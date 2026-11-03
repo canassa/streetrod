@@ -1,0 +1,3 @@
+#include "GLOBALS.H"
+#include "STRUCTS.H"
+static void near F_0D1DE(int rpm, struct Eng *p) { }

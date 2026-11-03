@@ -1,0 +1,3 @@
+@F_15396
+static void near F_15409(int n) { }
+static int near F_153D7(int n) { return n; }

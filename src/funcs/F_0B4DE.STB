@@ -1,0 +1,4 @@
+#include "GLOBALS.H"
+static void near F_0B456(void) { g_6ca4 = 0; }
+static void near F_0B49C(int a, int b, int c, int d, int e) { g_6ca4 = a + b + c + d + e; }
+static void near F_0B425(void) { g_6ca4 = 1; }

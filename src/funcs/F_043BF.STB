@@ -1,0 +1,3 @@
+#include "GLOBALS.H"
+static int near F_04386(struct Node *n, int keep) { return 0; }
+static void near F_03FD4(struct Node2 *p) { }

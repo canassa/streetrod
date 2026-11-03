@@ -1,0 +1,4 @@
+#include "GLOBALS.H"
+static int near F_09556(void) { }
+static int near F_09BC5(int kind) { }
+static void near F_0D031(void) { }

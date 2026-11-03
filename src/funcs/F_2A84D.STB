@@ -1,0 +1,10 @@
+#include "STRUCTS.H"
+@F_28860
+static void near F_287D1(int color, int x, int y1, int y2) { }
+static void near F_28847(void) { }
+static void near F_29F04(void) { }
+static void near F_29F3B(int x, int y, int n, int f, int idx) { }
+static void near F_29F8A(int x, int y, int n, int f) { }
+static void near F_2A11C(int x1, int x2, int y1, int y2, int n, int clip, int flags) { }
+static void near F_2A32B(void) { }
+static void near F_2A3DD(void) { }

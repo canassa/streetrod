@@ -1,0 +1,4 @@
+@F_16455
+static void near F_16612(int a, int *p, int count, int reps) { }
+static void near F_16686(int a, int *p, int count, int reps) { }
+static int near F_166FA(int *buf, int start, int end, int step) { return 0; }

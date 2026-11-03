@@ -1,0 +1,2 @@
+static int near F_1563A(int n, int load, char far *dst) { return 0; }
+static int near F_153D7(int n) { return 0; }

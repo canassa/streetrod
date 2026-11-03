@@ -1,0 +1,2 @@
+@F_06476
+static int near F_0653C(int v, int *out) { return 0; }

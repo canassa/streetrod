@@ -1,0 +1,2 @@
+#include "GLOBALS.H"
+static int near F_09556(void) { return 0; }

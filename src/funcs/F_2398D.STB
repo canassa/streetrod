@@ -1,0 +1,1 @@
+static void near F_238A2(unsigned char *p, int n, int len) { }

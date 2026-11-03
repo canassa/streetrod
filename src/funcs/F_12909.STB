@@ -1,0 +1,2 @@
+static int near F_1287B(void) { return 0; }
+static int near F_1289C(int *px, int *py) { return 0; }

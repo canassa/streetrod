@@ -1,0 +1,3 @@
+#include "GLOBALS.H"
+@data_segment
+static void near F_03614(int reset) { }

@@ -1,0 +1,1 @@
+static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int off, int shift) { }

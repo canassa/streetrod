@@ -1,0 +1,3 @@
+#include "GLOBALS.H"
+#include "STRUCTS.H"
+static void near F_0B61B(struct Dlg *d, int id) { g_6ca4 = d->f0 + id; }

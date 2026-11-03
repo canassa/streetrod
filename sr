@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# The Street Rod decompilation driver. See ./sr -h and CLAUDE.md.
+set -euo pipefail
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if ! command -v dosbox-x >/dev/null || ! python3 -c 'import capstone' 2>/dev/null; then
+    exec nix-shell "$HERE/shell.nix" --run "$(printf '%q ' "$0" "$@")" 2> >(grep -v '^warning: Nix search path' >&2)
+fi
+exec python3 "$HERE/tools/sr/cli.py" "$@"

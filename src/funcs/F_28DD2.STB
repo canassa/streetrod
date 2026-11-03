@@ -1,0 +1,2 @@
+#include "STRUCTS.H"
+static void near F_2874C(struct Blt *b) { }

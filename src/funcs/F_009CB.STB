@@ -1,0 +1,2 @@
+#include "GLOBALS.H"
+static struct Bitmap far * near F_009B7(int n) { return 0; }

@@ -1,0 +1,5 @@
+@F_17BE6
+@F_1783E
+static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, int h, char far *mask, char c) { }
+static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color) { }
+static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstbm, int id1, int id2) { }

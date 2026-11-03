@@ -1,0 +1,1 @@
+static void near F_226F4(struct Rect *r, struct Bitmap far *a, struct Bitmap far *b, int horiz) { }

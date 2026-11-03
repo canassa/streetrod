@@ -1,0 +1,2 @@
+static int near F_0018B(void) { return 0; }
+static int near F_00082(int mode) { return 0; }

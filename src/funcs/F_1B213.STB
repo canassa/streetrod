@@ -1,0 +1,2 @@
+static struct Bitmap far * near F_1A9B2(int n) { }
+static void near F_1ABAC(int a, int *p, int *q) { }

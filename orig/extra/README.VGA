@@ -1,0 +1,16 @@
+Some VGA cards (for instance, the Vega Video Seven VGA card) contain 
+non-standard VGA modes. If you are using one of these cards you might 
+see graphics garbage where the dashboard of the car is supposed to be. 
+To get rid of this garbage, insert your card's utility disk in drive A, 
+locate the utility which disables the VGA extensions, and run this 
+utility before beginning the game. The game will look OK then. 
+
+As an example, the utility disk for the Vega Video Seven VGA card 
+contains a utility called "vega". This utility contains several 
+commands, one of which, called "pure", forces the card into true VGA 
+mode. Before booting Street Rod, insert the utility disk in drive A 
+and type A:VEGA PURE:ON and hit return. You will see a message that 
+all extensions have been disabled. You can then start Street Rod and 
+it will run as designed. You can also toggle dip switch 5 on the card 
+to Off. This accomplishes the same thing. 
+

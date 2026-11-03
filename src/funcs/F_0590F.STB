@@ -1,0 +1,3 @@
+#include "GLOBALS.H"
+static int near F_057DC(int handle, struct Node **head) { return 0; }
+static struct Node2 * near F_03FB1(void) { return 0; }

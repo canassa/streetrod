@@ -1,0 +1,9 @@
+#include "GLOBALS.H"
+#include "STRUCTS.H"
+static void near F_0B4DE(void) { g_6ca4 = 0; }
+static void near F_0B525(void) { g_6ca4 = 0; }
+static void near F_0B552(void) { g_6ca4 = 0; }
+static void near F_0B59B(void) { g_6ca4 = 0; }
+static void near F_0B617(void) { g_6ca4 = 0; }
+static void near F_0B61B(struct Dlg *d, int id) { g_6ca4 = d->f0 + id; }
+static void near F_0B717(struct Dlg *d) { g_6ca4 = d->f0; }

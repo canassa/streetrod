@@ -1,0 +1,6 @@
+#include "GLOBALS.H"
+static void near F_0D29D(void) { }
+static void near F_0D624(void) { }
+static void near F_0D67D(void) { }
+static void near F_0D992(void) { }
+@F_0C407

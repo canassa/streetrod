@@ -1,0 +1,2 @@
+#include "GLOBALS.H"
+static int near F_05795(int handle, struct Node *p) { return 0; }

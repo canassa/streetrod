@@ -1,0 +1,6 @@
+@F_164A2
+@F_164BD
+static void near F_164E9(int a, int b, int c, int d) { }
+static void near F_167E4(int a, int b, int c) { }
+static void near F_16830(int a, int b, int c, int d, int e) { }
+static void near F_1687C(int a, int b, int c, int d, int e) { }

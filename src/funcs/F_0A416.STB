@@ -1,0 +1,1 @@
+static void near F_0A35C(struct Bitmap far *bm, int n, struct Bitmap far *dst) { }

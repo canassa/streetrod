@@ -1,0 +1,4 @@
+#include "GLOBALS.H"
+static int near score_index(void) { return 0; }
+static int near entry_beats_score(int i) { return 0; }
+static void near insert_entry(int pos) { }

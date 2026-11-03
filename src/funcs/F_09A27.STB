@@ -1,0 +1,4 @@
+#include "GLOBALS.H"
+static void near F_098BA(int a) { g_7f82 = a; }
+static int near F_09556(void) { return g_7f82; }
+static void near F_092A4(int a, int b, int c, int d, int e, int *f) { g_7f82 = a + b + c + d + e + *f; }

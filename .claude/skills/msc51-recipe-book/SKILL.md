@@ -1,0 +1,282 @@
+---
+name: msc51-recipe-book
+description: Recipe book for byte-matching Microsoft C 5.1 (medium model) codegen in Street Rod. Consult when ./sr check or ./sr diff shows a DIFF; it maps the first divergent instruction to the C or flag fix. Also lists MSC 5.1 fingerprints (to tell compiled C from hand asm) and the C shapes behind common instruction patterns. A living document: add a row every time a divergence teaches something new.
+---
+
+# MSC 5.1 recipe book
+
+Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in the source, sometimes a flag (once per module), and never "the compiler".
+
+## Fingerprints: this is MSC 5.1 C
+
+- Prologue `push bp / mov bp,sp / [sub sp,N] / push di / push si`, **di before si**. Epilogue `pop si / pop di / mov sp,bp / pop bp / ret[f]`. Hand-written asm in this game pushes **si before di** and keeps values in registers.
+- A function that saves and restores `ax` (`push ax ... pop ax`) or other scratch registers is hand-written. MSC treats `ax`, `bx`, `cx`, `dx` and `es` as scratch (example: `0x02B9A`).
+- Zeroing with `sub ax,ax` (never `xor ax,ax`, except inside intrinsics).
+- Caller cleanup `add sp,N` after every call (cdecl), except before the `mov sp,bp` epilogue, where MSC drops it: after the last call, and after an earlier one when only stores follow (`0x001D1`, `0x08E2D`).
+- Shift by 4 in C: `mov cl,4; shl ax,cl` (`0x2914C`). Runs of `shr reg,1` so far came from hand-written code.
+- No frame at all: compiled C when there are no args or locals (`0x1923C`), including tiny `if (g) { push cs; call near ... }` wrappers the scanner calls asm (`0x16B3A`) and frameless `switch`es (`0x10DDF`); a frameless routine that does `out` is asm (`0x26458`).
+- `mov es,[DS:x]` where the DGROUP word is in the EXE relocation table (`./sr show` says "segment constant"), then `es:[reg+0]`: a `far` array, declared with `./sr global SEG:OFF` (`0x158DE`). An immediate `mov dx,SEG` with an offset is a far array in another module's segment, declared the same way (`0x168C8`).
+- A plain local loaded into `si`/`di` before a loop and stored back at loop exit, with no `register` in the source: `/Ol` enregistering the loop variable (`0x14294`, `0x16532`). A register that is never stored at exit is a compiler temp, not a variable (see "`/Ol` loop optimizer").
+- `#pragma loop_opt(on|off)` and `#pragma check_stack(on|off)` exist in 5.1 (measured). A `loop_opt` pragma inside a function body still acts on the whole function: `loop_opt(on)` just before a loop also changed the code before it. So a function whose loops disagree with its module's `/Ol` may carry one; `./sr sweep` doesn't try pragmas.
+- `void interrupt far f()` prologue: `push ax cx dx bx sp bp si di ds es; mov bp,sp; sub sp,N; mov ax,DGROUP; mov ds,ax; cld`, then `iret`.
+- Float code: `INT 34h`-`3Dh` are emulator calls (`/FPi`), shown as `emu_*` by `./sr show`. `fstsw [bp-N]; fwait; mov ah,[bp-N+1]; sahf` is a compiled float compare.
+- Hand-written, not C: a plain far function doing `push ds` then `cld` and `lds`/`les` on its arguments (`0x1C11C`), or a prologue `push bp; mov bp,sp; push ds; push di; push si` (`0x24D84`). Also `test [mem],0FFFFh`, `xor ah,ah` and `mov ah,0` before an `int`: MSC writes `cmp ...,0` and `sub ah,ah` (`0x02C04`, `0x02DB6`).
+- A code address loaded as a value (`mov ax,SEG h; mov ds,ax; mov dx,OFFSET h` for int 21h/25h, or `mov ax,OFF; mov dx,SEG` for a C function pointer) names a real function: `EXTRN` it, never a literal (`0x02DC3`).
+- Intrinsics: inline `strlen` (`mov cx,0xffff; xor ax,ax; repne scasb; not cx; dec cx`) or `strcpy` (the same scan, then `shr cx,1; rep movsw; adc cx,cx; rep movsb`) means `/Oi` (`0x032F4`). A `loop` instruction means `/Ol`. `cli`/`sti` in compiled code come from the `_disable()`/`_enable()` intrinsics (MSC 5.1 README).
+- `abs(x)`: `cwd; xor ax,dx; sub ax,dx`.
+- Small struct copy: `movsw ... movsb` without `rep` (a 5-byte struct: `movsw; movsw; movsb`).
+
+## C shapes (what the source looked like)
+
+| Original instructions | C |
+|---|---|
+| `cmp; jle L; mov ax,1; jmp E; L: sub ax,ax; E:` | `return a > b;` (comparison as a value) |
+| `cmp; jge L; mov ax,1; jmp E; L: sub ax,ax; E: mov [x],ax` | `x = a < b;` |
+| `cmp; je L; sub ax,ax; jmp E; L: mov ax,1; E:` | `if (a != b) return 0; return 1;` |
+| `cmp [bp+6],0; je L; mov [g],1; jmp E; L: mov [g],0` | `if (x) g = 1; else g = 0;` (`0x16AA8`) |
+| several stores of `dx` to globals, then `mov si,dx` | chained assignment `x = g1 = g2 = g3 = expr;`; stores go rightmost first, so the source order is the reverse of the store order (`0x15236`, `0x00D58`) |
+| `mov bx,K; mov [g],bx; shl bx,1; mov [bx+tbl],ax` | assignment used as the index: `tbl[g = K] = v;` (`0x193D4`) |
+| `mov bx,ax; mov es,[seg]; lea bx,[bx+K]; mov [bp-4],bx; mov [bp-2],es` then `es:[bx]` | `if (*(pp = &tbl[n].f))`; as a separate statement `pp = &tbl[n].f;` the segment folds to an immediate (`0x158DE`) |
+| result stored to `[bp-2]` and reloaded before the epilogue | `int r; if (c) r = 100; else r = x; return r;` (`0x03C5A`) |
+| `cmp [bp+6],0; jne; ... jle` returning 0, 1, -1 | `if (x == 0) return 0; if (x > 0) return 1; return -1;` (`0x01B91`) |
+| value left in `ax` at the end (e.g. `mov ax,bx; mov [g],ax`) | not proof of a return value: MSC routes stores through `ax` in `void` functions too. Return a value only if a caller reads `ax` after the call (`0x03C3E`, `0x03FD4`) |
+| two words copied through `ax` one after the other | two `int` field assignments; a `long` or far pointer copies through `dx:ax` (`0x1A69F`) |
+| identical tails, one branch jumping into the other's | cross-jumping of duplicated source: write both branches out in full (`0x19438`, `0x16381`, `0x168C8`) |
+| a `je` that skips into the middle of a branch, landing on a store | that store is unconditional source after the `if` (`0x1633D`) |
+| `jcc` to an earlier address | a loop: `while ((x = f()) == 0) ;` (`0x14294`) |
+| `mov al,[bp-2]; sub ah,ah; out dx,al; mov al,[bp-1]; out dx,al` | `outp` (intrinsic: `/Oi` or `#pragma intrinsic(outp)`) of the bytes of a `union { int i; unsigned char b[2]; }` local (`0x16455`) |
+| `union REGS` local, word store at `[bp-14]` then byte at `[bp-11]` | `r.x.ax = ...; r.h.bh = ...`; `ax` at -14, `bx` at -12 (`bl`, `bh` at -11) (`0x001F2`) |
+| `call f; mov cx,K; imul cx` | `f() * K`; a constant-first `mov ax,K; imul [mem]` is `K * var` or `var * K` (`0x03375`) |
+| `a%n + b%n + c%n` evaluated `c` first | MSC evaluates such sums right to left; write them in natural order (`0x15236`) |
+| `mov [bp-N],K` never read, then the constant in its place (`push OFFSET s`, `mov si,K`) | MSC propagates a constant local into its uses and keeps the store: `char *msg = "s"; f(msg);` (`0x036E9`), `count = 3; for (i = count; i; i--)` (`0x16BE3`). Not a dead local |
+| `mov ax,[k]; or ax,ax; je C0; cmp ax,1; jne END; jmp C1` with case 1's body placed after later code | `switch (k) { case 0: ...; break; case 1: ...; break; }` |
+| `mov ax,SIZE; imul word [bp+N]; add ax,OFFSET tbl` | `tbl[i].field` with `int i` and `sizeof *tbl == SIZE` |
+| `mov bx,[i]; shl bx,1; mov al,[bx+tbl]; cbw` | `tbl[i].c` on a 2-byte struct of `signed char` |
+| `les bx,[p]; push word [es:bx+N+2]; push word [es:bx+N]` | passing a `far *` member of a struct reached through a far pointer |
+| `call far [mem]` | call through a far function pointer global, `(*g_fp)(...)` |
+| `push ax` of a single word, then a far call into the CRT | medium model: data pointers are near (`char *`) |
+| `mov ax,[bp+6]; mul word [g]` | `unsigned f(unsigned n) { return n * g; }` (`mul` means unsigned; `imul` means `int`), `0x11E9C` |
+| `mov [bp-N],K` before a loop under `/Ol`, then `[bp-8]`/`[bp-0xa]` advanced by the struct size | induction pointers from `/Ol` for `tbl[i].f`: write the repeated indexed expressions, not a pointer local or a named temp (`0x11149`) |
+| `sub sp,N` larger than the used slots, the extra never touched | unreferenced locals still get slots under `/Oas`; under `/Oals` (`0x11213`) function-scope ones got none and inner-block ones did. Keep them, and note it |
+| INT 21h/33h via `int86`, byte stores to `[bp-N]` and `[bp-N+1]` | `r.h.ah = X; r.h.al = Y;`, not `r.x.ax` (`0x16D57`) |
+| `sub bx,bx; mov es,bx; ... es:[0xCC]` | interrupt vector test `*(long far *)0xccL == 0L` (`0x16D1A`) |
+| `in al,dx` / `out dx,al` in compiled code | `inp`/`outp` with `#pragma intrinsic(inp, outp)` and `<conio.h>` |
+| `and al,0xf8` on an int expression | `x & 0xfff8`: MSC narrows the mask to the byte it changes |
+| `cwd; xor ax,dx; sub ax,dx; sar; xor; sub` | signed division by a power of two, e.g. `(w + 7) / 8` on an `int` (`0x23C3B`) |
+| `/Ol`: a product stored to a nameless temp before the loop, the back edge jumping past it; or `i` counted down in `si` with a `cmp n,0; jg` guard | loop-invariant hoisting and induction variables: write the plain `for (i = 0; i < n; i++)` with `w * h` inside; no named temp (`0x23262`, `0x238A2`) |
+| several increments in one place at the loop bottom | comma `for` increment, in that order: `for (; c; a++, b <<= 1, p += n)` (`0x23262`) |
+| `jmp cs:[bx+TABLE]` with the table inside the function | a plain `switch` on dense values; unused slots point at the `break` target (`0x004F4`) |
+| `mov cx,N; lea di,[bp-X]; mov si,OFFSET s; mov ax,ss; mov es,ax; shr cx,1; rep movsw; adc cx,cx; rep movsb` | `memcpy(buf, "literal", N)` under `/Oi`; MSC 5.1 can't initialise an auto array (C2073) (`0x00082`) |
+| `cmp byte [x],1; sbb ax,ax; neg ax` | `!x` on a `char` (`0x08D26`) |
+| `mov es,[seg]; lea bx,[bx]` and a store of `bx`/`es` to a far pointer local | assign it inside the dereference: `wd = *(pen = (unsigned char far *)&tbl[i]);`; separate statements give an immediate segment (`0x22B3A`) |
+| `mov ax,K; mov [n],ax; mov cx,S; imul cx` before an inline `rep movsw` copy, constant not folded | `len = (num = K) * sizeof(struct X); memcpy(dst, item, len);` with `#pragma intrinsic(memcpy)`: an assignment's value still in `ax` isn't folded (`0x1344A`) |
+| call first, compare second in `f()*2 + (g == K)` | write the comparison as the left operand: `(g == K) + f() * 2` (`0x1344A`) |
+| empty-body search loop `jmp test; inc; test; jcc inc` | `for (; cond1 && t[i].f != v; i++) ;`; `while` lays it out differently (`0x01BAE`) |
+| `cwd; sub ax,dx; sar ax,1` on a `strlen` | `(int)strlen(p) / 2`; `size_t` gives `shr` (`0x01BAE`) |
+| `_enable`/`_disable` as calls in an ISR | `#pragma intrinsic(inp, outp, _enable, _disable)` in that source (`0x01FE2`) |
+| `mov ax,[v]; cmp ax,K1; jne +3; jmp; cmp ax,K2` | a `switch`; an `if` chain compares memory, `cmp [v],K1` (`0x17BE6`) |
+| `cmp byte es:[bx+di],0xff` | an `unsigned char far *`; a `char` pointer gives `mov al; cbw; cmp ax,0xff` (`0x17BE6`) |
+| `/Ol` inline far-to-near block move: `push si; push di; shr cx,1; ... push ds; mov ds,dx; rep movsw; jae; movsb; pop ds; ...; add di,si` | `for (off = 0; off < n; off++) near[off] = far[off];` with both element types the same signedness; the index's exit value is the final `add di,si` (`0x1D741`, `0x221AC`) |
+| each call in a loop body followed by a `jmp` to a shared first call site | `{ F(); continue; }` in each branch (`0x0D29D`) |
+| `[test1; jl T2][arm a][T2: test2; jne a][arm b]` | `if (A) x = a; else if (B) x = a; else x = b;`: identical arms cross-jumped (`0x0D29D`) |
+| loop-exit stores at the head of the exit block, with a copy before the `return` path's jump | the post-loop code follows a `for (;;)` whose cases `break` out; not `goto done` (`0x06F6B`) |
+| `je ONE; sub ax,ax; jmp; ONE: mov ax,1` | `x = (c != K) ? 0 : 1;`; the plain relational `x = (a == b)` gives `jne; mov 1; jmp; sub` (`0x09646`) |
+| one `mov [n],ax` after the join | `n = n > K ? K : n;`; `if (n > K) n = K;` stores directly (`0x07FB1`) |
+| `/Ol`: an invariant flag tested at loop entry and bottom | `for (; flag == 0 && k > 6; k--)`; with `k > 6` first the loop becomes `loop` with a hidden counter (`0x09646`) |
+| `sub dx,dx; add ax,[lo]` for `long + (c ? K1 : K2)` | unsigned constants `140u : 280u`; plain ints give `cwd` (`0x0D67D`) |
+| several branches ending `mov [g],ax; jmp tail` | one nested ternary `g = c1 ? A : c2 ? B : C;` (`0x0D67D`) |
+| cases differing only in `mov ax,K; jmp` into a shared `push ax; call` | each case written `f(K); break;`: cross-jumping builds the tail (`0x09D6D`) |
+| one body for cases 2..5 and the default, placed at the end | `case 2: case 3: case 4: case 5: default: body` (`0x0B08C`) |
+| `inc ax; jne` after storing a value | `if ((w = r) == -1)`; `w = r; if (w == -1)` gives `cmp ax,0xffff` (`0x05B4A`) |
+| `/Ol` loop over `p[i]` keeping two induction pointers and a user `i` | `if (!p[i]) continue;` then the body; `if (p[i]) {...}` merges them and makes `i` a counter (`0x1D925`, `0x23FD9`) |
+| `fld st(0); fstp xword [tmp]` after `cos(r)` | MSC's FP CSE of a repeated pure call with identical argument trees; write `r = expr;` separately (gives `fst [r]`) and `cos(r)`/`sin(r)` (`0x0F972`). `sin`/`cos` with the argument in `st(0)` need `#pragma intrinsic(sin, cos)` |
+| `sar word [h],1; add word [h],0x14` | compound assignments `h >>= 1; h += 0x14;`; `h = (h >> 1) + 0x14` goes through `ax` (`0x0F972`) |
+| `mov [tmp],ax; fild word [tmp]` on unsigned char arithmetic | an `(int)` cast: without it MSC widens to unsigned long (`sub dx,dx; fild dword`) (`0x0DCBE`) |
+| `/Ol`: a value computed once before the loop and passed unchanged every pass, though the source recomputes it | `/Ol` hoists `x = f(n)` out of the loop even when `n` changes (a 5.1 optimizer bug the shipped code has): write the assignment in the body (`0x16830`) |
+| `di < limit` with `di += step` and a separate `inc [j]` | `for (j = 0; j*step < w*2; j++) f(a - w + j*step)`: strength reduction (`0x16564`) |
+| `test byte [bp-2],1` on a value just returned | comma form `(e = f(), e & 1)`; `(e = f()) & 1` gives `test al,1` (`0x15CC3`) |
+| first `lea di,[..]` of an inline `strcpy` | that's the *source* (scanned with `repne scasb`), then `xchg si,di` (`0x15CC3`) |
+| compute, store to a local, use; the second use reloads and rescales it | assignment inside a subscript: `*px = t[n = f()][0]; *py = t[n][1];` (`0x12909`). Two tables 2 bytes apart are one `[][2]` table |
+| `or dx,ax` testing a far pointer just returned | `if (p = f())`; a separate `p = f(); if (p)` gives `or ax,dx` (`0x03709`) |
+| `rep movsw` copy of a small array with `mov cx,N` hoisted, no `di` save, `n = N` stored first | a counted `for (n = 0; n < N; n++) a[n] = b[n];` under `/Ol`, not a struct copy (`0x078F1`) |
+| `neg ax; neg ax` before a `rep stos` fill | the `-n / -1` trip count of `for (; n; n--) *q++ = c;` (`0x109C0`) |
+| list search `mov cx,si; mov bx,cx; mov si,[bx+6]` | `for (p = head, q = 0; p; ) if (p != n) p = (q = p)->next; else break;` (`0x077B7`) |
+| `while (p)` with a guard and bottom test, `/Ol` induction pointers | `n++; a[n] = v; b[n] = w;` as separate statements (`0x076A7`); `a[++n]` keeps the index in memory |
+| some `switch` case bodies inline, others after the next unconditional `jmp` | case order in the source decides which stay inline: write them in the order the original places them (`0x10BD9`). If a loop test or a shared tail sits between the cases, see "Block placement" (first `continue`) |
+| `or cx,cx; je EXIT; jmp BODY` with `dec cx` at the top | `i = K; do { i--; body } while (i);` under `/Oals` (`0x10BD9`) |
+| `mov cx,3; imul cx` vs `mov ax,3; imul [mem]` | `(j = expr) * 3` vs `j = expr; ... j * 3` (`0x0E0E2`) |
+| a `jmp` landing on a shared `or ax,[c]` | `v = (cond ? A : B) \| c` (`0x195F3`) |
+| `cmp cl,[k]` vs `cmp [k],cl` | `if ((c = *p) == k)` vs `c == k` (`0x2244F`) |
+| `/Ol`: register exit store at the function exit (after `cbw`) instead of right after the loop | the code after the loop sits inside it: `for (;;) { ... if (!c) { rest; return x; } }` (`0x15FBD`) |
+| `/Ol`: a parameter loses `di` to a global used 3+ times in the loop | the global is really a struct member (`struct Lims g_8b90`): members never win a register (`0x1412D`) |
+| one shared `return 0` stub reached from a loop | `break` out of the loop, then `return 0` after it (`0x057DC`) |
+| one shared `return 1` stub reached by several `jne` | `if (a \|\| b \|\| c) return 1;`, not separate `if`s (`0x0586E`) |
+| `strcpy` scanning a constant source with `repne scasb` | the source is not a bare literal (MSC knows its length): a `char[]` global (`0x059F6`) or a literal held in a pointer local, `char *s = \"...\"; strcpy(d, s);` (`0x06AA6`) |
+| `aFulmul` then signed `aFldiv` | `(long)((unsigned long)(unsigned)x * 60) / 546` (`0x064A3`) |
+| dead `mov ax,[p]` at a `for` increment | `p++` as the increment; `++p` has none (`0x059F6`) |
+| `mov cx,8; mov [h],cx; add ax,cx` where a plain `h = 8;` folds | `if (y + (h = 8) > bm->height)` (`0x22626`) |
+| `mov ax,[p]; add ax,[off]` right after `off` is stored from `ax` | `x = (off = a * b + c) + p->f;`; separate statements cache `ax` and commute (`0x21D58`) |
+| inline `rep stosb` for `memset` | `/Oi` only; without it `memset` is a call (`0x22364`) |
+| `/Ol`: `mov [bp-N],ds` ... `mov ds,[bp-N]` around an inner loop with far pointers in `es:di`/`ds:si` | plain `unsigned char far *` locals with `*dp++ = v` in the loop; no `register` (`0x2BAC0`) |
+| `jge +3; jmp L` | MSC's long form of an out-of-range conditional jump, not a source shape (`0x29398`) |
+| `sub al,al; mov [c],al; mov [n],ax` | `n = c = 0;` with `c` a `char`; separate statements give `mov byte [c],0` (`0x2BAC0`) |
+| a loop condition that includes the first tests of the body | `if (f) {...} else X` as the body: MSC threads the then-branch's leading tests into the condition and puts `X` last (`0x29398`) |
+| loop laid out `[part][incr][test; je out][body; jmp incr]` | the body ends in `continue` or an `if` falling into the increment: `if (c != X) { ...; continue; } rest;` (`0x03C8D`) |
+| `switch` compare chain order | signed values sort signed (`-4, -3, 0x3ea`), unsigned ones unsigned; bodies follow source order (`0x03C8D`) |
+| `mov [bp-2],ax; push ax` and a later `strlen(p)` folded to a constant | `f(..., p = buf + 1, ...)`: assignment inside the argument (`0x14341`) |
+| `add bx,OFF` before the store to `p`, then `mov ax,[bx+f]` | `g = (p = &tbl[i])->f;`; as two statements the store goes through `ax` (`0x13DE6`) |
+| one exit path for the fallback value | `if (a != X && a != Y) return t[n]; else return n;`, not the `\|\|` form (`0x153D7`) |
+| `push [bx+2]; push [bx]` for a pair of arguments read from one table entry | a 4-byte struct passed by value (`0x29F3B`) |
+| `mov ax,v; cmp ax,lo; jl; cmp ax,hi; jg` around a shared body | `switch (v) { case lo: case hi: ... }`; an `\|\|` chain compiles to `cmp [mem]` (`0x0315B`) |
+| compare in `ax` right after the store, no reload | `if ((x = f()) != g)`; a separate statement reloads (`0x03B33`) |
+| `rep stosw`/`rep stosb` fill with dead stores of the end pointer and count | a plain `for (q = p, i = n; i; i--) *q++ = 0;` under `/Oals`; `memset` is a real call here (`0x0C5AC`) |
+| `cmp ax,63h; jle; mov ax,63h` with no local | `(int)E > 99 ? 99 : (int)E`: MSC shares the repeated expression (`0x0C407`) |
+| `mov bx,[p]; add [p],2; mov [bx],ax` vs `mov bx,[p]; mov [bx],ax; add [p],2` | `*p++ = f();` vs `*p = f(); p++;` (`0x27D4B`) |
+| a first loop iteration peeled with constants pushed, then the same body as a loop | `r = 4;` then the loop: MSC propagates the constant along the fall-through into the first pass only (`0x27D4B`) |
+| inline `abs` pattern in a module without `/Oi` | `#pragma intrinsic(abs)` in that source (`0x2834C`) |
+| `default:` body placed first in the code | `default:` written first in the `switch` (`0x12909`) |
+| `inc ax; mov cx,K; mul cx` where MSC would fold `(g+1)*K` | `unsigned off = K; ((int)g + 1) * off` (`0x11EA8`) |
+| `or byte [a+1],4` / `and byte [a+1],0xf` on an int array | `a[i] \|= 0x400;` / `a[i] &= 0x0fff;`: MSC narrows to the changed byte; the array base is the displacement minus 1 (`0x267F8`) |
+| `/Ol` keeps an index in memory where `n++; a[n] = v;` made induction pointers | `a[++n] = v;` (`0x078F1`) |
+| `mov cx,N; mov di,OFFSET a; push ds; pop es; rep stosw`, then `mov [bp-N],N` | `for (i = 0; i < N; i++) a[i] = 0;` under `/Oalsi`; the store is the loop variable's exit value (`0x00E24`). Also under plain `/Oals`, and for one zeroing statement inside a larger loop (`0x26FE1`) |
+| `cond ? 0 : 1` stored to a global: `jne L; sub ax,ax; jmp E; L: mov ax,1` | write the ternary that way round; `!=` gives another layout (`0x00FEA`) |
+| `sub dx,dx; div` on a pointer difference | `((unsigned)p - (unsigned)q) / sizeof *p`; plain `p - q` gives `cwd; idiv` (`0x0B425`) |
+| `int` function ends right after a `switch` with no reload of `ax` | no final `return`: the original returns whatever the `switch` left in `ax` (C4035) (`0x09AF4`) |
+| a value held in `si`/`di` with no 2-byte home (`sub sp` smaller than a `register` version) | MSC's own CSE register: write the expression at each use, no temp at all (`0x23F68`, `0x226F4`: `r->x1` three times; `0x1264E`: `f - 8` and `d + 8` at each use). A `register` local always gets a home; a `register` **parameter** never does (it is loaded from `[bp+N]` into `si`). Under `/Ol` see the next row |
+| `/Ol`: the same CSE goes to a stack temp at the bottom of the frame (`mov [bp-N],ax`) | `/Ol` spills a CSE whose basic block falls straight into a loop; any `if`/label between them (even one with no code) keeps it in `si`. Measured on small cases; `0x23C3B` matches only with such a boundary, source unknown (open question) |
+| two registers (`bx` and `si`) both holding the same pointer, one stored to its home: `mov [bp-2],ax; mov bx,ax; mov si,ax` | an assignment nested in another: `p->x2 = (p->x1 = x) + w - 1;`; the inner lvalue goes through `si`, the outer through `bx` (`0x0B49C`) |
+| `/Ol` loop: `imul cx; add ax,OFF; mov si,ax` (index in `cx`, pointer in `si`); separate `p = tbl + i;` gives the registers swapped | assign the pointer inside the test: `if ((p = tbl + i)->f == 1 && ...)` (`0x019BC`) |
+| a loop increment emitted out of line after a later `jmp` (`inc si; jne; jmp out`), the test jumping to it | `for (j = 1; j; j++) if (cond) break;`, not `for (j = 1; j && !cond; j++) ;` (`0x01111`) |
+| an `else` assignment emitted out of line after a later `jmp`, with a `jmp` back | the same assignment written twice in a nested `if`: `if (a) { if (b) x = 1; else x = 2; } else x = 1;` (cross-jumping); `if (!a \|\| b)` gives it inline (`0x0105B`) |
+| a 4-byte global stored as two immediates, then reloaded through `ax:dx` to copy it (`a = b = g`) | if the high word is in the EXE relocation table, a far address: `p = far_array; q = r = p;`. MSC does not propagate a relocatable address constant (`0x01111`: `g_79aa.l8 = g_2e6b_0000`). A plain numeric `long` would be propagated; only then think struct copy |
+| `mov ax,[a]; op ax,[b]` order flips when one operand is written as a struct member (`s.f`) instead of a plain global | MSC orders a `sym+disp` operand differently from a plain `sym`. If only the plain form matches, that module declared the field as its own `int` global: keep the overlapping plain decl and note it, don't contort (`0x2858D` `g_78ec`, `0x0DA25` `g_78ea` inside `struct Eng g_78e0`) |
+| one module tests a global with `cmp byte ptr`, another with `cmp word ptr` | the modules had their own `extern`s. Declare the type of the module that writes it (or the majority) and keep `*(int *)&g` in the minority, with a note (`g_8aca`: `char`, word reads in `0x28879`..`0x2AFDC`) |
+| allocator returning `char far *` that every caller casts | retype the prototype to what callers use (`struct Bitmap far *F_15BBE`, `F_1934E`, `F_0376B`); pointer types never change the bytes |
+| `mov al,[bp+N]; cbw; push ax` (or `sub ah,ah`) for an `int` parameter | an explicit `(char)` / `(unsigned char)` cast at the call (`0x19A2D`, `0x11C24`) |
+| `mov ax,[..]; mov [tmp],ax; push ax` | assignment inside an argument: `f(x = p->a, ...)`, evaluated right to left (`0x11C24`) |
+| `cmp ax,1; sbb cx,cx; neg cx; or cx,cx; je` around a call | `!f()` used as a value, e.g. `while (!kbhit() == 0)` (`0x1174E`) |
+| loop test threaded into the body, or not | `if (c) break; body;` threads it; `if (!c) body; else break;` doesn't (`0x09256`) |
+| `je`/`jne` polarity inverted on a `?:` or `if` with `||` | write the condition the other way: `(a \|\| b) ? X : Y` vs `(!a && !b) ? Y : X` (`0x00316`) |
+| `cmp; je L; ... L:` where the body of `if (f()) count++; else if (!all) return` gives `inc; jmp T`, the original `jne INC` with `inc` just before the loop test | `if (!f()) { if (!all) return n; } else n++;`: the `else` arm lands at the bottom of a `while` body and falls into the test (`0x15C4A`) |
+| `switch` bodies ending in a shared store that sits in the **last** body, earlier bodies jumping forward to it; ours keeps it in the first body | the earlier cases end in `return`, the last falls off the end of the `switch` (`case 0: break;` stays); with `break` everywhere the cross-jump keeps the first copy (`0x19925`) |
+| `p += tbl[i]` on a far pointer, then `tbl[i]` reloaded for the next statement (`mov ax,size; add ax,[si+tbl]`) while other cases reuse `ax` | `tbl` is `unsigned[]`: the conversion in the far-pointer add blocks the value CSE; `int` elements reuse `ax` (`0x192AC`, `g_8b02`) |
+| `&tbl[c]` not CSE'd between two statements, `c` reloaded from its home and re-`cbw`d | the first subscript is an assignment: `q->val = tbl[q->key = c = p->key]; tbl[c] = p->val;`; separate `q->key = c = p->key;` makes a CSE temp under `/Ol` (`0x012DE`) |
+| operand order of a compare or commutative op that no swap changes | MSC orders the two operands by tree complexity, not by source order. Measured ranks (2026-11-03): plain global = one-level member (`s.f`, `t[3]`) < bp local or param < nested member (`s.a.b`, `t[1].f`) < pointer member (`p->f`); an explicit cast node counts (`(unsigned)h->x`), an implicit conversion doesn't. In a relational the simpler one goes into `ax` and the other is the memory operand; in `a OP b ? a : b` the more complex one is loaded and kept as the arm. Fix by changing the tree, never the order (`0x1220B`, `0x0DA25`, `0x068E8`) |
+| `?:` min/max loads the global first, `cmp ax,[bp-N]` | the global is a nested member: `g_cursor.r.x1` in `struct Cursor` (`0x1220B`) |
+| `mov ax,es:[si+K+2]; cmp es:[si+K],ax` for `t[n]` vs `t[n+1]` (ours loads `t[n]`) | `t[n] - t[n+1] >= 0`: the subtraction form swaps the roles (`0x0DA25`) |
+| `mov si,bx; mov ax,[si+8]` first, then the byte operand into `cx` | `(unsigned)h->x1 + p->r[i].w`: the cast makes the int side the complex one (`0x068E8`; why the original had it is open) |
+| `les bx` in each `?:` arm, then `mov ax,es:[bx+N]; mov dx,es:[bx+N+2]; push dx; push ax` after the join | the member is inside each arm: `c ? a->bits.p : b->bits.p`; `(c ? a : b)->bits.p` pushes the memory directly (`0x16EA2`) |
+| `les bx,[g1]` / `les bx,[g2]` in two arms, then several statements reuse `es:bx` and a CSE in `si`, no slot for the pointer | `if (rev) { x = g1[0] & 4; y = g1[1] & 4; } else { x = g2[0] & 4; y = g2[1] & 4; }`: cross-jumping merges everything after the `les`. A pointer local always gets a slot (`0x29BFF`, `0x2992A`) |
+| `/Ol` loop with no `jmp` to the test right after an `if (y < f)` guard | `if (y < f) { ...; do body; while (++y < f); }`; a `for` there adds the `jmp` (`0x29BFF`) |
+| a loop in a `/Ol` function left alone (variables in memory, `jmp` to a bottom test, `switch` dispatch after it) while other loops get `si`/`di` | a `goto` loop: `y = y0; goto test; loop: ...; y++; test: if (...) goto loop;`. `/Ol` only works on `for`/`while`/`do` (`0x29170`) |
+| `mov ax,si; add ax,[step]; mov si,ax` in a `/Ol` loop where ours makes `add si,[step]` | the stored value feeds the sum: `start = (buf[n] = start) + step;` (`0x166FA`) |
+| a temp reused for later reads where the original reloads through the pointer | declare the temp in a block around its own uses: `{ unsigned wd; wd = *q; ...; }`; its value tracking ends with the block (`0x04036`) |
+
+## `/Ol` loop optimizer (measured 2026-11-03)
+
+What the loop optimizer does with the source, and how to read it back. All from `/Oals`/`/Oails` functions that now match.
+
+| Original | Rule | Source |
+|---|---|---|
+| a counter in `cx`/`dx` (`loop`, or `dec dx; jne`) never stored, plus `mov [bp-N],K` where the `i = 0` would be, plus an untouched slot at the bottom of the frame | an index that is only counted (not used in the body) is replaced by a hidden down-counter; the index's exit value `K` is stored at its init position; the counter has a hidden slot and is never stored | `for (i = 0; i < K; i++)`, not `for (i = K; i; i--)` or `do ... while (--n)` (those keep the user variable as the counter and store it at exit) (`0x2B6DC`, `0x03614`, `0x0C52C`, `0x18ADB`) |
+| `mov [i],K` before the setup of another register | the exit store sits where `i = 0` is: `for (i = 0, p = g = tbl; ...)` puts it first; `p = ...; for (i = 0; ...)` after (`0x03614`) | order the comma init accordingly |
+| several `mov [bp-N],K` / `add [bp-N],S` slots advanced each pass, never named | induction pointers for `a[i]`, `s->f[s->k]` and the like; they need not come from a local index, `p->f18++` as the loop variable works too (`0x0D1DE`) | write the indexed expressions; no pointer locals |
+| `mov ax,n; neg ax; cwd; mov cx,-K; idiv cx; mov [tmp],ax; neg ax; shl...; add n,ax`, then `mov cx,[tmp]` and `loop` | trip count of `for (; n > K-1; n -= K)`; `n`'s exit value is computed up front, the count lives in a hidden slot | `for (; n > 3; n -= 4) body;` (`0x1D683`) |
+| that loop is a plain byte copy but the original keeps `mov al,[si]; mov es:[di],al; inc; inc; loop` where ours makes `rep movsw` | `/Ol` turns `*d++ = *s++` into a block move only when both sides have the same type; `char` vs `unsigned char` blocks it | give one pointer the other signedness (`char far *dst`, `unsigned char *s`) (`0x1D683`) |
+| `do { } while (--n)` matched the loop but ours stores `cx` back | see the first row: the original was a counted `for`/`while`, not a user counter | rewrite as `for (; n > K; n -= K)` or `for (i = 0; i < n; i++)` |
+| every register variable modified in the loop is stored at exit, even when dead (a parameter, the returned value) | exit stores don't look at liveness; only compiler temps are never stored | a missing exit store means a temp, not a dead variable |
+| a register loaded from a home before the loop that is never written anywhere | a CSE temp, e.g. `(y >> 1) * 0x50` used twice; no `off` local | write the expression at each use (`0x1CF40`) |
+| a variable loaded into its register before the loop although each pass assigns it first | the assignment is inside a condition: `if ((r = &p->gear[i].r[1])->f2 > x)`; as a separate statement `r = ...;` the load goes away | assign inside the test (`0x0D1DE`, cf. `0x019BC`) |
+| which variable gets `si`, `di` (and `dx`/`cx` when the loop has no call) | candidates rank by the number of references in the loop (body, test and increment all count); ties go to the first reference in the loop. Declaration order and names don't matter. A call in the loop leaves only `si`/`di`, so a third variable stays in memory (`0x133CB`: memmove inside the loop keeps `i` and `n` in memory) | count the references; not fully modelled: `if (++d == 4)` instead of `d++; if (d == 4)` moved `d` ahead (`0x21B7C`), and moving `plane++` into the `for` increment moved `plane` behind a parameter used twice (`0x174A6`) |
+| `mov ax,..; and ax,3; mov si,ax` vs ours `mov si,..; and si,3` | the variable is `unsigned` (`0x21B7C`) | `unsigned d;` |
+| two separate compares of the same fields (`cmp; jge L` then at `L` the same `cmp; jg`), both branches into one insert block | the insert code is written twice and cross-jumped: `if (a < b) { insert; return; } if (a <= b && c < d) { insert; return; }` (`0x133CB`) | duplicate the block, don't merge the conditions with `\|\|` |
+| a global read inside the loop each pass (`cmp [g],-4`) where `/Ol` in ours hoists it into a free register (`mov di,[g]` before the loop) | the global is really a struct member; members are never hoisted or enregistered (cf. `0x1412D`). Done: `struct Video g_vid` (DS:822A, `front`..`f16`) made `0x10AFD` and `0x22762` match and every other user still matched, so a whole block of plain-looking globals can be one struct. Before retyping, check the module's `/Ol` users: an original that does enregister a global is evidence against | redeclare the globals as members of one struct; in asm write `_g_vid+12` (`refs` checks sym+disp) |
+| `g_a[g_n] = v; g_n++;` in a loop: ours makes an induction pointer and keeps `g_n` in `dx`, the original indexes directly (`mov bx,[n]; shl bx,1; mov [bx+a],v; inc [n]`) | the array and its count are members of one struct | `struct Pages g_pages` (`start[12], n, cur, list`) at DS:04FE (`0x008B4`, `0x00D58`) |
+| `mov [bp-2],0`, a `cmp n,0; jle` guard, `mov si,n; mov ax,si; add [bp-2],ax`, then `dec si; jne` at the bottom | `for (i = 0; i < n; i++)` with `i` unused in the body: the down-counter is `si` (hidden slot `-4`), `i`'s exit value is added up front | not a `register` counter with a dead `sum += i` (`0x10AFD`) |
+| `cmp [y],K; jle` in memory, then `si`/`di` loaded with loop invariants, then a bottom-tested loop with `y` in `cx` and stored at exit | `while (y > K) { ...; y = 0; y += expr; }`: `/Ol` turns `while` into guard + `do`, hoists invariant subexpressions (each with a hidden slot) | no `register` locals, no `if`+`do` needed (`0x008B4`) |
+| `/Ol`: two `[bp-N]` slots at the bottom of the frame written once with a `?:` result and read back later in the same block | CSE temps for a repeated `min()`/`max()` (stdlib.h macros): `blt.w = max(a.x2, b.x2) - min(a.x1, b.x1) + 1; blt.dx = min(a.x1, b.x1);`. Not a nested `{ int x, y; }` block | (`0x1D925`) |
+| `while (A && B)` under `/Ol`: original has both tests at the bottom (`cmp A; je out; cmp B; jl body`), ours moves `B` to the body top | `for (; A; incr) { if (!B) break; ... }`: the `break` test is threaded into the bottom test | (`0x012DE`) |
+
+## Block placement and `switch` lowering (measured 2026-11-03)
+
+When the instructions match but the blocks come in another order, the cause is one of these rules. Measured on small generated functions (`work/bp/s2`..`s7`, `work/bp/x2.py` prints a `.COD` listing with labels) and confirmed on `0x0503F`, `0x10E3D`, `0x139DE`, `0x14C90`, `0x1563A`, `0x07367`. Mostly under `/Oas`. Under `/Oals`, a loop that `/Ol` rotates (index in a register, guard plus bottom test) did not show the `continue` pull in small tests, but a loop that keeps its index in memory did (`0x10E3D`).
+
+**Switch lowering.** Sort the case labels by value, signed for `int`. A run of consecutive values with one body is a single *entry* (a range). Then:
+
+| Shape | When | Code |
+|---|---|---|
+| jump table | at least 7 labels, spread below about 3 per label (8 labels over 22 values: table; over 29: no table; 5 or 6 consecutive: no table) | `sub ax,lo; cmp ax,n-1; ja DEFAULT; add ax,ax; xchg ax,bx; jmp cs:[bx+T]`, holes point at the break/default target |
+| linear chain | up to 6 entries with no range, or up to 3 entries | one `cmp; je` per single entry and `cmp lo; jl DEF; cmp hi; jle BODY` per range, in sorted order, then `jmp DEFAULT` |
+| binary tree | 7 or more entries, **or 4 or more entries with at least one range** | `cmp ax,R; je BODY; jg RIGHT`, the left part inline, `RIGHT` emitted after the case bodies. `R` is entry number `n/2 - 1` (0-based, sorted). Each half is split again by the same rules (a dense half becomes a table: `0x0503F`'s outer switch is a tree over `-40, 1..8` with a table for `9..17`) |
+
+Compares at the end of a chain whose target is the fallthrough (the default, or the end of the switch) are dropped. Labels that share the default body therefore leave no code, but they still count as entries. The only trace of `case -2: case -1: default:` in `0x0503F` is that the four real cases (`-22, -20, -4, -3`) form a tree with root `-20` instead of a chain. When you see a 4- to 6-case tree, add a run of labels on the default or break target, just past the end of the tree's right half. The values can't be recovered, so note that they are a guess. Whether the switch has a `default:` doesn't change the shape, and neither does the type (`char`, `unsigned`, `long`).
+
+**Where blocks go.**
+
+| Original | Rule | Source |
+|---|---|---|
+| a `for` loop's increment and test (plus a `switch` dispatch that follows the test) sit in the middle of the case bodies, right after one case | MSC emits the code a `continue` jumps to (the `for` increment and test, or the `while`/`do` test), up to its next unconditional jump, right after the **first `continue` in source order**. Later `continue`s jump to it. `goto` to a label at the same place does **not** do this | make the case the original puts before the loop test the first one that ends in `continue`. Turn earlier `continue`s into `goto next;` with `next:` before the closing brace (`0x10E3D`: case 7 `goto next;`, case 8 `g_cmd++; continue;`). Cross-jumping then merges the duplicated `g_cmd++`, which leaves a `jmp` behind the jump table |
+| a loop's bounding-box block placed right after the first case, other cases `jmp` back to it, and a `jmp` past the loop after the jump table | the shared block is inside the first case under a label, ending in `continue`; the other cases `goto` the label; `break;` after the switch exits the loop for unlisted kinds (`0x139DE`) | `case 4: ... box: ...; continue; case 10: ...; goto box; ... } break; } while (...)` |
+| the code after a `for (;;)` loop moved up to the `break` (`jne skip; mov ax,2; jmp EX` inline) where the original keeps `jne +3; jmp STUB` and the stub after the loop's back jump | `break` pulls the after-loop block up to the first `break` when nothing falls into it. `goto done;` with `done:` after the loop leaves it in place (`0x1563A`) | `goto done;` |
+| `jne bad; jmp top` at the bottom of a `for (;;)` where ours has `je top; jmp bad` | `if (!f()) continue; goto bad;` (`0x1563A`). `if (f()) goto bad;` as the last statement gives the other polarity | |
+| an `else` branch that ends in `return`/`break`/`continue` placed after the code that follows the `if`, the `then` branch falling straight into that code | in an `if`/`else if` chain, a **last** `else` that ends in an unconditional transfer is deferred to the next unconditional jump after the `if` statement; only that last `else` moves (nested `else { if ... }` the same) | write the chain in source order; to defer a whole `else` that contains its own `if` chain, end it with a jump: `if (a) A; else { if (b) B; else if (c) C; else { D; return; } goto nx; } nx: tail;` or `if (a) { A; goto nx; } if (b) { B; goto nx; } ... nx:` (both measured) |
+| loop body at the top, then `inc; test`, then the exit code with `jmp epilogue`, then the rest of the body and an `else` block after the `return` | `for (;; g = 0) { if ((key = f()) != 0) { if (key < 0) break; ...; if (key == 13) { ...; continue; } rest } else { blink } }`: the `for` increment gives the `jmp test` entry, the first `continue` pulls increment, test and exit code up, the `else` goes last (`0x14C90`) | |
+| test sequence `or ax,ax; je X; or ax,ax; jge top` (two `or`s) | `if ((key = f()) == 0) ... else if (key < 0) break;`-style tests written in that order; a single `(key = f()) >= 0` condition gives `jl exit; je X` | |
+| `while (c)` laid out with `jmp test` at entry and the test at the bottom, or with the test at the top | both happen for `while`: bottom-tested by default, top-tested when the body has a deferred `else` (small tests). A `for` with an increment always enters with `jmp test` | |
+
+**Still open:** `0x1412D`. Its original order is `[x1>x break][x2<=x part][tail][p++][test][y-chain][found]`, so the deferred y-chain is flushed only after the loop test, past the tail's own `jmp`. The `goto nx` forms put the y-chain right after the tail's first `jmp` instead.
+
+## Divergence → fix
+
+| Ours vs original | Cause | Fix |
+|---|---|---|
+| ours repeats `mov ax,1; pop bp; ret` on each return path, original jumps to one shared epilogue | speed optimization (`/Ot` or `/Ox`) duplicates epilogues | size optimization: `/Oas /Gs` (project default) |
+| `push cs; call near X` in the original, `lcall X` in ours | `X` is in the same module | list `X` in the sidecar `F_xxxxx.STB` (`@X` for a far callee, a trivial `static ... near` definition for a near one); never in the `.C` (`0x119B8`, `0x29F0F`) |
+| ours `sub sp,N+2k`, otherwise identical | every `register` local gets a 2-byte home (even a lone one, at the top of the frame), under every flag set; `register` parameters don't | if the original has the home, declare the register variable in the innermost block that uses it; locals of sibling blocks share slots (`0x15236`). If it has no home, it wasn't `register`: write the expression at each use (CSE, the C shapes table), or see the `/Ol` row for a local loaded before a loop and stored after (`0x226F4`, `0x1264E`) |
+| original keeps a plain local in `si`/`di` around a loop (load before, store after), ours keeps it in memory or gives it a home | `/Ol` for this module | `/Oals`, no `register` (`0x14294`, `0x16532`). Get the loop shape right first: `sweep` can't find `/Ol` on loop-less source |
+| same instructions, only `[bp-N]` offsets differ | local names give a different stack order (names are load-bearing; rule in "Local layout" below) | `./sr layout NAMES` predicts the layout, `./sr layout -w WANTED...` proposes renames and a declaration order for the order you need |
+| an unreferenced hole right above a struct local (at its tail end), or a dummy local needed to fill one | the local is a bigger struct whose tail fields this function never touches (`struct Blt` is 20 bytes; F_10A00 reads only its first 12) | size the struct from the largest offset any user touches (callers of the hook, the hooks themselves); a hole that also appears where sibling functions with the same struct have none is a real unreferenced local instead (`0x12A17` vs `0x12B7C`) |
+| a stack-check call (`call __chkstk`) at entry in ours | missing `/Gs` | `/Gs` (part of the default) |
+| inline `repne scasb` in ours, `call strlen` in original (or the reverse) | `/Oi` differs for this module | flag, per module; record with `./sr flags` (`0x032F4` needed `/Oasi`). `/Oe` doesn't exist in 5.1 |
+| ours size +1, no other diff | MSC pads the segment to an even length after the last procedure | not a divergence; `./sr` measures to the last instruction |
+| original has `nop`s before backward-jump targets and after `jmp`s | the module was compiled without `/Os` | `/Oa`, `/Ot` or `/Ol` (no `s`); pick the one the neighbours use (`0x22F08`) |
+| `FP_SEG(bm->bits)` warns C4060 and compiles wrong on a struct reached through a far pointer | `FP_SEG`/`FP_OFF` take the address of their argument | a `union FarPtr { char far *p; struct { unsigned off, seg; } w; }` member (`STRUCTS.H`) |
+| `while (c) { }` shape differs, `for (;;)` / `do ... while` match | MSC lays out `while` either with `jmp test` at entry and the test at the bottom, or with the test at the top (see "Block placement"); it's not always top-tested | use the loop form whose test placement matches the original (`0x22F08`) |
+
+## MASM 5.1 (hand-written functions)
+
+| Original | Source |
+|---|---|
+| `a2 lo hi` (`mov [g],al`, short accumulator form) | `mov _g,al` with `EXTRN _g:BYTE` in `.DATA`; MASM picks the short form itself (`0x02B9A`) |
+| `retf` at the end of a far routine | `ret` inside `name PROC FAR` |
+| `jcc` to a nearby `jmp short` that jumps on | the original's own trampoline for an out-of-range short jump; write the same labels (`0x24AC7`) |
+| computed `jmp dx` into an unrolled block, `add dx,imm` | `imm` is the code offset of the first entry: `add dx,OFFSET label`; the width arithmetic is entry size × entries skipped (`0x24F4A`) |
+| an unrolled block of `[bx+k]` ops with descending displacements | `REPT n` with `k = k-2`; MASM picks disp8/disp16 and the bare `[bx]` for `k=0` itself (`0x24F4A`, `0x25954`) |
+| scratch words addressed `cs:[0x22..]` inside the routine | `ORG` to the routine's segment offset, then `DW` scratch words where they sit, addressed `cs:name` (`0x2634A`, `0x24F4A`) |
+| disassembly `xchg X,Y` | write `xchg Y,X`: MASM puts the second operand in the reg field (`0x23DBC`) |
+| 2-byte `eb` jump forward | `jmp SHORT label`; a plain forward `jmp` assembles to `eb` plus a `nop` or to `e9`. Use `jmp NEAR PTR label` when the original has `e9` in short range (`0x23DBC`, `0x1DFD2`) |
+
+`even` as a directive pads with `nop` before a loop target or `rep movsb` (`0x0E5D2`); as a label it is a reserved word (warning A4016). `xchg bx,[mem]` is the source of the disassembly's `xchg [mem],bx` (`0x0E835`). After `./sr name`, rename the `PROC` and `PUBLIC` too.
+
+## Local layout (solved 2026-11-03)
+
+Measured on about 2,200 generated functions and checked against every matched function (`./sr layout` implements it, `tools/sr/layout.py`):
+
+1. **Hash.** bucket = (sum of the name's bytes, first 31 chars) & 15. Upper and lower case share a bucket when the codes differ by 32 (`a`, `q`, `A`, `Q` are all bucket 1; `p` is 0).
+2. **Order inside one block.** Slots go out bucket 0 to 15, top of the frame first (`[bp-2]`). In one bucket the later-declared local sits higher (new symbols go to the head of the chain). Use order and parameters don't matter. `n p q` gives `p, q, n` because `p`=0, `q`=1, `n`=14. `kind answer page x y z` gives `answer`(0) `kind`(6) `x`(8) `y`(9) `z`(10) `page`(13).
+3. **Sizes.** Each slot is its size rounded up to even (`char` 2, `char[3]` 4, `long` and far pointers 4, `double` 8), no further alignment. Statics get no slot. An unreferenced local still gets one.
+4. **Register locals** have a home slot in the same walk even when they live in `si`/`di`. The first two `register` ints in declaration order get `si` then `di` and give them back when their block closes.
+5. **Nested blocks.** The function's own locals are placed first. A block's locals are placed when it opens; when it closes its slots are freed. A later block takes the **deepest** free slot big enough for each local, walking its own bucket order, and grows the frame only when none fits. Slots are never split or merged (an `int` can take a freed `long` slot).
+6. **`/Ol` changes rule 5** (`./sr layout --ol`): a block only reuses slots last held at its own nesting depth or deeper; and the first block of a statement list (or the first after a label: `if`, `else`, loops, `?:`, `&&`) keeps its slots until the next block at that level closes or a label comes, so the block right after it never reuses them. `/Ol` loops that strength-reduce `p + i * K` also take a 2-byte hidden temp at that point (`0x2398D`: `j` at -20, not -18); write `~` there for `./sr layout`. Every compiler loop temp takes such a slot, below the function's named locals, in creation order, even when it lives in a register and the slot is never touched: a down-counter replacing an index (`0x2B6DC`, `0x03614`), each induction pointer (`0x18ADB`: two untouched slots for the `si`/`di` pointers, then the counter), a trip count (`0x1D683`), a CSE (`0x1CF40`).
+
+Picking names: `./sr layout -w answer kind x y z page` keeps the longest run of names whose buckets already ascend, renames the rest with a small edit (a suffix digit, mostly), and prints the declaration order. Pass `--avoid` with parameter and global names.
+
+## Open questions
+
+- **`/Ol` with a `register` local in a nested block.** Its slot reuse and which locals get `si`/`di` aren't modelled (195/200 random cases still matched). Under `/Ol` only some `register` locals get a register, and a block holding one seems to keep its slots longer. Check such functions with `./sr check`.
+
+- **`/Ol` CSE next to a loop with no visible boundary** (`0x23C3B`). The original keeps `r->sx / 8` in `si` with no home. The plain-CSE source matches once a code-less `if (0) ;` sits anywhere after the CSE's last use and before the loop (before `f = r->h`, the `outp` pair or `j =`); between the two uses it kills the CSE. `do {} while (0)` around the `outp`s, `while`/`do` forms of the loop and an early `return` all fail. Source not found.
+
+## Maintaining this book
+
+Add a row when a divergence costs more than one iteration to understand. Write the row as "what you see → why → what to change", with an address where it happened. If a row turns out to be wrong, fix it and say so in the diary.

@@ -1,0 +1,1 @@
+static void near F_23F68(struct Rect *r, struct Bitmap far *dst, struct Bitmap far *src, int rows) { }

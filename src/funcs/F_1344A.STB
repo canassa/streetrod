@@ -1,0 +1,3 @@
+@F_12964
+static int near F_1287B(void) { return 0; }
+static void near F_133CB(struct Link *arr, struct Link *item, int n) { }

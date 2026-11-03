@@ -1,0 +1,3 @@
+#include "STRUCTS.H"
+static void near F_28781(struct Blt *b) { }
+static void near F_2874C(struct Blt *b) { }
