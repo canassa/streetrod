@@ -1,12 +1,9 @@
-"""Modules: one source file under src/mods/ holding a run of matched functions, compiled
-as one object and gated as a whole.
+"""Contiguous C or MASM compilation groups under src/mods/.
 
-A module is the reconstruction of (part of) one original source file. Its members are
-consecutive functions of the original image, all `matched` as singletons first. Built
-together, calls between members become real `push cs; call near` / near calls, so the
-module gate verifies every byte of the span: member bodies, the bytes between them,
-near-call displacements and the code-segment offsets in jump tables. Only fixups to other
-modules and to DGROUP stay masked; the per-function refs check resolves those.
+Members first match individually. The module gate verifies their positions, intervening
+bytes, internal near-call displacements and code-segment fixups. External relocations
+remain reference-checked; external near calls are counted as outstanding layout work.
+Groups may be parts of original files, whose historical boundaries are not established.
 """
 
 import re
@@ -15,7 +12,7 @@ from . import config, db
 from .disasm import branch_target, linear
 
 MODS = config.SRC / "mods"
-_NAME = re.compile(r"^[A-Z0-9_]{1,8}\.C$")
+_NAME = re.compile(r"^[A-Z0-9_]{1,8}\.(C|ASM)$")
 _HEAD = re.compile(r"^/\* (\w+) @ [0-9A-Fa-f]{4}:[0-9A-Fa-f]{4} \(linear 0x([0-9A-Fa-f]{5})", re.M)
 _HOIST = re.compile(r"^(#include .*|static [^;{]*\bnear\b[^;{]*\([^;{]*\);)\s*$")
 
@@ -36,9 +33,11 @@ def path(name):
 
 
 def same_module_edges(con, im):
-    """(caller, callee) pairs the original proves are in one source file: a near call to a
-    near function, or `push cs; call near` to a far one. MSC only emits either for a
-    function of the same compilation unit."""
+    """Near-call edges suggesting source groups within the same code segment.
+
+    These are candidate spans, not proof of one C translation unit: explicit near
+    interfaces can cross object files, and the first span includes MASM routines.
+    """
     rows = con.execute("SELECT * FROM functions WHERE kind = 'c'").fetchall()
     by_addr = {r["addr"]: r for r in con.execute("SELECT * FROM functions")}
     edges = set()
@@ -56,8 +55,10 @@ def same_module_edges(con, im):
 
 
 def units(con, im):
-    """Spans [lo, hi) that must each lie inside one source file: the hull of every
-    connected group of same-module edges (the linker keeps a module's code together)."""
+    """Candidate spans [lo, hi): hulls of connected near-call groups.
+
+    Split at language, alignment and compiler limits; verify each resulting module.
+    """
     spans = []
     for a, b in same_module_edges(con, im):
         lo, hi = min(a, b), max(a, b)
@@ -125,8 +126,9 @@ def validate(con, rows, name):
         raise SystemExit(f"{name!r}: a module is named by its DOS 8.3 file name, e.g. GARAGE.C")
     rows = sorted(rows, key=lambda r: r["addr"])
     for r in rows:
-        if r["kind"] != "c":
-            raise SystemExit(f"{fname(r)} is kind {r['kind']}; modules hold C functions")
+        kind = "asm" if name.endswith(".ASM") else "c"
+        if r["kind"] != kind:
+            raise SystemExit(f"{fname(r)} is kind {r['kind']}; {name} holds {kind} functions")
         if r["status"] != "matched" or r["mismatches"]:
             raise SystemExit(f"{fname(r)} is {r['status']}: only byte-matched functions join a module")
         if r["module"] and r["module"] != name:
@@ -134,6 +136,12 @@ def validate(con, rows, name):
     for a, b in zip(rows, rows[1:]):
         between = con.execute("SELECT * FROM functions WHERE addr > ? AND addr < ?",
                               (a["addr"], b["addr"])).fetchall()
+        # A retired scanner false positive wholly inside the previous member is
+        # not an intervening function. Keep its history in the DB, but require the
+        # real member to cover its complete extent before excluding it here.
+        between = [r for r in between if not (r["status"] == "skip"
+                   and a["addr"] <= r["addr"]
+                   and r["addr"] + r["size"] <= a["addr"] + a["size"])]
         if between:
             raise SystemExit(f"{', '.join(fname(x) for x in between)} sit between {fname(a)} and {fname(b)}: "
                              "a module is a contiguous run")
@@ -148,6 +156,11 @@ def unit_flags(rows):
     """One CL line for the whole file: the union of the members' /O letters. A member
     matched with fewer letters only had no code those letters change (no loop for l, no
     intrinsic call for i); the module build re-verifies that."""
+    if all(r["kind"] == "asm" for r in rows):
+        flags = {r["flags"] or config.DEFAULT_ASM_FLAGS for r in rows}
+        if len(flags) != 1:
+            raise SystemExit("assembly module members must use the same MASM flags")
+        return flags.pop()
     letters = set()
     for r in rows:
         m = re.search(r"/O(\w+)", r["flags"] or config.DEFAULT_FLAGS)
@@ -179,7 +192,7 @@ class Gate:
              f"size {self.size_obj} vs original {self.size_exe}, {self.masked} external fixup bytes masked, "
              f"{self.selfrefs} in-module references verified")
         if self.nearcalls:
-            s += f", {self.nearcalls} near call(s) to a placeholder outside the module"
+            s += f", {self.nearcalls} near call(s) outside the module"
         for p in self.problems:
             s += "\n    " + p
         if self.mismatches:
@@ -202,7 +215,7 @@ def gate(obj, procs, img, rows):
     for r in rows:
         p = find(procs, fname(r))
         if p is None or p.start + base != r["addr"]:
-            g.problems.append(f"{fname(r)} is at object offset {p and p.start:#x}, original needs "
+            g.problems.append(f"{fname(r)} is at object offset {hex(p.start) if p else 'missing'}, original needs "
                               f"{r['addr'] - base:#x} (order or size of an earlier member)")
     lo, hi = p0.start, pn.end if pn.end is not None else len(obj.code)
     end_exe = last["addr"] + last["size"]
@@ -223,7 +236,7 @@ def gate(obj, procs, img, rows):
         if f.seg != obj.code_seg or not lo <= f.pos < hi:
             continue
         own = obj.publics.get(obj.target_name(f)) if f.kind == "ext" else None
-        if own is not None and f.loc in (1, 5):
+        if own is not None and lo <= own < hi and f.loc in (1, 5):
             # A call or a near pointer to another member: MSC leaves it to the linker as an
             # EXTDEF, so the object holds 0000. Resolve it inside the module instead.
             word = own + f.disp + (obj.code[f.pos] | obj.code[f.pos + 1] << 8) - (f.pos + 2 if f.self_rel else 0) + (0 if f.self_rel else frame_off(f.pos))
@@ -242,10 +255,15 @@ def gate(obj, procs, img, rows):
                 g.problems.append(f"code-segment fixup at 0x{base + f.pos:05x}: ours {want:#06x}, original {have:#06x}")
         else:
             g.masked += f.size
+            # An EXTDEF may name a prepended placeholder. Its raw displacement
+            # is zero, which looks like an in-span call until the linker fills it.
+            if f.self_rel and f.pos > 0 and obj.code[f.pos - 1] == 0xE8:
+                g.nearcalls += 1
         skip.update(range(f.pos, f.pos + f.size))
     for ins in linear(obj.code, lo, hi, ip0=off0 + lo):
         t = branch_target(ins)
-        if ins.bytes[0] == 0xE8 and ins.size == 3 and t is not None and not off0 + lo <= t < off0 + hi:
+        if (ins.bytes[0] == 0xE8 and ins.size == 3 and ins.addr + 1 not in skip
+                and t is not None and not off0 + lo <= t < off0 + hi):
             g.nearcalls += 1                 # an .STB placeholder: the callee isn't in the module yet
             skip.update((ins.addr + 1, ins.addr + 2))
     for i in range(lo, min(hi, lo + g.size_exe)):
@@ -258,3 +276,50 @@ def set_members(con, name, rows):
     rel = str(path(name).relative_to(config.ROOT))
     for r in rows:
         db.update(con, r["addr"], module=name, src=rel)
+
+
+def merge_asm(texts, rows):
+    """Combine MASM sources; local label names are scoped by original function address.
+
+    Each member keeps its DATA/CODE directives. Calls to members use their real PUBLIC
+    definitions, not EXTRNs. No bytes, instruction encodings or alignment are inserted.
+    """
+    publics = set()
+    for text in texts:
+        publics.update(re.findall(r"^\s*PUBLIC\s+(\w+)", text, re.M | re.I))
+    chunks = []
+    for text, row in zip(texts, rows):
+        labels = set(re.findall(r"^\s*(\w+):", text, re.M)) - publics
+        for label in sorted(labels, key=len, reverse=True):
+            if label.startswith(f"L{row['addr']:05X}_"):
+                continue
+            text = re.sub(rf"\b{re.escape(label)}\b", f"L{row['addr']:05X}_{label}", text)
+        lines = []
+        for line in text.splitlines():
+            if re.match(r"^\s*(?:\.MODEL\b|END\s*(?:;.*)?$)", line, re.I):
+                continue
+            ext = re.match(r"^\s*EXTRN\s+(\w+):", line, re.I)
+            if ext and ext.group(1) in publics:
+                continue
+            lines.append(line)
+        chunks.append(f"; sr-member 0x{row['addr']:05X}\n" + "\n".join(lines).strip())
+    return "        .MODEL MEDIUM\n\n" + "\n\n".join(chunks) + "\n        END\n"
+
+
+def split_asm(text, rows):
+    parts = re.split(r"(?m)^; sr-member 0x([0-9A-Fa-f]+)\s*$", text)
+    chunks = {int(parts[i], 16): parts[i + 1] for i in range(1, len(parts), 2)}
+    out = {}
+    for row in rows:
+        body = re.sub(r"(?im)^\s*END\s*$", "", chunks[row["addr"]])
+        declarations = []
+        for other in rows:
+            if other["addr"] != row["addr"]:
+                # MASM members may export either spelling (or both aliases).
+                symbols = re.findall(r"^\s*PUBLIC\s+(\w+)", chunks[other["addr"]], re.M | re.I)
+                for sym in symbols:
+                    if re.search(rf"\b{re.escape(sym)}\b", body):
+                        declarations.append(f"        EXTRN {sym}:{'FAR' if other['far'] else 'NEAR'}")
+        out[row["addr"]] = ("        .MODEL MEDIUM\n        .CODE\n" +
+                            "\n".join(declarations) + "\n" + body.strip() + "\n        END\n")
+    return out

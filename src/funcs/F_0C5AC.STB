@@ -1,3 +1,0 @@
-#include "GLOBALS.H"
-#include "STRUCTS.H"
-static int near F_04386(struct Node *n, int keep) { return keep; }

@@ -9,8 +9,8 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 - **Default flags:** `/AM /Oas /Gs /FPi`, used by most matched functions. Some modules differ: `/Oasi` (`0x032F4`) and `/Oals` (`0x14294`, `0x16532`). Per-function flags are recorded with `./sr flags`. Modules may differ; some show `/Oi` intrinsics (inline `strlen`) and `/Ol` (`loop`), so expect per-module flags.
 - **Packing:** Microsoft EXEPACK. `orig/SR_unpacked.EXE` is the unpacked image and is what every tool reads.
 - **Addresses** are linear offsets into the load image (file offset minus the `0x22D0` header). `seg:off` is the segment value the callers use.
-- **Size:** about 709 functions. Roughly 480 are game C, 83 are game asm, and 145 are the MSC runtime (`kind = crt`, `status = skip`, never reconstructed).
-- **Hand-written asm:** line drawing, unrolled sprite blitters, video helpers, and small register-saving helpers. They are rebuilt with MASM 5.1 (`toolchain/masm51`, same 1988 release as the compiler) from `src/funcs/F_xxxxx.ASM`.
+- **Size:** 719 real functions: 506 game C, 66 game asm, and 147 MSC runtime entries (`kind = crt`, `status = skip`, never reconstructed).
+- **Hand-written asm:** line drawing, unrolled sprite blitters, video helpers, and small register-saving helpers. They are rebuilt with MASM 5.1 (`toolchain/masm51`, same 1988 release as the compiler) from `src/mods/M_xxxxx.ASM` (singletons use `src/funcs/` while being reconstructed).
 
 ## The `sr` CLI
 
@@ -49,10 +49,10 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 
 ### Modules: `src/mods/`
 
-A module is the reconstruction of (part of) one original source file: a contiguous run of matched functions in one `.C`, compiled as one object with one CL line.
+A module groups a contiguous run of matched functions in one `.C` or `.ASM`, compiled as one object. It may reconstruct part of an original source file; address-based grouping does not establish the original file boundaries.
 
 ```
-./sr module units [-v]           # address spans the original proves are one file (near / push-cs calls), flags per span
+./sr module units [-v]           # candidate spans from near / push-cs calls, flags per span
 ./sr module create NAME.C FN...  # merge matched singletons into src/mods/NAME.C, then verify; restores everything on failure
 ./sr module add NAME.C FN...     # extend a module (members stay contiguous)
 ./sr module list | show NAME.C   # show rebuilds and gates it
@@ -60,8 +60,11 @@ A module is the reconstruction of (part of) one original source file: a contiguo
 ```
 
 - **Only byte-matched functions join a module** (status `matched`, 0 mismatches), and only as a contiguous run: no other function and no unexplained bytes between members. Matching happens on singletons; grouping is a re-verification step.
-- **One flag set per file.** `create` uses the union of the members' `/O` letters (or `--flags`) for every member. So far every proven span verified under its union, which says the per-function flag variety is an artefact of matching singletons.
-- **The module gate is stricter than per-function `MATCH*`.** `./sr check` on any member also compares the whole span against the image: the bytes between functions, every near-call displacement, and calls and jump-table offsets into the module (resolved inside the object, not masked). Only references to other modules and to DGROUP stay masked; `refs:` checks those. A member that passes it has no unverifiable near calls left.
+- **One flag set per file.** C `create` uses the union of the members' `/O` letters (or `--flags`). Not every union preserves code generation; failed merges restore the sources. Large C groups can exceed MSC 5.1's heap. Use smaller verified contiguous groups. MASM groups require the same assembler flags and namespace local labels without changing instructions.
+- **Candidate spans are not file-boundary proof.** Near interfaces can cross objects; the first span includes both C and assembly. Keep languages separate and preserve observed alignment boundaries.
+- **Single-function modules are valid.** They record standalone compilation units where combining neighbours changes flags, alignment or code generation; their names do not imply recovered historical filenames.
+- **The module gate is stricter than per-function `MATCH*`.** `./sr check` on any member also compares the whole span against the image: bytes between functions, internal near-call displacements, and internal calls and jump-table offsets. References to other modules and DGROUP remain relocation-masked and checked by `refs:`. External near calls are counted explicitly, including EXTDEF calls to prepended placeholders; a module with such calls still has layout verification outstanding. Only a gate with zero external near calls clears `MATCH*`.
+- **Retired scanner rows:** a skipped false positive wholly covered by a real member does not block grouping. Its history remains in the DB. This does not permit gaps or missing routines.
 - Names are `M_<first addr>.C` until the real file name is known.
 
 ## Workflow
@@ -102,7 +105,7 @@ Every `.C` includes `GLOBALS.H` and `PROTOS.H` (in `src/include/`, generated fro
 
 ### 5. The DB comes from the EXE and the CLI
 
-The EXE is the ground truth. `db/sr.sqlite` is derived from it by `./sr scan`, plus what we record through `sr` commands. Never edit the DB or the generated headers by hand, and never edit `docs/PROGRESS.md` (`./sr status` regenerates it).
+The EXE is the ground truth. `db/sr.sqlite` is derived from it by `./sr scan`, plus what we record through `sr` commands. The scanner also checks complete gaps for prologue-free routines, rejecting gaps that do not partition into bounded reachable code and trailing alignment; review new discoveries before matching them. Never edit the DB or the generated headers by hand, and never edit `docs/PROGRESS.md` (`./sr status` regenerates it).
 
 ### 6. Keep the gate green
 

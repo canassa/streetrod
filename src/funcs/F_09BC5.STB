@@ -1,2 +1,0 @@
-#include "GLOBALS.H"
-static int near F_09524(int n) { return g_7f82 + n; }

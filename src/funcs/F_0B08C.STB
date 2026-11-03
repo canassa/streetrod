@@ -1,6 +1,0 @@
-#include "GLOBALS.H"
-static void near F_0B045(int id, char c) { }
-static int near F_095F1(void) { }
-static int near F_0984E(int chance, int arg) { }
-static void near F_09A27(int n, int a, int mode) { }
-static void near F_0A416(void) { }

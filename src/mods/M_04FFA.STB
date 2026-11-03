@@ -1,0 +1,21 @@
+@F_03A83
+#include "GLOBALS.H"
+static int near F_039C0(void) { return 0; }
+static int near F_0570C(void) { return 0; }
+static int near F_05B4A(void) { return 0; }
+static int near F_03B33(void) { return 0; }
+static void near F_0442B(int r) { }
+static int near F_06B06(int v) { return 0; }
+static int near F_03B0C(void) { return 0; }
+static void near F_0DCBE(struct Car *c, struct Eng *e) { }
+static int near F_0641E(void) { return 0; }
+static void near F_05EEA(void) { }
+static void near F_03C8D(void) { }
+static int near F_049ED(void) { return 0; }
+static void near F_06F6B(void) { }
+static void near F_07800(void) { }
+static void near F_07AA4(void) { }
+static void near F_081AB(struct Car *c) { }
+static void near F_0711A(unsigned mask) { }
+static void near F_07367(void) { }
+@F_03AB8

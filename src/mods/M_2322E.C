@@ -1,0 +1,20 @@
+#include <conio.h>
+#include "GLOBALS.H"
+#include "PROTOS.H"
+
+/* F_2322E @ 21A0:182E: set the CRTC start address and wait for a vertical retrace */
+
+
+#pragma intrinsic(inp, outp)
+
+void F_2322E(int n)
+{
+    outp(0x3d4, 0x0c);
+    outp(0x3d5, n << 5);
+    outp(0x3d4, 0x0d);
+    outp(0x3d5, 0);
+    while (inp(0x3da) & 8)
+        ;
+    while (!(inp(0x3da) & 8))
+        ;
+}

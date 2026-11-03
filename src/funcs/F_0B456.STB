@@ -1,2 +1,0 @@
-#include "GLOBALS.H"
-static int near F_0B3CA(int id) { return id; }

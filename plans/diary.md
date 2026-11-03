@@ -456,3 +456,18 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - msc51's equivalence run already covered all 725 streetrod sources: OBJ/COD/CC.LOG byte-identical under emu2 and DOSBox-X. bak-scratch-area's findings (DOSBox tuning doesn't help, qemu+FreeDOS slower) are in the msc51 diary.
+
+## 2026-11-03 18:18 CET: finish source grouping and repair scanner coverage
+
+### What I did
+- Assigned every real game function to `src/mods/`: 506 C + 66 assembly = 572 functions in 147 compilation groups (95 multi-function, 52 standalone). Existing work was preserved; no commit or reset.
+- Added bounded gap discovery to the scanner. Recovered and byte-matched nine game routines at 02DB0, 0FEAD, 0FEBF, 1636C, 16ADA, 16B0A, 1D080, 1D0A4, 23F4D. Two new runtime entries stay skipped; all 147 MSC runtime entries remain unreconstructed. Corrected eleven stale C/ASM classifications through the CLI.
+- Added homogeneous MASM module support, local-label namespacing, multiline STB handling, covered-retired-row validation, and correct handling/counting of external placeholder publics in the module gate.
+- Final full regression: **572/572**, all 147 whole-span gates pass. Eight scanner/module regression tests pass. A subsequent scan finds no new routines. Refreshed docs/PROGRESS.md and added docs/MODULES.md with complete inventory and verification limits.
+- The skipped 0F8C2 false-positive row remains as history, wholly covered by F_0F7A5. It is not reconstructed or counted among the 572 game functions.
+
+### What I learned
+- Earlier “all functions matched” meant all recorded functions; the gap audit exposed missing scanner coverage. Prologue-free, unreferenced routines need bounded control-flow discovery, with data and malformed gaps rejected.
+- A near-call hull is not proof of a single original C file: the first candidate includes MASM and also exceeds the MSC compiler heap. Flag effects and alignment can require smaller contiguous groups. Grouping is complete, but original filenames/file boundaries are not claimed.
+- **198 external near calls still require linked placement verification.** Source grouping and passing module gates do not yet establish a fully linked byte-identical executable. See docs/MODULES.md; the gate now reports external EXTDEF placeholder calls honestly.
+- Lessons recorded in .claude/skills/sr-cli/SKILL.md and CLAUDE.md. Scratch baselines, proposals, final regression and tests: work/group_modules/.

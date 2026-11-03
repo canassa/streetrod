@@ -1,2 +1,0 @@
-static struct Car * near F_04036(int idx, int weight, struct Car *old) { }
-static void near F_081AB(struct Car *c) { }

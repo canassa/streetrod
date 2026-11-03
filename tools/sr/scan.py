@@ -13,7 +13,7 @@ from .disasm import branch_target, decode
 from .exe import image
 
 _HARD = {"iret", "pushf", "popf", "xlatb", "jcxz", "lodsb", "lodsw", "lahf",
-         "clc", "stc", "cmc", "rcl", "rcr", "daa", "das"}
+         "clc", "stc", "cmc", "rcl", "rcr", "daa", "das", "cli", "sti", "hlt"}
 _INT_PROLOGUE = bytes.fromhex("50515253545556571e06")
 
 
@@ -127,6 +127,15 @@ def scan():
             break
         descend(new)
 
+    # Inspect complete gaps between discovered extents. Optimized leaf routines may
+    # have no BP prologue and no surviving callers. Accept a gap only if bounded
+    # control-flow walks partition it into complete routines plus alignment bytes.
+    extents = sorted((a, max(ins.addr + ins.size for ins in f[2].values()), f[0])
+                     for a, f in funcs.items())
+    for (_, lo, seg), (hi, _, _) in zip(extents, extents[1:]):
+        if lo < hi:
+            descend([(seg, a - seg * 16) for a in gap_entries(img, lo, hi, seg)])
+
     rows = []
     for start in sorted(funcs):
         seg, off, insns, callees = funcs[start]
@@ -139,6 +148,56 @@ def scan():
             "callees": sorted(callees),
         })
     return rows
+
+
+def gap_entries(img, lo, hi, seg):
+    """Conservative discovery of unreferenced, prologue-free routines in a code gap.
+
+    Every byte must be reachable instruction text, apart from trailing alignment;
+    jumps must stay inside the candidate gap and terminate at an ordinary return.
+    Reject the entire gap on undecodable bytes, overlapping instructions, fallthrough
+    into its neighbour, indirect jumps or data-looking zero instructions. This is
+    evidence for review, not a general code-versus-data oracle.
+    """
+    starts = []
+    while lo < hi:
+        if hi - lo <= 15 and all(b in (0, 0x90) for b in img[lo:hi]):
+            return starts
+        todo, insns, occupied, returns = [lo], {}, set(), 0
+        while todo:
+            a = todo.pop()
+            while a not in insns:
+                if not lo <= a < hi or a in occupied:
+                    return []
+                ins = decode(img, a, a - seg * 16)
+                if (ins is None or ins.mnemonic == "db" or a + ins.size > hi
+                        or img[a] == 0 or ins.mnemonic in ("int3", "hlt", "ljmp")):
+                    return []
+                span = set(range(a, a + ins.size))
+                if occupied & span:
+                    return []
+                occupied.update(span)
+                insns[a] = ins
+                if ins.mnemonic in ("ret", "retf", "iret"):
+                    returns += 1
+                    break
+                target = branch_target(ins)
+                if ins.mnemonic.startswith("j") or ins.mnemonic.startswith("loop"):
+                    if target is None:
+                        return []
+                    target = seg * 16 + (target & 0xFFFF)
+                    if not lo <= target < hi:
+                        return []
+                    todo.append(target)
+                    if ins.mnemonic == "jmp":
+                        break
+                a += ins.size
+        end = max(occupied) + 1
+        if not returns or occupied != set(range(lo, end)):
+            return []
+        starts.append(lo)
+        lo = end
+    return starts
 
 
 def classify(start, insns):

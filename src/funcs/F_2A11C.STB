@@ -1,3 +1,0 @@
-static void near F_287D1(int color, int x, int y1, int y2) { }
-static void near F_29FC9(int x, int y, int n, int align, int clip, int mode) { }
-static void near F_29F3B(int x, int y, int n, int f, int idx) { }

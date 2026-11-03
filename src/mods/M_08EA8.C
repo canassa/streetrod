@@ -1,0 +1,107 @@
+#include "GLOBALS.H"
+#include "PROTOS.H"
+
+/* F_08EA8 @ 0000:8EA8 (linear 0x08EA8, 675 bytes) */
+
+
+int F_08EA8(void)
+{
+    char key;
+
+    if (g_8aca) {
+        switch (g_79a6) {
+        case 0:
+            g_5d6 = 0;
+            if (g_51ec == 0)
+                F_16381(1);
+            F_01AAD();
+            F_00E24();
+            g_79a6 = 1;
+            F_11421(-1, "Get ready !", 0);
+            g_05cc = g_tick + random_int(103) + 110;
+            return g_78e0.fbc | g_79e2.fbc;
+        case 1:
+            if (g_78e0.f0 > 0) {
+                F_01B27();
+                g_78e0.fbc |= 0x81;
+                return 1;
+            }
+            if (g_05cc <= g_tick) {
+                g_79a6 = 2;
+                F_11421(-1, "Go !", 0);
+                g_7d66 = 1;
+            }
+            return g_78e0.fbc | g_79e2.fbc;
+        case 2:
+            F_0DA25();
+            if (g_78e0.fbc || g_79e2.fbc)
+                return 1;
+            if (g_78e0.f0 > 0) {
+                F_11421(-1, "    ", 0);
+                g_79a6 = 3;
+            }
+            return 0;
+        case 3:
+            if (g_78e0.fbc || g_79e2.fbc)
+                return 1;
+            F_0DA25();
+            return 0;
+        }
+    } else {
+        switch (g_79a6) {
+        case 0:
+            g_5d6 = 0;
+            if (g_51ec == 0)
+                F_16381(1);
+            F_01AAD();
+            F_00E24();
+            g_79a6 = 1;
+            F_11421(-1, "Cruising in town...", 0);
+            g_78e0.f1a = 1;
+            g_78e0.f18 = 1;
+            if (g_78e0.f24 == 1)
+                g_78e0.f24 = 2;
+            g_6c82 = g_51d8[0];
+            return 0;
+        case 1:
+            if (g_0610 == 0) {
+                key = F_02DB6();
+                if (key == 0x1b || key == 0x1f)
+                    g_47ee = 1;
+                if (g_05f2) {
+                    F_16D57();
+                    g_47ee |= g_5ee;
+                }
+                if (g_471d) {
+                    F_02DF4();
+                    g_47ee |= g_471c;
+                }
+            }
+            if (g_0610 == 99) {
+                g_0610--;
+                F_00FEA();
+            }
+            if ((g_ter33f0[g_7d30 + 1] & 1) || (g_ter3cb0[g_7d30 + 1] & 1) || g_47ee) {
+                g_4736 = 0;
+                g_4732 = 0;
+                F_01B27();
+                return 1;
+            }
+            g_78e0.fe += g_6c82;
+            if (g_78e0.fe > 4700)
+                g_78e0.fe = 4700;
+            if (g_78e0.f18)
+                g_78e0.f0 = g_78e0.fe / g_51e2[g_78e0.f18];
+            if (g_78e0.fe > 4500) {
+                if (g_78e0.f18 < g_78e0.f1c) {
+                    g_78e0.f1a = 1;
+                    g_78e0.f18++;
+                    g_6c82 = g_51d8[g_78e0.f18];
+                    g_78e0.fe = g_51e2[g_78e0.f18] * g_78e0.f0;
+                } else
+                    g_6c82 = 0;
+            }
+            return 0;
+        }
+    }
+}

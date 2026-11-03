@@ -1,8 +1,0 @@
-#include "GLOBALS.H"
-static void near F_068E8(int n, int x, int y) { }
-static void near F_068B3(void) { }
-static void near F_06882(void) { }
-static int near F_06AD8(void) { return 0; }
-@F_06529
-@F_06AA6
-@F_067CF

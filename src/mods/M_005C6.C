@@ -1,0 +1,22 @@
+#include "GLOBALS.H"
+#include "PROTOS.H"
+
+/* F_005C6 @ 0000:05C6 (linear 0x005C6, 147 bytes) */
+
+
+static int near F_005C6(void)
+{
+    unsigned long count;
+    long prev;
+
+    count = 0;
+    prev = *(long far *)0x0000046cL;
+    while (prev == *(long far *)0x0000046cL)
+        ;
+    prev = *(long far *)0x0000046cL;
+    while (prev == *(long far *)0x0000046cL)
+        count++;
+    count %= 95;
+    count %= 10;
+    return (long)count > 1 ? (int)count : 1;
+}

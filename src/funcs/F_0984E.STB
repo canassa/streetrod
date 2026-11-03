@@ -1,2 +1,0 @@
-#include "GLOBALS.H"
-static void near F_09646(int a) { g_51f8 = a; }

@@ -1,3 +1,0 @@
-#include "GLOBALS.H"
-static struct Node * near F_03C1B(void) { return 0; }
-static struct Node2 * near F_03FB1(void) { return 0; }

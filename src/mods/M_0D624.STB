@@ -1,0 +1,6 @@
+@F_0D544
+#include "GLOBALS.H"
+#include "STRUCTS.H"
+static void near F_0D1DE(int rpm, struct Eng *p) { }
+static void near F_0E0E2(int n, struct Eng *p) { }
+static int near F_0E218(int n) { return n; }

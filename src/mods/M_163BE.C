@@ -8,6 +8,13 @@ static void near F_16612(int a, int *p, int count, int reps);
 static void near F_16686(int a, int *p, int count, int reps);
 static int near F_166FA(int *buf, int start, int end, int step);
 static void near F_167E4(int range, int bits, int count);
+static void near F_1676D(long freq, int period, int hi, int step, int cycles, int reps);
+static void near F_16564(int a, int b, int c, int d, int e);
+static void near F_167E4(int a, int b, int c);
+static void near F_164E9(int a, int b, int c, int d);
+static void near F_16830(int a, int b, int c, int d, int e);
+static void near F_1687C(int a, int b, int c, int d, int e);
+static void near F_16532(int start, int end, int step, int delay);
 
 /* F_163BE: calibrate the speed of the machine: counts how often F_21962(n) can be called within
    one BIOS timer tick (the long at 0040:006C). Counts above 848 are scaled by 3/4. Also sets
@@ -370,4 +377,126 @@ void F_16AC1(int on)
         g_58da = 1;
     else
         g_58da = 0;
+}
+
+void F_16ADA(void)
+{
+    if (g_47ce) {
+        F_164A2();
+        F_1676D(30000L, 300, 100, 6, 1, 2);
+        F_164BD();
+    }
+}
+
+void F_16B0A(void)
+{
+    if (g_47ce) {
+        F_164A2();
+        F_1676D(30000L, 200, 70, 5, 1, 3);
+        F_164BD();
+    }
+}
+
+/* F_16B3A: sound effect, only when sound is on */
+
+
+
+void F_16B3A(void)
+{
+    if (g_47ce) {
+        F_164A2();
+        F_16564(3000, 10, 10, 60, 9);
+        F_164BD();
+    }
+}
+
+/* F_16B61: sound effect with a random start pitch */
+
+
+
+void F_16B61(void)
+{
+    if (g_47ce) {
+        F_164A2();
+        F_16564(random_int(100) + 6200, 40, 10, 1, 10);
+        F_164BD();
+    }
+}
+
+/* F_16B97: sound effect */
+
+
+
+void F_16B97(void)
+{
+    if (g_47ce) {
+        F_164A2();
+        F_16564(5200, 40, 10, 1, 10);
+        F_164BD();
+    }
+}
+
+/* F_16BC1: sound effect */
+
+
+
+void F_16BC1(void)
+{
+    if (g_47ce) {
+        F_164A2();
+        F_167E4(200, 10, 60);
+        F_164BD();
+    }
+}
+
+/* F_16BE3: sound effect, three repeats of a noise burst, a click and a blip */
+
+
+
+void F_16BE3(void)
+{
+    register int i;
+    int count;
+
+    if (g_47ce) {
+        count = 3;
+        for (i = count; i; i--) {
+            F_164A2();
+            F_164E9(3000, 8000, 60, 10);
+            F_16830(200, random_int(30) + 18, 15, 5, 2);
+            F_167E4(random_int(300) + 40, 2, 30);
+            F_1687C(16, random_int(100) + 50, 15, 5, 4);
+        }
+        F_164BD();
+    }
+}
+
+/* F_16C8F: sound effect, two noise bursts each followed by a click run */
+
+
+
+void F_16C8F(void)
+{
+    if (g_47ce) {
+        F_164A2();
+        F_164E9(2000, 8000, 100, 10);
+        F_167E4(120, 2, 30);
+        F_164A2();
+        F_164E9(4000, 9000, 100, 10);
+        F_167E4(220, 2, 20);
+        F_164BD();
+    }
+}
+
+/* F_16CF3: sound effect, a falling sweep */
+
+
+
+void F_16CF3(void)
+{
+    if (g_47ce) {
+        F_164A2();
+        F_16532(130, 90, 4, 1000);
+        F_164BD();
+    }
 }

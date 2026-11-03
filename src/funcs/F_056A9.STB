@@ -1,3 +1,0 @@
-#include "GLOBALS.H"
-static void near F_03614(int reset) { }
-static void near F_05584(void) { }

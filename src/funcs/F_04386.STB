@@ -1,2 +1,0 @@
-#include "GLOBALS.H"
-static void near F_03C3E(struct Node *p) { }

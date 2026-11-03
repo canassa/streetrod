@@ -1,2 +1,0 @@
-#include "GLOBALS.H"
-static void near F_056A9(void) { }

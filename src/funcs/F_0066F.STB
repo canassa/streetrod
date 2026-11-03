@@ -1,7 +1,0 @@
-static int near F_005C6(void) { return 0; }
-static int near F_00226(int mode) { return 0; }
-static void near F_036BE(void) { }
-static void near F_00316(int mode) { }
-static void near F_004F4(int mode) { }
-static void near F_00659(void) { }
-static void near F_0503F(void) { }

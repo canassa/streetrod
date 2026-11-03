@@ -1,6 +1,0 @@
-#include "GLOBALS.H"
-static void near F_03614(int reset) { }
-static void near F_056A9(void) { }
-static int near F_057DC(int handle, struct Node **head) { return 0; }
-static int near F_0590F(int handle, struct Car **head, int flag) { return 0; }
-static void near F_059F6(int create) { }

@@ -681,9 +681,12 @@ def _module_gates(con, im, jobs, rows, results, flags_override=None):
         if not name or name in gates:
             continue
         job = jobs.get(_job_key(r, flags_override))
-        if job is None or job.obj is None or job.cod is None:
+        if job is None or job.obj is None or (job.cod is None and not job.asm):
             continue
-        g = mod.gate(Obj(job.obj), cod.parse(job.cod), im.img, mod.members(con, name))
+        obj = Obj(job.obj)
+        ms = mod.members(con, name)
+        procs = ([cod.from_publics(obj, fn_name(m)) for m in ms] if job.asm else cod.parse(job.cod))
+        g = mod.gate(obj, [p for p in procs if p is not None], im.img, ms)
         gates[name] = g
         print(g.line(name))
         for m in mod.members(con, name):
@@ -696,7 +699,12 @@ def _module_gates(con, im, jobs, rows, results, flags_override=None):
 
 
 def _stb_lines(p):
-    return [ln for ln in p.read_text(errors="replace").splitlines() if ln.strip()] if p.exists() else []
+    if not p.exists():
+        return []
+    # Keep a multiline placeholder definition together when removing member stubs.
+    text = p.read_text(errors="replace")
+    return [m.group(0).strip() for m in re.finditer(
+        r"static\b[^{}]*\{[^{}]*\}|[^\n]+", text) if m.group(0).strip()]
 
 
 def _placeholder_for(text, row):
@@ -717,7 +725,7 @@ def _module_write(con, name, rows, texts, stubs):
             continue
         stub.append(ln)
     mod.MODS.mkdir(exist_ok=True)
-    mod.path(name).write_text(mod.merge(texts))
+    mod.path(name).write_text(mod.merge_asm(texts, rows) if name.endswith(".ASM") else mod.merge(texts))
     st = mod.path(name).with_suffix(".STB")
     if stub:
         st.write_text("\n".join(stub) + "\n")
@@ -786,7 +794,7 @@ def cmd_module(args):
             raise SystemExit(f"no module {name}; use `module create`")
         new = [db.resolve(con, f) for f in args.fns]
         rows = mod.validate(con, list(old) + new, name)
-        texts = mod.split(mod.path(name).read_text(), old) if old else {}
+        texts = ((mod.split_asm if name.endswith(".ASM") else mod.split)(mod.path(name).read_text(), old) if old else {})
         stubs = _stb_lines(mod.path(name).with_suffix(".STB"))
         singles = []
         for r in new:
@@ -817,15 +825,15 @@ def cmd_module(args):
         if not rows:
             raise SystemExit(f"no module {name}")
         text = mod.path(name).read_text()
-        parts = mod.split(text, rows)
+        parts = (mod.split_asm if name.endswith(".ASM") else mod.split)(text, rows)
         stubs = _stb_lines(mod.path(name).with_suffix(".STB"))
         for r in rows:
             body = parts[r["addr"]]
             st = list(stubs)
-            for o in rows:
+            for o in ([] if name.endswith(".ASM") else rows):
                 if o["addr"] != r["addr"] and re.search(rf"\b{fn_name(o)}\s*\(", body):
                     st.append(f"@{fn_name(o)}" if o["far"] else _placeholder_for(text, o))
-            p = config.FUNCS / f"F_{r['addr']:05X}.C"
+            p = config.FUNCS / f"F_{r['addr']:05X}{mod.path(name).suffix}"
             p.write_text(body)
             if any(st):
                 p.with_suffix(".STB").write_text("\n".join(s for s in st if s) + "\n")

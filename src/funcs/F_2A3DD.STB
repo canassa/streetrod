@@ -1,5 +1,0 @@
-#include "STRUCTS.H"
-@F_28860
-static void near F_28847(void) { }
-static void near F_28781(struct Blt *b) { }
-static void near F_2874C(struct Blt *b) { }

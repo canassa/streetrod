@@ -45,3 +45,11 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 - `sr check` compares a procedure by name against the extent recorded by the scanner. A function with a jump table after its code may have its extent end early.
 - Single-function compiles can't verify near calls to other functions (`MATCH*`). Module files (several functions in one `.C`, via `./sr src`) will verify them once the module's layout matches.
 - An assembled function's extent runs to the next `PUBLIC` in the OBJ, so put one function per `.ASM` until modules are formed, or make every procedure in a module `PUBLIC`.
+
+## Module and scanner lessons (2026-11-03)
+
+- `module create/add/show/dissolve` supports homogeneous `.C` and `.ASM` groups. MASM merging namespaces local labels and removes only EXTRNs supplied by actual members; no padding or instruction bytes are manufactured. Whole-span gates apply to both languages.
+- STB entries are definitions, not lines: keep multiline placeholders together when removing a member's stub. A public symbol before the first member belongs to a placeholder, not the module span. External near EXTDEF fixups must be counted even when their raw displacement is zero.
+- Near-call hulls are candidate grouping spans, not proof of an original C file. Language boundaries, linker alignment, flag-sensitive source and MSC heap limits can require smaller groups. All 572 game functions are now assigned to modules; some units contain one function.
+- The scanner now discovers complete prologue-free routines in bounded gaps. It requires reachable instruction coverage, in-gap branches, returns, and only trailing alignment; it rejects the entire gap on ambiguous bytes. The shipped-image regression covers nine recovered game routines and the retired 0x0F8C2 false positive. Existing human metadata is preserved by `scan`.
+- Run `nix-shell shell.nix --run 'python3 -m unittest discover -s tests -v'` for scanner/module regressions, then the full `./sr check --all` gate.

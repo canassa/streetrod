@@ -43,6 +43,7 @@ extern struct Style g_03f0;                             /* DS:03F0 */
 extern unsigned char g_palette[];                       /* DS:0440 */
 extern char g_0443;                                     /* DS:0443 */
 extern char g_044c;                                     /* DS:044C */
+extern char g_0452[16];                                 /* DS:0452 */
 extern char *g_msgs[];                                  /* DS:0482 */
 extern char g_04ac[];                                   /* DS:04AC */
 extern int g_04be;                                      /* DS:04BE */
