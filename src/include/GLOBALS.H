@@ -239,6 +239,11 @@ extern int g_4970;                                      /* DS:4970 */
 extern int g_4972;                                      /* DS:4972 */
 extern int g_4974;                                      /* DS:4974 */
 extern int g_4976;                                      /* DS:4976 */
+extern char g_4978[][5];                                /* DS:4978 */
+extern char g_4988[][3];                                /* DS:4988 */
+extern int g_4998[][5];                                 /* DS:4998 */
+extern int g_49a2;                                      /* DS:49A2 */
+extern int g_49ca[];                                    /* DS:49CA */
 extern int g_49d2[];                                    /* DS:49D2 */
 extern char *g_49dc;                                    /* DS:49DC */
 extern char *g_49de;                                    /* DS:49DE */
@@ -293,6 +298,12 @@ extern int g_50ce[];                                    /* DS:50CE */
 extern char *g_511e[];                                  /* DS:511E */
 extern int g_5126[];                                    /* DS:5126 */
 extern int g_5130[];                                    /* DS:5130 */
+extern int g_513c[];                                    /* DS:513C */
+extern int g_5148[][6];                                 /* DS:5148 */
+extern int g_5184[];                                    /* DS:5184 */
+extern int g_5186[];                                    /* DS:5186 */
+extern int g_5198[];                                    /* DS:5198 */
+extern int g_519a[];                                    /* DS:519A */
 extern char g_51ac;                                     /* DS:51AC */
 extern char g_51ad;                                     /* DS:51AD */
 extern int g_51d8[];                                    /* DS:51D8 */

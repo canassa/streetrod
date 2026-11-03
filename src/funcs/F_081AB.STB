@@ -1,0 +1,8 @@
+#include "GLOBALS.H"
+#include "STRUCTS.H"
+static void near F_076A7(int t, struct Node **list, char *buf, int start) { }
+static void near F_07741(struct Node *n, struct Node **slot) { }
+static void near F_07789(struct Node **slot) { }
+static struct Node * near F_077B7(struct Node *n) { return n; }
+static void near F_07FB1(struct Car *car) { }
+@F_07EE6

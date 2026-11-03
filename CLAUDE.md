@@ -126,4 +126,4 @@ Never redirect a DOS program's output to a file without a timeout and a size bou
 | `db/sr.sqlite` | Functions, callees, named globals |
 | `docs/PROGRESS.md` | Generated progress report |
 | `plans/diary.md` | Captain's log |
-| `work/` | Scratch output (ignored) |
+| `work/` | Scratch output (ignored). `work/op/tryv.sh ADDR V.C...` checks variants and restores the source, `work/op/diffv.sh ADDR V.C [--full]` diffs one, `work/op/regions.py` prints a diff as address ranges; `work/bp/x2.py DIR FLAGS` lists small test functions (`T*.C`, 8.3 names) |

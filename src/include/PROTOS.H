@@ -150,7 +150,7 @@ void F_12964(int *px, int *py);                         /* 0x12964 */
 void F_12A17(int n);                                    /* 0x12A17 */
 void F_12B7C(void);                                     /* 0x12B7C */
 void F_12DD8(int n, int flag);                          /* 0x12DD8 */
-void F_12F99(int n);                                    /* 0x12F99 */
+void F_12F99(int n, int flag);                          /* 0x12F99 */
 void F_1309C(void);                                     /* 0x1309C */
 void F_131B5(struct Car *car);                          /* 0x131B5 */
 void F_132AD(int *a, int *b, int flag);                 /* 0x132AD */

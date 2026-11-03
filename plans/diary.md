@@ -293,3 +293,15 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - A code-less `if` before a loop stops `/Ol` from giving a CSE a slot; between two uses it kills the CSE. The same construct therefore cuts both ways (`0x23C3B`, `0x04036`).
 - The slot a block-scoped local leaves behind is reused by `/Ol` loop temps only after another *declared* block at the same level has closed; plain braces and labels do nothing (`0x04036`, still one slot off).
 - Under `/FPi` MSC evaluates the product of a float relational first and uses `ficom` for a plain int operand on either side; nothing but `/FPc` gives the original's left-to-right order in `0x049ED`.
+
+## 2026-11-03 13:54 CET: 0x081AB reconstructed to a partial, block-placement rules
+
+### What I did
+- Reconstructed `0x081AB` (the garage parts screen, 2938 bytes, the last todo) from scratch: 2951 bytes with the body matching except two block-layout points (notes in the DB). Declared `g_49a2`, `g_49ca`, `g_4998[][5]`, `g_4978[][5]`, `g_4988[][3]`, `g_513c`, `g_5148[][6]`, `g_5184`, `g_5186`, `g_5198`, `g_519a`; fixed `F_12F99`'s prototype to two arguments.
+- Measured on small functions how MSC places the code after a `switch` (pulled up behind the first `break`, split at its first unconditional jump), when a `goto` label disables `/Ol` on a following loop (only a backward goto), and how a `switch` with `default:` first is dispatched. Rows in the recipe book.
+- dagon's VPN name resolution dropped mid-session; its LAN address 192.168.1.70 (same host key) works.
+
+### What I learned
+- The install sequence of `0x081AB` is case 0's fall-through: the after-switch code is pulled up behind the first `break` up to its first real `jmp` (a `?:` arm's), the rest sits after the jump table, and the two stub jumps around the table are real code that `./sr show` decodes as garbage.
+- A label before a loop stops `/Ol` from optimizing it only when the `goto` is backward in source order. The original of `0x081AB` has a rotated loop and a backward jump into the block before it, which this rule cannot produce: open question, same family as the cross-jump survivor in `0x0C613`.
+- A duplicated block that contains a loop is cross-jumped only up to the loop's back edge.
