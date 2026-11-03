@@ -1,0 +1,600 @@
+#include <dos.h>
+#include "GLOBALS.H"
+#include "PROTOS.H"
+#include <conio.h>
+#include <memory.h>
+#include <bios.h>
+#include <string.h>
+#include <io.h>
+
+static int near F_153D7(int n);
+static void near F_15409(int n);
+static int near F_1563A(int n, int load, char far *dst);
+static int near F_1563A(int n, int load, long dst);
+static void near F_1606C(void);
+static void near F_1604F(void);
+
+/* F_15396: seek the DOS file handle to the absolute position pos (INT 21h function 42h, method 0).
+   Returns 0 on success, else the error in g_6318, also copied to g_630d */
+
+
+int F_15396(int handle, long pos)
+{
+    union REGS in, out;
+
+    in.x.ax = 0x4200;
+    in.x.bx = handle;
+    in.x.cx = (int)(pos >> 16);
+    in.x.dx = (int)pos;
+    intdos(&in, &out);
+    if (out.x.cflag == 0)
+        return 0;
+    return g_630d = g_6318;
+}
+
+/* F_153D7: map a picture number to its table index: numbers from 1000 on are shifted down, the rest
+   are 1 based. In the video modes -2 and -6 that is the result, else g_07c6 translates it */
+
+
+static int near F_153D7(int n)
+{
+    if (n >= 1000)
+        n -= 0x3df;
+    else
+        n--;
+    if (g_vid.mode != -2 && g_vid.mode != -6)
+        return g_07c6[n];
+    else
+        return n;
+}
+
+/* F_15409: make sure the picture file holding picture number n is open (the pictures come in two
+   files, split at g_8bc8). Closes the other one, asks for the right disk until the open works
+   and checks the file header word */
+
+
+
+static void near F_15409(int n)
+{
+    int kind;
+    int tries;
+    unsigned got;
+
+    if (F_153D7(n) >= g_8bc8) {
+        kind = 2;
+        g_6c6e = g_8dd6;
+        g_6c6c = &g_4eda;
+        g_6c70 = &g_4ed8;
+        g_6c6a = &g_8dd2;
+    } else {
+        kind = 1;
+        g_6c6e = g_8dd4;
+        g_6c6c = &g_4ed8;
+        g_6c70 = &g_4eda;
+        g_6c6a = &g_8bc8;
+    }
+    if (*g_6c6c == 0) {
+        _dos_close(*g_6c70);
+        *g_6c70 = 0;
+        g_4ee4[12] = kind == 1 ? '1' : (g_vid.mode != -2 && g_vid.mode != -6) ? '3' : '2';
+        g_4ee4[25] = *g_6c6e;
+        tries = 0;
+        while (_dos_open(g_6c6e, 0, g_6c6c)) {
+            if (tries++ == 3)
+                F_00FEA();
+            F_1174E(g_4ee4);
+        }
+        if (_dos_read(*g_6c6c, (void far *)g_6c6a, 2, &got) || got != 2 || g_8bc8 + g_8dd2 != 0x115) {
+            F_1174E(g_4ee8);
+            F_00FEA();
+        }
+    }
+}
+
+/* F_1552B: read the picture headers of one picture file into g_slots: which 1 is the first file,
+   anything else the second (its entries follow the first file's, g_8bc8 of them). Clears the
+   run time fields of each entry. Returns the largest data size found */
+
+
+
+int F_1552B(int which)
+{
+    int num;
+    unsigned height;
+    int i;
+    int count;
+    int got;
+    int base;
+    struct Slot far *sl;
+
+    base = which == 1 ? 0 : g_8bc8;
+    num = which == 1 ? 1 : 1000;
+    height = 0;
+    F_15409(num);
+    count = which == 1 ? g_8bc8 : g_8dd2;
+    for (i = 0; i < count; i++) {
+        sl = &g_slots[base + i];
+        if (F_15396(*g_6c6c, (long)(i * 0x1e + 2)) ||
+            _dos_read(*g_6c6c, (void far *)sl, 0x1e, &got) || got != 0x1e) {
+            F_1174E(g_4ee8);
+            F_00FEA();
+        }
+        sl->f1e = 0xff;
+        sl->ptr.p = 0;
+        sl->f24 = 0;
+        sl->f28 = 0;
+        sl->f2c = -1;
+        sl->f2e = 1;
+        if (sl->f1c > height)
+            height = sl->f1c;
+    }
+    return height;
+}
+
+/* F_1563A: bring picture number n into memory. With load set the picture goes through a work
+   area in the fast pool (F_03967) and is copied there after it has been read; otherwise it is read
+   into dst, or into a new block when dst is 0. The file position and the disk are looked after by
+   F_15409 and the read is repeated after asking for the disk again when the data does not start
+   and end with 0xbc. Returns 0 when there was no memory, 1 when the picture was loaded already,
+   2 and 3 when it has just been read (3: copied to the fast pool) */
+
+
+#pragma intrinsic(outp)
+
+
+static int near F_1563A(int n, int load, char far *dst)
+{
+    int num;
+    int total;
+    char far *fp;
+    long offset;
+    struct Slot far *ent;
+    int got;
+    char pool;
+    int retries;
+    struct Slot far *sl;
+
+    n = F_153D7(num = n);
+    ent = sl = &g_slots[n];
+    if (sl->ptr.p == 0) {
+        if (load) {
+            fp = F_03967(ent->f1c, &pool);
+            sl->ptr.p = fp == 0 ? (char far *)0 : F_192AC(ent->f1c + 1, 2);
+            sl->f1e = pool;
+        } else {
+            sl->ptr.p = dst ? dst : F_03709(ent->f1c + 1, 0);
+            sl->f1e = 0xff;
+        }
+        if (sl->ptr.p == 0)
+            return 0;
+        F_15409(num);
+        offset = (long)(*g_6c6a * 0x1e + 2) + ent->f18;
+        if (F_15396(*g_6c6c, offset))
+            goto bad;
+        if (sl->f1e != 0xff) {
+            outp(0x3c4, 2);
+            outp(0x3c5, 1 << sl->f1e);
+        }
+        retries = 0;
+        total = ent->f1c + 1;
+        for (;;) {
+            if (_dos_read(*g_6c6c, sl->ptr.p, total, &got) || got != total)
+                goto bad;
+            if (*sl->ptr.p == (char)0xbc && sl->ptr.p[total - 1] == (char)0xbc) {
+                if (sl->f1e == 0xff)
+                    goto done;
+                movedata(sl->ptr.w.seg, sl->ptr.w.off, FP_SEG(fp), FP_OFF(fp), ent->f1c);
+                sl->ptr.p = fp;
+                F_19438(1);
+                outp(0x3c4, 2);
+                outp(0x3c5, 0xf);
+                return 3;
+            }
+            if (g_6c68 > 2)
+                goto bad;
+            do {
+                if (++retries > 3)
+                    F_00FEA();
+                g_4ee4[12] = *g_6c6c == g_4ed8 ? 1 : (g_vid.mode != -2 && g_vid.mode != -6) ? '3' : '2';
+                g_4ee4[25] = *g_6c6e;
+                F_1174E(g_4ee4);
+                _dos_close(*g_6c6c);
+            } while (_dos_open(g_6c6e, 0, g_6c6c));
+            if (!F_15396(*g_6c6c, offset))
+                continue;
+            goto bad;
+        }
+    done:
+        return 2;
+    } else
+        return 1;
+bad:
+    F_1174E(g_4ee8);
+    F_00FEA();
+}
+
+/* F_158DE @ 0F38:65DE (linear 0x158DE, 80 bytes)
+
+   Frees and clears the far pointer in slot n of the far table g_slots. */
+
+
+
+void F_158DE(int n)
+{
+    char far * far *pp;
+
+    n = F_153D7(n);
+    if (*(pp = &g_slots[n].ptr.p)) {
+        F_036D6(*pp);
+        *pp = 0;
+    }
+}
+
+/* F_1592E: unpack picture number id into the bitmap bm (a new one when bm is 0). The picture is
+   loaded to the work area g_7564 first; its data is RLE coded (F_0E926) and expanded for the video
+   mode in use into the planes bits and alt of the bitmap. Returns the bitmap */
+
+
+#pragma intrinsic(outp)
+
+
+struct Bitmap far *F_1592E(int id, struct Bitmap far *bm)
+{
+    int num;
+    char far *src;
+    unsigned char colors16[16];
+    struct Slot far *cur;
+    int j;
+    int res;
+    struct Bitmap far *pic;
+    struct Slot far *sl;
+
+    F_120FE(-4);
+    res = F_1563A(id, 0, g_7564);
+    cur = sl = &g_slots[F_153D7(id)];
+    if (g_4f0e)
+        pic = F_0376B(cur->f0, cur->f2, cur->f6, 1, bm);
+    else
+        pic = bm;
+    for (j = 0; j < 16; j++)
+        colors16[j] = cur->pal[j];
+    if (sl->f1e != 0xff) {
+        outp(0x3ce, 4);
+        outp(0x3cf, sl->f1e);
+    }
+    src = sl->ptr.p + 1;
+    num = cur->f1c - 1;
+    if (g_vid.mode == -2) {
+        if (pic->bits.p == 0) {
+            F_0E926(src, pic->alt.p, num, colors16, 16);
+        } else {
+            F_0E926(src, pic->bits.p, num, colors16, 16);
+            if (pic->alt.p)
+                F_26401(pic->bits.p, pic->alt.p, pic->planesize);
+        }
+    } else if (g_vid.mode == -6) {
+        if (pic->bits.p == 0) {
+            F_24740(src, pic->alt.p, pic->planesize, colors16);
+        } else {
+            F_2467A(src, pic->bits.p, pic->planesize, colors16);
+            if (pic->alt.p)
+                F_24849(pic->bits.p, pic->alt.p, pic->planesize);
+        }
+    } else {
+        F_0E926(src, pic->bits.p == 0 ? pic->alt.p : pic->bits.p, num, colors16, 16);
+    }
+    if (sl->f1e != 0xff) {
+        outp(0x3c4, 2);
+        outp(0x3c5, 0xf);
+    }
+    if (res == 2)
+        sl->ptr.p = 0;
+    F_120FE(-2);
+    return pic;
+}
+
+/* F_15B7F: fields of slot picture number n: *w, *h and the byte *x */
+
+
+
+void F_15B7F(int n, int *w, int *h, int *x)
+{
+    n = F_153D7(n);
+    *w = g_slots[n].f0;
+    *h = g_slots[n].f2;
+    *x = g_slots[n].f6;
+}
+
+/* F_15BBE: allocate a bitmap of the given mode for slot picture id, draw the picture into it
+   (F_1592E) and return it */
+
+
+struct Bitmap far *F_15BBE(int id, int mode)
+{
+    int h;
+    int w1;
+    int x;
+    struct Bitmap far *bm;
+
+    F_15B7F(id, &w1, &h, &x);
+    bm = F_1934E(w1, h, x, mode);
+    F_1592E(id, bm);
+    return bm;
+}
+
+/* F_15C07: load every picture of the zero terminated list of picture numbers (see F_1563A). Does
+   nothing when g_0280 is set. Returns 1 */
+
+
+
+int F_15C07(int *list)
+{
+    int n;
+
+    if (g_0280)
+        return 1;
+    while (n = *list++)
+        F_1563A(n, 1, 0L);
+    return 1;
+}
+
+/* F_15C4A: try the pictures of the zero terminated list in turn with F_1563A (load flag 0) and
+   count the ones that succeed. A failure ends the walk unless all is set. Returns the count */
+
+
+
+int F_15C4A(int *list, int all)
+{
+    int n;
+    int count;
+
+    count = 0;
+    while (n = *list++) {
+        if (!F_1563A(n, 0, 0L)) {
+            if (!all)
+                return count;
+        } else
+            count++;
+    }
+    return count;
+}
+
+/* F_15C95: free the pictures listed in the zero terminated array of picture numbers */
+
+
+void F_15C95(int *list)
+{
+    int n;
+
+    while (n = *list++)
+        F_158DE(n);
+}
+
+/* F_15CC3: open the two picture files (names g_8dd4 and g_8dd6, drive letter patched into their
+   first character) and read the entry counts g_8bc8 and g_8dd2 from their headers. disks is the
+   number of disk drives wanted: 2 only when the equipment word says there are two floppies. mode 2
+   and 5 pick the other file names. Any failure shows an error text */
+
+
+void F_15CC3(int disks, int mode)
+{
+    int equip;
+    int tries;
+    int err;
+
+    _dos_getdrive((unsigned *)&g_6c68);
+    if (g_6c68 < 3 && disks > 1 && (equip = _bios_equiplist(), equip & 1) && (equip & 0xc0))
+        disks = 2;
+    else
+        disks = 1;
+    g_8dd4 = (mode == 2 || mode == 5) ? g_4edc : g_4ede;
+    *g_8dd4 = g_6c68 + 0x40;
+    err = _dos_open(g_8dd4, 0, &g_4ed8);
+    if (err || g_4ed8 == 0) {
+        if (g_6c68 > 2) {
+            F_1174E(g_4ee6);
+        } else {
+            strcpy(g_4eec + 0x10, g_8dd4 + 2);
+            F_1174E(g_4eec);
+        }
+        F_00FEA();
+    }
+    if (_dos_read(g_4ed8, (void far *)&g_8bc8, 2, &err) || err != 2) {
+        F_1174E(g_4ee8);
+        F_00FEA();
+    }
+    g_8dd6 = (mode == 2 || mode == 5) ? g_4ee0 : g_4ee2;
+    *g_8dd6 = *g_8dd4;
+    if (_dos_open(g_8dd6, 0, &g_4eda) || g_4eda == 0) {
+        if (g_6c68 > 2) {
+            F_1174E(g_4ee6);
+            F_00FEA();
+        } else if (disks == 1) {
+            g_4eda = 0;
+        } else {
+            *g_8dd6 = g_6c68 == 1 ? 'B' : 'A';
+            err = _dos_open(g_8dd6, 0, &g_4eda);
+            for (tries = 0; err || g_4eda == 0; tries++) {
+                if (tries == 3)
+                    F_00FEA();
+                g_4ee4[12] = (mode != 2 && mode != 5) ? '3' : '2';
+                g_4ee4[0x19] = *g_8dd6;
+                F_1174E(g_4ee4);
+                err = _dos_open(g_8dd6, 0, &g_4eda);
+            }
+        }
+    }
+    if (g_4eda) {
+        if (_dos_read(g_4eda, (void far *)&g_8dd2, 2, &err) || err != 2 || g_8bc8 + g_8dd2 != 0x115) {
+            F_1174E(g_4ee8);
+            F_00FEA();
+        }
+    }
+}
+
+/* F_15EF9: load the game data. Builds the file name g_6c72 from the first two characters of
+   g_8dd6 and the text g_4ea2 points to (g_4ea2 ends up behind its terminator), opens it and
+   reads the 13 blocks of the data table (buffer g_4ea4[i], size g_4ebe[i]); any failure shows an
+   error text. Ends by loading the hall of fame (F_16089) */
+
+
+void F_15EF9(void)
+{
+    int i;
+    int got;
+    int fd;
+    char *drive;
+    int j;
+
+    drive = g_6c72;
+    *drive++ = g_8dd6[0];
+    *drive++ = g_8dd6[1];
+    while (*drive++ = *g_4ea2++)
+        ;
+    if (_dos_open(g_6c72, 0, &fd)) {
+        F_1174E("Can't open data file");
+        F_00FEA();
+    }
+    for (i = j = 0; i < 13; i++) {
+        if (!_dos_read(fd, (void far *)g_4ea4[i], g_4ebe[i], &got) && got == g_4ebe[i])
+            continue;
+        F_1174E("Data disc read fail");
+        F_00FEA();
+    }
+    _dos_close(fd);
+    F_16089();
+}
+
+/* F_15FBD: make sure the game disk is in the drive: tries to open the file g_6c72 (asking for
+   disk 2 again and again) and closes it. From the third drive on (g_6c68 > 2, a hard disk) it
+   returns the drive letter code g_6c68 + 0x40 at once. Otherwise returns the first character of
+   g_6c72 */
+
+
+
+int F_15FBD(void)
+{
+    int file;
+    int tries;
+
+    tries = 0;
+    if (g_6c68 > 2)
+        return (char)(g_6c68 + 0x40);
+    for (;;) {
+        if (_dos_open(g_6c72, 0, &file)) {
+            if (++tries > 3)
+                F_00FEA();
+            g_4ee4[12] = (g_vid.mode != -2 && g_vid.mode != -6) ? '3' : '2';
+            g_4ee4[25] = *g_8dd6;
+            F_1174E(g_4ee4);
+        } else {
+            _dos_close(file);
+            F_15409(1000);
+            return g_6c72[0];
+        }
+    }
+}
+
+/* F_1604F: set the high bit of all 230 bytes of g_table (10 hall of fame entries of 23 bytes) to scramble
+   it before it is written to the file (see F_16152) */
+
+
+static void near F_1604F(void)
+{
+    int i;
+
+    for (i = 0; i < 230; i++)
+        ((char *)g_table)[i] |= 0x80;
+}
+
+/* F_1606C: clear the high bit of all 230 bytes of g_table again, unscrambling the hall of fame */
+
+
+static void near F_1606C(void)
+{
+    int i;
+
+    for (i = 0; i < 230; i++)
+        ((char *)g_table)[i] &= 0x7f;
+}
+
+/* F_16089: read the hall of fame file (name g_4f3a, first character the drive of the game disk):
+   a count word, then g_count entries. Any read failure shows the error text. A missing file
+   leaves the table empty */
+
+
+
+void F_16089(void)
+{
+    struct Entry *p;
+    int i;
+    int got;
+    int fd;
+
+    g_4f3a[0] = *g_8dd6;
+    F_15FBD();
+    if (_dos_open(g_4f3a, 0, &fd) || fd == 0)
+        g_count = 0;
+    else {
+        if (_dos_read(fd, (void far *)&g_count, 2, &got) || got != 2) {
+            F_1174E(g_4ee8);
+            F_00FEA();
+        }
+        for (i = 0, p = g_table; i < g_count; p++, i++) {
+            if (_dos_read(fd, (void far *)p, sizeof *p, &got) || got != sizeof *p) {
+                F_1174E(g_4ee8);
+                F_00FEA();
+            }
+        }
+        _dos_close(fd);
+        F_1606C();
+    }
+}
+
+/* F_16152: write the hall of fame file (g_4f3a): the table is scrambled (F_1604F), the file made
+   (asking for the disk until it works on a floppy), the count word and the g_count entries
+   written. Any failure shows the error text and deletes the file. The table is unscrambled at
+   the end (F_1606C) */
+
+
+
+void F_16152(void)
+{
+    struct Entry *p;
+    int tries;
+    int i;
+    unsigned got;
+    int fd;
+
+    F_1604F();
+    F_15FBD();
+    got = _dos_creat(g_4f3a, 0, &fd);
+    if (g_6c68 > 2) {
+        if (fd == 0 || got) {
+            F_1174E(g_4eea);
+            F_00FEA();
+        }
+    } else {
+        g_4ee4[12] = '1';
+        g_4ee4[25] = g_4f3a[0];
+        for (tries = 0; fd == 0 || got; tries++) {
+            if (tries == 3)
+                F_00FEA();
+            F_1174E(g_4ee8);
+            got = _dos_creat(g_4f3a, 0, &fd);
+        }
+    }
+    if (_dos_write(fd, (void far *)&g_count, 2, &got) || got != 2) {
+bad:
+        F_1174E(g_4eea);
+        unlink(g_4f3a);
+        F_1174E(g_4eea);
+    } else {
+        for (i = 0, p = g_table; i < g_count; p++, i++)
+            if (_dos_write(fd, (void far *)p, sizeof *p, &got) || got != sizeof *p)
+                goto bad;
+        if (_dos_close(fd))
+            goto bad;
+    }
+    F_1606C();
+}

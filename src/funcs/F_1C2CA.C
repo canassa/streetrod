@@ -25,9 +25,9 @@ void F_1C2CA(struct Bitmap far *bm, int x, int y, char *s)
     unsigned fg7;
     int t;
     unsigned buf7[8][40];
-    unsigned char *qd;
+    unsigned char *from;
     unsigned char far *s1;
-    unsigned char *qs;
+    unsigned char *fill;
     unsigned dseg4;
     int shl;
     unsigned far *gp;
@@ -58,14 +58,12 @@ void F_1C2CA(struct Bitmap far *bm, int x, int y, char *s)
     t = g_colors.c[1];
     bgn = (t << 2) | (t << 4) | (t << 6) | t;
     bgn |= bgn << 8;
-    bitoff1 = col4 = shl;
+    col4 = bitoff1 = shl;
     pp2 = &buf7[0][0];
     while (*s) {
-        c4 = *s++ - 0x20;
-        if (c4 < 0 || c4 > 0x5a)
+        if ((c4 = *s++ - 0x20) < 0 || c4 > 0x5a)
             c4 = 0;
-        gp = &g_cgafont.g[c4].w;
-        col4 += (wid4 = *gp * 2);
+        col4 += (wid4 = *(gp = &g_cgafont.g[c4].w) * 2);
         if (col4 >= 0x280) {
             col4 -= wid4;
             break;
@@ -87,8 +85,7 @@ void F_1C2CA(struct Bitmap far *bm, int x, int y, char *s)
             p3 = pp2;
             i = 8;
             while (i--) {
-                ++gp;
-                *p3 |= *gp >> bitoff1;
+                *p3 |= *++gp >> bitoff1;
                 p3[1] |= *gp << (16 - bitoff1);
                 p3 += 40;
             }
@@ -124,14 +121,14 @@ void F_1C2CA(struct Bitmap far *bm, int x, int y, char *s)
         h = bm->height - y;
     r6 = 0;
     pp2 = &buf7[0][0];
-    for (r6 = 0; r6 < h; r6++) {
+    for (; r6 < h; r6++) {
         for (i = 0, p3 = pp2; i < w169; i++) {
             *p3 = (~(*p3 = _rotl(*p3, 8)) & bgn) | (*p3 & fg7);
             p3++;
         }
         pp2 += 40;
     }
-    b1 = b0 = bm->bits.p;
+    b0 = b1 = bm->bits.p;
     cga5 = (g_vid.mode == -4 ? 0xb000 : 0xb800) == FP_SEG(b0);
     b1 += bm->planesize >> 1;
     b0 += bm->pitch * (y >> 1);
@@ -140,20 +137,21 @@ void F_1C2CA(struct Bitmap far *bm, int x, int y, char *s)
     b1 += x >> 2;
     rp = (unsigned char *)buf7;
     if (shl) {
+        r6 = 0;
         s1 = b1;
         s0 = b0;
-        qs = rp;
-        for (r6 = 0; r6 < h; r6++, qs += 80) {
+        fill = rp;
+        for (; r6 < h; r6++, fill += 80) {
             if ((r6 + y) & 1) {
                 *s1 &= lmask;
-                *s1 |= *qs & lm28;
+                *s1 |= *fill & lm28;
                 if (cga5 && g_vid.mode == -4)
                     s1[0x2000] = *s1;
                 s1 += bm->pitch;
                 s0 += bm->pitch;
             } else {
                 *s0 &= lmask;
-                *s0 |= *qs & lm28;
+                *s0 |= *fill & lm28;
             }
         }
         b0++;
@@ -166,36 +164,37 @@ void F_1C2CA(struct Bitmap far *bm, int x, int y, char *s)
         seg1 = FP_SEG(b1);
         off0 = FP_OFF(b0);
         off1 = FP_OFF(b1);
-        qd = rp;
-        for (r6 = 0; r6 < h; r6++, qd += 80) {
-            if ((r6 + y) & 1) {
-                movedata(dseg4, (unsigned)qd, seg1, off1, nb2);
+        from = rp;
+        for (i = 0; i < h; i++, from += 80) {
+            if ((y + i) & 1) {
+                movedata(dseg4, (unsigned)from, seg1, off1, nb2);
                 if (cga5 && g_vid.mode == -4)
-                    movedata(dseg4, (unsigned)qd, seg1, off1 + 0x2000, nb2);
+                    movedata(dseg4, (unsigned)from, seg1, off1 + 0x2000, nb2);
                 off0 += 80;
                 off1 += 80;
             } else
-                movedata(dseg4, (unsigned)qd, seg0, off0, nb2);
+                movedata(dseg4, (unsigned)from, seg0, off0, nb2);
         }
         b0 += nb2;
         b1 += nb2;
         rp += nb2;
     }
     if (rb8) {
+        r6 = 0;
         s1 = b1;
         s0 = b0;
-        qs = rp;
-        for (r6 = 0; r6 < h; r6++, qs += 80) {
+        fill = rp;
+        for (; r6 < h; r6++, fill += 80) {
             if ((r6 + y) & 1) {
                 *s1 &= rmask;
-                *s1 |= *qs;
+                *s1 |= *fill;
                 if (cga5 && g_vid.mode == -4)
                     s1[0x2000] = *s1;
                 s1 += bm->pitch;
                 s0 += bm->pitch;
             } else {
                 *s0 &= rmask;
-                *s0 |= *qs;
+                *s0 |= *fill;
             }
         }
     }

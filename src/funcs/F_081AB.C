@@ -33,10 +33,10 @@ static void near F_081AB(struct Car *car)
     for (key = 1; key <= 9; key++) {
         if (k = car->b16[key - 1]) {
             havek[key] = k == 1 ? 1 : 2;
-            g_829a[key] = g_49ca[k];
+            g_829a[key - 1] = g_49ca[k];
         } else {
             havek[key] = 0;
-            g_829a[key] = 0;
+            g_829a[key - 1] = 0;
         }
     }
     g_82ac = car->f1f != 0 ? (car->f1f > 0 ? 0x447 : 0x446) : 0;
@@ -85,36 +85,7 @@ static void near F_081AB(struct Car *car)
             g_05fc += 0x6d;
             g_82ae = 0;
             F_1344A(g_5186, g_519a);
-        remove:
-            sel2 = -1;
-            ok = 0;
-            if (cnt1 == 1 && car->f1f == -1) {
-                for (key = 1; key < 2 && havek[key] == 0; key++)
-                    ;
-                if (key == 2) {
-                    sel2 = 0;
-                    car->f1f = 0;
-                    g_82ac = 0;
-                    g_05fc += 0x666;
-                }
-            }
-        strip:
-            if (sel2 >= 0) {
-                cnt1--;
-                F_07789(&car->rack.s[sel2]);
-                F_120FE(-4);
-                g_8290[sel2] = 0;
-                if (ok)
-                    g_82ae = ok - 1;
-                F_131B5(car);
-                F_132AD(g_5186, g_519a, 1);
-                F_1344A(g_5186, g_519a);
-                car->f20 = random_int(13) - 8;
-                F_120FE(-2);
-            }
-            if (ok == 0)
-                continue;
-            goto done;
+            break;
         case -3:
             if (F_07EE6(car, 0)) {
                 F_07FB1(car);
@@ -274,6 +245,34 @@ static void near F_081AB(struct Car *car)
                     F_12A17(g_829a[key - 1] = g_49ca[car->b16[key - 1]]);
                     F_16CF3();
                 }
+            done:
+                sel2 = -1;
+                ok = 0;
+                switch (g_82ae) {
+                default:
+                    if (g_5198[k = key] == 1)
+                        k--;
+                    if (havek[k] != 0 || havek[k + 1] != 0)
+                        goto strip;
+                    sel2 = (k - 4) / 2 + 2;
+                    if (cnt1 == 3)
+                        ok = 2;
+                    g_05fc += 0x199;
+                    goto strip;
+                case 0:
+                    break;
+                case 1:
+                    if (cnt1 != 2)
+                        goto strip;
+                    for (key = 2; key < 4 && havek[key] == 0; key++)
+                        ;
+                    if (key != 4)
+                        goto strip;
+                    sel2 = 1;
+                    ok = 1;
+                    g_05fc += 0x333;
+                    goto strip;
+                }
             } else {
                 if (havek[key] == 1) {
                     if (car->b16[key - 1] == 3) {
@@ -295,34 +294,35 @@ static void near F_081AB(struct Car *car)
                 car->b16[key - 1] = 1;
                 continue;
             }
-        done:
-            sel2 = -1;
-            ok = 0;
-            switch (g_82ae) {
-            default:
-                if (g_5198[k = key] == 1)
-                    k--;
-                if (havek[k] != 0 || havek[k + 1] != 0)
-                    goto strip;
-                sel2 = (k - 4) / 2 + 2;
-                if (cnt1 == 3)
-                    ok = 2;
-                g_05fc += 0x199;
-                goto strip;
-            case 0:
-                goto remove;
-            case 1:
-                if (cnt1 != 2)
-                    goto strip;
-                for (key = 2; key < 4 && havek[key] == 0; key++)
-                    ;
-                if (key != 4)
-                    goto strip;
-                sel2 = 1;
-                ok = 1;
-                g_05fc += 0x333;
-                goto strip;
+        }
+        sel2 = -1;
+        ok = 0;
+        if (cnt1 == 1 && car->f1f == -1) {
+            for (key = 1; key < 2 && !havek[key]; key++)
+                continue;
+            if (key == 2) {
+                sel2 = 0;
+                car->f1f = 0;
+                g_82ac = 0;
+                g_05fc += 0x666;
             }
         }
+    strip:
+        if (sel2 >= 0) {
+            cnt1--;
+            F_07789(&car->rack.s[sel2]);
+            F_120FE(-4);
+            g_8290[sel2] = 0;
+            if (ok)
+                g_82ae = ok - 1;
+            F_131B5(car);
+            F_132AD(g_5186, g_519a, 1);
+            F_1344A(g_5186, g_519a);
+            car->f20 = random_int(13) - 8;
+            F_120FE(-2);
+        }
+        if (ok == 0)
+            continue;
+        goto done;
     }
 }

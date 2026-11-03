@@ -1,2 +1,0 @@
-#include "STRUCTS.H"
-static int near F_2B6DC(unsigned char b) { return 0; }

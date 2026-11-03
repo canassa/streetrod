@@ -11,7 +11,6 @@ static struct Car * near F_04036(int idx, int weight, struct Car *old)
     struct Node *node;
     struct Car *car;
     int kind, w, i, j;
-    unsigned wd2;
 
     car = (old == 0) ? (struct Car *)F_03FB1() : old;
     car->f2 = idx;
@@ -24,61 +23,34 @@ static struct Car * near F_04036(int idx, int weight, struct Car *old)
     car->f4 = i;
     car->f1f = 1;
     car->f20 = random_int(13) - 8;
-    if (old == 0)
-        node = F_03C1B();
-    else
-        node = car->slot6;
-    car->slot6 = node;
-    {
-    unsigned *q;
-
-    q = &g_7d88[idx].f2;
-    {
-    unsigned wd;
-
-    wd = *q;
-    w = (wd >> 6) & 3;
-    w = (kind = (wd & 0xf) >> 1) + (w == 3) + 3 * w + 9;
-    }
+    car->slot6 = node = (old == 0) ? F_03C1B() : car->slot6;
+    w = (g_7d88[idx].f2 >> 6) & 3;
+    w = (kind = (g_7d88[idx].f2 & 0xf) >> 1) + (w == 3) + 3 * w + 9;
     node->idx = w;
     node->a = g_4806[w].f0;
     node->b = g_4966[1];
     node->next = 0;
-    if (old == 0)
-        node = F_03C1B();
-    else
-        node = car->rack.s[0];
-    car->rack.s[0] = node;
-    w = (*q >> 8 & 7) * 3 + kind;
+    car->rack.s[0] = node = (old == 0) ? F_03C1B() : car->rack.s[0];
+    w = (g_7d88[idx].f2 >> 8 & 7) * 3 + kind;
     node->idx = w;
     node->a = g_4806[w].f0;
     node->b = g_4966[0];
     node->next = 0;
-    if (old == 0)
-        node = F_03C1B();
-    else
-        node = car->slot12;
-    car->slot12 = node;
-    w = (*q >> 4 & 3) + 0x28;
+    car->slot12 = node = (old == 0) ? F_03C1B() : car->slot12;
+    w = (g_7d88[idx].f2 >> 4 & 3) + 0x28;
     node->idx = w;
     node->a = g_4806[w].f0;
     node->b = g_4966[4];
     node->next = 0;
-    }
-    if (old == 0)
-        node = F_03C1B();
-    else
-        node = car->rack.s[1];
-    car->rack.s[1] = node;
+    car->rack.s[1] = node = (old == 0) ? F_03C1B() : car->rack.s[1];
     for (i = 3; i < 9; i++)
         car->b16[i] = 0;
-    wd2 = g_7d88[idx].f2;
-    w = (i = wd2 >> 11 & 7) * 3 + kind + 0x19;
+    w = (i = g_7d88[idx].f2 >> 11 & 7) * 3 + kind + 0x19;
     node->idx = w;
     node->a = g_4806[w].f0;
     node->b = g_4966[3];
     node->next = 0;
-    w = (wd2 >> 14 & 3) + 0x16;
+    w = (g_7d88[idx].f2 >> 14 & 3) + 0x16;
     i = g_5126[i] - 1;
     for (j = 2; j > i; j--)
         car->rack.s[j + 2] = 0;

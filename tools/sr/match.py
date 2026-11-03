@@ -15,12 +15,15 @@ class Result:
         self.masked = masked
         self.refs = None
         self.lint = []
+        self.module = None      # the module gate, when the function is built as part of one
 
     @property
     def verdict(self):
         if self.size_exe != self.size_obj or self.mismatches:
             return "DIFF"
         if self.refs is not None and self.refs.problems or self.lint:
+            return "DIFF"
+        if self.module is not None and not self.module.ok:
             return "DIFF"
         return "MATCH*" if self.nearcalls else "MATCH"
 
@@ -46,6 +49,10 @@ class Result:
 def compare(obj, proc, img, addr, size):
     o0 = proc.start
     olen = (proc.end if proc.end is not None else len(obj.code)) - o0
+    # Without /Os MSC ends the procedure with an alignment nop to an even length; the
+    # scanner leaves that byte (also 0x90 in the original) out of the function size.
+    if olen == size + 1 and obj.code[o0 + size] == 0x90 and img[addr + size] == 0x90:
+        olen = size
     exe = linear(img, addr, addr + size)
     near_ok = set()
     nearcalls = 0

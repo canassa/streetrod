@@ -94,9 +94,11 @@ static int near F_0C613(void)
                         g_7d84->f10 = 1;
                     } else
                         g_7d84->fb = 0xff;
+                    goto done;
                 }
             }
         }
+done:
         F_13F21(1);
         if (g_799c & 8)
             if ((i = F_0BED4()) != 0)
@@ -155,10 +157,15 @@ ret2:
             return 2;
         } else if (stop) {
             F_120FE(-2);
-            if (engine)
+            if (engine) {
                 F_0C52C(kind == 5 ? 0x16bd : 0x1634);
-            else if (opt)
+                goto finishstop;
+            } else if (opt) {
                 F_0C5AC(kind == 5 ? 0x1678 : 0x1608);
+                goto finishstop;
+            }
+finishstop:
+            goto fin;
         } else {
             F_0C1D8();
             if (kind == 5) {

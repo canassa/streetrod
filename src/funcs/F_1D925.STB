@@ -1,1 +1,0 @@
-static void near F_1D8C4(struct Rect *rect, struct Bitmap far *bm2, struct Bitmap far *bm1, int flag) { }

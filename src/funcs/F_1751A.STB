@@ -1,1 +1,0 @@
-static void near F_174A6(char far *src, char far *dst, char far *mask, int w, int h, int n, int step) { }

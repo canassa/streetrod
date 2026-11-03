@@ -20,11 +20,9 @@ void F_008B4(int *list, int base)
     base = num - base;
     g_pages.cur = 1;
     while (num--) {
-        pos += 9 * g_2c01[*ptr] + 3;
-        while (pos > 0xbd) {
+        while ((pos += 9 * g_2c01[*ptr] + 3) > 0xbd) {
             g_pages.start[g_pages.n++] = first - num;
             pos = 0;
-            pos += 9 * g_2c01[*ptr] + 3;
         }
         if (num == base)
             g_pages.cur = g_pages.n - 1;

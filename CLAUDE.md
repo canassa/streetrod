@@ -45,6 +45,25 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 
 `./sr check` is the gate. `MATCH` means every byte matches except fixups (relocated addresses), the sizes are equal, every fixup refers to the same thing as in the original (`refs:` globals by DGROUP offset, calls by function address, string literals by content), and the source passes the lint (rule 4). `MATCH*` means the same, but some near calls to other functions can't be verified because their displacements depend on the original module layout. A one-function compile can't reproduce those.
 
+**Compile backend: `SR_EMU`.** `emu2` (default) runs `CL`/`MASM` under [emu2](https://github.com/dmsc/emu2), a user-space 8086 + DOS-call emulator with no boot: one process per job, run in parallel (`SR_JOBS`, default 16), ~25 ms per small compile. `SR_EMU=dosbox` is the original one-DOSBox-X-boot-per-batch backend. Both give byte-identical OBJ, COD and CC.LOG (proved on every source here and in ../msc51 with `tools/scripts/emucmp.py`; rerun it after touching either backend or `tools/nix/emu2.nix`). The `./sr` wrapper caches the nix-shell PATH in `work/.nix-path-<hash>` (refreshed when `shell.nix` changes), so a command no longer pays ~2 s to enter the shell. Ported from ../msc51, which has the measurements.
+
+### Modules: `src/mods/`
+
+A module is the reconstruction of (part of) one original source file: a contiguous run of matched functions in one `.C`, compiled as one object with one CL line.
+
+```
+./sr module units [-v]           # address spans the original proves are one file (near / push-cs calls), flags per span
+./sr module create NAME.C FN...  # merge matched singletons into src/mods/NAME.C, then verify; restores everything on failure
+./sr module add NAME.C FN...     # extend a module (members stay contiguous)
+./sr module list | show NAME.C   # show rebuilds and gates it
+./sr module dissolve NAME.C      # back to singletons (+ .STB placeholders)
+```
+
+- **Only byte-matched functions join a module** (status `matched`, 0 mismatches), and only as a contiguous run: no other function and no unexplained bytes between members. Matching happens on singletons; grouping is a re-verification step.
+- **One flag set per file.** `create` uses the union of the members' `/O` letters (or `--flags`) for every member. So far every proven span verified under its union, which says the per-function flag variety is an artefact of matching singletons.
+- **The module gate is stricter than per-function `MATCH*`.** `./sr check` on any member also compares the whole span against the image: the bytes between functions, every near-call displacement, and calls and jump-table offsets into the module (resolved inside the object, not masked). Only references to other modules and to DGROUP stay masked; `refs:` checks those. A member that passes it has no unverifiable near calls left.
+- Names are `M_<first addr>.C` until the real file name is known.
+
 ## Workflow
 
 Use the `decompile-function` skill for the per-function loop. Consult `msc51-recipe-book` when a function diverges. Run `wrap-up` at the end of a session. Change the tooling with the `sr-cli` skill.

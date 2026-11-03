@@ -1,2 +1,0 @@
-static void near F_18C8F(struct Bitmap far **pbm) { }
-static void near F_18BDC(struct Bitmap far **out, int n) { }

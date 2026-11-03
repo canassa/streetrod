@@ -35,7 +35,8 @@ void F_22B3A(struct Bitmap far *bm, int x, int y, char *str)
     memset(bits, 0, 320);
     cols = sh = d;
     q = bits;
-    while (*str) {
+    /* a for with an increment (here one with no code) gives the original layout: jmp test, the tail of the body, then the test with the body head */
+    for (; *str; str) {
         byte = *str++ - 0x20;
         if (byte > 0x5a)
             byte = 0;

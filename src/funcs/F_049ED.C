@@ -112,7 +112,7 @@ static int near F_049ED(void)
                     goto tail;
             } while (cash == 0);
         }
-        if (offer < cash * 0.9) {
+        if ((float)offer < (float)cash * 0.9) {
             F_03AB8(0x1084);
             goto tail;
         }

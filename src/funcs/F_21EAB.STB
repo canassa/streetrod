@@ -1,1 +1,0 @@
-static void near F_21AAC(struct Bitmap far *src, struct Bitmap far *dst, struct Clip *o) { }

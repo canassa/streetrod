@@ -1,0 +1,122 @@
+#include "GLOBALS.H"
+#include "PROTOS.H"
+#include <string.h>
+#include <conio.h>
+#include <stdio.h>
+
+void F_1169A(int x, int y, int w, int h, char color)
+{
+    char old;
+
+    old = g_8244;
+    F_120FE(-3);
+    g_8244 = color;
+    F_13682(g_vid.back, x, y, w, h);
+    if (g_vid.f16)
+        F_1A92A(g_vid.back, g_vid.front, x, y, x + w - 1, y + h - 1);
+    g_8244 = old;
+    F_120FE(-1);
+}
+
+void F_1171C(char *s)
+{
+    strcpy(g_291f, s);
+    F_14241(0x1d);
+}
+
+/* F_1174E: show a message and wait for a key ("Hit Return when ready ...") */
+
+
+void F_1174E(char *msg)
+{
+    int saved;
+    char prev;
+    int dx;
+    int i;
+    struct Bitmap far *back;
+
+    saved = g_vid.f16;
+    strcpy(g_293e, msg);
+    strcpy(g_2967, "Hit Return when ready ...");
+    if (g_8247 >= 1) {
+        if (g_58ee) {
+            F_1169A(0, 0, 320, 200, 0);
+            g_58ee++;
+        }
+        prev = g_8249;
+        if (!prev) {
+            g_8249 = 1;
+            (*g_present)();
+        }
+        dx = g_824a ? 5 : 0x50;
+        for (i = 0; i < 5; i++) {
+            g_1d8a[i].x1 += dx;
+            g_1d8a[i].x2 += dx;
+        }
+        if (g_58ee)
+            F_11324(g_04ac);
+        g_vid.f16 = 1;
+        F_00E24();
+        back = g_vid.back;
+        g_vid.back = g_vid.front;
+        F_14241(0x20);
+        g_vid.back = back;
+        for (i = 0; i < 5; i++) {
+            g_1d8a[i].x1 -= dx;
+            g_1d8a[i].x2 -= dx;
+        }
+        g_vid.f16 = saved;
+        g_8249 = prev;
+        if (!prev)
+            (*g_78be)();
+    } else {
+        puts(" ");
+        puts(g_293e);
+        puts(g_2967);
+        if (g_05e0) {
+            while (!F_02DB6())
+                ;
+        } else {
+            while (!kbhit() == 0)
+                ;
+            getch();
+        }
+    }
+}
+
+/* F_118D4: blit bitmap number a to the back buffer at (g_04be, g_04c0), then copy the rectangle to the front
+   buffer. b >= 0 first fills the screen with color b. */
+
+
+int F_118D4(int a, int b)
+{
+    struct Bitmap far *p;
+    long unused;
+    struct Blt pkt;
+
+    F_120FE(-3);
+    p = F_15BBE(a, 2);
+    if (b >= 0)
+        F_1169A(0, 0, 320, g_04c2, b);
+    pkt.w = p->width;
+    pkt.h = p->height > g_04c2 ? g_04c2 : p->height;
+    pkt.sx = pkt.sy = pkt.fc = 0;
+    pkt.dx = g_04be;
+    pkt.dy = g_04c0;
+    (*g_78a2)(p, g_vid.back, &pkt, 1);
+    F_120FE(-1);
+    if (g_vid.f16)
+        F_1A92A(g_vid.back, g_vid.front, g_04be, g_04c0, pkt.dx + pkt.w - 1, pkt.dy + pkt.h - 1);
+    g_04be = g_04c0 = 0;
+    F_19438(1);
+}
+
+/* F_119B8 @ 0F38:2638 (linear 0x119B8, 30 bytes) */
+
+
+int F_119B8(int a, int b, int c, int d)
+{
+    g_04be = b;
+    g_04c0 = c;
+    return F_118D4(a, d);
+}

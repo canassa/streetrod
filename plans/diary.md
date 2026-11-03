@@ -305,3 +305,154 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - The install sequence of `0x081AB` is case 0's fall-through: the after-switch code is pulled up behind the first `break` up to its first real `jmp` (a `?:` arm's), the rest sits after the jump table, and the two stub jumps around the table are real code that `./sr show` decodes as garbage.
 - A label before a loop stops `/Ol` from optimizing it only when the `goto` is backward in source order. The original of `0x081AB` has a rotated loop and a backward jump into the block before it, which this rule cannot produce: open question, same family as the cross-jump survivor in `0x0C613`.
 - A duplicated block that contains a loop is cross-jumped only up to the loop's back edge.
+
+## 2026-11-03 14:12 CET: F_008B4 matched (accumulate inside the inner loop test)
+
+**What I did**
+- `0x008B4` (259 bytes, `/Oalsi`) now matches. After 34 variants the only divergence left was `/Ol` keeping `pos` in `cx` across the outer `while (num--)` loop. Measured in `work/bp/ol2` and `work/bp/ol4` (`x2.py` on isolated copies of the function): a goto-form outer loop, a label before the inner loop, `for (;;)` + `break`, a nested block for `pos`, `volatile int pos`, `&pos` after the loops, `continue`, `> 0` and `for (pos += w; pos > 0xbd; pos += w)` all keep `cx`; the goto-form outer loop also turns `/Ol` off for the inner loop (no hoisting). `/Ols` (no `/Oa`) turns registers off in both loops, which showed the original is a per-loop effect, not a flag. The fix is the source shape: `while ((pos += 9 * g_2c01[*ptr] + 3) > 0xbd) { g_pages.start[g_pages.n++] = first - num; pos = 0; }`, the same semantics as the separate `pos += w;` statement.
+- Corrected the earlier `0x008B4` row in the recipe book (it described the two-statement form) and added a row for the rule. `./sr check --all`: 554/554.
+
+**What I learned**
+- `/Ol` extends an inner loop's register variable to the enclosing loop when the variable is updated by a statement of the outer body; when the only outer-body update is the one inside the inner loop's test expression, the variable lives in memory outside the inner loop and gets its exit store right after it. The guard (`add [mem]; cmp [mem]; jle`) is the rotated first evaluation of that test.
+- When `./sr sweep` ranks a flag set without `/Oa` closer, look at what it changes: here it switched the register allocation off in every loop, which said the original's outer-loop difference had to come from the source.
+
+## 2026-11-03: F_03C8D matched (jump table from a split range, `(float)` cast)
+
+**What I did**
+- `0x03C8D` (804 bytes, `/Oasi`) now matches. Four changes: `case 0: ; case 1:` in the second switch (gives the jump table), `price1 = (float)price1 * ((rl + 70) / 100.0)` (gives `fild dword; fmulp` instead of `fimul`), `case -4: return;` written first in the first switch (drops a dead `jmp` epilogue block), and `if (nl == -0x15) continue;` (puts the loop increment where the original has it). `./sr check --all`: 555/555.
+
+**What I learned**
+- Switch lowering counts *entries*, not labels or values: 3 entries over `0..4` stay a chain whatever the bodies are (the earlier "trivial body gives a table" did not reproduce), 4 entries with a range become a table. A null statement between two labels splits one range into two entries at the same address.
+- `(float)` on the integer operand of a double multiply turns `fimul dword [tmp]` into `fild dword [tmp]; fmulp`; no `(double)`/`(long)` cast or operand order does.
+
+## 2026-11-03: F_22B3A matched (`/Ot`, not `/Oa`; `for` with an increment)
+
+**What I did**
+- `0x22B3A` (973 bytes) now matches. There were two causes, and only one of them was in the loop. (1) The flags are `/AM /FPi /Gs`, which defaults to `/Ot`, not `/Oa` like `0x22F08`. With `/Oa` ours kept `es:bx`/`al` after a store through a far pointer. The original reloads them (`*r = c; ch = *r;`, `q[1] = 0; r = q;`). The DB note's "everything after the loop matches" was not true under `/Oa`. (2) The loop is `for (; *str; str)`. A `for` with an increment is generated top-tested, and the body tail that jumps back to the increment is moved in front of the test. That gives the original's `[jmp T][render][T: test, front, cols test][cols -= wd]`. The increment emits no code (`(void)0` also matches), so the real one is unknown.
+- `tools/sr/match.py`: a non-`/Os` compile ends with an alignment `nop` inside the procedure. The scanner leaves the original's matching `0x90` (0x22F07) out of the size, so `compare` now ignores exactly one trailing `0x90` when the original has it too.
+
+**What I learned**
+- Before reordering blocks, check the code outside them under each flag set: a store-then-reload pattern decides `/Oa` vs no `/Oa`, and `volatile` has no effect in 5.1 (small tests, `work/agent_22b3a/t4`).
+- MSC moves a comma condition `while (A && (B, C))` back into the body, so a loop condition can't hold the body head. Of the loop forms tried, only a `for` with an increment puts the head after the test (`work/agent_22b3a/t1`..`t5`).
+
+## 2026-11-03 14:35 CET: F_1412D matched (label inside the `then` branch)
+
+**What I did**
+- `0x1412D` (276 bytes, `/Oals`) now matches. Source: `while ((kind = p->f0) > 9) { if (kind == 14) { p++; continue; } if (p->x1 > x) { ...; break; } if (p->x2 <= x) { ...; next: if (kind == 12) p = &g_09f4[p->f6]; else p++; } else { y-chain; else { if (kind == 12) { p++; continue; } found; return ...; } goto next; } }`. Variants in `work/agent_1412d/`.
+
+**What I learned**
+- A deferred `else` is flushed at the first unconditional jump *after the whole `if` statement*. A jump inside the `then` branch does not flush it. With the shared tail after the `if` (`goto nx` form), the tail's own `jmp test` flushed the y-chain too early. With the label inside the `then` branch, the flush happens after the rotated `kind == 14` jump past the loop test, which is where the original has it.
+- A `while` whose body ends in an `if` whose branches all end in a transfer (`continue`/`return`) becomes top-tested (R-series). The `goto next` back into the `then` keeps it bottom-tested.
+
+## 2026-11-03: modules (ported from bak-scratch-area's compilation units)
+
+- New `./sr module` (tools/sr/module.py) groups matched singletons into one source file under `src/mods/`, built as one object with one CL line. The module gate compares the whole span: bytes between functions, near-call displacements, and in-module EXTDEF calls and jump-table offsets, which it resolves itself. Before this, those last two were masked, which is where `MATCH*` came from.
+- Same-file evidence: a near call to a near function, or `push cs; call near` to a far one. `./sr module units` takes the hull of each connected group. 35 spans were found. The first one covers 0x00000-0x0e569 (189 functions); that is either one huge main file or near calls across files, so it is still open.
+- 30 modules were created, holding 187 functions (53 KB), all verified. Every fully matched span was grouped except the two that contain asm, plus the tail of 0x163be. Every span verified under the union of its members' /O letters, although almost every span mixed /Oas with /Oals (some also /Oasi, /Oalsi). Per-function flags were an artefact of matching singletons.
+- Gate pitfalls I hit: (1) MSC emits calls to functions in the same file as self-relative EXTDEF fixups (0000 in the object), so the linker resolves them. (2) A jump-table fixup keeps the target offset in the LEDATA word, not in the fixup displacement. (3) Callers reach some members through a different frame (0e6c vs 0f38 in 0x14c90-0x15236), so a code-segment offset is relative to the frame of the member that holds it.
+- Holes: 0x16ADA and 0x16B0A are two 48-byte far C functions missing from the DB (no `push bp` prologue). M_163BE.C stops before them. The spans 0x27b6d and 0x286d8 contain asm-kind functions, so they are not grouped yet.
+
+## 2026-11-03: F_049ED matched (`(float)` cast on a float compare)
+
+**What I did**
+- `0x049ED` (1501 bytes, `/Oalsi`) now matches: `if ((float)offer < (float)cash * 0.9)`. `cash * 0.9 > (float)offer` matches too. Tiny tests in `work/agent_49ed/t1`.
+
+**What I learned**
+- The `(float)` cast from `0x03C8D` also drives float compares: a cast int operand is an FP subtree, loaded with `fild` instead of folded into `ficom`, so the compare is `fcompp`. When both sides are FP subtrees MSC evaluates the left one first. That closes the recipe book's "FP relational operand order" open question.
+
+## 2026-11-03 14:40 CET: F_1C2CA matched (a reference count in the inner loop decided the outer-loop register)
+
+**What I did**
+- `0x1C2CA` (1337 bytes, `/Oalsi`, the CGA text renderer) now matches; `./sr check --all` 558/558. Measured on tiny copies of the text loop in `work/agent_1c2ca/t1`..`t5` (`x2.py` with the function's flags) before touching the source.
+- Fixes, in order of effect: (1) the else-loop body `++gp; *p3 |= *gp >> b; p3[1] |= *gp << (16 - b);` became `*p3 |= *++gp >> b; p3[1] |= *gp << (16 - b);`. That alone removed the `di` preload of `i` before the outer loop, restored `i`'s exit stores after each inner loop and the memory guard of the rotated else loop, put `gp` back in memory (`les bx,[gp]`, `es:[bx]` read twice) and dropped the `*gp` CSE temp. (2) `if ((c4 = *s++ - 0x20) < 0 || c4 > 0x5a) c4 = 0;` moves `inc [s]` up to right after the loop test. (3) `col4 += (wid4 = *(gp = &g_cgafont.g[c4].w) * 2);` gives the `mov es,[seg word]; lea bx,[bx+4]` form (same trick as `0x22B3A`). (4) `col4 = bitoff1 = shl;`, `b0 = b1 = bm->bits.p;` (store order), `r6 = 0;` before `s1 = b1; s0 = b0;` in the two byte loops and before `pp2 = buf` in the rotate loop (where the exit value lands), the `movedata` loop counts `i` (its exit store is `mov [i],di`) and tests `(y + i) & 1`. (5) Layout: the byte loops' buffer pointer is a bucket-7 name declared before `dseg4` (`fill`), the `movedata` one a bucket-4 name between `buf7` and `s1` (`from`).
+
+**What I learned**
+- The 0x008B4 hint ("where the update lives decides the register's extent") was the right family but the wrong variable here: `i`'s spread to the outer loop was collateral. `/Ol` ranks the inner loop's candidates by reference count; a separate `++gp;` gave `gp` 3 references, it took `di` (a far pointer's offset can be enregistered as `es:di`), and the displaced `i` ended up spread across the outer loop with a miscompile (ours clobbered `di` with `les di`). With 2 references `i` keeps `di` and nothing spreads. So when a variable is enregistered too widely, look at what *displaced* it in the inner loop, not only at its own statements.
+- Under `/Ol` a plain `c = *s++ - K;` statement sinks `inc [s]` to after the store; the same expression inside an `if` condition keeps it right after the pointer load. Without `/Ol` both are early.
+- A goto-form outer loop turns `/Ol` off for the inner loops too (confirmed again, `t3/T7`); without `/Oa`, `/Ol` enregisters nothing in these loops.
+- Four recipe rows added (end of the `/Ol` table).
+
+## 2026-11-03: 0x04036, why the q slot isn't reused (agent_4036, still 18 bytes off)
+
+- Built `work/agent_4036/bat.py`, which batch-compiles a directory of variants in one DOSBox run (about 6 a second) and prints the frame, the loop-temp slots and the locals. With it I searched all 3776 block placements of `j`/`wd2`/`q`/`wd` (`work/agent_4036/e1p`). None gives the original's named slots and its temps together.
+- A block holding only `static`/`extern`/`typedef`/tag/prototype declarations doesn't release `q`. A block with several autos keeps one slot from `/Ol` temps after it closes, and it isn't always the first one: `{q; zz}` keeps the unused `zz`. Recorded as an open question in the recipe book.
+- Lead: without a named `wd` (the `*q` reads written in place), `q`'s slot is freed and every loop temp lands where the original has it. But the `*q` CSE goes to `si`, plus a hidden slot. So `[bp-12h]` is probably MSC's own CSE temp, spilled to the stack. The spill trigger is still unknown; expression reshapes don't change it. Details are in the DB note.
+- Follow-up on 0x04036, what puts a CSE on the stack: only a loop right after the CSE's block (calls don't break this, an `if`/label does) or `si` and `di` both being taken (two `register` locals) does it. Flags and type don't matter, and `#pragma loop_opt(off)` drops the loop temps too. Forcing the spill with register locals brings back the held `q` slot, so the CSE idea doesn't explain the original either. Recipe row added.
+
+
+## 2026-11-03 15:31 CET: resume 0x04036 (18 to 5 mismatched bytes, still partial)
+
+### What I did
+- Read CLAUDE.md, the decompile-function/msc51-recipe-book/wrap-up skills, DB notes, diary, and the earlier work/op/v4036 and work/agent_4036 experiments before changing source. Reproduced the 18-byte baseline.
+- Replaced the later named wd2 with repeated table reads. Official ./sr check 4036 now reports 5 mismatched bytes, exact 848-byte size; all five are q/wd stack displacements. Kept status partial.
+- Ran scope, name, initializer, expression, bitfield, and loop-shape experiments in work/resume_4036 without swapping the tracked source during the search. Saved the baseline, candidate, generators, build paths, failed hypotheses, and exact remaining offsets in work/resume_4036/README.md.
+- Regression: ./sr check --all reports 559/559 still match (work/resume_4036/regression.log). No production tooling or comparer changes.
+
+### What I learned
+- The later packed-word value can be an anonymous CSE, and letting MSC make it fixes the entire suffix's stack layout and frame. This is the new lead in .claude/skills/msc51-recipe-book/SKILL.md under Open questions; it is not proof of the complete source layout.
+- q/wd still need an extra word ahead of them early without shifting the later temps. Adding dummy autos moves the early locals but breaks later offsets. None were kept. References remain unchecked until a byte match, and isolated near calls remain unverifiable.
+
+
+## 2026-11-03 15:51 CET: 0x04036 matched (all three apparent locals were CSEs)
+
+### What I did
+- Reconstructed all six packed-word reads directly as g_7d88[idx].f2 and restored the four early node assignments to ternaries. Removed the q/wd nested blocks. The function now has only kind, car, node, w, i and j as locals. Official check: MATCH*, 0 mismatches, 848/848 bytes, 27 refs verified.
+- Tested all 16 combinations of early ternary/if statements with no q/wd locals. Only masks 14 and 15 match (the first node assignment can be either form; the later three must be ternaries). Retained the consistent all-ternary form, work/continue_4036/allcse/T015.C.
+- Verified the six actual near-call encodings in a scratch build with the real contiguous neighbours, at their original relative offsets: target MATCH, 27 refs verified, six exact E8 instructions. The context preserves 0x03C8D's recorded non-/Ol setting with a local pragma for validation only; no production module or flags changed. The broader module probe still has an out-of-target F_03AB8 placeholder, so it is not claimed as a whole-module match.
+- ./sr check --all: 560/560 still match. Logs and reproduction: work/continue_4036/README.md, target.log, regression.log. Updated the recipe book and decompile-function skill; the prior partial-result entries remain historical.
+
+### What I learned
+- The prior assumption that bp-16 and bp-18 represented q and wd was wrong. Both are compiler-generated CSEs, like the later bp-14 value. Reconstructing just one temporary at a time hid the source shape; all three and their surrounding conditional-expression region had to change together.
+- A correct instruction sequence does not prove a named local, and an equivalent if/else can break the CSE region even when the conditional instructions themselves match. See the new C-shapes row in .claude/skills/msc51-recipe-book/SKILL.md.
+- The original source's exact names and first conditional spelling are not recoverable from this match. The earlier nested-block allocation anomaly is a separate compiler observation, no longer a blocker for this function.
+
+## 2026-11-03 16:31 CET: 0x0AB8B race loop, /Ol scope measurements
+
+**What I did**
+- Measured why the race loop in `0x0AB8B` gets `/Ol` in ours and not in the original (variants in `work/agent_ab8b`). Another session matched the function in the meantime with `test:` before the `while` and `goto test;` at the end of the body. I left that version installed.
+
+**What I learned**
+- `loop_opt` pragmas work per function, never per loop, and a pragma just before the closing `}` is ignored. `/Ol` drops a loop that has too many branch blocks (two extra ifs were enough) or a jump into it. String-literal addresses follow source order, so they show whether a loop test was written before or after the body. Rows in the recipe book.
+
+## 2026-11-03 16:33 CET: 0x0C613 block order (deferred else flush, cross-jump survivor)
+
+**What I did**
+- Took `0x0C613` from 123 to 37 mismatched bytes. Adding `goto done;` at the end of the list-building else, with `done:` before `F_13F21(1)`, made that else a codegen-deferred block. It is then emitted right after the `goto ret2` jmp, as in the original (`work/agent_c613/l2.C`). During my rate-limit pause the resume agent added the `goto finishstop` arms on top of l2 and matched the function (MATCH*, refs verified). `./sr check --all`: 562/562.
+- Measured in small tests (`work/agent_c613/t1`..`t5`, `s1`..`s5`) what flushes a deferred block and which cross-jump copy survives. Recipe-book rows added under Block placement.
+
+**What I learned**
+- There are two kinds of deferral. Codegen deferral (an else ending in a jump) flushes at any unconditional jump after the whole if, including a conditional goto's jmp, a ?: jump, an if/else jump and a switch jump. Post-pass deferral (an else that only ends in a jump after cross-jumping) flushes only at a return's jmp, because folding has already turned `if (c) goto L` into `jcc L`. The earlier rule "goto never flushes" described only the second kind.
+- When the cross-jump survivor looks wrong for the arms of an `if/else if`, give the branch its own end label. The inner if's end is otherwise the outer chain's end, every copy jumps there, and the first one wins.
+
+## 2026-11-03 17:36 CET: Resuming remaining functions — active checkpoint
+
+### What I did
+- Recovered previous agents' source attempts and read project instructions and skills before continuing.
+- Matched 0x0AB8B (1210 bytes, 133 refs, MATCH*) and 0x0C613 (1948 bytes, 165 refs, MATCH*). Regression after both: 562/562; work/resume_remaining/regression-c613.log.
+- Reduced 0x081AB to four stack-temporary bytes at exact length2938 and corrected initial g_829a indexing. It remains partial, never marked matched. Diagnostic references:190 verified,10 singleton jump-table offsets unchecked,none wrong.
+- Preserved all inherited work. No compiler flags, comparison masks, or tooling gates changed.
+
+### What I learned
+- Both successful control-flow patterns are in .claude/skills/msc51-recipe-book/SKILL.md; evidence and current 081AB mismatch details are in work/resume_remaining/README.md.
+- Unrolling the first slot scan diagnostically restores later temporary offsets; removing individual jump paths does not. A named register scan pointer occupies bp-472 and produces the same four mismatches, so the extra bp-474 slot arises later. Exact cause remains unresolved; work continues.
+
+## 2026-11-03 17:56 CET: All three inherited partial functions matched
+
+### What I did
+- Finished0x081AB:2938bytes,zero mismatches,190 references. Together with0x0AB8B and0x0C613 this resolves all three inherited partials. Full regression:563/563 (work/resume_remaining/regression-final.log).
+- Verified081AB in an actual-neighbor build spanning076A7..081AB:5758-byte module gate passes; target verification checks all6 near-call displacements and10 jump-table offsets. The span's one outside placeholder call belongs to079EB. Evidence: work/resume_remaining/verify81-target.log.
+- Refreshed progress, DB notes, recipe book, and work/resume_remaining/README.md. Preserved inherited changes; no flags, masks or production tooling changed.
+
+### What I learned
+- Shared removal belongs after the outer switch. The empty scan body must be continue rather than a semicolon: this lets the first switch break pull the complete loop exit and cleanup into position. Putting the shared block directly in case13 gave matching instructions but wrong temporary homes. See the new recipe-book entry.
+- Corrected an earlier inference: the post-switch scan was already loop-optimized; its exit was displaced. Auditing saved outputs for frame size and actual loop instructions exposed the useful alternative. All1380 saved081AB compiler outputs had been no better than four bytes until this final variant.
+- AB8B and C613 have official MATCH* results; their outside near-call displacements remain outside singleton verification. No broader module-match claim was made for those two.
+
+## 2026-11-03 18:02 CET: emu2 compile backend (ported from ../msc51)
+
+### What I did
+- Ported msc51's emu2 backend: `tools/sr/emu2.py`, the `SR_EMU` switch in `tools/sr/dosbox.py`, `tools/nix/emu2.nix` (upstream pin + flush-before-fork patch), `tools/scripts/emucmp.py`, and the nix PATH cache in `./sr`.
+- `./sr check --all`: 563/563 under both backends; 13 s with emu2 (first run, including the nix build) against 45 s with DOSBox-X; a single `./sr check` now takes 0.9 s.
+
+### What I learned
+- msc51's equivalence run already covered all 725 streetrod sources: OBJ/COD/CC.LOG byte-identical under emu2 and DOSBox-X. bak-scratch-area's findings (DOSBox tuning doesn't help, qemu+FreeDOS slower) are in the msc51 diary.

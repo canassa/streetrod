@@ -42,14 +42,14 @@ static void near F_03C8D(void)
         *g_57a7 = 0x2e;
         strcpy(g_2a3e, "Change");
         switch ((int)sel) {
+        case -4:
+            return;
         case 0x3ea:
             F_03AB8(tries3 ? 0x0ed7 : 0x0f2a);
             return;
         case -3:
             sel = F_14C8B();
             break;
-        case -4:
-            return;
         }
         p7 = list8[sel];
         price1 = F_03C5A(p7);
@@ -59,9 +59,10 @@ static void near F_03C8D(void)
         case 2:
         case 3:
             rl = random_int(20);
-            price1 *= (rl + 70) / 100.0;
+            price1 = (float)price1 * ((rl + 70) / 100.0);
             break;
         case 0:
+            ;
         case 1:
             cut = price1 * (pct / 100.0) * 0.9;
             price1 -= cut;
@@ -81,14 +82,14 @@ static void near F_03C8D(void)
         F_11DE2(msg5, -1, -1);
         nl = F_14241(16);
         F_11E5F();
-        if (nl != -0x15) {
-            if (sel == 1)
-                g_7eb8 = p7->next;
-            else
-                list8[sel - 1]->next = p7->next;
-            F_03C3E(p7);
-            g_05fc += 0x444L;
-            F_11540(price1);
-        }
+        if (nl == -0x15)
+            continue;
+        if (sel == 1)
+            g_7eb8 = p7->next;
+        else
+            list8[sel - 1]->next = p7->next;
+        F_03C3E(p7);
+        g_05fc += 0x444L;
+        F_11540(price1);
     }
 }

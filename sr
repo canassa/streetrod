@@ -1,8 +1,24 @@
 #!/usr/bin/env bash
 # The Street Rod decompilation driver. See ./sr -h and CLAUDE.md.
+# SR_EMU picks the compile backend (emu2 default, dosbox).
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-if ! command -v dosbox-x >/dev/null || ! python3 -c 'import capstone' 2>/dev/null; then
-    exec nix-shell "$HERE/shell.nix" --run "$(printf '%q ' "$0" "$@")" 2> >(grep -v '^warning: Nix search path' >&2)
+ready() { command -v dosbox-x >/dev/null && command -v emu2 >/dev/null && python3 -c 'import capstone' 2>/dev/null; }
+if ! ready; then
+    # Entering nix-shell costs ~2 s per call, more than a compile. Cache the shell's nix
+    # store PATH entries, keyed by shell.nix; refresh when it changes or a path is gone (GC).
+    key="$(sha256sum "$HERE/shell.nix" "$HERE/tools/nix/"* | sha256sum | cut -c1-16)"
+    cache="$HERE/work/.nix-path-$key"
+    if [ -s "$cache" ]; then PATH="$(cat "$cache"):$PATH"; fi
+    if ! ready; then
+        mkdir -p "$HERE/work"
+        nix-shell "$HERE/shell.nix" --run 'printf %s "$PATH"' 2> >(grep -v '^warning: Nix search path' >&2) |
+            tr ':' '\n' | grep '^/nix/store/' | paste -sd: > "$cache.$$" && mv -f "$cache.$$" "$cache"
+        if [ -s "$cache" ]; then PATH="$(cat "$cache"):$PATH"; fi
+        if ! ready; then
+            exec nix-shell "$HERE/shell.nix" --run "$(printf '%q ' "$0" "$@")" 2> >(grep -v '^warning: Nix search path' >&2)
+        fi
+    fi
+    export PATH
 fi
 exec python3 "$HERE/tools/sr/cli.py" "$@"

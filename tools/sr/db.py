@@ -55,7 +55,8 @@ CREATE TABLE IF NOT EXISTS aliases (
 
 _MIGRATIONS = (
     ("globals", "decl", "TEXT"),
-    ("functions", "proto", "TEXT"),  # prototype with @ for the name, e.g. "int far @(int n)"
+    ("functions", "proto", "TEXT"),
+    ("functions", "module", "TEXT"),  # src/mods/ file it is built in, when grouped  # prototype with @ for the name, e.g. "int far @(int n)"
 )
 
 

@@ -1,13 +1,23 @@
-"""Compile C files with MSC 5.1 inside one headless DOSBox-X boot."""
+"""Compile C (CL) and MASM jobs with MSC 5.1 / MASM 5.1 under a DOS emulator.
+
+`compile_all` lays every job out in work/<name>-<pid>/Jnnnn/ (safe in parallel) and runs
+them with the backend SR_EMU selects:
+
+- `emu2` (default): one emu2 process per job, run in parallel (tools/sr/emu2.py). No boot.
+- `dosbox`: one headless DOSBox-X boot runs RUN.BAT over all jobs (the original backend).
+
+Both produce byte-identical OBJ, COD, LST and CC.LOG (tools/scripts/emucmp.py).
+"""
 
 import os
 import shutil
 import subprocess
 
-from . import config, stb
+from . import config, emu2, stb
 
 _SET = ("quit warning=false", "core=dynamic_x86", "cycles=max", "pcspeaker=false",
         "mpu401=none", "serial1=disabled", "serial2=disabled", "parallel1=disabled")
+BACKENDS = ("emu2", "dosbox")
 
 
 class Job:
@@ -40,9 +50,17 @@ class Job:
         return None
 
 
-def compile_all(jobs, name="build"):
-    """Compile every job in one DOSBox-X session. Output goes to work/<name>-<pid>/J<n>/,
-    so parallel `sr` processes never share a build tree."""
+def backend():
+    emu = os.environ.get("SR_EMU", "emu2").lower()
+    if emu not in BACKENDS:
+        raise SystemExit(f"SR_EMU={emu!r}: one of {', '.join(BACKENDS)}")
+    return emu
+
+
+def compile_all(jobs, name="build", emu=None):
+    """Compile every job. Output goes to work/<name>-<pid>/J<n>/, so parallel `sr`
+    processes never share a build tree."""
+    emu = emu or backend()
     root = config.WORK / f"{name}-{os.getpid()}"
     if root.exists():
         shutil.rmtree(root)
@@ -65,6 +83,9 @@ def compile_all(jobs, name="build"):
             (job.dir / f"{job.stem}.C").write_text(text)
             # /W3 only adds diagnostics (C4071: call without a prototype); codegen is unaffected.
             lines.append(f"cl /c /W3 {job.flags} /Fc{job.stem}.COD {job.stem}.C > CC.LOG")
+    if emu == "emu2":
+        emu2.run(root, jobs)
+        return jobs
     (root / "RUN.BAT").write_text("\r\n".join(lines) + "\r\n")
 
     tc = config.TOOLCHAIN

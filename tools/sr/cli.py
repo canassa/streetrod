@@ -8,6 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from sr import cod, config, db, dosbox, layout  # noqa: E402
+from sr import module as mod  # noqa: E402
 from sr.disasm import branch_target, linear  # noqa: E402
 from sr.exe import image  # noqa: E402
 from sr.match import compare, diff_rows  # noqa: E402
@@ -269,6 +270,7 @@ def _check_rows(con, rows, flags_override=None, quiet=False):
                 if extra:
                     print(f"  hint: the original far-calls {', '.join(extra)} (another module): "
                           "remove them from the .STB")
+    _module_gates(con, im, jobs, rows, results, flags_override)
     return results
 
 
@@ -668,6 +670,171 @@ def cmd_status(args):
     print(f"wrote {config.PROGRESS.relative_to(config.ROOT)}")
 
 
+# ---------------------------------------------------------------- modules
+
+
+def _module_gates(con, im, jobs, rows, results, flags_override=None):
+    """Run the whole-span gate once per module object built in this check."""
+    gates = {}
+    for r in rows:
+        name = r["module"]
+        if not name or name in gates:
+            continue
+        job = jobs.get(_job_key(r, flags_override))
+        if job is None or job.obj is None or job.cod is None:
+            continue
+        g = mod.gate(Obj(job.obj), cod.parse(job.cod), im.img, mod.members(con, name))
+        gates[name] = g
+        print(g.line(name))
+        for m in mod.members(con, name):
+            res = results.get(m["addr"])
+            if res:
+                res[0].module = g
+                if g.ok and not g.nearcalls:
+                    res[0].nearcalls = 0  # every near call in the span was resolved and verified
+    return gates
+
+
+def _stb_lines(p):
+    return [ln for ln in p.read_text(errors="replace").splitlines() if ln.strip()] if p.exists() else []
+
+
+def _placeholder_for(text, row):
+    """A near member's definition head from the module text, as an .STB placeholder."""
+    m = re.search(rf"^(static [^;{{]*\bnear\s+{fn_name(row)}\s*\([^)]*\))\s*$", text, re.M)
+    if not m:
+        return None
+    head = m.group(1)
+    return head + (" { }" if re.match(r"static\s+void\b", head) else " { return 0; }")
+
+
+def _module_write(con, name, rows, texts, stubs):
+    names = {fn_name(r) for r in rows}
+    stub = []
+    for ln in stubs:
+        ref = re.match(r"^@(\w+)\s*$", ln) or re.search(r"\b(\w+)\s*\(", ln)
+        if ref and ref.group(1) in names or ln in stub:
+            continue
+        stub.append(ln)
+    mod.MODS.mkdir(exist_ok=True)
+    mod.path(name).write_text(mod.merge(texts))
+    st = mod.path(name).with_suffix(".STB")
+    if stub:
+        st.write_text("\n".join(stub) + "\n")
+    elif st.exists():
+        st.unlink()
+
+
+def _snapshot(paths):
+    return {p: (p.read_bytes() if p.exists() else None) for p in paths}
+
+
+def _restore(snap):
+    for p, data in snap.items():
+        if data is None:
+            p.unlink(missing_ok=True)
+        else:
+            p.write_bytes(data)
+
+
+def _module_verify(con, name):
+    """Rebuild every member from the module file; True when all match and the span does."""
+    rows = mod.members(con, name)
+    results = _check_rows(con, rows)
+    ok = all(results.get(r["addr"]) and results[r["addr"]][0].verdict.startswith("MATCH") for r in rows)
+    if ok:
+        for r in rows:
+            _record(con, r, results[r["addr"]][0])
+    return ok
+
+
+def cmd_module(args):
+    con = db.connect()
+    im = image()
+    if args.op == "list":
+        for (name,) in con.execute("SELECT DISTINCT module FROM functions WHERE module IS NOT NULL ORDER BY module"):
+            ms = mod.members(con, name)
+            print(f"{name:<12} {len(ms):3} functions  {hexa(ms[0]['addr'])}-{hexa(ms[-1]['addr'] + ms[-1]['size'])}"
+                  f"  {sum(m['size'] for m in ms)} bytes  [{ms[0]['flags'] or config.DEFAULT_FLAGS}]")
+        return
+    if args.op == "units":
+        for lo, hi in mod.units(con, im):
+            fs = con.execute("SELECT * FROM functions WHERE addr >= ? AND addr < ? ORDER BY addr", (lo, hi)).fetchall()
+            flags = sorted({f["flags"] or config.DEFAULT_FLAGS for f in fs if f["kind"] == "c"})
+            done = sum(f["status"] == "matched" for f in fs)
+            mods = sorted({f["module"] for f in fs if f["module"]})
+            print(f"{hexa(lo)}-{hexa(hi)}  {len(fs):3} functions, {done} matched"
+                  + (f", modules {', '.join(mods)}" if mods else "") + f"  flags: {' | '.join(flags)}")
+            if args.verbose:
+                for f in fs:
+                    print(f"    {hexa(f['addr'])} {fn_name(f):<10} {f['status']:<8} {f['module'] or ''}")
+        return
+    if args.op == "show":
+        ms = mod.members(con, args.name)
+        if not ms:
+            raise SystemExit(f"no module {args.name}")
+        for m in ms:
+            print(f"{hexa(m['addr'])} {fn_name(m):<10} {m['size']:5} {m['status']}")
+        _module_verify(con, args.name)
+        return
+    name = args.name.upper()
+    if args.op in ("create", "add"):
+        old = mod.members(con, name)
+        if args.op == "create" and old:
+            raise SystemExit(f"{name} exists; use `module add`")
+        if args.op == "add" and not old:
+            raise SystemExit(f"no module {name}; use `module create`")
+        new = [db.resolve(con, f) for f in args.fns]
+        rows = mod.validate(con, list(old) + new, name)
+        texts = mod.split(mod.path(name).read_text(), old) if old else {}
+        stubs = _stb_lines(mod.path(name).with_suffix(".STB"))
+        singles = []
+        for r in new:
+            p = src_path(r)
+            if p.parent != config.FUNCS:
+                raise SystemExit(f"{fn_name(r)}'s source is {p}, not a singleton in src/funcs")
+            texts[r["addr"]] = p.read_text()
+            stubs += _stb_lines(p.with_suffix(".STB"))
+            singles += [p, p.with_suffix(".STB")]
+        snap = _snapshot([mod.path(name), mod.path(name).with_suffix(".STB"), *singles])
+        before = {r["addr"]: (r["src"], r["module"], r["flags"]) for r in rows}
+        flags = args.flags or mod.unit_flags(rows)
+        _module_write(con, name, rows, [texts[r["addr"]] for r in rows], stubs)
+        mod.set_members(con, name, rows)
+        for r in rows:
+            db.update(con, r["addr"], flags=None if flags == config.DEFAULT_FLAGS else flags)
+        for p in singles:
+            p.unlink(missing_ok=True)
+        if not _module_verify(con, name):
+            _restore(snap)
+            for a, (s, m, f) in before.items():
+                db.update(con, a, src=s, module=m, flags=f)
+            raise SystemExit(f"{name}: did not verify as a module; restored the previous sources")
+        print(f"{name}: {len(rows)} functions, verified with {flags}")
+        return
+    if args.op == "dissolve":
+        rows = mod.members(con, name)
+        if not rows:
+            raise SystemExit(f"no module {name}")
+        text = mod.path(name).read_text()
+        parts = mod.split(text, rows)
+        stubs = _stb_lines(mod.path(name).with_suffix(".STB"))
+        for r in rows:
+            body = parts[r["addr"]]
+            st = list(stubs)
+            for o in rows:
+                if o["addr"] != r["addr"] and re.search(rf"\b{fn_name(o)}\s*\(", body):
+                    st.append(f"@{fn_name(o)}" if o["far"] else _placeholder_for(text, o))
+            p = config.FUNCS / f"F_{r['addr']:05X}.C"
+            p.write_text(body)
+            if any(st):
+                p.with_suffix(".STB").write_text("\n".join(s for s in st if s) + "\n")
+            db.update(con, r["addr"], src=str(p.relative_to(config.ROOT)), module=None)
+        mod.path(name).unlink()
+        mod.path(name).with_suffix(".STB").unlink(missing_ok=True)
+        print(f"{name}: dissolved into {len(rows)} singletons; run ./sr check on them")
+
+
 def main():
     p = argparse.ArgumentParser(prog="sr", description="Street Rod decompilation driver")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -753,6 +920,14 @@ def main():
     s.add_argument("--reset", action="store_true")
     s.add_argument("--force", action="store_true", help="allow changing a matched function's flags")
     s.set_defaults(func=cmd_flags)
+
+    s = sub.add_parser("module", help="group matched functions into one source file, gated as a whole")
+    s.add_argument("op", choices=["list", "units", "show", "create", "add", "dissolve"])
+    s.add_argument("name", nargs="?", help="DOS 8.3 file name, e.g. GARAGE.C")
+    s.add_argument("fns", nargs="*", help="functions to put in it (create/add)")
+    s.add_argument("-v", "--verbose", action="store_true")
+    s.add_argument("--flags", help="CL flags for the whole file (default: the union of the members' /O letters)")
+    s.set_defaults(func=cmd_module)
 
     s = sub.add_parser("src", help="point a function at a different source file (e.g. a module)")
     s.add_argument("fn")
