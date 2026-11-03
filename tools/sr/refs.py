@@ -14,6 +14,7 @@ Near calls the compiler resolved inside our OBJ (to an .STB placeholder) are che
 name against the original call target.
 """
 
+import bisect
 import struct
 
 from . import config
@@ -152,6 +153,17 @@ def verify(con, obj, proc, im, addr, row, procs=()):
                 elif im.word(dpos) != far[0]:
                     r.problems.append(f"{where}: segment of {_canon(obj.target_name(segconst))} ({far[0]:04x}), "
                                       f"original DS:{orig:04x} holds segment {im.word(dpos):04x}")
+                else:
+                    r.ok += 1
+                continue
+            pubs = sorted((o, n) for n, (s, o) in obj.all_publics.items() if s == f.index)
+            k = bisect.bisect_right([o for o, _ in pubs], off) - 1
+            if k >= 0 and seg_name == "_DATA" and _canon(pubs[k][1]) in globals_by_name:
+                # the module's own named data: the original must refer to the same global offset
+                pub_off, pub_name = pubs[k]
+                want = (globals_by_name[_canon(pub_name)] + off - pub_off) & 0xFFFF
+                if want != orig:
+                    r.problems.append(f"{where}: {_canon(pub_name)}+{off - pub_off} is DS:{want:04x}, original refers to DS:{orig:04x}")
                 else:
                     r.ok += 1
                 continue

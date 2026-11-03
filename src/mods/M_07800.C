@@ -4,6 +4,8 @@
 #include <conio.h>
 #include <stdlib.h>
 
+int g_50ce[7] = {0, 5, 5, 5, 5, 0, 0};   /* DS:50CE */
+
 /* F_07800 @ 0000:7800 (linear 0x07800, 241 bytes) */
 
 
@@ -74,6 +76,16 @@ static void near F_078F1(int *ids, char *vals)
     g_49e0[0] = count;
 }
 
+char *g_511e[4] = {"", "Fuel                  ", "", "Max speed      mph"};   /* DS:511E */
+int g_5126[5] = {1, 1, 3, 2, 2};   /* DS:5126 */
+int g_5130[6] = {1, 2, 2, 2, 2, 2};   /* DS:5130 */
+int g_513c[6] = {0, 3, 2, 2, 2, 2};   /* DS:513C */
+int g_5148[5][6] = {{5, 5, 0, 0, 0, 0}, {6, 6, 0, 0, 0, 0}, {7, 7, 8, 8, 9, 9}, {10, 10, 11, 11, 0, 0}, {12, 12, 13, 13, 0, 0}};   /* DS:5148 */
+int g_5184[1] = {0};   /* DS:5184 */
+int g_5186[9] = {0, 1, 1, 5, 5, 5, 5, 5, 5};   /* DS:5186 */
+int g_5198[1] = {0};   /* DS:5198 */
+int g_519a[9] = {0, 0, 1, 0, 1, 0, 1, 0, 1};   /* DS:519A */
+
 /* F_079EB @ 0000:79EB (linear 0x079EB, 185 bytes) */
 
 
@@ -123,7 +135,7 @@ static void near F_07AA4(void)
             flags[k] = 0;
         g_1804[k].f0 = 11;
     }
-    g_8286 = owner->slot6 ? g_49d2[g_4808[owner->slot6->idx].kind] : 0;
+    g_8286 = owner->slot6 ? g_49d2[((struct Row8 *)((char *)g_4806 + 2))[owner->slot6->idx].kind] : 0;
     g_vid.f16 = !g_8286;
     F_119B8(0x42e, 0x20, 10, -1);
     g_vid.f16 = 1;
@@ -158,8 +170,8 @@ static void near F_07AA4(void)
                 if (!k)
                     break;
                 prev = g_8286;
-                g_8286 = g_49d2[g_4808[tbl[k]->idx].kind];
-                if (g_7d88[owner->f2].f2 & g_4808[tbl[k]->idx].f1 & 0xf) {
+                g_8286 = g_49d2[((struct Row8 *)((char *)g_4806 + 2))[tbl[k]->idx].kind];
+                if (g_7d88[owner->f2].f2 & ((struct Row8 *)((char *)g_4806 + 2))[tbl[k]->idx].f1 & 0xf) {
                     F_07741(F_077B7(tbl[k]), &owner->slot6);
                     F_120FE(-4);
                     F_16A5A(1);

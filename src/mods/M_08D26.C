@@ -1,6 +1,9 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
+char g_51ac = -1;   /* DS:51AC */
+char g_51ad = -1;   /* DS:51AD */
+
 /* F_08D26 @ 0000:8D26 (linear 0x08D26, 118 bytes) */
 
 
@@ -38,8 +41,8 @@ void F_08D9C(int mode)
             g_51ac = g_51ad = -1;
         } else {
             if (g_51ac == -1) {
-                g_51ac = g_044c;
-                g_51ad = g_0443;
+                g_51ac = (*(char *)&g_palette[12]);
+                g_51ad = (*(char *)&g_palette[3]);
             }
             a = g_50c2[mode][0];
             b = g_50c2[mode][1];
@@ -48,7 +51,7 @@ void F_08D9C(int mode)
             F_112CB(12, a);
             F_112CB(3, b);
         }
-        g_044c = a;
-        g_0443 = b;
+        (*(char *)&g_palette[12]) = a;
+        (*(char *)&g_palette[3]) = b;
     }
 }

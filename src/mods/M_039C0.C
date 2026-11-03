@@ -1,6 +1,14 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
+struct Car *g_4f46 = 0;   /* DS:4F46 */
+struct Car *g_4f48 = 0;   /* DS:4F48 */
+int g_4f4a = 0;   /* DS:4F4A */
+int g_4f4c = 0;   /* DS:4F4C */
+int g_4f4e[5] = {1022, 1023, 1025, 1024, 1026};   /* DS:4F4E */
+int g_4f58 = 0;   /* DS:4F58 */
+int g_4f5a = -1;   /* DS:4F5A */
+
 static int near F_039C0(void)
 {
     F_1013D(0);

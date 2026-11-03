@@ -8,6 +8,16 @@
    Fills the drive train e (gear ranges, ratio table, limits) for the car c. The first half
    is the rating computation of F_0E218. */
 
+int g_54dc[4][5] = {{0, 25, 50, 100, 0}, {0, 25, 50, 100, 0}, {0, 25, 50, 75, 100}, {0, 30, 50, 80, 100}};   /* DS:54DC */
+int g_5504[3][5] = {{500, 600, 300, 100, 70}, {600, 700, 350, 120, 90}, {600, 760, 380, 140, 90}};   /* DS:5504 */
+int g_5522[3][2] = {{2900, 4500}, {2900, 5000}, {2500, 5200}};   /* DS:5522 */
+int g_552e[3][5] = {{0, 0, 100, 0, 0}, {0, 50, 0, 100, 75}, {0, 0, 0, 50, 100}};   /* DS:552E */
+int g_554c[3] = {0, 50, 100};   /* DS:554C */
+int g_5552[4] = {0, 33, 66, 100};   /* DS:5552 */
+int g_555a[3] = {4500, 5000, 5200};   /* DS:555A */
+int g_5560[4] = {3, 3, 4, 4};   /* DS:5560 */
+int g_5568[3] = {9, 8, 5};   /* DS:5568 */
+int g_556e[9] = {40, 44, 48, 60, 64, 68, 80, 84, 88};   /* DS:556E */
 
 static void near F_0DCBE(struct Car *c, struct Eng *e)
 {
@@ -24,11 +34,11 @@ static void near F_0DCBE(struct Car *c, struct Eng *e)
     qn = c->rack.s;
     n6k = c->slot6;
     m = c->slot12;
-    a3 = g_4808[qn[0]->idx].kind;
-    bl = g_4808[qn[1]->idx].kind;
-    c3 = g_4808[qn[2]->idx].kind;
-    d = g_4808[n6k->idx].kind;
-    e1 = g_4808[m->idx].kind;
+    a3 = ((struct Row8 *)((char *)g_4806 + 2))[qn[0]->idx].kind;
+    bl = ((struct Row8 *)((char *)g_4806 + 2))[qn[1]->idx].kind;
+    c3 = ((struct Row8 *)((char *)g_4806 + 2))[qn[2]->idx].kind;
+    d = ((struct Row8 *)((char *)g_4806 + 2))[n6k->idx].kind;
+    e1 = ((struct Row8 *)((char *)g_4806 + 2))[m->idx].kind;
     vl = ((c->f24 & 0x2000) || g_8df0[c->f2].f2 == 0) * 0.09
         + ((c->f24 & 0x8000) || g_8df0[c->f2].f8 == 0) * 0.05
         + ((c->f24 & 0x4000) || g_8df0[c->f2].f6 == 0) * 0.01
@@ -65,7 +75,7 @@ static void near F_0DCBE(struct Car *c, struct Eng *e)
         e->f22 = gl->r[1].f2;
     }
     e->f1e = g_555a[a3];
-    e->f34[5] = (int)((int)(0x82 - g_7d88[c->f2].kind) * 5.0 / 50.0 + g_5568[g_4808[m->idx].kind]);
+    e->f34[5] = (int)((int)(0x82 - g_7d88[c->f2].kind) * 5.0 / 50.0 + g_5568[((struct Row8 *)((char *)g_4806 + 2))[m->idx].kind]);
     e->f1c = g_5560[d];
     e->f1a = 1;
 }

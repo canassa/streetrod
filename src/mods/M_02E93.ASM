@@ -22,7 +22,7 @@
         EXTRN   _g_47cc:BYTE
         EXTRN   _g_47ce:BYTE
         EXTRN   _g_47d0:BYTE
-        EXTRN   _g_47e8:BYTE
+        EXTRN   _g_47e8:WORD
 
         .CODE
 
@@ -66,9 +66,9 @@ L02E93_L4:     mov     bx,ax
         mov     bx,ax
         popf
         jne     L02E93_L6
-        cmp     _g_47e8[bx],0
+        cmp     BYTE PTR _g_47e8[bx],0
         jne     L02E93_done
-        mov     _g_47e8[bx],1
+        mov     BYTE PTR _g_47e8[bx],1
         mov     _g_4740,0FFFFh
         mov     al,_g_4766[bx]
         add     _g_472e,al
@@ -78,10 +78,10 @@ L02E93_L4:     mov     bx,ax
         mov     _g_4730,ax
         mov     _g_4740,0
         jmp     SHORT L02E93_done
-L02E93_L6:     cmp     _g_47e8[bx],0
+L02E93_L6:     cmp     BYTE PTR _g_47e8[bx],0
         je      L02E93_done
         mov     _g_4740,0FFFFh
-        mov     _g_47e8[bx],0
+        mov     BYTE PTR _g_47e8[bx],0
         mov     al,_g_4766[bx]
         sub     _g_472e,al
         mov     al,_g_4766[bx+1]

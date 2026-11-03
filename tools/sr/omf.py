@@ -24,12 +24,22 @@ class Obj:
     def __init__(self, path):
         self.segments = []      # names, 1-based by index - 1
         self.groups = []
+        self.communals = {}     # name -> byte size (COMDEF also consumes an external index)
         self.externs = []
         self.publics = {}       # code-segment publics: name -> offset
+        self.all_publics = {}   # name -> (segment index, offset), including data
         self.data = {}          # SEGDEF index -> bytearray
         self.fixups = []
         self.code_seg = None
-        self._parse(path.read_bytes())
+        self.raw = path if isinstance(path, bytes) else path.read_bytes()
+        self._parse(self.raw)
+        # MASM .MODEL may declare an empty default code segment before a
+        # named .CODE contribution. Select the actual code, retaining its pubs.
+        if not self.data.get(self.code_seg):
+            self.code_seg = next((i for i, name in enumerate(self.segments, 1)
+                                  if name.endswith('_TEXT') and self.data.get(i)), self.code_seg)
+        self.publics = {name: off for name, (seg, off) in self.all_publics.items()
+                        if seg == self.code_seg}
         self.code = self.data.get(self.code_seg, bytearray())
         self.mask = bytearray(len(self.code))
         for f in self.fixups:
@@ -73,6 +83,28 @@ class Obj:
                     self.externs.append(rec[k + 1 : k + 1 + rec[k]].decode("latin-1"))
                     k += 1 + rec[k]
                     _, k = self._index(rec, k)
+            elif t in (0xB0, 0xB8):  # COMDEF / LCOMDEF
+                k = 0
+                while k < len(rec):
+                    length = rec[k]
+                    name = rec[k+1:k+1+length].decode('latin-1')
+                    k += 1+length
+                    _, k = self._index(rec, k)
+                    kind = rec[k]
+                    k += 1
+                    values = []
+                    for _ in range(2 if kind == 0x61 else 1):
+                        tag = rec[k]
+                        k += 1
+                        if tag <= 0x80:
+                            value = tag
+                        else:
+                            width = {0x81: 2, 0x84: 3, 0x88: 4}[tag]
+                            value = int.from_bytes(rec[k:k+width], 'little')
+                            k += width
+                        values.append(value)
+                    self.communals[name] = values[0]*(values[1] if len(values) == 2 else 1)
+                    self.externs.append(name)
             elif t in (0x90, 0xB6):  # PUBDEF, LPUBDEF (static)
                 _, k = self._index(rec, 0)
                 seg, k = self._index(rec, k)
@@ -84,6 +116,7 @@ class Obj:
                     off = struct.unpack("<H", rec[k + 1 + ln : k + 3 + ln])[0]
                     k += 3 + ln
                     _, k = self._index(rec, k)
+                    self.all_publics[name] = (seg, off)
                     if seg == self.code_seg:
                         self.publics[name] = off
             elif t == 0xA0:

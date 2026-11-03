@@ -5,6 +5,8 @@
 static int near F_0018B(void);
 static int near F_00082(int mode);
 
+int g_0262 = 1;   /* DS:0262 */
+
 /* F_00226 @ 0000:0226 (linear 0x00226, 240 bytes) */
 
 

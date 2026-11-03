@@ -44,7 +44,7 @@ static void near F_0CDAF(struct Eng *p)
     g_8630 = -1;
     g_6caa = g_7ec0 == 0 ? 0x17c : 0x3fc;
     car = g_7eb0->slot12;
-    p->fc = g_54b2[g_4808[car->idx].kind][car->b / 2000];
+    p->fc = g_54b2[((struct Row8 *)((char *)g_4806 + 2))[car->idx].kind][car->b / 2000];
     if (car->b < 8000)
         p->fa = 0;
     else {
@@ -135,7 +135,7 @@ static void near F_0D031(void)
                 g_7eb0->f20 = random_int(8) - 4;
         }
         slot = g_7eb0->slot12;
-        slot->b += (g_4808[slot->idx].kind == 0 ? (g_7ec0 == 1 ? 700 : 300) : (g_7ec0 == 1 ? 400 : 200)) + random_int(300);
+        slot->b += (((struct Row8 *)((char *)g_4806 + 2))[slot->idx].kind == 0 ? (g_7ec0 == 1 ? 700 : 300) : (g_7ec0 == 1 ? 400 : 200)) + random_int(300);
         if (slot->b > 10000)
             slot->b = 10000;
     }

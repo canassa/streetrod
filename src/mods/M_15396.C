@@ -17,6 +17,23 @@ static void near F_1604F(void);
 /* F_15396: seek the DOS file handle to the absolute position pos (INT 21h function 42h, method 0).
    Returns 0 on success, else the error in g_6318, also copied to g_630d */
 
+char *g_4ea2 = "hot_data";   /* DS:4EA2 */
+char *g_4ea4[13] = {&g_7ff8, &g_7d86, &g_8df0, &g_7682, &g_70e4, &g_818c, g_2c02, &g_7d16, g_239e, &g_7d68, &g_8bae, &g_8dd8, (char *)&g_7844 + 6};   /* DS:4EA4 */
+unsigned g_4ebe[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};   /* DS:4EBE */
+int g_4ed8 = 0;   /* DS:4ED8 */
+int g_4eda = 0;   /* DS:4EDA */
+char *g_4edc = "?:lib1";   /* DS:4EDC */
+char *g_4ede = "?:lib1c";   /* DS:4EDE */
+char *g_4ee0 = "?:lib2";   /* DS:4EE0 */
+char *g_4ee2 = "?:lib2c";   /* DS:4EE2 */
+char *g_4ee4 = "insert disk ? into drive ?";   /* DS:4EE4 */
+char *g_4ee6 = "copy all files to current directory";   /* DS:4EE6 */
+char *g_4ee8 = "bad file format";   /* DS:4EE8 */
+char *g_4eea = "write error";   /* DS:4EEA */
+char *g_4eec = "file not found: ????";   /* DS:4EEC */
+unsigned char g_4eee[16] = {1, 1, 2, 3, 4, 2, 3, 5, 6, 6, 4, 7, 7, 5, 8, 8};   /* DS:4EEE */
+unsigned char g_4efe[16] = {0, 255, 0, 0, 0, 255, 255, 0, 255, 0, 255, 255, 0, 255, 255, 0};   /* DS:4EFE */
+int g_4f0e = 1;   /* DS:4F0E */
 
 int F_15396(int handle, long pos)
 {
@@ -437,6 +454,7 @@ void F_15CC3(int disks, int mode)
    reads the 13 blocks of the data table (buffer g_4ea4[i], size g_4ebe[i]); any failure shows an
    error text. Ends by loading the hall of fame (F_16089) */
 
+char g_4f3a[12] = "?:hall_dat";   /* DS:4F3A */
 
 void F_15EF9(void)
 {

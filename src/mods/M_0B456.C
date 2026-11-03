@@ -31,6 +31,8 @@ static struct Car * near F_04036(int idx, int weight, struct Car *old);
 static int near F_043BF(struct Car *c, int keep);
 static void near F_0DCBE(struct Car *c, struct Eng *e);
 
+int g_53b6[6] = {2, 1, 4, 6, 5, 3};   /* DS:53B6 */
+
 /* F_0B456 @ 0000:B456 (linear 0x0B456, 70 bytes) */
 
 
@@ -201,7 +203,7 @@ void F_0B8A1(void)
     int done;
     int key;
 
-    F_11421(-1, "", 0);
+    F_11421(-1, "\0", 0);
     g_0284 = 3;
     F_118D4(0x442, -1);
     F_11593(g_49dc);
@@ -212,7 +214,7 @@ void F_0B8A1(void)
     dl.f0 = g_7eb0->f2;
     dl.f2 = F_049A2(g_7eb0);
     F_181C8(4, dl.f0, dl.f2, (g_7eb0->f24 >> 8) & 0x1f, 0, 0xa9, 1,
-            g_5030[g_4808[g_7eb0->slot12->idx].kind]);
+            g_5030[((struct Row8 *)((char *)g_4806 + 2))[g_7eb0->slot12->idx].kind]);
     F_16381(0);
     label = F_11A72(0x50, 0xaa, 0x28, 0xc, 0);
     dl.bm1 = F_11A72(g_826e - 0x10, g_8270 - 5, 0x18, 0xc, 0);
@@ -396,13 +398,17 @@ static int near F_0BED4(void)
             ret = (int)-g_7eaa;
             g_7eaa = 0;
         }
-        F_03FF0(0x28, g_4946);
+        F_03FF0(0x28, g_4806[40].f0);
         tbl[0] = g_7eb8;
         g_7eb8 = tbl[0]->next;
         F_07741(tbl[0], &g_7eb0->slot12);
     }
     return ret;
 }
+
+int g_53c8[6] = {4973, 5015, 5073, 5043, 5099, 5130};   /* DS:53C8 */
+struct Spot g_53d4[3] = {{1264, 64, 84}, {1266, 208, 82}, {1265, 272, 123}};   /* DS:53D4 */
+int g_53e6 = 0;   /* DS:53E6 */
 
 /* F_0BF94 @ 0000:BF94 (linear 0x0BF94, 580 bytes) */
 
@@ -591,6 +597,14 @@ static void near F_0C5AC(int n)
     F_04FFA(-n, -1, 0x49);
 }
 
+int g_54b2[3][5] = {{2, 5, 8, 11, 14}, {0, 2, 4, 6, 8}, {0, 0, 1, 2, 4}};   /* DS:54B2 */
+int g_54d0 = 0;   /* DS:54D0 */
+int g_54d2 = 0;   /* DS:54D2 */
+int g_54d4 = 1;   /* DS:54D4 */
+int g_54d6 = 0;   /* DS:54D6 */
+int g_54d8 = 0;   /* DS:54D8 */
+int g_54da = 0;   /* DS:54DA */
+
 /* F_0C613 @ 0000:C613 (linear 0x0C613, 1948 bytes) */
 
 
@@ -699,21 +713,21 @@ done:
         sprintf(temp, "You have been fined $%2d for speeding", i);
         F_11421(-1, temp, 0x140 - g_8250);
         F_03A83(0xfa);
-        if (i <= g_7eaa) {
-            F_11540(-i);
-            cost = g_05cc;
-            F_03A83(g_05dc);
-            g_05cc = cost;
-            F_13F21(1);
-            F_11421(-1, "", 0x140 - g_8250);
-        } else {
-            F_03AB8(0x1793);
-            F_13F21(1);
-            F_13F21(1);
-            F_11540(-g_7eaa);
-            F_11421(-1, " ", 0x140 - g_8250);
-            return 4;
-        }
+        if (i <= g_7eaa)
+            goto pay;
+        F_03AB8(0x1793);
+        F_13F21(1);
+        F_13F21(1);
+        F_11540(-g_7eaa);
+        F_11421(-1, " ", 0x140 - g_8250);
+        return 4;
+pay:
+        F_11540(-i);
+        cost = g_05cc;
+        F_03A83(g_05dc);
+        g_05cc = cost;
+        F_13F21(1);
+        F_11421(-1, "", 0x140 - g_8250);
     } else if (g_799c == 0x81) {
         F_120FE(-2);
         F_03AB8(0xecb2);
@@ -794,12 +808,12 @@ finishstop:
                     g_2aea[0] = 0;
                 sel = i ? 0x1a : 0x19;
                 if ((long)v > g_7eaa) {
-                    g_1ac2 = g_1b40 = 0xe;
+                    g_1ac2 = (*(int *)&g_1ac4[62]) = 0xe;
                     g_579f[sel][0].val = 0xd0;
                     g_579f[sel][1].key = 1;
                     g_579f[sel][1].val = 0xd0;
                 } else {
-                    g_1ac2 = g_1b40 = 0xa;
+                    g_1ac2 = (*(int *)&g_1ac4[62]) = 0xa;
                     g_579f[sel][0].val = 0xcf;
                     g_579f[sel][1].key = 0x21;
                     g_579f[sel][1].val = 0xcf;

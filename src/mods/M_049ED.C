@@ -129,7 +129,7 @@ static int near F_049ED(void)
             mid = g_7eb0->f2;
             result = F_049A2(g_7eb0);
             F_181C8(6, mid, result, (g_7eb0->f24 >> 8) & 0x1f, 0, 0x98, 0,
-                    g_5030[g_4808[g_7eb0->slot12->idx].kind]);
+                    g_5030[((struct Row8 *)((char *)g_4806 + 2))[g_7eb0->slot12->idx].kind]);
             F_13F21(1);
             F_06AA6();
             F_13DE6(10);

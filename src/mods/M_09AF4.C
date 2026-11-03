@@ -12,6 +12,9 @@ static void near F_0D031(void);
 static struct Car * near F_04036(int idx, int weight, struct Car *old);
 static void near F_081AB(struct Car *c);
 
+int g_51fc[2][5] = {{4779, 4803, 4822, 4840, 4663}, {4663, 4675, 4694, 4715, 4727}};   /* DS:51FC */
+int g_5210[2][3] = {{4859, 4867, 4875}, {4743, 4756, 4767}};   /* DS:5210 */
+
 /* F_09AF4 @ 0000:9AF4 (linear 0x09AF4, 209 bytes) */
 
 

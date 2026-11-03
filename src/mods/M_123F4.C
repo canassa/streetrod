@@ -4,6 +4,18 @@
 /* F_123F4: draw the 64 x 6 bar for slot of the dialog; frame selects the highlighted frame.
    When frame == 1 and the screen is shadowed, the old bar is grabbed and pasted first. */
 
+char g_06fc = 1;   /* DS:06FC */
+int g_06fe[2] = {78, 93};   /* DS:06FE */
+int g_0702[3][2] = {{24, 68}, {24, 68}, {16, 68}};   /* DS:0702 */
+int g_070e[6] = {109, 112, 120, 111, 124, 116};   /* DS:070E */
+int g_071a[12] = {75, 113, 64, 122, 83, 110, 72, 119, 83, 118, 72, 127};   /* DS:071A */
+int g_0732[8] = {68, 74, 144, 74, 68, 74, 160, 74};   /* DS:0732 */
+int g_0742[10][2] = {{90, 70}, {98, 70}, {94, 70}, {64, 70}, {90, 70}, {115, 70}, {72, 71}, {111, 71}, {71, 69}, {115, 69}};   /* DS:0742 */
+int g_076a[10] = {10, -1, 21, -1, 11, -1, 29, -1, 11, -1};   /* DS:076A */
+char g_077e[14] = {29, 0, -1, -1, 2, 2, 2, 2, 3, 4, 2, 3, 2, 3};   /* DS:077E */
+char g_078c[6] = {5, 6, 7, 10, 12, 0};   /* DS:078C */
+struct Bitmap far *g_0792 = 0;   /* DS:0792 */
+struct NewLink g_0796 = {11, 0, 0, 1, 0, 0, 0, 0, ""};   /* DS:0796 */
 
 void F_123F4(int frame, int slot)
 {

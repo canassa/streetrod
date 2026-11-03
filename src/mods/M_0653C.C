@@ -73,6 +73,9 @@ void F_065AF(int a1)
     F_19438(1);
 }
 
+char *g_5082[4] = {"June", "July", "August", "September"};   /* DS:5082 */
+int g_508a[5] = {11, 13, 9, 10, 12};   /* DS:508A */
+
 /* F_06750 @ 0000:6750 (linear 0x06750, 127 bytes)  - draws the current date ("Month day, 1963") */
 
 

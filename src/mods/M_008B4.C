@@ -4,6 +4,19 @@
 
 static struct Bitmap far * near F_009B7(int n);
 
+struct Pages g_pages = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 0, 0, 0};   /* DS:04FE */
+struct Bitmap far *g_051c = 0;   /* DS:051C */
+char g_0520 = 0;   /* DS:0520 */
+int g_0522 = 0;   /* DS:0522 */
+int g_0524 = 0;   /* DS:0524 */
+int g_0526 = 0;   /* DS:0526 */
+int g_0528 = 0;   /* DS:0528 */
+int g_052a = 0;   /* DS:052A */
+int g_052c = 0;   /* DS:052C */
+int g_052e = 0;   /* DS:052E */
+int g_0530[3] = {0, 0, 0};   /* DS:0530 */
+int g_0536 = 0;   /* DS:0536 */
+
 /* F_008B4 @ 0000:08B4 (linear 0x008B4, 259 bytes) */
 
 

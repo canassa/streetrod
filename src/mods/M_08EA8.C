@@ -1,6 +1,12 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
+int g_51d8[5] = {42, 26, 12, 8, 4};   /* DS:51D8 */
+int g_51e2[5] = {0, 200, 125, 71, 56};   /* DS:51E2 */
+int g_51ec = 0;   /* DS:51EC */
+int g_51ee = 100;   /* DS:51EE */
+int g_51f0 = 0;   /* DS:51F0 */
+
 /* F_08EA8 @ 0000:8EA8 (linear 0x08EA8, 675 bytes) */
 
 

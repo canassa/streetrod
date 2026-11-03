@@ -330,3 +330,15 @@ A natural while loop can have the correct body-before-test layout but cause /Ol 
 When an outer switch's first `break` pulls the shared tail after the switch into that case, `for (...);` can stop the pull at the loop back edge: the scan head appears in the right place but its exit store and cleanup remain after all other cases. Write `for (...) continue;`. In 0x081AB this pulls the complete scan/cleanup into place, with no extra instructions. Keep removal after the outer switch: case13 breaks from it, and done.case0 breaks from its inner switch and then falls through. Moving removal into case13 plus a forward goto trampoline reproduced the instruction layout but retained four wrong temporary/frame bytes. The post-switch source plus explicit continue matches all2938 bytes and gives frame472. Evidence: work/resume_remaining/anext69/T014.C, check81ab-final.log, verify81-target.log (all6 near calls and10 jump-table offsets verified in actual-neighbor context).
 
 Do not infer that an optimized scan itself is disabled just because its exit is displaced. In the post-switch attempt the pointer loop was already optimized; block placement, then temporary reuse, were the issues. Audit saved compiler output and distinguish loop instructions from their location before restarting source experiments.
+
+
+## Data layout tells (2026-11-04)
+
+| Tell | Source |
+|---|---|
+| One string address referenced from two instructions ( twice) | A named  array (), never two literals: MSC emits one  per literal token |
+| A function's literal pool order differs from the source order of the two calls, code otherwise identical (F_0C613:  before ) |  with the other arm's statements first; swapping / arms changes the code, the goto shape does not |
+| A function stops matching when the module gains many file-scope definitions (F_2969D: 40 dummies break it, 10 do not; frame  and SI/DI use change) | The tables were in another translation unit: make a data-only file () |
+|  | A two-byte literal; the pool shows  where  would leave one byte |
+|  compiles differently from  (register use, frame) | The original used scalar globals after a 12-byte record, not struct members |
+| Pointer table at an odd DS address (DS:579F) | Assembler data (); the C compiler word-aligns every array, struct and pointer, only scalar  is unaligned |

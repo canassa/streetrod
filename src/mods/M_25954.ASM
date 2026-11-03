@@ -13,7 +13,6 @@
 
         .CODE
 
-        ORG     04h
 
         PUBLIC  _F_25954
 _F_25954  PROC    FAR

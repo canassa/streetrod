@@ -2,6 +2,8 @@
 #include "PROTOS.H"
 #include <string.h>
 
+struct Pair g_06ec[4] = {{1, 1}, {2, 2}, {1, 1}, {8, 8}};   /* DS:06EC */
+
 /* F_11E9C @ 0F38:2B1C (linear 0x11E9C, 12 bytes) */
 
 

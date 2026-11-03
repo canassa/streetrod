@@ -278,6 +278,11 @@ _F_2487A  ENDP
 ; its byte), ah = 0Fh (pixel mask).
 
         .DATA
+        EXTRN   _g_5e42:BYTE
+        EXTRN   _g_clip_ymin:WORD
+        EXTRN   _g_clip_xmin:WORD
+        EXTRN   _g_clip_ymax:WORD
+        EXTRN   _g_clip_xmax:WORD
         EXTRN   _g_767c:WORD
         EXTRN   _g_787a:WORD
 
@@ -315,13 +320,8 @@ _F_24A9B  ENDP
 ; framebuffer: fill_span(x1, x2, y, color), clipped to the L24AC7_clip window.
 
         .DATA
-        EXTRN   _g_clip_xmin:WORD
-        EXTRN   _g_clip_ymin:WORD
-        EXTRN   _g_clip_ymax:WORD
-        EXTRN   _g_clip_xmax:WORD
 
         .CODE
-        EXTRN   F_24A9B:NEAR
 
         PUBLIC  _fill_span_clipped
 _fill_span_clipped  PROC  FAR
@@ -362,7 +362,7 @@ L24AC7_x2_ok:
 L24AC7_ordered:
         mov     ax,[bp+10]
         mov     bx,[bp+6]
-        call    F_24A9B
+        call    _F_24A9B
         mov     di,bx
         mov     dh,ah
         not     dh
@@ -422,7 +422,6 @@ _fill_span_clipped  ENDP
 ; window with a colour, four interlaced banks one after the other.
 
         .DATA
-        EXTRN   _g_clip_ymax:WORD
 
         .CODE
 

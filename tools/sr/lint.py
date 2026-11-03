@@ -27,7 +27,8 @@ def lint(text, log=""):
             s = " ".join(stmt.split())
             if re.search(r"\bextern\b", s):
                 problems.append(f"`{s}`: declarations come from GLOBALS.H / PROTOS.H, never `extern` in a source")
-            elif "(" in s and not s.startswith("#") and not re.search(r"\bstatic\b.*\bnear\b", s):
+            elif "(" in s and not s.startswith("#") and not re.search(r"\bstatic\b.*\bnear\b", s) \
+                    and not re.match(r"[^(]*=", s):      # a data definition with an initializer
                 problems.append(f"`{s}`: function prototypes come from PROTOS.H "
                                 "(only `static ... near` module-mates may be forward-declared)")
             stmt = ""

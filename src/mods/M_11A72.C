@@ -6,6 +6,8 @@
 /* F_11A72: copy the rectangle (x, y, w, h) of the back buffer into pict new bitmap and return it.
    The x range is rounded to the pixel grid g_vid.mask. src, when given, is the bitmap to reuse. */
 
+struct Win g_04c4[3] = {{1072, 1, 72, 30, 152, 37, 0, 6, 144}, {1073, 1, 80, 30, 232, 37, 0, 6, 223}, {1074, 2, 80, 20, 232, 46, 0, 6, 223}};   /* DS:04C4 */
+struct Bitmap far *g_04fa = 0;   /* DS:04FA */
 
 struct Bitmap far *F_11A72(int x, int y, int w, int h, struct Bitmap far *src)
 {

@@ -11,6 +11,8 @@ static void near F_1D683(char far *dst, unsigned char *src, int n, int ph);
 
 #pragma intrinsic(_rotl, _rotr)
 
+unsigned char g_5b52[4] = {192, 240, 252, 255};   /* DS:5B52 */
+
 static void near F_1D590(unsigned char *p, int n, int cnt)
 {
     unsigned char carry;

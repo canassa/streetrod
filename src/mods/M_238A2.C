@@ -13,6 +13,9 @@ static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int 
 
 #pragma intrinsic(_rotl, _rotr)
 
+unsigned char g_5c16[8] = {128, 192, 224, 240, 248, 252, 254, 255};   /* DS:5C16 */
+int g_5c1e = 0;   /* DS:5C1E */
+
 static void near F_238A2(unsigned char *p, int n, int len)
 {
     unsigned char a;

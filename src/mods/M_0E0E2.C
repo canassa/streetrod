@@ -88,11 +88,11 @@ static int near F_0E218(int n)
     qn = p6->rack.s;
     n6k = p6->slot6;
     m = p6->slot12;
-    a3 = g_4808[qn[0]->idx].kind;
-    bl = g_4808[qn[1]->idx].kind;
-    c3 = g_4808[qn[2]->idx].kind;
-    d = g_4808[n6k->idx].kind;
-    e1 = g_4808[m->idx].kind;
+    a3 = ((struct Row8 *)((char *)g_4806 + 2))[qn[0]->idx].kind;
+    bl = ((struct Row8 *)((char *)g_4806 + 2))[qn[1]->idx].kind;
+    c3 = ((struct Row8 *)((char *)g_4806 + 2))[qn[2]->idx].kind;
+    d = ((struct Row8 *)((char *)g_4806 + 2))[n6k->idx].kind;
+    e1 = ((struct Row8 *)((char *)g_4806 + 2))[m->idx].kind;
     vl = ((p6->f24 & 0x2000) || g_8df0[p6->f2].f2 == 0) * 0.09
         + ((p6->f24 & 0x8000) || g_8df0[p6->f2].f8 == 0) * 0.05
         + ((p6->f24 & 0x4000) || g_8df0[p6->f2].f6 == 0) * 0.01

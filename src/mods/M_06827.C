@@ -107,6 +107,8 @@ static int near F_06AD8(void)
     return 0;
 }
 
+char g_50c2[6][2] = {{4, 12}, {3, 11}, {2, 10}, {5, 13}, {1, 9}, {7, 15}};   /* DS:50C2 */
+
 /* F_06B06 @ 0000:6B06 (linear 0x06B06, 1125 bytes) */
 
 
@@ -139,7 +141,7 @@ static int near F_06B06(int mode)
         if (g_4f46) {
             n = F_049A2(g_4f46);
             F_181C8(6, g_4f46->f2, n, (g_4f46->f24 >> 8) & 0x1f,
-                    0, 0x98, 0, g_5030[g_4808[g_4f46->slot12->idx].kind]);
+                    0, 0x98, 0, g_5030[((struct Row8 *)((char *)g_4806 + 2))[g_4f46->slot12->idx].kind]);
             F_06AA6();
             F_13DE6(10);
             F_13F21(1);
@@ -163,7 +165,7 @@ static int near F_06B06(int mode)
         if (g_7eb0) {
             g_827a = g_7d88[g_7eb0->f2].f6;
             g_827c = g_7eb0->f4;
-            g_827e = g_4808[g_7eb0->slot12->idx].kind;
+            g_827e = ((struct Row8 *)((char *)g_4806 + 2))[g_7eb0->slot12->idx].kind;
             if (mode == 1)
                 F_067CF(g_827c);
             g_8280 = 0;
@@ -315,7 +317,7 @@ static void near F_0711A(unsigned mask)
             F_03AB8(0x1914);
             return;
         }
-        msg = (g_7eb0->f24 & 0x2000) ? "Rebuild roof - $70" : "Chop roof - $70";
+        msg = (g_7eb0->f24 & 0x2000) ? g_28b1 : g_28a1;
         cost = 70;
         val5 = 0x2220;
     }
@@ -324,7 +326,7 @@ static void near F_0711A(unsigned mask)
             F_03AB8(0x1936);
             return;
         }
-        msg = (g_7eb0->f24 & 0x4000) ? "Restore bumper - $15" : "Strip bumper - $15";
+        msg = (g_7eb0->f24 & 0x4000) ? g_28d7 : g_28c4;
         cost = 15;
         val5 = 0x888;
     }
@@ -333,7 +335,7 @@ static void near F_0711A(unsigned mask)
             F_03AB8(0x1936);
             return;
         }
-        msg = (g_7eb0->f24 & 0x8000) ? "Restore bumper - $15" : "Strip bumper - $15";
+        msg = (g_7eb0->f24 & 0x8000) ? g_28d7 : g_28c4;
         cost = 15;
         val5 = 0x888;
     }
@@ -361,7 +363,7 @@ static void near F_0711A(unsigned mask)
         n9 = g_7eb0->f2;
         r7 = F_049A2(g_7eb0);
         F_181C8(8, n9, r7, (g_7eb0->f24 >> 8) & 0x1f, 0, 0x98, 0,
-                g_5030[g_4808[g_7eb0->slot12->idx].kind]);
+                g_5030[((struct Row8 *)((char *)g_4806 + 2))[g_7eb0->slot12->idx].kind]);
         F_16BC1();
         F_120FE(-2);
         g_05fc += val5;

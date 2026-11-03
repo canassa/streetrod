@@ -6,6 +6,11 @@
 ; program GC index 3 (data rotate / function select) from the high byte of g_5c1e.
 
         .DATA
+        EXTRN   _g_5e42:BYTE
+        EXTRN   _g_clip_ymin:WORD
+        EXTRN   _g_clip_xmin:WORD
+        EXTRN   _g_clip_ymax:WORD
+        EXTRN   _g_clip_xmax:WORD
         EXTRN   _g_vid:WORD
         EXTRN   _g_5c1e:WORD
 
@@ -59,10 +64,6 @@ _F_2646D  ENDP
 ; (GC index 8) used for the partial L26484_first and L26484_last bytes.
 
         .DATA
-        EXTRN   _g_clip_xmin:WORD
-        EXTRN   _g_clip_ymin:WORD
-        EXTRN   _g_clip_ymax:WORD
-        EXTRN   _g_clip_xmax:WORD
 
         .CODE
 
@@ -170,7 +171,6 @@ _F_26484  ENDP
 ; latch copy of 40 bytes per row), then restore the graphics controller.
 
         .DATA
-        EXTRN   _g_clip_ymax:WORD
         EXTRN   _g_5c1e:WORD
         EXTRN   _g_787a:WORD
 

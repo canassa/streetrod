@@ -4,6 +4,9 @@
 #include "STRUCTS.H"
 #include <dos.h>
 
+int g_5bc6[5] = {0, 2, 4, 1, 3};   /* DS:5BC6 */
+long g_5bd0[15] = {564140130L, 564142651L, 564141269L, 564138298L, 241959285L, 564139740L, 564139272L, 255331117L, 255331135L, 564143577L, 564139810L, 564144364L, 564143036L, 642056244L, 642056423L};   /* DS:5BD0 */
+
 /* F_22364: render a glyph into a scratch buffer and copy it to the interleaved screen, 8 rows at most */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 

@@ -1,0 +1,1611 @@
+{
+  "code_starts": [
+    0,
+    59074,
+    59686,
+    62346,
+    114972,
+    137570,
+    137734,
+    148994,
+    149038,
+    149626,
+    150498,
+    150916,
+    151160,
+    151370,
+    153940,
+    156490,
+    156760
+  ],
+  "units": [
+    {
+      "start": 0,
+      "end": 1478,
+      "sources": [
+        "src/mods/M_00000.C",
+        "src/mods/M_00226.C",
+        "src/mods/M_004F4.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 1478,
+      "end": 2227,
+      "sources": [
+        "src/mods/M_005C6.C",
+        "src/mods/M_00659.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 2228,
+      "end": 3416,
+      "sources": [
+        "src/mods/M_008B4.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 3416,
+      "end": 9076,
+      "sources": [
+        "src/mods/M_00D58.C",
+        "src/mods/M_01843.C",
+        "src/mods/M_01BAE.C",
+        "src/mods/M_01FE2.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 9076,
+      "end": 11162,
+      "sources": [
+        "src/mods/M_02374.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 11162,
+      "end": 11268,
+      "sources": [
+        "src/mods/M_02B9A.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 11268,
+      "end": 11696,
+      "sources": [
+        "src/mods/M_02C04.ASM",
+        "src/mods/M_02C2B.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 11696,
+      "end": 11702,
+      "sources": [
+        "src/mods/M_02DB0.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 11702,
+      "end": 11746,
+      "sources": [
+        "src/mods/M_02DB6.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 11746,
+      "end": 11764,
+      "sources": [
+        "src/mods/M_02DE2.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 11764,
+      "end": 12232,
+      "sources": [
+        "src/mods/M_02DF4.ASM",
+        "src/mods/M_02E93.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 12232,
+      "end": 13044,
+      "sources": [
+        "src/mods/M_02FC8.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 13044,
+      "end": 13843,
+      "sources": [
+        "src/mods/M_032F4.C",
+        "src/mods/M_0339F.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 13844,
+      "end": 13992,
+      "sources": [
+        "src/mods/M_03614.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 13992,
+      "end": 14783,
+      "sources": [
+        "src/mods/M_036A8.C",
+        "src/mods/M_03967.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 14784,
+      "end": 21550,
+      "sources": [
+        "src/mods/M_039C0.C",
+        "src/mods/M_03C8D.C",
+        "src/mods/M_03FB1.C",
+        "src/mods/M_04036.C",
+        "src/mods/M_0442B.C",
+        "src/mods/M_04940.C",
+        "src/mods/M_049ED.C",
+        "src/mods/M_04FCA.C",
+        "src/mods/M_04FFA.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 21550,
+      "end": 23370,
+      "sources": [
+        "src/mods/M_0542E.C",
+        "src/mods/M_056A9.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 23370,
+      "end": 25630,
+      "sources": [
+        "src/mods/M_05B4A.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 25630,
+      "end": 25717,
+      "sources": [
+        "src/mods/M_0641E.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 25718,
+      "end": 30720,
+      "sources": [
+        "src/mods/M_06476.C",
+        "src/mods/M_064A3.C",
+        "src/mods/M_0653C.C",
+        "src/mods/M_06827.C",
+        "src/mods/M_07367.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 30720,
+      "end": 36133,
+      "sources": [
+        "src/mods/M_07800.C",
+        "src/mods/M_081AB.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 36134,
+      "end": 36520,
+      "sources": [
+        "src/mods/M_08D26.C",
+        "src/mods/M_08E2D.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 36520,
+      "end": 37195,
+      "sources": [
+        "src/mods/M_08EA8.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 37196,
+      "end": 37462,
+      "sources": [
+        "src/mods/M_0914C.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 37462,
+      "end": 38180,
+      "sources": [
+        "src/mods/M_09256.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 38180,
+      "end": 39668,
+      "sources": [
+        "src/mods/M_09524.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 39668,
+      "end": 42006,
+      "sources": [
+        "src/mods/M_09AF4.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 42006,
+      "end": 46025,
+      "sources": [
+        "src/mods/M_0A416.C",
+        "src/mods/M_0B045.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 46026,
+      "end": 46166,
+      "sources": [
+        "src/mods/M_0B3CA.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 46166,
+      "end": 56509,
+      "sources": [
+        "src/mods/M_0B456.C",
+        "src/mods/M_0CDAF.C",
+        "src/mods/M_0D624.C",
+        "src/mods/M_0DA25.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 56510,
+      "end": 57570,
+      "sources": [
+        "src/mods/M_0DCBE.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 57570,
+      "end": 58729,
+      "sources": [
+        "src/mods/M_0E0E2.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 58730,
+      "end": 58833,
+      "sources": [
+        "src/mods/M_0E56A.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 58834,
+      "end": 58895,
+      "sources": [
+        "src/mods/M_0E5D2.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 58896,
+      "end": 59073,
+      "sources": [
+        "src/mods/M_0E610.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 59074,
+      "end": 59685,
+      "sources": [
+        "src/mods/M_0E6C2.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 59686,
+      "end": 59887,
+      "sources": [
+        "src/mods/M_0E926.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 62346,
+      "end": 68476,
+      "sources": [
+        "src/mods/M_0F38A.C",
+        "src/mods/M_10677.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 68476,
+      "end": 70436,
+      "sources": [
+        "src/mods/M_10B7C.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 70436,
+      "end": 70560,
+      "sources": [
+        "src/mods/M_11324.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 70562,
+      "end": 71322,
+      "sources": [
+        "src/mods/M_113A2.C",
+        "src/mods/M_11421.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 71322,
+      "end": 72150,
+      "sources": [
+        "src/mods/M_1169A.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 72150,
+      "end": 72306,
+      "sources": [
+        "src/mods/M_119D6.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 72306,
+      "end": 73372,
+      "sources": [
+        "src/mods/M_11A72.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 73372,
+      "end": 74739,
+      "sources": [
+        "src/mods/M_11E9C.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 74740,
+      "end": 79489,
+      "sources": [
+        "src/mods/M_123F4.C",
+        "src/mods/M_1287B.C",
+        "src/mods/M_135E5.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 79490,
+      "end": 80349,
+      "sources": [
+        "src/mods/M_13682.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 80350,
+      "end": 85135,
+      "sources": [
+        "src/mods/M_139DE.C",
+        "src/mods/M_14C8B.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 85136,
+      "end": 86582,
+      "sources": [
+        "src/mods/M_14C90.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 86582,
+      "end": 86934,
+      "sources": [
+        "src/mods/M_15236.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 86934,
+      "end": 90762,
+      "sources": [
+        "src/mods/M_15396.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 90762,
+      "end": 91070,
+      "sources": [
+        "src/mods/M_1628A.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 91070,
+      "end": 93465,
+      "sources": [
+        "src/mods/M_163BE.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 93466,
+      "end": 93857,
+      "sources": [
+        "src/mods/M_16D1A.C",
+        "src/mods/M_16D57.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 93858,
+      "end": 95398,
+      "sources": [
+        "src/mods/M_16EA2.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 95398,
+      "end": 101339,
+      "sources": [
+        "src/mods/M_174A6.C",
+        "src/mods/M_18ADB.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 101340,
+      "end": 102971,
+      "sources": [
+        "src/mods/M_18BDC.C",
+        "src/mods/M_191DD.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 102972,
+      "end": 103066,
+      "sources": [
+        "src/mods/M_1923C.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 103066,
+      "end": 103084,
+      "sources": [
+        "src/mods/M_1929A.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 103084,
+      "end": 103380,
+      "sources": [
+        "src/mods/M_192AC.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 103380,
+      "end": 103546,
+      "sources": [
+        "src/mods/M_193D4.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 103546,
+      "end": 103790,
+      "sources": [
+        "src/mods/M_1947A.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 103790,
+      "end": 106192,
+      "sources": [
+        "src/mods/M_1956E.C",
+        "src/mods/M_19DB7.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 106192,
+      "end": 108978,
+      "sources": [
+        "src/mods/M_19ED0.C",
+        "src/mods/M_1A79B.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 108978,
+      "end": 114972,
+      "sources": [
+        "src/mods/M_1A9B2.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 114972,
+      "end": 115402,
+      "sources": [
+        "src/mods/M_1C11C.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 115402,
+      "end": 118984,
+      "sources": [
+        "src/mods/M_1C2CA.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 118984,
+      "end": 120208,
+      "sources": [
+        "src/mods/M_1D0C8.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 120208,
+      "end": 121027,
+      "sources": [
+        "src/mods/M_1D590.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 121028,
+      "end": 122146,
+      "sources": [
+        "src/mods/M_1D8C4.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 122146,
+      "end": 123246,
+      "sources": [
+        "src/mods/M_1DD22.ASM",
+        "src/mods/M_1DFD2.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 137570,
+      "end": 137733,
+      "sources": [
+        "src/mods/M_21962.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 137734,
+      "end": 137899,
+      "sources": [
+        "src/mods/M_21A06.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 137900,
+      "end": 140113,
+      "sources": [
+        "src/mods/M_21AAC.C",
+        "src/mods/M_22077.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 140114,
+      "end": 140132,
+      "sources": [
+        "src/mods/M_22352.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 140132,
+      "end": 141043,
+      "sources": [
+        "src/mods/M_22364.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 141044,
+      "end": 142119,
+      "sources": [
+        "src/mods/M_226F4.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 142120,
+      "end": 142138,
+      "sources": [
+        "src/mods/M_22B28.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 142138,
+      "end": 143111,
+      "sources": [
+        "src/mods/M_22B3A.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 143112,
+      "end": 143580,
+      "sources": [
+        "src/mods/M_22F08.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 143580,
+      "end": 143650,
+      "sources": [
+        "src/mods/M_230DC.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 143650,
+      "end": 143917,
+      "sources": [
+        "src/mods/M_23122.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 143918,
+      "end": 143970,
+      "sources": [
+        "src/mods/M_2322E.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 143970,
+      "end": 145570,
+      "sources": [
+        "src/mods/M_23262.C",
+        "src/mods/M_2382D.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 145570,
+      "end": 146874,
+      "sources": [
+        "src/mods/M_238A2.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 146876,
+      "end": 147303,
+      "sources": [
+        "src/mods/M_23DBC.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 147304,
+      "end": 148204,
+      "sources": [
+        "src/mods/M_23F68.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 148204,
+      "end": 148994,
+      "sources": [
+        "src/mods/M_242EC.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 148994,
+      "end": 149037,
+      "sources": [
+        "src/mods/M_24602.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 149038,
+      "end": 149625,
+      "sources": [
+        "src/mods/M_2462E.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 149626,
+      "end": 150497,
+      "sources": [
+        "src/mods/M_2487A.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 150498,
+      "end": 150915,
+      "sources": [
+        "src/mods/M_24BE2.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 150916,
+      "end": 151160,
+      "sources": [
+        "src/mods/M_24D84.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 151160,
+      "end": 151370,
+      "sources": [
+        "src/mods/M_24E78.ASM",
+        "src/mods/M_24EFB.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 151370,
+      "end": 153939,
+      "sources": [
+        "src/mods/M_24F4A.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 153940,
+      "end": 156489,
+      "sources": [
+        "src/mods/M_25954.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 156490,
+      "end": 156759,
+      "sources": [
+        "src/mods/M_2634A.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 156760,
+      "end": 157114,
+      "sources": [
+        "src/mods/M_26458.ASM"
+      ],
+      "kind": "asm"
+    },
+    {
+      "start": 157114,
+      "end": 165533,
+      "sources": [
+        "src/mods/M_265BA.C",
+        "src/mods/M_27B6D.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 165534,
+      "end": 165592,
+      "sources": [
+        "src/mods/M_2869E.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 165592,
+      "end": 177866,
+      "sources": [
+        "src/mods/M_286D8.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 177866,
+      "end": 177883,
+      "sources": [
+        "src/mods/M_2B6CA.C"
+      ],
+      "kind": "c"
+    },
+    {
+      "start": 177884,
+      "end": 179883,
+      "sources": [
+        "src/mods/M_2B6DC.C"
+      ],
+      "kind": "c"
+    }
+  ],
+  "runtime": [
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\crt0.asm",
+      "public": "__astart",
+      "code_size": 197
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\crt0dat.asm",
+      "public": "__exit",
+      "code_size": 354
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\crt0msg.asm",
+      "public": "__FF_MSGBANNER",
+      "code_size": 36
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "crt0fp.asm",
+      "public": "__fptrap",
+      "code_size": 6
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "chkstk.asm",
+      "public": "__chkstk",
+      "code_size": 36
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "chksum.asm",
+      "public": "__nullcheck",
+      "code_size": 38
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\stdargv.asm",
+      "public": "__setargv",
+      "code_size": 402
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\stdenvp.asm",
+      "public": "__setenvp",
+      "code_size": 110
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\nmsghdr.asm",
+      "public": "__NMSG_TEXT",
+      "code_size": 86
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\stdalloc.asm",
+      "public": "__myalloc",
+      "code_size": 66
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\dosret.asm",
+      "public": "__dosret0",
+      "code_size": 84
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "flushall.c",
+      "public": "_flushall",
+      "code_size": 52
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "fwrite.c",
+      "public": "_fwrite",
+      "code_size": 326
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "_flsbuf.c",
+      "public": "__flsbuf",
+      "code_size": 350
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "_getbuf.c",
+      "public": "__getbuf",
+      "code_size": 110
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "_sftbuf.c",
+      "public": "__ftbuf",
+      "code_size": 290
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "fflush.c",
+      "public": "_fflush",
+      "code_size": 112
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "output.c",
+      "public": "_outc",
+      "code_size": 2288
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\lseek.asm",
+      "public": "_lseek",
+      "code_size": 122
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "write.asm",
+      "public": "_write",
+      "code_size": 298
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "stackava.asm",
+      "public": "_stackavail",
+      "code_size": 20
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "nmalloc.asm",
+      "public": "_malloc",
+      "code_size": 88
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "fmalloc.asm",
+      "public": "__ffree",
+      "code_size": 217
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "amalloc.asm",
+      "public": "__amallocbrk",
+      "code_size": 355
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\brkctl.asm",
+      "public": "_brkctl",
+      "code_size": 196
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "strcpy.asm",
+      "public": "_strcpy",
+      "code_size": 50
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "strlen.asm",
+      "public": "_strlen",
+      "code_size": 27
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "strncpy.asm",
+      "public": "_strncpy",
+      "code_size": 40
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "strncmp.asm",
+      "public": "_strncmp",
+      "code_size": 58
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "atoi.asm",
+      "public": "_atoi",
+      "code_size": 3
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "atol.asm",
+      "public": "_atol",
+      "code_size": 3
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "atof.c",
+      "public": "_atof",
+      "code_size": 68
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "atox.asm",
+      "public": "__catox",
+      "code_size": 84
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "itoa.asm",
+      "public": "_itoa",
+      "code_size": 27
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "ltoa.asm",
+      "public": "_ltoa",
+      "code_size": 10
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "_fptostr.c",
+      "public": "__fptostr",
+      "code_size": 118
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "ultoa.asm",
+      "public": "_ultoa",
+      "code_size": 10
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "getenv.c",
+      "public": "_getenv",
+      "code_size": 100
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "isatty.asm",
+      "public": "_isatty",
+      "code_size": 35
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\apisim.asm",
+      "public": "__DOSCREATECSALIAS",
+      "code_size": 110
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\kbhit.asm",
+      "public": "_kbhit",
+      "code_size": 16
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\getch.asm",
+      "public": "_getch",
+      "code_size": 27
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\int86.asm",
+      "public": "_int86",
+      "code_size": 128
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "puts.c",
+      "public": "_puts",
+      "code_size": 116
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "sprintf.c",
+      "public": "_sprintf",
+      "code_size": 90
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\int86x.asm",
+      "public": "_int86x",
+      "code_size": 150
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\intdos.asm",
+      "public": "_intdos",
+      "code_size": 73
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "movedata.asm",
+      "public": "_movedata",
+      "code_size": 30
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "segread.asm",
+      "public": "_segread",
+      "code_size": 21
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\time.asm",
+      "public": "_time",
+      "code_size": 83
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "tzset.c",
+      "public": "__isindst",
+      "code_size": 404
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dtoxtime.c",
+      "public": "__dtoxtime",
+      "code_size": 290
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "strchr.asm",
+      "public": "_strchr",
+      "code_size": 42
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "stricmp.asm",
+      "public": "_stricmp",
+      "code_size": 66
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "strcspn.asm",
+      "public": "_strcspn",
+      "code_size": 90
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "memcpy.asm",
+      "public": "_memmove",
+      "code_size": 72
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "memcpy.asm",
+      "public": "_memcpy",
+      "code_size": 44
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "memset.asm",
+      "public": "_memset",
+      "code_size": 45
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "xtoa.asm",
+      "public": "__cxtoa",
+      "code_size": 95
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\wrt2err.asm",
+      "public": "__wrt2err",
+      "code_size": 15
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\unlink.asm",
+      "public": "_remove",
+      "code_size": 13
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\b_equipl.asm",
+      "public": "__bios_equiplist",
+      "code_size": 3
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\d_close.asm",
+      "public": "__dos_close",
+      "code_size": 13
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\d_creat.asm",
+      "public": "__dos_creatnew",
+      "code_size": 32
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\d_getvec.asm",
+      "public": "__dos_getvect",
+      "code_size": 18
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\d_open.asm",
+      "public": "__dos_open",
+      "code_size": 23
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\d_rdwr.asm",
+      "public": "__dos_write",
+      "code_size": 35
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\d_setvec.asm",
+      "public": "__dos_setvect",
+      "code_size": 21
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\getdrive.asm",
+      "public": "__dos_getdrive",
+      "code_size": 19
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "dos\\harderr.asm",
+      "public": "__hardretn_return",
+      "code_size": 85
+    },
+    {
+      "library": "LIBH.LIB",
+      "member": "ldiv.asm",
+      "public": "__aFldiv",
+      "code_size": 156
+    },
+    {
+      "library": "LIBH.LIB",
+      "member": "lmul.asm",
+      "public": "__aFlmul",
+      "code_size": 52
+    },
+    {
+      "library": "LIBH.LIB",
+      "member": "lrem.asm",
+      "public": "__aFlrem",
+      "code_size": 162
+    },
+    {
+      "library": "LIBH.LIB",
+      "member": "lshr.asm",
+      "public": "__aFlshr",
+      "code_size": 11
+    },
+    {
+      "library": "LIBH.LIB",
+      "member": "aldiv.asm",
+      "public": "__aFNaldiv",
+      "code_size": 36
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "..\\fltused.ASM",
+      "public": null,
+      "code_size": 20
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "..\\cfpsig.ASM",
+      "public": "__fpsignal",
+      "code_size": 68
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "x8fin.ASM",
+      "public": "$i8_input",
+      "code_size": 1037
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "x8fout.ASM",
+      "public": "$i8_output",
+      "code_size": 396
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "x8tmul.ASM",
+      "public": "$i8_tpwr10",
+      "code_size": 442
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "..\\cfin.ASM",
+      "public": "__fltin",
+      "code_size": 106
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "..\\cfout.ASM",
+      "public": "__fltout",
+      "code_size": 70
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "..\\87ftol.ASM",
+      "public": "__ftol",
+      "code_size": 51
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "..\\cvt.c",
+      "public": "_cftof_g",
+      "code_size": 1252
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "..\\87ctrig.ASM",
+      "public": "__CItan",
+      "code_size": 32
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "..\\87cdisp.ASM",
+      "public": "__ctrandisp1",
+      "code_size": 394
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "..\\matherr.ASM",
+      "public": "_matherr",
+      "code_size": 15
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "87disp.ASM",
+      "public": "__rtzeropop",
+      "code_size": 255
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "87tran.ASM",
+      "public": "fFYTOX",
+      "code_size": 376
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "87trig.ASM",
+      "public": "__fFCOS",
+      "code_size": 209
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "_cflush.asm",
+      "public": "__cflush",
+      "code_size": 0
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "_file.c",
+      "public": "__iob2",
+      "code_size": 0
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "cmiscdat.asm",
+      "public": "__cfltcvt_tab",
+      "code_size": 0
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "ctype.asm",
+      "public": "__ctype",
+      "code_size": 0
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "days.c",
+      "public": "__days",
+      "code_size": 0
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "timeset.c",
+      "public": "___mnames",
+      "code_size": 0
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "fixups.ASM",
+      "public": "FIARQQ",
+      "code_size": 0
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "..\\huge.ASM",
+      "public": "__matherr_flag",
+      "code_size": 0
+    }
+  ],
+  "emulator": [
+    {
+      "library": "EM.LIB",
+      "member": "emulator.ASM",
+      "public": "__fpemulator",
+      "code_size": 9378
+    },
+    {
+      "library": "EM.LIB",
+      "member": "emoem.ASM",
+      "public": "__FPINSTALL87",
+      "code_size": 128
+    }
+  ],
+  "link_order": [
+    0,
+    1478,
+    59074,
+    59686,
+    62346,
+    68476,
+    70436,
+    70562,
+    71322,
+    72150,
+    72306,
+    2228,
+    3416,
+    9076,
+    73372,
+    74740,
+    79490,
+    80350,
+    85136,
+    11162,
+    11268,
+    11696,
+    11702,
+    11746,
+    11764,
+    12232,
+    13044,
+    13844,
+    13992,
+    86582,
+    86934,
+    14784,
+    21550,
+    23370,
+    25630,
+    25718,
+    30720,
+    36134,
+    36520,
+    37196,
+    37462,
+    38180,
+    39668,
+    42006,
+    46026,
+    46166,
+    56510,
+    57570,
+    58730,
+    90762,
+    91070,
+    114972,
+    137570,
+    93466,
+    93858,
+    95398,
+    101340,
+    102972,
+    103066,
+    103084,
+    103380,
+    103546,
+    103790,
+    106192,
+    108978,
+    58834,
+    58896,
+    115402,
+    118984,
+    120208,
+    121028,
+    122146,
+    137734,
+    137900,
+    140114,
+    140132,
+    141044,
+    142120,
+    142138,
+    143112,
+    143580,
+    143650,
+    143918,
+    143970,
+    145570,
+    148994,
+    149038,
+    149626,
+    150498,
+    150916,
+    151160,
+    151370,
+    153940,
+    156490,
+    156760,
+    157114,
+    165534,
+    165592,
+    1072838,
+    146876,
+    147304,
+    148204,
+    177866,
+    177884
+  ],
+  "data_units": [
+    {
+      "start": 1072838,
+      "lo": 24262,
+      "hi": 25244,
+      "sources": [
+        "src/mods/CARMASKS.C"
+      ]
+    }
+  ]
+}

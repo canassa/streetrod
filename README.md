@@ -2,14 +2,53 @@
 
 Reverse engineering of Street Rod (Logical Design Works / California Dreams, 1989), DOS version 1.0.
 
+## Build the game
+
+On the host, with Nix and the checked-out MSC/MASM toolchains:
+
+```sh
+nix-shell shell.nix --run make   # or ./sr build
+```
+
+This compiles 147 game modules and 12 reconstructed data modules, then links
+`work/game/SR.EXE` with the original MSC 5.1 libraries. It also writes `SR.MAP`,
+compiler logs and linker diagnostics. All game data comes from `src/data/` source;
+the build does not extract it from the original EXE.
+
+For a DOS-native build, run `./sr build --prepare-only` on the host, then mount these directories
+in DOSBox-X (substitute the checkout's absolute path):
+
+```text
+mount c /path/to/streetrod/work/game
+mount d /path/to/streetrod/toolchain/msc51
+mount e /path/to/streetrod/work/game/INCLUDE
+mount f /path/to/streetrod/toolchain/masm51
+c:
+ENV.BAT
+MAKE MAKEFILE
+```
+
+`BUILD.BAT` is also provided as an unconditional rebuild. MSC's MAKE 4.07 takes
+its input filename positionally and processes rules in order. The generated
+Makefile uses this syntax rather than NMAKE syntax.
+
+Run the resulting EXE from a directory containing the assets in `orig/freeware/`.
+Keep the original EXE intact; copy the assets and rebuilt EXE to a separate run
+directory. The retail manual-color protection is preserved.
+
+`make objects` compiles without linking; `make check` runs the reconstruction
+regression gate. See [src/data/README.md](src/data/README.md) for the data audits.
+The linked build is not yet a byte-identical reproduction of the shipped EXE:
+its segment layout and cross-module call encodings differ. All 572 reconstructed
+game functions still pass their original function/module checks.
+
 ## Findings so far
 
-- Built with Microsoft C 5.1, medium model, 8087 emulator: `/AM /FPi`. The C runtime matches `MLIBCR.LIB` at 93.6% and the emulator matches `EM.LIB` at 96.8%. The rest are fixup bytes the matcher doesn't mask yet.
-- `0x032D0` (`src/T32D0.C`, 36 bytes) and the copy-protection routine `0x2FC8` (`src/PROTECT.C`, 403 bytes) byte-match with `/AM /Oas /Gs /FPi`.
-- MSC 5.1 assigns stack slots to locals in an order that depends on the identifier names, not on declaration order, so local names are load-bearing. `src/PROTECT.C` uses single letters, which MSC lays out alphabetically from the top of the frame. The hash behind this ordering hasn't been worked out yet.
-- Other modules may use other flags. Some have intrinsic `strlen`, `loop` and `_disable`/`_enable`, which point to `/Oi` and `/Ol`.
-- The EXE is packed with Microsoft EXEPACK. About 92% of the game's own code is compiled C and about 7% is hand-written asm (line drawing, unrolled sprite blitters, video helpers).
-- The copy protection is the manual color lookup in the far function at `0x2FC8`.
+- Microsoft C 5.1, medium model, with the 8087 emulator; flags vary by module.
+- All 506 C and 66 assembly game functions are grouped in 147 verified modules.
+- The 147 MSC runtime entries are supplied by the original libraries.
+- MSC local-variable names affect stack layout; the CLI models that rule.
+- The original EXE is EXEPACK-packed. The rebuilt executable is unpacked.
 
 Addresses are linear offsets into the unpacked load image (`orig/SR_unpacked.EXE` minus its `0x22D0` byte header).
 
@@ -23,7 +62,8 @@ Addresses are linear offsets into the unpacked load image (`orig/SR_unpacked.EXE
 | `orig/extra/` | `LIB2C` and `README.VGA` from the original disks, missing from the freeware copy (taken from the archive.org copy) |
 | `dist/` | The downloads as fetched: streetrodonline.com `sr1pc.zip`, archive.org `msdos_Street_Rod_1989`, and The Good Old Days `001593` (a 720K image with an uncracked EXE whose CGA/Hercules menu strings were edited) |
 | `toolchain/msc51/` | MSC 5.1 `BIN`, `INCLUDE` and `LIB`, unpacked from the WinWorld 5.25" disk set in `toolchain/msc51/dist/` |
-| `src/funcs/` | Reconstructed functions, one per file |
+| `src/mods/` | Reconstructed C and assembly compilation groups |
+| `src/data/` | Reconstructed initialized data and working storage |
 | `tools/sr/` | The `sr` CLI; `tools/unexepack.py` removes EXEPACK |
 | `db/sr.sqlite` | Function database |
 | `work/` | Scratch output (ignored) |
@@ -31,3 +71,18 @@ Addresses are linear offsets into the unpacked load image (`orig/SR_unpacked.EXE
 ## Usage
 
 `CLAUDE.md` describes the workflow and the `./sr` CLI, which drives everything (compile in DOSBox-X, byte compare, the function DB, progress in `docs/PROGRESS.md`). `./dosbox.sh` opens an interactive DOSBox-X with the toolchain on `D:`.
+
+### Original binary layout
+
+`./sr build --layout` rebuilds the recovered code/link order into `work/layout`.
+All 572 game functions land at their original addresses, and all 748 near-call
+encodings match. `./sr dgroup` recovers which module owned each DGROUP item from the
+original data positions and writes the definitions into the module sources; the data below
+DS:09F4 and above DS:4AFE is owned and byte-identical in the linked DGROUP, the tables in
+between still come from `src/data/DGROUP.ASM`.  recovers which module owned each DGROUP item from the
+original data positions and writes the definitions into the module sources; the data below
+DS:09F4 and above DS:4AFE is owned and byte-identical in the linked DGROUP, the tables in
+between still come from . `./sr linkcheck work/layout/SR.EXE` compares the linked file
+without masking relocations or padding and returns nonzero until it is identical.
+The detailed report is `work/layout/BYTE-MATCH.JSON`. Data and MZ differences
+remain; the layout build is not yet a whole-binary match.

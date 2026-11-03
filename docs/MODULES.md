@@ -21,6 +21,10 @@ separate linking task. A passing module with external near calls is not evidence
 a fully linked byte-identical executable.
 
 The whole-span gates report **198 external near calls** across the groups.
+The recovered `./sr build --layout` now verifies their placement in the linked
+image: all 572 game functions have their original addresses and all 748 E8 call
+encodings match. The individual module gates still report their local scope;
+whole-file byte identity remains unfinished because data and MZ metadata differ.
 
 ## Recovered routines
 

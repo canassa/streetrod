@@ -175,6 +175,8 @@ def unit_flags(rows):
 
 class Gate:
     def __init__(self):
+        self.data = None            # (base, size) of the module's _DATA in the original
+        self.notes = []             # data layout differences of a module that owns no data yet
         self.mismatches = []
         self.masked = 0
         self.selfrefs = 0
@@ -195,12 +197,14 @@ class Gate:
             s += f", {self.nearcalls} near call(s) outside the module"
         for p in self.problems:
             s += "\n    " + p
+        for p in self.notes:
+            s += "\n    (data, not gated yet) " + p
         if self.mismatches:
             s += "\n    first mismatches at linear " + ", ".join(f"0x{a:05x}" for a in self.mismatches[:8])
         return s
 
 
-def gate(obj, procs, img, rows):
+def gate(obj, procs, img, rows, con=None):
     """Compare the members' whole span in the object with the original image."""
     from .cod import find
 
@@ -269,6 +273,17 @@ def gate(obj, procs, img, rows):
     for i in range(lo, min(hi, lo + g.size_exe)):
         if i not in skip and obj.code[i] != img[base + i]:
             g.mismatches.append(base + i)
+    if con is not None:
+        from .datacheck import check
+        from .exe import image
+        problems, g.data = check(obj, con, image(), base)
+        dseg = obj.segments.index('_DATA') + 1 if '_DATA' in obj.segments else None
+        owns = dseg is not None and any(s == dseg for s, _ in obj.all_publics.values())
+        if owns:
+            g.problems.extend(problems)
+        else:
+            # a module that does not define its data yet: its literal pool may legitimately differ
+            g.notes.extend(problems)
     return g
 
 

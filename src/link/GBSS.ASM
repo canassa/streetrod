@@ -1,0 +1,320 @@
+; Identified uninitialized storage, original DS:6C22..6E2C.
+; Real MASM labels preserve the existing typed views; no initializer bytes.
+_DATA SEGMENT WORD PUBLIC 'DATA'
+_DATA ENDS
+_BSS SEGMENT WORD PUBLIC 'BSS'
+DGROUP GROUP _DATA,_BSS
+BSTART LABEL BYTE
+PUBLIC _g_6c22
+ORG BSTART+00h
+_g_6c22 LABEL BYTE ; int @[3]
+PUBLIC _g_6c28
+ORG BSTART+06h
+_g_6c28 LABEL BYTE ; struct Bitmap far *@[3]
+PUBLIC _g_6c34
+ORG BSTART+012h
+_g_6c34 LABEL BYTE ; struct Track *@
+PUBLIC _g_6c36
+ORG BSTART+014h
+_g_6c36 LABEL BYTE ; int @
+PUBLIC _g_cmd
+ORG BSTART+016h
+_g_cmd LABEL BYTE ; struct Cmd *@
+PUBLIC _g_obj
+ORG BSTART+018h
+_g_obj LABEL BYTE ; struct Obj *@
+PUBLIC _g_box
+ORG BSTART+01Ah
+_g_box LABEL BYTE ; struct Box *@
+PUBLIC _g_6c3e
+ORG BSTART+01Ch
+_g_6c3e LABEL BYTE ; int @
+PUBLIC _g_6c40
+ORG BSTART+01Eh
+_g_6c40 LABEL BYTE ; struct Win *@
+PUBLIC _g_6c46
+ORG BSTART+024h
+_g_6c46 LABEL BYTE ; int @
+PUBLIC _g_6c48
+ORG BSTART+026h
+_g_6c48 LABEL BYTE ; int @
+PUBLIC _g_6c4a
+ORG BSTART+028h
+_g_6c4a LABEL BYTE ; char @
+PUBLIC _g_6c4c
+ORG BSTART+02Ah
+_g_6c4c LABEL BYTE ; int @
+PUBLIC _g_6c4e
+ORG BSTART+02Ch
+_g_6c4e LABEL BYTE ; char @
+PUBLIC _g_6c50
+ORG BSTART+02Eh
+_g_6c50 LABEL BYTE ; int @
+PUBLIC _g_6c52
+ORG BSTART+030h
+_g_6c52 LABEL BYTE ; int @
+PUBLIC _g_6c54
+ORG BSTART+032h
+_g_6c54 LABEL BYTE ; int @
+PUBLIC _g_6c56
+ORG BSTART+034h
+_g_6c56 LABEL BYTE ; int @
+PUBLIC _g_6c58
+ORG BSTART+036h
+_g_6c58 LABEL BYTE ; int @
+PUBLIC _g_6c5a
+ORG BSTART+038h
+_g_6c5a LABEL BYTE ; int @
+PUBLIC _g_6c5c
+ORG BSTART+03Ah
+_g_6c5c LABEL BYTE ; int @
+PUBLIC _g_score
+ORG BSTART+03Ch
+_g_score LABEL BYTE ; int @
+PUBLIC _g_6c60
+ORG BSTART+03Eh
+_g_6c60 LABEL BYTE ; unsigned @
+PUBLIC _g_rngA
+ORG BSTART+040h
+_g_rngA LABEL BYTE ; int @
+PUBLIC _g_rngB
+ORG BSTART+042h
+_g_rngB LABEL BYTE ; int @
+PUBLIC _g_rngC
+ORG BSTART+044h
+_g_rngC LABEL BYTE ; int @
+PUBLIC _g_6c68
+ORG BSTART+046h
+_g_6c68 LABEL BYTE ; int @
+PUBLIC _g_6c6a
+ORG BSTART+048h
+_g_6c6a LABEL BYTE ; int *@
+PUBLIC _g_6c6c
+ORG BSTART+04Ah
+_g_6c6c LABEL BYTE ; int *@
+PUBLIC _g_6c6e
+ORG BSTART+04Ch
+_g_6c6e LABEL BYTE ; char *@
+PUBLIC _g_6c70
+ORG BSTART+04Eh
+_g_6c70 LABEL BYTE ; int *@
+PUBLIC _g_6c72
+ORG BSTART+050h
+_g_6c72 LABEL BYTE ; char @[]
+PUBLIC _g_6c82
+ORG BSTART+060h
+_g_6c82 LABEL BYTE ; int @
+PUBLIC _g_6c84
+ORG BSTART+062h
+_g_6c84 LABEL BYTE ; int @
+PUBLIC _g_6c86
+ORG BSTART+064h
+_g_6c86 LABEL BYTE ; int @
+PUBLIC _g_6c88
+ORG BSTART+066h
+_g_6c88 LABEL BYTE ; int @
+PUBLIC _g_6c8a
+ORG BSTART+068h
+_g_6c8a LABEL BYTE ; int @[]
+PUBLIC _g_6ca2
+ORG BSTART+080h
+_g_6ca2 LABEL BYTE ; int @
+PUBLIC _g_6ca4
+ORG BSTART+082h
+_g_6ca4 LABEL BYTE ; int @
+PUBLIC _g_6ca6
+ORG BSTART+084h
+_g_6ca6 LABEL BYTE ; int @
+PUBLIC _g_6ca8
+ORG BSTART+086h
+_g_6ca8 LABEL BYTE ; int @
+PUBLIC _g_6caa
+ORG BSTART+088h
+_g_6caa LABEL BYTE ; int @
+PUBLIC _g_6cac
+ORG BSTART+08Ah
+_g_6cac LABEL BYTE ; int @
+PUBLIC _g_6cae
+ORG BSTART+08Ch
+_g_6cae LABEL BYTE ; int @
+PUBLIC _g_6cb0
+ORG BSTART+08Eh
+_g_6cb0 LABEL BYTE ; int @
+PUBLIC _g_6cb2
+ORG BSTART+090h
+_g_6cb2 LABEL BYTE ; int @
+PUBLIC _g_6cb4
+ORG BSTART+092h
+_g_6cb4 LABEL BYTE ; int @
+PUBLIC _g_6cb6
+ORG BSTART+094h
+_g_6cb6 LABEL BYTE ; int @
+PUBLIC _g_6cb8
+ORG BSTART+096h
+_g_6cb8 LABEL BYTE ; int @
+PUBLIC _g_6cba
+ORG BSTART+098h
+_g_6cba LABEL BYTE ; int @
+PUBLIC _g_6cbc
+ORG BSTART+09Ah
+_g_6cbc LABEL BYTE ; struct Rect @
+PUBLIC _g_6cc4
+ORG BSTART+0A2h
+_g_6cc4 LABEL BYTE ; struct Rect @
+PUBLIC _g_6ccc
+ORG BSTART+0AAh
+_g_6ccc LABEL BYTE ; struct Bitmap far *@
+PUBLIC _g_6cd0
+ORG BSTART+0AEh
+_g_6cd0 LABEL BYTE ; char far *@
+PUBLIC _g_6cd4
+ORG BSTART+0B2h
+_g_6cd4 LABEL BYTE ; struct Bitmap far *@
+PUBLIC _g_6cd8
+ORG BSTART+0B6h
+_g_6cd8 LABEL BYTE ; int @
+PUBLIC _g_6cda
+ORG BSTART+0B8h
+_g_6cda LABEL BYTE ; struct Bitmap far *@[3]
+PUBLIC _g_6ce6
+ORG BSTART+0C4h
+_g_6ce6 LABEL BYTE ; int @
+PUBLIC _g_6ce8
+ORG BSTART+0C6h
+_g_6ce8 LABEL BYTE ; struct Rect @
+PUBLIC _g_6cf0
+ORG BSTART+0CEh
+_g_6cf0 LABEL BYTE ; struct Bitmap far *@
+PUBLIC _g_6cf4
+ORG BSTART+0D2h
+_g_6cf4 LABEL BYTE ; struct Bitmap @
+PUBLIC _g_6d24
+ORG BSTART+0102h
+_g_6d24 LABEL BYTE ; struct Bitmap far *@
+PUBLIC _g_6d28
+ORG BSTART+0106h
+_g_6d28 LABEL BYTE ; struct Bitmap far *@
+PUBLIC _g_6d2c
+ORG BSTART+010Ah
+_g_6d2c LABEL BYTE ; struct Bitmap far *@
+PUBLIC _g_6d30
+ORG BSTART+010Eh
+_g_6d30 LABEL BYTE ; struct Bitmap far *@
+PUBLIC _g_6d34
+ORG BSTART+0112h
+_g_6d34 LABEL BYTE ; struct Bitmap far *@
+PUBLIC _g_6d38
+ORG BSTART+0116h
+_g_6d38 LABEL BYTE ; struct Bitmap far *@
+PUBLIC _g_6d3c
+ORG BSTART+011Ah
+_g_6d3c LABEL BYTE ; struct Sprite *@
+PUBLIC _g_6d3e
+ORG BSTART+011Ch
+_g_6d3e LABEL BYTE ; int @
+PUBLIC _g_6da0
+ORG BSTART+017Eh
+_g_6da0 LABEL BYTE ; int @
+PUBLIC _g_6da2
+ORG BSTART+0180h
+_g_6da2 LABEL BYTE ; int @
+PUBLIC _g_6dd4
+ORG BSTART+01B2h
+_g_6dd4 LABEL BYTE ; int @
+PUBLIC _g_6dd6
+ORG BSTART+01B4h
+_g_6dd6 LABEL BYTE ; struct Bitmap far *@
+PUBLIC _g_6dda
+ORG BSTART+01B8h
+_g_6dda LABEL BYTE ; struct Bitmap far *@
+PUBLIC _g_6dde
+ORG BSTART+01BCh
+_g_6dde LABEL BYTE ; struct Bitmap far *@
+PUBLIC _g_6de2
+ORG BSTART+01C0h
+_g_6de2 LABEL BYTE ; struct Bitmap far *@[4]
+PUBLIC _g_6df2
+ORG BSTART+01D0h
+_g_6df2 LABEL BYTE ; struct Bitmap far *@
+PUBLIC _g_6df6
+ORG BSTART+01D4h
+_g_6df6 LABEL BYTE ; struct Bitmap far *@
+PUBLIC _g_6dfa
+ORG BSTART+01D8h
+_g_6dfa LABEL BYTE ; struct Bitmap far *@
+PUBLIC _g_6dfe
+ORG BSTART+01DCh
+_g_6dfe LABEL BYTE ; int @
+PUBLIC _g_6e00
+ORG BSTART+01DEh
+_g_6e00 LABEL BYTE ; int @
+PUBLIC _g_6e02
+ORG BSTART+01E0h
+_g_6e02 LABEL BYTE ; int @
+PUBLIC _g_6e04
+ORG BSTART+01E2h
+_g_6e04 LABEL BYTE ; int @
+PUBLIC _g_6e06
+ORG BSTART+01E4h
+_g_6e06 LABEL BYTE ; int @
+PUBLIC _g_6e08
+ORG BSTART+01E6h
+_g_6e08 LABEL BYTE ; int *@
+PUBLIC _g_6e0a
+ORG BSTART+01E8h
+_g_6e0a LABEL BYTE ; int *@
+PUBLIC _g_6e0c
+ORG BSTART+01EAh
+_g_6e0c LABEL BYTE ; int *@
+PUBLIC _g_6e0e
+ORG BSTART+01ECh
+_g_6e0e LABEL BYTE ; int *@
+PUBLIC _g_6e10
+ORG BSTART+01EEh
+_g_6e10 LABEL BYTE ; int *@
+PUBLIC _g_6e12
+ORG BSTART+01F0h
+_g_6e12 LABEL BYTE ; int *@
+PUBLIC _g_6e14
+ORG BSTART+01F2h
+_g_6e14 LABEL BYTE ; int *@
+PUBLIC _g_6e16
+ORG BSTART+01F4h
+_g_6e16 LABEL BYTE ; int *@
+PUBLIC _g_6e18
+ORG BSTART+01F6h
+_g_6e18 LABEL BYTE ; int *@
+PUBLIC _g_6e1a
+ORG BSTART+01F8h
+_g_6e1a LABEL BYTE ; int *@
+PUBLIC _g_6e1c
+ORG BSTART+01FAh
+_g_6e1c LABEL BYTE ; int *@
+PUBLIC _g_6e1e
+ORG BSTART+01FCh
+_g_6e1e LABEL BYTE ; int *@
+PUBLIC _g_6e20
+ORG BSTART+01FEh
+_g_6e20 LABEL BYTE ; int far *@
+PUBLIC _g_6e24
+ORG BSTART+0202h
+_g_6e24 LABEL BYTE ; int far *@
+PUBLIC _g_6e28
+ORG BSTART+0206h
+_g_6e28 LABEL BYTE ; int *@
+PUBLIC _g_6e2a
+ORG BSTART+0208h
+_g_6e2a LABEL BYTE ; int @
+PUBLIC _g_6d40
+ORG BSTART+011Eh
+_g_6d40 LABEL BYTE ; struct Bitmap @
+PUBLIC _g_6d70
+ORG BSTART+014Eh
+_g_6d70 LABEL BYTE ; struct Bitmap @
+PUBLIC _g_6da4
+ORG BSTART+0182h
+_g_6da4 LABEL BYTE ; struct Bitmap @
+ORG BSTART
+DB 522 DUP (?) ; game working storage, DS:6C22..6E2C
+_BSS ENDS
+END

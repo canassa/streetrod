@@ -15,7 +15,6 @@
 
         .CODE
 
-        ORG     0Ah
 
         PUBLIC  _F_24F4A
 _F_24F4A  PROC    FAR

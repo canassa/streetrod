@@ -20,6 +20,17 @@ static void near F_16532(int start, int end, int step, int delay);
    one BIOS timer tick (the long at 0040:006C). Counts above 848 are scaled by 3/4. Also sets
    g_58e2 to 256 on the way */
 
+int g_5858[19] = {2, 1, 0, 2, 2, 0, 2, 1, 0, 1, 0, 0, 2, 2, 0, 2, 1, 0, -1};   /* DS:5858 */
+char g_587e[4] = {0, 0, -1, -1};   /* DS:587E */
+int g_5882[37] = {1, 2, 1, 2, 3, 3, 1, 2, 1, 3, 1, 4, 4, 1, 2, 1, 3, 1, 2, 1, 3, 4, 4, 1, 2, 1, 3, 4, 1, 1, 1, 2, 1, 4, 3, 3, -1};   /* DS:5882 */
+int g_58cc[2] = {0, -1};   /* DS:58CC */
+int g_58d0 = 1;   /* DS:58D0 */
+struct Dev *g_58d2 = &g_79aa;   /* DS:58D2 */
+int g_58d4 = 1;   /* DS:58D4 */
+int g_58d6 = -1;   /* DS:58D6 */
+int g_58d8 = 0;   /* DS:58D8 */
+int g_58da = 0;   /* DS:58DA */
+int g_58dc = 0;   /* DS:58DC */
 
 int F_163BE(int n)
 {

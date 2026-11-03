@@ -39,9 +39,9 @@ static void near F_03C8D(void)
         }
         g_49e0[0] = nl;
         strcpy(g_2a3e, "Sell it");
-        *g_57a7 = 0x1f;
+        *(*(char * *)&g_579f[4]) = 0x1f;
         sel = F_142CF(4, sel <= g_49e0[0] ? sel : g_49e0[0], 0, g_49e0, lbl, 0);
-        *g_57a7 = 0x2e;
+        *(*(char * *)&g_579f[4]) = 0x2e;
         strcpy(g_2a3e, "Change");
         switch ((int)sel) {
         case -4:

@@ -6,6 +6,48 @@
 #include <string.h>
 #include "STRUCTS.H"
 
+int g_0566 = -1;   /* DS:0566 */
+int g_0568 = -1;   /* DS:0568 */
+int g_056a = 0;   /* DS:056A */
+long g_056c = 2147483647L;   /* DS:056C */
+char g_0570 = 0;   /* DS:0570 */
+char g_0571 = 0;   /* DS:0571 */
+struct Link g_0572[4] = {{0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}};   /* DS:0572 */
+int g_05ba = 0;   /* DS:05BA */
+int g_05bc[8] = {0, 0, 0, 0, 0, 0, 0, 0};   /* DS:05BC */
+long g_05cc = 0L;   /* DS:05CC */
+int g_05d0 = 0;   /* DS:05D0 */
+int g_05d2 = 0;   /* DS:05D2 */
+int g_05d4 = 32767;   /* DS:05D4 */
+int g_5d6 = 0;   /* DS:05D6 */
+int g_05d8 = 0;   /* DS:05D8 */
+int g_05da = 0;   /* DS:05DA */
+int g_05dc = 350;   /* DS:05DC */
+int g_05de = 0;   /* DS:05DE */
+int g_05e0 = 0;   /* DS:05E0 */
+int g_5e2 = 0;   /* DS:05E2 */
+int g_5e4 = 0;   /* DS:05E4 */
+int g_5e6 = 0;   /* DS:05E6 */
+int g_5e8 = 0;   /* DS:05E8 */
+int g_5ea = 0;   /* DS:05EA */
+int g_5ec = 0;   /* DS:05EC */
+int g_5ee = 0;   /* DS:05EE */
+int g_5f0 = 10;   /* DS:05F0 */
+char g_05f2 = 3;   /* DS:05F2 */
+char g_05f3 = 0;   /* DS:05F3 */
+int g_05f4[2] = {0, 0};   /* DS:05F4 */
+long g_tick = 0L;   /* DS:05F8 */
+long g_05fc = 0L;   /* DS:05FC */
+long g_0600 = 0L;   /* DS:0600 */
+long g_0604 = 0L;   /* DS:0604 */
+char g_0608 = 0;   /* DS:0608 */
+char g_0609 = 0;   /* DS:0609 */
+int g_060a = 0;   /* DS:060A */
+char *g_060c = "cannot read drive ?";   /* DS:060C */
+char *g_060e = "disk ? is write protected";   /* DS:060E */
+int g_0610 = 0;   /* DS:0610 */
+int g_0612 = 0;   /* DS:0612 */
+
 /* F_00D58 @ 0000:0D58 (linear 0x00D58, 32 bytes) */
 
 
@@ -161,6 +203,10 @@ void F_00FEA(void)
     exit(5);
 }
 
+char g_064d = 0;   /* DS:064D */
+char g_064e = 0;   /* DS:064E */
+struct KeyMap g_0650[30] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};   /* DS:0650 */
+
 /* F_0105B @ 0000:105B (linear 0x0105B, 182 bytes) */
 
 
@@ -300,7 +346,7 @@ void F_012DE(int n)
         q->val = g_4766[q->key = c = p->key];
         g_4766[c] = p->val;
     }
-    p = g_57f3;
+    p = g_579f[42];
     q->val = g_4766[q->key = c = p->key];
     g_4766[c] = p->val;
     q[1].key = 0;
@@ -331,6 +377,21 @@ int F_01391(int keep)
     }
     return i;
 }
+
+unsigned char g_0692[16] = {0, 0, 8, 7, 15, 7, 15, 8, 7, 2, 4, 12, 5, 10, 6, 14};   /* DS:0692 */
+int g_06a2 = 0;   /* DS:06A2 */
+int g_06a4 = 0;   /* DS:06A4 */
+char g_06a6 = 0;   /* DS:06A6 */
+char g_06a7 = 0;   /* DS:06A7 */
+int g_06a8 = 0;   /* DS:06A8 */
+int g_06aa = 0;   /* DS:06AA */
+int g_06ac = 0;   /* DS:06AC */
+int g_06ae = 0;   /* DS:06AE */
+int g_06b0 = 0;   /* DS:06B0 */
+int g_06b2 = 0;   /* DS:06B2 */
+int g_06b4[22] = {-1, 0, -1, 0, 1, 1, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 0, 0, 2};   /* DS:06B4 */
+char g_06e0 = 0;   /* DS:06E0 */
+int g_06e2 = 1;   /* DS:06E2 */
 
 /* F_01417 @ 0000:1417 (linear 0x01417, 1068 bytes) */
 
@@ -368,13 +429,13 @@ int F_01417(int ticks)
         }
         if (g_4bc8 && (g_vid.mode == -2 || g_vid.mode == -6)
             && !(g_tick & 0xf) && g_58d0 && g_47cf) {
-            old = g_0698[2];
-            g_0698[2] = g_0698[1];
-            g_0698[1] = g_0698[0];
-            g_0698[0] = old;
+            old = ((char *)((char *)g_0692 + 6))[2];
+            ((char *)((char *)g_0692 + 6))[2] = ((char *)((char *)g_0692 + 6))[1];
+            ((char *)((char *)g_0692 + 6))[1] = ((char *)((char *)g_0692 + 6))[0];
+            ((char *)((char *)g_0692 + 6))[0] = old;
             F_112CB(6, old);
-            F_112CB(7, g_0698[1]);
-            F_112CB(8, g_0698[2]);
+            F_112CB(7, ((char *)((char *)g_0692 + 6))[1]);
+            F_112CB(8, ((char *)((char *)g_0692 + 6))[2]);
         }
         res = F_02DB6();
         if (res > 0) {

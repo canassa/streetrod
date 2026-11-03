@@ -17,6 +17,11 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 `./sr` drives everything (it enters `shell.nix` on its own if `dosbox-x` or capstone is missing). The DB is `db/sr.sqlite`. Run `./sr <command> -h` for options.
 
 ```
+./sr build --layout            # recover original code positions/link order in work/layout
+./sr linkcheck [EXE]            # fail unless the linked file matches, no byte masks
+./sr build                     # compile/link the runnable game into work/game/SR.EXE
+./sr build --prepare-only      # emit DOS-native MAKEFILE, ENV.BAT, BUILD.BAT and LINK.RSP
+./sr build --objects-only      # compile actual objects without linking
 ./sr scan                      # rediscover functions in the EXE, update the DB (keeps names/status/src)
 ./sr crtnames                  # name CRT functions by locating MSC 5.1 library modules in the EXE (also records their aliases)
 ./sr list [-s todo] [-k c] [--seg 0f38] [-r 10d6c-168f2] [--max 100] [--by-size]
@@ -41,11 +46,37 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 ./sr note ADDR text...         # append a note to a function (--replace to overwrite)
 ./sr src ADDR path             # point a function at another source file (a module)
 ./sr status                    # summary + regenerate docs/PROGRESS.md
+./sr dgroup report [lo hi]     # original DGROUP: owner unit, declaration slot and C definition of every item
+./sr dgroup problems           # named strings used as literals, aliases, untyped tables, fallbacks
+./sr dgroup apply UNIT... --write  # write a unit's data definitions into its module sources (marked /* DS:xxxx */)
+./sr dgroup aliases --write    # rewrite overlapping DB views as base[i]; `register --write` adds recovered globals
+./sr dgroup asm                # regenerate src/data/DGROUP.ASM: the data no module owns yet
+./sr dgroup order --write      # the recovered link order into src/link/LAYOUT.JSON
 ```
 
 `./sr check` is the gate. `MATCH` means every byte matches except fixups (relocated addresses), the sizes are equal, every fixup refers to the same thing as in the original (`refs:` globals by DGROUP offset, calls by function address, string literals by content), and the source passes the lint (rule 4). `MATCH*` means the same, but some near calls to other functions can't be verified because their displacements depend on the original module layout. A one-function compile can't reproduce those.
 
 **Compile backend: `SR_EMU`.** `emu2` (default) runs `CL`/`MASM` under [emu2](https://github.com/dmsc/emu2), a user-space 8086 + DOS-call emulator with no boot: one process per job, run in parallel (`SR_JOBS`, default 16), ~25 ms per small compile. `SR_EMU=dosbox` is the original one-DOSBox-X-boot-per-batch backend. Both give byte-identical OBJ, COD and CC.LOG (proved on every source here and in ../msc51 with `tools/scripts/emucmp.py`; rerun it after touching either backend or `tools/nix/emu2.nix`). The `./sr` wrapper caches the nix-shell PATH in `work/.nix-path-<hash>` (refreshed when `shell.nix` changes), so a command no longer pays ~2 s to enter the shell. Ported from ../msc51, which has the measurements.
+
+### Linked game build
+
+`make` / `./sr build` compiles real modules without `.STB` placeholders, assembles
+`src/data/` records, and links MSC's MLIBCR, MLIBFP, LIBH and EM libraries.
+Shared near interfaces use four named code segments and public near definitions
+in staging copies; the source used by the byte-match gate stays unchanged.
+The entry point F_0066F becomes `main` in staging. `CRT.H` maps runtime-owned data.
+LINK runs in DOSBox-X because emu2 crashes on this link workload. The generated
+DOS Makefile works with MSC MAKE 4.07 (`ENV.BAT`, then `MAKE MAKEFILE`).
+`./sr build --layout` uses `src/link/LAYOUT.JSON`, original region boundaries,
+whole-source groups, and untouched MSC library members in recovered order. All
+116 source jobs are compiled and gated. It puts all 572 game functions at their
+original addresses and reproduces all 748 E8 call encodings. Whole-file matching
+is still red: initialized data/literals, uninitialized storage and MZ metadata
+remain. Use `./sr linkcheck work/layout/SR.EXE`; its JSON includes raw differences,
+relocation positions, mapped function positions and every near-call encoding.
+
+The legacy runnable build is not proof of original whole-EXE layout. See README.md
+and src/data/README.md for usage and source-data validation.
 
 ### Modules: `src/mods/`
 
@@ -102,6 +133,10 @@ Every `.C` includes `GLOBALS.H` and `PROTOS.H` (in `src/include/`, generated fro
 - **Asm:** `EXTRN` names must be the DB names (the `refs` check enforces it).
 
 `./sr check` lints for `extern`, local prototypes and local struct definitions. Name a global or function only once you know what it is; until then keep `g_XXXX` / `F_XXXXX`.
+
+### 4b. Data belongs to the file that owned it
+
+The original DGROUP is the modules' `_DATA` in link order: each translation unit's string literals (in parse order) and its initialized globals (flushed after the next function's literals). `./sr dgroup` recovers the owner and the declaration slot of every item from those positions and writes the definitions into the module sources with a `/* DS:xxxx */` marker; `src/data/DGROUP.ASM` only holds what no module owns yet. A module that defines data is gated on it (`datacheck`: base, bytes and every pointer). Overlapping DB names are views, rewritten as `base[i]`; a literal referenced twice at one address is a named array; a unit whose function stops matching once its tables are defined did not own them (MSC's frame layout depends on the number of file-scope definitions), so they go to a data-only unit.
 
 ### 5. The DB comes from the EXE and the CLI
 

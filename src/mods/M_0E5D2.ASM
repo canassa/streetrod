@@ -5,9 +5,58 @@
 ; Hercules graphics mode set up: BIOS video state, CRTC registers.
 
         .DATA
-        EXTRN   _g_5ad0:BYTE
-        EXTRN   _g_5abc:WORD
-        EXTRN   _g_5aec:BYTE
+
+
+
+
+
+
+        ; data (recovered DGROUP layout)
+        EVEN
+        PUBLIC _g_5abc
+_g_5abc LABEL BYTE ; +5ABC int @[10]
+        DW 03500h
+        DW 02801h
+        DW 02C02h
+        DW 0803h
+        DW 0FC04h
+        DW 0705h
+        DW 06406h
+        DW 07207h
+        DW 0208h
+        DW 0209h
+        PUBLIC _g_5ad0
+_g_5ad0 LABEL BYTE ; +5AD0 char @[30]
+        DB 07h
+        DB 050h
+        DB 00h
+        DB 00h
+        DB 080h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 0B4h
+        DB 03h
+        DB 02h
+        DB 00h
 
         .CODE
 
@@ -39,7 +88,7 @@ L0E5D2_crtc:
         out     dx,ax
         loop    L0E5D2_crtc
         add     dl,4
-        mov     al,_g_5aec
+        mov     al,_g_5ad0+28
         out     dx,al
         pop     di
         pop     si

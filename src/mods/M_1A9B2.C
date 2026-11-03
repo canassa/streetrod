@@ -5,6 +5,12 @@
 static struct Bitmap far * near F_1A9B2(int n);
 static void near F_1ABAC(int a, int *p, int *q);
 
+int g_5aa8 = 0;   /* DS:5AA8 */
+int g_5aaa[3] = {1034, 1035, 1036};   /* DS:5AAA */
+struct Bitmap far *g_5ab0 = (struct Bitmap far *)&g_6da4;   /* DS:5AB0 */
+struct Bitmap far *g_5ab4 = (struct Bitmap far *)&g_6d40;   /* DS:5AB4 */
+struct Bitmap far *g_5ab8 = (struct Bitmap far *)&g_6d70;   /* DS:5AB8 */
+
 /* F_1A9B2: build the two scratch bitmaps for a shifted background strip and its 0x28-wide column */
 
 

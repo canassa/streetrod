@@ -201,6 +201,7 @@ struct Style {
     char pad2[5];
     struct Colors hilite;
     struct Colors popup;
+    struct Colors bank;         /* fifth palette bank: DS:03EB / 043B, part of the 80-byte record */
 };
 
 struct Mask {
@@ -526,6 +527,17 @@ struct Track {
 };
 
 /* 16-byte blit packet of F_10872 (struct Blt without the last two words) */
+/* the clip source rectangle at DS:5E42: the six leading Blt words, followed by the four
+   clip limits as separate globals (g_clip_xmin..) */
+struct Blt12 {
+    int w;
+    int h;
+    int sx;
+    int sy;
+    int dx;
+    int dy;
+};
+
 struct Blt16 {
     int w;
     int h;

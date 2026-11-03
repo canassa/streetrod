@@ -6,6 +6,13 @@
 
 static void near F_00000(char *s);
 
+int g_0042 = 0;   /* DS:0042 */
+int g_0044 = 0;   /* DS:0044 */
+int g_0046 = 0;   /* DS:0046 */
+int g_0048 = 0;   /* DS:0048 */
+int g_004a = 0;   /* DS:004A */
+int g_004c = 0;   /* DS:004C */
+
 /* F_00000 @ 0000:0000 (linear 0x00000, 130 bytes) */
 
 
@@ -25,6 +32,11 @@ static void near F_00000(char *s)
     inr.x.dx = (int)text;
     int86(0x21, &inr, &outr);
 }
+
+char *g_videoMenu[6] = {"                    1 - CGA      320 x 200 x  4 colors", "                    2 - EGA      320 x 200 x 16 colors", "                    3 - VGA      320 x 200 x 16 colors", "                    4 - Hercules monochrome", "                    5 - Tandy    320 x 200 x 16 colors", "\n                  Esc - Back to DOS"};   /* DS:0244 */
+int g_0250 = 0;   /* DS:0250 */
+int g_0252 = 0;   /* DS:0252 */
+int g_0254 = 0;   /* DS:0254 */
 
 /* F_00082 @ 0000:0082 (linear 0x00082, 265 bytes) */
 

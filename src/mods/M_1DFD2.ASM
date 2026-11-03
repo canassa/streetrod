@@ -9,12 +9,13 @@
 ; F_1DFD2(x1, x2, y, colour)
 
         .DATA
-        EXTRN   _g_0042:WORD
-        EXTRN   _g_787a:WORD
-        EXTRN   _g_clip_xmin:WORD
+        EXTRN   _g_5e42:BYTE
         EXTRN   _g_clip_ymin:WORD
+        EXTRN   _g_clip_xmin:WORD
         EXTRN   _g_clip_ymax:WORD
         EXTRN   _g_clip_xmax:WORD
+        EXTRN   _g_0042:WORD
+        EXTRN   _g_787a:WORD
         EXTRN   _g_5b6a:BYTE
         EXTRN   _g_5b7a:BYTE
 
@@ -164,7 +165,6 @@ _F_1DFD2  ENDP
 ; F_1E0FE(y1, colour)
 
         .DATA
-        EXTRN   _g_clip_ymax:WORD
         EXTRN   _g_5b6a:BYTE
 
         .CODE

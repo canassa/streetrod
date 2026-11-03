@@ -161,7 +161,7 @@ void F_01BAE(void)
     } else
         g_06aa = g_6c4c;
     if (g_7eb8 == 0 && g_6c4c == 7)
-        F_03FF0(0x2a, g_4956);
+        F_03FF0(0x2a, g_4806[42].f0);
     if (g_7eb0 == 0) {
         if (g_6c4c == 10)
             g_47cc = 0x31;

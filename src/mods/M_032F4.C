@@ -3,6 +3,8 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
+int g_4bca[10] = {59, 70, 81, 92, 103, 114, 125, 136, 147, 158};   /* DS:4BCA */
+
 /* insert_entry @ 0000:32F4 (linear 0x032F4, 129 bytes) */
 
 

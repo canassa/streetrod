@@ -405,12 +405,16 @@ def cmd_crtnames(args):
         if row is None:
             continue
         names = [pub for pub, _ in pubs]
-        if row["name"] is None or row["name"] in names:
+        managed = row["kind"] == "crt" and (row["notes"] or "").startswith("MSC 5.1 library module ")
+        if row["name"] is None or row["name"] in names or managed:
             pub, module = pubs[names.index(row["name"])] if row["name"] in names else pubs[0]
             db.update(con, addr, name=pub, kind="crt", status="skip", notes=f"MSC 5.1 library module {module}")
             named += 1
+        # Re-identification must invalidate false historical wrapper aliases.
+        con.execute("DELETE FROM aliases WHERE addr = ?", (addr,))
+        current = con.execute("SELECT name FROM functions WHERE addr = ?", (addr,)).fetchone()[0]
         for pub in names:
-            if pub != row["name"]:
+            if pub != current:
                 aliases += con.execute("INSERT OR IGNORE INTO aliases (addr, name) VALUES (?, ?)", (addr, pub)).rowcount
     con.commit()
     crt = con.execute("SELECT COUNT(*) FROM functions WHERE kind = 'crt'").fetchone()[0]
@@ -686,7 +690,7 @@ def _module_gates(con, im, jobs, rows, results, flags_override=None):
         obj = Obj(job.obj)
         ms = mod.members(con, name)
         procs = ([cod.from_publics(obj, fn_name(m)) for m in ms] if job.asm else cod.parse(job.cod))
-        g = mod.gate(obj, [p for p in procs if p is not None], im.img, ms)
+        g = mod.gate(obj, [p for p in procs if p is not None], im.img, ms, con=con)
         gates[name] = g
         print(g.line(name))
         for m in mod.members(con, name):
@@ -843,9 +847,89 @@ def cmd_module(args):
         print(f"{name}: dissolved into {len(rows)} singletons; run ./sr check on them")
 
 
+def cmd_dgroup(args):
+    from sr.dgroup import Analysis
+    a = Analysis()
+    if args.what == 'report':
+        lo = int(args.names[0], 16) if args.names else 0x42
+        hi = int(args.names[1], 16) if len(args.names) > 1 else 0x629C
+        print(a.summary())
+        try:
+            a.blocks()
+        except ValueError as e:
+            print('!! ' + str(e))
+        print(a.report(lo, hi))
+    elif args.what == 'problems':
+        print(a.summary())
+        print('\n'.join(a.problems()))
+    elif args.what == 'order':
+        print(' '.join(f'{s:05X}' for s in a.order))
+        if args.write:
+            a.write_order()
+            print('written to src/link/LAYOUT.JSON (link_order)')
+    elif args.what == 'register':
+        new = a.register(write=args.write)
+        for off, name, decl in new:
+            print(f'DS:{off:04x} {name} {decl}')
+        print(f'{len(new)} synthesized globals' + (' registered' if args.write else ' (use --write)'))
+        if args.write:
+            gen_headers(a.con)
+    elif args.what == 'aliases':
+        rew, changed = a.apply_aliases(write=args.write)
+        for name, (expr, asm) in rew.items():
+            print(f'{name} -> {expr}   (asm: {asm})')
+        print(f'{len(changed)} source files' + (' rewritten' if args.write else ' would change (use --write)'))
+        if args.write:
+            gen_headers(a.con)
+    elif args.what == 'apply':
+        units = [int(n, 16) for n in args.names] if args.names else []
+        for u in units:
+            changed = a.apply_unit(u, write=args.write)
+            for path, text in changed.items():
+                print(f'{u:05X}: {path.relative_to(config.ROOT)}' + ('' if args.write else ' (dry run)'))
+                if not args.write:
+                    print(text)
+    elif args.what == 'asm':
+        n = a.write_dgroup_asm()
+        print(f'src/data/DGROUP.ASM: {n} records not yet owned by a module')
+    else:
+        raise SystemExit(args.what)
+
+
+def cmd_linkcheck(args):
+    from sr.linkmatch import check
+    raise SystemExit(check(args.executable, args.mapfile, args.output))
+
+
+def cmd_build(args):
+    if args.layout:
+        from sr.linklayout import run as build
+    else:
+        from sr.build import build
+    sys.exit(build(args.prepare_only, args.objects_only))
+
+
 def main():
     p = argparse.ArgumentParser(prog="sr", description="Street Rod decompilation driver")
     sub = p.add_subparsers(dest="cmd", required=True)
+
+    s = sub.add_parser("dgroup", help="recover DGROUP ownership from the data layout; write definitions")
+    s.add_argument("what", choices=["report", "problems", "order", "register", "aliases", "apply", "asm"])
+    s.add_argument("names", nargs="*", help="unit starts (hex) for apply; lo hi for report")
+    s.add_argument("--write", action="store_true")
+    s.set_defaults(func=cmd_dgroup)
+
+    s = sub.add_parser("linkcheck", help="compare the linked MZ binary without masking any bytes")
+    s.add_argument("executable", nargs="?", help="EXE to compare (default work/game/SR.EXE)")
+    s.add_argument("--map", dest="mapfile", help="linker MAP for position/call diagnostics")
+    s.add_argument("--output", help="JSON report path")
+    s.set_defaults(func=cmd_linkcheck)
+
+    s = sub.add_parser("build", help="compile and link the game with MSC 5.1 and MASM 5.1")
+    s.add_argument("--prepare-only", action="store_true", help="write DOS sources, MAKEFILE, BUILD.BAT and LINK.RSP")
+    s.add_argument("--objects-only", action="store_true", help="compile all real objects without linking")
+    s.add_argument("--layout", action="store_true", help="build recovered original code/link layout into work/layout")
+    s.set_defaults(func=cmd_build)
 
     s = sub.add_parser("scan", help="(re)discover functions in the EXE and update the DB")
     s.set_defaults(func=cmd_scan)

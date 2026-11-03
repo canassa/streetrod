@@ -1,6 +1,8 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
+char *g_msgs[7] = {"0", "1", "2", "3", "4", "N", "D"};   /* DS:0482 */
+
 void F_113A2(int y)
 {
     g_8252 = y + 1;

@@ -71,7 +71,7 @@ static void near F_0442B(int tab)
                 if (g_0610 && (long)price6 > g_7eaa)
                     g_7eaa += 1999;
                 if ((long)price6 > g_7eaa) {
-                    p1 = strchr("No go, hot shot. You're $12345 short.", '$');
+                    p1 = strchr(g_3a5a, '$');
                     sprintf(++p1, "%d short.", price6 - (int)g_7eaa);
                     F_03AB8(0xf1a8);
                     break;
@@ -97,7 +97,7 @@ static void near F_0442B(int tab)
             bm1 = F_1934E(0x140, 0x52, 0, 0);
             F_11A72(0, 0x40, 0x140, 0x52, bm1);
             g_colors = g_style->colors;
-            ck = (g_vid.mode == -2 || g_vid.mode == -6) ? g_02cc : g_02be;
+            ck = (g_vid.mode == -2 || g_vid.mode == -6) ? g_02c2[5] : g_02b4[5];
             F_1169A(0, 0x41, 0x140, 0x46, ck);
             F_1169A(0, 0x87, 0x140, 0xa, g_colors.c[1]);
             if (g_vid.mode != -2 && g_vid.mode != -6) {

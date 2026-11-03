@@ -24,6 +24,11 @@ void F_1171C(char *s)
     F_14241(0x1d);
 }
 
+char g_04ac[18] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14, 0, 0};   /* DS:04AC */
+int g_04be = 0;   /* DS:04BE */
+int g_04c0 = 0;   /* DS:04C0 */
+int g_04c2 = 190;   /* DS:04C2 */
+
 /* F_1174E: show a message and wait for a key ("Hit Return when ready ...") */
 
 

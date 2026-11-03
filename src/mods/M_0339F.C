@@ -7,6 +7,10 @@ static int near score_index(void);
 static int near entry_beats_score(int i);
 static void near insert_entry(int pos);
 
+struct Colors g_4be2 = {{3, 5, 5, 4, 1}};   /* DS:4BE2 */
+struct Colors g_4be8 = {{3, 4, 4, 3, 1}};   /* DS:4BE8 */
+char g_4bed = 0;   /* DS:4BED */
+
 void F_0339F(int add)
 {
     char buf3[16];

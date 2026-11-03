@@ -21,6 +21,20 @@ static void near F_00659(void)
         g_82c6 = 0;
 }
 
+int g_0280 = 0;   /* DS:0280 */
+int g_0282 = 0;   /* DS:0282 */
+int g_0284 = 0;   /* DS:0284 */
+int g_0286 = 0;   /* DS:0286 */
+long g_288 = 0L;   /* DS:0288 */
+struct Bitmap far *g_028c = 0;   /* DS:028C */
+struct Bitmap far *g_0290 = 0;   /* DS:0290 */
+struct Bitmap far *g_0294 = 0;   /* DS:0294 */
+int g_0298[7] = {0, 19, 31, 29, 0, 0, 30};   /* DS:0298 */
+int g_02a6[7] = {0, 0, 8, 0, 0, 0, 9};   /* DS:02A6 */
+int g_02b4[7] = {0, 2, 0, 2, 0, 0, 0};   /* DS:02B4 */
+int g_02c2[7] = {0, 3, 1, 3, 0, 3, 1};   /* DS:02C2 */
+int g_02d0 = 0;   /* DS:02D0 */
+
 /* F_0066F @ 0000:066F (linear 0x0066F, 580 bytes) */
 
 

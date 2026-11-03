@@ -6,7 +6,7 @@
 
 static int near F_005C6(void)
 {
-    unsigned long count;
+    long count;
     long prev;
 
     count = 0;
@@ -16,7 +16,7 @@ static int near F_005C6(void)
     prev = *(long far *)0x0000046cL;
     while (prev == *(long far *)0x0000046cL)
         count++;
-    count %= 95;
-    count %= 10;
-    return (long)count > 1 ? (int)count : 1;
+    count /= 95;
+    count /= 10;
+    return count > 1 ? (int)count : 1;
 }

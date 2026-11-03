@@ -366,7 +366,7 @@ void F_131B5(struct Car *car)
         if (type = g_8290[1]) {
             g_82ae = 1;
             F_12DD8(type, 0);
-            slot = g_078c[g_4808[car->rack.s[1]->idx].kind];
+            slot = g_078c[((struct Row8 *)((char *)g_4806 + 2))[car->rack.s[1]->idx].kind];
             for (type = 0; type < 3; type++) {
                 g_82ae = slot++;
                 if (other = g_8290[type + 2])

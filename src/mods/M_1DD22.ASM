@@ -13,8 +13,91 @@
 
         .DATA
         EXTRN   _g_0042:WORD
-        EXTRN   _g_787a:WORD
-        EXTRN   _g_5b56:BYTE
+        ; data (recovered DGROUP layout)
+        PUBLIC _g_5b56
+_g_5b56 LABEL BYTE ; +5B56 char @[4]
+        DB 00h
+        DB 055h
+        DB 0AAh
+        DB 0FFh
+        PUBLIC _g_5b5a
+_g_5b5a LABEL BYTE ; +5B5A char @[16]
+        DB 00h
+        DB 00h
+        DB 02h
+        DB 00h
+        DB 03h
+        DB 01h
+        DB 02h
+        DB 01h
+        DB 01h
+        DB 01h
+        DB 02h
+        DB 01h
+        DB 02h
+        DB 01h
+        DB 01h
+        DB 03h
+        PUBLIC _g_5b6a
+_g_5b6a LABEL BYTE ; +5B6A char @[16]
+        DB 00h
+        DB 00h
+        DB 055h
+        DB 0EEh
+        DB 0FFh
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 055h
+        DB 077h
+        DB 0AAh
+        DB 00h
+        DB 0AAh
+        DB 055h
+        DB 0AAh
+        DB 0AAh
+        PUBLIC _g_5b7a
+_g_5b7a LABEL BYTE ; +5B7A char @[16]
+        DB 00h
+        DB 00h
+        DB 055h
+        DB 0BBh
+        DB 0FFh
+        DB 00h
+        DB 00h
+        DB 00h
+        DB 055h
+        DB 0DDh
+        DB 0AAh
+        DB 00h
+        DB 0AAh
+        DB 055h
+        DB 0AAh
+        DB 0AAh
+        EVEN
+        PUBLIC _g_5b8a
+_g_5b8a LABEL BYTE ; +5B8A long @[15]
+        DD 021A004ABh
+        DD 021A007ACh
+        DD 021A00358h
+        DD 021A00964h
+        DD 0E6C0002h
+        DD 021A00C09h
+        DD 021A00A4Fh
+        DD 0F380B2Dh
+        DD 0F380B3Fh
+        DD 021A00D62h
+        DD 021A00C26h
+        DD 0F38A87Eh
+        DD 02487000Ah
+        DD 024870257h
+        DD 024870309h
+
+
+
+
+
+
 
         .CODE
 

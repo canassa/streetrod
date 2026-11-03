@@ -109,6 +109,8 @@ static int near F_05EB3(char *p)
     return 1;
 }
 
+char g_501d = 0;   /* DS:501D */
+
 /* F_05EEA @ 0000:5EEA (linear 0x05EEA, 1332 bytes) */
 
 

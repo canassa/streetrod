@@ -8,6 +8,8 @@ static void near F_098BA(int);
 static int near F_09556(void);
 static void near F_092A4(int, int, int, int, int, int *);
 
+int g_51f8 = -1;   /* DS:51F8 */
+
 /* F_09524 @ 0000:9524 (linear 0x09524, 50 bytes) */
 
 

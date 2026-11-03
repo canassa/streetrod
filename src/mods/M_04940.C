@@ -2,6 +2,8 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
+char *g_4fa4 = g_3bf9;   /* DS:4FA4 */
+
 /* F_04940 @ 0000:4940 (linear 0x04940, 98 bytes) */
 
 

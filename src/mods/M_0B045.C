@@ -17,14 +17,14 @@ static void near F_0B045(int id, char c)
 
     h = g_20aa;
     if (id == 14)
-        g_20aa[0].f4 = "Wanna quit ?" - g_239e;
+        g_20aa[0].f4 = g_28ec - g_239e;
     else
-        h->f4 = "Back to the garage" - g_239e;
+        h->f4 = g_28f9 - g_239e;
     h[1].f0 = id;
     h[2].f0 = id;
     h[3].f0 = id;
     h[4].f0 = id;
-    *g_57e9 = c;
+    *(*(char * *)&g_579f[37]) = c;
 }
 
 /* F_0B08C @ 0000:B08C (linear 0x0B08C, 829 bytes) */

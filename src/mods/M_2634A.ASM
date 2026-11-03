@@ -10,7 +10,6 @@
 
         .CODE
 
-        ORG     0Ah
 
         PUBLIC  _F_2634A
 _F_2634A  PROC    FAR
