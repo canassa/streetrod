@@ -24,7 +24,11 @@ static struct Car * near F_04036(int idx, int weight, struct Car *old)
     car->f4 = i;
     car->f1f = 1;
     car->f20 = random_int(13) - 8;
-    car->slot6 = node = (old == 0) ? F_03C1B() : car->slot6;
+    if (old == 0)
+        node = F_03C1B();
+    else
+        node = car->slot6;
+    car->slot6 = node;
     {
     unsigned *q;
 
@@ -40,20 +44,32 @@ static struct Car * near F_04036(int idx, int weight, struct Car *old)
     node->a = g_4806[w].f0;
     node->b = g_4966[1];
     node->next = 0;
-    car->rack.s[0] = node = (old == 0) ? F_03C1B() : car->rack.s[0];
+    if (old == 0)
+        node = F_03C1B();
+    else
+        node = car->rack.s[0];
+    car->rack.s[0] = node;
     w = (*q >> 8 & 7) * 3 + kind;
     node->idx = w;
     node->a = g_4806[w].f0;
     node->b = g_4966[0];
     node->next = 0;
-    car->slot12 = node = (old == 0) ? F_03C1B() : car->slot12;
+    if (old == 0)
+        node = F_03C1B();
+    else
+        node = car->slot12;
+    car->slot12 = node;
     w = (*q >> 4 & 3) + 0x28;
     node->idx = w;
     node->a = g_4806[w].f0;
     node->b = g_4966[4];
     node->next = 0;
     }
-    car->rack.s[1] = node = (old == 0) ? F_03C1B() : car->rack.s[1];
+    if (old == 0)
+        node = F_03C1B();
+    else
+        node = car->rack.s[1];
+    car->rack.s[1] = node;
     for (i = 3; i < 9; i++)
         car->b16[i] = 0;
     wd2 = g_7d88[idx].f2;

@@ -147,9 +147,7 @@ static int near F_0C613(void)
             F_0C497();
             F_120FE(-2);
             i = kind == 5 ? 0x143a : 0x1427;
-            if (g_7d40)
-                i = g_7ec0 == 0 ? 0x1450 : 0x146c;
-            F_03AB8(i);
+            F_03AB8(g_7d40 == 0 ? i : g_7ec0 == 0 ? 0x1450 : 0x146c);
             F_13F21(1);
             if (kind != 5)
                 return 3;
@@ -238,7 +236,7 @@ ret2:
                     g_7eb0 = 0;
                     break;
                 default:
-                    return i;
+                    return;
                 }
             }
         }

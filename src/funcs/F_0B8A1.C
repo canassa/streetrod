@@ -184,7 +184,7 @@ top:
             break;
         case 3:
             F_03AB8(0x10f6);
-            break;
+            continue;
         case 5:
             break;
         case 6:
