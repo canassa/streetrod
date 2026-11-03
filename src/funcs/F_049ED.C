@@ -45,7 +45,8 @@ static int near F_049ED(void)
             return 0;
         case -1:
             g_4f48 = tbl[item = F_14C8B()];
-            if (g_4f48 != (g_4f46 = g_7eb0)) {
+            g_4f46 = g_7eb0;
+            if (g_4f48 != g_4f46) {
                 if (item == ((g_7eb0 != 0) + 1))
                     g_7eb2 = g_4f48->f26;
                 else

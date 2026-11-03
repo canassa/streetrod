@@ -18,12 +18,12 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 | `tools/sr/omf.py` | OBJ segments, data, fixups with their targets, publics, externs (incl. MSC's LEXTDEF/LPUBDEF for statics) |
 | `tools/sr/cod.py` | `/Fc` listing: procedure start/end and the locals layout; `from_publics` gives the extent of an assembled function |
 | `tools/sr/match.py` | byte compare (fixups masked, near calls out of the function counted separately) and the two-column diff |
-| `tools/sr/lib.py` | finds MSC library modules in the EXE (`crtnames`) |
+| `tools/sr/lib.py` | finds MSC library modules in the EXE (`crtnames`); `locate` returns every public at an address, since a module can publish two names for one offset (`__aFlmul` = `__aFulmul`) |
 | `tools/sr/refs.py` | resolves every fixup to its symbol and checks it against the original instruction |
 | `tools/sr/headers.py` | generates `GLOBALS.H` / `PROTOS.H` from the DB |
 | `tools/sr/layout.py` | the MSC 5.1 local-layout rule (`./sr layout`): bucket hash, block slot reuse, `/Ol` variant, rename suggestions |
 | `tools/sr/lint.py` | the CLAUDE.md rule 4 lint, plus missing-prototype warnings from `/W3` |
-| `tools/sr/db.py` | SQLite schema and helpers |
+| `tools/sr/db.py` | SQLite schema and helpers; the `aliases` table (filled by `crtnames`) holds the extra library names of a function, and `refs` accepts any of them for a call |
 
 ## Rules
 

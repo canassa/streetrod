@@ -276,3 +276,20 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - `/Ol` ignores goto-built loops. That explains `0x29170`, where one loop is in registers and the other is not. Inside an `if (y < f)` guard, `do ... while (++y < f)` gives the original's layout with no `jmp` to the test.
 - Test scripts: `work/op/try.sh ADDR VARIANT.C...` (installs each variant, checks it, then restores the source) and `work/op/run.sh DIR` (small `qqfn` tests). Watch out: when a variant matches, `try.sh` sets the function's status to matched, so put it back with `./sr mark` afterwards (that happened to `0x23C3B`).
 - Another session is editing `src/funcs/F_0AB8B.C` at the same time. My `g_cursor` sed ran into its local-variable rename (`r` became `rival`), and I repaired that one line by hand.
+
+## 2026-11-03 12:15 CET: CRT aliases, three matches, cross-jump and deferral rules
+
+### What I did
+- Fixed the one thing failing `0x0238C`: the refs check now knows library aliases. `crtnames` keeps every public a module gives an address (new `aliases` table, 11 rows: `aFlmul`, `aFNaldiv`/`aFNalrem`/`aFNauldiv`, `flushall`, ...) and `refs` accepts any of them for a call. Gate 551/551 after the change.
+- Matched `0x23C3B` (the `r->sx / 8` CSE plus a code-less `if (p > 40) ;` before the loop: any empty `if` or an unused label works, no pragma does; the condition is a guess, review item) and `0x0B8A1` (`case 3` ends in `continue`).
+- `0x0C613` from 663 mismatched bytes (+8) to 123 at the exact size: `F_03AB8(g_7d40 == 0 ? i : ...)` passes `i` from `ax`, and the switch's no-match path is a bare `return;`. `0x04036` from 526 to 18: the four node ternaries as if/else (an `if` between two uses ends the `*q` CSE). `0x049ED` 31 to 30: `g_4f46 = g_7eb0;` as its own statement. Notes on each in the DB.
+- Measured on small generated functions (`work/bp/cj`, `work/bp/fp`): which copy of a merged tail survives cross-jumping, what flushes a deferred else, that `default: return;` written first leaves no code, and how MSC orders the operands of a float compare. Rows in the recipe book; the open points are in its "Open questions".
+- Helpers in `work/op`: `tryv.sh ADDR V.C...` checks variants and restores the source and status, `diffv.sh ADDR V.C [--full]` diffs one, `regions.py ADDR V.C...` prints a diff as address ranges (block moves show as shifted ranges, so read them with the diff). `work/bp/x2.py DIR FLAGS...` prints small-test listings; name the files `T*.C` (8.3 names).
+- The project is now a git repository, pushed to a private GitHub repo (`canassa/streetrod`); `work/` and the SQLite side files are ignored.
+
+### What I learned
+- Cross-jumping keeps the copy that falls through into the join; when every copy jumps, the first generated one. A `case` followed only by empty cases is a fall-through copy. `0x0C613`'s original keeps later copies three times over, which this rule cannot produce from any structure tried: open question.
+- A deferred `else` is flushed at the next `return` statement; `goto`, `break`, pragmas and the `je +3; jmp` long form of a conditional `goto` do not flush it. A `?:` inside an argument did flush it once (`0x0C613` `r1`), so "unconditional jump" is not the whole rule.
+- A code-less `if` before a loop stops `/Ol` from giving a CSE a slot; between two uses it kills the CSE. The same construct therefore cuts both ways (`0x23C3B`, `0x04036`).
+- The slot a block-scoped local leaves behind is reused by `/Ol` loop temps only after another *declared* block at the same level has closed; plain braces and labels do nothing (`0x04036`, still one slot off).
+- Under `/FPi` MSC evaluates the product of a float relational first and uses `ficom` for a plain int operand on either side; nothing but `/FPc` gives the original's left-to-right order in `0x049ED`.

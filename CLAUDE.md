@@ -18,7 +18,7 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 
 ```
 ./sr scan                      # rediscover functions in the EXE, update the DB (keeps names/status/src)
-./sr crtnames                  # name CRT functions by locating MSC 5.1 library modules in the EXE
+./sr crtnames                  # name CRT functions by locating MSC 5.1 library modules in the EXE (also records their aliases)
 ./sr list [-s todo] [-k c] [--seg 0f38] [-r 10d6c-168f2] [--max 100] [--by-size]
 ./sr next [--near ADDR]        # todo C functions, smallest first, or nearest to ADDR (same module)
 ./sr show ADDR|NAME [-b]       # annotated disassembly: callers, callees, strings, named globals
@@ -74,7 +74,7 @@ MSC 5.1 assigns stack slots to locals in an order set by a hash of the identifie
 Every `.C` includes `GLOBALS.H` and `PROTOS.H` (in `src/include/`, generated from the DB) and declares nothing itself:
 
 - **Globals:** `./sr global OFF NAME --decl "TYPE @"`. One name per DGROUP offset, project-wide.
-- **Far functions:** `./sr proto ADDR "TYPE @(ARGS)"`. A call without a prototype fails the check (MSC's C4071 at `/W3`).
+- **Far functions:** `./sr proto ADDR "TYPE @(ARGS)"`. A call without a prototype fails the check (MSC's C4071 at `/W3`). A CRT function may have several library names (`aFlmul`/`aFulmul`); `crtnames` records them in the `aliases` table and `refs` accepts any.
 - **Struct types:** `src/include/STRUCTS.H`, hand-written, one definition per type.
 - **Allowed in a `.C`:** standard MSC headers, and `static ... near` forward declarations of module-mates.
 - **Asm:** `EXTRN` names must be the DB names (the `refs` check enforces it).
