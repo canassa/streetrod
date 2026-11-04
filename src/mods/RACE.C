@@ -244,9 +244,9 @@ static void near leave_station(struct Dlg *d)
         cursor_ctl(-1);
         carpic_patch_bg(p, 0x60, 0, 0x30, 0x40, 0xc8, 0x51, 0xa9, 2);
     }
-    a_7eaap.m7eb0->f22 = a_7eaap.m7eb0->f22 > 0xaa ? 0xaa : a_7eaap.m7eb0->f22;
-    F_181C8(2, d->f0, d->f2, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0xa9, 1,
-            g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].variant]);
+    a_7eaap.m7eb0->fuel = a_7eaap.m7eb0->fuel > 0xaa ? 0xaa : a_7eaap.m7eb0->fuel;
+    F_181C8(2, d->f0, d->f2, (a_7eaap.m7eb0->appearance >> 8) & 0x1f, 0, 0xa9, 1,
+            g_5030[g_4806[a_7eaap.m7eb0->tires->idx].variant]);
     menu_pop(1);
     marks_clear();
     g_scene = 1;
@@ -272,10 +272,10 @@ void race_gas_station(void)
     (*m_present)();
     dl.f0c = 1;
     cursor_ctl(1);
-    dl.f0 = a_7eaap.m7eb0->f2;
+    dl.f0 = a_7eaap.m7eb0->specIndex;
     dl.f2 = game_car_look(a_7eaap.m7eb0);
-    F_181C8(4, dl.f0, dl.f2, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0xa9, 1,
-            g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].variant]);
+    F_181C8(4, dl.f0, dl.f2, (a_7eaap.m7eb0->appearance >> 8) & 0x1f, 0, 0xa9, 1,
+            g_5030[g_4806[a_7eaap.m7eb0->tires->idx].variant]);
     F_16381(0);
     label = popup_grab(0x50, 0xaa, 0x28, 0xc, 0);
     dl.bm1 = popup_grab(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
@@ -293,7 +293,7 @@ void race_gas_station(void)
     dl.f10 = 1;
     dl.f16 = 0;
     dl.f18 = 1;
-    dl.f0e = (0xbe - a_7eaap.m7eb0->f22) / 0x1e;
+    dl.f0e = (0xbe - a_7eaap.m7eb0->fuel) / 0x1e;
     show_tank_cap(&dl, 0x472);
     spots_idle();
     menu_push(0x17);
@@ -309,7 +309,7 @@ top:
                 goto top;
             if (dl.f1a) {
                 dl.f0e--;
-                a_7eaap.m7eb0->f22 += 0x1e;
+                a_7eaap.m7eb0->fuel += 0x1e;
                 done = 1;
                 F_11540(-(pos <= a_7eaap.m7eaa ? pos : (int)a_7eaap.m7eaa));
                 if (dl.f0e == 0 || pos > a_7eaap.m7eaa) {
@@ -446,11 +446,11 @@ static int near replace_tires(void)
     ret = 0;
     if (a_7eaap.m7eb0 == 0)
         return 0;
-    a_7eaap.m7eb0->value -= game_take_part(a_7eaap.m7eb0->slot12, 0);
-    a_7eaap.m7eb0->slot12 = 0;
+    a_7eaap.m7eb0->value -= game_take_part(a_7eaap.m7eb0->tires, 0);
+    a_7eaap.m7eb0->tires = 0;
     F_076A7(4, tbl, 0, 0);
     if (g_list[0]) {
-        F_07741(F_077B7(tbl[1]), &a_7eaap.m7eb0->slot12);
+        F_07741(F_077B7(tbl[1]), &a_7eaap.m7eb0->tires);
     } else {
         a_7eaap.m7eaa -= 0x32;
         if (a_7eaap.m7eaa < 0) {
@@ -460,7 +460,7 @@ static int near replace_tires(void)
         game_add_part(0x28, g_4806[40].value);
         tbl[0] = a_7eaap.m7eb8;
         a_7eaap.m7eb8 = tbl[0]->next;
-        F_07741(tbl[0], &a_7eaap.m7eb0->slot12);
+        F_07741(tbl[0], &a_7eaap.m7eb0->tires);
     }
     return ret;
 }
@@ -506,7 +506,7 @@ static void near show_ticket(void)
     *p2 = 0;
     (*a_78aem)(r_vid.back, 0x5e, 0x48, g_driverName);
     *p2 = d;
-    desc3 = g7d86n[a_7eaap.m7eb0->f2].f6;
+    desc3 = g7d86n[a_7eaap.m7eb0->specIndex].f6;
     endk = desc3 + strcspn(g_descHdr + desc3 + 8, " `.") + 7;
     for (p2 = g_descHdr + desc3 + 1, wk = 0; *p2 && wk < maxw2; p2++)
         wk += g_font[*p2 - 32].w;
@@ -621,7 +621,7 @@ static void near blow_engine(int n)
             a_7eaap.m7eb0->value -= game_take_part(*p, 0);
             *p = 0;
         }
-        for (i = 0, q = a_7eaap.m7eb0->b16; i < 9; i++)
+        for (i = 0, q = a_7eaap.m7eb0->engineBolts; i < 9; i++)
             *q++ = 0;
         a_7eaap.m7eb0->f1f = 0;
     }
@@ -638,9 +638,9 @@ static void near drop_transmission(int n)
     int i;
 
     if (a_7eaap.m7eb0) {
-        a_7eaap.m7eb0->value -= game_take_part(a_7eaap.m7eb0->slot6, 0);
-        a_7eaap.m7eb0->slot6 = 0;
-        for (i = 0, q = a_7eaap.m7eb0->b14; i < 2; i++)
+        a_7eaap.m7eb0->value -= game_take_part(a_7eaap.m7eb0->transmission, 0);
+        a_7eaap.m7eb0->transmission = 0;
+        for (i = 0, q = a_7eaap.m7eb0->transmissionBolts; i < 2; i++)
             *q++ = 0;
     }
     sys_reset_queues();
@@ -680,12 +680,12 @@ int near race_outcome(void)
     engine = g_driveEng.fbc & 4;
     opt = g_driveEng.fbc & 0x10;
     stop = g_driveEng.fbc == 5 || g_driveEng.fbc == 0x11 || g_driveEng.fbc == 0x15;
-    if (a_7eaap.m7eb0->slot6->wear > 9900)
-        a_7eaap.m7eb0->slot6->wear = 9900;
+    if (a_7eaap.m7eb0->transmission->wear > 9900)
+        a_7eaap.m7eb0->transmission->wear = 9900;
     if (a_7eaap.m7eb0->rack.parts[0]->wear > 9900)
         a_7eaap.m7eb0->rack.parts[0]->wear = 9900;
-    if (a_7eaap.m7eb0->slot12->wear > 9900)
-        a_7eaap.m7eb0->slot12->wear = 9900;
+    if (a_7eaap.m7eb0->tires->wear > 9900)
+        a_7eaap.m7eb0->tires->wear = 9900;
     bo7676 = 0;
     g_statsDone = 0;
     b_82bc = 0;
@@ -697,10 +697,10 @@ int near race_outcome(void)
         g_driveEng.fbc |= 8;
     menu_push(1);
     i = a_7eaap.m7ec0 == 0 ? 5 : 15;
-    if (a_7eaap.m7eb0->f22 > i)
-        a_7eaap.m7eb0->f22 -= i;
+    if (a_7eaap.m7eb0->fuel > i)
+        a_7eaap.m7eb0->fuel -= i;
     else
-        a_7eaap.m7eb0->f22 = 0;
+        a_7eaap.m7eb0->fuel = 0;
     (*m_present)();
     if (g_oppEngState.fbc & 1) {
         bo7676 = 1;
@@ -710,14 +710,14 @@ int near race_outcome(void)
         F_11540(v);
         if (kind == 5) {
             found = game_make_car(bn7648, g_oppSpecPointer->f0, 0);
-            found->slot12->wear = random_int(500);
-            found->f24 = ((g7d84o->ff & 0x1f) << 8) | (found->f24 & 0xe0ff);
-            found->f24 = (((g7d84o->fe & 4) != 0 & 1) << 13) | (found->f24 & 0xdfff);
-            found->f24 = (((g7d84o->fe & 2) != 0 & 1) << 14) | (found->f24 & 0xbfff);
-            found->f24 = (((g7d84o->fe & 1) != 0 & 1) << 15) | (found->f24 & 0x7fff);
-            found->f4 = g7d84o->fa;
-            if (found->f5 > a_7eaap.m7eb0->f5) {
-                a_7eaap.m7eb0->f26 = a_7eaap.m7eb2->f26;
+            found->tires->wear = random_int(500);
+            found->appearance = ((g7d84o->ff & 0x1f) << 8) | (found->appearance & 0xe0ff);
+            found->appearance = (((g7d84o->fe & 4) != 0 & 1) << 13) | (found->appearance & 0xdfff);
+            found->appearance = (((g7d84o->fe & 2) != 0 & 1) << 14) | (found->appearance & 0xbfff);
+            found->appearance = (((g7d84o->fe & 1) != 0 & 1) << 15) | (found->appearance & 0x7fff);
+            found->paintScheme = g7d84o->fa;
+            if (found->modelKind > a_7eaap.m7eb0->modelKind) {
+                a_7eaap.m7eb0->next = a_7eaap.m7eb2->next;
                 a_7eaap.m7eb2 = a_7eaap.m7eb0;
                 a_7eaap.m7eb0 = found;
                 perf_drivetrain(a_7eaap.m7eb0, &g_driveEng);
@@ -933,7 +933,7 @@ void near race_reset_eng(struct Eng *p)
     g_05d8 = g_05da = 0;
     bz8630z = -1;
     g_finishLineIndex = a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc;
-    car = a_7eaap.m7eb0->slot12;
+    car = a_7eaap.m7eb0->tires;
     p->fc = g_tireSlip[g_4806[car->idx].variant][car->wear / 2000];
     if (car->wear < 8000)
         p->fa = 0;
@@ -1013,14 +1013,14 @@ void near race_run(void)
     F_11593(g_49dc);
     if (ao7d2ev.m7d30 > 200) {
         if (random_int(3) > 0) {
-            if (a_7eaap.m7eb0->f20 > 0)
-                a_7eaap.m7eb0->f20 = a_7eaap.m7eb0->f20 < random_int(4) ? random_int(4) : a_7eaap.m7eb0->f20;
-            else if (a_7eaap.m7eb0->f20 < 0)
-                a_7eaap.m7eb0->f20 = -random_int(8) < a_7eaap.m7eb0->f20 ? -random_int(8) : a_7eaap.m7eb0->f20;
+            if (a_7eaap.m7eb0->timing > 0)
+                a_7eaap.m7eb0->timing = a_7eaap.m7eb0->timing < random_int(4) ? random_int(4) : a_7eaap.m7eb0->timing;
+            else if (a_7eaap.m7eb0->timing < 0)
+                a_7eaap.m7eb0->timing = -random_int(8) < a_7eaap.m7eb0->timing ? -random_int(8) : a_7eaap.m7eb0->timing;
             else
-                a_7eaap.m7eb0->f20 = random_int(8) - 4;
+                a_7eaap.m7eb0->timing = random_int(8) - 4;
         }
-        slot = a_7eaap.m7eb0->slot12;
+        slot = a_7eaap.m7eb0->tires;
         slot->wear += (g_4806[slot->idx].variant == 0 ? (a_7eaap.m7ec0 == 1 ? 700 : 300) : (a_7eaap.m7ec0 == 1 ? 400 : 200)) + random_int(300);
         if (slot->wear > 10000)
             slot->wear = 10000;

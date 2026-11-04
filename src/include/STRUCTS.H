@@ -76,20 +76,20 @@ struct Rack {
 
 struct Car {
     int value;
-    int f2;
-    char f4;
-    unsigned char f5;
-    struct Node *slot6;
+    int specIndex;
+    char paintScheme;
+    unsigned char modelKind;
+    struct Node *transmission;
     struct Rack rack;
-    struct Node *slot12;
-    char b14[2];
-    char b16[9];
+    struct Node *tires;
+    char transmissionBolts[2];
+    char engineBolts[9];
     char f1f;
-    signed char f20;
+    signed char timing;
     char pad21;
-    int f22;
-    unsigned f24;    /* bits 8-12 paint shade (F_06B06), 13 roof chopped, 14 front and 15 rear bumper stripped */
-    struct Car *f26;
+    int fuel;
+    unsigned appearance;    /* bits 8-12 paint shade (F_06B06), 13 roof chopped, 14 front and 15 rear bumper stripped */
+    struct Car *next;
 };
 
 struct Node2 {

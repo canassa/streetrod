@@ -1198,7 +1198,7 @@ void interrupt far sys_drive_isr(void)
                 }
                 if (g_driveEng.fe > 5000) {
                     a_7eaap.m7eb0->rack.parts[0]->wear += !a_7eaap.m7ec0 ? 1 : 1;
-                    a_7eaap.m7eb0->slot6->wear += !a_7eaap.m7ec0 ? 1 : 1;
+                    a_7eaap.m7eb0->transmission->wear += !a_7eaap.m7ec0 ? 1 : 1;
                 }
                 if (!(g_0600 & (!a_7eaap.m7ec0 ? 0xf : 0xf)))
                     a_7eaap.m7eb0->rack.parts[0]->wear++;
@@ -1227,9 +1227,9 @@ void interrupt far sys_drive_isr(void)
                     (g_driveEng.f20 && g_driveEng.f24 > 1 &&
                      ((flag && g_driveEng.fe > g_driveEng.f22 && g_driveEng.f18 < g_driveEng.f1c) ||
                       (!flag && g_driveEng.f18 > 1 && !g_driveEng.f42)))) {
-                    a_7eaap.m7eb0->slot6->wear += g_driveEng.fe > 5000 ? 15 : 3;
+                    a_7eaap.m7eb0->transmission->wear += g_driveEng.fe > 5000 ? 15 : 3;
                     if (g_demo == 0) {
-                        i = a_7eaap.m7eb0->slot6->wear;
+                        i = a_7eaap.m7eb0->transmission->wear;
                         if (i >= 9900 ||
                             (g_driveEng.f20 == 0 && flag && g_driveEng.fe > 5000 &&
                              i / 100 + 100 > random_int(3277))) {

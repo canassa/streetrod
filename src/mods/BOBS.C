@@ -256,7 +256,7 @@ static void near build_rival_pool(int flag)
     for (k = 0; k < 21; k++) {
         item = &g7d86n[av7ff8[k].f8];
         map[k].dr = abs(F_0E218(av7ff8[k].f8) - F_0E218(-1));
-        map[k].dk = abs(g7d86n[av7ff8[k].f8].f2 - g7d86n[a_7eaap.m7eb0->f2].f2);
+        map[k].dk = abs(g7d86n[av7ff8[k].f8].f2 - g7d86n[a_7eaap.m7eb0->specIndex].f2);
         map[k].taken = (av7ff8[k].fb != -1) ? 0 : 1;
     }
     g_poolCount = 0;
@@ -433,7 +433,7 @@ static int near accepts_bet(int kind)
 calc:
     chm = g7d84o->f0;
     p18 = spec_class(bn7648);
-    p27 = spec_class(a_7eaap.m7eb0->f2);
+    p27 = spec_class(a_7eaap.m7eb0->specIndex);
     clsl = (g_oppSpecPointer->f4 >> 8) & 7;
     item1 = g_4806[a_7eaap.m7eb0->rack.parts[0]->idx].variant;
     v11 = ag8baey[chm][row];
@@ -446,9 +446,9 @@ calc:
     else
         c6 = 1;
     scorel = g_acceptProbability[col][c6];
-    if ((a_7eaap.m7eb0->f24 & 0x1f00) == 0)
+    if ((a_7eaap.m7eb0->appearance & 0x1f00) == 0)
         bonus2 = 0;
-    else if (a_7eaap.m7eb0->f24 & 0x100)
+    else if (a_7eaap.m7eb0->appearance & 0x100)
         bonus2 = 4;
     else
         bonus2 = 6;
@@ -491,7 +491,7 @@ static int near challenge(int arg)
             break;
         case 0:
             if (g_kingDragWon == 0) {
-                if (a_7eaap.m7eb0->f22 < 22) {
+                if (a_7eaap.m7eb0->fuel < 22) {
                     game_message(0x1761);
                     return 0;
                 }
@@ -511,7 +511,7 @@ static int near challenge(int arg)
         marks_release();
         return 0;
     }
-    if (a_7eaap.m7eb0->f22 < 7) {
+    if (a_7eaap.m7eb0->fuel < 7) {
         game_message(0x1761);
         return 0;
     }
@@ -534,7 +534,7 @@ static int near challenge(int arg)
         game_message(0x122c);
         goto quit;
     }
-    if (a_7eaap.m7ec0 == 1 && a_7eaap.m7eb0->f22 < 17) {
+    if (a_7eaap.m7ec0 == 1 && a_7eaap.m7eb0->fuel < 17) {
         game_message(0x1761);
         goto quit;
     }
@@ -675,8 +675,8 @@ static void near pop_rival_hood(void)
 
     marks_release();
     pict = popup_grab(0x60, 9, 200, 143, 0);
-    chassis.slot6 = &n1;
-    chassis.slot12 = &na;
+    chassis.transmission = &n1;
+    chassis.tires = &na;
     for (n = 0; n < 5; n++)
         chassis.rack.parts[n] = &nodes[n];
     game_make_car(bn7648, 0, &chassis);

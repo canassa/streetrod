@@ -202,16 +202,16 @@ static int near write_cars(int handle, struct Car *c, int flag)
     unsigned n;
 
     while (c) {
-        if (_dos_write(handle, c, 0x28, &n) != 0 || n != 0x28 || write_nodes(handle, c->slot6))
+        if (_dos_write(handle, c, 0x28, &n) != 0 || n != 0x28 || write_nodes(handle, c->transmission))
             return 1;
         for (i = 0; i < 5; i++)
             if (write_nodes(handle, c->rack.parts[i]))
                 return 1;
-        if (write_nodes(handle, c->slot12))
+        if (write_nodes(handle, c->tires))
             return 1;
         if (flag)
             return 0;
-        c = c->f26;
+        c = c->next;
     }
     return 0;
 }
@@ -231,25 +231,25 @@ static int near read_cars(int handle, struct Car **head, int flag)
         return 0;
     *head = 0;
     for (;;) {
-        if (_dos_read(handle, &buf, 0x28, &n) != 0 || n != 0x28 || read_nodes(handle, &buf.slot6))
+        if (_dos_read(handle, &buf, 0x28, &n) != 0 || n != 0x28 || read_nodes(handle, &buf.transmission))
             return 1;
         for (m = 0; m < 5; m++)
             if (read_nodes(handle, &buf.rack.parts[m]))
                 return 1;
-        if (read_nodes(handle, &buf.slot12))
+        if (read_nodes(handle, &buf.tires))
             return 1;
         car = (struct Car *)game_new_car();
         *car = buf;
         if (prev) {
-            prev->f26 = car;
+            prev->next = car;
             prev = car;
         } else
             *head = prev = car;
-        if (prev->f26 == 0)
+        if (prev->next == 0)
             break;
         if (flag)
             break;
-        prev->f26 = 0;
+        prev->next = 0;
     }
     return 0;
 }
@@ -361,7 +361,7 @@ int near savegame_load(void)
     }
     _dos_close(fd7);
     if (a_7eaap.m7eb0)
-        F_067CF(a_7eaap.m7eb0->f4);
+        F_067CF(a_7eaap.m7eb0->paintScheme);
     road_build_layout(g_roadLayout);
     g_0604 = g_0600 - delta;
     cursor_ctl(-2);
