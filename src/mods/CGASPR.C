@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include "STRUCTS.H"
 #include "CGASPR.H"
+#include "BOBS.H"
 #include "CGABLT.H"
-#include "M_00000.H"
-#include "M_0914C.H"
+#include "MAIN.H"
 #include "M_10B7C.H"
-#include "M_1947A.H"
+#include "SPRITE.H"
 
 #pragma intrinsic(inp)
 

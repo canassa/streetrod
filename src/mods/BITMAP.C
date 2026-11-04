@@ -2,15 +2,15 @@
 #include <dos.h>
 #include "STRUCTS.H"
 #include "BITMAP.H"
-#include "M_00000.H"
-#include "M_036A8.H"
+#include "ARENA.H"
+#include "CARHOP.H"
+#include "CARPIC.H"
+#include "DISK.H"
+#include "MAIN.H"
+#include "MARKS.H"
+#include "MEM.H"
 #include "M_0F38A.H"
 #include "M_10B7C.H"
-#include "M_15396.H"
-#include "M_174A6.H"
-#include "M_18BDC.H"
-#include "M_1923C.H"
-#include "M_193D4.H"
 
 /* bitmap_copy @ 0F38:AB50 (linear 0x19ED0, 114 bytes)
 

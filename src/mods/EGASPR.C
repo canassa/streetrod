@@ -1,11 +1,11 @@
 #include "STRUCTS.H"
 #include "EGASPR.H"
+#include "BOBS.H"
 #include "EGABLIT.H"
 #include "EGALATCH.H"
 #include "EGAPAGE.H"
-#include "M_00000.H"
-#include "M_0914C.H"
-#include "M_1947A.H"
+#include "MAIN.H"
+#include "SPRITE.H"
 
 static void near restore_rect_latch(struct Rect *r, struct Bitmap far *dst, struct Bitmap far *src, int rows);
 

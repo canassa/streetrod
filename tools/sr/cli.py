@@ -260,7 +260,7 @@ def _record(con, row, res):
 
 
 def _rows_for(con, what):
-    """A function by address or name, or every function of a source file (M_0914C.C)."""
+    """A function by address or name, or every function of a source file (BOBS.C)."""
     f = mod.find_file(what)
     if f is not None:
         return mod.members(con, f.rel)
@@ -802,7 +802,7 @@ def main():
     s.set_defaults(func=cmd_next)
 
     s = sub.add_parser("check", help="compile the function's whole source file, byte-compare; records the result")
-    s.add_argument("fn", nargs="?", help="address, name, or a source file (M_0914C.C: all its functions)")
+    s.add_argument("fn", nargs="?", help="address, name, or a source file (BOBS.C: all its functions)")
     s.add_argument("--all", action="store_true", help="compile every file once, check every matched function (regression gate)")
     s.add_argument("--flags", help="try these CL/MASM flags for the file without recording the result")
     s.set_defaults(func=cmd_check)
@@ -833,7 +833,7 @@ def main():
 
     s = sub.add_parser("rename", help="rename a function, global or source file everywhere (DB, sources, "
                        "MAKEFILE, SR.LNK, docs, tools), then regenerate the headers")
-    s.add_argument("old", nargs="?", help="current name (F_0914C, g_0042) or source file (M_0914C.C)")
+    s.add_argument("old", nargs="?", help="current name (F_0914C, g_0042) or source file (BOBS.C)")
     s.add_argument("new", nargs="?")
     s.add_argument("--file", help="a file of OLD NEW lines (# comments) applied at once")
     s.add_argument("-n", "--dry-run", action="store_true", help="report what would change, write nothing")
@@ -858,7 +858,7 @@ def main():
     s.set_defaults(func=cmd_note)
 
     s = sub.add_parser("flags", help="a source file's CL/MASM flags (no flags: print them)")
-    s.add_argument("fn", help="a source file (M_0914C.C) or a function in it")
+    s.add_argument("fn", help="a source file (BOBS.C) or a function in it")
     s.add_argument("flags", nargs="*")
     s.add_argument("--force", action="store_true", help="allow changing the flags of a file with matched functions")
     s.set_defaults(func=cmd_flags)

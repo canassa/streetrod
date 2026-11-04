@@ -1,13 +1,13 @@
 #include "STRUCTS.H"
 #include "TANDYSPR.H"
 #include "BITMAP.H"
-#include "M_00000.H"
-#include "M_0914C.H"
+#include "BOBS.H"
+#include "CARPIC.H"
+#include "MAIN.H"
 #include "M_10B7C.H"
-#include "M_174A6.H"
-#include "M_1947A.H"
-#include "M_1A9B2.H"
+#include "SPRITE.H"
 #include "TANDYBLT.H"
+#include "TIRES.H"
 
 static void near restore_rect_back(struct Rect *r, struct Bitmap far *a, struct Bitmap far *b, int horiz);
 

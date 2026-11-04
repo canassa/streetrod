@@ -1,9 +1,9 @@
 #include "STRUCTS.H"
 #include "M_2B6DC.H"
+#include "ARENA.H"
+#include "MAIN.H"
 #include "MASKBLT.H"
-#include "M_00000.H"
 #include "M_0F38A.H"
-#include "M_1923C.H"
 #include "TANDYPIC.H"
 
 static int near F_2B6DC(unsigned char b);

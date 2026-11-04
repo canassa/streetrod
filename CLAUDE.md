@@ -96,9 +96,9 @@ function whose literals precede it. Names are `M_<first addr>` until the real fi
 - **One command line per file:** its MAKEFILE block. A C file's line ends in
   `/NT S<region>_TEXT` (the code segment shared by near interfaces, a placeholder name: the
   segment's first address / 16). An assembler file names that segment in its own `.CODE` directive
-  (M_21962.ASM is a `.MODEL SMALL` file with an explicit `SEGMENT`, see its comment).
+  (SPEAKER.ASM is a `.MODEL SMALL` file with an explicit `SEGMENT`, see its comment).
   `./sr flags FILE` prints or sets it. Code that must not be loop-optimized under the file's
-  `/Ol` carries the real `#pragma loop_opt(off)` (M_00D58.C, M_039C0.C, EGABLIT.C).
+  `/Ol` carries the real `#pragma loop_opt(off)` (SYS.C, GAME.C, EGABLIT.C).
 - **What is compiled is the file in git.** `./sr check` and `./sr build` copy it unchanged; no
   placeholders, no text rewriting.
 - **The file gate.** `./sr check` on any function compiles its whole file and also compares
@@ -166,7 +166,7 @@ MSC 5.1 assigns stack slots to locals in an order set by a hash of the identifie
 
 ### 4. Declarations come from the defining file's header, never ad hoc
 
-As in the original, each source file has its own header: `src/include/<FILE>.H` declares what that file defines (one header per source file, e.g. `M_0914C.H` for M_0914C.C; standalone data files get theirs, e.g. `SCREENS.H`, `MESSAGES.H`). A `.C` includes `STRUCTS.H`, its own header, and the headers of the files whose globals and functions it uses, and declares nothing itself. The headers in git are source and are what the build compiles. They and the include blocks are maintained by `./sr headers`: declarations come from the DB, ownership from where the definition is (`./sr global` and `./sr proto` rerun it). Run `./sr headers` after adding a reference to another file's symbol or moving a definition; it also updates the header dependencies in `src/MAKEFILE`. `./sr headers --check` (and the test suite) fails when the files have drifted from the DB. Unused declarations do not count against the compiler budget (rule 4d), so the include lists cannot change code.
+As in the original, each source file has its own header: `src/include/<FILE>.H` declares what that file defines (one header per source file, e.g. `BOBS.H` for BOBS.C; standalone data files get theirs, e.g. `SCREENS.H`, `MESSAGES.H`). A `.C` includes `STRUCTS.H`, its own header, and the headers of the files whose globals and functions it uses, and declares nothing itself. The headers in git are source and are what the build compiles. They and the include blocks are maintained by `./sr headers`: declarations come from the DB, ownership from where the definition is (`./sr global` and `./sr proto` rerun it). Run `./sr headers` after adding a reference to another file's symbol or moving a definition; it also updates the header dependencies in `src/MAKEFILE`. `./sr headers --check` (and the test suite) fails when the files have drifted from the DB. Unused declarations do not count against the compiler budget (rule 4d), so the include lists cannot change code.
 
 - **Globals:** `./sr global OFF NAME --decl "TYPE @"`. One name per DGROUP offset, project-wide.
 - **Far functions:** `./sr proto ADDR "TYPE @(ARGS)"`. A call without a prototype fails the check (MSC's C4071 at `/W3`). A CRT function may have several library names (`aFlmul`/`aFulmul`); `crtnames` records them in the `aliases` table and `refs` accepts any.

@@ -2,7 +2,7 @@
 
 A symbol (function, DGROUP global or static, far data label) is renamed in the DB (its name,
 and every note that mentions it) and as a whole word in the sources, the headers, the docs and
-the tools (`_name` in assembler too). A source file (`M_0914C.C GARAGE.C`) is moved with git,
+the tools (`_name` in assembler too). A source file (`BOBS.C GARAGE.C`) is moved with git,
 its functions' `src` is updated, and its stem is replaced in src/MAKEFILE, src/SR.LNK, the
 docs and the tools. The headers are regenerated afterwards (`./sr headers`), which also moves
 a renamed file's header and rewrites the include blocks. Names stay checked: a new name must

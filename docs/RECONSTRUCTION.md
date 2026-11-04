@@ -57,7 +57,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   so a jump the original's layout shows has to be somewhere in the source. Where no
   structured form gives the layout, the source has a `goto` or a particular loop form,
   with the reason in the function's DB note. 74 `goto`s in 11 files; the layout-driven
-  ones: F_0AB8B's `while` whose body ends in a redundant `goto test;` (M_0914C.C: the
+  ones: F_0AB8B's `while` whose body ends in a redundant `goto test;` (BOBS.C: the
   original's body-before-test layout, and it keeps `/Ol` from enregistering `n`),
   F_0C613's `goto finishstop` from both arms, F_0CDAF's `goto nx;` to the label right
   after its `else`, F_10E3D's `goto next;` (a `continue` there would pull the loop
@@ -69,8 +69,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   F_008B4's accumulation inside the inner `while` test (keeps `cx` for the outer loop).
   That the original had a jump at each of these points is evidence; the exact statement
   (a `goto`, a `continue`, a differently nested `if`) is not.
-- **`#pragma loop_opt`** in M_00D58.C (off before F_01BAE, to the end of the file),
-  M_039C0.C (off/on around F_03C8D) and EGABLIT.C (off before egablit_latch_pack). These five
+- **`#pragma loop_opt`** in SYS.C (off before F_01BAE, to the end of the file),
+  GAME.C (off/on around F_03C8D) and EGABLIT.C (off before egablit_latch_pack). These five
   functions keep plain memory loops that the file's `/Ol` would otherwise optimize. Only
   `goto` loops escape `/Ol`, and a pragma is the more plausible source. Where exactly the
   pragmas sat in the original is unknown.
@@ -78,7 +78,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   Braced register-write macros give it. Their names, and the fact that every other port
   pair of the file uses them, are a reconstruction (braced and unbraced pairs compile
   the same everywhere else).
-- **F_07AA4's `int flags[3]`** (M_06476.C), indexed by key 1 and 2. The element that is
+- **F_07AA4's `int flags[3]`** (GARAGE.C), indexed by key 1 and 2. The element that is
   never touched, `flags[0]`, fills the original's unused 2-byte frame slot. This is an
   interpretation (it matches `flags[k--]`) and is not proven.
 - **PROVISIONAL dummies** (each is marked in the source). They reproduce something in the
@@ -89,8 +89,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   - `x_trk0`/`x_trk1` (M_0F38A.C, labels in `src/data/TRACKPTS.ASM`): two unreachable far
     accesses for the two SEG constants in CONST (DS:68E6, DS:68E8) that nothing reads.
   - `g_6c42` (M_11A72.C): four unreferenced `_BSS` bytes after `g_6c40`.
-  - `g_49e0[0] = g_49e0[0];` in the default cases of F_049ED (M_039C0.C) and F_05B4A
-    (M_0542E.C): after the menu F_142CF returns a positive item, the original loads
+  - `g_49e0[0] = g_49e0[0];` in the default cases of F_049ED (GAME.C) and F_05B4A
+    (SAVEGAME.C): after the menu F_142CF returns a positive item, the original loads
     `g_49e0[0]` (the list's item count) into `ax` and drops it. MSC drops the store of a
     self-assignment and keeps the load. The only other forms found that give these bytes
     are a `switch (g_49e0[0])` whose cases are all empty (`{ }`, `{ case 1: break; }`), as
@@ -102,11 +102,11 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   shows that these blocks are struct members, not plain variables (recipe book). Their
   extent and member types are a reconstruction.
 - **Budget structs and message offsets.** `struct State7EAA` (`a_7eaap`, DS:7EAA..7EC1) and
-  `struct State8272` (`m_8272`, DS:8272..828F) each fold 11 placeholder globals. M_06476.C
+  `struct State8272` (`m_8272`, DS:8272..828F) each fold 11 placeholder globals. GARAGE.C
   (one object, as the relocation table requires) loses F_07AA4's loop register variables
   once it references more external symbols than MSC 5.1's budget allows (CLAUDE.md 4d), and
   these two COMMON clusters as structs bring it under. For the same reason F_0711A
-  (M_06476.C) addresses its four messages as offsets into the message block,
+  (GARAGE.C) addresses its four messages as offsets into the message block,
   `g_239e + 1283`, `+ 1299`, `+ 1318`, `+ 1337` ("Chop roof - $70" ...), not as named
   globals; the game addresses messages by offset into g_239e everywhere (`Hot.f4`, the
   argument of F_03AB8), so the original may have had named constants there. That the
@@ -114,14 +114,14 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   loop temps, so the arrays from DS:8290 stay separate) and the spelling are not.
 - **Per-module type views.** M_2869E.C reads the char `bw8aca` (DS:8ACA) as a word, so it
   writes `*(int *)&bw8aca`. The original file probably had an `extern int` of its own
-  there. `struct Win` (M_139DE.C, M_0542E.C) is a second view of the 18-byte hot-spot record
+  there. `struct Win` (M_139DE.C, SAVEGAME.C) is a second view of the 18-byte hot-spot record
   `struct Hot`: `a_8b9ap` holds the address of the first menu-line record as an `int`
   (`a_8b9ap = (int)p`) and the code computes `(struct Win *)(0x12 * sel + a_8b9ap)`.
   Declaring it `struct Hot *` and writing `a_8b9ap + sel` makes F_1438E 10 bytes shorter,
   so the int arithmetic is evidence; that there were two struct names is not.
-- **Return types the code does not decide.** `main` (M_00000.C) and F_118D4 (M_113A2.C)
+- **Return types the code does not decide.** `main` (MAIN.C) and F_118D4 (M_113A2.C)
   are `int` but end without a `return` (C4035); F_119B8 returns F_118D4's value. F_0C613
-  (M_0B3CA.C) returns 1 on one path, a value its caller stores, and `return;` on another
+  (RACE.C) returns 1 on one path, a value its caller stores, and `return;` on another
   (C4033). `void` and `int` give the same bytes for the first two; the source keeps `int`
   (`main` by convention, F_118D4 because F_119B8 passes its value on).
 
@@ -212,7 +212,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
 - **The MLIBCE.LIB component order** `MLIBCR+LIBH+EM+MLIBFP` was measured: this order
   reproduces the runtime layout, and the other orders tried differ by 5381..12426 bytes.
   That MSC SETUP built the library the same way is assumed, not documented here.
-- **M_21962.ASM's `.MODEL SMALL`.** The segment order shows an empty `_TEXT` SEGDEF before
+- **SPEAKER.ASM's `.MODEL SMALL`.** The segment order shows an empty `_TEXT` SEGDEF before
   S2196_TEXT, which `.MODEL SMALL` produces. The exact directive form the programmer used
   cannot be recovered.
 - **emu2.** The host build runs CL, MASM and LIB under emu2 instead of DOS. On every source

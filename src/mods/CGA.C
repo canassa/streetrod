@@ -9,15 +9,15 @@
 #include "CGALINE.H"
 #include "CGASHIFT.H"
 #include "CGASPR.H"
-#include "M_00000.H"
-#include "M_00D58.H"
-#include "M_036A8.H"
+#include "MAIN.H"
+#include "MEM.H"
 #include "M_0E6C2.H"
 #include "M_0F38A.H"
 #include "M_10B7C.H"
 #include "M_113A2.H"
 #include "M_139DE.H"
-#include "M_1947A.H"
+#include "SPRITE.H"
+#include "SYS.H"
 
 #pragma intrinsic(_rotl, outp)
 

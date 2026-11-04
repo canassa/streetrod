@@ -90,7 +90,7 @@ class MakefileTests(unittest.TestCase):
     def test_link_report_includes_fixup_errors(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            (root / 'LINK.LOG').write_text('M_00000.OBJ : error L2002: fixup overflow\n')
+            (root / 'LINK.LOG').write_text('MAIN.OBJ : error L2002: fixup overflow\n')
             with contextlib.redirect_stdout(io.StringIO()):
                 report = build.link_report(root)
             self.assertEqual(report['missing_symbols'], [])

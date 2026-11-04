@@ -16,20 +16,20 @@ class RenameTests(unittest.TestCase):
                          '/* menu_draw @ 0000:0100 */')
 
     def test_file_stems(self):
-        pat = rename._pattern({'M_02FC8': 'PROTECT'}, prefix=False)
-        self.assertEqual(rename._sub(pat, {'M_02FC8': 'PROTECT'}, 'MODS\\M_02FC8.C M_02FC8.OBJ _M_02FC8'),
+        pat = rename._pattern({'FAME': 'PROTECT'}, prefix=False)
+        self.assertEqual(rename._sub(pat, {'FAME': 'PROTECT'}, 'MODS\\FAME.C FAME.OBJ _M_02FC8'),
                          'MODS\\PROTECT.C PROTECT.OBJ _M_02FC8')
 
     def test_pairs(self):
-        self.assertEqual(rename.parse_pairs(['# c', 'F_00000 a  # why', '', 'M_02FC8.C B.C']),
-                         [('F_00000', 'a'), ('M_02FC8.C', 'B.C')])
+        self.assertEqual(rename.parse_pairs(['# c', 'F_00000 a  # why', '', 'FAME.C B.C']),
+                         [('F_00000', 'a'), ('FAME.C', 'B.C')])
 
     def test_refuses_taken_and_bad_names(self):
         con = db.connect()
         used = con.execute("SELECT name FROM functions WHERE name = 'main'").fetchone()[0]
         con.close()
         for pairs in ([('F_00000', used)], [('F_00000', 'MAIN')], [('F_00000', '1x')],
-                      [('M_02FC8.C', 'protect.c')], [('M_02FC8.C', 'PROTECT.ASM')], [('no_such_name', 'x_y')]):
+                      [('FAME.C', 'protect.c')], [('FAME.C', 'PROTECT.ASM')], [('no_such_name', 'x_y')]):
             with self.assertRaises(SystemExit, msg=pairs):
                 rename.rename(pairs, dry=True)
 

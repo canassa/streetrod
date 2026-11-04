@@ -3,7 +3,7 @@
 #include <memory.h>
 #include "STRUCTS.H"
 #include "EGACOPY.H"
-#include "M_00D58.H"
+#include "SYS.H"
 
 #pragma intrinsic(outp)
 

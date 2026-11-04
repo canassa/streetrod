@@ -63,7 +63,7 @@ class Rule:
 
     @property
     def source(self):
-        """The DOS path of the compiled source (MODS\\M_00000.C)."""
+        """The DOS path of the compiled source (MODS\\MAIN.C)."""
         last = self.raw[0].split()[-1]
         return last.split(',')[0] if self.compiler == 'MASM' else last
 

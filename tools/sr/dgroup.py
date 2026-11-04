@@ -453,9 +453,9 @@ class Analysis:
         defined now (the previous `apply`): a reference counts the same as an EXTDEF fixup
         when another file defines the global and as a fixup to the object's own _DATA, inside
         the global's extent, when this file does. In a C object both code and data
-        initializers count (`char *g_4ff2 = g_4fa6;` is M_0542E's reference to DS:4FA6, which
-        no code uses; counting it only as an external made DS:4FA6 flip between M_039C0 and
-        M_0542E on every apply). In an assembler object only code counts: its data tables
+        initializers count (`char *g_4ff2 = g_4fa6;` is SAVEGAME's reference to DS:4FA6, which
+        no code uses; counting it only as an external made DS:4FA6 flip between GAME and
+        SAVEGAME on every apply). In an assembler object only code counts: its data tables
         point into the blocks FORCE_OWNER and DATA_UNITS assign anyway."""
         if hasattr(self, '_refs'):
             return self._refs
