@@ -1191,3 +1191,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - The cursor's EGA background save area (A000:1F40) is now `#define CURSOR_EGA_SAVE (EGA_VRAM + EGA_PITCH * SCREEN_HEIGHT)` in CURSOR.H: the first byte past the visible 8000-byte page 0 in each plane, in the gap before page 1 at A000:2000. It must be video memory because cursor_draw restores it with the write-mode-1 latch copy (egalatch_to_page). MSC folds the expression to the same constant.
 - Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, tests OK.
+
+## 2026-11-04 15:33 CET: Racer table indices and status values
+
+### What I did
+- Added racer-table constants in DISK.H and replaced only the associated numeric literals; kept all symbols and the char status field unchanged.
+- Verified all 572 functions match, clean linked and DOS-native builds are IDENTICAL, headers and DGROUP pass, and all 53 unit tests pass.
+
+### What I learned
+- HOT_DATA contains 22 18-byte racer records; slot 21 is named The King and is excluded from the ordinary rival pool. SAVEGAME.C assigns seven racers each from rank pools below 3, 3 through 5, and 6 upward.
+- Slot 10 is Steve, an ordinary middle-group rival, also reused by cop_appears for the chase shift penalty. RACER_COP_ENTRY describes that use without claiming a dedicated police-only slot.
+- RACE.C removes rivals after losing their car with status 0xff; BOBS.C excludes status -1 from its pool, marks selected rivals 1, and lists only 1. Status 0 is initially not met and also hides the King until available. This evidence is recorded with the constants in the commit body.

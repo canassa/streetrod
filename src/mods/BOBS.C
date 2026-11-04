@@ -199,8 +199,8 @@ static int near king_status(void)
     int k, any, total;
 
     any = 0;
-    for (k = 0; k < 21; k++)
-        if (av7ff8[k].status != -1)
+    for (k = 0; k < RACER_KING; k++)
+        if (av7ff8[k].status != RACER_EMPTY)
             any = 1;
     if (any == 0)
         return 0;
@@ -237,7 +237,7 @@ static int near king_chance(void)
         else
             v = 12;
     } else {
-        if (av7ff8[21].status == 1)
+        if (av7ff8[RACER_KING].status == RACER_MET)
             v = 10;
         else
             v = 50;
@@ -251,23 +251,23 @@ static void near build_rival_pool(int flag)
 {
     int result;
     struct Spec *item;
-    struct Cand map[21];
+    struct Cand map[RACER_KING];
     int m, found, k, low;
 
-    for (k = 0; k < 21; k++) {
+    for (k = 0; k < RACER_KING; k++) {
         item = &g7d86n[av7ff8[k].specIndex];
         map[k].dr = abs(F_0E218(av7ff8[k].specIndex) - F_0E218(-1));
         map[k].dk = abs(g7d86n[av7ff8[k].specIndex].rank - g7d86n[a_7eaap.currentCar->specIndex].rank);
-        map[k].taken = (av7ff8[k].status != -1) ? 0 : 1;
+        map[k].taken = (av7ff8[k].status != RACER_EMPTY) ? 0 : 1;
     }
     g_poolCount = 0;
     found = 1;
     do {
-        if ((flag ? 21 : 9) <= g_poolCount)
+        if ((flag ? RACER_KING : 9) <= g_poolCount)
             break;
         found = 0;
         low = 0x7d00;
-        for (m = 0; m < 21; m++)
+        for (m = 0; m < RACER_KING; m++)
             if (map[m].taken == 0 && map[m].dr < low) {
                 result = m;
                 low = map[m].dr;
@@ -300,10 +300,10 @@ static int near pick_rival(int chance, int arg)
     int pick;
 
     if (random_int(100) < chance)
-        return 0x15;
+        return RACER_KING;
     build_rival_pool(arg);
     if (g_poolCount == 0)
-        return 0x15;
+        return RACER_KING;
     pick = g_poolRivals[random_int(g_poolCount)];
     if (pick == g_lastRival)
         pick = g_poolRivals[random_int(g_poolCount)];
@@ -320,9 +320,9 @@ static void near select_rival(int n)
     g7f82r = n;
     g7d84o = &av7ff8[n];
     g_oppSpecPointer = &g7d86n[bn7648 = g7d84o->specIndex];
-    if (n != 0x15) {
+    if (n != RACER_KING) {
         g_isKingState = 0;
-        g7d84o->status = 1;
+        g7d84o->status = RACER_MET;
         skill = (g_oppSpecPointer->rank >> 1) + 1;
         if (g7d84o->sticker == 0 && g7d84o->betRaces > 5)
             g7d84o->sticker = random_int(20) < skill ? random_int(9) : 0;
@@ -348,7 +348,7 @@ static void near rival_arrives(int n, int a, int mode)
     select_rival(n);
     if (mode == 1)
         g_carPassBy = 1;
-    if (mode == 2 && g7f82r == 0x15)
+    if (mode == 2 && g7f82r == RACER_KING)
         g_carPassBy = king_status() == 1;
     show_rival_car(a, bn7648, 1, 0xa3, 0, g_5030[m_8272.tireVariant]);
 }
@@ -360,11 +360,11 @@ static void near list_met_rivals(int *ids, int *slots, int *kinds)
     int i, n;
 
     if (king_status() == 0)
-        av7ff8[21].status = 1;
+        av7ff8[RACER_KING].status = RACER_MET;
     else
-        av7ff8[21].status = 0;
-    for (i = 0, n = 0; i <= 21; i++) {
-        if (av7ff8[i].status == 1) {
+        av7ff8[RACER_KING].status = RACER_NOT_MET;
+    for (i = 0, n = 0; i <= NUM_RACERS - 1; i++) {
+        if (av7ff8[i].status == RACER_MET) {
             slots[n] = i;
             ids[++n] = av7ff8[i].nameOffset;
             kinds[n] = 7;
@@ -825,10 +825,10 @@ static void near play_ending(void)
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.copyToFront = 0;
     (*m_present)();
-    av7ff8[21].overlayPic = 0x4c1;
-    select_rival(0x15);
+    av7ff8[RACER_KING].overlayPic = 0x4c1;
+    select_rival(RACER_KING);
     F_181C8(4, bn7648, g7d84o->bodyMods, g7d84o->sticker, 1, 0x98, 0, g_5030[m_8272.tireVariant]);
-    av7ff8[21].overlayPic = 0x4dc;
+    av7ff8[RACER_KING].overlayPic = 0x4dc;
     pic24 = F_1934E(0x50, 0x2c, 0, ARENA_HIGH_BASE);
     popup_grab(0x78, 0x45, 0x50, 0x2c, pic24);
     pic3 = F_15BBE(6, ARENA_LOW_STACK);
@@ -1032,7 +1032,7 @@ test:
                     if (g_isKingState) {
                         if (bo7676 == 0) {
                             g_kingDragWon = 0;
-                            av7ff8[21].status = 0;
+                            av7ff8[RACER_KING].status = RACER_NOT_MET;
                             g_dragWins -= 3;
                             g_roadWins -= 2;
                         } else if (a_7eaap.raceType == 0)
@@ -1084,7 +1084,7 @@ test:
                     n = 0;
                     if (g_kingDragWon == 0)
                         goto out;
-                    rival_arrives(0x15, 4, 0);
+                    rival_arrives(RACER_KING, 4, 0);
                     goto test;
                 }
                 show_rival_car(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.tireVariant]);
