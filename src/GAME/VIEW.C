@@ -56,10 +56,7 @@ int g_opponentPics[5][4] = {{1003, 1004, 1057, 1091}, {1010, 1012, 1011, 1239}, 
 int g_5e3c = 0;   /* DS:5E3C */
 struct ViewPages g_viewPages = {1, 2}; /* DS:5E3E */
 struct Clip g_viewRect = {SCREEN_WIDTH, 82, 0, 18, 0, 18};   /* DS:5E42 */
-int g_clipXMin = 0;   /* DS:5E4E */
-int g_clipYMin = 18;   /* DS:5E50 */
-int g_clipYMax = 101;   /* DS:5E52 */
-int g_clipXMax = (SCREEN_WIDTH - 1);   /* DS:5E54 */
+struct ViewClip g_viewClip = {0, 18, 101, (SCREEN_WIDTH - 1)}; /* DS:5E4E */
 unsigned char g_shrinkMasks[3][4] = {{87, 37, 34, 0}, {247, 117, 82, 0}, {117, 84, 33, 0}};   /* DS:5E56 */
 int g_5e62[18] = {1258, 1237, 1236, 1238, 8, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0};   /* DS:5E62 */
 int g_5e86 = 0;   /* DS:5E86 */
@@ -129,13 +126,13 @@ static void near flip_page(void)
 
 static void near clip_blit_y(struct Blt *b)
 {
-    if (b->dy < g_clipYMin) {
-        b->h -= g_clipYMin - b->dy;
-        b->sy += g_clipYMin - b->dy;
-        b->dy = g_clipYMin;
+    if (b->dy < g_viewClip.yMin) {
+        b->h -= g_viewClip.yMin - b->dy;
+        b->sy += g_viewClip.yMin - b->dy;
+        b->dy = g_viewClip.yMin;
     }
-    if (g_clipYMax < b->dy + b->h)
-        b->h -= b->dy + b->h - g_clipYMax;
+    if (g_viewClip.yMax < b->dy + b->h)
+        b->h -= b->dy + b->h - g_viewClip.yMax;
 }
 
 /* clip_blit @ 2645:2331 (linear 0x28781, 80 bytes)
@@ -145,17 +142,17 @@ static void near clip_blit_y(struct Blt *b)
 
 static void near clip_blit(struct Blt *b)
 {
-    if (b->dy < g_clipYMin) {
-        b->h -= g_clipYMin - b->dy;
-        b->sy += g_clipYMin - b->dy;
-        b->dy = g_clipYMin;
+    if (b->dy < g_viewClip.yMin) {
+        b->h -= g_viewClip.yMin - b->dy;
+        b->sy += g_viewClip.yMin - b->dy;
+        b->dy = g_viewClip.yMin;
     }
-    if (g_clipYMax < b->dy + b->h)
-        b->h -= b->dy + b->h - g_clipYMax;
-    if (b->dx < g_clipXMin) {
-        b->w -= g_clipXMin - b->dx;
-        b->sx += g_clipXMin - b->dx + 7;
-        b->dx = g_clipXMin;
+    if (g_viewClip.yMax < b->dy + b->h)
+        b->h -= b->dy + b->h - g_viewClip.yMax;
+    if (b->dx < g_viewClip.xMin) {
+        b->w -= g_viewClip.xMin - b->dx;
+        b->sx += g_viewClip.xMin - b->dx + 7;
+        b->dx = g_viewClip.xMin;
     }
 }
 
@@ -165,11 +162,11 @@ static void near clip_blit(struct Blt *b)
 
 static void near clip_vline(int color, int x, int y1, int y2)
 {
-    if (y2 >= g_clipYMin && y1 <= g_clipYMax && x >= g_clipXMin && x <= g_clipXMax) {
-        y1 = (y1 < g_clipYMin) ? g_clipYMin : y1;
-        y1 = (y1 > g_clipYMax) ? g_clipYMax : y1;
-        y2 = (y2 < g_clipYMin) ? g_clipYMin : y2;
-        y2 = (y2 > g_clipYMax) ? g_clipYMax : y2;
+    if (y2 >= g_viewClip.yMin && y1 <= g_viewClip.yMax && x >= g_viewClip.xMin && x <= g_viewClip.xMax) {
+        y1 = (y1 < g_viewClip.yMin) ? g_viewClip.yMin : y1;
+        y1 = (y1 > g_viewClip.yMax) ? g_viewClip.yMax : y1;
+        y2 = (y2 < g_viewClip.yMin) ? g_viewClip.yMin : y2;
+        y2 = (y2 > g_viewClip.yMax) ? g_viewClip.yMax : y2;
         (*g_videoOps.drawLine)(x, y1, x, y2, color);
     }
 }
@@ -178,7 +175,7 @@ static void near clip_vline(int color, int x, int y1, int y2)
 
 void view_unclip_top(void)
 {
-    g_clipYMin = 0;
+    g_viewClip.yMin = 0;
 }
 
 /* clip_mirror @ 2645:23F7 (linear 0x28847, 25 bytes)
@@ -187,10 +184,10 @@ void view_unclip_top(void)
 
 static void near clip_mirror(void)
 {
-    g_clipXMin = 0xf2;
-    g_clipYMin = 0x16;
-    g_clipXMax = 0x13d;
-    g_clipYMax = 0x2a;
+    g_viewClip.xMin = 0xf2;
+    g_viewClip.yMin = 0x16;
+    g_viewClip.xMax = 0x13d;
+    g_viewClip.yMax = 0x2a;
 }
 
 /* view_clip @ 2645:2410 (linear 0x28860, 25 bytes)
@@ -199,10 +196,10 @@ static void near clip_mirror(void)
 
 void view_clip(void)
 {
-    g_clipXMin = 0;
-    g_clipYMin = 0x12;
-    g_clipYMax = 0x65;
-    g_clipXMax = (SCREEN_WIDTH - 1);
+    g_viewClip.xMin = 0;
+    g_viewClip.yMin = 0x12;
+    g_viewClip.yMax = 0x65;
+    g_viewClip.xMax = (SCREEN_WIDTH - 1);
 }
 
 /* view_load @ 2645:2429 (linear 0x28879, 1369 bytes) */
@@ -506,7 +503,7 @@ static void near fill_quad(int col, int a, int b, int c, int d, int e, int f)
             (*g_videoOps.fillSpan)(xlk, xr5, y6, col);
         y6++;
     test:
-        if (y6 <= ymax && y6 <= g_clipYMax)
+        if (y6 <= ymax && y6 <= g_viewClip.yMax)
             goto loop;
     }
 }
@@ -750,15 +747,15 @@ static void near render_buildings(int a, int b, int c, int d, int e, int f, int 
         }
         if (am8b82y[-1] & 4) {
             if (rev)
-                (*g_videoOps.fillSpan)(g_clipXMin, a, c - 1, 4);
+                (*g_videoOps.fillSpan)(g_viewClip.xMin, a, c - 1, 4);
             else
-                (*g_videoOps.fillSpan)(b, g_clipXMax, d - 1, 4);
+                (*g_videoOps.fillSpan)(b, g_viewClip.xMax, d - 1, 4);
             if (rev) {
                 for (y = f; y < c - 1; y++)
-                    (*g_videoOps.fillSpan)(g_clipXMin, a, y, 2);
+                    (*g_videoOps.fillSpan)(g_viewClip.xMin, a, y, 2);
             } else {
                 for (y = e; y < d - 1; y++)
-                    (*g_videoOps.fillSpan)(b, g_clipXMax, y, 2);
+                    (*g_videoOps.fillSpan)(b, g_viewClip.xMax, y, 2);
             }
         }
         if (a41 && !b4) {
@@ -843,15 +840,15 @@ static void near render_mirror_buildings(int a, int b, int c, int d, int e, int 
             }
             if (am8b82y[1] & 4) {
                 if (rev)
-                    (*g_videoOps.fillSpan)(g_clipXMin, a, c - 1, 4);
+                    (*g_videoOps.fillSpan)(g_viewClip.xMin, a, c - 1, 4);
                 else
-                    (*g_videoOps.fillSpan)(b, g_clipXMax, d - 1, 4);
+                    (*g_videoOps.fillSpan)(b, g_viewClip.xMax, d - 1, 4);
                 if (rev) {
                     for (y = f; y < c - 1; y++)
-                        (*g_videoOps.fillSpan)(g_clipXMin, a, y, 2);
+                        (*g_videoOps.fillSpan)(g_viewClip.xMin, a, y, 2);
                 } else {
                     for (y = e; y < d - 1; y++)
-                        (*g_videoOps.fillSpan)(b, g_clipXMax, y, 2);
+                        (*g_videoOps.fillSpan)(b, g_viewClip.xMax, y, 2);
                 }
             }
             if (a41 && !b4) {
@@ -1215,22 +1212,22 @@ static void near render_opponent(void)
     }
     flag9 = 0;
     if (seln >= 9) {
-        if (g_clipXMin == 0) {
+        if (g_viewClip.xMin == 0) {
             flag9 = 1;
             clip_mirror();
         }
-    } else if (g_clipXMin != 0) {
+    } else if (g_viewClip.xMin != 0) {
         flag9 = 1;
         view_clip();
     }
-    if (b.dx + b.w >= g_clipXMin && b.dx < g_clipXMax) {
+    if (b.dx + b.w >= g_viewClip.xMin && b.dx < g_viewClip.xMax) {
         if (seln >= 9)
             clip_blit(&b);
         else
             clip_blit_y(&b);
         (*g_videoOps.maskedBlit)(g8acew[seln], g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
         if (flag9) {
-            if (g_clipXMin == 0)
+            if (g_viewClip.xMin == 0)
                 clip_mirror();
             else
                 view_clip();

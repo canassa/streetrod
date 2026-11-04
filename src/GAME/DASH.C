@@ -493,13 +493,13 @@ void dash_steer_marker(int n)
     view_unclip_top();
     x = g_steerPoints[n][0];
     y2 = g_steerPoints[n][1] + DASH_Y;
-    ymax = g_clipYMax;
-    ymin2 = g_clipYMin;
-    g_clipYMax = SCREEN_BODY_HEIGHT;
-    g_clipYMin = DASH_Y;
+    ymax = g_viewClip.yMax;
+    ymin2 = g_viewClip.yMin;
+    g_viewClip.yMax = SCREEN_BODY_HEIGHT;
+    g_viewClip.yMin = DASH_Y;
     view_draw_dot(x, y2);
-    g_clipYMax = ymax;
-    g_clipYMin = ymin2;
+    g_viewClip.yMax = ymax;
+    g_viewClip.yMin = ymin2;
     view_clip();
     av787at = seg;
     at767ct = off;
@@ -545,15 +545,15 @@ void dash_draw_wheel(int a, int b, struct Bitmap far *dst)
         at767ct = 0;
         view_unclip_top();
         if (r_vid.mode != VID_EGA) {
-            ymax = g_clipYMax;
-            ymin2 = g_clipYMin;
-            g_clipYMax = SCREEN_BODY_HEIGHT;
-            g_clipYMin = DASH_Y;
+            ymax = g_viewClip.yMax;
+            ymin2 = g_viewClip.yMin;
+            g_viewClip.yMax = SCREEN_BODY_HEIGHT;
+            g_viewClip.yMin = DASH_Y;
         }
         view_draw_dot(x, y2);
         if (r_vid.mode != VID_EGA) {
-            g_clipYMax = ymax;
-            g_clipYMin = ymin2;
+            g_viewClip.yMax = ymax;
+            g_viewClip.yMin = ymin2;
         }
         view_clip();
         av787at = seg;

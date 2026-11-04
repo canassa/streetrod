@@ -750,4 +750,11 @@ struct ViewPages {
     int show;
 };
 
+struct ViewClip {
+    int xMin;
+    int yMin;
+    int yMax;
+    int xMax;
+};
+
 #endif
