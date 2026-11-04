@@ -1161,3 +1161,13 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I did
 - CLAUDE.md: a closed set in int-sized things is an enum and the holder is typed with it; a closed set in char fields uses enum constants with char (or typedef'd char) members, because MSC 5.1 enums are int-sized; lone values are #defines. File-local constants at the top of the file, module interface constants in its header, PC facts in PC.H/PC.INC.
+## 2026-11-04 15:11 CET: load_pic results and picture markers
+
+### What I did
+- Typed load_pic and disk_unpack_pic's res as enum LoadResult, named all four outcomes, and made disk_load_list's allocation-failure comparison explicit.
+- Defined PIC_MARK and NOT_IN_VRAM in DISK.C after verifying all vramPlane accesses stay in that file. Kept the member byte-sized and added no code comments.
+- Verified the full DISK.C module and all 572 functions match; res remains a word at [bp-24]. Clean sr build and DOS-native MAKE both produce an EXE byte-identical to orig/SR.EXE. Header and DGROUP checks and all 53 unit tests pass.
+
+### What I learned
+- The three load_pic callers respectively retain the result to clear the shared-buffer reference after LOAD_READ, ignore it while caching, and test LOAD_NO_MEMORY while loading a list.
+- This change confirms the existing CLAUDE.md enum rule without requiring a new code-generation rule: the enum local preserves its stack slot and comparison bytes.
