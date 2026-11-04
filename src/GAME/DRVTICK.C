@@ -23,9 +23,9 @@ int g_cruiseRpmSteps[5] = {42, 26, 12, 8, 4};   /* DS:51D8 */
 int g_cruiseRatios[5] = {0, 200, 125, 71, 56};   /* DS:51E2 */
 int g_keepCruiseMusic = 0;   /* DS:51EC */
 
-/* drvtick_step @ 0000:8EA8 (linear 0x08EA8, 675 bytes) */
+/* dt_step @ 0000:8EA8 (linear 0x08EA8, 675 bytes) */
 
-int drvtick_step(void)
+int dt_step(void)
 {
     char key;
 
@@ -35,15 +35,15 @@ int drvtick_step(void)
             g_05d6 = 0;
             if (g_keepCruiseMusic == 0)
                 F_16381(1);
-            sys_drive_start();
-            sys_reset_queues();
+            sy_drive_start();
+            sy_reset_queues();
             g_phaseDriveRunState = 1;
             F_11421(-1, "Get ready !", 0);
-            g_waitUntil = g_tick + random_int(103) + 110;
+            g_waitUntil = g_tick + rn_int(103) + 110;
             return g_driveEng.stopFlags | g_oppEngState.stopFlags;
         case 1:
             if (g_driveEng.speed > 0) {
-                sys_drive_stop();
+                sy_drive_stop();
                 g_driveEng.stopFlags |= 0x81;
                 return 1;
             }
@@ -54,7 +54,7 @@ int drvtick_step(void)
             }
             return g_driveEng.stopFlags | g_oppEngState.stopFlags;
         case 2:
-            race_tick();
+            ra_tick();
             if (g_driveEng.stopFlags || g_oppEngState.stopFlags)
                 return 1;
             if (g_driveEng.speed > 0) {
@@ -65,7 +65,7 @@ int drvtick_step(void)
         case 3:
             if (g_driveEng.stopFlags || g_oppEngState.stopFlags)
                 return 1;
-            race_tick();
+            ra_tick();
             return 0;
         }
     } else {
@@ -74,8 +74,8 @@ int drvtick_step(void)
             g_05d6 = 0;
             if (g_keepCruiseMusic == 0)
                 F_16381(1);
-            sys_drive_start();
-            sys_reset_queues();
+            sy_drive_start();
+            sy_reset_queues();
             g_phaseDriveRunState = 1;
             F_11421(-1, "Cruising in town...", 0);
             g_driveEng.shifterDirty = 1;
@@ -86,26 +86,26 @@ int drvtick_step(void)
             return 0;
         case 1:
             if (g_demo == 0) {
-                key = kbdget_key();
+                key = kg_key();
                 if (key == 0x1b || key == 0x1f)
                     g_firePressed = 1;
                 if (g_mouse.present) {
-                    mouse_buttons();
+                    mo_buttons();
                     g_firePressed |= g_mouse.left;
                 }
                 if (g_joystick) {
-                    joy_read();
+                    jy_read();
                     g_firePressed |= g_joyButtons;
                 }
             }
             if (g_demo == 99) {
                 g_demo--;
-                sys_exit();
+                sy_exit();
             }
             if ((g_terrain0[ao7d2ev.roadIndex + 1] & 1) || (g_terrain1[ao7d2ev.roadIndex + 1] & 1) || g_firePressed) {
                 g_click = 0;
                 g_buttons = 0;
-                sys_drive_stop();
+                sy_drive_stop();
                 return 1;
             }
             g_driveEng.rpm += g_cruiseRpmStep;

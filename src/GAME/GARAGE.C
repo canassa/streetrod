@@ -42,9 +42,9 @@ int g_colX = 33;   /* DS:5048 */
 int g_rowY[4] = {14, 107, 15, 105};   /* DS:504A */
 int g_wOff[4] = {0, 5, 9, 14};   /* DS:5052 */
 
-/* garage_day @ 0000:6476 (linear 0x06476, 45 bytes) */
+/* ga_day @ 0000:6476 (linear 0x06476, 45 bytes) */
 
-int garage_day(void)
+int ga_day(void)
 {
     return (int)((g_gameClock.actionTicks + g_gameClock.biosTicks - g_gameClock.timeBase) / 6552) > 91 ? 91 : (int)((g_gameClock.actionTicks + g_gameClock.biosTicks - g_gameClock.timeBase) / 6552);
 }
@@ -68,7 +68,7 @@ void F_064A3(int *a, int *b)
 
 void F_06529(int n)
 {
-    if (garage_day() >= 91)
+    if (ga_day() >= 91)
         g_end |= 1;
 }
 
@@ -110,7 +110,7 @@ void F_065AF(int a1)
     F_06529(0);
     if (a1 == 0 && g_end)
         return;
-    d9 = garage_day();
+    d9 = ga_day();
     F_064A3(&al, &bl);
     m = day_to_date(d9, &day);
     col = (e9 = d9 + 21) % 7;
@@ -121,19 +121,19 @@ void F_065AF(int a1)
     px5 = 80;
     py4 = 4;
     id = m < 2 ? 0x4c3 : 0x4c5;
-    cursor_ctl(CURSOR_HIDE);
-    pic = disk_bm(id, ARENA_HIGH_STACK);
-    bitmap_draw_pic(pic, 0x4c4, (unsigned char)x, (unsigned char)y4, 0);
-    img = arena_bm(pic->width, pic->height, 0, ARENA_HIGH_STACK);
-    popup_grab(px5, py4, pic->width, pic->height, img);
-    popup_show(pic, px5, py4);
+    cu_ctl(CURSOR_HIDE);
+    pic = di_bm(id, ARENA_HIGH_STACK);
+    bm_draw_pic(pic, 0x4c4, (unsigned char)x, (unsigned char)y4, 0);
+    img = ar_bm(pic->width, pic->height, 0, ARENA_HIGH_STACK);
+    pu_grab(px5, py4, pic->width, pic->height, img);
+    pu_show(pic, px5, py4);
     F_19438(1);
-    cursor_ctl(CURSOR_SHOW);
+    cu_ctl(CURSOR_SHOW);
     if (a1 == 0) {
         F_11421(-1, "", 0);
-        game_pause(500);
+        gm_pause(500);
         g_gameClock.actionTicks += 0L;
-        popup_show(img, px5, py4);
+        pu_show(img, px5, py4);
     }
     F_19438(1);
 }
@@ -153,7 +153,7 @@ void F_06750(int x)
     char buf[30];
     struct Colors sv;
 
-    today = garage_day();
+    today = ga_day();
     mnum = day_to_date(today, &date);
     sprintf(buf, "%s %d, 1963", g_mon[mnum], date);
     sv = x_colors;
@@ -286,31 +286,31 @@ int near F_06B06(int mode)
     int n;
 
     if (g_cVis > 0)
-        cursor_ctl(CURSOR_HIDE_NOW);
+        cu_ctl(CURSOR_HIDE_NOW);
     F_06529(0);
     if (g_end) {
         if (g_end & 1)
-            cursor_ctl(CURSOR_SHOW_NOW);
+            cu_ctl(CURSOR_SHOW_NOW);
         return 0x29a;
     }
-    cursor_ctl(0);
+    cu_ctl(0);
     F_11421(-1, "", 0);
     g_scene = 1;
     switch (mode) {
     case 3:
         if (g_new == 0) {
-            cursor_ctl(CURSOR_SHOW_NOW);
-            game_message(0x1867);
-            cursor_ctl(CURSOR_HIDE_NOW);
+            cu_ctl(CURSOR_SHOW_NOW);
+            gm_message(0x1867);
+            cu_ctl(CURSOR_HIDE_NOW);
             break;
         }
         if (g_old) {
-            n = game_car_look(g_old);
+            n = gm_car_look(g_old);
             F_181C8(6, g_old->specIndex, n, (g_old->appearance >> 8) & 0x1f,
                     0, 0x98, 0, g_whlPic[g_part[g_old->tires->idx].variant]);
             F_06AA6();
-            menu_push(10);
-            menu_pop(1);
+            mn_push(10);
+            mn_pop(1);
         }
     case 2:
         r_vid.copyToFront = 0;
@@ -342,14 +342,14 @@ int near F_06B06(int mode)
             m_8272.appearance.rear = (a_7eaap.currentCar->appearance >> 15) & 1;
             for (r = 0; r < 5; r++)
                 o_8290[r] = a_7eaap.currentCar->rack.parts[r]->idx;
-            n = game_car_look(a_7eaap.currentCar);
+            n = gm_car_look(a_7eaap.currentCar);
             strcpy(g_29ff, g_desc + g7d86n[a_7eaap.currentCar->specIndex].nameOffset);
             if (mode == 2)
                 F_181C8(3, m_8272.specIndex, n, m_8272.appearance.sticker, 0, 0x98, 0, g_whlPic[m_8272.tireVariant]);
             else
                 F_181C8(4, m_8272.specIndex, n, m_8272.appearance.sticker, 0, 0x98, 0, g_whlPic[m_8272.tireVariant]);
         } else {
-            bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), 0xc7);
+            bm_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), 0xc7);
             g_29ff[0] = 0;
         }
         break;
@@ -362,28 +362,28 @@ int near F_06B06(int mode)
         hide_spots();
     sort_spots();
     F_11593(g_49dc);
-    cursor_ctl(CURSOR_SHOW_NOW);
+    cu_ctl(CURSOR_SHOW_NOW);
     if (a_7eaap.carCount > 15)
-        game_message(0x0d30);
+        gm_message(0x0d30);
     else if (a_7eaap.partCount > 130) {
         if (a_7eaap.partCount == 131)
-            game_message(0x0d76);
+            gm_message(0x0d76);
         else {
             p = g_junk;
             p += strlen(p) + 1;
             p += strcspn(p, "1234567890");
             itoa(a_7eaap.partCount - 130, p, 10);
             p[strlen(p)] = ' ';
-            game_message(0x0dc7);
+            gm_message(0x0dc7);
         }
     }
     if (is_broke()) {
-        game_message(0x17ff);
+        gm_message(0x17ff);
         g_end |= 0x10;
     } else {
         F_16381(0);
-        sys_reset_queues();
-        r = menu_wait(10);
+        sy_reset_queues();
+        r = mn_wait(10);
     }
     F_06529(0);
     if (g_end & 0x10)
@@ -391,7 +391,7 @@ int near F_06B06(int mode)
     if (g_end) {
         r = 0x29a;
         if ((g_end & 1) == 0)
-            cursor_ctl(CURSOR_HIDE_NOW);
+            cu_ctl(CURSOR_HIDE_NOW);
     }
     return r;
 }
@@ -407,16 +407,16 @@ void near F_06F6B(void)
     int key;
 
     if (!a_7eaap.currentCar)
-        game_message(0x0efa);
+        gm_message(0x0efa);
     else if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
-        game_message(0x18ad);
+        gm_message(0x18ad);
     else {
-        bm1 = menu_grab(14, &x, &y, ARENA_HIGH_STACK);
-        menu_push(14);
+        bm1 = mn_grab(14, &x, &y, ARENA_HIGH_STACK);
+        mn_push(14);
         idx4 = a_7eaap.currentCar->paintScheme;
         for (;;) {
             F_112CB(12, g_paint[idx4][0]);
-            while ((key = sys_wait_input(3000)) == 0)
+            while ((key = sy_wait_input(3000)) == 0)
                 ;
             switch (key) {
             case 1:
@@ -429,14 +429,14 @@ void near F_06F6B(void)
                 continue;
             case 3:
                 if (a_7eaap.money < 20L) {
-                    game_message(0x10a1);
+                    gm_message(0x10a1);
                     break;
                 }
                 r_vid.copyToFront = 1;
-                menu_pop(1);
-                popup_show(bm1, x, y);
+                mn_pop(1);
+                pu_show(bm1, x, y);
                 F_19438(1);
-                popup_show(g_0294, m_8272.stickerX, m_8272.stickerY);
+                pu_show(g_0294, m_8272.stickerX, m_8272.stickerY);
                 a_7eaap.currentCar->appearance &= 0xe0ff;
                 F_067CF(a_7eaap.currentCar->paintScheme = idx4);
                 F_112CB(12, 5);
@@ -449,9 +449,9 @@ void near F_06F6B(void)
             }
             break;
         }
-        menu_pop(1);
+        mn_pop(1);
         F_112CB(12, 5);
-        popup_show(bm1, x, y);
+        pu_show(bm1, x, y);
         F_19438(1);
     }
 }
@@ -473,12 +473,12 @@ void near F_0711A(unsigned mask)
 
     p9 = &w_8df0[a_7eaap.currentCar->specIndex];
     if (!a_7eaap.currentCar) {
-        game_message(0x0efa);
+        gm_message(0x0efa);
         return;
     }
     if (mask & 4) {
         if (p9->roofPic == 0) {
-            game_message(0x1914);
+            gm_message(0x1914);
             return;
         }
         msg = (a_7eaap.currentCar->appearance & 0x2000) ? (g_txt + 1299) : (g_txt + 1283);
@@ -487,7 +487,7 @@ void near F_0711A(unsigned mask)
     }
     if (mask & 2) {
         if (p9->frontBumperPic == 0) {
-            game_message(0x1936);
+            gm_message(0x1936);
             return;
         }
         msg = (a_7eaap.currentCar->appearance & 0x4000) ? (g_txt + 1337) : (g_txt + 1318);
@@ -496,7 +496,7 @@ void near F_0711A(unsigned mask)
     }
     if (mask & 1) {
         if (p9->rearBumperPic == 0) {
-            game_message(0x1936);
+            gm_message(0x1936);
             return;
         }
         msg = (a_7eaap.currentCar->appearance & 0x8000) ? (g_txt + 1337) : (g_txt + 1318);
@@ -504,13 +504,13 @@ void near F_0711A(unsigned mask)
         val5 = 0x888;
     }
     if ((long)cost > a_7eaap.money) {
-        game_message(0x1959);
+        gm_message(0x1959);
         return;
     }
-    bm1 = menu_grab(34, &x, &y, ARENA_HIGH_STACK);
+    bm1 = mn_grab(34, &x, &y, ARENA_HIGH_STACK);
     g_1e34[0].textOffset = msg - g_txt;
-    menu_push(34);
-    while ((key = sys_wait_input(3000)) == 0)
+    mn_push(34);
+    while ((key = sy_wait_input(3000)) == 0)
         ;
     switch (key) {
     case -20:
@@ -520,22 +520,22 @@ void near F_0711A(unsigned mask)
             a_7eaap.currentCar->appearance ^= 0x4000;
         if (mask & 1)
             a_7eaap.currentCar->appearance ^= 0x8000;
-        cursor_ctl(CURSOR_HIDE_NOW);
-        menu_pop(1);
-        popup_show(bm1, x, y);
+        cu_ctl(CURSOR_HIDE_NOW);
+        mn_pop(1);
+        pu_show(bm1, x, y);
         F_19438(1);
         n9 = a_7eaap.currentCar->specIndex;
-        r7 = game_car_look(a_7eaap.currentCar);
+        r7 = gm_car_look(a_7eaap.currentCar);
         F_181C8(8, n9, r7, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0x98, 0,
                 g_whlPic[g_part[a_7eaap.currentCar->tires->idx].variant]);
         F_16BC1();
-        cursor_ctl(CURSOR_SHOW_NOW);
+        cu_ctl(CURSOR_SHOW_NOW);
         g_gameClock.actionTicks += val5;
         F_11540(-cost);
         break;
     case -22:
-        menu_pop(1);
-        popup_show(bm1, x, y);
+        mn_pop(1);
+        pu_show(bm1, x, y);
         F_19438(1);
         break;
     }
@@ -558,35 +558,35 @@ void near F_07367(void)
     int k;
 
     if (!a_7eaap.currentCar)
-        game_message(0x0efa);
+        gm_message(0x0efa);
     else if (a_7eaap.money < 5L)
-        game_message(0x1975);
+        gm_message(0x1975);
     else {
         r_vid.copyToFront = 1;
         x = 24;
         y = 11;
-        bm1 = arena_bm(264, 69, 0, ARENA_HIGH_STACK);
-        popup_grab(x, y, 264, 69, bm1);
+        bm1 = ar_bm(264, 69, 0, ARENA_HIGH_STACK);
+        pu_grab(x, y, 264, 69, bm1);
         F_119B8(1200, x, y, -1);
-        menu_push(35);
-        while ((k = sys_wait_input(3000)) == 0)
+        mn_push(35);
+        while ((k = sy_wait_input(3000)) == 0)
             ;
         switch (k) {
         case -38: case -37: case -36: case -35:
         case -34: case -33: case -32: case -31:
-            cursor_ctl(CURSOR_HIDE);
-            menu_pop(1);
-            popup_show(bm1, x, y);
+            cu_ctl(CURSOR_HIDE);
+            mn_pop(1);
+            pu_show(bm1, x, y);
             F_19438(1);
             idx6 = -30 - k;
             a_7eaap.currentCar->appearance = ((idx6 & 0x1f) << 8) | (a_7eaap.currentCar->appearance & 0xe0ff);
-            bm3 = disk_bm(1218, ARENA_HIGH_STACK);
-            bm1 = arena_bm(g_0294->width, g_0294->height, 0, ARENA_HIGH_STACK);
-            bitmap_copy(g_0294, bm1, 1);
+            bm3 = di_bm(1218, ARENA_HIGH_STACK);
+            bm1 = ar_bm(g_0294->width, g_0294->height, 0, ARENA_HIGH_STACK);
+            bm_copy(g_0294, bm1, 1);
             q2 = &a784als[idx6 - 1];
-            bitmap_draw_pic(bm1, q2->id, (char)(q2->dx + m_8272.stickerSubX), (char)q2->dy, 0);
-            bm4 = arena_bm(bm1->width, bm1->height, 0, ARENA_HIGH_STACK);
-            bitmap_copy(bm1, bm4, 1);
+            bm_draw_pic(bm1, q2->id, (char)(q2->dx + m_8272.stickerSubX), (char)q2->dy, 0);
+            bm4 = ar_bm(bm1->width, bm1->height, 0, ARENA_HIGH_STACK);
+            bm_copy(bm1, bm4, 1);
             A2.sx = B1.sx = C.sx = 0;
             A2.sy = B1.sy = C.sy = 0;
             A2.dy = B1.dy = 0;
@@ -606,16 +606,16 @@ void near F_07367(void)
                 C.w += 8;
                 B1.dx += 8;
             }
-            popup_show(bm1, m_8272.stickerX, m_8272.stickerY);
+            pu_show(bm1, m_8272.stickerX, m_8272.stickerY);
             F_19438(3);
             F_168F3(0);
             g_gameClock.actionTicks += 0x222L;
             F_11540(-5);
-            cursor_ctl(CURSOR_SHOW);
+            cu_ctl(CURSOR_SHOW);
             break;
         case -22:
-            menu_pop(1);
-            popup_show(bm1, x, y);
+            mn_pop(1);
+            pu_show(bm1, x, y);
             F_19438(1);
             break;
         }
@@ -653,11 +653,11 @@ void near F_07741(struct Node *n, struct Node **slot)
 {
     if (*slot) {
         (*slot)->next = a_7eaap.spareParts;
-        a_7eaap.currentCar->value -= game_part_value(a_7eaap.spareParts = *slot);
+        a_7eaap.currentCar->value -= gm_part_value(a_7eaap.spareParts = *slot);
     }
     *slot = n;
     n->next = 0;
-    a_7eaap.currentCar->value += game_part_value(n);
+    a_7eaap.currentCar->value += gm_part_value(n);
 }
 
 /* remove_part @ 0000:7789 (linear 0x07789, 46 bytes) */
@@ -665,7 +665,7 @@ void near F_07741(struct Node *n, struct Node **slot)
 static void near remove_part(struct Node **slot)
 {
     (*slot)->next = a_7eaap.spareParts;
-    a_7eaap.currentCar->value -= game_part_value(a_7eaap.spareParts = *slot);
+    a_7eaap.currentCar->value -= gm_part_value(a_7eaap.spareParts = *slot);
     *slot = 0;
 }
 
@@ -699,7 +699,7 @@ void near F_07800(void)
 
     car = a_7eaap.currentCar;
     if (car == 0) {
-        game_message(0x0efa);
+        gm_message(0x0efa);
         return;
     }
     F_076A7(4, tbl, line, 0);
@@ -707,10 +707,10 @@ void near F_07800(void)
     case -4:
         return;
     case -3:
-        sel = menu_ix();
+        sel = mn_ix();
         break;
     case 0x3ea:
-        game_message(0x0f4e);
+        gm_message(0x0f4e);
         return;
     }
     y = g_part[car->tires->idx].variant;
@@ -773,17 +773,17 @@ void F_079EB(void)
     char vals[144];
 
     if (a_7eaap.currentCar == 0) {
-        game_message(0x0efa);
+        gm_message(0x0efa);
         return;
     }
     build_car_info(ids, vals);
-    sprintf(g_iTxt[3] + 9, " %3i mph", F_07EE6(a_7eaap.currentCar, 1) ? perf_vmax(-1) : 0);
+    sprintf(g_iTxt[3] + 9, " %3i mph", F_07EE6(a_7eaap.currentCar, 1) ? pf_vmax(-1) : 0);
     sprintf(g_iTxt[1] + 5, " %2i gallons", a_7eaap.currentCar->fuel / 10);
     switch (F_142CF(0x26, 1, ids, g_list, vals, g_iTxt)) {
     case -3:
         return;
     case 0x3ea:
-        game_message(0x0f4e);
+        gm_message(0x0f4e);
         return;
     }
 }
@@ -801,7 +801,7 @@ void near F_07AA4(void)
 
     owner = a_7eaap.currentCar;
     if (!owner) {
-        game_message(0x0efa);
+        gm_message(0x0efa);
         return;
     }
     for (k = 0; k < 2; k++) {
@@ -816,13 +816,13 @@ void near F_07AA4(void)
     F_119B8(0x42e, 0x20, 10, -1);
     r_vid.copyToFront = 1;
     F_127DB(m_8272.transmissionPic, owner->transmissionBolts);
-    menu_push(20);
+    mn_push(20);
     for (;;) {
-        while ((k = sys_wait_input(3000)) == 0)
+        while ((k = sy_wait_input(3000)) == 0)
             ;
         switch (k) {
         case -1:
-            menu_pop(1);
+            mn_pop(1);
             return;
         case -2:
             F_076A7(1, tbl, buf, 0);
@@ -830,16 +830,16 @@ void near F_07AA4(void)
                 switch (k = F_142CF(4, 1, 0, g_list, buf, 0)) {
                 case -3:
                     if (owner->transmission) {
-                        game_message(0x1875);
+                        gm_message(0x1875);
                         k = 0;
                     } else
-                        k = menu_ix();
+                        k = mn_ix();
                     break;
                 case -4:
                     k = 0;
                     break;
                 case 0x3ea:
-                    game_message(0xf72);
+                    gm_message(0xf72);
                     k = 0;
                     break;
                 }
@@ -849,7 +849,7 @@ void near F_07AA4(void)
                 m_8272.transmissionPic = g_49d2[g_part[tbl[k]->idx].variant];
                 if (g7d86n[owner->specIndex].parts & g_part[tbl[k]->idx].fitMask & 0xf) {
                     F_07741(F_077B7(tbl[k]), &owner->transmission);
-                    cursor_ctl(CURSOR_HIDE_NOW);
+                    cu_ctl(CURSOR_HIDE_NOW);
                     F_16A5A(1);
                     F_1264E(m_8272.transmissionPic, 0);
                     F_16A5A(0);
@@ -861,12 +861,12 @@ void near F_07AA4(void)
                         F_16B61();
                         g_1804[k].kind = 11;
                     }
-                    sys_hover_reset();
-                    cursor_ctl(CURSOR_SHOW_NOW);
+                    sy_hover_reset();
+                    cu_ctl(CURSOR_SHOW_NOW);
                     break;
                 }
                     F_1264E(m_8272.transmissionPic, 1);
-                    game_message(0x10cd);
+                    gm_message(0x10cd);
                     F_12784(m_8272.transmissionPic, 1);
                     g_gameClock.actionTicks += 0x888L;
                     m_8272.transmissionPic = prev;
@@ -881,7 +881,7 @@ void near F_07AA4(void)
                     flags[k + 1] = owner->transmissionBolts[k] = 0;
                     F_12525(k);
                     F_16B61();
-                    sys_hover_reset();
+                    sy_hover_reset();
                 } else {
                     F_123F4(owner->transmissionBolts[k], k);
                     F_16CF3();
@@ -893,7 +893,7 @@ void near F_07AA4(void)
                 m_8272.transmissionPic = 0;
                 owner->transmissionBolts[0] = owner->transmissionBolts[1] = 0;
                 remove_part(&owner->transmission);
-                sys_hover_reset();
+                sy_hover_reset();
             } else if (flags[k + 1] == 1) {
                 if (owner->transmissionBolts[k] == 3) {
                     flags[k + 1] = 2;
@@ -902,10 +902,10 @@ void near F_07AA4(void)
                 F_123F4(++owner->transmissionBolts[k], k);
                 F_16CF3();
             } else {
-                cursor_ctl(CURSOR_HIDE_NOW);
+                cu_ctl(CURSOR_HIDE_NOW);
                 F_123F4(owner->transmissionBolts[k] = 1, k);
                 F_16B61();
-                cursor_ctl(CURSOR_SHOW_NOW);
+                cu_ctl(CURSOR_SHOW_NOW);
                 flags[k + 1] = 1;
             }
             break;
@@ -953,16 +953,16 @@ static void near tune_timing(struct Car *car)
     unsigned n;
     int gear;
 
-    menu_push(0x1c);
+    mn_push(0x1c);
     blt.w = 8;
     blt.h = 11;
     blt.sx = 0x30;
     blt.sy = 0;
     blt.dx = 0xb0;
     F_119B8(0x42f, 0x60, 9, -1);
-    p = bm7568 + video_anim_start(8);
+    p = bm7568 + vi_anim_start(8);
     tmp = g_gameClock.biosTicks;
-    sys_music_pause();
+    sy_music_pause();
     g_voiceNum = 2;
     if (g_soundOn) {
         outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_MASK);
@@ -978,11 +978,11 @@ static void near tune_timing(struct Car *car)
         outp(PIT_CH2, w.b[0]);
         outp(PIT_CH2, w.b[1]);
         y = blt.dy = gear * 2 + 0x4b;
-        cursor_ctl(CURSOR_HIDE_NOW);
+        cu_ctl(CURSOR_HIDE_NOW);
         (*g_videoOps.copy)(p->img, r_vid.back, &blt, 1);
-        bitmap_copy_box(r_vid.back, r_vid.front, 0xb0, y, 0xb7, y + 10);
-        cursor_ctl(CURSOR_SHOW_NOW);
-        while ((key = sys_wait_input(0)) == 0) {
+        bm_copy_box(r_vid.back, r_vid.front, 0xb0, y, 0xb7, y + 10);
+        cu_ctl(CURSOR_SHOW_NOW);
+        while ((key = sy_wait_input(0)) == 0) {
             if (g_soundOn && g_soundOn != g_speakerOn) {
                 outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_MASK);
                 g_speakerOn = 1;
@@ -1004,19 +1004,19 @@ static void near tune_timing(struct Car *car)
     outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
     g_speakerOn = 0;
     g_voiceNum = 1;
-    sys_music_resume();
-    video_anim_stop(8);
+    sy_music_resume();
+    vi_anim_stop(8);
     n = ((unsigned)g_gameClock.biosTicks - (unsigned)tmp) * 3;
     n = n > 0x444 ? 0x444 : n;
     g_gameClock.actionTicks += n;
-    menu_pop(1);
+    mn_pop(1);
 }
 
-/* garage_hood @ 0000:81AB (linear 0x081AB, 2938 bytes)
+/* ga_hood @ 0000:81AB (linear 0x081AB, 2938 bytes)
 
    The garage screen: install, remove and tune parts */
 
-void near garage_hood(struct Car *car)
+void near ga_hood(struct Car *car)
 {
     struct Node *list4[142];
     struct Node *p6;
@@ -1032,7 +1032,7 @@ void near garage_hood(struct Car *car)
     int havek[10];
 
     if (car == 0) {
-        game_message(0xefa);
+        gm_message(0xefa);
         return;
     }
     for (key = 1; key <= 9; key++) {
@@ -1057,22 +1057,22 @@ void near garage_hood(struct Car *car)
         for (k = 3; k < 9; k++)
             g_bPos[k] = g_cPos[tmp29][k - 3];
     }
-    cursor_ctl(CURSOR_HIDE_NOW);
-    gargfx_draw_parts(car);
-    gargfx_draw_bolts(g_bPos, g_bIdx, car == a_7eaap.currentCar);
-    cursor_ctl(CURSOR_SHOW_NOW);
+    cu_ctl(CURSOR_HIDE_NOW);
+    gx_draw_parts(car);
+    gx_draw_bolts(g_bPos, g_bIdx, car == a_7eaap.currentCar);
+    cu_ctl(CURSOR_SHOW_NOW);
     if (car != a_7eaap.currentCar)
         return;
-    gargfx_build_hots(g_bPos, g_bIdx);
-    menu_push(0x15);
+    gx_build_hots(g_bPos, g_bIdx);
+    mn_push(0x15);
     for (;;) {
-        while ((key = sys_wait_input(3000)) == 0)
+        while ((key = sy_wait_input(3000)) == 0)
             ;
         switch (key) {
         case -1:
-            menu_pop(1);
+            mn_pop(1);
             r_vid.hoodBg = 0;
-            marks_release();
+            ma_release();
             return;
         case 13:
             car->wireState = -car->wireState;
@@ -1080,25 +1080,25 @@ void near garage_hood(struct Car *car)
                 continue;
             if (car->wireState > 0) {
                 g_slotSelec.wirePic = 0x447;
-                gargfx_draw_wires();
+                gx_draw_wires();
                 g_gameClock.actionTicks += 0x6d;
-                gargfx_build_hots(g_bPos, g_bIdx);
+                gx_build_hots(g_bPos, g_bIdx);
                 continue;
             }
             g_slotSelec.wirePic = 0x446;
-            gargfx_draw_wires();
+            gx_draw_wires();
             g_gameClock.actionTicks += 0x6d;
             g_slotSelec.slot = 0;
-            gargfx_build_hots(g_bPos, g_bIdx);
+            gx_build_hots(g_bPos, g_bIdx);
             break;
         case -3:
             if (F_07EE6(car, 0)) {
                 tune_timing(car);
-                cursor_ctl(CURSOR_HIDE_NOW);
-                gargfx_draw_bolts(g_bPos, g_bIdx, 1);
-                cursor_ctl(CURSOR_SHOW_NOW);
+                cu_ctl(CURSOR_HIDE_NOW);
+                gx_draw_bolts(g_bPos, g_bIdx, 1);
+                cu_ctl(CURSOR_SHOW_NOW);
             } else
-                game_message(0xea1);
+                gm_message(0xea1);
             continue;
         case -2:
             F_076A7(g_nextPartCategory[cnt1], list4, buf, 0);
@@ -1106,15 +1106,15 @@ void near garage_hood(struct Car *car)
             key = F_142CF(4, 1, 0, g_list, buf, 0);
             switch (key) {
             case -3:
-                key = menu_ix();
+                key = mn_ix();
                 break;
             case 0x3ea:
                 if (g_nextPartCategory[cnt1] == 0)
-                    game_message(0xf97);
+                    gm_message(0xf97);
                 if (g_nextPartCategory[cnt1] == 3)
-                    game_message(0xfd7);
+                    gm_message(0xfd7);
                 if (g_nextPartCategory[cnt1] == 2)
-                    game_message(0xfb5);
+                    gm_message(0xfb5);
                 key = 0;
                 break;
             case -4:
@@ -1124,7 +1124,7 @@ void near garage_hood(struct Car *car)
             if (key == 0)
                 continue;
             if (cnt1 >= n) {
-                game_message(0x1875);
+                gm_message(0x1875);
                 continue;
             }
             sel2 = cnt1;
@@ -1190,37 +1190,37 @@ void near garage_hood(struct Car *car)
             o_8290[sel2] = k = g_partPics[sel2][g_part[list4[key]->idx].variant];
             if (ok) {
                 F_07741(F_077B7(list4[key]), &car->rack.parts[sel2]);
-                cursor_ctl(CURSOR_HIDE_NOW);
+                cu_ctl(CURSOR_HIDE_NOW);
                 F_16A5A(1);
-                gargfx_draw_part(o_8290[sel2], 0);
+                gx_draw_part(o_8290[sel2], 0);
                 F_16A5A(0);
                 F_16B97();
                 if (sel2 == 0) {
                     g_partPics[1][0] = k == 0x434 ? 0x438 : 0x439;
                     g_cPos[0][0] = g_cPos[0][1] = k == 0x434 ? 4 : 5;
                     g_slotSelec.wirePic = 0x446;
-                    gargfx_draw_wires();
+                    gx_draw_wires();
                 }
                 for (k = g_nBolt[cnt1]; --k >= 0;) {
                     g_slotSelec.subslot = k;
-                    gargfx_draw_bolt(af829ax[step + k] = g_boltPics[1]);
+                    gx_draw_bolt(af829ax[step + k] = g_boltPics[1]);
                     F_16B61();
                     havek[step + k + 1] = 1;
                     car->engineBolts[step + k] = 1;
                 }
-                gargfx_build_hots(g_bPos, g_bIdx);
-                cursor_ctl(CURSOR_SHOW_NOW);
+                gx_build_hots(g_bPos, g_bIdx);
+                cu_ctl(CURSOR_SHOW_NOW);
                 cnt1++;
-                car->timing = random_int(13) - 8;
+                car->timing = rn_int(13) - 8;
                 continue;
             } else {
                 F_16A5A(1);
-                gargfx_draw_part(o_8290[sel2], 1);
+                gx_draw_part(o_8290[sel2], 1);
                 F_16A5A(0);
                 F_16B97();
-                game_message(0x10cd);
+                gm_message(0x10cd);
                 F_16A5A(1);
-                gargfx_erase_part(o_8290[sel2], 1);
+                gx_erase_part(o_8290[sel2], 1);
                 F_16A5A(0);
                 o_8290[sel2] = 0;
                 if (sel2 == 0) {
@@ -1244,10 +1244,10 @@ void near garage_hood(struct Car *car)
                 g_slotSelec.subslot = g_5198[key];
                 if (--car->engineBolts[key - 1] <= 1) {
                     af829ax[key - 1] = havek[key] = car->engineBolts[key - 1] = 0;
-                    gargfx_drop_bolt();
+                    gx_drop_bolt();
                     F_16B61();
                 } else {
-                    gargfx_draw_bolt(af829ax[key - 1] = g_boltPics[car->engineBolts[key - 1]]);
+                    gx_draw_bolt(af829ax[key - 1] = g_boltPics[car->engineBolts[key - 1]]);
                     F_16CF3();
                 }
             done:
@@ -1287,13 +1287,13 @@ void near garage_hood(struct Car *car)
                     af829ax[key - 1] = g_boltPics[++car->engineBolts[key - 1]];
                     g_slotSelec.slot = g_5184[key];
                     g_slotSelec.subslot = g_5198[key];
-                    gargfx_draw_bolt(af829ax[key - 1]);
+                    gx_draw_bolt(af829ax[key - 1]);
                     F_16CF3();
                     continue;
                 }
                 g_slotSelec.slot = g_5184[key];
                 g_slotSelec.subslot = g_5198[key];
-                gargfx_draw_bolt(af829ax[key - 1] = g_boltPics[1]);
+                gx_draw_bolt(af829ax[key - 1] = g_boltPics[1]);
                 F_16B61();
                 havek[key] = 1;
                 car->engineBolts[key - 1] = 1;
@@ -1316,15 +1316,15 @@ void near garage_hood(struct Car *car)
         if (sel2 >= 0) {
             cnt1--;
             remove_part(&car->rack.parts[sel2]);
-            cursor_ctl(CURSOR_HIDE_NOW);
+            cu_ctl(CURSOR_HIDE_NOW);
             o_8290[sel2] = 0;
             if (ok)
                 g_slotSelec.slot = ok - 1;
-            gargfx_draw_parts(car);
-            gargfx_draw_bolts(g_bPos, g_bIdx, 1);
-            gargfx_build_hots(g_bPos, g_bIdx);
-            car->timing = random_int(13) - 8;
-            cursor_ctl(CURSOR_SHOW_NOW);
+            gx_draw_parts(car);
+            gx_draw_bolts(g_bPos, g_bIdx, 1);
+            gx_build_hots(g_bPos, g_bIdx);
+            car->timing = rn_int(13) - 8;
+            cu_ctl(CURSOR_SHOW_NOW);
         }
         if (ok == 0)
             continue;

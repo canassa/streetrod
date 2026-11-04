@@ -291,10 +291,10 @@ _g_list DW      143 DUP (0)              ; DS:49E0 int[]
 
         .CODE S0000_TEXT
 
-; m_02b9a_store_mode_a @ 0000:2B9A (linear 0x02B9A, 19 bytes)
+; mb_store_mode_a @ 0000:2B9A (linear 0x02B9A, 19 bytes)
 
-        PUBLIC  _m_02b9a_store_mode_a
-_m_02b9a_store_mode_a  PROC  FAR
+        PUBLIC  _mb_store_mode_a
+_mb_store_mode_a  PROC  FAR
         push    bp
         mov     bp,sp
         push    ax
@@ -305,7 +305,7 @@ _m_02b9a_store_mode_a  PROC  FAR
         pop     ax
         pop     bp
         ret
-_m_02b9a_store_mode_a  ENDP
+_mb_store_mode_a  ENDP
 
 ; set_g47ec_47ed @ 0000:2BAD (linear 0x02BAD, 19 bytes)
 
@@ -323,10 +323,10 @@ _set_g47ec_47ed  PROC  FAR
         ret
 _set_g47ec_47ed  ENDP
 
-; m_02b9a_apply_mode_a @ 0000:2BC0 (linear 0x02BC0, 34 bytes)
+; mb_apply_mode_a @ 0000:2BC0 (linear 0x02BC0, 34 bytes)
 
-        PUBLIC  _m_02b9a_apply_mode_a
-_m_02b9a_apply_mode_a  PROC  FAR
+        PUBLIC  _mb_apply_mode_a
+_mb_apply_mode_a  PROC  FAR
         push    bp
         mov     bp,sp
         push    ax
@@ -344,12 +344,12 @@ _m_02b9a_apply_mode_a  PROC  FAR
         pop     ax
         pop     bp
         ret
-_m_02b9a_apply_mode_a  ENDP
+_mb_apply_mode_a  ENDP
 
-; m_02b9a_apply_mode_b @ 0000:2BE2 (linear 0x02BE2, 34 bytes)
+; mb_apply_mode_b @ 0000:2BE2 (linear 0x02BE2, 34 bytes)
 
-        PUBLIC  _m_02b9a_apply_mode_b
-_m_02b9a_apply_mode_b  PROC  FAR
+        PUBLIC  _mb_apply_mode_b
+_mb_apply_mode_b  PROC  FAR
         push    bp
         mov     bp,sp
         push    ax
@@ -367,6 +367,6 @@ _m_02b9a_apply_mode_b  PROC  FAR
         pop     ax
         pop     bp
         ret
-_m_02b9a_apply_mode_b  ENDP
+_mb_apply_mode_b  ENDP
 
         END

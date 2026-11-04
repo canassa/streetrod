@@ -40,7 +40,7 @@ extern struct Racer *g_selectedRacerPointer;                            /* DS:7D
 extern int g_driverIdxSelVal;                                      /* DS:7F82 */
 extern int g_rivalHereState;                                      /* DS:7F86 */
 extern struct Bitmap far *g_edgeBmpJail;                       /* DS:82B8 */
-void bobs_visit(void);                                  /* 0x0AB8B */
-void bobs_jail(void);                                   /* 0x0B08C */
+void bo_visit(void);                                  /* 0x0AB8B */
+void bo_jail(void);                                   /* 0x0B08C */
 
 #endif

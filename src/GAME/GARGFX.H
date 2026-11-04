@@ -27,16 +27,16 @@ void F_12525(int a);                                    /* 0x12525 */
 void F_1264E(int n, int flag);                          /* 0x1264E */
 void F_12784(int n, int flag);                          /* 0x12784 */
 void F_127DB(int n, char far *s);                       /* 0x127DB */
-void gargfx_part_pos(int *px, int *py);                 /* 0x12909 */
-void gargfx_bolt_pos(int *px, int *py);                 /* 0x12964 */
-void gargfx_draw_bolt(int n);                           /* 0x12A17 */
-void gargfx_drop_bolt(void);                            /* 0x12B7C */
-void gargfx_draw_part(int n, int flag);                 /* 0x12DD8 */
-void gargfx_erase_part(int n, int flag);                /* 0x12F99 */
-void gargfx_draw_wires(void);                           /* 0x1309C */
-void gargfx_draw_parts(struct Car *car);                /* 0x131B5 */
-void gargfx_draw_bolts(int *a, int *b, int flag);       /* 0x132AD */
-void gargfx_build_hots(int *xs, int *ys);               /* 0x1344A */
+void gx_part_pos(int *px, int *py);                 /* 0x12909 */
+void gx_bolt_pos(int *px, int *py);                 /* 0x12964 */
+void gx_draw_bolt(int n);                           /* 0x12A17 */
+void gx_drop_bolt(void);                            /* 0x12B7C */
+void gx_draw_part(int n, int flag);                 /* 0x12DD8 */
+void gx_erase_part(int n, int flag);                /* 0x12F99 */
+void gx_draw_wires(void);                           /* 0x1309C */
+void gx_draw_parts(struct Car *car);                /* 0x131B5 */
+void gx_draw_bolts(int *a, int *b, int flag);       /* 0x132AD */
+void gx_build_hots(int *xs, int *ys);               /* 0x1344A */
 void F_135E5(int first, int n);                         /* 0x135E5 */
 
 #endif

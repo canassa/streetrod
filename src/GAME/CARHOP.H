@@ -12,7 +12,7 @@ extern char g_carhopFrames[];                           /* DS:5A32 */
 extern struct Seq g_carhopInSeq[4];                     /* DS:5A86 */
 extern struct Seq g_carhopOutSeq[4];                    /* DS:5A96 */
 extern char g_keepMask;                                     /* DS:5AA6 */
-void carhop_skate(int a, int b);                         /* 0x18D59 */
-void carhop_save_bg(void);                              /* 0x191DD */
+void ch_skate(int a, int b);                         /* 0x18D59 */
+void ch_save_bg(void);                              /* 0x191DD */
 
 #endif

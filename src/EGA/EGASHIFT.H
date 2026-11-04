@@ -6,6 +6,6 @@
 
 extern unsigned char g_leftBitMasks[];                  /* DS:5C16 */
 extern int g_egaGcFunction;                             /* DS:5C1E */
-void egashift_blit(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r);/* 0x23C3B */
+void ex_blit(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r);/* 0x23C3B */
 
 #endif

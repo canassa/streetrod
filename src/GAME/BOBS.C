@@ -73,32 +73,32 @@ static int near maybe_carhop(int mode, int arg, int pct1, int pct2)
     case CARHOP_ENTER:
         if (g_carhop != 0)
             break;
-        if (g_passCount < 3 || random_int(100) >= pct1)
+        if (g_passCount < 3 || rn_int(100) >= pct1)
             break;
         r = 1;
-        cursor_ctl(CURSOR_HIDE_NOW);
-        carhop_skate(CARHOP_ENTER, arg);
+        cu_ctl(CURSOR_HIDE_NOW);
+        ch_skate(CARHOP_ENTER, arg);
         g_carhop = 1;
-        if (random_int(100) < pct2) {
+        if (rn_int(100) < pct2) {
             F_10AFD(100);
-            carhop_skate(CARHOP_LEAVE, arg);
+            ch_skate(CARHOP_LEAVE, arg);
             g_carhop = 0;
             g_ordered = 0;
         }
         break;
     case CARHOP_LEAVE:
-        if (g_carhop != 1 || random_int(100) >= pct1)
+        if (g_carhop != 1 || rn_int(100) >= pct1)
             break;
         r = 1;
-        cursor_ctl(CURSOR_HIDE_NOW);
-        carhop_skate(CARHOP_LEAVE, arg);
+        cu_ctl(CURSOR_HIDE_NOW);
+        ch_skate(CARHOP_LEAVE, arg);
         g_carhop = 0;
         g_ordered = 0;
         g_passCount = 0;
         break;
     }
     if (r)
-        cursor_ctl(CURSOR_SHOW_NOW);
+        cu_ctl(CURSOR_SHOW_NOW);
     return r;
 }
 
@@ -145,7 +145,7 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
     if (g_strOpp[n = strlen(g_strOpp) - 1] == '.')
         g_strOpp[n] = 0;
     for (;;) {
-        g_wRivBanner = dash_text_width(g_strOpp);
+        g_wRivBanner = da_text_width(g_strOpp);
         n = SCREEN_WIDTH - (g_xMoneyRhsVal + g_wRivBanner);
         n = n > 0 ? n >> 1 : 0;
         n = n < 15 ? 15 : n;
@@ -257,7 +257,7 @@ static void near build_rival_pool(int flag)
 
     for (k = 0; k < RACER_KING; k++) {
         item = &g7d86n[g_racerRecordsArray[k].specIndex];
-        map[k].dr = abs(perf_vmax(g_racerRecordsArray[k].specIndex) - perf_vmax(-1));
+        map[k].dr = abs(pf_vmax(g_racerRecordsArray[k].specIndex) - pf_vmax(-1));
         map[k].dk = abs(g7d86n[g_racerRecordsArray[k].specIndex].rank - g7d86n[a_7eaap.currentCar->specIndex].rank);
         map[k].taken = (g_racerRecordsArray[k].status != RACER_EMPTY) ? 0 : 1;
     }
@@ -300,14 +300,14 @@ static int near pick_rival(int chance, int arg)
 {
     int pick;
 
-    if (random_int(100) < chance)
+    if (rn_int(100) < chance)
         return RACER_KING;
     build_rival_pool(arg);
     if (g_poolCount == 0)
         return RACER_KING;
-    pick = g_poolRivals[random_int(g_poolCount)];
+    pick = g_poolRivals[rn_int(g_poolCount)];
     if (pick == g_lastRival)
-        pick = g_poolRivals[random_int(g_poolCount)];
+        pick = g_poolRivals[rn_int(g_poolCount)];
     g_lastRival = pick;
     return pick;
 }
@@ -326,13 +326,13 @@ static void near select_rival(int n)
         g_selectedRacerPointer->status = RACER_MET;
         skill = (g_oppSpecPointer->rank >> 1) + 1;
         if (g_selectedRacerPointer->sticker == 0 && g_selectedRacerPointer->betRaces > 5)
-            g_selectedRacerPointer->sticker = random_int(20) < skill ? random_int(9) : 0;
+            g_selectedRacerPointer->sticker = rn_int(20) < skill ? rn_int(9) : 0;
         else if (g_selectedRacerPointer->sticker > 0 && g_selectedRacerPointer->betRaces > 10)
-            g_selectedRacerPointer->sticker = random_int(40) < skill ? random_int(9) : g_selectedRacerPointer->sticker;
+            g_selectedRacerPointer->sticker = rn_int(40) < skill ? rn_int(9) : g_selectedRacerPointer->sticker;
         if (w_8df0[bn7648].frontBumperPic > 0 && w_8df0[bn7648].rearBumperPic > 0 && g_selectedRacerPointer->betRaces > 8)
-            g_selectedRacerPointer->bodyMods |= random_int(25) < skill ? 3 : g_selectedRacerPointer->bodyMods;
+            g_selectedRacerPointer->bodyMods |= rn_int(25) < skill ? 3 : g_selectedRacerPointer->bodyMods;
         if (w_8df0[bn7648].roofPic > 0 && g_selectedRacerPointer->betRaces > 8)
-            g_selectedRacerPointer->bodyMods |= random_int(30) < skill ? 4 : g_selectedRacerPointer->bodyMods;
+            g_selectedRacerPointer->bodyMods |= rn_int(30) < skill ? 4 : g_selectedRacerPointer->bodyMods;
     } else
         g_isKingState = 1;
     m_8272.bodyPic = g_oppSpecPointer->bodyPic;
@@ -396,11 +396,11 @@ static int near look_for_rival(int n)
             F_11421(-1, "", 0);
             show_rival_car(2, bn7648, 1, 0xa3, 0, g_whlPic[m_8272.tireVariant]);
         }
-        choice = menu_ix();
+        choice = mn_ix();
         rival_arrives(sel[choice - 1], n, 0);
         return 1;
     case 0x3ea:
-        game_message(0x198c);
+        gm_message(0x198c);
         return 0;
     }
 }
@@ -457,7 +457,7 @@ calc:
     scorel += adj9 + bonus2;
     if (g_demo)
         scorel += (scorel >> 2) + 10;
-    return random_int(100) <= scorel;
+    return rn_int(100) <= scorel;
 }
 
 /* challenge @ 0000:9D6D (linear 0x09D6D, 907 bytes) */
@@ -474,52 +474,52 @@ static int near challenge(int arg)
     int sy;
     int prev;
 
-    marks_release();
+    ma_release();
     if (arg) {
         ch = king_status();
         switch (ch) {
         case 2:
-            game_message(0x1113);
+            gm_message(0x1113);
             break;
         case 3:
-            game_message(0x113d);
+            gm_message(0x113d);
             break;
         case 4:
-            game_message(0x117d);
+            gm_message(0x117d);
             break;
         case 5:
-            game_message(0x11a7);
+            gm_message(0x11a7);
             break;
         case 0:
             if (g_kingDragWon == 0) {
                 if (a_7eaap.currentCar->fuel < 22) {
-                    game_message(0x1761);
+                    gm_message(0x1761);
                     return 0;
                 }
                 a_7eaap.raceType = 0;
-                game_message(0x11d1);
+                gm_message(0x11d1);
                 g_raceWagerTerms.kind = BET_NONE;
             } else {
                 a_7eaap.raceType = 1;
-                game_message(0x11f7);
+                gm_message(0x11f7);
                 g_raceWagerTerms.kind = BET_CAR;
             }
             g_raceWagerTerms.amount = 0;
-            race_run();
+            ra_run();
             g_gameClock.actionTicks += a_7eaap.raceType == 0 ? 0x444u : 0x777u;
             return 2;
         }
-        marks_release();
+        ma_release();
         return 0;
     }
     if (a_7eaap.currentCar->fuel < 7) {
-        game_message(0x1761);
+        gm_message(0x1761);
         return 0;
     }
-    pict = menu_grab(0x12, &x, &sy, ARENA_LOW_STACK);
-    menu_push(0x16);
+    pict = mn_grab(0x12, &x, &sy, ARENA_LOW_STACK);
+    mn_push(0x16);
     g_waitUntil = g_tick + 800;
-    while ((ch = sys_wait_input(3000)) == 0)
+    while ((ch = sy_wait_input(3000)) == 0)
         ;
     switch (ch) {
     case 1:
@@ -532,25 +532,25 @@ static int near challenge(int arg)
         break;
     case -23:
     case 1000:
-        game_message(0x122c);
+        gm_message(0x122c);
         goto quit;
     }
     if (a_7eaap.raceType == 1 && a_7eaap.currentCar->fuel < 17) {
-        game_message(0x1761);
+        gm_message(0x1761);
         goto quit;
     }
-    menu_pop(1);
+    mn_pop(1);
     prev = -1;
-    menu_push(num);
+    mn_push(num);
     for (step = 0; step < 2; step++) {
         g_waitUntil = g_tick + 800;
-        while ((ch = sys_wait_input(3000)) == 0)
+        while ((ch = sy_wait_input(3000)) == 0)
             ;
         m_8272.betType = ch;
         switch (ch) {
         case -23:
         case 1000:
-            game_message(0x122c);
+            gm_message(0x122c);
             goto quit;
         case 1:
             price = 0;
@@ -581,25 +581,25 @@ static int near challenge(int arg)
             if (accepts_bet(kind)) {
                 g_raceWagerTerms.kind = kind;
                 g_raceWagerTerms.amount = price;
-                menu_pop(1);
-                popup_show(pict, x, sy);
+                mn_pop(1);
+                pu_show(pict, x, sy);
                 pict = 0;
-                game_message(g_acceptMsgs[a_7eaap.raceType][random_int(3)]);
-                race_run();
+                gm_message(g_acceptMsgs[a_7eaap.raceType][rn_int(3)]);
+                ra_run();
                 g_gameClock.actionTicks += a_7eaap.raceType == 0 ? 0x444u : 0x777u;
                 return 2;
             }
-            while ((ch = random_int(5)) == prev)
+            while ((ch = rn_int(5)) == prev)
                 ;
-            game_message(g_refuseMsgs[a_7eaap.raceType][prev = ch]);
+            gm_message(g_refuseMsgs[a_7eaap.raceType][prev = ch]);
         } else
-            game_message(0x131b);
+            gm_message(0x131b);
     }
 quit:
-    menu_pop(1);
-    popup_show(pict, x, sy);
+    mn_pop(1);
+    pu_show(pict, x, sy);
     pict = 0;
-    marks_release();
+    ma_release();
     return 0;
 }
 
@@ -674,23 +674,23 @@ static void near pop_rival_hood(void)
     struct Node n1;
     struct Node na;
 
-    marks_release();
-    pict = popup_grab(0x60, 9, 200, 143, 0);
+    ma_release();
+    pict = pu_grab(0x60, 9, 200, 143, 0);
     chassis.transmission = &n1;
     chassis.tires = &na;
     for (n = 0; n < 5; n++)
         chassis.rack.parts[n] = &nodes[n];
-    game_make_car(bn7648, 0, &chassis);
-    garage_hood(&chassis);
+    gm_make_car(bn7648, 0, &chassis);
+    ga_hood(&chassis);
     F_11421(-1, "", 0);
-    menu_push(0x18);
+    mn_push(0x18);
     g_waitUntil = g_tick + 800;
-    while ((n = sys_wait_input(3000)) == 0)
+    while ((n = sy_wait_input(3000)) == 0)
         ;
     r_vid.hoodBg = 0;
-    popup_show(pict, 0x60, 9);
-    marks_release();
-    menu_pop(1);
+    pu_show(pict, 0x60, 9);
+    ma_release();
+    mn_pop(1);
 }
 
 /* blit_cell @ 0000:A35C (linear 0x0A35C, 186 bytes)
@@ -741,14 +741,14 @@ static void near play_cell_anim(void)
     int going;
     int i, key;
 
-    marks_release();
-    pict = disk_bm(0x4c9, ARENA_HIGH_STACK);
+    ma_release();
+    pict = di_bm(0x4c9, ARENA_HIGH_STACK);
     i = 0;
-    menu_push(0x18);
+    mn_push(0x18);
     g_waitUntil = g_tick + 10;
     going = 1;
     do {
-        while ((key = sys_wait_input(3000)) == 0)
+        while ((key = sy_wait_input(3000)) == 0)
             ;
         switch (key) {
         case -26:
@@ -769,8 +769,8 @@ static void near play_cell_anim(void)
     F_10AFD(1);
     blit_cell(pict, g_animCells[1 + 1], r_vid.front);
     blit_cell(pict, g_animCells[1 + 1], r_vid.back);
-    menu_pop(1);
-    marks_release();
+    mn_pop(1);
+    ma_release();
 }
 
 /* play_ending @ 0000:A544 (linear 0x0A544, 1607 bytes) */
@@ -802,8 +802,8 @@ static void near play_ending(void)
     int savedl;
 
     flag8 = 0;
-    cursor_ctl(CURSOR_HIDE_NOW);
-    screen_status_init(0xbe);
+    cu_ctl(CURSOR_HIDE_NOW);
+    sc_status_init(0xbe);
     F_119B8(9, 8, 0x14, 2);
     r_vid.copyToFront = 0;
     savedl = g_picturePlacement.maxHeight;
@@ -812,15 +812,15 @@ static void near play_ending(void)
     F_118D4(0x408, -1);
     g_picturePlacement.maxHeight = savedl;
     (*g_videoOps.show)();
-    game_pause(0x2ee);
+    gm_pause(0x2ee);
     (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
     g_scene = 1;
-    pic15 = arena_bm(0x50, 0x2c, 0, ARENA_HIGH_BASE);
-    popup_grab(0x78, 0x45, 0x50, 0x2c, pic15);
-    disk_free_list(g_gamePics);
+    pic15 = ar_bm(0x50, 0x2c, 0, ARENA_HIGH_BASE);
+    pu_grab(0x78, 0x45, 0x50, 0x2c, pic15);
+    di_free_list(g_gamePics);
     g_picsFreed = 1;
-    r = disk_load_list(g_endPics, 0);
-    r = disk_load_list(g_endPics2, 0);
+    r = di_load_list(g_endPics, 0);
+    r = di_load_list(g_endPics2, 0);
     (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.copyToFront = 0;
     (*g_videoOps.show)();
@@ -828,10 +828,10 @@ static void near play_ending(void)
     select_rival(RACER_KING);
     F_181C8(4, bn7648, g_selectedRacerPointer->bodyMods, g_selectedRacerPointer->sticker, 1, 0x98, 0, g_whlPic[m_8272.tireVariant]);
     g_racerRecordsArray[RACER_KING].overlayPic = 0x4dc;
-    pic24 = arena_bm(0x50, 0x2c, 0, ARENA_HIGH_BASE);
-    popup_grab(0x78, 0x45, 0x50, 0x2c, pic24);
-    pic3 = disk_bm(6, ARENA_LOW_STACK);
-    pic4 = arena_bm(0x50, 0x2c, 0, ARENA_HIGH_BASE);
+    pic24 = ar_bm(0x50, 0x2c, 0, ARENA_HIGH_BASE);
+    pu_grab(0x78, 0x45, 0x50, 0x2c, pic24);
+    pic3 = di_bm(6, ARENA_LOW_STACK);
+    pic4 = ar_bm(0x50, 0x2c, 0, ARENA_HIGH_BASE);
     p3 = g_endCellsA;
     blt.w = g_endCellsA[0].w;
     blt.h = g_endCellsA[0].h;
@@ -847,12 +847,12 @@ static void near play_ending(void)
     blt.dx = blt.sx;
     blt.dy = blt.sy;
     (*g_videoOps.copy)(pic15, pic24, &blt, 1);
-    game_pause(10);
+    gm_pause(10);
     for (i2 = 1; i2 < 0x14; i2++) {
         if (i2 == 13)
             F_10AFD(0x14);
         p3 = &g_endCellsA[i2];
-        bitmap_copy(pic24, pic4, 1);
+        bm_copy(pic24, pic4, 1);
         blt.w = p3->w;
         blt.h = p3->h;
         blt.sx = p3->sx;
@@ -873,12 +873,12 @@ static void near play_ending(void)
         if (i2 == 0x12)
             (*g_videoOps.copy)(pic4, r_vid.back, &blt, 1);
     }
-    marks_clear();
+    ma_clear();
     if (flag8 == 0) {
-        pic58 = disk_bm(7, ARENA_LOW_STACK);
+        pic58 = di_bm(7, ARENA_LOW_STACK);
         cntz = 9;
         if (r_vid.mode == VID_TANDY) {
-            arena_shrink(10000);
+            ar_shrink(10000);
             cntz--;
         }
         v32 = v38l = 0x28;
@@ -888,7 +888,7 @@ static void near play_ending(void)
             w8 = max((int)p2m->w + (int)p2m->x, v32 + v2a) - (minx = min((int)p2m->x, v32));
             h8 = max((int)p2m->h + (int)p2m->y, v38l + v2a);
             h8 -= miny = min((int)p2m->y, v38l);
-            pic6m = arena_bm(w8, h8, 0, ARENA_HIGH_STACK);
+            pic6m = ar_bm(w8, h8, 0, ARENA_HIGH_STACK);
             blt2k.w = w8;
             blt2k.h = h8;
             blt2k.sx = minx;
@@ -916,26 +916,26 @@ static void near play_ending(void)
     }
     blt2k.sx = minx;
     blt2k.sy = miny;
-    game_pause(0x50);
+    gm_pause(0x50);
     F_10AFD(1);
     (*g_videoOps.copy)(r_vid.back, r_vid.front, &blt2k, 1);
     F_10AFD(1);
     (*g_videoOps.copy)(pic4, r_vid.front, &blt, 1);
     (*g_videoOps.copy)(pic4, r_vid.back, &blt, 1);
-    game_pause(0x32);
-    game_message(0x183c);
+    gm_pause(0x32);
+    gm_message(0x183c);
     r_vid.copyToFront = 0;
-    arena_reset();
-    disk_free_list(g_endPics2);
-    disk_free_list(g_endPics);
+    ar_reset();
+    di_free_list(g_endPics2);
+    di_free_list(g_endPics);
 }
 
 struct Btn g_jailBars[7] = {{&g_barJailPixels, 0, 0, 16, 149, 40, 5}, {&g_barJailPixels, 0, 0, 16, 149, 96, 5}, {&g_barJailPixels, 0, 0, 16, 149, 152, 5}, {&g_barJailPixels, 0, 0, 16, 149, 208, 5}, {&g_barJailPixels, 0, 0, 16, 149, 264, 5}, {&g_edgeBmpJail, 0, 0, 32, 149, 0, 5}, {&g_edgeBmpJail, 32, 0, 32, 149, 288, 5}};   /* DS:5338 */
 struct Pair g_jailGaps[6] = {{32, 8}, {56, 40}, {112, 40}, {168, 40}, {224, 40}, {280, 8}};   /* DS:539A */
 
-/* bobs_visit @ 0000:AB8B (linear 0x0AB8B, 1210 bytes) */
+/* bo_visit @ 0000:AB8B (linear 0x0AB8B, 1210 bytes) */
 
-void bobs_visit(void)
+void bo_visit(void)
 {
     int n;
     int rival;
@@ -952,15 +952,15 @@ void bobs_visit(void)
     g_cursorX = 0x9e;
     g_cursorY = 0x80;
     F_118D4(0x445, -1);
-    video_bobs_pal();
+    vi_bobs_pal();
     F_11593(g_49dc);
     g_cursor2.drawnRect.x2 = -1;
-    cursor_ctl(1);
+    cu_ctl(1);
     (*g_videoOps.show)();
     F_16381(0);
-    if (random_int(100) < 25)
+    if (rn_int(100) < 25)
         play_cell_anim();
-    cursor_ctl(CURSOR_SHOW_NOW);
+    cu_ctl(CURSOR_SHOW_NOW);
     g_rivalHereState = 0;
     g_carhop = -1;
     g_ordered = 0;
@@ -969,22 +969,22 @@ void bobs_visit(void)
     g_mouse.left = g_joyButtons = g_buttons = 0;
     for (;;) {
         setup_bobs_spots(g_rivalHereState, !g_carhop & !g_ordered);
-        menu_push(0x25);
+        mn_push(0x25);
         g_waitUntil = flag == 0 ? (unsigned)(class == 4 ? 140 : 280) + g_tick : g_tick + 5;
         flag = 0;
         rival = class == 4 ? 0 : king_chance();
         F_06529(0);
         if (g_end)
             return;
-        while ((choice = sys_wait_input(3000)) == 0)
+        while ((choice = sy_wait_input(3000)) == 0)
             ;
         switch (choice) {
         case 1:
             g_strOpp[0] = 0;
             F_11421(g_bannerX, " ", g_wRivBanner);
-            menu_pop(1);
+            mn_pop(1);
             g_scene = 1;
-            cruise_go();
+            cr_go();
             return;
         case 1000:
             F_06529(0);
@@ -995,18 +995,18 @@ void bobs_visit(void)
             F_11421(-1, "", 0);
             show_rival_car(2, bn7648, 1, 0xa3, 0, g_whlPic[m_8272.tireVariant]);
             n = 0;
-            menu_pop(1);
+            mn_pop(1);
             break;
         default:
 out:
-            menu_pop(1);
+            mn_pop(1);
             break;
         case 4:
             if ((status = look_for_rival(class)) == 0)
                 flag = 1;
             else
                 n = 0;
-            menu_pop(1);
+            mn_pop(1);
             break;
         case 2:
             if (g_rivalHereState == 0) {
@@ -1014,7 +1014,7 @@ out:
 race:
                 rival_arrives(pick_rival(rival, 0), class, 2);
                 class = 1;
-                menu_pop(1);
+                mn_pop(1);
             } else {
                 g_statusLine.shown = 1;
                 F_11421(-1, "", 0);
@@ -1023,9 +1023,9 @@ test:
                 while ((F_11421(-1, "", 0), challenge(g_isKingState))) {
                     g_strOpp[0] = 0;
                     F_11421(g_bannerX, " ", g_wRivBanner);
-                    place = race_outcome();
+                    place = ra_outcome();
                     (*g_videoOps.blank)();
-                    cruise_rival_paint(-1);
+                    cr_rival_paint(-1);
                     if (m_8272.betType != 1)
                         g_betRaces++;
                     if (g_isKingState) {
@@ -1038,7 +1038,7 @@ test:
                             g_kingDragWon = 1;
                         else {
                             F_16381(0);
-                            menu_pop(1);
+                            mn_pop(1);
                             play_ending();
                             g_end |= 2;
                             return;
@@ -1046,9 +1046,9 @@ test:
                     }
                     if (place == 4) {
                         F_16381(0);
-                        menu_pop(1);
-                        bobs_jail();
-                        cursor_ctl(CURSOR_HIDE_NOW);
+                        mn_pop(1);
+                        bo_jail();
+                        cu_ctl(CURSOR_HIDE_NOW);
                         g_end |= 4;
                         return;
                     }
@@ -1064,11 +1064,11 @@ test:
                             g_selectedRacerPointer->betWins++;
                     }
                     if (place == 2 || place == 1) {
-                        menu_pop(1);
+                        mn_pop(1);
                         g_scene = place == 2 ? 0 : 1;
                         if (g_scene == 1)
                             g_keepCruiseMusic = 1;
-                        cruise_go();
+                        cr_go();
                         g_keepCruiseMusic = 0;
                         return;
                     }
@@ -1088,14 +1088,14 @@ test:
                 }
                 show_rival_car(2, bn7648, 1, 0xa3, 0, g_whlPic[m_8272.tireVariant]);
                 n = 0;
-                menu_pop(1);
+                mn_pop(1);
             }
             break;
         case 3:
             if (g_rivalHereState == 0)
                 goto out;
             if (n > 0 || g_isKingState) {
-                game_message(0x122c);
+                gm_message(0x122c);
                 show_rival_car(2, bn7648, 1, 0xa3, 0, g_whlPic[m_8272.tireVariant]);
                 n = 0;
             } else {
@@ -1103,12 +1103,12 @@ test:
                 n++;
                 g_gameClock.actionTicks += 0x111L;
             }
-            menu_pop(1);
+            mn_pop(1);
             break;
         case 5:
             if (g_carhop == 0)
                 g_ordered = 1;
-            menu_pop(1);
+            mn_pop(1);
             break;
         }
     }
@@ -1132,9 +1132,9 @@ static void near set_jail_spots(int id, char c)
     g_keyMaps[37]->key = c;
 }
 
-/* bobs_jail @ 0000:B08C (linear 0x0B08C, 829 bytes) */
+/* bo_jail @ 0000:B08C (linear 0x0B08C, 829 bytes) */
 
-void bobs_jail(void)
+void bo_jail(void)
 {
     struct Bitmap far *pict;
     struct Blt blt;
@@ -1149,13 +1149,13 @@ void bobs_jail(void)
     mode = 4;
     flag = 0;
     r_vid.copyToFront = 0;
-    cursor_ctl(CURSOR_HIDE);
-    marks_clear();
-    g_edgeBmpJail = disk_bm(0x4e7, ARENA_LOW_STACK);
-    g_barJailPixels = disk_bm(0x4e9, ARENA_LOW_STACK);
+    cu_ctl(CURSOR_HIDE);
+    ma_clear();
+    g_edgeBmpJail = di_bm(0x4e7, ARENA_LOW_STACK);
+    g_barJailPixels = di_bm(0x4e9, ARENA_LOW_STACK);
     F_118D4(0x445, -1);
-    video_bobs_pal();
-    pict = disk_bm(0x4e8, ARENA_HIGH_STACK);
+    vi_bobs_pal();
+    pict = di_bm(0x4e8, ARENA_HIGH_STACK);
     blt.w = pict->width;
     blt.h = 5;
     blt.dx = blt.dy = blt.sx = blt.sy = 0;
@@ -1181,32 +1181,32 @@ void bobs_jail(void)
     g_rivalHereState = 0;
     g_carhop = -1;
     g_ordered = 0;
-    cursor_ctl(1);
-    cursor_ctl(CURSOR_SHOW);
+    cu_ctl(1);
+    cu_ctl(CURSOR_SHOW);
     g_scene = 6;
     set_jail_spots(14, 16);
     for (;;) {
-        menu_push(0x25);
+        mn_push(0x25);
         if (flag == 0)
             g_waitUntil = (mode == 4 ? 140u : 280u) + g_tick;
         else
             g_waitUntil = g_tick + 5;
         flag = 0;
         who = mode == 4 ? 0 : king_chance();
-        while ((ch = sys_wait_input(3000)) == 0)
+        while ((ch = sy_wait_input(3000)) == 0)
             ;
         switch (ch) {
         case 1:
-            menu_pop(1);
+            mn_pop(1);
             set_jail_spots(11, 34);
             g_scene = 1;
             return;
         case 1000:
-            if (random_int(100) < 6) {
-                cursor_ctl(CURSOR_HIDE_NOW);
+            if (rn_int(100) < 6) {
+                cu_ctl(CURSOR_HIDE_NOW);
                 F_11421(-1, "", 0);
                 play_cell_anim();
-                cursor_ctl(CURSOR_SHOW_NOW);
+                cu_ctl(CURSOR_SHOW_NOW);
             }
             rival_arrives(pick_rival(who, 1), mode, 1);
             mode = 1;
@@ -1217,7 +1217,7 @@ void bobs_jail(void)
         case 4:
         case 5:
         default:
-            menu_pop(0);
+            mn_pop(0);
         }
     }
 }

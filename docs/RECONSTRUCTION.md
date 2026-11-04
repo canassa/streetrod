@@ -10,7 +10,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 ## Names
 
 - **Functions and globals.** `F_xxxxx` and `g_xxxx` are addresses. The other names
-  (`garage_day`, `sys_wait_input`, `g_lib1Name`, ...) were given from what the code does
+  (`ga_day`, `sy_wait_input`, `g_lib1Name`, ...) were given from what the code does
   (values read and written, callers, strings, ports, data), following CLAUDE.md's naming
   conventions; they describe behaviour and are not the original identifiers. Only the
   runtime's names (`./sr crtnames`) come from a library. Name lengths are not free: MSC's
@@ -60,46 +60,46 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **Equivalent forms.** Wherever several C forms compile to the same bytes, the source uses
   one of them. Some arbitrary picks: the equal-arm ternaries
-  `!x ? 1 : 1` in sys_drive_isr (the condition leaves no code), `case -2: case -1:` in game_run
+  `!x ? 1 : 1` in sy_drive_isr (the condition leaves no code), `case -2: case -1:` in gm_run
   (any run above -3 gives the same code), the empty increment of `for (; *str; str)` in
-  ega_draw_text, and `i = 4` after swap_wheel's loops.
-- **draw_bevel's `int bm = x_colors.c[4] == 2 ? 3 : 3;`** (DRAW.C). The original stores 3
+  eg_draw_text, and `i = 4` after swap_wheel's loops.
+- **dr_bevel's `int bm = x_colors.c[4] == 2 ? 3 : 3;`** (DRAW.C). The original stores 3
   through `ax` and reloads `bm` from memory (including a `bm * 2` CSE in `si`), so the
   constant was not propagated; a plain `int bm = 3` (also as a statement, `volatile`, any
   flags) is folded. An equal-arm `?:` gives exactly that: the compare goes, the value stays
-  in `ax` and blocks propagation (as in sys_drive_isr). `if (bm = 3)` also matches. It reads as a
+  in `ax` and blocks propagation (as in sy_drive_isr). `if (bm = 3)` also matches. It reads as a
   leftover of a style-dependent border width; the condition and the arm values are a
   guess, only "a ?: or assignment-condition with value 3" is evidence.
 - **Block-layout forms.** MSC 5.1 emits basic blocks in source order (with cross-jumping),
   so a jump the original's layout shows has to be somewhere in the source. Where no
   structured form gives the layout, the source has a `goto` or a particular loop form.
-  74 `goto`s in 11 files; the layout-driven ones: bobs_visit's `while` whose body ends in a redundant `goto test;` (BOBS.C: the
+  74 `goto`s in 11 files; the layout-driven ones: bo_visit's `while` whose body ends in a redundant `goto test;` (BOBS.C: the
   original's body-before-test layout, and it keeps `/Ol` from enregistering `n`),
-  race_outcome's `goto finishstop` from both arms, race_reset_eng's `goto nx;` to the label right
+  ra_outcome's `goto finishstop` from both arms, ra_reset_eng's `goto nx;` to the label right
   after its `else`, anim_run's `goto next;` (a `continue` there would pull the loop
-  increment up), menu_draw_hot's `goto box;`, menu_hit's `goto next;` into a then-branch,
-  menu_list's `goto restore;`, load_pic's `goto done;` (a `break` moves the after-loop block),
-  fill_quad's goto loop (escapes `/Ol`, see `loop_opt` below), render_mirror/view_draw's `goto next`,
-  F_181C8's `again`/`done`, savegame_save's shared retry tail; and the loop forms
-  `for (;; g_inputKey = 0)` in edit_line (the increment gives the `jmp test` entry) and
-  ads_open's accumulation inside the inner `while` test (keeps `cx` for the outer loop).
+  increment up), mn_draw_hot's `goto box;`, mn_hit's `goto next;` into a then-branch,
+  mn_list's `goto restore;`, load_pic's `goto done;` (a `break` moves the after-loop block),
+  fill_quad's goto loop (escapes `/Ol`, see `loop_opt` below), render_mirror/vw_draw's `goto next`,
+  F_181C8's `again`/`done`, sg_save's shared retry tail; and the loop forms
+  `for (;; g_inputKey = 0)` in ed_line (the increment gives the `jmp test` entry) and
+  av_open's accumulation inside the inner `while` test (keeps `cx` for the outer loop).
   That the original had a jump at each of these points is evidence; the exact statement
   (a `goto`, a `continue`, a differently nested `if`) is not.
-- **`#pragma loop_opt`** in SYS.C (off before sys_demo_step, to the end of the file),
-  GAME.C (off/on around sell_parts) and EGABLIT.C (off before egablit_latch_pack). These five
+- **`#pragma loop_opt`** in SYS.C (off before sy_demo_step, to the end of the file),
+  GAME.C (off/on around sell_parts) and EGABLIT.C (off before eb_latch_pack). These five
   functions keep plain memory loops that the file's `/Ol` would otherwise optimize; the
   rest of each file needs `/Ol` (13 functions break without it). `volatile`, `register`,
   static or global counters, taken addresses, calls, intrinsics and `interrupt` do not stop
   MSC 5.1's loop optimizer (it ignores `volatile`); it only optimizes a loop entered at
-  the target of its back edge. egablit_latch_pack also matches without the pragma with its row loop
+  the target of its back edge. eb_latch_pack also matches without the pragma with its row loop
   entered at its test (`row = 0; goto test; next: row++; src += pitch; test: if (row < h)
   { ...; goto next; }`); for the other four the only matching goto forms are jumps to the
   next statement. The pragma is kept as the more plausible source everywhere: it is MSC's
-  documented mechanism, the same files use it, and egablit_latch_pack has a reason (as `rep movsw`
+  documented mechanism, the same files use it, and eb_latch_pack has a reason (as `rep movsw`
   its write-mode-1 latch copy would move words). Where exactly the pragmas sat is unknown: in SYS.C the `off`
-  fits anywhere after sys_timer_cancel, and GAME.C matches equally as `/Oasi` with one
+  fits anywhere after sy_timer_cancel, and GAME.C matches equally as `/Oasi` with one
   `loop_opt(on)` after sell_parts.
-- **`GCREG`/`SEQREG`** in EGASHIFT.C. egashift_blit needs a block boundary after `GCREG(5, 0)`.
+- **`GCREG`/`SEQREG`** in EGASHIFT.C. ex_blit needs a block boundary after `GCREG(5, 0)`.
   Braced register-write macros give it. Their names, and the fact that every other port
   pair of the file uses them, are a reconstruction (braced and unbraced pairs compile
   the same everywhere else).
@@ -115,13 +115,13 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   `/Oi` use none of these functions, so their `i` is unknown.
 - **PROVISIONAL dummies** (each is marked in the source). They reproduce something in the
   EXE whose original text is unknown:
-  - video_anim_hook's unused inner-block `struct Colors save` (VIDEO.C): a 6-byte frame slot.
-  - `long unused` in F_118D4 (SCREEN.C), gargfx_draw_bolt, gargfx_draw_part and gargfx_erase_part (GARGFX.C): a
+  - vi_anim_hook's unused inner-block `struct Colors save` (VIDEO.C): a 6-byte frame slot.
+  - `long unused` in F_118D4 (SCREEN.C), gx_draw_bolt, gx_draw_part and gx_erase_part (GARGFX.C): a
     4-byte slot above the `struct Blt` local.
   - `x_trk0`/`x_trk1` (DASH.C, labels in `src/DATA/NEEDLE.ASM`): two unreachable far
     accesses for the two SEG constants in CONST (DS:68E6, DS:68E8) that nothing reads.
   - `g_6c42` (POPUP.C): four unreferenced `_BSS` bytes after `g_popupLayout`.
-  - `g_list[0] = g_list[0];` in the default cases of your_cars (GAME.C) and savegame_load
+  - `g_list[0] = g_list[0];` in the default cases of your_cars (GAME.C) and sg_load
     (SAVEGAME.C): after the menu F_142CF returns a positive item, the original loads
     `g_list[0]` (the list's item count) into `ax` and drops it. MSC drops the store of a
     self-assignment and keeps the load. The only other forms found that give these bytes
@@ -130,7 +130,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
     `+= 0`, `|= 0`, `if (g_list[0]) ;` and comparisons compile to nothing or to a compare;
     stores to locals stay stores. The two functions share the idiom, so the original
     probably had one construct (a macro, an emptied switch) in both.
-- **The hook installers** cga_install (CGA.C), tandy_install (TANDY.C) and ega_install
+- **The hook installers** cg_install (CGA.C), ta_install (TANDY.C) and eg_install
   (EGA.C): `g_videoOps = g_cgaHooks;`. Their bytes are
   MSC 5.1's struct assignment (`push di; push si`, no frame, `mov cx,1Eh` and `f2 a5`:
   MSC writes `rep movsw` with the F2 prefix, MASM's `rep` is F3; the `memcpy` intrinsic
@@ -140,7 +140,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   name fits LINK's communal hash window (CLAUDE.md 4e). Each installer
   is the first function of the driver file whose table it copies (that file's table
   needs no forced owner then). The EXE does not decide this placement: none of the three
-  has a segment relocation, so a one-function file of its own, or for tandy_install and ega_install
+  has a segment relocation, so a one-function file of its own, or for ta_install and eg_install
   the end of the C file before (TANDYBLT.C, TANDYSPR.C), gives the same image.
 - **Mouse state** (`struct Mouse g_mouse`, DS:05E2..05F3). Eight ints and a
   present byte are a natural record shared by SYS and MOUSE. Separate globals
@@ -161,18 +161,18 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   (GARAGE.C) addresses its four messages as offsets into the message block,
   `g_txt + 1283`, `+ 1299`, `+ 1318`, `+ 1337` ("Chop roof - $70" ...), not as named
   globals; the game addresses messages by offset into g_txt everywhere (`Hot.f4`, the
-  argument of game_message), so the original may have had named constants there. That the
-  blocks are grouped is evidence; the member list (a wider State8272 changes garage_hood's
+  argument of gm_message), so the original may have had named constants there. That the
+  blocks are grouped is evidence; the member list (a wider State8272 changes ga_hood's
   loop temps, so the arrays from DS:8290 stay separate) and the spelling are not.
 - **Per-module type views.** VIEW.C reads the char `bw8aca` (DS:8ACA) as a word, so it
   writes `*(int *)&bw8aca`. The original file probably had an `extern int` of its own
   there. `struct Win` (MENU.C, SAVEGAME.C) is a second view of the 18-byte hot-spot record
   `struct Hot`: `g_listLineBasePointerValue` holds the address of the first menu-line record as an `int`
   (`g_listLineBasePointerValue = (int)p`) and the code computes `(struct Win *)(0x12 * sel + g_listLineBasePointerValue)`.
-  Declaring it `struct Hot *` and writing `g_listLineBasePointerValue + sel` makes menu_list 10 bytes shorter,
+  Declaring it `struct Hot *` and writing `g_listLineBasePointerValue + sel` makes mn_list 10 bytes shorter,
   so the int arithmetic is evidence; that there were two struct names is not.
 - **Return types the code does not decide.** `main` (MAIN.C) and F_118D4 (SCREEN.C)
-  are `int` but end without a `return` (C4035); F_119B8 returns F_118D4's value. race_outcome
+  are `int` but end without a `return` (C4035); F_119B8 returns F_118D4's value. ra_outcome
   (RACE.C) returns 1 on one path, a value its caller stores, and `return;` on another
   (C4033). `void` and `int` give the same bytes for the first two; the source keeps `int`
   (`main` by convention, F_118D4 because F_119B8 passes its value on).
@@ -209,9 +209,9 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **TimerQueue** (`g_timerQueue`, DS:0566..0571): the timer insertion/removal/reset paths share the latest-deadline chain head, earliest entry, free-list head, next deadline and busy state. The reset-only byte is explicit unused storage; timer entries and later spare words stay separate. Separate globals also match; the control record is a natural reconstruction choice.
 
-- **GameClock** (`g_gameClock`, DS:05FC..0607): garage_day and elapsed-time accounting compute actionTicks + biosTicks - timeBase. SAVEGAME resets and serializes that same clock, while SYS advances biosTicks. g_tick remains a separate scheduler clock. Separate globals also match; this grouping is a natural reconstruction choice.
+- **GameClock** (`g_gameClock`, DS:05FC..0607): ga_day and elapsed-time accounting compute actionTicks + biosTicks - timeBase. SAVEGAME resets and serializes that same clock, while SYS advances biosTicks. g_tick remains a separate scheduler clock. Separate globals also match; this grouping is a natural reconstruction choice.
 
-- **GasInteraction** (`g_fuelStationActions`, DS:6CA4..6CA9): clear_gas_spots resets all three interaction flags together; the cap, nozzle and rag handlers set them and race_gas_station tests them when enabling the matching hotspots. Separate globals also match; this grouping is a natural reconstruction choice.
+- **GasInteraction** (`g_fuelStationActions`, DS:6CA4..6CA9): clear_gas_spots resets all three interaction flags together; the cap, nozzle and rag handlers set them and ra_gas_station tests them when enabling the matching hotspots. Separate globals also match; this grouping is a natural reconstruction choice.
 
 - **PicturePlacement** (`g_picturePlacement`, DS:04BE..04C3): Screen picture drawing uses the x/y destination and maximum height together to clip and place one bitmap. Separate globals also match; this grouping is a natural reconstruction choice.
 
@@ -219,23 +219,23 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **CursorDraw** (`g_drawnCursor`, DS:6C46..6C4B): SYS saves the drawn cursor position and tracks whether it needs repainting as one cursor drawing state. MSC supplies the final byte of alignment padding. Separate globals also match; this grouping is a natural reconstruction choice.
 
-- **Vibrato** (`g_vibrato`, DS:6C52..6C55): sys_timer_isr uses gain and divisor together to modulate PIT channel 2. Separate globals also match; this grouping is a natural reconstruction choice.
+- **Vibrato** (`g_vibrato`, DS:6C52..6C55): sy_timer_isr uses gain and divisor together to modulate PIT channel 2. Separate globals also match; this grouping is a natural reconstruction choice.
 
-- **RandomState** (`g_random`, DS:6C62..6C67): random_int seeds and updates all three Wichmann-Hill generator words together. Separate globals also match; this grouping is a natural reconstruction choice.
+- **RandomState** (`g_random`, DS:6C62..6C67): rn_int seeds and updates all three Wichmann-Hill generator words together. Separate globals also match; this grouping is a natural reconstruction choice.
 
 - **PicLibSelection** (`g_picLib`, DS:6C6A..6C71): open_lib selects the count, handle, library path and other handle together before picture reads. The initial DOS drive (`g_initialDrive`, DS:6C68) and hot_data path (`g_dataPath`, DS:6C72..6C81) are separate session and game-data state. Separate globals also match; the selection record is a natural reconstruction choice.
 
 - **ViewPages** (`g_viewPages`, DS:5E3E..5E41): flip_page swaps draw and show page indices together and select_draw_page consumes the pair. The preceding unused word stays separate. Separate globals also match; this grouping is a natural reconstruction choice.
 
-- **RivalPace** (`g_rivalPace`, DS:6CAC..6CB3): race_reset_eng and cop_appears derive fast and slow speeds from the top speed; rival_accelerate selects those targets or the player speed plus speedMargin. Shift penalty (`g_shiftPenalty`, DS:6CB4), shift point, target lane and RPM band stay separate. Separate globals also match; the speed-target record is a natural reconstruction choice.
+- **RivalPace** (`g_rivalPace`, DS:6CAC..6CB3): ra_reset_eng and cop_appears derive fast and slow speeds from the top speed; rival_accelerate selects those targets or the player speed plus speedMargin. Shift penalty (`g_shiftPenalty`, DS:6CB4), shift point, target lane and RPM band stay separate. Separate globals also match; the speed-target record is a natural reconstruction choice.
 
-- **WheelPoses** (`g_wheelPoses`, DS:6C22..6C33): dash_load_wheel caches three steering-wheel bitmaps and their source Y coordinates. dash_draw_wheel chooses pose 0, 1 or 2 from the steering sign and blits that cached bitmap when the pose changes. Shifter state stays separate. Separate globals also match; the cached poses are a natural reconstruction choice.
+- **WheelPoses** (`g_wheelPoses`, DS:6C22..6C33): da_load_wheel caches three steering-wheel bitmaps and their source Y coordinates. da_draw_wheel chooses pose 0, 1 or 2 from the steering sign and blits that cached bitmap when the pose changes. Shifter state stays separate. Separate globals also match; the cached poses are a natural reconstruction choice.
 
-- **ShifterDraw** (`g_shifterDraw`, DS:6C34..6C37): dash_init_shifter selects a shifter track and resets its knob position; dash_draw_shifter uses both to restore the old knob and draw the new one. Separate globals also match; this grouping is a natural reconstruction choice.
+- **ShifterDraw** (`g_shifterDraw`, DS:6C34..6C37): da_init_shifter selects a shifter track and resets its knob position; da_draw_shifter uses both to restore the old knob and draw the new one. Separate globals also match; this grouping is a natural reconstruction choice.
 
 - **ViewClip** (`g_viewClip`, DS:5E4E..5E55): VIEW and the CGA/EGA/Tandy span assemblers use all four bounds as one clipping rectangle. Assembly references use a WORD external with the corresponding member displacement. Separate globals also match; this grouping is a natural reconstruction choice.
 
-- **DemoControl** (`g_demoControl`, DS:06A4..06AD): sys_demo_step shares key-down, movement, count, previous group and auto-shift controls with SYS input and interrupt paths. The leading unused word stays separate. Target X/Y have the same demo-movement role, but folding them into this record reverses the cursor/target operands in sys_demo_step and sys_timer_isr (four wrong fixup references in each). Adding the script position too produces the same failures. The targets and script index therefore remain separate to preserve byte identity; this boundary is a compiler constraint rather than a semantic distinction. Separate globals also match; this grouping is a natural reconstruction choice.
+- **DemoControl** (`g_demoControl`, DS:06A4..06AD): sy_demo_step shares key-down, movement, count, previous group and auto-shift controls with SYS input and interrupt paths. The leading unused word stays separate. Target X/Y have the same demo-movement role, but folding them into this record reverses the cursor/target operands in sy_demo_step and sy_timer_isr (four wrong fixup references in each). Adding the script position too produces the same failures. The targets and script index therefore remain separate to preserve byte identity; this boundary is a compiler constraint rather than a semantic distinction. Separate globals also match; this grouping is a natural reconstruction choice.
 
 ## Compiler warnings
 
@@ -245,16 +245,16 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
 - C4051 "data conversion" (94, in 24 files): mostly an `int` value stored into or passed
   as a `char` (colours, flags, drive letters), a few `int`/`long` mixes. Believed original:
   casts would not change a byte, and the original need not have compiled at `/W2`.
-- C4100 "unreferenced formal parameter" (5): F_06529 `n`, F_12784 `n` and `flag`, gargfx_erase_part
-  `flag`, carpic_patch_bg `p8`. Their callers push these arguments and the callees ignore them; the
+- C4100 "unreferenced formal parameter" (5): F_06529 `n`, F_12784 `n` and `flag`, gx_erase_part
+  `flag`, cp_patch_bg `p8`. Their callers push these arguments and the callees ignore them; the
   call sites decide the parameter count. Believed original.
 - C4101 "unreferenced local variable" (5): the PROVISIONAL frame-filler locals above.
   Reconstruction.
 - C4035 "no return value" (2) and C4033 "function must return a value" (1): the return
   types above. Believed original.
-- C4047 "different levels of indirection" (2): menu_draw_hot's
+- C4047 "different levels of indirection" (2): mn_draw_hot's
   `g_numPageRow = g_listLineBasePointerValue = g_hotTextFld = 0;` assigns the `struct Hot *` through to the two ints
-  (int-held pointer, see `struct Win`), and sprite_setup's
+  (int-held pointer, see `struct Win`), and sp_setup's
   `g_frmTable[i].data = r_vid.mode == -2 ? cell++ : &g_bandRecordsSprArray[i];` mixes a `char (*)[8]` cell
   with a `struct Bitmap *` in one `Frame.data` pointer that restore_rect/restore_rect_back read as a
   Bitmap and restore_rect_latch as a Mask. Both need a cast or a different type in one place, and the
@@ -289,7 +289,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   `g_hotBobs[3]`) or computes a run-time difference (`g_134e - g_gar`, `g_1a44 - g_hotGasStation`),
   which proves separate symbols; each array starts at the first record so named. Where
   the original's other boundaries were (one array per menu list, or fewer), and the
-  arrays' names, are not recoverable. `g_engineHots` (a runtime list gargfx_build_hots builds), `g_1948`
+  arrays' names, are not recoverable. `g_engineHots` (a runtime list gx_build_hots builds), `g_1948`
   (three fixed menu records, then six records of another list) and `g_boltHot` are Hot
   records too; insert_hot sorts them by (x1, y1).
 - **KEYMAPS.ASM's key maps.** 42 referenced lists of (scan code, value) pairs, each ended

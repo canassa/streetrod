@@ -2,15 +2,15 @@
 
         .CODE S2634_TEXT
 
-; maskblt_copy @ 2634:000A (linear 0x2634A, 183 bytes)
-; maskblt_copy(dst_far, src_seg, src_off, mask_off, dst_pitch, x_bytes, w, h):
+; mk_copy @ 2634:000A (linear 0x2634A, 183 bytes)
+; mk_copy(dst_far, src_seg, src_off, mask_off, dst_pitch, x_bytes, w, h):
 ; masked blit.  For each row: dst = (dst & mask) | (~mask & src), words first
 ; and then one odd byte.  Its scratch variables live in the code segment, in
 ; the 6 bytes it jumps over, so they are addressed through CS at fixed offsets
 ; (the routine sits at offset 0Ah of its code segment).
 
-        PUBLIC  _maskblt_copy
-_maskblt_copy  PROC    FAR
+        PUBLIC  _mk_copy
+_mk_copy  PROC    FAR
         push    bp
         mov     bp,sp
         push    ds
@@ -91,15 +91,15 @@ done1:
         pop     ds
         pop     bp
         ret
-_maskblt_copy  ENDP
+_mk_copy  ENDP
 
-; maskblt_make_mask @ 2634:00C1 (linear 0x26401, 86 bytes)
-; maskblt_make_mask(src_far, dst_far, bytes): OR together the four bit planes of a
+; mk_make_mask @ 2634:00C1 (linear 0x26401, 86 bytes)
+; mk_make_mask(src_far, dst_far, bytes): OR together the four bit planes of a
 ; source of bytes (a quarter of it each, plane n at src + n * bytes/4) and
 ; store the complement, byte by byte for an odd count and then word by word.
 
-        PUBLIC  _maskblt_make_mask
-_maskblt_make_mask  PROC    FAR
+        PUBLIC  _mk_make_mask
+_mk_make_mask  PROC    FAR
         push    bp
         mov     bp,sp
         push    ds
@@ -151,6 +151,6 @@ done2:
         pop     ds
         pop     bp
         ret
-_maskblt_make_mask  ENDP
+_mk_make_mask  ENDP
 
         END

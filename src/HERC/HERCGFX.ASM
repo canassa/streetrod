@@ -13,11 +13,11 @@ _g_hercBiosData DB      7, 'P', 0                ; DS:5AD0 char[30]
 
         .CODE S0000_TEXT
 
-; hercgfx_set_mode @ 0000:E5D2 (linear 0x0E5D2, 61 bytes)
+; hg_set_mode @ 0000:E5D2 (linear 0x0E5D2, 61 bytes)
 ; Hercules graphics mode set up: BIOS video state, CRTC registers.
 
-        PUBLIC  _hercgfx_set_mode
-_hercgfx_set_mode  PROC    NEAR
+        PUBLIC  _hg_set_mode
+_hg_set_mode  PROC    NEAR
         push    bp
         mov     bp,sp
         push    si
@@ -51,6 +51,6 @@ crtc:
         mov     sp,bp
         pop     bp
         ret
-_hercgfx_set_mode  ENDP
+_hg_set_mode  ENDP
 
         END

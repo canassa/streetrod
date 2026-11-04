@@ -49,12 +49,12 @@ extern struct Bitmap far *g8acew[13];                   /* DS:8ACE */
 extern int ay8bc2z;                                     /* DS:8BC2 */
 extern float g_raceSecsElapsedValue;                                    /* DS:8BC4 */
 extern int g_edgeXR;                                     /* DS:8BD0 */
-void race_gas_station(void);                            /* 0x0B8A1 */
-void race_finish_stats(void);                           /* 0x0C407 */
-int near race_outcome(void);                            /* 0x0C613 */
-void near race_reset_eng(struct Eng *p);                /* 0x0CDAF */
-void near race_run(void);                               /* 0x0D031 */
-int race_speed_step(int rpm);                           /* 0x0D544 */
-void race_tick(void);                                   /* 0x0DA25 */
+void ra_gas_station(void);                            /* 0x0B8A1 */
+void ra_finish_stats(void);                           /* 0x0C407 */
+int near ra_outcome(void);                            /* 0x0C613 */
+void near ra_reset_eng(struct Eng *p);                /* 0x0CDAF */
+void near ra_run(void);                               /* 0x0D031 */
+int ra_speed_step(int rpm);                           /* 0x0D544 */
+void ra_tick(void);                                   /* 0x0DA25 */
 
 #endif

@@ -3,11 +3,11 @@
 #include "EGARECOL.H"
 #include "PC.H"
 
-/* egarecol_rect @ 21A0:1508 (linear 0x22F08, 468 bytes)
+/* er_rect @ 21A0:1508 (linear 0x22F08, 468 bytes)
 
    Fill a rectangle in a planar VGA bitmap using the bit mask register */
 
-void egarecol_rect(struct Bitmap far *bm, int mode, char color,
+void er_rect(struct Bitmap far *bm, int mode, char color,
              int x1, int y1, int x2, int y2)
 {
     unsigned char e = 0xff;

@@ -23,16 +23,16 @@ static void near restore_rect(struct Rect *rect, struct Bitmap far *bm2, struct 
     c.h = rect->y2 - rect->y1 + 1;
     c.sx = c.dx = flag ? rect->x1 : 0;
     c.sy = c.dy = flag ? 0 : rect->y1;
-    cgablt_copy(bm1, bm2, (struct Blt *)&c, 1);
+    cb_copy(bm1, bm2, (struct Blt *)&c, 1);
 }
 
-/* cgaspr_step @ 1C11:1815 (linear 0x1D925, 1021 bytes)
+/* cs_step @ 1C11:1815 (linear 0x1D925, 1021 bytes)
 
    Erase and redraw one sprite: restore the background under its old rectangles, draw it over the
    screen pg and advance it */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-int cgaspr_step(struct Sprite *s)
+int cs_step(struct Sprite *s)
 {
     struct Bitmap far *bits;
     struct Blt blt;
@@ -55,9 +55,9 @@ int cgaspr_step(struct Sprite *s)
     bits = s->img;
     fp = s->save;
     d = fr->data;
-    sprite_clip_box(fr->pos->width, fr->pos->height,
+    sp_clip_box(fr->pos->width, fr->pos->height,
         s->x, s->y, pg->bm->width, pg->bm->height, &rc);
-    if (sprite_rect_sub(&rc, &pg->rect, &c2, s->seq->dx))
+    if (sp_rect_sub(&rc, &pg->rect, &c2, s->seq->dx))
         restore_rect(&c2, bits, fp, s->seq->dx);
     pg->rect = rc;
     top = d ? d->height : 0;
@@ -68,22 +68,22 @@ int cgaspr_step(struct Sprite *s)
         blt.w = fr->pos->width;
         blt.sx = 0;
         blt.dx = s->seq->dx ? s->x : 0;
-        cgablt_compose(fr->pos, bits, fp, &blt);
+        cb_compose(fr->pos, bits, fp, &blt);
         if (d) {
             blt.dy += blt.h;
             blt.h = top;
-            cgablt_copy(d, bits, &blt, 1);
+            cb_copy(d, bits, &blt, 1);
         }
     } else {
         for (idx = 0; idx < 6; idx++) {
-            if (sprite_clip_span(g_jailGaps[idx].a, g_jailGaps[idx].b, s, (struct Blt16 *)&blt)) {
+            if (sp_clip_span(g_jailGaps[idx].a, g_jailGaps[idx].b, s, (struct Blt16 *)&blt)) {
                 blt.dy = u;
                 blt.h = t;
-                cgablt_compose(fr->pos, bits, fp, &blt);
+                cb_compose(fr->pos, bits, fp, &blt);
                 if (d) {
                     blt.dy += t;
                     blt.h = top;
-                    cgablt_copy(d, bits, &blt, 1);
+                    cb_copy(d, bits, &blt, 1);
                 }
             }
         }
@@ -99,7 +99,7 @@ int cgaspr_step(struct Sprite *s)
             s2.y1 += s->y;
             s2.y2 += s->y;
         }
-        if (sprite_rect_and(&s2, &pg->rect, &e)) {
+        if (sp_rect_and(&s2, &pg->rect, &e)) {
             blt.w = e.x2 - e.x1 + 1;
             blt.h = e.y2 - e.y1 + 1;
             if (fp->pitch == fr->pos->pitch) {
@@ -129,7 +129,7 @@ int cgaspr_step(struct Sprite *s)
         while (inp(MONO_STATUS) & HERC_STATUS_VSYNC)
             ;
     }
-    cgablt_copy(bits, pg->bm, &blt, 1);
-    sprite_advance(s);
+    cb_copy(bits, pg->bm, &blt, 1);
+    sp_advance(s);
     return 1;
 }

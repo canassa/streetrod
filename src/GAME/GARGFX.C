@@ -50,8 +50,8 @@ void F_123F4(int frame, int slot)
     int x;
     int y;
 
-    cursor_ctl(CURSOR_HIDE);
-    pict = disk_bm(0x44f, ARENA_HIGH_STACK);
+    cu_ctl(CURSOR_HIDE);
+    pict = di_bm(0x44f, ARENA_HIGH_STACK);
     x = 0xb8;
     y = g_tboltY[slot] + 10;
     if (frame == 1 && r_vid.copyToFront) {
@@ -59,7 +59,7 @@ void F_123F4(int frame, int slot)
         blt.h = 6;
         blt.sx = 0x40;
         blt.sy = 0;
-        tmp = bitmap_grab(pict, &blt, ARENA_HIGH_STACK);
+        tmp = bm_grab(pict, &blt, ARENA_HIGH_STACK);
         (*g_videoOps.slideSprite)(0xe, 0x94, x, 8, y, tmp);
         F_19438(1);
     }
@@ -70,9 +70,9 @@ void F_123F4(int frame, int slot)
     blt.w = 0x10;
     blt.h = blt.fc = 6;
     (*g_videoOps.copy)(pict, r_vid.back, &blt, 1);
-    cursor_ctl(CURSOR_SHOW);
+    cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
+        bm_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
     F_19438(1);
 }
 
@@ -89,24 +89,24 @@ void F_12525(int slot)
     int x;
     int y;
 
-    cursor_ctl(CURSOR_HIDE);
-    pict = disk_bm(0x44f, ARENA_HIGH_STACK);
+    cu_ctl(CURSOR_HIDE);
+    pict = di_bm(0x44f, ARENA_HIGH_STACK);
     blt.sx = blt.sy = 0;
     blt.dx = x = 0xb8;
     blt.dy = y = g_tboltY[slot] + 10;
     blt.w = 0x10;
     blt.h = blt.fc = 6;
     (*g_videoOps.copy)(pict, r_vid.back, &blt, 1);
-    cursor_ctl(CURSOR_SHOW);
+    cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront) {
-        bitmap_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
+        bm_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
         F_16CF3();
-        cursor_ctl(CURSOR_HIDE_NOW);
+        cu_ctl(CURSOR_HIDE_NOW);
         blt.sx = 0x40;
-        tmp = bitmap_grab(pict, &blt, ARENA_HIGH_STACK);
+        tmp = bm_grab(pict, &blt, ARENA_HIGH_STACK);
         (*g_videoOps.slideSprite)(0xe, 0x94, x, y, 0x94, tmp);
         F_19438(1);
-        cursor_ctl(CURSOR_SHOW_NOW);
+        cu_ctl(CURSOR_SHOW_NOW);
     }
     F_19438(1);
 }
@@ -126,14 +126,14 @@ void F_1264E(int n, int flag)
     int sx;
     int sy;
 
-    cursor_ctl(CURSOR_HIDE_NOW);
-    pict = disk_bm(n, ARENA_HIGH_STACK);
+    cu_ctl(CURSOR_HIDE_NOW);
+    pict = di_bm(n, ARENA_HIGH_STACK);
     sx = 200 - (w1 = pict->width);
     sy = 125 - (h1 = pict->height);
     if (flag)
         sx -= 0x18;
     if (r_vid.copyToFront) {
-        saved = popup_grab(sx - 8, sy, w1 + 8, h1, 0);
+        saved = pu_grab(sx - 8, sy, w1 + 8, h1, 0);
         (*g_videoOps.slideSprite)(0xe, 0x94, sx - 8, 0x94, sy, pict);
         blt.sx = blt.sy = 0;
         blt.dx = 8;
@@ -141,12 +141,12 @@ void F_1264E(int n, int flag)
         blt.w = w1 + 8;
         blt.h = h1;
         (*g_videoOps.maskedBlit)(pict, saved, &blt, 1);
-        cursor_ctl(CURSOR_SHOW_NOW);
-        popup_show(saved, sx - 8, sy);
+        cu_ctl(CURSOR_SHOW_NOW);
+        pu_show(saved, sx - 8, sy);
         F_19438(1);
     } else {
         (*g_videoOps.slideSprite)(0xe, 0x94, sx, sy, sy, pict);
-        cursor_ctl(CURSOR_SHOW_NOW);
+        cu_ctl(CURSOR_SHOW_NOW);
     }
     F_19438(1);
 }
@@ -159,10 +159,10 @@ void F_12784(int n, int flag)
 {
     struct Bitmap far *p;
 
-    cursor_ctl(CURSOR_HIDE);
-    p = disk_bm(0x42e, ARENA_HIGH_STACK);
-    cursor_ctl(CURSOR_SHOW);
-    popup_show(p, 0x20, 10);
+    cu_ctl(CURSOR_HIDE);
+    p = di_bm(0x42e, ARENA_HIGH_STACK);
+    cu_ctl(CURSOR_SHOW);
+    pu_show(p, 0x20, 10);
     F_19438(1);
 }
 
@@ -180,13 +180,13 @@ void F_127DB(int n, char far *s)
     if (n) {
         g_partAnimate = 0;
         r_vid.copyToFront = 0;
-        cursor_ctl(CURSOR_HIDE);
+        cu_ctl(CURSOR_HIDE);
         F_1264E(n, 0);
         for (i = 0; i < 2; i++)
             F_123F4(*s++, i);
-        cursor_ctl(CURSOR_SHOW);
+        cu_ctl(CURSOR_SHOW);
         if (r_vid.copyToFront = saved)
-            bitmap_copy_box(r_vid.back, r_vid.front, 0x20, 10, 0xe7, 0xb8);
+            bm_copy_box(r_vid.back, r_vid.front, 0x20, 10, 0xe7, 0xb8);
         g_partAnimate = 1;
     }
 }
@@ -238,11 +238,11 @@ static int near carb_pos(int *px, int *py)
     return r;
 }
 
-/* gargfx_part_pos @ 0F38:3589 (linear 0x12909, 91 bytes)
+/* gx_part_pos @ 0F38:3589 (linear 0x12909, 91 bytes)
 
    Screen position (*px, *py) of the current slot, by game mode g_slotSelec.slot */
 
-void gargfx_part_pos(int *px, int *py)
+void gx_part_pos(int *px, int *py)
 {
     int n;
 
@@ -261,11 +261,11 @@ void gargfx_part_pos(int *px, int *py)
     }
 }
 
-/* gargfx_bolt_pos @ 0F38:35E4 (linear 0x12964, 179 bytes)
+/* gx_bolt_pos @ 0F38:35E4 (linear 0x12964, 179 bytes)
 
    Position (*px, *py) for the current item: looked up per slot, with an offset added in one mode */
 
-void gargfx_bolt_pos(int *px, int *py)
+void gx_bolt_pos(int *px, int *py)
 {
     int slot;
     int item;
@@ -291,12 +291,12 @@ void gargfx_bolt_pos(int *px, int *py)
     }
 }
 
-/* gargfx_draw_bolt @ 0F38:3697 (linear 0x12A17, 357 bytes)
+/* gx_draw_bolt @ 0F38:3697 (linear 0x12A17, 357 bytes)
 
    Draw picture n (item id) at the current slot position and restore the background strip
    behind it. With the screen shadowed the picture is first copied into a bitmap 8 pixels wider. */
 
-void gargfx_draw_bolt(int n)
+void gx_draw_bolt(int n)
 {
     struct Bitmap far *pict;
     struct Bitmap far *saved;
@@ -308,9 +308,9 @@ void gargfx_draw_bolt(int n)
     int ypos;
 
     flag = 0;
-    gargfx_bolt_pos(&px, &ypos);
-    cursor_ctl(CURSOR_HIDE_NOW);
-    saved = pict = disk_bm(n, ARENA_HIGH_STACK);
+    gx_bolt_pos(&px, &ypos);
+    cu_ctl(CURSOR_HIDE_NOW);
+    saved = pict = di_bm(n, ARENA_HIGH_STACK);
     ypos -= saved->height;
     height = move.h = move.fc = saved->height;
     px -= 2;
@@ -320,23 +320,23 @@ void gargfx_draw_bolt(int n)
     move.w = 6;
     (*g_videoOps.shiftBlit)(r_vid.hoodBg, r_vid.back, &move);
     if (flag = px & ~r_vid.mask) {
-        saved = arena_bm(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
-        bitmap_shift_right(pict, flag, saved);
+        saved = ar_bm(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
+        bm_shift_right(pict, flag, saved);
     }
     px = (px & r_vid.mask) + 0x60;
     (*g_videoOps.slideSprite)(0xd, 0x93, px, (n == 0x43f && r_vid.copyToFront) ? 0xd - height : ypos, ypos, saved);
-    cursor_ctl(CURSOR_SHOW_NOW);
+    cu_ctl(CURSOR_SHOW_NOW);
     F_19438(1);
     if (pict != saved)
         F_19438(1);
 }
 
-/* gargfx_drop_bolt @ 0F38:37FC (linear 0x12B7C, 341 bytes)
+/* gx_drop_bolt @ 0F38:37FC (linear 0x12B7C, 341 bytes)
 
    Redraw the marker picture (0x43f) at the current slot position, aligned to the pixel grid.
    With the screen shadowed the area is also copied to the front buffer and a label is drawn beside it. */
 
-void gargfx_drop_bolt(void)
+void gx_drop_bolt(void)
 {
     int ypos;
     int rows;
@@ -347,11 +347,11 @@ void gargfx_drop_bolt(void)
     struct Blt blt;
     struct Bitmap far *pict;
 
-    gargfx_bolt_pos(&xpos, &ypos);
+    gx_bolt_pos(&xpos, &ypos);
     x1 = xpos - 2;
     y1 = ypos;
-    cursor_ctl(CURSOR_HIDE_NOW);
-    pict = disk_bm(0x43f, ARENA_HIGH_STACK);
+    cu_ctl(CURSOR_HIDE_NOW);
+    pict = di_bm(0x43f, ARENA_HIGH_STACK);
     wide = 8;
     if ((rows = xpos & 7) < 2) {
         xpos -= 8;
@@ -370,13 +370,13 @@ void gargfx_drop_bolt(void)
     if (r_vid.copyToFront) {
         xpos += 0x60;
         ypos += 9 - rows;
-        bitmap_copy_box(r_vid.back, r_vid.front, xpos, ypos, xpos + wide, ypos + rows);
+        bm_copy_box(r_vid.back, r_vid.front, xpos, ypos, xpos + wide, ypos + rows);
         F_16CF3();
         if (wide == 0x10)
             xpos += 8;
         (*g_videoOps.slideSprite)(0xd, 0x93, xpos - 8, ypos + 3, 0x93, pict);
     }
-    cursor_ctl(CURSOR_SHOW_NOW);
+    cu_ctl(CURSOR_SHOW_NOW);
     F_19438(1);
 }
 
@@ -403,10 +403,10 @@ static void near make_bolt_overlay(void)
             return;
         px = g_manifoldBoltPos[i * 2] - 2;
         py = g_manifoldBoltPos[i * 2 + 1];
-        picture = disk_bm(what, ARENA_LOW_STACK);
-        g_boltOverlay = arena_bm(picture->width + 8, picture->height, picture->alt.p != 0, ARENA_HIGH_STACK);
-        bitmap_shift_right(picture, px & ~r_vid.mask, g_boltOverlay);
-        marks_pop_low(1);
+        picture = di_bm(what, ARENA_LOW_STACK);
+        g_boltOverlay = ar_bm(picture->width + 8, picture->height, picture->alt.p != 0, ARENA_HIGH_STACK);
+        bm_shift_right(picture, px & ~r_vid.mask, g_boltOverlay);
+        ma_pop_low(1);
         g_cpyBoltPatchRecord.w = g_boltOverlay->width;
         g_cpyBoltPatchRecord.h = g_boltOverlay->height;
         g_cpyBoltPatchRecord.sx = g_cpyBoltPatchRecord.sy = 0;
@@ -415,12 +415,12 @@ static void near make_bolt_overlay(void)
     }
 }
 
-/* gargfx_draw_part @ 0F38:3A58 (linear 0x12DD8, 449 bytes)
+/* gx_draw_part @ 0F38:3A58 (linear 0x12DD8, 449 bytes)
 
    Draw item picture n at the current slot position, aligned to the pixel grid;
    flag (nonzero) raises it by 20 and skips the blit to the back buffer. Frees the temporary copies. */
 
-void gargfx_draw_part(int n, int flag)
+void gx_draw_part(int n, int flag)
 {
     struct Bitmap far *pict;
     struct Bitmap far *saved;
@@ -434,14 +434,14 @@ void gargfx_draw_part(int n, int flag)
     int mask;
 
     z = 0;
-    gargfx_part_pos(&x, &ypos);
+    gx_part_pos(&x, &ypos);
     if (g_partAnimate)
-        cursor_ctl(CURSOR_HIDE_NOW);
-    saved = pict = disk_bm(n, ARENA_HIGH_STACK);
+        cu_ctl(CURSOR_HIDE_NOW);
+    saved = pict = di_bm(n, ARENA_HIGH_STACK);
     w = saved->width;
     if (mask = x & ~r_vid.mask) {
-        saved = arena_bm(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
-        bitmap_shift_right(pict, mask, saved);
+        saved = ar_bm(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
+        bm_shift_right(pict, mask, saved);
         w = saved->width;
     }
     x &= r_vid.mask;
@@ -461,7 +461,7 @@ void gargfx_draw_part(int n, int flag)
     }
     if (g_partAnimate) {
         (*g_videoOps.slideSprite)(0xd, 0x93, x + 0x60, r_vid.copyToFront ? 0xd - height : ypos, ypos + 9, saved);
-        cursor_ctl(CURSOR_SHOW_NOW);
+        cu_ctl(CURSOR_SHOW_NOW);
     }
     if (g_boltOverlay) {
         F_19438(1);
@@ -472,12 +472,12 @@ void gargfx_draw_part(int n, int flag)
         F_19438(1);
 }
 
-/* gargfx_erase_part @ 0F38:3C19 (linear 0x12F99, 259 bytes)
+/* gx_erase_part @ 0F38:3C19 (linear 0x12F99, 259 bytes)
 
    Draw item picture n at the current slot position, 20 above it, via the r_vid.hoodBg buffer,
    and copy the area to the front buffer when the screen is shadowed. */
 
-void gargfx_erase_part(int n, int flag)
+void gx_erase_part(int n, int flag)
 {
     struct Bitmap far *pict;
     long unused;    /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
@@ -487,10 +487,10 @@ void gargfx_erase_part(int n, int flag)
     int px;
     int py;
 
-    gargfx_part_pos(&px, &py);
+    gx_part_pos(&px, &py);
     py -= 0x14;
-    cursor_ctl(CURSOR_HIDE);
-    pict = disk_bm(n, ARENA_HIGH_STACK);
+    cu_ctl(CURSOR_HIDE);
+    pict = di_bm(n, ARENA_HIGH_STACK);
     if (n != 0x434 && n != 0x435 && n != 0x436)
         py -= pict->height;
     move.sx = px;
@@ -501,17 +501,17 @@ void gargfx_erase_part(int n, int flag)
     h = move.h = move.fc = pict->height;
     (*g_videoOps.copy)(r_vid.hoodBg, r_vid.back, &move, 1);
     F_19438(1);
-    cursor_ctl(CURSOR_SHOW);
+    cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, px, py, px + w, py + h);
+        bm_copy_box(r_vid.back, r_vid.front, px, py, px + w, py + h);
 }
 
-/* gargfx_draw_wires @ 0F38:3D1C (linear 0x1309C, 281 bytes)
+/* gx_draw_wires @ 0F38:3D1C (linear 0x1309C, 281 bytes)
 
    Draw the current pair of slot pictures: the strip from r_vid.hoodBg and the sprite g_slotSelec.wirePic,
    copying the area to the front buffer when the screen is shadowed. */
 
-void gargfx_draw_wires(void)
+void gx_draw_wires(void)
 {
     int next;
     int ys;
@@ -523,24 +523,24 @@ void gargfx_draw_wires(void)
 
     pair = engine_index() * 2;
     next = (g_slotSelec.wirePic == 0x446) ? pair++ : pair + 1;
-    cursor_ctl(CURSOR_HIDE);
+    cu_ctl(CURSOR_HIDE);
     blt.w = 0x20;
     xs = blt.dx = (blt.sx = g_wiresPos[next * 2]) + 0x60;
     ys = blt.dy = (blt.sy = g_wiresPos[next * 2 + 1]) + 9;
     blt.h = r_vid.hoodBg->height - blt.sy - 4;
     (*g_videoOps.copy)(r_vid.hoodBg, r_vid.back, &blt, 1);
-    bitmap_draw_pic(r_vid.back, g_slotSelec.wirePic, (unsigned char)(x2 = g_wiresPos[pair * 2] + 0x60), (unsigned char)(y2 = g_wiresPos[pair * 2 + 1] + 9), 0);
-    cursor_ctl(CURSOR_SHOW);
+    bm_draw_pic(r_vid.back, g_slotSelec.wirePic, (unsigned char)(x2 = g_wiresPos[pair * 2] + 0x60), (unsigned char)(y2 = g_wiresPos[pair * 2 + 1] + 9), 0);
+    cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, x2 > xs ? xs : x2, y2 > ys ? ys : y2, blt.w + x2 + 0x18, blt.h + y2 + 0x18);
+        bm_copy_box(r_vid.back, r_vid.front, x2 > xs ? xs : x2, y2 > ys ? ys : y2, blt.w + x2 + 0x18, blt.h + y2 + 0x18);
 }
 
-/* gargfx_draw_parts @ 0F38:3E35 (linear 0x131B5, 248 bytes)
+/* gx_draw_parts @ 0F38:3E35 (linear 0x131B5, 248 bytes)
 
    Draw the item pictures of a car's parts for slots 0, 1 and then 2..4, with the
    screen shadow off (g_partAnimate). Loads the r_vid.hoodBg strip first when it isn't there yet. */
 
-void gargfx_draw_parts(struct Car *car)
+void gx_draw_parts(struct Car *car)
 {
     int mode;
     int slot;
@@ -550,24 +550,24 @@ void gargfx_draw_parts(struct Car *car)
     mode = g_slotSelec.slot;
     g_partAnimate = 0;
     if (r_vid.hoodBg == 0)
-        r_vid.hoodBg = disk_bm(0x42d, ARENA_LOW_STACK);
+        r_vid.hoodBg = di_bm(0x42d, ARENA_LOW_STACK);
     else
-        disk_unpack_pic(0x42d, r_vid.hoodBg);
+        di_unpack_pic(0x42d, r_vid.hoodBg);
     if (type = o_8290[0]) {
         g_slotSelec.slot = 0;
-        gargfx_draw_part(type, 0);
+        gx_draw_part(type, 0);
         if (type == 0x434)
             g_carbPosBase[0] = 4;
         else
             g_carbPosBase[0] = 5;
         if (type = o_8290[1]) {
             g_slotSelec.slot = 1;
-            gargfx_draw_part(type, 0);
+            gx_draw_part(type, 0);
             slot = g_carbPosBase[g_part[car->rack.parts[1]->idx].variant];
             for (type = 0; type < 3; type++) {
                 g_slotSelec.slot = slot++;
                 if (other = o_8290[type + 2])
-                    gargfx_draw_part(other, 0);
+                    gx_draw_part(other, 0);
             }
         }
     }
@@ -575,13 +575,13 @@ void gargfx_draw_parts(struct Car *car)
     g_slotSelec.slot = mode;
 }
 
-/* gargfx_draw_bolts @ 0F38:3F2D (linear 0x132AD, 286 bytes)
+/* gx_draw_bolts @ 0F38:3F2D (linear 0x132AD, 286 bytes)
 
    Redraw all nine slot pictures (a and b give each slot's mode and sub-mode) into the
    back buffer over the r_vid.hoodBg strip, then the g_slotSelec.wirePic sprite, and an optional label when flag is set.
    The screen shadow r_vid.copyToFront is switched off meanwhile and the area is copied to the front afterwards. */
 
-void gargfx_draw_bolts(int *a, int *b, int flag)
+void gx_draw_bolts(int *a, int *b, int flag)
 {
     int prev2;
     int prev;
@@ -605,17 +605,17 @@ void gargfx_draw_bolts(int *a, int *b, int flag)
         if (id = af829ax[i]) {
             g_slotSelec.slot = a[i];
             g_slotSelec.subslot = b[i];
-            gargfx_draw_bolt(id);
+            gx_draw_bolt(id);
         }
     }
     if (g_slotSelec.wirePic)
-        gargfx_draw_wires();
+        gx_draw_wires();
     if (flag) {
         F_119B8(0x4c6, 0x60, 0x94, -1);
         blt.h = 0xaf;
     }
     if (r_vid.copyToFront = shadow)
-        bitmap_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + blt.w - 1, blt.dy + blt.h - 1);
+        bm_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + blt.w - 1, blt.dy + blt.h - 1);
     g_slotSelec.slot = prev;
     g_slotSelec.subslot = prev2;
 }
@@ -646,14 +646,14 @@ static void near insert_hot(struct Hot *arr, struct Hot *item, int n)
     *p = *item;
 }
 
-/* gargfx_build_hots @ 0F38:40CA (linear 0x1344A, 411 bytes)
+/* gx_build_hots @ 0F38:40CA (linear 0x1344A, 411 bytes)
 
    Build the sorted list of menu items in g_engineHots: the 3 fixed records are copied from g_1948,
    then for each of 9 slots (grouped by the counts in g_nBolt) that is enabled in o_8290 an item is
-   inserted at the position gargfx_bolt_pos gives for the slot's coordinates, plus a last item picked by
+   inserted at the position gx_bolt_pos gives for the slot's coordinates, plus a last item picked by
    g_slotSelec.wirePic. g_slotSelec.slot/g_slotSelec.subslot are saved and restored around it. */
 
-void gargfx_build_hots(int *xs, int *ys)
+void gx_build_hots(int *xs, int *ys)
 {
     int lane;
     int num;
@@ -674,7 +674,7 @@ void gargfx_build_hots(int *xs, int *ys)
         if (o_8290[lane]) {
             g_slotSelec.slot = xs[i];
             g_slotSelec.subslot = ys[i];
-            gargfx_bolt_pos(&x, &y);
+            gx_bolt_pos(&x, &y);
             x += 0x60;
             y += 9;
             g_boltHot.f6 = i + 1;
@@ -700,7 +700,7 @@ void gargfx_build_hots(int *xs, int *ys)
     g_engineHots[num].kind = 9;
     g_slotSelec.slot = rx;
     g_slotSelec.subslot = rh;
-    sys_hover_reset();
+    sy_hover_reset();
 }
 
 /* F_135E5 @ 0F38:4265 (linear 0x135E5, 156 bytes)

@@ -8,15 +8,15 @@
 
         .CODE S2487_TEXT
 
-; tandylin_draw @ 2487:000A (linear 0x2487A, 545 bytes)
-; tandylin_draw(x1, y1, x2, y2, color): Bresenham line in the 320x200 16-colour screen
+; tl_draw @ 2487:000A (linear 0x2487A, 545 bytes)
+; tl_draw(x1, y1, x2, y2, color): Bresenham line in the 320x200 16-colour screen
 ; (four interlaced banks of 2000h bytes, two pixels per byte), the sibling of
-; egaline_draw. Vertical lines go pixel by pixel, horizontal ones fill whole bytes.
+; el_draw. Vertical lines go pixel by pixel, horizontal ones fill whole bytes.
 ; si = bank step (+-2000h), di = step from the last bank back to the next row
 ; (+-0A0A0h, i.e. -5F60h).
 
-        PUBLIC  _tandylin_draw
-_tandylin_draw  PROC  FAR
+        PUBLIC  _tl_draw
+_tl_draw  PROC  FAR
         push    bp
         mov     bp,sp
         sub     sp,8
@@ -62,7 +62,7 @@ x_is_major:
         push    cx
         mov     ax,[bp+8]
         mov     bx,[bp+6]
-        call    _tandylin_pixel_addr
+        call    _tl_pixel_addr
         mov     al,[bp+14]              ; color
         shl     ax,cl
         mov     dx,ax
@@ -83,7 +83,7 @@ v_ordered:
         inc     cx
         mov     bx,[bp+6]
         push    cx
-        call    _tandylin_pixel_addr
+        call    _tl_pixel_addr
         mov     al,[bp+14]
         shl     ax,cl
         not     ah
@@ -104,7 +104,7 @@ v_bank:
 horizontal:
         mov     ax,[bp+8]
         mov     bx,[bp+6]
-        call    _tandylin_pixel_addr
+        call    _tl_pixel_addr
         mov     di,bx
         mov     dh,ah
         not     dh
@@ -273,16 +273,16 @@ done1:
         mov     sp,bp
         pop     bp
         ret
-_tandylin_draw  ENDP
+_tl_draw  ENDP
 
-; tandylin_pixel_addr @ 2487:022B (linear 0x24A9B, 44 bytes)
+; tl_pixel_addr @ 2487:022B (linear 0x24A9B, 44 bytes)
 ; Pixel address helper for the nibble packed 320x200 screen, interlaced in
 ; four banks of 80 bytes per line.  In: ax = y, bx = x.
 ; Out: bx = offset, es = video segment, cl = 0 or 4 (shift of the pixel in
 ; its byte), ah = 0Fh (pixel mask).
 
-        PUBLIC  _tandylin_pixel_addr
-_tandylin_pixel_addr  PROC  NEAR
+        PUBLIC  _tl_pixel_addr
+_tl_pixel_addr  PROC  NEAR
         mov     cl,bl
         xchg    ah,al
         shr     ax,1
@@ -305,14 +305,14 @@ _tandylin_pixel_addr  PROC  NEAR
 even1:
         mov     ah,0Fh
         ret
-_tandylin_pixel_addr  ENDP
+_tl_pixel_addr  ENDP
 
-; tandylin_span @ 2487:0257 (linear 0x24AC7, 178 bytes)
+; tl_span @ 2487:0257 (linear 0x24AC7, 178 bytes)
 ; Clipped horizontal span fill in the 16-colour planar-less (nibble packed)
 ; framebuffer: fill_span(x1, x2, y, color), clipped to the clip window.
 
-        PUBLIC  _tandylin_span
-_tandylin_span  PROC  FAR
+        PUBLIC  _tl_span
+_tl_span  PROC  FAR
         push    bp
         mov     bp,sp
         push    si
@@ -350,7 +350,7 @@ x2_ok:
 ordered:
         mov     ax,[bp+10]
         mov     bx,[bp+6]
-        call    _tandylin_pixel_addr
+        call    _tl_pixel_addr
         mov     di,bx
         mov     dh,ah
         not     dh
@@ -402,14 +402,14 @@ done2:
         mov     sp,bp
         pop     bp
         ret
-_tandylin_span  ENDP
+_tl_span  ENDP
 
-; tandylin_fill_below @ 2487:0309 (linear 0x24B79, 104 bytes)
-; tandylin_fill_below(y, color): fill the lines from y down to the bottom of the clip
+; tl_fill_below @ 2487:0309 (linear 0x24B79, 104 bytes)
+; tl_fill_below(y, color): fill the lines from y down to the bottom of the clip
 ; window with a colour, four interlaced banks one after the other.
 
-        PUBLIC  _tandylin_fill_below
-_tandylin_fill_below  PROC  FAR
+        PUBLIC  _tl_fill_below
+_tl_fill_below  PROC  FAR
         push    bp
         mov     bp,sp
         push    si
@@ -445,7 +445,7 @@ same_phase:
         mov     ax,[bp+6]
         xor     bx,bx
         push    cx
-        call    _tandylin_pixel_addr
+        call    _tl_pixel_addr
         pop     ax
         mov     cl,80
         mul     cl
@@ -465,6 +465,6 @@ done3:
         mov     sp,bp
         pop     bp
         ret
-_tandylin_fill_below  ENDP
+_tl_fill_below  ENDP
 
         END

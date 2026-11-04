@@ -25,18 +25,18 @@
 
 char *g_gearNames[7] = {"0", "1", "2", "3", "4", "N", "D"};   /* DS:0482 */
 
-/* screen_status_init @ 0F38:2022 (linear 0x113A2, 127 bytes) */
+/* sc_status_init @ 0F38:2022 (linear 0x113A2, 127 bytes) */
 
-void screen_status_init(int y)
+void sc_status_init(int y)
 {
     g_statusLine.y = y + 1;
     g_statusLine.messageWidth = 0xa0;
     g_statusLine.messageX = 0x58;
     g_statusLine.shown = 0;
     x_colors = bustyle->colors;
-    draw_fill_rect(r_vid.back, 0, y, SCREEN_WIDTH, STATUS_BAR_HEIGHT);
+    dr_fill_rect(r_vid.back, 0, y, SCREEN_WIDTH, STATUS_BAR_HEIGHT);
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, 0, y, (SCREEN_WIDTH - 1), y + STATUS_BAR_HEIGHT - 1);
+        bm_copy_box(r_vid.back, r_vid.front, 0, y, (SCREEN_WIDTH - 1), y + STATUS_BAR_HEIGHT - 1);
 }
 
 struct State7EAA a_7eaap;
@@ -59,19 +59,19 @@ void F_11421(int x, char *s, int w)
         w = g_statusLine.messageWidth;
     if (x < 0) {
         x = g_statusLine.messageX;
-        left = (x + (w - dash_text_width(s)) / 2) & 0xfff8;
+        left = (x + (w - da_text_width(s)) / 2) & 0xfff8;
     } else
         left = x;
     wd = SCREEN_WIDTH - x;
     ypos = g_statusLine.y;
-    cursor_ctl(CURSOR_HIDE);
+    cu_ctl(CURSOR_HIDE);
     if (g_statusLine.shown)
-        draw_fill_rect(r_vid.back, x - 1, ypos, wd, 8);
+        dr_fill_rect(r_vid.back, x - 1, ypos, wd, 8);
     (*g_videoOps.drawText)(r_vid.back, left, ypos, s);
     g_statusLine.shown = *s;
-    cursor_ctl(CURSOR_SHOW);
+    cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, x > 8 ? x - 8 : x, ypos, x + wd, ypos + 7);
+        bm_copy_box(r_vid.back, r_vid.front, x > 8 ? x - 8 : x, ypos, x + wd, ypos + 7);
     x_colors = saved;
 }
 
@@ -97,22 +97,22 @@ void F_11593(char *s)
 
     saved = r_vid.copyToFront;
     x_colors = bustyle->colors;
-    cursor_ctl(CURSOR_HIDE);
-    draw_fill_rect(r_vid.back, 0, g_statusLine.y, g_statusLine.messageX & 0xfff8, 8);
+    cu_ctl(CURSOR_HIDE);
+    dr_fill_rect(r_vid.back, 0, g_statusLine.y, g_statusLine.messageX & 0xfff8, 8);
     (*g_videoOps.drawText)(r_vid.back, 0, g_statusLine.y, s);
     g_statusLine.valueX = (g_penPoint.x + 7) & 0xfff8;
     r_vid.copyToFront = 0;
     if (s[1] != 'G' && s[1] != ' ')
         F_11540(0);
     r_vid.copyToFront = saved;
-    cursor_ctl(CURSOR_SHOW);
+    cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, 0, g_statusLine.y, g_statusLine.messageX, g_statusLine.y + 7);
+        bm_copy_box(r_vid.back, r_vid.front, 0, g_statusLine.y, g_statusLine.messageX, g_statusLine.y + 7);
 }
 
-/* screen_show_gear @ 0F38:22E9 (linear 0x11669, 49 bytes) */
+/* sc_show_gear @ 0F38:22E9 (linear 0x11669, 49 bytes) */
 
-void screen_show_gear(int i)
+void sc_show_gear(int i)
 {
     int saved;
 
@@ -124,38 +124,38 @@ void screen_show_gear(int i)
 
 char g_displaySplitYVal;
 
-/* screen_fill_rect @ 0F38:231A (linear 0x1169A, 130 bytes) */
+/* sc_fill_rect @ 0F38:231A (linear 0x1169A, 130 bytes) */
 
-void screen_fill_rect(int x, int y, int w, int h, char color)
+void sc_fill_rect(int x, int y, int w, int h, char color)
 {
     char old;
 
     old = x_colors.fill;
-    cursor_ctl(CURSOR_HIDE);
+    cu_ctl(CURSOR_HIDE);
     x_colors.fill = color;
-    draw_fill_rect(r_vid.back, x, y, w, h);
+    dr_fill_rect(r_vid.back, x, y, w, h);
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, x, y, x + w - 1, y + h - 1);
+        bm_copy_box(r_vid.back, r_vid.front, x, y, x + w - 1, y + h - 1);
     x_colors.fill = old;
-    cursor_ctl(CURSOR_SHOW);
+    cu_ctl(CURSOR_SHOW);
 }
 
-/* screen_msg_box @ 0F38:239C (linear 0x1171C, 50 bytes) */
+/* sc_msg_box @ 0F38:239C (linear 0x1171C, 50 bytes) */
 
-void screen_msg_box(char *s)
+void sc_msg_box(char *s)
 {
     strcpy(g_boxText, s);
-    menu_modal(0x1d);
+    mn_modal(0x1d);
 }
 
 char g_promptPalette[18] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14, 0, 0};   /* DS:04AC */
 struct PicturePlacement g_picturePlacement = {0, 0, SCREEN_BODY_HEIGHT}; /* DS:04BE */
 
-/* screen_wait_msg @ 0F38:23CE (linear 0x1174E, 390 bytes)
+/* sc_wait_msg @ 0F38:23CE (linear 0x1174E, 390 bytes)
 
    Show a message and wait for a key ("Hit Return when ready ...") */
 
-void screen_wait_msg(char *msg)
+void sc_wait_msg(char *msg)
 {
     int saved;
     char prev;
@@ -168,7 +168,7 @@ void screen_wait_msg(char *msg)
     strcpy(g_promptLine2, "Hit Return when ready ...");
     if (g_graphicsUp >= 1) {
         if (g_driveRebuild) {
-            screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+            sc_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
             g_driveRebuild++;
         }
         prev = gz8249;
@@ -182,12 +182,12 @@ void screen_wait_msg(char *msg)
             g_hotReadyBox[i].y2 += dx;
         }
         if (g_driveRebuild)
-            video_set_palette(g_promptPalette);
+            vi_set_palette(g_promptPalette);
         r_vid.copyToFront = 1;
-        sys_reset_queues();
+        sy_reset_queues();
         back = r_vid.back;
         r_vid.back = r_vid.front;
-        menu_modal(0x20);
+        mn_modal(0x20);
         r_vid.back = back;
         for (i = 0; i < 5; i++) {
             g_hotReadyBox[i].y1 -= dx;
@@ -202,7 +202,7 @@ void screen_wait_msg(char *msg)
         puts(g_promptLine1);
         puts(g_promptLine2);
         if (g_kbdHooked) {
-            while (!kbdget_key())
+            while (!kg_key())
                 ;
         } else {
             while (!kbhit() == 0)
@@ -223,19 +223,19 @@ int F_118D4(int a, int b)
     long unused;    /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
     struct Blt pkt;
 
-    cursor_ctl(CURSOR_HIDE);
-    p = disk_bm(a, ARENA_HIGH_STACK);
+    cu_ctl(CURSOR_HIDE);
+    p = di_bm(a, ARENA_HIGH_STACK);
     if (b >= 0)
-        screen_fill_rect(0, 0, SCREEN_WIDTH, g_picturePlacement.maxHeight, b);
+        sc_fill_rect(0, 0, SCREEN_WIDTH, g_picturePlacement.maxHeight, b);
     pkt.w = p->width;
     pkt.h = p->height > g_picturePlacement.maxHeight ? g_picturePlacement.maxHeight : p->height;
     pkt.sx = pkt.sy = pkt.fc = 0;
     pkt.dx = g_picturePlacement.x;
     pkt.dy = g_picturePlacement.y;
     (*g_videoOps.copy)(p, r_vid.back, &pkt, 1);
-    cursor_ctl(CURSOR_SHOW);
+    cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, g_picturePlacement.x, g_picturePlacement.y, pkt.dx + pkt.w - 1, pkt.dy + pkt.h - 1);
+        bm_copy_box(r_vid.back, r_vid.front, g_picturePlacement.x, g_picturePlacement.y, pkt.dx + pkt.w - 1, pkt.dy + pkt.h - 1);
     g_picturePlacement.x = g_picturePlacement.y = 0;
     F_19438(1);
 }
@@ -249,24 +249,24 @@ int F_119B8(int a, int b, int c, int d)
     return F_118D4(a, d);
 }
 
-/* screen_text @ 0F38:2656 (linear 0x119D6, 78 bytes)
+/* sc_text @ 0F38:2656 (linear 0x119D6, 78 bytes)
 
    Draw string s at (x, y) on the back buffer, then copy the 8 pixel high strip to the front buffer */
 
-void screen_text(int x, int y, char *s)
+void sc_text(int x, int y, char *s)
 {
     (*g_videoOps.drawText)(r_vid.back, x, y, s);
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, x, y, g_penPoint.x - 1, y + 7);
+        bm_copy_box(r_vid.back, r_vid.front, x, y, g_penPoint.x - 1, y + 7);
 }
 
-/* screen_hline @ 0F38:26A4 (linear 0x11A24, 78 bytes)
+/* sc_hline @ 0F38:26A4 (linear 0x11A24, 78 bytes)
 
    Draw a horizontal run of w pixels at (x, y) on the back buffer and copy it to the front buffer */
 
-void screen_hline(int x, int y, int w)
+void sc_hline(int x, int y, int w)
 {
-    draw_hline(r_vid.back, x, y, w);
+    dr_hline(r_vid.back, x, y, w);
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, x, y, x + w - 1, y);
+        bm_copy_box(r_vid.back, r_vid.front, x, y, x + w - 1, y);
 }

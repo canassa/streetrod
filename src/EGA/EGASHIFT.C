@@ -8,7 +8,7 @@ static void near shift_row_bits(unsigned char *p, int n, int len);
 static void near write_plane_row(unsigned char far *dst, unsigned char *src, int w, int off, int shift);
 
 /* EGA/VGA register writes (graphics controller, sequencer). Written as braced blocks: the
-   block boundary is visible in egashift_blit's code; every other pair in the file (and the 38
+   block boundary is visible in ex_blit's code; every other pair in the file (and the 38
    such pairs of seven other files) compiles the same either way. */
 #define GCREG(i, v)  { outp(GC_INDEX, (i)); outp(GC_DATA, (v)); }
 #define SEQREG(i, v) { outp(SEQ_INDEX, (i)); outp(SEQ_DATA, (v)); }
@@ -141,14 +141,14 @@ static void near write_plane_row(unsigned char far *dst, unsigned char *src, int
     SEQREG(SEQ_MAP_MASK, SEQ_ALL_PLANES);
 }
 
-/* egashift_blit @ 21A0:223B (linear 0x23C3B, 383 bytes)
+/* ex_blit @ 21A0:223B (linear 0x23C3B, 383 bytes)
 
    Copy a rectangle of a planar VGA bitmap to another, via a per-row 4 plane buffer */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 /* The braces of GCREG(5, 0) are load-bearing: a block ends the basic block that holds the
    r->sx / 8 CSE in si, so /Ol does not give it a stack slot (the original has none). */
 
-void egashift_blit(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r)
+void ex_blit(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r)
 {
     int p;                 /* bytes per row */
     unsigned char far *a;  /* source row */

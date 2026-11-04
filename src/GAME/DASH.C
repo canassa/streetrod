@@ -83,9 +83,9 @@ static void near save_under(int x, int y, int w, int h, int kind)
     (*g_videoOps.copy)(g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt, 1);
 }
 
-/* dash_speedo_pts @ 0F38:0137 (linear 0x0F4B7, 155 bytes) */
+/* da_speedo_pts @ 0F38:0137 (linear 0x0F4B7, 155 bytes) */
 
-void dash_speedo_pts(int i, int *x1, int *y1, int *x2, int *y2)
+void da_speedo_pts(int i, int *x1, int *y1, int *x2, int *y2)
 {
     if (i < 0)
         i = 0;
@@ -105,15 +105,15 @@ void dash_speedo_pts(int i, int *x1, int *y1, int *x2, int *y2)
     { extern char far x_trk0[][2]; *x1 = x_trk0[i][0]; }
 }
 
-/* dash_speedo_init @ 0F38:01D2 (linear 0x0F552, 220 bytes) */
+/* da_speedo_init @ 0F38:01D2 (linear 0x0F552, 220 bytes) */
 
-void dash_speedo_init(int i)
+void da_speedo_init(int i)
 {
     int miny3, minx4, y1, x2, x11, y2, color;
     unsigned saveOff, saveSeg;
 
     color = (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) ? 11 : 3;
-    dash_speedo_pts(i, &x11, &y1, &x2, &y2);
+    da_speedo_pts(i, &x11, &y1, &x2, &y2);
     minx4 = x11 > x2 ? x2 : x11;
     miny3 = y1 > y2 ? y2 : y1;
     save_under(minx4, miny3, abs(x11 - x2) + 1, abs(y1 - y2) + 1, 2);
@@ -128,9 +128,9 @@ void dash_speedo_init(int i)
     }
 }
 
-/* dash_tach_pts @ 0F38:02AE (linear 0x0F62E, 155 bytes) */
+/* da_tach_pts @ 0F38:02AE (linear 0x0F62E, 155 bytes) */
 
-void dash_tach_pts(int i, int *x1, int *y1, int *x2, int *y2)
+void da_tach_pts(int i, int *x1, int *y1, int *x2, int *y2)
 {
     if (i < 0)
         i = 0;
@@ -140,20 +140,20 @@ void dash_tach_pts(int i, int *x1, int *y1, int *x2, int *y2)
     *y1 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[0][i][1] + 0x2a;
     *x2 = g_needlePts[1][i][0] + 0x91;
     *y2 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[1][i][1] + 0x2a;
-    /* PROVISIONAL: second unreachable far access, see dash_speedo_pts. */
+    /* PROVISIONAL: second unreachable far access, see da_speedo_pts. */
     return;
     { extern char far x_trk1[][2]; *x2 = x_trk1[i][0]; }
 }
 
-/* dash_tach_init @ 0F38:0349 (linear 0x0F6C9, 220 bytes) */
+/* da_tach_init @ 0F38:0349 (linear 0x0F6C9, 220 bytes) */
 
-void dash_tach_init(int v)
+void da_tach_init(int v)
 {
     int miny3, minx4, y1, x2, x11, y2, color;
     unsigned saveOff, saveSeg;
 
     color = r_vid.mode == VID_EGA ? 11 : 3;
-    dash_tach_pts(v / 0x2b, &x11, &y1, &x2, &y2);
+    da_tach_pts(v / 0x2b, &x11, &y1, &x2, &y2);
     minx4 = x11 > x2 ? x2 : x11;
     miny3 = y1 > y2 ? y2 : y1;
     save_under(minx4, miny3, abs(x11 - x2) + 1, abs(y1 - y2) + 1, 3);
@@ -168,9 +168,9 @@ void dash_tach_init(int v)
     }
 }
 
-/* dash_move_needle @ 0F38:0425 (linear 0x0F7A5, 461 bytes) */
+/* da_move_needle @ 0F38:0425 (linear 0x0F7A5, 461 bytes) */
 
-int dash_move_needle(int cur, int old, int flag)
+int da_move_needle(int cur, int old, int flag)
 {
     int miny3, minx4, y1, x2, x11, y2;
     unsigned saveOff, saveSeg;
@@ -182,23 +182,23 @@ int dash_move_needle(int cur, int old, int flag)
     av787at = r_vid.mode == VID_EGA ? 0xa000 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
     at767ct = 0;
     if (flag) {
-        dash_tach_pts(old / 0x2b, &x11, &y1, &x2, &y2);
+        da_tach_pts(old / 0x2b, &x11, &y1, &x2, &y2);
         minx4 = x11 > x2 ? x2 : x11;
         miny3 = y1 > y2 ? y2 : y1;
         restore_under(minx4, miny3, abs(x11 - x2) + 1, abs(y1 - y2) + 1, 3);
     } else {
-        dash_speedo_pts(old, &x11, &y1, &x2, &y2);
+        da_speedo_pts(old, &x11, &y1, &x2, &y2);
         minx4 = x11 > x2 ? x2 : x11;
         miny3 = y1 > y2 ? y2 : y1;
         restore_under(minx4, miny3, abs(x11 - x2) + 1, abs(y1 - y2) + 1, 2);
     }
     if (flag) {
-        dash_tach_pts(cur / 0x2b, &x11, &y1, &x2, &y2);
+        da_tach_pts(cur / 0x2b, &x11, &y1, &x2, &y2);
         minx4 = x11 > x2 ? x2 : x11;
         miny3 = y1 > y2 ? y2 : y1;
         save_under(minx4, miny3, abs(x11 - x2) + 1, abs(y1 - y2) + 1, 3);
     } else {
-        dash_speedo_pts(cur, &x11, &y1, &x2, &y2);
+        da_speedo_pts(cur, &x11, &y1, &x2, &y2);
         minx4 = x11 > x2 ? x2 : x11;
         miny3 = y1 > y2 ? y2 : y1;
         save_under(minx4, miny3, abs(x11 - x2) + 1, abs(y1 - y2) + 1, 2);
@@ -209,12 +209,12 @@ int dash_move_needle(int cur, int old, int flag)
     return cur;
 }
 
-/* dash_draw_clock @ 0F38:05F2 (linear 0x0F972, 1339 bytes)
+/* da_draw_clock @ 0F38:05F2 (linear 0x0F972, 1339 bytes)
 
    Draws the clock: the hour hand (width 5 or 8) and the minute hand (width 4 or 8), each a
    diamond of five lines around the face centre, from the time F_064A3 returns. */
 
-void dash_draw_clock(void)
+void da_draw_clock(void)
 {
     int a2, x2, y2, x3, x4;
     double pi3;
@@ -280,25 +280,25 @@ void dash_draw_clock(void)
     at767ct = soffn;
 }
 
-/* dash_pal_blank @ 0F38:0B2D (linear 0x0FEAD, 18 bytes) */
+/* da_pal_blank @ 0F38:0B2D (linear 0x0FEAD, 18 bytes) */
 
-void dash_pal_blank(void)
+void da_pal_blank(void)
 {
-    video_set_palette(g_blackPalette);
+    vi_set_palette(g_blackPalette);
     gz8249 = 0;
 }
 
-/* dash_pal_show @ 0F38:0B3F (linear 0x0FEBF, 18 bytes) */
+/* da_pal_show @ 0F38:0B3F (linear 0x0FEBF, 18 bytes) */
 
-void dash_pal_show(void)
+void da_pal_show(void)
 {
-    video_set_palette(g_palette);
+    vi_set_palette(g_palette);
     gz8249 = 1;
 }
 
-/* dash_wait_key @ 0F38:0B51 (linear 0x0FED1, 159 bytes) */
+/* da_wait_key @ 0F38:0B51 (linear 0x0FED1, 159 bytes) */
 
-void dash_wait_key(int ticks)
+void da_wait_key(int ticks)
 {
     long end;
     char key;
@@ -310,32 +310,32 @@ void dash_wait_key(int ticks)
             break;
         }
         if (g_mouse.present) {
-            mouse_buttons();
+            mo_buttons();
             if (g_mouse.left)
                 break;
         }
         if (g_joystick) {
-            joy_read();
+            jy_read();
             if (g_joyButtons)
                 break;
         }
-        key = kbdget_key();
+        key = kg_key();
         if (key == 0x4d) {
             if (g_musicOn) {
-                sys_music_pause();
+                sy_music_pause();
                 g_musicOn = 0;
             } else {
                 g_musicOn = 1;
-                sys_music_resume();
+                sy_music_resume();
             }
         } else if (key == 0xd || key == 0x1b)
             break;
     }
 }
 
-/* dash_intro @ 0F38:0BF0 (linear 0x0FF70, 370 bytes) */
+/* da_intro @ 0F38:0BF0 (linear 0x0FF70, 370 bytes) */
 
-void dash_intro(void)
+void da_intro(void)
 {
     int saved;
 
@@ -344,48 +344,48 @@ void dash_intro(void)
         (*g_videoOps.blank)();
     g_picturePlacement.maxHeight = SCREEN_HEIGHT;
     if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
-        main_set_palette(CGA_PALETTE_GREEN_RED_BROWN);
+        mi_set_palette(CGA_PALETTE_GREEN_RED_BROWN);
     F_119B8(3, 0x28, 0x28, 0);
-    disk_free_pic(3);
+    di_free_pic(3);
     (*g_videoOps.show)();
     r_vid.copyToFront = 0;
     F_118D4(1, -1);
-    disk_free_pic(1);
-    dash_wait_key(400);
+    di_free_pic(1);
+    da_wait_key(400);
     (*g_videoOps.show)();
     if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
-        main_set_palette(CGA_PALETTE_CYAN_MAGENTA_WHITE);
+        mi_set_palette(CGA_PALETTE_CYAN_MAGENTA_WHITE);
     (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
     F_118D4(4, 0);
-    disk_free_pic(4);
-    dash_wait_key(400);
+    di_free_pic(4);
+    da_wait_key(400);
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
-        video_set_palette(g_introPalette);
+        vi_set_palette(g_introPalette);
     (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
-    dash_wait_key(400);
+    da_wait_key(400);
     g_picturePlacement.maxHeight = saved;
-    screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+    sc_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
 }
 
-/* dash_time_up @ 0F38:0D62 (linear 0x100E2, 91 bytes) */
+/* da_time_up @ 0F38:0D62 (linear 0x100E2, 91 bytes) */
 
-void dash_time_up(void)
+void da_time_up(void)
 {
-    game_message(0x17bb);
+    gm_message(0x17bb);
     (*g_videoOps.blank)();
-    cursor_ctl(CURSOR_HIDE_NOW);
+    cu_ctl(CURSOR_HIDE_NOW);
     r_vid.copyToFront = 1;
-    screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+    sc_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     F_065AF(1);
     F_10B7C();
     (*g_videoOps.show)();
-    game_pause(300);
+    gm_pause(300);
 }
 
-/* dash_set_view @ 0F38:0DBD (linear 0x1013D, 406 bytes) */
+/* da_set_view @ 0F38:0DBD (linear 0x1013D, 406 bytes) */
 
-void dash_set_view(int mode)
+void da_set_view(int mode)
 {
     switch (mode) {
     case 0:
@@ -401,14 +401,14 @@ void dash_set_view(int mode)
         if (r_vid.mode == VID_EGA) {
             outp(CRTC_INDEX, CRTC_OFFSET);
             outp(CRTC_DATA, 0x14);
-            crtc_set_split(-1);
+            ct_set_split(-1);
             outp(CRTC_INDEX, CRTC_START_HI);
             outp(CRTC_DATA, 0);
             outp(CRTC_INDEX, CRTC_START_LO);
             outp(CRTC_DATA, 0);
         }
         r_vid.copyToFront = 1;
-        screen_status_init(SCREEN_BODY_HEIGHT);
+        sc_status_init(SCREEN_BODY_HEIGHT);
         break;
     case 2:
         if (r_vid.mode == VID_EGA) {
@@ -422,7 +422,7 @@ void dash_set_view(int mode)
     case 3:
         r_vid.back = r_vid.front = g_savedFront;
         r_vid.copyToFront = 0;
-        screen_status_init(r_vid.mode == VID_EGA ? 0x5a : SCREEN_BODY_HEIGHT);
+        sc_status_init(r_vid.mode == VID_EGA ? 0x5a : SCREEN_BODY_HEIGHT);
         if (bw8aca)
             F_11593(g_gearLabel);
         break;
@@ -432,7 +432,7 @@ void dash_set_view(int mode)
         if (r_vid.mode == VID_EGA) {
             outp(CRTC_INDEX, CRTC_OFFSET);
             outp(CRTC_DATA, 0x14);
-            crtc_set_split(-1);
+            ct_set_split(-1);
             outp(CRTC_INDEX, CRTC_START_HI);
             outp(CRTC_DATA, 0);
             outp(CRTC_INDEX, CRTC_START_LO);
@@ -444,9 +444,9 @@ void dash_set_view(int mode)
     }
 }
 
-/* dash_load_wheel @ 0F38:0F53 (linear 0x102D3, 321 bytes) */
+/* da_load_wheel @ 0F38:0F53 (linear 0x102D3, 321 bytes) */
 
-void dash_load_wheel(void)
+void da_load_wheel(void)
 {
     int i6;
     struct Bitmap far *bm;
@@ -458,7 +458,7 @@ void dash_load_wheel(void)
         pkt.sx = pkt.sy = 0;
         pkt.dx = 0x88;
         for (i6 = 0; i6 < 3; i6++) {
-            bm = disk_bm(g_wheelPicIds[i6], ARENA_LOW_STACK);
+            bm = di_bm(g_wheelPicIds[i6], ARENA_LOW_STACK);
             if (r_vid.mode != VID_EGA || i6 < 2) {
                 g_wheelPoses.bitmaps[i6] = g82b4s;
                 g_wheelPoses.y[i6] = g_wheelSlotY[i6];
@@ -468,17 +468,17 @@ void dash_load_wheel(void)
             }
             pkt.dy = g_wheelPoses.y[i6];
             (*g_videoOps.copy)(bm, g_wheelPoses.bitmaps[i6], &pkt, 1);
-            marks_pop_low(1);
+            ma_pop_low(1);
         }
     } else {
         for (i6 = 0; i6 < 3; i6++)
-            g_wheelPoses.bitmaps[i6] = disk_bm(g_wheelPicIds[i6], ARENA_LOW_STACK);
+            g_wheelPoses.bitmaps[i6] = di_bm(g_wheelPicIds[i6], ARENA_LOW_STACK);
     }
 }
 
-/* dash_steer_marker @ 0F38:1094 (linear 0x10414, 156 bytes) */
+/* da_steer_marker @ 0F38:1094 (linear 0x10414, 156 bytes) */
 
-void dash_steer_marker(int n)
+void da_steer_marker(int n)
 {
     int x, y2;
     unsigned off;
@@ -490,24 +490,24 @@ void dash_steer_marker(int n)
     off = at767ct;
     av787at = r_vid.mode == VID_EGA ? 0xa200 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
     at767ct = 0;
-    view_unclip_top();
+    vw_unclip_top();
     x = g_steerPoints[n][0];
     y2 = g_steerPoints[n][1] + DASH_Y;
     ymax = g_viewClip.yMax;
     ymin2 = g_viewClip.yMin;
     g_viewClip.yMax = SCREEN_BODY_HEIGHT;
     g_viewClip.yMin = DASH_Y;
-    view_draw_dot(x, y2);
+    vw_draw_dot(x, y2);
     g_viewClip.yMax = ymax;
     g_viewClip.yMin = ymin2;
-    view_clip();
+    vw_clip();
     av787at = seg;
     at767ct = off;
 }
 
-/* dash_draw_wheel @ 0F38:1130 (linear 0x104B0, 455 bytes) */
+/* da_draw_wheel @ 0F38:1130 (linear 0x104B0, 455 bytes) */
 
-void dash_draw_wheel(int a, int b, struct Bitmap far *dst)
+void da_draw_wheel(int a, int b, struct Bitmap far *dst)
 {
     struct Blt pkt1;
     int sel, x, y2;
@@ -543,31 +543,31 @@ void dash_draw_wheel(int a, int b, struct Bitmap far *dst)
         off = at767ct;
         av787at = r_vid.mode == VID_EGA ? 0xa000 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
         at767ct = 0;
-        view_unclip_top();
+        vw_unclip_top();
         if (r_vid.mode != VID_EGA) {
             ymax = g_viewClip.yMax;
             ymin2 = g_viewClip.yMin;
             g_viewClip.yMax = SCREEN_BODY_HEIGHT;
             g_viewClip.yMin = DASH_Y;
         }
-        view_draw_dot(x, y2);
+        vw_draw_dot(x, y2);
         if (r_vid.mode != VID_EGA) {
             g_viewClip.yMax = ymax;
             g_viewClip.yMin = ymin2;
         }
-        view_clip();
+        vw_clip();
         av787at = seg;
         at767ct = off;
     }
 }
 
-/* dash_init_shifter @ 0F38:12F7 (linear 0x10677, 507 bytes)
+/* da_init_shifter @ 0F38:12F7 (linear 0x10677, 507 bytes)
 
    Draws the car sprite at the top of the screen and, for each of the g_shifterDraw.track->n points of the
    track, the wheel sprite (the position comes from the (x, y) pair, the source rectangle from
-   g_shiftSlots). dash_draw_shifter is the per-frame update that draws the same pieces. */
+   g_shiftSlots). da_draw_shifter is the per-frame update that draws the same pieces. */
 
-void dash_init_shifter(int a, int b)
+void da_init_shifter(int a, int b)
 {
     struct Blt pk5;
     struct Bitmap far *cm2;
@@ -580,14 +580,14 @@ void dash_init_shifter(int a, int b)
     int y;
 
     g_shifterDraw.track = &g_shifters[a ? 0 : b == 3 ? 1 : 2];
-    bm19 = disk_bm(g_shifterDraw.track->id1, ARENA_HIGH_STACK);
+    bm19 = di_bm(g_shifterDraw.track->id1, ARENA_HIGH_STACK);
     pk5.w = 0x30;
     pk5.h = 0x2b;
     pk5.sx = pk5.sy = 0;
     pk5.dx = 0x108;
     pk5.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + 0x17;
     (*g_videoOps.copy)(bm19, g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, &pk5, 1);
-    bm28 = disk_bm(g_shifterDraw.track->id2, ARENA_HIGH_STACK);
+    bm28 = di_bm(g_shifterDraw.track->id2, ARENA_HIGH_STACK);
     p3.w = p2.w = (pk5.w = bm28->width) + 8;
     p3.h = p2.h = pk5.h = bm28->height;
     p3.sx = p3.sy = 0;
@@ -598,23 +598,23 @@ void dash_init_shifter(int a, int b)
         y = g_shifterDraw.track->pt[i * 2 + 1];
         p2.sx = x & 0xfff8;
         p2.sy = y;
-        cm2 = bitmap_grab(bm19, &p2, ARENA_LOW_STACK);
+        cm2 = bm_grab(bm19, &p2, ARENA_LOW_STACK);
         p3.dx = g_shiftSlots[i].a;
         p3.dy = g_shiftSlots[i].b;
         (*g_videoOps.copy)(cm2, g82b4s, &p3, 1);
         pk5.dx = x - p2.sx;
-        bitmap_draw_masked(bm28, cm2, &pk5, 0);
+        bm_draw_masked(bm28, cm2, &pk5, 0);
         p3.dy += 0x13;
         (*g_videoOps.copy)(cm2, g82b4s, &p3, 1);
-        marks_pop_low(1);
+        ma_pop_low(1);
     }
     g_shifterDraw.knobPosition = -1;
     F_19438(2);
 }
 
-/* dash_draw_shifter @ 0F38:14F2 (linear 0x10872, 334 bytes) */
+/* da_draw_shifter @ 0F38:14F2 (linear 0x10872, 334 bytes) */
 
-void dash_draw_shifter(struct Bitmap far *dst, struct Eng *e)
+void da_draw_shifter(struct Bitmap far *dst, struct Eng *e)
 {
     struct Blt16 pkt1;
     int x, idx3;
@@ -646,9 +646,9 @@ void dash_draw_shifter(struct Bitmap far *dst, struct Eng *e)
     e->shifterDirty = 0;
 }
 
-/* dash_fmemset @ 0F38:1640 (linear 0x109C0, 64 bytes) */
+/* da_fmemset @ 0F38:1640 (linear 0x109C0, 64 bytes) */
 
-void dash_fmemset(char far *p, int c, unsigned n)
+void da_fmemset(char far *p, int c, unsigned n)
 {
     char far *q;
 
@@ -656,13 +656,13 @@ void dash_fmemset(char far *p, int c, unsigned n)
         *q++ = c;
 }
 
-/* dash_clip_blt @ 0F38:1680 (linear 0x10A00, 253 bytes)
+/* da_clip_blt @ 0F38:1680 (linear 0x10A00, 253 bytes)
 
    Clips the rectangle in to the destination bitmap, then to the
    source bitmap; the result goes to out. Returns 1 if anything is left. The x values of in
    are shifted down by r_vid.shift. */
 
-int dash_clip_blt(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *in, struct Blt *out)
+int da_clip_blt(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *in, struct Blt *out)
 {
     int t1, t2;
     int w1, h;
@@ -722,9 +722,9 @@ void F_10AFD(int n)
     }
 }
 
-/* dash_text_width @ 0F38:17C8 (linear 0x10B48, 52 bytes) */
+/* da_text_width @ 0F38:17C8 (linear 0x10B48, 52 bytes) */
 
-int dash_text_width(char *s)
+int da_text_width(char *s)
 {
     int w;
 

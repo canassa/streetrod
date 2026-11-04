@@ -13,21 +13,21 @@ static void near restore_rect_latch(struct Rect *r, struct Bitmap far *dst, stru
 
 /* restore_rect_latch @ 21A0:2568 (linear 0x23F68, 113 bytes)
 
-   Copy a rectangle between two planar bitmaps with egalatch_rect */
+   Copy a rectangle between two planar bitmaps with ea_rect */
 
 static void near restore_rect_latch(struct Rect *r, struct Bitmap far *dst, struct Bitmap far *src, int rows)
 {
     int off = rows ? EGA_PITCH * r->y1 : r->x1 >> 3;
 
-    egalatch_rect(src->bits.p - off, dst->bits.p, (r->x2 >> 3) - (r->x1 >> 3) + 1,
+    ea_rect(src->bits.p - off, dst->bits.p, (r->x2 >> 3) - (r->x1 >> 3) + 1,
             r->y2 - r->y1 + 1, r->x1 >> 3, r->y1, dst->pitch);
 }
 
-/* egaspr_step @ 21A0:25D9 (linear 0x23FD9, 787 bytes)
+/* es_step @ 21A0:25D9 (linear 0x23FD9, 787 bytes)
 
    Advance a sprite to its next display page and redraw it there */
 
-int egaspr_step(struct Sprite *s)
+int es_step(struct Sprite *s)
 {
     struct Rect clip;
     struct Rect first;
@@ -41,11 +41,11 @@ int egaspr_step(struct Sprite *s)
 
     if (s->seq->count < 0) {
         count = s->page;
-        egalatch_rect(count->bm->bits.p, count->link->bm->bits.p, EGA_PITCH, SCREEN_BODY_HEIGHT, 0, 0, EGA_PITCH);
+        ea_rect(count->bm->bits.p, count->link->bm->bits.p, EGA_PITCH, SCREEN_BODY_HEIGHT, 0, 0, EGA_PITCH);
         if (count->pageIndex) {
             count = count->link;
             count->rect = count->link->rect;
-            egapage_show(0);
+            ep_show(0);
         }
         return 0;
     }
@@ -53,10 +53,10 @@ int egaspr_step(struct Sprite *s)
     box = s->frame;
     key = s->img;
     height = s->save;
-    sprite_clip_box(box->pos->width,
+    sp_clip_box(box->pos->width,
         box->pos->height - g_spriteBottomCut, s->x, s->y,
         count->bm->width, count->bm->height, &clip);
-    if (sprite_rect_sub(&clip, &count->rect, &f, s->seq->dx))
+    if (sp_rect_sub(&clip, &count->rect, &f, s->seq->dx))
         restore_rect_latch(&f, count->bm, key, s->seq->dx);
     count->rect = clip;
     dest.h = box->pos->height - g_spriteBottomCut;
@@ -66,11 +66,11 @@ int egaspr_step(struct Sprite *s)
         dest.w = box->pos->width;
         dest.sx = 0;
         dest.dx = s->x;
-        egablit_sprite(box->pos, count->bm, height, (struct Mask *)box->data, (struct Blt *)&dest);
+        eb_sprite(box->pos, count->bm, height, (struct Mask *)box->data, (struct Blt *)&dest);
     } else {
         for (i = 0; i < 6; i++) {
-            if (sprite_clip_span(g_jailGaps[i].a, g_jailGaps[i].b, s, &dest))
-                egablit_sprite(box->pos, count->bm, height, (struct Mask *)box->data, (struct Blt *)&dest);
+            if (sp_clip_span(g_jailGaps[i].a, g_jailGaps[i].b, s, &dest))
+                eb_sprite(box->pos, count->bm, height, (struct Mask *)box->data, (struct Blt *)&dest);
         }
     }
     for (i = 0; i < 2; i++) {
@@ -84,7 +84,7 @@ int egaspr_step(struct Sprite *s)
             first.y1 += s->y;
             first.y2 += s->y;
         }
-        if (sprite_rect_and(&first, &count->rect, &f)) {
+        if (sp_rect_and(&first, &count->rect, &f)) {
             dest.w = f.x2 - f.x1 + 1;
             dest.h = f.y2 - f.y1 + 1;
             if (box->pos->pitch == height->pitch) {
@@ -96,10 +96,10 @@ int egaspr_step(struct Sprite *s)
             }
             dest.dx = f.x1;
             dest.dy = f.y1;
-            egablit_masked(height, count->bm, (struct Blt *)&dest, 0);
+            eb_masked(height, count->bm, (struct Blt *)&dest, 0);
         }
     }
-    sprite_advance(s);
-    egapage_show(count->pageIndex);
+    sp_advance(s);
+    ep_show(count->pageIndex);
     return 1;
 }

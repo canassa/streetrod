@@ -2,9 +2,9 @@
 #include "KEYCLR.H"
 #include "M_02B9A.H"
 
-/* keyclr_flush @ 0000:2DB0 (linear 0x02DB0, 6 bytes) */
+/* kc_flush @ 0000:2DB0 (linear 0x02DB0, 6 bytes) */
 
-void keyclr_flush(void)
+void kc_flush(void)
 {
     g_lastKey = 0;
 }

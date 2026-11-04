@@ -34,12 +34,12 @@ class SourceFileTests(unittest.TestCase):
         # data between two PROCs (a flag byte in the code segment) belongs to neither
         with tempfile.TemporaryDirectory() as d:
             lst = Path(d) / 'T.LST'
-            lst.write_text('_cgaline_pixel_addr . . . . . . . . . . . .  \tN PROC\t0287\tS1C11_TEXT\tGlobal\tLength = 0028\n')
+            lst.write_text('_cl_pixel_addr . . . . . . . . . . . .  \tN PROC\t0287\tS1C11_TEXT\tGlobal\tLength = 0028\n')
             lengths = cod.asm_lengths(lst)
-        self.assertEqual(lengths, {'_cgaline_pixel_addr': 0x28})
-        obj = NS(publics={'_cgaline_pixel_addr': 0x287, '_cgaline_span': 0x2b0}, code=bytes(0x300))
-        self.assertEqual(cod.from_publics(obj, 'cgaline_pixel_addr').end, 0x2b0)
-        self.assertEqual(cod.from_publics(obj, 'cgaline_pixel_addr', lengths).end, 0x2af)
+        self.assertEqual(lengths, {'_cl_pixel_addr': 0x28})
+        obj = NS(publics={'_cl_pixel_addr': 0x287, '_cl_span': 0x2b0}, code=bytes(0x300))
+        self.assertEqual(cod.from_publics(obj, 'cl_pixel_addr').end, 0x2b0)
+        self.assertEqual(cod.from_publics(obj, 'cl_pixel_addr', lengths).end, 0x2af)
 
 
 class GateTests(unittest.TestCase):

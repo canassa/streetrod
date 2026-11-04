@@ -101,29 +101,29 @@ extern struct Lims g_boxSpotHitData;                             /* DS:8B90 */
 extern struct Hot *g_curHoverPointer;                             /* DS:8BA8 */
 extern int g_cursHoverCodeVal;                                      /* DS:8BAA */
 extern int g_wRivBanner;                                     /* DS:8BC0 */
-void sys_hover_reset(void);                             /* 0x00D78 */
-void sys_music_pause(void);                             /* 0x00D99 */
-void sys_music_resume(void);                            /* 0x00DD8 */
-void sys_reset_queues(void);                            /* 0x00E24 */
-void sys_timer_remove(int n);                           /* 0x00F0B */
-void sys_unhook(void);                                  /* 0x00FB7 */
-void sys_exit(void);                                    /* 0x00FEA */
-void sys_crit_error(unsigned deverr, unsigned char errcode);/* 0x0105B */
-void sys_init(void);                                    /* 0x01111 */
-void sys_keymap_set(int n);                             /* 0x012DE */
-int sys_keymap_restore(int keep);                       /* 0x01391 */
-int sys_wait_input(int n);                              /* 0x01417 */
-int sys_timer_add(int delay, int pri);                  /* 0x01843 */
-void sys_timer_anim(int fc, int delay);                 /* 0x0198A */
-void sys_timer_cancel(int n);                           /* 0x019BC */
-void sys_music_start(int n, int cnt);                   /* 0x01A05 */
-void sys_music_stop(void);                              /* 0x01A7C */
-void sys_drive_start(void);                             /* 0x01AAD */
-void sys_drive_stop(void);                              /* 0x01B27 */
-int sys_sign(int x);                                    /* 0x01B91 */
-void sys_demo_step(void);                               /* 0x01BAE */
-void interrupt far sys_timer_isr(void);                 /* 0x01FE2 */
-void sys_stop_drive(void);                                     /* 0x02374 */
-void interrupt far sys_drive_isr(void);                 /* 0x0238C */
+void sy_hover_reset(void);                             /* 0x00D78 */
+void sy_music_pause(void);                             /* 0x00D99 */
+void sy_music_resume(void);                            /* 0x00DD8 */
+void sy_reset_queues(void);                            /* 0x00E24 */
+void sy_timer_remove(int n);                           /* 0x00F0B */
+void sy_unhook(void);                                  /* 0x00FB7 */
+void sy_exit(void);                                    /* 0x00FEA */
+void sy_crit_error(unsigned deverr, unsigned char errcode);/* 0x0105B */
+void sy_init(void);                                    /* 0x01111 */
+void sy_keymap_set(int n);                             /* 0x012DE */
+int sy_keymap_restore(int keep);                       /* 0x01391 */
+int sy_wait_input(int n);                              /* 0x01417 */
+int sy_timer_add(int delay, int pri);                  /* 0x01843 */
+void sy_timer_anim(int fc, int delay);                 /* 0x0198A */
+void sy_timer_cancel(int n);                           /* 0x019BC */
+void sy_music_start(int n, int cnt);                   /* 0x01A05 */
+void sy_music_stop(void);                              /* 0x01A7C */
+void sy_drive_start(void);                             /* 0x01AAD */
+void sy_drive_stop(void);                              /* 0x01B27 */
+int sy_sign(int x);                                    /* 0x01B91 */
+void sy_demo_step(void);                               /* 0x01BAE */
+void interrupt far sy_timer_isr(void);                 /* 0x01FE2 */
+void sy_stop_drive(void);                                     /* 0x02374 */
+void interrupt far sy_drive_isr(void);                 /* 0x0238C */
 
 #endif

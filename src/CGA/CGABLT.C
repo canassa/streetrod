@@ -49,11 +49,11 @@ static void near copy_from_cga(struct Bitmap far *bm1, struct Bitmap far *bm2, s
     }
 }
 
-/* cgablt_compose @ 1C11:1085 (linear 0x1D195, 205 bytes)
+/* cb_compose @ 1C11:1085 (linear 0x1D195, 205 bytes)
 
    Masked blit between three bitmaps, clipped, through the assembly blitter */
 
-void cgablt_compose(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *bm3, struct Blt *r)
+void cb_compose(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *bm3, struct Blt *r)
 {
     char far *db;
     int soff;
@@ -67,19 +67,19 @@ void cgablt_compose(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitma
     sak = bm1->alt.p;
     db = bm2->bits.p;
     mb = bm3->bits.p;
-    if (dash_clip_blt(bm1, bm2, r, (struct Blt *)&out7)) {
+    if (da_clip_blt(bm1, bm2, r, (struct Blt *)&out7)) {
         soff = bm1->pitch * out7.sy + out7.sx;
         doff = bm2->pitch * out7.dy + out7.dx;
-        maskbg_blit(db + doff, FP_SEG(sbz), (unsigned)sbz + soff, (unsigned)sak + soff, (unsigned)mb + doff,
+        mg_blit(db + doff, FP_SEG(sbz), (unsigned)sbz + soff, (unsigned)sak + soff, (unsigned)mb + doff,
                 bm1->pitch, out7.w, out7.h, bm3->pitch, bm2->pitch);
     }
 }
 
-/* cgablt_masked @ 1C11:1152 (linear 0x1D262, 358 bytes)
+/* cb_masked @ 1C11:1152 (linear 0x1D262, 358 bytes)
 
    Masked blit into a linear or CGA-interleaved bitmap through one of two assembly line routines */
 
-void cgablt_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int flag)
+void cb_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int flag)
 {
     int off05;
     char far *db;
@@ -99,7 +99,7 @@ void cgablt_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r
     int segn;
     int soff;
 
-    if (!dash_clip_blt(bm1, bm2, r, &ol))
+    if (!da_clip_blt(bm1, bm2, r, &ol))
         return;
     pitch1 = bm1->pitch;
     w = ol.w;
@@ -110,7 +110,7 @@ void cgablt_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r
     segn = bm1->bits.w.seg;
     bitsz = (soff = ol.sy * pitch1 + ol.sx) + bm1->bits.w.off;
     altk = bm1->alt.w.off + soff;
-    f5 = flag ? maskor_blit : maskblt_copy;
+    f5 = flag ? mr_blit : mk_copy;
     if (bm2->flags >= -1) {
         (*f5)(db + (pitch21 * dy + ol.dx), segn, bitsz, altk, pitch1, w, h3, pitch21);
     } else {
@@ -132,11 +132,11 @@ void cgablt_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r
     }
 }
 
-/* cgablt_copy @ 1C11:12B8 (linear 0x1D3C8, 456 bytes)
+/* cb_copy @ 1C11:12B8 (linear 0x1D3C8, 456 bytes)
 
    Clipped blit between bitmaps, picking the plain or CGA-interleaved copy routine */
 
-void cgablt_copy(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int flags)
+void cb_copy(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int flags)
 {
     int sp3;
     int f;
@@ -148,9 +148,9 @@ void cgablt_copy(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, 
 
     f = flags & 1;
     g8 = (flags & 2) && bm1->alt.p && bm2->alt.p ? 1 : 0;
-    if (dash_clip_blt(bm1, bm2, r, (struct Blt *)&o)) {
+    if (da_clip_blt(bm1, bm2, r, (struct Blt *)&o)) {
         if (bm1->flags < -1 && bm2->flags < -1)
-            cgadrv_blit_ilv(bm1->bits.p, bm2->bits.p, o.w, o.h, o.sx, o.sy, o.dx, o.dy);
+            cd_blit_ilv(bm1->bits.p, bm2->bits.p, o.w, o.h, o.sx, o.sy, o.dx, o.dy);
         else if (bm1->flags < -1)
             copy_from_cga(bm1, bm2, &o);
         else {
@@ -160,14 +160,14 @@ void cgablt_copy(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, 
             if (bm2->flags >= -1) {
                 dp3 = bm2->pitch * o.dy + o.dx;
                 if (f)
-                    cgadrv_blit_rect(bm1->bits.p + sp3, bm2->bits.p + dp3, o.w, o.h, skip, dskip);
+                    cd_blit_rect(bm1->bits.p + sp3, bm2->bits.p + dp3, o.w, o.h, skip, dskip);
                 if (g8)
-                    cgadrv_blit_rect(bm1->alt.p + sp3, bm2->alt.p + dp3, o.w, o.h, skip, dskip);
+                    cd_blit_rect(bm1->alt.p + sp3, bm2->alt.p + dp3, o.w, o.h, skip, dskip);
             } else {
                 dp3 = bm2->pitch * (o.dy >> 1) + o.dx;
                 if (o.dy & 1)
                     dp3 += 0x2000;
-                cgadrv_blit_to_ilv(bm1->bits.p + sp3, bm2->bits.p + dp3, o.w, o.h, skip, dskip, o.dy);
+                cd_blit_to_ilv(bm1->bits.p + sp3, bm2->bits.p + dp3, o.w, o.h, skip, dskip, o.dy);
             }
         }
     }

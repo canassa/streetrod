@@ -25,10 +25,10 @@
 
         .CODE S0000_TEXT
 
-; kbd_text_on @ 0000:2C04 (linear 0x02C04, 39 bytes)
+; kb_text_on @ 0000:2C04 (linear 0x02C04, 39 bytes)
 
-        PUBLIC  _kbd_text_on
-_kbd_text_on  PROC  FAR
+        PUBLIC  _kb_text_on
+_kb_text_on  PROC  FAR
         push    bp
         mov     bp,sp
         cli
@@ -43,12 +43,12 @@ skip57:
         sti
         pop     bp
         ret
-_kbd_text_on  ENDP
+_kb_text_on  ENDP
 
-; kbd_text_off @ 0000:2C2B (linear 0x02C2B, 23 bytes)
+; kb_text_off @ 0000:2C2B (linear 0x02C2B, 23 bytes)
 
-        PUBLIC  _kbd_text_off
-_kbd_text_off  PROC  FAR
+        PUBLIC  _kb_text_off
+_kb_text_off  PROC  FAR
         cli
         mov     _g_scanMap+14,0
         mov     _g_scanMap+51,0
@@ -56,13 +56,13 @@ _kbd_text_off  PROC  FAR
         mov     _g_scanMap+57,1Fh
         sti
         ret
-_kbd_text_off  ENDP
+_kb_text_off  ENDP
 
-; kbd_isr @ 0000:2C42 (linear 0x02C42, 366 bytes)
-; int 9 keyboard ISR (installed by kbdget_hook)
+; kb_isr @ 0000:2C42 (linear 0x02C42, 366 bytes)
+; int 9 keyboard ISR (installed by kg_hook)
 
-        PUBLIC  _kbd_isr
-_kbd_isr  PROC  FAR
+        PUBLIC  _kb_isr
+_kb_isr  PROC  FAR
         push    ax
         push    bx
         push    ds
@@ -211,6 +211,6 @@ L16b:
         jmp     SHORT done
 L17:
         jmp     SHORT done
-_kbd_isr  ENDP
+_kb_isr  ENDP
 
         END

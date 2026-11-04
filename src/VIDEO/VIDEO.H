@@ -54,16 +54,16 @@ extern struct Bitmap far *g_autoSprImagePtr;                       /* DS:825A */
 extern int ac825et;                                     /* DS:825E */
 extern int aw8260y;                                     /* DS:8260 */
 void F_10B7C(void);                                     /* 0x10B7C */
-void video_bobs_pal(void);                                     /* 0x10B8C */
-void video_name_pal(void);                                     /* 0x10B9C */
-void video_swap_pal(void);                              /* 0x10BAC */
-void video_init(struct Bitmap far *front, struct Bitmap far *back);/* 0x10BD9 */
-void video_anim_stop(int n);                            /* 0x10D6C */
-int video_anim_start(int n);                            /* 0x11149 */
-void video_anim_resume(int n);                          /* 0x111C1 */
-int video_anim_active(int n);                           /* 0x111F2 */
-int video_anim_hook(struct Obj *o, struct Cmd *c);      /* 0x11213 */
+void vi_bobs_pal(void);                                     /* 0x10B8C */
+void vi_name_pal(void);                                     /* 0x10B9C */
+void vi_swap_pal(void);                              /* 0x10BAC */
+void vi_init(struct Bitmap far *front, struct Bitmap far *back);/* 0x10BD9 */
+void vi_anim_stop(int n);                            /* 0x10D6C */
+int vi_anim_start(int n);                            /* 0x11149 */
+void vi_anim_resume(int n);                          /* 0x111C1 */
+int vi_anim_active(int n);                           /* 0x111F2 */
+int vi_anim_hook(struct Obj *o, struct Cmd *c);      /* 0x11213 */
 void F_112CB(int reg, char color);                      /* 0x112CB */
-void video_set_palette(char *table);                    /* 0x11324 */
+void vi_set_palette(char *table);                    /* 0x11324 */
 
 #endif

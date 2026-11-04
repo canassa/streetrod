@@ -58,15 +58,15 @@ static struct Bitmap far * near alloc_shrunk(struct Bitmap far *p, unsigned char
             rows6++;
         m2 >>= 1;
     }
-    q = arena_bm(bytes, rows6, p->alt.p != 0, ARENA_LOW_STACK);
-    dash_fmemset(q->bits.p, 0, q->planesize);
-    dash_fmemset(q->alt.p, 0xff, q->planesize / (unsigned)r_vid.planes);
+    q = ar_bm(bytes, rows6, p->alt.p != 0, ARENA_LOW_STACK);
+    da_fmemset(q->bits.p, 0, q->planesize);
+    da_fmemset(q->alt.p, 0xff, q->planesize / (unsigned)r_vid.planes);
     return q;
 }
 
-/* shrink_ega @ 2645:5407 (linear 0x2B857, 497 bytes) */
+/* sr_ega @ 2645:5407 (linear 0x2B857, 497 bytes) */
 
-struct Bitmap far *shrink_ega(struct Bitmap far *p, unsigned char a, unsigned char b)
+struct Bitmap far *sr_ega(struct Bitmap far *p, unsigned char a, unsigned char b)
 {
     unsigned char far *dpl;
     struct Bitmap far *q;
@@ -135,7 +135,7 @@ struct Bitmap far *shrink_ega(struct Bitmap far *p, unsigned char a, unsigned ch
         }
     }
     if (p->alt.p)
-        maskblt_make_mask(q->bits.p, q->alt.p, q->planesize);
+        mk_make_mask(q->bits.p, q->alt.p, q->planesize);
     return q;
 }
 
@@ -155,9 +155,9 @@ static void near expand_mask(unsigned char v, char *pa, char *pb)
             *pb |= 3 << sh;
 }
 
-/* shrink_cga @ 2645:5670 (linear 0x2BAC0, 533 bytes) */
+/* sr_cga @ 2645:5670 (linear 0x2BAC0, 533 bytes) */
 
-struct Bitmap far *shrink_cga(struct Bitmap far *p, unsigned char a, unsigned char c)
+struct Bitmap far *sr_cga(struct Bitmap far *p, unsigned char a, unsigned char c)
 {
     unsigned char far *dpl;
     struct Bitmap far *q;
@@ -232,9 +232,9 @@ struct Bitmap far *shrink_cga(struct Bitmap far *p, unsigned char a, unsigned ch
     return q;
 }
 
-/* shrink_tandy @ 2645:5885 (linear 0x2BCD5, 470 bytes) */
+/* sr_tandy @ 2645:5885 (linear 0x2BCD5, 470 bytes) */
 
-struct Bitmap far *shrink_tandy(struct Bitmap far *p, unsigned char a, unsigned char c)
+struct Bitmap far *sr_tandy(struct Bitmap far *p, unsigned char a, unsigned char c)
 {
     unsigned char far *dpl;
     struct Bitmap far *q;
@@ -289,6 +289,6 @@ struct Bitmap far *shrink_tandy(struct Bitmap far *p, unsigned char a, unsigned 
         if (ml == 0)
             ml = 0x80;
     }
-    tandypic_make_mask(q->bits.p, q->alt.p, q->planesize);
+    tp_make_mask(q->bits.p, q->alt.p, q->planesize);
     return q;
 }

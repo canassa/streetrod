@@ -16,17 +16,17 @@ extern char g_headerEditableState;                                    /* DS:8BA4
 extern struct Hot *g_hotsCurMenu;                             /* DS:8BA6 */
 extern int ai8bacx;                                     /* DS:8BAC */
 extern int g_hotMenuGroupState;                                      /* DS:8EFE */
-void menu_draw_hot(struct Hot *p);                      /* 0x139DE */
-void menu_push(int id);                                 /* 0x13DE6 */
-void menu_pop(int keep);                                /* 0x13F21 */
-void menu_reset(void);                                  /* 0x13F7F */
-void menu_bbox(int id, int *x, int *y, int *w, int *h); /* 0x13F9A */
-struct Bitmap far *menu_grab(int id, int *px, int *py, int mode);/* 0x14090 */
-int menu_hit(int x, int y);                             /* 0x1412D */
-int menu_modal(int id);                                 /* 0x14241 */
-int menu_wait(int a);                                   /* 0x14294 */
+void mn_draw_hot(struct Hot *p);                      /* 0x139DE */
+void mn_push(int id);                                 /* 0x13DE6 */
+void mn_pop(int keep);                                /* 0x13F21 */
+void mn_reset(void);                                  /* 0x13F7F */
+void mn_bbox(int id, int *x, int *y, int *w, int *h); /* 0x13F9A */
+struct Bitmap far *mn_grab(int id, int *px, int *py, int mode);/* 0x14090 */
+int mn_hit(int x, int y);                             /* 0x1412D */
+int mn_modal(int id);                                 /* 0x14241 */
+int mn_wait(int a);                                   /* 0x14294 */
 int F_142CF(int a, int b, int *c, int *list, char *buf, char **d);/* 0x142CF */
-int menu_list(int a, int b, int *c, int *list, char *buf, char **d);/* 0x1438E */
-int menu_ix(void);                                      /* 0x14C8B */
+int mn_list(int a, int b, int *c, int *list, char *buf, char **d);/* 0x1438E */
+int mn_ix(void);                                      /* 0x14C8B */
 
 #endif

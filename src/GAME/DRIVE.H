@@ -5,6 +5,6 @@
 #include "STRUCTS.H"
 
 extern struct Bitmap far *g8188w;                       /* DS:8188 */
-int drive_run(void);                                    /* 0x16EA2 */
+int dv_run(void);                                    /* 0x16EA2 */
 
 #endif

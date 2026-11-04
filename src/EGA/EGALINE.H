@@ -4,6 +4,6 @@
 #define EGALINE_H
 #include "STRUCTS.H"
 
-void far egaline_draw();                                /* 0x23DBC */
+void far el_draw();                                /* 0x23DBC */
 
 #endif

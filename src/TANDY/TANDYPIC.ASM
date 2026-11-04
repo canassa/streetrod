@@ -6,15 +6,15 @@
 
         .CODE S2462_TEXT
 
-; tandypic_init @ 2462:000E (linear 0x2462E, 76 bytes)
-; Near helper shared by tandypic_unpack and tandypic_unpack_mask, which keep its tables in their own
+; tp_init @ 2462:000E (linear 0x2462E, 76 bytes)
+; Near helper shared by tp_unpack and tp_unpack_mask, which keep its tables in their own
 ; frame: [bp-110h] 16 bytes (copy of g_rleCounts), [bp-120h] 16 bytes (copy of
 ; g_rleValues), [bp-100h] 256 bytes mapping a colour byte of the palette passed at
 ; [bp+10h] to its index+1.  Then clears the destination buffer ([bp+0Ah] far,
 ; [bp+0Eh] bytes).
 
-        PUBLIC  _tandypic_init
-_tandypic_init  PROC  NEAR
+        PUBLIC  _tp_init
+_tp_init  PROC  NEAR
         push    ss
         pop     es
         mov     cx,8
@@ -46,22 +46,22 @@ index_loop:
         xor     ax,ax
         rep     stosw
         ret
-_tandypic_init  ENDP
+_tp_init  ENDP
 
-; tandypic_unpack @ 2462:005A (linear 0x2467A, 198 bytes)
-; tandypic_unpack(src_far, dst_far, count, palette): like tandypic_unpack_mask, but ORs the pixels
+; tp_unpack @ 2462:005A (linear 0x2467A, 198 bytes)
+; tp_unpack(src_far, dst_far, count, palette): like tp_unpack_mask, but ORs the pixels
 ; into the destination, one bit plane at a time: the plane colour word is kept
 ; at [bp-122h] (1111h, shifted left after each pass over the buffer).
 
-        PUBLIC  _tandypic_unpack
-_tandypic_unpack  PROC  FAR
+        PUBLIC  _tp_unpack
+_tp_unpack  PROC  FAR
         push    bp
         mov     bp,sp
         sub     sp,122h
         push    di
         push    si
         push    ds
-        call    _tandypic_init
+        call    _tp_init
         les     di,DWORD PTR [bp+0ah]
         lds     si,DWORD PTR [bp+6]
         mov     dx,di
@@ -81,12 +81,12 @@ next1:
         jnc     decode
         jmp     done1
 decode:
-        call    _tandypic_read_code
+        call    _tp_read_code
         or      al,al
         je      skip1
         cmp     al,0FFh
         je      fill1
-        call    _tandypic_or_nibbles
+        call    _tp_or_nibbles
         jmp     next1
 skip1:
         shl     cx,1
@@ -158,22 +158,22 @@ done1:
         mov     sp,bp
         pop     bp
         ret
-_tandypic_unpack  ENDP
+_tp_unpack  ENDP
 
-; tandypic_unpack_mask @ 2462:0120 (linear 0x24740, 139 bytes)
-; tandypic_unpack_mask(src_far, dst_far, count, palette): expand a compressed 4-bit image.
+; tp_unpack_mask @ 2462:0120 (linear 0x24740, 139 bytes)
+; tp_unpack_mask(src_far, dst_far, count, palette): expand a compressed 4-bit image.
 ; Each pattern byte gives 8 bits; every set bit makes one 4-bit pixel 0Fh in
 ; the two output words.  Code 0 skips pixels, 0FFh fills with 0FFFFh.
 
-        PUBLIC  _tandypic_unpack_mask
-_tandypic_unpack_mask  PROC  FAR
+        PUBLIC  _tp_unpack_mask
+_tp_unpack_mask  PROC  FAR
         push    bp
         mov     bp,sp
         sub     sp,122h
         push    di
         push    si
         push    ds
-        call    _tandypic_init
+        call    _tp_init
         les     di,DWORD PTR [bp+0ah]
         lds     si,DWORD PTR [bp+6]
         mov     dx,di
@@ -181,7 +181,7 @@ _tandypic_unpack_mask  PROC  FAR
         jnc     next2
         jmp     SHORT done2
 next2:
-        call    _tandypic_read_code
+        call    _tp_read_code
         or      al,al
         je      skip2
         cmp     al,0FFh
@@ -247,15 +247,15 @@ done2:
         mov     sp,bp
         pop     bp
         ret
-_tandypic_unpack_mask  ENDP
+_tp_unpack_mask  ENDP
 
-; tandypic_or_nibbles @ 2462:01AB (linear 0x247CB, 73 bytes)
-; Near helper of tandypic_unpack: expand the 8 bits of al into two words of 4-bit
+; tp_or_nibbles @ 2462:01AB (linear 0x247CB, 73 bytes)
+; Near helper of tp_unpack: expand the 8 bits of al into two words of 4-bit
 ; pixels, masking the colour word kept in the caller's frame ([bp-122h]), and
 ; OR them into the destination (es:di).
 
-        PUBLIC  _tandypic_or_nibbles
-_tandypic_or_nibbles  PROC  NEAR
+        PUBLIC  _tp_or_nibbles
+_tp_or_nibbles  PROC  NEAR
         mov     bx,[bp-122h]
         mov     cx,bx
         rol     al,1
@@ -297,17 +297,17 @@ b8:
         inc     di
         inc     di
         ret
-_tandypic_or_nibbles  ENDP
+_tp_or_nibbles  ENDP
 
-; tandypic_read_code @ 2462:01F4 (linear 0x24814, 53 bytes)
-; Near helper of tandypic_unpack and tandypic_unpack_mask: fetch the next code from ds:si.
+; tp_read_code @ 2462:01F4 (linear 0x24814, 53 bytes)
+; Near helper of tp_unpack and tp_unpack_mask: fetch the next code from ds:si.
 ; A code byte of 0 or 0FFh is followed by a count byte: returns cx = count+1
 ; and al = the code.  Any other byte is a pixel pattern looked up through the
 ; 256-byte table in the caller's frame: returns al = pattern, cx = run
 ; length, or ah = 0 (return) when the byte isn't in the table.
 
-        PUBLIC  _tandypic_read_code
-_tandypic_read_code  PROC  NEAR
+        PUBLIC  _tp_read_code
+_tp_read_code  PROC  NEAR
         lodsb
         or      al,al
         je      run
@@ -337,15 +337,15 @@ run:
         inc     ax
         xchg    cx,ax
         ret
-_tandypic_read_code  ENDP
+_tp_read_code  ENDP
 
-; tandypic_make_mask @ 2462:0229 (linear 0x24849, 48 bytes)
-; tandypic_make_mask(src_far, dst_far, count): turn count bytes of packed 4-bit pixels
+; tp_make_mask @ 2462:0229 (linear 0x24849, 48 bytes)
+; tp_make_mask(src_far, dst_far, count): turn count bytes of packed 4-bit pixels
 ; into a byte-per-pair mask: a nibble that is zero sets the corresponding
 ; nibble of the mask (0F0h for the high one, 0Fh for the low one).
 
-        PUBLIC  _tandypic_make_mask
-_tandypic_make_mask  PROC  FAR
+        PUBLIC  _tp_make_mask
+_tp_make_mask  PROC  FAR
         push    bp
         mov     bp,sp
         push    di
@@ -376,6 +376,6 @@ store:
         mov     sp,bp
         pop     bp
         ret
-_tandypic_make_mask  ENDP
+_tp_make_mask  ENDP
 
         END

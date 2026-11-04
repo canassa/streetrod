@@ -94,7 +94,7 @@ static int near show_video_menu(int mode)
         ;
     choice = getch() - '0';
     if (choice == -21)
-        sys_exit();
+        sy_exit();
     if (choice <= 0 || choice > VIDEO_CHOICE_TANDY)
         return 0;
     return choice;
@@ -116,9 +116,9 @@ static int near is_vga(void)
     return s && c == DCC_VGA_COLOR;
 }
 
-/* main_set_mode @ 0000:01D1 (linear 0x001D1, 33 bytes) */
+/* mi_set_mode @ 0000:01D1 (linear 0x001D1, 33 bytes) */
 
-void main_set_mode(int ax)
+void mi_set_mode(int ax)
 {
     union REGS r;
 
@@ -126,9 +126,9 @@ void main_set_mode(int ax)
     int86(BIOS_VIDEO, &r, &r);
 }
 
-/* main_set_palette @ 0000:01F2 (linear 0x001F2, 52 bytes) */
+/* mi_set_palette @ 0000:01F2 (linear 0x001F2, 52 bytes) */
 
-void main_set_palette(unsigned char color)
+void mi_set_palette(unsigned char color)
 {
     union REGS r;
 
@@ -149,10 +149,10 @@ static int near choose_video(int mode)
     int pick;
 
     herc = 0;
-    viddet_detect();
+    vd_detect();
     if (g_forceEga)
         g_egaCard = 1;
-    if (hercdet_bios_mono() && (g_egaCard == 1 || hercdet_detect())) {
+    if (hd_bios_mono() && (g_egaCard == 1 || hd_detect())) {
         g_egaCard = 0;
         herc = 1;
     }
@@ -162,8 +162,8 @@ static int near choose_video(int mode)
         mode = VIDEO_CHOICE_CGA;
     if (herc)
         mode = VIDEO_CHOICE_HERCULES;
-    if (memstr_find("Tandy", BIOS_ROM, 0xffff) ||
-        memstr_find("TANDY", BIOS_ROM, 0xffff))
+    if (ms_find("Tandy", BIOS_ROM, 0xffff) ||
+        ms_find("TANDY", BIOS_ROM, 0xffff))
         mode = VIDEO_CHOICE_TANDY;
     if (is_vga())
         mode = VIDEO_CHOICE_VGA;
@@ -189,19 +189,19 @@ static void near init_screens(int mode)
     case VIDEO_CHOICE_EGA:
         r_vid.mode = VID_EGA;
         SET_EQUIP_VIDEO(EQUIP_VIDEO_COLOR80);
-        ega_install();
+        eg_install();
         return;
     case VIDEO_CHOICE_TANDY:
         r_vid.mode = g_screens[0].flags = VID_TANDY;
-        tandy_install();
+        ta_install();
         g_screens[0].bits.p = r_vid.mode == VID_HERCULES ? MONO_VRAM : CGA_VRAM;
         g_screens[0].planesize = g_screens[1].planesize = g_screens[2].planesize = 0x8000;
         g_screens[0].pitch = g_screens[1].pitch = g_screens[2].pitch = 0xa0;
         g_screens[1].flags = g_screens[2].flags = VID_TANDY;
         g_screens[1].bits.p = TANDY_SCREEN1_BITS;
-        g_screens[2].bits.p = mem_alloc(0x8000, 1);
-        dash_fmemset(g_screens[1].bits.p, 0, 0x8000);
-        dash_fmemset(g_screens[2].bits.p, 0, 0x8000);
+        g_screens[2].bits.p = me_alloc(0x8000, 1);
+        da_fmemset(g_screens[1].bits.p, 0, 0x8000);
+        da_fmemset(g_screens[2].bits.p, 0, 0x8000);
         return;
     case VIDEO_CHOICE_HERCULES:
         g_screens[0].flags = VID_HERCULES;
@@ -215,15 +215,15 @@ static void near init_screens(int mode)
         SET_EQUIP_VIDEO(EQUIP_VIDEO_COLOR80);
         break;
     }
-    cga_install();
+    cg_install();
     g_screens[0].bits.p = r_vid.mode == VID_HERCULES ? MONO_VRAM : CGA_VRAM;
     g_screens[0].planesize = g_screens[1].planesize = 0x4000;
     g_screens[0].pitch = g_screens[1].pitch = 0x50;
     g_screens[1].flags = VID_CGA;
-    g_screens[1].bits.p = mem_alloc(0x4000, 1);
-    dash_fmemset(g_screens[1].bits.p, 0, 0x4000);
-    g_screens[2].bits.p = mem_alloc(0x4000, 1);
-    dash_fmemset(g_screens[2].bits.p, 0, 0x4000);
+    g_screens[1].bits.p = me_alloc(0x4000, 1);
+    da_fmemset(g_screens[1].bits.p, 0, 0x4000);
+    g_screens[2].bits.p = me_alloc(0x4000, 1);
+    da_fmemset(g_screens[2].bits.p, 0, 0x4000);
 }
 
 /* set_video_mode @ 0000:04F4 (linear 0x004F4, 210 bytes) */
@@ -235,14 +235,14 @@ static void near set_video_mode(int mode)
     switch (mode) {
     case VIDEO_CHOICE_EGA:
     case VIDEO_CHOICE_VGA:
-        main_set_mode(MODE_EGA_320_200_16);
+        mi_set_mode(MODE_EGA_320_200_16);
         break;
     case VIDEO_CHOICE_TANDY:
-        main_set_mode(MODE_TANDY_320_200_16);
+        mi_set_mode(MODE_TANDY_320_200_16);
         outp(TANDY_PAGE, 0xf6);
         break;
     case VIDEO_CHOICE_HERCULES:
-        hercgfx_set_mode();
+        hg_set_mode();
         p = r_vid.mode == VID_HERCULES ? (int far *)MONO_VRAM : (int far *)CGA_VRAM;
         while (p < (int far *)((r_vid.mode == VID_HERCULES ? (long)MONO_VRAM : (long)CGA_VRAM) + 0x8000L))
             *p++ = 0;
@@ -252,8 +252,8 @@ static void near set_video_mode(int mode)
         break;
     case VIDEO_CHOICE_CGA:
     case 6:
-        main_set_mode(MODE_CGA_320_200_4);
-        main_set_palette(CGA_PALETTE_CYAN_MAGENTA_WHITE);
+        mi_set_mode(MODE_CGA_320_200_4);
+        mi_set_palette(CGA_PALETTE_CYAN_MAGENTA_WHITE);
         break;
     }
     g_videoSet = 1;
@@ -341,35 +341,35 @@ int main(int argc, char **argv)
             g_noUeMem = 1;
     }
     b = choose_video(b);
-    mem_init();
-    arena_init();
+    me_init();
+    ar_init();
     init_screens(b);
     set_video_mode(b);
-    video_init(g_screens, &g_screen1);
-    sys_init();
+    vi_init(g_screens, &g_screen1);
+    sy_init();
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
-        video_set_palette(g_palette);
-    disk_open_libs(e, b);
+        vi_set_palette(g_palette);
+    di_open_libs(e, b);
     check_slow_cpu();
-    d = disk_read_index(1);
-    cursor_init();
-    sound_init();
-    dash_set_view(0);
+    d = di_read_index(1);
+    cu_init();
+    so_init();
+    da_set_view(0);
     if (r_vid.mode == VID_CGA && g_egaCard)
-        g_bufBackgroundDashPtr = mem_new_bitmap(SCREEN_WIDTH, DASH_HEIGHT, 0, -1, 0);
-    g_imageBufferPointer = mem_alloc(r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY ? 16000 : 18000, 1);
-    a = disk_load_list(g_titlePics, 0);
+        g_bufBackgroundDashPtr = me_new_bitmap(SCREEN_WIDTH, DASH_HEIGHT, 0, -1, 0);
+    g_imageBufferPointer = me_alloc(r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY ? 16000 : 18000, 1);
+    a = di_load_list(g_titlePics, 0);
     if (a == 3) {
         g_loadedIntroBmps = 1;
-        d = disk_read_index(2);
-        disk_load_data();
+        d = di_read_index(2);
+        di_load_data();
         if (r_vid.mode == VID_EGA)
-            disk_cache_list(g_gamePics);
-        disk_load_list(g_gamePics, 1);
+            di_cache_list(g_gamePics);
+        di_load_list(g_gamePics, 1);
     } else {
         g_loadedIntroBmps = 0;
-        disk_free_list(g_titlePics);
+        di_free_list(g_titlePics);
     }
-    game_run();
-    sys_exit();
+    gm_run();
+    sy_exit();
 }

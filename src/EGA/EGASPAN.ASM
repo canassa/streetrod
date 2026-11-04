@@ -10,12 +10,12 @@
 
         .CODE S2645_TEXT
 
-; egaspan_begin @ 2645:0008 (linear 0x26458, 21 bytes)
+; en_begin @ 2645:0008 (linear 0x26458, 21 bytes)
 ; EGA/VGA: enable set/reset on all four planes (GC index 1 = 0Fh), then
 ; program GC index 3 (data rotate / function select) from the high byte of g_egaGcFunction.
 
-        PUBLIC  _egaspan_begin
-_egaspan_begin  PROC    FAR
+        PUBLIC  _en_begin
+_en_begin  PROC    FAR
         cmp     _r_vid+12,-2
         jne     done1
         mov     dx,GC_INDEX
@@ -26,14 +26,14 @@ _egaspan_begin  PROC    FAR
         out     dx,ax
 done1:
         ret
-_egaspan_begin  ENDP
+_en_begin  ENDP
 
-; egaspan_end @ 2645:001D (linear 0x2646D, 23 bytes)
+; en_end @ 2645:001D (linear 0x2646D, 23 bytes)
 ; Restore the graphics controller defaults: set/reset 0, enable set/reset 0,
 ; function select 0, bit mask FFh.
 
-        PUBLIC  _egaspan_end
-_egaspan_end  PROC    FAR
+        PUBLIC  _en_end
+_en_end  PROC    FAR
         cmp     _r_vid+12,-2
         jne     done2
         mov     dx,GC_INDEX
@@ -47,15 +47,15 @@ _egaspan_end  PROC    FAR
         out     dx,ax
 done2:
         ret
-_egaspan_end  ENDP
+_en_end  ENDP
 
-; egaspan_fill @ 2645:0034 (linear 0x26484, 179 bytes)
-; egaspan_fill(x1, x2, y, colour): EGA horizontal line from x1 to x2 on row y,
+; en_fill @ 2645:0034 (linear 0x26484, 179 bytes)
+; en_fill(x1, x2, y, colour): EGA horizontal line from x1 to x2 on row y,
 ; clipped to the clip rectangle.  Set/reset colour in GC index 0, bit mask
 ; (GC index 8) used for the partial first and last bytes.
 
-        PUBLIC  _egaspan_fill
-_egaspan_fill  PROC    FAR
+        PUBLIC  _en_fill
+_en_fill  PROC    FAR
         push    bp
         mov     bp,sp
         sub     sp,8
@@ -99,7 +99,7 @@ ordered:
         push    ds
         mov     ax,[bp+0Ah]
         mov     bx,[bp+6]
-        call    _egaspan_pixel_addr
+        call    _en_pixel_addr
         mov     di,bx
         mov     dh,ah
         not     dh
@@ -149,15 +149,15 @@ done3:
         mov     sp,bp
         pop     bp
         ret
-_egaspan_fill  ENDP
+_en_fill  ENDP
 
-; egaspan_fill_below @ 2645:00E7 (linear 0x26537, 100 bytes)
-; egaspan_fill_below(y, colour): EGA, fill the rows from y down to the bottom of the clip
+; en_fill_below @ 2645:00E7 (linear 0x26537, 100 bytes)
+; en_fill_below(y, colour): EGA, fill the rows from y down to the bottom of the clip
 ; rectangle by copying within segment av787at with the set/reset colour (a
 ; latch copy of 40 bytes per row), then restore the graphics controller.
 
-        PUBLIC  _egaspan_fill_below
-_egaspan_fill_below  PROC    FAR
+        PUBLIC  _en_fill_below
+_en_fill_below  PROC    FAR
         push    bp
         mov     bp,sp
         sub     sp,8
@@ -211,14 +211,14 @@ done4:
         mov     sp,bp
         pop     bp
         ret
-_egaspan_fill_below  ENDP
+_en_fill_below  ENDP
 
-; egaspan_pixel_addr @ 2645:014B (linear 0x2659B, 31 bytes)
-; egaspan_pixel_addr(ax = y, bx = x): EGA address of a pixel.  Out: bx = y * 40 + x / 8,
+; en_pixel_addr @ 2645:014B (linear 0x2659B, 31 bytes)
+; en_pixel_addr(ax = y, bx = x): EGA address of a pixel.  Out: bx = y * 40 + x / 8,
 ; es = av787at, cl = 7 - (x & 7), ah = 1.
 
-        PUBLIC  _egaspan_pixel_addr
-_egaspan_pixel_addr  PROC    NEAR
+        PUBLIC  _en_pixel_addr
+_en_pixel_addr  PROC    NEAR
         mov     cl,bl
         push    dx
         mov     dx,EGA_PITCH
@@ -234,6 +234,6 @@ _egaspan_pixel_addr  PROC    NEAR
         xor     cl,7
         mov     ah,1
         ret
-_egaspan_pixel_addr  ENDP
+_en_pixel_addr  ENDP
 
         END

@@ -56,7 +56,7 @@ ORDER_HINTS = [
      'the original relocation table places the Hercules calls after PERF and before MUSIC; '
      'KEYMAPS has no segment relocations and is placed before HERCDET by reconstruction choice'),
     (('24602', '2462E', '2487A', '24BE2'), '22352',
-     'the original relocation table lists tandytxt_render SEG fixup between TANDY and TANDYSPR'),
+     'the original relocation table lists tt_render SEG fixup between TANDY and TANDYSPR'),
     (('26458', '265BA', '2869E', '2B6DC', '105EC6', '1060A2'), '242EC',
      'the original relocation table lists 23F68 and 242EC before the C units of segment 2645; '
      'the car-mask data follows 286D8 in DGROUP'),

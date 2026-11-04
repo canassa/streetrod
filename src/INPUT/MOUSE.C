@@ -5,11 +5,11 @@
 #include "PC.H"
 #include "SYS.H"
 
-/* mouse_reset @ 0F38:799A (linear 0x16D1A, 61 bytes)
+/* mo_reset @ 0F38:799A (linear 0x16D1A, 61 bytes)
 
    Mouse driver present? Returns the INT 33h reset result (0 if the vector is empty) */
 
-int mouse_reset(void)
+int mo_reset(void)
 {
     union REGS r;
 
@@ -21,11 +21,11 @@ int mouse_reset(void)
     return r.x.ax;
 }
 
-/* mouse_buttons @ 0F38:79D7 (linear 0x16D57, 61 bytes)
+/* mo_buttons @ 0F38:79D7 (linear 0x16D57, 61 bytes)
 
    Mouse function 3, buttons: bl bit 0 and bit 1 stored in two globals */
 
-void mouse_buttons(void)
+void mo_buttons(void)
 {
     union REGS r;
 
@@ -36,11 +36,11 @@ void mouse_buttons(void)
     g_mouse.right = r.h.bl & MOUSE_RIGHT_BUTTON;
 }
 
-/* mouse_motion @ 0F38:7A14 (linear 0x16D94, 51 bytes)
+/* mo_motion @ 0F38:7A14 (linear 0x16D94, 51 bytes)
 
    Mouse function 0Bh, motion counters returned through two pointers */
 
-void mouse_motion(int *dx, int *dy)
+void mo_motion(int *dx, int *dy)
 {
     union REGS r;
 
@@ -51,16 +51,16 @@ void mouse_motion(int *dx, int *dy)
     *dy = r.x.dx;
 }
 
-/* mouse_poll @ 0F38:7A47 (linear 0x16DC7, 218 bytes)
+/* mo_poll @ 0F38:7A47 (linear 0x16DC7, 218 bytes)
 
    Mouse motion polling; accumulates mickeys and converts to pixel steps */
 
-void mouse_poll(void)
+void mo_poll(void)
 {
     int mx, my;
     int mag, neg;
 
-    mouse_motion(&mx, &my);
+    mo_motion(&mx, &my);
     g_mouse.accX += mx;
     g_mouse.accY += my;
     if (g_mouse.accX < 0) {
@@ -89,7 +89,7 @@ void mouse_poll(void)
             g_mouse.dy = -g_mouse.dy;
         g_mouse.accY = 0;
     }
-    mouse_buttons();
+    mo_buttons();
     if (g_mouse.left) {
         if (g_buttons == 0) {
             g_click = 1;

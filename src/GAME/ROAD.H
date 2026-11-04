@@ -33,21 +33,21 @@ extern unsigned far *g7d62p;                            /* DS:7D62 */
 extern int g_lhsRdMirrorX[];                                    /* DS:7F22 */
 extern int g_xOuterLProjArray[];                                   /* DS:7F8A */
 extern int g_rhsOuterXArray[];                                    /* DS:7FD8 */
-void road_build_layout(int n);                          /* 0x26FE1 */
-void road_generate(void);                               /* 0x27198 */
-void road_seek(int n);                                  /* 0x27B6D */
-int road_proj_x(int a, int b, int c);                   /* 0x27BBF */
-int road_proj_y(int a, int b, int c);                   /* 0x27C01 */
-int road_mirror_x(int a, int b, int c);                 /* 0x27C3D */
-int road_mirror_y(int a, int b, int c);                 /* 0x27C78 */
-void road_reset(void);                                  /* 0x27CAD */
-void road_project_ahead(void);                          /* 0x27D4B */
-void road_project_behind(void);                         /* 0x2801C */
-void road_draw_frame(void);                             /* 0x282EE */
-void road_advance(void);                                /* 0x2834C */
-int road_check_crash(void);                             /* 0x284BB */
-void road_start(void);                                  /* 0x28564 */
-void road_turn(int dir);                                /* 0x28576 */
-void road_update(void);                                 /* 0x2858D */
+void rd_build_layout(int n);                          /* 0x26FE1 */
+void rd_generate(void);                               /* 0x27198 */
+void rd_seek(int n);                                  /* 0x27B6D */
+int rd_proj_x(int a, int b, int c);                   /* 0x27BBF */
+int rd_proj_y(int a, int b, int c);                   /* 0x27C01 */
+int rd_mirror_x(int a, int b, int c);                 /* 0x27C3D */
+int rd_mirror_y(int a, int b, int c);                 /* 0x27C78 */
+void rd_reset(void);                                  /* 0x27CAD */
+void rd_project_ahead(void);                          /* 0x27D4B */
+void rd_project_behind(void);                         /* 0x2801C */
+void rd_draw_frame(void);                             /* 0x282EE */
+void rd_advance(void);                                /* 0x2834C */
+int rd_check_crash(void);                             /* 0x284BB */
+void rd_start(void);                                  /* 0x28564 */
+void rd_turn(int dir);                                /* 0x28576 */
+void rd_update(void);                                 /* 0x2858D */
 
 #endif

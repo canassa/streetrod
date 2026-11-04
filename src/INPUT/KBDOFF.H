@@ -4,6 +4,6 @@
 #define KBDOFF_H
 #include "STRUCTS.H"
 
-void kbdoff_unhook(void);                               /* 0x02DE2 */
+void ko_unhook(void);                               /* 0x02DE2 */
 
 #endif

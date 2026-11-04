@@ -22,7 +22,7 @@ extern int g_bPos[];                                    /* DS:5186 */
 extern int g_5198[];                                    /* DS:5198 */
 extern int g_bIdx[];                                    /* DS:519A */
 extern struct State8272 m_8272;                         /* DS:8272 */
-int garage_day(void);                                   /* 0x06476 */
+int ga_day(void);                                   /* 0x06476 */
 void F_064A3(int *a, int *b);                           /* 0x064A3 */
 void F_06529(int n);                                    /* 0x06529 */
 void F_065AF(int a);                                    /* 0x065AF */
@@ -41,6 +41,6 @@ void near F_07800(void);                                /* 0x07800 */
 void F_079EB(void);                                     /* 0x079EB */
 void near F_07AA4(void);                                /* 0x07AA4 */
 int F_07EE6(struct Car *car, int flag);                 /* 0x07EE6 */
-void near garage_hood(struct Car *car);                 /* 0x081AB */
+void near ga_hood(struct Car *car);                 /* 0x081AB */
 
 #endif

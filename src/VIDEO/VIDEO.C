@@ -49,25 +49,25 @@ void F_10B7C(void)
     F_112CB(12, 5);
 }
 
-/* video_bobs_pal @ 0F38:180C (linear 0x10B8C, 16 bytes) */
+/* vi_bobs_pal @ 0F38:180C (linear 0x10B8C, 16 bytes) */
 
-void video_bobs_pal(void)
+void vi_bobs_pal(void)
 {
     F_112CB(12, 13);
 }
 
-/* video_name_pal @ 0F38:181C (linear 0x10B9C, 16 bytes) */
+/* vi_name_pal @ 0F38:181C (linear 0x10B9C, 16 bytes) */
 
-void video_name_pal(void)
+void vi_name_pal(void)
 {
     g_palette[6] = 9;
     g_palette[7] = 1;
     g_palette[8] = 3;
 }
 
-/* video_swap_pal @ 0F38:182C (linear 0x10BAC, 45 bytes) */
+/* vi_swap_pal @ 0F38:182C (linear 0x10BAC, 45 bytes) */
 
-void video_swap_pal(void)
+void vi_swap_pal(void)
 {
     int i;
     unsigned char save;
@@ -79,9 +79,9 @@ void video_swap_pal(void)
     }
 }
 
-/* video_init @ 0F38:1859 (linear 0x10BD9, 403 bytes) */
+/* vi_init @ 0F38:1859 (linear 0x10BD9, 403 bytes) */
 
-void video_init(struct Bitmap far *front, struct Bitmap far *back)
+void vi_init(struct Bitmap far *front, struct Bitmap far *back)
 {
     int i;
 
@@ -125,7 +125,7 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
         bm7568[i].id = bm7568[i].scriptIndex = -1;
     } while (i);
     (*g_videoOps.show)();
-    menu_reset();
+    mn_reset();
     g_graphicsUp = 1;
     g_pageBmps[0] = r_vid.front;
     g_pageBmps[1] = r_vid.back;
@@ -141,9 +141,9 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
     }
 }
 
-/* video_anim_stop @ 0F38:19EC (linear 0x10D6C, 115 bytes) */
+/* vi_anim_stop @ 0F38:19EC (linear 0x10D6C, 115 bytes) */
 
-void video_anim_stop(int n)
+void vi_anim_stop(int n)
 {
     struct Obj *o;
 
@@ -155,7 +155,7 @@ void video_anim_stop(int n)
     g_animScripts[g_animScriptStart[n]].a = -1;
     o->id = -1;
     if (o->pendingTimers)
-        sys_timer_cancel(n);
+        sy_timer_cancel(n);
 }
 
 /* anim_set_box @ 0F38:1A5F (linear 0x10DDF, 94 bytes) */
@@ -192,7 +192,7 @@ static void near anim_run(int n)
     struct Blt blt;
 
     wait = 1;
-    cursor_ctl(CURSOR_HIDE);
+    cu_ctl(CURSOR_HIDE);
     g_animRun.object = &bm7568[n];
     g_animRun.command = &g_animScripts[k = g_animRun.object->scriptIndex];
     g_animRun.box = &g_animRun.object->box;
@@ -210,7 +210,7 @@ static void near anim_run(int n)
             (*g_videoOps.maskedBlit)(g_animRun.object->img, r_vid.back, (struct Blt *)g_animRun.box, 1);
             break;
         case ANIM_TILE_CAR:
-            if (!sprite_car_clip(g_animRun.box->dx, g_animRun.box->dy, g_animRun.box->w, g_animRun.box->h, &res))
+            if (!sp_car_clip(g_animRun.box->dx, g_animRun.box->dy, g_animRun.box->w, g_animRun.box->h, &res))
                 break;
             blt.w = res.x2 - res.x1;
             blt.h = res.y2 - res.y1 + 1;
@@ -227,17 +227,17 @@ static void near anim_run(int n)
             }
             break;
         case ANIM_HOOK:
-            if (!video_anim_hook(g_animRun.object, g_animRun.command))
+            if (!vi_anim_hook(g_animRun.object, g_animRun.command))
                 break;
         case ANIM_STOP:
-            video_anim_stop(g_animRun.object->id);
-            cursor_ctl(CURSOR_SHOW);
+            vi_anim_stop(g_animRun.object->id);
+            cu_ctl(CURSOR_SHOW);
             return;
         case ANIM_JUMP:
             g_animRun.command = &g_animScripts[g_animRun.command->a];
             goto next;
         case ANIM_LOAD_IMAGE:
-            g_animRun.object->img = disk_bm(g_animRun.command->a, ARENA_HIGH_STACK);
+            g_animRun.object->img = di_bm(g_animRun.command->a, ARENA_HIGH_STACK);
             g_animRun.command++;
             continue;
         case ANIM_SET_BOX:
@@ -250,20 +250,20 @@ static void near anim_run(int n)
         case ANIM_WAIT:
             if (!(g_animRun.object->scriptIndex = g_animRun.command->b))
                 g_animRun.object->scriptIndex = ++k;
-            sys_timer_anim(g_animRun.object->id, g_animRun.command->a);
+            sy_timer_anim(g_animRun.object->id, g_animRun.command->a);
             g_animRun.object->pendingTimers++;
             if (wait)
-                cursor_ctl(CURSOR_SHOW);
+                cu_ctl(CURSOR_SHOW);
             if (g_animRun.command->sub == ANIM_WAIT_COPY_TO_FRONT && r_vid.copyToFront)
-                bitmap_copy_box(r_vid.back, r_vid.front, g_animRun.box->dx, g_animRun.box->dy,
+                bm_copy_box(r_vid.back, r_vid.front, g_animRun.box->dx, g_animRun.box->dy,
                         g_animRun.box->dx + g_animRun.box->w - 1, g_animRun.box->dy + g_animRun.box->h - 1);
             return;
         case ANIM_COPY_TO_FRONT:
-            cursor_ctl(CURSOR_SHOW);
+            cu_ctl(CURSOR_SHOW);
             wait = 0;
             if (!r_vid.copyToFront)
                 break;
-            bitmap_copy_box(r_vid.back, r_vid.front, g_animRun.box->dx, g_animRun.box->dy,
+            bm_copy_box(r_vid.back, r_vid.front, g_animRun.box->dx, g_animRun.box->dy,
                     g_animRun.box->dx + g_animRun.box->w - 1, g_animRun.box->dy + g_animRun.box->h - 1);
             break;
         }
@@ -272,9 +272,9 @@ static void near anim_run(int n)
     }
 }
 
-/* video_anim_start @ 0F38:1DC9 (linear 0x11149, 120 bytes) */
+/* vi_anim_start @ 0F38:1DC9 (linear 0x11149, 120 bytes) */
 
-int video_anim_start(int n)
+int vi_anim_start(int n)
 {
     int i;
 
@@ -291,9 +291,9 @@ int video_anim_start(int n)
     return i;
 }
 
-/* video_anim_resume @ 0F38:1E41 (linear 0x111C1, 49 bytes) */
+/* vi_anim_resume @ 0F38:1E41 (linear 0x111C1, 49 bytes) */
 
-void video_anim_resume(int n)
+void vi_anim_resume(int n)
 {
     int k;
 
@@ -302,16 +302,16 @@ void video_anim_resume(int n)
     anim_run(k);
 }
 
-/* video_anim_active @ 0F38:1E72 (linear 0x111F2, 33 bytes) */
+/* vi_anim_active @ 0F38:1E72 (linear 0x111F2, 33 bytes) */
 
-int video_anim_active(int n)
+int vi_anim_active(int n)
 {
     return g_animScripts[g_animScriptStart[n]].a >= 0;
 }
 
-/* video_anim_hook @ 0F38:1E93 (linear 0x11213, 184 bytes) */
+/* vi_anim_hook @ 0F38:1E93 (linear 0x11213, 184 bytes) */
 
-int video_anim_hook(struct Obj *o, struct Cmd *c)
+int vi_anim_hook(struct Obj *o, struct Cmd *c)
 {
     int old;
 
@@ -319,21 +319,21 @@ int video_anim_hook(struct Obj *o, struct Cmd *c)
     case 2:
         if (c->a) {
             g_pumpBlinkCount = c->a;
-            sound_pump(1);
+            so_pump(1);
             return 0;
         }
         if (g_pumpBlinkCount--) {
             struct Colors save;     /* PROVISIONAL: never used; fills the 6-byte frame slot (original local unknown) */
             old = x_colors.line;
             x_colors.line = (g_pumpBlinkCount & 1) ? 4 : 0;
-            draw_hline(r_vid.back, 0x33, 0x6f, 2);
+            dr_hline(r_vid.back, 0x33, 0x6f, 2);
             if (!(g_pumpBlinkCount & 3)) {
                 x_colors.line = (g_pumpBlinkCount & 4) ? 4 : 0;
-                draw_hline(r_vid.back, 0x30, 0x6f, 2);
+                dr_hline(r_vid.back, 0x30, 0x6f, 2);
             }
             return 0;
         }
-        sound_pump(0);
+        so_pump(0);
         return 1;
     }
 }
@@ -361,11 +361,11 @@ void F_112CB(int reg, char color)
 
 char g_colScreenBorder;
 
-/* video_set_palette @ 0F38:1FA4 (linear 0x11324, 124 bytes)
+/* vi_set_palette @ 0F38:1FA4 (linear 0x11324, 124 bytes)
 
    Load all 16 EGA palette registers plus the overscan color (BIOS int 10h function 10h, al = 2) */
 
-void video_set_palette(char *table)
+void vi_set_palette(char *table)
 {
     char pal[17];
     char far *dest;

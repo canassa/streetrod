@@ -6,12 +6,12 @@
 
         .CODE S0E92_TEXT
 
-; rle_decode @ 0E92:0006 (linear 0x0E926, 201 bytes)
+; rl_decode @ 0E92:0006 (linear 0x0E926, 201 bytes)
 ; Run-length decoder with a byte dictionary (tables g_rleCounts and g_rleValues copied to
 ; the stack). 0 and 0FFh start a literal run: the next byte is the repeat count.
 
-        PUBLIC  _rle_decode
-_rle_decode  PROC  FAR
+        PUBLIC  _rl_decode
+_rl_decode  PROC  FAR
         push    bp
         mov     bp,sp
         sub     sp,12Ch
@@ -111,7 +111,7 @@ fin:
         mov     sp,bp
         pop     bp
         ret
-_rle_decode  ENDP
+_rl_decode  ENDP
         EVEN
 
         END

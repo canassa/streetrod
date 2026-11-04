@@ -27,9 +27,9 @@ char g_adRedraw = 0;   /* DS:0520 */
 struct Blt g_adPacket = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; /* DS:0522 */
 int g_adResume = 0;   /* DS:0536 */
 
-/* ads_open @ 0000:08B4 (linear 0x008B4, 259 bytes) */
+/* av_open @ 0000:08B4 (linear 0x008B4, 259 bytes) */
 
-void ads_open(int *list, int base)
+void av_open(int *list, int base)
 {
     int num;
     int pos;
@@ -37,7 +37,7 @@ void ads_open(int *list, int base)
     int first;
 
     g_adResume = 0;
-    marks_clear();
+    ma_clear();
     g_pages.list = list;
     g_pages.n = 0;
     ptr = list + 1;
@@ -55,25 +55,25 @@ void ads_open(int *list, int base)
         ptr++;
     }
     x_colors = bustyle->hilite;
-    cursor_ctl(CURSOR_HIDE);
+    cu_ctl(CURSOR_HIDE);
     g_adPacket.w = 0x40;
     g_adPacket.h = SCREEN_BODY_HEIGHT;
     g_adPacket.sx = g_adPacket.sy = g_adPacket.dx = g_adPacket.dy = g_adPacket.fc = 0;
     g_adRedraw = 1;
-    menu_push(8);
-    cursor_ctl(CURSOR_SHOW);
+    mn_push(8);
+    cu_ctl(CURSOR_SHOW);
 }
 
 /* ad_picture @ 0000:09B7 (linear 0x009B7, 20 bytes) */
 
 static struct Bitmap far * near ad_picture(int n)
 {
-    return disk_bm(0x403, n);
+    return di_bm(0x403, n);
 }
 
-/* ads_run @ 0000:09CB (linear 0x009CB, 909 bytes) */
+/* av_run @ 0000:09CB (linear 0x009CB, 909 bytes) */
 
-int ads_run(void)
+int av_run(void)
 {
     int hsave;
     int key;
@@ -91,10 +91,10 @@ int ads_run(void)
     limit = *g_pages.list;
     for (;;) {
         if (g_adRedraw) {
-            cursor_ctl(CURSOR_HIDE_NOW);
+            cu_ctl(CURSOR_HIDE_NOW);
             x_colors = bustyle->hilite;
             g_adPicture = ad_picture(2);
-            draw_fill_rect(r_vid.back, 0x40, 0, 0xc0, SCREEN_BODY_HEIGHT);
+            dr_fill_rect(r_vid.back, 0x40, 0, 0xc0, SCREEN_BODY_HEIGHT);
             g_adPacket.sx = g_adPacket.dx = 0;
             (*g_videoOps.copy)(g_adPicture, r_vid.back, &g_adPacket, 1);
             g_adPacket.sx = 0x40;
@@ -110,7 +110,7 @@ int ads_run(void)
             cntz = 0;
             a_7eaap.adIndex = i;
             do {
-                draw_hline(r_vid.back, 0x44, y + 1, 0xb8);
+                dr_hline(r_vid.back, 0x44, y + 1, 0xb8);
                 y += 3;
                 if (y > (SCREEN_BODY_HEIGHT - 1))
                     break;
@@ -144,7 +144,7 @@ int ads_run(void)
             g_adResume = 1;
             row7->y2 = y + 1 > (SCREEN_BODY_HEIGHT - 1) ? (SCREEN_BODY_HEIGHT - 1) : y + 1;
             if (row7->y2 < (SCREEN_BODY_HEIGHT - 1))
-                draw_hline(r_vid.back, 0x44, y + 1, 0xb8);
+                dr_hline(r_vid.back, 0x44, y + 1, 0xb8);
             row7++;
             while (row7->f6 >= 0) {
                 row7->kind = 0xe;
@@ -152,12 +152,12 @@ int ads_run(void)
             }
             g_adRedraw = 0;
             r_vid.back->height = hsave;
-            cursor_ctl(CURSOR_SHOW);
+            cu_ctl(CURSOR_SHOW);
             if (r_vid.copyToFront)
-                bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), (SCREEN_BODY_HEIGHT - 1));
-            sys_hover_reset();
+                bm_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), (SCREEN_BODY_HEIGHT - 1));
+            sy_hover_reset();
         }
-        while ((key = sys_wait_input(3000)) == 0)
+        while ((key = sy_wait_input(3000)) == 0)
             ;
         switch (key) {
         case -3:
@@ -188,12 +188,12 @@ int ads_run(void)
     }
 }
 
-/* ads_close @ 0000:0D58 (linear 0x00D58, 32 bytes) */
+/* av_close @ 0000:0D58 (linear 0x00D58, 32 bytes) */
 
-void ads_close(void)
+void av_close(void)
 {
-    marks_clear();
+    ma_clear();
     g_pages.list = 0;
     g_adPicture = 0;
-    menu_pop(1);
+    mn_pop(1);
 }

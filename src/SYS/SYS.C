@@ -76,21 +76,21 @@ char *g_errWriteProt = "disk ? is write protected";   /* DS:060E */
 int g_demo = 0;   /* DS:0610 */
 int g_autoDrive = 0;   /* DS:0612 */
 
-/* sys_hover_reset @ 0000:0D78 (linear 0x00D78, 33 bytes) */
+/* sy_hover_reset @ 0000:0D78 (linear 0x00D78, 33 bytes) */
 
-void sys_hover_reset(void)
+void sy_hover_reset(void)
 {
     g_drawnCursor.dirty = 1;
     g_boxSpotHitData.x2 = -1;
     g_cursHoverCodeVal = 0x7d00;
     g_click = 0;
     g_click2 = 0;
-    kbdget_key();
+    kg_key();
 }
 
-/* sys_music_pause @ 0000:0D99 (linear 0x00D99, 63 bytes) */
+/* sy_music_pause @ 0000:0D99 (linear 0x00D99, 63 bytes) */
 
-void sys_music_pause(void)
+void sy_music_pause(void)
 {
     if (g_voice->active) {
         g_voice->active = 0;
@@ -98,25 +98,25 @@ void sys_music_pause(void)
         g_speakerOn = 0;
         g_voice->dirty = 1;
         g_hots[F_06827(-40)].textOffset = g_offTunes;
-        sys_hover_reset();
+        sy_hover_reset();
     }
 }
 
-/* sys_music_resume @ 0000:0DD8 (linear 0x00DD8, 76 bytes) */
+/* sy_music_resume @ 0000:0DD8 (linear 0x00DD8, 76 bytes) */
 
-void sys_music_resume(void)
+void sy_music_resume(void)
 {
     if (g_musicOn && !g_voice->active && g_voice->phraseStart != g_voice->song) {
         g_voice->active = 1;
         g_voice->dirty = 1;
         g_hots[F_06827(-40)].textOffset = g_offSquelch;
-        sys_hover_reset();
+        sy_hover_reset();
     }
 }
 
-/* sys_reset_queues @ 0000:0E24 (linear 0x00E24, 231 bytes) */
+/* sy_reset_queues @ 0000:0E24 (linear 0x00E24, 231 bytes) */
 
-void sys_reset_queues(void)
+void sy_reset_queues(void)
 {
     int i;
     long deadline;
@@ -130,14 +130,14 @@ void sys_reset_queues(void)
     g_05ba = -1;
     deadline = g_tick + 10;
     while (deadline > g_tick) {
-        for (i = 0; kbdget_key(); i++)
+        for (i = 0; kg_key(); i++)
             ;
         if (i)
             deadline = g_tick + 10;
     }
     g_waitUntil = 0;
     if (g_demo == 0 && g_mouse.present) {
-        mouse_poll();
+        mo_poll();
         g_mouse.accX = g_mouse.accY = 0;
     }
     g_click = 0;
@@ -146,9 +146,9 @@ void sys_reset_queues(void)
     g_buttons = g_keyDx = g_keyDy = g_lastDx = g_lastDy = 0;
 }
 
-/* sys_timer_remove @ 0000:0F0B (linear 0x00F0B, 172 bytes) */
+/* sy_timer_remove @ 0000:0F0B (linear 0x00F0B, 172 bytes) */
 
-void sys_timer_remove(int n)
+void sy_timer_remove(int n)
 {
     register int i;
 
@@ -172,9 +172,9 @@ void sys_timer_remove(int n)
     g_timerQueue.free = n;
 }
 
-/* sys_unhook @ 0000:0FB7 (linear 0x00FB7, 51 bytes) */
+/* sy_unhook @ 0000:0FB7 (linear 0x00FB7, 51 bytes) */
 
-void sys_unhook(void)
+void sy_unhook(void)
 {
     _disable();
     outp(PIT_CMD, PIT_CH0_LOHI_MODE3);
@@ -182,25 +182,25 @@ void sys_unhook(void)
     outp(PIT_CH0, 0);
     _dos_setvect(TIMER_INT, g_clockPrev);
     _enable();
-    kbdoff_unhook();
+    ko_unhook();
     g_kbdHooked = 0;
     g_sysHooked = 0;
 }
 
-/* sys_exit @ 0000:0FEA (linear 0x00FEA, 113 bytes) */
+/* sy_exit @ 0000:0FEA (linear 0x00FEA, 113 bytes) */
 
-void sys_exit(void)
+void sy_exit(void)
 {
     if (g_demo) {
         g_demo = (g_demo == 0x62) ? 0 : 1;
-        screen_wait_msg("Quit demo");
-        screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+        sc_wait_msg("Quit demo");
+        sc_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     }
     if (g_sysHooked)
-        sys_unhook();
+        sy_unhook();
     if (g_videoSet) {
         (*g_videoOps.show)();
-        viddet_restore();
+        vd_restore();
     }
     outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
     g_speakerOn = 0;
@@ -211,9 +211,9 @@ char g_064d = 0;   /* DS:064D */
 char g_keymapGroup = 0;   /* DS:064E */
 struct KeyMap g_keymapSaved[30] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};   /* DS:0650 */
 
-/* sys_crit_error @ 0000:105B (linear 0x0105B, 182 bytes) */
+/* sy_crit_error @ 0000:105B (linear 0x0105B, 182 bytes) */
 
-void sys_crit_error(unsigned deverr, unsigned char errcode)
+void sy_crit_error(unsigned deverr, unsigned char errcode)
 {
     int disk;
     int action;
@@ -229,31 +229,31 @@ void sys_crit_error(unsigned deverr, unsigned char errcode)
     switch (errcode) {
     case CRIT_WRITE_PROTECT:
         g_errWriteProt[5] = deverr + 'A';
-        screen_wait_msg(g_errWriteProt);
+        sc_wait_msg(g_errWriteProt);
         break;
     case CRIT_NOT_READY:
         g_errRead[strlen(g_errRead) - 1] = deverr + 'A';
-        screen_wait_msg(g_errRead);
+        sc_wait_msg(g_errRead);
         break;
     case CRIT_PAPER_OUT:
-        screen_wait_msg("printer out of paper");
+        sc_wait_msg("printer out of paper");
         break;
     default:
         if (disk)
-            screen_wait_msg("disk error");
+            sc_wait_msg("disk error");
         else {
-            screen_wait_msg("hardware error");
+            sc_wait_msg("hardware error");
             action = _HARDERR_ABORT;
         }
     }
     if (action == _HARDERR_ABORT)
-        sys_exit();
+        sy_exit();
     _hardresume(action);
 }
 
-/* sys_init @ 0000:1111 (linear 0x01111, 461 bytes) */
+/* sy_init @ 0000:1111 (linear 0x01111, 461 bytes) */
 
-void sys_init(void)
+void sy_init(void)
 {
     int sumx;
     int sumy;
@@ -275,13 +275,13 @@ void sys_init(void)
             break;
     if (g_demo == 0 && j != 0 && v != first) {
         g_joystick = 1;
-        joy_read();
+        jy_read();
         sumx = g_joyX;
         sumy = g_joyY;
-        joy_read();
+        jy_read();
         sumx += g_joyX;
         sumy += g_joyY;
-        joy_read();
+        jy_read();
         sumx += g_joyX;
         sumy += g_joyY;
         g_joyCenterX = sumx / 3;
@@ -291,7 +291,7 @@ void sys_init(void)
         g_joyMinY = -(g_joyCenterY >> 1);
         g_joyMaxY = g_joyCenterY >> 1;
     }
-    if (g_demo == 0 && g_useMouse && mouse_reset() == -1) {
+    if (g_demo == 0 && g_useMouse && mo_reset() == -1) {
         g_mouse.present = 1;
         g_mouse.accX = g_mouse.accY = 0;
         g_mouse.shiftX = 1;
@@ -307,24 +307,24 @@ void sys_init(void)
     g_songBgState.toneCursor = g_songBgState.toneTable = g_songTones;
     g_secondaryMusicStateData.active = 0;
     g_secondaryMusicStateData.toneCursor = g_secondaryMusicStateData.toneTable = g_jingleTones;
-    _harderr(sys_crit_error);
+    _harderr(sy_crit_error);
     _disable();
     outp(PIT_CMD, PIT_CH0_LOHI_MODE3);
     outp(PIT_CH0, 0);
     outp(PIT_CH0, 0x40);
     g_clockPrev = _dos_getvect(TIMER_INT);
-    _dos_setvect(TIMER_INT, sys_timer_isr);
+    _dos_setvect(TIMER_INT, sy_timer_isr);
     _enable();
-    kbdget_hook();
+    kg_hook();
     g_kbdHooked = 1;
     outp(PIT_CMD, PIT_CH2_LOHI_MODE3);
-    sys_reset_queues();
+    sy_reset_queues();
     g_sysHooked = 1;
 }
 
-/* sys_keymap_set @ 0000:12DE (linear 0x012DE, 179 bytes) */
+/* sy_keymap_set @ 0000:12DE (linear 0x012DE, 179 bytes) */
 
-void sys_keymap_set(int n)
+void sy_keymap_set(int n)
 {
     struct KeyMap *p;
     int num;
@@ -335,7 +335,7 @@ void sys_keymap_set(int n)
     if (g_demo)
         g_demoKey = 0;
     g_keyGroup = n;
-    sys_keymap_restore(0);
+    sy_keymap_restore(0);
     g_keymapGroup = n;
     p = g_keyMaps[n];
     q = g_keymapSaved;
@@ -351,9 +351,9 @@ void sys_keymap_set(int n)
     q[1].key = 0;
 }
 
-/* sys_keymap_restore @ 0000:1391 (linear 0x01391, 134 bytes) */
+/* sy_keymap_restore @ 0000:1391 (linear 0x01391, 134 bytes) */
 
-int sys_keymap_restore(int keep)
+int sy_keymap_restore(int keep)
 {
     int i;
     struct KeyMap *p;
@@ -391,9 +391,9 @@ char g_driveBusy = 0;   /* DS:06E8 */
 char g_lastFire = 0;   /* DS:06E9 */
 char g_squealPhase = 0;   /* DS:06EA */
 
-/* sys_wait_input @ 0000:1417 (linear 0x01417, 1068 bytes) */
+/* sy_wait_input @ 0000:1417 (linear 0x01417, 1068 bytes) */
 
-int sys_wait_input(int ticks)
+int sy_wait_input(int ticks)
 {
     register struct Link *p;
     long end;
@@ -421,7 +421,7 @@ int sys_wait_input(int ticks)
     do {
         if (g_demo == 0x63 && g_demoControl.quit != 0x63) {
             g_demoControl.quit = 0x63;
-            sys_exit();
+            sy_exit();
         }
         if (g_protectCycle && (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
             && !(g_tick & 0xf) && g_musicOn && g_speakerOn) {
@@ -433,24 +433,24 @@ int sys_wait_input(int ticks)
             F_112CB(7, g_protectPal[7]);
             F_112CB(8, g_protectPal[8]);
         }
-        res = kbdget_key();
+        res = kg_key();
         if (res > 0) {
             if (g_input.any) {
                 g_input.key = res;
                 return 0x3eb;
             }
             if (res == 0x7f)
-                sys_exit();
+                sy_exit();
         } else if (res < 0) {
             res += 0x32;
             if (res == -0x28) {
                 if (g_voiceNum == 1) {
                     if (g_musicOn) {
-                        sys_music_pause();
+                        sy_music_pause();
                         g_musicOn = 0;
                     } else {
                         g_musicOn = 1;
-                        sys_music_resume();
+                        sy_music_resume();
                     }
                 }
             } else
@@ -461,17 +461,17 @@ int sys_wait_input(int ticks)
             switch (p->action) {
             case 0:
             default:
-                sys_timer_remove(i);
+                sy_timer_remove(i);
                 break;
             case 1:
                 res = p->argument;
-                sys_timer_remove(i);
-                video_anim_resume(res);
+                sy_timer_remove(i);
+                vi_anim_resume(res);
                 break;
             }
         }
         if (g_demo == 0 && g_mouse.present) {
-            mouse_poll();
+            mo_poll();
             if (g_drawnCursor.dirty |= (g_mouse.dx != 0 || g_mouse.dy != 0)) {
                 g_cursorX += g_mouse.dx;
                 g_cursorY += g_mouse.dy;
@@ -490,7 +490,7 @@ int sys_wait_input(int ticks)
             }
             if (g_menuLevel) {
                 if (i = (x >= g_boxSpotHitData.x1 && x < g_boxSpotHitData.x2 && y >= g_boxSpotHitData.y1 && y < g_boxSpotHitData.y2)
-                        ? g_cursHoverCodeVal : menu_hit(x, y))
+                        ? g_cursHoverCodeVal : mn_hit(x, y))
                     return i;
             }
             if (g_input.any) {
@@ -513,11 +513,11 @@ int sys_wait_input(int ticks)
                 g_drawnCursor.y = g_cursorY = 0xc2;
             g_drawnCursor.dirty = 0;
             _enable();
-            cursor_draw(x = g_drawnCursor.x, y = g_drawnCursor.y);
+            cu_draw(x = g_drawnCursor.x, y = g_drawnCursor.y);
             if (g_menuLevel
                 && (x < g_boxSpotHitData.x1 || x >= g_boxSpotHitData.x2 || y < g_boxSpotHitData.y1 || y >= g_boxSpotHitData.y2)) {
                 res = g_cursHoverCodeVal;
-                if (i = menu_hit(x, y)) {
+                if (i = mn_hit(x, y)) {
                     if (res != i) {
                         if (g_keyGroup == 0x25) {
                             g_statusLine.shown = 1;
@@ -548,9 +548,9 @@ struct Eng g_driveEng;
 int g_vibratoActive;
 struct Tone *g_toneShapePlaybackPointer;
 
-/* sys_timer_add @ 0000:1843 (linear 0x01843, 327 bytes) */
+/* sy_timer_add @ 0000:1843 (linear 0x01843, 327 bytes) */
 
-int sys_timer_add(int delay, int pri)
+int sy_timer_add(int delay, int pri)
 {
     register int i, cur3;
     int prev;
@@ -603,20 +603,20 @@ int sys_timer_add(int delay, int pri)
     return i;
 }
 
-/* sys_timer_anim @ 0000:198A (linear 0x0198A, 50 bytes) */
+/* sy_timer_anim @ 0000:198A (linear 0x0198A, 50 bytes) */
 
-void sys_timer_anim(int fc, int delay)
+void sy_timer_anim(int fc, int delay)
 {
     int n;
 
-    n = sys_timer_add(delay, g_sysTimerPriorities.animation);
+    n = sy_timer_add(delay, g_sysTimerPriorities.animation);
     g_timers[n].action = 1;
     g_timers[n].argument = fc;
 }
 
-/* sys_timer_cancel @ 0000:19BC (linear 0x019BC, 73 bytes) */
+/* sy_timer_cancel @ 0000:19BC (linear 0x019BC, 73 bytes) */
 
-void sys_timer_cancel(int n)
+void sy_timer_cancel(int n)
 {
     struct Link *p;
     int i;
@@ -626,9 +626,9 @@ void sys_timer_cancel(int n)
             p->action = 0;
 }
 
-/* sys_music_start @ 0000:1A05 (linear 0x01A05, 119 bytes) */
+/* sy_music_start @ 0000:1A05 (linear 0x01A05, 119 bytes) */
 
-void sys_music_start(int n, int cnt)
+void sy_music_start(int n, int cnt)
 {
     if (g_musicOn) {
         g_voice->active = 0;
@@ -647,9 +647,9 @@ void sys_music_start(int n, int cnt)
     }
 }
 
-/* sys_music_stop @ 0000:1A7C (linear 0x01A7C, 49 bytes) */
+/* sy_music_stop @ 0000:1A7C (linear 0x01A7C, 49 bytes) */
 
-void sys_music_stop(void)
+void sy_music_stop(void)
 {
     g_voice->active = 0;
     outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
@@ -658,14 +658,14 @@ void sys_music_stop(void)
     g_voice->phraseStart = g_voice->cur = g_voice->song;
 }
 
-/* sys_drive_start @ 0000:1AAD (linear 0x01AAD, 122 bytes) */
+/* sy_drive_start @ 0000:1AAD (linear 0x01AAD, 122 bytes) */
 
-void sys_drive_start(void)
+void sy_drive_start(void)
 {
     g_060a = 0;
-    _dos_setvect(TIMER_INT, sys_drive_isr);
+    _dos_setvect(TIMER_INT, sy_drive_isr);
     if (!g_demo && g_mouse.present) {
-        mouse_poll();
+        mo_poll();
         g_mouse.accX = g_mouse.accY = 0;
         g_mouse.shiftX = 1;
         g_mouse.shiftY = 6;
@@ -681,18 +681,18 @@ void sys_drive_start(void)
     }
 }
 
-/* sys_drive_stop @ 0000:1B27 (linear 0x01B27, 106 bytes) */
+/* sy_drive_stop @ 0000:1B27 (linear 0x01B27, 106 bytes) */
 
-void sys_drive_stop(void)
+void sy_drive_stop(void)
 {
-    _dos_setvect(TIMER_INT, sys_timer_isr);
+    _dos_setvect(TIMER_INT, sy_timer_isr);
     g_sirenOn = 0;
     g_squealOn = 0;
     g_onShoulder = 0;
     outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
     g_speakerOn = 0;
     if (!g_demo && g_mouse.present) {
-        mouse_poll();
+        mo_poll();
         g_mouse.accX = g_mouse.accY = 0;
         g_mouse.shiftX = 1;
         g_mouse.shiftY = 1;
@@ -700,9 +700,9 @@ void sys_drive_stop(void)
     g_lastDx = g_lastDy = g_buttons = g_click = 0;
 }
 
-/* sys_sign @ 0000:1B91 (linear 0x01B91, 29 bytes) */
+/* sy_sign @ 0000:1B91 (linear 0x01B91, 29 bytes) */
 
-int sys_sign(int x)
+int sy_sign(int x)
 {
     if (x == 0)
         return 0;
@@ -712,16 +712,16 @@ int sys_sign(int x)
 }
 
 /* Loop optimization is off from here to the end of the file. The file is
-   compiled /Oalsi, but in the shipped code the loops of sys_demo_step, sys_timer_isr and
-   sys_drive_isr (the timer interrupt handler) are plain /Ol-off loops: counters and
+   compiled /Oalsi, but in the shipped code the loops of sy_demo_step, sy_timer_isr and
+   sy_drive_isr (the timer interrupt handler) are plain /Ol-off loops: counters and
    pointers stay in memory, the test is reached by a jmp, no induction
    variables. No for/while/do formulation reproduces that under /Ol (/Ol takes
    every such loop here); this one pragma reproduces all three functions. */
 #pragma loop_opt(off)
 
-/* sys_demo_step @ 0000:1BAE (linear 0x01BAE, 1076 bytes) */
+/* sy_demo_step @ 0000:1BAE (linear 0x01BAE, 1076 bytes) */
 
-void sys_demo_step(void)
+void sy_demo_step(void)
 {
     int num;
     int cx;
@@ -731,11 +731,11 @@ void sys_demo_step(void)
     int cy;
 
     if (g_keyGroup == 2)
-        random_int(-1);
+        rn_int(-1);
     if (g_demoControl.keyDown) {
         g_demoKey |= 0x80;
         g_demoControl.keyDown = 0;
-        joy_demo_key();
+        jy_demo_key();
         return;
     }
     if (!g_demoControl.moving) {
@@ -779,7 +779,7 @@ void sys_demo_step(void)
             g_demoChoice = num - g_demoControl.count++ - 1;
             g_demoControl.count = g_demoControl.count % num;
         } else
-            g_demoChoice = random_int(num + k);
+            g_demoChoice = rn_int(num + k);
         switch (g_keyGroup) {
         case 21:
             if ((g_demoChoice >= 0 && g_demoChoice < 9) || g_demoChoice == 12)
@@ -873,7 +873,7 @@ void sys_demo_step(void)
     } else
         g_demoControl.lastGroup = g_keyGroup;
     if (a_7eaap.spareParts == 0 && g_keyGroup == 7)
-        game_add_part(0x2a, g_part[42].value);
+        gm_add_part(0x2a, g_part[42].value);
     if (a_7eaap.currentCar == 0) {
         if (g_keyGroup == 10)
             g_demoKey = 0x31;
@@ -883,12 +883,12 @@ void sys_demo_step(void)
     if (g_demoKey == 0x46)
         g_demoKey = 0x1c;
     g_demoControl.keyDown = 1;
-    joy_demo_key();
+    jy_demo_key();
 }
 
-/* sys_timer_isr @ 0000:1FE2 (linear 0x01FE2, 914 bytes) */
+/* sy_timer_isr @ 0000:1FE2 (linear 0x01FE2, 914 bytes) */
 
-void interrupt far sys_timer_isr(void)
+void interrupt far sy_timer_isr(void)
 {
     int x, y;
     register int delta;
@@ -908,10 +908,10 @@ void interrupt far sys_timer_isr(void)
     }
     if (g_demo) {
         if (((g_demoControl.keyDown ? 0xf : 0x7f) & g_tick) == 0)
-            sys_demo_step();
+            sy_demo_step();
         if ((g_demoTargetX || g_demoTargetY) && (g_cursorX != g_demoTargetX || g_cursorY != g_demoTargetY)) {
-            g_cursorX += sys_sign(g_demoTargetX - g_cursorX);
-            g_cursorY += sys_sign(g_demoTargetY - g_cursorY);
+            g_cursorX += sy_sign(g_demoTargetX - g_cursorX);
+            g_cursorY += sy_sign(g_demoTargetY - g_cursorY);
             g_drawnCursor.dirty = 1;
         }
     }
@@ -979,7 +979,7 @@ tail:
                     y = delta > 0 ? 1 : -1;
             }
             if (g_demo == 0 && g_joystick) {
-                joy_read();
+                jy_read();
                 if ((delta = g_joyX) < g_joyMinX)
                     x = -1;
                 else if (g_joyMaxX < delta)
@@ -1005,17 +1005,17 @@ int ao8228u;
 long g_mphAccumulator;
 int g_xCoordSprite;
 
-/* sys_stop_drive @ 0000:2374 (linear 0x02374, 24 bytes) */
+/* sy_stop_drive @ 0000:2374 (linear 0x02374, 24 bytes) */
 
-void sys_stop_drive(void)
+void sy_stop_drive(void)
 {
     g_driveEng.accelStep = g_driveEng.decelStep = g_driveEng.steeringInput = g_driveEng.steering = g_05d6 = 0;
     g_driveEng.fbe = g_driveEng.elapsedTicks;
 }
 
-/* sys_drive_isr @ 0000:238C (linear 0x0238C, 2062 bytes) */
+/* sy_drive_isr @ 0000:238C (linear 0x0238C, 2062 bytes) */
 
-void interrupt far sys_drive_isr(void)
+void interrupt far sy_drive_isr(void)
 {
     struct Range *sp;
     char flag = 0;
@@ -1101,7 +1101,7 @@ void interrupt far sys_drive_isr(void)
                             flag = 1;
                     }
                     if (g_demo == 0 && g_joystick) {
-                        joy_read();
+                        jy_read();
                         if ((n = g_joyX) < g_joyMinX) {
                             g_drawnCursor.dirty = s = 1;
                             g_cursorX += -1;
@@ -1118,7 +1118,7 @@ void interrupt far sys_drive_isr(void)
                         }
                     }
                     if (g_demo == 0 && g_mouse.present) {
-                        mouse_poll();
+                        mo_poll();
                         if (g_mouse.dy > 0) {
                             g_drawnCursor.dirty = 1;
                             g_cursorY++;
@@ -1176,7 +1176,7 @@ void interrupt far sys_drive_isr(void)
                     a_7eaap.currentCar->rack.parts[0]->wear++;
                 if ((i = a_7eaap.currentCar->rack.parts[0]->wear) >= 9900) {
                     g_driveEng.stopFlags |= 5;
-                    sys_stop_drive();
+                    sy_stop_drive();
                 }
                 if (flag) {
                     g_driveEng.rpm += g_driveEng.accelStep;
@@ -1186,7 +1186,7 @@ void interrupt far sys_drive_isr(void)
                         g_driveEng.rpm = 5700;
                         if (15 - i / 1000 < ++g_overRev) {
                             g_driveEng.stopFlags |= 5;
-                            sys_stop_drive();
+                            sy_stop_drive();
                         }
                     }
                 } else if (g_driveEng.rpm > 1500 ||
@@ -1204,9 +1204,9 @@ void interrupt far sys_drive_isr(void)
                         i = a_7eaap.currentCar->transmission->wear;
                         if (i >= 9900 ||
                             (g_driveEng.automatic == 0 && flag && g_driveEng.rpm > 5000 &&
-                             i / 100 + 100 > random_int(3277))) {
+                             i / 100 + 100 > rn_int(3277))) {
                             g_driveEng.stopFlags |= 0x11;
-                            sys_stop_drive();
+                            sy_stop_drive();
                         }
                     }
                     if ((prev || (!g_driveEng.rpmBand && !flag)) && g_driveEng.gearIndex > 0)
@@ -1262,9 +1262,9 @@ void interrupt far sys_drive_isr(void)
                 if (abs(g_driveEng.steering) > 0)
                     g_driveEng.steering += g_driveEng.steering > 0 ? -((g_driveEng.steering >> 2) + 1)
                                                : ((-g_driveEng.steering >> 2) + 1);
-                if (bw8aca && road_check_crash()) {
+                if (bw8aca && rd_check_crash()) {
                     g_driveEng.stopFlags |= 0x21;
-                    sys_stop_drive();
+                    sy_stop_drive();
                 }
                 g_driveBusy = 0;
             }

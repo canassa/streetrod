@@ -47,7 +47,7 @@ extern char g_graphicsUp;                               /* DS:8247 */
 extern int g_hasSlowCpu;                                      /* DS:82C6 */
 extern int bu8acc;                                      /* DS:8ACC */
 extern int g_attractSwitchStartup;                                     /* DS:8BCE */
-void main_set_mode(int ax);                             /* 0x001D1 */
-void main_set_palette(unsigned char color);             /* 0x001F2 */
+void mi_set_mode(int ax);                             /* 0x001D1 */
+void mi_set_palette(unsigned char color);             /* 0x001F2 */
 
 #endif

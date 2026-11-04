@@ -6,12 +6,12 @@
 
         .CODE S1C11_TEXT
 
-; cgadrv_blit_rect @ 1C11:000C (linear 0x1C11C, 48 bytes)
+; cd_blit_rect @ 1C11:000C (linear 0x1C11C, 48 bytes)
 ; Copy a rectangle of bytes between far buffers:
-; cgadrv_blit_rect(src far, dst far, width, rows, src_skip, dst_skip)
+; cd_blit_rect(src far, dst far, width, rows, src_skip, dst_skip)
 
-        PUBLIC  _cgadrv_blit_rect
-_cgadrv_blit_rect  PROC  FAR
+        PUBLIC  _cd_blit_rect
+_cd_blit_rect  PROC  FAR
         push    bp
         mov     bp,sp
         push    ds
@@ -42,17 +42,17 @@ done1:
         mov     sp,bp
         pop     bp
         ret
-_cgadrv_blit_rect  ENDP
+_cd_blit_rect  ENDP
 
-; cgadrv_blit_to_ilv @ 1C11:003C (linear 0x1C14C, 136 bytes)
+; cd_blit_to_ilv @ 1C11:003C (linear 0x1C14C, 136 bytes)
 ; Copy rows of bytes into an interleaved (CGA/Hercules style) screen:
 ; the destination row address alternates between the even bank and the
 ; odd bank 0x2000 bytes further on. On a Hercules segment (B000-B400 with
 ; g_hercules set) an odd starting row is also written 0x2000 bytes up first.
-; cgadrv_blit_to_ilv(src far, dst far, width, rows, src_skip, dst_skip, row)
+; cd_blit_to_ilv(src far, dst far, width, rows, src_skip, dst_skip, row)
 
-        PUBLIC  _cgadrv_blit_to_ilv
-_cgadrv_blit_to_ilv  PROC    FAR
+        PUBLIC  _cd_blit_to_ilv
+_cd_blit_to_ilv  PROC    FAR
         push    bp
         mov     bp,sp
         push    ds
@@ -121,15 +121,15 @@ done2:
         mov     sp,bp
         pop     bp
         ret
-_cgadrv_blit_to_ilv  ENDP
+_cd_blit_to_ilv  ENDP
 
-; cgadrv_blit_ilv @ 1C11:00C4 (linear 0x1C1D4, 228 bytes)
+; cd_blit_ilv @ 1C11:00C4 (linear 0x1C1D4, 228 bytes)
 ; Copy a rectangle between two interleaved (CGA/Hercules style) screens
 ; of 80 bytes per line, the odd lines living 0x2000 bytes after the even ones:
-; cgadrv_blit_ilv(src far, dst far, width, rows, src_x, src_y, dst_x, dst_y)
+; cd_blit_ilv(src far, dst far, width, rows, src_x, src_y, dst_x, dst_y)
 
-        PUBLIC  _cgadrv_blit_ilv
-_cgadrv_blit_ilv  PROC    FAR
+        PUBLIC  _cd_blit_ilv
+_cd_blit_ilv  PROC    FAR
         push    bp
         mov     bp,sp
         sub     sp,6
@@ -235,6 +235,6 @@ done3:
         mov     sp,bp
         pop     bp
         ret
-_cgadrv_blit_ilv  ENDP
+_cd_blit_ilv  ENDP
 
         END

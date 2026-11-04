@@ -19,24 +19,24 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-struct Hooks g_cgaHooks = {cgablt_copy, cgashift_blit, cgablt_masked, cga_draw_text, cursblt_cga, cga_copy_page, cga_recolor_rect, cga_screen_off, cga_screen_on, cgaspr_step, cga_reveal, sprite_slide_v, cgaline_draw, cgaline_span, cgaline_fill_below};   /* DS:5B04 */
+struct Hooks g_cgaHooks = {cb_copy, cx_blit, cb_masked, cg_draw_text, uc_cga, cg_copy_page, cg_recolor_rect, cg_screen_off, cg_screen_on, cs_step, cg_reveal, sp_slide_v, cl_draw, cl_span, cl_fill_below};   /* DS:5B04 */
 unsigned char g_cgaPixMask[4] = {192, 48, 12, 3};   /* DS:5B40 */
 unsigned char g_cgaPixKeep[4] = {63, 207, 243, 252};   /* DS:5B44 */
 int g_cgaRevealOrder[5] = {0, 2, 4, 1, 3};   /* DS:5B48 */
 
-/* cga_install @ 1C11:01A8 (linear 0x1C2B8, 18 bytes) */
+/* cg_install @ 1C11:01A8 (linear 0x1C2B8, 18 bytes) */
 
-void cga_install(void)
+void cg_install(void)
 {
     g_videoOps = g_cgaHooks;
 }
 
-/* cga_draw_text @ 1C11:01BA (linear 0x1C2CA, 1337 bytes)
+/* cg_draw_text @ 1C11:01BA (linear 0x1C2CA, 1337 bytes)
 
    Draw a string of 8-pixel-high CGA/Hercules text into a bitmap at pixel x, y, through an 8x80 byte
    scratch buffer */
 
-void cga_draw_text(struct Bitmap far *bm, int x, int y, char *s)
+void cg_draw_text(struct Bitmap far *bm, int x, int y, char *s)
 {
     unsigned seg1;
     int cga5;
@@ -186,7 +186,7 @@ void cga_draw_text(struct Bitmap far *bm, int x, int y, char *s)
         rp++;
     }
     if (nb2 > 0) {
-        dseg4 = mem_data_segment();
+        dseg4 = me_data_segment();
         seg0 = FP_SEG(b0);
         seg1 = FP_SEG(b1);
         off0 = FP_OFF(b0);
@@ -251,12 +251,12 @@ void cga_draw_text(struct Bitmap far *bm, int x, int y, char *s)
         PIX(2, c2, b2) \
     }
 
-/* cga_recolor_rect @ 1C11:06F3 (linear 0x1C803, 1764 bytes)
+/* cg_recolor_rect @ 1C11:06F3 (linear 0x1C803, 1764 bytes)
 
    Fill a rectangle of 2-bit CGA pixels with a colour, recolouring every pixel that is not colour
    c1l */
 
-void cga_recolor_rect(struct Bitmap far *bm, int a, int b, int x1, int y1, int x2, int y2)
+void cg_recolor_rect(struct Bitmap far *bm, int a, int b, int x1, int y1, int x2, int y2)
 {
     int nmid8;
     char far *p0;
@@ -370,22 +370,22 @@ void cga_recolor_rect(struct Bitmap far *bm, int a, int b, int x1, int y1, int x
     }
 }
 
-/* cga_copy_page @ 1C11:0DD7 (linear 0x1CEE7, 89 bytes)
+/* cg_copy_page @ 1C11:0DD7 (linear 0x1CEE7, 89 bytes)
 
    Copy a 16K video page, and on Hercules also its fourth bank */
 
-void cga_copy_page(char far *src, char far *dst)
+void cg_copy_page(char far *src, char far *dst)
 {
     movedata(FP_SEG(src), FP_OFF(src), FP_SEG(dst), FP_OFF(dst), 0x4000);
     if (r_vid.mode == VID_HERCULES && (r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800) == FP_SEG(dst))
         movedata(r_vid.mode == VID_HERCULES ? 0xb200 : 0xba00, 0, 0xb400, 0, 0x2000);
 }
 
-/* cga_reveal @ 1C11:0E30 (linear 0x1CF40, 283 bytes)
+/* cg_reveal @ 1C11:0E30 (linear 0x1CF40, 283 bytes)
 
    Dissolve one 80-byte-per-line CGA screen into another, five interleaved passes */
 
-void cga_reveal(char far *dst, char far *src)
+void cg_reveal(char far *dst, char far *src)
 {
     char far *d;
     char far *s2;
@@ -419,11 +419,11 @@ void cga_reveal(char far *dst, char far *src)
     }
 }
 
-/* cga_set_page @ 1C11:0F4B (linear 0x1D05B, 37 bytes)
+/* cg_set_page @ 1C11:0F4B (linear 0x1D05B, 37 bytes)
 
    BIOS video function 5, select the active display page */
 
-void cga_set_page(int page)
+void cg_set_page(int page)
 {
     union REGS r;
 
@@ -432,10 +432,10 @@ void cga_set_page(int page)
     int86(BIOS_VIDEO, &r, &r);
 }
 
-/* cga_screen_off @ 1C11:0F70 (linear 0x1D080, 36 bytes)
+/* cg_screen_off @ 1C11:0F70 (linear 0x1D080, 36 bytes)
 
    Unreferenced video-control routine. */
-void cga_screen_off(void)
+void cg_screen_off(void)
 {
     switch (r_vid.mode) {
     case VID_CGA:
@@ -448,10 +448,10 @@ void cga_screen_off(void)
     gz8249 = 0;
 }
 
-/* cga_screen_on @ 1C11:0F94 (linear 0x1D0A4, 36 bytes)
+/* cg_screen_on @ 1C11:0F94 (linear 0x1D0A4, 36 bytes)
 
    Unreferenced video-control routine. */
-void cga_screen_on(void)
+void cg_screen_on(void)
 {
     switch (r_vid.mode) {
     case VID_CGA:

@@ -7,10 +7,10 @@
 
         .CODE S0000_TEXT
 
-; kbdoff_unhook @ 0000:2DE2 (linear 0x02DE2, 18 bytes)
+; ko_unhook @ 0000:2DE2 (linear 0x02DE2, 18 bytes)
 
-        PUBLIC  _kbdoff_unhook
-_kbdoff_unhook  PROC  FAR
+        PUBLIC  _ko_unhook
+_ko_unhook  PROC  FAR
         push    ds
         mov     dx,_g_oldInt9Off
         mov     ax,_g_oldInt9Seg
@@ -20,6 +20,6 @@ _kbdoff_unhook  PROC  FAR
         int     DOS_INT
         pop     ds
         ret
-_kbdoff_unhook  ENDP
+_ko_unhook  ENDP
 
         END

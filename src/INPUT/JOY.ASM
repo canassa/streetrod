@@ -25,10 +25,10 @@
 
         .CODE S0000_TEXT
 
-; joy_read @ 0000:2DF4 (linear 0x02DF4, 159 bytes)
+; jy_read @ 0000:2DF4 (linear 0x02DF4, 159 bytes)
 
-        PUBLIC  _joy_read
-_joy_read  PROC  FAR
+        PUBLIC  _jy_read
+_jy_read  PROC  FAR
         push    ax
         push    bx
         push    cx
@@ -117,13 +117,13 @@ timeout:
         sti
         mov     sp,_g_joySavedSp
         jmp     done1
-_joy_read  ENDP
+_jy_read  ENDP
 
-; joy_demo_key @ 0000:2E93 (linear 0x02E93, 309 bytes)
-; keyboard scan code handler, variant of the int 9 ISR kbd_isr (retf, no port I/O)
+; jy_demo_key @ 0000:2E93 (linear 0x02E93, 309 bytes)
+; keyboard scan code handler, variant of the int 9 ISR kb_isr (retf, no port I/O)
 
-        PUBLIC  _joy_demo_key
-_joy_demo_key  PROC  FAR
+        PUBLIC  _jy_demo_key
+_jy_demo_key  PROC  FAR
         push    ax
         push    bx
         push    ds
@@ -248,6 +248,6 @@ L16b:
         jmp     SHORT done2
 L17:
         jmp     SHORT done2
-_joy_demo_key  ENDP
+_jy_demo_key  ENDP
 
         END

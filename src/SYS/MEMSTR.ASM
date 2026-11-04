@@ -2,13 +2,13 @@
 
         .CODE S2460_TEXT
 
-; memstr_find @ 2460:0002 (linear 0x24602, 43 bytes)
+; ms_find @ 2460:0002 (linear 0x24602, 43 bytes)
 ; Search len bytes of a far buffer for a NUL-terminated near string:
-; memstr_find(needle, haystack_far, len). Returns the number of bytes left
+; ms_find(needle, haystack_far, len). Returns the number of bytes left
 ; (cx) when the match ended, 0 if not found.
 
-        PUBLIC  _memstr_find
-_memstr_find  PROC  FAR
+        PUBLIC  _ms_find
+_ms_find  PROC  FAR
         push    bp
         mov     bp,sp
         push    di
@@ -35,6 +35,6 @@ done:
         mov     sp,bp
         pop     bp
         ret
-_memstr_find  ENDP
+_ms_find  ENDP
 
         END

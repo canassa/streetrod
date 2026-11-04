@@ -172,7 +172,7 @@ struct Obj {
 };
 
 /* blit request handed to the g_videoOps hooks (20 bytes). The first six ints are the same as
-   struct Clip; dash_clip_blt reads only those. mx, my: origin in the mask bitmap (tandyblt_compose). */
+   struct Clip; da_clip_blt reads only those. mx, my: origin in the mask bitmap (tb_compose). */
 struct Blt {
     int w;
     int h;
@@ -186,7 +186,7 @@ struct Blt {
     int my;
 };
 
-/* clipped rectangle (12 bytes): size, source origin, destination origin. dash_clip_blt takes struct Blt *
+/* clipped rectangle (12 bytes): size, source origin, destination origin. da_clip_blt takes struct Blt *
    but reads and writes only these first 12 bytes, so callers with a Clip local pass it cast. */
 struct Clip {
     int w;
@@ -237,7 +237,7 @@ struct Seq {
     signed char dy;
 };
 
-/* one animation frame: 12 bytes, the ring links nxt[0..2] (sprite_setup builds g_frmTable[]) */
+/* one animation frame: 12 bytes, the ring links nxt[0..2] (sp_setup builds g_frmTable[]) */
 struct Frame {
     struct Bitmap far *pos;
     struct Bitmap *data;
@@ -339,7 +339,7 @@ struct Spec {
     int bodyPic;
 };
 
-/* one car model (10 bytes, w_8df0[], indexed by Car.specIndex): kind picks its sprites (view_load); roofPic, frontBumperPic, rearBumperPic
+/* one car model (10 bytes, w_8df0[], indexed by Car.specIndex): kind picks its sprites (vw_load); roofPic, frontBumperPic, rearBumperPic
    are nonzero when the roof can be chopped and the front and rear bumpers stripped (F_0711A) */
 struct Model {
     signed char kind;
@@ -461,7 +461,7 @@ struct Btn {
     int y;
 };
 
-/* the free area around the pointer found by menu_hit (x1, x2: left and right limits; y1, y2: top
+/* the free area around the pointer found by mn_hit (x1, x2: left and right limits; y1, y2: top
    and bottom) or, on a hit, the box of the hot spot */
 struct Lims {
     int x1;
@@ -470,7 +470,7 @@ struct Lims {
     int y2;
 };
 
-/* what g_shifterDraw.track points at (dash_draw_shifter, dash_init_shifter): number of points, bitmap ids of the two sprites, bitmap
+/* what g_shifterDraw.track points at (da_draw_shifter, da_init_shifter): number of points, bitmap ids of the two sprites, bitmap
    height at +6 and a table of (x, y) signed-byte pairs at +8 */
 struct Track {
     int n;
@@ -480,7 +480,7 @@ struct Track {
     signed char *pt;
 };
 
-/* 16-byte blit packet of dash_draw_shifter (struct Blt without the last two words) */
+/* 16-byte blit packet of da_draw_shifter (struct Blt without the last two words) */
 struct Blt16 {
     int w;
     int h;
@@ -500,7 +500,7 @@ struct Panel {
     struct Offs r[5];
 };
 
-/* 12-byte table entry (g_layoutAutoSprArray[]), read as bytes by carpic_build */
+/* 12-byte table entry (g_layoutAutoSprArray[]), read as bytes by cp_build */
 struct Spr12 {
     unsigned char wheelX1, wheelX2, b2, b3, roofX, b5, b6, frontBumperY, rearBumperX, rearBumperY, stickerX, stickerY;
 };
@@ -538,7 +538,7 @@ struct Cand {
     int dk;
 };
 
-/* DS:822A, the display state set by video_init: the visible and drawing bitmaps, a scratch bitmap,
+/* DS:822A, the display state set by vi_init: the visible and drawing bitmaps, a scratch bitmap,
    the video mode (front->flags), and per-mode geometry. Members, not plain globals: /Ol never
    hoists r_vid.mode into a register (0x004F4, 0x10AFD). */
 struct Video {
@@ -553,7 +553,7 @@ struct Video {
     int copyToFront;
 };
 
-/* DS:04FE, the pages of a list menu (ads_open fills it, ads_run pages through it): start[k] is the
+/* DS:04FE, the pages of a list menu (av_open fills it, av_run pages through it): start[k] is the
    first entry of page k, n the page count, cur the current page, list the menu (count, then items). */
 struct Pages {
     int start[12];
@@ -562,14 +562,14 @@ struct Pages {
     int *list;
 };
 
-/* mouse cursor state at DS:7aec (cursor_init sets it up, cursor_ctl/cursor_draw move it). The four
-   rectangle members compare as nested members (cursor_draw), which plain globals don't reproduce. */
+/* mouse cursor state at DS:7aec (cu_init sets it up, cu_ctl/cu_draw move it). The four
+   rectangle members compare as nested members (cu_draw), which plain globals don't reproduce. */
 struct Cursor {
     struct Bitmap far *save;    /* background under the cursor */
     struct Clip clip;           /* last drawn strip; memset as 12 bytes */
     char far *shape;
     char far *mask;
-    unsigned shapeOffset;               /* shape offset, cursor_shape_off(n) */
+    unsigned shapeOffset;               /* shape offset, cu_shape_off(n) */
     unsigned shapeSize;              /* bytes per shape */
     int shapeIndex;                      /* shape number */
     char state;                 /* 0 hidden, 1 shown, <0 hide pending */
@@ -587,7 +587,7 @@ struct Cell {
     unsigned char y;
 };
 
-/* one glyph of the CGA text font (cga_draw_text; 91 glyphs for ' '..'z' from 0ED2:0004): a width in half pixels and 8 rows of bits */
+/* one glyph of the CGA text font (cg_draw_text; 91 glyphs for ' '..'z' from 0ED2:0004): a width in half pixels and 8 rows of bits */
 struct CgaGlyph {
     unsigned w;
     unsigned rows[8];

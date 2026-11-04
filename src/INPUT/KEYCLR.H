@@ -4,6 +4,6 @@
 #define KEYCLR_H
 #include "STRUCTS.H"
 
-void keyclr_flush(void);                                /* 0x02DB0 */
+void kc_flush(void);                                /* 0x02DB0 */
 
 #endif

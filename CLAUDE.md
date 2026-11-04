@@ -119,11 +119,151 @@ The tree is full of names a machine invented (`F_xxxxx`, `g_xxxx`, `M_xxxxx.C`, 
 | Struct / enum | bare `PascalCase`, no module prefix | `Car`, `Bitmap` |
 | Struct member | `camelCase` | `kind`, `lodCount` |
 | Enum value | `SCREAMING_SNAKE_CASE` | `GEAR_REVERSE` |
-| Public function | `module_snake_case`, declared in the module `.H` | `garage_buy_part` |
+| Public function | `xx_snake_case`, using the module's two-letter prefix, declared in its `.H` | `ga_buy_part` |
 | Private function | `static`, `snake_case` | `static build_list` |
 | Source file | DOS 8.3, upper case, named for what the module is; its header has the same base name | `GARAGE.C`, `GARAGE.H` |
 
-A *module* is one original source file (one object). The `module_` prefix of its public functions is the file's base name in lower case (`GARAGE.C` → `garage_...`); an assembler routine follows the same rule (`_garage_...` in MASM). Functions the C runtime owns keep their library names.
+A *module* is one original source file (one object). Named public functions use `xx_snake_case`, where `xx` is the module's unique two-letter prefix from the table below (`GARAGE.C` → `ga_...`); assembler routines use the same prefix after the ABI underscore (`_ga_...` in MASM). Keep the semantic suffix and the file name unchanged. Private functions remain `static snake_case`. Existing address placeholders (`F_XXXXX`, `M_XXXXX`) stay unchanged until evidence supports a name; `main` and functions the C runtime owns keep their runtime names.
+
+### Module prefixes
+
+Prefixes are unique ignoring case. Data-only modules need none. A prefix is reserved even when a module currently has only unnamed public functions. `mb_` is provisional for M_02B9A.ASM (M + hex B), without asserting the module's identity; its already-named functions use this prefix.
+
+#### CGA
+
+| Module | Prefix |
+|---|---|
+| CGA.C | `cg_` |
+| CGABLT.C | `cb_` |
+| CGADRV.ASM | `cd_` |
+| CGALINE.ASM | `cl_` |
+| CGASHIFT.C | `cx_` |
+| CGASPR.C | `cs_` |
+
+#### EGA
+
+| Module | Prefix |
+|---|---|
+| EGA.C | `eg_` |
+| EGABLIT.C | `eb_` |
+| EGACOPY.C | `ec_` |
+| EGALATCH.ASM | `ea_` |
+| EGALINE.ASM | `el_` |
+| EGAPAGE.C | `ep_` |
+| EGARECOL.C | `er_` |
+| EGASHIFT.C | `ex_` |
+| EGASLIDE.C | `ev_` |
+| EGASPAN.ASM | `en_` |
+| EGASPR.C | `es_` |
+
+#### GAME
+
+| Module | Prefix |
+|---|---|
+| ADS.C | `av_` |
+| BOBS.C | `bo_` |
+| CARHOP.C | `ch_` |
+| CARPIC.C | `cp_` |
+| CRUISE.C | `cr_` |
+| DASH.C | `da_` |
+| DRIVE.C | `dv_` |
+| DRVTICK.C | `dt_` |
+| FAME.C | `fa_` |
+| GAME.C | `gm_` |
+| GARAGE.C | `ga_` |
+| GARGFX.C | `gx_` |
+| PERF.C | `pf_` |
+| RACE.C | `ra_` |
+| ROAD.C | `rd_` |
+| SAVEGAME.C | `sg_` |
+| SHRINK.C | `sr_` |
+| TIRES.C | `ti_` |
+| VIEW.C | `vw_` |
+
+#### HERC
+
+| Module | Prefix |
+|---|---|
+| HERCDET.ASM | `hd_` |
+| HERCGFX.ASM | `hg_` |
+
+#### INPUT
+
+| Module | Prefix |
+|---|---|
+| JOY.ASM | `jy_` |
+| KBD.ASM | `kb_` |
+| KBDGET.ASM | `kg_` |
+| KBDOFF.ASM | `ko_` |
+| KEYCLR.C | `kc_` |
+| MOUSE.C | `mo_` |
+
+#### SOUND
+
+| Module | Prefix |
+|---|---|
+| MUSIC.C | `mu_` |
+| SOUND.C | `so_` |
+| SPEAKER.ASM | `sk_` |
+
+#### SYS
+
+| Module | Prefix |
+|---|---|
+| ARENA.C | `ar_` |
+| DISK.C | `di_` |
+| MAIN.C | `mi_` |
+| MARKS.C | `ma_` |
+| MEM.C | `me_` |
+| MEMSTR.ASM | `ms_` |
+| M_02B9A.ASM | `mb_` |
+| POOLS.C | `pl_` |
+| RANDOM.C | `rn_` |
+| RLE.ASM | `rl_` |
+| SYS.C | `sy_` |
+
+#### TANDY
+
+| Module | Prefix |
+|---|---|
+| TANDY.C | `ta_` |
+| TANDYBLT.C | `tb_` |
+| TANDYCPY.ASM | `ty_` |
+| TANDYLIN.ASM | `tl_` |
+| TANDYPIC.ASM | `tp_` |
+| TANDYSPR.C | `ts_` |
+| TANDYTXT.ASM | `tt_` |
+
+#### UI
+
+| Module | Prefix |
+|---|---|
+| CURSOR.C | `cu_` |
+| EDIT.C | `ed_` |
+| MENU.C | `mn_` |
+| POPUP.C | `pu_` |
+| SCREEN.C | `sc_` |
+
+#### VIDEO
+
+| Module | Prefix |
+|---|---|
+| BITMAP.C | `bm_` |
+| CRTC.ASM | `ct_` |
+| CURSBLT.ASM | `uc_` |
+| DRAW.C | `dr_` |
+| MASKBG.ASM | `mg_` |
+| MASKBLT.ASM | `mk_` |
+| MASKOR.ASM | `mr_` |
+| SPRITE.C | `sp_` |
+| VIDDET.ASM | `vd_` |
+| VIDEO.C | `vi_` |
+
+Rejected `ad_`: private `ad_picture` already occupies that prefix; ADS uses `av_` (adVertisements).
+
+Rejected `sh_`: MSC sharing macros (`SH_*`) occupy that prefix; SHRINK uses `sr_` (ShRink).
+
+Rejected `tc_`: MSC termination-code macros (`TC_*`) occupy that prefix; TANDYCPY uses `ty_` (copY).
 
 **Name only from evidence.** Read the function, its callers, what it writes and who reads that back, the strings and data it uses. Only then name it. A wrong name is worse than a placeholder: it is a confident lie the next reader builds on. If you cannot tell what something is, leave the placeholder. Byte identity proves the data flow is right, never that a name is right.
 

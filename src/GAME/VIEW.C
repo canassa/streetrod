@@ -71,7 +71,7 @@ static void near select_draw_page(void)
 {
     if (r_vid.mode == VID_EGA) {
         av787at = (g_viewPages.draw == 1) ? 0xa200 : 0xa400;
-        egapage_show(g_viewPages.show);
+        ep_show(g_viewPages.show);
     } else {
         av787at = g8188w->bits.w.seg;
         at767ct = g8188w->bits.w.off;
@@ -112,7 +112,7 @@ static void near flip_page(void)
         g_viewPages.draw = g_viewPages.show;
         g_viewPages.show = t;
         av787at = (g_viewPages.draw == 1) ? 0xa200 : 0xa400;
-        egapage_show(g_viewPages.show);
+        ep_show(g_viewPages.show);
     } else {
         (*g_videoOps.copy)(g8188w, r_vid.front, (struct Blt *)&g_viewRect, 1);
         av787at = g8188w->bits.w.seg;
@@ -171,9 +171,9 @@ static void near clip_vline(int color, int x, int y1, int y2)
     }
 }
 
-/* view_unclip_top @ 2645:23F0 (linear 0x28840, 7 bytes) */
+/* vw_unclip_top @ 2645:23F0 (linear 0x28840, 7 bytes) */
 
-void view_unclip_top(void)
+void vw_unclip_top(void)
 {
     g_viewClip.yMin = 0;
 }
@@ -190,11 +190,11 @@ static void near clip_mirror(void)
     g_viewClip.yMax = 0x2a;
 }
 
-/* view_clip @ 2645:2410 (linear 0x28860, 25 bytes)
+/* vw_clip @ 2645:2410 (linear 0x28860, 25 bytes)
 
    Sets the clip window to x 0..319, y 18..101. */
 
-void view_clip(void)
+void vw_clip(void)
 {
     g_viewClip.xMin = 0;
     g_viewClip.yMin = 0x12;
@@ -202,9 +202,9 @@ void view_clip(void)
     g_viewClip.xMax = (SCREEN_WIDTH - 1);
 }
 
-/* view_load @ 2645:2429 (linear 0x28879, 1369 bytes) */
+/* vw_load @ 2645:2429 (linear 0x28879, 1369 bytes) */
 
-void view_load(void)
+void vw_load(void)
 {
     struct Bitmap far *bm1;
     struct Bitmap far *(far *load)(struct Bitmap far *, unsigned char, unsigned char);
@@ -214,8 +214,8 @@ void view_load(void)
     int il;
     int idx;
 
-    marks_clear();
-    bm1 = disk_bm(0x3ed, ARENA_HIGH_STACK);
+    ma_clear();
+    bm1 = di_bm(0x3ed, ARENA_HIGH_STACK);
     pkt1.w = bm1->width;
     pkt1.h = bm1->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
@@ -223,7 +223,7 @@ void view_load(void)
     (*g_videoOps.copy)(bm1, g8188w, &pkt1, 1);
     F_19438(1);
     sel = *(int *)&bw8aca == 0 ? g_scene : 0;
-    bm24 = disk_bm(g_5e62[sel], ARENA_HIGH_STACK);
+    bm24 = di_bm(g_5e62[sel], ARENA_HIGH_STACK);
     pkt1.w = bm24->width;
     pkt1.h = bm24->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
@@ -231,14 +231,14 @@ void view_load(void)
     (*g_videoOps.copy)(bm24, g82b4s, &pkt1, 1);
     F_19438(1);
     if (*(int *)&bw8aca == 0) {
-        bm24 = disk_bm(0x4ed, ARENA_HIGH_STACK);
+        bm24 = di_bm(0x4ed, ARENA_HIGH_STACK);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
         pkt1.dy = (r_vid.mode == VID_EGA ? DASH_Y - 1 : 0) + 1;
         (*g_videoOps.copy)(bm24, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt1, 1);
         F_19438(1);
-        bm24 = disk_bm(0x4ee, ARENA_HIGH_STACK);
+        bm24 = di_bm(0x4ee, ARENA_HIGH_STACK);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
@@ -246,50 +246,50 @@ void view_load(void)
         (*g_videoOps.copy)(bm24, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt1, 1);
         F_19438(1);
     }
-    ar767eu = disk_bm(0x4f3, ARENA_LOW_STACK);
+    ar767eu = di_bm(0x4f3, ARENA_LOW_STACK);
     if (*(int *)&bw8aca == 0) {
-        g764aw = disk_bm(0x3f0, ARENA_LOW_STACK);
+        g764aw = di_bm(0x3f0, ARENA_LOW_STACK);
         pkt1.w = g764aw->width;
         pkt1.h = g764aw->height;
         pkt1.sx = pkt1.sy = 0;
         pkt1.dx = 0x2c;
         pkt1.dy = 0xc;
         (*g_videoOps.maskedBlit)(g764aw, ar767eu, &pkt1, 1);
-        marks_pop_low(1);
+        ma_pop_low(1);
     }
     pkt1.w = ar767eu->width;
     pkt1.h = ar767eu->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
     pkt1.dy = SCREEN_HEIGHT - ar767eu->height;
     (*g_videoOps.copy)(ar767eu, g8188w, &pkt1, 1);
-    marks_pop_low(1);
-    ax72f4 = disk_bm(0x3ee, ARENA_LOW_STACK);
-    ak8bcat = disk_bm(0x3ef, ARENA_LOW_STACK);
-    g8184y = disk_bm(0x3f1, ARENA_LOW_STACK);
-    bz8b7ex = disk_bm(0x4db, ARENA_LOW_STACK);
+    ma_pop_low(1);
+    ax72f4 = di_bm(0x3ee, ARENA_LOW_STACK);
+    ak8bcat = di_bm(0x3ef, ARENA_LOW_STACK);
+    g8184y = di_bm(0x3f1, ARENA_LOW_STACK);
+    bz8b7ex = di_bm(0x4db, ARENA_LOW_STACK);
     if (*(int *)&bw8aca) {
         idx = w_8df0[bn7648].kind;
-        k_6e60 = disk_bm(0x3f5, ARENA_LOW_STACK);
+        k_6e60 = di_bm(0x3f5, ARENA_LOW_STACK);
         aw7aaex = k_6e60->height;
-        g8acew[0] = disk_bm(g_opponentPics[idx][0], ARENA_LOW_STACK);
-        g8acew[1] = disk_bm(g_opponentPics[idx][1], ARENA_LOW_STACK);
-        g8acew[2] = disk_bm(g_opponentPics[idx][2], ARENA_HIGH_STACK);
-        load = r_vid.mode == VID_EGA ? shrink_ega : r_vid.mode == VID_TANDY ? shrink_tandy : shrink_cga;
+        g8acew[0] = di_bm(g_opponentPics[idx][0], ARENA_LOW_STACK);
+        g8acew[1] = di_bm(g_opponentPics[idx][1], ARENA_LOW_STACK);
+        g8acew[2] = di_bm(g_opponentPics[idx][2], ARENA_HIGH_STACK);
+        load = r_vid.mode == VID_EGA ? sr_ega : r_vid.mode == VID_TANDY ? sr_tandy : sr_cga;
         for (il = 0; il < 3; il++)
             g8acew[3 + il] = (*load)(g8acew[2], g_shrinkMasks[0][il], g_shrinkMasks[0][il]);
         for (il = 0; il < 3; il++)
             g8acew[6 + il] = (*load)(g8acew[5], g_shrinkMasks[1][il], g_shrinkMasks[1][il]);
-        g8acew[9] = disk_bm(g_opponentPics[idx][3], ARENA_LOW_STACK);
+        g8acew[9] = di_bm(g_opponentPics[idx][3], ARENA_LOW_STACK);
         for (il = 0; il < 3; il++)
             g8acew[10 + il] = (*load)(g8acew[9], g_shrinkMasks[2][il], g_shrinkMasks[2][il]);
         ab7526x[0] = g8acew[0];
-        ab7526x[1] = disk_bm(0x4d9, ARENA_LOW_STACK);
-        ab7526x[2] = disk_bm(0x4da, ARENA_HIGH_STACK);
+        ab7526x[1] = di_bm(0x4d9, ARENA_LOW_STACK);
+        ab7526x[2] = di_bm(0x4da, ARENA_HIGH_STACK);
         ab7526x[2] = ab7526x[3] = (*load)(ab7526x[2], g_shrinkMasks[0][0], g_shrinkMasks[0][0]);
         F_19438(1);
         for (il = 0; il < 3; il++)
             ab7526x[4 + il] = ab7526x[3];
-        ab7526x[9] = disk_bm(0x4de, ARENA_LOW_STACK);
+        ab7526x[9] = di_bm(0x4de, ARENA_LOW_STACK);
         for (il = 0; il < 3; il++)
             ab7526x[10 + il] = (*load)(ab7526x[9], g_shrinkMasks[2][il], g_shrinkMasks[2][il]);
     }
@@ -309,7 +309,7 @@ static void near render_backdrop(void)
 
     b.dy = 0x12;
     if (*(int *)&bw8aca) {
-        v = road_proj_y(n8, m5 * 2, ao7d2ev.m7d3e);
+        v = rd_proj_y(n8, m5 * 2, ao7d2ev.m7d3e);
         b.h = v - 0x1e;
         b.sy = 0x9a - b.h;
         if (ao7d2ev.m7d3c > 0) {
@@ -376,9 +376,9 @@ static void near render_backdrop(void)
         (*g_videoOps.fillBelow)(0x3f, 1);
 }
 
-/* view_sprite @ 2645:2C0A (linear 0x2905A, 242 bytes) */
+/* vw_sprite @ 2645:2C0A (linear 0x2905A, 242 bytes) */
 
-void view_sprite(int x, int y, int first, struct List l, int dir)
+void vw_sprite(int x, int y, int first, struct List l, int dir)
 {
     struct Run run;
     int px;
@@ -519,9 +519,9 @@ static int near sgn(int n)
     return 0;
 }
 
-/* view_road_row @ 2645:2F48 (linear 0x29398, 773 bytes) */
+/* vw_road_row @ 2645:2F48 (linear 0x29398, 773 bytes) */
 
-void view_road_row(int n)
+void vw_road_row(int n)
 {
     int xl;
     int ybot6;
@@ -618,9 +618,9 @@ void view_road_row(int n)
     }
 }
 
-/* view_mirror_row @ 2645:324D (linear 0x2969D, 653 bytes) */
+/* vw_mirror_row @ 2645:324D (linear 0x2969D, 653 bytes) */
 
-void view_mirror_row(void)
+void vw_mirror_row(void)
 {
     int xl;
     int ybot6;
@@ -901,7 +901,7 @@ static void near render_row(int n)
         render_left_buildings();
         render_right_buildings();
     }
-    view_road_row(n);
+    vw_road_row(n);
 }
 
 /* render_mirror_left @ 2645:3A57 (linear 0x29EA7, 47 bytes) */
@@ -924,16 +924,16 @@ static void near render_mirror_row(void)
 {
     render_mirror_left();
     render_mirror_right();
-    view_mirror_row();
+    vw_mirror_row();
 }
 
-/* view_draw_dot @ 2645:3ABF (linear 0x29F0F, 44 bytes) */
+/* vw_draw_dot @ 2645:3ABF (linear 0x29F0F, 44 bytes) */
 
-void view_draw_dot(int x, int y)
+void vw_draw_dot(int x, int y)
 {
-    egaspan_begin();
-    view_sprite(x, y, 0, *g_scenery[20], 1);
-    egaspan_end();
+    en_begin();
+    vw_sprite(x, y, 0, *g_scenery[20], 1);
+    en_end();
 }
 
 /* render_object @ 2645:3AEB (linear 0x29F3B, 79 bytes) */
@@ -947,7 +947,7 @@ static void near render_object(int x, int y, int n, int f, int idx)
         n = 0;
     if (y > 0x65)
         y = 0x65;
-    view_sprite(x, y, n, *g_scenery[idx], f);
+    vw_sprite(x, y, n, *g_scenery[idx], f);
 }
 
 /* render_hydrant @ 2645:3B3A (linear 0x29F8A, 63 bytes) */
@@ -959,7 +959,7 @@ static void near render_hydrant(int x, int y, int n, int f)
         n = 7;
     if (n < 0)
         n = 0;
-    view_sprite(x, y, n, *g_scenery[2], f);
+    vw_sprite(x, y, n, *g_scenery[2], f);
 }
 
 /* render_scaled_pic @ 2645:3B79 (linear 0x29FC9, 339 bytes) */
@@ -1014,22 +1014,22 @@ static void near render_gantry(int x1, int x2, int y1, int y2, int n, int clip, 
     int j;
 
     for (j = *g_renderRows.lineWidth + 1; j; j--) {
-        egaspan_end();
+        en_end();
         clip_vline(10, x1 - j, y1, y2);
         clip_vline(10, x2 + j, y1, y2);
-        egaspan_begin();
+        en_begin();
         (*g_videoOps.fillSpan)(x1, x2, y1 + j - 1, 10);
     }
     if (flags & 0x1000)
         render_object((x1 + x2) >> 1, y1, n, 1, 13);
     else if (flags & 0x2000) {
-        egaspan_end();
+        en_end();
         render_scaled_pic((x1 + x2) >> 1, y1, n, 0, clip, 1);
-        egaspan_begin();
+        en_begin();
     } else if (*am8b82y & 1) {
-        egaspan_end();
+        en_end();
         render_scaled_pic((x1 + x2) >> 1, y1, n, 0, clip, (flags & 0x4000) ? 2 : 3);
-        egaspan_begin();
+        en_begin();
     } else
         render_object((x1 + x2) >> 1, y1, n, 1, (flags & 0x4000) ? 12 : 14);
 }
@@ -1175,12 +1175,12 @@ static void near render_opponent(void)
     rd = ao7d2ev.m7d3c - g_terrain2[a2];
     if (seln < 9) {
         t1 += 4;
-        ra = road_proj_x(t1, ar7e8av.lateralX, rd);
-        rb = road_proj_y(t1, 2000, rc);
+        ra = rd_proj_x(t1, ar7e8av.lateralX, rd);
+        rb = rd_proj_y(t1, 2000, rc);
     } else {
         t1 = -t1;
-        ra = road_mirror_x(t1, ar7e8av.lateralX, -rd);
-        rb = road_mirror_y(t1, 2000, -rc);
+        ra = rd_mirror_x(t1, ar7e8av.lateralX, -rd);
+        rb = rd_mirror_y(t1, 2000, -rc);
     }
     if (seln == 0) {
         bm = g8acew[seln];
@@ -1218,7 +1218,7 @@ static void near render_opponent(void)
         }
     } else if (g_viewClip.xMin != 0) {
         flag9 = 1;
-        view_clip();
+        vw_clip();
     }
     if (b.dx + b.w >= g_viewClip.xMin && b.dx < g_viewClip.xMax) {
         if (seln >= 9)
@@ -1230,7 +1230,7 @@ static void near render_opponent(void)
             if (g_viewClip.xMin == 0)
                 clip_mirror();
             else
-                view_clip();
+                vw_clip();
         }
     }
 }
@@ -1262,9 +1262,9 @@ static void near render_mirror(void)
     g_renderRows.leftFlags = (int far *)(q_72ee - 8);
     g_renderRows.rightFlags = (int far *)(g_rightSideTerrainRow - 8);
     am8b82y = (int far *)(g7d62p - 8);
-    egaspan_end();
+    en_end();
     render_mirror_frame();
-    egaspan_begin();
+    en_begin();
     clip_mirror();
     for (i = 7; i; i--) {
         render_mirror_row();
@@ -1357,9 +1357,9 @@ static void near render_mirror(void)
             render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 0xf);
     next:
         if (ao7d2ev.roadIndex - ar7e8av.roadIndex == i && *(int *)&bw8aca) {
-            egaspan_end();
+            en_end();
             render_opponent();
-            egaspan_begin();
+            en_begin();
         }
         g_renderRows.prevLeftX--;
         g_renderRows.prevRightX--;
@@ -1378,7 +1378,7 @@ static void near render_mirror(void)
         g_renderRows.prevRightOuterX--;
         g_renderRows.prevBuildingY--;
     }
-    view_clip();
+    vw_clip();
     clip_vline(2, 0xf0, 0x17, 0x2a);
     clip_vline(4, 0xf1, 0x17, 0x2a);
     clip_vline(4, 0x13e, 0x17, 0x2a);
@@ -1392,9 +1392,9 @@ static void near render_mirror(void)
     (*g_videoOps.copy)(g_viewPages.draw == 1 ? g8188w : g82b4s, bm7678, &pkt1, 1);
 }
 
-/* view_draw @ 2645:4B8C (linear 0x2AFDC, 1774 bytes) */
+/* vw_draw @ 2645:4B8C (linear 0x2AFDC, 1774 bytes) */
 
-void view_draw(void)
+void vw_draw(void)
 {
     int w36;
     int w11;
@@ -1418,9 +1418,9 @@ void view_draw(void)
     g_renderRows.leftFlags = (int far *)(q_72ee + 14);
     g_renderRows.rightFlags = (int far *)(g_rightSideTerrainRow + 14);
     am8b82y = (int far *)(g7d62p + 14);
-    view_clip();
+    vw_clip();
     render_backdrop();
-    egaspan_begin();
+    en_begin();
     for (i = 14; i; i--) {
         if (i <= g_6e06aax)
             render_row(i);
@@ -1452,9 +1452,9 @@ void view_draw(void)
             render_object(*g_renderRows.leftX, *g_renderRows.y, i, 1, 6);
         if (w11 & 1) {
             if (f3) {
-                egaspan_end();
+                en_end();
                 render_scaled_pic(*g_renderRows.leftX, (*g_renderRows.buildingY + *g_renderRows.y) >> 1, i, 1, 0, 1);
-                egaspan_begin();
+                en_begin();
             } else
                 render_object(*g_renderRows.leftX, *g_renderRows.y, i, 1, 1);
         }
@@ -1507,9 +1507,9 @@ void view_draw(void)
             render_object(*g_renderRows.rightX, *g_renderRows.y, i, -1, 6);
         if (w2 & 1) {
             if (f3) {
-                egaspan_end();
+                en_end();
                 render_scaled_pic(*g_renderRows.rightX, (*g_renderRows.buildingY + *g_renderRows.y) >> 1, i, -1, 0, 1);
-                egaspan_begin();
+                en_begin();
             } else
                 render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 1);
         }
@@ -1525,9 +1525,9 @@ void view_draw(void)
             render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 0x11);
     next:
         if (ar7e8av.roadIndex - ao7d2ev.roadIndex == i && *(int *)&bw8aca) {
-            egaspan_end();
+            en_end();
             render_opponent();
-            egaspan_begin();
+            en_begin();
         }
         g_renderRows.prevLeftX--;
         g_renderRows.prevRightX--;
@@ -1547,23 +1547,23 @@ void view_draw(void)
         g_renderRows.prevBuildingY--;
     }
     if (ar7e8av.roadIndex == ao7d2ev.roadIndex && *(int *)&bw8aca) {
-        egaspan_end();
+        en_end();
         render_opponent();
-        egaspan_begin();
+        en_begin();
     }
     render_mirror();
-    egaspan_end();
+    en_end();
     render_overlays();
     if (*(int *)&bw8aca)
         render_start_signal();
     flip_page();
 }
 
-/* view_start @ 2645:527A (linear 0x2B6CA, 17 bytes) */
+/* vw_start @ 2645:527A (linear 0x2B6CA, 17 bytes) */
 
-void view_start(void)
+void vw_start(void)
 {
     ap7d7cv = g_oldF = 0;
     select_draw_page();
-    road_draw_frame();
+    rd_draw_frame();
 }

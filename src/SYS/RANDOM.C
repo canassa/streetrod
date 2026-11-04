@@ -5,12 +5,12 @@
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct RandomState g_random; /* DS:6C62 */
 
-/* random_int @ 0F38:5EB6 (linear 0x15236, 352 bytes)
+/* rn_int @ 0F38:5EB6 (linear 0x15236, 352 bytes)
 
    Wichmann-Hill style generator: three 15-bit LCG state words.
    n <= 0 seeds from the clock and returns -1, n > 0 returns a value in 0..n-1. */
 
-int random_int(int n)
+int rn_int(int n)
 {
     if (n <= 0) {
         long t;

@@ -170,13 +170,13 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ## 2026-11-03 06:40 CET: Blt and Clip rect types
 
-**What I did**
+### What I did
 - Measured every frame that holds a blit rect local and every offset touched through the rect pointers. `struct Blt` stays 20 bytes; its tail `pad[3]` is now `fe, mx, my` (F_21C0B reads `r->mx`, `r->my` at 0x10/0x12 as the origin in the mask bitmap; F_22762 writes them). `struct Clip` stays 12 bytes.
 - F_10A00 only reads and writes offsets 0..0xB of both rects, and its callers give it both sizes: 20-byte outputs in F_1D262, F_21D58, F_23262, F_234E9, F_236D5, F_1A79B, F_1A2D0; 12-byte outputs in F_1D3C8, F_1D195, F_21EAB, F_21C0B; F_1D3C8 also gets a 12-byte input from F_1D8C4 and 20-byte ones from F_1D925 and the g_78a2 callers. No single parameter type fits, so the prototype takes `void *in, void *out`. The C4049/C4024 warnings are gone.
 - F_1D262: `int pad4[4]` removed, `ol` is a `struct Blt` (the 8 bytes were its untouched tail). F_1D262 and F_1D195 take `struct Blt *r` (they are fed 20-byte rects through g_78aa and by F_1D925).
 - Recipe book: one row on holes at the tail of a struct local.
 
-**What I learned**
+### What I learned
 - The `long unused` in F_118D4, F_12A17, F_12DD8 and F_12F99 is a real unreferenced 4-byte local, not part of the struct. F_12B7C, from the same module and using the same `move.h = move.fc = ...` pattern, has its 20-byte Blt right under `pict` with no hole, so a 24-byte type can't be the explanation.
 - `int f();` (no parameter list) still gives C4071 at /W3, so a K&R declaration can't be used to accept both rect sizes.
 - At the end, `check --all` showed 2 build failures (F_13F21, F_14294: PROTOS.H redefinition of F_13DE6/F_13F21). Those come from another worker's in-progress STB/proto change and have nothing to do with these structs.
@@ -199,7 +199,7 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ## 2026-11-03 08:12 CET: seven stubborn partials (/Ol, CSE, switch tails)
 
-**What I did**
+### What I did
 - Matched `0x15C4A`, `0x012DE`, `0x19925` and `0x192AC` with plain source. For `0x192AC`, `g_8b02` is now `unsigned @[]`, and its four other users still match.
 - `0x10AFD` is now a `for (i = 0; i < n; i++)` under `/Oals`. The old `sum` was really the `/Ol` exit value of `i`. The one byte-level divergence left is that `/Ol` hoists `g_videoMode` into `di`.
 - `0x004F4` and `0x10AFD` both match once `g_videoMode` is a struct member (measured with a stand-in struct). I left that change undone because it touches 48 files. It needs a decision: `0x8236` probably sits in a video-state struct next to `g_front` and `g_back`.
@@ -207,7 +207,7 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - Added nine recipe-book rows.
 - `./sr check --all`: 488/489. The one regression is `F_0DCBE`, a float-constant ref that another worker edited at 08:02. That file isn't one of mine.
 
-**What I learned**
+### What I learned
 - If ours hoists a global into a register under `/Ol` and the original re-reads it every pass, the global is a struct member. Arrays indexed by a global counter in the loop behave the same way: when both are members of one struct, `/Ol` makes no induction pointer.
 - If `tbl[i]` is reloaded right after `p += tbl[i]` on a far pointer, `tbl` is `unsigned`.
 - An assignment used as a subscript (`tbl[q->key = c = p->key]`) stops the address CSE with the next statement.
@@ -216,7 +216,7 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ## 2026-11-03 08:30 CET: type review of shared globals and allocators
 
-**What I did**
+### What I did
 - `g_0294`/`g_0296` are one `struct Bitmap far *g_0294` (`g_0296` deleted); casts gone in `0x06F6B`, `0x07367`; `0x1923C`/`0x193D4` write `g_0294 = 0;`.
 - `g_8df2` became `struct Model g_8df0[]` (10 bytes: `signed char kind`, then ints at 2, 4, 6, 8; replaces `struct Rec5`). The `- 2` and `* 10 - 2` casts in `0x0711A`/`0x28879` are gone; field names shifted in `0x0542E`, `0x098BA`, `0x0DCBE`, `0x0E218`.
 - `g_7526`/`g_8ace` are `struct Bitmap far *[13]` (13 entries, up to `g_755a`/`g_8b02`); `struct Block48` removed. `0x0D992` copies only the first 12.
@@ -229,7 +229,7 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - Kept, each with a note: `*(int *)&g_8aca` in the five `0x28879`..`0x2AFDC` functions (byte everywhere else, so modules disagreed); the plain `g_78ea`/`g_78ec` inside `struct Eng g_78e0` (operand order, see below); `struct Blt16` in `0x10872`/`0x23FD9`; `long unused` in `0x118D4`/`0x12A17`/`0x12DD8`/`0x12F99`; `g_05fc += 0L` in `0x065AF` (likely a time macro called with 0 hours); `g_47e8` BYTE/WORD in asm (each asm module has its own EXTRN, and the byte table is indexed from its end by negative key codes); `g_4607` (a real array shared with `0x1438E`).
 - `./sr check --all`: 502/502.
 
-**What I learned**
+### What I learned
 - `./sr note` replaces the notes, it doesn't append. I overwrote five notes by mistake and restored them from `docs/PROGRESS.md`. Read `./sr show` first.
 - Writing a field as `s.f` instead of a plain global changes which operand MSC loads into the register, so operand order shows how a module declared a global.
 - MSC does not constant-propagate a relocatable far address (`p = far_array; q = r = p;` reloads `p`). The old recipe row that called `g_79b2` a struct copy was wrong.
@@ -237,7 +237,7 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ## 2026-11-03 08:50 CET: struct Video, struct Pages, two overlaps
 
-**What I did**
+### What I did
 - `g_front`, `g_back`, `g_8232`, `g_videoMode`, `g_8238`, `g_823a`, `g_823c`, `g_823e` and `g_8240` are now one `struct Video g_vid` at DS:822A (`front`, `back`, `f8`, `mode`, `planes`, `shift`, `bpp`, `mask`, `f16`). F_10BD9 sets all of them in one place. The extent stops at 0x8241: `g_8228` and `g_colors` are left as plain globals because nothing ties them to the struct. I renamed in 121 files, and the two asm files now read `_g_vid+12`. I measured it in a scratch copy of the tree before applying it: every matched user still matched. That includes about 45 `/Ol` functions, so no original enregisters one of these globals. `0x10AFD` and `0x22762` now match. Most partials that use these globals lost bytes (`0x16EA2` 100 to 86, `0x1783E` 27 to 15).
 - `0x004F4`: 0 mismatched bytes, but it stays DIFF on lint. The original calls `F_0E5D2` far (`lcall 0:e5d2`), yet `F_0E5D2` is a NEAR asm proc ending in `ret`, so the DB has far=0 and PROTOS.H doesn't emit its prototype. This needs a tooling decision.
 - `g_04fe`/`g_0516`/`g_0518`/`g_051a` are now `struct Pages g_pages` (`start[12]`, `n`, `cur`, `list`). The inner loop of `0x008B4` matches; the outer loop still keeps `pos` in `cx`.
@@ -245,32 +245,32 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - `g_533e` (`struct Cell[7]`) was `g_5338 + 6`, the `w`/`h`/`x` fields of `struct Btn`. I deleted it and `struct Cell`; `0x18ADB` reads `g_5338[i9]`. `g_5a10`/`g_5a18` don't overlap anything in the DB (two 8-byte Rects, only `0x1783E` touches them), so I left them alone. `struct Rect[2]` and `(*pr2 = &g_5a18)->y1` didn't fix that function's tail either.
 - `./sr check --all`: 514/514.
 
-**What I learned**
+### What I learned
 - Experiments that touch the whole project are cheap in a copy (`rsync` without `work`/`dist`): `sr` resolves everything relative to its own tree.
 - A store to `g_5a18.y1` doesn't kill MSC's knowledge that `*pr2 == &g_5a18` in ours, but it does in the original (`0x1783E`). The cause is still unknown.
 
 ## 2026-11-03 09:12 CET: block placement and switch lowering
 
-**What I did**
+### What I did
 - Ran small batched compiler experiments on switch lowering and block order (`work/bp/s2`..`s7`). `work/bp/x2.py` prints a `.COD` listing with its labels, `work/bp/sig.py` prints a block-order signature against the original, and `work/bp/hh.sh` runs `work/reg/h.py` with the function's `.STB` copied next to the variants.
 - Matched `0x0503F`, `0x10E3D`, `0x139DE`, `0x14C90`, `0x1563A` and `0x07367`. `0x06F6B` already matched with its unchanged source, after the struct Video change. `0x1412D` is still partial, with a sharper note.
 - Added "Block placement and switch lowering" to the recipe book, and corrected the `while` row (a `while` is not always top-tested).
 - `./sr check --all`: 535/535.
 
-**What I learned**
+### What I learned
 - MSC sorts the case values and merges runs of consecutive labels that share a body into one range entry. It uses a jump table at 7 or more labels when the spread is below about 3 per label. With 7 or more entries, or with 4 or more entries when one of them is a range, it builds a binary tree whose root is entry `n/2-1`. Anything else becomes a linear chain. Trailing compares that go to the default are dropped, but they still count as entries. That is why `0x0503F`'s 4-case switch is a tree: it had a run of labels on the default (`case -2: case -1:`, a guess).
 - The first `continue` in source order pulls the loop's increment and test, up to the next unconditional jump, in behind it. `goto` doesn't. A `break` pulls the code after a `for (;;)` up to it in the same way. In an `if`/`else if` chain, a last `else` that ends in a jump is deferred until after the next unconditional jump. These three rules explain the "shared tail / test in the middle" layouts in five of the functions.
 - Two smaller ones: `(unsigned char)(a <= b)` gives `mov al,1 / sub al,al / sub ah,ah`, and `x & 0xe0ff` narrows to `and ah,0xe0`.
 
 ## 2026-11-03 09:39 CET: operand order and register-allocation partials
 
-**What I did**
+### What I did
 - Worked the eleven register-allocation, CSE and operand-order partials. Nine now match: `0x1220B`, `0x0DA25`, `0x068E8`, `0x16EA2`, `0x29BFF`, `0x2992A`, `0x29170`, `0x166FA` and `0x19BFE`. `0x04036` and `0x23C3B` are still partial, with sharper notes.
 - Replaced the cursor globals at DS:7aec..7b12 with `struct Cursor g_cursor` (in STRUCTS.H). Its rectangle `r` is what makes `0x1220B` match. `0x11EA8`, `0x120FE`, `0x11E9C` and `0x0AB8B` now use the members. All still match, and `0x0AB8B` is unchanged (it is still partial).
 - `0x19BFE` matches with `/Oals` and its current source. The old notes about loop inversion came from an earlier version of the source.
 - Gate: 535/535.
 
-**What I learned**
+### What I learned
 - MSC picks the operand order of compares, commutative ops and `?:` min/max from the shape of the expression tree, never from the source order. Measured order, simplest first: a plain global or a one-level member, then a bp local, then a nested member (`s.a.b`, `t[1].f`), then a member through a pointer. An explicit cast node raises the rank; an implicit conversion does not. In a relational the simpler operand goes into `ax`. In `a < b ? b : a` the more complex operand is loaded and kept as the arm. `t[n] - t[n+1] >= 0` swaps the roles.
 - A far pointer kept in `es:bx` across statements with no stack slot comes from cross-jumping. The source is `if (c) {stmts on g1} else {same stmts on g2}`. Likewise `c ? a->f : b->f` puts the `les` in each arm and loads the member after the join.
 - `/Ol` ignores goto-built loops. That explains `0x29170`, where one loop is in registers and the other is not. Inside an `if (y < f)` guard, `do ... while (++y < f)` gives the original's layout with no `jmp` to the test.
@@ -308,39 +308,39 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ## 2026-11-03 14:12 CET: F_008B4 matched (accumulate inside the inner loop test)
 
-**What I did**
+### What I did
 - `0x008B4` (259 bytes, `/Oalsi`) now matches. After 34 variants the only divergence left was `/Ol` keeping `pos` in `cx` across the outer `while (num--)` loop. Measured in `work/bp/ol2` and `work/bp/ol4` (`x2.py` on isolated copies of the function): a goto-form outer loop, a label before the inner loop, `for (;;)` + `break`, a nested block for `pos`, `volatile int pos`, `&pos` after the loops, `continue`, `> 0` and `for (pos += w; pos > 0xbd; pos += w)` all keep `cx`; the goto-form outer loop also turns `/Ol` off for the inner loop (no hoisting). `/Ols` (no `/Oa`) turns registers off in both loops, which showed the original is a per-loop effect, not a flag. The fix is the source shape: `while ((pos += 9 * g_2c01[*ptr] + 3) > 0xbd) { g_pages.start[g_pages.n++] = first - num; pos = 0; }`, the same semantics as the separate `pos += w;` statement.
 - Corrected the earlier `0x008B4` row in the recipe book (it described the two-statement form) and added a row for the rule. `./sr check --all`: 554/554.
 
-**What I learned**
+### What I learned
 - `/Ol` extends an inner loop's register variable to the enclosing loop when the variable is updated by a statement of the outer body; when the only outer-body update is the one inside the inner loop's test expression, the variable lives in memory outside the inner loop and gets its exit store right after it. The guard (`add [mem]; cmp [mem]; jle`) is the rotated first evaluation of that test.
 - When `./sr sweep` ranks a flag set without `/Oa` closer, look at what it changes: here it switched the register allocation off in every loop, which said the original's outer-loop difference had to come from the source.
 
 ## 2026-11-03: F_03C8D matched (jump table from a split range, `(float)` cast)
 
-**What I did**
+### What I did
 - `0x03C8D` (804 bytes, `/Oasi`) now matches. Four changes: `case 0: ; case 1:` in the second switch (gives the jump table), `price1 = (float)price1 * ((rl + 70) / 100.0)` (gives `fild dword; fmulp` instead of `fimul`), `case -4: return;` written first in the first switch (drops a dead `jmp` epilogue block), and `if (nl == -0x15) continue;` (puts the loop increment where the original has it). `./sr check --all`: 555/555.
 
-**What I learned**
+### What I learned
 - Switch lowering counts *entries*, not labels or values: 3 entries over `0..4` stay a chain whatever the bodies are (the earlier "trivial body gives a table" did not reproduce), 4 entries with a range become a table. A null statement between two labels splits one range into two entries at the same address.
 - `(float)` on the integer operand of a double multiply turns `fimul dword [tmp]` into `fild dword [tmp]; fmulp`; no `(double)`/`(long)` cast or operand order does.
 
 ## 2026-11-03: F_22B3A matched (`/Ot`, not `/Oa`; `for` with an increment)
 
-**What I did**
+### What I did
 - `0x22B3A` (973 bytes) now matches. There were two causes, and only one of them was in the loop. (1) The flags are `/AM /FPi /Gs`, which defaults to `/Ot`, not `/Oa` like `0x22F08`. With `/Oa` ours kept `es:bx`/`al` after a store through a far pointer. The original reloads them (`*r = c; ch = *r;`, `q[1] = 0; r = q;`). The DB note's "everything after the loop matches" was not true under `/Oa`. (2) The loop is `for (; *str; str)`. A `for` with an increment is generated top-tested, and the body tail that jumps back to the increment is moved in front of the test. That gives the original's `[jmp T][render][T: test, front, cols test][cols -= wd]`. The increment emits no code (`(void)0` also matches), so the real one is unknown.
 - `tools/sr/match.py`: a non-`/Os` compile ends with an alignment `nop` inside the procedure. The scanner leaves the original's matching `0x90` (0x22F07) out of the size, so `compare` now ignores exactly one trailing `0x90` when the original has it too.
 
-**What I learned**
+### What I learned
 - Before reordering blocks, check the code outside them under each flag set: a store-then-reload pattern decides `/Oa` vs no `/Oa`, and `volatile` has no effect in 5.1 (small tests, `work/agent_22b3a/t4`).
 - MSC moves a comma condition `while (A && (B, C))` back into the body, so a loop condition can't hold the body head. Of the loop forms tried, only a `for` with an increment puts the head after the test (`work/agent_22b3a/t1`..`t5`).
 
 ## 2026-11-03 14:35 CET: F_1412D matched (label inside the `then` branch)
 
-**What I did**
+### What I did
 - `0x1412D` (276 bytes, `/Oals`) now matches. Source: `while ((kind = p->f0) > 9) { if (kind == 14) { p++; continue; } if (p->x1 > x) { ...; break; } if (p->x2 <= x) { ...; next: if (kind == 12) p = &g_09f4[p->f6]; else p++; } else { y-chain; else { if (kind == 12) { p++; continue; } found; return ...; } goto next; } }`. Variants in `work/agent_1412d/`.
 
-**What I learned**
+### What I learned
 - A deferred `else` is flushed at the first unconditional jump *after the whole `if` statement*. A jump inside the `then` branch does not flush it. With the shared tail after the `if` (`goto nx` form), the tail's own `jmp test` flushed the y-chain too early. With the label inside the `then` branch, the flush happens after the rotated `kind == 14` jump past the loop test, which is where the original has it.
 - A `while` whose body ends in an `if` whose branches all end in a transfer (`continue`/`return`) becomes top-tested (R-series). The `goto next` back into the `then` keeps it bottom-tested.
 
@@ -354,19 +354,19 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ## 2026-11-03: F_049ED matched (`(float)` cast on a float compare)
 
-**What I did**
+### What I did
 - `0x049ED` (1501 bytes, `/Oalsi`) now matches: `if ((float)offer < (float)cash * 0.9)`. `cash * 0.9 > (float)offer` matches too. Tiny tests in `work/agent_49ed/t1`.
 
-**What I learned**
+### What I learned
 - The `(float)` cast from `0x03C8D` also drives float compares: a cast int operand is an FP subtree, loaded with `fild` instead of folded into `ficom`, so the compare is `fcompp`. When both sides are FP subtrees MSC evaluates the left one first. That closes the recipe book's "FP relational operand order" open question.
 
 ## 2026-11-03 14:40 CET: F_1C2CA matched (a reference count in the inner loop decided the outer-loop register)
 
-**What I did**
+### What I did
 - `0x1C2CA` (1337 bytes, `/Oalsi`, the CGA text renderer) now matches; `./sr check --all` 558/558. Measured on tiny copies of the text loop in `work/agent_1c2ca/t1`..`t5` (`x2.py` with the function's flags) before touching the source.
 - Fixes, in order of effect: (1) the else-loop body `++gp; *p3 |= *gp >> b; p3[1] |= *gp << (16 - b);` became `*p3 |= *++gp >> b; p3[1] |= *gp << (16 - b);`. That alone removed the `di` preload of `i` before the outer loop, restored `i`'s exit stores after each inner loop and the memory guard of the rotated else loop, put `gp` back in memory (`les bx,[gp]`, `es:[bx]` read twice) and dropped the `*gp` CSE temp. (2) `if ((c4 = *s++ - 0x20) < 0 || c4 > 0x5a) c4 = 0;` moves `inc [s]` up to right after the loop test. (3) `col4 += (wid4 = *(gp = &g_cgafont.g[c4].w) * 2);` gives the `mov es,[seg word]; lea bx,[bx+4]` form (same trick as `0x22B3A`). (4) `col4 = bitoff1 = shl;`, `b0 = b1 = bm->bits.p;` (store order), `r6 = 0;` before `s1 = b1; s0 = b0;` in the two byte loops and before `pp2 = buf` in the rotate loop (where the exit value lands), the `movedata` loop counts `i` (its exit store is `mov [i],di`) and tests `(y + i) & 1`. (5) Layout: the byte loops' buffer pointer is a bucket-7 name declared before `dseg4` (`fill`), the `movedata` one a bucket-4 name between `buf7` and `s1` (`from`).
 
-**What I learned**
+### What I learned
 - The 0x008B4 hint ("where the update lives decides the register's extent") was the right family but the wrong variable here: `i`'s spread to the outer loop was collateral. `/Ol` ranks the inner loop's candidates by reference count; a separate `++gp;` gave `gp` 3 references, it took `di` (a far pointer's offset can be enregistered as `es:di`), and the displaced `i` ended up spread across the outer loop with a miscompile (ours clobbered `di` with `les di`). With 2 references `i` keeps `di` and nothing spreads. So when a variable is enregistered too widely, look at what *displaced* it in the inner loop, not only at its own statements.
 - Under `/Ol` a plain `c = *s++ - K;` statement sinks `inc [s]` to after the store; the same expression inside an `if` condition keeps it right after the pointer load. Without `/Ol` both are early.
 - A goto-form outer loop turns `/Ol` off for the inner loops too (confirmed again, `t3/T7`); without `/Oa`, `/Ol` enregisters nothing in these loops.
@@ -408,19 +408,19 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ## 2026-11-03 16:31 CET: 0x0AB8B race loop, /Ol scope measurements
 
-**What I did**
+### What I did
 - Measured why the race loop in `0x0AB8B` gets `/Ol` in ours and not in the original (variants in `work/agent_ab8b`). Another session matched the function in the meantime with `test:` before the `while` and `goto test;` at the end of the body. I left that version installed.
 
-**What I learned**
+### What I learned
 - `loop_opt` pragmas work per function, never per loop, and a pragma just before the closing `}` is ignored. `/Ol` drops a loop that has too many branch blocks (two extra ifs were enough) or a jump into it. String-literal addresses follow source order, so they show whether a loop test was written before or after the body. Rows in the recipe book.
 
 ## 2026-11-03 16:33 CET: 0x0C613 block order (deferred else flush, cross-jump survivor)
 
-**What I did**
+### What I did
 - Took `0x0C613` from 123 to 37 mismatched bytes. Adding `goto done;` at the end of the list-building else, with `done:` before `F_13F21(1)`, made that else a codegen-deferred block. It is then emitted right after the `goto ret2` jmp, as in the original (`work/agent_c613/l2.C`). During my rate-limit pause the resume agent added the `goto finishstop` arms on top of l2 and matched the function (MATCH*, refs verified). `./sr check --all`: 562/562.
 - Measured in small tests (`work/agent_c613/t1`..`t5`, `s1`..`s5`) what flushes a deferred block and which cross-jump copy survives. Recipe-book rows added under Block placement.
 
-**What I learned**
+### What I learned
 - There are two kinds of deferral. Codegen deferral (an else ending in a jump) flushes at any unconditional jump after the whole if, including a conditional goto's jmp, a ?: jump, an if/else jump and a switch jump. Post-pass deferral (an else that only ends in a jump after cross-jumping) flushes only at a return's jmp, because folding has already turned `if (c) goto L` into `jcc L`. The earlier rule "goto never flushes" described only the second kind.
 - When the cross-jump survivor looks wrong for the arms of an `if/else if`, give the branch its own end label. The inner if's end is otherwise the outer chain's end, every copy jumps there, and the first one wins.
 
@@ -1231,7 +1231,7 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ## 2026-11-04 17:09 CET: Group evidenced global state into records
 
-**What I did**
+### What I did
 
 - Merged main 2223600 and mapped candidates by DS address after the global-renaming pass. Implemented 14 non-overlapping records: Hooks, RenderRows, TireWork, StatusText, BodyPoints, MirrorRoad, MirrorEdges, BuildingRows, ListDialog, TimerPriorities, PartSelection, InputState, Wager and the existing Blt for the ad packet. This replaces 114 symbols with 14 objects (100 fewer symbols); typed driver tables share Hooks and installers use direct assignments.
 - Restored the cramped spellings as members: g_fnShow becomes g_videoOps.show and g_xTextR becomes g_statusLine.textEndX. Kept unrelated cramped names outside the records.
@@ -1239,7 +1239,7 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - Committed four focused tooling/test fixes separately: named callback fields, int-sized enum members, static ownership without a symbol-count threshold, and fallback data regions inside source aggregates. The overlapping-source-global check stays strict.
 - Each group passed 572/572 functions, a clean packed build IDENTICAL, header/DGROUP checks and the unit suite. Final suite: 58 tests OK. Real MSC confirmed 602 sizeof/offsetof checks across 82 shared/owner-header types; native DOS MAKE is IDENTICAL (SHA1 3a5e28b795313028b7e77d147122f41cb29de334). Full mapping and logs are in work/structs/impl/REPORT.md. No work/ artifacts committed, no push or merge back to main.
 
-**What I learned**
+### What I learned
 
 - Members remove hash and external-name budget constraints, but the one remaining object name must fit its new neighbor window; deleting the old members can widen that window.
 - Separate globals and a natural record can both match. The callback copies support Hooks; the other chosen records remain explicit reconstruction choices.
@@ -1250,7 +1250,7 @@ Tooling lessons are recorded in [sr-cli](../.claude/skills/sr-cli/SKILL.md); the
 
 ## 2026-11-04 18:02 CET: Correct the independent struct review findings
 
-**What I did**
+### What I did
 
 - Split generic text endpoints into TextEnd g_penPoint at 824C and narrowed StatusText to status-line state at 8250. Extracted the right-side scenery cursor at 8634 from mirror Y rows at 8638. InputState now contains only any/key; restored 05D4..05DB as separate placeholder globals, preserving the 32767 sentinel and drive-reset writes.
 - Applied the reviewed member names: RenderRows.lineWidth, TireWork.liftBuf/liftHeader/wheelX1. Replaced the five misleading object spellings with g_sysTimerPriorities, g_slotSelec, g_mirGeom, g_raceWagerTerms and g_rightSideTerrainRow (separate from g_mirYProj).
@@ -1258,7 +1258,7 @@ Tooling lessons are recorded in [sr-cli](../.claude/skills/sr-cli/SKILL.md); the
 - Used BetKind constants at wager-kind writers/tests and typed the corresponding locals/parameter. Changed PartSelection's unused word to int, corrected the old hook comment, and made ADS function-pointer calls consistent.
 - Merged main (already up to date), checked conflicts, and passed 572/572 functions, clean packed build IDENTICAL, headers/DGROUP/order and 58 unit tests. Native DOS MAKE is IDENTICAL; real MSC verified 586 size/offset checks across 81 shared/owner-header types. No further tooling fixes were needed. Current evidence: work/structs/fixes/REPORT.md.
 
-**What I learned**
+### What I learned
 
 - Byte identity permits broader groups than a source reconstruction should use. Trace each field's writers/readers to separate generic text output, status-line state, forward/mirror scenery cursors and drive-reset words.
 - Array writers can reveal the true capacity where reconstruction introduced terminal scalar members. The compiler-verified full-array result is recorded in the [recipe book](../.claude/skills/msc51-recipe-book/SKILL.md); explicit unused/reset-only fields remain distinct from automatic padding.
@@ -1359,3 +1359,25 @@ Tooling lessons are recorded in [sr-cli](../.claude/skills/sr-cli/SKILL.md); the
 
 ### What I learned
 - sys_timer_cancel walks from `earliest` along `nxt`, but `earliest` ends the chain, so it only ever looks at one entry: probably a bug in the original game (kept; the bytes are the game's).
+
+## 2026-11-04 19:12 CET: Two-letter module prefix proposal
+
+### What I did
+
+Read PREFIX_TASK.md and CLAUDE.md, surveyed all 96 source modules, and wrote PREFIXES.md for review only. Proposed 80 unique two-letter prefixes covering 405 public definitions (404 rename candidates; main keeps its CRT name). Checked complete candidate names with the rename tool's collision registry and MSC headers, checked prefix namespaces, and counted source identifier savings and distinct-name changes in GARAGE.C and VIEW.C. No source symbols, files, flags, or headers were changed; build gates were not run for this documentation-only proposal.
+
+### What I learned
+
+Header-only inventory misses 16 public definitions, including main and exported assembly helpers. There are 45 public address placeholders: adding their module prefix while preserving the address adds one character per occurrence. Full consistency saves 7,449 source identifier characters, including 326 in GARAGE.C and 220 in VIEW.C; the distinct-name estimates are 62 characters each, not compiler-threshold measurements. Avoid ad_ (private ad_picture), sh_ (MSC SH_* macros), and tc_ (MSC TC_* macros). The proposal stops before any rename for manager/user review.
+
+## 2026-11-04 19:26 CET: Adopt approved two-letter public function prefixes
+
+### What I did
+
+Applied option (a) of the approved proposal: renamed 358 already-named public functions through ./sr rename using the uncommitted work/prefix/LEDGER.tsv. Kept all address placeholders, main, set_g47ec_47ed, file names, private functions, locals, globals, and struct members unchanged. Updated CLAUDE.md with the xx_snake_case rule, the full 80-module prefix table grouped by folder, and the reasons ad_, sh_, and tc_ were rejected. The rename tool updated source/header references, documentation, skill examples, and test fixtures. Kept the proposal diary entry above; proposal/task briefs and work/ are excluded from the commit.
+
+Validation passed with SR_JOBS=6: ./sr headers --check; ./sr check --all (572/572, 551 MATCH and 21 MATCH*); clean ./sr build after removing work/build* (96/96 object gates, 572/572 raw-byte exact at original positions, 748/748 near calls exact, packed EXE IDENTICAL); ./sr dgroup check; ./sr dgroup order; all 62 unittest tests; and ./dosbox.sh --make (DOS-native EXE IDENTICAL). A separate audit verified all 572 definitions retained addresses, sizes, distance, visibility, and source files, all data/static declarations were unchanged, and every source edit was exactly an authorized symbol replacement.
+
+### What I learned
+
+The approved renames free 105 distinct function-name characters in GARAGE.C (37 renamed symbols) and 63 in VIEW.C (23 renamed symbols), including their own public definitions, matching the proposal's option (a). Repeated source spellings shrink by 439 and 225 characters respectively, but repetition does not multiply MSC budget headroom. These are name-length reductions, not measured absolute distances to the compiler's code-generation threshold. Keeping the 45 public F_XXXXX placeholders unchanged avoids their additional name cost. Both compiler backends preserve the original executable without hash-window or budget workarounds.

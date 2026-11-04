@@ -73,12 +73,12 @@ static void near put_pixels(char far *dst, unsigned char *src, int n, int ph)
     }
 }
 
-/* cgashift_blit @ 1C11:1631 (linear 0x1D741, 386 bytes)
+/* cx_blit @ 1C11:1631 (linear 0x1D741, 386 bytes)
 
    Blit a rectangle between 4-pixel-per-byte bitmaps, shifting each row through a buffer */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-void cgashift_blit(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *blt)
+void cx_blit(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *blt)
 {
     int n2;
     int w9;

@@ -75,12 +75,12 @@ unsigned char g_rleCounts[16] = {1, 1, 2, 3, 4, 2, 3, 5, 6, 6, 4, 7, 7, 5, 8, 8}
 unsigned char g_rleValues[16] = {0, 255, 0, 0, 0, 255, 255, 0, 255, 0, 255, 255, 0, 255, 255, 0};   /* DS:4EFE */
 int g_picNewHeader = 1;   /* DS:4F0E */
 
-/* disk_seek @ 0F38:6016 (linear 0x15396, 65 bytes)
+/* di_seek @ 0F38:6016 (linear 0x15396, 65 bytes)
 
    Seek the DOS file handle to the absolute position pos (INT 21h function 42h, method 0).
    Returns 0 on success, else the error in _doserrno, also copied to errno */
 
-int disk_seek(int handle, long pos)
+int di_seek(int handle, long pos)
 {
     union REGS in, out;
 
@@ -144,23 +144,23 @@ static void near open_lib(int n)
         tries = 0;
         while (_dos_open(g_picLib.path, O_RDONLY, g_picLib.handle)) {
             if (tries++ == 3)
-                sys_exit();
-            screen_wait_msg(g_msgInsertDisk);
+                sy_exit();
+            sc_wait_msg(g_msgInsertDisk);
         }
         if (_dos_read(*g_picLib.handle, (void far *)g_picLib.count, 2, &got) || got != 2 || g_lib1Count + g_countLibBmB != 0x115) {
-            screen_wait_msg(g_msgBadFormat);
-            sys_exit();
+            sc_wait_msg(g_msgBadFormat);
+            sy_exit();
         }
     }
 }
 
-/* disk_read_index @ 0F38:61AB (linear 0x1552B, 271 bytes)
+/* di_read_index @ 0F38:61AB (linear 0x1552B, 271 bytes)
 
    Read the picture headers of one picture file into g_slot: which 1 is the first file,
    anything else the second (its entries follow the first file's, g_lib1Count of them). Clears the
    run time fields of each entry. Returns the largest data size found */
 
-int disk_read_index(int which)
+int di_read_index(int which)
 {
     int num;
     unsigned height;
@@ -177,10 +177,10 @@ int disk_read_index(int which)
     count = which == 1 ? g_lib1Count : g_countLibBmB;
     for (i = 0; i < count; i++) {
         sl = &g_slot[base + i];
-        if (disk_seek(*g_picLib.handle, (long)(i * 0x1e + 2)) ||
+        if (di_seek(*g_picLib.handle, (long)(i * 0x1e + 2)) ||
             _dos_read(*g_picLib.handle, (void far *)sl, 0x1e, &got) || got != 0x1e) {
-            screen_wait_msg(g_msgBadFormat);
-            sys_exit();
+            sc_wait_msg(g_msgBadFormat);
+            sy_exit();
         }
         sl->vramPlane = NOT_IN_VRAM;
         sl->ptr.p = 0;
@@ -197,7 +197,7 @@ int disk_read_index(int which)
 /* load_pic @ 0F38:62BA (linear 0x1563A, 676 bytes)
 
    Bring picture number n into memory. With load set the picture goes through a work
-   area in the fast pool (mem_vram_alloc) and is copied there after it has been read; otherwise it is read
+   area in the fast pool (me_vram_alloc) and is copied there after it has been read; otherwise it is read
    into dst, or into a new block when dst is 0. The file position and the disk are looked after by
    open_lib and the read is repeated after asking for the disk again when the data does not start
    and end with 0xbc. Returns 0 when there was no memory, 1 when the picture was loaded already,
@@ -219,18 +219,18 @@ static enum LoadResult near load_pic(int n, int load, char far *dst)
     ent = sl = &g_slot[n];
     if (sl->ptr.p == 0) {
         if (load) {
-            fp = mem_vram_alloc(ent->packedSize, &pool);
-            sl->ptr.p = fp == 0 ? (char far *)0 : arena_alloc(ent->packedSize + 1, ARENA_HIGH_STACK);
+            fp = me_vram_alloc(ent->packedSize, &pool);
+            sl->ptr.p = fp == 0 ? (char far *)0 : ar_alloc(ent->packedSize + 1, ARENA_HIGH_STACK);
             sl->vramPlane = pool;
         } else {
-            sl->ptr.p = dst ? dst : mem_alloc(ent->packedSize + 1, 0);
+            sl->ptr.p = dst ? dst : me_alloc(ent->packedSize + 1, 0);
             sl->vramPlane = NOT_IN_VRAM;
         }
         if (sl->ptr.p == 0)
             return LOAD_NO_MEMORY;
         open_lib(num);
         offset = (long)(*g_picLib.count * 0x1e + 2) + ent->dataOffset;
-        if (disk_seek(*g_picLib.handle, offset))
+        if (di_seek(*g_picLib.handle, offset))
             goto bad;
         if (sl->vramPlane != NOT_IN_VRAM) {
             outp(SEQ_INDEX, SEQ_MAP_MASK);
@@ -255,13 +255,13 @@ static enum LoadResult near load_pic(int n, int load, char far *dst)
                 goto bad;
             do {
                 if (++retries > 3)
-                    sys_exit();
+                    sy_exit();
                 g_msgInsertDisk[12] = *g_picLib.handle == g_lib1Handle ? 1 : (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3' : '2';
                 g_msgInsertDisk[25] = *g_picLib.path;
-                screen_wait_msg(g_msgInsertDisk);
+                sc_wait_msg(g_msgInsertDisk);
                 _dos_close(*g_picLib.handle);
             } while (_dos_open(g_picLib.path, O_RDONLY, g_picLib.handle));
-            if (!disk_seek(*g_picLib.handle, offset))
+            if (!di_seek(*g_picLib.handle, offset))
                 continue;
             goto bad;
         }
@@ -270,32 +270,32 @@ static enum LoadResult near load_pic(int n, int load, char far *dst)
     } else
         return LOAD_CACHED;
 bad:
-    screen_wait_msg(g_msgBadFormat);
-    sys_exit();
+    sc_wait_msg(g_msgBadFormat);
+    sy_exit();
 }
 
-/* disk_free_pic @ 0F38:655E (linear 0x158DE, 80 bytes)
+/* di_free_pic @ 0F38:655E (linear 0x158DE, 80 bytes)
 
    Frees and clears the far pointer in slot n of the far table g_slot. */
 
-void disk_free_pic(int n)
+void di_free_pic(int n)
 {
     char far * far *pp;
 
     n = pic_index(n);
     if (*(pp = &g_slot[n].ptr.p)) {
-        mem_free(*pp);
+        me_free(*pp);
         *pp = 0;
     }
 }
 
-/* disk_unpack_pic @ 0F38:65AE (linear 0x1592E, 593 bytes)
+/* di_unpack_pic @ 0F38:65AE (linear 0x1592E, 593 bytes)
 
    Unpack picture number id into the bitmap bm (a new one when bm is 0). The picture is
-   loaded to the work area g_imageBufferPointer first; its data is RLE coded (rle_decode) and expanded for the video
+   loaded to the work area g_imageBufferPointer first; its data is RLE coded (rl_decode) and expanded for the video
    mode in use into the planes bits and alt of the bitmap. Returns the bitmap */
 
-struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
+struct Bitmap far *di_unpack_pic(int id, struct Bitmap far *bm)
 {
     int num;
     char far *src;
@@ -306,11 +306,11 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
     struct Bitmap far *pic;
     struct Slot far *sl;
 
-    cursor_ctl(CURSOR_HIDE_NOW);
+    cu_ctl(CURSOR_HIDE_NOW);
     res = load_pic(id, 0, g_imageBufferPointer);
     cur = sl = &g_slot[pic_index(id)];
     if (g_picNewHeader)
-        pic = mem_new_bitmap(cur->width, cur->height, cur->bitmapFlags, 1, bm);
+        pic = me_new_bitmap(cur->width, cur->height, cur->bitmapFlags, 1, bm);
     else
         pic = bm;
     for (j = 0; j < 16; j++)
@@ -323,22 +323,22 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
     num = cur->packedSize - 1;
     if (r_vid.mode == VID_EGA) {
         if (pic->bits.p == 0) {
-            rle_decode(src, pic->alt.p, num, colors16, 16);
+            rl_decode(src, pic->alt.p, num, colors16, 16);
         } else {
-            rle_decode(src, pic->bits.p, num, colors16, 16);
+            rl_decode(src, pic->bits.p, num, colors16, 16);
             if (pic->alt.p)
-                maskblt_make_mask(pic->bits.p, pic->alt.p, pic->planesize);
+                mk_make_mask(pic->bits.p, pic->alt.p, pic->planesize);
         }
     } else if (r_vid.mode == VID_TANDY) {
         if (pic->bits.p == 0) {
-            tandypic_unpack_mask(src, pic->alt.p, pic->planesize, colors16);
+            tp_unpack_mask(src, pic->alt.p, pic->planesize, colors16);
         } else {
-            tandypic_unpack(src, pic->bits.p, pic->planesize, colors16);
+            tp_unpack(src, pic->bits.p, pic->planesize, colors16);
             if (pic->alt.p)
-                tandypic_make_mask(pic->bits.p, pic->alt.p, pic->planesize);
+                tp_make_mask(pic->bits.p, pic->alt.p, pic->planesize);
         }
     } else {
-        rle_decode(src, pic->bits.p == 0 ? pic->alt.p : pic->bits.p, num, colors16, 16);
+        rl_decode(src, pic->bits.p == 0 ? pic->alt.p : pic->bits.p, num, colors16, 16);
     }
     if (sl->vramPlane != NOT_IN_VRAM) {
         outp(SEQ_INDEX, SEQ_MAP_MASK);
@@ -346,15 +346,15 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
     }
     if (res == LOAD_READ)
         sl->ptr.p = 0;
-    cursor_ctl(CURSOR_SHOW_NOW);
+    cu_ctl(CURSOR_SHOW_NOW);
     return pic;
 }
 
-/* disk_pic_size @ 0F38:67FF (linear 0x15B7F, 63 bytes)
+/* di_pic_size @ 0F38:67FF (linear 0x15B7F, 63 bytes)
 
    Fields of slot picture number n: *w, *h and the byte *x */
 
-void disk_pic_size(int n, int *w, int *h, int *x)
+void di_pic_size(int n, int *w, int *h, int *x)
 {
     n = pic_index(n);
     *w = g_slot[n].width;
@@ -362,30 +362,30 @@ void disk_pic_size(int n, int *w, int *h, int *x)
     *x = g_slot[n].bitmapFlags;
 }
 
-/* disk_bm @ 0F38:683E (linear 0x15BBE, 73 bytes)
+/* di_bm @ 0F38:683E (linear 0x15BBE, 73 bytes)
 
    Allocate a bitmap of the given mode for slot picture id, draw the picture into it
-   (disk_unpack_pic) and return it */
+   (di_unpack_pic) and return it */
 
-struct Bitmap far *disk_bm(int id, int mode)
+struct Bitmap far *di_bm(int id, int mode)
 {
     int h;
     int w1;
     int x;
     struct Bitmap far *bm;
 
-    disk_pic_size(id, &w1, &h, &x);
-    bm = arena_bm(w1, h, x, mode);
-    disk_unpack_pic(id, bm);
+    di_pic_size(id, &w1, &h, &x);
+    bm = ar_bm(w1, h, x, mode);
+    di_unpack_pic(id, bm);
     return bm;
 }
 
-/* disk_cache_list @ 0F38:6887 (linear 0x15C07, 67 bytes)
+/* di_cache_list @ 0F38:6887 (linear 0x15C07, 67 bytes)
 
    Load every picture of the zero terminated list of picture numbers (see load_pic). Does
    nothing when g_noUeMem is set. Returns 1 */
 
-int disk_cache_list(int *list)
+int di_cache_list(int *list)
 {
     int n;
 
@@ -396,12 +396,12 @@ int disk_cache_list(int *list)
     return 1;
 }
 
-/* disk_load_list @ 0F38:68CA (linear 0x15C4A, 75 bytes)
+/* di_load_list @ 0F38:68CA (linear 0x15C4A, 75 bytes)
 
    Try the pictures of the zero terminated list in turn with load_pic (load flag 0) and
    count the ones that succeed. A failure ends the walk unless all is set. Returns the count */
 
-int disk_load_list(int *list, int all)
+int di_load_list(int *list, int all)
 {
     int n;
     int count;
@@ -417,26 +417,26 @@ int disk_load_list(int *list, int all)
     return count;
 }
 
-/* disk_free_list @ 0F38:6915 (linear 0x15C95, 46 bytes)
+/* di_free_list @ 0F38:6915 (linear 0x15C95, 46 bytes)
 
    Free the pictures listed in the zero terminated array of picture numbers */
 
-void disk_free_list(int *list)
+void di_free_list(int *list)
 {
     int n;
 
     while (n = *list++)
-        disk_free_pic(n);
+        di_free_pic(n);
 }
 
-/* disk_open_libs @ 0F38:6943 (linear 0x15CC3, 566 bytes)
+/* di_open_libs @ 0F38:6943 (linear 0x15CC3, 566 bytes)
 
    Open the two picture files (names g_library1Path and g_picLibBPath, drive letter patched into their
    first character) and read the entry counts g_lib1Count and g_countLibBmB from their headers. disks is the
    number of disk drives wanted: 2 only when the equipment word says there are two floppies. mode 2
    and 5 pick the other file names. Any failure shows an error text */
 
-void disk_open_libs(int disks, int mode)
+void di_open_libs(int disks, int mode)
 {
     int equip;
     int tries;
@@ -452,23 +452,23 @@ void disk_open_libs(int disks, int mode)
     err = _dos_open(g_library1Path, O_RDONLY, &g_lib1Handle);
     if (err || g_lib1Handle == 0) {
         if (g_initialDrive > 2) {
-            screen_wait_msg(g_msgCopyFiles);
+            sc_wait_msg(g_msgCopyFiles);
         } else {
             strcpy(g_msgNotFound + 0x10, g_library1Path + 2);
-            screen_wait_msg(g_msgNotFound);
+            sc_wait_msg(g_msgNotFound);
         }
-        sys_exit();
+        sy_exit();
     }
     if (_dos_read(g_lib1Handle, (void far *)&g_lib1Count, 2, &err) || err != 2) {
-        screen_wait_msg(g_msgBadFormat);
-        sys_exit();
+        sc_wait_msg(g_msgBadFormat);
+        sy_exit();
     }
     g_picLibBPath = (mode == 2 || mode == 5) ? g_lib2Name : g_lib2cName;
     *g_picLibBPath = *g_library1Path;
     if (_dos_open(g_picLibBPath, O_RDONLY, &g_lib2Handle) || g_lib2Handle == 0) {
         if (g_initialDrive > 2) {
-            screen_wait_msg(g_msgCopyFiles);
-            sys_exit();
+            sc_wait_msg(g_msgCopyFiles);
+            sy_exit();
         } else if (disks == 1) {
             g_lib2Handle = 0;
         } else {
@@ -476,32 +476,32 @@ void disk_open_libs(int disks, int mode)
             err = _dos_open(g_picLibBPath, O_RDONLY, &g_lib2Handle);
             for (tries = 0; err || g_lib2Handle == 0; tries++) {
                 if (tries == 3)
-                    sys_exit();
+                    sy_exit();
                 g_msgInsertDisk[12] = (mode != 2 && mode != 5) ? '3' : '2';
                 g_msgInsertDisk[0x19] = *g_picLibBPath;
-                screen_wait_msg(g_msgInsertDisk);
+                sc_wait_msg(g_msgInsertDisk);
                 err = _dos_open(g_picLibBPath, O_RDONLY, &g_lib2Handle);
             }
         }
     }
     if (g_lib2Handle) {
         if (_dos_read(g_lib2Handle, (void far *)&g_countLibBmB, 2, &err) || err != 2 || g_lib1Count + g_countLibBmB != 0x115) {
-            screen_wait_msg(g_msgBadFormat);
-            sys_exit();
+            sc_wait_msg(g_msgBadFormat);
+            sy_exit();
         }
     }
 }
 
 char g_hallFileName[12] = "?:hall_dat";   /* DS:4F3A */
 
-/* disk_load_data @ 0F38:6B79 (linear 0x15EF9, 196 bytes)
+/* di_load_data @ 0F38:6B79 (linear 0x15EF9, 196 bytes)
 
    Load the game data. Builds the file name g_dataPath from the first two characters of
    g_picLibBPath and the text g_dataFileName points to (g_dataFileName ends up behind its terminator), opens it and
    reads the 13 blocks of the data table (buffer g_dataBlocks[i], size g_dataSizes[i]); any failure shows an
-   error text. Ends by loading the hall of fame (disk_load_hall) */
+   error text. Ends by loading the hall of fame (di_load_hall) */
 
-void disk_load_data(void)
+void di_load_data(void)
 {
     int i;
     int got;
@@ -515,27 +515,27 @@ void disk_load_data(void)
     while (*drive++ = *g_dataFileName++)
         ;
     if (_dos_open(g_dataPath, O_RDONLY, &fd)) {
-        screen_wait_msg("Can't open data file");
-        sys_exit();
+        sc_wait_msg("Can't open data file");
+        sy_exit();
     }
     for (i = j = 0; i < 13; i++) {
         if (!_dos_read(fd, (void far *)g_dataBlocks[i], g_dataSizes[i], &got) && got == g_dataSizes[i])
             continue;
-        screen_wait_msg("Data disc read fail");
-        sys_exit();
+        sc_wait_msg("Data disc read fail");
+        sy_exit();
     }
     _dos_close(fd);
-    disk_load_hall();
+    di_load_hall();
 }
 
-/* disk_data_drive @ 0F38:6C3D (linear 0x15FBD, 146 bytes)
+/* di_data_drive @ 0F38:6C3D (linear 0x15FBD, 146 bytes)
 
    Make sure the game disk is in the drive: tries to open the file g_dataPath (asking for
    disk 2 again and again) and closes it. From the third drive on (g_initialDrive > 2, a hard disk) it
    returns the drive letter code g_initialDrive + 0x40 at once. Otherwise returns the first character of
    g_dataPath */
 
-int disk_data_drive(void)
+int di_data_drive(void)
 {
     int file;
     int tries;
@@ -546,10 +546,10 @@ int disk_data_drive(void)
     for (;;) {
         if (_dos_open(g_dataPath, O_RDONLY, &file)) {
             if (++tries > 3)
-                sys_exit();
+                sy_exit();
             g_msgInsertDisk[12] = (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3' : '2';
             g_msgInsertDisk[25] = *g_picLibBPath;
-            screen_wait_msg(g_msgInsertDisk);
+            sc_wait_msg(g_msgInsertDisk);
         } else {
             _dos_close(file);
             open_lib(1000);
@@ -561,7 +561,7 @@ int disk_data_drive(void)
 /* scramble_hall @ 0F38:6CCF (linear 0x1604F, 29 bytes)
 
    Set the high bit of all 230 bytes of g_hallFameTbl (10 hall of fame entries of 23 bytes) to scramble
-   it before it is written to the file (see disk_save_hall) */
+   it before it is written to the file (see di_save_hall) */
 
 static void near scramble_hall(void)
 {
@@ -583,13 +583,13 @@ static void near unscramble_hall(void)
         ((char *)g_hallFameTbl)[i] &= 0x7f;
 }
 
-/* disk_load_hall @ 0F38:6D09 (linear 0x16089, 201 bytes)
+/* di_load_hall @ 0F38:6D09 (linear 0x16089, 201 bytes)
 
    Read the hall of fame file (name g_hallFileName, first character the drive of the game disk):
    a count word, then g_nScore entries. Any read failure shows the error text. A missing file
    leaves the table empty */
 
-void disk_load_hall(void)
+void di_load_hall(void)
 {
     struct Entry *p;
     int i;
@@ -597,18 +597,18 @@ void disk_load_hall(void)
     int fd;
 
     g_hallFileName[0] = *g_picLibBPath;
-    disk_data_drive();
+    di_data_drive();
     if (_dos_open(g_hallFileName, O_RDONLY, &fd) || fd == 0)
         g_nScore = 0;
     else {
         if (_dos_read(fd, (void far *)&g_nScore, 2, &got) || got != 2) {
-            screen_wait_msg(g_msgBadFormat);
-            sys_exit();
+            sc_wait_msg(g_msgBadFormat);
+            sy_exit();
         }
         for (i = 0, p = g_hallFameTbl; i < g_nScore; p++, i++) {
             if (_dos_read(fd, (void far *)p, sizeof *p, &got) || got != sizeof *p) {
-                screen_wait_msg(g_msgBadFormat);
-                sys_exit();
+                sc_wait_msg(g_msgBadFormat);
+                sy_exit();
             }
         }
         _dos_close(fd);
@@ -616,14 +616,14 @@ void disk_load_hall(void)
     }
 }
 
-/* disk_save_hall @ 0F38:6DD2 (linear 0x16152, 312 bytes)
+/* di_save_hall @ 0F38:6DD2 (linear 0x16152, 312 bytes)
 
    Write the hall of fame file (g_hallFileName): the table is scrambled (scramble_hall), the file made
    (asking for the disk until it works on a floppy), the count word and the g_nScore entries
    written. Any failure shows the error text and deletes the file. The table is unscrambled at
    the end (unscramble_hall) */
 
-void disk_save_hall(void)
+void di_save_hall(void)
 {
     struct Entry *p;
     int tries;
@@ -632,28 +632,28 @@ void disk_save_hall(void)
     int fd;
 
     scramble_hall();
-    disk_data_drive();
+    di_data_drive();
     got = _dos_creat(g_hallFileName, _A_NORMAL, &fd);
     if (g_initialDrive > 2) {
         if (fd == 0 || got) {
-            screen_wait_msg(g_msgWriteError);
-            sys_exit();
+            sc_wait_msg(g_msgWriteError);
+            sy_exit();
         }
     } else {
         g_msgInsertDisk[12] = '1';
         g_msgInsertDisk[25] = g_hallFileName[0];
         for (tries = 0; fd == 0 || got; tries++) {
             if (tries == 3)
-                sys_exit();
-            screen_wait_msg(g_msgBadFormat);
+                sy_exit();
+            sc_wait_msg(g_msgBadFormat);
             got = _dos_creat(g_hallFileName, _A_NORMAL, &fd);
         }
     }
     if (_dos_write(fd, (void far *)&g_nScore, 2, &got) || got != 2) {
 bad:
-        screen_wait_msg(g_msgWriteError);
+        sc_wait_msg(g_msgWriteError);
         unlink(g_hallFileName);
-        screen_wait_msg(g_msgWriteError);
+        sc_wait_msg(g_msgWriteError);
     } else {
         for (i = 0, p = g_hallFameTbl; i < g_nScore; p++, i++)
             if (_dos_write(fd, (void far *)p, sizeof *p, &got) || got != sizeof *p)

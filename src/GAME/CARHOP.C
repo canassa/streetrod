@@ -41,7 +41,7 @@ static void near cut_sheet(struct Bitmap far **out, int n)
     id5 = g_carhopSheets[n].id;
     cols8 = g_carhopSheets[n].cols;
     cells = g_carhopSheets[n].n;
-    sheet = disk_bm(id5, ARENA_HIGH_STACK);
+    sheet = di_bm(id5, ARENA_HIGH_STACK);
     r.w = sheet->width / cols8;
     r.h = sheet->height >> 1;
     r.sx = 0;
@@ -52,7 +52,7 @@ static void near cut_sheet(struct Bitmap far **out, int n)
             r.sx = 0;
             r.sy = r.h;
         }
-        out[i] = bitmap_grab(sheet, &r, ARENA_HIGH_STACK);
+        out[i] = bm_grab(sheet, &r, ARENA_HIGH_STACK);
     }
 }
 
@@ -64,21 +64,21 @@ static void near grab_strip(struct Bitmap far **pbm)
 {
     int w, x, h;
 
-    disk_pic_size(0x474, &w, &h, &x);
-    mem_set_bitmap(*pbm, g_pageBmps[2]->bits.p + BACKDROP_ROWS * g_pageBmps[2]->pitch, 0L, w, h, r_vid.mode == VID_EGA ? VID_EGA : -1);
+    di_pic_size(0x474, &w, &h, &x);
+    me_set_bitmap(*pbm, g_pageBmps[2]->bits.p + BACKDROP_ROWS * g_pageBmps[2]->pitch, 0L, w, h, r_vid.mode == VID_EGA ? VID_EGA : -1);
     if (r_vid.mode == VID_EGA) {
-        egalatch_rect(r_vid.front->bits.p, (*pbm)->bits.p - 0xaa0, (*pbm)->pitch, (*pbm)->height, 0, 0x44, EGA_PITCH);
+        ea_rect(r_vid.front->bits.p, (*pbm)->bits.p - 0xaa0, (*pbm)->pitch, (*pbm)->height, 0, 0x44, EGA_PITCH);
     } else {
-        popup_grab(0, 0x44, w, h, *pbm);
+        pu_grab(0, 0x44, w, h, *pbm);
     }
 }
 
-/* carhop_skate @ 0F38:99D9 (linear 0x18D59, 1156 bytes)
+/* ch_skate @ 0F38:99D9 (linear 0x18D59, 1156 bytes)
 
    Build the sprite animation of a moving car body: the cells from the sheet, the pages, the 0x54
    step run */
 
-void carhop_skate(int a, int b)
+void ch_skate(int a, int b)
 {
     struct Blt r2;
     struct Bitmap far *t;
@@ -101,7 +101,7 @@ void carhop_skate(int a, int b)
     int i;
 
     bm9 = &hdrz;
-    marks_release();
+    ma_release();
     grab_strip(&bm9);
     if (a == CARHOP_LEAVE) {
         r3.w = 0x30;
@@ -111,12 +111,12 @@ void carhop_skate(int a, int b)
         (*g_videoOps.copy)(g_carhopBg, bm9, &r3, 1);
     }
     if (b) {
-        if (sprite_car_clip(0, 0x44, bm9->width, bm9->height, &rca2)) {
+        if (sp_car_clip(0, 0x44, bm9->width, bm9->height, &rca2)) {
             r3.w = rca2.x2 - rca2.x1;
             r3.h = rca2.y2 - rca2.y1 + 1;
             r3.sx = rca2.x1 - ac825et;
             r3.sy = rca2.y1 - aw8260y;
-            clip = bitmap_grab(g_autoSprImagePtr, &r3, ARENA_HIGH_STACK);
+            clip = bm_grab(g_autoSprImagePtr, &r3, ARENA_HIGH_STACK);
             r3.sx = 0;
             r3.sy = 0;
             r3.dx = rca2.x1;
@@ -125,9 +125,9 @@ void carhop_skate(int a, int b)
         } else
             clip = 0;
     }
-    carpic_backdrop(bm9, &tab2[0], 0x474, &B7, 0x29, 0x29, &prc3, &prc3);
+    cp_backdrop(bm9, &tab2[0], 0x474, &B7, 0x29, 0x29, &prc3, &prc3);
     if (a == CARHOP_ENTER) {
-        bm27 = arena_bm(0x30, 0x29, 1, ARENA_HIGH_STACK);
+        bm27 = ar_bm(0x30, 0x29, 1, ARENA_HIGH_STACK);
         r2.w = 0x30;
         r2.h = 0x29;
         r2.sx = r2.sy = 0;
@@ -137,13 +137,13 @@ void carhop_skate(int a, int b)
         (*g_videoOps.copy)(tab2[0], bm27, &r2, 2);
     }
     if (b && clip)
-        bitmap_and_mask(clip, tab2[0], &r3);
+        bm_and_mask(clip, tab2[0], &r3);
     rcb1.x1 = rcb1.y1 = 0;
     rcb1.x2 = tab2[0]->width - 1;
     rcb1.y2 = tab2[0]->height - 1;
     cut_sheet(&tab2[1], a);
-    fr = arena_bm(0x30, 0x29, 1, ARENA_HIGH_STACK);
-    sp2 = sprite_setup(a == CARHOP_ENTER ? -40 : 200, 0x6c, &fr, 0, 1, B7, tab2[0], &rcb1, 0);
+    fr = ar_bm(0x30, 0x29, 1, ARENA_HIGH_STACK);
+    sp2 = sp_setup(a == CARHOP_ENTER ? -40 : 200, 0x6c, &fr, 0, 1, B7, tab2[0], &rcb1, 0);
     p9 = a == CARHOP_ENTER ? g_carhopInSeq : g_carhopOutSeq;
     for (i = 0; i < 4; i++)
         trk7[i] = *p9++;
@@ -156,7 +156,7 @@ void carhop_skate(int a, int b)
     for (i = 0; i < 0x54; i++) {
         x = sp2->x;
         v3 = x & ~r_vid.mask;
-        bitmap_shift_right(tab2[g_carhopFrames[i]], v3, fr);
+        bm_shift_right(tab2[g_carhopFrames[i]], v3, fr);
         tm7 = g_tick + 2;
         okn = (*g_videoOps.spriteStep)(sp2);
         while (tm7 > g_tick)
@@ -165,9 +165,9 @@ void carhop_skate(int a, int b)
     okn = (*g_videoOps.spriteStep)(sp2);
     g_carhopRect = sp2->page->rect;
     if (a == CARHOP_LEAVE) {
-        carpic_patch_bg(g_carhopBg, 0, 0, 0x30, 0x29, 0xc8, 0x44, 0xa3, 2);
+        cp_patch_bg(g_carhopBg, 0, 0, 0x30, 0x29, 0xc8, 0x44, 0xa3, 2);
     } else {
-        t = arena_bm(fr->width, 0x29, 1, ARENA_HIGH_STACK);
+        t = ar_bm(fr->width, 0x29, 1, ARENA_HIGH_STACK);
         r2.w = fr->width;
         r2.h = 0x29;
         r2.sx = r2.sy = 0;
@@ -175,22 +175,22 @@ void carhop_skate(int a, int b)
         (*g_videoOps.copy)(g_carhopBg, t, &r2, 1);
         (*g_videoOps.maskedBlit)(fr, t, &r2, 1);
         (*g_videoOps.maskedBlit)(bm27, t, &r2, 0);
-        carpic_patch_bg(t, 0, 0, t->width, 0x29, 0xc8, 0x44, 0xa3, 2);
+        cp_patch_bg(t, 0, 0, t->width, 0x29, 0xc8, 0x44, 0xa3, 2);
     }
     if (r_vid.mode != VID_EGA)
         (*g_videoOps.copyPage)(r_vid.front->bits.p, r_vid.back->bits.p);
-    marks_release();
+    ma_release();
 }
 
-/* carhop_save_bg @ 0F38:9E5D (linear 0x191DD, 94 bytes)
+/* ch_save_bg @ 0F38:9E5D (linear 0x191DD, 94 bytes)
 
    Allocate the 0x30 x 0x29 bitmap g_carhopBg and clear a 200 x 68 rectangle of it */
 
-void carhop_save_bg(void)
+void ch_save_bg(void)
 {
     struct Blt pkt;
 
-    g_carhopBg = arena_bm(0x30, 0x29, 0, ARENA_LOW_BASE);
+    g_carhopBg = ar_bm(0x30, 0x29, 0, ARENA_LOW_BASE);
     pkt.w = g_carhopBg->width;
     pkt.h = g_carhopBg->height;
     pkt.sx = 200;

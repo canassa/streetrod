@@ -35,13 +35,13 @@ int g_musicSuspended = 0;   /* DS:58D8 */
 int g_squealOn = 0;   /* DS:58DA */
 int g_sirenOn = 0;   /* DS:58DC */
 
-/* sound_calibrate @ 0F38:703E (linear 0x163BE, 151 bytes)
+/* so_calibrate @ 0F38:703E (linear 0x163BE, 151 bytes)
 
-   Calibrate the speed of the machine: counts how often speaker_delay(n) can be called within
+   Calibrate the speed of the machine: counts how often sk_delay(n) can be called within
    one BIOS timer tick (the long at 0040:006C). Counts above 848 are scaled by 3/4. Also sets
    g_delayScale to 256 on the way */
 
-int sound_calibrate(int n)
+int so_calibrate(int n)
 {
     long tick;
     int count;
@@ -53,7 +53,7 @@ int sound_calibrate(int n)
         ;
     tick = *BIOS_TICKS;
     while (tick == *BIOS_TICKS) {
-        speaker_delay(n);
+        sk_delay(n);
         count++;
     }
     if (count > 0x350)
@@ -61,11 +61,11 @@ int sound_calibrate(int n)
     return count;
 }
 
-/* sound_set_freq @ 0F38:70D5 (linear 0x16455, 44 bytes)
+/* so_set_freq @ 0F38:70D5 (linear 0x16455, 44 bytes)
 
    Program PIT channel 2 for a tone of the given frequency */
 
-void sound_set_freq(long freq)
+void so_set_freq(long freq)
 {
     union Word div;
 
@@ -74,33 +74,33 @@ void sound_set_freq(long freq)
     outp(PIT_CH2, div.b[1]);
 }
 
-/* sound_init @ 0F38:7101 (linear 0x16481, 33 bytes)
+/* so_init @ 0F38:7101 (linear 0x16481, 33 bytes)
 
    Set up the PIT for sound (channel 2, mode 3) and program a tone (divisor from 25000) */
 
-void sound_init(void)
+void so_init(void)
 {
-    g_delayScale = sound_calibrate(10);
+    g_delayScale = so_calibrate(10);
     outp(PIT_CMD, PIT_CH2_LOHI_MODE3);
-    sound_set_freq(25000L);
+    so_set_freq(25000L);
 }
 
-/* sound_on @ 0F38:7122 (linear 0x164A2, 27 bytes)
+/* so_on @ 0F38:7122 (linear 0x164A2, 27 bytes)
 
    Speaker on: program the tone for 25000 and set bits 0 and 1 of port 61h */
 
-void sound_on(void)
+void so_on(void)
 {
-    sound_set_freq(25000L);
+    so_set_freq(25000L);
     outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_MASK);
     g_speakerOn = 1;
 }
 
-/* sound_off @ 0F38:713D (linear 0x164BD, 15 bytes)
+/* so_off @ 0F38:713D (linear 0x164BD, 15 bytes)
 
    Speaker off: clear bits 0 and 1 of port 61h */
 
-void sound_off(void)
+void so_off(void)
 {
     outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
     g_speakerOn = 0;
@@ -108,12 +108,12 @@ void sound_off(void)
 
 /* play_tone @ 0F38:714C (linear 0x164CC, 29 bytes)
 
-   Play the tone of frequency freq for n ticks (speaker_delay) */
+   Play the tone of frequency freq for n ticks (sk_delay) */
 
 static void near play_tone(long freq, int n)
 {
-    sound_set_freq(freq);
-    speaker_delay(n);
+    so_set_freq(freq);
+    sk_delay(n);
 }
 
 /* tone_burst @ 0F38:7169 (linear 0x164E9, 73 bytes)
@@ -127,7 +127,7 @@ static void near tone_burst(int lo, int hi, int dur, int count)
 
     span = hi - lo;
     for (i = 0; i < count; i++)
-        play_tone((long)(random_int(span) + lo), dur);
+        play_tone((long)(rn_int(span) + lo), dur);
 }
 
 /* sweep_down @ 0F38:71B2 (linear 0x16532, 50 bytes)
@@ -173,9 +173,9 @@ static void near pulse_train(int a, int *p, int count, int reps)
     for (i = 0; i < count; i++) {
         for (j = 0; j < reps; j++) {
             outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_DATA);
-            speaker_delay(*p);
+            sk_delay(*p);
             outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_DATA));
-            speaker_delay(a - *p);
+            sk_delay(a - *p);
         }
         p++;
     }
@@ -195,9 +195,9 @@ static void near pulse_train_back(int a, int *p, int count, int reps)
     for (i = 0; i < count; i++) {
         for (j = 0; j < reps; j++) {
             outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_DATA);
-            speaker_delay(*p);
+            sk_delay(*p);
             outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_DATA));
-            speaker_delay(a - *p);
+            sk_delay(a - *p);
         }
         p--;
     }
@@ -235,7 +235,7 @@ static void near warble(long freq, int period, int hi, int step, int cycles, int
     int k;
 
     count = fill_range(half, 1, hi, step);
-    sound_set_freq(freq);
+    so_set_freq(freq);
     for (k = 0; k < reps; k++) {
         pulse_train(period, half, count, cycles);
         pulse_train_back(period, &half[count - 1], count, cycles);
@@ -245,18 +245,18 @@ static void near warble(long freq, int period, int hi, int step, int cycles, int
 /* noise @ 0F38:7464 (linear 0x167E4, 76 bytes)
 
    Noise: speaker off, then count times flip bit 1 of port 61h and wait for a random time
-   (random_int(range) | bits) */
+   (rn_int(range) | bits) */
 
 static void near noise(int range, int bits, int count)
 {
     int i;
     int delay;
 
-    sound_off();
+    so_off();
     for (i = 0; i < count; i++) {
         outp(PPI_B, inp(PPI_B) ^ PPI_SPEAKER_DATA);
-        delay = random_int(range) | bits;
-        speaker_delay(delay);
+        delay = rn_int(range) | bits;
+        sk_delay(delay);
     }
 }
 
@@ -290,98 +290,98 @@ static void near noise_sweep_up(int start, int end, int gap, int step, int dur)
     }
 }
 
-/* sound_wheel_roll @ 0F38:7548 (linear 0x168C8, 43 bytes)
+/* so_wheel_roll @ 0F38:7548 (linear 0x168C8, 43 bytes)
 
-   Starts one of two sounds through music_play; `on` selects which. */
+   Starts one of two sounds through mu_play; `on` selects which. */
 
-void sound_wheel_roll(int on)
+void so_wheel_roll(int on)
 {
     if (on)
-        music_play(g_wheelRollSound, g_jingleRepeats);
+        mu_play(g_wheelRollSound, g_jingleRepeats);
     else
-        music_play(g_song, g_songRepeats);
+        mu_play(g_song, g_songRepeats);
 }
 
 /* F_168F3 @ 0F38:7573 (linear 0x168F3, 80 bytes)
 
-   Starts one of two sounds through music_play; `on` selects which */
+   Starts one of two sounds through mu_play; `on` selects which */
 
 void F_168F3(int on)
 {
     if (on) {
-        music_play(g_stickerSound, g_jingleRepeats);
-        music_set_vibrato(1, 0, 8, 10, 1);
+        mu_play(g_stickerSound, g_jingleRepeats);
+        mu_set_vibrato(1, 0, 8, 10, 1);
     } else
-        music_play(g_song, g_songRepeats);
+        mu_play(g_song, g_songRepeats);
 }
 
 /* F_16943 @ 0F38:75C3 (linear 0x16943, 80 bytes)
 
-   Starts one of two sounds through music_play; `on` selects which */
+   Starts one of two sounds through mu_play; `on` selects which */
 
 void F_16943(int on)
 {
     if (on) {
-        music_play(g_2f93_00b0, g_jingleRepeats);
-        music_set_vibrato(1, 0, 8, 5, 1);
+        mu_play(g_2f93_00b0, g_jingleRepeats);
+        mu_set_vibrato(1, 0, 8, 5, 1);
     } else
-        music_play(g_song, g_songRepeats);
+        mu_play(g_song, g_songRepeats);
 }
 
-/* sound_pump @ 0F38:7613 (linear 0x16993, 78 bytes)
+/* so_pump @ 0F38:7613 (linear 0x16993, 78 bytes)
 
-   Starts one of two sounds through music_play; `on` selects which */
+   Starts one of two sounds through mu_play; `on` selects which */
 
-void sound_pump(int on)
+void so_pump(int on)
 {
     if (on) {
-        music_play(g_pumpSound, g_jingleRepeats);
-        music_set_vibrato(1, 1, 8, 30, 1);
+        mu_play(g_pumpSound, g_jingleRepeats);
+        mu_set_vibrato(1, 1, 8, 30, 1);
     } else
-        music_play(g_song, g_songRepeats);
+        mu_play(g_song, g_songRepeats);
 }
 
-/* sound_jack @ 0F38:7661 (linear 0x169E1, 78 bytes)
+/* so_jack @ 0F38:7661 (linear 0x169E1, 78 bytes)
 
-   Starts one of two sounds through music_play; `on` selects which */
+   Starts one of two sounds through mu_play; `on` selects which */
 
-void sound_jack(int on)
+void so_jack(int on)
 {
     if (on) {
-        music_play(g_jackSound, g_jingleRepeats);
-        music_set_vibrato(1, 1, 8, 20, 1);
+        mu_play(g_jackSound, g_jingleRepeats);
+        mu_set_vibrato(1, 1, 8, 20, 1);
     } else
-        music_play(g_song, g_songRepeats);
+        mu_play(g_song, g_songRepeats);
 }
 
 /* F_16A2F @ 0F38:76AF (linear 0x16A2F, 43 bytes)
 
-   Starts one of two sounds through music_play; `on` selects which */
+   Starts one of two sounds through mu_play; `on` selects which */
 
 void F_16A2F(int on)
 {
     if (on)
-        music_play(g_2f93_0050, g_jingleRepeats);
+        mu_play(g_2f93_0050, g_jingleRepeats);
     else
-        music_play(g_song, g_songRepeats);
+        mu_play(g_song, g_songRepeats);
 }
 
 /* F_16A5A @ 0F38:76DA (linear 0x16A5A, 78 bytes)
 
-   Starts one of two sounds through music_play; `on` selects which */
+   Starts one of two sounds through mu_play; `on` selects which */
 
 void F_16A5A(int on)
 {
     if (on) {
-        music_play(g_partMoveSound, g_jingleRepeats);
-        music_set_vibrato(1, 1, 8, 14, 1);
+        mu_play(g_partMoveSound, g_jingleRepeats);
+        mu_set_vibrato(1, 1, 8, 14, 1);
     } else
-        music_play(g_song, g_songRepeats);
+        mu_play(g_song, g_songRepeats);
 }
 
-/* sound_siren @ 0F38:7728 (linear 0x16AA8, 25 bytes) */
+/* so_siren @ 0F38:7728 (linear 0x16AA8, 25 bytes) */
 
-void sound_siren(int on)
+void so_siren(int on)
 {
     if (on)
         g_sirenOn = 1;
@@ -389,9 +389,9 @@ void sound_siren(int on)
         g_sirenOn = 0;
 }
 
-/* sound_squeal @ 0F38:7741 (linear 0x16AC1, 25 bytes) */
+/* so_squeal @ 0F38:7741 (linear 0x16AC1, 25 bytes) */
 
-void sound_squeal(int on)
+void so_squeal(int on)
 {
     if (on)
         g_squealOn = 1;
@@ -399,38 +399,38 @@ void sound_squeal(int on)
         g_squealOn = 0;
 }
 
-/* sound_warble1 @ 0F38:775A (linear 0x16ADA, 48 bytes) */
+/* so_warble1 @ 0F38:775A (linear 0x16ADA, 48 bytes) */
 
-void sound_warble1(void)
+void so_warble1(void)
 {
     if (g_soundOn) {
-        sound_on();
+        so_on();
         warble(30000L, 300, 100, 6, 1, 2);
-        sound_off();
+        so_off();
     }
 }
 
-/* sound_warble2 @ 0F38:778A (linear 0x16B0A, 48 bytes) */
+/* so_warble2 @ 0F38:778A (linear 0x16B0A, 48 bytes) */
 
-void sound_warble2(void)
+void so_warble2(void)
 {
     if (g_soundOn) {
-        sound_on();
+        so_on();
         warble(30000L, 200, 70, 5, 1, 3);
-        sound_off();
+        so_off();
     }
 }
 
-/* sound_buzz @ 0F38:77BA (linear 0x16B3A, 39 bytes)
+/* so_buzz @ 0F38:77BA (linear 0x16B3A, 39 bytes)
 
    Sound effect, only when sound is on */
 
-void sound_buzz(void)
+void so_buzz(void)
 {
     if (g_soundOn) {
-        sound_on();
+        so_on();
         sweep_up_down(3000, 10, 10, 60, 9);
-        sound_off();
+        so_off();
     }
 }
 
@@ -441,9 +441,9 @@ void sound_buzz(void)
 void F_16B61(void)
 {
     if (g_soundOn) {
-        sound_on();
-        sweep_up_down(random_int(100) + 6200, 40, 10, 1, 10);
-        sound_off();
+        so_on();
+        sweep_up_down(rn_int(100) + 6200, 40, 10, 1, 10);
+        so_off();
     }
 }
 
@@ -454,9 +454,9 @@ void F_16B61(void)
 void F_16B97(void)
 {
     if (g_soundOn) {
-        sound_on();
+        so_on();
         sweep_up_down(5200, 40, 10, 1, 10);
-        sound_off();
+        so_off();
     }
 }
 
@@ -467,17 +467,17 @@ void F_16B97(void)
 void F_16BC1(void)
 {
     if (g_soundOn) {
-        sound_on();
+        so_on();
         noise(200, 10, 60);
-        sound_off();
+        so_off();
     }
 }
 
-/* sound_crash @ 0F38:7863 (linear 0x16BE3, 172 bytes)
+/* so_crash @ 0F38:7863 (linear 0x16BE3, 172 bytes)
 
    Sound effect, three repeats of a noise burst, a click and a blip */
 
-void sound_crash(void)
+void so_crash(void)
 {
     register int i;
     int count;
@@ -485,30 +485,30 @@ void sound_crash(void)
     if (g_soundOn) {
         count = 3;
         for (i = count; i; i--) {
-            sound_on();
+            so_on();
             tone_burst(3000, 8000, 60, 10);
-            noise_sweep_down(200, random_int(30) + 18, 15, 5, 2);
-            noise(random_int(300) + 40, 2, 30);
-            noise_sweep_up(16, random_int(100) + 50, 15, 5, 4);
+            noise_sweep_down(200, rn_int(30) + 18, 15, 5, 2);
+            noise(rn_int(300) + 40, 2, 30);
+            noise_sweep_up(16, rn_int(100) + 50, 15, 5, 4);
         }
-        sound_off();
+        so_off();
     }
 }
 
-/* sound_bump @ 0F38:790F (linear 0x16C8F, 100 bytes)
+/* so_bump @ 0F38:790F (linear 0x16C8F, 100 bytes)
 
    Sound effect, two noise bursts each followed by a click run */
 
-void sound_bump(void)
+void so_bump(void)
 {
     if (g_soundOn) {
-        sound_on();
+        so_on();
         tone_burst(2000, 8000, 100, 10);
         noise(120, 2, 30);
-        sound_on();
+        so_on();
         tone_burst(4000, 9000, 100, 10);
         noise(220, 2, 20);
-        sound_off();
+        so_off();
     }
 }
 
@@ -519,8 +519,8 @@ void sound_bump(void)
 void F_16CF3(void)
 {
     if (g_soundOn) {
-        sound_on();
+        so_on();
         sweep_down(130, 90, 4, 1000);
-        sound_off();
+        so_off();
     }
 }

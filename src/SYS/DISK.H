@@ -43,19 +43,19 @@ extern char *g_library1Path;                                   /* DS:8DD4 */
 extern char *g_picLibBPath;                                   /* DS:8DD6 */
 extern int g_acceptProbability[][3];                                 /* DS:8DD8 */
 extern struct Model w_8df0[];                           /* DS:8DF0 */
-int disk_seek(int handle, long pos);                    /* 0x15396 */
-int disk_read_index(int n);                             /* 0x1552B */
-void disk_free_pic(int n);                              /* 0x158DE */
-struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm);/* 0x1592E */
-void disk_pic_size(int id, int *w, int *h, int *x);     /* 0x15B7F */
-struct Bitmap far *disk_bm(int id, int mode);           /* 0x15BBE */
-int disk_cache_list(int *list);                         /* 0x15C07 */
-int disk_load_list(int *list, int n);                   /* 0x15C4A */
-void disk_free_list(int *list);                         /* 0x15C95 */
-void disk_open_libs(int a, int mode);                   /* 0x15CC3 */
-void disk_load_data(void);                              /* 0x15EF9 */
-int disk_data_drive(void);                              /* 0x15FBD */
-void disk_load_hall(void);                              /* 0x16089 */
-void disk_save_hall(void);                              /* 0x16152 */
+int di_seek(int handle, long pos);                    /* 0x15396 */
+int di_read_index(int n);                             /* 0x1552B */
+void di_free_pic(int n);                              /* 0x158DE */
+struct Bitmap far *di_unpack_pic(int id, struct Bitmap far *bm);/* 0x1592E */
+void di_pic_size(int id, int *w, int *h, int *x);     /* 0x15B7F */
+struct Bitmap far *di_bm(int id, int mode);           /* 0x15BBE */
+int di_cache_list(int *list);                         /* 0x15C07 */
+int di_load_list(int *list, int n);                   /* 0x15C4A */
+void di_free_list(int *list);                         /* 0x15C95 */
+void di_open_libs(int a, int mode);                   /* 0x15CC3 */
+void di_load_data(void);                              /* 0x15EF9 */
+int di_data_drive(void);                              /* 0x15FBD */
+void di_load_hall(void);                              /* 0x16089 */
+void di_save_hall(void);                              /* 0x16152 */
 
 #endif

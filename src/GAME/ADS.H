@@ -11,8 +11,8 @@ extern struct Bitmap far *g_adPicture;                  /* DS:051C */
 extern char g_adRedraw;                                 /* DS:0520 */
 extern int g_adResume;                                  /* DS:0536 */
 extern int g_adIdxEndPageState;                                      /* DS:7F84 */
-void ads_open(int *list, int base);                     /* 0x008B4 */
-int ads_run(void);                                      /* 0x009CB */
-void ads_close(void);                                   /* 0x00D58 */
+void av_open(int *list, int base);                     /* 0x008B4 */
+int av_run(void);                                      /* 0x009CB */
+void av_close(void);                                   /* 0x00D58 */
 
 #endif

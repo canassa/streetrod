@@ -33,12 +33,12 @@ struct ManualEntry g_manual[51] = {{2, 2}, {3, 11}, {4, 6}, {6, 5}, {7, 9}, {8, 
 int g_protectCycle = 0;   /* DS:4BC8 */
 int g_fameRowY[10] = {59, 70, 81, 92, 103, 114, 125, 136, 147, 158};   /* DS:4BCA */
 
-/* fame_protect_check @ 0000:2FC8 (linear 0x02FC8, 403 bytes)
+/* fa_protect_check @ 0000:2FC8 (linear 0x02FC8, 403 bytes)
 
    The manual lookup copy protection: asks for the colour of the car key or car
    icon on a random manual page and returns 1 if the answer matches. */
 
-int fame_protect_check(void)
+int fa_protect_check(void)
 {
     int f;
     int e;
@@ -47,12 +47,12 @@ int fame_protect_check(void)
     char b[26];
     char a[50];
 
-    d = random_int(0x33);
+    d = rn_int(0x33);
     f = d < 0x12;
     F_11421(-1, "", 0);
     r_vid.copyToFront = 0;
     F_119B8(8, 8, 0, 0);
-    disk_free_pic(8);
+    di_free_pic(8);
     switch (f) {
     case 0:
         sprintf(b, "What`is`the`color`of");
@@ -65,18 +65,18 @@ int fame_protect_check(void)
         c = 0x55;
         break;
     }
-    screen_text(0x79, 0x3f, b);
-    screen_text(c, 0x48, a);
-    cursor_ctl(CURSOR_SHOW_NOW);
+    sc_text(0x79, 0x3f, b);
+    sc_text(c, 0x48, a);
+    cu_ctl(CURSOR_SHOW_NOW);
     (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
-        video_set_palette(g_protectPal);
+        vi_set_palette(g_protectPal);
     else
         (*g_videoOps.show)();
     gz8249 = 1;
     r_vid.copyToFront = 1;
     g_protectCycle = 1;
-    e = menu_wait(0x27);
+    e = mn_wait(0x27);
     g_protectCycle = 0;
     F_11421(-1, "", 0);
     if (g_manual[d].color != e)
@@ -84,9 +84,9 @@ int fame_protect_check(void)
     return 1;
 }
 
-/* fame_end_menu @ 0000:315B (linear 0x0315B, 373 bytes) */
+/* fa_end_menu @ 0000:315B (linear 0x0315B, 373 bytes) */
 
-int fame_end_menu(void)
+int fa_end_menu(void)
 {
     char c01;
     char c1;
@@ -94,7 +94,7 @@ int fame_end_menu(void)
     char c3;
     int key;
 
-    screen_status_init(SCREEN_BODY_HEIGHT);
+    sc_status_init(SCREEN_BODY_HEIGHT);
     r_vid.copyToFront = 1;
     c01 = x_colors.text;
     c1 = x_colors.textBg;
@@ -111,24 +111,24 @@ int fame_end_menu(void)
         x_colors.line = 13;
         x_colors.fill = 3;
     }
-    screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_BODY_HEIGHT, x_colors.textBg);
-    draw_frame(r_vid.back, 100, 50, 120, 90);
-    draw_frame(r_vid.front, 100, 50, 120, 90);
-    draw_frame(r_vid.back, 102, 52, 116, 86);
-    draw_frame(r_vid.front, 102, 52, 116, 86);
+    sc_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_BODY_HEIGHT, x_colors.textBg);
+    dr_frame(r_vid.back, 100, 50, 120, 90);
+    dr_frame(r_vid.front, 100, 50, 120, 90);
+    dr_frame(r_vid.back, 102, 52, 116, 86);
+    dr_frame(r_vid.front, 102, 52, 116, 86);
     x_colors.text = c01;
     x_colors.textBg = c1;
     x_colors.line = c3;
     x_colors.fill = c21;
-    cursor_ctl(CURSOR_SHOW_NOW);
+    cu_ctl(CURSOR_SHOW_NOW);
     (*g_videoOps.show)();
-    key = menu_wait(41);
-    cursor_ctl(CURSOR_HIDE_NOW);
+    key = mn_wait(41);
+    cu_ctl(CURSOR_HIDE_NOW);
     switch (key) {
     case -2:
     case -1:
         if (g_picsFreed) {
-            disk_load_list(g_gamePics, 1);
+            di_load_list(g_gamePics, 1);
             g_picsFreed = 0;
         }
         break;
@@ -175,16 +175,16 @@ static int near elapsed_hours(void)
     int b;
 
     F_064A3(&a, &b);
-    return garage_day() * 24 + a + 12;
+    return ga_day() * 24 + a + 12;
 }
 
 struct Colors g_fameColors1 = {3, 5, 5, 4, 1};   /* DS:4BE2 */
 struct Colors g_fameColors2 = {3, 4, 4, 3, 1};   /* DS:4BE8 */
 char g_4bed = 0;   /* DS:4BED */
 
-/* fame_show @ 0000:339F (linear 0x0339F, 628 bytes) */
+/* fa_show @ 0000:339F (linear 0x0339F, 628 bytes) */
 
-void fame_show(int add)
+void fa_show(int add)
 {
     char buf3[16];
     int n2;
@@ -203,7 +203,7 @@ void fame_show(int add)
     r_vid.copyToFront = 1;
     F_118D4(5, -1);
     g_picturePlacement.maxHeight = old;
-    video_swap_pal();
+    vi_swap_pal();
     sv286 = bustyle->c28;
     sv23 = bustyle->c23;
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) {
@@ -244,17 +244,17 @@ void fame_show(int add)
         p++;
         (*g_videoOps.drawText)(r_vid.back, 191, g_fameRowY[i], "hr");
     }
-    bitmap_copy_box(r_vid.back, r_vid.front, 46, g_fameRowY[0], 211, g_fameRowY[9] + 8);
+    bm_copy_box(r_vid.back, r_vid.front, 46, g_fameRowY[0], 211, g_fameRowY[9] + 8);
     if (pos7 >= 0) {
         strcpy(buf3, g_hallFameTbl[pos7].name);
-        edit_line(46, g_fameRowY[pos7], buf3, 15);
+        ed_line(46, g_fameRowY[pos7], buf3, 15);
         strcpy(g_hallFameTbl[pos7].name, buf3);
-        disk_save_hall();
+        di_save_hall();
     } else {
-        dash_wait_key(700);
+        da_wait_key(700);
     }
     (*g_videoOps.blank)();
     bustyle->c28 = sv286;
     bustyle->c23 = sv23;
-    video_swap_pal();
+    vi_swap_pal();
 }

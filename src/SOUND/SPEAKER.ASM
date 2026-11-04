@@ -15,13 +15,13 @@ _g_toneDelay DW      1                        ; DS:58E0 int
 S2196_TEXT SEGMENT WORD PUBLIC 'CODE'
         ASSUME  CS:S2196_TEXT
 
-; speaker_delay @ 2196:0002 (linear 0x21962, 27 bytes)
+; sk_delay @ 2196:0002 (linear 0x21962, 27 bytes)
 ; Busy-wait delay: spin for n * g_delayScale units, in 16-bit chunks of a LOOP count
 ; (the high byte of the product counts the outer repetitions).
-; speaker_delay(n)
+; sk_delay(n)
 
-        PUBLIC  _speaker_delay
-_speaker_delay  PROC    FAR
+        PUBLIC  _sk_delay
+_sk_delay  PROC    FAR
         push    bp
         mov     bp,sp
         mov     ax,[bp+6]
@@ -38,18 +38,18 @@ spin1:
         jns     again
         pop     bp
         ret
-_speaker_delay  ENDP
+_sk_delay  ENDP
 
-; speaker_play @ 2196:001D (linear 0x2197D, 136 bytes)
+; sk_play @ 2196:001D (linear 0x2197D, 136 bytes)
 ; Play a tune on the PC speaker. The argument points at a table of
 ; 3-word records (length, two frequency counters, duty/step word) ending
 ; with a zero length word; g_tunePtr keeps the read pointer so the caller's
 ; table advances one record per step. The speaker is toggled through port 61h,
 ; g_toneDelay is the delay count of the half-wave loop.
-; speaker_play(table)
+; sk_play(table)
 
-        PUBLIC  _speaker_play
-_speaker_play  PROC    FAR
+        PUBLIC  _sk_play
+_sk_play  PROC    FAR
         push    bp
         mov     bp,sp
         mov     bx,[bp+6]
@@ -118,7 +118,7 @@ spin2:
 done:
         pop     bp
         ret
-_speaker_play  ENDP
+_sk_play  ENDP
 S2196_TEXT ENDS
 
         END

@@ -5,7 +5,7 @@
 #include "STRUCTS.H"
 
 extern struct Hooks g_egaHooks;                    /* DS:5BD0 */
-void ega_install(void);                                 /* 0x22B28 */
-void ega_draw_text(struct Bitmap far *bm, int x, int y, char *str);/* 0x22B3A */
+void eg_install(void);                                 /* 0x22B28 */
+void eg_draw_text(struct Bitmap far *bm, int x, int y, char *str);/* 0x22B3A */
 
 #endif

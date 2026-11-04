@@ -18,22 +18,22 @@
 #include "SCREEN.H"
 #include "VIDEO.H"
 
-struct Hooks g_egaHooks = {egablit_copy, egashift_blit, egablit_masked, ega_draw_text, cursblt_ega, egacopy_page, egarecol_rect, dash_pal_blank, dash_pal_show, egaspr_step, egacopy_reveal, egaslide_sprite, egaline_draw, egaspan_fill, egaspan_fill_below};   /* DS:5BD0 */
+struct Hooks g_egaHooks = {eb_copy, ex_blit, eb_masked, eg_draw_text, uc_ega, ec_page, er_rect, da_pal_blank, da_pal_show, es_step, ec_reveal, ev_sprite, el_draw, en_fill, en_fill_below};   /* DS:5BD0 */
 
-/* ega_install @ 21A0:1128 (linear 0x22B28, 18 bytes) */
+/* eg_install @ 21A0:1128 (linear 0x22B28, 18 bytes) */
 
-void ega_install(void)
+void eg_install(void)
 {
     g_videoOps = g_egaHooks;
 }
 
-/* ega_draw_text @ 21A0:113A (linear 0x22B3A, 973 bytes)
+/* eg_draw_text @ 21A0:113A (linear 0x22B3A, 973 bytes)
 
    Draw a string in the 8-pixel-high font into a planar EGA/VGA bitmap, composing the glyph rows in
    a 320 byte buffer first */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-void ega_draw_text(struct Bitmap far *bm, int x, int y, char *str)
+void eg_draw_text(struct Bitmap far *bm, int x, int y, char *str)
 {
     int cols;
     unsigned char far *q;

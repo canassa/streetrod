@@ -13,12 +13,12 @@ class SourceTests(unittest.TestCase):
         self.assertEqual(sum(r['kind'] == 'c' for r in fs), 509)
         self.assertEqual(sum(r['kind'] == 'asm' for r in fs), 63)
         by = {r['name']: r for r in fs}
-        self.assertEqual(by['garage_day'], dict(addr=0x06476, seg=0, off=0x6476, size=45, kind='c', far=1,
-                                                name='garage_day', src='src/GAME/GARAGE.C', proto='int @(void)'))
+        self.assertEqual(by['ga_day'], dict(addr=0x06476, seg=0, off=0x6476, size=45, kind='c', far=1,
+                                                name='ga_day', src='src/GAME/GARAGE.C', proto='int @(void)'))
         self.assertEqual(by['F_06B06']['far'], 0)
         self.assertEqual(by['F_06B06']['proto'], 'int near @(int mode)')
-        self.assertEqual(by['cgaline_pixel_addr']['far'], 0)
-        self.assertEqual(by['cgaline_draw']['far'], 1)
+        self.assertEqual(by['cl_pixel_addr']['far'], 0)
+        self.assertEqual(by['cl_draw']['far'], 1)
         # the functions of a file are contiguous: no other file's function inside its extent
         for f in module.files():
             self.assertEqual({r['src'] for r in fs if f.start <= r['addr'] < f.end}, {f.rel})

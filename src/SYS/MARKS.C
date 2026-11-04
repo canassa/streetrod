@@ -3,26 +3,26 @@
 #include "ARENA.H"
 #include "MAIN.H"
 
-/* marks_clear @ 0F38:A054 (linear 0x193D4, 42 bytes) */
+/* ma_clear @ 0F38:A054 (linear 0x193D4, 42 bytes) */
 
-void marks_clear(void)
+void ma_clear(void)
 {
     g_offsetArenaMarksList[g_lowArenaMarker = 0] = g_loHeapLimit = 0;
     g_offsetArenaMarksList[g_markerIndexHigh = 60] = g_arenaTopVal;
     g_0294 = 0;
 }
 
-/* marks_release @ 0F38:A07E (linear 0x193FE, 32 bytes) */
+/* ma_release @ 0F38:A07E (linear 0x193FE, 32 bytes) */
 
-void marks_release(void)
+void ma_release(void)
 {
     g_offsetArenaMarksList[g_lowArenaMarker = 0] = g_loHeapLimit;
     g_offsetArenaMarksList[g_markerIndexHigh = 60] = g_arenaTopVal;
 }
 
-/* marks_pop_low @ 0F38:A09E (linear 0x1941E, 26 bytes) */
+/* ma_pop_low @ 0F38:A09E (linear 0x1941E, 26 bytes) */
 
-void marks_pop_low(int n)
+void ma_pop_low(int n)
 {
     if (n == 0)
         g_lowArenaMarker = 0;

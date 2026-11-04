@@ -4,8 +4,8 @@
 #define HERCDET_H
 #include "STRUCTS.H"
 
-void hercdet_ram_test(void);                            /* 0x0E56A */
-int hercdet_detect(void);                               /* 0x0E584 */
-int hercdet_bios_mono(void);                            /* 0x0E5C3 */
+void hd_ram_test(void);                            /* 0x0E56A */
+int hd_detect(void);                               /* 0x0E584 */
+int hd_bios_mono(void);                            /* 0x0E5C3 */
 
 #endif

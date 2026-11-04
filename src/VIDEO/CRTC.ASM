@@ -6,12 +6,12 @@
 
         .CODE S21A0_TEXT
 
-; crtc_wait_vsync @ 21A0:0006 (linear 0x21A06, 14 bytes)
+; ct_wait_vsync @ 21A0:0006 (linear 0x21A06, 14 bytes)
 ; Wait for the start of vertical retrace on the CRT status port 3DAh:
 ; first until the display is not in the middle of a retrace, then until bit 3 sets.
 
-        PUBLIC  _crtc_wait_vsync
-_crtc_wait_vsync  PROC    FAR
+        PUBLIC  _ct_wait_vsync
+_ct_wait_vsync  PROC    FAR
         mov     dx,INPUT_STATUS
 wait1a:
         in      al,dx
@@ -22,18 +22,18 @@ wait2a:
         test    al,STATUS_VRETRACE
         je      wait2a
         ret
-_crtc_wait_vsync  ENDP
+_ct_wait_vsync  ENDP
 
-; crtc_set_split @ 21A0:0014 (linear 0x21A14, 151 bytes)
+; ct_set_split @ 21A0:0014 (linear 0x21A14, 151 bytes)
 ; Set the CRTC line compare register (split screen row) during vertical
 ; retrace. The CRTC base port comes from the BIOS data area (0040:0063).
 ; A line value of -1 means the bottom of the screen (1FFh, or 3FFh when
 ; g_vga is set). With g_vga clear only the plain VGA bits are used; otherwise
 ; the extra overflow bits live in registers 7 and 9 and the value is biased.
-; crtc_set_split(line)
+; ct_set_split(line)
 
-        PUBLIC  _crtc_set_split
-_crtc_set_split  PROC    FAR
+        PUBLIC  _ct_set_split
+_ct_set_split  PROC    FAR
         push    bp
         mov     bp,sp
         mov     ax,BIOS_DATA_SEGMENT
@@ -116,6 +116,6 @@ biased:
         sti
         pop     bp
         ret
-_crtc_set_split  ENDP
+_ct_set_split  ENDP
 
         END

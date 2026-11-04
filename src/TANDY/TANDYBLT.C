@@ -74,12 +74,12 @@ static void near split_banks(int x, int x0, int y, int *b, int *a)
     }
 }
 
-/* tandyblt_compose @ 21A0:020B (linear 0x21C0B, 333 bytes)
+/* tb_compose @ 21A0:020B (linear 0x21C0B, 333 bytes)
 
-   Masked blit between interleaved-bank bitmaps, one maskbg_blit call per bank */
+   Masked blit between interleaved-bank bitmaps, one mg_blit call per bank */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-void tandyblt_compose(struct Bitmap far *dst, struct Bitmap far *src, struct Bitmap far *mask, struct Blt *in)
+void tb_compose(struct Bitmap far *dst, struct Bitmap far *src, struct Bitmap far *mask, struct Blt *in)
 {
     int seg2;
     int a[4];
@@ -102,7 +102,7 @@ void tandyblt_compose(struct Bitmap far *dst, struct Bitmap far *src, struct Bit
     alt_a = dst->alt;
     bits_bn = src->bits;
     bits_cm = mask->bits;
-    if (!dash_clip_blt(dst, src, in, (struct Blt *)&clip9))
+    if (!da_clip_blt(dst, src, in, (struct Blt *)&clip9))
         return;
     pa = dst->pitch;
     wz = clip9.w;
@@ -114,20 +114,20 @@ void tandyblt_compose(struct Bitmap far *dst, struct Bitmap far *src, struct Bit
     di = (in->my * pcn + (in->mx >> 1)) + bits_cm.w.off;
     split_banks(clip9.h, clip9.dx, clip9.dy, b, a);
     for (k6 = 0; k6 < 4; k6++) {
-        maskbg_blit(bits_bn.p + b[k6], seg2, p1, p2o, di, pa * 4, wz, a[k6], pcn * 4, 0xa0);
+        mg_blit(bits_bn.p + b[k6], seg2, p1, p2o, di, pa * 4, wz, a[k6], pcn * 4, 0xa0);
         p1 += pa;
         p2o += pa;
         di += pcn;
     }
 }
 
-/* tandyblt_masked @ 21A0:0358 (linear 0x21D58, 339 bytes)
+/* tb_masked @ 21A0:0358 (linear 0x21D58, 339 bytes)
 
    Blit between bitmaps through the blitter selected by flag, in banks when the destination is
    interleaved */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-void tandyblt_masked(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *in, int flag)
+void tb_masked(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *in, int flag)
 {
     union FarPtr bits_b;
     int pa6;
@@ -145,7 +145,7 @@ void tandyblt_masked(struct Bitmap far *src, struct Bitmap far *dst, struct Blt 
     int dy2;
     int seg;
 
-    if (!dash_clip_blt(src, dst, in, &clip))
+    if (!da_clip_blt(src, dst, in, &clip))
         return;
     pa6 = src->pitch;
     w = clip.w;
@@ -156,7 +156,7 @@ void tandyblt_masked(struct Bitmap far *src, struct Bitmap far *dst, struct Blt 
     seg = src->bits.w.seg;
     off3 = (off04 = clip.sy * pa6 + clip.sx) + src->bits.w.off;
     off2 = src->alt.w.off + off04;
-    fn4 = flag ? maskor_blit : maskblt_copy;
+    fn4 = flag ? mr_blit : mk_copy;
     if (dst->flags >= -1) {
         (*fn4)(bits_b.p + pb9 * dy2 + clip.dx, seg, off3, off2, pa6, w, h, pb9);
     } else {
@@ -169,11 +169,11 @@ void tandyblt_masked(struct Bitmap far *src, struct Bitmap far *dst, struct Blt 
     }
 }
 
-/* tandyblt_copy @ 21A0:04AB (linear 0x21EAB, 460 bytes)
+/* tb_copy @ 21A0:04AB (linear 0x21EAB, 460 bytes)
 
    Clipped blit between bitmaps, picking the plain, interleaved or planar copy routine */
 
-void tandyblt_copy(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *r, int flags)
+void tb_copy(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *r, int flags)
 {
     int sp3;
     int f;
@@ -185,10 +185,10 @@ void tandyblt_copy(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *r
 
     f = flags & 1;
     g8 = (flags & 2) && src->alt.p && dst->alt.p;
-    if (!dash_clip_blt(src, dst, r, (struct Blt *)&o))
+    if (!da_clip_blt(src, dst, r, (struct Blt *)&o))
         return;
     if (src->flags < -1 && dst->flags < -1)
-        tandycpy_screen(src->bits.p, dst->bits.p, o.w, o.h, o.sx, o.sy, o.dx, o.dy);
+        ty_screen(src->bits.p, dst->bits.p, o.w, o.h, o.sx, o.sy, o.dx, o.dy);
     else if (src->flags < -1)
         copy_from_tandy(src, dst, &o);
     else {
@@ -198,12 +198,12 @@ void tandyblt_copy(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *r
         if (dst->flags >= -1) {
             dp3 = dst->pitch * o.dy + o.dx;
             if (f)
-                cgadrv_blit_rect(src->bits.p + sp3, dst->bits.p + dp3, o.w, o.h, skip, dskip);
+                cd_blit_rect(src->bits.p + sp3, dst->bits.p + dp3, o.w, o.h, skip, dskip);
             if (g8)
-                cgadrv_blit_rect(src->alt.p + sp3, dst->alt.p + dp3, o.w, o.h, skip, dskip);
+                cd_blit_rect(src->alt.p + sp3, dst->alt.p + dp3, o.w, o.h, skip, dskip);
         } else {
             dp3 = dst->pitch * (o.dy >> 2) + ((o.dy & 3) << 13) + o.dx;
-            tandycpy_to_screen(src->bits.p + sp3, dst->bits.p + dp3, o.w, o.h, skip, dskip, o.dy);
+            ty_to_screen(src->bits.p + sp3, dst->bits.p + dp3, o.w, o.h, skip, dskip, o.dy);
         }
     }
 }
@@ -260,12 +260,12 @@ static void near put_nibbles(char far *dst, char *src, int n, int odd)
     }
 }
 
-/* tandyblt_shifted @ 21A0:07AC (linear 0x221AC, 421 bytes)
+/* tb_shifted @ 21A0:07AC (linear 0x221AC, 421 bytes)
 
    Copy rows between 2-pixel-per-byte bitmaps, shifting each row through a buffer by a nibble */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-void tandyblt_shifted(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *blt)
+void tb_shifted(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *blt)
 {
     int n2;
     int w9;

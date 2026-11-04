@@ -2,7 +2,7 @@
         INCLUDE PC.INC
 
         .DATA
-        EXTRN   _cursblt_cga:FAR
+        EXTRN   _uc_cga:FAR
         EXTRN   _g_egaCard:WORD
         EXTRN   _g_forceEga:WORD
 
@@ -24,11 +24,11 @@ S_5b00  DB      'CGA', 0                 ; DS:5B00 string
 
         .CODE S0000_TEXT
 
-; viddet_restore @ 0000:E610 (linear 0x0E610, 31 bytes)
-; Restore the equipment byte and the BIOS video mode saved by viddet_detect.
+; vd_restore @ 0000:E610 (linear 0x0E610, 31 bytes)
+; Restore the equipment byte and the BIOS video mode saved by vd_detect.
 
-        PUBLIC  _viddet_restore
-_viddet_restore  PROC  FAR
+        PUBLIC  _vd_restore
+_vd_restore  PROC  FAR
         push    bp
         mov     bp,sp
         push    di
@@ -46,14 +46,14 @@ _viddet_restore  PROC  FAR
         mov     sp,bp
         pop     bp
         ret
-_viddet_restore  ENDP
+_vd_restore  ENDP
 
-; viddet_detect @ 0000:E62F (linear 0x0E62F, 146 bytes)
+; vd_detect @ 0000:E62F (linear 0x0E62F, 146 bytes)
 ; Video adapter detection: saves the current mode and equipment byte,
 ; asks the EGA BIOS, falls back to probing the CRTC cursor register (VGA/CGA).
 
-        PUBLIC  _viddet_detect
-_viddet_detect  PROC  FAR
+        PUBLIC  _vd_detect
+_vd_detect  PROC  FAR
         push    bp
         mov     bp,sp
         push    di
@@ -117,6 +117,6 @@ done:
         mov     sp,bp
         pop     bp
         ret
-_viddet_detect  ENDP
+_vd_detect  ENDP
 
         END

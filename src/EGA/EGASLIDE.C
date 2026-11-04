@@ -11,12 +11,12 @@
 #include "MASKOR.H"
 #include "PC.H"
 
-/* egaslide_sprite @ 21A0:28EC (linear 0x242EC, 790 bytes)
+/* ev_sprite @ 21A0:28EC (linear 0x242EC, 790 bytes)
 
    Copy a range of rows of a planar sprite sheet into the back page, plane by plane */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-void egaslide_sprite(int top, int bottom, int x, int y0, int y1, struct Bitmap far *bm)
+void ev_sprite(int top, int bottom, int x, int y0, int y1, struct Bitmap far *bm)
 {
     int k5;
     int pitch;            /* bm pitch */
@@ -67,11 +67,11 @@ void egaslide_sprite(int top, int bottom, int x, int y0, int y1, struct Bitmap f
     }
     n = (n >> 1) + 1;
     row = r_vid.back->bits.p + y0 * bpitch + x;
-    maskblt_make_mask(bm->bits.p, bm->alt.p, bm->planesize);
+    mk_make_mask(bm->bits.p, bm->alt.p, bm->planesize);
     abase = bm->alt;
-    egablit_latch_pack(dst2k, pitch, bottom - top + 1, scratch, bpitch);
+    eb_latch_pack(dst2k, pitch, bottom - top + 1, scratch, bpitch);
     for (i = 0, y = y0; i < n; i++, y += stepl, row += stridem) {
-        egalatch_to_page(scratch, pitch, bottom - top + 1, dst2k, pitch);
+        ea_to_page(scratch, pitch, bottom - top + 1, dst2k, pitch);
         if (y < top) {
             src0.p = base1.p + (top - y) * pitch;
             dstm = dst2k;
@@ -91,16 +91,16 @@ void egaslide_sprite(int top, int bottom, int x, int y0, int y1, struct Bitmap f
             outp(SEQ_DATA, k5);
             outp(GC_INDEX, GC_READ_MAP);
             outp(GC_DATA, m);
-            maskor_blit(dstm, curn.w.seg, curn.w.off, alt16.w.off, (char)pitch, (char)pitch, (char)hh8, (char)bpitch);
+            mr_blit(dstm, curn.w.seg, curn.w.off, alt16.w.off, (char)pitch, (char)pitch, (char)hh8, (char)bpitch);
         }
         outp(SEQ_INDEX, SEQ_MAP_MASK);
         outp(SEQ_DATA, SEQ_ALL_PLANES);
         if (r_vid.copyToFront) {
             if (g_boltOverlay)
                 (*g_videoOps.maskedBlit)(g_boltOverlay, r_vid.back, &g_cpyBoltPatchRecord, 1);
-            crtc_wait_vsync();
-            egalatch_rect(r_vid.back->bits.p, r_vid.front->bits.p, pitch, bottom - top + 1, x, top, bpitch);
-            crtc_wait_vsync();
+            ct_wait_vsync();
+            ea_rect(r_vid.back->bits.p, r_vid.front->bits.p, pitch, bottom - top + 1, x, top, bpitch);
+            ct_wait_vsync();
         }
     }
 }

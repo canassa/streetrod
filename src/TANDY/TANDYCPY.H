@@ -4,7 +4,7 @@
 #define TANDYCPY_H
 #include "STRUCTS.H"
 
-void tandycpy_to_screen(char far *src, char far *dst, int width, int rows, int src_skip, int dst_skip, int row);/* 0x24D84 */
-void tandycpy_screen(char far *src, char far *dst, int width, int rows, int sx, int sy, int dx, int dy);/* 0x24DC7 */
+void ty_to_screen(char far *src, char far *dst, int width, int rows, int src_skip, int dst_skip, int row);/* 0x24D84 */
+void ty_screen(char far *src, char far *dst, int width, int rows, int sx, int sy, int dx, int dy);/* 0x24DC7 */
 
 #endif

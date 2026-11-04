@@ -8,11 +8,11 @@
 
 int g_revealOffsets[5] = {0, 80, 160, 40, 120};   /* DS:5C0C */
 
-/* egacopy_page @ 21A0:16DC (linear 0x230DC, 70 bytes)
+/* ec_page @ 21A0:16DC (linear 0x230DC, 70 bytes)
 
    Copy 8000 bytes between planar VGA buffers using write mode 1 (latch copy) */
 
-void egacopy_page(char far *src, char far *dst)
+void ec_page(char far *src, char far *dst)
 {
     outp(GC_INDEX, GC_MODE);
     outp(GC_DATA, GC_WRITE_MODE1);
@@ -23,11 +23,11 @@ void egacopy_page(char far *src, char far *dst)
     outp(GC_DATA, GC_WRITE_MODE0);
 }
 
-/* egacopy_reveal @ 21A0:1722 (linear 0x23122, 267 bytes)
+/* ec_reveal @ 21A0:1722 (linear 0x23122, 267 bytes)
 
    Copy 5 bands of 40 rows between planar VGA buffers, paced by the tick counter */
 
-void egacopy_reveal(char far *dst, char far *src)
+void ec_reveal(char far *dst, char far *src)
 {
     int e;
     int f;

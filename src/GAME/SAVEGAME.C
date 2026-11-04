@@ -47,14 +47,14 @@ int g_demoRacer = 0;   /* DS:4FF4 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 
-/* savegame_init_racer @ 0000:542E (linear 0x0542E, 342 bytes) */
+/* sg_init_racer @ 0000:542E (linear 0x0542E, 342 bytes) */
 
-void savegame_init_racer(int k, int *list)
+void sg_init_racer(int k, int *list)
 {
     int x, i, y, n;
 
-    while ((i = random_int(6)) == 5)
-        if (random_int(2) == 1)
+    while ((i = rn_int(6)) == 5)
+        if (rn_int(2) == 1)
             break;
     g_racerRecordsArray[k].paintScheme = i;
     g_racerRecordsArray[k].status = RACER_NOT_MET;
@@ -65,18 +65,18 @@ void savegame_init_racer(int k, int *list)
     g_racerRecordsArray[k].lostCarOnce = 0;
     n = list[0];
     do {
-        i = random_int(n);
+        i = rn_int(n);
     } while (list[i + 1] == -1);
     g_racerRecordsArray[k].specIndex = list[i + 1];
     list[i + 1] = -1;
     x = g_racerRecordsArray[k].specIndex;
     y = (g7d86n[x].rank >> 1) + 1;
     g_racerRecordsArray[k].bodyMods = ((g7d86n[x].parts >> 8 & 7) == 2) ? 8 : 0;
-    g_racerRecordsArray[k].sticker = (random_int(20) < y) ? random_int(9) : 0;
+    g_racerRecordsArray[k].sticker = (rn_int(20) < y) ? rn_int(9) : 0;
     if (w_8df0[x].frontBumperPic > 0 && w_8df0[x].rearBumperPic > 0)
-        g_racerRecordsArray[k].bodyMods |= (random_int(25) < y) ? 3 : 0;
+        g_racerRecordsArray[k].bodyMods |= (rn_int(25) < y) ? 3 : 0;
     if (w_8df0[x].roofPic > 0)
-        g_racerRecordsArray[k].bodyMods |= (random_int(30) < y) ? 4 : 0;
+        g_racerRecordsArray[k].bodyMods |= (rn_int(30) < y) ? 4 : 0;
 }
 
 /* init_racers @ 0000:5584 (linear 0x05584, 293 bytes) */
@@ -103,16 +103,16 @@ static void near init_racers(void)
         an[0] = --na1;
     k = 0;
     for (i = 0; i < RACERS_PER_GROUP; i++)
-        savegame_init_racer(k++, an);
+        sg_init_racer(k++, an);
     for (i = 0; i < RACERS_PER_GROUP; i++)
-        savegame_init_racer(k++, bm);
+        sg_init_racer(k++, bm);
     for (i = 0; i < RACERS_PER_GROUP; i++)
-        savegame_init_racer(k++, cl);
+        sg_init_racer(k++, cl);
     g_racerRecordsArray[RACER_KING].status = RACER_NOT_MET;
     if (g_demo) {
         an[0] = 1;
         an[1] = 0x18;
-        savegame_init_racer(g_demoRacer, an);
+        sg_init_racer(g_demoRacer, an);
         g_racerRecordsArray[g_demoRacer].nameOffset = 0x629;
     }
 }
@@ -121,31 +121,31 @@ static void near init_racers(void)
 
 static void near init_new_game(void)
 {
-    pools_init(1);
+    pl_init(1);
     a_7eaap.money = 750L;
     if (g_demo)
         a_7eaap.money = 10000L;
     a_7eaap.m7eae = 10;
-    road_build_layout(100);
+    rd_build_layout(100);
     init_racers();
     g_gameClock.actionTicks = 0L;
     g_gameClock.timeBase = g_gameClock.biosTicks;
     g_betRaces = g_dragWins = g_roadWins = g_kingDragWon = 0;
 }
 
-/* savegame_new @ 0000:570C (linear 0x0570C, 137 bytes) */
+/* sg_new @ 0000:570C (linear 0x0570C, 137 bytes) */
 
-int near savegame_new(void)
+int near sg_new(void)
 {
     int sel;
 
     r_vid.copyToFront = 0;
     F_119B8(0x3f8, 0x10, 6, 0);
     r_vid.copyToFront = 1;
-    video_name_pal();
-    bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), (SCREEN_BODY_HEIGHT - 1));
+    vi_name_pal();
+    bm_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), (SCREEN_BODY_HEIGHT - 1));
     (*g_videoOps.show)();
-    switch (sel = edit_text_box(2, 15, g_driverName)) {
+    switch (sel = ed_text_box(2, 15, g_driverName)) {
     case -3:
     case 0:
         init_new_game();
@@ -184,7 +184,7 @@ static int near read_nodes(int handle, struct Node **head)
     for (;;) {
         if (_dos_read(handle, &buf, 8, &n) != 0 || n != 8)
             return 1;
-        p = game_new_part();
+        p = gm_new_part();
         *p = buf;
         if (prev) {
             prev->next = p;
@@ -242,7 +242,7 @@ static int near read_cars(int handle, struct Car **head, int flag)
                 return 1;
         if (read_nodes(handle, &buf.tires))
             return 1;
-        car = (struct Car *)game_new_car();
+        car = (struct Car *)gm_new_car();
         *car = buf;
         if (prev) {
             prev->next = car;
@@ -269,7 +269,7 @@ static void near scan_save_slots(int create)
     int cnt;
     unsigned n;
 
-    name[0] = disk_data_drive();
+    name[0] = di_data_drive();
     strcpy(name + 1, ":HOTROD");
     for (slot = 1, cnt = 0; slot <= 15; slot++) {
         itoa(slot, name + 8, 10);
@@ -292,9 +292,9 @@ static void near scan_save_slots(int create)
     g_list[0] = cnt;
 }
 
-/* savegame_load @ 0000:5B4A (linear 0x05B4A, 873 bytes) */
+/* sg_load @ 0000:5B4A (linear 0x05B4A, 873 bytes) */
 
-int near savegame_load(void)
+int near sg_load(void)
 {
     int fd7;
     char name[20];
@@ -304,7 +304,7 @@ int near savegame_load(void)
     long delta;
     unsigned n;
 
-    cursor_ctl(CURSOR_HIDE_NOW);
+    cu_ctl(CURSOR_HIDE_NOW);
     scan_save_slots(0);
     r = r_vid.copyToFront;
     r_vid.copyToFront = 0;
@@ -315,10 +315,10 @@ int near savegame_load(void)
     }
     r_vid.copyToFront = r;
     if (r)
-        bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, SCREEN_WIDTH, SCREEN_BODY_HEIGHT);
-    cursor_ctl(CURSOR_SHOW_NOW);
+        bm_copy_box(r_vid.back, r_vid.front, 0, 0, SCREEN_WIDTH, SCREEN_BODY_HEIGHT);
+    cu_ctl(CURSOR_SHOW_NOW);
     if (g_list[0] == 0) {
-        menu_wait(15);
+        mn_wait(15);
         return -1;
     }
     r = F_142CF(3, 1, 0, g_list, 0, 0);
@@ -326,7 +326,7 @@ int near savegame_load(void)
     case -4:
         return -1;
     case -3:
-        r = menu_ix();
+        r = mn_ix();
         break;
     default:
         if (r >= 1)             /* PROVISIONAL: the original loads g_list[0] here and drops it */
@@ -337,14 +337,14 @@ int near savegame_load(void)
         if (g_saveSlots[i])
             cntl++;
     r = i - 1;
-    cursor_ctl(CURSOR_HIDE_NOW);
-    name[0] = disk_data_drive();
+    cu_ctl(CURSOR_HIDE_NOW);
+    name[0] = di_data_drive();
     strcpy(name + 1, ":HOTROD");
     itoa(g_saveSlots[r], name + 8, 10);
     strcat(name, ".SAV");
     if (_dos_open(name, O_RDONLY, &fd7)
         || _dos_read(fd7, g_driverName, 0x24, &n) != 0 || n != 0x24
-        || (pools_init(0), 0)
+        || (pl_init(0), 0)
         || read_cars(fd7, &a_7eaap.currentCar, 1)
         || read_cars(fd7, &a_7eaap.otherCars, 0)
         || read_nodes(fd7, &a_7eaap.spareParts)
@@ -353,22 +353,22 @@ int near savegame_load(void)
         || _dos_read(fd7, &g_gameClock.actionTicks, 4, &n) != 0 || n != 4
         || _dos_read(fd7, &delta, 4, &n) != 0 || n != 4
         || _dos_read(fd7, &g_roadLayout, 2, &n) != 0 || n != 2) {
-        cursor_ctl(CURSOR_SHOW_NOW);
-        menu_wait(0x1f);
-        cursor_ctl(CURSOR_HIDE);
+        cu_ctl(CURSOR_SHOW_NOW);
+        mn_wait(0x1f);
+        cu_ctl(CURSOR_HIDE);
         if (fd7 > -1) {
             _dos_close(fd7);
             init_new_game();
         }
-        cursor_ctl(CURSOR_SHOW);
+        cu_ctl(CURSOR_SHOW);
         return -666;
     }
     _dos_close(fd7);
     if (a_7eaap.currentCar)
         F_067CF(a_7eaap.currentCar->paintScheme);
-    road_build_layout(g_roadLayout);
+    rd_build_layout(g_roadLayout);
     g_gameClock.timeBase = g_gameClock.biosTicks - delta;
-    cursor_ctl(CURSOR_SHOW_NOW);
+    cu_ctl(CURSOR_SHOW_NOW);
     return 0;
 }
 
@@ -389,9 +389,9 @@ static int near is_blank(char *p)
 char g_501d = 0;   /* DS:501D */
 char g_buyCarMsg[] = "Buy a car first !";   /* DS:501E */
 
-/* savegame_save @ 0000:5EEA (linear 0x05EEA, 1332 bytes) */
+/* sg_save @ 0000:5EEA (linear 0x05EEA, 1332 bytes) */
 
-void near savegame_save(void)
+void near sg_save(void)
 {
     int cmp;
     char sv7;
@@ -408,7 +408,7 @@ void near savegame_save(void)
     unsigned n;
 
     sel = 0;
-    cursor_ctl(CURSOR_HIDE_NOW);
+    cu_ctl(CURSOR_HIDE_NOW);
     scan_save_slots(1);
     r = r_vid.copyToFront;
     r_vid.copyToFront = 0;
@@ -418,7 +418,7 @@ void near savegame_save(void)
     F_119B8(0x3fc, 0xf0, 0x8c, -1);
     r_vid.copyToFront = r;
     if (r)
-        bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, SCREEN_WIDTH, SCREEN_BODY_HEIGHT);
+        bm_copy_box(r_vid.back, r_vid.front, 0, 0, SCREEN_WIDTH, SCREEN_BODY_HEIGHT);
     strcpy(g_saveName, g_driverName);
 again:
     for (r = 1; r <= g_list[0] && g_saveSlots[r]; r++)
@@ -427,8 +427,8 @@ again:
         r = g_list[0];
     if (sel == 0)
         sel = r;
-    cursor_ctl(CURSOR_SHOW_NOW);
-    switch (r = menu_list(5, sel, 0, g_list, 0, 0)) {
+    cu_ctl(CURSOR_SHOW_NOW);
+    switch (r = mn_list(5, sel, 0, g_list, 0, 0)) {
     case -4:
         return;
     default:
@@ -438,37 +438,37 @@ again:
             return;
         break;
     case -3:
-        r = menu_ix();
+        r = mn_ix();
         break;
     }
     sel = r;
     if (is_blank(g_saveName) && is_blank(g_desc + g_list[r])) {
-        screen_msg_box(g_noNameMsgPtr);
-        cursor_ctl(CURSOR_HIDE_NOW);
+        sc_msg_box(g_noNameMsgPtr);
+        cu_ctl(CURSOR_HIDE_NOW);
         goto again;
     }
     for (i5 = 1; i5 <= 15 && (cmp = strcmp(g_saveName, g_desc + g_list[i5])) != 0; i5++)
         ;
     if (cmp == 0) {
-        cursor_ctl(CURSOR_HIDE);
+        cu_ctl(CURSOR_HIDE);
         box7 = (struct Win *)(0x12 * (int)r + g_menuList.lineBase - 0x12);
         pal4 = x_colors;
         x_colors = bustyle->pal[((struct Win *)g_menuList.lineBase)->lines];
         sv7 = x_colors.line;
         x_colors.line = x_colors.textBg;
         wk = ((struct Win *)g_menuList.lineBase)->tx - ((struct Win *)g_menuList.lineBase)->w;
-        draw_frame(r_vid.back, box7->w, box7->h, wk, 8);
-        draw_frame(r_vid.front, box7->w, box7->h, wk, 8);
+        dr_frame(r_vid.back, box7->w, box7->h, wk, 8);
+        dr_frame(r_vid.front, box7->w, box7->h, wk, 8);
         x_colors = pal4;
         x_colors.line = sv7;
-        cursor_ctl(CURSOR_SHOW);
+        cu_ctl(CURSOR_SHOW);
         sel = r = i5;
     }
     strcpy(name + 1, ":HOTROD");
     itoa(r, name + 8, 10);
     strcat(name + 1, ".SAV");
-    key = g_saveSlots[r] ? menu_modal(0x1e) : 0;
-    cursor_ctl(CURSOR_HIDE_NOW);
+    key = g_saveSlots[r] ? mn_modal(0x1e) : 0;
+    cu_ctl(CURSOR_HIDE_NOW);
     switch (key) {
     case -0x15:
         goto again;
@@ -477,7 +477,7 @@ again:
     }
     strcpy(g_driverName, is_blank(g_saveName) ? g_desc + g_list[r] : g_saveName);
     delta = g_gameClock.biosTicks - g_gameClock.timeBase;
-    name[0] = disk_data_drive();
+    name[0] = di_data_drive();
     if (_dos_creat(name, _A_NORMAL, &fd8)
         || _dos_write(fd8, g_driverName, 0x24, &n) != 0 || n != 0x24
         || write_cars(fd8, a_7eaap.currentCar, 1)
@@ -488,9 +488,9 @@ again:
         || _dos_write(fd8, &g_gameClock.actionTicks, 4, &n) != 0 || n != 4
         || _dos_write(fd8, &delta, 4, &n) != 0 || n != 4
         || _dos_write(fd8, &g_roadLayout, 2, &n) != 0 || n != 2) {
-        cursor_ctl(CURSOR_SHOW_NOW);
-        menu_modal(6);
-        cursor_ctl(CURSOR_HIDE_NOW);
+        cu_ctl(CURSOR_SHOW_NOW);
+        mn_modal(6);
+        cu_ctl(CURSOR_HIDE_NOW);
         if (fd8 > -1) {
             _dos_close(fd8);
             unlink(name);
@@ -498,24 +498,24 @@ again:
         scan_save_slots(1);
     } else {
         _dos_close(fd8);
-        cursor_ctl(CURSOR_SHOW_NOW);
+        cu_ctl(CURSOR_SHOW_NOW);
         return;
     }
     goto again;
 }
 
-/* savegame_menu @ 0000:641E (linear 0x0641E, 87 bytes) */
+/* sg_menu @ 0000:641E (linear 0x0641E, 87 bytes) */
 
-int near savegame_menu(void)
+int near sg_menu(void)
 {
     struct Bitmap far *p;
     int row;
     int x;
     int y;
 
-    p = menu_grab(0x1b, &x, &y, ARENA_HIGH_STACK);
-    row = menu_wait(0x1b);
-    popup_show(p, x, y);
+    p = mn_grab(0x1b, &x, &y, ARENA_HIGH_STACK);
+    row = mn_wait(0x1b);
+    pu_show(p, x, y);
     F_19438(1);
     return row;
 }

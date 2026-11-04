@@ -4,7 +4,7 @@
 #define KBDGET_H
 #include "STRUCTS.H"
 
-char kbdget_key(void);                                  /* 0x02DB6 */
-void kbdget_hook(void);                                 /* 0x02DC3 */
+char kg_key(void);                                  /* 0x02DB6 */
+void kg_hook(void);                                 /* 0x02DC3 */
 
 #endif

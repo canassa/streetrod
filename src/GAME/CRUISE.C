@@ -19,9 +19,9 @@ int g_phaseDriveRunState;
 char g_savedPal12 = -1;   /* DS:51AC */
 char g_savedPal3 = -1;   /* DS:51AD */
 
-/* cruise_go @ 0000:8D26 (linear 0x08D26, 118 bytes) */
+/* cr_go @ 0000:8D26 (linear 0x08D26, 118 bytes) */
 
-void cruise_go(void)
+void cr_go(void)
 {
     g_firePressed = g_mouse.left = g_joyButtons = g_buttons = 0;
     if (g_scene) {
@@ -31,19 +31,19 @@ void cruise_go(void)
             a_7eaap.currentCar->fuel = 0;
         (*g_videoOps.blank)();
         if (g_firePressed == 0) {
-            cursor_ctl(CURSOR_HIDE_NOW);
+            cu_ctl(CURSOR_HIDE_NOW);
             g_autoTrans = !g_part[a_7eaap.currentCar->transmission->idx].variant;
-            race_reset_eng(&g_driveEng);
+            ra_reset_eng(&g_driveEng);
             g_phaseDriveRunState = 0;
             bw8aca = 0;
-            cruise_drive();
+            cr_drive();
         }
     }
 }
 
-/* cruise_rival_paint @ 0000:8D9C (linear 0x08D9C, 145 bytes) */
+/* cr_rival_paint @ 0000:8D9C (linear 0x08D9C, 145 bytes) */
 
-void cruise_rival_paint(int mode)
+void cr_rival_paint(int mode)
 {
     char a, b;
 
@@ -71,9 +71,9 @@ void cruise_rival_paint(int mode)
 
 int g7d66n;
 
-/* cruise_drive @ 0000:8E2D (linear 0x08E2D, 123 bytes) */
+/* cr_drive @ 0000:8E2D (linear 0x08E2D, 123 bytes) */
 
-int cruise_drive(void)
+int cr_drive(void)
 {
     int r, saved;
 
@@ -83,10 +83,10 @@ int cruise_drive(void)
     saved = m_8272.paintScheme;
     F_067CF(a_7eaap.currentCar->paintScheme);
     if (bw8aca)
-        cruise_rival_paint(saved);
-    r = drive_run();
-    sound_squeal(0);
-    sound_siren(0);
+        cr_rival_paint(saved);
+    r = dv_run();
+    so_squeal(0);
+    so_siren(0);
     g_cursorX = g_savedCursorX;
     g_cursorY = g_savedCursorY;
     g_savedCursorX = 0;

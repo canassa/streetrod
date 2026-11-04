@@ -3,14 +3,14 @@
 
         .CODE S0E6C_TEXT
 
-; cursblt_tandy @ 0E6C:0002 (linear 0x0E6C2, 191 bytes)
+; uc_tandy @ 0E6C:0002 (linear 0x0E6C2, 191 bytes)
 ; CGA 320x200 4-colour masked blit with background save: for each row, saves the
 ; screen words to one buffer, then ANDs with a mask and ORs the sprite data.
 ; Args: sprite, mask, save buffer (far), screen (far), x, y, width in words, rows.
 ; Screen rows interleave in four banks of 2000h.
 
-        PUBLIC  _cursblt_tandy
-_cursblt_tandy  PROC  FAR
+        PUBLIC  _uc_tandy
+_uc_tandy  PROC  FAR
         push    bp
         mov     bp,sp
         sub     sp,8
@@ -104,13 +104,13 @@ done1:
         mov     sp,bp
         pop     bp
         ret
-_cursblt_tandy  ENDP
+_uc_tandy  ENDP
 
-; cursblt_cga @ 0E6C:00C1 (linear 0x0E781, 180 bytes)
-; Same blit as cursblt_tandy with two interleaved banks and 80 byte rows.
+; uc_cga @ 0E6C:00C1 (linear 0x0E781, 180 bytes)
+; Same blit as uc_tandy with two interleaved banks and 80 byte rows.
 
-        PUBLIC  _cursblt_cga
-_cursblt_cga  PROC  FAR
+        PUBLIC  _uc_cga
+_uc_cga  PROC  FAR
         push    bp
         mov     bp,sp
         sub     sp,8
@@ -199,15 +199,15 @@ done2:
         mov     sp,bp
         pop     bp
         ret
-_cursblt_cga  ENDP
+_uc_cga  ENDP
 
-; cursblt_ega @ 0E6C:0175 (linear 0x0E835, 240 bytes)
+; uc_ega @ 0E6C:0175 (linear 0x0E835, 240 bytes)
 ; EGA 320x200 16-colour masked blit with background save, planar: the mask is
 ; applied through the graphics controller (write mode 0, bit mask register 8)
 ; and the four sprite planes are 600h bytes apart.
 
-        PUBLIC  _cursblt_ega
-_cursblt_ega  PROC  FAR
+        PUBLIC  _uc_ega
+_uc_ega  PROC  FAR
         push    bp
         mov     bp,sp
         sub     sp,0Ch
@@ -314,6 +314,6 @@ done3:
         mov     sp,bp
         pop     bp
         ret
-_cursblt_ega  ENDP
+_uc_ega  ENDP
 
         END
