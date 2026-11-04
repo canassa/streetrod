@@ -1,5 +1,5 @@
 @F_03A83
-#include "GLOBALS.H"
+#include "STRUCTS.H"
 static int near F_039C0(void) { return 0; }
 static int near F_0570C(void) { return 0; }
 static int near F_05B4A(void) { return 0; }

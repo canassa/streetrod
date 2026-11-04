@@ -1,4 +1,4 @@
-#include "GLOBALS.H"
+#include "STRUCTS.H"
 static int near F_095F1(void) { }
 static int near F_0984E(int chance, int arg) { }
 static void near F_09A27(int n, int a, int mode) { }

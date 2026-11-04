@@ -1,4 +1,4 @@
-#include "GLOBALS.H"
+#include "STRUCTS.H"
 static void near F_0D29D(void) { }
 static void near F_0D624(void) { }
 static void near F_0D67D(void) { }

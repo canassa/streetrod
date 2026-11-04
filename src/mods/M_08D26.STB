@@ -1,3 +1,3 @@
-#include "GLOBALS.H"
+#include "STRUCTS.H"
 static void near F_0CDAF(struct Eng *p) { }
 @F_08E2D

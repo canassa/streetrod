@@ -25,7 +25,7 @@ it gets there through the steps below.
 
 ## Scaffolding that goes away once the files are real
 
-- `.STB` stubs (41), GLOBALS.H / PROTOS.H, the per-source repetition of shared statics, `module.merge` / `split` / `merge_asm`: all exist because `./sr check` compiles a split `M_*.C` alone. With one file per unit, check compiles the unit (the layout build already gates every unit) and compares the function asked for.
+- `.STB` stubs (41), the per-source repetition of shared statics, `module.merge` / `split` / `merge_asm`: all exist because `./sr check` compiles a split `M_*.C` alone. With one file per unit, check compiles the unit (the layout build already gates every unit) and compares the function asked for.
 - The legacy `./sr build` (work/game: four renamed code segments, public near definitions in staging copies, 55 unresolved symbols) and the README section that presents it as the build. `src/data/SLOTS.ASM` (unused; SLOTS.C is linked).
 - `LAYOUT.JSON` shrinks to nothing once the MAKEFILE and LINK response file are the sources of truth; the Python side only runs MAKE in DOSBox-X and compares.
 
@@ -41,6 +41,6 @@ it gets there through the steps below.
 1. MLIBCE: build it with LIB in the build, link with the default library, delete the extracted-member machinery and the `runtime`/`emulator` plan. (Proven.)
 2. CRTORDER: find the original's `_TEXT` declaration (M_21962.ASM first), delete the anchor.
 3. Source fixes that do not need the merge: `main`, CRT.H, non-static near functions with header prototypes; for the three units, try sources that match with one `/Ol` setting per file before writing explicit pragmas.
-4. Merge each unit into one real file (C and asm), with its own segment directive and pragmas; switch `./sr check` to unit compiles; delete STB, GLOBALS.H/PROTOS.H, merge/split.
+4. Merge each unit into one real file (C and asm), with its own segment directive and pragmas; switch `./sr check` to unit compiles; delete STB, merge/split. (GLOBALS.H/PROTOS.H are gone since 2026-11-04.)
 5. Check in MAKEFILE + LINK.RSP (+ the LIB step); the build is `MAKE` under DOSBox-X; retire the legacy build, LAYOUT.JSON, SLOTS.ASM; update README/CLAUDE.md.
 6. Repair `work/dg/run.sh` / `./sr dgroup apply` or retire it once the data lives in final files (it currently moves `g_4fa6` to the wrong file).

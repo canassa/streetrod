@@ -1,4 +1,3 @@
-#include "GLOBALS.H"
 #include "STRUCTS.H"
 static void near F_076A7(int t, struct Node **list, char *buf, int start) { }
 static void near F_07741(struct Node *n, struct Node **slot) { }

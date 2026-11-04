@@ -626,3 +626,15 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - The developers linked against a SETUP-style combined MLIBCE.LIB with the component order MLIBCR, LIBH, EM, MLIBFP; the "recovered runtime order" was just the order LINK extracts members from it.
 - Three units need the injected `#pragma loop_opt` with our current source; the other nine whose sources differ in `/Ol` do not. That is not proof the originals had pragmas: those functions may match under the file's one flag set with a different source formulation (correction from the user).
+
+## 2026-11-04 12:00 CET: GLOBALS.H and PROTOS.H removed
+
+### What I did
+- Deleted the two shared headers; the original most likely had one header per file, which the sources already use. They were only left for the `.STB` stubs and the `./sr new` template.
+- Stubs include `STRUCTS.H` (they are prepended to a module that includes its own headers); six stub bodies that wrote the communal `g7f82r` are now empty (`{ }` / `{ return 0; }`); bodies are placeholders and never reach the executable.
+- `./sr new` writes `#include "STRUCTS.H"`; `src/funcs` files get their include block from `./sr headers` like any other file. Docs and skills updated.
+- Result: `./sr check --all` 572/572, `./sr build --layout` IDENTICAL from an empty work dir, tests OK.
+
+### What I learned
+- Nothing in the check depended on the stub bodies touching a communal (no external-symbol budget effect at these sizes).
+

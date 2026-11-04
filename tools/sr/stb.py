@@ -1,7 +1,7 @@
 """Expand an .STB sidecar: `@NAME` lines become placeholder definitions built from the DB prototype.
 
 A hand-written far placeholder goes stale (C2086) whenever someone refines the callee's
-prototype in PROTOS.H. `@F_13DE6` always repeats the current one. Near (static) placeholders
+prototype in the DB. `@F_13DE6` always repeats the current one. Near (static) placeholders
 have no DB prototype and stay hand-written.
 """
 

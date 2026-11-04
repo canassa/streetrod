@@ -1,4 +1,4 @@
-#include "GLOBALS.H"
+#include "STRUCTS.H"
 static void near F_03614(int reset) { }
 static void near F_05584(void) { }
 static struct Node * near F_03C1B(void) { return 0; }

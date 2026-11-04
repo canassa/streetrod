@@ -1,7 +1,6 @@
-#include "GLOBALS.H"
+#include "STRUCTS.H"
 static int near F_0B3CA(int id) { return id; }
 static void near F_0B425(void) { }
-#include "STRUCTS.H"
 static struct Node * near F_03FF0(int idx, int a) { return 0; }
 static int near F_04386(struct Node *n, int keep) { return keep; }
 static void near F_076A7(int t, struct Node **list, char *buf, int start) { }

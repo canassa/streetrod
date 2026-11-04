@@ -1,2 +1,2 @@
-#include "GLOBALS.H"
+#include "STRUCTS.H"
 static struct Node * near F_03C1B(void) { return 0; }

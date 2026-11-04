@@ -212,7 +212,7 @@ def cmd_new(args):
             head = "static " + row["proto"].replace("@", "near " + name)
         else:
             head = f"{'int' if row['far'] else 'static int near'} {name}(void)"
-        path.write_text(f"/* {where} */\n\n#include \"GLOBALS.H\"\n#include \"PROTOS.H\"\n\n{head}\n{{\n}}\n")
+        path.write_text(f"/* {where} */\n\n#include \"STRUCTS.H\"\n\n{head}\n{{\n}}\n")
     db.update(con, row["addr"], status="wip", src=str(path.relative_to(config.ROOT)), name=name)
     print(f"created {path.relative_to(config.ROOT)}; status -> wip")
 
@@ -576,7 +576,7 @@ def cmd_proto(args):
     check_decl(args.proto)
     if not row["far"] and "interrupt" not in args.proto and not ("far @" in args.proto and args.force):
         raise SystemExit(f"{fn_name(row)} is near (RET): it is a static module-mate, forward-declared in the "
-                         "callers' .C as `static T near F(...);`, not a PROTOS.H prototype. (If C code really "
+                         "callers' .C as `static T near F(...);`, not a header prototype. (If C code really "
                          "far-calls this near routine, an original bug, use `T far @(...)` with --force.)")
     same = row["proto"] and re.sub(r"\w+(?=\s*[,)])", "", row["proto"]) == re.sub(r"\w+(?=\s*[,)])", "", args.proto)
     if row["proto"] and row["proto"] != args.proto and not same and not args.force:
@@ -634,8 +634,7 @@ def cmd_headers(args):
     con = db.connect()
     gen_headers(con)
     fileheaders.generate(con, rewrite_sources=True)
-    print("wrote the per-file headers in src/include, the include blocks of the C sources, "
-          "and GLOBALS.H / PROTOS.H (check scaffolding)")
+    print("wrote the per-file headers in src/include and the include blocks of the C sources")
 
 
 def cmd_status(args):
@@ -1050,7 +1049,7 @@ def main():
     s.add_argument("--delete", action="store_true", help="remove the entry")
     s.set_defaults(func=cmd_global)
 
-    s = sub.add_parser("proto", help="set a function's prototype for PROTOS.H (no proto: print it)")
+    s = sub.add_parser("proto", help="set a function's prototype for its file's header (no proto: print it)")
     s.add_argument("fn")
     s.add_argument("proto", nargs="?", help='with @ for the name, e.g. "int far @(int n)"')
     s.add_argument("--force", action="store_true", help="replace an existing prototype")
