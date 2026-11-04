@@ -20,7 +20,7 @@
         EXTRN   _g_demoKey:BYTE
         EXTRN   _g_soundOn:BYTE
         EXTRN   _g_lastKey:BYTE
-        EXTRN   _g_47e8:WORD
+        EXTRN   _g_joySavedSp:WORD
 
         .CODE S0000_TEXT
 
@@ -39,7 +39,7 @@ _joy_read  PROC  FAR
         mov     ax,DGROUP
         mov     ds,ax
         mov     es,ax
-        mov     _g_47e8,sp
+        mov     _g_joySavedSp,sp
         cli
         mov     dx,201h
         mov     cx,400h
@@ -114,7 +114,7 @@ done1:
         ret
 timeout:
         sti
-        mov     sp,_g_47e8
+        mov     sp,_g_joySavedSp
         jmp     done1
 _joy_read  ENDP
 
@@ -163,9 +163,9 @@ L4:
         mov     bx,ax
         popf
         jne     L6
-        cmp     BYTE PTR _g_47e8[bx],0
+        cmp     BYTE PTR _g_joySavedSp[bx],0
         jne     done2
-        mov     BYTE PTR _g_47e8[bx],1
+        mov     BYTE PTR _g_joySavedSp[bx],1
         mov     _g_inputLock,0FFFFh
         mov     al,_g_scanMap[bx]
         add     _g_keyDx,al
@@ -176,10 +176,10 @@ L4:
         mov     _g_inputLock,0
         jmp     SHORT done2
 L6:
-        cmp     BYTE PTR _g_47e8[bx],0
+        cmp     BYTE PTR _g_joySavedSp[bx],0
         je      done2
         mov     _g_inputLock,0FFFFh
-        mov     BYTE PTR _g_47e8[bx],0
+        mov     BYTE PTR _g_joySavedSp[bx],0
         mov     al,_g_scanMap[bx]
         sub     _g_keyDx,al
         mov     al,_g_scanMap[bx+1]

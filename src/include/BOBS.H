@@ -23,11 +23,11 @@ extern int bo7676;                                      /* DS:7676 */
 extern void (far *dz78b6)(char far *, char far *);      /* DS:78B6 */
 extern int as79a2z;                                     /* DS:79A2 */
 extern int d_79a4;                                      /* DS:79A4 */
-extern int g7d40q;                                      /* DS:7D40 */
-extern struct Spec *ar7d7au;                            /* DS:7D7A */
+extern int g_isKingState;                                      /* DS:7D40 */
+extern struct Spec *g_oppSpecPointer;                            /* DS:7D7A */
 extern struct Racer *g7d84o;                            /* DS:7D84 */
 extern int g7f82r;                                      /* DS:7F82 */
-extern int bm7f86;                                      /* DS:7F86 */
+extern int g_rivalHereState;                                      /* DS:7F86 */
 extern struct Bitmap far *x_82b8;                       /* DS:82B8 */
 void bobs_visit(void);                                  /* 0x0AB8B */
 void bobs_jail(void);                                   /* 0x0B08C */

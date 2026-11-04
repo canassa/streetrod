@@ -64,7 +64,7 @@ static void near dos_print(char *s)
 
 char *g_videoMenu[6] = {"                    1 - CGA      320 x 200 x  4 colors", "                    2 - EGA      320 x 200 x 16 colors", "                    3 - VGA      320 x 200 x 16 colors", "                    4 - Hercules monochrome", "                    5 - Tandy    320 x 200 x 16 colors", "\n                  Esc - Back to DOS"};   /* DS:0244 */
 int g_egaCard = 0;   /* DS:0250 */
-int g_0252 = 0;   /* DS:0252 */
+int g_forceEga = 0;   /* DS:0252 */
 int g_vga = 0;   /* DS:0254 */
 
 /* show_video_menu @ 0000:0082 (linear 0x00082, 265 bytes) */
@@ -150,7 +150,7 @@ static int near choose_video(int mode)
 
     herc = 0;
     viddet_detect();
-    if (g_0252)
+    if (g_forceEga)
         g_egaCard = 1;
     if (hercdet_bios_mono() && (g_egaCard == 1 || hercdet_detect())) {
         g_egaCard = 0;
@@ -280,7 +280,7 @@ static int near cpu_speed(void)
 
 int by70e2;
 struct Bitmap far *g755cu;
-char far *ab7564z;
+char far *g_imageBufferPointer;
 char g_graphicsUp;
 int bl82c6;
 int bu8acc;
@@ -297,18 +297,18 @@ static void near check_slow_cpu(void)
 }
 
 int g_noUeMem = 0;   /* DS:0280 */
-int g_0282 = 0;   /* DS:0282 */
-int g_0284 = 0;   /* DS:0284 */
+int g_end = 0;   /* DS:0282 */
+int g_scene = 0;   /* DS:0284 */
 int g_carAnim = 0;   /* DS:0286 */
-struct Bitmap far *g_0288 = 0;   /* DS:0288 */
-struct Bitmap far *g_028c = 0;   /* DS:028C */
-struct Bitmap far *g_0290 = 0;   /* DS:0290 */
+struct Bitmap far *g_spritePic = 0;   /* DS:0288 */
+struct Bitmap far *g_pumpWithNozzle = 0;   /* DS:028C */
+struct Bitmap far *g_pumpNoNozzle = 0;   /* DS:0290 */
 struct Bitmap far *g_0294 = 0;   /* DS:0294 */
-int g_0298[7] = {0, 19, 31, 29, 0, 0, 30};   /* DS:0298 */
-int g_02a6[7] = {0, 0, 8, 0, 0, 0, 9};   /* DS:02A6 */
-int g_02b4[7] = {0, 2, 0, 2, 0, 0, 0};   /* DS:02B4 */
-int g_02c2[7] = {0, 3, 1, 3, 0, 3, 1};   /* DS:02C2 */
-int g_02d0 = 0;   /* DS:02D0 */
+int g_carBandHeights[7] = {0, 19, 31, 29, 0, 0, 30};   /* DS:0298 */
+int g_carBottomCuts[7] = {0, 0, 8, 0, 0, 0, 9};   /* DS:02A6 */
+int g_carBg4[7] = {0, 2, 0, 2, 0, 0, 0};   /* DS:02B4 */
+int g_carBg16[7] = {0, 3, 1, 3, 0, 3, 1};   /* DS:02C2 */
+int g_spriteBottomCut = 0;   /* DS:02D0 */
 
 /* main @ 0000:066F (linear 0x0066F, 580 bytes) */
 
@@ -357,7 +357,7 @@ int main(int argc, char **argv)
     dash_set_view(0);
     if (r_vid.mode == -3 && g_egaCard)
         g755cu = mem_new_bitmap(320, 100, 0, -1, 0);
-    ab7564z = mem_alloc(r_vid.mode != -2 && r_vid.mode != -6 ? 16000 : 18000, 1);
+    g_imageBufferPointer = mem_alloc(r_vid.mode != -2 && r_vid.mode != -6 ? 16000 : 18000, 1);
     a = disk_load_list(g_titlePics, 0);
     if (a == 3) {
         by70e2 = 1;

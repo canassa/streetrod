@@ -42,17 +42,17 @@ int drive_run(void)
         dash_set_view(3);
         marks_clear();
         (*bl78be)();
-        g_58e4 = r_vid.mode == -3 && g_egaCard;
-        if (g_58e4) {
+        g_dashBuffered = r_vid.mode == -3 && g_egaCard;
+        if (g_dashBuffered) {
             popup_grab(0, 0x64, 0x140, 0x64, g755cu);
             r_vid.f16 = 1;
             screen_fill_rect(0, 0, 0x140, 0xc8, 0);
             r_vid.f16 = sv;
         }
         if (r_vid.mode == -2)
-            g_58ee = 1;
+            g_driveRebuild = 1;
         else
-            g_58ee = 0;
+            g_driveRebuild = 0;
         src = F_15BBE(0x3f6, 2);
         if (g_autoTrans) {
             pict = F_15BBE(0x4d8, 2);
@@ -75,30 +75,30 @@ int drive_run(void)
         blt.h = 0x5a;
         blt.sx = blt.dx = 0;
         blt.sy = 0x64;
-        blt.dy = (r_vid.mode == -2 || g_58e4) ? 0 : 0x64;
-        (*b_78a2)(src, g_58e4 ? g755cu : bm7678, &blt, 1);
+        blt.dy = (r_vid.mode == -2 || g_dashBuffered) ? 0 : 0x64;
+        (*b_78a2)(src, g_dashBuffered ? g755cu : bm7678, &blt, 1);
         F_19438(1);
         view_load();
-        dash_init_shifter(e_78e0.f24, e_78e0.f1c);
-        dash_draw_shifter(g_58e4 ? g755cu : bm7678, &e_78e0);
+        dash_init_shifter(g_driveEng.f24, g_driveEng.f1c);
+        dash_draw_shifter(g_dashBuffered ? g755cu : bm7678, &g_driveEng);
         shiftx5 = 0;
         bp82c2 = 0x64;
         dash_load_wheel();
-        dash_draw_wheel(0, bp82c2, g_58e4 ? g755cu : bm7678);
+        dash_draw_wheel(0, bp82c2, g_dashBuffered ? g755cu : bm7678);
         bp82c2 = 0;
         ret = 0;
-        oldfe = e_78e0.fe;
-        dash_speedo_init(oldf05 = e_78e0.f0);
-        if (!g_58e4)
-            oldf05 = dash_move_needle(e_78e0.f0, oldf05, 0);
+        oldfe = g_driveEng.fe;
+        dash_speedo_init(oldf05 = g_driveEng.f0);
+        if (!g_dashBuffered)
+            oldf05 = dash_move_needle(g_driveEng.f0, oldf05, 0);
         if (!g_autoTrans) {
             dash_tach_init(oldfe);
-            if (!g_58e4)
-                oldfe = dash_move_needle(e_78e0.fe, oldfe, 1);
-        } else if (!g_58e4)
+            if (!g_dashBuffered)
+                oldfe = dash_move_needle(g_driveEng.fe, oldfe, 1);
+        } else if (!g_dashBuffered)
             dash_draw_clock();
-    } while (g_58ee > 1);
-    g_58ee = 0;
+    } while (g_driveRebuild > 1);
+    g_driveRebuild = 0;
     if (r_vid.mode == -2) {
         crtc_set_split(0x63);
         af824ax = 0x64;
@@ -111,16 +111,16 @@ int drive_run(void)
         blt.dy = blt.sy = blt.sx = blt.dx = 0;
         (*b_78a2)(g8188w, bm7678, &blt, 1);
     }
-    if (g_58e4) {
-        g_58e4 = 0;
+    if (g_dashBuffered) {
+        g_dashBuffered = 0;
         blt.w = g755cu->width;
         blt.h = 0x64;
         blt.sy = blt.sx = blt.dx = 0;
         blt.dy = 0x64;
         (*b_78a2)(g755cu, bm7678, &blt, 1);
-        oldf05 = dash_move_needle(e_78e0.f0, oldf05, 0);
+        oldf05 = dash_move_needle(g_driveEng.f0, oldf05, 0);
         if (!g_autoTrans)
-            oldfe = dash_move_needle(e_78e0.fe, oldfe, 1);
+            oldfe = dash_move_needle(g_driveEng.fe, oldfe, 1);
         else
             dash_draw_clock();
         dash_draw_wheel(shiftx5, bp82c2, bm7678);
@@ -134,15 +134,15 @@ int drive_run(void)
         }
         if (ret = drvtick_step())
             break;
-        shiftx5 = e_78e0.f4;
-        if (e_78e0.f1a)
-            dash_draw_shifter(bm7678, &e_78e0);
+        shiftx5 = g_driveEng.f4;
+        if (g_driveEng.f1a)
+            dash_draw_shifter(bm7678, &g_driveEng);
         if (cur != ao8228u)
             cur = ao8228u;
-        if (abs(e_78e0.f0 - oldf05) > 1)
-            oldf05 = dash_move_needle(e_78e0.f0, oldf05, 0);
-        if (!g_autoTrans && abs(e_78e0.fe - oldfe) > 1)
-            oldfe = dash_move_needle(e_78e0.fe, oldfe, 1);
+        if (abs(g_driveEng.f0 - oldf05) > 1)
+            oldf05 = dash_move_needle(g_driveEng.f0, oldf05, 0);
+        if (!g_autoTrans && abs(g_driveEng.fe - oldfe) > 1)
+            oldfe = dash_move_needle(g_driveEng.fe, oldfe, 1);
         if (shiftx5 != bp82c2) {
             dash_draw_wheel(shiftx5, bp82c2, bm7678);
             bp82c2 = shiftx5;

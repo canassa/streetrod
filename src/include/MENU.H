@@ -7,7 +7,7 @@
 extern int g_hotChain;                                  /* DS:07A8 */
 extern char g_wearText[];                               /* DS:07AA */
 extern char g_wearPad[4];                               /* DS:07BE */
-extern int g_07c6[];                                    /* DS:07C6 */
+extern int g_cgaPicMap[];                                    /* DS:07C6 */
 extern void (far *g_drvRecolorRegion)(struct Bitmap far *, int, int, int, int, int, int);/* DS:78BA */
 extern int bq824e;                                      /* DS:824E */
 extern int ai8b86y[];                                   /* DS:8B86 */
@@ -17,10 +17,10 @@ extern int a_8b9ca;                                     /* DS:8B9C */
 extern int *az8b9ez;                                    /* DS:8B9E */
 extern int x_8ba0;                                      /* DS:8BA0 */
 extern struct Hot *az8ba2t;                             /* DS:8BA2 */
-extern char ax8ba4u;                                    /* DS:8BA4 */
+extern char g_headerEditableState;                                    /* DS:8BA4 */
 extern struct Hot *av8ba6v;                             /* DS:8BA6 */
 extern int ai8bacx;                                     /* DS:8BAC */
-extern int av8efe;                                      /* DS:8EFE */
+extern int g_hotMenuGroupState;                                      /* DS:8EFE */
 void menu_draw_hot(struct Hot *p);                      /* 0x139DE */
 void menu_push(int id);                                 /* 0x13DE6 */
 void menu_pop(int keep);                                /* 0x13F21 */

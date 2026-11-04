@@ -262,7 +262,7 @@ void sprite_plan_drive(struct Sprite *s, int mode, int d)
     switch (mode) {
     case 1:
     case 4:
-        if (g_0284 == 1)
+        if (g_scene == 1)
             sprite_plan_move(s, 1, 8, 4, 2, d, 0, 0x3c);
         else
             sprite_plan_move(s, 1, 8, 4, 2, d, 0x19, 0x37);
@@ -307,8 +307,8 @@ void sprite_slide_v(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
     sprite_set_step(sp, 0, n1, 0, (char)dir);
     sp->page->bm = r_vid.back;
     while ((*g78c6c)(sp)) {
-        if (g_0792)
-            (*ab78aat)(g_0792, r_vid.back, &u_70ac, 1);
+        if (g_boltOverlay)
+            (*ab78aat)(g_boltOverlay, r_vid.back, &u_70ac, 1);
         if (r_vid.f16)
             bitmap_copy_box(r_vid.back, r_vid.front, x, a, bm->width + x, b);
     }
@@ -328,7 +328,7 @@ void sprite_advance(struct Sprite *s)
     int n;
 
     z_8b7c = s->x;
-    g_0288 = s->frame->pos;
+    g_spritePic = s->frame->pos;
     s->seq->count--;
     if (s->seq->count == 0)
         s->seq++;

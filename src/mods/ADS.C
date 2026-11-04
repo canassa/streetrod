@@ -24,11 +24,11 @@ struct Pages g_pages = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 0, 0, 0};   /* DS:
 struct Bitmap far *g_adPicture = 0;   /* DS:051C */
 char g_adRedraw = 0;   /* DS:0520 */
 int g_adBlt = 0;   /* DS:0522 */
-int g_0524 = 0;   /* DS:0524 */
-int g_0526 = 0;   /* DS:0526 */
-int g_0528 = 0;   /* DS:0528 */
-int g_052a = 0;   /* DS:052A */
-int g_052c = 0;   /* DS:052C */
+int g_adHeight = 0;   /* DS:0524 */
+int g_adSrcX = 0;   /* DS:0526 */
+int g_adSrcY = 0;   /* DS:0528 */
+int g_adDstX = 0;   /* DS:052A */
+int g_adDstY = 0;   /* DS:052C */
 int g_052e = 0;   /* DS:052E */
 int g_0530[3] = {0, 0, 0};   /* DS:0530 */
 int g_adResume = 0;   /* DS:0536 */
@@ -52,7 +52,7 @@ void ads_open(int *list, int base)
     base = num - base;
     g_pages.cur = 1;
     while (num--) {
-        while ((pos += 9 * g_2c01[*ptr] + 3) > 0xbd) {
+        while ((pos += 9 * g_descHdr[*ptr] + 3) > 0xbd) {
             g_pages.start[g_pages.n++] = first - num;
             pos = 0;
         }
@@ -63,8 +63,8 @@ void ads_open(int *list, int base)
     x_colors = bustyle->hilite;
     cursor_ctl(-3);
     g_adBlt = 0x40;
-    g_0524 = 0xbe;
-    g_0526 = g_0528 = g_052a = g_052c = g_052e = 0;
+    g_adHeight = 0xbe;
+    g_adSrcX = g_adSrcY = g_adDstX = g_adDstY = g_052e = 0;
     g_adRedraw = 1;
     menu_push(8);
     cursor_ctl(-1);
@@ -101,10 +101,10 @@ int ads_run(void)
             x_colors = bustyle->hilite;
             g_adPicture = ad_picture(2);
             draw_fill_rect(r_vid.back, 0x40, 0, 0xc0, 0xbe);
-            g_0526 = g_052a = 0;
+            g_adSrcX = g_adDstX = 0;
             b_78a2(g_adPicture, r_vid.back, (struct Blt *)&g_adBlt, 1);
-            g_0526 = 0x40;
-            g_052a = 0x100;
+            g_adSrcX = 0x40;
+            g_adDstX = 0x100;
             b_78a2(g_adPicture, r_vid.back, (struct Blt *)&g_adBlt, 1);
             F_19438(1);
             hsave = r_vid.back->height;
@@ -126,7 +126,7 @@ int ads_run(void)
                 row7->f0 = 0xb;
                 item = *next++;
                 row7->f6 = item >= 0xcd8 ? 0 : i;
-                a_78aem(r_vid.back, 0x44, y, str = g_2c02 + item);
+                a_78aem(r_vid.back, 0x44, y, str = g_desc + item);
                 for (;;) {
                     while ((c6 = *(str += strlen(str) + 1)) == '+') {
                         str++;
@@ -175,7 +175,7 @@ int ads_run(void)
             if (g7f84q < 1)
                 g7f84q = limit;
             diff = 0xbd;
-            while ((diff -= 9 * g_2c01[g_pages.list[g7f84q]] + 3) > 0)
+            while ((diff -= 9 * g_descHdr[g_pages.list[g7f84q]] + 3) > 0)
                 if (--g7f84q < 1)
                     g7f84q = limit;
             a_7eaap.m7ebe = g7f84q;

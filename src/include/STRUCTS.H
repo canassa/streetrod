@@ -23,7 +23,7 @@ struct Part {
     signed char dx;
     signed char dy;
     signed char w;
-    signed char h;
+    signed char color;
 };
 
 struct Run {
@@ -75,7 +75,7 @@ struct Rack {
 };
 
 struct Car {
-    int weight;
+    int value;
     int f2;
     char f4;
     unsigned char f5;
@@ -396,7 +396,7 @@ struct Gear {
     struct Range r[3];
 };
 
-/* drive train state; e_78e0 and g79e2g are two instances, 0xc2 bytes each */
+/* drive train state; g_driveEng and g_oppEngState are two instances, 0xc2 bytes each */
 struct Eng {
     int f0;
     int f2;

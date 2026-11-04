@@ -5,7 +5,7 @@
 #include "STRUCTS.H"
 
 extern int g_gearSpeedPct[][5];                         /* DS:54DC */
-extern int g_5504[][5];                                 /* DS:5504 */
+extern int g_rpmStepBase[][5];                                 /* DS:5504 */
 extern int g_rpmBands[][2];                             /* DS:5522 */
 extern int g_carbManifoldFit[][5];                      /* DS:552E */
 extern int g_engineScore[];                             /* DS:554C */

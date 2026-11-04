@@ -17,7 +17,7 @@
 void (far *ap78b2z)(char far *, char far *, char far *, char far *, int, int, int, int);
 struct Cursor g_cursor2;
 
-struct Pair g_06ec[4] = {{1, 1}, {2, 2}, {1, 1}, {8, 8}};   /* DS:06EC */
+struct Pair g_cursorPairs[4] = {{1, 1}, {2, 2}, {1, 1}, {8, 8}};   /* DS:06EC */
 
 /* cursor_shape_off @ 0F38:2B1C (linear 0x11E9C, 12 bytes) */
 
@@ -105,8 +105,8 @@ void cursor_ctl(int mode)
     a = a < 0 ? 0 : a > 319 ? 319 : a;
     b = b < 0 ? 0 : b > 199 ? 199 : b;
     if (mode >= 0) {
-        g_4742 = g_06ec[g_cursor2.n = mode].a;
-        g_4744 = g_06ec[mode].b;
+        g_4742 = g_cursorPairs[g_cursor2.n = mode].a;
+        g_4744 = g_cursorPairs[mode].b;
         g_cursor2.off = cursor_shape_off(g_cursor2.n);
         cursor_draw(a, b);
     } else if (mode >= -2) {

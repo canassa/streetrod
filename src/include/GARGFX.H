@@ -12,9 +12,9 @@ extern int g_wiresPos[];                                /* DS:071A */
 extern int g_manifoldBoltPos[];                         /* DS:0732 */
 extern int g_carbPos[][2];                              /* DS:0742 */
 extern int g_carbBoltOff[];                             /* DS:076A */
-extern char g_077e[];                                   /* DS:077E */
-extern char g_078c[];                                   /* DS:078C */
-extern struct Bitmap far *g_0792;                       /* DS:0792 */
+extern char g_partSlotMap[];                                   /* DS:077E */
+extern char g_carbPosBase[];                                   /* DS:078C */
+extern struct Bitmap far *g_boltOverlay;                       /* DS:0792 */
 extern struct Hot g_boltHot;                            /* DS:0796 */
 extern struct Blt u_70ac;                               /* DS:70AC */
 extern int (far *am78a6t)(struct Bitmap far *, struct Bitmap far *, struct Blt *);/* DS:78A6 */

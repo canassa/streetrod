@@ -20,7 +20,7 @@
 
 static int near engine_index(void);
 static int near carb_pos(int *px, int *py);
-static void near F_12CD1(void);
+static void near make_bolt_overlay(void);
 static void near insert_hot(struct Hot *arr, struct Hot *item, int num);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
@@ -34,9 +34,9 @@ int g_wiresPos[12] = {75, 113, 64, 122, 83, 110, 72, 119, 83, 118, 72, 127};   /
 int g_manifoldBoltPos[8] = {68, 74, 144, 74, 68, 74, 160, 74};   /* DS:0732 */
 int g_carbPos[10][2] = {{90, 70}, {98, 70}, {94, 70}, {64, 70}, {90, 70}, {115, 70}, {72, 71}, {111, 71}, {71, 69}, {115, 69}};   /* DS:0742 */
 int g_carbBoltOff[10] = {10, -1, 21, -1, 11, -1, 29, -1, 11, -1};   /* DS:076A */
-char g_077e[14] = {29, 0, -1, -1, 2, 2, 2, 2, 3, 4, 2, 3, 2, 3};   /* DS:077E */
-char g_078c[6] = {5, 6, 7, 10, 12, 0};   /* DS:078C */
-struct Bitmap far *g_0792 = 0;   /* DS:0792 */
+char g_partSlotMap[14] = {29, 0, -1, -1, 2, 2, 2, 2, 3, 4, 2, 3, 2, 3};   /* DS:077E */
+char g_carbPosBase[6] = {5, 6, 7, 10, 12, 0};   /* DS:078C */
+struct Bitmap far *g_boltOverlay = 0;   /* DS:0792 */
 struct Hot g_boltHot = {11, 0, 0, 1, 0, 0, 0, 0, 0};   /* DS:0796 */
 
 /* F_123F4 @ 0F38:3074 (linear 0x123F4, 305 bytes)
@@ -227,7 +227,7 @@ static int near carb_pos(int *px, int *py)
     int r;
     int t;
 
-    switch (o_8290[g_077e[hz82ae]]) {
+    switch (o_8290[g_partSlotMap[hz82ae]]) {
     case 0x43c:
         r = 0;
         break;
@@ -385,12 +385,12 @@ void gargfx_drop_bolt(void)
     F_19438(1);
 }
 
-/* F_12CD1 @ 0F38:3951 (linear 0x12CD1, 263 bytes)
+/* make_bolt_overlay @ 0F38:3951 (linear 0x12CD1, 263 bytes)
 
    For the marker items 0x43f/0x440 of the current slot, save a copy of the picture
-   (shifted to the pixel grid) in g_0792 and set up the blit u_70ac that draws it. */
+   (shifted to the pixel grid) in g_boltOverlay and set up the blit u_70ac that draws it. */
 
-static void near F_12CD1(void)
+static void near make_bolt_overlay(void)
 {
     int what;
     char kind;
@@ -400,7 +400,7 @@ static void near F_12CD1(void)
     struct Bitmap far *picture;
 
     if (o_8290[1] == 0x437) {
-        kind = g_077e[hz82ae];
+        kind = g_partSlotMap[hz82ae];
         if (kind == 3)
             return;
         what = ad829cy[i = (kind != 2) ? 1 : 0];
@@ -409,11 +409,11 @@ static void near F_12CD1(void)
         px = g_manifoldBoltPos[i * 2] - 2;
         py = g_manifoldBoltPos[i * 2 + 1];
         picture = F_15BBE(what, 1);
-        g_0792 = F_1934E(picture->width + 8, picture->height, picture->alt.p != 0, 2);
-        bitmap_shift_right(picture, px & ~r_vid.mask, g_0792);
+        g_boltOverlay = F_1934E(picture->width + 8, picture->height, picture->alt.p != 0, 2);
+        bitmap_shift_right(picture, px & ~r_vid.mask, g_boltOverlay);
         marks_pop_low(1);
-        u_70ac.w = g_0792->width;
-        u_70ac.h = g_0792->height;
+        u_70ac.w = g_boltOverlay->width;
+        u_70ac.h = g_boltOverlay->height;
         u_70ac.sx = u_70ac.sy = 0;
         u_70ac.dx = (px & r_vid.mask) + 0x60;
         u_70ac.dy = py - u_70ac.h + 9;
@@ -451,7 +451,7 @@ void gargfx_draw_part(int n, int flag)
     }
     x &= r_vid.mask;
     if (n == 0x43c)
-        F_12CD1();
+        make_bolt_overlay();
     if (n != 0x434 && n != 0x435 && n != 0x436)
         ypos -= saved->height;
     if (flag)
@@ -468,9 +468,9 @@ void gargfx_draw_part(int n, int flag)
         (*bl78ce)(0xd, 0x93, x + 0x60, r_vid.f16 ? 0xd - height : ypos, ypos + 9, saved);
         cursor_ctl(-2);
     }
-    if (g_0792) {
+    if (g_boltOverlay) {
         F_19438(1);
-        g_0792 = 0;
+        g_boltOverlay = 0;
     }
     F_19438(1);
     if (pict != saved)
@@ -562,13 +562,13 @@ void gargfx_draw_parts(struct Car *car)
         hz82ae = 0;
         gargfx_draw_part(type, 0);
         if (type == 0x434)
-            g_078c[0] = 4;
+            g_carbPosBase[0] = 4;
         else
-            g_078c[0] = 5;
+            g_carbPosBase[0] = 5;
         if (type = o_8290[1]) {
             hz82ae = 1;
             gargfx_draw_part(type, 0);
-            slot = g_078c[g_4806[car->rack.s[1]->idx].f2];
+            slot = g_carbPosBase[g_4806[car->rack.s[1]->idx].f2];
             for (type = 0; type < 3; type++) {
                 hz82ae = slot++;
                 if (other = o_8290[type + 2])
@@ -653,7 +653,7 @@ static void near insert_hot(struct Hot *arr, struct Hot *item, int n)
 
 /* gargfx_build_hots @ 0F38:40CA (linear 0x1344A, 411 bytes)
 
-   Build the sorted list of menu items in g_184c: the 3 fixed records are copied from g_1948,
+   Build the sorted list of menu items in g_engineHots: the 3 fixed records are copied from g_1948,
    then for each of 9 slots (grouped by the counts in g_5130) that is enabled in o_8290 an item is
    inserted at the position gargfx_bolt_pos gives for the slot's coordinates, plus a last item picked by
    ap82acz. hz82ae/g82b2t are saved and restored around it. */
@@ -672,8 +672,8 @@ void gargfx_build_hots(int *xs, int *ys)
     rh = g82b2t;
     item = g_1948;
     len = (num = 3) * sizeof(struct Hot);
-    memcpy(g_184c, item, len);
-    g_boltHot.f4 = g_2ba5;
+    memcpy(g_engineHots, item, len);
+    g_boltHot.f4 = g_offBolt;
     i = lane = j = 0;
     for (; i < 9; i++) {
         if (o_8290[lane]) {
@@ -685,7 +685,7 @@ void gargfx_build_hots(int *xs, int *ys)
             g_boltHot.f6 = i + 1;
             g_boltHot.x2 = (g_boltHot.x1 = x - 2) + 5;
             g_boltHot.y1 = (g_boltHot.y2 = y + 2) - 15;
-            insert_hot(g_184c, &g_boltHot, num);
+            insert_hot(g_engineHots, &g_boltHot, num);
             num++;
         }
         if (++j == g_5130[lane]) {
@@ -694,15 +694,15 @@ void gargfx_build_hots(int *xs, int *ys)
         }
     }
     if (o_8290[0]) {
-        g_boltHot.f4 = g_2ba7;
+        g_boltHot.f4 = g_offWires;
         g_boltHot.f6 = 13;
         i = (ap82acz == 0x446) + engine_index() * 2;
         g_boltHot.x2 = (g_boltHot.x1 = g_wiresPos[i * 2] + 0x5b) + 10;
         g_boltHot.y2 = (g_boltHot.y1 = g_wiresPos[i * 2 + 1] + 2) + 15;
-        insert_hot(g_184c, &g_boltHot, num);
+        insert_hot(g_engineHots, &g_boltHot, num);
         num++;
     }
-    g_184c[num].f0 = 9;
+    g_engineHots[num].f0 = 9;
     hz82ae = rx;
     g82b2t = rh;
     sys_hover_reset();
@@ -710,7 +710,7 @@ void gargfx_build_hots(int *xs, int *ys)
 
 /* F_135E5 @ 0F38:4265 (linear 0x135E5, 156 bytes)
 
-   Sort n hot spots of g_09f4 starting at first by x1 (exchange sort, ascending) */
+   Sort n hot spots of g_hots starting at first by x1 (exchange sort, ascending) */
 
 void F_135E5(int first, int n)
 {
@@ -721,9 +721,9 @@ void F_135E5(int first, int n)
     struct Hot swap;
 
     for (i = 0; i < n - 1; i++) {
-        p = &g_09f4[first + i];
+        p = &g_hots[first + i];
         for (k = i + 1; k < n; k++) {
-            q = &g_09f4[first + k];
+            q = &g_hots[first + k];
             if (p->x1 > q->x1) {
                 swap = *p;
                 *p = *q;

@@ -3,7 +3,7 @@
         .DATA
         EXTRN   _cursblt_cga:FAR
         EXTRN   _g_egaCard:WORD
-        EXTRN   _g_0252:WORD
+        EXTRN   _g_forceEga:WORD
 
         PUBLIC  _g_savedVideoMode
 _g_savedVideoMode DB      0                        ; DS:5AEE char
@@ -109,7 +109,7 @@ probe:
         mov     _g_egaCard,2
         jmp     done
 mono:
-        mov     _g_0252,1
+        mov     _g_forceEga,1
 done:
         pop     si
         pop     di

@@ -10,11 +10,11 @@ extern struct Spot g_crashPics[];                       /* DS:53D4 */
 extern int g_statsDone;                                 /* DS:53E6 */
 extern int g_tireSlip[][5];                             /* DS:54B2 */
 extern int g_lastTicks;                                 /* DS:54D0 */
-extern int g_54d2;                                      /* DS:54D2 */
-extern int g_54d4;                                      /* DS:54D4 */
-extern int g_54d6;                                      /* DS:54D6 */
-extern int g_54d8;                                      /* DS:54D8 */
-extern int g_54da;                                      /* DS:54DA */
+extern int g_bumpAlternate;                                      /* DS:54D2 */
+extern int g_rivalLeft;                                      /* DS:54D4 */
+extern int g_rivalCurveBrake;                                      /* DS:54D6 */
+extern int g_contactFrames;                                      /* DS:54D8 */
+extern int g_brakeTicks;                                      /* DS:54DA */
 extern struct State70C0 al70c0x;                        /* DS:70C0 */
 extern int by72f2;                                      /* DS:72F2 */
 extern struct Bitmap far *ab7526x[13];                  /* DS:7526 */
@@ -26,7 +26,7 @@ extern int gz7d7e;                                      /* DS:7D7E */
 extern int g7d82p;                                      /* DS:7D82 */
 extern int a_7f88d;                                     /* DS:7F88 */
 extern int h_8264;                                      /* DS:8264 */
-extern int g826af;                                      /* DS:826A */
+extern int g_backGlassXState;                                      /* DS:826A */
 extern int ae826cv;                                     /* DS:826C */
 extern int ar826e;                                      /* DS:826E */
 extern int q_8270;                                      /* DS:8270 */

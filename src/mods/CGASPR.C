@@ -61,10 +61,10 @@ int cgaspr_step(struct Sprite *s)
         restore_rect(&c2, bits, fp, s->seq->dx);
     pg->r = rc;
     top = d ? d->height : 0;
-    t = blt.h = fr->pos->height - top - g_02d0;
+    t = blt.h = fr->pos->height - top - g_spriteBottomCut;
     blt.sy = 0;
     u = blt.dy = s->seq->dy ? s->y : 0;
-    if (g_0284 != 6) {
+    if (g_scene != 6) {
         blt.w = fr->pos->width;
         blt.sx = 0;
         blt.dx = s->seq->dx ? s->x : 0;
@@ -113,7 +113,7 @@ int cgaspr_step(struct Sprite *s)
         }
     }
     blt.w = max(rc.x2, c2.x2) - min(rc.x1, c2.x1) + 1;
-    blt.h = max(rc.y2, c2.y2) - min(rc.y1, c2.y1) - g_02d0 + 1;
+    blt.h = max(rc.y2, c2.y2) - min(rc.y1, c2.y1) - g_spriteBottomCut + 1;
     blt.dx = min(rc.x1, c2.x1);
     blt.dy = min(rc.y1, c2.y1);
     blt.sx = s->seq->dx ? blt.dx : 0;

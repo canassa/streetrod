@@ -40,10 +40,10 @@ int ap8268t;
 struct Style g_style16 = {{{""}, {{13, 9, 9, 15, 1}}, {{9, 13, 13, 15, 1}}, {{1, 5, 5, 1, 1}}, {{1, 5, 5, 4, 1}}, {{15, 9, 9, 15, 1}}, {{14, 15, 15, 10, 1}}}, {{1, 4, 4, 1, 1}}, {{1, 3, 3, 4, 2}}, {{15, 9, 9, 15, 1}}, {{13, 9, 9, 15, 1}}, {{11, 2, 2, 11, 1}}, {1, 4, 4, 11, 1}, {{1, 4, 4, 1, 1}}, {{1, 4, 4, 1, 1}}, {{1, 3, 3, 4, 1}}};   /* DS:03A0 */
 struct Style g_style4 = {{{""}, {{1, 2, 2, 3, 1}}, {{2, 1, 1, 3, 1}}, {{0, 3, 3, 0, 1}}, {{0, 3, 3, 2, 1}}, {{3, 2, 2, 3, 1}}, {{2, 1, 1, 1, 1}}}, {{0, 3, 3, 0, 1}}, {{0, 3, 3, 2, 2}}, {{3, 2, 2, 3, 1}}, {{1, 2, 2, 3, 1}}, {{0, 2, 2, 0, 1}}, {0, 3, 3, 1, 1}, {{0, 3, 3, 0, 1}}, {{0, 3, 3, 0, 1}}, {{1, 2, 2, 3, 1}}};   /* DS:03F0 */
 unsigned char g_palette[16] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14};   /* DS:0440 */
-int g_0450 = 0;   /* DS:0450 */
+int g_palTail = 0;   /* DS:0450 */
 char g_blackPalette[16] = "";   /* DS:0452 */
 unsigned char g_altPalette[16] = {9, 1, 8, 0, 15, 7, 11, 3, 14, 2, 4, 12, 13, 10, 6, 14};   /* DS:0462 */
-int g_0472 = 0;   /* DS:0472 */
+int g_altPalTail = 0;   /* DS:0472 */
 
 /* F_10B7C @ 0F38:17FC (linear 0x10B7C, 16 bytes) */
 
@@ -52,16 +52,16 @@ void F_10B7C(void)
     F_112CB(12, 5);
 }
 
-/* F_10B8C @ 0F38:180C (linear 0x10B8C, 16 bytes) */
+/* video_bobs_pal @ 0F38:180C (linear 0x10B8C, 16 bytes) */
 
-void F_10B8C(void)
+void video_bobs_pal(void)
 {
     F_112CB(12, 13);
 }
 
-/* F_10B9C @ 0F38:181C (linear 0x10B9C, 16 bytes) */
+/* video_name_pal @ 0F38:181C (linear 0x10B9C, 16 bytes) */
 
-void F_10B9C(void)
+void video_name_pal(void)
 {
     g_palette[6] = 9;
     g_palette[7] = 1;
@@ -322,7 +322,7 @@ int video_anim_hook(struct Obj *o, struct Cmd *c)
     case 2:
         if (c->a) {
             g_blinkCount = c->a;
-            F_16993(1);
+            sound_pump(1);
             return 0;
         }
         if (g_blinkCount--) {
@@ -336,7 +336,7 @@ int video_anim_hook(struct Obj *o, struct Cmd *c)
             }
             return 0;
         }
-        F_16993(0);
+        sound_pump(0);
         return 1;
     }
 }

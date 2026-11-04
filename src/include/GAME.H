@@ -18,7 +18,7 @@ struct Node * near game_new_part(void);                 /* 0x03C1B */
 int game_part_value(struct Node *n);                    /* 0x03C5A */
 struct Node2 * near game_new_car(void);                 /* 0x03FB1 */
 struct Node * near game_add_part(int idx, int a);       /* 0x03FF0 */
-struct Car * near game_make_car(int idx, int weight, struct Car *old);/* 0x04036 */
+struct Car * near game_make_car(int idx, int value, struct Car *old);/* 0x04036 */
 int near game_take_part(struct Node *n, int keep);      /* 0x04386 */
 int near game_scrap_car(struct Car *c, int keep);       /* 0x043BF */
 int game_car_look(struct Car *c);                       /* 0x049A2 */

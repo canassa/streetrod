@@ -7,10 +7,10 @@
 extern struct Style g_style16;                          /* DS:03A0 */
 extern struct Style g_style4;                           /* DS:03F0 */
 extern unsigned char g_palette[];                       /* DS:0440 */
-extern int g_0450;                                      /* DS:0450 */
+extern int g_palTail;                                      /* DS:0450 */
 extern char g_blackPalette[16];                         /* DS:0452 */
 extern unsigned char g_altPalette[16];                  /* DS:0462 */
-extern int g_0472;                                      /* DS:0472 */
+extern int g_altPalTail;                                      /* DS:0472 */
 extern struct Bitmap far *g_pageBmps[];                 /* DS:7316 */
 extern struct Obj bm7568[];                             /* DS:7568 */
 extern struct Style *bustyle;                           /* DS:787E */
@@ -23,8 +23,8 @@ extern int aw8260y;                                     /* DS:8260 */
 extern int d_8266;                                      /* DS:8266 */
 extern int ap8268t;                                     /* DS:8268 */
 void F_10B7C(void);                                     /* 0x10B7C */
-void F_10B8C(void);                                     /* 0x10B8C */
-void F_10B9C(void);                                     /* 0x10B9C */
+void video_bobs_pal(void);                                     /* 0x10B8C */
+void video_name_pal(void);                                     /* 0x10B9C */
 void video_swap_pal(void);                              /* 0x10BAC */
 void video_init(struct Bitmap far *front, struct Bitmap far *back);/* 0x10BD9 */
 void video_anim_stop(int n);                            /* 0x10D6C */

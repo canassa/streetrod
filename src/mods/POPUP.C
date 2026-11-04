@@ -85,7 +85,7 @@ void popup_show(struct Bitmap far *bm, int x, int y)
 /* popup_open @ 0F38:28A4 (linear 0x11C24, 446 bytes)
 
    Pop up message window n (negative n: the window is removed again afterwards).
-   The text is the run of NUL-terminated lines that follows the window's index byte in g_2c01. */
+   The text is the run of NUL-terminated lines that follows the window's index byte in g_descHdr. */
 
 void popup_open(int n)
 {
@@ -107,7 +107,7 @@ void popup_open(int n)
     close = n < 0;
     if (close)
         n = -n;
-    txt = g_2c01 + n + 1;
+    txt = g_descHdr + n + 1;
     rec = txt[-1] - 1;
     g_popupLayout = &g_popupWins[rec];
     g_popupSave = popup_grab(x0 = g_popupLayout->x, y1 = g_popupLayout->y, w1 = g_popupLayout->w, h1 = g_popupLayout->h, 0);
@@ -142,7 +142,7 @@ void popup_open_at(int n, int x, int y)
     int ox;
     int oy;
 
-    idx = g_2c01[abs(n)] - 1;
+    idx = g_descHdr[abs(n)] - 1;
     ox = g_popupWins[idx].x;
     oy = g_popupWins[idx].y;
     if (x >= 0)

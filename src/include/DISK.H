@@ -31,11 +31,11 @@ extern struct Spec g7d86n[];                            /* DS:7D86 */
 extern struct Racer av7ff8[];                           /* DS:7FF8 */
 extern struct Spr6 ap818c[];                            /* DS:818C */
 extern unsigned ag8baey[][3];                           /* DS:8BAE */
-extern int h_8bc8;                                      /* DS:8BC8 */
+extern int g_lib1Count;                                      /* DS:8BC8 */
 extern int s_8dd2;                                      /* DS:8DD2 */
-extern char *aw8dd4x;                                   /* DS:8DD4 */
+extern char *g_library1Path;                                   /* DS:8DD4 */
 extern char *au8dd6y;                                   /* DS:8DD6 */
-extern int h_8dd8[][3];                                 /* DS:8DD8 */
+extern int g_acceptProbability[][3];                                 /* DS:8DD8 */
 extern struct Model w_8df0[];                           /* DS:8DF0 */
 int disk_seek(int handle, long pos);                    /* 0x15396 */
 int disk_read_index(int n);                             /* 0x1552B */

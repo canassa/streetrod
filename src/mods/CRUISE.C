@@ -24,7 +24,7 @@ char g_savedPal3 = -1;   /* DS:51AD */
 void cruise_go(void)
 {
     g_firePressed = g_mouseLeft = g_joyButtons = g_buttons = 0;
-    if (g_0284) {
+    if (g_scene) {
         if (a_7eaap.m7eb0->f22 > 2)
             a_7eaap.m7eb0->f22 -= 2;
         else
@@ -33,7 +33,7 @@ void cruise_go(void)
         if (g_firePressed == 0) {
             cursor_ctl(-4);
             g_autoTrans = !g_4806[a_7eaap.m7eb0->slot6->idx].f2;
-            race_reset_eng(&e_78e0);
+            race_reset_eng(&g_driveEng);
             jz79a6 = 0;
             bw8aca = 0;
             cruise_drive();

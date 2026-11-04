@@ -55,20 +55,20 @@ extern char g_demoKeyDown;                              /* DS:06A6 */
 extern char g_demoMoving;                               /* DS:06A7 */
 extern int g_demoCount;                                 /* DS:06A8 */
 extern int g_demoLastGroup;                             /* DS:06AA */
-extern int g_06ac;                                      /* DS:06AC */
+extern int g_autoShifts;                                      /* DS:06AC */
 extern int g_demoTargetX;                               /* DS:06AE */
 extern int g_demoTargetY;                               /* DS:06B0 */
 extern int g_demoScriptPos;                             /* DS:06B2 */
 extern int g_demoScript[];                              /* DS:06B4 */
 extern char g_cursorBusy;                               /* DS:06E0 */
 extern int g_vibCount;                                  /* DS:06E2 */
-extern int g_06e4;                                      /* DS:06E4 */
+extern int g_sirenPhase;                                      /* DS:06E4 */
 extern int g_overRev;                                   /* DS:06E6 */
 extern char g_driveBusy;                                /* DS:06E8 */
 extern char g_lastFire;                                 /* DS:06E9 */
-extern char g_06ea;                                     /* DS:06EA */
+extern char g_squealPhase;                                     /* DS:06EA */
 extern int g_vibratoActive;                             /* DS:72EC */
-extern struct Eng e_78e0;                               /* DS:78E0 */
+extern struct Eng g_driveEng;                               /* DS:78E0 */
 extern struct Dev bs79aa;                               /* DS:79AA */
 extern struct Dev ao79c6t;                              /* DS:79C6 */
 extern void (interrupt far *w_7aaa)(void);              /* DS:7AAA */
@@ -79,7 +79,7 @@ extern int ao8228u;                                     /* DS:8228 */
 extern long b_82bc;                                     /* DS:82BC */
 extern struct Tone *bn82c4;                             /* DS:82C4 */
 extern int z_8b7c;                                      /* DS:8B7C */
-extern int g8b8eb;                                      /* DS:8B8E */
+extern int g_menuLevel;                                      /* DS:8B8E */
 extern struct Lims ao8b90v;                             /* DS:8B90 */
 extern struct Hot *at8ba8v;                             /* DS:8BA8 */
 extern int az8baa;                                      /* DS:8BAA */
@@ -110,7 +110,7 @@ void sys_drive_stop(void);                              /* 0x01B27 */
 int sys_sign(int x);                                    /* 0x01B91 */
 void sys_demo_step(void);                               /* 0x01BAE */
 void interrupt far sys_timer_isr(void);                 /* 0x01FE2 */
-void F_02374(void);                                     /* 0x02374 */
+void sys_stop_drive(void);                                     /* 0x02374 */
 void interrupt far sys_drive_isr(void);                 /* 0x0238C */
 
 #endif

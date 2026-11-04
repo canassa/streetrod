@@ -929,3 +929,15 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - Clearing speaker bits needs `0xff ^ MASK`, not `~MASK`: the int-promoted complement changes MSC's byte code.
+
+
+## 2026-11-04 13:20 CET: Apply reviewed naming evidence
+
+### What I did
+- Fast-forwarded naming2 to main (6328a8d), then applied the reviewed names in gated function, initialized-data, static, communal, far-data and member/parameter batches.
+- Applied 127 of the 256 approved entries, including Car.value, Part.color and game_make_car's value parameter; retained 129 placeholders where tested spellings missed hash/budget constraints or changed linked placement. The complete applied/skipped ledger and gate logs are in work/naming/PHASE2-RESULTS.md.
+- Every committed batch passes 572/572 function checks, a clean byte-identical packed build, header/DGROUP checks and all 41 unit tests. The final DOS-native build is also byte-identical to orig/SR.EXE.
+
+### What I learned
+- The boundary-tie caveat in CLAUDE.md rules 4e/4f matters here: function gates passed while linked static/communal addresses moved. Linker-map diagnostics identified the affected candidates; restoring placeholders or using original-bucket/strict-window alternatives restored byte identity.
+- The reviewed g_scene spelling survives the compiler budget in the complete initialized-data batch; the g_loc fallback was unnecessary. No tooling or declaration-layout changes were needed.

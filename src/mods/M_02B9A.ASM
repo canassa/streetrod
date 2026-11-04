@@ -93,18 +93,18 @@ _g_47d1 DB      1Dh, 1Eh, 1Fh            ; DS:47D1 char[3]
 _g_oldInt9Seg DW      0                        ; DS:47D4 int
         PUBLIC  _g_oldInt9Off
 _g_oldInt9Off DW      0                        ; DS:47D6 int
-        PUBLIC  _g_47d8
-_g_47d8 DW      8 DUP (0)                ; DS:47D8 int[8]
-        PUBLIC  _g_47e8
-_g_47e8 DW      0                        ; DS:47E8 int
-        PUBLIC  _g_47ea
-_g_47ea DB      0                        ; DS:47EA char
-        PUBLIC  _g_47eb
-_g_47eb DB      0                        ; DS:47EB char
-        PUBLIC  _g_47ec
-_g_47ec DB      0                        ; DS:47EC char
-        PUBLIC  _g_47ed
-_g_47ed DB      0                        ; DS:47ED char
+        PUBLIC  _g_dirHeld
+_g_dirHeld DW      8 DUP (0)                ; DS:47D8 int[8]
+        PUBLIC  _g_joySavedSp
+_g_joySavedSp DW      0                        ; DS:47E8 int
+        PUBLIC  _g_modeBitsA
+_g_modeBitsA DB      0                        ; DS:47EA char
+        PUBLIC  _g_biosModeA
+_g_biosModeA DB      0                        ; DS:47EB char
+        PUBLIC  _g_modeBitsB
+_g_modeBitsB DB      0                        ; DS:47EC char
+        PUBLIC  _g_biosModeB
+_g_biosModeB DB      0                        ; DS:47ED char
         PUBLIC  _g_firePressed
 _g_firePressed DW      0                        ; DS:47EE int
         PUBLIC  _g_47f0
@@ -285,26 +285,26 @@ _g_49d2 DW      44Bh, 44Ch, 44Dh, 44Eh, 47F0h  ; DS:49D2 int[]
 _g_49dc DW      OFFSET DGROUP:S_47f1     ; DS:49DC char *
         PUBLIC  _g_gearLabel
 _g_gearLabel DW      OFFSET DGROUP:_g_gearText    ; DS:49DE char *
-        PUBLIC  _g_49e0
-_g_49e0 DW      143 DUP (0)              ; DS:49E0 int[]
+        PUBLIC  _g_list
+_g_list DW      143 DUP (0)              ; DS:49E0 int[]
 
         .CODE S0000_TEXT
 
-; F_02B9A @ 0000:2B9A (linear 0x02B9A, 19 bytes)
+; m_02b9a_store_mode_a @ 0000:2B9A (linear 0x02B9A, 19 bytes)
 
-        PUBLIC  _F_02B9A
-_F_02B9A  PROC  FAR
+        PUBLIC  _m_02b9a_store_mode_a
+_m_02b9a_store_mode_a  PROC  FAR
         push    bp
         mov     bp,sp
         push    ax
         mov     al,[bp+6]
-        mov     _g_47ea,al
+        mov     _g_modeBitsA,al
         mov     al,[bp+8]
-        mov     _g_47eb,al
+        mov     _g_biosModeA,al
         pop     ax
         pop     bp
         ret
-_F_02B9A  ENDP
+_m_02b9a_store_mode_a  ENDP
 
 ; set_g47ec_47ed @ 0000:2BAD (linear 0x02BAD, 19 bytes)
 
@@ -314,18 +314,18 @@ _set_g47ec_47ed  PROC  FAR
         mov     bp,sp
         push    ax
         mov     al,[bp+6]
-        mov     _g_47ec,al
+        mov     _g_modeBitsB,al
         mov     al,[bp+8]
-        mov     _g_47ed,al
+        mov     _g_biosModeB,al
         pop     ax
         pop     bp
         ret
 _set_g47ec_47ed  ENDP
 
-; F_02BC0 @ 0000:2BC0 (linear 0x02BC0, 34 bytes)
+; m_02b9a_apply_mode_a @ 0000:2BC0 (linear 0x02BC0, 34 bytes)
 
-        PUBLIC  _F_02BC0
-_F_02BC0  PROC  FAR
+        PUBLIC  _m_02b9a_apply_mode_a
+_m_02b9a_apply_mode_a  PROC  FAR
         push    bp
         mov     bp,sp
         push    ax
@@ -334,21 +334,21 @@ _F_02BC0  PROC  FAR
         cli
         mov     al,es:[0410h]
         and     al,0CFh
-        or      al,_g_47ea
+        or      al,_g_modeBitsA
         mov     es:[0410h],al
         mov     ah,0
-        mov     al,_g_47eb
+        mov     al,_g_biosModeA
         sti
         int     10h
         pop     ax
         pop     bp
         ret
-_F_02BC0  ENDP
+_m_02b9a_apply_mode_a  ENDP
 
-; F_02BE2 @ 0000:2BE2 (linear 0x02BE2, 34 bytes)
+; m_02b9a_apply_mode_b @ 0000:2BE2 (linear 0x02BE2, 34 bytes)
 
-        PUBLIC  _F_02BE2
-_F_02BE2  PROC  FAR
+        PUBLIC  _m_02b9a_apply_mode_b
+_m_02b9a_apply_mode_b  PROC  FAR
         push    bp
         mov     bp,sp
         push    ax
@@ -357,15 +357,15 @@ _F_02BE2  PROC  FAR
         cli
         mov     al,es:[0410h]
         and     al,0CFh
-        or      al,_g_47ec
+        or      al,_g_modeBitsB
         mov     es:[0410h],al
         mov     ah,0
-        mov     al,_g_47ed
+        mov     al,_g_biosModeB
         sti
         int     10h
         pop     ax
         pop     bp
         ret
-_F_02BE2  ENDP
+_m_02b9a_apply_mode_b  ENDP
 
         END

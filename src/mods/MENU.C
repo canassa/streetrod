@@ -34,10 +34,10 @@ int a_8b9ca;
 int *az8b9ez;
 int x_8ba0;
 struct Hot *az8ba2t;
-char ax8ba4u;
+char g_headerEditableState;
 struct Hot *av8ba6v;
 int ai8bacx;
-int av8efe;
+int g_hotMenuGroupState;
 
 int g_hotChain = 0;   /* DS:07A8 */
 char g_wearText[12] = "(xx% worn)";   /* DS:07AA */
@@ -102,7 +102,7 @@ void menu_draw_hot(struct Hot *p)
                       ((p->y2 - p->y1 - 8) >> 1) + p->y1, str);
             goto box;
         case 7:
-            ax8ba4u = 1;
+            g_headerEditableState = 1;
         case 8:
             if (p->f2 != colr)
                 x_colors = bustyle->pal[colr = p->f2];
@@ -128,7 +128,7 @@ void menu_draw_hot(struct Hot *p)
             continue;
         }
         break;
-    } while ((nxt = p->f10 & g_hotChain) ? (p = &g_09f4[nxt], 1) : 0);
+    } while ((nxt = p->f10 & g_hotChain) ? (p = &g_hots[nxt], 1) : 0);
     if (!g_hotChain && r_vid.f16) {
         cursor_ctl(-1);
         bitmap_copy_box(r_vid.back, r_vid.front, p->x1 - 3, p->y1 - 3, p->x2 + 6, p->y2 + 6);
@@ -146,21 +146,21 @@ void menu_push(int id)
     struct Hot *p;
     struct Colors saved;
 
-    if (g8b8eb < 4) {
+    if (g_menuLevel < 4) {
         cursor_ctl(-3);
-        ai8b86y[g8b8eb++] = av8efe = id;
+        ai8b86y[g_menuLevel++] = g_hotMenuGroupState = id;
         ao8b90v.x1 = ao8b90v.x2 = ao8b90v.y1 = ao8b90v.y2 = -1;
-        ai8bacx = (p = &g_09f4[g_groupHot[id]])->f4;
+        ai8bacx = (p = &g_hots[g_groupHot[id]])->f4;
         av8ba6v = (p + 1)->f0 > 9 ? p + 1 : 0;
         a_8b9ca = a_8b9ap = az8ba2t = 0;
-        ax8ba4u = 0;
+        g_headerEditableState = 0;
         av8b98 = p->f0 == 3;
         saved = x_colors;
         g_hotChain = -1;
         g_drawnMinX = g_drawnMinY = 1000;
         g_drawnMaxX = g_drawnMaxY = -1;
         if (p->f10)
-            menu_draw_hot(&g_09f4[p->f10]);
+            menu_draw_hot(&g_hots[p->f10]);
         g_hotChain = 0;
         x_colors = saved;
         cursor_ctl(-1);
@@ -178,14 +178,14 @@ void menu_push(int id)
 
 void menu_pop(int keep)
 {
-    if (g8b8eb) {
+    if (g_menuLevel) {
         sys_keymap_restore(0);
         av8ba6v = 0;
-        if (--g8b8eb && keep) {
-            --g8b8eb;
-            menu_push(ai8b86y[g8b8eb]);
+        if (--g_menuLevel && keep) {
+            --g_menuLevel;
+            menu_push(ai8b86y[g_menuLevel]);
         } else {
-            av8efe = 0;
+            g_hotMenuGroupState = 0;
             av8ba6v = 0;
             ao8b90v.x1 = ao8b90v.y1 = ao8b90v.x2 = ao8b90v.y2 = az8baa = -1;
         }
@@ -196,7 +196,7 @@ void menu_pop(int keep)
 
 void menu_reset(void)
 {
-    g8b8eb = ai8bacx = 0;
+    g_menuLevel = ai8bacx = 0;
     av8ba6v = 0;
     ao8b90v.x1 = ao8b90v.y1 = ao8b90v.x2 = ao8b90v.y2 = az8baa = 0;
 }
@@ -210,11 +210,11 @@ void menu_bbox(int id, int *x, int *y, int *w, int *h)
 {
     struct Hot *p;
 
-    p = &g_09f4[g_groupHot[id]];
+    p = &g_hots[g_groupHot[id]];
     g_drawnMinX = g_drawnMinY = 1000;
     g_drawnMaxX = g_drawnMaxY = 1;
     while (p->f10) {
-        p = &g_09f4[p->f10];
+        p = &g_hots[p->f10];
         g_drawnMinX = p->x1 > g_drawnMinX ? g_drawnMinX : p->x1;
         g_drawnMaxX = p->x2 < g_drawnMaxX ? g_drawnMaxX : p->x2;
         g_drawnMinY = p->y1 > g_drawnMinY ? g_drawnMinY : p->y1;
@@ -292,7 +292,7 @@ int menu_hit(int x, int y)
                 ao8b90v.x1 = p->x2;
         next:
             if (kind == 12)
-                p = &g_09f4[p->f6];
+                p = &g_hots[p->f6];
             else
                 p++;
         } else {
@@ -393,11 +393,11 @@ static char * near wear_text(int wear)
     return g_wearText;
 }
 
-int g_07c6[277] = {0, 1, 2, 3, 5, 6, 7, 4, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276};   /* DS:07C6 */
+int g_cgaPicMap[277] = {0, 1, 2, 3, 5, 6, 7, 4, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276};   /* DS:07C6 */
 
 /* menu_list @ 0F38:500E (linear 0x1438E, 2301 bytes)
 
-   List dialog. Shows the entries list[1..list[0]] (offsets into the string table g_2c02,
+   List dialog. Shows the entries list[1..list[0]] (offsets into the string table g_desc,
    or, when negative, d[-entry - 1]) in the windows of the current menu, optionally with a column c
    of x offsets and wear values buf[1..]; arrow/page keys scroll, a positive key2 picks an entry,
    a hotn spot (az8ba2t) shows the picked text and is edited in place on Enter.
@@ -439,8 +439,8 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
     if (hotn = az8ba2t) {
         bufpl = g_239e + hotn->f4;
         n9 = (hotn->x2 - hotn->x1) / 6;
-        if (!ax8ba4u) {
-            strcpy(bufpl, g_2c02 + lp11[sel]);
+        if (!g_headerEditableState) {
+            strcpy(bufpl, g_desc + lp11[sel]);
             if (buf && (wear = buf1[sel]) != -128) {
                 strcat(bufpl, g_wearPad);
                 strcat(bufpl, wear_text(wear));
@@ -464,7 +464,7 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
         pc1 = c ? c1 + topk : 0;
         bpl = buf ? buf1 + topk : 0;
         for (; i--; pc1++, w++, lpk++, bpl++) {
-            labeln = (*lpk > -1) ? g_2c02 + *lpk : d[-*lpk - 1];
+            labeln = (*lpk > -1) ? g_desc + *lpk : d[-*lpk - 1];
             x = (c ? *pc1 : 0) + w->w;
             (*a_78aem)(r_vid.back, x, w->h, labeln);
             draw_fill_rect(r_vid.back, g824cd - 1, bq824e, w->tx - g824cd + 1, 8);
@@ -521,8 +521,8 @@ restore:
                 x_8ba0 = topk + key2;
                 i = topk + key2 - 1;
                 if (hotn) {
-                    if (!ax8ba4u || i == sel) {
-                        strcpy(bufpl, g_2c02 + lp11[i]);
+                    if (!g_headerEditableState || i == sel) {
+                        strcpy(bufpl, g_desc + lp11[i]);
                         if (kind == 5 && !strcmp(g_blankName, bufpl))
                             strcpy(bufpl, "\0");
                         if (buf && (wear = buf1[i]) != -128) {

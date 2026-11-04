@@ -59,16 +59,16 @@ int tandyspr_step(struct Sprite *s)
     fr = s->frame;
     fp = s->save;
     d = fr->data;
-    sprite_clip_box(fr->pos->width, fr->pos->height - g_02d0,
+    sprite_clip_box(fr->pos->width, fr->pos->height - g_spriteBottomCut,
         s->x, s->y, pg->bm->width, pg->bm->height, &rc);
     if (sprite_rect_sub(&rc, &pg->r, &c2, s->seq->dx))
         restore_rect_back(&c2, r_vid.back, fp, s->seq->dx);
     pg->r = rc;
     top = d ? d->height : 0;
-    t = blt.h = fr->pos->height - top - g_02d0;
+    t = blt.h = fr->pos->height - top - g_spriteBottomCut;
     blt.sy = 0;
     u = blt.dy = s->y;
-    if (g_0284 != 6) {
+    if (g_scene != 6) {
         blt.w = fr->pos->width;
         blt.sx = 0;
         blt.dx = s->x;

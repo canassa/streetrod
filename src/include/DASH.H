@@ -5,11 +5,11 @@
 #include "STRUCTS.H"
 
 extern int g_needleColor;                               /* DS:02D2 */
-extern char g_02d4[];                                   /* DS:02D4 */
+extern char g_introPalette[];                                   /* DS:02D4 */
 extern struct Bitmap far *g_savedBack;                  /* DS:02E6 */
 extern struct Bitmap far *g_savedFront;                 /* DS:02EA */
 extern signed char g_02ee[24][2];                       /* DS:02EE */
-extern unsigned char g_031e[][2];                       /* DS:031E */
+extern unsigned char g_steerPoints[][2];                       /* DS:031E */
 extern int g_wheelShown;                                /* DS:0350 */
 extern int g_wheelSlotY[3];                             /* DS:0352 */
 extern signed char g_shiftPts[11][2];                   /* DS:0358 */

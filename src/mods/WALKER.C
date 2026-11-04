@@ -23,7 +23,7 @@ struct Sheet g_carhopSheets[2] = {{1142, 6, 11}, {1141, 6, 11}};   /* DS:5A26 */
 char g_carhopFrames[84] = {4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 11};   /* DS:5A32 */
 struct Seq g_carhopInSeq[4] = {{78, 3, 0}, {3, 2, 0}, {3, 1, 0}, {-1, 0, 0}};   /* DS:5A86 */
 struct Seq g_carhopOutSeq[4] = {{4, -1, 0}, {3, -2, 0}, {77, -3, 0}, {-1, 0, 0}};   /* DS:5A96 */
-char g_5aa6 = 0;   /* DS:5AA6 */
+char g_keepMask = 0;   /* DS:5AA6 */
 
 /* cut_sheet @ 0F38:985C (linear 0x18BDC, 179 bytes)
 
@@ -152,7 +152,7 @@ void walker_walk(int a, int b)
         sp2->page->r = g_carhopRect;
         sp2->page->link->r = g_carhopRect;
     }
-    g_02d0 = 0;
+    g_spriteBottomCut = 0;
     for (i = 0; i < 0x54; i++) {
         x = sp2->x;
         v3 = x & ~r_vid.mask;

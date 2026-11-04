@@ -113,13 +113,13 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   - `x_trk0`/`x_trk1` (DASH.C, labels in `src/data/NEEDLE.ASM`): two unreachable far
     accesses for the two SEG constants in CONST (DS:68E6, DS:68E8) that nothing reads.
   - `g_6c42` (POPUP.C): four unreferenced `_BSS` bytes after `g_popupLayout`.
-  - `g_49e0[0] = g_49e0[0];` in the default cases of your_cars (GAME.C) and savegame_load
+  - `g_list[0] = g_list[0];` in the default cases of your_cars (GAME.C) and savegame_load
     (SAVEGAME.C): after the menu F_142CF returns a positive item, the original loads
-    `g_49e0[0]` (the list's item count) into `ax` and drops it. MSC drops the store of a
+    `g_list[0]` (the list's item count) into `ax` and drops it. MSC drops the store of a
     self-assignment and keeps the load. The only other forms found that give these bytes
-    are a `switch (g_49e0[0])` whose cases are all empty (`{ }`, `{ case 1: break; }`), as
-    if its cases had been removed. A bare `g_49e0[0];`, a `(void)` or `volatile` cast,
-    `+= 0`, `|= 0`, `if (g_49e0[0]) ;` and comparisons compile to nothing or to a compare;
+    are a `switch (g_list[0])` whose cases are all empty (`{ }`, `{ case 1: break; }`), as
+    if its cases had been removed. A bare `g_list[0];`, a `(void)` or `volatile` cast,
+    `+= 0`, `|= 0`, `if (g_list[0]) ;` and comparisons compile to nothing or to a compare;
     stores to locals stay stores. The two functions share the idiom, so the original
     probably had one construct (a macro, an emptied switch) in both.
 - **The hook installers** cga_install (CGA.C), tandy_install (TANDY.C) and ega_install
@@ -206,18 +206,18 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
     initializer that takes its address.
   The splits are evidence; the files' names and contents beyond the bytes are not.
 - **HOTSPOT.C's arrays.** DS:09F4..239E is 365 18-byte `struct Hot` records in one index
-  space: `Hot.f10` links a record to the next by its index into `g_09f4`, and the code
-  reaches records as `&g_09f4[n]`. It is split into arrays where code names a record
+  space: `Hot.f10` links a record to the next by its index into `g_hots`, and the code
+  reaches records as `&g_hots[n]`. It is split into arrays where code names a record
   directly (`g_hotBuy[0].f0`, `g_hotRepair[7].f0`, `g_hotReadyBox[i].y1`, `g_1e34[0].f4`, `g_1804[k]`,
   `g_hotBobs[3]`) or computes a run-time difference (`g_134e - g_121c`, `g_1a44 - g_hotGasStation`),
   which proves separate symbols; each array starts at the first record so named. Where
   the original's other boundaries were (one array per menu list, or fewer), and the
-  arrays' names, are not recoverable. `g_184c` (a runtime list gargfx_build_hots builds), `g_1948`
+  arrays' names, are not recoverable. `g_engineHots` (a runtime list gargfx_build_hots builds), `g_1948`
   (three fixed menu records, then six records of another list) and `g_boltHot` are Hot
   records too; insert_hot sorts them by (x1, y1).
 - **HERCDET.ASM's key maps.** 43 lists of (scan code, value) pairs, each ended by a 0
   byte, one per screen (`g_keyMaps[]`). They are local labels; HERCDET.H only knows
-  the first, `g_5580`, as the 543-byte area (no C code names it; the DGROUP model needs
+  the first, `g_keyMapData`, as the 543-byte area (no C code names it; the DGROUP model needs
   its extent). DS:5727 is a 0 byte between two lists that no pointer names, written as an
   unreferenced empty list.
 - **HOTSPOT.C's filler communals** (`char fz79a8[2]` and the others after the

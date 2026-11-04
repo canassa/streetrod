@@ -46,12 +46,12 @@ extern char g_lastKey;                                  /* DS:47D0 */
 extern char g_47d1[3];                                  /* DS:47D1 */
 extern int g_oldInt9Seg;                                /* DS:47D4 */
 extern int g_oldInt9Off;                                /* DS:47D6 */
-extern int g_47d8[8];                                   /* DS:47D8 */
-extern int g_47e8;                                      /* DS:47E8 */
-extern char g_47ea;                                     /* DS:47EA */
-extern char g_47eb;                                     /* DS:47EB */
-extern char g_47ec;                                     /* DS:47EC */
-extern char g_47ed;                                     /* DS:47ED */
+extern int g_dirHeld[8];                                   /* DS:47D8 */
+extern int g_joySavedSp;                                      /* DS:47E8 */
+extern char g_modeBitsA;                                     /* DS:47EA */
+extern char g_biosModeA;                                     /* DS:47EB */
+extern char g_modeBitsB;                                     /* DS:47EC */
+extern char g_biosModeB;                                     /* DS:47ED */
 extern int g_firePressed;                               /* DS:47EE */
 extern char g_47f0;                                     /* DS:47F0 */
 extern char g_gearText[8];                              /* DS:47FE */
@@ -70,8 +70,8 @@ extern int g_49ca[];                                    /* DS:49CA */
 extern int g_49d2[];                                    /* DS:49D2 */
 extern char *g_49dc;                                    /* DS:49DC */
 extern char *g_gearLabel;                               /* DS:49DE */
-extern int g_49e0[];                                    /* DS:49E0 */
-void F_02B9A(char a, char b);                           /* 0x02B9A */
+extern int g_list[];                                    /* DS:49E0 */
+void m_02b9a_store_mode_a(char a, char b);                           /* 0x02B9A */
 void set_g47ec_47ed(char a, char b);                    /* 0x02BAD */
 
 #endif
