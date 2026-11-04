@@ -5,9 +5,9 @@
 #include "STRUCTS.H"
 
 struct GasInteraction {
-    int capActive;
+    int capAvailable;
     int ragAvailable;
-    int pumpOn;
+    int nozzleAvailable;
 };
 
 extern struct BodyPoints g_featurePos; /* DS:8264 */
