@@ -75,7 +75,7 @@ static int near maybe_walker(int mode, int arg, int pct1, int pct2)
         if (g_passCount < 3 || random_int(100) >= pct1)
             break;
         r = 1;
-        cursor_ctl(-4);
+        cursor_ctl(CURSOR_HIDE_NOW);
         walker_walk(0, arg);
         g_walkState = 1;
         if (random_int(100) < pct2) {
@@ -89,7 +89,7 @@ static int near maybe_walker(int mode, int arg, int pct1, int pct2)
         if (g_walkState != 1 || random_int(100) >= pct1)
             break;
         r = 1;
-        cursor_ctl(-4);
+        cursor_ctl(CURSOR_HIDE_NOW);
         walker_walk(1, arg);
         g_walkState = 0;
         g_ordered = 0;
@@ -97,7 +97,7 @@ static int near maybe_walker(int mode, int arg, int pct1, int pct2)
         break;
     }
     if (r)
-        cursor_ctl(-2);
+        cursor_ctl(CURSOR_SHOW_NOW);
     return r;
 }
 
@@ -802,7 +802,7 @@ static void near play_ending(void)
     int savedl;
 
     flag8 = 0;
-    cursor_ctl(-4);
+    cursor_ctl(CURSOR_HIDE_NOW);
     screen_status_init(0xbe);
     F_119B8(9, 8, 0x14, 2);
     r_vid.f16 = 0;
@@ -960,7 +960,7 @@ void bobs_visit(void)
     F_16381(0);
     if (random_int(100) < 25)
         play_cell_anim();
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
     g_rivalHereState = 0;
     g_walkState = -1;
     g_ordered = 0;
@@ -1048,7 +1048,7 @@ test:
                         F_16381(0);
                         menu_pop(1);
                         bobs_jail();
-                        cursor_ctl(-4);
+                        cursor_ctl(CURSOR_HIDE_NOW);
                         g_end |= 4;
                         return;
                     }
@@ -1149,7 +1149,7 @@ void bobs_jail(void)
     mode = 4;
     flag = 0;
     r_vid.f16 = 0;
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     marks_clear();
     x_82b8 = F_15BBE(0x4e7, 1);
     c_6e64 = F_15BBE(0x4e9, 1);
@@ -1182,7 +1182,7 @@ void bobs_jail(void)
     g_walkState = -1;
     g_ordered = 0;
     cursor_ctl(1);
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
     g_scene = 6;
     set_jail_spots(14, 16);
     for (;;) {
@@ -1203,10 +1203,10 @@ void bobs_jail(void)
             return;
         case 1000:
             if (random_int(100) < 6) {
-                cursor_ctl(-4);
+                cursor_ctl(CURSOR_HIDE_NOW);
                 F_11421(-1, "", 0);
                 play_cell_anim();
-                cursor_ctl(-2);
+                cursor_ctl(CURSOR_SHOW_NOW);
             }
             rival_arrives(pick_rival(who, 1), mode, 1);
             mode = 1;

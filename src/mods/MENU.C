@@ -57,7 +57,7 @@ void menu_draw_hot(struct Hot *p)
 
     colr = 0;
     if (!g_hotChain && r_vid.f16)
-        cursor_ctl(-3);
+        cursor_ctl(CURSOR_HIDE);
     do {
         switch (p->f0) {
         case 4:
@@ -130,7 +130,7 @@ void menu_draw_hot(struct Hot *p)
         break;
     } while ((nxt = p->f10 & g_hotChain) ? (p = &g_hots[nxt], 1) : 0);
     if (!g_hotChain && r_vid.f16) {
-        cursor_ctl(-1);
+        cursor_ctl(CURSOR_SHOW);
         bitmap_copy_box(r_vid.back, r_vid.front, p->x1 - 3, p->y1 - 3, p->x2 + 6, p->y2 + 6);
     }
 }
@@ -147,7 +147,7 @@ void menu_push(int id)
     struct Colors saved;
 
     if (g_menuLevel < 4) {
-        cursor_ctl(-3);
+        cursor_ctl(CURSOR_HIDE);
         ai8b86y[g_menuLevel++] = g_hotMenuGroupState = id;
         ao8b90v.x1 = ao8b90v.x2 = ao8b90v.y1 = ao8b90v.y2 = -1;
         ai8bacx = (p = &g_hots[g_groupHot[id]])->f4;
@@ -163,7 +163,7 @@ void menu_push(int id)
             menu_draw_hot(&g_hots[p->f10]);
         g_hotChain = 0;
         x_colors = saved;
-        cursor_ctl(-1);
+        cursor_ctl(CURSOR_SHOW);
         if (r_vid.f16 && g_drawnMaxX >= 0)
             bitmap_copy_box(r_vid.back, r_vid.front, g_drawnMinX - 3, g_drawnMinY - 3, g_drawnMaxX + 6, g_drawnMaxY + 6);
         sys_keymap_set(id);
@@ -458,7 +458,7 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
     for (;;) {
         x_colors = bustyle->pal[idx2];
         w = (struct Win *)a_8b9ap;
-        cursor_ctl(-3);
+        cursor_ctl(CURSOR_HIDE);
         i = (count5 - topk > page) ? page : count5 - topk;
         lpk = lp11 + topk;
         pc1 = c ? c1 + topk : 0;
@@ -476,7 +476,7 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
             x_colors = bustyle->pal[w->lines];
             draw_frame(r_vid.back, w->w, w->h, ww9, 8);
         }
-        cursor_ctl(-1);
+        cursor_ctl(CURSOR_SHOW);
         if (r_vid.f16)
             bitmap_copy_box(r_vid.back, r_vid.front, wx8 - 1, wy7 - 1, right + 1, bottom9 + 1);
 restore:
@@ -489,7 +489,7 @@ restore:
                 continue;
             if (curl == az8baa - 1)
                 continue;
-            cursor_ctl(-3);
+            cursor_ctl(CURSOR_HIDE);
             x1 = y1 = 1000;
             x2 = y2 = -1;
             if (i) {
@@ -511,7 +511,7 @@ restore:
                 x2 = (w->tx < x2) ? x2 : w->tx;
                 y2 = (w->ty < y2) ? y2 : w->ty;
             }
-            cursor_ctl(-1);
+            cursor_ctl(CURSOR_SHOW);
             if (r_vid.f16)
                 bitmap_copy_box(r_vid.back, r_vid.front, x1, y1, x2, y2);
             curl = nw5;
@@ -533,7 +533,7 @@ restore:
                     }
                 }
                 if (!av8b98) {
-                    cursor_ctl(-3);
+                    cursor_ctl(CURSOR_HIDE);
                     w = (struct Win *)(0x12 * sel + a_8b9ap);
                     x_colors = bustyle->pal[idx2];
                     nw5 = x_colors.c[3];
@@ -544,7 +544,7 @@ restore:
                     x_colors.c[3] = nw5;
                     w = (struct Win *)(0x12 * i + a_8b9ap);
                     draw_frame(r_vid.back, w->w, w->h, ww9, 8);
-                    cursor_ctl(-1);
+                    cursor_ctl(CURSOR_SHOW);
                     if (r_vid.f16)
                         bitmap_copy_box(r_vid.back, r_vid.front,
                             (w->w - 1 > x1) ? x1 : w->w - 1,

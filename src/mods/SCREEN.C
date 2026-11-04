@@ -67,12 +67,12 @@ void F_11421(int x, char *s, int w)
         left = x;
     wd = 320 - x;
     ypos = au8252x;
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     if (aq8256z)
         draw_fill_rect(r_vid.back, x - 1, ypos, wd, 8);
     (*a_78aem)(r_vid.back, left, ypos, s);
     aq8256z = *s;
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
     if (r_vid.f16)
         bitmap_copy_box(r_vid.back, r_vid.front, x > 8 ? x - 8 : x, ypos, x + wd, ypos + 7);
     x_colors = saved;
@@ -100,7 +100,7 @@ void F_11593(char *s)
 
     saved = r_vid.f16;
     x_colors = bustyle->colors;
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     draw_fill_rect(r_vid.back, 0, au8252x, o_8250 & 0xfff8, 8);
     (*a_78aem)(r_vid.back, 0, au8252x, s);
     g8258z = (g824cd + 7) & 0xfff8;
@@ -108,7 +108,7 @@ void F_11593(char *s)
     if (s[1] != 'G' && s[1] != ' ')
         F_11540(0);
     r_vid.f16 = saved;
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
     if (r_vid.f16)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, au8252x, o_8250, au8252x + 7);
 }
@@ -134,13 +134,13 @@ void screen_fill_rect(int x, int y, int w, int h, char color)
     char old;
 
     old = x_colors.c[2];
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     x_colors.c[2] = color;
     draw_fill_rect(r_vid.back, x, y, w, h);
     if (r_vid.f16)
         bitmap_copy_box(r_vid.back, r_vid.front, x, y, x + w - 1, y + h - 1);
     x_colors.c[2] = old;
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
 }
 
 /* screen_msg_box @ 0F38:239C (linear 0x1171C, 50 bytes) */
@@ -228,7 +228,7 @@ int F_118D4(int a, int b)
     long unused;    /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
     struct Blt pkt;
 
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     p = F_15BBE(a, 2);
     if (b >= 0)
         screen_fill_rect(0, 0, 320, g_picMaxH, b);
@@ -238,7 +238,7 @@ int F_118D4(int a, int b)
     pkt.dx = g_picX;
     pkt.dy = g_picY;
     (*b_78a2)(p, r_vid.back, &pkt, 1);
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
     if (r_vid.f16)
         bitmap_copy_box(r_vid.back, r_vid.front, g_picX, g_picY, pkt.dx + pkt.w - 1, pkt.dy + pkt.h - 1);
     g_picX = g_picY = 0;

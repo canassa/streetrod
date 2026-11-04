@@ -121,14 +121,14 @@ void F_065AF(int a1)
     px5 = 80;
     py4 = 4;
     id = m < 2 ? 0x4c3 : 0x4c5;
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     pic = F_15BBE(id, 2);
     bitmap_draw_pic(pic, 0x4c4, (unsigned char)x, (unsigned char)y4, 0);
     img = F_1934E(pic->width, pic->height, 0, 2);
     popup_grab(px5, py4, pic->width, pic->height, img);
     popup_show(pic, px5, py4);
     F_19438(1);
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
     if (a1 == 0) {
         F_11421(-1, "", 0);
         game_pause(500);
@@ -286,11 +286,11 @@ int near F_06B06(int mode)
     int n;
 
     if (g_4733 > 0)
-        cursor_ctl(-4);
+        cursor_ctl(CURSOR_HIDE_NOW);
     F_06529(0);
     if (g_end) {
         if (g_end & 1)
-            cursor_ctl(-2);
+            cursor_ctl(CURSOR_SHOW_NOW);
         return 0x29a;
     }
     cursor_ctl(0);
@@ -299,9 +299,9 @@ int near F_06B06(int mode)
     switch (mode) {
     case 3:
         if (g_4f48 == 0) {
-            cursor_ctl(-2);
+            cursor_ctl(CURSOR_SHOW_NOW);
             game_message(0x1867);
-            cursor_ctl(-4);
+            cursor_ctl(CURSOR_HIDE_NOW);
             break;
         }
         if (g_4f46) {
@@ -362,7 +362,7 @@ int near F_06B06(int mode)
         hide_spots();
     sort_spots();
     F_11593(g_49dc);
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
     if (a_7eaap.m7eb6 > 15)
         game_message(0x0d30);
     else if (a_7eaap.m7ebc > 130) {
@@ -391,7 +391,7 @@ int near F_06B06(int mode)
     if (g_end) {
         r = 0x29a;
         if ((g_end & 1) == 0)
-            cursor_ctl(-4);
+            cursor_ctl(CURSOR_HIDE_NOW);
     }
     return r;
 }
@@ -520,7 +520,7 @@ void near F_0711A(unsigned mask)
             a_7eaap.m7eb0->f24 ^= 0x4000;
         if (mask & 1)
             a_7eaap.m7eb0->f24 ^= 0x8000;
-        cursor_ctl(-4);
+        cursor_ctl(CURSOR_HIDE_NOW);
         menu_pop(1);
         popup_show(bm1, x, y);
         F_19438(1);
@@ -529,7 +529,7 @@ void near F_0711A(unsigned mask)
         F_181C8(8, n9, r7, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0x98, 0,
                 g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
         F_16BC1();
-        cursor_ctl(-2);
+        cursor_ctl(CURSOR_SHOW_NOW);
         g_05fc += val5;
         F_11540(-cost);
         break;
@@ -574,7 +574,7 @@ void near F_07367(void)
         switch (k) {
         case -38: case -37: case -36: case -35:
         case -34: case -33: case -32: case -31:
-            cursor_ctl(-3);
+            cursor_ctl(CURSOR_HIDE);
             menu_pop(1);
             popup_show(bm1, x, y);
             F_19438(1);
@@ -611,7 +611,7 @@ void near F_07367(void)
             F_168F3(0);
             g_05fc += 0x222L;
             F_11540(-5);
-            cursor_ctl(-1);
+            cursor_ctl(CURSOR_SHOW);
             break;
         case -22:
             menu_pop(1);
@@ -849,7 +849,7 @@ void near F_07AA4(void)
                 m_8272.m8286 = g_49d2[g_4806[tbl[k]->idx].f2];
                 if (g7d86n[owner->f2].f4 & g_4806[tbl[k]->idx].f3 & 0xf) {
                     F_07741(F_077B7(tbl[k]), &owner->slot6);
-                    cursor_ctl(-4);
+                    cursor_ctl(CURSOR_HIDE_NOW);
                     F_16A5A(1);
                     F_1264E(m_8272.m8286, 0);
                     F_16A5A(0);
@@ -862,7 +862,7 @@ void near F_07AA4(void)
                         g_1804[k].f0 = 11;
                     }
                     sys_hover_reset();
-                    cursor_ctl(-2);
+                    cursor_ctl(CURSOR_SHOW_NOW);
                     break;
                 }
                     F_1264E(m_8272.m8286, 1);
@@ -902,10 +902,10 @@ void near F_07AA4(void)
                 F_123F4(++owner->b14[k], k);
                 F_16CF3();
             } else {
-                cursor_ctl(-4);
+                cursor_ctl(CURSOR_HIDE_NOW);
                 F_123F4(owner->b14[k] = 1, k);
                 F_16B61();
-                cursor_ctl(-2);
+                cursor_ctl(CURSOR_SHOW_NOW);
                 flags[k + 1] = 1;
             }
             break;
@@ -978,10 +978,10 @@ static void near tune_timing(struct Car *car)
         outp(PIT_CH2, w.b[0]);
         outp(PIT_CH2, w.b[1]);
         y = blt.dy = gear * 2 + 0x4b;
-        cursor_ctl(-4);
+        cursor_ctl(CURSOR_HIDE_NOW);
         (*b_78a2)(p->img, r_vid.back, &blt, 1);
         bitmap_copy_box(r_vid.back, r_vid.front, 0xb0, y, 0xb7, y + 10);
-        cursor_ctl(-2);
+        cursor_ctl(CURSOR_SHOW_NOW);
         while ((key = sys_wait_input(0)) == 0) {
             if (g_soundOn && g_soundOn != g_speakerOn) {
                 outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_MASK);
@@ -1057,10 +1057,10 @@ void near garage_hood(struct Car *car)
         for (k = 3; k < 9; k++)
             g_5186[k] = g_5148[tmp29][k - 3];
     }
-    cursor_ctl(-4);
+    cursor_ctl(CURSOR_HIDE_NOW);
     gargfx_draw_parts(car);
     gargfx_draw_bolts(g_5186, g_519a, car == a_7eaap.m7eb0);
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
     if (car != a_7eaap.m7eb0)
         return;
     gargfx_build_hots(g_5186, g_519a);
@@ -1094,9 +1094,9 @@ void near garage_hood(struct Car *car)
         case -3:
             if (F_07EE6(car, 0)) {
                 tune_timing(car);
-                cursor_ctl(-4);
+                cursor_ctl(CURSOR_HIDE_NOW);
                 gargfx_draw_bolts(g_5186, g_519a, 1);
-                cursor_ctl(-2);
+                cursor_ctl(CURSOR_SHOW_NOW);
             } else
                 game_message(0xea1);
             continue;
@@ -1190,7 +1190,7 @@ void near garage_hood(struct Car *car)
             o_8290[sel2] = k = g_4998[sel2][g_4806[list4[key]->idx].f2];
             if (ok) {
                 F_07741(F_077B7(list4[key]), &car->rack.s[sel2]);
-                cursor_ctl(-4);
+                cursor_ctl(CURSOR_HIDE_NOW);
                 F_16A5A(1);
                 gargfx_draw_part(o_8290[sel2], 0);
                 F_16A5A(0);
@@ -1209,7 +1209,7 @@ void near garage_hood(struct Car *car)
                     car->b16[step + k] = 1;
                 }
                 gargfx_build_hots(g_5186, g_519a);
-                cursor_ctl(-2);
+                cursor_ctl(CURSOR_SHOW_NOW);
                 cnt1++;
                 car->f20 = random_int(13) - 8;
                 continue;
@@ -1316,7 +1316,7 @@ void near garage_hood(struct Car *car)
         if (sel2 >= 0) {
             cnt1--;
             remove_part(&car->rack.s[sel2]);
-            cursor_ctl(-4);
+            cursor_ctl(CURSOR_HIDE_NOW);
             o_8290[sel2] = 0;
             if (ok)
                 hz82ae = ok - 1;
@@ -1324,7 +1324,7 @@ void near garage_hood(struct Car *car)
             gargfx_draw_bolts(g_5186, g_519a, 1);
             gargfx_build_hots(g_5186, g_519a);
             car->f20 = random_int(13) - 8;
-            cursor_ctl(-2);
+            cursor_ctl(CURSOR_SHOW_NOW);
         }
         if (ok == 0)
             continue;

@@ -203,9 +203,9 @@ static void near show_tank_cap(struct Dlg *d, int id)
         back = d->bm1;
     else
         back = d->bm2;
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     label = F_15BBE(id, 2);
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
     work = F_1934E(back->width, back->height, 0, 2);
     bitmap_copy(back, work, 1);
     box.w = label->width;
@@ -239,9 +239,9 @@ static void near leave_station(struct Dlg *d)
             F_11540(a_7eaap.m7eaa >= 10 ? -10 : -(int)a_7eaap.m7eaa);
     }
     if (d->f10 == 0) {
-        cursor_ctl(-3);
+        cursor_ctl(CURSOR_HIDE);
         p = F_15BBE(0x4d1, 2);
-        cursor_ctl(-1);
+        cursor_ctl(CURSOR_SHOW);
         carpic_patch_bg(p, 0x60, 0, 0x30, 0x40, 0xc8, 0x51, 0xa9, 2);
     }
     a_7eaap.m7eb0->f22 = a_7eaap.m7eb0->f22 > 0xaa ? 0xaa : a_7eaap.m7eb0->f22;
@@ -297,7 +297,7 @@ void race_gas_station(void)
     show_tank_cap(&dl, 0x472);
     spots_idle();
     menu_push(0x17);
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
 top:
     g_waitUntil = g_tick + 20;
     for (;;) {
@@ -521,7 +521,7 @@ static void near show_ticket(void)
     *p2 = d;
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.f16 = 1;
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
     sys_reset_queues();
 }
 
@@ -569,7 +569,7 @@ static void near show_crash(void)
             (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
         }
     }
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
     (*m_present)();
     sys_reset_queues();
     game_pause(0x64);
@@ -705,7 +705,7 @@ int near race_outcome(void)
     if (g_oppEngState.fbc & 1) {
         bo7676 = 1;
         show_race_stats();
-        cursor_ctl(-2);
+        cursor_ctl(CURSOR_SHOW_NOW);
         game_message(g_isKingState == 0 ? (i = g_winMsgs[kind]) : a_7eaap.m7ec0 == 0 ? 0x14bd : 0x14d6);
         F_11540(v);
         if (kind == 5) {
@@ -778,7 +778,7 @@ pay:
         menu_pop(1);
         F_11421(-1, "", 0x140 - o_8250);
     } else if (g_driveEng.fbc == 0x81) {
-        cursor_ctl(-2);
+        cursor_ctl(CURSOR_SHOW_NOW);
         game_message(0xecb2);
     } else {
         if (kind == 5) {
@@ -788,7 +788,7 @@ pay:
         F_11540(-v);
         if (g_driveEng.fbc == 1) {
             show_race_stats();
-            cursor_ctl(-2);
+            cursor_ctl(CURSOR_SHOW_NOW);
             i = kind == 5 ? 0x143a : 0x1427;
             game_message(g_isKingState == 0 ? i : a_7eaap.m7ec0 == 0 ? 0x1450 : 0x146c);
             menu_pop(1);
@@ -797,7 +797,7 @@ pay:
 ret2:
             return 2;
         } else if (stop) {
-            cursor_ctl(-2);
+            cursor_ctl(CURSOR_SHOW_NOW);
             if (engine) {
                 blow_engine(kind == 5 ? 0x16bd : 0x1634);
                 goto finishstop;
@@ -994,7 +994,7 @@ void near race_run(void)
     struct Node *slot;
 
     one = 1;
-    cursor_ctl(-4);
+    cursor_ctl(CURSOR_HIDE_NOW);
     cursor_ctl(1);
     sys_reset_queues();
     race_reset_eng(&g_driveEng);

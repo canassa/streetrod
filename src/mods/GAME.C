@@ -68,7 +68,7 @@ static int near start_game(void)
     if (ag8bcet == 0) {
         if (fame_protect_check() == 0)
             sys_exit();
-        cursor_ctl(-4);
+        cursor_ctl(CURSOR_HIDE_NOW);
     }
     road_generate();
     g_driverName[0] = 0;
@@ -79,7 +79,7 @@ static int near start_game(void)
             disk_cache_list(g_gamePics);
     }
     disk_load_list(g_gamePics, 1);
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
     return -1;
 }
 
@@ -142,9 +142,9 @@ static int near read_paper(void)
         g_paperDay = tune;
     }
     F_119B8(g_paperPics[g_paperPick], 0, 0x88, -1);
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     F_06750(0x79);
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
     r_vid.f16 = old;
     if (r_vid.f16)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
@@ -524,7 +524,7 @@ static void near buy_from_ads(int tab)
             }
             if (n != -25)
                 break;
-            cursor_ctl(-4);
+            cursor_ctl(CURSOR_HIDE_NOW);
             marks_clear();
             bm1 = F_1934E(0x140, 0x52, 0, 0);
             popup_grab(0, 0x40, 0x140, 0x52, bm1);
@@ -551,7 +551,7 @@ static void near buy_from_ads(int tab)
             y = (((specn->f4 >> 8) & 7) == 2) ? 8 : 0;
             F_181C8(7, x1, y, 0, 0, 0x86, 0, g_5030[(specn->f4 >> 4) & 3]);
             screen_text((0x140 - dash_text_width(g_offerName)) / 2, 0x88, g_offerName);
-            cursor_ctl(-2);
+            cursor_ctl(CURSOR_SHOW_NOW);
             g_anyInput = 1;
             menu_wait(0x18);
             g_anyInput = 0;
@@ -722,7 +722,7 @@ static int near your_cars(void)
             popup_show(pict, rx, ye);
             marks_pop_low(1);
             pict = 0;
-            cursor_ctl(-4);
+            cursor_ctl(CURSOR_HIDE_NOW);
             mid = a_7eaap.m7eb0->f2;
             result = game_car_look(a_7eaap.m7eb0);
             F_181C8(6, mid, result, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0x98, 0,
@@ -730,7 +730,7 @@ static int near your_cars(void)
             menu_pop(1);
             F_06AA6();
             menu_push(10);
-            cursor_ctl(-2);
+            cursor_ctl(CURSOR_SHOW_NOW);
             game_scrap_car(a_7eaap.m7eb0, 0);
             a_7eaap.m7eb0 = 0;
         } else {
@@ -821,7 +821,7 @@ void near game_run(void)
                 kind = fame_end_menu();
                 if (kind != -2 && kind != -1 && kind == 4)
                     return;
-                cursor_ctl(-2);
+                cursor_ctl(CURSOR_SHOW_NOW);
                 g_4f4a = 0;
                 break;
             }

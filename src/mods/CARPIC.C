@@ -416,7 +416,7 @@ void F_181C8(int kind, int idx, int flags, int kk, int q, int bot, int mode2, in
     struct Bitmap far *pan;
 
     top7 = bot - 0x45;
-    cursor_ctl(-4);
+    cursor_ctl(CURSOR_HIDE_NOW);
 again:
     n2 = (kind == 3 || kind == 7 || kind == 8) ? 1 : 4;
     disk_pic_size(g7d86n[idx].f8, &w1, &h7, &x7);
@@ -578,7 +578,7 @@ done:
     g_spriteBottomCut = g_backdropW = g_backdropX = 0;
     marks_release();
     g_carPassBy = 0;
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
 }
 
 /* carpic_patch_bg @ 0F38:975B (linear 0x18ADB, 256 bytes)

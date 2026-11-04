@@ -109,9 +109,9 @@ void cursor_ctl(int mode)
         g_4744 = g_cursorPairs[mode].b;
         g_cursor2.off = cursor_shape_off(g_cursor2.n);
         cursor_draw(a, b);
-    } else if (mode >= -2) {
+    } else if (mode >= CURSOR_SHOW_NOW) {
         if (++g_4733 > 0) {
-            g_cursor2.state = (mode == -1) + 1;
+            g_cursor2.state = (mode == CURSOR_SHOW) + 1;
             if (g_cursor2.r.x2 >= 0)
                 cursor_draw(g_cursor2.r.x1, g_cursor2.r.y1);
             else
@@ -120,7 +120,7 @@ void cursor_ctl(int mode)
         }
     } else {
         if (--g_4733 >= 0) {
-            g_cursor2.state = -((mode == -3) - 0xff);
+            g_cursor2.state = -((mode == CURSOR_HIDE) - 0xff);
             if (g_cursor2.r.x2 >= 0)
                 cursor_draw(g_cursor2.r.x1, g_cursor2.r.y1);
             else

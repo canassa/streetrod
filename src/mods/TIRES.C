@@ -222,7 +222,7 @@ void F_1B213(int *a, int *b)
     s72 = m_8272.m8272;
     s74 = m_8272.m8274;
     marks_release();
-    cursor_ctl(-4);
+    cursor_ctl(CURSOR_HIDE_NOW);
     r_vid.f16 = 0;
     g_6da0 = z_8b7c;
     modelm = a_7eaap.m7eb0->f2;
@@ -458,5 +458,5 @@ void F_1B213(int *a, int *b)
     m_8272.m8272 = s72;
     m_8272.m8274 = s74;
     g_spriteBgY = 0;
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
 }

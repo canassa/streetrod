@@ -66,7 +66,7 @@ int fame_protect_check(void)
     }
     screen_text(0x79, 0x3f, b);
     screen_text(c, 0x48, a);
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
     if (r_vid.mode == -2 || r_vid.mode == -6)
         video_set_palette(g_protectPal);
@@ -119,10 +119,10 @@ int fame_end_menu(void)
     x_colors.c[1] = c1;
     x_colors.c[3] = c3;
     x_colors.c[2] = c21;
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
     (*m_present)();
     key = menu_wait(41);
-    cursor_ctl(-4);
+    cursor_ctl(CURSOR_HIDE_NOW);
     switch (key) {
     case -2:
     case -1:
