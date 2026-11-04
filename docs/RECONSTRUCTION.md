@@ -28,8 +28,9 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   Names with digit suffixes come from `./sr layout -w` and only reproduce the frame.
 - **Struct types and members** (shared types in `src/include/STRUCTS.H`, private types in
   their owner's header). Sizes and offsets come from the code; tags and member names are
-  invented. Untouched members are unused storage (`pad`, `fNN`, `unusedN`); explicit spare fields
-  are distinguished from the compiler's automatic alignment padding.
+  invented. Explicit unused or reset-only fields use `unused` / `unusedN`; legacy `pad` /
+  `fNN` names also remain where meaning is uncertain. Explicit spare storage is distinct
+  from the compiler's automatic alignment padding.
 - **Files.** Each object's file is named for what its code does (GARAGE.C, DISK.C,
   CGABLT.C, ...); SCENERY.C/SCENERY2.C and the `src/data/` names likewise describe their
   data. These are labels for recovered objects: a file boundary is evidence, its name is
@@ -178,13 +179,15 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **TireWork** (`g_tires`, DS:6CD4..6DFD): a natural, byte-identical reconstruction choice; separate globals also match.
 
-- **TextEnd / StatusText** (`g_penPoint`, DS:824C..824F; `g_statusLine`, DS:8250..8259): natural, separate records for the last drawn text endpoint and status-line state; separate globals also match.
+- **TextEnd** (`g_penPoint`, DS:824C..824F): a natural pair for the last drawn text endpoint, written by the drivers and read by ADS/MENU/EDIT.
+- **StatusText** (`g_statusLine`, DS:8250..8259): a natural record for status-line placement, dimensions and display state; separate from the generic text endpoint.
 
 - **BodyPoints** (`g_featurePos`, DS:8264..8271): a natural, byte-identical reconstruction choice; separate globals also match.
 
-- **Right scenery cursor / mirror road projection** (`g_rightSideTerrainRow`, DS:8634..8637; `g_mirYProj[8]`, DS:8638..8647): keep the right-side scenery cursor separate from the full eight-row mirror Y array; the array form is byte-identical.
+- **Right scenery cursor** (`g_rightSideTerrainRow`, DS:8634..8637): a separate right-side terrain/scenery cursor used by both forward and mirror views.
+- **Mirror road Y projection** (`g_mirYProj[8]`, DS:8638..8647): a full eight-row array matching its writer; the array form is byte-identical.
 
-- **MirrorEdges** (`g_mirGeom`, DS:864A..8669): a natural, byte-identical reconstruction choice; separate globals also match.
+- **MirrorEdges** (`g_mirGeom`, DS:864A..8669): a natural, byte-identical reconstruction choice; separate globals also match; both member arrays contain all eight rows written by the projection loop.
 
 - **Forward building rows** (`g_yBuildingTopArray[15]`, DS:7AB0..7ACD): one full-length array matches its fifteen-entry writer and is byte-identical; the preceding backdrop reveal height remains separate.
 
@@ -192,7 +195,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **TimerPriorities** (`g_sysTimerPriorities`, DS:8EF6..8EFD; type in SYS.H): a natural, byte-identical reconstruction choice; separate globals also match.
 
-- **PartSelection** (`g_slotSelec`, DS:82AC..82B3): a natural, byte-identical reconstruction choice; separate globals also match.
+- **PartSelection** (`g_slotSelec`, DS:82AC..82B3): a natural, byte-identical reconstruction choice; separate globals also match; the explicit unused two-byte word is an `int`, not automatic padding.
 
 - **InputState** (`g_input`, DS:05D0..05D3): natural record of the any-input latch and input key only; the unused sentinel and drive-reset words at 05D4..05DB stay separate with neutral placeholder names.
 

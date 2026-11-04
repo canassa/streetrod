@@ -1246,3 +1246,19 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - Unused word-sized storage is not automatic word-alignment padding. Preserve unknown/reset-only fields without inventing semantic names, and do not let recovered fallback ranges reintroduce their old symbols.
 
 Tooling lessons are recorded in [sr-cli](../.claude/skills/sr-cli/SKILL.md); the type-header ownership rule is in [CLAUDE.md](../CLAUDE.md).
+
+
+## 2026-11-04 18:02 CET: Correct the independent struct review findings
+
+**What I did**
+
+- Split generic text endpoints into TextEnd g_penPoint at 824C and narrowed StatusText to status-line state at 8250. Extracted the right-side scenery cursor at 8634 from mirror Y rows at 8638. InputState now contains only any/key; restored 05D4..05DB as separate placeholder globals, preserving the 32767 sentinel and drive-reset writes.
+- Applied the reviewed member names: RenderRows.lineWidth, TireWork.liftBuf/liftHeader/wheelX1. Replaced the five misleading object spellings with g_sysTimerPriorities, g_slotSelec, g_mirGeom, g_raceWagerTerms and g_rightSideTerrainRow (separate from g_mirYProj).
+- Tested four natural array variants with real MSC and full builds; all were byte-identical. Adopted g_yBuildingTopArray[15], g_mirYProj[8] and two eight-element MirrorEdges arrays. No short arrays plus terminal scalar fields remain in those reviewed projection groups.
+- Used BetKind constants at wager-kind writers/tests and typed the corresponding locals/parameter. Changed PartSelection's unused word to int, corrected the old hook comment, and made ADS function-pointer calls consistent.
+- Merged main (already up to date), checked conflicts, and passed 572/572 functions, clean packed build IDENTICAL, headers/DGROUP/order and 58 unit tests. Native DOS MAKE is IDENTICAL; real MSC verified 586 size/offset checks across 81 shared/owner-header types. No further tooling fixes were needed. Current evidence: work/structs/fixes/REPORT.md.
+
+**What I learned**
+
+- Byte identity permits broader groups than a source reconstruction should use. Trace each field's writers/readers to separate generic text output, status-line state, forward/mirror scenery cursors and drive-reset words.
+- Array writers can reveal the true capacity where reconstruction introduced terminal scalar members. The compiler-verified full-array result is recorded in the [recipe book](../.claude/skills/msc51-recipe-book/SKILL.md); explicit unused/reset-only fields remain distinct from automatic padding.
