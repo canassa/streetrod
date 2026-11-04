@@ -1,6 +1,7 @@
 #include <conio.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_00000.H"
+#include "M_0E5D2.H"
 
 /* F_004F4 @ 0000:04F4 (linear 0x004F4, 210 bytes) */
 

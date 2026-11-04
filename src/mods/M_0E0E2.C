@@ -1,6 +1,9 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_0DCBE.H"
+#include "M_02B9A.H"
+#include "M_06476.H"
+#include "M_113A2.H"
+#include "M_15396.H"
 #include <math.h>
 
 static void near F_0DCBE(struct Car *c, struct Eng *e);

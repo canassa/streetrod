@@ -1,7 +1,14 @@
 #include <conio.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_242EC.H"
+#include "M_00000.H"
+#include "M_10B7C.H"
+#include "M_123F4.H"
+#include "M_21A06.H"
+#include "M_23262.H"
+#include "M_24E78.H"
+#include "M_25954.H"
+#include "M_2634A.H"
 
 /* F_242EC @ 21A0:28EC: copy a range of rows of a planar sprite sheet into the back page, plane by plane */
 /* Local names are placeholders chosen to reproduce the original stack layout. */

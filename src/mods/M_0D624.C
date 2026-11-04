@@ -1,6 +1,14 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_0B3CA.H"
+#include "GBSS.H"
+#include "M_00000.H"
+#include "M_00D58.H"
+#include "M_08D26.H"
+#include "M_08EA8.H"
+#include "M_0914C.H"
+#include "M_15396.H"
+#include "M_265BA.H"
+#include "SLOTS.H"
 #include <string.h>
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */

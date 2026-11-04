@@ -1,6 +1,6 @@
 #include <conio.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_2322E.H"
 
 /* F_2322E @ 21A0:182E: set the CRTC start address and wait for a vertical retrace */
 

@@ -1,7 +1,6 @@
 #include <stdlib.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_21AAC.H"
 
 static void near F_22077(unsigned char *p, int dir, int n);
 static void near F_2212C(char far *dst, char *src, int n, int odd);

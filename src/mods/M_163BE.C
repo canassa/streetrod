@@ -1,5 +1,13 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_163BE.H"
+#include "EFFECTS.H"
+#include "M_00D58.H"
+#include "M_02B9A.H"
+#include "M_15236.H"
+#include "M_1628A.H"
+#include "M_174A6.H"
+#include "M_21962.H"
+#include "SONG.H"
 #include <conio.h>
 
 static void near F_164CC(long freq, int n);

@@ -1,6 +1,10 @@
 #include <dos.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_036A8.H"
+#include "GBSS.H"
+#include "M_00000.H"
+#include "M_00D58.H"
+#include "M_113A2.H"
 #include <malloc.h>
 
 static void near F_03614(int reset);
@@ -18,7 +22,7 @@ int data_segment(void)
 
 static void near F_036BE(void)
 {
-    g_64a6 = 0x800;
+    _amblksiz = 0x800;
     g_6c60 = data_segment();
     F_03614(1);
 }

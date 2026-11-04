@@ -1,6 +1,8 @@
 #include <dos.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_16D1A.H"
+#include "M_00D58.H"
+#include "M_02B9A.H"
 
 /* F_16D57: mouse function 3, buttons: bl bit 0 and bit 1 stored in two globals */
 

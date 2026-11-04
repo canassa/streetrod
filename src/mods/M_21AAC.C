@@ -1,8 +1,13 @@
 #include <dos.h>
 #include <memory.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_21AAC.H"
+#include "M_0F38A.H"
+#include "M_1C11C.H"
+#include "M_24D84.H"
+#include "M_24F4A.H"
+#include "M_25954.H"
+#include "M_2634A.H"
 
 static void near F_21B7C(int x, int x0, int y, int *b, int *a);
 static void near F_21AAC(struct Bitmap far *src, struct Bitmap far *dst, struct Clip *o);

@@ -1,5 +1,10 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_0914C.H"
+#include "GBSS.H"
+#include "M_0F38A.H"
+#include "M_11E9C.H"
+#include "M_15236.H"
+#include "M_18BDC.H"
 
 int g_51ee = 100;   /* DS:51EE */
 int g_51f0 = 0;   /* DS:51F0 */

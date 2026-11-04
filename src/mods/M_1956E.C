@@ -1,6 +1,14 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_1947A.H"
+#include "M_00000.H"
+#include "M_00D58.H"
+#include "M_10B7C.H"
+#include "M_11A72.H"
+#include "M_123F4.H"
+#include "M_174A6.H"
+#include "M_1923C.H"
+#include "M_193D4.H"
+#include "M_19ED0.H"
 #include <stdlib.h>
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */

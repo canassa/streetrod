@@ -1,5 +1,7 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_06476.H"
+#include "M_00000.H"
+#include "M_00D58.H"
 
 /* F_064A3 @ 0000:64A3 (linear 0x064A3, 134 bytes) */
 

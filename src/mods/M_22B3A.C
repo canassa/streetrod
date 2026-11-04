@@ -1,9 +1,22 @@
 #include <conio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_22B3A.H"
+#include "FONTDATA.H"
+#include "M_0E6C2.H"
+#include "M_0F38A.H"
+#include "M_10B7C.H"
+#include "M_113A2.H"
+#include "M_139DE.H"
+#include "M_22F08.H"
+#include "M_230DC.H"
+#include "M_23262.H"
+#include "M_238A2.H"
+#include "M_23DBC.H"
+#include "M_23F68.H"
+#include "M_242EC.H"
+#include "M_26458.H"
 
 /* F_22B3A: draw a string in the 8-pixel-high font into a planar EGA/VGA bitmap, composing the glyph rows in a 320 byte buffer first */
 /* Local names are placeholders chosen to reproduce the original stack layout. */

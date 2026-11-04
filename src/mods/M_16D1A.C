@@ -1,6 +1,6 @@
 #include <dos.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_16D1A.H"
 
 /* F_16D1A: mouse driver present? Returns the INT 33h reset result (0 if the vector is empty) */
 

@@ -1,5 +1,9 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_2869E.H"
+#include "M_00000.H"
+#include "M_0F38A.H"
+#include "M_16EA2.H"
+#include "M_2322E.H"
 
 int g_5e14[5][4] = {{1003, 1004, 1057, 1091}, {1010, 1012, 1011, 1239}, {1010, 1247, 1248, 1092}, {1010, 1249, 1250, 1251}, {1010, 1253, 1252, 1254}};   /* DS:5E14 */
 int g_5e3c = 0;   /* DS:5E3C */

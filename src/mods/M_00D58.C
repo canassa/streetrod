@@ -1,10 +1,30 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_00D58.H"
+#include "GBSS.H"
+#include "HOTSPOT.H"
+#include "MESSAGES.H"
+#include "M_00000.H"
+#include "M_02B9A.H"
+#include "M_02DB6.H"
+#include "M_02DE2.H"
+#include "M_02DF4.H"
+#include "M_02FC8.H"
+#include "M_06476.H"
+#include "M_0914C.H"
+#include "M_0E56A.H"
+#include "M_0E610.H"
+#include "M_0F38A.H"
+#include "M_10B7C.H"
+#include "M_113A2.H"
+#include "M_11E9C.H"
+#include "M_139DE.H"
+#include "M_163BE.H"
+#include "M_16D1A.H"
+#include "SONG.H"
 #include <conio.h>
 #include <dos.h>
 #include <stdlib.h>
 #include <string.h>
-#include "STRUCTS.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Dev bs79aa;

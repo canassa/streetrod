@@ -1,5 +1,7 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "CARMASKS.H"
+#include "CARMASK2.H"
+#include "PARTS1.H"
 
 int g_5ec6 = 0;   /* DS:5EC6 */
 struct List g_5ef2 = {7, g_5ec8};   /* DS:5EF2 */

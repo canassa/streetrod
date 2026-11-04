@@ -1,5 +1,8 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_1923C.H"
+#include "GBSS.H"
+#include "M_00000.H"
+#include "M_036A8.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 int bl78de;

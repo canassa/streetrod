@@ -1,5 +1,12 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_08D26.H"
+#include "M_00D58.H"
+#include "M_02B9A.H"
+#include "M_06476.H"
+#include "M_0F38A.H"
+#include "M_113A2.H"
+#include "M_163BE.H"
+#include "M_16EA2.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 int g7d66n;

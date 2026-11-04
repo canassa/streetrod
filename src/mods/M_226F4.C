@@ -1,6 +1,13 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_226F4.H"
+#include "M_00000.H"
+#include "M_0914C.H"
+#include "M_10B7C.H"
+#include "M_174A6.H"
+#include "M_1947A.H"
+#include "M_19ED0.H"
+#include "M_1A9B2.H"
+#include "M_21AAC.H"
 
 static void near F_226F4(struct Rect *r, struct Bitmap far *a, struct Bitmap far *b, int horiz);
 

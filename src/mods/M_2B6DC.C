@@ -1,5 +1,10 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_2B6DC.H"
+#include "M_00000.H"
+#include "M_0F38A.H"
+#include "M_1923C.H"
+#include "M_2462E.H"
+#include "M_2634A.H"
 
 static int near F_2B6DC(unsigned char b);
 static struct Bitmap far * near F_2B707(struct Bitmap far *p, unsigned char a, unsigned char b);

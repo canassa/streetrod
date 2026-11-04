@@ -1,4 +1,5 @@
-"""Generate src/include/GLOBALS.H and PROTOS.H from the DB. STRUCTS.H is hand-written source."""
+"""Generate the headers from the DB: the per-file headers the game sources include (fileheaders.py),
+and GLOBALS.H / PROTOS.H, which only the check scaffolding (.STB stubs) uses. STRUCTS.H is hand-written."""
 
 import os
 
@@ -36,6 +37,11 @@ def generate(con):
         out.append(f"{f['proto'].replace('@', name)};".ljust(56) + f"/* 0x{f['addr']:05X} */")
     out += ["", "#endif", ""]
     _write(inc / "PROTOS.H", "\n".join(out))
+
+    from . import fileheaders           # per-file headers (the game sources use these)
+    missing = fileheaders.generate(con)
+    if missing:
+        print("warning: no source defines " + ", ".join(missing[:12]) + (" ..." if len(missing) > 12 else ""))
 
     structs = inc / "STRUCTS.H"
     if structs.exists():

@@ -158,7 +158,7 @@ def prepare():
     batch = ['@echo off', 'if exist SR.EXE del SR.EXE']
     for job in jobs:
         command = job['program']+' '+' '.join(job['args'])
-        deps = ' INCLUDE\\GLOBALS.H INCLUDE\\PROTOS.H INCLUDE\\STRUCTS.H INCLUDE\\CRT.H' if job['program'] == 'CL' else ''
+        deps = build.header_deps((OUT/job['source']).read_text(errors='replace')) if job['program'] == 'CL' else ''
         make += [f"{job['stem']}.OBJ: {job['source']}{deps}", '\t'+command, '']
         batch += [command, 'if errorlevel 1 goto failed']
     command = 'LINK /NOD /MAP /STACK:2560 @LINK.RSP'

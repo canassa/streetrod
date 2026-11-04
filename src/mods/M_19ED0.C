@@ -1,6 +1,14 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_19ED0.H"
+#include "M_00000.H"
+#include "M_036A8.H"
+#include "M_0F38A.H"
+#include "M_10B7C.H"
+#include "M_15396.H"
+#include "M_174A6.H"
+#include "M_18BDC.H"
+#include "M_1923C.H"
+#include "M_193D4.H"
 
 /* F_19ED0: copy a bitmap into another through the blit hook */
 

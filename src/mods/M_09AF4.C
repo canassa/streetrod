@@ -1,6 +1,19 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_0914C.H"
+#include "HOTSPOT.H"
+#include "M_00000.H"
+#include "M_00D58.H"
+#include "M_02B9A.H"
+#include "M_039C0.H"
+#include "M_06476.H"
+#include "M_0F38A.H"
+#include "M_10B7C.H"
+#include "M_113A2.H"
+#include "M_11A72.H"
+#include "M_139DE.H"
+#include "M_15236.H"
+#include "M_15396.H"
+#include "M_193D4.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 int as79a2z;

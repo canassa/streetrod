@@ -629,9 +629,12 @@ def cmd_layout(args):
 
 
 def cmd_headers(args):
+    from sr import fileheaders
     con = db.connect()
     gen_headers(con)
-    print("wrote src/include/GLOBALS.H, src/include/PROTOS.H")
+    fileheaders.generate(con, rewrite_sources=True)
+    print("wrote the per-file headers in src/include, the include blocks of the C sources, "
+          "and GLOBALS.H / PROTOS.H (check scaffolding)")
 
 
 def cmd_status(args):
@@ -1065,7 +1068,7 @@ def main():
     s.add_argument("--bucket", type=int, help="list common readable names in bucket N (0-15) instead")
     s.set_defaults(func=cmd_layout)
 
-    s = sub.add_parser("headers", help="regenerate src/include/GLOBALS.H and PROTOS.H")
+    s = sub.add_parser("headers", help="regenerate the per-file headers and the sources' include blocks")
     s.set_defaults(func=cmd_headers)
 
     s = sub.add_parser("status", help="summary + regenerate docs/PROGRESS.md")

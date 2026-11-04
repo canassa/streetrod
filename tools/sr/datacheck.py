@@ -37,7 +37,7 @@ def check(obj, con, im, codebase):
         bases.setdefault(base, []).append(f.pos)
     if not bases:
         return problems, None
-    globals_by_name = {g['name']: g['off'] for g in con.execute('SELECT off, name FROM globals')}
+    globals_by_name = {g['name'].lstrip('_'): g['off'] for g in con.execute('SELECT off, name FROM globals')}
     if len(bases) > 1:
         shown = ', '.join(f'{b:04x} ({len(p)} refs)' for b, p in sorted(bases.items(), key=lambda kv: -len(kv[1])))
         problems.append(f'data layout: the code refers to our _DATA with different original bases: {shown}')

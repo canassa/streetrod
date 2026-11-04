@@ -1,7 +1,18 @@
 #include <dos.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_0B3CA.H"
+#include "GBSS.H"
+#include "M_00000.H"
+#include "M_00D58.H"
+#include "M_02B9A.H"
+#include "M_08D26.H"
+#include "M_08EA8.H"
+#include "M_0914C.H"
+#include "M_0F38A.H"
+#include "M_113A2.H"
+#include "M_11E9C.H"
+#include "M_15236.H"
+#include "SLOTS.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct State70C0 al70c0x;

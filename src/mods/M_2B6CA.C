@@ -1,5 +1,8 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_2869E.H"
+#include "GBSS.H"
+#include "M_0B3CA.H"
+#include "M_265BA.H"
 
 static void near F_2869E(void);
 

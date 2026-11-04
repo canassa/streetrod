@@ -1,5 +1,7 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_193D4.H"
+#include "M_00000.H"
+#include "M_1923C.H"
 
 /* F_193D4 @ 0F38:A054 (linear 0x193d4, 42 bytes) */
 

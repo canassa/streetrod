@@ -1,6 +1,6 @@
 #include <conio.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_23262.H"
 
 /* F_2382D @ 21A0:1E2D: copy a w by h block of planar VGA video memory using write mode 1 (latch copy) */
 

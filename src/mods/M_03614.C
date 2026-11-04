@@ -1,5 +1,6 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_03614.H"
+#include "M_113A2.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Node2 as83b0[16];

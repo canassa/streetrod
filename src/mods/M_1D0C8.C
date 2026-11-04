@@ -1,8 +1,12 @@
 #include <dos.h>
 #include <memory.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_1D0C8.H"
+#include "M_0F38A.H"
+#include "M_1C11C.H"
+#include "M_24F4A.H"
+#include "M_25954.H"
+#include "M_2634A.H"
 
 static void near F_1D0C8(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Clip *o);
 

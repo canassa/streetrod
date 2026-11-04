@@ -586,3 +586,18 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - Operand order is evidence for declarations: in a two-memory-operand comparison or addition MSC loads the simpler operand; ties load the right side of a comparison and the left side of an addition. Every place our "plain" global sits against a struct member is a test of whether it was a member.
 - Merging two address-adjacent communals never moves anything else, because adjacent blocks are adjacent in LINK's allocation order; only the merged block's first mention can change, which the bucket check covers.
 - `State70C0` looks like two 16-byte records (an int, six ints, an int) for player and opponent; it is still a flat placeholder.
+
+## 2026-11-04 08:30 CET: Per-file headers instead of GLOBALS.H / PROTOS.H
+
+### What I did
+- Each original source file now has its own header in src/include: one per link unit (named after its first source, e.g. `M_0914C.H` for M_0914C.C..M_0B045.C) and one per standalone data or assembler file (`SCREENS.H`, `GBSS.H`, `MESSAGES.H`, ...). 100 headers.
+- A header declares what its file defines: the owner of each global, far datum and far function is found from its definition (C file-scope definitions, MASM `PUBLIC`s); the declaration text still comes from the DB.
+- Every C source's include block is generated: `STRUCTS.H`, its own header, then the headers of the files it uses. `./sr headers` rewrites the blocks; any header regeneration refreshes the headers (new `tools/sr/fileheaders.py`).
+- The game now reads `errno`, `_doserrno` and `_amblksiz` by their real names through `<stdlib.h>` / `<malloc.h>`; CRT.H's `#define g_630d errno` mapping is gone. The reference checkers compare global names without leading underscores.
+- MAKEFILE dependencies list each job's actual headers; the dgroup data-unit writer keeps a file's include block; lint messages point at the defining file's header.
+- GLOBALS.H / PROTOS.H remain generated for the check scaffolding only (.STB stubs, new src/funcs files).
+- Result: `./sr build --layout` IDENTICAL from an empty work dir, `./sr check --all` 572/572, tests OK, `work/dg/run.sh` regenerates to IDENTICAL.
+
+### What I learned
+- The include lists do not affect code: unused declarations cost nothing in MSC's external-symbol budget, as expected.
+- The plain `./sr build` (all-files game build, not the layout link) has not linked since before the DGROUP work: at a497236 it had 368 unresolved data symbols, now 158 (the private BSS at DS:6C22..6E2C and other data only the layout link provides). `./sr build --layout` is the build that matters.

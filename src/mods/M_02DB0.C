@@ -1,5 +1,5 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_02B9A.H"
 
 void F_02DB0(void)
 {

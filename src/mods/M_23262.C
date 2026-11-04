@@ -1,9 +1,13 @@
 #include <conio.h>
 #include <dos.h>
 #include <memory.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_23262.H"
+#include "M_0F38A.H"
+#include "M_24E78.H"
+#include "M_24F4A.H"
+#include "M_25954.H"
+#include "M_2634A.H"
 
 /* F_23262 @ 21A0:1862: copy a rectangle between planar VGA bitmaps, plane by plane */
 /* Local names are placeholders chosen to reproduce the original stack layout. */

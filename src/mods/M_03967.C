@@ -1,5 +1,5 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_036A8.H"
 
 char far *F_03967(unsigned size, char *pool)
 {

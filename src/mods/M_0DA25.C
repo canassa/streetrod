@@ -1,7 +1,14 @@
 #include <stdlib.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_0B3CA.H"
+#include "GBSS.H"
+#include "M_00D58.H"
+#include "M_08EA8.H"
+#include "M_0914C.H"
+#include "M_113A2.H"
+#include "M_15236.H"
+#include "M_163BE.H"
+#include "SLOTS.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 int by72f2;

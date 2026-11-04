@@ -1,5 +1,20 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_06476.H"
+#include "M_00000.H"
+#include "M_00D58.H"
+#include "M_02B9A.H"
+#include "M_039C0.H"
+#include "M_0F38A.H"
+#include "M_10B7C.H"
+#include "M_113A2.H"
+#include "M_11A72.H"
+#include "M_11E9C.H"
+#include "M_139DE.H"
+#include "M_15396.H"
+#include "M_163BE.H"
+#include "M_1923C.H"
+#include "M_193D4.H"
+#include "M_19ED0.H"
 
 /* F_07367 @ 0000:7367 (linear 0x07367, 832 bytes) */
 

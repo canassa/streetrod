@@ -1,5 +1,7 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_0B3CA.H"
+#include "HOTSPOT.H"
+#include "M_123F4.H"
 
 int g_53b6[6] = {2, 1, 4, 6, 5, 3};   /* DS:53B6 */
 

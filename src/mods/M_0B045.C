@@ -1,6 +1,20 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_0914C.H"
+#include "GBSS.H"
+#include "HOTSPOT.H"
+#include "MESSAGES.H"
+#include "M_00000.H"
+#include "M_00D58.H"
+#include "M_02B9A.H"
+#include "M_0E56A.H"
+#include "M_0F38A.H"
+#include "M_10B7C.H"
+#include "M_113A2.H"
+#include "M_11E9C.H"
+#include "M_139DE.H"
+#include "M_15236.H"
+#include "M_15396.H"
+#include "M_193D4.H"
 
 static void near F_0B045(int id, char c);
 static int near F_095F1(void);

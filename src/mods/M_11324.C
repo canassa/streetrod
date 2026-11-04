@@ -1,6 +1,6 @@
 #include <dos.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_10B7C.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 char iz8248;

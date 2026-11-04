@@ -1,5 +1,8 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_113A2.H"
+#include "M_00000.H"
+#include "M_13682.H"
+#include "M_19ED0.H"
 
 /* F_119D6: draw string s at (x, y) on the back buffer, then copy the 8 pixel high strip to the front buffer */
 

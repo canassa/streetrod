@@ -1,5 +1,7 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_039C0.H"
+#include "M_02B9A.H"
+#include "M_113A2.H"
 
 /* F_03FB1 @ 0000:3FB1 (linear 0x03FB1, 35 bytes) */
 

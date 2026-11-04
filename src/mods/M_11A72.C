@@ -1,5 +1,17 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_11A72.H"
+#include "GBSS.H"
+#include "MESSAGES.H"
+#include "M_00000.H"
+#include "M_00D58.H"
+#include "M_036A8.H"
+#include "M_0F38A.H"
+#include "M_10B7C.H"
+#include "M_113A2.H"
+#include "M_11E9C.H"
+#include "M_1923C.H"
+#include "M_193D4.H"
+#include "M_19ED0.H"
 #include <stdlib.h>
 #include <string.h>
 

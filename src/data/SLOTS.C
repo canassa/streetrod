@@ -4,7 +4,8 @@
    then the five arrays) therefore fixes the order of the names' buckets. The names are
    placeholders chosen to satisfy it (g_slot 64, g_terrain0..4 158..190); the historical
    names are unknown. */
-#include "GLOBALS.H"
+#include "STRUCTS.H"
+#include "SLOTS.H"
 
 struct Slot far g_slot[277];
 unsigned far g_terrain0[1120];

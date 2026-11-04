@@ -1,6 +1,13 @@
 #include <string.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_0914C.H"
+#include "GBSS.H"
+#include "MESSAGES.H"
+#include "M_00000.H"
+#include "M_00D58.H"
+#include "M_0F38A.H"
+#include "M_113A2.H"
+#include "M_174A6.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Spec *ar7d7au;

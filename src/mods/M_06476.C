@@ -1,5 +1,6 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_06476.H"
+#include "M_00D58.H"
 
 int g_5030[3][4] = {{1065, 1066, 1067, 1068}, {1028, 1029, 1030, 1031}, {1106, 1107, 1108, 1109}};   /* DS:5030 */
 int g_5048 = 33;   /* DS:5048 */

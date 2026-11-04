@@ -35,9 +35,9 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 ./sr flags ADDR /AM /Os /FPi   # per-function flags (--reset for the default; --force on a matched function)
 ./sr name ADDR NAME            # name a function
 ./sr global 82ca g_table --decl "struct Entry @[]"   # declare a DGROUP global (no args: list them)
-./sr proto 15236 "int @(int n)" # a far function's prototype for PROTOS.H ("" clears; --force replaces an existing one)
+./sr proto 15236 "int @(int n)" # a far function's prototype (goes into its file's header) ("" clears; --force replaces an existing one)
 ./sr data 4eee [N]             # hex dump of DGROUP bytes with known globals
-./sr headers                   # regenerate GLOBALS.H / PROTOS.H (check does this itself)
+./sr headers                   # regenerate the per-file headers and every source's include block
 ./sr layout a b:long '{ c }'   # predict the [bp-N] layout of locals from their names (--ol for /Ol)
 ./sr layout -w x cnt i         # suggest renames + declaration order for this top-to-bottom order
 ./sr layout --bucket 5          # readable names in bucket 5 (pick one instead of a digit-suffixed rename)
@@ -122,9 +122,9 @@ We use the exact compiler the developers used. Never blame a compiler version or
 
 MSC 5.1 assigns stack slots to locals in an order set by a hash of the identifier names (declaration order only breaks ties). Renaming a local can move it and break a match. `./sr check` prints the layout (`locals: a=-50, ...`), and `./sr diff` shows wrong `[bp-N]` offsets. The rule is known (recipe book, "Local layout"): `./sr layout NAMES` predicts the frame and `./sr layout -w NAMES` suggests names for a wanted order. Still recheck after every rename.
 
-### 4. Declarations come from the shared headers, never ad hoc
+### 4. Declarations come from the defining file's header, never ad hoc
 
-Every `.C` includes `GLOBALS.H` and `PROTOS.H` (in `src/include/`, generated from the DB) and declares nothing itself:
+As in the original, each source file has its own header: `src/include/<FILE>.H` declares what that file defines (one header per link unit, named after its first source, e.g. `M_0914C.H` covers M_0914C.C..M_0B045.C; standalone data files get theirs, e.g. `SCREENS.H`, `GBSS.H`). A `.C` includes `STRUCTS.H`, its own header, and the headers of the files whose globals and functions it uses, and declares nothing itself. The headers and the include blocks are generated: declarations come from the DB, ownership from where the definition is. Run `./sr headers` after adding a reference to another file's symbol or moving a definition. `GLOBALS.H` / `PROTOS.H` are still generated, but only for the check scaffolding (`.STB` stubs, new `src/funcs` files). Unused declarations do not count against the compiler budget (rule 4d), so the include lists cannot change code.
 
 - **Globals:** `./sr global OFF NAME --decl "TYPE @"`. One name per DGROUP offset, project-wide.
 - **Far functions:** `./sr proto ADDR "TYPE @(ARGS)"`. A call without a prototype fails the check (MSC's C4071 at `/W3`). A CRT function may have several library names (`aFlmul`/`aFulmul`); `crtnames` records them in the `aliases` table and `refs` accepts any.
@@ -190,7 +190,7 @@ Never redirect a DOS program's output to a file without a timeout and a size bou
 | `toolchain/masm51/` | MASM 5.1 `BIN`, `INCLUDE`, docs, plus the original disk images (`F:` in DOSBox) |
 | `src/funcs/F_xxxxx.C` / `.ASM` | One reconstructed function per file (8.3 names; DOS builds them) |
 | `src/funcs/F_xxxxx.STB` | Optional placeholders for same-module callees, prepended at build time so calls compile to `push cs; call near`: `@F_xxxxx` (generated from the DB prototype) for far ones, a trivial `static ... near` definition for near ones. Not source |
-| `src/include/` | `GLOBALS.H`, `PROTOS.H` (generated) and `STRUCTS.H` (hand-written); on the compiler's `INCLUDE` path as `E:` |
+| `src/include/` | per-file headers and `GLOBALS.H` / `PROTOS.H` (generated), `STRUCTS.H` (hand-written); on the compiler's `INCLUDE` path as `E:` |
 | `tools/sr/` | The CLI |
 | `db/sr.sqlite` | Functions, callees, named globals |
 | `docs/PROGRESS.md` | Generated progress report |

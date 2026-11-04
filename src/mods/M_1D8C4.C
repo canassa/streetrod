@@ -1,6 +1,10 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_1D8C4.H"
+#include "M_00000.H"
+#include "M_0914C.H"
+#include "M_10B7C.H"
+#include "M_1947A.H"
+#include "M_1D0C8.H"
 #include <conio.h>
 #include <stdlib.h>
 

@@ -1,6 +1,7 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_1947A.H"
+#include "M_00000.H"
+#include "M_00D58.H"
 
 /* F_19DB7: advance a sprite one tick along its motion sequence */
 

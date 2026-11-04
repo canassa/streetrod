@@ -1,8 +1,28 @@
 #include <conio.h>
 #include <dos.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_174A6.H"
+#include "GBSS.H"
+#include "M_00000.H"
+#include "M_00D58.H"
+#include "M_036A8.H"
+#include "M_039C0.H"
+#include "M_06476.H"
+#include "M_0914C.H"
+#include "M_0B3CA.H"
+#include "M_0F38A.H"
+#include "M_10B7C.H"
+#include "M_11A72.H"
+#include "M_11E9C.H"
+#include "M_15396.H"
+#include "M_18BDC.H"
+#include "M_1923C.H"
+#include "M_193D4.H"
+#include "M_1947A.H"
+#include "M_19ED0.H"
+#include "M_23262.H"
+#include "M_24E78.H"
+#include "M_25954.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Bitmap am6e68x[12];

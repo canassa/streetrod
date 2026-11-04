@@ -1,6 +1,8 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_174A6.H"
+#include "M_00000.H"
+#include "M_0914C.H"
+#include "M_0F38A.H"
 
 /* F_18ADB: blit a clipped band of a bitmap through the blit hook, then the seven frame cells onto the front buffer */
 

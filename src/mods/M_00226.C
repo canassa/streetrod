@@ -1,5 +1,14 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_00000.H"
+#include "M_036A8.H"
+#include "M_0E56A.H"
+#include "M_0E610.H"
+#include "M_0F38A.H"
+#include "M_1C11C.H"
+#include "M_22352.H"
+#include "M_22B28.H"
+#include "M_24602.H"
+#include "SCREENS.H"
 #include <dos.h>
 
 static int near F_0018B(void);

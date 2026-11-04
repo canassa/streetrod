@@ -1,5 +1,8 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_0542E.H"
+#include "M_11A72.H"
+#include "M_139DE.H"
+#include "M_193D4.H"
 
 /* F_0641E @ 0000:641E (linear 0x0641E, 87 bytes) */
 

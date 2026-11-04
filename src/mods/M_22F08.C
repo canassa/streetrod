@@ -1,7 +1,6 @@
 #include <conio.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_22F08.H"
 
 /* F_22F08 @ 21A0:1508: fill a rectangle in a planar VGA bitmap using the bit mask register */
 

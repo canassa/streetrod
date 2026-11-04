@@ -1,5 +1,10 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_039C0.H"
+#include "M_02B9A.H"
+#include "M_06476.H"
+#include "M_113A2.H"
+#include "M_15236.H"
+#include "M_15396.H"
 
 static struct Node * near F_03C1B(void);
 static struct Node2 * near F_03FB1(void);

@@ -1,5 +1,20 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_039C0.H"
+#include "M_00000.H"
+#include "M_00D58.H"
+#include "M_02B9A.H"
+#include "M_02FC8.H"
+#include "M_06476.H"
+#include "M_08D26.H"
+#include "M_0914C.H"
+#include "M_0B3CA.H"
+#include "M_0F38A.H"
+#include "M_113A2.H"
+#include "M_11A72.H"
+#include "M_11E9C.H"
+#include "M_1628A.H"
+#include "M_163BE.H"
+#include "M_193D4.H"
 
 static int near F_039C0(void);
 static int near F_0570C(void);

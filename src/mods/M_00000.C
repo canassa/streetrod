@@ -1,7 +1,8 @@
 #include <dos.h>
 #include <string.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_00000.H"
+#include "M_00D58.H"
 #include <conio.h>
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */

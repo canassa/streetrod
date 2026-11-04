@@ -89,6 +89,12 @@ def code_segment(addr):
     return ('G0_TEXT' if addr < 0xF38A else 'G1_TEXT' if addr < 0x21960
             else 'G2_TEXT' if addr < 0x26458 else 'G3_TEXT')
 
+
+def header_deps(text):
+    """MAKEFILE dependencies: the quoted headers a C source includes."""
+    return ''.join(' INCLUDE\\' + h for h in dict.fromkeys(['CRT.H', *re.findall(r'^#include\s+"(\w+\.H)"', text, re.M)]))
+
+
 def near_declarations(path):
     """Retain typed near interfaces from check scaffolding, without its bodies.
 
@@ -164,7 +170,7 @@ def prepare():
     for j in jobs:
         cmd = j['program'] + ' ' + ' '.join(j['args'])
         bat += [cmd, 'if errorlevel 1 goto failed']
-        deps = " INCLUDE\\GLOBALS.H INCLUDE\\PROTOS.H INCLUDE\\STRUCTS.H INCLUDE\\CRT.H" if j["program"] == "CL" else ""
+        deps = header_deps((OUT / j["source"]).read_text(errors="replace")) if j["program"] == "CL" else ""
         make += [f"{j['stem']}.OBJ: {j['source']}{deps}", '\t' + cmd, '']
     make += ['SR.EXE: ' + ' \\\n    '.join(j['stem'] + '.OBJ' for j in jobs) + ' LINK.RSP',
              '\tLINK /NOD /MAP @LINK.RSP', '']

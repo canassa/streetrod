@@ -1250,7 +1250,9 @@ class Analysis:
                 path.write_text(changed[path])
             return changed
         if u['kind'] == 'data':
-            lines = ['#include "GLOBALS.H"', '#include "PROTOS.H"', '']
+            path = config.ROOT / u['sources'][0]
+            old_inc = [ln for ln in (path.read_text().splitlines() if path.exists() else []) if ln.startswith('#include')]
+            lines = (old_inc or ['#include "STRUCTS.H"']) + ['']
             own = [it for it in self.items if it.owner == ustart and it.kind not in ('lit', 'str', 'alias')]
             # a definition that points at the item just before it was written first in the
             # original: MSC then emits the earlier item at the reference, in a record of its

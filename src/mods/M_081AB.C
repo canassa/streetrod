@@ -1,7 +1,18 @@
 #include <stdlib.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_06476.H"
+#include "M_00000.H"
+#include "M_00D58.H"
+#include "M_02B9A.H"
+#include "M_039C0.H"
+#include "M_113A2.H"
+#include "M_11E9C.H"
+#include "M_123F4.H"
+#include "M_139DE.H"
+#include "M_15236.H"
+#include "M_15396.H"
+#include "M_163BE.H"
+#include "M_193D4.H"
 
 static void near F_076A7(int t, struct Node **list4, char *buf, int start);
 static void near F_07741(struct Node *n, struct Node **slot);

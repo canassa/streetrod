@@ -1,11 +1,27 @@
 #include <dos.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_15396.H"
+#include "GBSS.H"
+#include "MESSAGES.H"
+#include "M_00000.H"
+#include "M_00D58.H"
+#include "M_02FC8.H"
+#include "M_036A8.H"
+#include "M_0E926.H"
+#include "M_113A2.H"
+#include "M_11E9C.H"
+#include "M_139DE.H"
+#include "M_1923C.H"
+#include "M_193D4.H"
+#include "M_2462E.H"
+#include "M_2634A.H"
+#include "SLOTS.H"
 #include <conio.h>
 #include <memory.h>
 #include <bios.h>
 #include <string.h>
 #include <io.h>
+#include <stdlib.h>
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Model w_8df0[26];
@@ -32,7 +48,7 @@ static void near F_1606C(void);
 static void near F_1604F(void);
 
 /* F_15396: seek the DOS file handle to the absolute position pos (INT 21h function 42h, method 0).
-   Returns 0 on success, else the error in g_6318, also copied to g_630d */
+   Returns 0 on success, else the error in _doserrno, also copied to errno */
 
 char *g_4ea2 = "hot_data";   /* DS:4EA2 */
 char *g_4ea4[13] = {&av7ff8, &g7d86n, &w_8df0, &g7682n, &ai70e4t, &ap818c, g_2c02, &a_7d16q, g_239e, &g7d68m, &ag8baey, &h_8dd8, &a784als};   /* DS:4EA4 */
@@ -63,7 +79,7 @@ int F_15396(int handle, long pos)
     intdos(&in, &out);
     if (out.x.cflag == 0)
         return 0;
-    return g_630d = g_6318;
+    return errno = _doserrno;
 }
 
 /* F_153D7: map a picture number to its table index: numbers from 1000 on are shifted down, the rest

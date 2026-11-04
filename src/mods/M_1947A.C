@@ -1,6 +1,8 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_1947A.H"
+#include "M_00000.H"
+#include "M_10B7C.H"
+#include "M_174A6.H"
 
 /* F_1947A: intersect rectangles a and b into out, snapped to the r_vid.mask pixel mask; 0 if they do not overlap */
 

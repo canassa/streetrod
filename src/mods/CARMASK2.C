@@ -1,5 +1,6 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "CARMASK2.H"
+#include "PARTS2.H"
 
 struct List g_60cc = {7, g_60a2};   /* DS:60CC */
 struct Run g_60a2[7] = {{5, g_parts2}, {21, g_parts2 + 5}, {34, g_parts2 + 26}, {48, g_parts2 + 60}, {64, g_parts2 + 108}, {75, g_parts2 + 172}, {95, g_parts2 + 247}};   /* DS:60A2 */

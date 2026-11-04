@@ -1,8 +1,12 @@
 #include <conio.h>
 #include <dos.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_00D58.H"
+#include "GBSS.H"
+#include "M_02B9A.H"
+#include "M_02DF4.H"
+#include "M_1628A.H"
+#include "M_163BE.H"
 
 /* F_01FE2 @ 0000:1fe2 (linear 0x01fe2, 914 bytes) */
 

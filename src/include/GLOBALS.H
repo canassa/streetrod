@@ -516,9 +516,9 @@ extern struct Run g_6240[7];                            /* DS:6240 */
 extern struct List g_626a;                              /* DS:626A */
 extern struct Run g_626e[7];                            /* DS:626E */
 extern struct List g_6298;                              /* DS:6298 */
-extern int g_630d;                                      /* DS:630D */
-extern int g_6318;                                      /* DS:6318 */
-extern unsigned int g_64a6;                             /* DS:64A6 */
+extern int errno;                                       /* DS:630D */
+extern int _doserrno;                                   /* DS:6318 */
+extern unsigned _amblksiz;                              /* DS:64A6 */
 extern int g_6c22[3];                                   /* DS:6C22 */
 extern struct Bitmap far *g_6c28[3];                    /* DS:6C28 */
 extern struct Track *g_6c34;                            /* DS:6C34 */

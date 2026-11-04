@@ -1,5 +1,13 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_265BA.H"
+#include "GBSS.H"
+#include "M_00000.H"
+#include "M_0F38A.H"
+#include "M_15236.H"
+#include "M_16EA2.H"
+#include "SCREEN2.H"
+#include "SCREENS.H"
+#include "SLOTS.H"
 
 static int near F_265BA(int n);
 static void near F_265CA(void);

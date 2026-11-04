@@ -1,5 +1,6 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_123F4.H"
+#include "HOTSPOT.H"
 
 /* F_135E5: sort n hot spots of g_09f4 starting at first by x1 (exchange sort, ascending) */
 

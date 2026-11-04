@@ -1,6 +1,9 @@
 #include <conio.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_1628A.H"
+#include "M_00D58.H"
+#include "M_02B9A.H"
+#include "M_163BE.H"
 
 /* F_1628A: start the sound song with its tone list tones. Song bs79aa's own song restarts the
    first voice (g_58d4 = 1); any other song goes into the second voice ao79c6t (g_58d4 = 2), the

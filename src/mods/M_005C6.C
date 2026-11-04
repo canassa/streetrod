@@ -1,5 +1,5 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_00000.H"
 
 /* F_005C6 @ 0000:05C6 (linear 0x005C6, 147 bytes) */
 

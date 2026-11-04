@@ -1,6 +1,11 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_23F68.H"
+#include "M_00000.H"
+#include "M_0914C.H"
+#include "M_1947A.H"
+#include "M_2322E.H"
+#include "M_23262.H"
+#include "M_24E78.H"
 
 static void near F_23F68(struct Rect *r, struct Bitmap far *dst, struct Bitmap far *src, int rows);
 

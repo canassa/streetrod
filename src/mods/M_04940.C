@@ -1,9 +1,12 @@
 #include <stdio.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_039C0.H"
+#include "MESSAGES.H"
+#include "M_02B9A.H"
+#include "M_11A72.H"
+#include "M_139DE.H"
 
 char *g_4fa4 = g_3bf9;   /* DS:4FA4 */
-int g_4fa6[14] = {26708, 8293, 24935, 25965, 27936, 29557, 8308, 24936, 25974, 24864, 28192, 28001, 8293, 33};   /* DS:4FA6 */
 
 /* F_04940 @ 0000:4940 (linear 0x04940, 98 bytes) */
 

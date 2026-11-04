@@ -1,6 +1,12 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_0F38A.H"
+#include "FONTDATA.H"
+#include "GBSS.H"
+#include "M_00000.H"
+#include "M_15396.H"
+#include "M_174A6.H"
+#include "M_193D4.H"
+#include "M_19ED0.H"
 #include <conio.h>
 
 /* F_10677 @ 0F38:12F7 (linear 0x10677, 507 bytes)

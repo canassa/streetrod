@@ -1,5 +1,7 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_13682.H"
+#include "M_0F38A.H"
+#include "M_10B7C.H"
 
 /* F_13682: fill the rectangle (x, y, w, h) of bitmap s with colour x_colors.c[2], clipped to its size,
    one horizontal line at a time through the line routine a_78d2 */

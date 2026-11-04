@@ -1,8 +1,8 @@
 #include <conio.h>
 #include <dos.h>
 #include <memory.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_230DC.H"
 
 /* F_230DC @ 21A0:16DC: copy 8000 bytes between planar VGA buffers using write mode 1 (latch copy) */
 

@@ -1,7 +1,15 @@
 #include <stdio.h>
 #include <string.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_039C0.H"
+#include "MESSAGES.H"
+#include "M_00D58.H"
+#include "M_02B9A.H"
+#include "M_0E56A.H"
+#include "M_113A2.H"
+#include "M_11A72.H"
+#include "M_139DE.H"
+#include "M_15236.H"
 
 static void near F_03C3E(struct Node *p7);
 

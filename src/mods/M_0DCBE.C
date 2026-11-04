@@ -1,7 +1,8 @@
 #include <math.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_0DCBE.H"
+#include "M_02B9A.H"
+#include "M_15396.H"
 
 /* F_0DCBE @ 0000:DCBE (linear 0x0DCBE, 1060 bytes)
 

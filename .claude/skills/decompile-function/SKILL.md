@@ -35,7 +35,7 @@ Prefer neighbours of matched functions: they share the module's flags and conven
 ./sr new <addr>           # creates src/funcs/F_xxxxx.C, marks wip
 ```
 
-Write the function the way a 1989 MSC programmer would have (CLAUDE.md rule 1): real string literals, no inline asm, no byte tricks. Include `"GLOBALS.H"` and `"PROTOS.H"`, plus any standard MSC headers; declare nothing in the file (rule 4).
+Write the function the way a 1989 MSC programmer would have (CLAUDE.md rule 1): real string literals, no inline asm, no byte tricks. A new `src/funcs` file includes `"GLOBALS.H"` and `"PROTOS.H"` (scaffolding), plus any standard MSC headers; declare nothing in the file (rule 4). Once it moves into a module, `./sr headers` replaces those with the per-file headers.
 
 **Hand-written functions:** `./sr new <addr> --asm` creates a MASM 5.1 skeleton (`.MODEL MEDIUM`, `.CODE`, a `PUBLIC` far or near `PROC`). Write it as the original programmer would: named local labels, `EXTRN` in `.DATA` for DGROUP globals (`EXTRN _g_47ea:BYTE`) and in `.CODE` for callees, instructions rather than `db`. `ret` inside a `FAR` proc assembles to `retf`. `./sr check` finds the function by its `PUBLIC` (`_name`) and measures to the next `PUBLIC`. See the recipe book's MASM section for encoding gotchas.
 

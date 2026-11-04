@@ -1,7 +1,6 @@
 #include <stdlib.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_1D590.H"
 
 static void near F_1D590(unsigned char *p, int n, int cnt);
 static void near F_1D683(char far *dst, unsigned char *src, int n, int ph);

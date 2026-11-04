@@ -22,7 +22,8 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 | `tools/sr/match.py` | byte compare (fixups masked, near calls out of the function counted separately) and the two-column diff |
 | `tools/sr/lib.py` | finds MSC library modules in the EXE (`crtnames`); `locate` returns every public at an address, since a module can publish two names for one offset (`__aFlmul` = `__aFulmul`) |
 | `tools/sr/refs.py` | resolves every fixup to its symbol and checks it against the original instruction |
-| `tools/sr/headers.py` | generates `GLOBALS.H` / `PROTOS.H` from the DB |
+| `tools/sr/headers.py` | generates `GLOBALS.H` / `PROTOS.H` (check scaffolding) and calls `fileheaders.py` |
+| `tools/sr/fileheaders.py` | per-file headers: owner of each global/function from its definition, one header per link unit or standalone file, and the include blocks of the C sources (`./sr headers`) |
 | `tools/sr/layout.py` | the MSC 5.1 local-layout rule (`./sr layout`): bucket hash, block slot reuse, `/Ol` variant, rename suggestions |
 | `tools/sr/lint.py` | the CLAUDE.md rule 4 lint, plus missing-prototype warnings from `/W3` |
 | `tools/sr/dgroup.py` | `./sr dgroup`: original DGROUP ownership from positions (literal pools of the layout objects pin each unit; runs between pools go to referrers; `FORCE_OWNER`/`DATA_UNITS` for assembler data and data-only files), declaration slots, C/MASM definition text with symbolic pointers, source insertion, the DGROUP.ASM remainder, `link_order` |

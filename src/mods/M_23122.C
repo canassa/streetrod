@@ -1,8 +1,9 @@
 #include <conio.h>
 #include <dos.h>
 #include <memory.h>
-#include "GLOBALS.H"
-#include "PROTOS.H"
+#include "STRUCTS.H"
+#include "M_230DC.H"
+#include "M_00D58.H"
 
 /* F_23122 @ 21A0:1722: copy 5 bands of 40 rows between planar VGA buffers, paced by the tick counter */
 

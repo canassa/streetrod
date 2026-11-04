@@ -1,6 +1,8 @@
-#include "GLOBALS.H"
-#include "PROTOS.H"
 #include "STRUCTS.H"
+#include "M_19ED0.H"
+#include "M_00000.H"
+#include "M_0F38A.H"
+#include "M_1923C.H"
 #include <memory.h>
 #include <dos.h>
 
