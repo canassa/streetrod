@@ -1055,3 +1055,9 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - video_init assigns front->flags to r_vid.mode: its EGA path uses four 1-bit planes, its CGA default uses 2 bits per pixel, and its Tandy path uses 4 bits per pixel. init_screens supplies the Hercules and hardware selection evidence.
 - Negative format constants preserve the bytes of the previous hexadecimal signed-byte assignments and MASM DB screen descriptors; both build paths remain identical to orig/SR.EXE.
+
+## 2026-11-05 16:00 CET: Named video mode codes
+
+### What I did
+- `VID_EGA` (-2), `VID_CGA` (-3), `VID_HERCULES` (-4), `VID_TANDY` (-6) name the pixel format held by `r_vid.mode` and the screen bitmaps' `flags` (EGA 4 planes 8 px/byte; CGA 2 bpp; Hercules mono at B000; Tandy 4 bpp 2 px/byte), in MAIN.H for C and PC.INC for the assembler; all ~190 comparisons and the flags assignments use them. Done by a Codex agent.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
