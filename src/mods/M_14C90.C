@@ -50,8 +50,8 @@ int F_14C90(int x, int y, char *buf, int max)
     F_120FE(-1);
     if (r_vid.f16)
         F_1A92A(r_vid.back, r_vid.front, x, y, x + w, y + 8);
-    ip = g_290c;
-    g_290c = 0;
+    ip = g_290c[0];
+    g_290c[0] = 0;
     F_00D78();
     ret = F_01391(1);
     F_02C04(g_09f2);
@@ -124,7 +124,7 @@ int F_14C90(int x, int y, char *buf, int max)
         F_1A92A(r_vid.back, r_vid.front, cx - 6, y, cx, y + 8);
     x_colors.c[3] = oc;
     x_colors.c[2] = pos;
-    g_290c = ip;
+    g_290c[0] = ip;
     F_00D78();
     g_05d0 = n;
     F_02C2B();

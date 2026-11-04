@@ -39,7 +39,7 @@ spin1:
         ret
 _F_21962  ENDP
 
-; F_2197D @ 1C11:586D (linear 0x2197D, 136 bytes)
+; F_2197D @ 2196:001D (linear 0x2197D, 136 bytes)
 ; Play a tune on the PC speaker. The argument points at a table of
 ; 3-word records (length, two frequency counters, duty/step word) ending
 ; with a zero length word; g_58de keeps the read pointer so the caller's

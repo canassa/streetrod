@@ -7,10 +7,7 @@
 extern char g_239e[];                                   /* DS:239E */
 extern char g_28ec[];                                   /* DS:28EC */
 extern char g_28f9[];                                   /* DS:28F9 */
-extern char g_290c;                                     /* DS:290C */
-extern char g_290d;                                     /* DS:290D */
-extern int g_290e[8];                                   /* DS:290E */
-extern char g_291e;                                     /* DS:291E */
+extern char g_290c[19];                                 /* DS:290C */
 extern char g_291f[];                                   /* DS:291F */
 extern char g_293e[];                                   /* DS:293E */
 extern char g_2967[];                                   /* DS:2967 */

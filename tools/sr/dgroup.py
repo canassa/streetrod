@@ -30,7 +30,7 @@ REGIONS = [(0x6076, 0x6078, 'int @'), (0x2ee, 0x31e, 'signed char @[24][2]'), (0
            (0x462, 0x472, 'unsigned char @[16]'), (0x5d4, 0x5d6, 'int @'),
            (0x11b2, 0x121c, 'unsigned @[53]'), (0x1ac4, 0x1d8a, 'unsigned @[355]'), (0x1e2c, 0x1e38, 'unsigned @[6]'),
            (0x1e3a, 0x20aa, 'unsigned @[312]'), (0x4734, 0x4736, 'int @'), (0x474a, 0x474c, 'int @'),
-           (0x47d1, 0x47d4, 'char @[3]'), (0x4804, 0x4806, 'int @'), (0x496c, 0x4970, 'int @[2]')]
+           (0x47d1, 0x47d4, 'char @[3]'), (0x496c, 0x4970, 'int @[2]')]
 # Data no C compiler could place (a pointer table at an odd address): assembler-defined,
 # owned by the assembly unit that sits there in the link order.
 FORCE_OWNER = [(0x5580, 0x57F6, 0x0E56A),
@@ -538,7 +538,6 @@ class Analysis:
             if u['start'] not in done:
                 done.add(u['start']); placed.append(u)
 
-        pooled = sorted(pos, key=pos.get)
         src_unit = {}
         for u in self.units:
             for f in u['functions']:
@@ -963,7 +962,6 @@ class Analysis:
         """(item, target) where an initializer in a C unit takes the address of a global the
         same unit defines later: MSC would emit the target first, so the order cannot hold."""
         out = []
-        owner_of = {it.off: it for it in self.items if it.kind == 'global'}
         for it in self.items:
             if it.kind != 'global' or it.owner is None or self.unit_by[it.owner]['kind'] == 'asm':
                 continue
@@ -1046,32 +1044,6 @@ class Analysis:
             return None, None
         return ('', node) if d == 0 else (None, None)
 
-    def alias_rewrites(self):
-        """alias name -> C expression (and MASM operand) of the base it is a view into."""
-        out = {}
-        for name, (base, d) in self.aliases.items():
-            it = next(x for x in self.items if x.name == name)
-            node = self.types.declaration(it.decl) if it.decl else None
-            ctype = (it.decl or '').replace('@', '').strip()
-            if node and node['kind'] == 'array':
-                # a view used as an array: pointer arithmetic keeps `alias[i]` working
-                bnode = base.node
-                ectype = node['elem'].get('ctype', 'char')
-                if bnode['kind'] == 'array' and d % bnode['elem']['size'] == 0 and bnode['elem'].get('ctype') == ectype:
-                    expr = f"({base.name} + {d // bnode['elem']['size']})"
-                else:
-                    expr = f"(({ectype} *)((char *){base.name} + {d}))"
-            else:
-                sub, leaf = self.path_leaf(base.node, d)
-                if sub is None:
-                    expr = f"(*({ctype} *)((char *){base.name} + {d}))"
-                elif leaf.get('ctype') == ctype or (leaf['kind'] == 'pointer' and leaf.get('ctype', '').replace(' ', '') == ctype.replace(' ', '')):
-                    expr = base.name + sub
-                else:
-                    expr = f"(*({ctype} *)&{base.name}{sub})"
-            out[name] = (expr, f'_{base.name}+{d}' if d else f'_{base.name}')
-        return out
-
     # ------------------------------------------------------------ checking sources
     def check_sources(self):
         """Where the sources' initialized DGROUP data disagrees with the recovered layout:
@@ -1097,23 +1069,14 @@ class Analysis:
             if g['name'] in defined and g['name'] not in seen:
                 problems.append(f'DS:{g["off"]:04X} {g["name"]}: defined in {defined[g["name"]]}, '
                                 'but the layout holds no such global (literal, alias or gap)')
+        for name, (base, d) in self.aliases.items():
+            problems.append(f'{name}: a DB global inside {base.name} (+{d}); write it as a view of {base.name}')
+        for it in self.items:
+            if it.kind == 'global' and it.synth and it.off not in self.globals:
+                problems.append(f'DS:{it.off:04X} {it.name}: the layout holds a global the DB lacks ({it.decl})')
         return problems
 
     # ------------------------------------------------------------ the DB
-    def register(self, write=True):
-        """Give the DB the synthesized globals (zero storage, typed table pieces, mask records,
-        named strings) so the headers and the gate know them. Returns the new rows."""
-        new = []
-        for it in self.items:
-            if it.kind == 'global' and it.synth and it.off not in self.globals:
-                new.append((it.off, it.name, it.decl))
-        if write:
-            for off, name, decl in new:
-                self.con.execute('INSERT INTO globals (off, name, decl, notes) VALUES (?, ?, ?, ?)',
-                                 (off, name, decl, 'recovered from the data layout (./sr dgroup)'))
-            self.con.commit()
-        return new
-
     def link_order(self):
         """The recovered order of the units: the literal-pool order with ORDER_HINTS applied."""
         order = list(self.order)
@@ -1147,47 +1110,3 @@ class Analysis:
         it = iter(mine)
         return [next(it) if o in set(mine) else o for o in objects]
 
-
-    def apply_aliases(self, write=False):
-        """Rewrite uses of alias globals as views of their base and drop them from the DB."""
-        rew = self.alias_rewrites()
-        changed = {}
-        for path in sorted((config.SRC / 'mods').glob('*.C')):
-            text = path.read_text(errors='replace')
-            new = text
-            for name, (expr, _) in rew.items():
-                m = re.fullmatch(r'\((g_\w+) \+ (\d+)\)', expr)
-                if m:
-                    new = re.sub(rf'\b{re.escape(name)}\s*\[([^\]]+)\]', lambda mm: f'{m.group(1)}[{m.group(2)} + {mm.group(1)}]', new)
-                new = re.sub(rf'\b{re.escape(name)}\b', expr, new)
-            if new != text:
-                changed[path] = new
-        for path in sorted((config.SRC / 'mods').glob('*.ASM')):
-            text = path.read_text(errors='replace')
-            new = text
-            needed = set()
-            for name, (_, asm) in rew.items():
-                if not re.search(rf'\b_{re.escape(name)}\b', new):
-                    continue
-                new = re.sub(rf'(?m)^[ \t]*EXTRN[ \t]+_{re.escape(name)}:\w+[ \t]*\r?\n', '', new)
-                new = re.sub(rf'\b_{re.escape(name)}\b', asm, new)
-                needed.add(asm.split('+')[0])
-            for base in sorted(needed):
-                ext = re.search(rf'EXTRN[ \t]+{re.escape(base)}:', new)
-                use = re.search(rf'(?m)^(?![ \t]*EXTRN).*\b{re.escape(base)}\b', new)
-                if ext and (use is None or ext.start() < use.start()):
-                    continue
-                m = re.search(r'(?m)^[ \t]*\.DATA[ \t]*\r?$', new)
-                if m is None:
-                    raise SystemExit(f'{path}: no .DATA section for EXTRN {base}')
-                nl = '\r\n' if '\r\n' in new else '\n'
-                new = new[:m.end()] + nl + f'        EXTRN   {base}:BYTE' + new[m.end():]
-            if new != text:
-                changed[path] = new
-        if write:
-            for path, text in changed.items():
-                path.write_text(text)
-            for name in rew:
-                self.con.execute('DELETE FROM globals WHERE name = ?', (name,))
-            self.con.commit()
-        return rew, changed

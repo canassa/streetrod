@@ -712,20 +712,6 @@ def cmd_dgroup(args):
             print('src/SR.LNK differs from the recovered order; it would be:\n' + '+\n'.join(want))
             sys.exit(1)
         print('src/SR.LNK lists the objects in this order')
-    elif args.what == 'register':
-        new = a.register(write=args.write)
-        for off, name, decl in new:
-            print(f'DS:{off:04x} {name} {decl}')
-        print(f'{len(new)} synthesized globals' + (' registered' if args.write else ' (use --write)'))
-        if args.write:
-            gen_headers(a.con)
-    elif args.what == 'aliases':
-        rew, changed = a.apply_aliases(write=args.write)
-        for name, (expr, asm) in rew.items():
-            print(f'{name} -> {expr}   (asm: {asm})')
-        print(f'{len(changed)} source files' + (' rewritten' if args.write else ' would change (use --write)'))
-        if args.write:
-            gen_headers(a.con)
     elif args.what == 'check':
         # the sources are the truth for data definitions; this only verifies them
         problems = a.check_sources()
@@ -752,10 +738,9 @@ def main():
     sub = p.add_subparsers(dest="cmd", required=True)
 
     s = sub.add_parser("dgroup", help="recover DGROUP ownership from the data layout; check the sources against it")
-    s.add_argument("what", choices=["report", "problems", "order", "register", "aliases", "check"],
+    s.add_argument("what", choices=["report", "problems", "order", "check"],
                    help="check: every initialized global is defined in the file that owned it (exit 1 if not)")
     s.add_argument("names", nargs="*", help="lo hi for report")
-    s.add_argument("--write", action="store_true")
     s.set_defaults(func=cmd_dgroup)
 
     s = sub.add_parser("linkcheck", help="compare the linked MZ binary without masking any bytes")
