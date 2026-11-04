@@ -167,18 +167,18 @@ void video_anim_stop(int n)
 static void near anim_set_box(void)
 {
     switch (g_cmd->sub) {
-    case 0:
+    case BOX_KEEP:
         break;
-    case 1:
-        g_box->x1 = g_cmd->a;
-        g_box->y1 = g_cmd->b;
+    case BOX_SET_SOURCE:
+        g_box->sx = g_cmd->a;
+        g_box->sy = g_cmd->b;
         break;
-    case 3:
-        g_box->x1 = g_cmd->a;
-        g_box->y1 = g_cmd->b;
-    case 2:
-        g_box->x2 = g_cmd->a;
-        g_box->y2 = g_cmd->b;
+    case BOX_SET_BOTH:
+        g_box->sx = g_cmd->a;
+        g_box->sy = g_cmd->b;
+    case BOX_SET_DESTINATION:
+        g_box->dx = g_cmd->a;
+        g_box->dy = g_cmd->b;
         break;
     }
 }
@@ -202,26 +202,26 @@ static void near anim_run(int n)
     g_box = &g_obj->box;
     for (; k >= 0; k++) {
         switch (g_cmd->op) {
-        case 1:
-        case 3:
+        case ANIM_NOP_1:
+        case ANIM_NOP_3:
             break;
-        case 2:
+        case ANIM_BLIT:
             anim_set_box();
             (*b_78a2)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
             break;
-        case 4:
+        case ANIM_BLIT_MASKED:
             anim_set_box();
             (*ab78aat)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
             break;
-        case 13:
-            if (!sprite_car_clip(g_box->x2, g_box->y2, g_box->w, g_box->h, &res))
+        case ANIM_TILE_CAR:
+            if (!sprite_car_clip(g_box->dx, g_box->dy, g_box->w, g_box->h, &res))
                 break;
             blt.w = res.x2 - res.x1;
             blt.h = res.y2 - res.y1 + 1;
             blt.sx = res.x1 - ac825et;
             blt.sy = res.y1 - aw8260y;
-            tx = res.x1 - g_box->x2;
-            ty = res.y1 - g_box->y2;
+            tx = res.x1 - g_box->dx;
+            ty = res.y1 - g_box->dy;
             for (y = 0; y < g_obj->img->height; y += g_box->h) {
                 for (x1 = 0; x1 < g_obj->img->width; x1 += g_box->w) {
                     blt.dx = tx + x1;
@@ -230,45 +230,45 @@ static void near anim_run(int n)
                 }
             }
             break;
-        case 5:
+        case ANIM_HOOK:
             if (!video_anim_hook(g_obj, g_cmd))
                 break;
-        case 6:
+        case ANIM_STOP:
             video_anim_stop(g_obj->id);
             cursor_ctl(CURSOR_SHOW);
             return;
-        case 7:
+        case ANIM_JUMP:
             g_cmd = &g_animScripts[g_cmd->a];
             goto next;
-        case 8:
+        case ANIM_LOAD_IMAGE:
             g_obj->img = F_15BBE(g_cmd->a, ARENA_HIGH_STACK);
             g_cmd++;
             continue;
-        case 9:
+        case ANIM_SET_BOX:
             anim_set_box();
             break;
-        case 10:
+        case ANIM_SET_SIZE:
             g_box->w = g_cmd->a;
             g_box->h = g_cmd->b;
             break;
-        case 11:
+        case ANIM_WAIT:
             if (!(g_obj->scriptIndex = g_cmd->b))
                 g_obj->scriptIndex = ++k;
             sys_timer_anim(g_obj->id, g_cmd->a);
             g_obj->pendingTimers++;
             if (wait)
                 cursor_ctl(CURSOR_SHOW);
-            if (g_cmd->sub == 4 && r_vid.copyToFront)
-                bitmap_copy_box(r_vid.back, r_vid.front, g_box->x2, g_box->y2,
-                        g_box->x2 + g_box->w - 1, g_box->y2 + g_box->h - 1);
+            if (g_cmd->sub == ANIM_WAIT_COPY_TO_FRONT && r_vid.copyToFront)
+                bitmap_copy_box(r_vid.back, r_vid.front, g_box->dx, g_box->dy,
+                        g_box->dx + g_box->w - 1, g_box->dy + g_box->h - 1);
             return;
-        case 12:
+        case ANIM_COPY_TO_FRONT:
             cursor_ctl(CURSOR_SHOW);
             wait = 0;
             if (!r_vid.copyToFront)
                 break;
-            bitmap_copy_box(r_vid.back, r_vid.front, g_box->x2, g_box->y2,
-                    g_box->x2 + g_box->w - 1, g_box->y2 + g_box->h - 1);
+            bitmap_copy_box(r_vid.back, r_vid.front, g_box->dx, g_box->dy,
+                    g_box->dx + g_box->w - 1, g_box->dy + g_box->h - 1);
             break;
         }
         g_cmd++;
