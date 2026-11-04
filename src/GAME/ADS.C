@@ -118,9 +118,9 @@ int av_run(void)
                 cntz++;
                 row7++;
                 row7->y1 = y - 2;
-                row7->kind = 0xb;
+                row7->kind = HOT_REGION;
                 item = *next++;
-                row7->f6 = item >= 0xcd8 ? 0 : i;
+                row7->id = item >= 0xcd8 ? 0 : i;
                 g_videoOps.drawText(r_vid.back, 0x44, y, str = g_desc + item);
                 for (;;) {
                     while ((c6 = *(str += strlen(str) + 1)) == '+') {
@@ -147,8 +147,8 @@ int av_run(void)
             if (row7->y2 < (SCREEN_BODY_HEIGHT - 1))
                 dr_hline(r_vid.back, 0x44, y + 1, 0xb8);
             row7++;
-            while (row7->f6 >= 0) {
-                row7->kind = 0xe;
+            while (row7->id >= 0) {
+                row7->kind = HOT_DISABLED;
                 row7++;
             }
             g_adRedraw = 0;
@@ -161,9 +161,9 @@ int av_run(void)
         while ((key = sy_wait_input(3000)) == 0)
             ;
         switch (key) {
-        case -3:
+        case KR_AD_CLOSE:
             break;
-        case -1:
+        case KR_AD_PREVIOUS:
             if (--g_pages.cur < 0)
                 g_pages.cur = g_pages.n - 1;
             g_adIdxEndPageState = g_driver.adIndex - 1;
@@ -176,7 +176,7 @@ int av_run(void)
             g_driver.adIndex = g_adIdxEndPageState;
             g_adRedraw = 1;
             continue;
-        case -2:
+        case KR_AD_NEXT:
             if (++g_pages.cur >= g_pages.n)
                 g_pages.cur = 0;
             g_driver.adIndex = g_adIdxEndPageState + (y > 0xc1 ? 0 : 1);

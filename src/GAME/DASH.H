@@ -23,7 +23,7 @@ extern int g_needleColor;                               /* DS:02D2 */
 extern char g_introPalette[];                                   /* DS:02D4 */
 extern struct Bitmap far *g_savedBack;                  /* DS:02E6 */
 extern struct Bitmap far *g_savedFront;                 /* DS:02EA */
-extern signed char g_02ee[24][2];                       /* DS:02EE */
+extern signed char g_steerLeftPoints[24][2];                       /* DS:02EE */
 extern unsigned char g_steerPoints[][2];                       /* DS:031E */
 extern int g_wheelShown;                                /* DS:0350 */
 extern int g_wheelSlotY[3];                             /* DS:0352 */
@@ -55,7 +55,7 @@ void da_init_shifter(int a, int b);                   /* 0x10677 */
 void da_draw_shifter(struct Bitmap far *dst, struct Eng *e);/* 0x10872 */
 void da_fmemset(char far *p, int c, unsigned n);      /* 0x109C0 */
 int da_clip_blt(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *in, struct Blt *out);/* 0x10A00 */
-void da_wait_retrace(int a);                                    /* 0x10AFD */
+void da_retrace(int a);                                    /* 0x10AFD */
 int da_text_width(char *s);                           /* 0x10B48 */
 
 #endif

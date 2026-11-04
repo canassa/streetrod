@@ -1525,6 +1525,232 @@ All gates passed: headers; 572/572 functions (551 MATCH, 21 MATCH*); a clean bui
 
 The cursor-step declarations hid two different mistakes: the -1 entries preceded their named bases, while the supposed Y-table tail was actually sixteen direction bytes reached through negative scan-map offsets. The held-direction writes likewise addressed their real array through the unrelated saved-SP word. The garage slot mappings have a zero entry before the nine bolt positions; both one-based and zero-based consumers establish ten entries. GAME's explicit category reads prove five part-wear values, including the word PERF had named separately. Palette swapping reaches seventeen bytes, with natural alignment supplying the following byte; alignment is not another source global. A largest key map of nineteen bindings needs only twenty-one saved entries including music and sentinel, so the defensive thirty-entry guard does not prove a larger allocation.
 
+## 2026-11-04 22:18 CET: restore explicit mouse AH initialization
+
+### What I did
+
+Replaced the three mouse function-code high-byte shifts in mo_reset, mo_buttons
+and mo_motion with explicit AH zero assignments, keeping the separate AL stores.
+Used two-digit hex function codes in PC.H to match its video and DOS constants;
+PC.INC already uses compact equivalent values. Checked all consumers: only
+MOUSE.C uses these three codes, apart from their C/ASM definitions. Searched the
+whole tree for other constant splits into high/low register bytes and found none;
+other shifts extract runtime data or send the variable PIT divisor's high byte.
+Corrected the mouse guidance in the msc51-recipe-book skill.
+
+All required gates passed: headers; 572/572 functions (551 MATCH, 21 MATCH*);
+rm -rf work followed by a clean build with packed EXE IDENTICAL; DGROUP
+ownership/order; 67 unit tests. No code comments or work/ files were added.
+
+### What I learned
+
+The explicit zero preserves the original separate byte stores without expressing
+the function code as a split word. The corrected recipe is recorded in
+.claude/skills/msc51-recipe-book/SKILL.md; short hex spelling in PC.H changes no
+constant values, and the assembly mirror needs no edit.
+
+## 2026-11-04 22:20 CET: complete negative input result names
+
+### What I did
+
+Added KR_AD_NEXT and KR_AD_PREVIOUS to InputResult and named all three ADS.C
+switch cases. Audited every C file for negative-literal cases, comparisons and
+input/menu/editor consumers, including mn_wait, sy_wait_input, mn_modal,
+mn_modal_list, mn_list and the text/number editors. Replaced fa_end_menu's -2/-1
+cases with KR_LOAD_GAME/KR_NEW_GAME and sy_wait_input's decoded -0x28 music
+comparison with KR_MUSIC. Used KR_MUSIC for its two hotspot lookups and
+KR_OLD_GAME for the same result forwarded by sg_new.
+
+Extended tests/test_keymaps.py to require all negative KR_* names in ASM to be
+available in C, supplementing the existing value-agreement test. This exposed
+three further missing negative names: KR_OFFER, KR_INFO_OK and KR_BUY_FORGET;
+added those without changing any values or ASM bindings.
+
+Kept MAIN.C show_video_menu's choice == -21: choice is getch() minus '0', so
+this is ASCII Escape and not KR_NO. Kept sg_load's -1 error/cancel returns,
+its -666 load-failure status and gm_run's corresponding recovery state; these
+are save/load statuses rather than screen key results. Kept sticker index
+arithmetic (-30 - k), signed timing limits, list/bitmap/hover sentinels and
+other negative numeric data. No other raw negative input-result comparisons
+or cases remain, and no screen mapping was left unresolved.
+
+All required gates passed: headers; 572/572 functions (551 MATCH, 21 MATCH*);
+rm -rf work followed by a clean packed build IDENTICAL; DGROUP ownership/order;
+68 unit tests, including four keymap tests. No code comments or work/ files added.
+
+### What I learned
+
+C-to-ASM value agreement alone cannot detect missing C result names. The new
+negative-result completeness check in tests/test_keymaps.py closes that gap
+while retaining the existing check of each name's value. Equal negative values
+can mean different things across screens or entirely different APIs; follow
+the active key map and the result's producer before choosing a KR_* name.
+
+## 2026-11-04 22:41 CET: needle2 natural unreachable-source search (BLOCKED)
+
+### What I did
+
+Worked only in ~/wt/needle2 on branch needle2. Read PROMPT.md, CLAUDE.md,
+the previous needle entry, the MSC recipe book, DASH.C/NEEDLE.H/NEEDLE.ASM,
+the original point-function disassembly, and the original relocation stream.
+Used real MSC 5.1 through tools.sr.dosbox.Job/compile_all (emu2), with exact
+`/AM /Oalsi /Gs /FPi /NTS0F38_TEXT`. All probes and scripts were under work/.
+There were **112 compiler jobs: 80 small probes and 32 whole-DASH jobs**,
+including baselines and declaration controls; six intentionally varied declaration
+forms failed compilation, leaving 106 compiled objects to inspect. No source,
+header, assembly, build flag or symbol name was changed. Updated
+RECONSTRUCTION.md and the recipe book with the new negative results.
+
+Full experiment list follows. For compact probe notation, a/b are signed-char far
+arrays of two-byte points, i is int, x/y are near int output pointers; `A` is
+`*x=a[i][0]`, `B` is `*x=b[i][0]`. All constant predicates are compile-time
+constants, not a changed flag set. A successful small probe is not a full-module
+match. The previous session's post-return and if(0) shapes were used only as
+controls to isolate the newly discovered declaration effect.
+
+**Batch 1: 18 small controls with a/b declared together.** Tried `1?A:B`,
+`0?B:A`, `(1?a:b)[i][0]`, `(0?b:a)[i][0]`, `if(1) A; else B`,
+`if(0) B; else A`, switch(0) with the selected case first and last,
+enum equality, sizeof(int)==2, `A; if(DEBUG && b[i][0]) *x=0`,
+zero-trip for/while, do/early-break, constant switch/return,
+for(;;)/return followed by B, while(1)/break followed by if(DEBUG) B,
+and a constant ternary in the index clamp. All emitted one needle SEG word.
+This batch revealed that a combined far-array declaration shares segment state;
+it cannot establish behavior for separately declared far symbols. Loop/return
+forms could retain extra code even when it was unreachable.
+
+**Batch 2: 36 small declaration controls.** Crossed the following twelve forms
+with separate file-scope declarations, one combined declaration, and a block-scope
+b declaration: `A; return; B`, `A; if(0) B`, `1?A:B`,
+`if(1) A; else B`, live A then `*y=b[i][0]`, local gauge=1 with ?:,
+local gauge=1 with if/else, local gauge=0 with a following if,
+`A; if(DEBUG) B`, `A; if(sizeof(int)==4) B`, pointer selection using a local
+gauge, and `A; if(DEBUG && b[i][0]) *x=0`. Block-declaration variants of
+ternary, live-y, local ternary, local pointer selection and logical condition
+failed because b was deliberately not visible there (five failures).
+With separate declarations the post-return, false-if, live-first if/else,
+debug, type-size and logical-control forms retained b's word. Constant ?: and
+pointer selection removed it. Locals added frame/code bytes even when folded.
+Every combined-declaration form shared one word. Live separately declared a/b
+needed two segment constants and an extra ES reload; the combined declaration
+needed one. Thus unused-word behavior depends on declaration structure too.
+
+**Batch 3: 26 further small probes with separate declarations.** Tried:
+
+| Form | Result |
+|---|---|
+| `*x=a ? a[i][0] : b[i][0]`, corresponding if/else | Two words but runtime far-address test and 52 bytes; not folded |
+| `*x=b ? a[i][0] : a[i][0]`, corresponding if/else | 28 bytes, one word; discarded condition leaves no b word |
+| `1?A:A`, `if(1) A; else A` | 26 bytes, one word; repeated use does not manufacture another constant |
+| for(;;)/return then B; while(1)/return then B | 46 bytes, two words; extra unreachable machine code survives |
+| switch(i) with default and case both A/return, followed by B | 28 bytes, two words |
+| do { if(1) {A; break;} B; } while(0) | 26 bytes, two words; natural macro shape, but still needs alternate b identity |
+| Same macro with while(1); for(;;) with if(1)/break then B | 26 bytes, two words |
+| do/switch(1)/case/continue then B, while(0) | 28 bytes, two words |
+| if(DEBUG) B else A; enum comparison; sizeof(int)==4 | 26 bytes, two words, dead b allocated before live a |
+| if(sizeof(a)==262) A else B | 26 bytes, two words, live a allocated first |
+| COORD(0,i) as a constant ?: macro | 26 bytes, one word |
+| COORD_IF(0,i,x) and COORD_IF(1,i,x) as do/if/else macros | 26 bytes each, two words |
+| comma expression `(1,a[i][0])` | 26 bytes, one word |
+| Nested compatible extern a redeclaration after live A | 26 bytes, one word; no extra cache entry |
+| Same local-only extern a in two different functions | Two words, both live, one per function |
+| Two functions expanding COORD_IF with opposite constants | Two words; functions use different words |
+| Same pair using constant ?: macros | Two words; functions use different words |
+| Separate declarations followed by a combined redeclaration | C2086 b redefinition (sixth compile failure) |
+
+**Batch 4: 20 whole-DASH jobs.** Baseline module code is 6130 bytes; both point
+functions are 155. Removed only the existing provisional blocks to form the clean
+control. Retained x_trk0/x_trk1 solely as experimental inputs, with separate
+file-scope point-array declarations; no role was inferred from their names.
+Applied each transformation to both point functions, with the same live clamp
+and four coordinate assignments:
+
+| Transformation | Module bytes and object result |
+|---|---|
+| Original baseline | 6130; three needle words, original fixup order |
+| Clean removal | 6130; live non-fixup instructions equal, but two words missing and later CONST offsets shifted |
+| if(1) { live body } else alternate read | 6130; all parsed segment bytes and ordered resolved fixups equal |
+| if(0) alternate read else { live body } | 6130; live non-fixup bytes equal, live word moves to CONST+2 |
+| if(positive gauge-center constant) live else alternate | 6130; same complete parsed signature as baseline |
+| switch(0) live case first / dead case first | 6128 each; wrong code/public positions; dead-first also changes word allocation |
+| Live body then while(0) / for(;0;) alternate read | 6198 each; wrong code/public positions |
+| Live body then sizeof(int)==4 / DEBUG=0 / enum NEEDLE_HUB>1 read | 6130 each; same complete parsed signature, unsupported disabled access remains |
+| for(;;) { live body; return; } then alternate read | 6150; wrong code/public positions |
+| switch(i>=0) with cases 0/1 returning, then alternate read | 6230; wrong code/public positions |
+| goto past alternate read | 6130; same parsed signature, simply another explicitly skipped access |
+| do { live body; break; alternate read; } while(0) | 6130; same parsed signature, simply another explicitly skipped access |
+| Constant ?: in upper clamp / tip-x scalar read / pointer selection | 6130 each; two words missing and later CONST offsets shifted |
+| Separate live tip/hub arrays declared together | 6118; one needle word, wrong instructions/public positions |
+
+Here “same complete parsed signature” means equality of every segment's byte
+contents, every public's segment/offset, communal sizes, and every fixup's
+segment, offset, location type, self-relative flag, target kind/name and
+addend **in record order**. Also inspected raw OBJ record differences:
+these are not raw-byte-identical objects. Moving extern declarations to file
+scope changes EXTDEF order/indices, public record grouping and FIXUPP encodings;
+resolved fixup order and segment bytes still agree. No result was accepted on
+masked code equality alone. Small-job COD listings and OMF CONST records were
+also available from each real compiler run.
+
+**Batch 5: 12 final whole-DASH jobs.** Six jobs selected genuinely separate
+speedo/tach two-dimensional point tables for each coordinate, using if/else,
+?: and switch, with separate versus combined far declarations. The separately
+declared variants produced 6156, 6130 and 6174 module bytes; all had only two
+needle words and different words live in the two functions. Combined declarations
+produced 6140, 6114 and 6158 bytes and only one needle word. None matched the
+complete object. These are the concrete two-table selection hypothesis tests;
+a shared macro does not create a third symbol's segment constant.
+
+The other six jobs kept the original block-scope char-array declarations and
+output destinations: live-first if/else, do/if(1)/break macro, sizeof(int)==4,
+DEBUG=0, switch(i) with default returning before the alternate read, and
+while(1)/if(1)/break before that read. The first four gave 6130 bytes and the
+same complete parsed signature; switch gave 6132 and while/break gave 6156.
+Raw comparison of the first matching block-scope candidate still showed altered
+EXTDEF order and the FIXUPP bytes that encode external indices, not an exact
+raw OBJ. A matching conditional skeleton still provides no evidence for a
+feature flag, alternate table, or old-format data access, so it was not applied.
+
+### What I learned
+
+- A constant `if/else` really can emit an unused SEG word with natural control
+  flow. A constant conditional **expression** does not. This narrows the compiler
+  mechanism, but does not justify replacing the existing hack with an invented
+  gauge/feature branch. An enum, sizeof predicate or early-break macro can reproduce
+  the same remnant, so byte identity alone cannot distinguish their intent.
+- The simple shared speedo/tach selector hypothesis fails the complete layout:
+  there are two declaration identities, so at most two needle SEG words, and the
+  two functions read different words. The original has three and both functions
+  read DS:68E4. Three speculative symbols or a different fallback are still
+  required for the matching if/else constructions. No observed data supports
+  that fallback, so no names or flags were invented.
+- The original unpacked relocation stream at indices 1990..1992 is consecutively
+  DS:68E6, DS:68E4, DS:68E8; each word contains 2E47. The preceding entry is
+  DS:68E2 (2E3E, the SCREENS far-data segment), before it image offset 0x215F6;
+  the following entry is DS:691A. There is no intervening instruction relocation
+  that locates the folded expression. In the baseline OBJ, CONST fixups 2/0 are
+  one flush and 4 is later, with code-fixup records between. Live-first if/else
+  preserves that sequence; dead-first changes the allocated live word. This
+  constrains first encounter/record flushing, not an exact source statement.
+- x_trk0 labels offset 0 (also g_needlePts); x_trk1 labels 0x106 (hub start).
+  These aliases were chosen by reconstruction. The original words are SEG-only,
+  contain no symbol offsets, and cannot say whether either unused target was a
+  tip, hub, tach or speedo table, or another symbol in the same segment. Claiming
+  that those arbitrary labels identify the original targets would be circular.
+- The combined far-declaration behavior and constant-statement/expression
+  distinction are now in the MSC recipe book. The full unresolved limitation is
+  also in docs/RECONSTRUCTION.md. **BLOCKED:** no evidence-backed natural source
+  has been found; existing provisional source is unchanged, as requested.
+
+Validation passed before committing: `./sr headers --check`;
+`./sr check --all` (572/572, 551 MATCH and 21 MATCH*); a fresh removal of work/
+followed by `./sr build` (96/96 objects, 572/572 function positions and bytes,
+748/748 exact near calls, Packed EXE vs orig/SR.EXE: IDENTICAL);
+`./sr dgroup check` and `./sr dgroup order`; and
+`nix-shell shell.nix --run "python3 -m unittest discover -s tests"`
+(68 tests, OK). The clean build removed every probe and compiled experiment;
+the matrices above preserve their forms and results. No work/ files are committed.
+
 ## 2026-11-04 22:30 CET: globalsA communal and BSS names
 
 ### What I did
@@ -1539,3 +1765,52 @@ The cursor-step declarations hid two different mistakes: the -1 entries preceded
 - The existing compiler-budget and communal-tie rules in CLAUDE.md 4d/4e remain decisive: the first long-name batch changed ga_transmission to1113 bytes; shorter equivalent body rectangle, car origin and display names restored1090. Several boundary-bucket names exchanged addresses with their neighbors despite passing the fit window; alternate meaningful spellings restored byte identity.
 - The four unused/reset-only members have no source readers: RoadView.unused is reset to zero, DriverState.unused to10, and RivalPosition/CarDisplay retain their explicit eight-byte unused tails. Their former addresses do not establish a more specific purpose.
 - The five skipped HOTSPOT allocations have only definitions/externs and no initialized bytes or code references; allocation size alone cannot distinguish their intended roles. Their exact addresses, sizes and evidence limits are preserved in the ledger.
+
+## 2026-11-04 22:46 CET: Measure GARAGE.C symbol budget after merging main
+
+### What I did
+
+Merged main through 1ba3f6a into globalsA, taking main's conflicting files and applying the globalsA identifier mappings to the new lines. This preserves the merged globalsB, mouse-register, car-animation-kind, hotspot-kind and needle work. Mechanically compared every C/H/ASM source against that main tip with only the globalsA mapping and the eight renames below applied; all agree. No code, declarations, flags or storage grouping was changed to recover the match.
+
+The unshortened merge reproduces GARAGE.C at10438 bytes instead of10415: ga_transmission grows from1090 to1113 and loses its loop register variables. Isolated MSC 5.1 /AM /Oalsi /Gs /FPi /NTS0000_TEXT trials shorten distinct symbol spellings by0..50 characters: saving40 still gives1113, saving41 gives1090. A second sweep uses different, collision-checked temporary names and gives the same exact boundary. Those synthetic spellings exist only in scratch compilation inputs.
+
+| old | final spelling | characters saved | evidence |
+|---|---|---:|---|
+| g_bankrollLabel | g_cashLabel | 4 | status-line label for the player's cash |
+| g_hotTransBolts | g_transBolts | 3 | two transmission bolt hotspots |
+| g_hotBodyChange | g_bodyAsk | 6 | body-change confirmation prompt hotspot |
+| g_partDisplayPicIds | g_partsPics | 8 | five installed engine-part picture IDs |
+| g_nextPartCategory | g_nextCat | 9 | category transition table for part selection |
+| build_car_info | car_info | 6 | builds car-info menu IDs and values |
+| sc_status_label | sc_label | 7 | draws the status-line label |
+| da_wait_retrace | da_retrace | 5 | waits for the requested display retraces |
+| total | | 48 | |
+
+The resulting **usable allowance at ga_transmission is exactly seven more identifier characters**, with the current declaration inventory and compiler flags. Lengthening g_cashLabel by0..7 characters preserves1090 bytes; +8, +9 and +10 give1113. Independently lengthening only ga_transmission's local k by0..7 characters also preserves1090; +8 gives1113. Appending lowercase p preserves the local-layout hash, so this is symbol-space pressure rather than stack reordering. Lengthening only the earlier day_to_date parameter v by0..10 characters leaves ga_transmission at1090. The same final-boundary sweep was rerun after incorporating the latest main tip.
+
+All final communal spellings pass sr fit. The shorter g_hoodIds candidate tied bucket187 and exchanged DS:8290 with g_engineBoltPicIds at829A; g_partsPics is bucket186 and keeps both addresses. The linked packed image was IDENTICAL after this correction. Full clean-build and regression results are recorded below after the gates run; the prior five evidence-limited globals remain untouched.
+
+### What I learned
+
+The useful planning limit is live symbol storage at a particular function, **not total source characters or an unconditional file-wide identifier limit**. For this exact file, the old merged spelling set had a41-byte deficit and the final set has7 bytes left. Spending a net8 more contributing name characters breaks the match. Each character is charged once per distinct live symbol, not per textual occurrence: at a boundary with2 bytes freed, +2 on one symbol and +1 on each of two symbols both pass; a total of+3 fails. These measurements establish current headroom; they do not reconstruct or assert the compiler's absolute heap capacity.
+
+The following categories were tested at the exact boundary (1090 means register optimization survives;1113 means it is lost):
+
+| change | ga_transmission | implication |
+|---|---:|---|
+| +1 on referenced external g_carName or communal g_driver | 1113 | external data and communals count |
+| +1 on own initialized g_colX or g_tirePics | 1113 | initialized definitions count too; the old rule4d exclusion was wrong |
+| +1 on public ga_day, current ga_transmission, or static day_to_date/remove_part | 1113 | defined public/static function names count |
+| +1 on any current local k/prev/owner/flags/tbl/buf, with unchanged stack bucket | 1113 | current-function local names count |
+| +1 on an earlier local v | 1090 | completed functions' locals release their names |
+| add an unused initialized or static data definition before the target | 1113 | definitions count even without a reader |
+| add an unused extern or function prototype | 1090 | declarations alone do not count |
+| lengthen DriverState, currentCar, CAR_SHOW_BACK_PAGE, or add unused typedef/enum spellings | 1090 | type/member/enum spellings are resolved before this budget |
+| lengthen ga_hood or the tune_timing forward prototype, first used/defined after the target | 1090 | later symbols do not charge the earlier function yet |
+| grow the June string literal by27 characters | 1090 | literal contents do not consume name allowance |
+
+New symbols consume fixed storage as well as name bytes. Starting at the41-character boundary and freeing more bytes, a new one-character int data name (initialized, static, communal, or referenced extern) needs23 additional bytes; an11-character initialized name needs33. Two initialized names q and qq need47 (23+24). A new one-character function name, near/far definition or referenced external call, needs27. Thus the tested int-data cases cost **N+22**, and the tested void-function cases cost **N+26**, where N is the C identifier length without the ABI underscore. Those charges apply to these declaration forms; arbitrary type/body/declaration changes still require remeasurement. With only7 bytes free, even a one-character new data symbol cannot be added without recovering at least16 more bytes.
+
+Updated CLAUDE.md4d and the recipe-book budget rows to correct the old initialized-data/local-name exclusions and record the measured7-byte allowance. Scratch source variants, frozen baseline headers, sweep scripts and output tables live under work/budget; the durable facts, limitations and rename evidence are also appended to work/LEDGER.md. For future naming passes: sum the length deltas once per contributing symbol, include the current locals, retain a margin, and remeasure if symbols, bodies or flags change. Never compensate with source-shape or linker-layout tricks.
+
+Final validation: headers --check passes; check --all is572/572 (551 MATCH,21 MATCH*); the build after rm -rf work reports Packed EXE vs orig/SR.EXE: IDENTICAL; dgroup check/order pass; all68 unit tests pass; DOS-native MAKE is IDENTICAL (SHA1 3a5e28b795313028b7e77d147122f41cb29de334). The LINK map has no communal address differences. Full module gates also validate the measured allowance: control, external-name +7 and same-stack-hash local-name +7 all match10415 bytes with zero mismatches and28 in-module references verified; +8 grows the module to10438 in both independent cases. The synthetic external name is mapped back only when verifying its unchanged reference identity; no trial spellings or macros enter the committed sources.

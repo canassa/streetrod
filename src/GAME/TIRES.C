@@ -101,7 +101,7 @@ static void near swap_wheel(int a, int *p, int *q)
     while ((*g_videoOps.spriteStep)(g_tires.sprite)) {
         if (g_tires.sprite->y == 0x7d)
             *g_tires.copyBitmap = *g_tires.frames[0];
-        da_wait_retrace(3);
+        da_retrace(3);
     }
     if (r_vid.mode == VID_EGA)
         (*g_videoOps.copyPage)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
@@ -121,7 +121,7 @@ static void near swap_wheel(int a, int *p, int *q)
     sp_set_step(g_tires.sprite, 0, (a + g_tires.frames[0]->width) >> 1, -2, 0);
     so_wheel_roll(1);
     while ((*g_videoOps.spriteStep)(g_tires.sprite))
-        da_wait_retrace(2);
+        da_retrace(2);
     so_wheel_roll(0);
     ma_pop_low(6);
     if (r_vid.mode == VID_EGA)
@@ -150,7 +150,7 @@ static void near swap_wheel(int a, int *p, int *q)
     sp_set_step(g_tires.sprite, 0, (a + g_tires.frames[0]->width >> 1) + 1, 2, 0);
     so_wheel_roll(1);
     while ((*g_videoOps.spriteStep)(g_tires.sprite))
-        da_wait_retrace(2);
+        da_retrace(2);
     so_wheel_roll(0);
     if (r_vid.mode == VID_EGA)
         (*g_videoOps.copyPage)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
@@ -163,7 +163,7 @@ static void near swap_wheel(int a, int *p, int *q)
     while ((*g_videoOps.spriteStep)(g_tires.sprite)) {
         if (g_tires.sprite->y == 0x7d)
             *g_tires.frames[g_tires.phase] = *g_tires.copyBitmap;
-        da_wait_retrace(3);
+        da_retrace(3);
     }
     ma_pop_low(6);
 }
@@ -312,7 +312,7 @@ void ti_change(int *a, int *b)
     g_tires.sprite = sp_setup(0x88, 0xb9, &g_tires.liftPics[1], 0, 1, g_jackBuf, g_tires.jackColumn, 0, 0);
     sp_set_step(g_tires.sprite, 0, 0x21, 0, -1);
     while ((*g_videoOps.spriteStep)(g_tires.sprite))
-        da_wait_retrace(3);
+        da_retrace(3);
     mu_suspend(1);
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x92 - g_tires.liftCar->height : 0;
     g_tires.wheelBitmap = di_bm(*a, ARENA_HIGH_STACK);
@@ -331,7 +331,7 @@ void ti_change(int *a, int *b)
     rev = 0;
     so_jack(1);
     while ((*g_videoOps.spriteStep)(g_tires.sprite)) {
-        da_wait_retrace(3);
+        da_retrace(3);
         if (rev) {
             if (frame == 2) {
                 frame = 1;
@@ -394,7 +394,7 @@ void ti_change(int *a, int *b)
     sp_set_step(g_tires.sprite, 0, 9, 0, 1);
     so_jack(1);
     while ((*g_videoOps.spriteStep)(g_tires.sprite)) {
-        da_wait_retrace(3);
+        da_retrace(3);
         if (rev) {
             if (frame == 2) {
                 frame = 1;
@@ -421,7 +421,7 @@ void ti_change(int *a, int *b)
     g_tires.sprite = sp_setup(0x88, 0x99, &g_tires.liftPics[1], 0, 1, g_jackBuf, g_tires.jackColumn, 0, 0);
     sp_set_step(g_tires.sprite, 0, 0x21, 0, 1);
     while ((*g_videoOps.spriteStep)(g_tires.sprite))
-        da_wait_retrace(3);
+        da_retrace(3);
     ma_release();
     (*g_videoOps.copyPage)(r_vid.front->bits.p, r_vid.back->bits.p);
     g_xCoordSprite = g_tires.carX;

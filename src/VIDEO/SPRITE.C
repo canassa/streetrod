@@ -231,19 +231,19 @@ void sp_set_step(struct Sprite *s, int i, int count, signed char dx, signed char
 
    Split a move of size d into the three phases of a sprite's motion sequence */
 
-void sp_plan_move(struct Sprite *s, int mode, int a, int b, int c, int d, int e, int f)
+void sp_plan_move(struct Sprite *s, enum CarAnimKind mode, int a, int b, int c, int d, int e, int f)
 {
     int n1, n2, n3;
 
     switch (mode) {
-    case 1:
-    case 4:
+    case CAR_DRIVE_IN:
+    case CAR_PULL_IN:
         n3 = -(e + f - 100) * d / 100 / c & 0xfffc;
         n2 = f * d / 100 / b & 0xfffe;
         n1 = (d - n2 * b - n3 * c) / a;
         break;
-    case 2:
-    case 6:
+    case CAR_DRIVE_OUT:
+    case CAR_BACK_OUT:
         n1 = abs(e * d / 100 / a) & 0xfffc;
         n2 = abs(f * d / 100 / b) & 0xfffe;
         n3 = abs((d - abs(a) * n1 - abs(b) * n2) / c);
@@ -259,22 +259,22 @@ void sp_plan_move(struct Sprite *s, int mode, int a, int b, int c, int d, int e,
 
    Build the motion sequence of a sprite for a given direction */
 
-void sp_plan_drive(struct Sprite *s, int mode, int d)
+void sp_plan_drive(struct Sprite *s, enum CarAnimKind mode, int d)
 {
     switch (mode) {
-    case 1:
-    case 4:
+    case CAR_DRIVE_IN:
+    case CAR_PULL_IN:
         if (g_scene == 1)
-            sp_plan_move(s, 1, 8, 4, 2, d, 0, 0x3c);
+            sp_plan_move(s, CAR_DRIVE_IN, 8, 4, 2, d, 0, 0x3c);
         else
-            sp_plan_move(s, 1, 8, 4, 2, d, 0x19, 0x37);
+            sp_plan_move(s, CAR_DRIVE_IN, 8, 4, 2, d, 0x19, 0x37);
         break;
-    case 6:
+    case CAR_BACK_OUT:
         sp_reverse(s);
-        sp_plan_move(s, 6, -2, -4, -4, d, 0x28, 0x3c);
+        sp_plan_move(s, CAR_BACK_OUT, -2, -4, -4, d, 0x28, 0x3c);
         break;
-    case 2:
-        sp_plan_move(s, 2, 2, 4, 8, d, 0xa, 0x3c);
+    case CAR_DRIVE_OUT:
+        sp_plan_move(s, CAR_DRIVE_OUT, 2, 4, 8, d, 0xa, 0x3c);
         break;
     }
 }

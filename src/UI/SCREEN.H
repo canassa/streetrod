@@ -19,7 +19,7 @@ extern int g_xMoneyRhsVal;                                      /* DS:82C0 */
 void sc_status_init(int y);                         /* 0x113A2 */
 void sc_status_text(int x, char *s, int w);                    /* 0x11421 */
 void sc_add_money(int n);                                    /* 0x11540 */
-void sc_status_label(char *s);                                  /* 0x11593 */
+void sc_label(char *s);                                  /* 0x11593 */
 void sc_show_gear(int i);                           /* 0x11669 */
 void sc_fill_rect(int x, int y, int w, int h, char color);/* 0x1169A */
 void sc_msg_box(char *s);                           /* 0x1171C */

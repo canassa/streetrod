@@ -152,7 +152,7 @@ int near sg_new(void)
         init_new_game();
         return 0;
     case KR_OLD_GAME:
-        return -2;
+        return KR_OLD_GAME;
     }
 }
 

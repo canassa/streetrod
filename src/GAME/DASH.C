@@ -26,6 +26,10 @@
 #include "VIDEO.H"
 #include "VIEW.H"
 
+#define SPEEDO_CENTER_X 0xc4
+#define TACH_CENTER_X 0x91
+#define GAUGE_CENTER_Y 0x2a
+
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct WheelPoses g_wheelPoses; /* DS:6C22 */
 static void near save_under(int x, int y, int w, int h, int kind);
@@ -45,7 +49,7 @@ int g_needleColor = -1;   /* DS:02D2 */
 char g_introPalette[18] = {0, 8, 7, 15, 14, 1, 9, 11, 0, 2, 4, 12, 13, 10, 5, 6, 0, 0};   /* DS:02D4 */
 struct Bitmap far *g_savedBack = 0;   /* DS:02E6 */
 struct Bitmap far *g_savedFront = 0;   /* DS:02EA */
-signed char g_02ee[24][2] = {{87, 69}, {88, 64}, {90, 58}, {91, 54}, {93, 49}, {95, 45}, {98, 40}, {101, 36}, {104, 33}, {108, 29}, {111, 26}, {114, 23}, {118, 20}, {121, 19}, {125, 16}, {-127, 14}, {-122, 12}, {-117, 11}, {-113, 9}, {-108, 8}, {-104, 7}, {-99, 7}, {-95, 6}, {-91, 6}};   /* DS:02EE */
+signed char g_steerLeftPoints[24][2] = {{87, 69}, {88, 64}, {90, 58}, {91, 54}, {93, 49}, {95, 45}, {98, 40}, {101, 36}, {104, 33}, {108, 29}, {111, 26}, {114, 23}, {118, 20}, {121, 19}, {125, 16}, {-127, 14}, {-122, 12}, {-117, 11}, {-113, 9}, {-108, 8}, {-104, 7}, {-99, 7}, {-95, 6}, {-91, 6}};   /* DS:02EE */
 unsigned char g_steerPoints[25][2] = {{170, 6}, {175, 6}, {179, 6}, {183, 7}, {188, 7}, {192, 8}, {197, 9}, {201, 11}, {206, 12}, {211, 14}, {215, 16}, {219, 19}, {222, 20}, {226, 23}, {229, 26}, {232, 29}, {236, 33}, {239, 36}, {242, 40}, {245, 45}, {247, 49}, {249, 54}, {250, 58}, {252, 64}, {253, 69}};   /* DS:031E */
 int g_wheelShown = 0;   /* DS:0350 */
 int g_wheelSlotY[3] = {148, 174, 73};   /* DS:0352 */
@@ -89,13 +93,13 @@ void da_speedo_pts(int i, int *x1, int *y1, int *x2, int *y2)
 {
     if (i < 0)
         i = 0;
-    else if (i > 0x82)
-        i = 0x82;
-    *x1 = g_needlePts[0][i][0] + 0xc4;
-    *y1 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[0][i][1] + 0x2a;
-    *x2 = g_needlePts[1][i][0] + 0xc4;
-    *y2 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[1][i][1] + 0x2a;
-    /* PROVISIONAL: the original CONST holds two more SEG constants for the track segment
+    else if (i > NEEDLE_MAX_POS)
+        i = NEEDLE_MAX_POS;
+    *x1 = g_needlePts[NEEDLE_TIP][i].x + SPEEDO_CENTER_X;
+    *y1 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[NEEDLE_TIP][i].y + GAUGE_CENTER_Y;
+    *x2 = g_needlePts[NEEDLE_HUB][i].x + SPEEDO_CENTER_X;
+    *y2 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[NEEDLE_HUB][i].y + GAUGE_CENTER_Y;
+    /* PROVISIONAL: the original CONST holds two more SEG constants for the needle segment
        (DS:68E6 with this function's, DS:68E8 later) that no instruction reads: MSC leaves
        them behind for unreachable far accesses to two other far symbols. The statements and
        symbol names are not recoverable; these keep the bytes and the relocation order. The
@@ -134,12 +138,12 @@ void da_tach_pts(int i, int *x1, int *y1, int *x2, int *y2)
 {
     if (i < 0)
         i = 0;
-    else if (i > 0x82)
-        i = 0x82;
-    *x1 = g_needlePts[0][i][0] + 0x91;
-    *y1 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[0][i][1] + 0x2a;
-    *x2 = g_needlePts[1][i][0] + 0x91;
-    *y2 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[1][i][1] + 0x2a;
+    else if (i > NEEDLE_MAX_POS)
+        i = NEEDLE_MAX_POS;
+    *x1 = g_needlePts[NEEDLE_TIP][i].x + TACH_CENTER_X;
+    *y1 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[NEEDLE_TIP][i].y + GAUGE_CENTER_Y;
+    *x2 = g_needlePts[NEEDLE_HUB][i].x + TACH_CENTER_X;
+    *y2 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[NEEDLE_HUB][i].y + GAUGE_CENTER_Y;
     /* PROVISIONAL: second unreachable far access, see da_speedo_pts. */
     return;
     { extern char far x_trk1[][2]; *x2 = x_trk1[i][0]; }
@@ -424,7 +428,7 @@ void da_set_view(int mode)
         r_vid.copyToFront = 0;
         sc_status_init(r_vid.mode == VID_EGA ? 0x5a : SCREEN_BODY_HEIGHT);
         if (g_runRacingFlag)
-            sc_status_label(g_gearLabel);
+            sc_label(g_gearLabel);
         break;
     case 4:
         r_vid.front = g_savedFront;
@@ -701,9 +705,9 @@ int da_clip_blt(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *in, 
     return out->w > 0 && out->h > 0;
 }
 
-/* da_wait_retrace @ 0F38:177D (linear 0x10AFD, 75 bytes) */
+/* da_retrace @ 0F38:177D (linear 0x10AFD, 75 bytes) */
 
-void da_wait_retrace(int n)
+void da_retrace(int n)
 {
     int i;
 

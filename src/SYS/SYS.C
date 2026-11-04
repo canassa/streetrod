@@ -97,7 +97,7 @@ void sy_music_pause(void)
         outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
         g_speakerOn = 0;
         g_voice->dirty = 1;
-        g_hots[ga_hotspot(-40)].textOffset = g_offTunes;
+        g_hots[ga_hotspot(KR_MUSIC)].textOffset = g_offTunes;
         sy_hover_reset();
     }
 }
@@ -109,7 +109,7 @@ void sy_music_resume(void)
     if (g_musicOn && !g_voice->active && g_voice->phraseStart != g_voice->song) {
         g_voice->active = 1;
         g_voice->dirty = 1;
-        g_hots[ga_hotspot(-40)].textOffset = g_offSquelch;
+        g_hots[ga_hotspot(KR_MUSIC)].textOffset = g_offSquelch;
         sy_hover_reset();
     }
 }
@@ -443,7 +443,7 @@ int sy_wait_input(int ticks)
                 sy_exit();
         } else if (res < 0) {
             res += 0x32;
-            if (res == -0x28) {
+            if (res == KR_MUSIC) {
                 if (g_voiceNum == 1) {
                     if (g_musicOn) {
                         sy_music_pause();
@@ -831,9 +831,9 @@ void sy_demo_step(void)
                 g_demoKey = g_keyMaps[g_keyGroup][g_demoChoice].key;
                 mask = g_keyMaps[g_keyGroup][g_demoChoice].val + 0x32;
                 step = g_groupHot[g_keyGroup];
-                for (; step - g_groupHot[g_keyGroup] < 32 && g_hots[step].f6 != mask; step++)
+                for (; step - g_groupHot[g_keyGroup] < 32 && g_hots[step].id != mask; step++)
                     ;
-                if (g_hots[step].f6 == mask) {
+                if (g_hots[step].id == mask) {
                     cx = (g_hots[step].x1 + g_hots[step].x2) / 2;
                     if (cx)
                         g_demoTargetX = cx;

@@ -4,6 +4,17 @@
 #define NEEDLE_H
 #include "STRUCTS.H"
 
-extern char far g_needlePts[2][0x83][2];                /* 2E47:0000 */
+struct NeedlePoint {
+    signed char x, y;
+};
+
+enum NeedleEnd {
+    NEEDLE_TIP,
+    NEEDLE_HUB
+};
+
+#define NEEDLE_MAX_POS 0x82
+
+extern struct NeedlePoint far g_needlePts[2][NEEDLE_MAX_POS + 1];                /* 2E47:0000 */
 
 #endif

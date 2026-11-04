@@ -70,3 +70,22 @@ Total: 46 globals/statics + 11 types/members named; 5 globals skipped.
 Validation: ./sr headers --check passes; ./sr check --all reports 572/572 (551 MATCH, 21 MATCH*); rm -rf work && ./sr build reports Packed EXE vs orig/SR.EXE: IDENTICAL; ./sr dgroup check and ./sr dgroup order pass; nix-shell shell.nix --run "python3 -m unittest discover -s tests" passes 67 tests; ./dosbox.sh --make reports DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL (SHA1 3a5e28b795313028b7e77d147122f41cb29de334). All communal public symbols retain their annotated DGROUP offsets in the final LINK map; ./sr fit was also run through the CLI for every final global/static spelling.
 
 Rejected trials: the first batch lengthened external names enough to change ga_transmission from 1090 to1113 bytes (544/572 whole-tree gate). Replacing g_bodyRegionsTable/g_carScreenCoordX/g_autoDestPosY/g_autoDrawData with g_bodyRects/g_picXDraw/g_sprDrawY/g_carDraw restored 572/572. Initial tie candidates g_viewCamera (bucket104), g_copRacePhase (139), g_renderCursor (214) and g_rivalBeside (229) exchanged communal addresses with neighbors; the final g_trackViewMotion (103), g_pursuitPhaseIndex (138), g_viewTerrainBitsData (215) and g_carCollisionRange (228) preserve all addresses. No item was skipped for budget or fit failure.
+
+## Follow-up: merge main and measure GARAGE.C budget
+
+Merged main through 1ba3f6a (main wins source conflicts, original globalsA renames reapplied). Source comparison against main plus the identifier mappings passed. Eight final renames save48 distinct contributing name characters:
+
+g_bankrollLabel -> g_cashLabel; saves4; cash label passed to sc_label.
+g_hotTransBolts -> g_transBolts; saves3; transmission bolt hotspots read and reset by ga_transmission.
+g_hotBodyChange -> g_bodyAsk; saves6; ga_body updates its confirmation text.
+g_partDisplayPicIds -> g_partsPics; saves8; ga_menu/ga_hood/GARGFX share five engine-part picture IDs; LINK bucket186 preserves DS:8290 (g_hoodIds bucket187 was rejected after exchanging addresses with g_engineBoltPicIds).
+g_nextPartCategory -> g_nextCat; saves9; ga_hood uses the category transition table.
+build_car_info -> car_info; saves6; private builder of car-info menu IDs/values.
+sc_status_label -> sc_label; saves7; screen status-line label renderer.
+da_wait_retrace -> da_retrace; saves5; dashboard routine waits n display retraces.
+
+Measured allowance: unshortened merged GARAGE needs at least41 characters saved (40 ->1113-byte ga_transmission,41 ->1090). Final savings48 leave exactly7 characters: +7 on g_cashLabel or current local k passes; +8 fails. Lowercase-p local suffixes preserve the stack hash. Prior-function local v grows10 with no effect. Repeated the final allowance trial on the updated main merge.
+
+Tested charges: existing live symbol name growth costs one byte per character once per symbol. Referenced externals/communals, prior definitions (public/static functions and initialized/uninitialized data even if unused), and current-function locals count. Earlier locals are released; unused externs/prototypes, type/member/enum names, literal contents and not-yet-used later definitions do not charge this earlier function. At the exact boundary, new int data with C names of length1/11 requires23/33 more bytes (N+22); two names q/qq require47; new one-character near/far or called-extern function requires27 (N+26). These are measured forms and current headroom, not a recovered absolute compiler heap size. See the diary for probe matrix and limitations.
+
+Follow-up gates: headers --check PASS; check --all572/572; clean build after deleting work IDENTICAL; dgroup check/order PASS;68 unit tests PASS; DOS-native MAKE IDENTICAL; LINK-map communal offsets unchanged. Full module-gate probes confirm10415-byte MODULE MATCH for +7 external or current-local name characters, and10438-byte MODULE DIFF for +8. Final sources equal main1ba3f6a plus only the original globalsA mappings and the eight documented renames.

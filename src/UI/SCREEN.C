@@ -90,9 +90,9 @@ void sc_add_money(int n)
     g_statusLine.shown = old;
 }
 
-/* sc_status_label @ 0F38:2213 (linear 0x11593, 214 bytes) */
+/* sc_label @ 0F38:2213 (linear 0x11593, 214 bytes) */
 
-void sc_status_label(char *s)
+void sc_label(char *s)
 {
     int saved;
 

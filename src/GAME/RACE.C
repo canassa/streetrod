@@ -79,9 +79,9 @@ static int near find_gas_spot(int id)
     int base, n, i;
 
     base = ((unsigned)g_hotGasStation - (unsigned)g_hots) / sizeof(struct Hot);
-    n = ((unsigned)g_1a44 - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
+    n = ((unsigned)g_hotGasExit - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
     for (i = 0; i < n; i++)
-        if (g_hots[base + i].f6 == id)
+        if (g_hots[base + i].id == id)
             return base + i;
 }
 
@@ -92,7 +92,7 @@ static void near sort_gas_spots(void)
     int base, n;
 
     base = ((unsigned)g_hotGasStation - (unsigned)g_hots) / sizeof(struct Hot);
-    n = ((unsigned)g_1a44 - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
+    n = ((unsigned)g_hotGasExit - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
     gx_sort_hots(base, n);
 }
 
@@ -115,7 +115,7 @@ static void near clear_gas_spots(void)
     g_fuelStationActions.nozzleAvailable = 0;
     g_fuelStationActions.capAvailable = 0;
     for (k = 0; k < 6; k++)
-        g_hots[find_gas_spot(g_gasSpotIds[k])].kind = 14;
+        g_hots[find_gas_spot(g_gasSpotIds[k])].kind = HOT_DISABLED;
 }
 
 /* place_gas_spot @ 0000:B49C (linear 0x0B49C, 66 bytes) */
@@ -126,7 +126,7 @@ static void near place_gas_spot(int id, int x, int y, int w, int h)
     p = &g_hots[find_gas_spot(id)];
     p->x2 = (p->x1 = x) + w - 1;
     p->y2 = (p->y1 = y) + h - 1;
-    p->kind = 11;
+    p->kind = HOT_REGION;
 }
 
 /* spots_idle @ 0000:B4DE (linear 0x0B4DE, 71 bytes) */
@@ -237,7 +237,7 @@ static void near leave_station(struct Dlg *d)
         cp_patch_bg(p, 0x60, 0, 0x30, 0x40, 0xc8, 0x51, 0xa9, 2);
     }
     g_driver.currentCar->fuel = g_driver.currentCar->fuel > 0xaa ? 0xaa : g_driver.currentCar->fuel;
-    cp_show_car(2, d->specIndex, d->bodyMods, (g_driver.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
+    cp_show_car(CAR_DRIVE_OUT, d->specIndex, d->bodyMods, (g_driver.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
             g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
     mn_pop(1);
     ma_clear();
@@ -259,14 +259,14 @@ void ra_gas_station(void)
     sc_status_text(-1, "\0", 0);
     g_scene = 3;
     sc_picture(0x442, -1);
-    sc_status_label(g_49dc);
+    sc_label(g_cashLabel);
     r_vid.copyToFront = 1;
     (*g_videoOps.show)();
     dl.f0c = 1;
     cu_ctl(1);
     dl.specIndex = g_driver.currentCar->specIndex;
     dl.bodyMods = gm_car_look(g_driver.currentCar);
-    cp_show_car(4, dl.specIndex, dl.bodyMods, (g_driver.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
+    cp_show_car(CAR_PULL_IN, dl.specIndex, dl.bodyMods, (g_driver.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
             g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
     mu_suspend(0);
     label = pu_grab(0x50, 0xaa, 0x28, 0xc, 0);
@@ -556,7 +556,7 @@ static void near show_crash(void)
             pkt.sx = pkt.sy = 0;
             pkt.dx = g_crashPics[i].x;
             pkt.dy = g_crashPics[i].y;
-            da_wait_retrace(0x14 - 8 * i);
+            da_retrace(0x14 - 8 * i);
             (*g_videoOps.maskedBlit)(a, r_vid.back, &pkt, 1);
             (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
         }
@@ -849,12 +849,12 @@ finishstop:
                     g_msgPlusTires[0] = 0;
                 sel = i ? KM_GET_RUNNING : KM_REPAIR;
                 if ((long)v > g_driver.money) {
-                    g_hotRepair[0].kind = g_hotRepair[7].kind = 0xe;
+                    g_hotRepair[0].kind = g_hotRepair[7].kind = HOT_DISABLED;
                     g_keyMaps[sel][0].val = KV_REPAIR_JUNK;
                     g_keyMaps[sel][1].key = SC_ESC;
                     g_keyMaps[sel][1].val = KV_REPAIR_JUNK;
                 } else {
-                    g_hotRepair[0].kind = g_hotRepair[7].kind = 0xa;
+                    g_hotRepair[0].kind = g_hotRepair[7].kind = HOT_BUTTON;
                     g_keyMaps[sel][0].val = KV_REPAIR_FIX;
                     g_keyMaps[sel][1].key = SC_F;
                     g_keyMaps[sel][1].val = KV_REPAIR_FIX;
@@ -1002,7 +1002,7 @@ void near ra_run(void)
     sy_drive_stop();
     g_waitUntil = 0;
     sy_reset_queues();
-    sc_status_label(g_49dc);
+    sc_label(g_cashLabel);
     if (g_trackViewMotion.roadIndex > 200) {
         if (rn_int(3) > 0) {
             if (g_driver.currentCar->timing > 0)

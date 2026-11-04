@@ -489,11 +489,11 @@ static void near buy_from_ads(int tab)
         if (used) {
             k3 = g_parts[i5 = list4[n + off6]].nameOffset;
             price6 = g_parts[i5].value;
-            g_hotBuy[0].kind = 0xe;
+            g_hotBuy[0].kind = HOT_DISABLED;
         } else {
             k3 = (specn = &g_carData[i5 = list4[n - 2]])->nameOffset;
             price6 = specn->price;
-            g_hotBuy[0].kind = 10;
+            g_hotBuy[0].kind = HOT_BUTTON;
         }
         strcpy(g_offerName, g_desc + k3);
         sprintf(g_buyPrice, "$%-3d ?", price6);
@@ -550,7 +550,7 @@ static void near buy_from_ads(int tab)
             }
             x1 = ((unsigned)specn - (unsigned)g_carData) / 10;
             y = (((specn->parts >> 8) & 7) == 2) ? 8 : 0;
-            cp_show_car(7, x1, y, 0, 0, 0x86, 0, g_tirePics[(specn->parts >> 4) & 3]);
+            cp_show_car(CAR_SHOW_SCREEN, x1, y, 0, 0, 0x86, 0, g_tirePics[(specn->parts >> 4) & 3]);
             sc_text((SCREEN_WIDTH - da_text_width(g_offerName)) / 2, 0x88, g_offerName);
             cu_ctl(CURSOR_SHOW_NOW);
             g_input.any = 1;
@@ -726,7 +726,7 @@ static int near your_cars(void)
             cu_ctl(CURSOR_HIDE_NOW);
             mid = g_driver.currentCar->specIndex;
             result = gm_car_look(g_driver.currentCar);
-            cp_show_car(6, mid, result, (g_driver.currentCar->appearance >> 8) & 0x1f, 0, 0x98, 0,
+            cp_show_car(CAR_BACK_OUT, mid, result, (g_driver.currentCar->appearance >> 8) & 0x1f, 0, 0x98, 0,
                     g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
             mn_pop(1);
             ga_clear_name();
@@ -798,7 +798,7 @@ void near gm_run(void)
         }
         if (kind && again)
             continue;
-        sc_status_label(g_49dc);
+        sc_label(g_cashLabel);
         v = 1;
         if (kind == 0 && w == KR_OLD_GAME && g_driver.currentCar)
             v = 2;

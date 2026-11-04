@@ -80,6 +80,12 @@ class KeyMapAgreementTests(unittest.TestCase):
         self.assertEqual(self.equ['KR_TIMING_ADVANCE'], self.equ['KR_SCROLL_DOWN'])
         self.assertEqual(self.equ['KR_TIMING_RETARD'], self.equ['KR_SCROLL_UP'])
 
+    def test_all_negative_decoded_results_are_available_in_c(self):
+        c = {n for n, v in self.c.items() if n.startswith('KR_') and v < 0}
+        asm = {n for n, v in self.equ.items() if n.startswith('KR_') and v < 0}
+        self.assertTrue(asm)
+        self.assertEqual(c, asm)
+
     def test_hardware_scan_codes_agree_in_c_and_masm(self):
         header = (SRC / 'SYS/PC.H').read_text()
         c = {name: value(expr, {}) for name, expr in

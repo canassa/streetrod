@@ -5,9 +5,9 @@ NEEDLE SEGMENT PARA PUBLIC 'FAR_DATA'
         PUBLIC  _g_needlePts
         PUBLIC  _x_trk1
 
-; track 0: 131 (x, y) points
+; Needle tip: 131 (x, y) points, y positive upwards.
 _x_trk0 LABEL   BYTE
-_g_needlePts LABEL   BYTE                ; char far[2][0x83][2]
+_g_needlePts LABEL   BYTE                ; struct NeedlePoint far[2][0x83]
         DB      -11,-13, -12,-13, -12,-12, -12,-12, -13,-11, -13,-11, -14,-10, -14,-10
         DB      -15,-9, -15,-8, -15,-8, -16,-7, -16,-7, -16,-6, -17,-5, -17,-5
         DB      -17,-4, -17,-4, -17,-3, -17,-2, -17,-1, -17,-1, -17,0, -18,0
@@ -26,7 +26,7 @@ _g_needlePts LABEL   BYTE                ; char far[2][0x83][2]
         DB      16,-6, 16,-7, 16,-7, 15,-8, 15,-8, 15,-9, 14,-10, 14,-10
         DB      14,-11, 13,-11, 13,-12
 
-; track 1: 131 (x, y) points
+; Hub end: 131 (x, y) points, y positive upwards.
 _x_trk1 LABEL   BYTE
         DB      -3,-3, -3,-3, -3,-3, -3,-3, -3,-3, -3,-3, -3,-3, -4,-2
         DB      -4,-2, -4,-2, -4,-2, -4,-2, -4,-2, -4,-1, -4,-1, -4,-1
