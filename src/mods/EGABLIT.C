@@ -8,6 +8,7 @@
 #include "MASKBG.H"
 #include "MASKBLT.H"
 #include "MASKOR.H"
+#include "PC.H"
 
 /* egablit_copy @ 21A0:1862 (linear 0x23262, 647 bytes)
 
@@ -64,16 +65,16 @@ void egablit_copy(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *re
     }
     f = e == 0 || g == 0;
     if (f) {
-        outp(0x3ce, 4);
-        outp(0x3c4, 2);
+        outp(GC_INDEX, GC_READ_MAP);
+        outp(SEQ_INDEX, SEQ_MAP_MASK);
     }
     k = 1;
     for (l = o; l < c; l++, k <<= 1, m += g, a += e) {
         if (f) {
             if (g == 0)
-                outp(0x3cf, l);
+                outp(GC_DATA, l);
             if (e == 0)
-                outp(0x3c5, k);
+                outp(SEQ_DATA, k);
         }
         if (d == i && M == d) {
             movedata(FP_SEG(m), FP_OFF(m), FP_SEG(a), FP_OFF(a), d * j);
@@ -89,8 +90,8 @@ void egablit_copy(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *re
         }
     }
     if (f) {
-        outp(0x3c4, 2);
-        outp(0x3c5, 0xf);
+        outp(SEQ_INDEX, SEQ_MAP_MASK);
+        outp(SEQ_DATA, SEQ_ALL_PLANES);
     }
 }
 
@@ -156,8 +157,8 @@ void egablit_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitma
     k = 1;
     do {
         if (f == 0) {
-            outp(0x3c4, 2);
-            outp(0x3c5, k);
+            outp(SEQ_INDEX, SEQ_MAP_MASK);
+            outp(SEQ_DATA, k);
         }
         maskbg_blit(c, M, m, L, e, g, d, o, h, K);
         k <<= 1;
@@ -166,8 +167,8 @@ void egablit_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitma
         e += b;
     } while (k < 9);
     if (f == 0) {
-        outp(0x3c4, 2);
-        outp(0x3c5, 0xf);
+        outp(SEQ_INDEX, SEQ_MAP_MASK);
+        outp(SEQ_DATA, SEQ_ALL_PLANES);
     }
     if (p > 0) {
         c += 40 * o;
@@ -213,21 +214,21 @@ void egablit_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *
     i = bm1->alt.w.off + e.sx + e.sy * d;
     f = flag ? maskor_blit : maskblt_copy;
     if (c == 0) {
-        outp(0x3ce, 4);
-        outp(0x3c4, 2);
+        outp(GC_INDEX, GC_READ_MAP);
+        outp(SEQ_INDEX, SEQ_MAP_MASK);
     }
     k = 1;
     m = 0;
     for (; k < 9; k <<= 1, m++, j += n, a += c) {
         if (c == 0) {
-            outp(0x3cf, m);
-            outp(0x3c5, k);
+            outp(GC_DATA, m);
+            outp(SEQ_DATA, k);
         }
         (*f)(a, l, j, i, d, b, h, g);
     }
     if (c == 0) {
-        outp(0x3c4, 2);
-        outp(0x3c5, 0xf);
+        outp(SEQ_INDEX, SEQ_MAP_MASK);
+        outp(SEQ_DATA, SEQ_ALL_PLANES);
     }
 }
 
@@ -250,13 +251,13 @@ void egablit_latch_pack(char far *src, int w, int h, char far *dst, int pitch)
     int col;
 
     if (h >= 1) {
-        outp(0x3ce, 5);
-        outp(0x3cf, 1);
+        outp(GC_INDEX, GC_MODE);
+        outp(GC_DATA, GC_WRITE_MODE1);
         for (row = 0; row < h; row++, src += pitch) {
             for (col = 0, p = src; col < w; col++)
                 *dst++ = *p++;
         }
-        outp(0x3ce, 5);
-        outp(0x3cf, 0);
+        outp(GC_INDEX, GC_MODE);
+        outp(GC_DATA, GC_WRITE_MODE0);
     }
 }

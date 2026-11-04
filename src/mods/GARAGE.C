@@ -19,6 +19,7 @@
 #include "MESSAGES.H"
 #include "MUSIC.H"
 #include "M_02B9A.H"
+#include "PC.H"
 #include "PERF.H"
 #include "POPUP.H"
 #include "RANDOM.H"
@@ -964,18 +965,18 @@ static void near tune_timing(struct Car *car)
     sys_music_pause();
     g_voiceNum = 2;
     if (g_soundOn) {
-        outp(0x61, inp(0x61) | 3);
+        outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_MASK);
         g_speakerOn = 1;
     }
     do {
         if (g_soundOn && g_soundOn != g_speakerOn) {
-            outp(0x61, inp(0x61) | 3);
+            outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_MASK);
             g_speakerOn = 1;
         }
         gear = car->f20;
         w.w = (abs(gear) << 10) + 30000;
-        outp(0x42, w.b[0]);
-        outp(0x42, w.b[1]);
+        outp(PIT_CH2, w.b[0]);
+        outp(PIT_CH2, w.b[1]);
         y = blt.dy = gear * 2 + 0x4b;
         cursor_ctl(-4);
         (*b_78a2)(p->img, r_vid.back, &blt, 1);
@@ -983,7 +984,7 @@ static void near tune_timing(struct Car *car)
         cursor_ctl(-2);
         while ((key = sys_wait_input(0)) == 0) {
             if (g_soundOn && g_soundOn != g_speakerOn) {
-                outp(0x61, inp(0x61) | 3);
+                outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_MASK);
                 g_speakerOn = 1;
             }
         }
@@ -1000,7 +1001,7 @@ static void near tune_timing(struct Car *car)
             break;
         }
     } while (key != -1);
-    outp(0x61, inp(0x61) & 0xfc);
+    outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
     g_speakerOn = 0;
     g_voiceNum = 1;
     sys_music_resume();

@@ -1,6 +1,7 @@
 #include <conio.h>
 #include "STRUCTS.H"
 #include "EGAPAGE.H"
+#include "PC.H"
 
 /* egapage_show @ 21A0:182E (linear 0x2322E, 52 bytes)
 
@@ -8,12 +9,12 @@
 
 void egapage_show(int n)
 {
-    outp(0x3d4, 0x0c);
-    outp(0x3d5, n << 5);
-    outp(0x3d4, 0x0d);
-    outp(0x3d5, 0);
-    while (inp(0x3da) & 8)
+    outp(CRTC_INDEX, CRTC_START_HI);
+    outp(CRTC_DATA, n << 5);
+    outp(CRTC_INDEX, CRTC_START_LO);
+    outp(CRTC_DATA, 0);
+    while (inp(INPUT_STATUS) & STATUS_VRETRACE)
         ;
-    while (!(inp(0x3da) & 8))
+    while (!(inp(INPUT_STATUS) & STATUS_VRETRACE))
         ;
 }

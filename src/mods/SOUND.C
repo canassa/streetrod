@@ -70,8 +70,8 @@ void sound_set_freq(long freq)
     union Word div;
 
     div.w = (int)(1193180L / freq);
-    outp(0x42, div.b[0]);
-    outp(0x42, div.b[1]);
+    outp(PIT_CH2, div.b[0]);
+    outp(PIT_CH2, div.b[1]);
 }
 
 /* sound_init @ 0F38:7101 (linear 0x16481, 33 bytes)
@@ -81,7 +81,7 @@ void sound_set_freq(long freq)
 void sound_init(void)
 {
     g_delayScale = sound_calibrate(10);
-    outp(0x43, 0xb6);
+    outp(PIT_CMD, PIT_CH2_LOHI_MODE3);
     sound_set_freq(25000L);
 }
 
@@ -92,7 +92,7 @@ void sound_init(void)
 void sound_on(void)
 {
     sound_set_freq(25000L);
-    outp(0x61, inp(0x61) | 3);
+    outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_MASK);
     g_speakerOn = 1;
 }
 
@@ -102,7 +102,7 @@ void sound_on(void)
 
 void sound_off(void)
 {
-    outp(0x61, inp(0x61) & 0xfc);
+    outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
     g_speakerOn = 0;
 }
 
@@ -172,9 +172,9 @@ static void near pulse_train(int a, int *p, int count, int reps)
 
     for (i = 0; i < count; i++) {
         for (j = 0; j < reps; j++) {
-            outp(0x61, inp(0x61) | 2);
+            outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_DATA);
             speaker_delay(*p);
-            outp(0x61, inp(0x61) & 0xfd);
+            outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_DATA));
             speaker_delay(a - *p);
         }
         p++;
@@ -194,9 +194,9 @@ static void near pulse_train_back(int a, int *p, int count, int reps)
 
     for (i = 0; i < count; i++) {
         for (j = 0; j < reps; j++) {
-            outp(0x61, inp(0x61) | 2);
+            outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_DATA);
             speaker_delay(*p);
-            outp(0x61, inp(0x61) & 0xfd);
+            outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_DATA));
             speaker_delay(a - *p);
         }
         p--;
@@ -254,7 +254,7 @@ static void near noise(int range, int bits, int count)
 
     sound_off();
     for (i = 0; i < count; i++) {
-        outp(0x61, inp(0x61) ^ 2);
+        outp(PPI_B, inp(PPI_B) ^ PPI_SPEAKER_DATA);
         delay = random_int(range) | bits;
         speaker_delay(delay);
     }

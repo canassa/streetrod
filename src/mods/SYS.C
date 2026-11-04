@@ -117,7 +117,7 @@ void sys_music_pause(void)
 {
     if (g_voice->off) {
         g_voice->off = 0;
-        outp(0x61, inp(0x61) & 0xfc);
+        outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
         g_speakerOn = 0;
         g_voice->dirty = 1;
         g_09f4[F_06827(-40)].f4 = g_offTunes;
@@ -200,9 +200,9 @@ void sys_timer_remove(int n)
 void sys_unhook(void)
 {
     _disable();
-    outp(0x43, 0x36);
-    outp(0x40, 0);
-    outp(0x40, 0);
+    outp(PIT_CMD, PIT_CH0_LOHI_MODE3);
+    outp(PIT_CH0, 0);
+    outp(PIT_CH0, 0);
     _dos_setvect(TIMER_INT, w_7aaa);
     _enable();
     kbdoff_unhook();
@@ -225,7 +225,7 @@ void sys_exit(void)
         (*m_present)();
         viddet_restore();
     }
-    outp(0x61, inp(0x61) & 0xfc);
+    outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
     g_speakerOn = 0;
     exit(5);
 }
@@ -290,11 +290,11 @@ void sys_init(void)
     g_8ef8 = 2;
     aj8efax = 5;
     bw8efc = 5;
-    outp(0x201, 0);
-    outp(0x201, 0);
-    first = inp(0x201);
+    outp(GAME_PORT, 0);
+    outp(GAME_PORT, 0);
+    first = inp(GAME_PORT);
     for (j = 1; j; j++)
-        if (((v = inp(0x201)) & 0xf3) == 0xf0)
+        if (((v = inp(GAME_PORT)) & (GAME_BUTTON_MASK | GAME_JOY1_AXES)) == GAME_BUTTON_MASK)
             break;
     if (g_demo == 0 && j != 0 && v != first) {
         g_joystick = 1;
@@ -332,15 +332,15 @@ void sys_init(void)
     ao79c6t.f1a = ao79c6t.f18 = g_jingleTones;
     _harderr(sys_crit_error);
     _disable();
-    outp(0x43, 0x36);
-    outp(0x40, 0);
-    outp(0x40, 0x40);
+    outp(PIT_CMD, PIT_CH0_LOHI_MODE3);
+    outp(PIT_CH0, 0);
+    outp(PIT_CH0, 0x40);
     w_7aaa = _dos_getvect(TIMER_INT);
     _dos_setvect(TIMER_INT, sys_timer_isr);
     _enable();
     kbdget_hook();
     g_kbdHooked = 1;
-    outp(0x43, 0xb6);
+    outp(PIT_CMD, PIT_CH2_LOHI_MODE3);
     sys_reset_queues();
     g_sysHooked = 1;
 }
@@ -660,7 +660,7 @@ void sys_music_start(int n, int cnt)
 {
     if (g_musicOn) {
         g_voice->off = 0;
-        outp(0x61, inp(0x61) & 0xfc);
+        outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
         g_speakerOn = 0;
         g_voice->f4 = 0;
         g_voice->dirty = 1;
@@ -680,7 +680,7 @@ void sys_music_start(int n, int cnt)
 void sys_music_stop(void)
 {
     g_voice->off = 0;
-    outp(0x61, inp(0x61) & 0xfc);
+    outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
     g_speakerOn = 0;
     g_voice->dirty = 1;
     g_voice->lc = g_voice->cur = g_voice->l8;
@@ -701,10 +701,10 @@ void sys_drive_start(void)
     g_lastDx = g_lastDy = g_buttons = g_click = 0;
     e_78e0.f2 = e_78e0.f4 = 0;
     g_driveDiv = 0;
-    outp(0x42, 0x1e);
-    outp(0x42, 0);
+    outp(PIT_CH2, 0x1e);
+    outp(PIT_CH2, 0);
     if (g_soundOn) {
-        outp(0x61, inp(0x61) | 3);
+        outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_MASK);
         g_speakerOn = 1;
     }
 }
@@ -717,7 +717,7 @@ void sys_drive_stop(void)
     g_sirenOn = 0;
     g_squealOn = 0;
     g_onShoulder = 0;
-    outp(0x61, inp(0x61) & 0xfc);
+    outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
     g_speakerOn = 0;
     if (!g_demo && g_mousePresent) {
         mouse_poll();
@@ -923,7 +923,7 @@ void interrupt far sys_timer_isr(void)
 
     g_tick++;
     if (g_tickDiv--) {
-        outp(0x20, 0x20);
+        outp(PIC_CMD, PIC_EOI);
         _enable();
     } else {
         (*w_7aaa)();
@@ -931,7 +931,7 @@ void interrupt far sys_timer_isr(void)
         g_0600++;
     }
     if (!g_soundOn && g_soundOn != g_speakerOn) {
-        outp(0x61, inp(0x61) & 0xfc);
+        outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
         g_speakerOn = 0;
     }
     if (g_demo) {
@@ -947,14 +947,14 @@ void interrupt far sys_timer_isr(void)
         if (g_vibratoActive && g_voice->f0.w && !--g_vibCount) {
             bn82c4->f0 = bn82c4->f0 % bn82c4->f3;
             g_vibDivisor = g_toneShapes[bn82c4->f1][bn82c4->f0++] * g_vibGain + g_voice->f0.w;
-            outp(0x42, g_vibDivisor);
-            outp(0x42, g_vibDivisor >> 8);
+            outp(PIT_CH2, g_vibDivisor);
+            outp(PIT_CH2, g_vibDivisor >> 8);
             g_vibCount = bn82c4->f4;
         }
     } else if (g_voice->off && g_voice->f2 == 0) {
         while (!(g_voice->f2 = *g_voice->cur++)) {
             if (*g_voice->cur++ == 0) {
-                outp(0x61, inp(0x61) & 0xfc);
+                outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
                 g_speakerOn = 0;
                 g_voice->off = 0;
                 g_voice->dirty = 1;
@@ -976,17 +976,17 @@ void interrupt far sys_timer_isr(void)
         }
         if (!(g_voice->f0.w = *g_voice->cur++)) {
             g_voice->dirty = 1;
-            outp(0x61, inp(0x61) & 0xfc);
+            outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
             g_speakerOn = 0;
         } else {
             if (g_vibratoActive) {
                 g_vibCount = bn82c4->f4;
                 g_vibGain = (unsigned)bn82c4->f2 * g_voice->f0.w / 1000;
             }
-            outp(0x42, g_voice->f0.b[0]);
-            outp(0x42, g_voice->f0.b[1]);
+            outp(PIT_CH2, g_voice->f0.b[0]);
+            outp(PIT_CH2, g_voice->f0.b[1]);
             if (g_soundOn && (g_soundOn != g_speakerOn || g_voice->dirty)) {
-                outp(0x61, inp(0x61) | 3);
+                outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_MASK);
                 g_speakerOn = 1;
                 if (g_voice->dirty)
                     g_voice->dirty = 0;
@@ -1059,11 +1059,11 @@ void interrupt far sys_drive_isr(void)
 
     g_tick++;
     if (g_tickDiv--) {
-        outp(0x20, 0x20);
+        outp(PIC_CMD, PIC_EOI);
         _enable();
         if (g_soundOn) {
             if (g_soundOn != g_speakerOn) {
-                outp(0x61, inp(0x61) | 3);
+                outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_MASK);
                 g_speakerOn = 1;
             }
             if (g_tickDiv & 1) {
@@ -1071,8 +1071,8 @@ void interrupt far sys_drive_isr(void)
                     r = (unsigned)(((long)e_78e0.fe * e_78e0.fe) >> 10);
                     r += r >> (r + 2) >> 3;
                     val.w = 50000 - ((e_78e0.fe == 5700 ? 10000 : 0) + r);
-                    outp(0x42, val.b[0]);
-                    outp(0x42, val.b[1]);
+                    outp(PIT_CH2, val.b[0]);
+                    outp(PIT_CH2, val.b[1]);
                 } else if (g_carMoving) {
                     off = ac825et - z_8b7c;
                     r = off < 0 ? -off : off;
@@ -1080,8 +1080,8 @@ void interrupt far sys_drive_isr(void)
                     if (r > 20000)
                         r = 20000;
                     val.w = 60000 - r;
-                    outp(0x42, val.b[0]);
-                    outp(0x42, val.b[1]);
+                    outp(PIT_CH2, val.b[0]);
+                    outp(PIT_CH2, val.b[1]);
                 }
             } else {
                 g_06ea ^= 1;
@@ -1090,20 +1090,20 @@ void interrupt far sys_drive_isr(void)
                         val.w = 0x54b;
                     else
                         val.w = 0x712;
-                    outp(0x42, val.b[0]);
-                    outp(0x42, val.b[1]);
+                    outp(PIT_CH2, val.b[0]);
+                    outp(PIT_CH2, val.b[1]);
                     if (g_06e4 > 20)
                         g_06e4 = 0;
                 } else if (g_squealOn || g_onShoulder) {
                     if (g_06ea) {
                         val.w = 0x95;
-                        outp(0x42, val.b[0]);
-                        outp(0x42, val.b[1]);
+                        outp(PIT_CH2, val.b[0]);
+                        outp(PIT_CH2, val.b[1]);
                     }
                 }
             }
         } else if (g_soundOn != g_speakerOn) {
-            outp(0x61, inp(0x61) & 0xfc);
+            outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
             g_speakerOn = 0;
         }
     } else {

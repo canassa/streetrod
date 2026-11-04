@@ -16,6 +16,7 @@
 #include "MARKS.H"
 #include "MASKOR.H"
 #include "MEM.H"
+#include "PC.H"
 #include "POPUP.H"
 #include "RACE.H"
 #include "SPRITE.H"
@@ -62,14 +63,14 @@ static void near blit_planes(char far *src, char far *dst, char far *mask, int w
     int plane, bit1;
 
     for (bit1 = 1, plane = 0; bit1 < 9; bit1 <<= 1, plane++, src += step) {
-        outp(0x3c4, 2);
-        outp(0x3c5, bit1);
-        outp(0x3ce, 4);
-        outp(0x3cf, plane);
+        outp(SEQ_INDEX, SEQ_MAP_MASK);
+        outp(SEQ_DATA, bit1);
+        outp(GC_INDEX, GC_READ_MAP);
+        outp(GC_DATA, plane);
         maskor_blit(dst, FP_SEG(src), FP_OFF(src), FP_OFF(mask), n, w, h, w);
     }
-    outp(0x3c4, 2);
-    outp(0x3c5, 0xf);
+    outp(SEQ_INDEX, SEQ_MAP_MASK);
+    outp(SEQ_DATA, SEQ_ALL_PLANES);
 }
 
 /* make_bands @ 0F38:819A (linear 0x1751A, 412 bytes)
@@ -94,12 +95,12 @@ static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2
         if (mask)
             egablit_latch_pack(mask, B[i]->pitch, h, A[i].p, 0x28);
         else {
-            outp(0x3ce, 5);
-            outp(0x3cf, 2);
+            outp(GC_INDEX, GC_MODE);
+            outp(GC_DATA, GC_WRITE_MODE2);
             for (j = 0; j < B[i]->pitch * h; j++)
                 A[i].p[j] = c;
-            outp(0x3ce, 5);
-            outp(0x3cf, 0);
+            outp(GC_INDEX, GC_MODE);
+            outp(GC_DATA, GC_WRITE_MODE0);
         }
         j = A[i].y * B[i]->pitch;
         blit_planes(B[i]->bits.p + j, A[i].p, B[i]->alt.p + j, B[i]->pitch, h, B[i]->pitch,

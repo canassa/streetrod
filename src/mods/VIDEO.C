@@ -99,10 +99,10 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
         r_vid.bpp = 1;
         r_vid.mask = -8;
         bustyle = &g_style16;
-        outp(0x3d4, 0xc);
-        outp(0x3d5, 0);
-        outp(0x3d4, 0xd);
-        outp(0x3d5, 0);
+        outp(CRTC_INDEX, CRTC_START_HI);
+        outp(CRTC_DATA, 0);
+        outp(CRTC_INDEX, CRTC_START_LO);
+        outp(CRTC_DATA, 0);
         break;
     default:
         r_vid.planes = 1;
@@ -357,7 +357,7 @@ void F_112CB(int reg, char color)
     r.h.al = reg > EGA_PALETTE_LAST;
     r.h.bl = reg;
     r.h.bh = color;
-    while (!(inp(0x3da) & 8))
+    while (!(inp(INPUT_STATUS) & STATUS_VRETRACE))
         ;
     int86x(BIOS_VIDEO, &r, &r, &s);
 }

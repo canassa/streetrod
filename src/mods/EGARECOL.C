@@ -1,6 +1,7 @@
 #include <conio.h>
 #include "STRUCTS.H"
 #include "EGARECOL.H"
+#include "PC.H"
 
 /* egarecol_rect @ 21A0:1508 (linear 0x22F08, 468 bytes)
 
@@ -39,14 +40,14 @@ void egarecol_rect(struct Bitmap far *bm, int mode, char color,
             o = 0;
         }
     }
-    outp(0x3ce, 5);
-    outp(0x3cf, 10);
-    outp(0x3ce, 2);
-    outp(0x3cf, mode);
-    outp(0x3c4, 2);
-    outp(0x3c5, 15);
-    outp(0x3ce, 8);
-    outp(0x3cf, 0xff);
+    outp(GC_INDEX, GC_MODE);
+    outp(GC_DATA, (GC_READ_MODE1 | GC_WRITE_MODE2));
+    outp(GC_INDEX, GC_COLOR_COMPARE);
+    outp(GC_DATA, mode);
+    outp(SEQ_INDEX, SEQ_MAP_MASK);
+    outp(SEQ_DATA, SEQ_ALL_PLANES);
+    outp(GC_INDEX, GC_BIT_MASK);
+    outp(GC_DATA, GC_MASK_ALL);
     g = y2 - f;
     a = bm->bits.p + bm->pitch * f + (d >> 3);
     l = bm->pitch;
@@ -55,7 +56,7 @@ void egarecol_rect(struct Bitmap far *bm, int mode, char color,
         if (e) {
             j = *b & e;
             if (j) {
-                outp(0x3cf, j);
+                outp(GC_DATA, j);
                 *b = color;
             }
             b++;
@@ -64,7 +65,7 @@ void egarecol_rect(struct Bitmap far *bm, int mode, char color,
         while (h != 0) {
             j = *b;
             if (j) {
-                outp(0x3cf, j);
+                outp(GC_DATA, j);
                 *b = color;
             }
             h--;
@@ -73,13 +74,13 @@ void egarecol_rect(struct Bitmap far *bm, int mode, char color,
         if (o) {
             j = *b & o;
             if (j) {
-                outp(0x3cf, j);
+                outp(GC_DATA, j);
                 *b = color;
             }
         }
     }
-    outp(0x3ce, 8);
-    outp(0x3cf, 0xff);
-    outp(0x3ce, 5);
-    outp(0x3cf, 0);
+    outp(GC_INDEX, GC_BIT_MASK);
+    outp(GC_DATA, GC_MASK_ALL);
+    outp(GC_INDEX, GC_MODE);
+    outp(GC_DATA, GC_WRITE_MODE0);
 }
