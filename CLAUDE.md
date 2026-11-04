@@ -36,6 +36,7 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 ./sr fit OLD CAND...            # would a renamed communal/static stay at its address? (LINK bucket / MSC key window, 4e/4f)
 ./sr pic [ID...] [--list] [--png OUT.png] [--scale N] [--cells COLS N] [--mode ega|cga] [--palette game|intro|standard|cga-green]  # decode resource pictures; default output is inline kitty graphics
 ./sr data 4eee [N]             # hex dump of DGROUP bytes with known globals
+./sr docs                      # build Doxygen HTML/XML, fail doc-lint warnings, report coverage
 ./sr headers                   # rewrite every C source's include block and the MAKEFILE dependencies from the headers
 ./sr headers --check           # write nothing; exit 1 if that would change a file or a header declares a name its file does not define
 ./sr layout a b:long '{ c }'   # predict the [bp-N] layout of locals from their names (--ol for /Ol)
@@ -105,6 +106,33 @@ function whose literals precede it. Each file is named for what the module is (G
 ## Workflow
 
 Every function is matched. To change a function, edit it in its file and `./sr check` it (the whole file is compiled and gated); the `decompile-function` skill has the loop. Consult `msc51-recipe-book` when a function diverges. Run `wrap-up` at the end of a session. Change the tooling with the `sr-cli` skill.
+
+## Documentation
+
+Use `.claude/skills/asm-documenter/SKILL.md` when explicitly asked to document
+or review `src/**/*.ASM` or `.INC`; it explains MASM 5.1, the game/hardware
+reading standard and measured byte-neutrality. Use
+`.claude/skills/doxygen-c/SKILL.md` for C/header documentation and Doxygen review.
+Public declarations are documented in their owning uppercase `.H`, private
+functions at their `.C` definition; `./sr headers` owns include blocks.
+
+These skills do not authorize unsolicited source comments. Source documentation
+explains the game, runtime formats, DOS and hardware. Decompilation addresses,
+hash/budget/reconstruction notes and storage-placement banners were deliberately
+removed: keep that reasoning in `docs/RECONSTRUCTION.md`. Preserve every
+PROVISIONAL marker with its full text.
+
+`./sr docs` builds HTML/XML, runs doc-lint with warnings as failures, and reports
+coverage from the source inventory. Read `work/doxygen/html/index.html`,
+`work/doxygen/doxygen.warn` and `work/doxygen/coverage.json`. The shell provides
+Doxygen and Graphviz; an explicit invocation is
+`nix-shell shell.nix --run './sr docs'`. Partial coverage is allowed; malformed
+comments, bad parameters and unresolved explicit `@ref` links fail the gate.
+Every symbol reference in docs must be `@ref`, or an explained `TBD-ref` marker
+while its target is undocumented. Zero warnings does not imply full coverage.
+Run this gate after documentation/config/tooling changes, alongside the normal
+headers, function, clean packed-build, DGROUP and unittest gates. ASM comments
+need human review; Doxygen does not parse them.
 
 ## Naming conventions
 

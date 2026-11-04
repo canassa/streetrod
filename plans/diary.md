@@ -1990,3 +1990,62 @@ The newly enum-typed state/category objects and named constants preserve the mea
   deleting by keyword; keep unresolved reconstruction choices marked PROVISIONAL.
 - Source comments and executable tokens can be checked independently. This cleanup
   changed no C/MASM tokens; the fresh packed build also confirms byte identity.
+
+## 2026-11-04 23:29 CET: Port documentation skills and add the Doxygen gate
+
+### What I did
+
+- Ported bak2's asm-documenter and doxygen-c into `.claude/skills/`, adapted to
+  Street Rod's MASM 5.1, MSC 5.1, uppercase subsystem paths, medium model,
+  PUBLIC/PROC interfaces, KEYMAPS macros and PC.INC constants. Both explicitly
+  keep decompilation addresses/hash/budget/reconstruction commentary in
+  `docs/RECONSTRUCTION.md`, preserve PROVISIONAL text and require authorization
+  before source documentation. No game sources or headers were changed; no
+  symbols were named or skipped for naming (tooling-only task).
+- Read bak2's two skills, Doxyfile, CONTRIBUTING/CLAUDE documentation notes and
+  flake packages; searched its CLI for doxygen/doc-lint. It has config and a
+  documented lint invocation, no equivalent docs command or dedicated tests.
+- Added Doxyfile, Doxygen/Graphviz shell dependencies and `./sr docs`: HTML/XML,
+  nonempty-diagnostic/exit-status failure, supplementary parameter lint, and
+  coverage with source-inventory denominators. Header search mirrors SRENV.BAT
+  and includes MSC headers; qualifiers are removed only by Doxygen PREDEFINED.
+  README links require including the existing reconstruction page. Updated
+  CLAUDE.md and sr-cli skill; shared-file changes are small, separate insertions
+  for merging alongside the format branch.
+- Added six documentation tests (real Doxygen fixtures plus coverage counting)
+  and the reproducible `tools/scripts/masm_doc_probe.py`. The latter creates
+  scratch inputs/listings/OBJ under work, preserving same-filename THEADR when
+  comparing entire objects: 30 probes, 12 identical comparisons,
+  one expected differing comparison (PROC FAR versus NEAR).
+- Gates passed: headers --check; check --all 572/572 (551 MATCH, 21 MATCH*);
+  removed work and built clean, packed SR.EXE IDENTICAL, 572/572 raw-byte exact
+  at original positions, 748/748 near calls exact; dgroup check/order; 91
+  unittests; sr show sk_delay; git diff --check. The unpacked report retains the
+  known synthesized-header/relocation-order/14-byte-tail differences described
+  in README; the packed comparison is IDENTICAL.
+- Doxygen 1.17.0 baseline: **0 warnings/errors**; **0/509 game C functions
+  (0.0%)**, **0/157 C files/headers (0.0%)** documented. Missing docs are counted
+  as coverage gaps, not warnings (EXTRACT_ALL=NO, WARN_IF_UNDOCUMENTED=NO).
+  Output: work/doxygen/html/index.html, doxygen.warn, build.log, coverage.json.
+
+### What I learned
+
+- MASM results, including exact instruction bytes, live in asm-documenter’s
+  measured table; rerun the probe script instead of relying on TASM knowledge.
+  Comments, numeric/operand EQU, both STRUC addressing forms, RECORD MASK/shift,
+  macros/REPT, macro LOCAL labels and listing directives produced whole-OBJ
+  identity in their paired cases. A forward EQU MOV also matched, without
+  proving general forward-reference sizing behavior.
+- The prompt's blanket claim about @@ is incorrect for this assembler:
+  LOCALS fails A2105, but named @@done and anonymous @@:/@F assemble. This does
+  not establish TASM's named-label scope rules; the skill retains ordinary
+  descriptive labels and does not import TASM scope-reset assumptions.
+- PROC language mode matters. Plain .MODEL MEDIUM can warn and ignore extended
+  PROC/LOCAL text (inspect LST, not only stdout). .MODEL MEDIUM,C plus parameters
+  generates a BP frame; LOCAL allocates stack; USES saves/restores registers.
+  Plain FAR/NEAR PROC emits no frame, but RET changes CB/C3 with distance.
+- Doxygen WARN_NO_PARAMDOC alone did not catch a documented function with zero
+  parameter docs in our fixture. The XML lint closes that gap; wrong names and
+  partial omissions already fail Doxygen. Bare symbol mentions still need human
+  review. Deleted XML must be cleared to keep coverage honest; the denominator
+  must come from sources rather than the partially extracted XML tree.
