@@ -128,8 +128,8 @@ static void near init_new_game(void)
     a_7eaap.m7eae = 10;
     road_build_layout(100);
     init_racers();
-    g_addT = 0L;
-    g_tRef = g_sysT;
+    g_gameClock.actionTicks = 0L;
+    g_gameClock.timeBase = g_gameClock.biosTicks;
     g_betRaces = g_dragWins = g_roadWins = g_kingDragWon = 0;
 }
 
@@ -350,7 +350,7 @@ int near savegame_load(void)
         || read_nodes(fd7, &a_7eaap.spareParts)
         || _dos_read(fd7, &g_betRaces, 8, &n) != 0 || n != 8
         || _dos_read(fd7, g_racerRecordsArray, 0x18c, &n) != 0 || n != 0x18c
-        || _dos_read(fd7, &g_addT, 4, &n) != 0 || n != 4
+        || _dos_read(fd7, &g_gameClock.actionTicks, 4, &n) != 0 || n != 4
         || _dos_read(fd7, &delta, 4, &n) != 0 || n != 4
         || _dos_read(fd7, &g_roadLayout, 2, &n) != 0 || n != 2) {
         cursor_ctl(CURSOR_SHOW_NOW);
@@ -367,7 +367,7 @@ int near savegame_load(void)
     if (a_7eaap.currentCar)
         F_067CF(a_7eaap.currentCar->paintScheme);
     road_build_layout(g_roadLayout);
-    g_tRef = g_sysT - delta;
+    g_gameClock.timeBase = g_gameClock.biosTicks - delta;
     cursor_ctl(CURSOR_SHOW_NOW);
     return 0;
 }
@@ -476,7 +476,7 @@ again:
         unlink(name);
     }
     strcpy(g_driverName, is_blank(g_saveName) ? g_desc + g_list[r] : g_saveName);
-    delta = g_sysT - g_tRef;
+    delta = g_gameClock.biosTicks - g_gameClock.timeBase;
     name[0] = disk_data_drive();
     if (_dos_creat(name, _A_NORMAL, &fd8)
         || _dos_write(fd8, g_driverName, 0x24, &n) != 0 || n != 0x24
@@ -485,7 +485,7 @@ again:
         || write_nodes(fd8, a_7eaap.spareParts)
         || _dos_write(fd8, &g_betRaces, 8, &n) != 0 || n != 8
         || _dos_write(fd8, g_racerRecordsArray, 0x18c, &n) != 0 || n != 0x18c
-        || _dos_write(fd8, &g_addT, 4, &n) != 0 || n != 4
+        || _dos_write(fd8, &g_gameClock.actionTicks, 4, &n) != 0 || n != 4
         || _dos_write(fd8, &delta, 4, &n) != 0 || n != 4
         || _dos_write(fd8, &g_roadLayout, 2, &n) != 0 || n != 2) {
         cursor_ctl(CURSOR_SHOW_NOW);

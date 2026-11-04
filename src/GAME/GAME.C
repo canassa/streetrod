@@ -279,7 +279,7 @@ static void near sell_parts(void)
         else
             list8[sel - 1]->next = p7->next;
         free_part(p7);
-        g_addT += 0x444L;
+        g_gameClock.actionTicks += 0x444L;
         F_11540(price1);
     }
 }
@@ -512,7 +512,7 @@ static void near buy_from_ads(int tab)
                 F_11540(-price6);
                 if (used) {
                     game_add_part(i5, price6);
-                    g_addT += 0x222;
+                    g_gameClock.actionTicks += 0x222;
                     if (a_7eaap.partCount > 0x82)
                         goto done;
                     break;
@@ -520,7 +520,7 @@ static void near buy_from_ads(int tab)
                 car = game_make_car(i5, price6, 0);
                 car->paintScheme = (color != -1) ? color : random_int(5);
                 game_message(0xf2de);
-                g_addT += 0x444;
+                g_gameClock.actionTicks += 0x444;
                 goto done;
             }
             if (n != -25)
@@ -717,7 +717,7 @@ static int near your_cars(void)
             goto tail;
         }
         game_message((cur->value > cash * 2) ? 0x104b : 0x1091);
-        g_addT += 0x888L;
+        g_gameClock.actionTicks += 0x888L;
         F_11540(cash);
         if (item == 1 && a_7eaap.currentCar) {
             popup_show(pict, rx, ye);
@@ -841,7 +841,7 @@ void near game_run(void)
                         v = 2;
                     if (a_7eaap.currentCar == 0 && a_7eaap.otherCars)
                         v = 1;
-                    g_addT += 0x222;
+                    g_gameClock.actionTicks += 0x222;
                 }
                 continue;
             case 2:
@@ -861,7 +861,7 @@ void near game_run(void)
                             }
                             g_scene = 2;
                             cruise_go();
-                            g_addT += 0x222;
+                            g_gameClock.actionTicks += 0x222;
                             bobs_visit();
                         } else {
                             if (a_7eaap.currentCar->fuel >= 0x8c) {
@@ -876,10 +876,10 @@ void near game_run(void)
                             }
                             g_scene = 3;
                             cruise_go();
-                            g_addT += 0x222;
+                            g_gameClock.actionTicks += 0x222;
                             race_gas_station();
                         }
-                        g_addT += 0x222;
+                        g_gameClock.actionTicks += 0x222;
                         v = 1;
                     } else {
                         game_message(0x0e7f);

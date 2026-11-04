@@ -70,9 +70,7 @@ int g_kbdHooked = 0;   /* DS:05E0 */
 struct Mouse g_mouse = {0, 0, 0, 0, 0, 0, 0, 10, 3};   /* DS:05E2 */
 int g_05f4[2] = {0, 0};   /* DS:05F4 */
 long g_tick = 0L;   /* DS:05F8 */
-long g_addT = 0L;   /* DS:05FC */
-long g_sysT = 0L;   /* DS:0600 */
-long g_tRef = 0L;   /* DS:0604 */
+struct GameClock g_gameClock = {0L, 0L, 0L}; /* DS:05FC */
 char g_tickDiv = 0;   /* DS:0608 */
 char g_driveDiv = 0;   /* DS:0609 */
 int g_060a = 0;   /* DS:060A */
@@ -910,7 +908,7 @@ void interrupt far sys_timer_isr(void)
     } else {
         (*g_clockPrev)();
         g_tickDiv = 3;
-        g_sysT++;
+        g_gameClock.biosTicks++;
     }
     if (!g_soundOn && g_soundOn != g_speakerOn) {
         outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
@@ -1089,7 +1087,7 @@ void interrupt far sys_drive_isr(void)
             g_speakerOn = 0;
         }
     } else {
-        g_sysT++;
+        g_gameClock.biosTicks++;
         (*g_clockPrev)();
         g_tickDiv = 3;
         if (bw8aca && !g_carAnim && --g_driveDiv <= 0) {
@@ -1182,7 +1180,7 @@ void interrupt far sys_drive_isr(void)
                     a_7eaap.currentCar->rack.parts[0]->wear += !a_7eaap.raceType ? 1 : 1;
                     a_7eaap.currentCar->transmission->wear += !a_7eaap.raceType ? 1 : 1;
                 }
-                if (!(g_sysT & (!a_7eaap.raceType ? 0xf : 0xf)))
+                if (!(g_gameClock.biosTicks & (!a_7eaap.raceType ? 0xf : 0xf)))
                     a_7eaap.currentCar->rack.parts[0]->wear++;
                 if ((i = a_7eaap.currentCar->rack.parts[0]->wear) >= 9900) {
                     g_driveEng.stopFlags |= 5;

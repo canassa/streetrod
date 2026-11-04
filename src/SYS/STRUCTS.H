@@ -733,4 +733,10 @@ struct Wager {
     enum BetKind kind;
     int amount;
 };
+struct GameClock {
+    long actionTicks;
+    long biosTicks;
+    long timeBase;
+};
+
 #endif

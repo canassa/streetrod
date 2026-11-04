@@ -209,6 +209,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **TimerHead** (`g_timerQueue`, DS:0566..0571): The timer insertion/removal/reset paths use the first, head, free, next-deadline and busy fields as one queue control record. The reset-only byte is explicit unused storage; timer entries and later spare words stay separate. Separate globals also match; this grouping is a natural reconstruction choice.
 
+- **GameClock** (`g_gameClock`, DS:05FC..0607): garage_day and elapsed-time accounting compute actionTicks + biosTicks - timeBase. SAVEGAME resets and serializes that same clock, while SYS advances biosTicks. g_tick remains a separate scheduler clock. Separate globals also match; this grouping is a natural reconstruction choice.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only

@@ -39,9 +39,7 @@ extern int g_kbdHooked;                                 /* DS:05E0 */
 extern struct Mouse g_mouse;                            /* DS:05E2 */
 extern int g_05f4[2];                                   /* DS:05F4 */
 extern long g_tick;                                     /* DS:05F8 */
-extern long g_addT;                                     /* DS:05FC */
-extern long g_sysT;                                     /* DS:0600 */
-extern long g_tRef;                                     /* DS:0604 */
+extern struct GameClock g_gameClock; /* DS:05FC */
 extern char g_tickDiv;                                  /* DS:0608 */
 extern char g_driveDiv;                                 /* DS:0609 */
 extern int g_060a;                                      /* DS:060A */
