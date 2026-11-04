@@ -126,8 +126,8 @@ int fa_end_menu(void)
     key = mn_wait(KM_END_MENU);
     cu_ctl(CURSOR_HIDE_NOW);
     switch (key) {
-    case -2:
-    case -1:
+    case KR_LOAD_GAME:
+    case KR_NEW_GAME:
         if (g_picsFreed) {
             di_load_list(g_gamePics, 1);
             g_picsFreed = 0;

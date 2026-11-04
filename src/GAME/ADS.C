@@ -161,9 +161,9 @@ int av_run(void)
         while ((key = sy_wait_input(3000)) == 0)
             ;
         switch (key) {
-        case -3:
+        case KR_AD_CLOSE:
             break;
-        case -1:
+        case KR_AD_PREVIOUS:
             if (--g_pages.cur < 0)
                 g_pages.cur = g_pages.n - 1;
             g_adIdxEndPageState = a_7eaap.adIndex - 1;
@@ -176,7 +176,7 @@ int av_run(void)
             a_7eaap.adIndex = g_adIdxEndPageState;
             g_adRedraw = 1;
             continue;
-        case -2:
+        case KR_AD_NEXT:
             if (++g_pages.cur >= g_pages.n)
                 g_pages.cur = 0;
             a_7eaap.adIndex = g_adIdxEndPageState + (y > 0xc1 ? 0 : 1);

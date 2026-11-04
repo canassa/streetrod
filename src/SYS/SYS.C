@@ -97,7 +97,7 @@ void sy_music_pause(void)
         outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
         g_speakerOn = 0;
         g_voice->dirty = 1;
-        g_hots[ga_hotspot(-40)].textOffset = g_offTunes;
+        g_hots[ga_hotspot(KR_MUSIC)].textOffset = g_offTunes;
         sy_hover_reset();
     }
 }
@@ -109,7 +109,7 @@ void sy_music_resume(void)
     if (g_musicOn && !g_voice->active && g_voice->phraseStart != g_voice->song) {
         g_voice->active = 1;
         g_voice->dirty = 1;
-        g_hots[ga_hotspot(-40)].textOffset = g_offSquelch;
+        g_hots[ga_hotspot(KR_MUSIC)].textOffset = g_offSquelch;
         sy_hover_reset();
     }
 }
@@ -443,7 +443,7 @@ int sy_wait_input(int ticks)
                 sy_exit();
         } else if (res < 0) {
             res += 0x32;
-            if (res == -0x28) {
+            if (res == KR_MUSIC) {
                 if (g_voiceNum == 1) {
                     if (g_musicOn) {
                         sy_music_pause();

@@ -1548,3 +1548,40 @@ The explicit zero preserves the original separate byte stores without expressing
 the function code as a split word. The corrected recipe is recorded in
 .claude/skills/msc51-recipe-book/SKILL.md; short hex spelling in PC.H changes no
 constant values, and the assembly mirror needs no edit.
+
+## 2026-11-04 22:20 CET: complete negative input result names
+
+### What I did
+
+Added KR_AD_NEXT and KR_AD_PREVIOUS to InputResult and named all three ADS.C
+switch cases. Audited every C file for negative-literal cases, comparisons and
+input/menu/editor consumers, including mn_wait, sy_wait_input, mn_modal,
+mn_modal_list, mn_list and the text/number editors. Replaced fa_end_menu's -2/-1
+cases with KR_LOAD_GAME/KR_NEW_GAME and sy_wait_input's decoded -0x28 music
+comparison with KR_MUSIC. Used KR_MUSIC for its two hotspot lookups and
+KR_OLD_GAME for the same result forwarded by sg_new.
+
+Extended tests/test_keymaps.py to require all negative KR_* names in ASM to be
+available in C, supplementing the existing value-agreement test. This exposed
+three further missing negative names: KR_OFFER, KR_INFO_OK and KR_BUY_FORGET;
+added those without changing any values or ASM bindings.
+
+Kept MAIN.C show_video_menu's choice == -21: choice is getch() minus '0', so
+this is ASCII Escape and not KR_NO. Kept sg_load's -1 error/cancel returns,
+its -666 load-failure status and gm_run's corresponding recovery state; these
+are save/load statuses rather than screen key results. Kept sticker index
+arithmetic (-30 - k), signed timing limits, list/bitmap/hover sentinels and
+other negative numeric data. No other raw negative input-result comparisons
+or cases remain, and no screen mapping was left unresolved.
+
+All required gates passed: headers; 572/572 functions (551 MATCH, 21 MATCH*);
+rm -rf work followed by a clean packed build IDENTICAL; DGROUP ownership/order;
+68 unit tests, including four keymap tests. No code comments or work/ files added.
+
+### What I learned
+
+C-to-ASM value agreement alone cannot detect missing C result names. The new
+negative-result completeness check in tests/test_keymaps.py closes that gap
+while retaining the existing check of each name's value. Equal negative values
+can mean different things across screens or entirely different APIs; follow
+the active key map and the result's producer before choosing a KR_* name.
