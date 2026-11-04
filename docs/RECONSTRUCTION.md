@@ -110,6 +110,18 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
     `+= 0`, `|= 0`, `if (g_49e0[0]) ;` and comparisons compile to nothing or to a compare;
     stores to locals stay stores. The two functions share the idiom, so the original
     probably had one construct (a macro, an emptied switch) in both.
+- **The hook installers** F_1C2B8 (M_1C2CA.C), F_22352 (M_22364.C) and F_22B28
+  (M_22B3A.C): `*(struct Hooks *)&b_78a2 = *(struct Hooks *)g_5b04;`. Their bytes are
+  MSC 5.1's struct assignment (`push di; push si`, no frame, `mov cx,1Eh` and `f2 a5`:
+  MSC writes `rep movsw` with the F2 prefix, MASM's `rep` is F3; the `memcpy` intrinsic
+  adds `shr cx,1 ... rep movsb`). So the original assigned one 60-byte struct: the hook
+  block DS:78A2..78DE was a struct, and each driver's table probably one too. The
+  reconstruction keeps the 15 hook globals (named for LINK's communal hash, CLAUDE.md 4e)
+  and the arrays, and copies them through the 15-pointer `struct Hooks`. Each installer
+  is the first function of the driver file whose table it copies (that file's table
+  needs no forced owner then). The EXE does not decide this placement: none of the three
+  has a segment relocation, so a one-function file of its own, or for F_22352 and F_22B28
+  the end of the C file before (M_21AAC.C, M_226F4.C), gives the same image.
 - **Evidence-only structs** `State70C0`, `State7D2E` and `State7E8A`. MSC's operand order
   shows that these blocks are struct members, not plain variables (recipe book). Their
   extent and member types are a reconstruction.
@@ -169,8 +181,9 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
     assembler keyboard handlers.
   - DS:5580..57F6 goes to M_0E56A.ASM: a pointer table at an odd address, which no C
     compiler can place.
-  - The three driver hook tables go to the C file after each assembler stub: their
-    relocations are listed in descending order, as MSC emits them.
+  - DS:5AEE..5B04 goes to M_0E610.ASM: after the bytes its video detection writes, one
+    byte and three strings ("Tandy", "Tandy", "CGA") that no code references, before the
+    hook table of M_1C2CA.C.
 - **Data-only units** (`dgroup.DATA_UNITS`):
   - HOTSPOT.C (DS:09F4..239E) exists because the functions of the neighbouring code units
     match only without these tables (MSC's frame layout depends on the number of

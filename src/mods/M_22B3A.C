@@ -20,6 +20,13 @@
 
 void (far *g_5bd0[15])() = {F_23262, F_23C3B, F_236D5, F_22B3A, F_0E835, F_230DC, F_22F08, F_0FEAD, F_0FEBF, F_23FD9, F_23122, F_242EC, line_ega, F_26484, F_26537};   /* DS:5BD0 */
 
+/* F_22B28 @ 21A0:1128 (linear 0x22B28, 18 bytes) */
+
+void F_22B28(void)
+{
+    *(struct Hooks *)&b_78a2 = *(struct Hooks *)g_5bd0;
+}
+
 /* F_22B3A @ 21A0:113A (linear 0x22B3A, 973 bytes)
 
    Draw a string in the 8-pixel-high font into a planar EGA/VGA bitmap, composing the glyph rows in
