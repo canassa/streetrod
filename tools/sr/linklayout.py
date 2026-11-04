@@ -128,8 +128,6 @@ def prepare():
     jobs.append(dict(stem='SLOTS', source='SLOTS.C', program='CL',
                      args=['/c', '/W3', *config.DEFAULT_FLAGS.split(), 'SLOTS.C']))
     sequence.append(slots)
-    sequence.append(assembly(config.SRC/'data/DGROUP.ASM'))
-    next(job for job in jobs if job['stem'] == 'DGROUP')['args'].insert(0, '/DORIGINAL_LAYOUT')
     # DS:6E60..8F02 is communal storage (C tentative definitions in the game files): LINK
     # creates c_common after crt0's XOB/XO/XOE and allocates it by symbol-hash bucket
     response = '+\n'.join(sequence)+'\nSR.EXE\nSR.MAP\n\n;\n'
