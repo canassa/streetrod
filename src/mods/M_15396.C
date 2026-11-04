@@ -54,9 +54,6 @@ static int near F_1563A(int n, int load, char far *dst);
 static void near F_1606C(void);
 static void near F_1604F(void);
 
-/* F_15396: seek the DOS file handle to the absolute position pos (INT 21h function 42h, method 0).
-   Returns 0 on success, else the error in _doserrno, also copied to errno */
-
 char *g_4ea2 = "hot_data";   /* DS:4EA2 */
 char *g_4ea4[13] = {&av7ff8, &g7d86n, &w_8df0, &g7682n, &ai70e4t, &ap818c, g_2c02, &a_7d16q, g_239e, &g7d68m, &ag8baey, &h_8dd8, &a784als};   /* DS:4EA4 */
 unsigned g_4ebe[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};   /* DS:4EBE */
@@ -75,6 +72,11 @@ unsigned char g_4eee[16] = {1, 1, 2, 3, 4, 2, 3, 5, 6, 6, 4, 7, 7, 5, 8, 8};   /
 unsigned char g_4efe[16] = {0, 255, 0, 0, 0, 255, 255, 0, 255, 0, 255, 255, 0, 255, 255, 0};   /* DS:4EFE */
 int g_4f0e = 1;   /* DS:4F0E */
 
+/* F_15396 @ 0F38:6016 (linear 0x15396, 65 bytes)
+
+   Seek the DOS file handle to the absolute position pos (INT 21h function 42h, method 0).
+   Returns 0 on success, else the error in _doserrno, also copied to errno */
+
 int F_15396(int handle, long pos)
 {
     union REGS in, out;
@@ -89,7 +91,9 @@ int F_15396(int handle, long pos)
     return errno = _doserrno;
 }
 
-/* F_153D7: map a picture number to its table index: numbers from 1000 on are shifted down, the rest
+/* F_153D7 @ 0F38:6057 (linear 0x153D7, 50 bytes)
+
+   Map a picture number to its table index: numbers from 1000 on are shifted down, the rest
    are 1 based. In the video modes -2 and -6 that is the result, else g_07c6 translates it */
 
 static int near F_153D7(int n)
@@ -104,7 +108,9 @@ static int near F_153D7(int n)
         return n;
 }
 
-/* F_15409: make sure the picture file holding picture number n is open (the pictures come in two
+/* F_15409 @ 0F38:6089 (linear 0x15409, 290 bytes)
+
+   Make sure the picture file holding picture number n is open (the pictures come in two
    files, split at h_8bc8). Closes the other one, asks for the right disk until the open works
    and checks the file header word */
 
@@ -145,7 +151,9 @@ static void near F_15409(int n)
     }
 }
 
-/* F_1552B: read the picture headers of one picture file into g_slot: which 1 is the first file,
+/* F_1552B @ 0F38:61AB (linear 0x1552B, 271 bytes)
+
+   Read the picture headers of one picture file into g_slot: which 1 is the first file,
    anything else the second (its entries follow the first file's, h_8bc8 of them). Clears the
    run time fields of each entry. Returns the largest data size found */
 
@@ -183,7 +191,9 @@ int F_1552B(int which)
     return height;
 }
 
-/* F_1563A: bring picture number n into memory. With load set the picture goes through a work
+/* F_1563A @ 0F38:62BA (linear 0x1563A, 676 bytes)
+
+   Bring picture number n into memory. With load set the picture goes through a work
    area in the fast pool (F_03967) and is copied there after it has been read; otherwise it is read
    into dst, or into a new block when dst is 0. The file position and the disk are looked after by
    F_15409 and the read is repeated after asking for the disk again when the data does not start
@@ -261,7 +271,7 @@ bad:
     F_00FEA();
 }
 
-/* F_158DE @ 0F38:65DE (linear 0x158DE, 80 bytes)
+/* F_158DE @ 0F38:655E (linear 0x158DE, 80 bytes)
 
    Frees and clears the far pointer in slot n of the far table g_slot. */
 
@@ -276,7 +286,9 @@ void F_158DE(int n)
     }
 }
 
-/* F_1592E: unpack picture number id into the bitmap bm (a new one when bm is 0). The picture is
+/* F_1592E @ 0F38:65AE (linear 0x1592E, 593 bytes)
+
+   Unpack picture number id into the bitmap bm (a new one when bm is 0). The picture is
    loaded to the work area ab7564z first; its data is RLE coded (F_0E926) and expanded for the video
    mode in use into the planes bits and alt of the bitmap. Returns the bitmap */
 
@@ -335,7 +347,9 @@ struct Bitmap far *F_1592E(int id, struct Bitmap far *bm)
     return pic;
 }
 
-/* F_15B7F: fields of slot picture number n: *w, *h and the byte *x */
+/* F_15B7F @ 0F38:67FF (linear 0x15B7F, 63 bytes)
+
+   Fields of slot picture number n: *w, *h and the byte *x */
 
 void F_15B7F(int n, int *w, int *h, int *x)
 {
@@ -345,7 +359,9 @@ void F_15B7F(int n, int *w, int *h, int *x)
     *x = g_slot[n].f6;
 }
 
-/* F_15BBE: allocate a bitmap of the given mode for slot picture id, draw the picture into it
+/* F_15BBE @ 0F38:683E (linear 0x15BBE, 73 bytes)
+
+   Allocate a bitmap of the given mode for slot picture id, draw the picture into it
    (F_1592E) and return it */
 
 struct Bitmap far *F_15BBE(int id, int mode)
@@ -361,7 +377,9 @@ struct Bitmap far *F_15BBE(int id, int mode)
     return bm;
 }
 
-/* F_15C07: load every picture of the zero terminated list of picture numbers (see F_1563A). Does
+/* F_15C07 @ 0F38:6887 (linear 0x15C07, 67 bytes)
+
+   Load every picture of the zero terminated list of picture numbers (see F_1563A). Does
    nothing when g_0280 is set. Returns 1 */
 
 int F_15C07(int *list)
@@ -375,7 +393,9 @@ int F_15C07(int *list)
     return 1;
 }
 
-/* F_15C4A: try the pictures of the zero terminated list in turn with F_1563A (load flag 0) and
+/* F_15C4A @ 0F38:68CA (linear 0x15C4A, 75 bytes)
+
+   Try the pictures of the zero terminated list in turn with F_1563A (load flag 0) and
    count the ones that succeed. A failure ends the walk unless all is set. Returns the count */
 
 int F_15C4A(int *list, int all)
@@ -394,7 +414,9 @@ int F_15C4A(int *list, int all)
     return count;
 }
 
-/* F_15C95: free the pictures listed in the zero terminated array of picture numbers */
+/* F_15C95 @ 0F38:6915 (linear 0x15C95, 46 bytes)
+
+   Free the pictures listed in the zero terminated array of picture numbers */
 
 void F_15C95(int *list)
 {
@@ -404,7 +426,9 @@ void F_15C95(int *list)
         F_158DE(n);
 }
 
-/* F_15CC3: open the two picture files (names aw8dd4x and au8dd6y, drive letter patched into their
+/* F_15CC3 @ 0F38:6943 (linear 0x15CC3, 566 bytes)
+
+   Open the two picture files (names aw8dd4x and au8dd6y, drive letter patched into their
    first character) and read the entry counts h_8bc8 and s_8dd2 from their headers. disks is the
    number of disk drives wanted: 2 only when the equipment word says there are two floppies. mode 2
    and 5 pick the other file names. Any failure shows an error text */
@@ -465,12 +489,14 @@ void F_15CC3(int disks, int mode)
     }
 }
 
-/* F_15EF9: load the game data. Builds the file name g_6c72a from the first two characters of
+char g_4f3a[12] = "?:hall_dat";   /* DS:4F3A */
+
+/* F_15EF9 @ 0F38:6B79 (linear 0x15EF9, 196 bytes)
+
+   Load the game data. Builds the file name g_6c72a from the first two characters of
    au8dd6y and the text g_4ea2 points to (g_4ea2 ends up behind its terminator), opens it and
    reads the 13 blocks of the data table (buffer g_4ea4[i], size g_4ebe[i]); any failure shows an
    error text. Ends by loading the hall of fame (F_16089) */
-
-char g_4f3a[12] = "?:hall_dat";   /* DS:4F3A */
 
 void F_15EF9(void)
 {
@@ -499,7 +525,9 @@ void F_15EF9(void)
     F_16089();
 }
 
-/* F_15FBD: make sure the game disk is in the drive: tries to open the file g_6c72a (asking for
+/* F_15FBD @ 0F38:6C3D (linear 0x15FBD, 146 bytes)
+
+   Make sure the game disk is in the drive: tries to open the file g_6c72a (asking for
    disk 2 again and again) and closes it. From the third drive on (g_6c68 > 2, a hard disk) it
    returns the drive letter code g_6c68 + 0x40 at once. Otherwise returns the first character of
    g_6c72a */
@@ -527,7 +555,9 @@ int F_15FBD(void)
     }
 }
 
-/* F_1604F: set the high bit of all 230 bytes of aytablex (10 hall of fame entries of 23 bytes) to scramble
+/* F_1604F @ 0F38:6CCF (linear 0x1604F, 29 bytes)
+
+   Set the high bit of all 230 bytes of aytablex (10 hall of fame entries of 23 bytes) to scramble
    it before it is written to the file (see F_16152) */
 
 static void near F_1604F(void)
@@ -538,7 +568,9 @@ static void near F_1604F(void)
         ((char *)aytablex)[i] |= 0x80;
 }
 
-/* F_1606C: clear the high bit of all 230 bytes of aytablex again, unscrambling the hall of fame */
+/* F_1606C @ 0F38:6CEC (linear 0x1606C, 29 bytes)
+
+   Clear the high bit of all 230 bytes of aytablex again, unscrambling the hall of fame */
 
 static void near F_1606C(void)
 {
@@ -548,7 +580,9 @@ static void near F_1606C(void)
         ((char *)aytablex)[i] &= 0x7f;
 }
 
-/* F_16089: read the hall of fame file (name g_4f3a, first character the drive of the game disk):
+/* F_16089 @ 0F38:6D09 (linear 0x16089, 201 bytes)
+
+   Read the hall of fame file (name g_4f3a, first character the drive of the game disk):
    a count word, then bucount entries. Any read failure shows the error text. A missing file
    leaves the table empty */
 
@@ -579,7 +613,9 @@ void F_16089(void)
     }
 }
 
-/* F_16152: write the hall of fame file (g_4f3a): the table is scrambled (F_1604F), the file made
+/* F_16152 @ 0F38:6DD2 (linear 0x16152, 312 bytes)
+
+   Write the hall of fame file (g_4f3a): the table is scrambled (F_1604F), the file made
    (asking for the disk until it works on a floppy), the count word and the bucount entries
    written. Any failure shows the error text and deletes the file. The table is unscrambled at
    the end (F_1606C) */

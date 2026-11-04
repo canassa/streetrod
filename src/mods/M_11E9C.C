@@ -24,7 +24,9 @@ unsigned F_11E9C(unsigned n)
     return n * g_cursor2.size;
 }
 
-/* F_11EA8: set up the off-screen work bitmap and the scratch strip used by the pop-up code */
+/* F_11EA8 @ 0F38:2B28 (linear 0x11EA8, 598 bytes)
+
+   Set up the off-screen work bitmap and the scratch strip used by the pop-up code */
 
 void F_11EA8(void)
 {
@@ -86,7 +88,9 @@ void F_11EA8(void)
     ap8247u = 2;
 }
 
-/* F_120FE: mouse cursor control. mode >= 0 selects cursor shape number mode and moves it to the
+/* F_120FE @ 0F38:2D7E (linear 0x120FE, 269 bytes)
+
+   Mouse cursor control. mode >= 0 selects cursor shape number mode and moves it to the
    (clamped) mouse position; -1/-2 show it and -3/-4 hide it (nested by a counter). */
 
 void F_120FE(int mode)
@@ -124,7 +128,9 @@ void F_120FE(int mode)
     }
 }
 
-/* F_1220B: move the saved-background cursor strip to (x, y): restore what it covered, save and draw anew */
+/* F_1220B @ 0F38:2E8B (linear 0x1220B, 488 bytes)
+
+   Move the saved-background cursor strip to (x, y): restore what it covered, save and draw anew */
 
 void F_1220B(int x, int y)
 {

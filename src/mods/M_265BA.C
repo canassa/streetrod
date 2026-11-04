@@ -43,7 +43,9 @@ int g_5e0e = 0;   /* DS:5E0E */
 int g_5e10 = 0;   /* DS:5E10 */
 int g_5e12 = 0;   /* DS:5E12 */
 
-/* F_265BA @ 2645:016A: near wrapper around random_int, used by the track builder */
+/* F_265BA @ 2645:016A (linear 0x265BA, 16 bytes)
+
+   Near wrapper around random_int, used by the track builder */
 
 static int near F_265BA(int n)
 {
@@ -181,7 +183,9 @@ static void near F_26B1A(void)
         g_terrain2[i] = g_6dfeaa;
 }
 
-/* F_26BAD (near, builds a terrain hill section) */
+/* F_26BAD @ 2645:075D (linear 0x26BAD, 149 bytes)
+
+   Builds a terrain hill section */
 
 static void near F_26BAD(void)
 {
@@ -200,7 +204,9 @@ static void near F_26BAD(void)
         g_terrain2[i] = g_6dfeaa;
 }
 
-/* F_26C42 (near, builds a terrain hill section) */
+/* F_26C42 @ 2645:07F2 (linear 0x26C42, 147 bytes)
+
+   Builds a terrain hill section */
 
 static void near F_26C42(void)
 {
@@ -219,7 +225,9 @@ static void near F_26C42(void)
         g_terrain2[i] = g_6dfeaa;
 }
 
-/* F_26CD5 (near, builds a terrain hill section) */
+/* F_26CD5 @ 2645:0885 (linear 0x26CD5, 149 bytes)
+
+   Builds a terrain hill section */
 
 static void near F_26CD5(void)
 {

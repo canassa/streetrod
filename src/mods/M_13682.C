@@ -3,7 +3,9 @@
 #include "M_0F38A.H"
 #include "M_10B7C.H"
 
-/* F_13682: fill the rectangle (x, y, w, h) of bitmap s with colour x_colors.c[2], clipped to its size,
+/* F_13682 @ 0F38:4302 (linear 0x13682, 154 bytes)
+
+   Fill the rectangle (x, y, w, h) of bitmap s with colour x_colors.c[2], clipped to its size,
    one horizontal line at a time through the line routine a_78d2 */
 
 void F_13682(struct Bitmap far *s, int x, int y, int w, int h)
@@ -30,7 +32,9 @@ void F_13682(struct Bitmap far *s, int x, int y, int w, int h)
     at767ct = oldoff;
 }
 
-/* F_1371C: vertical line of height h at (x, y) in bitmap s with colour x_colors.c[3], clipped to the bitmap */
+/* F_1371C @ 0F38:439C (linear 0x1371C, 99 bytes)
+
+   Vertical line of height h at (x, y) in bitmap s with colour x_colors.c[3], clipped to the bitmap */
 
 void F_1371C(struct Bitmap far *s, int x, int y, int h)
 {
@@ -48,7 +52,9 @@ void F_1371C(struct Bitmap far *s, int x, int y, int h)
     at767ct = oldoff;
 }
 
-/* F_1377F: horizontal line of width w at (x, y) in bitmap s, drawn with colour x_colors.c[3] */
+/* F_1377F @ 0F38:43FF (linear 0x1377F, 51 bytes)
+
+   Horizontal line of width w at (x, y) in bitmap s, drawn with colour x_colors.c[3] */
 
 void F_1377F(struct Bitmap far *s, int x, int y, int w)
 {
@@ -60,7 +66,9 @@ void F_1377F(struct Bitmap far *s, int x, int y, int w)
     x_colors.c[2] = old;
 }
 
-/* F_137B2: draw a raised box frame of width 3 around the rectangle (x, y, w, h) of bitmap s: four
+/* F_137B2 @ 0F38:4432 (linear 0x137B2, 421 bytes)
+
+   Draw a raised box frame of width 3 around the rectangle (x, y, w, h) of bitmap s: four
    filled bars in colour x_colors.c[2] (x_colors.c[3] when the style in x_colors.c[4] is 3), then an inner
    highlight made of two vertical and two horizontal lines, doubled when the style is 2 */
 
@@ -104,7 +112,9 @@ void F_137B2(struct Bitmap far *s, int x, int y, int w, int h)
     }
 }
 
-/* F_13957: draw a frame around the rectangle (x, y, w, h) of bitmap s, one pixel outside it:
+/* F_13957 @ 0F38:45D7 (linear 0x13957, 134 bytes)
+
+   Draw a frame around the rectangle (x, y, w, h) of bitmap s, one pixel outside it:
    two vertical lines and two horizontal ones */
 
 void F_13957(struct Bitmap far *s, int x, int y, int w, int h)

@@ -142,7 +142,9 @@ void F_065AF(int a1)
 char *g_5082[4] = {"June", "July", "August", "September"};   /* DS:5082 */
 int g_508a[5] = {11, 13, 9, 10, 12};   /* DS:508A */
 
-/* F_06750 @ 0000:6750 (linear 0x06750, 127 bytes)  - draws the current date ("Month day, 1963") */
+/* F_06750 @ 0000:6750 (linear 0x06750, 127 bytes)
+
+   Draws the current date ("Month day, 1963") */
 
 void F_06750(int x)
 {
@@ -212,7 +214,9 @@ static void near F_068B3(void)
         g_09f4[F_06827(g_508a[i])].f0 = 14;
 }
 
-/* F_068E8 @ 0000:68E8 (linear 0x068E8, 446 bytes) - rect + hotspot setup for the 5 button rects of panel n */
+/* F_068E8 @ 0000:68E8 (linear 0x068E8, 446 bytes)
+
+   Rect + hotspot setup for the 5 button rects of panel n */
 
 static void near F_068E8(int n, int x, int y)
 {
@@ -393,7 +397,7 @@ int near F_06B06(int mode)
     return r;
 }
 
-/* F_06F6B @ 0000:6F6B (linear 0x06f6b, 431 bytes) */
+/* F_06F6B @ 0000:6F6B (linear 0x06F6B, 431 bytes) */
 
 void near F_06F6B(void)
 {
@@ -453,7 +457,7 @@ void near F_06F6B(void)
     }
 }
 
-/* F_0711A @ 0000:711A (linear 0x0711a, 589 bytes) */
+/* F_0711A @ 0000:711A (linear 0x0711A, 589 bytes) */
 
 void near F_0711A(unsigned mask)
 {
@@ -1010,7 +1014,9 @@ static void near F_07FB1(struct Car *car)
     F_13F21(1);
 }
 
-/* F_081AB @ 0000:81AB (linear 0x081AB, 2938 bytes): the garage screen: install, remove and tune parts */
+/* F_081AB @ 0000:81AB (linear 0x081AB, 2938 bytes)
+
+   The garage screen: install, remove and tune parts */
 
 void near F_081AB(struct Car *car)
 {

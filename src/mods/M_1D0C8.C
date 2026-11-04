@@ -10,7 +10,9 @@
 
 static void near F_1D0C8(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Clip *o);
 
-/* F_1D0C8: copy a clipped rectangle from an interleaved (CGA) bitmap to a linear one */
+/* F_1D0C8 @ 1C11:0FB8 (linear 0x1D0C8, 205 bytes)
+
+   Copy a clipped rectangle from an interleaved (CGA) bitmap to a linear one */
 
 static void near F_1D0C8(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Clip *o)
 {
@@ -47,7 +49,9 @@ static void near F_1D0C8(struct Bitmap far *bm1, struct Bitmap far *bm2, struct 
     }
 }
 
-/* F_1D195: masked blit between three bitmaps, clipped, through the assembly blitter */
+/* F_1D195 @ 1C11:1085 (linear 0x1D195, 205 bytes)
+
+   Masked blit between three bitmaps, clipped, through the assembly blitter */
 
 void F_1D195(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *bm3, struct Blt *r)
 {
@@ -71,7 +75,9 @@ void F_1D195(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *
     }
 }
 
-/* F_1D262: masked blit into a linear or CGA-interleaved bitmap through one of two assembly line routines */
+/* F_1D262 @ 1C11:1152 (linear 0x1D262, 358 bytes)
+
+   Masked blit into a linear or CGA-interleaved bitmap through one of two assembly line routines */
 
 void F_1D262(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int flag)
 {
@@ -126,7 +132,9 @@ void F_1D262(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int 
     }
 }
 
-/* F_1D3C8: clipped blit between bitmaps, picking the plain or CGA-interleaved copy routine */
+/* F_1D3C8 @ 1C11:12B8 (linear 0x1D3C8, 456 bytes)
+
+   Clipped blit between bitmaps, picking the plain or CGA-interleaved copy routine */
 
 void F_1D3C8(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int flags)
 {

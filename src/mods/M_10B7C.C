@@ -144,6 +144,8 @@ void F_10BD9(struct Bitmap far *front, struct Bitmap far *back)
     }
 }
 
+/* F_10D6C @ 0F38:19EC (linear 0x10D6C, 115 bytes) */
+
 void F_10D6C(int n)
 {
     struct Obj *o;
@@ -158,6 +160,8 @@ void F_10D6C(int n)
     if (o->f4)
         F_019BC(n);
 }
+
+/* F_10DDF @ 0F38:1A5F (linear 0x10DDF, 94 bytes) */
 
 static void near F_10DDF(void)
 {
@@ -178,7 +182,9 @@ static void near F_10DDF(void)
     }
 }
 
-/* F_10E3D @ 0F38:1ABD (linear 0x10E3D, 780 bytes): run the script of one Obj slot */
+/* F_10E3D @ 0F38:1ABD (linear 0x10E3D, 780 bytes)
+
+   Run the script of one Obj slot */
 
 static void near F_10E3D(int n)
 {
@@ -269,6 +275,8 @@ static void near F_10E3D(int n)
     }
 }
 
+/* F_11149 @ 0F38:1DC9 (linear 0x11149, 120 bytes) */
+
 int F_11149(int n)
 {
     int i;
@@ -286,6 +294,8 @@ int F_11149(int n)
     return i;
 }
 
+/* F_111C1 @ 0F38:1E41 (linear 0x111C1, 49 bytes) */
+
 void F_111C1(int n)
 {
     int k;
@@ -295,10 +305,14 @@ void F_111C1(int n)
     F_10E3D(k);
 }
 
+/* F_111F2 @ 0F38:1E72 (linear 0x111F2, 33 bytes) */
+
 int F_111F2(int n)
 {
     return g_58f0[g_59f8[n]].a >= 0;
 }
+
+/* F_11213 @ 0F38:1E93 (linear 0x11213, 184 bytes) */
 
 int F_11213(struct Obj *o, struct Cmd *c)
 {
@@ -327,7 +341,9 @@ int F_11213(struct Obj *o, struct Cmd *c)
     }
 }
 
-/* F_112CB: set EGA palette register reg to color (BIOS int 10h function 10h), waiting for vertical retrace */
+/* F_112CB @ 0F38:1F4B (linear 0x112CB, 89 bytes)
+
+   Set EGA palette register reg to color (BIOS int 10h function 10h), waiting for vertical retrace */
 
 void F_112CB(int reg, char color)
 {
@@ -348,7 +364,9 @@ void F_112CB(int reg, char color)
 
 char iz8248;
 
-/* F_11324: load all 16 EGA palette registers plus the overscan color (BIOS int 10h function 10h, al = 2) */
+/* F_11324 @ 0F38:1FA4 (linear 0x11324, 124 bytes)
+
+   Load all 16 EGA palette registers plus the overscan color (BIOS int 10h function 10h, al = 2) */
 
 void F_11324(char *table)
 {

@@ -4,7 +4,9 @@
 #include "M_00D58.H"
 #include "M_02B9A.H"
 
-/* F_16D1A: mouse driver present? Returns the INT 33h reset result (0 if the vector is empty) */
+/* F_16D1A @ 0F38:799A (linear 0x16D1A, 61 bytes)
+
+   Mouse driver present? Returns the INT 33h reset result (0 if the vector is empty) */
 
 int F_16D1A(void)
 {
@@ -18,7 +20,9 @@ int F_16D1A(void)
     return r.x.ax;
 }
 
-/* F_16D57: mouse function 3, buttons: bl bit 0 and bit 1 stored in two globals */
+/* F_16D57 @ 0F38:79D7 (linear 0x16D57, 61 bytes)
+
+   Mouse function 3, buttons: bl bit 0 and bit 1 stored in two globals */
 
 void F_16D57(void)
 {
@@ -31,7 +35,9 @@ void F_16D57(void)
     g_5f0 = r.h.bl & 2;
 }
 
-/* F_16D94: mouse function 0Bh, motion counters returned through two pointers */
+/* F_16D94 @ 0F38:7A14 (linear 0x16D94, 51 bytes)
+
+   Mouse function 0Bh, motion counters returned through two pointers */
 
 void F_16D94(int *dx, int *dy)
 {
@@ -44,7 +50,9 @@ void F_16D94(int *dx, int *dy)
     *dy = r.x.dx;
 }
 
-/* F_16DC7: mouse motion polling; accumulates mickeys and converts to pixel steps */
+/* F_16DC7 @ 0F38:7A47 (linear 0x16DC7, 218 bytes)
+
+   Mouse motion polling; accumulates mickeys and converts to pixel steps */
 
 void F_16DC7(void)
 {

@@ -8,11 +8,13 @@
 static void near F_238A2(unsigned char *p, int n, int len);
 static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int off, int shift);
 
-/* F_238A2 @ 21A0:1EA2: shift a row of bytes right (n > 0) or left (n < 0) by n bits, carrying between bytes */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
-
 unsigned char g_5c16[8] = {128, 192, 224, 240, 248, 252, 254, 255};   /* DS:5C16 */
 int g_5c1e = 0;   /* DS:5C1E */
+
+/* F_238A2 @ 21A0:1EA2 (linear 0x238A2, 235 bytes)
+
+   Shift a row of bytes right (n > 0) or left (n < 0) by n bits, carrying between bytes */
+/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 static void near F_238A2(unsigned char *p, int n, int len)
 {
@@ -50,7 +52,9 @@ static void near F_238A2(unsigned char *p, int n, int len)
     }
 }
 
-/* F_2398D @ 21A0:1F8D: write one 4 plane row (40 bytes per plane) to planar VGA memory, shifted and edge masked */
+/* F_2398D @ 21A0:1F8D (linear 0x2398D, 686 bytes)
+
+   Write one 4 plane row (40 bytes per plane) to planar VGA memory, shifted and edge masked */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int off, int shift)
@@ -148,7 +152,9 @@ static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int 
     outp(0x3c5, 0xf);
 }
 
-/* F_23C3B @ 21A0:223B: copy a rectangle of a planar VGA bitmap to another, via a per-row 4 plane buffer */
+/* F_23C3B @ 21A0:223B (linear 0x23C3B, 383 bytes)
+
+   Copy a rectangle of a planar VGA bitmap to another, via a per-row 4 plane buffer */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 /* The empty if before the loop is load-bearing: it leaves no code but ends the basic block that
    holds the r->sx / 8 CSE in si, so /Ol does not give it a stack slot (the original has none).

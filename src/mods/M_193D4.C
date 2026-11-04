@@ -3,7 +3,7 @@
 #include "M_00000.H"
 #include "M_1923C.H"
 
-/* F_193D4 @ 0F38:A054 (linear 0x193d4, 42 bytes) */
+/* F_193D4 @ 0F38:A054 (linear 0x193D4, 42 bytes) */
 
 void F_193D4(void)
 {
@@ -12,7 +12,7 @@ void F_193D4(void)
     g_0294 = 0;
 }
 
-/* F_193FE @ 0F38:A07E (linear 0x193fe, 32 bytes) */
+/* F_193FE @ 0F38:A07E (linear 0x193FE, 32 bytes) */
 
 void F_193FE(void)
 {

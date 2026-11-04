@@ -7,12 +7,14 @@
 
 #pragma intrinsic(inp, outp)
 
-/* F_1628A: start the sound song with its tone list tones. Song bs79aa's own song restarts the
-   first voice (g_58d4 = 1); any other song goes into the second voice ao79c6t (g_58d4 = 2), the
-   first voice's on/off state g_58d0 is saved in g_58d6 meanwhile */
-
 int g_57f6[3][8] = {{0, 1, 2, 1, 0, -1, -2, -1}, {0, 1, 2, 3, 4, 5, 6, 7}, {0, 1, 0, 0, 0, 0, 0, 0}};   /* DS:57F6 */
 struct Tone g_tones[5] = {{0, 0, 0, 0, 0}, {0, 0, 0, 8, 10}, {0, 0, 4, 8, 1}, {0, 0, 6, 8, 1}, {0, 2, 5, 2, 1}};   /* DS:5826 */
+
+/* F_1628A @ 0F38:6F0A (linear 0x1628A, 179 bytes)
+
+   Start the sound song with its tone list tones. Song bs79aa's own song restarts the
+   first voice (g_58d4 = 1); any other song goes into the second voice ao79c6t (g_58d4 = 2), the
+   first voice's on/off state g_58d0 is saved in g_58d6 meanwhile */
 
 void F_1628A(void far *song, void *tones)
 {
@@ -42,7 +44,9 @@ void F_1628A(void far *song, void *tones)
     }
 }
 
-/* F_1633D @ 0F38:6FBD: if on, fill the first entry of the sound table; t_72ec = on either way */
+/* F_1633D @ 0F38:6FBD (linear 0x1633D, 47 bytes)
+
+   If on, fill the first entry of the sound table; t_72ec = on either way */
 
 void F_1633D(int on, int a, int b, int c, int d)
 {
@@ -56,6 +60,8 @@ void F_1633D(int on, int a, int b, int c, int d)
     t_72ec = on;
 }
 
+/* F_1636C @ 0F38:6FEC (linear 0x1636C, 21 bytes) */
+
 void F_1636C(void)
 {
     t_72ec = 0;
@@ -63,7 +69,9 @@ void F_1636C(void)
     F_01A7C();
 }
 
-/* F_16381 @ 0F38:7001: toggle between two states (calls F_00D99 on entering, F_00DD8 on leaving) */
+/* F_16381 @ 0F38:7001 (linear 0x16381, 61 bytes)
+
+   Toggle between two states (calls F_00D99 on entering, F_00DD8 on leaving) */
 
 void F_16381(int on)
 {

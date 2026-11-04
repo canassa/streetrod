@@ -11,7 +11,9 @@
 
 #pragma intrinsic(inp, outp)
 
-/* F_23262 @ 21A0:1862: copy a rectangle between planar VGA bitmaps, plane by plane */
+/* F_23262 @ 21A0:1862 (linear 0x23262, 647 bytes)
+
+   Copy a rectangle between planar VGA bitmaps, plane by plane */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void F_23262(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, int flags)
@@ -94,7 +96,9 @@ void F_23262(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, i
     }
 }
 
-/* F_234E9 @ 21A0:1AE9: masked blit between planar VGA bitmaps */
+/* F_234E9 @ 21A0:1AE9 (linear 0x234E9, 492 bytes)
+
+   Masked blit between planar VGA bitmaps */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void F_234E9(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *bm3,
@@ -173,7 +177,9 @@ void F_234E9(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *
     }
 }
 
-/* F_236D5 @ 21A0:1CD5: blit between planar VGA bitmaps through one of two hand-written plane routines */
+/* F_236D5 @ 21A0:1CD5 (linear 0x236D5, 344 bytes)
+
+   Blit between planar VGA bitmaps through one of two hand-written plane routines */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void F_236D5(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int flag)
@@ -227,8 +233,6 @@ void F_236D5(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int 
     }
 }
 
-/* F_2382D @ 21A0:1E2D: copy a w by h block of planar VGA video memory using write mode 1 (latch copy) */
-
 /* The file is compiled /Oals, but this copy loop is a plain /Ol-off loop in the
    shipped code (byte moves through memory variables). Under /Ol MSC turns the
    inner loop into rep movsw, and every for/while/do form gets registers and
@@ -236,6 +240,10 @@ void F_236D5(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int 
    second byte's latches are written to both bytes), a likely reason the
    programmer switched the loop optimizer off here. */
 #pragma loop_opt(off)
+
+/* F_2382D @ 21A0:1E2D (linear 0x2382D, 117 bytes)
+
+   Copy a w by h block of planar VGA video memory using write mode 1 (latch copy) */
 
 void F_2382D(char far *src, int w, int h, char far *dst, int pitch)
 {

@@ -693,7 +693,9 @@ static void near F_0A265(void)
     F_13F21(1);
 }
 
-/* F_0A35C @ 0000:A35C (linear 0x0A35C, 186 bytes) - blit sprite-sheet cell n (7 per row) of bm into dst */
+/* F_0A35C @ 0000:A35C (linear 0x0A35C, 186 bytes)
+
+   Blit sprite-sheet cell n (7 per row) of bm into dst */
 
 static void near F_0A35C(struct Bitmap far *bm, int n, struct Bitmap far *dst)
 {

@@ -12,7 +12,9 @@
 
 static void near F_1D8C4(struct Rect *rect, struct Bitmap far *bm2, struct Bitmap far *bm1, int flag);
 
-/* F_1D8C4: blit the part of one bitmap that lies under a rectangle */
+/* F_1D8C4 @ 1C11:17B4 (linear 0x1D8C4, 97 bytes)
+
+   Blit the part of one bitmap that lies under a rectangle */
 
 static void near F_1D8C4(struct Rect *rect, struct Bitmap far *bm2, struct Bitmap far *bm1, int flag)
 {
@@ -25,7 +27,10 @@ static void near F_1D8C4(struct Rect *rect, struct Bitmap far *bm2, struct Bitma
     F_1D3C8(bm1, bm2, (struct Blt *)&c, 1);
 }
 
-/* F_1D925: erase and redraw one sprite: restore the background under its old rectangles, draw it over the screen pg and advance it */
+/* F_1D925 @ 1C11:1815 (linear 0x1D925, 1021 bytes)
+
+   Erase and redraw one sprite: restore the background under its old rectangles, draw it over the
+   screen pg and advance it */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 int F_1D925(struct Sprite *s)

@@ -129,7 +129,7 @@ struct Bitmap far *bz8b7ex;
 int far *am8b82y;
 struct Bitmap far *ak8bcat;
 
-/* F_286D8 @ 2645:22D8 (linear 0x286D8, 116 bytes) */
+/* F_286D8 @ 2645:2288 (linear 0x286D8, 116 bytes) */
 
 static void near F_286D8(void)
 {
@@ -907,14 +907,14 @@ static void near F_29BFF(int a, int b, int c, int d, int e, int f, int rev)
     }
 }
 
-/* F_29E2E @ (linear 0x29E2E) */
+/* F_29E2E @ 2645:39DE (linear 0x29E2E, 47 bytes) */
 
 static void near F_29E2E(void)
 {
     F_2992A(*g_6e12, *g_6e0awz, *g_6e1e, *g_6e1a, *g_6e0cvz, *g_6e14, 1);
 }
 
-/* F_29E5D @ (linear 0x29E5D) */
+/* F_29E5D @ 2645:3A0D (linear 0x29E5D, 46 bytes) */
 
 static void near F_29E5D(void)
 {
@@ -932,14 +932,14 @@ static void near F_29E8B(int n)
     F_29398(n);
 }
 
-/* F_29EA7 @ (linear 0x29EA7) */
+/* F_29EA7 @ 2645:3A57 (linear 0x29EA7, 47 bytes) */
 
 static void near F_29EA7(void)
 {
     F_29BFF(*g_6e12, *g_6e0awz, *g_6e1e, *g_6e1a, *g_6e0cvz, *g_6e14, 1);
 }
 
-/* F_29ED6 @ (linear 0x29ED6) */
+/* F_29ED6 @ 2645:3A86 (linear 0x29ED6, 46 bytes) */
 
 static void near F_29ED6(void)
 {

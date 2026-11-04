@@ -739,8 +739,6 @@ int F_01B91(int x)
     return -1;
 }
 
-/* F_01BAE @ 0000:1bae (linear 0x01bae, 1076 bytes) */
-
 /* Loop optimization is off from here to the end of the file. The file is
    compiled /Oalsi, but in the shipped code the loops of F_01BAE, F_01FE2 and
    F_0238C (the timer interrupt handler) are plain /Ol-off loops: counters and
@@ -748,6 +746,8 @@ int F_01B91(int x)
    variables. No for/while/do formulation reproduces that under /Ol (/Ol takes
    every such loop here); this one pragma reproduces all three functions. */
 #pragma loop_opt(off)
+
+/* F_01BAE @ 0000:1BAE (linear 0x01BAE, 1076 bytes) */
 
 void F_01BAE(void)
 {
@@ -914,7 +914,7 @@ void F_01BAE(void)
     F_02E93();
 }
 
-/* F_01FE2 @ 0000:1fe2 (linear 0x01fe2, 914 bytes) */
+/* F_01FE2 @ 0000:1FE2 (linear 0x01FE2, 914 bytes) */
 
 void interrupt far F_01FE2(void)
 {

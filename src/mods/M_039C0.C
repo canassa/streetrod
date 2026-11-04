@@ -52,6 +52,8 @@ int g_4f4e[5] = {1022, 1023, 1025, 1024, 1026};   /* DS:4F4E */
 int g_4f58 = 0;   /* DS:4F58 */
 int g_4f5a = -1;   /* DS:4F5A */
 
+/* F_039C0 @ 0000:39C0 (linear 0x039C0, 195 bytes) */
+
 static int near F_039C0(void)
 {
     F_1013D(0);
@@ -81,6 +83,8 @@ static int near F_039C0(void)
     return -1;
 }
 
+/* F_03A83 @ 0000:3A83 (linear 0x03A83, 53 bytes) */
+
 void F_03A83(int a)
 {
     g_05cc = a + g_tick;
@@ -89,6 +93,8 @@ void F_03A83(int a)
     g_05cc = 0;
     g_05d0 = 0;
 }
+
+/* F_03AB8 @ 0000:3AB8 (linear 0x03AB8, 84 bytes) */
 
 void F_03AB8(int n)
 {
@@ -103,6 +109,8 @@ void F_03AB8(int n)
     g_05cc = saved;
 }
 
+/* F_03B0C @ 0000:3B0C (linear 0x03B0C, 39 bytes) */
+
 static int near F_03B0C(void)
 {
     if (a_7eaap.m7eb6 > 15) {
@@ -115,6 +123,8 @@ static int near F_03B0C(void)
     }
     return 0;
 }
+
+/* F_03B33 @ 0000:3B33 (linear 0x03B33, 232 bytes) */
 
 static int near F_03B33(void)
 {
@@ -178,13 +188,13 @@ int F_03C5A(struct Node *n)
     return r;
 }
 
-/* F_03C8D @ 0000:3C8D (linear 0x03C8D, 804 bytes) */
-
 /* The file is compiled /Oalsi, but the loops of F_03C8D are plain /Ol-off
    loops in the shipped code (list counters and pointers kept in memory, test
    reached by a jmp). No for/while/do formulation reproduces that under /Ol,
    so loop optimization is switched off for this function only. */
 #pragma loop_opt(off)
+
+/* F_03C8D @ 0000:3C8D (linear 0x03C8D, 804 bytes) */
 
 static void near F_03C8D(void)
 {

@@ -73,7 +73,7 @@ static void near F_0F38A(int x, int y, int w, int h, int kind)
     (*b_78a2)(r_vid.mode == -2 ? bm7678 : g82b4s, bm7678, &pkt, 1);
 }
 
-/* F_0F418 @ 0E9F:0A28 (linear 0x0F418, 159 bytes) */
+/* F_0F418 @ 0F38:0098 (linear 0x0F418, 159 bytes) */
 
 static void near F_0F418(int x, int y, int w, int h, int kind)
 {
@@ -131,7 +131,7 @@ void F_0F552(int i)
     }
 }
 
-/* F_0F62E @ 0E9F:0C3E (linear 0x0F62E, 155 bytes) */
+/* F_0F62E @ 0F38:02AE (linear 0x0F62E, 155 bytes) */
 
 void F_0F62E(int i, int *x1, int *y1, int *x2, int *y2)
 {
@@ -171,7 +171,7 @@ void F_0F6C9(int v)
     }
 }
 
-/* F_0F7A5 @ 0F38:0425 (linear 0x0F7A5) */
+/* F_0F7A5 @ 0F38:0425 (linear 0x0F7A5, 461 bytes) */
 
 int F_0F7A5(int cur, int old, int flag)
 {
@@ -283,11 +283,15 @@ void F_0F972(void)
     at767ct = soffn;
 }
 
+/* F_0FEAD @ 0F38:0B2D (linear 0x0FEAD, 18 bytes) */
+
 void F_0FEAD(void)
 {
     F_11324(g_0452);
     gz8249 = 0;
 }
+
+/* F_0FEBF @ 0F38:0B3F (linear 0x0FEBF, 18 bytes) */
 
 void F_0FEBF(void)
 {

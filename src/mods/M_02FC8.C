@@ -27,14 +27,14 @@ static void near insert_entry(int pos);
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Entry aytablex[10];
 
+struct ManualEntry g_manual[51] = {{2, 2}, {3, 11}, {4, 6}, {6, 5}, {7, 9}, {8, 1}, {9, 4}, {10, 6}, {11, 10}, {12, 1}, {14, 7}, {15, 12}, {16, 2}, {18, 3}, {19, 11}, {20, 5}, {22, 10}, {23, 6}, {1, 3}, {2, 5}, {3, 9}, {4, 4}, {5, 8}, {6, 10}, {7, 7}, {8, 2}, {9, 12}, {10, 5}, {11, 1}, {12, 3}, {13, 11}, {14, 9}, {15, 8}, {16, 4}, {17, 6}, {18, 1}, {19, 10}, {20, 8}, {21, 9}, {22, 12}, {23, 7}, {24, 2}, {25, 3}, {26, 1}, {27, 8}, {28, 5}, {29, 11}, {30, 10}, {31, 4}, {32, 12}, {33, 9}};   /* DS:4B62 */
+int g_4bc8 = 0;   /* DS:4BC8 */
+int g_4bca[10] = {59, 70, 81, 92, 103, 114, 125, 136, 147, 158};   /* DS:4BCA */
+
 /* protect_check @ 0000:2FC8 (linear 0x02FC8, 403 bytes)
 
    The manual lookup copy protection: asks for the colour of the car key or car
    icon on a random manual page and returns 1 if the answer matches. */
-
-struct ManualEntry g_manual[51] = {{2, 2}, {3, 11}, {4, 6}, {6, 5}, {7, 9}, {8, 1}, {9, 4}, {10, 6}, {11, 10}, {12, 1}, {14, 7}, {15, 12}, {16, 2}, {18, 3}, {19, 11}, {20, 5}, {22, 10}, {23, 6}, {1, 3}, {2, 5}, {3, 9}, {4, 4}, {5, 8}, {6, 10}, {7, 7}, {8, 2}, {9, 12}, {10, 5}, {11, 1}, {12, 3}, {13, 11}, {14, 9}, {15, 8}, {16, 4}, {17, 6}, {18, 1}, {19, 10}, {20, 8}, {21, 9}, {22, 12}, {23, 7}, {24, 2}, {25, 3}, {26, 1}, {27, 8}, {28, 5}, {29, 11}, {30, 10}, {31, 4}, {32, 12}, {33, 9}};   /* DS:4B62 */
-int g_4bc8 = 0;   /* DS:4BC8 */
-int g_4bca[10] = {59, 70, 81, 92, 103, 114, 125, 136, 147, 158};   /* DS:4BCA */
 
 int protect_check(void)
 {
@@ -81,6 +81,8 @@ int protect_check(void)
         return 0;
     return 1;
 }
+
+/* F_0315B @ 0000:315B (linear 0x0315B, 373 bytes) */
 
 int F_0315B(void)
 {
@@ -177,6 +179,8 @@ static int near score_index(void)
 struct Colors g_4be2 = {{3, 5, 5, 4, 1}};   /* DS:4BE2 */
 struct Colors g_4be8 = {{3, 4, 4, 3, 1}};   /* DS:4BE8 */
 char g_4bed = 0;   /* DS:4BED */
+
+/* F_0339F @ 0000:339F (linear 0x0339F, 628 bytes) */
 
 void F_0339F(int add)
 {

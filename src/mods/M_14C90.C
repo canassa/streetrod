@@ -15,11 +15,13 @@
 #include "M_163BE.H"
 #include "M_19ED0.H"
 
-/* F_14C90: line editor. Edit the string buf (at most max characters, clipped to the width of
+char g_09f2 = 0;   /* DS:09F2 */
+
+/* F_14C90 @ 0F38:5910 (linear 0x14C90, 1063 bytes)
+
+   Line editor. Edit the string buf (at most max characters, clipped to the width of
    the back bitmap) at x, y on the back page until Enter or a negative event; backspace, printable
    characters 0x20..0x5A (digits only when g_09f2), a blinking block cursor. Returns the last key. */
-
-char g_09f2 = 0;   /* DS:09F2 */
 
 int F_14C90(int x, int y, char *buf, int max)
 {
@@ -131,7 +133,9 @@ int F_14C90(int x, int y, char *buf, int max)
     return key;
 }
 
-/* F_150B7: number prompt: draw the prompt s at (x, y) in the style's colours, let the player edit a
+/* F_150B7 @ 0F38:5D37 (linear 0x150B7, 112 bytes)
+
+   Number prompt: draw the prompt s at (x, y) in the style's colours, let the player edit a
    text of up to 20 characters at (g824cd, bq824e) and store its value in *out. Returns the result
    of the editor when that is 0 or negative, else 0 */
 
@@ -150,7 +154,9 @@ int F_150B7(int x, int y, char *s, int *out)
     return rl > 0 ? 0 : rl;
 }
 
-/* F_15127: number field of the current hot spot az8ba2t: edit a text into buf (at most 10 characters,
+/* F_15127 @ 0F38:5DA7 (linear 0x15127, 119 bytes)
+
+   Number field of the current hot spot az8ba2t: edit a text into buf (at most 10 characters,
    fewer when the box is narrow: 6 pixels each) with the spot's colours and store its value in *out.
    Returns the editor's result when that is 0 or negative, else 0 */
 
@@ -167,7 +173,9 @@ int F_15127(int *out, char *buf)
     return rl > 0 ? 0 : rl;
 }
 
-/* F_1519E: show hot spot id, read a number into *out with F_15127 and close the spot again;
+/* F_1519E @ 0F38:5E1E (linear 0x1519E, 54 bytes)
+
+   Show hot spot id, read a number into *out with F_15127 and close the spot again;
    returns the editor's result */
 
 int F_1519E(int id, int *out)
@@ -182,7 +190,9 @@ int F_1519E(int id, int *out)
     return res;
 }
 
-/* F_151D4: show hot spot id and let the player edit the text s (at most len characters) in its box
+/* F_151D4 @ 0F38:5E54 (linear 0x151D4, 98 bytes)
+
+   Show hot spot id and let the player edit the text s (at most len characters) in its box
    with the spot's colours; returns the editor's result when that is 0 or negative, else 0 */
 
 int F_151D4(int id, int len, char *s)

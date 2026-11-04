@@ -368,7 +368,9 @@ int near F_05B4A(void)
     return 0;
 }
 
-/* F_05EB3 @ 0000:5EB3 (linear 0x05EB3, 55 bytes)  - true if the string is only spaces and underscores */
+/* F_05EB3 @ 0000:5EB3 (linear 0x05EB3, 55 bytes)
+
+   True if the string is only spaces and underscores */
 
 static int near F_05EB3(char *p)
 {

@@ -9,7 +9,9 @@
 
 static void near F_23F68(struct Rect *r, struct Bitmap far *dst, struct Bitmap far *src, int rows);
 
-/* F_23F68 @ 21A0:2568: copy a rectangle between two planar bitmaps with F_24E78 */
+/* F_23F68 @ 21A0:2568 (linear 0x23F68, 113 bytes)
+
+   Copy a rectangle between two planar bitmaps with F_24E78 */
 
 static void near F_23F68(struct Rect *r, struct Bitmap far *dst, struct Bitmap far *src, int rows)
 {
@@ -19,7 +21,9 @@ static void near F_23F68(struct Rect *r, struct Bitmap far *dst, struct Bitmap f
             r->y2 - r->y1 + 1, r->x1 >> 3, r->y1, dst->pitch);
 }
 
-/* F_23FD9 @ 21A0:25D9: advance a sprite to its next display page and redraw it there */
+/* F_23FD9 @ 21A0:25D9 (linear 0x23FD9, 787 bytes)
+
+   Advance a sprite to its next display page and redraw it there */
 
 int F_23FD9(struct Sprite *s)
 {

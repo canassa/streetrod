@@ -24,7 +24,9 @@ struct Seq g_5a86[4] = {{78, 3, 0}, {3, 2, 0}, {3, 1, 0}, {-1, 0, 0}};   /* DS:5
 struct Seq g_5a96[4] = {{4, -1, 0}, {3, -2, 0}, {77, -3, 0}, {-1, 0, 0}};   /* DS:5A96 */
 char g_5aa6 = 0;   /* DS:5AA6 */
 
-/* F_18BDC: cut a sheet bitmap into equal cells, one sub-bitmap per cell */
+/* F_18BDC @ 0F38:985C (linear 0x18BDC, 179 bytes)
+
+   Cut a sheet bitmap into equal cells, one sub-bitmap per cell */
 
 static void near F_18BDC(struct Bitmap far **out, int n)
 {
@@ -53,7 +55,9 @@ static void near F_18BDC(struct Bitmap far **out, int n)
     }
 }
 
-/* F_18C8F: draw a bitmap into the work area, then copy it on to the front buffer */
+/* F_18C8F @ 0F38:990F (linear 0x18C8F, 202 bytes)
+
+   Draw a bitmap into the work area, then copy it on to the front buffer */
 
 static void near F_18C8F(struct Bitmap far **pbm)
 {
@@ -68,7 +72,10 @@ static void near F_18C8F(struct Bitmap far **pbm)
     }
 }
 
-/* F_18D59: build the sprite animation of a moving car body: the cells from the sheet, the pages, the 0x54 step run */
+/* F_18D59 @ 0F38:99D9 (linear 0x18D59, 1156 bytes)
+
+   Build the sprite animation of a moving car body: the cells from the sheet, the pages, the 0x54
+   step run */
 
 void F_18D59(int a, int b)
 {
@@ -174,7 +181,9 @@ void F_18D59(int a, int b)
     F_193FE();
 }
 
-/* F_191DD: allocate the 0x30 x 0x29 bitmap g_6ccc and clear a 200 x 68 rectangle of it */
+/* F_191DD @ 0F38:9E5D (linear 0x191DD, 94 bytes)
+
+   Allocate the 0x30 x 0x29 bitmap g_6ccc and clear a 200 x 68 rectangle of it */
 
 void F_191DD(void)
 {

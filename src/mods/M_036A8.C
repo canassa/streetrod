@@ -19,12 +19,16 @@ int data_segment(void)
     return segs.ds;
 }
 
+/* F_036BE @ 0000:36BE (linear 0x036BE, 24 bytes) */
+
 void near F_036BE(void)
 {
     _amblksiz = 0x800;
     g_6c60 = data_segment();
     F_03614(1);
 }
+
+/* F_036D6 @ 0000:36D6 (linear 0x036D6, 19 bytes) */
 
 void F_036D6(void far *p)
 {
@@ -47,6 +51,8 @@ void out_of_memory(void)
     F_00FEA();
 }
 
+/* F_03709 @ 0000:3709 (linear 0x03709, 98 bytes) */
+
 char far *F_03709(unsigned n, int fatal)
 {
     char far *p;
@@ -63,6 +69,8 @@ char far *F_03709(unsigned n, int fatal)
     else
         return 0;
 }
+
+/* F_0376B @ 0000:376B (linear 0x0376B, 277 bytes) */
 
 struct Bitmap far *F_0376B(int w, int h, int flags, int c, struct Bitmap far *mem)
 {
@@ -108,6 +116,8 @@ struct Bitmap far *F_0376B(int w, int h, int flags, int c, struct Bitmap far *me
     return bm;
 }
 
+/* F_03880 @ 0000:3880 (linear 0x03880, 132 bytes) */
+
 struct Bitmap far *F_03880(char far *bits, char far *alt, int w, int h, int flags)
 {
     int pitch;
@@ -129,6 +139,8 @@ struct Bitmap far *F_03880(char far *bits, char far *alt, int w, int h, int flag
     return bm;
 }
 
+/* F_03904 @ 0000:3904 (linear 0x03904, 99 bytes) */
+
 void F_03904(struct Bitmap far *bm, char far *bits, char far *alt, int w, int h, int flags)
 {
     int pitch;
@@ -144,6 +156,8 @@ void F_03904(struct Bitmap far *bm, char far *bits, char far *alt, int w, int h,
     bm->pitch = pitch;
     bm->flags = flags;
 }
+
+/* F_03967 @ 0000:3967 (linear 0x03967, 88 bytes) */
 
 char far *F_03967(unsigned size, char *pool)
 {
