@@ -3,7 +3,6 @@
 ; other segment, which is what orders the _TEXT of the runtime between segments
 ; 1C11 and 2196. Small model rejects .CODE name (A2063), so the far code has its own SEGMENT.
 
-; sr-member 0x21962
 ; F_21962 @ 2196:0002 (linear 0x21962, 27 bytes)
 ; Busy-wait delay: L21962_spin for n * g_58e2 units, in 16-bit chunks of a LOOP count
 ; (the high byte of the product counts the outer repetitions).
@@ -18,52 +17,6 @@ _g_58de LABEL BYTE ; +58DE int @
         PUBLIC _g_58e0
 _g_58e0 LABEL BYTE ; +58E0 int @
         DW 01h
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 S2196_TEXT SEGMENT WORD PUBLIC 'CODE'
         ASSUME  CS:S2196_TEXT
@@ -89,7 +42,6 @@ L21962_spin:
 _F_21962  ENDP
 S2196_TEXT ENDS
 
-; sr-member 0x2197D
 ; F_2197D @ 1C11:586D (linear 0x2197D, 136 bytes)
 ; Play a tune on the PC speaker. The argument points at a table of
 ; 3-word records (length, two frequency counters, duty/step word) ending
@@ -175,4 +127,5 @@ L2197D_done:
         ret
 _F_2197D  ENDP
 S2196_TEXT ENDS
+
         END

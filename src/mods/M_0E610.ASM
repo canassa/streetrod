@@ -1,25 +1,9 @@
         .MODEL MEDIUM
 
-; sr-member 0x0E610
 ; F_0E610 @ 0000:E610 (linear 0x0E610, 31 bytes)
 ; Restore the equipment byte and the BIOS video mode saved by F_0E62F.
 
         .DATA
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         EXTRN   _F_0E781:FAR
         ; data (recovered DGROUP layout)
@@ -48,33 +32,7 @@ S_5afa LABEL BYTE
 S_5b00 LABEL BYTE
         DB 'CGA', 0 ; +5B00
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        .CODE
+        .CODE S0000_TEXT
 
         PUBLIC  _F_0E610
 _F_0E610  PROC  FAR
@@ -97,7 +55,6 @@ _F_0E610  PROC  FAR
         ret
 _F_0E610  ENDP
 
-; sr-member 0x0E62F
 ; F_0E62F @ 0000:E62F (linear 0x0E62F, 146 bytes)
 ; Video adapter detection: saves the current mode and equipment byte,
 ; asks the EGA BIOS, falls back to probing the CRTC cursor register (VGA/CGA).
@@ -106,7 +63,7 @@ _F_0E610  ENDP
         EXTRN   _g_0250:WORD
         EXTRN   _g_0252:WORD
 
-        .CODE
+        .CODE S0000_TEXT
 
         PUBLIC  _F_0E62F
 _F_0E62F  PROC  FAR
@@ -174,4 +131,5 @@ L0E62F_done:
         pop     bp
         ret
 _F_0E62F  ENDP
+
         END

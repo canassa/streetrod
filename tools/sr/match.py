@@ -13,9 +13,10 @@ class Result:
         self.mismatches = mismatches
         self.nearcalls = nearcalls
         self.masked = masked
+        self.near_targets = []  # original targets of the near calls counted in `nearcalls`
         self.refs = None
         self.lint = []
-        self.module = None      # the module gate, when the function is built as part of one
+        self.module = None      # the gate of the function's whole file
 
     @property
     def verdict(self):
@@ -34,7 +35,7 @@ class Result:
         s = (f"{v}: {len(self.mismatches)} mismatched bytes, {self.masked} fixup bytes masked, "
              f"size {self.size_obj} vs original {self.size_exe}")
         if self.nearcalls:
-            s += f", {self.nearcalls} near call displacement(s) not verifiable in isolation"
+            s += f", {self.nearcalls} near call(s) to other objects (verified by the layout build)"
         if self.refs is not None and (self.mismatches or self.size_exe != self.size_obj):
             s += "; refs: not checked until the bytes line up"
         elif self.refs is not None:
@@ -55,17 +56,18 @@ def compare(obj, proc, img, addr, size):
         olen = size
     exe = linear(img, addr, addr + size)
     near_ok = set()
-    nearcalls = 0
+    targets = []
     for ins in exe:
         rel = ins.addr - addr
         if ins.bytes[0] != 0xE8 or ins.size != 3 or rel + 3 > olen or obj.code[o0 + rel] != 0xE8:
             continue
         if bytes(obj.code[o0 + rel + 1 : o0 + rel + 3]) == ins.bytes[1:3]:
             continue
-        # A near call out of the function: its displacement depends on where the callee
-        # sits in the original module, which a one-function compile can't reproduce.
+        # A near call out of the function whose displacement the object leaves to LINK (or
+        # that depends on where the callee sits): the file's gate resolves calls inside the
+        # file; a call to another object is only verified by the linked layout build.
         if not addr <= branch_target(ins) < addr + size:
-            nearcalls += 1
+            targets.append(branch_target(ins))
             near_ok.update((rel + 1, rel + 2))
     mism, masked = [], 0
     for i in range(min(olen, size)):
@@ -76,7 +78,9 @@ def compare(obj, proc, img, addr, size):
             continue
         if obj.code[o0 + i] != img[addr + i]:
             mism.append(i)
-    return Result(size, olen, mism, nearcalls, masked)
+    res = Result(size, olen, mism, len(targets), masked)
+    res.near_targets = targets
+    return res
 
 
 def _key(ins, base_ip):

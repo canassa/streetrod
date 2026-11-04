@@ -1,11 +1,10 @@
         .MODEL MEDIUM
 
-; sr-member 0x1C11C
 ; F_1C11C @ 1c11:000c (linear 0x1C11C, 48 bytes)
 ; Copy a rectangle of bytes between far buffers:
 ; blit_rect(src far, dst far, width, rows, src_skip, dst_skip)
 
-        .CODE
+        .CODE S1C11_TEXT
 
         PUBLIC  _blit_rect
 _blit_rect  PROC  FAR
@@ -41,7 +40,6 @@ L1C11C_done:
         ret
 _blit_rect  ENDP
 
-; sr-member 0x1C14C
 ; F_1C14C @ 1C11:003C (linear 0x1C14C, 136 bytes)
 ; Copy rows of bytes into an interleaved (CGA/Hercules style) screen:
 ; the destination row address alternates between the even bank and the
@@ -52,7 +50,7 @@ _blit_rect  ENDP
         .DATA
         EXTRN   _g_0042:WORD
 
-        .CODE
+        .CODE S1C11_TEXT
 
         PUBLIC  _F_1C14C
 _F_1C14C  PROC    FAR
@@ -126,7 +124,6 @@ L1C14C_done:
         ret
 _F_1C14C  ENDP
 
-; sr-member 0x1C1D4
 ; F_1C1D4 @ 1C11:00C4 (linear 0x1C1D4, 228 bytes)
 ; Copy a rectangle between two interleaved (CGA/Hercules style) screens
 ; of 80 bytes per line, the odd lines living 0x2000 bytes after the even ones:
@@ -135,7 +132,7 @@ _F_1C14C  ENDP
         .DATA
         EXTRN   _g_0042:WORD
 
-        .CODE
+        .CODE S1C11_TEXT
 
         PUBLIC  _F_1C1D4
 _F_1C1D4  PROC    FAR
@@ -246,7 +243,6 @@ L1C1D4_done:
         ret
 _F_1C1D4  ENDP
 
-; sr-member 0x1C2B8
 ; F_1C2B8 @ 1C11:01A8 (linear 0x1C2B8, 18 bytes)
 ; Install the default blit hooks: copy the 15-entry far-pointer table
 ; at g_5b04 over the hook table starting at b_78a2.
@@ -255,7 +251,7 @@ _F_1C1D4  ENDP
         EXTRN   _b_78a2:DWORD
         EXTRN   _g_5b04:DWORD
 
-        .CODE
+        .CODE S1C11_TEXT
 
         PUBLIC  _F_1C2B8
 _F_1C2B8  PROC    FAR
@@ -271,4 +267,5 @@ _F_1C2B8  PROC    FAR
         pop     di
         ret
 _F_1C2B8  ENDP
+
         END

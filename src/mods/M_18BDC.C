@@ -26,7 +26,6 @@ char g_5aa6 = 0;   /* DS:5AA6 */
 
 /* F_18BDC: cut a sheet bitmap into equal cells, one sub-bitmap per cell */
 
-
 static void near F_18BDC(struct Bitmap far **out, int n)
 {
     int id5;
@@ -56,7 +55,6 @@ static void near F_18BDC(struct Bitmap far **out, int n)
 
 /* F_18C8F: draw a bitmap into the work area, then copy it on to the front buffer */
 
-
 static void near F_18C8F(struct Bitmap far **pbm)
 {
     int w, x, h;
@@ -71,7 +69,6 @@ static void near F_18C8F(struct Bitmap far **pbm)
 }
 
 /* F_18D59: build the sprite animation of a moving car body: the cells from the sheet, the pages, the 0x54 step run */
-
 
 void F_18D59(int a, int b)
 {
@@ -175,4 +172,19 @@ void F_18D59(int a, int b)
     if (r_vid.mode != -2)
         (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
     F_193FE();
+}
+
+/* F_191DD: allocate the 0x30 x 0x29 bitmap g_6ccc and clear a 200 x 68 rectangle of it */
+
+void F_191DD(void)
+{
+    struct Blt pkt;
+
+    g_6ccc = F_1934E(0x30, 0x29, 0, 0);
+    pkt.w = g_6ccc->width;
+    pkt.h = g_6ccc->height;
+    pkt.sx = 200;
+    pkt.sy = 68;
+    pkt.dx = pkt.dy = 0;
+    (*b_78a2)(r_vid.back, g_6ccc, &pkt, 1);
 }

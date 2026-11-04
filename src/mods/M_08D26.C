@@ -9,6 +9,8 @@
 #include "M_10B7C.H"
 #include "M_113A2.H"
 #include "M_11E9C.H"
+#include "M_163BE.H"
+#include "M_16EA2.H"
 #include "M_174A6.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
@@ -18,7 +20,6 @@ char g_51ac = -1;   /* DS:51AC */
 char g_51ad = -1;   /* DS:51AD */
 
 /* F_08D26 @ 0000:8D26 (linear 0x08D26, 118 bytes) */
-
 
 void F_08D26(void)
 {
@@ -41,7 +42,6 @@ void F_08D26(void)
 }
 
 /* F_08D9C @ 0000:8D9C (linear 0x08D9C, 145 bytes) */
-
 
 void F_08D9C(int mode)
 {
@@ -67,4 +67,29 @@ void F_08D9C(int mode)
         (*(char *)&g_palette[12]) = a;
         (*(char *)&g_palette[3]) = b;
     }
+}
+
+int g7d66n;
+
+/* F_08E2D @ 0000:8E2D (linear 0x08E2D, 123 bytes) */
+
+int F_08E2D(void)
+{
+    int r, saved;
+
+    if (bw8aca)
+        (*bl78be)();
+    ao8228u = g7d66n = 0;
+    saved = m_8272.m827c;
+    F_067CF(a_7eaap.m7eb0->f4);
+    if (bw8aca)
+        F_08D9C(saved);
+    r = F_16EA2();
+    F_16AC1(0);
+    F_16AA8(0);
+    g_472a = g_4746;
+    g_472c = g_4748;
+    g_4746 = 0;
+    g_4748 = 0;
+    return r;
 }

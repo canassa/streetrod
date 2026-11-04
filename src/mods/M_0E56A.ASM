@@ -1,56 +1,9 @@
         .MODEL MEDIUM
 
-; sr-member 0x0E56A
 ; F_0E56A @ 0000:E56A (linear 0x0E56A, 26 bytes)
 ; Is there RAM at es:3FFFh that holds a written value? Result in ZF
 ; (equal: the byte at 7FFFh read back the same after the increment).
         .DATA
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         ; data (recovered DGROUP layout)
         PUBLIC _g_5580
@@ -645,7 +598,7 @@ _g_579f LABEL BYTE ; +579F struct KeyMap *@[]
         DW OFFSET DGROUP:_g_5580+540
         DB 0 ; +57F5 alignment
 
-        .CODE
+        .CODE S0000_TEXT
 
         PUBLIC  _F_0E56A
 _F_0E56A  PROC  FAR
@@ -657,13 +610,11 @@ _F_0E56A  PROC  FAR
         ret
 _F_0E56A  ENDP
 
-; sr-member 0x0E584
 ; F_0E584 @ 0000:E584 (linear 0x0E584, 63 bytes)
 ; Hercules detection: does the status port 3BAh toggle bit 7, and is
 ; there memory at B000h that survives the config switch.
 
-        .CODE
-
+        .CODE S0000_TEXT
 
         PUBLIC  _F_0E584
 _F_0E584  PROC  FAR
@@ -703,11 +654,10 @@ L0E584_done:
         ret
 _F_0E584  ENDP
 
-; sr-member 0x0E5C3
 ; F_0E5C3 @ 0000:E5C3 (linear 0x0E5C3, 14 bytes)
 ; BIOS equipment word: 0x30 in the video bits means monochrome.
 
-        .CODE
+        .CODE S0000_TEXT
 
         PUBLIC  _F_0E5C3
 _F_0E5C3  PROC  FAR
@@ -719,4 +669,5 @@ _F_0E5C3  PROC  FAR
 L0E5C3_mono:
         ret
 _F_0E5C3  ENDP
+
         END

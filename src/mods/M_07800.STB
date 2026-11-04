@@ -1,5 +1,0 @@
-#include "STRUCTS.H"
-@F_076A7
-@F_07741
-@F_077B7
-static void near F_07789(struct Node **slot) { }

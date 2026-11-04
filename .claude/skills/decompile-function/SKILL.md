@@ -1,21 +1,21 @@
 ---
 name: decompile-function
-description: Reconstruct ONE Street Rod function so it byte-matches the original, as C under MSC 5.1 or, for hand-written routines, as MASM 5.1 asm, using the ./sr loop (pick → show → new → write source → check/diff → record). Use when asked to decompile, match or migrate a function by address or name, or to "do the next one".
+description: Reconstruct or rework ONE Street Rod function in its source file so it byte-matches the original, as C under MSC 5.1 or, for hand-written routines, as MASM 5.1 asm, using the ./sr loop (show → edit in its file → check/diff → record). Use when asked to decompile, match, rewrite or fix a function by address or name.
 ---
 
 # decompile-function
 
 The per-function loop. `./sr check` is the oracle: `MATCH` (or `MATCH*`) is done, anything else isn't.
 
+All 572 game functions are matched and live in their original object's file (`src/mods/M_xxxxx.C|ASM`, one per link unit of `src/link/LAYOUT.JSON`). A function is always edited in that file and compiled with the whole file: there are no per-function files, placeholders or flags any more. A function the scanner newly finds goes into the file whose span contains it (extend the unit's `end` in LAYOUT.JSON if needed).
+
 ## 0. Pick
 
 ```
-./sr next                 # smallest todo C functions
-./sr next --near 2fc8     # neighbours of a matched function: same module, likely same flags
-./sr show <addr>          # read it first: size, far/near, callers, callees, strings
+./sr next                 # smallest todo C functions (none left today)
+./sr show <addr>          # read it first: size, far/near, callers, callees, strings, its file and flags
 ```
-
-Prefer neighbours of matched functions: they share the module's flags and conventions. The scanner's `kind` is a guess: if the disassembly looks hand-written (see the recipe book's fingerprints), correct it with `./sr kind <addr> asm -m "<the tell>"` and take the asm path in step 2.
+ The scanner's `kind` is a guess: if the disassembly looks hand-written (see the recipe book's fingerprints), correct it with `./sr kind <addr> asm -m "<the tell>"` and take the asm path in step 2.
 
 ## 1. Read the disassembly
 
@@ -31,32 +31,29 @@ Prefer neighbours of matched functions: they share the module's flags and conven
 
 ## 2. Write the C
 
-```
-./sr new <addr>           # creates src/funcs/F_xxxxx.C, marks wip
-```
+Edit the function where it is in its file (`./sr show` prints the file and its command line). Write it the way a 1989 MSC programmer would have (CLAUDE.md rule 1): real string literals, no inline asm, no byte tricks. Run `./sr headers` after using another file's symbol; declare nothing in the file except `static ... near` forward declarations of the file's own static functions (rule 4).
 
-Write the function the way a 1989 MSC programmer would have (CLAUDE.md rule 1): real string literals, no inline asm, no byte tricks. A new `src/funcs` file includes `"STRUCTS.H"` plus any standard MSC headers; run `./sr headers` to add the per-file headers of what it uses. Declare nothing in the file (rule 4).
+**Hand-written functions** are `PROC`s in the file's `.ASM`: named local labels (unique in the file: MASM 5.1 labels are file-global without a `.MODEL` language), `EXTRN` in `.DATA` for DGROUP globals (`EXTRN _g_47ea:BYTE`) and for callees in other files, instructions rather than `db`. `ret` inside a `FAR` proc assembles to `retf`. The file's `.CODE S<region>_TEXT` names the shared code segment. `./sr check` finds the function by its `PUBLIC` (`_name`) and takes its extent from the `PROC` length in the listing. See the recipe book's MASM section for encoding gotchas.
 
-**Hand-written functions:** `./sr new <addr> --asm` creates a MASM 5.1 skeleton (`.MODEL MEDIUM`, `.CODE`, a `PUBLIC` far or near `PROC`). Write it as the original programmer would: named local labels, `EXTRN` in `.DATA` for DGROUP globals (`EXTRN _g_47ea:BYTE`) and in `.CODE` for callees, instructions rather than `db`. `ret` inside a `FAR` proc assembles to `retf`. `./sr check` finds the function by its `PUBLIC` (`_name`) and measures to the next `PUBLIC`. See the recipe book's MASM section for encoding gotchas.
-
-**Same-module callees.** If the original calls a function with `push cs; call near`, it was in the same source file. List it in `src/funcs/F_xxxxx.STB`, which `sr` prepends at build time: a far callee is one line `@F_xxxxx` (the placeholder is generated from its DB prototype, so set that first with `./sr proto`); a near (`static`) one is a hand-written trivial definition `static T near X(...) { }`. Keep the `.C` itself free of placeholders: a far callee's prototype comes from its file's header; a near one is forward-declared in the `.C` as `static T near X(...);`. A prototype inferred only from callers is a guess: say so with `./sr note` on the callee.
+**Callees.** `push cs; call near` in the original means the callee is in the same file, which it now really is. A call to a function of another file (far, or a public near function in the same code segment) needs that file's header prototype (`./sr proto`). A prototype inferred only from callers is a guess: say so with `./sr note` on the callee.
 
 The procedure name must equal the DB name (`./sr name` it first, or keep `F_xxxxx`), because `./sr check` finds the procedure by that name in the listing.
 
 ## 3. Check, diff, iterate
 
 ```
-./sr check <addr>         # MATCH / MATCH* / DIFF, records result, prints the locals layout
+./sr check <addr>         # compiles the whole file: MATCH / MATCH* / DIFF, the file gate, the locals layout
 ./sr diff <addr>          # where it diverges, instruction by instruction
 ```
 
-- **First DIFF in a new area:** once the control flow is right (sweep can't find `/Ol` before the loops exist), run `./sr sweep <addr>` once. If a recipe gives 0, record it with `./sr flags <addr> ...`, and say so in the diary: it probably applies to the whole module.
+- **Flags are the file's** (`./sr flags FILE`). `./sr sweep <addr>` compiles the whole file under other flag sets, but changing a file's flags changes all its functions: a function that only matches with other flags points at a source difference (or, for a whole loop shape, a real `#pragma loop_opt`), not at new flags.
 - **After that, a DIFF is a source difference.** Look up the first divergent instruction in `msc51-recipe-book` and fix the C. Don't keep sweeping flags.
 - **Wrong `[bp-N]` offsets only:** the locals have the right sizes but the names order them differently (CLAUDE.md rule 3). `./sr check` prints the layout. Read the slot order off the original, then `./sr layout -w NAMES...` (top of the frame first) gives renames and a declaration order that reproduce it while keeping your names where it can. `./sr layout NAMES` predicts a layout without compiling.
 - **Correct instructions but stubborn stack-slot differences:** do not assume every stack store names a local. Reconstruct related CSEs together, including their pointer/address expression and the control flow that bounds them. For 0x04036, removing only wd2 reduced the diff to five bytes; removing q and wd too, using repeated indexed reads and ternary assignments through the following loop, gave the complete match. Explicit if/else statements changed that CSE region.
 - **Frame too big by 2 per `register` variable:** if the original has no home for the `si`/`di` value, drop the variable and write the expression at each use (MSC's CSE register); if it has one, move the register variable into the block that uses it (recipe book).
 - **`refs: ... WRONG`:** the bytes match but a reference doesn't: wrong global, wrong callee, or a different string. Fix the source or the DB name; it's never noise once the bytes line up.
-- **`MATCH*`:** fine. The near-call displacements will be verified once the function is compiled together with its module.
+- **`MATCH*`:** fine. The function near-calls a public near function of another object; `./sr build` verifies those encodings (`Near-call encodings: 748/748 exact`).
+- **`MODULE DIFF`** (the file gate): something between or across functions moved: a function's size, the bytes between two procedures, an internal call. Fix it before anything else; `./sr build` must stay IDENTICAL.
 
 ## 4. Record
 
@@ -64,6 +61,7 @@ On `MATCH`, `./sr check` sets `status=matched`. Then:
 
 ```
 ./sr check --all          # nothing else regressed
+./sr build                # must end with `Packed EXE vs orig/SR.EXE: IDENTICAL`
 ./sr status               # refresh docs/PROGRESS.md
 ```
 

@@ -1,12 +1,11 @@
         .MODEL MEDIUM
 
-; sr-member 0x02DB6
 ; F_02DB6 @ 0000:2DB6 (linear 0x02DB6, 13 bytes)
 
         .DATA
         EXTRN   _g_47d0:BYTE
 
-        .CODE
+        .CODE S0000_TEXT
 
         PUBLIC  _F_02DB6
 _F_02DB6  PROC  FAR
@@ -18,14 +17,13 @@ _F_02DB6  PROC  FAR
         ret
 _F_02DB6  ENDP
 
-; sr-member 0x02DC3
 ; F_02DC3 @ 0000:2DC3 (linear 0x02DC3, 31 bytes)
 
         .DATA
         EXTRN   _g_47d4:WORD
         EXTRN   _g_47d6:WORD
 
-        .CODE
+        .CODE S0000_TEXT
         EXTRN   _F_02C42:FAR
 
         PUBLIC  _F_02DC3
@@ -45,4 +43,5 @@ _F_02DC3  PROC  FAR
         pop     ds
         ret
 _F_02DC3  ENDP
+
         END

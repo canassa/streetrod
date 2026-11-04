@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS functions (
     far        INTEGER NOT NULL,      -- 1 if it returns with RETF
     name       TEXT,                  -- C identifier once known
     status     TEXT NOT NULL DEFAULT 'todo',  -- todo | wip | matched | partial | blocked | skip
-    src        TEXT,                  -- source file, relative to the project root
-    flags      TEXT,                  -- CL flags when not the default
+    src        TEXT,                  -- its source file (src/mods/, one per original object); its
+                                      -- flags are the file's, in src/link/LAYOUT.JSON
     mismatches INTEGER,               -- last check: differing bytes (excl. fixups)
     nearcalls  INTEGER,               -- last check: near-call displacements not verifiable
     notes      TEXT,
@@ -55,8 +55,7 @@ CREATE TABLE IF NOT EXISTS aliases (
 
 _MIGRATIONS = (
     ("globals", "decl", "TEXT"),
-    ("functions", "proto", "TEXT"),
-    ("functions", "module", "TEXT"),  # src/mods/ file it is built in, when grouped  # prototype with @ for the name, e.g. "int far @(int n)"
+    ("functions", "proto", "TEXT"),  # prototype with @ for the name, e.g. "int far @(int n)"
 )
 
 

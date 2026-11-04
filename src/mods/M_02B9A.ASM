@@ -1,47 +1,8 @@
         .MODEL MEDIUM
 
-; sr-member 0x02B9A
 ; F_02B9A @ 0000:2B9A (linear 0x02B9A, 19 bytes)
 
         .DATA
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         ; data (recovered DGROUP layout)
         PUBLIC _g_4718
@@ -842,7 +803,7 @@ _g_49e0 LABEL BYTE ; +49E0 int @[]
         DW 00h
         DW 00h
 
-        .CODE
+        .CODE S0000_TEXT
 
         PUBLIC  _F_02B9A
 _F_02B9A  PROC  FAR
@@ -858,12 +819,11 @@ _F_02B9A  PROC  FAR
         ret
 _F_02B9A  ENDP
 
-; sr-member 0x02BAD
 ; set_g47ec_47ed @ 0000:2BAD (linear 0x02BAD, 19 bytes)
 
         .DATA
 
-        .CODE
+        .CODE S0000_TEXT
 
         PUBLIC  _set_g47ec_47ed
 _set_g47ec_47ed  PROC  FAR
@@ -879,12 +839,11 @@ _set_g47ec_47ed  PROC  FAR
         ret
 _set_g47ec_47ed  ENDP
 
-; sr-member 0x02BC0
 ; F_02BC0 @ 0000:2BC0 (linear 0x02BC0, 34 bytes)
 
         .DATA
 
-        .CODE
+        .CODE S0000_TEXT
 
         PUBLIC  _F_02BC0
 _F_02BC0  PROC  FAR
@@ -907,12 +866,11 @@ _F_02BC0  PROC  FAR
         ret
 _F_02BC0  ENDP
 
-; sr-member 0x02BE2
 ; F_02BE2 @ 0000:2BC0 (linear 0x02BE2, 34 bytes)
 
         .DATA
 
-        .CODE
+        .CODE S0000_TEXT
 
         PUBLIC  _F_02BE2
 _F_02BE2  PROC  FAR
@@ -934,4 +892,5 @@ _F_02BE2  PROC  FAR
         pop     bp
         ret
 _F_02BE2  ENDP
+
         END

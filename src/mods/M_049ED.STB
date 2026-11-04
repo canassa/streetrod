@@ -1,5 +1,0 @@
-#include "STRUCTS.H"
-static int near F_04940(unsigned *price) { return 0; }
-@F_043BF
-@F_049A2
-@F_03AB8

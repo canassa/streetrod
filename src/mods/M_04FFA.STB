@@ -1,9 +1,0 @@
-@F_03A83
-#include "STRUCTS.H"
-static int near F_039C0(void) { return 0; }
-static int near F_03B33(void) { return 0; }
-static void near F_0442B(int r) { }
-static int near F_03B0C(void) { return 0; }
-static void near F_03C8D(void) { }
-static int near F_049ED(void) { return 0; }
-@F_03AB8

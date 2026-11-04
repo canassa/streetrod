@@ -1,10 +1,11 @@
-"""File-local statics: the listing gives their _BSS offsets, a merged unit defines each once."""
+"""File-local statics: the listing gives their _BSS offsets, a source file defines each once."""
 from pathlib import Path
 import sys
+import re
 import tempfile
 import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
-from sr import cod, module
+from sr import cod, fileheaders, module
 
 LISTING = """_BSS      SEGMENT\r
 COMM NEAR\t_bn7648:\tBYTE:\t 2\r
@@ -28,12 +29,19 @@ class StaticsTests(unittest.TestCase):
             self.assertEqual(cod.statics(p), {26: ('g_6ca2', 2), 0: ('g_6c86', 2),
                                               2: ('g_6c8aaav', 24), 28: ('g_rngA', 48)})
 
-    def test_merge_hoists_shared_statics_once(self):
-        a = '#include "STRUCTS.H"\n\nstatic int g_x;   /* DS:6C4A */\n\nint f(void) { return g_x; }\n'
-        b = '#include "STRUCTS.H"\n\nstatic int g_x;   /* DS:6C4A */\nstatic int g_y;\n\nint g(void) { return g_y; }\n'
-        text = module.merge([a, b])
-        self.assertEqual(text.count('static int g_x;'), 1)
-        self.assertLess(text.index('static int g_y;'), text.index('int f(void)'))
+    def test_each_static_is_defined_once(self):
+        # one file per object: a static is not repeated, and no two files share one
+        owner = {}
+        for f in module.files():
+            if f.kind != 'c':
+                continue
+            text = f.path.read_text(encoding='latin-1')
+            names = fileheaders.file_statics(f.path)
+            for n in names:
+                self.assertEqual(len(re.findall(rf'^static [^;(]*\b{n}\b', text, re.M)), 1, (f.rel, n))
+                self.assertNotIn(n, owner, (f.rel, n))
+                owner[n] = f.rel
+        self.assertGreater(len(owner), 100)
 
 
 if __name__ == '__main__':

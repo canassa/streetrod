@@ -1,6 +1,5 @@
         .MODEL MEDIUM
 
-; sr-member 0x24BE2
 ; F_24BE2 @ 24BE:0002 (linear 0x24BE2, 201 bytes)
 ; F_24BE2(width, text, dest, fg, bg): draw a string with the 8x8 font in
 ; segment 0E9Fh into the 4-bit packed screen buffer (160 bytes per row).  The
@@ -9,7 +8,7 @@
 
         EXTRN   _g_font:BYTE
 
-        .CODE
+        .CODE S24BE_TEXT
 
         PUBLIC  _F_24BE2
 _F_24BE2  PROC    FAR
@@ -116,14 +115,13 @@ L24BE2_done:
         ret
 _F_24BE2  ENDP
 
-; sr-member 0x24CAB
 ; F_24CAB @ 24BE:00CB (linear 0x24CAB, 216 bytes)
 ; F_24CAB(src, dstseg, dstoff, y, height, width, flags, ...): copy a strip of
 ; 4-bit pixels from a linear buffer (160 bytes per L24CAB_row) into the interleaved
 ; (4 banks of 2000h) screen.  Handles a leading half byte (merge the low
 ; nibble), the whole bytes, and a trailing half byte (merge the high nibble).
 
-        .CODE
+        .CODE S24BE_TEXT
 
         PUBLIC  _F_24CAB
 _F_24CAB  PROC    FAR
@@ -224,4 +222,5 @@ L24CAB_done:
         pop     bp
         ret
 _F_24CAB  ENDP
+
         END

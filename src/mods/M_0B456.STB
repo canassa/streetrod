@@ -1,3 +1,0 @@
-#include "STRUCTS.H"
-static int near F_0B3CA(int id) { return id; }
-static void near F_0B425(void) { }

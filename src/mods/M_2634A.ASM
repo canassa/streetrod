@@ -1,6 +1,5 @@
         .MODEL MEDIUM
 
-; sr-member 0x2634A
 ; F_2634A @ 2634:000A (linear 0x2634A, 183 bytes)
 ; F_2634A(dst_far, src_seg, src_off, mask_off, dst_pitch, x_bytes, w, h):
 ; masked blit.  For each L2634A_row: dst = (dst & mask) | (~mask & src), words first
@@ -8,8 +7,7 @@
 ; the 6 bytes it jumps over, so they are addressed through CS at fixed offsets
 ; (the routine sits at offset 0Ah of its code segment).
 
-        .CODE
-
+        .CODE S2634_TEXT
 
         PUBLIC  _F_2634A
 _F_2634A  PROC    FAR
@@ -95,13 +93,12 @@ L2634A_done:
         ret
 _F_2634A  ENDP
 
-; sr-member 0x26401
 ; F_26401 @ 2634:00C1 (linear 0x26401, 86 bytes)
 ; F_26401(src_far, dst_far, bytes): OR together the four bit planes of a
 ; source of bytes (a quarter of it each, plane n at src + n * bytes/4) and
 ; store the complement, byte by byte for an odd count and then word by word.
 
-        .CODE
+        .CODE S2634_TEXT
 
         PUBLIC  _F_26401
 _F_26401  PROC    FAR
@@ -157,4 +154,5 @@ L26401_done:
         pop     bp
         ret
 _F_26401  ENDP
+
         END
