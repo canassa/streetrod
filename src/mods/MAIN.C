@@ -187,11 +187,11 @@ static void near init_screens(int mode)
         r_vid.mode = -2;
         *(unsigned char far *)0x410L &= 0xcf;
         *(unsigned char far *)0x410L |= 0x20;
-        egadrv_install();
+        ega_install();
         return;
     case 5:
         r_vid.mode = g_screens[0].flags = 0xfa;
-        tandydrv_install();
+        tandy_install();
         g_screens[0].bits.p = r_vid.mode == -4 ? (char far *)0xb0000000L : (char far *)0xb8000000L;
         g_screens[0].planesize = g_screens[1].planesize = g_screens[2].planesize = 0x8000;
         g_screens[0].pitch = g_screens[1].pitch = g_screens[2].pitch = 0xa0;
@@ -214,7 +214,7 @@ static void near init_screens(int mode)
         *(unsigned char far *)0x410L |= 0x20;
         break;
     }
-    cgadrv_install();
+    cga_install();
     g_screens[0].bits.p = r_vid.mode == -4 ? (char far *)0xb0000000L : (char far *)0xb8000000L;
     g_screens[0].planesize = g_screens[1].planesize = 0x4000;
     g_screens[0].pitch = g_screens[1].pitch = 0x50;

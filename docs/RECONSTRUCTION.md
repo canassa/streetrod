@@ -119,7 +119,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
     `+= 0`, `|= 0`, `if (g_49e0[0]) ;` and comparisons compile to nothing or to a compare;
     stores to locals stay stores. The two functions share the idiom, so the original
     probably had one construct (a macro, an emptied switch) in both.
-- **The hook installers** cgadrv_install (CGA.C), tandydrv_install (TANDY.C) and egadrv_install
+- **The hook installers** cga_install (CGA.C), tandy_install (TANDY.C) and ega_install
   (EGA.C): `*(struct Hooks *)&b_78a2 = *(struct Hooks *)g_cgaHooks;`. Their bytes are
   MSC 5.1's struct assignment (`push di; push si`, no frame, `mov cx,1Eh` and `f2 a5`:
   MSC writes `rep movsw` with the F2 prefix, MASM's `rep` is F3; the `memcpy` intrinsic
@@ -129,7 +129,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   and the arrays, and copies them through the 15-pointer `struct Hooks`. Each installer
   is the first function of the driver file whose table it copies (that file's table
   needs no forced owner then). The EXE does not decide this placement: none of the three
-  has a segment relocation, so a one-function file of its own, or for tandydrv_install and egadrv_install
+  has a segment relocation, so a one-function file of its own, or for tandy_install and ega_install
   the end of the C file before (TANDYBLT.C, TANDYSPR.C), gives the same image.
 - **Evidence-only structs** `State70C0`, `State7D2E` and `State7E8A`. MSC's operand order
   shows that these blocks are struct members, not plain variables (recipe book). Their

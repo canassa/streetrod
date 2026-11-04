@@ -24,9 +24,9 @@ unsigned char g_cgaPixMask[4] = {192, 48, 12, 3};   /* DS:5B40 */
 unsigned char g_cgaPixKeep[4] = {63, 207, 243, 252};   /* DS:5B44 */
 int g_cgaRevealOrder[5] = {0, 2, 4, 1, 3};   /* DS:5B48 */
 
-/* cgadrv_install @ 1C11:01A8 (linear 0x1C2B8, 18 bytes) */
+/* cga_install @ 1C11:01A8 (linear 0x1C2B8, 18 bytes) */
 
-void cgadrv_install(void)
+void cga_install(void)
 {
     *(struct Hooks *)&b_78a2 = *(struct Hooks *)g_cgaHooks;
 }
