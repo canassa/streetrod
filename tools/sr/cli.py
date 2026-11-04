@@ -410,6 +410,18 @@ def cmd_name(args):
     print(f"{hexa(row['addr'])}: {fn_name(row)} -> {args.name}")
 
 
+def cmd_rename(args):
+    from sr import rename
+    if args.file:
+        pairs = rename.parse_pairs(Path(args.file).read_text().splitlines())
+    elif args.old and args.new:
+        pairs = [(args.old, args.new)]
+    else:
+        raise SystemExit("give OLD NEW, or --file PAIRS")
+    for line in rename.rename(pairs, dry=args.dry_run):
+        print(line)
+
+
 def cmd_kind(args):
     con = db.connect()
     row = db.resolve(con, args.fn)
@@ -812,6 +824,14 @@ def main():
     s.add_argument("name", nargs="?")
     s.add_argument("--force", action="store_true", help="rename even though sources use the old name")
     s.set_defaults(func=cmd_name)
+
+    s = sub.add_parser("rename", help="rename a function, global or source file everywhere (DB, sources, "
+                       "MAKEFILE, SR.LNK, docs, tools), then regenerate the headers")
+    s.add_argument("old", nargs="?", help="current name (F_0914C, g_0042) or source file (M_0914C.C)")
+    s.add_argument("new", nargs="?")
+    s.add_argument("--file", help="a file of OLD NEW lines (# comments) applied at once")
+    s.add_argument("-n", "--dry-run", action="store_true", help="report what would change, write nothing")
+    s.set_defaults(func=cmd_rename)
 
     s = sub.add_parser("kind", help="correct the scanner's c/asm/crt guess")
     s.add_argument("fn")

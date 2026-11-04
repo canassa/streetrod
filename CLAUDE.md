@@ -33,7 +33,8 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 ./sr diff ADDR|NAME [--full]   # two-column instruction diff, ours vs original
 ./sr sweep ADDR|NAME           # compile the function's file under 46 /O flag combinations, score the function
 ./sr flags FILE|ADDR [FLAGS]   # a file's CL/MASM flags: its src/MAKEFILE line (--force when it has matched functions)
-./sr name ADDR NAME            # name a function
+./sr name ADDR NAME            # name a function (DB only)
+./sr rename OLD NEW            # rename a function, global or source file everywhere: DB, sources, MAKEFILE, SR.LNK, docs, tools; then ./sr headers (--file PAIRS, -n)
 ./sr global 82ca g_table --decl "struct Entry @[]"   # declare a DGROUP global (no args: list them)
 ./sr proto 15236 "int @(int n)" # a far (or public near) function's prototype (goes into its file's header) ("" clears; --force replaces an existing one)
 ./sr data 4eee [N]             # hex dump of DGROUP bytes with known globals
@@ -137,7 +138,7 @@ A *module* is one original source file (one object). The `module_` prefix of its
 - local names decide the stack frame layout (rule 3);
 - uninitialized globals are placed by LINK's communal hash (rule 4e) and file-local statics by MSC's name hash (rule 4f): renaming one can move others;
 - external symbols' name lengths count toward MSC's per-file budget (rule 4d), so renaming an external function or global can change the code of a later function in any file that references it.
-Every rename must keep `./sr check --all`, `./sr build` and `./dosbox.sh --make` IDENTICAL. Rename through the tools so the DB, sources, headers, MAKEFILE and SR.LNK stay consistent (`./sr name`, `./sr global`, then `./sr headers`).
+Every rename must keep `./sr check --all`, `./sr build` and `./dosbox.sh --make` IDENTICAL. Rename through the tools so the DB, sources, headers, MAKEFILE and SR.LNK stay consistent (`./sr rename OLD NEW`, or `./sr rename M_xxxxx.C NAME.C` for a file; it regenerates the headers).
 
 - **Never add comments.** Do not add comments to the code unless instructed to; all documentation is human-reviewed.
 - **`NULL` for pointers.** Use `NULL` for a null pointer, never bare `0`; reserve `0` for integers (in the medium model `NULL` is `0` for data pointers, so it is byte-free — verify).
