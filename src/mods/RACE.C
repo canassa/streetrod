@@ -660,7 +660,7 @@ int near race_outcome(void)
     int units;
     char opt;
     int sel;
-    int kind;
+    enum BetKind kind;
     unsigned v;
     char stop;
     char *ptr;
@@ -672,8 +672,8 @@ int near race_outcome(void)
     struct Car *found;
     int list[25];
 
-    kind = g_screenBetInfo.kind;
-    v = g_screenBetInfo.amount;
+    kind = g_raceWagerTerms.kind;
+    v = g_raceWagerTerms.amount;
     engine = g_driveEng.stopFlags & 4;
     opt = g_driveEng.stopFlags & 0x10;
     stop = g_driveEng.stopFlags == 5 || g_driveEng.stopFlags == 0x11 || g_driveEng.stopFlags == 0x15;
@@ -705,7 +705,7 @@ int near race_outcome(void)
         cursor_ctl(CURSOR_SHOW_NOW);
         game_message(g_isKingState == 0 ? (i = g_winMsgs[kind]) : a_7eaap.raceType == 0 ? 0x14bd : 0x14d6);
         F_11540(v);
-        if (kind == 5) {
+        if (kind == BET_CAR) {
             found = game_make_car(bn7648, g_oppSpecPointer->price, 0);
             found->tires->wear = random_int(500);
             found->appearance = ((g_selectedRacerPointer->sticker & 0x1f) << 8) | (found->appearance & 0xe0ff);
@@ -741,7 +741,7 @@ done:
         if (g_driveEng.stopFlags & 8)
             if ((i = replace_tires()) != 0)
                 goto ret2;
-        if (kind == 5)
+        if (kind == BET_CAR)
             return 1;
         return 3;
     } else if (g_driveEng.stopFlags & 0x40) {
@@ -778,7 +778,7 @@ pay:
         cursor_ctl(CURSOR_SHOW_NOW);
         game_message(0xecb2);
     } else {
-        if (kind == 5) {
+        if (kind == BET_CAR) {
             game_scrap_car(a_7eaap.currentCar, 0);
             a_7eaap.currentCar = 0;
         }
@@ -786,27 +786,27 @@ pay:
         if (g_driveEng.stopFlags == 1) {
             show_race_stats();
             cursor_ctl(CURSOR_SHOW_NOW);
-            i = kind == 5 ? 0x143a : 0x1427;
+            i = kind == BET_CAR ? 0x143a : 0x1427;
             game_message(g_isKingState == 0 ? i : a_7eaap.raceType == 0 ? 0x1450 : 0x146c);
             menu_pop(1);
-            if (kind != 5)
+            if (kind != BET_CAR)
                 return 3;
 ret2:
             return 2;
         } else if (stop) {
             cursor_ctl(CURSOR_SHOW_NOW);
             if (engine) {
-                blow_engine(kind == 5 ? 0x16bd : 0x1634);
+                blow_engine(kind == BET_CAR ? 0x16bd : 0x1634);
                 goto finishstop;
             } else if (opt) {
-                drop_transmission(kind == 5 ? 0x1678 : 0x1608);
+                drop_transmission(kind == BET_CAR ? 0x1678 : 0x1608);
                 goto finishstop;
             }
 finishstop:
             goto fin;
         } else {
             show_crash();
-            if (kind == 5) {
+            if (kind == BET_CAR) {
                 if (g_driveEng.stopFlags & 8) {
                     game_message(0x16f6);
                     replace_tires();

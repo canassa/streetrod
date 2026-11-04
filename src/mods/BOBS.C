@@ -47,7 +47,7 @@ static void near show_rival_car(int, int, int, int, int, int *);
 static void near rival_arrives(int, int, int);
 static void near list_met_rivals(int *, int *, int *);
 static int near spec_class(int);
-static int near accepts_bet(int kind);
+static int near accepts_bet(enum BetKind kind);
 static void near blit_cell(struct Bitmap far *, int, struct Bitmap far *);
 static void near setup_bobs_spots(int, int);
 static int near king_chance(void);
@@ -374,7 +374,7 @@ static void near list_met_rivals(int *ids, int *slots, int *kinds)
     ids[0] = n;
 }
 
-struct Wager g_screenBetInfo; /* DS:79A2 */
+struct Wager g_raceWagerTerms; /* DS:79A2 */
 
 int g_refuseMsgs[2][5] = {{4779, 4803, 4822, 4840, 4663}, {4663, 4675, 4694, 4715, 4727}};   /* DS:51FC */
 int g_acceptMsgs[2][3] = {{4859, 4867, 4875}, {4743, 4756, 4767}};   /* DS:5210 */
@@ -407,7 +407,7 @@ static int near look_for_rival(int n)
 
 /* accepts_bet @ 0000:9BC5 (linear 0x09BC5, 424 bytes) */
 
-static int near accepts_bet(int kind)
+static int near accepts_bet(enum BetKind kind)
 {
     int item1;
     unsigned v11, v2;
@@ -415,17 +415,17 @@ static int near accepts_bet(int kind)
     unsigned v3;
     int clsl, col;
 
-    if (kind == 0) {
+    if (kind == BET_NONE) {
         row = 0;
         col = 0;
     } else {
-        if (kind == 5) {
+        if (kind == BET_CAR) {
             row = 2;
             col = 3;
-        } else if (kind == 1 || kind == 2) {
+        } else if (kind == BET_10 || kind == BET_50) {
             row = 1;
             col = 1;
-        } else if (kind == 3 || kind == 4) {
+        } else if (kind == BET_25 || kind == BET_100) {
             row = 1;
             col = 2;
         }
@@ -467,7 +467,7 @@ static int near challenge(int arg)
     int num;
     struct Bitmap far *pict;
     unsigned price;
-    int kind;
+    enum BetKind kind;
     int x;
     int ch;
     int step;
@@ -498,13 +498,13 @@ static int near challenge(int arg)
                 }
                 a_7eaap.raceType = 0;
                 game_message(0x11d1);
-                g_screenBetInfo.kind = 0;
+                g_raceWagerTerms.kind = BET_NONE;
             } else {
                 a_7eaap.raceType = 1;
                 game_message(0x11f7);
-                g_screenBetInfo.kind = 5;
+                g_raceWagerTerms.kind = BET_CAR;
             }
-            g_screenBetInfo.amount = 0;
+            g_raceWagerTerms.amount = 0;
             race_run();
             g_addT += a_7eaap.raceType == 0 ? 0x444u : 0x777u;
             return 2;
@@ -554,33 +554,33 @@ static int near challenge(int arg)
             goto quit;
         case 1:
             price = 0;
-            kind = 0;
+            kind = BET_NONE;
             break;
         case 2:
             price = 10;
-            kind = 1;
+            kind = BET_10;
             break;
         case 3:
             price = 50;
-            kind = 2;
+            kind = BET_50;
             break;
         case 7:
             price = 25;
-            kind = 3;
+            kind = BET_25;
             break;
         case 8:
             price = 100;
-            kind = 4;
+            kind = BET_100;
             break;
         case 9:
             price = 0;
-            kind = 5;
+            kind = BET_CAR;
             break;
         }
         if ((long)price <= a_7eaap.money) {
             if (accepts_bet(kind)) {
-                g_screenBetInfo.kind = kind;
-                g_screenBetInfo.amount = price;
+                g_raceWagerTerms.kind = kind;
+                g_raceWagerTerms.amount = price;
                 menu_pop(1);
                 popup_show(pict, x, sy);
                 pict = 0;

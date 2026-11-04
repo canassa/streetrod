@@ -4,7 +4,7 @@
 #define BOBS_H
 #include "STRUCTS.H"
 
-extern struct Wager g_screenBetInfo; /* DS:79A2 */
+extern struct Wager g_raceWagerTerms; /* DS:79A2 */
 
 #define NUM_RACERS 22
 #define RACER_KING 21

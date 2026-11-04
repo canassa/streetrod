@@ -196,7 +196,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **InputState** (`g_input`, DS:05D0..05D3): natural record of the any-input latch and input key only; the unused sentinel and drive-reset words at 05D4..05DB stay separate with neutral placeholder names.
 
-- **Wager** (`g_screenBetInfo`, DS:79A2..79A5): a natural, byte-identical reconstruction choice; separate globals also match.
+- **Wager** (`g_raceWagerTerms`, DS:79A2..79A5): a natural, byte-identical reconstruction choice; separate globals also match.
 
 - **Blt** (`g_adPacket`, DS:0522..0535): a natural, byte-identical reconstruction choice; separate globals also match.
 
