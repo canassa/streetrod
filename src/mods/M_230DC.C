@@ -5,9 +5,9 @@
 #include "M_230DC.H"
 #include "M_00D58.H"
 
-/* F_230DC @ 21A0:16DC: copy 8000 bytes between planar VGA buffers using write mode 1 (latch copy) */
-
 #pragma intrinsic(outp)
+
+/* F_230DC @ 21A0:16DC: copy 8000 bytes between planar VGA buffers using write mode 1 (latch copy) */
 
 int g_5c0c[5] = {0, 80, 160, 40, 120};   /* DS:5C0C */
 
@@ -23,8 +23,6 @@ void F_230DC(char far *src, char far *dst)
 }
 
 /* F_23122 @ 21A0:1722: copy 5 bands of 40 rows between planar VGA buffers, paced by the tick counter */
-
-#pragma intrinsic(outp)
 
 void F_23122(char far *dst, char far *src)
 {

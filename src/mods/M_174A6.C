@@ -23,6 +23,8 @@
 #include "M_24E78.H"
 #include "M_25954.H"
 
+#pragma intrinsic(outp)
+
 static struct Rect g_6cbc;                 /* DS:6CBC */
 static void near F_174A6(char far *src, char far *dst, char far *mask, int w, int h, int n, int step);
 static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, int h, char far *mask, char c);
@@ -38,8 +40,6 @@ struct Bitmap bw7fa8;
 int l_8262;
 
 /* F_174A6: blit one 4-plane EGA image row set, one plane at a time via the sequencer map mask */
-
-#pragma intrinsic(outp)
 
 int g_58e2 = 1;   /* DS:58E2 */
 int g_58e4 = 0;   /* DS:58E4 */
@@ -73,8 +73,6 @@ static void near F_174A6(char far *src, char far *dst, char far *mask, int w, in
 
 /* F_1751A: for each of n bitmaps, lay a band of h rows into the scratch bitmap bp7316[2], fill or copy it, then blit the bitmap through the EGA planes */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
-
-#pragma intrinsic(outp)
 
 static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, int h,
     char far *mask, char c)

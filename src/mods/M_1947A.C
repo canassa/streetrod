@@ -11,6 +11,8 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
+#pragma intrinsic(abs)
+
 /* F_1947A: intersect rectangles a and b into out, snapped to the r_vid.mask pixel mask; 0 if they do not overlap */
 
 struct Rect *F_1947A(struct Rect *a, struct Rect *b, struct Rect *out)
@@ -210,8 +212,6 @@ void F_199DD(struct Sprite *s, int i, int count, signed char dx, signed char dy)
 }
 
 /* F_19A2D: split a move of size d into the three phases of a sprite's motion sequence */
-
-#pragma intrinsic(abs)
 
 void F_19A2D(struct Sprite *s, int mode, int a, int b, int c, int d, int e, int f)
 {

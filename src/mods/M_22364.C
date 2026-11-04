@@ -21,7 +21,6 @@ int g_5bc6[5] = {0, 2, 4, 1, 3};   /* DS:5BC6 */
 /* F_22364: render a glyph into a scratch buffer and copy it to the interleaved screen, 8 rows at most */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-
 void F_22364(struct Bitmap far *bm, int x, int y, int glyph)
 {
     char buf3[0x500];
@@ -51,7 +50,6 @@ void F_22364(struct Bitmap far *bm, int x, int y, int glyph)
 
 /* F_2244F: replace one colour by another inside a rectangle of a 2-pixel-per-byte interlaced bitmap */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
-
 
 void F_2244F(struct Bitmap far *bm, int from, int to, int x1, int y1, int x2, int y2)
 {
@@ -125,7 +123,6 @@ void F_2244F(struct Bitmap far *bm, int from, int to, int x1, int y1, int x2, in
 
 /* F_22609: copy a 32K block (a full EGA/VGA-sized buffer) */
 
-
 void F_22609(char far *src, char far *dst)
 {
     F_1A882(src, dst, 0x8000);
@@ -133,7 +130,6 @@ void F_22609(char far *src, char far *dst)
 
 /* F_22626: clear one source row, then copy the same row from the second screen: five interlaced passes over the lines */
 /* kl: index over the five line phases (name chosen for the stack layout). */
-
 
 void F_22626(char far *a, char far *b)
 {

@@ -19,10 +19,9 @@
 #include "M_1D8C4.H"
 #include "M_1DD22.H"
 
+#pragma intrinsic(_rotl, outp)
+
 /* F_1C2CA: draw a string of 8-pixel-high CGA/Hercules text into a bitmap at pixel x, y, through an 8x80 byte scratch buffer */
-
-
-#pragma intrinsic(_rotl)
 
 void (far *g_5b04[15])() = {F_1D3C8, F_1D741, F_1D262, F_1C2CA, F_0E781, F_1CEE7, F_1C803, F_1D080, F_1D0A4, F_1D925, F_1CF40, F_19BFE, F_1DD22, F_1DFD2, F_1E0FE};   /* DS:5B04 */
 unsigned char g_5b40[4] = {192, 48, 12, 3};   /* DS:5B40 */
@@ -222,7 +221,6 @@ void F_1C2CA(struct Bitmap far *bm, int x, int y, char *s)
 
 /* F_1C803: fill a rectangle of 2-bit CGA pixels with a colour, recolouring every pixel that is not colour c1l */
 
-
 #define PIX(k, cv, bv) \
     if ((*p5 & g_5b40[k]) != (cv)) { *p5 &= g_5b44[k]; *p5 |= (bv); }
 
@@ -363,7 +361,6 @@ void F_1C803(struct Bitmap far *bm, int a, int b, int x1, int y1, int x2, int y2
 
 /* F_1CEE7: copy a 16K video page, and on Hercules also its fourth bank */
 
-
 void F_1CEE7(char far *src, char far *dst)
 {
     movedata(FP_SEG(src), FP_OFF(src), FP_SEG(dst), FP_OFF(dst), 0x4000);
@@ -372,7 +369,6 @@ void F_1CEE7(char far *src, char far *dst)
 }
 
 /* F_1CF40: dissolve one 80-byte-per-line CGA screen into another, five interleaved passes */
-
 
 void F_1CF40(char far *dst, char far *src)
 {
@@ -410,7 +406,6 @@ void F_1CF40(char far *dst, char far *src)
 
 /* F_1D05B: BIOS video function 5, select the active display page */
 
-
 void F_1D05B(int page)
 {
     union REGS r;
@@ -420,7 +415,6 @@ void F_1D05B(int page)
     int86(0x10, &r, &r);
 }
 
-#pragma intrinsic(outp)
 /* Recovered unreferenced video-control routine at 0x1D080. */
 void F_1D080(void)
 {
@@ -435,7 +429,6 @@ void F_1D080(void)
     gz8249 = 0;
 }
 
-#pragma intrinsic(outp)
 /* Recovered unreferenced video-control routine at 0x1D0A4. */
 void F_1D0A4(void)
 {

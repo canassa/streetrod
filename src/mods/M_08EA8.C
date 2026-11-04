@@ -24,7 +24,6 @@ int g_51ec = 0;   /* DS:51EC */
 
 /* F_08EA8 @ 0000:8EA8 (linear 0x08EA8, 675 bytes) */
 
-
 int F_08EA8(void)
 {
     char key;

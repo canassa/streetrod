@@ -52,7 +52,6 @@ struct Bitmap far *F_11A72(int x, int y, int w, int h, struct Bitmap far *src)
 
 /* F_11B6F: blit bitmap bm to the back buffer at (x, y), x rounded to the pixel grid r_vid.mask */
 
-
 void F_11B6F(struct Bitmap far *bm, int x, int y)
 {
     struct Blt pkt;
@@ -69,7 +68,6 @@ void F_11B6F(struct Bitmap far *bm, int x, int y)
 
 /* F_11BD3: draw bitmap bm at (x, y) on the back buffer and copy the covered rectangle to the front buffer */
 
-
 void F_11BD3(struct Bitmap far *bm, int x, int y)
 {
     F_11B6F(bm, x, y);
@@ -79,7 +77,6 @@ void F_11BD3(struct Bitmap far *bm, int x, int y)
 
 /* F_11C24: pop up message window n (negative n: the window is removed again afterwards).
    The text is the run of NUL-terminated lines that follows the window's index byte in g_2c01. */
-
 
 void F_11C24(int n)
 {
@@ -127,7 +124,6 @@ void F_11C24(int n)
 
 /* F_11DE2: pop up message window n with its position temporarily set to (x, y); idx negative coordinate keeps the default */
 
-
 void F_11DE2(int n, int x, int y)
 {
     int idx;
@@ -148,7 +144,6 @@ void F_11DE2(int n, int x, int y)
 }
 
 /* F_11E5F: remove the pop-up window: put back the saved background */
-
 
 void F_11E5F(void)
 {

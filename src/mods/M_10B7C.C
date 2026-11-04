@@ -16,6 +16,8 @@
 #include "SCRATCH.H"
 #include "SCREENS.H"
 
+#pragma intrinsic(outp, inp)
+
 static struct Cmd *g_cmd;                  /* DS:6C38 */
 static struct Obj *g_obj;                  /* DS:6C3A */
 static struct Box *g_box;                  /* DS:6C3C */
@@ -81,8 +83,6 @@ void F_10BAC(void)
 }
 
 /* F_10BD9 @ 0F38:1859 (linear 0x10BD9, 403 bytes) */
-
-#pragma intrinsic(outp)
 
 void F_10BD9(struct Bitmap far *front, struct Bitmap far *back)
 {
@@ -328,8 +328,6 @@ int F_11213(struct Obj *o, struct Cmd *c)
 }
 
 /* F_112CB: set EGA palette register reg to color (BIOS int 10h function 10h), waiting for vertical retrace */
-
-#pragma intrinsic(inp)
 
 void F_112CB(int reg, char color)
 {

@@ -24,6 +24,8 @@
 #include "M_2869E.H"
 #include "TRACKPTS.H"
 
+#pragma intrinsic(abs, cos, sin, outp, inp)
+
 static int g_6c22[3];                      /* DS:6C22 */
 static struct Bitmap far *g_6c28gzz[3];    /* DS:6C28 */
 static void near F_0F418(int x, int y, int w, int h, int kind);
@@ -108,8 +110,6 @@ void F_0F4B7(int i, int *x1, int *y1, int *x2, int *y2)
 
 /* F_0F552 @ 0F38:01D2 (linear 0x0F552, 220 bytes) */
 
-#pragma intrinsic(abs)
-
 void F_0F552(int i)
 {
     int miny3, minx4, y1, x2, x11, y2, color;
@@ -150,8 +150,6 @@ void F_0F62E(int i, int *x1, int *y1, int *x2, int *y2)
 
 /* F_0F6C9 @ 0F38:0349 (linear 0x0F6C9, 220 bytes) */
 
-#pragma intrinsic(abs)
-
 void F_0F6C9(int v)
 {
     int miny3, minx4, y1, x2, x11, y2, color;
@@ -174,8 +172,6 @@ void F_0F6C9(int v)
 }
 
 /* F_0F7A5 @ 0F38:0425 (linear 0x0F7A5) */
-
-#pragma intrinsic(abs)
 
 int F_0F7A5(int cur, int old, int flag)
 {
@@ -220,8 +216,6 @@ int F_0F7A5(int cur, int old, int flag)
 
    Draws the clock: the hour hand (width 5 or 8) and the minute hand (width 4 or 8), each a
    diamond of five lines around the face centre, from the time F_064A3 returns. */
-
-#pragma intrinsic(abs, cos, sin)
 
 void F_0F972(void)
 {
@@ -389,8 +383,6 @@ void F_100E2(void)
 }
 
 /* F_1013D @ 0F38:0DBD (linear 0x1013D, 406 bytes) */
-
-#pragma intrinsic(outp)
 
 void F_1013D(int mode)
 {
@@ -709,8 +701,6 @@ int F_10A00(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *in, stru
 }
 
 /* F_10AFD @ 0F38:177D (linear 0x10AFD, 75 bytes) */
-
-#pragma intrinsic(inp)
 
 void F_10AFD(int n)
 {

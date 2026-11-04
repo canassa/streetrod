@@ -18,6 +18,8 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
+#pragma intrinsic(memcpy)
+
 static int near F_1287B(void);
 static int near F_1289C(int *px, int *py);
 static void near F_12CD1(void);
@@ -618,8 +620,6 @@ static void near F_133CB(struct Link *arr, struct Link *item, int n)
    then for each of 9 slots (grouped by the counts in g_5130) that is enabled in o_8290 an item is
    inserted at the position F_12964 gives for the slot's coordinates, plus a last item picked by
    ap82acz. hz82ae/g82b2t are saved and restored around it. */
-
-#pragma intrinsic(memcpy)
 
 void F_1344A(int *xs, int *ys)
 {

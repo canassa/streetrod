@@ -18,6 +18,8 @@
 #include "M_2B6DC.H"
 #include "SLOTS.H"
 
+#pragma intrinsic(abs)
+
 static int g_6e04aay;                      /* DS:6E04 */
 static int g_6e06aax;                      /* DS:6E06 */
 static int *g_6e08aaw;                     /* DS:6E08 */
@@ -322,8 +324,6 @@ void F_28879(void)
 }
 
 /* F_28DD2 @ 2645:2982 (linear 0x28DD2, 648 bytes) */
-
-#pragma intrinsic(abs)
 
 static void near F_28DD2(void)
 {
@@ -1124,8 +1124,6 @@ static void near F_2A32B(void)
 }
 
 /* F_2A3DD @ 2645:3F8D (linear 0x2A3DD, 1136 bytes) */
-
-#pragma intrinsic(abs)
 
 static void near F_2A3DD(void)
 {

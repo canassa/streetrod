@@ -13,6 +13,8 @@
 #include "SCREENS.H"
 #include "SLOTS.H"
 
+#pragma intrinsic(abs)
+
 static int g_6dfeaa;                       /* DS:6DFE */
 static int g_6e00;                         /* DS:6E00 */
 static int g_6e02;                         /* DS:6E02 */
@@ -882,8 +884,6 @@ void F_282EE(void)
 
 /* F_2834C @ 2645:1EFC (linear 0x2834C, 367 bytes) */
 
-#pragma intrinsic(abs)
-
 void F_2834C(void)
 {
     int bits7, goal6, diff;
@@ -990,8 +990,6 @@ void F_28576(int dir)
 }
 
 /* F_2858D @ 2645:213D (linear 0x2858D, 272 bytes) */
-
-#pragma intrinsic(abs)
 
 void F_2858D(void)
 {

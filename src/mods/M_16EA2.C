@@ -16,6 +16,8 @@
 #include "M_265BA.H"
 #include "M_2869E.H"
 
+#pragma intrinsic(abs)
+
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Bitmap far *g8188w;
 
@@ -23,8 +25,6 @@ struct Bitmap far *g8188w;
 
    Gearbox/drive screen loop: draws the dashboard, then redraws the changing parts until
    F_08EA8 reports an input. Returns that value. */
-
-#pragma intrinsic(abs)
 
 int F_16EA2(void)
 {

@@ -3,14 +3,13 @@
 #include "STRUCTS.H"
 #include "M_238A2.H"
 
+#pragma intrinsic(_rotl, _rotr, outp)
+
 static void near F_238A2(unsigned char *p, int n, int len);
 static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int off, int shift);
 
 /* F_238A2 @ 21A0:1EA2: shift a row of bytes right (n > 0) or left (n < 0) by n bits, carrying between bytes */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
-
-
-#pragma intrinsic(_rotl, _rotr)
 
 unsigned char g_5c16[8] = {128, 192, 224, 240, 248, 252, 254, 255};   /* DS:5C16 */
 int g_5c1e = 0;   /* DS:5C1E */
@@ -53,10 +52,6 @@ static void near F_238A2(unsigned char *p, int n, int len)
 
 /* F_2398D @ 21A0:1F8D: write one 4 plane row (40 bytes per plane) to planar VGA memory, shifted and edge masked */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
-
-
-#pragma intrinsic(outp)
-
 
 static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int off, int shift)
 {
@@ -158,10 +153,6 @@ static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int 
 /* The empty if before the loop is load-bearing: it leaves no code but ends the basic block that
    holds the r->sx / 8 CSE in si, so /Ol does not give it a stack slot (the original has none).
    The condition is a guess; a disabled debug check on the row width (c[] rows hold 40 bytes). */
-
-
-#pragma intrinsic(outp)
-
 
 void F_23C3B(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r)
 {

@@ -10,15 +10,15 @@
 #include "M_21962.H"
 #include "SONG.H"
 
+#pragma intrinsic(outp, inp)
+
 static void near F_164CC(long freq, int n);
-static void near F_164CC(long freq, int delay);
 static void near F_16612(int a, int *p, int count, int reps);
 static void near F_16686(int a, int *p, int count, int reps);
 static int near F_166FA(int *buf, int start, int end, int step);
 static void near F_167E4(int range, int bits, int count);
 static void near F_1676D(long freq, int period, int hi, int step, int cycles, int reps);
 static void near F_16564(int a, int b, int c, int d, int e);
-static void near F_167E4(int a, int b, int c);
 static void near F_164E9(int a, int b, int c, int d);
 static void near F_16830(int a, int b, int c, int d, int e);
 static void near F_1687C(int a, int b, int c, int d, int e);
@@ -62,9 +62,6 @@ int F_163BE(int n)
 
 /* F_16455 @ 0F38:70D5: program PIT channel 2 for a tone of the given frequency */
 
-
-#pragma intrinsic(outp)
-
 void F_16455(long freq)
 {
     union Word div;
@@ -76,9 +73,6 @@ void F_16455(long freq)
 
 /* F_16481 @ 0F38:7101: set up the PIT for sound (channel 2, mode 3) and program a tone (divisor from 25000) */
 
-
-#pragma intrinsic(outp)
-
 void F_16481(void)
 {
     g_58e2 = F_163BE(10);
@@ -87,9 +81,6 @@ void F_16481(void)
 }
 
 /* F_164A2: speaker on: program the tone for 25000 and set bits 0 and 1 of port 61h */
-
-
-#pragma intrinsic(inp, outp)
 
 void F_164A2(void)
 {
@@ -100,9 +91,6 @@ void F_164A2(void)
 
 /* F_164BD: speaker off: clear bits 0 and 1 of port 61h */
 
-
-#pragma intrinsic(inp, outp)
-
 void F_164BD(void)
 {
     outp(0x61, inp(0x61) & 0xfc);
@@ -111,7 +99,6 @@ void F_164BD(void)
 
 /* F_164CC: play the tone of frequency freq for n ticks (F_21962) */
 
-
 static void near F_164CC(long freq, int n)
 {
     F_16455(freq);
@@ -119,8 +106,6 @@ static void near F_164CC(long freq, int n)
 }
 
 /* F_164E9: play count random tones with frequencies from lo up to hi, each held for dur ticks */
-
-
 
 static void near F_164E9(int lo, int hi, int dur, int count)
 {
@@ -134,8 +119,6 @@ static void near F_164E9(int lo, int hi, int dur, int count)
 
 /* F_16532 @ 0F38:71B2 (near): sweep a tone downwards from start while it is >= end, in steps of step */
 
-
-
 static void near F_16532(int start, int end, int step, int delay)
 {
     int n;
@@ -146,8 +129,6 @@ static void near F_16532(int start, int end, int step, int delay)
 
 /* F_16564: siren: reps times sweep the tone from centre - width up to centre + width and back down
    again, in steps of step, each tone held for dur */
-
-
 
 static void near F_16564(int centre, int width, int step, int dur, int reps)
 {
@@ -164,9 +145,6 @@ static void near F_16564(int centre, int width, int step, int dur, int reps)
 
 /* F_16612: square wave on the speaker: for each of count tones in table, flip bit 1 of port 61h
    with delays *p and a - *p, reps times */
-
-
-#pragma intrinsic(inp, outp)
 
 static void near F_16612(int a, int *p, int count, int reps)
 {
@@ -186,9 +164,6 @@ static void near F_16612(int a, int *p, int count, int reps)
 
 /* F_16686: same as F_16612 with the table walked backwards: square wave on the speaker: for each of count tones in table, flip bit 1 of port 61h
    with delays *p and a - *p, reps times */
-
-
-#pragma intrinsic(inp, outp)
 
 static void near F_16686(int a, int *p, int count, int reps)
 {
@@ -227,8 +202,6 @@ static int near F_166FA(int *buf, int start, int end, int step)
 /* F_1676D: warble: set the tone to freq, then reps times play the square wave half made by
    F_166FA (from 1 to hi in steps of step) forwards and backwards */
 
-
-
 static void near F_1676D(long freq, int period, int hi, int step, int cycles, int reps)
 {
     int count;
@@ -246,9 +219,6 @@ static void near F_1676D(long freq, int period, int hi, int step, int cycles, in
 /* F_167E4: noise: speaker off, then count times flip bit 1 of port 61h and wait for a random time
    (random_int(range) | bits) */
 
-
-#pragma intrinsic(inp, outp)
-
 static void near F_167E4(int range, int bits, int count)
 {
     int i;
@@ -264,8 +234,6 @@ static void near F_167E4(int range, int bits, int count)
 
 /* F_16830: sweep noise bursts downwards from start while it is > end, in steps of step */
 
-
-
 static void near F_16830(int start, int end, int gap, int step, int dur)
 {
     int n;
@@ -278,8 +246,6 @@ static void near F_16830(int start, int end, int gap, int step, int dur)
 }
 
 /* F_1687C: sweep noise bursts upwards from start while it is < end, in steps of step */
-
-
 
 static void near F_1687C(int start, int end, int gap, int step, int dur)
 {
@@ -296,7 +262,6 @@ static void near F_1687C(int start, int end, int gap, int step, int dur)
 
    Starts one of two sounds through F_1628A; `on` selects which. */
 
-
 void F_168C8(int on)
 {
     if (on)
@@ -306,7 +271,6 @@ void F_168C8(int on)
 }
 
 /* F_168F3: starts one of two sounds through F_1628A; `on` selects which */
-
 
 void F_168F3(int on)
 {
@@ -319,7 +283,6 @@ void F_168F3(int on)
 
 /* F_16943: starts one of two sounds through F_1628A; `on` selects which */
 
-
 void F_16943(int on)
 {
     if (on) {
@@ -330,7 +293,6 @@ void F_16943(int on)
 }
 
 /* F_16993: starts one of two sounds through F_1628A; `on` selects which */
-
 
 void F_16993(int on)
 {
@@ -343,7 +305,6 @@ void F_16993(int on)
 
 /* F_169E1: starts one of two sounds through F_1628A; `on` selects which */
 
-
 void F_169E1(int on)
 {
     if (on) {
@@ -355,7 +316,6 @@ void F_169E1(int on)
 
 /* F_16A2F: starts one of two sounds through F_1628A; `on` selects which */
 
-
 void F_16A2F(int on)
 {
     if (on)
@@ -365,7 +325,6 @@ void F_16A2F(int on)
 }
 
 /* F_16A5A: starts one of two sounds through F_1628A; `on` selects which */
-
 
 void F_16A5A(int on)
 {
@@ -378,7 +337,6 @@ void F_16A5A(int on)
 
 /* F_16AA8 @ 0F38:7728 (linear 0x16AA8, 25 bytes) */
 
-
 void F_16AA8(int on)
 {
     if (on)
@@ -388,7 +346,6 @@ void F_16AA8(int on)
 }
 
 /* F_16AC1 @ 0F38:7741 (linear 0x16AC1, 25 bytes) */
-
 
 void F_16AC1(int on)
 {
@@ -418,8 +375,6 @@ void F_16B0A(void)
 
 /* F_16B3A: sound effect, only when sound is on */
 
-
-
 void F_16B3A(void)
 {
     if (g_47ce) {
@@ -430,8 +385,6 @@ void F_16B3A(void)
 }
 
 /* F_16B61: sound effect with a random start pitch */
-
-
 
 void F_16B61(void)
 {
@@ -444,8 +397,6 @@ void F_16B61(void)
 
 /* F_16B97: sound effect */
 
-
-
 void F_16B97(void)
 {
     if (g_47ce) {
@@ -457,8 +408,6 @@ void F_16B97(void)
 
 /* F_16BC1: sound effect */
 
-
-
 void F_16BC1(void)
 {
     if (g_47ce) {
@@ -469,8 +418,6 @@ void F_16BC1(void)
 }
 
 /* F_16BE3: sound effect, three repeats of a noise burst, a click and a blip */
-
-
 
 void F_16BE3(void)
 {
@@ -492,8 +439,6 @@ void F_16BE3(void)
 
 /* F_16C8F: sound effect, two noise bursts each followed by a click run */
 
-
-
 void F_16C8F(void)
 {
     if (g_47ce) {
@@ -508,8 +453,6 @@ void F_16C8F(void)
 }
 
 /* F_16CF3: sound effect, a falling sweep */
-
-
 
 void F_16CF3(void)
 {

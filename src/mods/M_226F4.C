@@ -33,8 +33,6 @@ static void near F_226F4(struct Rect *r, struct Bitmap far *a, struct Bitmap far
 /* F_22762: erase and redraw one sprite on the screen page r_vid.back through the masked blitters, then flush the touched rectangle to the page and advance the sprite */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-
-
 int F_22762(struct Sprite *s)
 {
     struct Blt blt;

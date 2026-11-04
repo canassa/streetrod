@@ -31,6 +31,8 @@
 #include "M_265BA.H"
 #include "SONG.H"
 
+#pragma intrinsic(inp, outp, _enable, _disable, abs)
+
 static int g_6c46;                         /* DS:6C46 */
 static int g_6c48;                         /* DS:6C48 */
 static char g_6c4a;                        /* DS:6C4A */
@@ -110,8 +112,6 @@ void F_00D78(void)
 }
 
 /* F_00D99 @ 0000:0D99 (linear 0x00D99, 63 bytes) */
-
-#pragma intrinsic(inp, outp)
 
 void F_00D99(void)
 {
@@ -197,8 +197,6 @@ void F_00F0B(int n)
 
 /* F_00FB7 @ 0000:0FB7 (linear 0x00FB7, 51 bytes) */
 
-#pragma intrinsic(outp)
-
 void F_00FB7(void)
 {
     _disable();
@@ -213,8 +211,6 @@ void F_00FB7(void)
 }
 
 /* F_00FEA @ 0000:0FEA (linear 0x00FEA, 113 bytes) */
-
-#pragma intrinsic(inp, outp)
 
 void F_00FEA(void)
 {
@@ -279,8 +275,6 @@ void F_0105B(unsigned deverr, unsigned char errcode)
 }
 
 /* F_01111 @ 0000:1111 (linear 0x01111, 461 bytes) */
-
-#pragma intrinsic(inp, outp)
 
 void F_01111(void)
 {
@@ -662,8 +656,6 @@ void F_019BC(int n)
 
 /* F_01A05 @ 0000:1A05 (linear 0x01A05, 119 bytes) */
 
-#pragma intrinsic(inp, outp)
-
 void F_01A05(int n, int cnt)
 {
     if (g_58d0) {
@@ -685,8 +677,6 @@ void F_01A05(int n, int cnt)
 
 /* F_01A7C @ 0000:1A7C (linear 0x01A7C, 49 bytes) */
 
-#pragma intrinsic(inp, outp)
-
 void F_01A7C(void)
 {
     g_58d2->off = 0;
@@ -697,8 +687,6 @@ void F_01A7C(void)
 }
 
 /* F_01AAD @ 0000:1AAD (linear 0x01AAD, 122 bytes) */
-
-#pragma intrinsic(inp, outp)
 
 void F_01AAD(void)
 {
@@ -722,8 +710,6 @@ void F_01AAD(void)
 }
 
 /* F_01B27 @ 0000:1B27 (linear 0x01B27, 106 bytes) */
-
-#pragma intrinsic(inp, outp)
 
 void F_01B27(void)
 {
@@ -930,8 +916,6 @@ void F_01BAE(void)
 
 /* F_01FE2 @ 0000:1fe2 (linear 0x01fe2, 914 bytes) */
 
-#pragma intrinsic(inp, outp, _enable, _disable)
-
 void interrupt far F_01FE2(void)
 {
     int x, y;
@@ -1058,8 +1042,6 @@ void F_02374(void)
 }
 
 /* F_0238C @ 0000:238C (linear 0x0238C, 2062 bytes) */
-
-#pragma intrinsic(inp, outp, _enable, _disable, abs)
 
 void interrupt far F_0238C(void)
 {

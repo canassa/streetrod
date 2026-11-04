@@ -19,14 +19,12 @@ struct Pair g_06ec[4] = {{1, 1}, {2, 2}, {1, 1}, {8, 8}};   /* DS:06EC */
 
 /* F_11E9C @ 0F38:2B1C (linear 0x11E9C, 12 bytes) */
 
-
 unsigned F_11E9C(unsigned n)
 {
     return n * g_cursor2.size;
 }
 
 /* F_11EA8: set up the off-screen work bitmap and the scratch strip used by the pop-up code */
-
 
 void F_11EA8(void)
 {
@@ -91,7 +89,6 @@ void F_11EA8(void)
 /* F_120FE: mouse cursor control. mode >= 0 selects cursor shape number mode and moves it to the
    (clamped) mouse position; -1/-2 show it and -3/-4 hide it (nested by a counter). */
 
-
 void F_120FE(int mode)
 {
     int a;
@@ -128,7 +125,6 @@ void F_120FE(int mode)
 }
 
 /* F_1220B: move the saved-background cursor strip to (x, y): restore what it covered, save and draw anew */
-
 
 void F_1220B(int x, int y)
 {

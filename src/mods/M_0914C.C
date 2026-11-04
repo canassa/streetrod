@@ -31,6 +31,8 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
+#pragma intrinsic(abs)
+
 static int g_6c84;                         /* DS:6C84 */
 static int g_6c88;                         /* DS:6C88 */
 static void near F_09256(char *s);
@@ -56,8 +58,6 @@ static void near F_0A265(void);
 static int near F_09D6D(int);
 static void near F_0A416(void);
 static void near F_0B045(int id, char c);
-static int near F_0984E(int chance, int arg);
-static void near F_09A27(int n, int a, int mode);
 
 int g_51ee = 100;   /* DS:51EE */
 int g_51f0 = 0;   /* DS:51F0 */
@@ -246,8 +246,6 @@ static int near F_095F1(void)
 }
 
 /* F_09646 @ 0000:9646 (linear 0x09646, 520 bytes) */
-
-#pragma intrinsic(abs)
 
 static void near F_09646(int flag)
 {

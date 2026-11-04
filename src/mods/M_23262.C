@@ -9,10 +9,10 @@
 #include "M_25954.H"
 #include "M_2634A.H"
 
+#pragma intrinsic(inp, outp)
+
 /* F_23262 @ 21A0:1862: copy a rectangle between planar VGA bitmaps, plane by plane */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
-
-#pragma intrinsic(inp, outp)
 
 void F_23262(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, int flags)
 {
@@ -97,8 +97,6 @@ void F_23262(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, i
 /* F_234E9 @ 21A0:1AE9: masked blit between planar VGA bitmaps */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-#pragma intrinsic(outp)
-
 void F_234E9(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *bm3,
              struct Mask *mask, struct Blt *r)
 {
@@ -178,8 +176,6 @@ void F_234E9(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *
 /* F_236D5 @ 21A0:1CD5: blit between planar VGA bitmaps through one of two hand-written plane routines */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-#pragma intrinsic(outp)
-
 void F_236D5(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int flag)
 {
     int p;                /* bm2 height */
@@ -232,8 +228,6 @@ void F_236D5(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int 
 }
 
 /* F_2382D @ 21A0:1E2D: copy a w by h block of planar VGA video memory using write mode 1 (latch copy) */
-
-#pragma intrinsic(outp)
 
 /* The file is compiled /Oals, but this copy loop is a plain /Ol-off loop in the
    shipped code (byte moves through memory variables). Under /Ol MSC turns the

@@ -62,7 +62,6 @@ struct Bitmap far *g_5ab8 = (struct Bitmap far *)&g_6d700;   /* DS:5AB8 */
 
 /* F_1A9B2: build the two scratch bitmaps for a shifted background strip and its 0x28-wide column */
 
-
 static struct Bitmap far *near F_1A9B2(int n)
 {
     struct Bitmap far *b;
@@ -99,7 +98,6 @@ static struct Bitmap far *near F_1A9B2(int n)
 }
 
 /* F_1ABAC: build the four shifted copies of a background strip and animate the sprite over them */
-
 
 static void near F_1ABAC(int a, int *p, int *q)
 {
@@ -193,8 +191,6 @@ static void near F_1ABAC(int a, int *p, int *q)
 }
 
 /* F_1B213: the car showroom sprite sequence (strip sprites slide across the screen in both directions) */
-
-
 
 void F_1B213(int *a, int *b)
 {

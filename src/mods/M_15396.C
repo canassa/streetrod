@@ -22,6 +22,8 @@
 #include "M_2634A.H"
 #include "SLOTS.H"
 
+#pragma intrinsic(outp)
+
 static int g_6c68;                         /* DS:6C68 */
 static int *g_6c6a;                        /* DS:6C6A */
 static int *g_6c6c;                        /* DS:6C6C */
@@ -49,7 +51,6 @@ int h_8dd8[4][3];
 static int near F_153D7(int n);
 static void near F_15409(int n);
 static int near F_1563A(int n, int load, char far *dst);
-static int near F_1563A(int n, int load, long dst);
 static void near F_1606C(void);
 static void near F_1604F(void);
 
@@ -91,7 +92,6 @@ int F_15396(int handle, long pos)
 /* F_153D7: map a picture number to its table index: numbers from 1000 on are shifted down, the rest
    are 1 based. In the video modes -2 and -6 that is the result, else g_07c6 translates it */
 
-
 static int near F_153D7(int n)
 {
     if (n >= 1000)
@@ -107,8 +107,6 @@ static int near F_153D7(int n)
 /* F_15409: make sure the picture file holding picture number n is open (the pictures come in two
    files, split at h_8bc8). Closes the other one, asks for the right disk until the open works
    and checks the file header word */
-
-
 
 static void near F_15409(int n)
 {
@@ -151,8 +149,6 @@ static void near F_15409(int n)
    anything else the second (its entries follow the first file's, h_8bc8 of them). Clears the
    run time fields of each entry. Returns the largest data size found */
 
-
-
 int F_1552B(int which)
 {
     int num;
@@ -193,10 +189,6 @@ int F_1552B(int which)
    F_15409 and the read is repeated after asking for the disk again when the data does not start
    and end with 0xbc. Returns 0 when there was no memory, 1 when the picture was loaded already,
    2 and 3 when it has just been read (3: copied to the fast pool) */
-
-
-#pragma intrinsic(outp)
-
 
 static int near F_1563A(int n, int load, char far *dst)
 {
@@ -273,8 +265,6 @@ bad:
 
    Frees and clears the far pointer in slot n of the far table g_slot. */
 
-
-
 void F_158DE(int n)
 {
     char far * far *pp;
@@ -289,10 +279,6 @@ void F_158DE(int n)
 /* F_1592E: unpack picture number id into the bitmap bm (a new one when bm is 0). The picture is
    loaded to the work area ab7564z first; its data is RLE coded (F_0E926) and expanded for the video
    mode in use into the planes bits and alt of the bitmap. Returns the bitmap */
-
-
-#pragma intrinsic(outp)
-
 
 struct Bitmap far *F_1592E(int id, struct Bitmap far *bm)
 {
@@ -351,8 +337,6 @@ struct Bitmap far *F_1592E(int id, struct Bitmap far *bm)
 
 /* F_15B7F: fields of slot picture number n: *w, *h and the byte *x */
 
-
-
 void F_15B7F(int n, int *w, int *h, int *x)
 {
     n = F_153D7(n);
@@ -363,7 +347,6 @@ void F_15B7F(int n, int *w, int *h, int *x)
 
 /* F_15BBE: allocate a bitmap of the given mode for slot picture id, draw the picture into it
    (F_1592E) and return it */
-
 
 struct Bitmap far *F_15BBE(int id, int mode)
 {
@@ -381,8 +364,6 @@ struct Bitmap far *F_15BBE(int id, int mode)
 /* F_15C07: load every picture of the zero terminated list of picture numbers (see F_1563A). Does
    nothing when g_0280 is set. Returns 1 */
 
-
-
 int F_15C07(int *list)
 {
     int n;
@@ -396,8 +377,6 @@ int F_15C07(int *list)
 
 /* F_15C4A: try the pictures of the zero terminated list in turn with F_1563A (load flag 0) and
    count the ones that succeed. A failure ends the walk unless all is set. Returns the count */
-
-
 
 int F_15C4A(int *list, int all)
 {
@@ -417,7 +396,6 @@ int F_15C4A(int *list, int all)
 
 /* F_15C95: free the pictures listed in the zero terminated array of picture numbers */
 
-
 void F_15C95(int *list)
 {
     int n;
@@ -430,7 +408,6 @@ void F_15C95(int *list)
    first character) and read the entry counts h_8bc8 and s_8dd2 from their headers. disks is the
    number of disk drives wanted: 2 only when the equipment word says there are two floppies. mode 2
    and 5 pick the other file names. Any failure shows an error text */
-
 
 void F_15CC3(int disks, int mode)
 {
@@ -527,8 +504,6 @@ void F_15EF9(void)
    returns the drive letter code g_6c68 + 0x40 at once. Otherwise returns the first character of
    g_6c72a */
 
-
-
 int F_15FBD(void)
 {
     int file;
@@ -555,7 +530,6 @@ int F_15FBD(void)
 /* F_1604F: set the high bit of all 230 bytes of aytablex (10 hall of fame entries of 23 bytes) to scramble
    it before it is written to the file (see F_16152) */
 
-
 static void near F_1604F(void)
 {
     int i;
@@ -565,7 +539,6 @@ static void near F_1604F(void)
 }
 
 /* F_1606C: clear the high bit of all 230 bytes of aytablex again, unscrambling the hall of fame */
-
 
 static void near F_1606C(void)
 {
@@ -578,8 +551,6 @@ static void near F_1606C(void)
 /* F_16089: read the hall of fame file (name g_4f3a, first character the drive of the game disk):
    a count word, then bucount entries. Any read failure shows the error text. A missing file
    leaves the table empty */
-
-
 
 void F_16089(void)
 {
@@ -612,8 +583,6 @@ void F_16089(void)
    (asking for the disk until it works on a floppy), the count word and the bucount entries
    written. Any failure shows the error text and deletes the file. The table is unscrambled at
    the end (F_1606C) */
-
-
 
 void F_16152(void)
 {

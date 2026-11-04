@@ -135,7 +135,6 @@ int F_14C90(int x, int y, char *buf, int max)
    text of up to 20 characters at (g824cd, bq824e) and store its value in *out. Returns the result
    of the editor when that is 0 or negative, else 0 */
 
-
 int F_150B7(int x, int y, char *s, int *out)
 {
     char buf[20];
@@ -155,7 +154,6 @@ int F_150B7(int x, int y, char *s, int *out)
    fewer when the box is narrow: 6 pixels each) with the spot's colours and store its value in *out.
    Returns the editor's result when that is 0 or negative, else 0 */
 
-
 int F_15127(int *out, char *buf)
 {
     int rl;
@@ -172,7 +170,6 @@ int F_15127(int *out, char *buf)
 /* F_1519E: show hot spot id, read a number into *out with F_15127 and close the spot again;
    returns the editor's result */
 
-
 int F_1519E(int id, int *out)
 {
     int res;
@@ -187,7 +184,6 @@ int F_1519E(int id, int *out)
 
 /* F_151D4: show hot spot id and let the player edit the text s (at most len characters) in its box
    with the spot's colours; returns the editor's result when that is 0 or negative, else 0 */
-
 
 int F_151D4(int id, int len, char *s)
 {
