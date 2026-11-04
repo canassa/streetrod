@@ -237,7 +237,7 @@ struct Seq {
     signed char dy;
 };
 
-/* one animation frame: 12 bytes, the ring links nxt[0..2] (sprite_setup builds g77bal[]) */
+/* one animation frame: 12 bytes, the ring links nxt[0..2] (sprite_setup builds g_frmTable[]) */
 struct Frame {
     struct Bitmap far *pos;
     struct Bitmap *data;
@@ -500,12 +500,12 @@ struct Panel {
     struct Offs r[5];
 };
 
-/* 12-byte table entry (g7682n[]), read as bytes by carpic_build */
+/* 12-byte table entry (g_layoutAutoSprArray[]), read as bytes by carpic_build */
 struct Spr12 {
     unsigned char wheelX1, wheelX2, b2, b3, roofX, b5, b6, frontBumperY, rearBumperX, rearBumperY, stickerX, stickerY;
 };
 
-/* 6-byte table entry (ap818c[]) */
+/* 6-byte table entry (g_pointsModelService[]) */
 struct Spr6 {
     unsigned char fuelCapX, fuelCapY, rearGlassX, rearGlassY, frontGlassX, frontGlassY;
 };

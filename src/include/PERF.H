@@ -16,6 +16,6 @@ extern int g_5568[];                                    /* DS:5568 */
 extern int g_modelScore[];                              /* DS:556E */
 void near perf_drivetrain(struct Car *c, struct Eng *e);/* 0x0DCBE */
 void near perf_drivetrain_spec(int n, struct Eng *e);   /* 0x0E0E2 */
-int near F_0E218(int n);                                /* 0x0E218 */
+int near perf_vmax(int n);                                /* 0x0E218 */
 
 #endif

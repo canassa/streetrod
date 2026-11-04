@@ -44,12 +44,12 @@ extern struct Obj bm7568[];                             /* DS:7568 */
 extern struct Style *bustyle;                           /* DS:787E */
 extern int (far *ab78aat)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);/* DS:78AA */
 extern struct Colors x_colors;                          /* DS:8242 */
-extern char iz8248;                                     /* DS:8248 */
-extern struct Bitmap far *bu825a;                       /* DS:825A */
+extern char g_colScreenBorder;                                     /* DS:8248 */
+extern struct Bitmap far *g_autoSprImagePtr;                       /* DS:825A */
 extern int ac825et;                                     /* DS:825E */
 extern int aw8260y;                                     /* DS:8260 */
-extern int d_8266;                                      /* DS:8266 */
-extern int ap8268t;                                     /* DS:8268 */
+extern int g_frntWindscreenX;                                      /* DS:8266 */
+extern int g_frontWinPositionYVal;                                     /* DS:8268 */
 void F_10B7C(void);                                     /* 0x10B7C */
 void video_bobs_pal(void);                                     /* 0x10B8C */
 void video_name_pal(void);                                     /* 0x10B9C */

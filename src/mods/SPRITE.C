@@ -42,9 +42,9 @@ struct Rect *sprite_car_clip(int x, int y, int w, int h, struct Rect *out)
     struct Rect rect, scr;
 
     scr.x1 = ac825et;
-    scr.x2 = bu825a->width + ac825et - 1;
+    scr.x2 = g_autoSprImagePtr->width + ac825et - 1;
     scr.y1 = aw8260y;
-    scr.y2 = aw8260y + l_8262 - 1;
+    scr.y2 = aw8260y + g_carVisibleHtValue - 1;
     rect.x1 = x;
     rect.x2 = x + w - 1;
     rect.y1 = y;
@@ -53,8 +53,8 @@ struct Rect *sprite_car_clip(int x, int y, int w, int h, struct Rect *out)
 }
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-struct Frame g77bal[12];
-struct Seq g_764e[10];
+struct Frame g_frmTable[12];
+struct Seq g_seqSpriteMoveData[10];
 struct Sprite g7d18m;
 struct Page g_sprPageRing[2];
 
@@ -99,18 +99,18 @@ struct Sprite *sprite_setup(int x, int y, struct Bitmap far **imgs, char (*cell)
 
     y -= (*imgs)->height - 1;
     for (i = 0; i < n; i++) {
-        g77bal[i].pos = *imgs++;
+        g_frmTable[i].pos = *imgs++;
         if (cell)
-            g77bal[i].data = r_vid.mode == VID_EGA ? cell++ : &am6e68x[i];
+            g_frmTable[i].data = r_vid.mode == VID_EGA ? cell++ : &g_bandRecordsSprArray[i];
         else
-            g77bal[i].data = 0;
-        g77bal[i].nxt[0] = &g77bal[i + 1];
+            g_frmTable[i].data = 0;
+        g_frmTable[i].nxt[0] = &g_frmTable[i + 1];
     }
-    g7d18m.frame = g77bal[i - 1].nxt[0] = g77bal;
+    g7d18m.frame = g_frmTable[i - 1].nxt[0] = g_frmTable;
     for (i = 0; i < n; i++)
-        g77bal[i].nxt[1] = g77bal[i].nxt[0]->nxt[0];
+        g_frmTable[i].nxt[1] = g_frmTable[i].nxt[0]->nxt[0];
     for (i = 0; i < n; i++)
-        g77bal[i].nxt[2] = g77bal[i].nxt[1]->nxt[1];
+        g_frmTable[i].nxt[2] = g_frmTable[i].nxt[1]->nxt[1];
     g7d18m.img = img;
     g7d18m.x = x;
     g7d18m.y = y;
@@ -137,7 +137,7 @@ struct Sprite *sprite_setup(int x, int y, struct Bitmap far **imgs, char (*cell)
     sprite_clip_box(g7d18m.frame->pos->width,
         g7d18m.frame->pos->height, g7d18m.x, g7d18m.y,
         g_sprPageRing[0].bm->width, g_sprPageRing[0].bm->height, &g_sprPageRing[0].rect);
-    g7d18m.seq = g_764e;
+    g7d18m.seq = g_seqSpriteMoveData;
     return &g7d18m;
 }
 
@@ -188,17 +188,17 @@ void sprite_reverse(struct Sprite *s)
     struct Frame *f1, *f2, *f3, *f4;
     int idx;
 
-    s->x = z_8b7c;
+    s->x = g_xCoordSprite;
     f4 = (f3 = (f2 = (f1 = s->frame)->nxt[0])->nxt[0])->nxt[0];
     f1->nxt[0] = f4;
     f2->nxt[0] = f1;
     f3->nxt[0] = f2;
     f4->nxt[0] = f3;
     for (idx = 0; idx < 4; idx++)
-        g77bal[idx].nxt[1] = g77bal[idx].nxt[0]->nxt[0];
+        g_frmTable[idx].nxt[1] = g_frmTable[idx].nxt[0]->nxt[0];
     for (idx = 0; idx < 4; idx++)
-        g77bal[idx].nxt[2] = g77bal[idx].nxt[1]->nxt[1];
-    switch (z_8b7c & 7) {
+        g_frmTable[idx].nxt[2] = g_frmTable[idx].nxt[1]->nxt[1];
+    switch (g_xCoordSprite & 7) {
     case 0:
         break;
     case 6:
@@ -293,7 +293,7 @@ void sprite_slide_v(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
     struct Bitmap far *img2;
     int old;
 
-    old = z_8b7c;
+    old = g_xCoordSprite;
     n1 = y1 - y0;
     dir = 1;
     if (n1 < 0) {
@@ -302,21 +302,21 @@ void sprite_slide_v(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
     }
     n1++;
     img2 = popup_grab(x, 0, bm->width, SCREEN_HEIGHT, 0);
-    save = F_1934E(img2->width, img2->height, 0, ARENA_HIGH_STACK);
+    save = arena_bm(img2->width, img2->height, 0, ARENA_HIGH_STACK);
     bitmap_copy(img2, save, 1);
     sp = sprite_setup(x, bm->height + y0 - 1, &bm, 0, 1, img2, save, 0, 0);
     sprite_set_step(sp, 0, n1, 0, (char)dir);
     sp->page->bm = r_vid.back;
-    while ((*g78c6c)(sp)) {
+    while ((*g_stepSpriteFrm)(sp)) {
         if (g_boltOverlay)
-            (*ab78aat)(g_boltOverlay, r_vid.back, &u_70ac, 1);
+            (*ab78aat)(g_boltOverlay, r_vid.back, &g_cpyBoltPatchRecord, 1);
         if (r_vid.copyToFront)
             bitmap_copy_box(r_vid.back, r_vid.front, x, a, bm->width + x, b);
     }
     if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.front, r_vid.back, x, (y0 > y1 ? y1 : y0) < 0 ? 0 : (y0 > y1 ? y1 : y0), bm->width + x,
             (y0 < y1 ? y1 : y0) + bm->height > (SCREEN_HEIGHT - 1) ? (SCREEN_HEIGHT - 1) : (y0 < y1 ? y1 : y0) + bm->height);
-    z_8b7c = old;
+    g_xCoordSprite = old;
     F_19438(2);
 }
 
@@ -328,7 +328,7 @@ void sprite_advance(struct Sprite *s)
 {
     int n;
 
-    z_8b7c = s->x;
+    g_xCoordSprite = s->x;
     g_spritePic = s->frame->pos;
     s->seq->count--;
     if (s->seq->count == 0)

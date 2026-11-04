@@ -4,7 +4,7 @@
 #define MESSAGES_H
 #include "STRUCTS.H"
 
-extern char g_239e[];                                   /* DS:239E */
+extern char g_txt[];                                   /* DS:239E */
 extern char g_msgWannaQuit[];                           /* DS:28EC */
 extern char g_msgBackToGarage[];                        /* DS:28F9 */
 extern char g_msgClickToEdit[19];                       /* DS:290C */
@@ -30,7 +30,7 @@ extern int g_offTunes;                                  /* DS:2BAB */
 extern int g_groupHot[];                                /* DS:2BAD */
 extern char g_descHdr[];                                   /* DS:2C01 */
 extern char g_desc[];                                   /* DS:2C02 */
-extern char g_39c9[];                                   /* DS:39C9 */
+extern char g_junk[];                                   /* DS:39C9 */
 extern char g_msgShort[];                               /* DS:3A5A */
 extern char g_noRunHdr;                                     /* DS:3A80 */
 extern char g_noTuneHdr;                                     /* DS:3AA2 */

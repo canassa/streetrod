@@ -20,7 +20,7 @@ int g_modelScore[9] = {40, 44, 48, 60, 64, 68, 80, 84, 88};   /* DS:556E */
 /* perf_drivetrain @ 0000:DCBE (linear 0x0DCBE, 1060 bytes)
 
    Fills the drive train e (gear ranges, ratio table, limits) for the car c. The first half
-   is the rating computation of F_0E218. */
+   is the rating computation of perf_vmax. */
 
 void near perf_drivetrain(struct Car *c, struct Eng *e)
 {
@@ -37,11 +37,11 @@ void near perf_drivetrain(struct Car *c, struct Eng *e)
     qn = c->rack.parts;
     n6k = c->transmission;
     m = c->tires;
-    a3 = g_4806[qn[0]->idx].variant;
-    bl = g_4806[qn[1]->idx].variant;
-    c3 = g_4806[qn[2]->idx].variant;
-    d = g_4806[n6k->idx].variant;
-    e1 = g_4806[m->idx].variant;
+    a3 = g_part[qn[0]->idx].variant;
+    bl = g_part[qn[1]->idx].variant;
+    c3 = g_part[qn[2]->idx].variant;
+    d = g_part[n6k->idx].variant;
+    e1 = g_part[m->idx].variant;
     vl = ((c->appearance & 0x2000) || w_8df0[c->specIndex].roofPic == 0) * 0.09
         + ((c->appearance & 0x8000) || w_8df0[c->specIndex].rearBumperPic == 0) * 0.05
         + ((c->appearance & 0x4000) || w_8df0[c->specIndex].frontBumperPic == 0) * 0.01
@@ -78,7 +78,7 @@ void near perf_drivetrain(struct Car *c, struct Eng *e)
         e->autoShiftRpm = gl->bands[1].maxRpm;
     }
     e->shiftRpm = g_shiftRpm[a3];
-    e->f34[5] = (int)((int)(0x82 - g7d86n[c->specIndex].rank) * 5.0 / 50.0 + g_5568[g_4806[m->idx].variant]);
+    e->f34[5] = (int)((int)(0x82 - g7d86n[c->specIndex].rank) * 5.0 / 50.0 + g_5568[g_part[m->idx].variant]);
     e->gearCount = g_transGears[d];
     e->shifterDirty = 1;
 }
@@ -102,7 +102,7 @@ void near perf_drivetrain_spec(int n, struct Eng *e)
     s = &g7d86n[n];
     car.rack.parts[3] = car.rack.parts[4] = 0;
     t = ((s->parts >> 14) & 3) + 0x16;
-    for (i = g_5126[(s->parts >> 11) & 7] + 1; i >= 0; i--) {
+    for (i = g_nCarb[(s->parts >> 11) & 7] + 1; i >= 0; i--) {
         car.rack.parts[i] = &nd[i];
         nd[i].wear = g_496a;
         nd[i].idx = t;
@@ -115,12 +115,12 @@ void near perf_drivetrain_spec(int n, struct Eng *e)
     perf_drivetrain(&car, e);
 }
 
-/* F_0E218 @ 0000:E218 (linear 0x0E218, 849 bytes)
+/* perf_vmax @ 0000:E218 (linear 0x0E218, 849 bytes)
 
    Rating of the car spec n (the car in a_7eaap.currentCar when n is negative): builds the
    car the way perf_drivetrain_spec does, then folds its parts into one number. */
 
-int near F_0E218(int n)
+int near perf_vmax(int n)
 {
     double w9, vl;
     struct Spec *s;
@@ -148,7 +148,7 @@ int near F_0E218(int n)
         s = &g7d86n[n];
         car.rack.parts[3] = car.rack.parts[4] = 0;
         t = ((s->parts >> 14) & 3) + 0x16;
-        for (i = g_5126[(s->parts >> 11) & 7] + 1; i >= 0; i--) {
+        for (i = g_nCarb[(s->parts >> 11) & 7] + 1; i >= 0; i--) {
             car.rack.parts[i] = &ndm[i];
             ndm[i].wear = g_496a;
             ndm[i].idx = t;
@@ -163,11 +163,11 @@ int near F_0E218(int n)
     qn = p6->rack.parts;
     n6k = p6->transmission;
     m = p6->tires;
-    a3 = g_4806[qn[0]->idx].variant;
-    bl = g_4806[qn[1]->idx].variant;
-    c3 = g_4806[qn[2]->idx].variant;
-    d = g_4806[n6k->idx].variant;
-    e1 = g_4806[m->idx].variant;
+    a3 = g_part[qn[0]->idx].variant;
+    bl = g_part[qn[1]->idx].variant;
+    c3 = g_part[qn[2]->idx].variant;
+    d = g_part[n6k->idx].variant;
+    e1 = g_part[m->idx].variant;
     vl = ((p6->appearance & 0x2000) || w_8df0[p6->specIndex].roofPic == 0) * 0.09
         + ((p6->appearance & 0x8000) || w_8df0[p6->specIndex].rearBumperPic == 0) * 0.05
         + ((p6->appearance & 0x4000) || w_8df0[p6->specIndex].frontBumperPic == 0) * 0.01

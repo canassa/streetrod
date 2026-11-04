@@ -37,8 +37,8 @@ _g_lastDx DB      0                        ; DS:4730 char
 _g_lastDy DB      0                        ; DS:4731 char
         PUBLIC  _g_buttons
 _g_buttons DB      0                        ; DS:4732 char
-        PUBLIC  _g_4733
-_g_4733 DB      0                        ; DS:4733 signed char
+        PUBLIC  _g_cVis
+_g_cVis DB      0                        ; DS:4733 signed char
         PUBLIC  _g_4734
 _g_4734 DW      1                        ; DS:4734 int
         PUBLIC  _g_click
@@ -113,8 +113,8 @@ _g_47f0 DB      0                        ; DS:47F0 char
 S_47f1  DB      '`Bankroll:`$', 0        ; DS:47F1 string
         PUBLIC  _g_gearText
 _g_gearText DB      ' Gear: ', 0             ; DS:47FE char[]
-        PUBLIC  _g_4806
-_g_4806 DW      13h                      ; DS:4806 struct Item[]
+        PUBLIC  _g_part
+_g_part DW      13h                      ; DS:4806 struct Item[]
         DB      0, 1, 0, 0
         DW      73Ch
         DW      13h
@@ -260,26 +260,26 @@ _g_dragWins DW      0                        ; DS:4972 int
 _g_roadWins DW      0                        ; DS:4974 int
         PUBLIC  _g_kingDragWon
 _g_kingDragWon DW      0                        ; DS:4976 int
-        PUBLIC  _g_4978
-_g_4978 DB      1, 0, 1, 0, 0            ; DS:4978 char[][5]
+        PUBLIC  _g_manifoldFit
+_g_manifoldFit DB      1, 0, 1, 0, 0            ; DS:4978 char[][5]
         DB      1, 1, 0, 1, 1
         DB      1, 1, 0, 1, 1
         EVEN
-        PUBLIC  _g_4988
-_g_4988 DB      1, 0, 0                  ; DS:4988 char[][3]
+        PUBLIC  _g_carbFit
+_g_carbFit DB      1, 0, 0                  ; DS:4988 char[][3]
         DB      0, 1, 1
         DB      1, 0, 0
         DB      0, 1, 1
         DB      0, 1, 1
         EVEN
-        PUBLIC  _g_4998
-_g_4998 DW      434h, 435h, 436h, 0, 0   ; DS:4998 int[][5]
+        PUBLIC  _g_partPics
+_g_partPics DW      434h, 435h, 436h, 0, 0   ; DS:4998 int[][5]
         DW      439h, 43Ah, 437h, 43Bh, 450h
         DW      43Ch, 43Dh, 43Eh, 0, 0
         DW      43Ch, 43Dh, 43Eh, 0, 0
         DW      43Ch, 43Dh, 43Eh, 0, 0
-        PUBLIC  _g_49ca
-_g_49ca DW      0, 43Fh, 440h, 441h      ; DS:49CA int[]
+        PUBLIC  _g_boltPics
+_g_boltPics DW      0, 43Fh, 440h, 441h      ; DS:49CA int[]
         PUBLIC  _g_49d2
 _g_49d2 DW      44Bh, 44Ch, 44Dh, 44Eh, 47F0h  ; DS:49D2 int[]
         PUBLIC  _g_49dc

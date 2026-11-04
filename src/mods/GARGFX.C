@@ -24,7 +24,7 @@ static void near make_bolt_overlay(void);
 static void near insert_hot(struct Hot *arr, struct Hot *item, int num);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-void (far *bl78ce)(int, int, int, int, int, struct Bitmap far *);
+void (far *g_slideBitmapHook)(int, int, int, int, int, struct Bitmap far *);
 
 char g_partAnimate = 1;   /* DS:06FC */
 int g_tboltY[2] = {78, 93};   /* DS:06FE */
@@ -62,7 +62,7 @@ void F_123F4(int frame, int slot)
         blt.sx = 0x40;
         blt.sy = 0;
         tmp = bitmap_grab(pict, &blt, ARENA_HIGH_STACK);
-        (*bl78ce)(0xe, 0x94, x, 8, y, tmp);
+        (*g_slideBitmapHook)(0xe, 0x94, x, 8, y, tmp);
         F_19438(1);
     }
     blt.sx = frame << 4;
@@ -106,7 +106,7 @@ void F_12525(int slot)
         cursor_ctl(CURSOR_HIDE_NOW);
         blt.sx = 0x40;
         tmp = bitmap_grab(pict, &blt, ARENA_HIGH_STACK);
-        (*bl78ce)(0xe, 0x94, x, y, 0x94, tmp);
+        (*g_slideBitmapHook)(0xe, 0x94, x, y, 0x94, tmp);
         F_19438(1);
         cursor_ctl(CURSOR_SHOW_NOW);
     }
@@ -136,7 +136,7 @@ void F_1264E(int n, int flag)
         sx -= 0x18;
     if (r_vid.copyToFront) {
         saved = popup_grab(sx - 8, sy, w1 + 8, h1, 0);
-        (*bl78ce)(0xe, 0x94, sx - 8, 0x94, sy, pict);
+        (*g_slideBitmapHook)(0xe, 0x94, sx - 8, 0x94, sy, pict);
         blt.sx = blt.sy = 0;
         blt.dx = 8;
         blt.dy = 0;
@@ -147,7 +147,7 @@ void F_1264E(int n, int flag)
         popup_show(saved, sx - 8, sy);
         F_19438(1);
     } else {
-        (*bl78ce)(0xe, 0x94, sx, sy, sy, pict);
+        (*g_slideBitmapHook)(0xe, 0x94, sx, sy, sy, pict);
         cursor_ctl(CURSOR_SHOW_NOW);
     }
     F_19438(1);
@@ -193,8 +193,8 @@ void F_127DB(int n, char far *s)
     }
 }
 
-struct Blt u_70ac;
-int (far *am78a6t)(struct Bitmap far *, struct Bitmap far *, struct Blt *);
+struct Blt g_cpyBoltPatchRecord;
+int (far *g_bltShiftedHook)(struct Bitmap far *, struct Bitmap far *, struct Blt *);
 int o_8290[5];
 int af829ax[1];
 int ad829cy[8];
@@ -323,13 +323,13 @@ void gargfx_draw_bolt(int n)
     move.dy = ypos += 9;
     move.dx = (move.sx = px) + 0x60;
     move.w = 6;
-    (*am78a6t)(r_vid.hoodBg, r_vid.back, &move);
+    (*g_bltShiftedHook)(r_vid.hoodBg, r_vid.back, &move);
     if (flag = px & ~r_vid.mask) {
-        saved = F_1934E(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
+        saved = arena_bm(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
         bitmap_shift_right(pict, flag, saved);
     }
     px = (px & r_vid.mask) + 0x60;
-    (*bl78ce)(0xd, 0x93, px, (n == 0x43f && r_vid.copyToFront) ? 0xd - height : ypos, ypos, saved);
+    (*g_slideBitmapHook)(0xd, 0x93, px, (n == 0x43f && r_vid.copyToFront) ? 0xd - height : ypos, ypos, saved);
     cursor_ctl(CURSOR_SHOW_NOW);
     F_19438(1);
     if (pict != saved)
@@ -371,7 +371,7 @@ void gargfx_drop_bolt(void)
     y1 -= rows;
     blt.sy = y1;
     blt.dy = y1 += 9;
-    (*am78a6t)(r_vid.hoodBg, r_vid.back, &blt);
+    (*g_bltShiftedHook)(r_vid.hoodBg, r_vid.back, &blt);
     if (r_vid.copyToFront) {
         xpos += 0x60;
         ypos += 9 - rows;
@@ -379,7 +379,7 @@ void gargfx_drop_bolt(void)
         F_16CF3();
         if (wide == 0x10)
             xpos += 8;
-        (*bl78ce)(0xd, 0x93, xpos - 8, ypos + 3, 0x93, pict);
+        (*g_slideBitmapHook)(0xd, 0x93, xpos - 8, ypos + 3, 0x93, pict);
     }
     cursor_ctl(CURSOR_SHOW_NOW);
     F_19438(1);
@@ -388,7 +388,7 @@ void gargfx_drop_bolt(void)
 /* make_bolt_overlay @ 0F38:3951 (linear 0x12CD1, 263 bytes)
 
    For the marker items 0x43f/0x440 of the current slot, save a copy of the picture
-   (shifted to the pixel grid) in g_boltOverlay and set up the blit u_70ac that draws it. */
+   (shifted to the pixel grid) in g_boltOverlay and set up the blit g_cpyBoltPatchRecord that draws it. */
 
 static void near make_bolt_overlay(void)
 {
@@ -409,14 +409,14 @@ static void near make_bolt_overlay(void)
         px = g_manifoldBoltPos[i * 2] - 2;
         py = g_manifoldBoltPos[i * 2 + 1];
         picture = F_15BBE(what, ARENA_LOW_STACK);
-        g_boltOverlay = F_1934E(picture->width + 8, picture->height, picture->alt.p != 0, ARENA_HIGH_STACK);
+        g_boltOverlay = arena_bm(picture->width + 8, picture->height, picture->alt.p != 0, ARENA_HIGH_STACK);
         bitmap_shift_right(picture, px & ~r_vid.mask, g_boltOverlay);
         marks_pop_low(1);
-        u_70ac.w = g_boltOverlay->width;
-        u_70ac.h = g_boltOverlay->height;
-        u_70ac.sx = u_70ac.sy = 0;
-        u_70ac.dx = (px & r_vid.mask) + 0x60;
-        u_70ac.dy = py - u_70ac.h + 9;
+        g_cpyBoltPatchRecord.w = g_boltOverlay->width;
+        g_cpyBoltPatchRecord.h = g_boltOverlay->height;
+        g_cpyBoltPatchRecord.sx = g_cpyBoltPatchRecord.sy = 0;
+        g_cpyBoltPatchRecord.dx = (px & r_vid.mask) + 0x60;
+        g_cpyBoltPatchRecord.dy = py - g_cpyBoltPatchRecord.h + 9;
     }
 }
 
@@ -445,7 +445,7 @@ void gargfx_draw_part(int n, int flag)
     saved = pict = F_15BBE(n, ARENA_HIGH_STACK);
     w = saved->width;
     if (mask = x & ~r_vid.mask) {
-        saved = F_1934E(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
+        saved = arena_bm(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
         bitmap_shift_right(pict, mask, saved);
         w = saved->width;
     }
@@ -465,7 +465,7 @@ void gargfx_draw_part(int n, int flag)
         (*ab78aat)(saved, r_vid.hoodBg, &move, 1);
     }
     if (g_partAnimate) {
-        (*bl78ce)(0xd, 0x93, x + 0x60, r_vid.copyToFront ? 0xd - height : ypos, ypos + 9, saved);
+        (*g_slideBitmapHook)(0xd, 0x93, x + 0x60, r_vid.copyToFront ? 0xd - height : ypos, ypos + 9, saved);
         cursor_ctl(CURSOR_SHOW_NOW);
     }
     if (g_boltOverlay) {
@@ -568,7 +568,7 @@ void gargfx_draw_parts(struct Car *car)
         if (type = o_8290[1]) {
             hz82ae = 1;
             gargfx_draw_part(type, 0);
-            slot = g_carbPosBase[g_4806[car->rack.parts[1]->idx].variant];
+            slot = g_carbPosBase[g_part[car->rack.parts[1]->idx].variant];
             for (type = 0; type < 3; type++) {
                 hz82ae = slot++;
                 if (other = o_8290[type + 2])
@@ -654,7 +654,7 @@ static void near insert_hot(struct Hot *arr, struct Hot *item, int n)
 /* gargfx_build_hots @ 0F38:40CA (linear 0x1344A, 411 bytes)
 
    Build the sorted list of menu items in g_engineHots: the 3 fixed records are copied from g_1948,
-   then for each of 9 slots (grouped by the counts in g_5130) that is enabled in o_8290 an item is
+   then for each of 9 slots (grouped by the counts in g_nBolt) that is enabled in o_8290 an item is
    inserted at the position gargfx_bolt_pos gives for the slot's coordinates, plus a last item picked by
    ap82acz. hz82ae/g82b2t are saved and restored around it. */
 
@@ -688,7 +688,7 @@ void gargfx_build_hots(int *xs, int *ys)
             insert_hot(g_engineHots, &g_boltHot, num);
             num++;
         }
-        if (++j == g_5130[lane]) {
+        if (++j == g_nBolt[lane]) {
             lane++;
             j = 0;
         }

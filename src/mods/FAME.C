@@ -27,7 +27,7 @@ static int near score_beats_entry(int i);
 static void near insert_entry(int pos);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-struct Entry aytablex[10];
+struct Entry g_hallFameTbl[10];
 
 struct ManualEntry g_manual[51] = {{2, 2}, {3, 11}, {4, 6}, {6, 5}, {7, 9}, {8, 1}, {9, 4}, {10, 6}, {11, 10}, {12, 1}, {14, 7}, {15, 12}, {16, 2}, {18, 3}, {19, 11}, {20, 5}, {22, 10}, {23, 6}, {1, 3}, {2, 5}, {3, 9}, {4, 4}, {5, 8}, {6, 10}, {7, 7}, {8, 2}, {9, 12}, {10, 5}, {11, 1}, {12, 3}, {13, 11}, {14, 9}, {15, 8}, {16, 4}, {17, 6}, {18, 1}, {19, 10}, {20, 8}, {21, 9}, {22, 12}, {23, 7}, {24, 2}, {25, 3}, {26, 1}, {27, 8}, {28, 5}, {29, 11}, {30, 10}, {31, 4}, {32, 12}, {33, 9}};   /* DS:4B62 */
 int g_protectCycle = 0;   /* DS:4BC8 */
@@ -68,11 +68,11 @@ int fame_protect_check(void)
     screen_text(0x79, 0x3f, b);
     screen_text(c, 0x48, a);
     cursor_ctl(CURSOR_SHOW_NOW);
-    (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
+    (*g_pageRevealBlit)(r_vid.front->bits.p, r_vid.back->bits.p);
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
         video_set_palette(g_protectPal);
     else
-        (*m_present)();
+        (*g_fnShow)();
     gz8249 = 1;
     r_vid.copyToFront = 1;
     g_protectCycle = 1;
@@ -121,7 +121,7 @@ int fame_end_menu(void)
     x_colors.line = c3;
     x_colors.fill = c21;
     cursor_ctl(CURSOR_SHOW_NOW);
-    (*m_present)();
+    (*g_fnShow)();
     key = menu_wait(41);
     cursor_ctl(CURSOR_HIDE_NOW);
     switch (key) {
@@ -140,10 +140,10 @@ int fame_end_menu(void)
 
 static int near score_beats_entry(int i)
 {
-    return atoi(aytablex[i].score) > g_score;
+    return atoi(g_hallFameTbl[i].score) > g_score;
 }
 
-int bucount;
+int g_nScore;
 char g_driverName[16];
 
 /* insert_entry @ 0000:32F4 (linear 0x032F4, 129 bytes) */
@@ -154,9 +154,9 @@ static void near insert_entry(int pos)
     char *src;
     char *dst;
 
-    cnt = bucount - pos - 1;
+    cnt = g_nScore - pos - 1;
     if (pos >= 0) {
-        src = (char *)&aytablex[pos];
+        src = (char *)&g_hallFameTbl[pos];
         if (cnt > 0) {
             dst = src + sizeof(struct Entry);
             memmove(dst, src, cnt * sizeof(struct Entry));
@@ -198,7 +198,7 @@ void fame_show(int add)
 
     old = g_picMaxH;
     pos7 = -1;
-    (*bl78be)();
+    (*g_displayDisablePtr)();
     g_picMaxH = SCREEN_HEIGHT;
     r_vid.copyToFront = 1;
     F_118D4(5, -1);
@@ -210,18 +210,18 @@ void fame_show(int add)
         bustyle->c28 = g_fameColors1;
         bustyle->c23 = g_fameColors2;
     }
-    (*m_present)();
+    (*g_fnShow)();
     if (add) {
         g_score = elapsed_hours();
-        for (i = 0; i < bucount; i++)
+        for (i = 0; i < g_nScore; i++)
             if (score_beats_entry(i)) {
                 pos7 = i;
                 break;
             }
-        if (bucount < 10) {
+        if (g_nScore < 10) {
             if (pos7 < 0)
-                pos7 = bucount;
-            bucount++;
+                pos7 = g_nScore;
+            g_nScore++;
         }
         insert_entry(pos7);
     }
@@ -232,7 +232,7 @@ void fame_show(int add)
         x_colors.text = 4;
         x_colors.textBg = 0;
     }
-    for (i = 0, p = aytablex; i < bucount; i++) {
+    for (i = 0, p = g_hallFameTbl; i < g_nScore; i++) {
         (*a_78aem)(r_vid.back, 46, g_fameRowY[i], p->name);
         x = 161;
         n2 = atoi(p->score);
@@ -246,14 +246,14 @@ void fame_show(int add)
     }
     bitmap_copy_box(r_vid.back, r_vid.front, 46, g_fameRowY[0], 211, g_fameRowY[9] + 8);
     if (pos7 >= 0) {
-        strcpy(buf3, aytablex[pos7].name);
+        strcpy(buf3, g_hallFameTbl[pos7].name);
         edit_line(46, g_fameRowY[pos7], buf3, 15);
-        strcpy(aytablex[pos7].name, buf3);
+        strcpy(g_hallFameTbl[pos7].name, buf3);
         disk_save_hall();
     } else {
         dash_wait_key(700);
     }
-    (*bl78be)();
+    (*g_displayDisablePtr)();
     bustyle->c28 = sv286;
     bustyle->c23 = sv23;
     video_swap_pal();

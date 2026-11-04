@@ -1220,3 +1220,10 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - HERCDET.ASM held the three Hercules/mono detection routines and, by its data run, the keymap tables at DS:5580 (`g_keyMapData`, and `g_keyMaps` at odd DS:579F, so assembler). Nothing references across the two, and the tables (near pointers) produce no MZ relocations, so the relocation evidence never tied them to that object. They are now a data-only KEYMAPS.ASM, linked directly before HERCDET.OBJ, written with ordinary MASM directives; one file versus two is undecidable from the EXE (RECONSTRUCTION.md). Done by a Codex agent.
 - Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup/order checks clean, tests OK.
+
+## 2026-11-05 22:30 CET: Phase 3 names (hash-fitting spellings), paused for the structs
+
+### What I did
+- A Codex agent searched honest alternative spellings for the reviewed statics and communals whose first names missed their hash windows (30+ candidates each, checked with `./sr fit`, confirmed by full builds), and for names kept only for length; 146 renames were applied. Phase 3 was paused so the struct grouping comes first. The branch conflicted with 33 files on main, so the 146 renames were replayed onto main with `./sr rename` from its ledger.
+- The renames only work as a set: applying the 114 full-length ones alone broke 28 functions and 32 bytes, because the 32 cramped names (e.g. `g_gar`, `g_pad`, `g_bIdx`) repay the per-file name budget the others spend in GARAGE.C/VIEW.C and some spellings share hash buckets. The 32 are listed in plans/cramped-names.md, to be renamed properly once the structs free budget.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup/order checks clean, tests OK.

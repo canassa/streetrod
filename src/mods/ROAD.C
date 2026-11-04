@@ -325,14 +325,14 @@ void road_build_layout(int n)
 
     g_buildEntry = 0x186;
     g_buildX = 0;
-    g_bendStep = bl82c6 ? 2 : 3;
+    g_bendStep = g_hasSlowCpu ? 2 : 3;
     for (i = 0x17c; i < 0x460; i++) {
         g_terrain2[i] = 0;
         g_terrain4[i] = 0;
         g_terrain3[i] &= 0xf117;
         g_terrain1[i] &= 0x87ff;
         g_terrain0[i] &= 0xe7ff;
-        if ((i + 1) % (bl82c6 * 4 + 4) == 0)
+        if ((i + 1) % (g_hasSlowCpu * 4 + 4) == 0)
             g_terrain3[i] |= 8;
     }
     if (n == 100)
@@ -376,7 +376,7 @@ void road_generate(void)
         g8188w = r_vid.back;
         g82b4s = &g_screens[2];
     }
-    cnt = bl82c6;
+    cnt = g_hasSlowCpu;
     for (i = 0; i < 0xb4; i++) {
         g_terrain4[i] = 0;
         g_terrain2[i] = 0;
@@ -478,7 +478,7 @@ void road_generate(void)
         g_terrain3[i] = 0;
         g_terrain0[i] = 0;
         g_terrain1[i] = 0;
-        if ((i + 1) % (bl82c6 * 4 + 4) == 0)
+        if ((i + 1) % (g_hasSlowCpu * 4 + 4) == 0)
             g_terrain3[i] |= 8;
         if (i % (cnt * 4 + 4) == 0) {
             g_terrain0[i] |= 1;
@@ -576,21 +576,21 @@ void road_generate(void)
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 unsigned far *q_72ee;
-int at72f8[13];
-int far *af7560z;
+int g_roadLXArray[13];
+int far *g_hereCurvePtr;
 int far *af7880z;
 int bq7884[13];
 int aw7aaex;
-int al7ab0u[13];
+int g_yBuildingTopArray[13];
 int g_rightXProjectionTable[13];
 unsigned far *g7d62p;
-int g7f22s[6];
-int at7f8au[13];
-int g7fd8e[13];
+int g_lhsRdMirrorX[6];
+int g_xOuterLProjArray[13];
+int g_rhsOuterXArray[13];
 unsigned far *aw8634x;
-int as8638y[6];
-int aj864ax[6];
-int ay865a[6];
+int g_yMirrProjectionArray[6];
+int g_yMirrorBldgArray[6];
+int g_rhsXsRear[6];
 
 /* road_seek @ 2645:171D (linear 0x27B6D, 82 bytes)
 
@@ -602,7 +602,7 @@ void road_seek(int n)
     aw8634x = &g_terrain1[n];
     g7d62p = &g_terrain3[n];
     af7880z = &g_terrain4[n];
-    af7560z = &g_terrain2[n];
+    g_hereCurvePtr = &g_terrain2[n];
 }
 
 /* road_proj_x @ 2645:176F (linear 0x27BBF, 66 bytes) */
@@ -684,8 +684,8 @@ void road_reset(void)
             break;
         }
     road_seek(ao7d2ev.roadIndex);
-    g7d82p = 1500;
-    cz8bd0y = 3300;
+    g_leftEdgeX = 1500;
+    g_edgeXR = 3300;
     ao7d2ev.roadFraction = 0;
     ao7d2ev.lateralX = 2560;
     ao7d2ev.cameraY = 1900;
@@ -694,8 +694,8 @@ void road_reset(void)
     ao7d2ev.m7d3c = 0;
     ao7d2ev.distanceStep = 0;
     g_rivalLeft = 1;
-    g_8648 = !random_int(2);
-    gz7d7e = 1;
+    g_swapArmedRivalValue = !random_int(2);
+    g_ramAllowed = 1;
 }
 
 /* road_project_ahead @ 2645:18FB (linear 0x27D4B, 721 bytes)
@@ -710,14 +710,14 @@ void road_project_ahead(void)
     flag8 = (*g7d62p & 1) || (*g7d62p & 0xf000);
     bits = *g7d62p++ & 0xe0;
     p11 = g_rightXProjectionTable;
-    p2 = at72f8;
+    p2 = g_roadLXArray;
     p3 = bq7884;
-    p42 = at7f8au;
-    p5l = g7fd8e;
-    p6 = al7ab0u;
+    p42 = g_xOuterLProjArray;
+    p5l = g_rhsOuterXArray;
+    p6 = g_yBuildingTopArray;
     rowz = 4;
     d1 = ao7d2ev.m7d3e - *af7880z++;
-    d2 = ao7d2ev.m7d3c - *af7560z++;
+    d2 = ao7d2ev.m7d3c - *g_hereCurvePtr++;
     *p3++ = road_proj_y(rowz, 2000, d1);
     if (bits) {
         if (bits & 0x80) {
@@ -748,8 +748,8 @@ void road_project_ahead(void)
         g7d62p++;
         d1 = ao7d2ev.m7d3e - *af7880z;
         af7880z++;
-        d2 = ao7d2ev.m7d3c - *af7560z;
-        af7560z++;
+        d2 = ao7d2ev.m7d3c - *g_hereCurvePtr;
+        g_hereCurvePtr++;
         if (bits) {
             if (bits & 0x80) {
                 *p11 = road_proj_x(rowz, 0xaf0, d2);
@@ -797,15 +797,15 @@ void road_project_behind(void)
 
     flag8 = (*g7d62p & 1) || (*g7d62p & 0xf000);
     bits = *g7d62p-- & 0xe0;
-    p11 = ay865a;
-    p2 = g7f22s;
-    p3 = as8638y;
+    p11 = g_rhsXsRear;
+    p2 = g_lhsRdMirrorX;
+    p3 = g_yMirrProjectionArray;
     p42 = al70c0x.m70c2;
     p5l = al70c0x.m70d2;
-    p6 = aj864ax;
+    p6 = g_yMirrorBldgArray;
     rowz = 8;
     d1 = *af7880z-- - ao7d2ev.m7d3e;
-    d2 = *af7560z-- - ao7d2ev.m7d3c;
+    d2 = *g_hereCurvePtr-- - ao7d2ev.m7d3c;
     *p3++ = road_mirror_y(rowz, 2000, d1);
     if (bits) {
         if (bits & 0x80) {
@@ -836,8 +836,8 @@ void road_project_behind(void)
         g7d62p--;
         d1 = *af7880z - ao7d2ev.m7d3e;
         af7880z--;
-        d2 = *af7560z - ao7d2ev.m7d3c;
-        af7560z--;
+        d2 = *g_hereCurvePtr - ao7d2ev.m7d3c;
+        g_hereCurvePtr--;
         if (bits) {
             if (bits & 0x80) {
                 *p11 = road_mirror_x(rowz, 0xaf0, d2);
@@ -905,18 +905,18 @@ void road_advance(void)
     bits7 = *g7d62p & 0xe0;
     if (bits7) {
         if (bits7 & 0x80) {
-            g7d82p = 2000;
-            cz8bd0y = 0xaf0;
+            g_leftEdgeX = 2000;
+            g_edgeXR = 0xaf0;
         } else if (bits7 & 0x20) {
-            g7d82p = 2000;
-            cz8bd0y = 0xce4;
+            g_leftEdgeX = 2000;
+            g_edgeXR = 0xce4;
         } else {
-            g7d82p = 1500;
-            cz8bd0y = 0xaf0;
+            g_leftEdgeX = 1500;
+            g_edgeXR = 0xaf0;
         }
     } else {
-        g7d82p = 1500;
-        cz8bd0y = 0xce4;
+        g_leftEdgeX = 1500;
+        g_edgeXR = 0xce4;
     }
     bits7 = g7d62p[4] & 0xe0;
     if (bits7) {
@@ -946,12 +946,12 @@ void road_advance(void)
             ao7d2ev.lateralX = goal6 + (goal6 < ao7d2ev.lateralX ? 100 : -100);
         else
             ao7d2ev.lateralX = goal6;
-        if (abs(*af7560z - ao7d2ev.m7d3c) > 0) {
-            g_driveEng.steering = (ao7d2ev.m7d3c - *af7560z) * 2;
+        if (abs(*g_hereCurvePtr - ao7d2ev.m7d3c) > 0) {
+            g_driveEng.steering = (ao7d2ev.m7d3c - *g_hereCurvePtr) * 2;
             if (abs(g_driveEng.steering) > 24)
                 g_driveEng.steering = g_driveEng.steering > 0 ? 24 : -24;
         }
-        ao7d2ev.m7d3c = *af7560z;
+        ao7d2ev.m7d3c = *g_hereCurvePtr;
     }
 }
 
@@ -962,14 +962,14 @@ void road_advance(void)
 int road_check_crash(void)
 {
     g_onShoulder = 0;
-    if (g7d82p - 0x104 < ao7d2ev.lateralX - 0x1e && ao7d2ev.lateralX + 0x46 < cz8bd0y + 0x104) {
-        if (g7d82p > ao7d2ev.lateralX - 0x1e) {
+    if (g_leftEdgeX - 0x104 < ao7d2ev.lateralX - 0x1e && ao7d2ev.lateralX + 0x46 < g_edgeXR + 0x104) {
+        if (g_leftEdgeX > ao7d2ev.lateralX - 0x1e) {
             if ((g_terrain0[ao7d2ev.roadIndex] & 0x1000) || (g_terrain0[ao7d2ev.roadIndex - 1] & 0x1000))
                 return 1;
             if (g_terrain3[ao7d2ev.roadIndex + 1] & 0xf000)
                 return 1;
             g_onShoulder = 1;
-        } else if (ao7d2ev.lateralX + 0x46 > cz8bd0y) {
+        } else if (ao7d2ev.lateralX + 0x46 > g_edgeXR) {
             if ((g_terrain1[ao7d2ev.roadIndex] & 0x1000) || (g_terrain1[ao7d2ev.roadIndex - 1] & 0x1000))
                 return 1;
             if (g_terrain3[ao7d2ev.roadIndex + 1] & 0xf002)
@@ -1004,10 +1004,10 @@ void road_turn(int dir)
 
 void road_update(void)
 {
-    if (g_driveEng.steeringInput && g_driveEng.speed && abs(ao7d2ev.m7d3c - *af7560z - g_driveEng.steeringInput) < 200)
+    if (g_driveEng.steeringInput && g_driveEng.speed && abs(ao7d2ev.m7d3c - *g_hereCurvePtr - g_driveEng.steeringInput) < 200)
         ao7d2ev.m7d3c -= (g_driveEng.steeringInput >> 1) + 1;
     if (!bw8aca) {
-        if (bl82c6)
+        if (g_hasSlowCpu)
             ao7d2ev.distanceStep = 6;
         else
             ao7d2ev.distanceStep = 4;
@@ -1016,10 +1016,10 @@ void road_update(void)
         aw7aaex -= 4;
     road_draw_frame();
     if (g_demo == 0 && g_autoDrive == 0) {
-        if (at787cu)
+        if (g_failureTire)
             ao7d2ev.lateralX += 25;
         else if (g_driveEng.speed)
-            ao7d2ev.lateralX -= (ao7d2ev.m7d3c - *af7560z) * (ao7d2ev.distanceStep + g_driveEng.tireSlip) >> 2;
+            ao7d2ev.lateralX -= (ao7d2ev.m7d3c - *g_hereCurvePtr) * (ao7d2ev.distanceStep + g_driveEng.tireSlip) >> 2;
     }
     if (!bw8aca) {
         ao7d2ev.roadFraction += ao7d2ev.distanceStep;

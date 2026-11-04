@@ -26,9 +26,9 @@ extern int g_kbdHooked;                                 /* DS:05E0 */
 extern struct Mouse g_mouse;                            /* DS:05E2 */
 extern int g_05f4[2];                                   /* DS:05F4 */
 extern long g_tick;                                     /* DS:05F8 */
-extern long g_05fc;                                     /* DS:05FC */
-extern long g_0600;                                     /* DS:0600 */
-extern long g_0604;                                     /* DS:0604 */
+extern long g_addT;                                     /* DS:05FC */
+extern long g_sysT;                                     /* DS:0600 */
+extern long g_tRef;                                     /* DS:0604 */
 extern char g_tickDiv;                                  /* DS:0608 */
 extern char g_driveDiv;                                 /* DS:0609 */
 extern int g_060a;                                      /* DS:060A */
@@ -60,22 +60,22 @@ extern char g_lastFire;                                 /* DS:06E9 */
 extern char g_squealPhase;                                     /* DS:06EA */
 extern int g_vibratoActive;                             /* DS:72EC */
 extern struct Eng g_driveEng;                               /* DS:78E0 */
-extern struct Dev bs79aa;                               /* DS:79AA */
-extern struct Dev ao79c6t;                              /* DS:79C6 */
-extern void (interrupt far *w_7aaa)(void);              /* DS:7AAA */
+extern struct Dev g_songBgState;                               /* DS:79AA */
+extern struct Dev g_secondaryMusicStateData;                              /* DS:79C6 */
+extern void (interrupt far *g_clockPrev)(void);              /* DS:7AAA */
 extern struct State7D2E ao7d2ev;                        /* DS:7D2E */
 extern struct State7E8A ar7e8av;                        /* DS:7E8A */
-extern char g7f32s[];                                   /* DS:7F32 */
+extern char g_strOpp[];                                   /* DS:7F32 */
 extern int ao8228u;                                     /* DS:8228 */
-extern long b_82bc;                                     /* DS:82BC */
-extern struct Tone *bn82c4;                             /* DS:82C4 */
-extern int z_8b7c;                                      /* DS:8B7C */
+extern long g_mphAccumulator;                                     /* DS:82BC */
+extern struct Tone *g_toneShapePlaybackPointer;                             /* DS:82C4 */
+extern int g_xCoordSprite;                                      /* DS:8B7C */
 extern int g_menuLevel;                                      /* DS:8B8E */
-extern struct Lims ao8b90v;                             /* DS:8B90 */
-extern struct Hot *at8ba8v;                             /* DS:8BA8 */
-extern int az8baa;                                      /* DS:8BAA */
-extern int cz8bc0y;                                     /* DS:8BC0 */
-extern int g8ef6q;                                      /* DS:8EF6 */
+extern struct Lims g_boxSpotHitData;                             /* DS:8B90 */
+extern struct Hot *g_curHoverPointer;                             /* DS:8BA8 */
+extern int g_cursHoverCodeVal;                                      /* DS:8BAA */
+extern int g_wRivBanner;                                     /* DS:8BC0 */
+extern int g_animationPriCallback;                                      /* DS:8EF6 */
 extern int g_8ef8;                                      /* DS:8EF8 */
 extern int aj8efax;                                     /* DS:8EFA */
 extern int bw8efc;                                      /* DS:8EFC */

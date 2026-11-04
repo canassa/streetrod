@@ -144,7 +144,7 @@ void bitmap_draw_masked(struct Bitmap far *dst, struct Bitmap far *src, struct B
         ((int *)&e)[i] = ((int *)r)[i];
     f = r->dx & ~r_vid.mask;
     if (f > 0) {
-        j = F_1934E(dst->width + 8, dst->height, dst->alt.p != 0L, ARENA_HIGH_STACK);
+        j = arena_bm(dst->width + 8, dst->height, dst->alt.p != 0L, ARENA_HIGH_STACK);
         bitmap_shift_right(dst, f, j);
         e.w = j->width;
     } else
@@ -200,7 +200,7 @@ void bitmap_underlay(struct Bitmap far *src, struct Bitmap far *dst, int x, int 
 
     sh5 = x & ~r_vid.mask;
     if (sh5 > 0) {
-        t7 = F_1934E(src->width + 8, src->height, src->alt.p != 0L, ARENA_HIGH_STACK);
+        t7 = arena_bm(src->width + 8, src->height, src->alt.p != 0L, ARENA_HIGH_STACK);
         bitmap_shift_right(src, sh5, t7);
     } else
         t7 = src;
@@ -262,7 +262,7 @@ void bitmap_put_pic(struct Bitmap far *dst, int n, unsigned char x, unsigned cha
 
     p = F_15BBE(n, ARENA_HIGH_STACK);
     bitmap_put(dst, p, x, y, 3);
-    at70a8 = p;
+    g_lastPic = p;
     F_19438(1);
 }
 
@@ -335,7 +335,7 @@ struct Bitmap far *bitmap_grab(struct Bitmap far *bm, struct Blt *r, int mode)
     d = r->h;
     c = r->sx;
     e = r->sy;
-    f = F_1934E(b, d, bm->alt.p != 0L, mode);
+    f = arena_bm(b, d, bm->alt.p != 0L, mode);
     a.w = b;
     a.h = d;
     a.sx = c;

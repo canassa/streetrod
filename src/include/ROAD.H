@@ -16,21 +16,21 @@ extern int g_onShoulder;                                /* DS:5E0E */
 extern int g_turnRight;                                 /* DS:5E10 */
 extern int g_turnLeft;                                  /* DS:5E12 */
 extern unsigned far *q_72ee;                            /* DS:72EE */
-extern int at72f8[];                                    /* DS:72F8 */
-extern int far *af7560z;                                /* DS:7560 */
+extern int g_roadLXArray[];                                    /* DS:72F8 */
+extern int far *g_hereCurvePtr;                                /* DS:7560 */
 extern int far *af7880z;                                /* DS:7880 */
 extern int bq7884[];                                    /* DS:7884 */
 extern int aw7aaex;                                     /* DS:7AAE */
-extern int al7ab0u[];                                   /* DS:7AB0 */
+extern int g_yBuildingTopArray[];                                   /* DS:7AB0 */
 extern int g_rightXProjectionTable[];                                    /* DS:7ACE */
 extern unsigned far *g7d62p;                            /* DS:7D62 */
-extern int g7f22s[];                                    /* DS:7F22 */
-extern int at7f8au[];                                   /* DS:7F8A */
-extern int g7fd8e[];                                    /* DS:7FD8 */
+extern int g_lhsRdMirrorX[];                                    /* DS:7F22 */
+extern int g_xOuterLProjArray[];                                   /* DS:7F8A */
+extern int g_rhsOuterXArray[];                                    /* DS:7FD8 */
 extern unsigned far *aw8634x;                           /* DS:8634 */
-extern int as8638y[];                                   /* DS:8638 */
-extern int aj864ax[];                                   /* DS:864A */
-extern int ay865a[];                                    /* DS:865A */
+extern int g_yMirrProjectionArray[];                                   /* DS:8638 */
+extern int g_yMirrorBldgArray[];                                   /* DS:864A */
+extern int g_rhsXsRear[];                                    /* DS:865A */
 void road_build_layout(int n);                          /* 0x26FE1 */
 void road_generate(void);                               /* 0x27198 */
 void road_seek(int n);                                  /* 0x27B6D */

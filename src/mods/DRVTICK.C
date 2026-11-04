@@ -30,14 +30,14 @@ int drvtick_step(void)
     char key;
 
     if (bw8aca) {
-        switch (jz79a6) {
+        switch (g_phaseDriveRunState) {
         case 0:
             g_05d6 = 0;
             if (g_keepCruiseMusic == 0)
                 F_16381(1);
             sys_drive_start();
             sys_reset_queues();
-            jz79a6 = 1;
+            g_phaseDriveRunState = 1;
             F_11421(-1, "Get ready !", 0);
             g_waitUntil = g_tick + random_int(103) + 110;
             return g_driveEng.stopFlags | g_oppEngState.stopFlags;
@@ -48,7 +48,7 @@ int drvtick_step(void)
                 return 1;
             }
             if (g_waitUntil <= g_tick) {
-                jz79a6 = 2;
+                g_phaseDriveRunState = 2;
                 F_11421(-1, "Go !", 0);
                 g7d66n = 1;
             }
@@ -59,7 +59,7 @@ int drvtick_step(void)
                 return 1;
             if (g_driveEng.speed > 0) {
                 F_11421(-1, "    ", 0);
-                jz79a6 = 3;
+                g_phaseDriveRunState = 3;
             }
             return 0;
         case 3:
@@ -69,14 +69,14 @@ int drvtick_step(void)
             return 0;
         }
     } else {
-        switch (jz79a6) {
+        switch (g_phaseDriveRunState) {
         case 0:
             g_05d6 = 0;
             if (g_keepCruiseMusic == 0)
                 F_16381(1);
             sys_drive_start();
             sys_reset_queues();
-            jz79a6 = 1;
+            g_phaseDriveRunState = 1;
             F_11421(-1, "Cruising in town...", 0);
             g_driveEng.shifterDirty = 1;
             g_driveEng.gearIndex = 1;

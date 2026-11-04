@@ -40,8 +40,8 @@
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_tankCapIsActive;                       /* DS:6CA4 */
-static int g_6ca6qz;                       /* DS:6CA6 */
-static int g_6ca8pz;                       /* DS:6CA8 */
+static int g_ragAvailable;                       /* DS:6CA6 */
+static int g_pumpOnState;                       /* DS:6CA8 */
 static int near find_gas_spot(int);
 static void near clear_gas_spots(void);
 static void near place_gas_spot(int, int, int, int, int);
@@ -102,17 +102,17 @@ static void near sort_gas_spots(void)
 }
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-int g7644m;
-char at787cu;
-int h_8264;
+int g_finishMeanSpeedVal;
+char g_failureTire;
+int g_hasGlassRear;
 int g_backGlassXState;
-int ae826cv;
-int ar826e;
-int q_8270;
-int bp82c2;
+int g_winRearPointY;
+int g_gasCapXVal;
+int g_gasCapYValue;
+int g_steeringOld;
 int dz82c8x;
-int s_8632;
-float p_8bc4;
+int g_finishAheadPlayerState;
+float g_raceSecsElapsedValue;
 
 /* clear_gas_spots @ 0000:B456 (linear 0x0B456, 70 bytes) */
 
@@ -120,8 +120,8 @@ static void near clear_gas_spots(void)
 {
     int k;
 
-    g_6ca6qz = 0;
-    g_6ca8pz = 0;
+    g_ragAvailable = 0;
+    g_pumpOnState = 0;
     g_tankCapIsActive = 0;
     for (k = 0; k < 6; k++)
         g_hots[find_gas_spot(g_gasSpotIds[k])].kind = 14;
@@ -146,8 +146,8 @@ static void near spots_idle(void)
     place_gas_spot(2, 0x3f, 100, 12, 23);
     place_gas_spot(1, 0x54, 0xa8, 0x1f, 15);
     sort_gas_spots();
-    g_6ca6qz = 1;
-    g_6ca8pz = 1;
+    g_ragAvailable = 1;
+    g_pumpOnState = 1;
 }
 
 /* spots_cap @ 0000:B525 (linear 0x0B525, 45 bytes) */
@@ -155,7 +155,7 @@ static void near spots_idle(void)
 static void near spots_cap(void)
 {
     clear_gas_spots();
-    place_gas_spot(4, ar826e - 10, q_8270 - 5, 18, 12);
+    place_gas_spot(4, g_gasCapXVal - 10, g_gasCapYValue - 5, 18, 12);
     sort_gas_spots();
     g_tankCapIsActive = 1;
 }
@@ -166,9 +166,9 @@ static void near spots_nozzle(void)
 {
     clear_gas_spots();
     place_gas_spot(2, 0x34, 100, 16, 23);
-    place_gas_spot(4, ar826e - 1, q_8270 - 1, 10, 9);
+    place_gas_spot(4, g_gasCapXVal - 1, g_gasCapYValue - 1, 10, 9);
     sort_gas_spots();
-    g_6ca8pz = 1;
+    g_pumpOnState = 1;
     g_tankCapIsActive = 1;
 }
 
@@ -177,13 +177,13 @@ static void near spots_nozzle(void)
 static void near spots_rag(void)
 {
     clear_gas_spots();
-    if (h_8264)
-        place_gas_spot(6, g_backGlassXState, ae826cv, 20, 19);
-    place_gas_spot(5, d_8266, ap8268t, 22, 19);
+    if (g_hasGlassRear)
+        place_gas_spot(6, g_backGlassXState, g_winRearPointY, 20, 19);
+    place_gas_spot(5, g_frntWindscreenX, g_frontWinPositionYVal, 22, 19);
     place_gas_spot(1, 0x3e, 0xa5, 0x35, 18);
     place_gas_spot(3, 0xc4, 0x5a, 16, 14);
     sort_gas_spots();
-    g_6ca6qz = 1;
+    g_ragAvailable = 1;
 }
 
 /* spots_none @ 0000:B617 (linear 0x0B617, 4 bytes) */
@@ -207,15 +207,15 @@ static void near show_tank_cap(struct Dlg *d, int id)
     cursor_ctl(CURSOR_HIDE);
     label = F_15BBE(id, ARENA_HIGH_STACK);
     cursor_ctl(CURSOR_SHOW);
-    work = F_1934E(back->width, back->height, 0, ARENA_HIGH_STACK);
+    work = arena_bm(back->width, back->height, 0, ARENA_HIGH_STACK);
     bitmap_copy(back, work, 1);
     box.w = label->width;
     box.h = box.fc = label->height;
     box.sx = box.sy = 0;
-    box.dx = (~r_vid.mask & ar826e) - box.w + 24;
+    box.dx = (~r_vid.mask & g_gasCapXVal) - box.w + 24;
     box.dy = 12 - label->height;
     bitmap_draw_masked(label, work, &box, 0);
-    popup_show(work, ar826e - 16, q_8270 - 5);
+    popup_show(work, g_gasCapXVal - 16, g_gasCapYValue - 5);
     F_19438(2);
 }
 
@@ -247,7 +247,7 @@ static void near leave_station(struct Dlg *d)
     }
     a_7eaap.currentCar->fuel = a_7eaap.currentCar->fuel > 0xaa ? 0xaa : a_7eaap.currentCar->fuel;
     F_181C8(2, d->specIndex, d->bodyMods, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
-            g_5030[g_4806[a_7eaap.currentCar->tires->idx].variant]);
+            g_whlPic[g_part[a_7eaap.currentCar->tires->idx].variant]);
     menu_pop(1);
     marks_clear();
     g_scene = 1;
@@ -270,19 +270,19 @@ void race_gas_station(void)
     F_118D4(0x442, -1);
     F_11593(g_49dc);
     r_vid.copyToFront = 1;
-    (*m_present)();
+    (*g_fnShow)();
     dl.f0c = 1;
     cursor_ctl(1);
     dl.specIndex = a_7eaap.currentCar->specIndex;
     dl.bodyMods = game_car_look(a_7eaap.currentCar);
     F_181C8(4, dl.specIndex, dl.bodyMods, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
-            g_5030[g_4806[a_7eaap.currentCar->tires->idx].variant]);
+            g_whlPic[g_part[a_7eaap.currentCar->tires->idx].variant]);
     F_16381(0);
     label = popup_grab(0x50, 0xaa, 0x28, 0xc, 0);
-    dl.bm1 = popup_grab(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
+    dl.bm1 = popup_grab(g_gasCapXVal - 0x10, g_gasCapYValue - 5, 0x18, 0xc, 0);
     r_vid.copyToFront = 0;
     popup_show(g_pumpNoNozzle, 0x40, 0x64);
-    dl.bm2 = popup_grab(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
+    dl.bm2 = popup_grab(g_gasCapXVal - 0x10, g_gasCapYValue - 5, 0x18, 0xc, 0);
     popup_show(g_pumpWithNozzle, 0x40, 0x64);
     r_vid.copyToFront = 1;
     pos = 1;
@@ -353,7 +353,7 @@ top:
             g_waitUntil = g_tick + 0x4c;
             break;
         case 1:
-            if (g_6ca6qz == 0)
+            if (g_ragAvailable == 0)
                 break;
             if (dl.f0c == 1) {
                 cursor_ctl(dl.f0c = 3);
@@ -371,7 +371,7 @@ top:
                 goto redraw;
             }
         case 2:
-            if (g_6ca8pz == 0)
+            if (g_pumpOnState == 0)
                 break;
             if (dl.f0c == 1) {
                 cursor_ctl(dl.f0c = 2);
@@ -458,7 +458,7 @@ static int near replace_tires(void)
             ret = (int)-a_7eaap.money;
             a_7eaap.money = 0;
         }
-        game_add_part(0x28, g_4806[40].value);
+        game_add_part(0x28, g_part[40].value);
         tbl[0] = a_7eaap.spareParts;
         a_7eaap.spareParts = tbl[0]->next;
         F_07741(tbl[0], &a_7eaap.currentCar->tires);
@@ -520,7 +520,7 @@ static void near show_ticket(void)
     (*a_78aem)(r_vid.back, 0x5e, 0x63, g_descHdr + desc3 + 1);
     g_descHdr[endk + 1] = e;
     *p2 = d;
-    (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
+    (*g_screenCopyPtr)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.copyToFront = 1;
     cursor_ctl(CURSOR_SHOW_NOW);
     sys_reset_queues();
@@ -555,8 +555,8 @@ static void near show_crash(void)
     pkt.sx = pkt.sy = pkt.dx = 0;
     pkt.dy = fast ? 0x78 : 0x77;
     (*b_78a2)(b, r_vid.back, &pkt, 1);
-    dash_steer_marker(bp82c2);
-    (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
+    dash_steer_marker(g_steeringOld);
+    (*g_screenCopyPtr)(r_vid.back->bits.p, r_vid.front->bits.p);
     if (g_driveEng.speed > 0x5a) {
         for (i = 0; i < 3; i++) {
             a = F_15BBE(g_crashPics[i].id, ARENA_LOW_STACK);
@@ -567,11 +567,11 @@ static void near show_crash(void)
             pkt.dy = g_crashPics[i].y;
             F_10AFD(0x14 - 8 * i);
             (*ab78aat)(a, r_vid.back, &pkt, 1);
-            (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
+            (*g_screenCopyPtr)(r_vid.back->bits.p, r_vid.front->bits.p);
         }
     }
     cursor_ctl(CURSOR_SHOW_NOW);
-    (*m_present)();
+    (*g_fnShow)();
     sys_reset_queues();
     game_pause(0x64);
     sys_reset_queues();
@@ -584,11 +584,11 @@ void race_finish_stats(void)
 {
     if (g_statsDone == 0) {
         if ((ar7e8av.roadIndex - ao7d2ev.roadIndex) * 8 + ar7e8av.roadFraction <= ao7d2ev.roadFraction)
-            s_8632 = 1;
+            g_finishAheadPlayerState = 1;
         else
-            s_8632 = 0;
-        g7644m = b_82bc / g_driveEng.elapsedTicks;
-        p_8bc4 = g_driveEng.elapsedTicks / 6.068827333333334;
+            g_finishAheadPlayerState = 0;
+        g_finishMeanSpeedVal = g_mphAccumulator / g_driveEng.elapsedTicks;
+        g_raceSecsElapsedValue = g_driveEng.elapsedTicks / 6.068827333333334;
         dz82c8x = (int)((ao7d2ev.roadIndex - 200) * 100.0 / (ar7e8av.roadIndex - 200)) > 99 ? 99 : (int)((ao7d2ev.roadIndex - 200) * 100.0 / (ar7e8av.roadIndex - 200));
         g_statsDone = 1;
     }
@@ -598,12 +598,12 @@ void race_finish_stats(void)
 
 static void near show_race_stats(void)
 {
-    if (bo7676) {
-        sprintf(g_raceResult1, "Your``winning``time %2.1f sec.,`avg. speed %2d mph", p_8bc4, g7644m);
+    if (g_resultWin) {
+        sprintf(g_raceResult1, "Your``winning``time %2.1f sec.,`avg. speed %2d mph", g_raceSecsElapsedValue, g_finishMeanSpeedVal);
         strcpy(g_raceResult2, "Congratulations !");
     } else {
-        sprintf(g_raceResult1, "In %2.1f sec you covered only %2d%%", p_8bc4, dz82c8x);
-        sprintf(g_raceResult2, "of the distance. Your avg. speed %2d mph.", g7644m);
+        sprintf(g_raceResult1, "In %2.1f sec you covered only %2d%%", g_raceSecsElapsedValue, dz82c8x);
+        sprintf(g_raceResult2, "of the distance. Your avg. speed %2d mph.", g_finishMeanSpeedVal);
     }
     menu_push(0x21);
     menu_pop(1);
@@ -676,7 +676,7 @@ int near race_outcome(void)
     struct Car *found;
     int list[25];
 
-    kind = as79a2z;
+    kind = g_classBetValue;
     v = d_79a4;
     engine = g_driveEng.stopFlags & 4;
     opt = g_driveEng.stopFlags & 0x10;
@@ -687,14 +687,14 @@ int near race_outcome(void)
         a_7eaap.currentCar->rack.parts[0]->wear = 9900;
     if (a_7eaap.currentCar->tires->wear > 9900)
         a_7eaap.currentCar->tires->wear = 9900;
-    bo7676 = 0;
+    g_resultWin = 0;
     g_statsDone = 0;
-    b_82bc = 0;
+    g_mphAccumulator = 0;
     g_fireLatch = 0;
     g_buttons = 0;
     if (g_driveEng.automatic)
         g_driveEng.autoSelector = 1;
-    if (at787cu)
+    if (g_failureTire)
         g_driveEng.stopFlags |= 8;
     menu_push(1);
     i = a_7eaap.raceType == 0 ? 5 : 15;
@@ -702,9 +702,9 @@ int near race_outcome(void)
         a_7eaap.currentCar->fuel -= i;
     else
         a_7eaap.currentCar->fuel = 0;
-    (*m_present)();
+    (*g_fnShow)();
     if (g_oppEngState.stopFlags & 1) {
-        bo7676 = 1;
+        g_resultWin = 1;
         show_race_stats();
         cursor_ctl(CURSOR_SHOW_NOW);
         game_message(g_isKingState == 0 ? (i = g_winMsgs[kind]) : a_7eaap.raceType == 0 ? 0x14bd : 0x14d6);
@@ -712,30 +712,30 @@ int near race_outcome(void)
         if (kind == 5) {
             found = game_make_car(bn7648, g_oppSpecPointer->price, 0);
             found->tires->wear = random_int(500);
-            found->appearance = ((g7d84o->sticker & 0x1f) << 8) | (found->appearance & 0xe0ff);
-            found->appearance = (((g7d84o->bodyMods & 4) != 0 & 1) << 13) | (found->appearance & 0xdfff);
-            found->appearance = (((g7d84o->bodyMods & 2) != 0 & 1) << 14) | (found->appearance & 0xbfff);
-            found->appearance = (((g7d84o->bodyMods & 1) != 0 & 1) << 15) | (found->appearance & 0x7fff);
-            found->paintScheme = g7d84o->paintScheme;
+            found->appearance = ((g_selectedRacerPointer->sticker & 0x1f) << 8) | (found->appearance & 0xe0ff);
+            found->appearance = (((g_selectedRacerPointer->bodyMods & 4) != 0 & 1) << 13) | (found->appearance & 0xdfff);
+            found->appearance = (((g_selectedRacerPointer->bodyMods & 2) != 0 & 1) << 14) | (found->appearance & 0xbfff);
+            found->appearance = (((g_selectedRacerPointer->bodyMods & 1) != 0 & 1) << 15) | (found->appearance & 0x7fff);
+            found->paintScheme = g_selectedRacerPointer->paintScheme;
             if (found->rank > a_7eaap.currentCar->rank) {
                 a_7eaap.currentCar->next = a_7eaap.otherCars->next;
                 a_7eaap.otherCars = a_7eaap.currentCar;
                 a_7eaap.currentCar = found;
                 perf_drivetrain(a_7eaap.currentCar, &g_driveEng);
             }
-            if (g_demo == 0 || g7f82r != g_demoRacer) {
-                if (g7d84o->lostCarOnce != 0 || g_isKingState != 0)
-                    g7d84o->status = RACER_EMPTY;
+            if (g_demo == 0 || g_driverIdxSelVal != g_demoRacer) {
+                if (g_selectedRacerPointer->lostCarOnce != 0 || g_isKingState != 0)
+                    g_selectedRacerPointer->status = RACER_EMPTY;
                 else {
                     for (i = 0, units = 0; i < 25; i++)
                         if (g7d86n[i].rank < g_oppSpecPointer->rank)
                             list[++units] = i;
                     if (units > 0) {
                         list[0] = units;
-                        savegame_init_racer(g7f82r, list);
-                        g7d84o->lostCarOnce = 1;
+                        savegame_init_racer(g_driverIdxSelVal, list);
+                        g_selectedRacerPointer->lostCarOnce = 1;
                     } else
-                        g7d84o->status = RACER_EMPTY;
+                        g_selectedRacerPointer->status = RACER_EMPTY;
                     goto done;
                 }
             }
@@ -761,7 +761,7 @@ done:
         menu_push(0x18);
         sys_wait_input(0);
         sprintf(temp, "You have been fined $%2d for speeding", i);
-        F_11421(-1, temp, SCREEN_WIDTH - o_8250);
+        F_11421(-1, temp, SCREEN_WIDTH - g_xStatTxtValue);
         game_pause(0xfa);
         if (i <= a_7eaap.money)
             goto pay;
@@ -769,7 +769,7 @@ done:
         menu_pop(1);
         menu_pop(1);
         F_11540(-a_7eaap.money);
-        F_11421(-1, " ", SCREEN_WIDTH - o_8250);
+        F_11421(-1, " ", SCREEN_WIDTH - g_xStatTxtValue);
         return 4;
 pay:
         F_11540(-i);
@@ -777,7 +777,7 @@ pay:
         game_pause(g_msgTicks);
         g_waitUntil = cost;
         menu_pop(1);
-        F_11421(-1, "", SCREEN_WIDTH - o_8250);
+        F_11421(-1, "", SCREEN_WIDTH - g_xStatTxtValue);
     } else if (g_driveEng.stopFlags == 0x81) {
         cursor_ctl(CURSOR_SHOW_NOW);
         game_message(0xecb2);
@@ -898,7 +898,7 @@ fin:
 }
 
 struct State70C0 al70c0x;
-int g755av;
+int g_idxAtCop;
 int a_7f88d;
 int bz8630z;
 
@@ -935,7 +935,7 @@ void near race_reset_eng(struct Eng *p)
     bz8630z = -1;
     g_finishLineIndex = a_7eaap.raceType == 0 ? 0x17c : 0x3fc;
     car = a_7eaap.currentCar->tires;
-    p->tireSlip = g_tireSlip[g_4806[car->idx].variant][car->wear / 2000];
+    p->tireSlip = g_tireSlip[g_part[car->idx].variant][car->wear / 2000];
     if (car->wear < 8000)
         p->tireFailureIndex = 0;
     else {
@@ -948,9 +948,9 @@ void near race_reset_eng(struct Eng *p)
         goto nx;
     }
 nx:
-    at787cu = 0;
+    g_failureTire = 0;
     g_lastTicks = 0;
-    g_rivalTop = F_0E218(bn7648);
+    g_rivalTop = perf_vmax(bn7648);
     g_rivalSlow = (int)(g_rivalTop * 0.7);
     g_rivalFast = (int)(g_rivalTop * 0.8);
     g_rivalLead = bu8acc < 4 ? 10 : 16;
@@ -965,7 +965,7 @@ static void near init_rival_eng(void)
     struct Range *r;
 
     perf_drivetrain_spec(bn7648, &g_oppEngState);
-    g_rivalShiftPen = g7d84o->shiftPenalty;
+    g_rivalShiftPen = g_selectedRacerPointer->shiftPenalty;
     race_reset_eng(&g_oppEngState);
     g_oppEngState.gearIndex = 0;
     g_oppEngState.rpmPerSpeed = g_oppEngState.f34[0];
@@ -1002,10 +1002,10 @@ void near race_run(void)
     init_rival_eng();
     if (a_7eaap.raceType == 1 && g_isKingState == 0) {
         if (a_7f88d = !random_int(4))
-            g755av = random_int(255) + 0x1fe;
+            g_idxAtCop = random_int(255) + 0x1fe;
     } else
         a_7f88d = 0;
-    jz79a6 = 0;
+    g_phaseDriveRunState = 0;
     bw8aca = 1;
     cruise_drive();
     sys_drive_stop();
@@ -1022,7 +1022,7 @@ void near race_run(void)
                 a_7eaap.currentCar->timing = random_int(8) - 4;
         }
         slot = a_7eaap.currentCar->tires;
-        slot->wear += (g_4806[slot->idx].variant == 0 ? (a_7eaap.raceType == 1 ? 700 : 300) : (a_7eaap.raceType == 1 ? 400 : 200)) + random_int(300);
+        slot->wear += (g_part[slot->idx].variant == 0 ? (a_7eaap.raceType == 1 ? 700 : 300) : (a_7eaap.raceType == 1 ? 400 : 200)) + random_int(300);
         if (slot->wear > 10000)
             slot->wear = 10000;
     }
@@ -1078,7 +1078,7 @@ static void near rival_accelerate(void)
         if (g_terrain2[ar7e8av.roadIndex] != g_terrain2[ar7e8av.roadIndex + 1]) {
             if (g_rivalCurveBrake == 0) {
                 g_rivalCurveBrake = 1;
-                vl = g_rivalTop - (ar7e8av.roadIndex > ao7d2ev.roadIndex ? g7d84o->f2 : g7d84o->f2 >> 1);
+                vl = g_rivalTop - (ar7e8av.roadIndex > ao7d2ev.roadIndex ? g_selectedRacerPointer->f2 : g_selectedRacerPointer->f2 >> 1);
                 if (vl < g_oppEngState.speed)
                     fit_gear(vl, &g_oppEngState);
             }
@@ -1201,11 +1201,11 @@ int race_speed_step(int rpm)
 
 struct Bitmap far *ab7526x[13];
 int ap7d7cv;
-int gz7d7e;
-int g7d82p;
-int g_8648;
+int g_ramAllowed;
+int g_leftEdgeX;
+int g_swapArmedRivalValue;
 struct Bitmap far *g8acew[13];
-int cz8bd0y;
+int g_edgeXR;
 
 /* move_player @ 0000:D624 (linear 0x0D624, 89 bytes) */
 
@@ -1215,7 +1215,7 @@ static void near move_player(void)
     if (ao7d2ev.roadFraction >= 8)
         road_advance();
     if (ao7d2ev.roadIndex >= g_finishLineIndex && g_statsDone && g_driveEng.speed <= 0) {
-        if (s_8632)
+        if (g_finishAheadPlayerState)
             g_oppEngState.stopFlags |= 1;
         else
             g_driveEng.stopFlags |= 1;
@@ -1241,7 +1241,7 @@ static void near move_rival(void)
         ar7e8av.roadFraction &= 7;
     }
     if (ar7e8av.roadIndex >= g_finishLineIndex && g_statsDone && g_driveEng.speed <= 0) {
-        if (s_8632 == 0)
+        if (g_finishAheadPlayerState == 0)
             g_driveEng.stopFlags |= 1;
         else
             g_oppEngState.stopFlags |= 1;
@@ -1255,9 +1255,9 @@ static void near move_rival(void)
         g_targetLane = (al70c0x.leftEdge + ao7d2ev.rightEdge) >> 1;
         if (slope)
             g_rivalLeft = slope < 0;
-        g_8648 = 1;
+        g_swapArmedRivalValue = 1;
     } else if (dist > 6) {
-        gz7d7e = 1;
+        g_ramAllowed = 1;
         if (slope) {
             if (slope < 0) {
                 g_targetLane = ((al70c0x.leftEdge + ao7d2ev.rightEdge) >> 1) - 200;
@@ -1279,18 +1279,18 @@ static void near move_rival(void)
             }
         } else if (flag)
             g_targetLane = (al70c0x.leftEdge + ao7d2ev.rightEdge) >> 1;
-        else if (g_8648) {
+        else if (g_swapArmedRivalValue) {
             if (g_rivalLeft)
                 g_targetLane = ((al70c0x.leftEdge + ao7d2ev.rightEdge) >> 1) + 300;
             else
                 g_targetLane = ((al70c0x.leftEdge + ao7d2ev.rightEdge) >> 1) - 200;
-            g_8648 = 0;
+            g_swapArmedRivalValue = 0;
             g_rivalLeft = !g_rivalLeft;
         }
     } else if (dist > -4) {
         if (ar7e8av.distanceStep > ao7d2ev.distanceStep) {
             if (ap7d7cv >= 9) {
-                if ((t = ao7d2ev.lateralX - 330) > g7d82p + 480) {
+                if ((t = ao7d2ev.lateralX - 330) > g_leftEdgeX + 480) {
                     g_rivalLeft = 1;
                     g_targetLane = t;
                     if (ao7d2ev.lateralX - ar7e8av.lateralX < 280) {
@@ -1298,7 +1298,7 @@ static void near move_rival(void)
                         fit_gear(g_driveEng.speed, &g_oppEngState);
                     }
                 } else {
-                    if ((t = ao7d2ev.lateralX + 430) < cz8bd0y - 30) {
+                    if ((t = ao7d2ev.lateralX + 430) < g_edgeXR - 30) {
                         g_rivalLeft = 0;
                         g_targetLane = t + 200;
                         if (ar7e8av.lateralX - ao7d2ev.lateralX < 580) {
@@ -1316,7 +1316,7 @@ static void near move_rival(void)
         } else if (ap7d7cv == 0)
             g_targetLane = ao7d2ev.lateralX - 330;
     } else if (dist > -6) {
-        gz7d7e = 1;
+        g_ramAllowed = 1;
         if (slope) {
             if (slope < 0) {
                 g_targetLane = ((al70c0x.leftEdge + ao7d2ev.rightEdge) >> 1) - 200;
@@ -1329,7 +1329,7 @@ static void near move_rival(void)
             g_targetLane = flag ? (al70c0x.leftEdge + ao7d2ev.rightEdge) >> 1 : g_rivalLeft ? ((al70c0x.leftEdge + ao7d2ev.rightEdge) >> 1) - 200 : ((al70c0x.leftEdge + ao7d2ev.rightEdge) >> 1) + 300;
     } else {
         g_targetLane = (al70c0x.leftEdge + ao7d2ev.rightEdge) >> 1;
-        g_8648 = 1;
+        g_swapArmedRivalValue = 1;
     }
     if (ar7e8av.lateralX > g_targetLane) {
         dist = (ar7e8av.lateralX - g_targetLane) >> 3;
@@ -1350,14 +1350,14 @@ static void near cop_appears(void)
     int old;
 
     old = g_oppEngState.speed;
-    g7d84o = &av7ff8[RACER_COP_ENTRY];
+    g_selectedRacerPointer = &g_racerRecordsArray[RACER_COP_ENTRY];
     perf_drivetrain_spec(0x19, &g_oppEngState);
-    g_rivalShiftPen = g7d84o->shiftPenalty;
+    g_rivalShiftPen = g_selectedRacerPointer->shiftPenalty;
     fit_gear(old, &g_oppEngState);
     cruise_rival_paint(5);
     for (n1 = 0; n1 < 12; n1++)
         g8acew[n1] = ab7526x[n1];
-    g_rivalTop = F_0E218(0x19);
+    g_rivalTop = perf_vmax(0x19);
     g_rivalSlow = (int)(g_rivalTop * 0.6);
     g_rivalFast = (int)(g_rivalTop * 0.8);
 }
@@ -1377,7 +1377,7 @@ void race_tick(void)
     } else if (g_driveEng.gearIndex != bz8630z)
         screen_show_gear(bz8630z = g_driveEng.gearIndex);
     if (g_driveEng.tireFailureIndex && ao7d2ev.roadIndex > g_driveEng.tireFailureIndex)
-        at787cu = 1;
+        g_failureTire = 1;
     if (g_squealOn == 0) {
         if (abs(g_driveEng.steering) >= 12)
             g_squealOn = 1;
@@ -1386,7 +1386,7 @@ void race_tick(void)
     rival_accelerate();
     switch (a_7f88d) {
     case 1:
-        if (ao7d2ev.roadIndex >= g755av) {
+        if (ao7d2ev.roadIndex >= g_idxAtCop) {
             if (ar7e8av.roadIndex + 5 <= ao7d2ev.roadIndex) {
                 a_7f88d++;
                 cop_appears();
@@ -1449,14 +1449,14 @@ void race_tick(void)
             }
             return;
         }
-        if (gz7d7e && g_contactFrames > 3 && a_7f88d < 2) {
-            if (random_int((g7d84o->f2 >> 2) + 2) == 0) {
+        if (g_ramAllowed && g_contactFrames > 3 && a_7f88d < 2) {
+            if (random_int((g_selectedRacerPointer->f2 >> 2) + 2) == 0) {
                 sound_bump();
                 sound_bump();
                 ao7d2ev.lateralX += 300;
                 if (g_driveEng.speed > 20)
                     g_brakeTicks = 2;
-                gz7d7e = 0;
+                g_ramAllowed = 0;
                 ao7d2ev.m7d3c += random_int(2) ? 15 : -15;
                 sound_bump();
             }

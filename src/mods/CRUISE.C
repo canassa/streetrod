@@ -14,7 +14,7 @@
 #include "VIDEO.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-int jz79a6;
+int g_phaseDriveRunState;
 
 char g_savedPal12 = -1;   /* DS:51AC */
 char g_savedPal3 = -1;   /* DS:51AD */
@@ -29,12 +29,12 @@ void cruise_go(void)
             a_7eaap.currentCar->fuel -= 2;
         else
             a_7eaap.currentCar->fuel = 0;
-        (*bl78be)();
+        (*g_displayDisablePtr)();
         if (g_firePressed == 0) {
             cursor_ctl(CURSOR_HIDE_NOW);
-            g_autoTrans = !g_4806[a_7eaap.currentCar->transmission->idx].variant;
+            g_autoTrans = !g_part[a_7eaap.currentCar->transmission->idx].variant;
             race_reset_eng(&g_driveEng);
-            jz79a6 = 0;
+            g_phaseDriveRunState = 0;
             bw8aca = 0;
             cruise_drive();
         }
@@ -57,8 +57,8 @@ void cruise_rival_paint(int mode)
                 g_savedPal12 = g_palette[12];
                 g_savedPal3 = g_palette[3];
             }
-            a = g_50c2[mode][0];
-            b = g_50c2[mode][1];
+            a = g_paint[mode][0];
+            b = g_paint[mode][1];
         }
         if (gz8249) {
             F_112CB(12, a);
@@ -78,7 +78,7 @@ int cruise_drive(void)
     int r, saved;
 
     if (bw8aca)
-        (*bl78be)();
+        (*g_displayDisablePtr)();
     ao8228u = g7d66n = 0;
     saved = m_8272.paintScheme;
     F_067CF(a_7eaap.currentCar->paintScheme);

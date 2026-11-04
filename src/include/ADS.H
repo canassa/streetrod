@@ -16,7 +16,7 @@ extern int g_adDstY;                                      /* DS:052C */
 extern int g_052e;                                      /* DS:052E */
 extern int g_0530[3];                                   /* DS:0530 */
 extern int g_adResume;                                  /* DS:0536 */
-extern int g7f84q;                                      /* DS:7F84 */
+extern int g_adIdxEndPageState;                                      /* DS:7F84 */
 void ads_open(int *list, int base);                     /* 0x008B4 */
 int ads_run(void);                                      /* 0x009CB */
 void ads_close(void);                                   /* 0x00D58 */

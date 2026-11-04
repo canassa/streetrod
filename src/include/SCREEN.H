@@ -14,14 +14,14 @@ extern int g_picY;                                      /* DS:04C0 */
 extern int g_picMaxH;                                   /* DS:04C2 */
 extern void (far *a_78aem)(struct Bitmap far *, int, int, char *);/* DS:78AE */
 extern struct State7EAA a_7eaap;                        /* DS:7EAA */
-extern char af824ax;                                    /* DS:824A */
-extern int g824cd;                                      /* DS:824C */
-extern int o_8250;                                      /* DS:8250 */
-extern int au8252x;                                     /* DS:8252 */
-extern int as8254y;                                     /* DS:8254 */
-extern int aq8256z;                                     /* DS:8256 */
-extern int g8258z;                                      /* DS:8258 */
-extern int ar82c0;                                      /* DS:82C0 */
+extern char g_displaySplitYVal;                                    /* DS:824A */
+extern int g_xTextR;                                      /* DS:824C */
+extern int g_xStatTxtValue;                                      /* DS:8250 */
+extern int g_statStringY;                                     /* DS:8252 */
+extern int g_widthStatusStrVal;                                     /* DS:8254 */
+extern int g_statusStrShown;                                     /* DS:8256 */
+extern int g_statValXState;                                      /* DS:8258 */
+extern int g_xMoneyRhsVal;                                      /* DS:82C0 */
 void screen_status_init(int y);                         /* 0x113A2 */
 void F_11421(int x, char *s, int w);                    /* 0x11421 */
 void F_11540(int n);                                    /* 0x11540 */

@@ -23,17 +23,17 @@ extern unsigned char g_rleValues[16];                   /* DS:4EFE */
 extern int g_picNewHeader;                              /* DS:4F0E */
 extern char g_hallFileName[];                           /* DS:4F3A */
 extern struct Panel ai70e4t[];                          /* DS:70E4 */
-extern struct Spr12 g7682n[];                           /* DS:7682 */
+extern struct Spr12 g_layoutAutoSprArray[];                           /* DS:7682 */
 extern struct Pos6 a784als[];                           /* DS:784A */
-extern int a_7d16q;                                     /* DS:7D16 */
-extern unsigned g7d68m[][3];                            /* DS:7D68 */
+extern int g_usedCarAdFirst;                                     /* DS:7D16 */
+extern unsigned g_carRatingsTable[][3];                            /* DS:7D68 */
 extern struct Spec g7d86n[];                            /* DS:7D86 */
-extern struct Spr6 ap818c[];                            /* DS:818C */
-extern unsigned ag8baey[][3];                           /* DS:8BAE */
+extern struct Spr6 g_pointsModelService[];                            /* DS:818C */
+extern unsigned g_rivalStakeToleranceTable[][3];                           /* DS:8BAE */
 extern int g_lib1Count;                                      /* DS:8BC8 */
-extern int s_8dd2;                                      /* DS:8DD2 */
+extern int g_countLibBmB;                                      /* DS:8DD2 */
 extern char *g_library1Path;                                   /* DS:8DD4 */
-extern char *au8dd6y;                                   /* DS:8DD6 */
+extern char *g_picLibBPath;                                   /* DS:8DD6 */
 extern int g_acceptProbability[][3];                                 /* DS:8DD8 */
 extern struct Model w_8df0[];                           /* DS:8DF0 */
 int disk_seek(int handle, long pos);                    /* 0x15396 */

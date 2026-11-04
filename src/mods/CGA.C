@@ -121,8 +121,8 @@ void cga_draw_text(struct Bitmap far *bm, int x, int y, char *s)
             pp2++;
         }
     }
-    g824cd = ((col4 - shl) >> 1) + x;
-    bq824e = y;
+    g_xTextR = ((col4 - shl) >> 1) + x;
+    g_yLastString = y;
     if (col4 == shl)
         return;
     if (shl) {

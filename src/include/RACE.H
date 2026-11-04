@@ -18,27 +18,27 @@ extern int g_brakeTicks;                                      /* DS:54DA */
 extern struct State70C0 al70c0x;                        /* DS:70C0 */
 extern int by72f2;                                      /* DS:72F2 */
 extern struct Bitmap far *ab7526x[13];                  /* DS:7526 */
-extern int g755av;                                      /* DS:755A */
-extern int g7644m;                                      /* DS:7644 */
-extern char at787cu;                                    /* DS:787C */
+extern int g_idxAtCop;                                      /* DS:755A */
+extern int g_finishMeanSpeedVal;                                      /* DS:7644 */
+extern char g_failureTire;                                    /* DS:787C */
 extern int ap7d7cv;                                     /* DS:7D7C */
-extern int gz7d7e;                                      /* DS:7D7E */
-extern int g7d82p;                                      /* DS:7D82 */
+extern int g_ramAllowed;                                      /* DS:7D7E */
+extern int g_leftEdgeX;                                      /* DS:7D82 */
 extern int a_7f88d;                                     /* DS:7F88 */
-extern int h_8264;                                      /* DS:8264 */
+extern int g_hasGlassRear;                                      /* DS:8264 */
 extern int g_backGlassXState;                                      /* DS:826A */
-extern int ae826cv;                                     /* DS:826C */
-extern int ar826e;                                      /* DS:826E */
-extern int q_8270;                                      /* DS:8270 */
-extern int bp82c2;                                      /* DS:82C2 */
+extern int g_winRearPointY;                                     /* DS:826C */
+extern int g_gasCapXVal;                                      /* DS:826E */
+extern int g_gasCapYValue;                                      /* DS:8270 */
+extern int g_steeringOld;                                      /* DS:82C2 */
 extern int dz82c8x;                                     /* DS:82C8 */
 extern int bz8630z;                                     /* DS:8630 */
-extern int s_8632;                                      /* DS:8632 */
-extern int g_8648;                                      /* DS:8648 */
+extern int g_finishAheadPlayerState;                                      /* DS:8632 */
+extern int g_swapArmedRivalValue;                                      /* DS:8648 */
 extern struct Bitmap far *g8acew[13];                   /* DS:8ACE */
 extern int ay8bc2z;                                     /* DS:8BC2 */
-extern float p_8bc4;                                    /* DS:8BC4 */
-extern int cz8bd0y;                                     /* DS:8BD0 */
+extern float g_raceSecsElapsedValue;                                    /* DS:8BC4 */
+extern int g_edgeXR;                                     /* DS:8BD0 */
 void race_gas_station(void);                            /* 0x0B8A1 */
 void race_finish_stats(void);                           /* 0x0C407 */
 int near race_outcome(void);                            /* 0x0C613 */

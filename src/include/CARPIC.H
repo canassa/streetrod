@@ -20,12 +20,12 @@ extern struct Rect g_overlayRectB;                              /* DS:5A18 */
 extern int g_backdropX;                                 /* DS:5A20 */
 extern int g_backdropW;                                 /* DS:5A22 */
 extern int g_carPassBy;                                 /* DS:5A24 */
-extern struct Bitmap am6e68x[];                         /* DS:6E68 */
-extern struct Bitmap far *at70a8;                       /* DS:70A8 */
-extern int (far *g78c6c)(struct Sprite *);              /* DS:78C6 */
-extern struct Band dz7ec2[4];                           /* DS:7EC2 */
+extern struct Bitmap g_bandRecordsSprArray[];                         /* DS:6E68 */
+extern struct Bitmap far *g_lastPic;                       /* DS:70A8 */
+extern int (far *g_stepSpriteFrm)(struct Sprite *);              /* DS:78C6 */
+extern struct Band g_carSpriteStrips[4];                           /* DS:7EC2 */
 extern struct Bitmap g_carBackdropHdrBmp;                            /* DS:7FA8 */
-extern int l_8262;                                      /* DS:8262 */
+extern int g_carVisibleHtValue;                                      /* DS:8262 */
 void carpic_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bitmap far **pb, int y1, int y0, struct Rect **pr1, struct Rect **pr2);/* 0x1783E */
 void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *ids, int w, int n);/* 0x17BE6 */
 void F_181C8(int kind, int idx, int flags, int kk, int q, int bot, int mode2, int *ids);/* 0x181C8 */

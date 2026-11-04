@@ -117,7 +117,7 @@ void carhop_skate(int a, int b)
             r3.h = rca2.y2 - rca2.y1 + 1;
             r3.sx = rca2.x1 - ac825et;
             r3.sy = rca2.y1 - aw8260y;
-            clip = bitmap_grab(bu825a, &r3, ARENA_HIGH_STACK);
+            clip = bitmap_grab(g_autoSprImagePtr, &r3, ARENA_HIGH_STACK);
             r3.sx = 0;
             r3.sy = 0;
             r3.dx = rca2.x1;
@@ -128,7 +128,7 @@ void carhop_skate(int a, int b)
     }
     carpic_backdrop(bm9, &tab2[0], 0x474, &B7, 0x29, 0x29, &prc3, &prc3);
     if (a == CARHOP_ENTER) {
-        bm27 = F_1934E(0x30, 0x29, 1, ARENA_HIGH_STACK);
+        bm27 = arena_bm(0x30, 0x29, 1, ARENA_HIGH_STACK);
         r2.w = 0x30;
         r2.h = 0x29;
         r2.sx = r2.sy = 0;
@@ -143,7 +143,7 @@ void carhop_skate(int a, int b)
     rcb1.x2 = tab2[0]->width - 1;
     rcb1.y2 = tab2[0]->height - 1;
     cut_sheet(&tab2[1], a);
-    fr = F_1934E(0x30, 0x29, 1, ARENA_HIGH_STACK);
+    fr = arena_bm(0x30, 0x29, 1, ARENA_HIGH_STACK);
     sp2 = sprite_setup(a == CARHOP_ENTER ? -40 : 200, 0x6c, &fr, 0, 1, B7, tab2[0], &rcb1, 0);
     p9 = a == CARHOP_ENTER ? g_carhopInSeq : g_carhopOutSeq;
     for (i = 0; i < 4; i++)
@@ -159,16 +159,16 @@ void carhop_skate(int a, int b)
         v3 = x & ~r_vid.mask;
         bitmap_shift_right(tab2[g_carhopFrames[i]], v3, fr);
         tm7 = g_tick + 2;
-        okn = (*g78c6c)(sp2);
+        okn = (*g_stepSpriteFrm)(sp2);
         while (tm7 > g_tick)
             ;
     }
-    okn = (*g78c6c)(sp2);
+    okn = (*g_stepSpriteFrm)(sp2);
     g_carhopRect = sp2->page->rect;
     if (a == CARHOP_LEAVE) {
         carpic_patch_bg(g_carhopBg, 0, 0, 0x30, 0x29, 0xc8, 0x44, 0xa3, 2);
     } else {
-        t = F_1934E(fr->width, 0x29, 1, ARENA_HIGH_STACK);
+        t = arena_bm(fr->width, 0x29, 1, ARENA_HIGH_STACK);
         r2.w = fr->width;
         r2.h = 0x29;
         r2.sx = r2.sy = 0;
@@ -179,7 +179,7 @@ void carhop_skate(int a, int b)
         carpic_patch_bg(t, 0, 0, t->width, 0x29, 0xc8, 0x44, 0xa3, 2);
     }
     if (r_vid.mode != VID_EGA)
-        (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
+        (*g_screenCopyPtr)(r_vid.front->bits.p, r_vid.back->bits.p);
     marks_release();
 }
 
@@ -191,7 +191,7 @@ void carhop_save_bg(void)
 {
     struct Blt pkt;
 
-    g_carhopBg = F_1934E(0x30, 0x29, 0, ARENA_LOW_BASE);
+    g_carhopBg = arena_bm(0x30, 0x29, 0, ARENA_LOW_BASE);
     pkt.w = g_carhopBg->width;
     pkt.h = g_carhopBg->height;
     pkt.sx = 200;

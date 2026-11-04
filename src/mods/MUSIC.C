@@ -11,13 +11,13 @@ struct Tone g_tones[5] = {{0, 0, 0, 0, 0}, {0, 0, 0, 8, 10}, {0, 0, 4, 8, 1}, {0
 
 /* music_play @ 0F38:6F0A (linear 0x1628A, 179 bytes)
 
-   Start the sound song with its tone list tones. Song bs79aa's own song restarts the
-   first voice (g_voiceNum = 1); any other song goes into the second voice ao79c6t (g_voiceNum = 2), the
+   Start the sound song with its tone list tones. Song g_songBgState's own song restarts the
+   first voice (g_voiceNum = 1); any other song goes into the second voice g_secondaryMusicStateData (g_voiceNum = 2), the
    first voice's on/off state g_musicOn is saved in g_savedMusicOn meanwhile */
 
 void music_play(void far *song, void *tones)
 {
-    if (song == bs79aa.song) {
+    if (song == g_songBgState.song) {
         if (g_savedMusicOn != -1) {
             g_musicOn = g_savedMusicOn;
             g_savedMusicOn = -1;
@@ -27,8 +27,8 @@ void music_play(void far *song, void *tones)
             g_speakerOn = 0;
         }
         g_voiceNum = 1;
-        g_voice = &bs79aa;
-        bn82c4 = g_tones + *bs79aa.toneCursor;
+        g_voice = &g_songBgState;
+        g_toneShapePlaybackPointer = g_tones + *g_songBgState.toneCursor;
         g_vibratoActive = 1;
     } else {
         if (g_savedMusicOn == -1) {
@@ -36,9 +36,9 @@ void music_play(void far *song, void *tones)
             g_musicOn = 1;
         }
         g_voiceNum = 2;
-        ao79c6t.cur = ao79c6t.phraseStart = ao79c6t.song = song;
-        ao79c6t.repeatCursor = ao79c6t.repeatTable = tones;
-        g_voice = &ao79c6t;
+        g_secondaryMusicStateData.cur = g_secondaryMusicStateData.phraseStart = g_secondaryMusicStateData.song = song;
+        g_secondaryMusicStateData.repeatCursor = g_secondaryMusicStateData.repeatTable = tones;
+        g_voice = &g_secondaryMusicStateData;
         sys_music_start(2, 0);
     }
 }

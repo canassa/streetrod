@@ -17,7 +17,7 @@
 #include "VIDEO.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-int g7f84q;
+int g_adIdxEndPageState;
 
 static struct Bitmap far * near ad_picture(int n);
 
@@ -131,7 +131,7 @@ int ads_run(void)
                 for (;;) {
                     while ((c6 = *(str += strlen(str) + 1)) == '+') {
                         str++;
-                        a_78aem(r_vid.back, g824cd, y, str);
+                        a_78aem(r_vid.back, g_xTextR, y, str);
                     }
                     if (c6 < 0x20)
                         break;
@@ -147,7 +147,7 @@ int ads_run(void)
                     next = g_pages.list + g_pages.start[0];
                 }
             } while (y < (SCREEN_BODY_HEIGHT - 1) && ++i <= limit);
-            g7f84q = i;
+            g_adIdxEndPageState = i;
             g_adResume = 1;
             row7->y2 = y + 1 > (SCREEN_BODY_HEIGHT - 1) ? (SCREEN_BODY_HEIGHT - 1) : y + 1;
             if (row7->y2 < (SCREEN_BODY_HEIGHT - 1))
@@ -172,20 +172,20 @@ int ads_run(void)
         case -1:
             if (--g_pages.cur < 0)
                 g_pages.cur = g_pages.n - 1;
-            g7f84q = a_7eaap.adIndex - 1;
-            if (g7f84q < 1)
-                g7f84q = limit;
+            g_adIdxEndPageState = a_7eaap.adIndex - 1;
+            if (g_adIdxEndPageState < 1)
+                g_adIdxEndPageState = limit;
             diff = (SCREEN_BODY_HEIGHT - 1);
-            while ((diff -= 9 * g_descHdr[g_pages.list[g7f84q]] + 3) > 0)
-                if (--g7f84q < 1)
-                    g7f84q = limit;
-            a_7eaap.adIndex = g7f84q;
+            while ((diff -= 9 * g_descHdr[g_pages.list[g_adIdxEndPageState]] + 3) > 0)
+                if (--g_adIdxEndPageState < 1)
+                    g_adIdxEndPageState = limit;
+            a_7eaap.adIndex = g_adIdxEndPageState;
             g_adRedraw = 1;
             continue;
         case -2:
             if (++g_pages.cur >= g_pages.n)
                 g_pages.cur = 0;
-            a_7eaap.adIndex = g7f84q + (y > 0xc1 ? 0 : 1);
+            a_7eaap.adIndex = g_adIdxEndPageState + (y > 0xc1 ? 0 : 1);
             g_adRedraw = 1;
             continue;
         default:

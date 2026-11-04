@@ -23,7 +23,7 @@
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6e04aay;                      /* DS:6E04 */
 static int g_6e06aax;                      /* DS:6E06 */
-static int *g_6e08aaw;                     /* DS:6E08 */
+static int *g_farLeftX;                     /* DS:6E08 */
 static int *g_6e0awz;                      /* DS:6E0A */
 static int *g_6e0cvz;                      /* DS:6E0C */
 static int *g_6e0euz;                      /* DS:6E0E */
@@ -38,7 +38,7 @@ static int *g_6e1e;                        /* DS:6E1E */
 static int far *g_6e20a;                   /* DS:6E20 */
 static int far *g_6e24a;                   /* DS:6E24 */
 static int *g_6e28a;                       /* DS:6E28 */
-static int g_6e2a9;                        /* DS:6E2A */
+static int g_oldF;                        /* DS:6E2A */
 static void near clip_blit_y(struct Blt *b);
 static int near edge_step(int x1, int y1, int x2, int y2);
 static int near sgn(int n);
@@ -576,7 +576,7 @@ void view_road_row(int n)
     int xl2s6;
     int m2;
 
-    xl = *g_6e08aaw;
+    xl = *g_farLeftX;
     xrl = *g_6e18;
     xlsn = xl << 4;
     xrs = xrl << 4;
@@ -674,7 +674,7 @@ void view_mirror_row(void)
     int xl2s6;
     int m2;
 
-    xl = *g_6e08aaw;
+    xl = *g_farLeftX;
     xrl = *g_6e18;
     xlsn = xl << 4;
     xrs = xrl << 4;
@@ -1172,7 +1172,7 @@ static void near render_opponent(void)
             if (ap7d7cv == 12)
                 return;
             seln = ap7d7cv + 1;
-        } else if (seln != g_6e2a9) {
+        } else if (seln != g_oldF) {
             if ((seln <= 8 && ap7d7cv > 9) || (seln >= 9 && ap7d7cv <= 8 && ap7d7cv > 0))
                 seln = ap7d7cv - 1;
             else if (ap7d7cv == 0)
@@ -1192,7 +1192,7 @@ static void near render_opponent(void)
     ay8bc2z = seln == 0 || (seln == 2 && xk <= 10);
     by72f2 = seln == 2 && xk <= 10 && abs(z9) < 180 &&
         (bu8acc < 4 ? 100 : 180) > abs(z9) && ar7e8av.distanceStep < ao7d2ev.distanceStep;
-    g_6e2a9 = ap7d7cv;
+    g_oldF = ap7d7cv;
     ap7d7cv = seln;
     g_5ec6 = xk > 16 ? (xk + 8) & 15 : 0;
     t1 = xk;
@@ -1275,7 +1275,7 @@ static void near render_mirror(void)
     int f3;
     int w2;
 
-    g_6e08aaw = &g7f30t;
+    g_farLeftX = &g7f30t;
     g_6e18 = &as8668u;
     g_6e1a = &k_8646;
     g_6e0awz = &al70c0x.m70d0;
@@ -1300,7 +1300,7 @@ static void near render_mirror(void)
         if (*am8b82y & 4)
             goto next;
         if (*am8b82y & 0xf000)
-            render_gantry(*g_6e08aaw, *g_6e18, -((*g_6e1a - *g_6e0cvz) * 4 - *g_6e1a), *g_6e1a, i + 5, 1, *am8b82y & 0xf000);
+            render_gantry(*g_farLeftX, *g_6e18, -((*g_6e1a - *g_6e0cvz) * 4 - *g_6e1a), *g_6e1a, i + 5, 1, *am8b82y & 0xf000);
         if (i >= 6)
             goto next;
         f3 = *am8b82y & 1;
@@ -1309,36 +1309,36 @@ static void near render_mirror(void)
         w36 = *am8b82y;
         if (w11 & 0x20) {
             if (f3)
-                render_object(*g_6e08aaw, *g_6e1a, i + 5, -1, 0);
+                render_object(*g_farLeftX, *g_6e1a, i + 5, -1, 0);
             else
                 render_object(*g_6e0awz, *g_6e1a, i + 5, -1, 0);
         }
         if (w11 & 0x100) {
             if (f3)
-                render_object(*g_6e08aaw, *g_6e1a, i + 5, -1, 4);
+                render_object(*g_farLeftX, *g_6e1a, i + 5, -1, 4);
             else if (w11 & 0x200)
-                render_object(*g_6e0awz - *g_6e08aaw + *g_6e0awz, *g_6e1a, i + 5, -1, 4);
+                render_object(*g_6e0awz - *g_farLeftX + *g_6e0awz, *g_6e1a, i + 5, -1, 4);
             else
                 render_object(*g_6e0awz, *g_6e1a, i + 5, -1, 4);
         }
         if (w11 & 0x800)
-            render_object(*g_6e08aaw, *g_6e1a, i + 5, 1, 3);
+            render_object(*g_farLeftX, *g_6e1a, i + 5, 1, 3);
         if (w11 & 0x1000)
-            render_object(*g_6e08aaw, *g_6e1a, i + 5, 1, 6);
+            render_object(*g_farLeftX, *g_6e1a, i + 5, 1, 6);
         if (f3) {
             if (w11 & 0x40)
-                render_hydrant(*g_6e08aaw, *g_6e1a, i + 5, 1);
+                render_hydrant(*g_farLeftX, *g_6e1a, i + 5, 1);
             if (w2 & 0x40)
                 render_hydrant(*g_6e18, *g_6e1a, i + 5, -1);
         } else {
             if (w11 & 1)
-                render_object(*g_6e08aaw, *g_6e1a, i + 5, 1, 1);
+                render_object(*g_farLeftX, *g_6e1a, i + 5, 1, 1);
             if (w11 & 4)
-                render_object(*g_6e08aaw, *g_6e1a, i + 5, -1, 7);
+                render_object(*g_farLeftX, *g_6e1a, i + 5, -1, 7);
             if (w11 & 8)
-                render_object(*g_6e08aaw, *g_6e1a, i + 5, -1, 8);
+                render_object(*g_farLeftX, *g_6e1a, i + 5, -1, 8);
             if (w11 & 0x40)
-                render_object(-(((*g_6e08aaw - *g_6e0awz) >> 1) - *g_6e0awz), *g_6e1a, i + 5, -1, 10);
+                render_object(-(((*g_farLeftX - *g_6e0awz) >> 1) - *g_6e0awz), *g_6e1a, i + 5, -1, 10);
             if (w11 & 0x80)
                 render_object(*g_6e0awz, *g_6e1a, i + 5, -1, 11);
             if (w2 & 1)
@@ -1393,7 +1393,7 @@ static void near render_mirror(void)
         g_6e10--;
         g_6e1c--;
         g_6e1e--;
-        g_6e08aaw--;
+        g_farLeftX--;
         g_6e18--;
         g_6e1a--;
         g_6e28a--;
@@ -1431,7 +1431,7 @@ void view_draw(void)
     int f3;
     int w2;
 
-    g_6e08aaw = &br7314;
+    g_farLeftX = &br7314;
     g_6e18 = &az7aeau;
     g_6e1a = &f_78a0;
     g_6e0awz = &by7fa6;
@@ -1463,42 +1463,42 @@ void view_draw(void)
         w36 = *am8b82y;
         if (w11 & 0x20) {
             if (f3)
-                render_object(*g_6e08aaw, *g_6e1a, i, -1, 0);
+                render_object(*g_farLeftX, *g_6e1a, i, -1, 0);
             else
                 render_object(*g_6e0awz, *g_6e1a, i, -1, 0);
         }
         if (w11 & 0x100) {
             if (f3)
-                render_object(*g_6e08aaw, *g_6e1a, i, -1, 4);
+                render_object(*g_farLeftX, *g_6e1a, i, -1, 4);
             else if (w11 & 0x200)
-                render_object(*g_6e0awz - *g_6e08aaw + *g_6e0awz, *g_6e1a, i, -1, 4);
+                render_object(*g_6e0awz - *g_farLeftX + *g_6e0awz, *g_6e1a, i, -1, 4);
             else
                 render_object(*g_6e0awz, *g_6e1a, i, -1, 4);
         }
         if (w11 & 0x800)
-            render_object(*g_6e08aaw, *g_6e1a, i, 1, 3);
+            render_object(*g_farLeftX, *g_6e1a, i, 1, 3);
         if (w11 & 0x1000)
-            render_object(*g_6e08aaw, *g_6e1a, i, 1, 6);
+            render_object(*g_farLeftX, *g_6e1a, i, 1, 6);
         if (w11 & 1) {
             if (f3) {
                 egaspan_end();
-                render_scaled_pic(*g_6e08aaw, (*g_6e0cvz + *g_6e1a) >> 1, i, 1, 0, 1);
+                render_scaled_pic(*g_farLeftX, (*g_6e0cvz + *g_6e1a) >> 1, i, 1, 0, 1);
                 egaspan_begin();
             } else
-                render_object(*g_6e08aaw, *g_6e1a, i, 1, 1);
+                render_object(*g_farLeftX, *g_6e1a, i, 1, 1);
         }
         if (f3) {
             if (w11 & 0x40)
-                render_hydrant(*g_6e08aaw, *g_6e1a, i, 1);
+                render_hydrant(*g_farLeftX, *g_6e1a, i, 1);
             if (w2 & 0x40)
                 render_hydrant(*g_6e18, *g_6e1a, i, -1);
         } else {
             if (w11 & 4)
-                render_object(*g_6e08aaw, *g_6e1a, i, -1, 7);
+                render_object(*g_farLeftX, *g_6e1a, i, -1, 7);
             if (w11 & 8)
-                render_object(*g_6e08aaw, *g_6e1a, i, -1, 8);
+                render_object(*g_farLeftX, *g_6e1a, i, -1, 8);
             if (w11 & 0x40)
-                render_object(-(((*g_6e08aaw - *g_6e0awz) >> 1) - *g_6e0awz), *g_6e1a, i, -1, 10);
+                render_object(-(((*g_farLeftX - *g_6e0awz) >> 1) - *g_6e0awz), *g_6e1a, i, -1, 10);
             if (w11 & 0x80)
                 render_object(*g_6e0awz, *g_6e1a, i, -1, 11);
             if (w2 & 4)
@@ -1543,7 +1543,7 @@ void view_draw(void)
                 render_object(*g_6e18, *g_6e1a, i, 1, 1);
         }
         if (w36 & 0xf000)
-            render_gantry(*g_6e08aaw, *g_6e18, -((*g_6e1a - *g_6e0cvz) * 4 - *g_6e1a), *g_6e1a, i, 0, w36 & 0xf000);
+            render_gantry(*g_farLeftX, *g_6e18, -((*g_6e1a - *g_6e0cvz) * 4 - *g_6e1a), *g_6e1a, i, 0, w36 & 0xf000);
         if (w36 & 0x100)
             render_object(*g_6e18, *g_6e1a, i, 1, 5);
         if (w36 & 0x800)
@@ -1561,7 +1561,7 @@ void view_draw(void)
         g_6e10--;
         g_6e1c--;
         g_6e1e--;
-        g_6e08aaw--;
+        g_farLeftX--;
         g_6e18--;
         g_6e1a--;
         g_6e28a--;
@@ -1592,7 +1592,7 @@ void view_draw(void)
 
 void view_start(void)
 {
-    ap7d7cv = g_6e2a9 = 0;
+    ap7d7cv = g_oldF = 0;
     select_draw_page();
     road_draw_frame();
 }

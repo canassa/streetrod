@@ -32,11 +32,11 @@ struct Bitmap far *g_pageBmps[4];
 struct Obj bm7568[5];
 struct Style *bustyle;
 int (far *ab78aat)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
-struct Bitmap far *bu825a;
+struct Bitmap far *g_autoSprImagePtr;
 int ac825et;
 int aw8260y;
-int d_8266;
-int ap8268t;
+int g_frntWindscreenX;
+int g_frontWinPositionYVal;
 
 struct Style g_style16 = {{{0, 0, 0, 0, 0}, {13, 9, 9, 15, 1}, {9, 13, 13, 15, 1}, {1, 5, 5, 1, 1}, {1, 5, 5, 4, 1}, {15, 9, 9, 15, 1}, {14, 15, 15, 10, 1}}, {1, 4, 4, 1, 1}, {1, 3, 3, 4, 2}, {15, 9, 9, 15, 1}, {13, 9, 9, 15, 1}, {11, 2, 2, 11, 1}, {1, 4, 4, 11, 1}, {1, 4, 4, 1, 1}, {1, 4, 4, 1, 1}, {1, 3, 3, 4, 1}};   /* DS:03A0 */
 struct Style g_style4 = {{{0, 0, 0, 0, 0}, {1, 2, 2, 3, 1}, {2, 1, 1, 3, 1}, {0, 3, 3, 0, 1}, {0, 3, 3, 2, 1}, {3, 2, 2, 3, 1}, {2, 1, 1, 1, 1}}, {0, 3, 3, 0, 1}, {0, 3, 3, 2, 2}, {3, 2, 2, 3, 1}, {1, 2, 2, 3, 1}, {0, 2, 2, 0, 1}, {0, 3, 3, 1, 1}, {0, 3, 3, 0, 1}, {0, 3, 3, 0, 1}, {1, 2, 2, 3, 1}};   /* DS:03F0 */
@@ -122,13 +122,13 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
         break;
     }
     x_colors = bustyle->pal[1];
-    d_8266 = ap8268t = -1;
+    g_frntWindscreenX = g_frontWinPositionYVal = -1;
     i = 5;
     do {
         i--;
         bm7568[i].id = bm7568[i].scriptIndex = -1;
     } while (i);
-    (*m_present)();
+    (*g_fnShow)();
     menu_reset();
     g_graphicsUp = 1;
     g_pageBmps[0] = r_vid.front;
@@ -226,7 +226,7 @@ static void near anim_run(int n)
                 for (x1 = 0; x1 < g_obj->img->width; x1 += g_box->w) {
                     blt.dx = tx + x1;
                     blt.dy = ty + y;
-                    (*ab78aat)(bu825a, g_obj->img, &blt, 1);
+                    (*ab78aat)(g_autoSprImagePtr, g_obj->img, &blt, 1);
                 }
             }
             break;
@@ -363,7 +363,7 @@ void F_112CB(int reg, char color)
     int86x(BIOS_VIDEO, &r, &r, &s);
 }
 
-char iz8248;
+char g_colScreenBorder;
 
 /* video_set_palette @ 0F38:1FA4 (linear 0x11324, 124 bytes)
 
@@ -385,7 +385,7 @@ void video_set_palette(char *table)
             *dest++ = *table;
         table++;
     }
-    pal[16] = iz8248;
+    pal[16] = g_colScreenBorder;
     dest = (char far *)pal;
     s.es = FP_SEG(dest);
     r.x.dx = FP_OFF(dest);

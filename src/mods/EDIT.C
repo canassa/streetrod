@@ -45,7 +45,7 @@ int edit_line(int x, int y, char *buf, int max)
     cursor_ctl(CURSOR_HIDE);
     draw_fill_rect(r_vid.back, x, y, w, 8);
     (*a_78aem)(r_vid.back, x, y, buf);
-    draw_vline(r_vid.back, cx = g824cd, cy = bq824e, 8);
+    draw_vline(r_vid.back, cx = g_xTextR, cy = g_yLastString, 8);
     colr = -1;
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
@@ -95,7 +95,7 @@ int edit_line(int x, int y, char *buf, int max)
                     buf[end++] = key;
                     buf[end] = 0;
                     (*a_78aem)(r_vid.back, px = cx, cy, buf + end - 1);
-                    cx = g824cd;
+                    cx = g_xTextR;
                 } else
                     sound_buzz();
                 x_colors.line = x_colors.text;
@@ -136,7 +136,7 @@ int edit_line(int x, int y, char *buf, int max)
 /* edit_number @ 0F38:5D37 (linear 0x150B7, 112 bytes)
 
    Number prompt: draw the prompt s at (x, y) in the style's colours, let the player edit a
-   text of up to 20 characters at (g824cd, bq824e) and store its value in *out. Returns the result
+   text of up to 20 characters at (g_xTextR, g_yLastString) and store its value in *out. Returns the result
    of the editor when that is 0 or negative, else 0 */
 
 int edit_number(int x, int y, char *s, int *out)
@@ -148,7 +148,7 @@ int edit_number(int x, int y, char *s, int *out)
     screen_text(x, y, s);
     g_editDigits = 1;
     buf[0] = 0;
-    rl = edit_line(g824cd, bq824e, buf, 20);
+    rl = edit_line(g_xTextR, g_yLastString, buf, 20);
     g_editDigits = 0;
     *out = atoi(buf);
     return rl > 0 ? 0 : rl;
@@ -156,7 +156,7 @@ int edit_number(int x, int y, char *s, int *out)
 
 /* edit_spot_number @ 0F38:5DA7 (linear 0x15127, 119 bytes)
 
-   Number field of the current hot spot az8ba2t: edit a text into buf (at most 10 characters,
+   Number field of the current hot spot g_hotTextFld: edit a text into buf (at most 10 characters,
    fewer when the box is narrow: 6 pixels each) with the spot's colours and store its value in *out.
    Returns the editor's result when that is 0 or negative, else 0 */
 
@@ -164,10 +164,10 @@ int edit_spot_number(int *out, char *buf)
 {
     int rl;
 
-    x_colors = bustyle->pal[az8ba2t->palIndex];
+    x_colors = bustyle->pal[g_hotTextFld->palIndex];
     g_editDigits = 1;
-    rl = edit_line(az8ba2t->x1, az8ba2t->y1, buf,
-        (az8ba2t->x2 - az8ba2t->x1) / 6 > 10 ? 10 : (az8ba2t->x2 - az8ba2t->x1) / 6);
+    rl = edit_line(g_hotTextFld->x1, g_hotTextFld->y1, buf,
+        (g_hotTextFld->x2 - g_hotTextFld->x1) / 6 > 10 ? 10 : (g_hotTextFld->x2 - g_hotTextFld->x1) / 6);
     g_editDigits = 0;
     *out = atoi(buf);
     return rl > 0 ? 0 : rl;
@@ -200,8 +200,8 @@ int edit_text_box(int id, int len, char *s)
     int rl;
 
     menu_push(id);
-    x_colors = bustyle->pal[az8ba2t->palIndex];
-    rl = edit_line(az8ba2t->x1, az8ba2t->y1, s, len);
+    x_colors = bustyle->pal[g_hotTextFld->palIndex];
+    rl = edit_line(g_hotTextFld->x1, g_hotTextFld->y1, s, len);
     menu_pop(1);
     return rl > 0 ? 0 : rl;
 }

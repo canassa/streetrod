@@ -22,9 +22,9 @@ extern struct Bitmap far *bm7678;                       /* DS:7678 */
 extern unsigned at767ct;                                /* DS:767C */
 extern unsigned av787at;                                /* DS:787A */
 extern int (far *b_78a2)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);/* DS:78A2 */
-extern void (far *bl78be)(void);                        /* DS:78BE */
-extern void (far *m_present)(void);                     /* DS:78C2 */
-extern void (far *s_blit)(char far *, char far *);      /* DS:78CA */
+extern void (far *g_displayDisablePtr)(void);                        /* DS:78BE */
+extern void (far *g_fnShow)(void);                     /* DS:78C2 */
+extern void (far *g_pageRevealBlit)(char far *, char far *);      /* DS:78CA */
 extern void (far *a_78d2)(int, int, int, int, int);     /* DS:78D2 */
 extern char gz8249;                                     /* DS:8249 */
 extern struct Bitmap far *g82b4s;                       /* DS:82B4 */

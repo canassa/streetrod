@@ -43,10 +43,10 @@ int drive_run(void)
     do {
         dash_set_view(3);
         marks_clear();
-        (*bl78be)();
+        (*g_displayDisablePtr)();
         g_dashBuffered = r_vid.mode == VID_CGA && g_egaCard;
         if (g_dashBuffered) {
-            popup_grab(0, DASH_Y, SCREEN_WIDTH, DASH_HEIGHT, g755cu);
+            popup_grab(0, DASH_Y, SCREEN_WIDTH, DASH_HEIGHT, g_bufBackgroundDashPtr);
             r_vid.copyToFront = 1;
             screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
             r_vid.copyToFront = sv;
@@ -78,16 +78,16 @@ int drive_run(void)
         blt.sx = blt.dx = 0;
         blt.sy = DASH_Y;
         blt.dy = (r_vid.mode == VID_EGA || g_dashBuffered) ? 0 : DASH_Y;
-        (*b_78a2)(src, g_dashBuffered ? g755cu : bm7678, &blt, 1);
+        (*b_78a2)(src, g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, &blt, 1);
         F_19438(1);
         view_load();
         dash_init_shifter(g_driveEng.autoSelector, g_driveEng.gearCount);
-        dash_draw_shifter(g_dashBuffered ? g755cu : bm7678, &g_driveEng);
+        dash_draw_shifter(g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, &g_driveEng);
         shiftx5 = 0;
-        bp82c2 = 0x64;
+        g_steeringOld = 0x64;
         dash_load_wheel();
-        dash_draw_wheel(0, bp82c2, g_dashBuffered ? g755cu : bm7678);
-        bp82c2 = 0;
+        dash_draw_wheel(0, g_steeringOld, g_dashBuffered ? g_bufBackgroundDashPtr : bm7678);
+        g_steeringOld = 0;
         ret = 0;
         oldfe = g_driveEng.rpm;
         dash_speedo_init(oldf05 = g_driveEng.speed);
@@ -103,9 +103,9 @@ int drive_run(void)
     g_driveRebuild = 0;
     if (r_vid.mode == VID_EGA) {
         crtc_set_split(DASH_Y - 1);
-        af824ax = DASH_Y;
+        g_displaySplitYVal = DASH_Y;
     } else
-        af824ax = 0;
+        g_displaySplitYVal = 0;
     road_start();
     if (r_vid.mode != VID_EGA) {
         blt.w = SCREEN_WIDTH;
@@ -115,19 +115,19 @@ int drive_run(void)
     }
     if (g_dashBuffered) {
         g_dashBuffered = 0;
-        blt.w = g755cu->width;
+        blt.w = g_bufBackgroundDashPtr->width;
         blt.h = DASH_HEIGHT;
         blt.sy = blt.sx = blt.dx = 0;
         blt.dy = DASH_Y;
-        (*b_78a2)(g755cu, bm7678, &blt, 1);
+        (*b_78a2)(g_bufBackgroundDashPtr, bm7678, &blt, 1);
         oldf05 = dash_move_needle(g_driveEng.speed, oldf05, 0);
         if (!g_autoTrans)
             oldfe = dash_move_needle(g_driveEng.rpm, oldfe, 1);
         else
             dash_draw_clock();
-        dash_draw_wheel(shiftx5, bp82c2, bm7678);
+        dash_draw_wheel(shiftx5, g_steeringOld, bm7678);
     }
-    (*m_present)();
+    (*g_fnShow)();
     for (;;) {
         road_update();
         if (g_demo == 0x63) {
@@ -145,9 +145,9 @@ int drive_run(void)
             oldf05 = dash_move_needle(g_driveEng.speed, oldf05, 0);
         if (!g_autoTrans && abs(g_driveEng.rpm - oldfe) > 1)
             oldfe = dash_move_needle(g_driveEng.rpm, oldfe, 1);
-        if (shiftx5 != bp82c2) {
-            dash_draw_wheel(shiftx5, bp82c2, bm7678);
-            bp82c2 = shiftx5;
+        if (shiftx5 != g_steeringOld) {
+            dash_draw_wheel(shiftx5, g_steeringOld, bm7678);
+            g_steeringOld = shiftx5;
         }
     }
     marks_clear();
@@ -167,11 +167,11 @@ int drive_run(void)
         blt.dy = DASH_Y;
         (*b_78a2)(bm7678, g_drawPage == 1 ? g82b4s : g8188w, &blt, 1);
         crtc_set_split(-1);
-        af824ax = 0;
-        (*dz78b6)(g_drawPage == 1 ? g82b4s->bits.p : g8188w->bits.p, bm7678->bits.p);
-        (*dz78b6)(g_drawPage == 1 ? g82b4s->bits.p : g8188w->bits.p, g_drawPage == 1 ? g8188w->bits.p : g82b4s->bits.p);
+        g_displaySplitYVal = 0;
+        (*g_screenCopyPtr)(g_drawPage == 1 ? g82b4s->bits.p : g8188w->bits.p, bm7678->bits.p);
+        (*g_screenCopyPtr)(g_drawPage == 1 ? g82b4s->bits.p : g8188w->bits.p, g_drawPage == 1 ? g8188w->bits.p : g82b4s->bits.p);
     } else
-        (*dz78b6)(bm7678->bits.p, g8188w->bits.p);
+        (*g_screenCopyPtr)(bm7678->bits.p, g8188w->bits.p);
     dash_set_view(1);
     return ret;
 }

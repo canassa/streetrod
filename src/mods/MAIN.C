@@ -278,22 +278,22 @@ static int near cpu_speed(void)
     return count > 1 ? (int)count : 1;
 }
 
-int by70e2;
-struct Bitmap far *g755cu;
+int g_loadedIntroBmps;
+struct Bitmap far *g_bufBackgroundDashPtr;
 char far *g_imageBufferPointer;
 char g_graphicsUp;
-int bl82c6;
+int g_hasSlowCpu;
 int bu8acc;
-int ag8bcet;
+int g_attractSwitchStartup;
 
 /* check_slow_cpu @ 0000:0659 (linear 0x00659, 22 bytes) */
 
 static void near check_slow_cpu(void)
 {
     if (bu8acc < 4)
-        bl82c6 = 1;
+        g_hasSlowCpu = 1;
     else
-        bl82c6 = 0;
+        g_hasSlowCpu = 0;
 }
 
 int g_noUeMem = 0;   /* DS:0280 */
@@ -325,7 +325,7 @@ int main(int argc, char **argv)
     e = 2;
     b = 0;
     g_useMouse = 1;
-    ag8bcet = 0;
+    g_attractSwitchStartup = 0;
     g_autoDrive = 0;
     for (c = 1; c < argc; c++) {
         argv++;
@@ -334,7 +334,7 @@ int main(int argc, char **argv)
         else if (strcmpi(*argv, "nomouse") == 0)
             g_useMouse = 0;
         else if (strcmpi(*argv, "demo") == 0)
-            ag8bcet = 1;
+            g_attractSwitchStartup = 1;
         else if (strcmpi(*argv, "auto") == 0)
             g_autoDrive = 1;
         else if (strcmpi(*argv, "nouemem") == 0)
@@ -356,18 +356,18 @@ int main(int argc, char **argv)
     sound_init();
     dash_set_view(0);
     if (r_vid.mode == VID_CGA && g_egaCard)
-        g755cu = mem_new_bitmap(SCREEN_WIDTH, DASH_HEIGHT, 0, -1, 0);
+        g_bufBackgroundDashPtr = mem_new_bitmap(SCREEN_WIDTH, DASH_HEIGHT, 0, -1, 0);
     g_imageBufferPointer = mem_alloc(r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY ? 16000 : 18000, 1);
     a = disk_load_list(g_titlePics, 0);
     if (a == 3) {
-        by70e2 = 1;
+        g_loadedIntroBmps = 1;
         d = disk_read_index(2);
         disk_load_data();
         if (r_vid.mode == VID_EGA)
             disk_cache_list(g_gamePics);
         disk_load_list(g_gamePics, 1);
     } else {
-        by70e2 = 0;
+        g_loadedIntroBmps = 0;
         disk_free_list(g_titlePics);
     }
     game_run();

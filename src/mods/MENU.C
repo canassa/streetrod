@@ -26,16 +26,16 @@ static char * near wear_text(int wear);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 void (far *g_drvRecolorRegion)(struct Bitmap far *, int, int, int, int, int, int);
-int bq824e;
-int ai8b86y[4];
-char av8b98;
-int a_8b9ap;
-int a_8b9ca;
+int g_yLastString;
+int g_menuGrpHistoryList[4];
+char g_hideSelectFrameVal;
+int g_listLineBasePointerValue;
+int g_numPageRow;
 int *az8b9ez;
-int x_8ba0;
-struct Hot *az8ba2t;
+int g_selMenuIndex;
+struct Hot *g_hotTextFld;
 char g_headerEditableState;
-struct Hot *av8ba6v;
+struct Hot *g_hotsCurMenu;
 int ai8bacx;
 int g_hotMenuGroupState;
 
@@ -69,7 +69,7 @@ void menu_draw_hot(struct Hot *p)
                 if (x_colors.frame)
                     draw_bevel(r_vid.back, p->x1, p->y1, w, h);
                 if (p->textOffset) {
-                    str = g_239e + p->textOffset;
+                    str = g_txt + p->textOffset;
                     (*a_78aem)(r_vid.back, ((w - dash_text_width(str)) >> 1) + p->x1, p->y1, str);
                     draw_hline(r_vid.back, p->x1, p->y1 + 9, w);
                 }
@@ -85,19 +85,19 @@ void menu_draw_hot(struct Hot *p)
                 x_colors = bustyle->pal[colr = p->palIndex];
             draw_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, h = p->y2 - p->y1);
             draw_bevel(r_vid.back, p->x1, p->y1, w, h);
-            str = g_239e + p->textOffset;
+            str = g_txt + p->textOffset;
             (*a_78aem)(r_vid.back, ((w - dash_text_width(str)) >> 1) + p->x1,
                       p->y1 + ((h - 8) >> 1), str);
             goto box;
         case 5:
             if (p->palIndex != colr)
                 x_colors = bustyle->pal[colr = p->palIndex];
-            (*a_78aem)(r_vid.back, p->x1, p->y1, g_239e + p->textOffset);
+            (*a_78aem)(r_vid.back, p->x1, p->y1, g_txt + p->textOffset);
             goto box;
         case 6:
             if (p->palIndex != colr)
                 x_colors = bustyle->pal[colr = p->palIndex];
-            str = g_239e + p->textOffset;
+            str = g_txt + p->textOffset;
             (*a_78aem)(r_vid.back, ((p->x2 - p->x1 - dash_text_width(str)) >> 1) + p->x1,
                       ((p->y2 - p->y1 - 8) >> 1) + p->y1, str);
             goto box;
@@ -107,17 +107,17 @@ void menu_draw_hot(struct Hot *p)
             if (p->palIndex != colr)
                 x_colors = bustyle->pal[colr = p->palIndex];
             draw_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, 8);
-            str = g_239e + p->textOffset;
+            str = g_txt + p->textOffset;
             if (p->kind == 8)
                 (*a_78aem)(r_vid.back, ((w - dash_text_width(str)) >> 1) + p->x1, p->y1, str);
             else
                 (*a_78aem)(r_vid.back, p->x1, p->y1, str);
-            if (!az8ba2t)
-                az8ba2t = p;
+            if (!g_hotTextFld)
+                g_hotTextFld = p;
             goto box;
         case 13:
-            if (!a_8b9ca++)
-                a_8b9ap = (int)p;
+            if (!g_numPageRow++)
+                g_listLineBasePointerValue = (int)p;
             goto box;
         case 1:
         case 2:
@@ -148,13 +148,13 @@ void menu_push(int id)
 
     if (g_menuLevel < 4) {
         cursor_ctl(CURSOR_HIDE);
-        ai8b86y[g_menuLevel++] = g_hotMenuGroupState = id;
-        ao8b90v.x1 = ao8b90v.x2 = ao8b90v.y1 = ao8b90v.y2 = -1;
+        g_menuGrpHistoryList[g_menuLevel++] = g_hotMenuGroupState = id;
+        g_boxSpotHitData.x1 = g_boxSpotHitData.x2 = g_boxSpotHitData.y1 = g_boxSpotHitData.y2 = -1;
         ai8bacx = (p = &g_hots[g_groupHot[id]])->textOffset;
-        av8ba6v = (p + 1)->kind > 9 ? p + 1 : 0;
-        a_8b9ca = a_8b9ap = az8ba2t = 0;
+        g_hotsCurMenu = (p + 1)->kind > 9 ? p + 1 : 0;
+        g_numPageRow = g_listLineBasePointerValue = g_hotTextFld = 0;
         g_headerEditableState = 0;
-        av8b98 = p->kind == 3;
+        g_hideSelectFrameVal = p->kind == 3;
         saved = x_colors;
         g_hotChain = -1;
         g_drawnMinX = g_drawnMinY = 1000;
@@ -180,14 +180,14 @@ void menu_pop(int keep)
 {
     if (g_menuLevel) {
         sys_keymap_restore(0);
-        av8ba6v = 0;
+        g_hotsCurMenu = 0;
         if (--g_menuLevel && keep) {
             --g_menuLevel;
-            menu_push(ai8b86y[g_menuLevel]);
+            menu_push(g_menuGrpHistoryList[g_menuLevel]);
         } else {
             g_hotMenuGroupState = 0;
-            av8ba6v = 0;
-            ao8b90v.x1 = ao8b90v.y1 = ao8b90v.x2 = ao8b90v.y2 = az8baa = -1;
+            g_hotsCurMenu = 0;
+            g_boxSpotHitData.x1 = g_boxSpotHitData.y1 = g_boxSpotHitData.x2 = g_boxSpotHitData.y2 = g_cursHoverCodeVal = -1;
         }
     }
 }
@@ -197,8 +197,8 @@ void menu_pop(int keep)
 void menu_reset(void)
 {
     g_menuLevel = ai8bacx = 0;
-    av8ba6v = 0;
-    ao8b90v.x1 = ao8b90v.y1 = ao8b90v.x2 = ao8b90v.y2 = az8baa = 0;
+    g_hotsCurMenu = 0;
+    g_boxSpotHitData.x1 = g_boxSpotHitData.y1 = g_boxSpotHitData.x2 = g_boxSpotHitData.y2 = g_cursHoverCodeVal = 0;
 }
 
 /* menu_bbox @ 0F38:4C1A (linear 0x13F9A, 246 bytes)
@@ -253,14 +253,14 @@ struct Bitmap far *menu_grab(int id, int *px, int *py, int mode)
     x2 = (x + w4 + ~r_vid.mask & r_vid.mask) > 320 ? 320 : (x + w4 + ~r_vid.mask & r_vid.mask);
     y2 = y1 + h3 > 200 ? 200 : y1 + h3;
     x &= r_vid.mask;
-    bits9 = F_1934E(x2 - x, y2 - y1, 0, mode);
+    bits9 = arena_bm(x2 - x, y2 - y1, 0, mode);
     return popup_grab(*px, y1, w4, h3, bits9);
 }
 
 /* menu_hit @ 0F38:4DAD (linear 0x1412D, 276 bytes)
 
-   Find the hot spot of the current menu (list at av8ba6v) under the point (x, y). On a hit
-   the spot's box goes to ao8b90v and its id (f6) is returned; on a miss ao8b90v gets the free
+   Find the hot spot of the current menu (list at g_hotsCurMenu) under the point (x, y). On a hit
+   the spot's box goes to g_boxSpotHitData and its id (f6) is returned; on a miss g_boxSpotHitData gets the free
    rectangle around the point and 0 is returned */
 
 int menu_hit(int x, int y)
@@ -268,28 +268,28 @@ int menu_hit(int x, int y)
     struct Hot *p;
     int kind;
 
-    p = av8ba6v;
+    p = g_hotsCurMenu;
     if (p == 0) {
-        ao8b90v.x1 = ao8b90v.y1 = -1;
-        ao8b90v.x2 = ao8b90v.y2 = 1000;
-        az8baa = 0;
+        g_boxSpotHitData.x1 = g_boxSpotHitData.y1 = -1;
+        g_boxSpotHitData.x2 = g_boxSpotHitData.y2 = 1000;
+        g_cursHoverCodeVal = 0;
         return 0;
     }
-    ao8b90v.x1 = ao8b90v.y1 = 0;
-    ao8b90v.x2 = 319;
-    ao8b90v.y2 = 199;
+    g_boxSpotHitData.x1 = g_boxSpotHitData.y1 = 0;
+    g_boxSpotHitData.x2 = 319;
+    g_boxSpotHitData.y2 = 199;
     while ((kind = p->kind) > 9) {
         if (kind == 14) {
             p++;
             continue;
         }
         if (p->x1 > x) {
-            ao8b90v.x2 = p->x1;
+            g_boxSpotHitData.x2 = p->x1;
             break;
         }
         if (p->x2 <= x) {
-            if (p->x2 > ao8b90v.x1)
-                ao8b90v.x1 = p->x2;
+            if (p->x2 > g_boxSpotHitData.x1)
+                g_boxSpotHitData.x1 = p->x2;
         next:
             if (kind == 12)
                 p = &g_hots[p->f6];
@@ -297,28 +297,28 @@ int menu_hit(int x, int y)
                 p++;
         } else {
             if (p->y1 - 3 > y) {
-                if (p->y1 - 3 < ao8b90v.y2)
-                    ao8b90v.y2 = p->y1 - 3;
+                if (p->y1 - 3 < g_boxSpotHitData.y2)
+                    g_boxSpotHitData.y2 = p->y1 - 3;
             } else if (p->y2 <= y) {
-                if (p->y2 > ao8b90v.y1)
-                    ao8b90v.y1 = p->y2;
+                if (p->y2 > g_boxSpotHitData.y1)
+                    g_boxSpotHitData.y1 = p->y2;
             } else {
                 if (kind == 12) {
                     p++;
                     continue;
                 }
-                ao8b90v.x1 = p->x1;
-                ao8b90v.x2 = p->x2;
-                ao8b90v.y1 = p->y1;
-                ao8b90v.y2 = p->y2;
-                at8ba8v = p;
-                return az8baa = p->f6;
+                g_boxSpotHitData.x1 = p->x1;
+                g_boxSpotHitData.x2 = p->x2;
+                g_boxSpotHitData.y1 = p->y1;
+                g_boxSpotHitData.y2 = p->y2;
+                g_curHoverPointer = p;
+                return g_cursHoverCodeVal = p->f6;
             }
             goto next;
         }
     }
-    at8ba8v = 0;
-    return az8baa = 0;
+    g_curHoverPointer = 0;
+    return g_cursHoverCodeVal = 0;
 }
 
 /* menu_modal @ 0F38:4EC1 (linear 0x14241, 83 bytes)
@@ -400,7 +400,7 @@ int g_cgaPicMap[277] = {0, 1, 2, 3, 5, 6, 7, 4, 8, 9, 10, 11, 12, 13, 14, 15, 16
    List dialog. Shows the entries list[1..list[0]] (offsets into the string table g_desc,
    or, when negative, d[-entry - 1]) in the windows of the current menu, optionally with a column c
    of x offsets and wear values buf[1..]; arrow/page keys scroll, a positive key2 picks an entry,
-   a hotn spot (az8ba2t) shows the picked text and is edited in place on Enter.
+   a hotn spot (g_hotTextFld) shows the picked text and is edited in place on Enter.
    Returns the key2 that left the dialog, 0x3ea when the list is empty. */
 
 int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
@@ -431,13 +431,13 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
     if (c)
         c1 = c + 1;
     menu_push(kind);
-    page = a_8b9ca;
+    page = g_numPageRow;
     az8b9ez = list;
-    x_8ba0 = sel + 1;
+    g_selMenuIndex = sel + 1;
     if (count5 > page)
         topk = (sel + page > count5) ? count5 - page : sel;
-    if (hotn = az8ba2t) {
-        bufpl = g_239e + hotn->textOffset;
+    if (hotn = g_hotTextFld) {
+        bufpl = g_txt + hotn->textOffset;
         n9 = (hotn->x2 - hotn->x1) / 6;
         if (!g_headerEditableState) {
             strcpy(bufpl, g_desc + lp11[sel]);
@@ -448,16 +448,16 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
             menu_draw_hot(hotn);
         }
     }
-    ww9 = ((struct Win *)a_8b9ap)->tx - (wx8 = ((struct Win *)a_8b9ap)->w);
+    ww9 = ((struct Win *)g_listLineBasePointerValue)->tx - (wx8 = ((struct Win *)g_listLineBasePointerValue)->w);
     right = wx8 + ww9 - 1;
-    wh9 = ((struct Win *)a_8b9ap)->ty - (wy7 = ((struct Win *)a_8b9ap)->h);
+    wh9 = ((struct Win *)g_listLineBasePointerValue)->ty - (wy7 = ((struct Win *)g_listLineBasePointerValue)->h);
     bottom9 = page * wh9 + wy7 - 1;
-    idx2 = ((struct Win *)a_8b9ap)->lines;
+    idx2 = ((struct Win *)g_listLineBasePointerValue)->lines;
     bustyle->c2d = bustyle->pal[idx2];
     sv5 = bustyle->pal[idx2].line;
     for (;;) {
         x_colors = bustyle->pal[idx2];
-        w = (struct Win *)a_8b9ap;
+        w = (struct Win *)g_listLineBasePointerValue;
         cursor_ctl(CURSOR_HIDE);
         i = (count5 - topk > page) ? page : count5 - topk;
         lpk = lp11 + topk;
@@ -467,12 +467,12 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
             labeln = (*lpk > -1) ? g_desc + *lpk : d[-*lpk - 1];
             x = (c ? *pc1 : 0) + w->w;
             (*a_78aem)(r_vid.back, x, w->h, labeln);
-            draw_fill_rect(r_vid.back, g824cd - 1, bq824e, w->tx - g824cd + 1, 8);
+            draw_fill_rect(r_vid.back, g_xTextR - 1, g_yLastString, w->tx - g_xTextR + 1, 8);
             if (buf && (wear = *bpl) != -128)
                 (*a_78aem)(r_vid.back, w->tx - strlen(g_wearText) * 6, w->h, wear_text(wear));
         }
-        if (!av8b98) {
-            w = (struct Win *)(0x12 * sel + a_8b9ap);
+        if (!g_hideSelectFrameVal) {
+            w = (struct Win *)(0x12 * sel + g_listLineBasePointerValue);
             x_colors = bustyle->pal[w->lines];
             draw_frame(r_vid.back, w->w, w->h, ww9, 8);
         }
@@ -484,16 +484,16 @@ restore:
         if (r_vid.mode == VID_HERCULES)
             x_colors.text = 0;
         while ((key2 = sys_wait_input(0)) == 0) {
-            i = az8baa > 0 && topk + az8baa <= count5;
+            i = g_cursHoverCodeVal > 0 && topk + g_cursHoverCodeVal <= count5;
             if (!i && curl < 0)
                 continue;
-            if (curl == az8baa - 1)
+            if (curl == g_cursHoverCodeVal - 1)
                 continue;
             cursor_ctl(CURSOR_HIDE);
             x1 = y1 = 1000;
             x2 = y2 = -1;
             if (i) {
-                w = (struct Win *)(0x12 * (nw5 = az8baa - 1) + a_8b9ap);
+                w = (struct Win *)(0x12 * (nw5 = g_cursHoverCodeVal - 1) + g_listLineBasePointerValue);
                 x1 = w->w;
                 y1 = w->h;
                 x2 = w->tx;
@@ -503,7 +503,7 @@ restore:
             } else
                 nw5 = -1;
             if (curl >= 0) {
-                w = (struct Win *)(0x12 * curl + a_8b9ap);
+                w = (struct Win *)(0x12 * curl + g_listLineBasePointerValue);
                 if (kind != 0x26)
                     (*g_drvRecolorRegion)(r_vid.back, sv5, x_colors.text, w->w, w->h, w->tx, w->h + 8);
                 x1 = (w->w > x1) ? x1 : w->w;
@@ -518,7 +518,7 @@ restore:
         }
         if (key2 > 0) {
             if (topk + key2 <= count5) {
-                x_8ba0 = topk + key2;
+                g_selMenuIndex = topk + key2;
                 i = topk + key2 - 1;
                 if (hotn) {
                     if (!g_headerEditableState || i == sel) {
@@ -532,9 +532,9 @@ restore:
                         menu_draw_hot(hotn);
                     }
                 }
-                if (!av8b98) {
+                if (!g_hideSelectFrameVal) {
                     cursor_ctl(CURSOR_HIDE);
-                    w = (struct Win *)(0x12 * sel + a_8b9ap);
+                    w = (struct Win *)(0x12 * sel + g_listLineBasePointerValue);
                     x_colors = bustyle->pal[idx2];
                     nw5 = x_colors.line;
                     x_colors.line = x_colors.textBg;
@@ -542,7 +542,7 @@ restore:
                     x2 = x1-- + ww9;
                     y2 = y1-- + 8;
                     x_colors.line = nw5;
-                    w = (struct Win *)(0x12 * i + a_8b9ap);
+                    w = (struct Win *)(0x12 * i + g_listLineBasePointerValue);
                     draw_frame(r_vid.back, w->w, w->h, ww9, 8);
                     cursor_ctl(CURSOR_SHOW);
                     if (r_vid.copyToFront)
@@ -589,7 +589,7 @@ restore:
 scroll:
             if (i < topk) {
                 if ((nw5 = count5 - topk) < page) {
-                    w = (struct Win *)(0x12 * nw5 + a_8b9ap);
+                    w = (struct Win *)(0x12 * nw5 + g_listLineBasePointerValue);
                     draw_fill_rect(r_vid.back, w->w, w->h, ww9,
                         ((topk - i > page - nw5) ? page - nw5 : topk - i) * wh9);
                 }
@@ -598,11 +598,11 @@ scroll:
     }
 }
 
-/* F_14C8B @ 0F38:590B (linear 0x14C8B, 4 bytes)
+/* menu_ix @ 0F38:590B (linear 0x14C8B, 4 bytes)
 
-   Accessor, returns x_8ba0 */
+   Accessor, returns g_selMenuIndex */
 
-int F_14C8B(void)
+int menu_ix(void)
 {
-    return x_8ba0;
+    return g_selMenuIndex;
 }

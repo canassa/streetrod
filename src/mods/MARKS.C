@@ -7,8 +7,8 @@
 
 void marks_clear(void)
 {
-    c_8b02[g7b14o = 0] = o_8f00 = 0;
-    c_8b02[g7d80q = 60] = bl78de;
+    g_offsetArenaMarksList[g_lowArenaMarker = 0] = g_loHeapLimit = 0;
+    g_offsetArenaMarksList[g_markerIndexHigh = 60] = g_arenaTopVal;
     g_0294 = 0;
 }
 
@@ -16,8 +16,8 @@ void marks_clear(void)
 
 void marks_release(void)
 {
-    c_8b02[g7b14o = 0] = o_8f00;
-    c_8b02[g7d80q = 60] = bl78de;
+    g_offsetArenaMarksList[g_lowArenaMarker = 0] = g_loHeapLimit;
+    g_offsetArenaMarksList[g_markerIndexHigh = 60] = g_arenaTopVal;
 }
 
 /* marks_pop_low @ 0F38:A09E (linear 0x1941E, 26 bytes) */
@@ -25,9 +25,9 @@ void marks_release(void)
 void marks_pop_low(int n)
 {
     if (n == 0)
-        g7b14o = 0;
+        g_lowArenaMarker = 0;
     else
-        g7b14o -= n;
+        g_lowArenaMarker -= n;
 }
 
 /* F_19438 @ 0F38:A0B8 (linear 0x19438, 66 bytes) */
@@ -35,12 +35,12 @@ void marks_pop_low(int n)
 void F_19438(int n)
 {
     if (n == 0)
-        c_8b02[g7d80q = 60] = bl78de;
+        g_offsetArenaMarksList[g_markerIndexHigh = 60] = g_arenaTopVal;
     else {
-        g7d80q += n;
-        if (g7d80q == 60)
-            c_8b02[g7d80q] = bl78de;
+        g_markerIndexHigh += n;
+        if (g_markerIndexHigh == 60)
+            g_offsetArenaMarksList[g_markerIndexHigh] = g_arenaTopVal;
         else
-            c_8b02[g7d80q] = c_8b02[g7d80q + 1] - 1;
+            g_offsetArenaMarksList[g_markerIndexHigh] = g_offsetArenaMarksList[g_markerIndexHigh + 1] - 1;
     }
 }

@@ -153,17 +153,17 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   once it references more external symbols than MSC 5.1's budget allows (CLAUDE.md 4d), and
   these two COMMON clusters as structs bring it under. For the same reason F_0711A
   (GARAGE.C) addresses its four messages as offsets into the message block,
-  `g_239e + 1283`, `+ 1299`, `+ 1318`, `+ 1337` ("Chop roof - $70" ...), not as named
-  globals; the game addresses messages by offset into g_239e everywhere (`Hot.f4`, the
+  `g_txt + 1283`, `+ 1299`, `+ 1318`, `+ 1337` ("Chop roof - $70" ...), not as named
+  globals; the game addresses messages by offset into g_txt everywhere (`Hot.f4`, the
   argument of game_message), so the original may have had named constants there. That the
   blocks are grouped is evidence; the member list (a wider State8272 changes garage_hood's
   loop temps, so the arrays from DS:8290 stay separate) and the spelling are not.
 - **Per-module type views.** VIEW.C reads the char `bw8aca` (DS:8ACA) as a word, so it
   writes `*(int *)&bw8aca`. The original file probably had an `extern int` of its own
   there. `struct Win` (MENU.C, SAVEGAME.C) is a second view of the 18-byte hot-spot record
-  `struct Hot`: `a_8b9ap` holds the address of the first menu-line record as an `int`
-  (`a_8b9ap = (int)p`) and the code computes `(struct Win *)(0x12 * sel + a_8b9ap)`.
-  Declaring it `struct Hot *` and writing `a_8b9ap + sel` makes menu_list 10 bytes shorter,
+  `struct Hot`: `g_listLineBasePointerValue` holds the address of the first menu-line record as an `int`
+  (`g_listLineBasePointerValue = (int)p`) and the code computes `(struct Win *)(0x12 * sel + g_listLineBasePointerValue)`.
+  Declaring it `struct Hot *` and writing `g_listLineBasePointerValue + sel` makes menu_list 10 bytes shorter,
   so the int arithmetic is evidence; that there were two struct names is not.
 - **Return types the code does not decide.** `main` (MAIN.C) and F_118D4 (SCREEN.C)
   are `int` but end without a `return` (C4035); F_119B8 returns F_118D4's value. race_outcome
@@ -187,9 +187,9 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
 - C4035 "no return value" (2) and C4033 "function must return a value" (1): the return
   types above. Believed original.
 - C4047 "different levels of indirection" (2): menu_draw_hot's
-  `a_8b9ca = a_8b9ap = az8ba2t = 0;` assigns the `struct Hot *` through to the two ints
+  `g_numPageRow = g_listLineBasePointerValue = g_hotTextFld = 0;` assigns the `struct Hot *` through to the two ints
   (int-held pointer, see `struct Win`), and sprite_setup's
-  `g77bal[i].data = r_vid.mode == -2 ? cell++ : &am6e68x[i];` mixes a `char (*)[8]` cell
+  `g_frmTable[i].data = r_vid.mode == -2 ? cell++ : &g_bandRecordsSprArray[i];` mixes a `char (*)[8]` cell
   with a `struct Bitmap *` in one `Frame.data` pointer that restore_rect/restore_rect_back read as a
   Bitmap and restore_rect_latch as a Mask. Both need a cast or a different type in one place, and the
   code does not say which; they are left as written.
@@ -220,7 +220,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   space: `Hot.f10` links a record to the next by its index into `g_hots`, and the code
   reaches records as `&g_hots[n]`. It is split into arrays where code names a record
   directly (`g_hotBuy[0].f0`, `g_hotRepair[7].f0`, `g_hotReadyBox[i].y1`, `g_1e34[0].f4`, `g_1804[k]`,
-  `g_hotBobs[3]`) or computes a run-time difference (`g_134e - g_121c`, `g_1a44 - g_hotGasStation`),
+  `g_hotBobs[3]`) or computes a run-time difference (`g_134e - g_gar`, `g_1a44 - g_hotGasStation`),
   which proves separate symbols; each array starts at the first record so named. Where
   the original's other boundaries were (one array per menu list, or fewer), and the
   arrays' names, are not recoverable. `g_engineHots` (a runtime list gargfx_build_hots builds), `g_1948`

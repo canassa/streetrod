@@ -42,16 +42,16 @@ static char g_dataPath[16];                   /* DS:6C72 */
 struct Model w_8df0[26];
 struct Spec g7d86n[26];
 struct Panel ai70e4t[26];
-struct Spr12 g7682n[26];
+struct Spr12 g_layoutAutoSprArray[26];
 struct Pos6 a784als[8];
-int a_7d16q;
-unsigned g7d68m[3][3];
-struct Spr6 ap818c[26];
-unsigned ag8baey[3][3];
+int g_usedCarAdFirst;
+unsigned g_carRatingsTable[3][3];
+struct Spr6 g_pointsModelService[26];
+unsigned g_rivalStakeToleranceTable[3][3];
 int g_lib1Count;
-int s_8dd2;
+int g_countLibBmB;
 char *g_library1Path;
-char *au8dd6y;
+char *g_picLibBPath;
 int g_acceptProbability[4][3];
 
 static int near pic_index(int n);
@@ -61,7 +61,7 @@ static void near unscramble_hall(void);
 static void near scramble_hall(void);
 
 char *g_dataFileName = "hot_data";   /* DS:4EA2 */
-char *g_dataBlocks[13] = {(char *)av7ff8, (char *)g7d86n, (char *)w_8df0, (char *)g7682n, (char *)ai70e4t, (char *)ap818c, g_desc, (char *)&a_7d16q, g_239e, (char *)g7d68m, (char *)ag8baey, (char *)g_acceptProbability, (char *)a784als};   /* DS:4EA4 */
+char *g_dataBlocks[13] = {(char *)g_racerRecordsArray, (char *)g7d86n, (char *)w_8df0, (char *)g_layoutAutoSprArray, (char *)ai70e4t, (char *)g_pointsModelService, g_desc, (char *)&g_usedCarAdFirst, g_txt, (char *)g_carRatingsTable, (char *)g_rivalStakeToleranceTable, (char *)g_acceptProbability, (char *)a784als};   /* DS:4EA4 */
 unsigned g_dataSizes[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};   /* DS:4EBE */
 int g_lib1Handle = 0;   /* DS:4ED8 */
 int g_lib2Handle = 0;   /* DS:4EDA */
@@ -128,10 +128,10 @@ static void near open_lib(int n)
 
     if (pic_index(n) >= g_lib1Count) {
         kind = 2;
-        g_curName = au8dd6y;
+        g_curName = g_picLibBPath;
         g_curHandle = &g_lib2Handle;
         g_otherHandle = &g_lib1Handle;
-        g_curCount = &s_8dd2;
+        g_curCount = &g_countLibBmB;
     } else {
         kind = 1;
         g_curName = g_library1Path;
@@ -150,7 +150,7 @@ static void near open_lib(int n)
                 sys_exit();
             screen_wait_msg(g_msgInsertDisk);
         }
-        if (_dos_read(*g_curHandle, (void far *)g_curCount, 2, &got) || got != 2 || g_lib1Count + s_8dd2 != 0x115) {
+        if (_dos_read(*g_curHandle, (void far *)g_curCount, 2, &got) || got != 2 || g_lib1Count + g_countLibBmB != 0x115) {
             screen_wait_msg(g_msgBadFormat);
             sys_exit();
         }
@@ -177,7 +177,7 @@ int disk_read_index(int which)
     num = which == 1 ? 1 : 1000;
     height = 0;
     open_lib(num);
-    count = which == 1 ? g_lib1Count : s_8dd2;
+    count = which == 1 ? g_lib1Count : g_countLibBmB;
     for (i = 0; i < count; i++) {
         sl = &g_slot[base + i];
         if (disk_seek(*g_curHandle, (long)(i * 0x1e + 2)) ||
@@ -378,7 +378,7 @@ struct Bitmap far *F_15BBE(int id, int mode)
     struct Bitmap far *bm;
 
     disk_pic_size(id, &w1, &h, &x);
-    bm = F_1934E(w1, h, x, mode);
+    bm = arena_bm(w1, h, x, mode);
     disk_unpack_pic(id, bm);
     return bm;
 }
@@ -434,8 +434,8 @@ void disk_free_list(int *list)
 
 /* disk_open_libs @ 0F38:6943 (linear 0x15CC3, 566 bytes)
 
-   Open the two picture files (names g_library1Path and au8dd6y, drive letter patched into their
-   first character) and read the entry counts g_lib1Count and s_8dd2 from their headers. disks is the
+   Open the two picture files (names g_library1Path and g_picLibBPath, drive letter patched into their
+   first character) and read the entry counts g_lib1Count and g_countLibBmB from their headers. disks is the
    number of disk drives wanted: 2 only when the equipment word says there are two floppies. mode 2
    and 5 pick the other file names. Any failure shows an error text */
 
@@ -466,29 +466,29 @@ void disk_open_libs(int disks, int mode)
         screen_wait_msg(g_msgBadFormat);
         sys_exit();
     }
-    au8dd6y = (mode == 2 || mode == 5) ? g_lib2Name : g_lib2cName;
-    *au8dd6y = *g_library1Path;
-    if (_dos_open(au8dd6y, O_RDONLY, &g_lib2Handle) || g_lib2Handle == 0) {
+    g_picLibBPath = (mode == 2 || mode == 5) ? g_lib2Name : g_lib2cName;
+    *g_picLibBPath = *g_library1Path;
+    if (_dos_open(g_picLibBPath, O_RDONLY, &g_lib2Handle) || g_lib2Handle == 0) {
         if (g_curDrive > 2) {
             screen_wait_msg(g_msgCopyFiles);
             sys_exit();
         } else if (disks == 1) {
             g_lib2Handle = 0;
         } else {
-            *au8dd6y = g_curDrive == 1 ? 'B' : 'A';
-            err = _dos_open(au8dd6y, O_RDONLY, &g_lib2Handle);
+            *g_picLibBPath = g_curDrive == 1 ? 'B' : 'A';
+            err = _dos_open(g_picLibBPath, O_RDONLY, &g_lib2Handle);
             for (tries = 0; err || g_lib2Handle == 0; tries++) {
                 if (tries == 3)
                     sys_exit();
                 g_msgInsertDisk[12] = (mode != 2 && mode != 5) ? '3' : '2';
-                g_msgInsertDisk[0x19] = *au8dd6y;
+                g_msgInsertDisk[0x19] = *g_picLibBPath;
                 screen_wait_msg(g_msgInsertDisk);
-                err = _dos_open(au8dd6y, O_RDONLY, &g_lib2Handle);
+                err = _dos_open(g_picLibBPath, O_RDONLY, &g_lib2Handle);
             }
         }
     }
     if (g_lib2Handle) {
-        if (_dos_read(g_lib2Handle, (void far *)&s_8dd2, 2, &err) || err != 2 || g_lib1Count + s_8dd2 != 0x115) {
+        if (_dos_read(g_lib2Handle, (void far *)&g_countLibBmB, 2, &err) || err != 2 || g_lib1Count + g_countLibBmB != 0x115) {
             screen_wait_msg(g_msgBadFormat);
             sys_exit();
         }
@@ -500,7 +500,7 @@ char g_hallFileName[12] = "?:hall_dat";   /* DS:4F3A */
 /* disk_load_data @ 0F38:6B79 (linear 0x15EF9, 196 bytes)
 
    Load the game data. Builds the file name g_dataPath from the first two characters of
-   au8dd6y and the text g_dataFileName points to (g_dataFileName ends up behind its terminator), opens it and
+   g_picLibBPath and the text g_dataFileName points to (g_dataFileName ends up behind its terminator), opens it and
    reads the 13 blocks of the data table (buffer g_dataBlocks[i], size g_dataSizes[i]); any failure shows an
    error text. Ends by loading the hall of fame (disk_load_hall) */
 
@@ -513,8 +513,8 @@ void disk_load_data(void)
     int j;
 
     drive = g_dataPath;
-    *drive++ = au8dd6y[0];
-    *drive++ = au8dd6y[1];
+    *drive++ = g_picLibBPath[0];
+    *drive++ = g_picLibBPath[1];
     while (*drive++ = *g_dataFileName++)
         ;
     if (_dos_open(g_dataPath, O_RDONLY, &fd)) {
@@ -551,7 +551,7 @@ int disk_data_drive(void)
             if (++tries > 3)
                 sys_exit();
             g_msgInsertDisk[12] = (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3' : '2';
-            g_msgInsertDisk[25] = *au8dd6y;
+            g_msgInsertDisk[25] = *g_picLibBPath;
             screen_wait_msg(g_msgInsertDisk);
         } else {
             _dos_close(file);
@@ -563,7 +563,7 @@ int disk_data_drive(void)
 
 /* scramble_hall @ 0F38:6CCF (linear 0x1604F, 29 bytes)
 
-   Set the high bit of all 230 bytes of aytablex (10 hall of fame entries of 23 bytes) to scramble
+   Set the high bit of all 230 bytes of g_hallFameTbl (10 hall of fame entries of 23 bytes) to scramble
    it before it is written to the file (see disk_save_hall) */
 
 static void near scramble_hall(void)
@@ -571,25 +571,25 @@ static void near scramble_hall(void)
     int i;
 
     for (i = 0; i < 230; i++)
-        ((char *)aytablex)[i] |= 0x80;
+        ((char *)g_hallFameTbl)[i] |= 0x80;
 }
 
 /* unscramble_hall @ 0F38:6CEC (linear 0x1606C, 29 bytes)
 
-   Clear the high bit of all 230 bytes of aytablex again, unscrambling the hall of fame */
+   Clear the high bit of all 230 bytes of g_hallFameTbl again, unscrambling the hall of fame */
 
 static void near unscramble_hall(void)
 {
     int i;
 
     for (i = 0; i < 230; i++)
-        ((char *)aytablex)[i] &= 0x7f;
+        ((char *)g_hallFameTbl)[i] &= 0x7f;
 }
 
 /* disk_load_hall @ 0F38:6D09 (linear 0x16089, 201 bytes)
 
    Read the hall of fame file (name g_hallFileName, first character the drive of the game disk):
-   a count word, then bucount entries. Any read failure shows the error text. A missing file
+   a count word, then g_nScore entries. Any read failure shows the error text. A missing file
    leaves the table empty */
 
 void disk_load_hall(void)
@@ -599,16 +599,16 @@ void disk_load_hall(void)
     int got;
     int fd;
 
-    g_hallFileName[0] = *au8dd6y;
+    g_hallFileName[0] = *g_picLibBPath;
     disk_data_drive();
     if (_dos_open(g_hallFileName, O_RDONLY, &fd) || fd == 0)
-        bucount = 0;
+        g_nScore = 0;
     else {
-        if (_dos_read(fd, (void far *)&bucount, 2, &got) || got != 2) {
+        if (_dos_read(fd, (void far *)&g_nScore, 2, &got) || got != 2) {
             screen_wait_msg(g_msgBadFormat);
             sys_exit();
         }
-        for (i = 0, p = aytablex; i < bucount; p++, i++) {
+        for (i = 0, p = g_hallFameTbl; i < g_nScore; p++, i++) {
             if (_dos_read(fd, (void far *)p, sizeof *p, &got) || got != sizeof *p) {
                 screen_wait_msg(g_msgBadFormat);
                 sys_exit();
@@ -622,7 +622,7 @@ void disk_load_hall(void)
 /* disk_save_hall @ 0F38:6DD2 (linear 0x16152, 312 bytes)
 
    Write the hall of fame file (g_hallFileName): the table is scrambled (scramble_hall), the file made
-   (asking for the disk until it works on a floppy), the count word and the bucount entries
+   (asking for the disk until it works on a floppy), the count word and the g_nScore entries
    written. Any failure shows the error text and deletes the file. The table is unscrambled at
    the end (unscramble_hall) */
 
@@ -652,13 +652,13 @@ void disk_save_hall(void)
             got = _dos_creat(g_hallFileName, _A_NORMAL, &fd);
         }
     }
-    if (_dos_write(fd, (void far *)&bucount, 2, &got) || got != 2) {
+    if (_dos_write(fd, (void far *)&g_nScore, 2, &got) || got != 2) {
 bad:
         screen_wait_msg(g_msgWriteError);
         unlink(g_hallFileName);
         screen_wait_msg(g_msgWriteError);
     } else {
-        for (i = 0, p = aytablex; i < bucount; p++, i++)
+        for (i = 0, p = g_hallFameTbl; i < g_nScore; p++, i++)
             if (_dos_write(fd, (void far *)p, sizeof *p, &got) || got != sizeof *p)
                 goto bad;
         if (_dos_close(fd))

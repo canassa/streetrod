@@ -43,16 +43,16 @@ static int g_vibGain;                        /* DS:6C52 */
 static int g_vibDivisor;                        /* DS:6C54 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-struct Dev bs79aa;
-struct Dev ao79c6t;
-void (interrupt far *w_7aaa)(void);
-char g7f32s[80];
+struct Dev g_songBgState;
+struct Dev g_secondaryMusicStateData;
+void (interrupt far *g_clockPrev)(void);
+char g_strOpp[80];
 int g_menuLevel;
-struct Lims ao8b90v;
-struct Hot *at8ba8v;
-int az8baa;
-int cz8bc0y;
-int g8ef6q;
+struct Lims g_boxSpotHitData;
+struct Hot *g_curHoverPointer;
+int g_cursHoverCodeVal;
+int g_wRivBanner;
+int g_animationPriCallback;
 int g_8ef8;
 int aj8efax;
 int bw8efc;
@@ -79,9 +79,9 @@ int g_kbdHooked = 0;   /* DS:05E0 */
 struct Mouse g_mouse = {0, 0, 0, 0, 0, 0, 0, 10, 3};   /* DS:05E2 */
 int g_05f4[2] = {0, 0};   /* DS:05F4 */
 long g_tick = 0L;   /* DS:05F8 */
-long g_05fc = 0L;   /* DS:05FC */
-long g_0600 = 0L;   /* DS:0600 */
-long g_0604 = 0L;   /* DS:0604 */
+long g_addT = 0L;   /* DS:05FC */
+long g_sysT = 0L;   /* DS:0600 */
+long g_tRef = 0L;   /* DS:0604 */
 char g_tickDiv = 0;   /* DS:0608 */
 char g_driveDiv = 0;   /* DS:0609 */
 int g_060a = 0;   /* DS:060A */
@@ -95,8 +95,8 @@ int g_autoDrive = 0;   /* DS:0612 */
 void sys_hover_reset(void)
 {
     g_cursorDirty = 1;
-    ao8b90v.x2 = -1;
-    az8baa = 0x7d00;
+    g_boxSpotHitData.x2 = -1;
+    g_cursHoverCodeVal = 0x7d00;
     g_click = 0;
     g_click2 = 0;
     kbdget_key();
@@ -194,7 +194,7 @@ void sys_unhook(void)
     outp(PIT_CMD, PIT_CH0_LOHI_MODE3);
     outp(PIT_CH0, 0);
     outp(PIT_CH0, 0);
-    _dos_setvect(TIMER_INT, w_7aaa);
+    _dos_setvect(TIMER_INT, g_clockPrev);
     _enable();
     kbdoff_unhook();
     g_kbdHooked = 0;
@@ -213,7 +213,7 @@ void sys_exit(void)
     if (g_sysHooked)
         sys_unhook();
     if (g_videoSet) {
-        (*m_present)();
+        (*g_fnShow)();
         viddet_restore();
     }
     outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
@@ -277,7 +277,7 @@ void sys_init(void)
 
     sumx = 0;
     sumy = 0;
-    g8ef6q = 10;
+    g_animationPriCallback = 10;
     g_8ef8 = 2;
     aj8efax = 5;
     bw8efc = 5;
@@ -314,19 +314,19 @@ void sys_init(void)
         g_mouse.present = 0;
     g_cursorDrawX = -1;
     g_cursorDrawY = -1;
-    bs79aa.active = 0;
-    bs79aa.song = g_song;
-    bs79aa.cur = bs79aa.phraseStart = bs79aa.song;
-    bs79aa.repeatCursor = bs79aa.repeatTable = g_songRepeats;
-    bs79aa.toneCursor = bs79aa.toneTable = g_songTones;
-    ao79c6t.active = 0;
-    ao79c6t.toneCursor = ao79c6t.toneTable = g_jingleTones;
+    g_songBgState.active = 0;
+    g_songBgState.song = g_song;
+    g_songBgState.cur = g_songBgState.phraseStart = g_songBgState.song;
+    g_songBgState.repeatCursor = g_songBgState.repeatTable = g_songRepeats;
+    g_songBgState.toneCursor = g_songBgState.toneTable = g_songTones;
+    g_secondaryMusicStateData.active = 0;
+    g_secondaryMusicStateData.toneCursor = g_secondaryMusicStateData.toneTable = g_jingleTones;
     _harderr(sys_crit_error);
     _disable();
     outp(PIT_CMD, PIT_CH0_LOHI_MODE3);
     outp(PIT_CH0, 0);
     outp(PIT_CH0, 0x40);
-    w_7aaa = _dos_getvect(TIMER_INT);
+    g_clockPrev = _dos_getvect(TIMER_INT);
     _dos_setvect(TIMER_INT, sys_timer_isr);
     _enable();
     kbdget_hook();
@@ -429,11 +429,11 @@ int sys_wait_input(int ticks)
     j = 0;
     bit = 0;
     if (g_keyGroup == 0x16) {
-        aq8256z = 1;
+        g_statusStrShown = 1;
         F_11421(-1, "", 0);
-        aq8256z = 1;
-        F_11421(g_bannerX, "", cz8bc0y);
-        g7f32s[0] = 0;
+        g_statusStrShown = 1;
+        F_11421(g_bannerX, "", g_wRivBanner);
+        g_strOpp[0] = 0;
     }
     flag = g_waitUntil != 0L;
     end = (long)ticks + g_tick;
@@ -508,8 +508,8 @@ int sys_wait_input(int ticks)
                 return 0x3eb;
             }
             if (g_menuLevel) {
-                if (i = (x >= ao8b90v.x1 && x < ao8b90v.x2 && y >= ao8b90v.y1 && y < ao8b90v.y2)
-                        ? az8baa : menu_hit(x, y))
+                if (i = (x >= g_boxSpotHitData.x1 && x < g_boxSpotHitData.x2 && y >= g_boxSpotHitData.y1 && y < g_boxSpotHitData.y2)
+                        ? g_cursHoverCodeVal : menu_hit(x, y))
                     return i;
             }
             if (g_anyInput) {
@@ -520,7 +520,7 @@ int sys_wait_input(int ticks)
             g_waitUntil = 0L;
             return 0x3e8;
         }
-        if (g_4733 > 0 && g_cursorDirty) {
+        if (g_cVis > 0 && g_cursorDirty) {
             _disable();
             if ((g_cursorDrawX = g_cursorX) < 0)
                 g_cursorDrawX = g_cursorX = 0;
@@ -534,17 +534,17 @@ int sys_wait_input(int ticks)
             _enable();
             cursor_draw(x = g_cursorDrawX, y = g_cursorDrawY);
             if (g_menuLevel
-                && (x < ao8b90v.x1 || x >= ao8b90v.x2 || y < ao8b90v.y1 || y >= ao8b90v.y2)) {
-                res = az8baa;
+                && (x < g_boxSpotHitData.x1 || x >= g_boxSpotHitData.x2 || y < g_boxSpotHitData.y1 || y >= g_boxSpotHitData.y2)) {
+                res = g_cursHoverCodeVal;
                 if (i = menu_hit(x, y)) {
                     if (res != i) {
                         if (g_keyGroup == 0x25) {
-                            aq8256z = 1;
+                            g_statusStrShown = 1;
                             F_11421(-1, "", 0);
-                            aq8256z = 1;
-                            F_11421(g_bannerX, "", cz8bc0y);
+                            g_statusStrShown = 1;
+                            F_11421(g_bannerX, "", g_wRivBanner);
                         }
-                        F_11421(-1, g_239e + at8ba8v->textOffset, 0);
+                        F_11421(-1, g_txt + g_curHoverPointer->textOffset, 0);
                         bit = 1;
                     }
                 } else {
@@ -553,7 +553,7 @@ int sys_wait_input(int ticks)
                         bit = 0;
                     }
                     if (g_keyGroup == 0x25)
-                        F_11421(g_bannerX, g7f32s, cz8bc0y);
+                        F_11421(g_bannerX, g_strOpp, g_wRivBanner);
                     else if (res)
                         F_11421(-1, "", 0);
                 }
@@ -565,7 +565,7 @@ int sys_wait_input(int ticks)
 
 struct Eng g_driveEng;
 int g_vibratoActive;
-struct Tone *bn82c4;
+struct Tone *g_toneShapePlaybackPointer;
 
 /* sys_timer_add @ 0000:1843 (linear 0x01843, 327 bytes) */
 
@@ -628,7 +628,7 @@ void sys_timer_anim(int fc, int delay)
 {
     int n;
 
-    n = sys_timer_add(delay, g8ef6q);
+    n = sys_timer_add(delay, g_animationPriCallback);
     g_timers[n].action = 1;
     g_timers[n].argument = fc;
 }
@@ -658,7 +658,7 @@ void sys_music_start(int n, int cnt)
         g_voice->phraseStart = g_voice->cur = g_voice->song + n;
         g_voice->ticksLeft = cnt + 1;
         g_voice->toneCursor = g_voice->toneTable;
-        bn82c4 = g_tones + *g_voice->toneCursor;
+        g_toneShapePlaybackPointer = g_tones + *g_voice->toneCursor;
         g_vibratoActive = 1;
         g_voice->active = 1;
     } else {
@@ -892,7 +892,7 @@ void sys_demo_step(void)
     } else
         g_demoLastGroup = g_keyGroup;
     if (a_7eaap.spareParts == 0 && g_keyGroup == 7)
-        game_add_part(0x2a, g_4806[42].value);
+        game_add_part(0x2a, g_part[42].value);
     if (a_7eaap.currentCar == 0) {
         if (g_keyGroup == 10)
             g_demoKey = 0x31;
@@ -917,9 +917,9 @@ void interrupt far sys_timer_isr(void)
         outp(PIC_CMD, PIC_EOI);
         _enable();
     } else {
-        (*w_7aaa)();
+        (*g_clockPrev)();
         g_tickDiv = 3;
-        g_0600++;
+        g_sysT++;
     }
     if (!g_soundOn && g_soundOn != g_speakerOn) {
         outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
@@ -936,11 +936,11 @@ void interrupt far sys_timer_isr(void)
     }
     if (g_voice->active && --g_voice->ticksLeft) {
         if (g_vibratoActive && g_voice->divisor.w && !--g_vibCount) {
-            bn82c4->phase = bn82c4->phase % bn82c4->length;
-            g_vibDivisor = g_toneShapes[bn82c4->waveform][bn82c4->phase++] * g_vibGain + g_voice->divisor.w;
+            g_toneShapePlaybackPointer->phase = g_toneShapePlaybackPointer->phase % g_toneShapePlaybackPointer->length;
+            g_vibDivisor = g_toneShapes[g_toneShapePlaybackPointer->waveform][g_toneShapePlaybackPointer->phase++] * g_vibGain + g_voice->divisor.w;
             outp(PIT_CH2, g_vibDivisor);
             outp(PIT_CH2, g_vibDivisor >> 8);
-            g_vibCount = bn82c4->delay;
+            g_vibCount = g_toneShapePlaybackPointer->delay;
         }
     } else if (g_voice->active && g_voice->ticksLeft == 0) {
         while (!(g_voice->ticksLeft = *g_voice->cur++)) {
@@ -963,7 +963,7 @@ void interrupt far sys_timer_isr(void)
                 g_voice->repeatCount = 0;
             } else
                 g_voice->cur = g_voice->phraseStart;
-            bn82c4 = g_tones + *g_voice->toneCursor;
+            g_toneShapePlaybackPointer = g_tones + *g_voice->toneCursor;
         }
         if (!(g_voice->divisor.w = *g_voice->cur++)) {
             g_voice->dirty = 1;
@@ -971,8 +971,8 @@ void interrupt far sys_timer_isr(void)
             g_speakerOn = 0;
         } else {
             if (g_vibratoActive) {
-                g_vibCount = bn82c4->delay;
-                g_vibGain = (unsigned)bn82c4->depth * g_voice->divisor.w / 1000;
+                g_vibCount = g_toneShapePlaybackPointer->delay;
+                g_vibGain = (unsigned)g_toneShapePlaybackPointer->depth * g_voice->divisor.w / 1000;
             }
             outp(PIT_CH2, g_voice->divisor.b[0]);
             outp(PIT_CH2, g_voice->divisor.b[1]);
@@ -985,7 +985,7 @@ void interrupt far sys_timer_isr(void)
         }
     }
 tail:
-    if (g_4733 > 0) {
+    if (g_cVis > 0) {
         _disable();
         if (!g_cursorBusy) {
             g_cursorBusy = 1;
@@ -1021,8 +1021,8 @@ tail:
 struct State7E8A ar7e8av;
 struct State7D2E ao7d2ev;
 int ao8228u;
-long b_82bc;
-int z_8b7c;
+long g_mphAccumulator;
+int g_xCoordSprite;
 
 /* sys_stop_drive @ 0000:2374 (linear 0x02374, 24 bytes) */
 
@@ -1065,7 +1065,7 @@ void interrupt far sys_drive_isr(void)
                     outp(PIT_CH2, val.b[0]);
                     outp(PIT_CH2, val.b[1]);
                 } else if (g_carMoving) {
-                    off = ac825et - z_8b7c;
+                    off = ac825et - g_xCoordSprite;
                     r = off < 0 ? -off : off;
                     r = (r >> 1) * r;
                     if (r > 20000)
@@ -1098,8 +1098,8 @@ void interrupt far sys_drive_isr(void)
             g_speakerOn = 0;
         }
     } else {
-        g_0600++;
-        (*w_7aaa)();
+        g_sysT++;
+        (*g_clockPrev)();
         g_tickDiv = 3;
         if (bw8aca && !g_carAnim && --g_driveDiv <= 0) {
             g_driveDiv = 3;
@@ -1173,7 +1173,7 @@ void interrupt far sys_drive_isr(void)
                         c = 0;
                 }
                 if (bw8aca) {
-                    b_82bc += g_driveEng.speed;
+                    g_mphAccumulator += g_driveEng.speed;
                     g_driveEng.elapsedTicks++;
                 }
                 if ((!a_7eaap.raceType ? 0x17c : 0x3fc) < ao7d2ev.roadIndex) {
@@ -1191,7 +1191,7 @@ void interrupt far sys_drive_isr(void)
                     a_7eaap.currentCar->rack.parts[0]->wear += !a_7eaap.raceType ? 1 : 1;
                     a_7eaap.currentCar->transmission->wear += !a_7eaap.raceType ? 1 : 1;
                 }
-                if (!(g_0600 & (!a_7eaap.raceType ? 0xf : 0xf)))
+                if (!(g_sysT & (!a_7eaap.raceType ? 0xf : 0xf)))
                     a_7eaap.currentCar->rack.parts[0]->wear++;
                 if ((i = a_7eaap.currentCar->rack.parts[0]->wear) >= 9900) {
                     g_driveEng.stopFlags |= 5;

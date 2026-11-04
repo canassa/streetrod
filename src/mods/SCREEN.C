@@ -22,10 +22,10 @@
 #include "VIDEO.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-int o_8250;
-int au8252x;
-int as8254y;
-int aq8256z;
+int g_xStatTxtValue;
+int g_statStringY;
+int g_widthStatusStrVal;
+int g_statusStrShown;
 
 char *g_gearNames[7] = {"0", "1", "2", "3", "4", "N", "D"};   /* DS:0482 */
 
@@ -33,10 +33,10 @@ char *g_gearNames[7] = {"0", "1", "2", "3", "4", "N", "D"};   /* DS:0482 */
 
 void screen_status_init(int y)
 {
-    au8252x = y + 1;
-    as8254y = 0xa0;
-    o_8250 = 0x58;
-    aq8256z = 0;
+    g_statStringY = y + 1;
+    g_widthStatusStrVal = 0xa0;
+    g_xStatTxtValue = 0x58;
+    g_statusStrShown = 0;
     x_colors = bustyle->colors;
     draw_fill_rect(r_vid.back, 0, y, SCREEN_WIDTH, STATUS_BAR_HEIGHT);
     if (r_vid.copyToFront)
@@ -45,9 +45,9 @@ void screen_status_init(int y)
 
 void (far *a_78aem)(struct Bitmap far *, int, int, char *);
 struct State7EAA a_7eaap;
-int g824cd;
-int g8258z;
-int ar82c0;
+int g_xTextR;
+int g_statValXState;
+int g_xMoneyRhsVal;
 
 /* F_11421 @ 0F38:20A1 (linear 0x11421, 287 bytes) */
 
@@ -61,19 +61,19 @@ void F_11421(int x, char *s, int w)
     saved = x_colors;
     x_colors = bustyle->colors;
     if (w == 0)
-        w = as8254y;
+        w = g_widthStatusStrVal;
     if (x < 0) {
-        x = o_8250;
+        x = g_xStatTxtValue;
         left = (x + (w - dash_text_width(s)) / 2) & 0xfff8;
     } else
         left = x;
     wd = SCREEN_WIDTH - x;
-    ypos = au8252x;
+    ypos = g_statStringY;
     cursor_ctl(CURSOR_HIDE);
-    if (aq8256z)
+    if (g_statusStrShown)
         draw_fill_rect(r_vid.back, x - 1, ypos, wd, 8);
     (*a_78aem)(r_vid.back, left, ypos, s);
-    aq8256z = *s;
+    g_statusStrShown = *s;
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, x > 8 ? x - 8 : x, ypos, x + wd, ypos + 7);
@@ -87,11 +87,11 @@ void F_11540(int n)
     int old;
     char buf[10];
 
-    old = aq8256z;
-    aq8256z = 1;
-    F_11421(g8258z, ltoa(a_7eaap.money += n, buf, 10), 0x30);
-    ar82c0 = g824cd;
-    aq8256z = old;
+    old = g_statusStrShown;
+    g_statusStrShown = 1;
+    F_11421(g_statValXState, ltoa(a_7eaap.money += n, buf, 10), 0x30);
+    g_xMoneyRhsVal = g_xTextR;
+    g_statusStrShown = old;
 }
 
 /* F_11593 @ 0F38:2213 (linear 0x11593, 214 bytes) */
@@ -103,16 +103,16 @@ void F_11593(char *s)
     saved = r_vid.copyToFront;
     x_colors = bustyle->colors;
     cursor_ctl(CURSOR_HIDE);
-    draw_fill_rect(r_vid.back, 0, au8252x, o_8250 & 0xfff8, 8);
-    (*a_78aem)(r_vid.back, 0, au8252x, s);
-    g8258z = (g824cd + 7) & 0xfff8;
+    draw_fill_rect(r_vid.back, 0, g_statStringY, g_xStatTxtValue & 0xfff8, 8);
+    (*a_78aem)(r_vid.back, 0, g_statStringY, s);
+    g_statValXState = (g_xTextR + 7) & 0xfff8;
     r_vid.copyToFront = 0;
     if (s[1] != 'G' && s[1] != ' ')
         F_11540(0);
     r_vid.copyToFront = saved;
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, 0, au8252x, o_8250, au8252x + 7);
+        bitmap_copy_box(r_vid.back, r_vid.front, 0, g_statStringY, g_xStatTxtValue, g_statStringY + 7);
 }
 
 /* screen_show_gear @ 0F38:22E9 (linear 0x11669, 49 bytes) */
@@ -121,13 +121,13 @@ void screen_show_gear(int i)
 {
     int saved;
 
-    saved = aq8256z;
-    aq8256z = 1;
-    F_11421(g8258z, g_gearNames[i], 8);
-    aq8256z = saved;
+    saved = g_statusStrShown;
+    g_statusStrShown = 1;
+    F_11421(g_statValXState, g_gearNames[i], 8);
+    g_statusStrShown = saved;
 }
 
-char af824ax;
+char g_displaySplitYVal;
 
 /* screen_fill_rect @ 0F38:231A (linear 0x1169A, 130 bytes) */
 
@@ -181,9 +181,9 @@ void screen_wait_msg(char *msg)
         prev = gz8249;
         if (!prev) {
             gz8249 = 1;
-            (*m_present)();
+            (*g_fnShow)();
         }
-        dx = af824ax ? 5 : 0x50;
+        dx = g_displaySplitYVal ? 5 : 0x50;
         for (i = 0; i < 5; i++) {
             g_hotReadyBox[i].y1 += dx;
             g_hotReadyBox[i].y2 += dx;
@@ -203,7 +203,7 @@ void screen_wait_msg(char *msg)
         r_vid.copyToFront = saved;
         gz8249 = prev;
         if (!prev)
-            (*bl78be)();
+            (*g_displayDisablePtr)();
     } else {
         puts(" ");
         puts(g_promptLine1);
@@ -264,7 +264,7 @@ void screen_text(int x, int y, char *s)
 {
     (*a_78aem)(r_vid.back, x, y, s);
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, x, y, g824cd - 1, y + 7);
+        bitmap_copy_box(r_vid.back, r_vid.front, x, y, g_xTextR - 1, y + 7);
 }
 
 /* screen_hline @ 0F38:26A4 (linear 0x11A24, 78 bytes)

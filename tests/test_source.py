@@ -35,7 +35,7 @@ class SourceTests(unittest.TestCase):
 
     def test_globals(self):
         gs = source.globals_()
-        self.assertEqual(gs[0x5030]['name'], 'g_5030')
+        self.assertEqual(gs[0x5030]['name'], 'g_whlPic')
         self.assertEqual(gs[0x5030]['decl'], 'int @[][4]')
         self.assertEqual(gs[0x5030]['header'], 'GARAGE')
         self.assertEqual(gs[0x6C36], dict(off=0x6C36, name='g_knobPos', decl='int @', header=None,
@@ -46,9 +46,9 @@ class SourceTests(unittest.TestCase):
                          (0x2E3E, 0x30, 'struct Bitmap far @'))
 
     def test_declared_name(self):
-        self.assertEqual(source.declared_name('int (far *g78c6c)(struct Sprite *)'), 'g78c6c')
-        self.assertEqual(source.declared_name('void (interrupt far *w_7aaa)(void)'), 'w_7aaa')
-        self.assertEqual(source.declared_name('char *g_5082[]'), 'g_5082')
+        self.assertEqual(source.declared_name('int (far *g_stepSpriteFrm)(struct Sprite *)'), 'g_stepSpriteFrm')
+        self.assertEqual(source.declared_name('void (interrupt far *g_clockPrev)(void)'), 'g_clockPrev')
+        self.assertEqual(source.declared_name('char *g_mon[]'), 'g_mon')
         self.assertEqual(source.declared_name('struct Bitmap far *g_adPicture'), 'g_adPicture')
 
 

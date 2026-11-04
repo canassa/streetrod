@@ -9,18 +9,18 @@
 static char far *g_arenaBase;                   /* DS:6CD0 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-int bl78de;
-int g7b14o;
-int g7d80q;
-unsigned c_8b02[61];
-int o_8f00;
+int g_arenaTopVal;
+int g_lowArenaMarker;
+int g_markerIndexHigh;
+unsigned g_offsetArenaMarksList[61];
+int g_loHeapLimit;
 
 /* arena_reset @ 0F38:9EBC (linear 0x1923C, 45 bytes) */
 
 void arena_reset(void)
 {
-    c_8b02[g7b14o = 0] = o_8f00 = 0;
-    c_8b02[g7d80q = 60] = bl78de = -536;
+    g_offsetArenaMarksList[g_lowArenaMarker = 0] = g_loHeapLimit = 0;
+    g_offsetArenaMarksList[g_markerIndexHigh = 60] = g_arenaTopVal = -536;
     g_0294 = 0;
 }
 
@@ -37,11 +37,11 @@ void arena_init(void)
 
 /* arena_shrink @ 0F38:9F1A (linear 0x1929A, 18 bytes)
 
-   Give back size bytes to the arena, top of the g7b14o marker stack */
+   Give back size bytes to the arena, top of the g_lowArenaMarker marker stack */
 
 void arena_shrink(int size)
 {
-    c_8b02[g7b14o] -= size;
+    g_offsetArenaMarksList[g_lowArenaMarker] -= size;
 }
 
 /* arena_alloc @ 0F38:9F2C (linear 0x192AC, 162 bytes)
@@ -55,35 +55,35 @@ char far *arena_alloc(int size, int mode)
     p = g_arenaBase;
     switch (mode) {
     case ARENA_LOW_BASE:
-        p += o_8f00;
-        o_8f00 += size;
-        c_8b02[0] = o_8f00;
+        p += g_loHeapLimit;
+        g_loHeapLimit += size;
+        g_offsetArenaMarksList[0] = g_loHeapLimit;
         break;
     case ARENA_LOW_STACK:
-        p += c_8b02[g7b14o];
-        c_8b02[g7b14o + 1] = size + c_8b02[g7b14o];
-        g7b14o++;
+        p += g_offsetArenaMarksList[g_lowArenaMarker];
+        g_offsetArenaMarksList[g_lowArenaMarker + 1] = size + g_offsetArenaMarksList[g_lowArenaMarker];
+        g_lowArenaMarker++;
         break;
     case ARENA_HIGH_STACK:
-        c_8b02[g7d80q] -= size;
-        p += c_8b02[g7d80q];
-        c_8b02[g7d80q - 1] = c_8b02[g7d80q] - 1;
-        g7d80q--;
+        g_offsetArenaMarksList[g_markerIndexHigh] -= size;
+        p += g_offsetArenaMarksList[g_markerIndexHigh];
+        g_offsetArenaMarksList[g_markerIndexHigh - 1] = g_offsetArenaMarksList[g_markerIndexHigh] - 1;
+        g_markerIndexHigh--;
         break;
     case ARENA_HIGH_BASE:
-        bl78de -= size;
-        p += bl78de--;
-        c_8b02[60] = bl78de;
+        g_arenaTopVal -= size;
+        p += g_arenaTopVal--;
+        g_offsetArenaMarksList[60] = g_arenaTopVal;
         break;
     }
     return p;
 }
 
-/* F_1934E @ 0F38:9FCE (linear 0x1934E, 134 bytes)
+/* arena_bm @ 0F38:9FCE (linear 0x1934E, 134 bytes)
 
    Allocate a bitmap w x h from the arena (header plus pixel rows) and initialise it */
 
-struct Bitmap far *F_1934E(int w, int h, int flags, int mode)
+struct Bitmap far *arena_bm(int w, int h, int flags, int mode)
 {
     int cols, extra, total;
     unsigned size;

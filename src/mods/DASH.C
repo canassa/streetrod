@@ -39,9 +39,9 @@ struct Bitmap far *bm7678;
 unsigned at767ct;
 unsigned av787at;
 int (far *b_78a2)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
-void (far *bl78be)(void);
-void (far *m_present)(void);
-void (far *s_blit)(char far *, char far *);
+void (far *g_displayDisablePtr)(void);
+void (far *g_fnShow)(void);
+void (far *g_pageRevealBlit)(char far *, char far *);
 void (far *a_78d2)(int, int, int, int, int);
 char gz8249;
 struct Bitmap far *g82b4s;
@@ -86,7 +86,7 @@ static void near save_under(int x, int y, int w, int h, int kind)
     pkt.sy = y;
     pkt.dx = 0x108;
     pkt.dy = (r_vid.mode == VID_EGA ? DASH_Y : 0) + (kind == 1 ? 5 : kind == 2 ? 12 : 35);
-    (*b_78a2)(g_dashBuffered ? g755cu : bm7678, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt, 1);
+    (*b_78a2)(g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt, 1);
 }
 
 /* dash_speedo_pts @ 0F38:0137 (linear 0x0F4B7, 155 bytes) */
@@ -347,31 +347,31 @@ void dash_intro(void)
 
     saved = g_picMaxH;
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
-        (*bl78be)();
+        (*g_displayDisablePtr)();
     g_picMaxH = SCREEN_HEIGHT;
     if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         main_set_palette(CGA_PALETTE_GREEN_RED_BROWN);
     F_119B8(3, 0x28, 0x28, 0);
     disk_free_pic(3);
-    (*m_present)();
+    (*g_fnShow)();
     r_vid.copyToFront = 0;
     F_118D4(1, -1);
     disk_free_pic(1);
     dash_wait_key(400);
-    (*m_present)();
+    (*g_fnShow)();
     if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         main_set_palette(CGA_PALETTE_CYAN_MAGENTA_WHITE);
-    (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
+    (*g_pageRevealBlit)(r_vid.front->bits.p, r_vid.back->bits.p);
     F_118D4(4, 0);
     disk_free_pic(4);
     dash_wait_key(400);
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
         video_set_palette(g_introPalette);
-    (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
+    (*g_pageRevealBlit)(r_vid.front->bits.p, r_vid.back->bits.p);
     dash_wait_key(400);
     g_picMaxH = saved;
     screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
-    (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
+    (*g_pageRevealBlit)(r_vid.front->bits.p, r_vid.back->bits.p);
 }
 
 /* dash_time_up @ 0F38:0D62 (linear 0x100E2, 91 bytes) */
@@ -379,13 +379,13 @@ void dash_intro(void)
 void dash_time_up(void)
 {
     game_message(0x17bb);
-    (*bl78be)();
+    (*g_displayDisablePtr)();
     cursor_ctl(CURSOR_HIDE_NOW);
     r_vid.copyToFront = 1;
     screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     F_065AF(1);
     F_10B7C();
-    (*m_present)();
+    (*g_fnShow)();
     game_pause(300);
 }
 
@@ -445,7 +445,7 @@ void dash_set_view(int mode)
             outp(CRTC_DATA, 0);
         }
         r_vid.copyToFront = 1;
-        (*m_present)();
+        (*g_fnShow)();
         break;
     }
 }
@@ -592,7 +592,7 @@ void dash_init_shifter(int a, int b)
     pk5.sx = pk5.sy = 0;
     pk5.dx = 0x108;
     pk5.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + 0x17;
-    (*b_78a2)(bm19, g_dashBuffered ? g755cu : bm7678, &pk5, 1);
+    (*b_78a2)(bm19, g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, &pk5, 1);
     bm28 = F_15BBE(g_shifter->id2, ARENA_HIGH_STACK);
     p3.w = p2.w = (pk5.w = bm28->width) + 8;
     p3.h = p2.h = pk5.h = bm28->height;

@@ -4,8 +4,8 @@
 #define GAME_H
 #include "STRUCTS.H"
 
-extern struct Car *g_4f46;                              /* DS:4F46 */
-extern struct Car *g_4f48;                              /* DS:4F48 */
+extern struct Car *g_old;                              /* DS:4F46 */
+extern struct Car *g_new;                              /* DS:4F48 */
 extern int g_4f4a;                                      /* DS:4F4A */
 extern int g_picsFreed;                                 /* DS:4F4C */
 extern int g_paperPics[];                               /* DS:4F4E */

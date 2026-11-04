@@ -45,8 +45,8 @@ static int near check_room(void);
 static void near sell_parts(void);
 static int near your_cars(void);
 
-struct Car *g_4f46 = 0;   /* DS:4F46 */
-struct Car *g_4f48 = 0;   /* DS:4F48 */
+struct Car *g_old = 0;   /* DS:4F46 */
+struct Car *g_new = 0;   /* DS:4F48 */
 int g_4f4a = 0;   /* DS:4F4A */
 int g_picsFreed = 0;   /* DS:4F4C */
 int g_paperPics[5] = {1022, 1023, 1025, 1024, 1026};   /* DS:4F4E */
@@ -60,21 +60,21 @@ static int near start_game(void)
     dash_set_view(0);
     sys_music_start(2, 10);
     dash_intro();
-    (*bl78be)();
+    (*g_displayDisablePtr)();
     dash_set_view(1);
     random_int(-1);
-    (*bl78be)();
-    if (by70e2 == 0)
+    (*g_displayDisablePtr)();
+    if (g_loadedIntroBmps == 0)
         disk_read_index(2);
-    if (ag8bcet == 0) {
+    if (g_attractSwitchStartup == 0) {
         if (fame_protect_check() == 0)
             sys_exit();
         cursor_ctl(CURSOR_HIDE_NOW);
     }
     road_generate();
     g_driverName[0] = 0;
-    g_demo = ag8bcet;
-    if (by70e2 == 0) {
+    g_demo = g_attractSwitchStartup;
+    if (g_loadedIntroBmps == 0) {
         disk_load_data();
         if (r_vid.mode == VID_EGA)
             disk_cache_list(g_gamePics);
@@ -182,7 +182,7 @@ int game_part_value(struct Node *n)
 {
     int r;
 
-    if (g_4806[n->idx].category == 0 && g_4806[n->idx].variant == 0)
+    if (g_part[n->idx].category == 0 && g_part[n->idx].variant == 0)
         r = 100;
     else
         r = n->value;
@@ -218,7 +218,7 @@ static void near sell_parts(void)
     for (;; tries3++) {
         for (p7 = a_7eaap.spareParts, nl = 0; p7; p7 = p7->next) {
             nl++;
-            g_list[nl] = (ip = &g_4806[(list8[nl] = p7)->idx])->nameOffset;
+            g_list[nl] = (ip = &g_part[(list8[nl] = p7)->idx])->nameOffset;
             if (p7->wear != -0x80) {
                 lbl[nl] = p7->wear / 100;
                 continue;
@@ -238,14 +238,14 @@ static void near sell_parts(void)
             game_message(tries3 ? 0x0ed7 : 0x0f2a);
             return;
         case -3:
-            sel = F_14C8B();
+            sel = menu_ix();
             break;
         }
         p7 = list8[sel];
         price1 = game_part_value(p7);
         type8 = p7->idx;
         pct = (10000 - p7->wear) / 100;
-        switch (g_4806[type8].category) {
+        switch (g_part[type8].category) {
         case 2:
         case 3:
             rl = random_int(20);
@@ -263,7 +263,7 @@ static void near sell_parts(void)
             break;
         }
         price1 = price1 / 5 * 5;
-        strcpy(g_salePartName, &g_desc[g_4806[type8].nameOffset]);
+        strcpy(g_salePartName, &g_desc[g_part[type8].nameOffset]);
         if (price1) {
             msg5 = 0x100a;
             sprintf(g_msgWillYouTake, "Will you take $%-d ?", price1);
@@ -279,7 +279,7 @@ static void near sell_parts(void)
         else
             list8[sel - 1]->next = p7->next;
         free_part(p7);
-        g_05fc += 0x444L;
+        g_addT += 0x444L;
         F_11540(price1);
     }
 }
@@ -318,7 +318,7 @@ struct Node * near game_add_part(int idx, int a)
 
     n = game_new_part();
     n->idx = idx;
-    it = &g_4806[idx];
+    it = &g_part[idx];
     n->wear = g_partWear[it->category];
     n->value = a;
     n->next = a_7eaap.spareParts;
@@ -349,19 +349,19 @@ struct Car * near game_make_car(int idx, int value, struct Car *old)
     w = (g7d86n[idx].parts >> 6) & 3;
     w = (kind = (g7d86n[idx].parts & 0xf) >> 1) + (w == 3) + 3 * w + 9;
     node->idx = w;
-    node->value = g_4806[w].value;
+    node->value = g_part[w].value;
     node->wear = g_partWear[1];
     node->next = 0;
     car->rack.parts[0] = node = (old == 0) ? game_new_part() : car->rack.parts[0];
     w = (g7d86n[idx].parts >> 8 & 7) * 3 + kind;
     node->idx = w;
-    node->value = g_4806[w].value;
+    node->value = g_part[w].value;
     node->wear = g_partWear[0];
     node->next = 0;
     car->tires = node = (old == 0) ? game_new_part() : car->tires;
     w = (g7d86n[idx].parts >> 4 & 3) + 0x28;
     node->idx = w;
-    node->value = g_4806[w].value;
+    node->value = g_part[w].value;
     node->wear = g_partWear[4];
     node->next = 0;
     car->rack.parts[1] = node = (old == 0) ? game_new_part() : car->rack.parts[1];
@@ -369,17 +369,17 @@ struct Car * near game_make_car(int idx, int value, struct Car *old)
         car->engineBolts[i] = 0;
     w = (i = g7d86n[idx].parts >> 11 & 7) * 3 + kind + 0x19;
     node->idx = w;
-    node->value = g_4806[w].value;
+    node->value = g_part[w].value;
     node->wear = g_partWear[3];
     node->next = 0;
     w = (g7d86n[idx].parts >> 14 & 3) + 0x16;
-    i = g_5126[i] - 1;
+    i = g_nCarb[i] - 1;
     for (j = 2; j > i; j--)
         car->rack.parts[j + 2] = 0;
     for (; i >= 0; i--) {
         car->rack.parts[i + 2] = node = (old == 0) ? game_new_part() : car->rack.parts[i + 2];
         node->idx = w;
-        node->value = g_4806[w].value;
+        node->value = g_part[w].value;
         node->wear = g_partWear[2];
         node->next = 0;
         car->engineBolts[2 * i + 3] = 3;
@@ -468,7 +468,7 @@ static void near buy_from_ads(int tab)
     g_list[1] = 0xcd8;
     n = 2;
     i5 = price6 = 0;
-    for (k3 = a_7d16q; k3 >= 0; k3 = g7d86n[k3].next) {
+    for (k3 = g_usedCarAdFirst; k3 >= 0; k3 = g7d86n[k3].next) {
         g_list[n++] = g7d86n[k3].nameOffset;
         list4[i5++] = k3;
     }
@@ -476,8 +476,8 @@ static void near buy_from_ads(int tab)
     n0 = n;
     off6 = i5 - n0;
     for (k3 = 0; k3 < 0x2c; k3++) {
-        if (g_4806[k3].value >= 0x14) {
-            g_list[n++] = g_4806[k3].nameOffset;
+        if (g_part[k3].value >= 0x14) {
+            g_list[n++] = g_part[k3].nameOffset;
             list4[i5++] = k3;
         }
     }
@@ -487,8 +487,8 @@ static void near buy_from_ads(int tab)
     do {
         used = n >= n0;
         if (used) {
-            k3 = g_4806[i5 = list4[n + off6]].nameOffset;
-            price6 = g_4806[i5].value;
+            k3 = g_part[i5 = list4[n + off6]].nameOffset;
+            price6 = g_part[i5].value;
             g_hotBuy[0].kind = 0xe;
         } else {
             k3 = (specn = &g7d86n[i5 = list4[n - 2]])->nameOffset;
@@ -512,7 +512,7 @@ static void near buy_from_ads(int tab)
                 F_11540(-price6);
                 if (used) {
                     game_add_part(i5, price6);
-                    g_05fc += 0x222;
+                    g_addT += 0x222;
                     if (a_7eaap.partCount > 0x82)
                         goto done;
                     break;
@@ -520,14 +520,14 @@ static void near buy_from_ads(int tab)
                 car = game_make_car(i5, price6, 0);
                 car->paintScheme = (color != -1) ? color : random_int(5);
                 game_message(0xf2de);
-                g_05fc += 0x444;
+                g_addT += 0x444;
                 goto done;
             }
             if (n != -25)
                 break;
             cursor_ctl(CURSOR_HIDE_NOW);
             marks_clear();
-            bm1 = F_1934E(SCREEN_WIDTH, 0x52, 0, ARENA_LOW_BASE);
+            bm1 = arena_bm(SCREEN_WIDTH, 0x52, 0, ARENA_LOW_BASE);
             popup_grab(0, 0x40, SCREEN_WIDTH, 0x52, bm1);
             x_colors = bustyle->colors;
             ck = (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) ? g_carBg16[5] : g_carBg4[5];
@@ -550,7 +550,7 @@ static void near buy_from_ads(int tab)
             }
             x1 = ((unsigned)specn - (unsigned)g7d86n) / 10;
             y = (((specn->parts >> 8) & 7) == 2) ? 8 : 0;
-            F_181C8(7, x1, y, 0, 0, 0x86, 0, g_5030[(specn->parts >> 4) & 3]);
+            F_181C8(7, x1, y, 0, 0, 0x86, 0, g_whlPic[(specn->parts >> 4) & 3]);
             screen_text((SCREEN_WIDTH - dash_text_width(g_offerName)) / 2, 0x88, g_offerName);
             cursor_ctl(CURSOR_SHOW_NOW);
             g_anyInput = 1;
@@ -601,7 +601,7 @@ int game_car_look(struct Car *c)
         r |= 2;
     if (c->appearance & 0x8000)
         r |= 1;
-    if (g_4806[c->rack.parts[0]->idx].variant == 2)
+    if (g_part[c->rack.parts[0]->idx].variant == 2)
         r |= 8;
     return r;
 }
@@ -644,20 +644,20 @@ static int near your_cars(void)
         case -3:
             return 0;
         case -1:
-            g_4f48 = tbl[item = F_14C8B()];
-            g_4f46 = a_7eaap.currentCar;
-            if (g_4f48 != g_4f46) {
+            g_new = tbl[item = menu_ix()];
+            g_old = a_7eaap.currentCar;
+            if (g_new != g_old) {
                 if (item == ((a_7eaap.currentCar != 0) + 1))
-                    a_7eaap.otherCars = g_4f48->next;
+                    a_7eaap.otherCars = g_new->next;
                 else
-                    tbl[item - 1]->next = g_4f48->next;
+                    tbl[item - 1]->next = g_new->next;
                 if (a_7eaap.currentCar) {
                     a_7eaap.currentCar->next = a_7eaap.otherCars;
                     a_7eaap.otherCars = a_7eaap.currentCar;
                 }
-                a_7eaap.currentCar = g_4f48;
+                a_7eaap.currentCar = g_new;
             } else
-                g_4f48 = 0;
+                g_new = 0;
             return 3;
         case -2:
             break;
@@ -665,7 +665,7 @@ static int near your_cars(void)
             if (item > 0)       /* PROVISIONAL: the original loads g_list[0] here and drops it */
                 g_list[0] = g_list[0];
         }
-        cur = tbl[item = F_14C8B()];
+        cur = tbl[item = menu_ix()];
         offer = price = (int)((random_int(20) + 75.0) * cur->value / 100.0);
         strcpy(g_offerName, g_desc + g7d86n[cur->specIndex].nameOffset);
         g_offerAmount[0] = 0;
@@ -717,7 +717,7 @@ static int near your_cars(void)
             goto tail;
         }
         game_message((cur->value > cash * 2) ? 0x104b : 0x1091);
-        g_05fc += 0x888L;
+        g_addT += 0x888L;
         F_11540(cash);
         if (item == 1 && a_7eaap.currentCar) {
             popup_show(pict, rx, ye);
@@ -727,7 +727,7 @@ static int near your_cars(void)
             mid = a_7eaap.currentCar->specIndex;
             result = game_car_look(a_7eaap.currentCar);
             F_181C8(6, mid, result, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0x98, 0,
-                    g_5030[g_4806[a_7eaap.currentCar->tires->idx].variant]);
+                    g_whlPic[g_part[a_7eaap.currentCar->tires->idx].variant]);
             menu_pop(1);
             F_06AA6();
             menu_push(10);
@@ -841,7 +841,7 @@ void near game_run(void)
                         v = 2;
                     if (a_7eaap.currentCar == 0 && a_7eaap.otherCars)
                         v = 1;
-                    g_05fc += 0x222;
+                    g_addT += 0x222;
                 }
                 continue;
             case 2:
@@ -861,7 +861,7 @@ void near game_run(void)
                             }
                             g_scene = 2;
                             cruise_go();
-                            g_05fc += 0x222;
+                            g_addT += 0x222;
                             bobs_visit();
                         } else {
                             if (a_7eaap.currentCar->fuel >= 0x8c) {
@@ -876,10 +876,10 @@ void near game_run(void)
                             }
                             g_scene = 3;
                             cruise_go();
-                            g_05fc += 0x222;
+                            g_addT += 0x222;
                             race_gas_station();
                         }
-                        g_05fc += 0x222;
+                        g_addT += 0x222;
                         v = 1;
                     } else {
                         game_message(0x0e7f);

@@ -4,8 +4,8 @@
 ; Words and arrays at odd addresses: assembler data, not C definitions.
 
         .DATA
-        PUBLIC  _g_239e
-_g_239e DB      0, 0, '________________________', 0  ; DS:239E char[]
+        PUBLIC  _g_txt
+_g_txt DB      0, 0, '________________________', 0  ; DS:239E char[]
         DB      '________________________', 0
         DB      '________________________', 0
         DB      '________________________', 0
@@ -288,8 +288,8 @@ _g_desc DB      1851 DUP (0), 1, 'GM V-6 engine', 0  ; DS:2C02 char[]
         DB      "You're gonna hafta sell a part.", 0
         DB      3
 ; DS:39C9 char[]
-        PUBLIC  _g_39c9
-_g_39c9 DB      "You've got``too``much``junk``in``your``garage`!", 0
+        PUBLIC  _g_junk
+_g_junk DB      "You've got``too``much``junk``in``your``garage`!", 0
         DB      'Must``sell``12``parts``to``make``enough``room.', 0
         DB      1, 'Sell some cars first`!', 0
         DB      1, 'Sell some parts first`!', 0
