@@ -1,102 +1,103 @@
-; font glyphs: width and eight raster rows. Reconstructed as source records from the shipped data.
+; Font glyphs: width and eight raster rows.
 FONTDATA SEGMENT PARA PUBLIC 'CODE'
-PUBLIC FONTDATA_BASE
-FONTDATA_BASE LABEL BYTE
-PUBLIC _g_font
-_g_font EQU FONTDATA_BASE+00h ; struct Glyph far @[]
-GLYPH MACRO w,r0,r1,r2,r3,r4,r5,r6,r7
- DB w,r0,r1,r2,r3,r4,r5,r6,r7
-ENDM
- GLYPH 06h,00h,00h,00h,00h,00h,00h,00h,00h ; character 32
- GLYPH 03h,080h,080h,080h,080h,080h,00h,080h,00h ; character 33
- GLYPH 06h,090h,090h,090h,00h,00h,00h,00h,00h ; character 34
- GLYPH 06h,028h,050h,0F8h,050h,0F8h,050h,0A0h,00h ; character 35
- GLYPH 05h,020h,070h,080h,060h,010h,0E0h,020h,00h ; character 36
- GLYPH 06h,0C8h,0C8h,010h,020h,040h,098h,098h,00h ; character 37
- GLYPH 06h,030h,050h,020h,040h,0A8h,090h,068h,00h ; character 38
- GLYPH 04h,020h,020h,040h,00h,00h,00h,00h,00h ; character 39
- GLYPH 06h,020h,040h,080h,080h,080h,040h,020h,00h ; character 40
- GLYPH 06h,040h,020h,010h,010h,010h,020h,040h,00h ; character 41
- GLYPH 06h,00h,0A8h,070h,0F8h,070h,0A8h,00h,00h ; character 42
- GLYPH 06h,00h,020h,020h,0F8h,020h,020h,00h,00h ; character 43
- GLYPH 04h,00h,00h,00h,00h,00h,040h,040h,080h ; character 44
- GLYPH 06h,00h,00h,00h,078h,00h,00h,00h,00h ; character 45
- GLYPH 04h,00h,00h,00h,00h,00h,040h,040h,00h ; character 46
- GLYPH 06h,08h,08h,010h,020h,040h,080h,080h,00h ; character 47
- GLYPH 06h,00h,070h,088h,088h,088h,088h,070h,00h ; character 48
- GLYPH 05h,00h,020h,060h,020h,020h,020h,0F0h,00h ; character 49
- GLYPH 06h,00h,070h,088h,010h,040h,088h,0F8h,00h ; character 50
- GLYPH 06h,00h,070h,088h,030h,08h,088h,070h,00h ; character 51
- GLYPH 06h,00h,030h,050h,090h,0F8h,010h,010h,00h ; character 52
- GLYPH 06h,00h,0F8h,080h,0F0h,08h,088h,070h,00h ; character 53
- GLYPH 06h,00h,070h,080h,0F0h,088h,088h,070h,00h ; character 54
- GLYPH 06h,00h,0F8h,088h,010h,020h,020h,020h,00h ; character 55
- GLYPH 06h,00h,070h,088h,070h,088h,088h,070h,00h ; character 56
- GLYPH 06h,00h,070h,088h,078h,08h,08h,070h,00h ; character 57
- GLYPH 04h,00h,040h,040h,00h,00h,040h,040h,00h ; character 58
- GLYPH 04h,00h,040h,040h,00h,00h,040h,040h,080h ; character 59
- GLYPH 06h,08h,010h,020h,040h,020h,010h,08h,00h ; character 60
- GLYPH 06h,00h,00h,078h,00h,00h,078h,00h,00h ; character 61
- GLYPH 06h,040h,020h,010h,08h,010h,020h,040h,00h ; character 62
- GLYPH 06h,030h,048h,08h,010h,020h,00h,020h,00h ; character 63
- GLYPH 06h,070h,088h,0B8h,0A8h,0B8h,080h,078h,00h ; character 64
- GLYPH 05h,060h,090h,090h,0F0h,090h,090h,090h,00h ; character 65
- GLYPH 06h,0F0h,048h,048h,070h,048h,048h,0F0h,00h ; character 66
- GLYPH 05h,060h,090h,080h,080h,080h,090h,060h,00h ; character 67
- GLYPH 06h,0F0h,048h,048h,048h,048h,048h,0F0h,00h ; character 68
- GLYPH 06h,0F8h,048h,040h,070h,040h,048h,0F8h,00h ; character 69
- GLYPH 06h,0F8h,048h,040h,070h,040h,040h,0E0h,00h ; character 70
- GLYPH 06h,070h,088h,080h,080h,098h,088h,078h,00h ; character 71
- GLYPH 05h,090h,090h,090h,0F0h,090h,090h,090h,00h ; character 72
- GLYPH 04h,0E0h,040h,040h,040h,040h,040h,0E0h,00h ; character 73
- GLYPH 06h,038h,010h,010h,010h,010h,090h,060h,00h ; character 74
- GLYPH 06h,0C8h,048h,050h,060h,050h,048h,0C8h,00h ; character 75
- GLYPH 06h,0E0h,040h,040h,040h,040h,048h,0F8h,00h ; character 76
- GLYPH 06h,088h,0D8h,0A8h,0A8h,088h,088h,088h,00h ; character 77
- GLYPH 06h,088h,088h,0C8h,0A8h,098h,088h,088h,00h ; character 78
- GLYPH 05h,060h,090h,090h,090h,090h,090h,060h,00h ; character 79
- GLYPH 06h,0F0h,048h,048h,070h,040h,040h,0E0h,00h ; character 80
- GLYPH 06h,070h,088h,088h,088h,0A8h,0B8h,070h,08h ; character 81
- GLYPH 06h,0F0h,048h,048h,070h,050h,050h,0C8h,00h ; character 82
- GLYPH 06h,070h,088h,0C0h,030h,08h,088h,070h,00h ; character 83
- GLYPH 06h,0F8h,0A8h,020h,020h,020h,020h,070h,00h ; character 84
- GLYPH 05h,090h,090h,090h,090h,090h,090h,060h,00h ; character 85
- GLYPH 06h,088h,088h,088h,088h,088h,050h,020h,00h ; character 86
- GLYPH 06h,088h,088h,088h,0A8h,0A8h,0D8h,088h,00h ; character 87
- GLYPH 06h,088h,088h,050h,020h,050h,088h,088h,00h ; character 88
- GLYPH 06h,088h,088h,088h,070h,020h,020h,070h,00h ; character 89
- GLYPH 05h,0F0h,090h,020h,040h,080h,090h,0F0h,00h ; character 90
- GLYPH 07h,00h,00h,010h,038h,07Ch,0FEh,00h,00h ; character 91
- GLYPH 07h,010h,038h,07Ch,0FEh,010h,038h,07Ch,0FEh ; character 92
- GLYPH 07h,00h,00h,0FEh,07Ch,038h,010h,00h,00h ; character 93
- GLYPH 07h,0FEh,07Ch,038h,010h,0FEh,07Ch,038h,010h ; character 94
- GLYPH 06h,00h,00h,00h,00h,00h,00h,00h,0F8h ; character 95
- GLYPH 02h,00h,00h,00h,00h,00h,00h,00h,00h ; character 96
- GLYPH 06h,00h,00h,060h,010h,070h,090h,068h,00h ; character 97
- GLYPH 06h,040h,040h,070h,048h,048h,048h,0B0h,00h ; character 98
- GLYPH 05h,00h,00h,060h,090h,080h,090h,060h,00h ; character 99
- GLYPH 06h,010h,010h,070h,090h,090h,090h,068h,00h ; character 100
- GLYPH 05h,00h,00h,060h,090h,0F0h,080h,060h,00h ; character 101
- GLYPH 05h,020h,050h,040h,0E0h,040h,040h,0C0h,00h ; character 102
- GLYPH 06h,00h,00h,068h,090h,090h,070h,010h,070h ; character 103
- GLYPH 06h,0C0h,040h,070h,048h,048h,048h,048h,00h ; character 104
- GLYPH 04h,040h,00h,0C0h,040h,040h,040h,060h,00h ; character 105
- GLYPH 05h,010h,00h,030h,010h,010h,090h,090h,060h ; character 106
- GLYPH 06h,0C0h,040h,048h,050h,060h,050h,048h,00h ; character 107
- GLYPH 04h,0C0h,040h,040h,040h,040h,040h,060h,00h ; character 108
- GLYPH 06h,00h,00h,0D0h,0A8h,0A8h,0A8h,0A8h,00h ; character 109
- GLYPH 05h,00h,00h,0E0h,090h,090h,090h,090h,00h ; character 110
- GLYPH 05h,00h,00h,060h,090h,090h,090h,060h,00h ; character 111
- GLYPH 06h,00h,00h,0B0h,048h,048h,070h,040h,0C0h ; character 112
- GLYPH 06h,00h,00h,068h,090h,090h,070h,010h,018h ; character 113
- GLYPH 06h,00h,00h,0B0h,068h,040h,040h,040h,00h ; character 114
- GLYPH 05h,00h,00h,070h,080h,060h,010h,0E0h,00h ; character 115
- GLYPH 05h,040h,040h,0E0h,040h,040h,050h,020h,00h ; character 116
- GLYPH 06h,00h,00h,090h,090h,090h,090h,068h,00h ; character 117
- GLYPH 06h,00h,00h,088h,088h,088h,050h,020h,00h ; character 118
- GLYPH 06h,00h,00h,088h,088h,0A8h,0D8h,088h,00h ; character 119
- GLYPH 06h,00h,00h,088h,050h,020h,050h,088h,00h ; character 120
- GLYPH 05h,00h,00h,090h,090h,090h,070h,010h,0E0h ; character 121
- GLYPH 05h,00h,00h,0F0h,020h,040h,080h,0F0h,00h ; character 122
+        PUBLIC  _g_font
+
+GLYPH   MACRO   w, r0, r1, r2, r3, r4, r5, r6, r7
+        DB      w, r0, r1, r2, r3, r4, r5, r6, r7
+        ENDM
+
+_g_font LABEL   BYTE                     ; struct Glyph far[]
+        GLYPH   6, 0, 0, 0, 0, 0, 0, 0, 0  ; character 32
+        GLYPH   3, 80h, 80h, 80h, 80h, 80h, 0, 80h, 0  ; character 33
+        GLYPH   6, 90h, 90h, 90h, 0, 0, 0, 0, 0  ; character 34
+        GLYPH   6, 28h, 50h, 0F8h, 50h, 0F8h, 50h, 0A0h, 0  ; character 35
+        GLYPH   5, 20h, 70h, 80h, 60h, 10h, 0E0h, 20h, 0  ; character 36
+        GLYPH   6, 0C8h, 0C8h, 10h, 20h, 40h, 98h, 98h, 0  ; character 37
+        GLYPH   6, 30h, 50h, 20h, 40h, 0A8h, 90h, 68h, 0  ; character 38
+        GLYPH   4, 20h, 20h, 40h, 0, 0, 0, 0, 0  ; character 39
+        GLYPH   6, 20h, 40h, 80h, 80h, 80h, 40h, 20h, 0  ; character 40
+        GLYPH   6, 40h, 20h, 10h, 10h, 10h, 20h, 40h, 0  ; character 41
+        GLYPH   6, 0, 0A8h, 70h, 0F8h, 70h, 0A8h, 0, 0  ; character 42
+        GLYPH   6, 0, 20h, 20h, 0F8h, 20h, 20h, 0, 0  ; character 43
+        GLYPH   4, 0, 0, 0, 0, 0, 40h, 40h, 80h  ; character 44
+        GLYPH   6, 0, 0, 0, 78h, 0, 0, 0, 0  ; character 45
+        GLYPH   4, 0, 0, 0, 0, 0, 40h, 40h, 0  ; character 46
+        GLYPH   6, 8, 8, 10h, 20h, 40h, 80h, 80h, 0  ; character 47
+        GLYPH   6, 0, 70h, 88h, 88h, 88h, 88h, 70h, 0  ; character 48
+        GLYPH   5, 0, 20h, 60h, 20h, 20h, 20h, 0F0h, 0  ; character 49
+        GLYPH   6, 0, 70h, 88h, 10h, 40h, 88h, 0F8h, 0  ; character 50
+        GLYPH   6, 0, 70h, 88h, 30h, 8, 88h, 70h, 0  ; character 51
+        GLYPH   6, 0, 30h, 50h, 90h, 0F8h, 10h, 10h, 0  ; character 52
+        GLYPH   6, 0, 0F8h, 80h, 0F0h, 8, 88h, 70h, 0  ; character 53
+        GLYPH   6, 0, 70h, 80h, 0F0h, 88h, 88h, 70h, 0  ; character 54
+        GLYPH   6, 0, 0F8h, 88h, 10h, 20h, 20h, 20h, 0  ; character 55
+        GLYPH   6, 0, 70h, 88h, 70h, 88h, 88h, 70h, 0  ; character 56
+        GLYPH   6, 0, 70h, 88h, 78h, 8, 8, 70h, 0  ; character 57
+        GLYPH   4, 0, 40h, 40h, 0, 0, 40h, 40h, 0  ; character 58
+        GLYPH   4, 0, 40h, 40h, 0, 0, 40h, 40h, 80h  ; character 59
+        GLYPH   6, 8, 10h, 20h, 40h, 20h, 10h, 8, 0  ; character 60
+        GLYPH   6, 0, 0, 78h, 0, 0, 78h, 0, 0  ; character 61
+        GLYPH   6, 40h, 20h, 10h, 8, 10h, 20h, 40h, 0  ; character 62
+        GLYPH   6, 30h, 48h, 8, 10h, 20h, 0, 20h, 0  ; character 63
+        GLYPH   6, 70h, 88h, 0B8h, 0A8h, 0B8h, 80h, 78h, 0  ; character 64
+        GLYPH   5, 60h, 90h, 90h, 0F0h, 90h, 90h, 90h, 0  ; character 65
+        GLYPH   6, 0F0h, 48h, 48h, 70h, 48h, 48h, 0F0h, 0  ; character 66
+        GLYPH   5, 60h, 90h, 80h, 80h, 80h, 90h, 60h, 0  ; character 67
+        GLYPH   6, 0F0h, 48h, 48h, 48h, 48h, 48h, 0F0h, 0  ; character 68
+        GLYPH   6, 0F8h, 48h, 40h, 70h, 40h, 48h, 0F8h, 0  ; character 69
+        GLYPH   6, 0F8h, 48h, 40h, 70h, 40h, 40h, 0E0h, 0  ; character 70
+        GLYPH   6, 70h, 88h, 80h, 80h, 98h, 88h, 78h, 0  ; character 71
+        GLYPH   5, 90h, 90h, 90h, 0F0h, 90h, 90h, 90h, 0  ; character 72
+        GLYPH   4, 0E0h, 40h, 40h, 40h, 40h, 40h, 0E0h, 0  ; character 73
+        GLYPH   6, 38h, 10h, 10h, 10h, 10h, 90h, 60h, 0  ; character 74
+        GLYPH   6, 0C8h, 48h, 50h, 60h, 50h, 48h, 0C8h, 0  ; character 75
+        GLYPH   6, 0E0h, 40h, 40h, 40h, 40h, 48h, 0F8h, 0  ; character 76
+        GLYPH   6, 88h, 0D8h, 0A8h, 0A8h, 88h, 88h, 88h, 0  ; character 77
+        GLYPH   6, 88h, 88h, 0C8h, 0A8h, 98h, 88h, 88h, 0  ; character 78
+        GLYPH   5, 60h, 90h, 90h, 90h, 90h, 90h, 60h, 0  ; character 79
+        GLYPH   6, 0F0h, 48h, 48h, 70h, 40h, 40h, 0E0h, 0  ; character 80
+        GLYPH   6, 70h, 88h, 88h, 88h, 0A8h, 0B8h, 70h, 8  ; character 81
+        GLYPH   6, 0F0h, 48h, 48h, 70h, 50h, 50h, 0C8h, 0  ; character 82
+        GLYPH   6, 70h, 88h, 0C0h, 30h, 8, 88h, 70h, 0  ; character 83
+        GLYPH   6, 0F8h, 0A8h, 20h, 20h, 20h, 20h, 70h, 0  ; character 84
+        GLYPH   5, 90h, 90h, 90h, 90h, 90h, 90h, 60h, 0  ; character 85
+        GLYPH   6, 88h, 88h, 88h, 88h, 88h, 50h, 20h, 0  ; character 86
+        GLYPH   6, 88h, 88h, 88h, 0A8h, 0A8h, 0D8h, 88h, 0  ; character 87
+        GLYPH   6, 88h, 88h, 50h, 20h, 50h, 88h, 88h, 0  ; character 88
+        GLYPH   6, 88h, 88h, 88h, 70h, 20h, 20h, 70h, 0  ; character 89
+        GLYPH   5, 0F0h, 90h, 20h, 40h, 80h, 90h, 0F0h, 0  ; character 90
+        GLYPH   7, 0, 0, 10h, 38h, 7Ch, 0FEh, 0, 0  ; character 91
+        GLYPH   7, 10h, 38h, 7Ch, 0FEh, 10h, 38h, 7Ch, 0FEh  ; character 92
+        GLYPH   7, 0, 0, 0FEh, 7Ch, 38h, 10h, 0, 0  ; character 93
+        GLYPH   7, 0FEh, 7Ch, 38h, 10h, 0FEh, 7Ch, 38h, 10h  ; character 94
+        GLYPH   6, 0, 0, 0, 0, 0, 0, 0, 0F8h  ; character 95
+        GLYPH   2, 0, 0, 0, 0, 0, 0, 0, 0  ; character 96
+        GLYPH   6, 0, 0, 60h, 10h, 70h, 90h, 68h, 0  ; character 97
+        GLYPH   6, 40h, 40h, 70h, 48h, 48h, 48h, 0B0h, 0  ; character 98
+        GLYPH   5, 0, 0, 60h, 90h, 80h, 90h, 60h, 0  ; character 99
+        GLYPH   6, 10h, 10h, 70h, 90h, 90h, 90h, 68h, 0  ; character 100
+        GLYPH   5, 0, 0, 60h, 90h, 0F0h, 80h, 60h, 0  ; character 101
+        GLYPH   5, 20h, 50h, 40h, 0E0h, 40h, 40h, 0C0h, 0  ; character 102
+        GLYPH   6, 0, 0, 68h, 90h, 90h, 70h, 10h, 70h  ; character 103
+        GLYPH   6, 0C0h, 40h, 70h, 48h, 48h, 48h, 48h, 0  ; character 104
+        GLYPH   4, 40h, 0, 0C0h, 40h, 40h, 40h, 60h, 0  ; character 105
+        GLYPH   5, 10h, 0, 30h, 10h, 10h, 90h, 90h, 60h  ; character 106
+        GLYPH   6, 0C0h, 40h, 48h, 50h, 60h, 50h, 48h, 0  ; character 107
+        GLYPH   4, 0C0h, 40h, 40h, 40h, 40h, 40h, 60h, 0  ; character 108
+        GLYPH   6, 0, 0, 0D0h, 0A8h, 0A8h, 0A8h, 0A8h, 0  ; character 109
+        GLYPH   5, 0, 0, 0E0h, 90h, 90h, 90h, 90h, 0  ; character 110
+        GLYPH   5, 0, 0, 60h, 90h, 90h, 90h, 60h, 0  ; character 111
+        GLYPH   6, 0, 0, 0B0h, 48h, 48h, 70h, 40h, 0C0h  ; character 112
+        GLYPH   6, 0, 0, 68h, 90h, 90h, 70h, 10h, 18h  ; character 113
+        GLYPH   6, 0, 0, 0B0h, 68h, 40h, 40h, 40h, 0  ; character 114
+        GLYPH   5, 0, 0, 70h, 80h, 60h, 10h, 0E0h, 0  ; character 115
+        GLYPH   5, 40h, 40h, 0E0h, 40h, 40h, 50h, 20h, 0  ; character 116
+        GLYPH   6, 0, 0, 90h, 90h, 90h, 90h, 68h, 0  ; character 117
+        GLYPH   6, 0, 0, 88h, 88h, 88h, 50h, 20h, 0  ; character 118
+        GLYPH   6, 0, 0, 88h, 88h, 0A8h, 0D8h, 88h, 0  ; character 119
+        GLYPH   6, 0, 0, 88h, 50h, 20h, 50h, 88h, 0  ; character 120
+        GLYPH   5, 0, 0, 90h, 90h, 90h, 70h, 10h, 0E0h  ; character 121
+        GLYPH   5, 0, 0, 0F0h, 20h, 40h, 80h, 0F0h, 0  ; character 122
 FONTDATA ENDS
-END
+
+        END

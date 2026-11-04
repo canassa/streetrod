@@ -1,304 +1,304 @@
-; music word instruction stream. Reconstructed as source records from the shipped data.
+; Music word instruction stream.
 SONG SEGMENT PARA PUBLIC 'FAR_DATA'
-PUBLIC SONG_BASE
-SONG_BASE LABEL BYTE
-PUBLIC _g_2e6b_0000
-_g_2e6b_0000 EQU SONG_BASE+00h ; int far @[]
- DW 00h,00h,05h,0474h,05h,054Bh,05h,05F1h ; sound words +0000
- DW 05h,06ACh,05h,0711h,05h,08E8h,01Bh,00h ; sound words +0010
- DW 05h,02A5h,05h,00h,05h,02F8h,05h,00h ; sound words +0020
- DW 05h,023Ah,063h,00h,00h,01h,0Bh,0D58h ; sound words +0030
- DW 0Bh,08E8h,05h,01AB1h,05h,0A97h,0Bh,0D58h ; sound words +0040
- DW 05h,01AB1h,05h,0A97h,010h,01AB1h,05h,011D0h ; sound words +0050
- DW 0Bh,0152Fh,0Bh,0D58h,0Bh,08E8h,05h,027FEh ; sound words +0060
- DW 05h,0B39h,0Bh,0D58h,05h,027FEh,05h,0B39h ; sound words +0070
- DW 010h,027FEh,05h,01672h,0Bh,01AB1h,0Bh,0D58h ; sound words +0080
- DW 0Bh,08E8h,05h,01AB1h,05h,08E8h,0Bh,09FFh ; sound words +0090
- DW 05h,01AB1h,05h,09FFh,0Bh,0A97h,05h,017C7h ; sound words +00A0
- DW 05h,0A97h,0Bh,0D58h,05h,01931h,05h,0D58h ; sound words +00B0
- DW 0Bh,01AB1h,05h,00h,05h,01AB1h,010h,01672h ; sound words +00C0
- DW 05h,0152Fh,0Bh,01AB1h,05h,00h,05h,01AB1h ; sound words +00D0
- DW 0Bh,01FBEh,05h,06ACh,05h,023A1h,0Bh,0474h ; sound words +00E0
- DW 05h,01AB1h,05h,054Bh,0Bh,06ACh,05h,01AB1h ; sound words +00F0
- DW 05h,054Bh,010h,01AB1h,05h,011D0h,0Bh,0152Fh ; sound words +0100
- DW 0Bh,06ACh,0Bh,0474h,05h,027FEh,05h,059Ch ; sound words +0110
- DW 0Bh,06ACh,05h,027FEh,05h,059Ch,010h,027FEh ; sound words +0120
- DW 05h,01672h,0Bh,01AB1h,0Bh,06ACh,0Bh,0474h ; sound words +0130
- DW 05h,01AB1h,05h,0474h,0Bh,04FFh,05h,01AB1h ; sound words +0140
- DW 05h,04FFh,0Bh,054Bh,05h,01AB1h,05h,054Bh ; sound words +0150
- DW 0Bh,04FFh,05h,01AB1h,05h,0474h,010h,023A1h ; sound words +0160
- DW 05h,01DF6h,010h,01C47h,05h,011D0h,0Bh,013FFh ; sound words +0170
- DW 05h,00h,05h,013FFh,0Bh,011D0h,05h,0D58h ; sound words +0180
- DW 05h,023A1h,0Bh,0BE3h,05h,027FEh,05h,0BE3h ; sound words +0190
- DW 0Bh,0D58h,05h,027FEh,05h,0BE3h,010h,027FEh ; sound words +01A0
- DW 05h,01AB1h,0Bh,01FBEh,0Bh,0D58h,0Bh,0B39h ; sound words +01B0
- DW 05h,025BFh,05h,0B39h,0Bh,0D58h,05h,025BFh ; sound words +01C0
- DW 05h,0B39h,010h,025BFh,05h,01672h,0Bh,01AB1h ; sound words +01D0
- DW 0Bh,0D58h,0Bh,08E8h,05h,01AB1h,05h,08E8h ; sound words +01E0
- DW 0Bh,09FFh,05h,01AB1h,05h,09FFh,0Bh,0A97h ; sound words +01F0
- DW 05h,017C7h,05h,0A97h,0Bh,0D58h,05h,01931h ; sound words +0200
- DW 05h,0D58h,0Bh,01AB1h,05h,00h,05h,01AB1h ; sound words +0210
- DW 010h,01672h,05h,0152Fh,0Bh,01AB1h,05h,00h ; sound words +0220
- DW 05h,01AB1h,0Bh,01FBEh,05h,0D58h,05h,023A1h ; sound words +0230
- DW 05h,059Ch,05h,054Bh,05h,01AB1h,05h,06ACh ; sound words +0240
- DW 05h,059Ch,05h,054Bh,05h,01AB1h,05h,06ACh ; sound words +0250
- DW 05h,059Ch,05h,054Bh,05h,01AB1h,05h,06ACh ; sound words +0260
- DW 05h,059Ch,05h,054Bh,05h,01AB1h,05h,06ACh ; sound words +0270
- DW 0Bh,08E8h,05h,027FEh,05h,09FFh,0Bh,08E8h ; sound words +0280
- DW 05h,027FEh,05h,08E8h,010h,027FEh,05h,01672h ; sound words +0290
- DW 0Bh,01AB1h,0Bh,0D58h,05h,0B39h,05h,0A97h ; sound words +02A0
- DW 05h,01AB1h,05h,0D58h,05h,0B39h,05h,0A97h ; sound words +02B0
- DW 05h,01AB1h,05h,0D58h,0Bh,0BE3h,05h,017C7h ; sound words +02C0
- DW 05h,0D58h,0Bh,010D0h,05h,01931h,05h,0D58h ; sound words +02D0
- DW 0Bh,01AB1h,05h,00h,05h,01AB1h,010h,01672h ; sound words +02E0
- DW 05h,0152Fh,0Bh,01AB1h,05h,00h,05h,01AB1h ; sound words +02F0
- DW 0Bh,01FBEh,05h,0D58h,05h,023A1h,0Bh,08E8h ; sound words +0300
- DW 05h,01AB1h,05h,0A97h,0Bh,0D58h,05h,01AB1h ; sound words +0310
- DW 05h,0D58h,010h,01AB1h,05h,011D0h,0Bh,0152Fh ; sound words +0320
- DW 0Bh,0D58h,0Bh,08E8h,05h,027FEh,05h,09FFh ; sound words +0330
- DW 0Bh,0B39h,05h,027FEh,05h,0B39h,010h,027FEh ; sound words +0340
- DW 05h,01672h,0Bh,01AB1h,0Bh,06ACh,05h,059Ch ; sound words +0350
- DW 05h,054Bh,05h,01AB1h,05h,06ACh,05h,059Ch ; sound words +0360
- DW 05h,054Bh,05h,01AB1h,05h,06ACh,05h,059Ch ; sound words +0370
- DW 05h,054Bh,05h,01AB1h,05h,06ACh,05h,0711h ; sound words +0380
- DW 05h,06ACh,05h,01AB1h,05h,0868h,010h,08E8h ; sound words +0390
- DW 05h,01DF6h,010h,01C47h,05h,011D0h,0Bh,013FFh ; sound words +03A0
- DW 05h,00h,05h,013FFh,0Bh,011D0h,05h,0D58h ; sound words +03B0
- DW 05h,023A1h,0Bh,0B39h,05h,027FEh,05h,0D58h ; sound words +03C0
- DW 0Bh,0B39h,05h,027FEh,05h,0D58h,010h,027FEh ; sound words +03D0
- DW 05h,01672h,0Bh,01AB1h,0Bh,06ACh,05h,05F1h ; sound words +03E0
- DW 05h,059Ch,05h,025BFh,05h,06ACh,05h,05F1h ; sound words +03F0
- DW 05h,059Ch,05h,025BFh,05h,06ACh,010h,059Ch ; sound words +0400
- DW 05h,01672h,0Bh,01AB1h,0Bh,0D58h,0Bh,08E8h ; sound words +0410
- DW 05h,01AB1h,05h,0D58h,0Bh,096Fh,05h,01AB1h ; sound words +0420
- DW 05h,09FFh,0Bh,0A97h,05h,017C7h,05h,0D58h ; sound words +0430
- DW 0Bh,010D0h,05h,01931h,05h,0EFAh,010h,0D58h ; sound words +0440
- DW 05h,012DFh,010h,011D0h,05h,01931h,016h,01AB1h ; sound words +0450
- DW 0Bh,00h,00h,01h,063h,00h,00h,01h ; sound words +0460
- DW 05h,0474h,05h,054Bh,05h,05F1h,05h,06ACh ; sound words +0470
- DW 05h,0711h,05h,08E8h,01Bh,00h,05h,02A5h ; sound words +0480
- DW 05h,00h,05h,02F8h,05h,00h,05h,023Ah ; sound words +0490
- DW 063h,00h,00h,01h,012h,04741h,06h,00h ; sound words +04A0
- DW 012h,04741h,06h,0388Eh,0Ch,02F8Fh,06h,00h ; sound words +04B0
- DW 06h,02F8Fh,012h,0388Eh,06h,02F8Fh,012h,04741h ; sound words +04C0
- DW 06h,00h,012h,04741h,06h,0388Eh,0Ch,02F8Fh ; sound words +04D0
- DW 06h,00h,06h,02F8Fh,012h,0388Eh,06h,02F8Fh ; sound words +04E0
- DW 0Ch,04741h,0Ch,023A1h,0Ch,04741h,06h,023A1h ; sound words +04F0
- DW 06h,0388Eh,0Ch,02F8Fh,06h,023A1h,06h,02F8Fh ; sound words +0500
- DW 0Ch,0388Eh,06h,023A1h,06h,02F8Fh,0Ch,04741h ; sound words +0510
- DW 0Ch,027FEh,0Ch,04741h,06h,027FEh,06h,0388Eh ; sound words +0520
- DW 0Ch,02F8Fh,06h,027FEh,06h,02F8Fh,0Ch,0388Eh ; sound words +0530
- DW 06h,027FEh,06h,02F8Fh,012h,03562h,06h,00h ; sound words +0540
- DW 012h,03562h,06h,02A5Fh,0Ch,023A1h,06h,00h ; sound words +0550
- DW 06h,023A1h,012h,02A5Fh,06h,023A1h,0Ch,03562h ; sound words +0560
- DW 0Ch,01AB1h,0Ch,03562h,06h,01AB1h,06h,02A5Fh ; sound words +0570
- DW 0Ch,023A1h,06h,00h,06h,023A1h,012h,02A5Fh ; sound words +0580
- DW 06h,023A1h,0Ch,04741h,0Ch,023A1h,0Ch,04741h ; sound words +0590
- DW 06h,023A1h,06h,0388Eh,0Ch,02F8Fh,06h,00h ; sound words +05A0
- DW 06h,02F8Fh,012h,0388Eh,06h,02F8Fh,0Ch,04741h ; sound words +05B0
- DW 0Ch,011D0h,0Ch,04741h,06h,011D0h,06h,0388Eh ; sound words +05C0
- DW 0Ch,02F8Fh,06h,00h,06h,02F8Fh,012h,0388Eh ; sound words +05D0
- DW 06h,02F8Fh,0Ch,03562h,0Ch,01AB1h,0Ch,03562h ; sound words +05E0
- DW 06h,01AB1h,06h,02A5Fh,0Ch,023A1h,06h,00h ; sound words +05F0
- DW 06h,023A1h,012h,02A5Fh,06h,023A1h,0Ch,03562h ; sound words +0600
- DW 0Ch,011D0h,0Ch,03562h,06h,011D0h,06h,02A5Fh ; sound words +0610
- DW 0Ch,023A1h,06h,00h,06h,023A1h,012h,02A5Fh ; sound words +0620
- DW 06h,023A1h,012h,02F8Fh,06h,00h,0Ch,02F8Fh ; sound words +0630
- DW 06h,00h,06h,025BFh,0Ch,01FBEh,06h,00h ; sound words +0640
- DW 06h,01FBEh,012h,025BFh,06h,03F7Bh,0Ch,02F8Fh ; sound words +0650
- DW 0Ch,017C7h,0Ch,02F8Fh,06h,017C7h,06h,025BFh ; sound words +0660
- DW 0Ch,01FBEh,06h,01AB1h,06h,01FBEh,0Ch,025BFh ; sound words +0670
- DW 06h,01AB1h,06h,01FBEh,0Ch,04741h,0Ch,011D0h ; sound words +0680
- DW 0Ch,04741h,06h,0BE3h,06h,0388Eh,0Ch,02F8Fh ; sound words +0690
- DW 06h,00h,06h,02F8Fh,012h,0388Eh,06h,02F8Fh ; sound words +06A0
- DW 0Ch,04741h,0Ch,011D0h,0Ch,04741h,06h,011D0h ; sound words +06B0
- DW 06h,0388Eh,0Ch,02F8Fh,06h,00h,06h,02F8Fh ; sound words +06C0
- DW 012h,0388Eh,06h,02F8Fh,0Ch,04741h,0Ch,011D0h ; sound words +06D0
- DW 0Ch,04741h,06h,0BE3h,06h,0388Eh,0Ch,02F8Fh ; sound words +06E0
- DW 06h,00h,06h,02F8Fh,012h,0388Eh,06h,02F8Fh ; sound words +06F0
- DW 0Ch,04741h,0Ch,011D0h,0Ch,04741h,06h,09FFh ; sound words +0700
- DW 06h,0388Eh,0Ch,02F8Fh,06h,09FFh,06h,0BE3h ; sound words +0710
- DW 012h,0E23h,06h,0BE3h,0Ch,03562h,0Ch,0D58h ; sound words +0720
- DW 0Ch,03562h,06h,0D58h,06h,02A5Fh,0Ch,023A1h ; sound words +0730
- DW 06h,00h,06h,023A1h,012h,02A5Fh,06h,023A1h ; sound words +0740
- DW 0Ch,03562h,0Ch,011D0h,0Ch,03562h,06h,011D0h ; sound words +0750
- DW 06h,02A5Fh,0Ch,023A1h,06h,00h,06h,023A1h ; sound words +0760
- DW 012h,02A5Fh,06h,023A1h,0Ch,04741h,0Ch,011D0h ; sound words +0770
- DW 0Ch,04741h,06h,0BE3h,06h,0388Eh,0Ch,02F8Fh ; sound words +0780
- DW 06h,00h,06h,02F8Fh,012h,0388Eh,06h,02F8Fh ; sound words +0790
- DW 0Ch,04741h,0Ch,011D0h,0Ch,04741h,06h,08E8h ; sound words +07A0
- DW 06h,0388Eh,0Ch,02F8Fh,06h,09FFh,06h,0BE3h ; sound words +07B0
- DW 012h,0E23h,06h,0BE3h,0Ch,03562h,0Ch,0A97h ; sound words +07C0
- DW 0Ch,03562h,06h,0A97h,06h,02A5Fh,0Ch,023A1h ; sound words +07D0
- DW 06h,00h,06h,023A1h,012h,02A5Fh,06h,023A1h ; sound words +07E0
- DW 0Ch,03562h,0Ch,0A97h,0Ch,03562h,06h,0D58h ; sound words +07F0
- DW 06h,02A5Fh,0Ch,023A1h,06h,0D58h,06h,023A1h ; sound words +0800
- DW 012h,02A5Fh,06h,023A1h,0Ch,02F8Fh,0Ch,0BE3h ; sound words +0810
- DW 0Ch,02F8Fh,06h,0BE3h,06h,025BFh,0Ch,01FBEh ; sound words +0820
- DW 06h,00h,06h,01FBEh,012h,025BFh,06h,03F7Bh ; sound words +0830
- DW 0Ch,02F8Fh,0Ch,0BE3h,0Ch,02F8Fh,06h,0D58h ; sound words +0840
- DW 06h,025BFh,0Ch,01FBEh,06h,0D58h,06h,01FBEh ; sound words +0850
- DW 012h,025BFh,06h,01FBEh,00h,01h,012h,04741h ; sound words +0860
- DW 06h,00h,012h,04741h,06h,0388Eh,0Ch,02F8Fh ; sound words +0870
- DW 06h,00h,06h,02F8Fh,012h,0388Eh,06h,02F8Fh ; sound words +0880
- DW 012h,04741h,06h,00h,012h,04741h,06h,0388Eh ; sound words +0890
- DW 0Ch,02F8Fh,06h,00h,06h,02F8Fh,012h,0388Eh ; sound words +08A0
- DW 06h,02F8Fh,012h,04741h,06h,00h,012h,04741h ; sound words +08B0
- DW 06h,0388Eh,018h,04741h,063h,00h,00h,01h ; sound words +08C0
- DW 05h,0474h,05h,054Bh,05h,05F1h,05h,06ACh ; sound words +08D0
- DW 05h,0711h,05h,08E8h,01Bh,00h,05h,02A5h ; sound words +08E0
- DW 05h,00h,05h,02F8h,05h,00h,05h,023Ah ; sound words +08F0
- DW 063h,00h,00h,01h,0Ch,011D0h,06h,08E8h ; sound words +0900
- DW 06h,08E8h,06h,0711h,06h,0E23h,0Ch,05F1h ; sound words +0910
- DW 0Ch,054Bh,06h,0711h,06h,08E8h,06h,0BE3h ; sound words +0920
- DW 06h,0BE3h,06h,08E8h,06h,0711h,0Ch,011D0h ; sound words +0930
- DW 06h,08E8h,06h,08E8h,06h,0711h,06h,0E23h ; sound words +0940
- DW 0Ch,05F1h,0Ch,054Bh,06h,05F1h,06h,0BE3h ; sound words +0950
- DW 06h,054Bh,06h,06ACh,06h,05F1h,06h,0E23h ; sound words +0960
- DW 0Ch,0152Fh,06h,08E8h,06h,054Bh,06h,08E8h ; sound words +0970
- DW 06h,011D0h,0Ch,0711h,0Ch,06ACh,06h,0711h ; sound words +0980
- DW 06h,08E8h,06h,0E23h,06h,0A97h,06h,08E8h ; sound words +0990
- DW 06h,0711h,0Ch,0152Fh,06h,054Bh,06h,05F1h ; sound words +09A0
- DW 06h,054Bh,06h,011D0h,0Ch,05F1h,0Ch,054Bh ; sound words +09B0
- DW 06h,05F1h,06h,0E23h,06h,0711h,06h,011D0h ; sound words +09C0
- DW 06h,07EFh,06h,096Fh,00h,01h,0Ch,011D0h ; sound words +09D0
- DW 06h,0711h,06h,05F1h,06h,0711h,06h,0E23h ; sound words +09E0
- DW 0Ch,07EFh,0Ch,08E8h,06h,0711h,06h,05F1h ; sound words +09F0
- DW 0Ch,0BE3h,0Ch,08E8h,0Ch,017C7h,0Ch,07EFh ; sound words +0A00
- DW 06h,07EFh,06h,012DFh,0Ch,07EFh,0Ch,0711h ; sound words +0A10
- DW 06h,07EFh,06h,0FDFh,06h,08E8h,06h,05F1h ; sound words +0A20
- DW 06h,07EFh,06h,096Fh,0Ch,011D0h,06h,05F1h ; sound words +0A30
- DW 06h,05F1h,06h,0711h,06h,0E23h,0Ch,06ACh ; sound words +0A40
- DW 0Ch,0711h,06h,0711h,06h,08E8h,0Ch,0BE3h ; sound words +0A50
- DW 0Ch,08E8h,0Ch,01AB1h,0Ch,06ACh,06h,06ACh ; sound words +0A60
- DW 06h,0152Fh,0Ch,06ACh,0Ch,05F1h,06h,06ACh ; sound words +0A70
- DW 06h,011D0h,06h,0711h,06h,08E8h,06h,06ACh ; sound words +0A80
- DW 06h,0A97h,0Ch,011D0h,0Ch,054Bh,06h,05F1h ; sound words +0A90
- DW 06h,0152Fh,0Ch,0711h,0Ch,07EFh,06h,08E8h ; sound words +0AA0
- DW 06h,011D0h,0Ch,0A97h,06h,0BE3h,06h,0FDFh ; sound words +0AB0
- DW 0Ch,07EFh,0Ch,0711h,06h,07EFh,06h,017C7h ; sound words +0AC0
- DW 0Ch,0711h,0Ch,07EFh,06h,08E8h,06h,012DFh ; sound words +0AD0
- DW 0Ch,0A97h,0Ch,0BE3h,00h,01h,0Ch,011D0h ; sound words +0AE0
- DW 06h,08E8h,06h,08E8h,06h,0711h,06h,0E23h ; sound words +0AF0
- DW 0Ch,05F1h,0Ch,054Bh,06h,0711h,06h,08E8h ; sound words +0B00
- DW 06h,0BE3h,06h,0BE3h,06h,08E8h,06h,0711h ; sound words +0B10
- DW 0Ch,011D0h,06h,08E8h,06h,08E8h,06h,0711h ; sound words +0B20
- DW 06h,0E23h,0Ch,05F1h,0Ch,054Bh,06h,05F1h ; sound words +0B30
- DW 06h,0BE3h,06h,054Bh,06h,06ACh,06h,05F1h ; sound words +0B40
- DW 06h,0E23h,0Ch,0152Fh,06h,08E8h,06h,054Bh ; sound words +0B50
- DW 06h,08E8h,06h,011D0h,0Ch,0711h,0Ch,06ACh ; sound words +0B60
- DW 06h,0711h,06h,08E8h,06h,0E23h,06h,0A97h ; sound words +0B70
- DW 06h,08E8h,06h,0711h,0Ch,0152Fh,06h,054Bh ; sound words +0B80
- DW 06h,05F1h,06h,054Bh,06h,011D0h,0Ch,05F1h ; sound words +0B90
- DW 0Ch,054Bh,06h,05F1h,06h,0E23h,06h,0711h ; sound words +0BA0
- DW 06h,011D0h,06h,07EFh,06h,096Fh,00h,01h ; sound words +0BB0
- DW 0Ch,011D0h,0Ch,0711h,06h,0711h,06h,0E23h ; sound words +0BC0
- DW 0Ch,0711h,0Ch,0711h,06h,07EFh,06h,0BE3h ; sound words +0BD0
- DW 0Ch,08E8h,0Ch,07EFh,0Ch,017C7h,06h,07EFh ; sound words +0BE0
- DW 06h,05F1h,0Ch,07EFh,0Ch,012DFh,0Ch,07EFh ; sound words +0BF0
- DW 06h,07EFh,06h,0FDFh,0Ch,07EFh,0Ch,017C7h ; sound words +0C00
- DW 0Ch,011D0h,0Ch,05F1h,06h,05F1h,06h,0E23h ; sound words +0C10
- DW 0Ch,05F1h,0Ch,05F1h,06h,06ACh,06h,0BE3h ; sound words +0C20
- DW 0Ch,0711h,0Ch,05F1h,0Ch,01AB1h,06h,08E8h ; sound words +0C30
- DW 06h,05F1h,0Ch,05F1h,0Ch,0152Fh,0Ch,05F1h ; sound words +0C40
- DW 06h,08E8h,06h,011D0h,0Ch,05F1h,0Ch,011D0h ; sound words +0C50
- DW 0Ch,0474h,0Ch,0711h,0Ch,0474h,0Ch,0152Fh ; sound words +0C60
- DW 0Ch,0474h,06h,08E8h,06h,0E23h,0Ch,0474h ; sound words +0C70
- DW 0Ch,0A97h,0Ch,0474h,0Ch,0FDFh,06h,04B7h ; sound words +0C80
- DW 06h,0D58h,0Ch,054Bh,0Ch,04B7h,06h,0474h ; sound words +0C90
- DW 06h,012DFh,0Ch,0474h,0Ch,0FDFh,00h,01h ; sound words +0CA0
- DW 0Ch,011D0h,06h,08E8h,06h,08E8h,06h,0711h ; sound words +0CB0
- DW 06h,0E23h,0Ch,05F1h,0Ch,0474h,06h,0E23h ; sound words +0CC0
- DW 06h,011D0h,0Ch,054Bh,0Ch,05F1h,018h,0474h ; sound words +0CD0
- DW 018h,08E8h,063h,00h,00h,01h,05h,0474h ; sound words +0CE0
- DW 05h,054Bh,05h,05F1h,05h,06ACh,05h,0711h ; sound words +0CF0
- DW 05h,08E8h,01Bh,00h,05h,02A5h,05h,00h ; sound words +0D00
- DW 05h,02F8h,05h,00h,05h,023Ah,063h,00h ; sound words +0D10
- DW 00h,01h,014h,02A5Fh,0Ah,021A1h,0Ah,01931h ; sound words +0D20
- DW 014h,01C47h,014h,01931h,014h,02A5Fh,0Ah,0A97h ; sound words +0D30
- DW 05h,01931h,05h,0A97h,0Ah,01C47h,0Ah,0E23h ; sound words +0D40
- DW 0Ah,01931h,0Ah,0A97h,05h,02A5Fh,05h,0E23h ; sound words +0D50
- DW 05h,0C98h,05h,0A97h,0Ah,021A1h,0Ah,01931h ; sound words +0D60
- DW 014h,01C47h,014h,01931h,014h,02A5Fh,0Ah,0BE3h ; sound words +0D70
- DW 05h,01931h,05h,0BE3h,0Ah,01C47h,0Ah,01931h ; sound words +0D80
- DW 0Ah,01C47h,0Ah,01931h,014h,03F7Bh,0Ah,03263h ; sound words +0D90
- DW 0Ah,025BFh,014h,02A5Fh,014h,025BFh,014h,03F7Bh ; sound words +0DA0
- DW 0Ah,0A97h,05h,025BFh,05h,0A97h,0Ah,02A5Fh ; sound words +0DB0
- DW 0Ah,0FDFh,0Ah,025BFh,0Ah,0A97h,05h,02A5Fh ; sound words +0DC0
- DW 05h,0E23h,05h,0C98h,05h,0A97h,0Ah,021A1h ; sound words +0DD0
- DW 0Ah,01931h,014h,01C47h,014h,01931h,014h,02A5Fh ; sound words +0DE0
- DW 0Ah,0A97h,05h,01931h,05h,0A97h,0Ah,01C47h ; sound words +0DF0
- DW 0Ah,01931h,0Ah,01C47h,0Ah,01931h,014h,0388Eh ; sound words +0E00
- DW 0Ah,02CE3h,0Ah,021A1h,05h,025BFh,05h,012DFh ; sound words +0E10
- DW 05h,010D0h,05h,0E23h,05h,021A1h,05h,012DFh ; sound words +0E20
- DW 05h,010D0h,05h,0E23h,014h,03F7Bh,0Ah,03263h ; sound words +0E30
- DW 0Ah,025BFh,05h,02A5Fh,05h,0152Fh,05h,012DFh ; sound words +0E40
- DW 05h,0FDFh,05h,025BFh,05h,0152Fh,05h,012DFh ; sound words +0E50
- DW 05h,0FDFh,014h,02A5Fh,0Ah,0A97h,05h,01931h ; sound words +0E60
- DW 05h,0A97h,0Ah,01C47h,0Ah,01931h,0Ah,01C47h ; sound words +0E70
- DW 0Ah,01931h,0Ah,01C47h,0Ah,0E23h,0Ah,0388Eh ; sound words +0E80
- DW 0Ah,0FDFh,0Ah,03263h,0Ah,012DFh,0Ah,02CE3h ; sound words +0E90
- DW 0Ah,0E23h,00h,01h,014h,02A5Fh,0Ah,021A1h ; sound words +0EA0
- DW 0Ah,01931h,014h,01C47h,014h,01931h,014h,02A5Fh ; sound words +0EB0
- DW 0Ah,0A97h,0Ah,0152Fh,014h,02A5Fh,063h,00h ; sound words +0EC0
- DW 00h,01h,05h,0474h,05h,054Bh,05h,05F1h ; sound words +0ED0
- DW 05h,06ACh,05h,0711h,05h,08E8h,01Bh,00h ; sound words +0EE0
- DW 05h,02A5h,05h,00h,05h,02F8h,05h,00h ; sound words +0EF0
- DW 05h,023Ah,063h,00h,00h,01h,05h,0152Fh ; sound words +0F00
- DW 05h,02A5Fh,05h,0152Fh,05h,02A5Fh,05h,0152Fh ; sound words +0F10
- DW 05h,02A5Fh,05h,0152Fh,05h,02A5Fh,09h,012DFh ; sound words +0F20
- DW 09h,025BFh,09h,0152Fh,09h,02A5Fh,012h,0152Fh ; sound words +0F30
- DW 09h,012DFh,09h,025BFh,09h,01C47h,09h,0388Eh ; sound words +0F40
- DW 09h,012DFh,09h,025BFh,05h,0152Fh,05h,02A5Fh ; sound words +0F50
- DW 05h,0152Fh,05h,02A5Fh,05h,0152Fh,05h,02A5Fh ; sound words +0F60
- DW 05h,0152Fh,05h,02A5Fh,09h,012DFh,09h,025BFh ; sound words +0F70
- DW 09h,0152Fh,09h,02A5Fh,012h,0152Fh,09h,012DFh ; sound words +0F80
- DW 09h,025BFh,09h,01C47h,09h,0388Eh,09h,012DFh ; sound words +0F90
- DW 09h,025BFh,05h,01FBEh,05h,03F7Bh,05h,01FBEh ; sound words +0FA0
- DW 05h,03F7Bh,05h,01FBEh,05h,03F7Bh,05h,01FBEh ; sound words +0FB0
- DW 05h,03F7Bh,09h,01C47h,09h,0388Eh,09h,01FBEh ; sound words +0FC0
- DW 09h,03F7Bh,012h,01FBEh,09h,0152Fh,09h,02A5Fh ; sound words +0FD0
- DW 09h,01931h,09h,03263h,09h,012DFh,09h,025BFh ; sound words +0FE0
- DW 05h,0152Fh,05h,02A5Fh,05h,0152Fh,05h,02A5Fh ; sound words +0FF0
- DW 05h,0152Fh,05h,02A5Fh,05h,0152Fh,05h,02A5Fh ; sound words +1000
- DW 09h,012DFh,09h,025BFh,09h,0152Fh,09h,02A5Fh ; sound words +1010
- DW 012h,0152Fh,09h,012DFh,09h,025BFh,09h,01C47h ; sound words +1020
- DW 09h,0388Eh,09h,012DFh,09h,025BFh,05h,01C47h ; sound words +1030
- DW 05h,0388Eh,05h,01C47h,05h,0388Eh,05h,01C47h ; sound words +1040
- DW 05h,0388Eh,05h,01C47h,05h,0388Eh,09h,012DFh ; sound words +1050
- DW 09h,025BFh,09h,01C47h,09h,0388Eh,012h,01C47h ; sound words +1060
- DW 09h,01931h,09h,03263h,09h,01FBEh,09h,03F7Bh ; sound words +1070
- DW 09h,01931h,09h,03263h,05h,0152Fh,05h,02A5Fh ; sound words +1080
- DW 05h,0152Fh,05h,02A5Fh,05h,0152Fh,05h,02A5Fh ; sound words +1090
- DW 05h,0152Fh,05h,02A5Fh,09h,012DFh,09h,025BFh ; sound words +10A0
- DW 09h,0152Fh,09h,02A5Fh,012h,0152Fh,09h,02A5Fh ; sound words +10B0
- DW 09h,01C47h,09h,0152Fh,09h,0E23h,09h,0A97h ; sound words +10C0
- DW 09h,0152Fh,05h,08E8h,05h,00h,09h,08E8h ; sound words +10D0
- DW 09h,096Fh,05h,0A97h,05h,02A5Fh,09h,096Fh ; sound words +10E0
- DW 012h,0A97h,09h,08E8h,09h,02A5Fh,09h,08E8h ; sound words +10F0
- DW 09h,096Fh,05h,0A97h,05h,02A5Fh,09h,0BE3h ; sound words +1100
- DW 012h,0A97h,09h,02A5Fh,05h,08E8h,05h,00h ; sound words +1110
- DW 09h,08E8h,09h,096Fh,05h,0A97h,05h,02A5Fh ; sound words +1120
- DW 09h,096Fh,012h,0E23h,09h,0711h,09h,02A5Fh ; sound words +1130
- DW 09h,0711h,09h,0868h,05h,0BE3h,05h,02A5Fh ; sound words +1140
- DW 012h,0A97h,09h,02A5Fh,09h,01FBEh,05h,08E8h ; sound words +1150
- DW 05h,00h,09h,08E8h,09h,096Fh,05h,0A97h ; sound words +1160
- DW 05h,01FBEh,09h,096Fh,012h,0A97h,09h,08E8h ; sound words +1170
- DW 09h,01FBEh,09h,08E8h,09h,096Fh,05h,0A97h ; sound words +1180
- DW 05h,01FBEh,09h,0BE3h,012h,0A97h,09h,02A5Fh ; sound words +1190
- DW 05h,0711h,05h,00h,09h,0711h,09h,0868h ; sound words +11A0
- DW 05h,0A97h,05h,02A5Fh,09h,0A97h,012h,0C98h ; sound words +11B0
- DW 09h,0868h,09h,02A5Fh,09h,0868h,09h,0C98h ; sound words +11C0
- DW 05h,0A97h,05h,02A5Fh,012h,0A97h,09h,02A5Fh ; sound words +11D0
- DW 09h,01C47h,05h,096Fh,05h,00h,05h,096Fh ; sound words +11E0
- DW 05h,00h,09h,096Fh,05h,0868h,05h,01C47h ; sound words +11F0
- DW 09h,096Fh,012h,0B39h,09h,0E23h,09h,01FBEh ; sound words +1200
- DW 09h,096Fh,0Eh,0A97h,05h,01FBEh,012h,0A97h ; sound words +1210
- DW 09h,0C98h,09h,02A5Fh,05h,08E8h,05h,00h ; sound words +1220
- DW 09h,08E8h,09h,096Fh,05h,0A97h,05h,02A5Fh ; sound words +1230
- DW 09h,096Fh,012h,0A97h,05h,0C98h,05h,02A5Fh ; sound words +1240
- DW 025h,0A97h,012h,0152Fh,012h,02A5Fh,00h,01h ; sound words +1250
- DW 09h,03263h,012h,02A5Fh,09h,0152Fh,025h,02A5Fh ; sound words +1260
- DW 063h,00h,00h,01h,00h,00h,00h,00h ; sound words +1270
+        PUBLIC  _g_2e6b_0000
+
+_g_2e6b_0000 LABEL   WORD                ; int far[]
+        DW      0, 0, 5, 474h, 5, 54Bh, 5, 5F1h
+        DW      5, 6ACh, 5, 711h, 5, 8E8h, 1Bh, 0
+        DW      5, 2A5h, 5, 0, 5, 2F8h, 5, 0
+        DW      5, 23Ah, 63h, 0, 0, 1, 0Bh, 0D58h
+        DW      0Bh, 8E8h, 5, 1AB1h, 5, 0A97h, 0Bh, 0D58h
+        DW      5, 1AB1h, 5, 0A97h, 10h, 1AB1h, 5, 11D0h
+        DW      0Bh, 152Fh, 0Bh, 0D58h, 0Bh, 8E8h, 5, 27FEh
+        DW      5, 0B39h, 0Bh, 0D58h, 5, 27FEh, 5, 0B39h
+        DW      10h, 27FEh, 5, 1672h, 0Bh, 1AB1h, 0Bh, 0D58h
+        DW      0Bh, 8E8h, 5, 1AB1h, 5, 8E8h, 0Bh, 9FFh
+        DW      5, 1AB1h, 5, 9FFh, 0Bh, 0A97h, 5, 17C7h
+        DW      5, 0A97h, 0Bh, 0D58h, 5, 1931h, 5, 0D58h
+        DW      0Bh, 1AB1h, 5, 0, 5, 1AB1h, 10h, 1672h
+        DW      5, 152Fh, 0Bh, 1AB1h, 5, 0, 5, 1AB1h
+        DW      0Bh, 1FBEh, 5, 6ACh, 5, 23A1h, 0Bh, 474h
+        DW      5, 1AB1h, 5, 54Bh, 0Bh, 6ACh, 5, 1AB1h
+        DW      5, 54Bh, 10h, 1AB1h, 5, 11D0h, 0Bh, 152Fh
+        DW      0Bh, 6ACh, 0Bh, 474h, 5, 27FEh, 5, 59Ch
+        DW      0Bh, 6ACh, 5, 27FEh, 5, 59Ch, 10h, 27FEh
+        DW      5, 1672h, 0Bh, 1AB1h, 0Bh, 6ACh, 0Bh, 474h
+        DW      5, 1AB1h, 5, 474h, 0Bh, 4FFh, 5, 1AB1h
+        DW      5, 4FFh, 0Bh, 54Bh, 5, 1AB1h, 5, 54Bh
+        DW      0Bh, 4FFh, 5, 1AB1h, 5, 474h, 10h, 23A1h
+        DW      5, 1DF6h, 10h, 1C47h, 5, 11D0h, 0Bh, 13FFh
+        DW      5, 0, 5, 13FFh, 0Bh, 11D0h, 5, 0D58h
+        DW      5, 23A1h, 0Bh, 0BE3h, 5, 27FEh, 5, 0BE3h
+        DW      0Bh, 0D58h, 5, 27FEh, 5, 0BE3h, 10h, 27FEh
+        DW      5, 1AB1h, 0Bh, 1FBEh, 0Bh, 0D58h, 0Bh, 0B39h
+        DW      5, 25BFh, 5, 0B39h, 0Bh, 0D58h, 5, 25BFh
+        DW      5, 0B39h, 10h, 25BFh, 5, 1672h, 0Bh, 1AB1h
+        DW      0Bh, 0D58h, 0Bh, 8E8h, 5, 1AB1h, 5, 8E8h
+        DW      0Bh, 9FFh, 5, 1AB1h, 5, 9FFh, 0Bh, 0A97h
+        DW      5, 17C7h, 5, 0A97h, 0Bh, 0D58h, 5, 1931h
+        DW      5, 0D58h, 0Bh, 1AB1h, 5, 0, 5, 1AB1h
+        DW      10h, 1672h, 5, 152Fh, 0Bh, 1AB1h, 5, 0
+        DW      5, 1AB1h, 0Bh, 1FBEh, 5, 0D58h, 5, 23A1h
+        DW      5, 59Ch, 5, 54Bh, 5, 1AB1h, 5, 6ACh
+        DW      5, 59Ch, 5, 54Bh, 5, 1AB1h, 5, 6ACh
+        DW      5, 59Ch, 5, 54Bh, 5, 1AB1h, 5, 6ACh
+        DW      5, 59Ch, 5, 54Bh, 5, 1AB1h, 5, 6ACh
+        DW      0Bh, 8E8h, 5, 27FEh, 5, 9FFh, 0Bh, 8E8h
+        DW      5, 27FEh, 5, 8E8h, 10h, 27FEh, 5, 1672h
+        DW      0Bh, 1AB1h, 0Bh, 0D58h, 5, 0B39h, 5, 0A97h
+        DW      5, 1AB1h, 5, 0D58h, 5, 0B39h, 5, 0A97h
+        DW      5, 1AB1h, 5, 0D58h, 0Bh, 0BE3h, 5, 17C7h
+        DW      5, 0D58h, 0Bh, 10D0h, 5, 1931h, 5, 0D58h
+        DW      0Bh, 1AB1h, 5, 0, 5, 1AB1h, 10h, 1672h
+        DW      5, 152Fh, 0Bh, 1AB1h, 5, 0, 5, 1AB1h
+        DW      0Bh, 1FBEh, 5, 0D58h, 5, 23A1h, 0Bh, 8E8h
+        DW      5, 1AB1h, 5, 0A97h, 0Bh, 0D58h, 5, 1AB1h
+        DW      5, 0D58h, 10h, 1AB1h, 5, 11D0h, 0Bh, 152Fh
+        DW      0Bh, 0D58h, 0Bh, 8E8h, 5, 27FEh, 5, 9FFh
+        DW      0Bh, 0B39h, 5, 27FEh, 5, 0B39h, 10h, 27FEh
+        DW      5, 1672h, 0Bh, 1AB1h, 0Bh, 6ACh, 5, 59Ch
+        DW      5, 54Bh, 5, 1AB1h, 5, 6ACh, 5, 59Ch
+        DW      5, 54Bh, 5, 1AB1h, 5, 6ACh, 5, 59Ch
+        DW      5, 54Bh, 5, 1AB1h, 5, 6ACh, 5, 711h
+        DW      5, 6ACh, 5, 1AB1h, 5, 868h, 10h, 8E8h
+        DW      5, 1DF6h, 10h, 1C47h, 5, 11D0h, 0Bh, 13FFh
+        DW      5, 0, 5, 13FFh, 0Bh, 11D0h, 5, 0D58h
+        DW      5, 23A1h, 0Bh, 0B39h, 5, 27FEh, 5, 0D58h
+        DW      0Bh, 0B39h, 5, 27FEh, 5, 0D58h, 10h, 27FEh
+        DW      5, 1672h, 0Bh, 1AB1h, 0Bh, 6ACh, 5, 5F1h
+        DW      5, 59Ch, 5, 25BFh, 5, 6ACh, 5, 5F1h
+        DW      5, 59Ch, 5, 25BFh, 5, 6ACh, 10h, 59Ch
+        DW      5, 1672h, 0Bh, 1AB1h, 0Bh, 0D58h, 0Bh, 8E8h
+        DW      5, 1AB1h, 5, 0D58h, 0Bh, 96Fh, 5, 1AB1h
+        DW      5, 9FFh, 0Bh, 0A97h, 5, 17C7h, 5, 0D58h
+        DW      0Bh, 10D0h, 5, 1931h, 5, 0EFAh, 10h, 0D58h
+        DW      5, 12DFh, 10h, 11D0h, 5, 1931h, 16h, 1AB1h
+        DW      0Bh, 0, 0, 1, 63h, 0, 0, 1
+        DW      5, 474h, 5, 54Bh, 5, 5F1h, 5, 6ACh
+        DW      5, 711h, 5, 8E8h, 1Bh, 0, 5, 2A5h
+        DW      5, 0, 5, 2F8h, 5, 0, 5, 23Ah
+        DW      63h, 0, 0, 1, 12h, 4741h, 6, 0
+        DW      12h, 4741h, 6, 388Eh, 0Ch, 2F8Fh, 6, 0
+        DW      6, 2F8Fh, 12h, 388Eh, 6, 2F8Fh, 12h, 4741h
+        DW      6, 0, 12h, 4741h, 6, 388Eh, 0Ch, 2F8Fh
+        DW      6, 0, 6, 2F8Fh, 12h, 388Eh, 6, 2F8Fh
+        DW      0Ch, 4741h, 0Ch, 23A1h, 0Ch, 4741h, 6, 23A1h
+        DW      6, 388Eh, 0Ch, 2F8Fh, 6, 23A1h, 6, 2F8Fh
+        DW      0Ch, 388Eh, 6, 23A1h, 6, 2F8Fh, 0Ch, 4741h
+        DW      0Ch, 27FEh, 0Ch, 4741h, 6, 27FEh, 6, 388Eh
+        DW      0Ch, 2F8Fh, 6, 27FEh, 6, 2F8Fh, 0Ch, 388Eh
+        DW      6, 27FEh, 6, 2F8Fh, 12h, 3562h, 6, 0
+        DW      12h, 3562h, 6, 2A5Fh, 0Ch, 23A1h, 6, 0
+        DW      6, 23A1h, 12h, 2A5Fh, 6, 23A1h, 0Ch, 3562h
+        DW      0Ch, 1AB1h, 0Ch, 3562h, 6, 1AB1h, 6, 2A5Fh
+        DW      0Ch, 23A1h, 6, 0, 6, 23A1h, 12h, 2A5Fh
+        DW      6, 23A1h, 0Ch, 4741h, 0Ch, 23A1h, 0Ch, 4741h
+        DW      6, 23A1h, 6, 388Eh, 0Ch, 2F8Fh, 6, 0
+        DW      6, 2F8Fh, 12h, 388Eh, 6, 2F8Fh, 0Ch, 4741h
+        DW      0Ch, 11D0h, 0Ch, 4741h, 6, 11D0h, 6, 388Eh
+        DW      0Ch, 2F8Fh, 6, 0, 6, 2F8Fh, 12h, 388Eh
+        DW      6, 2F8Fh, 0Ch, 3562h, 0Ch, 1AB1h, 0Ch, 3562h
+        DW      6, 1AB1h, 6, 2A5Fh, 0Ch, 23A1h, 6, 0
+        DW      6, 23A1h, 12h, 2A5Fh, 6, 23A1h, 0Ch, 3562h
+        DW      0Ch, 11D0h, 0Ch, 3562h, 6, 11D0h, 6, 2A5Fh
+        DW      0Ch, 23A1h, 6, 0, 6, 23A1h, 12h, 2A5Fh
+        DW      6, 23A1h, 12h, 2F8Fh, 6, 0, 0Ch, 2F8Fh
+        DW      6, 0, 6, 25BFh, 0Ch, 1FBEh, 6, 0
+        DW      6, 1FBEh, 12h, 25BFh, 6, 3F7Bh, 0Ch, 2F8Fh
+        DW      0Ch, 17C7h, 0Ch, 2F8Fh, 6, 17C7h, 6, 25BFh
+        DW      0Ch, 1FBEh, 6, 1AB1h, 6, 1FBEh, 0Ch, 25BFh
+        DW      6, 1AB1h, 6, 1FBEh, 0Ch, 4741h, 0Ch, 11D0h
+        DW      0Ch, 4741h, 6, 0BE3h, 6, 388Eh, 0Ch, 2F8Fh
+        DW      6, 0, 6, 2F8Fh, 12h, 388Eh, 6, 2F8Fh
+        DW      0Ch, 4741h, 0Ch, 11D0h, 0Ch, 4741h, 6, 11D0h
+        DW      6, 388Eh, 0Ch, 2F8Fh, 6, 0, 6, 2F8Fh
+        DW      12h, 388Eh, 6, 2F8Fh, 0Ch, 4741h, 0Ch, 11D0h
+        DW      0Ch, 4741h, 6, 0BE3h, 6, 388Eh, 0Ch, 2F8Fh
+        DW      6, 0, 6, 2F8Fh, 12h, 388Eh, 6, 2F8Fh
+        DW      0Ch, 4741h, 0Ch, 11D0h, 0Ch, 4741h, 6, 9FFh
+        DW      6, 388Eh, 0Ch, 2F8Fh, 6, 9FFh, 6, 0BE3h
+        DW      12h, 0E23h, 6, 0BE3h, 0Ch, 3562h, 0Ch, 0D58h
+        DW      0Ch, 3562h, 6, 0D58h, 6, 2A5Fh, 0Ch, 23A1h
+        DW      6, 0, 6, 23A1h, 12h, 2A5Fh, 6, 23A1h
+        DW      0Ch, 3562h, 0Ch, 11D0h, 0Ch, 3562h, 6, 11D0h
+        DW      6, 2A5Fh, 0Ch, 23A1h, 6, 0, 6, 23A1h
+        DW      12h, 2A5Fh, 6, 23A1h, 0Ch, 4741h, 0Ch, 11D0h
+        DW      0Ch, 4741h, 6, 0BE3h, 6, 388Eh, 0Ch, 2F8Fh
+        DW      6, 0, 6, 2F8Fh, 12h, 388Eh, 6, 2F8Fh
+        DW      0Ch, 4741h, 0Ch, 11D0h, 0Ch, 4741h, 6, 8E8h
+        DW      6, 388Eh, 0Ch, 2F8Fh, 6, 9FFh, 6, 0BE3h
+        DW      12h, 0E23h, 6, 0BE3h, 0Ch, 3562h, 0Ch, 0A97h
+        DW      0Ch, 3562h, 6, 0A97h, 6, 2A5Fh, 0Ch, 23A1h
+        DW      6, 0, 6, 23A1h, 12h, 2A5Fh, 6, 23A1h
+        DW      0Ch, 3562h, 0Ch, 0A97h, 0Ch, 3562h, 6, 0D58h
+        DW      6, 2A5Fh, 0Ch, 23A1h, 6, 0D58h, 6, 23A1h
+        DW      12h, 2A5Fh, 6, 23A1h, 0Ch, 2F8Fh, 0Ch, 0BE3h
+        DW      0Ch, 2F8Fh, 6, 0BE3h, 6, 25BFh, 0Ch, 1FBEh
+        DW      6, 0, 6, 1FBEh, 12h, 25BFh, 6, 3F7Bh
+        DW      0Ch, 2F8Fh, 0Ch, 0BE3h, 0Ch, 2F8Fh, 6, 0D58h
+        DW      6, 25BFh, 0Ch, 1FBEh, 6, 0D58h, 6, 1FBEh
+        DW      12h, 25BFh, 6, 1FBEh, 0, 1, 12h, 4741h
+        DW      6, 0, 12h, 4741h, 6, 388Eh, 0Ch, 2F8Fh
+        DW      6, 0, 6, 2F8Fh, 12h, 388Eh, 6, 2F8Fh
+        DW      12h, 4741h, 6, 0, 12h, 4741h, 6, 388Eh
+        DW      0Ch, 2F8Fh, 6, 0, 6, 2F8Fh, 12h, 388Eh
+        DW      6, 2F8Fh, 12h, 4741h, 6, 0, 12h, 4741h
+        DW      6, 388Eh, 18h, 4741h, 63h, 0, 0, 1
+        DW      5, 474h, 5, 54Bh, 5, 5F1h, 5, 6ACh
+        DW      5, 711h, 5, 8E8h, 1Bh, 0, 5, 2A5h
+        DW      5, 0, 5, 2F8h, 5, 0, 5, 23Ah
+        DW      63h, 0, 0, 1, 0Ch, 11D0h, 6, 8E8h
+        DW      6, 8E8h, 6, 711h, 6, 0E23h, 0Ch, 5F1h
+        DW      0Ch, 54Bh, 6, 711h, 6, 8E8h, 6, 0BE3h
+        DW      6, 0BE3h, 6, 8E8h, 6, 711h, 0Ch, 11D0h
+        DW      6, 8E8h, 6, 8E8h, 6, 711h, 6, 0E23h
+        DW      0Ch, 5F1h, 0Ch, 54Bh, 6, 5F1h, 6, 0BE3h
+        DW      6, 54Bh, 6, 6ACh, 6, 5F1h, 6, 0E23h
+        DW      0Ch, 152Fh, 6, 8E8h, 6, 54Bh, 6, 8E8h
+        DW      6, 11D0h, 0Ch, 711h, 0Ch, 6ACh, 6, 711h
+        DW      6, 8E8h, 6, 0E23h, 6, 0A97h, 6, 8E8h
+        DW      6, 711h, 0Ch, 152Fh, 6, 54Bh, 6, 5F1h
+        DW      6, 54Bh, 6, 11D0h, 0Ch, 5F1h, 0Ch, 54Bh
+        DW      6, 5F1h, 6, 0E23h, 6, 711h, 6, 11D0h
+        DW      6, 7EFh, 6, 96Fh, 0, 1, 0Ch, 11D0h
+        DW      6, 711h, 6, 5F1h, 6, 711h, 6, 0E23h
+        DW      0Ch, 7EFh, 0Ch, 8E8h, 6, 711h, 6, 5F1h
+        DW      0Ch, 0BE3h, 0Ch, 8E8h, 0Ch, 17C7h, 0Ch, 7EFh
+        DW      6, 7EFh, 6, 12DFh, 0Ch, 7EFh, 0Ch, 711h
+        DW      6, 7EFh, 6, 0FDFh, 6, 8E8h, 6, 5F1h
+        DW      6, 7EFh, 6, 96Fh, 0Ch, 11D0h, 6, 5F1h
+        DW      6, 5F1h, 6, 711h, 6, 0E23h, 0Ch, 6ACh
+        DW      0Ch, 711h, 6, 711h, 6, 8E8h, 0Ch, 0BE3h
+        DW      0Ch, 8E8h, 0Ch, 1AB1h, 0Ch, 6ACh, 6, 6ACh
+        DW      6, 152Fh, 0Ch, 6ACh, 0Ch, 5F1h, 6, 6ACh
+        DW      6, 11D0h, 6, 711h, 6, 8E8h, 6, 6ACh
+        DW      6, 0A97h, 0Ch, 11D0h, 0Ch, 54Bh, 6, 5F1h
+        DW      6, 152Fh, 0Ch, 711h, 0Ch, 7EFh, 6, 8E8h
+        DW      6, 11D0h, 0Ch, 0A97h, 6, 0BE3h, 6, 0FDFh
+        DW      0Ch, 7EFh, 0Ch, 711h, 6, 7EFh, 6, 17C7h
+        DW      0Ch, 711h, 0Ch, 7EFh, 6, 8E8h, 6, 12DFh
+        DW      0Ch, 0A97h, 0Ch, 0BE3h, 0, 1, 0Ch, 11D0h
+        DW      6, 8E8h, 6, 8E8h, 6, 711h, 6, 0E23h
+        DW      0Ch, 5F1h, 0Ch, 54Bh, 6, 711h, 6, 8E8h
+        DW      6, 0BE3h, 6, 0BE3h, 6, 8E8h, 6, 711h
+        DW      0Ch, 11D0h, 6, 8E8h, 6, 8E8h, 6, 711h
+        DW      6, 0E23h, 0Ch, 5F1h, 0Ch, 54Bh, 6, 5F1h
+        DW      6, 0BE3h, 6, 54Bh, 6, 6ACh, 6, 5F1h
+        DW      6, 0E23h, 0Ch, 152Fh, 6, 8E8h, 6, 54Bh
+        DW      6, 8E8h, 6, 11D0h, 0Ch, 711h, 0Ch, 6ACh
+        DW      6, 711h, 6, 8E8h, 6, 0E23h, 6, 0A97h
+        DW      6, 8E8h, 6, 711h, 0Ch, 152Fh, 6, 54Bh
+        DW      6, 5F1h, 6, 54Bh, 6, 11D0h, 0Ch, 5F1h
+        DW      0Ch, 54Bh, 6, 5F1h, 6, 0E23h, 6, 711h
+        DW      6, 11D0h, 6, 7EFh, 6, 96Fh, 0, 1
+        DW      0Ch, 11D0h, 0Ch, 711h, 6, 711h, 6, 0E23h
+        DW      0Ch, 711h, 0Ch, 711h, 6, 7EFh, 6, 0BE3h
+        DW      0Ch, 8E8h, 0Ch, 7EFh, 0Ch, 17C7h, 6, 7EFh
+        DW      6, 5F1h, 0Ch, 7EFh, 0Ch, 12DFh, 0Ch, 7EFh
+        DW      6, 7EFh, 6, 0FDFh, 0Ch, 7EFh, 0Ch, 17C7h
+        DW      0Ch, 11D0h, 0Ch, 5F1h, 6, 5F1h, 6, 0E23h
+        DW      0Ch, 5F1h, 0Ch, 5F1h, 6, 6ACh, 6, 0BE3h
+        DW      0Ch, 711h, 0Ch, 5F1h, 0Ch, 1AB1h, 6, 8E8h
+        DW      6, 5F1h, 0Ch, 5F1h, 0Ch, 152Fh, 0Ch, 5F1h
+        DW      6, 8E8h, 6, 11D0h, 0Ch, 5F1h, 0Ch, 11D0h
+        DW      0Ch, 474h, 0Ch, 711h, 0Ch, 474h, 0Ch, 152Fh
+        DW      0Ch, 474h, 6, 8E8h, 6, 0E23h, 0Ch, 474h
+        DW      0Ch, 0A97h, 0Ch, 474h, 0Ch, 0FDFh, 6, 4B7h
+        DW      6, 0D58h, 0Ch, 54Bh, 0Ch, 4B7h, 6, 474h
+        DW      6, 12DFh, 0Ch, 474h, 0Ch, 0FDFh, 0, 1
+        DW      0Ch, 11D0h, 6, 8E8h, 6, 8E8h, 6, 711h
+        DW      6, 0E23h, 0Ch, 5F1h, 0Ch, 474h, 6, 0E23h
+        DW      6, 11D0h, 0Ch, 54Bh, 0Ch, 5F1h, 18h, 474h
+        DW      18h, 8E8h, 63h, 0, 0, 1, 5, 474h
+        DW      5, 54Bh, 5, 5F1h, 5, 6ACh, 5, 711h
+        DW      5, 8E8h, 1Bh, 0, 5, 2A5h, 5, 0
+        DW      5, 2F8h, 5, 0, 5, 23Ah, 63h, 0
+        DW      0, 1, 14h, 2A5Fh, 0Ah, 21A1h, 0Ah, 1931h
+        DW      14h, 1C47h, 14h, 1931h, 14h, 2A5Fh, 0Ah, 0A97h
+        DW      5, 1931h, 5, 0A97h, 0Ah, 1C47h, 0Ah, 0E23h
+        DW      0Ah, 1931h, 0Ah, 0A97h, 5, 2A5Fh, 5, 0E23h
+        DW      5, 0C98h, 5, 0A97h, 0Ah, 21A1h, 0Ah, 1931h
+        DW      14h, 1C47h, 14h, 1931h, 14h, 2A5Fh, 0Ah, 0BE3h
+        DW      5, 1931h, 5, 0BE3h, 0Ah, 1C47h, 0Ah, 1931h
+        DW      0Ah, 1C47h, 0Ah, 1931h, 14h, 3F7Bh, 0Ah, 3263h
+        DW      0Ah, 25BFh, 14h, 2A5Fh, 14h, 25BFh, 14h, 3F7Bh
+        DW      0Ah, 0A97h, 5, 25BFh, 5, 0A97h, 0Ah, 2A5Fh
+        DW      0Ah, 0FDFh, 0Ah, 25BFh, 0Ah, 0A97h, 5, 2A5Fh
+        DW      5, 0E23h, 5, 0C98h, 5, 0A97h, 0Ah, 21A1h
+        DW      0Ah, 1931h, 14h, 1C47h, 14h, 1931h, 14h, 2A5Fh
+        DW      0Ah, 0A97h, 5, 1931h, 5, 0A97h, 0Ah, 1C47h
+        DW      0Ah, 1931h, 0Ah, 1C47h, 0Ah, 1931h, 14h, 388Eh
+        DW      0Ah, 2CE3h, 0Ah, 21A1h, 5, 25BFh, 5, 12DFh
+        DW      5, 10D0h, 5, 0E23h, 5, 21A1h, 5, 12DFh
+        DW      5, 10D0h, 5, 0E23h, 14h, 3F7Bh, 0Ah, 3263h
+        DW      0Ah, 25BFh, 5, 2A5Fh, 5, 152Fh, 5, 12DFh
+        DW      5, 0FDFh, 5, 25BFh, 5, 152Fh, 5, 12DFh
+        DW      5, 0FDFh, 14h, 2A5Fh, 0Ah, 0A97h, 5, 1931h
+        DW      5, 0A97h, 0Ah, 1C47h, 0Ah, 1931h, 0Ah, 1C47h
+        DW      0Ah, 1931h, 0Ah, 1C47h, 0Ah, 0E23h, 0Ah, 388Eh
+        DW      0Ah, 0FDFh, 0Ah, 3263h, 0Ah, 12DFh, 0Ah, 2CE3h
+        DW      0Ah, 0E23h, 0, 1, 14h, 2A5Fh, 0Ah, 21A1h
+        DW      0Ah, 1931h, 14h, 1C47h, 14h, 1931h, 14h, 2A5Fh
+        DW      0Ah, 0A97h, 0Ah, 152Fh, 14h, 2A5Fh, 63h, 0
+        DW      0, 1, 5, 474h, 5, 54Bh, 5, 5F1h
+        DW      5, 6ACh, 5, 711h, 5, 8E8h, 1Bh, 0
+        DW      5, 2A5h, 5, 0, 5, 2F8h, 5, 0
+        DW      5, 23Ah, 63h, 0, 0, 1, 5, 152Fh
+        DW      5, 2A5Fh, 5, 152Fh, 5, 2A5Fh, 5, 152Fh
+        DW      5, 2A5Fh, 5, 152Fh, 5, 2A5Fh, 9, 12DFh
+        DW      9, 25BFh, 9, 152Fh, 9, 2A5Fh, 12h, 152Fh
+        DW      9, 12DFh, 9, 25BFh, 9, 1C47h, 9, 388Eh
+        DW      9, 12DFh, 9, 25BFh, 5, 152Fh, 5, 2A5Fh
+        DW      5, 152Fh, 5, 2A5Fh, 5, 152Fh, 5, 2A5Fh
+        DW      5, 152Fh, 5, 2A5Fh, 9, 12DFh, 9, 25BFh
+        DW      9, 152Fh, 9, 2A5Fh, 12h, 152Fh, 9, 12DFh
+        DW      9, 25BFh, 9, 1C47h, 9, 388Eh, 9, 12DFh
+        DW      9, 25BFh, 5, 1FBEh, 5, 3F7Bh, 5, 1FBEh
+        DW      5, 3F7Bh, 5, 1FBEh, 5, 3F7Bh, 5, 1FBEh
+        DW      5, 3F7Bh, 9, 1C47h, 9, 388Eh, 9, 1FBEh
+        DW      9, 3F7Bh, 12h, 1FBEh, 9, 152Fh, 9, 2A5Fh
+        DW      9, 1931h, 9, 3263h, 9, 12DFh, 9, 25BFh
+        DW      5, 152Fh, 5, 2A5Fh, 5, 152Fh, 5, 2A5Fh
+        DW      5, 152Fh, 5, 2A5Fh, 5, 152Fh, 5, 2A5Fh
+        DW      9, 12DFh, 9, 25BFh, 9, 152Fh, 9, 2A5Fh
+        DW      12h, 152Fh, 9, 12DFh, 9, 25BFh, 9, 1C47h
+        DW      9, 388Eh, 9, 12DFh, 9, 25BFh, 5, 1C47h
+        DW      5, 388Eh, 5, 1C47h, 5, 388Eh, 5, 1C47h
+        DW      5, 388Eh, 5, 1C47h, 5, 388Eh, 9, 12DFh
+        DW      9, 25BFh, 9, 1C47h, 9, 388Eh, 12h, 1C47h
+        DW      9, 1931h, 9, 3263h, 9, 1FBEh, 9, 3F7Bh
+        DW      9, 1931h, 9, 3263h, 5, 152Fh, 5, 2A5Fh
+        DW      5, 152Fh, 5, 2A5Fh, 5, 152Fh, 5, 2A5Fh
+        DW      5, 152Fh, 5, 2A5Fh, 9, 12DFh, 9, 25BFh
+        DW      9, 152Fh, 9, 2A5Fh, 12h, 152Fh, 9, 2A5Fh
+        DW      9, 1C47h, 9, 152Fh, 9, 0E23h, 9, 0A97h
+        DW      9, 152Fh, 5, 8E8h, 5, 0, 9, 8E8h
+        DW      9, 96Fh, 5, 0A97h, 5, 2A5Fh, 9, 96Fh
+        DW      12h, 0A97h, 9, 8E8h, 9, 2A5Fh, 9, 8E8h
+        DW      9, 96Fh, 5, 0A97h, 5, 2A5Fh, 9, 0BE3h
+        DW      12h, 0A97h, 9, 2A5Fh, 5, 8E8h, 5, 0
+        DW      9, 8E8h, 9, 96Fh, 5, 0A97h, 5, 2A5Fh
+        DW      9, 96Fh, 12h, 0E23h, 9, 711h, 9, 2A5Fh
+        DW      9, 711h, 9, 868h, 5, 0BE3h, 5, 2A5Fh
+        DW      12h, 0A97h, 9, 2A5Fh, 9, 1FBEh, 5, 8E8h
+        DW      5, 0, 9, 8E8h, 9, 96Fh, 5, 0A97h
+        DW      5, 1FBEh, 9, 96Fh, 12h, 0A97h, 9, 8E8h
+        DW      9, 1FBEh, 9, 8E8h, 9, 96Fh, 5, 0A97h
+        DW      5, 1FBEh, 9, 0BE3h, 12h, 0A97h, 9, 2A5Fh
+        DW      5, 711h, 5, 0, 9, 711h, 9, 868h
+        DW      5, 0A97h, 5, 2A5Fh, 9, 0A97h, 12h, 0C98h
+        DW      9, 868h, 9, 2A5Fh, 9, 868h, 9, 0C98h
+        DW      5, 0A97h, 5, 2A5Fh, 12h, 0A97h, 9, 2A5Fh
+        DW      9, 1C47h, 5, 96Fh, 5, 0, 5, 96Fh
+        DW      5, 0, 9, 96Fh, 5, 868h, 5, 1C47h
+        DW      9, 96Fh, 12h, 0B39h, 9, 0E23h, 9, 1FBEh
+        DW      9, 96Fh, 0Eh, 0A97h, 5, 1FBEh, 12h, 0A97h
+        DW      9, 0C98h, 9, 2A5Fh, 5, 8E8h, 5, 0
+        DW      9, 8E8h, 9, 96Fh, 5, 0A97h, 5, 2A5Fh
+        DW      9, 96Fh, 12h, 0A97h, 5, 0C98h, 5, 2A5Fh
+        DW      25h, 0A97h, 12h, 152Fh, 12h, 2A5Fh, 0, 1
+        DW      9, 3263h, 12h, 2A5Fh, 9, 152Fh, 25h, 2A5Fh
+        DW      63h, 0, 0, 1, 0, 0, 0, 0
 SONG ENDS
-END
+
+        END
