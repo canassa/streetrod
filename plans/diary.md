@@ -807,3 +807,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - MSC 5.1 ignores `volatile`. `/Ol` leaves a loop alone only when it is entered by a jump; a `goto` to the very next statement makes F_0238C match, but nothing else jumps to that loop head, so the pragma is the better explanation. M_039C0.C also matches as `/Oasi` plus one `loop_opt(on)` after F_03C8D. An `if` + goto loop inside a `for` crashes C1 under `/Ol` (C1001).
+
+## 2026-11-05 02:30 CET: Review of the assembler routines; the hook installers are C
+
+### What I did
+- Reviewed all 66 routines of the 27 MASM objects against MSC 5.1 output, compiling C candidates for the borderline ones (F_02C2B, F_21A06, F_26458, the hook stubs). 63 are hand-written (register calling conventions, inline `int`, `lds`/`les` on arguments, `xchg`/`loop`/`xlat`, code-segment scratch words, computed jumps, flags as results, MSC-impossible idioms such as `xor ah,ah` or `push si` before `push di`); the evidence is in DB notes.
+- F_1C2B8, F_22352 and F_22B28 copy a driver's 15 far hook pointers over DS:78A2 as one struct assignment: MSC 5.1's `rep movsw` is F2 A5, MASM's F3 A5, and the assembler source had to spell it `repne movsw`. Each is now C, the first function of the driver file whose table it copies (`struct Hooks` in STRUCTS.H); M_22352.ASM and M_22B28.ASM are gone (95 objects). Their placement has no relocation evidence and is a reconstruction choice (RECONSTRUCTION.md).
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, `headers --check`, `dgroup check`, `dgroup order` clean, tests OK.
+
+### What I learned
+- The `rep` prefix byte classifies code: every F2 movs in SR.EXE is in C, every F3 movs in asm or the runtime. MSC's `inp`/`outpw` reload `dx` each pass and load the value before the port.
+- MSC emits far initialized data as PARA 'FAR_DATA' segments, so most of src/data could have been C; the EXE cannot tell. The hook block DS:78A2..78DE was one struct in the original (copied as one); its 15 separate globals are a reconstruction.
