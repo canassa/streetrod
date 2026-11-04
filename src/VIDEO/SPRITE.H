@@ -2,7 +2,54 @@
 
 #ifndef SPRITE_H
 #define SPRITE_H
-#include "STRUCTS.H"
+
+#include "CARPIC.H"
+
+struct Bitmap;
+
+struct Seq {
+    int count;
+    signed char dx;
+    signed char dy;
+};
+
+/* one animation frame: 12 bytes, the ring links nxt[0..2] (sp_setup builds g_frmTable[]) */
+struct Frame {
+    struct Bitmap far *pos;
+    struct Bitmap *data;
+    struct Frame *nxt[3];
+};
+
+struct Sprite {
+    struct Frame *frame;
+    struct Bitmap far *img;
+    struct Bitmap far *save;
+    struct Rect *rc[2];
+    int x;
+    int y;
+    struct Seq *seq;
+    struct Page *page;
+};
+
+/* one display page of the sprite engine (16 bytes): its bitmap, the clipped rectangle, the link to the next page */
+struct Page {
+    struct Bitmap far *bm;
+    struct Rect rect;
+    int pageIndex;
+    struct Page *link;
+};
+
+/* 16-byte blit packet of da_draw_shifter (struct Blt without the last two words) */
+struct Blt16 {
+    int w;
+    int h;
+    int sx;
+    int sy;
+    int dx;
+    int dy;
+    int fc;
+    int fe;
+};
 #include "CARPIC.H"
 
 extern struct Seq g_seqSpriteMoveData[];

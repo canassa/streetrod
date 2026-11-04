@@ -1,9 +1,9 @@
 #include <string.h>
 #include <stdlib.h>
-#include "STRUCTS.H"
 #include "MENU.H"
 #include "ARENA.H"
 #include "BITMAP.H"
+#include "CARPIC.H"
 #include "CURSOR.H"
 #include "DASH.H"
 #include "DRAW.H"

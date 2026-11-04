@@ -1,5 +1,4 @@
 #include <conio.h>
-#include "STRUCTS.H"
 #include "EGAPAGE.H"
 #include "PC.H"
 

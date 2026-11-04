@@ -2,7 +2,6 @@
 
 #ifndef MEMSTR_H
 #define MEMSTR_H
-#include "STRUCTS.H"
 
 int ms_find(char *s, char far *p, unsigned n);
 

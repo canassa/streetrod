@@ -2,7 +2,50 @@
 
 #ifndef SCREEN_H
 #define SCREEN_H
-#include "STRUCTS.H"
+
+#include "GAME.H"
+
+struct Node;
+struct Node2;
+
+enum RaceType {
+    RACE_DRAG = 0,
+    RACE_ROAD = 1
+};
+
+struct DriverState {
+    long money;
+    int unused;
+    struct Car *currentCar;
+    struct Car *otherCars;
+    struct Node2 *freeCars;
+    int carCount;
+    struct Node *spareParts;
+    struct Node *freeParts;
+    int partCount;
+    int adIndex;
+    enum RaceType raceType;
+};
+
+struct TextEnd {
+    int x;
+    int y;
+};
+
+struct StatusText {
+    int messageX;
+    int y;
+    int messageWidth;
+    int shown;
+    int valueX;
+};
+
+/* Picture destination and maximum drawing height. */
+struct PicturePlacement {
+    int x;
+    int y;
+    int maxHeight;
+};
 
 extern struct TextEnd g_penPoint;
 extern struct StatusText g_statusLine;

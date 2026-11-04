@@ -2,7 +2,52 @@
 
 #ifndef RACE_H
 #define RACE_H
-#include "STRUCTS.H"
+
+struct Bitmap;
+struct Eng;
+
+enum GasHand {
+    GAS_HAND_EMPTY = 1,
+    GAS_HAND_NOZZLE = 2,
+    GAS_HAND_RAG = 3
+};
+
+struct Dlg {
+    int specIndex;
+    int bodyMods;
+    struct Bitmap far *bm1;
+    struct Bitmap far *bm2;
+    enum GasHand f0c;
+    int fillsLeft;
+    int f10;
+    int f12;
+    int f14;
+    int f16;
+    int f18;
+    int f1a;
+};
+
+struct Spot {
+    int id;
+    int x;
+    int y;
+};
+
+struct RoadEdges {
+    int leftEdge;
+    int leftOuterX[8];
+    int rightOuterX[8];
+};
+
+struct BodyPoints {
+    int hasRearGlass;
+    int frontGlassX;
+    int frontGlassY;
+    int rearGlassX;
+    int rearGlassY;
+    int gasCapX;
+    int gasCapY;
+};
 
 enum CopPhase {
     COP_ABSENT = 0,

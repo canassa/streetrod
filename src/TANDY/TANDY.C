@@ -1,8 +1,8 @@
 #include <memory.h>
 #include <dos.h>
-#include "STRUCTS.H"
 #include "TANDY.H"
 #include "BITMAP.H"
+#include "CARPIC.H"
 #include "CURSBLT.H"
 #include "DASH.H"
 #include "PC.H"

@@ -27,7 +27,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 | `tools/sr/lib.py` | finds MSC library modules in the EXE (`crtnames`); `locate` returns every public at an address, since a module can publish two names for one offset (`__aFlmul` = `__aFulmul`); `locate_all` also places the located modules' data publics in DGROUP from their code's fixups |
 | `tools/sr/refs.py` | resolves every fixup to its symbol and checks it against the original instruction |
 | `tools/sr/headers.py` | `./sr headers`: calls `fileheaders.py` (include blocks) and `makefile.sync_deps`; `check()` is the dry run of `--check` (every write goes through `headers._write`, which records instead of writing) and returns the headers' problems too. Headers and sources are LF, MAKEFILE/SR.LNK CRLF. Never called by `build` or `check`. The headers themselves are hand-written |
-| `tools/sr/fileheaders.py` | the include blocks of the C sources: declarations and macros with replacement text identify the header for each used name; include guards are excluded. `STRUCTS.H` and `PC.H` are standalone headers without owning sources. Module-header macros need no duplicate definition in the source; function and data declarations must match their source's definitions (`owners_layout`: code files, data-only files outside DATA in link order, then src/DATA); duplicate declarations are errors |
+| `tools/sr/fileheaders.py` | the include blocks of the C sources: declarations, struct/union tags, enums and macros with replacement text identify the header for each used name; include guards are excluded. Struct/union tags use their own namespace. `STRUCTS.H` (only the ownerless Word helper) and `PC.H` are standalone headers without owning sources; neither is included unconditionally. Module-header macros need no duplicate definition in the source; function and data declarations must match their source's definitions (`owners_layout`: code files, data-only files outside DATA in link order, then src/DATA); duplicate declarations are errors |
 | `tools/sr/layout.py` | the MSC 5.1 local-layout rule (`./sr layout`): bucket hash, block slot reuse, `/Ol` variant, rename suggestions |
 | `tools/sr/lint.py` | the CLAUDE.md rule 4 lint, plus missing-prototype warnings from `/W3` |
 | `tools/sr/dgroup.py` | `./sr dgroup`: original DGROUP ownership from positions (literal pools of the layout objects pin each unit; runs between pools go to referrers; `FORCE_OWNER`/`DATA_UNITS` for assembler data and data-only files), declaration slots, the C definition text of each item (`report`), `check_sources` (`./sr dgroup check`, the only consumer of ownership), `link_order` |
@@ -155,7 +155,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 - MSC enum members occupy two bytes with word alignment. Keep the real-compiler sizeof/offsetof audit passing when adding enum-backed records.
 - Recovered DGROUP fallback regions must not create synthetic aliases inside a fully covering source aggregate. Explicit overlapping source declarations still require the normal alias diagnostics.
 - Grouping statics lowers the symbol count without removing storage. Ownership tests compare actual declarations and uniqueness, not a fixed minimum number of symbols.
-- `cdata.Types` and `check_data_types.py` read STRUCTS.H first, then all indexed module headers in deterministic source-index order. The real-compiler audit includes private records, enums and typedefs from those headers; no separate private-type probe is needed.
+- `cdata.Types` and `check_data_types.py` read all indexed headers in deterministic source-index order; they do not require a central type header. The real-compiler audit includes private records, enums and typedefs from those headers; no separate private-type probe is needed.
 
 ## Subsystem layout (2026-11-04)
 
@@ -232,3 +232,17 @@ comments or rewrite the declarations or function bodies.
   numeric FORCE_OWNER code-address key. Gate the renamed THEADR/object filename
   with a clean packed build and DOS-native MAKE; function matches alone do not
   establish that object metadata is absent from the EXE.
+
+
+## Type ownership and header dependencies
+
+- Struct/union definitions belong to their primary global owner header; producer/API
+  modules own types without global storage. Related enums and embedded helpers follow
+  their parent. Keep only independent ownerless helpers in the tiny STRUCTS.H.
+- Includes for types are selected from explicit struct/union tags, using the tag
+  namespace. A type-only header still counts as an owner; do not force STRUCTS.H into
+  every source. cdata collects all indexed headers before evaluating layouts.
+- A pointer forward declaration can suffice for a declaration but leave clients
+  unable to traverse members. Include the dependency when that traversal is part
+  of the API. Check embedded-record dependencies, independent header compilation
+  and include cycles after moving definitions, then run all byte/build gates.

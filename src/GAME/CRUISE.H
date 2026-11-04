@@ -2,7 +2,6 @@
 
 #ifndef CRUISE_H
 #define CRUISE_H
-#include "STRUCTS.H"
 
 #define RIVAL_PAINT_RESTORE (-1)
 
@@ -13,7 +12,6 @@ enum DrivePhase {
     DRIVE_WAIT_FOR_MOTION = 2,
     DRIVE_RUNNING = 3
 };
-
 
 extern char g_savedPal12;
 extern char g_savedPal3;

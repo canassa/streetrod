@@ -26,9 +26,9 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   its spelling (`g_drawnMinX`, `g_sprPageRing`) was picked to fit.
 - **Local variables.** MSC's slot order depends on a hash of the names (CLAUDE.md 3).
   Names with digit suffixes come from `./sr layout -w` and only reproduce the frame.
-- **Struct types and members** (shared types in `src/SYS/STRUCTS.H`, private types in
-  their owner's header). Sizes and offsets come from the code; tags and member names are
-  invented. Explicit unused or reset-only fields use `unused` / `unusedN`; legacy `pad` /
+- **Struct types and members** (in the primary global owner's header, or the
+  producer/API header for types without global storage). Sizes and offsets come
+  from the code; tags and member names are invented. Explicit unused or reset-only fields use `unused` / `unusedN`; legacy `pad` /
   `fNN` names also remain where meaning is uncertain. Explicit spare storage is distinct
   from the compiler's automatic alignment padding.
 - **Files.** Each object's file is named for what its code does (GARAGE.C, DISK.C,
@@ -52,7 +52,12 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   live beside their sources; shared headers live in SYS. SRENV.BAT supplies INCLUDE for
   both compilers without adding long /I lists to DOS command lines.
 - **Headers.** One hand-written header per source file (`src/<folder>/<FILE>.H`)
-  and a single `STRUCTS.H` is a plausible organisation, not a recovered one.
+  with type definitions beside their primary global or producer/API, and a tiny
+  `STRUCTS.H` for ownerless helpers, is a plausible organisation, not a recovered one.
+  The remaining common `union Word` has no global instance or producer API:
+  GARAGE reads paint bytes, SOUND forms a speaker divisor, and SYS forms timer
+  bytes independently. Giving one of those modules ownership would add an
+  unrelated API dependency to the other two.
   `./sr headers` maintains source includes and MAKEFILE dependencies only.
   Unused declarations cost nothing (rule 4d), so the include lists cannot be checked
   against the code.
@@ -445,7 +450,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   order is the 277 Slot records followed by five 1120-word terrain arrays.
   `g_slot` has bucket 64 and `g_terrain0..4` buckets 158..190; their historical
   names are unknown.
-- **Video and cursor records** (`STRUCTS.H`). `Video` at DS:822A is supported by
+- **Video and cursor records** (`MAIN.H`, `CURSOR.H`). `Video` at DS:822A is supported by
   `/Ol` leaving `r_vid.mode` in memory at 0x004F4 and 0x10AFD rather than hoisting
   it as a plain global. `Cursor` at DS:7AEC has rectangle members whose comparison
   operand order in cu_draw requires nested members rather than separate globals.

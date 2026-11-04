@@ -2,7 +2,8 @@
 
 #ifndef TANDYSPR_H
 #define TANDYSPR_H
-#include "STRUCTS.H"
+
+struct Sprite;
 
 int ts_step(struct Sprite *s);
 

@@ -1,5 +1,4 @@
 #include <conio.h>
-#include "STRUCTS.H"
 #include "SOUND.H"
 #include "CARPIC.H"
 #include "EFFECTS.H"
@@ -9,6 +8,7 @@
 #include "RANDOM.H"
 #include "SONG.H"
 #include "SPEAKER.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 
 static void near play_tone(long freq, int n);

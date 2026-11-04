@@ -2,7 +2,71 @@
 
 #ifndef GAME_H
 #define GAME_H
-#include "STRUCTS.H"
+
+#include "POOLS.H"
+
+struct Node2;
+
+enum TireVariant {
+    TIRES_STANDARD = 0,
+    TIRES_BRAND_NAME = 1,
+    TIRES_RACING_SLICKS = 2
+};
+
+enum ManifoldVariant {
+    MANIFOLD_TWO_BARREL = 0,
+    MANIFOLD_FOUR_BARREL = 1,
+    MANIFOLD_DUAL_QUAD = 2,
+    MANIFOLD_TRI_POWER = 3,
+    MANIFOLD_RACING = 4
+};
+
+enum CarburetorVariant {
+    CARB_TWO_BARREL = 0,
+    CARB_FOUR_BARREL = 1,
+    CARB_RACING = 2
+};
+
+enum TransmissionVariant {
+    TRANS_AUTOMATIC = 0,
+    TRANS_THREE_SPEED = 1,
+    TRANS_FOUR_SPEED = 2,
+    TRANS_RACING = 3
+};
+
+enum EngineVariant {
+    ENGINE_V6 = 0,
+    ENGINE_V8_SMALL = 1,
+    ENGINE_V8_LARGE = 2
+};
+
+enum WireState {
+    WIRES_DISCONNECTED = -1,
+    WIRES_ABSENT = 0,
+    WIRES_CONNECTED = 1
+};
+
+struct Rack {
+    struct Node *parts[5];
+};
+
+struct Car {
+    int value;
+    int specIndex;
+    char paintScheme;
+    unsigned char rank;
+    struct Node *transmission;
+    struct Rack rack;
+    struct Node *tires;
+    char transmissionBolts[2];
+    char engineBolts[9];
+    char wireState;
+    signed char timing;
+    char pad21;
+    int fuel;
+    unsigned appearance; /* bits 8-12 sticker (ga_menu), 13 roof chopped, 14 front and 15 rear bumper stripped */
+    struct Car *next;
+};
 
 extern struct Car *g_old;
 extern struct Car *g_new;

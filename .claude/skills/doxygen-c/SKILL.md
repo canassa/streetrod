@@ -21,8 +21,9 @@ prove a semantic name or explanation.
 Files use uppercase DOS 8.3 names in `src/<subsystem>/`. A module's `.H` owns
 its public function/global declarations. Document public functions at that
 header declaration, private static functions at their `.C` definition. Use one
-block per entity, not duplicates in both places. Shared types live in
-`src/SYS/STRUCTS.H`; module-only types belong in the module's header.
+block per entity, not duplicates in both places. Types belong in the header of
+the module defining their primary global, or their producer/API when there is no global storage; related enums and helper records
+follow that owner. Only independent ownerless helpers remain in `src/SYS/STRUCTS.H`.
 
 `./sr headers` rewrites C include blocks and MAKEFILE dependencies. Keep docs
 outside those generated include blocks and beside the owning declarations.

@@ -2,7 +2,6 @@
 
 #ifndef EGASPAN_H
 #define EGASPAN_H
-#include "STRUCTS.H"
 
 void en_begin(void);
 void en_end(void);

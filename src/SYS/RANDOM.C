@@ -1,5 +1,4 @@
 #include <time.h>
-#include "STRUCTS.H"
 #include "RANDOM.H"
 
 static struct RandomState g_random;

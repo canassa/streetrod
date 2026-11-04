@@ -1,7 +1,7 @@
 #include <dos.h>
 #include <malloc.h>
-#include "STRUCTS.H"
 #include "MEM.H"
+#include "CARPIC.H"
 #include "MAIN.H"
 #include "PC.H"
 #include "POOLS.H"

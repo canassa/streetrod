@@ -1,5 +1,5 @@
-#include "STRUCTS.H"
 #include "DRAW.H"
+#include "CARPIC.H"
 #include "DASH.H"
 #include "VIDEO.H"
 

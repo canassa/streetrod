@@ -2,7 +2,6 @@
 
 #ifndef HERCGFX_H
 #define HERCGFX_H
-#include "STRUCTS.H"
 
 extern int g_hercCrtc[10];
 extern char g_hercBiosData[30];

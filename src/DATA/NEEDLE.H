@@ -2,7 +2,6 @@
 
 #ifndef NEEDLE_H
 #define NEEDLE_H
-#include "STRUCTS.H"
 
 struct NeedlePoint {
     signed char x, y;

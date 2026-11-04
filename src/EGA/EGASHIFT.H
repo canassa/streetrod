@@ -2,7 +2,9 @@
 
 #ifndef EGASHIFT_H
 #define EGASHIFT_H
-#include "STRUCTS.H"
+
+struct Bitmap;
+struct Blt;
 
 extern unsigned char g_leftBitMasks[];
 extern int g_egaGcFunction;

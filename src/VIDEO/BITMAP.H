@@ -2,7 +2,9 @@
 
 #ifndef BITMAP_H
 #define BITMAP_H
-#include "STRUCTS.H"
+
+struct Bitmap;
+struct Blt;
 
 void bm_copy(struct Bitmap far *src, struct Bitmap far *dst, int e);
 void bm_opaque_span(struct Bitmap far *bm, int *left, int *right);

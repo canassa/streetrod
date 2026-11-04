@@ -1,7 +1,7 @@
 """MSC 5.1 data shapes for source reconstruction (16-bit int, two-byte packing).
 
 The layout is checked against sizeof/offsetof emitted by the actual compiler before
-it is used for initialized data. Definitions come from STRUCTS.H and the indexed module headers.
+it is used for initialized data. Definitions come from the indexed source headers.
 """
 import ast
 import re
@@ -36,8 +36,7 @@ def align(n,a):return (n+a-1)//a*a
 class Types:
     def __init__(self):
         index=config.source_index()
-        shared=index['STRUCTS.H']
-        self.headers=[shared]+[p for p in index.values() if p.suffix.upper()=='.H' and p!=shared]
+        self.headers=[p for p in index.values() if p.suffix.upper()=='.H']
         self.defs={};self.typedefs={};self.cache={}
         pattern=re.compile(r'\b(typedef\s+)?(struct|union|enum)\s+(?:(\w+)\s*)?\{')
         for path in self.headers:

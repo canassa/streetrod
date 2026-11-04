@@ -2,7 +2,18 @@
 
 #ifndef MENU_H
 #define MENU_H
-#include "STRUCTS.H"
+
+#include "HOTSPOT.H"
+
+struct Bitmap;
+
+struct ListDialog {
+    int lineBase;
+    int rows;
+    int *list;
+    int selection;
+    struct Hot *header;
+};
 #include "KEYMAPS.H"
 
 extern struct ListDialog g_menuList;

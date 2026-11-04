@@ -6,10 +6,10 @@
 #include <string.h>
 #include <io.h>
 #include <stdlib.h>
-#include "STRUCTS.H"
 #include "DISK.H"
 #include "ARENA.H"
 #include "BOBS.H"
+#include "CARPIC.H"
 #include "CURSOR.H"
 #include "FAME.H"
 #include "MAIN.H"

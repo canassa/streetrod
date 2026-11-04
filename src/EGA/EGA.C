@@ -1,8 +1,8 @@
 #include <conio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "STRUCTS.H"
 #include "EGA.H"
+#include "CARPIC.H"
 #include "CURSBLT.H"
 #include "DASH.H"
 #include "EGABLIT.H"

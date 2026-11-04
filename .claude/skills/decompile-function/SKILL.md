@@ -26,7 +26,7 @@ All 572 game functions are matched and live in their original object's file (`sr
 - **Control flow.** Find the shapes in the recipe book (boolean results, switch dispatch, loops).
 - **Callees.** Every far callee needs a prototype in its file's header, `int name(int n);   /* 0xAAAAA */` (look there first; another file may already rely on it). Use its current name, or `F_xxxxx` until you know what it does.
 - **Far data.** `mov es,[0xNNNN]` with `./sr show` saying "segment constant" is a `far` array in its own segment: declare it in the defining file's header as `extern T far g_name[];   /* SSSS:OOOO */`, never as a DGROUP word.
-- **Globals.** `[0xNNNN]` is a DGROUP global. `./sr show` names the known ones (addresses in `tools/sr/symbols.json`, joined to header declarations and static definitions); declare a missing one in its file's header, `extern int g_NNNN;`, and register its offset in `tools/sr/symbols.json`. Struct types go in `src/SYS/STRUCTS.H`, inside the include guard (before the final `#endif`); reuse an existing one when the offsets fit.
+- **Globals.** `[0xNNNN]` is a DGROUP global. `./sr show` names the known ones (addresses in `tools/sr/symbols.json`, joined to header declarations and static definitions); declare a missing one in its file's header, `extern int g_NNNN;`, and register its offset in `tools/sr/symbols.json`. Struct types go in the header of the module defining their primary global (or their producer/API for types without global storage), inside the include guard; related enums and embedded records follow that owner. Include dependencies for embedded records and forward-declare pointer-only records. Reuse an existing type when the offsets fit.
 
 ## 2. Write the C
 

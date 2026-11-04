@@ -1,4 +1,3 @@
-#include "STRUCTS.H"
 #include "MARKS.H"
 #include "ARENA.H"
 #include "MAIN.H"

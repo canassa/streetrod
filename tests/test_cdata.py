@@ -25,7 +25,7 @@ typedef union { int word; char bytes[2]; } Value;
 ''')
             with patch.object(config, 'SRC', root):
                 types = Types()
-            self.assertEqual([p.name for p in types.headers], ['STRUCTS.H', 'PRIVATE.H'])
+            self.assertEqual([p.name for p in types.headers], ['PRIVATE.H', 'STRUCTS.H'])
             self.assertEqual(types.named('struct Private')['size'], 6)
             self.assertEqual([(n, o) for n, o, _ in types.named('Private')['fields']],
                              [('shared', 0), ('mode', 2), ('code', 4)])

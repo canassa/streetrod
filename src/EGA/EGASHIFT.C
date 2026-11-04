@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <conio.h>
-#include "STRUCTS.H"
 #include "EGASHIFT.H"
+#include "ADS.H"
+#include "CARPIC.H"
 #include "PC.H"
 
 static void near shift_row_bits(unsigned char *p, int n, int len);

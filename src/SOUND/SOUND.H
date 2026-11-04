@@ -2,7 +2,9 @@
 
 #ifndef SOUND_H
 #define SOUND_H
-#include "STRUCTS.H"
+
+#include "MUSIC.H"
+struct Dev;
 
 extern int g_songRepeats[];
 extern char g_jingleRepeats[];

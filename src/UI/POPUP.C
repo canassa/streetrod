@@ -1,9 +1,10 @@
 #include <stdlib.h>
 #include <string.h>
-#include "STRUCTS.H"
 #include "POPUP.H"
+#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
+#include "CARPIC.H"
 #include "CURSOR.H"
 #include "DASH.H"
 #include "MAIN.H"

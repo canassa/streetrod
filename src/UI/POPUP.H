@@ -2,7 +2,20 @@
 
 #ifndef POPUP_H
 #define POPUP_H
-#include "STRUCTS.H"
+
+struct Bitmap;
+
+struct Win {
+    int bg;
+    int lines;
+    int x;
+    int y;
+    int w;
+    int h;
+    int tx;
+    int ty;
+    int pad;
+};
 
 extern struct Win g_popupWins[];
 extern struct Bitmap far *g_popupSave;

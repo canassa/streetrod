@@ -1,8 +1,9 @@
 #include <conio.h>
 #include <dos.h>
 #include <memory.h>
-#include "STRUCTS.H"
 #include "EGABLIT.H"
+#include "ADS.H"
+#include "CARPIC.H"
 #include "DASH.H"
 #include "EGALATCH.H"
 #include "MAIN.H"

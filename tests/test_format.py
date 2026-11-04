@@ -80,7 +80,7 @@ class FormatTests(unittest.TestCase):
             self.assertEqual(problems, [])
             self.assertEqual(path.read_bytes(), raw)
             self.assertEqual(drift[path], formatter.format_bytes(
-                b'#include "STRUCTS.H"\n#include "DRAW.H"\nint x=1;\n', path))
+                b'#include "DRAW.H"\nint x=1;\n', path))
             generate()
             self.assertEqual(formatter.format_files([path], check=True), [])
             with patch.object(headers, 'generate', side_effect=generate):

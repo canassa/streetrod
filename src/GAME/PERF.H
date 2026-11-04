@@ -2,7 +2,10 @@
 
 #ifndef PERF_H
 #define PERF_H
-#include "STRUCTS.H"
+
+struct Eng;
+
+struct Car;
 
 extern int g_gearSpeedPct[][5];
 extern int g_rpmStepBase[][5];

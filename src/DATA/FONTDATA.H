@@ -2,7 +2,11 @@
 
 #ifndef FONTDATA_H
 #define FONTDATA_H
-#include "STRUCTS.H"
+
+struct Glyph {
+    unsigned char w;
+    char rows[8];
+};
 
 extern struct Glyph far g_font[];
 

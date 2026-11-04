@@ -1,4 +1,3 @@
-#include "STRUCTS.H"
 #include "KEYCLR.H"
 #include "INPUTDAT.H"
 

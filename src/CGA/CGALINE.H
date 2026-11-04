@@ -2,7 +2,6 @@
 
 #ifndef CGALINE_H
 #define CGALINE_H
-#include "STRUCTS.H"
 
 extern char g_cgaColorByte[4];
 extern char g_cgaColorMap[16];

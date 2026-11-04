@@ -2,7 +2,8 @@
 
 #ifndef SCREEN2_H
 #define SCREEN2_H
-#include "STRUCTS.H"
+
+#include "CARPIC.H"
 
 extern struct Bitmap far g_egaPage0;
 

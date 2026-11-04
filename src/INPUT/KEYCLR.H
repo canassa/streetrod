@@ -2,7 +2,6 @@
 
 #ifndef KEYCLR_H
 #define KEYCLR_H
-#include "STRUCTS.H"
 
 void kc_flush(void);
 

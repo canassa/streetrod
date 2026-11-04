@@ -17,10 +17,11 @@ def generate():
     from . import fileheaders, makefile
     problems = fileheaders.generate()
     makefile.sync_deps()
-    text = config.source_path('STRUCTS.H').read_text(errors="replace")
-    if text.rstrip().rsplit("\n", 1)[-1].strip() != "#endif":
-        problems.append("src/SYS/STRUCTS.H: something was added after the closing #endif; "
-                        "move it inside the include guard")
+    for path in config.source_files('.H'):
+        text = path.read_text(errors="replace")
+        if '#ifndef' in text and text.rstrip().rsplit("\n", 1)[-1].strip() != "#endif":
+            problems.append(f"{path.relative_to(config.SRC)}: something was added after the closing #endif; "
+                            "move it inside the include guard")
     return problems
 
 

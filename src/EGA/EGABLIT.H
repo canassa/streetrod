@@ -2,7 +2,15 @@
 
 #ifndef EGABLIT_H
 #define EGABLIT_H
-#include "STRUCTS.H"
+
+struct Bitmap;
+struct Blt;
+
+struct Mask {
+    char far *data;
+    int pad;
+    int h;
+};
 
 void eb_copy(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *r, int flags);
 void eb_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *bm3, struct Mask *mask,

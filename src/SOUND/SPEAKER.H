@@ -2,7 +2,6 @@
 
 #ifndef SPEAKER_H
 #define SPEAKER_H
-#include "STRUCTS.H"
 
 extern int g_tunePtr;
 extern int g_toneDelay;

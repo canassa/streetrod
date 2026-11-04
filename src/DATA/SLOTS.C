@@ -1,5 +1,4 @@
 /* Far working storage: 277 Slot records and five 1120-word terrain arrays. */
-#include "STRUCTS.H"
 #include "SLOTS.H"
 
 struct Slot far g_slot[277];

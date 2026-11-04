@@ -1,4 +1,3 @@
-#include "STRUCTS.H"
 #include "CRUISE.H"
 #include "CARPIC.H"
 #include "CURSOR.H"

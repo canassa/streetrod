@@ -2,7 +2,21 @@
 
 #ifndef MAIN_H
 #define MAIN_H
-#include "STRUCTS.H"
+
+struct Bitmap;
+
+/* Display state set by vi_init; mode follows front->flags and geometry depends on the mode. */
+struct Video {
+    struct Bitmap far *front;
+    struct Bitmap far *back;
+    struct Bitmap far *hoodBg;
+    int mode;
+    int planes; /* 4 on EGA (-2), else 1 */
+    int shift;  /* log2 pixels per byte: 3, 2, 1 */
+    int bpp;    /* bits per pixel: 1, 2, 4 */
+    int mask;   /* ~(pixels per byte - 1): -8, -4, -2 */
+    int copyToFront;
+};
 
 enum Scene {
     SCENE_NONE = 0,
@@ -12,7 +26,6 @@ enum Scene {
     SCENE_ADVERTS = 5,
     SCENE_JAIL = 6
 };
-
 
 #define VID_EGA (-2)
 #define VID_CGA (-3)

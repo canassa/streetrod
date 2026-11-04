@@ -2,8 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <conio.h>
-#include "STRUCTS.H"
 #include "GARAGE.H"
+#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "CARPIC.H"
@@ -22,10 +22,12 @@
 #include "MUSIC.H"
 #include "PC.H"
 #include "PERF.H"
+#include "POOLS.H"
 #include "POPUP.H"
 #include "RANDOM.H"
 #include "SCREEN.H"
 #include "SOUND.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 #include "TIRES.H"
 #include "VIDEO.H"

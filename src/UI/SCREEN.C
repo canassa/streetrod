@@ -2,8 +2,8 @@
 #include <string.h>
 #include <conio.h>
 #include <stdio.h>
-#include "STRUCTS.H"
 #include "SCREEN.H"
+#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "CARPIC.H"

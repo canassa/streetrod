@@ -2,7 +2,53 @@
 
 #ifndef DISK_H
 #define DISK_H
-#include "STRUCTS.H"
+
+struct Bitmap;
+
+struct Spec {
+    int price;
+    unsigned char rank;
+    signed char next;
+    unsigned parts;
+    int nameOffset;
+    int bodyPic;
+};
+
+/* one car model (10 bytes, g_models[], indexed by Car.specIndex): kind picks its sprites (vw_load); roofPic, frontBumperPic, rearBumperPic
+   are nonzero when the roof can be chopped and the front and rear bumpers stripped (ga_body) */
+struct Model {
+    signed char kind;
+    char pad1;
+    int roofPic;
+    int f4;
+    int frontBumperPic;
+    int rearBumperPic;
+};
+
+struct Offs {
+    unsigned char x, y, w, h;
+};
+
+struct Panel {
+    struct Offs r[5];
+};
+
+/* 12-byte table entry (g_layoutAutoSprArray[]), read as bytes by cp_build */
+struct Spr12 {
+    unsigned char wheelX1, wheelX2, b2, b3, roofX, b5, b6, frontBumperY, rearBumperX, rearBumperY, stickerX, stickerY;
+};
+
+/* 6-byte table entry (g_pointsModelService[]) */
+struct Spr6 {
+    unsigned char fuelCapX, fuelCapY, rearGlassX, rearGlassY, frontGlassX, frontGlassY;
+};
+
+/* 6-byte table entry (g_imageDecalLayout[]): bitmap id, then the (dx, dy) offset it is drawn at */
+struct Pos6 {
+    int id;
+    int dx;
+    int dy;
+};
 #include "MAIN.H"
 
 struct PicLibSelection {

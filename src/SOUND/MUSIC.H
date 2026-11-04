@@ -2,7 +2,29 @@
 
 #ifndef MUSIC_H
 #define MUSIC_H
-#include "STRUCTS.H"
+
+enum ToneSlot {
+    TONE_END = -1,
+    TONE_PROGRAMMABLE = 0,
+    TONE_PLAIN = 1,
+    TONE_LIGHT_VIBRATO = 2,
+    TONE_WIDE_VIBRATO = 3,
+    TONE_TRILL = 4
+};
+
+enum Waveform {
+    WAVE_TRIANGLE = 0,
+    WAVE_SAWTOOTH = 1,
+    WAVE_PULSE = 2
+};
+
+struct Tone {
+    int phase;
+    enum Waveform waveform;
+    int depth;
+    int length;
+    int delay;
+};
 
 extern int g_toneShapes[][8];
 extern struct Tone g_tones[];

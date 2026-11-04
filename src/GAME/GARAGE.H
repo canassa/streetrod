@@ -2,7 +2,40 @@
 
 #ifndef GARAGE_H
 #define GARAGE_H
-#include "STRUCTS.H"
+
+struct Car;
+struct Node;
+
+enum PartCategory {
+    PART_ENGINE = 0,
+    PART_TRANSMISSION = 1,
+    PART_CARBURETOR = 2,
+    PART_MANIFOLD = 3,
+    PART_TIRES = 4
+};
+
+struct Look {
+    unsigned lo : 8;
+    unsigned sticker : 5;
+    unsigned roof : 1;
+    unsigned front : 1;
+    unsigned rear : 1;
+};
+
+struct CarDisplay {
+    int stickerX;
+    int stickerY;
+    int stickerSubX;
+    int betType;
+    int bodyPic;
+    int paintScheme;
+    int tireVariant;
+    int overlayPic;
+    int specIndex;
+    struct Look appearance;
+    int transmissionPic;
+    char unused[8];
+};
 
 #define GARAGE_GAME_ENDED 0x29a
 
@@ -12,7 +45,6 @@ enum GarageMode {
     GARAGE_REDRAW = 2,
     GARAGE_SWAP = 3
 };
-
 
 extern int g_tirePics[][4];
 extern int g_colX;

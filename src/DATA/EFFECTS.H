@@ -2,7 +2,6 @@
 
 #ifndef EFFECTS_H
 #define EFFECTS_H
-#include "STRUCTS.H"
 
 extern int far g_pumpSound[];
 extern int far g_jackSound[];

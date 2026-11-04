@@ -86,10 +86,18 @@ def generate():
     from . import source
     decls = {}
     header_constants = set()
+    type_owners = {}
+    problems = []
     for kind in ('globals', 'fardata', 'functions'):
         for d in source.headers()[kind]:
             decls.setdefault(d['name'], []).append(d['header'])
     for path in config.source_files('.H'):
+        text = _strip(path.read_text(encoding='latin-1'))
+        for kind, name in re.findall(r'\b(struct|union)\s+(\w+)\s*\{', text):
+            key = (kind, name)
+            if key in type_owners:
+                problems.append(f'{kind} {name} is defined in {type_owners[key]}.H and {path.name}')
+            type_owners[key] = path.stem.upper()
         macros = re.findall(r'^#[ \t]*define[ \t]+([A-Za-z_]\w*)(?:\([^\n)]*\))?[ \t]+[^\s]',
                             _strip(path.read_text(encoding='latin-1')), re.M)
         enums = []
@@ -102,13 +110,13 @@ def generate():
             decls.setdefault(name, []).append(path.stem.upper())
     files = owners_layout()
     stems = {stem for stem, _ in files}
-    problems, owner = [], {}
+    owner = {}
     for name, hs in sorted(decls.items()):
         if len(hs) > 1:
             problems.append(f'{name} is declared in ' + ' and '.join(f'{h}.H' for h in hs))
         owner[name] = hs[0]
-    made = {h for hs in decls.values() for h in hs} & (stems | _STANDALONE)
-    for h in sorted({h for hs in decls.values() for h in hs} - stems - _STANDALONE):
+    made = ({h for hs in decls.values() for h in hs} | set(type_owners.values())) & (stems | _STANDALONE)
+    for h in sorted(({h for hs in decls.values() for h in hs} | set(type_owners.values())) - stems - _STANDALONE):
         problems.append(f'{config.source_path(h + ".H").relative_to(config.SRC)}: no source file {h}.C or {h}.ASM')
     for stem, srcs in files:
         mine = {n for n, h in owner.items() if h == stem}
@@ -118,29 +126,31 @@ def generate():
     for stem, srcs in files:
         for p in srcs:
             if p.suffix.upper() == '.C':
-                _rewrite_includes(p, stem, owner, made)
+                _rewrite_includes(p, stem, {**owner, **type_owners}, made)
     return problems
 
 
 def _rewrite_includes(path, stem, owner, made):
     """The include block as a C programmer of 1989 wrote it: the system headers first (in the
     order the file has them; one the game's runtime variables need is appended), then
-    STRUCTS.H, the file's own header, and the headers of the files it uses, alphabetically.
+    the file's own header, and the headers of the files whose symbols or types it uses, alphabetically.
     The block is the run of #include lines at the top of the file."""
     raw = path.read_text(encoding='latin-1')
     ids = set(re.findall(r'\b[A-Za-z_]\w*\b', _strip(raw)))
-    need = sorted({owner[i] for i in ids if i in owner} & made - {stem, 'STRUCTS'})
+    tags = set(re.findall(r'\b(struct|union)\s+(\w+)', _strip(raw)))
+    need = sorted({owner[i] for i in ids | tags if i in owner} & made - {stem})
     lines = raw.split('\n')
     at = [i for i, ln in enumerate(lines) if ln.startswith('#include')]
-    if not at or not any(re.match(r'#include\s+"STRUCTS\.H"', lines[i]) for i in at):
-        raise SystemExit(f'{path}: no header include block to rewrite')
+    if not at:
+        at = [0]
+        lines.insert(0, '')
     if any(lines[i].strip() for i in range(at[0], at[-1]) if i not in at):
         raise SystemExit(f'{path}: the #include lines are not one block at the top')
     system = [lines[i] for i in at if lines[i].startswith('#include <')]
     for h in sorted({_SYSTEM[i] for i in ids if i in _SYSTEM}):
         if not any(re.match(rf'#include\s+<{re.escape(h)}>', ln, re.I) for ln in system):
             system.append(f'#include <{h}>')
-    block = system + ['#include "STRUCTS.H"'] + ([f'#include "{stem}.H"'] if stem in made else []) \
+    block = system + ([f'#include "{stem}.H"'] if stem in made else []) \
         + [f'#include "{h}.H"' for h in need]
     new = lines[:at[0]] + block + [ln for i, ln in enumerate(lines) if i > at[0] and i not in at]
     text = '\n'.join(new)

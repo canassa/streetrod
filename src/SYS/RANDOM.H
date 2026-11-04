@@ -2,7 +2,6 @@
 
 #ifndef RANDOM_H
 #define RANDOM_H
-#include "STRUCTS.H"
 
 struct RandomState {
     int a;

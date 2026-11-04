@@ -2,7 +2,40 @@
 
 #ifndef DASH_H
 #define DASH_H
-#include "STRUCTS.H"
+
+#include "CURSOR.H"
+struct Bitmap;
+struct Blt;
+struct Eng;
+struct Sprite;
+
+/* what g_shifterDraw.track points at (da_draw_shifter, da_init_shifter): number of points, bitmap ids of the two sprites, bitmap
+   height at +6 and a table of (x, y) signed-byte pairs at +8 */
+struct Track {
+    int n;
+    int id1;
+    int id2;
+    int h;
+    signed char *pt;
+};
+
+struct Hooks {
+    int(far *copy)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
+    int(far *shiftBlit)(struct Bitmap far *, struct Bitmap far *, struct Blt *);
+    int(far *maskedBlit)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
+    void(far *drawText)(struct Bitmap far *, int, int, char *);
+    void(far *cursorBlit)(char far *, char far *, char far *, char far *, int, int, int, int);
+    void(far *copyPage)(char far *, char far *);
+    void(far *recolorRegion)(struct Bitmap far *, int, int, int, int, int, int);
+    void(far *blank)(void);
+    void(far *show)(void);
+    int(far *spriteStep)(struct Sprite *);
+    void(far *reveal)(char far *, char far *);
+    void(far *slideSprite)(int, int, int, int, int, struct Bitmap far *);
+    void(far *drawLine)(int, int, int, int, int);
+    void(far *fillSpan)(int, int, int, int);
+    void(far *fillBelow)(int, int);
+};
 
 enum DashView {
     DASH_VIEW_SAVE = 0,
@@ -11,7 +44,6 @@ enum DashView {
     DASH_VIEW_DRIVE = 3,
     DASH_VIEW_RESTORE_SHOW = 4
 };
-
 
 struct ShifterDraw {
     struct Track *track;

@@ -2,7 +2,9 @@
 
 #ifndef TANDYBLT_H
 #define TANDYBLT_H
-#include "STRUCTS.H"
+
+struct Bitmap;
+struct Blt;
 
 void tb_compose(struct Bitmap far *dst, struct Bitmap far *src, struct Bitmap far *mask, struct Blt *in);
 void tb_masked(struct Bitmap far *a, struct Bitmap far *b, struct Blt *in, int flag);

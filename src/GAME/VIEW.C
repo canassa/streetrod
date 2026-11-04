@@ -1,8 +1,9 @@
 #include <stdlib.h>
-#include "STRUCTS.H"
 #include "VIEW.H"
+#include "ADS.H"
 #include "ARENA.H"
 #include "BOBS.H"
+#include "CARPIC.H"
 #include "CRUISE.H"
 #include "DASH.H"
 #include "DISK.H"

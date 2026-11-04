@@ -2,7 +2,6 @@
 
 #ifndef EGACOPY_H
 #define EGACOPY_H
-#include "STRUCTS.H"
 
 extern int g_revealOffsets[];
 void ec_page(char far *src, char far *dst);

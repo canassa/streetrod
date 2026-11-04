@@ -1,7 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
-#include "STRUCTS.H"
 #include "BOBS.H"
+#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "CARHOP.H"
@@ -24,6 +24,7 @@
 #include "MUSIC.H"
 #include "PC.H"
 #include "PERF.H"
+#include "POOLS.H"
 #include "POPUP.H"
 #include "RACE.H"
 #include "RANDOM.H"

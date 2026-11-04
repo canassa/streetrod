@@ -2,7 +2,14 @@
 
 #ifndef CARHOP_H
 #define CARHOP_H
-#include "STRUCTS.H"
+
+#include "SPRITE.H"
+
+struct Sheet {
+    int id;
+    int cols;
+    int n;
+};
 
 enum CarhopMode {
     CARHOP_ENTER = 0,

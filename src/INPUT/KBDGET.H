@@ -2,7 +2,6 @@
 
 #ifndef KBDGET_H
 #define KBDGET_H
-#include "STRUCTS.H"
 
 #define KEY_NONE 0
 #define ASCII_ENTER 0x0d

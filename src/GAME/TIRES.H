@@ -2,7 +2,10 @@
 
 #ifndef TIRES_H
 #define TIRES_H
-#include "STRUCTS.H"
+
+#include "CARPIC.H"
+#include "CARPIC.H"
+struct Sprite;
 
 struct TireWork {
     struct Bitmap far *liftBuf;

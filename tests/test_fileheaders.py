@@ -124,7 +124,45 @@ class SourceBodyTests(unittest.TestCase):
             path = Path(tmp) / 'DRAW.C'
             path.write_text('#include "STRUCTS.H"\n' + body)
             fileheaders._rewrite_includes(path, 'DRAW', {}, {'DRAW'})
-            expected = '#include "STRUCTS.H"\n#include "DRAW.H"\n' + body
+            expected = '#include "DRAW.H"\n' + body
             self.assertEqual(path.read_text(), expected)
             fileheaders._rewrite_includes(path, 'DRAW', {}, {'DRAW'})
             self.assertEqual(path.read_text(), expected)
+
+
+class TypeHeaderTests(unittest.TestCase):
+    def test_type_only_headers_follow_tags_without_a_shared_header(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / 'OWNED.H').write_text('struct Record { int value; };\n'
+                                         'union Bits { int word; char bytes[2]; };\n')
+            owned = root / 'OWNED.C'
+            caller = root / 'CALLER.C'
+            owned.write_text('int unused;\n')
+            caller.write_text('struct Record value;\nunion Bits bits;\n')
+            with patch.object(config, 'SRC', root), \
+                    patch.object(fileheaders, 'owners_layout', return_value=[('OWNED', [owned]), ('CALLER', [caller])]), \
+                    patch.object(source, 'headers', return_value=dict(globals=[], fardata=[], functions=[])):
+                self.assertEqual(fileheaders.generate(), [])
+                self.assertIn('#include "OWNED.H"', caller.read_text())
+                self.assertNotIn('STRUCTS.H', caller.read_text())
+                before = owned.read_bytes(), caller.read_bytes()
+                self.assertEqual(fileheaders.generate(), [])
+                self.assertEqual((owned.read_bytes(), caller.read_bytes()), before)
+                caller.write_text('int Record; /* struct Record */\nchar *s = "union Bits";\n')
+                self.assertEqual(fileheaders.generate(), [])
+                self.assertNotIn('OWNED.H', caller.read_text())
+                before = caller.read_bytes()
+                self.assertEqual(fileheaders.generate(), [])
+                self.assertEqual(caller.read_bytes(), before)
+
+    def test_duplicate_type_is_reported(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for stem in ('A', 'B'):
+                (root / (stem + '.H')).write_text('struct Record { int value; };\n')
+                (root / (stem + '.C')).write_text('int unused;\n')
+            with patch.object(config, 'SRC', root), \
+                    patch.object(fileheaders, 'owners_layout', return_value=[(stem, [root / (stem + '.C')]) for stem in ('A', 'B')]), \
+                    patch.object(source, 'headers', return_value=dict(globals=[], fardata=[], functions=[])):
+                self.assertEqual(fileheaders.generate(), ['struct Record is defined in A.H and B.H'])

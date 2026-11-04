@@ -2,7 +2,6 @@
 
 #ifndef SAVEGAME_H
 #define SAVEGAME_H
-#include "STRUCTS.H"
 
 enum SaveLoadResult {
     LOAD_OK = 0,

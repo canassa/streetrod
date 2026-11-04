@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <dos.h>
-#include "STRUCTS.H"
 #include "RACE.H"
+#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "BOBS.H"
@@ -28,6 +28,7 @@
 #include "MUSIC.H"
 #include "PC.H"
 #include "PERF.H"
+#include "POOLS.H"
 #include "POPUP.H"
 #include "RANDOM.H"
 #include "ROAD.H"

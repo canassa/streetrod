@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include "STRUCTS.H"
 #include "SPRITE.H"
 #include "ARENA.H"
 #include "BITMAP.H"

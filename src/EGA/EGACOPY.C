@@ -1,7 +1,6 @@
 #include <conio.h>
 #include <dos.h>
 #include <memory.h>
-#include "STRUCTS.H"
 #include "EGACOPY.H"
 #include "PC.H"
 #include "SYS.H"

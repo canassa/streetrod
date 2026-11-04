@@ -1,6 +1,10 @@
 #ifndef KEYMAPS_H
 #define KEYMAPS_H
-#include "STRUCTS.H"
+
+struct KeyMap {
+    char key;
+    char val;
+};
 
 #define KEY_VALUE_BASE 0xce
 

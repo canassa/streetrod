@@ -2,7 +2,8 @@
 
 #ifndef DRVTICK_H
 #define DRVTICK_H
-#include "STRUCTS.H"
+
+#include "SYS.H"
 
 extern int g_cruiseRpmSteps[];
 extern int g_cruiseRatios[];

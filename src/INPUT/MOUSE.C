@@ -1,5 +1,4 @@
 #include <dos.h>
-#include "STRUCTS.H"
 #include "MOUSE.H"
 #include "INPUTDAT.H"
 #include "PC.H"

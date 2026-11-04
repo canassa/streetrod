@@ -2,7 +2,18 @@
 
 #ifndef SCENERY_H
 #define SCENERY_H
-#include "STRUCTS.H"
+
+#include "SPANS1.H"
+
+struct Run {
+    int n;
+    struct Part far *parts;
+};
+
+struct List {
+    int last;
+    struct Run *items;
+};
 
 extern int g_5ec6;
 extern struct Run g_sprTreeLod[7];

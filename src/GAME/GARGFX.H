@@ -2,7 +2,18 @@
 
 #ifndef GARGFX_H
 #define GARGFX_H
-#include "STRUCTS.H"
+
+#include "ADS.H"
+#include "HOTSPOT.H"
+struct Bitmap;
+struct Car;
+
+struct PartSelection {
+    int wirePic;
+    int slot;
+    int unused;
+    int subslot;
+};
 
 extern struct PartSelection g_slotSelec;
 

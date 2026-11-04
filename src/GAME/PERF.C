@@ -1,10 +1,12 @@
 #include <math.h>
-#include "STRUCTS.H"
 #include "PERF.H"
 #include "DISK.H"
+#include "GAME.H"
 #include "GARAGE.H"
 #include "INPUTDAT.H"
+#include "POOLS.H"
 #include "SCREEN.H"
+#include "SYS.H"
 
 int g_gearSpeedPct[4][5] = {{0, 25, 50, 100, 0}, {0, 25, 50, 100, 0}, {0, 25, 50, 75, 100}, {0, 30, 50, 80, 100}};
 int g_rpmStepBase[3][5] = {{500, 600, 300, 100, 70}, {600, 700, 350, 120, 90}, {600, 760, 380, 140, 90}};

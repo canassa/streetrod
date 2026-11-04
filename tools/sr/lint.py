@@ -19,7 +19,7 @@ def lint(text, log=""):
     for ch in body:
         if ch == "{":
             if depth == 0 and re.search(r"\bstruct\s+\w+\s*$", stmt.strip()):
-                problems.append(f"struct definition `{stmt.strip()}` belongs in STRUCTS.H")
+                problems.append(f"struct definition `{stmt.strip()}` belongs in its owning module's header")
             depth += 1
             stmt = ""
             continue

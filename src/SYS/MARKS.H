@@ -2,7 +2,6 @@
 
 #ifndef MARKS_H
 #define MARKS_H
-#include "STRUCTS.H"
 
 void ma_clear(void);
 void ma_release(void);

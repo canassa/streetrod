@@ -3,11 +3,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "STRUCTS.H"
 #include "SAVEGAME.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "BOBS.H"
+#include "CARPIC.H"
 #include "CURSOR.H"
 #include "DASH.H"
 #include "DISK.H"

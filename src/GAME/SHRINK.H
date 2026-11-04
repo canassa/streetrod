@@ -2,7 +2,8 @@
 
 #ifndef SHRINK_H
 #define SHRINK_H
-#include "STRUCTS.H"
+
+struct Bitmap;
 
 struct Bitmap far *sr_ega(struct Bitmap far *p, unsigned char a, unsigned char b);
 struct Bitmap far *sr_cga(struct Bitmap far *p, unsigned char a, unsigned char b);

@@ -2,7 +2,18 @@
 
 #ifndef FAME_H
 #define FAME_H
-#include "STRUCTS.H"
+
+#include "VIDEO.H"
+
+struct ManualEntry {
+    signed char page;
+    signed char color;
+};
+
+struct Entry {
+    char name[16];
+    char score[7];
+};
 
 extern struct ManualEntry g_manual[];
 extern int g_protectCycle;

@@ -1,4 +1,3 @@
-#include "STRUCTS.H"
 #include "HOTSPOT.H"
 
 struct Hot g_hots[79] = {{HOT_MENU, 0, 0, 0, 0, 0, -1, -1, 0},

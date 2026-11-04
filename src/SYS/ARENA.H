@@ -2,7 +2,8 @@
 
 #ifndef ARENA_H
 #define ARENA_H
-#include "STRUCTS.H"
+
+struct Bitmap;
 
 #define ARENA_LOW_BASE 0
 #define ARENA_LOW_STACK 1

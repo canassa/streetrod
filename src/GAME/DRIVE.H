@@ -2,7 +2,8 @@
 
 #ifndef DRIVE_H
 #define DRIVE_H
-#include "STRUCTS.H"
+
+struct Bitmap;
 
 extern struct Bitmap far *g_driveScreenB;
 int dv_run(void);

@@ -2,8 +2,8 @@
 #include <dos.h>
 #include <stdlib.h>
 #include <conio.h>
-#include "STRUCTS.H"
 #include "CGA.H"
+#include "CARPIC.H"
 #include "CGABLT.H"
 #include "CGAFONT.H"
 #include "CGALINE.H"

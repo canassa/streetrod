@@ -2,7 +2,6 @@
 
 #ifndef MESSAGES_H
 #define MESSAGES_H
-#include "STRUCTS.H"
 
 extern char g_txt[];
 extern char g_msgWannaQuit[];

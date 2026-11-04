@@ -1,8 +1,9 @@
 #include <string.h>
-#include "STRUCTS.H"
 #include "CURSOR.H"
+#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
+#include "CARPIC.H"
 #include "DASH.H"
 #include "DISK.H"
 #include "EGALATCH.H"

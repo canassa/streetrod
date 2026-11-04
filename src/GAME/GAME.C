@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-#include "STRUCTS.H"
 #include "GAME.H"
 #include "ADS.H"
 #include "ARENA.H"
@@ -26,6 +25,7 @@
 #include "MUSIC.H"
 #include "PC.H"
 #include "PERF.H"
+#include "POOLS.H"
 #include "POPUP.H"
 #include "RACE.H"
 #include "RANDOM.H"

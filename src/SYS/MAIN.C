@@ -1,9 +1,9 @@
 #include <dos.h>
 #include <string.h>
 #include <conio.h>
-#include "STRUCTS.H"
 #include "MAIN.H"
 #include "ARENA.H"
+#include "CARPIC.H"
 #include "CGA.H"
 #include "CURSOR.H"
 #include "DASH.H"

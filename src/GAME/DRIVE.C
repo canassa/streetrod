@@ -1,6 +1,6 @@
 #include <stdlib.h>
-#include "STRUCTS.H"
 #include "DRIVE.H"
+#include "ADS.H"
 #include "ARENA.H"
 #include "CARPIC.H"
 #include "CRTC.H"

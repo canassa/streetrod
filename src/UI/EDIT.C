@@ -1,6 +1,5 @@
 #include <string.h>
 #include <stdlib.h>
-#include "STRUCTS.H"
 #include "EDIT.H"
 #include "BITMAP.H"
 #include "CURSOR.H"

@@ -1,4 +1,3 @@
-#include "STRUCTS.H"
 #include "SCENERY.H"
 #include "SCENERY2.H"
 #include "SPANS1.H"

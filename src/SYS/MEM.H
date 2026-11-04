@@ -2,7 +2,8 @@
 
 #ifndef MEM_H
 #define MEM_H
-#include "STRUCTS.H"
+
+struct Bitmap;
 
 extern char far *g_vramBase;
 extern unsigned g_vramUsed[4];

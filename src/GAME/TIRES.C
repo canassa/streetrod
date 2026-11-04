@@ -1,5 +1,5 @@
-#include "STRUCTS.H"
 #include "TIRES.H"
+#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "CARPIC.H"

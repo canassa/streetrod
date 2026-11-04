@@ -2,7 +2,8 @@
 
 #ifndef EGASPR_H
 #define EGASPR_H
-#include "STRUCTS.H"
+
+struct Sprite;
 
 int far es_step(struct Sprite *s);
 

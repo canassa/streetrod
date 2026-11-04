@@ -2,7 +2,9 @@
 
 #ifndef TANDY_H
 #define TANDY_H
-#include "STRUCTS.H"
+
+#include "DASH.H"
+struct Bitmap;
 
 extern struct Hooks g_tandyHooks;
 extern int g_tandyRevealOrder[];

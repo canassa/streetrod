@@ -1,5 +1,5 @@
-#include "STRUCTS.H"
 #include "SCENERY2.H"
+#include "SCENERY.H"
 #include "SPANS2.H"
 
 struct List g_sprPole = {7, g_sprPoleLod};

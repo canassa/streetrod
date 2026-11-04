@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "STRUCTS.H"
 #include "FAME.H"
 #include "BITMAP.H"
 #include "CURSOR.H"

@@ -2,7 +2,50 @@
 
 #ifndef VIDEO_H
 #define VIDEO_H
-#include "STRUCTS.H"
+
+struct Bitmap;
+struct Cmd;
+
+struct Box {
+    int w;
+    int h;
+    int sx;
+    int sy;
+    int dx;
+    int dy;
+    char pad[0x1c - 12];
+};
+
+struct Obj {
+    int id;
+    int scriptIndex;
+    int pendingTimers;
+    int f6;
+    struct Bitmap far *img;
+    void far *fc;
+    struct Box box;
+};
+
+struct Colors {
+    char text;
+    char textBg;
+    char fill;
+    char line;
+    char frame;
+};
+
+struct Style {
+    struct Colors pal[7];
+    struct Colors c23;
+    struct Colors c28;
+    struct Colors c2d;
+    struct Colors c32;
+    struct Colors colors;
+    char pad2[5];
+    struct Colors hilite;
+    struct Colors popup;
+    struct Colors bank; /* fifth palette bank, part of the 80-byte record */
+};
 
 struct AnimRun {
     struct Cmd *command;

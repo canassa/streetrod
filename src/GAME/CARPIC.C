@@ -1,7 +1,7 @@
 #include <conio.h>
 #include <dos.h>
-#include "STRUCTS.H"
 #include "CARPIC.H"
+#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "BOBS.H"

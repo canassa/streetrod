@@ -1,6 +1,7 @@
 #include <stdlib.h>
-#include "STRUCTS.H"
 #include "CGASHIFT.H"
+#include "ADS.H"
+#include "CARPIC.H"
 
 static void near shift_pixels(unsigned char *p, int n, int cnt);
 static void near put_pixels(char far *dst, unsigned char *src, int n, int ph);

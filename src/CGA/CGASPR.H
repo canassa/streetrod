@@ -2,7 +2,8 @@
 
 #ifndef CGASPR_H
 #define CGASPR_H
-#include "STRUCTS.H"
+
+struct Sprite;
 
 int cs_step(struct Sprite *s);
 

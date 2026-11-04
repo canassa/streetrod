@@ -1,4 +1,3 @@
-#include "STRUCTS.H"
 #include "DRVTICK.H"
 #include "CRUISE.H"
 #include "DASH.H"

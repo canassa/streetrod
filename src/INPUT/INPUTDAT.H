@@ -2,7 +2,15 @@
 
 #ifndef INPUTDAT_H
 #define INPUTDAT_H
-#include "STRUCTS.H"
+
+struct Item {
+    int value;
+    char variant;
+    char fitMask;
+    char category;
+    char pad3;
+    int nameOffset;
+};
 
 extern int g_joyX;
 extern int g_joyY;

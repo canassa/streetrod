@@ -2,7 +2,46 @@
 
 #ifndef CARPIC_H
 #define CARPIC_H
-#include "STRUCTS.H"
+
+union FarPtr {
+    char far *p;
+    struct {
+        unsigned off;
+        unsigned seg;
+    } w;
+};
+
+struct Bitmap {
+    int width;
+    int height;
+    unsigned planesize;
+    char pad[0x1e];
+    union FarPtr bits;
+    union FarPtr alt;
+    int pitch;
+    signed char flags;
+};
+
+struct Cmd {
+    signed char op;
+    signed char sub;
+    int a;
+    int b;
+};
+
+struct Rect {
+    int x1;
+    int y1;
+    int x2;
+    int y2;
+};
+
+/* one saved band of a screen page (8 bytes): where it sits in the scratch bitmap, its first row and height */
+struct Band {
+    char far *p;
+    int y;
+    int h;
+};
 
 #define BACKDROP_ROWS 70
 

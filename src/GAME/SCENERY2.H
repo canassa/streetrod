@@ -2,7 +2,8 @@
 
 #ifndef SCENERY2_H
 #define SCENERY2_H
-#include "STRUCTS.H"
+
+#include "SCENERY.H"
 
 extern struct Run g_sprPoleLod[7];
 extern struct List g_sprPole;

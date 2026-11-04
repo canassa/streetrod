@@ -2,7 +2,6 @@
 
 #ifndef VIDDET_H
 #define VIDDET_H
-#include "STRUCTS.H"
 
 extern char g_savedVideoMode;
 extern char g_egaMono;

@@ -2,8 +2,148 @@
 
 #ifndef SYS_H
 #define SYS_H
+
+/* the free area around the pointer found by mn_hit (x1, x2: left and right limits; y1, y2: top
+   and bottom) or, on a hit, the box of the hot spot */
+struct Lims {
+    int x1;
+    int x2;
+    int y1;
+    int y2;
+};
+
+enum AutoSelector {
+    SELECTOR_MANUAL = 0,
+    SELECTOR_NEUTRAL = 1,
+    SELECTOR_DRIVE = 2
+};
+
+/* one range of the engine curve: 8 bytes */
+struct Range {
+    int minRpm;
+    int maxRpm;
+    int accelStep;
+    int decelStep;
+};
+
+/* one gear: three ranges */
+struct Gear {
+    struct Range bands[3];
+};
+
+/* drive train state; g_driveEng and g_oppEngState are two instances, 0xc2 bytes each */
+struct Eng {
+    int speed;
+    int steeringInput;
+    int steering;
+    char pad6[4];
+    int tireFailureIndex;
+    int tireSlip;
+    int rpm;
+    int minRpm;
+    int maxRpm;
+    int accelStep;
+    int decelStep;
+    int gearIndex;
+    int shifterDirty;
+    int gearCount;
+    int shiftRpm;
+    int automatic;
+    int autoShiftRpm;
+    enum AutoSelector autoSelector;
+    int f26;
+    int f28;
+    int f2a;
+    char pad2c[8];
+    int f34[6];
+    int rpmPerSpeed;
+    int rpmBand;
+    struct Gear gear[5];
+    int stopFlags;
+    int fbe;
+    int elapsedTicks;
+};
+
+#include "MUSIC.H"
+struct Hot;
+
+enum TimerAction {
+    TIMER_CANCELLED = 0,
+    TIMER_RESUME_ANIM = 1
+};
+
+struct Mouse {
+    int dx;
+    int dy;
+    int accX;
+    int accY;
+    int shiftX;
+    int shiftY;
+    int left;
+    int right;
+    char present;
+};
+
+struct Dev {
+    union {
+        int w;
+        unsigned char b[2];
+    } divisor;
+    int ticksLeft;
+    int repeatCount;
+    char active;
+    char dirty;
+    int far *song;
+    int far *phraseStart;
+    int far *cur;
+    int *repeatTable;
+    int *repeatCursor;
+    enum ToneSlot *toneTable;
+    enum ToneSlot *toneCursor;
+};
+
+struct Link {
+    int nxt;
+    int prv;
+    long deadline;
+    int priority;
+    enum TimerAction action;
+    int argument;
+    char pad[4];
+};
+
+struct RoadView {
+    int rightEdge;
+    int roadIndex;
+    int roadFraction;
+    int distanceStep;
+    int lateralX;
+    int cameraY;
+    int unused;
+    int curveX;
+    int roadHeight;
+};
+
+struct RivalPosition {
+    int roadIndex;
+    int roadFraction;
+    int distanceStep;
+    int lateralX;
+    char unused[8];
+};
+
+struct InputState {
+    int any;
+    int key;
+};
+
+/* Game time from action ticks, BIOS ticks and a saved time base. */
+struct GameClock {
+    long actionTicks;
+    long biosTicks;
+    long timeBase;
+};
 #include "KEYMAPS.H"
-#include "STRUCTS.H"
 
 struct DemoControl {
     int quit;

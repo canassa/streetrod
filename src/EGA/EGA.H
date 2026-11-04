@@ -2,7 +2,9 @@
 
 #ifndef EGA_H
 #define EGA_H
-#include "STRUCTS.H"
+
+#include "DASH.H"
+struct Bitmap;
 
 extern struct Hooks g_egaHooks;
 void eg_install(void);

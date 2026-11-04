@@ -2173,3 +2173,98 @@ sr headers synchronizes dependencies. The sr-cli skill records this workflow.
 A numeric FORCE_OWNER key is a code address, not a stale filename. The packed and
 DOS-native comparisons prove the renamed THEADR/object metadata does not reach
 the shipped EXE; matching functions alone would not establish that.
+
+
+## 2026-11-04 23:37 CET: Move struct definitions to their owning module headers
+
+### What I did
+
+- Moved all 80 structs, all 16 enums and the FarPtr union out of STRUCTS.H;
+  definitions are unchanged apart from formatting. STRUCTS.H is now ten lines
+  containing only union Word. No struct, field, enum or global was renamed.
+- Chose headers from the verified defining globals; where multiple units have
+  instances, used a primary owner (CARPIC for bitmap/rectangle records, SYS for
+  drive-engine and music-voice state, SPRITE for animation records, DASH for
+  video hooks). Embedded helper records and member enums follow their parent.
+  For records without standalone globals: RACE owns Dlg/GasHand, BOBS owns Cand,
+  EGABLIT owns Mask, SPRITE owns Blt16, GAME owns Rack, GARAGE owns Look, and
+  SYS owns the engine Range/Gear helpers. Their producers, consumers and field
+  accesses establish those APIs. SCENERY owns the Run/List scenery interface;
+  SPANS1 owns Part (also used by SPANS2), matching the far-data definitions.
+- Added guarded header dependencies for embedded records and enums, and forward
+  declarations for pointer records. Included POOLS from GAME, GAME from SCREEN,
+  HOTSPOT from MENU, SPANS1 from SCENERY, and CARPIC from SPRITE where clients
+  need complete records through chained member access or embedded page bounds.
+- Made sr headers discover struct/union tag owners separately from ordinary
+  identifiers, include type-only owner headers, reject duplicate definitions,
+  and work without an unconditional common header. Regenerated all source include
+  blocks and MAKEFILE dependencies. Generalized the closing-guard check and
+  removed cdata.Types central-header ordering/availability assumptions.
+- Updated CLAUDE.md, reconstruction docs, decompilation/CLI/compiler-recipe skills,
+  and the newly merged Doxygen skill. Added meaningful include-generation tests.
+- Merged main at 613c927 (mbrename and docskills) into structs. Resolved the
+  INPUTDAT.H rename by keeping Item there with the new include guard, then
+  regenerated source includes and MAKEFILE dependencies rather than hand-merging
+  generated lists. No merge to main and no push.
+- Final gates: sr headers --check; sr format and sr format --check; sr check --all
+  (572/572); rm -rf work followed by sr build (96/96 objects, 572/572 exact function
+  bytes and positions, 748/748 near calls, packed EXE IDENTICAL); sr dgroup check;
+  sr dgroup order; unittest discovery (100 tests). Additional audits: all 98 headers
+  compile independently with MSC 5.1, no header include cycles, and 131 types /
+  685 sizeof/offsetof checks with zero mismatches. No byte-budget/static-order
+  regressions remain.
+
+### What I learned
+
+- The sole common exception is union Word: GARAGE uses it to inspect paint bytes,
+  SOUND to form a speaker divisor and SYS to form timer bytes. It has no global
+  instance and no producer/API that owns those independent conversions. Keeping
+  this two-byte helper common avoids unrelated gameplay/sound/system API includes.
+  FarPtr instead follows Bitmap to CARPIC because it describes bitmap storage.
+- Forward declarations alone are insufficient when callers traverse a public
+  record into another record and access its members, even when the caller never
+  spells the pointed-to type tag. Those API headers need the defining dependency.
+  Missing definitions in the first check were fixed with those natural includes;
+  subsequent checks stayed at 572/572 without name padding or source-body changes.
+- Struct/union tags occupy their own namespace. Include discovery must match
+  `struct Name` / `union Name`, not every bare identifier equal to a tag. Tests
+  also cover comments/strings, type-only headers and idempotence without includes.
+- Source-index order is enough for the host data-shape reader: it collects all
+  definitions before evaluating layouts. Real MSC checks and independent header
+  compiles provide the checks that the C include/dependency graph needs.
+
+Ownership inventory (the original 98 definitions):
+
+- src/DATA/CGAFONT.H: struct CgaGlyph
+- src/DATA/FONTDATA.H: struct Glyph
+- src/DATA/SLOTS.H: struct Slot
+- src/DATA/SPANS1.H: struct Part
+- src/EGA/EGABLIT.H: struct Mask
+- src/GAME/ADS.H: struct Blt, struct Pages
+- src/GAME/BOBS.H: struct Racer, struct Btn, struct Step, struct Cand, struct Cell, enum BetKind, struct Wager
+- src/GAME/CARHOP.H: struct Sheet
+- src/GAME/CARPIC.H: union FarPtr, struct Bitmap, struct Cmd, struct Rect, struct Band
+- src/GAME/DASH.H: struct Track, struct Hooks
+- src/GAME/FAME.H: struct ManualEntry, struct Entry
+- src/GAME/GAME.H: enum TireVariant, enum ManifoldVariant, enum CarburetorVariant, enum TransmissionVariant, enum EngineVariant, enum WireState, struct Rack, struct Car
+- src/GAME/GARAGE.H: enum PartCategory, struct Look, struct CarDisplay
+- src/GAME/GARGFX.H: struct PartSelection
+- src/GAME/RACE.H: enum GasHand, struct Dlg, struct Spot, struct RoadEdges, struct BodyPoints
+- src/GAME/ROAD.H: struct MirrorEdges
+- src/GAME/SCENERY.H: struct Run, struct List
+- src/GAME/VIEW.H: struct Ball, struct Clip, struct ViewPages, struct ViewClip
+- src/INPUT/INPUTDAT.H: struct Item
+- src/INPUT/KEYMAPS.H: struct KeyMap
+- src/SOUND/MUSIC.H: enum ToneSlot, enum Waveform, struct Tone
+- src/SYS/DISK.H: struct Spec, struct Model, struct Offs, struct Panel, struct Spr12, struct Spr6, struct Pos6
+- src/SYS/MAIN.H: struct Video
+- src/SYS/POOLS.H: struct Node, struct Node2
+- src/SYS/STRUCTS.H: union Word
+- src/SYS/SYS.H: enum TimerAction, enum AutoSelector, struct Mouse, struct Dev, struct Link, struct Range, struct Gear, struct Eng, struct Lims, struct RoadView, struct RivalPosition, struct InputState, struct GameClock
+- src/UI/CURSOR.H: struct Pair, enum CursorDrawState, struct Cursor
+- src/UI/HOTSPOT.H: enum HotKind, struct Hot
+- src/UI/MENU.H: struct ListDialog
+- src/UI/POPUP.H: struct Win
+- src/UI/SCREEN.H: enum RaceType, struct DriverState, struct TextEnd, struct StatusText, struct PicturePlacement
+- src/VIDEO/SPRITE.H: struct Seq, struct Frame, struct Sprite, struct Page, struct Blt16
+- src/VIDEO/VIDEO.H: struct Box, struct Obj, struct Colors, struct Style

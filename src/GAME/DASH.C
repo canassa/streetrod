@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <conio.h>
-#include "STRUCTS.H"
 #include "DASH.H"
+#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "CARPIC.H"
@@ -22,6 +22,7 @@
 #include "PC.H"
 #include "SCREEN.H"
 #include "SOUND.H"
+#include "SPRITE.H"
 #include "SYS.H"
 #include "VIDEO.H"
 #include "VIEW.H"

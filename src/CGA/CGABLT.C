@@ -1,12 +1,14 @@
 #include <dos.h>
 #include <memory.h>
-#include "STRUCTS.H"
 #include "CGABLT.H"
+#include "ADS.H"
+#include "CARPIC.H"
 #include "CGADRV.H"
 #include "DASH.H"
 #include "MASKBG.H"
 #include "MASKBLT.H"
 #include "MASKOR.H"
+#include "VIEW.H"
 
 static void near copy_from_cga(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Clip *o);
 

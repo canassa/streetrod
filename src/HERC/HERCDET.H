@@ -2,7 +2,6 @@
 
 #ifndef HERCDET_H
 #define HERCDET_H
-#include "STRUCTS.H"
 
 void hd_ram_test(void);
 int hd_detect(void);

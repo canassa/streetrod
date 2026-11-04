@@ -2,7 +2,41 @@
 
 #ifndef VIEW_H
 #define VIEW_H
-#include "STRUCTS.H"
+
+#include "SCENERY.H"
+struct Bitmap;
+
+/* source rectangle of one size of ball in the sprite sheet */
+struct Ball {
+    int sx;
+    int w;
+    int h;
+};
+
+/* clipped rectangle (12 bytes): size, source origin, destination origin. da_clip_blt takes struct Blt *
+   but reads and writes only these first 12 bytes, so callers with a Clip local pass it cast. */
+struct Clip {
+    int w;
+    int h;
+    int sx;
+    int sy;
+    int dx;
+    int dy;
+};
+
+/* Draw and show page indices. */
+struct ViewPages {
+    int draw;
+    int show;
+};
+
+/* Clipping bounds shared by VIEW and the span drawing routines. */
+struct ViewClip {
+    int xMin;
+    int yMin;
+    int yMax;
+    int xMax;
+};
 
 struct RenderRows {
     int *leftX;

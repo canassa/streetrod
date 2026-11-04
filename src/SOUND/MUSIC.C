@@ -1,5 +1,4 @@
 #include <conio.h>
-#include "STRUCTS.H"
 #include "MUSIC.H"
 #include "INPUTDAT.H"
 #include "PC.H"

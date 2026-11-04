@@ -1,13 +1,15 @@
 #include <conio.h>
 #include <stdlib.h>
-#include "STRUCTS.H"
 #include "CGASPR.H"
+#include "ADS.H"
 #include "BOBS.H"
+#include "CARPIC.H"
 #include "CGABLT.H"
 #include "DASH.H"
 #include "MAIN.H"
 #include "PC.H"
 #include "SPRITE.H"
+#include "VIEW.H"
 
 static void near restore_rect(struct Rect *rect, struct Bitmap far *bm2, struct Bitmap far *bm1, int flag);
 

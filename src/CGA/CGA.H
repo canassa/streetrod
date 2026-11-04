@@ -2,7 +2,9 @@
 
 #ifndef CGA_H
 #define CGA_H
-#include "STRUCTS.H"
+
+#include "DASH.H"
+struct Bitmap;
 
 extern struct Hooks g_cgaHooks;
 extern unsigned char g_cgaPixMask[4];

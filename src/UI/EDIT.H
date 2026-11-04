@@ -2,7 +2,6 @@
 
 #ifndef EDIT_H
 #define EDIT_H
-#include "STRUCTS.H"
 #include "KEYMAPS.H"
 
 extern char g_editDigits;

@@ -1,5 +1,5 @@
-#include "STRUCTS.H"
 #include "TANDYSPR.H"
+#include "ADS.H"
 #include "BITMAP.H"
 #include "BOBS.H"
 #include "CARPIC.H"

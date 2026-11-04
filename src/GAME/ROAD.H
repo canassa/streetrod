@@ -2,7 +2,13 @@
 
 #ifndef ROAD_H
 #define ROAD_H
-#include "STRUCTS.H"
+
+#include "CARPIC.H"
+
+struct MirrorEdges {
+    int buildingY[8];
+    int rightX[8];
+};
 
 enum RoadSection {
     SECTION_LEFT_CURVE = 1,
@@ -17,7 +23,6 @@ enum RoadSection {
     SECTION_S_CURVE_LR = 10,
     SECTION_S_CURVE_RL = 11
 };
-
 
 extern int g_yBuildingTopArray[15];
 

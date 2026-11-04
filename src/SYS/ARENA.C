@@ -1,5 +1,5 @@
-#include "STRUCTS.H"
 #include "ARENA.H"
+#include "CARPIC.H"
 #include "MAIN.H"
 #include "MEM.H"
 

@@ -2,7 +2,6 @@
 #include <dos.h>
 #include <stdlib.h>
 #include <string.h>
-#include "STRUCTS.H"
 #include "SYS.H"
 #include "BOBS.H"
 #include "CARPIC.H"
@@ -29,6 +28,7 @@
 #include "SCREEN.H"
 #include "SONG.H"
 #include "SOUND.H"
+#include "STRUCTS.H"
 #include "VIDDET.H"
 #include "VIDEO.H"
 

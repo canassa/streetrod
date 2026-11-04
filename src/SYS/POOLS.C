@@ -1,4 +1,3 @@
-#include "STRUCTS.H"
 #include "POOLS.H"
 #include "SCREEN.H"
 

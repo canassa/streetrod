@@ -2,7 +2,8 @@
 
 #ifndef SCRATCH_H
 #define SCRATCH_H
-#include "STRUCTS.H"
+
+#include "CARPIC.H"
 
 extern struct Bitmap far g_egaPage3;
 
