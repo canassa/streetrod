@@ -171,7 +171,7 @@ void screen_wait_msg(char *msg)
     saved = r_vid.f16;
     strcpy(g_promptLine1, msg);
     strcpy(g_promptLine2, "Hit Return when ready ...");
-    if (ap8247u >= 1) {
+    if (g_graphicsUp >= 1) {
         if (g_58ee) {
             screen_fill_rect(0, 0, 320, 200, 0);
             g_58ee++;

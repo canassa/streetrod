@@ -118,7 +118,7 @@ static void near swap_wheel(int a, int *p, int *q)
     g_6ce6sz = g_6de2a[0]->height - g_6d38->height;
     bitmap_underlay(g_6d38, g_6de2a[0], g_6d3eaas, g_6ce6sz);
     if (r_vid.mode == -2)
-        (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
+        (*dz78b6)(g_videoPageBms[0]->bits.p, g_videoPageBms[1]->bits.p);
     g_6ce8rz.x1 = 0;
     g_6ce8rz.y1 = 0;
     g_6ce8rz.x2 = g_6d2c0nz->width - 1;
@@ -131,7 +131,7 @@ static void near swap_wheel(int a, int *p, int *q)
         F_10AFD(3);
     }
     if (r_vid.mode == -2)
-        (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
+        (*dz78b6)(g_videoPageBms[0]->bits.p, g_videoPageBms[1]->bits.p);
     for (i = 1; i < 4; i++) {
         g_6da2 = (i * 2 + g_6d3eaas) & ~r_vid.mask;
         if (g_6da2) {
@@ -152,7 +152,7 @@ static void near swap_wheel(int a, int *p, int *q)
     F_168C8(0);
     marks_pop_low(6);
     if (r_vid.mode == -2)
-        (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
+        (*dz78b6)(g_videoPageBms[0]->bits.p, g_videoPageBms[1]->bits.p);
     g_6de2a[0] = F_15BBE(*q, 1);
     g_6d3eaas = ((unsigned char)a & 7) >> 1;
     for (i = 1; i < 4; i++) {
@@ -180,7 +180,7 @@ static void near swap_wheel(int a, int *p, int *q)
         F_10AFD(2);
     F_168C8(0);
     if (r_vid.mode == -2)
-        (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
+        (*dz78b6)(g_videoPageBms[0]->bits.p, g_videoPageBms[1]->bits.p);
     g_6ce8rz.x1 = 0;
     g_6ce8rz.y1 = 0;
     g_6ce8rz.x2 = g_6d2c0nz->width - 1;
@@ -302,10 +302,10 @@ void F_1B213(int *a, int *b)
     (*ab78aat)(g_6cdaaa[2], g_6d24ajz, &blt, 1);
     if (r_vid.mode == -2) {
         g_6cd4oz = &g_6cf4wz;
-        mem_set_bitmap(g_6cd4oz, bp7316[2]->bits.p, 0, g_6df6a->width, 200, -2);
-        mem_set_bitmap(g_5ab0, bp7316[2]->bits.p + g_6df6a->pitch, 0, pic->width, 200, -2);
-        mem_set_bitmap(g_5ab4, bp7316[3]->bits.p, 0, 0x140, g_6d24ajz->height, -2);
-        mem_set_bitmap(g_5ab8, bp7316[3]->bits.p, 0, g_6d28agz->width, 200, -2);
+        mem_set_bitmap(g_6cd4oz, g_videoPageBms[2]->bits.p, 0, g_6df6a->width, 200, -2);
+        mem_set_bitmap(g_5ab0, g_videoPageBms[2]->bits.p + g_6df6a->pitch, 0, pic->width, 200, -2);
+        mem_set_bitmap(g_5ab4, g_videoPageBms[3]->bits.p, 0, 0x140, g_6d24ajz->height, -2);
+        mem_set_bitmap(g_5ab8, g_videoPageBms[3]->bits.p, 0, g_6d28agz->width, 200, -2);
         blt.w = g_6dfa7->width;
         blt.h = g_6df6a->height + 4;
         blt.sx = blt.dx = 0;
@@ -337,7 +337,7 @@ void F_1B213(int *a, int *b)
     }
     g_spriteBgY = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
     if (r_vid.mode == -2)
-        (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
+        (*dz78b6)(g_videoPageBms[0]->bits.p, g_videoPageBms[1]->bits.p);
     g_6d3caat = sprite_setup(0x88, 0xb9, &g_6cdaaa[1], 0, 1, g_5ab8, g_6d28agz, 0, 0);
     sprite_set_step(g_6d3caat, 0, 0x21, 0, -1);
     while ((*g78c6c)(g_6d3caat))
@@ -349,7 +349,7 @@ void F_1B213(int *a, int *b)
     bitmap_underlay(g_6cf0zz, g_6df6a, g_6cd8lz, ybot);
     F_19438(1);
     if (r_vid.mode == -2)
-        (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
+        (*dz78b6)(g_videoPageBms[0]->bits.p, g_videoPageBms[1]->bits.p);
     g_6ce8rz.x1 = 0;
     g_6ce8rz.y1 = 0;
     g_6ce8rz.x2 = g_6dfa7->width - 1;
@@ -410,7 +410,7 @@ void F_1B213(int *a, int *b)
     bitmap_underlay(g_6de2a[0], g_6df6a, g_6dd4, ybot);
     bitmap_underlay(g_6de2a[0], g_6df6a, g_6cd8lz, ybot);
     if (r_vid.mode == -2)
-        (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
+        (*dz78b6)(g_videoPageBms[0]->bits.p, g_videoPageBms[1]->bits.p);
     frame = 2;
     rev = 1;
     (*ab78aat)(g_6cdaaa[2], g_6dfa7, &clip6, 1);
@@ -446,7 +446,7 @@ void F_1B213(int *a, int *b)
     F_16381(0);
     g_spriteBgY = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
     if (r_vid.mode == -2)
-        (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
+        (*dz78b6)(g_videoPageBms[0]->bits.p, g_videoPageBms[1]->bits.p);
     g_6d3caat = sprite_setup(0x88, 0x99, &g_6cdaaa[1], 0, 1, g_5ab8, g_6d28agz, 0, 0);
     sprite_set_step(g_6d3caat, 0, 0x21, 0, 1);
     while ((*g78c6c)(g_6d3caat))

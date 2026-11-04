@@ -67,7 +67,7 @@ extern int g_overRev;                                   /* DS:06E6 */
 extern char g_driveBusy;                                /* DS:06E8 */
 extern char g_lastFire;                                 /* DS:06E9 */
 extern char g_06ea;                                     /* DS:06EA */
-extern int t_72ec;                                      /* DS:72EC */
+extern int g_vibratoActive;                             /* DS:72EC */
 extern struct Eng e_78e0;                               /* DS:78E0 */
 extern struct Dev bs79aa;                               /* DS:79AA */
 extern struct Dev ao79c6t;                              /* DS:79C6 */

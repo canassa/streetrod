@@ -143,7 +143,7 @@ static int near entry_beats_score(int i)
 }
 
 int bucount;
-char atnewName[16];
+char g_driverName[16];
 
 /* insert_entry @ 0000:32F4 (linear 0x032F4, 129 bytes) */
 
@@ -160,7 +160,7 @@ static void near insert_entry(int pos)
             dst = src + sizeof(struct Entry);
             memmove(dst, src, cnt * sizeof(struct Entry));
         }
-        strcpy(src, atnewName);
+        strcpy(src, g_driverName);
         src += 16;
         itoa(g_score, src, 10);
     }

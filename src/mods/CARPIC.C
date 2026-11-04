@@ -76,7 +76,7 @@ static void near blit_planes(char far *src, char far *dst, char far *mask, int w
 
 /* make_bands @ 0F38:819A (linear 0x1751A, 412 bytes)
 
-   For each of n bitmaps, lay a band of h rows into the scratch bitmap bp7316[2], fill or copy it,
+   For each of n bitmaps, lay a band of h rows into the scratch bitmap g_videoPageBms[2], fill or copy it,
    then blit the bitmap through the EGA planes */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
@@ -87,7 +87,7 @@ static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2
     int j;
     char far *base;
 
-    base = bp7316[2]->bits.p + 0x46 * bp7316[2]->pitch;
+    base = g_videoPageBms[2]->bits.p + 0x46 * g_videoPageBms[2]->pitch;
     for (i = 0; i < n; i++) {
         A[i].p = base;
         A[i].y = B[i]->height - y2 - h;
@@ -112,7 +112,7 @@ static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2
 /* make_frames @ 0F38:8336 (linear 0x176B6, 392 bytes)
 
    Copy n bitmaps into the table am6e68x, each filled with a colour pattern and h rows high, in
-   space cut from the scratch bitmap bp7316[2] */
+   space cut from the scratch bitmap g_videoPageBms[2] */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int color)
@@ -125,7 +125,7 @@ static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int co
     int H5;
     int maxw;
 
-    base2 = bp7316[2]->bits.p + 0x46 * bp7316[2]->pitch;
+    base2 = g_videoPageBms[2]->bits.p + 0x46 * g_videoPageBms[2]->pitch;
     H5 = B[0]->height - y2 - h;
     v = (r_vid.mode == -6 ? color << 4 : color << 2 | color << 4 | color << 6) | color;
     maxw = B[0]->width;
@@ -430,10 +430,10 @@ again:
         if (kind == 4) {
             g_4f4a = 1;
             if (r_vid.mode == -2) {
-                mem_set_bitmap(g_backdrop, bp7316[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -2);
+                mem_set_bitmap(g_backdrop, g_videoPageBms[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -2);
                 egalatch_rect(r_vid.back->bits.p, g_backdrop->bits.p - 0x28 * top7, 0x28, g_backdrop->height, 0, top7, 0x28);
             } else {
-                mem_set_bitmap(g_backdrop, bp7316[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -1);
+                mem_set_bitmap(g_backdrop, g_videoPageBms[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -1);
                 F_11A72(0, top7, 0x140, g_backdrop->height, g_backdrop);
             }
         }

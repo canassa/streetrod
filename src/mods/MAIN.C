@@ -280,7 +280,7 @@ static int near cpu_speed(void)
 int by70e2;
 struct Bitmap far *g755cu;
 char far *ab7564z;
-char ap8247u;
+char g_graphicsUp;
 int bl82c6;
 int bu8acc;
 int ag8bcet;
@@ -319,7 +319,7 @@ int main(int argc, char **argv)
     int d;
     int a;
 
-    ap8247u = 0;
+    g_graphicsUp = 0;
     bu8acc = cpu_speed();
     e = 2;
     b = 0;

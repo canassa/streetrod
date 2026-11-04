@@ -141,7 +141,7 @@ int near savegame_new(void)
     F_10B9C();
     bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
     (*m_present)();
-    switch (sel = edit_text_box(2, 15, atnewName)) {
+    switch (sel = edit_text_box(2, 15, g_driverName)) {
     case -3:
     case 0:
         init_new_game();
@@ -339,7 +339,7 @@ int near savegame_load(void)
     itoa(g_saveSlots[r], name + 8, 10);
     strcat(name, ".SAV");
     if (_dos_open(name, 0, &fd7)
-        || _dos_read(fd7, atnewName, 0x24, &n) != 0 || n != 0x24
+        || _dos_read(fd7, g_driverName, 0x24, &n) != 0 || n != 0x24
         || (pools_init(0), 0)
         || read_cars(fd7, &a_7eaap.m7eb0, 1)
         || read_cars(fd7, &a_7eaap.m7eb2, 0)
@@ -415,7 +415,7 @@ void near savegame_save(void)
     r_vid.f16 = r;
     if (r)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 320, 190);
-    strcpy(g_2a2e, atnewName);
+    strcpy(g_2a2e, g_driverName);
 again:
     for (r = 1; r <= g_49e0[0] && g_saveSlots[r]; r++)
         ;
@@ -471,11 +471,11 @@ again:
     case -0x14:
         unlink(name);
     }
-    strcpy(atnewName, is_blank(g_2a2e) ? g_2c02 + g_49e0[r] : g_2a2e);
+    strcpy(g_driverName, is_blank(g_2a2e) ? g_2c02 + g_49e0[r] : g_2a2e);
     delta = g_0600 - g_0604;
     name[0] = disk_data_drive();
     if (_dos_creat(name, 0, &fd8)
-        || _dos_write(fd8, atnewName, 0x24, &n) != 0 || n != 0x24
+        || _dos_write(fd8, g_driverName, 0x24, &n) != 0 || n != 0x24
         || write_cars(fd8, a_7eaap.m7eb0, 1)
         || write_cars(fd8, a_7eaap.m7eb2, 0)
         || write_nodes(fd8, a_7eaap.m7eb8)

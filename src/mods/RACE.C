@@ -498,13 +498,13 @@ static void near show_ticket(void)
     maxw2 = a->width - 8;
     r_vid.f16 = 0;
     x_colors = bustyle->hilite;
-    for (p2 = atnewName, wk = 0; *p2 && wk < maxw2; p2++)
+    for (p2 = g_driverName, wk = 0; *p2 && wk < maxw2; p2++)
         wk += g_font[*p2 - 32].w;
     if (wk >= maxw2)
         p2--;
     d = cl = *p2;
     *p2 = 0;
-    (*a_78aem)(r_vid.back, 0x5e, 0x48, atnewName);
+    (*a_78aem)(r_vid.back, 0x5e, 0x48, g_driverName);
     *p2 = d;
     desc3 = g7d86n[a_7eaap.m7eb0->f2].f6;
     endk = desc3 + strcspn(g_2c01 + desc3 + 8, " `.") + 7;

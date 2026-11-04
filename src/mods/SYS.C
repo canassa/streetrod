@@ -574,7 +574,7 @@ int sys_wait_input(int ticks)
 }
 
 struct Eng e_78e0;
-int t_72ec;
+int g_vibratoActive;
 struct Tone *bn82c4;
 
 /* sys_timer_add @ 0000:1843 (linear 0x01843, 327 bytes) */
@@ -669,7 +669,7 @@ void sys_music_start(int n, int cnt)
         g_voice->f2 = cnt + 1;
         g_voice->f1a = g_voice->f18;
         bn82c4 = g_tones + *g_voice->f1a;
-        t_72ec = 1;
+        g_vibratoActive = 1;
         g_voice->off = 1;
     } else {
         g_voice->off = 0;
@@ -945,7 +945,7 @@ void interrupt far sys_timer_isr(void)
         }
     }
     if (g_voice->off && --g_voice->f2) {
-        if (t_72ec && g_voice->f0.w && !--g_vibCount) {
+        if (g_vibratoActive && g_voice->f0.w && !--g_vibCount) {
             bn82c4->f0 = bn82c4->f0 % bn82c4->f3;
             g_vibDivisor = g_toneShapes[bn82c4->f1][bn82c4->f0++] * g_vibGain + g_voice->f0.w;
             outp(0x42, g_vibDivisor);
@@ -980,7 +980,7 @@ void interrupt far sys_timer_isr(void)
             outp(0x61, inp(0x61) & 0xfc);
             g_speakerOn = 0;
         } else {
-            if (t_72ec) {
+            if (g_vibratoActive) {
                 g_vibCount = bn82c4->f4;
                 g_vibGain = (unsigned)bn82c4->f2 * g_voice->f0.w / 1000;
             }

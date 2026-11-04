@@ -30,7 +30,7 @@ void music_play(void far *song, void *tones)
         g_voiceNum = 1;
         g_voice = &bs79aa;
         bn82c4 = g_tones + *bs79aa.f1a;
-        t_72ec = 1;
+        g_vibratoActive = 1;
     } else {
         if (g_savedMusicOn == -1) {
             g_savedMusicOn = g_musicOn;
@@ -46,7 +46,7 @@ void music_play(void far *song, void *tones)
 
 /* music_set_vibrato @ 0F38:6FBD (linear 0x1633D, 47 bytes)
 
-   If on, fill the first entry of the sound table; t_72ec = on either way */
+   If on, fill the first entry of the sound table; g_vibratoActive = on either way */
 
 void music_set_vibrato(int on, int a, int b, int c, int d)
 {
@@ -57,14 +57,14 @@ void music_set_vibrato(int on, int a, int b, int c, int d)
         g_tones[0].f3 = b;
         g_tones[0].f4 = d;
     }
-    t_72ec = on;
+    g_vibratoActive = on;
 }
 
 /* music_stop @ 0F38:6FEC (linear 0x1636C, 21 bytes) */
 
 void music_stop(void)
 {
-    t_72ec = 0;
+    g_vibratoActive = 0;
     outp(0x61, inp(0x61) & 0xfc);
     sys_music_stop();
 }

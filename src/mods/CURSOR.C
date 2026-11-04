@@ -85,7 +85,7 @@ void cursor_init(void)
     g_cursorY = 0x80;
     g_savedCursorX = 0;
     g_savedCursorY = 0;
-    ap8247u = 2;
+    g_graphicsUp = 2;
 }
 
 /* F_120FE @ 0F38:2D7E (linear 0x120FE, 269 bytes)

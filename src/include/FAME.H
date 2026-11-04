@@ -11,7 +11,7 @@ extern struct Colors g_fameColors1;                     /* DS:4BE2 */
 extern struct Colors g_fameColors2;                     /* DS:4BE8 */
 extern char g_4bed;                                     /* DS:4BED */
 extern int bucount;                                     /* DS:7646 */
-extern char atnewName[];                                /* DS:7E9A */
+extern char g_driverName[];                             /* DS:7E9A */
 extern struct Entry aytablex[];                         /* DS:82CA */
 int fame_protect_check(void);                           /* 0x02FC8 */
 int fame_end_menu(void);                                /* 0x0315B */

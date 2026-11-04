@@ -71,7 +71,7 @@ static int near start_game(void)
         F_120FE(-4);
     }
     road_generate();
-    atnewName[0] = 0;
+    g_driverName[0] = 0;
     g_demo = ag8bcet;
     if (by70e2 == 0) {
         disk_load_data();

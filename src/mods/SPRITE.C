@@ -57,7 +57,7 @@ struct Rect *sprite_car_clip(int x, int y, int w, int h, struct Rect *out)
 struct Frame g77bal[12];
 struct Seq g_764e[10];
 struct Sprite g7d18m;
-struct Page aq7d42[2];
+struct Page g_sprPageRing[2];
 
 /* sprite_clip_box @ 0F38:A1EE (linear 0x1956E, 133 bytes)
 
@@ -120,24 +120,24 @@ struct Sprite *sprite_setup(int x, int y, struct Bitmap far **imgs, char (*cell)
     g7d18m.rc[1] = a9;
     if (r_vid.mode == -2) {
         for (i = 0; i < 2; i++) {
-            aq7d42[i].bm = bp7316[i];
-            aq7d42[i].idx = i;
-            aq7d42[i].r.x1 = aq7d42[i].r.y1 = 0;
-            aq7d42[i].r.x2 = aq7d42[i].r.y2 = -1;
-            aq7d42[i].link = &aq7d42[i + 1];
+            g_sprPageRing[i].bm = g_videoPageBms[i];
+            g_sprPageRing[i].idx = i;
+            g_sprPageRing[i].r.x1 = g_sprPageRing[i].r.y1 = 0;
+            g_sprPageRing[i].r.x2 = g_sprPageRing[i].r.y2 = -1;
+            g_sprPageRing[i].link = &g_sprPageRing[i + 1];
         }
-        aq7d42[i - 1].link = aq7d42;
+        g_sprPageRing[i - 1].link = g_sprPageRing;
     } else {
-        aq7d42[0].bm = r_vid.front;
-        aq7d42[0].idx = 0;
-        aq7d42[0].r.x1 = aq7d42[0].r.y1 = 0;
-        aq7d42[0].r.x2 = aq7d42[0].r.y2 = -1;
-        aq7d42[0].link = aq7d42;
+        g_sprPageRing[0].bm = r_vid.front;
+        g_sprPageRing[0].idx = 0;
+        g_sprPageRing[0].r.x1 = g_sprPageRing[0].r.y1 = 0;
+        g_sprPageRing[0].r.x2 = g_sprPageRing[0].r.y2 = -1;
+        g_sprPageRing[0].link = g_sprPageRing;
     }
-    g7d18m.page = aq7d42;
+    g7d18m.page = g_sprPageRing;
     sprite_clip_box(g7d18m.frame->pos->width,
         g7d18m.frame->pos->height, g7d18m.x, g7d18m.y,
-        aq7d42[0].bm->width, aq7d42[0].bm->height, &aq7d42[0].r);
+        g_sprPageRing[0].bm->width, g_sprPageRing[0].bm->height, &g_sprPageRing[0].r);
     g7d18m.seq = g_764e;
     return &g7d18m;
 }
