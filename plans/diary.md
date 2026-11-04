@@ -1262,3 +1262,12 @@ Tooling lessons are recorded in [sr-cli](../.claude/skills/sr-cli/SKILL.md); the
 
 - Byte identity permits broader groups than a source reconstruction should use. Trace each field's writers/readers to separate generic text output, status-line state, forward/mirror scenery cursors and drive-reset words.
 - Array writers can reveal the true capacity where reconstruction introduced terminal scalar members. The compiler-verified full-array result is recorded in the [recipe book](../.claude/skills/msc51-recipe-book/SKILL.md); explicit unused/reset-only fields remain distinct from automatic padding.
+
+## 2026-11-06 00:00 CET: Natural records for grouped globals
+
+### What I did
+- A Codex survey probed 60 candidate groups with the real compiler (1 supported, 48 undecidable-natural, 11 ruled out by operand order or gates). Implemented 14 records from the best single-role groups: the video driver's `struct Hooks g_videoOps` (the installers copy it as one struct; now `.copy`, `.drawLine`, `.fillSpan`...), and natural records for render rows, the tire-change sprites, the status line, the car body points, the mirror and road rows (as full 15/8-entry arrays), the list dialog, timer priorities, part selection, input, the wager and the ad blit. An independent review confirmed about 100 of 114 members; its findings were fixed: mixed groups split (the last-text-end position, the shared right-scenery cursor, the drive words), wrong names (`liftBuf`, `lineWidth`, `wheelX1`), misleading object names replaced by honest hash-fitting ones, `BetKind` constants used, `int unused` for an unreferenced word. Four tooling fixes with tests (function-pointer members, static ownership, fallback data, enum member sizes).
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup/order checks clean, tests OK.
+
+### What I learned
+- Members carry no hash or budget constraint, so records turn hash-blocked globals into freely nameable members; only the object name must fit.
