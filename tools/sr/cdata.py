@@ -103,7 +103,7 @@ class Types:
         for statement in split_top(body,';'):
             base,tail=self.base(statement)
             for decl in split_top(tail,','):
-                m=re.search(r'([A-Za-z_]\w*)\s*(?=\[|:|$)',decl)
+                m=re.search(r'([A-Za-z_]\w*)\s*(?=\[|:|\)\s*\(|$)',decl)
                 if not m:raise ValueError(statement)
                 name=m.group(1);normalized=decl[:m.start()]+'@'+decl[m.end():]
                 node=self.declarator(base,normalized)

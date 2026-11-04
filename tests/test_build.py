@@ -130,6 +130,19 @@ class MakefileTests(unittest.TestCase):
             self.assertEqual(report['missing_symbols'], [])
             self.assertEqual(len(report['diagnostics']), 1)
 
+    def test_record_with_named_function_pointers(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            include = Path(tmp)
+            (include / 'STRUCTS.H').write_text(
+                'struct Callbacks { char enabled; '
+                'void (far *show)(void); '
+                'int (near *read)(int); int count; };')
+            with patch.object(config, 'INCLUDE', include):
+                record = Types().named('struct Callbacks')
+        self.assertEqual(record['size'], 10)
+        self.assertEqual([(name, off, node['size']) for name, off, node in record['fields']],
+                         [('enabled', 0, 1), ('show', 2, 4), ('read', 6, 2), ('count', 8, 2)])
+
     def test_msc_data_shapes(self):
         types = Types()
         self.assertEqual(types.declaration('int far *@')['size'], 4)
