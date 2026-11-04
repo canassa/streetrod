@@ -1,5 +1,6 @@
 #include <dos.h>
 #include <string.h>
+#include <conio.h>
 #include "STRUCTS.H"
 #include "M_00000.H"
 #include "M_00D58.H"
@@ -19,7 +20,6 @@
 #include "M_22B28.H"
 #include "M_24602.H"
 #include "SCREENS.H"
-#include <conio.h>
 
 static void near F_00000(char *s);
 static int near F_0018B(void);

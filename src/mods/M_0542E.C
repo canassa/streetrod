@@ -1,3 +1,7 @@
+#include <dos.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "STRUCTS.H"
 #include "M_0542E.H"
 #include "MESSAGES.H"
@@ -21,10 +25,6 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 #include "M_265BA.H"
-#include <dos.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
 
 static void near F_05584(void);
 static void near F_056A9(void);

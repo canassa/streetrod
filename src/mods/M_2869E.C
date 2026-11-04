@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "STRUCTS.H"
 #include "M_2869E.H"
 #include "CARMASKS.H"
@@ -16,7 +17,6 @@
 #include "M_265BA.H"
 #include "M_2B6DC.H"
 #include "SLOTS.H"
-#include <stdlib.h>
 
 static int g_6e04aay;                      /* DS:6E04 */
 static int g_6e06aax;                      /* DS:6E06 */

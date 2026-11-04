@@ -1,4 +1,5 @@
 #include <memory.h>
+#include <dos.h>
 #include "STRUCTS.H"
 #include "M_22364.H"
 #include "M_00D58.H"
@@ -13,7 +14,6 @@
 #include "M_226F4.H"
 #include "M_2487A.H"
 #include "M_24BE2.H"
-#include <dos.h>
 
 void (far *g_5b8a[15])() = {F_21EAB, F_221AC, F_21D58, F_22364, F_0E6C2, F_22609, F_2244F, F_0FEAD, F_0FEBF, F_22762, F_22626, F_19BFE, F_2487A, fill_span_clipped, F_24B79};   /* DS:5B8A */
 int g_5bc6[5] = {0, 2, 4, 1, 3};   /* DS:5BC6 */

@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <math.h>
+#include <conio.h>
 #include "STRUCTS.H"
 #include "M_0F38A.H"
 #include "FONTDATA.H"
@@ -20,9 +23,6 @@
 #include "M_21A06.H"
 #include "M_2869E.H"
 #include "TRACKPTS.H"
-#include <stdlib.h>
-#include <math.h>
-#include <conio.h>
 
 static int g_6c22[3];                      /* DS:6C22 */
 static struct Bitmap far *g_6c28gzz[3];    /* DS:6C28 */

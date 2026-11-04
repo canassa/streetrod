@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <string.h>
 #include "STRUCTS.H"
 #include "M_11A72.H"
 #include "MESSAGES.H"
@@ -11,8 +13,6 @@
 #include "M_1923C.H"
 #include "M_193D4.H"
 #include "M_19ED0.H"
-#include <stdlib.h>
-#include <string.h>
 
 static struct Win *g_6c40;                 /* DS:6C40 */
 static int g_6c42[2];                      /* DS:6C42 */

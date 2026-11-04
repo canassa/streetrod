@@ -1,4 +1,10 @@
 #include <dos.h>
+#include <conio.h>
+#include <memory.h>
+#include <bios.h>
+#include <string.h>
+#include <io.h>
+#include <stdlib.h>
 #include "STRUCTS.H"
 #include "M_15396.H"
 #include "MESSAGES.H"
@@ -15,12 +21,6 @@
 #include "M_2462E.H"
 #include "M_2634A.H"
 #include "SLOTS.H"
-#include <conio.h>
-#include <memory.h>
-#include <bios.h>
-#include <string.h>
-#include <io.h>
-#include <stdlib.h>
 
 static int g_6c68;                         /* DS:6C68 */
 static int *g_6c6a;                        /* DS:6C6A */

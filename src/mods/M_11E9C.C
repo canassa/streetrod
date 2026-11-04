@@ -1,3 +1,4 @@
+#include <string.h>
 #include "STRUCTS.H"
 #include "M_11E9C.H"
 #include "M_00000.H"
@@ -9,7 +10,6 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 #include "M_24E78.H"
-#include <string.h>
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 void (far *ap78b2z)(char far *, char far *, char far *, char far *, int, int, int, int);

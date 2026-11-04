@@ -1,3 +1,4 @@
+#include <string.h>
 #include "STRUCTS.H"
 #include "M_123F4.H"
 #include "HOTSPOT.H"
@@ -16,7 +17,6 @@
 #include "M_1923C.H"
 #include "M_193D4.H"
 #include "M_19ED0.H"
-#include <string.h>
 
 static int near F_1287B(void);
 static int near F_1289C(int *px, int *py);

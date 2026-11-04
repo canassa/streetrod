@@ -1,3 +1,7 @@
+#include <conio.h>
+#include <dos.h>
+#include <stdlib.h>
+#include <string.h>
 #include "STRUCTS.H"
 #include "M_00D58.H"
 #include "HOTSPOT.H"
@@ -26,10 +30,6 @@
 #include "M_174A6.H"
 #include "M_265BA.H"
 #include "SONG.H"
-#include <conio.h>
-#include <dos.h>
-#include <stdlib.h>
-#include <string.h>
 
 static int g_6c46;                         /* DS:6C46 */
 static int g_6c48;                         /* DS:6C48 */

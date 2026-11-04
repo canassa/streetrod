@@ -1,3 +1,4 @@
+#include <string.h>
 #include "STRUCTS.H"
 #include "M_008B4.H"
 #include "HOTSPOT.H"
@@ -13,7 +14,6 @@
 #include "M_15396.H"
 #include "M_193D4.H"
 #include "M_19ED0.H"
-#include <string.h>
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 int g7f84q;

@@ -1,3 +1,5 @@
+#include <string.h>
+#include <stdlib.h>
 #include "STRUCTS.H"
 #include "M_0914C.H"
 #include "HOTSPOT.H"
@@ -28,8 +30,6 @@
 #include "M_1923C.H"
 #include "M_193D4.H"
 #include "M_19ED0.H"
-#include <string.h>
-#include <stdlib.h>
 
 static int g_6c84;                         /* DS:6C84 */
 static int g_6c88;                         /* DS:6C88 */

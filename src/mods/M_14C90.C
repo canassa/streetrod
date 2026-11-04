@@ -1,3 +1,5 @@
+#include <string.h>
+#include <stdlib.h>
 #include "STRUCTS.H"
 #include "M_14C90.H"
 #include "MESSAGES.H"
@@ -12,8 +14,6 @@
 #include "M_139DE.H"
 #include "M_163BE.H"
 #include "M_19ED0.H"
-#include <string.h>
-#include <stdlib.h>
 
 /* F_14C90: line editor. Edit the string buf (at most max characters, clipped to the width of
    the back bitmap) at x, y on the back page until Enter or a negative event; backspace, printable

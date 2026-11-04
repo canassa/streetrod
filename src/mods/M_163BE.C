@@ -1,3 +1,4 @@
+#include <conio.h>
 #include "STRUCTS.H"
 #include "M_163BE.H"
 #include "EFFECTS.H"
@@ -8,7 +9,6 @@
 #include "M_174A6.H"
 #include "M_21962.H"
 #include "SONG.H"
-#include <conio.h>
 
 static void near F_164CC(long freq, int n);
 static void near F_164CC(long freq, int delay);

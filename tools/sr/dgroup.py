@@ -460,31 +460,51 @@ class Analysis:
 
     # ------------------------------------------------------------ ownership
     def refs_to(self):
-        """global name -> {unit start: fixup count} from the layout objects."""
+        """global name -> {unit start: fixup count} from the layout objects.
+
+        Ownership is decided from these sets, so they must not depend on where a global is
+        defined now (the previous `apply`): a reference counts the same as an EXTDEF fixup
+        when another file defines the global and as a fixup to the object's own _DATA, inside
+        the global's extent, when this file does. In a C object both code and data
+        initializers count (`char *g_4ff2 = g_4fa6;` is M_0542E's reference to DS:4FA6, which
+        no code uses; counting it only as an external made DS:4FA6 flip between M_039C0 and
+        M_0542E on every apply). In an assembler object only code counts: its data tables
+        point into the blocks FORCE_OWNER and DATA_UNITS assign anyway."""
         if hasattr(self, '_refs'):
             return self._refs
         name2off = {'_' + g['name']: off for off, g in self.globals.items()}
+        byname = {'_' + g['name']: g for g in self.globals.values()}
         refs = {}
+
+        def count(name, u):
+            refs.setdefault(name[1:], {}).setdefault(u['start'], 0)
+            refs[name[1:]][u['start']] += 1
+
         for u in self.units:
             if u['kind'] == 'data':
                 continue
             obj = Obj(self._unit_obj(u))
-            for f in obj.fixups:
-                if f.kind == 'ext':
-                    n = obj.externs[f.index - 1]
-                    if n in name2off:
-                        refs.setdefault(n[1:], {}).setdefault(u['start'], 0)
-                        refs[n[1:]][u['start']] += 1
             dseg = obj.segments.index('_DATA') + 1 if '_DATA' in obj.segments else None
-            if dseg:
-                pubs = sorted((off, name) for name, (seg, off) in obj.all_publics.items() if seg == dseg)
-                for f in obj.fixups:
-                    if f.seg == obj.code_seg and f.kind == 'seg' and f.index == dseg and f.loc in (1, 5) and not f.self_rel:
-                        objoff = (int.from_bytes(obj.code[f.pos:f.pos + 2], 'little') + f.disp) & 0xFFFF
-                        i = bisect.bisect_right([o for o, _ in pubs], objoff) - 1
-                        if i >= 0 and pubs[i][1] in name2off:
-                            refs.setdefault(pubs[i][1][1:], {}).setdefault(u['start'], 0)
-                            refs[pubs[i][1][1:]][u['start']] += 1
+            segs = {obj.code_seg} | ({dseg} if u['kind'] == 'c' and dseg else set())
+            for f in obj.fixups:
+                if f.kind == 'ext' and f.seg in segs and obj.externs[f.index - 1] in name2off:
+                    count(obj.externs[f.index - 1], u)
+            if not dseg:
+                continue
+            pubs = sorted((off, off + self._decl_size(byname[name]), name)
+                          for name, (seg, off) in obj.all_publics.items() if seg == dseg and name in byname)
+            starts = [lo for lo, _, _ in pubs]
+            for f in obj.fixups:
+                if f.seg not in segs or f.kind != 'seg' or f.index != dseg or f.loc not in (1, 5) or f.self_rel:
+                    continue
+                data = obj.data.get(f.seg, b'')
+                objoff = (int.from_bytes(data[f.pos:f.pos + 2], 'little') + f.disp) & 0xFFFF
+                i = bisect.bisect_right(starts, objoff) - 1
+                if i < 0 or objoff >= pubs[i][1]:
+                    continue        # a literal, not named data
+                if f.seg == dseg and pubs[i][0] <= f.pos < pubs[i][1]:
+                    continue        # a table pointing into itself says nothing about its owner
+                count(pubs[i][2], u)
         self._refs = refs
         return refs
 

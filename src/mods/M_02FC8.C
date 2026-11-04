@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "STRUCTS.H"
 #include "M_02FC8.H"
 #include "M_00000.H"
@@ -16,8 +18,6 @@
 #include "M_15236.H"
 #include "M_15396.H"
 #include "M_19ED0.H"
-#include <stdlib.h>
-#include <string.h>
 
 static int g_score;                        /* DS:6C5E */
 static int near score_index(void);

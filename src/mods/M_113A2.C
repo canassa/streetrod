@@ -1,3 +1,7 @@
+#include <stdlib.h>
+#include <string.h>
+#include <conio.h>
+#include <stdio.h>
 #include "STRUCTS.H"
 #include "M_113A2.H"
 #include "HOTSPOT.H"
@@ -14,10 +18,6 @@
 #include "M_174A6.H"
 #include "M_193D4.H"
 #include "M_19ED0.H"
-#include <stdlib.h>
-#include <string.h>
-#include <conio.h>
-#include <stdio.h>
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 int o_8250;
