@@ -1600,3 +1600,17 @@ Validation passed: headers --check; check --all (572/572); a clean rm -rf work f
 The apparently unused DS:02EE table is reached by negative indexes from g_steerPoints: the driving ISR bounds steering to -24..24, so the preceding 24 pairs form its left arc. A source-name search alone misses that use. The four hotspot allocations cross screen boundaries; their first directly addressed controls supply the names, while g_groupHot and ScreenId establish the additional screen lists in each allocation. The first unnamed hotspot is Calendar, not a garage exit.
 
 Several SYS words are reset-only rather than configuration/detection values: g_05ba gets -1 only in queue reset, g_05d6 is cleared at driving transitions, g_05d8/g_05da only in engine reset, and g_060a only when installing the driving ISR. Those writes do not establish their intended roles. The tire-dependent PERF expression ends in f34[5], whose consumers only select gear slots 0..4; calling the unused sixth value a gear ratio or braking coefficient would go beyond the evidence. Neither uncalled sound wrapper supplies an event identity.
+||||||| 66bcf79
+
+
+## 2026-11-04 22:25 CET: car-animation kind enum
+
+### What I did
+
+Added enum CarAnimKind to CARPIC.H with seven evidence-backed values: CAR_DRIVE_IN (1), CAR_DRIVE_OUT (2), CAR_SHOW_BACK_PAGE (3), CAR_PULL_IN (4), CAR_BACK_OUT (6), CAR_SHOW_SCREEN (7), and CAR_SHOW_BACKDROP (8). Replaced every car-kind literal at callers, comparisons, assignments and sprite planner switches. Typed the kind parameters through cp_show_car, show_rival_car, rival_arrives, look_for_rival, sp_plan_drive and sp_plan_move. Preserved the char storage in bo_visit and bo_jail. No other identifiers were renamed and no code comments were added. Recorded each value and the unused value 5 in work/LEDGER.md.
+
+Verified ./sr headers --check; ./sr check --all (572/572); a fresh rm -rf work followed by ./sr build (Packed EXE vs orig/SR.EXE: IDENTICAL); ./sr dgroup check and ./sr dgroup order; all 68 unittest tests; and ./dosbox.sh --make (DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL).
+
+### What I learned
+
+Kinds 3, 7 and 8 share one-frame rendering but differ in page/background handling: 3 draws on the back page and copies the full page forward; 7 uses the current screen beneath the car (no backdrop mask on EGA); 8 composites against the saved backdrop and refreshes only the car box. Their garage and advertisement callers confirm the distinction. Kind 4 saves the backdrop and scene-specific carhop/pump setup before the same decelerating arrival as kind 1. The pass-by path changes the kind to 2 and reuses the frames for departure. Kind 5 has neither a caller nor a distinguishing branch, so no meaning was invented for it. The shared enum and enum-typed parameters preserve all original machine bytes without changing any names subject to the communal, static or external-symbol budgets.

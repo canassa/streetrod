@@ -550,7 +550,7 @@ static void near buy_from_ads(int tab)
             }
             x1 = ((unsigned)specn - (unsigned)g7d86n) / 10;
             y = (((specn->parts >> 8) & 7) == 2) ? 8 : 0;
-            cp_show_car(7, x1, y, 0, 0, 0x86, 0, g_tirePics[(specn->parts >> 4) & 3]);
+            cp_show_car(CAR_SHOW_SCREEN, x1, y, 0, 0, 0x86, 0, g_tirePics[(specn->parts >> 4) & 3]);
             sc_text((SCREEN_WIDTH - da_text_width(g_offerName)) / 2, 0x88, g_offerName);
             cu_ctl(CURSOR_SHOW_NOW);
             g_input.any = 1;
@@ -726,7 +726,7 @@ static int near your_cars(void)
             cu_ctl(CURSOR_HIDE_NOW);
             mid = a_7eaap.currentCar->specIndex;
             result = gm_car_look(a_7eaap.currentCar);
-            cp_show_car(6, mid, result, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0x98, 0,
+            cp_show_car(CAR_BACK_OUT, mid, result, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0x98, 0,
                     g_tirePics[g_parts[a_7eaap.currentCar->tires->idx].variant]);
             mn_pop(1);
             ga_clear_name();

@@ -430,7 +430,7 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
 /* cp_show_car @ 0F38:8E48 (linear 0x181C8, 2323 bytes) */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-void cp_show_car(int kind, int idx, int flags, int kk, int q, int bot, int mode2, int *ids)
+void cp_show_car(enum CarAnimKind kind, int idx, int flags, int kk, int q, int bot, int mode2, int *ids)
 {
     int n2;
     struct Blt blt;
@@ -459,15 +459,15 @@ void cp_show_car(int kind, int idx, int flags, int kk, int q, int bot, int mode2
     top7 = bot - (BACKDROP_ROWS - 1);
     cu_ctl(CURSOR_HIDE_NOW);
 again:
-    n2 = (kind == 3 || kind == 7 || kind == 8) ? 1 : 4;
+    n2 = (kind == CAR_SHOW_BACK_PAGE || kind == CAR_SHOW_SCREEN || kind == CAR_SHOW_BACKDROP) ? 1 : 4;
     di_pic_size(g7d86n[idx].bodyPic, &w1, &h7, &x7);
     g_spriteBottomCut = g_carBottomCuts[g_scene];
     tmpn = (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? g_carBg4[g_scene] : g_carBg16[g_scene];
-    hh8 = (kind == 3 || kind == 7 || kind == 8) ? h7 - g_spriteBottomCut : g_carBandHeights[g_scene];
+    hh8 = (kind == CAR_SHOW_BACK_PAGE || kind == CAR_SHOW_SCREEN || kind == CAR_SHOW_BACKDROP) ? h7 - g_spriteBottomCut : g_carBandHeights[g_scene];
     x0 = ((SCREEN_WIDTH - w1) / 2 + 4) & 0xfff8;
-    right = kind == 2 ? SCREEN_WIDTH - x0 : x0 + w1;
+    right = kind == CAR_DRIVE_OUT ? SCREEN_WIDTH - x0 : x0 + w1;
     if (g_carPassBy != 2) {
-        if (kind == 4) {
+        if (kind == CAR_PULL_IN) {
             g_4f4a = 1;
             if (r_vid.mode == VID_EGA) {
                 me_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, SCREEN_WIDTH, BACKDROP_ROWS - g_spriteBottomCut, VID_EGA);
@@ -477,7 +477,7 @@ again:
                 pu_grab(0, top7, SCREEN_WIDTH, g_backdrop->height, g_backdrop);
             }
         }
-        if (kind == 4) {
+        if (kind == CAR_PULL_IN) {
             ma_clear();
             if (g_scene == 3) {
                 di_pic_size(0x449, &w2, &h2, &x2);
@@ -491,15 +491,15 @@ again:
         if (!g_stickerBg)
             g_stickerBg = ar_bm(0x40, 0x19, 0, ARENA_LOW_BASE);
         cp_build(bms6, idx, flags, kk, q, ids, 1, n2);
-        if (r_vid.mode == VID_TANDY && kind != 3 && kind != 7 && kind != 8) {
+        if (r_vid.mode == VID_TANDY && kind != CAR_SHOW_BACK_PAGE && kind != CAR_SHOW_SCREEN && kind != CAR_SHOW_BACKDROP) {
             make_frames(bms6, n2, g_spriteBottomCut, hh8, tmpn);
             bms6[1] = bms6[2] = bms6[3] = bms6[0];
             ma_pop_low(3);
         }
-        if (kind != 3 && kind != 7 && kind != 8) {
+        if (kind != CAR_SHOW_BACK_PAGE && kind != CAR_SHOW_SCREEN && kind != CAR_SHOW_BACKDROP) {
             if (g_carPassBy != 1) {
                 g_backdropW = right;
-                g_backdropX = kind == 2 ? x0 : 0;
+                g_backdropX = kind == CAR_DRIVE_OUT ? x0 : 0;
             } else {
                 g_backdropW = SCREEN_WIDTH;
                 g_backdropX = 0;
@@ -520,19 +520,19 @@ again:
     g_featurePos.gasCapY += aw8260y;
     m_8272.stickerX += x0;
     m_8272.stickerY += aw8260y;
-    ang2 = (kind == 1 || kind == 4) ? x0 - right : x0;
+    ang2 = (kind == CAR_DRIVE_IN || kind == CAR_PULL_IN) ? x0 - right : x0;
     if (g_carPassBy != 2) {
         if (r_vid.mode == VID_EGA) {
-            if (kind == 3 || kind == 8)
+            if (kind == CAR_SHOW_BACK_PAGE || kind == CAR_SHOW_BACKDROP)
                 mask3 = g_backdrop->bits.p + ((g_backdrop->height - hh8) * g_backdrop->pitch + x0 / 8);
             else
                 mask3 = 0;
             make_bands(g_carSpriteStrips, bms6, n2, g_spriteBottomCut, hh8, mask3, tmpn);
         }
         if (!((r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) && r_vid.mode != VID_TANDY)) {
-            if (kind == 3 || kind == 7 || kind == 8) {
+            if (kind == CAR_SHOW_BACK_PAGE || kind == CAR_SHOW_SCREEN || kind == CAR_SHOW_BACKDROP) {
                 bm48 = ar_bm(w1, h7 - g_spriteBottomCut, 0, ARENA_LOW_STACK);
-                if (kind != 7) {
+                if (kind != CAR_SHOW_SCREEN) {
                     blt.w = w1;
                     blt.h = h7 - g_spriteBottomCut;
                     blt.sx = x0;
@@ -555,7 +555,7 @@ again:
             blt.dx = x0;
             blt.dy = bot - h7 + 1;
         }
-        if (kind == 3) {
+        if (kind == CAR_SHOW_BACK_PAGE) {
             if (r_vid.mode == VID_EGA)
                 ea_to_page(g_carSpriteStrips[0].p, bms6[0]->pitch, bms6[0]->height - g_spriteBottomCut,
                     r_vid.back->bits.p + ((bot - h7) * EGA_PITCH + (x0 >> 3)) + EGA_PITCH, bms6[0]->pitch);
@@ -563,7 +563,7 @@ again:
                 (*g_videoOps.copy)(bm48, r_vid.back, &blt, 1);
             (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
             goto done;
-        } else if (kind == 7 || kind == 8) {
+        } else if (kind == CAR_SHOW_SCREEN || kind == CAR_SHOW_BACKDROP) {
             if (r_vid.mode == VID_EGA)
                 ea_to_page(g_carSpriteStrips[0].p, bms6[0]->pitch, h7 - g_spriteBottomCut,
                     r_vid.front->bits.p + ((bot - h7) * EGA_PITCH + (x0 >> 3)) + EGA_PITCH, bms6[0]->pitch);
@@ -575,9 +575,9 @@ again:
     }
     spr3 = sp_setup(ang2, bot, bms6, (char (*)[8])g_carSpriteStrips, n2, pb8, pan, pr16, pr26);
     sp_plan_drive(spr3, kind, right);
-    if (kind == 6)
+    if (kind == CAR_BACK_OUT)
         spr3->page->rect = g_lastCarRect;
-    if (kind == 4 || kind == 1 || kind == 2 || kind == 6) {
+    if (kind == CAR_PULL_IN || kind == CAR_DRIVE_IN || kind == CAR_DRIVE_OUT || kind == CAR_BACK_OUT) {
         g_carAnim = 1;
         g_carMoving = 1;
         if (g_carPassBy != 2)
@@ -591,7 +591,7 @@ again:
         g_carAnim = 0;
         g_lastCarRect = spr3->page->rect;
     }
-    if (g_scene == 3 && kind == 4) {
+    if (g_scene == 3 && kind == CAR_PULL_IN) {
         scratch = ar_bm(0x18, 7, 0, ARENA_HIGH_STACK);
         blt.w = 0x10;
         blt.h = scratch->height;
@@ -611,7 +611,7 @@ again:
     if (r_vid.mode != VID_EGA)
         (*g_videoOps.copyPage)(r_vid.front->bits.p, r_vid.back->bits.p);
     if (g_carPassBy == 1) {
-        kind = 2;
+        kind = CAR_DRIVE_OUT;
         g_carPassBy = 2;
         goto again;
     }
