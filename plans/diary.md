@@ -625,4 +625,4 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - The developers linked against a SETUP-style combined MLIBCE.LIB with the component order MLIBCR, LIBH, EM, MLIBFP; the "recovered runtime order" was just the order LINK extracts members from it.
-- Three original files switched `/Ol` off and on with `#pragma loop_opt`; the other nine units whose sources differ in `/Ol` do not need it.
+- Three units need the injected `#pragma loop_opt` with our current source; the other nine whose sources differ in `/Ol` do not. That is not proof the originals had pragmas: those functions may match under the file's one flag set with a different source formulation (correction from the user).
