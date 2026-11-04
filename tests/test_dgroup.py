@@ -84,3 +84,44 @@ class SegmentAlignmentTests(unittest.TestCase):
                 self.assertEqual((gap.kind, gap.note),
                                  ('gap', 'align') if segment_end else
                                  ('global', 'unreferenced zero storage'))
+
+
+class AssemblerAlignmentTests(unittest.TestCase):
+    def test_only_emitted_data_even_bytes_are_alignment(self):
+        listing = """
+                                .DATA
+ 0001  00                       EVEN
+ 0002                           EVEN
+ 0003  00                       dummy DB 0
+ 0005  00                       EVEN ; align next string
+                                ; .CODE in a comment is not a section change
+ 0007  00                       EVEN
+                                .DATA?
+ 0009  00                       EVEN
+                                .CODE S0000_TEXT
+ 0001  00                       EVEN
+"""
+        self.assertEqual(dgroup.Analysis._even_offsets(listing), {1, 5, 7})
+
+    def test_explicit_asm_padding_does_not_hide_a_source_global(self):
+        for declared in (False, True):
+            with self.subTest(declared=declared):
+                analysis = object.__new__(dgroup.Analysis)
+                analysis.types = dgroup.Types()
+                analysis.globals = {
+                    0x100: {'name': 'g_first', 'decl': 'char @'},
+                    0x102: {'name': 'g_second', 'decl': 'char @'}}
+                if declared:
+                    analysis.globals[0x101] = {'name': 'g_explicit', 'decl': 'char @'}
+                analysis.goffs = sorted(analysis.globals)
+                analysis.pools = {}
+                analysis.dg = bytes(dgroup.DATA_END)
+                analysis.asm_alignment = {0x101}
+                analysis._masks = lambda: []
+                analysis.pointer_targets = lambda items: set()
+                with patch.object(dgroup, 'REGIONS', []):
+                    items = analysis._items()
+                item = next(item for item in items if item.off == 0x101)
+                self.assertEqual(item.kind, 'global' if declared else 'gap')
+                if not declared:
+                    self.assertEqual(item.note, 'align')

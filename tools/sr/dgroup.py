@@ -131,6 +131,7 @@ class Analysis:
         self.defined = defined_in_sources()
         self.lit_sizes = {}
         self.pools = self._pools()
+        self.asm_alignment = self._asm_alignment()
         self.items = self._items()
         self.by_off = {it.off: it for it in self.items}
         self.gitems = {it.off: it for it in self.items if it.kind == 'global'}
@@ -220,6 +221,45 @@ class Analysis:
                 n += len(part[1:-1].replace("''", "'")) if part.startswith("'") else 1
             sizes[cur] += n
         return sizes
+
+    @staticmethod
+    def _even_offsets(listing):
+        """Zero bytes actually emitted by EVEN in MASM's .DATA listing."""
+        inside, offsets = False, set()
+        for line in listing.splitlines():
+            directive = re.match(r'^\s*\.(CODE|DATA\?|DATA|CONST|FARDATA\?|FARDATA)(?=\s|$)', line, re.I)
+            if directive:
+                inside = directive.group(1).upper() == 'DATA'
+            m = re.match(r'^\s*([0-9A-F]{4})\s+00\s+EVEN\s*(?:;.*)?$', line, re.I)
+            if inside and m and int(m.group(1), 16) % 2:
+                offsets.add(int(m.group(1), 16))
+        return offsets
+
+    def _asm_alignment(self):
+        offsets = set()
+        for u in self.units:
+            if u['kind'] != 'asm':
+                continue
+            objpath = self._unit_obj(u)
+            listing_dir = config.WORK / 'layout' / 'BUILD' / objpath.stem
+            if not listing_dir.is_dir():
+                continue
+            listing = next((p for p in listing_dir.iterdir()
+                            if p.stem.lower() == objpath.stem.lower() and p.suffix.upper() == '.LST'), None)
+            if listing is None:
+                continue
+            obj = Obj(objpath)
+            if '_DATA' not in obj.segments:
+                continue
+            dseg = obj.segments.index('_DATA') + 1
+            bases = {g['off'] - off for g in self.globals.values()
+                     for seg, off in [obj.all_publics.get('_' + g['name'], (None, 0))]
+                     if seg == dseg}
+            if len(bases) == 1:
+                base = bases.pop()
+                offsets.update(base + off for off in self._even_offsets(listing.read_text(errors='replace'))
+                               if 0 <= base + off < len(self.dg) and self.dg[base + off] == 0)
+        return offsets
 
     def _pools(self):
         """unit start -> function addr -> sorted [(object offset, original offset)] of its literals."""
@@ -376,6 +416,7 @@ class Analysis:
                 g = Item(a, it.off - a, 'gap')
                 if g.size == 1 and a % 2 == 1 and (
                         a in getattr(self, 'data_ends', set()) or
+                        a in getattr(self, 'asm_alignment', set()) or
                         it.node and max(it.node.get('align', 1), it.node.get('dalign', 1)) == 2):
                     g.note = 'align'
                 else:

@@ -246,3 +246,11 @@ comments or rewrite the declarations or function bodies.
   unable to traverse members. Include the dependency when that traversal is part
   of the API. Check embedded-record dependencies, independent header compilation
   and include cycles after moving definitions, then run all byte/build gates.
+
+## Assembler data alignment
+
+- MASM data gaps are not implicitly aligned by DW. DGROUP recognizes an emitted
+  zero-byte EVEN from the fresh `.DATA` LST and a consistent OBJ public-symbol
+  base; bare DB bytes, code EVENs and source-declared globals remain checked.
+  Layout gating copies OBJ files to work/layout without LST files: read the
+  listing from work/layout/BUILD/<stem>, as for C COD literal sizes.

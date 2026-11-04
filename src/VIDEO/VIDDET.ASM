@@ -16,8 +16,7 @@ _g_savedEquip DB      0
 _g_egaMemory DB      0
         PUBLIC  _g_egaSwitches
 _g_egaSwitches DB      0
-        PUBLIC  _g_5af3
-_g_5af3 DB      0
+        EVEN
 S_5af4  DB      'Tandy', 0
 S_5afa  DB      'Tandy', 0
 S_5b00  DB      'CGA', 0

@@ -369,7 +369,6 @@ static int near is_blank(char *p)
     return 1;
 }
 
-char g_501d = 0;
 char g_buyCarMsg[] = "Buy a car first !";
 
 

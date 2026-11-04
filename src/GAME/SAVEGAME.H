@@ -14,7 +14,6 @@ extern char g_saveSlots[];
 extern int g_slotNameOfs[];
 extern char *g_noNameMsgPtr;
 extern int g_demoRacer;
-extern char g_501d;
 extern char g_buyCarMsg[];
 void sg_init_racer(int k, int *list);
 int near sg_new(void);

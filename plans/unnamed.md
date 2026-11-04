@@ -30,11 +30,8 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 | 4744 | g_4744 | `int @` | INPUTDAT |
 | 47D1 | g_47d1 | `char @[3]` | INPUTDAT |
 | 47F0 | g_47f0 | `char @` | INPUTDAT |
-| 4BED | g_4bed | `char @` | FAME |
 | 4F4A | g_4f4a | `int @` | GAME |
-| 501D | g_501d | `char @` | SAVEGAME |
 | 5568 | g_5568 | `int @[]` | PERF |
-| 5AF3 | g_5af3 | `char @` | VIDDET |
 | 5E3C | g_5e3c | `int @` | VIEW |
 | 5E94 | g_5e94 | `int @[4]` | VIEW |
 | 5EC6 | g_5ec6 | `int @` | SCENERY |

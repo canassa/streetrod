@@ -349,7 +349,7 @@ Do not infer that an optimized scan itself is disabled just because its exit is 
 | A function stops matching when the module gains many file-scope definitions (vw_mirror_row: 40 dummies break it, 10 do not; frame  and SI/DI use change) | The tables were in another translation unit: make a data-only file () |
 |  | A two-byte literal; the pool shows  where  would leave one byte |
 |  compiles differently from  (register use, frame) | The original used scalar globals after a 12-byte record, not struct members |
-| Pointer table at an odd DS address (DS:579F) | Assembler data (); the C compiler word-aligns every array, struct and pointer, only scalar  is unaligned |
+| Pointer table at an odd DS address (DS:579F) | Assembler data (); MSC word-aligns initialized objects larger than one byte; a scalar char or one-byte aggregate can be unaligned |
 
 | An `int` or array at an odd DS address | Not C: no `/Zp` flag unaligns top-level data. Assembler data, or one large char array |
 | An initializer takes the address of a definition later in the file | MSC emits the later definition first, each in its own data record; the original relocation table shows one run per such item (car masks: each `List` written before its `Run` array) |
@@ -379,3 +379,37 @@ Measured with `/AM /Oalsi /Gs /FPi`, both small probes and whole DASH.C variants
 - With separate `extern ... far a[...]` / `b[...]` declarations, `if (1) live_a; else read_b;` preserves b's unused CONST SEG word; `1 ? read_a : read_b` and `(1 ? a : b)[i]` discard it. The first encountered far access determines CONST allocation: placing the dead arm first changes which word the live code reads. Whole DASH.C trials verified every segment's bytes and the ordered, target-resolved fixups, not just function instructions.
 - Far arrays in **one declaration** (`extern char far a[][2], b[][2];`) share a cached segment constant; separate declarations do not. The combined live tip/hub form was tested too and failed DASH.C (6118 versus 6130 code bytes; one needle word). Do not confuse this declaration effect with general far-symbol alias analysis.
 - A shared macro selecting separately declared speedo/tach arrays gives only two needle words, and the functions read different ones. The original has three words and both functions read DS:68E4. Supplying a third unsupported alias or a speculative disabled feature merely substitutes a different provisional construct. The original relocation words do not recover dead symbol names or offsets. See the needle2 diary matrix before repeating these trials.
+
+
+### Zero-byte data padding (padbytes, 2026-11-04)
+
+Measured with real MSC 5.1 `/AM /Oalsi /Gs /FPi` and MASM 5.1 `/Ml` through emu2,
+20 small probes plus independent removal variants of 13 real-module candidates:
+
+| Situation | Observed rule |
+|---|---|
+| Literal strings, including odd byte counts with their NUL | Packed consecutively, including across functions; no pool-end or function-end alignment. `"ab"`, `"c"`, `"de"` start at 0, 3, 5. |
+| Initialized object larger than one byte | Starts at an even offset: int, pointer, char[2], char[3], and all-char structs of size 3/5. A preceding zero byte is supplied automatically when needed. |
+| Scalar char, char[1], or one-char struct | Can start at an odd offset; no blanket alignment for aggregate types. |
+| End of an object/module | No unconditional tail padding in `_DATA`: a five-char struct can be followed by a char at +5; char[3] and a three-byte literal leave odd segment lengths. LINK word-aligns the next module contribution. This differs from a struct's member/tail padding when its members require word alignment. |
+| MASM DB followed by DW | No automatic alignment (`DB 1; DW 2; DB 3` emits `01 02 00 03`). Explicit `EVEN` at odd offset emits one zero in `.DATA`; at even offset it emits none. |
+| Unreferenced storage | Absence of references does not prove padding. Inspect the object segment length, public offsets, actual bytes and fixups, then require the packed build and DGROUP gates. `_BSS`/COMDEF allocations are separate from literal alignment. |
+
+Removed g_501d (alignment before SAVEGAME's message array), g_4bed (LINK padding
+between FAME and the next module), and replaced g_5af3 with EVEN in VIDDET.
+g_064d stays: the following scalar g_keymapGroup moves 064E -> 064D without it,
+then g_keymapSaved moves 0650 -> 064E. g_47f0 is at an even offset, so EVEN
+cannot replace it. Nonzero 1D/1E/1F at g_47d1 is real data, not zero padding.
+See docs/RECONSTRUCTION.md and the padbytes diary entry for the retained candidates.
+
+
+File-split check: an odd `_DATA` end can be a LINK pad, so compare both code and
+data ownership before declaring a new object. Shared file-static `_BSS` storage
+across a contiguous function span constrains splits more strongly than near-call
+hulls (which can cross explicit near interfaces). SYS's DS:6C46/6C4C statics span
+0D78..2B9A; splitting before sy_keymap_set produces six wrong external far calls.
+The six empty sy_wait_input literals after the keymap tables also prevent moving
+just those tables after all SYS data. g_064d is retained required storage.
+For unused data without relocations, byte identity may not decide: standalone
+MSGONLY after SAVEGAME and VDSTRS after VIDDET each produced IDENTICAL packed
+EXEs. Keep those as alternative findings, not established original file splits.

@@ -472,3 +472,94 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   far code uses an explicit SEGMENT. CGAFONT's segment offset four comes from
   linker alignment. MESSAGES' odd-address words and arrays require assembler
   definitions rather than C definitions.
+
+
+## Unreferenced zero storage and alignment (padbytes)
+
+MSC 5.1 does not align each string, literal pool, function's literals, or the end
+of `_DATA`. Literal bytes are consecutive. Under the actual SYS/FAME/SAVEGAME
+flags (`/AM /Oalsi /Gs /FPi`), initialized objects larger than one byte start on
+word boundaries, including char arrays and all-char structs. A scalar char,
+char[1], and a one-char struct do not require that alignment. Five-char structs
+occupy five bytes; any byte before the next word-aligned item is separate from
+the struct. LINK aligns the next module's WORD `_DATA` contribution after an odd
+segment length. MASM 5.1 does not align a DW after a DB; EVEN is explicit.
+These rules were measured with 20 compiler/assembler probes and OBJ/COD/LST
+inspection, then tested by independent deletion variants of 13 real-module candidates.
+
+Three declarations were removed, with their externs, symbol metadata and unnamed
+rows. The complete packed EXE remains identical:
+
+| Former symbol | Evidence and chosen source form |
+|---|---|
+| g_501d, DS:501D | SAVEGAME's preceding literals finish at 501D; the 18-byte g_buyCarMsg starts at 501E automatically. Removing the char leaves all `_DATA` bytes and public offsets unchanged. |
+| g_4bed, DS:4BED | FAME's final Colors occupies 4BE8..4BEC. Deletion shortens its `_DATA` from 240 to 239 bytes without moving any remaining public. LINK supplies 4BED before the next module starts at 4BEE; this is module alignment, not literal-pool padding. |
+| g_5af3, DS:5AF3 | VIDDET's five bytes end at local offset 5. EVEN emits the same zero before the first Tandy string at offset 6. The object data bytes remain identical. The explicit directive is a reconstruction choice; byte identity does not establish the historical spelling. |
+
+Retained storage is not explained by these alignment rules:
+
+| Candidates | Removal evidence / limit |
+|---|---|
+| g_064d | Deletion shifts g_keymapGroup 064E -> 064D and g_keymapSaved 0650 -> 064E; SYS `_DATA` shrinks 435 -> 433 bytes. Its meaning is unknown; the following char does not induce alignment. |
+| g_47f0 | Local offset 216 is already even: EVEN emits nothing. Deletion moves the bankroll string and later data; `_DATA` shrinks 998 -> 996 bytes. Meaning unresolved. |
+| g_47d1 | Contains 1D, 1E, 1F, not zeros. Deletion shifts the following saved interrupt words back three bytes. EVEN supplies only one byte, not three. |
+| g_05bc / g_05f4 | SYS shrinks by 16 / 4 bytes; already-aligned following data moves by that amount. |
+| g_5e3c / g_5e94 | VIEW shrinks by 2 / 8 bytes; g_viewPages / g_sheetRects move back respectively. |
+| g_6c42 | POPUP `_BSS` shrinks 6 -> 2 bytes, moving later modules' static storage. Four bytes cannot be a single WORD alignment pad. Preserve its existing PROVISIONAL marker. |
+| g_004a / g_06a2 | Additional unused zero words found by auditing all source/header symbols. Deletion shrinks MAIN / SYS `_DATA` by two and moves following globals. |
+| fz79a8 / ah7aa4w / bz7ee2 / g7ff6f / a8ef4fv | HOTSPOT tentative arrays allocate 2 / 6 / 64 / 2 / 2 bytes through COMDEF. They are explicit communal blocks, not initialized-data or literal padding; purpose remains unknown. |
+
+The full audit also found unused nonzero tables, message headers and constants;
+being unreferenced is insufficient reason to remove them. Named data in retained
+rows may eventually prove to be part of another object or aggregate; no such
+interpretation is claimed here. `work/LEDGER.md` records each of the 18 candidates.
+DGROUP now recognizes zero bytes explicitly emitted by EVEN in a fresh MASM
+`.DATA` listing, relocated by a consistent public-symbol base. It still checks
+explicit source globals and does not infer assembler padding from a DW type.
+
+
+### Could the gaps instead mark file splits?
+
+The code side supports one SYS object at 0D78..2B9A (24 functions). Original
+instructions at 0D78 and 2639 both write DS:6C4A, the dirty byte of file-static
+g_drawnCursor at DS:6C46; the last function sy_drive_isr also accesses that byte
+at 25D2, 25E9, 2601, 2618 and 2655. DS:6C4C is the same file-static g_keyGroup
+in sy_keymap_set (12FA), sy_wait_input (142E, 177B, 17F4) and sy_demo_step
+(1BB6 through 1FA5). Under the established `_BSS` file-static reconstruction,
+these shared private objects and contiguous code rule out a SYS code split at
+064D's associated functions. Near-call hulls alone are weaker: `sr module units`
+also joins separate modules through explicit near interfaces.
+
+An independent compiler trial placed sy_hover_reset through sy_init in SYSHEAD
+and sy_keymap_set through sy_drive_isr in SYSKEY, after SYS in SR.LNK. It produces
+a 277-byte first `_DATA`, so LINK could indeed supply 064D, and the suffix's data
+has the expected 157 bytes. But the six original `push cs; call near` calls from
+sy_wait_input to sy_exit (twice), sy_music_pause, sy_music_resume and
+sy_timer_remove (twice) become five-byte external far calls (9A) instead of the
+original four-byte sequences (0E E8). Sharing the original private statics would
+also require an unsupported interface. This trial was rejected before linking.
+Cuts before sy_crit_error (105B) or sy_init (1111) additionally violate the WORD
+code-contribution alignment. SYS's two literal pools surround the keymap data:
+0614..064C precedes it, and sy_wait_input's six empty literals at 068C..0691
+follow it. Moving only the keymap tables to an object after SYS cannot interleave
+that new contribution between SYS's own pools. Retain g_064d as category (c),
+required explicit storage of unknown meaning, rather than claiming a proven
+independent historical variable or a compiler pad.
+
+The classification has two unavoidable ambiguities, verified by full trial links
+in isolated work directories, without changing src/MAKEFILE or src/SR.LNK:
+
+| Gap | Classification and split trial |
+|---|---|
+| 4BED | (b), existing module boundary. FAME code is 2FC8..3613; POOLS follows at 3614 with no initialized data; MEM's first literal starts at DS:4BEE. FAME's final data ends at 4BED. Removing the dummy uses the existing link order, without inventing an object. |
+| 501D | (a) in the retained reconstruction; (b) is byte-equivalent. Moving only g_buyCarMsg to MSGONLY.C after SAVEGAME.OBJ and before GARAGE.OBJ makes SAVEGAME end at 501D and LINK supply the zero; the packed EXE is IDENTICAL. No functions move, the message has no code users, and there are no message fixups to establish which file held it. No split implemented. |
+| 5AF3 | Explicit assembly EVEN in the retained reconstruction; (b) is byte-equivalent. Keep both video functions and five live state bytes in VIDDET; put its three unreferenced strings in VDSTRS.ASM immediately after VIDDET.OBJ and before CGA.OBJ. Without EVEN, LINK pads VIDDET's five bytes. The packed EXE is IDENTICAL. No string code references or relocations establish a separate object. No split implemented. |
+
+For the other initialized candidates (004A, 05BC, 05F4, 06A2, 47F0, 5E3C,
+5E94), the proposed gap begins at an even address and occupies explicit storage;
+a WORD object-boundary gap can only be one byte beginning at an odd address.
+47D1 contains nonzero data. 6C42 is an already-even four-byte `_BSS` allocation,
+not WORD inter-object alignment. The five HOTSPOT arrays are separate COMDEF
+allocations. All are category (c) for this audit; their exact historical grouping
+and meanings remain unproved. The per-candidate ledger distinguishes storage
+necessity from recovered variable identity.

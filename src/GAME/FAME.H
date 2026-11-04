@@ -20,7 +20,6 @@ extern int g_protectCycle;
 extern int g_fameRowY[];
 extern struct Colors g_fameColors1;
 extern struct Colors g_fameColors2;
-extern char g_4bed;
 extern int g_nScore;
 extern char g_driverName[];
 extern struct Entry g_hallFameTbl[];

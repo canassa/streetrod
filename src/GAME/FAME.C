@@ -182,7 +182,6 @@ static int near elapsed_hours(void)
 
 struct Colors g_fameColors1 = {3, 5, 5, 4, 1};
 struct Colors g_fameColors2 = {3, 4, 4, 3, 1};
-char g_4bed = 0;
 
 
 void fa_show(int add)
