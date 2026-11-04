@@ -759,3 +759,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - MASM 5.1 writes EXTDEFs in its own symbol order, so deduplicating EXTRN lines leaves the OBJ unchanged; local code labels never reach the OBJ. `DUP` becomes LIDATA; `EVEN` pads 00h in data, 90h in code.
+
+## 2026-11-04 21:30 CET: Final cleanliness pass; docs/RECONSTRUCTION.md
+
+### What I did
+- Deleted the unused `Steps`, `Strip` and `CgaFont` structs (the CGA font has no header) and dead tool code; pyflakes is clean.
+- The scanner gives routines found without a far caller the segment that contains them (nearest base below): 8 game functions moved to 0F38, 3 to 1C11, 7 runtime rows to 1E16, F_2197D to 2196. All 572 header comments agree with the DB.
+- Rewrote 31 stale DB notes that described the split-era workflow or long-resolved divergences.
+- `./sr dgroup register`/`aliases` (the last source-writing modes) are gone; `dgroup check` also fails on alias views and on layout globals the DB lacks.
+- "Click here to edit" (`g_290c`) and " Gear: " (`g_47fe`) are strings instead of char/int pieces (no code reference into their middle).
+- New docs/RECONSTRUCTION.md lists every reconstruction choice with its evidence and limits; plans/faithful-build.md is marked done; docs no longer depend on scratch scripts in work/.
+- Result: `./sr build` IDENTICAL from an empty work dir, `./dosbox.sh --make` IDENTICAL, `./sr check --all` 572/572, tests OK, `headers --check`, `dgroup check` and `dgroup order` clean.
