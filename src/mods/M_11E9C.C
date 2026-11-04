@@ -61,7 +61,7 @@ void F_11EA8(void)
     (*b_78a2)(pict, img, &blt, 3);
     for (step = 1; step <= ~r_vid.mask; step++) {
         tmp = F_1934E(0x18, 0x40, 1, 1);
-        F_1A03F(pict, step, tmp);
+        bitmap_shift_right(pict, step, tmp);
         blt.dx += 0x18;
         (*b_78a2)(tmp, img, &blt, 3);
         F_1941E(1);
@@ -140,7 +140,7 @@ void F_1220B(int x, int y)
     if (g_cursor2.state) {
         if (g_cursor2.clip.w > 0) {
             if (r_vid.mode == -2)
-                F_24EFB(g_cursor2.save->bits.p, g_cursor2.clip.w >> 3, g_cursor2.clip.h, r_vid.back->bits.p + 40 * g_cursor2.clip.dy + (g_cursor2.clip.dx >> 3), 0x18 >> r_vid.shift);
+                egalatch_to_page(g_cursor2.save->bits.p, g_cursor2.clip.w >> 3, g_cursor2.clip.h, r_vid.back->bits.p + 40 * g_cursor2.clip.dy + (g_cursor2.clip.dx >> 3), 0x18 >> r_vid.shift);
             else
                 (*b_78a2)(g_cursor2.save, r_vid.back, (struct Blt *)&g_cursor2.clip, 1);
             g_cursor2.clip.w = 0;
@@ -165,7 +165,7 @@ void F_1220B(int x, int y)
         a = x + 15;
         b = y + 15;
         if (r_vid.f16 && g_cursor2.state == 1)
-            F_1A92A(r_vid.back, r_vid.front, g_cursor2.r.x1 > x ? x : g_cursor2.r.x1, g_cursor2.r.y1 > y ? y : g_cursor2.r.y1, g_cursor2.r.x2 < a ? a : g_cursor2.r.x2, g_cursor2.r.y2 < b ? b : g_cursor2.r.y2);
+            bitmap_copy_box(r_vid.back, r_vid.front, g_cursor2.r.x1 > x ? x : g_cursor2.r.x1, g_cursor2.r.y1 > y ? y : g_cursor2.r.y1, g_cursor2.r.x2 < a ? a : g_cursor2.r.x2, g_cursor2.r.y2 < b ? b : g_cursor2.r.y2);
         g_cursor2.r.x1 = x;
         g_cursor2.r.y1 = y;
         g_cursor2.r.x2 = a;

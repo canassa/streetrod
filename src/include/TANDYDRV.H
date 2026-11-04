@@ -4,6 +4,6 @@
 #define TANDYDRV_H
 #include "STRUCTS.H"
 
-void F_22352(void);                                     /* 0x22352 */
+void tandydrv_install(void);                            /* 0x22352 */
 
 #endif

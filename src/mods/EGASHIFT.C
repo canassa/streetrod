@@ -5,11 +5,11 @@
 
 #pragma intrinsic(_rotl, _rotr, outp)
 
-static void near F_238A2(unsigned char *p, int n, int len);
-static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int off, int shift);
+static void near shift_row_bits(unsigned char *p, int n, int len);
+static void near write_plane_row(unsigned char far *dst, unsigned char *src, int w, int off, int shift);
 
 /* EGA/VGA register writes (graphics controller, sequencer). Written as braced blocks: the
-   block boundary is visible in F_23C3B's code; every other pair in the file (and the 38
+   block boundary is visible in egashift_blit's code; every other pair in the file (and the 38
    such pairs of seven other files) compiles the same either way. */
 #define GCREG(i, v)  { outp(0x3ce, (i)); outp(0x3cf, (v)); }
 #define SEQREG(i, v) { outp(0x3c4, (i)); outp(0x3c5, (v)); }
@@ -17,12 +17,12 @@ static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int 
 unsigned char g_5c16[8] = {128, 192, 224, 240, 248, 252, 254, 255};   /* DS:5C16 */
 int g_5c1e = 0;   /* DS:5C1E */
 
-/* F_238A2 @ 21A0:1EA2 (linear 0x238A2, 235 bytes)
+/* shift_row_bits @ 21A0:1EA2 (linear 0x238A2, 235 bytes)
 
    Shift a row of bytes right (n > 0) or left (n < 0) by n bits, carrying between bytes */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-static void near F_238A2(unsigned char *p, int n, int len)
+static void near shift_row_bits(unsigned char *p, int n, int len)
 {
     unsigned char a;
     unsigned char b;
@@ -58,12 +58,12 @@ static void near F_238A2(unsigned char *p, int n, int len)
     }
 }
 
-/* F_2398D @ 21A0:1F8D (linear 0x2398D, 686 bytes)
+/* write_plane_row @ 21A0:1F8D (linear 0x2398D, 686 bytes)
 
    Write one 4 plane row (40 bytes per plane) to planar VGA memory, shifted and edge masked */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int off, int shift)
+static void near write_plane_row(unsigned char far *dst, unsigned char *src, int w, int off, int shift)
 {
     unsigned char *a, *b, *c, *d;
     int e;
@@ -73,7 +73,7 @@ static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int 
 
     if (shift) {
         for (e = 0, h = (w + 7) / 8; e < 4; e++)
-            F_238A2(src + e * 40, shift, h);
+            shift_row_bits(src + e * 40, shift, h);
     }
     a = src;
     b = src + 40;
@@ -142,14 +142,14 @@ static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int 
     SEQREG(2, 0xf);
 }
 
-/* F_23C3B @ 21A0:223B (linear 0x23C3B, 383 bytes)
+/* egashift_blit @ 21A0:223B (linear 0x23C3B, 383 bytes)
 
    Copy a rectangle of a planar VGA bitmap to another, via a per-row 4 plane buffer */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 /* The braces of GCREG(5, 0) are load-bearing: a block ends the basic block that holds the
    r->sx / 8 CSE in si, so /Ol does not give it a stack slot (the original has none). */
 
-void F_23C3B(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r)
+void egashift_blit(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r)
 {
     int p;                 /* bytes per row */
     unsigned char far *a;  /* source row */
@@ -176,7 +176,7 @@ void F_23C3B(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r)
             for (i = 0; i < 4; i++)
                 c[i][g] = *(a + g + i * d);
         }
-        F_2398D(b, (unsigned char *)c, r->w, j, h);
+        write_plane_row(b, (unsigned char *)c, r->w, j, h);
         a += bm1->pitch;
         b += bm2->pitch;
     }

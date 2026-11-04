@@ -90,7 +90,7 @@ static void near F_2869E(void)
 {
     if (r_vid.mode == -2) {
         av787at = (g_5e3e == 1) ? 0xa200 : 0xa400;
-        F_2322E(g_5e40);
+        egapage_show(g_5e40);
     } else {
         av787at = g8188w->bits.w.seg;
         at767ct = g8188w->bits.w.off;
@@ -141,7 +141,7 @@ static void near F_286D8(void)
         g_5e3e = g_5e40;
         g_5e40 = t;
         av787at = (g_5e3e == 1) ? 0xa200 : 0xa400;
-        F_2322E(g_5e40);
+        egapage_show(g_5e40);
     } else {
         (*b_78a2)(g8188w, r_vid.front, (struct Blt *)&g_5e42, 1);
         av787at = g8188w->bits.w.seg;
@@ -960,9 +960,9 @@ static void near F_29F04(void)
 
 void F_29F0F(int x, int y)
 {
-    F_26458();
+    egaspan_begin();
     F_2905A(x, y, 0, *g_6078[20], 1);
-    F_2646D();
+    egaspan_end();
 }
 
 /* F_29F3B @ 2645:3AEB (linear 0x29F3B, 79 bytes) */
@@ -1043,22 +1043,22 @@ static void near F_2A11C(int x1, int x2, int y1, int y2, int n, int clip, int fl
     int j;
 
     for (j = *g_6e28a + 1; j; j--) {
-        F_2646D();
+        egaspan_end();
         F_287D1(10, x1 - j, y1, y2);
         F_287D1(10, x2 + j, y1, y2);
-        F_26458();
+        egaspan_begin();
         (*g78d6c)(x1, x2, y1 + j - 1, 10);
     }
     if (flags & 0x1000)
         F_29F3B((x1 + x2) >> 1, y1, n, 1, 13);
     else if (flags & 0x2000) {
-        F_2646D();
+        egaspan_end();
         F_29FC9((x1 + x2) >> 1, y1, n, 0, clip, 1);
-        F_26458();
+        egaspan_begin();
     } else if (*am8b82y & 1) {
-        F_2646D();
+        egaspan_end();
         F_29FC9((x1 + x2) >> 1, y1, n, 0, clip, (flags & 0x4000) ? 2 : 3);
-        F_26458();
+        egaspan_begin();
     } else
         F_29F3B((x1 + x2) >> 1, y1, n, 1, (flags & 0x4000) ? 12 : 14);
 }
@@ -1291,9 +1291,9 @@ static void near F_2A84D(void)
     g_6e20a = (int far *)(q_72ee - 8);
     g_6e24a = (int far *)(aw8634x - 8);
     am8b82y = (int far *)(g7d62p - 8);
-    F_2646D();
+    egaspan_end();
     F_2A32B();
-    F_26458();
+    egaspan_begin();
     F_28847();
     for (i = 7; i; i--) {
         F_29F04();
@@ -1386,9 +1386,9 @@ static void near F_2A84D(void)
             F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 0xf);
     next:
         if (ao7d2ev.m7d30 - ar7e8av.m7e8a == i && *(int *)&bw8aca) {
-            F_2646D();
+            egaspan_end();
             F_2A3DD();
-            F_26458();
+            egaspan_begin();
         }
         g_6e10--;
         g_6e1c--;
@@ -1449,7 +1449,7 @@ void F_2AFDC(void)
     am8b82y = (int far *)(g7d62p + 14);
     F_28860();
     F_28DD2();
-    F_26458();
+    egaspan_begin();
     for (i = 14; i; i--) {
         if (i <= g_6e06aax)
             F_29E8B(i);
@@ -1481,9 +1481,9 @@ void F_2AFDC(void)
             F_29F3B(*g_6e08aaw, *g_6e1a, i, 1, 6);
         if (w11 & 1) {
             if (f3) {
-                F_2646D();
+                egaspan_end();
                 F_29FC9(*g_6e08aaw, (*g_6e0cvz + *g_6e1a) >> 1, i, 1, 0, 1);
-                F_26458();
+                egaspan_begin();
             } else
                 F_29F3B(*g_6e08aaw, *g_6e1a, i, 1, 1);
         }
@@ -1536,9 +1536,9 @@ void F_2AFDC(void)
             F_29F3B(*g_6e18, *g_6e1a, i, -1, 6);
         if (w2 & 1) {
             if (f3) {
-                F_2646D();
+                egaspan_end();
                 F_29FC9(*g_6e18, (*g_6e0cvz + *g_6e1a) >> 1, i, -1, 0, 1);
-                F_26458();
+                egaspan_begin();
             } else
                 F_29F3B(*g_6e18, *g_6e1a, i, 1, 1);
         }
@@ -1554,9 +1554,9 @@ void F_2AFDC(void)
             F_29F3B(*g_6e18, *g_6e1a, i, 1, 0x11);
     next:
         if (ar7e8av.m7e8a - ao7d2ev.m7d30 == i && *(int *)&bw8aca) {
-            F_2646D();
+            egaspan_end();
             F_2A3DD();
-            F_26458();
+            egaspan_begin();
         }
         g_6e10--;
         g_6e1c--;
@@ -1576,12 +1576,12 @@ void F_2AFDC(void)
         g_6e14--;
     }
     if (ar7e8av.m7e8a == ao7d2ev.m7d30 && *(int *)&bw8aca) {
-        F_2646D();
+        egaspan_end();
         F_2A3DD();
-        F_26458();
+        egaspan_begin();
     }
     F_2A84D();
-    F_2646D();
+    egaspan_end();
     F_2A28C();
     if (*(int *)&bw8aca)
         F_2A213();

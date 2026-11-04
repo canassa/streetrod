@@ -147,7 +147,7 @@ static int near F_03B33(void)
     F_120FE(-1);
     r_vid.f16 = old;
     if (r_vid.f16)
-        F_1A92A(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
+        bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
     F_120FE(1);
     return F_14294(7);
 }

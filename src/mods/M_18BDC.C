@@ -52,7 +52,7 @@ static void near F_18BDC(struct Bitmap far **out, int n)
             r.sx = 0;
             r.sy = r.h;
         }
-        out[i] = F_1A89E(sheet, &r, 2);
+        out[i] = bitmap_grab(sheet, &r, 2);
     }
 }
 
@@ -67,7 +67,7 @@ static void near F_18C8F(struct Bitmap far **pbm)
     F_15B7F(0x474, &w, &h, &x);
     F_03904(*pbm, bp7316[2]->bits.p + 0x46 * bp7316[2]->pitch, 0L, w, h, r_vid.mode == -2 ? -2 : -1);
     if (r_vid.mode == -2) {
-        F_24E78(r_vid.front->bits.p, (*pbm)->bits.p - 0xaa0, (*pbm)->pitch, (*pbm)->height, 0, 0x44, 0x28);
+        egalatch_rect(r_vid.front->bits.p, (*pbm)->bits.p - 0xaa0, (*pbm)->pitch, (*pbm)->height, 0, 0x44, 0x28);
     } else {
         F_11A72(0, 0x44, w, h, *pbm);
     }
@@ -116,7 +116,7 @@ void F_18D59(int a, int b)
             r3.h = rca2.y2 - rca2.y1 + 1;
             r3.sx = rca2.x1 - ac825et;
             r3.sy = rca2.y1 - aw8260y;
-            clip = F_1A89E(bu825a, &r3, 2);
+            clip = bitmap_grab(bu825a, &r3, 2);
             r3.sx = 0;
             r3.sy = 0;
             r3.dx = rca2.x1;
@@ -137,7 +137,7 @@ void F_18D59(int a, int b)
         (*b_78a2)(tab2[0], bm27, &r2, 2);
     }
     if (b && clip)
-        F_1A79B(clip, tab2[0], &r3);
+        bitmap_and_mask(clip, tab2[0], &r3);
     rcb1.x1 = rcb1.y1 = 0;
     rcb1.x2 = tab2[0]->width - 1;
     rcb1.y2 = tab2[0]->height - 1;
@@ -156,7 +156,7 @@ void F_18D59(int a, int b)
     for (i = 0; i < 0x54; i++) {
         x = sp2->x;
         v3 = x & ~r_vid.mask;
-        F_1A03F(tab2[g_5a32[i]], v3, fr);
+        bitmap_shift_right(tab2[g_5a32[i]], v3, fr);
         tm7 = g_tick + 2;
         okn = (*g78c6c)(sp2);
         while (tm7 > g_tick)

@@ -2,13 +2,13 @@
 
         .CODE S24E7_TEXT
 
-; F_24E78 @ 24E7:0008 (linear 0x24E78, 131 bytes)
-; F_24E78(src_far, dst_far, width, height, x, y, pitch): EGA latch copy
+; egalatch_rect @ 24E7:0008 (linear 0x24E78, 131 bytes)
+; egalatch_rect(src_far, dst_far, width, height, x, y, pitch): EGA latch copy
 ; (write mode 1) of a width x height byte rectangle between two planar
 ; buffers with the same pitch.  Does nothing if width or height < 1.
 
-        PUBLIC  _F_24E78
-_F_24E78  PROC    FAR
+        PUBLIC  _egalatch_rect
+_egalatch_rect  PROC    FAR
         push    bp
         mov     bp,sp
         push    ds
@@ -78,15 +78,15 @@ done1:
         pop     ds
         pop     bp
         ret
-_F_24E78  ENDP
+_egalatch_rect  ENDP
 
-; F_24EFB @ 24E7:008B (linear 0x24EFB, 79 bytes)
-; F_24EFB(src_far, width, height, dst_far, src_pitch): EGA latch copy (write
+; egalatch_to_page @ 24E7:008B (linear 0x24EFB, 79 bytes)
+; egalatch_to_page(src_far, width, height, dst_far, src_pitch): EGA latch copy (write
 ; mode 1) of a width x height byte rectangle into a 40 byte per row screen.
 ; Does nothing if width or height < 1.
 
-        PUBLIC  _F_24EFB
-_F_24EFB  PROC    FAR
+        PUBLIC  _egalatch_to_page
+_egalatch_to_page  PROC    FAR
         push    bp
         mov     bp,sp
         push    ds
@@ -131,6 +131,6 @@ done2:
         pop     ds
         pop     bp
         ret
-_F_24EFB  ENDP
+_egalatch_to_page  ENDP
 
         END

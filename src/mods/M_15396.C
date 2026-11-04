@@ -325,15 +325,15 @@ struct Bitmap far *F_1592E(int id, struct Bitmap far *bm)
         } else {
             F_0E926(src, pic->bits.p, num, colors16, 16);
             if (pic->alt.p)
-                F_26401(pic->bits.p, pic->alt.p, pic->planesize);
+                maskblt_make_mask(pic->bits.p, pic->alt.p, pic->planesize);
         }
     } else if (r_vid.mode == -6) {
         if (pic->bits.p == 0) {
-            F_24740(src, pic->alt.p, pic->planesize, colors16);
+            tandypic_unpack_mask(src, pic->alt.p, pic->planesize, colors16);
         } else {
-            F_2467A(src, pic->bits.p, pic->planesize, colors16);
+            tandypic_unpack(src, pic->bits.p, pic->planesize, colors16);
             if (pic->alt.p)
-                F_24849(pic->bits.p, pic->alt.p, pic->planesize);
+                tandypic_make_mask(pic->bits.p, pic->alt.p, pic->planesize);
         }
     } else {
         F_0E926(src, pic->bits.p == 0 ? pic->alt.p : pic->bits.p, num, colors16, 16);

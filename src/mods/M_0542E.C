@@ -139,7 +139,7 @@ int near F_0570C(void)
     F_119B8(0x3f8, 0x10, 6, 0);
     r_vid.f16 = 1;
     F_10B9C();
-    F_1A92A(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
+    bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
     (*m_present)();
     switch (sel = F_151D4(2, 15, atnewName)) {
     case -3:
@@ -311,7 +311,7 @@ int near F_05B4A(void)
     }
     r_vid.f16 = r;
     if (r)
-        F_1A92A(r_vid.back, r_vid.front, 0, 0, 320, 190);
+        bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 320, 190);
     F_120FE(-2);
     if (g_49e0[0] == 0) {
         F_14294(15);
@@ -414,7 +414,7 @@ void near F_05EEA(void)
     F_119B8(0x3fc, 0xf0, 0x8c, -1);
     r_vid.f16 = r;
     if (r)
-        F_1A92A(r_vid.back, r_vid.front, 0, 0, 320, 190);
+        bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 320, 190);
     strcpy(g_2a2e, atnewName);
 again:
     for (r = 1; r <= g_49e0[0] && g_4fc2[r]; r++)

@@ -160,7 +160,7 @@ int F_009CB(void)
             r_vid.back->height = hsave;
             F_120FE(-1);
             if (r_vid.f16)
-                F_1A92A(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
+                bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
             F_00D78();
         }
         while ((key = F_01417(3000)) == 0)

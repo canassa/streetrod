@@ -10,13 +10,13 @@
 
 #pragma intrinsic(inp)
 
-static void near F_1D8C4(struct Rect *rect, struct Bitmap far *bm2, struct Bitmap far *bm1, int flag);
+static void near restore_rect(struct Rect *rect, struct Bitmap far *bm2, struct Bitmap far *bm1, int flag);
 
-/* F_1D8C4 @ 1C11:17B4 (linear 0x1D8C4, 97 bytes)
+/* restore_rect @ 1C11:17B4 (linear 0x1D8C4, 97 bytes)
 
    Blit the part of one bitmap that lies under a rectangle */
 
-static void near F_1D8C4(struct Rect *rect, struct Bitmap far *bm2, struct Bitmap far *bm1, int flag)
+static void near restore_rect(struct Rect *rect, struct Bitmap far *bm2, struct Bitmap far *bm1, int flag)
 {
     struct Clip c;
 
@@ -24,16 +24,16 @@ static void near F_1D8C4(struct Rect *rect, struct Bitmap far *bm2, struct Bitma
     c.h = rect->y2 - rect->y1 + 1;
     c.sx = c.dx = flag ? rect->x1 : 0;
     c.sy = c.dy = flag ? 0 : rect->y1;
-    F_1D3C8(bm1, bm2, (struct Blt *)&c, 1);
+    cgablt_copy(bm1, bm2, (struct Blt *)&c, 1);
 }
 
-/* F_1D925 @ 1C11:1815 (linear 0x1D925, 1021 bytes)
+/* cgaspr_step @ 1C11:1815 (linear 0x1D925, 1021 bytes)
 
    Erase and redraw one sprite: restore the background under its old rectangles, draw it over the
    screen pg and advance it */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-int F_1D925(struct Sprite *s)
+int cgaspr_step(struct Sprite *s)
 {
     struct Bitmap far *bits;
     struct Blt blt;
@@ -59,7 +59,7 @@ int F_1D925(struct Sprite *s)
     F_1956E(fr->pos->width, fr->pos->height,
         s->x, s->y, pg->bm->width, pg->bm->height, &rc);
     if (F_19839(&rc, &pg->r, &c2, s->seq->dx))
-        F_1D8C4(&c2, bits, fp, s->seq->dx);
+        restore_rect(&c2, bits, fp, s->seq->dx);
     pg->r = rc;
     top = d ? d->height : 0;
     t = blt.h = fr->pos->height - top - g_02d0;
@@ -69,22 +69,22 @@ int F_1D925(struct Sprite *s)
         blt.w = fr->pos->width;
         blt.sx = 0;
         blt.dx = s->seq->dx ? s->x : 0;
-        F_1D195(fr->pos, bits, fp, &blt);
+        cgablt_compose(fr->pos, bits, fp, &blt);
         if (d) {
             blt.dy += blt.h;
             blt.h = top;
-            F_1D3C8(d, bits, &blt, 1);
+            cgablt_copy(d, bits, &blt, 1);
         }
     } else {
         for (idx = 0; idx < 6; idx++) {
             if (F_19E42(g_539a[idx].a, g_539a[idx].b, s, (struct Blt16 *)&blt)) {
                 blt.dy = u;
                 blt.h = t;
-                F_1D195(fr->pos, bits, fp, &blt);
+                cgablt_compose(fr->pos, bits, fp, &blt);
                 if (d) {
                     blt.dy += t;
                     blt.h = top;
-                    F_1D3C8(d, bits, &blt, 1);
+                    cgablt_copy(d, bits, &blt, 1);
                 }
             }
         }
@@ -130,7 +130,7 @@ int F_1D925(struct Sprite *s)
         while (inp(0x3ba) & 0x80)
             ;
     }
-    F_1D3C8(bits, pg->bm, &blt, 1);
+    cgablt_copy(bits, pg->bm, &blt, 1);
     F_19DB7(s);
     return 1;
 }

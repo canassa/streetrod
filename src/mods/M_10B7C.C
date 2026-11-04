@@ -259,7 +259,7 @@ static void near F_10E3D(int n)
             if (wait)
                 F_120FE(-1);
             if (g_cmd->sub == 4 && r_vid.f16)
-                F_1A92A(r_vid.back, r_vid.front, g_box->x2, g_box->y2,
+                bitmap_copy_box(r_vid.back, r_vid.front, g_box->x2, g_box->y2,
                         g_box->x2 + g_box->w - 1, g_box->y2 + g_box->h - 1);
             return;
         case 12:
@@ -267,7 +267,7 @@ static void near F_10E3D(int n)
             wait = 0;
             if (!r_vid.f16)
                 break;
-            F_1A92A(r_vid.back, r_vid.front, g_box->x2, g_box->y2,
+            bitmap_copy_box(r_vid.back, r_vid.front, g_box->x2, g_box->y2,
                     g_box->x2 + g_box->w - 1, g_box->y2 + g_box->h - 1);
             break;
         }

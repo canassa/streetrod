@@ -7,25 +7,25 @@
 #include "M_0914C.H"
 #include "M_1947A.H"
 
-static void near F_23F68(struct Rect *r, struct Bitmap far *dst, struct Bitmap far *src, int rows);
+static void near restore_rect_latch(struct Rect *r, struct Bitmap far *dst, struct Bitmap far *src, int rows);
 
-/* F_23F68 @ 21A0:2568 (linear 0x23F68, 113 bytes)
+/* restore_rect_latch @ 21A0:2568 (linear 0x23F68, 113 bytes)
 
-   Copy a rectangle between two planar bitmaps with F_24E78 */
+   Copy a rectangle between two planar bitmaps with egalatch_rect */
 
-static void near F_23F68(struct Rect *r, struct Bitmap far *dst, struct Bitmap far *src, int rows)
+static void near restore_rect_latch(struct Rect *r, struct Bitmap far *dst, struct Bitmap far *src, int rows)
 {
     int off = rows ? 40 * r->y1 : r->x1 >> 3;
 
-    F_24E78(src->bits.p - off, dst->bits.p, (r->x2 >> 3) - (r->x1 >> 3) + 1,
+    egalatch_rect(src->bits.p - off, dst->bits.p, (r->x2 >> 3) - (r->x1 >> 3) + 1,
             r->y2 - r->y1 + 1, r->x1 >> 3, r->y1, dst->pitch);
 }
 
-/* F_23FD9 @ 21A0:25D9 (linear 0x23FD9, 787 bytes)
+/* egaspr_step @ 21A0:25D9 (linear 0x23FD9, 787 bytes)
 
    Advance a sprite to its next display page and redraw it there */
 
-int F_23FD9(struct Sprite *s)
+int egaspr_step(struct Sprite *s)
 {
     struct Rect clip;
     struct Rect first;
@@ -39,11 +39,11 @@ int F_23FD9(struct Sprite *s)
 
     if (s->seq->count < 0) {
         count = s->page;
-        F_24E78(count->bm->bits.p, count->link->bm->bits.p, 40, 190, 0, 0, 40);
+        egalatch_rect(count->bm->bits.p, count->link->bm->bits.p, 40, 190, 0, 0, 40);
         if (count->idx) {
             count = count->link;
             count->r = count->link->r;
-            F_2322E(0);
+            egapage_show(0);
         }
         return 0;
     }
@@ -55,7 +55,7 @@ int F_23FD9(struct Sprite *s)
         box->pos->height - g_02d0, s->x, s->y,
         count->bm->width, count->bm->height, &clip);
     if (F_19839(&clip, &count->r, &f, s->seq->dx))
-        F_23F68(&f, count->bm, key, s->seq->dx);
+        restore_rect_latch(&f, count->bm, key, s->seq->dx);
     count->r = clip;
     dest.h = box->pos->height - g_02d0;
     dest.sy = 0;
@@ -64,11 +64,11 @@ int F_23FD9(struct Sprite *s)
         dest.w = box->pos->width;
         dest.sx = 0;
         dest.dx = s->x;
-        F_234E9(box->pos, count->bm, height, (struct Mask *)box->data, (struct Blt *)&dest);
+        egablit_sprite(box->pos, count->bm, height, (struct Mask *)box->data, (struct Blt *)&dest);
     } else {
         for (i = 0; i < 6; i++) {
             if (F_19E42(g_539a[i].a, g_539a[i].b, s, &dest))
-                F_234E9(box->pos, count->bm, height, (struct Mask *)box->data, (struct Blt *)&dest);
+                egablit_sprite(box->pos, count->bm, height, (struct Mask *)box->data, (struct Blt *)&dest);
         }
     }
     for (i = 0; i < 2; i++) {
@@ -94,10 +94,10 @@ int F_23FD9(struct Sprite *s)
             }
             dest.dx = f.x1;
             dest.dy = f.y1;
-            F_236D5(height, count->bm, (struct Blt *)&dest, 0);
+            egablit_masked(height, count->bm, (struct Blt *)&dest, 0);
         }
     }
     F_19DB7(s);
-    F_2322E(count->idx);
+    egapage_show(count->idx);
     return 1;
 }

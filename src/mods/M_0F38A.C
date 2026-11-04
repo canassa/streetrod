@@ -407,7 +407,7 @@ void F_1013D(int mode)
         if (r_vid.mode == -2) {
             outp(0x3d4, 0x13);
             outp(0x3d5, 0x14);
-            F_21A14(-1);
+            crtc_set_split(-1);
             outp(0x3d4, 0xc);
             outp(0x3d5, 0);
             outp(0x3d4, 0xd);
@@ -438,7 +438,7 @@ void F_1013D(int mode)
         if (r_vid.mode == -2) {
             outp(0x3d4, 0x13);
             outp(0x3d5, 0x14);
-            F_21A14(-1);
+            crtc_set_split(-1);
             outp(0x3d4, 0xc);
             outp(0x3d5, 0);
             outp(0x3d4, 0xd);
@@ -604,12 +604,12 @@ void F_10677(int a, int b)
         y = g_6c34->pt[i * 2 + 1];
         p2.sx = x & 0xfff8;
         p2.sy = y;
-        cm2 = F_1A89E(bm19, &p2, 1);
+        cm2 = bitmap_grab(bm19, &p2, 1);
         p3.dx = g_038c[i].a;
         p3.dy = g_038c[i].b;
         (*b_78a2)(cm2, g82b4s, &p3, 1);
         pk5.dx = x - p2.sx;
-        F_1A2D0(bm28, cm2, &pk5, 0);
+        bitmap_draw_masked(bm28, cm2, &pk5, 0);
         p3.dy += 0x13;
         (*b_78a2)(cm2, g82b4s, &p3, 1);
         F_1941E(1);

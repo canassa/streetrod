@@ -9,13 +9,13 @@
 #include "M_1A9B2.H"
 #include "TANDYBLT.H"
 
-static void near F_226F4(struct Rect *r, struct Bitmap far *a, struct Bitmap far *b, int horiz);
+static void near restore_rect_back(struct Rect *r, struct Bitmap far *a, struct Bitmap far *b, int horiz);
 
-/* F_226F4 @ 21A0:0CF4 (linear 0x226F4, 110 bytes)
+/* restore_rect_back @ 21A0:0CF4 (linear 0x226F4, 110 bytes)
 
    Blit a rectangle between two bitmaps, offset by a scroll origin */
 
-static void near F_226F4(struct Rect *r, struct Bitmap far *a, struct Bitmap far *b, int horiz)
+static void near restore_rect_back(struct Rect *r, struct Bitmap far *a, struct Bitmap far *b, int horiz)
 {
     struct Blt blt;
     blt.w = r->x2 - r->x1 + 1;
@@ -29,16 +29,16 @@ static void near F_226F4(struct Rect *r, struct Bitmap far *a, struct Bitmap far
         blt.sx = 0;
         blt.sy = blt.dy - g_5aa8;
     }
-    F_21EAB(b, a, &blt, 1);
+    tandyblt_copy(b, a, &blt, 1);
 }
 
-/* F_22762 @ 21A0:0D62 (linear 0x22762, 965 bytes)
+/* tandyspr_step @ 21A0:0D62 (linear 0x22762, 965 bytes)
 
    Erase and redraw one sprite on the screen page r_vid.back through the masked blitters, then flush
    the touched rectangle to the page and advance the sprite */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-int F_22762(struct Sprite *s)
+int tandyspr_step(struct Sprite *s)
 {
     struct Blt blt;
     int top, t;
@@ -62,7 +62,7 @@ int F_22762(struct Sprite *s)
     F_1956E(fr->pos->width, fr->pos->height - g_02d0,
         s->x, s->y, pg->bm->width, pg->bm->height, &rc);
     if (F_19839(&rc, &pg->r, &c2, s->seq->dx))
-        F_226F4(&c2, r_vid.back, fp, s->seq->dx);
+        restore_rect_back(&c2, r_vid.back, fp, s->seq->dx);
     pg->r = rc;
     top = d ? d->height : 0;
     t = blt.h = fr->pos->height - top - g_02d0;
@@ -79,11 +79,11 @@ int F_22762(struct Sprite *s)
             blt.mx = 0;
             blt.my = blt.dy - g_5aa8 < 0 ? 0 : blt.dy - g_5aa8;
         }
-        F_21C0B(fr->pos, r_vid.back, fp, &blt);
+        tandyblt_compose(fr->pos, r_vid.back, fp, &blt);
         if (d) {
             blt.dy += blt.h;
             blt.h = top;
-            F_21EAB((struct Bitmap far *)d, r_vid.back, &blt, 1);
+            tandyblt_copy((struct Bitmap far *)d, r_vid.back, &blt, 1);
         }
     } else {
         blt.my = 0;
@@ -92,11 +92,11 @@ int F_22762(struct Sprite *s)
                 blt.dy = u;
                 blt.h = t;
                 blt.mx = blt.dx - g_5a20;
-                F_21C0B(fr->pos, r_vid.back, fp, &blt);
+                tandyblt_compose(fr->pos, r_vid.back, fp, &blt);
                 if (d) {
                     blt.dy += t;
                     blt.h = top;
-                    F_21EAB((struct Bitmap far *)d, r_vid.back, &blt, 1);
+                    tandyblt_copy((struct Bitmap far *)d, r_vid.back, &blt, 1);
                 }
             }
         }
@@ -128,7 +128,7 @@ int F_22762(struct Sprite *s)
         }
     }
     if (r_vid.back->bits.p != pg->bm->bits.p)
-        F_1A92A(r_vid.back, pg->bm, rc.x1 > c2.x1 ? c2.x1 : rc.x1, rc.y1 > c2.y1 ? c2.y1 : rc.y1,
+        bitmap_copy_box(r_vid.back, pg->bm, rc.x1 > c2.x1 ? c2.x1 : rc.x1, rc.y1 > c2.y1 ? c2.y1 : rc.y1,
             rc.x2 < c2.x2 ? c2.x2 : rc.x2, rc.y2 < c2.y2 ? c2.y2 : rc.y2);
     F_19DB7(s);
     return 1;

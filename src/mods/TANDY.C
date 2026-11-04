@@ -15,15 +15,15 @@
 #include "TANDYSPR.H"
 #include "TANDYTXT.H"
 
-void (far *g_5b8a[15])() = {F_21EAB, F_221AC, F_21D58, F_22364, F_0E6C2, F_22609, F_2244F, F_0FEAD, F_0FEBF, F_22762, F_22626, F_19BFE, F_2487A, fill_span_clipped, F_24B79};   /* DS:5B8A */
+void (far *g_5b8a[15])() = {tandyblt_copy, tandyblt_shifted, tandyblt_masked, tandy_draw_text, F_0E6C2, tandy_copy_page, tandy_recolor_rect, F_0FEAD, F_0FEBF, tandyspr_step, tandy_reveal, F_19BFE, tandylin_draw, tandylin_span, tandylin_fill_below};   /* DS:5B8A */
 int g_5bc6[5] = {0, 2, 4, 1, 3};   /* DS:5BC6 */
 
-/* F_22364 @ 21A0:0964 (linear 0x22364, 235 bytes)
+/* tandy_draw_text @ 21A0:0964 (linear 0x22364, 235 bytes)
 
    Render a glyph into a scratch buffer and copy it to the interleaved screen, 8 rows at most */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-void F_22364(struct Bitmap far *bm, int x, int y, int glyph)
+void tandy_draw_text(struct Bitmap far *bm, int x, int y, int glyph)
 {
     char buf3[0x500];
     int m3;
@@ -37,25 +37,25 @@ void F_22364(struct Bitmap far *bm, int x, int y, int glyph)
     memset(buf3, 0, 0x500);
     c1 = x_colors.c[0];
     c2 = x_colors.c[1];
-    n2 = F_24BE2(x, glyph, buf3, c1, c2);
+    n2 = tandytxt_render(x, glyph, buf3, c1, c2);
     g824cd = x + n2 - ph;
     bq824e = y;
     if (n2 != ph) {
         m3 = (n2 >> 1) - ph;
         if (y + (h = 8) > bm->height)
             h = bm->height - y;
-        F_24CAB(buf3, bm->bits.w.seg,
+        tandytxt_copy(buf3, bm->bits.w.seg,
             (bm->planesize >> 2) * (y & 3) + (y >> 2) * 160 + bm->bits.w.off + (x >> 1),
             y, h, m3, ph, n2);
     }
 }
 
-/* F_2244F @ 21A0:0A4F (linear 0x2244F, 442 bytes)
+/* tandy_recolor_rect @ 21A0:0A4F (linear 0x2244F, 442 bytes)
 
    Replace one colour by another inside a rectangle of a 2-pixel-per-byte interlaced bitmap */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-void F_2244F(struct Bitmap far *bm, int from, int to, int x1, int y1, int x2, int y2)
+void tandy_recolor_rect(struct Bitmap far *bm, int from, int to, int x1, int y1, int x2, int y2)
 {
     int pa2;
     unsigned char c;
@@ -125,22 +125,22 @@ void F_2244F(struct Bitmap far *bm, int from, int to, int x1, int y1, int x2, in
     }
 }
 
-/* F_22609 @ 21A0:0C09 (linear 0x22609, 29 bytes)
+/* tandy_copy_page @ 21A0:0C09 (linear 0x22609, 29 bytes)
 
    Copy a 32K block (a full EGA/VGA-sized buffer) */
 
-void F_22609(char far *src, char far *dst)
+void tandy_copy_page(char far *src, char far *dst)
 {
-    F_1A882(src, dst, 0x8000);
+    bitmap_far_copy(src, dst, 0x8000);
 }
 
-/* F_22626 @ 21A0:0C26 (linear 0x22626, 205 bytes)
+/* tandy_reveal @ 21A0:0C26 (linear 0x22626, 205 bytes)
 
    Clear one source row, then copy the same row from the second screen: five interlaced passes over
    the lines */
 /* kl: index over the five line phases (name chosen for the stack layout). */
 
-void F_22626(char far *a, char far *b)
+void tandy_reveal(char far *a, char far *b)
 {
     char far *p1;
     long dl5;

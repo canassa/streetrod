@@ -63,7 +63,7 @@ void F_123F4(int frame, int slot)
         blt.h = 6;
         blt.sx = 0x40;
         blt.sy = 0;
-        tmp = F_1A89E(pict, &blt, 2);
+        tmp = bitmap_grab(pict, &blt, 2);
         (*bl78ce)(0xe, 0x94, x, 8, y, tmp);
         F_19438(1);
     }
@@ -76,7 +76,7 @@ void F_123F4(int frame, int slot)
     (*b_78a2)(pict, r_vid.back, &blt, 1);
     F_120FE(-1);
     if (r_vid.f16)
-        F_1A92A(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
+        bitmap_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
     F_19438(1);
 }
 
@@ -103,11 +103,11 @@ void F_12525(int slot)
     (*b_78a2)(pict, r_vid.back, &blt, 1);
     F_120FE(-1);
     if (r_vid.f16) {
-        F_1A92A(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
+        bitmap_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
         F_16CF3();
         F_120FE(-4);
         blt.sx = 0x40;
-        tmp = F_1A89E(pict, &blt, 2);
+        tmp = bitmap_grab(pict, &blt, 2);
         (*bl78ce)(0xe, 0x94, x, y, 0x94, tmp);
         F_19438(1);
         F_120FE(-2);
@@ -190,7 +190,7 @@ void F_127DB(int n, char far *s)
             F_123F4(*s++, i);
         F_120FE(-1);
         if (r_vid.f16 = saved)
-            F_1A92A(r_vid.back, r_vid.front, 0x20, 10, 0xe7, 0xb8);
+            bitmap_copy_box(r_vid.back, r_vid.front, 0x20, 10, 0xe7, 0xb8);
         g_06fc = 1;
     }
 }
@@ -328,7 +328,7 @@ void F_12A17(int n)
     (*am78a6t)(r_vid.f8, r_vid.back, &move);
     if (flag = px & ~r_vid.mask) {
         saved = F_1934E(pict->width + 8, pict->height, pict->alt.p != 0, 2);
-        F_1A03F(pict, flag, saved);
+        bitmap_shift_right(pict, flag, saved);
     }
     px = (px & r_vid.mask) + 0x60;
     (*bl78ce)(0xd, 0x93, px, (n == 0x43f && r_vid.f16) ? 0xd - height : ypos, ypos, saved);
@@ -377,7 +377,7 @@ void F_12B7C(void)
     if (r_vid.f16) {
         xpos += 0x60;
         ypos += 9 - rows;
-        F_1A92A(r_vid.back, r_vid.front, xpos, ypos, xpos + wide, ypos + rows);
+        bitmap_copy_box(r_vid.back, r_vid.front, xpos, ypos, xpos + wide, ypos + rows);
         F_16CF3();
         if (wide == 0x10)
             xpos += 8;
@@ -412,7 +412,7 @@ static void near F_12CD1(void)
         py = g_0732[i * 2 + 1];
         picture = F_15BBE(what, 1);
         g_0792 = F_1934E(picture->width + 8, picture->height, picture->alt.p != 0, 2);
-        F_1A03F(picture, px & ~r_vid.mask, g_0792);
+        bitmap_shift_right(picture, px & ~r_vid.mask, g_0792);
         F_1941E(1);
         u_70ac.w = g_0792->width;
         u_70ac.h = g_0792->height;
@@ -448,7 +448,7 @@ void F_12DD8(int n, int flag)
     w = saved->width;
     if (mask = x & ~r_vid.mask) {
         saved = F_1934E(pict->width + 8, pict->height, pict->alt.p != 0, 2);
-        F_1A03F(pict, mask, saved);
+        bitmap_shift_right(pict, mask, saved);
         w = saved->width;
     }
     x &= r_vid.mask;
@@ -510,7 +510,7 @@ void F_12F99(int n, int flag)
     F_19438(1);
     F_120FE(-1);
     if (r_vid.f16)
-        F_1A92A(r_vid.back, r_vid.front, px, py, px + w, py + h);
+        bitmap_copy_box(r_vid.back, r_vid.front, px, py, px + w, py + h);
 }
 
 /* F_1309C @ 0F38:3D1C (linear 0x1309C, 281 bytes)
@@ -536,10 +536,10 @@ void F_1309C(void)
     ys = blt.dy = (blt.sy = g_071a[next * 2 + 1]) + 9;
     blt.h = r_vid.f8->height - blt.sy - 4;
     (*b_78a2)(r_vid.f8, r_vid.back, &blt, 1);
-    F_1A734(r_vid.back, ap82acz, (unsigned char)(x2 = g_071a[pair * 2] + 0x60), (unsigned char)(y2 = g_071a[pair * 2 + 1] + 9), 0);
+    bitmap_draw_pic(r_vid.back, ap82acz, (unsigned char)(x2 = g_071a[pair * 2] + 0x60), (unsigned char)(y2 = g_071a[pair * 2 + 1] + 9), 0);
     F_120FE(-1);
     if (r_vid.f16)
-        F_1A92A(r_vid.back, r_vid.front, x2 > xs ? xs : x2, y2 > ys ? ys : y2, blt.w + x2 + 0x18, blt.h + y2 + 0x18);
+        bitmap_copy_box(r_vid.back, r_vid.front, x2 > xs ? xs : x2, y2 > ys ? ys : y2, blt.w + x2 + 0x18, blt.h + y2 + 0x18);
 }
 
 /* F_131B5 @ 0F38:3E35 (linear 0x131B5, 248 bytes)
@@ -622,7 +622,7 @@ void F_132AD(int *a, int *b, int flag)
         blt.h = 0xaf;
     }
     if (r_vid.f16 = shadow)
-        F_1A92A(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + blt.w - 1, blt.dy + blt.h - 1);
+        bitmap_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + blt.w - 1, blt.dy + blt.h - 1);
     hz82ae = prev;
     g82b2t = prev2;
 }

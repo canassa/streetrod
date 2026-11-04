@@ -4,6 +4,6 @@
 #define EGADRV_H
 #include "STRUCTS.H"
 
-void F_22B28(void);                                     /* 0x22B28 */
+void egadrv_install(void);                              /* 0x22B28 */
 
 #endif

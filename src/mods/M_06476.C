@@ -124,7 +124,7 @@ void F_065AF(int a1)
     id = m < 2 ? 0x4c3 : 0x4c5;
     F_120FE(-3);
     pic = F_15BBE(id, 2);
-    F_1A734(pic, 0x4c4, (unsigned char)x, (unsigned char)y4, 0);
+    bitmap_draw_pic(pic, 0x4c4, (unsigned char)x, (unsigned char)y4, 0);
     img = F_1934E(pic->width, pic->height, 0, 2);
     F_11A72(px5, py4, pic->width, pic->height, img);
     F_11BD3(pic, px5, py4);
@@ -350,7 +350,7 @@ int near F_06B06(int mode)
             else
                 F_181C8(4, m_8272.m8282, n, m_8272.m8284.shade, 0, 0x98, 0, g_5030[m_8272.m827e]);
         } else {
-            F_1A92A(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xc7);
+            bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xc7);
             g_29ff[0] = 0;
         }
         break;
@@ -583,11 +583,11 @@ void near F_07367(void)
             a_7eaap.m7eb0->f24 = ((idx6 & 0x1f) << 8) | (a_7eaap.m7eb0->f24 & 0xe0ff);
             bm3 = F_15BBE(1218, 2);
             bm1 = F_1934E(g_0294->width, g_0294->height, 0, 2);
-            F_19ED0(g_0294, bm1, 1);
+            bitmap_copy(g_0294, bm1, 1);
             q2 = &a784als[idx6 - 1];
-            F_1A734(bm1, q2->id, (char)(q2->dx + m_8272.m8276), (char)q2->dy, 0);
+            bitmap_draw_pic(bm1, q2->id, (char)(q2->dx + m_8272.m8276), (char)q2->dy, 0);
             bm4 = F_1934E(bm1->width, bm1->height, 0, 2);
-            F_19ED0(bm1, bm4, 1);
+            bitmap_copy(bm1, bm4, 1);
             A2.sx = B1.sx = C.sx = 0;
             A2.sy = B1.sy = C.sy = 0;
             A2.dy = B1.dy = 0;
@@ -981,7 +981,7 @@ static void near F_07FB1(struct Car *car)
         y = blt.dy = gear * 2 + 0x4b;
         F_120FE(-4);
         (*b_78a2)(p->img, r_vid.back, &blt, 1);
-        F_1A92A(r_vid.back, r_vid.front, 0xb0, y, 0xb7, y + 10);
+        bitmap_copy_box(r_vid.back, r_vid.front, 0xb0, y, 0xb7, y + 10);
         F_120FE(-2);
         while ((key = F_01417(0)) == 0) {
             if (g_47ce && g_47ce != g_47cf) {

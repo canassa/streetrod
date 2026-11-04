@@ -2,9 +2,9 @@
 
         .CODE S2595_TEXT
 
-; F_25954 @ 2595:0004 (linear 0x25954, 2549 bytes)
-; F_25954(dst_far, src_seg, si_off, bx_off, bx_si_pitch, di_pitch, w, h)
-; sibling of F_24F4A: dst = (bx[] & dst) | si[] with the destination also
+; maskor_blit @ 2595:0004 (linear 0x25954, 2549 bytes)
+; maskor_blit(dst_far, src_seg, si_off, bx_off, bx_si_pitch, di_pitch, w, h)
+; sibling of maskbg_blit: dst = (bx[] & dst) | si[] with the destination also
 ; the mask, 16 bits at a time, fully unrolled (80 words, then one trailing
 ; byte for odd widths).  The width picks the entry point in the unrolled
 ; code (jmp dx), so exactly w/2 words are done per row.  Entries with an
@@ -12,8 +12,8 @@
 ; Its scratch variables live in the code segment, in the 6 bytes it jumps
 ; over (routine at offset 04h of its code segment).
 
-        PUBLIC  _F_25954
-_F_25954  PROC    FAR
+        PUBLIC  _maskor_blit
+_maskor_blit  PROC    FAR
         push    bp
         mov     bp,sp
         push    ds
@@ -124,6 +124,6 @@ done:
         pop     ds
         pop     bp
         ret
-_F_25954  ENDP
+_maskor_blit  ENDP
 
         END

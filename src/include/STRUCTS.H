@@ -160,7 +160,7 @@ struct Obj {
 };
 
 /* blit request handed to the b_78a2.. hooks (20 bytes). The first six ints are the same as
-   struct Clip; F_10A00 reads only those. mx, my: origin in the mask bitmap (F_21C0B). */
+   struct Clip; F_10A00 reads only those. mx, my: origin in the mask bitmap (tandyblt_compose). */
 struct Blt {
     int w;
     int h;
@@ -571,7 +571,7 @@ struct Cell {
     unsigned char y;
 };
 
-/* one glyph of the CGA text font (F_1C2CA; 91 glyphs for ' '..'z' from 0ED2:0004): a width in half pixels and 8 rows of bits */
+/* one glyph of the CGA text font (cga_draw_text; 91 glyphs for ' '..'z' from 0ED2:0004): a width in half pixels and 8 rows of bits */
 struct CgaGlyph {
     unsigned w;
     unsigned rows[8];

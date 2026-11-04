@@ -4,9 +4,9 @@
 #define EGASPAN_H
 #include "STRUCTS.H"
 
-void F_26458(void);                                     /* 0x26458 */
-void F_2646D(void);                                     /* 0x2646D */
-void far F_26484();                                     /* 0x26484 */
-void far F_26537();                                     /* 0x26537 */
+void egaspan_begin(void);                               /* 0x26458 */
+void egaspan_end(void);                                 /* 0x2646D */
+void far egaspan_fill();                                /* 0x26484 */
+void far egaspan_fill_below();                          /* 0x26537 */
 
 #endif

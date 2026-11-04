@@ -159,8 +159,8 @@ static int near F_00226(int mode)
         mode = 1;
     if (herc)
         mode = 4;
-    if (F_24602("Tandy", (char far *)0xF0000000L, 0xffff) ||
-        F_24602("TANDY", (char far *)0xF0000000L, 0xffff))
+    if (memstr_find("Tandy", (char far *)0xF0000000L, 0xffff) ||
+        memstr_find("TANDY", (char far *)0xF0000000L, 0xffff))
         mode = 5;
     if (F_0018B())
         mode = 3;
@@ -187,11 +187,11 @@ static void near F_00316(int mode)
         r_vid.mode = -2;
         *(unsigned char far *)0x410L &= 0xcf;
         *(unsigned char far *)0x410L |= 0x20;
-        F_22B28();
+        egadrv_install();
         return;
     case 5:
         r_vid.mode = g_screens[0].flags = 0xfa;
-        F_22352();
+        tandydrv_install();
         g_screens[0].bits.p = r_vid.mode == -4 ? (char far *)0xb0000000L : (char far *)0xb8000000L;
         g_screens[0].planesize = g_screens[1].planesize = g_screens[2].planesize = 0x8000;
         g_screens[0].pitch = g_screens[1].pitch = g_screens[2].pitch = 0xa0;
@@ -214,7 +214,7 @@ static void near F_00316(int mode)
         *(unsigned char far *)0x410L |= 0x20;
         break;
     }
-    F_1C2B8();
+    cgadrv_install();
     g_screens[0].bits.p = r_vid.mode == -4 ? (char far *)0xb0000000L : (char far *)0xb8000000L;
     g_screens[0].planesize = g_screens[1].planesize = 0x4000;
     g_screens[0].pitch = g_screens[1].pitch = 0x50;

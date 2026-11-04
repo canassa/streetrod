@@ -4,11 +4,11 @@
 
 #pragma intrinsic(inp, outp)
 
-/* F_2322E @ 21A0:182E (linear 0x2322E, 52 bytes)
+/* egapage_show @ 21A0:182E (linear 0x2322E, 52 bytes)
 
    Set the CRTC start address and wait for a vertical retrace */
 
-void F_2322E(int n)
+void egapage_show(int n)
 {
     outp(0x3d4, 0x0c);
     outp(0x3d5, n << 5);

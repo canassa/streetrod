@@ -68,7 +68,7 @@ static void near F_174A6(char far *src, char far *dst, char far *mask, int w, in
         outp(0x3c5, bit1);
         outp(0x3ce, 4);
         outp(0x3cf, plane);
-        F_25954(dst, FP_SEG(src), FP_OFF(src), FP_OFF(mask), n, w, h, w);
+        maskor_blit(dst, FP_SEG(src), FP_OFF(src), FP_OFF(mask), n, w, h, w);
     }
     outp(0x3c4, 2);
     outp(0x3c5, 0xf);
@@ -94,7 +94,7 @@ static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, i
         A[i].h = h;
         base += B[i]->pitch * h;
         if (mask)
-            F_2382D(mask, B[i]->pitch, h, A[i].p, 0x28);
+            egablit_latch_pack(mask, B[i]->pitch, h, A[i].p, 0x28);
         else {
             outp(0x3ce, 5);
             outp(0x3cf, 2);
@@ -143,7 +143,7 @@ static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color)
         base2 += bm1->planesize;
         F_109C0(bm1->bits.p, v, bm1->planesize);
         (*ab78aat)(B[i], bm1, &pkt1, 1);
-        F_19ED0(bm1, &am6e68x[i], 1);
+        bitmap_copy(bm1, &am6e68x[i], 1);
     }
     F_19438(1);
 }
@@ -181,7 +181,7 @@ void F_1783E(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bi
         (*b_78a2)(start, *pa, &blt, 1);
     } else {
         *pa = F_1934E(src->width, y2, flag, 1);
-        F_19ED0(start, *pa, 1);
+        bitmap_copy(start, *pa, 1);
     }
     switch (r_vid.mode) {
     case -2:
@@ -193,7 +193,7 @@ void F_1783E(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bi
     default:
         *pb = F_1934E(start->width, y2, 0, 1);
         if (g_0284 == 6)
-            F_19ED0(start, *pb, 1);
+            bitmap_copy(start, *pb, 1);
         break;
     }
     *pr1 = 0;
@@ -205,7 +205,7 @@ void F_1783E(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bi
             (*b_78a2)(p2, *pa, &blt, 2);
         } else {
             diff = p2->planesize / r_vid.planes - (*pa)->planesize / r_vid.planes;
-            F_1A882(p2->alt.p + diff, (*pa)->alt.p, (*pa)->planesize / r_vid.planes);
+            bitmap_far_copy(p2->alt.p + diff, (*pa)->alt.p, (*pa)->planesize / r_vid.planes);
         }
         F_19438(1);
         *pr1 = &g_5a10;
@@ -236,7 +236,7 @@ static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstb
     F_1592E(id2, tmp1);
     tmp1->bits.p = save1;
     g_4f0e = 1;
-    F_19ED0(tmp1, dstbm, 1);
+    bitmap_copy(tmp1, dstbm, 1);
     b.h = bu825a->height;
     b.sy = 0;
     b.dy = top - bu825a->height - y + 1;
@@ -288,11 +288,11 @@ void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *id
     m_8272.m8272 = r_vid.mask & p12->b10;
     m_8272.m8274 = p12->b11;
     if (flags & 2)
-        F_1A6E0(*out, m2->f6, 0, p12->b7);
+        bitmap_put_pic(*out, m2->f6, 0, p12->b7);
     if (flags & 1)
-        F_1A6E0(*out, m2->f8, p12->b8, p12->b9);
+        bitmap_put_pic(*out, m2->f8, p12->b8, p12->b9);
     if (flags & 4) {
-        F_1A6E0(*out, m2->f2, p12->b4, 0);
+        bitmap_put_pic(*out, m2->f2, p12->b4, 0);
         for (j5 = 0; j5 < at70a8->planesize / r_vid.planes; j5++)
             if (((unsigned char far *)at70a8->alt.p)[j5] != 0xff)
                 break;
@@ -300,7 +300,7 @@ void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *id
     } else
         row8 = 0;
     if ((flags & 8) && idx != 0x19)
-        F_1A734(*out, m2->f4, p12->b5, p12->b6, 1);
+        bitmap_draw_pic(*out, m2->f4, p12->b5, p12->b6, 1);
     blt.w = g_0294->width;
     blt.h = g_0294->height;
     blt.sx = p12->b10;
@@ -309,11 +309,11 @@ void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *id
     (*b_78a2)(*out, g_0294, &blt, 1);
     if (kk > 0) {
         pp8 = &a784als[kk - 1];
-        F_1A734(*out, pp8->id, p12->b10 + pp8->dx, p12->b11 + pp8->dy, 0);
+        bitmap_draw_pic(*out, pp8->id, p12->b10 + pp8->dx, p12->b11 + pp8->dy, 0);
     }
     if (q) {
         bm = F_15BBE(m_8272.m8280, 2);
-        F_1A472(bm, *out, p12->b2, p12->b3 - bm->height + row8 + 1);
+        bitmap_underlay(bm, *out, p12->b2, p12->b3 - bm->height + row8 + 1);
         F_19438(1);
     }
     j5 = 1;
@@ -324,18 +324,18 @@ void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *id
         switch (r_vid.mode) {
         case -2:
             for (j5 = 1; j5 < n; j5++)
-                F_1A03F(out[j5 - 1], 2, out[j5]);
+                bitmap_shift_right(out[j5 - 1], 2, out[j5]);
             break;
         case -6:
             for (j5 = 1; j5 < n; j5++) {
-                F_19ED0(out[0], out[j5], 1);
+                bitmap_copy(out[0], out[j5], 1);
                 out[j5]->alt.p = out[0]->alt.p;
             }
             break;
         default:
-            F_1A03F(out[0], 2, out[1]);
-            F_19ED0(out[0], out[2], 3);
-            F_19ED0(out[1], out[3], 3);
+            bitmap_shift_right(out[0], 2, out[1]);
+            bitmap_copy(out[0], out[2], 3);
+            bitmap_copy(out[1], out[3], 3);
             break;
         }
     }
@@ -355,14 +355,14 @@ void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *id
                 off = (j5 & 1) << 1;
                 break;
             }
-            F_1A472(bm, out[j5], p12->b0 + off, h);
-            F_1A472(bm, out[j5], p12->b1 + off, h);
+            bitmap_underlay(bm, out[j5], p12->b0 + off, h);
+            bitmap_underlay(bm, out[j5], p12->b1 + off, h);
             F_19438(1);
         }
     }
     if (w) {
         bm2n = F_15BBE(0x49d, 2);
-        F_19F42(*out, &left, &right1);
+        bitmap_opaque_span(*out, &left, &right1);
         h = (*out)->height - bm2n->height;
         for (j5 = 0; j5 < n; j5++) {
             switch (r_vid.mode) {
@@ -377,8 +377,8 @@ void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *id
                 off = (j5 & 1) << 1;
                 break;
             }
-            F_1A472(bm2n, out[j5], left + off, h);
-            F_1A472(bm2n, out[j5], right1 - bm2n->width + off + 1, h);
+            bitmap_underlay(bm2n, out[j5], left + off, h);
+            bitmap_underlay(bm2n, out[j5], right1 - bm2n->width + off + 1, h);
         }
         F_19438(1);
     }
@@ -431,7 +431,7 @@ again:
             g_4f4a = 1;
             if (r_vid.mode == -2) {
                 F_03904(g_5a0a, bp7316[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -2);
-                F_24E78(r_vid.back->bits.p, g_5a0a->bits.p - 0x28 * top7, 0x28, g_5a0a->height, 0, top7, 0x28);
+                egalatch_rect(r_vid.back->bits.p, g_5a0a->bits.p - 0x28 * top7, 0x28, g_5a0a->height, 0, top7, 0x28);
             } else {
                 F_03904(g_5a0a, bp7316[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -1);
                 F_11A72(0, top7, 0x140, g_5a0a->height, g_5a0a);
@@ -517,7 +517,7 @@ again:
         }
         if (kind == 3) {
             if (r_vid.mode == -2)
-                F_24EFB(dz7ec2[0].p, bms6[0]->pitch, bms6[0]->height - g_02d0,
+                egalatch_to_page(dz7ec2[0].p, bms6[0]->pitch, bms6[0]->height - g_02d0,
                     r_vid.back->bits.p + ((bot - h7) * 0x28 + (x0 >> 3)) + 0x28, bms6[0]->pitch);
             else
                 (*b_78a2)(bm48, r_vid.back, &blt, 1);
@@ -525,11 +525,11 @@ again:
             goto done;
         } else if (kind == 7 || kind == 8) {
             if (r_vid.mode == -2)
-                F_24EFB(dz7ec2[0].p, bms6[0]->pitch, h7 - g_02d0,
+                egalatch_to_page(dz7ec2[0].p, bms6[0]->pitch, h7 - g_02d0,
                     r_vid.front->bits.p + ((bot - h7) * 0x28 + (x0 >> 3)) + 0x28, bms6[0]->pitch);
             else
                 (*b_78a2)(bm48, r_vid.front, &blt, 1);
-            F_1A92A(r_vid.front, r_vid.back, x0, bot - h7 + 1, x0 + w1 - 1, bot);
+            bitmap_copy_box(r_vid.front, r_vid.back, x0, bot - h7 + 1, x0 + w1 - 1, bot);
             goto done;
         }
     }
@@ -559,7 +559,7 @@ again:
         blt.sy = q_8270 - aw8260y;
         blt.dx = blt.dy = 0;
         (*b_78a2)(bms6[0], scratch, &blt, 1);
-        F_1A734(bms6[0], 0x472, (char)blt.sx, (char)blt.sy, 0);
+        bitmap_draw_pic(bms6[0], 0x472, (char)blt.sx, (char)blt.sy, 0);
         F_17AAE(0x40, 0x64, z_8b7c, bot, g_028c, 0x4c8, 0x4ca);
         F_17AAE(0x40, 0x64, z_8b7c, bot, g_0290, 0x449, 0x44a);
         blt.dx = blt.sx;

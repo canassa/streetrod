@@ -4,9 +4,9 @@
 #define TANDYBLT_H
 #include "STRUCTS.H"
 
-void F_21C0B(struct Bitmap far *dst, struct Bitmap far *src, struct Bitmap far *mask, struct Blt *in);/* 0x21C0B */
-void F_21D58(struct Bitmap far *a, struct Bitmap far *b, struct Blt *in, int flag);/* 0x21D58 */
-void F_21EAB(struct Bitmap far *a, struct Bitmap far *b, struct Blt *r, int flags);/* 0x21EAB */
-void far F_221AC(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *blt);/* 0x221AC */
+void tandyblt_compose(struct Bitmap far *dst, struct Bitmap far *src, struct Bitmap far *mask, struct Blt *in);/* 0x21C0B */
+void tandyblt_masked(struct Bitmap far *a, struct Bitmap far *b, struct Blt *in, int flag);/* 0x21D58 */
+void tandyblt_copy(struct Bitmap far *a, struct Bitmap far *b, struct Blt *r, int flags);/* 0x21EAB */
+void far tandyblt_shifted(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *blt);/* 0x221AC */
 
 #endif

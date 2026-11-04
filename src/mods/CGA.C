@@ -21,17 +21,17 @@
 
 #pragma intrinsic(_rotl, outp)
 
-void (far *g_5b04[15])() = {F_1D3C8, F_1D741, F_1D262, F_1C2CA, F_0E781, F_1CEE7, F_1C803, F_1D080, F_1D0A4, F_1D925, F_1CF40, F_19BFE, F_1DD22, F_1DFD2, F_1E0FE};   /* DS:5B04 */
+void (far *g_5b04[15])() = {cgablt_copy, cgashift_blit, cgablt_masked, cga_draw_text, F_0E781, cga_copy_page, cga_recolor_rect, cga_screen_off, cga_screen_on, cgaspr_step, cga_reveal, F_19BFE, cgaline_draw, cgaline_span, cgaline_fill_below};   /* DS:5B04 */
 unsigned char g_5b40[4] = {192, 48, 12, 3};   /* DS:5B40 */
 unsigned char g_5b44[4] = {63, 207, 243, 252};   /* DS:5B44 */
 int g_5b48[5] = {0, 2, 4, 1, 3};   /* DS:5B48 */
 
-/* F_1C2CA @ 1C11:01BA (linear 0x1C2CA, 1337 bytes)
+/* cga_draw_text @ 1C11:01BA (linear 0x1C2CA, 1337 bytes)
 
    Draw a string of 8-pixel-high CGA/Hercules text into a bitmap at pixel x, y, through an 8x80 byte
    scratch buffer */
 
-void F_1C2CA(struct Bitmap far *bm, int x, int y, char *s)
+void cga_draw_text(struct Bitmap far *bm, int x, int y, char *s)
 {
     unsigned seg1;
     int cga5;
@@ -246,12 +246,12 @@ void F_1C2CA(struct Bitmap far *bm, int x, int y, char *s)
         PIX(2, c2, b2) \
     }
 
-/* F_1C803 @ 1C11:06F3 (linear 0x1C803, 1764 bytes)
+/* cga_recolor_rect @ 1C11:06F3 (linear 0x1C803, 1764 bytes)
 
    Fill a rectangle of 2-bit CGA pixels with a colour, recolouring every pixel that is not colour
    c1l */
 
-void F_1C803(struct Bitmap far *bm, int a, int b, int x1, int y1, int x2, int y2)
+void cga_recolor_rect(struct Bitmap far *bm, int a, int b, int x1, int y1, int x2, int y2)
 {
     int nmid8;
     char far *p0;
@@ -365,22 +365,22 @@ void F_1C803(struct Bitmap far *bm, int a, int b, int x1, int y1, int x2, int y2
     }
 }
 
-/* F_1CEE7 @ 1C11:0DD7 (linear 0x1CEE7, 89 bytes)
+/* cga_copy_page @ 1C11:0DD7 (linear 0x1CEE7, 89 bytes)
 
    Copy a 16K video page, and on Hercules also its fourth bank */
 
-void F_1CEE7(char far *src, char far *dst)
+void cga_copy_page(char far *src, char far *dst)
 {
     movedata(FP_SEG(src), FP_OFF(src), FP_SEG(dst), FP_OFF(dst), 0x4000);
     if (r_vid.mode == -4 && (r_vid.mode == -4 ? 0xb000 : 0xb800) == FP_SEG(dst))
         movedata(r_vid.mode == -4 ? 0xb200 : 0xba00, 0, 0xb400, 0, 0x2000);
 }
 
-/* F_1CF40 @ 1C11:0E30 (linear 0x1CF40, 283 bytes)
+/* cga_reveal @ 1C11:0E30 (linear 0x1CF40, 283 bytes)
 
    Dissolve one 80-byte-per-line CGA screen into another, five interleaved passes */
 
-void F_1CF40(char far *dst, char far *src)
+void cga_reveal(char far *dst, char far *src)
 {
     char far *d;
     char far *s2;
@@ -414,11 +414,11 @@ void F_1CF40(char far *dst, char far *src)
     }
 }
 
-/* F_1D05B @ 1C11:0F4B (linear 0x1D05B, 37 bytes)
+/* cga_set_page @ 1C11:0F4B (linear 0x1D05B, 37 bytes)
 
    BIOS video function 5, select the active display page */
 
-void F_1D05B(int page)
+void cga_set_page(int page)
 {
     union REGS r;
 
@@ -427,10 +427,10 @@ void F_1D05B(int page)
     int86(0x10, &r, &r);
 }
 
-/* F_1D080 @ 1C11:0F70 (linear 0x1D080, 36 bytes)
+/* cga_screen_off @ 1C11:0F70 (linear 0x1D080, 36 bytes)
 
    Unreferenced video-control routine. */
-void F_1D080(void)
+void cga_screen_off(void)
 {
     switch (r_vid.mode) {
     case -3:
@@ -443,10 +443,10 @@ void F_1D080(void)
     gz8249 = 0;
 }
 
-/* F_1D0A4 @ 1C11:0F94 (linear 0x1D0A4, 36 bytes)
+/* cga_screen_on @ 1C11:0F94 (linear 0x1D0A4, 36 bytes)
 
    Unreferenced video-control routine. */
-void F_1D0A4(void)
+void cga_screen_on(void)
 {
     switch (r_vid.mode) {
     case -3:

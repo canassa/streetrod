@@ -4,8 +4,8 @@
 #define TANDYPIC_H
 #include "STRUCTS.H"
 
-void F_2467A(char far *src, char far *dst, unsigned n, unsigned char *pal);/* 0x2467A */
-void F_24740(char far *src, char far *dst, unsigned n, unsigned char *pal);/* 0x24740 */
-void F_24849(char far *bits, char far *alt, unsigned n);/* 0x24849 */
+void tandypic_unpack(char far *src, char far *dst, unsigned n, unsigned char *pal);/* 0x2467A */
+void tandypic_unpack_mask(char far *src, char far *dst, unsigned n, unsigned char *pal);/* 0x24740 */
+void tandypic_make_mask(char far *bits, char far *alt, unsigned n);/* 0x24849 */
 
 #endif

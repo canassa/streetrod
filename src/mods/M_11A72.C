@@ -79,7 +79,7 @@ void F_11BD3(struct Bitmap far *bm, int x, int y)
 {
     F_11B6F(bm, x, y);
     if (r_vid.f16)
-        F_1A92A(r_vid.back, r_vid.front, x, y, bm->width + x - 1, bm->height + y - 1);
+        bitmap_copy_box(r_vid.back, r_vid.front, x, y, bm->width + x - 1, bm->height + y - 1);
 }
 
 /* F_11C24 @ 0F38:28A4 (linear 0x11C24, 446 bytes)
@@ -111,7 +111,7 @@ void F_11C24(int n)
     rec = txt[-1] - 1;
     g_6c40 = &g_04c4[rec];
     g_04fa = F_11A72(x0 = g_6c40->x, y1 = g_6c40->y, w1 = g_6c40->w, h1 = g_6c40->h, 0);
-    F_1A734(r_vid.back, g_6c40->bg, (unsigned char)x0, (unsigned char)y1, 0);
+    bitmap_draw_pic(r_vid.back, g_6c40->bg, (unsigned char)x0, (unsigned char)y1, 0);
     x_colors = bustyle->popup;
     x0 += g_6c40->tx;
     y1 += g_6c40->ty;
@@ -123,7 +123,7 @@ void F_11C24(int n)
     }
     F_120FE(-1);
     if (r_vid.f16)
-        F_1A92A(r_vid.back, r_vid.front, g_6c40->x, g_6c40->y, g_6c40->x + w1 - 1, g_6c40->y + h1 - 1);
+        bitmap_copy_box(r_vid.back, r_vid.front, g_6c40->x, g_6c40->y, g_6c40->x + w1 - 1, g_6c40->y + h1 - 1);
     if (close) {
         F_19438(1);
         g_04fa = 0;

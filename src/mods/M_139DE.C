@@ -131,7 +131,7 @@ void F_139DE(struct Hot *p)
     } while ((nxt = p->f10 & g_07a8) ? (p = &g_09f4[nxt], 1) : 0);
     if (!g_07a8 && r_vid.f16) {
         F_120FE(-1);
-        F_1A92A(r_vid.back, r_vid.front, p->x1 - 3, p->y1 - 3, p->x2 + 6, p->y2 + 6);
+        bitmap_copy_box(r_vid.back, r_vid.front, p->x1 - 3, p->y1 - 3, p->x2 + 6, p->y2 + 6);
     }
 }
 
@@ -165,7 +165,7 @@ void F_13DE6(int id)
         x_colors = saved;
         F_120FE(-1);
         if (r_vid.f16 && g_6c5a >= 0)
-            F_1A92A(r_vid.back, r_vid.front, g_6c56 - 3, g_6c58 - 3, g_6c5a + 6, g_6c5c + 6);
+            bitmap_copy_box(r_vid.back, r_vid.front, g_6c56 - 3, g_6c58 - 3, g_6c5a + 6, g_6c5c + 6);
         F_012DE(id);
         F_00D78();
     }
@@ -478,7 +478,7 @@ int F_1438E(int kind, int sel, int *c, int *list, char *buf, char **d)
         }
         F_120FE(-1);
         if (r_vid.f16)
-            F_1A92A(r_vid.back, r_vid.front, wx8 - 1, wy7 - 1, right + 1, bottom9 + 1);
+            bitmap_copy_box(r_vid.back, r_vid.front, wx8 - 1, wy7 - 1, right + 1, bottom9 + 1);
 restore:
         x_colors = bustyle->pal[idx2];
         if (r_vid.mode == -4)
@@ -513,7 +513,7 @@ restore:
             }
             F_120FE(-1);
             if (r_vid.f16)
-                F_1A92A(r_vid.back, r_vid.front, x1, y1, x2, y2);
+                bitmap_copy_box(r_vid.back, r_vid.front, x1, y1, x2, y2);
             curl = nw5;
         }
         if (key2 > 0) {
@@ -546,7 +546,7 @@ restore:
                     F_13957(r_vid.back, w->w, w->h, ww9, 8);
                     F_120FE(-1);
                     if (r_vid.f16)
-                        F_1A92A(r_vid.back, r_vid.front,
+                        bitmap_copy_box(r_vid.back, r_vid.front,
                             (w->w - 1 > x1) ? x1 : w->w - 1,
                             (w->h - 1 > y1) ? y1 : w->h - 1,
                             (w->w + ww9 + 2 < x2) ? x2 : w->w + ww9 + 2,

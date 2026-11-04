@@ -6,15 +6,15 @@
 
         .CODE S21A0_TEXT
 
-; line_ega @ 21A0:23BC (linear 0x23DBC, 370 bytes)
+; egaline_draw @ 21A0:23BC (linear 0x23DBC, 370 bytes)
 ; Bresenham line in the 640x200 planar EGA screen (40 bytes per row),
-; line_ega(x1, y1, x2, y2, color), using write mode 3 style set/reset
+; egaline_draw(x1, y1, x2, y2, color), using write mode 3 style set/reset
 ; (GC regs: 0 = set/reset, 1 = enable set/reset, 3 = function, 8 = bit mask).
 ; Vertical lines are done pixel by pixel, horizontal lines with
 ; whole-byte writes through a latched copy.
 
-        PUBLIC  _line_ega
-_line_ega  PROC  FAR
+        PUBLIC  _egaline_draw
+_egaline_draw  PROC  FAR
         push    bp
         mov     bp,sp
         sub     sp,8
@@ -65,7 +65,7 @@ x_is_major:
         push    cx
         mov     ax,[bp+8]
         mov     bx,[bp+6]
-        call    _F_23F2E
+        call    _egaline_pixel_addr
         mov     di,bx
         shl     ah,cl
         mov     bl,ah
@@ -85,7 +85,7 @@ v_ordered:
         inc     cx
         mov     bx,[bp+6]
         push    cx
-        call    _F_23F2E
+        call    _egaline_pixel_addr
         shl     ah,cl
         mov     al,8
         out     dx,ax
@@ -99,7 +99,7 @@ horizontal:
         push    ds
         mov     ax,[bp+8]
         mov     bx,[bp+6]
-        call    _F_23F2E
+        call    _egaline_pixel_addr
         mov     di,bx
         mov     dh,ah
         not     dh
@@ -208,14 +208,14 @@ done:
         mov     sp,bp
         pop     bp
         ret
-_line_ega  ENDP
+_egaline_draw  ENDP
 
-; F_23F2E @ 21A0:252E (linear 0x23F2E, 31 bytes)
+; egaline_pixel_addr @ 21A0:252E (linear 0x23F2E, 31 bytes)
 ; Planar pixel address helper. In: ax = y, bx = x.
 ; Out: bx = y*40 + x/8, es = video segment, cl = 7 - (x & 7), ah = 1.
 
-        PUBLIC  _F_23F2E
-_F_23F2E  PROC    NEAR
+        PUBLIC  _egaline_pixel_addr
+_egaline_pixel_addr  PROC    NEAR
         mov     cl,bl
         push    dx
         mov     dx,40
@@ -231,14 +231,14 @@ _F_23F2E  PROC    NEAR
         xor     cl,7
         mov     ah,1
         ret
-_F_23F2E  ENDP
+_egaline_pixel_addr  ENDP
 
-; F_23F4D @ 21A0:254D (linear 0x23F4D, 26 bytes)
+; egaline_get_pixel @ 21A0:254D (linear 0x23F4D, 26 bytes)
 ; EGA bit-plane reader. CX selects a bit, ES:SI addresses the pixel byte;
 ; DX is the graphics controller port. Returns the four-plane colour in BL.
 
-        PUBLIC  _F_23F4D
-_F_23F4D  PROC    NEAR
+        PUBLIC  _egaline_get_pixel
+_egaline_get_pixel  PROC    NEAR
         mov     ax,0304h
         mov     ch,1
         shl     ch,cl
@@ -253,6 +253,6 @@ plane:
         dec     ah
         jge     plane
         ret
-_F_23F4D  ENDP
+_egaline_get_pixel  ENDP
 
         END

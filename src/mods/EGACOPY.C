@@ -9,11 +9,11 @@
 
 int g_5c0c[5] = {0, 80, 160, 40, 120};   /* DS:5C0C */
 
-/* F_230DC @ 21A0:16DC (linear 0x230DC, 70 bytes)
+/* egacopy_page @ 21A0:16DC (linear 0x230DC, 70 bytes)
 
    Copy 8000 bytes between planar VGA buffers using write mode 1 (latch copy) */
 
-void F_230DC(char far *src, char far *dst)
+void egacopy_page(char far *src, char far *dst)
 {
     outp(0x3ce, 5);
     outp(0x3cf, 1);
@@ -24,11 +24,11 @@ void F_230DC(char far *src, char far *dst)
     outp(0x3cf, 0);
 }
 
-/* F_23122 @ 21A0:1722 (linear 0x23122, 267 bytes)
+/* egacopy_reveal @ 21A0:1722 (linear 0x23122, 267 bytes)
 
    Copy 5 bands of 40 rows between planar VGA buffers, paced by the tick counter */
 
-void F_23122(char far *dst, char far *src)
+void egacopy_reveal(char far *dst, char far *src)
 {
     int e;
     int f;

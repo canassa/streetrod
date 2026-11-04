@@ -4,6 +4,6 @@
 #define EGASPR_H
 #include "STRUCTS.H"
 
-int far F_23FD9(struct Sprite *s);                      /* 0x23FD9 */
+int far egaspr_step(struct Sprite *s);                  /* 0x23FD9 */
 
 #endif

@@ -26,7 +26,7 @@ _g_5b7a DB      0, 0, 55h, 0BBh, 0FFh, 0, 0, 0, 55h, 0DDh, 0AAh, 0, 0AAh
 
         .CODE S1C11_TEXT
 
-; F_1DD22 @ 1C11:1C12 (linear 0x1DD22, 647 bytes)
+; cgaline_draw @ 1C11:1C12 (linear 0x1DD22, 647 bytes)
 ; Draw a line with 2 bits per pixel into the interleaved (CGA/Hercules
 ; style) screen, Bresenham style. A horizontal line is a byte-fill with edge
 ; masks, a vertical one a per-line loop, anything else steps along its major
@@ -34,17 +34,17 @@ _g_5b7a DB      0, 0, 55h, 0BBh, 0FFh, 0, 0, 0, 55h, 0DDh, 0AAh, 0, 0AAh
 ; Local words: [bp-2] = alternate row step, [bp-4] = 2*minor, [bp-6] = error
 ; decrement, [bp-8] = loop to enter, [bp-0Ah] = Hercules double-write state
 ; (0 = off, 2/3 = on with the parity of the current row).
-; F_1DD22(x1, y1, x2, y2, colour)
+; cgaline_draw(x1, y1, x2, y2, colour)
 
-        PUBLIC  _F_1DD22
-_F_1DD22  PROC    FAR
+        PUBLIC  _cgaline_draw
+_cgaline_draw  PROC    FAR
         push    bp
         mov     bp,sp
         sub     sp,0Ah
         push    si
         push    di
         mov     al,[bp+14]
-        call    _F_1E15E
+        call    _cgaline_map_color
         mov     [bp+14],al
         mov     si,2000h
         mov     di,0E050h
@@ -105,7 +105,7 @@ minor:
         push    cx
         mov     ax,[bp+8]
         mov     bx,[bp+6]
-        call    _F_1DFA9
+        call    _cgaline_pixel_addr
         mov     al,[bp+14]
         shl     ax,cl
         mov     dx,ax
@@ -129,7 +129,7 @@ vlen:
         inc     cx
         mov     bx,[bp+6]
         push    cx
-        call    _F_1DFA9
+        call    _cgaline_pixel_addr
         mov     al,[bp+14]
         shl     ax,cl
         not     ah
@@ -158,7 +158,7 @@ vnext:
 horiz:
         mov     ax,[bp+8]
         mov     bx,[bp+6]
-        call    _F_1DFA9
+        call    _cgaline_pixel_addr
         mov     di,bx
         mov     dh,ah
         not     dh
@@ -319,14 +319,14 @@ done1:
         mov     sp,bp
         pop     bp
         ret
-_F_1DD22  ENDP
+_cgaline_draw  ENDP
 
-; F_1DFA9 @ 1C11:1E99 (linear 0x1DFA9, 40 bytes)
+; cgaline_pixel_addr @ 1C11:1E99 (linear 0x1DFA9, 40 bytes)
 ; Pixel address helper for the interleaved 2-bit mode. In: ax = y, bx = x.
 ; Out: bx = byte offset of the pixel (scan line, bank and x/4 folded together) + at767ct, es = av787at, cl = 2 * (3 - (x & 3)).
 
-        PUBLIC  _F_1DFA9
-_F_1DFA9  PROC    NEAR
+        PUBLIC  _cgaline_pixel_addr
+_cgaline_pixel_addr  PROC    NEAR
         mov     cl,bl
         xchg    ah,al
         shr     ax,1
@@ -346,19 +346,19 @@ _F_1DFA9  PROC    NEAR
         xor     cl,ah
         shl     cl,1
         ret
-_F_1DFA9  ENDP
+_cgaline_pixel_addr  ENDP
 
-; F_1DFD2 @ 1C11:1EC2 (linear 0x1DFD2, 300 bytes)
+; cgaline_span @ 1C11:1EC2 (linear 0x1DFD2, 300 bytes)
 ; Draw a horizontal line with 2 bits per pixel into the interleaved
 ; (CGA/Hercules style) screen, clipped to the clip rectangle. On a Hercules
 ; segment (B000-B400 with g_0042 set) an odd line is also drawn 0x2000 bytes
 ; up, which is what the flag byte in the code segment records.
-; F_1DFD2(x1, x2, y, colour)
+; cgaline_span(x1, x2, y, colour)
 
 dbl     DB      0
 
-        PUBLIC  _F_1DFD2
-_F_1DFD2  PROC    FAR
+        PUBLIC  _cgaline_span
+_cgaline_span  PROC    FAR
         push    bp
         mov     bp,sp
         push    si
@@ -407,7 +407,7 @@ x2ok:
 ordered:
         mov     ax,[bp+10]
         mov     bx,[bp+6]
-        call    _F_1DFA9
+        call    _cgaline_pixel_addr
         mov     di,bx
         mov     dh,ah
         not     dh
@@ -487,16 +487,16 @@ done2:
         mov     sp,bp
         pop     bp
         ret
-_F_1DFD2  ENDP
+_cgaline_span  ENDP
 
-; F_1E0FE @ 1C11:1FEE (linear 0x1E0FE, 96 bytes)
+; cgaline_fill_below @ 1C11:1FEE (linear 0x1E0FE, 96 bytes)
 ; Fill whole screen lines with a 2-bit pattern, from line y1 down to the
 ; bottom clip line (g_clip_ymax). The colour is turned into a pattern
 ; byte via g_5b6a; every second line gets the pattern rotated by 2 bits.
-; F_1E0FE(y1, colour)
+; cgaline_fill_below(y1, colour)
 
-        PUBLIC  _F_1E0FE
-_F_1E0FE  PROC    FAR
+        PUBLIC  _cgaline_fill_below
+_cgaline_fill_below  PROC    FAR
         push    bp
         mov     bp,sp
         push    si
@@ -527,7 +527,7 @@ even1:
         mov     ax,[bp+6]
         xor     bx,bx
         push    cx
-        call    _F_1DFA9
+        call    _cgaline_pixel_addr
         pop     ax
         mov     cl,28h
         mul     cl
@@ -549,14 +549,14 @@ done3:
         mov     sp,bp
         pop     bp
         ret
-_F_1E0FE  ENDP
+_cgaline_fill_below  ENDP
 
-; F_1E15E @ 1C11:204E (linear 0x1E15E, 16 bytes)
+; cgaline_map_color @ 1C11:204E (linear 0x1E15E, 16 bytes)
 ; Map a colour in al to a CGA 2-bit pixel value: 0-3 stay as they are,
 ; 4-15 go through the table g_5b5a, anything above becomes 3.
 
-        PUBLIC  _F_1E15E
-_F_1E15E  PROC    NEAR
+        PUBLIC  _cgaline_map_color
+_cgaline_map_color  PROC    NEAR
         cmp     al,3
         jbe     done4
         cmp     al,0Fh
@@ -568,6 +568,6 @@ mapped:
         mov     bx,OFFSET _g_5b5a
         xlat
         ret
-_F_1E15E  ENDP
+_cgaline_map_color  ENDP
 
         END

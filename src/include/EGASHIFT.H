@@ -6,6 +6,6 @@
 
 extern unsigned char g_5c16[];                          /* DS:5C16 */
 extern int g_5c1e;                                      /* DS:5C1E */
-void F_23C3B(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r);/* 0x23C3B */
+void egashift_blit(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r);/* 0x23C3B */
 
 #endif

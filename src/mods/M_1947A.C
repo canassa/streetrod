@@ -304,7 +304,7 @@ void F_19BFE(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
     n1++;
     img2 = F_11A72(x, 0, bm->width, 200, 0);
     save = F_1934E(img2->width, img2->height, 0, 2);
-    F_19ED0(img2, save, 1);
+    bitmap_copy(img2, save, 1);
     sp = F_195F3(x, bm->height + y0 - 1, &bm, 0, 1, img2, save, 0, 0);
     F_199DD(sp, 0, n1, 0, (char)dir);
     sp->page->bm = r_vid.back;
@@ -312,10 +312,10 @@ void F_19BFE(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
         if (g_0792)
             (*ab78aat)(g_0792, r_vid.back, &u_70ac, 1);
         if (r_vid.f16)
-            F_1A92A(r_vid.back, r_vid.front, x, a, bm->width + x, b);
+            bitmap_copy_box(r_vid.back, r_vid.front, x, a, bm->width + x, b);
     }
     if (r_vid.f16)
-        F_1A92A(r_vid.front, r_vid.back, x, (y0 > y1 ? y1 : y0) < 0 ? 0 : (y0 > y1 ? y1 : y0), bm->width + x,
+        bitmap_copy_box(r_vid.front, r_vid.back, x, (y0 > y1 ? y1 : y0) < 0 ? 0 : (y0 > y1 ? y1 : y0), bm->width + x,
             (y0 < y1 ? y1 : y0) + bm->height > 199 ? 199 : (y0 < y1 ? y1 : y0) + bm->height);
     z_8b7c = old;
     F_19438(2);

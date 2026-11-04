@@ -135,7 +135,7 @@ struct Bitmap far *F_2B857(struct Bitmap far *p, unsigned char a, unsigned char 
         }
     }
     if (p->alt.p)
-        F_26401(q->bits.p, q->alt.p, q->planesize);
+        maskblt_make_mask(q->bits.p, q->alt.p, q->planesize);
     return q;
 }
 
@@ -289,6 +289,6 @@ struct Bitmap far *F_2BCD5(struct Bitmap far *p, unsigned char a, unsigned char 
         if (ml == 0)
             ml = 0x80;
     }
-    F_24849(q->bits.p, q->alt.p, q->planesize);
+    tandypic_make_mask(q->bits.p, q->alt.p, q->planesize);
     return q;
 }

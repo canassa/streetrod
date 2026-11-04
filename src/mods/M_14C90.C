@@ -49,7 +49,7 @@ int F_14C90(int x, int y, char *buf, int max)
     colr = -1;
     F_120FE(-1);
     if (r_vid.f16)
-        F_1A92A(r_vid.back, r_vid.front, x, y, x + w, y + 8);
+        bitmap_copy_box(r_vid.back, r_vid.front, x, y, x + w, y + 8);
     ip = g_290c[0];
     g_290c[0] = 0;
     F_00D78();
@@ -103,7 +103,7 @@ int F_14C90(int x, int y, char *buf, int max)
                 colr = -1;
                 F_120FE(-1);
                 if (r_vid.f16)
-                    F_1A92A(r_vid.back, r_vid.front, px, cy, px + 6, cy + 8);
+                    bitmap_copy_box(r_vid.back, r_vid.front, px, cy, px + 6, cy + 8);
             }
         } else {
             F_120FE(-3);
@@ -112,7 +112,7 @@ int F_14C90(int x, int y, char *buf, int max)
             colr = ~colr;
             F_120FE(-1);
             if (r_vid.f16)
-                F_1A92A(r_vid.back, r_vid.front, cx, cy, cx + 1, cy + 8);
+                bitmap_copy_box(r_vid.back, r_vid.front, cx, cy, cx + 1, cy + 8);
         }
     }
     buf[end] = 0;
@@ -121,7 +121,7 @@ int F_14C90(int x, int y, char *buf, int max)
     F_1371C(r_vid.back, cx, cy, 8);
     F_120FE(-1);
     if (r_vid.f16)
-        F_1A92A(r_vid.back, r_vid.front, cx - 6, y, cx, y + 8);
+        bitmap_copy_box(r_vid.back, r_vid.front, cx - 6, y, cx, y + 8);
     x_colors.c[3] = oc;
     x_colors.c[2] = pos;
     g_290c[0] = ip;

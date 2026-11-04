@@ -207,13 +207,13 @@ static void near F_0B61B(struct Dlg *d, int id)
     label = F_15BBE(id, 2);
     F_120FE(-1);
     work = F_1934E(back->width, back->height, 0, 2);
-    F_19ED0(back, work, 1);
+    bitmap_copy(back, work, 1);
     box.w = label->width;
     box.h = box.fc = label->height;
     box.sx = box.sy = 0;
     box.dx = (~r_vid.mask & ar826e) - box.w + 24;
     box.dy = 12 - label->height;
-    F_1A2D0(label, work, &box, 0);
+    bitmap_draw_masked(label, work, &box, 0);
     F_11BD3(work, ar826e - 16, q_8270 - 5);
     F_19438(2);
 }

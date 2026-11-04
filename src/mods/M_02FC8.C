@@ -243,7 +243,7 @@ void F_0339F(int add)
         p++;
         (*a_78aem)(r_vid.back, 191, g_4bca[i], "hr");
     }
-    F_1A92A(r_vid.back, r_vid.front, 46, g_4bca[0], 211, g_4bca[9] + 8);
+    bitmap_copy_box(r_vid.back, r_vid.front, 46, g_4bca[0], 211, g_4bca[9] + 8);
     if (pos7 >= 0) {
         strcpy(buf3, aytablex[pos7].name);
         F_14C90(46, g_4bca[pos7], buf3, 15);

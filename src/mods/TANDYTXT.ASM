@@ -4,14 +4,14 @@
 
         .CODE S24BE_TEXT
 
-; F_24BE2 @ 24BE:0002 (linear 0x24BE2, 201 bytes)
-; F_24BE2(width, text, dest, fg, bg): draw a string with the 8x8 font in
+; tandytxt_render @ 24BE:0002 (linear 0x24BE2, 201 bytes)
+; tandytxt_render(width, text, dest, fg, bg): draw a string with the 8x8 font in
 ; segment 0E9Fh into the 4-bit packed screen buffer (160 bytes per row).  The
 ; font has 9 bytes per glyph: a width byte, then eight row bits.  Returns the
 ; x position reached (the caller passes the field width and the start parity).
 
-        PUBLIC  _F_24BE2
-_F_24BE2  PROC    FAR
+        PUBLIC  _tandytxt_render
+_tandytxt_render  PROC    FAR
         push    bp
         mov     bp,sp
         sub     sp,8
@@ -113,16 +113,16 @@ done1:
         mov     sp,bp
         pop     bp
         ret
-_F_24BE2  ENDP
+_tandytxt_render  ENDP
 
-; F_24CAB @ 24BE:00CB (linear 0x24CAB, 216 bytes)
-; F_24CAB(src, dstseg, dstoff, y, height, width, flags, ...): copy a strip of
+; tandytxt_copy @ 24BE:00CB (linear 0x24CAB, 216 bytes)
+; tandytxt_copy(src, dstseg, dstoff, y, height, width, flags, ...): copy a strip of
 ; 4-bit pixels from a linear buffer (160 bytes per row) into the interleaved
 ; (4 banks of 2000h) screen.  Handles a leading half byte (merge the low
 ; nibble), the whole bytes, and a trailing half byte (merge the high nibble).
 
-        PUBLIC  _F_24CAB
-_F_24CAB  PROC    FAR
+        PUBLIC  _tandytxt_copy
+_tandytxt_copy  PROC    FAR
         push    bp
         mov     bp,sp
         push    si
@@ -219,6 +219,6 @@ done2:
         mov     sp,bp
         pop     bp
         ret
-_F_24CAB  ENDP
+_tandytxt_copy  ENDP
 
         END

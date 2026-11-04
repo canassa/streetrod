@@ -10,7 +10,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 ## Names
 
 - **Functions and globals.** `F_xxxxx` and `g_xxxx` are addresses. Names such as `main`,
-  `random_int` and `blit_rect` describe behaviour; only the runtime's names (`./sr crtnames`)
+  `random_int` and `cgadrv_blit_rect` describe behaviour; only the runtime's names (`./sr crtnames`)
   come from a library.
 - **Communal storage** (DS:6E60..8F02, the far communals of `SLOTS.C`) and **file statics**
   (DS:6C22..6E2C). These names are made up, but chosen so that LINK's symbol hash
@@ -45,7 +45,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   one of them. The DB notes list some arbitrary picks: the equal-arm ternaries
   `!x ? 1 : 1` in F_0238C (the condition leaves no code), `case -2: case -1:` in F_0503F
   (any run above -3 gives the same code), the empty increment of `for (; *str; str)` in
-  F_22B3A, and `i = 4` after F_1ABAC's loops.
+  ega_draw_text, and `i = 4` after F_1ABAC's loops.
 - **F_137B2's `int bm = x_colors.c[4] == 2 ? 3 : 3;`** (M_13682.C). The original stores 3
   through `ax` and reloads `bm` from memory (including a `bm * 2` CSE in `si`), so the
   constant was not propagated; a plain `int bm = 3` (also as a statement, `volatile`, any
@@ -70,11 +70,11 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   That the original had a jump at each of these points is evidence; the exact statement
   (a `goto`, a `continue`, a differently nested `if`) is not.
 - **`#pragma loop_opt`** in M_00D58.C (off before F_01BAE, to the end of the file),
-  M_039C0.C (off/on around F_03C8D) and EGABLIT.C (off before F_2382D). These five
+  M_039C0.C (off/on around F_03C8D) and EGABLIT.C (off before egablit_latch_pack). These five
   functions keep plain memory loops that the file's `/Ol` would otherwise optimize. Only
   `goto` loops escape `/Ol`, and a pragma is the more plausible source. Where exactly the
   pragmas sat in the original is unknown.
-- **`GCREG`/`SEQREG`** in EGASHIFT.C. F_23C3B needs a block boundary after `GCREG(5, 0)`.
+- **`GCREG`/`SEQREG`** in EGASHIFT.C. egashift_blit needs a block boundary after `GCREG(5, 0)`.
   Braced register-write macros give it. Their names, and the fact that every other port
   pair of the file uses them, are a reconstruction (braced and unbraced pairs compile
   the same everywhere else).
@@ -144,8 +144,8 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   `a_8b9ca = a_8b9ap = az8ba2t = 0;` assigns the `struct Hot *` through to the two ints
   (int-held pointer, see `struct Win`), and F_195F3's
   `g77bal[i].data = r_vid.mode == -2 ? cell++ : &am6e68x[i];` mixes a `char (*)[8]` cell
-  with a `struct Bitmap *` in one `Frame.data` pointer that F_1D8C4/F_226F4 read as a
-  Bitmap and F_23F68 as a Mask. Both need a cast or a different type in one place, and the
+  with a `struct Bitmap *` in one `Frame.data` pointer that restore_rect/restore_rect_back read as a
+  Bitmap and restore_rect_latch as a Mask. Both need a cast or a different type in one place, and the
   code does not say which; they are left as written.
 
 ## Data

@@ -55,7 +55,7 @@ DATA_KEY = 0x100000
 # their code order.
 ORDER_HINTS = [
     (('24602', '2462E', '2487A', '24BE2'), '22364',
-     'the original relocation table lists F_24BE2 SEG fixup between 22364 and 226F4'),
+     'the original relocation table lists tandytxt_render SEG fixup between 22364 and 226F4'),
     (('26458', '265BA', '2869E', '2B6DC', '105EC6', '1060A2'), '242EC',
      'the original relocation table lists 23F68 and 242EC before the C units of segment 2645; '
      'the car-mask data follows 286D8 in DGROUP'),

@@ -102,7 +102,7 @@ int F_16EA2(void)
     } while (g_58ee > 1);
     g_58ee = 0;
     if (r_vid.mode == -2) {
-        F_21A14(0x63);
+        crtc_set_split(0x63);
         af824ax = 0x64;
     } else
         af824ax = 0;
@@ -166,7 +166,7 @@ int F_16EA2(void)
         blt.dx = 0;
         blt.dy = 0x64;
         (*b_78a2)(bm7678, g_5e3e == 1 ? g82b4s : g8188w, &blt, 1);
-        F_21A14(-1);
+        crtc_set_split(-1);
         af824ax = 0;
         (*dz78b6)(g_5e3e == 1 ? g82b4s->bits.p : g8188w->bits.p, bm7678->bits.p);
         (*dz78b6)(g_5e3e == 1 ? g82b4s->bits.p : g8188w->bits.p, g_5e3e == 1 ? g8188w->bits.p : g82b4s->bits.p);

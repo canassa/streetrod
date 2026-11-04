@@ -12,12 +12,12 @@
 
 #pragma intrinsic(outp)
 
-/* F_242EC @ 21A0:28EC (linear 0x242EC, 790 bytes)
+/* egaslide_sprite @ 21A0:28EC (linear 0x242EC, 790 bytes)
 
    Copy a range of rows of a planar sprite sheet into the back page, plane by plane */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-void F_242EC(int top, int bottom, int x, int y0, int y1, struct Bitmap far *bm)
+void egaslide_sprite(int top, int bottom, int x, int y0, int y1, struct Bitmap far *bm)
 {
     int k5;
     int pitch;            /* bm pitch */
@@ -68,11 +68,11 @@ void F_242EC(int top, int bottom, int x, int y0, int y1, struct Bitmap far *bm)
     }
     n = (n >> 1) + 1;
     row = r_vid.back->bits.p + y0 * bpitch + x;
-    F_26401(bm->bits.p, bm->alt.p, bm->planesize);
+    maskblt_make_mask(bm->bits.p, bm->alt.p, bm->planesize);
     abase = bm->alt;
-    F_2382D(dst2k, pitch, bottom - top + 1, scratch, bpitch);
+    egablit_latch_pack(dst2k, pitch, bottom - top + 1, scratch, bpitch);
     for (i = 0, y = y0; i < n; i++, y += stepl, row += stridem) {
-        F_24EFB(scratch, pitch, bottom - top + 1, dst2k, pitch);
+        egalatch_to_page(scratch, pitch, bottom - top + 1, dst2k, pitch);
         if (y < top) {
             src0.p = base1.p + (top - y) * pitch;
             dstm = dst2k;
@@ -92,16 +92,16 @@ void F_242EC(int top, int bottom, int x, int y0, int y1, struct Bitmap far *bm)
             outp(0x3c5, k5);
             outp(0x3ce, 4);
             outp(0x3cf, m);
-            F_25954(dstm, curn.w.seg, curn.w.off, alt16.w.off, (char)pitch, (char)pitch, (char)hh8, (char)bpitch);
+            maskor_blit(dstm, curn.w.seg, curn.w.off, alt16.w.off, (char)pitch, (char)pitch, (char)hh8, (char)bpitch);
         }
         outp(0x3c4, 2);
         outp(0x3c5, 0xf);
         if (r_vid.f16) {
             if (g_0792)
                 (*ab78aat)(g_0792, r_vid.back, &u_70ac, 1);
-            F_21A06();
-            F_24E78(r_vid.back->bits.p, r_vid.front->bits.p, pitch, bottom - top + 1, x, top, bpitch);
-            F_21A06();
+            crtc_wait_vsync();
+            egalatch_rect(r_vid.back->bits.p, r_vid.front->bits.p, pitch, bottom - top + 1, x, top, bpitch);
+            crtc_wait_vsync();
         }
     }
 }

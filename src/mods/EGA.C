@@ -20,15 +20,15 @@
 
 #pragma intrinsic(outp, memset, _rotr)
 
-void (far *g_5bd0[15])() = {F_23262, F_23C3B, F_236D5, F_22B3A, F_0E835, F_230DC, F_22F08, F_0FEAD, F_0FEBF, F_23FD9, F_23122, F_242EC, line_ega, F_26484, F_26537};   /* DS:5BD0 */
+void (far *g_5bd0[15])() = {egablit_copy, egashift_blit, egablit_masked, ega_draw_text, F_0E835, egacopy_page, egarecol_rect, F_0FEAD, F_0FEBF, egaspr_step, egacopy_reveal, egaslide_sprite, egaline_draw, egaspan_fill, egaspan_fill_below};   /* DS:5BD0 */
 
-/* F_22B3A @ 21A0:113A (linear 0x22B3A, 973 bytes)
+/* ega_draw_text @ 21A0:113A (linear 0x22B3A, 973 bytes)
 
    Draw a string in the 8-pixel-high font into a planar EGA/VGA bitmap, composing the glyph rows in
    a 320 byte buffer first */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-void F_22B3A(struct Bitmap far *bm, int x, int y, char *str)
+void ega_draw_text(struct Bitmap far *bm, int x, int y, char *str)
 {
     int cols;
     unsigned char far *q;

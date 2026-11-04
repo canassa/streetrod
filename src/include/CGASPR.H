@@ -4,6 +4,6 @@
 #define CGASPR_H
 #include "STRUCTS.H"
 
-int F_1D925(struct Sprite *s);                          /* 0x1D925 */
+int cgaspr_step(struct Sprite *s);                      /* 0x1D925 */
 
 #endif

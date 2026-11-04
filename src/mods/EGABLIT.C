@@ -11,12 +11,12 @@
 
 #pragma intrinsic(inp, outp)
 
-/* F_23262 @ 21A0:1862 (linear 0x23262, 647 bytes)
+/* egablit_copy @ 21A0:1862 (linear 0x23262, 647 bytes)
 
    Copy a rectangle between planar VGA bitmaps, plane by plane */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-void F_23262(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, int flags)
+void egablit_copy(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, int flags)
 {
     int p;                /* source bitmap height */
     char far *a;          /* destination pointer */
@@ -61,7 +61,7 @@ void F_23262(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, i
     d = h.w;
     j = h.h;
     if (src->flags == -2 && dst->flags == -2) {
-        F_24E78(m, a, d, j, 0, 0, 40);
+        egalatch_rect(m, a, d, j, 0, 0, 40);
         return;
     }
     f = e == 0 || g == 0;
@@ -96,12 +96,12 @@ void F_23262(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, i
     }
 }
 
-/* F_234E9 @ 21A0:1AE9 (linear 0x234E9, 492 bytes)
+/* egablit_sprite @ 21A0:1AE9 (linear 0x234E9, 492 bytes)
 
    Masked blit between planar VGA bitmaps */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-void F_234E9(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *bm3,
+void egablit_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *bm3,
              struct Mask *mask, struct Blt *r)
 {
     int p;                /* mask height */
@@ -161,7 +161,7 @@ void F_234E9(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *
             outp(0x3c4, 2);
             outp(0x3c5, k);
         }
-        F_24F4A(c, M, m, L, e, g, d, o, h, K);
+        maskbg_blit(c, M, m, L, e, g, d, o, h, K);
         k <<= 1;
         c += f;
         m += N;
@@ -173,16 +173,16 @@ void F_234E9(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *
     }
     if (p > 0) {
         c += 40 * o;
-        F_24EFB(n, d, p, c, g);
+        egalatch_to_page(n, d, p, c, g);
     }
 }
 
-/* F_236D5 @ 21A0:1CD5 (linear 0x236D5, 344 bytes)
+/* egablit_masked @ 21A0:1CD5 (linear 0x236D5, 344 bytes)
 
    Blit between planar VGA bitmaps through one of two hand-written plane routines */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-void F_236D5(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int flag)
+void egablit_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int flag)
 {
     int p;                /* bm2 height */
     char far *a;          /* destination pointer */
@@ -213,7 +213,7 @@ void F_236D5(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int 
     l = bm1->bits.w.seg;
     j = bm1->bits.w.off + e.sx + e.sy * d;
     i = bm1->alt.w.off + e.sx + e.sy * d;
-    f = flag ? F_25954 : F_2634A;
+    f = flag ? maskor_blit : maskblt_copy;
     if (c == 0) {
         outp(0x3ce, 4);
         outp(0x3c4, 2);
@@ -241,11 +241,11 @@ void F_236D5(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int 
    programmer switched the loop optimizer off here. */
 #pragma loop_opt(off)
 
-/* F_2382D @ 21A0:1E2D (linear 0x2382D, 117 bytes)
+/* egablit_latch_pack @ 21A0:1E2D (linear 0x2382D, 117 bytes)
 
    Copy a w by h block of planar VGA video memory using write mode 1 (latch copy) */
 
-void F_2382D(char far *src, int w, int h, char far *dst, int pitch)
+void egablit_latch_pack(char far *src, int w, int h, char far *dst, int pitch)
 {
     char far *p;
     int row;

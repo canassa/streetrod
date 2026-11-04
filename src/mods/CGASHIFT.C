@@ -4,16 +4,16 @@
 
 #pragma intrinsic(_rotl, _rotr)
 
-static void near F_1D590(unsigned char *p, int n, int cnt);
-static void near F_1D683(char far *dst, unsigned char *src, int n, int ph);
+static void near shift_pixels(unsigned char *p, int n, int cnt);
+static void near put_pixels(char far *dst, unsigned char *src, int n, int ph);
 
 unsigned char g_5b52[4] = {192, 240, 252, 255};   /* DS:5B52 */
 
-/* F_1D590 @ 1C11:1480 (linear 0x1D590, 243 bytes)
+/* shift_pixels @ 1C11:1480 (linear 0x1D590, 243 bytes)
 
    Shift a row of bytes by n pixel pairs (2 bits each), carrying the bits across bytes */
 
-static void near F_1D590(unsigned char *p, int n, int cnt)
+static void near shift_pixels(unsigned char *p, int n, int cnt)
 {
     unsigned char carry;
     int r2;
@@ -45,11 +45,11 @@ static void near F_1D590(unsigned char *p, int n, int cnt)
     }
 }
 
-/* F_1D683 @ 1C11:1573 (linear 0x1D683, 190 bytes)
+/* put_pixels @ 1C11:1573 (linear 0x1D683, 190 bytes)
 
    Copy n pixel pairs from src into a byte row, keeping the bits outside the range */
 
-static void near F_1D683(char far *dst, unsigned char *src, int n, int ph)
+static void near put_pixels(char far *dst, unsigned char *src, int n, int ph)
 {
     unsigned char *s;
     int e;
@@ -75,12 +75,12 @@ static void near F_1D683(char far *dst, unsigned char *src, int n, int ph)
     }
 }
 
-/* F_1D741 @ 1C11:1631 (linear 0x1D741, 386 bytes)
+/* cgashift_blit @ 1C11:1631 (linear 0x1D741, 386 bytes)
 
    Blit a rectangle between 4-pixel-per-byte bitmaps, shifting each row through a buffer */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-void F_1D741(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *blt)
+void cgashift_blit(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *blt)
 {
     int n2;
     int w9;
@@ -121,7 +121,7 @@ void F_1D741(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *blt)
         } else
             c = d1;
         if (sh)
-            F_1D590(buf9, sh, n2);
-        F_1D683(c, buf9, w9, ph4);
+            shift_pixels(buf9, sh, n2);
+        put_pixels(c, buf9, w9, ph4);
     }
 }

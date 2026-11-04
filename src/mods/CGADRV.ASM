@@ -7,12 +7,12 @@
 
         .CODE S1C11_TEXT
 
-; blit_rect @ 1C11:000C (linear 0x1C11C, 48 bytes)
+; cgadrv_blit_rect @ 1C11:000C (linear 0x1C11C, 48 bytes)
 ; Copy a rectangle of bytes between far buffers:
-; blit_rect(src far, dst far, width, rows, src_skip, dst_skip)
+; cgadrv_blit_rect(src far, dst far, width, rows, src_skip, dst_skip)
 
-        PUBLIC  _blit_rect
-_blit_rect  PROC  FAR
+        PUBLIC  _cgadrv_blit_rect
+_cgadrv_blit_rect  PROC  FAR
         push    bp
         mov     bp,sp
         push    ds
@@ -43,17 +43,17 @@ done1:
         mov     sp,bp
         pop     bp
         ret
-_blit_rect  ENDP
+_cgadrv_blit_rect  ENDP
 
-; F_1C14C @ 1C11:003C (linear 0x1C14C, 136 bytes)
+; cgadrv_blit_to_ilv @ 1C11:003C (linear 0x1C14C, 136 bytes)
 ; Copy rows of bytes into an interleaved (CGA/Hercules style) screen:
 ; the destination row address alternates between the even bank and the
 ; odd bank 0x2000 bytes further on. On a Hercules segment (B000-B400 with
 ; g_0042 set) an odd starting row is also written 0x2000 bytes up first.
-; F_1C14C(src far, dst far, width, rows, src_skip, dst_skip, row)
+; cgadrv_blit_to_ilv(src far, dst far, width, rows, src_skip, dst_skip, row)
 
-        PUBLIC  _F_1C14C
-_F_1C14C  PROC    FAR
+        PUBLIC  _cgadrv_blit_to_ilv
+_cgadrv_blit_to_ilv  PROC    FAR
         push    bp
         mov     bp,sp
         push    ds
@@ -122,15 +122,15 @@ done2:
         mov     sp,bp
         pop     bp
         ret
-_F_1C14C  ENDP
+_cgadrv_blit_to_ilv  ENDP
 
-; F_1C1D4 @ 1C11:00C4 (linear 0x1C1D4, 228 bytes)
+; cgadrv_blit_ilv @ 1C11:00C4 (linear 0x1C1D4, 228 bytes)
 ; Copy a rectangle between two interleaved (CGA/Hercules style) screens
 ; of 80 bytes per line, the odd lines living 0x2000 bytes after the even ones:
-; F_1C1D4(src far, dst far, width, rows, src_x, src_y, dst_x, dst_y)
+; cgadrv_blit_ilv(src far, dst far, width, rows, src_x, src_y, dst_x, dst_y)
 
-        PUBLIC  _F_1C1D4
-_F_1C1D4  PROC    FAR
+        PUBLIC  _cgadrv_blit_ilv
+_cgadrv_blit_ilv  PROC    FAR
         push    bp
         mov     bp,sp
         sub     sp,6
@@ -236,14 +236,14 @@ done3:
         mov     sp,bp
         pop     bp
         ret
-_F_1C1D4  ENDP
+_cgadrv_blit_ilv  ENDP
 
-; F_1C2B8 @ 1C11:01A8 (linear 0x1C2B8, 18 bytes)
+; cgadrv_install @ 1C11:01A8 (linear 0x1C2B8, 18 bytes)
 ; Install the default blit hooks: copy the 15-entry far-pointer table
 ; at g_5b04 over the hook table starting at b_78a2.
 
-        PUBLIC  _F_1C2B8
-_F_1C2B8  PROC    FAR
+        PUBLIC  _cgadrv_install
+_cgadrv_install  PROC    FAR
         push    di
         push    si
         mov     di,OFFSET _b_78a2
@@ -255,6 +255,6 @@ _F_1C2B8  PROC    FAR
         pop     si
         pop     di
         ret
-_F_1C2B8  ENDP
+_cgadrv_install  ENDP
 
         END

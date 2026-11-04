@@ -2,8 +2,8 @@
 
         .CODE S24F4_TEXT
 
-; F_24F4A @ 24F4:000A (linear 0x24F4A, 2569 bytes)
-; F_24F4A(dst_far, src_seg, si_off, bx_off, bp_off, bx_si_pitch, w, h,
+; maskbg_blit @ 24F4:000A (linear 0x24F4A, 2569 bytes)
+; maskbg_blit(dst_far, src_seg, si_off, bx_off, bp_off, bx_si_pitch, w, h,
 ;         bp_pitch, di_pitch): masked blit, three source streams in the
 ; segment src_seg: dst = (bx[] & bp[]) | si[], 16 bits at a time, fully
 ; unrolled (80 words, then one trailing byte for odd widths).
@@ -14,8 +14,8 @@
 ; over, so they are addressed through CS at fixed offsets (the routine sits
 ; at offset 0Ah of its code segment).
 
-        PUBLIC  _F_24F4A
-_F_24F4A  PROC    FAR
+        PUBLIC  _maskbg_blit
+_maskbg_blit  PROC    FAR
         push    bp
         mov     bp,sp
         push    ds
@@ -130,6 +130,6 @@ done:
         pop     ds
         pop     bp
         ret
-_F_24F4A  ENDP
+_maskbg_blit  ENDP
 
         END

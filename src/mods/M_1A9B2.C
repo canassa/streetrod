@@ -73,7 +73,7 @@ static struct Bitmap far *near F_1A9B2(int n)
     struct Bitmap far *c;
 
     a2 = F_1934E(g_6d30->width + 8, g_6d30->height, g_6d30->alt.p != 0L, 1);
-    F_1A03F(g_6d30, n & ~r_vid.mask, a2);
+    bitmap_shift_right(g_6d30, n & ~r_vid.mask, a2);
     b = F_1934E(a2->width, a2->height, 0, 1);
     F_11A72((n + g_6da0) & r_vid.mask, 0x78, a2->width, a2->height, b);
     blt.w = a2->width;
@@ -112,11 +112,11 @@ static void near F_1ABAC(int a, int *p, int *q)
     g_6cf0zz = F_15BBE(*p, 1);
     g_6d3eaas = a & ~r_vid.mask;
     g_6de2a[0] = F_1934E(g_6cf0zz->width + 8, g_6cf0zz->height, 1, 1);
-    F_1A03F(g_6cf0zz, g_6d3eaas, g_6de2a[0]);
+    bitmap_shift_right(g_6cf0zz, g_6d3eaas, g_6de2a[0]);
     g_6df2a = F_1934E(g_6de2a[0]->width, g_6de2a[0]->height, 1, 1);
-    F_19ED0(g_6de2a[0], g_6df2a, 3);
+    bitmap_copy(g_6de2a[0], g_6df2a, 3);
     g_6ce6sz = g_6de2a[0]->height - g_6d38->height;
-    F_1A472(g_6d38, g_6de2a[0], g_6d3eaas, g_6ce6sz);
+    bitmap_underlay(g_6d38, g_6de2a[0], g_6d3eaas, g_6ce6sz);
     if (r_vid.mode == -2)
         (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
     g_6ce8rz.x1 = 0;
@@ -137,11 +137,11 @@ static void near F_1ABAC(int a, int *p, int *q)
         if (g_6da2) {
             g_6cf0zz = F_15BBE(p[i], 2);
             g_6de2a[4 - i] = F_1934E(g_6cf0zz->width + 8, g_6cf0zz->height, 1, 1);
-            F_1A03F(g_6cf0zz, g_6da2, g_6de2a[4 - i]);
+            bitmap_shift_right(g_6cf0zz, g_6da2, g_6de2a[4 - i]);
             F_19438(1);
         } else
             g_6de2a[4 - i] = F_15BBE(p[i], 1);
-        F_1A472(g_6d38, g_6de2a[4 - i], g_6da2, g_6ce6sz);
+        bitmap_underlay(g_6d38, g_6de2a[4 - i], g_6da2, g_6ce6sz);
     }
     i = 4;
     g_6d3caat = F_195F3(a, 0x9b, g_6de2a, 0, 4, g_5ab4, g_6d24ajz, 0, 0);
@@ -160,7 +160,7 @@ static void near F_1ABAC(int a, int *p, int *q)
         if (g_6da2) {
             g_6cf0zz = F_15BBE(q[i], 2);
             g_6de2a[i] = F_1934E(g_6cf0zz->width + 8, g_6cf0zz->height, 1, 1);
-            F_1A03F(g_6cf0zz, g_6da2, g_6de2a[i]);
+            bitmap_shift_right(g_6cf0zz, g_6da2, g_6de2a[i]);
             F_19438(1);
         } else
             g_6de2a[i] = F_15BBE(q[i], 1);
@@ -168,9 +168,9 @@ static void near F_1ABAC(int a, int *p, int *q)
     for (i = 0; i < 4; i++) {
         if (i == g_6d3eaas) {
             g_6df2a = F_1934E(g_6de2a[i]->width, g_6de2a[i]->height, 1, 1);
-            F_19ED0(g_6de2a[i], g_6df2a, 3);
+            bitmap_copy(g_6de2a[i], g_6df2a, 3);
         }
-        F_1A472(g_6d38, g_6de2a[i], (i * 2) & ~r_vid.mask, g_6ce6sz);
+        bitmap_underlay(g_6d38, g_6de2a[i], (i * 2) & ~r_vid.mask, g_6ce6sz);
     }
     i = 4;
     g_6d3caat = F_195F3(-g_6de2a[0]->width, 0x9b, g_6de2a, 0, 4, g_5ab4, g_6d24ajz, 0, 0);
@@ -242,14 +242,14 @@ void F_1B213(int *a, int *b)
     blt.h = 0x1c;
     blt.sx = 0;
     blt.sy = ybot = g_6df6a->height - 0x1c;
-    g_6dd6 = F_1A89E(g_6df6a, &blt, 1);
+    g_6dd6 = bitmap_grab(g_6df6a, &blt, 1);
     F_118D4(0x408, -1);
     g_6dde = F_15BBE(0x49d, 2);
-    F_19F42(g_6df6a, &left, &right);
+    bitmap_opaque_span(g_6df6a, &left, &right);
     g_6d34 = F_1934E(g_6df6a->width, g_6dde->height, 0, 2);
     F_11A72(g_6da0, 0x99 - g_6dde->height, g_6df6a->width, g_6dde->height, g_6d34);
     g_6dda = F_1934E(g_6dde->width + 8, g_6dde->height, 1, 2);
-    F_1A03F(g_6dde, left & ~r_vid.mask, g_6dda);
+    bitmap_shift_right(g_6dde, left & ~r_vid.mask, g_6dda);
     blt.w = g_6dda->width;
     blt.h = g_6dda->height;
     blt.sx = blt.sy = 0;
@@ -258,7 +258,7 @@ void F_1B213(int *a, int *b)
     (*ab78aat)(g_6dda, g_6d34, &blt, 1);
     F_19438(1);
     g_6dda = F_1934E(g_6dde->width + 8, g_6dde->height, 1, 2);
-    F_1A03F(g_6dde, (right + 1) & ~r_vid.mask, g_6dda);
+    bitmap_shift_right(g_6dde, (right + 1) & ~r_vid.mask, g_6dda);
     blt.w = g_6dda->width;
     blt.dx = right - blt.w + ~r_vid.mask + 1;
     (*ab78aat)(g_6dda, g_6d34, &blt, 1);
@@ -345,8 +345,8 @@ void F_1B213(int *a, int *b)
     F_16381(1);
     g_5aa8 = (r_vid.mode == -6) ? 0x92 - g_6df6a->height : 0;
     g_6cf0zz = F_15BBE(*a, 2);
-    F_1A472(g_6cf0zz, g_6df6a, g_6dd4, ybot);
-    F_1A472(g_6cf0zz, g_6df6a, g_6cd8lz, ybot);
+    bitmap_underlay(g_6cf0zz, g_6df6a, g_6dd4, ybot);
+    bitmap_underlay(g_6cf0zz, g_6df6a, g_6cd8lz, ybot);
     F_19438(1);
     if (r_vid.mode == -2)
         (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
@@ -407,8 +407,8 @@ void F_1B213(int *a, int *b)
     blt.dy = g_6df6a->height - g_6de2a[0]->height;
     blt.sx = blt.sy = blt.dx = 0;
     (*b_78a2)(g_6dd6, g_6df6a, &blt, 3);
-    F_1A472(g_6de2a[0], g_6df6a, g_6dd4, ybot);
-    F_1A472(g_6de2a[0], g_6df6a, g_6cd8lz, ybot);
+    bitmap_underlay(g_6de2a[0], g_6df6a, g_6dd4, ybot);
+    bitmap_underlay(g_6de2a[0], g_6df6a, g_6cd8lz, ybot);
     if (r_vid.mode == -2)
         (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
     frame = 2;

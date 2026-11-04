@@ -854,7 +854,7 @@ static void near F_0A544(void)
         if (i2 == 13)
             F_10AFD(0x14);
         p3 = &g_526a[i2];
-        F_19ED0(pic24, pic4, 1);
+        bitmap_copy(pic24, pic4, 1);
         blt.w = p3->w;
         blt.h = p3->h;
         blt.sx = p3->sx;

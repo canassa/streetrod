@@ -38,7 +38,7 @@ void F_113A2(int y)
     x_colors = bustyle->colors;
     F_13682(r_vid.back, 0, y, 320, 10);
     if (r_vid.f16)
-        F_1A92A(r_vid.back, r_vid.front, 0, y, 319, y + 9);
+        bitmap_copy_box(r_vid.back, r_vid.front, 0, y, 319, y + 9);
 }
 
 void (far *a_78aem)(struct Bitmap far *, int, int, char *);
@@ -74,7 +74,7 @@ void F_11421(int x, char *s, int w)
     aq8256z = *s;
     F_120FE(-1);
     if (r_vid.f16)
-        F_1A92A(r_vid.back, r_vid.front, x > 8 ? x - 8 : x, ypos, x + wd, ypos + 7);
+        bitmap_copy_box(r_vid.back, r_vid.front, x > 8 ? x - 8 : x, ypos, x + wd, ypos + 7);
     x_colors = saved;
 }
 
@@ -110,7 +110,7 @@ void F_11593(char *s)
     r_vid.f16 = saved;
     F_120FE(-1);
     if (r_vid.f16)
-        F_1A92A(r_vid.back, r_vid.front, 0, au8252x, o_8250, au8252x + 7);
+        bitmap_copy_box(r_vid.back, r_vid.front, 0, au8252x, o_8250, au8252x + 7);
 }
 
 /* F_11669 @ 0F38:22E9 (linear 0x11669, 49 bytes) */
@@ -138,7 +138,7 @@ void F_1169A(int x, int y, int w, int h, char color)
     x_colors.c[2] = color;
     F_13682(r_vid.back, x, y, w, h);
     if (r_vid.f16)
-        F_1A92A(r_vid.back, r_vid.front, x, y, x + w - 1, y + h - 1);
+        bitmap_copy_box(r_vid.back, r_vid.front, x, y, x + w - 1, y + h - 1);
     x_colors.c[2] = old;
     F_120FE(-1);
 }
@@ -240,7 +240,7 @@ int F_118D4(int a, int b)
     (*b_78a2)(p, r_vid.back, &pkt, 1);
     F_120FE(-1);
     if (r_vid.f16)
-        F_1A92A(r_vid.back, r_vid.front, g_04be, g_04c0, pkt.dx + pkt.w - 1, pkt.dy + pkt.h - 1);
+        bitmap_copy_box(r_vid.back, r_vid.front, g_04be, g_04c0, pkt.dx + pkt.w - 1, pkt.dy + pkt.h - 1);
     g_04be = g_04c0 = 0;
     F_19438(1);
 }
@@ -262,7 +262,7 @@ void F_119D6(int x, int y, char *s)
 {
     (*a_78aem)(r_vid.back, x, y, s);
     if (r_vid.f16)
-        F_1A92A(r_vid.back, r_vid.front, x, y, g824cd - 1, y + 7);
+        bitmap_copy_box(r_vid.back, r_vid.front, x, y, g824cd - 1, y + 7);
 }
 
 /* F_11A24 @ 0F38:26A4 (linear 0x11A24, 78 bytes)
@@ -273,5 +273,5 @@ void F_11A24(int x, int y, int w)
 {
     F_1377F(r_vid.back, x, y, w);
     if (r_vid.f16)
-        F_1A92A(r_vid.back, r_vid.front, x, y, x + w - 1, y);
+        bitmap_copy_box(r_vid.back, r_vid.front, x, y, x + w - 1, y);
 }
