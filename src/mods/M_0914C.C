@@ -1,6 +1,9 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
+int g_51ee = 100;   /* DS:51EE */
+int g_51f0 = 0;   /* DS:51F0 */
+
 /* F_0914C @ 0000:914C (linear 0x0914C, 266 bytes) */
 
 

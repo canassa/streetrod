@@ -7,6 +7,7 @@
    the back bitmap) at x, y on the back page until Enter or a negative event; backspace, printable
    characters 0x20..0x5A (digits only when g_09f2), a blinking block cursor. Returns the last key. */
 
+char g_09f2 = 0;   /* DS:09F2 */
 
 int F_14C90(int x, int y, char *buf, int max)
 {

@@ -9,9 +9,6 @@
 
 #pragma intrinsic(outp)
 
-int g_5c0c[4] = {0, 80, 160, 40};   /* DS:5C0C */
-char g_5c14 = 120;   /* DS:5C14 */
-
 void F_23122(char far *dst, char far *src)
 {
     int e;

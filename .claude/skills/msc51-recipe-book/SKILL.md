@@ -342,3 +342,9 @@ Do not infer that an optimized scan itself is disabled just because its exit is 
 |  | A two-byte literal; the pool shows  where  would leave one byte |
 |  compiles differently from  (register use, frame) | The original used scalar globals after a 12-byte record, not struct members |
 | Pointer table at an odd DS address (DS:579F) | Assembler data (); the C compiler word-aligns every array, struct and pointer, only scalar  is unaligned |
+
+| An `int` or array at an odd DS address | Not C: no `/Zp` flag unaligns top-level data. Assembler data, or one large char array |
+| An initializer takes the address of a definition later in the file | MSC emits the later definition first, each in its own data record; the original relocation table shows one run per such item (car masks: each `List` written before its `Run` array) |
+| A SEG constant in CONST that no instruction reads | An unreachable far access to another far symbol (`return; x = far_arr[i];`); a second use of an already-used symbol shares its constant |
+| `push cs; call near` versus `lcall` to a far function in the same segment | Same file versus different files: MSC near-calls every function defined anywhere in its file, explicit `far` or not |
+| Relocation runs that interleave two units in the packed table | One object; code/data records are cut about every 945 bytes from the object start, so an unexpected split means the object started elsewhere |

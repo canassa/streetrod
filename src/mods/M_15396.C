@@ -108,7 +108,7 @@ static void near F_15409(int n)
     }
 }
 
-/* F_1552B: read the picture headers of one picture file into g_slots: which 1 is the first file,
+/* F_1552B: read the picture headers of one picture file into g_slot: which 1 is the first file,
    anything else the second (its entries follow the first file's, g_8bc8 of them). Clears the
    run time fields of each entry. Returns the largest data size found */
 
@@ -130,7 +130,7 @@ int F_1552B(int which)
     F_15409(num);
     count = which == 1 ? g_8bc8 : g_8dd2;
     for (i = 0; i < count; i++) {
-        sl = &g_slots[base + i];
+        sl = &g_slot[base + i];
         if (F_15396(*g_6c6c, (long)(i * 0x1e + 2)) ||
             _dos_read(*g_6c6c, (void far *)sl, 0x1e, &got) || got != 0x1e) {
             F_1174E(g_4ee8);
@@ -172,7 +172,7 @@ static int near F_1563A(int n, int load, char far *dst)
     struct Slot far *sl;
 
     n = F_153D7(num = n);
-    ent = sl = &g_slots[n];
+    ent = sl = &g_slot[n];
     if (sl->ptr.p == 0) {
         if (load) {
             fp = F_03967(ent->f1c, &pool);
@@ -232,7 +232,7 @@ bad:
 
 /* F_158DE @ 0F38:65DE (linear 0x158DE, 80 bytes)
 
-   Frees and clears the far pointer in slot n of the far table g_slots. */
+   Frees and clears the far pointer in slot n of the far table g_slot. */
 
 
 
@@ -241,7 +241,7 @@ void F_158DE(int n)
     char far * far *pp;
 
     n = F_153D7(n);
-    if (*(pp = &g_slots[n].ptr.p)) {
+    if (*(pp = &g_slot[n].ptr.p)) {
         F_036D6(*pp);
         *pp = 0;
     }
@@ -268,7 +268,7 @@ struct Bitmap far *F_1592E(int id, struct Bitmap far *bm)
 
     F_120FE(-4);
     res = F_1563A(id, 0, g_7564);
-    cur = sl = &g_slots[F_153D7(id)];
+    cur = sl = &g_slot[F_153D7(id)];
     if (g_4f0e)
         pic = F_0376B(cur->f0, cur->f2, cur->f6, 1, bm);
     else
@@ -317,9 +317,9 @@ struct Bitmap far *F_1592E(int id, struct Bitmap far *bm)
 void F_15B7F(int n, int *w, int *h, int *x)
 {
     n = F_153D7(n);
-    *w = g_slots[n].f0;
-    *h = g_slots[n].f2;
-    *x = g_slots[n].f6;
+    *w = g_slot[n].f0;
+    *h = g_slot[n].f2;
+    *x = g_slot[n].f6;
 }
 
 /* F_15BBE: allocate a bitmap of the given mode for slot picture id, draw the picture into it

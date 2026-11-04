@@ -290,6 +290,7 @@ extern int g_4bc8;                                      /* DS:4BC8 */
 extern int g_4bca[];                                    /* DS:4BCA */
 extern struct Colors g_4be2;                            /* DS:4BE2 */
 extern struct Colors g_4be8;                            /* DS:4BE8 */
+extern char g_4bed;                                     /* DS:4BED */
 extern char far *g_4c14;                                /* DS:4C14 */
 extern unsigned g_4c18[4];                              /* DS:4C18 */
 extern int g_4c20[];                                    /* DS:4C20 */
@@ -326,6 +327,7 @@ extern int g_4fd2[];                                    /* DS:4FD2 */
 extern char *g_4ff2;                                    /* DS:4FF2 */
 extern int g_4ff4;                                      /* DS:4FF4 */
 extern char g_501d;                                     /* DS:501D */
+extern char g_501e[];                                   /* DS:501E */
 extern int g_5030[][4];                                 /* DS:5030 */
 extern int g_5048;                                      /* DS:5048 */
 extern int g_504a[];                                    /* DS:504A */
@@ -431,7 +433,7 @@ extern char g_5af0;                                     /* DS:5AF0 */
 extern char g_5af1;                                     /* DS:5AF1 */
 extern char g_5af2;                                     /* DS:5AF2 */
 extern char g_5af3;                                     /* DS:5AF3 */
-extern long g_5b04[15];                                 /* DS:5B04 */
+extern void (far *g_5b04[15])();                        /* DS:5B04 */
 extern unsigned char g_5b40[4];                         /* DS:5B40 */
 extern unsigned char g_5b44[4];                         /* DS:5B44 */
 extern int g_5b48[5];                                   /* DS:5B48 */
@@ -440,9 +442,9 @@ extern char g_5b56[4];                                  /* DS:5B56 */
 extern char g_5b5a[16];                                 /* DS:5B5A */
 extern char g_5b6a[16];                                 /* DS:5B6A */
 extern char g_5b7a[16];                                 /* DS:5B7A */
-extern long g_5b8a[15];                                 /* DS:5B8A */
+extern void (far *g_5b8a[15])();                        /* DS:5B8A */
 extern int g_5bc6[];                                    /* DS:5BC6 */
-extern long g_5bd0[15];                                 /* DS:5BD0 */
+extern void (far *g_5bd0[15])();                        /* DS:5BD0 */
 extern int g_5c0c[];                                    /* DS:5C0C */
 extern unsigned char g_5c16[];                          /* DS:5C16 */
 extern int g_5c1e;                                      /* DS:5C1E */
@@ -906,11 +908,11 @@ extern char far g_2f93_00c0[];                          /* 2F93:00C0 */
 extern struct Bitmap far g_2fa3_0000;                   /* 2FA3:0000 */
 extern struct Part far g_parts1[];                      /* 2FA6:0000 */
 extern struct Part far g_parts2[];                      /* 3324:0000 */
-extern struct Slot far g_slots[];                       /* 389B:0000 */
-extern unsigned far g_ter33f0[];                        /* 389B:33F0 */
-extern unsigned far g_ter3cb0[];                        /* 389B:3CB0 */
-extern int far g_ter4570[];                             /* 389B:4570 */
-extern unsigned far g_ter4e30[];                        /* 389B:4E30 */
-extern int far g_ter56f0[];                             /* 389B:56F0 */
+extern struct Slot far g_slot[];                        /* 389B:0000 */
+extern unsigned far g_terrain0[];                       /* 389B:33F0 */
+extern unsigned far g_terrain1[];                       /* 389B:3CB0 */
+extern int far g_terrain2[];                            /* 389B:4570 */
+extern unsigned far g_terrain3[];                       /* 389B:4E30 */
+extern int far g_terrain4[];                            /* 389B:56F0 */
 
 #endif

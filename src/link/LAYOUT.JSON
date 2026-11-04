@@ -21,18 +21,11 @@
   "units": [
     {
       "start": 0,
-      "end": 1478,
+      "end": 2227,
       "sources": [
         "src/mods/M_00000.C",
         "src/mods/M_00226.C",
-        "src/mods/M_004F4.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 1478,
-      "end": 2227,
-      "sources": [
+        "src/mods/M_004F4.C",
         "src/mods/M_005C6.C",
         "src/mods/M_00659.C"
       ],
@@ -40,27 +33,20 @@
     },
     {
       "start": 2228,
-      "end": 3416,
+      "end": 3448,
       "sources": [
         "src/mods/M_008B4.C"
       ],
       "kind": "c"
     },
     {
-      "start": 3416,
-      "end": 9076,
+      "start": 3448,
+      "end": 11162,
       "sources": [
         "src/mods/M_00D58.C",
         "src/mods/M_01843.C",
         "src/mods/M_01BAE.C",
-        "src/mods/M_01FE2.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 9076,
-      "end": 11162,
-      "sources": [
+        "src/mods/M_01FE2.C",
         "src/mods/M_02374.C"
       ],
       "kind": "c"
@@ -117,16 +103,9 @@
     },
     {
       "start": 12232,
-      "end": 13044,
-      "sources": [
-        "src/mods/M_02FC8.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 13044,
       "end": 13843,
       "sources": [
+        "src/mods/M_02FC8.C",
         "src/mods/M_032F4.C",
         "src/mods/M_0339F.C"
       ],
@@ -167,25 +146,11 @@
     },
     {
       "start": 21550,
-      "end": 23370,
-      "sources": [
-        "src/mods/M_0542E.C",
-        "src/mods/M_056A9.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 23370,
-      "end": 25630,
-      "sources": [
-        "src/mods/M_05B4A.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 25630,
       "end": 25717,
       "sources": [
+        "src/mods/M_0542E.C",
+        "src/mods/M_056A9.C",
+        "src/mods/M_05B4A.C",
         "src/mods/M_0641E.C"
       ],
       "kind": "c"
@@ -230,32 +195,18 @@
     },
     {
       "start": 37196,
-      "end": 37462,
-      "sources": [
-        "src/mods/M_0914C.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 37462,
       "end": 38180,
       "sources": [
+        "src/mods/M_0914C.C",
         "src/mods/M_09256.C"
       ],
       "kind": "c"
     },
     {
       "start": 38180,
-      "end": 39668,
-      "sources": [
-        "src/mods/M_09524.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 39668,
       "end": 42006,
       "sources": [
+        "src/mods/M_09524.C",
         "src/mods/M_09AF4.C"
       ],
       "kind": "c"
@@ -271,16 +222,9 @@
     },
     {
       "start": 46026,
-      "end": 46166,
-      "sources": [
-        "src/mods/M_0B3CA.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 46166,
       "end": 56509,
       "sources": [
+        "src/mods/M_0B3CA.C",
         "src/mods/M_0B456.C",
         "src/mods/M_0CDAF.C",
         "src/mods/M_0D624.C",
@@ -290,16 +234,9 @@
     },
     {
       "start": 56510,
-      "end": 57570,
-      "sources": [
-        "src/mods/M_0DCBE.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 57570,
       "end": 58729,
       "sources": [
+        "src/mods/M_0DCBE.C",
         "src/mods/M_0E0E2.C"
       ],
       "kind": "c"
@@ -355,41 +292,20 @@
     },
     {
       "start": 68476,
-      "end": 70436,
-      "sources": [
-        "src/mods/M_10B7C.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 70436,
       "end": 70560,
       "sources": [
+        "src/mods/M_10B7C.C",
         "src/mods/M_11324.C"
       ],
       "kind": "c"
     },
     {
       "start": 70562,
-      "end": 71322,
-      "sources": [
-        "src/mods/M_113A2.C",
-        "src/mods/M_11421.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 71322,
-      "end": 72150,
-      "sources": [
-        "src/mods/M_1169A.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 72150,
       "end": 72306,
       "sources": [
+        "src/mods/M_113A2.C",
+        "src/mods/M_11421.C",
+        "src/mods/M_1169A.C",
         "src/mods/M_119D6.C"
       ],
       "kind": "c"
@@ -514,24 +430,10 @@
     },
     {
       "start": 102972,
-      "end": 103066,
-      "sources": [
-        "src/mods/M_1923C.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 103066,
-      "end": 103084,
-      "sources": [
-        "src/mods/M_1929A.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 103084,
       "end": 103380,
       "sources": [
+        "src/mods/M_1923C.C",
+        "src/mods/M_1929A.C",
         "src/mods/M_192AC.C"
       ],
       "kind": "c"
@@ -546,16 +448,9 @@
     },
     {
       "start": 103546,
-      "end": 103790,
-      "sources": [
-        "src/mods/M_1947A.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 103790,
       "end": 106192,
       "sources": [
+        "src/mods/M_1947A.C",
         "src/mods/M_1956E.C",
         "src/mods/M_19DB7.C"
       ],
@@ -702,16 +597,9 @@
     },
     {
       "start": 143580,
-      "end": 143650,
-      "sources": [
-        "src/mods/M_230DC.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 143650,
       "end": 143917,
       "sources": [
+        "src/mods/M_230DC.C",
         "src/mods/M_23122.C"
       ],
       "kind": "c"
@@ -857,24 +745,10 @@
     },
     {
       "start": 165534,
-      "end": 165592,
-      "sources": [
-        "src/mods/M_2869E.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 165592,
-      "end": 177866,
-      "sources": [
-        "src/mods/M_286D8.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 177866,
       "end": 177883,
       "sources": [
+        "src/mods/M_2869E.C",
+        "src/mods/M_286D8.C",
         "src/mods/M_2B6CA.C"
       ],
       "kind": "c"
@@ -957,6 +831,18 @@
     },
     {
       "library": "MLIBCR.LIB",
+      "member": "_cflush.asm",
+      "public": "__cflush",
+      "code_size": 0
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "_file.c",
+      "public": "__iob2",
+      "code_size": 0
+    },
+    {
+      "library": "MLIBCR.LIB",
       "member": "flushall.c",
       "public": "_flushall",
       "code_size": 52
@@ -1032,6 +918,18 @@
       "member": "amalloc.asm",
       "public": "__amallocbrk",
       "code_size": 355
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "cmiscdat.asm",
+      "public": "__cfltcvt_tab",
+      "code_size": 0
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "ctype.asm",
+      "public": "__ctype",
+      "code_size": 0
     },
     {
       "library": "MLIBCR.LIB",
@@ -1143,6 +1041,12 @@
     },
     {
       "library": "MLIBCR.LIB",
+      "member": "days.c",
+      "public": "__days",
+      "code_size": 0
+    },
+    {
+      "library": "MLIBCR.LIB",
       "member": "dos\\int86.asm",
       "public": "_int86",
       "code_size": 128
@@ -1194,6 +1098,12 @@
       "member": "tzset.c",
       "public": "__isindst",
       "code_size": 404
+    },
+    {
+      "library": "MLIBCR.LIB",
+      "member": "timeset.c",
+      "public": "___mnames",
+      "code_size": 0
     },
     {
       "library": "MLIBCR.LIB",
@@ -1407,6 +1317,18 @@
     },
     {
       "library": "MLIBFP.LIB",
+      "member": "..\\huge.ASM",
+      "public": "__matherr_flag",
+      "code_size": 0
+    },
+    {
+      "library": "MLIBFP.LIB",
+      "member": "fixups.ASM",
+      "public": "FIARQQ",
+      "code_size": 0
+    },
+    {
+      "library": "MLIBFP.LIB",
       "member": "..\\matherr.ASM",
       "public": "_matherr",
       "code_size": 15
@@ -1428,54 +1350,6 @@
       "member": "87trig.ASM",
       "public": "__fFCOS",
       "code_size": 209
-    },
-    {
-      "library": "MLIBCR.LIB",
-      "member": "_cflush.asm",
-      "public": "__cflush",
-      "code_size": 0
-    },
-    {
-      "library": "MLIBCR.LIB",
-      "member": "_file.c",
-      "public": "__iob2",
-      "code_size": 0
-    },
-    {
-      "library": "MLIBCR.LIB",
-      "member": "cmiscdat.asm",
-      "public": "__cfltcvt_tab",
-      "code_size": 0
-    },
-    {
-      "library": "MLIBCR.LIB",
-      "member": "ctype.asm",
-      "public": "__ctype",
-      "code_size": 0
-    },
-    {
-      "library": "MLIBCR.LIB",
-      "member": "days.c",
-      "public": "__days",
-      "code_size": 0
-    },
-    {
-      "library": "MLIBCR.LIB",
-      "member": "timeset.c",
-      "public": "___mnames",
-      "code_size": 0
-    },
-    {
-      "library": "MLIBFP.LIB",
-      "member": "fixups.ASM",
-      "public": "FIARQQ",
-      "code_size": 0
-    },
-    {
-      "library": "MLIBFP.LIB",
-      "member": "..\\huge.ASM",
-      "public": "__matherr_flag",
-      "code_size": 0
     }
   ],
   "emulator": [
@@ -1494,24 +1368,21 @@
   ],
   "link_order": [
     0,
-    1478,
     59074,
     59686,
     62346,
     68476,
-    70436,
     70562,
-    71322,
-    72150,
     72306,
     2228,
-    3416,
-    9076,
+    3448,
     73372,
     74740,
     79490,
     80350,
     85136,
+    1051124,
+    1057694,
     11162,
     11268,
     11696,
@@ -1519,28 +1390,21 @@
     11746,
     11764,
     12232,
-    13044,
     13844,
     13992,
     86582,
     86934,
     14784,
     21550,
-    23370,
-    25630,
     25718,
     30720,
     36134,
     36520,
     37196,
-    37462,
     38180,
-    39668,
     42006,
     46026,
-    46166,
     56510,
-    57570,
     58730,
     90762,
     91070,
@@ -1551,11 +1415,8 @@
     95398,
     101340,
     102972,
-    103066,
-    103084,
     103380,
     103546,
-    103790,
     106192,
     108978,
     58834,
@@ -1569,43 +1430,89 @@
     137900,
     140114,
     140132,
+    148994,
+    149038,
+    149626,
+    150498,
     141044,
     142120,
     142138,
     143112,
     143580,
-    143650,
     143918,
     143970,
     145570,
-    148994,
-    149038,
-    149626,
-    150498,
     150916,
     151160,
     151370,
     153940,
     156490,
-    156760,
-    157114,
-    165534,
-    165592,
-    1072838,
     146876,
     147304,
     148204,
-    177866,
-    177884
+    156760,
+    157114,
+    165534,
+    177884,
+    1072838,
+    1073314
   ],
   "data_units": [
     {
+      "start": 1051124,
+      "lo": 2548,
+      "hi": 9118,
+      "sources": [
+        "src/mods/HOTSPOT.C"
+      ]
+    },
+    {
+      "start": 1057694,
+      "lo": 9118,
+      "hi": 18200,
+      "sources": [
+        "src/mods/MESSAGES.ASM"
+      ]
+    },
+    {
       "start": 1072838,
       "lo": 24262,
-      "hi": 25244,
+      "hi": 24738,
       "sources": [
         "src/mods/CARMASKS.C"
       ]
+    },
+    {
+      "start": 1073314,
+      "lo": 24738,
+      "hi": 25244,
+      "sources": [
+        "src/mods/CARMASK2.C"
+      ]
+    }
+  ],
+  "order_hints": [
+    {
+      "units": [
+        "24602",
+        "2462E",
+        "2487A",
+        "24BE2"
+      ],
+      "after": "22364",
+      "why": "the original relocation table lists F_24BE2 SEG fixup between 22364 and 226F4"
+    },
+    {
+      "units": [
+        "26458",
+        "265BA",
+        "2869E",
+        "2B6DC",
+        "105EC6",
+        "1060A2"
+      ],
+      "after": "242EC",
+      "why": "the original relocation table lists 23F68 and 242EC before the C units of segment 2645; the car-mask data follows 286D8 in DGROUP"
     }
   ]
 }

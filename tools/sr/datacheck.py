@@ -49,6 +49,9 @@ def check(obj, con, im, codebase):
                 problems.append(f'    {sym}: ours +{off:04x} (DS:{base + off:04x}), original DS:{globals_by_name[sym]:04x}')
         return problems, None
     base = next(iter(bases))
+    if base % 2:
+        # bytes are still compared, but alignment of later items may differ standalone
+        pass
     if base + len(data) > 0xFFFF or ds + base + len(data) > len(img):
         problems.append(f'data layout: base {base:04x} plus {len(data)} bytes runs past the image')
         return problems, (base, len(data))

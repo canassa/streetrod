@@ -51,9 +51,9 @@ static void near F_0D67D(void)
         F_02374();
         return;
     }
-    flag = g_ter4e30[g_7e8a + 4] & 0xe0;
+    flag = g_terrain3[g_7e8a + 4] & 0xe0;
     dist = g_7e8a - g_7d30;
-    slope = g_ter4570[g_7d30 + 4] - g_ter4570[g_7d30 + 5];
+    slope = g_terrain2[g_7d30 + 4] - g_terrain2[g_7d30 + 5];
     if (dist > 12) {
         g_6cb6 = (g_70c0 + g_7d2e) >> 1;
         if (slope)

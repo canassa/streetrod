@@ -279,7 +279,11 @@ def gate(obj, procs, img, rows, con=None):
         problems, g.data = check(obj, con, image(), base)
         dseg = obj.segments.index('_DATA') + 1 if '_DATA' in obj.segments else None
         owns = dseg is not None and any(s == dseg for s, _ in obj.all_publics.values())
-        if owns:
+        if owns and g.data is not None and g.data[0] % 2:
+            # an odd original base: this file is the middle of a larger translation unit
+            # (every object's _DATA starts word-aligned); the layout build checks the whole unit
+            g.notes.extend(['odd base, verified by the layout build only: ' + p for p in problems])
+        elif owns:
             g.problems.extend(problems)
         else:
             # a module that does not define its data yet: its literal pool may legitimately differ

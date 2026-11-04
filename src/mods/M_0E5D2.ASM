@@ -11,8 +11,31 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         ; data (recovered DGROUP layout)
-        EVEN
         PUBLIC _g_5abc
 _g_5abc LABEL BYTE ; +5ABC int @[10]
         DW 03500h

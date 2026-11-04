@@ -4,8 +4,6 @@
 int g_51d8[5] = {42, 26, 12, 8, 4};   /* DS:51D8 */
 int g_51e2[5] = {0, 200, 125, 71, 56};   /* DS:51E2 */
 int g_51ec = 0;   /* DS:51EC */
-int g_51ee = 100;   /* DS:51EE */
-int g_51f0 = 0;   /* DS:51F0 */
 
 /* F_08EA8 @ 0000:8EA8 (linear 0x08EA8, 675 bytes) */
 
@@ -87,7 +85,7 @@ int F_08EA8(void)
                 g_0610--;
                 F_00FEA();
             }
-            if ((g_ter33f0[g_7d30 + 1] & 1) || (g_ter3cb0[g_7d30 + 1] & 1) || g_47ee) {
+            if ((g_terrain0[g_7d30 + 1] & 1) || (g_terrain1[g_7d30 + 1] & 1) || g_47ee) {
                 g_4736 = 0;
                 g_4732 = 0;
                 F_01B27();

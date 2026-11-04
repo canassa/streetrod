@@ -77,12 +77,10 @@ Addresses are linear offsets into the unpacked load image (`orig/SR_unpacked.EXE
 `./sr build --layout` rebuilds the recovered code/link order into `work/layout`.
 All 572 game functions land at their original addresses, and all 748 near-call
 encodings match. `./sr dgroup` recovers which module owned each DGROUP item from the
-original data positions and writes the definitions into the module sources; the data below
-DS:09F4 and above DS:4AFE is owned and byte-identical in the linked DGROUP, the tables in
-between still come from `src/data/DGROUP.ASM`.  recovers which module owned each DGROUP item from the
-original data positions and writes the definitions into the module sources; the data below
-DS:09F4 and above DS:4AFE is owned and byte-identical in the linked DGROUP, the tables in
-between still come from . `./sr linkcheck work/layout/SR.EXE` compares the linked file
+original data positions and writes the definitions into the module sources. The linked
+load image is byte-identical to the original, and the `/EXEPACK` link
+(`work/layout/SRPACKED.EXE`) differs from `orig/SR.EXE` only in the order of its packed
+relocation table (331 bytes; one object boundary is left). `./sr linkcheck work/layout/SR.EXE` compares the linked file
 without masking relocations or padding and returns nonzero until it is identical.
-The detailed report is `work/layout/BYTE-MATCH.JSON`. Data and MZ differences
-remain; the layout build is not yet a whole-binary match.
+The detailed report is `work/layout/BYTE-MATCH.JSON`. Against the unpacked reference the
+header and relocation order still differ: the unpacker synthesized both.

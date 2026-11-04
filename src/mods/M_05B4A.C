@@ -110,6 +110,7 @@ static int near F_05EB3(char *p)
 }
 
 char g_501d = 0;   /* DS:501D */
+char g_501e[] = "Buy a car first !";   /* DS:501E */
 
 /* F_05EEA @ 0000:5EEA (linear 0x05EEA, 1332 bytes) */
 

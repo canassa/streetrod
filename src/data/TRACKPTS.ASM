@@ -3,6 +3,11 @@ TRACKPTS SEGMENT PARA PUBLIC 'FAR_DATA'
 PUBLIC TRACKPTS_BASE
 TRACKPTS_BASE LABEL BYTE
 PUBLIC _g_2e47_0000
+; PROVISIONAL symbols for the two unreachable far references in M_0F38A.C
+PUBLIC _x_trk0
+_x_trk0 EQU TRACKPTS_BASE+00h
+PUBLIC _x_trk1
+_x_trk1 EQU TRACKPTS_BASE+0106h
 _g_2e47_0000 EQU TRACKPTS_BASE+00h ; char far @[2][0x83][2]
  DB -11,-13 ; track 0, point 0
  DB -12,-13 ; track 0, point 1

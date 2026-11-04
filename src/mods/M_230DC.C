@@ -9,6 +9,8 @@
 
 #pragma intrinsic(outp)
 
+int g_5c0c[5] = {0, 80, 160, 40, 120};   /* DS:5C0C */
+
 void F_230DC(char far *src, char far *dst)
 {
     outp(0x3ce, 5);

@@ -74,24 +74,27 @@ _g_5b7a LABEL BYTE ; +5B7A char @[16]
         DB 055h
         DB 0AAh
         DB 0AAh
-        EVEN
-        PUBLIC _g_5b8a
-_g_5b8a LABEL BYTE ; +5B8A long @[15]
-        DD 021A004ABh
-        DD 021A007ACh
-        DD 021A00358h
-        DD 021A00964h
-        DD 0E6C0002h
-        DD 021A00C09h
-        DD 021A00A4Fh
-        DD 0F380B2Dh
-        DD 0F380B3Fh
-        DD 021A00D62h
-        DD 021A00C26h
-        DD 0F38A87Eh
-        DD 02487000Ah
-        DD 024870257h
-        DD 024870309h
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

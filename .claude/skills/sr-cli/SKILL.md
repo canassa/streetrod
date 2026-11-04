@@ -134,3 +134,10 @@ Unmasked comparison report: /home/canassa/src/github.com/canassa/streetrod/work/
 - `aliases --write` deletes the alias rows: run it once. A later decl change that creates new overlaps needs a fresh run, and the run also removes `EXTRN` lines for the aliases in `.ASM` files (put the base's EXTRN before the first use when it only exists in a later `.DATA` block).
 - The DB is WAL-backed: restoring `db/sr.sqlite` from a backup needs `-wal`/`-shm` removed first.
 - An assembler unit's data goes into its `.DATA` section (`PUBLIC`/`LABEL`/`DB`); EXTRNs for symbols it now defines are removed.
+
+## Link-structure lessons (2026-11-04)
+
+- `./sr dgroup apply all --write` strips every `/* DS:xxxx */` definition from `src/mods/*.C` before rewriting; after changing units, run the pipeline twice (the second pass reads the fresh objects of the new units). `work/dg/run.sh` is the pipeline.
+- `order_hints` in LAYOUT.JSON move units (data-only units too, key `10xxxx`) after another unit; afterwards each code segment's units are re-sorted into code order within their slots.
+- Storage objects need `ASSUME DS:DGROUP`, or MASM writes their PUBDEFs without the group and every reference resolves segment-relative.
+- Runtime members: declared `_DATA` length can exceed the data records (`DUP (?)`); read SEGDEF lengths when tiling runtime data.

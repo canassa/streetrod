@@ -5,12 +5,6 @@
 #include <stdlib.h>
 #include "STRUCTS.H"
 
-int g_06e4 = 0;   /* DS:06E4 */
-int g_06e6 = 0;   /* DS:06E6 */
-char g_06e8 = 0;   /* DS:06E8 */
-char g_06e9 = 0;   /* DS:06E9 */
-char g_06ea = 0;   /* DS:06EA */
-
 /* F_02374 @ 0000:2374 (linear 0x02374, 24 bytes) */
 
 

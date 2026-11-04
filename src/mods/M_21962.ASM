@@ -9,14 +9,36 @@
         .DATA
         EXTRN   _g_58e2:WORD
         ; data (recovered DGROUP layout)
-        EVEN
         PUBLIC _g_58de
 _g_58de LABEL BYTE ; +58DE int @
         DW 01h
-        EVEN
         PUBLIC _g_58e0
 _g_58e0 LABEL BYTE ; +58E0 int @
         DW 01h
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

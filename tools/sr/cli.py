@@ -488,8 +488,9 @@ def cmd_flags(args):
 def cmd_src(args):
     con = db.connect()
     row = db.resolve(con, args.fn)
-    db.update(con, row["addr"], src=args.path)
-    print(f"{fn_name(row)}: src = {args.path}")
+    module = Path(args.path).name if Path(args.path).parent.name == 'mods' else None
+    db.update(con, row["addr"], src=args.path, module=module)
+    print(f"{fn_name(row)}: src = {args.path}" + (f", module {module}" if module else ""))
 
 
 def cmd_global(args):
@@ -882,7 +883,17 @@ def cmd_dgroup(args):
         if args.write:
             gen_headers(a.con)
     elif args.what == 'apply':
-        units = [int(n, 16) for n in args.names] if args.names else []
+        if args.names == ['all']:
+            units = [s for s in a.order if any(it.owner == s and it.kind not in ('lit',) for it in a.items)]
+            if args.write:
+                # ownership may have moved between files: start from sources without generated data
+                for path in sorted((config.SRC / 'mods').glob('*.C')):
+                    text = path.read_text(errors='replace')
+                    clean = a._strip_c_definitions(text, [])
+                    if clean != text:
+                        path.write_text(clean)
+        else:
+            units = [int(n, 16) for n in args.names] if args.names else []
         for u in units:
             changed = a.apply_unit(u, write=args.write)
             for path, text in changed.items():

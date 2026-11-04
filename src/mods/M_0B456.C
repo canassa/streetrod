@@ -31,8 +31,6 @@ static struct Car * near F_04036(int idx, int weight, struct Car *old);
 static int near F_043BF(struct Car *c, int keep);
 static void near F_0DCBE(struct Car *c, struct Eng *e);
 
-int g_53b6[6] = {2, 1, 4, 6, 5, 3};   /* DS:53B6 */
-
 /* F_0B456 @ 0000:B456 (linear 0x0B456, 70 bytes) */
 
 

@@ -11,6 +11,17 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+        EXTRN   _F_0E781:FAR
         ; data (recovered DGROUP layout)
         PUBLIC _g_5aee
 _g_5aee LABEL BYTE ; +5AEE char @
@@ -36,24 +47,17 @@ S_5afa LABEL BYTE
         DB 'Tandy', 0 ; +5AFA
 S_5b00 LABEL BYTE
         DB 'CGA', 0 ; +5B00
-        EVEN
-        PUBLIC _g_5b04
-_g_5b04 LABEL BYTE ; +5B04 long @[15]
-        DD 01C1112B8h
-        DD 01C111631h
-        DD 01C111152h
-        DD 01C1101BAh
-        DD 0E6C00C1h
-        DD 01C110DD7h
-        DD 01C1106F3h
-        DD 01C110F70h
-        DD 01C110F94h
-        DD 01C111815h
-        DD 01C110E30h
-        DD 0F38A87Eh
-        DD 01C111C12h
-        DD 01C111EC2h
-        DD 01C111FEEh
+
+
+
+
+
+
+
+
+
+
+
 
         .CODE
 

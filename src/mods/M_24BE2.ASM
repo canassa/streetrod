@@ -7,6 +7,8 @@
 ; font has 9 bytes per glyph: a width byte, then eight row bits.  Returns the
 ; x position reached (the caller passes the field width and the start parity).
 
+        EXTRN   _g_font:BYTE
+
         .CODE
 
         PUBLIC  _F_24BE2
@@ -16,7 +18,7 @@ _F_24BE2  PROC    FAR
         sub     sp,8
         push    si
         push    di
-        mov     ax,0E9Fh
+        mov     ax,SEG _g_font
         mov     es,ax
         mov     ax,320
         sub     ax,[bp+6]

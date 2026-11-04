@@ -138,6 +138,10 @@ Every `.C` includes `GLOBALS.H` and `PROTOS.H` (in `src/include/`, generated fro
 
 The original DGROUP is the modules' `_DATA` in link order: each translation unit's string literals (in parse order) and its initialized globals (flushed after the next function's literals). `./sr dgroup` recovers the owner and the declaration slot of every item from those positions and writes the definitions into the module sources with a `/* DS:xxxx */` marker; `src/data/DGROUP.ASM` only holds what no module owns yet. A module that defines data is gated on it (`datacheck`: base, bytes and every pointer). Overlapping DB names are views, rewritten as `base[i]`; a literal referenced twice at one address is a named array; a unit whose function stops matching once its tables are defined did not own them (MSC's frame layout depends on the number of file-scope definitions), so they go to a data-only unit.
 
+### 4c. Objects and link order come from the relocation table
+
+LINK lists relocations object by object, each data record's fixups in descending offset (MSC; MASM ascending). `orig/SR.EXE`'s packed relocation table therefore shows which units were one object and in which order objects were linked. A far call between two functions proves two files (MSC near-calls every function defined in the same file). `src/link/LAYOUT.JSON` holds the recovered units, `link_order` (written by `./sr dgroup order --write`), `order_hints` with the evidence for each, and the runtime member order. `./sr build --layout` ends with the packed EXE's comparison against `orig/SR.EXE`.
+
 ### 5. The DB comes from the EXE and the CLI
 
 The EXE is the ground truth. `db/sr.sqlite` is derived from it by `./sr scan`, plus what we record through `sr` commands. The scanner also checks complete gaps for prologue-free routines, rejecting gaps that do not partition into bounded reachable code and trailing alignment; review new discoveries before matching them. Never edit the DB or the generated headers by hand, and never edit `docs/PROGRESS.md` (`./sr status` regenerates it).

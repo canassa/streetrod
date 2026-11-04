@@ -1,6 +1,8 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
+int g_53b6[6] = {2, 1, 4, 6, 5, 3};   /* DS:53B6 */
+
 /* F_0B3CA @ 0000:B3CA (linear 0x0B3CA, 91 bytes) */
 
 

@@ -222,7 +222,7 @@ def storage(file,segment,lo,hi,buffers=()):
         '; Real MASM labels preserve the existing typed views; no initializer bytes.',
         "_DATA SEGMENT WORD PUBLIC 'DATA'",'_DATA ENDS',
         f"{segment} SEGMENT {'PARA' if segment=='c_common' else 'WORD'} PUBLIC 'BSS'",
-        f'DGROUP GROUP _DATA,{segment}','BSTART LABEL BYTE']
+        f'DGROUP GROUP _DATA,{segment}','ASSUME DS:DGROUP','BSTART LABEL BYTE']
  for r in rows:
   if lo<=r['off']<hi:
    lines += ['PUBLIC _'+r['name'],f"ORG BSTART+{hx(r['off']-lo)}",'_'+r['name']+' LABEL BYTE ; '+r['decl']]

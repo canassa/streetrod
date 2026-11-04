@@ -34,11 +34,23 @@ REGIONS = [(0x6076, 0x6078, 'int @'), (0x2ee, 0x31e, 'signed char @[24][2]'), (0
            (0x47d1, 0x47d4, 'char @[3]'), (0x4804, 0x4806, 'int @'), (0x496c, 0x4970, 'int @[2]')]
 # Data no C compiler could place (a pointer table at an odd address): assembler-defined,
 # owned by the assembly unit that sits there in the link order.
-FORCE_OWNER = [(0x5580, 0x57F6, 0x0E56A)]
+FORCE_OWNER = [(0x5580, 0x57F6, 0x0E56A),
+               # keyboard/mouse state and tables shared with the assembler keyboard handlers
+               (0x4718, 0x4AFE, 0x02B9A),
+               # driver hook tables: C data of the driver file that follows each assembler
+               # stub (descending relocations in the original: compiler-emitted, not MASM)
+               (0x5B04, 0x5B40, 0x1C2CA), (0x5B8A, 0x5BC6, 0x22364), (0x5BD0, 0x5C0C, 0x22B3A)]
 # Data-only translation units: tables a code unit cannot have held (MSC's frame layout of a
 # unit's functions changes with the number of file-scope definitions; these functions match
 # only without them). Each gets a synthetic unit key above any code address.
-DATA_UNITS = [(0x5EC6, 0x629C, 'src/mods/CARMASKS.C')]
+# File names describe content; the historical names are unknown.
+DATA_UNITS = [(0x09F4, 0x239E, 'src/mods/HOTSPOT.C'),
+              # odd-address ints and arrays, count-prefixed message records: not C-placeable
+              (0x239E, 0x4718, 'src/mods/MESSAGES.ASM'),
+              # MSC emits a global whose address an earlier initializer takes before that
+              # initializer: the table at DS:6078 precedes the second set, so two files
+              (0x5EC6, 0x60A2, 'src/mods/CARMASKS.C'),
+              (0x60A2, 0x629C, 'src/mods/CARMASK2.C')]
 DATA_KEY = 0x100000
 PRINTABLE = set(range(32, 127)) | {9, 10, 13}
 
@@ -67,7 +79,7 @@ def defined_in_sources():
     out = {}
     for path in sorted((config.SRC / 'mods').glob('*.C')):
         text = re.sub(r'/\*.*?\*/', '', path.read_text(errors='replace'), flags=re.S)
-        for m in re.finditer(r'(?m)^(?!extern\b|static\b|#)([A-Za-z_][\w *]*?)\b(g_\w+)\s*((?:\[[^\]]*\]\s*)*)=', text):
+        for m in re.finditer(r'(?m)^(?!extern\b|static\b|#)([A-Za-z_][\w *(]*?)\b(g_\w+)\s*((?:\[[^\]]*\]\s*)*)(?:\)\s*\([^)]*\))?\s*=', text):
             out[m.group(2)] = str(path.relative_to(config.ROOT))
             SOURCE_DECLS[m.group(2)] = (m.group(1) + '@' + m.group(3)).replace(' @', ' @').strip()
     for path in sorted((config.SRC / 'mods').glob('*.ASM')):
@@ -239,6 +251,8 @@ class Analysis:
                 objoff = (int.from_bytes(obj.code[f.pos:f.pos + 2], 'little') + f.disp) & 0xFFFF
                 if any(lo <= objoff < hi for lo, hi in named):
                     continue
+                if objoff >= len(obj.data.get(dseg, b'')):
+                    continue        # below the unit's data (named[i - 1]): not a literal
                 orig = self.im.word(codebase + f.pos)
                 per.setdefault(self.fn_at(codebase + f.pos)['addr'], set()).add((objoff, orig))
             if per:
@@ -672,6 +686,12 @@ class Analysis:
                 taker = next((c for c in cands if any(c in refs.get(it.name, {}) for it in after)), cands[0] if cands else unit)
                 for it in after:
                     it.owner = taker
+        # code order within a segment is fixed: keep each region's units ascending in the
+        # positions they occupy
+        for r, lst in regions.items():
+            slots = [k for k, u in enumerate(placed) if u['region'] == r]
+            for k, u in zip(slots, sorted((placed[k] for k in slots), key=lambda u: u['start'])):
+                placed[k] = u
         self.order = [u['start'] for u in placed]
         targets = {}
         for it in self.items:
@@ -710,6 +730,16 @@ class Analysis:
                 it.owner = last.owner if last else None
             elif it.kind in ('global', 'lit'):
                 last = it
+            if it.kind == 'str' and it.note == 'no pointer names this string' and it.owner is not None \
+                    and self.unit_by[it.owner]['kind'] == 'c' and it.off % 2 == 0:
+                # unreferenced text in a C unit, not a literal of any function: a named array
+                it.kind, it.synth = 'global', True
+                it.name = self.globals[it.off]['name'] if it.off in self.globals else f'g_{it.off:04x}'
+                it.decl = 'char @[]'
+                it.node = dict(kind='array', elem=dict(kind='scalar', name='char', size=1, align=1, ctype='char'),
+                               count=it.size, size=it.size, align=1, dalign=2)
+                it.note = 'unreferenced named string'
+                self.gitems[it.off] = it
         self.goffs2 = sorted(self.gitems)
 
     def _adjacent(self, it, block_lo):
@@ -918,8 +948,51 @@ class Analysis:
         return (f'items {dict(kinds)}; aliases {len(self.aliases)}; orphan strings {len(orphan)}; '
                 f'real gaps {len(gaps)} ({sum(g.size for g in gaps)} bytes); named literals {len(self.named_lits)}')
 
+    def _points_at(self, it, target):
+        try:
+            leaves = list(self.types.leaves(it.node, it.off, it.name))
+        except ValueError:
+            return False
+        for off, node, label in leaves:
+            if node['kind'] == 'pointer' and node['size'] == 2 and self.im.word(self.ds + off) == target.off:
+                return True
+        return False
+
+    def forward_refs(self):
+        """(item, target) where an initializer in a C unit takes the address of a global the
+        same unit defines later: MSC would emit the target first, so the order cannot hold."""
+        out = []
+        owner_of = {it.off: it for it in self.items if it.kind == 'global'}
+        for it in self.items:
+            if it.kind != 'global' or it.owner is None or self.unit_by[it.owner]['kind'] == 'asm':
+                continue
+            if self.unit_by[it.owner]['kind'] == 'data' and self.unit_by[it.owner]['sources'][0].upper().endswith('.ASM'):
+                continue
+            try:
+                leaves = list(self.types.leaves(it.node, it.off, it.name))
+            except ValueError:
+                continue
+            for off, node, label in leaves:
+                if node['kind'] != 'pointer':
+                    continue
+                if node['size'] == 2:
+                    tgt = self.im.word(self.ds + off)
+                elif self.ds + off + 2 in self.im.reloc_pos and self.im.word(self.ds + off + 2) == config.DGROUP_SEG:
+                    tgt = self.im.word(self.ds + off)
+                else:
+                    continue
+                i = bisect.bisect_right(self.goffs2, tgt) - 1
+                if i < 0:
+                    continue
+                g = self.gitems[self.goffs2[i]]
+                if g.owner == it.owner and g.off > it.off:
+                    out.append((it, g))
+        return out
+
     def problems(self):
         lines = [f'{o:04x} named string used as a literal by F_{f:05X} (unit {u:05X})' for u, f, o in self.named_lits]
+        lines += [f'{it.off:04x} {it.name} takes the address of {g.name} (DS:{g.off:04x}), defined later in the same unit '
+                  f'{it.owner:05X}: MSC emits it first; split the unit' for it, g in self.forward_refs()]
         for it in self.items:
             if it.kind == 'str' and it.note:
                 lines.append(f'{it.off:04x} orphan string {self.clit(self.cstring(it.off))[:60]}')
@@ -1017,7 +1090,7 @@ class Analysis:
                 continue
             if it.kind == 'gap':
                 if it.note == 'align':
-                    lines.append('        EVEN')
+                    lines.append(f'        DB 0 ; +{it.off:04X} alignment')
                 else:
                     lines.append(f'        DB {it.size} DUP (0) ; +{it.off:04X}')
                 continue
@@ -1029,8 +1102,6 @@ class Analysis:
                 continue
             if it.node is None:
                 raise ValueError(f'{it!r} has no declaration')
-            if it.node.get('align', 1) == 2:
-                lines.append('        EVEN')
             if label_public:
                 lines.append(f'        PUBLIC _{it.name}')
             lines.append(f'_{it.name} LABEL BYTE ; +{it.off:04X} {it.decl}')
@@ -1099,7 +1170,8 @@ class Analysis:
     def write_dgroup_asm(self, path=config.SRC / 'data/DGROUP.ASM'):
         """The initialized data no C or MASM module owns yet, in original order."""
         converted = {u for u in self.order if self.unit_converted(u)}
-        remaining = [it for it in self.items if it.owner not in converted and it.kind != 'lit']
+        remaining = [it for it in self.items if it.owner not in converted and it.kind != 'lit'
+                     and not (it.kind == 'gap' and it.note == 'align')]   # the owner's compiler aligns
         body, externs = self.masm_lines(remaining)
         own = {ln.split()[0] for ln in body if ' LABEL BYTE' in ln}
         externs = {s: k for s, k in externs.items() if s not in own}
@@ -1134,7 +1206,24 @@ class Analysis:
         return new
 
     def write_order(self):
-        self.plan['link_order'] = self.order
+        order = list(self.order)
+        # relocation-order evidence for objects without data: [units], after
+        for hint in self.plan.get('order_hints', []):
+            units = [int(s, 16) for s in hint['units']]
+            after = int(hint['after'], 16)
+            order = [s for s in order if s not in units]
+            k = order.index(after) + 1
+            order[k:k] = units
+        # hints must not reorder code inside a segment
+        regions = {}
+        for k, s in enumerate(order):
+            u = self.unit_by[s]
+            if u['region'] is not None:
+                regions.setdefault(u['region'], []).append(k)
+        for r, slots in regions.items():
+            for k, s in zip(slots, sorted(order[k] for k in slots)):
+                order[k] = s
+        self.plan['link_order'] = order
         self.plan['data_units'] = [dict(start=DATA_KEY + lo, lo=lo, hi=hi, sources=[src]) for lo, hi, src in DATA_UNITS]
         (config.SRC / 'link/LAYOUT.JSON').write_text(json.dumps(self.plan, indent=2) + '\n')
 
@@ -1142,13 +1231,37 @@ class Analysis:
         """Insert the unit's data definitions into its module sources. Returns {path: text}."""
         u = self.unit_by[ustart]
         changed = {}
+        if u['kind'] == 'data' and u['sources'][0].upper().endswith('.ASM'):
+            items = [it for it in self.items if it.owner == ustart and it.kind != 'lit']
+            body, externs = self.masm_lines(items, label_public=True)
+            own = {ln.split()[0] for ln in body if ' LABEL BYTE' in ln}
+            ext = [f'        EXTRN   {s}:{k}' for s, k in sorted(externs.items()) if s not in own]
+            head = ['        .MODEL MEDIUM', '',
+                    f'; Initialized data DS:{u["lo"]:04X}..{u["hi"]:04X}, recovered from the original layout',
+                    '; (./sr dgroup). Odd-address words and arrays: assembler data, not C definitions.', '',
+                    '        .DATA'] + ext
+            path = config.ROOT / u['sources'][0]
+            changed[path] = '\n'.join(head + body + ['', '        END', ''])
+            if write:
+                path.write_text(changed[path])
+            return changed
         if u['kind'] == 'data':
             lines = ['#include "GLOBALS.H"', '#include "PROTOS.H"', '']
-            for it in self.items:
-                if it.owner == ustart and it.kind not in ('lit', 'str', 'alias'):
-                    text = self.definition(it)
-                    if text:
-                        lines.append(text)
+            own = [it for it in self.items if it.owner == ustart and it.kind not in ('lit', 'str', 'alias')]
+            # a definition that points at the item just before it was written first in the
+            # original: MSC then emits the earlier item at the reference, in a record of its
+            # own (the original relocation table shows one run per such item)
+            k = 0
+            while k + 1 < len(own):
+                if own[k].kind == 'global' and own[k + 1].kind == 'global' and self._points_at(own[k + 1], own[k]):
+                    own[k], own[k + 1] = own[k + 1], own[k]
+                    k += 2
+                else:
+                    k += 1
+            for it in own:
+                text = self.definition(it)
+                if text:
+                    lines.append(text)
             path = config.ROOT / u['sources'][0]
             changed[path] = '\n'.join(lines) + '\n'
             if write:
@@ -1229,7 +1342,7 @@ class Analysis:
         while i < len(lines):
             ln = lines[i]
             if ln and (ln[0].isalpha() or ln[0] == '_') and not ln.lstrip().startswith(('static', 'extern')) \
-                    and '(' not in ln.split('=')[0] and _marked(lines, i, pat):
+                    and '=' in ln and _marked(lines, i, pat):
                 # statement runs to the first ';' outside quotes/braces
                 depth, inq, j = 0, False, i
                 done = False

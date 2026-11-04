@@ -65,6 +65,12 @@ void F_0F4B7(int i, int *x1, int *y1, int *x2, int *y2)
     *y1 = (g_vid.mode == -2 || g_58e4 ? 0 : 100) - g_2e47_0000[0][i][1] + 0x2a;
     *x2 = g_2e47_0000[1][i][0] + 0xc4;
     *y2 = (g_vid.mode == -2 || g_58e4 ? 0 : 100) - g_2e47_0000[1][i][1] + 0x2a;
+    /* PROVISIONAL: the original CONST holds two more SEG constants for the track segment
+       (DS:68E6 with this function's, DS:68E8 later) that no instruction reads: MSC leaves
+       them behind for unreachable far accesses to two other far symbols. The statements and
+       symbol names are not recoverable; these keep the bytes and the relocation order. */
+    return;
+    { extern char far x_trk0[][2]; *x1 = x_trk0[i][0]; }
 }
 
 /* F_0F552 @ 0F38:01D2 (linear 0x0F552, 220 bytes) */
@@ -106,6 +112,9 @@ void F_0F62E(int i, int *x1, int *y1, int *x2, int *y2)
     *y1 = (g_vid.mode == -2 || g_58e4 ? 0 : 100) - g_2e47_0000[0][i][1] + 0x2a;
     *x2 = g_2e47_0000[1][i][0] + 0x91;
     *y2 = (g_vid.mode == -2 || g_58e4 ? 0 : 100) - g_2e47_0000[1][i][1] + 0x2a;
+    /* PROVISIONAL: second unreachable far access, see F_0F4B7. */
+    return;
+    { extern char far x_trk1[][2]; *x2 = x_trk1[i][0]; }
 }
 
 /* F_0F6C9 @ 0F38:0349 (linear 0x0F6C9, 220 bytes) */

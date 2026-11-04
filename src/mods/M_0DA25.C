@@ -84,7 +84,7 @@ void F_0DA25(void)
     if (g_7d7c == 0 && g_7d34 > 1) {
         g_54d8++;
         if (g_78e0.f2 < 0) {
-            if (g_ter4570[g_7d30] - g_ter4570[g_7d30 + 1] >= 0 || ((g_70c0 + g_7d2e) >> 1) >= g_7d36) {
+            if (g_terrain2[g_7d30] - g_terrain2[g_7d30 + 1] >= 0 || ((g_70c0 + g_7d2e) >> 1) >= g_7d36) {
                 F_16C8F();
                 if (g_54d2 == 0) {
                     g_7e8a--;

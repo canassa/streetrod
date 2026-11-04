@@ -9,11 +9,11 @@
 
 void F_27B6D(int n)
 {
-    g_72ee = &g_ter33f0[n];
-    g_8634 = &g_ter3cb0[n];
-    g_7d62 = &g_ter4e30[n];
-    g_7880 = &g_ter56f0[n];
-    g_7560 = &g_ter4570[n];
+    g_72ee = &g_terrain0[n];
+    g_8634 = &g_terrain1[n];
+    g_7d62 = &g_terrain3[n];
+    g_7880 = &g_terrain4[n];
+    g_7560 = &g_terrain2[n];
 }
 
 /* F_27BBF @ 2645:176F (linear 0x27BBF, 66 bytes) */
@@ -387,15 +387,15 @@ int F_284BB(void)
     g_5e0e = 0;
     if (g_7d82 - 0x104 < g_7d36 - 0x1e && g_7d36 + 0x46 < g_8bd0 + 0x104) {
         if (g_7d82 > g_7d36 - 0x1e) {
-            if ((g_ter33f0[g_7d30] & 0x1000) || (g_ter33f0[g_7d30 - 1] & 0x1000))
+            if ((g_terrain0[g_7d30] & 0x1000) || (g_terrain0[g_7d30 - 1] & 0x1000))
                 return 1;
-            if (g_ter4e30[g_7d30 + 1] & 0xf000)
+            if (g_terrain3[g_7d30 + 1] & 0xf000)
                 return 1;
             g_5e0e = 1;
         } else if (g_7d36 + 0x46 > g_8bd0) {
-            if ((g_ter3cb0[g_7d30] & 0x1000) || (g_ter3cb0[g_7d30 - 1] & 0x1000))
+            if ((g_terrain1[g_7d30] & 0x1000) || (g_terrain1[g_7d30 - 1] & 0x1000))
                 return 1;
-            if (g_ter4e30[g_7d30 + 1] & 0xf002)
+            if (g_terrain3[g_7d30 + 1] & 0xf002)
                 return 1;
             g_5e0e = 1;
         }
@@ -453,11 +453,11 @@ void F_2858D(void)
         g_7d32 += g_7d34;
         if (g_7d32 >= 8)
             F_2834C();
-        if ((g_ter33f0[g_7d30 + 7] & 1) || g_5e12) {
+        if ((g_terrain0[g_7d30 + 7] & 1) || g_5e12) {
             g_5e12 = 1;
             F_28576(1);
         }
-        if ((g_ter3cb0[g_7d30 + 6] & 1) || g_5e10) {
+        if ((g_terrain1[g_7d30 + 6] & 1) || g_5e10) {
             F_28576(-1);
             g_5e10 = 1;
         }

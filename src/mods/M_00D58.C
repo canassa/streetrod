@@ -48,17 +48,6 @@ char *g_060e = "disk ? is write protected";   /* DS:060E */
 int g_0610 = 0;   /* DS:0610 */
 int g_0612 = 0;   /* DS:0612 */
 
-/* F_00D58 @ 0000:0D58 (linear 0x00D58, 32 bytes) */
-
-
-void F_00D58(void)
-{
-    F_193D4();
-    g_pages.list = 0;
-    g_051c = 0;
-    F_13F21(1);
-}
-
 /* F_00D78 @ 0000:0D78 (linear 0x00D78, 33 bytes) */
 
 
@@ -392,6 +381,11 @@ int g_06b2 = 0;   /* DS:06B2 */
 int g_06b4[22] = {-1, 0, -1, 0, 1, 1, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 0, 0, 2};   /* DS:06B4 */
 char g_06e0 = 0;   /* DS:06E0 */
 int g_06e2 = 1;   /* DS:06E2 */
+int g_06e4 = 0;   /* DS:06E4 */
+int g_06e6 = 0;   /* DS:06E6 */
+char g_06e8 = 0;   /* DS:06E8 */
+char g_06e9 = 0;   /* DS:06E9 */
+char g_06ea = 0;   /* DS:06EA */
 
 /* F_01417 @ 0000:1417 (linear 0x01417, 1068 bytes) */
 

@@ -191,7 +191,7 @@ static void near F_0D29D(void)
     _enable();
     r = &g_79e2.gear[g_79e2.f18].r[g_6cb8];
     for (i5 = 0; i5 < ticks; i5++) {
-        if (g_ter4570[g_7e8a] != g_ter4570[g_7e8a + 1]) {
+        if (g_terrain2[g_7e8a] != g_terrain2[g_7e8a + 1]) {
             if (g_54d6 == 0) {
                 g_54d6 = 1;
                 vl = g_6cac - (g_7e8a > g_7d30 ? g_7d84->f2 : g_7d84->f2 >> 1);

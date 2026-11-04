@@ -58,7 +58,7 @@ def prepare():
         jobs.append(dict(stem=stem, source=filename, program='MASM',
                          args=['/Ml', f'{filename},{stem}.OBJ,{stem}.LST;']))
         return stem+'.OBJ'
-    sequence += [assembly(config.SRC/'link'/name) for name in ('GBSS.ASM', 'GCOMMON.ASM')]
+    sequence.append(assembly(config.SRC/'link'/'GBSS.ASM'))
     order = plan.get('link_order')
     units = plan['units'] + [dict(d, kind='data') for d in plan.get('data_units', [])]
     if order:
@@ -67,6 +67,9 @@ def prepare():
     regions = sorted(plan['code_starts'])
     first_seen = set()
     for unit in units:
+        if unit['kind'] == 'data' and unit['sources'][0].upper().endswith('.ASM'):
+            sequence.append(assembly(config.ROOT / unit['sources'][0], f"D_{unit['lo']:05X}.ASM"))
+            continue
         if unit['kind'] == 'data':
             # a data-only translation unit: compiled, linked at its place, no code gate
             src = config.ROOT / unit['sources'][0]
@@ -129,11 +132,23 @@ def prepare():
             (OUT/'RUNTIME'/filename).write_bytes(raw)
     for name in ('SCREENS', 'TRACKPTS', 'SCRATCH', 'SONG', 'EFFECTS', 'SCREEN2', 'PARTS1', 'PARTS2'):
         sequence.append(assembly(config.SRC/'data'/(name+'.ASM')))
-    sequence += ['RUNTIME\\'+name for name, _ in archives['emulator']]
-    sequence.append(assembly(config.SRC/'data/SLOTS.ASM'))
+    # SLOTS is far communal storage (src/data/SLOTS.C): LINK places FAR_BSS after the
+    # library objects, so the emulator follows its first reference inside the runtime
+    slots = 'SLOTS.OBJ'
+    (OUT/'SLOTS.C').write_text((config.SRC/'data/SLOTS.C').read_text())
+    jobs.append(dict(stem='SLOTS', source='SLOTS.C', program='CL',
+                     args=['/c', '/W3', *config.DEFAULT_FLAGS.split(), 'SLOTS.C']))
+    sequence.append(slots)
     sequence.append(assembly(config.SRC/'data/DGROUP.ASM'))
     next(job for job in jobs if job['stem'] == 'DGROUP')['args'].insert(0, '/DORIGINAL_LAYOUT')
-    sequence += ['RUNTIME\\'+name for name, _ in archives['runtime']]
+    runtime = ['RUNTIME\\'+name for name, _ in archives['runtime']]
+    # the original links EM.LIB's objects right after fltused (relocation order)
+    k = next(i for i, r in enumerate(plan['runtime']) if r['member'].endswith('fltused.ASM')) + 1
+    runtime[k:k] = ['RUNTIME\\'+name for name, _ in archives['emulator']]
+    sequence += runtime
+    # LINK creates the communal segment c_common after every declared segment, so it
+    # follows crt0's XOB/XO/XOE markers; the explicit storage goes after the runtime objects
+    sequence.append(assembly(config.SRC/'link'/'GCOMMON.ASM'))
     response = '+\n'.join(sequence)+'\nSR.EXE\nSR.MAP\n\n;\n'
     (OUT/'LINK.RSP').write_bytes(response.replace('\n', '\r\n').encode())
     env = ['@echo off', 'set PATH=D:\\BIN;F:\\BIN', 'set INCLUDE=E:\\;D:\\INCLUDE;F:\\INCLUDE',
@@ -199,6 +214,10 @@ def run(prepare_only=False, objects_only=False):
         return 1
     if objects_only:
         return 0
+    # the shipped file is EXEPACK-packed by LINK: build it first, then the unpacked file
+    # the diagnostics read
+    if build.link(OUT, options=('/NOD', '/MAP', '/STACK:2560', '/EXEPACK')):
+        (OUT/'SR.EXE').replace(OUT/'SRPACKED.EXE')
     ok = build.link(OUT, options=('/NOD', '/MAP', '/STACK:2560'))
     build.link_report(OUT)
     if not ok:
@@ -208,4 +227,10 @@ def run(prepare_only=False, objects_only=False):
     # A successful build remains usable while the unmasked comparison is red.
     # linkcheck itself fails until the entire file is identical.
     check(OUT/'SR.EXE')
+    packed, shipped = OUT/'SRPACKED.EXE', config.EXE_PACKED
+    if packed.exists():
+        a, b = packed.read_bytes(), shipped.read_bytes()
+        diff = sum(x != y for x, y in zip(a, b)) + abs(len(a) - len(b))
+        print(f'Packed EXE vs {shipped.relative_to(config.ROOT)}: '
+              + ('IDENTICAL' if diff == 0 else f'{diff} differing bytes (size {len(a)} vs {len(b)})'))
     return 0

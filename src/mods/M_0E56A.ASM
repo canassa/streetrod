@@ -13,6 +13,30 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         ; data (recovered DGROUP layout)
         PUBLIC _g_5580
 _g_5580 LABEL BYTE ; +5580 unsigned char @[543]
@@ -559,7 +583,6 @@ _g_5580 LABEL BYTE ; +5580 unsigned char @[543]
         DB 032h
         DB 0A6h
         DB 00h
-        EVEN
         PUBLIC _g_579f
 _g_579f LABEL BYTE ; +579F struct KeyMap *@[]
         DW 42
@@ -605,7 +628,7 @@ _g_579f LABEL BYTE ; +579F struct KeyMap *@[]
         DW OFFSET DGROUP:_g_5580+524
         DW OFFSET DGROUP:_g_5580+533
         DW OFFSET DGROUP:_g_5580+540
-        EVEN
+        DB 0 ; +57F5 alignment
 
         .CODE
 

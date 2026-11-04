@@ -86,6 +86,9 @@ int F_0E5C3(void);                                      /* 0x0E5C3 */
 void far F_0E5D2(void);                                 /* 0x0E5D2 */
 void F_0E610(void);                                     /* 0x0E610 */
 void F_0E62F(void);                                     /* 0x0E62F */
+void far F_0E6C2();                                     /* 0x0E6C2 */
+void far F_0E781();                                     /* 0x0E781 */
+void far F_0E835();                                     /* 0x0E835 */
 void F_0E926(char far *src, char far *dst, int len, unsigned char *pal, int n);/* 0x0E926 */
 void F_0F4B7(int i, int *x1, int *y1, int *x2, int *y2);/* 0x0F4B7 */
 void F_0F552(int i);                                    /* 0x0F552 */
@@ -93,6 +96,8 @@ void F_0F62E(int i, int *x1, int *y1, int *x2, int *y2);/* 0x0F62E */
 void F_0F6C9(int v);                                    /* 0x0F6C9 */
 int F_0F7A5(int cur, int old, int flag);                /* 0x0F7A5 */
 void F_0F972(void);                                     /* 0x0F972 */
+void far F_0FEAD(void);                                 /* 0x0FEAD */
+void far F_0FEBF(void);                                 /* 0x0FEBF */
 void F_0FED1(int n);                                    /* 0x0FED1 */
 void F_0FF70(void);                                     /* 0x0FF70 */
 void F_100E2(void);                                     /* 0x100E2 */
@@ -271,6 +276,8 @@ void F_1C803(struct Bitmap far *bm, int a, int b, int x1, int y1, int x2, int y2
 void F_1CEE7(char far *src, char far *dst);             /* 0x1CEE7 */
 void F_1CF40(char far *dst, char far *src);             /* 0x1CF40 */
 void F_1D05B(int page);                                 /* 0x1D05B */
+void far F_1D080(void);                                 /* 0x1D080 */
+void far F_1D0A4(void);                                 /* 0x1D0A4 */
 void F_1D195(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *bm3, struct Blt *r);/* 0x1D195 */
 void F_1D262(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int flag);/* 0x1D262 */
 void F_1D3C8(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int flags);/* 0x1D3C8 */
@@ -286,6 +293,7 @@ void F_21A14(int line);                                 /* 0x21A14 */
 void F_21C0B(struct Bitmap far *dst, struct Bitmap far *src, struct Bitmap far *mask, struct Blt *in);/* 0x21C0B */
 void F_21D58(struct Bitmap far *a, struct Bitmap far *b, struct Blt *in, int flag);/* 0x21D58 */
 void F_21EAB(struct Bitmap far *a, struct Bitmap far *b, struct Blt *r, int flags);/* 0x21EAB */
+void far F_221AC(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *blt);/* 0x221AC */
 void F_22352(void);                                     /* 0x22352 */
 void F_22364(struct Bitmap far *bm, int x, int y, int glyph);/* 0x22364 */
 void F_2244F(struct Bitmap far *bm, int from, int to, int x1, int y1, int x2, int y2);/* 0x2244F */
@@ -303,11 +311,16 @@ void F_234E9(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *
 void F_236D5(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int flag);/* 0x236D5 */
 void F_2382D(char far *src, int w, int h, char far *dst, int pitch);/* 0x2382D */
 void F_23C3B(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r);/* 0x23C3B */
+void far line_ega();                                    /* 0x23DBC */
+int far F_23FD9(struct Sprite *s);                      /* 0x23FD9 */
+void far F_242EC(int top, int bottom, int x, int y0, int y1, struct Bitmap far *bm);/* 0x242EC */
 int F_24602(char *s, char far *p, unsigned n);          /* 0x24602 */
 void F_2467A(char far *src, char far *dst, unsigned n, unsigned char *pal);/* 0x2467A */
 void F_24740(char far *src, char far *dst, unsigned n, unsigned char *pal);/* 0x24740 */
 void F_24849(char far *bits, char far *alt, unsigned n);/* 0x24849 */
+void far F_2487A();                                     /* 0x2487A */
 void fill_span_clipped(int x1, int x2, int y, int color);/* 0x24AC7 */
+void far F_24B79();                                     /* 0x24B79 */
 int F_24BE2(int x, int glyph, char *buf, int c1, int c2);/* 0x24BE2 */
 void F_24CAB(char *buf, unsigned seg, unsigned off, int y, int h, int m, int ph, int n);/* 0x24CAB */
 void F_24D84(char far *src, char far *dst, int width, int rows, int src_skip, int dst_skip, int row);/* 0x24D84 */
@@ -320,6 +333,8 @@ void F_2634A(char far *dst, unsigned seg, int off, int off2, int pitch1, int w, 
 void F_26401(char far *bits, char far *alt, unsigned n);/* 0x26401 */
 void F_26458(void);                                     /* 0x26458 */
 void F_2646D(void);                                     /* 0x2646D */
+void far F_26484();                                     /* 0x26484 */
+void far F_26537();                                     /* 0x26537 */
 void F_26FE1(int n);                                    /* 0x26FE1 */
 void F_27198(void);                                     /* 0x27198 */
 void F_27B6D(int n);                                    /* 0x27B6D */
