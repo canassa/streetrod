@@ -187,7 +187,7 @@ LINK lists relocations object by object, each data record's fixups in descending
 
 ### 4d. The compiler budget: global symbols are load-bearing
 
-MSC 5.1's code generator degrades (fewer loop register variables, other temps) once the external symbols referenced so far in a file exceed a budget measured in symbols plus name characters. A function can match alone and fail in its real file. External functions, external data, communals and the file's own static functions (their names too) count; locals, static variables, prototypes, literals and initialized data do not. Folding globals into the structs/arrays they were (with code evidence: a run-time `a - b` between two addresses or a direct `g[i]` index proves separate symbols) is how the original files stayed under it. `./sr build` must stay IDENTICAL against `orig/SR.EXE`.
+MSC 5.1's code generator degrades (fewer loop register variables, other temps) once the external symbols referenced so far in a file exceed a budget measured in symbols plus name characters. A function can match alone and fail in its real file. External functions, external data, communals and the file's own statics (static functions and the static variables it references, names included) count; locals, prototypes, literals and initialized data do not. Folding globals into the structs/arrays they were (with code evidence: a run-time `a - b` between two addresses or a direct `g[i]` index proves separate symbols) is how the original files stayed under it. `./sr build` must stay IDENTICAL against `orig/SR.EXE`.
 
 ### 4e. Uninitialized storage is communal, and LINK's hash fixes the names
 

@@ -45,7 +45,7 @@ static int g_6dd4;                         /* DS:6DD4 */
 static struct Bitmap far *g_6dd6;          /* DS:6DD6 */
 static struct Bitmap far *g_6dda;          /* DS:6DDA */
 static struct Bitmap far *g_6dde;          /* DS:6DDE */
-static struct Bitmap far *g_6de2a[4];      /* DS:6DE2 */
+static struct Bitmap far *g_tireFrames[4];      /* DS:6DE2 */
 static struct Bitmap far *g_6df2a;         /* DS:6DF2 */
 static struct Bitmap far *g_6df6a;         /* DS:6DF6 */
 static struct Bitmap far *g_6dfa7;         /* DS:6DFA */
@@ -111,12 +111,12 @@ static void near swap_wheel(int a, int *p, int *q)
     g_6d38 = F_15BBE(0x4d2, 1);
     g_6cf0zz = F_15BBE(*p, 1);
     g_6d3eaas = a & ~r_vid.mask;
-    g_6de2a[0] = F_1934E(g_6cf0zz->width + 8, g_6cf0zz->height, 1, 1);
-    bitmap_shift_right(g_6cf0zz, g_6d3eaas, g_6de2a[0]);
-    g_6df2a = F_1934E(g_6de2a[0]->width, g_6de2a[0]->height, 1, 1);
-    bitmap_copy(g_6de2a[0], g_6df2a, 3);
-    g_6ce6sz = g_6de2a[0]->height - g_6d38->height;
-    bitmap_underlay(g_6d38, g_6de2a[0], g_6d3eaas, g_6ce6sz);
+    g_tireFrames[0] = F_1934E(g_6cf0zz->width + 8, g_6cf0zz->height, 1, 1);
+    bitmap_shift_right(g_6cf0zz, g_6d3eaas, g_tireFrames[0]);
+    g_6df2a = F_1934E(g_tireFrames[0]->width, g_tireFrames[0]->height, 1, 1);
+    bitmap_copy(g_tireFrames[0], g_6df2a, 3);
+    g_6ce6sz = g_tireFrames[0]->height - g_6d38->height;
+    bitmap_underlay(g_6d38, g_tireFrames[0], g_6d3eaas, g_6ce6sz);
     if (r_vid.mode == -2)
         (*dz78b6)(g_videoPageBms[0]->bits.p, g_videoPageBms[1]->bits.p);
     g_6ce8rz.x1 = 0;
@@ -127,7 +127,7 @@ static void near swap_wheel(int a, int *p, int *q)
     sprite_set_step(g_6d3caat, 0, 8, 0, 1);
     while ((*g78c6c)(g_6d3caat)) {
         if (g_6d3caat->y == 0x7d)
-            *g_6df2a = *g_6de2a[0];
+            *g_6df2a = *g_tireFrames[0];
         F_10AFD(3);
     }
     if (r_vid.mode == -2)
@@ -136,16 +136,16 @@ static void near swap_wheel(int a, int *p, int *q)
         g_6da2 = (i * 2 + g_6d3eaas) & ~r_vid.mask;
         if (g_6da2) {
             g_6cf0zz = F_15BBE(p[i], 2);
-            g_6de2a[4 - i] = F_1934E(g_6cf0zz->width + 8, g_6cf0zz->height, 1, 1);
-            bitmap_shift_right(g_6cf0zz, g_6da2, g_6de2a[4 - i]);
+            g_tireFrames[4 - i] = F_1934E(g_6cf0zz->width + 8, g_6cf0zz->height, 1, 1);
+            bitmap_shift_right(g_6cf0zz, g_6da2, g_tireFrames[4 - i]);
             F_19438(1);
         } else
-            g_6de2a[4 - i] = F_15BBE(p[i], 1);
-        bitmap_underlay(g_6d38, g_6de2a[4 - i], g_6da2, g_6ce6sz);
+            g_tireFrames[4 - i] = F_15BBE(p[i], 1);
+        bitmap_underlay(g_6d38, g_tireFrames[4 - i], g_6da2, g_6ce6sz);
     }
     i = 4;
-    g_6d3caat = sprite_setup(a, 0x9b, g_6de2a, 0, 4, g_5ab4, g_6d24ajz, 0, 0);
-    sprite_set_step(g_6d3caat, 0, (a + g_6de2a[0]->width) >> 1, -2, 0);
+    g_6d3caat = sprite_setup(a, 0x9b, g_tireFrames, 0, 4, g_5ab4, g_6d24ajz, 0, 0);
+    sprite_set_step(g_6d3caat, 0, (a + g_tireFrames[0]->width) >> 1, -2, 0);
     F_168C8(1);
     while ((*g78c6c)(g_6d3caat))
         F_10AFD(2);
@@ -153,28 +153,28 @@ static void near swap_wheel(int a, int *p, int *q)
     marks_pop_low(6);
     if (r_vid.mode == -2)
         (*dz78b6)(g_videoPageBms[0]->bits.p, g_videoPageBms[1]->bits.p);
-    g_6de2a[0] = F_15BBE(*q, 1);
+    g_tireFrames[0] = F_15BBE(*q, 1);
     g_6d3eaas = ((unsigned char)a & 7) >> 1;
     for (i = 1; i < 4; i++) {
         g_6da2 = (i * 2) & ~r_vid.mask;
         if (g_6da2) {
             g_6cf0zz = F_15BBE(q[i], 2);
-            g_6de2a[i] = F_1934E(g_6cf0zz->width + 8, g_6cf0zz->height, 1, 1);
-            bitmap_shift_right(g_6cf0zz, g_6da2, g_6de2a[i]);
+            g_tireFrames[i] = F_1934E(g_6cf0zz->width + 8, g_6cf0zz->height, 1, 1);
+            bitmap_shift_right(g_6cf0zz, g_6da2, g_tireFrames[i]);
             F_19438(1);
         } else
-            g_6de2a[i] = F_15BBE(q[i], 1);
+            g_tireFrames[i] = F_15BBE(q[i], 1);
     }
     for (i = 0; i < 4; i++) {
         if (i == g_6d3eaas) {
-            g_6df2a = F_1934E(g_6de2a[i]->width, g_6de2a[i]->height, 1, 1);
-            bitmap_copy(g_6de2a[i], g_6df2a, 3);
+            g_6df2a = F_1934E(g_tireFrames[i]->width, g_tireFrames[i]->height, 1, 1);
+            bitmap_copy(g_tireFrames[i], g_6df2a, 3);
         }
-        bitmap_underlay(g_6d38, g_6de2a[i], (i * 2) & ~r_vid.mask, g_6ce6sz);
+        bitmap_underlay(g_6d38, g_tireFrames[i], (i * 2) & ~r_vid.mask, g_6ce6sz);
     }
     i = 4;
-    g_6d3caat = sprite_setup(-g_6de2a[0]->width, 0x9b, g_6de2a, 0, 4, g_5ab4, g_6d24ajz, 0, 0);
-    sprite_set_step(g_6d3caat, 0, (a + g_6de2a[0]->width >> 1) + 1, 2, 0);
+    g_6d3caat = sprite_setup(-g_tireFrames[0]->width, 0x9b, g_tireFrames, 0, 4, g_5ab4, g_6d24ajz, 0, 0);
+    sprite_set_step(g_6d3caat, 0, (a + g_tireFrames[0]->width >> 1) + 1, 2, 0);
     F_168C8(1);
     while ((*g78c6c)(g_6d3caat))
         F_10AFD(2);
@@ -185,11 +185,11 @@ static void near swap_wheel(int a, int *p, int *q)
     g_6ce8rz.y1 = 0;
     g_6ce8rz.x2 = g_6d2c0nz->width - 1;
     g_6ce8rz.y2 = g_6d2c0nz->height + g_spriteBgY - 1;
-    g_6d3caat = sprite_setup(a, 0x9b, &g_6de2a[g_6d3eaas], 0, 1, g_5ab0, g_6d2c0nz, &g_6ce8rz, 0);
+    g_6d3caat = sprite_setup(a, 0x9b, &g_tireFrames[g_6d3eaas], 0, 1, g_5ab0, g_6d2c0nz, &g_6ce8rz, 0);
     sprite_set_step(g_6d3caat, 0, 8, 0, -1);
     while ((*g78c6c)(g_6d3caat)) {
         if (g_6d3caat->y == 0x7d)
-            *g_6de2a[g_6d3eaas] = *g_6df2a;
+            *g_tireFrames[g_6d3eaas] = *g_6df2a;
         F_10AFD(3);
     }
     marks_pop_low(6);
@@ -401,14 +401,14 @@ void F_1B213(int *a, int *b)
         (*b_78a2)(r_vid.front, g_5ab4, &blt, 1);
     swap_wheel(g_6da0 + g_6cd8lz, a, b);
     g_spriteBgY = (r_vid.mode == -6) ? 0x92 - g_6df6a->height : 0;
-    g_6de2a[0] = F_15BBE(*b, 1);
+    g_tireFrames[0] = F_15BBE(*b, 1);
     blt.w = g_6df6a->width;
-    blt.h = g_6de2a[0]->height;
-    blt.dy = g_6df6a->height - g_6de2a[0]->height;
+    blt.h = g_tireFrames[0]->height;
+    blt.dy = g_6df6a->height - g_tireFrames[0]->height;
     blt.sx = blt.sy = blt.dx = 0;
     (*b_78a2)(g_6dd6, g_6df6a, &blt, 3);
-    bitmap_underlay(g_6de2a[0], g_6df6a, g_6dd4, ybot);
-    bitmap_underlay(g_6de2a[0], g_6df6a, g_6cd8lz, ybot);
+    bitmap_underlay(g_tireFrames[0], g_6df6a, g_6dd4, ybot);
+    bitmap_underlay(g_tireFrames[0], g_6df6a, g_6cd8lz, ybot);
     if (r_vid.mode == -2)
         (*dz78b6)(g_videoPageBms[0]->bits.p, g_videoPageBms[1]->bits.p);
     frame = 2;
