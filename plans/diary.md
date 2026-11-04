@@ -677,3 +677,15 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - MASM 5.1's `.MODEL` declares the default code segment immediately (`FILE_TEXT` for MEDIUM, `_TEXT` for SMALL), so the model line alone fixes segment order at that point of the link. The EXE only proves that some object in that window declared `_TEXT`; a full-segment-directive header is also IDENTICAL, so the exact directive form is not recoverable.
+
+## 2026-11-04 15:00 CET: The faithful build is the build
+
+### What I did
+- Retired the legacy `./sr build` (work/game: renamed G0..G3 code segments, staging edits, `.STB` near-declaration harvesting, `/NOD` with component libraries; it no longer linked). `./sr build` runs the layout build (`--layout` is an alias); build.py keeps `run_dos`, `link`, `link_report`, `header_deps`; the Makefile drives the layout build; test_build checks the generated MAKEFILE, BUILD.BAT and LINK.RSP.
+- Removed the empty `src/data/DGROUP.ASM` from the link and the repo (still IDENTICAL); `./sr dgroup asm` only reports unowned data. Deleted the unused `src/data/SLOTS.ASM` and the obsolete `tools/scripts/reconstruct_data.py` and `inspect_layout_data.py`.
+- README.md and src/data/README.md describe the faithful build; dosbox.sh mounts the prepared tree.
+- Ran the prepared tree natively in DOSBox-X: `BUILD.BAT` and `MAKE MAKEFILE` (MAKE 4.07) each produce an SR.EXE identical to orig/SR.EXE, with no host tooling involved.
+- Result: `./sr build` IDENTICAL from an empty work dir, `./sr check --all` 572/572, tests OK.
+
+### What I learned
+- The last, empty `_DATA` contribution had no effect on segment order. The generated DOS tree is a complete 1988-tools build (C: work/layout, D: msc51, E: its INCLUDE, F: masm51).
