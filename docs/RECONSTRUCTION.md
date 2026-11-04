@@ -227,7 +227,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **ViewPages** (`g_viewPages`, DS:5E3E..5E41): flip_page swaps draw and show page indices together and select_draw_page consumes the pair. The preceding unused word stays separate. Separate globals also match; this grouping is a natural reconstruction choice.
 
-- **RivalPace** (`g_rivalPace`, DS:6CAC..6CB5): init_rival_eng and cop_appears derive the fast/slow speeds from the top speed; rival_accelerate consumes those targets, lead and shift penalty together. The target lane, RPM band and shift point remain separate. Separate globals also match; this grouping is a natural reconstruction choice.
+- **RivalPace** (`g_rivalPace`, DS:6CAC..6CB3): race_reset_eng and cop_appears derive fast and slow speeds from the top speed; rival_accelerate selects those targets or the player speed plus speedMargin. Shift penalty (`g_shiftPenalty`, DS:6CB4), shift point, target lane and RPM band stay separate. Separate globals also match; the speed-target record is a natural reconstruction choice.
 
 - **WheelBackdrop** (`g_wheelBackdrop`, DS:6C22..6C33): dash_load_wheel chooses each saved wheel page and its Y coordinate together, and dash_draw_wheel reads both to restore the same rectangle. Shifter state remains separate. Separate globals also match; this grouping is a natural reconstruction choice.
 

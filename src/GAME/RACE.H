@@ -6,10 +6,9 @@
 
 struct RivalPace {
     int topSpeed;
-    int lead;
+    int speedMargin;
     int fastSpeed;
     int slowSpeed;
-    int shiftPenalty;
 };
 
 struct GasInteraction {

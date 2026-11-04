@@ -59,6 +59,7 @@ static int near replace_tires(void);
 static void near show_ticket(void);
 static int g_finishLineIndex;                       /* DS:6CAA */
 static struct RivalPace g_rivalPace; /* DS:6CAC */
+static int g_shiftPenalty; /* DS:6CB4 */
 static int g_targetLane;                         /* DS:6CB6 */
 static int g_rpmBand;                         /* DS:6CB8 */
 static int g_shiftPoint;                         /* DS:6CBA */
@@ -943,7 +944,7 @@ nx:
     g_rivalPace.topSpeed = perf_vmax(bn7648);
     g_rivalPace.slowSpeed = (int)(g_rivalPace.topSpeed * 0.7);
     g_rivalPace.fastSpeed = (int)(g_rivalPace.topSpeed * 0.8);
-    g_rivalPace.lead = bu8acc < 4 ? 10 : 16;
+    g_rivalPace.speedMargin = bu8acc < 4 ? 10 : 16;
     g_bumpAlternate = 0;
     g_statsDone = 0;
 }
@@ -955,7 +956,7 @@ static void near init_rival_eng(void)
     struct Range *r;
 
     perf_drivetrain_spec(bn7648, &g_oppEngState);
-    g_rivalPace.shiftPenalty = g_selectedRacerPointer->shiftPenalty;
+    g_shiftPenalty = g_selectedRacerPointer->shiftPenalty;
     race_reset_eng(&g_oppEngState);
     g_oppEngState.gearIndex = 0;
     g_oppEngState.rpmPerSpeed = g_oppEngState.f34[0];
@@ -971,7 +972,7 @@ static void near init_rival_eng(void)
     g_oppEngState.rpmBand = g_rpmBand;
     g_oppEngState.maxRpm = r->maxRpm;
     g_oppEngState.accelStep = r->accelStep;
-    g_shiftPoint = g_oppEngState.autoSelector ? 0x14b4 : g_oppEngState.shiftRpm - 100 * g_rivalPace.shiftPenalty;
+    g_shiftPoint = g_oppEngState.autoSelector ? 0x14b4 : g_oppEngState.shiftRpm - 100 * g_shiftPenalty;
     ar7e8av.roadIndex = 200;
     ar7e8av.roadFraction = 0;
     g_targetLane = ar7e8av.lateralX = ((al70c0x.leftEdge + ao7d2ev.rightEdge) >> 1) - 200;
@@ -1089,7 +1090,7 @@ static void near rival_accelerate(void)
                 continue;
             }
         } else if (d > -5 && d < 5) {
-            vl = g_driveEng.speed + g_rivalPace.lead;
+            vl = g_driveEng.speed + g_rivalPace.speedMargin;
             if (ao7d2ev.roadIndex >= 30 && vl < g_rivalPace.slowSpeed)
                 vl = g_rivalPace.slowSpeed;
             goto chk;
@@ -1109,7 +1110,7 @@ static void near rival_accelerate(void)
                 ((g_oppEngState.autoSelector && g_oppEngState.rpm >= g_oppEngState.autoShiftRpm) || g_oppEngState.rpm >= g_shiftPoint)) {
                 g_oppEngState.gearIndex++;
                 if (g_oppEngState.autoSelector == 0)
-                    g_shiftPoint = g_oppEngState.gearIndex < g_oppEngState.gearCount ? g_oppEngState.shiftRpm - 100 * g_rivalPace.shiftPenalty
+                    g_shiftPoint = g_oppEngState.gearIndex < g_oppEngState.gearCount ? g_oppEngState.shiftRpm - 100 * g_shiftPenalty
                            : bu8acc < 4 && r_vid.mode != VID_TANDY ? 0x14b4 : 0x1518;
                 g_oppEngState.rpmPerSpeed = g_oppEngState.f34[g_oppEngState.gearIndex];
                 g_oppEngState.rpm = g_oppEngState.speed * g_oppEngState.rpmPerSpeed;
@@ -1342,7 +1343,7 @@ static void near cop_appears(void)
     old = g_oppEngState.speed;
     g_selectedRacerPointer = &g_racerRecordsArray[RACER_COP_ENTRY];
     perf_drivetrain_spec(0x19, &g_oppEngState);
-    g_rivalPace.shiftPenalty = g_selectedRacerPointer->shiftPenalty;
+    g_shiftPenalty = g_selectedRacerPointer->shiftPenalty;
     fit_gear(old, &g_oppEngState);
     cruise_rival_paint(5);
     for (n1 = 0; n1 < 12; n1++)
