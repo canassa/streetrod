@@ -666,3 +666,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - No file crossed MSC's external-symbol budget: the merged units already referenced these functions as externals once `static` was stripped; only the source now says so.
+
+## 2026-11-04 14:30 CET: No CRTORDER anchor: M_21962.ASM is a small-model file
+
+### What I did
+- Listing each code segment's first SEGDEF in link order shows the runtime's `_TEXT` had to be declared between U_1C11C's `S1C11_TEXT` and U_21962's `S2196_TEXT`, which are adjacent; no data-only unit fits there.
+- M_21962.ASM is now `.MODEL SMALL` with its far PROCs in an explicit `S2196_TEXT SEGMENT` (small model rejects `.CODE name`, A2063). MASM's `.MODEL SMALL` emits the empty `_TEXT` SEGDEF first, where the anchor was. `src/link/CRTORDER.ASM` and its insertion are deleted; `merge_asm` keeps the source's `.MODEL`.
+- Found on the way: the header scan stripped quoted strings across an apostrophe in an asm `;` comment and the `'CODE'` class, hiding M_21962's PUBLICs; it now drops asm comments first.
+- Result: `./sr build --layout` IDENTICAL from an empty work dir, `./sr check --all` 572/572, tests OK.
+
+### What I learned
+- MASM 5.1's `.MODEL` declares the default code segment immediately (`FILE_TEXT` for MEDIUM, `_TEXT` for SMALL), so the model line alone fixes segment order at that point of the link. The EXE only proves that some object in that window declared `_TEXT`; a full-segment-directive header is also IDENTICAL, so the exact directive form is not recoverable.
