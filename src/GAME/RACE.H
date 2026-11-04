@@ -4,6 +4,14 @@
 #define RACE_H
 #include "STRUCTS.H"
 
+struct RivalPace {
+    int topSpeed;
+    int lead;
+    int fastSpeed;
+    int slowSpeed;
+    int shiftPenalty;
+};
+
 struct GasInteraction {
     int capAvailable;
     int ragAvailable;

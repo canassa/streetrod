@@ -227,6 +227,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **ViewPages** (`g_viewPages`, DS:5E3E..5E41): flip_page swaps draw and show page indices together and select_draw_page consumes the pair. The preceding unused word stays separate. Separate globals also match; this grouping is a natural reconstruction choice.
 
+- **RivalPace** (`g_rivalPace`, DS:6CAC..6CB5): init_rival_eng and cop_appears derive the fast/slow speeds from the top speed; rival_accelerate consumes those targets, lead and shift penalty together. The target lane, RPM band and shift point remain separate. Separate globals also match; this grouping is a natural reconstruction choice.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only
