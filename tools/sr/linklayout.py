@@ -116,8 +116,6 @@ def prepare():
             first_seen.add(region)
             if region == 0xf38a:
                 sequence += [assembly(config.SRC/'data'/f) for f in ('FONTDATA.ASM', 'CGAFONT.ASM')]
-            if region == 0x21962:
-                sequence.append(assembly(config.SRC/'link/CRTORDER.ASM'))
         sequence.append(stem+'.OBJ')
     if sorted(covered) != sorted(r['addr'] for r in rows):
         raise ValueError('Layout must compile every matched game function exactly once')

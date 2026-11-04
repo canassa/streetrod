@@ -325,7 +325,9 @@ def merge_asm(texts, rows):
                 continue
             lines.append(line)
         chunks.append(f"; sr-member 0x{row['addr']:05X}\n" + "\n".join(lines).strip())
-    return "        .MODEL MEDIUM\n\n" + "\n\n".join(chunks) + "\n        END\n"
+    model = next((m.group(0).strip() for m in [re.search(r"(?im)^\s*\.MODEL\s+\w+.*$", texts[0])] if m),
+                 ".MODEL MEDIUM")
+    return f"        {model}\n\n" + "\n\n".join(chunks) + "\n        END\n"
 
 
 def split_asm(text, rows):

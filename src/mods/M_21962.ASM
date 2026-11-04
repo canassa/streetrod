@@ -1,4 +1,7 @@
-        .MODEL MEDIUM
+        .MODEL SMALL
+; Written as a small-model file: .MODEL SMALL declares _TEXT (empty here) before any
+; other segment, which is what orders the _TEXT of the runtime between segments
+; 1C11 and 2196. Small model rejects .CODE name (A2063), so the far code has its own SEGMENT.
 
 ; sr-member 0x21962
 ; F_21962 @ 2196:0002 (linear 0x21962, 27 bytes)
@@ -62,7 +65,8 @@ _g_58e0 LABEL BYTE ; +58E0 int @
 
 
 
-        .CODE
+S2196_TEXT SEGMENT WORD PUBLIC 'CODE'
+        ASSUME  CS:S2196_TEXT
 
         PUBLIC  _F_21962
 _F_21962  PROC    FAR
@@ -83,6 +87,7 @@ L21962_spin:
         pop     bp
         ret
 _F_21962  ENDP
+S2196_TEXT ENDS
 
 ; sr-member 0x2197D
 ; F_2197D @ 1C11:586D (linear 0x2197D, 136 bytes)
@@ -95,7 +100,8 @@ _F_21962  ENDP
 
         .DATA
 
-        .CODE
+S2196_TEXT SEGMENT WORD PUBLIC 'CODE'
+        ASSUME  CS:S2196_TEXT
 
         PUBLIC  _F_2197D
 _F_2197D  PROC    FAR
@@ -168,4 +174,5 @@ L2197D_done:
         pop     bp
         ret
 _F_2197D  ENDP
+S2196_TEXT ENDS
         END
