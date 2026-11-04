@@ -570,7 +570,7 @@ void F_131B5(struct Car *car)
         if (type = o_8290[1]) {
             hz82ae = 1;
             F_12DD8(type, 0);
-            slot = g_078c[((struct Row8 *)((char *)g_4806 + 2))[car->rack.s[1]->idx].kind];
+            slot = g_078c[g_4806[car->rack.s[1]->idx].f2];
             for (type = 0; type < 3; type++) {
                 hz82ae = slot++;
                 if (other = o_8290[type + 2])

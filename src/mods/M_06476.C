@@ -308,7 +308,7 @@ int near F_06B06(int mode)
         if (g_4f46) {
             n = F_049A2(g_4f46);
             F_181C8(6, g_4f46->f2, n, (g_4f46->f24 >> 8) & 0x1f,
-                    0, 0x98, 0, g_5030[((struct Row8 *)((char *)g_4806 + 2))[g_4f46->slot12->idx].kind]);
+                    0, 0x98, 0, g_5030[g_4806[g_4f46->slot12->idx].f2]);
             F_06AA6();
             F_13DE6(10);
             F_13F21(1);
@@ -332,7 +332,7 @@ int near F_06B06(int mode)
         if (a_7eaap.m7eb0) {
             m_8272.m827a = g7d86n[a_7eaap.m7eb0->f2].f8;
             m_8272.m827c = a_7eaap.m7eb0->f4;
-            m_8272.m827e = ((struct Row8 *)((char *)g_4806 + 2))[a_7eaap.m7eb0->slot12->idx].kind;
+            m_8272.m827e = g_4806[a_7eaap.m7eb0->slot12->idx].f2;
             if (mode == 1)
                 F_067CF(m_8272.m827c);
             m_8272.m8280 = 0;
@@ -528,7 +528,7 @@ void near F_0711A(unsigned mask)
         n9 = a_7eaap.m7eb0->f2;
         r7 = F_049A2(a_7eaap.m7eb0);
         F_181C8(8, n9, r7, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0x98, 0,
-                g_5030[((struct Row8 *)((char *)g_4806 + 2))[a_7eaap.m7eb0->slot12->idx].kind]);
+                g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
         F_16BC1();
         F_120FE(-2);
         g_05fc += val5;
@@ -812,7 +812,7 @@ void near F_07AA4(void)
             flags[k + 1] = 0;
         g_1804[k].f0 = 11;
     }
-    m_8272.m8286 = owner->slot6 ? g_49d2[((struct Row8 *)((char *)g_4806 + 2))[owner->slot6->idx].kind] : 0;
+    m_8272.m8286 = owner->slot6 ? g_49d2[g_4806[owner->slot6->idx].f2] : 0;
     r_vid.f16 = !m_8272.m8286;
     F_119B8(0x42e, 0x20, 10, -1);
     r_vid.f16 = 1;
@@ -847,8 +847,8 @@ void near F_07AA4(void)
                 if (!k)
                     break;
                 prev = m_8272.m8286;
-                m_8272.m8286 = g_49d2[((struct Row8 *)((char *)g_4806 + 2))[tbl[k]->idx].kind];
-                if (g7d86n[owner->f2].f4 & ((struct Row8 *)((char *)g_4806 + 2))[tbl[k]->idx].f1 & 0xf) {
+                m_8272.m8286 = g_49d2[g_4806[tbl[k]->idx].f2];
+                if (g7d86n[owner->f2].f4 & g_4806[tbl[k]->idx].f3 & 0xf) {
                     F_07741(F_077B7(tbl[k]), &owner->slot6);
                     F_120FE(-4);
                     F_16A5A(1);
@@ -1047,14 +1047,14 @@ void near F_081AB(struct Car *car)
     }
     ap82acz = car->f1f != 0 ? (car->f1f > 0 ? 0x447 : 0x446) : 0;
     if (p6 = car->rack.s[0])
-        g_4998[1][0] = ((struct Row8 *)((char *)g_4806 + 2))[p6->idx].kind == 0 ? 0x438 : 0x439;
+        g_4998[1][0] = g_4806[p6->idx].f2 == 0 ? 0x438 : 0x439;
     for (key = 0; key < 5; key++)
-        o_8290[key] = (p6 = car->rack.s[key]) ? g_4998[key][((struct Row8 *)((char *)g_4806 + 2))[p6->idx].kind] : 0;
+        o_8290[key] = (p6 = car->rack.s[key]) ? g_4998[key][g_4806[p6->idx].f2] : 0;
     g_5148[0][0] = g_5148[0][1] = o_8290[0] == 0x434 ? 4 : 5;
     cnt1 = (o_8290[0] != 0) + (o_8290[1] != 0) + (o_8290[2] != 0) + (o_8290[3] != 0) + (o_8290[4] != 0);
-    n = (p6 = car->rack.s[1]) ? g_5126[((struct Row8 *)((char *)g_4806 + 2))[p6->idx].kind] + 2 : 5;
+    n = (p6 = car->rack.s[1]) ? g_5126[g_4806[p6->idx].f2] + 2 : 5;
     if (p6) {
-        tmp29 = ((struct Row8 *)((char *)g_4806 + 2))[p6->idx].kind;
+        tmp29 = g_4806[p6->idx].f2;
         for (k = 3; k < 9; k++)
             g_5186[k] = g_5148[tmp29][k - 3];
     }
@@ -1133,7 +1133,7 @@ void near F_081AB(struct Car *car)
             default:
                 goto again;
             case 0:
-                ok = ((struct Row8 *)((char *)g_4806 + 2))[list4[key]->idx].f1 & g7d86n[car->f2].f4 & 0xf;
+                ok = g_4806[list4[key]->idx].f3 & g7d86n[car->f2].f4 & 0xf;
                 hz82ae = 0;
                 step = 0;
                 car->f1f = -1;
@@ -1141,11 +1141,11 @@ void near F_081AB(struct Car *car)
                 g_05fc += ok ? 0x666 : 0x888;
                 break;
             case 1:
-                ok = (((struct Row8 *)((char *)g_4806 + 2))[k = list4[key]->idx].f1 & g7d86n[car->f2].f4 & 0xf) != 0
-                     && g_4978[((struct Row8 *)((char *)g_4806 + 2))[car->rack.s[0]->idx].kind][tmp29 = ((struct Row8 *)((char *)g_4806 + 2))[k].kind] != 0;
+                ok = (g_4806[k = list4[key]->idx].f3 & g7d86n[car->f2].f4 & 0xf) != 0
+                     && g_4978[g_4806[car->rack.s[0]->idx].f2][tmp29 = g_4806[k].f2] != 0;
                 hz82ae = 1;
                 step = 1;
-                n = g_5126[((struct Row8 *)((char *)g_4806 + 2))[list4[key]->idx].kind] + 2;
+                n = g_5126[g_4806[list4[key]->idx].f2] + 2;
                 for (k = 4; k < 10; k++)
                     g_5184[k] = g_5148[tmp29][k - 4];
                 g_05fc += ok ? 0x333u : 0x444u;
@@ -1153,8 +1153,8 @@ void near F_081AB(struct Car *car)
             case 2:
             case 3:
             case 4:
-                ok = (((struct Row8 *)((char *)g_4806 + 2))[k = list4[key]->idx].f1 & g7d86n[car->f2].f4 & 0xf) != 0
-                     && g_4988[tmp29 = ((struct Row8 *)((char *)g_4806 + 2))[car->rack.s[1]->idx].kind][((struct Row8 *)((char *)g_4806 + 2))[k].kind] != 0;
+                ok = (g_4806[k = list4[key]->idx].f3 & g7d86n[car->f2].f4 & 0xf) != 0
+                     && g_4988[tmp29 = g_4806[car->rack.s[1]->idx].f2][g_4806[k].f2] != 0;
                 g_05fc += ok ? 0x199u : 0x222u;
                 step = 3;
                 sel2 = 2;
@@ -1188,7 +1188,7 @@ void near F_081AB(struct Car *car)
                     goto again;
                 }
             }
-            o_8290[sel2] = k = g_4998[sel2][((struct Row8 *)((char *)g_4806 + 2))[list4[key]->idx].kind];
+            o_8290[sel2] = k = g_4998[sel2][g_4806[list4[key]->idx].f2];
             if (ok) {
                 F_07741(F_077B7(list4[key]), &car->rack.s[sel2]);
                 F_120FE(-4);

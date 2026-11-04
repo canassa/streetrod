@@ -102,7 +102,7 @@ struct Node2 {
 struct Item {
     int f0;
     char f2;
-    char pad2;
+    char f3;
     char f4;
     char pad3;
     int f6;
@@ -376,12 +376,6 @@ struct Glyph {
     char pad[8];
 };
 
-
-struct Row8 {
-    signed char kind;
-    signed char f1;
-    char pad[6];
-};
 
 struct Spot {
     int id;

@@ -1131,7 +1131,7 @@ static void near F_0B045(int id, char c)
     h[2].f0 = id;
     h[3].f0 = id;
     h[4].f0 = id;
-    *(*(char * *)&g_579f[37]) = c;
+    g_579f[37]->key = c;
 }
 
 /* F_0B08C @ 0000:B08C (linear 0x0B08C, 829 bytes) */

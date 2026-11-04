@@ -54,8 +54,8 @@ void F_08D9C(int mode)
             g_51ac = g_51ad = -1;
         } else {
             if (g_51ac == -1) {
-                g_51ac = (*(char *)&g_palette[12]);
-                g_51ad = (*(char *)&g_palette[3]);
+                g_51ac = g_palette[12];
+                g_51ad = g_palette[3];
             }
             a = g_50c2[mode][0];
             b = g_50c2[mode][1];
@@ -64,8 +64,8 @@ void F_08D9C(int mode)
             F_112CB(12, a);
             F_112CB(3, b);
         }
-        (*(char *)&g_palette[12]) = a;
-        (*(char *)&g_palette[3]) = b;
+        g_palette[12] = a;
+        g_palette[3] = b;
     }
 }
 

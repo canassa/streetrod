@@ -48,7 +48,7 @@ extern int g_0612;                                      /* DS:0612 */
 extern char g_064d;                                     /* DS:064D */
 extern char g_064e;                                     /* DS:064E */
 extern struct KeyMap g_0650[];                          /* DS:0650 */
-extern unsigned char g_0692[];                          /* DS:0692 */
+extern char g_0692[];                                   /* DS:0692 */
 extern int g_06a2;                                      /* DS:06A2 */
 extern int g_06a4;                                      /* DS:06A4 */
 extern char g_06a6;                                     /* DS:06A6 */
