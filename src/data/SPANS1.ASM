@@ -1,12 +1,12 @@
 ; Car-mask Part records: dx,dy,w,h.
 SPANS1 SEGMENT PARA PUBLIC 'FAR_DATA'
-        PUBLIC  _g_parts1
+        PUBLIC  _g_spans1
 
 PART    MACRO   dx, dy, w, h
         DB      dx, dy, w, h
         ENDM
 
-_g_parts1 LABEL   BYTE                   ; struct Part far[]
+_g_spans1 LABEL   BYTE                   ; struct Part far[]
         PART    -1, -12, 2, 13           ; part 0
         PART    -1, -11, 4, 13           ; part 1
         PART    2, -10, 1, 13            ; part 2

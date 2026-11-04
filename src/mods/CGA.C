@@ -85,7 +85,7 @@ void cga_draw_text(struct Bitmap far *bm, int x, int y, char *s)
     while (*s) {
         if ((c4 = *s++ - 0x20) < 0 || c4 > 0x5a)
             c4 = 0;
-        col4 += (wid4 = *(gp = &g_cgafont[c4].w) * 2);
+        col4 += (wid4 = *(gp = &g_cgaFont[c4].w) * 2);
         if (col4 >= 0x280) {
             col4 -= wid4;
             break;

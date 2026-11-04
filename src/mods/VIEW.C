@@ -961,7 +961,7 @@ static void near render_mirror_row(void)
 void view_draw_dot(int x, int y)
 {
     egaspan_begin();
-    view_sprite(x, y, 0, *g_6078[20], 1);
+    view_sprite(x, y, 0, *g_scenery[20], 1);
     egaspan_end();
 }
 
@@ -976,7 +976,7 @@ static void near render_object(int x, int y, int n, int f, int idx)
         n = 0;
     if (y > 0x65)
         y = 0x65;
-    view_sprite(x, y, n, *g_6078[idx], f);
+    view_sprite(x, y, n, *g_scenery[idx], f);
 }
 
 /* render_hydrant @ 2645:3B3A (linear 0x29F8A, 63 bytes) */
@@ -988,7 +988,7 @@ static void near render_hydrant(int x, int y, int n, int f)
         n = 7;
     if (n < 0)
         n = 0;
-    view_sprite(x, y, n, *g_6078[2], f);
+    view_sprite(x, y, n, *g_scenery[2], f);
 }
 
 /* render_scaled_pic @ 2645:3B79 (linear 0x29FC9, 339 bytes) */

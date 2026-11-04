@@ -2,12 +2,12 @@
 NEEDLE SEGMENT PARA PUBLIC 'FAR_DATA'
 ; PROVISIONAL symbols for the two unreachable far references in DASH.C
         PUBLIC  _x_trk0
-        PUBLIC  _g_2e47_0000
+        PUBLIC  _g_needlePts
         PUBLIC  _x_trk1
 
 ; track 0: 131 (x, y) points
 _x_trk0 LABEL   BYTE
-_g_2e47_0000 LABEL   BYTE                ; char far[2][0x83][2]
+_g_needlePts LABEL   BYTE                ; char far[2][0x83][2]
         DB      -11,-13, -12,-13, -12,-12, -12,-12, -13,-11, -13,-11, -14,-10, -14,-10
         DB      -15,-9, -15,-8, -15,-8, -16,-7, -16,-7, -16,-6, -17,-5, -17,-5
         DB      -17,-4, -17,-4, -17,-3, -17,-2, -17,-1, -17,-1, -17,0, -18,0

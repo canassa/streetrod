@@ -325,7 +325,7 @@ void sys_init(void)
     g_6c46 = -1;
     g_6c48 = -1;
     bs79aa.off = 0;
-    bs79aa.l8 = g_2e6b_0000;
+    bs79aa.l8 = g_song;
     bs79aa.cur = bs79aa.lc = bs79aa.l8;
     bs79aa.f16 = bs79aa.f14 = g_songRepeats;
     bs79aa.f1a = bs79aa.f18 = g_songTones;

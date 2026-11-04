@@ -1,12 +1,12 @@
 ; CGA glyphs: width and eight word rasters; segment offset four is linker alignment.
 CGAFONT SEGMENT WORD PUBLIC 'CODE'
-        PUBLIC  _g_cgafont
+        PUBLIC  _g_cgaFont
 
 GLYPH   MACRO   w, r0, r1, r2, r3, r4, r5, r6, r7
         DW      w, r0, r1, r2, r3, r4, r5, r6, r7
         ENDM
 
-_g_cgafont LABEL   BYTE                  ; struct CgaGlyph far[]
+_g_cgaFont LABEL   BYTE                  ; struct CgaGlyph far[]
         GLYPH   6, 0, 0, 0, 0, 0, 0, 0, 0  ; character 32
         GLYPH   3, 0C000h, 0C000h, 0C000h, 0C000h, 0C000h, 0, 0C000h, 0  ; character 33
         GLYPH   6, 0C300h, 0C300h, 0C300h, 0, 0, 0, 0, 0  ; character 34

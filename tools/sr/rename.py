@@ -111,7 +111,7 @@ def rename(pairs, dry=False):
             continue
         if not _IDENT.fullmatch(new):
             raise SystemExit(f"{new!r} is not a C identifier (letters, digits, _, at most 31 chars)")
-        if new.upper() in taken:
+        if new.upper() in taken and new.upper() != old.upper():
             raise SystemExit(f"{new} is already used (DB or sources, ignoring case)")
         syms[old] = (new, _symbol(con, old))
     mapping = {o: n for o, (n, _) in syms.items()}

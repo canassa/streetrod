@@ -4,6 +4,6 @@
 #define SCRATCH_H
 #include "STRUCTS.H"
 
-extern struct Bitmap far g_2e68_0000;                   /* 2E68:0000 */
+extern struct Bitmap far g_egaPage3;                    /* 2E68:0000 */
 
 #endif

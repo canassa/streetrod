@@ -366,7 +366,7 @@ void road_generate(void)
     int cnt, i, j;
 
     if (r_vid.mode == -2) {
-        bm7678 = &g_2fa3_0000;
+        bm7678 = &g_egaPage0;
         g8188w = &g_egaPage1;
         g82b4s = &g_egaPage2;
     } else {

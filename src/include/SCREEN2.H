@@ -4,6 +4,6 @@
 #define SCREEN2_H
 #include "STRUCTS.H"
 
-extern struct Bitmap far g_2fa3_0000;                   /* 2FA3:0000 */
+extern struct Bitmap far g_egaPage0;                    /* 2FA3:0000 */
 
 #endif

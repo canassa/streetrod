@@ -138,7 +138,7 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
         *bp7316[2] = *r_vid.back;
         bp7316[2]->bits.w.off = 0x4000;
         bp7316[2]->bits.w.seg = 0xa000;
-        bp7316[3] = &g_2e68_0000;
+        bp7316[3] = &g_egaPage3;
         *bp7316[3] = *r_vid.back;
         bp7316[3]->bits.w.off = 0x6000;
         bp7316[3]->bits.w.seg = 0xa000;
