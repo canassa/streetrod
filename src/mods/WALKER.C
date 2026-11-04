@@ -103,7 +103,7 @@ void walker_walk(int a, int b)
     bm9 = &hdrz;
     marks_release();
     grab_strip(&bm9);
-    if (a == 1) {
+    if (a == WALKER_LEAVE) {
         r3.w = 0x30;
         r3.h = 0x29;
         r3.dx = 0xc8;
@@ -126,7 +126,7 @@ void walker_walk(int a, int b)
             clip = 0;
     }
     carpic_backdrop(bm9, &tab2[0], 0x474, &B7, 0x29, 0x29, &prc3, &prc3);
-    if (a == 0) {
+    if (a == WALKER_ENTER) {
         bm27 = F_1934E(0x30, 0x29, 1, ARENA_HIGH_STACK);
         r2.w = 0x30;
         r2.h = 0x29;
@@ -143,12 +143,12 @@ void walker_walk(int a, int b)
     rcb1.y2 = tab2[0]->height - 1;
     cut_sheet(&tab2[1], a);
     fr = F_1934E(0x30, 0x29, 1, ARENA_HIGH_STACK);
-    sp2 = sprite_setup(a == 0 ? -40 : 200, 0x6c, &fr, 0, 1, B7, tab2[0], &rcb1, 0);
-    p9 = a == 0 ? g_carhopInSeq : g_carhopOutSeq;
+    sp2 = sprite_setup(a == WALKER_ENTER ? -40 : 200, 0x6c, &fr, 0, 1, B7, tab2[0], &rcb1, 0);
+    p9 = a == WALKER_ENTER ? g_carhopInSeq : g_carhopOutSeq;
     for (i = 0; i < 4; i++)
         trk7[i] = *p9++;
     sp2->seq = trk7;
-    if (a == 1) {
+    if (a == WALKER_LEAVE) {
         sp2->page->r = g_carhopRect;
         sp2->page->link->r = g_carhopRect;
     }
@@ -164,7 +164,7 @@ void walker_walk(int a, int b)
     }
     okn = (*g78c6c)(sp2);
     g_carhopRect = sp2->page->r;
-    if (a == 1) {
+    if (a == WALKER_LEAVE) {
         carpic_patch_bg(g_carhopBg, 0, 0, 0x30, 0x29, 0xc8, 0x44, 0xa3, 2);
     } else {
         t = F_1934E(fr->width, 0x29, 1, ARENA_HIGH_STACK);

@@ -69,28 +69,28 @@ static int near maybe_walker(int mode, int arg, int pct1, int pct2)
 
     r = 0;
     switch (mode) {
-    case 0:
+    case WALKER_ENTER:
         if (g_walkState != 0)
             break;
         if (g_passCount < 3 || random_int(100) >= pct1)
             break;
         r = 1;
         cursor_ctl(CURSOR_HIDE_NOW);
-        walker_walk(0, arg);
+        walker_walk(WALKER_ENTER, arg);
         g_walkState = 1;
         if (random_int(100) < pct2) {
             F_10AFD(100);
-            walker_walk(1, arg);
+            walker_walk(WALKER_LEAVE, arg);
             g_walkState = 0;
             g_ordered = 0;
         }
         break;
-    case 1:
+    case WALKER_LEAVE:
         if (g_walkState != 1 || random_int(100) >= pct1)
             break;
         r = 1;
         cursor_ctl(CURSOR_HIDE_NOW);
-        walker_walk(1, arg);
+        walker_walk(WALKER_LEAVE, arg);
         g_walkState = 0;
         g_ordered = 0;
         g_passCount = 0;
@@ -138,8 +138,8 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
     if (mode == 4)
         g_walkState = -1;
     g_rivalHereState = mode == 2;
-    if (mode == 1 && !maybe_walker(0, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, 10))
-        maybe_walker(1, g_rivalHereState, 20, 0);
+    if (mode == 1 && !maybe_walker(WALKER_ENTER, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, 10))
+        maybe_walker(WALKER_LEAVE, g_rivalHereState, 20, 0);
     if (g7f32s[n = strlen(g7f32s) - 1] == '.')
         g7f32s[n] = 0;
     for (;;) {
@@ -169,8 +169,8 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
         g_walkState = 0;
     g_rivalHereState = (mode == 2) ? 0 : 1;
     if (!(x && g_rivalHereState))
-        if (!maybe_walker(0, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, g_rivalHereState == 0 ? 8 : 0))
-            maybe_walker(1, g_rivalHereState, 40, 0);
+        if (!maybe_walker(WALKER_ENTER, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, g_rivalHereState == 0 ? 8 : 0))
+            maybe_walker(WALKER_LEAVE, g_rivalHereState, 40, 0);
 }
 
 int bn7648;
