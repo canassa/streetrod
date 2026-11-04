@@ -229,7 +229,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **RivalPace** (`g_rivalPace`, DS:6CAC..6CB3): race_reset_eng and cop_appears derive fast and slow speeds from the top speed; rival_accelerate selects those targets or the player speed plus speedMargin. Shift penalty (`g_shiftPenalty`, DS:6CB4), shift point, target lane and RPM band stay separate. Separate globals also match; the speed-target record is a natural reconstruction choice.
 
-- **WheelBackdrop** (`g_wheelBackdrop`, DS:6C22..6C33): dash_load_wheel chooses each saved wheel page and its Y coordinate together, and dash_draw_wheel reads both to restore the same rectangle. Shifter state remains separate. Separate globals also match; this grouping is a natural reconstruction choice.
+- **WheelPoses** (`g_wheelPoses`, DS:6C22..6C33): dash_load_wheel caches three steering-wheel bitmaps and their source Y coordinates. dash_draw_wheel chooses pose 0, 1 or 2 from the steering sign and blits that cached bitmap when the pose changes. Shifter state stays separate. Separate globals also match; the cached poses are a natural reconstruction choice.
 
 - **ShifterDraw** (`g_shifterDraw`, DS:6C34..6C37): dash_init_shifter selects a shifter track and resets its knob position; dash_draw_shifter uses both to restore the old knob and draw the new one. Separate globals also match; this grouping is a natural reconstruction choice.
 

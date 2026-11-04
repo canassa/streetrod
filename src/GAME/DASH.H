@@ -9,9 +9,9 @@ struct ShifterDraw {
     int knobPosition;
 };
 
-struct WheelBackdrop {
+struct WheelPoses {
     int y[3];
-    struct Bitmap far *pages[3];
+    struct Bitmap far *bitmaps[3];
 };
 
 extern struct Hooks g_videoOps; /* DS:78A2 */

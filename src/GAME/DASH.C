@@ -27,7 +27,7 @@
 #include "VIEW.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static struct WheelBackdrop g_wheelBackdrop; /* DS:6C22 */
+static struct WheelPoses g_wheelPoses; /* DS:6C22 */
 static void near save_under(int x, int y, int w, int h, int kind);
 static void near restore_under(int x, int y, int w, int h, int kind);
 static struct ShifterDraw g_shifterDraw; /* DS:6C34 */
@@ -460,19 +460,19 @@ void dash_load_wheel(void)
         for (i6 = 0; i6 < 3; i6++) {
             bm = disk_bm(g_wheelPicIds[i6], ARENA_LOW_STACK);
             if (r_vid.mode != VID_EGA || i6 < 2) {
-                g_wheelBackdrop.pages[i6] = g82b4s;
-                g_wheelBackdrop.y[i6] = g_wheelSlotY[i6];
+                g_wheelPoses.bitmaps[i6] = g82b4s;
+                g_wheelPoses.y[i6] = g_wheelSlotY[i6];
             } else {
-                g_wheelBackdrop.pages[i6] = bm7678;
-                g_wheelBackdrop.y[i6] = g_wheelSlotY[i6] + 0x66;
+                g_wheelPoses.bitmaps[i6] = bm7678;
+                g_wheelPoses.y[i6] = g_wheelSlotY[i6] + 0x66;
             }
-            pkt.dy = g_wheelBackdrop.y[i6];
-            (*g_videoOps.copy)(bm, g_wheelBackdrop.pages[i6], &pkt, 1);
+            pkt.dy = g_wheelPoses.y[i6];
+            (*g_videoOps.copy)(bm, g_wheelPoses.bitmaps[i6], &pkt, 1);
             marks_pop_low(1);
         }
     } else {
         for (i6 = 0; i6 < 3; i6++)
-            g_wheelBackdrop.pages[i6] = disk_bm(g_wheelPicIds[i6], ARENA_LOW_STACK);
+            g_wheelPoses.bitmaps[i6] = disk_bm(g_wheelPicIds[i6], ARENA_LOW_STACK);
     }
 }
 
@@ -522,12 +522,12 @@ void dash_draw_wheel(int a, int b, struct Bitmap far *dst)
         pkt1.h = 0x1a;
         if (r_vid.mode != VID_EGA) {
             pkt1.sx = 0x88;
-            pkt1.sy = g_wheelBackdrop.y[sel];
+            pkt1.sy = g_wheelPoses.y[sel];
         } else
             pkt1.sx = pkt1.sy = 0;
         pkt1.dx = 0x50;
         pkt1.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + 0x3f;
-        (*g_videoOps.copy)(g_wheelBackdrop.pages[sel], dst, &pkt1, 1);
+        (*g_videoOps.copy)(g_wheelPoses.bitmaps[sel], dst, &pkt1, 1);
         g_wheelShown = sel;
     }
     if (b != 100) {
