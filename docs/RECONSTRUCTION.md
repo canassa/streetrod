@@ -207,7 +207,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **Blt** (`g_adPacket`, DS:0522..0535): a natural, byte-identical reconstruction choice; separate globals also match.
 
-- **TimerHead** (`g_timerQueue`, DS:0566..0571): The timer insertion/removal/reset paths use the first, head, free, next-deadline and busy fields as one queue control record. The reset-only byte is explicit unused storage; timer entries and later spare words stay separate. Separate globals also match; this grouping is a natural reconstruction choice.
+- **TimerQueue** (`g_timerQueue`, DS:0566..0571): the timer insertion/removal/reset paths share the latest-deadline chain head, earliest entry, free-list head, next deadline and busy state. The reset-only byte is explicit unused storage; timer entries and later spare words stay separate. Separate globals also match; the control record is a natural reconstruction choice.
 
 - **GameClock** (`g_gameClock`, DS:05FC..0607): garage_day and elapsed-time accounting compute actionTicks + biosTicks - timeBase. SAVEGAME resets and serializes that same clock, while SYS advances biosTicks. g_tick remains a separate scheduler clock. Separate globals also match; this grouping is a natural reconstruction choice.
 

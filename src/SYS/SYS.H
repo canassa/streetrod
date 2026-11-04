@@ -24,8 +24,8 @@ struct CursorDraw {
     char dirty;
 };
 
-struct TimerHead {
-    int first;
+struct TimerQueue {
+    int earliest;
     int head;
     int free;
     long nextDeadline;
@@ -48,7 +48,7 @@ extern int g_05da; /* DS:05DA */
 
 extern struct TimerPriorities g_sysTimerPriorities; /* DS:8EF6 */
 
-extern struct TimerHead g_timerQueue; /* DS:0566 */
+extern struct TimerQueue g_timerQueue; /* DS:0566 */
 extern struct Link g_timers[];                          /* DS:0572 */
 extern int g_05ba;                                      /* DS:05BA */
 extern int g_05bc[8];                                   /* DS:05BC */

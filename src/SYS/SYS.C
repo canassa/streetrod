@@ -51,7 +51,7 @@ int g_cursHoverCodeVal;
 int g_wRivBanner;
 struct TimerPriorities g_sysTimerPriorities; /* DS:8EF6 */
 
-struct TimerHead g_timerQueue = {-1, -1, 0, 2147483647L, 0, 0}; /* DS:0566 */
+struct TimerQueue g_timerQueue = {-1, -1, 0, 2147483647L, 0, 0}; /* DS:0566 */
 struct Link g_timers[4] = {{0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}};   /* DS:0572 */
 int g_05ba = 0;   /* DS:05BA */
 int g_05bc[8] = {0, 0, 0, 0, 0, 0, 0, 0};   /* DS:05BC */
@@ -121,7 +121,7 @@ void sys_reset_queues(void)
     int i;
     long deadline;
 
-    g_timerQueue.first = g_timerQueue.head = -1;
+    g_timerQueue.earliest = g_timerQueue.head = -1;
     g_timerQueue.free = 0;
     g_timerQueue.nextDeadline = 0x7fffffffL;
     g_timerQueue.unused = g_timerQueue.busy = 0;
@@ -157,7 +157,7 @@ void sys_timer_remove(int n)
         g_timers[i].prv = g_timers[n].prv;
     else {
         i = g_timers[n].prv;
-        g_timerQueue.first = i;
+        g_timerQueue.earliest = i;
         if (i < 0)
             g_timerQueue.nextDeadline = 0x7fffffffL;
         else
@@ -457,7 +457,7 @@ int sys_wait_input(int ticks)
                 return res;
         }
         if (g_timerQueue.nextDeadline <= g_tick) {
-            p = &g_timers[i = g_timerQueue.first];
+            p = &g_timers[i = g_timerQueue.earliest];
             switch (p->action) {
             case 0:
             default:
@@ -590,7 +590,7 @@ int sys_timer_add(int delay, int pri)
     g_timerQueue.free = g_timers[i].nxt;
     g_timers[i].nxt = cur3;
     if (cur3 < 0) {
-        g_timerQueue.first = i;
+        g_timerQueue.earliest = i;
         g_timerQueue.nextDeadline = when;
     } else
         g_timers[cur3].prv = i;
@@ -621,7 +621,7 @@ void sys_timer_cancel(int n)
     struct Link *p;
     int i;
 
-    for (i = g_timerQueue.first; i >= 0; i = g_timers[i].nxt)
+    for (i = g_timerQueue.earliest; i >= 0; i = g_timers[i].nxt)
         if ((p = g_timers + i)->action == 1 && p->argument == n)
             p->action = 0;
 }
