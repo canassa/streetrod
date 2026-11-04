@@ -1157,7 +1157,23 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - Main's animation naming changes also compose with the mouse record without byte differences.
 
+<<<<<<< HEAD
 ## 2026-11-05 19:00 CET: Rule: enum or #define
 
 ### What I did
 - CLAUDE.md: a closed set in int-sized things is an enum and the holder is typed with it; a closed set in char fields uses enum constants with char (or typedef'd char) members, because MSC 5.1 enums are int-sized; lone values are #defines. File-local constants at the top of the file, module interface constants in its header, PC facts in PC.H/PC.INC.
+||||||| ac675c5
+=======
+## 2026-11-04 15:07 CET: MSC 5.1 runtime constants
+
+### What I did
+- Inventoried C runtime call sites throughout src/ against the actual toolchain/msc51/INCLUDE headers, and reviewed every MASM EXTRN (none refer to runtime routines). Detailed per-call inventory: work/msconst-inventory.txt; header/name cross-check: work/msconst-audit.py.
+- Replaced 11 _dos_open access flags with O_RDONLY (nine in DISK.C, two in SAVEGAME.C) and three _dos_creat attributes with _A_NORMAL (two in DISK.C, one in SAVEGAME.C). FCNTL.H defines O_RDONLY as 0x0000; DOS.H defines _A_NORMAL as 0x00. Added fcntl.h to both system-include blocks; sr headers preserves these includes and needs no extension.
+- Runtime inventory by family: DOS (_dos_open, _dos_creat, _dos_close, _dos_read, _dos_write, _dos_getdrive, _dos_getvect, _dos_setvect, _harderr, _hardresume, _disable, _enable, int86, int86x, intdos, segread); BIOS (_bios_equiplist); allocation (_fmalloc, _ffree); console (getch, kbhit, inp, outp); strings/memory (memcmp, memcpy, memmove, memset, movedata, strcat, strchr, strcmp, strcmpi, strcpy, strcspn, strlen, strncpy); formatting/conversion (sprintf, puts, atoi, itoa, ltoa); math/utility (abs, fabs, sin, cos, _rotl, _rotr); time (time); process (exit); files (unlink). Existing FP_SEG/FP_OFF and min/max macros were also reviewed.
+- Checked the requested negative cases: no O_WRONLY/O_RDWR, other attributes, S_IREAD/S_IWRITE, SH_*, BIOS keyboard/disk/serial/printer/time commands, stdio seek/buffering/EOF constants, signal constants, process modes, heap-status constants or graph calls apply. _HARDERR_RETRY/_HARDERR_ABORT are already named. errno is assigned from _doserrno, never compared to an error literal. No literal null-pointer argument occurs at an MSC runtime call. exit(5) has no corresponding exit-status constant in these headers. Read/write sizes, numeric conversion radices, rotate counts and device-register values retain their meanings; no runtime header names apply to them.
+- Gates: sr check --all 572/572; clean-layout sr build packed EXE IDENTICAL, 95/95 objects and 748/748 near calls exact; sr headers --check and sr dgroup check clean; 53 unit tests pass. No prototypes changed code, and no symbols were renamed.
+
+### What I learned
+- MSC 5.1's fcntl.h supplies plain open-flag constants without prototypes, so including it at the existing dos.h call sites preserves code generation. The existing header tool already preserves arbitrary system includes in their original order.
+- Final integration validation: git merge main was already up to date; repeated sr check --all (572/572), a clean-layout build (packed EXE IDENTICAL), header/DGROUP checks and all 53 unit tests successfully. DOS-native dosbox.sh --make also produced IDENTICAL SR.EXE (SHA-1 3a5e28b795313028b7e77d147122f41cb29de334).
+>>>>>>> msconst
