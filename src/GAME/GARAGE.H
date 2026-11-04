@@ -4,6 +4,16 @@
 #define GARAGE_H
 #include "STRUCTS.H"
 
+#define GARAGE_GAME_ENDED 0x29a
+
+enum GarageMode {
+    GARAGE_KEEP = 0,
+    GARAGE_DRIVE_IN = 1,
+    GARAGE_REDRAW = 2,
+    GARAGE_SWAP = 3
+};
+
+
 extern int g_tirePics[][4];
 extern int g_colX;
 extern int g_rowY[];
@@ -15,11 +25,11 @@ extern int g_pad[];
 extern char *g_iTxt[];
 extern int g_nCarb[];
 extern int g_nBolt[];
-extern int g_nextPartCategory[];
+extern enum PartCategory g_nextCat[];
 extern int g_cPos[][6];
 extern int g_boltSlots[10];
 extern int g_boltSubslots[10];
-extern struct State8272 m_8272;
+extern struct CarDisplay g_carDraw;
 int ga_day(void);
 void ga_time(int *a, int *b);
 void ga_check_end(int n);
@@ -28,11 +38,11 @@ void ga_date(int x);
 void ga_palette(int a);
 int ga_hotspot(int n);
 void ga_clear_name(void);
-int near ga_menu(int mode);
+int near ga_menu(enum GarageMode mode);
 void near ga_paint(void);
 void near ga_body(unsigned mask);
 void near ga_stickers(void);
-void near ga_spares(int t, struct Node **list, char *buf, int start);
+void near ga_spares(enum PartCategory t, struct Node **list, char *buf, int start);
 void near ga_install(struct Node *n, struct Node **slot);
 struct Node * near ga_unlink(struct Node *n);
 void near ga_tires(void);

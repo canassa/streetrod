@@ -26,6 +26,8 @@ static int near count_bits(unsigned char b)
     return count;
 }
 
+
+
 static struct Bitmap far * near alloc_shrunk(struct Bitmap far *p, unsigned char a, unsigned char b)
 {
     int nb1;
@@ -59,6 +61,8 @@ static struct Bitmap far * near alloc_shrunk(struct Bitmap far *p, unsigned char
     da_fmemset(q->alt.p, 0xff, q->planesize / (unsigned)r_vid.planes);
     return q;
 }
+
+
 
 struct Bitmap far *sr_ega(struct Bitmap far *p, unsigned char a, unsigned char b)
 {
@@ -133,6 +137,8 @@ struct Bitmap far *sr_ega(struct Bitmap far *p, unsigned char a, unsigned char b
     return q;
 }
 
+
+
 static void near expand_mask(unsigned char v, char *pa, char *pb)
 {
     int m;
@@ -146,6 +152,8 @@ static void near expand_mask(unsigned char v, char *pa, char *pb)
         if (v & m)
             *pb |= 3 << sh;
 }
+
+
 
 struct Bitmap far *sr_cga(struct Bitmap far *p, unsigned char a, unsigned char c)
 {
@@ -221,6 +229,8 @@ struct Bitmap far *sr_cga(struct Bitmap far *p, unsigned char a, unsigned char c
     }
     return q;
 }
+
+
 
 struct Bitmap far *sr_tandy(struct Bitmap far *p, unsigned char a, unsigned char c)
 {

@@ -9,6 +9,8 @@
         .CODE S0000_TEXT
         EXTRN   _kb_isr:FAR
 
+
+
         PUBLIC  _kg_key
 _kg_key  PROC  FAR
         cli
@@ -18,6 +20,8 @@ _kg_key  PROC  FAR
         sti
         ret
 _kg_key  ENDP
+
+
 
         PUBLIC  _kg_hook
 _kg_hook  PROC  FAR

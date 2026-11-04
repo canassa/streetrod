@@ -1,12 +1,13 @@
         .MODEL MEDIUM
 
         .DATA
-        EXTRN   _at767ct:WORD
-        EXTRN   _av787at:WORD
+        EXTRN   _g_targetPixelOffset:WORD
+        EXTRN   _g_videoAddrSegment:WORD
         EXTRN   _g_viewRect:BYTE
         EXTRN   _g_viewClip:WORD
 
         .CODE S2487_TEXT
+
 
 ; tl_draw(x1, y1, x2, y2, color): Bresenham line in the 320x200 16-colour screen
 ; (four interlaced banks of 2000h bytes, two pixels per byte), the sibling of
@@ -274,6 +275,7 @@ done1:
         ret
 _tl_draw  ENDP
 
+
 ; Pixel address helper for the nibble packed 320x200 screen, interlaced in
 ; four banks of 80 bytes per line.  In: ax = y, bx = x.
 ; Out: bx = offset, es = video segment, cl = 0 or 4 (shift of the pixel in
@@ -292,8 +294,8 @@ _tl_pixel_addr  PROC  NEAR
         shr     ax,1
         add     bx,ax
         shr     bx,1
-        add     bx,_at767ct
-        mov     ax,_av787at
+        add     bx,_g_targetPixelOffset
+        mov     ax,_g_videoAddrSegment
         mov     es,ax
         mov     ah,1
         and     cl,ah
@@ -304,6 +306,7 @@ even1:
         mov     ah,0Fh
         ret
 _tl_pixel_addr  ENDP
+
 
 ; Clipped horizontal span fill in the 16-colour planar-less (nibble packed)
 ; framebuffer: fill_span(x1, x2, y, color), clipped to the clip window.
@@ -400,6 +403,7 @@ done2:
         pop     bp
         ret
 _tl_span  ENDP
+
 
 ; tl_fill_below(y, color): fill the lines from y down to the bottom of the clip
 ; window with a colour, four interlaced banks one after the other.

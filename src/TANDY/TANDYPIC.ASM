@@ -6,6 +6,7 @@
 
         .CODE S2462_TEXT
 
+
 ; Near helper shared by tp_unpack and tp_unpack_mask, which keep its tables in their own
 ; frame: [bp-110h] 16 bytes (copy of g_rleCounts), [bp-120h] 16 bytes (copy of
 ; g_rleValues), [bp-100h] 256 bytes mapping a colour byte of the palette passed at
@@ -46,6 +47,7 @@ index_loop:
         rep     stosw
         ret
 _tp_init  ENDP
+
 
 ; tp_unpack(src_far, dst_far, count, palette): like tp_unpack_mask, but ORs the pixels
 ; into the destination, one bit plane at a time: the plane colour word is kept
@@ -158,6 +160,7 @@ done1:
         ret
 _tp_unpack  ENDP
 
+
 ; tp_unpack_mask(src_far, dst_far, count, palette): expand a compressed 4-bit image.
 ; Each pattern byte gives 8 bits; every set bit makes one 4-bit pixel 0Fh in
 ; the two output words.  Code 0 skips pixels, 0FFh fills with 0FFFFh.
@@ -246,6 +249,7 @@ done2:
         ret
 _tp_unpack_mask  ENDP
 
+
 ; Near helper of tp_unpack: expand the 8 bits of al into two words of 4-bit
 ; pixels, masking the colour word kept in the caller's frame ([bp-122h]), and
 ; OR them into the destination (es:di).
@@ -295,6 +299,7 @@ b8:
         ret
 _tp_or_nibbles  ENDP
 
+
 ; Near helper of tp_unpack and tp_unpack_mask: fetch the next code from ds:si.
 ; A code byte of 0 or 0FFh is followed by a count byte: returns cx = count+1
 ; and al = the code.  Any other byte is a pixel pattern looked up through the
@@ -333,6 +338,7 @@ run:
         xchg    cx,ax
         ret
 _tp_read_code  ENDP
+
 
 ; tp_make_mask(src_far, dst_far, count): turn count bytes of packed 4-bit pixels
 ; into a byte-per-pair mask: a nibble that is zero sets the corresponding

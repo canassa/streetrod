@@ -1,142 +1,73 @@
 {
   "data": {
-    "a784als": {
-      "off": 30794
+    "S_3a81": {
+      "off": 14977
+    },
+    "S_3aa3": {
+      "off": 15011
+    },
+    "S_3ac2": {
+      "off": 15042
+    },
+    "S_3ad9": {
+      "off": 15065
+    },
+    "S_3aeb": {
+      "off": 15083
+    },
+    "S_3afc": {
+      "off": 15100
+    },
+    "S_3b18": {
+      "off": 15128
+    },
+    "S_3b2c": {
+      "off": 15148
+    },
+    "S_3b50": {
+      "off": 15184
+    },
+    "S_3b74": {
+      "off": 15220
+    },
+    "S_3b99": {
+      "off": 15257
+    },
+    "S_3bb7": {
+      "off": 15287
+    },
+    "S_3bd9": {
+      "off": 15321
+    },
+    "S_47f1": {
+      "off": 18417
+    },
+    "S_5af4": {
+      "off": 23284
+    },
+    "S_5afa": {
+      "off": 23290
+    },
+    "S_5b00": {
+      "off": 23296
     },
     "a8ef4fv": {
       "off": 36596
     },
-    "a_7eaap": {
-      "off": 32426
-    },
-    "a_7f88d": {
-      "off": 32648
-    },
-    "ab7526x": {
-      "off": 29990
-    },
-    "ac825et": {
-      "off": 33374
-    },
-    "af7880z": {
-      "off": 30848
-    },
     "ah7aa4w": {
       "off": 31396
-    },
-    "ai70e4t": {
-      "off": 28900
-    },
-    "ai8bacx": {
-      "off": 35756
-    },
-    "ak8bcat": {
-      "off": 35786
-    },
-    "al70c0x": {
-      "off": 28864
-    },
-    "am8b82y": {
-      "off": 35714
-    },
-    "ao7d2ev": {
-      "off": 32046
-    },
-    "ao8228u": {
-      "off": 33320
-    },
-    "ap7d7cv": {
-      "off": 32124
-    },
-    "ar767eu": {
-      "off": 30334
-    },
-    "ar7e8av": {
-      "off": 32394
-    },
-    "at767ct": {
-      "off": 30332
-    },
-    "av787at": {
-      "off": 30842
-    },
-    "aw7aaex": {
-      "off": 31406
-    },
-    "aw8260y": {
-      "off": 33376
-    },
-    "ax72f4": {
-      "off": 29428
-    },
-    "ay8bc2z": {
-      "off": 35778
-    },
-    "bm7568": {
-      "off": 30056
-    },
-    "bm7678": {
-      "off": 30328
-    },
-    "bn7648": {
-      "off": 30280
-    },
-    "bu8acc": {
-      "off": 35532
     },
     "bustyle": {
       "off": 30846
     },
-    "bw8aca": {
-      "off": 35530
-    },
-    "by72f2": {
-      "off": 29426
-    },
     "bz7ee2": {
       "off": 32482
-    },
-    "bz8630z": {
-      "off": 34352
-    },
-    "bz8b7ex": {
-      "off": 35710
-    },
-    "dz82c8x": {
-      "off": 33480
     },
     "fz79a8": {
       "off": 31144
     },
-    "g764aw": {
-      "off": 30282
-    },
-    "g7d18m": {
-      "off": 32024
-    },
-    "g7d62p": {
-      "off": 32098
-    },
-    "g7d66n": {
-      "off": 32102
-    },
-    "g7d86n": {
-      "off": 32134
-    },
     "g7ff6f": {
       "off": 32758
-    },
-    "g8184y": {
-      "off": 33156
-    },
-    "g8188w": {
-      "off": 33160
-    },
-    "g82b4s": {
-      "off": 33460
-    },
-    "g8acew": {
-      "off": 35534
     },
     "g_004a": {
       "off": 74
@@ -227,9 +158,6 @@
     "g_6c42": {
       "off": 27714
     },
-    "g_6e04aay": {
-      "off": 28164
-    },
     "g_acceptMsgs": {
       "off": 21008
     },
@@ -302,9 +230,6 @@
     "g_bandRecordsSprArray": {
       "off": 28264
     },
-    "g_bankrollLabel": {
-      "off": 18908
-    },
     "g_bannerX": {
       "off": 20974
     },
@@ -328,6 +253,12 @@
     },
     "g_blankName": {
       "off": 17927
+    },
+    "g_bodyAsk": {
+      "off": 7732
+    },
+    "g_bodyRects": {
+      "off": 28900
     },
     "g_boltHot": {
       "off": 1942
@@ -355,6 +286,9 @@
     },
     "g_bufBackgroundDashPtr": {
       "off": 30044
+    },
+    "g_bufferSceneA": {
+      "off": 33460
     },
     "g_buildEntry": {
       "off": 28160
@@ -400,6 +334,18 @@
     },
     "g_carBottomCuts": {
       "off": 678
+    },
+    "g_carCollisionRange": {
+      "off": 35778
+    },
+    "g_carData": {
+      "off": 32134
+    },
+    "g_carDraw": {
+      "off": 33394
+    },
+    "g_carHit": {
+      "off": 29426
     },
     "g_carMoving": {
       "off": 23054
@@ -458,6 +404,9 @@
     "g_carsGoneHdr": {
       "off": 15082
     },
+    "g_cashLabel": {
+      "off": 18908
+    },
     "g_cgaColorByte": {
       "off": 23382
     },
@@ -491,6 +440,9 @@
     },
     "g_cgaRevealOrder": {
       "off": 23368
+    },
+    "g_citySkylineBmp": {
+      "off": 30282
     },
     "g_click": {
       "off": 18230
@@ -527,6 +479,9 @@
     },
     "g_countLibBmB": {
       "off": 36306
+    },
+    "g_coveredRacePct": {
+      "off": 33480
     },
     "g_cpyBoltPatchRecord": {
       "off": 28844
@@ -630,6 +585,9 @@
     "g_directionSteps": {
       "off": 18262
     },
+    "g_displayEnabled": {
+      "off": 33353
+    },
     "g_displaySplitYVal": {
       "off": 33354
     },
@@ -654,6 +612,9 @@
     "g_driveBusy": {
       "off": 1768
     },
+    "g_driveDisplayPage": {
+      "off": 30328
+    },
     "g_driveDiv": {
       "off": 1545
     },
@@ -662,6 +623,12 @@
     },
     "g_driveRebuild": {
       "off": 22766
+    },
+    "g_driveScreenB": {
+      "off": 33160
+    },
+    "g_driver": {
+      "off": 32426
     },
     "g_driverIdxSelVal": {
       "off": 32642
@@ -674,6 +641,9 @@
     },
     "g_edgeXR": {
       "off": 35792
+    },
+    "g_edgesRoad": {
+      "off": 28864
     },
     "g_editDigits": {
       "off": 2546
@@ -837,6 +807,9 @@
     "g_headerEditableState": {
       "off": 35748
     },
+    "g_heightRoadPtr": {
+      "off": 30848
+    },
     "g_hercBiosData": {
       "off": 23248
     },
@@ -852,6 +825,9 @@
     "g_hereCurvePtr": {
       "off": 30048
     },
+    "g_hereFlagsPtr": {
+      "off": 32098
+    },
     "g_hideSelectFrameVal": {
       "off": 35736
     },
@@ -861,11 +837,11 @@
     "g_hillProfile": {
       "off": 23584
     },
+    "g_horizonY": {
+      "off": 28164
+    },
     "g_hotBobs": {
       "off": 8362
-    },
-    "g_hotBodyChange": {
-      "off": 7732
     },
     "g_hotBuy": {
       "off": 4528
@@ -894,9 +870,6 @@
     "g_hotRepair": {
       "off": 6850
     },
-    "g_hotTransBolts": {
-      "off": 6148
-    },
     "g_hots": {
       "off": 2548
     },
@@ -914,6 +887,12 @@
     },
     "g_imageBufferPointer": {
       "off": 30052
+    },
+    "g_imageDecalLayout": {
+      "off": 30794
+    },
+    "g_imageFullMirror": {
+      "off": 33156
     },
     "g_initialDrive": {
       "off": 27752
@@ -1093,6 +1072,9 @@
     "g_liftPicIds": {
       "off": 23210
     },
+    "g_lightsBm": {
+      "off": 28256
+    },
     "g_list": {
       "off": 18912
     },
@@ -1104,6 +1086,9 @@
     },
     "g_lowArenaMarker": {
       "off": 31508
+    },
+    "g_mainCarSprite": {
+      "off": 32024
     },
     "g_manifoldBoltPos": {
       "off": 1842
@@ -1229,7 +1214,7 @@
     "g_new": {
       "off": 20296
     },
-    "g_nextPartCategory": {
+    "g_nextCat": {
       "off": 20796
     },
     "g_noCarHdr": {
@@ -1313,6 +1298,9 @@
     "g_opponentPics": {
       "off": 24084
     },
+    "g_opponentSpecIndex": {
+      "off": 30280
+    },
     "g_ordered": {
       "off": 27784
     },
@@ -1371,6 +1359,9 @@
     "g_partsGoneHdr": {
       "off": 15064
     },
+    "g_partsPics": {
+      "off": 33424
+    },
     "g_passCount": {
       "off": 20976
     },
@@ -1389,6 +1380,12 @@
     "g_picNewHeader": {
       "off": 20238
     },
+    "g_picOpponent": {
+      "off": 32124
+    },
+    "g_picXDraw": {
+      "off": 33374
+    },
     "g_pickCarHdr": {
       "off": 15127
     },
@@ -1400,6 +1397,9 @@
     },
     "g_pointsModelService": {
       "off": 33164
+    },
+    "g_policeFramesTable": {
+      "off": 29990
     },
     "g_poolCount": {
       "off": 27782
@@ -1418,6 +1418,9 @@
     },
     "g_prevRivalFrame": {
       "off": 28202
+    },
+    "g_processorSpeedRating": {
+      "off": 35532
     },
     "g_promptLine1": {
       "off": 10558
@@ -1447,6 +1450,9 @@
     "g_pumpWithNozzle": {
       "off": 652
     },
+    "g_pursuitPhaseIndex": {
+      "off": 32648
+    },
     "g_raceResult1": {
       "off": 11071
     },
@@ -1467,6 +1473,9 @@
     },
     "g_random": {
       "off": 27746
+    },
+    "g_rearBasePic": {
+      "off": 35710
     },
     "g_refuseMsgs": {
       "off": 20988
@@ -1522,11 +1531,17 @@
     "g_roadLineWidths": {
       "off": 24170
     },
+    "g_roadOppPos": {
+      "off": 32394
+    },
     "g_roadOuterLeftXArray": {
       "off": 32650
     },
     "g_roadRowLimit": {
       "off": 28166
+    },
+    "g_roadTerrain": {
+      "off": 29422
     },
     "g_roadWins": {
       "off": 18804
@@ -1548,6 +1563,9 @@
     },
     "g_rpmStepBase": {
       "off": 21764
+    },
+    "g_runRacingFlag": {
+      "off": 35530
     },
     "g_salePartName": {
       "off": 10847
@@ -1608,6 +1626,9 @@
       "off": 0,
       "seg": 11838
     },
+    "g_scriptObjsData": {
+      "off": 30056
+    },
     "g_secondaryMusicStateData": {
       "off": 31174
     },
@@ -1641,6 +1662,9 @@
     "g_shifters": {
       "off": 878
     },
+    "g_shownShiftPosition": {
+      "off": 34352
+    },
     "g_shrinkMasks": {
       "off": 24150
     },
@@ -1649,6 +1673,9 @@
     },
     "g_sirenPhase": {
       "off": 1764
+    },
+    "g_skylineCountry": {
+      "off": 30334
     },
     "g_slot": {
       "off": 0,
@@ -1734,6 +1761,9 @@
     },
     "g_sprDotLod": {
       "off": 24684
+    },
+    "g_sprDrawY": {
+      "off": 33376
     },
     "g_sprHydrant": {
       "off": 24404
@@ -1825,11 +1855,23 @@
     "g_spritePic": {
       "off": 648
     },
+    "g_spritesOpp": {
+      "off": 35534
+    },
     "g_squealOn": {
       "off": 22746
     },
     "g_squealPhase": {
       "off": 1770
+    },
+    "g_startDrawRows": {
+      "off": 31406
+    },
+    "g_startLightGo": {
+      "off": 33320
+    },
+    "g_startingGoActive": {
+      "off": 32102
     },
     "g_statsDone": {
       "off": 21478
@@ -1883,6 +1925,9 @@
     "g_targetLane": {
       "off": 27830
     },
+    "g_targetPixelOffset": {
+      "off": 30332
+    },
     "g_tboltY": {
       "off": 1790
     },
@@ -1905,6 +1950,9 @@
     "g_terrain4": {
       "off": 22256,
       "seg": 14491
+    },
+    "g_textOfsMenu": {
+      "off": 35756
     },
     "g_tick": {
       "off": 1528
@@ -1941,6 +1989,12 @@
     },
     "g_tones": {
       "off": 22566
+    },
+    "g_trackViewMotion": {
+      "off": 32046
+    },
+    "g_transBolts": {
+      "off": 6148
     },
     "g_transGears": {
       "off": 21856
@@ -1981,6 +2035,9 @@
     "g_vibratoActive": {
       "off": 29420
     },
+    "g_videoAddrSegment": {
+      "off": 30842
+    },
     "g_videoMenu": {
       "off": 580
     },
@@ -1998,6 +2055,9 @@
     },
     "g_viewRect": {
       "off": 24130
+    },
+    "g_viewTerrainBitsData": {
+      "off": 35714
     },
     "g_voice": {
       "off": 22738
@@ -2048,6 +2108,12 @@
     "g_winMsgs": {
       "off": 21448
     },
+    "g_windowBorderImage": {
+      "off": 35786
+    },
+    "g_windowStrutArt": {
+      "off": 29428
+    },
     "g_wiresPos": {
       "off": 1818
     },
@@ -2059,21 +2125,6 @@
     },
     "g_yBuildingTopArray": {
       "off": 31408
-    },
-    "gz8249": {
-      "off": 33353
-    },
-    "k_6e60": {
-      "off": 28256
-    },
-    "m_8272": {
-      "off": 33394
-    },
-    "o_8290": {
-      "off": 33424
-    },
-    "q_72ee": {
-      "off": 29422
     },
     "r_vid": {
       "off": 33322
@@ -2243,11 +2294,6 @@
       "seg": 0,
       "size": 1210
     },
-    "build_car_info": {
-      "off": 30961,
-      "seg": 0,
-      "size": 250
-    },
     "build_dip": {
       "off": 1885,
       "seg": 9797,
@@ -2317,6 +2363,11 @@
       "off": 17451,
       "seg": 0,
       "size": 1301
+    },
+    "car_info": {
+      "off": 30961,
+      "seg": 0,
+      "size": 250
     },
     "carb_pos": {
       "off": 13596,
@@ -2638,6 +2689,11 @@
       "seg": 3896,
       "size": 18
     },
+    "da_retrace": {
+      "off": 6013,
+      "seg": 3896,
+      "size": 75
+    },
     "da_set_view": {
       "off": 3517,
       "seg": 3896,
@@ -2682,11 +2738,6 @@
       "off": 2897,
       "seg": 3896,
       "size": 159
-    },
-    "da_wait_retrace": {
-      "off": 6013,
-      "seg": 3896,
-      "size": 75
     },
     "day_to_date": {
       "off": 25916,
@@ -4098,6 +4149,11 @@
       "seg": 3896,
       "size": 78
     },
+    "sc_label": {
+      "off": 8723,
+      "seg": 3896,
+      "size": 214
+    },
     "sc_msg_box": {
       "off": 9116,
       "seg": 3896,
@@ -4122,11 +4178,6 @@
       "off": 8226,
       "seg": 3896,
       "size": 127
-    },
-    "sc_status_label": {
-      "off": 8723,
-      "seg": 3896,
-      "size": 214
     },
     "sc_status_text": {
       "off": 8353,

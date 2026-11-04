@@ -15,6 +15,7 @@ _g_toneDelay DW      1
 S2196_TEXT SEGMENT WORD PUBLIC 'CODE'
         ASSUME  CS:S2196_TEXT
 
+
 ; Busy-wait delay: spin for n * g_delayScale units, in 16-bit chunks of a LOOP count
 ; (the high byte of the product counts the outer repetitions).
 ; sk_delay(n)
@@ -38,6 +39,7 @@ spin1:
         pop     bp
         ret
 _sk_delay  ENDP
+
 
 ; Play a tune on the PC speaker. The argument points at a table of
 ; 3-word records (length, two frequency counters, duty/step word) ending

@@ -21,6 +21,11 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
+enum ManualKind {
+    MANUAL_CAR_KEY = 0,
+    MANUAL_CAR_ICON = 1
+};
+
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_score;
 static int near elapsed_hours(void);
@@ -39,7 +44,7 @@ int g_fameRowY[10] = {59, 70, 81, 92, 103, 114, 125, 136, 147, 158};
 
 int fa_protect_check(void)
 {
-    int f;
+    enum ManualKind f;
     int e;
     int d;
     int c;
@@ -53,12 +58,12 @@ int fa_protect_check(void)
     sc_picture_at(8, 8, 0, 0);
     di_free_pic(8);
     switch (f) {
-    case 0:
+    case MANUAL_CAR_KEY:
         sprintf(b, "What`is`the`color`of");
         sprintf(a, "the`car`key`on`page`%d?", g_manual[d].page);
         c = 0x72;
         break;
-    case 1:
+    case MANUAL_CAR_ICON:
         sprintf(b, "What`is`the`color`of");
         sprintf(a, "    `the`car`icon`on`page`%d?  ", g_manual[d].page);
         c = 0x55;
@@ -72,7 +77,7 @@ int fa_protect_check(void)
         vi_set_palette(g_protectPal);
     else
         (*g_videoOps.show)();
-    gz8249 = 1;
+    g_displayEnabled = 1;
     r_vid.copyToFront = 1;
     g_protectCycle = 1;
     e = mn_wait(KM_MANUAL_COLORS);
@@ -82,6 +87,8 @@ int fa_protect_check(void)
         return 0;
     return 1;
 }
+
+
 
 int fa_end_menu(void)
 {
@@ -133,6 +140,8 @@ int fa_end_menu(void)
     return key;
 }
 
+
+
 static int near score_beats_entry(int i)
 {
     return atoi(g_hallFameTbl[i].score) > g_score;
@@ -140,6 +149,8 @@ static int near score_beats_entry(int i)
 
 int g_nScore;
 char g_driverName[16];
+
+
 
 static void near insert_entry(int pos)
 {
@@ -160,6 +171,8 @@ static void near insert_entry(int pos)
     }
 }
 
+
+
 static int near elapsed_hours(void)
 {
     int a;
@@ -172,6 +185,8 @@ static int near elapsed_hours(void)
 struct Colors g_fameColors1 = {3, 5, 5, 4, 1};
 struct Colors g_fameColors2 = {3, 4, 4, 3, 1};
 char g_4bed = 0;
+
+
 
 void fa_show(int add)
 {

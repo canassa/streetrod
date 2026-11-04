@@ -28,11 +28,11 @@ static void near anim_run(int n);
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Colors x_colors;
 struct Bitmap far *g_pageBmps[4];
-struct Obj bm7568[5];
+struct Obj g_scriptObjsData[5];
 struct Style *bustyle;
 struct Bitmap far *g_autoSprImagePtr;
-int ac825et;
-int aw8260y;
+int g_picXDraw;
+int g_sprDrawY;
 
 struct Style g_style16 = {{{0, 0, 0, 0, 0}, {13, 9, 9, 15, 1}, {9, 13, 13, 15, 1}, {1, 5, 5, 1, 1}, {1, 5, 5, 4, 1}, {15, 9, 9, 15, 1}, {14, 15, 15, 10, 1}}, {1, 4, 4, 1, 1}, {1, 3, 3, 4, 2}, {15, 9, 9, 15, 1}, {13, 9, 9, 15, 1}, {11, 2, 2, 11, 1}, {1, 4, 4, 11, 1}, {1, 4, 4, 1, 1}, {1, 4, 4, 1, 1}, {1, 3, 3, 4, 1}};
 struct Style g_style4 = {{{0, 0, 0, 0, 0}, {1, 2, 2, 3, 1}, {2, 1, 1, 3, 1}, {0, 3, 3, 0, 1}, {0, 3, 3, 2, 1}, {3, 2, 2, 3, 1}, {2, 1, 1, 1, 1}}, {0, 3, 3, 0, 1}, {0, 3, 3, 2, 2}, {3, 2, 2, 3, 1}, {1, 2, 2, 3, 1}, {0, 2, 2, 0, 1}, {0, 3, 3, 1, 1}, {0, 3, 3, 0, 1}, {0, 3, 3, 0, 1}, {1, 2, 2, 3, 1}};
@@ -40,15 +40,21 @@ unsigned char g_palette[17] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 
 char g_blackPalette[16] = "";
 unsigned char g_altPalette[17] = {9, 1, 8, 0, 15, 7, 11, 3, 14, 2, 4, 12, 13, 10, 6, 14};
 
+
+
 void vi_garage_pal(void)
 {
     vi_palette_reg(12, 5);
 }
 
+
+
 void vi_bobs_pal(void)
 {
     vi_palette_reg(12, 13);
 }
+
+
 
 void vi_name_pal(void)
 {
@@ -56,6 +62,8 @@ void vi_name_pal(void)
     g_palette[7] = 1;
     g_palette[8] = 3;
 }
+
+
 
 void vi_swap_pal(void)
 {
@@ -68,6 +76,8 @@ void vi_swap_pal(void)
         g_altPalette[i] = save;
     }
 }
+
+
 
 void vi_init(struct Bitmap far *front, struct Bitmap far *back)
 {
@@ -110,7 +120,7 @@ void vi_init(struct Bitmap far *front, struct Bitmap far *back)
     i = 5;
     do {
         i--;
-        bm7568[i].id = bm7568[i].scriptIndex = -1;
+        g_scriptObjsData[i].id = g_scriptObjsData[i].scriptIndex = -1;
     } while (i);
     (*g_videoOps.show)();
     mn_reset();
@@ -129,11 +139,13 @@ void vi_init(struct Bitmap far *front, struct Bitmap far *back)
     }
 }
 
+
+
 void vi_anim_stop(int n)
 {
     struct Obj *o;
 
-    o = &bm7568[g_animScripts[g_animScriptStart[n]].a];
+    o = &g_scriptObjsData[g_animScripts[g_animScriptStart[n]].a];
     if (o->img)
         o->img = 0;
     if (o->fc)
@@ -143,6 +155,8 @@ void vi_anim_stop(int n)
     if (o->pendingTimers)
         sy_timer_cancel(n);
 }
+
+
 
 static void near anim_set_box(void)
 {
@@ -175,7 +189,7 @@ static void near anim_run(int n)
 
     wait = 1;
     cu_ctl(CURSOR_HIDE);
-    g_animRun.object = &bm7568[n];
+    g_animRun.object = &g_scriptObjsData[n];
     g_animRun.command = &g_animScripts[k = g_animRun.object->scriptIndex];
     g_animRun.box = &g_animRun.object->box;
     for (; k >= 0; k++) {
@@ -196,8 +210,8 @@ static void near anim_run(int n)
                 break;
             blt.w = res.x2 - res.x1;
             blt.h = res.y2 - res.y1 + 1;
-            blt.sx = res.x1 - ac825et;
-            blt.sy = res.y1 - aw8260y;
+            blt.sx = res.x1 - g_picXDraw;
+            blt.sy = res.y1 - g_sprDrawY;
             tx = res.x1 - g_animRun.box->dx;
             ty = res.y1 - g_animRun.box->dy;
             for (y = 0; y < g_animRun.object->img->height; y += g_animRun.box->h) {
@@ -254,16 +268,18 @@ static void near anim_run(int n)
     }
 }
 
+
+
 int vi_anim_start(int n)
 {
     int i;
 
     for (i = 0; i < 5; i++) {
-        if (bm7568[i].id == -1) {
+        if (g_scriptObjsData[i].id == -1) {
             g_animScripts[g_animScriptStart[n]].a = i;
-            bm7568[i].id = n;
-            bm7568[i].scriptIndex = g_animScriptStart[n] + 1;
-            bm7568[i].pendingTimers = 0;
+            g_scriptObjsData[i].id = n;
+            g_scriptObjsData[i].scriptIndex = g_animScriptStart[n] + 1;
+            g_scriptObjsData[i].pendingTimers = 0;
             anim_run(i);
             break;
         }
@@ -271,19 +287,25 @@ int vi_anim_start(int n)
     return i;
 }
 
+
+
 void vi_anim_resume(int n)
 {
     int k;
 
     k = g_animScripts[g_animScriptStart[n]].a;
-    bm7568[k].pendingTimers--;
+    g_scriptObjsData[k].pendingTimers--;
     anim_run(k);
 }
+
+
 
 int vi_anim_active(int n)
 {
     return g_animScripts[g_animScriptStart[n]].a >= 0;
 }
+
+
 
 int vi_anim_hook(struct Obj *o, struct Cmd *c)
 {

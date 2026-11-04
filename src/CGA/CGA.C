@@ -24,6 +24,8 @@ unsigned char g_cgaPixMask[4] = {192, 48, 12, 3};
 unsigned char g_cgaPixKeep[4] = {63, 207, 243, 252};
 int g_cgaRevealOrder[5] = {0, 2, 4, 1, 3};
 
+
+
 void cg_install(void)
 {
     g_videoOps = g_cgaHooks;
@@ -431,7 +433,7 @@ void cg_screen_off(void)
         outp(MONO_MODE, (MODE_CTRL_GRAPHICS | MODE_CTRL_BLINK));
         break;
     }
-    gz8249 = 0;
+    g_displayEnabled = 0;
 }
 
 /* Unreferenced video-control routine. */
@@ -445,5 +447,5 @@ void cg_screen_on(void)
         outp(MONO_MODE, (MODE_CTRL_GRAPHICS | MODE_CTRL_VIDEO | MODE_CTRL_BLINK));
         break;
     }
-    gz8249 = 1;
+    g_displayEnabled = 1;
 }

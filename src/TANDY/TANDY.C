@@ -18,6 +18,8 @@
 struct Hooks g_tandyHooks = {tb_copy, tb_shifted, tb_masked, ta_draw_text, uc_tandy, ta_copy_page, ta_recolor_rect, da_pal_blank, da_pal_show, ts_step, ta_reveal, sp_slide_v, tl_draw, tl_span, tl_fill_below};
 int g_tandyRevealOrder[5] = {0, 2, 4, 1, 3};
 
+
+
 void ta_install(void)
 {
     g_videoOps = g_tandyHooks;

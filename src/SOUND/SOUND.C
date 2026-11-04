@@ -25,8 +25,8 @@ static void near sweep_down(int start, int end, int step, int delay);
 
 int g_songRepeats[19] = {2, 1, 0, 2, 2, 0, 2, 1, 0, 1, 0, 0, 2, 2, 0, 2, 1, 0, -1};
 char g_jingleRepeats[4] = {0, 0, -1, -1};
-int g_songTones[37] = {1, 2, 1, 2, 3, 3, 1, 2, 1, 3, 1, 4, 4, 1, 2, 1, 3, 1, 2, 1, 3, 4, 4, 1, 2, 1, 3, 4, 1, 1, 1, 2, 1, 4, 3, 3, -1};
-int g_jingleTones[2] = {0, -1};
+enum ToneSlot g_songTones[37] = {TONE_PLAIN, TONE_LIGHT_VIBRATO, TONE_PLAIN, TONE_LIGHT_VIBRATO, TONE_WIDE_VIBRATO, TONE_WIDE_VIBRATO, TONE_PLAIN, TONE_LIGHT_VIBRATO, TONE_PLAIN, TONE_WIDE_VIBRATO, TONE_PLAIN, TONE_TRILL, TONE_TRILL, TONE_PLAIN, TONE_LIGHT_VIBRATO, TONE_PLAIN, TONE_WIDE_VIBRATO, TONE_PLAIN, TONE_LIGHT_VIBRATO, TONE_PLAIN, TONE_WIDE_VIBRATO, TONE_TRILL, TONE_TRILL, TONE_PLAIN, TONE_LIGHT_VIBRATO, TONE_PLAIN, TONE_WIDE_VIBRATO, TONE_TRILL, TONE_PLAIN, TONE_PLAIN, TONE_PLAIN, TONE_LIGHT_VIBRATO, TONE_PLAIN, TONE_TRILL, TONE_WIDE_VIBRATO, TONE_WIDE_VIBRATO, TONE_END};
+enum ToneSlot g_jingleTones[2] = {TONE_PROGRAMMABLE, TONE_END};
 int g_musicOn = 1;
 struct Dev *g_voice = &g_songBgState;
 int g_voiceNum = 1;
@@ -274,7 +274,7 @@ void so_sticker(int on)
 {
     if (on) {
         mu_play(g_stickerSound, g_jingleRepeats);
-        mu_set_vibrato(1, 0, 8, 10, 1);
+        mu_set_vibrato(1, WAVE_TRIANGLE, 8, 10, 1);
     } else
         mu_play(g_song, g_songRepeats);
 }
@@ -285,7 +285,7 @@ void F_16943(int on)
 {
     if (on) {
         mu_play(g_2f93_00b0, g_jingleRepeats);
-        mu_set_vibrato(1, 0, 8, 5, 1);
+        mu_set_vibrato(1, WAVE_TRIANGLE, 8, 5, 1);
     } else
         mu_play(g_song, g_songRepeats);
 }
@@ -296,7 +296,7 @@ void so_pump(int on)
 {
     if (on) {
         mu_play(g_pumpSound, g_jingleRepeats);
-        mu_set_vibrato(1, 1, 8, 30, 1);
+        mu_set_vibrato(1, WAVE_SAWTOOTH, 8, 30, 1);
     } else
         mu_play(g_song, g_songRepeats);
 }
@@ -307,7 +307,7 @@ void so_jack(int on)
 {
     if (on) {
         mu_play(g_jackSound, g_jingleRepeats);
-        mu_set_vibrato(1, 1, 8, 20, 1);
+        mu_set_vibrato(1, WAVE_SAWTOOTH, 8, 20, 1);
     } else
         mu_play(g_song, g_songRepeats);
 }
@@ -328,10 +328,12 @@ void so_part_move(int on)
 {
     if (on) {
         mu_play(g_partMoveSound, g_jingleRepeats);
-        mu_set_vibrato(1, 1, 8, 14, 1);
+        mu_set_vibrato(1, WAVE_SAWTOOTH, 8, 14, 1);
     } else
         mu_play(g_song, g_songRepeats);
 }
+
+
 
 void so_siren(int on)
 {
@@ -341,6 +343,8 @@ void so_siren(int on)
         g_sirenOn = 0;
 }
 
+
+
 void so_squeal(int on)
 {
     if (on)
@@ -348,6 +352,8 @@ void so_squeal(int on)
     else
         g_squealOn = 0;
 }
+
+
 
 void so_warble1(void)
 {
@@ -357,6 +363,8 @@ void so_warble1(void)
         so_off();
     }
 }
+
+
 
 void so_warble2(void)
 {

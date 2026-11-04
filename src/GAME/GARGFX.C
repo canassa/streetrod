@@ -35,7 +35,7 @@ int g_carbBoltOff[10] = {10, -1, 21, -1, 11, -1, 29, -1, 11, -1};
 char g_partSlotMap[14] = {29, 0, -1, -1, 2, 2, 2, 2, 3, 4, 2, 3, 2, 3};
 char g_carbPosBase[6] = {5, 6, 7, 10, 12, 0};
 struct Bitmap far *g_boltOverlay = 0;
-struct Hot g_boltHot = {11, 0, 0, 1, 0, 0, 0, 0, 0};
+struct Hot g_boltHot = {HOT_REGION, 0, 0, 1, 0, 0, 0, 0, 0};
 
 /* Draw the 64 x 6 bar for slot of the dialog; frame selects the highlighted frame.
    When frame == 1 and the screen is shadowed, the old bar is grabbed and pasted first. */
@@ -182,15 +182,15 @@ void gx_trans_draw(int n, char far *s)
 }
 
 struct Blt g_cpyBoltPatchRecord;
-int o_8290[5];
+int g_partsPics[5];
 int g_engineBoltPicIds[9];
 struct PartSelection g_slotSelec;
 
-/* Slot number for the item in o_8290: 0x434..0x436 map to 0..2 (anything else is returned as it is) */
+/* Slot number for the item in g_partsPics: 0x434..0x436 map to 0..2 (anything else is returned as it is) */
 
 static int near engine_index(void)
 {
-    switch (o_8290[0]) {
+    switch (g_partsPics[0]) {
     case 0x434:
         return 0;
     case 0x435:
@@ -207,7 +207,7 @@ static int near carb_pos(int *px, int *py)
     int r;
     int t;
 
-    switch (o_8290[g_partSlotMap[g_slotSelec.slot]]) {
+    switch (g_partsPics[g_partSlotMap[g_slotSelec.slot]]) {
     case 0x43c:
         r = 0;
         break;
@@ -262,7 +262,7 @@ void gx_bolt_pos(int *px, int *py)
         *py = g_engineBoltPos[slot * 2 + 1];
         break;
     case 1:
-        item = o_8290[1];
+        item = g_partsPics[1];
         slot = (item == 0x438 || item == 0x437) ? 0 : 2;
         if (g_slotSelec.subslot == 1)
             slot++;
@@ -369,7 +369,7 @@ static void near make_bolt_overlay(void)
     int py;
     struct Bitmap far *picture;
 
-    if (o_8290[1] == 0x437) {
+    if (g_partsPics[1] == 0x437) {
         kind = g_partSlotMap[g_slotSelec.slot];
         if (kind == 3)
             return;
@@ -520,20 +520,20 @@ void gx_draw_parts(struct Car *car)
         r_vid.hoodBg = di_bm(0x42d, ARENA_LOW_STACK);
     else
         di_unpack_pic(0x42d, r_vid.hoodBg);
-    if (type = o_8290[0]) {
+    if (type = g_partsPics[0]) {
         g_slotSelec.slot = 0;
         gx_draw_part(type, 0);
         if (type == 0x434)
             g_carbPosBase[0] = 4;
         else
             g_carbPosBase[0] = 5;
-        if (type = o_8290[1]) {
+        if (type = g_partsPics[1]) {
             g_slotSelec.slot = 1;
             gx_draw_part(type, 0);
             slot = g_carbPosBase[g_parts[car->rack.parts[1]->idx].variant];
             for (type = 0; type < 3; type++) {
                 g_slotSelec.slot = slot++;
-                if (other = o_8290[type + 2])
+                if (other = g_partsPics[type + 2])
                     gx_draw_part(other, 0);
             }
         }
@@ -610,7 +610,7 @@ static void near insert_hot(struct Hot *arr, struct Hot *item, int n)
 }
 
 /* Build the sorted list of menu items in g_engineHots: the 3 fixed records are copied from g_engineHotTemplate,
-   then for each of 9 slots (grouped by the counts in g_nBolt) that is enabled in o_8290 an item is
+   then for each of 9 slots (grouped by the counts in g_nBolt) that is enabled in g_partsPics an item is
    inserted at the position gx_bolt_pos gives for the slot's coordinates, plus a last item picked by
    g_slotSelec.wirePic. g_slotSelec.slot/g_slotSelec.subslot are saved and restored around it. */
 
@@ -632,13 +632,13 @@ void gx_build_hots(int *xs, int *ys)
     g_boltHot.textOffset = g_offBolt;
     i = lane = j = 0;
     for (; i < 9; i++) {
-        if (o_8290[lane]) {
+        if (g_partsPics[lane]) {
             g_slotSelec.slot = xs[i];
             g_slotSelec.subslot = ys[i];
             gx_bolt_pos(&x, &y);
             x += 0x60;
             y += 9;
-            g_boltHot.f6 = i + 1;
+            g_boltHot.id = i + 1;
             g_boltHot.x2 = (g_boltHot.x1 = x - 2) + 5;
             g_boltHot.y1 = (g_boltHot.y2 = y + 2) - 15;
             insert_hot(g_engineHots, &g_boltHot, num);
@@ -649,16 +649,16 @@ void gx_build_hots(int *xs, int *ys)
             j = 0;
         }
     }
-    if (o_8290[0]) {
+    if (g_partsPics[0]) {
         g_boltHot.textOffset = g_offWires;
-        g_boltHot.f6 = 13;
+        g_boltHot.id = 13;
         i = (g_slotSelec.wirePic == 0x446) + engine_index() * 2;
         g_boltHot.x2 = (g_boltHot.x1 = g_wiresPos[i * 2] + 0x5b) + 10;
         g_boltHot.y2 = (g_boltHot.y1 = g_wiresPos[i * 2 + 1] + 2) + 15;
         insert_hot(g_engineHots, &g_boltHot, num);
         num++;
     }
-    g_engineHots[num].kind = 9;
+    g_engineHots[num].kind = HOT_END;
     g_slotSelec.slot = rx;
     g_slotSelec.subslot = rh;
     sy_hover_reset();

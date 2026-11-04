@@ -6,6 +6,7 @@
 
         .CODE S21A0_TEXT
 
+
 ; Wait for the start of vertical retrace on the CRT status port 3DAh:
 ; first until the display is not in the middle of a retrace, then until bit 3 sets.
 
@@ -22,6 +23,7 @@ wait2a:
         je      wait2a
         ret
 _ct_wait_vsync  ENDP
+
 
 ; Set the CRTC line compare register (split screen row) during vertical
 ; retrace. The CRTC base port comes from the BIOS data area (0040:0063).

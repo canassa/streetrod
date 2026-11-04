@@ -7,6 +7,8 @@
 
         .CODE S0000_TEXT
 
+
+
         PUBLIC  _ko_unhook
 _ko_unhook  PROC  FAR
         push    ds

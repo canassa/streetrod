@@ -31,15 +31,14 @@ char g_hideSelectFrameVal;
 struct ListDialog g_menuList;
 char g_headerEditableState;
 struct Hot *g_hotsCurMenu;
-int ai8bacx;
+int g_textOfsMenu;
 int g_hotMenuGroupState;
 
 int g_hotChain = 0;
 char g_wearText[12] = "(xx% worn)";
 
 /* Draw a hot spot and the spots linked behind it (the chain through Hot.next masked with
-   g_hotChain), by kind: 4/12 filled box with optional centred text, 5/6/10 text only, 7/8 header bar,
-   13 first-time marker. Grows the touched rectangle g_drawnMinX..g_drawnMaxY. */
+   g_hotChain). Grows the touched rectangle g_drawnMinX..g_drawnMaxY. */
 
 void mn_draw_hot(struct Hot *p)
 {
@@ -53,8 +52,8 @@ void mn_draw_hot(struct Hot *p)
         cu_ctl(CURSOR_HIDE);
     do {
         switch (p->kind) {
-        case 4:
-        case 12:
+        case HOT_BOX:
+        case HOT_LINK_BOX:
             if (p->palIndex > 0) {
                 if (p->palIndex != colr)
                     x_colors = bustyle->pal[colr = p->palIndex];
@@ -73,7 +72,7 @@ void mn_draw_hot(struct Hot *p)
             g_drawnMinY = p->y1 > g_drawnMinY ? g_drawnMinY : p->y1;
             g_drawnMaxY = p->y2 < g_drawnMaxY ? g_drawnMaxY : p->y2;
             continue;
-        case 10:
+        case HOT_BUTTON:
             if (p->palIndex != colr)
                 x_colors = bustyle->pal[colr = p->palIndex];
             dr_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, h = p->y2 - p->y1);
@@ -82,42 +81,42 @@ void mn_draw_hot(struct Hot *p)
             (*g_videoOps.drawText)(r_vid.back, ((w - da_text_width(str)) >> 1) + p->x1,
                       p->y1 + ((h - 8) >> 1), str);
             goto box;
-        case 5:
+        case HOT_TEXT:
             if (p->palIndex != colr)
                 x_colors = bustyle->pal[colr = p->palIndex];
             (*g_videoOps.drawText)(r_vid.back, p->x1, p->y1, g_txt + p->textOffset);
             goto box;
-        case 6:
+        case HOT_CENTERED_TEXT:
             if (p->palIndex != colr)
                 x_colors = bustyle->pal[colr = p->palIndex];
             str = g_txt + p->textOffset;
             (*g_videoOps.drawText)(r_vid.back, ((p->x2 - p->x1 - da_text_width(str)) >> 1) + p->x1,
                       ((p->y2 - p->y1 - 8) >> 1) + p->y1, str);
             goto box;
-        case 7:
+        case HOT_EDIT_HEADER:
             g_headerEditableState = 1;
-        case 8:
+        case HOT_CENTERED_HEADER:
             if (p->palIndex != colr)
                 x_colors = bustyle->pal[colr = p->palIndex];
             dr_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, 8);
             str = g_txt + p->textOffset;
-            if (p->kind == 8)
+            if (p->kind == HOT_CENTERED_HEADER)
                 (*g_videoOps.drawText)(r_vid.back, ((w - da_text_width(str)) >> 1) + p->x1, p->y1, str);
             else
                 (*g_videoOps.drawText)(r_vid.back, p->x1, p->y1, str);
             if (!g_menuList.header)
                 g_menuList.header = p;
             goto box;
-        case 13:
+        case HOT_LIST_ROW:
             if (!g_menuList.rows++)
                 g_menuList.lineBase = (int)p;
             goto box;
-        case 1:
-        case 2:
-        case 3:
-        case 9:
-        case 11:
-        case 14:
+        case HOT_MENU:
+        case HOT_LIST_MENU:
+        case HOT_LIST_NO_FRAME:
+        case HOT_END:
+        case HOT_REGION:
+        case HOT_DISABLED:
             continue;
         }
         break;
@@ -141,11 +140,11 @@ void mn_push(enum ScreenId id)
         cu_ctl(CURSOR_HIDE);
         g_menuGrpHistoryList[g_menuLevel++] = g_hotMenuGroupState = id;
         g_boxSpotHitData.x1 = g_boxSpotHitData.x2 = g_boxSpotHitData.y1 = g_boxSpotHitData.y2 = -1;
-        ai8bacx = (p = &g_hots[g_groupHot[id]])->textOffset;
-        g_hotsCurMenu = (p + 1)->kind > 9 ? p + 1 : 0;
+        g_textOfsMenu = (p = &g_hots[g_groupHot[id]])->textOffset;
+        g_hotsCurMenu = (p + 1)->kind > HOT_LAST_NONCLICKABLE ? p + 1 : 0;
         g_menuList.rows = g_menuList.lineBase = g_menuList.header = 0;
         g_headerEditableState = 0;
-        g_hideSelectFrameVal = p->kind == 3;
+        g_hideSelectFrameVal = p->kind == HOT_LIST_NO_FRAME;
         saved = x_colors;
         g_hotChain = -1;
         g_drawnMinX = g_drawnMinY = 1000;
@@ -181,9 +180,11 @@ void mn_pop(int keep)
     }
 }
 
+
+
 void mn_reset(void)
 {
-    g_menuLevel = ai8bacx = 0;
+    g_menuLevel = g_textOfsMenu = 0;
     g_hotsCurMenu = 0;
     g_boxSpotHitData.x1 = g_boxSpotHitData.y1 = g_boxSpotHitData.x2 = g_boxSpotHitData.y2 = g_cursHoverCodeVal = 0;
 }
@@ -241,13 +242,13 @@ struct Bitmap far *mn_grab(enum ScreenId id, int *px, int *py, int mode)
 }
 
 /* Find the hot spot of the current menu (list at g_hotsCurMenu) under the point (x, y). On a hit
-   the spot's box goes to g_boxSpotHitData and its id (f6) is returned; on a miss g_boxSpotHitData gets the free
+   the spot's box goes to g_boxSpotHitData and its id is returned; on a miss g_boxSpotHitData gets the free
    rectangle around the point and 0 is returned */
 
 int mn_hit(int x, int y)
 {
     struct Hot *p;
-    int kind;
+    enum HotKind kind;
 
     p = g_hotsCurMenu;
     if (p == 0) {
@@ -259,8 +260,8 @@ int mn_hit(int x, int y)
     g_boxSpotHitData.x1 = g_boxSpotHitData.y1 = 0;
     g_boxSpotHitData.x2 = 319;
     g_boxSpotHitData.y2 = 199;
-    while ((kind = p->kind) > 9) {
-        if (kind == 14) {
+    while ((kind = p->kind) > HOT_LAST_NONCLICKABLE) {
+        if (kind == HOT_DISABLED) {
             p++;
             continue;
         }
@@ -272,8 +273,8 @@ int mn_hit(int x, int y)
             if (p->x2 > g_boxSpotHitData.x1)
                 g_boxSpotHitData.x1 = p->x2;
         next:
-            if (kind == 12)
-                p = &g_hots[p->f6];
+            if (kind == HOT_LINK_BOX)
+                p = &g_hots[p->id];
             else
                 p++;
         } else {
@@ -284,7 +285,7 @@ int mn_hit(int x, int y)
                 if (p->y2 > g_boxSpotHitData.y1)
                     g_boxSpotHitData.y1 = p->y2;
             } else {
-                if (kind == 12) {
+                if (kind == HOT_LINK_BOX) {
                     p++;
                     continue;
                 }
@@ -293,7 +294,7 @@ int mn_hit(int x, int y)
                 g_boxSpotHitData.y1 = p->y1;
                 g_boxSpotHitData.y2 = p->y2;
                 g_curHoverPointer = p;
-                return g_cursHoverCodeVal = p->f6;
+                return g_cursHoverCodeVal = p->id;
             }
             goto next;
         }
@@ -319,6 +320,8 @@ int mn_modal(enum ScreenId id)
     return res;
 }
 
+
+
 int mn_wait(enum ScreenId a)
 {
     int key;
@@ -341,7 +344,7 @@ int mn_modal_list(enum ScreenId a, int b, int *c, int *list, char *buf, char **d
     int res;
 
     if (*list == 0)
-        return 0x3ea;
+        return KR_EMPTY_LIST;
     bm1 = mn_grab(a, &x, &y1, ARENA_HIGH_STACK);
     res = mn_list(a, b, c, list, buf, d);
     pu_show(bm1, x, y1);
@@ -393,7 +396,7 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
     topk = 0;
     curl = -1;
     if (*list == 0)
-        return 0x3ea;
+        return KR_EMPTY_LIST;
     sel--;
     lp11 = list + 1;
     count5 = *list;
@@ -468,14 +471,14 @@ restore:
                 x1 = w->w;
                 y1 = w->h;
                 x2 = w->tx;
-                if (kind != 0x26)
+                if (kind != KM_CAR_INFO)
                     (*g_videoOps.recolorRegion)(r_vid.back, x_colors.text, sv5, x1, y1, x2, w->h + 8);
                 y2 = w->ty;
             } else
                 nw5 = -1;
             if (curl >= 0) {
                 w = (struct Win *)(0x12 * curl + g_menuList.lineBase);
-                if (kind != 0x26)
+                if (kind != KM_CAR_INFO)
                     (*g_videoOps.recolorRegion)(r_vid.back, sv5, x_colors.text, w->w, w->h, w->tx, w->h + 8);
                 x1 = (w->w > x1) ? x1 : w->w;
                 y1 = (w->h > y1) ? y1 : w->h;
@@ -494,7 +497,7 @@ restore:
                 if (hotn) {
                     if (!g_headerEditableState || i == sel) {
                         strcpy(bufpl, g_desc + lp11[i]);
-                        if (kind == 5 && !strcmp(g_blankName, bufpl))
+                        if (kind == KM_SAVE && !strcmp(g_blankName, bufpl))
                             strcpy(bufpl, "\0");
                         if (buf && (wear = buf1[i]) != -128) {
                             strcat(bufpl, g_wearPad);
@@ -532,7 +535,7 @@ restore:
             mn_pop(1);
             return key2;
         case KR_EDIT_HEADER:
-            if (kind == 5 && !strcmp(g_blankName, bufpl))
+            if (kind == KM_SAVE && !strcmp(g_blankName, bufpl))
                 strcpy(bufpl, "\0");
             x_colors = bustyle->pal[hotn->palIndex];
             mn_push(KM_MESSAGE);

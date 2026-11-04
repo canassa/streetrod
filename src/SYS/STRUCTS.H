@@ -2,6 +2,78 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
+enum GasHand {
+    GAS_HAND_EMPTY = 1,
+    GAS_HAND_NOZZLE = 2,
+    GAS_HAND_RAG = 3
+};
+
+enum TimerAction {
+    TIMER_CANCELLED = 0,
+    TIMER_RESUME_ANIM = 1
+};
+
+enum TireVariant {
+    TIRES_STANDARD = 0,
+    TIRES_BRAND_NAME = 1,
+    TIRES_RACING_SLICKS = 2
+};
+
+enum ManifoldVariant {
+    MANIFOLD_TWO_BARREL = 0,
+    MANIFOLD_FOUR_BARREL = 1,
+    MANIFOLD_DUAL_QUAD = 2,
+    MANIFOLD_TRI_POWER = 3,
+    MANIFOLD_RACING = 4
+};
+
+enum CarburetorVariant {
+    CARB_TWO_BARREL = 0,
+    CARB_FOUR_BARREL = 1,
+    CARB_RACING = 2
+};
+
+enum TransmissionVariant {
+    TRANS_AUTOMATIC = 0,
+    TRANS_THREE_SPEED = 1,
+    TRANS_FOUR_SPEED = 2,
+    TRANS_RACING = 3
+};
+
+enum EngineVariant {
+    ENGINE_V6 = 0,
+    ENGINE_V8_SMALL = 1,
+    ENGINE_V8_LARGE = 2
+};
+
+enum PartCategory {
+    PART_ENGINE = 0,
+    PART_TRANSMISSION = 1,
+    PART_CARBURETOR = 2,
+    PART_MANIFOLD = 3,
+    PART_TIRES = 4
+};
+
+enum AutoSelector {
+    SELECTOR_MANUAL = 0,
+    SELECTOR_NEUTRAL = 1,
+    SELECTOR_DRIVE = 2
+};
+
+
+enum WireState {
+    WIRES_DISCONNECTED = -1,
+    WIRES_ABSENT = 0,
+    WIRES_CONNECTED = 1
+};
+
+
+enum RaceType {
+    RACE_DRAG = 0,
+    RACE_ROAD = 1
+};
+
+
 struct Mouse {
     int dx;
     int dy;
@@ -125,9 +197,24 @@ union Word {
     unsigned char b[2];
 };
 
+enum ToneSlot {
+    TONE_END = -1,
+    TONE_PROGRAMMABLE = 0,
+    TONE_PLAIN = 1,
+    TONE_LIGHT_VIBRATO = 2,
+    TONE_WIDE_VIBRATO = 3,
+    TONE_TRILL = 4
+};
+
+enum Waveform {
+    WAVE_TRIANGLE = 0,
+    WAVE_SAWTOOTH = 1,
+    WAVE_PULSE = 2
+};
+
 struct Tone {
     int phase;
-    int waveform;
+    enum Waveform waveform;
     int depth;
     int length;
     int delay;
@@ -284,15 +371,34 @@ struct Dev {
     int far *cur;
     int *repeatTable;
     int *repeatCursor;
-    int *toneTable;
-    int *toneCursor;
+    enum ToneSlot *toneTable;
+    enum ToneSlot *toneCursor;
+};
+
+enum HotKind {
+    HOT_UNSET = 0,
+    HOT_MENU = 1,
+    HOT_LIST_MENU = 2,
+    HOT_LIST_NO_FRAME = 3,
+    HOT_BOX = 4,
+    HOT_TEXT = 5,
+    HOT_CENTERED_TEXT = 6,
+    HOT_EDIT_HEADER = 7,
+    HOT_CENTERED_HEADER = 8,
+    HOT_END = 9,
+    HOT_BUTTON = 10,
+    HOT_REGION = 11,
+    HOT_LINK_BOX = 12,
+    HOT_LIST_ROW = 13,
+    HOT_DISABLED = 14,
+    HOT_LAST_NONCLICKABLE = HOT_END
 };
 
 struct Hot {
-    int kind;
+    enum HotKind kind;
     int palIndex;
     int textOffset;
-    int f6;
+    int id;
     int x1;
     int y1;
     int x2;
@@ -355,7 +461,7 @@ struct Link {
     int prv;
     long deadline;
     int priority;
-    int action;
+    enum TimerAction action;
     int argument;
     char pad[4];
 };
@@ -371,7 +477,7 @@ struct Dlg {
     int bodyMods;
     struct Bitmap far *bm1;
     struct Bitmap far *bm2;
-    int f0c;
+    enum GasHand f0c;
     int fillsLeft;
     int f10;
     int f12;
@@ -431,7 +537,7 @@ struct Eng {
     int shiftRpm;
     int automatic;
     int autoShiftRpm;
-    int autoSelector;
+    enum AutoSelector autoSelector;
     int f26;
     int f28;
     int f2a;
@@ -510,7 +616,7 @@ struct Spr6 {
     unsigned char fuelCapX, fuelCapY, rearGlassX, rearGlassY, frontGlassX, frontGlassY;
 };
 
-/* 6-byte table entry (a784als[]): bitmap id, then the (dx, dy) offset it is drawn at */
+/* 6-byte table entry (g_imageDecalLayout[]): bitmap id, then the (dx, dy) offset it is drawn at */
 struct Pos6 {
     int id;
     int dx;
@@ -564,6 +670,14 @@ struct Pages {
 
 /* mouse cursor state at DS:7aec (cu_init sets it up, cu_ctl/cu_draw move it). The four
    rectangle members compare as nested members (cu_draw), which plain globals don't reproduce. */
+enum CursorDrawState {
+    CURSOR_ERASE_BUFFERED = -2,
+    CURSOR_ERASE_NOW = -1,
+    CURSOR_HIDDEN = 0,
+    CURSOR_DRAWN = 1,
+    CURSOR_DRAW_BUFFERED = 2
+};
+
 struct Cursor {
     struct Bitmap far *save;    /* background under the cursor */
     struct Clip clip;           /* last drawn strip; memset as 12 bytes */
@@ -594,28 +708,28 @@ struct CgaGlyph {
 };
 
 /* DS:7D2E..7D3F: one communal; the code reads these as struct members */
-struct State7D2E {
+struct RoadView {
     int rightEdge;
     int roadIndex;
     int roadFraction;
     int distanceStep;
     int lateralX;
     int cameraY;
-    int m7d3a;
-    int m7d3c;
-    int m7d3e;
+    int unused;
+    int curveX;
+    int roadHeight;
 };
 
 /* DS:7E8A..7E99: one communal; the code reads these as struct members */
-struct State7E8A {
+struct RivalPosition {
     int roadIndex;
     int roadFraction;
     int distanceStep;
     int lateralX;
-    char m7e92[8];
+    char unused[8];
 };
 
-struct State70C0 {
+struct RoadEdges {
     int leftEdge;
     int leftOuterX[8];
     int rightOuterX[8];
@@ -623,9 +737,9 @@ struct State70C0 {
 
 /* DS:7EAA..7EC2: one COMMON block in the original (folded from 11 placeholder
    globals: the compiler budget of the original translation units requires fewer external symbols) */
-struct State7EAA {
+struct DriverState {
     long money;
-    int m7eae;
+    int unused;
     struct Car *currentCar;
     struct Car *otherCars;
     struct Node2 *freeCars;
@@ -634,12 +748,12 @@ struct State7EAA {
     struct Node *freeParts;
     int partCount;
     int adIndex;
-    int raceType;
+    enum RaceType raceType;
 };
 
 /* DS:8272..8290: one COMMON block in the original (folded from 11 placeholder
    globals: the compiler budget of the original translation units requires fewer external symbols) */
-struct State8272 {
+struct CarDisplay {
     int stickerX;
     int stickerY;
     int stickerSubX;
@@ -651,7 +765,7 @@ struct State8272 {
     int specIndex;
     struct Look appearance;
     int transmissionPic;
-    char pad8288[8];
+    char unused[8];
 };
 
 struct Hooks {

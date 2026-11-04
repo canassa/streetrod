@@ -26,7 +26,8 @@ def value(expr, names):
 
 
 def c_enums(text):
-    names = {}
+    names = {name: value(expr, {}) for name, expr in
+             re.findall(r'^#define (KEY_VALUE_BASE) (0x[0-9a-f]+)$', text, re.M)}
     for body in re.findall(r'\benum\s+\w+\s*\{([^}]+)\}', text, re.S):
         next_value = 0
         for member in body.split(','):
@@ -67,12 +68,19 @@ class KeyMapAgreementTests(unittest.TestCase):
 
     def test_decoded_results_and_raw_patch_bytes_agree(self):
         for name, result in self.c.items():
+            if name in {'KR_TIMEOUT', 'KR_EMPTY_LIST', 'KR_ANY_INPUT'}:
+                self.assertNotIn(name, self.equ)
+                continue
             if name.startswith('KR_'):
                 self.assertIn(name, self.equ)
                 self.assertEqual(result, self.equ[name], name)
             elif name.startswith('KV_'):
                 decoded = name.replace('KV_', 'KR_', 1)
                 self.assertEqual(result, self.equ['KEY_VALUE_BASE'] + self.equ[decoded], name)
+        self.assertEqual(self.c['KEY_VALUE_BASE'], self.equ['KEY_VALUE_BASE'])
+        self.assertEqual({n: self.c[n] for n in
+                          ('KR_TIMEOUT', 'KR_EMPTY_LIST', 'KR_ANY_INPUT')},
+                         {'KR_TIMEOUT': 1000, 'KR_EMPTY_LIST': 1002, 'KR_ANY_INPUT': 1003})
         self.assertEqual({n for n in self.c if n.startswith('KV_')},
                          {'KV_REPAIR_FIX', 'KV_REPAIR_JUNK'})
         for result in re.findall(r'\bKEY SC_\w+,\s+(KR_\w+)', self.asm):

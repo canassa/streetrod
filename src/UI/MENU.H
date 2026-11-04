@@ -15,7 +15,7 @@ extern int g_menuGrpHistoryList[];
 extern char g_hideSelectFrameVal;
 extern char g_headerEditableState;
 extern struct Hot *g_hotsCurMenu;
-extern int ai8bacx;
+extern int g_textOfsMenu;
 extern int g_hotMenuGroupState;
 void mn_draw_hot(struct Hot *p);
 void mn_push(enum ScreenId id);

@@ -26,6 +26,8 @@
 
         .CODE S0000_TEXT
 
+
+
         PUBLIC  _kb_text_on
 _kb_text_on  PROC  FAR
         push    bp
@@ -44,6 +46,8 @@ skip57:
         ret
 _kb_text_on  ENDP
 
+
+
         PUBLIC  _kb_text_off
 _kb_text_off  PROC  FAR
         cli
@@ -54,6 +58,7 @@ _kb_text_off  PROC  FAR
         sti
         ret
 _kb_text_off  ENDP
+
 
 ; int 9 keyboard ISR (installed by kg_hook)
 

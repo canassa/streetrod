@@ -4,6 +4,22 @@
 #define RACE_H
 #include "STRUCTS.H"
 
+enum CopPhase {
+    COP_ABSENT = 0,
+    COP_WAITING = 1,
+    COP_APPROACHING = 2,
+    COP_PURSUING = 3
+};
+
+#define STOP_LOST 0x01
+#define STOP_COLLISION 0x02
+#define STOP_ENGINE 0x04
+#define STOP_TIRES 0x08
+#define STOP_TRANSMISSION 0x10
+#define STOP_ROADSIDE_CRASH 0x20
+#define STOP_POLICE 0x40
+#define STOP_JUMP_START 0x80
+
 struct RivalPace {
     int topSpeed;
     int speedMargin;
@@ -30,23 +46,23 @@ extern int g_rivalLeft;
 extern int g_rivalCurveBrake;
 extern int g_contactFrames;
 extern int g_brakeTicks;
-extern struct State70C0 al70c0x;
-extern int by72f2;
-extern struct Bitmap far *ab7526x[13];
+extern struct RoadEdges g_edgesRoad;
+extern int g_carHit;
+extern struct Bitmap far *g_policeFramesTable[13];
 extern int g_idxAtCop;
 extern int g_finishMeanSpeedVal;
 extern char g_failureTire;
-extern int ap7d7cv;
+extern int g_picOpponent;
 extern int g_ramAllowed;
 extern int g_leftEdgeX;
-extern int a_7f88d;
+extern enum CopPhase g_pursuitPhaseIndex;
 extern int g_steeringOld;
-extern int dz82c8x;
-extern int bz8630z;
+extern int g_coveredRacePct;
+extern int g_shownShiftPosition;
 extern int g_finishAheadPlayerState;
 extern int g_swapArmedRivalValue;
-extern struct Bitmap far *g8acew[13];
-extern int ay8bc2z;
+extern struct Bitmap far *g_spritesOpp[13];
+extern int g_carCollisionRange;
 extern float g_raceSecsElapsedValue;
 extern int g_edgeXR;
 void ra_gas_station(void);

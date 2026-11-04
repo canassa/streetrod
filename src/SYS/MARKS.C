@@ -3,6 +3,8 @@
 #include "ARENA.H"
 #include "MAIN.H"
 
+
+
 void ma_clear(void)
 {
     g_offsetArenaMarksList[g_lowArenaMarker = 0] = g_loHeapLimit = 0;
@@ -10,11 +12,15 @@ void ma_clear(void)
     g_stickerBg = 0;
 }
 
+
+
 void ma_release(void)
 {
     g_offsetArenaMarksList[g_lowArenaMarker = 0] = g_loHeapLimit;
     g_offsetArenaMarksList[g_markerIndexHigh = 60] = g_arenaTopVal;
 }
+
+
 
 void ma_pop_low(int n)
 {
@@ -23,6 +29,8 @@ void ma_pop_low(int n)
     else
         g_lowArenaMarker -= n;
 }
+
+
 
 void ma_pop_high(int n)
 {

@@ -2,6 +2,7 @@
 
         .CODE S2634_TEXT
 
+
 ; mk_copy(dst_far, src_seg, src_off, mask_off, dst_pitch, x_bytes, w, h):
 ; masked blit.  For each row: dst = (dst & mask) | (~mask & src), words first
 ; and then one odd byte.  Its scratch variables live in the code segment, in
@@ -91,6 +92,7 @@ done1:
         pop     bp
         ret
 _mk_copy  ENDP
+
 
 ; mk_make_mask(src_far, dst_far, bytes): OR together the four bit planes of a
 ; source of bytes (a quarter of it each, plane n at src + n * bytes/4) and

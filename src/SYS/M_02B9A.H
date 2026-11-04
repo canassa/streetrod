@@ -66,7 +66,7 @@ extern char g_carbFit[][3];
 extern int g_partPics[][5];
 extern int g_boltPics[];
 extern int g_transPics[];
-extern char *g_bankrollLabel;
+extern char *g_cashLabel;
 extern char *g_gearLabel;
 extern int g_list[];
 void mb_store_mode_a(char a, char b);

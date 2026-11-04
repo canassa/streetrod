@@ -2,8 +2,8 @@
         INCLUDE PC.INC
 
         .DATA
-        EXTRN   _at767ct:WORD
-        EXTRN   _av787at:WORD
+        EXTRN   _g_targetPixelOffset:WORD
+        EXTRN   _g_videoAddrSegment:WORD
         EXTRN   _g_hercules:WORD
         EXTRN   _g_viewRect:BYTE
         EXTRN   _g_viewClip:WORD
@@ -23,6 +23,7 @@ _g_cgaDitherEven DB      0, 0, 55h, 0BBh, 0FFh, 0, 0, 0, 55h, 0DDh, 0AAh, 0, 0AA
         DB      55h, 0AAh, 0AAh
 
         .CODE S1C11_TEXT
+
 
 ; Draw a line with 2 bits per pixel into the interleaved (CGA/Hercules
 ; style) screen, Bresenham style. A horizontal line is a byte-fill with edge
@@ -48,9 +49,9 @@ _cl_draw  PROC    FAR
         mov     WORD PTR [bp-0Ah],0
         cmp     _g_hercules,0
         je      gotdx
-        cmp     _av787at,MONO_SEGMENT
+        cmp     _g_videoAddrSegment,MONO_SEGMENT
         jb      gotdx
-        cmp     _av787at,0B400h
+        cmp     _g_videoAddrSegment,0B400h
         ja      gotdx
         mov     WORD PTR [bp-0Ah],2
         mov     ax,[bp+8]
@@ -318,8 +319,9 @@ done1:
         ret
 _cl_draw  ENDP
 
+
 ; Pixel address helper for the interleaved 2-bit mode. In: ax = y, bx = x.
-; Out: bx = byte offset of the pixel (scan line, bank and x/4 folded together) + at767ct, es = av787at, cl = 2 * (3 - (x & 3)).
+; Out: bx = byte offset of the pixel (scan line, bank and x/4 folded together) + g_targetPixelOffset, es = g_videoAddrSegment, cl = 2 * (3 - (x & 3)).
 
         PUBLIC  _cl_pixel_addr
 _cl_pixel_addr  PROC    NEAR
@@ -334,8 +336,8 @@ _cl_pixel_addr  PROC    NEAR
         add     bx,ax
         shr     bx,1
         shr     bx,1
-        add     bx,_at767ct
-        mov     ax,_av787at
+        add     bx,_g_targetPixelOffset
+        mov     ax,_g_videoAddrSegment
         mov     es,ax
         mov     ah,3
         and     cl,ah
@@ -343,6 +345,7 @@ _cl_pixel_addr  PROC    NEAR
         shl     cl,1
         ret
 _cl_pixel_addr  ENDP
+
 
 ; Draw a horizontal line with 2 bits per pixel into the interleaved
 ; (CGA/Hercules style) screen, clipped to the clip rectangle. On a Hercules
@@ -361,9 +364,9 @@ _cl_span  PROC    FAR
         mov     BYTE PTR cs:dbl,0
         cmp     _g_hercules,0
         je      clip
-        cmp     _av787at,MONO_SEGMENT
+        cmp     _g_videoAddrSegment,MONO_SEGMENT
         jb      clip
-        cmp     _av787at,0B400h
+        cmp     _g_videoAddrSegment,0B400h
         ja      clip
         test    WORD PTR [bp+10],1
         je      clip
@@ -484,6 +487,7 @@ done2:
         ret
 _cl_span  ENDP
 
+
 ; Fill whole screen lines with a 2-bit pattern, from line y1 down to the
 ; bottom clip line (g_viewClip.yMax). The colour is turned into a pattern
 ; byte via g_cgaDitherOdd; every second line gets the pattern rotated by 2 bits.
@@ -544,6 +548,7 @@ done3:
         pop     bp
         ret
 _cl_fill_below  ENDP
+
 
 ; Map a colour in al to a CGA 2-bit pixel value: 0-3 stay as they are,
 ; 4-15 go through the table g_cgaColorMap, anything above becomes 3.

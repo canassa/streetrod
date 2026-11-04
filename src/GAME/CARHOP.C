@@ -72,7 +72,7 @@ static void near grab_strip(struct Bitmap far **pbm)
 /* Build the sprite animation of a moving car body: the cells from the sheet, the pages, the 0x54
    step run */
 
-void ch_skate(int a, int b)
+void ch_skate(enum CarhopMode a, int b)
 {
     struct Blt r2;
     struct Bitmap far *t;
@@ -108,8 +108,8 @@ void ch_skate(int a, int b)
         if (sp_car_clip(0, 0x44, bm9->width, bm9->height, &rca2)) {
             r3.w = rca2.x2 - rca2.x1;
             r3.h = rca2.y2 - rca2.y1 + 1;
-            r3.sx = rca2.x1 - ac825et;
-            r3.sy = rca2.y1 - aw8260y;
+            r3.sx = rca2.x1 - g_picXDraw;
+            r3.sy = rca2.y1 - g_sprDrawY;
             clip = bm_grab(g_autoSprImagePtr, &r3, ARENA_HIGH_STACK);
             r3.sx = 0;
             r3.sy = 0;

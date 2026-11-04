@@ -1,6 +1,30 @@
         .MODEL MEDIUM
         INCLUDE PC.INC
 
+PART_ENGINE EQU 0
+PART_TRANSMISSION EQU 1
+PART_CARBURETOR EQU 2
+PART_MANIFOLD EQU 3
+PART_TIRES EQU 4
+ENGINE_V6 EQU 0
+ENGINE_V8_SMALL EQU 1
+ENGINE_V8_LARGE EQU 2
+TRANS_AUTOMATIC EQU 0
+TRANS_THREE_SPEED EQU 1
+TRANS_FOUR_SPEED EQU 2
+TRANS_RACING EQU 3
+CARB_TWO_BARREL EQU 0
+CARB_FOUR_BARREL EQU 1
+CARB_RACING EQU 2
+MANIFOLD_TWO_BARREL EQU 0
+MANIFOLD_FOUR_BARREL EQU 1
+MANIFOLD_DUAL_QUAD EQU 2
+MANIFOLD_TRI_POWER EQU 3
+MANIFOLD_RACING EQU 4
+TIRES_STANDARD EQU 0
+TIRES_BRAND_NAME EQU 1
+TIRES_RACING_SLICKS EQU 2
+
         .DATA
 
         PUBLIC  _g_joyX
@@ -114,133 +138,133 @@ S_47f1  DB      '`Bankroll:`$', 0
 _g_gearText DB      ' Gear: ', 0
         PUBLIC  _g_parts
 _g_parts DW      13h
-        DB      0, 1, 0, 0
+        DB      ENGINE_V6, 1, PART_ENGINE, 0
         DW      73Ch
         DW      13h
-        DB      0, 2, 0, 0
+        DB      ENGINE_V6, 2, PART_ENGINE, 0
         DW      74Bh
         DW      13h
-        DB      0, 4, 0, 0
+        DB      ENGINE_V6, 4, PART_ENGINE, 0
         DW      75Ch
         DW      15Eh
-        DB      1, 1, 0, 0
+        DB      ENGINE_V8_SMALL, 1, PART_ENGINE, 0
         DW      771h
         DW      154h
-        DB      1, 2, 0, 0
+        DB      ENGINE_V8_SMALL, 2, PART_ENGINE, 0
         DW      7A4h
         DW      168h
-        DB      1, 4, 0, 0
+        DB      ENGINE_V8_SMALL, 4, PART_ENGINE, 0
         DW      7D6h
         DW      1F4h
-        DB      2, 1, 0, 0
+        DB      ENGINE_V8_LARGE, 1, PART_ENGINE, 0
         DW      804h
         DW      1DBh
-        DB      2, 2, 0, 0
+        DB      ENGINE_V8_LARGE, 2, PART_ENGINE, 0
         DW      833h
         DW      20Dh
-        DB      2, 4, 0, 0
+        DB      ENGINE_V8_LARGE, 4, PART_ENGINE, 0
         DW      853h
         DW      82h
-        DB      0, 1, 1, 0
+        DB      TRANS_AUTOMATIC, 1, PART_TRANSMISSION, 0
         DW      886h
         DW      78h
-        DB      0, 2, 1, 0
+        DB      TRANS_AUTOMATIC, 2, PART_TRANSMISSION, 0
         DW      89Fh
         DW      7Dh
-        DB      0, 4, 1, 0
+        DB      TRANS_AUTOMATIC, 4, PART_TRANSMISSION, 0
         DW      8B9h
         DW      0AFh
-        DB      1, 1, 1, 0
+        DB      TRANS_THREE_SPEED, 1, PART_TRANSMISSION, 0
         DW      8D8h
         DW      0A0h
-        DB      1, 2, 1, 0
+        DB      TRANS_THREE_SPEED, 2, PART_TRANSMISSION, 0
         DW      8F2h
         DW      0AAh
-        DB      1, 4, 1, 0
+        DB      TRANS_THREE_SPEED, 4, PART_TRANSMISSION, 0
         DW      90Eh
         DW      0FAh
-        DB      2, 1, 1, 0
+        DB      TRANS_FOUR_SPEED, 1, PART_TRANSMISSION, 0
         DW      92Eh
         DW      104h
-        DB      2, 2, 1, 0
+        DB      TRANS_FOUR_SPEED, 2, PART_TRANSMISSION, 0
         DW      949h
         DW      0F5h
-        DB      2, 4, 1, 0
+        DB      TRANS_FOUR_SPEED, 4, PART_TRANSMISSION, 0
         DW      966h
         DW      113h
-        DB      2, 7, 1, 0
+        DB      TRANS_FOUR_SPEED, 7, PART_TRANSMISSION, 0
         DW      987h
         DW      190h
-        DB      3, 1, 1, 0
+        DB      TRANS_RACING, 1, PART_TRANSMISSION, 0
         DW      9A8h
         DW      195h
-        DB      3, 2, 1, 0
+        DB      TRANS_RACING, 2, PART_TRANSMISSION, 0
         DW      9C2h
         DW      19Ah
-        DB      3, 4, 1, 0
+        DB      TRANS_RACING, 4, PART_TRANSMISSION, 0
         DW      9DEh
         DW      19h
-        DB      0, 7, 2, 0
+        DB      CARB_TWO_BARREL, 7, PART_CARBURETOR, 0
         DW      9FEh
         DW      28h
-        DB      1, 7, 2, 0
+        DB      CARB_FOUR_BARREL, 7, PART_CARBURETOR, 0
         DW      0A1Ch
         DW      3Ch
-        DB      2, 7, 2, 0
+        DB      CARB_RACING, 7, PART_CARBURETOR, 0
         DW      0A3Ah
         DW      14h
-        DB      0, 1, 3, 0
+        DB      MANIFOLD_TWO_BARREL, 1, PART_MANIFOLD, 0
         DW      0A6Bh
         DW      14h
-        DB      0, 2, 3, 0
+        DB      MANIFOLD_TWO_BARREL, 2, PART_MANIFOLD, 0
         DW      0A85h
         DW      14h
-        DB      0, 4, 3, 0
+        DB      MANIFOLD_TWO_BARREL, 4, PART_MANIFOLD, 0
         DW      0AA1h
         DW      19h
-        DB      1, 1, 3, 0
+        DB      MANIFOLD_FOUR_BARREL, 1, PART_MANIFOLD, 0
         DW      0AC1h
         DW      19h
-        DB      1, 2, 3, 0
+        DB      MANIFOLD_FOUR_BARREL, 2, PART_MANIFOLD, 0
         DW      0ADBh
         DW      19h
-        DB      1, 4, 3, 0
+        DB      MANIFOLD_FOUR_BARREL, 4, PART_MANIFOLD, 0
         DW      0AF7h
         DW      23h
-        DB      2, 1, 3, 0
+        DB      MANIFOLD_DUAL_QUAD, 1, PART_MANIFOLD, 0
         DW      0B91h
         DW      23h
-        DB      2, 2, 3, 0
+        DB      MANIFOLD_DUAL_QUAD, 2, PART_MANIFOLD, 0
         DW      0BB6h
         DW      23h
-        DB      2, 4, 3, 0
+        DB      MANIFOLD_DUAL_QUAD, 4, PART_MANIFOLD, 0
         DW      0BDEh
         DW      23h
-        DB      3, 1, 3, 0
+        DB      MANIFOLD_TRI_POWER, 1, PART_MANIFOLD, 0
         DW      0B17h
         DW      23h
-        DB      3, 2, 3, 0
+        DB      MANIFOLD_TRI_POWER, 2, PART_MANIFOLD, 0
         DW      0B3Dh
         DW      23h
-        DB      3, 4, 3, 0
+        DB      MANIFOLD_TRI_POWER, 4, PART_MANIFOLD, 0
         DW      0B66h
         DW      3Ch
-        DB      4, 1, 3, 0
+        DB      MANIFOLD_RACING, 1, PART_MANIFOLD, 0
         DW      0C09h
         DW      3Ch
-        DB      4, 2, 3, 0
+        DB      MANIFOLD_RACING, 2, PART_MANIFOLD, 0
         DW      0C24h
         DW      3Ch
-        DB      4, 4, 3, 0
+        DB      MANIFOLD_RACING, 4, PART_MANIFOLD, 0
         DW      0C41h
         DW      32h
-        DB      0, 7, 4, 0
+        DB      TIRES_STANDARD, 7, PART_TIRES, 0
         DW      0C62h
         DW      50h
-        DB      1, 7, 4, 0
+        DB      TIRES_BRAND_NAME, 7, PART_TIRES, 0
         DW      0C79h
         DW      96h
-        DB      2, 7, 4, 0
+        DB      TIRES_RACING_SLICKS, 7, PART_TIRES, 0
         DW      0CACh
         DW      0
         DB      0, 0, 0, 0
@@ -277,14 +301,16 @@ _g_partPics DW      434h, 435h, 436h, 0, 0
 _g_boltPics DW      0, 43Fh, 440h, 441h
         PUBLIC  _g_transPics
 _g_transPics DW      44Bh, 44Ch, 44Dh, 44Eh, 47F0h
-        PUBLIC  _g_bankrollLabel
-_g_bankrollLabel DW      OFFSET DGROUP:S_47f1
+        PUBLIC  _g_cashLabel
+_g_cashLabel DW      OFFSET DGROUP:S_47f1
         PUBLIC  _g_gearLabel
 _g_gearLabel DW      OFFSET DGROUP:_g_gearText
         PUBLIC  _g_list
 _g_list DW      143 DUP (0)
 
         .CODE S0000_TEXT
+
+
 
         PUBLIC  _mb_store_mode_a
 _mb_store_mode_a  PROC  FAR
@@ -300,6 +326,8 @@ _mb_store_mode_a  PROC  FAR
         ret
 _mb_store_mode_a  ENDP
 
+
+
         PUBLIC  _set_g47ec_47ed
 _set_g47ec_47ed  PROC  FAR
         push    bp
@@ -313,6 +341,8 @@ _set_g47ec_47ed  PROC  FAR
         pop     bp
         ret
 _set_g47ec_47ed  ENDP
+
+
 
         PUBLIC  _mb_apply_mode_a
 _mb_apply_mode_a  PROC  FAR
@@ -334,6 +364,8 @@ _mb_apply_mode_a  PROC  FAR
         pop     bp
         ret
 _mb_apply_mode_a  ENDP
+
+
 
         PUBLIC  _mb_apply_mode_b
 _mb_apply_mode_b  PROC  FAR

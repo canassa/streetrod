@@ -14,37 +14,41 @@
 #include "VIDEO.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-int g_phaseDriveRunState;
+enum DrivePhase g_phaseDriveRunState;
 
 char g_savedPal12 = -1;
 char g_savedPal3 = -1;
+
+
 
 void cr_go(void)
 {
     g_firePressed = g_mouse.left = g_joyButtons = g_buttons = 0;
     if (g_scene) {
-        if (a_7eaap.currentCar->fuel > 2)
-            a_7eaap.currentCar->fuel -= 2;
+        if (g_driver.currentCar->fuel > 2)
+            g_driver.currentCar->fuel -= 2;
         else
-            a_7eaap.currentCar->fuel = 0;
+            g_driver.currentCar->fuel = 0;
         (*g_videoOps.blank)();
         if (g_firePressed == 0) {
             cu_ctl(CURSOR_HIDE_NOW);
-            g_autoTrans = !g_parts[a_7eaap.currentCar->transmission->idx].variant;
+            g_autoTrans = !g_parts[g_driver.currentCar->transmission->idx].variant;
             ra_reset_eng(&g_driveEng);
-            g_phaseDriveRunState = 0;
-            bw8aca = 0;
+            g_phaseDriveRunState = DRIVE_START;
+            g_runRacingFlag = 0;
             cr_drive();
         }
     }
 }
+
+
 
 void cr_rival_paint(int mode)
 {
     char a, b;
 
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) {
-        if (mode == -1) {
+        if (mode == RIVAL_PAINT_RESTORE) {
             a = g_savedPal12;
             b = g_savedPal3;
             g_savedPal12 = g_savedPal3 = -1;
@@ -56,7 +60,7 @@ void cr_rival_paint(int mode)
             a = g_paint[mode][0];
             b = g_paint[mode][1];
         }
-        if (gz8249) {
+        if (g_displayEnabled) {
             vi_palette_reg(12, a);
             vi_palette_reg(3, b);
         }
@@ -65,18 +69,20 @@ void cr_rival_paint(int mode)
     }
 }
 
-int g7d66n;
+int g_startingGoActive;
+
+
 
 int cr_drive(void)
 {
     int r, saved;
 
-    if (bw8aca)
+    if (g_runRacingFlag)
         (*g_videoOps.blank)();
-    ao8228u = g7d66n = 0;
-    saved = m_8272.paintScheme;
-    ga_palette(a_7eaap.currentCar->paintScheme);
-    if (bw8aca)
+    g_startLightGo = g_startingGoActive = 0;
+    saved = g_carDraw.paintScheme;
+    ga_palette(g_driver.currentCar->paintScheme);
+    if (g_runRacingFlag)
         cr_rival_paint(saved);
     r = dv_run();
     so_squeal(0);

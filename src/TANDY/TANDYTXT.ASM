@@ -5,6 +5,7 @@
 
         .CODE S24BE_TEXT
 
+
 ; tt_render(width, text, dest, fg, bg): draw a string with the 8x8 font in
 ; segment 0E9Fh into the 4-bit packed screen buffer (160 bytes per row).  The
 ; font has 9 bytes per glyph: a width byte, then eight row bits.  Returns the
@@ -114,6 +115,7 @@ done1:
         pop     bp
         ret
 _tt_render  ENDP
+
 
 ; tt_copy(src, dstseg, dstoff, y, height, width, flags, ...): copy a strip of
 ; 4-bit pixels from a linear buffer (160 bytes per row) into the interleaved

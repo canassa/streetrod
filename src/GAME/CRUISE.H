@@ -4,10 +4,21 @@
 #define CRUISE_H
 #include "STRUCTS.H"
 
+#define RIVAL_PAINT_RESTORE (-1)
+
+enum DrivePhase {
+    DRIVE_START = 0,
+    DRIVE_STAGING = 1,
+    DRIVE_CRUISING = 1,
+    DRIVE_WAIT_FOR_MOTION = 2,
+    DRIVE_RUNNING = 3
+};
+
+
 extern char g_savedPal12;
 extern char g_savedPal3;
-extern int g_phaseDriveRunState;
-extern int g7d66n;
+extern enum DrivePhase g_phaseDriveRunState;
+extern int g_startingGoActive;
 void cr_go(void);
 void cr_rival_paint(int mode);
 int cr_drive(void);

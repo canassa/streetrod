@@ -3,6 +3,7 @@
 
         .DATA
 
+
         PUBLIC  _g_hercCrtc
 _g_hercCrtc DW      3500h, 2801h, 2C02h, 803h, 0FC04h, 705h, 6406h, 7207h
         DW      208h, 209h
@@ -11,6 +12,7 @@ _g_hercBiosData DB      7, 'P', 0
         DB      0, 80h, 21 DUP (0), 0B4h, 3, 2, 0
 
         .CODE S0000_TEXT
+
 
 ; Hercules graphics mode set up: BIOS video state, CRTC registers.
 

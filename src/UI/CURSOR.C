@@ -17,6 +17,8 @@ struct Cursor g_cursor2;
 
 struct Pair g_cursorPairs[4] = {{1, 1}, {2, 2}, {1, 1}, {8, 8}};
 
+
+
 unsigned cu_shape_off(unsigned n)
 {
     return n * g_cursor2.shapeSize;
@@ -47,7 +49,7 @@ void cu_init(void)
     me_set_bitmap(g_cursor2.save, r_vid.mode == VID_EGA ? CURSOR_EGA_SAVE : (char far *)(g_cursor2.save + 1), 0L,
             (0x18 >> r_vid.shift) << r_vid.shift, 0x10, r_vid.mode == VID_EGA ? VID_EGA : -1);
     memset(&g_cursor2.clip, 0, 12);
-    g_cursor2.state = 0;
+    g_cursor2.state = CURSOR_HIDDEN;
     pict = di_bm(2, ARENA_HIGH_STACK);
     if (pict == 0)
         me_out_of_memory();
@@ -103,12 +105,12 @@ void cu_ctl(int mode)
         cu_draw(a, b);
     } else if (mode >= CURSOR_SHOW_NOW) {
         if (++g_cVis > 0) {
-            g_cursor2.state = (mode == CURSOR_SHOW) + 1;
+            g_cursor2.state = (mode == CURSOR_SHOW) + CURSOR_DRAWN;
             if (g_cursor2.drawnRect.x2 >= 0)
                 cu_draw(g_cursor2.drawnRect.x1, g_cursor2.drawnRect.y1);
             else
                 cu_draw(a, b);
-            g_cursor2.state = 1;
+            g_cursor2.state = CURSOR_DRAWN;
         }
     } else {
         if (--g_cVis >= 0) {
@@ -117,7 +119,7 @@ void cu_ctl(int mode)
                 cu_draw(g_cursor2.drawnRect.x1, g_cursor2.drawnRect.y1);
             else
                 cu_draw(a, b);
-            g_cursor2.state = 0;
+            g_cursor2.state = CURSOR_HIDDEN;
         }
     }
 }
@@ -143,9 +145,9 @@ void cu_draw(int x, int y)
         if (g_cursor2.state < 0) {
             if (g_cursor2.drawnRect.x2 < 0)
                 return;
-            if (g_cursor2.state < -1)
+            if (g_cursor2.state < CURSOR_ERASE_NOW)
                 return;
-            g_cursor2.state = 1;
+            g_cursor2.state = CURSOR_DRAWN;
         } else {
             g_cursor2.clip.dx = x & r_vid.mask;
             g_cursor2.clip.w = SCREEN_WIDTH - g_cursor2.clip.dx > 0x18 ? 0x18 : SCREEN_WIDTH - g_cursor2.clip.dx;
@@ -156,7 +158,7 @@ void cu_draw(int x, int y)
         }
         a = x + 15;
         b = y + 15;
-        if (r_vid.copyToFront && g_cursor2.state == 1)
+        if (r_vid.copyToFront && g_cursor2.state == CURSOR_DRAWN)
             bm_copy_box(r_vid.back, r_vid.front, g_cursor2.drawnRect.x1 > x ? x : g_cursor2.drawnRect.x1, g_cursor2.drawnRect.y1 > y ? y : g_cursor2.drawnRect.y1, g_cursor2.drawnRect.x2 < a ? a : g_cursor2.drawnRect.x2, g_cursor2.drawnRect.y2 < b ? b : g_cursor2.drawnRect.y2);
         g_cursor2.drawnRect.x1 = x;
         g_cursor2.drawnRect.y1 = y;

@@ -3,6 +3,7 @@
 
         .CODE S24E7_TEXT
 
+
 ; ea_rect(src_far, dst_far, width, height, x, y, pitch): EGA latch copy
 ; (write mode 1) of a width x height byte rectangle between two planar
 ; buffers with the same pitch.  Does nothing if width or height < 1.
@@ -79,6 +80,7 @@ done1:
         pop     bp
         ret
 _ea_rect  ENDP
+
 
 ; ea_to_page(src_far, width, height, dst_far, src_pitch): EGA latch copy (write
 ; mode 1) of a width x height byte rectangle into a 40 byte per row screen.

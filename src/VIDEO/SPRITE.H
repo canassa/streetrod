@@ -7,7 +7,7 @@
 
 extern struct Seq g_seqSpriteMoveData[];
 extern struct Frame g_frmTable[];
-extern struct Sprite g7d18m;
+extern struct Sprite g_mainCarSprite;
 extern struct Page g_sprPageRing[];
 struct Rect *sp_rect_and(struct Rect *a, struct Rect *b, struct Rect *out);
 struct Rect *sp_car_clip(int x, int y, int w, int h, struct Rect *out);

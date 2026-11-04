@@ -26,6 +26,8 @@
 
 char *g_gearNames[7] = {"0", "1", "2", "3", "4", "N", "D"};
 
+
+
 void sc_status_init(int y)
 {
     g_statusLine.y = y + 1;
@@ -38,10 +40,12 @@ void sc_status_init(int y)
         bm_copy_box(r_vid.back, r_vid.front, 0, y, (SCREEN_WIDTH - 1), y + STATUS_BAR_HEIGHT - 1);
 }
 
-struct State7EAA a_7eaap;
+struct DriverState g_driver;
 struct TextEnd g_penPoint;
 struct StatusText g_statusLine;
 int g_xMoneyRhsVal;
+
+
 
 void sc_status_text(int x, char *s, int w)
 {
@@ -72,6 +76,8 @@ void sc_status_text(int x, char *s, int w)
     x_colors = saved;
 }
 
+
+
 void sc_add_money(int n)
 {
     int old;
@@ -79,12 +85,14 @@ void sc_add_money(int n)
 
     old = g_statusLine.shown;
     g_statusLine.shown = 1;
-    sc_status_text(g_statusLine.valueX, ltoa(a_7eaap.money += n, buf, 10), 0x30);
+    sc_status_text(g_statusLine.valueX, ltoa(g_driver.money += n, buf, 10), 0x30);
     g_xMoneyRhsVal = g_penPoint.x;
     g_statusLine.shown = old;
 }
 
-void sc_status_label(char *s)
+
+
+void sc_label(char *s)
 {
     int saved;
 
@@ -103,6 +111,8 @@ void sc_status_label(char *s)
         bm_copy_box(r_vid.back, r_vid.front, 0, g_statusLine.y, g_statusLine.messageX, g_statusLine.y + 7);
 }
 
+
+
 void sc_show_gear(int i)
 {
     int saved;
@@ -114,6 +124,8 @@ void sc_show_gear(int i)
 }
 
 char g_displaySplitYVal;
+
+
 
 void sc_fill_rect(int x, int y, int w, int h, char color)
 {
@@ -128,6 +140,8 @@ void sc_fill_rect(int x, int y, int w, int h, char color)
     x_colors.fill = old;
     cu_ctl(CURSOR_SHOW);
 }
+
+
 
 void sc_msg_box(char *s)
 {
@@ -156,9 +170,9 @@ void sc_wait_msg(char *msg)
             sc_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
             g_driveRebuild++;
         }
-        prev = gz8249;
+        prev = g_displayEnabled;
         if (!prev) {
-            gz8249 = 1;
+            g_displayEnabled = 1;
             (*g_videoOps.show)();
         }
         dx = g_displaySplitYVal ? 5 : 0x50;
@@ -179,7 +193,7 @@ void sc_wait_msg(char *msg)
             g_hotReadyBox[i].y2 -= dx;
         }
         r_vid.copyToFront = saved;
-        gz8249 = prev;
+        g_displayEnabled = prev;
         if (!prev)
             (*g_videoOps.blank)();
     } else {
@@ -222,6 +236,8 @@ int sc_picture(int a, int b)
     g_picturePlacement.x = g_picturePlacement.y = 0;
     ma_pop_high(1);
 }
+
+
 
 int sc_picture_at(int a, int b, int c, int d)
 {

@@ -2,10 +2,11 @@
         INCLUDE PC.INC
 
         .DATA
-        EXTRN   _av787at:WORD
+        EXTRN   _g_videoAddrSegment:WORD
         EXTRN   _g_egaGcFunction:WORD
 
         .CODE S21A0_TEXT
+
 
 ; Bresenham line in the 640x200 planar EGA screen (40 bytes per row),
 ; el_draw(x1, y1, x2, y2, color), using write mode 3 style set/reset
@@ -210,6 +211,7 @@ done:
         ret
 _el_draw  ENDP
 
+
 ; Planar pixel address helper. In: ax = y, bx = x.
 ; Out: bx = y*40 + x/8, es = video segment, cl = 7 - (x & 7), ah = 1.
 
@@ -224,13 +226,14 @@ _el_pixel_addr  PROC    NEAR
         shr     bx,1
         shr     bx,1
         add     bx,ax
-        mov     ax,_av787at
+        mov     ax,_g_videoAddrSegment
         mov     es,ax
         and     cl,7
         xor     cl,7
         mov     ah,1
         ret
 _el_pixel_addr  ENDP
+
 
 ; EGA bit-plane reader. CX selects a bit, ES:SI addresses the pixel byte;
 ; DX is the graphics controller port. Returns the four-plane colour in BL.

@@ -6,6 +6,7 @@
 
         .CODE S1C11_TEXT
 
+
 ; Copy a rectangle of bytes between far buffers:
 ; cd_blit_rect(src far, dst far, width, rows, src_skip, dst_skip)
 
@@ -42,6 +43,7 @@ done1:
         pop     bp
         ret
 _cd_blit_rect  ENDP
+
 
 ; Copy rows of bytes into an interleaved (CGA/Hercules style) screen:
 ; the destination row address alternates between the even bank and the
@@ -120,6 +122,7 @@ done2:
         pop     bp
         ret
 _cd_blit_to_ilv  ENDP
+
 
 ; Copy a rectangle between two interleaved (CGA/Hercules style) screens
 ; of 80 bytes per line, the odd lines living 0x2000 bytes after the even ones:

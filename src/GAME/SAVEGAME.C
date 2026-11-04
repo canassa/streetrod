@@ -48,6 +48,8 @@ int g_demoRacer = 0;
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 
+
+
 void sg_init_racer(int k, int *list)
 {
     int x, i, y, n;
@@ -69,14 +71,16 @@ void sg_init_racer(int k, int *list)
     g_racerRecordsArray[k].specIndex = list[i + 1];
     list[i + 1] = -1;
     x = g_racerRecordsArray[k].specIndex;
-    y = (g7d86n[x].rank >> 1) + 1;
-    g_racerRecordsArray[k].bodyMods = ((g7d86n[x].parts >> 8 & 7) == 2) ? 8 : 0;
+    y = (g_carData[x].rank >> 1) + 1;
+    g_racerRecordsArray[k].bodyMods = ((g_carData[x].parts >> 8 & 7) == 2) ? 8 : 0;
     g_racerRecordsArray[k].sticker = (rn_int(20) < y) ? rn_int(9) : 0;
     if (g_models[x].frontBumperPic > 0 && g_models[x].rearBumperPic > 0)
         g_racerRecordsArray[k].bodyMods |= (rn_int(25) < y) ? 3 : 0;
     if (g_models[x].roofPic > 0)
         g_racerRecordsArray[k].bodyMods |= (rn_int(30) < y) ? 4 : 0;
 }
+
+
 
 static void near init_racers(void)
 {
@@ -85,7 +89,7 @@ static void near init_racers(void)
 
     i = na1 = nb = nc = 0;
     for (; i < 25; i++) {
-        v = g7d86n[i].rank;
+        v = g_carData[i].rank;
         if (v >= 6)
             cl[++nc] = i;
         else if (v < 3)
@@ -114,19 +118,23 @@ static void near init_racers(void)
     }
 }
 
+
+
 static void near init_new_game(void)
 {
     pl_init(1);
-    a_7eaap.money = 750L;
+    g_driver.money = 750L;
     if (g_demo)
-        a_7eaap.money = 10000L;
-    a_7eaap.m7eae = 10;
+        g_driver.money = 10000L;
+    g_driver.unused = 10;
     rd_build_layout(100);
     init_racers();
     g_gameClock.actionTicks = 0L;
     g_gameClock.timeBase = g_gameClock.biosTicks;
     g_betRaces = g_dragWins = g_roadWins = g_kingDragWon = 0;
 }
+
+
 
 int near sg_new(void)
 {
@@ -148,6 +156,8 @@ int near sg_new(void)
     }
 }
 
+
+
 static int near write_nodes(int handle, struct Node *p)
 {
     unsigned written;
@@ -158,6 +168,8 @@ static int near write_nodes(int handle, struct Node *p)
     }
     return 0;
 }
+
+
 
 static int near read_nodes(int handle, struct Node **head)
 {
@@ -187,6 +199,8 @@ static int near read_nodes(int handle, struct Node **head)
     return 0;
 }
 
+
+
 static int near write_cars(int handle, struct Car *c, int flag)
 {
     int i;
@@ -206,6 +220,8 @@ static int near write_cars(int handle, struct Car *c, int flag)
     }
     return 0;
 }
+
+
 
 static int near read_cars(int handle, struct Car **head, int flag)
 {
@@ -243,6 +259,8 @@ static int near read_cars(int handle, struct Car **head, int flag)
     return 0;
 }
 
+
+
 static void near scan_save_slots(int create)
 {
     int fd7;
@@ -275,7 +293,9 @@ static void near scan_save_slots(int create)
     g_list[0] = cnt;
 }
 
-int near sg_load(void)
+
+
+enum SaveLoadResult near sg_load(void)
 {
     int fd7;
     char name[20];
@@ -300,12 +320,12 @@ int near sg_load(void)
     cu_ctl(CURSOR_SHOW_NOW);
     if (g_list[0] == 0) {
         mn_wait(KM_NO_SAVED_GAMES);
-        return -1;
+        return LOAD_CANCELLED;
     }
     r = mn_modal_list(KM_LOAD, 1, 0, g_list, 0, 0);
     switch (r) {
     case KR_CANCEL:
-        return -1;
+        return LOAD_CANCELLED;
     case KR_ACCEPT:
         r = mn_sel();
         break;
@@ -326,9 +346,9 @@ int near sg_load(void)
     if (_dos_open(name, O_RDONLY, &fd7)
         || _dos_read(fd7, g_driverName, 0x24, &n) != 0 || n != 0x24
         || (pl_init(0), 0)
-        || read_cars(fd7, &a_7eaap.currentCar, 1)
-        || read_cars(fd7, &a_7eaap.otherCars, 0)
-        || read_nodes(fd7, &a_7eaap.spareParts)
+        || read_cars(fd7, &g_driver.currentCar, 1)
+        || read_cars(fd7, &g_driver.otherCars, 0)
+        || read_nodes(fd7, &g_driver.spareParts)
         || _dos_read(fd7, &g_betRaces, 8, &n) != 0 || n != 8
         || _dos_read(fd7, g_racerRecordsArray, 0x18c, &n) != 0 || n != 0x18c
         || _dos_read(fd7, &g_gameClock.actionTicks, 4, &n) != 0 || n != 4
@@ -342,15 +362,15 @@ int near sg_load(void)
             init_new_game();
         }
         cu_ctl(CURSOR_SHOW);
-        return -666;
+        return LOAD_ERROR;
     }
     _dos_close(fd7);
-    if (a_7eaap.currentCar)
-        ga_palette(a_7eaap.currentCar->paintScheme);
+    if (g_driver.currentCar)
+        ga_palette(g_driver.currentCar->paintScheme);
     rd_build_layout(g_roadLayout);
     g_gameClock.timeBase = g_gameClock.biosTicks - delta;
     cu_ctl(CURSOR_SHOW_NOW);
-    return 0;
+    return LOAD_OK;
 }
 
 /* True if the string is only spaces and underscores */
@@ -367,6 +387,8 @@ static int near is_blank(char *p)
 
 char g_501d = 0;
 char g_buyCarMsg[] = "Buy a car first !";
+
+
 
 void near sg_save(void)
 {
@@ -457,9 +479,9 @@ again:
     name[0] = di_data_drive();
     if (_dos_creat(name, _A_NORMAL, &fd8)
         || _dos_write(fd8, g_driverName, 0x24, &n) != 0 || n != 0x24
-        || write_cars(fd8, a_7eaap.currentCar, 1)
-        || write_cars(fd8, a_7eaap.otherCars, 0)
-        || write_nodes(fd8, a_7eaap.spareParts)
+        || write_cars(fd8, g_driver.currentCar, 1)
+        || write_cars(fd8, g_driver.otherCars, 0)
+        || write_nodes(fd8, g_driver.spareParts)
         || _dos_write(fd8, &g_betRaces, 8, &n) != 0 || n != 8
         || _dos_write(fd8, g_racerRecordsArray, 0x18c, &n) != 0 || n != 0x18c
         || _dos_write(fd8, &g_gameClock.actionTicks, 4, &n) != 0 || n != 4
@@ -480,6 +502,8 @@ again:
     }
     goto again;
 }
+
+
 
 int near sg_menu(void)
 {

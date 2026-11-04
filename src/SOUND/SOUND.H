@@ -6,8 +6,8 @@
 
 extern int g_songRepeats[];
 extern char g_jingleRepeats[];
-extern int g_songTones[];
-extern int g_jingleTones[];
+extern enum ToneSlot g_songTones[];
+extern enum ToneSlot g_jingleTones[];
 extern int g_musicOn;
 extern struct Dev *g_voice;
 extern int g_voiceNum;

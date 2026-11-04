@@ -18,16 +18,16 @@ void dr_fill_rect(struct Bitmap far *s, int x, int y, int w, int h)
         w = s->width - x;
     if (y + h > s->height)
         h = s->height - y;
-    oldseg = av787at;
-    oldoff = at767ct;
-    av787at = s->bits.w.seg;
-    at767ct = s->bits.w.off;
+    oldseg = g_videoAddrSegment;
+    oldoff = g_targetPixelOffset;
+    g_videoAddrSegment = s->bits.w.seg;
+    g_targetPixelOffset = s->bits.w.off;
     col = x_colors.fill;
     x2 = x + w - 1;
     for (j = 0; j < h; j++)
         (*g_videoOps.drawLine)(x, y + j, x2, y + j, col);
-    av787at = oldseg;
-    at767ct = oldoff;
+    g_videoAddrSegment = oldseg;
+    g_targetPixelOffset = oldoff;
 }
 
 /* Vertical line of height h at (x, y) in bitmap s with colour x_colors.line, clipped to the bitmap */
@@ -39,13 +39,13 @@ void dr_vline(struct Bitmap far *s, int x, int y, int h)
 
     if (h + y > s->height)
         h = s->height - y;
-    oldseg = av787at;
-    oldoff = at767ct;
-    av787at = s->bits.w.seg;
-    at767ct = s->bits.w.off;
+    oldseg = g_videoAddrSegment;
+    oldoff = g_targetPixelOffset;
+    g_videoAddrSegment = s->bits.w.seg;
+    g_targetPixelOffset = s->bits.w.off;
     (*g_videoOps.drawLine)(x, y, x, y + h - 1, x_colors.line);
-    av787at = oldseg;
-    at767ct = oldoff;
+    g_videoAddrSegment = oldseg;
+    g_targetPixelOffset = oldoff;
 }
 
 /* Horizontal line of width w at (x, y) in bitmap s, drawn with colour x_colors.line */

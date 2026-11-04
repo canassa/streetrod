@@ -3,6 +3,7 @@
 
         .CODE S0E6C_TEXT
 
+
 ; CGA 320x200 4-colour masked blit with background save: for each row, saves the
 ; screen words to one buffer, then ANDs with a mask and ORs the sprite data.
 ; Args: sprite, mask, save buffer (far), screen (far), x, y, width in words, rows.
@@ -105,6 +106,7 @@ done1:
         ret
 _uc_tandy  ENDP
 
+
 ; Same blit as uc_tandy with two interleaved banks and 80 byte rows.
 
         PUBLIC  _uc_cga
@@ -198,6 +200,7 @@ done2:
         pop     bp
         ret
 _uc_cga  ENDP
+
 
 ; EGA 320x200 16-colour masked blit with background save, planar: the mask is
 ; applied through the graphics controller (write mode 0, bit mask register 8)

@@ -60,7 +60,7 @@ int cs_step(struct Sprite *s)
     t = blt.h = fr->pos->height - top - g_spriteBottomCut;
     blt.sy = 0;
     u = blt.dy = s->seq->dy ? s->y : 0;
-    if (g_scene != 6) {
+    if (g_scene != SCENE_JAIL) {
         blt.w = fr->pos->width;
         blt.sx = 0;
         blt.dx = s->seq->dx ? s->x : 0;

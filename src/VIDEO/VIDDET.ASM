@@ -24,6 +24,7 @@ S_5b00  DB      'CGA', 0
 
         .CODE S0000_TEXT
 
+
 ; Restore the equipment byte and the BIOS video mode saved by vd_detect.
 
         PUBLIC  _vd_restore
@@ -46,6 +47,7 @@ _vd_restore  PROC  FAR
         pop     bp
         ret
 _vd_restore  ENDP
+
 
 ; Video adapter detection: saves the current mode and equipment byte,
 ; asks the EGA BIOS, falls back to probing the CRTC cursor register (VGA/CGA).

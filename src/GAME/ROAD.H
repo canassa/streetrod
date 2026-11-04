@@ -4,6 +4,21 @@
 #define ROAD_H
 #include "STRUCTS.H"
 
+enum RoadSection {
+    SECTION_LEFT_CURVE = 1,
+    SECTION_RIGHT_CURVE = 2,
+    SECTION_HILL = 3,
+    SECTION_DIP = 4,
+    SECTION_HILL_DIP = 5,
+    SECTION_DIP_HILL = 6,
+    SECTION_RIGHT_CLOSED = 7,
+    SECTION_LEFT_CLOSED = 8,
+    SECTION_NARROWS = 9,
+    SECTION_S_CURVE_LR = 10,
+    SECTION_S_CURVE_RL = 11
+};
+
+
 extern int g_yBuildingTopArray[15];
 
 extern struct MirrorEdges g_mirGeom;
@@ -15,21 +30,21 @@ extern int g_hillProfile[];
 extern int g_hillDipProfile[];
 extern int g_bumpProfile[17];
 extern int g_layoutLen;
-extern int g_roadLayouts[][12];
+extern enum RoadSection g_roadLayouts[][12];
 extern struct Bitmap g_egaPage1;
 extern struct Bitmap g_egaPage2;
 extern int g_roadLayout;
 extern int g_onShoulder;
 extern int g_turnRight;
 extern int g_turnLeft;
-extern unsigned far *q_72ee;
+extern unsigned far *g_roadTerrain;
 extern int g_roadLXArray[15];
 extern int far *g_hereCurvePtr;
-extern int far *af7880z;
+extern int far *g_heightRoadPtr;
 extern int g_roadYProjectionArray[15];
-extern int aw7aaex;
+extern int g_startDrawRows;
 extern int g_rightXProjectionTable[15];
-extern unsigned far *g7d62p;
+extern unsigned far *g_hereFlagsPtr;
 extern int g_lhsRdMirrorX[8];
 extern int g_roadOuterLeftXArray[15];
 extern int g_rhsOuterXArray[15];

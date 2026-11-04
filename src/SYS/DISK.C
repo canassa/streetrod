@@ -28,6 +28,8 @@
 #define PIC_MARK 0xbc
 #define NOT_IN_VRAM 0xff
 
+enum PictureLibrary { LIBRARY_FIRST = 1, LIBRARY_SECOND = 2 };
+
 enum LoadResult { LOAD_NO_MEMORY, LOAD_CACHED, LOAD_READ, LOAD_READ_VRAM };
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
@@ -37,10 +39,10 @@ static char g_dataPath[16];
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Model g_models[26];
-struct Spec g7d86n[26];
-struct Panel ai70e4t[26];
+struct Spec g_carData[26];
+struct Panel g_bodyRects[26];
 struct Spr12 g_layoutAutoSprArray[26];
-struct Pos6 a784als[8];
+struct Pos6 g_imageDecalLayout[8];
 int g_usedCarAdFirst;
 unsigned g_carRatingsTable[3][3];
 struct Spr6 g_pointsModelService[26];
@@ -58,7 +60,7 @@ static void near unscramble_hall(void);
 static void near scramble_hall(void);
 
 char *g_dataFileName = "hot_data";
-char *g_dataBlocks[13] = {(char *)g_racerRecordsArray, (char *)g7d86n, (char *)g_models, (char *)g_layoutAutoSprArray, (char *)ai70e4t, (char *)g_pointsModelService, g_desc, (char *)&g_usedCarAdFirst, g_txt, (char *)g_carRatingsTable, (char *)g_rivalStakeToleranceTable, (char *)g_acceptProbability, (char *)a784als};
+char *g_dataBlocks[13] = {(char *)g_racerRecordsArray, (char *)g_carData, (char *)g_models, (char *)g_layoutAutoSprArray, (char *)g_bodyRects, (char *)g_pointsModelService, g_desc, (char *)&g_usedCarAdFirst, g_txt, (char *)g_carRatingsTable, (char *)g_rivalStakeToleranceTable, (char *)g_acceptProbability, (char *)g_imageDecalLayout};
 unsigned g_dataSizes[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};
 int g_lib1Handle = 0;
 int g_lib2Handle = 0;
@@ -113,18 +115,18 @@ static int near pic_index(int n)
 
 static void near open_lib(int n)
 {
-    int kind;
+    enum PictureLibrary kind;
     int tries;
     unsigned got;
 
     if (pic_index(n) >= g_lib1Count) {
-        kind = 2;
+        kind = LIBRARY_SECOND;
         g_picLib.path = g_picLibBPath;
         g_picLib.handle = &g_lib2Handle;
         g_picLib.otherHandle = &g_lib1Handle;
         g_picLib.count = &g_countLibBmB;
     } else {
-        kind = 1;
+        kind = LIBRARY_FIRST;
         g_picLib.path = g_library1Path;
         g_picLib.handle = &g_lib1Handle;
         g_picLib.otherHandle = &g_lib2Handle;
@@ -133,7 +135,7 @@ static void near open_lib(int n)
     if (*g_picLib.handle == 0) {
         _dos_close(*g_picLib.otherHandle);
         *g_picLib.otherHandle = 0;
-        g_msgInsertDisk[12] = kind == 1 ? '1' : (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3' : '2';
+        g_msgInsertDisk[12] = kind == LIBRARY_FIRST ? '1' : (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3' : '2';
         g_msgInsertDisk[25] = *g_picLib.path;
         tries = 0;
         while (_dos_open(g_picLib.path, O_RDONLY, g_picLib.handle)) {
@@ -410,7 +412,7 @@ void di_free_list(int *list)
    number of disk drives wanted: 2 only when the equipment word says there are two floppies. mode 2
    and 5 pick the other file names. Any failure shows an error text */
 
-void di_open_libs(int disks, int mode)
+void di_open_libs(int disks, enum VideoChoice mode)
 {
     int equip;
     int tries;
@@ -421,7 +423,7 @@ void di_open_libs(int disks, int mode)
         disks = 2;
     else
         disks = 1;
-    g_library1Path = (mode == 2 || mode == 5) ? g_lib1Name : g_lib1cName;
+    g_library1Path = (mode == VIDEO_CHOICE_EGA || mode == VIDEO_CHOICE_TANDY) ? g_lib1Name : g_lib1cName;
     *g_library1Path = g_initialDrive + 0x40;
     err = _dos_open(g_library1Path, O_RDONLY, &g_lib1Handle);
     if (err || g_lib1Handle == 0) {
@@ -437,7 +439,7 @@ void di_open_libs(int disks, int mode)
         sc_wait_msg(g_msgBadFormat);
         sy_exit();
     }
-    g_picLibBPath = (mode == 2 || mode == 5) ? g_lib2Name : g_lib2cName;
+    g_picLibBPath = (mode == VIDEO_CHOICE_EGA || mode == VIDEO_CHOICE_TANDY) ? g_lib2Name : g_lib2cName;
     *g_picLibBPath = *g_library1Path;
     if (_dos_open(g_picLibBPath, O_RDONLY, &g_lib2Handle) || g_lib2Handle == 0) {
         if (g_initialDrive > 2) {
@@ -451,7 +453,7 @@ void di_open_libs(int disks, int mode)
             for (tries = 0; err || g_lib2Handle == 0; tries++) {
                 if (tries == 3)
                     sy_exit();
-                g_msgInsertDisk[12] = (mode != 2 && mode != 5) ? '3' : '2';
+                g_msgInsertDisk[12] = (mode != VIDEO_CHOICE_EGA && mode != VIDEO_CHOICE_TANDY) ? '3' : '2';
                 g_msgInsertDisk[0x19] = *g_picLibBPath;
                 sc_wait_msg(g_msgInsertDisk);
                 err = _dos_open(g_picLibBPath, O_RDONLY, &g_lib2Handle);

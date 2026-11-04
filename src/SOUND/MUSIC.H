@@ -7,7 +7,7 @@
 extern int g_toneShapes[][8];
 extern struct Tone g_tones[];
 void mu_play(void far *song, void *tones);
-void mu_set_vibrato(int on, int a, int b, int c, int d);
+void mu_set_vibrato(int on, enum Waveform waveform, int length, int depth, int delay);
 void mu_suspend(int on);
 
 #endif

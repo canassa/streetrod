@@ -4,6 +4,12 @@
 #define SAVEGAME_H
 #include "STRUCTS.H"
 
+enum SaveLoadResult {
+    LOAD_OK = 0,
+    LOAD_CANCELLED = -1,
+    LOAD_ERROR = -666
+};
+
 extern char g_noNameMsg[];
 extern char g_saveSlots[];
 extern int g_slotNameOfs[];
@@ -13,7 +19,7 @@ extern char g_501d;
 extern char g_buyCarMsg[];
 void sg_init_racer(int k, int *list);
 int near sg_new(void);
-int near sg_load(void);
+enum SaveLoadResult near sg_load(void);
 void near sg_save(void);
 int near sg_menu(void);
 

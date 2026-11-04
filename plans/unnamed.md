@@ -40,59 +40,13 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 | 5EC6 | g_5ec6 | `int @` | SCENERY |
 | 6076 | g_6076 | `int @` | SCENERY |
 | 6C42 | g_6c42 | `int @[2]` | src/UI/POPUP.C |
-| 6E04 | g_6e04aay | `int @` | src/GAME/VIEW.C |
-| 6E60 | k_6e60 | `struct Bitmap far *@` | VIEW |
-| 70C0 | al70c0x | `struct State70C0 @` | RACE |
-| 70E4 | ai70e4t | `struct Panel @[]` | DISK |
-| 72EE | q_72ee | `unsigned far *@` | ROAD |
-| 72F2 | by72f2 | `int @` | RACE |
-| 72F4 | ax72f4 | `struct Bitmap far *@` | VIEW |
-| 7526 | ab7526x | `struct Bitmap far *@[13]` | RACE |
-| 7568 | bm7568 | `struct Obj @[]` | VIDEO |
-| 7648 | bn7648 | `int @` | BOBS |
-| 764A | g764aw | `struct Bitmap far *@` | VIEW |
-| 7678 | bm7678 | `struct Bitmap far *@` | DASH |
-| 767C | at767ct | `unsigned @` | DASH |
-| 767E | ar767eu | `struct Bitmap far *@` | VIEW |
-| 784A | a784als | `struct Pos6 @[]` | DISK |
-| 787A | av787at | `unsigned @` | DASH |
 | 787E | bustyle | `struct Style *@` | VIDEO |
-| 7880 | af7880z | `int far *@` | ROAD |
 | 79A8 | fz79a8 | `char @[2]` | HOTSPOT |
 | 7AA4 | ah7aa4w | `char @[6]` | HOTSPOT |
-| 7AAE | aw7aaex | `int @` | ROAD |
-| 7D18 | g7d18m | `struct Sprite @` | SPRITE |
-| 7D2E | ao7d2ev | `struct State7D2E @` | SYS |
-| 7D62 | g7d62p | `unsigned far *@` | ROAD |
-| 7D66 | g7d66n | `int @` | CRUISE |
-| 7D7C | ap7d7cv | `int @` | RACE |
-| 7D86 | g7d86n | `struct Spec @[]` | DISK |
-| 7E8A | ar7e8av | `struct State7E8A @` | SYS |
-| 7EAA | a_7eaap | `struct State7EAA @` | SCREEN |
 | 7EE2 | bz7ee2 | `char @[64]` | HOTSPOT |
-| 7F88 | a_7f88d | `int @` | RACE |
 | 7FF6 | g7ff6f | `char @[2]` | HOTSPOT |
-| 8184 | g8184y | `struct Bitmap far *@` | VIEW |
-| 8188 | g8188w | `struct Bitmap far *@` | DRIVE |
-| 8228 | ao8228u | `int @` | SYS |
 | 822A | r_vid | `struct Video @` | MAIN |
 | 8242 | x_colors | `struct Colors @` | VIDEO |
-| 8249 | gz8249 | `char @` | DASH |
-| 825E | ac825et | `int @` | VIDEO |
-| 8260 | aw8260y | `int @` | VIDEO |
-| 8272 | m_8272 | `struct State8272 @` | GARAGE |
-| 8290 | o_8290 | `int @[]` | GARGFX |
-| 82B4 | g82b4s | `struct Bitmap far *@` | DASH |
-| 82C8 | dz82c8x | `int @` | RACE |
-| 8630 | bz8630z | `int @` | RACE |
-| 8ACA | bw8aca | `char @` | DASH |
-| 8ACC | bu8acc | `int @` | MAIN |
-| 8ACE | g8acew | `struct Bitmap far *@[13]` | RACE |
-| 8B7E | bz8b7ex | `struct Bitmap far *@` | VIEW |
-| 8B82 | am8b82y | `int far *@` | VIEW |
-| 8BAC | ai8bacx | `int @` | MENU |
-| 8BC2 | ay8bc2z | `int @` | RACE |
-| 8BCA | ak8bcat | `struct Bitmap far *@` | VIEW |
 | 8EF4 | a8ef4fv | `char @[2]` | HOTSPOT |
 
 ## Far data

@@ -27,6 +27,8 @@
 
         .CODE S0000_TEXT
 
+
+
         PUBLIC  _jy_read
 _jy_read  PROC  FAR
         push    ax
@@ -118,6 +120,7 @@ timeout:
         mov     sp,_g_joySavedSp
         jmp     done1
 _jy_read  ENDP
+
 
 ; keyboard scan code handler, variant of the int 9 ISR kb_isr (retf, no port I/O)
 

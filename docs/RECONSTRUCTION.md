@@ -137,6 +137,21 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
     words, like the existing post-return access. Thus unreachable control flow is
     a measured explanation, not proof that the original contained `return` there.
     The original expressions, alias offsets and symbol names remain unknown.
+    A second pass (needle2, 2026-11-04; 112 compiler jobs) found that a
+    constant `if/else` with the live arm first also preserves all segment bytes
+    and the target-resolved fixup sequence; constant `?:` table/value selection
+    removes the spare word. This is a compiler mechanism, not a recovered table
+    selection: selecting separate speedo/tach tables in the two functions emits
+    only two needle words, with a different live word in each function. Declaring
+    both far arrays together shares one segment constant, also insufficient.
+    Disabled feature/type-size branches and early-break macro forms can preserve
+    the layout only when supplied the same unsupported alternate symbols.
+    No such replacement was applied. The original relocation stream contains
+    DS:68E6, DS:68E4, then DS:68E8 consecutively; it carries segment values, not
+    symbol offsets or names, and does not identify which table an unused word
+    named. `_x_trk0` at offset 0 and `_x_trk1` at 0x106 are reconstruction labels,
+    not evidence that the unused words originally named the tip and hub. The full
+    experiment matrix and comparison limits are in the needle2 diary entry.
   - `NeedlePoint`, `NEEDLE_TIP`/`NEEDLE_HUB` and gauge centre constants describe the
     observed table and coordinate transforms, not recovered original declarations.
     The tip reaches radius 18 and the hub radius 5; the latter includes axial
@@ -172,11 +187,11 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   clocks stay separate; folding g_tick while keeping the earlier deadlines plain
   reverses comparison operands in SYS and DRVTICK. The experiments and limits of
   this conclusion are summarized in plans/diary.md (2026-11-05).
-- **Evidence-only structs** `State70C0`, `State7D2E` and `State7E8A`. MSC's operand order
+- **Evidence-only structs** `RoadEdges`, `RoadView` and `RivalPosition`. MSC's operand order
   shows that these blocks are struct members, not plain variables (recipe book). Their
   extent and member types are a reconstruction.
-- **Budget structs and message offsets.** `struct State7EAA` (`a_7eaap`, DS:7EAA..7EC1) and
-  `struct State8272` (`m_8272`, DS:8272..828F) each fold 11 placeholder globals. GARAGE.C
+- **Budget structs and message offsets.** `struct DriverState` (`g_driver`, DS:7EAA..7EC1) and
+  `struct CarDisplay` (`g_carDraw`, DS:8272..828F) each fold 11 placeholder globals. GARAGE.C
   (one object, as the relocation table requires) loses ga_transmission's loop register variables
   once it references more external symbols than MSC 5.1's budget allows (CLAUDE.md 4d), and
   these two COMMON clusters as structs bring it under. For the same reason ga_body
@@ -184,10 +199,10 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   `g_txt + 1283`, `+ 1299`, `+ 1318`, `+ 1337` ("Chop roof - $70" ...), not as named
   globals; the game addresses messages by offset into g_txt everywhere (`Hot.f4`, the
   argument of gm_message), so the original may have had named constants there. That the
-  blocks are grouped is evidence; the member list (a wider State8272 changes ga_hood's
+  blocks are grouped is evidence; the member list (a wider CarDisplay changes ga_hood's
   loop temps, so the arrays from DS:8290 stay separate) and the spelling are not.
-- **Per-module type views.** VIEW.C reads the char `bw8aca` (DS:8ACA) as a word, so it
-  writes `*(int *)&bw8aca`. The original file probably had an `extern int` of its own
+- **Per-module type views.** VIEW.C reads the char `g_runRacingFlag` (DS:8ACA) as a word, so it
+  writes `*(int *)&g_runRacingFlag`. The original file probably had an `extern int` of its own
   there. `struct Win` (MENU.C, SAVEGAME.C) is a second view of the 18-byte hot-spot record
   `struct Hot`: `g_listLineBasePointerValue` holds the address of the first menu-line record as an `int`
   (`g_listLineBasePointerValue = (int)p`) and the code computes `(struct Win *)(0x12 * sel + g_listLineBasePointerValue)`.
@@ -307,7 +322,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
 - **HOTSPOT.C's arrays.** DS:09F4..239E is 365 18-byte `struct Hot` records in one index
   space: `Hot.f10` links a record to the next by its index into `g_hots`, and the code
   reaches records as `&g_hots[n]`. It is split into arrays where code names a record
-  directly (`g_hotBuy[0].f0`, `g_hotRepair[7].f0`, `g_hotReadyBox[i].y1`, `g_hotBodyChange[0].f4`, `g_hotTransBolts[k]`,
+  directly (`g_hotBuy[0].f0`, `g_hotRepair[7].f0`, `g_hotReadyBox[i].y1`, `g_bodyAsk[0].f4`, `g_transBolts[k]`,
   `g_hotBobs[3]`) or computes a run-time difference (`g_hotCalendar - g_gar`, `g_hotGasExit - g_hotGasStation`),
   which proves separate symbols; each array starts at the first record so named. Where
   the original's other boundaries were (one array per menu list, or fewer), and the

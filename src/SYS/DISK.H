@@ -3,6 +3,7 @@
 #ifndef DISK_H
 #define DISK_H
 #include "STRUCTS.H"
+#include "MAIN.H"
 
 struct PicLibSelection {
     int *count;
@@ -29,12 +30,12 @@ extern unsigned char g_rleCounts[16];
 extern unsigned char g_rleValues[16];
 extern int g_picNewHeader;
 extern char g_hallFileName[];
-extern struct Panel ai70e4t[];
+extern struct Panel g_bodyRects[];
 extern struct Spr12 g_layoutAutoSprArray[];
-extern struct Pos6 a784als[];
+extern struct Pos6 g_imageDecalLayout[];
 extern int g_usedCarAdFirst;
 extern unsigned g_carRatingsTable[][3];
-extern struct Spec g7d86n[];
+extern struct Spec g_carData[];
 extern struct Spr6 g_pointsModelService[];
 extern unsigned g_rivalStakeToleranceTable[][3];
 extern int g_lib1Count;
@@ -52,7 +53,7 @@ struct Bitmap far *di_bm(int id, int mode);
 int di_cache_list(int *list);
 int di_load_list(int *list, int n);
 void di_free_list(int *list);
-void di_open_libs(int a, int mode);
+void di_open_libs(int a, enum VideoChoice mode);
 void di_load_data(void);
 int di_data_drive(void);
 void di_load_hall(void);

@@ -58,7 +58,7 @@ int es_step(struct Sprite *s)
     dest.h = box->pos->height - g_spriteBottomCut;
     dest.sy = 0;
     dest.dy = s->y;
-    if (g_scene != 6) {
+    if (g_scene != SCENE_JAIL) {
         dest.w = box->pos->width;
         dest.sx = 0;
         dest.dx = s->x;
