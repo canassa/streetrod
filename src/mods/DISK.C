@@ -1,4 +1,5 @@
 #include <dos.h>
+#include <fcntl.h>
 #include <conio.h>
 #include <memory.h>
 #include <bios.h>
@@ -144,7 +145,7 @@ static void near open_lib(int n)
         g_msgInsertDisk[12] = kind == 1 ? '1' : (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3' : '2';
         g_msgInsertDisk[25] = *g_curName;
         tries = 0;
-        while (_dos_open(g_curName, 0, g_curHandle)) {
+        while (_dos_open(g_curName, O_RDONLY, g_curHandle)) {
             if (tries++ == 3)
                 sys_exit();
             screen_wait_msg(g_msgInsertDisk);
@@ -262,7 +263,7 @@ static enum LoadResult near load_pic(int n, int load, char far *dst)
                 g_msgInsertDisk[25] = *g_curName;
                 screen_wait_msg(g_msgInsertDisk);
                 _dos_close(*g_curHandle);
-            } while (_dos_open(g_curName, 0, g_curHandle));
+            } while (_dos_open(g_curName, O_RDONLY, g_curHandle));
             if (!disk_seek(*g_curHandle, offset))
                 continue;
             goto bad;
@@ -451,7 +452,7 @@ void disk_open_libs(int disks, int mode)
         disks = 1;
     g_library1Path = (mode == 2 || mode == 5) ? g_lib1Name : g_lib1cName;
     *g_library1Path = g_curDrive + 0x40;
-    err = _dos_open(g_library1Path, 0, &g_lib1Handle);
+    err = _dos_open(g_library1Path, O_RDONLY, &g_lib1Handle);
     if (err || g_lib1Handle == 0) {
         if (g_curDrive > 2) {
             screen_wait_msg(g_msgCopyFiles);
@@ -467,7 +468,7 @@ void disk_open_libs(int disks, int mode)
     }
     au8dd6y = (mode == 2 || mode == 5) ? g_lib2Name : g_lib2cName;
     *au8dd6y = *g_library1Path;
-    if (_dos_open(au8dd6y, 0, &g_lib2Handle) || g_lib2Handle == 0) {
+    if (_dos_open(au8dd6y, O_RDONLY, &g_lib2Handle) || g_lib2Handle == 0) {
         if (g_curDrive > 2) {
             screen_wait_msg(g_msgCopyFiles);
             sys_exit();
@@ -475,14 +476,14 @@ void disk_open_libs(int disks, int mode)
             g_lib2Handle = 0;
         } else {
             *au8dd6y = g_curDrive == 1 ? 'B' : 'A';
-            err = _dos_open(au8dd6y, 0, &g_lib2Handle);
+            err = _dos_open(au8dd6y, O_RDONLY, &g_lib2Handle);
             for (tries = 0; err || g_lib2Handle == 0; tries++) {
                 if (tries == 3)
                     sys_exit();
                 g_msgInsertDisk[12] = (mode != 2 && mode != 5) ? '3' : '2';
                 g_msgInsertDisk[0x19] = *au8dd6y;
                 screen_wait_msg(g_msgInsertDisk);
-                err = _dos_open(au8dd6y, 0, &g_lib2Handle);
+                err = _dos_open(au8dd6y, O_RDONLY, &g_lib2Handle);
             }
         }
     }
@@ -516,7 +517,7 @@ void disk_load_data(void)
     *drive++ = au8dd6y[1];
     while (*drive++ = *g_dataFileName++)
         ;
-    if (_dos_open(g_dataPath, 0, &fd)) {
+    if (_dos_open(g_dataPath, O_RDONLY, &fd)) {
         screen_wait_msg("Can't open data file");
         sys_exit();
     }
@@ -546,7 +547,7 @@ int disk_data_drive(void)
     if (g_curDrive > 2)
         return (char)(g_curDrive + 0x40);
     for (;;) {
-        if (_dos_open(g_dataPath, 0, &file)) {
+        if (_dos_open(g_dataPath, O_RDONLY, &file)) {
             if (++tries > 3)
                 sys_exit();
             g_msgInsertDisk[12] = (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3' : '2';
@@ -600,7 +601,7 @@ void disk_load_hall(void)
 
     g_hallFileName[0] = *au8dd6y;
     disk_data_drive();
-    if (_dos_open(g_hallFileName, 0, &fd) || fd == 0)
+    if (_dos_open(g_hallFileName, O_RDONLY, &fd) || fd == 0)
         bucount = 0;
     else {
         if (_dos_read(fd, (void far *)&bucount, 2, &got) || got != 2) {
@@ -635,7 +636,7 @@ void disk_save_hall(void)
 
     scramble_hall();
     disk_data_drive();
-    got = _dos_creat(g_hallFileName, 0, &fd);
+    got = _dos_creat(g_hallFileName, _A_NORMAL, &fd);
     if (g_curDrive > 2) {
         if (fd == 0 || got) {
             screen_wait_msg(g_msgWriteError);
@@ -648,7 +649,7 @@ void disk_save_hall(void)
             if (tries == 3)
                 sys_exit();
             screen_wait_msg(g_msgBadFormat);
-            got = _dos_creat(g_hallFileName, 0, &fd);
+            got = _dos_creat(g_hallFileName, _A_NORMAL, &fd);
         }
     }
     if (_dos_write(fd, (void far *)&bucount, 2, &got) || got != 2) {
