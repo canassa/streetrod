@@ -615,3 +615,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - MSC's `_BSS` order for statics is a 256-bucket table keyed by the name's byte sum with bit 5 cleared; a static declared after an `extern` of the same name (C4074) becomes public `_name` instead of `$Snnn_name`, so headers must not declare statics.
 - Open: `work/dg/run.sh` no longer round-trips, also on 0aef06c: `./sr dgroup apply` moves `g_4fa6` from M_0542E.C to M_04940.C (then U_0542E fails to compile) and adds a blank line to six .ASM files.
 
+
+## 2026-11-04 11:30 CET: What stands between us and a faithful build
+
+### What I did
+- Read the build pipeline end to end and listed every step the developers could not have had: extracted runtime members in a recovered order, the CRTORDER anchor, generated `U_*` files merged from the `M_*` split, injected `#pragma loop_opt`, stripped `static` on near functions, prepended CRT.H and STB prototypes, `#define F_0066F main`, flags as a union of per-function flags. The plan is `plans/faithful-build.md`.
+- Linked the layout objects against the libraries instead of extracted members (work/nat). Component libraries in LINK's list: 55876..61916 bytes differ. A combined library built with LIB 3.11 as `MLIBCE = MLIBCR + LIBH + EM + MLIBFP`, linked as the objects' default library without `/NOD`: packed EXE IDENTICAL. Other component orders: 5381, 5389 and 12426 bytes.
+- Without CRTORDER.OBJ the link differs in 57336 bytes. Without the injected loop pragmas U_00D78, U_039C0 and U_23262 stop matching.
+
+### What I learned
+- The developers linked against a SETUP-style combined MLIBCE.LIB with the component order MLIBCR, LIBH, EM, MLIBFP; the "recovered runtime order" was just the order LINK extracts members from it.
+- Three original files switched `/Ol` off and on with `#pragma loop_opt`; the other nine units with mixed recorded flags do not need it.
