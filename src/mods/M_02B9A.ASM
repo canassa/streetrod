@@ -1,7 +1,5 @@
         .MODEL MEDIUM
 
-; F_02B9A @ 0000:2B9A (linear 0x02B9A, 19 bytes)
-
         .DATA
 
         ; data (recovered DGROUP layout)
@@ -805,6 +803,8 @@ _g_49e0 LABEL BYTE ; +49E0 int @[]
 
         .CODE S0000_TEXT
 
+; F_02B9A @ 0000:2B9A (linear 0x02B9A, 19 bytes)
+
         PUBLIC  _F_02B9A
 _F_02B9A  PROC  FAR
         push    bp
@@ -821,10 +821,6 @@ _F_02B9A  ENDP
 
 ; set_g47ec_47ed @ 0000:2BAD (linear 0x02BAD, 19 bytes)
 
-        .DATA
-
-        .CODE S0000_TEXT
-
         PUBLIC  _set_g47ec_47ed
 _set_g47ec_47ed  PROC  FAR
         push    bp
@@ -840,10 +836,6 @@ _set_g47ec_47ed  PROC  FAR
 _set_g47ec_47ed  ENDP
 
 ; F_02BC0 @ 0000:2BC0 (linear 0x02BC0, 34 bytes)
-
-        .DATA
-
-        .CODE S0000_TEXT
 
         PUBLIC  _F_02BC0
 _F_02BC0  PROC  FAR
@@ -866,11 +858,7 @@ _F_02BC0  PROC  FAR
         ret
 _F_02BC0  ENDP
 
-; F_02BE2 @ 0000:2BC0 (linear 0x02BE2, 34 bytes)
-
-        .DATA
-
-        .CODE S0000_TEXT
+; F_02BE2 @ 0000:2BE2 (linear 0x02BE2, 34 bytes)
 
         PUBLIC  _F_02BE2
 _F_02BE2  PROC  FAR

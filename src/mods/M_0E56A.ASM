@@ -1,8 +1,5 @@
         .MODEL MEDIUM
 
-; F_0E56A @ 0000:E56A (linear 0x0E56A, 26 bytes)
-; Is there RAM at es:3FFFh that holds a written value? Result in ZF
-; (equal: the byte at 7FFFh read back the same after the increment).
         .DATA
 
         ; data (recovered DGROUP layout)
@@ -600,6 +597,10 @@ _g_579f LABEL BYTE ; +579F struct KeyMap *@[]
 
         .CODE S0000_TEXT
 
+; F_0E56A @ 0000:E56A (linear 0x0E56A, 26 bytes)
+; Is there RAM at es:3FFFh that holds a written value? Result in ZF
+; (equal: the byte at 7FFFh read back the same after the increment).
+
         PUBLIC  _F_0E56A
 _F_0E56A  PROC  FAR
         mov     bl,es:[7FFFh]
@@ -614,8 +615,6 @@ _F_0E56A  ENDP
 ; Hercules detection: does the status port 3BAh toggle bit 7, and is
 ; there memory at B000h that survives the config switch.
 
-        .CODE S0000_TEXT
-
         PUBLIC  _F_0E584
 _F_0E584  PROC  FAR
         mov     bx,100h
@@ -623,33 +622,33 @@ _F_0E584  PROC  FAR
         in      al,dx
         mov     ah,al
         and     ah,80h
-L0E584_wait1:
+wait1:
         mov     cx,40h
-L0E584_wait2:
+wait2:
         in      al,dx
         and     al,80h
         cmp     al,ah
-        loope   L0E584_wait2
-        jne     L0E584_toggled
+        loope   wait2
+        jne     toggled
         dec     bx
-        jne     L0E584_wait1
-        jmp     SHORT L0E584_none
-L0E584_toggled:
+        jne     wait1
+        jmp     SHORT none
+toggled:
         mov     ax,0B000h
         mov     es,ax
         call    _F_0E56A
-        jne     L0E584_found
+        jne     found
         mov     al,1
         mov     dx,3BFh
         out     dx,al
         call    _F_0E56A
-        je      L0E584_none
-L0E584_found:
+        je      none
+found:
         mov     al,1
-        jmp     SHORT L0E584_done
-L0E584_none:
+        jmp     SHORT done
+none:
         xor     al,al
-L0E584_done:
+done:
         or      al,al
         ret
 _F_0E584  ENDP
@@ -657,16 +656,14 @@ _F_0E584  ENDP
 ; F_0E5C3 @ 0000:E5C3 (linear 0x0E5C3, 14 bytes)
 ; BIOS equipment word: 0x30 in the video bits means monochrome.
 
-        .CODE S0000_TEXT
-
         PUBLIC  _F_0E5C3
 _F_0E5C3  PROC  FAR
         int     11h
         and     ax,30h
         cmp     ax,30h
-        je      L0E5C3_mono
+        je      mono
         mov     ax,0
-L0E5C3_mono:
+mono:
         ret
 _F_0E5C3  ENDP
 

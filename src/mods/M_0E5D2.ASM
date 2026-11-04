@@ -1,8 +1,5 @@
         .MODEL MEDIUM
 
-; F_0E5D2 @ 0000:E5D2 (linear 0x0E5D2, 61 bytes)
-; Hercules graphics mode set up: BIOS video state, CRTC registers.
-
         .DATA
 
         ; data (recovered DGROUP layout)
@@ -53,6 +50,9 @@ _g_5ad0 LABEL BYTE ; +5AD0 char @[30]
 
         .CODE S0000_TEXT
 
+; F_0E5D2 @ 0000:E5D2 (linear 0x0E5D2, 61 bytes)
+; Hercules graphics mode set up: BIOS video state, CRTC registers.
+
         PUBLIC  _F_0E5D2
 _F_0E5D2  PROC    NEAR
         push    bp
@@ -76,10 +76,10 @@ _F_0E5D2  PROC    NEAR
         mov     si,OFFSET _g_5abc
         mov     cx,0Ah
         even
-L0E5D2_crtc:
+crtc:
         lodsw
         out     dx,ax
-        loop    L0E5D2_crtc
+        loop    crtc
         add     dl,4
         mov     al,_g_5ad0+28
         out     dx,al

@@ -1,12 +1,12 @@
         .MODEL MEDIUM
 
-; F_0E6C2 @ 0e6c:0002 (linear 0x0E6C2, 191 bytes)
-; CGA 320x200 4-colour masked blit with background save: for each L0E6C2_row, saves the
-; screen L0E6C2_words to one buffer, then ANDs with a mask and ORs the sprite data.
-; Args: sprite, mask, save buffer (far), screen (far), x, y, width in L0E6C2_words, rows.
-; Screen rows interleave in four banks of 2000h.
-
         .CODE S0E6C_TEXT
+
+; F_0E6C2 @ 0E6C:0002 (linear 0x0E6C2, 191 bytes)
+; CGA 320x200 4-colour masked blit with background save: for each row, saves the
+; screen words to one buffer, then ANDs with a mask and ORs the sprite data.
+; Args: sprite, mask, save buffer (far), screen (far), x, y, width in words, rows.
+; Screen rows interleave in four banks of 2000h.
 
         PUBLIC  _F_0E6C2
 _F_0E6C2  PROC  FAR
@@ -26,13 +26,13 @@ _F_0E6C2  PROC  FAR
         add     di,ax
         add     di,[bp+16h]
         test    bh,1
-        je      L0E6C2_bank1
+        je      bank1a
         add     di,2000h
-L0E6C2_bank1:
+bank1a:
         test    bh,2
-        je      L0E6C2_bank2
+        je      bank2
         add     di,4000h
-L0E6C2_bank2:
+bank2:
         mov     ax,18h
         sub     ax,[bp+1Ah]
         mov     [bp-8],ax
@@ -51,10 +51,10 @@ L0E6C2_bank2:
         lds     si,DWORD PTR [bp+0Ah]
         mov     bx,si
         lds     si,DWORD PTR [bp+6]
-L0E6C2_row:
+row1:
         mov     cx,[bp+1Ah]
         shr     cx,1
-        jae     L0E6C2_words
+        jae     words1
         xchg    dx,bx
         mov     al,es:[di]
         mov     [bx],al
@@ -65,8 +65,8 @@ L0E6C2_row:
         or      al,[si]
         inc     si
         stosb
-        jcxz    L0E6C2_rowend
-L0E6C2_words:
+        jcxz    rowend1
+words1:
         xchg    dx,bx
         mov     ax,es:[di]
         mov     [bx],ax
@@ -80,23 +80,23 @@ L0E6C2_words:
         inc     si
         inc     si
         stosw
-        loop    L0E6C2_words
-L0E6C2_rowend:
+        loop    words1
+rowend1:
         dec     WORD PTR [bp+1Ch]
-        je      L0E6C2_done
+        je      done1
         mov     ax,[bp-8]
         add     si,ax
         add     bx,ax
         add     dx,[bp-6]
         inc     WORD PTR [bp+18h]
         test    WORD PTR [bp+18h],3
-        je      L0E6C2_nextbank
+        je      nextbank1
         add     di,[bp-2]
-        jmp     L0E6C2_row
-L0E6C2_nextbank:
+        jmp     row1
+nextbank1:
         add     di,[bp-4]
-        jmp     L0E6C2_row
-L0E6C2_done:
+        jmp     row1
+done1:
         pop     si
         pop     di
         pop     ds
@@ -105,10 +105,8 @@ L0E6C2_done:
         ret
 _F_0E6C2  ENDP
 
-; F_0E781 @ 0e6c:00c1 (linear 0x0E781, 180 bytes)
+; F_0E781 @ 0E6C:00C1 (linear 0x0E781, 180 bytes)
 ; Same blit as F_0E6C2 with two interleaved banks and 80 byte rows.
-
-        .CODE S0E6C_TEXT
 
         PUBLIC  _F_0E781
 _F_0E781  PROC  FAR
@@ -127,9 +125,9 @@ _F_0E781  PROC  FAR
         add     di,ax
         add     di,[bp+16h]
         test    bh,1
-        je      L0E781_bank1
+        je      bank1b
         add     di,2000h
-L0E781_bank1:
+bank1b:
         mov     ax,18h
         sub     ax,[bp+1Ah]
         mov     [bp-8],ax
@@ -148,10 +146,10 @@ L0E781_bank1:
         lds     si,DWORD PTR [bp+0Ah]
         mov     bx,si
         lds     si,DWORD PTR [bp+6]
-L0E781_row:
+row2:
         mov     cx,[bp+1Ah]
         shr     cx,1
-        jae     L0E781_words
+        jae     words2
         xchg    dx,bx
         mov     al,es:[di]
         mov     [bx],al
@@ -162,8 +160,8 @@ L0E781_row:
         or      al,[si]
         inc     si
         stosb
-        jcxz    L0E781_rowend
-L0E781_words:
+        jcxz    rowend2
+words2:
         xchg    dx,bx
         mov     ax,es:[di]
         mov     [bx],ax
@@ -177,23 +175,23 @@ L0E781_words:
         inc     si
         inc     si
         stosw
-        loop    L0E781_words
-L0E781_rowend:
+        loop    words2
+rowend2:
         dec     WORD PTR [bp+1Ch]
-        je      L0E781_done
+        je      done2
         mov     ax,[bp-8]
         add     si,ax
         add     bx,ax
         add     dx,[bp-6]
         inc     WORD PTR [bp+18h]
         test    WORD PTR [bp+18h],1
-        je      L0E781_nextbank
+        je      nextbank2
         add     di,[bp-2]
-        jmp     L0E781_row
-L0E781_nextbank:
+        jmp     row2
+nextbank2:
         add     di,[bp-4]
-        jmp     L0E781_row
-L0E781_done:
+        jmp     row2
+done2:
         pop     si
         pop     di
         pop     ds
@@ -202,12 +200,10 @@ L0E781_done:
         ret
 _F_0E781  ENDP
 
-; F_0E835 @ 0e6c:0175 (linear 0x0E835, 240 bytes)
+; F_0E835 @ 0E6C:0175 (linear 0x0E835, 240 bytes)
 ; EGA 320x200 16-colour masked blit with background save, planar: the mask is
 ; applied through the graphics controller (write mode 0, bit mask register 8)
 ; and the four sprite planes are 600h bytes apart.
-
-        .CODE S0E6C_TEXT
 
         PUBLIC  _F_0E835
 _F_0E835  PROC  FAR
@@ -250,9 +246,9 @@ _F_0E835  PROC  FAR
         mov     ax,8
         dec     dx
         out     dx,al
-L0E835_row:
+row3:
         mov     cx,[bp+1Ah]
-L0E835_pixel:
+pixel:
         sub     ax,ax
         mov     dx,3CFh
         out     dx,al
@@ -294,17 +290,17 @@ L0E835_pixel:
         mov     al,[si+1200h]
         stosb
         inc     si
-        loop    L0E835_pixel
+        loop    pixel
         dec     WORD PTR [bp+1Ch]
-        je      L0E835_done
+        je      done3
         mov     ax,[bp-6]
         add     si,ax
         add     bx,ax
         mov     ax,[bp-4]
         add     [bp-0Ah],ax
         add     di,[bp-2]
-        jmp     L0E835_row
-L0E835_done:
+        jmp     row3
+done3:
         mov     ax,0Fh
         mov     dx,3C5h
         out     dx,al

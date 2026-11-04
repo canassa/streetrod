@@ -1,17 +1,15 @@
         .MODEL MEDIUM
 
-; F_1DD22 @ 1C11:1C12 (linear 0x1DD22, 647 bytes)
-; Draw a line with 2 bits per pixel into the interleaved (CGA/Hercules
-; style) screen, Bresenham style. A horizontal line is a byte-fill with edge
-; masks, a vertical one a per-line loop, anything else steps along its major
-; axis (L1DD22_xmajor / L1DD22_ymajor loops, picked through the pointer kept at [bp-8]).
-; Local words: [bp-2] = alternate row step, [bp-4] = 2*L1DD22_minor, [bp-6] = error
-; decrement, [bp-8] = loop to L1DD22_enter, [bp-0Ah] = Hercules double-write state
-; (0 = off, 2/3 = on with the parity of the current row).
-; F_1DD22(x1, y1, x2, y2, colour)
-
         .DATA
+        EXTRN   _at767ct:WORD
+        EXTRN   _av787at:WORD
         EXTRN   _g_0042:WORD
+        EXTRN   _g_5e42:BYTE
+        EXTRN   _g_clip_xmax:WORD
+        EXTRN   _g_clip_xmin:WORD
+        EXTRN   _g_clip_ymax:WORD
+        EXTRN   _g_clip_ymin:WORD
+
         ; data (recovered DGROUP layout)
         PUBLIC _g_5b56
 _g_5b56 LABEL BYTE ; +5B56 char @[4]
@@ -76,6 +74,16 @@ _g_5b7a LABEL BYTE ; +5B7A char @[16]
 
         .CODE S1C11_TEXT
 
+; F_1DD22 @ 1C11:1C12 (linear 0x1DD22, 647 bytes)
+; Draw a line with 2 bits per pixel into the interleaved (CGA/Hercules
+; style) screen, Bresenham style. A horizontal line is a byte-fill with edge
+; masks, a vertical one a per-line loop, anything else steps along its major
+; axis (xmajor / ymajor loops, picked through the pointer kept at [bp-8]).
+; Local words: [bp-2] = alternate row step, [bp-4] = 2*minor, [bp-6] = error
+; decrement, [bp-8] = loop to enter, [bp-0Ah] = Hercules double-write state
+; (0 = off, 2/3 = on with the parity of the current row).
+; F_1DD22(x1, y1, x2, y2, colour)
+
         PUBLIC  _F_1DD22
 _F_1DD22  PROC    FAR
         push    bp
@@ -90,20 +98,20 @@ _F_1DD22  PROC    FAR
         mov     di,0E050h
         mov     WORD PTR [bp-0Ah],0
         cmp     _g_0042,0
-        je      L1DD22_gotdx
+        je      gotdx
         cmp     _av787at,0B000h
-        jb      L1DD22_gotdx
+        jb      gotdx
         cmp     _av787at,0B400h
-        ja      L1DD22_gotdx
+        ja      gotdx
         mov     WORD PTR [bp-0Ah],2
         mov     ax,[bp+8]
         and     ax,1
         add     [bp-0Ah],ax
-L1DD22_gotdx:
+gotdx:
         mov     cx,[bp+10]
         sub     cx,[bp+6]
-        je      L1DD22_vert
-        jns     L1DD22_xordered
+        je      vert
+        jns     xordered
         neg     cx
         mov     bx,[bp+10]
         xchg    bx,[bp+6]
@@ -112,30 +120,30 @@ L1DD22_gotdx:
         xchg    bx,[bp+8]
         mov     [bp+12],bx
         cmp     WORD PTR [bp-0Ah],0
-        je      L1DD22_xordered
+        je      xordered
         mov     ax,[bp+8]
         and     ax,1
         or      ax,2
         mov     [bp-0Ah],ax
-L1DD22_xordered:
+xordered:
         mov     bx,[bp+12]
         sub     bx,[bp+8]
-        jne     L1DD22_notflat
-        jmp     L1DD22_horiz
-L1DD22_notflat:
-        jns     L1DD22_ydown
+        jne     notflat
+        jmp     horiz
+notflat:
+        jns     ydown
         neg     bx
         neg     si
         neg     di
         xchg    si,di
-L1DD22_ydown:
+ydown:
         mov     [bp-2],di
-        mov     WORD PTR [bp-8],OFFSET L1DD22_xmajor
+        mov     WORD PTR [bp-8],OFFSET xmajor
         cmp     bx,cx
-        jle     L1DD22_minor
-        mov     WORD PTR [bp-8],OFFSET L1DD22_ymajor
+        jle     minor
+        mov     WORD PTR [bp-8],OFFSET ymajor
         xchg    bx,cx
-L1DD22_minor:
+minor:
         shl     bx,1
         mov     [bp-4],bx
         sub     bx,cx
@@ -153,19 +161,19 @@ L1DD22_minor:
         pop     cx
         inc     cx
         test    bx,2000h
-        je      L1DD22_enter
+        je      enter
         xchg    si,[bp-2]
-L1DD22_enter:
+enter:
         jmp     WORD PTR [bp-8]
-L1DD22_vert:
+vert:
         mov     ax,[bp+8]
         mov     bx,[bp+12]
         mov     cx,bx
         sub     cx,ax
-        jge     L1DD22_vlen
+        jge     vlen
         neg     cx
         mov     ax,bx
-L1DD22_vlen:
+vlen:
         inc     cx
         mov     bx,[bp+6]
         push    cx
@@ -175,27 +183,27 @@ L1DD22_vlen:
         not     ah
         pop     cx
         test    bx,si
-        je      L1DD22_vloop
+        je      vloop
         xchg    si,di
-L1DD22_vloop:
+vloop:
         and     es:[bx],ah
         or      es:[bx],al
         cmp     WORD PTR [bp-0Ah],0
-        je      L1DD22_vnext
+        je      vnext
         test    WORD PTR [bp-0Ah],1
-        je      L1DD22_vflip
+        je      vflip
         add     bx,2000h
         and     es:[bx],ah
         or      es:[bx],al
         sub     bx,2000h
-L1DD22_vflip:
+vflip:
         xor     WORD PTR [bp-0Ah],1
-L1DD22_vnext:
+vnext:
         add     bx,si
         xchg    si,di
-        loop    L1DD22_vloop
-        jmp     L1DD22_done
-L1DD22_horiz:
+        loop    vloop
+        jmp     done1
+horiz:
         mov     ax,[bp+8]
         mov     bx,[bp+6]
         call    _F_1DFA9
@@ -221,33 +229,33 @@ L1DD22_horiz:
         mov     al,[bp+14]
         xlat
         or      dh,dh
-        js      L1DD22_hmiddle
+        js      hmiddle
         or      cx,cx
-        jne     L1DD22_hlead
+        jne     hlead
         and     dl,dh
-        jmp     SHORT L1DD22_hlast
-L1DD22_hlead:
+        jmp     SHORT hlast
+hlead:
         mov     ah,al
         and     ah,dh
         not     dh
         and     es:[di],dh
         or      es:[di],ah
         cmp     WORD PTR [bp-0Ah],0
-        je      L1DD22_hlead1
+        je      hlead1
         test    WORD PTR [bp-0Ah],1
-        je      L1DD22_hlead1
+        je      hlead1
         add     di,2000h
         and     es:[di],dh
         or      es:[di],ah
         sub     di,2000h
-L1DD22_hlead1:
+hlead1:
         inc     di
         dec     cx
-L1DD22_hmiddle:
+hmiddle:
         cmp     WORD PTR [bp-0Ah],0
-        je      L1DD22_hsingle
+        je      hsingle
         test    WORD PTR [bp-0Ah],1
-        je      L1DD22_hsingle
+        je      hsingle
         push    cx
         push    di
         rep stosb
@@ -256,95 +264,95 @@ L1DD22_hmiddle:
         add     di,2000h
         rep stosb
         sub     di,2000h
-        jmp     SHORT L1DD22_hlast
-L1DD22_hsingle:
+        jmp     SHORT hlast
+hsingle:
         rep stosb
-L1DD22_hlast:
+hlast:
         and     al,dl
         not     dl
         and     es:[di],dl
         or      es:[di],al
         cmp     WORD PTR [bp-0Ah],0
-        je      L1DD22_hend
+        je      hend
         test    WORD PTR [bp-0Ah],1
-        je      L1DD22_hend
+        je      hend
         add     di,2000h
         and     es:[di],dl
         or      es:[di],al
         sub     di,2000h
-L1DD22_hend:
-        jmp     L1DD22_done
-L1DD22_xmajor:
+hend:
+        jmp     done1
+xmajor:
         mov     ah,es:[bx]
-L1DD22_xand:
+xand:
         and     ah,dh
         or      ah,dl
         ror     dl,1
         ror     dl,1
         ror     dh,1
         ror     dh,1
-        jae     L1DD22_xnext
+        jae     xnext
         or      di,di
-        jns     L1DD22_xdiag
+        jns     xdiag
         add     di,[bp-4]
-        loop    L1DD22_xand
+        loop    xand
         mov     es:[bx],ah
-        jmp     L1DD22_done
-L1DD22_xdiag:
+        jmp     done1
+xdiag:
         add     di,[bp-6]
         mov     es:[bx],ah
         cmp     WORD PTR [bp-0Ah],0
-        je      L1DD22_xrow
+        je      xrow
         test    WORD PTR [bp-0Ah],1
-        je      L1DD22_xflip
+        je      xflip
         add     bx,2000h
         mov     es:[bx],ah
         sub     bx,2000h
-L1DD22_xflip:
+xflip:
         xor     WORD PTR [bp-0Ah],1
-L1DD22_xrow:
+xrow:
         add     bx,si
         xchg    si,[bp-2]
-        loop    L1DD22_xmajor
-        jmp     SHORT L1DD22_done
-L1DD22_xnext:
+        loop    xmajor
+        jmp     SHORT done1
+xnext:
         mov     es:[bx],ah
         inc     bx
         or      di,di
-        jns     L1DD22_xnext2
+        jns     xnext2
         add     di,[bp-4]
         dec     cx
-        je      L1DD22_done
-        jmp     L1DD22_xmajor
-L1DD22_xnext2:
+        je      done1
+        jmp     xmajor
+xnext2:
         add     di,[bp-6]
         add     bx,si
         xchg    si,[bp-2]
         dec     cx
-        je      L1DD22_done
-        jmp     L1DD22_xmajor
-L1DD22_ymajor:
+        je      done1
+        jmp     xmajor
+ymajor:
         and     es:[bx],dh
         or      es:[bx],dl
         cmp     WORD PTR [bp-0Ah],0
-        je      L1DD22_yrow
+        je      yrow
         test    WORD PTR [bp-0Ah],1
-        je      L1DD22_yflip
+        je      yflip
         add     bx,2000h
         and     es:[bx],dh
         or      es:[bx],dl
         sub     bx,2000h
-L1DD22_yflip:
+yflip:
         xor     WORD PTR [bp-0Ah],1
-L1DD22_yrow:
+yrow:
         add     bx,si
         xchg    si,[bp-2]
         or      di,di
-        jns     L1DD22_ydiag
+        jns     ydiag
         add     di,[bp-4]
-        loop    L1DD22_ymajor
-        jmp     SHORT L1DD22_done
-L1DD22_ydiag:
+        loop    ymajor
+        jmp     SHORT done1
+ydiag:
         add     di,[bp-6]
         ror     dl,1
         ror     dl,1
@@ -352,8 +360,8 @@ L1DD22_ydiag:
         ror     dh,1
         cmc
         adc     bx,0
-        loop    L1DD22_ymajor
-L1DD22_done:
+        loop    ymajor
+done1:
         pop     di
         pop     si
         mov     sp,bp
@@ -364,12 +372,6 @@ _F_1DD22  ENDP
 ; F_1DFA9 @ 1C11:1E99 (linear 0x1DFA9, 40 bytes)
 ; Pixel address helper for the interleaved 2-bit mode. In: ax = y, bx = x.
 ; Out: bx = byte offset of the pixel (scan line, bank and x/4 folded together) + at767ct, es = av787at, cl = 2 * (3 - (x & 3)).
-
-        .DATA
-        EXTRN   _at767ct:WORD
-        EXTRN   _av787at:WORD
-
-        .CODE S1C11_TEXT
 
         PUBLIC  _F_1DFA9
 _F_1DFA9  PROC    NEAR
@@ -396,21 +398,10 @@ _F_1DFA9  ENDP
 
 ; F_1DFD2 @ 1C11:1EC2 (linear 0x1DFD2, 300 bytes)
 ; Draw a horizontal line with 2 bits per pixel into the interleaved
-; (CGA/Hercules style) screen, clipped to the L1DFD2_clip rectangle. On a Hercules
+; (CGA/Hercules style) screen, clipped to the clip rectangle. On a Hercules
 ; segment (B000-B400 with g_0042 set) an odd line is also drawn 0x2000 bytes
 ; up, which is what the flag byte in the code segment records.
 ; F_1DFD2(x1, x2, y, colour)
-
-        .DATA
-        EXTRN   _g_5e42:BYTE
-        EXTRN   _g_clip_ymin:WORD
-        EXTRN   _g_clip_xmin:WORD
-        EXTRN   _g_clip_ymax:WORD
-        EXTRN   _g_clip_xmax:WORD
-        EXTRN   _g_0042:WORD
-        EXTRN   _av787at:WORD
-
-        .CODE S1C11_TEXT
 
 dbl     DB      0
 
@@ -422,46 +413,46 @@ _F_1DFD2  PROC    FAR
         push    di
         mov     BYTE PTR cs:dbl,0
         cmp     _g_0042,0
-        je      L1DFD2_clip
+        je      clip
         cmp     _av787at,0B000h
-        jb      L1DFD2_clip
+        jb      clip
         cmp     _av787at,0B400h
-        ja      L1DFD2_clip
+        ja      clip
         test    WORD PTR [bp+10],1
-        je      L1DFD2_clip
+        je      clip
         mov     BYTE PTR cs:dbl,1
-L1DFD2_clip:
+clip:
         mov     ax,[bp+10]
         cmp     _g_clip_ymin,ax
-        jg      L1DFD2_skip1
+        jg      skip1
         cmp     _g_clip_ymax,ax
-        jl      L1DFD2_skip1
+        jl      skip1
         mov     ax,[bp+6]
         mov     bx,[bp+8]
         mov     cx,_g_clip_xmin
         mov     dx,_g_clip_xmax
         cmp     cx,bx
-        jg      L1DFD2_skip1
+        jg      skip1
         cmp     dx,ax
-        jl      L1DFD2_skip1
-        jmp     SHORT L1DFD2_inside
-L1DFD2_skip1:
-        jmp     NEAR PTR L1DFD2_done
-L1DFD2_inside:
+        jl      skip1
+        jmp     SHORT inside
+skip1:
+        jmp     NEAR PTR done2
+inside:
         cmp     ax,cx
-        jg      L1DFD2_xok
+        jg      xok
         mov     [bp+6],cx
-L1DFD2_xok:
+xok:
         cmp     bx,dx
-        jl      L1DFD2_x2ok
+        jl      x2ok
         mov     [bp+8],dx
-L1DFD2_x2ok:
+x2ok:
         mov     ax,[bp+6]
         cmp     ax,[bp+8]
-        jle     L1DFD2_ordered
+        jle     ordered
         xchg    ax,[bp+8]
         mov     [bp+6],ax
-L1DFD2_ordered:
+ordered:
         mov     ax,[bp+10]
         mov     bx,[bp+6]
         call    _F_1DFA9
@@ -484,38 +475,38 @@ L1DFD2_ordered:
         mov     cx,ax
         sub     cx,bx
         test    WORD PTR [bp+10],1
-        je      L1DFD2_evenline
+        je      evenline
         mov     bx,OFFSET _g_5b6a
-        jmp     SHORT L1DFD2_gotpat
-L1DFD2_evenline:
+        jmp     SHORT gotpat
+evenline:
         mov     bx,OFFSET _g_5b7a
-L1DFD2_gotpat:
+gotpat:
         mov     al,[bp+12]
         xlat
         or      dh,dh
-        js      L1DFD2_middle
+        js      middle
         or      cx,cx
-        jne     L1DFD2_lead
+        jne     lead
         and     dl,dh
-        jmp     SHORT L1DFD2_last
-L1DFD2_lead:
+        jmp     SHORT last
+lead:
         mov     ah,al
         and     ah,dh
         not     dh
         and     es:[di],dh
         or      es:[di],ah
         cmp     BYTE PTR cs:dbl,0
-        je      L1DFD2_lead1
+        je      lead1
         add     di,2000h
         and     es:[di],dh
         or      es:[di],ah
         sub     di,2000h
-L1DFD2_lead1:
+lead1:
         inc     di
         dec     cx
-L1DFD2_middle:
+middle:
         cmp     BYTE PTR cs:dbl,0
-        je      L1DFD2_single
+        je      single
         push    cx
         push    di
         rep stosb
@@ -524,21 +515,21 @@ L1DFD2_middle:
         add     di,2000h
         rep stosb
         sub     di,2000h
-        jmp     SHORT L1DFD2_last
-L1DFD2_single:
+        jmp     SHORT last
+single:
         rep stosb
-L1DFD2_last:
+last:
         and     al,dl
         not     dl
         and     es:[di],dl
         or      es:[di],al
         cmp     BYTE PTR cs:dbl,0
-        je      L1DFD2_done
+        je      done2
         add     di,2000h
         and     es:[di],dl
         or      es:[di],al
         sub     di,2000h
-L1DFD2_done:
+done2:
         pop     di
         pop     si
         mov     sp,bp
@@ -552,10 +543,6 @@ _F_1DFD2  ENDP
 ; byte via g_5b6a; every second line gets the pattern rotated by 2 bits.
 ; F_1E0FE(y1, colour)
 
-        .DATA
-
-        .CODE S1C11_TEXT
-
         PUBLIC  _F_1E0FE
 _F_1E0FE  PROC    FAR
         push    bp
@@ -564,7 +551,7 @@ _F_1E0FE  PROC    FAR
         push    di
         mov     ax,[bp+6]
         cmp     _g_clip_ymax,ax
-        jl      L1E0FE_done
+        jl      done3
         mov     bx,OFFSET _g_5b6a
         mov     ax,[bp+8]
         xor     ah,ah
@@ -572,7 +559,7 @@ _F_1E0FE  PROC    FAR
         mov     dh,al
         mov     dl,al
         xor     si,si
-L1E0FE_again:
+again:
         mov     ax,[bp+6]
         mov     bx,_g_clip_ymax
         mov     cx,bx
@@ -580,11 +567,11 @@ L1E0FE_again:
         shr     cx,1
         xor     ax,bx
         test    ax,1
-        je      L1E0FE_even
+        je      even1
         inc     cx
-L1E0FE_even:
+even1:
         or      cx,cx
-        je      L1E0FE_next
+        je      next
         mov     ax,[bp+6]
         xor     bx,bx
         push    cx
@@ -596,15 +583,15 @@ L1E0FE_even:
         mov     ax,dx
         mov     di,bx
         rep stosw
-L1E0FE_next:
+next:
         or      si,si
-        jne     L1E0FE_done
+        jne     done3
         inc     si
         inc     WORD PTR [bp+6]
         ror     dx,1
         ror     dx,1
-        jmp     L1E0FE_again
-L1E0FE_done:
+        jmp     again
+done3:
         pop     di
         pop     si
         mov     sp,bp
@@ -616,20 +603,16 @@ _F_1E0FE  ENDP
 ; Map a colour in al to a CGA 2-bit pixel value: 0-3 stay as they are,
 ; 4-15 go through the table g_5b5a, anything above becomes 3.
 
-        .DATA
-
-        .CODE S1C11_TEXT
-
         PUBLIC  _F_1E15E
 _F_1E15E  PROC    NEAR
         cmp     al,3
-        jbe     L1E15E_done
+        jbe     done4
         cmp     al,0Fh
-        jbe     L1E15E_mapped
+        jbe     mapped
         mov     al,3
-L1E15E_done:
+done4:
         ret
-L1E15E_mapped:
+mapped:
         mov     bx,OFFSET _g_5b5a
         xlat
         ret

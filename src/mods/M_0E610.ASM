@@ -1,11 +1,10 @@
         .MODEL MEDIUM
 
-; F_0E610 @ 0000:E610 (linear 0x0E610, 31 bytes)
-; Restore the equipment byte and the BIOS video mode saved by F_0E62F.
-
         .DATA
-
         EXTRN   _F_0E781:FAR
+        EXTRN   _g_0250:WORD
+        EXTRN   _g_0252:WORD
+
         ; data (recovered DGROUP layout)
         PUBLIC _g_5aee
 _g_5aee LABEL BYTE ; +5AEE char @
@@ -34,6 +33,9 @@ S_5b00 LABEL BYTE
 
         .CODE S0000_TEXT
 
+; F_0E610 @ 0000:E610 (linear 0x0E610, 31 bytes)
+; Restore the equipment byte and the BIOS video mode saved by F_0E62F.
+
         PUBLIC  _F_0E610
 _F_0E610  PROC  FAR
         push    bp
@@ -59,12 +61,6 @@ _F_0E610  ENDP
 ; Video adapter detection: saves the current mode and equipment byte,
 ; asks the EGA BIOS, falls back to probing the CRTC cursor register (VGA/CGA).
 
-        .DATA
-        EXTRN   _g_0250:WORD
-        EXTRN   _g_0252:WORD
-
-        .CODE S0000_TEXT
-
         PUBLIC  _F_0E62F
 _F_0E62F  PROC  FAR
         push    bp
@@ -85,25 +81,25 @@ _F_0E62F  PROC  FAR
         mov     _g_5aef,bh
         mov     _g_5af2,cl
         cmp     bl,10h
-        je      L0E62F_probe
+        je      probe
         mov     _g_0250,1
         mov     _g_5af1,bl
         cmp     cl,0Fh
-        jge     L0E62F_probe
+        jge     probe
         cmp     bh,1
-        jg      L0E62F_probe
+        jg      probe
         cmp     bl,3
-        jg      L0E62F_probe
+        jg      probe
         cmp     cl,1
-        je      L0E62F_mono
+        je      mono
         cmp     cl,0Eh
-        je      L0E62F_mono
+        je      mono
         cmp     cl,8
-        jle     L0E62F_probe
+        jle     probe
         mov     _g_5af1,bl
         mov     _g_0250,1
-        jmp     L0E62F_done
-L0E62F_probe:
+        jmp     done
+probe:
         mov     dx,3D4h
         mov     al,0Fh
         out     dx,al
@@ -119,12 +115,12 @@ L0E62F_probe:
         cmp     al,5Ah
         mov     al,bh
         out     dx,al
-        je      L0E62F_done
+        je      done
         mov     _g_0250,2
-        jmp     L0E62F_done
-L0E62F_mono:
+        jmp     done
+mono:
         mov     _g_0252,1
-L0E62F_done:
+done:
         pop     si
         pop     di
         mov     sp,bp
