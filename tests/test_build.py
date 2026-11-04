@@ -143,6 +143,18 @@ class MakefileTests(unittest.TestCase):
         self.assertEqual([(name, off, node['size']) for name, off, node in record['fields']],
                          [('enabled', 0, 1), ('show', 2, 4), ('read', 6, 2), ('count', 8, 2)])
 
+    def test_record_with_enum_member(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            include = Path(tmp)
+            (include / 'STRUCTS.H').write_text(
+                'enum Choice { NONE, FIRST, SECOND }; '
+                'struct Selection { char enabled; enum Choice choice; };')
+            with patch.object(config, 'INCLUDE', include):
+                record = Types().named('struct Selection')
+        self.assertEqual(record['size'], 4)
+        self.assertEqual([(name, off, node['size']) for name, off, node in record['fields']],
+                         [('enabled', 0, 1), ('choice', 2, 2)])
+
     def test_msc_data_shapes(self):
         types = Types()
         self.assertEqual(types.declaration('int far *@')['size'], 4)
