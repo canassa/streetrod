@@ -1017,3 +1017,12 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - The game's pictures are evidence too: the review's modest "walker" was right on the code alone, and the sprite settled it.
+
+## 2026-11-05 14:00 CET: What produced `bits.p + 0x46 * pitch`?
+
+### What I did
+- Investigated the three `g_pageBmps[2]->bits.p + 0x46 * pitch` sites (CARPIC.C make_bands and make_frames, the carhop's grab_strip) with 27 candidate source forms compiled by MSC 5.1. Exact at all three: the literal, a #define or enum, a row macro, either operand order, long variants, and the structural forms `sizeof` of a 70-byte record, a constant member offset (`offsetof` after `char backdrop[70]`) and a typed 70-byte row pointer. Different: any runtime source of 70 (struct field, bitmap height, table, helper call, sub-bitmap header) and `70U` (`mul` instead of `imul`).
+- The rest of the evidence favours a fixed 70-row reserve at the top of a reusable page (the backdrop is at most 70 rows, `70 - g_spriteBottomCut`; other 70s are the car display height; TIRES.C reuses the same pages differently; no declarations or consumers back a record). No source changed; the geometry pass names it `BACKDROP_ROWS`, recorded as a choice among identical forms.
+
+### What I learned
+- MSC canonicalizes `70 * p` and `p * 70` to `mov ax,70; imul p`, so operand order says nothing here; signed vs unsigned does (`imul` vs `mul`).
