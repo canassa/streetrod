@@ -322,7 +322,7 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
     } else
         row8 = 0;
     if ((flags & 8) && idx != 0x19)
-        bm_draw_pic(*out, m2->f4, p12->b5, p12->b6, 1);
+        bm_draw_pic(*out, m2->engineOverlayPic, p12->b5, p12->b6, 1);
     blt.w = g_stickerBg->width;
     blt.h = g_stickerBg->height;
     blt.sx = p12->stickerX;
@@ -525,7 +525,7 @@ again:
                 } else
                     pu_grab(x0, g_sprDrawY, bm48->width, bm48->height, bm48);
                 blt.w = w1;
-                blt.h = blt.fc = h7 - g_spriteBottomCut;
+                blt.h = blt.unused1 = h7 - g_spriteBottomCut;
                 blt.dx = blt.dy = blt.sx = blt.sy = 0;
                 (*g_videoOps.maskedBlit)(bms6[0], bm48, &blt, 1);
             } else if (r_vid.mode != VID_TANDY)

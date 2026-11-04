@@ -8,7 +8,7 @@ struct Blt;
 
 struct Mask {
     char far *data;
-    int pad;
+    int y;
     int h;
 };
 

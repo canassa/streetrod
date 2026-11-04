@@ -17,14 +17,14 @@ struct Dlg {
     int bodyMods;
     struct Bitmap far *bm1;
     struct Bitmap far *bm2;
-    enum GasHand f0c;
+    enum GasHand hand;
     int fillsLeft;
-    int f10;
-    int f12;
-    int f14;
-    int f16;
-    int f18;
-    int f1a;
+    int attendantAbsent;
+    int nozzleInTank;
+    int nozzleOnPump;
+    int unused;
+    int nozzlePenaltyDue;
+    int pumping;
 };
 
 struct Spot {

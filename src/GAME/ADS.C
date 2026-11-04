@@ -57,7 +57,7 @@ void av_open(int *list, int base)
     cu_ctl(CURSOR_HIDE);
     g_adPacket.w = 0x40;
     g_adPacket.h = SCREEN_BODY_HEIGHT;
-    g_adPacket.sx = g_adPacket.sy = g_adPacket.dx = g_adPacket.dy = g_adPacket.fc = 0;
+    g_adPacket.sx = g_adPacket.sy = g_adPacket.dx = g_adPacket.dy = g_adPacket.unused1 = 0;
     g_adRedraw = 1;
     mn_push(KM_ADVERTS);
     cu_ctl(CURSOR_SHOW);

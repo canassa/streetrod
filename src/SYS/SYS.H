@@ -36,7 +36,7 @@ struct Eng {
     int speed;
     int steeringInput;
     int steering;
-    char pad6[4];
+    char unused1[4];
     int tireFailureIndex;
     int tireSlip;
     int rpm;
@@ -51,16 +51,16 @@ struct Eng {
     int automatic;
     int autoShiftRpm;
     enum AutoSelector autoSelector;
-    int f26;
-    int f28;
-    int f2a;
-    char pad2c[8];
-    int f34[6];
+    int unused2;
+    int unused3;
+    int initialRpmPerSpeed;
+    char unused4[8];
+    int gearRpmPerSpeed[6];
     int rpmPerSpeed;
     int rpmBand;
     struct Gear gear[5];
     int stopFlags;
-    int fbe;
+    int unused5;
     int elapsedTicks;
 };
 
@@ -109,7 +109,7 @@ struct Link {
     int priority;
     enum TimerAction action;
     int argument;
-    char pad[4];
+    char unused[4];
 };
 
 struct RoadView {

@@ -8,7 +8,7 @@ struct Item {
     char variant;
     char fitMask;
     char category;
-    char pad3;
+    char unused;
     int nameOffset;
 };
 

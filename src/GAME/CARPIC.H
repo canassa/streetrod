@@ -15,7 +15,7 @@ struct Bitmap {
     int width;
     int height;
     unsigned planesize;
-    char pad[0x1e];
+    char unused[0x1e];
     union FarPtr bits;
     union FarPtr alt;
     int pitch;

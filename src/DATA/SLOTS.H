@@ -8,20 +8,20 @@
 struct Slot {
     int width;
     int height;
-    char pad4[2];
+    char unused1[2];
     unsigned char bitmapFlags;
     unsigned char pal[16];
-    char pad17;
+    char unused2;
     long dataOffset;
     int packedSize;
     unsigned char vramPlane;
-    char pad1f;
+    char unused3;
     union FarPtr ptr;
-    long f24;
-    long f28;
-    int f2c;
-    unsigned char f2e;
-    char pad2f;
+    long unused4;
+    long unused5;
+    int unused6;
+    unsigned char unused7;
+    char unused8;
 };
 
 extern struct Slot far g_slot[];

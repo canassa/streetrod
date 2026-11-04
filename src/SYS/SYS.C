@@ -987,7 +987,7 @@ int g_xCoordSprite;
 void sy_stop_drive(void)
 {
     g_driveEng.accelStep = g_driveEng.decelStep = g_driveEng.steeringInput = g_driveEng.steering = g_unused6 = 0;
-    g_driveEng.fbe = g_driveEng.elapsedTicks;
+    g_driveEng.unused5 = g_driveEng.elapsedTicks;
 }
 
 
@@ -1199,7 +1199,7 @@ void interrupt far sy_drive_isr(void)
                     } else if (top)
                         g_driveEng.gearIndex = 0;
                     g_driveEng.shifterDirty = 1;
-                    g_driveEng.rpmPerSpeed = g_driveEng.f34[g_driveEng.gearIndex];
+                    g_driveEng.rpmPerSpeed = g_driveEng.gearRpmPerSpeed[g_driveEng.gearIndex];
                     if ((g_driveEng.rpm = g_driveEng.speed * g_driveEng.rpmPerSpeed) == 0)
                         g_driveEng.rpm = 1505;
                 }

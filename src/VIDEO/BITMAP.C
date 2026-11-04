@@ -260,7 +260,7 @@ void bm_draw_pic(struct Bitmap far *dst, int n, unsigned char x, unsigned char y
 
     bm = di_bm(n, ARENA_HIGH_STACK);
     blt.w = bm->width;
-    blt.h = blt.fc = bm->height;
+    blt.h = blt.unused1 = bm->height;
     blt.sx = blt.sy = 0;
     blt.dx = x;
     blt.dy = y;

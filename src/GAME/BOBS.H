@@ -8,10 +8,10 @@ struct Bitmap;
 struct Spec;
 
 struct Racer {
-    signed char f0;
+    signed char betToleranceClass;
     char shiftPenalty;
-    signed char f2;
-    char f3;
+    signed char drivingPenalty;
+    char unused1;
     int overlayPic;
     int nameOffset;
     int specIndex;
@@ -22,7 +22,7 @@ struct Racer {
     char bodyMods;
     signed char sticker;
     char lostCarOnce;
-    char pad11;
+    char unused2;
 };
 
 struct Btn {

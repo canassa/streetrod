@@ -586,7 +586,7 @@ void near ga_stickers(void)
             A2.dx = B1.dx = 0;
             C.dx = g_carDraw.stickerX;
             C.dy = g_carDraw.stickerY;
-            B1.h = B1.fc = A2.h = C.h = bm1->height;
+            B1.h = B1.unused1 = A2.h = C.h = bm1->height;
             A2.w = B1.w = C.w = 8;
             so_sticker(1);
             for (k = 0; k < bm1->width; k += 8) {

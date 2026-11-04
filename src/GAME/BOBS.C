@@ -444,7 +444,7 @@ static int near accepts_bet(enum BetKind kind)
         goto calc;
     }
 calc:
-    chm = g_selectedRacerPointer->f0;
+    chm = g_selectedRacerPointer->betToleranceClass;
     p18 = spec_class(g_opponentSpecIndex);
     p27 = spec_class(g_driver.currentCar->specIndex);
     clsl = (g_oppSpecPointer->parts >> 8) & 7;
