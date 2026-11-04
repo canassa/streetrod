@@ -377,7 +377,7 @@ struct KeyMap {
 
 struct Glyph {
     unsigned char w;
-    char pad[8];
+    char rows[8];
 };
 
 
