@@ -5,7 +5,7 @@ import re
 import resource
 import subprocess
 
-from . import config, db
+from . import config
 
 
 def _limit():
@@ -63,25 +63,19 @@ def link(root, command):
 
 
 def link_report(root):
+    """LINK's unresolved symbols and diagnostics from LINK.LOG (also written to LINK.JSON)."""
     text = (root / 'LINK.LOG').read_text(errors='replace') if (root / 'LINK.LOG').exists() else ''
     missing = sorted(set(re.findall(r'^([^ \r\n]+) in file\(s\):', text, re.M)))
-    declarations = {}
-    if config.DB.exists():       # the build itself does not need the DB; it only names symbols
-        con = db.connect()
-        declarations = {'_' + r['name']: dict(r) for r in con.execute('SELECT * FROM globals')}
-        declarations.update({'_' + r['name']: dict(r) for r in con.execute('SELECT * FROM fardata')})
-        con.close()
     errors = re.findall(r'^.*(?:fatal error|error|warning) L[0-9]+.*$', text, re.M)
-    report = dict(diagnostics=errors, missing_symbols=missing, data_definitions=[declarations[n] for n in missing if n in declarations],
-                  other_symbols=[n for n in missing if n not in declarations])
+    report = dict(diagnostics=errors, missing_symbols=missing)
     (root / 'LINK.JSON').write_text(json.dumps(report, indent=2))
-    print(f"Link: {len(missing)} unresolved symbols ({len(report['data_definitions'])} game data definitions)")
+    print(f'Link: {len(missing)} unresolved symbols')
+    if missing:
+        print('Missing symbols: ' + ', '.join(missing))
     if errors:
         print(f'Link diagnostics: {len(errors)} errors/warnings')
         for error in list(dict.fromkeys(errors))[:12]:
             print(error.strip())
-    if report['other_symbols']:
-        print('Other missing symbols: ' + ', '.join(report['other_symbols']))
-    print(f'Full diagnostics: {root}/LINK.LOG; data inventory: {root}/LINK.JSON')
+    print(f'Full diagnostics: {root}/LINK.LOG')
     return report
 

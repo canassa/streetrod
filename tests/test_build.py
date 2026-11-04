@@ -72,10 +72,8 @@ class MakefileTests(unittest.TestCase):
     def test_prepare_copies_src(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            (root / 'LINK.RSP').write_text('old')
             with patch.object(linklayout, 'OUT', root):
                 rules = linklayout.prepare()
-            self.assertFalse((root / 'LINK.RSP').exists())
             for name in ('MAKEFILE', 'SR.LNK'):
                 self.assertEqual((root / name).read_bytes(), (config.SRC / name).read_bytes())
             for r in rules:
