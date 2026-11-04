@@ -909,8 +909,11 @@ def cmd_dgroup(args):
                 if not args.write:
                     print(text)
     elif args.what == 'asm':
-        n = a.write_dgroup_asm()
-        print(f'src/data/DGROUP.ASM: {n} records not yet owned by a module')
+        # every DGROUP item is defined by its owning source; anything listed here is not
+        lines = a.unowned()
+        print('\n'.join(lines) if lines else 'Every initialized DGROUP item is owned by a source')
+        if lines:
+            raise SystemExit(1)
     else:
         raise SystemExit(args.what)
 
@@ -921,11 +924,8 @@ def cmd_linkcheck(args):
 
 
 def cmd_build(args):
-    if args.layout:
-        from sr.linklayout import run as build
-    else:
-        from sr.build import build
-    sys.exit(build(args.prepare_only, args.objects_only))
+    from sr.linklayout import run
+    sys.exit(run(args.prepare_only, args.objects_only))
 
 
 def main():
@@ -933,21 +933,22 @@ def main():
     sub = p.add_subparsers(dest="cmd", required=True)
 
     s = sub.add_parser("dgroup", help="recover DGROUP ownership from the data layout; write definitions")
-    s.add_argument("what", choices=["report", "problems", "order", "register", "aliases", "apply", "asm"])
+    s.add_argument("what", choices=["report", "problems", "order", "register", "aliases", "apply", "asm"],
+                   help="asm: list initialized data no source owns (exit 1 if any)")
     s.add_argument("names", nargs="*", help="unit starts (hex) for apply; lo hi for report")
     s.add_argument("--write", action="store_true")
     s.set_defaults(func=cmd_dgroup)
 
     s = sub.add_parser("linkcheck", help="compare the linked MZ binary without masking any bytes")
-    s.add_argument("executable", nargs="?", help="EXE to compare (default work/game/SR.EXE)")
+    s.add_argument("executable", nargs="?", help="EXE to compare (default work/layout/SR.EXE)")
     s.add_argument("--map", dest="mapfile", help="linker MAP for position/call diagnostics")
     s.add_argument("--output", help="JSON report path")
     s.set_defaults(func=cmd_linkcheck)
 
-    s = sub.add_parser("build", help="compile and link the game with MSC 5.1 and MASM 5.1")
-    s.add_argument("--prepare-only", action="store_true", help="write DOS sources, MAKEFILE, BUILD.BAT and LINK.RSP")
-    s.add_argument("--objects-only", action="store_true", help="compile all real objects without linking")
-    s.add_argument("--layout", action="store_true", help="build recovered original code/link layout into work/layout")
+    s = sub.add_parser("build", help="build SR.EXE in work/layout with MSC 5.1, MASM 5.1, LIB 3.11 and LINK 5.01; compare with orig/SR.EXE")
+    s.add_argument("--prepare-only", action="store_true", help="write the DOS sources, MAKEFILE, BUILD.BAT, ENV.BAT and LINK.RSP")
+    s.add_argument("--objects-only", action="store_true", help="compile and gate every object without linking")
+    s.add_argument("--layout", action="store_true", help="accepted for compatibility: the build is always the layout build")
     s.set_defaults(func=cmd_build)
 
     s = sub.add_parser("scan", help="(re)discover functions in the EXE and update the DB")

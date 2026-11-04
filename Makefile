@@ -8,4 +8,4 @@ prepare:
 check:
 	./sr check --all
 clean:
-	rm -rf work/game
+	rm -rf work/layout

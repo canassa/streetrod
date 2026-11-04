@@ -1,4 +1,4 @@
-"""The runnable build must not import comparison-only placeholders."""
+"""The build's generated DOS files: what MAKE 4.07 and BUILD.BAT run, in order."""
 import contextlib
 import io
 from pathlib import Path
@@ -7,35 +7,38 @@ import tempfile
 import unittest
 from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
-from sr import build
+from sr import build, linklayout
 from sr.cdata import Types, number
 
 
 class BuildTests(unittest.TestCase):
-    def test_staging_and_native_make_order(self):
+    def test_native_make_order(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            with patch.object(build, 'OUT', root), patch.object(build.headers, 'generate'):
-                jobs = build.prepare()
-            self.assertEqual(len(jobs), 159)
-            sources = {j['stem']: (root / j['source']).read_text() for j in jobs}
-            self.assertIn('int main(int argc', sources['M_00659'])
-            self.assertNotIn('static int near', sources['M_00659'])
-            self.assertIn('#include "M_0DCBE.H"', sources['M_07800'])
-            self.assertNotIn('F_0E218(int x) {', sources['M_07800'])
-            self.assertNotIn('.STB', (root / 'LINK.RSP').read_text())
-            self.assertIn('.CODE G2_TEXT', sources['M_2487A'])
+            with patch.object(linklayout, 'OUT', root), patch.object(linklayout.headers, 'generate'):
+                jobs = linklayout.prepare()
+            stems = {j['stem'] for j in jobs}
+            response = (root / 'LINK.RSP').read_text()
+            # every compiled object is linked, and only those
+            linked = {n[:-4] for n in response.split('\nSR.EXE')[0].replace('+', ' ').split()}
+            self.assertEqual(linked, stems)
+            self.assertNotIn('.STB', response)
+            self.assertTrue(response.rstrip().endswith('SR.EXE\nSR.MAP\n\n;'))
             make = (root / 'MAKEFILE').read_text()
-            # MAKE 4.07 evaluates rules in order, not recursively.
-            self.assertGreater(make.index('SR.EXE:'), make.index('M_2B6DC.OBJ:'))
+            # MAKE 4.07 runs rules in file order: the library first, the link last
+            self.assertLess(make.index('MLIBCE.LIB:'), min(make.index(s + '.OBJ:') for s in stems))
+            self.assertGreater(make.index('SR.EXE:'), max(make.index(s + '.OBJ:') for s in stems))
             self.assertEqual(make.count('\tLINK '), 1)
+            self.assertIn('\tLINK /MAP /STACK:2560 /EXEPACK @LINK.RSP', make)
             self.assertIn('INCLUDE\\STRUCTS.H', make)
-            self.assertIn('if exist SR.EXE del SR.EXE', (root / 'BUILD.BAT').read_text())
+            batch = (root / 'BUILD.BAT').read_text()
+            self.assertIn('LIB MLIBCE.LIB +D:\\LIB\\MLIBCR.LIB+D:\\LIB\\LIBH.LIB+D:\\LIB\\EM.LIB+D:\\LIB\\MLIBFP.LIB;', batch)
+            self.assertIn('if exist SR.EXE del SR.EXE', batch)
 
     def test_link_report_includes_fixup_errors(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            (root / 'LINK.LOG').write_text('DGROUP.OBJ : error L2002: fixup overflow\n')
+            (root / 'LINK.LOG').write_text('U_00000.OBJ : error L2002: fixup overflow\n')
             with contextlib.redirect_stdout(io.StringIO()):
                 report = build.link_report(root)
             self.assertEqual(report['missing_symbols'], [])

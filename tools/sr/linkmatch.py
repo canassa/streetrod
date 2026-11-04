@@ -101,7 +101,7 @@ def compare(executable, mapfile=None):
 
 
 def check(executable=None, mapfile=None, output=None):
-    executable = Path(executable) if executable else config.WORK/'game/SR.EXE'
+    executable = Path(executable) if executable else config.WORK/'layout/SR.EXE'
     mapfile = Path(mapfile) if mapfile else executable.with_suffix('.MAP')
     output = Path(output) if output else executable.parent/'BYTE-MATCH.JSON'
     report = compare(executable, mapfile if mapfile.exists() else None)
