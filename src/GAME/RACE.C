@@ -618,7 +618,7 @@ static void near blow_engine(int n)
         a_7eaap.currentCar->wireState = 0;
     }
     sy_reset_queues();
-    F_16BC1();
+    so_noise();
     gm_popup(-n, -1, 0x49);
 }
 
@@ -636,7 +636,7 @@ static void near drop_transmission(int n)
             *q++ = 0;
     }
     sy_reset_queues();
-    F_16BC1();
+    so_noise();
     gm_popup(-n, -1, 0x49);
 }
 
@@ -687,7 +687,7 @@ int near ra_outcome(void)
         g_driveEng.autoSelector = 1;
     if (g_failureTire)
         g_driveEng.stopFlags |= 8;
-    mn_push(KM_RACE);
+    mn_push(KM_RACE_OUTCOME);
     i = a_7eaap.raceType == 0 ? 5 : 15;
     if (a_7eaap.currentCar->fuel > i)
         a_7eaap.currentCar->fuel -= i;
@@ -865,13 +865,13 @@ finishstop:
                     ;
                 mn_pop(1);
                 switch (i) {
-                case 1:
+                case KR_REPAIR_FIX:
                     sc_add_money(-v);
                     if (all)
                         replace_tires();
                     mn_pop(1);
                     return 1;
-                case 2:
+                case KR_REPAIR_JUNK:
                     sc_add_money((int)(a_7eaap.currentCar->value * 0.4));
                     a_7eaap.currentCar = 0;
                     break;

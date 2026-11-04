@@ -10,7 +10,7 @@ struct DemoControl {
     char keyDown;
     char moving;
     int count;
-    enum KeyMapId lastGroup;
+    enum ScreenId lastGroup;
     int autoShifts;
 };
 
@@ -111,7 +111,7 @@ void sy_unhook(void);                                  /* 0x00FB7 */
 void sy_exit(void);                                    /* 0x00FEA */
 void sy_crit_error(unsigned deverr, unsigned char errcode);/* 0x0105B */
 void sy_init(void);                                    /* 0x01111 */
-void sy_keymap_set(enum KeyMapId n);                             /* 0x012DE */
+void sy_keymap_set(enum ScreenId n);                             /* 0x012DE */
 int sy_keymap_restore(int keep);                       /* 0x01391 */
 int sy_wait_input(int n);                              /* 0x01417 */
 int sy_timer_add(int delay, int pri);                  /* 0x01843 */

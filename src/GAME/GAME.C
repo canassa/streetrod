@@ -232,12 +232,12 @@ static void near sell_parts(void)
         g_keyMaps[KM_SPARE_PARTS]->key = SC_C;
         strcpy(g_msgSellChange, "Change");
         switch ((int)sel) {
-        case -4:
+        case KR_CANCEL:
             return;
         case 0x3ea:
             gm_message(tries3 ? 0x0ed7 : 0x0f2a);
             return;
-        case -3:
+        case KR_ACCEPT:
             sel = mn_sel();
             break;
         }
@@ -272,7 +272,7 @@ static void near sell_parts(void)
         pu_open_at(msg5, -1, -1);
         nl = mn_modal(KM_SELL_PART_OFFER);
         pu_close();
-        if (nl == -0x15)
+        if (nl == KR_SELL_PART_NO_THANKS)
             continue;
         if (sel == 1)
             a_7eaap.spareParts = p7->next;
@@ -500,7 +500,7 @@ static void near buy_from_ads(int tab)
         color = -1;
         for (;;) {
             n = mn_wait(KM_BUY);
-            if (n == -20) {
+            if (n == KR_BUY_YEAH) {
                 if (g_demo && (long)price6 > a_7eaap.money)
                     a_7eaap.money += 1999;
                 if ((long)price6 > a_7eaap.money) {
@@ -523,7 +523,7 @@ static void near buy_from_ads(int tab)
                 g_gameClock.actionTicks += 0x444;
                 goto done;
             }
-            if (n != -25)
+            if (n != KR_SEE_IT)
                 break;
             cu_ctl(CURSOR_HIDE_NOW);
             ma_clear();
@@ -561,7 +561,7 @@ static void near buy_from_ads(int tab)
         }
 test:
         n = av_run();
-    } while (n != -3);
+    } while (n != KR_AD_CLOSE);
 done:
     av_close();
     if (a_7eaap.currentCar)
@@ -641,9 +641,9 @@ static int near your_cars(void)
         switch (item = mn_modal_list(KM_YOUR_CARS, (n > item) ? item : n, 0, g_list, 0, 0)) {
         case 0x3ea:
             gm_message(ticks ? 0xee9 : 0xefa);
-        case -3:
+        case KR_CLOSE_CARS:
             return 0;
-        case -1:
+        case KR_SWITCH_CAR:
             g_new = tbl[item = mn_sel()];
             g_old = a_7eaap.currentCar;
             if (g_new != g_old) {
@@ -659,7 +659,7 @@ static int near your_cars(void)
             } else
                 g_new = 0;
             return 3;
-        case -2:
+        case KR_SELL_CAR:
             break;
         default:
             if (item > 0)       /* PROVISIONAL: the original loads g_list[0] here and drops it */
@@ -672,7 +672,7 @@ static int near your_cars(void)
         pict = mn_grab(KM_SELL_CAR_OFFER, &rx, &ye, ARENA_LOW_STACK);
         mn_push(KM_SELL_CAR_OFFER);
         do {
-            if ((n = ed_spot_number(&cash, g_offerAmount)) == -22)
+            if ((n = ed_spot_number(&cash, g_offerAmount)) == KR_NEVER_MIND)
                 goto tail;
         } while (cash == 0);
         if ((unsigned)(cur->value * 1.15) < cash) {
@@ -682,7 +682,7 @@ static int near your_cars(void)
         if (cur->value < cash) {
             gm_message(0x106e);
             do {
-                if ((n = ed_spot_number(&cash, g_offerAmount)) == -22)
+                if ((n = ed_spot_number(&cash, g_offerAmount)) == KR_NEVER_MIND)
                     goto tail;
             } while (cash == 0);
             if (cur->value < cash) {
@@ -692,23 +692,23 @@ static int near your_cars(void)
         }
         if (cash > offer) {
             offer = (rn_int(5) + 85.0) * price / 100.0;
-            if (cash > offer && counter_offer(&offer) == -20)
+            if (cash > offer && counter_offer(&offer) == KR_OK)
                 cash = offer;
         }
         if (cash > offer) {
             do {
-                if ((n = ed_spot_number(&cash, g_offerAmount)) == -22)
+                if ((n = ed_spot_number(&cash, g_offerAmount)) == KR_NEVER_MIND)
                     goto tail;
             } while (cash == 0);
         }
         if (cash > offer) {
             offer = (rn_int(5) + 91.0) * price / 100.0;
-            if (cash > offer && counter_offer(&offer) == -20)
+            if (cash > offer && counter_offer(&offer) == KR_OK)
                 cash = offer;
         }
         if (cash > offer) {
             do {
-                if ((n = ed_spot_number(&cash, g_offerAmount)) == -22)
+                if ((n = ed_spot_number(&cash, g_offerAmount)) == KR_NEVER_MIND)
                     goto tail;
             } while (cash == 0);
         }
@@ -785,10 +785,10 @@ void near gm_run(void)
     again = 1;
     kind = start_game();
     for (;;) {
-        if (kind == -1)
+        if (kind == KR_NEW_GAME)
             again = 1;
         w = kind;
-        if (w == -1)
+        if (w == KR_NEW_GAME)
             kind = sg_new();
         else
             kind = sg_load();
@@ -800,11 +800,11 @@ void near gm_run(void)
             continue;
         sc_status_label(g_49dc);
         v = 1;
-        if (kind == 0 && w == -2 && a_7eaap.currentCar)
+        if (kind == 0 && w == KR_OLD_GAME && a_7eaap.currentCar)
             v = 2;
-        if (kind == 0 && w == -2)
+        if (kind == 0 && w == KR_OLD_GAME)
             v = 1;
-        if (w == -1 && a_7eaap.carCount <= 15 && a_7eaap.partCount <= 130) {
+        if (w == KR_NEW_GAME && a_7eaap.carCount <= 15 && a_7eaap.partCount <= 130) {
             kind = read_paper();
             if (kind == 2 || kind == 1)
                 buy_from_ads(kind);
@@ -820,7 +820,7 @@ void near gm_run(void)
                 g_end = 0;
                 again = 1;
                 kind = fa_end_menu();
-                if (kind != -2 && kind != -1 && kind == 4)
+                if (kind != KR_LOAD_GAME && kind != KR_NEW_GAME && kind == 4)
                     return;
                 cu_ctl(CURSOR_SHOW_NOW);
                 g_4f4a = 0;
@@ -896,12 +896,12 @@ void near gm_run(void)
             case 4:
                 v = 0;
                 switch (kind = sg_menu()) {
-                case -20:
+                case KR_QUIT:
                     return;
-                case -22:
-                case -4:
+                case KR_MENU_FORGET:
+                case KR_CANCEL:
                     continue;
-                case -3:
+                case KR_SAVE_GAME:
                     if (check_room()) {
                         v = 0;
                         kind = 0x309;
@@ -912,8 +912,8 @@ void near gm_run(void)
                             v = 1;
                         continue;
                     }
-                case -2:
-                case -1:
+                case KR_OLD_GAME:
+                case KR_NEW_GAME:
                 default:
                     if (kind == 0x309)
                         continue;
@@ -969,7 +969,7 @@ void near gm_run(void)
                 gm_message(0x18f6);
                 v = 0;
                 continue;
-            case -40:
+            case KR_MUSIC:
                 if (g_musicOn) {
                     sy_music_pause();
                     g_musicOn = 0;

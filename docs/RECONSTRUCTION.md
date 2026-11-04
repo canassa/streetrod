@@ -289,7 +289,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   `g_hotBobs[3]`) or computes a run-time difference (`g_134e - g_gar`, `g_1a44 - g_hotGasStation`),
   which proves separate symbols; each array starts at the first record so named. Where
   the original's other boundaries were (one array per menu list, or fewer), and the
-  arrays' names, are not recoverable. `g_engineHots` (a runtime list gx_build_hots builds), `g_1948`
+  arrays' names, are not recoverable. `g_engineHots` (a runtime list gx_build_hots builds), `g_engineHotTemplate`
   (three fixed menu records, then six records of another list) and `g_boltHot` are Hot
   records too; insert_hot sorts them by (x1, y1).
 - **KEYMAPS.ASM's key maps.** 42 referenced lists of (scan code, value) pairs, each ended
@@ -306,32 +306,42 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   its empty default code segment changes no layout. One file versus two is undecidable
   from the EXE. The split and the order of these two objects are reconstruction choices.
   The `SC_` hardware constants in PC.H/PC.INC, screen enum in KEYMAPS.H,
-  semantic value aliases and KEY/ITEM/ITEMS/STICKER macros are readability
+  decoded result aliases and KEY/ITEMS macros are readability
   reconstructions, not recovered original spelling or macro design. MASM 5.1
-  assembles the LOCAL/REPT/item arithmetic unchanged into the original bytes.
-  ITEM emits `0xCE + n`; ITEMS advances both scan and item, and STICKER emits
-  `0xB0 - n`. Arithmetic is emitted directly by DB: an unbracketed expression
-  passed to a nested MASM macro is split at spaces.
+  assembles the LOCAL/REPT arithmetic unchanged into the original bytes.
+  KEY takes a decoded result and emits `0xCE + result`; ITEMS advances both scan
+  and result. Sticker choices use the same KEY encoding, with results -31..-38.
+  Arithmetic is emitted directly by DB: an unbracketed expression passed to a
+  nested MASM macro is split at spaces.
   PC.H/PC.INC were chosen instead of another standalone header because scan codes
-  are hardware facts (CLAUDE.md). KEYMAPS.H owns the screen and byte-value enums;
-  byte fields stay byte-sized, while sy_keymap_set, g_keyGroup and the demo's
-  lastGroup use the int-sized screen enum. The header tool follows enum tags and
+  are hardware facts (CLAUDE.md). KEYMAPS.H owns ScreenId (the shared index into
+  g_keyMaps and g_groupHot), InputResult (decoded KR_ values used in C switches),
+  and KeyMapByte (only the two raw KV_ values used to patch the repair maps).
+  Byte fields stay byte-sized; the menu/editor screen parameters, sy_keymap_set,
+  g_keyGroup and the demo's lastGroup use the int-sized ScreenId enum. The header
+  tool follows enum tags and
   members as well as macros when choosing source includes.
   Evidence for screen names is each menu caller, its associated Hot records and
   g_txt strings, and the decoded newspaper, BOBS and sticker pictures.
-  Lists 17 (K_5688, empty) and 40 (K_578c) remain unnamed; 42 is the music binding
+  Lists 17 (K_UNUSED_17, empty) and 40 (K_UNUSED_40) have no known callers; the
+  names describe that evidence only. List 1 is RACE_OUTCOME, the base menu layer
+  ra_outcome installs under its messages. List 42 is the music binding
   installed after every screen by sy_keymap_set, rather than a screen itself.
   kg_key returns char, so sy_wait_input sign-extends negative byte values and
   adds 0x32. Thus CF..DE select items 1..16; CB accepts the highlighted item
   (the caller obtains it through mn_sel), and CA cancels in the load/save/parts
   lists. These codes are context-dependent: CB is also Save Game, CC is Old Game
   or Sell it, and CD is New Game or Switch it, so screen aliases carry those
-  meanings rather than assigning a universal action to CC/CD. The race map's
-  CC/CD remain numeric return-code names because their actions are unproven.
-  B4 dismisses the general message, B5 is See it, B6 Offer, B7 Forget it,
-  B8 Never mind, B9 No, BA OK, and A6 toggles music in sy_wait_input.
+  meanings rather than assigning a universal action to CC/CD. The outcome map's
+  CC/CD are written as decoded -2/-1 because their actions are unproven.
+  B4 dismisses the general message, B5 is See it, B6 Offer, and A6 toggles music
+  in sy_wait_input. B7/B8/B9 are -23/-22/-21: several screens call these
+  different results "Forget it". BA (-20) is OK, Yeah, Go ahead or Quit depending
+  on the screen; aliases state the screen's actual action. Engine result 13
+  toggles car->wireState, so it is named ENGINE_WIRES.
   C4/C7 are scroll-down/up codes in mn_list, and advance/retard timing in the
-  timing screen. Sticker bytes AF..A8 decode to -31..-38 and select sticker
+  timing screen; timing aliases reuse the scroll result definitions. Sticker bytes
+  AF..A8 decode to -31..-38 and select sticker
   numbers 1..8 through ga_stickers' `-30 - key` expression.
   The first spare-parts entry remains first for GAME.C's C/S Change/Sell patch;
   the first two repair entries remain first for RACE.C's Fix/Junk affordability
@@ -339,6 +349,11 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   The newspaper's third item stays numeric: the map returns 3 for G/Esc, whereas
   the corresponding garage Hot record returns 4. No inferred equivalence is
   encoded in a name.
+  C and MASM keep hand-written constants because MASM cannot read the C enum.
+  tests/test_keymaps.py checks decoded result equality, the raw repair encoding,
+  all screen IDs against their pointer-table slots (including the unused lists),
+  and every SC_ hardware constant between PC.H and PC.INC. This prevents drift
+  without generating or rewriting the historical-language source files.
 - **HOTSPOT.C's filler communals** (`char fz79a8[2]` and the others after the
   "Uninitialized storage" comment). No code references these blocks. Their types and sizes
   are invented to fill the gaps between referenced communals, and their names fit LINK's

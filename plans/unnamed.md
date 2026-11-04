@@ -8,7 +8,6 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 |---|---|---|---|
 | 16943 | F_16943 | src/SOUND/SOUND.C | 80 |
 | 16A2F | F_16A2F | src/SOUND/SOUND.C | 43 |
-| 16BC1 | F_16BC1 | src/SOUND/SOUND.C | 34 |
 
 ## Globals and statics
 
@@ -16,7 +15,6 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 |---|---|---|---|
 | 004A | g_004a | `int @` | MAIN |
 | 004C | g_004c | `int @` | MAIN |
-| 0294 | g_0294 | `struct Bitmap far *@` | MAIN |
 | 02EE | g_02ee | `signed char @[24][2]` | DASH |
 | 05BA | g_05ba | `int @` | SYS |
 | 05BC | g_05bc | `int @[8]` | SYS |
@@ -30,7 +28,6 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 | 06A2 | g_06a2 | `int @` | SYS |
 | 134E | g_134e | `struct Hot @[]` | HOTSPOT |
 | 1804 | g_1804 | `struct Hot @[]` | HOTSPOT |
-| 1948 | g_1948 | `struct Hot @[]` | HOTSPOT |
 | 1A44 | g_1a44 | `struct Hot @[]` | HOTSPOT |
 | 1E34 | g_1e34 | `struct Hot @[]` | HOTSPOT |
 | 29FF | g_29ff | `char @[]` | MESSAGES |
@@ -38,8 +35,6 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 | 4742 | g_4742 | `int @` | M_02B9A |
 | 4744 | g_4744 | `int @` | M_02B9A |
 | 474A | g_474a | `int @` | M_02B9A |
-| 474C | g_474c | `int @[]` | M_02B9A |
-| 4752 | g_4752 | `int @[]` | M_02B9A |
 | 47D1 | g_47d1 | `char @[3]` | M_02B9A |
 | 47F0 | g_47f0 | `char @` | M_02B9A |
 | 496C | g_496c | `int @[2]` | M_02B9A |
@@ -65,9 +60,7 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 | 6068 | g_6068 | `struct List @` | SCENERY |
 | 6076 | g_6076 | `int @` | SCENERY |
 | 6C42 | g_6c42 | `int @[2]` | src/UI/POPUP.C |
-| 6C4E | g_6c4e | `char @` | src/SYS/SYS.C |
 | 6E04 | g_6e04aay | `int @` | src/GAME/VIEW.C |
-| 6E06 | g_6e06aax | `int @` | src/GAME/VIEW.C |
 | 6E60 | k_6e60 | `struct Bitmap far *@` | VIEW |
 | 70C0 | al70c0x | `struct State70C0 @` | RACE |
 | 70E0 | dz70e0 | `int @` | VIEW |
@@ -136,7 +129,6 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 | 8BAC | ai8bacx | `int @` | MENU |
 | 8BC2 | ay8bc2z | `int @` | RACE |
 | 8BCA | ak8bcat | `struct Bitmap far *@` | VIEW |
-| 8DF0 | w_8df0 | `struct Model @[]` | DISK |
 | 8EF4 | a8ef4fv | `char @[2]` | HOTSPOT |
 
 ## Far data

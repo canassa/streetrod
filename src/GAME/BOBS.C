@@ -329,9 +329,9 @@ static void near select_rival(int n)
             g_selectedRacerPointer->sticker = rn_int(20) < skill ? rn_int(9) : 0;
         else if (g_selectedRacerPointer->sticker > 0 && g_selectedRacerPointer->betRaces > 10)
             g_selectedRacerPointer->sticker = rn_int(40) < skill ? rn_int(9) : g_selectedRacerPointer->sticker;
-        if (w_8df0[bn7648].frontBumperPic > 0 && w_8df0[bn7648].rearBumperPic > 0 && g_selectedRacerPointer->betRaces > 8)
+        if (g_models[bn7648].frontBumperPic > 0 && g_models[bn7648].rearBumperPic > 0 && g_selectedRacerPointer->betRaces > 8)
             g_selectedRacerPointer->bodyMods |= rn_int(25) < skill ? 3 : g_selectedRacerPointer->bodyMods;
-        if (w_8df0[bn7648].roofPic > 0 && g_selectedRacerPointer->betRaces > 8)
+        if (g_models[bn7648].roofPic > 0 && g_selectedRacerPointer->betRaces > 8)
             g_selectedRacerPointer->bodyMods |= rn_int(30) < skill ? 4 : g_selectedRacerPointer->bodyMods;
     } else
         g_isKingState = 1;
@@ -389,9 +389,9 @@ static int near look_for_rival(int n)
     list_met_rivals(list, sel, kinds);
     choice = mn_modal_list(KM_CALL_RIVAL, 1, kinds, list, 0, 0);
     switch (choice) {
-    case -4:
+    case KR_CANCEL:
         return 0;
-    case -3:
+    case KR_ACCEPT:
         if (g_rivalHereState) {
             sc_status_text(-1, "", 0);
             show_rival_car(2, bn7648, 1, 0xa3, 0, g_tirePics[m_8272.tireVariant]);
@@ -530,7 +530,7 @@ static int near challenge(int arg)
         num = KM_ROAD_WAGER;
         a_7eaap.raceType = 1;
         break;
-    case -23:
+    case KR_FORGET:
     case 1000:
         gm_message(0x122c);
         goto quit;
@@ -548,7 +548,7 @@ static int near challenge(int arg)
             ;
         m_8272.betType = ch;
         switch (ch) {
-        case -23:
+        case KR_FORGET:
         case 1000:
             gm_message(0x122c);
             goto quit;
@@ -751,7 +751,7 @@ static void near play_cell_anim(void)
         while ((key = sy_wait_input(3000)) == 0)
             ;
         switch (key) {
-        case -26:
+        case KR_MESSAGE_DISMISS:
             going = 0;
             break;
         case 1000:

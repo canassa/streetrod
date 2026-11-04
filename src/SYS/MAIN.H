@@ -33,7 +33,7 @@ extern int g_carAnim;                                   /* DS:0286 */
 extern struct Bitmap far *g_spritePic;                       /* DS:0288 */
 extern struct Bitmap far *g_pumpWithNozzle;                       /* DS:028C */
 extern struct Bitmap far *g_pumpNoNozzle;                       /* DS:0290 */
-extern struct Bitmap far *g_0294;                       /* DS:0294 */
+extern struct Bitmap far *g_stickerBg;                       /* DS:0294 */
 extern int g_carBandHeights[7];                                   /* DS:0298 */
 extern int g_carBottomCuts[7];                                   /* DS:02A6 */
 extern int g_carBg4[7];                                   /* DS:02B4 */

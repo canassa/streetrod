@@ -35,8 +35,8 @@ extern int g_4744;                                      /* DS:4744 */
 extern int g_savedCursorX;                              /* DS:4746 */
 extern int g_savedCursorY;                              /* DS:4748 */
 extern int g_474a;                                      /* DS:474A */
-extern int g_474c[];                                    /* DS:474C */
-extern int g_4752[];                                    /* DS:4752 */
+extern int g_cursorStepX[];                                    /* DS:474C */
+extern int g_cursorStepY[];                                    /* DS:4752 */
 extern char g_scanMap[];                                /* DS:4766 */
 extern char g_demoKey;                                  /* DS:47CC */
 extern char g_fireLatch;                                /* DS:47CD */

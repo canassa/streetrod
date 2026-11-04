@@ -36,7 +36,7 @@ static struct PicLibSelection g_picLib; /* DS:6C6A */
 static char g_dataPath[16]; /* DS:6C72 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-struct Model w_8df0[26];
+struct Model g_models[26];
 struct Spec g7d86n[26];
 struct Panel ai70e4t[26];
 struct Spr12 g_layoutAutoSprArray[26];
@@ -58,7 +58,7 @@ static void near unscramble_hall(void);
 static void near scramble_hall(void);
 
 char *g_dataFileName = "hot_data";   /* DS:4EA2 */
-char *g_dataBlocks[13] = {(char *)g_racerRecordsArray, (char *)g7d86n, (char *)w_8df0, (char *)g_layoutAutoSprArray, (char *)ai70e4t, (char *)g_pointsModelService, g_desc, (char *)&g_usedCarAdFirst, g_txt, (char *)g_carRatingsTable, (char *)g_rivalStakeToleranceTable, (char *)g_acceptProbability, (char *)a784als};   /* DS:4EA4 */
+char *g_dataBlocks[13] = {(char *)g_racerRecordsArray, (char *)g7d86n, (char *)g_models, (char *)g_layoutAutoSprArray, (char *)ai70e4t, (char *)g_pointsModelService, g_desc, (char *)&g_usedCarAdFirst, g_txt, (char *)g_carRatingsTable, (char *)g_rivalStakeToleranceTable, (char *)g_acceptProbability, (char *)a784als};   /* DS:4EA4 */
 unsigned g_dataSizes[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};   /* DS:4EBE */
 int g_lib1Handle = 0;   /* DS:4ED8 */
 int g_lib2Handle = 0;   /* DS:4EDA */

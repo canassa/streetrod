@@ -460,11 +460,11 @@ void so_part_set(void)
     }
 }
 
-/* F_16BC1 @ 0F38:7841 (linear 0x16BC1, 34 bytes)
+/* so_noise @ 0F38:7841 (linear 0x16BC1, 34 bytes)
 
    Sound effect */
 
-void F_16BC1(void)
+void so_noise(void)
 {
     if (g_soundOn) {
         so_on();

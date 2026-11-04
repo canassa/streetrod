@@ -74,9 +74,9 @@ void sg_init_racer(int k, int *list)
     y = (g7d86n[x].rank >> 1) + 1;
     g_racerRecordsArray[k].bodyMods = ((g7d86n[x].parts >> 8 & 7) == 2) ? 8 : 0;
     g_racerRecordsArray[k].sticker = (rn_int(20) < y) ? rn_int(9) : 0;
-    if (w_8df0[x].frontBumperPic > 0 && w_8df0[x].rearBumperPic > 0)
+    if (g_models[x].frontBumperPic > 0 && g_models[x].rearBumperPic > 0)
         g_racerRecordsArray[k].bodyMods |= (rn_int(25) < y) ? 3 : 0;
-    if (w_8df0[x].roofPic > 0)
+    if (g_models[x].roofPic > 0)
         g_racerRecordsArray[k].bodyMods |= (rn_int(30) < y) ? 4 : 0;
 }
 
@@ -146,12 +146,12 @@ int near sg_new(void)
     vi_name_pal();
     bm_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), (SCREEN_BODY_HEIGHT - 1));
     (*g_videoOps.show)();
-    switch (sel = ed_text_box(2, 15, g_driverName)) {
-    case -3:
+    switch (sel = ed_text_box(KM_START_GAME, 15, g_driverName)) {
+    case KR_START_OK:
     case 0:
         init_new_game();
         return 0;
-    case -2:
+    case KR_OLD_GAME:
         return -2;
     }
 }
@@ -324,9 +324,9 @@ int near sg_load(void)
     }
     r = mn_modal_list(KM_LOAD, 1, 0, g_list, 0, 0);
     switch (r) {
-    case -4:
+    case KR_CANCEL:
         return -1;
-    case -3:
+    case KR_ACCEPT:
         r = mn_sel();
         break;
     default:
@@ -430,7 +430,7 @@ again:
         sel = r;
     cu_ctl(CURSOR_SHOW_NOW);
     switch (r = mn_list(KM_SAVE, sel, 0, g_list, 0, 0)) {
-    case -4:
+    case KR_CANCEL:
         return;
     default:
         if ((int)r < 1)
@@ -438,7 +438,7 @@ again:
         if (r > g_list[0])
             return;
         break;
-    case -3:
+    case KR_ACCEPT:
         r = mn_sel();
         break;
     }
@@ -471,9 +471,9 @@ again:
     key = g_saveSlots[r] ? mn_modal(KM_OVERWRITE_SAVE) : 0;
     cu_ctl(CURSOR_HIDE_NOW);
     switch (key) {
-    case -0x15:
+    case KR_OVERWRITE_FORGET:
         goto again;
-    case -0x14:
+    case KR_OVERWRITE_GO_AHEAD:
         unlink(name);
     }
     strcpy(g_driverName, is_blank(g_saveName) ? g_desc + g_list[r] : g_saveName);

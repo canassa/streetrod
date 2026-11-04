@@ -136,7 +136,7 @@ void mn_draw_hot(struct Hot *p)
    current entry globals are reset, mn_draw_hot draws the linked spot, and the touched area is copied
    from the back buffer to the front when the screen shadow is on */
 
-void mn_push(int id)
+void mn_push(enum ScreenId id)
 {
     struct Hot *p;
     struct Colors saved;
@@ -201,7 +201,7 @@ void mn_reset(void)
    Bounding box of hot spot id and the spots linked after it (through f10), widened by 3
    and clipped to the 320 x 200 screen. *x and *y receive the top left corner, *w and *h the size */
 
-void mn_bbox(int id, int *x, int *y, int *w, int *h)
+void mn_bbox(enum ScreenId id, int *x, int *y, int *w, int *h)
 {
     struct Hot *p;
 
@@ -232,7 +232,7 @@ void mn_bbox(int id, int *x, int *y, int *w, int *h)
    Copy the screen area around hot spot id (see mn_bbox, which updates *px and *py to the
    box corner) into a bitmap of the given mode and return it. The x range is rounded to r_vid.mask */
 
-struct Bitmap far *mn_grab(int id, int *px, int *py, int mode)
+struct Bitmap far *mn_grab(enum ScreenId id, int *px, int *py, int mode)
 {
     int x;
     int y1;
@@ -321,7 +321,7 @@ int mn_hit(int x, int y)
    Grab the screen area around hot spot id, show the spot (waiting for a key through
    mn_wait), put the saved area back and return the key */
 
-int mn_modal(int id)
+int mn_modal(enum ScreenId id)
 {
     struct Bitmap far *bm1;
     int x;
@@ -337,7 +337,7 @@ int mn_modal(int id)
 
 /* mn_wait @ 0F38:4F14 (linear 0x14294, 59 bytes) */
 
-int mn_wait(int a)
+int mn_wait(enum ScreenId a)
 {
     int key;
 
@@ -353,7 +353,7 @@ int mn_wait(int a)
    Run the mn_list dialog over a grabbed screen area (see mn_modal) and restore the area
    afterwards; 0x3ea when *list is zero */
 
-int mn_modal_list(int a, int b, int *c, int *list, char *buf, char **d)
+int mn_modal_list(enum ScreenId a, int b, int *c, int *list, char *buf, char **d)
 {
     struct Bitmap far *bm1;
     int x;
@@ -398,7 +398,7 @@ int g_cgaPicMap[277] = {0, 1, 2, 3, 5, 6, 7, 4, 8, 9, 10, 11, 12, 13, 14, 15, 16
    a hotn spot (g_menuList.header) shows the picked text and is edited in place on Enter.
    Returns the key2 that left the dialog, 0x3ea when the list is empty. */
 
-int mn_list(int kind, int sel, int *c, int *list, char *buf, char **d)
+int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
 {
     int *pc1, *c1, curl, idx2, n9, ww9, wy7, wx8;
     struct Win *w;
@@ -555,7 +555,7 @@ restore:
         default:
             mn_pop(1);
             return key2;
-        case -6:
+        case KR_EDIT_HEADER:
             if (kind == 5 && !strcmp(g_blankName, bufpl))
                 strcpy(bufpl, "\0");
             x_colors = bustyle->pal[hotn->palIndex];
@@ -563,21 +563,21 @@ restore:
             ed_line(hotn->x1, hotn->y1, bufpl, n9);
             mn_pop(1);
             continue;
-        case -7:
+        case KR_SCROLL_UP:
             if (topk)
                 topk--;
             continue;
-        case -8:
+        case KR_PAGE_UP:
             if ((topk -= page) < 0)
                 topk = 0;
             continue;
-        case -9:
+        case KR_PAGE_DOWN:
             i = topk;
             topk += page;
             if (topk >= count5)
                 topk = count5 - 1;
             goto scroll;
-        case -10:
+        case KR_SCROLL_DOWN:
             i = topk;
             if (i + 1 < count5)
                 topk++;

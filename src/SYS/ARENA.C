@@ -21,7 +21,7 @@ void ar_reset(void)
 {
     g_offsetArenaMarksList[g_lowArenaMarker = 0] = g_loHeapLimit = 0;
     g_offsetArenaMarksList[g_markerIndexHigh = 60] = g_arenaTopVal = -536;
-    g_0294 = 0;
+    g_stickerBg = 0;
 }
 
 /* ar_init @ 0F38:9EE9 (linear 0x19269, 49 bytes) */

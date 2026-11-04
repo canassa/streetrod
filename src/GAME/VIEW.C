@@ -21,7 +21,7 @@
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6e04aay;                      /* DS:6E04 */
-static int g_6e06aax;                      /* DS:6E06 */
+static int g_roadRowLimit;                      /* DS:6E06 */
 static struct RenderRows g_renderRows; /* DS:6E08 */
 static int g_prevRivalFrame;                        /* DS:6E2A */
 static void near clip_blit_y(struct Blt *b);
@@ -268,7 +268,7 @@ void vw_load(void)
     g8184y = di_bm(0x3f1, ARENA_LOW_STACK);
     bz8b7ex = di_bm(0x4db, ARENA_LOW_STACK);
     if (*(int *)&bw8aca) {
-        idx = w_8df0[bn7648].kind;
+        idx = g_models[bn7648].kind;
         k_6e60 = di_bm(0x3f5, ARENA_LOW_STACK);
         aw7aaex = k_6e60->height;
         g8acew[0] = di_bm(g_opponentPics[idx][0], ARENA_LOW_STACK);
@@ -358,7 +358,7 @@ static void near render_backdrop(void)
     }
     clip_blit_y(&b);
     (*g_videoOps.copy)(g8188w, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
-    g_6e06aax = 14;
+    g_roadRowLimit = 14;
     if (*(int *)&bw8aca) {
         b.w = r;
         b.sx = ll;
@@ -368,7 +368,7 @@ static void near render_backdrop(void)
         for (i = 14; i; i--) {
             if (bq7884[i] < g_6e04aay) {
                 g_6e04aay = bq7884[i];
-                g_6e06aax = i;
+                g_roadRowLimit = i;
             }
         }
         (*g_videoOps.fillBelow)(g_6e04aay, 9);
@@ -1422,7 +1422,7 @@ void vw_draw(void)
     render_backdrop();
     en_begin();
     for (i = 14; i; i--) {
-        if (i <= g_6e06aax)
+        if (i <= g_roadRowLimit)
             render_row(i);
         if (*am8b82y & 4)
             goto next;

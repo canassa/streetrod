@@ -437,14 +437,14 @@ void near ga_paint(void)
                 mn_pop(1);
                 pu_show(bm1, x, y);
                 ma_pop_high(1);
-                pu_show(g_0294, m_8272.stickerX, m_8272.stickerY);
+                pu_show(g_stickerBg, m_8272.stickerX, m_8272.stickerY);
                 a_7eaap.currentCar->appearance &= 0xe0ff;
                 ga_palette(a_7eaap.currentCar->paintScheme = idx4);
                 vi_palette_reg(12, 5);
                 g_gameClock.actionTicks += 0x888L;
                 sc_add_money(-20);
                 return;
-            case -23:
+            case KR_FORGET:
             default:
                 break;
             }
@@ -472,7 +472,7 @@ void near ga_body(unsigned mask)
     int key;
     int cost;
 
-    p9 = &w_8df0[a_7eaap.currentCar->specIndex];
+    p9 = &g_models[a_7eaap.currentCar->specIndex];
     if (!a_7eaap.currentCar) {
         gm_message(0x0efa);
         return;
@@ -514,7 +514,7 @@ void near ga_body(unsigned mask)
     while ((key = sy_wait_input(3000)) == 0)
         ;
     switch (key) {
-    case -20:
+    case KR_OK:
         if (mask & 4)
             a_7eaap.currentCar->appearance ^= 0x2000;
         if (mask & 2)
@@ -529,12 +529,12 @@ void near ga_body(unsigned mask)
         r7 = gm_car_look(a_7eaap.currentCar);
         cp_show_car(8, n9, r7, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0x98, 0,
                 g_tirePics[g_parts[a_7eaap.currentCar->tires->idx].variant]);
-        F_16BC1();
+        so_noise();
         cu_ctl(CURSOR_SHOW_NOW);
         g_gameClock.actionTicks += val5;
         sc_add_money(-cost);
         break;
-    case -22:
+    case KR_BODY_FORGET:
         mn_pop(1);
         pu_show(bm1, x, y);
         ma_pop_high(1);
@@ -573,8 +573,8 @@ void near ga_stickers(void)
         while ((k = sy_wait_input(3000)) == 0)
             ;
         switch (k) {
-        case -38: case -37: case -36: case -35:
-        case -34: case -33: case -32: case -31:
+        case KR_STICKER_8: case KR_STICKER_7: case KR_STICKER_6: case KR_STICKER_5:
+        case KR_STICKER_4: case KR_STICKER_3: case KR_STICKER_2: case KR_STICKER_1:
             cu_ctl(CURSOR_HIDE);
             mn_pop(1);
             pu_show(bm1, x, y);
@@ -582,8 +582,8 @@ void near ga_stickers(void)
             idx6 = -30 - k;
             a_7eaap.currentCar->appearance = ((idx6 & 0x1f) << 8) | (a_7eaap.currentCar->appearance & 0xe0ff);
             bm3 = di_bm(1218, ARENA_HIGH_STACK);
-            bm1 = ar_bm(g_0294->width, g_0294->height, 0, ARENA_HIGH_STACK);
-            bm_copy(g_0294, bm1, 1);
+            bm1 = ar_bm(g_stickerBg->width, g_stickerBg->height, 0, ARENA_HIGH_STACK);
+            bm_copy(g_stickerBg, bm1, 1);
             q2 = &a784als[idx6 - 1];
             bm_draw_pic(bm1, q2->id, (char)(q2->dx + m_8272.stickerSubX), (char)q2->dy, 0);
             bm4 = ar_bm(bm1->width, bm1->height, 0, ARENA_HIGH_STACK);
@@ -614,7 +614,7 @@ void near ga_stickers(void)
             sc_add_money(-5);
             cu_ctl(CURSOR_SHOW);
             break;
-        case -22:
+        case KR_STICKER_SKIP:
             mn_pop(1);
             pu_show(bm1, x, y);
             ma_pop_high(1);
@@ -705,9 +705,9 @@ void near ga_tires(void)
     }
     ga_spares(4, tbl, line, 0);
     switch (mn_modal_list(KM_SPARE_PARTS, 1, 0, g_list, line, 0)) {
-    case -4:
+    case KR_CANCEL:
         return;
-    case -3:
+    case KR_ACCEPT:
         sel = mn_sel();
         break;
     case 0x3ea:
@@ -781,7 +781,7 @@ void ga_info(void)
     sprintf(g_iTxt[3] + 9, " %3i mph", ga_ready(a_7eaap.currentCar, 1) ? pf_vmax(-1) : 0);
     sprintf(g_iTxt[1] + 5, " %2i gallons", a_7eaap.currentCar->fuel / 10);
     switch (mn_modal_list(KM_CAR_INFO, 1, ids, g_list, vals, g_iTxt)) {
-    case -3:
+    case KR_ACCEPT:
         return;
     case 0x3ea:
         gm_message(0x0f4e);
@@ -822,21 +822,21 @@ void near ga_transmission(void)
         while ((k = sy_wait_input(3000)) == 0)
             ;
         switch (k) {
-        case -1:
+        case KR_TRANS_DONE:
             mn_pop(1);
             return;
-        case -2:
+        case KR_TRANS_PARTS:
             ga_spares(1, tbl, buf, 0);
             for (;;) {
                 switch (k = mn_modal_list(KM_SPARE_PARTS, 1, 0, g_list, buf, 0)) {
-                case -3:
+                case KR_ACCEPT:
                     if (owner->transmission) {
                         gm_message(0x1875);
                         k = 0;
                     } else
                         k = mn_sel();
                     break;
-                case -4:
+                case KR_CANCEL:
                     k = 0;
                     break;
                 case 0x3ea:
@@ -990,18 +990,18 @@ static void near tune_timing(struct Car *car)
             }
         }
         switch (key) {
-        case -10:
+        case KR_TIMING_ADVANCE:
             car->timing++;
             if (car->timing > 4)
                 car->timing = 4;
             break;
-        case -7:
+        case KR_TIMING_RETARD:
             car->timing--;
             if (car->timing < -8)
                 car->timing = -8;
             break;
         }
-    } while (key != -1);
+    } while (key != KR_TIMING_DONE);
     outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
     g_speakerOn = 0;
     g_voiceNum = 1;
@@ -1070,12 +1070,12 @@ void near ga_hood(struct Car *car)
         while ((key = sy_wait_input(3000)) == 0)
             ;
         switch (key) {
-        case -1:
+        case KR_ENGINE_DONE:
             mn_pop(1);
             r_vid.hoodBg = 0;
             ma_release();
             return;
-        case 13:
+        case KR_ENGINE_WIRES:
             car->wireState = -car->wireState;
             if (car->wireState == 0)
                 continue;
@@ -1092,7 +1092,7 @@ void near ga_hood(struct Car *car)
             g_slotSelec.slot = 0;
             gx_build_hots(g_bPos, g_bIdx);
             break;
-        case -3:
+        case KR_ENGINE_TIMING:
             if (ga_ready(car, 0)) {
                 tune_timing(car);
                 cu_ctl(CURSOR_HIDE_NOW);
@@ -1101,12 +1101,12 @@ void near ga_hood(struct Car *car)
             } else
                 gm_message(0xea1);
             continue;
-        case -2:
+        case KR_ENGINE_PARTS:
             ga_spares(g_nextPartCategory[cnt1], list4, buf, 0);
         again:
             key = mn_modal_list(KM_SPARE_PARTS, 1, 0, g_list, buf, 0);
             switch (key) {
-            case -3:
+            case KR_ACCEPT:
                 key = mn_sel();
                 break;
             case 0x3ea:
@@ -1118,7 +1118,7 @@ void near ga_hood(struct Car *car)
                     gm_message(0xfb5);
                 key = 0;
                 break;
-            case -4:
+            case KR_CANCEL:
                 key = 0;
                 break;
             }

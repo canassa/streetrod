@@ -7,6 +7,7 @@
 #include "DASH.H"
 #include "DRAW.H"
 #include "KBD.H"
+#include "KEYMAPS.H"
 #include "MAIN.H"
 #include "MENU.H"
 #include "MESSAGES.H"
@@ -178,7 +179,7 @@ int ed_spot_number(int *out, char *buf)
    Show hot spot id, read a number into *out with ed_spot_number and close the spot again;
    returns the editor's result */
 
-int ed_number_box(int id, int *out)
+int ed_number_box(enum ScreenId id, int *out)
 {
     int res;
     char buf[12];
@@ -195,7 +196,7 @@ int ed_number_box(int id, int *out)
    Show hot spot id and let the player edit the text s (at most len characters) in its box
    with the spot's colours; returns the editor's result when that is 0 or negative, else 0 */
 
-int ed_text_box(int id, int len, char *s)
+int ed_text_box(enum ScreenId id, int len, char *s)
 {
     int rl;
 

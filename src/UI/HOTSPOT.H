@@ -11,7 +11,7 @@ extern struct Hot g_gar[];                             /* DS:121C */
 extern struct Hot g_134e[];                             /* DS:134E */
 extern struct Hot g_1804[];                             /* DS:1804 */
 extern struct Hot g_engineHots[];                             /* DS:184C */
-extern struct Hot g_1948[];                             /* DS:1948 */
+extern struct Hot g_engineHotTemplate[];                             /* DS:1948 */
 extern struct Hot g_hotGasStation[];                    /* DS:19EA */
 extern struct Hot g_1a44[];                             /* DS:1A44 */
 extern struct Hot g_hotRepair[];                        /* DS:1AC2 */

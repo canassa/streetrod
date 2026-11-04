@@ -339,7 +339,7 @@ struct Spec {
     int bodyPic;
 };
 
-/* one car model (10 bytes, w_8df0[], indexed by Car.specIndex): kind picks its sprites (vw_load); roofPic, frontBumperPic, rearBumperPic
+/* one car model (10 bytes, g_models[], indexed by Car.specIndex): kind picks its sprites (vw_load); roofPic, frontBumperPic, rearBumperPic
    are nonzero when the roof can be chopped and the front and rear bumpers stripped (ga_body) */
 struct Model {
     signed char kind;

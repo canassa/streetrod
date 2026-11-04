@@ -9,7 +9,7 @@ void ma_clear(void)
 {
     g_offsetArenaMarksList[g_lowArenaMarker = 0] = g_loHeapLimit = 0;
     g_offsetArenaMarksList[g_markerIndexHigh = 60] = g_arenaTopVal;
-    g_0294 = 0;
+    g_stickerBg = 0;
 }
 
 /* ma_release @ 0F38:A07E (linear 0x193FE, 32 bytes) */

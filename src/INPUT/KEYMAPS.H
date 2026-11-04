@@ -2,9 +2,9 @@
 #define KEYMAPS_H
 #include "STRUCTS.H"
 
-enum KeyMapId {
+enum ScreenId {
     KM_NONE = 0,
-    KM_RACE = 1,
+    KM_RACE_OUTCOME = 1,
     KM_START_GAME = 2,
     KM_LOAD = 3,
     KM_SPARE_PARTS = 4,
@@ -20,6 +20,7 @@ enum KeyMapId {
     KM_PAINT = 14,
     KM_NO_SAVED_GAMES = 15,
     KM_SELL_PART_OFFER = 16,
+    KM_UNUSED_17 = 17,
     KM_DRAG_WAGER = 18,
     KM_ROAD_WAGER = 19,
     KM_TRANSMISSION = 20,
@@ -42,30 +43,68 @@ enum KeyMapId {
     KM_BOBS = 37,
     KM_CAR_INFO = 38,
     KM_MANUAL_COLORS = 39,
+    KM_UNUSED_40 = 40,
     KM_END_MENU = 41,
     KM_MUSIC = 42
 };
 
-enum KeyValue {
-    KV_REPAIR_FIX = 0xcf,
-    KV_REPAIR_JUNK = 0xd0,
-    KV_MUSIC = 0xa6,
-    KV_MESSAGE_DISMISS = 0xb4,
-    KV_SEE_IT = 0xb5,
-    KV_OFFER = 0xb6,
-    KV_FORGET = 0xb7,
-    KV_NEVER_MIND = 0xb8,
-    KV_NO = 0xb9,
-    KV_OK = 0xba,
-    KV_SCROLL_DOWN = 0xc4,
-    KV_SCROLL_UP = 0xc7,
-    KV_CANCEL = 0xca,
-    KV_ACCEPT = 0xcb,
-    KV_RETURN_MINUS_2 = 0xcc,
-    KV_RETURN_MINUS_1 = 0xcd
+enum InputResult {
+    KR_NO = -21,
+    KR_MUSIC = -40,
+    KR_MESSAGE_DISMISS = -26,
+    KR_SEE_IT = -25,
+    KR_FORGET = -23,
+    KR_NEVER_MIND = -22,
+    KR_OK = -20,
+    KR_SCROLL_DOWN = -10,
+    KR_SCROLL_UP = -7,
+    KR_CANCEL = -4,
+    KR_ACCEPT = -3,
+    KR_AD_CLOSE = -3,
+    KR_CLOSE_CARS = -3,
+    KR_ENGINE_DONE = -1,
+    KR_ENGINE_PARTS = -2,
+    KR_ENGINE_TIMING = -3,
+    KR_LOAD_GAME = -2,
+    KR_NEW_GAME = -1,
+    KR_OLD_GAME = -2,
+    KR_SAVE_GAME = -3,
+    KR_SELL_CAR = -2,
+    KR_START_OK = -3,
+    KR_SWITCH_CAR = -1,
+    KR_TIMING_DONE = -1,
+    KR_TRANS_DONE = -1,
+    KR_TRANS_PARTS = -2,
+    KR_REPAIR_FIX = 1,
+    KR_REPAIR_JUNK = 2,
+    KR_TIMING_ADVANCE = KR_SCROLL_DOWN,
+    KR_TIMING_RETARD = KR_SCROLL_UP,
+    KR_ENGINE_WIRES = 13,
+    KR_EDIT_HEADER = -6,
+    KR_PAGE_UP = -8,
+    KR_PAGE_DOWN = -9,
+    KR_STICKER_1 = -31,
+    KR_STICKER_2 = -32,
+    KR_STICKER_3 = -33,
+    KR_STICKER_4 = -34,
+    KR_STICKER_5 = -35,
+    KR_STICKER_6 = -36,
+    KR_STICKER_7 = -37,
+    KR_STICKER_8 = -38,
+    KR_BUY_YEAH = KR_OK,
+    KR_QUIT = KR_OK,
+    KR_MENU_FORGET = KR_NEVER_MIND,
+    KR_OVERWRITE_GO_AHEAD = KR_OK,
+    KR_OVERWRITE_FORGET = KR_NO,
+    KR_BODY_FORGET = KR_NEVER_MIND,
+    KR_STICKER_SKIP = KR_NEVER_MIND,
+    KR_SELL_PART_NO_THANKS = KR_NO
 };
 
-#define KV_ITEM(n) (0xce + (n))
+enum KeyMapByte {
+    KV_REPAIR_FIX = 0xce + KR_REPAIR_FIX,
+    KV_REPAIR_JUNK = 0xce + KR_REPAIR_JUNK
+};
 
 extern unsigned char g_keyMapData[543];                       /* DS:5580 */
 extern struct KeyMap *g_keyMaps[];                      /* DS:579F */

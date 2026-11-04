@@ -166,6 +166,11 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 - Header include discovery follows enum tags and members as well as macros;
   enum constants belong to their defining header and need no source definition.
 - MASM 5.1 macro arguments split at spaces: emit arithmetic directly in DB
-  inside ITEM/STICKER, or bracket a nested argument. LOCAL assignment symbols
+  inside KEY, or bracket a nested argument. LOCAL assignment symbols
   and REPT implement sequential item runs; verify data with the packed build,
   since function checks do not cover a data-only key-map object.
+
+- Key-map bindings take decoded results; KEY alone encodes `0xCE + result`.
+  C KR_ constants are decoded input results, while KV_ constants are raw bytes
+  restricted to runtime patches. tests/test_keymaps.py keeps C/ASM constants,
+  pointer-table screen slots and PC scan-code definitions in agreement.

@@ -34,8 +34,8 @@
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct CursorDraw g_drawnCursor; /* DS:6C46 */
-static enum KeyMapId g_keyGroup;                         /* DS:6C4C */
-static char g_6c4e;                        /* DS:6C4E */
+static enum ScreenId g_keyGroup;                         /* DS:6C4C */
+static char g_lastClick;                        /* DS:6C4E */
 static int g_demoChoice;                        /* DS:6C50 */
 static struct Vibrato g_vibrato; /* DS:6C52 */
 
@@ -324,7 +324,7 @@ void sy_init(void)
 
 /* sy_keymap_set @ 0000:12DE (linear 0x012DE, 179 bytes) */
 
-void sy_keymap_set(enum KeyMapId n)
+void sy_keymap_set(enum ScreenId n)
 {
     struct KeyMap *p;
     int num;
@@ -479,7 +479,7 @@ int sy_wait_input(int ticks)
         }
         if (g_click | g_click2) {
             _disable();
-            g_6c4e = g_click;
+            g_lastClick = g_click;
             x = g_clickX;
             y = g_clickY;
             g_click2 = g_click = 0;
@@ -990,8 +990,8 @@ tail:
                     y = 1;
             }
             if (x | y) {
-                g_cursorX += g_474c[x];
-                g_cursorY += g_4752[y];
+                g_cursorX += g_cursorStepX[x];
+                g_cursorY += g_cursorStepY[y];
                 g_drawnCursor.dirty = 1;
             }
             g_cursorBusy = 0;

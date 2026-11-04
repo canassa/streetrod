@@ -1436,3 +1436,50 @@ expression passed to a nested macro is split at spaces. Direct DB arithmetic
 inside ITEM/STICKER preserves it. Function matching alone does not gate this
 data-only object; the packed build caught the lost arithmetic before completion.
 The 42nd map is the shared M/music binding installed after every screen.
+## 2026-11-04 20:17 CET: Evidence-backed naming pass five
+
+### What I did
+
+- Named F_16BC1 as so_noise after checking all three callers; renamed ten globals/statics for sticker background, engine menu template, cursor steps, line widths, click state, sky clipping, road-row limit, and model records. No storage or comments added; key maps untouched.
+- Reviewed the remaining placeholders and both far sound sequences; retained names without sufficient identity evidence. Recorded every direct reference, proposed meaning, hash trial, compiler trial, deferred grouping, and skipped name in uncommitted work/naming5/FINDINGS.md and LEDGER.tsv.
+- Retried all 23 cramped spellings: three hash failures and twenty compiler-budget failures. Regenerated plans/unnamed.md and added seven newly understood constrained names to plans/cramped-names.md.
+- All gates passed: headers, 572/572 functions, clean build with packed EXE IDENTICAL, DGROUP ownership/order, 62 unit tests, DOS-native MAKE IDENTICAL. A mechanical audit confirmed source/header changes are identifier substitutions only.
+
+### What I learned
+
+- Renaming the road-row-limit static widened its neighbor's hash window, allowing g_skyClipY. A shorter so_noise spelling recovered enough cumulative compiler budget for g_stickerBg; the coupled constraints in CLAUDE.md rules 4d/4f apply to the final set of names.
+- VIEW's line-width pointers decrement into preceding words: the mixed table at DS:5E62 is not purely picture IDs. Several projected row arrays and bolt mappings likewise extend across placeholder declarations; these grouping candidates are documented for a later structural pass.
+- The two unused jingle wrappers have no callers in either the source search or binary call graph. Their musical parameters do not prove the intended effect names.
+
+## 2026-11-04 21:10 CET: Review of naming pass 5
+
+### What I did
+- An independent review found 8 of the 11 names supported and 3 doubtful. I put the three doubtful ones back to placeholders:
+  - `g_lastRoadLineWidth` and `g_lastMirrorLineWidth` are never read or written by name. Each only seeds the `g_renderRows.lineWidth` pointer, which then walks down a per-row width table that starts inside `g_5e62`/`g_5e88`. "last" was wrong, and the real table boundaries are a struct/array question for later.
+  - `g_skyClipY`: nothing in the code shows "sky". It is the topmost road-row Y, used as a lower bound and passed to `fillBelow`.
+- All gates pass after the reverts: headers, 572/572, packed EXE IDENTICAL, DGROUP check/order, tests.
+
+### What I learned
+- `bq7884` is declared `int[13]`, but VIEW.C reads its indices 13 and 14. Either the declared extent is wrong or the original read past it. Still open.
+- The placeholder globals that were skipped all got one blanket reason. The next pass needs one reason per item.
+
+## 2026-11-04 20:24 CET: key-map review fixes and main merge
+
+### What I did
+
+Resolved the main merge conflicts first, preserving both diary histories and
+combining the screen enum with main's renamed click state. Applied all key-map
+review items: ScreenId menu/editor parameters, START_GAME's missed editor ID,
+RACE_OUTCOME and neutral UNUSED_17/40 names, decoded KR_ results in C switches,
+raw KV_ bytes only for repair patches, one KEY encoding for all results,
+screen-specific action aliases, and the engine wire toggle. Added agreement
+tests for C/ASM results, raw repair bytes, table slots and hardware scan codes.
+All gates pass: headers; 572/572; clean packed build IDENTICAL; DGROUP check/order;
+66 tests; DOS-native MAKE IDENTICAL. No work/ files are committed.
+
+### What I learned
+
+The same screen ID indexes both key maps and hotspot groups. Encoded key bytes
+and decoded menu results need distinct names: a raw byte constant in a C case
+would compile successfully while matching the wrong value. One encoding boundary
+and tests for the two language interfaces make that distinction checkable.
