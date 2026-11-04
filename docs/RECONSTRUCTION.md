@@ -143,7 +143,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   by MSC's zero tail padding. The neighboring input flags, unused 05F4 words and
   clocks stay separate; folding g_tick while keeping the earlier deadlines plain
   reverses comparison operands in SYS and DRVTICK. The experiments and limits of
-  this conclusion are recorded in `work/mouse/REPORT.md`.
+  this conclusion are summarized in plans/diary.md (2026-11-05).
 - **Evidence-only structs** `State70C0`, `State7D2E` and `State7E8A`. MSC's operand order
   shows that these blocks are struct members, not plain variables (recipe book). Their
   extent and member types are a reconstruction.
