@@ -133,6 +133,20 @@ No artificial packing directive or initializer filler is used.
 
 ## Final verification
 
-Before merging main: 572/572 functions and all file gates pass; the packed build
-and DOS-native MAKE are IDENTICAL; all 53 unit tests pass; headers and DGROUP
-checks are clean. Final gates will be repeated after merging main.
+Merged main at 9d23432, preserving its critical-error constants and both sides
+of the append-only diary conflict. No source conflict required resolution.
+Repeated every required gate against the merged source:
+
+- `SR_JOBS=6 ./sr check --all`: 572/572 (551 MATCH, 21 MATCH*); every file gate passes.
+- `rm -rf work/layout` then `SR_JOBS=6 ./sr build`: 95/95 objects pass;
+  572/572 game functions raw-byte exact at their original positions;
+  748/748 near calls exact; packed EXE vs orig/SR.EXE IDENTICAL.
+- `./sr headers --check`: clean.
+- `./sr dgroup check`: clean.
+- `nix-shell shell.nix --run "python3 -m unittest discover -s tests"`: 53 tests OK.
+- `./dosbox.sh --make`: DOS-native SR.EXE vs orig/SR.EXE IDENTICAL.
+- DOS-native EXE and original SHA-1: 3a5e28b795313028b7e77d147122f41cb29de334.
+
+No toolchain flags, compiler-budget padding symbols, assembly, or tooling were
+changed. The report, reconstruction notes and recipe-book lesson distinguish
+compatibility with a Mouse record from proof that it existed in the original.

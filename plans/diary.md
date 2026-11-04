@@ -1093,6 +1093,23 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - A Codex agent surveyed 71 records and named 155 struct members from their uses (e.g. `Colors` = `text`, `textBg`, `fill`, `line`, `frame`, split from `char c[5]` because every access used a constant index; the hot-spot record's `kind`, `palIndex`, `textOffset`, `next`); 256 members keep placeholders. An independent review confirmed 143 and corrected the rest: six "paint" names are stickers (the game's "Stickers - $5" overlays, distinct from "New paint job - $20"), as was the older `Look.shade`; `modelKind` is a 0..8 `rank`; `gallonsLeft` counts 3-gallon `fillsLeft`; `Video.scratch` holds the garage hood picture (`hoodBg`). Comments naming old members were updated.
 - Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
 
+## 2026-11-04 14:42 CET: Name critical-error values
+
+### What I did
+- Named the int 24h device-error flag, retry permission, and write-protect/not-ready/paper-out codes in PC.H, with matching PC.INC equates. Reused MSC 5.1 DOS.H's _HARDERR_RETRY and _HARDERR_ABORT in sys_crit_error. No symbol or member renames and no source comments added.
+- Verified 572/572 function matches, a clean byte-identical packed build, clean header and DGROUP checks, 53 passing unit tests, and a byte-identical native DOSBox MAKE build.
+
+### What I learned
+- toolchain/msc51/INCLUDE/DOS.H:146-152 supplies the resume actions; BIN/README.DOC and BIN/CL.HLP contain no _harderr documentation (CL.HLP covers compiler flags).
+- Microsoft's MS-DOS 3.3 Programmer's Reference section 1.11.2 (https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/) confirms AH bits 7/4 and DI codes 0/2/9. CRIT_DEVICE_ERROR is broader than character-device-only: AH bit 7 can also indicate a bad in-memory FAT. The handler's messages and retry/exit branches agree with these meanings.
+- Tree-wide searches found no other uses with critical-error semantics. PC.H's numeric constants require matching PC.INC equates, enforced by test_shared_pc_constants.
+
+## 2026-11-05 17:30 CET: Named critical-error values
+
+### What I did
+- sys_crit_error (the `_harderr` handler) uses MSC 5.1's own `_HARDERR_RETRY`/`_HARDERR_ABORT` from <dos.h> for `_hardresume`, and PC.H/PC.INC name the int 24h facts: `CRIT_DEVICE_ERROR` (0x8000), `CRIT_RETRY_ALLOWED` (0x1000), `CRIT_WRITE_PROTECT` (0), `CRIT_NOT_READY` (2), `CRIT_PAPER_OUT` (9). Done by a Codex agent.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, tests OK.
+
 ## 2026-11-04 14:50 CET: mouse record evidence and tail padding
 
 ### What I did
@@ -1104,3 +1121,12 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - The nine mouse fields are undecidable as separate globals versus a struct: both forms have identical code and no budget effect. This is documented as a natural reconstruction choice in docs/RECONSTRUCTION.md.
 - Folding g_tick while keeping earlier deadlines separate reverses long-comparison operands in SYS and DRVTICK. The tested clock extensions are ruled out.
 - A trailing unreferenced initialized char can represent struct padding; retaining it separately after folding inserts extra bytes. Added this evidence to the msc51 recipe book.
+
+## 2026-11-04 14:52 CET: mouse gates after merging main
+
+### What I did
+- Merged main at 9d23432, kept both diary entries and the critical-error constants, and repeated all required checks on the combined source.
+- Result: 572/572 functions and every file gate pass; clean packed build and native DOSBox MAKE IDENTICAL; headers/DGROUP clean; 53 unit tests OK. Final evidence is in work/mouse/REPORT.md.
+
+### What I learned
+- The mouse record and main's critical-error changes compose without any byte changes.

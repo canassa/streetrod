@@ -232,24 +232,24 @@ void sys_crit_error(unsigned deverr, unsigned char errcode)
     int disk;
     int action;
 
-    disk = (deverr & 0x8000) == 0;
+    disk = (deverr & CRIT_DEVICE_ERROR) == 0;
     if (disk) {
-        if (deverr & 0x1000)
-            action = 1;
+        if (deverr & CRIT_RETRY_ALLOWED)
+            action = _HARDERR_RETRY;
         else
-            action = 2;
+            action = _HARDERR_ABORT;
     } else
-        action = 1;
+        action = _HARDERR_RETRY;
     switch (errcode) {
-    case 0:
+    case CRIT_WRITE_PROTECT:
         g_errWriteProt[5] = deverr + 'A';
         screen_wait_msg(g_errWriteProt);
         break;
-    case 2:
+    case CRIT_NOT_READY:
         g_errRead[strlen(g_errRead) - 1] = deverr + 'A';
         screen_wait_msg(g_errRead);
         break;
-    case 9:
+    case CRIT_PAPER_OUT:
         screen_wait_msg("printer out of paper");
         break;
     default:
@@ -257,10 +257,10 @@ void sys_crit_error(unsigned deverr, unsigned char errcode)
             screen_wait_msg("disk error");
         else {
             screen_wait_msg("hardware error");
-            action = 2;
+            action = _HARDERR_ABORT;
         }
     }
-    if (action == 2)
+    if (action == _HARDERR_ABORT)
         sys_exit();
     _hardresume(action);
 }
