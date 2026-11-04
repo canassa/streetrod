@@ -223,6 +223,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **RandomState** (`g_random`, DS:6C62..6C67): random_int seeds and updates all three Wichmann-Hill generator words together. Separate globals also match; this grouping is a natural reconstruction choice.
 
+- **ArchiveSelection** (`g_archive`, DS:6C68..6C81): open_lib and the disk loading paths select the drive, count, handles and archive name together, with the path buffer used by the same archive context. Separate globals also match; this grouping is a natural reconstruction choice.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only

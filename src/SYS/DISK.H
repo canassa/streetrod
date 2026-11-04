@@ -4,6 +4,15 @@
 #define DISK_H
 #include "STRUCTS.H"
 
+struct ArchiveSelection {
+    int drive;
+    int *count;
+    int *handle;
+    char *name;
+    int *otherHandle;
+    char path[16];
+};
+
 extern char *g_dataFileName;                            /* DS:4EA2 */
 extern char *g_dataBlocks[13];                          /* DS:4EA4 */
 extern unsigned g_dataSizes[13];                        /* DS:4EBE */
