@@ -40,6 +40,7 @@ void screen_status_init(int y)
 }
 
 struct State7EAA a_7eaap;
+struct TextEnd g_penPoint;
 struct StatusText g_statusLine; /* DS:824C */
 int g_xMoneyRhsVal;
 
@@ -84,7 +85,7 @@ void F_11540(int n)
     old = g_statusLine.shown;
     g_statusLine.shown = 1;
     F_11421(g_statusLine.valueX, ltoa(a_7eaap.money += n, buf, 10), 0x30);
-    g_xMoneyRhsVal = g_statusLine.textEndX;
+    g_xMoneyRhsVal = g_penPoint.x;
     g_statusLine.shown = old;
 }
 
@@ -99,7 +100,7 @@ void F_11593(char *s)
     cursor_ctl(CURSOR_HIDE);
     draw_fill_rect(r_vid.back, 0, g_statusLine.y, g_statusLine.messageX & 0xfff8, 8);
     (*g_videoOps.drawText)(r_vid.back, 0, g_statusLine.y, s);
-    g_statusLine.valueX = (g_statusLine.textEndX + 7) & 0xfff8;
+    g_statusLine.valueX = (g_penPoint.x + 7) & 0xfff8;
     r_vid.copyToFront = 0;
     if (s[1] != 'G' && s[1] != ' ')
         F_11540(0);
@@ -258,7 +259,7 @@ void screen_text(int x, int y, char *s)
 {
     (*g_videoOps.drawText)(r_vid.back, x, y, s);
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, x, y, g_statusLine.textEndX - 1, y + 7);
+        bitmap_copy_box(r_vid.back, r_vid.front, x, y, g_penPoint.x - 1, y + 7);
 }
 
 /* screen_hline @ 0F38:26A4 (linear 0x11A24, 78 bytes)

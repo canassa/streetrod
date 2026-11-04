@@ -120,8 +120,8 @@ void cga_draw_text(struct Bitmap far *bm, int x, int y, char *s)
             pp2++;
         }
     }
-    g_statusLine.textEndX = ((col4 - shl) >> 1) + x;
-    g_statusLine.textEndY = y;
+    g_penPoint.x = ((col4 - shl) >> 1) + x;
+    g_penPoint.y = y;
     if (col4 == shl)
         return;
     if (shl) {

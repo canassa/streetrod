@@ -677,9 +677,12 @@ struct Hooks {
 };
 
 
+struct TextEnd {
+    int x;
+    int y;
+};
+
 struct StatusText {
-    int textEndX;
-    int textEndY;
     int messageX;
     int y;
     int messageWidth;

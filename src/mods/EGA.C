@@ -104,8 +104,8 @@ void ega_draw_text(struct Bitmap far *bm, int x, int y, char *str)
     }
     if (y + (part = 8) > bm->height)
         part = bm->height - y;
-    g_statusLine.textEndX = x + cols - d;
-    g_statusLine.textEndY = y;
+    g_penPoint.x = x + cols - d;
+    g_penPoint.y = y;
     outp(GC_INDEX, GC_MODE);
     outp(GC_DATA, GC_WRITE_MODE2);
     outp(SEQ_INDEX, SEQ_MAP_MASK);

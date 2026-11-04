@@ -178,7 +178,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **TireWork** (`g_tires`, DS:6CD4..6DFD): a natural, byte-identical reconstruction choice; separate globals also match.
 
-- **StatusText** (`g_statusLine`, DS:824C..8259): a natural, byte-identical reconstruction choice; separate globals also match.
+- **TextEnd / StatusText** (`g_penPoint`, DS:824C..824F; `g_statusLine`, DS:8250..8259): natural, separate records for the last drawn text endpoint and status-line state; separate globals also match.
 
 - **BodyPoints** (`g_featurePos`, DS:8264..8271): a natural, byte-identical reconstruction choice; separate globals also match.
 

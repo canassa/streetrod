@@ -461,7 +461,7 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
             labeln = (*lpk > -1) ? g_desc + *lpk : d[-*lpk - 1];
             x = (c ? *pc1 : 0) + w->w;
             (*g_videoOps.drawText)(r_vid.back, x, w->h, labeln);
-            draw_fill_rect(r_vid.back, g_statusLine.textEndX - 1, g_statusLine.textEndY, w->tx - g_statusLine.textEndX + 1, 8);
+            draw_fill_rect(r_vid.back, g_penPoint.x - 1, g_penPoint.y, w->tx - g_penPoint.x + 1, 8);
             if (buf && (wear = *bpl) != -128)
                 (*g_videoOps.drawText)(r_vid.back, w->tx - strlen(g_wearText) * 6, w->h, wear_text(wear));
         }

@@ -4,7 +4,8 @@
 #define SCREEN_H
 #include "STRUCTS.H"
 
-extern struct StatusText g_statusLine; /* DS:824C */
+extern struct TextEnd g_penPoint; /* DS:824C */
+extern struct StatusText g_statusLine; /* DS:8250 */
 
 #define SCREEN_BODY_HEIGHT 190
 #define STATUS_BAR_HEIGHT 10

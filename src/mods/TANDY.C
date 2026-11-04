@@ -45,8 +45,8 @@ void tandy_draw_text(struct Bitmap far *bm, int x, int y, int glyph)
     c1 = x_colors.text;
     c2 = x_colors.textBg;
     n2 = tandytxt_render(x, glyph, buf3, c1, c2);
-    g_statusLine.textEndX = x + n2 - ph;
-    g_statusLine.textEndY = y;
+    g_penPoint.x = x + n2 - ph;
+    g_penPoint.y = y;
     if (n2 != ph) {
         m3 = (n2 >> 1) - ph;
         if (y + (h = 8) > bm->height)
