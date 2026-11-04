@@ -831,9 +831,9 @@ void sy_demo_step(void)
                 g_demoKey = g_keyMaps[g_keyGroup][g_demoChoice].key;
                 mask = g_keyMaps[g_keyGroup][g_demoChoice].val + 0x32;
                 step = g_groupHot[g_keyGroup];
-                for (; step - g_groupHot[g_keyGroup] < 32 && g_hots[step].f6 != mask; step++)
+                for (; step - g_groupHot[g_keyGroup] < 32 && g_hots[step].id != mask; step++)
                     ;
-                if (g_hots[step].f6 == mask) {
+                if (g_hots[step].id == mask) {
                     cx = (g_hots[step].x1 + g_hots[step].x2) / 2;
                     if (cx)
                         g_demoTargetX = cx;

@@ -189,7 +189,7 @@ int ga_hotspot(int id)
     base = ((unsigned)g_gar - (unsigned)g_hots) / sizeof(struct Hot);
     n = ((unsigned)g_hotCalendar - (unsigned)g_gar) / sizeof(struct Hot) + 1;
     for (k = 0; k < n; k++)
-        if (g_hots[base + k].f6 == id)
+        if (g_hots[base + k].id == id)
             return base + k;
 }
 
@@ -211,7 +211,7 @@ static void near hide_spots(void)
     int i;
 
     for (i = 0; i < 5; i++)
-        g_hots[ga_hotspot(g_hIds[i])].kind = 14;
+        g_hots[ga_hotspot(g_hIds[i])].kind = HOT_DISABLED;
 }
 
 /* place_spots @ 0000:68E8 (linear 0x068E8, 446 bytes)
@@ -229,31 +229,31 @@ static void near place_spots(int n, int x, int y)
     hotspot->y1 = panel->r[0].y + y;
     hotspot->x2 = (unsigned)hotspot->x1 + panel->r[0].w;
     hotspot->y2 = (unsigned)hotspot->y1 + panel->r[0].h;
-    hotspot->kind = 11;
+    hotspot->kind = HOT_REGION;
     hotspot = &g_hots[ga_hotspot(13)];
     hotspot->x1 = panel->r[1].x + x;
     hotspot->y1 = panel->r[1].y + y;
     hotspot->x2 = (unsigned)hotspot->x1 + panel->r[1].w;
     hotspot->y2 = (unsigned)hotspot->y1 + panel->r[1].h;
-    hotspot->kind = 11;
+    hotspot->kind = HOT_REGION;
     hotspot = &g_hots[ga_hotspot(9)];
     hotspot->x1 = panel->r[2].x + x;
     hotspot->y1 = panel->r[2].y + y;
     hotspot->x2 = (unsigned)hotspot->x1 + panel->r[2].w;
     hotspot->y2 = (unsigned)hotspot->y1 + panel->r[2].h;
-    hotspot->kind = 11;
+    hotspot->kind = HOT_REGION;
     hotspot = &g_hots[ga_hotspot(10)];
     hotspot->x1 = panel->r[3].x + x;
     hotspot->y1 = panel->r[3].y + y;
     hotspot->x2 = (unsigned)hotspot->x1 + panel->r[3].w;
     hotspot->y2 = (unsigned)hotspot->y1 + panel->r[3].h;
-    hotspot->kind = 11;
+    hotspot->kind = HOT_REGION;
     hotspot = &g_hots[ga_hotspot(12)];
     hotspot->x1 = panel->r[4].x + x;
     hotspot->y1 = panel->r[4].y + y;
     hotspot->x2 = (unsigned)hotspot->x1 + panel->r[4].w;
     hotspot->y2 = (unsigned)hotspot->y1 + panel->r[4].h;
-    hotspot->kind = 11;
+    hotspot->kind = HOT_REGION;
 }
 
 /* ga_clear_name @ 0000:6AA6 (linear 0x06AA6, 50 bytes) */
@@ -808,7 +808,7 @@ void near ga_transmission(void)
             flags[k + 1] = prev == 1 ? 1 : 2;
         else
             flags[k + 1] = 0;
-        g_hotTransBolts[k].kind = 11;
+        g_hotTransBolts[k].kind = HOT_REGION;
     }
     m_8272.transmissionPic = owner->transmission ? g_transPics[g_parts[owner->transmission->idx].variant] : 0;
     r_vid.copyToFront = !m_8272.transmissionPic;
@@ -858,7 +858,7 @@ void near ga_transmission(void)
                         flags[k + 1] = 1;
                         gx_trans_bolt(owner->transmissionBolts[k] = 1, k);
                         so_bolt();
-                        g_hotTransBolts[k].kind = 11;
+                        g_hotTransBolts[k].kind = HOT_REGION;
                     }
                     sy_hover_reset();
                     cu_ctl(CURSOR_SHOW_NOW);

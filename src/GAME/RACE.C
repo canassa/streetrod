@@ -81,7 +81,7 @@ static int near find_gas_spot(int id)
     base = ((unsigned)g_hotGasStation - (unsigned)g_hots) / sizeof(struct Hot);
     n = ((unsigned)g_hotGasExit - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
     for (i = 0; i < n; i++)
-        if (g_hots[base + i].f6 == id)
+        if (g_hots[base + i].id == id)
             return base + i;
 }
 
@@ -115,7 +115,7 @@ static void near clear_gas_spots(void)
     g_fuelStationActions.nozzleAvailable = 0;
     g_fuelStationActions.capAvailable = 0;
     for (k = 0; k < 6; k++)
-        g_hots[find_gas_spot(g_gasSpotIds[k])].kind = 14;
+        g_hots[find_gas_spot(g_gasSpotIds[k])].kind = HOT_DISABLED;
 }
 
 /* place_gas_spot @ 0000:B49C (linear 0x0B49C, 66 bytes) */
@@ -126,7 +126,7 @@ static void near place_gas_spot(int id, int x, int y, int w, int h)
     p = &g_hots[find_gas_spot(id)];
     p->x2 = (p->x1 = x) + w - 1;
     p->y2 = (p->y1 = y) + h - 1;
-    p->kind = 11;
+    p->kind = HOT_REGION;
 }
 
 /* spots_idle @ 0000:B4DE (linear 0x0B4DE, 71 bytes) */
@@ -849,12 +849,12 @@ finishstop:
                     g_msgPlusTires[0] = 0;
                 sel = i ? KM_GET_RUNNING : KM_REPAIR;
                 if ((long)v > a_7eaap.money) {
-                    g_hotRepair[0].kind = g_hotRepair[7].kind = 0xe;
+                    g_hotRepair[0].kind = g_hotRepair[7].kind = HOT_DISABLED;
                     g_keyMaps[sel][0].val = KV_REPAIR_JUNK;
                     g_keyMaps[sel][1].key = SC_ESC;
                     g_keyMaps[sel][1].val = KV_REPAIR_JUNK;
                 } else {
-                    g_hotRepair[0].kind = g_hotRepair[7].kind = 0xa;
+                    g_hotRepair[0].kind = g_hotRepair[7].kind = HOT_BUTTON;
                     g_keyMaps[sel][0].val = KV_REPAIR_FIX;
                     g_keyMaps[sel][1].key = SC_F;
                     g_keyMaps[sel][1].val = KV_REPAIR_FIX;

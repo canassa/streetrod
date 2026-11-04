@@ -57,7 +57,7 @@ static void near play_ending(void);
 static void near pop_rival_hood(void);
 static int near challenge(int);
 static void near play_cell_anim(void);
-static void near set_jail_spots(int id, char c);
+static void near set_jail_spots(enum HotKind id, char c);
 
 int g_bannerX = 100;   /* DS:51EE */
 int g_passCount = 0;   /* DS:51F0 */
@@ -612,7 +612,7 @@ static void near setup_bobs_spots(int a, int b)
     int y1, x1, y, x;
 
     hot = g_hotBobs;
-    if (g_hotBobs[4].f6 != 4) {
+    if (g_hotBobs[4].id != 4) {
         save = g_hotBobs[3];
         g_hotBobs[3] = g_hotBobs[4];
         g_hotBobs[4] = save;
@@ -621,10 +621,10 @@ static void near setup_bobs_spots(int a, int b)
     hot[4].x2 = 0xd8;
     hot[4].y1 = 0x49;
     hot[4].y2 = 0x77;
-    hot[2].kind = (b == 1) ? 11 : 14;
+    hot[2].kind = (b == 1) ? HOT_REGION : HOT_DISABLED;
     if (a == 0) {
-        hot[1].kind = 14;
-        hot[3].kind = 14;
+        hot[1].kind = HOT_DISABLED;
+        hot[3].kind = HOT_DISABLED;
     } else {
         x1 = ai70e4t[bn7648].r[1].x + ac825et;
         y1 = ai70e4t[bn7648].r[1].y + aw8260y;
@@ -634,7 +634,7 @@ static void near setup_bobs_spots(int a, int b)
         hot[1].x2 = x;
         hot[1].y1 = y1;
         hot[1].y2 = y;
-        hot[1].kind = 11;
+        hot[1].kind = HOT_REGION;
         x1 = ai70e4t[bn7648].r[3].x + ac825et;
         y1 = ai70e4t[bn7648].r[3].y + aw8260y;
         x = ai70e4t[bn7648].r[3].w + x1 - 1;
@@ -645,7 +645,7 @@ static void near setup_bobs_spots(int a, int b)
         hot[3].x2 = x;
         hot[3].y1 = y1;
         hot[3].y2 = y;
-        hot[3].kind = 11;
+        hot[3].kind = HOT_REGION;
         if (hot[4].y2 >= hot[1].y1)
             hot[4].y2 = hot[1].y1 - 1;
         if (hot[4].x1 < hot[3].x1) {
@@ -1116,12 +1116,12 @@ test:
 
 /* set_jail_spots @ 0000:B045 (linear 0x0B045, 71 bytes) */
 
-static void near set_jail_spots(int id, char c)
+static void near set_jail_spots(enum HotKind id, char c)
 {
     struct Hot *h;
 
     h = g_hotBobs;
-    if (id == 14)
+    if (id == HOT_DISABLED)
         g_hotBobs[0].textOffset = g_msgWannaQuit - g_txt;
     else
         h->textOffset = g_msgBackToGarage - g_txt;
@@ -1184,7 +1184,7 @@ void bo_jail(void)
     cu_ctl(1);
     cu_ctl(CURSOR_SHOW);
     g_scene = 6;
-    set_jail_spots(14, SC_Q);
+    set_jail_spots(HOT_DISABLED, SC_Q);
     for (;;) {
         mn_push(KM_BOBS);
         if (flag == 0)
@@ -1198,7 +1198,7 @@ void bo_jail(void)
         switch (ch) {
         case 1:
             mn_pop(1);
-            set_jail_spots(11, SC_G);
+            set_jail_spots(HOT_REGION, SC_G);
             g_scene = 1;
             return;
         case 1000:

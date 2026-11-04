@@ -1675,3 +1675,15 @@ nix-shell shell.nix --run "python3 -m unittest discover -s tests" (68 tests, OK)
 - The hub table includes radius-5 axis samples, despite the task's approximate
   3-to-4-pixel description. Both ends use positive-up coordinates, converted to
   screen coordinates around (196,42) or (145,42), with the existing DASH_Y offset.
+
+## 2026-11-04 22:40 CET: Hot-spot kind enum and id
+
+### What I did
+
+Defined enum HotKind for all fifteen observed values and typed Hot.kind, mn_hit's kind local and set_jail_spots' kind argument with it. Replaced the raw kind numbers in every writer, comparison, drawing case and all 366 initialized Hot records. Named the hit-test boundary HOT_LAST_NONCLICKABLE and renamed Hot.f6 to id, including the demo's lookup. Removed the redundant numeric drawing summary. Recorded 18 naming items with evidence and no skips in work/LEDGER.md.
+
+Validated headers --check; check --all (572/572); a clean rm -rf work followed by sr build (packed executable IDENTICAL); dgroup check and order; all 68 unit tests; and dosbox.sh --make (DOS-native executable IDENTICAL). Every table initializer also reduces to the exact integers present before the edit. GARAGE.C, including ga_transmission, passes its full file gate with no budget adjustments.
+
+### What I learned
+
+Kind 10 draws a filled, beveled button with text centered on both axes; the old header's text-only description was inaccurate. Kind 13 registers every list row and remembers the first row's address. Kind 12 both draws a box and links the hit list through the id word, while never returning a hit itself. The two kind-2 roots are the load/save list menus; the code gives them no additional runtime distinction from ordinary kind-1 roots, so HOT_LIST_MENU describes their observed use. Kind 3 suppresses the selection frame. Zero is the unset state in scratch and BOBS records. Enum constants and the id member preserve the 18-byte layout and do not consume the external name budget.

@@ -288,11 +288,30 @@ struct Dev {
     int *toneCursor;
 };
 
+enum HotKind {
+    HOT_UNSET = 0,
+    HOT_MENU = 1,
+    HOT_LIST_MENU = 2,
+    HOT_LIST_NO_FRAME = 3,
+    HOT_BOX = 4,
+    HOT_TEXT = 5,
+    HOT_CENTERED_TEXT = 6,
+    HOT_EDIT_HEADER = 7,
+    HOT_CENTERED_HEADER = 8,
+    HOT_END = 9,
+    HOT_BUTTON = 10,
+    HOT_REGION = 11,
+    HOT_LINK_BOX = 12,
+    HOT_LIST_ROW = 13,
+    HOT_DISABLED = 14,
+    HOT_LAST_NONCLICKABLE = HOT_END
+};
+
 struct Hot {
-    int kind;
+    enum HotKind kind;
     int palIndex;
     int textOffset;
-    int f6;
+    int id;
     int x1;
     int y1;
     int x2;

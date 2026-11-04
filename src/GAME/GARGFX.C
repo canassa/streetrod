@@ -35,7 +35,7 @@ int g_carbBoltOff[10] = {10, -1, 21, -1, 11, -1, 29, -1, 11, -1};   /* DS:076A *
 char g_partSlotMap[14] = {29, 0, -1, -1, 2, 2, 2, 2, 3, 4, 2, 3, 2, 3};   /* DS:077E */
 char g_carbPosBase[6] = {5, 6, 7, 10, 12, 0};   /* DS:078C */
 struct Bitmap far *g_boltOverlay = 0;   /* DS:0792 */
-struct Hot g_boltHot = {11, 0, 0, 1, 0, 0, 0, 0, 0};   /* DS:0796 */
+struct Hot g_boltHot = {HOT_REGION, 0, 0, 1, 0, 0, 0, 0, 0};   /* DS:0796 */
 
 /* gx_trans_bolt @ 0F38:3074 (linear 0x123F4, 305 bytes)
 
@@ -676,7 +676,7 @@ void gx_build_hots(int *xs, int *ys)
             gx_bolt_pos(&x, &y);
             x += 0x60;
             y += 9;
-            g_boltHot.f6 = i + 1;
+            g_boltHot.id = i + 1;
             g_boltHot.x2 = (g_boltHot.x1 = x - 2) + 5;
             g_boltHot.y1 = (g_boltHot.y2 = y + 2) - 15;
             insert_hot(g_engineHots, &g_boltHot, num);
@@ -689,14 +689,14 @@ void gx_build_hots(int *xs, int *ys)
     }
     if (o_8290[0]) {
         g_boltHot.textOffset = g_offWires;
-        g_boltHot.f6 = 13;
+        g_boltHot.id = 13;
         i = (g_slotSelec.wirePic == 0x446) + engine_index() * 2;
         g_boltHot.x2 = (g_boltHot.x1 = g_wiresPos[i * 2] + 0x5b) + 10;
         g_boltHot.y2 = (g_boltHot.y1 = g_wiresPos[i * 2 + 1] + 2) + 15;
         insert_hot(g_engineHots, &g_boltHot, num);
         num++;
     }
-    g_engineHots[num].kind = 9;
+    g_engineHots[num].kind = HOT_END;
     g_slotSelec.slot = rx;
     g_slotSelec.subslot = rh;
     sy_hover_reset();

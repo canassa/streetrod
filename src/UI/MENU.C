@@ -40,8 +40,7 @@ char g_wearText[12] = "(xx% worn)";   /* DS:07AA */
 /* mn_draw_hot @ 0F38:465E (linear 0x139DE, 1032 bytes)
 
    Draw a hot spot and the spots linked behind it (the chain through Hot.next masked with
-   g_hotChain), by kind: 4/12 filled box with optional centred text, 5/6/10 text only, 7/8 header bar,
-   13 first-time marker. Grows the touched rectangle g_drawnMinX..g_drawnMaxY. */
+   g_hotChain). Grows the touched rectangle g_drawnMinX..g_drawnMaxY. */
 
 void mn_draw_hot(struct Hot *p)
 {
@@ -55,8 +54,8 @@ void mn_draw_hot(struct Hot *p)
         cu_ctl(CURSOR_HIDE);
     do {
         switch (p->kind) {
-        case 4:
-        case 12:
+        case HOT_BOX:
+        case HOT_LINK_BOX:
             if (p->palIndex > 0) {
                 if (p->palIndex != colr)
                     x_colors = bustyle->pal[colr = p->palIndex];
@@ -75,7 +74,7 @@ void mn_draw_hot(struct Hot *p)
             g_drawnMinY = p->y1 > g_drawnMinY ? g_drawnMinY : p->y1;
             g_drawnMaxY = p->y2 < g_drawnMaxY ? g_drawnMaxY : p->y2;
             continue;
-        case 10:
+        case HOT_BUTTON:
             if (p->palIndex != colr)
                 x_colors = bustyle->pal[colr = p->palIndex];
             dr_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, h = p->y2 - p->y1);
@@ -84,42 +83,42 @@ void mn_draw_hot(struct Hot *p)
             (*g_videoOps.drawText)(r_vid.back, ((w - da_text_width(str)) >> 1) + p->x1,
                       p->y1 + ((h - 8) >> 1), str);
             goto box;
-        case 5:
+        case HOT_TEXT:
             if (p->palIndex != colr)
                 x_colors = bustyle->pal[colr = p->palIndex];
             (*g_videoOps.drawText)(r_vid.back, p->x1, p->y1, g_txt + p->textOffset);
             goto box;
-        case 6:
+        case HOT_CENTERED_TEXT:
             if (p->palIndex != colr)
                 x_colors = bustyle->pal[colr = p->palIndex];
             str = g_txt + p->textOffset;
             (*g_videoOps.drawText)(r_vid.back, ((p->x2 - p->x1 - da_text_width(str)) >> 1) + p->x1,
                       ((p->y2 - p->y1 - 8) >> 1) + p->y1, str);
             goto box;
-        case 7:
+        case HOT_EDIT_HEADER:
             g_headerEditableState = 1;
-        case 8:
+        case HOT_CENTERED_HEADER:
             if (p->palIndex != colr)
                 x_colors = bustyle->pal[colr = p->palIndex];
             dr_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, 8);
             str = g_txt + p->textOffset;
-            if (p->kind == 8)
+            if (p->kind == HOT_CENTERED_HEADER)
                 (*g_videoOps.drawText)(r_vid.back, ((w - da_text_width(str)) >> 1) + p->x1, p->y1, str);
             else
                 (*g_videoOps.drawText)(r_vid.back, p->x1, p->y1, str);
             if (!g_menuList.header)
                 g_menuList.header = p;
             goto box;
-        case 13:
+        case HOT_LIST_ROW:
             if (!g_menuList.rows++)
                 g_menuList.lineBase = (int)p;
             goto box;
-        case 1:
-        case 2:
-        case 3:
-        case 9:
-        case 11:
-        case 14:
+        case HOT_MENU:
+        case HOT_LIST_MENU:
+        case HOT_LIST_NO_FRAME:
+        case HOT_END:
+        case HOT_REGION:
+        case HOT_DISABLED:
             continue;
         }
         break;
@@ -146,10 +145,10 @@ void mn_push(enum ScreenId id)
         g_menuGrpHistoryList[g_menuLevel++] = g_hotMenuGroupState = id;
         g_boxSpotHitData.x1 = g_boxSpotHitData.x2 = g_boxSpotHitData.y1 = g_boxSpotHitData.y2 = -1;
         ai8bacx = (p = &g_hots[g_groupHot[id]])->textOffset;
-        g_hotsCurMenu = (p + 1)->kind > 9 ? p + 1 : 0;
+        g_hotsCurMenu = (p + 1)->kind > HOT_LAST_NONCLICKABLE ? p + 1 : 0;
         g_menuList.rows = g_menuList.lineBase = g_menuList.header = 0;
         g_headerEditableState = 0;
-        g_hideSelectFrameVal = p->kind == 3;
+        g_hideSelectFrameVal = p->kind == HOT_LIST_NO_FRAME;
         saved = x_colors;
         g_hotChain = -1;
         g_drawnMinX = g_drawnMinY = 1000;
@@ -255,13 +254,13 @@ struct Bitmap far *mn_grab(enum ScreenId id, int *px, int *py, int mode)
 /* mn_hit @ 0F38:4DAD (linear 0x1412D, 276 bytes)
 
    Find the hot spot of the current menu (list at g_hotsCurMenu) under the point (x, y). On a hit
-   the spot's box goes to g_boxSpotHitData and its id (f6) is returned; on a miss g_boxSpotHitData gets the free
+   the spot's box goes to g_boxSpotHitData and its id is returned; on a miss g_boxSpotHitData gets the free
    rectangle around the point and 0 is returned */
 
 int mn_hit(int x, int y)
 {
     struct Hot *p;
-    int kind;
+    enum HotKind kind;
 
     p = g_hotsCurMenu;
     if (p == 0) {
@@ -273,8 +272,8 @@ int mn_hit(int x, int y)
     g_boxSpotHitData.x1 = g_boxSpotHitData.y1 = 0;
     g_boxSpotHitData.x2 = 319;
     g_boxSpotHitData.y2 = 199;
-    while ((kind = p->kind) > 9) {
-        if (kind == 14) {
+    while ((kind = p->kind) > HOT_LAST_NONCLICKABLE) {
+        if (kind == HOT_DISABLED) {
             p++;
             continue;
         }
@@ -286,8 +285,8 @@ int mn_hit(int x, int y)
             if (p->x2 > g_boxSpotHitData.x1)
                 g_boxSpotHitData.x1 = p->x2;
         next:
-            if (kind == 12)
-                p = &g_hots[p->f6];
+            if (kind == HOT_LINK_BOX)
+                p = &g_hots[p->id];
             else
                 p++;
         } else {
@@ -298,7 +297,7 @@ int mn_hit(int x, int y)
                 if (p->y2 > g_boxSpotHitData.y1)
                     g_boxSpotHitData.y1 = p->y2;
             } else {
-                if (kind == 12) {
+                if (kind == HOT_LINK_BOX) {
                     p++;
                     continue;
                 }
@@ -307,7 +306,7 @@ int mn_hit(int x, int y)
                 g_boxSpotHitData.y1 = p->y1;
                 g_boxSpotHitData.y2 = p->y2;
                 g_curHoverPointer = p;
-                return g_cursHoverCodeVal = p->f6;
+                return g_cursHoverCodeVal = p->id;
             }
             goto next;
         }
