@@ -140,8 +140,8 @@ _g_buyPrice DB      0, '----------', 0       ; DS:29D6 char[]
         PUBLIC  _g_offerAmount
 _g_offerAmount DB      0, '     ', 0            ; DS:29F8 char[]
 ; DS:29FF char[]
-        PUBLIC  _g_29ff
-_g_29ff DB      0, '.............................................', 0
+        PUBLIC  _g_carName
+_g_carName DB      0, '.............................................', 0
         PUBLIC  _g_saveName
 _g_saveName DB      0, '              ', 0   ; DS:2A2E char[]
         PUBLIC  _g_msgSellChange

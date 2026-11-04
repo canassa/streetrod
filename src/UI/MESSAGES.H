@@ -14,7 +14,7 @@ extern char g_promptLine2[];                            /* DS:2967 */
 extern char g_offerName[];                                   /* DS:2990 */
 extern char g_buyPrice[];                               /* DS:29D6 */
 extern char g_offerAmount[];                                   /* DS:29F8 */
-extern char g_29ff[];                                   /* DS:29FF */
+extern char g_carName[];                                   /* DS:29FF */
 extern char g_saveName[];                                   /* DS:2A2E */
 extern char g_msgSellChange[];                          /* DS:2A3E */
 extern char g_salePartName[];                                   /* DS:2A5F */

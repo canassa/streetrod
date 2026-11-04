@@ -275,10 +275,10 @@ _g_partPics DW      434h, 435h, 436h, 0, 0   ; DS:4998 int[][5]
         DW      43Ch, 43Dh, 43Eh, 0, 0
         PUBLIC  _g_boltPics
 _g_boltPics DW      0, 43Fh, 440h, 441h      ; DS:49CA int[]
-        PUBLIC  _g_49d2
-_g_49d2 DW      44Bh, 44Ch, 44Dh, 44Eh, 47F0h  ; DS:49D2 int[]
-        PUBLIC  _g_49dc
-_g_49dc DW      OFFSET DGROUP:S_47f1     ; DS:49DC char *
+        PUBLIC  _g_transPics
+_g_transPics DW      44Bh, 44Ch, 44Dh, 44Eh, 47F0h  ; DS:49D2 int[]
+        PUBLIC  _g_bankrollLabel
+_g_bankrollLabel DW      OFFSET DGROUP:S_47f1     ; DS:49DC char *
         PUBLIC  _g_gearLabel
 _g_gearLabel DW      OFFSET DGROUP:_g_gearText    ; DS:49DE char *
         PUBLIC  _g_list

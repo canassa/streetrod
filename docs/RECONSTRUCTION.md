@@ -285,8 +285,8 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
 - **HOTSPOT.C's arrays.** DS:09F4..239E is 365 18-byte `struct Hot` records in one index
   space: `Hot.f10` links a record to the next by its index into `g_hots`, and the code
   reaches records as `&g_hots[n]`. It is split into arrays where code names a record
-  directly (`g_hotBuy[0].f0`, `g_hotRepair[7].f0`, `g_hotReadyBox[i].y1`, `g_1e34[0].f4`, `g_1804[k]`,
-  `g_hotBobs[3]`) or computes a run-time difference (`g_134e - g_gar`, `g_1a44 - g_hotGasStation`),
+  directly (`g_hotBuy[0].f0`, `g_hotRepair[7].f0`, `g_hotReadyBox[i].y1`, `g_hotBodyChange[0].f4`, `g_hotTransBolts[k]`,
+  `g_hotBobs[3]`) or computes a run-time difference (`g_hotCalendar - g_gar`, `g_hotGasExit - g_hotGasStation`),
   which proves separate symbols; each array starts at the first record so named. Where
   the original's other boundaries were (one array per menu list, or fewer), and the
   arrays' names, are not recoverable. `g_engineHots` (a runtime list gx_build_hots builds), `g_engineHotTemplate`
