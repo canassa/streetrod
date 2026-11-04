@@ -277,15 +277,15 @@ struct Dev {
 };
 
 struct Hot {
-    int f0;
-    int f2;
-    int f4;
+    int kind;
+    int style;
+    int textOffset;
     int f6;
     int x1;
     int y1;
     int x2;
     int y2;
-    int f10;
+    int next;
 };
 
 struct Win {

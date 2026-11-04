@@ -620,10 +620,10 @@ static void near setup_bobs_spots(int a, int b)
     hot[4].x2 = 0xd8;
     hot[4].y1 = 0x49;
     hot[4].y2 = 0x77;
-    hot[2].f0 = (b == 1) ? 11 : 14;
+    hot[2].kind = (b == 1) ? 11 : 14;
     if (a == 0) {
-        hot[1].f0 = 14;
-        hot[3].f0 = 14;
+        hot[1].kind = 14;
+        hot[3].kind = 14;
     } else {
         x1 = ai70e4t[bn7648].r[1].x + ac825et;
         y1 = ai70e4t[bn7648].r[1].y + aw8260y;
@@ -633,7 +633,7 @@ static void near setup_bobs_spots(int a, int b)
         hot[1].x2 = x;
         hot[1].y1 = y1;
         hot[1].y2 = y;
-        hot[1].f0 = 11;
+        hot[1].kind = 11;
         x1 = ai70e4t[bn7648].r[3].x + ac825et;
         y1 = ai70e4t[bn7648].r[3].y + aw8260y;
         x = ai70e4t[bn7648].r[3].w + x1 - 1;
@@ -644,7 +644,7 @@ static void near setup_bobs_spots(int a, int b)
         hot[3].x2 = x;
         hot[3].y1 = y1;
         hot[3].y2 = y;
-        hot[3].f0 = 11;
+        hot[3].kind = 11;
         if (hot[4].y2 >= hot[1].y1)
             hot[4].y2 = hot[1].y1 - 1;
         if (hot[4].x1 < hot[3].x1) {
@@ -1122,13 +1122,13 @@ static void near set_jail_spots(int id, char c)
 
     h = g_hotBobs;
     if (id == 14)
-        g_hotBobs[0].f4 = g_msgWannaQuit - g_239e;
+        g_hotBobs[0].textOffset = g_msgWannaQuit - g_239e;
     else
-        h->f4 = g_msgBackToGarage - g_239e;
-    h[1].f0 = id;
-    h[2].f0 = id;
-    h[3].f0 = id;
-    h[4].f0 = id;
+        h->textOffset = g_msgBackToGarage - g_239e;
+    h[1].kind = id;
+    h[2].kind = id;
+    h[3].kind = id;
+    h[4].kind = id;
     g_keyMaps[37]->key = c;
 }
 

@@ -673,7 +673,7 @@ void gargfx_build_hots(int *xs, int *ys)
     item = g_1948;
     len = (num = 3) * sizeof(struct Hot);
     memcpy(g_engineHots, item, len);
-    g_boltHot.f4 = g_offBolt;
+    g_boltHot.textOffset = g_offBolt;
     i = lane = j = 0;
     for (; i < 9; i++) {
         if (o_8290[lane]) {
@@ -694,7 +694,7 @@ void gargfx_build_hots(int *xs, int *ys)
         }
     }
     if (o_8290[0]) {
-        g_boltHot.f4 = g_offWires;
+        g_boltHot.textOffset = g_offWires;
         g_boltHot.f6 = 13;
         i = (ap82acz == 0x446) + engine_index() * 2;
         g_boltHot.x2 = (g_boltHot.x1 = g_wiresPos[i * 2] + 0x5b) + 10;
@@ -702,7 +702,7 @@ void gargfx_build_hots(int *xs, int *ys)
         insert_hot(g_engineHots, &g_boltHot, num);
         num++;
     }
-    g_engineHots[num].f0 = 9;
+    g_engineHots[num].kind = 9;
     hz82ae = rx;
     g82b2t = rh;
     sys_hover_reset();

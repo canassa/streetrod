@@ -488,11 +488,11 @@ static void near buy_from_ads(int tab)
         if (used) {
             k3 = g_4806[i5 = list4[n + off6]].nameOffset;
             price6 = g_4806[i5].value;
-            g_hotBuy[0].f0 = 0xe;
+            g_hotBuy[0].kind = 0xe;
         } else {
             k3 = (specn = &g7d86n[i5 = list4[n - 2]])->nameOffset;
             price6 = specn->price;
-            g_hotBuy[0].f0 = 10;
+            g_hotBuy[0].kind = 10;
         }
         strcpy(g_offerName, g_desc + k3);
         sprintf(g_buyPrice, "$%-3d ?", price6);

@@ -123,7 +123,7 @@ static void near clear_gas_spots(void)
     g_6ca8pz = 0;
     g_tankCapIsActive = 0;
     for (k = 0; k < 6; k++)
-        g_hots[find_gas_spot(g_gasSpotIds[k])].f0 = 14;
+        g_hots[find_gas_spot(g_gasSpotIds[k])].kind = 14;
 }
 
 /* place_gas_spot @ 0000:B49C (linear 0x0B49C, 66 bytes) */
@@ -134,7 +134,7 @@ static void near place_gas_spot(int id, int x, int y, int w, int h)
     p = &g_hots[find_gas_spot(id)];
     p->x2 = (p->x1 = x) + w - 1;
     p->y2 = (p->y1 = y) + h - 1;
-    p->f0 = 11;
+    p->kind = 11;
 }
 
 /* spots_idle @ 0000:B4DE (linear 0x0B4DE, 71 bytes) */
@@ -857,12 +857,12 @@ finishstop:
                     g_msgPlusTires[0] = 0;
                 sel = i ? 0x1a : 0x19;
                 if ((long)v > a_7eaap.m7eaa) {
-                    g_hotRepair[0].f0 = g_hotRepair[7].f0 = 0xe;
+                    g_hotRepair[0].kind = g_hotRepair[7].kind = 0xe;
                     g_keyMaps[sel][0].val = 0xd0;
                     g_keyMaps[sel][1].key = 1;
                     g_keyMaps[sel][1].val = 0xd0;
                 } else {
-                    g_hotRepair[0].f0 = g_hotRepair[7].f0 = 0xa;
+                    g_hotRepair[0].kind = g_hotRepair[7].kind = 0xa;
                     g_keyMaps[sel][0].val = 0xcf;
                     g_keyMaps[sel][1].key = 0x21;
                     g_keyMaps[sel][1].val = 0xcf;

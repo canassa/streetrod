@@ -210,7 +210,7 @@ static void near hide_spots(void)
     int i;
 
     for (i = 0; i < 5; i++)
-        g_hots[F_06827(g_508a[i])].f0 = 14;
+        g_hots[F_06827(g_508a[i])].kind = 14;
 }
 
 /* place_spots @ 0000:68E8 (linear 0x068E8, 446 bytes)
@@ -228,31 +228,31 @@ static void near place_spots(int n, int x, int y)
     hotspot->y1 = panel->r[0].y + y;
     hotspot->x2 = (unsigned)hotspot->x1 + panel->r[0].w;
     hotspot->y2 = (unsigned)hotspot->y1 + panel->r[0].h;
-    hotspot->f0 = 11;
+    hotspot->kind = 11;
     hotspot = &g_hots[F_06827(13)];
     hotspot->x1 = panel->r[1].x + x;
     hotspot->y1 = panel->r[1].y + y;
     hotspot->x2 = (unsigned)hotspot->x1 + panel->r[1].w;
     hotspot->y2 = (unsigned)hotspot->y1 + panel->r[1].h;
-    hotspot->f0 = 11;
+    hotspot->kind = 11;
     hotspot = &g_hots[F_06827(9)];
     hotspot->x1 = panel->r[2].x + x;
     hotspot->y1 = panel->r[2].y + y;
     hotspot->x2 = (unsigned)hotspot->x1 + panel->r[2].w;
     hotspot->y2 = (unsigned)hotspot->y1 + panel->r[2].h;
-    hotspot->f0 = 11;
+    hotspot->kind = 11;
     hotspot = &g_hots[F_06827(10)];
     hotspot->x1 = panel->r[3].x + x;
     hotspot->y1 = panel->r[3].y + y;
     hotspot->x2 = (unsigned)hotspot->x1 + panel->r[3].w;
     hotspot->y2 = (unsigned)hotspot->y1 + panel->r[3].h;
-    hotspot->f0 = 11;
+    hotspot->kind = 11;
     hotspot = &g_hots[F_06827(12)];
     hotspot->x1 = panel->r[4].x + x;
     hotspot->y1 = panel->r[4].y + y;
     hotspot->x2 = (unsigned)hotspot->x1 + panel->r[4].w;
     hotspot->y2 = (unsigned)hotspot->y1 + panel->r[4].h;
-    hotspot->f0 = 11;
+    hotspot->kind = 11;
 }
 
 /* F_06AA6 @ 0000:6AA6 (linear 0x06AA6, 50 bytes) */
@@ -508,7 +508,7 @@ void near F_0711A(unsigned mask)
         return;
     }
     bm1 = menu_grab(34, &x, &y, 2);
-    g_1e34[0].f4 = msg - g_239e;
+    g_1e34[0].textOffset = msg - g_239e;
     menu_push(34);
     while ((key = sys_wait_input(3000)) == 0)
         ;
@@ -809,7 +809,7 @@ void near F_07AA4(void)
             flags[k + 1] = prev == 1 ? 1 : 2;
         else
             flags[k + 1] = 0;
-        g_1804[k].f0 = 11;
+        g_1804[k].kind = 11;
     }
     m_8272.m8286 = owner->transmission ? g_49d2[g_4806[owner->transmission->idx].variant] : 0;
     r_vid.f16 = !m_8272.m8286;
@@ -859,7 +859,7 @@ void near F_07AA4(void)
                         flags[k + 1] = 1;
                         F_123F4(owner->transmissionBolts[k] = 1, k);
                         F_16B61();
-                        g_1804[k].f0 = 11;
+                        g_1804[k].kind = 11;
                     }
                     sys_hover_reset();
                     cursor_ctl(-2);

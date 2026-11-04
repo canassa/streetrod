@@ -120,7 +120,7 @@ void sys_music_pause(void)
         outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
         g_speakerOn = 0;
         g_voice->dirty = 1;
-        g_hots[F_06827(-40)].f4 = g_offTunes;
+        g_hots[F_06827(-40)].textOffset = g_offTunes;
         sys_hover_reset();
     }
 }
@@ -132,7 +132,7 @@ void sys_music_resume(void)
     if (g_musicOn && !g_voice->active && g_voice->phraseStart != g_voice->song) {
         g_voice->active = 1;
         g_voice->dirty = 1;
-        g_hots[F_06827(-40)].f4 = g_offSquelch;
+        g_hots[F_06827(-40)].textOffset = g_offSquelch;
         sys_hover_reset();
     }
 }
@@ -553,7 +553,7 @@ int sys_wait_input(int ticks)
                             aq8256z = 1;
                             F_11421(g_bannerX, "", cz8bc0y);
                         }
-                        F_11421(-1, g_239e + at8ba8v->f4, 0);
+                        F_11421(-1, g_239e + at8ba8v->textOffset, 0);
                         bit = 1;
                     }
                 } else {

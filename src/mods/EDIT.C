@@ -164,7 +164,7 @@ int edit_spot_number(int *out, char *buf)
 {
     int rl;
 
-    x_colors = bustyle->pal[az8ba2t->f2];
+    x_colors = bustyle->pal[az8ba2t->style];
     g_editDigits = 1;
     rl = edit_line(az8ba2t->x1, az8ba2t->y1, buf,
         (az8ba2t->x2 - az8ba2t->x1) / 6 > 10 ? 10 : (az8ba2t->x2 - az8ba2t->x1) / 6);
@@ -200,7 +200,7 @@ int edit_text_box(int id, int len, char *s)
     int rl;
 
     menu_push(id);
-    x_colors = bustyle->pal[az8ba2t->f2];
+    x_colors = bustyle->pal[az8ba2t->style];
     rl = edit_line(az8ba2t->x1, az8ba2t->y1, s, len);
     menu_pop(1);
     return rl > 0 ? 0 : rl;
