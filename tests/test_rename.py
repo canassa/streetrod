@@ -17,8 +17,8 @@ class RenameTests(unittest.TestCase):
 
     def test_file_stems(self):
         pat = rename._pattern({'FAME': 'PROTECT'}, prefix=False)
-        self.assertEqual(rename._sub(pat, {'FAME': 'PROTECT'}, 'MODS\\FAME.C FAME.OBJ _M_02FC8'),
-                         'MODS\\PROTECT.C PROTECT.OBJ _M_02FC8')
+        self.assertEqual(rename._sub(pat, {'FAME': 'PROTECT'}, 'SYS\\FAME.C FAME.OBJ _M_02FC8'),
+                         'SYS\\PROTECT.C PROTECT.OBJ _M_02FC8')
 
     def test_pairs(self):
         self.assertEqual(rename.parse_pairs(['# c', 'dos_print a  # why', '', 'FAME.C B.C']),

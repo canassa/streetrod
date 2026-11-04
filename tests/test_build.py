@@ -38,7 +38,7 @@ class MakefileTests(unittest.TestCase):
             self.assertTrue(r.path.exists(), r.source)
             self.assertEqual(r.stem, r.path.stem.upper())
             if r.compiler == 'CL':
-                self.assertTrue(r.command.startswith('CL /c /W3 /Fc /IINCLUDE /AM '), r.target)
+                self.assertTrue(r.command.startswith('CL /c /W3 /Fc /AM '), r.target)
                 # the dependencies are the source and the headers it includes
                 self.assertEqual(r.deps, [r.source, *makefile.header_deps(r.path)], r.target)
             else:
@@ -47,17 +47,17 @@ class MakefileTests(unittest.TestCase):
         fs = {f.path.name: f for f in module.files()}
         self.assertTrue(all(f.segment for f in fs.values()))
         self.assertEqual(fs['DASH.C'].rule.command,
-                         'CL /c /W3 /Fc /IINCLUDE /AM /Oalsi /Gs /FPi /NTS0F38_TEXT MODS\\DASH.C')
+                         'CL /c /W3 /Fc /AM /Oalsi /Gs /FPi /NTS0F38_TEXT GAME\\DASH.C')
 
     def test_parser_and_edits(self):
-        text = ('# comment\r\nX=D:\\LIB\r\nCC=CL /c\r\n\r\nA.OBJ: MODS\\A.C \\\r\n\tINCLUDE\\A.H\r\n'
-                '\t$(CC) /AM /Oas /NTS0000_TEXT MODS\\A.C\r\n\r\nL.LIB: $(X)\\M.LIB\r\n\tLIB L.LIB +$(X)\\M.LIB;\r\n')
+        text = ('# comment\r\nX=D:\\LIB\r\nCC=CL /c\r\n\r\nA.OBJ: SYS\\A.C \\\r\n\tSYS\\A.H\r\n'
+                '\t$(CC) /AM /Oas /NTS0000_TEXT SYS\\A.C\r\n\r\nL.LIB: $(X)\\M.LIB\r\n\tLIB L.LIB +$(X)\\M.LIB;\r\n')
         macros, rules = makefile.parse(text)
         self.assertEqual(macros['X'], 'D:\\LIB')
         a, lib = rules
-        self.assertEqual(a.deps, ['MODS\\A.C', 'INCLUDE\\A.H'])
-        self.assertEqual((a.flags, a.segment, a.source), ('/AM /Oas', 'S0000_TEXT', 'MODS\\A.C'))
-        self.assertEqual(a.command, 'CL /c /AM /Oas /NTS0000_TEXT MODS\\A.C')
+        self.assertEqual(a.deps, ['SYS\\A.C', 'SYS\\A.H'])
+        self.assertEqual((a.flags, a.segment, a.source), ('/AM /Oas', 'S0000_TEXT', 'SYS\\A.C'))
+        self.assertEqual(a.command, 'CL /c /AM /Oas /NTS0000_TEXT SYS\\A.C')
         self.assertEqual(lib.deps, ['D:\\LIB\\M.LIB'])
         self.assertEqual(lib.command, 'LIB L.LIB +D:\\LIB\\M.LIB;')
         with tempfile.TemporaryDirectory() as tmp:
@@ -65,16 +65,16 @@ class MakefileTests(unittest.TestCase):
             p.write_bytes(text.encode())
             makefile.set_flags('A', '/AM /Oals', p)
             new = p.read_bytes().decode()
-            self.assertIn('\t$(CC) /AM /Oals /NTS0000_TEXT MODS\\A.C\r\n', new)
+            self.assertIn('\t$(CC) /AM /Oals /NTS0000_TEXT SYS\\A.C\r\n', new)
             self.assertTrue(new.startswith('# comment\r\nX=D:\\LIB\r\n'))
             self.assertEqual(makefile.rules(p)[0].deps, a.deps)
             self.assertEqual(makefile.rules(p)[1].command, lib.command)
 
     def test_shared_pc_constants(self):
         asm = dict(re.findall(r'^(\w+)\s+EQU\s+(\w+)\s*$',
-                              (config.INCLUDE / 'PC.INC').read_text(), re.M))
+                              config.source_path('PC.INC').read_text(), re.M))
         shared = re.findall(r'^#define (\w+) (0x[\da-f]+|\d+)\s*$',
-                            (config.INCLUDE / 'PC.H').read_text(), re.M | re.I)
+                            config.source_path('PC.H').read_text(), re.M | re.I)
         for name, value in shared:
             self.assertIn(name, asm)
             literal = asm[name]
@@ -84,7 +84,7 @@ class MakefileTests(unittest.TestCase):
     def test_asm_include_dependencies(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            include = root / 'include'
+            include = root / 'SYS'
             include.mkdir()
             (include / 'PC.INC').write_text('INCLUDE BITS.INC\n')
             (include / 'BITS.INC').write_text('GC_MODE EQU 5\nINCLUDE PC.INC\n')
@@ -93,11 +93,11 @@ class MakefileTests(unittest.TestCase):
                            '; INCLUDE UNUSED.INC\n')
             mk = root / 'MAKEFILE'
             mk.write_text('ASM=MASM\nA.OBJ: A.ASM\n\t$(ASM) /Ml A.ASM,A.OBJ,A.LST;\n')
-            with patch.object(config, 'INCLUDE', include), patch.object(config, 'SRC', root):
-                self.assertEqual(makefile.header_deps(asm), ['INCLUDE\\BITS.INC', 'INCLUDE\\PC.INC'])
+            with patch.object(config, 'SRC', root):
+                self.assertEqual(makefile.header_deps(asm), ['SYS\\BITS.INC', 'SYS\\PC.INC'])
                 self.assertEqual(makefile.sync_deps(mk), ['A.OBJ'])
                 self.assertEqual(makefile.compile_rules(mk)[0].deps,
-                                 ['A.ASM', 'INCLUDE\\BITS.INC', 'INCLUDE\\PC.INC'])
+                                 ['A.ASM', 'SYS\\BITS.INC', 'SYS\\PC.INC'])
                 self.assertEqual(makefile.sync_deps(mk), [])
                 asm.write_text('        .MODEL MEDIUM\n')
                 self.assertEqual(makefile.sync_deps(mk), ['A.OBJ'])
@@ -137,7 +137,7 @@ class MakefileTests(unittest.TestCase):
                 'struct Callbacks { char enabled; '
                 'void (far *show)(void); '
                 'int (near *read)(int); int count; };')
-            with patch.object(config, 'INCLUDE', include):
+            with patch.object(config, 'SRC', include):
                 record = Types().named('struct Callbacks')
         self.assertEqual(record['size'], 10)
         self.assertEqual([(name, off, node['size']) for name, off, node in record['fields']],
@@ -149,7 +149,7 @@ class MakefileTests(unittest.TestCase):
             (include / 'STRUCTS.H').write_text(
                 'enum Choice { NONE, FIRST, SECOND }; '
                 'struct Selection { char enabled; enum Choice choice; };')
-            with patch.object(config, 'INCLUDE', include):
+            with patch.object(config, 'SRC', include):
                 record = Types().named('struct Selection')
         self.assertEqual(record['size'], 4)
         self.assertEqual([(name, off, node['size']) for name, off, node in record['fields']],

@@ -17,7 +17,7 @@ class KeymapModuleTests(unittest.TestCase):
         self.assertEqual(fileheaders._defines(owners['HERCDET'][0], names), set())
         self.assertEqual({r['header'] for r in source.headers()['globals'] if r['name'] in names},
                          {'KEYMAPS'})
-        self.assertIn((0x5580, 0x57F6, 'src/mods/KEYMAPS.ASM'), dgroup.DATA_UNITS)
+        self.assertIn((0x5580, 0x57F6, 'src/INPUT/KEYMAPS.ASM'), dgroup.DATA_UNITS)
 
     def test_relocation_order_keeps_hercules_before_music_without_its_data(self):
         perf, maps, herc, music, hercgfx = 0xDCBE, 0x105580, 0xE56A, 0x1628A, 0xE5D2

@@ -35,7 +35,7 @@ def align(n,a):return (n+a-1)//a*a
 
 class Types:
     def __init__(self):
-        text=re.sub(r'/\*.*?\*/','', (config.INCLUDE/'STRUCTS.H').read_text(),flags=re.S)
+        text=re.sub(r'/\*.*?\*/','', config.source_path('STRUCTS.H').read_text(),flags=re.S)
         self.defs={};self.cache={};at=0
         pattern=re.compile(r'\b(struct|union)\s+(\w+)\s*\{')
         while m:=pattern.search(text,at):

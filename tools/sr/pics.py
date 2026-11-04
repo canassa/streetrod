@@ -18,7 +18,7 @@ RGB16 = (
 
 
 def source_array(filename, name):
-    text = (config.SRC / 'mods' / filename).read_text(encoding='latin-1')
+    text = config.source_path(filename).read_text(encoding='latin-1')
     match = re.search(r'\b' + re.escape(name) + r'\s*\[\d+\]\s*=\s*\{([^}]+)\}', text)
     if not match:
         raise ValueError(f'{filename}: initializer for {name} not found')

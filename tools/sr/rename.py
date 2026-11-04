@@ -19,9 +19,8 @@ _FILE = re.compile(r"[A-Z0-9_]{1,8}\.(C|ASM)")
 def text_files():
     """Every checked-in text file that may name a symbol or a source file."""
     root = config.ROOT
-    out = [p for d in ("mods", "data") for p in (config.SRC / d).iterdir()
-           if p.suffix.upper() in (".C", ".ASM", ".MD")]
-    out += list(config.INCLUDE.glob("*.H"))
+    out = config.source_files('.C', '.ASM', '.H', '.INC')
+    out += [p for p in config.SRC.rglob('*') if p.suffix.upper() == '.MD']
     out += [root / "CLAUDE.md", root / "README.md"]
     out += list((root / "docs").glob("*.md"))
     out += list((root / ".claude" / "skills").rglob("*.md"))
@@ -95,13 +94,11 @@ def rename(pairs, dry=False):
         if _FILE.fullmatch(old.upper()) and "." in old:
             if not _FILE.fullmatch(new) or new.rsplit(".", 1)[1] != old.upper().rsplit(".", 1)[1]:
                 raise SystemExit(f"{new}: a source file name is DOS 8.3, upper case, same extension as {old}")
-            src = next((p for d in ("mods", "data") for p in (config.SRC / d).iterdir()
-                        if p.name.upper() == old.upper()), None)
+            src = config.source_index().get(old.upper())
             if src is None:
-                raise SystemExit(f"{old}: not a file of src/mods or src/data")
+                raise SystemExit(f"{old}: not a source file under src/")
             ostem, nstem = src.stem.upper(), new.rsplit(".", 1)[0]
-            if any(p.stem.upper() == nstem for d in ("mods", "data") for p in (config.SRC / d).iterdir()) \
-                    or (config.INCLUDE / f"{nstem}.H").exists() and nstem != ostem:
+            if nstem != ostem and any(p.stem.upper() == nstem for p in config.source_index().values()):
                 raise SystemExit(f"{new}: a file of that name exists")
             stems[ostem] = nstem
             moves.append((src, src.with_name(new)))
@@ -124,7 +121,7 @@ def rename(pairs, dry=False):
             text = re.sub(rf"\b{guard[0]}_H\b", f"{guard[1]}_H", text)
         return text
 
-    headers = {config.INCLUDE / f"{o}.H": (o, n) for o, n in stems.items()}
+    headers = {p.with_suffix('.H'): (p.stem, q.stem) for p, q in moves}
     for p in files + [makefile.MAKEFILE, makefile.RESPONSE]:
         raw = p.read_bytes().decode("latin-1")
         new = fix(raw, headers.get(p))
@@ -141,9 +138,9 @@ def rename(pairs, dry=False):
         if dry:
             continue
         subprocess.run(["git", "mv", str(src), str(dst)], cwd=config.ROOT, check=True)
-        header = config.INCLUDE / f"{src.stem.upper()}.H"
+        header = src.with_suffix('.H')
         if header.exists():
-            subprocess.run(["git", "mv", str(header), str(config.INCLUDE / f"{dst.stem.upper()}.H")],
+            subprocess.run(["git", "mv", str(header), str(dst.with_suffix('.H'))],
                            cwd=config.ROOT, check=True)
     if dry:
         return report

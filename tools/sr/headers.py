@@ -1,5 +1,5 @@
 """`./sr headers`: the include blocks of the C sources (fileheaders.py) and the header
-dependencies of src/MAKEFILE, kept in step with the hand-written headers in src/include.
+dependencies of src/MAKEFILE, kept in step with the hand-written headers in the source folders.
 The files in git are the source the build compiles; nothing here runs during `./sr build` or
 `./sr check`. `check()` (`./sr headers --check`) reports what a run would change without
 writing, and the headers' problems (a name declared twice, or by a header whose file does not
@@ -17,9 +17,9 @@ def generate():
     from . import fileheaders, makefile
     problems = fileheaders.generate()
     makefile.sync_deps()
-    text = (config.INCLUDE / "STRUCTS.H").read_text(errors="replace")
+    text = config.source_path('STRUCTS.H').read_text(errors="replace")
     if text.rstrip().rsplit("\n", 1)[-1].strip() != "#endif":
-        problems.append("src/include/STRUCTS.H: something was added after the closing #endif; "
+        problems.append("src/SYS/STRUCTS.H: something was added after the closing #endif; "
                         "move it inside the include guard")
     return problems
 

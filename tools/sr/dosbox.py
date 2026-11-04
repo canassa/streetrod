@@ -70,6 +70,7 @@ def compile_all(jobs, name="build", emu=None):
         shutil.rmtree(root)
     (root / ".home").mkdir(parents=True)
     (root / "TMP").mkdir()
+    config.stage_headers(root / "HEADERS", flat=True)
     lines = ["@echo off"]
     for n, job in enumerate(jobs):
         job.dir = root / f"J{n:04d}"
@@ -95,7 +96,7 @@ def compile_all(jobs, name="build", emu=None):
     argv += [
         "-c", f'mount c "{root}"',
         "-c", f'mount d "{tc}"',
-        "-c", f'mount e "{config.INCLUDE}"',
+        "-c", f'mount e "{root / "HEADERS"}"',
         "-c", f'mount f "{config.MASM}"',
         "-c", "set PATH=D:\\BIN;F:\\BIN",
         "-c", "set INCLUDE=E:\\;D:\\INCLUDE;F:\\INCLUDE",

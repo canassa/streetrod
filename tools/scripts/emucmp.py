@@ -2,7 +2,7 @@
 
 Compiles the same jobs under both backends and compares every file each job leaves behind
 (OBJ, COD, LST, CC.LOG) byte for byte. Job sets:
-  - every src/mods source, with its command line (src/MAKEFILE) and a spread of other
+  - every src/ source, with its command line (src/MAKEFILE) and a spread of other
     flag sets (/Ol, /Oi, /Ox, /Od, other models)
   - the 46 `./sr sweep` combos on a few sources
   - hand-written probes: floating point constants, errors and warnings, MASM
@@ -60,19 +60,10 @@ _qqasm  ENDP
 }
 
 
-def snapshot(srcdirs, include, dest):
-    """Copy sources and headers into dest; return (paths, include copy)."""
-    shutil.copytree(include, dest / "include")
-    out = []
-    for d in srcdirs:
-        for p in sorted(d.glob("*")):
-            if p.suffix.upper() not in (".C", ".ASM"):
-                continue
-            q = dest / "src" / d.name / p.name.upper()
-            q.parent.mkdir(parents=True, exist_ok=True)
-            q.write_text(p.read_text(errors="replace"))
-            out.append(q)
-    return out, dest / "include"
+def snapshot(dest):
+    """Snapshot the source tree so both backends see the same files."""
+    shutil.copytree(config.SRC, dest)
+    return sorted(p for p in dest.rglob('*') if p.suffix in ('.C', '.ASM')), dest
 
 
 # The two things that legitimately differ, both MASM-only and not code: the LST page header
@@ -111,7 +102,7 @@ def run_backend(emu, specs, label, chunk):
 
 
 def compare(label, specs, include, chunk=40):
-    config.INCLUDE = include
+    config.SRC = include
     a, ta = run_backend("dosbox", specs, label, chunk)
     b, tb = run_backend("emu2", specs, label, chunk)
     bad = soft = 0
@@ -146,7 +137,7 @@ def main():
     shutil.rmtree(base, ignore_errors=True)
     # each file's command line (its src/MAKEFILE block)
     command = {f.path.name.upper(): f.command for f in module.sources()}
-    srcs, inc = snapshot([config.SRC / "mods"], config.INCLUDE, base / "mc")
+    srcs, inc = snapshot(base / "mc")
     bad = 0
 
     def own(p):

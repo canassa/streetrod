@@ -39,14 +39,14 @@ FORCE_OWNER = [(0x4718, 0x4AFE, 0x02B9A),
 # Data-only translation units: recovered splits and reconstruction choices documented in
 # docs/RECONSTRUCTION.md. Each gets a synthetic unit key above any code address.
 # File names describe content; the historical names are unknown.
-DATA_UNITS = [(0x09F4, 0x239E, 'src/mods/HOTSPOT.C'),
+DATA_UNITS = [(0x09F4, 0x239E, 'src/UI/HOTSPOT.C'),
               # odd-address ints and arrays, count-prefixed message records: not C-placeable
-              (0x239E, 0x4718, 'src/mods/MESSAGES.ASM'),
-              (0x5580, 0x57F6, 'src/mods/KEYMAPS.ASM'),
+              (0x239E, 0x4718, 'src/UI/MESSAGES.ASM'),
+              (0x5580, 0x57F6, 'src/INPUT/KEYMAPS.ASM'),
               # MSC emits a global whose address an earlier initializer takes before that
               # initializer: the table at DS:6078 precedes the second set, so two files
-              (0x5EC6, 0x60A2, 'src/mods/SCENERY.C'),
-              (0x60A2, 0x629C, 'src/mods/SCENERY2.C')]
+              (0x5EC6, 0x60A2, 'src/GAME/SCENERY.C'),
+              (0x60A2, 0x629C, 'src/GAME/SCENERY2.C')]
 DATA_KEY = 0x100000
 # Relocation-order evidence for objects whose position no literal pool pins: (units, after,
 # why). `link_order()` moves the units after `after`; each code segment's units then keep
@@ -90,13 +90,13 @@ def defined_in_sources(prefix='g_'):
     with `prefix`. SOURCE_DECLS keeps each C definition's declaration (with @ for the name)."""
     out = {}
     name = re.escape(prefix) + r'\w*' if prefix else r'[A-Za-z_]\w*'
-    for path in sorted((config.SRC / 'mods').glob('*.C')):
+    for path in config.source_files('.C'):
         text = re.sub(r'/\*.*?\*/', '', path.read_text(errors='replace'), flags=re.S)
         for m in re.finditer(rf'(?m)^(?!extern\b|static\b|#)([A-Za-z_][\w *(]*?)\b({name})\s*((?:\[[^\]]*\]\s*)*)(?:\)\s*\([^)]*\))?\s*=', text):
             out[m.group(2)] = str(path.relative_to(config.ROOT))
             if m.group(2).startswith('g_'):
                 SOURCE_DECLS[m.group(2)] = (m.group(1) + '@' + m.group(3)).replace(' @', ' @').strip()
-    for path in sorted((config.SRC / 'mods').glob('*.ASM')):
+    for path in config.source_files('.ASM'):
         text = path.read_text(errors='replace')
         for m in re.finditer(rf'(?m)^\s*PUBLIC\s+_({name})', text):
             if re.search(rf'(?m)^_{m.group(1)}\s+(LABEL|D[BWDQ])\b', text):

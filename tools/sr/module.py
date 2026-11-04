@@ -15,7 +15,6 @@ import re
 from . import config, makefile, source
 from .disasm import branch_target, linear
 
-MODS = config.SRC / "mods"
 
 
 def fname(row):

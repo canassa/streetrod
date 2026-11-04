@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # The DOS-native build: DOSBox-X with the drives src/MAKEFILE expects, and MSC SETUP's
-# environment. C: is work/dos, a fresh copy of src/ (MAKEFILE, SR.LNK, MODS\, DATA\,
-# INCLUDE\); D: toolchain/msc51; F: toolchain/masm51. No host tool is involved.
-#   ./dosbox.sh          interactive: type MAKE MAKEFILE
+# environment. C: is work/dos, a fresh copy of src/ (MAKEFILE, SR.LNK, SRENV.BAT and subsystem folders); D: toolchain/msc51; F: toolchain/masm51. No host tool is involved.
+#   ./dosbox.sh          interactive: SRENV.BAT is called before the prompt; type MAKE MAKEFILE
 #   ./dosbox.sh --make   headless: MAKE MAKEFILE > MAKE.LOG, then compare C:\SR.EXE with orig/SR.EXE
 set -euo pipefail
 
@@ -14,8 +13,8 @@ mkdir -p "$TREE/TMP"
 cp -R "$HERE/src/." "$TREE/"
 
 args=(-c "mount c \"$TREE\"" -c "mount d \"$HERE/toolchain/msc51\"" -c "mount f \"$HERE/toolchain/masm51\""
-      -c "set PATH=D:\\BIN;F:\\BIN" -c "set INCLUDE=C:\\INCLUDE;D:\\INCLUDE;F:\\INCLUDE" -c "set LIB=D:\\LIB"
-      -c "set TMP=C:\\TMP" -c "c:")
+      -c "set PATH=D:\\BIN;F:\\BIN" -c "set LIB=D:\\LIB"
+      -c "set TMP=C:\\TMP" -c "c:" -c "call SRENV.BAT")
 if [ "${1:-}" != "--make" ]; then
     exec dosbox-x "${args[@]}" "$@"
 fi

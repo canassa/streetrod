@@ -6,7 +6,7 @@ that only use int 21h, so they run under it unchanged; CL's spawn of C1/C2/C3 be
 child emu2 process. One CL run costs ~25 ms instead of a ~1.5 s DOSBox-X boot, and the
 jobs run in parallel (one emu2 per job, each with its own TMP).
 
-The drives are the same as in DOSBox-X (C: work root, D: MSC 5.1, E: src/include,
+The drives are the same as in DOSBox-X (C: work root, D: MSC 5.1, E: a flat header snapshot,
 F: MASM 5.1), the current directory is C:\\Jnnnn, and only DOS stdout goes to CC.LOG,
 exactly like `cl ... > CC.LOG` in RUN.BAT, so OBJ, COD, LST and CC.LOG are the same bytes
 (tools/scripts/emucmp.py checks that). Every run is bounded by `timeout` and RLIMIT_FSIZE.
@@ -45,7 +45,7 @@ def _run_one(root, n, job, exe):
     env = {
         **{k: os.environ[k] for k in ("PATH", "TZ", "TZDIR") if k in os.environ},  # TZ: LST dates
         "EMU2_DRIVE_C": str(root), "EMU2_DRIVE_D": str(config.TOOLCHAIN),
-        "EMU2_DRIVE_E": str(config.INCLUDE), "EMU2_DRIVE_F": str(config.MASM),
+        "EMU2_DRIVE_E": str(root / "HEADERS"), "EMU2_DRIVE_F": str(config.MASM),
         "EMU2_DEFAULT_DRIVE": "C", "EMU2_CWD": f"\\J{n:04d}", "EMU2_PROGNAME": dos,
     }  # fmt: skip
     dosenv = ["PATH=D:\\BIN;F:\\BIN", "INCLUDE=E:\\;D:\\INCLUDE;F:\\INCLUDE", "LIB=D:\\LIB",

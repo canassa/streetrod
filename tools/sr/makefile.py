@@ -63,7 +63,7 @@ class Rule:
 
     @property
     def source(self):
-        """The DOS path of the compiled source (MODS\\MAIN.C)."""
+        """The DOS path of the compiled source (SYS\\MAIN.C)."""
         last = self.raw[0].split()[-1]
         return last.split(',')[0] if self.compiler == 'MASM' else last
 
@@ -193,19 +193,20 @@ def link_order(path=None):
 
 
 def header_deps(source):
-    """INCLUDE\\X.H or INCLUDE\\X.INC for every project header a source includes (directly or through
+    """Folder-relative paths for every project header a source includes (directly or through
     another project header), sorted."""
+    index = config.source_index()
     seen, todo = set(), [source]
     while todo:
         text = todo.pop().read_text(encoding='latin-1')
         pattern = (r'^\s*INCLUDE\s+(\w+\.INC)\b' if source.suffix.upper() == '.ASM'
                    else r'^#include\s+"(\w+\.H)"')
         for h in re.findall(pattern, text, re.M | re.I):
-            p = config.INCLUDE / h.upper()
-            if h.upper() not in seen and p.exists():
+            p = index.get(h.upper())
+            if h.upper() not in seen and p is not None:
                 seen.add(h.upper())
                 todo.append(p)
-    return ['INCLUDE\\' + h for h in sorted(seen)]
+    return [str(index[h].relative_to(config.SRC)).replace('/', '\\') for h in sorted(seen)]
 
 
 def _block(target, deps, command):
