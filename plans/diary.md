@@ -833,3 +833,15 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - Reverted F_2382D to the plain nested `for` loops under `#pragma loop_opt(off)`. The goto form (row loop entered at its test) also matches, but needs knowledge of an undocumented `/Ol` rule; the pragma is MSC's documented mechanism, the same idiom stays in M_00D58.C and M_039C0.C, and the latch copy has a reason to avoid `rep movsw`. RECONSTRUCTION.md records both forms. The recipe book keeps the `/Ol` entry-point rule.
 - Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572.
+
+## 2026-11-05 05:00 CET: Real names for files, functions and globals
+
+### What I did
+- Gave evidence-based names to 84 of the 85 src/mods files (plus SPANS1/2 and NEEDLE in src/data; CARMASKS/CARMASK2 are SCENERY/SCENERY2, the roadside sprites), about 500 game functions, about 390 initialized globals and statics, and a few communals. Seven read-only analysis agents gathered the evidence (strings, ports, callers, data use); low-confidence items keep their placeholders (M_02B9A.ASM, the jingle starters, most communals). New `./sr rename` (DB, sources, MASM, MAKEFILE, SR.LNK, docs, headers in one pass) and `./sr fit` (hash window of a communal or static).
+- An independent skeptical review (all functions, ~350 globals, all files) found two inverted names (`entry_beats_score` -> `score_beats_entry`, `g_tireGrip` -> `g_tireSlip`), two unsupported (`g_hotAttendant`, the write-only cursor hot point -> placeholders) and some over-specific ones (`siren_sweep` -> `sweep_up_down`, `g_garagePics` -> `g_gamePics`, `sys_car_halt` -> placeholder, the carhop -> a walker, WALKER.C, ...); all corrected. `g_pageBmps` and `g_walkState` were chosen to keep their hash slots.
+- egablit_latch_pack (was F_2382D) keeps its `#pragma loop_opt(off)` and plain `for` loops.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, `headers --check`, `dgroup check`, `dgroup order` clean, tests OK.
+
+### What I learned
+- MSC's per-file budget counts name characters of static functions and the static variables a file references too, not only externals (rule 4d corrected). GARAGE.C (before F_07AA4) and VIEW.C (before F_2969D) are at the limit, so most of their symbols keep placeholders.
+- Communal windows are 0-3 hash buckets wide; few descriptive names fit them.
