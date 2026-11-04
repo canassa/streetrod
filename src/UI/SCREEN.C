@@ -149,9 +149,7 @@ void screen_msg_box(char *s)
 }
 
 char g_promptPalette[18] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14, 0, 0};   /* DS:04AC */
-int g_picX = 0;   /* DS:04BE */
-int g_picY = 0;   /* DS:04C0 */
-int g_picMaxH = SCREEN_BODY_HEIGHT;   /* DS:04C2 */
+struct PicturePlacement g_picturePlacement = {0, 0, SCREEN_BODY_HEIGHT}; /* DS:04BE */
 
 /* screen_wait_msg @ 0F38:23CE (linear 0x1174E, 390 bytes)
 
@@ -216,7 +214,7 @@ void screen_wait_msg(char *msg)
 
 /* F_118D4 @ 0F38:2554 (linear 0x118D4, 228 bytes)
 
-   Blit bitmap number a to the back buffer at (g_picX, g_picY), then copy the rectangle to the front
+   Blit bitmap number a to the back buffer at (g_picturePlacement.x, g_picturePlacement.y), then copy the rectangle to the front
    buffer. b >= 0 first fills the screen with color b. */
 
 int F_118D4(int a, int b)
@@ -228,17 +226,17 @@ int F_118D4(int a, int b)
     cursor_ctl(CURSOR_HIDE);
     p = F_15BBE(a, ARENA_HIGH_STACK);
     if (b >= 0)
-        screen_fill_rect(0, 0, SCREEN_WIDTH, g_picMaxH, b);
+        screen_fill_rect(0, 0, SCREEN_WIDTH, g_picturePlacement.maxHeight, b);
     pkt.w = p->width;
-    pkt.h = p->height > g_picMaxH ? g_picMaxH : p->height;
+    pkt.h = p->height > g_picturePlacement.maxHeight ? g_picturePlacement.maxHeight : p->height;
     pkt.sx = pkt.sy = pkt.fc = 0;
-    pkt.dx = g_picX;
-    pkt.dy = g_picY;
+    pkt.dx = g_picturePlacement.x;
+    pkt.dy = g_picturePlacement.y;
     (*g_videoOps.copy)(p, r_vid.back, &pkt, 1);
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, g_picX, g_picY, pkt.dx + pkt.w - 1, pkt.dy + pkt.h - 1);
-    g_picX = g_picY = 0;
+        bitmap_copy_box(r_vid.back, r_vid.front, g_picturePlacement.x, g_picturePlacement.y, pkt.dx + pkt.w - 1, pkt.dy + pkt.h - 1);
+    g_picturePlacement.x = g_picturePlacement.y = 0;
     F_19438(1);
 }
 
@@ -246,8 +244,8 @@ int F_118D4(int a, int b)
 
 int F_119B8(int a, int b, int c, int d)
 {
-    g_picX = b;
-    g_picY = c;
+    g_picturePlacement.x = b;
+    g_picturePlacement.y = c;
     return F_118D4(a, d);
 }
 

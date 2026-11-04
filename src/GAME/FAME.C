@@ -196,13 +196,13 @@ void fame_show(int add)
     struct Colors sv23;
     int old;
 
-    old = g_picMaxH;
+    old = g_picturePlacement.maxHeight;
     pos7 = -1;
     (*g_videoOps.blank)();
-    g_picMaxH = SCREEN_HEIGHT;
+    g_picturePlacement.maxHeight = SCREEN_HEIGHT;
     r_vid.copyToFront = 1;
     F_118D4(5, -1);
-    g_picMaxH = old;
+    g_picturePlacement.maxHeight = old;
     video_swap_pal();
     sv286 = bustyle->c28;
     sv23 = bustyle->c23;

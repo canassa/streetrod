@@ -739,4 +739,10 @@ struct GameClock {
     long timeBase;
 };
 
+struct PicturePlacement {
+    int x;
+    int y;
+    int maxHeight;
+};
+
 #endif

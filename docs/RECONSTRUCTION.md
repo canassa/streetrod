@@ -213,6 +213,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **GasInteraction** (`g_gasState`, DS:6CA4..6CA9): clear_gas_spots resets all three interaction flags together; the cap, nozzle and rag handlers set them and race_gas_station tests them when enabling the matching hotspots. Separate globals also match; this grouping is a natural reconstruction choice.
 
+- **PicturePlacement** (`g_picturePlacement`, DS:04BE..04C3): Screen picture drawing uses the x/y destination and maximum height together to clip and place one bitmap. Separate globals also match; this grouping is a natural reconstruction choice.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only

@@ -341,10 +341,10 @@ void dash_intro(void)
 {
     int saved;
 
-    saved = g_picMaxH;
+    saved = g_picturePlacement.maxHeight;
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
         (*g_videoOps.blank)();
-    g_picMaxH = SCREEN_HEIGHT;
+    g_picturePlacement.maxHeight = SCREEN_HEIGHT;
     if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         main_set_palette(CGA_PALETTE_GREEN_RED_BROWN);
     F_119B8(3, 0x28, 0x28, 0);
@@ -365,7 +365,7 @@ void dash_intro(void)
         video_set_palette(g_introPalette);
     (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
     dash_wait_key(400);
-    g_picMaxH = saved;
+    g_picturePlacement.maxHeight = saved;
     screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
 }

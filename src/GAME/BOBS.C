@@ -806,11 +806,11 @@ static void near play_ending(void)
     screen_status_init(0xbe);
     F_119B8(9, 8, 0x14, 2);
     r_vid.copyToFront = 0;
-    savedl = g_picMaxH;
-    g_picMaxH = SCREEN_HEIGHT;
+    savedl = g_picturePlacement.maxHeight;
+    g_picturePlacement.maxHeight = SCREEN_HEIGHT;
     (*g_videoOps.copyPage)(r_vid.front->bits.p, r_vid.back->bits.p);
     F_118D4(0x408, -1);
-    g_picMaxH = savedl;
+    g_picturePlacement.maxHeight = savedl;
     (*g_videoOps.show)();
     game_pause(0x2ee);
     (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
