@@ -56,7 +56,7 @@ void savegame_init_racer(int k, int *list)
         if (random_int(2) == 1)
             break;
     av7ff8[k].paintScheme = i;
-    av7ff8[k].status = 0;
+    av7ff8[k].status = RACER_NOT_MET;
     av7ff8[k].betRaces = 0;
     av7ff8[k].betWins = 0;
     av7ff8[k].bodyMods = 0;
@@ -101,13 +101,13 @@ static void near init_racers(void)
     if (g_demo)
         an[0] = --na1;
     k = 0;
-    for (i = 0; i < 7; i++)
+    for (i = 0; i < RACERS_PER_GROUP; i++)
         savegame_init_racer(k++, an);
-    for (i = 0; i < 7; i++)
+    for (i = 0; i < RACERS_PER_GROUP; i++)
         savegame_init_racer(k++, bm);
-    for (i = 0; i < 7; i++)
+    for (i = 0; i < RACERS_PER_GROUP; i++)
         savegame_init_racer(k++, cl);
-    av7ff8[21].status = 0;
+    av7ff8[RACER_KING].status = RACER_NOT_MET;
     if (g_demo) {
         an[0] = 1;
         an[1] = 0x18;

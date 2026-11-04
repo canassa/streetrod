@@ -4,6 +4,17 @@
 #define DISK_H
 #include "STRUCTS.H"
 
+#define NUM_RACERS 22
+#define RACER_KING 21
+#define RACER_COP_ENTRY 10
+#define RACERS_PER_GROUP 7
+
+enum RacerStatus {
+    RACER_EMPTY = -1,
+    RACER_NOT_MET = 0,
+    RACER_MET = 1
+};
+
 extern char *g_dataFileName;                            /* DS:4EA2 */
 extern char *g_dataBlocks[13];                          /* DS:4EA4 */
 extern unsigned g_dataSizes[13];                        /* DS:4EBE */

@@ -725,7 +725,7 @@ int near race_outcome(void)
             }
             if (g_demo == 0 || g7f82r != g_demoRacer) {
                 if (g7d84o->lostCarOnce != 0 || g_isKingState != 0)
-                    g7d84o->status = 0xff;
+                    g7d84o->status = RACER_EMPTY;
                 else {
                     for (i = 0, units = 0; i < 25; i++)
                         if (g7d86n[i].rank < g_oppSpecPointer->rank)
@@ -735,7 +735,7 @@ int near race_outcome(void)
                         savegame_init_racer(g7f82r, list);
                         g7d84o->lostCarOnce = 1;
                     } else
-                        g7d84o->status = 0xff;
+                        g7d84o->status = RACER_EMPTY;
                     goto done;
                 }
             }
@@ -1350,7 +1350,7 @@ static void near cop_appears(void)
     int old;
 
     old = g_oppEngState.speed;
-    g7d84o = &av7ff8[10];
+    g7d84o = &av7ff8[RACER_COP_ENTRY];
     perf_drivetrain_spec(0x19, &g_oppEngState);
     g_rivalShiftPen = g7d84o->shiftPenalty;
     fit_gear(old, &g_oppEngState);

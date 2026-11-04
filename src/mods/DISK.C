@@ -39,7 +39,7 @@ static char g_dataPath[16];                   /* DS:6C72 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Model w_8df0[26];
-struct Racer av7ff8[22];
+struct Racer av7ff8[NUM_RACERS];
 struct Spec g7d86n[26];
 struct Panel ai70e4t[26];
 struct Spr12 g7682n[26];
