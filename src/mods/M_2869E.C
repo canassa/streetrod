@@ -4,19 +4,19 @@
 #include "BOBS.H"
 #include "CARMASKS.H"
 #include "CRUISE.H"
+#include "DASH.H"
 #include "DISK.H"
 #include "DRIVE.H"
 #include "EGAPAGE.H"
 #include "EGASPAN.H"
 #include "MAIN.H"
 #include "MARKS.H"
-#include "M_0F38A.H"
-#include "M_10B7C.H"
 #include "M_265BA.H"
 #include "M_2B6DC.H"
 #include "RACE.H"
 #include "SLOTS.H"
 #include "SYS.H"
+#include "VIDEO.H"
 
 #pragma intrinsic(abs)
 

@@ -1,7 +1,7 @@
-/* M_13682.H - declarations of what M_13682.C defines. */
+/* DRAW.H - declarations of what DRAW.C defines. */
 
-#ifndef M_13682_H
-#define M_13682_H
+#ifndef DRAW_H
+#define DRAW_H
 #include "STRUCTS.H"
 
 void F_13682(struct Bitmap far *s, int x, int y, int w, int h);/* 0x13682 */

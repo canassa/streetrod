@@ -5,7 +5,7 @@ import re
 _PROTO_WARN = re.compile(r"warning C(4071|4016)\b.*")
 
 # Block-scope `extern` declarations are flagged like file-scope ones. The only exceptions are the two
-# PROVISIONAL far symbols of M_0F38A.C (F_0F4B7, F_0F62E): unreachable accesses that reproduce two
+# PROVISIONAL far symbols of DASH.C (F_0F4B7, F_0F62E): unreachable accesses that reproduce two
 # SEG constants in CONST that no instruction reads; the original statements are unknown.
 _PROVISIONAL_EXTERNS = {"extern char far x_trk0[][2]", "extern char far x_trk1[][2]"}
 

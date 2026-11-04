@@ -1,10 +1,10 @@
 #include <math.h>
 #include "STRUCTS.H"
-#include "M_0DCBE.H"
+#include "PERF.H"
 #include "DISK.H"
 #include "GARAGE.H"
 #include "M_02B9A.H"
-#include "M_113A2.H"
+#include "SCREEN.H"
 
 int g_54dc[4][5] = {{0, 25, 50, 100, 0}, {0, 25, 50, 100, 0}, {0, 25, 50, 75, 100}, {0, 30, 50, 80, 100}};   /* DS:54DC */
 int g_5504[3][5] = {{500, 600, 300, 100, 70}, {600, 700, 350, 120, 90}, {600, 760, 380, 140, 90}};   /* DS:5504 */

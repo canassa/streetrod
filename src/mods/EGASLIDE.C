@@ -4,11 +4,11 @@
 #include "CRTC.H"
 #include "EGABLIT.H"
 #include "EGALATCH.H"
+#include "GARGFX.H"
 #include "MAIN.H"
 #include "MASKBLT.H"
 #include "MASKOR.H"
-#include "M_10B7C.H"
-#include "M_123F4.H"
+#include "VIDEO.H"
 
 #pragma intrinsic(outp)
 

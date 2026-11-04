@@ -1,15 +1,15 @@
 #include <string.h>
 #include "STRUCTS.H"
-#include "M_11E9C.H"
+#include "CURSOR.H"
 #include "ARENA.H"
 #include "BITMAP.H"
+#include "DASH.H"
 #include "DISK.H"
 #include "EGALATCH.H"
 #include "MAIN.H"
 #include "MARKS.H"
 #include "MEM.H"
 #include "M_02B9A.H"
-#include "M_0F38A.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 void (far *ap78b2z)(char far *, char far *, char far *, char far *, int, int, int, int);

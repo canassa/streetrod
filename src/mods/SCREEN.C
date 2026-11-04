@@ -3,21 +3,21 @@
 #include <conio.h>
 #include <stdio.h>
 #include "STRUCTS.H"
-#include "M_113A2.H"
+#include "SCREEN.H"
 #include "BITMAP.H"
 #include "CARPIC.H"
+#include "CURSOR.H"
+#include "DASH.H"
 #include "DISK.H"
+#include "DRAW.H"
 #include "HOTSPOT.H"
 #include "KBDGET.H"
 #include "MAIN.H"
 #include "MARKS.H"
+#include "MENU.H"
 #include "MESSAGES.H"
-#include "M_0F38A.H"
-#include "M_10B7C.H"
-#include "M_11E9C.H"
-#include "M_13682.H"
-#include "M_139DE.H"
 #include "SYS.H"
+#include "VIDEO.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int o_8250;

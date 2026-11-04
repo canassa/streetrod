@@ -29,7 +29,7 @@ class SourceFileTests(unittest.TestCase):
 
     def test_command_line(self):
         fs = {f.path.name: f for f in module.files()}
-        self.assertTrue(fs['M_0F38A.C'].command.endswith(' /NTS0F38_TEXT'))
+        self.assertTrue(fs['DASH.C'].command.endswith(' /NTS0F38_TEXT'))
         self.assertEqual(fs['MEMSTR.ASM'].command, '/Ml')   # MASM: the segment is in .CODE
         self.assertIn('.CODE S2460_TEXT', fs['MEMSTR.ASM'].path.read_text())
 

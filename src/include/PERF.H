@@ -1,7 +1,7 @@
-/* M_0DCBE.H - declarations of what M_0DCBE.C defines. */
+/* PERF.H - declarations of what PERF.C defines. */
 
-#ifndef M_0DCBE_H
-#define M_0DCBE_H
+#ifndef PERF_H
+#define PERF_H
 #include "STRUCTS.H"
 
 extern int g_54dc[][5];                                 /* DS:54DC */

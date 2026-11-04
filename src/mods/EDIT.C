@@ -3,17 +3,17 @@
 #include "STRUCTS.H"
 #include "EDIT.H"
 #include "BITMAP.H"
+#include "CURSOR.H"
+#include "DASH.H"
+#include "DRAW.H"
 #include "KBD.H"
 #include "MAIN.H"
+#include "MENU.H"
 #include "MESSAGES.H"
-#include "M_0F38A.H"
-#include "M_10B7C.H"
-#include "M_113A2.H"
-#include "M_11E9C.H"
-#include "M_13682.H"
-#include "M_139DE.H"
+#include "SCREEN.H"
 #include "SOUND.H"
 #include "SYS.H"
+#include "VIDEO.H"
 
 char g_09f2 = 0;   /* DS:09F2 */
 

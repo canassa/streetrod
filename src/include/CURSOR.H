@@ -1,7 +1,7 @@
-/* M_11E9C.H - declarations of what M_11E9C.C defines. */
+/* CURSOR.H - declarations of what CURSOR.C defines. */
 
-#ifndef M_11E9C_H
-#define M_11E9C_H
+#ifndef CURSOR_H
+#define CURSOR_H
 #include "STRUCTS.H"
 
 extern struct Pair g_06ec[];                            /* DS:06EC */

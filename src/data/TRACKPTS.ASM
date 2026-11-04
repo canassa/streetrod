@@ -1,6 +1,6 @@
 ; Two arrays of 131 signed coordinate pairs.
 TRACKPTS SEGMENT PARA PUBLIC 'FAR_DATA'
-; PROVISIONAL symbols for the two unreachable far references in M_0F38A.C
+; PROVISIONAL symbols for the two unreachable far references in DASH.C
         PUBLIC  _x_trk0
         PUBLIC  _g_2e47_0000
         PUBLIC  _x_trk1

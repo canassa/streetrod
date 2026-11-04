@@ -4,12 +4,12 @@
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "CARPIC.H"
+#include "GARGFX.H"
 #include "MAIN.H"
 #include "MARKS.H"
-#include "M_10B7C.H"
-#include "M_11A72.H"
-#include "M_123F4.H"
+#include "POPUP.H"
 #include "SYS.H"
+#include "VIDEO.H"
 
 #pragma intrinsic(abs)
 

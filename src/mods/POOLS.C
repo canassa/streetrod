@@ -1,6 +1,6 @@
 #include "STRUCTS.H"
 #include "POOLS.H"
-#include "M_113A2.H"
+#include "SCREEN.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Node2 as83b0[16];

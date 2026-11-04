@@ -1,7 +1,7 @@
-/* M_0F38A.H - declarations of what M_0F38A.C defines. */
+/* DASH.H - declarations of what DASH.C defines. */
 
-#ifndef M_0F38A_H
-#define M_0F38A_H
+#ifndef DASH_H
+#define DASH_H
 #include "STRUCTS.H"
 
 extern int g_02d2;                                      /* DS:02D2 */

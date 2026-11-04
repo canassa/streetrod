@@ -2,10 +2,11 @@
 #include <math.h>
 #include <conio.h>
 #include "STRUCTS.H"
-#include "M_0F38A.H"
+#include "DASH.H"
 #include "BITMAP.H"
 #include "CARPIC.H"
 #include "CRTC.H"
+#include "CURSOR.H"
 #include "DISK.H"
 #include "FONTDATA.H"
 #include "GAME.H"
@@ -16,13 +17,12 @@
 #include "MARKS.H"
 #include "MOUSE.H"
 #include "M_02B9A.H"
-#include "M_10B7C.H"
-#include "M_113A2.H"
-#include "M_11E9C.H"
 #include "M_2869E.H"
+#include "SCREEN.H"
 #include "SOUND.H"
 #include "SYS.H"
 #include "TRACKPTS.H"
+#include "VIDEO.H"
 
 #pragma intrinsic(abs, cos, sin, outp, inp)
 

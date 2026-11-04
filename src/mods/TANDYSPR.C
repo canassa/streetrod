@@ -4,10 +4,10 @@
 #include "BOBS.H"
 #include "CARPIC.H"
 #include "MAIN.H"
-#include "M_10B7C.H"
 #include "SPRITE.H"
 #include "TANDYBLT.H"
 #include "TIRES.H"
+#include "VIDEO.H"
 
 static void near restore_rect_back(struct Rect *r, struct Bitmap far *a, struct Bitmap far *b, int horiz);
 

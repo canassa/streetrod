@@ -1,7 +1,7 @@
-/* M_0E5D2.H - declarations of what M_0E5D2.ASM defines. */
+/* HERCGFX.H - declarations of what HERCGFX.ASM defines. */
 
-#ifndef M_0E5D2_H
-#define M_0E5D2_H
+#ifndef HERCGFX_H
+#define HERCGFX_H
 #include "STRUCTS.H"
 
 extern int g_5abc[10];                                  /* DS:5ABC */

@@ -1,7 +1,7 @@
-/* M_10B7C.H - declarations of what M_10B7C.C defines. */
+/* VIDEO.H - declarations of what VIDEO.C defines. */
 
-#ifndef M_10B7C_H
-#define M_10B7C_H
+#ifndef VIDEO_H
+#define VIDEO_H
 #include "STRUCTS.H"
 
 extern struct Style g_03a0;                             /* DS:03A0 */

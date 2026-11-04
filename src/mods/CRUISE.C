@@ -1,17 +1,17 @@
 #include "STRUCTS.H"
 #include "CRUISE.H"
 #include "CARPIC.H"
+#include "CURSOR.H"
+#include "DASH.H"
 #include "DRIVE.H"
 #include "GARAGE.H"
 #include "MAIN.H"
 #include "M_02B9A.H"
-#include "M_0F38A.H"
-#include "M_10B7C.H"
-#include "M_113A2.H"
-#include "M_11E9C.H"
 #include "RACE.H"
+#include "SCREEN.H"
 #include "SOUND.H"
 #include "SYS.H"
+#include "VIDEO.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int jz79a6;

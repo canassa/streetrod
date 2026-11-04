@@ -3,6 +3,8 @@
 #include <string.h>
 #include "STRUCTS.H"
 #include "EGA.H"
+#include "CURSBLT.H"
+#include "DASH.H"
 #include "EGABLIT.H"
 #include "EGACOPY.H"
 #include "EGALINE.H"
@@ -12,11 +14,9 @@
 #include "EGASPAN.H"
 #include "EGASPR.H"
 #include "FONTDATA.H"
-#include "M_0E6C2.H"
-#include "M_0F38A.H"
-#include "M_10B7C.H"
-#include "M_113A2.H"
-#include "M_139DE.H"
+#include "MENU.H"
+#include "SCREEN.H"
+#include "VIDEO.H"
 
 #pragma intrinsic(outp, memset, _rotr)
 

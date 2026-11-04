@@ -6,6 +6,8 @@
 #include "BITMAP.H"
 #include "BOBS.H"
 #include "CARHOP.H"
+#include "CURSOR.H"
+#include "DASH.H"
 #include "DISK.H"
 #include "EGABLIT.H"
 #include "EGALATCH.H"
@@ -15,13 +17,11 @@
 #include "MARKS.H"
 #include "MASKOR.H"
 #include "MEM.H"
-#include "M_0F38A.H"
-#include "M_10B7C.H"
-#include "M_11A72.H"
-#include "M_11E9C.H"
+#include "POPUP.H"
 #include "RACE.H"
 #include "SPRITE.H"
 #include "SYS.H"
+#include "VIDEO.H"
 
 #pragma intrinsic(outp)
 

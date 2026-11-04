@@ -1,7 +1,7 @@
-/* M_11A72.H - declarations of what M_11A72.C defines. */
+/* POPUP.H - declarations of what POPUP.C defines. */
 
-#ifndef M_11A72_H
-#define M_11A72_H
+#ifndef POPUP_H
+#define POPUP_H
 #include "STRUCTS.H"
 
 extern struct Win g_04c4[];                             /* DS:04C4 */

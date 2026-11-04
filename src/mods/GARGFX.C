@@ -1,8 +1,10 @@
 #include <string.h>
 #include "STRUCTS.H"
-#include "M_123F4.H"
+#include "GARGFX.H"
 #include "ARENA.H"
 #include "BITMAP.H"
+#include "CURSOR.H"
+#include "DASH.H"
 #include "DISK.H"
 #include "GARAGE.H"
 #include "HOTSPOT.H"
@@ -10,13 +12,11 @@
 #include "MARKS.H"
 #include "MESSAGES.H"
 #include "M_02B9A.H"
-#include "M_0F38A.H"
-#include "M_10B7C.H"
-#include "M_113A2.H"
-#include "M_11A72.H"
-#include "M_11E9C.H"
+#include "POPUP.H"
+#include "SCREEN.H"
 #include "SOUND.H"
 #include "SYS.H"
+#include "VIDEO.H"
 
 #pragma intrinsic(memcpy)
 

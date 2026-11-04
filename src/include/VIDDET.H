@@ -1,7 +1,7 @@
-/* M_0E610.H - declarations of what M_0E610.ASM defines. */
+/* VIDDET.H - declarations of what VIDDET.ASM defines. */
 
-#ifndef M_0E610_H
-#define M_0E610_H
+#ifndef VIDDET_H
+#define VIDDET_H
 #include "STRUCTS.H"
 
 extern char g_5aee;                                     /* DS:5AEE */

@@ -4,10 +4,10 @@
 #include "STRUCTS.H"
 #include "TANDYBLT.H"
 #include "CGADRV.H"
+#include "DASH.H"
 #include "MASKBG.H"
 #include "MASKBLT.H"
 #include "MASKOR.H"
-#include "M_0F38A.H"
 #include "TANDYCPY.H"
 
 #pragma intrinsic(_rotr, _rotl)

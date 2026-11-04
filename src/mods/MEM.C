@@ -3,8 +3,8 @@
 #include "STRUCTS.H"
 #include "MEM.H"
 #include "MAIN.H"
-#include "M_113A2.H"
 #include "POOLS.H"
+#include "SCREEN.H"
 #include "SYS.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */

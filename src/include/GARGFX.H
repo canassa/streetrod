@@ -1,7 +1,7 @@
-/* M_123F4.H - declarations of what M_123F4.C defines. */
+/* GARGFX.H - declarations of what GARGFX.C defines. */
 
-#ifndef M_123F4_H
-#define M_123F4_H
+#ifndef GARGFX_H
+#define GARGFX_H
 #include "STRUCTS.H"
 
 extern char g_06fc;                                     /* DS:06FC */

@@ -1,18 +1,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include "STRUCTS.H"
-#include "M_11A72.H"
+#include "POPUP.H"
 #include "ARENA.H"
 #include "BITMAP.H"
+#include "CURSOR.H"
+#include "DASH.H"
 #include "MAIN.H"
 #include "MARKS.H"
 #include "MEM.H"
 #include "MESSAGES.H"
-#include "M_0F38A.H"
-#include "M_10B7C.H"
-#include "M_113A2.H"
-#include "M_11E9C.H"
+#include "SCREEN.H"
 #include "SYS.H"
+#include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct Win *g_6c40;                 /* DS:6C40 */

@@ -9,15 +9,15 @@
 #include "CGALINE.H"
 #include "CGASHIFT.H"
 #include "CGASPR.H"
+#include "CURSBLT.H"
+#include "DASH.H"
 #include "MAIN.H"
 #include "MEM.H"
-#include "M_0E6C2.H"
-#include "M_0F38A.H"
-#include "M_10B7C.H"
-#include "M_113A2.H"
-#include "M_139DE.H"
+#include "MENU.H"
+#include "SCREEN.H"
 #include "SPRITE.H"
 #include "SYS.H"
+#include "VIDEO.H"
 
 #pragma intrinsic(_rotl, outp)
 

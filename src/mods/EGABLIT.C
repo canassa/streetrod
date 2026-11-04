@@ -3,11 +3,11 @@
 #include <memory.h>
 #include "STRUCTS.H"
 #include "EGABLIT.H"
+#include "DASH.H"
 #include "EGALATCH.H"
 #include "MASKBG.H"
 #include "MASKBLT.H"
 #include "MASKOR.H"
-#include "M_0F38A.H"
 
 #pragma intrinsic(inp, outp)
 

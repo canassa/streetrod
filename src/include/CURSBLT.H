@@ -1,7 +1,7 @@
-/* M_0E6C2.H - declarations of what M_0E6C2.ASM defines. */
+/* CURSBLT.H - declarations of what CURSBLT.ASM defines. */
 
-#ifndef M_0E6C2_H
-#define M_0E6C2_H
+#ifndef CURSBLT_H
+#define CURSBLT_H
 #include "STRUCTS.H"
 
 void far F_0E6C2();                                     /* 0x0E6C2 */

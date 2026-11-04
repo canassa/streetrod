@@ -1,7 +1,7 @@
-/* M_0E56A.H - declarations of what M_0E56A.ASM defines. */
+/* HERCDET.H - declarations of what HERCDET.ASM defines. */
 
-#ifndef M_0E56A_H
-#define M_0E56A_H
+#ifndef HERCDET_H
+#define HERCDET_H
 #include "STRUCTS.H"
 
 extern unsigned char g_5580[543];                       /* DS:5580 */

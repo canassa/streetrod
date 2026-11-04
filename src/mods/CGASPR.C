@@ -5,8 +5,8 @@
 #include "BOBS.H"
 #include "CGABLT.H"
 #include "MAIN.H"
-#include "M_10B7C.H"
 #include "SPRITE.H"
+#include "VIDEO.H"
 
 #pragma intrinsic(inp)
 

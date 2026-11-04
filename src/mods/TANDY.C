@@ -3,17 +3,17 @@
 #include "STRUCTS.H"
 #include "TANDY.H"
 #include "BITMAP.H"
-#include "M_0E6C2.H"
-#include "M_0F38A.H"
-#include "M_10B7C.H"
-#include "M_113A2.H"
-#include "M_139DE.H"
+#include "CURSBLT.H"
+#include "DASH.H"
+#include "MENU.H"
+#include "SCREEN.H"
 #include "SPRITE.H"
 #include "SYS.H"
 #include "TANDYBLT.H"
 #include "TANDYLIN.H"
 #include "TANDYSPR.H"
 #include "TANDYTXT.H"
+#include "VIDEO.H"
 
 void (far *g_5b8a[15])() = {tandyblt_copy, tandyblt_shifted, tandyblt_masked, tandy_draw_text, F_0E6C2, tandy_copy_page, tandy_recolor_rect, F_0FEAD, F_0FEBF, tandyspr_step, tandy_reveal, F_19BFE, tandylin_draw, tandylin_span, tandylin_fill_below};   /* DS:5B8A */
 int g_5bc6[5] = {0, 2, 4, 1, 3};   /* DS:5BC6 */

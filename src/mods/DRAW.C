@@ -1,7 +1,7 @@
 #include "STRUCTS.H"
-#include "M_13682.H"
-#include "M_0F38A.H"
-#include "M_10B7C.H"
+#include "DRAW.H"
+#include "DASH.H"
+#include "VIDEO.H"
 
 /* F_13682 @ 0F38:4302 (linear 0x13682, 154 bytes)
 

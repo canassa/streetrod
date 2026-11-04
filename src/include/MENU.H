@@ -1,7 +1,7 @@
-/* M_139DE.H - declarations of what M_139DE.C defines. */
+/* MENU.H - declarations of what MENU.C defines. */
 
-#ifndef M_139DE_H
-#define M_139DE_H
+#ifndef MENU_H
+#define MENU_H
 #include "STRUCTS.H"
 
 extern int g_07a8;                                      /* DS:07A8 */

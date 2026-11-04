@@ -4,6 +4,8 @@
 #include "BITMAP.H"
 #include "BOBS.H"
 #include "CARPIC.H"
+#include "CURSOR.H"
+#include "DASH.H"
 #include "DISK.H"
 #include "GAME.H"
 #include "GARAGE.H"
@@ -11,14 +13,12 @@
 #include "MARKS.H"
 #include "MEM.H"
 #include "MUSIC.H"
-#include "M_0F38A.H"
-#include "M_10B7C.H"
-#include "M_113A2.H"
-#include "M_11A72.H"
-#include "M_11E9C.H"
+#include "POPUP.H"
+#include "SCREEN.H"
 #include "SOUND.H"
 #include "SPRITE.H"
 #include "SYS.H"
+#include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct Bitmap far *g_6cd4oz;        /* DS:6CD4 */

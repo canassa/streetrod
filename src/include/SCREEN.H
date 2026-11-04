@@ -1,7 +1,7 @@
-/* M_113A2.H - declarations of what M_113A2.C defines. */
+/* SCREEN.H - declarations of what SCREEN.C defines. */
 
-#ifndef M_113A2_H
-#define M_113A2_H
+#ifndef SCREEN_H
+#define SCREEN_H
 #include "STRUCTS.H"
 
 extern char *g_msgs[];                                  /* DS:0482 */
