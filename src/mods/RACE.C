@@ -446,7 +446,7 @@ static int near replace_tires(void)
     ret = 0;
     if (a_7eaap.m7eb0 == 0)
         return 0;
-    a_7eaap.m7eb0->weight -= game_take_part(a_7eaap.m7eb0->slot12, 0);
+    a_7eaap.m7eb0->value -= game_take_part(a_7eaap.m7eb0->slot12, 0);
     a_7eaap.m7eb0->slot12 = 0;
     F_076A7(4, tbl, 0, 0);
     if (g_list[0]) {
@@ -618,7 +618,7 @@ static void near blow_engine(int n)
 
     if (a_7eaap.m7eb0) {
         for (i = 0, p = a_7eaap.m7eb0->rack.s; i < 5; i++, p++) {
-            a_7eaap.m7eb0->weight -= game_take_part(*p, 0);
+            a_7eaap.m7eb0->value -= game_take_part(*p, 0);
             *p = 0;
         }
         for (i = 0, q = a_7eaap.m7eb0->b16; i < 9; i++)
@@ -638,7 +638,7 @@ static void near drop_transmission(int n)
     int i;
 
     if (a_7eaap.m7eb0) {
-        a_7eaap.m7eb0->weight -= game_take_part(a_7eaap.m7eb0->slot6, 0);
+        a_7eaap.m7eb0->value -= game_take_part(a_7eaap.m7eb0->slot6, 0);
         a_7eaap.m7eb0->slot6 = 0;
         for (i = 0, q = a_7eaap.m7eb0->b14; i < 2; i++)
             *q++ = 0;
@@ -880,7 +880,7 @@ finishstop:
                     menu_pop(1);
                     return 1;
                 case 2:
-                    F_11540((int)(a_7eaap.m7eb0->weight * 0.4));
+                    F_11540((int)(a_7eaap.m7eb0->value * 0.4));
                     a_7eaap.m7eb0 = 0;
                     break;
                 default:

@@ -327,7 +327,7 @@ struct Node * near game_add_part(int idx, int a)
 
 /* game_make_car @ 0000:4036 (linear 0x04036, 848 bytes) */
 
-struct Car * near game_make_car(int idx, int weight, struct Car *old)
+struct Car * near game_make_car(int idx, int value, struct Car *old)
 {
     struct Node *node;
     struct Car *car;
@@ -335,7 +335,7 @@ struct Car * near game_make_car(int idx, int weight, struct Car *old)
 
     car = (old == 0) ? (struct Car *)game_new_car() : old;
     car->f2 = idx;
-    car->weight = weight;
+    car->value = value;
     car->f22 = 0x28;
     car->f5 = g7d86n[idx].f2;
     while ((i = random_int(6)) == 5)
@@ -428,12 +428,12 @@ int near game_scrap_car(struct Car *c, int keep)
     int r;
     register int i;
 
-    c->weight -= game_take_part(c->slot6, keep);
+    c->value -= game_take_part(c->slot6, keep);
     r = 5;
     for (p2 = c->rack.s, i = r; i; p2++, i--)
-        c->weight -= game_take_part(*p2, keep);
+        c->value -= game_take_part(*p2, keep);
     game_take_part(c->slot12, 0);
-    r = c->weight;
+    r = c->value;
     if (r < 0)
         r = 0;
     free_car((struct Node2 *)c);
@@ -665,7 +665,7 @@ static int near your_cars(void)
                 g_list[0] = g_list[0];
         }
         cur = tbl[item = F_14C8B()];
-        offer = price = (int)((random_int(20) + 75.0) * cur->weight / 100.0);
+        offer = price = (int)((random_int(20) + 75.0) * cur->value / 100.0);
         strcpy(g_offerName, g_desc + g7d86n[cur->f2].f6);
         g_offerAmount[0] = 0;
         pict = menu_grab(12, &rx, &ye, 1);
@@ -674,17 +674,17 @@ static int near your_cars(void)
             if ((n = edit_spot_number(&cash, g_offerAmount)) == -22)
                 goto tail;
         } while (cash == 0);
-        if ((unsigned)(cur->weight * 1.15) < cash) {
+        if ((unsigned)(cur->value * 1.15) < cash) {
             game_message(0xec0);
             goto tail;
         }
-        if (cur->weight < cash) {
+        if (cur->value < cash) {
             game_message(0x106e);
             do {
                 if ((n = edit_spot_number(&cash, g_offerAmount)) == -22)
                     goto tail;
             } while (cash == 0);
-            if (cur->weight < cash) {
+            if (cur->value < cash) {
                 game_message(0x1078);
                 goto tail;
             }
@@ -715,7 +715,7 @@ static int near your_cars(void)
             game_message(0x1084);
             goto tail;
         }
-        game_message((cur->weight > cash * 2) ? 0x104b : 0x1091);
+        game_message((cur->value > cash * 2) ? 0x104b : 0x1091);
         g_05fc += 0x888L;
         F_11540(cash);
         if (item == 1 && a_7eaap.m7eb0) {

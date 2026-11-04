@@ -420,14 +420,14 @@ void view_sprite(int x, int y, int first, struct List l, int dir)
                 px = x - run.parts[j].dx;
                 x2 = px - run.parts[j].w;
                 y1 = y + run.parts[j].dy;
-                (*g78d6c)(x2, px, y1, run.parts[j].h);
+                (*g78d6c)(x2, px, y1, run.parts[j].color);
             }
         } else {
             for (j = 0; j < run.n; j++) {
                 px = run.parts[j].dx + x;
                 x2 = px + run.parts[j].w;
                 y1 = y + run.parts[j].dy;
-                (*g78d6c)(px, x2, y1, run.parts[j].h);
+                (*g78d6c)(px, x2, y1, run.parts[j].color);
             }
         }
     }

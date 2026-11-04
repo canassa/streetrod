@@ -23,7 +23,7 @@ struct Part {
     signed char dx;
     signed char dy;
     signed char w;
-    signed char h;
+    signed char color;
 };
 
 struct Run {
@@ -75,7 +75,7 @@ struct Rack {
 };
 
 struct Car {
-    int weight;
+    int value;
     int f2;
     char f4;
     unsigned char f5;

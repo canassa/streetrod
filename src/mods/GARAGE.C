@@ -652,11 +652,11 @@ void near F_07741(struct Node *n, struct Node **slot)
 {
     if (*slot) {
         (*slot)->next = a_7eaap.m7eb8;
-        a_7eaap.m7eb0->weight -= game_part_value(a_7eaap.m7eb8 = *slot);
+        a_7eaap.m7eb0->value -= game_part_value(a_7eaap.m7eb8 = *slot);
     }
     *slot = n;
     n->next = 0;
-    a_7eaap.m7eb0->weight += game_part_value(n);
+    a_7eaap.m7eb0->value += game_part_value(n);
 }
 
 /* remove_part @ 0000:7789 (linear 0x07789, 46 bytes) */
@@ -664,7 +664,7 @@ void near F_07741(struct Node *n, struct Node **slot)
 static void near remove_part(struct Node **slot)
 {
     (*slot)->next = a_7eaap.m7eb8;
-    a_7eaap.m7eb0->weight -= game_part_value(a_7eaap.m7eb8 = *slot);
+    a_7eaap.m7eb0->value -= game_part_value(a_7eaap.m7eb8 = *slot);
     *slot = 0;
 }
 
