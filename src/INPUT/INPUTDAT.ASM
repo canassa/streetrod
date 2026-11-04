@@ -312,8 +312,8 @@ _g_list DW      143 DUP (0)
 
 
 
-        PUBLIC  _mb_store_mode_a
-_mb_store_mode_a  PROC  FAR
+        PUBLIC  _id_store_mode_a
+_id_store_mode_a  PROC  FAR
         push    bp
         mov     bp,sp
         push    ax
@@ -324,12 +324,12 @@ _mb_store_mode_a  PROC  FAR
         pop     ax
         pop     bp
         ret
-_mb_store_mode_a  ENDP
+_id_store_mode_a  ENDP
 
 
 
-        PUBLIC  _set_g47ec_47ed
-_set_g47ec_47ed  PROC  FAR
+        PUBLIC  _id_store_mode_b
+_id_store_mode_b  PROC  FAR
         push    bp
         mov     bp,sp
         push    ax
@@ -340,12 +340,12 @@ _set_g47ec_47ed  PROC  FAR
         pop     ax
         pop     bp
         ret
-_set_g47ec_47ed  ENDP
+_id_store_mode_b  ENDP
 
 
 
-        PUBLIC  _mb_apply_mode_a
-_mb_apply_mode_a  PROC  FAR
+        PUBLIC  _id_apply_mode_a
+_id_apply_mode_a  PROC  FAR
         push    bp
         mov     bp,sp
         push    ax
@@ -363,12 +363,12 @@ _mb_apply_mode_a  PROC  FAR
         pop     ax
         pop     bp
         ret
-_mb_apply_mode_a  ENDP
+_id_apply_mode_a  ENDP
 
 
 
-        PUBLIC  _mb_apply_mode_b
-_mb_apply_mode_b  PROC  FAR
+        PUBLIC  _id_apply_mode_b
+_id_apply_mode_b  PROC  FAR
         push    bp
         mov     bp,sp
         push    ax
@@ -386,6 +386,6 @@ _mb_apply_mode_b  PROC  FAR
         pop     ax
         pop     bp
         ret
-_mb_apply_mode_b  ENDP
+_id_apply_mode_b  ENDP
 
         END

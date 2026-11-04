@@ -1,6 +1,6 @@
 #include "STRUCTS.H"
 #include "KEYCLR.H"
-#include "M_02B9A.H"
+#include "INPUTDAT.H"
 
 
 void kc_flush(void)

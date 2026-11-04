@@ -207,3 +207,13 @@ comments or change declaration/function tokens; it formats C text when rewriting
   first (C translation phase two). Added continuation lines do not add C tokens.
 - Tests that read `#define` constants must accept variable horizontal whitespace.
   EQUIP_VIDEO_COLOR80 is C-only; shared PC.H/PC.INC constants still agree by value.
+
+## Naming recovered objects
+
+- INPUTDAT.ASM in INPUT holds shared input state and game tables with four BIOS
+  mode helpers (`id_`). File names describe recovered objects, not recovered original
+  spellings. Rename with `sr rename`; a subsystem move also needs `git mv` of source
+  and header and the MAKEFILE source path updated before `sr headers`. Preserve the
+  numeric FORCE_OWNER code-address key. Gate the renamed THEADR/object filename
+  with a clean packed build and DOS-native MAKE; function matches alone do not
+  establish that object metadata is absent from the EXE.

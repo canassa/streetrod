@@ -1,7 +1,7 @@
 #include <dos.h>
 #include "STRUCTS.H"
 #include "MOUSE.H"
-#include "M_02B9A.H"
+#include "INPUTDAT.H"
 #include "PC.H"
 #include "SYS.H"
 

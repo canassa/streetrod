@@ -85,7 +85,7 @@ ranges are `dgroup.DATA_UNITS`). A code file's extent in the image is the span o
 functions it defines (`module.files()`). The 55 C files and 25 MASM files hold
 their functions in address order: includes, the file-scope statics and `static ... near`
 forward declarations, then each function with its comment, initialized data before the
-function whose literals precede it. Each file is named for what the module is (GARAGE.C, DISK.C); M_02B9A.ASM keeps its address name until its identity is known.
+function whose literals precede it. Each file is named for what the module is (GARAGE.C, DISK.C); INPUTDAT.ASM holds shared input state and game tables with BIOS mode helpers.
 
 - **One command line per file:** its MAKEFILE block. A C file's line ends in
   `/NT S<region>_TEXT` (the code segment shared by near interfaces, a placeholder name: the
@@ -128,7 +128,7 @@ A *module* is one original source file (one object). Named public functions use 
 
 ### Module prefixes
 
-Prefixes are unique ignoring case. Data-only modules need none. A prefix is reserved even when a module currently has only unnamed public functions. `mb_` is provisional for M_02B9A.ASM (M + hex B), without asserting the module's identity; its already-named functions use this prefix.
+Prefixes are unique ignoring case. Data-only modules need none. A prefix is reserved even when a module currently has only unnamed public functions.
 
 #### CGA
 
@@ -192,6 +192,7 @@ Prefixes are unique ignoring case. Data-only modules need none. A prefix is rese
 
 | Module | Prefix |
 |---|---|
+| INPUTDAT.ASM | `id_` |
 | JOY.ASM | `jy_` |
 | KBD.ASM | `kb_` |
 | KBDGET.ASM | `kg_` |
@@ -217,7 +218,6 @@ Prefixes are unique ignoring case. Data-only modules need none. A prefix is rese
 | MARKS.C | `ma_` |
 | MEM.C | `me_` |
 | MEMSTR.ASM | `ms_` |
-| M_02B9A.ASM | `mb_` |
 | POOLS.C | `pl_` |
 | RANDOM.C | `rn_` |
 | RLE.ASM | `rl_` |

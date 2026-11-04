@@ -34,9 +34,13 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 - **Files.** Each object's file is named for what its code does (GARAGE.C, DISK.C,
   CGABLT.C, ...); SCENERY.C/SCENERY2.C and the `src/DATA/` names likewise describe their
   data. These are labels for recovered objects: a file boundary is evidence, its name is
-  not (a source path only changes an object's THEADR record). M_02B9A.ASM keeps its
-  address name: its data is the input state, its code four uncalled BIOS video-mode
-  helpers, and neither decides what the original file was.
+  not (a source path only changes an object's THEADR record). INPUTDAT.ASM in
+  `src/INPUT/` labels the shared joystick, keyboard and cursor state and tables. The
+  same object also holds game part/fit/picture tables, win counters, display labels
+  and list storage, plus four uncalled BIOS video-mode store/apply helpers. The name
+  describes its shared input-data role without claiming an original filename or
+  splitting the recovered object. The renamed object still produces an identical
+  packed EXE; its THEADR filename does not reach the executable.
 - **Code segments** `S<region>_TEXT` (`/NT` in the MAKEFILE, `.CODE` in assembler files).
   Which objects share a segment is recovered; the name is the segment's paragraph.
 - **Assembler labels.** `PROC` names are the functions' names. Local labels are made up
@@ -303,8 +307,10 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
 - **Which unit owns which data.** For most items the literal pools and initializer order
   decide (CLAUDE.md 4b). The `FORCE_OWNER` ranges in `tools/sr/dgroup.py` are judgements,
   one per range:
-  - DS:4718..4AFE goes to M_02B9A.ASM: keyboard/mouse state and tables shared with the
-    assembler keyboard handlers.
+  - DS:4718..4AFE goes to INPUTDAT.ASM: joystick/keyboard/cursor state and tables
+    shared with the assembler input handlers, BIOS mode pairs, and game tables,
+    counters, labels and list storage. The FORCE_OWNER key remains the first code
+    address, 0x02B9A; renaming the file does not change this ownership choice.
   - DS:5AEE..5B04 goes to VIDDET.ASM: after the bytes its video detection writes, one
     byte and three strings ("Tandy", "Tandy", "CGA") that no code references, before the
     hook table of CGA.C.

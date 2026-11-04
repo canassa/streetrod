@@ -1,7 +1,7 @@
-/* M_02B9A.H - declarations of what M_02B9A.ASM defines. */
+/* INPUTDAT.H - declarations of what INPUTDAT.ASM defines. */
 
-#ifndef M_02B9A_H
-#define M_02B9A_H
+#ifndef INPUTDAT_H
+#define INPUTDAT_H
 #include "STRUCTS.H"
 
 extern int g_joyX;
@@ -69,7 +69,7 @@ extern int g_transPics[];
 extern char *g_cashLabel;
 extern char *g_gearLabel;
 extern int g_list[];
-void mb_store_mode_a(char a, char b);
-void set_g47ec_47ed(char a, char b);
+void id_store_mode_a(char a, char b);
+void id_store_mode_b(char a, char b);
 
 #endif

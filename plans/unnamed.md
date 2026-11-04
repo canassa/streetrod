@@ -25,11 +25,11 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 | 060A | g_060a | `int @` | SYS |
 | 064D | g_064d | `char @` | SYS |
 | 06A2 | g_06a2 | `int @` | SYS |
-| 4734 | g_4734 | `int @` | M_02B9A |
-| 4742 | g_4742 | `int @` | M_02B9A |
-| 4744 | g_4744 | `int @` | M_02B9A |
-| 47D1 | g_47d1 | `char @[3]` | M_02B9A |
-| 47F0 | g_47f0 | `char @` | M_02B9A |
+| 4734 | g_4734 | `int @` | INPUTDAT |
+| 4742 | g_4742 | `int @` | INPUTDAT |
+| 4744 | g_4744 | `int @` | INPUTDAT |
+| 47D1 | g_47d1 | `char @[3]` | INPUTDAT |
+| 47F0 | g_47f0 | `char @` | INPUTDAT |
 | 4BED | g_4bed | `char @` | FAME |
 | 4F4A | g_4f4a | `int @` | GAME |
 | 501D | g_501d | `char @` | SAVEGAME |

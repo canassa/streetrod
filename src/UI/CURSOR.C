@@ -6,10 +6,10 @@
 #include "DASH.H"
 #include "DISK.H"
 #include "EGALATCH.H"
+#include "INPUTDAT.H"
 #include "MAIN.H"
 #include "MARKS.H"
 #include "MEM.H"
-#include "M_02B9A.H"
 #include "PC.H"
 
 struct Cursor g_cursor2;
