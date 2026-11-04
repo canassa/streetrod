@@ -1350,3 +1350,12 @@ Tooling lessons are recorded in [sr-cli](../.claude/skills/sr-cli/SKILL.md); the
 ### What I learned
 - The independent review separated selected-library state from session/game-data state, interpreter position from hook countdown lifetime, and pace targets from shift-point state. The corrected roles are recorded in docs/RECONSTRUCTION.md.
 - Current compiler probes confirm that demo targets share the movement role but cannot be folded into DemoControl with the current expression form: target/cursor comparison operands swap, producing four wrong references in each of sys_demo_step and sys_timer_isr. Including the script index fails identically. The exact boundaries and logs are in work/structs2/DECISIONS.md.
+
+## 2026-11-06 03:00 CET: Struct round 2
+
+### What I did
+- A Codex agent grouped 54 more globals into narrow single-role records: the timer queue (`TimerQueue`, `earliest`/`head`), the game clock (`GameClock`: actionTicks + biosTicks - timeBase, 6552 ticks a day), picture placement, vibrato, random state, view pages, shifter drawing, view clip, the gas-station interaction, the picture-library selection, the animation-run cursor (`AnimRun`), the rival's driving pace, the three cached steering-wheel poses (`WheelPoses`), the cursor draw state and the demo control. An independent review (50 of 54 members correct) led to splits (the archive record held the start drive and the hot_data path; the pump's blink countdown and the rival shift penalty left their records) and renames; extending the demo record with its target position breaks four references in two functions, so it stays separate. Type definitions may now live in their owner's header (tooling reads all headers).
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup/order checks clean, tests OK.
+
+### What I learned
+- sys_timer_cancel walks from `earliest` along `nxt`, but `earliest` ends the chain, so it only ever looks at one entry: probably a bug in the original game (kept; the bytes are the game's).
