@@ -38,7 +38,7 @@ class SourceTests(unittest.TestCase):
         self.assertEqual(gs[0x5030]['name'], 'g_whlPic')
         self.assertEqual(gs[0x5030]['decl'], 'int @[][4]')
         self.assertEqual(gs[0x5030]['header'], 'GARAGE')
-        self.assertEqual(gs[0x6C36], dict(off=0x6C36, name='g_knobPos', decl='int @', header=None,
+        self.assertEqual(gs[0x6C34], dict(off=0x6C34, name='g_shifterDraw', decl='struct ShifterDraw @', header=None,
                                           static='src/GAME/DASH.C'))
         self.assertEqual(gs[0x6C42]['name'], 'g_6c42')
         far = {g['name']: g for g in source.fardata()}

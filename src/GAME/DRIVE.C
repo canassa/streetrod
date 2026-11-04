@@ -157,18 +157,18 @@ int drive_run(void)
         blt.sy = 0;
         blt.dx = 0;
         blt.dy = g_vga ? DASH_Y : 0x65;
-        (*g_videoOps.copy)(bm7678, g_drawPage == 1 ? g82b4s : g8188w, &blt, 1);
+        (*g_videoOps.copy)(bm7678, g_viewPages.draw == 1 ? g82b4s : g8188w, &blt, 1);
         blt.w = w;
         blt.h = 1;
         blt.sx = 0;
         blt.sy = 0;
         blt.dx = 0;
         blt.dy = DASH_Y;
-        (*g_videoOps.copy)(bm7678, g_drawPage == 1 ? g82b4s : g8188w, &blt, 1);
+        (*g_videoOps.copy)(bm7678, g_viewPages.draw == 1 ? g82b4s : g8188w, &blt, 1);
         crtc_set_split(-1);
         g_displaySplitYVal = 0;
-        (*g_videoOps.copyPage)(g_drawPage == 1 ? g82b4s->bits.p : g8188w->bits.p, bm7678->bits.p);
-        (*g_videoOps.copyPage)(g_drawPage == 1 ? g82b4s->bits.p : g8188w->bits.p, g_drawPage == 1 ? g8188w->bits.p : g82b4s->bits.p);
+        (*g_videoOps.copyPage)(g_viewPages.draw == 1 ? g82b4s->bits.p : g8188w->bits.p, bm7678->bits.p);
+        (*g_videoOps.copyPage)(g_viewPages.draw == 1 ? g82b4s->bits.p : g8188w->bits.p, g_viewPages.draw == 1 ? g8188w->bits.p : g82b4s->bits.p);
     } else
         (*g_videoOps.copyPage)(bm7678->bits.p, g8188w->bits.p);
     dash_set_view(1);

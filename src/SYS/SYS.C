@@ -33,14 +33,11 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_cursorDrawX;                         /* DS:6C46 */
-static int g_cursorDrawY;                         /* DS:6C48 */
-static char g_cursorDirty;                        /* DS:6C4A */
+static struct CursorDraw g_drawnCursor; /* DS:6C46 */
 static int g_keyGroup;                         /* DS:6C4C */
 static char g_6c4e;                        /* DS:6C4E */
 static int g_demoChoice;                        /* DS:6C50 */
-static int g_vibGain;                        /* DS:6C52 */
-static int g_vibDivisor;                        /* DS:6C54 */
+static struct Vibrato g_vibrato; /* DS:6C52 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Dev g_songBgState;
@@ -54,12 +51,7 @@ int g_cursHoverCodeVal;
 int g_wRivBanner;
 struct TimerPriorities g_sysTimerPriorities; /* DS:8EF6 */
 
-int g_timerFirst = -1;   /* DS:0566 */
-int g_timerHead = -1;   /* DS:0568 */
-int g_timerFree = 0;   /* DS:056A */
-long g_timerNext = 2147483647L;   /* DS:056C */
-char g_0570 = 0;   /* DS:0570 */
-char g_timerBusy = 0;   /* DS:0571 */
+struct TimerQueue g_timerQueue = {-1, -1, 0, 2147483647L, 0, 0}; /* DS:0566 */
 struct Link g_timers[4] = {{0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}};   /* DS:0572 */
 int g_05ba = 0;   /* DS:05BA */
 int g_05bc[8] = {0, 0, 0, 0, 0, 0, 0, 0};   /* DS:05BC */
@@ -75,9 +67,7 @@ int g_kbdHooked = 0;   /* DS:05E0 */
 struct Mouse g_mouse = {0, 0, 0, 0, 0, 0, 0, 10, 3};   /* DS:05E2 */
 int g_05f4[2] = {0, 0};   /* DS:05F4 */
 long g_tick = 0L;   /* DS:05F8 */
-long g_addT = 0L;   /* DS:05FC */
-long g_sysT = 0L;   /* DS:0600 */
-long g_tRef = 0L;   /* DS:0604 */
+struct GameClock g_gameClock = {0L, 0L, 0L}; /* DS:05FC */
 char g_tickDiv = 0;   /* DS:0608 */
 char g_driveDiv = 0;   /* DS:0609 */
 int g_060a = 0;   /* DS:060A */
@@ -90,7 +80,7 @@ int g_autoDrive = 0;   /* DS:0612 */
 
 void sys_hover_reset(void)
 {
-    g_cursorDirty = 1;
+    g_drawnCursor.dirty = 1;
     g_boxSpotHitData.x2 = -1;
     g_cursHoverCodeVal = 0x7d00;
     g_click = 0;
@@ -131,10 +121,10 @@ void sys_reset_queues(void)
     int i;
     long deadline;
 
-    g_timerFirst = g_timerHead = -1;
-    g_timerFree = 0;
-    g_timerNext = 0x7fffffffL;
-    g_0570 = g_timerBusy = 0;
+    g_timerQueue.earliest = g_timerQueue.head = -1;
+    g_timerQueue.free = 0;
+    g_timerQueue.nextDeadline = 0x7fffffffL;
+    g_timerQueue.unused = g_timerQueue.busy = 0;
     for (i = 0; i < 4; i++)
         g_timers[i].nxt = i + 1;
     g_05ba = -1;
@@ -167,19 +157,19 @@ void sys_timer_remove(int n)
         g_timers[i].prv = g_timers[n].prv;
     else {
         i = g_timers[n].prv;
-        g_timerFirst = i;
+        g_timerQueue.earliest = i;
         if (i < 0)
-            g_timerNext = 0x7fffffffL;
+            g_timerQueue.nextDeadline = 0x7fffffffL;
         else
-            g_timerNext = g_timers[i].deadline;
+            g_timerQueue.nextDeadline = g_timers[i].deadline;
     }
     i = g_timers[n].prv;
     if (i >= 0)
         g_timers[i].nxt = g_timers[n].nxt;
     else
-        g_timerHead = g_timers[n].nxt;
-    g_timers[n].nxt = g_timerFree;
-    g_timerFree = n;
+        g_timerQueue.head = g_timers[n].nxt;
+    g_timers[n].nxt = g_timerQueue.free;
+    g_timerQueue.free = n;
 }
 
 /* sys_unhook @ 0000:0FB7 (linear 0x00FB7, 51 bytes) */
@@ -308,8 +298,8 @@ void sys_init(void)
         g_mouse.shiftY = 1;
     } else
         g_mouse.present = 0;
-    g_cursorDrawX = -1;
-    g_cursorDrawY = -1;
+    g_drawnCursor.x = -1;
+    g_drawnCursor.y = -1;
     g_songBgState.active = 0;
     g_songBgState.song = g_song;
     g_songBgState.cur = g_songBgState.phraseStart = g_songBgState.song;
@@ -388,12 +378,7 @@ int sys_keymap_restore(int keep)
 
 char g_protectPal[16] = {0, 0, 8, 7, 15, 7, 15, 8, 7, 2, 4, 12, 5, 10, 6, 14};   /* DS:0692 */
 int g_06a2 = 0;   /* DS:06A2 */
-int g_demoQuit = 0;   /* DS:06A4 */
-char g_demoKeyDown = 0;   /* DS:06A6 */
-char g_demoMoving = 0;   /* DS:06A7 */
-int g_demoCount = 0;   /* DS:06A8 */
-int g_demoLastGroup = 0;   /* DS:06AA */
-int g_autoShifts = 0;   /* DS:06AC */
+struct DemoControl g_demoControl = {0, 0, 0, 0, 0, 0}; /* DS:06A4 */
 int g_demoTargetX = 0;   /* DS:06AE */
 int g_demoTargetY = 0;   /* DS:06B0 */
 int g_demoScriptPos = 0;   /* DS:06B2 */
@@ -434,8 +419,8 @@ int sys_wait_input(int ticks)
     flag = g_waitUntil != 0L;
     end = (long)ticks + g_tick;
     do {
-        if (g_demo == 0x63 && g_demoQuit != 0x63) {
-            g_demoQuit = 0x63;
+        if (g_demo == 0x63 && g_demoControl.quit != 0x63) {
+            g_demoControl.quit = 0x63;
             sys_exit();
         }
         if (g_protectCycle && (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
@@ -471,8 +456,8 @@ int sys_wait_input(int ticks)
             } else
                 return res;
         }
-        if (g_timerNext <= g_tick) {
-            p = &g_timers[i = g_timerFirst];
+        if (g_timerQueue.nextDeadline <= g_tick) {
+            p = &g_timers[i = g_timerQueue.earliest];
             switch (p->action) {
             case 0:
             default:
@@ -487,7 +472,7 @@ int sys_wait_input(int ticks)
         }
         if (g_demo == 0 && g_mouse.present) {
             mouse_poll();
-            if (g_cursorDirty |= (g_mouse.dx != 0 || g_mouse.dy != 0)) {
+            if (g_drawnCursor.dirty |= (g_mouse.dx != 0 || g_mouse.dy != 0)) {
                 g_cursorX += g_mouse.dx;
                 g_cursorY += g_mouse.dy;
             }
@@ -516,19 +501,19 @@ int sys_wait_input(int ticks)
             g_waitUntil = 0L;
             return 0x3e8;
         }
-        if (g_cVis > 0 && g_cursorDirty) {
+        if (g_cVis > 0 && g_drawnCursor.dirty) {
             _disable();
-            if ((g_cursorDrawX = g_cursorX) < 0)
-                g_cursorDrawX = g_cursorX = 0;
-            else if (g_cursorDrawX > 0x13a)
-                g_cursorDrawX = g_cursorX = 0x13a;
-            if ((g_cursorDrawY = g_cursorY) < 0)
-                g_cursorDrawY = g_cursorY = 0;
-            else if (g_cursorDrawY > 0xc2)
-                g_cursorDrawY = g_cursorY = 0xc2;
-            g_cursorDirty = 0;
+            if ((g_drawnCursor.x = g_cursorX) < 0)
+                g_drawnCursor.x = g_cursorX = 0;
+            else if (g_drawnCursor.x > 0x13a)
+                g_drawnCursor.x = g_cursorX = 0x13a;
+            if ((g_drawnCursor.y = g_cursorY) < 0)
+                g_drawnCursor.y = g_cursorY = 0;
+            else if (g_drawnCursor.y > 0xc2)
+                g_drawnCursor.y = g_cursorY = 0xc2;
+            g_drawnCursor.dirty = 0;
             _enable();
-            cursor_draw(x = g_cursorDrawX, y = g_cursorDrawY);
+            cursor_draw(x = g_drawnCursor.x, y = g_drawnCursor.y);
             if (g_menuLevel
                 && (x < g_boxSpotHitData.x1 || x >= g_boxSpotHitData.x2 || y < g_boxSpotHitData.y1 || y >= g_boxSpotHitData.y2)) {
                 res = g_cursHoverCodeVal;
@@ -571,13 +556,13 @@ int sys_timer_add(int delay, int pri)
     int prev;
     long when, key;
 
-    g_timerBusy = 1;
-    i = g_timerFree;
+    g_timerQueue.busy = 1;
+    i = g_timerQueue.free;
     if (i < 0) {
-        g_timerBusy = 0;
+        g_timerQueue.busy = 0;
         return -1;
     }
-    cur3 = g_timerHead;
+    cur3 = g_timerQueue.head;
     prev = -1;
     when = g_tick + delay;
     if (delay) {
@@ -602,19 +587,19 @@ int sys_timer_add(int delay, int pri)
     }
     g_timers[i].deadline = when;
     g_timers[i].priority = pri;
-    g_timerFree = g_timers[i].nxt;
+    g_timerQueue.free = g_timers[i].nxt;
     g_timers[i].nxt = cur3;
     if (cur3 < 0) {
-        g_timerFirst = i;
-        g_timerNext = when;
+        g_timerQueue.earliest = i;
+        g_timerQueue.nextDeadline = when;
     } else
         g_timers[cur3].prv = i;
     g_timers[i].prv = prev;
     if (prev < 0)
-        g_timerHead = i;
+        g_timerQueue.head = i;
     else
         g_timers[prev].nxt = i;
-    g_timerBusy = 0;
+    g_timerQueue.busy = 0;
     return i;
 }
 
@@ -636,7 +621,7 @@ void sys_timer_cancel(int n)
     struct Link *p;
     int i;
 
-    for (i = g_timerFirst; i >= 0; i = g_timers[i].nxt)
+    for (i = g_timerQueue.earliest; i >= 0; i = g_timers[i].nxt)
         if ((p = g_timers + i)->action == 1 && p->argument == n)
             p->action = 0;
 }
@@ -747,16 +732,16 @@ void sys_demo_step(void)
 
     if (g_keyGroup == 2)
         random_int(-1);
-    if (g_demoKeyDown) {
+    if (g_demoControl.keyDown) {
         g_demoKey |= 0x80;
-        g_demoKeyDown = 0;
+        g_demoControl.keyDown = 0;
         joy_demo_key();
         return;
     }
-    if (!g_demoMoving) {
-        if (g_autoShifts && g_keyGroup == 10) {
-            g_autoShifts = 0;
-            g_demoCount = 15;
+    if (!g_demoControl.moving) {
+        if (g_demoControl.autoShifts && g_keyGroup == 10) {
+            g_demoControl.autoShifts = 0;
+            g_demoControl.count = 15;
         }
         num = (int)strlen((char *)g_keyMaps[g_keyGroup]) / 2;
         k = 0;
@@ -774,7 +759,7 @@ void sys_demo_step(void)
             k = 1;
             break;
         case 23:
-            g_demoCount = 4;
+            g_demoControl.count = 4;
             break;
         case 8:
             k = 4;
@@ -790,16 +775,16 @@ void sys_demo_step(void)
             num--;
             break;
         }
-        if (g_keyGroup == 10 && g_demoLastGroup != 10) {
-            g_demoChoice = num - g_demoCount++ - 1;
-            g_demoCount = g_demoCount % num;
+        if (g_keyGroup == 10 && g_demoControl.lastGroup != 10) {
+            g_demoChoice = num - g_demoControl.count++ - 1;
+            g_demoControl.count = g_demoControl.count % num;
         } else
             g_demoChoice = random_int(num + k);
         switch (g_keyGroup) {
         case 21:
             if ((g_demoChoice >= 0 && g_demoChoice < 9) || g_demoChoice == 12)
                 g_demoChoice = 9;
-            if (g_demoLastGroup == 28)
+            if (g_demoControl.lastGroup == 28)
                 g_demoChoice = 11;
             break;
         case 20:
@@ -814,7 +799,7 @@ void sys_demo_step(void)
             g_demoChoice = 1;
             break;
         case 4:
-            if (g_demoCount < 11)
+            if (g_demoControl.count < 11)
                 g_demoChoice = 0;
             else
                 g_demoChoice = num - 1;
@@ -824,11 +809,11 @@ void sys_demo_step(void)
             g_demoChoice = 0;
             break;
         case 36:
-            if (g_demoLastGroup == 36)
+            if (g_demoControl.lastGroup == 36)
                 g_demoChoice = 0;
             break;
         case 11:
-            if (g_demoLastGroup == 11)
+            if (g_demoControl.lastGroup == 11)
                 g_demoChoice = 10;
             break;
         case 27:
@@ -876,17 +861,17 @@ void sys_demo_step(void)
             g_demoKey = 0x4c;
     }
     if ((g_demoTargetX && g_cursorX != g_demoTargetX) || (g_demoTargetY && g_cursorY != g_demoTargetY)) {
-        g_demoMoving = 1;
+        g_demoControl.moving = 1;
         return;
     }
-    g_demoMoving = 0;
-    if (g_keyGroup == 0x25 && g_autoShifts < 10 && g_demoKey == 0x22)
+    g_demoControl.moving = 0;
+    if (g_keyGroup == 0x25 && g_demoControl.autoShifts < 10 && g_demoKey == 0x22)
         g_demoKey = 0x1c;
-    if (g_keyGroup == 10 && g_demoLastGroup == 10) {
+    if (g_keyGroup == 10 && g_demoControl.lastGroup == 10) {
         g_demoKey = 0x1c;
-        g_demoLastGroup = 0;
+        g_demoControl.lastGroup = 0;
     } else
-        g_demoLastGroup = g_keyGroup;
+        g_demoControl.lastGroup = g_keyGroup;
     if (a_7eaap.spareParts == 0 && g_keyGroup == 7)
         game_add_part(0x2a, g_part[42].value);
     if (a_7eaap.currentCar == 0) {
@@ -897,7 +882,7 @@ void sys_demo_step(void)
     }
     if (g_demoKey == 0x46)
         g_demoKey = 0x1c;
-    g_demoKeyDown = 1;
+    g_demoControl.keyDown = 1;
     joy_demo_key();
 }
 
@@ -915,27 +900,27 @@ void interrupt far sys_timer_isr(void)
     } else {
         (*g_clockPrev)();
         g_tickDiv = 3;
-        g_sysT++;
+        g_gameClock.biosTicks++;
     }
     if (!g_soundOn && g_soundOn != g_speakerOn) {
         outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
         g_speakerOn = 0;
     }
     if (g_demo) {
-        if (((g_demoKeyDown ? 0xf : 0x7f) & g_tick) == 0)
+        if (((g_demoControl.keyDown ? 0xf : 0x7f) & g_tick) == 0)
             sys_demo_step();
         if ((g_demoTargetX || g_demoTargetY) && (g_cursorX != g_demoTargetX || g_cursorY != g_demoTargetY)) {
             g_cursorX += sys_sign(g_demoTargetX - g_cursorX);
             g_cursorY += sys_sign(g_demoTargetY - g_cursorY);
-            g_cursorDirty = 1;
+            g_drawnCursor.dirty = 1;
         }
     }
     if (g_voice->active && --g_voice->ticksLeft) {
         if (g_vibratoActive && g_voice->divisor.w && !--g_vibCount) {
             g_toneShapePlaybackPointer->phase = g_toneShapePlaybackPointer->phase % g_toneShapePlaybackPointer->length;
-            g_vibDivisor = g_toneShapes[g_toneShapePlaybackPointer->waveform][g_toneShapePlaybackPointer->phase++] * g_vibGain + g_voice->divisor.w;
-            outp(PIT_CH2, g_vibDivisor);
-            outp(PIT_CH2, g_vibDivisor >> 8);
+            g_vibrato.divisor = g_toneShapes[g_toneShapePlaybackPointer->waveform][g_toneShapePlaybackPointer->phase++] * g_vibrato.gain + g_voice->divisor.w;
+            outp(PIT_CH2, g_vibrato.divisor);
+            outp(PIT_CH2, g_vibrato.divisor >> 8);
             g_vibCount = g_toneShapePlaybackPointer->delay;
         }
     } else if (g_voice->active && g_voice->ticksLeft == 0) {
@@ -968,7 +953,7 @@ void interrupt far sys_timer_isr(void)
         } else {
             if (g_vibratoActive) {
                 g_vibCount = g_toneShapePlaybackPointer->delay;
-                g_vibGain = (unsigned)g_toneShapePlaybackPointer->depth * g_voice->divisor.w / 1000;
+                g_vibrato.gain = (unsigned)g_toneShapePlaybackPointer->depth * g_voice->divisor.w / 1000;
             }
             outp(PIT_CH2, g_voice->divisor.b[0]);
             outp(PIT_CH2, g_voice->divisor.b[1]);
@@ -1007,7 +992,7 @@ tail:
             if (x | y) {
                 g_cursorX += g_474c[x];
                 g_cursorY += g_4752[y];
-                g_cursorDirty = 1;
+                g_drawnCursor.dirty = 1;
             }
             g_cursorBusy = 0;
         }
@@ -1094,7 +1079,7 @@ void interrupt far sys_drive_isr(void)
             g_speakerOn = 0;
         }
     } else {
-        g_sysT++;
+        g_gameClock.biosTicks++;
         (*g_clockPrev)();
         g_tickDiv = 3;
         if (bw8aca && !g_carAnim && --g_driveDiv <= 0) {
@@ -1118,29 +1103,29 @@ void interrupt far sys_drive_isr(void)
                     if (g_demo == 0 && g_joystick) {
                         joy_read();
                         if ((n = g_joyX) < g_joyMinX) {
-                            g_cursorDirty = s = 1;
+                            g_drawnCursor.dirty = s = 1;
                             g_cursorX += -1;
                         } else if (g_joyMaxX < n) {
-                            g_cursorDirty = s = 1;
+                            g_drawnCursor.dirty = s = 1;
                             g_cursorX++;
                         }
                         if ((n = g_joyY) < g_joyMinY) {
-                            g_cursorDirty = flag = 1;
+                            g_drawnCursor.dirty = flag = 1;
                             g_cursorY += -1;
                         } else if (g_joyMaxY < n) {
-                            g_cursorDirty = prev = 1;
+                            g_drawnCursor.dirty = prev = 1;
                             g_cursorY++;
                         }
                     }
                     if (g_demo == 0 && g_mouse.present) {
                         mouse_poll();
                         if (g_mouse.dy > 0) {
-                            g_cursorDirty = 1;
+                            g_drawnCursor.dirty = 1;
                             g_cursorY++;
                             prev = 1;
                         }
                         if (n = g_mouse.dx) {
-                            g_cursorDirty = s = 1;
+                            g_drawnCursor.dirty = s = 1;
                             g_cursorX += n > 0 ? 1 : -1;
                         }
                         if (g_mouse.right)
@@ -1161,7 +1146,7 @@ void interrupt far sys_drive_isr(void)
                     } else if (g_driveEng.gearIndex < g_driveEng.gearCount && ao8228u) {
                         c = 1;
                         flag = 1;
-                        g_autoShifts++;
+                        g_demoControl.autoShifts++;
                     }
                     if (g_driveEng.rpm < 2000 && g_driveEng.gearIndex > 1 && !flag)
                         c = 1;
@@ -1187,7 +1172,7 @@ void interrupt far sys_drive_isr(void)
                     a_7eaap.currentCar->rack.parts[0]->wear += !a_7eaap.raceType ? 1 : 1;
                     a_7eaap.currentCar->transmission->wear += !a_7eaap.raceType ? 1 : 1;
                 }
-                if (!(g_sysT & (!a_7eaap.raceType ? 0xf : 0xf)))
+                if (!(g_gameClock.biosTicks & (!a_7eaap.raceType ? 0xf : 0xf)))
                     a_7eaap.currentCar->rack.parts[0]->wear++;
                 if ((i = a_7eaap.currentCar->rack.parts[0]->wear) >= 9900) {
                     g_driveEng.stopFlags |= 5;

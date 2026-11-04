@@ -46,7 +46,7 @@ int g_wOff[4] = {0, 5, 9, 14};   /* DS:5052 */
 
 int garage_day(void)
 {
-    return (int)((g_addT + g_sysT - g_tRef) / 6552) > 91 ? 91 : (int)((g_addT + g_sysT - g_tRef) / 6552);
+    return (int)((g_gameClock.actionTicks + g_gameClock.biosTicks - g_gameClock.timeBase) / 6552) > 91 ? 91 : (int)((g_gameClock.actionTicks + g_gameClock.biosTicks - g_gameClock.timeBase) / 6552);
 }
 
 /* F_064A3 @ 0000:64A3 (linear 0x064A3, 134 bytes) */
@@ -56,7 +56,7 @@ void F_064A3(int *a, int *b)
     long t;
     int r;
 
-    t = g_addT + g_sysT - g_tRef;
+    t = g_gameClock.actionTicks + g_gameClock.biosTicks - g_gameClock.timeBase;
     if (t > 0x91908L)
         t = 0x91908L;
     r = (int)(t % 6552);
@@ -132,7 +132,7 @@ void F_065AF(int a1)
     if (a1 == 0) {
         F_11421(-1, "", 0);
         game_pause(500);
-        g_addT += 0L;
+        g_gameClock.actionTicks += 0L;
         popup_show(img, px5, py4);
     }
     F_19438(1);
@@ -440,7 +440,7 @@ void near F_06F6B(void)
                 a_7eaap.currentCar->appearance &= 0xe0ff;
                 F_067CF(a_7eaap.currentCar->paintScheme = idx4);
                 F_112CB(12, 5);
-                g_addT += 0x888L;
+                g_gameClock.actionTicks += 0x888L;
                 F_11540(-20);
                 return;
             case -23:
@@ -530,7 +530,7 @@ void near F_0711A(unsigned mask)
                 g_whlPic[g_part[a_7eaap.currentCar->tires->idx].variant]);
         F_16BC1();
         cursor_ctl(CURSOR_SHOW_NOW);
-        g_addT += val5;
+        g_gameClock.actionTicks += val5;
         F_11540(-cost);
         break;
     case -22:
@@ -609,7 +609,7 @@ void near F_07367(void)
             popup_show(bm1, m_8272.stickerX, m_8272.stickerY);
             F_19438(3);
             F_168F3(0);
-            g_addT += 0x222L;
+            g_gameClock.actionTicks += 0x222L;
             F_11540(-5);
             cursor_ctl(CURSOR_SHOW);
             break;
@@ -717,7 +717,7 @@ void near F_07800(void)
     cur = g_part[tbl[sel]->idx].variant;
     F_07741(F_077B7(tbl[sel]), &car->tires);
     F_1B213(g_whlPic[y], g_whlPic[cur]);
-    g_addT += 0x444L;
+    g_gameClock.actionTicks += 0x444L;
 }
 
 /* build_car_info @ 0000:78F1 (linear 0x078F1, 250 bytes) */
@@ -854,7 +854,7 @@ void near F_07AA4(void)
                     F_1264E(m_8272.transmissionPic, 0);
                     F_16A5A(0);
                     F_16B97();
-                    g_addT += 0x666L;
+                    g_gameClock.actionTicks += 0x666L;
                     for (k = 2; k--;) {
                         flags[k + 1] = 1;
                         F_123F4(owner->transmissionBolts[k] = 1, k);
@@ -868,7 +868,7 @@ void near F_07AA4(void)
                     F_1264E(m_8272.transmissionPic, 1);
                     game_message(0x10cd);
                     F_12784(m_8272.transmissionPic, 1);
-                    g_addT += 0x888L;
+                    g_gameClock.actionTicks += 0x888L;
                     m_8272.transmissionPic = prev;
             }
             break;
@@ -889,7 +889,7 @@ void near F_07AA4(void)
                 if (flags[1] || flags[2])
                     break;
                 F_12784(m_8272.transmissionPic, 0);
-                g_addT += 0x666L;
+                g_gameClock.actionTicks += 0x666L;
                 m_8272.transmissionPic = 0;
                 owner->transmissionBolts[0] = owner->transmissionBolts[1] = 0;
                 remove_part(&owner->transmission);
@@ -961,7 +961,7 @@ static void near tune_timing(struct Car *car)
     blt.dx = 0xb0;
     F_119B8(0x42f, 0x60, 9, -1);
     p = bm7568 + video_anim_start(8);
-    tmp = g_sysT;
+    tmp = g_gameClock.biosTicks;
     sys_music_pause();
     g_voiceNum = 2;
     if (g_soundOn) {
@@ -1006,9 +1006,9 @@ static void near tune_timing(struct Car *car)
     g_voiceNum = 1;
     sys_music_resume();
     video_anim_stop(8);
-    n = ((unsigned)g_sysT - (unsigned)tmp) * 3;
+    n = ((unsigned)g_gameClock.biosTicks - (unsigned)tmp) * 3;
     n = n > 0x444 ? 0x444 : n;
-    g_addT += n;
+    g_gameClock.actionTicks += n;
     menu_pop(1);
 }
 
@@ -1081,13 +1081,13 @@ void near garage_hood(struct Car *car)
             if (car->wireState > 0) {
                 g_slotSelec.wirePic = 0x447;
                 gargfx_draw_wires();
-                g_addT += 0x6d;
+                g_gameClock.actionTicks += 0x6d;
                 gargfx_build_hots(g_bPos, g_bIdx);
                 continue;
             }
             g_slotSelec.wirePic = 0x446;
             gargfx_draw_wires();
-            g_addT += 0x6d;
+            g_gameClock.actionTicks += 0x6d;
             g_slotSelec.slot = 0;
             gargfx_build_hots(g_bPos, g_bIdx);
             break;
@@ -1137,7 +1137,7 @@ void near garage_hood(struct Car *car)
                 step = 0;
                 car->wireState = -1;
                 g_slotSelec.wirePic = 0x446;
-                g_addT += ok ? 0x666 : 0x888;
+                g_gameClock.actionTicks += ok ? 0x666 : 0x888;
                 break;
             case 1:
                 ok = (g_part[k = list4[key]->idx].fitMask & g7d86n[car->specIndex].parts & 0xf) != 0
@@ -1147,14 +1147,14 @@ void near garage_hood(struct Car *car)
                 n = g_nCarb[g_part[list4[key]->idx].variant] + 2;
                 for (k = 4; k < 10; k++)
                     g_5184[k] = g_cPos[tmp29][k - 4];
-                g_addT += ok ? 0x333u : 0x444u;
+                g_gameClock.actionTicks += ok ? 0x333u : 0x444u;
                 break;
             case 2:
             case 3:
             case 4:
                 ok = (g_part[k = list4[key]->idx].fitMask & g7d86n[car->specIndex].parts & 0xf) != 0
                      && g_carbFit[tmp29 = g_part[car->rack.parts[1]->idx].variant][g_part[k].variant] != 0;
-                g_addT += ok ? 0x199u : 0x222u;
+                g_gameClock.actionTicks += ok ? 0x199u : 0x222u;
                 step = 3;
                 sel2 = 2;
                 switch (g_slotSelec.slot = g_cPos[tmp29][0]) {
@@ -1238,7 +1238,7 @@ void near garage_hood(struct Car *car)
                     break;
             if (o_8290[k] == 0)
                 continue;
-            g_addT += 0x36;
+            g_gameClock.actionTicks += 0x36;
             if (havek[key] == 2) {
                 g_slotSelec.slot = g_5184[key];
                 g_slotSelec.subslot = g_5198[key];
@@ -1262,7 +1262,7 @@ void near garage_hood(struct Car *car)
                     sel2 = (k - 4) / 2 + 2;
                     if (cnt1 == 3)
                         ok = 2;
-                    g_addT += 0x199;
+                    g_gameClock.actionTicks += 0x199;
                     goto strip;
                 case 0:
                     break;
@@ -1275,7 +1275,7 @@ void near garage_hood(struct Car *car)
                         goto strip;
                     sel2 = 1;
                     ok = 1;
-                    g_addT += 0x333;
+                    g_gameClock.actionTicks += 0x333;
                     goto strip;
                 }
             } else {
@@ -1309,7 +1309,7 @@ void near garage_hood(struct Car *car)
                 sel2 = 0;
                 car->wireState = 0;
                 g_slotSelec.wirePic = 0;
-                g_addT += 0x666;
+                g_gameClock.actionTicks += 0x666;
             }
         }
     strip:

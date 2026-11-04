@@ -4,6 +4,19 @@
 #define RACE_H
 #include "STRUCTS.H"
 
+struct RivalPace {
+    int topSpeed;
+    int speedMargin;
+    int fastSpeed;
+    int slowSpeed;
+};
+
+struct GasInteraction {
+    int capAvailable;
+    int ragAvailable;
+    int nozzleAvailable;
+};
+
 extern struct BodyPoints g_featurePos; /* DS:8264 */
 
 extern int g_gasSpotIds[];                              /* DS:53B6 */

@@ -4,6 +4,35 @@
 #define SYS_H
 #include "STRUCTS.H"
 
+struct DemoControl {
+    int quit;
+    char keyDown;
+    char moving;
+    int count;
+    int lastGroup;
+    int autoShifts;
+};
+
+struct Vibrato {
+    int gain;
+    int divisor;
+};
+
+struct CursorDraw {
+    int x;
+    int y;
+    char dirty;
+};
+
+struct TimerQueue {
+    int earliest;
+    int head;
+    int free;
+    long nextDeadline;
+    char unused;
+    char busy;
+};
+
 struct TimerPriorities {
     int animation;
     int unused2;
@@ -19,12 +48,7 @@ extern int g_05da; /* DS:05DA */
 
 extern struct TimerPriorities g_sysTimerPriorities; /* DS:8EF6 */
 
-extern int g_timerFirst;                                /* DS:0566 */
-extern int g_timerHead;                                 /* DS:0568 */
-extern int g_timerFree;                                 /* DS:056A */
-extern long g_timerNext;                                /* DS:056C */
-extern char g_0570;                                     /* DS:0570 */
-extern char g_timerBusy;                                /* DS:0571 */
+extern struct TimerQueue g_timerQueue; /* DS:0566 */
 extern struct Link g_timers[];                          /* DS:0572 */
 extern int g_05ba;                                      /* DS:05BA */
 extern int g_05bc[8];                                   /* DS:05BC */
@@ -35,9 +59,7 @@ extern int g_kbdHooked;                                 /* DS:05E0 */
 extern struct Mouse g_mouse;                            /* DS:05E2 */
 extern int g_05f4[2];                                   /* DS:05F4 */
 extern long g_tick;                                     /* DS:05F8 */
-extern long g_addT;                                     /* DS:05FC */
-extern long g_sysT;                                     /* DS:0600 */
-extern long g_tRef;                                     /* DS:0604 */
+extern struct GameClock g_gameClock; /* DS:05FC */
 extern char g_tickDiv;                                  /* DS:0608 */
 extern char g_driveDiv;                                 /* DS:0609 */
 extern int g_060a;                                      /* DS:060A */
@@ -50,12 +72,7 @@ extern char g_keymapGroup;                              /* DS:064E */
 extern struct KeyMap g_keymapSaved[];                   /* DS:0650 */
 extern char g_protectPal[];                             /* DS:0692 */
 extern int g_06a2;                                      /* DS:06A2 */
-extern int g_demoQuit;                                  /* DS:06A4 */
-extern char g_demoKeyDown;                              /* DS:06A6 */
-extern char g_demoMoving;                               /* DS:06A7 */
-extern int g_demoCount;                                 /* DS:06A8 */
-extern int g_demoLastGroup;                             /* DS:06AA */
-extern int g_autoShifts;                                      /* DS:06AC */
+extern struct DemoControl g_demoControl; /* DS:06A4 */
 extern int g_demoTargetX;                               /* DS:06AE */
 extern int g_demoTargetY;                               /* DS:06B0 */
 extern int g_demoScriptPos;                             /* DS:06B2 */

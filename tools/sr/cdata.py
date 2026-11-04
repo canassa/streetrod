@@ -1,7 +1,7 @@
 """MSC 5.1 data shapes for source reconstruction (16-bit int, two-byte packing).
 
 The layout is checked against sizeof/offsetof emitted by the actual compiler before
-it is used for initialized data. This is intentionally limited to STRUCTS.H syntax.
+it is used for initialized data. Definitions come from STRUCTS.H and the indexed module headers.
 """
 import ast
 import re
@@ -35,13 +35,33 @@ def align(n,a):return (n+a-1)//a*a
 
 class Types:
     def __init__(self):
-        text=re.sub(r'/\*.*?\*/','', config.source_path('STRUCTS.H').read_text(),flags=re.S)
-        self.defs={};self.cache={};at=0
-        pattern=re.compile(r'\b(struct|union)\s+(\w+)\s*\{')
-        while m:=pattern.search(text,at):
-            end=self.brace_end(text,m.end()-1)
-            self.defs[m.group(1)+' '+m.group(2)]=(m.group(1),text[m.end():end])
-            at=end+1
+        index=config.source_index()
+        shared=index['STRUCTS.H']
+        self.headers=[shared]+[p for p in index.values() if p.suffix.upper()=='.H' and p!=shared]
+        self.defs={};self.typedefs={};self.cache={}
+        pattern=re.compile(r'\b(typedef\s+)?(struct|union|enum)\s+(?:(\w+)\s*)?\{')
+        for path in self.headers:
+            text=re.sub(r'/\*.*?\*/','',path.read_text(encoding='latin-1'),flags=re.S)
+            at=0
+            while m:=pattern.search(text,at):
+                end=self.brace_end(text,m.end()-1)
+                kind=m.group(2);body=text[m.end():end]
+                name=kind+' '+m.group(3) if m.group(3) else None
+                if name:self.defs[name]=(kind,body)
+                at=end+1
+                if m.group(1):
+                    semi=text.index(';',at)
+                    for alias in split_top(text[at:semi],','):
+                        match=re.search(r'[A-Za-z_]\w*',alias)
+                        key=alias[match.start():match.end()]
+                        decl=alias[:match.start()]+'@'+alias[match.end():]
+                        self.typedefs[key]=((kind,body),decl)
+                    at=semi+1
+            for m in re.finditer(r'\btypedef\s+([^;{}]+);',text):
+                base,decl=m.group(1).rsplit(None,1)
+                match=re.search(r'[A-Za-z_]\w*',decl)
+                key=match.group(0)
+                self.typedefs[key]=(base+' '+decl[:match.start()]+'@'+decl[match.end():],None)
 
     @staticmethod
     def brace_end(text,start):
@@ -70,6 +90,12 @@ class Types:
         if enum:
             name=enum.group(0)
             return dict(kind='scalar',name=name,size=2,align=2,ctype=name),text[enum.end():].strip()
+        alias=re.match(r'[A-Za-z_]\w*',text)
+        if alias and alias.group(0) in self.typedefs:
+            name=alias.group(0)
+            node=lambda:dict(self.named(name),ctype=name)
+            node.ctype=name
+            return node,text[alias.end():].strip()
         m=re.match(r'(?:(?:unsigned|signed)\s+)?(?:char|short|int|long|float|double|void)\b|unsigned\b|signed\b',text)
         if not m:raise ValueError('unsupported declaration: '+text)
         name=m.group(0);size=(1 if 'char' in name else 8 if name=='double' else 4 if name in ('long','unsigned long','signed long','float') else 0 if name=='void' else 2)
@@ -99,10 +125,17 @@ class Types:
 
     def named(self,name):
         if name not in self.cache:
-            kind,body=self.defs[name];self.cache[name]=self.record(kind,body)
+            if name in self.typedefs:
+                definition,decl=self.typedefs[name]
+                node=self.declaration(definition) if decl is None else self.declarator(self.record(*definition),decl)
+            else:
+                kind,body=self.defs[name]
+                node=self.record(kind,body)
+            self.cache[name]=node
         return self.cache[name]
 
     def record(self,kind,body):
+        if kind=='enum':return dict(kind='scalar',size=2,align=2,fields=[],dalign=2)
         fields=[];size=0;alignment=1;bitpos=0
         for statement in split_top(body,';'):
             base,tail=self.base(statement)

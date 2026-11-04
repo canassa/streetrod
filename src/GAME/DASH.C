@@ -27,12 +27,10 @@
 #include "VIEW.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_wheelY[3];                      /* DS:6C22 */
-static struct Bitmap far *g_wheelPages[3];    /* DS:6C28 */
+static struct WheelPoses g_wheelPoses; /* DS:6C22 */
 static void near save_under(int x, int y, int w, int h, int kind);
 static void near restore_under(int x, int y, int w, int h, int kind);
-static struct Track *g_shifter;               /* DS:6C34 */
-static int g_knobPos;                         /* DS:6C36 */
+static struct ShifterDraw g_shifterDraw; /* DS:6C34 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Bitmap far *bm7678;
@@ -341,10 +339,10 @@ void dash_intro(void)
 {
     int saved;
 
-    saved = g_picMaxH;
+    saved = g_picturePlacement.maxHeight;
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
         (*g_videoOps.blank)();
-    g_picMaxH = SCREEN_HEIGHT;
+    g_picturePlacement.maxHeight = SCREEN_HEIGHT;
     if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         main_set_palette(CGA_PALETTE_GREEN_RED_BROWN);
     F_119B8(3, 0x28, 0x28, 0);
@@ -365,7 +363,7 @@ void dash_intro(void)
         video_set_palette(g_introPalette);
     (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
     dash_wait_key(400);
-    g_picMaxH = saved;
+    g_picturePlacement.maxHeight = saved;
     screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
 }
@@ -462,19 +460,19 @@ void dash_load_wheel(void)
         for (i6 = 0; i6 < 3; i6++) {
             bm = disk_bm(g_wheelPicIds[i6], ARENA_LOW_STACK);
             if (r_vid.mode != VID_EGA || i6 < 2) {
-                g_wheelPages[i6] = g82b4s;
-                g_wheelY[i6] = g_wheelSlotY[i6];
+                g_wheelPoses.bitmaps[i6] = g82b4s;
+                g_wheelPoses.y[i6] = g_wheelSlotY[i6];
             } else {
-                g_wheelPages[i6] = bm7678;
-                g_wheelY[i6] = g_wheelSlotY[i6] + 0x66;
+                g_wheelPoses.bitmaps[i6] = bm7678;
+                g_wheelPoses.y[i6] = g_wheelSlotY[i6] + 0x66;
             }
-            pkt.dy = g_wheelY[i6];
-            (*g_videoOps.copy)(bm, g_wheelPages[i6], &pkt, 1);
+            pkt.dy = g_wheelPoses.y[i6];
+            (*g_videoOps.copy)(bm, g_wheelPoses.bitmaps[i6], &pkt, 1);
             marks_pop_low(1);
         }
     } else {
         for (i6 = 0; i6 < 3; i6++)
-            g_wheelPages[i6] = disk_bm(g_wheelPicIds[i6], ARENA_LOW_STACK);
+            g_wheelPoses.bitmaps[i6] = disk_bm(g_wheelPicIds[i6], ARENA_LOW_STACK);
     }
 }
 
@@ -495,13 +493,13 @@ void dash_steer_marker(int n)
     view_unclip_top();
     x = g_steerPoints[n][0];
     y2 = g_steerPoints[n][1] + DASH_Y;
-    ymax = g_clipYMax;
-    ymin2 = g_clipYMin;
-    g_clipYMax = SCREEN_BODY_HEIGHT;
-    g_clipYMin = DASH_Y;
+    ymax = g_viewClip.yMax;
+    ymin2 = g_viewClip.yMin;
+    g_viewClip.yMax = SCREEN_BODY_HEIGHT;
+    g_viewClip.yMin = DASH_Y;
     view_draw_dot(x, y2);
-    g_clipYMax = ymax;
-    g_clipYMin = ymin2;
+    g_viewClip.yMax = ymax;
+    g_viewClip.yMin = ymin2;
     view_clip();
     av787at = seg;
     at767ct = off;
@@ -524,12 +522,12 @@ void dash_draw_wheel(int a, int b, struct Bitmap far *dst)
         pkt1.h = 0x1a;
         if (r_vid.mode != VID_EGA) {
             pkt1.sx = 0x88;
-            pkt1.sy = g_wheelY[sel];
+            pkt1.sy = g_wheelPoses.y[sel];
         } else
             pkt1.sx = pkt1.sy = 0;
         pkt1.dx = 0x50;
         pkt1.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + 0x3f;
-        (*g_videoOps.copy)(g_wheelPages[sel], dst, &pkt1, 1);
+        (*g_videoOps.copy)(g_wheelPoses.bitmaps[sel], dst, &pkt1, 1);
         g_wheelShown = sel;
     }
     if (b != 100) {
@@ -547,15 +545,15 @@ void dash_draw_wheel(int a, int b, struct Bitmap far *dst)
         at767ct = 0;
         view_unclip_top();
         if (r_vid.mode != VID_EGA) {
-            ymax = g_clipYMax;
-            ymin2 = g_clipYMin;
-            g_clipYMax = SCREEN_BODY_HEIGHT;
-            g_clipYMin = DASH_Y;
+            ymax = g_viewClip.yMax;
+            ymin2 = g_viewClip.yMin;
+            g_viewClip.yMax = SCREEN_BODY_HEIGHT;
+            g_viewClip.yMin = DASH_Y;
         }
         view_draw_dot(x, y2);
         if (r_vid.mode != VID_EGA) {
-            g_clipYMax = ymax;
-            g_clipYMin = ymin2;
+            g_viewClip.yMax = ymax;
+            g_viewClip.yMin = ymin2;
         }
         view_clip();
         av787at = seg;
@@ -565,7 +563,7 @@ void dash_draw_wheel(int a, int b, struct Bitmap far *dst)
 
 /* dash_init_shifter @ 0F38:12F7 (linear 0x10677, 507 bytes)
 
-   Draws the car sprite at the top of the screen and, for each of the g_shifter->n points of the
+   Draws the car sprite at the top of the screen and, for each of the g_shifterDraw.track->n points of the
    track, the wheel sprite (the position comes from the (x, y) pair, the source rectangle from
    g_shiftSlots). dash_draw_shifter is the per-frame update that draws the same pieces. */
 
@@ -581,23 +579,23 @@ void dash_init_shifter(int a, int b)
     struct Bitmap far *bm28;
     int y;
 
-    g_shifter = &g_shifters[a ? 0 : b == 3 ? 1 : 2];
-    bm19 = disk_bm(g_shifter->id1, ARENA_HIGH_STACK);
+    g_shifterDraw.track = &g_shifters[a ? 0 : b == 3 ? 1 : 2];
+    bm19 = disk_bm(g_shifterDraw.track->id1, ARENA_HIGH_STACK);
     pk5.w = 0x30;
     pk5.h = 0x2b;
     pk5.sx = pk5.sy = 0;
     pk5.dx = 0x108;
     pk5.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + 0x17;
     (*g_videoOps.copy)(bm19, g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, &pk5, 1);
-    bm28 = disk_bm(g_shifter->id2, ARENA_HIGH_STACK);
+    bm28 = disk_bm(g_shifterDraw.track->id2, ARENA_HIGH_STACK);
     p3.w = p2.w = (pk5.w = bm28->width) + 8;
     p3.h = p2.h = pk5.h = bm28->height;
     p3.sx = p3.sy = 0;
     p2.dx = p2.dy = 0;
     pk5.sx = pk5.sy = pk5.dy = 0;
-    for (i = 0; i < g_shifter->n; i++) {
-        x = g_shifter->pt[i * 2];
-        y = g_shifter->pt[i * 2 + 1];
+    for (i = 0; i < g_shifterDraw.track->n; i++) {
+        x = g_shifterDraw.track->pt[i * 2];
+        y = g_shifterDraw.track->pt[i * 2 + 1];
         p2.sx = x & 0xfff8;
         p2.sy = y;
         cm2 = bitmap_grab(bm19, &p2, ARENA_LOW_STACK);
@@ -610,7 +608,7 @@ void dash_init_shifter(int a, int b)
         (*g_videoOps.copy)(cm2, g82b4s, &p3, 1);
         marks_pop_low(1);
     }
-    g_knobPos = -1;
+    g_shifterDraw.knobPosition = -1;
     F_19438(2);
 }
 
@@ -627,24 +625,24 @@ void dash_draw_shifter(struct Bitmap far *dst, struct Eng *e)
         idx3 = 0;
     else
         idx3 = e->autoSelector - 1;
-    pkt1.h = g_shifter->h;
-    if (g_knobPos >= 0) {
-        pkt1.sx = g_shiftSlots[g_knobPos].a;
-        pkt1.sy = g_shiftSlots[g_knobPos].b;
-        x = g_shifter->pt[g_knobPos * 2] & 0xfff8;
+    pkt1.h = g_shifterDraw.track->h;
+    if (g_shifterDraw.knobPosition >= 0) {
+        pkt1.sx = g_shiftSlots[g_shifterDraw.knobPosition].a;
+        pkt1.sy = g_shiftSlots[g_shifterDraw.knobPosition].b;
+        x = g_shifterDraw.track->pt[g_shifterDraw.knobPosition * 2] & 0xfff8;
         pkt1.dx = x + 0x108;
-        pkt1.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + g_shifter->pt[g_knobPos * 2 + 1] + 0x17;
+        pkt1.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + g_shifterDraw.track->pt[g_shifterDraw.knobPosition * 2 + 1] + 0x17;
         pkt1.w = 0x30 - x > 0x20 ? 0x20 : 0x30 - x;
         (*g_videoOps.copy)(g82b4s, dst, (struct Blt *)&pkt1, 1);
     }
     pkt1.sx = g_shiftSlots[idx3].a;
     pkt1.sy = g_shiftSlots[idx3].b + 0x13;
-    x = g_shifter->pt[idx3 * 2] & 0xfff8;
+    x = g_shifterDraw.track->pt[idx3 * 2] & 0xfff8;
     pkt1.dx = x + 0x108;
-    pkt1.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + g_shifter->pt[idx3 * 2 + 1] + 0x17;
+    pkt1.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + g_shifterDraw.track->pt[idx3 * 2 + 1] + 0x17;
     pkt1.w = 0x30 - x > 0x20 ? 0x20 : 0x30 - x;
     (*g_videoOps.copy)(g82b4s, dst, (struct Blt *)&pkt1, 1);
-    g_knobPos = idx3;
+    g_shifterDraw.knobPosition = idx3;
     e->shifterDirty = 0;
 }
 

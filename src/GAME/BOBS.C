@@ -506,7 +506,7 @@ static int near challenge(int arg)
             }
             g_raceWagerTerms.amount = 0;
             race_run();
-            g_addT += a_7eaap.raceType == 0 ? 0x444u : 0x777u;
+            g_gameClock.actionTicks += a_7eaap.raceType == 0 ? 0x444u : 0x777u;
             return 2;
         }
         marks_release();
@@ -586,7 +586,7 @@ static int near challenge(int arg)
                 pict = 0;
                 game_message(g_acceptMsgs[a_7eaap.raceType][random_int(3)]);
                 race_run();
-                g_addT += a_7eaap.raceType == 0 ? 0x444u : 0x777u;
+                g_gameClock.actionTicks += a_7eaap.raceType == 0 ? 0x444u : 0x777u;
                 return 2;
             }
             while ((ch = random_int(5)) == prev)
@@ -806,11 +806,11 @@ static void near play_ending(void)
     screen_status_init(0xbe);
     F_119B8(9, 8, 0x14, 2);
     r_vid.copyToFront = 0;
-    savedl = g_picMaxH;
-    g_picMaxH = SCREEN_HEIGHT;
+    savedl = g_picturePlacement.maxHeight;
+    g_picturePlacement.maxHeight = SCREEN_HEIGHT;
     (*g_videoOps.copyPage)(r_vid.front->bits.p, r_vid.back->bits.p);
     F_118D4(0x408, -1);
-    g_picMaxH = savedl;
+    g_picturePlacement.maxHeight = savedl;
     (*g_videoOps.show)();
     game_pause(0x2ee);
     (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
@@ -1101,7 +1101,7 @@ test:
             } else {
                 pop_rival_hood();
                 n++;
-                g_addT += 0x111L;
+                g_gameClock.actionTicks += 0x111L;
             }
             menu_pop(1);
             break;

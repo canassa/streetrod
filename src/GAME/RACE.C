@@ -39,9 +39,7 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_tankCapIsActive;                       /* DS:6CA4 */
-static int g_ragAvailable;                       /* DS:6CA6 */
-static int g_pumpOnState;                       /* DS:6CA8 */
+static struct GasInteraction g_fuelStationActions; /* DS:6CA4 */
 static int near find_gas_spot(int);
 static void near clear_gas_spots(void);
 static void near place_gas_spot(int, int, int, int, int);
@@ -60,11 +58,8 @@ static void near drop_transmission(int n);
 static int near replace_tires(void);
 static void near show_ticket(void);
 static int g_finishLineIndex;                       /* DS:6CAA */
-static int g_rivalTop;                       /* DS:6CAC */
-static int g_rivalLead;                       /* DS:6CAE */
-static int g_rivalFast;                         /* DS:6CB0 */
-static int g_rivalSlow;                         /* DS:6CB2 */
-static int g_rivalShiftPen;                         /* DS:6CB4 */
+static struct RivalPace g_rivalPace; /* DS:6CAC */
+static int g_shiftPenalty; /* DS:6CB4 */
 static int g_targetLane;                         /* DS:6CB6 */
 static int g_rpmBand;                         /* DS:6CB8 */
 static int g_shiftPoint;                         /* DS:6CBA */
@@ -116,9 +111,9 @@ static void near clear_gas_spots(void)
 {
     int k;
 
-    g_ragAvailable = 0;
-    g_pumpOnState = 0;
-    g_tankCapIsActive = 0;
+    g_fuelStationActions.ragAvailable = 0;
+    g_fuelStationActions.nozzleAvailable = 0;
+    g_fuelStationActions.capAvailable = 0;
     for (k = 0; k < 6; k++)
         g_hots[find_gas_spot(g_gasSpotIds[k])].kind = 14;
 }
@@ -142,8 +137,8 @@ static void near spots_idle(void)
     place_gas_spot(2, 0x3f, 100, 12, 23);
     place_gas_spot(1, 0x54, 0xa8, 0x1f, 15);
     sort_gas_spots();
-    g_ragAvailable = 1;
-    g_pumpOnState = 1;
+    g_fuelStationActions.ragAvailable = 1;
+    g_fuelStationActions.nozzleAvailable = 1;
 }
 
 /* spots_cap @ 0000:B525 (linear 0x0B525, 45 bytes) */
@@ -153,7 +148,7 @@ static void near spots_cap(void)
     clear_gas_spots();
     place_gas_spot(4, g_featurePos.gasCapX - 10, g_featurePos.gasCapY - 5, 18, 12);
     sort_gas_spots();
-    g_tankCapIsActive = 1;
+    g_fuelStationActions.capAvailable = 1;
 }
 
 /* spots_nozzle @ 0000:B552 (linear 0x0B552, 73 bytes) */
@@ -164,8 +159,8 @@ static void near spots_nozzle(void)
     place_gas_spot(2, 0x34, 100, 16, 23);
     place_gas_spot(4, g_featurePos.gasCapX - 1, g_featurePos.gasCapY - 1, 10, 9);
     sort_gas_spots();
-    g_pumpOnState = 1;
-    g_tankCapIsActive = 1;
+    g_fuelStationActions.nozzleAvailable = 1;
+    g_fuelStationActions.capAvailable = 1;
 }
 
 /* spots_rag @ 0000:B59B (linear 0x0B59B, 124 bytes) */
@@ -179,7 +174,7 @@ static void near spots_rag(void)
     place_gas_spot(1, 0x3e, 0xa5, 0x35, 18);
     place_gas_spot(3, 0xc4, 0x5a, 16, 14);
     sort_gas_spots();
-    g_ragAvailable = 1;
+    g_fuelStationActions.ragAvailable = 1;
 }
 
 /* spots_none @ 0000:B617 (linear 0x0B617, 4 bytes) */
@@ -349,7 +344,7 @@ top:
             g_waitUntil = g_tick + 0x4c;
             break;
         case 1:
-            if (g_ragAvailable == 0)
+            if (g_fuelStationActions.ragAvailable == 0)
                 break;
             if (dl.f0c == 1) {
                 cursor_ctl(dl.f0c = 3);
@@ -367,7 +362,7 @@ top:
                 goto redraw;
             }
         case 2:
-            if (g_pumpOnState == 0)
+            if (g_fuelStationActions.nozzleAvailable == 0)
                 break;
             if (dl.f0c == 1) {
                 cursor_ctl(dl.f0c = 2);
@@ -393,7 +388,7 @@ top:
             dl.f1a = 0;
             break;
         case 4:
-            if (g_tankCapIsActive == 0)
+            if (g_fuelStationActions.capAvailable == 0)
                 break;
             if (dl.f0c == 1) {
                 if (video_anim_active(2)) {
@@ -946,10 +941,10 @@ void near race_reset_eng(struct Eng *p)
 nx:
     g_failureTire = 0;
     g_lastTicks = 0;
-    g_rivalTop = perf_vmax(bn7648);
-    g_rivalSlow = (int)(g_rivalTop * 0.7);
-    g_rivalFast = (int)(g_rivalTop * 0.8);
-    g_rivalLead = bu8acc < 4 ? 10 : 16;
+    g_rivalPace.topSpeed = perf_vmax(bn7648);
+    g_rivalPace.slowSpeed = (int)(g_rivalPace.topSpeed * 0.7);
+    g_rivalPace.fastSpeed = (int)(g_rivalPace.topSpeed * 0.8);
+    g_rivalPace.speedMargin = bu8acc < 4 ? 10 : 16;
     g_bumpAlternate = 0;
     g_statsDone = 0;
 }
@@ -961,7 +956,7 @@ static void near init_rival_eng(void)
     struct Range *r;
 
     perf_drivetrain_spec(bn7648, &g_oppEngState);
-    g_rivalShiftPen = g_selectedRacerPointer->shiftPenalty;
+    g_shiftPenalty = g_selectedRacerPointer->shiftPenalty;
     race_reset_eng(&g_oppEngState);
     g_oppEngState.gearIndex = 0;
     g_oppEngState.rpmPerSpeed = g_oppEngState.f34[0];
@@ -977,7 +972,7 @@ static void near init_rival_eng(void)
     g_oppEngState.rpmBand = g_rpmBand;
     g_oppEngState.maxRpm = r->maxRpm;
     g_oppEngState.accelStep = r->accelStep;
-    g_shiftPoint = g_oppEngState.autoSelector ? 0x14b4 : g_oppEngState.shiftRpm - 100 * g_rivalShiftPen;
+    g_shiftPoint = g_oppEngState.autoSelector ? 0x14b4 : g_oppEngState.shiftRpm - 100 * g_shiftPenalty;
     ar7e8av.roadIndex = 200;
     ar7e8av.roadFraction = 0;
     g_targetLane = ar7e8av.lateralX = ((al70c0x.leftEdge + ao7d2ev.rightEdge) >> 1) - 200;
@@ -1074,7 +1069,7 @@ static void near rival_accelerate(void)
         if (g_terrain2[ar7e8av.roadIndex] != g_terrain2[ar7e8av.roadIndex + 1]) {
             if (g_rivalCurveBrake == 0) {
                 g_rivalCurveBrake = 1;
-                vl = g_rivalTop - (ar7e8av.roadIndex > ao7d2ev.roadIndex ? g_selectedRacerPointer->f2 : g_selectedRacerPointer->f2 >> 1);
+                vl = g_rivalPace.topSpeed - (ar7e8av.roadIndex > ao7d2ev.roadIndex ? g_selectedRacerPointer->f2 : g_selectedRacerPointer->f2 >> 1);
                 if (vl < g_oppEngState.speed)
                     fit_gear(vl, &g_oppEngState);
             }
@@ -1084,20 +1079,20 @@ static void near rival_accelerate(void)
         d = ar7e8av.roadIndex - ao7d2ev.roadIndex;
         if (d > 12 && (a_7eaap.raceType != 1 || g_isKingState == 0)) {
             if (g_driveEng.speed >= 0x61)
-                vl = g_rivalFast;
+                vl = g_rivalPace.fastSpeed;
             else if (g_isKingState)
-                vl = g_rivalFast;
+                vl = g_rivalPace.fastSpeed;
             else
-                vl = g_rivalSlow;
+                vl = g_rivalPace.slowSpeed;
         chk:
             if (vl < g_oppEngState.speed) {
                 fit_gear(vl, &g_oppEngState);
                 continue;
             }
         } else if (d > -5 && d < 5) {
-            vl = g_driveEng.speed + g_rivalLead;
-            if (ao7d2ev.roadIndex >= 30 && vl < g_rivalSlow)
-                vl = g_rivalSlow;
+            vl = g_driveEng.speed + g_rivalPace.speedMargin;
+            if (ao7d2ev.roadIndex >= 30 && vl < g_rivalPace.slowSpeed)
+                vl = g_rivalPace.slowSpeed;
             goto chk;
         }
         if (a_7f88d >= 2 && g_driveEng.speed > 50 && g_oppEngState.speed > g_driveEng.speed + 32)
@@ -1115,7 +1110,7 @@ static void near rival_accelerate(void)
                 ((g_oppEngState.autoSelector && g_oppEngState.rpm >= g_oppEngState.autoShiftRpm) || g_oppEngState.rpm >= g_shiftPoint)) {
                 g_oppEngState.gearIndex++;
                 if (g_oppEngState.autoSelector == 0)
-                    g_shiftPoint = g_oppEngState.gearIndex < g_oppEngState.gearCount ? g_oppEngState.shiftRpm - 100 * g_rivalShiftPen
+                    g_shiftPoint = g_oppEngState.gearIndex < g_oppEngState.gearCount ? g_oppEngState.shiftRpm - 100 * g_shiftPenalty
                            : bu8acc < 4 && r_vid.mode != VID_TANDY ? 0x14b4 : 0x1518;
                 g_oppEngState.rpmPerSpeed = g_oppEngState.f34[g_oppEngState.gearIndex];
                 g_oppEngState.rpm = g_oppEngState.speed * g_oppEngState.rpmPerSpeed;
@@ -1348,14 +1343,14 @@ static void near cop_appears(void)
     old = g_oppEngState.speed;
     g_selectedRacerPointer = &g_racerRecordsArray[RACER_COP_ENTRY];
     perf_drivetrain_spec(0x19, &g_oppEngState);
-    g_rivalShiftPen = g_selectedRacerPointer->shiftPenalty;
+    g_shiftPenalty = g_selectedRacerPointer->shiftPenalty;
     fit_gear(old, &g_oppEngState);
     cruise_rival_paint(5);
     for (n1 = 0; n1 < 12; n1++)
         g8acew[n1] = ab7526x[n1];
-    g_rivalTop = perf_vmax(0x19);
-    g_rivalSlow = (int)(g_rivalTop * 0.6);
-    g_rivalFast = (int)(g_rivalTop * 0.8);
+    g_rivalPace.topSpeed = perf_vmax(0x19);
+    g_rivalPace.slowSpeed = (int)(g_rivalPace.topSpeed * 0.6);
+    g_rivalPace.fastSpeed = (int)(g_rivalPace.topSpeed * 0.8);
 }
 
 int by72f2;

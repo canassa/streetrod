@@ -6,10 +6,7 @@
         EXTRN   _av787at:WORD
         EXTRN   _g_hercules:WORD
         EXTRN   _g_viewRect:BYTE
-        EXTRN   _g_clipXMax:WORD
-        EXTRN   _g_clipXMin:WORD
-        EXTRN   _g_clipYMax:WORD
-        EXTRN   _g_clipYMin:WORD
+        EXTRN   _g_viewClip:WORD
 
         PUBLIC  _g_cgaColorByte
 _g_cgaColorByte DB      0, 55h, 0AAh, 0FFh       ; DS:5B56 char[4]
@@ -376,14 +373,14 @@ _cgaline_span  PROC    FAR
         mov     BYTE PTR cs:dbl,1
 clip:
         mov     ax,[bp+10]
-        cmp     _g_clipYMin,ax
+        cmp     _g_viewClip+2,ax
         jg      skip1
-        cmp     _g_clipYMax,ax
+        cmp     _g_viewClip+4,ax
         jl      skip1
         mov     ax,[bp+6]
         mov     bx,[bp+8]
-        mov     cx,_g_clipXMin
-        mov     dx,_g_clipXMax
+        mov     cx,_g_viewClip
+        mov     dx,_g_viewClip+6
         cmp     cx,bx
         jg      skip1
         cmp     dx,ax
@@ -492,7 +489,7 @@ _cgaline_span  ENDP
 
 ; cgaline_fill_below @ 1C11:1FEE (linear 0x1E0FE, 96 bytes)
 ; Fill whole screen lines with a 2-bit pattern, from line y1 down to the
-; bottom clip line (g_clipYMax). The colour is turned into a pattern
+; bottom clip line (g_viewClip.yMax). The colour is turned into a pattern
 ; byte via g_cgaDitherOdd; every second line gets the pattern rotated by 2 bits.
 ; cgaline_fill_below(y1, colour)
 
@@ -503,7 +500,7 @@ _cgaline_fill_below  PROC    FAR
         push    si
         push    di
         mov     ax,[bp+6]
-        cmp     _g_clipYMax,ax
+        cmp     _g_viewClip+4,ax
         jl      done3
         mov     bx,OFFSET _g_cgaDitherOdd
         mov     ax,[bp+8]
@@ -514,7 +511,7 @@ _cgaline_fill_below  PROC    FAR
         xor     si,si
 again:
         mov     ax,[bp+6]
-        mov     bx,_g_clipYMax
+        mov     bx,_g_viewClip+4
         mov     cx,bx
         sub     cx,ax
         shr     cx,1

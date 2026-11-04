@@ -4,6 +4,16 @@
 #define DASH_H
 #include "STRUCTS.H"
 
+struct ShifterDraw {
+    struct Track *track;
+    int knobPosition;
+};
+
+struct WheelPoses {
+    int y[3];
+    struct Bitmap far *bitmaps[3];
+};
+
 extern struct Hooks g_videoOps; /* DS:78A2 */
 
 #define DASH_Y 100

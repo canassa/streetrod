@@ -4,6 +4,12 @@
 #define VIDEO_H
 #include "STRUCTS.H"
 
+struct AnimRun {
+    struct Cmd *command;
+    struct Obj *object;
+    struct Box *box;
+};
+
 enum AnimOp {
     ANIM_NOP_1 = 1,
     ANIM_BLIT = 2,

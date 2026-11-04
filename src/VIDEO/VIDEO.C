@@ -20,10 +20,8 @@
 #include "SYS.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static struct Cmd *g_cmd;                  /* DS:6C38 */
-static struct Obj *g_obj;                  /* DS:6C3A */
-static struct Box *g_box;                  /* DS:6C3C */
-static int g_blinkCount;                        /* DS:6C3E */
+static struct AnimRun g_animRun; /* DS:6C38 */
+static int g_pumpBlinkCount; /* DS:6C3E */
 static void near anim_set_box(void);
 static void near anim_run(int n);
 
@@ -164,19 +162,19 @@ void video_anim_stop(int n)
 
 static void near anim_set_box(void)
 {
-    switch (g_cmd->sub) {
+    switch (g_animRun.command->sub) {
     case BOX_KEEP:
         break;
     case BOX_SET_SOURCE:
-        g_box->sx = g_cmd->a;
-        g_box->sy = g_cmd->b;
+        g_animRun.box->sx = g_animRun.command->a;
+        g_animRun.box->sy = g_animRun.command->b;
         break;
     case BOX_SET_BOTH:
-        g_box->sx = g_cmd->a;
-        g_box->sy = g_cmd->b;
+        g_animRun.box->sx = g_animRun.command->a;
+        g_animRun.box->sy = g_animRun.command->b;
     case BOX_SET_DESTINATION:
-        g_box->dx = g_cmd->a;
-        g_box->dy = g_cmd->b;
+        g_animRun.box->dx = g_animRun.command->a;
+        g_animRun.box->dy = g_animRun.command->b;
         break;
     }
 }
@@ -195,81 +193,81 @@ static void near anim_run(int n)
 
     wait = 1;
     cursor_ctl(CURSOR_HIDE);
-    g_obj = &bm7568[n];
-    g_cmd = &g_animScripts[k = g_obj->scriptIndex];
-    g_box = &g_obj->box;
+    g_animRun.object = &bm7568[n];
+    g_animRun.command = &g_animScripts[k = g_animRun.object->scriptIndex];
+    g_animRun.box = &g_animRun.object->box;
     for (; k >= 0; k++) {
-        switch (g_cmd->op) {
+        switch (g_animRun.command->op) {
         case ANIM_NOP_1:
         case ANIM_NOP_3:
             break;
         case ANIM_BLIT:
             anim_set_box();
-            (*g_videoOps.copy)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
+            (*g_videoOps.copy)(g_animRun.object->img, r_vid.back, (struct Blt *)g_animRun.box, 1);
             break;
         case ANIM_BLIT_MASKED:
             anim_set_box();
-            (*g_videoOps.maskedBlit)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
+            (*g_videoOps.maskedBlit)(g_animRun.object->img, r_vid.back, (struct Blt *)g_animRun.box, 1);
             break;
         case ANIM_TILE_CAR:
-            if (!sprite_car_clip(g_box->dx, g_box->dy, g_box->w, g_box->h, &res))
+            if (!sprite_car_clip(g_animRun.box->dx, g_animRun.box->dy, g_animRun.box->w, g_animRun.box->h, &res))
                 break;
             blt.w = res.x2 - res.x1;
             blt.h = res.y2 - res.y1 + 1;
             blt.sx = res.x1 - ac825et;
             blt.sy = res.y1 - aw8260y;
-            tx = res.x1 - g_box->dx;
-            ty = res.y1 - g_box->dy;
-            for (y = 0; y < g_obj->img->height; y += g_box->h) {
-                for (x1 = 0; x1 < g_obj->img->width; x1 += g_box->w) {
+            tx = res.x1 - g_animRun.box->dx;
+            ty = res.y1 - g_animRun.box->dy;
+            for (y = 0; y < g_animRun.object->img->height; y += g_animRun.box->h) {
+                for (x1 = 0; x1 < g_animRun.object->img->width; x1 += g_animRun.box->w) {
                     blt.dx = tx + x1;
                     blt.dy = ty + y;
-                    (*g_videoOps.maskedBlit)(g_autoSprImagePtr, g_obj->img, &blt, 1);
+                    (*g_videoOps.maskedBlit)(g_autoSprImagePtr, g_animRun.object->img, &blt, 1);
                 }
             }
             break;
         case ANIM_HOOK:
-            if (!video_anim_hook(g_obj, g_cmd))
+            if (!video_anim_hook(g_animRun.object, g_animRun.command))
                 break;
         case ANIM_STOP:
-            video_anim_stop(g_obj->id);
+            video_anim_stop(g_animRun.object->id);
             cursor_ctl(CURSOR_SHOW);
             return;
         case ANIM_JUMP:
-            g_cmd = &g_animScripts[g_cmd->a];
+            g_animRun.command = &g_animScripts[g_animRun.command->a];
             goto next;
         case ANIM_LOAD_IMAGE:
-            g_obj->img = disk_bm(g_cmd->a, ARENA_HIGH_STACK);
-            g_cmd++;
+            g_animRun.object->img = disk_bm(g_animRun.command->a, ARENA_HIGH_STACK);
+            g_animRun.command++;
             continue;
         case ANIM_SET_BOX:
             anim_set_box();
             break;
         case ANIM_SET_SIZE:
-            g_box->w = g_cmd->a;
-            g_box->h = g_cmd->b;
+            g_animRun.box->w = g_animRun.command->a;
+            g_animRun.box->h = g_animRun.command->b;
             break;
         case ANIM_WAIT:
-            if (!(g_obj->scriptIndex = g_cmd->b))
-                g_obj->scriptIndex = ++k;
-            sys_timer_anim(g_obj->id, g_cmd->a);
-            g_obj->pendingTimers++;
+            if (!(g_animRun.object->scriptIndex = g_animRun.command->b))
+                g_animRun.object->scriptIndex = ++k;
+            sys_timer_anim(g_animRun.object->id, g_animRun.command->a);
+            g_animRun.object->pendingTimers++;
             if (wait)
                 cursor_ctl(CURSOR_SHOW);
-            if (g_cmd->sub == ANIM_WAIT_COPY_TO_FRONT && r_vid.copyToFront)
-                bitmap_copy_box(r_vid.back, r_vid.front, g_box->dx, g_box->dy,
-                        g_box->dx + g_box->w - 1, g_box->dy + g_box->h - 1);
+            if (g_animRun.command->sub == ANIM_WAIT_COPY_TO_FRONT && r_vid.copyToFront)
+                bitmap_copy_box(r_vid.back, r_vid.front, g_animRun.box->dx, g_animRun.box->dy,
+                        g_animRun.box->dx + g_animRun.box->w - 1, g_animRun.box->dy + g_animRun.box->h - 1);
             return;
         case ANIM_COPY_TO_FRONT:
             cursor_ctl(CURSOR_SHOW);
             wait = 0;
             if (!r_vid.copyToFront)
                 break;
-            bitmap_copy_box(r_vid.back, r_vid.front, g_box->dx, g_box->dy,
-                    g_box->dx + g_box->w - 1, g_box->dy + g_box->h - 1);
+            bitmap_copy_box(r_vid.back, r_vid.front, g_animRun.box->dx, g_animRun.box->dy,
+                    g_animRun.box->dx + g_animRun.box->w - 1, g_animRun.box->dy + g_animRun.box->h - 1);
             break;
         }
-        g_cmd++;
+        g_animRun.command++;
     next: ;
     }
 }
@@ -320,17 +318,17 @@ int video_anim_hook(struct Obj *o, struct Cmd *c)
     switch (o->id) {
     case 2:
         if (c->a) {
-            g_blinkCount = c->a;
+            g_pumpBlinkCount = c->a;
             sound_pump(1);
             return 0;
         }
-        if (g_blinkCount--) {
+        if (g_pumpBlinkCount--) {
             struct Colors save;     /* PROVISIONAL: never used; fills the 6-byte frame slot (original local unknown) */
             old = x_colors.line;
-            x_colors.line = (g_blinkCount & 1) ? 4 : 0;
+            x_colors.line = (g_pumpBlinkCount & 1) ? 4 : 0;
             draw_hline(r_vid.back, 0x33, 0x6f, 2);
-            if (!(g_blinkCount & 3)) {
-                x_colors.line = (g_blinkCount & 4) ? 4 : 0;
+            if (!(g_pumpBlinkCount & 3)) {
+                x_colors.line = (g_pumpBlinkCount & 4) ? 4 : 0;
                 draw_hline(r_vid.back, 0x30, 0x6f, 2);
             }
             return 0;

@@ -470,7 +470,7 @@ struct Lims {
     int y2;
 };
 
-/* what g_shifter points at (dash_draw_shifter, dash_init_shifter): number of points, bitmap ids of the two sprites, bitmap
+/* what g_shifterDraw.track points at (dash_draw_shifter, dash_init_shifter): number of points, bitmap ids of the two sprites, bitmap
    height at +6 and a table of (x, y) signed-byte pairs at +8 */
 struct Track {
     int n;
@@ -733,4 +733,33 @@ struct Wager {
     enum BetKind kind;
     int amount;
 };
+
+/* Game time from action ticks, BIOS ticks and a saved time base. */
+struct GameClock {
+    long actionTicks;
+    long biosTicks;
+    long timeBase;
+};
+
+/* Picture destination and maximum drawing height. */
+struct PicturePlacement {
+    int x;
+    int y;
+    int maxHeight;
+};
+
+/* Draw and show page indices. */
+struct ViewPages {
+    int draw;
+    int show;
+};
+
+/* Clipping bounds shared by VIEW and the span drawing routines. */
+struct ViewClip {
+    int xMin;
+    int yMin;
+    int yMax;
+    int xMax;
+};
+
 #endif

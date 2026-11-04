@@ -31,12 +31,9 @@
 enum LoadResult { LOAD_NO_MEMORY, LOAD_CACHED, LOAD_READ, LOAD_READ_VRAM };
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_curDrive;                         /* DS:6C68 */
-static int *g_curCount;                        /* DS:6C6A */
-static int *g_curHandle;                        /* DS:6C6C */
-static char *g_curName;                       /* DS:6C6E */
-static int *g_otherHandle;                       /* DS:6C70 */
-static char g_dataPath[16];                   /* DS:6C72 */
+static int g_initialDrive; /* DS:6C68 */
+static struct PicLibSelection g_picLib; /* DS:6C6A */
+static char g_dataPath[16]; /* DS:6C72 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Model w_8df0[26];
@@ -128,29 +125,29 @@ static void near open_lib(int n)
 
     if (pic_index(n) >= g_lib1Count) {
         kind = 2;
-        g_curName = g_picLibBPath;
-        g_curHandle = &g_lib2Handle;
-        g_otherHandle = &g_lib1Handle;
-        g_curCount = &g_countLibBmB;
+        g_picLib.path = g_picLibBPath;
+        g_picLib.handle = &g_lib2Handle;
+        g_picLib.otherHandle = &g_lib1Handle;
+        g_picLib.count = &g_countLibBmB;
     } else {
         kind = 1;
-        g_curName = g_library1Path;
-        g_curHandle = &g_lib1Handle;
-        g_otherHandle = &g_lib2Handle;
-        g_curCount = &g_lib1Count;
+        g_picLib.path = g_library1Path;
+        g_picLib.handle = &g_lib1Handle;
+        g_picLib.otherHandle = &g_lib2Handle;
+        g_picLib.count = &g_lib1Count;
     }
-    if (*g_curHandle == 0) {
-        _dos_close(*g_otherHandle);
-        *g_otherHandle = 0;
+    if (*g_picLib.handle == 0) {
+        _dos_close(*g_picLib.otherHandle);
+        *g_picLib.otherHandle = 0;
         g_msgInsertDisk[12] = kind == 1 ? '1' : (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3' : '2';
-        g_msgInsertDisk[25] = *g_curName;
+        g_msgInsertDisk[25] = *g_picLib.path;
         tries = 0;
-        while (_dos_open(g_curName, O_RDONLY, g_curHandle)) {
+        while (_dos_open(g_picLib.path, O_RDONLY, g_picLib.handle)) {
             if (tries++ == 3)
                 sys_exit();
             screen_wait_msg(g_msgInsertDisk);
         }
-        if (_dos_read(*g_curHandle, (void far *)g_curCount, 2, &got) || got != 2 || g_lib1Count + g_countLibBmB != 0x115) {
+        if (_dos_read(*g_picLib.handle, (void far *)g_picLib.count, 2, &got) || got != 2 || g_lib1Count + g_countLibBmB != 0x115) {
             screen_wait_msg(g_msgBadFormat);
             sys_exit();
         }
@@ -180,8 +177,8 @@ int disk_read_index(int which)
     count = which == 1 ? g_lib1Count : g_countLibBmB;
     for (i = 0; i < count; i++) {
         sl = &g_slot[base + i];
-        if (disk_seek(*g_curHandle, (long)(i * 0x1e + 2)) ||
-            _dos_read(*g_curHandle, (void far *)sl, 0x1e, &got) || got != 0x1e) {
+        if (disk_seek(*g_picLib.handle, (long)(i * 0x1e + 2)) ||
+            _dos_read(*g_picLib.handle, (void far *)sl, 0x1e, &got) || got != 0x1e) {
             screen_wait_msg(g_msgBadFormat);
             sys_exit();
         }
@@ -232,8 +229,8 @@ static enum LoadResult near load_pic(int n, int load, char far *dst)
         if (sl->ptr.p == 0)
             return LOAD_NO_MEMORY;
         open_lib(num);
-        offset = (long)(*g_curCount * 0x1e + 2) + ent->dataOffset;
-        if (disk_seek(*g_curHandle, offset))
+        offset = (long)(*g_picLib.count * 0x1e + 2) + ent->dataOffset;
+        if (disk_seek(*g_picLib.handle, offset))
             goto bad;
         if (sl->vramPlane != NOT_IN_VRAM) {
             outp(SEQ_INDEX, SEQ_MAP_MASK);
@@ -242,7 +239,7 @@ static enum LoadResult near load_pic(int n, int load, char far *dst)
         retries = 0;
         total = ent->packedSize + 1;
         for (;;) {
-            if (_dos_read(*g_curHandle, sl->ptr.p, total, &got) || got != total)
+            if (_dos_read(*g_picLib.handle, sl->ptr.p, total, &got) || got != total)
                 goto bad;
             if (*sl->ptr.p == (char)PIC_MARK && sl->ptr.p[total - 1] == (char)PIC_MARK) {
                 if (sl->vramPlane == NOT_IN_VRAM)
@@ -254,17 +251,17 @@ static enum LoadResult near load_pic(int n, int load, char far *dst)
                 outp(SEQ_DATA, SEQ_ALL_PLANES);
                 return LOAD_READ_VRAM;
             }
-            if (g_curDrive > 2)
+            if (g_initialDrive > 2)
                 goto bad;
             do {
                 if (++retries > 3)
                     sys_exit();
-                g_msgInsertDisk[12] = *g_curHandle == g_lib1Handle ? 1 : (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3' : '2';
-                g_msgInsertDisk[25] = *g_curName;
+                g_msgInsertDisk[12] = *g_picLib.handle == g_lib1Handle ? 1 : (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3' : '2';
+                g_msgInsertDisk[25] = *g_picLib.path;
                 screen_wait_msg(g_msgInsertDisk);
-                _dos_close(*g_curHandle);
-            } while (_dos_open(g_curName, O_RDONLY, g_curHandle));
-            if (!disk_seek(*g_curHandle, offset))
+                _dos_close(*g_picLib.handle);
+            } while (_dos_open(g_picLib.path, O_RDONLY, g_picLib.handle));
+            if (!disk_seek(*g_picLib.handle, offset))
                 continue;
             goto bad;
         }
@@ -445,16 +442,16 @@ void disk_open_libs(int disks, int mode)
     int tries;
     int err;
 
-    _dos_getdrive((unsigned *)&g_curDrive);
-    if (g_curDrive < 3 && disks > 1 && (equip = _bios_equiplist(), equip & 1) && (equip & 0xc0))
+    _dos_getdrive((unsigned *)&g_initialDrive);
+    if (g_initialDrive < 3 && disks > 1 && (equip = _bios_equiplist(), equip & 1) && (equip & 0xc0))
         disks = 2;
     else
         disks = 1;
     g_library1Path = (mode == 2 || mode == 5) ? g_lib1Name : g_lib1cName;
-    *g_library1Path = g_curDrive + 0x40;
+    *g_library1Path = g_initialDrive + 0x40;
     err = _dos_open(g_library1Path, O_RDONLY, &g_lib1Handle);
     if (err || g_lib1Handle == 0) {
-        if (g_curDrive > 2) {
+        if (g_initialDrive > 2) {
             screen_wait_msg(g_msgCopyFiles);
         } else {
             strcpy(g_msgNotFound + 0x10, g_library1Path + 2);
@@ -469,13 +466,13 @@ void disk_open_libs(int disks, int mode)
     g_picLibBPath = (mode == 2 || mode == 5) ? g_lib2Name : g_lib2cName;
     *g_picLibBPath = *g_library1Path;
     if (_dos_open(g_picLibBPath, O_RDONLY, &g_lib2Handle) || g_lib2Handle == 0) {
-        if (g_curDrive > 2) {
+        if (g_initialDrive > 2) {
             screen_wait_msg(g_msgCopyFiles);
             sys_exit();
         } else if (disks == 1) {
             g_lib2Handle = 0;
         } else {
-            *g_picLibBPath = g_curDrive == 1 ? 'B' : 'A';
+            *g_picLibBPath = g_initialDrive == 1 ? 'B' : 'A';
             err = _dos_open(g_picLibBPath, O_RDONLY, &g_lib2Handle);
             for (tries = 0; err || g_lib2Handle == 0; tries++) {
                 if (tries == 3)
@@ -534,8 +531,8 @@ void disk_load_data(void)
 /* disk_data_drive @ 0F38:6C3D (linear 0x15FBD, 146 bytes)
 
    Make sure the game disk is in the drive: tries to open the file g_dataPath (asking for
-   disk 2 again and again) and closes it. From the third drive on (g_curDrive > 2, a hard disk) it
-   returns the drive letter code g_curDrive + 0x40 at once. Otherwise returns the first character of
+   disk 2 again and again) and closes it. From the third drive on (g_initialDrive > 2, a hard disk) it
+   returns the drive letter code g_initialDrive + 0x40 at once. Otherwise returns the first character of
    g_dataPath */
 
 int disk_data_drive(void)
@@ -544,8 +541,8 @@ int disk_data_drive(void)
     int tries;
 
     tries = 0;
-    if (g_curDrive > 2)
-        return (char)(g_curDrive + 0x40);
+    if (g_initialDrive > 2)
+        return (char)(g_initialDrive + 0x40);
     for (;;) {
         if (_dos_open(g_dataPath, O_RDONLY, &file)) {
             if (++tries > 3)
@@ -637,7 +634,7 @@ void disk_save_hall(void)
     scramble_hall();
     disk_data_drive();
     got = _dos_creat(g_hallFileName, _A_NORMAL, &fd);
-    if (g_curDrive > 2) {
+    if (g_initialDrive > 2) {
         if (fd == 0 || got) {
             screen_wait_msg(g_msgWriteError);
             sys_exit();

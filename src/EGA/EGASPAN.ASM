@@ -5,10 +5,7 @@
         EXTRN   _av787at:WORD
         EXTRN   _g_egaGcFunction:WORD
         EXTRN   _g_viewRect:BYTE
-        EXTRN   _g_clipXMax:WORD
-        EXTRN   _g_clipXMin:WORD
-        EXTRN   _g_clipYMax:WORD
-        EXTRN   _g_clipYMin:WORD
+        EXTRN   _g_viewClip:WORD
         EXTRN   _r_vid:WORD
 
         .CODE S2645_TEXT
@@ -65,14 +62,14 @@ _egaspan_fill  PROC    FAR
         push    si
         push    di
         mov     ax,[bp+0Ah]
-        cmp     _g_clipYMin,ax
+        cmp     _g_viewClip+2,ax
         jg      reject
-        cmp     _g_clipYMax,ax
+        cmp     _g_viewClip+4,ax
         jl      reject
         mov     ax,[bp+6]
         mov     bx,[bp+8]
-        mov     cx,_g_clipXMin
-        mov     dx,_g_clipXMax
+        mov     cx,_g_viewClip
+        mov     dx,_g_viewClip+6
         cmp     cx,bx
         jg      reject
         cmp     dx,ax
@@ -167,7 +164,7 @@ _egaspan_fill_below  PROC    FAR
         push    si
         push    di
         mov     ax,[bp+6]
-        cmp     _g_clipYMax,ax
+        cmp     _g_viewClip+4,ax
         jl      done4
         mov     dx,GC_INDEX
         mov     ah,[bp+8]
@@ -179,7 +176,7 @@ _egaspan_fill_below  PROC    FAR
         mov     al,GC_DATA_ROTATE
         out     dx,ax
         push    ds
-        mov     ax,_g_clipYMax
+        mov     ax,_g_viewClip+4
         mov     dx,[bp+6]
         sub     ax,dx
         mov     dx,EGA_PITCH

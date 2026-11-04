@@ -207,6 +207,36 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **Blt** (`g_adPacket`, DS:0522..0535): a natural, byte-identical reconstruction choice; separate globals also match.
 
+- **TimerQueue** (`g_timerQueue`, DS:0566..0571): the timer insertion/removal/reset paths share the latest-deadline chain head, earliest entry, free-list head, next deadline and busy state. The reset-only byte is explicit unused storage; timer entries and later spare words stay separate. Separate globals also match; the control record is a natural reconstruction choice.
+
+- **GameClock** (`g_gameClock`, DS:05FC..0607): garage_day and elapsed-time accounting compute actionTicks + biosTicks - timeBase. SAVEGAME resets and serializes that same clock, while SYS advances biosTicks. g_tick remains a separate scheduler clock. Separate globals also match; this grouping is a natural reconstruction choice.
+
+- **GasInteraction** (`g_fuelStationActions`, DS:6CA4..6CA9): clear_gas_spots resets all three interaction flags together; the cap, nozzle and rag handlers set them and race_gas_station tests them when enabling the matching hotspots. Separate globals also match; this grouping is a natural reconstruction choice.
+
+- **PicturePlacement** (`g_picturePlacement`, DS:04BE..04C3): Screen picture drawing uses the x/y destination and maximum height together to clip and place one bitmap. Separate globals also match; this grouping is a natural reconstruction choice.
+
+- **AnimRun** (`g_animRun`, DS:6C38..6C3D): anim_run and anim_set_box use command, object and box pointers as the current interpreter position. The pump hook countdown (`g_pumpBlinkCount`, DS:6C3E) persists across calls and stays separate. Separate globals also match; the interpreter record is a natural reconstruction choice.
+
+- **CursorDraw** (`g_drawnCursor`, DS:6C46..6C4B): SYS saves the drawn cursor position and tracks whether it needs repainting as one cursor drawing state. MSC supplies the final byte of alignment padding. Separate globals also match; this grouping is a natural reconstruction choice.
+
+- **Vibrato** (`g_vibrato`, DS:6C52..6C55): sys_timer_isr uses gain and divisor together to modulate PIT channel 2. Separate globals also match; this grouping is a natural reconstruction choice.
+
+- **RandomState** (`g_random`, DS:6C62..6C67): random_int seeds and updates all three Wichmann-Hill generator words together. Separate globals also match; this grouping is a natural reconstruction choice.
+
+- **PicLibSelection** (`g_picLib`, DS:6C6A..6C71): open_lib selects the count, handle, library path and other handle together before picture reads. The initial DOS drive (`g_initialDrive`, DS:6C68) and hot_data path (`g_dataPath`, DS:6C72..6C81) are separate session and game-data state. Separate globals also match; the selection record is a natural reconstruction choice.
+
+- **ViewPages** (`g_viewPages`, DS:5E3E..5E41): flip_page swaps draw and show page indices together and select_draw_page consumes the pair. The preceding unused word stays separate. Separate globals also match; this grouping is a natural reconstruction choice.
+
+- **RivalPace** (`g_rivalPace`, DS:6CAC..6CB3): race_reset_eng and cop_appears derive fast and slow speeds from the top speed; rival_accelerate selects those targets or the player speed plus speedMargin. Shift penalty (`g_shiftPenalty`, DS:6CB4), shift point, target lane and RPM band stay separate. Separate globals also match; the speed-target record is a natural reconstruction choice.
+
+- **WheelPoses** (`g_wheelPoses`, DS:6C22..6C33): dash_load_wheel caches three steering-wheel bitmaps and their source Y coordinates. dash_draw_wheel chooses pose 0, 1 or 2 from the steering sign and blits that cached bitmap when the pose changes. Shifter state stays separate. Separate globals also match; the cached poses are a natural reconstruction choice.
+
+- **ShifterDraw** (`g_shifterDraw`, DS:6C34..6C37): dash_init_shifter selects a shifter track and resets its knob position; dash_draw_shifter uses both to restore the old knob and draw the new one. Separate globals also match; this grouping is a natural reconstruction choice.
+
+- **ViewClip** (`g_viewClip`, DS:5E4E..5E55): VIEW and the CGA/EGA/Tandy span assemblers use all four bounds as one clipping rectangle. Assembly references use a WORD external with the corresponding member displacement. Separate globals also match; this grouping is a natural reconstruction choice.
+
+- **DemoControl** (`g_demoControl`, DS:06A4..06AD): sys_demo_step shares key-down, movement, count, previous group and auto-shift controls with SYS input and interrupt paths. The leading unused word stays separate. Target X/Y have the same demo-movement role, but folding them into this record reverses the cursor/target operands in sys_demo_step and sys_timer_isr (four wrong fixup references in each). Adding the script position too produces the same failures. The targets and script index therefore remain separate to preserve byte identity; this boundary is a compiler constraint rather than a semantic distinction. Separate globals also match; this grouping is a natural reconstruction choice.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only

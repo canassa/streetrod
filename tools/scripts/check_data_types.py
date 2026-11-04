@@ -5,17 +5,18 @@ sys.path.insert(0,'tools')
 from sr.cdata import Types
 from sr import dosbox
 from sr.omf import Obj
-t=Types(); names=sorted(t.defs)
+t=Types(); names=sorted(t.defs.keys() | t.typedefs.keys())
 checks=[]
 for name in names:
  node=t.named(name);checks.append(('sizeof('+name+')',node['size']))
- for field,off,child in node['fields']:
+ for field,off,child in node.get('fields',[]):
   # offsetof() takes a member's address, which a bit-field has none of; struct Look
   # (bit-fields packed into one word) is the only such type, so only its sizeof is checked
   if name=='struct Look':continue
   checks.append(('offsetof('+name+', '+field+')',off))
 out=Path('work/data-audit');out.mkdir(parents=True,exist_ok=True)
-p=out/'SHAPES.C';p.write_text('#define offsetof(t,m) ((unsigned)&(((t *)0)->m))\n#include "STRUCTS.H"\nunsigned shapes[] = {\n'+',\n'.join(a for a,b in checks)+'\n};\n')
+includes=''.join('#include \"'+path.name+'\"\n' for path in t.headers)
+p=out/'SHAPES.C';p.write_text('#define offsetof(t,m) ((unsigned)&(((t *)0)->m))\n'+includes+'unsigned shapes[] = {\n'+',\n'.join(a for a,b in checks)+'\n};\n')
 j=dosbox.Job(p,'/AM /Oas /Gs /FPi','shapes');dosbox.compile_all([j],name='shapes')
 if not j.obj:raise SystemExit(j.log)
 o=Obj(j.obj);seg=o.segments.index('_DATA')+1;data=o.data[seg]
