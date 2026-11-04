@@ -15,9 +15,9 @@ and the headers are source (`./sr headers --check`). What the tree contains beyo
 recovered facts is listed in [docs/RECONSTRUCTION.md](../docs/RECONSTRUCTION.md).
 
 Nothing in the build remains to be done. What is still open is the reconstruction itself:
-real names, the record structure of HOTSPOT.C's flattened tables, the original text behind
-the PROVISIONAL dummies, and the remaining compiler warnings that need struct retyping
-(C4047). None of it is needed for the identical build.
+real names, the original array boundaries inside HOTSPOT.C's hot-spot table, the original
+text behind the PROVISIONAL dummies, and the two C4047 warnings whose type the code does not
+decide. None of it is needed for the identical build.
 
 The rest of this file records how the build got there (the assessment of 2026-11-04,
 after aa49a8d, with each step's resolution).

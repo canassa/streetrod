@@ -135,8 +135,8 @@ struct Sprite *F_195F3(int x, int y, struct Bitmap far **imgs, char (*cell)[8], 
         aq7d42[0].link = aq7d42;
     }
     g7d18m.page = aq7d42;
-    F_1956E(((struct Bitmap far *)g7d18m.frame->pos)->width,
-        ((struct Bitmap far *)g7d18m.frame->pos)->height, g7d18m.x, g7d18m.y,
+    F_1956E(g7d18m.frame->pos->width,
+        g7d18m.frame->pos->height, g7d18m.x, g7d18m.y,
         aq7d42[0].bm->width, aq7d42[0].bm->height, &aq7d42[0].r);
     g7d18m.seq = g_764e;
     return &g7d18m;
@@ -354,7 +354,7 @@ int F_19E42(int pos, int len, struct Sprite *s, struct Blt16 *o)
     int a, b, c, d;
 
     b = s->x & r_vid.mask;
-    a = ((struct Bitmap far *)s->frame->pos)->width;
+    a = s->frame->pos->width;
     if (pos + len <= b || b + a < pos)
         return 0;
     c = (b < pos) ? pos : b;
