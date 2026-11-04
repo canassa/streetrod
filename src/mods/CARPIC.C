@@ -28,7 +28,7 @@ static struct Rect g_lastCarRect;                 /* DS:6CBC */
 static void near blit_planes(char far *src, char far *dst, char far *mask, int w, int h, int n, int step);
 static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2, int h, char far *mask, char c);
 static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int color);
-static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstbm, int id1, int id2);
+static void near build_pump_strip(int x, int y, int sx0, int top, struct Bitmap far *dstbm, int id1, int id2);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Bitmap am6e68x[12];
@@ -214,12 +214,12 @@ void carpic_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, s
     }
 }
 
-/* F_17AAE @ 0F38:872E (linear 0x17AAE, 312 bytes)
+/* build_pump_strip @ 0F38:872E (linear 0x17AAE, 312 bytes)
 
    Render a 16x70 strip into a scratch bitmap with two draw passes and blit it onto two bitmaps */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstbm, int id1, int id2)
+static void near build_pump_strip(int x, int y, int sx0, int top, struct Bitmap far *dstbm, int id1, int id2)
 {
     char far *save1;
     struct Bitmap far *tmp1;
@@ -558,8 +558,8 @@ again:
         blt.dx = blt.dy = 0;
         (*b_78a2)(bms6[0], scratch, &blt, 1);
         bitmap_draw_pic(bms6[0], 0x472, (char)blt.sx, (char)blt.sy, 0);
-        F_17AAE(0x40, 0x64, z_8b7c, bot, g_028c, 0x4c8, 0x4ca);
-        F_17AAE(0x40, 0x64, z_8b7c, bot, g_0290, 0x449, 0x44a);
+        build_pump_strip(0x40, 0x64, z_8b7c, bot, g_028c, 0x4c8, 0x4ca);
+        build_pump_strip(0x40, 0x64, z_8b7c, bot, g_0290, 0x449, 0x44a);
         blt.dx = blt.sx;
         blt.dy = blt.sy;
         blt.sx = blt.sy = 0;

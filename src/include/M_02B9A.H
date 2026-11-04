@@ -71,7 +71,7 @@ extern int g_49d2[];                                    /* DS:49D2 */
 extern char *g_49dc;                                    /* DS:49DC */
 extern char *g_gearLabel;                               /* DS:49DE */
 extern int g_49e0[];                                    /* DS:49E0 */
-void F_02B9A(char a, char b);                           /* 0x02B9A */
+void m_02b9a_store_mode_a(char a, char b);                           /* 0x02B9A */
 void set_g47ec_47ed(char a, char b);                    /* 0x02BAD */
 
 #endif

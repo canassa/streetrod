@@ -138,7 +138,7 @@ int near savegame_new(void)
     r_vid.f16 = 0;
     F_119B8(0x3f8, 0x10, 6, 0);
     r_vid.f16 = 1;
-    F_10B9C();
+    video_name_pal();
     bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
     (*m_present)();
     switch (sel = edit_text_box(2, 15, g_driverName)) {

@@ -290,11 +290,11 @@ static void near noise_sweep_up(int start, int end, int gap, int step, int dur)
     }
 }
 
-/* F_168C8 @ 0F38:7548 (linear 0x168C8, 43 bytes)
+/* sound_wheel_roll @ 0F38:7548 (linear 0x168C8, 43 bytes)
 
    Starts one of two sounds through music_play; `on` selects which. */
 
-void F_168C8(int on)
+void sound_wheel_roll(int on)
 {
     if (on)
         music_play(g_2f93_00c0, g_jingleRepeats);
@@ -328,11 +328,11 @@ void F_16943(int on)
         music_play(g_song, g_songRepeats);
 }
 
-/* F_16993 @ 0F38:7613 (linear 0x16993, 78 bytes)
+/* sound_pump @ 0F38:7613 (linear 0x16993, 78 bytes)
 
    Starts one of two sounds through music_play; `on` selects which */
 
-void F_16993(int on)
+void sound_pump(int on)
 {
     if (on) {
         music_play(g_2f93_0000, g_jingleRepeats);
@@ -341,11 +341,11 @@ void F_16993(int on)
         music_play(g_song, g_songRepeats);
 }
 
-/* F_169E1 @ 0F38:7661 (linear 0x169E1, 78 bytes)
+/* sound_jack @ 0F38:7661 (linear 0x169E1, 78 bytes)
 
    Starts one of two sounds through music_play; `on` selects which */
 
-void F_169E1(int on)
+void sound_jack(int on)
 {
     if (on) {
         music_play(g_2f93_002c, g_jingleRepeats);
@@ -495,11 +495,11 @@ void sound_crash(void)
     }
 }
 
-/* F_16C8F @ 0F38:790F (linear 0x16C8F, 100 bytes)
+/* sound_bump @ 0F38:790F (linear 0x16C8F, 100 bytes)
 
    Sound effect, two noise bursts each followed by a click run */
 
-void F_16C8F(void)
+void sound_bump(void)
 {
     if (g_soundOn) {
         sound_on();

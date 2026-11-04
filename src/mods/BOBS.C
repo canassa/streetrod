@@ -952,7 +952,7 @@ void bobs_visit(void)
     g_cursorX = 0x9e;
     g_cursorY = 0x80;
     F_118D4(0x445, -1);
-    F_10B8C();
+    video_bobs_pal();
     F_11593(g_49dc);
     g_cursor2.r.x2 = -1;
     cursor_ctl(1);
@@ -1154,7 +1154,7 @@ void bobs_jail(void)
     x_82b8 = F_15BBE(0x4e7, 1);
     c_6e64 = F_15BBE(0x4e9, 1);
     F_118D4(0x445, -1);
-    F_10B8C();
+    video_bobs_pal();
     pict = F_15BBE(0x4e8, 2);
     blt.w = pict->width;
     blt.h = 5;

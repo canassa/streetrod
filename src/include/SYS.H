@@ -110,7 +110,7 @@ void sys_drive_stop(void);                              /* 0x01B27 */
 int sys_sign(int x);                                    /* 0x01B91 */
 void sys_demo_step(void);                               /* 0x01BAE */
 void interrupt far sys_timer_isr(void);                 /* 0x01FE2 */
-void F_02374(void);                                     /* 0x02374 */
+void sys_stop_drive(void);                                     /* 0x02374 */
 void interrupt far sys_drive_isr(void);                 /* 0x0238C */
 
 #endif

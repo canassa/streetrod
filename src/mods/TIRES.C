@@ -146,10 +146,10 @@ static void near swap_wheel(int a, int *p, int *q)
     i = 4;
     g_6d3caat = sprite_setup(a, 0x9b, g_tireFrames, 0, 4, g_5ab4, g_6d24ajz, 0, 0);
     sprite_set_step(g_6d3caat, 0, (a + g_tireFrames[0]->width) >> 1, -2, 0);
-    F_168C8(1);
+    sound_wheel_roll(1);
     while ((*g78c6c)(g_6d3caat))
         F_10AFD(2);
-    F_168C8(0);
+    sound_wheel_roll(0);
     marks_pop_low(6);
     if (r_vid.mode == -2)
         (*dz78b6)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
@@ -175,10 +175,10 @@ static void near swap_wheel(int a, int *p, int *q)
     i = 4;
     g_6d3caat = sprite_setup(-g_tireFrames[0]->width, 0x9b, g_tireFrames, 0, 4, g_5ab4, g_6d24ajz, 0, 0);
     sprite_set_step(g_6d3caat, 0, (a + g_tireFrames[0]->width >> 1) + 1, 2, 0);
-    F_168C8(1);
+    sound_wheel_roll(1);
     while ((*g78c6c)(g_6d3caat))
         F_10AFD(2);
-    F_168C8(0);
+    sound_wheel_roll(0);
     if (r_vid.mode == -2)
         (*dz78b6)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     g_6ce8rz.x1 = 0;
@@ -358,7 +358,7 @@ void F_1B213(int *a, int *b)
     sprite_set_step(g_6d3caat, 0, 7, 0, -1);
     frame = 0;
     rev = 0;
-    F_169E1(1);
+    sound_jack(1);
     while ((*g78c6c)(g_6d3caat)) {
         F_10AFD(3);
         if (rev) {
@@ -379,7 +379,7 @@ void F_1B213(int *a, int *b)
         (*ab78aat)(g_6cdaaa[frame], g_6dfa7, &clip6, 1);
         (*b_78a2)(g_6cdaaa[frame], g_6dfa7, &clip6, 2);
     }
-    F_169E1(0);
+    sound_jack(0);
     g_spriteBgY = (r_vid.mode == -6) ? 0x76 : 0;
     g_6d2c0nz = dst;
     swap_wheel(g_6da0 + g_6dd4, a, b);
@@ -421,7 +421,7 @@ void F_1B213(int *a, int *b)
     g_6ce8rz.y2 = g_6dfa7->height + g_spriteBgY - 1;
     g_6d3caat = sprite_setup(g_6da0, 0x94, &g_6df6a, 0, 1, g_6cd4oz, g_6dfa7, &g_6ce8rz, 0);
     sprite_set_step(g_6d3caat, 0, 9, 0, 1);
-    F_169E1(1);
+    sound_jack(1);
     while ((*g78c6c)(g_6d3caat)) {
         F_10AFD(3);
         if (rev) {
@@ -442,7 +442,7 @@ void F_1B213(int *a, int *b)
         (*ab78aat)(g_6cdaaa[frame], g_6dfa7, &clip6, 1);
         (*b_78a2)(g_6cdaaa[frame], g_6dfa7, &clip6, 2);
     }
-    F_169E1(0);
+    sound_jack(0);
     F_16381(0);
     g_spriteBgY = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
     if (r_vid.mode == -2)

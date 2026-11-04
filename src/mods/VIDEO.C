@@ -51,16 +51,16 @@ void F_10B7C(void)
     F_112CB(12, 5);
 }
 
-/* F_10B8C @ 0F38:180C (linear 0x10B8C, 16 bytes) */
+/* video_bobs_pal @ 0F38:180C (linear 0x10B8C, 16 bytes) */
 
-void F_10B8C(void)
+void video_bobs_pal(void)
 {
     F_112CB(12, 13);
 }
 
-/* F_10B9C @ 0F38:181C (linear 0x10B9C, 16 bytes) */
+/* video_name_pal @ 0F38:181C (linear 0x10B9C, 16 bytes) */
 
-void F_10B9C(void)
+void video_name_pal(void)
 {
     g_palette[6] = 9;
     g_palette[7] = 1;
@@ -321,7 +321,7 @@ int video_anim_hook(struct Obj *o, struct Cmd *c)
     case 2:
         if (c->a) {
             g_blinkCount = c->a;
-            F_16993(1);
+            sound_pump(1);
             return 0;
         }
         if (g_blinkCount--) {
@@ -335,7 +335,7 @@ int video_anim_hook(struct Obj *o, struct Cmd *c)
             }
             return 0;
         }
-        F_16993(0);
+        sound_pump(0);
         return 1;
     }
 }

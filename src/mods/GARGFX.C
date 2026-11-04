@@ -20,7 +20,7 @@
 
 static int near engine_index(void);
 static int near carb_pos(int *px, int *py);
-static void near F_12CD1(void);
+static void near make_bolt_overlay(void);
 static void near insert_hot(struct Hot *arr, struct Hot *item, int num);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
@@ -385,12 +385,12 @@ void gargfx_drop_bolt(void)
     F_19438(1);
 }
 
-/* F_12CD1 @ 0F38:3951 (linear 0x12CD1, 263 bytes)
+/* make_bolt_overlay @ 0F38:3951 (linear 0x12CD1, 263 bytes)
 
    For the marker items 0x43f/0x440 of the current slot, save a copy of the picture
    (shifted to the pixel grid) in g_0792 and set up the blit u_70ac that draws it. */
 
-static void near F_12CD1(void)
+static void near make_bolt_overlay(void)
 {
     int what;
     char kind;
@@ -451,7 +451,7 @@ void gargfx_draw_part(int n, int flag)
     }
     x &= r_vid.mask;
     if (n == 0x43c)
-        F_12CD1();
+        make_bolt_overlay();
     if (n != 0x434 && n != 0x435 && n != 0x436)
         ypos -= saved->height;
     if (flag)

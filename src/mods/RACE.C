@@ -314,7 +314,7 @@ top:
                 F_11540(-(pos <= a_7eaap.m7eaa ? pos : (int)a_7eaap.m7eaa));
                 if (dl.f0e == 0 || pos > a_7eaap.m7eaa) {
                     if (video_anim_active(2)) {
-                        F_16993(0);
+                        sound_pump(0);
                         video_anim_stop(2);
                     }
                     if (dl.f10)
@@ -346,7 +346,7 @@ top:
                 dl.f12 = 1;
                 cursor_ctl(dl.f0c = 1);
                 video_anim_start(2);
-                F_16993(1);
+                sound_pump(1);
                 dl.f1a = 1;
             }
             g_waitUntil = g_tick + 0x4c;
@@ -400,7 +400,7 @@ top:
                 break;
             if (dl.f0c == 1) {
                 if (video_anim_active(2)) {
-                    F_16993(0);
+                    sound_pump(0);
                     video_anim_stop(2);
                 }
                 show_tank_cap(&dl, 0x472);
@@ -417,7 +417,7 @@ top:
                 dl.f12 = 1;
                 cursor_ctl(dl.f0c = 1);
                 video_anim_start(2);
-                F_16993(1);
+                sound_pump(1);
                 menu_pop(1);
                 spots_cap();
                 menu_push(0x17);
@@ -1218,7 +1218,7 @@ static void near move_player(void)
             g79e2g.fbc |= 1;
         else
             e_78e0.fbc |= 1;
-        F_02374();
+        sys_stop_drive();
     }
 }
 
@@ -1244,7 +1244,7 @@ static void near move_rival(void)
             e_78e0.fbc |= 1;
         else
             g79e2g.fbc |= 1;
-        F_02374();
+        sys_stop_drive();
         return;
     }
     flag = g_terrain3[ar7e8av.m7e8a + 4] & 0xe0;
@@ -1402,7 +1402,7 @@ void race_tick(void)
     case 3:
         if (ar7e8av.m7e8a - 2 > ao7d2ev.m7d30) {
             e_78e0.fbc |= 0x41;
-            F_02374();
+            sys_stop_drive();
             return;
         }
         break;
@@ -1421,7 +1421,7 @@ void race_tick(void)
                 e_78e0.fbc |= 0x41;
             sound_siren(0);
         }
-        F_02374();
+        sys_stop_drive();
         return;
     }
     if (ay8bc2z == 0)
@@ -1432,14 +1432,14 @@ void race_tick(void)
         return;
     if (by72f2 && a_7f88d <= 1) {
         e_78e0.fbc |= 3;
-        F_02374();
+        sys_stop_drive();
         return;
     }
     if (ap7d7cv == 0 && ao7d2ev.m7d34 > 1) {
         g_54d8++;
         if (e_78e0.f2 < 0) {
             if (g_terrain2[ao7d2ev.m7d30] - g_terrain2[ao7d2ev.m7d30 + 1] >= 0 || ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) >= ao7d2ev.m7d36) {
-                F_16C8F();
+                sound_bump();
                 if (g_54d2 == 0) {
                     ar7e8av.m7e8a--;
                     g_54d2 = 1;
@@ -1450,14 +1450,14 @@ void race_tick(void)
         }
         if (gz7d7e && g_54d8 > 3 && a_7f88d < 2) {
             if (random_int((g7d84o->f2 >> 2) + 2) == 0) {
-                F_16C8F();
-                F_16C8F();
+                sound_bump();
+                sound_bump();
                 ao7d2ev.m7d36 += 300;
                 if (e_78e0.f0 > 20)
                     g_54da = 2;
                 gz7d7e = 0;
                 ao7d2ev.m7d3c += random_int(2) ? 15 : -15;
-                F_16C8F();
+                sound_bump();
             }
             g_54d8 = 0;
         }

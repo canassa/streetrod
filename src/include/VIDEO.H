@@ -23,8 +23,8 @@ extern int aw8260y;                                     /* DS:8260 */
 extern int d_8266;                                      /* DS:8266 */
 extern int ap8268t;                                     /* DS:8268 */
 void F_10B7C(void);                                     /* 0x10B7C */
-void F_10B8C(void);                                     /* 0x10B8C */
-void F_10B9C(void);                                     /* 0x10B9C */
+void video_bobs_pal(void);                                     /* 0x10B8C */
+void video_name_pal(void);                                     /* 0x10B9C */
 void video_swap_pal(void);                              /* 0x10BAC */
 void video_init(struct Bitmap far *front, struct Bitmap far *back);/* 0x10BD9 */
 void video_anim_stop(int n);                            /* 0x10D6C */

@@ -1032,9 +1032,9 @@ int ao8228u;
 long b_82bc;
 int z_8b7c;
 
-/* F_02374 @ 0000:2374 (linear 0x02374, 24 bytes) */
+/* sys_stop_drive @ 0000:2374 (linear 0x02374, 24 bytes) */
 
-void F_02374(void)
+void sys_stop_drive(void)
 {
     e_78e0.f14 = e_78e0.f16 = e_78e0.f2 = e_78e0.f4 = g_05d6 = 0;
     e_78e0.fbe = e_78e0.fc0;
@@ -1203,7 +1203,7 @@ void interrupt far sys_drive_isr(void)
                     a_7eaap.m7eb0->rack.s[0]->b++;
                 if ((i = a_7eaap.m7eb0->rack.s[0]->b) >= 9900) {
                     e_78e0.fbc |= 5;
-                    F_02374();
+                    sys_stop_drive();
                 }
                 if (flag) {
                     e_78e0.fe += e_78e0.f14;
@@ -1213,7 +1213,7 @@ void interrupt far sys_drive_isr(void)
                         e_78e0.fe = 5700;
                         if (15 - i / 1000 < ++g_overRev) {
                             e_78e0.fbc |= 5;
-                            F_02374();
+                            sys_stop_drive();
                         }
                     }
                 } else if (e_78e0.fe > 1500 ||
@@ -1233,7 +1233,7 @@ void interrupt far sys_drive_isr(void)
                             (e_78e0.f20 == 0 && flag && e_78e0.fe > 5000 &&
                              i / 100 + 100 > random_int(3277))) {
                             e_78e0.fbc |= 0x11;
-                            F_02374();
+                            sys_stop_drive();
                         }
                     }
                     if ((prev || (!e_78e0.f42 && !flag)) && e_78e0.f18 > 0)
@@ -1291,7 +1291,7 @@ void interrupt far sys_drive_isr(void)
                                                : ((-e_78e0.f4 >> 2) + 1);
                 if (bw8aca && road_check_crash()) {
                     e_78e0.fbc |= 0x21;
-                    F_02374();
+                    sys_stop_drive();
                 }
                 g_driveBusy = 0;
             }
