@@ -140,7 +140,7 @@ int near sg_new(void)
     int sel;
 
     r_vid.copyToFront = 0;
-    F_119B8(0x3f8, 0x10, 6, 0);
+    sc_picture_at(0x3f8, 0x10, 6, 0);
     r_vid.copyToFront = 1;
     vi_name_pal();
     bm_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), (SCREEN_BODY_HEIGHT - 1));
@@ -308,10 +308,10 @@ int near sg_load(void)
     scan_save_slots(0);
     r = r_vid.copyToFront;
     r_vid.copyToFront = 0;
-    F_118D4(0x3f7, 0);
+    sc_picture(0x3f7, 0);
     if (g_list[0]) {
-        F_119B8(0x3fa, 0xf0, 100, -1);
-        F_119B8(0x3fc, 0xf0, 0x8c, -1);
+        sc_picture_at(0x3fa, 0xf0, 100, -1);
+        sc_picture_at(0x3fc, 0xf0, 0x8c, -1);
     }
     r_vid.copyToFront = r;
     if (r)
@@ -321,12 +321,12 @@ int near sg_load(void)
         mn_wait(15);
         return -1;
     }
-    r = F_142CF(3, 1, 0, g_list, 0, 0);
+    r = mn_modal_list(3, 1, 0, g_list, 0, 0);
     switch (r) {
     case -4:
         return -1;
     case -3:
-        r = mn_ix();
+        r = mn_sel();
         break;
     default:
         if (r >= 1)             /* PROVISIONAL: the original loads g_list[0] here and drops it */
@@ -365,7 +365,7 @@ int near sg_load(void)
     }
     _dos_close(fd7);
     if (a_7eaap.currentCar)
-        F_067CF(a_7eaap.currentCar->paintScheme);
+        ga_palette(a_7eaap.currentCar->paintScheme);
     rd_build_layout(g_roadLayout);
     g_gameClock.timeBase = g_gameClock.biosTicks - delta;
     cu_ctl(CURSOR_SHOW_NOW);
@@ -412,10 +412,10 @@ void near sg_save(void)
     scan_save_slots(1);
     r = r_vid.copyToFront;
     r_vid.copyToFront = 0;
-    F_118D4(0x3f7, 0);
-    F_119B8(0x3f9, 0x48, 0xa9, -1);
-    F_119B8(0x3fb, 0xf0, 100, -1);
-    F_119B8(0x3fc, 0xf0, 0x8c, -1);
+    sc_picture(0x3f7, 0);
+    sc_picture_at(0x3f9, 0x48, 0xa9, -1);
+    sc_picture_at(0x3fb, 0xf0, 100, -1);
+    sc_picture_at(0x3fc, 0xf0, 0x8c, -1);
     r_vid.copyToFront = r;
     if (r)
         bm_copy_box(r_vid.back, r_vid.front, 0, 0, SCREEN_WIDTH, SCREEN_BODY_HEIGHT);
@@ -438,7 +438,7 @@ again:
             return;
         break;
     case -3:
-        r = mn_ix();
+        r = mn_sel();
         break;
     }
     sel = r;
@@ -516,6 +516,6 @@ int near sg_menu(void)
     p = mn_grab(0x1b, &x, &y, ARENA_HIGH_STACK);
     row = mn_wait(0x1b);
     pu_show(p, x, y);
-    F_19438(1);
+    ma_pop_high(1);
     return row;
 }

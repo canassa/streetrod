@@ -212,7 +212,7 @@ int da_move_needle(int cur, int old, int flag)
 /* da_draw_clock @ 0F38:05F2 (linear 0x0F972, 1339 bytes)
 
    Draws the clock: the hour hand (width 5 or 8) and the minute hand (width 4 or 8), each a
-   diamond of five lines around the face centre, from the time F_064A3 returns. */
+   diamond of five lines around the face centre, from the time ga_time returns. */
 
 void da_draw_clock(void)
 {
@@ -232,7 +232,7 @@ void da_draw_clock(void)
     soffn = at767ct;
     av787at = r_vid.mode == VID_EGA ? 0xa000 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
     at767ct = 0;
-    F_064A3(&h4, &m);
+    ga_time(&h4, &m);
     h4 >>= 1;
     h4 += 0x14;
     h4 = h4 % 12 + 1;
@@ -345,18 +345,18 @@ void da_intro(void)
     g_picturePlacement.maxHeight = SCREEN_HEIGHT;
     if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         mi_set_palette(CGA_PALETTE_GREEN_RED_BROWN);
-    F_119B8(3, 0x28, 0x28, 0);
+    sc_picture_at(3, 0x28, 0x28, 0);
     di_free_pic(3);
     (*g_videoOps.show)();
     r_vid.copyToFront = 0;
-    F_118D4(1, -1);
+    sc_picture(1, -1);
     di_free_pic(1);
     da_wait_key(400);
     (*g_videoOps.show)();
     if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         mi_set_palette(CGA_PALETTE_CYAN_MAGENTA_WHITE);
     (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
-    F_118D4(4, 0);
+    sc_picture(4, 0);
     di_free_pic(4);
     da_wait_key(400);
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
@@ -377,8 +377,8 @@ void da_time_up(void)
     cu_ctl(CURSOR_HIDE_NOW);
     r_vid.copyToFront = 1;
     sc_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
-    F_065AF(1);
-    F_10B7C();
+    ga_calendar(1);
+    vi_garage_pal();
     (*g_videoOps.show)();
     gm_pause(300);
 }
@@ -424,7 +424,7 @@ void da_set_view(int mode)
         r_vid.copyToFront = 0;
         sc_status_init(r_vid.mode == VID_EGA ? 0x5a : SCREEN_BODY_HEIGHT);
         if (bw8aca)
-            F_11593(g_gearLabel);
+            sc_status_label(g_gearLabel);
         break;
     case 4:
         r_vid.front = g_savedFront;
@@ -609,7 +609,7 @@ void da_init_shifter(int a, int b)
         ma_pop_low(1);
     }
     g_shifterDraw.knobPosition = -1;
-    F_19438(2);
+    ma_pop_high(2);
 }
 
 /* da_draw_shifter @ 0F38:14F2 (linear 0x10872, 334 bytes) */
@@ -701,9 +701,9 @@ int da_clip_blt(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *in, 
     return out->w > 0 && out->h > 0;
 }
 
-/* F_10AFD @ 0F38:177D (linear 0x10AFD, 75 bytes) */
+/* da_wait_retrace @ 0F38:177D (linear 0x10AFD, 75 bytes) */
 
-void F_10AFD(int n)
+void da_wait_retrace(int n)
 {
     int i;
 

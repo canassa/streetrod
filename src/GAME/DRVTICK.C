@@ -34,11 +34,11 @@ int dt_step(void)
         case 0:
             g_05d6 = 0;
             if (g_keepCruiseMusic == 0)
-                F_16381(1);
+                mu_suspend(1);
             sy_drive_start();
             sy_reset_queues();
             g_phaseDriveRunState = 1;
-            F_11421(-1, "Get ready !", 0);
+            sc_status_text(-1, "Get ready !", 0);
             g_waitUntil = g_tick + rn_int(103) + 110;
             return g_driveEng.stopFlags | g_oppEngState.stopFlags;
         case 1:
@@ -49,7 +49,7 @@ int dt_step(void)
             }
             if (g_waitUntil <= g_tick) {
                 g_phaseDriveRunState = 2;
-                F_11421(-1, "Go !", 0);
+                sc_status_text(-1, "Go !", 0);
                 g7d66n = 1;
             }
             return g_driveEng.stopFlags | g_oppEngState.stopFlags;
@@ -58,7 +58,7 @@ int dt_step(void)
             if (g_driveEng.stopFlags || g_oppEngState.stopFlags)
                 return 1;
             if (g_driveEng.speed > 0) {
-                F_11421(-1, "    ", 0);
+                sc_status_text(-1, "    ", 0);
                 g_phaseDriveRunState = 3;
             }
             return 0;
@@ -73,11 +73,11 @@ int dt_step(void)
         case 0:
             g_05d6 = 0;
             if (g_keepCruiseMusic == 0)
-                F_16381(1);
+                mu_suspend(1);
             sy_drive_start();
             sy_reset_queues();
             g_phaseDriveRunState = 1;
-            F_11421(-1, "Cruising in town...", 0);
+            sc_status_text(-1, "Cruising in town...", 0);
             g_driveEng.shifterDirty = 1;
             g_driveEng.gearIndex = 1;
             if (g_driveEng.autoSelector == 1)

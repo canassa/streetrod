@@ -37,12 +37,12 @@ char g_carbPosBase[6] = {5, 6, 7, 10, 12, 0};   /* DS:078C */
 struct Bitmap far *g_boltOverlay = 0;   /* DS:0792 */
 struct Hot g_boltHot = {11, 0, 0, 1, 0, 0, 0, 0, 0};   /* DS:0796 */
 
-/* F_123F4 @ 0F38:3074 (linear 0x123F4, 305 bytes)
+/* gx_trans_bolt @ 0F38:3074 (linear 0x123F4, 305 bytes)
 
    Draw the 64 x 6 bar for slot of the dialog; frame selects the highlighted frame.
    When frame == 1 and the screen is shadowed, the old bar is grabbed and pasted first. */
 
-void F_123F4(int frame, int slot)
+void gx_trans_bolt(int frame, int slot)
 {
     struct Bitmap far *pict;
     struct Bitmap far *tmp;
@@ -61,7 +61,7 @@ void F_123F4(int frame, int slot)
         blt.sy = 0;
         tmp = bm_grab(pict, &blt, ARENA_HIGH_STACK);
         (*g_videoOps.slideSprite)(0xe, 0x94, x, 8, y, tmp);
-        F_19438(1);
+        ma_pop_high(1);
     }
     blt.sx = frame << 4;
     blt.sy = 0;
@@ -73,15 +73,15 @@ void F_123F4(int frame, int slot)
     cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
         bm_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
-    F_19438(1);
+    ma_pop_high(1);
 }
 
-/* F_12525 @ 0F38:31A5 (linear 0x12525, 297 bytes)
+/* gx_trans_drop @ 0F38:31A5 (linear 0x12525, 297 bytes)
 
    Draw the bar for slot "slot" of the dialog, then (screen shadowed) grab it back and paste the
    frame */
 
-void F_12525(int slot)
+void gx_trans_drop(int slot)
 {
     struct Bitmap far *pict;
     struct Bitmap far *tmp;
@@ -100,23 +100,23 @@ void F_12525(int slot)
     cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront) {
         bm_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
-        F_16CF3();
+        so_bolt_turn();
         cu_ctl(CURSOR_HIDE_NOW);
         blt.sx = 0x40;
         tmp = bm_grab(pict, &blt, ARENA_HIGH_STACK);
         (*g_videoOps.slideSprite)(0xe, 0x94, x, y, 0x94, tmp);
-        F_19438(1);
+        ma_pop_high(1);
         cu_ctl(CURSOR_SHOW_NOW);
     }
-    F_19438(1);
+    ma_pop_high(1);
 }
 
-/* F_1264E @ 0F38:32CE (linear 0x1264E, 310 bytes)
+/* gx_trans_pic @ 0F38:32CE (linear 0x1264E, 310 bytes)
 
    Show picture n centered in the dialog area; flag moves it left by 24.
    With the screen shadowed the area under it is saved around the draw and restored afterwards. */
 
-void F_1264E(int n, int flag)
+void gx_trans_pic(int n, int flag)
 {
     struct Bitmap far *pict;
     struct Bitmap far *saved;
@@ -143,19 +143,19 @@ void F_1264E(int n, int flag)
         (*g_videoOps.maskedBlit)(pict, saved, &blt, 1);
         cu_ctl(CURSOR_SHOW_NOW);
         pu_show(saved, sx - 8, sy);
-        F_19438(1);
+        ma_pop_high(1);
     } else {
         (*g_videoOps.slideSprite)(0xe, 0x94, sx, sy, sy, pict);
         cu_ctl(CURSOR_SHOW_NOW);
     }
-    F_19438(1);
+    ma_pop_high(1);
 }
 
-/* F_12784 @ 0F38:3404 (linear 0x12784, 87 bytes)
+/* gx_trans_clear @ 0F38:3404 (linear 0x12784, 87 bytes)
 
    Paste picture 0x42e at (0x20, 10) */
 
-void F_12784(int n, int flag)
+void gx_trans_clear(int n, int flag)
 {
     struct Bitmap far *p;
 
@@ -163,15 +163,15 @@ void F_12784(int n, int flag)
     p = di_bm(0x42e, ARENA_HIGH_STACK);
     cu_ctl(CURSOR_SHOW);
     pu_show(p, 0x20, 10);
-    F_19438(1);
+    ma_pop_high(1);
 }
 
-/* F_127DB @ 0F38:345B (linear 0x127DB, 160 bytes)
+/* gx_trans_bolts @ 0F38:345B (linear 0x127DB, 160 bytes)
 
    Redraw the dialog picture n and its two bars; s gives the bar states.
    The screen shadow flag is switched off while drawing and the area is copied to the front afterwards. */
 
-void F_127DB(int n, char far *s)
+void gx_trans_bolts(int n, char far *s)
 {
     int saved;
     int i;
@@ -181,9 +181,9 @@ void F_127DB(int n, char far *s)
         g_partAnimate = 0;
         r_vid.copyToFront = 0;
         cu_ctl(CURSOR_HIDE);
-        F_1264E(n, 0);
+        gx_trans_pic(n, 0);
         for (i = 0; i < 2; i++)
-            F_123F4(*s++, i);
+            gx_trans_bolt(*s++, i);
         cu_ctl(CURSOR_SHOW);
         if (r_vid.copyToFront = saved)
             bm_copy_box(r_vid.back, r_vid.front, 0x20, 10, 0xe7, 0xb8);
@@ -326,9 +326,9 @@ void gx_draw_bolt(int n)
     px = (px & r_vid.mask) + 0x60;
     (*g_videoOps.slideSprite)(0xd, 0x93, px, (n == 0x43f && r_vid.copyToFront) ? 0xd - height : ypos, ypos, saved);
     cu_ctl(CURSOR_SHOW_NOW);
-    F_19438(1);
+    ma_pop_high(1);
     if (pict != saved)
-        F_19438(1);
+        ma_pop_high(1);
 }
 
 /* gx_drop_bolt @ 0F38:37FC (linear 0x12B7C, 341 bytes)
@@ -371,13 +371,13 @@ void gx_drop_bolt(void)
         xpos += 0x60;
         ypos += 9 - rows;
         bm_copy_box(r_vid.back, r_vid.front, xpos, ypos, xpos + wide, ypos + rows);
-        F_16CF3();
+        so_bolt_turn();
         if (wide == 0x10)
             xpos += 8;
         (*g_videoOps.slideSprite)(0xd, 0x93, xpos - 8, ypos + 3, 0x93, pict);
     }
     cu_ctl(CURSOR_SHOW_NOW);
-    F_19438(1);
+    ma_pop_high(1);
 }
 
 /* make_bolt_overlay @ 0F38:3951 (linear 0x12CD1, 263 bytes)
@@ -464,12 +464,12 @@ void gx_draw_part(int n, int flag)
         cu_ctl(CURSOR_SHOW_NOW);
     }
     if (g_boltOverlay) {
-        F_19438(1);
+        ma_pop_high(1);
         g_boltOverlay = 0;
     }
-    F_19438(1);
+    ma_pop_high(1);
     if (pict != saved)
-        F_19438(1);
+        ma_pop_high(1);
 }
 
 /* gx_erase_part @ 0F38:3C19 (linear 0x12F99, 259 bytes)
@@ -500,7 +500,7 @@ void gx_erase_part(int n, int flag)
     w = move.w = pict->width + 8;
     h = move.h = move.fc = pict->height;
     (*g_videoOps.copy)(r_vid.hoodBg, r_vid.back, &move, 1);
-    F_19438(1);
+    ma_pop_high(1);
     cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
         bm_copy_box(r_vid.back, r_vid.front, px, py, px + w, py + h);
@@ -563,7 +563,7 @@ void gx_draw_parts(struct Car *car)
         if (type = o_8290[1]) {
             g_slotSelec.slot = 1;
             gx_draw_part(type, 0);
-            slot = g_carbPosBase[g_part[car->rack.parts[1]->idx].variant];
+            slot = g_carbPosBase[g_parts[car->rack.parts[1]->idx].variant];
             for (type = 0; type < 3; type++) {
                 g_slotSelec.slot = slot++;
                 if (other = o_8290[type + 2])
@@ -611,7 +611,7 @@ void gx_draw_bolts(int *a, int *b, int flag)
     if (g_slotSelec.wirePic)
         gx_draw_wires();
     if (flag) {
-        F_119B8(0x4c6, 0x60, 0x94, -1);
+        sc_picture_at(0x4c6, 0x60, 0x94, -1);
         blt.h = 0xaf;
     }
     if (r_vid.copyToFront = shadow)
@@ -703,11 +703,11 @@ void gx_build_hots(int *xs, int *ys)
     sy_hover_reset();
 }
 
-/* F_135E5 @ 0F38:4265 (linear 0x135E5, 156 bytes)
+/* gx_sort_hots @ 0F38:4265 (linear 0x135E5, 156 bytes)
 
    Sort n hot spots of g_hots starting at first by x1 (exchange sort, ascending) */
 
-void F_135E5(int first, int n)
+void gx_sort_hots(int first, int n)
 {
     struct Hot *p;
     struct Hot *q;

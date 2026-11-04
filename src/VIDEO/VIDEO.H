@@ -53,7 +53,7 @@ extern char g_colScreenBorder;                                     /* DS:8248 */
 extern struct Bitmap far *g_autoSprImagePtr;                       /* DS:825A */
 extern int ac825et;                                     /* DS:825E */
 extern int aw8260y;                                     /* DS:8260 */
-void F_10B7C(void);                                     /* 0x10B7C */
+void vi_garage_pal(void);                                     /* 0x10B7C */
 void vi_bobs_pal(void);                                     /* 0x10B8C */
 void vi_name_pal(void);                                     /* 0x10B9C */
 void vi_swap_pal(void);                              /* 0x10BAC */
@@ -63,7 +63,7 @@ int vi_anim_start(int n);                            /* 0x11149 */
 void vi_anim_resume(int n);                          /* 0x111C1 */
 int vi_anim_active(int n);                           /* 0x111F2 */
 int vi_anim_hook(struct Obj *o, struct Cmd *c);      /* 0x11213 */
-void F_112CB(int reg, char color);                      /* 0x112CB */
+void vi_palette_reg(int reg, char color);                      /* 0x112CB */
 void vi_set_palette(char *table);                    /* 0x11324 */
 
 #endif

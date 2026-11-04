@@ -100,7 +100,7 @@ struct Car {
     signed char timing;
     char pad21;
     int fuel;
-    unsigned appearance;    /* bits 8-12 sticker (F_06B06), 13 roof chopped, 14 front and 15 rear bumper stripped */
+    unsigned appearance;    /* bits 8-12 sticker (ga_menu), 13 roof chopped, 14 front and 15 rear bumper stripped */
     struct Car *next;
 };
 
@@ -340,7 +340,7 @@ struct Spec {
 };
 
 /* one car model (10 bytes, w_8df0[], indexed by Car.specIndex): kind picks its sprites (vw_load); roofPic, frontBumperPic, rearBumperPic
-   are nonzero when the roof can be chopped and the front and rear bumpers stripped (F_0711A) */
+   are nonzero when the roof can be chopped and the front and rear bumpers stripped (ga_body) */
 struct Model {
     signed char kind;
     char pad1;

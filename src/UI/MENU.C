@@ -330,7 +330,7 @@ int mn_modal(int id)
     bm1 = mn_grab(id, &x, &y1, ARENA_HIGH_STACK);
     res = mn_wait(id);
     pu_show(bm1, x, y1);
-    F_19438(1);
+    ma_pop_high(1);
     return res;
 }
 
@@ -347,12 +347,12 @@ int mn_wait(int a)
     return key;
 }
 
-/* F_142CF @ 0F38:4F4F (linear 0x142CF, 114 bytes)
+/* mn_modal_list @ 0F38:4F4F (linear 0x142CF, 114 bytes)
 
    Run the mn_list dialog over a grabbed screen area (see mn_modal) and restore the area
    afterwards; 0x3ea when *list is zero */
 
-int F_142CF(int a, int b, int *c, int *list, char *buf, char **d)
+int mn_modal_list(int a, int b, int *c, int *list, char *buf, char **d)
 {
     struct Bitmap far *bm1;
     int x;
@@ -364,7 +364,7 @@ int F_142CF(int a, int b, int *c, int *list, char *buf, char **d)
     bm1 = mn_grab(a, &x, &y1, ARENA_HIGH_STACK);
     res = mn_list(a, b, c, list, buf, d);
     pu_show(bm1, x, y1);
-    F_19438(1);
+    ma_pop_high(1);
     return res;
 }
 
@@ -592,11 +592,11 @@ scroll:
     }
 }
 
-/* mn_ix @ 0F38:590B (linear 0x14C8B, 4 bytes)
+/* mn_sel @ 0F38:590B (linear 0x14C8B, 4 bytes)
 
    Accessor, returns g_menuList.selection */
 
-int mn_ix(void)
+int mn_sel(void)
 {
     return g_menuList.selection;
 }

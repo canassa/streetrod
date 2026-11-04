@@ -270,7 +270,7 @@ Rejected `tc_`: MSC termination-code macros (`TC_*`) occupy that prefix; TANDYCP
 **A rename is a change to verify, not a free edit.** In this project names are often load-bearing:
 - local names decide the stack frame layout (rule 3);
 - uninitialized globals are placed by LINK's communal hash (rule 4e) and file-local statics by MSC's name hash (rule 4f): renaming one can move others;
-- external symbols' name lengths count toward MSC's per-file budget (rule 4d), and so do a file's static function names: renaming a function or global can change the code of a later function in any file that references it. GARAGE.C (F_07AA4) and VIEW.C (F_2969D) have almost no slack left.
+- external symbols' name lengths count toward MSC's per-file budget (rule 4d), and so do a file's static function names: renaming a function or global can change the code of a later function in any file that references it. GARAGE.C (ga_transmission) and VIEW.C (F_2969D) have almost no slack left.
 Every rename must keep `./sr check --all`, `./sr build` and `./dosbox.sh --make` IDENTICAL. Rename through the tools so the sources, headers, MAKEFILE and SR.LNK stay consistent (`./sr rename OLD NEW`, or `./sr rename M_xxxxx.C NAME.C` for a file and its header; it runs `./sr headers`).
 
 - **Never add comments.** Do not add comments to the code unless instructed to; all documentation is human-reviewed.

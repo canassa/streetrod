@@ -44,9 +44,9 @@ struct TextEnd g_penPoint;
 struct StatusText g_statusLine; /* DS:824C */
 int g_xMoneyRhsVal;
 
-/* F_11421 @ 0F38:20A1 (linear 0x11421, 287 bytes) */
+/* sc_status_text @ 0F38:20A1 (linear 0x11421, 287 bytes) */
 
-void F_11421(int x, char *s, int w)
+void sc_status_text(int x, char *s, int w)
 {
     struct Colors saved;
     int left;
@@ -75,23 +75,23 @@ void F_11421(int x, char *s, int w)
     x_colors = saved;
 }
 
-/* F_11540 @ 0F38:21C0 (linear 0x11540, 83 bytes) */
+/* sc_add_money @ 0F38:21C0 (linear 0x11540, 83 bytes) */
 
-void F_11540(int n)
+void sc_add_money(int n)
 {
     int old;
     char buf[10];
 
     old = g_statusLine.shown;
     g_statusLine.shown = 1;
-    F_11421(g_statusLine.valueX, ltoa(a_7eaap.money += n, buf, 10), 0x30);
+    sc_status_text(g_statusLine.valueX, ltoa(a_7eaap.money += n, buf, 10), 0x30);
     g_xMoneyRhsVal = g_penPoint.x;
     g_statusLine.shown = old;
 }
 
-/* F_11593 @ 0F38:2213 (linear 0x11593, 214 bytes) */
+/* sc_status_label @ 0F38:2213 (linear 0x11593, 214 bytes) */
 
-void F_11593(char *s)
+void sc_status_label(char *s)
 {
     int saved;
 
@@ -103,7 +103,7 @@ void F_11593(char *s)
     g_statusLine.valueX = (g_penPoint.x + 7) & 0xfff8;
     r_vid.copyToFront = 0;
     if (s[1] != 'G' && s[1] != ' ')
-        F_11540(0);
+        sc_add_money(0);
     r_vid.copyToFront = saved;
     cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
@@ -118,7 +118,7 @@ void sc_show_gear(int i)
 
     saved = g_statusLine.shown;
     g_statusLine.shown = 1;
-    F_11421(g_statusLine.valueX, g_gearNames[i], 8);
+    sc_status_text(g_statusLine.valueX, g_gearNames[i], 8);
     g_statusLine.shown = saved;
 }
 
@@ -212,12 +212,12 @@ void sc_wait_msg(char *msg)
     }
 }
 
-/* F_118D4 @ 0F38:2554 (linear 0x118D4, 228 bytes)
+/* sc_picture @ 0F38:2554 (linear 0x118D4, 228 bytes)
 
    Blit bitmap number a to the back buffer at (g_picturePlacement.x, g_picturePlacement.y), then copy the rectangle to the front
    buffer. b >= 0 first fills the screen with color b. */
 
-int F_118D4(int a, int b)
+int sc_picture(int a, int b)
 {
     struct Bitmap far *p;
     long unused;    /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
@@ -237,16 +237,16 @@ int F_118D4(int a, int b)
     if (r_vid.copyToFront)
         bm_copy_box(r_vid.back, r_vid.front, g_picturePlacement.x, g_picturePlacement.y, pkt.dx + pkt.w - 1, pkt.dy + pkt.h - 1);
     g_picturePlacement.x = g_picturePlacement.y = 0;
-    F_19438(1);
+    ma_pop_high(1);
 }
 
-/* F_119B8 @ 0F38:2638 (linear 0x119B8, 30 bytes) */
+/* sc_picture_at @ 0F38:2638 (linear 0x119B8, 30 bytes) */
 
-int F_119B8(int a, int b, int c, int d)
+int sc_picture_at(int a, int b, int c, int d)
 {
     g_picturePlacement.x = b;
     g_picturePlacement.y = c;
-    return F_118D4(a, d);
+    return sc_picture(a, d);
 }
 
 /* sc_text @ 0F38:2656 (linear 0x119D6, 78 bytes)

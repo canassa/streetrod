@@ -63,7 +63,7 @@ int dv_run(void)
             blt.dx = 0x78;
             blt.dy = 0x7a;
             (*g_videoOps.copy)(pict, src, &blt, 1);
-            F_19438(1);
+            ma_pop_high(1);
         }
         w = blt.w = src->width;
         blt.h = 0x65;
@@ -78,7 +78,7 @@ int dv_run(void)
         blt.sy = DASH_Y;
         blt.dy = (r_vid.mode == VID_EGA || g_dashBuffered) ? 0 : DASH_Y;
         (*g_videoOps.copy)(src, g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, &blt, 1);
-        F_19438(1);
+        ma_pop_high(1);
         vw_load();
         da_init_shifter(g_driveEng.autoSelector, g_driveEng.gearCount);
         da_draw_shifter(g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, &g_driveEng);

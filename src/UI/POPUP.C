@@ -101,7 +101,7 @@ void pu_open(int n)
     cu_ctl(CURSOR_HIDE);
     if (g_popupSave) {
         pu_put(g_popupSave, g_popupLayout->x, g_popupLayout->y);
-        F_19438(1);
+        ma_pop_high(1);
         g_popupSave = 0;
     }
     close = n < 0;
@@ -125,7 +125,7 @@ void pu_open(int n)
     if (r_vid.copyToFront)
         bm_copy_box(r_vid.back, r_vid.front, g_popupLayout->x, g_popupLayout->y, g_popupLayout->x + w1 - 1, g_popupLayout->y + h1 - 1);
     if (close) {
-        F_19438(1);
+        ma_pop_high(1);
         g_popupSave = 0;
     }
     g_clickEnds = 1;
@@ -163,7 +163,7 @@ void pu_close(void)
 {
     if (g_popupSave) {
         pu_show(g_popupSave, g_popupLayout->x, g_popupLayout->y);
-        F_19438(1);
+        ma_pop_high(1);
         g_popupSave = 0;
     }
     g_clickEnds = 0;

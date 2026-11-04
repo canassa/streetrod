@@ -42,18 +42,18 @@ char g_blackPalette[16] = "";   /* DS:0452 */
 unsigned char g_altPalette[16] = {9, 1, 8, 0, 15, 7, 11, 3, 14, 2, 4, 12, 13, 10, 6, 14};   /* DS:0462 */
 int g_altPalTail = 0;   /* DS:0472 */
 
-/* F_10B7C @ 0F38:17FC (linear 0x10B7C, 16 bytes) */
+/* vi_garage_pal @ 0F38:17FC (linear 0x10B7C, 16 bytes) */
 
-void F_10B7C(void)
+void vi_garage_pal(void)
 {
-    F_112CB(12, 5);
+    vi_palette_reg(12, 5);
 }
 
 /* vi_bobs_pal @ 0F38:180C (linear 0x10B8C, 16 bytes) */
 
 void vi_bobs_pal(void)
 {
-    F_112CB(12, 13);
+    vi_palette_reg(12, 13);
 }
 
 /* vi_name_pal @ 0F38:181C (linear 0x10B9C, 16 bytes) */
@@ -338,11 +338,11 @@ int vi_anim_hook(struct Obj *o, struct Cmd *c)
     }
 }
 
-/* F_112CB @ 0F38:1F4B (linear 0x112CB, 89 bytes)
+/* vi_palette_reg @ 0F38:1F4B (linear 0x112CB, 89 bytes)
 
    Set EGA palette register reg to color (BIOS int 10h function 10h), waiting for vertical retrace */
 
-void F_112CB(int reg, char color)
+void vi_palette_reg(int reg, char color)
 {
     union REGS r;
     struct SREGS s;

@@ -15,8 +15,8 @@ class SourceTests(unittest.TestCase):
         by = {r['name']: r for r in fs}
         self.assertEqual(by['ga_day'], dict(addr=0x06476, seg=0, off=0x6476, size=45, kind='c', far=1,
                                                 name='ga_day', src='src/GAME/GARAGE.C', proto='int @(void)'))
-        self.assertEqual(by['F_06B06']['far'], 0)
-        self.assertEqual(by['F_06B06']['proto'], 'int near @(int mode)')
+        self.assertEqual(by['ga_menu']['far'], 0)
+        self.assertEqual(by['ga_menu']['proto'], 'int near @(int mode)')
         self.assertEqual(by['cl_pixel_addr']['far'], 0)
         self.assertEqual(by['cl_draw']['far'], 1)
         # the functions of a file are contiguous: no other file's function inside its extent
@@ -35,7 +35,7 @@ class SourceTests(unittest.TestCase):
 
     def test_globals(self):
         gs = source.globals_()
-        self.assertEqual(gs[0x5030]['name'], 'g_whlPic')
+        self.assertEqual(gs[0x5030]['name'], 'g_tirePics')
         self.assertEqual(gs[0x5030]['decl'], 'int @[][4]')
         self.assertEqual(gs[0x5030]['header'], 'GARAGE')
         self.assertEqual(gs[0x6C34], dict(off=0x6C34, name='g_shifterDraw', decl='struct ShifterDraw @', header=None,

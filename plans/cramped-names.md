@@ -1,53 +1,31 @@
-# Budget-cramped names to revisit after the struct grouping
+# Budget-cramped names still constrained
 
-Applied in phase 3 only because GARAGE.C/VIEW.C's name budget forced short spellings; the meaning is reviewed, the spelling is not final. Columns: placeholder, current name, intended meaning.
+Rechecked on naming4 after naming the understood function placeholders. These meanings are established, but the intended spellings still fail a communal hash window or the cumulative compiler budget.
 
-```
-bucount g_nScore g_hallCount
-m_present g_fnShow g_show
-g7f32s g_strOpp g_rivalBanner
-g824cd g_xTextR g_textEndX
-cz8bd0y g_edgeXR g_roadRight
-F_14C8B menu_ix menu_sel
-F_1934E arena_bm arena_bitmap
-g_05fc g_addT g_actionTicks
-g_0600 g_sysT g_biosTicks
-g_0604 g_tRef g_timeBase
-g_121c g_gar g_garageHots
-g_239e g_txt g_uiText
-g_39c9 g_junk g_junkWarning
-g_4733 g_cVis g_cursorDepth
-g_4806 g_part g_parts
-g_4f46 g_old g_oldCar
-g_4f48 g_new g_newCar
-g_5030 g_whlPic g_tirePics
-g_5048 g_colX g_calendarX
-g_504a g_rowY g_calendarY
-g_5052 g_wOff g_calendarRows
-g_5082 g_mon g_months
-g_508a g_hIds g_carHotIds
-g_50c2 g_paint g_paintColors
-g_50ce g_pad g_infoIndents
-g_511e g_iTxt g_infoText
-g_5126 g_nCarb g_carbCounts
-g_5130 g_nBolt g_boltCounts
-g_5148 g_cPos g_carbBoltPositions
-g_5186 g_bPos g_boltPositions
-g_519a g_bIdx g_boltSides
-g_6e2a9 g_oldF g_prevRivalFrame
-```
+| Original placeholder | Current name | Intended name | Constraint |
+|---|---|---|---|
+| bucount | g_nScore | g_hallCount | Communal hash window |
+| g7f32s | g_strOpp | g_rivalBanner | Communal hash window |
+| cz8bd0y | g_edgeXR | g_roadRight | Communal hash window |
+| F_1934E | ar_bm | ar_bitmap | GARAGE.C compiler budget |
+| g_121c | g_gar | g_garageHots | GARAGE.C compiler budget |
+| g_239e | g_txt | g_uiText | GARAGE.C compiler budget |
+| g_39c9 | g_junk | g_junkWarning | GARAGE.C compiler budget |
+| g_4733 | g_cVis | g_cursorDepth | GARAGE.C compiler budget |
+| g_4f46 | g_old | g_oldCar | GARAGE.C compiler budget |
+| g_4f48 | g_new | g_newCar | GARAGE.C compiler budget |
+| g_5048 | g_colX | g_calendarX | GARAGE.C compiler budget |
+| g_504a | g_rowY | g_calendarY | GARAGE.C compiler budget |
+| g_5052 | g_wOff | g_calendarRows | GARAGE.C compiler budget |
+| g_5082 | g_mon | g_months | GARAGE.C compiler budget |
+| g_508a | g_hIds | g_carHotIds | GARAGE.C compiler budget |
+| g_50c2 | g_paint | g_paintColors | GARAGE.C compiler budget |
+| g_50ce | g_pad | g_infoIndents | GARAGE.C compiler budget |
+| g_511e | g_iTxt | g_infoText | GARAGE.C compiler budget |
+| g_5126 | g_nCarb | g_carbCounts | GARAGE.C compiler budget |
+| g_5130 | g_nBolt | g_boltCounts | GARAGE.C compiler budget |
+| g_5148 | g_cPos | g_carbBoltPositions | GARAGE.C compiler budget |
+| g_5186 | g_bPos | g_boltPositions | GARAGE.C compiler budget |
+| g_519a | g_bIdx | g_boltSides | GARAGE.C compiler budget |
 
-## Resolved by struct grouping on branch structs
-
-- `g_fnShow` is now `g_videoOps.show`, restoring the intended `show` member name.
-- `g_xTextR` is now `g_penPoint.x`, the X coordinate of the last text endpoint.
-
-The other entries above remain outside the selected records; their names were not changed in this pass.
-
-## Resolved by struct grouping on branch structs2
-
-- `g_addT` is now `g_gameClock.actionTicks`.
-- `g_sysT` is now `g_gameClock.biosTicks`.
-- `g_tRef` is now `g_gameClock.timeBase`.
-
-The shared clock calculation and SAVEGAME accounting establish these meanings; the three members no longer need budget-cramped spellings.
+Fixed names have been dropped. Five former entries are now struct members: `g_videoOps.show`, `g_penPoint.x`, and `g_gameClock.actionTicks`/`biosTicks`/`timeBase`. Intended public function spellings retain the approved module prefixes (`mn_sel`, `ar_bitmap`). Evidence, individual budget trials, and the applied ledger are under uncommitted `work/naming4/`.

@@ -37,11 +37,11 @@ void near pf_drivetrain(struct Car *c, struct Eng *e)
     qn = c->rack.parts;
     n6k = c->transmission;
     m = c->tires;
-    a3 = g_part[qn[0]->idx].variant;
-    bl = g_part[qn[1]->idx].variant;
-    c3 = g_part[qn[2]->idx].variant;
-    d = g_part[n6k->idx].variant;
-    e1 = g_part[m->idx].variant;
+    a3 = g_parts[qn[0]->idx].variant;
+    bl = g_parts[qn[1]->idx].variant;
+    c3 = g_parts[qn[2]->idx].variant;
+    d = g_parts[n6k->idx].variant;
+    e1 = g_parts[m->idx].variant;
     vl = ((c->appearance & 0x2000) || w_8df0[c->specIndex].roofPic == 0) * 0.09
         + ((c->appearance & 0x8000) || w_8df0[c->specIndex].rearBumperPic == 0) * 0.05
         + ((c->appearance & 0x4000) || w_8df0[c->specIndex].frontBumperPic == 0) * 0.01
@@ -78,7 +78,7 @@ void near pf_drivetrain(struct Car *c, struct Eng *e)
         e->autoShiftRpm = gl->bands[1].maxRpm;
     }
     e->shiftRpm = g_shiftRpm[a3];
-    e->f34[5] = (int)((int)(0x82 - g7d86n[c->specIndex].rank) * 5.0 / 50.0 + g_5568[g_part[m->idx].variant]);
+    e->f34[5] = (int)((int)(0x82 - g7d86n[c->specIndex].rank) * 5.0 / 50.0 + g_5568[g_parts[m->idx].variant]);
     e->gearCount = g_transGears[d];
     e->shifterDirty = 1;
 }
@@ -163,11 +163,11 @@ int near pf_vmax(int n)
     qn = p6->rack.parts;
     n6k = p6->transmission;
     m = p6->tires;
-    a3 = g_part[qn[0]->idx].variant;
-    bl = g_part[qn[1]->idx].variant;
-    c3 = g_part[qn[2]->idx].variant;
-    d = g_part[n6k->idx].variant;
-    e1 = g_part[m->idx].variant;
+    a3 = g_parts[qn[0]->idx].variant;
+    bl = g_parts[qn[1]->idx].variant;
+    c3 = g_parts[qn[2]->idx].variant;
+    d = g_parts[n6k->idx].variant;
+    e1 = g_parts[m->idx].variant;
     vl = ((p6->appearance & 0x2000) || w_8df0[p6->specIndex].roofPic == 0) * 0.09
         + ((p6->appearance & 0x8000) || w_8df0[p6->specIndex].rearBumperPic == 0) * 0.05
         + ((p6->appearance & 0x4000) || w_8df0[p6->specIndex].frontBumperPic == 0) * 0.01

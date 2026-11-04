@@ -318,7 +318,7 @@ void sp_slide_v(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
         bm_copy_box(r_vid.front, r_vid.back, x, (y0 > y1 ? y1 : y0) < 0 ? 0 : (y0 > y1 ? y1 : y0), bm->width + x,
             (y0 < y1 ? y1 : y0) + bm->height > (SCREEN_HEIGHT - 1) ? (SCREEN_HEIGHT - 1) : (y0 < y1 ? y1 : y0) + bm->height);
     g_xCoordSprite = old;
-    F_19438(2);
+    ma_pop_high(2);
 }
 
 /* sp_advance @ 0F38:AA37 (linear 0x19DB7, 139 bytes)

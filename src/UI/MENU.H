@@ -25,8 +25,8 @@ struct Bitmap far *mn_grab(int id, int *px, int *py, int mode);/* 0x14090 */
 int mn_hit(int x, int y);                             /* 0x1412D */
 int mn_modal(int id);                                 /* 0x14241 */
 int mn_wait(int a);                                   /* 0x14294 */
-int F_142CF(int a, int b, int *c, int *list, char *buf, char **d);/* 0x142CF */
+int mn_modal_list(int a, int b, int *c, int *list, char *buf, char **d);/* 0x142CF */
 int mn_list(int a, int b, int *c, int *list, char *buf, char **d);/* 0x1438E */
-int mn_ix(void);                                      /* 0x14C8B */
+int mn_sel(void);                                      /* 0x14C8B */
 
 #endif

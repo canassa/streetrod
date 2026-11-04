@@ -23,7 +23,7 @@
 static int g_6e04aay;                      /* DS:6E04 */
 static int g_6e06aax;                      /* DS:6E06 */
 static struct RenderRows g_renderRows; /* DS:6E08 */
-static int g_oldF;                        /* DS:6E2A */
+static int g_prevRivalFrame;                        /* DS:6E2A */
 static void near clip_blit_y(struct Blt *b);
 static int near edge_step(int x1, int y1, int x2, int y2);
 static int near sgn(int n);
@@ -221,7 +221,7 @@ void vw_load(void)
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
     pkt1.dy = 0x66;
     (*g_videoOps.copy)(bm1, g8188w, &pkt1, 1);
-    F_19438(1);
+    ma_pop_high(1);
     sel = *(int *)&bw8aca == 0 ? g_scene : 0;
     bm24 = di_bm(g_5e62[sel], ARENA_HIGH_STACK);
     pkt1.w = bm24->width;
@@ -229,7 +229,7 @@ void vw_load(void)
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
     pkt1.dy = 0x66;
     (*g_videoOps.copy)(bm24, g82b4s, &pkt1, 1);
-    F_19438(1);
+    ma_pop_high(1);
     if (*(int *)&bw8aca == 0) {
         bm24 = di_bm(0x4ed, ARENA_HIGH_STACK);
         pkt1.w = bm24->width;
@@ -237,14 +237,14 @@ void vw_load(void)
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
         pkt1.dy = (r_vid.mode == VID_EGA ? DASH_Y - 1 : 0) + 1;
         (*g_videoOps.copy)(bm24, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt1, 1);
-        F_19438(1);
+        ma_pop_high(1);
         bm24 = di_bm(0x4ee, ARENA_HIGH_STACK);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
         pkt1.dy = (r_vid.mode == VID_EGA ? DASH_Y - 1 : 0) + 0x2c;
         (*g_videoOps.copy)(bm24, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt1, 1);
-        F_19438(1);
+        ma_pop_high(1);
     }
     ar767eu = di_bm(0x4f3, ARENA_LOW_STACK);
     if (*(int *)&bw8aca == 0) {
@@ -286,7 +286,7 @@ void vw_load(void)
         ab7526x[1] = di_bm(0x4d9, ARENA_LOW_STACK);
         ab7526x[2] = di_bm(0x4da, ARENA_HIGH_STACK);
         ab7526x[2] = ab7526x[3] = (*load)(ab7526x[2], g_shrinkMasks[0][0], g_shrinkMasks[0][0]);
-        F_19438(1);
+        ma_pop_high(1);
         for (il = 0; il < 3; il++)
             ab7526x[4 + il] = ab7526x[3];
         ab7526x[9] = di_bm(0x4de, ARENA_LOW_STACK);
@@ -1143,7 +1143,7 @@ static void near render_opponent(void)
             if (ap7d7cv == 12)
                 return;
             seln = ap7d7cv + 1;
-        } else if (seln != g_oldF) {
+        } else if (seln != g_prevRivalFrame) {
             if ((seln <= 8 && ap7d7cv > 9) || (seln >= 9 && ap7d7cv <= 8 && ap7d7cv > 0))
                 seln = ap7d7cv - 1;
             else if (ap7d7cv == 0)
@@ -1163,7 +1163,7 @@ static void near render_opponent(void)
     ay8bc2z = seln == 0 || (seln == 2 && xk <= 10);
     by72f2 = seln == 2 && xk <= 10 && abs(z9) < 180 &&
         (bu8acc < 4 ? 100 : 180) > abs(z9) && ar7e8av.distanceStep < ao7d2ev.distanceStep;
-    g_oldF = ap7d7cv;
+    g_prevRivalFrame = ap7d7cv;
     ap7d7cv = seln;
     g_5ec6 = xk > 16 ? (xk + 8) & 15 : 0;
     t1 = xk;
@@ -1563,7 +1563,7 @@ void vw_draw(void)
 
 void vw_start(void)
 {
-    ap7d7cv = g_oldF = 0;
+    ap7d7cv = g_prevRivalFrame = 0;
     select_draw_page();
     rd_draw_frame();
 }

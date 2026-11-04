@@ -188,7 +188,7 @@ static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int co
         (*g_videoOps.maskedBlit)(B[i], bm1, &pkt1, 1);
         bm_copy(bm1, &g_bandRecordsSprArray[i], 1);
     }
-    F_19438(1);
+    ma_pop_high(1);
 }
 
 /* cp_backdrop @ 0F38:84BE (linear 0x1783E, 624 bytes)
@@ -250,7 +250,7 @@ void cp_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, struc
             diff = p2->planesize / r_vid.planes - (*pa)->planesize / r_vid.planes;
             bm_far_copy(p2->alt.p + diff, (*pa)->alt.p, (*pa)->planesize / r_vid.planes);
         }
-        F_19438(1);
+        ma_pop_high(1);
         *pr1 = &g_overlayRectA;
         (*pr1)->y2 = (*pa)->height - 1;
         *pr2 = &g_overlayRectB;
@@ -292,7 +292,7 @@ static void near build_pump_strip(int x, int y, int sx0, int top, struct Bitmap 
     b.h = BACKDROP_ROWS;
     b.dx = b.dy = b.sx = b.sy = 0;
     (*g_videoOps.maskedBlit)(tmp1, dstbm, &b, 0);
-    F_19438(1);
+    ma_pop_high(1);
 }
 
 /* cp_build @ 0F38:8866 (linear 0x17BE6, 1506 bytes)
@@ -357,7 +357,7 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
     if (q) {
         bm = di_bm(m_8272.overlayPic, ARENA_HIGH_STACK);
         bm_underlay(bm, *out, p12->b2, p12->b3 - bm->height + row8 + 1);
-        F_19438(1);
+        ma_pop_high(1);
     }
     j5 = 1;
     for (j5 = 1; j5 < n; j5++)
@@ -400,7 +400,7 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
             }
             bm_underlay(bm, out[j5], p12->wheelX1 + off, h);
             bm_underlay(bm, out[j5], p12->wheelX2 + off, h);
-            F_19438(1);
+            ma_pop_high(1);
         }
     }
     if (w) {
@@ -423,17 +423,17 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
             bm_underlay(bm2n, out[j5], left + off, h);
             bm_underlay(bm2n, out[j5], right1 - bm2n->width + off + 1, h);
         }
-        F_19438(1);
+        ma_pop_high(1);
     }
 }
 
-/* F_181C8 @ 0F38:8E48 (linear 0x181C8, 2323 bytes)
+/* cp_show_car @ 0F38:8E48 (linear 0x181C8, 2323 bytes)
 
    Draw a pop-up picture (car part, kind 1..8) with its frame sprite, saving and restoring the
    screen behind it */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-void F_181C8(int kind, int idx, int flags, int kk, int q, int bot, int mode2, int *ids)
+void cp_show_car(int kind, int idx, int flags, int kk, int q, int bot, int mode2, int *ids)
 {
     int n2;
     struct Blt blt;

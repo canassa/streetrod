@@ -21,20 +21,20 @@ void so_init(void);                                  /* 0x16481 */
 void so_on(void);                                    /* 0x164A2 */
 void so_off(void);                                   /* 0x164BD */
 void so_wheel_roll(int on);                                   /* 0x168C8 */
-void F_168F3(int on);                                   /* 0x168F3 */
+void so_sticker(int on);                                   /* 0x168F3 */
 void F_16943(int on);                                   /* 0x16943 */
 void so_pump(int on);                                   /* 0x16993 */
 void so_jack(int on);                                   /* 0x169E1 */
 void F_16A2F(int on);                                   /* 0x16A2F */
-void F_16A5A(int on);                                   /* 0x16A5A */
+void so_part_move(int on);                                   /* 0x16A5A */
 void so_siren(int on);                               /* 0x16AA8 */
 void so_squeal(int on);                              /* 0x16AC1 */
 void so_buzz(void);                                  /* 0x16B3A */
-void F_16B61(void);                                     /* 0x16B61 */
-void F_16B97(void);                                     /* 0x16B97 */
-void F_16BC1(void);                                     /* 0x16BC1 */
+void so_bolt(void);                                     /* 0x16B61 */
+void so_part_set(void);                                     /* 0x16B97 */
+void so_body_change(void);                                     /* 0x16BC1 */
 void so_crash(void);                                 /* 0x16BE3 */
 void so_bump(void);                                     /* 0x16C8F */
-void F_16CF3(void);                                     /* 0x16CF3 */
+void so_bolt_turn(void);                                     /* 0x16CF3 */
 
 #endif

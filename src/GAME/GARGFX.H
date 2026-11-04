@@ -22,11 +22,11 @@ extern struct Blt g_cpyBoltPatchRecord;                               /* DS:70AC
 extern int o_8290[];                                    /* DS:8290 */
 extern int af829ax[];                                   /* DS:829A */
 extern int ad829cy[];                                   /* DS:829C */
-void F_123F4(int a, int b);                             /* 0x123F4 */
-void F_12525(int a);                                    /* 0x12525 */
-void F_1264E(int n, int flag);                          /* 0x1264E */
-void F_12784(int n, int flag);                          /* 0x12784 */
-void F_127DB(int n, char far *s);                       /* 0x127DB */
+void gx_trans_bolt(int a, int b);                             /* 0x123F4 */
+void gx_trans_drop(int a);                                    /* 0x12525 */
+void gx_trans_pic(int n, int flag);                          /* 0x1264E */
+void gx_trans_clear(int n, int flag);                          /* 0x12784 */
+void gx_trans_bolts(int n, char far *s);                       /* 0x127DB */
 void gx_part_pos(int *px, int *py);                 /* 0x12909 */
 void gx_bolt_pos(int *px, int *py);                 /* 0x12964 */
 void gx_draw_bolt(int n);                           /* 0x12A17 */
@@ -37,6 +37,6 @@ void gx_draw_wires(void);                           /* 0x1309C */
 void gx_draw_parts(struct Car *car);                /* 0x131B5 */
 void gx_draw_bolts(int *a, int *b, int flag);       /* 0x132AD */
 void gx_build_hots(int *xs, int *ys);               /* 0x1344A */
-void F_135E5(int first, int n);                         /* 0x135E5 */
+void gx_sort_hots(int first, int n);                         /* 0x135E5 */
 
 #endif

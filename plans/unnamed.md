@@ -6,51 +6,8 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 
 | addr | name | file | size |
 |---|---|---|---|
-| 064A3 | F_064A3 | src/GAME/GARAGE.C | 134 |
-| 06529 | F_06529 | src/GAME/GARAGE.C | 19 |
-| 065AF | F_065AF | src/GAME/GARAGE.C | 417 |
-| 06750 | F_06750 | src/GAME/GARAGE.C | 127 |
-| 067CF | F_067CF | src/GAME/GARAGE.C | 88 |
-| 06827 | F_06827 | src/GAME/GARAGE.C | 91 |
-| 06AA6 | F_06AA6 | src/GAME/GARAGE.C | 50 |
-| 06B06 | F_06B06 | src/GAME/GARAGE.C | 1125 |
-| 06F6B | F_06F6B | src/GAME/GARAGE.C | 431 |
-| 0711A | F_0711A | src/GAME/GARAGE.C | 589 |
-| 07367 | F_07367 | src/GAME/GARAGE.C | 832 |
-| 076A7 | F_076A7 | src/GAME/GARAGE.C | 154 |
-| 07741 | F_07741 | src/GAME/GARAGE.C | 72 |
-| 077B7 | F_077B7 | src/GAME/GARAGE.C | 73 |
-| 07800 | F_07800 | src/GAME/GARAGE.C | 241 |
-| 079EB | F_079EB | src/GAME/GARAGE.C | 185 |
-| 07AA4 | F_07AA4 | src/GAME/GARAGE.C | 1090 |
-| 07EE6 | F_07EE6 | src/GAME/GARAGE.C | 203 |
-| 10AFD | F_10AFD | src/GAME/DASH.C | 75 |
-| 10B7C | F_10B7C | src/VIDEO/VIDEO.C | 16 |
-| 112CB | F_112CB | src/VIDEO/VIDEO.C | 89 |
-| 11421 | F_11421 | src/UI/SCREEN.C | 287 |
-| 11540 | F_11540 | src/UI/SCREEN.C | 83 |
-| 11593 | F_11593 | src/UI/SCREEN.C | 214 |
-| 118D4 | F_118D4 | src/UI/SCREEN.C | 228 |
-| 119B8 | F_119B8 | src/UI/SCREEN.C | 30 |
-| 123F4 | F_123F4 | src/GAME/GARGFX.C | 305 |
-| 12525 | F_12525 | src/GAME/GARGFX.C | 297 |
-| 1264E | F_1264E | src/GAME/GARGFX.C | 310 |
-| 12784 | F_12784 | src/GAME/GARGFX.C | 87 |
-| 127DB | F_127DB | src/GAME/GARGFX.C | 160 |
-| 135E5 | F_135E5 | src/GAME/GARGFX.C | 156 |
-| 142CF | F_142CF | src/UI/MENU.C | 114 |
-| 16381 | F_16381 | src/SOUND/MUSIC.C | 61 |
-| 168F3 | F_168F3 | src/SOUND/SOUND.C | 80 |
 | 16943 | F_16943 | src/SOUND/SOUND.C | 80 |
 | 16A2F | F_16A2F | src/SOUND/SOUND.C | 43 |
-| 16A5A | F_16A5A | src/SOUND/SOUND.C | 78 |
-| 16B61 | F_16B61 | src/SOUND/SOUND.C | 54 |
-| 16B97 | F_16B97 | src/SOUND/SOUND.C | 42 |
-| 16BC1 | F_16BC1 | src/SOUND/SOUND.C | 34 |
-| 16CF3 | F_16CF3 | src/SOUND/SOUND.C | 38 |
-| 181C8 | F_181C8 | src/GAME/CARPIC.C | 2323 |
-| 19438 | F_19438 | src/SYS/MARKS.C | 66 |
-| 1B213 | F_1B213 | src/GAME/TIRES.C | 3849 |
 
 ## Globals and statics
 
@@ -60,7 +17,6 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 | 004C | g_004c | `int @` | MAIN |
 | 0294 | g_0294 | `struct Bitmap far *@` | MAIN |
 | 02EE | g_02ee | `signed char @[24][2]` | DASH |
-| 0570 | g_0570 | `char @` | SYS |
 | 05BA | g_05ba | `int @` | SYS |
 | 05BC | g_05bc | `int @[8]` | SYS |
 | 05D4 | g_05d4 | `int @` | SYS |

@@ -113,8 +113,8 @@ _g_47f0 DB      0                        ; DS:47F0 char
 S_47f1  DB      '`Bankroll:`$', 0        ; DS:47F1 string
         PUBLIC  _g_gearText
 _g_gearText DB      ' Gear: ', 0             ; DS:47FE char[]
-        PUBLIC  _g_part
-_g_part DW      13h                      ; DS:4806 struct Item[]
+        PUBLIC  _g_parts
+_g_parts DW      13h                      ; DS:4806 struct Item[]
         DB      0, 1, 0, 0
         DW      73Ch
         DW      13h

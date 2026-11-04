@@ -55,7 +55,7 @@ void da_init_shifter(int a, int b);                   /* 0x10677 */
 void da_draw_shifter(struct Bitmap far *dst, struct Eng *e);/* 0x10872 */
 void da_fmemset(char far *p, int c, unsigned n);      /* 0x109C0 */
 int da_clip_blt(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *in, struct Blt *out);/* 0x10A00 */
-void F_10AFD(int a);                                    /* 0x10AFD */
+void da_wait_retrace(int a);                                    /* 0x10AFD */
 int da_text_width(char *s);                           /* 0x10B48 */
 
 #endif

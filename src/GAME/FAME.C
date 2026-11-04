@@ -49,9 +49,9 @@ int fa_protect_check(void)
 
     d = rn_int(0x33);
     f = d < 0x12;
-    F_11421(-1, "", 0);
+    sc_status_text(-1, "", 0);
     r_vid.copyToFront = 0;
-    F_119B8(8, 8, 0, 0);
+    sc_picture_at(8, 8, 0, 0);
     di_free_pic(8);
     switch (f) {
     case 0:
@@ -78,7 +78,7 @@ int fa_protect_check(void)
     g_protectCycle = 1;
     e = mn_wait(0x27);
     g_protectCycle = 0;
-    F_11421(-1, "", 0);
+    sc_status_text(-1, "", 0);
     if (g_manual[d].color != e)
         return 0;
     return 1;
@@ -174,7 +174,7 @@ static int near elapsed_hours(void)
     int a;
     int b;
 
-    F_064A3(&a, &b);
+    ga_time(&a, &b);
     return ga_day() * 24 + a + 12;
 }
 
@@ -201,7 +201,7 @@ void fa_show(int add)
     (*g_videoOps.blank)();
     g_picturePlacement.maxHeight = SCREEN_HEIGHT;
     r_vid.copyToFront = 1;
-    F_118D4(5, -1);
+    sc_picture(5, -1);
     g_picturePlacement.maxHeight = old;
     vi_swap_pal();
     sv286 = bustyle->c28;

@@ -80,7 +80,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   increment up), mn_draw_hot's `goto box;`, mn_hit's `goto next;` into a then-branch,
   mn_list's `goto restore;`, load_pic's `goto done;` (a `break` moves the after-loop block),
   fill_quad's goto loop (escapes `/Ol`, see `loop_opt` below), render_mirror/vw_draw's `goto next`,
-  F_181C8's `again`/`done`, sg_save's shared retry tail; and the loop forms
+  cp_show_car's `again`/`done`, sg_save's shared retry tail; and the loop forms
   `for (;; g_inputKey = 0)` in ed_line (the increment gives the `jmp test` entry) and
   av_open's accumulation inside the inner `while` test (keeps `cx` for the outer loop).
   That the original had a jump at each of these points is evidence; the exact statement
@@ -103,7 +103,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   Braced register-write macros give it. Their names, and the fact that every other port
   pair of the file uses them, are a reconstruction (braced and unbraced pairs compile
   the same everywhere else).
-- **F_07AA4's `int flags[3]`** (GARAGE.C), indexed by key 1 and 2. The element that is
+- **ga_transmission's `int flags[3]`** (GARAGE.C), indexed by key 1 and 2. The element that is
   never touched, `flags[0]`, fills the original's unused 2-byte frame slot. This is an
   interpretation (it matches `flags[k--]`) and is not proven.
 - **`/Oi`, not `#pragma intrinsic`.** No compiled C code in the EXE calls a library routine
@@ -116,13 +116,13 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 - **PROVISIONAL dummies** (each is marked in the source). They reproduce something in the
   EXE whose original text is unknown:
   - vi_anim_hook's unused inner-block `struct Colors save` (VIDEO.C): a 6-byte frame slot.
-  - `long unused` in F_118D4 (SCREEN.C), gx_draw_bolt, gx_draw_part and gx_erase_part (GARGFX.C): a
+  - `long unused` in sc_picture (SCREEN.C), gx_draw_bolt, gx_draw_part and gx_erase_part (GARGFX.C): a
     4-byte slot above the `struct Blt` local.
   - `x_trk0`/`x_trk1` (DASH.C, labels in `src/DATA/NEEDLE.ASM`): two unreachable far
     accesses for the two SEG constants in CONST (DS:68E6, DS:68E8) that nothing reads.
   - `g_6c42` (POPUP.C): four unreferenced `_BSS` bytes after `g_popupLayout`.
   - `g_list[0] = g_list[0];` in the default cases of your_cars (GAME.C) and sg_load
-    (SAVEGAME.C): after the menu F_142CF returns a positive item, the original loads
+    (SAVEGAME.C): after the menu mn_modal_list returns a positive item, the original loads
     `g_list[0]` (the list's item count) into `ax` and drops it. MSC drops the store of a
     self-assignment and keeps the load. The only other forms found that give these bytes
     are a `switch (g_list[0])` whose cases are all empty (`{ }`, `{ case 1: break; }`), as
@@ -155,9 +155,9 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   extent and member types are a reconstruction.
 - **Budget structs and message offsets.** `struct State7EAA` (`a_7eaap`, DS:7EAA..7EC1) and
   `struct State8272` (`m_8272`, DS:8272..828F) each fold 11 placeholder globals. GARAGE.C
-  (one object, as the relocation table requires) loses F_07AA4's loop register variables
+  (one object, as the relocation table requires) loses ga_transmission's loop register variables
   once it references more external symbols than MSC 5.1's budget allows (CLAUDE.md 4d), and
-  these two COMMON clusters as structs bring it under. For the same reason F_0711A
+  these two COMMON clusters as structs bring it under. For the same reason ga_body
   (GARAGE.C) addresses its four messages as offsets into the message block,
   `g_txt + 1283`, `+ 1299`, `+ 1318`, `+ 1337` ("Chop roof - $70" ...), not as named
   globals; the game addresses messages by offset into g_txt everywhere (`Hot.f4`, the
@@ -171,11 +171,11 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   (`g_listLineBasePointerValue = (int)p`) and the code computes `(struct Win *)(0x12 * sel + g_listLineBasePointerValue)`.
   Declaring it `struct Hot *` and writing `g_listLineBasePointerValue + sel` makes mn_list 10 bytes shorter,
   so the int arithmetic is evidence; that there were two struct names is not.
-- **Return types the code does not decide.** `main` (MAIN.C) and F_118D4 (SCREEN.C)
-  are `int` but end without a `return` (C4035); F_119B8 returns F_118D4's value. ra_outcome
+- **Return types the code does not decide.** `main` (MAIN.C) and sc_picture (SCREEN.C)
+  are `int` but end without a `return` (C4035); sc_picture_at returns sc_picture's value. ra_outcome
   (RACE.C) returns 1 on one path, a value its caller stores, and `return;` on another
   (C4033). `void` and `int` give the same bytes for the first two; the source keeps `int`
-  (`main` by convention, F_118D4 because F_119B8 passes its value on).
+  (`main` by convention, sc_picture because sc_picture_at passes its value on).
 
 - **Hooks** (`g_videoOps`, DS:78A2..78DD): supported by the three MSC struct-copy installers.
 
@@ -245,7 +245,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
 - C4051 "data conversion" (94, in 24 files): mostly an `int` value stored into or passed
   as a `char` (colours, flags, drive letters), a few `int`/`long` mixes. Believed original:
   casts would not change a byte, and the original need not have compiled at `/W2`.
-- C4100 "unreferenced formal parameter" (5): F_06529 `n`, F_12784 `n` and `flag`, gx_erase_part
+- C4100 "unreferenced formal parameter" (5): ga_check_end `n`, gx_trans_clear `n` and `flag`, gx_erase_part
   `flag`, cp_patch_bg `p8`. Their callers push these arguments and the callees ignore them; the
   call sites decide the parameter count. Believed original.
 - C4101 "unreferenced local variable" (5): the PROVISIONAL frame-filler locals above.

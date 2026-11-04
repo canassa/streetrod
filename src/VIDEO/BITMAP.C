@@ -170,7 +170,7 @@ void bm_draw_masked(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *
         }
     }
     if (f)
-        F_19438(1);
+        ma_pop_high(1);
 }
 
 /* bm_underlay @ 0F38:B0F2 (linear 0x1A472, 557 bytes)
@@ -232,7 +232,7 @@ void bm_underlay(struct Bitmap far *src, struct Bitmap far *dst, int x, int y)
         }
     }
     if (sh5)
-        F_19438(1);
+        ma_pop_high(1);
 }
 
 /* bm_put @ 0F38:B31F (linear 0x1A69F, 65 bytes)
@@ -262,7 +262,7 @@ void bm_put_pic(struct Bitmap far *dst, int n, unsigned char x, unsigned char y)
     p = di_bm(n, ARENA_HIGH_STACK);
     bm_put(dst, p, x, y, 3);
     g_lastPic = p;
-    F_19438(1);
+    ma_pop_high(1);
 }
 
 /* bm_draw_pic @ 0F38:B3B4 (linear 0x1A734, 103 bytes)
@@ -281,7 +281,7 @@ void bm_draw_pic(struct Bitmap far *dst, int n, unsigned char x, unsigned char y
     blt.dx = x;
     blt.dy = y;
     bm_draw_masked(bm, dst, &blt, mode);
-    F_19438(1);
+    ma_pop_high(1);
 }
 
 /* bm_and_mask @ 0F38:B41B (linear 0x1A79B, 231 bytes)

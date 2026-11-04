@@ -4,7 +4,7 @@
 #define GARAGE_H
 #include "STRUCTS.H"
 
-extern int g_whlPic[][4];                                 /* DS:5030 */
+extern int g_tirePics[][4];                                 /* DS:5030 */
 extern int g_colX;                                      /* DS:5048 */
 extern int g_rowY[];                                    /* DS:504A */
 extern int g_wOff[];                                    /* DS:5052 */
@@ -23,24 +23,24 @@ extern int g_5198[];                                    /* DS:5198 */
 extern int g_bIdx[];                                    /* DS:519A */
 extern struct State8272 m_8272;                         /* DS:8272 */
 int ga_day(void);                                   /* 0x06476 */
-void F_064A3(int *a, int *b);                           /* 0x064A3 */
-void F_06529(int n);                                    /* 0x06529 */
-void F_065AF(int a);                                    /* 0x065AF */
-void F_06750(int x);                                    /* 0x06750 */
-void F_067CF(int a);                                    /* 0x067CF */
-int F_06827(int n);                                     /* 0x06827 */
-void F_06AA6(void);                                     /* 0x06AA6 */
-int near F_06B06(int mode);                             /* 0x06B06 */
-void near F_06F6B(void);                                /* 0x06F6B */
-void near F_0711A(unsigned mask);                       /* 0x0711A */
-void near F_07367(void);                                /* 0x07367 */
-void near F_076A7(int t, struct Node **list, char *buf, int start);/* 0x076A7 */
-void near F_07741(struct Node *n, struct Node **slot);  /* 0x07741 */
-struct Node * near F_077B7(struct Node *n);             /* 0x077B7 */
-void near F_07800(void);                                /* 0x07800 */
-void F_079EB(void);                                     /* 0x079EB */
-void near F_07AA4(void);                                /* 0x07AA4 */
-int F_07EE6(struct Car *car, int flag);                 /* 0x07EE6 */
+void ga_time(int *a, int *b);                           /* 0x064A3 */
+void ga_check_end(int n);                                    /* 0x06529 */
+void ga_calendar(int a);                                    /* 0x065AF */
+void ga_date(int x);                                    /* 0x06750 */
+void ga_palette(int a);                                    /* 0x067CF */
+int ga_hotspot(int n);                                     /* 0x06827 */
+void ga_clear_name(void);                                     /* 0x06AA6 */
+int near ga_menu(int mode);                             /* 0x06B06 */
+void near ga_paint(void);                                /* 0x06F6B */
+void near ga_body(unsigned mask);                       /* 0x0711A */
+void near ga_stickers(void);                                /* 0x07367 */
+void near ga_spares(int t, struct Node **list, char *buf, int start);/* 0x076A7 */
+void near ga_install(struct Node *n, struct Node **slot);  /* 0x07741 */
+struct Node * near ga_unlink(struct Node *n);             /* 0x077B7 */
+void near ga_tires(void);                                /* 0x07800 */
+void ga_info(void);                                     /* 0x079EB */
+void near ga_transmission(void);                                /* 0x07AA4 */
+int ga_ready(struct Car *car, int flag);                 /* 0x07EE6 */
 void near ga_hood(struct Car *car);                 /* 0x081AB */
 
 #endif

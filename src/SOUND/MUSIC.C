@@ -68,11 +68,11 @@ void mu_stop(void)
     sy_music_stop();
 }
 
-/* F_16381 @ 0F38:7001 (linear 0x16381, 61 bytes)
+/* mu_suspend @ 0F38:7001 (linear 0x16381, 61 bytes)
 
    Toggle between two states (calls sy_music_pause on entering, sy_music_resume on leaving) */
 
-void F_16381(int on)
+void mu_suspend(int on)
 {
     if (on) {
         if (g_musicOn) {

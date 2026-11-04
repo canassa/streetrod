@@ -100,7 +100,7 @@ int av_run(void)
             g_adPacket.sx = 0x40;
             g_adPacket.dx = 0x100;
             (*g_videoOps.copy)(g_adPicture, r_vid.back, &g_adPacket, 1);
-            F_19438(1);
+            ma_pop_high(1);
             hsave = r_vid.back->height;
             r_vid.back->height = SCREEN_BODY_HEIGHT;
             y = 0;

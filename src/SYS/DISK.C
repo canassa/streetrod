@@ -246,7 +246,7 @@ static enum LoadResult near load_pic(int n, int load, char far *dst)
                     goto done;
                 movedata(sl->ptr.w.seg, sl->ptr.w.off, FP_SEG(fp), FP_OFF(fp), ent->packedSize);
                 sl->ptr.p = fp;
-                F_19438(1);
+                ma_pop_high(1);
                 outp(SEQ_INDEX, SEQ_MAP_MASK);
                 outp(SEQ_DATA, SEQ_ALL_PLANES);
                 return LOAD_READ_VRAM;

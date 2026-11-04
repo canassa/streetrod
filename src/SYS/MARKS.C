@@ -30,9 +30,9 @@ void ma_pop_low(int n)
         g_lowArenaMarker -= n;
 }
 
-/* F_19438 @ 0F38:A0B8 (linear 0x19438, 66 bytes) */
+/* ma_pop_high @ 0F38:A0B8 (linear 0x19438, 66 bytes) */
 
-void F_19438(int n)
+void ma_pop_high(int n)
 {
     if (n == 0)
         g_offsetArenaMarksList[g_markerIndexHigh = 60] = g_arenaTopVal;

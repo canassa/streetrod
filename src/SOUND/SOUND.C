@@ -302,11 +302,11 @@ void so_wheel_roll(int on)
         mu_play(g_song, g_songRepeats);
 }
 
-/* F_168F3 @ 0F38:7573 (linear 0x168F3, 80 bytes)
+/* so_sticker @ 0F38:7573 (linear 0x168F3, 80 bytes)
 
    Starts one of two sounds through mu_play; `on` selects which */
 
-void F_168F3(int on)
+void so_sticker(int on)
 {
     if (on) {
         mu_play(g_stickerSound, g_jingleRepeats);
@@ -366,11 +366,11 @@ void F_16A2F(int on)
         mu_play(g_song, g_songRepeats);
 }
 
-/* F_16A5A @ 0F38:76DA (linear 0x16A5A, 78 bytes)
+/* so_part_move @ 0F38:76DA (linear 0x16A5A, 78 bytes)
 
    Starts one of two sounds through mu_play; `on` selects which */
 
-void F_16A5A(int on)
+void so_part_move(int on)
 {
     if (on) {
         mu_play(g_partMoveSound, g_jingleRepeats);
@@ -434,11 +434,11 @@ void so_buzz(void)
     }
 }
 
-/* F_16B61 @ 0F38:77E1 (linear 0x16B61, 54 bytes)
+/* so_bolt @ 0F38:77E1 (linear 0x16B61, 54 bytes)
 
    Sound effect with a random start pitch */
 
-void F_16B61(void)
+void so_bolt(void)
 {
     if (g_soundOn) {
         so_on();
@@ -447,11 +447,11 @@ void F_16B61(void)
     }
 }
 
-/* F_16B97 @ 0F38:7817 (linear 0x16B97, 42 bytes)
+/* so_part_set @ 0F38:7817 (linear 0x16B97, 42 bytes)
 
    Sound effect */
 
-void F_16B97(void)
+void so_part_set(void)
 {
     if (g_soundOn) {
         so_on();
@@ -460,11 +460,11 @@ void F_16B97(void)
     }
 }
 
-/* F_16BC1 @ 0F38:7841 (linear 0x16BC1, 34 bytes)
+/* so_body_change @ 0F38:7841 (linear 0x16BC1, 34 bytes)
 
    Sound effect */
 
-void F_16BC1(void)
+void so_body_change(void)
 {
     if (g_soundOn) {
         so_on();
@@ -512,11 +512,11 @@ void so_bump(void)
     }
 }
 
-/* F_16CF3 @ 0F38:7973 (linear 0x16CF3, 38 bytes)
+/* so_bolt_turn @ 0F38:7973 (linear 0x16CF3, 38 bytes)
 
    Sound effect, a falling sweep */
 
-void F_16CF3(void)
+void so_bolt_turn(void)
 {
     if (g_soundOn) {
         so_on();

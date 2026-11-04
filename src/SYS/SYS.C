@@ -97,7 +97,7 @@ void sy_music_pause(void)
         outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
         g_speakerOn = 0;
         g_voice->dirty = 1;
-        g_hots[F_06827(-40)].textOffset = g_offTunes;
+        g_hots[ga_hotspot(-40)].textOffset = g_offTunes;
         sy_hover_reset();
     }
 }
@@ -109,7 +109,7 @@ void sy_music_resume(void)
     if (g_musicOn && !g_voice->active && g_voice->phraseStart != g_voice->song) {
         g_voice->active = 1;
         g_voice->dirty = 1;
-        g_hots[F_06827(-40)].textOffset = g_offSquelch;
+        g_hots[ga_hotspot(-40)].textOffset = g_offSquelch;
         sy_hover_reset();
     }
 }
@@ -411,9 +411,9 @@ int sy_wait_input(int ticks)
     bit = 0;
     if (g_keyGroup == 0x16) {
         g_statusLine.shown = 1;
-        F_11421(-1, "", 0);
+        sc_status_text(-1, "", 0);
         g_statusLine.shown = 1;
-        F_11421(g_bannerX, "", g_wRivBanner);
+        sc_status_text(g_bannerX, "", g_wRivBanner);
         g_strOpp[0] = 0;
     }
     flag = g_waitUntil != 0L;
@@ -429,9 +429,9 @@ int sy_wait_input(int ticks)
             g_protectPal[8] = g_protectPal[7];
             g_protectPal[7] = g_protectPal[6];
             g_protectPal[6] = old;
-            F_112CB(6, old);
-            F_112CB(7, g_protectPal[7]);
-            F_112CB(8, g_protectPal[8]);
+            vi_palette_reg(6, old);
+            vi_palette_reg(7, g_protectPal[7]);
+            vi_palette_reg(8, g_protectPal[8]);
         }
         res = kg_key();
         if (res > 0) {
@@ -521,22 +521,22 @@ int sy_wait_input(int ticks)
                     if (res != i) {
                         if (g_keyGroup == 0x25) {
                             g_statusLine.shown = 1;
-                            F_11421(-1, "", 0);
+                            sc_status_text(-1, "", 0);
                             g_statusLine.shown = 1;
-                            F_11421(g_bannerX, "", g_wRivBanner);
+                            sc_status_text(g_bannerX, "", g_wRivBanner);
                         }
-                        F_11421(-1, g_txt + g_curHoverPointer->textOffset, 0);
+                        sc_status_text(-1, g_txt + g_curHoverPointer->textOffset, 0);
                         bit = 1;
                     }
                 } else {
                     if (bit) {
-                        F_11421(-1, "", 0);
+                        sc_status_text(-1, "", 0);
                         bit = 0;
                     }
                     if (g_keyGroup == 0x25)
-                        F_11421(g_bannerX, g_strOpp, g_wRivBanner);
+                        sc_status_text(g_bannerX, g_strOpp, g_wRivBanner);
                     else if (res)
-                        F_11421(-1, "", 0);
+                        sc_status_text(-1, "", 0);
                 }
             }
         }
@@ -873,7 +873,7 @@ void sy_demo_step(void)
     } else
         g_demoControl.lastGroup = g_keyGroup;
     if (a_7eaap.spareParts == 0 && g_keyGroup == 7)
-        gm_add_part(0x2a, g_part[42].value);
+        gm_add_part(0x2a, g_parts[42].value);
     if (a_7eaap.currentCar == 0) {
         if (g_keyGroup == 10)
             g_demoKey = 0x31;

@@ -93,7 +93,7 @@ static void near sort_gas_spots(void)
 
     base = ((unsigned)g_hotGasStation - (unsigned)g_hots) / sizeof(struct Hot);
     n = ((unsigned)g_1a44 - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
-    F_135E5(base, n);
+    gx_sort_hots(base, n);
 }
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
@@ -207,7 +207,7 @@ static void near show_tank_cap(struct Dlg *d, int id)
     box.dy = 12 - label->height;
     bm_draw_masked(label, work, &box, 0);
     pu_show(work, g_featurePos.gasCapX - 16, g_featurePos.gasCapY - 5);
-    F_19438(2);
+    ma_pop_high(2);
 }
 
 /* leave_station @ 0000:B717 (linear 0x0B717, 394 bytes) */
@@ -221,14 +221,14 @@ static void near leave_station(struct Dlg *d)
     if (d->f12) {
         show_tank_cap(d, 0x472);
         if (d->f18) {
-            F_11540(a_7eaap.money >= 10 ? -10 : -(int)a_7eaap.money);
+            sc_add_money(a_7eaap.money >= 10 ? -10 : -(int)a_7eaap.money);
             d->f18 = 0;
         }
     }
     if (d->f14 == 0) {
         pu_show(g_pumpWithNozzle, 0x40, 0x64);
         if (d->f18)
-            F_11540(a_7eaap.money >= 10 ? -10 : -(int)a_7eaap.money);
+            sc_add_money(a_7eaap.money >= 10 ? -10 : -(int)a_7eaap.money);
     }
     if (d->f10 == 0) {
         cu_ctl(CURSOR_HIDE);
@@ -237,8 +237,8 @@ static void near leave_station(struct Dlg *d)
         cp_patch_bg(p, 0x60, 0, 0x30, 0x40, 0xc8, 0x51, 0xa9, 2);
     }
     a_7eaap.currentCar->fuel = a_7eaap.currentCar->fuel > 0xaa ? 0xaa : a_7eaap.currentCar->fuel;
-    F_181C8(2, d->specIndex, d->bodyMods, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
-            g_whlPic[g_part[a_7eaap.currentCar->tires->idx].variant]);
+    cp_show_car(2, d->specIndex, d->bodyMods, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
+            g_tirePics[g_parts[a_7eaap.currentCar->tires->idx].variant]);
     mn_pop(1);
     ma_clear();
     g_scene = 1;
@@ -256,19 +256,19 @@ void ra_gas_station(void)
     int done;
     int key;
 
-    F_11421(-1, "\0", 0);
+    sc_status_text(-1, "\0", 0);
     g_scene = 3;
-    F_118D4(0x442, -1);
-    F_11593(g_49dc);
+    sc_picture(0x442, -1);
+    sc_status_label(g_49dc);
     r_vid.copyToFront = 1;
     (*g_videoOps.show)();
     dl.f0c = 1;
     cu_ctl(1);
     dl.specIndex = a_7eaap.currentCar->specIndex;
     dl.bodyMods = gm_car_look(a_7eaap.currentCar);
-    F_181C8(4, dl.specIndex, dl.bodyMods, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
-            g_whlPic[g_part[a_7eaap.currentCar->tires->idx].variant]);
-    F_16381(0);
+    cp_show_car(4, dl.specIndex, dl.bodyMods, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
+            g_tirePics[g_parts[a_7eaap.currentCar->tires->idx].variant]);
+    mu_suspend(0);
     label = pu_grab(0x50, 0xaa, 0x28, 0xc, 0);
     dl.bm1 = pu_grab(g_featurePos.gasCapX - 0x10, g_featurePos.gasCapY - 5, 0x18, 0xc, 0);
     r_vid.copyToFront = 0;
@@ -303,7 +303,7 @@ top:
                 dl.fillsLeft--;
                 a_7eaap.currentCar->fuel += 0x1e;
                 done = 1;
-                F_11540(-(pos <= a_7eaap.money ? pos : (int)a_7eaap.money));
+                sc_add_money(-(pos <= a_7eaap.money ? pos : (int)a_7eaap.money));
                 if (dl.fillsLeft == 0 || pos > a_7eaap.money) {
                     if (vi_anim_active(2)) {
                         so_pump(0);
@@ -348,7 +348,7 @@ top:
                 break;
             if (dl.f0c == 1) {
                 cu_ctl(dl.f0c = 3);
-                F_119B8(0x473, 0x50, 0xaa, -1);
+                sc_picture_at(0x473, 0x50, 0xaa, -1);
                 mn_pop(1);
                 spots_rag();
         redraw:
@@ -440,19 +440,19 @@ static int near replace_tires(void)
         return 0;
     a_7eaap.currentCar->value -= gm_take_part(a_7eaap.currentCar->tires, 0);
     a_7eaap.currentCar->tires = 0;
-    F_076A7(4, tbl, 0, 0);
+    ga_spares(4, tbl, 0, 0);
     if (g_list[0]) {
-        F_07741(F_077B7(tbl[1]), &a_7eaap.currentCar->tires);
+        ga_install(ga_unlink(tbl[1]), &a_7eaap.currentCar->tires);
     } else {
         a_7eaap.money -= 0x32;
         if (a_7eaap.money < 0) {
             ret = (int)-a_7eaap.money;
             a_7eaap.money = 0;
         }
-        gm_add_part(0x28, g_part[40].value);
+        gm_add_part(0x28, g_parts[40].value);
         tbl[0] = a_7eaap.spareParts;
         a_7eaap.spareParts = tbl[0]->next;
-        F_07741(tbl[0], &a_7eaap.currentCar->tires);
+        ga_install(tbl[0], &a_7eaap.currentCar->tires);
     }
     return ret;
 }
@@ -556,7 +556,7 @@ static void near show_crash(void)
             pkt.sx = pkt.sy = 0;
             pkt.dx = g_crashPics[i].x;
             pkt.dy = g_crashPics[i].y;
-            F_10AFD(0x14 - 8 * i);
+            da_wait_retrace(0x14 - 8 * i);
             (*g_videoOps.maskedBlit)(a, r_vid.back, &pkt, 1);
             (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
         }
@@ -618,7 +618,7 @@ static void near blow_engine(int n)
         a_7eaap.currentCar->wireState = 0;
     }
     sy_reset_queues();
-    F_16BC1();
+    so_body_change();
     gm_popup(-n, -1, 0x49);
 }
 
@@ -636,7 +636,7 @@ static void near drop_transmission(int n)
             *q++ = 0;
     }
     sy_reset_queues();
-    F_16BC1();
+    so_body_change();
     gm_popup(-n, -1, 0x49);
 }
 
@@ -699,7 +699,7 @@ int near ra_outcome(void)
         show_race_stats();
         cu_ctl(CURSOR_SHOW_NOW);
         gm_message(g_isKingState == 0 ? (i = g_winMsgs[kind]) : a_7eaap.raceType == 0 ? 0x14bd : 0x14d6);
-        F_11540(v);
+        sc_add_money(v);
         if (kind == BET_CAR) {
             found = gm_make_car(bn7648, g_oppSpecPointer->price, 0);
             found->tires->wear = rn_int(500);
@@ -752,23 +752,23 @@ done:
         mn_push(0x18);
         sy_wait_input(0);
         sprintf(temp, "You have been fined $%2d for speeding", i);
-        F_11421(-1, temp, SCREEN_WIDTH - g_statusLine.messageX);
+        sc_status_text(-1, temp, SCREEN_WIDTH - g_statusLine.messageX);
         gm_pause(0xfa);
         if (i <= a_7eaap.money)
             goto pay;
         gm_message(0x1793);
         mn_pop(1);
         mn_pop(1);
-        F_11540(-a_7eaap.money);
-        F_11421(-1, " ", SCREEN_WIDTH - g_statusLine.messageX);
+        sc_add_money(-a_7eaap.money);
+        sc_status_text(-1, " ", SCREEN_WIDTH - g_statusLine.messageX);
         return 4;
 pay:
-        F_11540(-i);
+        sc_add_money(-i);
         cost = g_waitUntil;
         gm_pause(g_msgTicks);
         g_waitUntil = cost;
         mn_pop(1);
-        F_11421(-1, "", SCREEN_WIDTH - g_statusLine.messageX);
+        sc_status_text(-1, "", SCREEN_WIDTH - g_statusLine.messageX);
     } else if (g_driveEng.stopFlags == 0x81) {
         cu_ctl(CURSOR_SHOW_NOW);
         gm_message(0xecb2);
@@ -777,7 +777,7 @@ pay:
             gm_scrap_car(a_7eaap.currentCar, 0);
             a_7eaap.currentCar = 0;
         }
-        F_11540(-v);
+        sc_add_money(-v);
         if (g_driveEng.stopFlags == 1) {
             show_race_stats();
             cu_ctl(CURSOR_SHOW_NOW);
@@ -810,7 +810,7 @@ finishstop:
             } else if (g_driveEng.speed > 0x5a) {
                 v = gm_scrap_car(a_7eaap.currentCar, 0) / 10 + 0x13;
                 a_7eaap.currentCar = 0;
-                F_11540(v);
+                sc_add_money(v);
                 ptr = g_msgTotaled;
                 while (*ptr++ != '$')
                     ;
@@ -866,13 +866,13 @@ finishstop:
                 mn_pop(1);
                 switch (i) {
                 case 1:
-                    F_11540(-v);
+                    sc_add_money(-v);
                     if (all)
                         replace_tires();
                     mn_pop(1);
                     return 1;
                 case 2:
-                    F_11540((int)(a_7eaap.currentCar->value * 0.4));
+                    sc_add_money((int)(a_7eaap.currentCar->value * 0.4));
                     a_7eaap.currentCar = 0;
                     break;
                 default:
@@ -926,7 +926,7 @@ void near ra_reset_eng(struct Eng *p)
     bz8630z = -1;
     g_finishLineIndex = a_7eaap.raceType == 0 ? 0x17c : 0x3fc;
     car = a_7eaap.currentCar->tires;
-    p->tireSlip = g_tireSlip[g_part[car->idx].variant][car->wear / 2000];
+    p->tireSlip = g_tireSlip[g_parts[car->idx].variant][car->wear / 2000];
     if (car->wear < 8000)
         p->tireFailureIndex = 0;
     else {
@@ -1002,7 +1002,7 @@ void near ra_run(void)
     sy_drive_stop();
     g_waitUntil = 0;
     sy_reset_queues();
-    F_11593(g_49dc);
+    sc_status_label(g_49dc);
     if (ao7d2ev.roadIndex > 200) {
         if (rn_int(3) > 0) {
             if (a_7eaap.currentCar->timing > 0)
@@ -1013,7 +1013,7 @@ void near ra_run(void)
                 a_7eaap.currentCar->timing = rn_int(8) - 4;
         }
         slot = a_7eaap.currentCar->tires;
-        slot->wear += (g_part[slot->idx].variant == 0 ? (a_7eaap.raceType == 1 ? 700 : 300) : (a_7eaap.raceType == 1 ? 400 : 200)) + rn_int(300);
+        slot->wear += (g_parts[slot->idx].variant == 0 ? (a_7eaap.raceType == 1 ? 700 : 300) : (a_7eaap.raceType == 1 ? 400 : 200)) + rn_int(300);
         if (slot->wear > 10000)
             slot->wear = 10000;
     }

@@ -32,7 +32,7 @@ void cr_go(void)
         (*g_videoOps.blank)();
         if (g_firePressed == 0) {
             cu_ctl(CURSOR_HIDE_NOW);
-            g_autoTrans = !g_part[a_7eaap.currentCar->transmission->idx].variant;
+            g_autoTrans = !g_parts[a_7eaap.currentCar->transmission->idx].variant;
             ra_reset_eng(&g_driveEng);
             g_phaseDriveRunState = 0;
             bw8aca = 0;
@@ -61,8 +61,8 @@ void cr_rival_paint(int mode)
             b = g_paint[mode][1];
         }
         if (gz8249) {
-            F_112CB(12, a);
-            F_112CB(3, b);
+            vi_palette_reg(12, a);
+            vi_palette_reg(3, b);
         }
         g_palette[12] = a;
         g_palette[3] = b;
@@ -81,7 +81,7 @@ int cr_drive(void)
         (*g_videoOps.blank)();
     ao8228u = g7d66n = 0;
     saved = m_8272.paintScheme;
-    F_067CF(a_7eaap.currentCar->paintScheme);
+    ga_palette(a_7eaap.currentCar->paintScheme);
     if (bw8aca)
         cr_rival_paint(saved);
     r = dv_run();
