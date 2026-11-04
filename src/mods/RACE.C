@@ -761,7 +761,7 @@ done:
         menu_push(0x18);
         sys_wait_input(0);
         sprintf(temp, "You have been fined $%2d for speeding", i);
-        F_11421(-1, temp, SCREEN_WIDTH - g_xStatTxtValue);
+        F_11421(-1, temp, SCREEN_WIDTH - g_statusLine.messageX);
         game_pause(0xfa);
         if (i <= a_7eaap.money)
             goto pay;
@@ -769,7 +769,7 @@ done:
         menu_pop(1);
         menu_pop(1);
         F_11540(-a_7eaap.money);
-        F_11421(-1, " ", SCREEN_WIDTH - g_xStatTxtValue);
+        F_11421(-1, " ", SCREEN_WIDTH - g_statusLine.messageX);
         return 4;
 pay:
         F_11540(-i);
@@ -777,7 +777,7 @@ pay:
         game_pause(g_msgTicks);
         g_waitUntil = cost;
         menu_pop(1);
-        F_11421(-1, "", SCREEN_WIDTH - g_xStatTxtValue);
+        F_11421(-1, "", SCREEN_WIDTH - g_statusLine.messageX);
     } else if (g_driveEng.stopFlags == 0x81) {
         cursor_ctl(CURSOR_SHOW_NOW);
         game_message(0xecb2);

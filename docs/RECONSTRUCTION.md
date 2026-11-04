@@ -177,6 +177,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **TireWork** (`g_tires`, DS:6CD4..6DFD): a natural, byte-identical reconstruction choice; separate globals also match.
 
+- **StatusText** (`g_statusLine`, DS:824C..8259): a natural, byte-identical reconstruction choice; separate globals also match.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only

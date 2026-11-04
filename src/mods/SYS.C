@@ -429,9 +429,9 @@ int sys_wait_input(int ticks)
     j = 0;
     bit = 0;
     if (g_keyGroup == 0x16) {
-        g_statusStrShown = 1;
+        g_statusLine.shown = 1;
         F_11421(-1, "", 0);
-        g_statusStrShown = 1;
+        g_statusLine.shown = 1;
         F_11421(g_bannerX, "", g_wRivBanner);
         g_strOpp[0] = 0;
     }
@@ -539,9 +539,9 @@ int sys_wait_input(int ticks)
                 if (i = menu_hit(x, y)) {
                     if (res != i) {
                         if (g_keyGroup == 0x25) {
-                            g_statusStrShown = 1;
+                            g_statusLine.shown = 1;
                             F_11421(-1, "", 0);
-                            g_statusStrShown = 1;
+                            g_statusLine.shown = 1;
                             F_11421(g_bannerX, "", g_wRivBanner);
                         }
                         F_11421(-1, g_txt + g_curHoverPointer->textOffset, 0);

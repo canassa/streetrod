@@ -8,7 +8,6 @@ extern int g_hotChain;                                  /* DS:07A8 */
 extern char g_wearText[];                               /* DS:07AA */
 extern char g_wearPad[4];                               /* DS:07BE */
 extern int g_cgaPicMap[];                                    /* DS:07C6 */
-extern int g_yLastString;                                      /* DS:824E */
 extern int g_menuGrpHistoryList[];                                   /* DS:8B86 */
 extern char g_hideSelectFrameVal;                                     /* DS:8B98 */
 extern int g_listLineBasePointerValue;                                     /* DS:8B9A */

@@ -13,7 +13,6 @@
 #include "DASH.H"
 #include "MAIN.H"
 #include "MEM.H"
-#include "MENU.H"
 #include "PC.H"
 #include "SCREEN.H"
 #include "SPRITE.H"
@@ -121,8 +120,8 @@ void cga_draw_text(struct Bitmap far *bm, int x, int y, char *s)
             pp2++;
         }
     }
-    g_xTextR = ((col4 - shl) >> 1) + x;
-    g_yLastString = y;
+    g_statusLine.textEndX = ((col4 - shl) >> 1) + x;
+    g_statusLine.textEndY = y;
     if (col4 == shl)
         return;
     if (shl) {

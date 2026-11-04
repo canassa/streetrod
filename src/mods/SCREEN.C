@@ -22,10 +22,6 @@
 #include "VIDEO.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-int g_xStatTxtValue;
-int g_statStringY;
-int g_widthStatusStrVal;
-int g_statusStrShown;
 
 char *g_gearNames[7] = {"0", "1", "2", "3", "4", "N", "D"};   /* DS:0482 */
 
@@ -33,10 +29,10 @@ char *g_gearNames[7] = {"0", "1", "2", "3", "4", "N", "D"};   /* DS:0482 */
 
 void screen_status_init(int y)
 {
-    g_statStringY = y + 1;
-    g_widthStatusStrVal = 0xa0;
-    g_xStatTxtValue = 0x58;
-    g_statusStrShown = 0;
+    g_statusLine.y = y + 1;
+    g_statusLine.messageWidth = 0xa0;
+    g_statusLine.messageX = 0x58;
+    g_statusLine.shown = 0;
     x_colors = bustyle->colors;
     draw_fill_rect(r_vid.back, 0, y, SCREEN_WIDTH, STATUS_BAR_HEIGHT);
     if (r_vid.copyToFront)
@@ -44,8 +40,7 @@ void screen_status_init(int y)
 }
 
 struct State7EAA a_7eaap;
-int g_xTextR;
-int g_statValXState;
+struct StatusText g_statusLine; /* DS:824C */
 int g_xMoneyRhsVal;
 
 /* F_11421 @ 0F38:20A1 (linear 0x11421, 287 bytes) */
@@ -60,19 +55,19 @@ void F_11421(int x, char *s, int w)
     saved = x_colors;
     x_colors = bustyle->colors;
     if (w == 0)
-        w = g_widthStatusStrVal;
+        w = g_statusLine.messageWidth;
     if (x < 0) {
-        x = g_xStatTxtValue;
+        x = g_statusLine.messageX;
         left = (x + (w - dash_text_width(s)) / 2) & 0xfff8;
     } else
         left = x;
     wd = SCREEN_WIDTH - x;
-    ypos = g_statStringY;
+    ypos = g_statusLine.y;
     cursor_ctl(CURSOR_HIDE);
-    if (g_statusStrShown)
+    if (g_statusLine.shown)
         draw_fill_rect(r_vid.back, x - 1, ypos, wd, 8);
     (*g_videoOps.drawText)(r_vid.back, left, ypos, s);
-    g_statusStrShown = *s;
+    g_statusLine.shown = *s;
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, x > 8 ? x - 8 : x, ypos, x + wd, ypos + 7);
@@ -86,11 +81,11 @@ void F_11540(int n)
     int old;
     char buf[10];
 
-    old = g_statusStrShown;
-    g_statusStrShown = 1;
-    F_11421(g_statValXState, ltoa(a_7eaap.money += n, buf, 10), 0x30);
-    g_xMoneyRhsVal = g_xTextR;
-    g_statusStrShown = old;
+    old = g_statusLine.shown;
+    g_statusLine.shown = 1;
+    F_11421(g_statusLine.valueX, ltoa(a_7eaap.money += n, buf, 10), 0x30);
+    g_xMoneyRhsVal = g_statusLine.textEndX;
+    g_statusLine.shown = old;
 }
 
 /* F_11593 @ 0F38:2213 (linear 0x11593, 214 bytes) */
@@ -102,16 +97,16 @@ void F_11593(char *s)
     saved = r_vid.copyToFront;
     x_colors = bustyle->colors;
     cursor_ctl(CURSOR_HIDE);
-    draw_fill_rect(r_vid.back, 0, g_statStringY, g_xStatTxtValue & 0xfff8, 8);
-    (*g_videoOps.drawText)(r_vid.back, 0, g_statStringY, s);
-    g_statValXState = (g_xTextR + 7) & 0xfff8;
+    draw_fill_rect(r_vid.back, 0, g_statusLine.y, g_statusLine.messageX & 0xfff8, 8);
+    (*g_videoOps.drawText)(r_vid.back, 0, g_statusLine.y, s);
+    g_statusLine.valueX = (g_statusLine.textEndX + 7) & 0xfff8;
     r_vid.copyToFront = 0;
     if (s[1] != 'G' && s[1] != ' ')
         F_11540(0);
     r_vid.copyToFront = saved;
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, 0, g_statStringY, g_xStatTxtValue, g_statStringY + 7);
+        bitmap_copy_box(r_vid.back, r_vid.front, 0, g_statusLine.y, g_statusLine.messageX, g_statusLine.y + 7);
 }
 
 /* screen_show_gear @ 0F38:22E9 (linear 0x11669, 49 bytes) */
@@ -120,10 +115,10 @@ void screen_show_gear(int i)
 {
     int saved;
 
-    saved = g_statusStrShown;
-    g_statusStrShown = 1;
-    F_11421(g_statValXState, g_gearNames[i], 8);
-    g_statusStrShown = saved;
+    saved = g_statusLine.shown;
+    g_statusLine.shown = 1;
+    F_11421(g_statusLine.valueX, g_gearNames[i], 8);
+    g_statusLine.shown = saved;
 }
 
 char g_displaySplitYVal;
@@ -263,7 +258,7 @@ void screen_text(int x, int y, char *s)
 {
     (*g_videoOps.drawText)(r_vid.back, x, y, s);
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, x, y, g_xTextR - 1, y + 7);
+        bitmap_copy_box(r_vid.back, r_vid.front, x, y, g_statusLine.textEndX - 1, y + 7);
 }
 
 /* screen_hline @ 0F38:26A4 (linear 0x11A24, 78 bytes)

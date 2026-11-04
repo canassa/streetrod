@@ -25,7 +25,6 @@ static int g_drawnMaxY;                         /* DS:6C5C */
 static char * near wear_text(int wear);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-int g_yLastString;
 int g_menuGrpHistoryList[4];
 char g_hideSelectFrameVal;
 int g_listLineBasePointerValue;
@@ -466,7 +465,7 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
             labeln = (*lpk > -1) ? g_desc + *lpk : d[-*lpk - 1];
             x = (c ? *pc1 : 0) + w->w;
             (*g_videoOps.drawText)(r_vid.back, x, w->h, labeln);
-            draw_fill_rect(r_vid.back, g_xTextR - 1, g_yLastString, w->tx - g_xTextR + 1, 8);
+            draw_fill_rect(r_vid.back, g_statusLine.textEndX - 1, g_statusLine.textEndY, w->tx - g_statusLine.textEndX + 1, 8);
             if (buf && (wear = *bpl) != -128)
                 (*g_videoOps.drawText)(r_vid.back, w->tx - strlen(g_wearText) * 6, w->h, wear_text(wear));
         }

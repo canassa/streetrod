@@ -131,7 +131,7 @@ int ads_run(void)
                 for (;;) {
                     while ((c6 = *(str += strlen(str) + 1)) == '+') {
                         str++;
-                        g_videoOps.drawText(r_vid.back, g_xTextR, y, str);
+                        g_videoOps.drawText(r_vid.back, g_statusLine.textEndX, y, str);
                     }
                     if (c6 < 0x20)
                         break;

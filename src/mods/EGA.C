@@ -14,7 +14,6 @@
 #include "EGASPAN.H"
 #include "EGASPR.H"
 #include "FONTDATA.H"
-#include "MENU.H"
 #include "PC.H"
 #include "SCREEN.H"
 #include "VIDEO.H"
@@ -105,8 +104,8 @@ void ega_draw_text(struct Bitmap far *bm, int x, int y, char *str)
     }
     if (y + (part = 8) > bm->height)
         part = bm->height - y;
-    g_xTextR = x + cols - d;
-    g_yLastString = y;
+    g_statusLine.textEndX = x + cols - d;
+    g_statusLine.textEndY = y;
     outp(GC_INDEX, GC_MODE);
     outp(GC_DATA, GC_WRITE_MODE2);
     outp(SEQ_INDEX, SEQ_MAP_MASK);

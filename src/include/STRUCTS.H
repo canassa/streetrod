@@ -676,4 +676,14 @@ struct Hooks {
     void (far *fillBelow)(int, int);
 };
 
+
+struct StatusText {
+    int textEndX;
+    int textEndY;
+    int messageX;
+    int y;
+    int messageWidth;
+    int shown;
+    int valueX;
+};
 #endif

@@ -1017,7 +1017,7 @@ race:
                 class = 1;
                 menu_pop(1);
             } else {
-                g_statusStrShown = 1;
+                g_statusLine.shown = 1;
                 F_11421(-1, "", 0);
                 F_11421(g_bannerX, "", g_wRivBanner);
 test:

@@ -45,7 +45,7 @@ int edit_line(int x, int y, char *buf, int max)
     cursor_ctl(CURSOR_HIDE);
     draw_fill_rect(r_vid.back, x, y, w, 8);
     (*g_videoOps.drawText)(r_vid.back, x, y, buf);
-    draw_vline(r_vid.back, cx = g_xTextR, cy = g_yLastString, 8);
+    draw_vline(r_vid.back, cx = g_statusLine.textEndX, cy = g_statusLine.textEndY, 8);
     colr = -1;
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
@@ -95,7 +95,7 @@ int edit_line(int x, int y, char *buf, int max)
                     buf[end++] = key;
                     buf[end] = 0;
                     (*g_videoOps.drawText)(r_vid.back, px = cx, cy, buf + end - 1);
-                    cx = g_xTextR;
+                    cx = g_statusLine.textEndX;
                 } else
                     sound_buzz();
                 x_colors.line = x_colors.text;
@@ -136,7 +136,7 @@ int edit_line(int x, int y, char *buf, int max)
 /* edit_number @ 0F38:5D37 (linear 0x150B7, 112 bytes)
 
    Number prompt: draw the prompt s at (x, y) in the style's colours, let the player edit a
-   text of up to 20 characters at (g_xTextR, g_yLastString) and store its value in *out. Returns the result
+   text of up to 20 characters at (g_statusLine.textEndX, g_statusLine.textEndY) and store its value in *out. Returns the result
    of the editor when that is 0 or negative, else 0 */
 
 int edit_number(int x, int y, char *s, int *out)
@@ -148,7 +148,7 @@ int edit_number(int x, int y, char *s, int *out)
     screen_text(x, y, s);
     g_editDigits = 1;
     buf[0] = 0;
-    rl = edit_line(g_xTextR, g_yLastString, buf, 20);
+    rl = edit_line(g_statusLine.textEndX, g_statusLine.textEndY, buf, 20);
     g_editDigits = 0;
     *out = atoi(buf);
     return rl > 0 ? 0 : rl;
