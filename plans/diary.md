@@ -1103,3 +1103,9 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - toolchain/msc51/INCLUDE/DOS.H:146-152 supplies the resume actions; BIN/README.DOC and BIN/CL.HLP contain no _harderr documentation (CL.HLP covers compiler flags).
 - Microsoft's MS-DOS 3.3 Programmer's Reference section 1.11.2 (https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/) confirms AH bits 7/4 and DI codes 0/2/9. CRIT_DEVICE_ERROR is broader than character-device-only: AH bit 7 can also indicate a bad in-memory FAT. The handler's messages and retry/exit branches agree with these meanings.
 - Tree-wide searches found no other uses with critical-error semantics. PC.H's numeric constants require matching PC.INC equates, enforced by test_shared_pc_constants.
+
+## 2026-11-05 17:30 CET: Named critical-error values
+
+### What I did
+- sys_crit_error (the `_harderr` handler) uses MSC 5.1's own `_HARDERR_RETRY`/`_HARDERR_ABORT` from <dos.h> for `_hardresume`, and PC.H/PC.INC name the int 24h facts: `CRIT_DEVICE_ERROR` (0x8000), `CRIT_RETRY_ALLOWED` (0x1000), `CRIT_WRITE_PROTECT` (0), `CRIT_NOT_READY` (2), `CRIT_PAPER_OUT` (9). Done by a Codex agent.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, tests OK.
