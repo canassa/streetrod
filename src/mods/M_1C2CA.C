@@ -24,6 +24,13 @@ unsigned char g_5b40[4] = {192, 48, 12, 3};   /* DS:5B40 */
 unsigned char g_5b44[4] = {63, 207, 243, 252};   /* DS:5B44 */
 int g_5b48[5] = {0, 2, 4, 1, 3};   /* DS:5B48 */
 
+/* F_1C2B8 @ 1C11:01A8 (linear 0x1C2B8, 18 bytes) */
+
+void F_1C2B8(void)
+{
+    *(struct Hooks *)&b_78a2 = *(struct Hooks *)g_5b04;
+}
+
 /* F_1C2CA @ 1C11:01BA (linear 0x1C2CA, 1337 bytes)
 
    Draw a string of 8-pixel-high CGA/Hercules text into a bitmap at pixel x, y, through an 8x80 byte

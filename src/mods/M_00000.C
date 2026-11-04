@@ -15,9 +15,9 @@
 #include "M_15396.H"
 #include "M_163BE.H"
 #include "M_1923C.H"
-#include "M_1C11C.H"
-#include "M_22352.H"
-#include "M_22B28.H"
+#include "M_1C2CA.H"
+#include "M_22364.H"
+#include "M_22B3A.H"
 #include "M_24602.H"
 #include "SCREENS.H"
 

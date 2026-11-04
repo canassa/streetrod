@@ -642,4 +642,8 @@ struct State8272 {
     char pad8288[8];
 };
 
+struct Hooks {
+    void (far *fn[15])();
+};
+
 #endif

@@ -18,6 +18,13 @@
 void (far *g_5b8a[15])() = {F_21EAB, F_221AC, F_21D58, F_22364, F_0E6C2, F_22609, F_2244F, F_0FEAD, F_0FEBF, F_22762, F_22626, F_19BFE, F_2487A, fill_span_clipped, F_24B79};   /* DS:5B8A */
 int g_5bc6[5] = {0, 2, 4, 1, 3};   /* DS:5BC6 */
 
+/* F_22352 @ 21A0:0952 (linear 0x22352, 18 bytes) */
+
+void F_22352(void)
+{
+    *(struct Hooks *)&b_78a2 = *(struct Hooks *)g_5b8a;
+}
+
 /* F_22364 @ 21A0:0964 (linear 0x22364, 235 bytes)
 
    Render a glyph into a scratch buffer and copy it to the interleaved screen, 8 rows at most */

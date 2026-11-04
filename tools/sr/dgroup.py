@@ -35,9 +35,9 @@ REGIONS = [(0x6076, 0x6078, 'int @'), (0x2ee, 0x31e, 'signed char @[24][2]'), (0
 FORCE_OWNER = [(0x5580, 0x57F6, 0x0E56A),
                # keyboard/mouse state and tables shared with the assembler keyboard handlers
                (0x4718, 0x4AFE, 0x02B9A),
-               # driver hook tables: C data of the driver file that follows each assembler
-               # stub (descending relocations in the original: compiler-emitted, not MASM)
-               (0x5B04, 0x5B40, 0x1C2CA), (0x5B8A, 0x5BC6, 0x22364), (0x5BD0, 0x5C0C, 0x22B3A)]
+               # M_0E610.ASM's unreferenced tail (a byte and three strings) before the hook
+               # table of M_1C2CA.C
+               (0x5AEE, 0x5B04, 0x0E610)]
 # Data-only translation units: tables a code unit cannot have held (MSC's frame layout of a
 # unit's functions changes with the number of file-scope definitions; these functions match
 # only without them). Each gets a synthetic unit key above any code address.
@@ -54,8 +54,8 @@ DATA_KEY = 0x100000
 # why). `link_order()` moves the units after `after`; each code segment's units then keep
 # their code order.
 ORDER_HINTS = [
-    (('24602', '2462E', '2487A', '24BE2'), '22364',
-     'the original relocation table lists F_24BE2 SEG fixup between 22364 and 226F4'),
+    (('24602', '2462E', '2487A', '24BE2'), '22352',
+     'the original relocation table lists F_24BE2 SEG fixup between M_22364 and M_226F4'),
     (('26458', '265BA', '2869E', '2B6DC', '105EC6', '1060A2'), '242EC',
      'the original relocation table lists 23F68 and 242EC before the C units of segment 2645; '
      'the car-mask data follows 286D8 in DGROUP'),

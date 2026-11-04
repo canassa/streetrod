@@ -61,7 +61,7 @@ To play the build, copy it and the assets in `orig/freeware/` to a separate dire
 ## Findings so far
 
 - Microsoft C 5.1, medium model, with the 8087 emulator. Each source file has its own flags.
-- All 506 C and 66 assembly game functions are reconstructed. Each one sits at its original
+- All 509 C and 63 assembly game functions are reconstructed. Each one sits at its original
   address in the rebuilt EXE.
 - The 147 MSC runtime entries come from the original libraries.
 - MSC's local-variable names affect stack layout, and LINK's symbol hash affects where

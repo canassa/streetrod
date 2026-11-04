@@ -8,6 +8,7 @@ extern void (far *g_5b04[15])();                        /* DS:5B04 */
 extern unsigned char g_5b40[4];                         /* DS:5B40 */
 extern unsigned char g_5b44[4];                         /* DS:5B44 */
 extern int g_5b48[5];                                   /* DS:5B48 */
+void F_1C2B8(void);                                     /* 0x1C2B8 */
 void F_1C2CA(struct Bitmap far *bm, int x, int y, char *s);/* 0x1C2CA */
 void F_1C803(struct Bitmap far *bm, int a, int b, int x1, int y1, int x2, int y2);/* 0x1C803 */
 void F_1CEE7(char far *src, char far *dst);             /* 0x1CEE7 */
