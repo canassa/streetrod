@@ -202,7 +202,6 @@ def _check_rows(con, rows, flags_override=None, quiet=False):
     """Compile the files that define `rows` (once each), compare every function asked for,
     and run each file's gate over all its functions."""
     im = image()
-    gen_headers(con)
     jobs = _file_jobs(con, rows, flags_override)
     dosbox.compile_all(list(jobs.values()), name="check")
     results = {}
@@ -431,22 +430,20 @@ def cmd_note(args):
 
 
 def cmd_flags(args):
-    """A source file's command line (one per file, recorded in src/link/LAYOUT.JSON)."""
+    """A source file's command line (one per file: its block in src/MAKEFILE)."""
     con = db.connect()
-    f = mod.find_file(args.fn) or mod.file_of(db.resolve(con, args.fn))
+    f = mod.find_file(args.fn, mod.sources()) or mod.file_of(db.resolve(con, args.fn))
     if not args.flags:
-        print(f"{f.path.name}: flags = {f.flags}" + (f" (compiled with /NT{f.segment})" if f.kind == "c" else ""))
+        print(f"{f.path.name}: flags = {f.flags}" + (f" (compiled with /NT{f.segment})" if f.kind == "c" and f.segment else ""))
         return
     flags = " ".join(args.flags)
     matched = [r for r in mod.members(con, f.rel) if r["status"] == "matched"]
     if matched and flags != f.flags and not args.force:
         raise SystemExit(f"{f.path.name} has {len(matched)} matched functions built with {f.flags}; "
                          "changing them may break them (--force, then ./sr check " + f.path.name + ")")
-    plan = mod.plan()
-    unit = next(u for u in plan["units"] if u["sources"] == [f.rel])
-    unit["flags"] = flags
-    mod.write_plan(plan)
-    print(f"{f.path.name}: flags = {flags}")
+    from sr import makefile
+    makefile.set_flags(f.rule.stem, flags)
+    print(f"{f.path.name}: flags = {flags} (src/MAKEFILE)")
 
 
 def cmd_global(args):
@@ -587,11 +584,19 @@ def cmd_layout(args):
 
 
 def cmd_headers(args):
-    from sr import fileheaders
     con = db.connect()
-    gen_headers(con)
-    fileheaders.generate(con, rewrite_sources=True)
-    print("wrote the per-file headers in src/include and the include blocks of the C sources")
+    if args.check:
+        from sr.headers import check
+        drift = check(con)
+        for p in sorted(drift):
+            print(("would delete " if drift[p] is None else "would rewrite ") + str(p.relative_to(config.ROOT)))
+        if drift:
+            sys.exit(f"{len(drift)} files differ from what ./sr headers writes")
+        print("the headers, the include blocks and the MAKEFILE dependencies are up to date")
+        return
+    gen_headers(con, rewrite_sources=True)
+    print("wrote the per-file headers in src/include, the include blocks of the C sources "
+          "and the header dependencies in src/MAKEFILE")
 
 
 def cmd_status(args):
@@ -667,7 +672,7 @@ def _file_gates(con, im, jobs, results):
 
 
 def cmd_module(args):
-    """Candidate same-file spans from near-call evidence (how LAYOUT.JSON's units were found)."""
+    """Candidate same-file spans from near-call evidence (how the files' extents were found)."""
     con = db.connect()
     im = image()
     srcs = {f.rel: f for f in mod.files()}
@@ -699,10 +704,13 @@ def cmd_dgroup(args):
         print(a.summary())
         print('\n'.join(a.problems()))
     elif args.what == 'order':
-        print(' '.join(f'{s:05X}' for s in a.order))
-        if args.write:
-            a.write_order()
-            print('written to src/link/LAYOUT.JSON (link_order)')
+        from sr import makefile
+        print(' '.join(f'{s:05X}' for s in a.link_order()))
+        want, have = a.response_order(), makefile.link_order()
+        if want != have:
+            print('src/SR.LNK differs from the recovered order; it would be:\n' + '+\n'.join(want))
+            sys.exit(1)
+        print('src/SR.LNK lists the objects in this order')
     elif args.what == 'register':
         new = a.register(write=args.write)
         for off, name, decl in new:
@@ -752,7 +760,7 @@ def cmd_linkcheck(args):
 
 def cmd_build(args):
     from sr.linklayout import run
-    sys.exit(run(args.prepare_only, args.objects_only))
+    sys.exit(run(args.prepare_only, args.objects_only, verify=not args.no_verify))
 
 
 def main():
@@ -772,10 +780,10 @@ def main():
     s.add_argument("--output", help="JSON report path")
     s.set_defaults(func=cmd_linkcheck)
 
-    s = sub.add_parser("build", help="build SR.EXE in work/layout with MSC 5.1, MASM 5.1, LIB 3.11 and LINK 5.01; compare with orig/SR.EXE")
-    s.add_argument("--prepare-only", action="store_true", help="write the DOS sources, MAKEFILE, BUILD.BAT, ENV.BAT and LINK.RSP")
-    s.add_argument("--objects-only", action="store_true", help="compile and gate every object without linking")
-    s.add_argument("--layout", action="store_true", help="accepted for compatibility: the build is always the layout build")
+    s = sub.add_parser("build", help="run src/MAKEFILE in work/layout (MSC 5.1, MASM 5.1, LIB 3.11, LINK 5.01), then verify against orig/")
+    s.add_argument("--prepare-only", action="store_true", help="only copy src/ (MAKEFILE, SR.LNK, sources, headers) to work/layout")
+    s.add_argument("--objects-only", action="store_true", help="compile (and gate) every object without linking")
+    s.add_argument("--no-verify", action="store_true", help="only build: no object gates, no comparison (needs neither orig/ nor the DB)")
     s.set_defaults(func=cmd_build)
 
     s = sub.add_parser("scan", help="(re)discover functions in the EXE and update the DB")
@@ -887,7 +895,8 @@ def main():
     s.add_argument("--bucket", type=int, help="list common readable names in bucket N (0-15) instead")
     s.set_defaults(func=cmd_layout)
 
-    s = sub.add_parser("headers", help="regenerate the per-file headers and the sources' include blocks")
+    s = sub.add_parser("headers", help="regenerate the per-file headers, the sources' include blocks and the MAKEFILE dependencies")
+    s.add_argument("--check", action="store_true", help="write nothing; exit 1 if a regeneration would change a file")
     s.set_defaults(func=cmd_headers)
 
     s = sub.add_parser("status", help="summary + regenerate docs/PROGRESS.md")

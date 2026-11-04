@@ -11,12 +11,11 @@ Reads the original image, the DB and the layout build's objects (`./sr build`, f
 the literal pools). `apply` writes definitions into src/mods/; `asm` lists any data that no source owns.
 """
 import bisect
-import json
 import re
 import struct
 from pathlib import Path
 
-from . import config, db
+from . import config, db, makefile, module
 from .cdata import Types
 from .exe import image
 from .omf import Obj
@@ -51,6 +50,16 @@ DATA_UNITS = [(0x09F4, 0x239E, 'src/mods/HOTSPOT.C'),
               (0x5EC6, 0x60A2, 'src/mods/CARMASKS.C'),
               (0x60A2, 0x629C, 'src/mods/CARMASK2.C')]
 DATA_KEY = 0x100000
+# Relocation-order evidence for objects whose position no literal pool pins: (units, after,
+# why). `link_order()` moves the units after `after`; each code segment's units then keep
+# their code order.
+ORDER_HINTS = [
+    (('24602', '2462E', '2487A', '24BE2'), '22364',
+     'the original relocation table lists F_24BE2 SEG fixup between 22364 and 226F4'),
+    (('26458', '265BA', '2869E', '2B6DC', '105EC6', '1060A2'), '242EC',
+     'the original relocation table lists 23F68 and 242EC before the C units of segment 2645; '
+     'the car-mask data follows 286D8 in DGROUP'),
+]
 PRINTABLE = set(range(32, 127)) | {9, 10, 13}
 
 
@@ -125,15 +134,15 @@ class Analysis:
         self.types = Types()
         self.ds = config.DGROUP_SEG * 16
         self.dg = bytes(self.im.img[self.ds:self.ds + END])
-        self.plan = json.loads((config.SRC / 'link/LAYOUT.JSON').read_text())
         self.globals = {r['off']: dict(r) for r in self.con.execute('SELECT * FROM globals ORDER BY off')}
         self.goffs = sorted(self.globals)
         self.fardata = [(r['seg'], r['off'], r['name'], r['decl']) for r in
                         self.con.execute('SELECT seg, off, name, decl FROM fardata ORDER BY seg, off')]
         self.funcs = {r['addr']: dict(r) for r in self.con.execute('SELECT * FROM functions ORDER BY addr')}
         self.faddrs = sorted(self.funcs)
-        self.units = [dict(u) for u in self.plan['units']]
-        self.code_starts = sorted(self.plan['code_starts'])
+        files = module.files()      # the code files of src/MAKEFILE, extents from the DB
+        self.units = [dict(start=f.start, end=f.end, sources=[f.rel], kind=f.kind, flags=f.flags) for f in files]
+        self.code_starts = module.code_starts(files)
         for u in self.units:
             u['region'] = max(c for c in self.code_starts if c <= u['start'])
             u['functions'] = [self.funcs[a] for a in self.faddrs if u['start'] <= a < u['end']
@@ -1218,12 +1227,13 @@ class Analysis:
             self.con.commit()
         return new
 
-    def write_order(self):
+    def link_order(self):
+        """The recovered order of the units: the literal-pool order with ORDER_HINTS applied."""
         order = list(self.order)
         # relocation-order evidence for objects without data: [units], after
-        for hint in self.plan.get('order_hints', []):
-            units = [int(s, 16) for s in hint['units']]
-            after = int(hint['after'], 16)
+        for hint_units, hint_after, _why in ORDER_HINTS:
+            units = [int(s, 16) for s in hint_units]
+            after = int(hint_after, 16)
             order = [s for s in order if s not in units]
             k = order.index(after) + 1
             order[k:k] = units
@@ -1236,9 +1246,19 @@ class Analysis:
         for r, slots in regions.items():
             for k, s in zip(slots, sorted(order[k] for k in slots)):
                 order[k] = s
-        self.plan['link_order'] = order
-        self.plan['data_units'] = [dict(start=DATA_KEY + lo, lo=lo, hi=hi, sources=[src]) for lo, hi, src in DATA_UNITS]
-        (config.SRC / 'link/LAYOUT.JSON').write_text(json.dumps(self.plan, indent=2) + '\n')
+        return order
+
+    def response_order(self):
+        """SR.LNK's object list with the units in the recovered order (the other objects,
+        far data and storage, keep their lines)."""
+        name = {u['start']: Path(u['sources'][0]).stem.upper() + '.OBJ' for u in self.units}
+        objects = makefile.link_order()
+        mine = [name[s] for s in self.link_order()]
+        missing = set(mine) - set(objects)
+        if missing:
+            raise SystemExit('SR.LNK lacks ' + ', '.join(sorted(missing)))
+        it = iter(mine)
+        return [next(it) if o in set(mine) else o for o in objects]
 
     def apply_unit(self, ustart, write=False):
         """Insert the unit's data definitions into its module sources. Returns {path: text}."""
