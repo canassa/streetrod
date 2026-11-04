@@ -14,13 +14,13 @@ _g_58e0 DW      1                        ; DS:58E0 int
 S2196_TEXT SEGMENT WORD PUBLIC 'CODE'
         ASSUME  CS:S2196_TEXT
 
-; F_21962 @ 2196:0002 (linear 0x21962, 27 bytes)
+; speaker_delay @ 2196:0002 (linear 0x21962, 27 bytes)
 ; Busy-wait delay: spin for n * g_58e2 units, in 16-bit chunks of a LOOP count
 ; (the high byte of the product counts the outer repetitions).
-; F_21962(n)
+; speaker_delay(n)
 
-        PUBLIC  _F_21962
-_F_21962  PROC    FAR
+        PUBLIC  _speaker_delay
+_speaker_delay  PROC    FAR
         push    bp
         mov     bp,sp
         mov     ax,[bp+6]
@@ -37,18 +37,18 @@ spin1:
         jns     again
         pop     bp
         ret
-_F_21962  ENDP
+_speaker_delay  ENDP
 
-; F_2197D @ 2196:001D (linear 0x2197D, 136 bytes)
+; speaker_play @ 2196:001D (linear 0x2197D, 136 bytes)
 ; Play a tune on the PC speaker. The argument points at a table of
 ; 3-word records (length, two frequency counters, duty/step word) ending
 ; with a zero length word; g_58de keeps the read pointer so the caller's
 ; table advances one record per step. The speaker is toggled through port 61h,
 ; g_58e0 is the delay count of the half-wave loop.
-; F_2197D(table)
+; speaker_play(table)
 
-        PUBLIC  _F_2197D
-_F_2197D  PROC    FAR
+        PUBLIC  _speaker_play
+_speaker_play  PROC    FAR
         push    bp
         mov     bp,sp
         mov     bx,[bp+6]
@@ -117,7 +117,7 @@ spin2:
 done:
         pop     bp
         ret
-_F_2197D  ENDP
+_speaker_play  ENDP
 S2196_TEXT ENDS
 
         END

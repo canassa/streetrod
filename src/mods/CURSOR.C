@@ -64,9 +64,9 @@ void cursor_init(void)
         bitmap_shift_right(pict, step, tmp);
         blt.dx += 0x18;
         (*b_78a2)(tmp, img, &blt, 3);
-        F_1941E(1);
+        marks_pop_low(1);
     }
-    F_193D4();
+    marks_clear();
     g_cursor2.shape = img->bits.p;
     g_cursor2.mask = img->alt.p;
     if (r_vid.mode == -2) {

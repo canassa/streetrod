@@ -10,13 +10,13 @@
 int g_57f6[3][8] = {{0, 1, 2, 1, 0, -1, -2, -1}, {0, 1, 2, 3, 4, 5, 6, 7}, {0, 1, 0, 0, 0, 0, 0, 0}};   /* DS:57F6 */
 struct Tone g_tones[5] = {{0, 0, 0, 0, 0}, {0, 0, 0, 8, 10}, {0, 0, 4, 8, 1}, {0, 0, 6, 8, 1}, {0, 2, 5, 2, 1}};   /* DS:5826 */
 
-/* F_1628A @ 0F38:6F0A (linear 0x1628A, 179 bytes)
+/* music_play @ 0F38:6F0A (linear 0x1628A, 179 bytes)
 
    Start the sound song with its tone list tones. Song bs79aa's own song restarts the
    first voice (g_58d4 = 1); any other song goes into the second voice ao79c6t (g_58d4 = 2), the
    first voice's on/off state g_58d0 is saved in g_58d6 meanwhile */
 
-void F_1628A(void far *song, void *tones)
+void music_play(void far *song, void *tones)
 {
     if (song == bs79aa.l8) {
         if (g_58d6 != -1) {
@@ -44,11 +44,11 @@ void F_1628A(void far *song, void *tones)
     }
 }
 
-/* F_1633D @ 0F38:6FBD (linear 0x1633D, 47 bytes)
+/* music_set_vibrato @ 0F38:6FBD (linear 0x1633D, 47 bytes)
 
    If on, fill the first entry of the sound table; t_72ec = on either way */
 
-void F_1633D(int on, int a, int b, int c, int d)
+void music_set_vibrato(int on, int a, int b, int c, int d)
 {
     if (on) {
         g_tones[0].f0 = 0;
@@ -60,9 +60,9 @@ void F_1633D(int on, int a, int b, int c, int d)
     t_72ec = on;
 }
 
-/* F_1636C @ 0F38:6FEC (linear 0x1636C, 21 bytes) */
+/* music_stop @ 0F38:6FEC (linear 0x1636C, 21 bytes) */
 
-void F_1636C(void)
+void music_stop(void)
 {
     t_72ec = 0;
     outp(0x61, inp(0x61) & 0xfc);

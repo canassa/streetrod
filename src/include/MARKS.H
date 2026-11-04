@@ -4,9 +4,9 @@
 #define MARKS_H
 #include "STRUCTS.H"
 
-void F_193D4(void);                                     /* 0x193D4 */
-void F_193FE(void);                                     /* 0x193FE */
-void F_1941E(int n);                                    /* 0x1941E */
+void marks_clear(void);                                 /* 0x193D4 */
+void marks_release(void);                               /* 0x193FE */
+void marks_pop_low(int n);                              /* 0x1941E */
 void F_19438(int n);                                    /* 0x19438 */
 
 #endif

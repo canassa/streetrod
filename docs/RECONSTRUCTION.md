@@ -45,7 +45,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   one of them. The DB notes list some arbitrary picks: the equal-arm ternaries
   `!x ? 1 : 1` in sys_drive_isr (the condition leaves no code), `case -2: case -1:` in game_run
   (any run above -3 gives the same code), the empty increment of `for (; *str; str)` in
-  ega_draw_text, and `i = 4` after F_1ABAC's loops.
+  ega_draw_text, and `i = 4` after swap_wheel's loops.
 - **draw_bevel's `int bm = x_colors.c[4] == 2 ? 3 : 3;`** (DRAW.C). The original stores 3
   through `ax` and reloads `bm` from memory (including a `bm * 2` CSE in `si`), so the
   constant was not propagated; a plain `int bm = 3` (also as a statement, `volatile`, any
@@ -62,10 +62,10 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   race_outcome's `goto finishstop` from both arms, race_reset_eng's `goto nx;` to the label right
   after its `else`, anim_run's `goto next;` (a `continue` there would pull the loop
   increment up), menu_draw_hot's `goto box;`, menu_hit's `goto next;` into a then-branch,
-  menu_list's `goto restore;`, F_1563A's `goto done;` (a `break` moves the after-loop block),
+  menu_list's `goto restore;`, load_pic's `goto done;` (a `break` moves the after-loop block),
   F_29170's goto loop (escapes `/Ol`, see `loop_opt` below), F_2A84D/F_2AFDC's `goto next`,
   F_181C8's `again`/`done`, savegame_save's shared retry tail; and the loop forms
-  `for (;; g_05d2 = 0)` in F_14C90 (the increment gives the `jmp test` entry) and
+  `for (;; g_05d2 = 0)` in edit_line (the increment gives the `jmp test` entry) and
   ads_open's accumulation inside the inner `while` test (keeps `cx` for the outer loop).
   That the original had a jump at each of these points is evidence; the exact statement
   (a `goto`, a `continue`, a differently nested `if`) is not.
@@ -134,7 +134,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   as a `char` (colours, flags, drive letters), a few `int`/`long` mixes. Believed original:
   casts would not change a byte, and the original need not have compiled at `/W2`.
 - C4100 "unreferenced formal parameter" (5): F_06529 `n`, F_12784 `n` and `flag`, gargfx_erase_part
-  `flag`, F_18ADB `p8`. Their callers push these arguments and the callees ignore them; the
+  `flag`, carpic_patch_bg `p8`. Their callers push these arguments and the callees ignore them; the
   call sites decide the parameter count. Believed original.
 - C4101 "unreferenced local variable" (5): the PROVISIONAL frame-filler locals above.
   Reconstruction.
@@ -142,7 +142,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   types above. Believed original.
 - C4047 "different levels of indirection" (2): menu_draw_hot's
   `a_8b9ca = a_8b9ap = az8ba2t = 0;` assigns the `struct Hot *` through to the two ints
-  (int-held pointer, see `struct Win`), and F_195F3's
+  (int-held pointer, see `struct Win`), and sprite_setup's
   `g77bal[i].data = r_vid.mode == -2 ? cell++ : &am6e68x[i];` mixes a `char (*)[8]` cell
   with a `struct Bitmap *` in one `Frame.data` pointer that restore_rect/restore_rect_back read as a
   Bitmap and restore_rect_latch as a Mask. Both need a cast or a different type in one place, and the

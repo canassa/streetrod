@@ -90,7 +90,7 @@ int drvtick_step(void)
                 if (key == 0x1b || key == 0x1f)
                     g_47ee = 1;
                 if (g_05f2) {
-                    F_16D57();
+                    mouse_buttons();
                     g_47ee |= g_05ee;
                 }
                 if (g_471d) {

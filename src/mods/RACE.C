@@ -242,13 +242,13 @@ static void near leave_station(struct Dlg *d)
         F_120FE(-3);
         p = F_15BBE(0x4d1, 2);
         F_120FE(-1);
-        F_18ADB(p, 0x60, 0, 0x30, 0x40, 0xc8, 0x51, 0xa9, 2);
+        carpic_patch_bg(p, 0x60, 0, 0x30, 0x40, 0xc8, 0x51, 0xa9, 2);
     }
     a_7eaap.m7eb0->f22 = a_7eaap.m7eb0->f22 > 0xaa ? 0xaa : a_7eaap.m7eb0->f22;
     F_181C8(2, d->f0, d->f2, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0xa9, 1,
             g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
     F_13F21(1);
-    F_193D4();
+    marks_clear();
     g_0284 = 1;
     cruise_go();
 }
@@ -481,7 +481,7 @@ static void near show_ticket(void)
     int maxw2;
     struct Blt pkt;
 
-    F_193D4();
+    marks_clear();
     a = F_15BBE(0x456, 1);
     b = F_15BBE(0x4ef, 1);
     pkt.w = b->width;
@@ -534,8 +534,8 @@ static void near show_crash(void)
     int fast, i;
 
     fast = r_vid.mode == -2 && g_0254 == 0;
-    F_16BE3();
-    F_193D4();
+    sound_crash();
+    marks_clear();
     a = F_15BBE(0x4eb, 1);
     b = F_15BBE(0x4ec, 1);
     pkt.w = a->width;
@@ -574,7 +574,7 @@ static void near show_crash(void)
     sys_input_reset();
     game_pause(0x64);
     sys_input_reset();
-    F_193D4();
+    marks_clear();
 }
 
 /* race_finish_stats @ 0000:C407 (linear 0x0C407, 144 bytes) */
@@ -748,7 +748,7 @@ done:
             return 1;
         return 3;
     } else if (e_78e0.fbc & 0x40) {
-        F_16AA8(0);
+        sound_siren(0);
         show_ticket();
         i = (e_78e0.fbc & 8) ? replace_tires() : 0;
         if (e_78e0.f0 > 0x50)
@@ -1396,7 +1396,7 @@ void race_tick(void)
     case 2:
         if (ar7e8av.m7e8a + 15 >= ao7d2ev.m7d30) {
             a_7f88d++;
-            F_16AA8(1);
+            sound_siren(1);
         }
         break;
     case 3:
@@ -1419,7 +1419,7 @@ void race_tick(void)
         if (a_7f88d >= 2) {
             if (e_78e0.fbc)
                 e_78e0.fbc |= 0x41;
-            F_16AA8(0);
+            sound_siren(0);
         }
         sys_car_halt();
         return;

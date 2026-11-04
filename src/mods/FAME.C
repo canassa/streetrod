@@ -51,7 +51,7 @@ int fame_protect_check(void)
     F_11421(-1, "", 0);
     r_vid.f16 = 0;
     F_119B8(8, 8, 0, 0);
-    F_158DE(8);
+    disk_free_pic(8);
     switch (f) {
     case 0:
         sprintf(b, "What`is`the`color`of");
@@ -127,7 +127,7 @@ int fame_end_menu(void)
     case -2:
     case -1:
         if (g_4f4c) {
-            F_15C4A(g_4c28, 1);
+            disk_load_list(g_4c28, 1);
             g_4f4c = 0;
         }
         break;
@@ -246,9 +246,9 @@ void fame_show(int add)
     bitmap_copy_box(r_vid.back, r_vid.front, 46, g_4bca[0], 211, g_4bca[9] + 8);
     if (pos7 >= 0) {
         strcpy(buf3, aytablex[pos7].name);
-        F_14C90(46, g_4bca[pos7], buf3, 15);
+        edit_line(46, g_4bca[pos7], buf3, 15);
         strcpy(aytablex[pos7].name, buf3);
-        F_16152();
+        disk_save_hall();
     } else {
         dash_wait_key(700);
     }

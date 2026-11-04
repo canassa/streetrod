@@ -141,7 +141,7 @@ int near savegame_new(void)
     F_10B9C();
     bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
     (*m_present)();
-    switch (sel = F_151D4(2, 15, atnewName)) {
+    switch (sel = edit_text_box(2, 15, atnewName)) {
     case -3:
     case 0:
         init_new_game();
@@ -265,7 +265,7 @@ static void near scan_save_slots(int create)
     int cnt;
     unsigned n;
 
-    name[0] = F_15FBD();
+    name[0] = disk_data_drive();
     strcpy(name + 1, ":HOTROD");
     for (slot = 1, cnt = 0; slot <= 15; slot++) {
         itoa(slot, name + 8, 10);
@@ -334,7 +334,7 @@ int near savegame_load(void)
             cntl++;
     r = i - 1;
     F_120FE(-4);
-    name[0] = F_15FBD();
+    name[0] = disk_data_drive();
     strcpy(name + 1, ":HOTROD");
     itoa(g_4fc2[r], name + 8, 10);
     strcat(name, ".SAV");
@@ -473,7 +473,7 @@ again:
     }
     strcpy(atnewName, is_blank(g_2a2e) ? g_2c02 + g_49e0[r] : g_2a2e);
     delta = g_0600 - g_0604;
-    name[0] = F_15FBD();
+    name[0] = disk_data_drive();
     if (_dos_creat(name, 0, &fd8)
         || _dos_write(fd8, atnewName, 0x24, &n) != 0 || n != 0x24
         || write_cars(fd8, a_7eaap.m7eb0, 1)

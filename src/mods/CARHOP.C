@@ -25,11 +25,11 @@ struct Seq g_5a86[4] = {{78, 3, 0}, {3, 2, 0}, {3, 1, 0}, {-1, 0, 0}};   /* DS:5
 struct Seq g_5a96[4] = {{4, -1, 0}, {3, -2, 0}, {77, -3, 0}, {-1, 0, 0}};   /* DS:5A96 */
 char g_5aa6 = 0;   /* DS:5AA6 */
 
-/* F_18BDC @ 0F38:985C (linear 0x18BDC, 179 bytes)
+/* cut_sheet @ 0F38:985C (linear 0x18BDC, 179 bytes)
 
    Cut a sheet bitmap into equal cells, one sub-bitmap per cell */
 
-static void near F_18BDC(struct Bitmap far **out, int n)
+static void near cut_sheet(struct Bitmap far **out, int n)
 {
     int id5;
     struct Blt r;
@@ -56,15 +56,15 @@ static void near F_18BDC(struct Bitmap far **out, int n)
     }
 }
 
-/* F_18C8F @ 0F38:990F (linear 0x18C8F, 202 bytes)
+/* grab_strip @ 0F38:990F (linear 0x18C8F, 202 bytes)
 
    Draw a bitmap into the work area, then copy it on to the front buffer */
 
-static void near F_18C8F(struct Bitmap far **pbm)
+static void near grab_strip(struct Bitmap far **pbm)
 {
     int w, x, h;
 
-    F_15B7F(0x474, &w, &h, &x);
+    disk_pic_size(0x474, &w, &h, &x);
     mem_set_bitmap(*pbm, bp7316[2]->bits.p + 0x46 * bp7316[2]->pitch, 0L, w, h, r_vid.mode == -2 ? -2 : -1);
     if (r_vid.mode == -2) {
         egalatch_rect(r_vid.front->bits.p, (*pbm)->bits.p - 0xaa0, (*pbm)->pitch, (*pbm)->height, 0, 0x44, 0x28);
@@ -73,12 +73,12 @@ static void near F_18C8F(struct Bitmap far **pbm)
     }
 }
 
-/* F_18D59 @ 0F38:99D9 (linear 0x18D59, 1156 bytes)
+/* carhop_walk @ 0F38:99D9 (linear 0x18D59, 1156 bytes)
 
    Build the sprite animation of a moving car body: the cells from the sheet, the pages, the 0x54
    step run */
 
-void F_18D59(int a, int b)
+void carhop_walk(int a, int b)
 {
     struct Blt r2;
     struct Bitmap far *t;
@@ -101,8 +101,8 @@ void F_18D59(int a, int b)
     int i;
 
     bm9 = &hdrz;
-    F_193FE();
-    F_18C8F(&bm9);
+    marks_release();
+    grab_strip(&bm9);
     if (a == 1) {
         r3.w = 0x30;
         r3.h = 0x29;
@@ -111,7 +111,7 @@ void F_18D59(int a, int b)
         (*b_78a2)(g_6ccc, bm9, &r3, 1);
     }
     if (b) {
-        if (F_19518(0, 0x44, bm9->width, bm9->height, &rca2)) {
+        if (sprite_car_clip(0, 0x44, bm9->width, bm9->height, &rca2)) {
             r3.w = rca2.x2 - rca2.x1;
             r3.h = rca2.y2 - rca2.y1 + 1;
             r3.sx = rca2.x1 - ac825et;
@@ -125,7 +125,7 @@ void F_18D59(int a, int b)
         } else
             clip = 0;
     }
-    F_1783E(bm9, &tab2[0], 0x474, &B7, 0x29, 0x29, &prc3, &prc3);
+    carpic_backdrop(bm9, &tab2[0], 0x474, &B7, 0x29, 0x29, &prc3, &prc3);
     if (a == 0) {
         bm27 = F_1934E(0x30, 0x29, 1, 2);
         r2.w = 0x30;
@@ -141,9 +141,9 @@ void F_18D59(int a, int b)
     rcb1.x1 = rcb1.y1 = 0;
     rcb1.x2 = tab2[0]->width - 1;
     rcb1.y2 = tab2[0]->height - 1;
-    F_18BDC(&tab2[1], a);
+    cut_sheet(&tab2[1], a);
     fr = F_1934E(0x30, 0x29, 1, 2);
-    sp2 = F_195F3(a == 0 ? -40 : 200, 0x6c, &fr, 0, 1, B7, tab2[0], &rcb1, 0);
+    sp2 = sprite_setup(a == 0 ? -40 : 200, 0x6c, &fr, 0, 1, B7, tab2[0], &rcb1, 0);
     p9 = a == 0 ? g_5a86 : g_5a96;
     for (i = 0; i < 4; i++)
         trk7[i] = *p9++;
@@ -165,7 +165,7 @@ void F_18D59(int a, int b)
     okn = (*g78c6c)(sp2);
     g_6cc4 = sp2->page->r;
     if (a == 1) {
-        F_18ADB(g_6ccc, 0, 0, 0x30, 0x29, 0xc8, 0x44, 0xa3, 2);
+        carpic_patch_bg(g_6ccc, 0, 0, 0x30, 0x29, 0xc8, 0x44, 0xa3, 2);
     } else {
         t = F_1934E(fr->width, 0x29, 1, 2);
         r2.w = fr->width;
@@ -175,18 +175,18 @@ void F_18D59(int a, int b)
         (*b_78a2)(g_6ccc, t, &r2, 1);
         (*ab78aat)(fr, t, &r2, 1);
         (*ab78aat)(bm27, t, &r2, 0);
-        F_18ADB(t, 0, 0, t->width, 0x29, 0xc8, 0x44, 0xa3, 2);
+        carpic_patch_bg(t, 0, 0, t->width, 0x29, 0xc8, 0x44, 0xa3, 2);
     }
     if (r_vid.mode != -2)
         (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
-    F_193FE();
+    marks_release();
 }
 
-/* F_191DD @ 0F38:9E5D (linear 0x191DD, 94 bytes)
+/* carhop_save_bg @ 0F38:9E5D (linear 0x191DD, 94 bytes)
 
    Allocate the 0x30 x 0x29 bitmap g_6ccc and clear a 200 x 68 rectangle of it */
 
-void F_191DD(void)
+void carhop_save_bg(void)
 {
     struct Blt pkt;
 

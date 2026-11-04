@@ -78,11 +78,11 @@ static int near maybe_carhop(int mode, int arg, int pct1, int pct2)
             break;
         r = 1;
         F_120FE(-4);
-        F_18D59(0, arg);
+        carhop_walk(0, arg);
         g_6c84 = 1;
         if (random_int(100) < pct2) {
             F_10AFD(100);
-            F_18D59(1, arg);
+            carhop_walk(1, arg);
             g_6c84 = 0;
             g_6c88 = 0;
         }
@@ -92,7 +92,7 @@ static int near maybe_carhop(int mode, int arg, int pct1, int pct2)
             break;
         r = 1;
         F_120FE(-4);
-        F_18D59(1, arg);
+        carhop_walk(1, arg);
         g_6c84 = 0;
         g_6c88 = 0;
         g_51f0 = 0;
@@ -475,7 +475,7 @@ static int near challenge(int arg)
     int sy;
     int prev;
 
-    F_193FE();
+    marks_release();
     if (arg) {
         ch = king_status();
         switch (ch) {
@@ -510,7 +510,7 @@ static int near challenge(int arg)
             g_05fc += a_7eaap.m7ec0 == 0 ? 0x444u : 0x777u;
             return 2;
         }
-        F_193FE();
+        marks_release();
         return 0;
     }
     if (a_7eaap.m7eb0->f22 < 7) {
@@ -600,7 +600,7 @@ quit:
     F_13F21(1);
     F_11BD3(pict, x, sy);
     pict = 0;
-    F_193FE();
+    marks_release();
     return 0;
 }
 
@@ -675,7 +675,7 @@ static void near pop_rival_hood(void)
     struct Node n1;
     struct Node na;
 
-    F_193FE();
+    marks_release();
     pict = F_11A72(0x60, 9, 200, 143, 0);
     chassis.slot6 = &n1;
     chassis.slot12 = &na;
@@ -690,7 +690,7 @@ static void near pop_rival_hood(void)
         ;
     r_vid.f8 = 0;
     F_11BD3(pict, 0x60, 9);
-    F_193FE();
+    marks_release();
     F_13F21(1);
 }
 
@@ -743,7 +743,7 @@ static void near play_cell_anim(void)
     int going;
     int i, key;
 
-    F_193FE();
+    marks_release();
     pict = F_15BBE(0x4c9, 2);
     i = 0;
     F_13DE6(0x18);
@@ -772,7 +772,7 @@ static void near play_cell_anim(void)
     blit_cell(pict, g_525a[1 + 1], r_vid.front);
     blit_cell(pict, g_525a[1 + 1], r_vid.back);
     F_13F21(1);
-    F_193FE();
+    marks_release();
 }
 
 /* play_ending @ 0000:A544 (linear 0x0A544, 1607 bytes) */
@@ -819,10 +819,10 @@ static void near play_ending(void)
     g_0284 = 1;
     pic15 = F_1934E(0x50, 0x2c, 0, 3);
     F_11A72(0x78, 0x45, 0x50, 0x2c, pic15);
-    F_15C95(g_4c28);
+    disk_free_list(g_4c28);
     g_4f4c = 1;
-    r = F_15C4A(g_5318, 0);
-    r = F_15C4A(g_5328, 0);
+    r = disk_load_list(g_5318, 0);
+    r = disk_load_list(g_5328, 0);
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.f16 = 0;
     (*m_present)();
@@ -875,12 +875,12 @@ static void near play_ending(void)
         if (i2 == 0x12)
             (*b_78a2)(pic4, r_vid.back, &blt, 1);
     }
-    F_193D4();
+    marks_clear();
     if (flag8 == 0) {
         pic58 = F_15BBE(7, 1);
         cntz = 9;
         if (r_vid.mode == -6) {
-            F_1929A(10000);
+            arena_shrink(10000);
             cntz--;
         }
         v32 = v38l = 0x28;
@@ -927,9 +927,9 @@ static void near play_ending(void)
     game_pause(0x32);
     game_message(0x183c);
     r_vid.f16 = 0;
-    F_1923C();
-    F_15C95(g_5328);
-    F_15C95(g_5318);
+    arena_reset();
+    disk_free_list(g_5328);
+    disk_free_list(g_5318);
 }
 
 struct Btn g_5338[7] = {{&c_6e64, 0, 0, 16, 149, 40, 5}, {&c_6e64, 0, 0, 16, 149, 96, 5}, {&c_6e64, 0, 0, 16, 149, 152, 5}, {&c_6e64, 0, 0, 16, 149, 208, 5}, {&c_6e64, 0, 0, 16, 149, 264, 5}, {&x_82b8, 0, 0, 32, 149, 0, 5}, {&x_82b8, 32, 0, 32, 149, 288, 5}};   /* DS:5338 */
@@ -1152,7 +1152,7 @@ void bobs_jail(void)
     flag = 0;
     r_vid.f16 = 0;
     F_120FE(-3);
-    F_193D4();
+    marks_clear();
     x_82b8 = F_15BBE(0x4e7, 1);
     c_6e64 = F_15BBE(0x4e9, 1);
     F_118D4(0x445, -1);

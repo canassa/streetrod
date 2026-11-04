@@ -316,7 +316,7 @@ void dash_wait_key(int ticks)
             break;
         }
         if (g_05f2) {
-            F_16D57();
+            mouse_buttons();
             if (g_05ee)
                 break;
         }
@@ -352,18 +352,18 @@ void dash_intro(void)
     if (r_vid.mode != -2 && r_vid.mode != -6)
         main_set_palette(0);
     F_119B8(3, 0x28, 0x28, 0);
-    F_158DE(3);
+    disk_free_pic(3);
     (*m_present)();
     r_vid.f16 = 0;
     F_118D4(1, -1);
-    F_158DE(1);
+    disk_free_pic(1);
     dash_wait_key(400);
     (*m_present)();
     if (r_vid.mode != -2 && r_vid.mode != -6)
         main_set_palette(1);
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
     F_118D4(4, 0);
-    F_158DE(4);
+    disk_free_pic(4);
     dash_wait_key(400);
     if (r_vid.mode == -2 || r_vid.mode == -6)
         video_set_palette(g_02d4);
@@ -474,7 +474,7 @@ void dash_load_wheel(void)
             }
             pkt.dy = g_6c22[i6];
             (*b_78a2)(bm, g_6c28gzz[i6], &pkt, 1);
-            F_1941E(1);
+            marks_pop_low(1);
         }
     } else {
         for (i6 = 0; i6 < 3; i6++)
@@ -612,7 +612,7 @@ void dash_init_shifter(int a, int b)
         bitmap_draw_masked(bm28, cm2, &pk5, 0);
         p3.dy += 0x13;
         (*b_78a2)(cm2, g82b4s, &p3, 1);
-        F_1941E(1);
+        marks_pop_low(1);
     }
     g_6c36 = -1;
     F_19438(2);

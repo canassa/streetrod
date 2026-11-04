@@ -59,9 +59,9 @@ int tandyspr_step(struct Sprite *s)
     fr = s->frame;
     fp = s->save;
     d = fr->data;
-    F_1956E(fr->pos->width, fr->pos->height - g_02d0,
+    sprite_clip_box(fr->pos->width, fr->pos->height - g_02d0,
         s->x, s->y, pg->bm->width, pg->bm->height, &rc);
-    if (F_19839(&rc, &pg->r, &c2, s->seq->dx))
+    if (sprite_rect_sub(&rc, &pg->r, &c2, s->seq->dx))
         restore_rect_back(&c2, r_vid.back, fp, s->seq->dx);
     pg->r = rc;
     top = d ? d->height : 0;
@@ -88,7 +88,7 @@ int tandyspr_step(struct Sprite *s)
     } else {
         blt.my = 0;
         for (idx = 0; idx < 6; idx++) {
-            if (F_19E42(g_539a[idx].a, g_539a[idx].b, s, (struct Blt16 *)&blt)) {
+            if (sprite_clip_span(g_539a[idx].a, g_539a[idx].b, s, (struct Blt16 *)&blt)) {
                 blt.dy = u;
                 blt.h = t;
                 blt.mx = blt.dx - g_5a20;
@@ -112,7 +112,7 @@ int tandyspr_step(struct Sprite *s)
             s2.y1 += s->y;
             s2.y2 += s->y;
         }
-        if (F_1947A(&s2, &pg->r, &e)) {
+        if (sprite_rect_and(&s2, &pg->r, &e)) {
             blt.w = e.x2 - e.x1 + 1;
             blt.h = e.y2 - e.y1 + 1;
             blt.dx = e.x1;
@@ -130,6 +130,6 @@ int tandyspr_step(struct Sprite *s)
     if (r_vid.back->bits.p != pg->bm->bits.p)
         bitmap_copy_box(r_vid.back, pg->bm, rc.x1 > c2.x1 ? c2.x1 : rc.x1, rc.y1 > c2.y1 ? c2.y1 : rc.y1,
             rc.x2 < c2.x2 ? c2.x2 : rc.x2, rc.y2 < c2.y2 ? c2.y2 : rc.y2);
-    F_19DB7(s);
+    sprite_advance(s);
     return 1;
 }

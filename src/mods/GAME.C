@@ -64,7 +64,7 @@ static int near start_game(void)
     random_int(-1);
     (*bl78be)();
     if (by70e2 == 0)
-        F_1552B(2);
+        disk_read_index(2);
     if (ag8bcet == 0) {
         if (fame_protect_check() == 0)
             sys_exit();
@@ -74,11 +74,11 @@ static int near start_game(void)
     atnewName[0] = 0;
     g_0610 = ag8bcet;
     if (by70e2 == 0) {
-        F_15EF9();
+        disk_load_data();
         if (r_vid.mode == -2)
-            F_15C07(g_4c28);
+            disk_cache_list(g_4c28);
     }
-    F_15C4A(g_4c28, 1);
+    disk_load_list(g_4c28, 1);
     F_120FE(-2);
     return -1;
 }
@@ -525,7 +525,7 @@ static void near buy_from_ads(int tab)
             if (n != -25)
                 break;
             F_120FE(-4);
-            F_193D4();
+            marks_clear();
             bm1 = F_1934E(0x140, 0x52, 0, 0);
             F_11A72(0, 0x40, 0x140, 0x52, bm1);
             x_colors = bustyle->colors;
@@ -556,7 +556,7 @@ static void near buy_from_ads(int tab)
             F_14294(0x18);
             g_05d0 = 0;
             F_11BD3(bm1, 0, 0x40);
-            F_193D4();
+            marks_clear();
         }
 test:
         n = ads_run();
@@ -671,7 +671,7 @@ static int near your_cars(void)
         pict = F_14090(12, &rx, &ye, 1);
         F_13DE6(12);
         do {
-            if ((n = F_15127(&cash, g_29f8)) == -22)
+            if ((n = edit_spot_number(&cash, g_29f8)) == -22)
                 goto tail;
         } while (cash == 0);
         if ((unsigned)(cur->weight * 1.15) < cash) {
@@ -681,7 +681,7 @@ static int near your_cars(void)
         if (cur->weight < cash) {
             game_message(0x106e);
             do {
-                if ((n = F_15127(&cash, g_29f8)) == -22)
+                if ((n = edit_spot_number(&cash, g_29f8)) == -22)
                     goto tail;
             } while (cash == 0);
             if (cur->weight < cash) {
@@ -696,7 +696,7 @@ static int near your_cars(void)
         }
         if (cash > offer) {
             do {
-                if ((n = F_15127(&cash, g_29f8)) == -22)
+                if ((n = edit_spot_number(&cash, g_29f8)) == -22)
                     goto tail;
             } while (cash == 0);
         }
@@ -707,7 +707,7 @@ static int near your_cars(void)
         }
         if (cash > offer) {
             do {
-                if ((n = F_15127(&cash, g_29f8)) == -22)
+                if ((n = edit_spot_number(&cash, g_29f8)) == -22)
                     goto tail;
             } while (cash == 0);
         }
@@ -720,7 +720,7 @@ static int near your_cars(void)
         F_11540(cash);
         if (item == 1 && a_7eaap.m7eb0) {
             F_11BD3(pict, rx, ye);
-            F_1941E(1);
+            marks_pop_low(1);
             pict = 0;
             F_120FE(-4);
             mid = a_7eaap.m7eb0->f2;
@@ -744,7 +744,7 @@ tail:
         F_13F21(1);
         if (pict) {
             F_11BD3(pict, rx, ye);
-            F_1941E(1);
+            marks_pop_low(1);
             pict = 0;
         }
     }
@@ -937,7 +937,7 @@ void near game_run(void)
                 F_07AA4();
                 continue;
             case 10:
-                F_193FE();
+                marks_release();
                 garage_hood(a_7eaap.m7eb0);
                 continue;
             case 13:

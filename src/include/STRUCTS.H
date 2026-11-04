@@ -221,7 +221,7 @@ struct Seq {
     signed char dy;
 };
 
-/* one animation frame: 12 bytes, the ring links nxt[0..2] (F_195F3 builds g77bal[]) */
+/* one animation frame: 12 bytes, the ring links nxt[0..2] (sprite_setup builds g77bal[]) */
 struct Frame {
     struct Bitmap far *pos;
     struct Bitmap *data;
@@ -484,7 +484,7 @@ struct Panel {
     struct Offs r[5];
 };
 
-/* 12-byte table entry (g7682n[]), read as bytes by F_17BE6 */
+/* 12-byte table entry (g7682n[]), read as bytes by carpic_build */
 struct Spr12 {
     unsigned char b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11;
 };

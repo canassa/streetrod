@@ -1073,7 +1073,7 @@ void near garage_hood(struct Car *car)
         case -1:
             F_13F21(1);
             r_vid.f8 = 0;
-            F_193FE();
+            marks_release();
             return;
         case 13:
             car->f1f = -car->f1f;

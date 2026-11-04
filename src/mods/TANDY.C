@@ -15,7 +15,7 @@
 #include "TANDYTXT.H"
 #include "VIDEO.H"
 
-void (far *g_5b8a[15])() = {tandyblt_copy, tandyblt_shifted, tandyblt_masked, tandy_draw_text, cursblt_tandy, tandy_copy_page, tandy_recolor_rect, dash_pal_blank, dash_pal_show, tandyspr_step, tandy_reveal, F_19BFE, tandylin_draw, tandylin_span, tandylin_fill_below};   /* DS:5B8A */
+void (far *g_5b8a[15])() = {tandyblt_copy, tandyblt_shifted, tandyblt_masked, tandy_draw_text, cursblt_tandy, tandy_copy_page, tandy_recolor_rect, dash_pal_blank, dash_pal_show, tandyspr_step, tandy_reveal, sprite_slide_v, tandylin_draw, tandylin_span, tandylin_fill_below};   /* DS:5B8A */
 int g_5bc6[5] = {0, 2, 4, 1, 3};   /* DS:5BC6 */
 
 /* tandy_draw_text @ 21A0:0964 (linear 0x22364, 235 bytes)

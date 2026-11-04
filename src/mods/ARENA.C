@@ -13,40 +13,40 @@ int g7d80q;
 unsigned c_8b02[61];
 int o_8f00;
 
-/* F_1923C @ 0F38:9EBC (linear 0x1923C, 45 bytes) */
+/* arena_reset @ 0F38:9EBC (linear 0x1923C, 45 bytes) */
 
-void F_1923C(void)
+void arena_reset(void)
 {
     c_8b02[g7b14o = 0] = o_8f00 = 0;
     c_8b02[g7d80q = 60] = bl78de = -536;
     g_0294 = 0;
 }
 
-/* F_19269 @ 0F38:9EE9 (linear 0x19269, 49 bytes) */
+/* arena_init @ 0F38:9EE9 (linear 0x19269, 49 bytes) */
 
-void F_19269(void)
+void arena_init(void)
 {
     if (r_vid.mode == -6)
         g_6cd0 = (char far *)0x80000000L;
     else
         g_6cd0 = mem_alloc(0xfde8, 1);
-    F_1923C();
+    arena_reset();
 }
 
-/* F_1929A @ 0F38:9F1A (linear 0x1929A, 18 bytes)
+/* arena_shrink @ 0F38:9F1A (linear 0x1929A, 18 bytes)
 
    Give back size bytes to the arena, top of the g7b14o marker stack */
 
-void F_1929A(int size)
+void arena_shrink(int size)
 {
     c_8b02[g7b14o] -= size;
 }
 
-/* F_192AC @ 0F38:9F2C (linear 0x192AC, 162 bytes)
+/* arena_alloc @ 0F38:9F2C (linear 0x192AC, 162 bytes)
 
    Allocate size bytes from the arena at g_6cd0; mode picks which of four marker stacks is used */
 
-char far *F_192AC(int size, int mode)
+char far *arena_alloc(int size, int mode)
 {
     char far *p;
 
@@ -96,7 +96,7 @@ struct Bitmap far *F_1934E(int w, int h, int flags, int mode)
     total = extra + 0x30;
     if (!(flags & 2))
         total += size * r_vid.planes;
-    bm = mem = (struct Bitmap far *)F_192AC(total, mode);
+    bm = mem = (struct Bitmap far *)arena_alloc(total, mode);
     bm->bits.p = (char far *)mem + 0x30;
     mem_new_bitmap(w, h, flags, -1, bm);
     return bm;

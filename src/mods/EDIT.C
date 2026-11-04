@@ -17,13 +17,13 @@
 
 char g_09f2 = 0;   /* DS:09F2 */
 
-/* F_14C90 @ 0F38:5910 (linear 0x14C90, 1063 bytes)
+/* edit_line @ 0F38:5910 (linear 0x14C90, 1063 bytes)
 
    Line editor. Edit the string buf (at most max characters, clipped to the width of
    the back bitmap) at x, y on the back page until Enter or a negative event; backspace, printable
    characters 0x20..0x5A (digits only when g_09f2), a blinking block cursor. Returns the last key. */
 
-int F_14C90(int x, int y, char *buf, int max)
+int edit_line(int x, int y, char *buf, int max)
 {
     char colr;
     char dest[2];
@@ -68,7 +68,7 @@ int F_14C90(int x, int y, char *buf, int max)
             if (key == 13) {
                 if (!g_09f2 || *buf)
                     break;
-                F_16B3A();
+                sound_buzz();
                 continue;
             }
             if (key != 0) {
@@ -76,7 +76,7 @@ int F_14C90(int x, int y, char *buf, int max)
                     if (key < 0x20 || key > 0x5a)
                         continue;
                     if (g_09f2 && (key < 0x30 || key > 0x39)) {
-                        F_16B3A();
+                        sound_buzz();
                         continue;
                     }
                 }
@@ -90,14 +90,14 @@ int F_14C90(int x, int y, char *buf, int max)
                         px = cx;
                         (*a_78aem)(r_vid.back, cx, cy, " ");
                     } else
-                        F_16B3A();
+                        sound_buzz();
                 } else if (end < max) {
                     buf[end++] = key;
                     buf[end] = 0;
                     (*a_78aem)(r_vid.back, px = cx, cy, buf + end - 1);
                     cx = g824cd;
                 } else
-                    F_16B3A();
+                    sound_buzz();
                 x_colors.c[3] = x_colors.c[0];
                 draw_vline(r_vid.back, cx, cy, 8);
                 colr = -1;
@@ -133,13 +133,13 @@ int F_14C90(int x, int y, char *buf, int max)
     return key;
 }
 
-/* F_150B7 @ 0F38:5D37 (linear 0x150B7, 112 bytes)
+/* edit_number @ 0F38:5D37 (linear 0x150B7, 112 bytes)
 
    Number prompt: draw the prompt s at (x, y) in the style's colours, let the player edit a
    text of up to 20 characters at (g824cd, bq824e) and store its value in *out. Returns the result
    of the editor when that is 0 or negative, else 0 */
 
-int F_150B7(int x, int y, char *s, int *out)
+int edit_number(int x, int y, char *s, int *out)
 {
     char buf[20];
     int rl;
@@ -148,60 +148,60 @@ int F_150B7(int x, int y, char *s, int *out)
     screen_text(x, y, s);
     g_09f2 = 1;
     buf[0] = 0;
-    rl = F_14C90(g824cd, bq824e, buf, 20);
+    rl = edit_line(g824cd, bq824e, buf, 20);
     g_09f2 = 0;
     *out = atoi(buf);
     return rl > 0 ? 0 : rl;
 }
 
-/* F_15127 @ 0F38:5DA7 (linear 0x15127, 119 bytes)
+/* edit_spot_number @ 0F38:5DA7 (linear 0x15127, 119 bytes)
 
    Number field of the current hot spot az8ba2t: edit a text into buf (at most 10 characters,
    fewer when the box is narrow: 6 pixels each) with the spot's colours and store its value in *out.
    Returns the editor's result when that is 0 or negative, else 0 */
 
-int F_15127(int *out, char *buf)
+int edit_spot_number(int *out, char *buf)
 {
     int rl;
 
     x_colors = bustyle->pal[az8ba2t->f2];
     g_09f2 = 1;
-    rl = F_14C90(az8ba2t->x1, az8ba2t->y1, buf,
+    rl = edit_line(az8ba2t->x1, az8ba2t->y1, buf,
         (az8ba2t->x2 - az8ba2t->x1) / 6 > 10 ? 10 : (az8ba2t->x2 - az8ba2t->x1) / 6);
     g_09f2 = 0;
     *out = atoi(buf);
     return rl > 0 ? 0 : rl;
 }
 
-/* F_1519E @ 0F38:5E1E (linear 0x1519E, 54 bytes)
+/* edit_number_box @ 0F38:5E1E (linear 0x1519E, 54 bytes)
 
-   Show hot spot id, read a number into *out with F_15127 and close the spot again;
+   Show hot spot id, read a number into *out with edit_spot_number and close the spot again;
    returns the editor's result */
 
-int F_1519E(int id, int *out)
+int edit_number_box(int id, int *out)
 {
     int res;
     char buf[12];
 
     F_13DE6(id);
     buf[0] = 0;
-    res = F_15127(out, buf);
+    res = edit_spot_number(out, buf);
     F_13F21(1);
     return res;
 }
 
-/* F_151D4 @ 0F38:5E54 (linear 0x151D4, 98 bytes)
+/* edit_text_box @ 0F38:5E54 (linear 0x151D4, 98 bytes)
 
    Show hot spot id and let the player edit the text s (at most len characters) in its box
    with the spot's colours; returns the editor's result when that is 0 or negative, else 0 */
 
-int F_151D4(int id, int len, char *s)
+int edit_text_box(int id, int len, char *s)
 {
     int rl;
 
     F_13DE6(id);
     x_colors = bustyle->pal[az8ba2t->f2];
-    rl = F_14C90(az8ba2t->x1, az8ba2t->y1, s, len);
+    rl = edit_line(az8ba2t->x1, az8ba2t->y1, s, len);
     F_13F21(1);
     return rl > 0 ? 0 : rl;
 }

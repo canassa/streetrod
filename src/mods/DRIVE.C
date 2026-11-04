@@ -21,12 +21,12 @@
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Bitmap far *g8188w;
 
-/* F_16EA2 @ 0F38:7B22 (linear 0x16EA2, 1540 bytes)
+/* drive_run @ 0F38:7B22 (linear 0x16EA2, 1540 bytes)
 
    Gearbox/drive screen loop: draws the dashboard, then redraws the changing parts until
    drvtick_step reports an input. Returns that value. */
 
-int F_16EA2(void)
+int drive_run(void)
 {
     struct Bitmap far *pict;
     struct Blt blt;
@@ -42,7 +42,7 @@ int F_16EA2(void)
     sv = r_vid.f16;
     do {
         dash_set_view(3);
-        F_193D4();
+        marks_clear();
         (*bl78be)();
         g_58e4 = r_vid.mode == -3 && g_0250;
         if (g_58e4) {
@@ -150,7 +150,7 @@ int F_16EA2(void)
             bp82c2 = shiftx5;
         }
     }
-    F_193D4();
+    marks_clear();
     if (r_vid.mode == -2) {
         blt.w = w;
         blt.h = 0x64;

@@ -243,7 +243,7 @@ void F_28879(void)
     int il;
     int idx;
 
-    F_193D4();
+    marks_clear();
     bm1 = F_15BBE(0x3ed, 2);
     pkt1.w = bm1->width;
     pkt1.h = bm1->height;
@@ -284,14 +284,14 @@ void F_28879(void)
         pkt1.dx = 0x2c;
         pkt1.dy = 0xc;
         (*ab78aat)(g764aw, ar767eu, &pkt1, 1);
-        F_1941E(1);
+        marks_pop_low(1);
     }
     pkt1.w = ar767eu->width;
     pkt1.h = ar767eu->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
     pkt1.dy = 0xc8 - ar767eu->height;
     (*b_78a2)(ar767eu, g8188w, &pkt1, 1);
-    F_1941E(1);
+    marks_pop_low(1);
     ax72f4 = F_15BBE(0x3ee, 1);
     ak8bcat = F_15BBE(0x3ef, 1);
     g8184y = F_15BBE(0x3f1, 1);

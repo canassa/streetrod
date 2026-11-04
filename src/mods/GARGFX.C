@@ -413,7 +413,7 @@ static void near F_12CD1(void)
         picture = F_15BBE(what, 1);
         g_0792 = F_1934E(picture->width + 8, picture->height, picture->alt.p != 0, 2);
         bitmap_shift_right(picture, px & ~r_vid.mask, g_0792);
-        F_1941E(1);
+        marks_pop_low(1);
         u_70ac.w = g_0792->width;
         u_70ac.h = g_0792->height;
         u_70ac.sx = u_70ac.sy = 0;
@@ -559,7 +559,7 @@ void gargfx_draw_parts(struct Car *car)
     if (r_vid.f8 == 0)
         r_vid.f8 = F_15BBE(0x42d, 1);
     else
-        F_1592E(0x42d, r_vid.f8);
+        disk_unpack_pic(0x42d, r_vid.f8);
     if (type = o_8290[0]) {
         hz82ae = 0;
         gargfx_draw_part(type, 0);

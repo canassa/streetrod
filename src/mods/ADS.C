@@ -43,7 +43,7 @@ void ads_open(int *list, int base)
     int first;
 
     g_0536 = 0;
-    F_193D4();
+    marks_clear();
     g_pages.list = list;
     g_pages.n = 0;
     ptr = list + 1;
@@ -198,7 +198,7 @@ int ads_run(void)
 
 void ads_close(void)
 {
-    F_193D4();
+    marks_clear();
     g_pages.list = 0;
     g_051c = 0;
     F_13F21(1);

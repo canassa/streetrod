@@ -52,8 +52,8 @@ static struct Bitmap far *g_6dfa7;         /* DS:6DFA */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 
-static struct Bitmap far * near F_1A9B2(int n);
-static void near F_1ABAC(int a, int *p, int *q);
+static struct Bitmap far * near grab_wheel_column(int n);
+static void near swap_wheel(int a, int *p, int *q);
 
 int g_5aa8 = 0;   /* DS:5AA8 */
 int g_5aaa[3] = {1034, 1035, 1036};   /* DS:5AAA */
@@ -61,11 +61,11 @@ struct Bitmap far *g_5ab0 = (struct Bitmap far *)&g_6da4;   /* DS:5AB0 */
 struct Bitmap far *g_5ab4 = (struct Bitmap far *)&g_6d400;   /* DS:5AB4 */
 struct Bitmap far *g_5ab8 = (struct Bitmap far *)&g_6d700;   /* DS:5AB8 */
 
-/* F_1A9B2 @ 0F38:B632 (linear 0x1A9B2, 506 bytes)
+/* grab_wheel_column @ 0F38:B632 (linear 0x1A9B2, 506 bytes)
 
    Build the two scratch bitmaps for a shifted background strip and its 0x28-wide column */
 
-static struct Bitmap far *near F_1A9B2(int n)
+static struct Bitmap far *near grab_wheel_column(int n)
 {
     struct Bitmap far *b;
     struct Blt blt;
@@ -86,7 +86,7 @@ static struct Bitmap far *near F_1A9B2(int n)
     blt.dx = (n + g_6da0) & r_vid.mask;
     blt.dy = 0x78;
     (*b_78a2)(b, r_vid.back, &blt, 1);
-    F_1941E(2);
+    marks_pop_low(2);
     blt.w = 0x28;
     blt.h = g_6df6a->height;
     blt.sx = n & r_vid.mask;
@@ -100,11 +100,11 @@ static struct Bitmap far *near F_1A9B2(int n)
     return c;
 }
 
-/* F_1ABAC @ 0F38:B82C (linear 0x1ABAC, 1639 bytes)
+/* swap_wheel @ 0F38:B82C (linear 0x1ABAC, 1639 bytes)
 
    Build the four shifted copies of a background strip and animate the sprite over them */
 
-static void near F_1ABAC(int a, int *p, int *q)
+static void near swap_wheel(int a, int *p, int *q)
 {
     int i;
 
@@ -123,8 +123,8 @@ static void near F_1ABAC(int a, int *p, int *q)
     g_6ce8rz.y1 = 0;
     g_6ce8rz.x2 = g_6d2c0nz->width - 1;
     g_6ce8rz.y2 = g_6d2c0nz->height + g_5aa8 - 1;
-    g_6d3caat = F_195F3(a & r_vid.mask, 0x94, &g_6df2a, 0, 1, g_5ab0, g_6d2c0nz, &g_6ce8rz, 0);
-    F_199DD(g_6d3caat, 0, 8, 0, 1);
+    g_6d3caat = sprite_setup(a & r_vid.mask, 0x94, &g_6df2a, 0, 1, g_5ab0, g_6d2c0nz, &g_6ce8rz, 0);
+    sprite_set_step(g_6d3caat, 0, 8, 0, 1);
     while ((*g78c6c)(g_6d3caat)) {
         if (g_6d3caat->y == 0x7d)
             *g_6df2a = *g_6de2a[0];
@@ -144,13 +144,13 @@ static void near F_1ABAC(int a, int *p, int *q)
         bitmap_underlay(g_6d38, g_6de2a[4 - i], g_6da2, g_6ce6sz);
     }
     i = 4;
-    g_6d3caat = F_195F3(a, 0x9b, g_6de2a, 0, 4, g_5ab4, g_6d24ajz, 0, 0);
-    F_199DD(g_6d3caat, 0, (a + g_6de2a[0]->width) >> 1, -2, 0);
+    g_6d3caat = sprite_setup(a, 0x9b, g_6de2a, 0, 4, g_5ab4, g_6d24ajz, 0, 0);
+    sprite_set_step(g_6d3caat, 0, (a + g_6de2a[0]->width) >> 1, -2, 0);
     F_168C8(1);
     while ((*g78c6c)(g_6d3caat))
         F_10AFD(2);
     F_168C8(0);
-    F_1941E(6);
+    marks_pop_low(6);
     if (r_vid.mode == -2)
         (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
     g_6de2a[0] = F_15BBE(*q, 1);
@@ -173,8 +173,8 @@ static void near F_1ABAC(int a, int *p, int *q)
         bitmap_underlay(g_6d38, g_6de2a[i], (i * 2) & ~r_vid.mask, g_6ce6sz);
     }
     i = 4;
-    g_6d3caat = F_195F3(-g_6de2a[0]->width, 0x9b, g_6de2a, 0, 4, g_5ab4, g_6d24ajz, 0, 0);
-    F_199DD(g_6d3caat, 0, (a + g_6de2a[0]->width >> 1) + 1, 2, 0);
+    g_6d3caat = sprite_setup(-g_6de2a[0]->width, 0x9b, g_6de2a, 0, 4, g_5ab4, g_6d24ajz, 0, 0);
+    sprite_set_step(g_6d3caat, 0, (a + g_6de2a[0]->width >> 1) + 1, 2, 0);
     F_168C8(1);
     while ((*g78c6c)(g_6d3caat))
         F_10AFD(2);
@@ -185,14 +185,14 @@ static void near F_1ABAC(int a, int *p, int *q)
     g_6ce8rz.y1 = 0;
     g_6ce8rz.x2 = g_6d2c0nz->width - 1;
     g_6ce8rz.y2 = g_6d2c0nz->height + g_5aa8 - 1;
-    g_6d3caat = F_195F3(a, 0x9b, &g_6de2a[g_6d3eaas], 0, 1, g_5ab0, g_6d2c0nz, &g_6ce8rz, 0);
-    F_199DD(g_6d3caat, 0, 8, 0, -1);
+    g_6d3caat = sprite_setup(a, 0x9b, &g_6de2a[g_6d3eaas], 0, 1, g_5ab0, g_6d2c0nz, &g_6ce8rz, 0);
+    sprite_set_step(g_6d3caat, 0, 8, 0, -1);
     while ((*g78c6c)(g_6d3caat)) {
         if (g_6d3caat->y == 0x7d)
             *g_6de2a[g_6d3eaas] = *g_6df2a;
         F_10AFD(3);
     }
-    F_1941E(6);
+    marks_pop_low(6);
 }
 
 /* F_1B213 @ 0F38:BE93 (linear 0x1B213, 3849 bytes)
@@ -221,7 +221,7 @@ void F_1B213(int *a, int *b)
     sv401 = r_vid.f16;
     s72 = m_8272.m8272;
     s74 = m_8272.m8274;
-    F_193FE();
+    marks_release();
     F_120FE(-4);
     r_vid.f16 = 0;
     g_6da0 = z_8b7c;
@@ -235,7 +235,7 @@ void F_1B213(int *a, int *b)
     g_5aa8 = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
     g_6d28agz = F_1934E(g_6cdaaa[1]->width, 0xba - g_5aa8, 0, 1);
     F_11A72(r_vid.mask & 0x88, g_5aa8, g_6cdaaa[1]->width, 0xba - g_5aa8, g_6d28agz);
-    F_17BE6(&g_6df6a, modelm, attr3, tinto, 0, 0, 0, 1);
+    carpic_build(&g_6df6a, modelm, attr3, tinto, 0, 0, 0, 1);
     g_6dd4 = g7682n[modelm].b0;
     g_6cd8lz = g7682n[modelm].b1;
     blt.w = g_6df6a->width;
@@ -281,8 +281,8 @@ void F_1B213(int *a, int *b)
     (*b_78a2)(g_6cdaaa[0], g_6dfa7, &clip6, 2);
     g_6d30 = F_15BBE(0x4c7, 2);
     g_5aa8 = (r_vid.mode == -6) ? 0x76 : 0;
-    pic = F_1A9B2(g_6cd8lz);
-    dst = F_1A9B2(g_6dd4);
+    pic = grab_wheel_column(g_6cd8lz);
+    dst = grab_wheel_column(g_6dd4);
     F_19438(1);
     g_6d24ajz = F_1934E(g_6df6a->width + g_6da0, 0x1c, 0, 1);
     F_11A72(0, 0x80, g_6df6a->width + g_6da0, 0x1c, g_6d24ajz);
@@ -338,8 +338,8 @@ void F_1B213(int *a, int *b)
     g_5aa8 = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
     if (r_vid.mode == -2)
         (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
-    g_6d3caat = F_195F3(0x88, 0xb9, &g_6cdaaa[1], 0, 1, g_5ab8, g_6d28agz, 0, 0);
-    F_199DD(g_6d3caat, 0, 0x21, 0, -1);
+    g_6d3caat = sprite_setup(0x88, 0xb9, &g_6cdaaa[1], 0, 1, g_5ab8, g_6d28agz, 0, 0);
+    sprite_set_step(g_6d3caat, 0, 0x21, 0, -1);
     while ((*g78c6c)(g_6d3caat))
         F_10AFD(3);
     F_16381(1);
@@ -354,8 +354,8 @@ void F_1B213(int *a, int *b)
     g_6ce8rz.y1 = 0;
     g_6ce8rz.x2 = g_6dfa7->width - 1;
     g_6ce8rz.y2 = g_6dfa7->height + g_5aa8 - 1;
-    g_6d3caat = F_195F3(g_6da0, 0x98, &g_6df6a, 0, 1, g_6cd4oz, g_6dfa7, &g_6ce8rz, 0);
-    F_199DD(g_6d3caat, 0, 7, 0, -1);
+    g_6d3caat = sprite_setup(g_6da0, 0x98, &g_6df6a, 0, 1, g_6cd4oz, g_6dfa7, &g_6ce8rz, 0);
+    sprite_set_step(g_6d3caat, 0, 7, 0, -1);
     frame = 0;
     rev = 0;
     F_169E1(1);
@@ -382,7 +382,7 @@ void F_1B213(int *a, int *b)
     F_169E1(0);
     g_5aa8 = (r_vid.mode == -6) ? 0x76 : 0;
     g_6d2c0nz = dst;
-    F_1ABAC(g_6da0 + g_6dd4, a, b);
+    swap_wheel(g_6da0 + g_6dd4, a, b);
     g_6d2c0nz = pic;
     if (r_vid.mode == -2) {
         blt.w = pic->width;
@@ -399,7 +399,7 @@ void F_1B213(int *a, int *b)
     (*b_78a2)(r_vid.front, g_6d24ajz, &blt, 1);
     if (r_vid.mode == -2)
         (*b_78a2)(r_vid.front, g_5ab4, &blt, 1);
-    F_1ABAC(g_6da0 + g_6cd8lz, a, b);
+    swap_wheel(g_6da0 + g_6cd8lz, a, b);
     g_5aa8 = (r_vid.mode == -6) ? 0x92 - g_6df6a->height : 0;
     g_6de2a[0] = F_15BBE(*b, 1);
     blt.w = g_6df6a->width;
@@ -419,8 +419,8 @@ void F_1B213(int *a, int *b)
     g_6ce8rz.y1 = 0;
     g_6ce8rz.x2 = g_6dfa7->width - 1;
     g_6ce8rz.y2 = g_6dfa7->height + g_5aa8 - 1;
-    g_6d3caat = F_195F3(g_6da0, 0x94, &g_6df6a, 0, 1, g_6cd4oz, g_6dfa7, &g_6ce8rz, 0);
-    F_199DD(g_6d3caat, 0, 9, 0, 1);
+    g_6d3caat = sprite_setup(g_6da0, 0x94, &g_6df6a, 0, 1, g_6cd4oz, g_6dfa7, &g_6ce8rz, 0);
+    sprite_set_step(g_6d3caat, 0, 9, 0, 1);
     F_169E1(1);
     while ((*g78c6c)(g_6d3caat)) {
         F_10AFD(3);
@@ -447,11 +447,11 @@ void F_1B213(int *a, int *b)
     g_5aa8 = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
     if (r_vid.mode == -2)
         (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
-    g_6d3caat = F_195F3(0x88, 0x99, &g_6cdaaa[1], 0, 1, g_5ab8, g_6d28agz, 0, 0);
-    F_199DD(g_6d3caat, 0, 0x21, 0, 1);
+    g_6d3caat = sprite_setup(0x88, 0x99, &g_6cdaaa[1], 0, 1, g_5ab8, g_6d28agz, 0, 0);
+    sprite_set_step(g_6d3caat, 0, 0x21, 0, 1);
     while ((*g78c6c)(g_6d3caat))
         F_10AFD(3);
-    F_193FE();
+    marks_release();
     (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
     z_8b7c = g_6da0;
     r_vid.f16 = sv401;

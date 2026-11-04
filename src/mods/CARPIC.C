@@ -27,9 +27,9 @@
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct Rect g_6cbc;                 /* DS:6CBC */
-static void near F_174A6(char far *src, char far *dst, char far *mask, int w, int h, int n, int step);
-static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, int h, char far *mask, char c);
-static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color);
+static void near blit_planes(char far *src, char far *dst, char far *mask, int w, int h, int n, int step);
+static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2, int h, char far *mask, char c);
+static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int color);
 static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstbm, int id1, int id2);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
@@ -55,11 +55,11 @@ int g_5a20 = 0;   /* DS:5A20 */
 int g_5a22 = 0;   /* DS:5A22 */
 int g_5a24 = 0;   /* DS:5A24 */
 
-/* F_174A6 @ 0F38:8126 (linear 0x174A6, 116 bytes)
+/* blit_planes @ 0F38:8126 (linear 0x174A6, 116 bytes)
 
    Blit one 4-plane EGA image row set, one plane at a time via the sequencer map mask */
 
-static void near F_174A6(char far *src, char far *dst, char far *mask, int w, int h, int n, int step)
+static void near blit_planes(char far *src, char far *dst, char far *mask, int w, int h, int n, int step)
 {
     int plane, bit1;
 
@@ -74,13 +74,13 @@ static void near F_174A6(char far *src, char far *dst, char far *mask, int w, in
     outp(0x3c5, 0xf);
 }
 
-/* F_1751A @ 0F38:819A (linear 0x1751A, 412 bytes)
+/* make_bands @ 0F38:819A (linear 0x1751A, 412 bytes)
 
    For each of n bitmaps, lay a band of h rows into the scratch bitmap bp7316[2], fill or copy it,
    then blit the bitmap through the EGA planes */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, int h,
+static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2, int h,
     char far *mask, char c)
 {
     int i;
@@ -104,18 +104,18 @@ static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, i
             outp(0x3cf, 0);
         }
         j = A[i].y * B[i]->pitch;
-        F_174A6(B[i]->bits.p + j, A[i].p, B[i]->alt.p + j, B[i]->pitch, h, B[i]->pitch,
+        blit_planes(B[i]->bits.p + j, A[i].p, B[i]->alt.p + j, B[i]->pitch, h, B[i]->pitch,
             B[i]->height * B[i]->pitch);
     }
 }
 
-/* F_176B6 @ 0F38:8336 (linear 0x176B6, 392 bytes)
+/* make_frames @ 0F38:8336 (linear 0x176B6, 392 bytes)
 
    Copy n bitmaps into the table am6e68x, each filled with a colour pattern and h rows high, in
    space cut from the scratch bitmap bp7316[2] */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color)
+static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int color)
 {
     struct Blt pkt1;
     struct Bitmap far *bm1;
@@ -148,12 +148,12 @@ static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color)
     F_19438(1);
 }
 
-/* F_1783E @ 0F38:84BE (linear 0x1783E, 624 bytes)
+/* carpic_backdrop @ 0F38:84BE (linear 0x1783E, 624 bytes)
 
    Make a copy of a bitmap header that views the rows below y0, plus a bitmap to hold them (*pa), a
    second one (*pb), and two clip rects */
 
-void F_1783E(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bitmap far **pb,
+void carpic_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bitmap far **pb,
     int y1, int y0, struct Rect **pr1, struct Rect **pr2)
 {
     struct Bitmap far *p2;
@@ -165,7 +165,7 @@ void F_1783E(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bi
     y2 = y0;
     h = y1 - y2;
     flag = mode != 0;
-    start = (struct Bitmap far *)F_192AC(0x30, 1);
+    start = (struct Bitmap far *)arena_alloc(0x30, 1);
     *start = *src;
     start->bits.w.off += h * size;
     start->height = y2;
@@ -230,10 +230,10 @@ static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstb
 
     g_4f0e = 0;
     tmp1 = F_1934E(0x10, 0x46, 1, 2);
-    F_1592E(id1, tmp1);
+    disk_unpack_pic(id1, tmp1);
     save1 = tmp1->bits.p;
     tmp1->bits.p = 0;
-    F_1592E(id2, tmp1);
+    disk_unpack_pic(id2, tmp1);
     tmp1->bits.p = save1;
     g_4f0e = 1;
     bitmap_copy(tmp1, dstbm, 1);
@@ -252,12 +252,12 @@ static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstb
     F_19438(1);
 }
 
-/* F_17BE6 @ 0F38:8866 (linear 0x17BE6, 1506 bytes)
+/* carpic_build @ 0F38:8866 (linear 0x17BE6, 1506 bytes)
 
    Load the bitmap of car part idx into out[0], paint its marks, and build the n frame copies
    out[1..] */
 
-void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *ids, int w, int n)
+void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *ids, int w, int n)
 {
     int row8;
     struct Blt blt;
@@ -420,7 +420,7 @@ void F_181C8(int kind, int idx, int flags, int kk, int q, int bot, int mode2, in
     F_120FE(-4);
 again:
     n2 = (kind == 3 || kind == 7 || kind == 8) ? 1 : 4;
-    F_15B7F(g7d86n[idx].f8, &w1, &h7, &x7);
+    disk_pic_size(g7d86n[idx].f8, &w1, &h7, &x7);
     g_02d0 = g_02a6[g_0284];
     tmpn = (r_vid.mode != -2 && r_vid.mode != -6) ? g_02b4[g_0284] : g_02c2[g_0284];
     hh8 = (kind == 3 || kind == 7 || kind == 8) ? h7 - g_02d0 : g_0298[g_0284];
@@ -438,23 +438,23 @@ again:
             }
         }
         if (kind == 4) {
-            F_193D4();
+            marks_clear();
             if (g_0284 == 3) {
-                F_15B7F(0x449, &w2, &h2, &x2);
+                disk_pic_size(0x449, &w2, &h2, &x2);
                 g_028c = F_1934E(w2, h2, 0, 0);
                 g_0290 = F_1934E(w2, h2, 0, 0);
             }
             if (g_0284 == 2 || g_0284 == 6)
-                F_191DD();
+                carhop_save_bg();
         } else
-            F_193FE();
+            marks_release();
         if (!g_0294)
             g_0294 = F_1934E(0x40, 0x19, 0, 0);
-        F_17BE6(bms6, idx, flags, kk, q, ids, 1, n2);
+        carpic_build(bms6, idx, flags, kk, q, ids, 1, n2);
         if (r_vid.mode == -6 && kind != 3 && kind != 7 && kind != 8) {
-            F_176B6(bms6, n2, g_02d0, hh8, tmpn);
+            make_frames(bms6, n2, g_02d0, hh8, tmpn);
             bms6[1] = bms6[2] = bms6[3] = bms6[0];
-            F_1941E(3);
+            marks_pop_low(3);
         }
         if (kind != 3 && kind != 7 && kind != 8) {
             if (g_5a24 != 1) {
@@ -464,7 +464,7 @@ again:
                 g_5a22 = 0x140;
                 g_5a20 = 0;
             }
-            F_1783E(g_5a0a, &pan, mode2 ? 0x448 : 0, &pb8, 0x46, h7, &pr16, &pr26);
+            carpic_backdrop(g_5a0a, &pan, mode2 ? 0x448 : 0, &pb8, 0x46, h7, &pr16, &pr26);
         }
     }
     ac825et = x0;
@@ -487,7 +487,7 @@ again:
                 mask3 = g_5a0a->bits.p + ((g_5a0a->height - hh8) * g_5a0a->pitch + x0 / 8);
             else
                 mask3 = 0;
-            F_1751A(dz7ec2, bms6, n2, g_02d0, hh8, mask3, tmpn);
+            make_bands(dz7ec2, bms6, n2, g_02d0, hh8, mask3, tmpn);
         }
         if (!((r_vid.mode == -2 || r_vid.mode == -6) && r_vid.mode != -6)) {
             if (kind == 3 || kind == 7 || kind == 8) {
@@ -506,7 +506,7 @@ again:
                 blt.dx = blt.dy = blt.sx = blt.sy = 0;
                 (*ab78aat)(bms6[0], bm48, &blt, 1);
             } else if (r_vid.mode != -6)
-                F_176B6(bms6, n2, g_02d0, hh8, tmpn);
+                make_frames(bms6, n2, g_02d0, hh8, tmpn);
         }
         if (!((r_vid.mode == -2 || r_vid.mode == -6) && r_vid.mode != -6)) {
             blt.w = w1;
@@ -533,8 +533,8 @@ again:
             goto done;
         }
     }
-    spr3 = F_195F3(ang2, bot, bms6, (char (*)[8])dz7ec2, n2, pb8, pan, pr16, pr26);
-    F_19B6E(spr3, kind, right);
+    spr3 = sprite_setup(ang2, bot, bms6, (char (*)[8])dz7ec2, n2, pb8, pan, pr16, pr26);
+    sprite_plan_drive(spr3, kind, right);
     if (kind == 6)
         spr3->page->r = g_6cbc;
     if (kind == 4 || kind == 1 || kind == 2 || kind == 6) {
@@ -577,17 +577,17 @@ again:
     }
 done:
     g_02d0 = g_5a22 = g_5a20 = 0;
-    F_193FE();
+    marks_release();
     g_5a24 = 0;
     F_120FE(-2);
 }
 
-/* F_18ADB @ 0F38:975B (linear 0x18ADB, 256 bytes)
+/* carpic_patch_bg @ 0F38:975B (linear 0x18ADB, 256 bytes)
 
    Blit a clipped band of a bitmap through the blit hook, then the seven frame cells onto the front
    buffer */
 
-void F_18ADB(struct Bitmap far *dst, int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8)
+void carpic_patch_bg(struct Bitmap far *dst, int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8)
 {
     int base7, hi1, lo7, i9;
     struct Blt r;

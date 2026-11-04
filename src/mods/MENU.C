@@ -565,7 +565,7 @@ restore:
                 strcpy(bufpl, "\0");
             x_colors = bustyle->pal[hotn->f2];
             F_13DE6(0x18);
-            F_14C90(hotn->x1, hotn->y1, bufpl, n9);
+            edit_line(hotn->x1, hotn->y1, bufpl, n9);
             F_13F21(1);
             continue;
         case -7:

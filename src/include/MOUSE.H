@@ -4,9 +4,9 @@
 #define MOUSE_H
 #include "STRUCTS.H"
 
-int F_16D1A(void);                                      /* 0x16D1A */
-void F_16D57(void);                                     /* 0x16D57 */
-void F_16D94(int *dx, int *dy);                         /* 0x16D94 */
-void F_16DC7(void);                                     /* 0x16DC7 */
+int mouse_reset(void);                                  /* 0x16D1A */
+void mouse_buttons(void);                               /* 0x16D57 */
+void mouse_motion(int *dx, int *dy);                    /* 0x16D94 */
+void mouse_poll(void);                                  /* 0x16DC7 */
 
 #endif

@@ -161,7 +161,7 @@ void sys_input_reset(void)
     }
     g_05cc = 0;
     if (g_0610 == 0 && g_05f2) {
-        F_16DC7();
+        mouse_poll();
         g_05e6 = g_05e8 = 0;
     }
     g_4736 = 0;
@@ -315,7 +315,7 @@ void sys_init(void)
         g_4726 = -(g_4720 >> 1);
         g_4728 = g_4720 >> 1;
     }
-    if (g_0610 == 0 && g_0262 && F_16D1A() == -1) {
+    if (g_0610 == 0 && g_0262 && mouse_reset() == -1) {
         g_05f2 = 1;
         g_05e6 = g_05e8 = 0;
         g_05ea = 1;
@@ -500,7 +500,7 @@ int sys_wait_input(int ticks)
             }
         }
         if (g_0610 == 0 && g_05f2) {
-            F_16DC7();
+            mouse_poll();
             if (g_6c4a |= (g_05e2 != 0 || g_05e4 != 0)) {
                 g_472a += g_05e2;
                 g_472c += g_05e4;
@@ -694,7 +694,7 @@ void sys_drive_start(void)
     g_060a = 0;
     _dos_setvect(8, sys_drive_isr);
     if (!g_0610 && g_05f2) {
-        F_16DC7();
+        mouse_poll();
         g_05e6 = g_05e8 = 0;
         g_05ea = 1;
         g_05ec = 6;
@@ -721,7 +721,7 @@ void sys_drive_stop(void)
     outp(0x61, inp(0x61) & 0xfc);
     g_47cf = 0;
     if (!g_0610 && g_05f2) {
-        F_16DC7();
+        mouse_poll();
         g_05e6 = g_05e8 = 0;
         g_05ea = 1;
         g_05ec = 1;
@@ -1147,7 +1147,7 @@ void interrupt far sys_drive_isr(void)
                         }
                     }
                     if (g_0610 == 0 && g_05f2) {
-                        F_16DC7();
+                        mouse_poll();
                         if (g_05e4 > 0) {
                             g_6c4a = 1;
                             g_472c++;

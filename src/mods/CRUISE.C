@@ -84,9 +84,9 @@ int cruise_run(void)
     F_067CF(a_7eaap.m7eb0->f4);
     if (bw8aca)
         cruise_rival_paint(saved);
-    r = F_16EA2();
-    F_16AC1(0);
-    F_16AA8(0);
+    r = drive_run();
+    sound_squeal(0);
+    sound_siren(0);
     g_472a = g_4746;
     g_472c = g_4748;
     g_4746 = 0;

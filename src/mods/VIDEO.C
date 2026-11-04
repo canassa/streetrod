@@ -214,7 +214,7 @@ static void near anim_run(int n)
             (*ab78aat)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
             break;
         case 13:
-            if (!F_19518(g_box->x2, g_box->y2, g_box->w, g_box->h, &res))
+            if (!sprite_car_clip(g_box->x2, g_box->y2, g_box->w, g_box->h, &res))
                 break;
             blt.w = res.x2 - res.x1;
             blt.h = res.y2 - res.y1 + 1;

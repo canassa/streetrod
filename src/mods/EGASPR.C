@@ -51,10 +51,10 @@ int egaspr_step(struct Sprite *s)
     box = s->frame;
     key = s->img;
     height = s->save;
-    F_1956E(box->pos->width,
+    sprite_clip_box(box->pos->width,
         box->pos->height - g_02d0, s->x, s->y,
         count->bm->width, count->bm->height, &clip);
-    if (F_19839(&clip, &count->r, &f, s->seq->dx))
+    if (sprite_rect_sub(&clip, &count->r, &f, s->seq->dx))
         restore_rect_latch(&f, count->bm, key, s->seq->dx);
     count->r = clip;
     dest.h = box->pos->height - g_02d0;
@@ -67,7 +67,7 @@ int egaspr_step(struct Sprite *s)
         egablit_sprite(box->pos, count->bm, height, (struct Mask *)box->data, (struct Blt *)&dest);
     } else {
         for (i = 0; i < 6; i++) {
-            if (F_19E42(g_539a[i].a, g_539a[i].b, s, &dest))
+            if (sprite_clip_span(g_539a[i].a, g_539a[i].b, s, &dest))
                 egablit_sprite(box->pos, count->bm, height, (struct Mask *)box->data, (struct Blt *)&dest);
         }
     }
@@ -82,7 +82,7 @@ int egaspr_step(struct Sprite *s)
             first.y1 += s->y;
             first.y2 += s->y;
         }
-        if (F_1947A(&first, &count->r, &f)) {
+        if (sprite_rect_and(&first, &count->r, &f)) {
             dest.w = f.x2 - f.x1 + 1;
             dest.h = f.y2 - f.y1 + 1;
             if (box->pos->pitch == height->pitch) {
@@ -97,7 +97,7 @@ int egaspr_step(struct Sprite *s)
             egablit_masked(height, count->bm, (struct Blt *)&dest, 0);
         }
     }
-    F_19DB7(s);
+    sprite_advance(s);
     egapage_show(count->idx);
     return 1;
 }

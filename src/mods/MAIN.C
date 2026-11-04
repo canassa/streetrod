@@ -341,33 +341,33 @@ int main(int argc, char **argv)
     }
     b = choose_video(b);
     mem_init();
-    F_19269();
+    arena_init();
     init_screens(b);
     set_video_mode(b);
     video_init(g_screens, &g_screen1);
     sys_init();
     if (r_vid.mode == -2 || r_vid.mode == -6)
         video_set_palette(g_palette);
-    F_15CC3(e, b);
+    disk_open_libs(e, b);
     check_slow_cpu();
-    d = F_1552B(1);
+    d = disk_read_index(1);
     cursor_init();
-    F_16481();
+    sound_init();
     dash_set_view(0);
     if (r_vid.mode == -3 && g_0250)
         g755cu = mem_new_bitmap(320, 100, 0, -1, 0);
     ab7564z = mem_alloc(r_vid.mode != -2 && r_vid.mode != -6 ? 16000 : 18000, 1);
-    a = F_15C4A(g_4c20, 0);
+    a = disk_load_list(g_4c20, 0);
     if (a == 3) {
         by70e2 = 1;
-        d = F_1552B(2);
-        F_15EF9();
+        d = disk_read_index(2);
+        disk_load_data();
         if (r_vid.mode == -2)
-            F_15C07(g_4c28);
-        F_15C4A(g_4c28, 1);
+            disk_cache_list(g_4c28);
+        disk_load_list(g_4c28, 1);
     } else {
         by70e2 = 0;
-        F_15C95(g_4c20);
+        disk_free_list(g_4c20);
     }
     game_run();
     sys_exit();

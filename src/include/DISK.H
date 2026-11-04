@@ -37,19 +37,19 @@ extern char *aw8dd4x;                                   /* DS:8DD4 */
 extern char *au8dd6y;                                   /* DS:8DD6 */
 extern int h_8dd8[][3];                                 /* DS:8DD8 */
 extern struct Model w_8df0[];                           /* DS:8DF0 */
-int F_15396(int handle, long pos);                      /* 0x15396 */
-int F_1552B(int n);                                     /* 0x1552B */
-void F_158DE(int n);                                    /* 0x158DE */
-struct Bitmap far *F_1592E(int id, struct Bitmap far *bm);/* 0x1592E */
-void F_15B7F(int id, int *w, int *h, int *x);           /* 0x15B7F */
+int disk_seek(int handle, long pos);                    /* 0x15396 */
+int disk_read_index(int n);                             /* 0x1552B */
+void disk_free_pic(int n);                              /* 0x158DE */
+struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm);/* 0x1592E */
+void disk_pic_size(int id, int *w, int *h, int *x);     /* 0x15B7F */
 struct Bitmap far *F_15BBE(int id, int mode);           /* 0x15BBE */
-int F_15C07(int *list);                                 /* 0x15C07 */
-int F_15C4A(int *list, int n);                          /* 0x15C4A */
-void F_15C95(int *list);                                /* 0x15C95 */
-void F_15CC3(int a, int mode);                          /* 0x15CC3 */
-void F_15EF9(void);                                     /* 0x15EF9 */
-int F_15FBD(void);                                      /* 0x15FBD */
-void F_16089(void);                                     /* 0x16089 */
-void F_16152(void);                                     /* 0x16152 */
+int disk_cache_list(int *list);                         /* 0x15C07 */
+int disk_load_list(int *list, int n);                   /* 0x15C4A */
+void disk_free_list(int *list);                         /* 0x15C95 */
+void disk_open_libs(int a, int mode);                   /* 0x15CC3 */
+void disk_load_data(void);                              /* 0x15EF9 */
+int disk_data_drive(void);                              /* 0x15FBD */
+void disk_load_hall(void);                              /* 0x16089 */
+void disk_save_hall(void);                              /* 0x16152 */
 
 #endif
