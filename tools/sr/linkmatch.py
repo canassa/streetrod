@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 import struct
 
-from . import config, db
+from . import config, db, module
 from .exe import Image
 
 
@@ -52,8 +52,7 @@ def compare(executable, mapfile=None):
         calls = []
         # A static function is not in the MAP: place it by a public of its own link unit
         # (one object, so the distance between them is fixed).
-        units = json.loads((config.SRC/'link/LAYOUT.JSON').read_text())['units']
-        unit_of = {s: u['start'] for u in units for s in u['sources']}
+        unit_of = {f.rel: f.start for f in module.files()}
         mapped = {}
         for row in rows:
             frame = publics.get('_' + (row['name'] or f"F_{row['addr']:05X}"))

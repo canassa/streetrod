@@ -1,20 +1,21 @@
-"""The game's source files: one per original object (a link unit in src/link/LAYOUT.JSON).
+"""The game's source files: one per original object, one description block of src/MAKEFILE each.
 
-Each file has one command line: the unit's recorded `flags`, plus `/NT S<region>_TEXT`
-for C (an assembler file names its code segment in its `.CODE` directive). `./sr check`
-and `./sr build --layout` compile the file as it is in git with that line. The module gate
-compares the file's whole span with the image: bytes between functions, internal near-call
-displacements, internal calls and code-segment offsets. References to other objects and
-DGROUP stay relocation-masked and are checked by `refs`.
+Each file has one command line, its MAKEFILE block: `$(CC) <flags> /NT<segment> <source>`
+for C (the code segment it shares with its neighbours), `$(ASM) <flags> <source>,...;` for
+MASM (an assembler file names its code segment in its `.CODE` directive). `./sr check` and
+`./sr build` compile the file as it is in git with that line. A code file's extent in the
+image is the span of the DB functions whose `src` it is. The module gate compares the file's
+whole span with the image: bytes between functions, internal near-call displacements,
+internal calls and code-segment offsets. References to other objects and DGROUP stay
+relocation-masked and are checked by `refs`.
 """
 
-import json
+import re
 
-from . import config
+from . import config, db, makefile
 from .disasm import branch_target, linear
 
 MODS = config.SRC / "mods"
-PLAN = config.SRC / "link" / "LAYOUT.JSON"
 
 
 def fname(row):
@@ -22,37 +23,65 @@ def fname(row):
 
 
 class File:
-    """A code unit of LAYOUT.JSON: one source file, one object."""
+    """A compiled source: its MAKEFILE block, and for a code file the extent of its functions."""
 
-    def __init__(self, unit, code_starts):
-        self.unit = unit
-        self.rel = unit["sources"][0]
-        self.path = config.ROOT / self.rel
-        self.kind = unit["kind"]
-        self.start, self.end = unit["start"], unit["end"]
-        self.flags = unit["flags"]
-        self.segment = f"S{max(s for s in code_starts if s <= self.start) // 16:04X}_TEXT"
+    def __init__(self, rule, start=None, end=None):
+        self.rule = rule
+        self.path = rule.path
+        self.rel = self.path.relative_to(config.ROOT).as_posix()
+        self.kind = "c" if self.path.suffix.upper() == ".C" else "asm"
+        self.start, self.end = start, end
+        self.flags = rule.flags
+        self.object = rule.target
+        self.segment = rule.segment if self.kind == "c" else asm_segment(self.path)
 
     @property
     def command(self):
-        """The CL or MASM options this file is built with (the MAKEFILE line)."""
+        """The CL or MASM options this file is built with (its MAKEFILE line, without the
+        common $(CC) options and the file names)."""
         return self.with_flags(self.flags)
 
     def with_flags(self, flags):
-        return f"{flags} /NT{self.segment}" if self.kind == "c" else flags
+        return f"{flags} /NT{self.segment}" if self.kind == "c" and self.segment else flags
 
 
-def plan():
-    return json.loads(PLAN.read_text())
+def asm_segment(path):
+    """The code segment an assembler file declares (`.CODE name`, or `name SEGMENT ... 'CODE'`)."""
+    text = re.sub(r";[^\n]*", "", path.read_text(encoding="latin-1"))
+    m = re.search(r"^\s*\.CODE\s+(\w+)", text, re.M | re.I) or \
+        re.search(r"^\s*(\w+)\s+SEGMENT\b[^\n]*'CODE'", text, re.M | re.I)
+    return m.group(1).upper() if m else None
 
 
-def write_plan(p):
-    PLAN.write_text(json.dumps(p, indent=2) + "\n")
+def _extents():
+    con = db.connect()
+    rows = con.execute("SELECT src, MIN(addr) AS lo, MAX(addr + size) AS hi FROM functions "
+                       "WHERE src IS NOT NULL GROUP BY src").fetchall()
+    con.close()
+    return {r["src"]: (r["lo"], r["hi"]) for r in rows}
 
 
-def files(p=None):
-    p = p or plan()
-    return [File(u, p["code_starts"]) for u in p["units"]]
+def sources():
+    """Every source src/MAKEFILE compiles, in MAKEFILE order (data-only files have no extent)."""
+    ext = _extents()
+    out = []
+    for r in makefile.compile_rules():
+        rel = r.path.relative_to(config.ROOT).as_posix()
+        out.append(File(r, *ext.get(rel, (None, None))))
+    return out
+
+
+def files():
+    """The code files (those that define functions), in address order."""
+    return sorted((f for f in sources() if f.start is not None), key=lambda f: f.start)
+
+
+def code_starts(fs=None):
+    """The start of each code segment: the first file of each segment name, ascending."""
+    first = {}
+    for f in fs or files():
+        first[f.segment] = min(first.get(f.segment, f.start), f.start)
+    return sorted(first.values())
 
 
 def file_of(row, fs=None):
@@ -60,7 +89,7 @@ def file_of(row, fs=None):
     for f in fs or files():
         if f.rel == row["src"]:
             return f
-    raise SystemExit(f"{fname(row)}: src {row['src']!r} is not a source file of src/link/LAYOUT.JSON")
+    raise SystemExit(f"{fname(row)}: src {row['src']!r} is not a source file of src/MAKEFILE")
 
 
 def find_file(name, fs=None):

@@ -713,3 +713,15 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - Ownership evidence must be symmetric under moving a definition, or the previous apply feeds the next one.
 - DS:4FA6 holds the text "The game must have a name !" but is declared `int[14]`; a `char[]` string is the likely original (open).
+
+## 2026-11-04 18:00 CET: The MAKEFILE is checked in; LAYOUT.JSON is gone
+
+### What I did
+- `src/MAKEFILE` (MSC MAKE 4.07, in the style of MSC 5.1's own STARTUP\MAKEFILE: `CC`/`ASM` macros, the MLIBCE.LIB block, one block per object with its command line and header dependencies, the link last) and `src/SR.LNK` (97 objects in link order) are the build definition. `src/` is the build directory (C:), MSC on D:, MASM on F:, SETUP's environment. `./dosbox.sh --make` runs `MAKE MAKEFILE` in DOSBox-X on a copy of `src/`: SR.EXE SHA-1 3a5e28b7..., identical to orig/SR.EXE.
+- `./sr build` copies `src/` and runs each block as written (emu2 for CL/MASM/LIB, DOSBox-X for LINK); that part needs neither the DB nor orig/ (`--no-verify`). The object gates and the comparison are a separate verification step.
+- LAYOUT.JSON is deleted: flags and `/NT` segments are MAKEFILE lines, link order is SR.LNK, file extents come from the DB, and the data-unit/order evidence stays in dgroup.py; `./sr dgroup order` checks SR.LNK against it, `./sr flags` edits the MAKEFILE.
+- Headers are source: build and check no longer regenerate them; `./sr headers` maintains headers, include blocks and MAKEFILE dependencies, `./sr headers --check` (also a test) reports drift. Headers are LF with a one-line banner.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, tests OK.
+
+### What I learned
+- A source path (`MODS\X.C`) changes only the OBJ's THEADR record, never code or segment names.
