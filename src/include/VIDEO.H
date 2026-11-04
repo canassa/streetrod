@@ -4,6 +4,34 @@
 #define VIDEO_H
 #include "STRUCTS.H"
 
+enum AnimOp {
+    ANIM_NOP_1 = 1,
+    ANIM_BLIT = 2,
+    ANIM_NOP_3 = 3,
+    ANIM_BLIT_MASKED = 4,
+    ANIM_HOOK = 5,
+    ANIM_STOP = 6,
+    ANIM_JUMP = 7,
+    ANIM_LOAD_IMAGE = 8,
+    ANIM_SET_BOX = 9,
+    ANIM_SET_SIZE = 10,
+    ANIM_WAIT = 11,
+    ANIM_COPY_TO_FRONT = 12,
+    ANIM_TILE_CAR = 13
+};
+
+enum BoxSet {
+    BOX_KEEP = 0,
+    BOX_SET_SOURCE = 1,
+    BOX_SET_DESTINATION = 2,
+    BOX_SET_BOTH = 3
+};
+
+enum AnimWaitMode {
+    ANIM_WAIT_ONLY = 0,
+    ANIM_WAIT_COPY_TO_FRONT = 4
+};
+
 extern struct Style g_style16;                          /* DS:03A0 */
 extern struct Style g_style4;                           /* DS:03F0 */
 extern unsigned char g_palette[];                       /* DS:0440 */
