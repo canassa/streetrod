@@ -9,6 +9,8 @@ import re
 from . import config
 from .headers import _write
 
+_STANDALONE = {'STRUCTS', 'PC'}
+
 # runtime variables the game reads directly; MSC's own headers declare them
 _SYSTEM = {'errno': 'stdlib.h', '_doserrno': 'stdlib.h', '_amblksiz': 'malloc.h'}
 
@@ -60,7 +62,7 @@ def _defines(path, names):
         text = re.sub(r"'[^'\n]*'|\"[^\"\n]*\"|;[^\n]*", '', text)
         pubs = {m.lower() for m in re.findall(r'^\s*PUBLIC\s+_(\w+)', text, re.M | re.I)}
         return {n for n in names if n.lower() in pubs}
-    found = set()
+    found = names & set(re.findall(r'^#[ \t]*define[ \t]+([A-Za-z_]\w*)', _strip(text), re.M))
     for ln in text.splitlines():
         if not ln[:1].isalpha() or ln.startswith(('extern', 'static', 'typedef')):
             continue
@@ -86,6 +88,11 @@ def generate():
     for kind in ('globals', 'fardata', 'functions'):
         for d in source.headers()[kind]:
             decls.setdefault(d['name'], []).append(d['header'])
+    for path in sorted(config.INCLUDE.glob('*.H')):
+        macros = re.findall(r'^#[ \t]*define[ \t]+([A-Za-z_]\w*)(?:\([^\n)]*\))?[ \t]+[^\s]',
+                            _strip(path.read_text(encoding='latin-1')), re.M)
+        for name in macros:
+            decls.setdefault(name, []).append(path.stem.upper())
     files = owners_layout()
     stems = {stem for stem, _ in files}
     problems, owner = [], {}
@@ -93,8 +100,8 @@ def generate():
         if len(hs) > 1:
             problems.append(f'{name} is declared in ' + ' and '.join(f'{h}.H' for h in hs))
         owner[name] = hs[0]
-    made = {h for hs in decls.values() for h in hs} & stems
-    for h in sorted({h for hs in decls.values() for h in hs} - stems):
+    made = {h for hs in decls.values() for h in hs} & (stems | _STANDALONE)
+    for h in sorted({h for hs in decls.values() for h in hs} - stems - _STANDALONE):
         problems.append(f'src/include/{h}.H: no source file {h}.C or {h}.ASM')
     for stem, srcs in files:
         mine = {n for n, h in owner.items() if h == stem}

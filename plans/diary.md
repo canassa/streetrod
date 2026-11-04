@@ -856,3 +856,16 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - The address comments in the headers are now what `refs` verifies global addresses against, so they are load-bearing.
+## 2026-11-04 12:39 CET: Name fixed PC memory addresses
+
+### What I did
+- Added PC.H with BIOS_EQUIP (0000:0410, unsigned char), BIOS_TICKS (0000:046C, long), MOUSE_VECTOR (0000:00CC, long), CGA_VRAM (B800:0000), MONO_VRAM (B000:0000), EGA_VRAM (A000:0000), and BIOS_ROM (F000:0000); video and ROM pointers are char far pointers. MAIN.C, MEM.C, MOUSE.C, and SOUND.C include it through ./sr headers.
+- Named the game-specific ARENA_FIXED_BASE (8000:0000, ARENA.C), TANDY_SCREEN1_BITS (9000:0000, MAIN.C), CURSOR_EGA_SAVE (A000:1F40, CURSOR.C), and EGA_PAGE1_BITS/EGA_PAGE2_BITS (A200:0000/A400:0000, ROAD.C) after their actual uses. No unexplained fixed pointer casts remain outside macro definitions.
+- Audited assembler literals: M_02B9A.ASM and VIDDET.ASM access the equipment byte at 0410h; CGADRV.ASM, CGALINE.ASM, and HERCDET.ASM use the monochrome segment B000h. Kept these MASM operands literal: PC.H defines C pointer expressions, not assembler offsets or segments. HERCDET's CCh bytes are key-map data, not mouse-vector addresses. The unsigned 80000000h bound in MEM.C remains integer address arithmetic.
+- Extended header ownership to macros with replacement text and standalone PC.H; added tests for usage-driven inclusion, removal, idempotence, standalone ownership, and module macro definitions. Updated the sr-cli skill's tooling map.
+- Gates: clean-work ./sr check --all: 572/572 still match (551 MATCH, 21 MATCH*); separately removed work before ./sr build: Packed EXE vs orig/SR.EXE: IDENTICAL, 572/572 at original positions, 748/748 near-call encodings exact. ./sr headers --check and ./sr dgroup check clean; unittest discover: 41 tests OK; ./dosbox.sh --make: DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL. Repeated check --all after the tooling refinement: 572/572.
+
+### What I learned
+- Header generation previously tracked address-annotated declarations only. Macro ownership now participates too, excluding empty include guards; the sr-cli skill documents the standalone-header exception.
+- Platform names were checked against the 1988 Microsoft Press reference (equipment flags at 0040:0010, ticks at 0040:006C, display segments) and Microsoft's mouse reference (INT 33h; vector offset 33h * 4 = CCh): https://msarchive.pcjs.org/mspl13/msdos/norton/ and https://bitsavers.trailing-edge.com/pdf/microsoft/mouse/Microsoft_Mouse_Programmers_Reference_1989.pdf .
+- Recasting the shared char far video pointers as int far pointers, and as long for the original packed-pointer limit arithmetic, preserves every compiled byte. Full clean builds verify the macro substitutions in initialized bitmap data too.
