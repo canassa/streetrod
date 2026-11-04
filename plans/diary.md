@@ -655,3 +655,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - Five functions lose their match under one flag set per file: F_01BAE, F_01FE2, F_0238C (unit 00D78), F_03C8D (039C0), F_2382D (23262). Each diverges at a structured loop the shipped code keeps as an /Ol-off memory loop. for/while/do rewrites (and the `unsigned char` trick for F_2382D's latch copy) all still get registers and loop temps; only `goto` loops escape /Ol, which is less plausible than a pragma. The sources now carry the real MSC 5.1 pragma with a comment: one `loop_opt(off)` before F_01BAE (to the end of the file), off/on around F_03C8D, off before F_2382D.
 - The other members recorded without `l` (M_039C0, M_03FB1, M_04940) match under the file's /Ol unchanged.
 - Result: `./sr build --layout` IDENTICAL from an empty work dir, `./sr check --all` 572/572, tests OK.
+
+## 2026-11-04 14:00 CET: `main`, no CRT.H, public near functions
+
+### What I did
+- F_0066F is `main` in M_00659.C and the DB; the layout build no longer defines it or renames it for the gate.
+- CRT.H (only a comment by then) is deleted with every place that prepended it, listed it as a dependency or kept it.
+- The 29 near functions called from other link units (`call near` within a shared `/NT` code segment) are public `T near F(...)` in their sources, with prototypes in their owner's header (`./sr proto` accepts `T near @(...)`). Callers lost their `static` forward declarations and cross-unit `.STB` placeholders; same-unit placeholders are `@NAME` lines built from the DB prototype. The layout build's static-stripping regex and its prepend of near prototypes harvested from `.STB` files are gone. linkmatch places file-static functions (absent from the MAP) relative to a public function of their own object.
+- Result: `./sr build --layout` IDENTICAL from an empty work dir (0 unresolved, 572/572 mapped, 748/748 near calls), `./sr check --all` 572/572, tests OK.
+
+### What I learned
+- No file crossed MSC's external-symbol budget: the merged units already referenced these functions as externals once `static` was stripped; only the source now says so.
