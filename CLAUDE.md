@@ -35,7 +35,7 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 ./sr flags ADDR /AM /Os /FPi   # per-function flags (--reset for the default; --force on a matched function)
 ./sr name ADDR NAME            # name a function
 ./sr global 82ca g_table --decl "struct Entry @[]"   # declare a DGROUP global (no args: list them)
-./sr proto 15236 "int @(int n)" # a far function's prototype (goes into its file's header) ("" clears; --force replaces an existing one)
+./sr proto 15236 "int @(int n)" # a far (or public near) function's prototype (goes into its file's header) ("" clears; --force replaces an existing one)
 ./sr data 4eee [N]             # hex dump of DGROUP bytes with known globals
 ./sr headers                   # regenerate the per-file headers and every source's include block
 ./sr layout a b:long '{ c }'   # predict the [bp-N] layout of locals from their names (--ol for /Ol)
@@ -64,7 +64,6 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 `src/data/` records, and links MSC's MLIBCR, MLIBFP, LIBH and EM libraries.
 Shared near interfaces use four named code segments and public near definitions
 in staging copies; the source used by the byte-match gate stays unchanged.
-The entry point F_0066F becomes `main` in staging. `CRT.H` maps runtime-owned data.
 LINK runs in DOSBox-X because emu2 crashes on this link workload. The generated
 DOS Makefile works with MSC MAKE 4.07 (`ENV.BAT`, then `MAKE MAKEFILE`).
 `./sr build --layout` uses `src/link/LAYOUT.JSON`, original region boundaries,
@@ -128,6 +127,7 @@ As in the original, each source file has its own header: `src/include/<FILE>.H` 
 
 - **Globals:** `./sr global OFF NAME --decl "TYPE @"`. One name per DGROUP offset, project-wide.
 - **Far functions:** `./sr proto ADDR "TYPE @(ARGS)"`. A call without a prototype fails the check (MSC's C4071 at `/W3`). A CRT function may have several library names (`aFlmul`/`aFulmul`); `crtnames` records them in the `aliases` table and `refs` accepts any.
+- **Near functions other files call:** about 29 near functions are called (`call near`, no `push cs`) from other objects sharing the code segment. They are public `T near F(...)` definitions (not `static`), with `./sr proto ADDR "T near @(ARGS)"` putting the prototype into the owner's header; their callers include that header and do not forward-declare them. Only file-local near functions stay `static`.
 - **Struct types:** `src/include/STRUCTS.H`, hand-written, one definition per type.
 - **Allowed in a `.C`:** standard MSC headers, and `static ... near` forward declarations of module-mates.
 - **Asm:** `EXTRN` names must be the DB names (the `refs` check enforces it).
@@ -193,7 +193,7 @@ Never redirect a DOS program's output to a file without a timeout and a size bou
 | `toolchain/msc51/` | MSC 5.1 `BIN`, `INCLUDE`, `LIB`, plus the original disk images |
 | `toolchain/masm51/` | MASM 5.1 `BIN`, `INCLUDE`, docs, plus the original disk images (`F:` in DOSBox) |
 | `src/funcs/F_xxxxx.C` / `.ASM` | One reconstructed function per file (8.3 names; DOS builds them) |
-| `src/funcs/F_xxxxx.STB` | Optional placeholders for same-module callees, prepended at build time so calls compile to `push cs; call near`: `@F_xxxxx` (generated from the DB prototype) for far ones, a trivial `static ... near` definition for near ones. Not source |
+| `src/funcs/F_xxxxx.STB` | Optional placeholders for same-module callees, prepended at build time so calls compile to `push cs; call near`: `@F_xxxxx` (generated from the DB prototype) for far ones and for public near ones defined by another source of the same link unit, a trivial `static ... near` definition for static near ones. A callee in another link unit is never a placeholder: its header declares it. Not source |
 | `src/include/` | per-file headers (generated), `STRUCTS.H` (hand-written); on the compiler's `INCLUDE` path as `E:` |
 | `tools/sr/` | The CLI |
 | `db/sr.sqlite` | Functions, callees, named globals |

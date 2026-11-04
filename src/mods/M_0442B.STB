@@ -1,4 +1,4 @@
 #include "STRUCTS.H"
-static struct Car * near F_04036(int idx, int weight, struct Car *old) { return 0; }
-static struct Node * near F_03FF0(int idx, int a) { return 0; }
+@F_04036
+@F_03FF0
 @F_03AB8

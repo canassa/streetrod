@@ -1,2 +1,0 @@
-#include "STRUCTS.H"
-static void near F_03614(int reset) { }

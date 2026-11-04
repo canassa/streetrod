@@ -4,6 +4,7 @@
 #include "M_02B9A.H"
 #include "M_0542E.H"
 #include "M_06476.H"
+#include "M_0DCBE.H"
 #include "M_113A2.H"
 #include "M_15236.H"
 #include "M_15396.H"
@@ -19,7 +20,6 @@ int bn7648;
 int g7d40q;
 int g7f82r;
 
-static int near F_0E218(int n);
 static void near F_09646(int);
 static void near F_098BA(int);
 static int near F_09556(void);

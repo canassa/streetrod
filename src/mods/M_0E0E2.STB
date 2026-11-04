@@ -1,2 +1,2 @@
 #include "STRUCTS.H"
-static void near F_0DCBE(struct Car *c, struct Eng *e) { }
+@F_0DCBE

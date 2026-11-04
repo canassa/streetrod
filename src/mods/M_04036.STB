@@ -1,5 +1,5 @@
 #include "STRUCTS.H"
-static struct Node * near F_03C1B(void) { return 0; }
-static struct Node2 * near F_03FB1(void) { return 0; }
+@F_03C1B
+@F_03FB1
 static void near F_03C3E(struct Node *p) { }
 static void near F_03FD4(struct Node2 *p) { }

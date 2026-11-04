@@ -136,7 +136,7 @@ int g_50ce[7] = {0, 5, 5, 5, 5, 0, 0};   /* DS:50CE */
 
 
 
-static int near F_06B06(int mode)
+int near F_06B06(int mode)
 {
     char *p;
     int r;
@@ -256,7 +256,7 @@ static int near F_06B06(int mode)
 /* F_06F6B @ 0000:6F6B (linear 0x06f6b, 431 bytes) */
 
 
-static void near F_06F6B(void)
+void near F_06F6B(void)
 {
     struct Bitmap far *bm1;
     int x;
@@ -317,7 +317,7 @@ static void near F_06F6B(void)
 /* F_0711A @ 0000:711A (linear 0x0711a, 589 bytes) */
 
 
-static void near F_0711A(unsigned mask)
+void near F_0711A(unsigned mask)
 {
     struct Bitmap far *bm1;
     int n9;

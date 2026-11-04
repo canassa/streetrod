@@ -2,6 +2,7 @@
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_036A8.H"
+#include "M_039C0.H"
 #include "M_0F38A.H"
 #include "M_10B7C.H"
 #include "M_11E9C.H"
@@ -22,11 +23,9 @@ int ag8bcet;
 
 static int near F_005C6(void);
 static int near F_00226(int mode);
-static void near F_036BE(void);
 static void near F_00316(int mode);
 static void near F_004F4(int mode);
 static void near F_00659(void);
-static void near F_0503F(void);
 
 /* F_00659 @ 0000:0659 (linear 0x00659, 22 bytes) */
 
@@ -53,11 +52,11 @@ int g_02b4[7] = {0, 2, 0, 2, 0, 0, 0};   /* DS:02B4 */
 int g_02c2[7] = {0, 3, 1, 3, 0, 3, 1};   /* DS:02C2 */
 int g_02d0 = 0;   /* DS:02D0 */
 
-/* F_0066F @ 0000:066F (linear 0x0066F, 580 bytes) */
+/* main @ 0000:066F (linear 0x0066F, 580 bytes) */
 
 
 
-int F_0066F(int argc, char **argv)
+int main(int argc, char **argv)
 {
     int e;
     int b;

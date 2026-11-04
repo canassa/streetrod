@@ -15,8 +15,8 @@ externals are declared outside segments to avoid imposing an incorrect frame.
 The old runtime intervals DS:0000–0041 and DS:629C–6C21 are reserved as zero
 storage to preserve relative game-data offsets. Their original contents are not
 copied. MSC libraries supply their own startup, heap, stdio and floating-point
-state. `CRT.H` maps three previously unnamed runtime references to `errno`,
-`_doserrno` and `_amblksiz`. Game storage beginning at old DS:6C22 is zeroed:
+state. The game reads `errno`, `_doserrno` and `_amblksiz` through MSC's
+`<stdlib.h>` and `<malloc.h>`. Game storage beginning at old DS:6C22 is zeroed:
 the unpacked file's FF filler is not an initializer.
 
 PARTS2 ends at 3884:0000. The following 0x170-byte block belongs to

@@ -5,6 +5,7 @@
 #include "M_00D58.H"
 #include "M_02B9A.H"
 #include "M_039C0.H"
+#include "M_0DCBE.H"
 #include "M_0F38A.H"
 #include "M_10B7C.H"
 #include "M_113A2.H"
@@ -22,7 +23,7 @@
 /* F_07800 @ 0000:7800 (linear 0x07800, 241 bytes) */
 
 
-static void near F_07800(void)
+void near F_07800(void)
 {
     struct Car *car;
     int sel;
@@ -126,7 +127,7 @@ void F_079EB(void)
 /* F_07AA4 @ 0000:7AA4 (linear 0x07AA4, 1090 bytes) */
 
 
-static void near F_07AA4(void)
+void near F_07AA4(void)
 {
     int n;
     int flags[2];

@@ -206,7 +206,7 @@ def cmd_new(args):
             f"{sym}  PROC    {'FAR' if row['far'] else 'NEAR'}\n{sym}  ENDP\n\n        END\n"
         )
     else:
-        if row["proto"] and (row["far"] or "interrupt" in row["proto"]):
+        if row["proto"] and (row["far"] or "interrupt" in row["proto"] or "near @" in row["proto"]):
             head = row["proto"].replace("@", name)
         elif row["proto"]:
             head = "static " + row["proto"].replace("@", "near " + name)
@@ -574,10 +574,13 @@ def cmd_proto(args):
         print(f"{fn_name(row)}: prototype cleared")
         return
     check_decl(args.proto)
-    if not row["far"] and "interrupt" not in args.proto and not ("far @" in args.proto and args.force):
-        raise SystemExit(f"{fn_name(row)} is near (RET): it is a static module-mate, forward-declared in the "
-                         "callers' .C as `static T near F(...);`, not a header prototype. (If C code really "
-                         "far-calls this near routine, an original bug, use `T far @(...)` with --force.)")
+    if not row["far"] and "interrupt" not in args.proto and "near @" not in args.proto \
+            and not ("far @" in args.proto and args.force):
+        raise SystemExit(f"{fn_name(row)} is near (RET). A static module-mate is forward-declared in the "
+                         "callers' .C as `static T near F(...);`, not a header prototype. A near function "
+                         "other files call (same code segment) is public: `T near @(...)` goes into its file's "
+                         "header. (If C code really far-calls this near routine, an original bug, use "
+                         "`T far @(...)` with --force.)")
     same = row["proto"] and re.sub(r"\w+(?=\s*[,)])", "", row["proto"]) == re.sub(r"\w+(?=\s*[,)])", "", args.proto)
     if row["proto"] and row["proto"] != args.proto and not same and not args.force:
         raise SystemExit(f"{fn_name(row)} already has {row['proto']!r}; other files rely on it "

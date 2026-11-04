@@ -43,6 +43,9 @@ extern float p_8bc4;                                    /* DS:8BC4 */
 extern int cz8bd0y;                                     /* DS:8BD0 */
 void F_0B8A1(void);                                     /* 0x0B8A1 */
 void F_0C407(void);                                     /* 0x0C407 */
+int near F_0C613(void);                                 /* 0x0C613 */
+void near F_0CDAF(struct Eng *p);                       /* 0x0CDAF */
+void near F_0D031(void);                                /* 0x0D031 */
 int F_0D544(int rpm);                                   /* 0x0D544 */
 void F_0DA25(void);                                     /* 0x0DA25 */
 

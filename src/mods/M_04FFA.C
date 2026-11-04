@@ -4,10 +4,12 @@
 #include "M_00D58.H"
 #include "M_02B9A.H"
 #include "M_02FC8.H"
+#include "M_0542E.H"
 #include "M_06476.H"
 #include "M_08D26.H"
 #include "M_0914C.H"
 #include "M_0B3CA.H"
+#include "M_0DCBE.H"
 #include "M_0F38A.H"
 #include "M_113A2.H"
 #include "M_11A72.H"
@@ -17,23 +19,11 @@
 #include "M_193D4.H"
 
 static int near F_039C0(void);
-static int near F_0570C(void);
-static int near F_05B4A(void);
 static int near F_03B33(void);
 static void near F_0442B(int r);
-static int near F_06B06(int v);
 static int near F_03B0C(void);
-static void near F_0DCBE(struct Car *c, struct Eng *e);
-static int near F_0641E(void);
-static void near F_05EEA(void);
 static void near F_03C8D(void);
 static int near F_049ED(void);
-static void near F_06F6B(void);
-static void near F_07800(void);
-static void near F_07AA4(void);
-static void near F_081AB(struct Car *c);
-static void near F_0711A(unsigned mask);
-static void near F_07367(void);
 
 /* F_04FFA @ 0000:4FFA (linear 0x04FFA, 69 bytes) */
 
@@ -53,7 +43,7 @@ void F_04FFA(int a, int b, int c)
 
 
 
-static void near F_0503F(void)
+void near F_0503F(void)
 {
     int again;
     int kind;

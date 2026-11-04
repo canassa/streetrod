@@ -1,6 +1,5 @@
 #include "STRUCTS.H"
-static void near F_076A7(int t, struct Node **list, char *buf, int start) { }
-static void near F_07741(struct Node *n, struct Node **slot) { }
-static struct Node * near F_077B7(struct Node *n) { return 0; }
-static int near F_0E218(int x) { return 0; }
+@F_076A7
+@F_07741
+@F_077B7
 static void near F_07789(struct Node **slot) { }

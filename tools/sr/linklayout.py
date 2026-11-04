@@ -74,7 +74,7 @@ def prepare():
             src = config.ROOT / unit['sources'][0]
             stem = f"D_{unit['lo']:05X}"
             filename = stem + '.C'
-            (OUT/filename).write_text('#include "CRT.H"\n' + src.read_text())
+            shutil.copyfile(src, OUT/filename)
             jobs.append(dict(stem=stem, source=filename, program='CL',
                              args=['/c', '/W3', *config.DEFAULT_FLAGS.split(), '/Fc', filename]))
             sequence.append(stem + '.OBJ')
@@ -96,12 +96,7 @@ def prepare():
                 opt = re.search(r'/O(\w+)', source_flags)
                 loop = opt is not None and 'l' in opt[1]
                 parts.append('#pragma loop_opt('+('on' if loop else 'off')+')\n'+(config.ROOT/source).read_text())
-            text = ('#include "CRT.H"\n'
-                    + ''.join(build.near_declarations(config.ROOT/s) for s in unit['sources'])
-                    + module.merge(parts))
-            text = re.sub(r'\bstatic\s+(?=[^;{}\n]*\bnear\b)', '', text)
-            if start <= 0x66f < end:
-                text = '#define F_0066F main\n'+text
+            text = module.merge(parts)
             filename = stem+'.C'
             program = 'CL'
             args = ['/c', '/W3', *flags.split(), '/NT'+seg, '/Fc', filename]
@@ -195,7 +190,6 @@ def run(prepare_only=False, objects_only=False):
             if job['program'] == 'CL':
                 procs = cod.parse(root/(job['stem'].lower()+'.cod'))
                 obj.statics = cod.statics(root/(job['stem'].lower()+'.cod'))
-                members = [{**r, 'name': 'main'} if r['addr'] == 0x66f else r for r in members]
             else:
                 procs = [cod.from_publics(obj, module.fname(r)) for r in members]
             gate = module.gate(obj, procs, original.img, members, con=db.connect())

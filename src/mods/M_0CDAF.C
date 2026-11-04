@@ -7,6 +7,7 @@
 #include "M_08D26.H"
 #include "M_08EA8.H"
 #include "M_0914C.H"
+#include "M_0DCBE.H"
 #include "M_0F38A.H"
 #include "M_113A2.H"
 #include "M_11E9C.H"
@@ -29,9 +30,6 @@ int g755av;
 int a_7f88d;
 int bz8630z;
 
-static int near F_0E218(int n);
-static void near F_0CDAF(struct Eng *p);
-static void near F_0E0E2(int n, struct Eng *p);
 static void near F_0CF5C(void);
 static void near F_0D1DE(int rpm, struct Eng *p);
 
@@ -39,7 +37,7 @@ static void near F_0D1DE(int rpm, struct Eng *p);
 
 
 
-static void near F_0CDAF(struct Eng *p)
+void near F_0CDAF(struct Eng *p)
 {
     struct Node *car;
     int t;
@@ -128,7 +126,7 @@ static void near F_0CF5C(void)
 
 
 
-static void near F_0D031(void)
+void near F_0D031(void)
 {
     int one;
     struct Node *slot;

@@ -19,9 +19,9 @@ class BuildTests(unittest.TestCase):
                 jobs = build.prepare()
             self.assertEqual(len(jobs), 159)
             sources = {j['stem']: (root / j['source']).read_text() for j in jobs}
-            self.assertIn('#define F_0066F main', sources['M_00659'])
+            self.assertIn('int main(int argc', sources['M_00659'])
             self.assertNotIn('static int near', sources['M_00659'])
-            self.assertIn('int near F_0E218(int x);', sources['M_07800'])
+            self.assertIn('#include "M_0DCBE.H"', sources['M_07800'])
             self.assertNotIn('F_0E218(int x) {', sources['M_07800'])
             self.assertNotIn('.STB', (root / 'LINK.RSP').read_text())
             self.assertIn('.CODE G2_TEXT', sources['M_2487A'])

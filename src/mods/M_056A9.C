@@ -5,6 +5,8 @@
 #include "M_00D58.H"
 #include "M_02B9A.H"
 #include "M_02FC8.H"
+#include "M_03614.H"
+#include "M_039C0.H"
 #include "M_0F38A.H"
 #include "M_10B7C.H"
 #include "M_113A2.H"
@@ -16,13 +18,10 @@
 #include <string.h>
 #include <stdlib.h>
 
-static void near F_03614(int reset);
 static void near F_05584(void);
 static void near F_056A9(void);
-static struct Node * near F_03C1B(void);
 static int near F_05795(int handle, struct Node *p);
 static int near F_057DC(int handle, struct Node **head);
-static struct Node2 * near F_03FB1(void);
 
 /* F_056A9 @ 0000:56A9 (linear 0x056A9, 99 bytes) */
 
@@ -46,7 +45,7 @@ static void near F_056A9(void)
 
 
 
-static int near F_0570C(void)
+int near F_0570C(void)
 {
     int sel;
 

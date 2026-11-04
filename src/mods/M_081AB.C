@@ -14,17 +14,14 @@
 #include "M_163BE.H"
 #include "M_193D4.H"
 
-static void near F_076A7(int t, struct Node **list4, char *buf, int start);
-static void near F_07741(struct Node *n, struct Node **slot);
 static void near F_07789(struct Node **slot);
-static struct Node * near F_077B7(struct Node *n);
 static void near F_07FB1(struct Car *car);
 
 /* F_081AB @ 0000:81AB (linear 0x081AB, 2938 bytes): the garage screen: install, remove and tune parts */
 
 
 
-static void near F_081AB(struct Car *car)
+void near F_081AB(struct Car *car)
 {
     struct Node *list4[142];
     struct Node *p6;

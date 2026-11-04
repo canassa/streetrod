@@ -6,6 +6,7 @@
 #include "M_02B9A.H"
 #include "M_039C0.H"
 #include "M_06476.H"
+#include "M_0B3CA.H"
 #include "M_0F38A.H"
 #include "M_10B7C.H"
 #include "M_113A2.H"
@@ -25,9 +26,6 @@ static void near F_09A83(int *, int *, int *);
 static int near F_09524(int);
 static int near F_09556(void);
 static int near F_09BC5(int kind);
-static void near F_0D031(void);
-static struct Car * near F_04036(int idx, int weight, struct Car *old);
-static void near F_081AB(struct Car *c);
 
 int g_51fc[2][5] = {{4779, 4803, 4822, 4840, 4663}, {4663, 4675, 4694, 4715, 4727}};   /* DS:51FC */
 int g_5210[2][3] = {{4859, 4867, 4875}, {4743, 4756, 4767}};   /* DS:5210 */

@@ -3,12 +3,12 @@
 #include "M_036A8.H"
 #include "M_00000.H"
 #include "M_00D58.H"
+#include "M_03614.H"
 #include "M_113A2.H"
 #include <malloc.h>
 
 static unsigned g_6c60;                    /* DS:6C60 */
 
-static void near F_03614(int reset);
 
 /* data_segment @ 0000:36A8 (linear 0x036A8, 22 bytes) */
 
@@ -21,7 +21,7 @@ int data_segment(void)
     return segs.ds;
 }
 
-static void near F_036BE(void)
+void near F_036BE(void)
 {
     _amblksiz = 0x800;
     g_6c60 = data_segment();

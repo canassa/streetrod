@@ -6,7 +6,7 @@
 struct Node2 as83b0[16];
 struct Node aj866au[140];
 
-static void near F_03614(int reset)
+void near F_03614(int reset)
 {
     struct Node2 *p2;
     struct Node *r;

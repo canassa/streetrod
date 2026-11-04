@@ -8,6 +8,7 @@
 #include "M_06476.H"
 #include "M_08D26.H"
 #include "M_08EA8.H"
+#include "M_0B3CA.H"
 #include "M_0F38A.H"
 #include "M_10B7C.H"
 #include "M_113A2.H"
@@ -41,7 +42,6 @@ static void near F_092A4(int, int, int, int, int, int *);
 static int near F_09AF4(int);
 static int near F_0984E(int, int);
 static void near F_09A27(int, int, int);
-static int near F_0C613(void);
 static void near F_0A544(void);
 static void near F_0A265(void);
 static int near F_09D6D(int);

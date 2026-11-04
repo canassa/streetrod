@@ -112,7 +112,6 @@ def target(seg,off=0):
  if seg==config.DGROUP_SEG:return 'OFFSET DGROUP:DSTART+'+hx(off),'SEG DGROUP'
  if a in funcs:
   r=funcs[a];sym='_'+(r['name'] or f'F_{a:05X}')
-  if a==0x66f:sym='_main'
   externs[sym]='FAR' if r['far'] else 'NEAR'
   return 'OFFSET '+sym,'SEG '+sym
  for base,size,name,file,desc in sorted(segments,key=lambda item:item[0]!=seg):
