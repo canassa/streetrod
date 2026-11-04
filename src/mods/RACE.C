@@ -41,23 +41,23 @@
 static int g_6ca4rz;                       /* DS:6CA4 */
 static int g_6ca6qz;                       /* DS:6CA6 */
 static int g_6ca8pz;                       /* DS:6CA8 */
-static int near F_0B3CA(int);
-static void near F_0B456(void);
-static void near F_0B49C(int, int, int, int, int);
-static void near F_0B425(void);
-static void near F_0B61B(struct Dlg *, int);
-static void near F_0B4DE(void);
-static void near F_0B525(void);
-static void near F_0B552(void);
-static void near F_0B59B(void);
-static void near F_0B617(void);
-static void near F_0B717(struct Dlg *);
-static void near F_0C1D8(void);
-static void near F_0C497(void);
-static void near F_0C52C(int n);
-static void near F_0C5AC(int n);
-static int near F_0BED4(void);
-static void near F_0BF94(void);
+static int near find_gas_spot(int);
+static void near clear_gas_spots(void);
+static void near place_gas_spot(int, int, int, int, int);
+static void near sort_gas_spots(void);
+static void near show_tank_cap(struct Dlg *, int);
+static void near spots_idle(void);
+static void near spots_cap(void);
+static void near spots_nozzle(void);
+static void near spots_rag(void);
+static void near spots_none(void);
+static void near leave_station(struct Dlg *);
+static void near show_crash(void);
+static void near show_race_stats(void);
+static void near blow_engine(int n);
+static void near drop_transmission(int n);
+static int near replace_tires(void);
+static void near show_ticket(void);
 static int g_6caaaa;                       /* DS:6CAA */
 static int g_6cacaa;                       /* DS:6CAC */
 static int g_6caeaa;                       /* DS:6CAE */
@@ -67,18 +67,18 @@ static int g_6cb4;                         /* DS:6CB4 */
 static int g_6cb6;                         /* DS:6CB6 */
 static int g_6cb8;                         /* DS:6CB8 */
 static int g_6cba;                         /* DS:6CBA */
-static void near F_0CF5C(void);
-static void near F_0D1DE(int rpm, struct Eng *p);
-static void near F_0D29D(void);
-static void near F_0D624(void);
-static void near F_0D67D(void);
-static void near F_0D992(void);
+static void near init_rival_eng(void);
+static void near fit_gear(int rpm, struct Eng *p);
+static void near rival_accelerate(void);
+static void near move_player(void);
+static void near move_rival(void);
+static void near cop_appears(void);
 
 int g_53b6[6] = {2, 1, 4, 6, 5, 3};   /* DS:53B6 */
 
-/* F_0B3CA @ 0000:B3CA (linear 0x0B3CA, 91 bytes) */
+/* find_gas_spot @ 0000:B3CA (linear 0x0B3CA, 91 bytes) */
 
-static int near F_0B3CA(int id)
+static int near find_gas_spot(int id)
 {
     int base, n, i;
 
@@ -89,9 +89,9 @@ static int near F_0B3CA(int id)
             return base + i;
 }
 
-/* F_0B425 @ 0000:B425 (linear 0x0B425, 49 bytes) */
+/* sort_gas_spots @ 0000:B425 (linear 0x0B425, 49 bytes) */
 
-static void near F_0B425(void)
+static void near sort_gas_spots(void)
 {
     int base, n;
 
@@ -113,9 +113,9 @@ int dz82c8x;
 int s_8632;
 float p_8bc4;
 
-/* F_0B456 @ 0000:B456 (linear 0x0B456, 70 bytes) */
+/* clear_gas_spots @ 0000:B456 (linear 0x0B456, 70 bytes) */
 
-static void near F_0B456(void)
+static void near clear_gas_spots(void)
 {
     int k;
 
@@ -123,78 +123,78 @@ static void near F_0B456(void)
     g_6ca8pz = 0;
     g_6ca4rz = 0;
     for (k = 0; k < 6; k++)
-        g_09f4[F_0B3CA(g_53b6[k])].f0 = 14;
+        g_09f4[find_gas_spot(g_53b6[k])].f0 = 14;
 }
 
-/* F_0B49C @ 0000:B49C (linear 0x0B49C, 66 bytes) */
+/* place_gas_spot @ 0000:B49C (linear 0x0B49C, 66 bytes) */
 
-static void near F_0B49C(int id, int x, int y, int w, int h)
+static void near place_gas_spot(int id, int x, int y, int w, int h)
 {
     struct Hot *p;
-    p = &g_09f4[F_0B3CA(id)];
+    p = &g_09f4[find_gas_spot(id)];
     p->x2 = (p->x1 = x) + w - 1;
     p->y2 = (p->y1 = y) + h - 1;
     p->f0 = 11;
 }
 
-/* F_0B4DE @ 0000:B4DE (linear 0x0B4DE, 71 bytes) */
+/* spots_idle @ 0000:B4DE (linear 0x0B4DE, 71 bytes) */
 
-static void near F_0B4DE(void)
+static void near spots_idle(void)
 {
-    F_0B456();
-    F_0B49C(2, 0x3f, 100, 12, 23);
-    F_0B49C(1, 0x54, 0xa8, 0x1f, 15);
-    F_0B425();
+    clear_gas_spots();
+    place_gas_spot(2, 0x3f, 100, 12, 23);
+    place_gas_spot(1, 0x54, 0xa8, 0x1f, 15);
+    sort_gas_spots();
     g_6ca6qz = 1;
     g_6ca8pz = 1;
 }
 
-/* F_0B525 @ 0000:B525 (linear 0x0B525, 45 bytes) */
+/* spots_cap @ 0000:B525 (linear 0x0B525, 45 bytes) */
 
-static void near F_0B525(void)
+static void near spots_cap(void)
 {
-    F_0B456();
-    F_0B49C(4, ar826e - 10, q_8270 - 5, 18, 12);
-    F_0B425();
+    clear_gas_spots();
+    place_gas_spot(4, ar826e - 10, q_8270 - 5, 18, 12);
+    sort_gas_spots();
     g_6ca4rz = 1;
 }
 
-/* F_0B552 @ 0000:B552 (linear 0x0B552, 73 bytes) */
+/* spots_nozzle @ 0000:B552 (linear 0x0B552, 73 bytes) */
 
-static void near F_0B552(void)
+static void near spots_nozzle(void)
 {
-    F_0B456();
-    F_0B49C(2, 0x34, 100, 16, 23);
-    F_0B49C(4, ar826e - 1, q_8270 - 1, 10, 9);
-    F_0B425();
+    clear_gas_spots();
+    place_gas_spot(2, 0x34, 100, 16, 23);
+    place_gas_spot(4, ar826e - 1, q_8270 - 1, 10, 9);
+    sort_gas_spots();
     g_6ca8pz = 1;
     g_6ca4rz = 1;
 }
 
-/* F_0B59B @ 0000:B59B (linear 0x0B59B, 124 bytes) */
+/* spots_rag @ 0000:B59B (linear 0x0B59B, 124 bytes) */
 
-static void near F_0B59B(void)
+static void near spots_rag(void)
 {
-    F_0B456();
+    clear_gas_spots();
     if (h_8264)
-        F_0B49C(6, g826af, ae826cv, 20, 19);
-    F_0B49C(5, d_8266, ap8268t, 22, 19);
-    F_0B49C(1, 0x3e, 0xa5, 0x35, 18);
-    F_0B49C(3, 0xc4, 0x5a, 16, 14);
-    F_0B425();
+        place_gas_spot(6, g826af, ae826cv, 20, 19);
+    place_gas_spot(5, d_8266, ap8268t, 22, 19);
+    place_gas_spot(1, 0x3e, 0xa5, 0x35, 18);
+    place_gas_spot(3, 0xc4, 0x5a, 16, 14);
+    sort_gas_spots();
     g_6ca6qz = 1;
 }
 
-/* F_0B617 @ 0000:B617 (linear 0x0B617, 4 bytes) */
+/* spots_none @ 0000:B617 (linear 0x0B617, 4 bytes) */
 
-static void near F_0B617(void)
+static void near spots_none(void)
 {
-    F_0B456();
+    clear_gas_spots();
 }
 
-/* F_0B61B @ 0000:B61B (linear 0x0B61B, 252 bytes) */
+/* show_tank_cap @ 0000:B61B (linear 0x0B61B, 252 bytes) */
 
-static void near F_0B61B(struct Dlg *d, int id)
+static void near show_tank_cap(struct Dlg *d, int id)
 {
     struct Bitmap far *back, far *label, far *work;
     struct Blt box;
@@ -218,16 +218,16 @@ static void near F_0B61B(struct Dlg *d, int id)
     F_19438(2);
 }
 
-/* F_0B717 @ 0000:B717 (linear 0x0B717, 394 bytes) */
+/* leave_station @ 0000:B717 (linear 0x0B717, 394 bytes) */
 
-static void near F_0B717(struct Dlg *d)
+static void near leave_station(struct Dlg *d)
 {
     struct Bitmap far *p;
 
     if (d->f0c != 1)
         F_120FE(1);
     if (d->f12) {
-        F_0B61B(d, 0x472);
+        show_tank_cap(d, 0x472);
         if (d->f18) {
             F_11540(a_7eaap.m7eaa >= 10 ? -10 : -(int)a_7eaap.m7eaa);
             d->f18 = 0;
@@ -250,12 +250,12 @@ static void near F_0B717(struct Dlg *d)
     F_13F21(1);
     F_193D4();
     g_0284 = 1;
-    F_08D26();
+    cruise_go();
 }
 
-/* F_0B8A1 @ 0000:B8A1 (linear 0x0B8A1, 1587 bytes) */
+/* race_gas_station @ 0000:B8A1 (linear 0x0B8A1, 1587 bytes) */
 
-void F_0B8A1(void)
+void race_gas_station(void)
 {
     struct Bitmap far *label;
     struct Dlg dl;
@@ -294,8 +294,8 @@ void F_0B8A1(void)
     dl.f16 = 0;
     dl.f18 = 1;
     dl.f0e = (0xbe - a_7eaap.m7eb0->f22) / 0x1e;
-    F_0B61B(&dl, 0x472);
-    F_0B4DE();
+    show_tank_cap(&dl, 0x472);
+    spots_idle();
     F_13DE6(0x17);
     F_120FE(-2);
 top:
@@ -320,14 +320,14 @@ top:
                     if (dl.f10)
                         goto tail;
                 fin:
-                    F_0B717(&dl);
+                    leave_station(&dl);
                     return;
                 }
             } else {
                 if (--wait1 > 0)
                     goto top;
                 F_13F21(1);
-                F_0B617();
+                spots_none();
                 F_13DE6(0x17);
                 pos <<= 1;
                 dl.f16 = 1;
@@ -342,7 +342,7 @@ top:
                     F_120FE(dl.f0c = 2);
                     dl.f14 = 0;
                 }
-                F_0B61B(&dl, 0x471);
+                show_tank_cap(&dl, 0x471);
                 dl.f12 = 1;
                 F_120FE(dl.f0c = 1);
                 F_11149(2);
@@ -358,7 +358,7 @@ top:
                 F_120FE(dl.f0c = 3);
                 F_119B8(0x473, 0x50, 0xaa, -1);
                 F_13F21(1);
-                F_0B59B();
+                spots_rag();
         redraw:
                 F_13DE6(0x17);
                 goto top;
@@ -366,7 +366,7 @@ top:
                 F_120FE(dl.f0c = 1);
                 F_11BD3(label, 0x50, 0xaa);
                 F_13F21(1);
-                F_0B4DE();
+                spots_idle();
                 goto redraw;
             }
         case 2:
@@ -378,7 +378,7 @@ top:
                 dl.f14 = 0;
             both:
                 F_13F21(1);
-                F_0B552();
+                spots_nozzle();
             } else {
                 if (pos > a_7eaap.m7eaa || done) {
                     dl.f18 = 0;
@@ -388,7 +388,7 @@ top:
                 F_11BD3(g_028c, 0x40, 0x64);
                 dl.f14 = 1;
                 F_13F21(1);
-                F_0B4DE();
+                spots_idle();
             }
             F_13DE6(0x17);
         tail:
@@ -403,7 +403,7 @@ top:
                     F_16993(0);
                     F_10D6C(2);
                 }
-                F_0B61B(&dl, 0x472);
+                show_tank_cap(&dl, 0x472);
                 dl.f12 = 0;
                 F_120FE(dl.f0c = 2);
                 if (dl.f0e > 0 && pos <= a_7eaap.m7eaa)
@@ -413,13 +413,13 @@ top:
             if (dl.f0e == 0 || pos > a_7eaap.m7eaa)
                 game_message(0x10b5);
             else {
-                F_0B61B(&dl, 0x471);
+                show_tank_cap(&dl, 0x471);
                 dl.f12 = 1;
                 F_120FE(dl.f0c = 1);
                 F_11149(2);
                 F_16993(1);
                 F_13F21(1);
-                F_0B525();
+                spots_cap();
                 F_13DE6(0x17);
                 g_05cc = g_tick + 0x4c;
                 dl.f1a = 1;
@@ -436,9 +436,9 @@ top:
     }
 }
 
-/* F_0BED4 @ 0000:BED4 (linear 0x0BED4, 192 bytes) */
+/* replace_tires @ 0000:BED4 (linear 0x0BED4, 192 bytes) */
 
-static int near F_0BED4(void)
+static int near replace_tires(void)
 {
     struct Node *tbl[142];
     int ret;
@@ -469,9 +469,9 @@ int g_53c8[6] = {4973, 5015, 5073, 5043, 5099, 5130};   /* DS:53C8 */
 struct Spot g_53d4[3] = {{1264, 64, 84}, {1266, 208, 82}, {1265, 272, 123}};   /* DS:53D4 */
 int g_53e6 = 0;   /* DS:53E6 */
 
-/* F_0BF94 @ 0000:BF94 (linear 0x0BF94, 580 bytes) */
+/* show_ticket @ 0000:BF94 (linear 0x0BF94, 580 bytes) */
 
-static void near F_0BF94(void)
+static void near show_ticket(void)
 {
     struct Bitmap far *a, far *b;
     int endk, desc3;
@@ -525,9 +525,9 @@ static void near F_0BF94(void)
     sys_input_reset();
 }
 
-/* F_0C1D8 @ 0000:C1D8 (linear 0x0C1D8, 559 bytes) */
+/* show_crash @ 0000:C1D8 (linear 0x0C1D8, 559 bytes) */
 
-static void near F_0C1D8(void)
+static void near show_crash(void)
 {
     struct Bitmap far *a, far *b;
     struct Blt pkt;
@@ -577,9 +577,9 @@ static void near F_0C1D8(void)
     F_193D4();
 }
 
-/* F_0C407 @ 0000:C407 (linear 0x0C407, 144 bytes) */
+/* race_finish_stats @ 0000:C407 (linear 0x0C407, 144 bytes) */
 
-void F_0C407(void)
+void race_finish_stats(void)
 {
     if (g_53e6 == 0) {
         if ((ar7e8av.m7e8a - ao7d2ev.m7d30) * 8 + ar7e8av.m7e8c <= ao7d2ev.m7d32)
@@ -593,9 +593,9 @@ void F_0C407(void)
     }
 }
 
-/* F_0C497 @ 0000:C497 (linear 0x0C497, 149 bytes) */
+/* show_race_stats @ 0000:C497 (linear 0x0C497, 149 bytes) */
 
-static void near F_0C497(void)
+static void near show_race_stats(void)
 {
     if (bo7676) {
         sprintf(g_2b3f, "Your``winning``time %2.1f sec.,`avg. speed %2d mph", p_8bc4, g7644m);
@@ -608,9 +608,9 @@ static void near F_0C497(void)
     F_13F21(1);
 }
 
-/* F_0C52C @ 0000:C52C (linear 0x0C52C, 128 bytes) */
+/* blow_engine @ 0000:C52C (linear 0x0C52C, 128 bytes) */
 
-static void near F_0C52C(int n)
+static void near blow_engine(int n)
 {
     struct Node **p;
     char *q;
@@ -630,9 +630,9 @@ static void near F_0C52C(int n)
     game_popup(-n, -1, 0x49);
 }
 
-/* F_0C5AC @ 0000:C5AC (linear 0x0C5AC, 103 bytes) */
+/* drop_transmission @ 0000:C5AC (linear 0x0C5AC, 103 bytes) */
 
-static void near F_0C5AC(int n)
+static void near drop_transmission(int n)
 {
     char *q;
     int i;
@@ -656,9 +656,9 @@ int g_54d6 = 0;   /* DS:54D6 */
 int g_54d8 = 0;   /* DS:54D8 */
 int g_54da = 0;   /* DS:54DA */
 
-/* F_0C613 @ 0000:C613 (linear 0x0C613, 1948 bytes) */
+/* race_outcome @ 0000:C613 (linear 0x0C613, 1948 bytes) */
 
-int near F_0C613(void)
+int near race_outcome(void)
 {
     int units;
     char opt;
@@ -704,7 +704,7 @@ int near F_0C613(void)
     (*m_present)();
     if (g79e2g.fbc & 1) {
         bo7676 = 1;
-        F_0C497();
+        show_race_stats();
         F_120FE(-2);
         game_message(g7d40q == 0 ? (i = g_53c8[kind]) : a_7eaap.m7ec0 == 0 ? 0x14bd : 0x14d6);
         F_11540(v);
@@ -731,7 +731,7 @@ int near F_0C613(void)
                             list[++units] = i;
                     if (units > 0) {
                         list[0] = units;
-                        F_0542E(g7f82r, list);
+                        savegame_init_racer(g7f82r, list);
                         g7d84o->f10 = 1;
                     } else
                         g7d84o->fb = 0xff;
@@ -742,15 +742,15 @@ int near F_0C613(void)
 done:
         F_13F21(1);
         if (e_78e0.fbc & 8)
-            if ((i = F_0BED4()) != 0)
+            if ((i = replace_tires()) != 0)
                 goto ret2;
         if (kind == 5)
             return 1;
         return 3;
     } else if (e_78e0.fbc & 0x40) {
         F_16AA8(0);
-        F_0BF94();
-        i = (e_78e0.fbc & 8) ? F_0BED4() : 0;
+        show_ticket();
+        i = (e_78e0.fbc & 8) ? replace_tires() : 0;
         if (e_78e0.f0 > 0x50)
             i += 0x4b;
         else if (e_78e0.f0 > 0x32)
@@ -787,7 +787,7 @@ pay:
         }
         F_11540(-v);
         if (e_78e0.fbc == 1) {
-            F_0C497();
+            show_race_stats();
             F_120FE(-2);
             i = kind == 5 ? 0x143a : 0x1427;
             game_message(g7d40q == 0 ? i : a_7eaap.m7ec0 == 0 ? 0x1450 : 0x146c);
@@ -799,20 +799,20 @@ ret2:
         } else if (stop) {
             F_120FE(-2);
             if (engine) {
-                F_0C52C(kind == 5 ? 0x16bd : 0x1634);
+                blow_engine(kind == 5 ? 0x16bd : 0x1634);
                 goto finishstop;
             } else if (opt) {
-                F_0C5AC(kind == 5 ? 0x1678 : 0x1608);
+                drop_transmission(kind == 5 ? 0x1678 : 0x1608);
                 goto finishstop;
             }
 finishstop:
             goto fin;
         } else {
-            F_0C1D8();
+            show_crash();
             if (kind == 5) {
                 if (e_78e0.fbc & 8) {
                     game_message(0x16f6);
-                    F_0BED4();
+                    replace_tires();
                 } else
                     game_message(0x1658);
             } else if (e_78e0.f0 > 0x5a) {
@@ -838,7 +838,7 @@ finishstop:
                 } else {
                     if (e_78e0.fbc & 8) {
                         game_message(0x1590);
-                        all = F_0BED4();
+                        all = replace_tires();
                         goto fin;
                     }
                     game_message(0x1561);
@@ -876,7 +876,7 @@ finishstop:
                 case 1:
                     F_11540(-v);
                     if (all)
-                        F_0BED4();
+                        replace_tires();
                     F_13F21(1);
                     return 1;
                 case 2:
@@ -901,9 +901,9 @@ int g755av;
 int a_7f88d;
 int bz8630z;
 
-/* F_0CDAF @ 0000:CDAF (linear 0x0CDAF, 429 bytes) */
+/* race_reset_eng @ 0000:CDAF (linear 0x0CDAF, 429 bytes) */
 
-void near F_0CDAF(struct Eng *p)
+void near race_reset_eng(struct Eng *p)
 {
     struct Node *car;
     int t;
@@ -957,15 +957,15 @@ nx:
     g_53e6 = 0;
 }
 
-/* F_0CF5C @ 0000:CF5C (linear 0x0CF5C, 213 bytes) */
+/* init_rival_eng @ 0000:CF5C (linear 0x0CF5C, 213 bytes) */
 
-static void near F_0CF5C(void)
+static void near init_rival_eng(void)
 {
     struct Range *r;
 
     F_0E0E2(bn7648, &g79e2g);
     g_6cb4 = g7d84o->f1;
-    F_0CDAF(&g79e2g);
+    race_reset_eng(&g79e2g);
     g79e2g.f18 = 0;
     g79e2g.f40 = g79e2g.f34[0];
     g79e2g.fe = 0x5dc;
@@ -986,9 +986,9 @@ static void near F_0CF5C(void)
     g_6cb6 = ar7e8av.m7e90 = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
 }
 
-/* F_0D031 @ 0000:D031 (linear 0x0D031, 429 bytes) */
+/* race_run @ 0000:D031 (linear 0x0D031, 429 bytes) */
 
-void near F_0D031(void)
+void near race_run(void)
 {
     int one;
     struct Node *slot;
@@ -997,8 +997,8 @@ void near F_0D031(void)
     F_120FE(-4);
     F_120FE(1);
     sys_input_reset();
-    F_0CDAF(&e_78e0);
-    F_0CF5C();
+    race_reset_eng(&e_78e0);
+    init_rival_eng();
     if (a_7eaap.m7ec0 == 1 && g7d40q == 0) {
         if (a_7f88d = !random_int(4))
             g755av = random_int(255) + 0x1fe;
@@ -1006,7 +1006,7 @@ void near F_0D031(void)
         a_7f88d = 0;
     jz79a6 = 0;
     bw8aca = 1;
-    F_08E2D();
+    cruise_run();
     sys_drive_stop();
     g_05cc = 0;
     sys_input_reset();
@@ -1027,12 +1027,12 @@ void near F_0D031(void)
     }
 }
 
-/* F_0D1DE @ 0000:D1DE (linear 0x0D1DE, 191 bytes)
+/* fit_gear @ 0000:D1DE (linear 0x0D1DE, 191 bytes)
 
    Steps p->f18 up from 1 until gear[f18].r[1].f2 exceeds f34[f18] * rpm or
    f18 reaches f1c. The four pointers the loop advances in memory are /Ol induction temps for the p->f18 indexing. */
 
-static void near F_0D1DE(int rpm, struct Eng *p)
+static void near fit_gear(int rpm, struct Eng *p)
 {
     struct Range *r;
 
@@ -1055,9 +1055,9 @@ static void near F_0D1DE(int rpm, struct Eng *p)
     p->f0 = p->fe / p->f40;
 }
 
-/* F_0D29D @ 0000:D29D (linear 0x0D29D, 679 bytes) */
+/* rival_accelerate @ 0000:D29D (linear 0x0D29D, 679 bytes) */
 
-static void near F_0D29D(void)
+static void near rival_accelerate(void)
 {
     struct Range *r;
     int old3;
@@ -1079,7 +1079,7 @@ static void near F_0D29D(void)
                 g_54d6 = 1;
                 vl = g_6cacaa - (ar7e8av.m7e8a > ao7d2ev.m7d30 ? g7d84o->f2 : g7d84o->f2 >> 1);
                 if (vl < g79e2g.f0)
-                    F_0D1DE(vl, &g79e2g);
+                    fit_gear(vl, &g79e2g);
             }
             continue;
         }
@@ -1094,7 +1094,7 @@ static void near F_0D29D(void)
                 vl = g_6cb2;
         chk:
             if (vl < g79e2g.f0) {
-                F_0D1DE(vl, &g79e2g);
+                fit_gear(vl, &g79e2g);
                 continue;
             }
         } else if (d > -5 && d < 5) {
@@ -1104,7 +1104,7 @@ static void near F_0D29D(void)
             goto chk;
         }
         if (a_7f88d >= 2 && e_78e0.f0 > 50 && g79e2g.f0 > e_78e0.f0 + 32)
-            F_0D1DE(e_78e0.f0 + 32, &g79e2g);
+            fit_gear(e_78e0.f0 + 32, &g79e2g);
         else {
             g79e2g.fe += g79e2g.f14;
             if (g79e2g.fe > g_6cba)
@@ -1146,9 +1146,9 @@ static void near F_0D29D(void)
     }
 }
 
-/* F_0D544 @ 0000:D544 (linear 0x0D544, 224 bytes) */
+/* race_speed_step @ 0000:D544 (linear 0x0D544, 224 bytes) */
 
-int F_0D544(int rpm)
+int race_speed_step(int rpm)
 {
     if (rpm <= 0)
         return 0;
@@ -1206,11 +1206,11 @@ int g_8648;
 struct Bitmap far *g8acew[13];
 int cz8bd0y;
 
-/* F_0D624 @ 0000:D624 (linear 0x0D624, 89 bytes) */
+/* move_player @ 0000:D624 (linear 0x0D624, 89 bytes) */
 
-static void near F_0D624(void)
+static void near move_player(void)
 {
-    ao7d2ev.m7d32 += ao7d2ev.m7d34 = e_78e0.f0 ? F_0D544(e_78e0.f0) : 0;
+    ao7d2ev.m7d32 += ao7d2ev.m7d34 = e_78e0.f0 ? race_speed_step(e_78e0.f0) : 0;
     if (ao7d2ev.m7d32 >= 8)
         F_2834C();
     if (ao7d2ev.m7d30 >= g_6caaaa && g_53e6 && e_78e0.f0 <= 0) {
@@ -1222,16 +1222,16 @@ static void near F_0D624(void)
     }
 }
 
-/* F_0D67D @ 0000:D67D (linear 0x0D67D, 789 bytes) */
+/* move_rival @ 0000:D67D (linear 0x0D67D, 789 bytes) */
 
-static void near F_0D67D(void)
+static void near move_rival(void)
 {
     int flag;
     int slope;
     int t;
     int dist;
 
-    ar7e8av.m7e8e = g79e2g.f0 ? F_0D544(g79e2g.f0) : 0;
+    ar7e8av.m7e8e = g79e2g.f0 ? race_speed_step(g79e2g.f0) : 0;
     if (g79e2g.f0 == 0)
         ar7e8av.m7e8e = 0;
     ar7e8av.m7e8c += ar7e8av.m7e8e;
@@ -1294,7 +1294,7 @@ static void near F_0D67D(void)
                     g_6cb6 = t;
                     if (ao7d2ev.m7d36 - ar7e8av.m7e90 < 280) {
                         ar7e8av.m7e8a = ao7d2ev.m7d30 - 1;
-                        F_0D1DE(e_78e0.f0, &g79e2g);
+                        fit_gear(e_78e0.f0, &g79e2g);
                     }
                 } else {
                     if ((t = ao7d2ev.m7d36 + 430) < cz8bd0y - 30) {
@@ -1302,11 +1302,11 @@ static void near F_0D67D(void)
                         g_6cb6 = t + 200;
                         if (ar7e8av.m7e90 - ao7d2ev.m7d36 < 580) {
                             ar7e8av.m7e8a = ao7d2ev.m7d30 - 2;
-                            F_0D1DE(e_78e0.f0, &g79e2g);
+                            fit_gear(e_78e0.f0, &g79e2g);
                         }
                     } else {
                         ar7e8av.m7e8a = ao7d2ev.m7d30 - 2;
-                        F_0D1DE(e_78e0.f0, &g79e2g);
+                        fit_gear(e_78e0.f0, &g79e2g);
                     }
                 }
             } else if (ap7d7cv == 0 || ap7d7cv == 2) {
@@ -1341,9 +1341,9 @@ static void near F_0D67D(void)
     }
 }
 
-/* F_0D992 @ 0000:D992 (linear 0x0D992, 147 bytes) */
+/* cop_appears @ 0000:D992 (linear 0x0D992, 147 bytes) */
 
-static void near F_0D992(void)
+static void near cop_appears(void)
 {
     int n1;
     int old;
@@ -1352,8 +1352,8 @@ static void near F_0D992(void)
     g7d84o = &av7ff8[10];
     F_0E0E2(0x19, &g79e2g);
     g_6cb4 = g7d84o->f1;
-    F_0D1DE(old, &g79e2g);
-    F_08D9C(5);
+    fit_gear(old, &g79e2g);
+    cruise_rival_paint(5);
     for (n1 = 0; n1 < 12; n1++)
         g8acew[n1] = ab7526x[n1];
     g_6cacaa = F_0E218(0x19);
@@ -1364,9 +1364,9 @@ static void near F_0D992(void)
 int by72f2;
 int ay8bc2z;
 
-/* F_0DA25 @ 0000:DA25 (linear 0x0DA25, 664 bytes) */
+/* race_tick @ 0000:DA25 (linear 0x0DA25, 664 bytes) */
 
-void F_0DA25(void)
+void race_tick(void)
 {
     int a1, b, c1, d;
 
@@ -1382,13 +1382,13 @@ void F_0DA25(void)
             g_58da = 1;
     } else if (abs(e_78e0.f4) < 10)
         g_58da = 0;
-    F_0D29D();
+    rival_accelerate();
     switch (a_7f88d) {
     case 1:
         if (ao7d2ev.m7d30 >= g755av) {
             if (ar7e8av.m7e8a + 5 <= ao7d2ev.m7d30) {
                 a_7f88d++;
-                F_0D992();
+                cop_appears();
             } else
                 a_7f88d = 0;
         }
@@ -1411,10 +1411,10 @@ void F_0DA25(void)
     b = ar7e8av.m7e8a * 8 + ar7e8av.m7e8c;
     c1 = ao7d2ev.m7d36;
     d = ar7e8av.m7e90;
-    F_0D624();
-    F_0D67D();
+    move_player();
+    move_rival();
     if (ao7d2ev.m7d30 >= g_6caaaa || ar7e8av.m7e8a >= g_6caaaa)
-        F_0C407();
+        race_finish_stats();
     if (e_78e0.fbc || g79e2g.fbc) {
         if (a_7f88d >= 2) {
             if (e_78e0.fbc)

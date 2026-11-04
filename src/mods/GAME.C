@@ -788,9 +788,9 @@ void near game_run(void)
             again = 1;
         w = kind;
         if (w == -1)
-            kind = F_0570C();
+            kind = savegame_new();
         else
-            kind = F_05B4A();
+            kind = savegame_load();
         if (kind == -666) {
             kind = -1;
             again = 1;
@@ -859,9 +859,9 @@ void near game_run(void)
                                 continue;
                             }
                             g_0284 = 2;
-                            F_08D26();
+                            cruise_go();
                             g_05fc += 0x222;
-                            F_0AB8B();
+                            bobs_visit();
                         } else {
                             if (a_7eaap.m7eb0->f22 >= 0x8c) {
                                 game_message(0x19b1);
@@ -874,9 +874,9 @@ void near game_run(void)
                                 continue;
                             }
                             g_0284 = 3;
-                            F_08D26();
+                            cruise_go();
                             g_05fc += 0x222;
-                            F_0B8A1();
+                            race_gas_station();
                         }
                         g_05fc += 0x222;
                         v = 1;
@@ -894,7 +894,7 @@ void near game_run(void)
                 continue;
             case 4:
                 v = 0;
-                switch (kind = F_0641E()) {
+                switch (kind = savegame_menu()) {
                 case -20:
                     return;
                 case -22:
@@ -905,7 +905,7 @@ void near game_run(void)
                         v = 0;
                         kind = 0x309;
                     } else {
-                        F_05EEA();
+                        savegame_save();
                         v = 2;
                         if (a_7eaap.m7eb0 == 0 && a_7eaap.m7eb2)
                             v = 1;
@@ -938,7 +938,7 @@ void near game_run(void)
                 continue;
             case 10:
                 F_193FE();
-                F_081AB(a_7eaap.m7eb0);
+                garage_hood(a_7eaap.m7eb0);
                 continue;
             case 13:
                 F_0711A(4);

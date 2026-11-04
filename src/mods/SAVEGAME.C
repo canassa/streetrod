@@ -26,14 +26,14 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-static void near F_05584(void);
-static void near F_056A9(void);
-static int near F_05795(int handle, struct Node *p);
-static int near F_057DC(int handle, struct Node **head);
-static int near F_0590F(int handle, struct Car **head, int flag);
-static void near F_059F6(int create);
-static int near F_05EB3(char *p);
-static int near F_0586E(int handle, struct Car *c, int flag);
+static void near init_racers(void);
+static void near init_new_game(void);
+static int near write_nodes(int handle, struct Node *p);
+static int near read_nodes(int handle, struct Node **head);
+static int near read_cars(int handle, struct Car **head, int flag);
+static void near scan_save_slots(int create);
+static int near is_blank(char *p);
+static int near write_cars(int handle, struct Car *c, int flag);
 
 char g_4fa6[] = "The game must have a name !";   /* DS:4FA6 */
 char g_4fc2[16] = {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};   /* DS:4FC2 */
@@ -43,9 +43,9 @@ int g_4ff4 = 0;   /* DS:4FF4 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 
-/* F_0542E @ 0000:542E (linear 0x0542E, 342 bytes) */
+/* savegame_init_racer @ 0000:542E (linear 0x0542E, 342 bytes) */
 
-void F_0542E(int k, int *list)
+void savegame_init_racer(int k, int *list)
 {
     int x, i, y, n;
 
@@ -75,9 +75,9 @@ void F_0542E(int k, int *list)
         av7ff8[k].fe |= (random_int(30) < y) ? 4 : 0;
 }
 
-/* F_05584 @ 0000:5584 (linear 0x05584, 293 bytes) */
+/* init_racers @ 0000:5584 (linear 0x05584, 293 bytes) */
 
-static void near F_05584(void)
+static void near init_racers(void)
 {
     int nb, na1, nc, v, i, k;
     int cl[11], bm[11], an[11];
@@ -99,23 +99,23 @@ static void near F_05584(void)
         an[0] = --na1;
     k = 0;
     for (i = 0; i < 7; i++)
-        F_0542E(k++, an);
+        savegame_init_racer(k++, an);
     for (i = 0; i < 7; i++)
-        F_0542E(k++, bm);
+        savegame_init_racer(k++, bm);
     for (i = 0; i < 7; i++)
-        F_0542E(k++, cl);
+        savegame_init_racer(k++, cl);
     av7ff8[21].fb = 0;
     if (g_0610) {
         an[0] = 1;
         an[1] = 0x18;
-        F_0542E(g_4ff4, an);
+        savegame_init_racer(g_4ff4, an);
         av7ff8[g_4ff4].f6 = 0x629;
     }
 }
 
-/* F_056A9 @ 0000:56A9 (linear 0x056A9, 99 bytes) */
+/* init_new_game @ 0000:56A9 (linear 0x056A9, 99 bytes) */
 
-static void near F_056A9(void)
+static void near init_new_game(void)
 {
     pools_init(1);
     a_7eaap.m7eaa = 750L;
@@ -123,15 +123,15 @@ static void near F_056A9(void)
         a_7eaap.m7eaa = 10000L;
     a_7eaap.m7eae = 10;
     F_26FE1(100);
-    F_05584();
+    init_racers();
     g_05fc = 0L;
     g_0604 = g_0600;
     g_4970 = g_4972 = g_4974 = g_4976 = 0;
 }
 
-/* F_0570C @ 0000:570C (linear 0x0570C, 137 bytes) */
+/* savegame_new @ 0000:570C (linear 0x0570C, 137 bytes) */
 
-int near F_0570C(void)
+int near savegame_new(void)
 {
     int sel;
 
@@ -144,16 +144,16 @@ int near F_0570C(void)
     switch (sel = F_151D4(2, 15, atnewName)) {
     case -3:
     case 0:
-        F_056A9();
+        init_new_game();
         return 0;
     case -2:
         return -2;
     }
 }
 
-/* F_05795 @ 0000:5795 (linear 0x05795, 71 bytes) */
+/* write_nodes @ 0000:5795 (linear 0x05795, 71 bytes) */
 
-static int near F_05795(int handle, struct Node *p)
+static int near write_nodes(int handle, struct Node *p)
 {
     unsigned written;
 
@@ -164,9 +164,9 @@ static int near F_05795(int handle, struct Node *p)
     return 0;
 }
 
-/* F_057DC @ 0000:57DC (linear 0x057DC, 146 bytes) */
+/* read_nodes @ 0000:57DC (linear 0x057DC, 146 bytes) */
 
-static int near F_057DC(int handle, struct Node **head)
+static int near read_nodes(int handle, struct Node **head)
 {
     struct Node *p;
     struct Node *prev;
@@ -194,20 +194,20 @@ static int near F_057DC(int handle, struct Node **head)
     return 0;
 }
 
-/* F_0586E @ 0000:586E (linear 0x0586E, 161 bytes) */
+/* write_cars @ 0000:586E (linear 0x0586E, 161 bytes) */
 
-static int near F_0586E(int handle, struct Car *c, int flag)
+static int near write_cars(int handle, struct Car *c, int flag)
 {
     int i;
     unsigned n;
 
     while (c) {
-        if (_dos_write(handle, c, 0x28, &n) != 0 || n != 0x28 || F_05795(handle, c->slot6))
+        if (_dos_write(handle, c, 0x28, &n) != 0 || n != 0x28 || write_nodes(handle, c->slot6))
             return 1;
         for (i = 0; i < 5; i++)
-            if (F_05795(handle, c->rack.s[i]))
+            if (write_nodes(handle, c->rack.s[i]))
                 return 1;
-        if (F_05795(handle, c->slot12))
+        if (write_nodes(handle, c->slot12))
             return 1;
         if (flag)
             return 0;
@@ -216,9 +216,9 @@ static int near F_0586E(int handle, struct Car *c, int flag)
     return 0;
 }
 
-/* F_0590F @ 0000:590F (linear 0x0590F, 231 bytes) */
+/* read_cars @ 0000:590F (linear 0x0590F, 231 bytes) */
 
-static int near F_0590F(int handle, struct Car **head, int flag)
+static int near read_cars(int handle, struct Car **head, int flag)
 {
     struct Car *car;
     struct Car *prev;
@@ -231,12 +231,12 @@ static int near F_0590F(int handle, struct Car **head, int flag)
         return 0;
     *head = 0;
     for (;;) {
-        if (_dos_read(handle, &buf, 0x28, &n) != 0 || n != 0x28 || F_057DC(handle, &buf.slot6))
+        if (_dos_read(handle, &buf, 0x28, &n) != 0 || n != 0x28 || read_nodes(handle, &buf.slot6))
             return 1;
         for (m = 0; m < 5; m++)
-            if (F_057DC(handle, &buf.rack.s[m]))
+            if (read_nodes(handle, &buf.rack.s[m]))
                 return 1;
-        if (F_057DC(handle, &buf.slot12))
+        if (read_nodes(handle, &buf.slot12))
             return 1;
         car = (struct Car *)game_new_car();
         *car = buf;
@@ -254,9 +254,9 @@ static int near F_0590F(int handle, struct Car **head, int flag)
     return 0;
 }
 
-/* F_059F6 @ 0000:59F6 (linear 0x059F6, 340 bytes) */
+/* scan_save_slots @ 0000:59F6 (linear 0x059F6, 340 bytes) */
 
-static void near F_059F6(int create)
+static void near scan_save_slots(int create)
 {
     int fd7;
     char hdr3[36];
@@ -288,9 +288,9 @@ static void near F_059F6(int create)
     g_49e0[0] = cnt;
 }
 
-/* F_05B4A @ 0000:5B4A (linear 0x05B4A, 873 bytes) */
+/* savegame_load @ 0000:5B4A (linear 0x05B4A, 873 bytes) */
 
-int near F_05B4A(void)
+int near savegame_load(void)
 {
     int fd7;
     char name[20];
@@ -301,7 +301,7 @@ int near F_05B4A(void)
     unsigned n;
 
     F_120FE(-4);
-    F_059F6(0);
+    scan_save_slots(0);
     r = r_vid.f16;
     r_vid.f16 = 0;
     F_118D4(0x3f7, 0);
@@ -341,9 +341,9 @@ int near F_05B4A(void)
     if (_dos_open(name, 0, &fd7)
         || _dos_read(fd7, atnewName, 0x24, &n) != 0 || n != 0x24
         || (pools_init(0), 0)
-        || F_0590F(fd7, &a_7eaap.m7eb0, 1)
-        || F_0590F(fd7, &a_7eaap.m7eb2, 0)
-        || F_057DC(fd7, &a_7eaap.m7eb8)
+        || read_cars(fd7, &a_7eaap.m7eb0, 1)
+        || read_cars(fd7, &a_7eaap.m7eb2, 0)
+        || read_nodes(fd7, &a_7eaap.m7eb8)
         || _dos_read(fd7, &g_4970, 8, &n) != 0 || n != 8
         || _dos_read(fd7, av7ff8, 0x18c, &n) != 0 || n != 0x18c
         || _dos_read(fd7, &g_05fc, 4, &n) != 0 || n != 4
@@ -354,7 +354,7 @@ int near F_05B4A(void)
         F_120FE(-3);
         if (fd7 > -1) {
             _dos_close(fd7);
-            F_056A9();
+            init_new_game();
         }
         F_120FE(-1);
         return -666;
@@ -368,11 +368,11 @@ int near F_05B4A(void)
     return 0;
 }
 
-/* F_05EB3 @ 0000:5EB3 (linear 0x05EB3, 55 bytes)
+/* is_blank @ 0000:5EB3 (linear 0x05EB3, 55 bytes)
 
    True if the string is only spaces and underscores */
 
-static int near F_05EB3(char *p)
+static int near is_blank(char *p)
 {
     char ch;
 
@@ -385,9 +385,9 @@ static int near F_05EB3(char *p)
 char g_501d = 0;   /* DS:501D */
 char g_501e[] = "Buy a car first !";   /* DS:501E */
 
-/* F_05EEA @ 0000:5EEA (linear 0x05EEA, 1332 bytes) */
+/* savegame_save @ 0000:5EEA (linear 0x05EEA, 1332 bytes) */
 
-void near F_05EEA(void)
+void near savegame_save(void)
 {
     int cmp;
     char sv7;
@@ -405,7 +405,7 @@ void near F_05EEA(void)
 
     sel = 0;
     F_120FE(-4);
-    F_059F6(1);
+    scan_save_slots(1);
     r = r_vid.f16;
     r_vid.f16 = 0;
     F_118D4(0x3f7, 0);
@@ -438,7 +438,7 @@ again:
         break;
     }
     sel = r;
-    if (F_05EB3(g_2a2e) && F_05EB3(g_2c02 + g_49e0[r])) {
+    if (is_blank(g_2a2e) && is_blank(g_2c02 + g_49e0[r])) {
         F_1171C(g_4ff2);
         F_120FE(-4);
         goto again;
@@ -471,14 +471,14 @@ again:
     case -0x14:
         unlink(name);
     }
-    strcpy(atnewName, F_05EB3(g_2a2e) ? g_2c02 + g_49e0[r] : g_2a2e);
+    strcpy(atnewName, is_blank(g_2a2e) ? g_2c02 + g_49e0[r] : g_2a2e);
     delta = g_0600 - g_0604;
     name[0] = F_15FBD();
     if (_dos_creat(name, 0, &fd8)
         || _dos_write(fd8, atnewName, 0x24, &n) != 0 || n != 0x24
-        || F_0586E(fd8, a_7eaap.m7eb0, 1)
-        || F_0586E(fd8, a_7eaap.m7eb2, 0)
-        || F_05795(fd8, a_7eaap.m7eb8)
+        || write_cars(fd8, a_7eaap.m7eb0, 1)
+        || write_cars(fd8, a_7eaap.m7eb2, 0)
+        || write_nodes(fd8, a_7eaap.m7eb8)
         || _dos_write(fd8, &g_4970, 8, &n) != 0 || n != 8
         || _dos_write(fd8, av7ff8, 0x18c, &n) != 0 || n != 0x18c
         || _dos_write(fd8, &g_05fc, 4, &n) != 0 || n != 4
@@ -491,7 +491,7 @@ again:
             _dos_close(fd8);
             unlink(name);
         }
-        F_059F6(1);
+        scan_save_slots(1);
     } else {
         _dos_close(fd8);
         F_120FE(-2);
@@ -500,9 +500,9 @@ again:
     goto again;
 }
 
-/* F_0641E @ 0000:641E (linear 0x0641E, 87 bytes) */
+/* savegame_menu @ 0000:641E (linear 0x0641E, 87 bytes) */
 
-int near F_0641E(void)
+int near savegame_menu(void)
 {
     struct Bitmap far *p;
     int row;

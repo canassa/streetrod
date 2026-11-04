@@ -57,14 +57,14 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   so a jump the original's layout shows has to be somewhere in the source. Where no
   structured form gives the layout, the source has a `goto` or a particular loop form,
   with the reason in the function's DB note. 74 `goto`s in 11 files; the layout-driven
-  ones: F_0AB8B's `while` whose body ends in a redundant `goto test;` (BOBS.C: the
+  ones: bobs_visit's `while` whose body ends in a redundant `goto test;` (BOBS.C: the
   original's body-before-test layout, and it keeps `/Ol` from enregistering `n`),
-  F_0C613's `goto finishstop` from both arms, F_0CDAF's `goto nx;` to the label right
+  race_outcome's `goto finishstop` from both arms, race_reset_eng's `goto nx;` to the label right
   after its `else`, F_10E3D's `goto next;` (a `continue` there would pull the loop
   increment up), F_139DE's `goto box;`, F_1412D's `goto next;` into a then-branch,
   F_1438E's `goto restore;`, F_1563A's `goto done;` (a `break` moves the after-loop block),
   F_29170's goto loop (escapes `/Ol`, see `loop_opt` below), F_2A84D/F_2AFDC's `goto next`,
-  F_181C8's `again`/`done`, F_05EEA's shared retry tail; and the loop forms
+  F_181C8's `again`/`done`, savegame_save's shared retry tail; and the loop forms
   `for (;; g_05d2 = 0)` in F_14C90 (the increment gives the `jmp test` entry) and
   ads_open's accumulation inside the inner `while` test (keeps `cx` for the outer loop).
   That the original had a jump at each of these points is evidence; the exact statement
@@ -89,7 +89,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   - `x_trk0`/`x_trk1` (DASH.C, labels in `src/data/NEEDLE.ASM`): two unreachable far
     accesses for the two SEG constants in CONST (DS:68E6, DS:68E8) that nothing reads.
   - `g_6c42` (POPUP.C): four unreferenced `_BSS` bytes after `g_6c40`.
-  - `g_49e0[0] = g_49e0[0];` in the default cases of your_cars (GAME.C) and F_05B4A
+  - `g_49e0[0] = g_49e0[0];` in the default cases of your_cars (GAME.C) and savegame_load
     (SAVEGAME.C): after the menu F_142CF returns a positive item, the original loads
     `g_49e0[0]` (the list's item count) into `ax` and drops it. MSC drops the store of a
     self-assignment and keeps the load. The only other forms found that give these bytes
@@ -110,7 +110,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   `g_239e + 1283`, `+ 1299`, `+ 1318`, `+ 1337` ("Chop roof - $70" ...), not as named
   globals; the game addresses messages by offset into g_239e everywhere (`Hot.f4`, the
   argument of game_message), so the original may have had named constants there. That the
-  blocks are grouped is evidence; the member list (a wider State8272 changes F_081AB's
+  blocks are grouped is evidence; the member list (a wider State8272 changes garage_hood's
   loop temps, so the arrays from DS:8290 stay separate) and the spelling are not.
 - **Per-module type views.** ROADVIEW.C reads the char `bw8aca` (DS:8ACA) as a word, so it
   writes `*(int *)&bw8aca`. The original file probably had an `extern int` of its own
@@ -120,7 +120,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   Declaring it `struct Hot *` and writing `a_8b9ap + sel` makes F_1438E 10 bytes shorter,
   so the int arithmetic is evidence; that there were two struct names is not.
 - **Return types the code does not decide.** `main` (MAIN.C) and F_118D4 (SCREEN.C)
-  are `int` but end without a `return` (C4035); F_119B8 returns F_118D4's value. F_0C613
+  are `int` but end without a `return` (C4035); F_119B8 returns F_118D4's value. race_outcome
   (RACE.C) returns 1 on one path, a value its caller stores, and `return;` on another
   (C4033). `void` and `int` give the same bytes for the first two; the source keeps `int`
   (`main` by convention, F_118D4 because F_119B8 passes its value on).

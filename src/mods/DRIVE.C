@@ -24,7 +24,7 @@ struct Bitmap far *g8188w;
 /* F_16EA2 @ 0F38:7B22 (linear 0x16EA2, 1540 bytes)
 
    Gearbox/drive screen loop: draws the dashboard, then redraws the changing parts until
-   F_08EA8 reports an input. Returns that value. */
+   drvtick_step reports an input. Returns that value. */
 
 int F_16EA2(void)
 {
@@ -134,7 +134,7 @@ int F_16EA2(void)
             g_0610--;
             sys_exit();
         }
-        if (ret = F_08EA8())
+        if (ret = drvtick_step())
             break;
         shiftx5 = e_78e0.f4;
         if (e_78e0.f1a)

@@ -36,36 +36,36 @@
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6c84;                         /* DS:6C84 */
 static int g_6c88;                         /* DS:6C88 */
-static void near F_09256(char *s);
-static int near F_0914C(int mode, int arg, int pct1, int pct2);
+static void near drop_last_word(char *s);
+static int near maybe_carhop(int mode, int arg, int pct1, int pct2);
 static int g_6c86;                         /* DS:6C86 */
 static int g_6c8aaav[12];                  /* DS:6C8A */
 static int g_6ca2;                         /* DS:6CA2 */
-static void near F_09646(int);
-static void near F_098BA(int);
-static int near F_09556(void);
-static void near F_092A4(int, int, int, int, int, int *);
-static void near F_09A27(int, int, int);
-static void near F_09A83(int *, int *, int *);
-static int near F_09524(int);
-static int near F_09BC5(int kind);
-static void near F_0A35C(struct Bitmap far *, int, struct Bitmap far *);
-static void near F_0A0F8(int, int);
-static int near F_095F1(void);
-static int near F_09AF4(int);
-static int near F_0984E(int, int);
-static void near F_0A544(void);
-static void near F_0A265(void);
-static int near F_09D6D(int);
-static void near F_0A416(void);
-static void near F_0B045(int id, char c);
+static void near build_rival_pool(int);
+static void near select_rival(int);
+static int near king_status(void);
+static void near show_rival_car(int, int, int, int, int, int *);
+static void near rival_arrives(int, int, int);
+static void near list_met_rivals(int *, int *, int *);
+static int near spec_class(int);
+static int near accepts_bet(int kind);
+static void near blit_cell(struct Bitmap far *, int, struct Bitmap far *);
+static void near setup_bobs_spots(int, int);
+static int near king_chance(void);
+static int near look_for_rival(int);
+static int near pick_rival(int, int);
+static void near play_ending(void);
+static void near pop_rival_hood(void);
+static int near challenge(int);
+static void near play_cell_anim(void);
+static void near set_jail_spots(int id, char c);
 
 int g_51ee = 100;   /* DS:51EE */
 int g_51f0 = 0;   /* DS:51F0 */
 
-/* F_0914C @ 0000:914C (linear 0x0914C, 266 bytes) */
+/* maybe_carhop @ 0000:914C (linear 0x0914C, 266 bytes) */
 
-static int near F_0914C(int mode, int arg, int pct1, int pct2)
+static int near maybe_carhop(int mode, int arg, int pct1, int pct2)
 {
     int r;
 
@@ -108,9 +108,9 @@ struct Spec *ar7d7au;
 struct Racer *g7d84o;
 int bm7f86;
 
-/* F_09256 @ 0000:9256 (linear 0x09256, 78 bytes) */
+/* drop_last_word @ 0000:9256 (linear 0x09256, 78 bytes) */
 
-static void near F_09256(char *s)
+static void near drop_last_word(char *s)
 {
     int i;
 
@@ -126,9 +126,9 @@ static void near F_09256(char *s)
 
 int g_51f8 = -1;   /* DS:51F8 */
 
-/* F_092A4 @ 0000:92A4 (linear 0x092A4, 640 bytes) */
+/* show_rival_car @ 0000:92A4 (linear 0x092A4, 640 bytes) */
 
-static void near F_092A4(int mode, int b, int c, int d, int e, int *f)
+static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
 {
     int x, n, old;
 
@@ -140,8 +140,8 @@ static void near F_092A4(int mode, int b, int c, int d, int e, int *f)
     if (mode == 4)
         g_6c84 = -1;
     bm7f86 = mode == 2;
-    if (mode == 1 && !F_0914C(0, bm7f86, 10 * x + 75 * g_6c88 + (g_0610 << 3) + 5, 10))
-        F_0914C(1, bm7f86, 20, 0);
+    if (mode == 1 && !maybe_carhop(0, bm7f86, 10 * x + 75 * g_6c88 + (g_0610 << 3) + 5, 10))
+        maybe_carhop(1, bm7f86, 20, 0);
     if (g7f32s[n = strlen(g7f32s) - 1] == '.')
         g7f32s[n] = 0;
     for (;;) {
@@ -151,7 +151,7 @@ static void near F_092A4(int mode, int b, int c, int d, int e, int *f)
         n = n < 15 ? 15 : n;
         g_51ee = (n + ar82c0) & ~7;
         if (g_51ee + cz8bc0y > 320) {
-            F_09256(g7f32s);
+            drop_last_word(g7f32s);
             continue;
         }
         break;
@@ -171,17 +171,17 @@ static void near F_092A4(int mode, int b, int c, int d, int e, int *f)
         g_6c84 = 0;
     bm7f86 = (mode == 2) ? 0 : 1;
     if (!(x && bm7f86))
-        if (!F_0914C(0, bm7f86, 10 * x + 75 * g_6c88 + (g_0610 << 3) + 5, bm7f86 == 0 ? 8 : 0))
-            F_0914C(1, bm7f86, 40, 0);
+        if (!maybe_carhop(0, bm7f86, 10 * x + 75 * g_6c88 + (g_0610 << 3) + 5, bm7f86 == 0 ? 8 : 0))
+            maybe_carhop(1, bm7f86, 40, 0);
 }
 
 int bn7648;
 int g7d40q;
 int g7f82r;
 
-/* F_09524 @ 0000:9524 (linear 0x09524, 50 bytes) */
+/* spec_class @ 0000:9524 (linear 0x09524, 50 bytes) */
 
-static int near F_09524(int n)
+static int near spec_class(int n)
 {
     int v;
 
@@ -193,9 +193,9 @@ static int near F_09524(int n)
     return 1;
 }
 
-/* F_09556 @ 0000:9556 (linear 0x09556, 155 bytes) */
+/* king_status @ 0000:9556 (linear 0x09556, 155 bytes) */
 
-static int near F_09556(void)
+static int near king_status(void)
 {
     int k, any, total;
 
@@ -221,15 +221,15 @@ static int near F_09556(void)
     return 3;
 }
 
-/* F_095F1 @ 0000:95F1 (linear 0x095F1, 85 bytes) */
+/* king_chance @ 0000:95F1 (linear 0x095F1, 85 bytes) */
 
-static int near F_095F1(void)
+static int near king_chance(void)
 {
     int kind, v;
 
     if (bn7648 == 25)
         return 0;
-    kind = F_09556();
+    kind = king_status();
     if (kind) {
         if (kind == 1)
             v = 5;
@@ -246,9 +246,9 @@ static int near F_095F1(void)
     return v;
 }
 
-/* F_09646 @ 0000:9646 (linear 0x09646, 520 bytes) */
+/* build_rival_pool @ 0000:9646 (linear 0x09646, 520 bytes) */
 
-static void near F_09646(int flag)
+static void near build_rival_pool(int flag)
 {
     int result;
     struct Spec *item;
@@ -294,15 +294,15 @@ static void near F_09646(int flag)
     }
 }
 
-/* F_0984E @ 0000:984E (linear 0x0984E, 108 bytes) */
+/* pick_rival @ 0000:984E (linear 0x0984E, 108 bytes) */
 
-static int near F_0984E(int chance, int arg)
+static int near pick_rival(int chance, int arg)
 {
     int pick;
 
     if (random_int(100) < chance)
         return 0x15;
-    F_09646(arg);
+    build_rival_pool(arg);
     if (g_6c86 == 0)
         return 0x15;
     pick = g_6c8aaav[random_int(g_6c86)];
@@ -312,9 +312,9 @@ static int near F_0984E(int chance, int arg)
     return pick;
 }
 
-/* F_098BA @ 0000:98BA (linear 0x098BA, 365 bytes) */
+/* select_rival @ 0000:98BA (linear 0x098BA, 365 bytes) */
 
-static void near F_098BA(int n)
+static void near select_rival(int n)
 {
     int skill;
 
@@ -342,25 +342,25 @@ static void near F_098BA(int n)
     m_8272.m8280 = g7d84o->f4;
 }
 
-/* F_09A27 @ 0000:9A27 (linear 0x09A27, 92 bytes) */
+/* rival_arrives @ 0000:9A27 (linear 0x09A27, 92 bytes) */
 
-static void near F_09A27(int n, int a, int mode)
+static void near rival_arrives(int n, int a, int mode)
 {
-    F_098BA(n);
+    select_rival(n);
     if (mode == 1)
         g_5a24 = 1;
     if (mode == 2 && g7f82r == 0x15)
-        g_5a24 = F_09556() == 1;
-    F_092A4(a, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
+        g_5a24 = king_status() == 1;
+    show_rival_car(a, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
 }
 
-/* F_09A83 @ 0000:9A83 (linear 0x09A83, 113 bytes) */
+/* list_met_rivals @ 0000:9A83 (linear 0x09A83, 113 bytes) */
 
-static void near F_09A83(int *ids, int *slots, int *kinds)
+static void near list_met_rivals(int *ids, int *slots, int *kinds)
 {
     int i, n;
 
-    if (F_09556() == 0)
+    if (king_status() == 0)
         av7ff8[21].fb = 1;
     else
         av7ff8[21].fb = 0;
@@ -380,14 +380,14 @@ int d_79a4;
 int g_51fc[2][5] = {{4779, 4803, 4822, 4840, 4663}, {4663, 4675, 4694, 4715, 4727}};   /* DS:51FC */
 int g_5210[2][3] = {{4859, 4867, 4875}, {4743, 4756, 4767}};   /* DS:5210 */
 
-/* F_09AF4 @ 0000:9AF4 (linear 0x09AF4, 209 bytes) */
+/* look_for_rival @ 0000:9AF4 (linear 0x09AF4, 209 bytes) */
 
-static int near F_09AF4(int n)
+static int near look_for_rival(int n)
 {
     int list[24], sel[24], kinds[24], choice;
 
     F_11421(-1, "", 0);
-    F_09A83(list, sel, kinds);
+    list_met_rivals(list, sel, kinds);
     choice = F_142CF(0x24, 1, kinds, list, 0, 0);
     switch (choice) {
     case -4:
@@ -395,10 +395,10 @@ static int near F_09AF4(int n)
     case -3:
         if (bm7f86) {
             F_11421(-1, "", 0);
-            F_092A4(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
+            show_rival_car(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
         }
         choice = F_14C8B();
-        F_09A27(sel[choice - 1], n, 0);
+        rival_arrives(sel[choice - 1], n, 0);
         return 1;
     case 0x3ea:
         game_message(0x198c);
@@ -406,9 +406,9 @@ static int near F_09AF4(int n)
     }
 }
 
-/* F_09BC5 @ 0000:9BC5 (linear 0x09BC5, 424 bytes) */
+/* accepts_bet @ 0000:9BC5 (linear 0x09BC5, 424 bytes) */
 
-static int near F_09BC5(int kind)
+static int near accepts_bet(int kind)
 {
     int item1;
     unsigned v11, v2;
@@ -434,8 +434,8 @@ static int near F_09BC5(int kind)
     }
 calc:
     chm = g7d84o->f0;
-    p18 = F_09524(bn7648);
-    p27 = F_09524(a_7eaap.m7eb0->f2);
+    p18 = spec_class(bn7648);
+    p27 = spec_class(a_7eaap.m7eb0->f2);
     clsl = (ar7d7au->f4 >> 8) & 7;
     item1 = g_4806[a_7eaap.m7eb0->rack.s[0]->idx].f2;
     v11 = ag8baey[chm][row];
@@ -461,9 +461,9 @@ calc:
     return random_int(100) <= scorel;
 }
 
-/* F_09D6D @ 0000:9D6D (linear 0x09D6D, 907 bytes) */
+/* challenge @ 0000:9D6D (linear 0x09D6D, 907 bytes) */
 
-static int near F_09D6D(int arg)
+static int near challenge(int arg)
 {
     int num;
     struct Bitmap far *pict;
@@ -477,7 +477,7 @@ static int near F_09D6D(int arg)
 
     F_193FE();
     if (arg) {
-        ch = F_09556();
+        ch = king_status();
         switch (ch) {
         case 2:
             game_message(0x1113);
@@ -506,7 +506,7 @@ static int near F_09D6D(int arg)
                 as79a2z = 5;
             }
             d_79a4 = 0;
-            F_0D031();
+            race_run();
             g_05fc += a_7eaap.m7ec0 == 0 ? 0x444u : 0x777u;
             return 2;
         }
@@ -579,14 +579,14 @@ static int near F_09D6D(int arg)
             break;
         }
         if ((long)price <= a_7eaap.m7eaa) {
-            if (F_09BC5(kind)) {
+            if (accepts_bet(kind)) {
                 as79a2z = kind;
                 d_79a4 = price;
                 F_13F21(1);
                 F_11BD3(pict, x, sy);
                 pict = 0;
                 game_message(g_5210[a_7eaap.m7ec0][random_int(3)]);
-                F_0D031();
+                race_run();
                 g_05fc += a_7eaap.m7ec0 == 0 ? 0x444u : 0x777u;
                 return 2;
             }
@@ -604,9 +604,9 @@ quit:
     return 0;
 }
 
-/* F_0A0F8 @ 0000:A0F8 (linear 0x0A0F8, 365 bytes) */
+/* setup_bobs_spots @ 0000:A0F8 (linear 0x0A0F8, 365 bytes) */
 
-static void near F_0A0F8(int a, int b)
+static void near setup_bobs_spots(int a, int b)
 {
     struct Hot save;
     struct Hot *hot;
@@ -664,9 +664,9 @@ struct Cell g_52e2[9] = {{208, 54, 8, 2, 128, 84}, {200, 54, 8, 3, 112, 88}, {18
 int g_5318[8] = {1201, 1217, 1106, 1107, 1108, 1109, 1073, 0};   /* DS:5318 */
 int g_5328[3] = {6, 7, 0};   /* DS:5328 */
 
-/* F_0A265 @ 0000:A265 (linear 0x0A265, 247 bytes) */
+/* pop_rival_hood @ 0000:A265 (linear 0x0A265, 247 bytes) */
 
-static void near F_0A265(void)
+static void near pop_rival_hood(void)
 {
     struct Bitmap far *pict;
     struct Car chassis;
@@ -682,7 +682,7 @@ static void near F_0A265(void)
     for (n = 0; n < 5; n++)
         chassis.rack.s[n] = &nodes[n];
     game_make_car(bn7648, 0, &chassis);
-    F_081AB(&chassis);
+    garage_hood(&chassis);
     F_11421(-1, "", 0);
     F_13DE6(0x18);
     g_05cc = g_tick + 800;
@@ -694,11 +694,11 @@ static void near F_0A265(void)
     F_13F21(1);
 }
 
-/* F_0A35C @ 0000:A35C (linear 0x0A35C, 186 bytes)
+/* blit_cell @ 0000:A35C (linear 0x0A35C, 186 bytes)
 
    Blit sprite-sheet cell n (7 per row) of bm into dst */
 
-static void near F_0A35C(struct Bitmap far *bm, int n, struct Bitmap far *dst)
+static void near blit_cell(struct Bitmap far *bm, int n, struct Bitmap far *dst)
 {
     struct Blt cell;
     int row;
@@ -735,9 +735,9 @@ int bo7676;
 void (far *dz78b6)(char far *, char far *);
 struct Bitmap far *x_82b8;
 
-/* F_0A416 @ 0000:A416 (linear 0x0A416, 302 bytes) */
+/* play_cell_anim @ 0000:A416 (linear 0x0A416, 302 bytes) */
 
-static void near F_0A416(void)
+static void near play_cell_anim(void)
 {
     struct Bitmap far *pict;
     int going;
@@ -761,7 +761,7 @@ static void near F_0A416(void)
                 going = 0;
             else {
                 F_10AFD(1);
-                F_0A35C(pict, g_525a[1 + g_521e[i].frame], r_vid.front);
+                blit_cell(pict, g_525a[1 + g_521e[i].frame], r_vid.front);
                 g_05cc = g_tick + (int)g_521e[i].delay;
                 i++;
             }
@@ -769,15 +769,15 @@ static void near F_0A416(void)
         }
     } while (going);
     F_10AFD(1);
-    F_0A35C(pict, g_525a[1 + 1], r_vid.front);
-    F_0A35C(pict, g_525a[1 + 1], r_vid.back);
+    blit_cell(pict, g_525a[1 + 1], r_vid.front);
+    blit_cell(pict, g_525a[1 + 1], r_vid.back);
     F_13F21(1);
     F_193FE();
 }
 
-/* F_0A544 @ 0000:A544 (linear 0x0A544, 1607 bytes) */
+/* play_ending @ 0000:A544 (linear 0x0A544, 1607 bytes) */
 
-static void near F_0A544(void)
+static void near play_ending(void)
 {
     struct Bitmap far *pic4;
     int h8;
@@ -827,7 +827,7 @@ static void near F_0A544(void)
     r_vid.f16 = 0;
     (*m_present)();
     av7ff8[21].f4 = 0x4c1;
-    F_098BA(0x15);
+    select_rival(0x15);
     F_181C8(4, bn7648, g7d84o->fe, g7d84o->ff, 1, 0x98, 0, g_5030[m_8272.m827e]);
     av7ff8[21].f4 = 0x4dc;
     pic24 = F_1934E(0x50, 0x2c, 0, 3);
@@ -935,9 +935,9 @@ static void near F_0A544(void)
 struct Btn g_5338[7] = {{&c_6e64, 0, 0, 16, 149, 40, 5}, {&c_6e64, 0, 0, 16, 149, 96, 5}, {&c_6e64, 0, 0, 16, 149, 152, 5}, {&c_6e64, 0, 0, 16, 149, 208, 5}, {&c_6e64, 0, 0, 16, 149, 264, 5}, {&x_82b8, 0, 0, 32, 149, 0, 5}, {&x_82b8, 32, 0, 32, 149, 288, 5}};   /* DS:5338 */
 struct Pair g_539a[6] = {{32, 8}, {56, 40}, {112, 40}, {168, 40}, {224, 40}, {280, 8}};   /* DS:539A */
 
-/* F_0AB8B @ 0000:AB8B (linear 0x0AB8B, 1210 bytes) */
+/* bobs_visit @ 0000:AB8B (linear 0x0AB8B, 1210 bytes) */
 
-void F_0AB8B(void)
+void bobs_visit(void)
 {
     int n;
     int rival;
@@ -961,7 +961,7 @@ void F_0AB8B(void)
     (*m_present)();
     F_16381(0);
     if (random_int(100) < 25)
-        F_0A416();
+        play_cell_anim();
     F_120FE(-2);
     bm7f86 = 0;
     g_6c84 = -1;
@@ -970,11 +970,11 @@ void F_0AB8B(void)
     g_0284 = 2;
     g_05ee = g_471c = g_4732 = 0;
     for (;;) {
-        F_0A0F8(bm7f86, !g_6c84 & !g_6c88);
+        setup_bobs_spots(bm7f86, !g_6c84 & !g_6c88);
         F_13DE6(0x25);
         g_05cc = flag == 0 ? (unsigned)(class == 4 ? 140 : 280) + g_tick : g_tick + 5;
         flag = 0;
-        rival = class == 4 ? 0 : F_095F1();
+        rival = class == 4 ? 0 : king_chance();
         F_06529(0);
         if (g_0282)
             return;
@@ -986,7 +986,7 @@ void F_0AB8B(void)
             F_11421(g_51ee, " ", cz8bc0y);
             F_13F21(1);
             g_0284 = 1;
-            F_08D26();
+            cruise_go();
             return;
         case 1000:
             F_06529(0);
@@ -995,7 +995,7 @@ void F_0AB8B(void)
             if (bm7f86 == 0)
                 goto race;
             F_11421(-1, "", 0);
-            F_092A4(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
+            show_rival_car(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
             n = 0;
             F_13F21(1);
             break;
@@ -1004,7 +1004,7 @@ out:
             F_13F21(1);
             break;
         case 4:
-            if ((status = F_09AF4(class)) == 0)
+            if ((status = look_for_rival(class)) == 0)
                 flag = 1;
             else
                 n = 0;
@@ -1014,7 +1014,7 @@ out:
             if (bm7f86 == 0) {
                 g_05cc = g_tick;
 race:
-                F_09A27(F_0984E(rival, 0), class, 2);
+                rival_arrives(pick_rival(rival, 0), class, 2);
                 class = 1;
                 F_13F21(1);
             } else {
@@ -1022,12 +1022,12 @@ race:
                 F_11421(-1, "", 0);
                 F_11421(g_51ee, "", cz8bc0y);
 test:
-                while ((F_11421(-1, "", 0), F_09D6D(g7d40q))) {
+                while ((F_11421(-1, "", 0), challenge(g7d40q))) {
                     g7f32s[0] = 0;
                     F_11421(g_51ee, " ", cz8bc0y);
-                    place = F_0C613();
+                    place = race_outcome();
                     (*bl78be)();
-                    F_08D9C(-1);
+                    cruise_rival_paint(-1);
                     if (m_8272.m8278 != 1)
                         g_4970++;
                     if (g7d40q) {
@@ -1041,7 +1041,7 @@ test:
                         else {
                             F_16381(0);
                             F_13F21(1);
-                            F_0A544();
+                            play_ending();
                             g_0282 |= 2;
                             return;
                         }
@@ -1049,7 +1049,7 @@ test:
                     if (place == 4) {
                         F_16381(0);
                         F_13F21(1);
-                        F_0B08C();
+                        bobs_jail();
                         F_120FE(-4);
                         g_0282 |= 4;
                         return;
@@ -1070,7 +1070,7 @@ test:
                         g_0284 = place == 2 ? 0 : 1;
                         if (g_0284 == 1)
                             g_51ec = 1;
-                        F_08D26();
+                        cruise_go();
                         g_51ec = 0;
                         return;
                     }
@@ -1085,10 +1085,10 @@ test:
                     n = 0;
                     if (g_4976 == 0)
                         goto out;
-                    F_09A27(0x15, 4, 0);
+                    rival_arrives(0x15, 4, 0);
                     goto test;
                 }
-                F_092A4(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
+                show_rival_car(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
                 n = 0;
                 F_13F21(1);
             }
@@ -1098,10 +1098,10 @@ test:
                 goto out;
             if (n > 0 || g7d40q) {
                 game_message(0x122c);
-                F_092A4(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
+                show_rival_car(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
                 n = 0;
             } else {
-                F_0A265();
+                pop_rival_hood();
                 n++;
                 g_05fc += 0x111L;
             }
@@ -1116,9 +1116,9 @@ test:
     }
 }
 
-/* F_0B045 @ 0000:B045 (linear 0x0B045, 71 bytes) */
+/* set_jail_spots @ 0000:B045 (linear 0x0B045, 71 bytes) */
 
-static void near F_0B045(int id, char c)
+static void near set_jail_spots(int id, char c)
 {
     struct Hot *h;
 
@@ -1134,9 +1134,9 @@ static void near F_0B045(int id, char c)
     g_579f[37]->key = c;
 }
 
-/* F_0B08C @ 0000:B08C (linear 0x0B08C, 829 bytes) */
+/* bobs_jail @ 0000:B08C (linear 0x0B08C, 829 bytes) */
 
-void F_0B08C(void)
+void bobs_jail(void)
 {
     struct Bitmap far *pict;
     struct Blt blt;
@@ -1186,7 +1186,7 @@ void F_0B08C(void)
     F_120FE(1);
     F_120FE(-1);
     g_0284 = 6;
-    F_0B045(14, 16);
+    set_jail_spots(14, 16);
     for (;;) {
         F_13DE6(0x25);
         if (flag == 0)
@@ -1194,23 +1194,23 @@ void F_0B08C(void)
         else
             g_05cc = g_tick + 5;
         flag = 0;
-        who = mode == 4 ? 0 : F_095F1();
+        who = mode == 4 ? 0 : king_chance();
         while ((ch = sys_wait_input(3000)) == 0)
             ;
         switch (ch) {
         case 1:
             F_13F21(1);
-            F_0B045(11, 34);
+            set_jail_spots(11, 34);
             g_0284 = 1;
             return;
         case 1000:
             if (random_int(100) < 6) {
                 F_120FE(-4);
                 F_11421(-1, "", 0);
-                F_0A416();
+                play_cell_anim();
                 F_120FE(-2);
             }
-            F_09A27(F_0984E(who, 1), mode, 1);
+            rival_arrives(pick_rival(who, 1), mode, 1);
             mode = 1;
             g7f32s[0] = 0;
             F_11421(g_51ee, " ", cz8bc0y);

@@ -41,6 +41,6 @@ void near F_07800(void);                                /* 0x07800 */
 void F_079EB(void);                                     /* 0x079EB */
 void near F_07AA4(void);                                /* 0x07AA4 */
 int F_07EE6(struct Car *car, int flag);                 /* 0x07EE6 */
-void near F_081AB(struct Car *car);                     /* 0x081AB */
+void near garage_hood(struct Car *car);                 /* 0x081AB */
 
 #endif

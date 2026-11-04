@@ -8,6 +8,6 @@ extern int g_51d8[];                                    /* DS:51D8 */
 extern int g_51e2[];                                    /* DS:51E2 */
 extern int g_51ec;                                      /* DS:51EC */
 extern struct Eng g79e2g;                               /* DS:79E2 */
-int F_08EA8(void);                                      /* 0x08EA8 */
+int drvtick_step(void);                                 /* 0x08EA8 */
 
 #endif

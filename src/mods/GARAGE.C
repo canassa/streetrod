@@ -30,13 +30,13 @@
 
 #pragma intrinsic(inp, outp, abs)
 
-static int near F_0653C(int v, int *out);
-static void near F_068E8(int n, int x, int y);
-static void near F_068B3(void);
-static void near F_06882(void);
-static int near F_06AD8(void);
-static void near F_07789(struct Node **slot);
-static void near F_07FB1(struct Car *car);
+static int near day_to_date(int v, int *out);
+static void near place_car_spots(int n, int x, int y);
+static void near hide_car_spots(void);
+static void near sort_spots(void);
+static int near is_broke(void);
+static void near remove_part(struct Node **slot);
+static void near tune_timing(struct Car *car);
 
 int g_5030[3][4] = {{1065, 1066, 1067, 1068}, {1028, 1029, 1030, 1031}, {1106, 1107, 1108, 1109}};   /* DS:5030 */
 int g_5048 = 33;   /* DS:5048 */
@@ -73,9 +73,9 @@ void F_06529(int n)
         g_0282 |= 1;
 }
 
-/* F_0653C @ 0000:653C (linear 0x0653C, 115 bytes) */
+/* day_to_date @ 0000:653C (linear 0x0653C, 115 bytes) */
 
-static int near F_0653C(int v, int *out)
+static int near day_to_date(int v, int *out)
 {
     int r;
 
@@ -113,7 +113,7 @@ void F_065AF(int a1)
         return;
     d9 = F_06476();
     F_064A3(&al, &bl);
-    m = F_0653C(d9, &day);
+    m = day_to_date(d9, &day);
     col = (e9 = d9 + 21) % 7;
     row5 = e9 / 7 - g_5052[m];
     x = 18 * col + g_5048;
@@ -155,7 +155,7 @@ void F_06750(int x)
     struct Colors sv;
 
     today = F_06476();
-    mnum = F_0653C(today, &date);
+    mnum = day_to_date(today, &date);
     sprintf(buf, "%s %d, 1963", g_5082[mnum], date);
     sv = x_colors;
     x_colors = bustyle->hilite;
@@ -193,9 +193,9 @@ int F_06827(int id)
             return base + k;
 }
 
-/* F_06882 @ 0000:6882 (linear 0x06882, 49 bytes) */
+/* sort_spots @ 0000:6882 (linear 0x06882, 49 bytes) */
 
-static void near F_06882(void)
+static void near sort_spots(void)
 {
     int base, n;
 
@@ -204,9 +204,9 @@ static void near F_06882(void)
     F_135E5(base, n);
 }
 
-/* F_068B3 @ 0000:68B3 (linear 0x068B3, 53 bytes) */
+/* hide_car_spots @ 0000:68B3 (linear 0x068B3, 53 bytes) */
 
-static void near F_068B3(void)
+static void near hide_car_spots(void)
 {
     int i;
 
@@ -214,11 +214,11 @@ static void near F_068B3(void)
         g_09f4[F_06827(g_508a[i])].f0 = 14;
 }
 
-/* F_068E8 @ 0000:68E8 (linear 0x068E8, 446 bytes)
+/* place_car_spots @ 0000:68E8 (linear 0x068E8, 446 bytes)
 
    Rect + hotspot setup for the 5 button rects of panel n */
 
-static void near F_068E8(int n, int x, int y)
+static void near place_car_spots(int n, int x, int y)
 {
     struct Panel *panel;
     struct Hot *hotspot;
@@ -266,9 +266,9 @@ void F_06AA6(void)
     strcpy(g_29ff, s);
 }
 
-/* F_06AD8 @ 0000:6AD8 (linear 0x06AD8, 46 bytes) */
+/* is_broke @ 0000:6AD8 (linear 0x06AD8, 46 bytes) */
 
-static int near F_06AD8(void)
+static int near is_broke(void)
 {
     if (a_7eaap.m7eb0 == 0 && a_7eaap.m7eb2 == 0 && a_7eaap.m7eb8 == 0 && a_7eaap.m7eaa < 400L)
         return 1;
@@ -358,10 +358,10 @@ int near F_06B06(int mode)
         break;
     }
     if (a_7eaap.m7eb0)
-        F_068E8(m_8272.m8282, ac825et, aw8260y);
+        place_car_spots(m_8272.m8282, ac825et, aw8260y);
     else
-        F_068B3();
-    F_06882();
+        hide_car_spots();
+    sort_spots();
     F_11593(g_49dc);
     F_120FE(-2);
     if (a_7eaap.m7eb6 > 15)
@@ -378,7 +378,7 @@ int near F_06B06(int mode)
             game_message(0x0dc7);
         }
     }
-    if (F_06AD8()) {
+    if (is_broke()) {
         game_message(0x17ff);
         g_0282 |= 0x10;
     } else {
@@ -661,9 +661,9 @@ void near F_07741(struct Node *n, struct Node **slot)
     a_7eaap.m7eb0->weight += game_part_value(n);
 }
 
-/* F_07789 @ 0000:7789 (linear 0x07789, 46 bytes) */
+/* remove_part @ 0000:7789 (linear 0x07789, 46 bytes) */
 
-static void near F_07789(struct Node **slot)
+static void near remove_part(struct Node **slot)
 {
     (*slot)->next = a_7eaap.m7eb8;
     a_7eaap.m7eb0->weight -= game_part_value(a_7eaap.m7eb8 = *slot);
@@ -721,9 +721,9 @@ void near F_07800(void)
     g_05fc += 0x444L;
 }
 
-/* F_078F1 @ 0000:78F1 (linear 0x078F1, 250 bytes) */
+/* build_car_info @ 0000:78F1 (linear 0x078F1, 250 bytes) */
 
-static void near F_078F1(int *ids, char *vals)
+static void near build_car_info(int *ids, char *vals)
 {
     int n;
     struct Item *it;
@@ -777,7 +777,7 @@ void F_079EB(void)
         game_message(0x0efa);
         return;
     }
-    F_078F1(ids, vals);
+    build_car_info(ids, vals);
     sprintf(g_511e[3] + 9, " %3i mph", F_07EE6(a_7eaap.m7eb0, 1) ? F_0E218(-1) : 0);
     sprintf(g_511e[1] + 5, " %2i gallons", a_7eaap.m7eb0->f22 / 10);
     switch (F_142CF(0x26, 1, ids, g_49e0, vals, g_511e)) {
@@ -893,7 +893,7 @@ void near F_07AA4(void)
                 g_05fc += 0x666L;
                 m_8272.m8286 = 0;
                 owner->b14[0] = owner->b14[1] = 0;
-                F_07789(&owner->slot6);
+                remove_part(&owner->slot6);
                 sys_hover_reset();
             } else if (flags[k + 1] == 1) {
                 if (owner->b14[k] == 3) {
@@ -941,9 +941,9 @@ int F_07EE6(struct Car *car, int flag)
     return 1;
 }
 
-/* F_07FB1 @ 0000:7FB1 (linear 0x07FB1, 506 bytes) */
+/* tune_timing @ 0000:7FB1 (linear 0x07FB1, 506 bytes) */
 
-static void near F_07FB1(struct Car *car)
+static void near tune_timing(struct Car *car)
 {
     struct Obj *p;
     long tmp;
@@ -1013,11 +1013,11 @@ static void near F_07FB1(struct Car *car)
     F_13F21(1);
 }
 
-/* F_081AB @ 0000:81AB (linear 0x081AB, 2938 bytes)
+/* garage_hood @ 0000:81AB (linear 0x081AB, 2938 bytes)
 
    The garage screen: install, remove and tune parts */
 
-void near F_081AB(struct Car *car)
+void near garage_hood(struct Car *car)
 {
     struct Node *list4[142];
     struct Node *p6;
@@ -1094,7 +1094,7 @@ void near F_081AB(struct Car *car)
             break;
         case -3:
             if (F_07EE6(car, 0)) {
-                F_07FB1(car);
+                tune_timing(car);
                 F_120FE(-4);
                 F_132AD(g_5186, g_519a, 1);
                 F_120FE(-2);
@@ -1316,7 +1316,7 @@ void near F_081AB(struct Car *car)
     strip:
         if (sel2 >= 0) {
             cnt1--;
-            F_07789(&car->rack.s[sel2]);
+            remove_part(&car->rack.s[sel2]);
             F_120FE(-4);
             o_8290[sel2] = 0;
             if (ok)

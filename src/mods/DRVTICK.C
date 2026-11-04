@@ -23,9 +23,9 @@ int g_51d8[5] = {42, 26, 12, 8, 4};   /* DS:51D8 */
 int g_51e2[5] = {0, 200, 125, 71, 56};   /* DS:51E2 */
 int g_51ec = 0;   /* DS:51EC */
 
-/* F_08EA8 @ 0000:8EA8 (linear 0x08EA8, 675 bytes) */
+/* drvtick_step @ 0000:8EA8 (linear 0x08EA8, 675 bytes) */
 
-int F_08EA8(void)
+int drvtick_step(void)
 {
     char key;
 
@@ -54,7 +54,7 @@ int F_08EA8(void)
             }
             return e_78e0.fbc | g79e2g.fbc;
         case 2:
-            F_0DA25();
+            race_tick();
             if (e_78e0.fbc || g79e2g.fbc)
                 return 1;
             if (e_78e0.f0 > 0) {
@@ -65,7 +65,7 @@ int F_08EA8(void)
         case 3:
             if (e_78e0.fbc || g79e2g.fbc)
                 return 1;
-            F_0DA25();
+            race_tick();
             return 0;
         }
     } else {

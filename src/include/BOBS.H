@@ -29,7 +29,7 @@ extern struct Racer *g7d84o;                            /* DS:7D84 */
 extern int g7f82r;                                      /* DS:7F82 */
 extern int bm7f86;                                      /* DS:7F86 */
 extern struct Bitmap far *x_82b8;                       /* DS:82B8 */
-void F_0AB8B(void);                                     /* 0x0AB8B */
-void F_0B08C(void);                                     /* 0x0B08C */
+void bobs_visit(void);                                  /* 0x0AB8B */
+void bobs_jail(void);                                   /* 0x0B08C */
 
 #endif

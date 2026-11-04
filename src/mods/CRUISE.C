@@ -19,9 +19,9 @@ int jz79a6;
 char g_51ac = -1;   /* DS:51AC */
 char g_51ad = -1;   /* DS:51AD */
 
-/* F_08D26 @ 0000:8D26 (linear 0x08D26, 118 bytes) */
+/* cruise_go @ 0000:8D26 (linear 0x08D26, 118 bytes) */
 
-void F_08D26(void)
+void cruise_go(void)
 {
     g_47ee = g_05ee = g_471c = g_4732 = 0;
     if (g_0284) {
@@ -33,17 +33,17 @@ void F_08D26(void)
         if (g_47ee == 0) {
             F_120FE(-4);
             g_58e6 = !g_4806[a_7eaap.m7eb0->slot6->idx].f2;
-            F_0CDAF(&e_78e0);
+            race_reset_eng(&e_78e0);
             jz79a6 = 0;
             bw8aca = 0;
-            F_08E2D();
+            cruise_run();
         }
     }
 }
 
-/* F_08D9C @ 0000:8D9C (linear 0x08D9C, 145 bytes) */
+/* cruise_rival_paint @ 0000:8D9C (linear 0x08D9C, 145 bytes) */
 
-void F_08D9C(int mode)
+void cruise_rival_paint(int mode)
 {
     char a, b;
 
@@ -71,9 +71,9 @@ void F_08D9C(int mode)
 
 int g7d66n;
 
-/* F_08E2D @ 0000:8E2D (linear 0x08E2D, 123 bytes) */
+/* cruise_run @ 0000:8E2D (linear 0x08E2D, 123 bytes) */
 
-int F_08E2D(void)
+int cruise_run(void)
 {
     int r, saved;
 
@@ -83,7 +83,7 @@ int F_08E2D(void)
     saved = m_8272.m827c;
     F_067CF(a_7eaap.m7eb0->f4);
     if (bw8aca)
-        F_08D9C(saved);
+        cruise_rival_paint(saved);
     r = F_16EA2();
     F_16AC1(0);
     F_16AA8(0);

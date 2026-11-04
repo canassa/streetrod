@@ -515,7 +515,7 @@ struct Look {
     unsigned rear : 1;
 };
 
-/* one candidate of F_09646: rating difference to the current car, an "already taken" flag, kind difference */
+/* one candidate of build_rival_pool: rating difference to the current car, an "already taken" flag, kind difference */
 struct Cand {
     int dr;
     int taken;
