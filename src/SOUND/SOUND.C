@@ -317,10 +317,10 @@ void so_sticker(int on)
 
 /* Starts one of two sounds through mu_play; `on` selects which */
 
-void F_16943(int on)
+void so_low_warble(int on)
 {
     if (on) {
-        mu_play(g_2f93_00b0, g_jingleRepeats);
+        mu_play(g_lowWarbleSound, g_jingleRepeats);
         mu_set_vibrato(1, WAVE_TRIANGLE, 8, 5, 1);
     } else
         mu_play(g_song, g_songRepeats);
@@ -350,10 +350,10 @@ void so_jack(int on)
 
 /* Starts one of two sounds through mu_play; `on` selects which */
 
-void F_16A2F(int on)
+void so_low_pulse(int on)
 {
     if (on)
-        mu_play(g_2f93_0050, g_jingleRepeats);
+        mu_play(g_lowPulseSound, g_jingleRepeats);
     else
         mu_play(g_song, g_songRepeats);
 }

@@ -2312,3 +2312,20 @@ Ownership inventory (the original 98 definitions):
 
 - A pad label can hide live data accessed through another record type. The Mask/Band, Node2/Car and Win/Hot paths must be followed before deciding that storage is unused; the per-item paths are in work/LEDGER.md and the alternate-view convention is in docs/RECONSTRUCTION.md.
 - Eng.fbe captures elapsedTicks when driving stops, but nothing reads that snapshot. Following docs/RECONSTRUCTION.md, it is now an unused member rather than claiming an active stop-time feature. Eng.initialRpmPerSpeed, by contrast, is read to seed rpmPerSpeed during reset even though there is no writer.
+
+## 2026-11-05 00:05 CET: Name the two uncalled sound effects
+
+### What I did
+
+- Renamed F_16943 / g_2f93_00b0 to so_low_warble / g_lowWarbleSound and F_16A2F / g_2f93_0050 to so_low_pulse / g_lowPulseSound through sr rename. Source changes are identifiers only; existing comments and data words remain unchanged. No items skipped.
+- Read both disassemblies, every source reference, EFFECTS.ASM, SONG.ASM, MUSIC.C and the SYS.C music start/ISR path. Verified all seven effect streams against original far-data bytes; sr data also verified the shared repeat table at DS:587E. Recorded the per-item evidence in work/LEDGER.md and the numeric decoding in work/SFX-DECODE.txt.
+- Checked GARAGE painting/bodywork/stickers/part installation, TIRES lifting/rolling, RACE gas-station actions, VIDEO's pump hook, message strings and object/function/data order. Painting has no effect call, body changes use so_noise, and jack placement is silent, but none binds either uncalled routine to an event. Function order (wheel, sticker, unknown, pump, jack, unknown, part) differs from data order (pump, jack, unknown, part, sticker, unknown, wheel) and game-object order. Chose sound descriptions rather than assigning an unsupported event.
+- Regenerated plans/unnamed.md from tools/sr/source.py. Headers and format checks pass; all 572/572 functions match; clean sr build reports packed EXE IDENTICAL; DGROUP ownership/order checks pass; 102 unit tests pass; sr docs reports zero diagnostics. Native DOSBox build validation is recorded below when complete.
+
+### What I learned
+
+- SYS programs PIT channel 0 with divisor 16384, so music advances on every 72.82605 Hz interrupt (13.73135 ms), while the BIOS clock is chained every fourth interrupt. Duration words are not BIOS ticks. The initial 0,0 is skipped by sy_music_start(2,0); 0,1 ends a phrase, and the shared int repeat table {0,-1} restarts it before the trailing 0,0 stop marker.
+- The low warble is a 11931-divisor tone (100.007 Hz, near G2 +35 cents), 7 ticks / 96.119 ms, with triangle vibrato. The low pulse is four 2-tick tones separated by 6-tick rests: divisors 65535/65023/61346/65023 yield 18.207/18.350/19.450/18.350 Hz (near D0/D0/D-sharp0/D0), totaling 32 ticks / 439.403 ms. Its wrapper does not set vibrato, so it inherits the programmable slot; the frequencies describe its stored base divisors.
+- Comparison: pump has 1-tick C3/D3/E-flat3/D3 tones with 3-tick rests (16 ticks); jack uses C1/G1/C1/E1 and a long rest (28 ticks); part movement alternates approximately 7019/30/6818/90/6214/40 Hz (26 ticks); sticker is approximately 4811 Hz for 36 ticks. The unused pulse resembles the pump/wheel rhythm at a much lower pitch; resemblance alone does not establish an event. These observations support descriptive names, with the uncertainty kept in this diary rather than source comments.
+- Both data symbols are initialized far data, so sr fit reports that communal/static hash placement does not apply. The full function and packed-build gates verify the additional identifier lengths against MSC's per-file budget.
+- Final validation: ./dosbox.sh --make also reports DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL (SHA-1 3a5e28b795313028b7e77d147122f41cb29de334); final headers, formatting and git diff whitespace checks pass.

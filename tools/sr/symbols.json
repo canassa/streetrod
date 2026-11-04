@@ -105,11 +105,11 @@
     "g_unused12": {
       "off": 1698
     },
-    "g_2f93_0050": {
+    "g_lowPulseSound": {
       "off": 80,
       "seg": 12179
     },
-    "g_2f93_00b0": {
+    "g_lowWarbleSound": {
       "off": 176,
       "seg": 12179
     },
@@ -2125,12 +2125,12 @@
     }
   },
   "functions": {
-    "F_16943": {
+    "so_low_warble": {
       "off": 30147,
       "seg": 3896,
       "size": 80
     },
-    "F_16A2F": {
+    "so_low_pulse": {
       "off": 30383,
       "seg": 3896,
       "size": 43

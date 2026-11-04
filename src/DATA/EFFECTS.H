@@ -5,10 +5,10 @@
 
 extern int far g_pumpSound[];
 extern int far g_jackSound[];
-extern int far g_2f93_0050[];
+extern int far g_lowPulseSound[];
 extern int far g_partMoveSound[];
 extern int far g_stickerSound[];
-extern int far g_2f93_00b0[];
+extern int far g_lowWarbleSound[];
 extern int far g_wheelRollSound[];
 
 #endif

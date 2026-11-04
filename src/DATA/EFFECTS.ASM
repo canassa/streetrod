@@ -2,10 +2,10 @@
 EFFECTS SEGMENT PARA PUBLIC 'FAR_DATA'
         PUBLIC  _g_pumpSound
         PUBLIC  _g_jackSound
-        PUBLIC  _g_2f93_0050
+        PUBLIC  _g_lowPulseSound
         PUBLIC  _g_partMoveSound
         PUBLIC  _g_stickerSound
-        PUBLIC  _g_2f93_00b0
+        PUBLIC  _g_lowWarbleSound
         PUBLIC  _g_wheelRollSound
 
 _g_pumpSound LABEL   WORD                ; int far[]
@@ -18,7 +18,7 @@ _g_jackSound LABEL   WORD                ; int far[]
         DW      2, 8E88h, 3, 7120h, 11h, 0, 0, 1
         DW      0, 0
 
-_g_2f93_0050 LABEL   WORD                ; int far[]
+_g_lowPulseSound LABEL   WORD                ; int far[]
         DW      0, 0, 2, 0FFFFh, 6, 0, 2, 0FDFFh
         DW      6, 0, 2, 0EFA2h, 6, 0, 2, 0FDFFh
         DW      6, 0, 0, 1, 0, 0
@@ -31,7 +31,7 @@ _g_partMoveSound LABEL   WORD                ; int far[]
 _g_stickerSound LABEL   WORD                ; int far[]
         DW      0, 0, 24h, 0F8h, 0, 1, 0, 0
 
-_g_2f93_00b0 LABEL   WORD                ; int far[]
+_g_lowWarbleSound LABEL   WORD                ; int far[]
         DW      0, 0, 7, 2E9Bh, 0, 1, 0, 0
 
 _g_wheelRollSound LABEL   WORD                ; int far[]
