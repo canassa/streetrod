@@ -818,3 +818,12 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - The `rep` prefix byte classifies code: every F2 movs in SR.EXE is in C, every F3 movs in asm or the runtime. MSC's `inp`/`outpw` reload `dx` each pass and load the value before the port.
 - MSC emits far initialized data as PARA 'FAR_DATA' segments, so most of src/data could have been C; the EXE cannot tell. The hook block DS:78A2..78DE was one struct in the original (copied as one); its 15 separate globals are a reconstruction.
+
+## 2026-11-05 03:00 CET: F_2382D without `#pragma loop_opt`
+
+### What I did
+- F_2382D (M_23262.C, `/Oalsi`) matches without the pragma once its row loop is entered at its test: `row = 0; goto test; next: row++; src += pitch; test: if (row < h) { for (col = 0, p = src; col < w; col++) *dst++ = *p++; goto next; }` — same 117 bytes and frame. The pragma and its comment are gone; M_00D58.C and M_039C0.C keep theirs.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, tests OK.
+
+### What I learned
+- MSC 5.1's `/Ol` only optimizes a loop entered at the target of its back edge. A label-at-entry goto loop (`again: ... goto again;`) is optimized like a `for`; a loop entered elsewhere (`goto test` into a `next:` loop, F_29170's shape) is skipped together with the loops nested in it. Forward gotos to a loop label change nothing. Which of the matching forms (or the pragma) the original had is not recoverable.
