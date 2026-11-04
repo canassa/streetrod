@@ -4,6 +4,12 @@
 #define SYS_H
 #include "STRUCTS.H"
 
+struct CursorDraw {
+    int x;
+    int y;
+    char dirty;
+};
+
 struct TimerHead {
     int first;
     int head;

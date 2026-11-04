@@ -217,6 +217,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **Animation** (`g_animation`, DS:6C38..6C3F): anim_run and anim_set_box use the command, object and box pointers as one interpreter context, including its blink counter. Separate globals also match; this grouping is a natural reconstruction choice.
 
+- **CursorDraw** (`g_cursorStamp`, DS:6C46..6C4B): SYS saves the drawn cursor position and tracks whether it needs repainting as one cursor drawing state. MSC supplies the final byte of alignment padding. Separate globals also match; this grouping is a natural reconstruction choice.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only

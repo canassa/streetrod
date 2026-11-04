@@ -33,9 +33,7 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_cursorDrawX;                         /* DS:6C46 */
-static int g_cursorDrawY;                         /* DS:6C48 */
-static char g_cursorDirty;                        /* DS:6C4A */
+static struct CursorDraw g_cursorStamp; /* DS:6C46 */
 static int g_keyGroup;                         /* DS:6C4C */
 static char g_6c4e;                        /* DS:6C4E */
 static int g_demoChoice;                        /* DS:6C50 */
@@ -83,7 +81,7 @@ int g_autoDrive = 0;   /* DS:0612 */
 
 void sys_hover_reset(void)
 {
-    g_cursorDirty = 1;
+    g_cursorStamp.dirty = 1;
     g_boxSpotHitData.x2 = -1;
     g_cursHoverCodeVal = 0x7d00;
     g_click = 0;
@@ -301,8 +299,8 @@ void sys_init(void)
         g_mouse.shiftY = 1;
     } else
         g_mouse.present = 0;
-    g_cursorDrawX = -1;
-    g_cursorDrawY = -1;
+    g_cursorStamp.x = -1;
+    g_cursorStamp.y = -1;
     g_songBgState.active = 0;
     g_songBgState.song = g_song;
     g_songBgState.cur = g_songBgState.phraseStart = g_songBgState.song;
@@ -480,7 +478,7 @@ int sys_wait_input(int ticks)
         }
         if (g_demo == 0 && g_mouse.present) {
             mouse_poll();
-            if (g_cursorDirty |= (g_mouse.dx != 0 || g_mouse.dy != 0)) {
+            if (g_cursorStamp.dirty |= (g_mouse.dx != 0 || g_mouse.dy != 0)) {
                 g_cursorX += g_mouse.dx;
                 g_cursorY += g_mouse.dy;
             }
@@ -509,19 +507,19 @@ int sys_wait_input(int ticks)
             g_waitUntil = 0L;
             return 0x3e8;
         }
-        if (g_cVis > 0 && g_cursorDirty) {
+        if (g_cVis > 0 && g_cursorStamp.dirty) {
             _disable();
-            if ((g_cursorDrawX = g_cursorX) < 0)
-                g_cursorDrawX = g_cursorX = 0;
-            else if (g_cursorDrawX > 0x13a)
-                g_cursorDrawX = g_cursorX = 0x13a;
-            if ((g_cursorDrawY = g_cursorY) < 0)
-                g_cursorDrawY = g_cursorY = 0;
-            else if (g_cursorDrawY > 0xc2)
-                g_cursorDrawY = g_cursorY = 0xc2;
-            g_cursorDirty = 0;
+            if ((g_cursorStamp.x = g_cursorX) < 0)
+                g_cursorStamp.x = g_cursorX = 0;
+            else if (g_cursorStamp.x > 0x13a)
+                g_cursorStamp.x = g_cursorX = 0x13a;
+            if ((g_cursorStamp.y = g_cursorY) < 0)
+                g_cursorStamp.y = g_cursorY = 0;
+            else if (g_cursorStamp.y > 0xc2)
+                g_cursorStamp.y = g_cursorY = 0xc2;
+            g_cursorStamp.dirty = 0;
             _enable();
-            cursor_draw(x = g_cursorDrawX, y = g_cursorDrawY);
+            cursor_draw(x = g_cursorStamp.x, y = g_cursorStamp.y);
             if (g_menuLevel
                 && (x < g_boxSpotHitData.x1 || x >= g_boxSpotHitData.x2 || y < g_boxSpotHitData.y1 || y >= g_boxSpotHitData.y2)) {
                 res = g_cursHoverCodeVal;
@@ -920,7 +918,7 @@ void interrupt far sys_timer_isr(void)
         if ((g_demoTargetX || g_demoTargetY) && (g_cursorX != g_demoTargetX || g_cursorY != g_demoTargetY)) {
             g_cursorX += sys_sign(g_demoTargetX - g_cursorX);
             g_cursorY += sys_sign(g_demoTargetY - g_cursorY);
-            g_cursorDirty = 1;
+            g_cursorStamp.dirty = 1;
         }
     }
     if (g_voice->active && --g_voice->ticksLeft) {
@@ -1000,7 +998,7 @@ tail:
             if (x | y) {
                 g_cursorX += g_474c[x];
                 g_cursorY += g_4752[y];
-                g_cursorDirty = 1;
+                g_cursorStamp.dirty = 1;
             }
             g_cursorBusy = 0;
         }
@@ -1111,29 +1109,29 @@ void interrupt far sys_drive_isr(void)
                     if (g_demo == 0 && g_joystick) {
                         joy_read();
                         if ((n = g_joyX) < g_joyMinX) {
-                            g_cursorDirty = s = 1;
+                            g_cursorStamp.dirty = s = 1;
                             g_cursorX += -1;
                         } else if (g_joyMaxX < n) {
-                            g_cursorDirty = s = 1;
+                            g_cursorStamp.dirty = s = 1;
                             g_cursorX++;
                         }
                         if ((n = g_joyY) < g_joyMinY) {
-                            g_cursorDirty = flag = 1;
+                            g_cursorStamp.dirty = flag = 1;
                             g_cursorY += -1;
                         } else if (g_joyMaxY < n) {
-                            g_cursorDirty = prev = 1;
+                            g_cursorStamp.dirty = prev = 1;
                             g_cursorY++;
                         }
                     }
                     if (g_demo == 0 && g_mouse.present) {
                         mouse_poll();
                         if (g_mouse.dy > 0) {
-                            g_cursorDirty = 1;
+                            g_cursorStamp.dirty = 1;
                             g_cursorY++;
                             prev = 1;
                         }
                         if (n = g_mouse.dx) {
-                            g_cursorDirty = s = 1;
+                            g_cursorStamp.dirty = s = 1;
                             g_cursorX += n > 0 ? 1 : -1;
                         }
                         if (g_mouse.right)
