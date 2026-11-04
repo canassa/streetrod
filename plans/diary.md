@@ -1109,3 +1109,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - sys_crit_error (the `_harderr` handler) uses MSC 5.1's own `_HARDERR_RETRY`/`_HARDERR_ABORT` from <dos.h> for `_hardresume`, and PC.H/PC.INC name the int 24h facts: `CRIT_DEVICE_ERROR` (0x8000), `CRIT_RETRY_ALLOWED` (0x1000), `CRIT_WRITE_PROTECT` (0), `CRIT_NOT_READY` (2), `CRIT_PAPER_OUT` (9). Done by a Codex agent.
 - Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, tests OK.
+
+## 2026-11-04 14:51 CET: Readable animation script commands
+
+### What I did
+- Named the thirteen animation opcodes, four box-position modes and wait copy mode in VIDEO.H; applied them to anim_set_box, anim_run and all 44 g_animScripts records.
+- Renamed Box coordinates to sx/sy/dx/dy while preserving the 28-byte record and 44-byte Obj stride. Retained casts to the 20-byte Blt.
+- Merged main (already current), then verified 572/572 functions, a clean build with packed EXE IDENTICAL, headers, DGROUP ownership, all 53 tests and DOS-native EXE IDENTICAL.
+
+### What I learned
+- Box shares Blt's first six words, but its 16-byte tail has no established member meanings in current accesses; substituting the smaller Blt would change the object array layout.
+- The DGROUP C-data reader cannot parse typedef member types. Cmd.op/sub therefore retain explicit signed-char storage, as allowed by the task; enum values live in VIDEO.H.
