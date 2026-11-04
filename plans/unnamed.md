@@ -1,6 +1,6 @@
 # Unnamed symbols (placeholders still in the tree)
 
-Generated from db/sr.sqlite and src/ on main. Placeholder = `F_xxxxx` functions, `g_xxxx` / hash-tuned globals (e.g. `ai70e4t`, `g_6c8aaav`), `M_xxxxx` files. Runtime names (errno, _doserrno, _amblksiz) excluded.
+Generated from the sources on main (2026-11-05). Placeholder = `F_xxxxx` functions, `g_xxxx` / hash-tuned globals (e.g. `ai70e4t`, `g_6c8aaav`), `M_xxxxx` files. Runtime names (errno, _doserrno, _amblksiz) excluded.
 
 - Functions: 62 of 573 game functions
 - Globals: 420 of 826 DGROUP globals (initialized: 161, static (_BSS, MSC name hash): 51, communal (LINK hash bucket): 208)

@@ -845,3 +845,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - MSC's per-file budget counts name characters of static functions and the static variables a file references too, not only externals (rule 4d corrected). GARAGE.C (before F_07AA4) and VIEW.C (before F_2969D) are at the limit, so most of their symbols keep placeholders.
 - Communal windows are 0-3 hash buckets wide; few descriptive names fit them.
+
+## 2026-11-05 06:30 CET: No database; the tools read the sources
+
+### What I did
+- Deleted db/sr.sqlite. tools/sr/source.py builds every table the tools used from the files: game functions from the comment above each definition (name, seg:off, linear address, size), globals and far data from the headers' extern lines and their address comments, file statics from their definitions; runtime functions, their library names and the library's DGROUP data come from the scanner and the MSC libraries matched in the EXE (cached under work/). Function notes were dropped (git history keeps them).
+- Removed the commands that only wrote rows (`name`, `global`, `proto`, `mark`, `kind`, `note`, `next`, `status`) and docs/PROGRESS.md; declarations and prototypes are header edits. `./sr headers` maintains include blocks and MAKEFILE dependencies and checks every header against its file's definitions; `./sr scan` and `crtnames` only report; `./sr rename` works on files alone.
+- A DB-vs-loader comparison agreed except for a retired scanner row, a stale prototype, the interrupt handlers' near/far reading and the choice between two library names for one address; `check --all` and the four dgroup outputs were byte-identical with and without the DB.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, `./sr scan` agrees with the sources, 38 tests OK.
+
+### What I learned
+- The address comments in the headers are now what `refs` verifies global addresses against, so they are load-bearing.
