@@ -42,12 +42,12 @@ int edit_line(int x, int y, char *buf, int max)
     }
     x_colors.fill = x_colors.textBg;
     x_colors.line = x_colors.text;
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     draw_fill_rect(r_vid.back, x, y, w, 8);
     (*a_78aem)(r_vid.back, x, y, buf);
     draw_vline(r_vid.back, cx = g824cd, cy = bq824e, 8);
     colr = -1;
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, x, y, x + w, y + 8);
     ip = g_msgClickToEdit[0];
@@ -80,7 +80,7 @@ int edit_line(int x, int y, char *buf, int max)
                         continue;
                     }
                 }
-                cursor_ctl(-3);
+                cursor_ctl(CURSOR_HIDE);
                 x_colors.line = x_colors.textBg;
                 draw_vline(r_vid.back, cx, cy, 8);
                 if (key == 8) {
@@ -101,25 +101,25 @@ int edit_line(int x, int y, char *buf, int max)
                 x_colors.line = x_colors.text;
                 draw_vline(r_vid.back, cx, cy, 8);
                 colr = -1;
-                cursor_ctl(-1);
+                cursor_ctl(CURSOR_SHOW);
                 if (r_vid.copyToFront)
                     bitmap_copy_box(r_vid.back, r_vid.front, px, cy, px + 6, cy + 8);
             }
         } else {
-            cursor_ctl(-3);
+            cursor_ctl(CURSOR_HIDE);
             x_colors.line = colr ? x_colors.textBg : x_colors.text;
             draw_vline(r_vid.back, cx, cy, 8);
             colr = ~colr;
-            cursor_ctl(-1);
+            cursor_ctl(CURSOR_SHOW);
             if (r_vid.copyToFront)
                 bitmap_copy_box(r_vid.back, r_vid.front, cx, cy, cx + 1, cy + 8);
         }
     }
     buf[end] = 0;
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     x_colors.line = x_colors.textBg;
     draw_vline(r_vid.back, cx, cy, 8);
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, cx - 6, y, cx, y + 8);
     x_colors.line = oc;

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "STRUCTS.H"
 #include "SAVEGAME.H"
+#include "ARENA.H"
 #include "BITMAP.H"
 #include "CURSOR.H"
 #include "DASH.H"
@@ -300,7 +301,7 @@ int near savegame_load(void)
     long delta;
     unsigned n;
 
-    cursor_ctl(-4);
+    cursor_ctl(CURSOR_HIDE_NOW);
     scan_save_slots(0);
     r = r_vid.copyToFront;
     r_vid.copyToFront = 0;
@@ -312,7 +313,7 @@ int near savegame_load(void)
     r_vid.copyToFront = r;
     if (r)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 320, 190);
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
     if (g_list[0] == 0) {
         menu_wait(15);
         return -1;
@@ -333,7 +334,7 @@ int near savegame_load(void)
         if (g_saveSlots[i])
             cntl++;
     r = i - 1;
-    cursor_ctl(-4);
+    cursor_ctl(CURSOR_HIDE_NOW);
     name[0] = disk_data_drive();
     strcpy(name + 1, ":HOTROD");
     itoa(g_saveSlots[r], name + 8, 10);
@@ -349,14 +350,14 @@ int near savegame_load(void)
         || _dos_read(fd7, &g_05fc, 4, &n) != 0 || n != 4
         || _dos_read(fd7, &delta, 4, &n) != 0 || n != 4
         || _dos_read(fd7, &g_roadLayout, 2, &n) != 0 || n != 2) {
-        cursor_ctl(-2);
+        cursor_ctl(CURSOR_SHOW_NOW);
         menu_wait(0x1f);
-        cursor_ctl(-3);
+        cursor_ctl(CURSOR_HIDE);
         if (fd7 > -1) {
             _dos_close(fd7);
             init_new_game();
         }
-        cursor_ctl(-1);
+        cursor_ctl(CURSOR_SHOW);
         return -666;
     }
     _dos_close(fd7);
@@ -364,7 +365,7 @@ int near savegame_load(void)
         F_067CF(a_7eaap.currentCar->paintScheme);
     road_build_layout(g_roadLayout);
     g_0604 = g_0600 - delta;
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
     return 0;
 }
 
@@ -404,7 +405,7 @@ void near savegame_save(void)
     unsigned n;
 
     sel = 0;
-    cursor_ctl(-4);
+    cursor_ctl(CURSOR_HIDE_NOW);
     scan_save_slots(1);
     r = r_vid.copyToFront;
     r_vid.copyToFront = 0;
@@ -423,7 +424,7 @@ again:
         r = g_list[0];
     if (sel == 0)
         sel = r;
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
     switch (r = menu_list(5, sel, 0, g_list, 0, 0)) {
     case -4:
         return;
@@ -440,13 +441,13 @@ again:
     sel = r;
     if (is_blank(g_saveName) && is_blank(g_desc + g_list[r])) {
         screen_msg_box(g_noNameMsgPtr);
-        cursor_ctl(-4);
+        cursor_ctl(CURSOR_HIDE_NOW);
         goto again;
     }
     for (i5 = 1; i5 <= 15 && (cmp = strcmp(g_saveName, g_desc + g_list[i5])) != 0; i5++)
         ;
     if (cmp == 0) {
-        cursor_ctl(-3);
+        cursor_ctl(CURSOR_HIDE);
         box7 = (struct Win *)(0x12 * (int)r + a_8b9ap - 0x12);
         pal4 = x_colors;
         x_colors = bustyle->pal[((struct Win *)a_8b9ap)->lines];
@@ -457,14 +458,14 @@ again:
         draw_frame(r_vid.front, box7->w, box7->h, wk, 8);
         x_colors = pal4;
         x_colors.line = sv7;
-        cursor_ctl(-1);
+        cursor_ctl(CURSOR_SHOW);
         sel = r = i5;
     }
     strcpy(name + 1, ":HOTROD");
     itoa(r, name + 8, 10);
     strcat(name + 1, ".SAV");
     key = g_saveSlots[r] ? menu_modal(0x1e) : 0;
-    cursor_ctl(-4);
+    cursor_ctl(CURSOR_HIDE_NOW);
     switch (key) {
     case -0x15:
         goto again;
@@ -484,9 +485,9 @@ again:
         || _dos_write(fd8, &g_05fc, 4, &n) != 0 || n != 4
         || _dos_write(fd8, &delta, 4, &n) != 0 || n != 4
         || _dos_write(fd8, &g_roadLayout, 2, &n) != 0 || n != 2) {
-        cursor_ctl(-2);
+        cursor_ctl(CURSOR_SHOW_NOW);
         menu_modal(6);
-        cursor_ctl(-4);
+        cursor_ctl(CURSOR_HIDE_NOW);
         if (fd8 > -1) {
             _dos_close(fd8);
             unlink(name);
@@ -494,7 +495,7 @@ again:
         scan_save_slots(1);
     } else {
         _dos_close(fd8);
-        cursor_ctl(-2);
+        cursor_ctl(CURSOR_SHOW_NOW);
         return;
     }
     goto again;
@@ -509,7 +510,7 @@ int near savegame_menu(void)
     int x;
     int y;
 
-    p = menu_grab(0x1b, &x, &y, 2);
+    p = menu_grab(0x1b, &x, &y, ARENA_HIGH_STACK);
     row = menu_wait(0x1b);
     popup_show(p, x, y);
     F_19438(1);

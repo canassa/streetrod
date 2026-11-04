@@ -52,8 +52,8 @@ void F_123F4(int frame, int slot)
     int x;
     int y;
 
-    cursor_ctl(-3);
-    pict = F_15BBE(0x44f, 2);
+    cursor_ctl(CURSOR_HIDE);
+    pict = F_15BBE(0x44f, ARENA_HIGH_STACK);
     x = 0xb8;
     y = g_tboltY[slot] + 10;
     if (frame == 1 && r_vid.copyToFront) {
@@ -61,7 +61,7 @@ void F_123F4(int frame, int slot)
         blt.h = 6;
         blt.sx = 0x40;
         blt.sy = 0;
-        tmp = bitmap_grab(pict, &blt, 2);
+        tmp = bitmap_grab(pict, &blt, ARENA_HIGH_STACK);
         (*bl78ce)(0xe, 0x94, x, 8, y, tmp);
         F_19438(1);
     }
@@ -72,7 +72,7 @@ void F_123F4(int frame, int slot)
     blt.w = 0x10;
     blt.h = blt.fc = 6;
     (*b_78a2)(pict, r_vid.back, &blt, 1);
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
     F_19438(1);
@@ -91,24 +91,24 @@ void F_12525(int slot)
     int x;
     int y;
 
-    cursor_ctl(-3);
-    pict = F_15BBE(0x44f, 2);
+    cursor_ctl(CURSOR_HIDE);
+    pict = F_15BBE(0x44f, ARENA_HIGH_STACK);
     blt.sx = blt.sy = 0;
     blt.dx = x = 0xb8;
     blt.dy = y = g_tboltY[slot] + 10;
     blt.w = 0x10;
     blt.h = blt.fc = 6;
     (*b_78a2)(pict, r_vid.back, &blt, 1);
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront) {
         bitmap_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
         F_16CF3();
-        cursor_ctl(-4);
+        cursor_ctl(CURSOR_HIDE_NOW);
         blt.sx = 0x40;
-        tmp = bitmap_grab(pict, &blt, 2);
+        tmp = bitmap_grab(pict, &blt, ARENA_HIGH_STACK);
         (*bl78ce)(0xe, 0x94, x, y, 0x94, tmp);
         F_19438(1);
-        cursor_ctl(-2);
+        cursor_ctl(CURSOR_SHOW_NOW);
     }
     F_19438(1);
 }
@@ -128,8 +128,8 @@ void F_1264E(int n, int flag)
     int sx;
     int sy;
 
-    cursor_ctl(-4);
-    pict = F_15BBE(n, 2);
+    cursor_ctl(CURSOR_HIDE_NOW);
+    pict = F_15BBE(n, ARENA_HIGH_STACK);
     sx = 200 - (w1 = pict->width);
     sy = 125 - (h1 = pict->height);
     if (flag)
@@ -143,12 +143,12 @@ void F_1264E(int n, int flag)
         blt.w = w1 + 8;
         blt.h = h1;
         (*ab78aat)(pict, saved, &blt, 1);
-        cursor_ctl(-2);
+        cursor_ctl(CURSOR_SHOW_NOW);
         popup_show(saved, sx - 8, sy);
         F_19438(1);
     } else {
         (*bl78ce)(0xe, 0x94, sx, sy, sy, pict);
-        cursor_ctl(-2);
+        cursor_ctl(CURSOR_SHOW_NOW);
     }
     F_19438(1);
 }
@@ -161,9 +161,9 @@ void F_12784(int n, int flag)
 {
     struct Bitmap far *p;
 
-    cursor_ctl(-3);
-    p = F_15BBE(0x42e, 2);
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_HIDE);
+    p = F_15BBE(0x42e, ARENA_HIGH_STACK);
+    cursor_ctl(CURSOR_SHOW);
     popup_show(p, 0x20, 10);
     F_19438(1);
 }
@@ -182,11 +182,11 @@ void F_127DB(int n, char far *s)
     if (n) {
         g_partAnimate = 0;
         r_vid.copyToFront = 0;
-        cursor_ctl(-3);
+        cursor_ctl(CURSOR_HIDE);
         F_1264E(n, 0);
         for (i = 0; i < 2; i++)
             F_123F4(*s++, i);
-        cursor_ctl(-1);
+        cursor_ctl(CURSOR_SHOW);
         if (r_vid.copyToFront = saved)
             bitmap_copy_box(r_vid.back, r_vid.front, 0x20, 10, 0xe7, 0xb8);
         g_partAnimate = 1;
@@ -314,8 +314,8 @@ void gargfx_draw_bolt(int n)
 
     flag = 0;
     gargfx_bolt_pos(&px, &ypos);
-    cursor_ctl(-4);
-    saved = pict = F_15BBE(n, 2);
+    cursor_ctl(CURSOR_HIDE_NOW);
+    saved = pict = F_15BBE(n, ARENA_HIGH_STACK);
     ypos -= saved->height;
     height = move.h = move.fc = saved->height;
     px -= 2;
@@ -325,12 +325,12 @@ void gargfx_draw_bolt(int n)
     move.w = 6;
     (*am78a6t)(r_vid.scratch, r_vid.back, &move);
     if (flag = px & ~r_vid.mask) {
-        saved = F_1934E(pict->width + 8, pict->height, pict->alt.p != 0, 2);
+        saved = F_1934E(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
         bitmap_shift_right(pict, flag, saved);
     }
     px = (px & r_vid.mask) + 0x60;
     (*bl78ce)(0xd, 0x93, px, (n == 0x43f && r_vid.copyToFront) ? 0xd - height : ypos, ypos, saved);
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
     F_19438(1);
     if (pict != saved)
         F_19438(1);
@@ -355,8 +355,8 @@ void gargfx_drop_bolt(void)
     gargfx_bolt_pos(&xpos, &ypos);
     x1 = xpos - 2;
     y1 = ypos;
-    cursor_ctl(-4);
-    pict = F_15BBE(0x43f, 2);
+    cursor_ctl(CURSOR_HIDE_NOW);
+    pict = F_15BBE(0x43f, ARENA_HIGH_STACK);
     wide = 8;
     if ((rows = xpos & 7) < 2) {
         xpos -= 8;
@@ -381,7 +381,7 @@ void gargfx_drop_bolt(void)
             xpos += 8;
         (*bl78ce)(0xd, 0x93, xpos - 8, ypos + 3, 0x93, pict);
     }
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
     F_19438(1);
 }
 
@@ -408,8 +408,8 @@ static void near make_bolt_overlay(void)
             return;
         px = g_manifoldBoltPos[i * 2] - 2;
         py = g_manifoldBoltPos[i * 2 + 1];
-        picture = F_15BBE(what, 1);
-        g_boltOverlay = F_1934E(picture->width + 8, picture->height, picture->alt.p != 0, 2);
+        picture = F_15BBE(what, ARENA_LOW_STACK);
+        g_boltOverlay = F_1934E(picture->width + 8, picture->height, picture->alt.p != 0, ARENA_HIGH_STACK);
         bitmap_shift_right(picture, px & ~r_vid.mask, g_boltOverlay);
         marks_pop_low(1);
         u_70ac.w = g_boltOverlay->width;
@@ -441,11 +441,11 @@ void gargfx_draw_part(int n, int flag)
     z = 0;
     gargfx_part_pos(&x, &ypos);
     if (g_partAnimate)
-        cursor_ctl(-4);
-    saved = pict = F_15BBE(n, 2);
+        cursor_ctl(CURSOR_HIDE_NOW);
+    saved = pict = F_15BBE(n, ARENA_HIGH_STACK);
     w = saved->width;
     if (mask = x & ~r_vid.mask) {
-        saved = F_1934E(pict->width + 8, pict->height, pict->alt.p != 0, 2);
+        saved = F_1934E(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
         bitmap_shift_right(pict, mask, saved);
         w = saved->width;
     }
@@ -466,7 +466,7 @@ void gargfx_draw_part(int n, int flag)
     }
     if (g_partAnimate) {
         (*bl78ce)(0xd, 0x93, x + 0x60, r_vid.copyToFront ? 0xd - height : ypos, ypos + 9, saved);
-        cursor_ctl(-2);
+        cursor_ctl(CURSOR_SHOW_NOW);
     }
     if (g_boltOverlay) {
         F_19438(1);
@@ -494,8 +494,8 @@ void gargfx_erase_part(int n, int flag)
 
     gargfx_part_pos(&px, &py);
     py -= 0x14;
-    cursor_ctl(-3);
-    pict = F_15BBE(n, 2);
+    cursor_ctl(CURSOR_HIDE);
+    pict = F_15BBE(n, ARENA_HIGH_STACK);
     if (n != 0x434 && n != 0x435 && n != 0x436)
         py -= pict->height;
     move.sx = px;
@@ -506,7 +506,7 @@ void gargfx_erase_part(int n, int flag)
     h = move.h = move.fc = pict->height;
     (*b_78a2)(r_vid.scratch, r_vid.back, &move, 1);
     F_19438(1);
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, px, py, px + w, py + h);
 }
@@ -528,14 +528,14 @@ void gargfx_draw_wires(void)
 
     pair = engine_index() * 2;
     next = (ap82acz == 0x446) ? pair++ : pair + 1;
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     blt.w = 0x20;
     xs = blt.dx = (blt.sx = g_wiresPos[next * 2]) + 0x60;
     ys = blt.dy = (blt.sy = g_wiresPos[next * 2 + 1]) + 9;
     blt.h = r_vid.scratch->height - blt.sy - 4;
     (*b_78a2)(r_vid.scratch, r_vid.back, &blt, 1);
     bitmap_draw_pic(r_vid.back, ap82acz, (unsigned char)(x2 = g_wiresPos[pair * 2] + 0x60), (unsigned char)(y2 = g_wiresPos[pair * 2 + 1] + 9), 0);
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, x2 > xs ? xs : x2, y2 > ys ? ys : y2, blt.w + x2 + 0x18, blt.h + y2 + 0x18);
 }
@@ -555,7 +555,7 @@ void gargfx_draw_parts(struct Car *car)
     mode = hz82ae;
     g_partAnimate = 0;
     if (r_vid.scratch == 0)
-        r_vid.scratch = F_15BBE(0x42d, 1);
+        r_vid.scratch = F_15BBE(0x42d, ARENA_LOW_STACK);
     else
         disk_unpack_pic(0x42d, r_vid.scratch);
     if (type = o_8290[0]) {

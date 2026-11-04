@@ -3,6 +3,7 @@
 #include <conio.h>
 #include "STRUCTS.H"
 #include "DASH.H"
+#include "ARENA.H"
 #include "BITMAP.H"
 #include "CARPIC.H"
 #include "CRTC.H"
@@ -379,7 +380,7 @@ void dash_time_up(void)
 {
     game_message(0x17bb);
     (*bl78be)();
-    cursor_ctl(-4);
+    cursor_ctl(CURSOR_HIDE_NOW);
     r_vid.copyToFront = 1;
     screen_fill_rect(0, 0, 320, 200, 0);
     F_065AF(1);
@@ -463,7 +464,7 @@ void dash_load_wheel(void)
         pkt.sx = pkt.sy = 0;
         pkt.dx = 0x88;
         for (i6 = 0; i6 < 3; i6++) {
-            bm = F_15BBE(g_wheelPicIds[i6], 1);
+            bm = F_15BBE(g_wheelPicIds[i6], ARENA_LOW_STACK);
             if (r_vid.mode != -2 || i6 < 2) {
                 g_wheelPages[i6] = g82b4s;
                 g_wheelY[i6] = g_wheelSlotY[i6];
@@ -477,7 +478,7 @@ void dash_load_wheel(void)
         }
     } else {
         for (i6 = 0; i6 < 3; i6++)
-            g_wheelPages[i6] = F_15BBE(g_wheelPicIds[i6], 1);
+            g_wheelPages[i6] = F_15BBE(g_wheelPicIds[i6], ARENA_LOW_STACK);
     }
 }
 
@@ -585,14 +586,14 @@ void dash_init_shifter(int a, int b)
     int y;
 
     g_shifter = &g_shifters[a ? 0 : b == 3 ? 1 : 2];
-    bm19 = F_15BBE(g_shifter->id1, 2);
+    bm19 = F_15BBE(g_shifter->id1, ARENA_HIGH_STACK);
     pk5.w = 0x30;
     pk5.h = 0x2b;
     pk5.sx = pk5.sy = 0;
     pk5.dx = 0x108;
     pk5.dy = (r_vid.mode == -2 || g_dashBuffered ? 0 : 100) + 0x17;
     (*b_78a2)(bm19, g_dashBuffered ? g755cu : bm7678, &pk5, 1);
-    bm28 = F_15BBE(g_shifter->id2, 2);
+    bm28 = F_15BBE(g_shifter->id2, ARENA_HIGH_STACK);
     p3.w = p2.w = (pk5.w = bm28->width) + 8;
     p3.h = p2.h = pk5.h = bm28->height;
     p3.sx = p3.sy = 0;
@@ -603,7 +604,7 @@ void dash_init_shifter(int a, int b)
         y = g_shifter->pt[i * 2 + 1];
         p2.sx = x & 0xfff8;
         p2.sy = y;
-        cm2 = bitmap_grab(bm19, &p2, 1);
+        cm2 = bitmap_grab(bm19, &p2, ARENA_LOW_STACK);
         p3.dx = g_shiftSlots[i].a;
         p3.dy = g_shiftSlots[i].b;
         (*b_78a2)(cm2, g82b4s, &p3, 1);

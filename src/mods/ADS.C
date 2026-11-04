@@ -61,13 +61,13 @@ void ads_open(int *list, int base)
         ptr++;
     }
     x_colors = bustyle->hilite;
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     g_adBlt = 0x40;
     g_adHeight = 0xbe;
     g_adSrcX = g_adSrcY = g_adDstX = g_adDstY = g_052e = 0;
     g_adRedraw = 1;
     menu_push(8);
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
 }
 
 /* ad_picture @ 0000:09B7 (linear 0x009B7, 20 bytes) */
@@ -97,7 +97,7 @@ int ads_run(void)
     limit = *g_pages.list;
     for (;;) {
         if (g_adRedraw) {
-            cursor_ctl(-4);
+            cursor_ctl(CURSOR_HIDE_NOW);
             x_colors = bustyle->hilite;
             g_adPicture = ad_picture(2);
             draw_fill_rect(r_vid.back, 0x40, 0, 0xc0, 0xbe);
@@ -158,7 +158,7 @@ int ads_run(void)
             }
             g_adRedraw = 0;
             r_vid.back->height = hsave;
-            cursor_ctl(-1);
+            cursor_ctl(CURSOR_SHOW);
             if (r_vid.copyToFront)
                 bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
             sys_hover_reset();

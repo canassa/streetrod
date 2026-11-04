@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "STRUCTS.H"
 #include "DRIVE.H"
+#include "ARENA.H"
 #include "BOBS.H"
 #include "CARPIC.H"
 #include "CRTC.H"
@@ -53,9 +54,9 @@ int drive_run(void)
             g_driveRebuild = 1;
         else
             g_driveRebuild = 0;
-        src = F_15BBE(0x3f6, 2);
+        src = F_15BBE(0x3f6, ARENA_HIGH_STACK);
         if (g_autoTrans) {
-            pict = F_15BBE(0x4d8, 2);
+            pict = F_15BBE(0x4d8, ARENA_HIGH_STACK);
             blt.w = pict->width;
             blt.h = pict->height;
             blt.sx = blt.sy = 0;

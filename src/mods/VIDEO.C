@@ -2,6 +2,7 @@
 #include <dos.h>
 #include "STRUCTS.H"
 #include "VIDEO.H"
+#include "ARENA.H"
 #include "BITMAP.H"
 #include "CARPIC.H"
 #include "CURSOR.H"
@@ -195,7 +196,7 @@ static void near anim_run(int n)
     struct Blt blt;
 
     wait = 1;
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     g_obj = &bm7568[n];
     g_cmd = &g_animScripts[k = g_obj->scriptIndex];
     g_box = &g_obj->box;
@@ -234,13 +235,13 @@ static void near anim_run(int n)
                 break;
         case 6:
             video_anim_stop(g_obj->id);
-            cursor_ctl(-1);
+            cursor_ctl(CURSOR_SHOW);
             return;
         case 7:
             g_cmd = &g_animScripts[g_cmd->a];
             goto next;
         case 8:
-            g_obj->img = F_15BBE(g_cmd->a, 2);
+            g_obj->img = F_15BBE(g_cmd->a, ARENA_HIGH_STACK);
             g_cmd++;
             continue;
         case 9:
@@ -256,13 +257,13 @@ static void near anim_run(int n)
             sys_timer_anim(g_obj->id, g_cmd->a);
             g_obj->pendingTimers++;
             if (wait)
-                cursor_ctl(-1);
+                cursor_ctl(CURSOR_SHOW);
             if (g_cmd->sub == 4 && r_vid.copyToFront)
                 bitmap_copy_box(r_vid.back, r_vid.front, g_box->x2, g_box->y2,
                         g_box->x2 + g_box->w - 1, g_box->y2 + g_box->h - 1);
             return;
         case 12:
-            cursor_ctl(-1);
+            cursor_ctl(CURSOR_SHOW);
             wait = 0;
             if (!r_vid.copyToFront)
                 break;

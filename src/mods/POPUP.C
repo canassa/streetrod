@@ -41,15 +41,15 @@ struct Bitmap far *popup_grab(int x, int y, int w, int h, struct Bitmap far *src
         color = src->alt.p != 0;
         pict = mem_new_bitmap(x2 - x, ye - y, color, -1, src);
     } else
-        pict = F_1934E(x2 - x, ye - y, 0, 2);
+        pict = F_1934E(x2 - x, ye - y, 0, ARENA_HIGH_STACK);
     blit.w = pict->width;
     blit.h = pict->height;
     blit.sx = x;
     blit.sy = y;
     blit.dx = blit.dy = 0;
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     (*b_78a2)(r_vid.back, pict, &blit, 1);
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
     return pict;
 }
 
@@ -66,9 +66,9 @@ void popup_put(struct Bitmap far *bm, int x, int y)
     pkt.sx = pkt.sy = 0;
     pkt.dx = x & r_vid.mask;
     pkt.dy = y;
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     (*b_78a2)(bm, r_vid.back, &pkt, 1);
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
 }
 
 /* popup_show @ 0F38:2853 (linear 0x11BD3, 81 bytes)
@@ -98,7 +98,7 @@ void popup_open(int n)
     int rec;
     int lines;
 
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     if (g_popupSave) {
         popup_put(g_popupSave, g_popupLayout->x, g_popupLayout->y);
         F_19438(1);
@@ -121,7 +121,7 @@ void popup_open(int n)
         txt = txt + strlen(txt) + 1;
         y1 += 9;
     }
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, g_popupLayout->x, g_popupLayout->y, g_popupLayout->x + w1 - 1, g_popupLayout->y + h1 - 1);
     if (close) {

@@ -971,3 +971,53 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - src/include/PC.INC gives the assembler files the same names as PC.H for the same facts (interrupts, BIOS/DOS functions, BIOS data addresses, video segments, ports, register indices and bits), plus assembler-only facts (DOS get/set vector, keyboard interrupt, Hercules configuration port, extra CRTC/GC registers). 18 .ASM files `INCLUDE PC.INC`; MASM finds it like CL finds the headers, in `./sr build`, `./sr check` and the native MAKE build. Done by a Codex agent.
 - Result: every asm object's code bytes and fixups unchanged; `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, tests OK.
+
+## 2026-11-04 13:51 CET: Evidence-backed numeric modes
+
+### What I did
+- Surveyed numeric mode arguments and states in work/args/SURVEY.md; left scene, bet, sprite direction and undocumented video values numeric where the semantic evidence was incomplete.
+- Added 15 constants in CURSOR.H, ARENA.H, WALKER.H and MAIN.H: four cursor controls, four arena allocation modes, two carhop requests and five original video menu choices. Updated selectors and literal callers, including arena mode forwarding through bitmap_grab, menu_grab and F_15BBE. No symbols renamed, data tables changed or code comments added.
+- Fixed module-header macro validation in tools/sr/fileheaders.py, preserving duplicate-name, missing-owner and missing-function/data errors; expanded the tests and updated the sr-cli skill and CLAUDE.md.
+- Kept each logical concern in its own commit and ran the gates after every batch. Merged main (already up to date), then reran all gates: 572/572 functions match, Packed EXE vs orig/SR.EXE: IDENTICAL, headers and DGROUP clean, 45 unit tests pass, DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL.
+
+### What I learned
+- Module header constants need no duplicate C definition; the checker already used them for include ownership but mistakenly required that duplicate. The rule is now documented in CLAUDE.md and .claude/skills/sr-cli/SKILL.md and covered by tests/test_fileheaders.py.
+- Allocation modes 0/3 advance low/high persistent boundaries, while 1/2 push low/high markers. MARKS.C's release/pop behavior confirms their lifetime. The evidence table remains in work/args/SURVEY.md.
+- Original video menu strings support names for choices 1 through 5; internal choice 6 and signed driver encodings need a separate audit.
+
+## 2026-11-05 12:00 CET: Named mode and argument constants
+
+### What I did
+- Mode arguments whose meaning the callee defines are named in the owning module's header: `CURSOR_SHOW`/`CURSOR_SHOW_NOW`/`CURSOR_HIDE`/`CURSOR_HIDE_NOW` (cursor_ctl: the _NOW variants copy the cursor box back->front at once on double-buffered video), `ARENA_LOW_BASE`/`ARENA_LOW_STACK`/`ARENA_HIGH_STACK`/`ARENA_HIGH_BASE` (arena allocation modes, also forwarded by the bitmap and menu grab helpers), `WALKER_ENTER`/`WALKER_LEAVE`, and the video menu choices `VIDEO_CHOICE_CGA..TANDY`. `./sr headers --check` accepts constant definitions in module headers. Survey of other candidates kept by the Codex agent in its worktree. Done by a Codex agent.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
+
+## 2026-11-04 14:11 CET: Decode and display picture libraries
+
+### What I did
+- Added tools/sr/pics.py and sr pic: list picture ids/dimensions/packed sizes/libraries; decode EGA and CGA; write a stdlib-only RGBA PNG or display inline using kitty graphics with 4096-byte base64 chunks. Added integer nearest-neighbour scaling, two-row cell cutting in WALKER.C order, vertical stacking of multiple PNG inputs, palette selection, and input/format error reporting. No src files changed.
+- Derived the format from DISK.C's pic_index/read_index/load_pic/unpack_pic, RLE.ASM, MEM.C, VIDEO.C, MASKBLT.ASM, MENU.C and WALKER.C. RLE dictionary arrays, display palettes and the CGA id map are read from their C initializers. LIB1/LIB2 contain 9+268 EGA entries; LIB1C and orig/extra/LIB2C contain 4+273 CGA entries. All 277 ids in each mode decode successfully, including four mask-only pictures per mode.
+- Rendered and inspected the Street Rod title, California Dreams logo and AD 1989 credits: text is readable with no shearing. Opened a background Rex pane beside the current codex-pcinc pane (inherited REX_BLOCK was stale; identified the live pane via rex block ls and capture). The walker-sheets pane displays ids 1142 and 1141, --cells 6 11 --scale 3; both commands exited successfully. Each sheet is 240x82, giving eleven 40x41 cells and a 1320x123 scaled row. The figure shows a blonde woman on roller skates carrying a tray, facing right in the first sequence and left in the second, with turning poses at the end.
+- All 53 unit tests pass, including known title/walker RGBA checksums, all 554 resource decodes, library framing, RLE edge cases, id mapping, cell order, scaling/stacking, PNG CRCs/scanlines, kitty chunk reassembly and output/errors. sr check --all: 572/572; rm -rf work followed by sr build: Packed EXE vs orig/SR.EXE IDENTICAL, 748/748 near calls exact. sr show rle_decode also inspected. No push or merge.
+
+### What I learned
+- Directory bytes 7..22 are dictionary tokens, not RGB palette entries. Picture color indices use VIDEO.C's g_palette by default; DASH.C changes to g_introPalette for the credits. The command exposes explicit palette choices rather than executing scene-specific animation/palette scripts. CGA uses bright cyan/magenta/white by default, with the alternate bright green/red/yellow palette available. Tandy output remains outside this command's supported modes.
+- Packed spans include the leading BC sentinel but exclude the trailing sentinel; adjacent entries share that boundary byte. Word +4 is unused by the game and does not describe the actual expanded length of mask-only EGA pictures. Sprite transparency comes from the complement of the OR of the EGA planes, or the stored CGA mask (all visible mask pixels in the resources are 0 or 3). Details and examples are recorded in the sr-cli skill's Picture resources section.
+
+## 2026-11-05 13:00 CET: `./sr pic` decodes the game's pictures
+
+### What I did
+- New `./sr pic` (tools/sr/pics.py): reads the resource libraries in orig/freeware (LIB1/LIB2 and the CGA variants), decodes a picture exactly as the game's loader and RLE unpacker do (EGA planar and CGA forms), and writes a PNG or prints it inline with the kitty graphics protocol (`--list`, `--scale`, `--cells` to cut sprite sheets like `cut_sheet`, palettes). All 554 pictures decode. Done by a Codex agent.
+- Used it on the walker's sprite sheets: two 11-frame rows of a blonde woman on roller skates carrying a tray, facing right then left. The drive-in figure is a roller-skating carhop.
+## 2026-11-04 14:20 CET: Name struct members from typed-use evidence
+
+### What I did
+- Surveyed all 69 named project types and two anonymous nested records: 411 members, with MSC offsets/types and all 6,289 typed C member accesses, read/write/address classification, function/file:line evidence and aggregate/raw-layout contexts. The report is work/members/SURVEY.md; original source coordinates are explicitly tied to its baseline commit. All 58 C sources were covered; the only 74 unresolved accesses belong to MSC REGS/SREGS, not project records.
+- Named or split 155 original fields across 29 structs in 18 small commits. Colors.c became five char fields (text, textBg, fill, line, frame), so those 155 original fields yield 159 named fields. Named picture metadata, parts/car/spec/art coordinates, rival statistics, sound/vibrato state, hot spots/timers/animation state, drivetrain/RPM bands, video/cursor/page state, player inventory, road positions, body-paint state, glyph rows and wiring state. Kept 256 reviewed members, including descriptive existing names and ambiguous/unused placeholders.
+- Retained overloaded Cmd operands, Hot.f6 (hit code versus link index), Win popup/menu geometry views, Pair coordinates/control values, the heterogeneous Eng.f34 array, unproven body-feature overlays and unused/reset-only fields. Glyph.pad is live row data: EGA text drawing reads its eight bytes through a byte pointer, so only its name became rows. No locals, parameters, globals, functions or type tags renamed; no source comments added or changed.
+- Every one of the 18 naming commits passed ./sr check --all (572/572), a fresh-layout ./sr build (Packed EXE vs orig/SR.EXE: IDENTICAL), headers/DGROUP checks and all 43 pre-integration unit tests. The real MSC compiler verified 475 sizeof/offsetof checks across all 69 named types with zero mismatches. A separate scalar/pointer leaf-layout audit verified unchanged sizes, alignments and offsets, including the five-byte Colors split and the 80-byte Style records; all other changes are pure member-token renames.
+- Integrated the manager-requested main updates (mode constants/header macro ownership, plus ./sr pic through 591265d). Resolved 62 adjacent member/mode conflict blocks in 20 files by combining disjoint token edits, preserving both names and constants. The complete merged-tree gate and final DOS-native build outputs are recorded in work/members/g19-*.log and work/members/final-dosbox.log.
+
+### What I learned
+- Value flow prevents plausible but wrong names: Spr12.b10/b11 and State8272.m8272/m8274 locate the saved body-paint region and shade overlays, not the engine. Hot.f6 and Win.w/h have contradictory interpretations across record views, so a one-role rename would mislead.
+- The five Colors slots are accessed only by constant indices; removing the obsolete initializer-array braces preserves both code and initialized bytes. Style palettes remain arrays because their indices vary; no packed/overlaid record was retyped.
+- Survey-only local follow-ups include EDIT.C edit_line pos (saved fill colour), GARAGE.C tune_timing gear (ignition timing), DISK.C disk_read_index height (largest packed byte count), DISK.C disk_pic_size x (flags parameter), and EGASPR bitmap/frame pointer locals named height/key/box. They need an independent stack-layout pass.

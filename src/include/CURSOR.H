@@ -4,6 +4,11 @@
 #define CURSOR_H
 #include "STRUCTS.H"
 
+#define CURSOR_SHOW (-1)
+#define CURSOR_SHOW_NOW (-2)
+#define CURSOR_HIDE (-3)
+#define CURSOR_HIDE_NOW (-4)
+
 extern struct Pair g_cursorPairs[];                            /* DS:06EC */
 extern void (far *ap78b2z)(char far *, char far *, char far *, char far *, int, int, int, int);/* DS:78B2 */
 extern struct Cursor g_cursor2;                         /* DS:7AEC */

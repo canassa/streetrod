@@ -75,8 +75,8 @@ static int near show_video_menu(int mode)
     char rec[84];
     int choice;
 
-    if (mode < 1 || mode > 5)
-        mode = 1;
+    if (mode < VIDEO_CHOICE_CGA || mode > VIDEO_CHOICE_TANDY)
+        mode = VIDEO_CHOICE_CGA;
     r.x.ax = (VIDEO_SET_MODE << 8) | MODE_TEXT80;
     int86(BIOS_VIDEO, &r, &r);
     memcpy(rec, "\n           Recommended mode: #", 32);
@@ -95,7 +95,7 @@ static int near show_video_menu(int mode)
     choice = getch() - '0';
     if (choice == -21)
         sys_exit();
-    if (choice <= 0 || choice > 5)
+    if (choice <= 0 || choice > VIDEO_CHOICE_TANDY)
         return 0;
     return choice;
 }
@@ -157,24 +157,24 @@ static int near choose_video(int mode)
         herc = 1;
     }
     if (g_egaCard)
-        mode = g_egaMemory == 3 ? 2 : 6;
+        mode = g_egaMemory == 3 ? VIDEO_CHOICE_EGA : 6;
     else
-        mode = 1;
+        mode = VIDEO_CHOICE_CGA;
     if (herc)
-        mode = 4;
+        mode = VIDEO_CHOICE_HERCULES;
     if (memstr_find("Tandy", BIOS_ROM, 0xffff) ||
         memstr_find("TANDY", BIOS_ROM, 0xffff))
-        mode = 5;
+        mode = VIDEO_CHOICE_TANDY;
     if (is_vga())
-        mode = 3;
+        mode = VIDEO_CHOICE_VGA;
     pick = show_video_menu(mode);
     if (pick)
         mode = pick;
-    if (mode == 1 && g_egaCard)
+    if (mode == VIDEO_CHOICE_CGA && g_egaCard)
         return 6;
-    if (mode == 3) {
+    if (mode == VIDEO_CHOICE_VGA) {
         g_vga = 1;
-        return 2;
+        return VIDEO_CHOICE_EGA;
     }
     return mode;
 }
@@ -184,14 +184,14 @@ static int near choose_video(int mode)
 static void near init_screens(int mode)
 {
     switch (mode) {
-    case 3:
+    case VIDEO_CHOICE_VGA:
         g_vga = 1;
-    case 2:
+    case VIDEO_CHOICE_EGA:
         r_vid.mode = -2;
         SET_EQUIP_VIDEO(EQUIP_VIDEO_COLOR80);
         ega_install();
         return;
-    case 5:
+    case VIDEO_CHOICE_TANDY:
         r_vid.mode = g_screens[0].flags = 0xfa;
         tandy_install();
         g_screens[0].bits.p = r_vid.mode == -4 ? MONO_VRAM : CGA_VRAM;
@@ -203,11 +203,11 @@ static void near init_screens(int mode)
         dash_fmemset(g_screens[1].bits.p, 0, 0x8000);
         dash_fmemset(g_screens[2].bits.p, 0, 0x8000);
         return;
-    case 4:
+    case VIDEO_CHOICE_HERCULES:
         g_screens[0].flags = 0xfc;
         r_vid.mode = -4;
         break;
-    case 1:
+    case VIDEO_CHOICE_CGA:
         g_screens[0].flags = 0xfd;
         break;
     case 6:
@@ -233,15 +233,15 @@ static void near set_video_mode(int mode)
     int far *p;
 
     switch (mode) {
-    case 2:
-    case 3:
+    case VIDEO_CHOICE_EGA:
+    case VIDEO_CHOICE_VGA:
         main_set_mode(MODE_EGA_320_200_16);
         break;
-    case 5:
+    case VIDEO_CHOICE_TANDY:
         main_set_mode(MODE_TANDY_320_200_16);
         outp(TANDY_PAGE, 0xf6);
         break;
-    case 4:
+    case VIDEO_CHOICE_HERCULES:
         hercgfx_set_mode();
         p = r_vid.mode == -4 ? (int far *)MONO_VRAM : (int far *)CGA_VRAM;
         while (p < (int far *)((r_vid.mode == -4 ? (long)MONO_VRAM : (long)CGA_VRAM) + 0x8000L))
@@ -250,7 +250,7 @@ static void near set_video_mode(int mode)
         g_0046 = 1;
         g_hercules = 1;
         break;
-    case 1:
+    case VIDEO_CHOICE_CGA:
     case 6:
         main_set_mode(MODE_CGA_320_200_4);
         main_set_palette(CGA_PALETTE_CYAN_MAGENTA_WHITE);

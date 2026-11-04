@@ -31,7 +31,7 @@ void cruise_go(void)
             a_7eaap.currentCar->fuel = 0;
         (*bl78be)();
         if (g_firePressed == 0) {
-            cursor_ctl(-4);
+            cursor_ctl(CURSOR_HIDE_NOW);
             g_autoTrans = !g_4806[a_7eaap.currentCar->transmission->idx].variant;
             race_reset_eng(&g_driveEng);
             jz79a6 = 0;
