@@ -15,7 +15,7 @@ int mo_reset(void)
 
     if (*MOUSE_VECTOR == 0L)
         return 0;
-    r.h.ah = MOUSE_RESET >> 8;
+    r.h.ah = 0;
     r.h.al = MOUSE_RESET;
     int86(MOUSE_INT, &r, &r);
     return r.x.ax;
@@ -29,7 +29,7 @@ void mo_buttons(void)
 {
     union REGS r;
 
-    r.h.ah = MOUSE_GET_POSITION >> 8;
+    r.h.ah = 0;
     r.h.al = MOUSE_GET_POSITION;
     int86(MOUSE_INT, &r, &r);
     g_mouse.left = r.h.bl & MOUSE_LEFT_BUTTON;
@@ -44,7 +44,7 @@ void mo_motion(int *dx, int *dy)
 {
     union REGS r;
 
-    r.h.ah = MOUSE_READ_MOTION >> 8;
+    r.h.ah = 0;
     r.h.al = MOUSE_READ_MOTION;
     int86(MOUSE_INT, &r, &r);
     *dx = r.x.cx;

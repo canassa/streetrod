@@ -34,7 +34,7 @@ Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in
 
 | Original instructions | C |
 |---|---|
-| a single word store of packed AH/AL function and parameter constants | Keep the AX assignment and write `(FUNCTION << 8) \| PARAMETER`: MAIN.C mode 0003h and DISK.C seek 4200h still match; `VIDEO_SET_PALETTE << 8` preserves MAIN.C palette 0B00h. For the existing separate mouse AH/AL writes, `FUNCTION >> 8` and `FUNCTION` preserve their statement structure and bytes. |
+| a single word store of packed AH/AL function and parameter constants | Keep the AX assignment and write `(FUNCTION << 8) \| PARAMETER`: MAIN.C mode 0003h and DISK.C seek 4200h still match; `VIDEO_SET_PALETTE << 8` preserves MAIN.C palette 0B00h. For separate mouse AH/AL writes, use `r.h.ah = 0;` then `r.h.al = FUNCTION;`: the function codes fit in AL, and the explicit zero preserves both byte stores. |
 | two separate byte read-modify-writes at 0000:0410, clearing bits 4-5 then setting bit 5 | `SET_EQUIP_VIDEO(EQUIP_VIDEO_COLOR80)` in MAIN.C expands to `(*BIOS_EQUIP &= ~EQUIP_VIDEO_MASK, *BIOS_EQUIP |= (m))`; with mask `0x30` and mode `0x20`, the comma form preserves both accesses and matches the two statements byte for byte under `/Oalsi` |
 | `cmp; jle L; mov ax,1; jmp E; L: sub ax,ax; E:` | `return a > b;` (comparison as a value) |
 | `cmp; jge L; mov ax,1; jmp E; L: sub ax,ax; E: mov [x],ax` | `x = a < b;` |

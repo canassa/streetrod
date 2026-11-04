@@ -1524,3 +1524,27 @@ All gates passed: headers; 572/572 functions (551 MATCH, 21 MATCH*); a clean bui
 ### What I learned
 
 The cursor-step declarations hid two different mistakes: the -1 entries preceded their named bases, while the supposed Y-table tail was actually sixteen direction bytes reached through negative scan-map offsets. The held-direction writes likewise addressed their real array through the unrelated saved-SP word. The garage slot mappings have a zero entry before the nine bolt positions; both one-based and zero-based consumers establish ten entries. GAME's explicit category reads prove five part-wear values, including the word PERF had named separately. Palette swapping reaches seventeen bytes, with natural alignment supplying the following byte; alignment is not another source global. A largest key map of nineteen bindings needs only twenty-one saved entries including music and sentinel, so the defensive thirty-entry guard does not prove a larger allocation.
+
+## 2026-11-04 22:18 CET: restore explicit mouse AH initialization
+
+### What I did
+
+Replaced the three mouse function-code high-byte shifts in mo_reset, mo_buttons
+and mo_motion with explicit AH zero assignments, keeping the separate AL stores.
+Used two-digit hex function codes in PC.H to match its video and DOS constants;
+PC.INC already uses compact equivalent values. Checked all consumers: only
+MOUSE.C uses these three codes, apart from their C/ASM definitions. Searched the
+whole tree for other constant splits into high/low register bytes and found none;
+other shifts extract runtime data or send the variable PIT divisor's high byte.
+Corrected the mouse guidance in the msc51-recipe-book skill.
+
+All required gates passed: headers; 572/572 functions (551 MATCH, 21 MATCH*);
+rm -rf work followed by a clean build with packed EXE IDENTICAL; DGROUP
+ownership/order; 67 unit tests. No code comments or work/ files were added.
+
+### What I learned
+
+The explicit zero preserves the original separate byte stores without expressing
+the function code as a split word. The corrected recipe is recorded in
+.claude/skills/msc51-recipe-book/SKILL.md; short hex spelling in PC.H changes no
+constant values, and the assembly mirror needs no edit.
