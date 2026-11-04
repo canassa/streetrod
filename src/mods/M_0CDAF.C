@@ -4,10 +4,8 @@
 #include "STRUCTS.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
-int al70c0x;
+struct State70C0 al70c0x;
 int g755av;
-int ao7d2ev;
-int ar7e90;
 int a_7f88d;
 int bz8630z;
 
@@ -101,9 +99,9 @@ static void near F_0CF5C(void)
     g79e2g.f12 = r->f2;
     g79e2g.f14 = r->f4;
     g_6cba = g79e2g.f24 ? 0x14b4 : g79e2g.f1e - 100 * g_6cb4;
-    ar7e8av = 200;
-    a_7e8c = 0;
-    g_6cb6 = ar7e90 = ((al70c0x + ao7d2ev) >> 1) - 200;
+    ar7e8av.m7e8a = 200;
+    ar7e8av.m7e8c = 0;
+    g_6cb6 = ar7e8av.m7e90 = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
 }
 
 /* F_0D031 @ 0000:D031 (linear 0x0D031, 429 bytes) */
@@ -133,7 +131,7 @@ static void near F_0D031(void)
     g_05cc = 0;
     F_00E24();
     F_11593(g_49dc);
-    if (ac7d30z > 200) {
+    if (ao7d2ev.m7d30 > 200) {
         if (random_int(3) > 0) {
             if (a_7eaap.m7eb0->f20 > 0)
                 a_7eaap.m7eb0->f20 = a_7eaap.m7eb0->f20 < random_int(4) ? random_int(4) : a_7eaap.m7eb0->f20;
@@ -199,17 +197,17 @@ static void near F_0D29D(void)
     _enable();
     r = &g79e2g.gear[g79e2g.f18].r[g_6cb8];
     for (i5 = 0; i5 < ticks; i5++) {
-        if (g_terrain2[ar7e8av] != g_terrain2[ar7e8av + 1]) {
+        if (g_terrain2[ar7e8av.m7e8a] != g_terrain2[ar7e8av.m7e8a + 1]) {
             if (g_54d6 == 0) {
                 g_54d6 = 1;
-                vl = g_6cac - (ar7e8av > ac7d30z ? g7d84o->f2 : g7d84o->f2 >> 1);
+                vl = g_6cac - (ar7e8av.m7e8a > ao7d2ev.m7d30 ? g7d84o->f2 : g7d84o->f2 >> 1);
                 if (vl < g79e2g.f0)
                     F_0D1DE(vl, &g79e2g);
             }
             continue;
         }
         g_54d6 = 0;
-        d = ar7e8av - ac7d30z;
+        d = ar7e8av.m7e8a - ao7d2ev.m7d30;
         if (d > 12 && (a_7eaap.m7ec0 != 1 || g7d40q == 0)) {
             if (e_78e0.f0 >= 0x61)
                 vl = g_6cb0;
@@ -224,7 +222,7 @@ static void near F_0D29D(void)
             }
         } else if (d > -5 && d < 5) {
             vl = e_78e0.f0 + g_6cae;
-            if (ac7d30z >= 30 && vl < g_6cb2)
+            if (ao7d2ev.m7d30 >= 30 && vl < g_6cb2)
                 vl = g_6cb2;
             goto chk;
         }
@@ -261,8 +259,8 @@ static void near F_0D29D(void)
             g79e2g.f0 = g79e2g.fe / g79e2g.f40;
         }
     }
-    if (ar7e8av >= g_6caa) {
-        liml = ac7d30z + 5 < ar7e8av ? 5 : 10;
+    if (ar7e8av.m7e8a >= g_6caa) {
+        liml = ao7d2ev.m7d30 + 5 < ar7e8av.m7e8a ? 5 : 10;
         g79e2g.f0 = old3;
         if (liml < old3)
             g79e2g.f0 -= liml;

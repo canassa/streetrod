@@ -571,3 +571,18 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - LINK 5.01 communal order: hash bucket ascending, within a bucket newest-created first; creation is the first mention of the name in link order, so an EXTDEF in an early object fixes the slot and the COMDEF may come from any later object.
 - The 14 overlapping views are the next structural question: each marks where our symbol split differs from the original (a struct or array spanning several of our globals).
+
+## 2026-11-04 07:00 CET: COMMON views folded into the original arrays and structs
+
+### What I did
+- Resolved the 14 overlapping views from the previous entry. The save-game table (DS:4EA4 pointers, DS:4EBE byte counts) gives the original blocks: 22 racers at DS:7FF8 (396 bytes), 26 specs at DS:7D86, 26 models at DS:8DF0, 26 panels at DS:70E4, and 48 bytes from DS:784A.
+- Rewrote the views as accesses to those blocks: `at70e8[i].x` became `ai70e4t[i].r[1].x`, the `Dir` view became `g77bal[i].nxt[k]` (12 frames at DS:77BA), the `Rec10`/`Ent10` views became `Spec` fields (its byte at +3 is `next`), and the `Rec18` view and the last racer's loose fields became `Racer` fields. The `Pos6` table now starts at DS:784A and is indexed `[k - 1]`; the table entry is `&a784als` instead of `(char *)&g7844n + 6`.
+- Folded loose fields into their structs: DS:78EA..7905 and DS:799C into `e_78e0`, DS:7A9E into `g79e2g`, DS:8240 into `r_vid.f16`, DS:8244 into `x_colors.c[2]`, and 7314..7325 into `bp7316[4]`. The 2 bytes after the model table are a `char` communal in HOTSPOT.C, named to land in the same hash bucket.
+- One byte stayed wrong: `ac7d30z > e_78e0.fa` loaded DS:7D30 into AX, the original loads DS:78EA. MSC keeps the more complex operand in memory, so DS:7D30 is a struct member too. Folding DS:7D2E..7D3F then broke comparisons with DS:7E8A..7E8F and an addition with DS:70C0, the same way; folding those runs as well (`State7D2E`, `State7E8A`, `State70C0`) made everything identical.
+- src/link/GCOMMON.ASM is deleted; COMMON is now entirely C.
+- Result: `./sr build --layout` IDENTICAL from an empty work dir, `./sr check --all` 572/572, tests OK.
+
+### What I learned
+- Operand order is evidence for declarations: in a two-memory-operand comparison or addition MSC loads the simpler operand; ties load the right side of a comparison and the left side of an addition. Every place our "plain" global sits against a struct member is a test of whether it was a member.
+- Merging two address-adjacent communals never moves anything else, because adjacent blocks are adjacent in LINK's allocation order; only the merged block's first mention can change, which the bucket check covers.
+- `State70C0` looks like two 16-byte records (an int, six ints, an int) for player and opponent; it is still a flat placeholder.

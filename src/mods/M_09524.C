@@ -20,7 +20,7 @@ static int near F_09524(int n)
 {
     int v;
 
-    v = w_7d88[n].kind;
+    v = g7d86n[n].f2;
     if (v < 3)
         return 0;
     if (v >= 7)
@@ -37,7 +37,7 @@ static int near F_09556(void)
 
     any = 0;
     for (k = 0; k < 21; k++)
-        if (p_8000[k].f3 != -1)
+        if (av7ff8[k].fb != -1)
             any = 1;
     if (any == 0)
         return 0;
@@ -75,7 +75,7 @@ static int near F_095F1(void)
         else
             v = 12;
     } else {
-        if (g817da == 1)
+        if (av7ff8[21].fb == 1)
             v = 10;
         else
             v = 50;
@@ -97,10 +97,10 @@ static void near F_09646(int flag)
     int m, found, k, low;
 
     for (k = 0; k < 21; k++) {
-        item = &g7d86n[p_8000[k].f0];
-        map[k].dr = abs(F_0E218(p_8000[k].f0) - F_0E218(-1));
-        map[k].dk = abs(w_7d88[p_8000[k].f0].kind - w_7d88[a_7eaap.m7eb0->f2].kind);
-        map[k].taken = (p_8000[k].f3 != -1) ? 0 : 1;
+        item = &g7d86n[av7ff8[k].f8];
+        map[k].dr = abs(F_0E218(av7ff8[k].f8) - F_0E218(-1));
+        map[k].dk = abs(g7d86n[av7ff8[k].f8].f2 - g7d86n[a_7eaap.m7eb0->f2].f2);
+        map[k].taken = (av7ff8[k].fb != -1) ? 0 : 1;
     }
     g_6c86 = 0;
     found = 1;
@@ -209,9 +209,9 @@ static void near F_09A83(int *ids, int *slots, int *kinds)
     int i, n;
 
     if (F_09556() == 0)
-        g817da = 1;
+        av7ff8[21].fb = 1;
     else
-        g817da = 0;
+        av7ff8[21].fb = 0;
     for (i = 0, n = 0; i <= 21; i++) {
         if (av7ff8[i].fb == 1) {
             slots[n] = i;

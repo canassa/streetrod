@@ -6,8 +6,8 @@
 #include "STRUCTS.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
-int ac7d30z;
-int ar7e8av;
+struct State7E8A ar7e8av;
+struct State7D2E ao7d2ev;
 int ao8228u;
 long b_82bc;
 int z_8b7c;
@@ -151,8 +151,8 @@ void interrupt far F_0238C(void)
                 }
                 if (g_0610 || g_0612) {
                     if (e_78e0.f14 * 4 + e_78e0.fe < 5700) {
-                        if (ar7e8av > ac7d30z ||
-                            (!a_7eaap.m7ec0 ? 0x17c : 0x3fc) - 60 < ac7d30z)
+                        if (ar7e8av.m7e8a > ao7d2ev.m7d30 ||
+                            (!a_7eaap.m7ec0 ? 0x17c : 0x3fc) - 60 < ao7d2ev.m7d30)
                             flag = 1;
                     } else if (e_78e0.f18 < e_78e0.f1c && ao8228u) {
                         c = 1;
@@ -168,7 +168,7 @@ void interrupt far F_0238C(void)
                     b_82bc += e_78e0.f0;
                     e_78e0.fc0++;
                 }
-                if ((!a_7eaap.m7ec0 ? 0x17c : 0x3fc) < ac7d30z) {
+                if ((!a_7eaap.m7ec0 ? 0x17c : 0x3fc) < ao7d2ev.m7d30) {
                     prev = 1;
                     flag = s = 0;
                     if (e_78e0.f0 > 15)

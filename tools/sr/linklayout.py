@@ -146,9 +146,8 @@ def prepare():
     k = next(i for i, r in enumerate(plan['runtime']) if r['member'].endswith('fltused.ASM')) + 1
     runtime[k:k] = ['RUNTIME\\'+name for name, _ in archives['emulator']]
     sequence += runtime
-    # LINK creates the communal segment c_common after every declared segment, so it
-    # follows crt0's XOB/XO/XOE markers; the explicit storage goes after the runtime objects
-    sequence.append(assembly(config.SRC/'link'/'GCOMMON.ASM'))
+    # DS:6E60..8F02 is communal storage (C tentative definitions in the game files): LINK
+    # creates c_common after crt0's XOB/XO/XOE and allocates it by symbol-hash bucket
     response = '+\n'.join(sequence)+'\nSR.EXE\nSR.MAP\n\n;\n'
     (OUT/'LINK.RSP').write_bytes(response.replace('\n', '\r\n').encode())
     env = ['@echo off', 'set PATH=D:\\BIN;F:\\BIN', 'set INCLUDE=E:\\;D:\\INCLUDE;F:\\INCLUDE',

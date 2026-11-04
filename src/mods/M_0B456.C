@@ -8,12 +8,6 @@
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 int g7644m;
 char at787cu;
-int ez7900;
-int bx7904;
-int g799cy;
-int az7a9e;
-int bp7d32;
-int a_7e8c;
 int h_8264;
 int g826af;
 int ae826cv;
@@ -224,7 +218,7 @@ void F_0B8A1(void)
     g_0284 = 3;
     F_118D4(0x442, -1);
     F_11593(g_49dc);
-    m_8240 = 1;
+    r_vid.f16 = 1;
     (*m_present)();
     dl.f0c = 1;
     F_120FE(1);
@@ -235,11 +229,11 @@ void F_0B8A1(void)
     F_16381(0);
     label = F_11A72(0x50, 0xaa, 0x28, 0xc, 0);
     dl.bm1 = F_11A72(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
-    m_8240 = 0;
+    r_vid.f16 = 0;
     F_11BD3(g_0290, 0x40, 0x64);
     dl.bm2 = F_11A72(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
     F_11BD3(g_028c, 0x40, 0x64);
-    m_8240 = 1;
+    r_vid.f16 = 1;
     pos = 1;
     dl.f1a = 0;
     wait1 = 0x28;
@@ -543,13 +537,13 @@ static void near F_0C1D8(void)
 void F_0C407(void)
 {
     if (g_53e6 == 0) {
-        if ((ar7e8av - ac7d30z) * 8 + a_7e8c <= bp7d32)
+        if ((ar7e8av.m7e8a - ao7d2ev.m7d30) * 8 + ar7e8av.m7e8c <= ao7d2ev.m7d32)
             s_8632 = 1;
         else
             s_8632 = 0;
         g7644m = b_82bc / e_78e0.fc0;
         p_8bc4 = e_78e0.fc0 / 6.068827333333334;
-        dz82c8x = (int)((ac7d30z - 200) * 100.0 / (ar7e8av - 200)) > 99 ? 99 : (int)((ac7d30z - 200) * 100.0 / (ar7e8av - 200));
+        dz82c8x = (int)((ao7d2ev.m7d30 - 200) * 100.0 / (ar7e8av.m7e8a - 200)) > 99 ? 99 : (int)((ao7d2ev.m7d30 - 200) * 100.0 / (ar7e8av.m7e8a - 200));
         g_53e6 = 1;
     }
 }
@@ -645,9 +639,9 @@ static int near F_0C613(void)
 
     kind = as79a2z;
     v = d_79a4;
-    engine = g799cy & 4;
-    opt = g799cy & 0x10;
-    stop = g799cy == 5 || g799cy == 0x11 || g799cy == 0x15;
+    engine = e_78e0.fbc & 4;
+    opt = e_78e0.fbc & 0x10;
+    stop = e_78e0.fbc == 5 || e_78e0.fbc == 0x11 || e_78e0.fbc == 0x15;
     if (a_7eaap.m7eb0->slot6->b > 9900)
         a_7eaap.m7eb0->slot6->b = 9900;
     if (a_7eaap.m7eb0->rack.s[0]->b > 9900)
@@ -659,10 +653,10 @@ static int near F_0C613(void)
     b_82bc = 0;
     g_47cd = 0;
     g_4732 = 0;
-    if (ez7900)
-        bx7904 = 1;
+    if (e_78e0.f20)
+        e_78e0.f24 = 1;
     if (at787cu)
-        g799cy |= 8;
+        e_78e0.fbc |= 8;
     F_13DE6(1);
     i = a_7eaap.m7ec0 == 0 ? 5 : 15;
     if (a_7eaap.m7eb0->f22 > i)
@@ -670,7 +664,7 @@ static int near F_0C613(void)
     else
         a_7eaap.m7eb0->f22 = 0;
     (*m_present)();
-    if (az7a9e & 1) {
+    if (g79e2g.fbc & 1) {
         bo7676 = 1;
         F_0C497();
         F_120FE(-2);
@@ -695,7 +689,7 @@ static int near F_0C613(void)
                     g7d84o->fb = 0xff;
                 else {
                     for (i = 0, units = 0; i < 25; i++)
-                        if (w_7d88[i].kind < ar7d7au->f2)
+                        if (g7d86n[i].f2 < ar7d7au->f2)
                             list[++units] = i;
                     if (units > 0) {
                         list[0] = units;
@@ -709,16 +703,16 @@ static int near F_0C613(void)
         }
 done:
         F_13F21(1);
-        if (g799cy & 8)
+        if (e_78e0.fbc & 8)
             if ((i = F_0BED4()) != 0)
                 goto ret2;
         if (kind == 5)
             return 1;
         return 3;
-    } else if (g799cy & 0x40) {
+    } else if (e_78e0.fbc & 0x40) {
         F_16AA8(0);
         F_0BF94();
-        i = (g799cy & 8) ? F_0BED4() : 0;
+        i = (e_78e0.fbc & 8) ? F_0BED4() : 0;
         if (e_78e0.f0 > 0x50)
             i += 0x4b;
         else if (e_78e0.f0 > 0x32)
@@ -745,7 +739,7 @@ pay:
         g_05cc = cost;
         F_13F21(1);
         F_11421(-1, "", 0x140 - o_8250);
-    } else if (g799cy == 0x81) {
+    } else if (e_78e0.fbc == 0x81) {
         F_120FE(-2);
         F_03AB8(0xecb2);
     } else {
@@ -754,7 +748,7 @@ pay:
             a_7eaap.m7eb0 = 0;
         }
         F_11540(-v);
-        if (g799cy == 1) {
+        if (e_78e0.fbc == 1) {
             F_0C497();
             F_120FE(-2);
             i = kind == 5 ? 0x143a : 0x1427;
@@ -778,7 +772,7 @@ finishstop:
         } else {
             F_0C1D8();
             if (kind == 5) {
-                if (g799cy & 8) {
+                if (e_78e0.fbc & 8) {
                     F_03AB8(0x16f6);
                     F_0BED4();
                 } else
@@ -804,7 +798,7 @@ finishstop:
                     i = 1;
                     v = random_int(0x14) + 100;
                 } else {
-                    if (g799cy & 8) {
+                    if (e_78e0.fbc & 8) {
                         F_03AB8(0x1590);
                         all = F_0BED4();
                         goto fin;
@@ -818,7 +812,7 @@ finishstop:
                 ptr[2] = ' ';
                 itoa(v, ptr, 10);
                 ptr[strlen(ptr)] = ' ';
-                all = g799cy & 8;
+                all = e_78e0.fbc & 8;
                 if (all)
                     strcpy(g_2aea, "Plus tires !");
                 else

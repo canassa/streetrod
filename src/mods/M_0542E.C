@@ -1,14 +1,12 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
-char g817da;
-
-int g_4fa6[14] = {26708, 8293, 24935, 25965, 27936, 29557, 8308, 24936, 25974, 24864, 28192, 28001, 8293, 33};   /* DS:4FA6 */
 char g_4fc2[16] = {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};   /* DS:4FC2 */
 int g_4fd2[16] = {6661, 6678, 6695, 6712, 6729, 6746, 6763, 6780, 6797, 6814, 6831, 6848, 6865, 6882, 6899, 6916};   /* DS:4FD2 */
 char *g_4ff2 = g_4fa6;   /* DS:4FF2 */
 int g_4ff4 = 0;   /* DS:4FF4 */
+
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 
 /* F_0542E @ 0000:542E (linear 0x0542E, 342 bytes) */
 
@@ -34,8 +32,8 @@ void F_0542E(int k, int *list)
     av7ff8[k].f8 = list[i + 1];
     list[i + 1] = -1;
     x = av7ff8[k].f8;
-    y = (w_7d88[x].kind >> 1) + 1;
-    av7ff8[k].fe = ((w_7d88[x].f2 >> 8 & 7) == 2) ? 8 : 0;
+    y = (g7d86n[x].f2 >> 1) + 1;
+    av7ff8[k].fe = ((g7d86n[x].f4 >> 8 & 7) == 2) ? 8 : 0;
     av7ff8[k].ff = (random_int(20) < y) ? random_int(9) : 0;
     if (w_8df0[x].f6 > 0 && w_8df0[x].f8 > 0)
         av7ff8[k].fe |= (random_int(25) < y) ? 3 : 0;
@@ -53,7 +51,7 @@ static void near F_05584(void)
 
     i = na1 = nb = nc = 0;
     for (; i < 25; i++) {
-        v = w_7d88[i].kind;
+        v = g7d86n[i].f2;
         if (v >= 6)
             cl[++nc] = i;
         else if (v < 3)
@@ -73,7 +71,7 @@ static void near F_05584(void)
         F_0542E(k++, bm);
     for (i = 0; i < 7; i++)
         F_0542E(k++, cl);
-    g817da = 0;
+    av7ff8[21].fb = 0;
     if (g_0610) {
         an[0] = 1;
         an[1] = 0x18;

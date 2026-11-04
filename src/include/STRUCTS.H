@@ -224,22 +224,6 @@ struct Rect {
     int y2;
 };
 
-struct Rec10 {
-    unsigned char kind;
-    signed char next;
-    unsigned f2;
-    int f4;
-    int f6;
-    int f8;
-};
-
-struct Rec18 {
-    int f0;
-    char pad2;
-    char f3;
-    char pad4[14];
-};
-
 struct Seq {
     int count;
     signed char dx;
@@ -326,13 +310,6 @@ struct Win {
     int pad;
 };
 
-struct Dir {
-    struct Frame *f0;
-    struct Frame *f2;
-    struct Frame *f4;
-    int pad[3];
-};
-
 struct Racer {
     signed char f0;
     char f1;
@@ -354,7 +331,7 @@ struct Racer {
 struct Spec {
     int f0;
     unsigned char f2;
-    char pad3;
+    signed char next;
     unsigned f4;
     int f6;
     int f8;
@@ -567,12 +544,6 @@ struct Spr6 {
     unsigned char b0, b1, b2, b3, b4, b5;
 };
 
-/* 10-byte table entry (g7d8ew[]): the bitmap id first */
-struct Ent10 {
-    int id;
-    int f2, f4, f6, f8;
-};
-
 struct Pos6 {
     int id;
     int dx;
@@ -583,14 +554,6 @@ struct Pos6 {
 struct Step {
     unsigned char frame;
     unsigned char delay;
-};
-
-/* 20-byte room table entry (at70e8): two rectangles as x, y, width, height bytes */
-struct Zone {
-    unsigned char x, y, w, h;
-    char pad4[4];
-    unsigned char sx, sy, sw, sh;
-    char pad12[8];
 };
 
 struct Look {
@@ -670,6 +633,38 @@ struct CgaFont {
 
 /* DS:7EAA..7EC2: one COMMON block in the original (folded from 11 placeholder
    globals: the compiler budget of the original translation units requires fewer external symbols) */
+/* DS:7D2E..7D3F: one communal; the code reads these as struct members */
+struct State7D2E {
+    int m7d2e;
+    int m7d30;
+    int m7d32;
+    int m7d34;
+    int m7d36;
+    int m7d38;
+    int m7d3a;
+    int m7d3c;
+    int m7d3e;
+};
+
+/* DS:7E8A..7E99: one communal; the code reads these as struct members */
+struct State7E8A {
+    int m7e8a;
+    int m7e8c;
+    int m7e8e;
+    int m7e90;
+    char m7e92[8];
+};
+
+/* DS:70C0..70DF: one communal; the code reads these as struct members */
+struct State70C0 {
+    int m70c0;
+    int m70c2[6];
+    int m70ce;
+    int m70d0;
+    int m70d2[6];
+    int m70de;
+};
+
 struct State7EAA {
     long m7eaa;
     int m7eae;

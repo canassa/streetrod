@@ -5,20 +5,19 @@
 #include <stdio.h>
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
-char f_8244;
 char af824ax;
 
 void F_1169A(int x, int y, int w, int h, char color)
 {
     char old;
 
-    old = f_8244;
+    old = x_colors.c[2];
     F_120FE(-3);
-    f_8244 = color;
+    x_colors.c[2] = color;
     F_13682(r_vid.back, x, y, w, h);
     if (r_vid.f16)
         F_1A92A(r_vid.back, r_vid.front, x, y, x + w - 1, y + h - 1);
-    f_8244 = old;
+    x_colors.c[2] = old;
     F_120FE(-1);
 }
 

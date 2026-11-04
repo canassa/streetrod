@@ -3,8 +3,6 @@
 #include "STRUCTS.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
-struct Bitmap far *o_731a;
-struct Bitmap far *au7322;
 
 static struct Bitmap far * near F_1A9B2(int n);
 static void near F_1ABAC(int a, int *p, int *q);
@@ -70,7 +68,7 @@ static void near F_1ABAC(int a, int *p, int *q)
     g_6ce6 = g_6de2[0]->height - g_6d38->height;
     F_1A472(g_6d38, g_6de2[0], g_6d3e, g_6ce6);
     if (r_vid.mode == -2)
-        (*dz78b6)(ae7312y[1]->bits.p, o_731a->bits.p);
+        (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
     g_6ce8.x1 = 0;
     g_6ce8.y1 = 0;
     g_6ce8.x2 = g_6d2c->width - 1;
@@ -83,7 +81,7 @@ static void near F_1ABAC(int a, int *p, int *q)
         F_10AFD(3);
     }
     if (r_vid.mode == -2)
-        (*dz78b6)(ae7312y[1]->bits.p, o_731a->bits.p);
+        (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
     for (i = 1; i < 4; i++) {
         g_6da2 = (i * 2 + g_6d3e) & ~r_vid.mask;
         if (g_6da2) {
@@ -104,7 +102,7 @@ static void near F_1ABAC(int a, int *p, int *q)
     F_168C8(0);
     F_1941E(6);
     if (r_vid.mode == -2)
-        (*dz78b6)(ae7312y[1]->bits.p, o_731a->bits.p);
+        (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
     g_6de2[0] = F_15BBE(*q, 1);
     g_6d3e = ((unsigned char)a & 7) >> 1;
     for (i = 1; i < 4; i++) {
@@ -132,7 +130,7 @@ static void near F_1ABAC(int a, int *p, int *q)
         F_10AFD(2);
     F_168C8(0);
     if (r_vid.mode == -2)
-        (*dz78b6)(ae7312y[1]->bits.p, o_731a->bits.p);
+        (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
     g_6ce8.x1 = 0;
     g_6ce8.y1 = 0;
     g_6ce8.x2 = g_6d2c->width - 1;
@@ -170,12 +168,12 @@ void F_1B213(int *a, int *b)
     int sv401;
     int s74;
 
-    sv401 = m_8240;
+    sv401 = r_vid.f16;
     s72 = m_8272.m8272;
     s74 = m_8272.m8274;
     F_193FE();
     F_120FE(-4);
-    m_8240 = 0;
+    r_vid.f16 = 0;
     g_6da0 = z_8b7c;
     modelm = a_7eaap.m7eb0->f2;
     attr3 = F_049A2(a_7eaap.m7eb0);
@@ -254,10 +252,10 @@ void F_1B213(int *a, int *b)
     (*ab78aat)(g_6cda[2], g_6d24, &blt, 1);
     if (r_vid.mode == -2) {
         g_6cd4 = &g_6cf4;
-        F_03904(g_6cd4, g_731e->bits.p, 0, g_6df6->width, 200, -2);
-        F_03904(g_5ab0, g_731e->bits.p + g_6df6->pitch, 0, pic->width, 200, -2);
-        F_03904(g_5ab4, au7322->bits.p, 0, 0x140, g_6d24->height, -2);
-        F_03904(g_5ab8, au7322->bits.p, 0, g_6d28->width, 200, -2);
+        F_03904(g_6cd4, bp7316[2]->bits.p, 0, g_6df6->width, 200, -2);
+        F_03904(g_5ab0, bp7316[2]->bits.p + g_6df6->pitch, 0, pic->width, 200, -2);
+        F_03904(g_5ab4, bp7316[3]->bits.p, 0, 0x140, g_6d24->height, -2);
+        F_03904(g_5ab8, bp7316[3]->bits.p, 0, g_6d28->width, 200, -2);
         blt.w = g_6dfa->width;
         blt.h = g_6df6->height + 4;
         blt.sx = blt.dx = 0;
@@ -289,7 +287,7 @@ void F_1B213(int *a, int *b)
     }
     g_5aa8 = (r_vid.mode == -6) ? 0x97 - g_6cda[0]->height : 0;
     if (r_vid.mode == -2)
-        (*dz78b6)(bp7316[0]->bits.p, o_731a->bits.p);
+        (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
     g_6d3c = F_195F3(0x88, 0xb9, &g_6cda[1], 0, 1, g_5ab8, g_6d28, 0, 0);
     F_199DD(g_6d3c, 0, 0x21, 0, -1);
     while ((*g78c6c)(g_6d3c))
@@ -301,7 +299,7 @@ void F_1B213(int *a, int *b)
     F_1A472(g_6cf0, g_6df6, g_6cd8, ybot);
     F_19438(1);
     if (r_vid.mode == -2)
-        (*dz78b6)(bp7316[0]->bits.p, o_731a->bits.p);
+        (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
     g_6ce8.x1 = 0;
     g_6ce8.y1 = 0;
     g_6ce8.x2 = g_6dfa->width - 1;
@@ -362,7 +360,7 @@ void F_1B213(int *a, int *b)
     F_1A472(g_6de2[0], g_6df6, g_6dd4, ybot);
     F_1A472(g_6de2[0], g_6df6, g_6cd8, ybot);
     if (r_vid.mode == -2)
-        (*dz78b6)(bp7316[0]->bits.p, o_731a->bits.p);
+        (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
     frame = 2;
     rev = 1;
     (*ab78aat)(g_6cda[2], g_6dfa, &clip6, 1);
@@ -398,7 +396,7 @@ void F_1B213(int *a, int *b)
     F_16381(0);
     g_5aa8 = (r_vid.mode == -6) ? 0x97 - g_6cda[0]->height : 0;
     if (r_vid.mode == -2)
-        (*dz78b6)(bp7316[0]->bits.p, o_731a->bits.p);
+        (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
     g_6d3c = F_195F3(0x88, 0x99, &g_6cda[1], 0, 1, g_5ab8, g_6d28, 0, 0);
     F_199DD(g_6d3c, 0, 0x21, 0, 1);
     while ((*g78c6c)(g_6d3c))
@@ -406,7 +404,7 @@ void F_1B213(int *a, int *b)
     F_193FE();
     (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
     z_8b7c = g_6da0;
-    m_8240 = sv401;
+    r_vid.f16 = sv401;
     m_8272.m8272 = s72;
     m_8272.m8274 = s74;
     g_5aa8 = 0;

@@ -4,8 +4,8 @@
 #include <stdlib.h>
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+struct Frame g77bal[12];
 struct Seq g_764e[10];
-struct Dir aq77c0v[11];
 struct Sprite g7d18m;
 struct Page aq7d42[2];
 
@@ -141,9 +141,9 @@ void F_19925(struct Sprite *s)
     f3->nxt[0] = f2;
     f4->nxt[0] = f3;
     for (idx = 0; idx < 4; idx++)
-        aq77c0v[idx].f2 = aq77c0v[idx].f0->nxt[0];
+        g77bal[idx].nxt[1] = g77bal[idx].nxt[0]->nxt[0];
     for (idx = 0; idx < 4; idx++)
-        aq77c0v[idx].f4 = aq77c0v[idx].f2->nxt[1];
+        g77bal[idx].nxt[2] = g77bal[idx].nxt[1]->nxt[1];
     switch (z_8b7c & 7) {
     case 0:
         break;

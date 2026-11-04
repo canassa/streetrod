@@ -129,7 +129,7 @@ static void near F_081AB(struct Car *car)
             default:
                 goto again;
             case 0:
-                ok = ((struct Row8 *)((char *)g_4806 + 2))[list4[key]->idx].f1 & w_7d88[car->f2].f2 & 0xf;
+                ok = ((struct Row8 *)((char *)g_4806 + 2))[list4[key]->idx].f1 & g7d86n[car->f2].f4 & 0xf;
                 hz82ae = 0;
                 step = 0;
                 car->f1f = -1;
@@ -137,7 +137,7 @@ static void near F_081AB(struct Car *car)
                 g_05fc += ok ? 0x666 : 0x888;
                 break;
             case 1:
-                ok = (((struct Row8 *)((char *)g_4806 + 2))[k = list4[key]->idx].f1 & w_7d88[car->f2].f2 & 0xf) != 0
+                ok = (((struct Row8 *)((char *)g_4806 + 2))[k = list4[key]->idx].f1 & g7d86n[car->f2].f4 & 0xf) != 0
                      && g_4978[((struct Row8 *)((char *)g_4806 + 2))[car->rack.s[0]->idx].kind][tmp29 = ((struct Row8 *)((char *)g_4806 + 2))[k].kind] != 0;
                 hz82ae = 1;
                 step = 1;
@@ -149,7 +149,7 @@ static void near F_081AB(struct Car *car)
             case 2:
             case 3:
             case 4:
-                ok = (((struct Row8 *)((char *)g_4806 + 2))[k = list4[key]->idx].f1 & w_7d88[car->f2].f2 & 0xf) != 0
+                ok = (((struct Row8 *)((char *)g_4806 + 2))[k = list4[key]->idx].f1 & g7d86n[car->f2].f4 & 0xf) != 0
                      && g_4988[tmp29 = ((struct Row8 *)((char *)g_4806 + 2))[car->rack.s[1]->idx].kind][((struct Row8 *)((char *)g_4806 + 2))[k].kind] != 0;
                 g_05fc += ok ? 0x199u : 0x222u;
                 step = 3;

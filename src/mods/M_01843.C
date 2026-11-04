@@ -4,6 +4,7 @@
 #include <dos.h>
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+struct Eng e_78e0;
 int t_72ec;
 struct Tone *bn82c4;
 

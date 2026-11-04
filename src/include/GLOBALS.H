@@ -627,27 +627,18 @@ extern struct Bitmap far *c_6e64;                       /* DS:6E64 */
 extern struct Bitmap am6e68x[];                         /* DS:6E68 */
 extern struct Bitmap far *at70a8;                       /* DS:70A8 */
 extern struct Blt u_70ac;                               /* DS:70AC */
-extern int al70c0x;                                     /* DS:70C0 */
-extern int by70c2[];                                    /* DS:70C2 */
-extern int g70cee;                                      /* DS:70CE */
-extern int dz70d0;                                      /* DS:70D0 */
-extern int by70d2[];                                    /* DS:70D2 */
-extern int g70dee;                                      /* DS:70DE */
+extern struct State70C0 al70c0x;                        /* DS:70C0 */
 extern int dz70e0;                                      /* DS:70E0 */
 extern int by70e2;                                      /* DS:70E2 */
 extern struct Panel ai70e4t[];                          /* DS:70E4 */
-extern struct Zone at70e8[];                            /* DS:70E8 */
 extern int t_72ec;                                      /* DS:72EC */
 extern unsigned far *q_72ee;                            /* DS:72EE */
 extern int by72f2;                                      /* DS:72F2 */
 extern struct Bitmap far *ax72f4;                       /* DS:72F4 */
 extern int at72f8[];                                    /* DS:72F8 */
-extern struct Bitmap far *ae7312y[];                    /* DS:7312 */
+extern int a7312av;                                     /* DS:7312 */
 extern int br7314;                                      /* DS:7314 */
 extern struct Bitmap far *bp7316[];                     /* DS:7316 */
-extern struct Bitmap far *o_731a;                       /* DS:731A */
-extern struct Bitmap far *g_731e;                       /* DS:731E */
-extern struct Bitmap far *au7322;                       /* DS:7322 */
 extern struct Bitmap far *ab7526x[13];                  /* DS:7526 */
 extern int g755av;                                      /* DS:755A */
 extern struct Bitmap far *g755cu;                       /* DS:755C */
@@ -665,8 +656,7 @@ extern unsigned at767ct;                                /* DS:767C */
 extern struct Bitmap far *ar767eu;                      /* DS:767E */
 extern struct Spr12 g7682n[];                           /* DS:7682 */
 extern struct Frame g77bal[];                           /* DS:77BA */
-extern struct Dir aq77c0v[];                            /* DS:77C0 */
-extern struct Pos6 g7844n[];                            /* DS:7844 */
+extern struct Pos6 a784als[];                           /* DS:784A */
 extern unsigned av787at;                                /* DS:787A */
 extern char at787cu;                                    /* DS:787C */
 extern struct Style *bustyle;                           /* DS:787E */
@@ -691,15 +681,6 @@ extern void (far *g78d6c)(int, int, int, int);          /* DS:78D6 */
 extern void (far *bp78da)(int, int);                    /* DS:78DA */
 extern int bl78de;                                      /* DS:78DE */
 extern struct Eng e_78e0;                               /* DS:78E0 */
-extern int g78ean;                                      /* DS:78EA */
-extern int bn78ec;                                      /* DS:78EC */
-extern char bl78ee[18];                                 /* DS:78EE */
-extern int ez7900;                                      /* DS:7900 */
-extern char az7902[2];                                  /* DS:7902 */
-extern int bx7904;                                      /* DS:7904 */
-extern char bv7906[150];                                /* DS:7906 */
-extern int g799cy;                                      /* DS:799C */
-extern char g799ex[4];                                  /* DS:799E */
 extern int as79a2z;                                     /* DS:79A2 */
 extern int d_79a4;                                      /* DS:79A4 */
 extern int jz79a6;                                      /* DS:79A6 */
@@ -707,8 +688,7 @@ extern char fz79a8[2];                                  /* DS:79A8 */
 extern struct Dev bs79aa;                               /* DS:79AA */
 extern struct Dev ao79c6t;                              /* DS:79C6 */
 extern struct Eng g79e2g;                               /* DS:79E2 */
-extern int az7a9e;                                      /* DS:7A9E */
-extern char cz7aa0[10];                                 /* DS:7AA0 */
+extern char ah7aa4w[6];                                 /* DS:7AA4 */
 extern void (interrupt far *w_7aaa)(void);              /* DS:7AAA */
 extern int aw7aaex;                                     /* DS:7AAE */
 extern int al7ab0u[];                                   /* DS:7AB0 */
@@ -721,15 +701,7 @@ extern struct Cursor g_cursor2;                         /* DS:7AEC */
 extern int g7b14o;                                      /* DS:7B14 */
 extern int a_7d16q;                                     /* DS:7D16 */
 extern struct Sprite g7d18m;                            /* DS:7D18 */
-extern int ao7d2ev;                                     /* DS:7D2E */
-extern int ac7d30z;                                     /* DS:7D30 */
-extern int bp7d32;                                      /* DS:7D32 */
-extern int aa7d34l;                                     /* DS:7D34 */
-extern int a_7d36m;                                     /* DS:7D36 */
-extern int g7d38m;                                      /* DS:7D38 */
-extern int g_7d3a;                                      /* DS:7D3A */
-extern int c_7d3c;                                      /* DS:7D3C */
-extern int ao7d3ex;                                     /* DS:7D3E */
+extern struct State7D2E ao7d2ev;                        /* DS:7D2E */
 extern int g7d40q;                                      /* DS:7D40 */
 extern struct Page aq7d42[];                            /* DS:7D42 */
 extern unsigned far *g7d62p;                            /* DS:7D62 */
@@ -742,13 +714,7 @@ extern int g7d80q;                                      /* DS:7D80 */
 extern int g7d82p;                                      /* DS:7D82 */
 extern struct Racer *g7d84o;                            /* DS:7D84 */
 extern struct Spec g7d86n[];                            /* DS:7D86 */
-extern struct Rec10 w_7d88[];                           /* DS:7D88 */
-extern struct Ent10 g7d8ew[];                           /* DS:7D8E */
-extern int ar7e8av;                                     /* DS:7E8A */
-extern int a_7e8c;                                      /* DS:7E8C */
-extern int an7e8ex;                                     /* DS:7E8E */
-extern int ar7e90;                                      /* DS:7E90 */
-extern char ap7e92[8];                                  /* DS:7E92 */
+extern struct State7E8A ar7e8av;                        /* DS:7E8A */
 extern char atnewName[];                                /* DS:7E9A */
 extern struct State7EAA a_7eaap;                        /* DS:7EAA */
 extern struct Band dz7ec2[4];                           /* DS:7EC2 */
@@ -770,21 +736,12 @@ extern int dz7ff2;                                      /* DS:7FF2 */
 extern int g7ff4g;                                      /* DS:7FF4 */
 extern char g7ff6f[2];                                  /* DS:7FF6 */
 extern struct Racer av7ff8[];                           /* DS:7FF8 */
-extern struct Rec18 p_8000[];                           /* DS:8000 */
-extern int gz8176;                                      /* DS:8176 */
-extern char cz8178[5];                                  /* DS:8178 */
-extern char g817da;                                     /* DS:817D */
-extern char a_817ex[6];                                 /* DS:817E */
 extern struct Bitmap far *g8184y;                       /* DS:8184 */
 extern struct Bitmap far *g8188w;                       /* DS:8188 */
 extern struct Spr6 ap818c[];                            /* DS:818C */
 extern int ao8228u;                                     /* DS:8228 */
 extern struct Video r_vid;                              /* DS:822A */
-extern int m_8240;                                      /* DS:8240 */
 extern struct Colors x_colors;                          /* DS:8242 */
-extern char f_8244;                                     /* DS:8244 */
-extern char ar8245t;                                    /* DS:8245 */
-extern char g8246z;                                     /* DS:8246 */
 extern char ap8247u;                                    /* DS:8247 */
 extern char iz8248;                                     /* DS:8248 */
 extern char gz8249;                                     /* DS:8249 */
@@ -873,6 +830,7 @@ extern char *aw8dd4x;                                   /* DS:8DD4 */
 extern char *au8dd6y;                                   /* DS:8DD6 */
 extern int h_8dd8[][3];                                 /* DS:8DD8 */
 extern struct Model w_8df0[];                           /* DS:8DF0 */
+extern char a8ef4fv[2];                                 /* DS:8EF4 */
 extern int g8ef6q;                                      /* DS:8EF6 */
 extern int g_8ef8;                                      /* DS:8EF8 */
 extern int aj8efax;                                     /* DS:8EFA */

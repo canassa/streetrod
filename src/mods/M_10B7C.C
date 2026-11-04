@@ -5,7 +5,8 @@
 #include <dos.h>
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
-struct Bitmap far *bp7316[1];
+struct Colors x_colors;
+struct Bitmap far *bp7316[4];
 struct Obj bm7568[5];
 struct Style *bustyle;
 int (far *ab78aat)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);

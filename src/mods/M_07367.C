@@ -44,7 +44,7 @@ static void near F_07367(void)
             bm3 = F_15BBE(1218, 2);
             bm1 = F_1934E(g_0294->width, g_0294->height, 0, 2);
             F_19ED0(g_0294, bm1, 1);
-            q2 = &g7844n[idx6];
+            q2 = &a784als[idx6 - 1];
             F_1A734(bm1, q2->id, (char)(q2->dx + m_8272.m8276), (char)q2->dy, 0);
             bm4 = F_1934E(bm1->width, bm1->height, 0, 2);
             F_19ED0(bm1, bm4, 1);

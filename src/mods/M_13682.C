@@ -1,7 +1,7 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
-/* F_13682: fill the rectangle (x, y, w, h) of bitmap s with colour f_8244, clipped to its size,
+/* F_13682: fill the rectangle (x, y, w, h) of bitmap s with colour x_colors.c[2], clipped to its size,
    one horizontal line at a time through the line routine a_78d2 */
 
 
@@ -21,7 +21,7 @@ void F_13682(struct Bitmap far *s, int x, int y, int w, int h)
     oldoff = at767ct;
     av787at = s->bits.w.seg;
     at767ct = s->bits.w.off;
-    col = f_8244;
+    col = x_colors.c[2];
     x2 = x + w - 1;
     for (j = 0; j < h; j++)
         (*a_78d2)(x, y + j, x2, y + j, col);
@@ -55,14 +55,14 @@ void F_1377F(struct Bitmap far *s, int x, int y, int w)
 {
     char old;
 
-    old = f_8244;
-    f_8244 = x_colors.c[3];
+    old = x_colors.c[2];
+    x_colors.c[2] = x_colors.c[3];
     F_13682(s, x, y, w, 1);
-    f_8244 = old;
+    x_colors.c[2] = old;
 }
 
 /* F_137B2: draw a raised box frame of width 3 around the rectangle (x, y, w, h) of bitmap s: four
-   filled bars in colour f_8244 (x_colors.c[3] when the style in x_colors.c[4] is 3), then an inner
+   filled bars in colour x_colors.c[2] (x_colors.c[3] when the style in x_colors.c[4] is 3), then an inner
    highlight made of two vertical and two horizontal lines, doubled when the style is 2 */
 
 
@@ -83,15 +83,15 @@ void F_137B2(struct Bitmap far *s, int x, int y, int w, int h)
     top8 = y - bm;
     bh6 = h + bm * 2;
     bw = w + bm * 2;
-    old = f_8244;
+    old = x_colors.c[2];
     if (x_colors.c[4] == 3)
-        f_8244 = x_colors.c[3];
+        x_colors.c[2] = x_colors.c[3];
     F_13682(s, left, top8, bm, bh6);
     F_13682(s, x, bottom, w, bm);
     F_13682(s, right2, top8, bm, bh6);
     F_13682(s, x, top8, w, bm);
     if (x_colors.c[4] == 3)
-        f_8244 = old;
+        x_colors.c[2] = old;
     else {
         F_1371C(s, left + 1, top8 + 1, bh6 - 2);
         F_1377F(s, left + 1, bottom + 1, bw - 2);

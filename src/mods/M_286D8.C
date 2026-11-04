@@ -3,10 +3,8 @@
 #include <stdlib.h>
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+int a7312av;
 struct Bitmap far *k_6e60;
-int g70cee;
-int dz70d0;
-int g70dee;
 int dz70e0;
 struct Bitmap far *ax72f4;
 int br7314;
@@ -284,14 +282,14 @@ static void near F_28DD2(void)
 
     b.dy = 0x12;
     if (*(int *)&bw8aca) {
-        v = F_27C01(n8, m5 * 2, ao7d3ex);
+        v = F_27C01(n8, m5 * 2, ao7d2ev.m7d3e);
         b.h = v - 0x1e;
         b.sy = 0x9a - b.h;
-        if (c_7d3c > 0) {
-            r = (c_7d3c * 2 % 320) & ~7;
+        if (ao7d2ev.m7d3c > 0) {
+            r = (ao7d2ev.m7d3c * 2 % 320) & ~7;
             ll = 320 - r;
         } else {
-            ll = (abs(c_7d3c) * 2 % 320) & ~7;
+            ll = (abs(ao7d2ev.m7d3c) * 2 % 320) & ~7;
             r = 320 - ll;
         }
         b.w = ll;
@@ -314,11 +312,11 @@ static void near F_28DD2(void)
     b.h = *(int *)&bw8aca ? 0x14 : 0x10;
     b.sy = 0xa3;
     if (*(int *)&bw8aca) {
-        if (c_7d3c > 0) {
-            r = (c_7d3c * 4 % 320) & ~7;
+        if (ao7d2ev.m7d3c > 0) {
+            r = (ao7d2ev.m7d3c * 4 % 320) & ~7;
             ll = 320 - r;
         } else {
-            ll = (abs(c_7d3c) * 4 % 320) & ~7;
+            ll = (abs(ao7d2ev.m7d3c) * 4 % 320) & ~7;
             r = 320 - ll;
         }
         b.w = ll;
@@ -1127,9 +1125,9 @@ static void near F_2A3DD(void)
     int rd;
     struct Bitmap far *bm;
 
-    a2 = ar7e8av;
-    xk = (a2 - ac7d30z) * 8 + a_7e8c - bp7d32;
-    z9 = ar7e90 - a_7d36m;
+    a2 = ar7e8av.m7e8a;
+    xk = (a2 - ao7d2ev.m7d30) * 8 + ar7e8av.m7e8c - ao7d2ev.m7d32;
+    z9 = ar7e8av.m7e90 - ao7d2ev.m7d36;
     if (xk >= 0x78)
         seln = -1;
     else if (xk >= 0x10) {
@@ -1177,7 +1175,7 @@ static void near F_2A3DD(void)
     }
     ay8bc2z = seln == 0 || (seln == 2 && xk <= 10);
     by72f2 = seln == 2 && xk <= 10 && abs(z9) < 180 &&
-        (bu8acc < 4 ? 100 : 180) > abs(z9) && an7e8ex < aa7d34l;
+        (bu8acc < 4 ? 100 : 180) > abs(z9) && ar7e8av.m7e8e < ao7d2ev.m7d34;
     g_6e2a = ap7d7cv;
     ap7d7cv = seln;
     g_5ec6 = xk > 16 ? (xk + 8) & 15 : 0;
@@ -1186,15 +1184,15 @@ static void near F_2A3DD(void)
         t1 += 16;
     if (t1 < -2 && seln == 2)
         t1 += 8;
-    rc = ao7d3ex - g_terrain4[a2];
-    rd = c_7d3c - g_terrain2[a2];
+    rc = ao7d2ev.m7d3e - g_terrain4[a2];
+    rd = ao7d2ev.m7d3c - g_terrain2[a2];
     if (seln < 9) {
         t1 += 4;
-        ra = F_27BBF(t1, ar7e90, rd);
+        ra = F_27BBF(t1, ar7e8av.m7e90, rd);
         rb = F_27C01(t1, 2000, rc);
     } else {
         t1 = -t1;
-        ra = F_27C3D(t1, ar7e90, -rd);
+        ra = F_27C3D(t1, ar7e8av.m7e90, -rd);
         rb = F_27C78(t1, 2000, -rc);
     }
     if (seln == 0) {
@@ -1266,15 +1264,15 @@ static void near F_2A84D(void)
     g_6e08 = &g7f30t;
     g_6e18 = &as8668u;
     g_6e1a = &k_8646;
-    g_6e0a = &dz70d0;
+    g_6e0a = &al70c0x.m70d0;
     g_6e0e = &dz70e0;
     g_6e0c = &g_8658;
     g_6e10 = &e_7f2e;
     g_6e1c = &au8666t;
     g_6e1e = &aw8644v;
     g_6e14 = &au8656u;
-    g_6e12 = &g70cee;
-    g_6e16 = &g70dee;
+    g_6e12 = &al70c0x.m70ce;
+    g_6e16 = &al70c0x.m70de;
     g_6e28 = &g_5e92;
     g_6e20 = (int far *)(q_72ee - 8);
     g_6e24 = (int far *)(aw8634x - 8);
@@ -1373,7 +1371,7 @@ static void near F_2A84D(void)
         if (w36 & 0x800)
             F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 0xf);
     next:
-        if (ac7d30z - ar7e8av == i && *(int *)&bw8aca) {
+        if (ao7d2ev.m7d30 - ar7e8av.m7e8a == i && *(int *)&bw8aca) {
             F_2646D();
             F_2A3DD();
             F_26458();
@@ -1427,7 +1425,7 @@ void F_2AFDC(void)
     g_6e0a = &by7fa6;
     g_6e0e = &g7ff4g;
     g_6e0c = &r_7acc;
-    g_6e10 = &ae7312y;
+    g_6e10 = &a7312av;
     g_6e1c = &ac7ae8t;
     g_6e1e = &g789eu;
     g_6e14 = &az7acaz;
@@ -1543,7 +1541,7 @@ void F_2AFDC(void)
         if (w36 & 0x400)
             F_29F3B(*g_6e18, *g_6e1a, i, 1, 0x11);
     next:
-        if (ar7e8av - ac7d30z == i && *(int *)&bw8aca) {
+        if (ar7e8av.m7e8a - ao7d2ev.m7d30 == i && *(int *)&bw8aca) {
             F_2646D();
             F_2A3DD();
             F_26458();
@@ -1565,7 +1563,7 @@ void F_2AFDC(void)
         g_6e16--;
         g_6e14--;
     }
-    if (ar7e8av == ac7d30z && *(int *)&bw8aca) {
+    if (ar7e8av.m7e8a == ao7d2ev.m7d30 && *(int *)&bw8aca) {
         F_2646D();
         F_2A3DD();
         F_26458();

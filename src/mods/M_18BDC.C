@@ -46,7 +46,7 @@ static void near F_18C8F(struct Bitmap far **pbm)
     int w, x, h;
 
     F_15B7F(0x474, &w, &h, &x);
-    F_03904(*pbm, g_731e->bits.p + 0x46 * g_731e->pitch, 0L, w, h, r_vid.mode == -2 ? -2 : -1);
+    F_03904(*pbm, bp7316[2]->bits.p + 0x46 * bp7316[2]->pitch, 0L, w, h, r_vid.mode == -2 ? -2 : -1);
     if (r_vid.mode == -2) {
         F_24E78(r_vid.front->bits.p, (*pbm)->bits.p - 0xaa0, (*pbm)->pitch, (*pbm)->height, 0, 0x44, 0x28);
     } else {

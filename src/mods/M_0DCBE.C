@@ -75,7 +75,7 @@ static void near F_0DCBE(struct Car *c, struct Eng *e)
         e->f22 = gl->r[1].f2;
     }
     e->f1e = g_555a[a3];
-    e->f34[5] = (int)((int)(0x82 - w_7d88[c->f2].kind) * 5.0 / 50.0 + g_5568[((struct Row8 *)((char *)g_4806 + 2))[m->idx].kind]);
+    e->f34[5] = (int)((int)(0x82 - g7d86n[c->f2].f2) * 5.0 / 50.0 + g_5568[((struct Row8 *)((char *)g_4806 + 2))[m->idx].kind]);
     e->f1c = g_5560[d];
     e->f1a = 1;
 }

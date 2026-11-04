@@ -4,6 +4,9 @@
 #include "PROTOS.H"
 #include <conio.h>
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+struct Video r_vid;
+
 static void near F_00000(char *s);
 
 int g_0042 = 0;   /* DS:0042 */

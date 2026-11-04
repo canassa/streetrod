@@ -169,7 +169,7 @@ static void near F_07AA4(void)
                     break;
                 prev = m_8272.m8286;
                 m_8272.m8286 = g_49d2[((struct Row8 *)((char *)g_4806 + 2))[tbl[k]->idx].kind];
-                if (w_7d88[owner->f2].f2 & ((struct Row8 *)((char *)g_4806 + 2))[tbl[k]->idx].f1 & 0xf) {
+                if (g7d86n[owner->f2].f4 & ((struct Row8 *)((char *)g_4806 + 2))[tbl[k]->idx].f1 & 0xf) {
                     F_07741(F_077B7(tbl[k]), &owner->slot6);
                     F_120FE(-4);
                     F_16A5A(1);

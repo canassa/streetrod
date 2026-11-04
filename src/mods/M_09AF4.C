@@ -273,19 +273,19 @@ static void near F_0A0F8(int a, int b)
         hot[1].f0 = 14;
         hot[3].f0 = 14;
     } else {
-        x1 = at70e8[bn7648].x + ac825et;
-        y1 = at70e8[bn7648].y + aw8260y;
-        x = at70e8[bn7648].w + x1 - 1;
+        x1 = ai70e4t[bn7648].r[1].x + ac825et;
+        y1 = ai70e4t[bn7648].r[1].y + aw8260y;
+        x = ai70e4t[bn7648].r[1].w + x1 - 1;
         y = hot[0].y1 - 1;
         hot[1].x1 = x1;
         hot[1].x2 = x;
         hot[1].y1 = y1;
         hot[1].y2 = y;
         hot[1].f0 = 11;
-        x1 = at70e8[bn7648].sx + ac825et;
-        y1 = at70e8[bn7648].sy + aw8260y;
-        x = at70e8[bn7648].sw + x1 - 1;
-        y = at70e8[bn7648].sh + y1 - 1;
+        x1 = ai70e4t[bn7648].r[3].x + ac825et;
+        y1 = ai70e4t[bn7648].r[3].y + aw8260y;
+        x = ai70e4t[bn7648].r[3].w + x1 - 1;
+        y = ai70e4t[bn7648].r[3].h + y1 - 1;
         if (hot[1].x2 >= x1)
             x1 = hot[1].x2 + 1;
         hot[3].x1 = x1;

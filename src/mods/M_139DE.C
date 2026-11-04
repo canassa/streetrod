@@ -5,7 +5,6 @@
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 void (far *bp78ba)(struct Bitmap far *, int, int, int, int, int, int);
-int m_8240;
 int bq824e;
 int ai8b86y[4];
 char av8b98;
@@ -448,7 +447,7 @@ int F_1438E(int kind, int sel, int *c, int *list, char *buf, char **d)
             F_13957(r_vid.back, w->w, w->h, ww9, 8);
         }
         F_120FE(-1);
-        if (m_8240)
+        if (r_vid.f16)
             F_1A92A(r_vid.back, r_vid.front, wx8 - 1, wy7 - 1, right + 1, bottom9 + 1);
 restore:
         x_colors = bustyle->pal[idx2];
@@ -483,7 +482,7 @@ restore:
                 y2 = (w->ty < y2) ? y2 : w->ty;
             }
             F_120FE(-1);
-            if (m_8240)
+            if (r_vid.f16)
                 F_1A92A(r_vid.back, r_vid.front, x1, y1, x2, y2);
             curl = nw5;
         }
@@ -516,7 +515,7 @@ restore:
                     w = (struct Win *)(0x12 * i + a_8b9ap);
                     F_13957(r_vid.back, w->w, w->h, ww9, 8);
                     F_120FE(-1);
-                    if (m_8240)
+                    if (r_vid.f16)
                         F_1A92A(r_vid.back, r_vid.front,
                             (w->w - 1 > x1) ? x1 : w->w - 1,
                             (w->h - 1 > y1) ? y1 : w->h - 1,

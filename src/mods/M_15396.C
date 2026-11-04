@@ -8,8 +8,12 @@
 #include <io.h>
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+struct Model w_8df0[26];
+struct Racer av7ff8[22];
+struct Spec g7d86n[26];
+struct Panel ai70e4t[26];
 struct Spr12 g7682n[26];
-struct Pos6 g7844n[9];
+struct Pos6 a784als[8];
 int a_7d16q;
 unsigned g7d68m[3][3];
 struct Spr6 ap818c[26];
@@ -31,7 +35,7 @@ static void near F_1604F(void);
    Returns 0 on success, else the error in g_6318, also copied to g_630d */
 
 char *g_4ea2 = "hot_data";   /* DS:4EA2 */
-char *g_4ea4[13] = {&av7ff8, &g7d86n, &w_8df0, &g7682n, &ai70e4t, &ap818c, g_2c02, &a_7d16q, g_239e, &g7d68m, &ag8baey, &h_8dd8, (char *)&g7844n + 6};   /* DS:4EA4 */
+char *g_4ea4[13] = {&av7ff8, &g7d86n, &w_8df0, &g7682n, &ai70e4t, &ap818c, g_2c02, &a_7d16q, g_239e, &g7d68m, &ag8baey, &h_8dd8, &a784als};   /* DS:4EA4 */
 unsigned g_4ebe[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};   /* DS:4EBE */
 int g_4ed8 = 0;   /* DS:4ED8 */
 int g_4eda = 0;   /* DS:4EDA */

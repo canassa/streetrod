@@ -35,8 +35,8 @@ static void near F_0442B(int tab)
     g_49e0[1] = 0xcd8;
     n = 2;
     i5 = price6 = 0;
-    for (k3 = a_7d16q; k3 >= 0; k3 = w_7d88[k3].next) {
-        g_49e0[n++] = w_7d88[k3].f4;
+    for (k3 = a_7d16q; k3 >= 0; k3 = g7d86n[k3].next) {
+        g_49e0[n++] = g7d86n[k3].f6;
         list4[i5++] = k3;
     }
     g_49e0[n++] = 0xcfd;

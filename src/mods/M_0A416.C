@@ -6,7 +6,6 @@
 struct Bitmap far *c_6e64;
 int bo7676;
 void (far *dz78b6)(char far *, char far *);
-int gz8176;
 struct Bitmap far *x_82b8;
 
 static void near F_0A35C(struct Bitmap far *, int, struct Bitmap far *);
@@ -99,7 +98,7 @@ static void near F_0A544(void)
     F_120FE(-4);
     F_113A2(0xbe);
     F_119B8(9, 8, 0x14, 2);
-    m_8240 = 0;
+    r_vid.f16 = 0;
     savedl = g_04c2;
     g_04c2 = 0xc8;
     (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
@@ -116,12 +115,12 @@ static void near F_0A544(void)
     r = F_15C4A(g_5318, 0);
     r = F_15C4A(g_5328, 0);
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
-    m_8240 = 0;
+    r_vid.f16 = 0;
     (*m_present)();
-    gz8176 = 0x4c1;
+    av7ff8[21].f4 = 0x4c1;
     F_098BA(0x15);
     F_181C8(4, bn7648, g7d84o->fe, g7d84o->ff, 1, 0x98, 0, g_5030[m_8272.m827e]);
-    gz8176 = 0x4dc;
+    av7ff8[21].f4 = 0x4dc;
     pic24 = F_1934E(0x50, 0x2c, 0, 3);
     F_11A72(0x78, 0x45, 0x50, 0x2c, pic24);
     pic3 = F_15BBE(6, 1);
@@ -219,7 +218,7 @@ static void near F_0A544(void)
     (*b_78a2)(pic4, r_vid.back, &blt, 1);
     F_03A83(0x32);
     F_03AB8(0x183c);
-    m_8240 = 0;
+    r_vid.f16 = 0;
     F_1923C();
     F_15C95(g_5328);
     F_15C95(g_5318);
@@ -328,7 +327,7 @@ test:
                     if (g7d40q) {
                         if (bo7676 == 0) {
                             g_4976 = 0;
-                            g817da = 0;
+                            av7ff8[21].fb = 0;
                             g_4972 -= 3;
                             g_4974 -= 2;
                         } else if (a_7eaap.m7ec0 == 0)

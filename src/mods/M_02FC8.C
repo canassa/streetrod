@@ -74,17 +74,17 @@ int F_0315B(void)
     c01 = x_colors.c[0];
     c1 = x_colors.c[1];
     c3 = x_colors.c[3];
-    c21 = f_8244;
+    c21 = x_colors.c[2];
     if (r_vid.mode != -2 && r_vid.mode != -6) {
         x_colors.c[0] = 3;
         x_colors.c[1] = 0;
         x_colors.c[3] = 2;
-        f_8244 = 1;
+        x_colors.c[2] = 1;
     } else {
         x_colors.c[0] = 15;
         x_colors.c[1] = 1;
         x_colors.c[3] = 13;
-        f_8244 = 3;
+        x_colors.c[2] = 3;
     }
     F_1169A(0, 0, 320, 190, x_colors.c[1]);
     F_13957(r_vid.back, 100, 50, 120, 90);
@@ -94,7 +94,7 @@ int F_0315B(void)
     x_colors.c[0] = c01;
     x_colors.c[1] = c1;
     x_colors.c[3] = c3;
-    f_8244 = c21;
+    x_colors.c[2] = c21;
     F_120FE(-2);
     (*m_present)();
     key = F_14294(41);

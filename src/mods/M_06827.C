@@ -167,7 +167,7 @@ static int near F_06B06(int mode)
         r_vid.f16 = 1;
         (*m_present)();
         if (a_7eaap.m7eb0) {
-            m_8272.m827a = w_7d88[a_7eaap.m7eb0->f2].f6;
+            m_8272.m827a = g7d86n[a_7eaap.m7eb0->f2].f8;
             m_8272.m827c = a_7eaap.m7eb0->f4;
             m_8272.m827e = ((struct Row8 *)((char *)g_4806 + 2))[a_7eaap.m7eb0->slot12->idx].kind;
             if (mode == 1)
@@ -181,7 +181,7 @@ static int near F_06B06(int mode)
             for (r = 0; r < 5; r++)
                 o_8290[r] = a_7eaap.m7eb0->rack.s[r]->idx;
             n = F_049A2(a_7eaap.m7eb0);
-            strcpy(g_29ff, g_2c02 + w_7d88[a_7eaap.m7eb0->f2].f4);
+            strcpy(g_29ff, g_2c02 + g7d86n[a_7eaap.m7eb0->f2].f6);
             if (mode == 2)
                 F_181C8(3, m_8272.m8282, n, m_8272.m8284.shade, 0, 0x98, 0, g_5030[m_8272.m827e]);
             else

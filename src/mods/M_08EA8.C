@@ -1,6 +1,9 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+struct Eng g79e2g;
+
 int g_51d8[5] = {42, 26, 12, 8, 4};   /* DS:51D8 */
 int g_51e2[5] = {0, 200, 125, 71, 56};   /* DS:51E2 */
 int g_51ec = 0;   /* DS:51EC */
@@ -85,7 +88,7 @@ int F_08EA8(void)
                 g_0610--;
                 F_00FEA();
             }
-            if ((g_terrain0[ac7d30z + 1] & 1) || (g_terrain1[ac7d30z + 1] & 1) || g_47ee) {
+            if ((g_terrain0[ao7d2ev.m7d30 + 1] & 1) || (g_terrain1[ao7d2ev.m7d30 + 1] & 1) || g_47ee) {
                 g_4736 = 0;
                 g_4732 = 0;
                 F_01B27();

@@ -105,8 +105,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
   low byte selects bucket. Bucket chains insert at head. Within a bucket the most
   recently created symbol (first EXTDEF/COMDEF/PUBDEF in link order) is allocated
   first; blocks over one byte are word-aligned. COMMON is now C tentative definitions
-  plus 14 sized `COMM` views in src/link/GCOMMON.ASM; renaming any of them can
-  move the layout. Disassembly and 45-name
+  only (src/link/GCOMMON.ASM is gone); renaming any of them can move the layout. Disassembly and 45-name
   forward/reverse declaration probes are in work/binary-match; helper linkhash.py.
   Historical global names are unknown; do not confuse reconstructed placeholders
   with recovered names. Verify allocation with actual LINK output.

@@ -7,7 +7,6 @@
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Bitmap am6e68x[12];
 struct Bitmap far *at70a8;
-struct Bitmap far *g_731e;
 int (far *g78c6c)(struct Sprite *);
 struct Band dz7ec2[4];
 struct Bitmap bw7fa8;
@@ -53,7 +52,7 @@ static void near F_174A6(char far *src, char far *dst, char far *mask, int w, in
     outp(0x3c5, 0xf);
 }
 
-/* F_1751A: for each of n bitmaps, lay a band of h rows into the scratch bitmap g_731e, fill or copy it, then blit the bitmap through the EGA planes */
+/* F_1751A: for each of n bitmaps, lay a band of h rows into the scratch bitmap bp7316[2], fill or copy it, then blit the bitmap through the EGA planes */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 
@@ -67,7 +66,7 @@ static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, i
     int j;
     char far *base;
 
-    base = g_731e->bits.p + 0x46 * g_731e->pitch;
+    base = bp7316[2]->bits.p + 0x46 * bp7316[2]->pitch;
     for (i = 0; i < n; i++) {
         A[i].p = base;
         A[i].y = B[i]->height - y2 - h;
@@ -89,7 +88,7 @@ static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, i
     }
 }
 
-/* F_176B6: copy n bitmaps into the table am6e68x, each filled with a colour pattern and h rows high, in space cut from the scratch bitmap g_731e */
+/* F_176B6: copy n bitmaps into the table am6e68x, each filled with a colour pattern and h rows high, in space cut from the scratch bitmap bp7316[2] */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 
@@ -103,7 +102,7 @@ static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color)
     int H5;
     int maxw;
 
-    base2 = g_731e->bits.p + 0x46 * g_731e->pitch;
+    base2 = bp7316[2]->bits.p + 0x46 * bp7316[2]->pitch;
     H5 = B[0]->height - y2 - h;
     v = (r_vid.mode == -6 ? color << 4 : color << 2 | color << 4 | color << 6) | color;
     maxw = B[0]->width;
@@ -250,7 +249,7 @@ void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *id
     m2 = &w_8df0[idx];
     p12 = &g7682n[idx];
     p69 = &ap818c[idx];
-    *out = F_15BBE(g7d8ew[idx].id, 1);
+    *out = F_15BBE(g7d86n[idx].f8, 1);
     ar826e = p69->b0;
     q_8270 = p69->b1;
     g826af = p69->b2;
@@ -282,7 +281,7 @@ void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *id
     blt.dx = blt.dy = 0;
     (*b_78a2)(*out, g_0294, &blt, 1);
     if (kk > 0) {
-        pp8 = &g7844n[kk];
+        pp8 = &a784als[kk - 1];
         F_1A734(*out, pp8->id, p12->b10 + pp8->dx, p12->b11 + pp8->dy, 0);
     }
     if (q) {
@@ -393,7 +392,7 @@ void F_181C8(int kind, int idx, int flags, int kk, int q, int bot, int mode2, in
     F_120FE(-4);
 again:
     n2 = (kind == 3 || kind == 7 || kind == 8) ? 1 : 4;
-    F_15B7F(g7d8ew[idx].id, &w1, &h7, &x7);
+    F_15B7F(g7d86n[idx].f8, &w1, &h7, &x7);
     g_02d0 = g_02a6[g_0284];
     tmpn = (r_vid.mode != -2 && r_vid.mode != -6) ? g_02b4[g_0284] : g_02c2[g_0284];
     hh8 = (kind == 3 || kind == 7 || kind == 8) ? h7 - g_02d0 : g_0298[g_0284];
@@ -403,10 +402,10 @@ again:
         if (kind == 4) {
             g_4f4a = 1;
             if (r_vid.mode == -2) {
-                F_03904(g_5a0a, g_731e->bits.p, 0, 0x140, 0x46 - g_02d0, -2);
+                F_03904(g_5a0a, bp7316[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -2);
                 F_24E78(r_vid.back->bits.p, g_5a0a->bits.p - 0x28 * top7, 0x28, g_5a0a->height, 0, top7, 0x28);
             } else {
-                F_03904(g_5a0a, g_731e->bits.p, 0, 0x140, 0x46 - g_02d0, -1);
+                F_03904(g_5a0a, bp7316[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -1);
                 F_11A72(0, top7, 0x140, g_5a0a->height, g_5a0a);
             }
         }
