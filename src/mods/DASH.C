@@ -348,7 +348,7 @@ void dash_intro(void)
     saved = g_picMaxH;
     if (r_vid.mode == -2 || r_vid.mode == -6)
         (*bl78be)();
-    g_picMaxH = 200;
+    g_picMaxH = SCREEN_H;
     if (r_vid.mode != -2 && r_vid.mode != -6)
         main_set_palette(CGA_PALETTE_GREEN_RED_BROWN);
     F_119B8(3, 0x28, 0x28, 0);
@@ -370,7 +370,7 @@ void dash_intro(void)
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
     dash_wait_key(400);
     g_picMaxH = saved;
-    screen_fill_rect(0, 0, 320, 200, 0);
+    screen_fill_rect(0, 0, SCREEN_W, SCREEN_H, 0);
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
 }
 
@@ -382,7 +382,7 @@ void dash_time_up(void)
     (*bl78be)();
     cursor_ctl(CURSOR_HIDE_NOW);
     r_vid.f16 = 1;
-    screen_fill_rect(0, 0, 320, 200, 0);
+    screen_fill_rect(0, 0, SCREEN_W, SCREEN_H, 0);
     F_065AF(1);
     F_10B7C();
     (*m_present)();

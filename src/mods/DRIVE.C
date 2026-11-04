@@ -10,6 +10,7 @@
 #include "DRVTICK.H"
 #include "MAIN.H"
 #include "MARKS.H"
+#include "PC.H"
 #include "POPUP.H"
 #include "RACE.H"
 #include "ROAD.H"
@@ -45,9 +46,9 @@ int drive_run(void)
         (*bl78be)();
         g_dashBuffered = r_vid.mode == -3 && g_egaCard;
         if (g_dashBuffered) {
-            popup_grab(0, 0x64, 0x140, 0x64, g755cu);
+            popup_grab(0, 0x64, SCREEN_W, 0x64, g755cu);
             r_vid.f16 = 1;
-            screen_fill_rect(0, 0, 0x140, 0xc8, 0);
+            screen_fill_rect(0, 0, SCREEN_W, SCREEN_H, 0);
             r_vid.f16 = sv;
         }
         if (r_vid.mode == -2)
@@ -107,7 +108,7 @@ int drive_run(void)
         af824ax = 0;
     road_start();
     if (r_vid.mode != -2) {
-        blt.w = 0x140;
+        blt.w = SCREEN_W;
         blt.h = 0x12;
         blt.dy = blt.sy = blt.sx = blt.dx = 0;
         (*b_78a2)(g8188w, bm7678, &blt, 1);

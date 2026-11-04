@@ -103,8 +103,8 @@ void cursor_ctl(int mode)
 
     a = g_cursorX;
     b = g_cursorY;
-    a = a < 0 ? 0 : a > 319 ? 319 : a;
-    b = b < 0 ? 0 : b > 199 ? 199 : b;
+    a = a < 0 ? 0 : a > (SCREEN_W - 1) ? (SCREEN_W - 1) : a;
+    b = b < 0 ? 0 : b > (SCREEN_H - 1) ? (SCREEN_H - 1) : b;
     if (mode >= 0) {
         g_4742 = g_cursorPairs[g_cursor2.n = mode].a;
         g_4744 = g_cursorPairs[mode].b;
@@ -159,8 +159,8 @@ void cursor_draw(int x, int y)
             g_cursor2.state = 1;
         } else {
             g_cursor2.clip.dx = x & r_vid.mask;
-            g_cursor2.clip.w = 320 - g_cursor2.clip.dx > 0x18 ? 0x18 : 320 - g_cursor2.clip.dx;
-            g_cursor2.clip.h = 200 - y > 16 ? 16 : 200 - y;
+            g_cursor2.clip.w = SCREEN_W - g_cursor2.clip.dx > 0x18 ? 0x18 : SCREEN_W - g_cursor2.clip.dx;
+            g_cursor2.clip.h = SCREEN_H - y > 16 ? 16 : SCREEN_H - y;
             g_cursor2.clip.dy = y;
             a = (x & ~r_vid.mask) * (0x18 >> r_vid.shift) + g_cursor2.off;
             (*ap78b2z)(g_cursor2.shape + a, g_cursor2.mask + a, g_cursor2.save->bits.p, r_vid.back->bits.p, g_cursor2.clip.dx >> r_vid.shift, y, g_cursor2.clip.w >> r_vid.shift, g_cursor2.clip.h);

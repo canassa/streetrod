@@ -11,6 +11,7 @@
 #include "MARKS.H"
 #include "MENU.H"
 #include "MESSAGES.H"
+#include "PC.H"
 #include "SCREEN.H"
 #include "SYS.H"
 #include "VIDEO.H"
@@ -160,7 +161,7 @@ int ads_run(void)
             r_vid.back->height = hsave;
             cursor_ctl(CURSOR_SHOW);
             if (r_vid.f16)
-                bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
+                bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_W - 1), 0xbd);
             sys_hover_reset();
         }
         while ((key = sys_wait_input(3000)) == 0)

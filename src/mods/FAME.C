@@ -14,6 +14,7 @@
 #include "MAIN.H"
 #include "MEM.H"
 #include "MENU.H"
+#include "PC.H"
 #include "RANDOM.H"
 #include "SCREEN.H"
 #include "SYS.H"
@@ -110,7 +111,7 @@ int fame_end_menu(void)
         x_colors.c[3] = 13;
         x_colors.c[2] = 3;
     }
-    screen_fill_rect(0, 0, 320, 190, x_colors.c[1]);
+    screen_fill_rect(0, 0, SCREEN_W, 190, x_colors.c[1]);
     draw_frame(r_vid.back, 100, 50, 120, 90);
     draw_frame(r_vid.front, 100, 50, 120, 90);
     draw_frame(r_vid.back, 102, 52, 116, 86);
@@ -198,7 +199,7 @@ void fame_show(int add)
     old = g_picMaxH;
     pos7 = -1;
     (*bl78be)();
-    g_picMaxH = 200;
+    g_picMaxH = SCREEN_H;
     r_vid.f16 = 1;
     F_118D4(5, -1);
     g_picMaxH = old;

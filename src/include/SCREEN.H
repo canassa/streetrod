@@ -1,7 +1,7 @@
 /* SCREEN.H - declarations of what SCREEN.C defines. */
 
-#ifndef SCREEN_H
-#define SCREEN_H
+#ifndef SCREEN_H_INCLUDED
+#define SCREEN_H_INCLUDED
 #include "STRUCTS.H"
 
 extern char *g_gearNames[];                             /* DS:0482 */

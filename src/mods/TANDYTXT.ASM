@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         EXTRN   _g_font:BYTE
 
@@ -19,7 +20,7 @@ _tandytxt_render  PROC    FAR
         push    di
         mov     ax,SEG _g_font
         mov     es,ax
-        mov     ax,320
+        mov     ax,SCREEN_W
         sub     ax,[bp+6]
         mov     [bp-2],ax
         mov     ax,[bp+6]

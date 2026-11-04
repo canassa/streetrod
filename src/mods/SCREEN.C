@@ -17,6 +17,7 @@
 #include "MARKS.H"
 #include "MENU.H"
 #include "MESSAGES.H"
+#include "PC.H"
 #include "SYS.H"
 #include "VIDEO.H"
 
@@ -37,9 +38,9 @@ void screen_status_init(int y)
     o_8250 = 0x58;
     aq8256z = 0;
     x_colors = bustyle->colors;
-    draw_fill_rect(r_vid.back, 0, y, 320, 10);
+    draw_fill_rect(r_vid.back, 0, y, SCREEN_W, 10);
     if (r_vid.f16)
-        bitmap_copy_box(r_vid.back, r_vid.front, 0, y, 319, y + 9);
+        bitmap_copy_box(r_vid.back, r_vid.front, 0, y, (SCREEN_W - 1), y + 9);
 }
 
 void (far *a_78aem)(struct Bitmap far *, int, int, char *);
@@ -66,7 +67,7 @@ void F_11421(int x, char *s, int w)
         left = (x + (w - dash_text_width(s)) / 2) & 0xfff8;
     } else
         left = x;
-    wd = 320 - x;
+    wd = SCREEN_W - x;
     ypos = au8252x;
     cursor_ctl(CURSOR_HIDE);
     if (aq8256z)
@@ -174,7 +175,7 @@ void screen_wait_msg(char *msg)
     strcpy(g_promptLine2, "Hit Return when ready ...");
     if (g_graphicsUp >= 1) {
         if (g_driveRebuild) {
-            screen_fill_rect(0, 0, 320, 200, 0);
+            screen_fill_rect(0, 0, SCREEN_W, SCREEN_H, 0);
             g_driveRebuild++;
         }
         prev = gz8249;
@@ -232,7 +233,7 @@ int F_118D4(int a, int b)
     cursor_ctl(CURSOR_HIDE);
     p = F_15BBE(a, ARENA_HIGH_STACK);
     if (b >= 0)
-        screen_fill_rect(0, 0, 320, g_picMaxH, b);
+        screen_fill_rect(0, 0, SCREEN_W, g_picMaxH, b);
     pkt.w = p->width;
     pkt.h = p->height > g_picMaxH ? g_picMaxH : p->height;
     pkt.sx = pkt.sy = pkt.fc = 0;

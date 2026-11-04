@@ -217,7 +217,7 @@ void sys_exit(void)
     if (g_demo) {
         g_demo = (g_demo == 0x62) ? 0 : 1;
         screen_wait_msg("Quit demo");
-        screen_fill_rect(0, 0, 320, 200, 0);
+        screen_fill_rect(0, 0, SCREEN_W, SCREEN_H, 0);
     }
     if (g_sysHooked)
         sys_unhook();

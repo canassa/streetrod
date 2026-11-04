@@ -19,6 +19,7 @@
 #include "MENU.H"
 #include "MESSAGES.H"
 #include "M_02B9A.H"
+#include "PC.H"
 #include "POOLS.H"
 #include "POPUP.H"
 #include "RANDOM.H"
@@ -140,7 +141,7 @@ int near savegame_new(void)
     F_119B8(0x3f8, 0x10, 6, 0);
     r_vid.f16 = 1;
     video_name_pal();
-    bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
+    bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_W - 1), 0xbd);
     (*m_present)();
     switch (sel = edit_text_box(2, 15, g_driverName)) {
     case -3:
@@ -312,7 +313,7 @@ int near savegame_load(void)
     }
     r_vid.f16 = r;
     if (r)
-        bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 320, 190);
+        bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, SCREEN_W, 190);
     cursor_ctl(CURSOR_SHOW_NOW);
     if (g_list[0] == 0) {
         menu_wait(15);
@@ -415,7 +416,7 @@ void near savegame_save(void)
     F_119B8(0x3fc, 0xf0, 0x8c, -1);
     r_vid.f16 = r;
     if (r)
-        bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 320, 190);
+        bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, SCREEN_W, 190);
     strcpy(g_saveName, g_driverName);
 again:
     for (r = 1; r <= g_list[0] && g_saveSlots[r]; r++)

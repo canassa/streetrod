@@ -356,7 +356,7 @@ int main(int argc, char **argv)
     sound_init();
     dash_set_view(0);
     if (r_vid.mode == -3 && g_egaCard)
-        g755cu = mem_new_bitmap(320, 100, 0, -1, 0);
+        g755cu = mem_new_bitmap(SCREEN_W, 100, 0, -1, 0);
     g_imageBufferPointer = mem_alloc(r_vid.mode != -2 && r_vid.mode != -6 ? 16000 : 18000, 1);
     a = disk_load_list(g_titlePics, 0);
     if (a == 3) {
