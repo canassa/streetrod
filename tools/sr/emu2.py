@@ -6,7 +6,7 @@ that only use int 21h, so they run under it unchanged; CL's spawn of C1/C2/C3 be
 child emu2 process. One CL run costs ~25 ms instead of a ~1.5 s DOSBox-X boot, and the
 jobs run in parallel (one emu2 per job, each with its own TMP).
 
-The drives are the same as in DOSBox-X (C: work root, D: MSC 5.1, E: src/<t>/include,
+The drives are the same as in DOSBox-X (C: work root, D: MSC 5.1, E: src/include,
 F: MASM 5.1), the current directory is C:\\Jnnnn, and only DOS stdout goes to CC.LOG,
 exactly like `cl ... > CC.LOG` in RUN.BAT, so OBJ, COD, LST and CC.LOG are the same bytes
 (tools/scripts/emucmp.py checks that). Every run is bounded by `timeout` and RLIMIT_FSIZE.

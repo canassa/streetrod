@@ -2,7 +2,7 @@
 
 Compiles the same jobs under both backends and compares every file each job leaves behind
 (OBJ, COD, LST, CC.LOG) byte for byte. Job sets:
-  - every src/mods source, with its recorded command line (LAYOUT.JSON) and a spread of other
+  - every src/mods source, with its command line (src/MAKEFILE) and a spread of other
     flag sets (/Ol, /Oi, /Ox, /Od, other models)
   - the 46 `./sr sweep` combos on a few sources
   - hand-written probes: floating point constants, errors and warnings, MASM
@@ -147,8 +147,8 @@ def main():
     args = ap.parse_args()
     base = config.WORK / f"emucmp-snap"
     shutil.rmtree(base, ignore_errors=True)
-    # each file's command line; data-only files use the default flags
-    command = {f.path.name.upper(): f.command for f in module.files()}
+    # each file's command line (its src/MAKEFILE block)
+    command = {f.path.name.upper(): f.command for f in module.sources()}
     srcs, inc = snapshot([config.SRC / "mods"], config.INCLUDE, base / "mc")
     bad = 0
 
@@ -157,8 +157,9 @@ def main():
 
     specs = []
     for p in srcs:
-        dflt = config.DEFAULT_ASM_FLAGS if p.suffix == ".ASM" else config.DEFAULT_FLAGS
-        fl = {own(p) or dflt}
+        if own(p) is None:
+            raise SystemExit(f"{p.name}: not compiled by src/MAKEFILE")
+        fl = {own(p)}
         if not args.quick and p.suffix == ".C":
             fl |= set(FLAGSETS)
         specs += [(p, f) for f in sorted(fl)]

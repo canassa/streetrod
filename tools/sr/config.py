@@ -12,9 +12,6 @@ MASM = ROOT / "toolchain" / "masm51"
 WORK = ROOT / "work"
 PROGRESS = ROOT / "docs" / "PROGRESS.md"
 
-DEFAULT_FLAGS = "/AM /Oas /Gs /FPi"
-DEFAULT_ASM_FLAGS = "/Ml"
-
 # Linear addresses in the unpacked load image.
 CODE_END = 0x2BEB0
 CRT = (0x1E160, 0x21960)

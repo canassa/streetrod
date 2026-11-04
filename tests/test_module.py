@@ -8,13 +8,15 @@ from sr import cod, config, db, module
 
 class SourceFileTests(unittest.TestCase):
     def test_one_source_per_object(self):
-        # every code unit is one file in git, with one recorded command line
-        plan = module.plan()
-        for u in plan['units']:
-            self.assertEqual(len(u['sources']), 1, u['start'])
-            self.assertTrue((config.ROOT / u['sources'][0]).exists(), u['sources'][0])
-            self.assertTrue(u['flags'].strip(), u['sources'][0])
-        self.assertEqual(list(module.MODS.glob('*.STB')), [])
+        # every source in src/mods is one object of src/MAKEFILE, with one command line
+        fs = module.sources()
+        self.assertEqual(sorted(f.path.name for f in fs if f.path.parent == module.MODS),
+                         sorted(p.name for p in module.MODS.iterdir()))
+        self.assertEqual(len({f.rel for f in fs}), len(fs))
+        for f in fs:
+            self.assertTrue(f.flags.strip(), f.rel)
+        self.assertEqual(len(module.files()), 82)
+        self.assertEqual(len(module.code_starts()), 17)
 
     def test_functions_point_at_their_file(self):
         con = db.connect()
