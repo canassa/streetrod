@@ -31,7 +31,6 @@ struct Colors x_colors;
 struct Bitmap far *g_pageBmps[4];
 struct Obj bm7568[5];
 struct Style *bustyle;
-int (far *ab78aat)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
 struct Bitmap far *g_autoSprImagePtr;
 int ac825et;
 int aw8260y;
@@ -128,7 +127,7 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
         i--;
         bm7568[i].id = bm7568[i].scriptIndex = -1;
     } while (i);
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     menu_reset();
     g_graphicsUp = 1;
     g_pageBmps[0] = r_vid.front;
@@ -207,11 +206,11 @@ static void near anim_run(int n)
             break;
         case ANIM_BLIT:
             anim_set_box();
-            (*b_78a2)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
+            (*g_videoOps.copy)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
             break;
         case ANIM_BLIT_MASKED:
             anim_set_box();
-            (*ab78aat)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
+            (*g_videoOps.maskedBlit)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
             break;
         case ANIM_TILE_CAR:
             if (!sprite_car_clip(g_box->dx, g_box->dy, g_box->w, g_box->h, &res))
@@ -226,7 +225,7 @@ static void near anim_run(int n)
                 for (x1 = 0; x1 < g_obj->img->width; x1 += g_box->w) {
                     blt.dx = tx + x1;
                     blt.dy = ty + y;
-                    (*ab78aat)(g_autoSprImagePtr, g_obj->img, &blt, 1);
+                    (*g_videoOps.maskedBlit)(g_autoSprImagePtr, g_obj->img, &blt, 1);
                 }
             }
             break;

@@ -32,7 +32,6 @@ extern struct Pair g_jailGaps[];                        /* DS:539A */
 extern struct Bitmap far *g_barJailPixels;                       /* DS:6E64 */
 extern int bn7648;                                      /* DS:7648 */
 extern int g_resultWin;                                      /* DS:7676 */
-extern void (far *g_screenCopyPtr)(char far *, char far *);      /* DS:78B6 */
 extern int g_classBetValue;                                     /* DS:79A2 */
 extern int d_79a4;                                      /* DS:79A4 */
 extern int g_isKingState;                                      /* DS:7D40 */

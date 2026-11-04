@@ -270,7 +270,7 @@ void race_gas_station(void)
     F_118D4(0x442, -1);
     F_11593(g_49dc);
     r_vid.copyToFront = 1;
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     dl.f0c = 1;
     cursor_ctl(1);
     dl.specIndex = a_7eaap.currentCar->specIndex;
@@ -489,13 +489,13 @@ static void near show_ticket(void)
     pkt.h = b->height;
     pkt.dx = pkt.sx = pkt.sy = 0;
     pkt.dy = 0x45;
-    (*ab78aat)(b, r_vid.back, &pkt, 1);
+    (*g_videoOps.maskedBlit)(b, r_vid.back, &pkt, 1);
     pkt.w = a->width;
     pkt.h = a->height;
     pkt.sx = pkt.sy = 0;
     pkt.dx = b->width;
     pkt.dy = 0x14;
-    (*b_78a2)(a, r_vid.back, &pkt, 1);
+    (*g_videoOps.copy)(a, r_vid.back, &pkt, 1);
     maxw2 = a->width - 8;
     r_vid.copyToFront = 0;
     x_colors = bustyle->hilite;
@@ -505,7 +505,7 @@ static void near show_ticket(void)
         p2--;
     d = cl = *p2;
     *p2 = 0;
-    (*a_78aem)(r_vid.back, 0x5e, 0x48, g_driverName);
+    (*g_videoOps.drawText)(r_vid.back, 0x5e, 0x48, g_driverName);
     *p2 = d;
     desc3 = g7d86n[a_7eaap.currentCar->specIndex].nameOffset;
     endk = desc3 + strcspn(g_descHdr + desc3 + 8, " `.") + 7;
@@ -517,10 +517,10 @@ static void near show_ticket(void)
     *p2 = 0;
     e = g_descHdr[endk + 1];
     g_descHdr[endk + 1] = 0;
-    (*a_78aem)(r_vid.back, 0x5e, 0x63, g_descHdr + desc3 + 1);
+    (*g_videoOps.drawText)(r_vid.back, 0x5e, 0x63, g_descHdr + desc3 + 1);
     g_descHdr[endk + 1] = e;
     *p2 = d;
-    (*g_screenCopyPtr)(r_vid.back->bits.p, r_vid.front->bits.p);
+    (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.copyToFront = 1;
     cursor_ctl(CURSOR_SHOW_NOW);
     sys_reset_queues();
@@ -543,20 +543,20 @@ static void near show_crash(void)
     pkt.h = 0x5a;
     pkt.sx = pkt.sy = pkt.dx = 0;
     pkt.dy = 0xb;
-    (*ab78aat)(a, r_vid.back, &pkt, 1);
+    (*g_videoOps.maskedBlit)(a, r_vid.back, &pkt, 1);
     pkt.w = a->width;
     pkt.h = a->height - 0x59;
     pkt.sy = 0x59;
     pkt.sx = pkt.dx = 0;
     pkt.dy = (fast ? 0x5a : 0x59) + 0xb;
-    (*ab78aat)(a, r_vid.back, &pkt, 1);
+    (*g_videoOps.maskedBlit)(a, r_vid.back, &pkt, 1);
     pkt.w = b->width;
     pkt.h = b->height;
     pkt.sx = pkt.sy = pkt.dx = 0;
     pkt.dy = fast ? 0x78 : 0x77;
-    (*b_78a2)(b, r_vid.back, &pkt, 1);
+    (*g_videoOps.copy)(b, r_vid.back, &pkt, 1);
     dash_steer_marker(g_steeringOld);
-    (*g_screenCopyPtr)(r_vid.back->bits.p, r_vid.front->bits.p);
+    (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
     if (g_driveEng.speed > 0x5a) {
         for (i = 0; i < 3; i++) {
             a = F_15BBE(g_crashPics[i].id, ARENA_LOW_STACK);
@@ -566,12 +566,12 @@ static void near show_crash(void)
             pkt.dx = g_crashPics[i].x;
             pkt.dy = g_crashPics[i].y;
             F_10AFD(0x14 - 8 * i);
-            (*ab78aat)(a, r_vid.back, &pkt, 1);
-            (*g_screenCopyPtr)(r_vid.back->bits.p, r_vid.front->bits.p);
+            (*g_videoOps.maskedBlit)(a, r_vid.back, &pkt, 1);
+            (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
         }
     }
     cursor_ctl(CURSOR_SHOW_NOW);
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     sys_reset_queues();
     game_pause(0x64);
     sys_reset_queues();
@@ -702,7 +702,7 @@ int near race_outcome(void)
         a_7eaap.currentCar->fuel -= i;
     else
         a_7eaap.currentCar->fuel = 0;
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     if (g_oppEngState.stopFlags & 1) {
         g_resultWin = 1;
         show_race_stats();

@@ -18,7 +18,6 @@
 #include "SHRINK.H"
 #include "SLOTS.H"
 #include "SYS.H"
-#include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6e04aay;                      /* DS:6E04 */
@@ -107,8 +106,6 @@ struct Bitmap far *g764aw;
 struct Bitmap far *ar767eu;
 int g789eu;
 int f_78a0;
-void (far *g78d6c)(int, int, int, int);
-void (far *bp78da)(int, int);
 int az7acaz;
 int r_7acc;
 int ac7ae8t;
@@ -143,7 +140,7 @@ static void near flip_page(void)
         av787at = (g_drawPage == 1) ? 0xa200 : 0xa400;
         egapage_show(g_showPage);
     } else {
-        (*b_78a2)(g8188w, r_vid.front, (struct Blt *)&g_viewRect, 1);
+        (*g_videoOps.copy)(g8188w, r_vid.front, (struct Blt *)&g_viewRect, 1);
         av787at = g8188w->bits.w.seg;
         at767ct = g8188w->bits.w.off;
     }
@@ -196,7 +193,7 @@ static void near clip_vline(int color, int x, int y1, int y2)
         y1 = (y1 > g_clipYMax) ? g_clipYMax : y1;
         y2 = (y2 < g_clipYMin) ? g_clipYMin : y2;
         y2 = (y2 > g_clipYMax) ? g_clipYMax : y2;
-        (*a_78d2)(x, y1, x, y2, color);
+        (*g_videoOps.drawLine)(x, y1, x, y2, color);
     }
 }
 
@@ -249,7 +246,7 @@ void view_load(void)
     pkt1.h = bm1->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
     pkt1.dy = 0x66;
-    (*b_78a2)(bm1, g8188w, &pkt1, 1);
+    (*g_videoOps.copy)(bm1, g8188w, &pkt1, 1);
     F_19438(1);
     sel = *(int *)&bw8aca == 0 ? g_scene : 0;
     bm24 = F_15BBE(g_5e62[sel], ARENA_HIGH_STACK);
@@ -257,7 +254,7 @@ void view_load(void)
     pkt1.h = bm24->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
     pkt1.dy = 0x66;
-    (*b_78a2)(bm24, g82b4s, &pkt1, 1);
+    (*g_videoOps.copy)(bm24, g82b4s, &pkt1, 1);
     F_19438(1);
     if (*(int *)&bw8aca == 0) {
         bm24 = F_15BBE(0x4ed, ARENA_HIGH_STACK);
@@ -265,14 +262,14 @@ void view_load(void)
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
         pkt1.dy = (r_vid.mode == VID_EGA ? DASH_Y - 1 : 0) + 1;
-        (*b_78a2)(bm24, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt1, 1);
+        (*g_videoOps.copy)(bm24, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt1, 1);
         F_19438(1);
         bm24 = F_15BBE(0x4ee, ARENA_HIGH_STACK);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
         pkt1.dy = (r_vid.mode == VID_EGA ? DASH_Y - 1 : 0) + 0x2c;
-        (*b_78a2)(bm24, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt1, 1);
+        (*g_videoOps.copy)(bm24, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt1, 1);
         F_19438(1);
     }
     ar767eu = F_15BBE(0x4f3, ARENA_LOW_STACK);
@@ -283,14 +280,14 @@ void view_load(void)
         pkt1.sx = pkt1.sy = 0;
         pkt1.dx = 0x2c;
         pkt1.dy = 0xc;
-        (*ab78aat)(g764aw, ar767eu, &pkt1, 1);
+        (*g_videoOps.maskedBlit)(g764aw, ar767eu, &pkt1, 1);
         marks_pop_low(1);
     }
     pkt1.w = ar767eu->width;
     pkt1.h = ar767eu->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
     pkt1.dy = SCREEN_HEIGHT - ar767eu->height;
-    (*b_78a2)(ar767eu, g8188w, &pkt1, 1);
+    (*g_videoOps.copy)(ar767eu, g8188w, &pkt1, 1);
     marks_pop_low(1);
     ax72f4 = F_15BBE(0x3ee, ARENA_LOW_STACK);
     ak8bcat = F_15BBE(0x3ef, ARENA_LOW_STACK);
@@ -358,12 +355,12 @@ static void near render_backdrop(void)
         b.dx = 0;
         b.h = 0x1d;
     }
-    (*b_78a2)(g8188w, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
+    (*g_videoOps.copy)(g8188w, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
     if (*(int *)&bw8aca) {
         b.w = r;
         b.sx = ll;
         b.dx = 0;
-        (*b_78a2)(g8188w, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
+        (*g_videoOps.copy)(g8188w, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
     }
     b.h = *(int *)&bw8aca ? 0x14 : 0x10;
     b.sy = 0xa3;
@@ -386,13 +383,13 @@ static void near render_backdrop(void)
         b.dy = 0x2f;
     }
     clip_blit_y(&b);
-    (*b_78a2)(g8188w, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
+    (*g_videoOps.copy)(g8188w, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
     g_6e06aax = 14;
     if (*(int *)&bw8aca) {
         b.w = r;
         b.sx = ll;
         b.dx = 0;
-        (*b_78a2)(g8188w, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
+        (*g_videoOps.copy)(g8188w, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
         g_6e04aay = v + 8;
         for (i = 14; i; i--) {
             if (bq7884[i] < g_6e04aay) {
@@ -400,9 +397,9 @@ static void near render_backdrop(void)
                 g_6e06aax = i;
             }
         }
-        (*bp78da)(g_6e04aay, 9);
+        (*g_videoOps.fillBelow)(g_6e04aay, 9);
     } else
-        (*bp78da)(0x3f, 1);
+        (*g_videoOps.fillBelow)(0x3f, 1);
 }
 
 /* view_sprite @ 2645:2C0A (linear 0x2905A, 242 bytes) */
@@ -422,14 +419,14 @@ void view_sprite(int x, int y, int first, struct List l, int dir)
                 px = x - run.parts[j].dx;
                 x2 = px - run.parts[j].w;
                 y1 = y + run.parts[j].dy;
-                (*g78d6c)(x2, px, y1, run.parts[j].color);
+                (*g_videoOps.fillSpan)(x2, px, y1, run.parts[j].color);
             }
         } else {
             for (j = 0; j < run.n; j++) {
                 px = run.parts[j].dx + x;
                 x2 = px + run.parts[j].w;
                 y1 = y + run.parts[j].dy;
-                (*g78d6c)(px, x2, y1, run.parts[j].color);
+                (*g_videoOps.fillSpan)(px, x2, y1, run.parts[j].color);
             }
         }
     }
@@ -461,7 +458,7 @@ static void near fill_quad(int col, int a, int b, int c, int d, int e, int f)
 
     if (c == d && f == e) {
         for (y6 = f; y6 <= d; y6++)
-            (*g78d6c)(a, b, y6, col);
+            (*g_videoOps.fillSpan)(a, b, y6, col);
     } else {
         ymin2 = f > e ? e : f;
         ymax = c < d ? d : c;
@@ -527,9 +524,9 @@ static void near fill_quad(int col, int a, int b, int c, int d, int e, int f)
             break;
         }
         if (xlk > xr5)
-            (*g78d6c)(xr5, xlk, y6, col);
+            (*g_videoOps.fillSpan)(xr5, xlk, y6, col);
         else
-            (*g78d6c)(xlk, xr5, y6, col);
+            (*g_videoOps.fillSpan)(xlk, xr5, y6, col);
         y6++;
     test:
         if (y6 <= ymax && y6 <= g_clipYMax)
@@ -605,33 +602,33 @@ void view_road_row(int n)
                 break;
             if (*g_6e20a & 0x80) {
                 m17 = xl2 + ((xl - xl2) >> 1);
-                (*g78d6c)(xl2, m17, yk, 4);
-                (*g78d6c)(m17, xl, yk, 9);
+                (*g_videoOps.fillSpan)(xl2, m17, yk, 4);
+                (*g_videoOps.fillSpan)(m17, xl, yk, 9);
                 if (cnt == last2 && n < 6)
-                    (*g78d6c)(xl2, m17, yk, 2);
+                    (*g_videoOps.fillSpan)(xl2, m17, yk, 2);
             } else {
-                (*g78d6c)(xl2, xl, yk, 4);
+                (*g_videoOps.fillSpan)(xl2, xl, yk, 4);
                 if (cnt == last2 && n < 6)
-                    (*g78d6c)(xl2, xl, yk, 2);
+                    (*g_videoOps.fillSpan)(xl2, xl, yk, 2);
             }
             if (*g_6e24a & 0x80) {
                 m2 = xr28 - ((xr28 - xrl) >> 1);
-                (*g78d6c)(m2, xr28, yk, 4);
-                (*g78d6c)(xrl, m2, yk, 9);
+                (*g_videoOps.fillSpan)(m2, xr28, yk, 4);
+                (*g_videoOps.fillSpan)(xrl, m2, yk, 9);
                 if (cnt == last2 && n < 6)
-                    (*g78d6c)(m2, xr28, yk, 2);
+                    (*g_videoOps.fillSpan)(m2, xr28, yk, 2);
             } else {
-                (*g78d6c)(xrl, xr28, yk, 4);
+                (*g_videoOps.fillSpan)(xrl, xr28, yk, 4);
                 if (cnt == last2 && n < 6)
-                    (*g78d6c)(xrl, xr28, yk, 2);
+                    (*g_videoOps.fillSpan)(xrl, xr28, yk, 2);
             }
         } else {
-            (*g78d6c)(xl, xrl, yk, (*am8b82y & 0x10) ? 15 : 1);
+            (*g_videoOps.fillSpan)(xl, xrl, yk, (*am8b82y & 0x10) ? 15 : 1);
         }
         if (*am8b82y & 8) {
             t1 = cx0k;
             t2 = t1 + wid;
-            (*g78d6c)(t1, t2, yk, 4);
+            (*g_videoOps.fillSpan)(t1, t2, yk, 4);
         }
         xlsn += dxlm;
         xrs += dxr7;
@@ -703,27 +700,27 @@ void view_mirror_row(void)
                 break;
             if (*g_6e20a & 0x80) {
                 m17 = xl2 + ((xl - xl2) >> 1);
-                (*g78d6c)(xl2, m17, yk, 4);
-                (*g78d6c)(m17, xl, yk, 9);
+                (*g_videoOps.fillSpan)(xl2, m17, yk, 4);
+                (*g_videoOps.fillSpan)(m17, xl, yk, 9);
             } else {
-                (*g78d6c)(xl2, xl, yk, 4);
+                (*g_videoOps.fillSpan)(xl2, xl, yk, 4);
             }
             if (*g_6e24a & 0x80) {
                 m2 = xr28 - ((xr28 - xrl) >> 1);
-                (*g78d6c)(m2, xr28, yk, 4);
-                (*g78d6c)(xrl, m2, yk, 9);
+                (*g_videoOps.fillSpan)(m2, xr28, yk, 4);
+                (*g_videoOps.fillSpan)(xrl, m2, yk, 9);
             } else {
-                (*g78d6c)(xrl, xr28, yk, 4);
+                (*g_videoOps.fillSpan)(xrl, xr28, yk, 4);
             }
         } else {
-            (*g78d6c)(242, xl, yk, 9);
-            (*g78d6c)(xrl, 317, yk, 9);
-            (*g78d6c)(xl, xrl, yk, 1);
+            (*g_videoOps.fillSpan)(242, xl, yk, 9);
+            (*g_videoOps.fillSpan)(xrl, 317, yk, 9);
+            (*g_videoOps.fillSpan)(xl, xrl, yk, 1);
         }
         if (*am8b82y & 8) {
             t1 = cx0k;
             t2 = t1 + wid;
-            (*g78d6c)(t1, t2, yk, 4);
+            (*g_videoOps.fillSpan)(t1, t2, yk, 4);
         }
         xlsn += dxlm;
         xrs += dxr7;
@@ -776,15 +773,15 @@ static void near render_buildings(int a, int b, int c, int d, int e, int f, int 
         }
         if (am8b82y[-1] & 4) {
             if (rev)
-                (*g78d6c)(g_clipXMin, a, c - 1, 4);
+                (*g_videoOps.fillSpan)(g_clipXMin, a, c - 1, 4);
             else
-                (*g78d6c)(b, g_clipXMax, d - 1, 4);
+                (*g_videoOps.fillSpan)(b, g_clipXMax, d - 1, 4);
             if (rev) {
                 for (y = f; y < c - 1; y++)
-                    (*g78d6c)(g_clipXMin, a, y, 2);
+                    (*g_videoOps.fillSpan)(g_clipXMin, a, y, 2);
             } else {
                 for (y = e; y < d - 1; y++)
-                    (*g78d6c)(b, g_clipXMax, y, 2);
+                    (*g_videoOps.fillSpan)(b, g_clipXMax, y, 2);
             }
         }
         if (a41 && !b4) {
@@ -798,7 +795,7 @@ static void near render_buildings(int a, int b, int c, int d, int e, int f, int 
                         x1 = a - b + a;
                         x2 = a - 1;
                         do
-                            (*g78d6c)(x1, x2, y, 2);
+                            (*g_videoOps.fillSpan)(x1, x2, y, 2);
                         while (++y < f);
                     }
                 } else {
@@ -807,7 +804,7 @@ static void near render_buildings(int a, int b, int c, int d, int e, int f, int 
                         x2 = b + 1;
                         x1 = b * 2 - a;
                         do
-                            (*g78d6c)(x2, x1, y, 2);
+                            (*g_videoOps.fillSpan)(x2, x1, y, 2);
                         while (++y < e);
                     }
                 }
@@ -818,7 +815,7 @@ static void near render_buildings(int a, int b, int c, int d, int e, int f, int 
                         x2 = a - b + a;
                         x1 = a - 1;
                         do
-                            (*g78d6c)(x2, x1, y, 2);
+                            (*g_videoOps.fillSpan)(x2, x1, y, 2);
                         while (++y < f);
                     }
                 } else {
@@ -827,7 +824,7 @@ static void near render_buildings(int a, int b, int c, int d, int e, int f, int 
                         x2 = b + 1;
                         x1 = b * 2 - a;
                         do
-                            (*g78d6c)(x2, x1, y, 2);
+                            (*g_videoOps.fillSpan)(x2, x1, y, 2);
                         while (++y < e);
                     }
                 }
@@ -869,15 +866,15 @@ static void near render_mirror_buildings(int a, int b, int c, int d, int e, int 
             }
             if (am8b82y[1] & 4) {
                 if (rev)
-                    (*g78d6c)(g_clipXMin, a, c - 1, 4);
+                    (*g_videoOps.fillSpan)(g_clipXMin, a, c - 1, 4);
                 else
-                    (*g78d6c)(b, g_clipXMax, d - 1, 4);
+                    (*g_videoOps.fillSpan)(b, g_clipXMax, d - 1, 4);
                 if (rev) {
                     for (y = f; y < c - 1; y++)
-                        (*g78d6c)(g_clipXMin, a, y, 2);
+                        (*g_videoOps.fillSpan)(g_clipXMin, a, y, 2);
                 } else {
                     for (y = e; y < d - 1; y++)
-                        (*g78d6c)(b, g_clipXMax, y, 2);
+                        (*g_videoOps.fillSpan)(b, g_clipXMax, y, 2);
                 }
             }
             if (a41 && !b4) {
@@ -890,7 +887,7 @@ static void near render_mirror_buildings(int a, int b, int c, int d, int e, int 
                         x1 = a - b + a;
                         x2 = a - 1;
                         do
-                            (*g78d6c)(x1, x2, y, 2);
+                            (*g_videoOps.fillSpan)(x1, x2, y, 2);
                         while (++y < f);
                     }
                 } else {
@@ -899,7 +896,7 @@ static void near render_mirror_buildings(int a, int b, int c, int d, int e, int 
                         x2 = b + 1;
                         x1 = b * 2 - a;
                         do
-                            (*g78d6c)(x2, x1, y, 2);
+                            (*g_videoOps.fillSpan)(x2, x1, y, 2);
                         while (++y < e);
                     }
                 }
@@ -1031,9 +1028,9 @@ static void near render_scaled_pic(int x, int y, int n, int align, int clip, int
     else
         clip_blit_y(&b);
     if (mode == 1)
-        (*b_78a2)(g82b4s, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
+        (*g_videoOps.copy)(g82b4s, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
     else
-        (*b_78a2)(r_vid.mode == VID_EGA ? bm7678 : g82b4s, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
+        (*g_videoOps.copy)(r_vid.mode == VID_EGA ? bm7678 : g82b4s, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
 }
 
 /* render_gantry @ 2645:3CCC (linear 0x2A11C, 247 bytes) */
@@ -1047,7 +1044,7 @@ static void near render_gantry(int x1, int x2, int y1, int y2, int n, int clip, 
         clip_vline(10, x1 - j, y1, y2);
         clip_vline(10, x2 + j, y1, y2);
         egaspan_begin();
-        (*g78d6c)(x1, x2, y1 + j - 1, 10);
+        (*g_videoOps.fillSpan)(x1, x2, y1 + j - 1, 10);
     }
     if (flags & 0x1000)
         render_object((x1 + x2) >> 1, y1, n, 1, 13);
@@ -1080,7 +1077,7 @@ static void near render_start_signal(void)
         b.sy = 0x20 - aw7aaex;
         b.dx = 0x82;
         b.dy = 0x12;
-        (*ab78aat)(k_6e60, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
+        (*g_videoOps.maskedBlit)(k_6e60, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
     }
 }
 
@@ -1094,13 +1091,13 @@ static void near render_overlays(void)
     b.h = ax72f4->height;
     b.dx = b.sx = b.sy = 0;
     b.dy = 0x12;
-    (*ab78aat)(ax72f4, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
+    (*g_videoOps.maskedBlit)(ax72f4, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
     b.w = ak8bcat->width;
     b.h = ak8bcat->height;
     b.sx = b.sy = 0;
     b.dx = 0x58;
     b.dy = 0x5f;
-    (*ab78aat)(ak8bcat, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
+    (*g_videoOps.maskedBlit)(ak8bcat, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
 }
 
 /* render_mirror_frame @ 2645:3EDB (linear 0x2A32B, 178 bytes) */
@@ -1114,14 +1111,14 @@ static void near render_mirror_frame(void)
     b.sx = b.sy = 0;
     b.dx = 0xf0;
     b.dy = 0x12;
-    (*b_78a2)(g8184y, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
+    (*g_videoOps.copy)(g8184y, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
     b.w = bz8b7ex->width;
     b.h = 2;
     b.sx = b.sy = 0;
     b.dx = 0xf0;
     b.dy = k_8646 - 2;
     clip_blit_y(&b);
-    (*b_78a2)(bz8b7ex, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
+    (*g_videoOps.copy)(bz8b7ex, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
 }
 
 /* render_opponent @ 2645:3F8D (linear 0x2A3DD, 1136 bytes) */
@@ -1254,7 +1251,7 @@ static void near render_opponent(void)
             clip_blit(&b);
         else
             clip_blit_y(&b);
-        (*ab78aat)(g8acew[seln], g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
+        (*g_videoOps.maskedBlit)(g8acew[seln], g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
         if (flag9) {
             if (g_clipXMin == 0)
                 clip_mirror();
@@ -1418,7 +1415,7 @@ static void near render_mirror(void)
     pkt1.sy = 0x16;
     pkt1.dx = 8;
     pkt1.dy = (r_vid.mode == VID_EGA ? 0 : DASH_Y) + 3;
-    (*b_78a2)(g_drawPage == 1 ? g8188w : g82b4s, bm7678, &pkt1, 1);
+    (*g_videoOps.copy)(g_drawPage == 1 ? g8188w : g82b4s, bm7678, &pkt1, 1);
 }
 
 /* view_draw @ 2645:4B8C (linear 0x2AFDC, 1774 bytes) */

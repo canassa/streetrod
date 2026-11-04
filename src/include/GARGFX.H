@@ -17,8 +17,6 @@ extern char g_carbPosBase[];                                   /* DS:078C */
 extern struct Bitmap far *g_boltOverlay;                       /* DS:0792 */
 extern struct Hot g_boltHot;                            /* DS:0796 */
 extern struct Blt g_cpyBoltPatchRecord;                               /* DS:70AC */
-extern int (far *g_bltShiftedHook)(struct Bitmap far *, struct Bitmap far *, struct Blt *);/* DS:78A6 */
-extern void (far *g_slideBitmapHook)(int, int, int, int, int, struct Bitmap far *);/* DS:78CE */
 extern int o_8290[];                                    /* DS:8290 */
 extern int af829ax[];                                   /* DS:829A */
 extern int ad829cy[];                                   /* DS:829C */

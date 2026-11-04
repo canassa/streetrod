@@ -2,7 +2,6 @@
 #include "CARHOP.H"
 #include "ARENA.H"
 #include "BITMAP.H"
-#include "BOBS.H"
 #include "CARPIC.H"
 #include "DASH.H"
 #include "DISK.H"
@@ -109,7 +108,7 @@ void carhop_skate(int a, int b)
         r3.h = 0x29;
         r3.dx = 0xc8;
         r3.dy = r3.sx = r3.sy = 0;
-        (*b_78a2)(g_carhopBg, bm9, &r3, 1);
+        (*g_videoOps.copy)(g_carhopBg, bm9, &r3, 1);
     }
     if (b) {
         if (sprite_car_clip(0, 0x44, bm9->width, bm9->height, &rca2)) {
@@ -122,7 +121,7 @@ void carhop_skate(int a, int b)
             r3.sy = 0;
             r3.dx = rca2.x1;
             r3.dy = bm9->height - clip->height;
-            (*ab78aat)(clip, bm9, &r3, 1);
+            (*g_videoOps.maskedBlit)(clip, bm9, &r3, 1);
         } else
             clip = 0;
     }
@@ -133,9 +132,9 @@ void carhop_skate(int a, int b)
         r2.h = 0x29;
         r2.sx = r2.sy = 0;
         r2.dx = r2.dy = 0;
-        (*b_78a2)(g_carhopBg, bm27, &r2, 1);
+        (*g_videoOps.copy)(g_carhopBg, bm27, &r2, 1);
         r2.sx = 0xc8;
-        (*b_78a2)(tab2[0], bm27, &r2, 2);
+        (*g_videoOps.copy)(tab2[0], bm27, &r2, 2);
     }
     if (b && clip)
         bitmap_and_mask(clip, tab2[0], &r3);
@@ -159,11 +158,11 @@ void carhop_skate(int a, int b)
         v3 = x & ~r_vid.mask;
         bitmap_shift_right(tab2[g_carhopFrames[i]], v3, fr);
         tm7 = g_tick + 2;
-        okn = (*g_stepSpriteFrm)(sp2);
+        okn = (*g_videoOps.spriteStep)(sp2);
         while (tm7 > g_tick)
             ;
     }
-    okn = (*g_stepSpriteFrm)(sp2);
+    okn = (*g_videoOps.spriteStep)(sp2);
     g_carhopRect = sp2->page->rect;
     if (a == CARHOP_LEAVE) {
         carpic_patch_bg(g_carhopBg, 0, 0, 0x30, 0x29, 0xc8, 0x44, 0xa3, 2);
@@ -173,13 +172,13 @@ void carhop_skate(int a, int b)
         r2.h = 0x29;
         r2.sx = r2.sy = 0;
         r2.dx = r2.dy = 0;
-        (*b_78a2)(g_carhopBg, t, &r2, 1);
-        (*ab78aat)(fr, t, &r2, 1);
-        (*ab78aat)(bm27, t, &r2, 0);
+        (*g_videoOps.copy)(g_carhopBg, t, &r2, 1);
+        (*g_videoOps.maskedBlit)(fr, t, &r2, 1);
+        (*g_videoOps.maskedBlit)(bm27, t, &r2, 0);
         carpic_patch_bg(t, 0, 0, t->width, 0x29, 0xc8, 0x44, 0xa3, 2);
     }
     if (r_vid.mode != VID_EGA)
-        (*g_screenCopyPtr)(r_vid.front->bits.p, r_vid.back->bits.p);
+        (*g_videoOps.copyPage)(r_vid.front->bits.p, r_vid.back->bits.p);
     marks_release();
 }
 
@@ -197,5 +196,5 @@ void carhop_save_bg(void)
     pkt.sx = 200;
     pkt.sy = 68;
     pkt.dx = pkt.dy = 0;
-    (*b_78a2)(r_vid.back, g_carhopBg, &pkt, 1);
+    (*g_videoOps.copy)(r_vid.back, g_carhopBg, &pkt, 1);
 }

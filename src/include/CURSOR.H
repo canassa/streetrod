@@ -11,7 +11,6 @@
 #define CURSOR_EGA_SAVE (EGA_VRAM + EGA_PITCH * SCREEN_HEIGHT)
 
 extern struct Pair g_cursorPairs[];                            /* DS:06EC */
-extern void (far *g_bltCursProc)(char far *, char far *, char far *, char far *, int, int, int, int);/* DS:78B2 */
 extern struct Cursor g_cursor2;                         /* DS:7AEC */
 unsigned cursor_shape_off(unsigned n);                  /* 0x11E9C */
 void cursor_init(void);                                 /* 0x11EA8 */

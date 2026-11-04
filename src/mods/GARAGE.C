@@ -158,7 +158,7 @@ void F_06750(int x)
     sprintf(buf, "%s %d, 1963", g_mon[mnum], date);
     sv = x_colors;
     x_colors = bustyle->hilite;
-    (*a_78aem)(r_vid.back, 0x61, x, buf);
+    (*g_videoOps.drawText)(r_vid.back, 0x61, x, buf);
     x_colors = sv;
 }
 
@@ -327,7 +327,7 @@ int near F_06B06(int mode)
             }
         }
         r_vid.copyToFront = 1;
-        (*g_fnShow)();
+        (*g_videoOps.show)();
         if (a_7eaap.currentCar) {
             m_8272.bodyPic = g7d86n[a_7eaap.currentCar->specIndex].bodyPic;
             m_8272.paintScheme = a_7eaap.currentCar->paintScheme;
@@ -597,11 +597,11 @@ void near F_07367(void)
             A2.w = B1.w = C.w = 8;
             F_168F3(1);
             for (k = 0; k < bm1->width; k += 8) {
-                (*b_78a2)(bm1, bm4, &A2, 1);
+                (*g_videoOps.copy)(bm1, bm4, &A2, 1);
                 if (bm1->width - 8 > k)
-                    (*ab78aat)(bm3, bm4, &B1, 1);
+                    (*g_videoOps.maskedBlit)(bm3, bm4, &B1, 1);
                 F_10AFD(2);
-                (*b_78a2)(bm4, r_vid.front, &C, 1);
+                (*g_videoOps.copy)(bm4, r_vid.front, &C, 1);
                 A2.w += 8;
                 C.w += 8;
                 B1.dx += 8;
@@ -979,7 +979,7 @@ static void near tune_timing(struct Car *car)
         outp(PIT_CH2, w.b[1]);
         y = blt.dy = gear * 2 + 0x4b;
         cursor_ctl(CURSOR_HIDE_NOW);
-        (*b_78a2)(p->img, r_vid.back, &blt, 1);
+        (*g_videoOps.copy)(p->img, r_vid.back, &blt, 1);
         bitmap_copy_box(r_vid.back, r_vid.front, 0xb0, y, 0xb7, y + 10);
         cursor_ctl(CURSOR_SHOW_NOW);
         while ((key = sys_wait_input(0)) == 0) {

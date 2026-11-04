@@ -43,7 +43,6 @@ void screen_status_init(int y)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, y, (SCREEN_WIDTH - 1), y + STATUS_BAR_HEIGHT - 1);
 }
 
-void (far *a_78aem)(struct Bitmap far *, int, int, char *);
 struct State7EAA a_7eaap;
 int g_xTextR;
 int g_statValXState;
@@ -72,7 +71,7 @@ void F_11421(int x, char *s, int w)
     cursor_ctl(CURSOR_HIDE);
     if (g_statusStrShown)
         draw_fill_rect(r_vid.back, x - 1, ypos, wd, 8);
-    (*a_78aem)(r_vid.back, left, ypos, s);
+    (*g_videoOps.drawText)(r_vid.back, left, ypos, s);
     g_statusStrShown = *s;
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
@@ -104,7 +103,7 @@ void F_11593(char *s)
     x_colors = bustyle->colors;
     cursor_ctl(CURSOR_HIDE);
     draw_fill_rect(r_vid.back, 0, g_statStringY, g_xStatTxtValue & 0xfff8, 8);
-    (*a_78aem)(r_vid.back, 0, g_statStringY, s);
+    (*g_videoOps.drawText)(r_vid.back, 0, g_statStringY, s);
     g_statValXState = (g_xTextR + 7) & 0xfff8;
     r_vid.copyToFront = 0;
     if (s[1] != 'G' && s[1] != ' ')
@@ -181,7 +180,7 @@ void screen_wait_msg(char *msg)
         prev = gz8249;
         if (!prev) {
             gz8249 = 1;
-            (*g_fnShow)();
+            (*g_videoOps.show)();
         }
         dx = g_displaySplitYVal ? 5 : 0x50;
         for (i = 0; i < 5; i++) {
@@ -203,7 +202,7 @@ void screen_wait_msg(char *msg)
         r_vid.copyToFront = saved;
         gz8249 = prev;
         if (!prev)
-            (*g_displayDisablePtr)();
+            (*g_videoOps.blank)();
     } else {
         puts(" ");
         puts(g_promptLine1);
@@ -239,7 +238,7 @@ int F_118D4(int a, int b)
     pkt.sx = pkt.sy = pkt.fc = 0;
     pkt.dx = g_picX;
     pkt.dy = g_picY;
-    (*b_78a2)(p, r_vid.back, &pkt, 1);
+    (*g_videoOps.copy)(p, r_vid.back, &pkt, 1);
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, g_picX, g_picY, pkt.dx + pkt.w - 1, pkt.dy + pkt.h - 1);
@@ -262,7 +261,7 @@ int F_119B8(int a, int b, int c, int d)
 
 void screen_text(int x, int y, char *s)
 {
-    (*a_78aem)(r_vid.back, x, y, s);
+    (*g_videoOps.drawText)(r_vid.back, x, y, s);
     if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, x, y, g_xTextR - 1, y + 7);
 }

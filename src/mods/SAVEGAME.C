@@ -144,7 +144,7 @@ int near savegame_new(void)
     r_vid.copyToFront = 1;
     video_name_pal();
     bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), (SCREEN_BODY_HEIGHT - 1));
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     switch (sel = edit_text_box(2, 15, g_driverName)) {
     case -3:
     case 0:

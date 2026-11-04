@@ -3,11 +3,11 @@
 #include "BITMAP.H"
 #include "BOBS.H"
 #include "CARPIC.H"
+#include "DASH.H"
 #include "MAIN.H"
 #include "SPRITE.H"
 #include "TANDYBLT.H"
 #include "TIRES.H"
-#include "VIDEO.H"
 
 static void near restore_rect_back(struct Rect *r, struct Bitmap far *a, struct Bitmap far *b, int horiz);
 
@@ -124,7 +124,7 @@ int tandyspr_step(struct Sprite *s)
                 blt.sx = e.x1 - g_backdropX;
                 blt.sy = e.y1 - s->y;
             }
-            (*ab78aat)(fp, r_vid.back, &blt, 0);
+            (*g_videoOps.maskedBlit)(fp, r_vid.back, &blt, 0);
         }
     }
     if (r_vid.back->bits.p != pg->bm->bits.p)

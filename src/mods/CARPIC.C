@@ -34,7 +34,6 @@ static void near build_pump_strip(int x, int y, int sx0, int top, struct Bitmap 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Bitmap g_bandRecordsSprArray[12];
 struct Bitmap far *g_lastPic;
-int (far *g_stepSpriteFrm)(struct Sprite *);
 struct Band g_carSpriteStrips[4];
 struct Bitmap g_carBackdropHdrBmp;
 int g_carVisibleHtValue;
@@ -186,7 +185,7 @@ static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int co
         g_bandRecordsSprArray[i].bits.p = base2;
         base2 += bm1->planesize;
         dash_fmemset(bm1->bits.p, v, bm1->planesize);
-        (*ab78aat)(B[i], bm1, &pkt1, 1);
+        (*g_videoOps.maskedBlit)(B[i], bm1, &pkt1, 1);
         bitmap_copy(bm1, &g_bandRecordsSprArray[i], 1);
     }
     F_19438(1);
@@ -222,7 +221,7 @@ void carpic_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, s
         blt.h = y2;
         blt.sx = g_backdropX;
         blt.sy = blt.dx = blt.dy = 0;
-        (*b_78a2)(start, *pa, &blt, 1);
+        (*g_videoOps.copy)(start, *pa, &blt, 1);
     } else {
         *pa = arena_bm(src->width, y2, flag, ARENA_LOW_STACK);
         bitmap_copy(start, *pa, 1);
@@ -246,7 +245,7 @@ void carpic_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, s
         p2 = F_15BBE(mode, ARENA_HIGH_STACK);
         if (r_vid.mode == VID_TANDY) {
             blt.sy = p2->height - y2;
-            (*b_78a2)(p2, *pa, &blt, 2);
+            (*g_videoOps.copy)(p2, *pa, &blt, 2);
         } else {
             diff = p2->planesize / r_vid.planes - (*pa)->planesize / r_vid.planes;
             bitmap_far_copy(p2->alt.p + diff, (*pa)->alt.p, (*pa)->planesize / r_vid.planes);
@@ -288,11 +287,11 @@ static void near build_pump_strip(int x, int y, int sx0, int top, struct Bitmap 
     b.sx = (t < 0) ? 0 : t;
     b.w = (t + 16 > 16) ? 16 : t + 16;
     b.dx = (-t < 0) ? 0 : -t;
-    (*ab78aat)(g_autoSprImagePtr, dstbm, &b, 1);
+    (*g_videoOps.maskedBlit)(g_autoSprImagePtr, dstbm, &b, 1);
     b.w = 0x10;
     b.h = BACKDROP_ROWS;
     b.dx = b.dy = b.sx = b.sy = 0;
-    (*ab78aat)(tmp1, dstbm, &b, 0);
+    (*g_videoOps.maskedBlit)(tmp1, dstbm, &b, 0);
     F_19438(1);
 }
 
@@ -350,7 +349,7 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
     blt.sx = p12->stickerX;
     blt.sy = p12->stickerY;
     blt.dx = blt.dy = 0;
-    (*b_78a2)(*out, g_0294, &blt, 1);
+    (*g_videoOps.copy)(*out, g_0294, &blt, 1);
     if (kk > 0) {
         pp8 = &a784als[kk - 1];
         bitmap_draw_pic(*out, pp8->id, p12->stickerX + pp8->dx, p12->stickerY + pp8->dy, 0);
@@ -542,13 +541,13 @@ again:
                     blt.sx = x0;
                     blt.sy = g_backdrop->height - h7;
                     blt.dx = blt.dy = 0;
-                    (*b_78a2)(g_backdrop, bm48, &blt, 1);
+                    (*g_videoOps.copy)(g_backdrop, bm48, &blt, 1);
                 } else
                     popup_grab(x0, aw8260y, bm48->width, bm48->height, bm48);
                 blt.w = w1;
                 blt.h = blt.fc = h7 - g_spriteBottomCut;
                 blt.dx = blt.dy = blt.sx = blt.sy = 0;
-                (*ab78aat)(bms6[0], bm48, &blt, 1);
+                (*g_videoOps.maskedBlit)(bms6[0], bm48, &blt, 1);
             } else if (r_vid.mode != VID_TANDY)
                 make_frames(bms6, n2, g_spriteBottomCut, hh8, tmpn);
         }
@@ -564,15 +563,15 @@ again:
                 egalatch_to_page(g_carSpriteStrips[0].p, bms6[0]->pitch, bms6[0]->height - g_spriteBottomCut,
                     r_vid.back->bits.p + ((bot - h7) * EGA_PITCH + (x0 >> 3)) + EGA_PITCH, bms6[0]->pitch);
             else
-                (*b_78a2)(bm48, r_vid.back, &blt, 1);
-            (*g_screenCopyPtr)(r_vid.back->bits.p, r_vid.front->bits.p);
+                (*g_videoOps.copy)(bm48, r_vid.back, &blt, 1);
+            (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
             goto done;
         } else if (kind == 7 || kind == 8) {
             if (r_vid.mode == VID_EGA)
                 egalatch_to_page(g_carSpriteStrips[0].p, bms6[0]->pitch, h7 - g_spriteBottomCut,
                     r_vid.front->bits.p + ((bot - h7) * EGA_PITCH + (x0 >> 3)) + EGA_PITCH, bms6[0]->pitch);
             else
-                (*b_78a2)(bm48, r_vid.front, &blt, 1);
+                (*g_videoOps.copy)(bm48, r_vid.front, &blt, 1);
             bitmap_copy_box(r_vid.front, r_vid.back, x0, bot - h7 + 1, x0 + w1 - 1, bot);
             goto done;
         }
@@ -586,7 +585,7 @@ again:
         g_carMoving = 1;
         if (g_carPassBy != 2)
             sys_drive_start();
-        while ((*g_stepSpriteFrm)(spr3))
+        while ((*g_videoOps.spriteStep)(spr3))
             ;
         if (g_carPassBy != 1)
             sys_drive_stop();
@@ -602,18 +601,18 @@ again:
         blt.sx = g_gasCapXVal - ac825et;
         blt.sy = g_gasCapYValue - aw8260y;
         blt.dx = blt.dy = 0;
-        (*b_78a2)(bms6[0], scratch, &blt, 1);
+        (*g_videoOps.copy)(bms6[0], scratch, &blt, 1);
         bitmap_draw_pic(bms6[0], 0x472, (char)blt.sx, (char)blt.sy, 0);
         build_pump_strip(0x40, 0x64, g_xCoordSprite, bot, g_pumpWithNozzle, 0x4c8, 0x4ca);
         build_pump_strip(0x40, 0x64, g_xCoordSprite, bot, g_pumpNoNozzle, 0x449, 0x44a);
         blt.dx = blt.sx;
         blt.dy = blt.sy;
         blt.sx = blt.sy = 0;
-        (*b_78a2)(scratch, bms6[0], &blt, 1);
+        (*g_videoOps.copy)(scratch, bms6[0], &blt, 1);
     }
     dash_set_view(2);
     if (r_vid.mode != VID_EGA)
-        (*g_screenCopyPtr)(r_vid.front->bits.p, r_vid.back->bits.p);
+        (*g_videoOps.copyPage)(r_vid.front->bits.p, r_vid.back->bits.p);
     if (g_carPassBy == 1) {
         kind = 2;
         g_carPassBy = 2;
@@ -648,7 +647,7 @@ void carpic_patch_bg(struct Bitmap far *dst, int p1, int p2, int p3, int p4, int
         r.sy = p2 + lo7 - p6;
         r.dx = p5;
         r.dy = lo7 - base7;
-        (*b_78a2)(dst, g_backdrop, &r, 1);
+        (*g_videoOps.copy)(dst, g_backdrop, &r, 1);
     }
     if (g_scene == 6) {
         r.h = g_backdrop->height;
@@ -657,7 +656,7 @@ void carpic_patch_bg(struct Bitmap far *dst, int p1, int p2, int p3, int p4, int
         for (i9 = 0; i9 < 7; i9++) {
             r.w = g_jailBars[i9].w;
             r.sx = r.dx = g_jailBars[i9].x;
-            (*b_78a2)(r_vid.front, g_backdrop, &r, 1);
+            (*g_videoOps.copy)(r_vid.front, g_backdrop, &r, 1);
         }
     }
 }

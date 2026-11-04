@@ -20,7 +20,7 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-void (far *g_cgaHooks[15])() = {cgablt_copy, cgashift_blit, cgablt_masked, cga_draw_text, cursblt_cga, cga_copy_page, cga_recolor_rect, cga_screen_off, cga_screen_on, cgaspr_step, cga_reveal, sprite_slide_v, cgaline_draw, cgaline_span, cgaline_fill_below};   /* DS:5B04 */
+struct Hooks g_cgaHooks = {cgablt_copy, cgashift_blit, cgablt_masked, cga_draw_text, cursblt_cga, cga_copy_page, cga_recolor_rect, cga_screen_off, cga_screen_on, cgaspr_step, cga_reveal, sprite_slide_v, cgaline_draw, cgaline_span, cgaline_fill_below};   /* DS:5B04 */
 unsigned char g_cgaPixMask[4] = {192, 48, 12, 3};   /* DS:5B40 */
 unsigned char g_cgaPixKeep[4] = {63, 207, 243, 252};   /* DS:5B44 */
 int g_cgaRevealOrder[5] = {0, 2, 4, 1, 3};   /* DS:5B48 */
@@ -29,7 +29,7 @@ int g_cgaRevealOrder[5] = {0, 2, 4, 1, 3};   /* DS:5B48 */
 
 void cga_install(void)
 {
-    *(struct Hooks *)&b_78a2 = *(struct Hooks *)g_cgaHooks;
+    g_videoOps = g_cgaHooks;
 }
 
 /* cga_draw_text @ 1C11:01BA (linear 0x1C2CA, 1337 bytes)

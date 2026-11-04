@@ -60,10 +60,10 @@ static int near start_game(void)
     dash_set_view(0);
     sys_music_start(2, 10);
     dash_intro();
-    (*g_displayDisablePtr)();
+    (*g_videoOps.blank)();
     dash_set_view(1);
     random_int(-1);
-    (*g_displayDisablePtr)();
+    (*g_videoOps.blank)();
     if (g_loadedIntroBmps == 0)
         disk_read_index(2);
     if (g_attractSwitchStartup == 0) {

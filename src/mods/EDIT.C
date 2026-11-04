@@ -44,7 +44,7 @@ int edit_line(int x, int y, char *buf, int max)
     x_colors.line = x_colors.text;
     cursor_ctl(CURSOR_HIDE);
     draw_fill_rect(r_vid.back, x, y, w, 8);
-    (*a_78aem)(r_vid.back, x, y, buf);
+    (*g_videoOps.drawText)(r_vid.back, x, y, buf);
     draw_vline(r_vid.back, cx = g_xTextR, cy = g_yLastString, 8);
     colr = -1;
     cursor_ctl(CURSOR_SHOW);
@@ -88,13 +88,13 @@ int edit_line(int x, int y, char *buf, int max)
                         dest[0] = buf[--end];
                         cx -= dash_text_width(dest);
                         px = cx;
-                        (*a_78aem)(r_vid.back, cx, cy, " ");
+                        (*g_videoOps.drawText)(r_vid.back, cx, cy, " ");
                     } else
                         sound_buzz();
                 } else if (end < max) {
                     buf[end++] = key;
                     buf[end] = 0;
-                    (*a_78aem)(r_vid.back, px = cx, cy, buf + end - 1);
+                    (*g_videoOps.drawText)(r_vid.back, px = cx, cy, buf + end - 1);
                     cx = g_xTextR;
                 } else
                     sound_buzz();

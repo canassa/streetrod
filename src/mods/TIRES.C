@@ -2,7 +2,6 @@
 #include "TIRES.H"
 #include "ARENA.H"
 #include "BITMAP.H"
-#include "BOBS.H"
 #include "CARPIC.H"
 #include "CURSOR.H"
 #include "DASH.H"
@@ -80,13 +79,13 @@ static struct Bitmap far *near grab_wheel_column(int n)
     blt.w = a2->width;
     blt.h = a2->height;
     blt.sx = blt.sy = blt.dx = blt.dy = 0;
-    (*ab78aat)(a2, b, &blt, 1);
+    (*g_videoOps.maskedBlit)(a2, b, &blt, 1);
     blt.w = a2->width;
     blt.h = a2->height;
     blt.sx = blt.sy = 0;
     blt.dx = (n + g_savedCarX) & r_vid.mask;
     blt.dy = 0x78;
-    (*b_78a2)(b, r_vid.back, &blt, 1);
+    (*g_videoOps.copy)(b, r_vid.back, &blt, 1);
     marks_pop_low(2);
     blt.w = 0x28;
     blt.h = g_liftCar->height;
@@ -96,8 +95,8 @@ static struct Bitmap far *near grab_wheel_column(int n)
     c = arena_bm(0x28, 0x9c - g_spriteBgY, 1, ARENA_LOW_STACK);
     popup_grab(blt.sx + g_savedCarX, g_spriteBgY, 0x28, 0x9c - g_spriteBgY, c);
     dash_fmemset(c->alt.p, 0xff, c->planesize / r_vid.planes);
-    (*ab78aat)(g_liftCar, c, &blt, 1);
-    (*b_78a2)(g_liftCar, c, &blt, 2);
+    (*g_videoOps.maskedBlit)(g_liftCar, c, &blt, 1);
+    (*g_videoOps.copy)(g_liftCar, c, &blt, 2);
     return c;
 }
 
@@ -119,20 +118,20 @@ static void near swap_wheel(int a, int *p, int *q)
     g_tireUnderlayOffset = g_tireFrames[0]->height - g_tireUnderPicPtr->height;
     bitmap_underlay(g_tireUnderPicPtr, g_tireFrames[0], g_6d3eaas, g_tireUnderlayOffset);
     if (r_vid.mode == VID_EGA)
-        (*g_screenCopyPtr)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
+        (*g_videoOps.copyPage)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     g_wheelOverlayBounds.x1 = 0;
     g_wheelOverlayBounds.y1 = 0;
     g_wheelOverlayBounds.x2 = g_tireBackdrop->width - 1;
     g_wheelOverlayBounds.y2 = g_tireBackdrop->height + g_spriteBgY - 1;
     g_tireSwapSprPointer = sprite_setup(a & r_vid.mask, 0x94, &g_tireCopyBm, 0, 1, g_wheelBuf, g_tireBackdrop, &g_wheelOverlayBounds, 0);
     sprite_set_step(g_tireSwapSprPointer, 0, 8, 0, 1);
-    while ((*g_stepSpriteFrm)(g_tireSwapSprPointer)) {
+    while ((*g_videoOps.spriteStep)(g_tireSwapSprPointer)) {
         if (g_tireSwapSprPointer->y == 0x7d)
             *g_tireCopyBm = *g_tireFrames[0];
         F_10AFD(3);
     }
     if (r_vid.mode == VID_EGA)
-        (*g_screenCopyPtr)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
+        (*g_videoOps.copyPage)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     for (i = 1; i < 4; i++) {
         g_rollingTireShiftVal = (i * 2 + g_6d3eaas) & ~r_vid.mask;
         if (g_rollingTireShiftVal) {
@@ -148,12 +147,12 @@ static void near swap_wheel(int a, int *p, int *q)
     g_tireSwapSprPointer = sprite_setup(a, 0x9b, g_tireFrames, 0, 4, g_rollBuf, g_wheelRollCanvas, 0, 0);
     sprite_set_step(g_tireSwapSprPointer, 0, (a + g_tireFrames[0]->width) >> 1, -2, 0);
     sound_wheel_roll(1);
-    while ((*g_stepSpriteFrm)(g_tireSwapSprPointer))
+    while ((*g_videoOps.spriteStep)(g_tireSwapSprPointer))
         F_10AFD(2);
     sound_wheel_roll(0);
     marks_pop_low(6);
     if (r_vid.mode == VID_EGA)
-        (*g_screenCopyPtr)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
+        (*g_videoOps.copyPage)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     g_tireFrames[0] = F_15BBE(*q, ARENA_LOW_STACK);
     g_6d3eaas = ((unsigned char)a & 7) >> 1;
     for (i = 1; i < 4; i++) {
@@ -177,18 +176,18 @@ static void near swap_wheel(int a, int *p, int *q)
     g_tireSwapSprPointer = sprite_setup(-g_tireFrames[0]->width, 0x9b, g_tireFrames, 0, 4, g_rollBuf, g_wheelRollCanvas, 0, 0);
     sprite_set_step(g_tireSwapSprPointer, 0, (a + g_tireFrames[0]->width >> 1) + 1, 2, 0);
     sound_wheel_roll(1);
-    while ((*g_stepSpriteFrm)(g_tireSwapSprPointer))
+    while ((*g_videoOps.spriteStep)(g_tireSwapSprPointer))
         F_10AFD(2);
     sound_wheel_roll(0);
     if (r_vid.mode == VID_EGA)
-        (*g_screenCopyPtr)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
+        (*g_videoOps.copyPage)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     g_wheelOverlayBounds.x1 = 0;
     g_wheelOverlayBounds.y1 = 0;
     g_wheelOverlayBounds.x2 = g_tireBackdrop->width - 1;
     g_wheelOverlayBounds.y2 = g_tireBackdrop->height + g_spriteBgY - 1;
     g_tireSwapSprPointer = sprite_setup(a, 0x9b, &g_tireFrames[g_6d3eaas], 0, 1, g_wheelBuf, g_tireBackdrop, &g_wheelOverlayBounds, 0);
     sprite_set_step(g_tireSwapSprPointer, 0, 8, 0, -1);
-    while ((*g_stepSpriteFrm)(g_tireSwapSprPointer)) {
+    while ((*g_videoOps.spriteStep)(g_tireSwapSprPointer)) {
         if (g_tireSwapSprPointer->y == 0x7d)
             *g_tireFrames[g_6d3eaas] = *g_tireCopyBm;
         F_10AFD(3);
@@ -256,18 +255,18 @@ void F_1B213(int *a, int *b)
     blt.sx = blt.sy = 0;
     blt.dx = left & r_vid.mask;
     blt.dy = 0;
-    (*ab78aat)(g_groundOverlayBmp, g_groundStripPointer, &blt, 1);
+    (*g_videoOps.maskedBlit)(g_groundOverlayBmp, g_groundStripPointer, &blt, 1);
     F_19438(1);
     g_groundOverlayBmp = arena_bm(g_basePicPtr->width + 8, g_basePicPtr->height, 1, ARENA_HIGH_STACK);
     bitmap_shift_right(g_basePicPtr, (right + 1) & ~r_vid.mask, g_groundOverlayBmp);
     blt.w = g_groundOverlayBmp->width;
     blt.dx = right - blt.w + ~r_vid.mask + 1;
-    (*ab78aat)(g_groundOverlayBmp, g_groundStripPointer, &blt, 1);
+    (*g_videoOps.maskedBlit)(g_groundOverlayBmp, g_groundStripPointer, &blt, 1);
     F_19438(1);
     blt.w = g_groundStripPointer->width;
     blt.dx = g_savedCarX;
     blt.dy = 0x99 - blt.h;
-    (*b_78a2)(g_groundStripPointer, r_vid.back, &blt, 1);
+    (*g_videoOps.copy)(g_groundStripPointer, r_vid.back, &blt, 1);
     F_19438(2);
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x92 - g_liftCar->height : 0;
     g_carLiftBackdrop = arena_bm(g_liftCar->width, 0x99 - g_spriteBgY, 1, ARENA_LOW_STACK);
@@ -278,8 +277,8 @@ void F_1B213(int *a, int *b)
     clip6.sx = clip6.sy = 0;
     clip6.dx = 0x88 - g_savedCarX;
     clip6.dy = -(g_liftPics[1]->height + g_spriteBgY - 0x9a);
-    (*ab78aat)(g_liftPics[0], g_carLiftBackdrop, &clip6, 1);
-    (*b_78a2)(g_liftPics[0], g_carLiftBackdrop, &clip6, 2);
+    (*g_videoOps.maskedBlit)(g_liftPics[0], g_carLiftBackdrop, &clip6, 1);
+    (*g_videoOps.copy)(g_liftPics[0], g_carLiftBackdrop, &clip6, 2);
     g_columnBitmapPtr = F_15BBE(0x4c7, ARENA_HIGH_STACK);
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x76 : 0;
     pic = grab_wheel_column(g_wheelX2Value);
@@ -293,14 +292,14 @@ void F_1B213(int *a, int *b)
     blt.sy = g_liftCar->height - 0x15;
     blt.dx = g_savedCarX;
     blt.dy = 0;
-    (*ab78aat)(g_liftCar, g_wheelRollCanvas, &blt, 1);
+    (*g_videoOps.maskedBlit)(g_liftCar, g_wheelRollCanvas, &blt, 1);
     blt.w = g_liftPics[1]->width;
     blt.h = g_wheelRollCanvas->height;
     blt.sx = 0;
     blt.sy = g_liftPics[1]->height - blt.h + 2;
     blt.dx = 0x88;
     blt.dy = 0;
-    (*ab78aat)(g_liftPics[2], g_wheelRollCanvas, &blt, 1);
+    (*g_videoOps.maskedBlit)(g_liftPics[2], g_wheelRollCanvas, &blt, 1);
     if (r_vid.mode == VID_EGA) {
         g_savedVehicleScr = &g_liftAutoBufDesc;
         mem_set_bitmap(g_savedVehicleScr, g_pageBmps[2]->bits.p, 0, g_liftCar->width, SCREEN_HEIGHT, VID_EGA);
@@ -311,19 +310,19 @@ void F_1B213(int *a, int *b)
         blt.h = g_liftCar->height + 4;
         blt.sx = blt.dx = 0;
         blt.sy = blt.dy = 0x95 - g_liftCar->height;
-        (*b_78a2)(g_carLiftBackdrop, g_savedVehicleScr, &blt, 1);
+        (*g_videoOps.copy)(g_carLiftBackdrop, g_savedVehicleScr, &blt, 1);
         blt.w = pic->width;
         blt.h = 0x23;
         blt.sy = blt.dy = 0x79;
-        (*b_78a2)(dst, g_wheelBuf, &blt, 1);
+        (*g_videoOps.copy)(dst, g_wheelBuf, &blt, 1);
         blt.w = g_wheelRollCanvas->width;
         blt.h = g_wheelRollCanvas->height;
         blt.sy = blt.dy = 0;
-        (*b_78a2)(g_wheelRollCanvas, g_rollBuf, &blt, 1);
+        (*g_videoOps.copy)(g_wheelRollCanvas, g_rollBuf, &blt, 1);
         blt.w = g_jackColumnBg->width;
         blt.h = g_liftPics[0]->height + 0x21;
         blt.sy = blt.dy = 0x99 - g_liftPics[0]->height;
-        (*b_78a2)(g_jackColumnBg, g_jackBuf, &blt, 1);
+        (*g_videoOps.copy)(g_jackColumnBg, g_jackBuf, &blt, 1);
     } else if (r_vid.mode != VID_TANDY) {
         g_savedVehicleScr = arena_bm(g_carLiftBackdrop->width, g_carLiftBackdrop->height, 0, ARENA_LOW_STACK);
         *g_wheelBuf = *pic;
@@ -338,10 +337,10 @@ void F_1B213(int *a, int *b)
     }
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x97 - g_liftPics[0]->height : 0;
     if (r_vid.mode == VID_EGA)
-        (*g_screenCopyPtr)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
+        (*g_videoOps.copyPage)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     g_tireSwapSprPointer = sprite_setup(0x88, 0xb9, &g_liftPics[1], 0, 1, g_jackBuf, g_jackColumnBg, 0, 0);
     sprite_set_step(g_tireSwapSprPointer, 0, 0x21, 0, -1);
-    while ((*g_stepSpriteFrm)(g_tireSwapSprPointer))
+    while ((*g_videoOps.spriteStep)(g_tireSwapSprPointer))
         F_10AFD(3);
     F_16381(1);
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x92 - g_liftCar->height : 0;
@@ -350,7 +349,7 @@ void F_1B213(int *a, int *b)
     bitmap_underlay(g_swapWheelBitmapPtr, g_liftCar, g_wheelX2Value, ybot);
     F_19438(1);
     if (r_vid.mode == VID_EGA)
-        (*g_screenCopyPtr)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
+        (*g_videoOps.copyPage)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     g_wheelOverlayBounds.x1 = 0;
     g_wheelOverlayBounds.y1 = 0;
     g_wheelOverlayBounds.x2 = g_carLiftBackdrop->width - 1;
@@ -360,7 +359,7 @@ void F_1B213(int *a, int *b)
     frame = 0;
     rev = 0;
     sound_jack(1);
-    while ((*g_stepSpriteFrm)(g_tireSwapSprPointer)) {
+    while ((*g_videoOps.spriteStep)(g_tireSwapSprPointer)) {
         F_10AFD(3);
         if (rev) {
             if (frame == 2) {
@@ -377,8 +376,8 @@ void F_1B213(int *a, int *b)
         }
         if (rev == 0)
             g_tireSwapSprPointer->y++;
-        (*ab78aat)(g_liftPics[frame], g_carLiftBackdrop, &clip6, 1);
-        (*b_78a2)(g_liftPics[frame], g_carLiftBackdrop, &clip6, 2);
+        (*g_videoOps.maskedBlit)(g_liftPics[frame], g_carLiftBackdrop, &clip6, 1);
+        (*g_videoOps.copy)(g_liftPics[frame], g_carLiftBackdrop, &clip6, 2);
     }
     sound_jack(0);
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x76 : 0;
@@ -390,16 +389,16 @@ void F_1B213(int *a, int *b)
         blt.h = 0x23;
         blt.sx = blt.dx = 0;
         blt.sy = blt.dy = 0x79;
-        (*b_78a2)(pic, g_wheelBuf, &blt, 1);
+        (*g_videoOps.copy)(pic, g_wheelBuf, &blt, 1);
     }
     blt.w = 0x28;
     blt.h = g_wheelRollCanvas->height;
     blt.sx = blt.dx = g_savedCarX + g_firstTirePositionState;
     blt.sy = 0x9c - blt.h;
     blt.dy = 0;
-    (*b_78a2)(r_vid.front, g_wheelRollCanvas, &blt, 1);
+    (*g_videoOps.copy)(r_vid.front, g_wheelRollCanvas, &blt, 1);
     if (r_vid.mode == VID_EGA)
-        (*b_78a2)(r_vid.front, g_rollBuf, &blt, 1);
+        (*g_videoOps.copy)(r_vid.front, g_rollBuf, &blt, 1);
     swap_wheel(g_savedCarX + g_wheelX2Value, a, b);
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x92 - g_liftCar->height : 0;
     g_tireFrames[0] = F_15BBE(*b, ARENA_LOW_STACK);
@@ -407,15 +406,15 @@ void F_1B213(int *a, int *b)
     blt.h = g_tireFrames[0]->height;
     blt.dy = g_liftCar->height - g_tireFrames[0]->height;
     blt.sx = blt.sy = blt.dx = 0;
-    (*b_78a2)(g_vehicleBottomBmp, g_liftCar, &blt, 3);
+    (*g_videoOps.copy)(g_vehicleBottomBmp, g_liftCar, &blt, 3);
     bitmap_underlay(g_tireFrames[0], g_liftCar, g_firstTirePositionState, ybot);
     bitmap_underlay(g_tireFrames[0], g_liftCar, g_wheelX2Value, ybot);
     if (r_vid.mode == VID_EGA)
-        (*g_screenCopyPtr)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
+        (*g_videoOps.copyPage)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     frame = 2;
     rev = 1;
-    (*ab78aat)(g_liftPics[2], g_carLiftBackdrop, &clip6, 1);
-    (*b_78a2)(g_liftPics[2], g_carLiftBackdrop, &clip6, 2);
+    (*g_videoOps.maskedBlit)(g_liftPics[2], g_carLiftBackdrop, &clip6, 1);
+    (*g_videoOps.copy)(g_liftPics[2], g_carLiftBackdrop, &clip6, 2);
     g_wheelOverlayBounds.x1 = 0;
     g_wheelOverlayBounds.y1 = 0;
     g_wheelOverlayBounds.x2 = g_carLiftBackdrop->width - 1;
@@ -423,7 +422,7 @@ void F_1B213(int *a, int *b)
     g_tireSwapSprPointer = sprite_setup(g_savedCarX, 0x94, &g_liftCar, 0, 1, g_savedVehicleScr, g_carLiftBackdrop, &g_wheelOverlayBounds, 0);
     sprite_set_step(g_tireSwapSprPointer, 0, 9, 0, 1);
     sound_jack(1);
-    while ((*g_stepSpriteFrm)(g_tireSwapSprPointer)) {
+    while ((*g_videoOps.spriteStep)(g_tireSwapSprPointer)) {
         F_10AFD(3);
         if (rev) {
             if (frame == 2) {
@@ -440,20 +439,20 @@ void F_1B213(int *a, int *b)
         }
         if (rev == 0)
             g_tireSwapSprPointer->y--;
-        (*ab78aat)(g_liftPics[frame], g_carLiftBackdrop, &clip6, 1);
-        (*b_78a2)(g_liftPics[frame], g_carLiftBackdrop, &clip6, 2);
+        (*g_videoOps.maskedBlit)(g_liftPics[frame], g_carLiftBackdrop, &clip6, 1);
+        (*g_videoOps.copy)(g_liftPics[frame], g_carLiftBackdrop, &clip6, 2);
     }
     sound_jack(0);
     F_16381(0);
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x97 - g_liftPics[0]->height : 0;
     if (r_vid.mode == VID_EGA)
-        (*g_screenCopyPtr)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
+        (*g_videoOps.copyPage)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     g_tireSwapSprPointer = sprite_setup(0x88, 0x99, &g_liftPics[1], 0, 1, g_jackBuf, g_jackColumnBg, 0, 0);
     sprite_set_step(g_tireSwapSprPointer, 0, 0x21, 0, 1);
-    while ((*g_stepSpriteFrm)(g_tireSwapSprPointer))
+    while ((*g_videoOps.spriteStep)(g_tireSwapSprPointer))
         F_10AFD(3);
     marks_release();
-    (*g_screenCopyPtr)(r_vid.front->bits.p, r_vid.back->bits.p);
+    (*g_videoOps.copyPage)(r_vid.front->bits.p, r_vid.back->bits.p);
     g_xCoordSprite = g_savedCarX;
     r_vid.copyToFront = sv401;
     m_8272.stickerX = s72;

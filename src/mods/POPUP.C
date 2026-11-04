@@ -11,7 +11,6 @@
 #include "MEM.H"
 #include "MESSAGES.H"
 #include "PC.H"
-#include "SCREEN.H"
 #include "SYS.H"
 #include "VIDEO.H"
 
@@ -49,7 +48,7 @@ struct Bitmap far *popup_grab(int x, int y, int w, int h, struct Bitmap far *src
     blit.sy = y;
     blit.dx = blit.dy = 0;
     cursor_ctl(CURSOR_HIDE);
-    (*b_78a2)(r_vid.back, pict, &blit, 1);
+    (*g_videoOps.copy)(r_vid.back, pict, &blit, 1);
     cursor_ctl(CURSOR_SHOW);
     return pict;
 }
@@ -68,7 +67,7 @@ void popup_put(struct Bitmap far *bm, int x, int y)
     pkt.dx = x & r_vid.mask;
     pkt.dy = y;
     cursor_ctl(CURSOR_HIDE);
-    (*b_78a2)(bm, r_vid.back, &pkt, 1);
+    (*g_videoOps.copy)(bm, r_vid.back, &pkt, 1);
     cursor_ctl(CURSOR_SHOW);
 }
 
@@ -118,7 +117,7 @@ void popup_open(int n)
     y1 += g_popupLayout->ty;
     lines = g_popupLayout->lines;
     while (lines--) {
-        (*a_78aem)(r_vid.back, ((w1 - dash_text_width(txt)) >> 1) + x0, y1, txt);
+        (*g_videoOps.drawText)(r_vid.back, ((w1 - dash_text_width(txt)) >> 1) + x0, y1, txt);
         txt = txt + strlen(txt) + 1;
         y1 += 9;
     }

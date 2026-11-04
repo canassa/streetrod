@@ -103,10 +103,10 @@ int ads_run(void)
             g_adPicture = ad_picture(2);
             draw_fill_rect(r_vid.back, 0x40, 0, 0xc0, SCREEN_BODY_HEIGHT);
             g_adSrcX = g_adDstX = 0;
-            b_78a2(g_adPicture, r_vid.back, (struct Blt *)&g_adBlt, 1);
+            g_videoOps.copy(g_adPicture, r_vid.back, (struct Blt *)&g_adBlt, 1);
             g_adSrcX = 0x40;
             g_adDstX = 0x100;
-            b_78a2(g_adPicture, r_vid.back, (struct Blt *)&g_adBlt, 1);
+            g_videoOps.copy(g_adPicture, r_vid.back, (struct Blt *)&g_adBlt, 1);
             F_19438(1);
             hsave = r_vid.back->height;
             r_vid.back->height = SCREEN_BODY_HEIGHT;
@@ -127,18 +127,18 @@ int ads_run(void)
                 row7->kind = 0xb;
                 item = *next++;
                 row7->f6 = item >= 0xcd8 ? 0 : i;
-                a_78aem(r_vid.back, 0x44, y, str = g_desc + item);
+                g_videoOps.drawText(r_vid.back, 0x44, y, str = g_desc + item);
                 for (;;) {
                     while ((c6 = *(str += strlen(str) + 1)) == '+') {
                         str++;
-                        a_78aem(r_vid.back, g_xTextR, y, str);
+                        g_videoOps.drawText(r_vid.back, g_xTextR, y, str);
                     }
                     if (c6 < 0x20)
                         break;
                     y += 9;
                     if (y > (SCREEN_BODY_HEIGHT - 1))
                         break;
-                    a_78aem(r_vid.back, 0x44, y, str);
+                    g_videoOps.drawText(r_vid.back, 0x44, y, str);
                 }
                 y += 9;
                 row7->y2 = y + 1 > (SCREEN_BODY_HEIGHT - 1) ? (SCREEN_BODY_HEIGHT - 1) : y + 1;

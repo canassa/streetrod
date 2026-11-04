@@ -13,7 +13,6 @@
 #include "PC.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-void (far *g_bltCursProc)(char far *, char far *, char far *, char far *, int, int, int, int);
 struct Cursor g_cursor2;
 
 struct Pair g_cursorPairs[4] = {{1, 1}, {2, 2}, {1, 1}, {8, 8}};   /* DS:06EC */
@@ -59,12 +58,12 @@ void cursor_init(void)
     blt.w = 0x18;
     blt.h = 0x40;
     blt.sx = blt.sy = blt.dx = blt.dy = 0;
-    (*b_78a2)(pict, img, &blt, 3);
+    (*g_videoOps.copy)(pict, img, &blt, 3);
     for (step = 1; step <= ~r_vid.mask; step++) {
         tmp = arena_bm(0x18, 0x40, 1, ARENA_LOW_STACK);
         bitmap_shift_right(pict, step, tmp);
         blt.dx += 0x18;
-        (*b_78a2)(tmp, img, &blt, 3);
+        (*g_videoOps.copy)(tmp, img, &blt, 3);
         marks_pop_low(1);
     }
     marks_clear();
@@ -143,7 +142,7 @@ void cursor_draw(int x, int y)
             if (r_vid.mode == VID_EGA)
                 egalatch_to_page(g_cursor2.save->bits.p, g_cursor2.clip.w >> 3, g_cursor2.clip.h, r_vid.back->bits.p + EGA_PITCH * g_cursor2.clip.dy + (g_cursor2.clip.dx >> 3), 0x18 >> r_vid.shift);
             else
-                (*b_78a2)(g_cursor2.save, r_vid.back, (struct Blt *)&g_cursor2.clip, 1);
+                (*g_videoOps.copy)(g_cursor2.save, r_vid.back, (struct Blt *)&g_cursor2.clip, 1);
             g_cursor2.clip.w = 0;
         } else {
             g_cursor2.drawnRect.x1 = g_cursor2.drawnRect.y1 = 1000;
@@ -161,7 +160,7 @@ void cursor_draw(int x, int y)
             g_cursor2.clip.h = SCREEN_HEIGHT - y > 16 ? 16 : SCREEN_HEIGHT - y;
             g_cursor2.clip.dy = y;
             a = (x & ~r_vid.mask) * (0x18 >> r_vid.shift) + g_cursor2.shapeOffset;
-            (*g_bltCursProc)(g_cursor2.shape + a, g_cursor2.mask + a, g_cursor2.save->bits.p, r_vid.back->bits.p, g_cursor2.clip.dx >> r_vid.shift, y, g_cursor2.clip.w >> r_vid.shift, g_cursor2.clip.h);
+            (*g_videoOps.cursorBlit)(g_cursor2.shape + a, g_cursor2.mask + a, g_cursor2.save->bits.p, r_vid.back->bits.p, g_cursor2.clip.dx >> r_vid.shift, y, g_cursor2.clip.w >> r_vid.shift, g_cursor2.clip.h);
         }
         a = x + 15;
         b = y + 15;

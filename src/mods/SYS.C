@@ -213,7 +213,7 @@ void sys_exit(void)
     if (g_sysHooked)
         sys_unhook();
     if (g_videoSet) {
-        (*g_fnShow)();
+        (*g_videoOps.show)();
         viddet_restore();
     }
     outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));

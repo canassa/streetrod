@@ -4,7 +4,7 @@
 #define CGA_H
 #include "STRUCTS.H"
 
-extern void (far *g_cgaHooks[15])();                    /* DS:5B04 */
+extern struct Hooks g_cgaHooks;                    /* DS:5B04 */
 extern unsigned char g_cgaPixMask[4];                   /* DS:5B40 */
 extern unsigned char g_cgaPixKeep[4];                   /* DS:5B44 */
 extern int g_cgaRevealOrder[5];                         /* DS:5B48 */

@@ -659,7 +659,21 @@ struct State8272 {
 };
 
 struct Hooks {
-    void (far *fn[15])();
+    int (far *copy)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
+    int (far *shiftBlit)(struct Bitmap far *, struct Bitmap far *, struct Blt *);
+    int (far *maskedBlit)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
+    void (far *drawText)(struct Bitmap far *, int, int, char *);
+    void (far *cursorBlit)(char far *, char far *, char far *, char far *, int, int, int, int);
+    void (far *copyPage)(char far *, char far *);
+    void (far *recolorRegion)(struct Bitmap far *, int, int, int, int, int, int);
+    void (far *blank)(void);
+    void (far *show)(void);
+    int (far *spriteStep)(struct Sprite *);
+    void (far *reveal)(char far *, char far *);
+    void (far *slideSprite)(int, int, int, int, int, struct Bitmap far *);
+    void (far *drawLine)(int, int, int, int, int);
+    void (far *fillSpan)(int, int, int, int);
+    void (far *fillBelow)(int, int);
 };
 
 #endif

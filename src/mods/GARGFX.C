@@ -16,7 +16,6 @@
 #include "SCREEN.H"
 #include "SOUND.H"
 #include "SYS.H"
-#include "VIDEO.H"
 
 static int near engine_index(void);
 static int near carb_pos(int *px, int *py);
@@ -24,7 +23,6 @@ static void near make_bolt_overlay(void);
 static void near insert_hot(struct Hot *arr, struct Hot *item, int num);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-void (far *g_slideBitmapHook)(int, int, int, int, int, struct Bitmap far *);
 
 char g_partAnimate = 1;   /* DS:06FC */
 int g_tboltY[2] = {78, 93};   /* DS:06FE */
@@ -62,7 +60,7 @@ void F_123F4(int frame, int slot)
         blt.sx = 0x40;
         blt.sy = 0;
         tmp = bitmap_grab(pict, &blt, ARENA_HIGH_STACK);
-        (*g_slideBitmapHook)(0xe, 0x94, x, 8, y, tmp);
+        (*g_videoOps.slideSprite)(0xe, 0x94, x, 8, y, tmp);
         F_19438(1);
     }
     blt.sx = frame << 4;
@@ -71,7 +69,7 @@ void F_123F4(int frame, int slot)
     blt.dy = y;
     blt.w = 0x10;
     blt.h = blt.fc = 6;
-    (*b_78a2)(pict, r_vid.back, &blt, 1);
+    (*g_videoOps.copy)(pict, r_vid.back, &blt, 1);
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
@@ -98,7 +96,7 @@ void F_12525(int slot)
     blt.dy = y = g_tboltY[slot] + 10;
     blt.w = 0x10;
     blt.h = blt.fc = 6;
-    (*b_78a2)(pict, r_vid.back, &blt, 1);
+    (*g_videoOps.copy)(pict, r_vid.back, &blt, 1);
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront) {
         bitmap_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
@@ -106,7 +104,7 @@ void F_12525(int slot)
         cursor_ctl(CURSOR_HIDE_NOW);
         blt.sx = 0x40;
         tmp = bitmap_grab(pict, &blt, ARENA_HIGH_STACK);
-        (*g_slideBitmapHook)(0xe, 0x94, x, y, 0x94, tmp);
+        (*g_videoOps.slideSprite)(0xe, 0x94, x, y, 0x94, tmp);
         F_19438(1);
         cursor_ctl(CURSOR_SHOW_NOW);
     }
@@ -136,18 +134,18 @@ void F_1264E(int n, int flag)
         sx -= 0x18;
     if (r_vid.copyToFront) {
         saved = popup_grab(sx - 8, sy, w1 + 8, h1, 0);
-        (*g_slideBitmapHook)(0xe, 0x94, sx - 8, 0x94, sy, pict);
+        (*g_videoOps.slideSprite)(0xe, 0x94, sx - 8, 0x94, sy, pict);
         blt.sx = blt.sy = 0;
         blt.dx = 8;
         blt.dy = 0;
         blt.w = w1 + 8;
         blt.h = h1;
-        (*ab78aat)(pict, saved, &blt, 1);
+        (*g_videoOps.maskedBlit)(pict, saved, &blt, 1);
         cursor_ctl(CURSOR_SHOW_NOW);
         popup_show(saved, sx - 8, sy);
         F_19438(1);
     } else {
-        (*g_slideBitmapHook)(0xe, 0x94, sx, sy, sy, pict);
+        (*g_videoOps.slideSprite)(0xe, 0x94, sx, sy, sy, pict);
         cursor_ctl(CURSOR_SHOW_NOW);
     }
     F_19438(1);
@@ -194,7 +192,6 @@ void F_127DB(int n, char far *s)
 }
 
 struct Blt g_cpyBoltPatchRecord;
-int (far *g_bltShiftedHook)(struct Bitmap far *, struct Bitmap far *, struct Blt *);
 int o_8290[5];
 int af829ax[1];
 int ad829cy[8];
@@ -323,13 +320,13 @@ void gargfx_draw_bolt(int n)
     move.dy = ypos += 9;
     move.dx = (move.sx = px) + 0x60;
     move.w = 6;
-    (*g_bltShiftedHook)(r_vid.hoodBg, r_vid.back, &move);
+    (*g_videoOps.shiftBlit)(r_vid.hoodBg, r_vid.back, &move);
     if (flag = px & ~r_vid.mask) {
         saved = arena_bm(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
         bitmap_shift_right(pict, flag, saved);
     }
     px = (px & r_vid.mask) + 0x60;
-    (*g_slideBitmapHook)(0xd, 0x93, px, (n == 0x43f && r_vid.copyToFront) ? 0xd - height : ypos, ypos, saved);
+    (*g_videoOps.slideSprite)(0xd, 0x93, px, (n == 0x43f && r_vid.copyToFront) ? 0xd - height : ypos, ypos, saved);
     cursor_ctl(CURSOR_SHOW_NOW);
     F_19438(1);
     if (pict != saved)
@@ -371,7 +368,7 @@ void gargfx_drop_bolt(void)
     y1 -= rows;
     blt.sy = y1;
     blt.dy = y1 += 9;
-    (*g_bltShiftedHook)(r_vid.hoodBg, r_vid.back, &blt);
+    (*g_videoOps.shiftBlit)(r_vid.hoodBg, r_vid.back, &blt);
     if (r_vid.copyToFront) {
         xpos += 0x60;
         ypos += 9 - rows;
@@ -379,7 +376,7 @@ void gargfx_drop_bolt(void)
         F_16CF3();
         if (wide == 0x10)
             xpos += 8;
-        (*g_slideBitmapHook)(0xd, 0x93, xpos - 8, ypos + 3, 0x93, pict);
+        (*g_videoOps.slideSprite)(0xd, 0x93, xpos - 8, ypos + 3, 0x93, pict);
     }
     cursor_ctl(CURSOR_SHOW_NOW);
     F_19438(1);
@@ -462,10 +459,10 @@ void gargfx_draw_part(int n, int flag)
     if (flag == 0) {
         move.dx = x;
         move.dy = ypos;
-        (*ab78aat)(saved, r_vid.hoodBg, &move, 1);
+        (*g_videoOps.maskedBlit)(saved, r_vid.hoodBg, &move, 1);
     }
     if (g_partAnimate) {
-        (*g_slideBitmapHook)(0xd, 0x93, x + 0x60, r_vid.copyToFront ? 0xd - height : ypos, ypos + 9, saved);
+        (*g_videoOps.slideSprite)(0xd, 0x93, x + 0x60, r_vid.copyToFront ? 0xd - height : ypos, ypos + 9, saved);
         cursor_ctl(CURSOR_SHOW_NOW);
     }
     if (g_boltOverlay) {
@@ -504,7 +501,7 @@ void gargfx_erase_part(int n, int flag)
     move.dy = py += 9;
     w = move.w = pict->width + 8;
     h = move.h = move.fc = pict->height;
-    (*b_78a2)(r_vid.hoodBg, r_vid.back, &move, 1);
+    (*g_videoOps.copy)(r_vid.hoodBg, r_vid.back, &move, 1);
     F_19438(1);
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
@@ -533,7 +530,7 @@ void gargfx_draw_wires(void)
     xs = blt.dx = (blt.sx = g_wiresPos[next * 2]) + 0x60;
     ys = blt.dy = (blt.sy = g_wiresPos[next * 2 + 1]) + 9;
     blt.h = r_vid.hoodBg->height - blt.sy - 4;
-    (*b_78a2)(r_vid.hoodBg, r_vid.back, &blt, 1);
+    (*g_videoOps.copy)(r_vid.hoodBg, r_vid.back, &blt, 1);
     bitmap_draw_pic(r_vid.back, ap82acz, (unsigned char)(x2 = g_wiresPos[pair * 2] + 0x60), (unsigned char)(y2 = g_wiresPos[pair * 2 + 1] + 9), 0);
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
@@ -605,7 +602,7 @@ void gargfx_draw_bolts(int *a, int *b, int flag)
     blt.dy = 9;
     blt.w = r_vid.hoodBg->width;
     blt.h = blt.fc = r_vid.hoodBg->height;
-    (*b_78a2)(r_vid.hoodBg, r_vid.back, &blt, 1);
+    (*g_videoOps.copy)(r_vid.hoodBg, r_vid.back, &blt, 1);
     for (i = 0; i < 9; i++) {
         if (id = af829ax[i]) {
             hz82ae = a[i];

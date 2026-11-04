@@ -68,11 +68,11 @@ int fame_protect_check(void)
     screen_text(0x79, 0x3f, b);
     screen_text(c, 0x48, a);
     cursor_ctl(CURSOR_SHOW_NOW);
-    (*g_pageRevealBlit)(r_vid.front->bits.p, r_vid.back->bits.p);
+    (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
         video_set_palette(g_protectPal);
     else
-        (*g_fnShow)();
+        (*g_videoOps.show)();
     gz8249 = 1;
     r_vid.copyToFront = 1;
     g_protectCycle = 1;
@@ -121,7 +121,7 @@ int fame_end_menu(void)
     x_colors.line = c3;
     x_colors.fill = c21;
     cursor_ctl(CURSOR_SHOW_NOW);
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     key = menu_wait(41);
     cursor_ctl(CURSOR_HIDE_NOW);
     switch (key) {
@@ -198,7 +198,7 @@ void fame_show(int add)
 
     old = g_picMaxH;
     pos7 = -1;
-    (*g_displayDisablePtr)();
+    (*g_videoOps.blank)();
     g_picMaxH = SCREEN_HEIGHT;
     r_vid.copyToFront = 1;
     F_118D4(5, -1);
@@ -210,7 +210,7 @@ void fame_show(int add)
         bustyle->c28 = g_fameColors1;
         bustyle->c23 = g_fameColors2;
     }
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     if (add) {
         g_score = elapsed_hours();
         for (i = 0; i < g_nScore; i++)
@@ -233,16 +233,16 @@ void fame_show(int add)
         x_colors.textBg = 0;
     }
     for (i = 0, p = g_hallFameTbl; i < g_nScore; i++) {
-        (*a_78aem)(r_vid.back, 46, g_fameRowY[i], p->name);
+        (*g_videoOps.drawText)(r_vid.back, 46, g_fameRowY[i], p->name);
         x = 161;
         n2 = atoi(p->score);
         while (n2 < 1000) {
             n2 *= 10;
             x += 6;
         }
-        (*a_78aem)(r_vid.back, x, g_fameRowY[i], p->score);
+        (*g_videoOps.drawText)(r_vid.back, x, g_fameRowY[i], p->score);
         p++;
-        (*a_78aem)(r_vid.back, 191, g_fameRowY[i], "hr");
+        (*g_videoOps.drawText)(r_vid.back, 191, g_fameRowY[i], "hr");
     }
     bitmap_copy_box(r_vid.back, r_vid.front, 46, g_fameRowY[0], 211, g_fameRowY[9] + 8);
     if (pos7 >= 0) {
@@ -253,7 +253,7 @@ void fame_show(int add)
     } else {
         dash_wait_key(700);
     }
-    (*g_displayDisablePtr)();
+    (*g_videoOps.blank)();
     bustyle->c28 = sv286;
     bustyle->c23 = sv23;
     video_swap_pal();

@@ -125,13 +125,13 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
     stores to locals stay stores. The two functions share the idiom, so the original
     probably had one construct (a macro, an emptied switch) in both.
 - **The hook installers** cga_install (CGA.C), tandy_install (TANDY.C) and ega_install
-  (EGA.C): `*(struct Hooks *)&b_78a2 = *(struct Hooks *)g_cgaHooks;`. Their bytes are
+  (EGA.C): `g_videoOps = g_cgaHooks;`. Their bytes are
   MSC 5.1's struct assignment (`push di; push si`, no frame, `mov cx,1Eh` and `f2 a5`:
   MSC writes `rep movsw` with the F2 prefix, MASM's `rep` is F3; the `memcpy` intrinsic
   adds `shr cx,1 ... rep movsb`). So the original assigned one 60-byte struct: the hook
   block DS:78A2..78DE was a struct, and each driver's table probably one too. The
-  reconstruction keeps the 15 hook globals (named for LINK's communal hash, CLAUDE.md 4e)
-  and the arrays, and copies them through the 15-pointer `struct Hooks`. Each installer
+  reconstruction uses one `struct Hooks` object and typed driver tables; the object's
+  name fits LINK's communal hash window (CLAUDE.md 4e). Each installer
   is the first function of the driver file whose table it copies (that file's table
   needs no forced owner then). The EXE does not decide this placement: none of the three
   has a segment relocation, so a one-function file of its own, or for tandy_install and ega_install
@@ -170,6 +170,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   (RACE.C) returns 1 on one path, a value its caller stores, and `return;` on another
   (C4033). `void` and `int` give the same bytes for the first two; the source keeps `int`
   (`main` by convention, F_118D4 because F_119B8 passes its value on).
+
+- **Hooks** (`g_videoOps`, DS:78A2..78DD): supported by the three MSC struct-copy installers.
 
 ## Compiler warnings
 

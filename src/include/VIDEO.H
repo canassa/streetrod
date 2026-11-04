@@ -42,7 +42,6 @@ extern int g_altPalTail;                                      /* DS:0472 */
 extern struct Bitmap far *g_pageBmps[];                 /* DS:7316 */
 extern struct Obj bm7568[];                             /* DS:7568 */
 extern struct Style *bustyle;                           /* DS:787E */
-extern int (far *ab78aat)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);/* DS:78AA */
 extern struct Colors x_colors;                          /* DS:8242 */
 extern char g_colScreenBorder;                                     /* DS:8248 */
 extern struct Bitmap far *g_autoSprImagePtr;                       /* DS:825A */

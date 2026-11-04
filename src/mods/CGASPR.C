@@ -4,10 +4,10 @@
 #include "CGASPR.H"
 #include "BOBS.H"
 #include "CGABLT.H"
+#include "DASH.H"
 #include "MAIN.H"
 #include "PC.H"
 #include "SPRITE.H"
-#include "VIDEO.H"
 
 static void near restore_rect(struct Rect *rect, struct Bitmap far *bm2, struct Bitmap far *bm1, int flag);
 
@@ -109,7 +109,7 @@ int cgaspr_step(struct Sprite *s)
                 blt.sx = blt.dx = e.x1;
                 blt.sy = blt.dy = e.y1 - s->y;
             }
-            (*ab78aat)(fp, bits, &blt, 0);
+            (*g_videoOps.maskedBlit)(fp, bits, &blt, 0);
         }
     }
     blt.w = max(rc.x2, c2.x2) - min(rc.x1, c2.x1) + 1;

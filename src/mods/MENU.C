@@ -25,7 +25,6 @@ static int g_drawnMaxY;                         /* DS:6C5C */
 static char * near wear_text(int wear);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-void (far *g_drvRecolorRegion)(struct Bitmap far *, int, int, int, int, int, int);
 int g_yLastString;
 int g_menuGrpHistoryList[4];
 char g_hideSelectFrameVal;
@@ -70,7 +69,7 @@ void menu_draw_hot(struct Hot *p)
                     draw_bevel(r_vid.back, p->x1, p->y1, w, h);
                 if (p->textOffset) {
                     str = g_txt + p->textOffset;
-                    (*a_78aem)(r_vid.back, ((w - dash_text_width(str)) >> 1) + p->x1, p->y1, str);
+                    (*g_videoOps.drawText)(r_vid.back, ((w - dash_text_width(str)) >> 1) + p->x1, p->y1, str);
                     draw_hline(r_vid.back, p->x1, p->y1 + 9, w);
                 }
             }
@@ -86,19 +85,19 @@ void menu_draw_hot(struct Hot *p)
             draw_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, h = p->y2 - p->y1);
             draw_bevel(r_vid.back, p->x1, p->y1, w, h);
             str = g_txt + p->textOffset;
-            (*a_78aem)(r_vid.back, ((w - dash_text_width(str)) >> 1) + p->x1,
+            (*g_videoOps.drawText)(r_vid.back, ((w - dash_text_width(str)) >> 1) + p->x1,
                       p->y1 + ((h - 8) >> 1), str);
             goto box;
         case 5:
             if (p->palIndex != colr)
                 x_colors = bustyle->pal[colr = p->palIndex];
-            (*a_78aem)(r_vid.back, p->x1, p->y1, g_txt + p->textOffset);
+            (*g_videoOps.drawText)(r_vid.back, p->x1, p->y1, g_txt + p->textOffset);
             goto box;
         case 6:
             if (p->palIndex != colr)
                 x_colors = bustyle->pal[colr = p->palIndex];
             str = g_txt + p->textOffset;
-            (*a_78aem)(r_vid.back, ((p->x2 - p->x1 - dash_text_width(str)) >> 1) + p->x1,
+            (*g_videoOps.drawText)(r_vid.back, ((p->x2 - p->x1 - dash_text_width(str)) >> 1) + p->x1,
                       ((p->y2 - p->y1 - 8) >> 1) + p->y1, str);
             goto box;
         case 7:
@@ -109,9 +108,9 @@ void menu_draw_hot(struct Hot *p)
             draw_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, 8);
             str = g_txt + p->textOffset;
             if (p->kind == 8)
-                (*a_78aem)(r_vid.back, ((w - dash_text_width(str)) >> 1) + p->x1, p->y1, str);
+                (*g_videoOps.drawText)(r_vid.back, ((w - dash_text_width(str)) >> 1) + p->x1, p->y1, str);
             else
-                (*a_78aem)(r_vid.back, p->x1, p->y1, str);
+                (*g_videoOps.drawText)(r_vid.back, p->x1, p->y1, str);
             if (!g_hotTextFld)
                 g_hotTextFld = p;
             goto box;
@@ -466,10 +465,10 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
         for (; i--; pc1++, w++, lpk++, bpl++) {
             labeln = (*lpk > -1) ? g_desc + *lpk : d[-*lpk - 1];
             x = (c ? *pc1 : 0) + w->w;
-            (*a_78aem)(r_vid.back, x, w->h, labeln);
+            (*g_videoOps.drawText)(r_vid.back, x, w->h, labeln);
             draw_fill_rect(r_vid.back, g_xTextR - 1, g_yLastString, w->tx - g_xTextR + 1, 8);
             if (buf && (wear = *bpl) != -128)
-                (*a_78aem)(r_vid.back, w->tx - strlen(g_wearText) * 6, w->h, wear_text(wear));
+                (*g_videoOps.drawText)(r_vid.back, w->tx - strlen(g_wearText) * 6, w->h, wear_text(wear));
         }
         if (!g_hideSelectFrameVal) {
             w = (struct Win *)(0x12 * sel + g_listLineBasePointerValue);
@@ -498,14 +497,14 @@ restore:
                 y1 = w->h;
                 x2 = w->tx;
                 if (kind != 0x26)
-                    (*g_drvRecolorRegion)(r_vid.back, x_colors.text, sv5, x1, y1, x2, w->h + 8);
+                    (*g_videoOps.recolorRegion)(r_vid.back, x_colors.text, sv5, x1, y1, x2, w->h + 8);
                 y2 = w->ty;
             } else
                 nw5 = -1;
             if (curl >= 0) {
                 w = (struct Win *)(0x12 * curl + g_listLineBasePointerValue);
                 if (kind != 0x26)
-                    (*g_drvRecolorRegion)(r_vid.back, sv5, x_colors.text, w->w, w->h, w->tx, w->h + 8);
+                    (*g_videoOps.recolorRegion)(r_vid.back, sv5, x_colors.text, w->w, w->h, w->tx, w->h + 8);
                 x1 = (w->w > x1) ? x1 : w->w;
                 y1 = (w->h > y1) ? y1 : w->h;
                 x2 = (w->tx < x2) ? x2 : w->tx;

@@ -2,6 +2,7 @@
 #include "STRUCTS.H"
 #include "EGASLIDE.H"
 #include "CRTC.H"
+#include "DASH.H"
 #include "EGABLIT.H"
 #include "EGALATCH.H"
 #include "GARGFX.H"
@@ -9,7 +10,6 @@
 #include "MASKBLT.H"
 #include "MASKOR.H"
 #include "PC.H"
-#include "VIDEO.H"
 
 /* egaslide_sprite @ 21A0:28EC (linear 0x242EC, 790 bytes)
 
@@ -97,7 +97,7 @@ void egaslide_sprite(int top, int bottom, int x, int y0, int y1, struct Bitmap f
         outp(SEQ_DATA, SEQ_ALL_PLANES);
         if (r_vid.copyToFront) {
             if (g_boltOverlay)
-                (*ab78aat)(g_boltOverlay, r_vid.back, &g_cpyBoltPatchRecord, 1);
+                (*g_videoOps.maskedBlit)(g_boltOverlay, r_vid.back, &g_cpyBoltPatchRecord, 1);
             crtc_wait_vsync();
             egalatch_rect(r_vid.back->bits.p, r_vid.front->bits.p, pitch, bottom - top + 1, x, top, bpitch);
             crtc_wait_vsync();

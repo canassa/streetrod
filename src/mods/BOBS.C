@@ -725,14 +725,13 @@ static void near blit_cell(struct Bitmap far *bm, int n, struct Bitmap far *dst)
         bl.sy = 73;
         bl.dx = cell.sx + 24;
         bl.dy = cell.sy;
-        (*b_78a2)(r_vid.front, bm, &bl, 1);
+        (*g_videoOps.copy)(r_vid.front, bm, &bl, 1);
     }
-    (*b_78a2)(bm, dst, &cell, 1);
+    (*g_videoOps.copy)(bm, dst, &cell, 1);
 }
 
 struct Bitmap far *g_barJailPixels;
 int g_resultWin;
-void (far *g_screenCopyPtr)(char far *, char far *);
 struct Bitmap far *g_edgeBmpJail;
 
 /* play_cell_anim @ 0000:A416 (linear 0x0A416, 302 bytes) */
@@ -810,12 +809,12 @@ static void near play_ending(void)
     r_vid.copyToFront = 0;
     savedl = g_picMaxH;
     g_picMaxH = SCREEN_HEIGHT;
-    (*g_screenCopyPtr)(r_vid.front->bits.p, r_vid.back->bits.p);
+    (*g_videoOps.copyPage)(r_vid.front->bits.p, r_vid.back->bits.p);
     F_118D4(0x408, -1);
     g_picMaxH = savedl;
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     game_pause(0x2ee);
-    (*g_pageRevealBlit)(r_vid.front->bits.p, r_vid.back->bits.p);
+    (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
     g_scene = 1;
     pic15 = arena_bm(0x50, 0x2c, 0, ARENA_HIGH_BASE);
     popup_grab(0x78, 0x45, 0x50, 0x2c, pic15);
@@ -823,9 +822,9 @@ static void near play_ending(void)
     g_picsFreed = 1;
     r = disk_load_list(g_endPics, 0);
     r = disk_load_list(g_endPics2, 0);
-    (*g_screenCopyPtr)(r_vid.back->bits.p, r_vid.front->bits.p);
+    (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.copyToFront = 0;
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     g_racerRecordsArray[RACER_KING].overlayPic = 0x4c1;
     select_rival(RACER_KING);
     F_181C8(4, bn7648, g_selectedRacerPointer->bodyMods, g_selectedRacerPointer->sticker, 1, 0x98, 0, g_whlPic[m_8272.tireVariant]);
@@ -841,14 +840,14 @@ static void near play_ending(void)
     blt.sy = g_endCellsA[0].sy;
     blt.dx = g_endCellsA[0].x - 0x50;
     blt.dy = 0x2c - g_endCellsA[0].h;
-    (*ab78aat)(pic3, pic15, &blt, 1);
+    (*g_videoOps.maskedBlit)(pic3, pic15, &blt, 1);
     blt.w = p3->w;
     blt.h = p3->h;
     blt.sx = p3->x - 0x50;
     blt.sy = 0x2c - p3->h;
     blt.dx = blt.sx;
     blt.dy = blt.sy;
-    (*b_78a2)(pic15, pic24, &blt, 1);
+    (*g_videoOps.copy)(pic15, pic24, &blt, 1);
     game_pause(10);
     for (i2 = 1; i2 < 0x14; i2++) {
         if (i2 == 13)
@@ -861,7 +860,7 @@ static void near play_ending(void)
         blt.sy = p3->sy;
         blt.dx = p3->x - 0x50;
         blt.dy = 0x2c - p3->h;
-        (*ab78aat)(pic3, pic4, &blt, 1);
+        (*g_videoOps.maskedBlit)(pic3, pic4, &blt, 1);
         blt.w = 0x50;
         blt.h = 0x2c;
         blt.sx = 0;
@@ -870,10 +869,10 @@ static void near play_ending(void)
         blt.dy = 0x45;
         if (i2 < 0x13) {
             F_10AFD(10);
-            (*b_78a2)(pic4, r_vid.front, &blt, 1);
+            (*g_videoOps.copy)(pic4, r_vid.front, &blt, 1);
         }
         if (i2 == 0x12)
-            (*b_78a2)(pic4, r_vid.back, &blt, 1);
+            (*g_videoOps.copy)(pic4, r_vid.back, &blt, 1);
     }
     marks_clear();
     if (flag8 == 0) {
@@ -897,14 +896,14 @@ static void near play_ending(void)
             blt2k.sy = miny;
             blt2k.dx = 0;
             blt2k.dy = 0;
-            (*b_78a2)(r_vid.back, pic6m, &blt2k, 1);
+            (*g_videoOps.copy)(r_vid.back, pic6m, &blt2k, 1);
             blt2k.w = v2a = p2m->w;
             blt2k.h = v30 = p2m->h;
             blt2k.sx = p2m->sx;
             blt2k.sy = p2m->sy;
             blt2k.dx = (v32 = p2m->x) - minx;
             blt2k.dy = (v38l = p2m->y) - miny;
-            (*ab78aat)(pic58, pic6m, &blt2k, 1);
+            (*g_videoOps.maskedBlit)(pic58, pic6m, &blt2k, 1);
             blt2k.w = w8;
             blt2k.h = h8;
             blt2k.sx = 0;
@@ -912,7 +911,7 @@ static void near play_ending(void)
             blt2k.dx = minx;
             blt2k.dy = miny;
             F_10AFD(8);
-            (*b_78a2)(pic6m, r_vid.front, &blt2k, 1);
+            (*g_videoOps.copy)(pic6m, r_vid.front, &blt2k, 1);
             F_19438(1);
         }
     }
@@ -920,10 +919,10 @@ static void near play_ending(void)
     blt2k.sy = miny;
     game_pause(0x50);
     F_10AFD(1);
-    (*b_78a2)(r_vid.back, r_vid.front, &blt2k, 1);
+    (*g_videoOps.copy)(r_vid.back, r_vid.front, &blt2k, 1);
     F_10AFD(1);
-    (*b_78a2)(pic4, r_vid.front, &blt, 1);
-    (*b_78a2)(pic4, r_vid.back, &blt, 1);
+    (*g_videoOps.copy)(pic4, r_vid.front, &blt, 1);
+    (*g_videoOps.copy)(pic4, r_vid.back, &blt, 1);
     game_pause(0x32);
     game_message(0x183c);
     r_vid.copyToFront = 0;
@@ -958,7 +957,7 @@ void bobs_visit(void)
     F_11593(g_49dc);
     g_cursor2.drawnRect.x2 = -1;
     cursor_ctl(1);
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     F_16381(0);
     if (random_int(100) < 25)
         play_cell_anim();
@@ -1026,7 +1025,7 @@ test:
                     g_strOpp[0] = 0;
                     F_11421(g_bannerX, " ", g_wRivBanner);
                     place = race_outcome();
-                    (*g_displayDisablePtr)();
+                    (*g_videoOps.blank)();
                     cruise_rival_paint(-1);
                     if (m_8272.betType != 1)
                         g_betRaces++;
@@ -1077,7 +1076,7 @@ test:
                     F_16381(0);
                     F_118D4(0x445, -1);
                     F_11593(g_49dc);
-                    (*g_fnShow)();
+                    (*g_videoOps.show)();
                     class = 4;
                     g_rivalHereState = 0;
                     g_carhop = -1;
@@ -1161,11 +1160,11 @@ void bobs_jail(void)
     blt.w = pict->width;
     blt.h = 5;
     blt.dx = blt.dy = blt.sx = blt.sy = 0;
-    (*b_78a2)(pict, r_vid.back, &blt, 1);
+    (*g_videoOps.copy)(pict, r_vid.back, &blt, 1);
     blt.h = pict->height - 5;
     blt.sy = 5;
     blt.dy = 190 - blt.h;
-    (*b_78a2)(pict, r_vid.back, &blt, 1);
+    (*g_videoOps.copy)(pict, r_vid.back, &blt, 1);
     for (i = 0; i < 7; i++) {
         blt.w = g_jailBars[i].w;
         blt.h = g_jailBars[i].h;
@@ -1173,13 +1172,13 @@ void bobs_jail(void)
         blt.sy = g_jailBars[i].sy;
         blt.dx = g_jailBars[i].x;
         blt.dy = g_jailBars[i].y;
-        (*b_78a2)(*g_jailBars[i].src, r_vid.back, &blt, 1);
+        (*g_videoOps.copy)(*g_jailBars[i].src, r_vid.back, &blt, 1);
     }
     F_11421(-1, "", 0);
     F_11593(g_49dc);
-    (*g_screenCopyPtr)(r_vid.back->bits.p, r_vid.front->bits.p);
+    (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.copyToFront = 1;
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     g_rivalHereState = 0;
     g_carhop = -1;
     g_ordered = 0;
