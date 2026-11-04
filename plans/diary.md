@@ -1295,6 +1295,37 @@ Tooling lessons are recorded in [sr-cli](../.claude/skills/sr-cli/SKILL.md); the
 ### What I learned
 - A source path reaches only the OBJ's THEADR record; the EXE never sees it.
 
+## 2026-11-04 18:26 CET: Names4 evidence review stop point
+
+### What I did
+- Regenerated plans/unnamed.md from tools/sr/source.py and current sources, including surviving historical hash placeholders.
+- Reviewed 46 remaining placeholder functions, 128 globals/statics and two far-data symbols; recorded evidence and four proposals in work/names4/FINDINGS.md.
+- Kept excluded ranges/groups and budget-constrained symbols; applied no source renames or comments.
+- Ran SR_JOBS=6 ./sr check --all: 572/572 still match (551 MATCH, 21 MATCH*).
+
+### What I learned
+- disk_bm is a seven-character, budget-neutral name for the bitmap allocation/loading helper F_15BBE.
+- Several clear communal meanings still lack a readable name within their LINK hash windows; failed candidates and evidence are recorded in work/names4/FINDINGS.md.
+- Independent review is the required stop point before any rename application.
+
+## 2026-11-04 18:29 CET: Apply four reviewed names
+
+### What I did
+- Merged main first (already up to date, no conflicts), then applied the four entries in work/names4/APPROVED.txt through ./sr rename.
+- Named disk_bm, g_hercModeSet, g_specPartWear and g_nextPartCategory; regenerated plans/unnamed.md and preserved work/names4/FINDINGS.md with its deferred KEEP evidence.
+- Verified all 23 changed source/header files contain exactly the approved substitutions.
+- SR_JOBS=6 ./sr check --all: 572/572 match; headers, DGROUP ownership and object order checks pass; 61 unit tests pass.
+- Removed work/layout and rebuilt: Packed EXE vs orig/SR.EXE: IDENTICAL. DOS-native MAKE also produced IDENTICAL SR.EXE (SHA1 3a5e28b795313028b7e77d147122f41cb29de334).
+
+### What I learned
+- The reviewed names preserve the compiler budget and data layout in both build paths. No further semantic or structural changes were needed.
+
+## 2026-11-06 02:00 CET: Four more names; the rest is budget-bound
+
+### What I did
+- A Codex agent reviewed the remaining 46 functions, 128 globals and 2 far-data placeholders: `F_15BBE` -> `disk_bm` (size, allocate and unpack a picture), `g_0046` -> `g_hercModeSet`, `g_496a` -> `g_specPartWear`, `g_513c` -> `g_nextPartCategory`. Most other placeholders are understood (the GARAGE.C clock, calendar, date line, paint and sticker dialogs, body modifications, spare-parts menu) but kept because GARAGE.C is at MSC's per-file name budget and the `garage_` prefix alone is as long as an `F_xxxxx` placeholder.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup/order checks clean, tests OK.
+
 ## 2026-11-04 18:41 CET: Natural records, round two
 
 ### What I did

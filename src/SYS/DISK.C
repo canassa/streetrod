@@ -360,12 +360,12 @@ void disk_pic_size(int n, int *w, int *h, int *x)
     *x = g_slot[n].bitmapFlags;
 }
 
-/* F_15BBE @ 0F38:683E (linear 0x15BBE, 73 bytes)
+/* disk_bm @ 0F38:683E (linear 0x15BBE, 73 bytes)
 
    Allocate a bitmap of the given mode for slot picture id, draw the picture into it
    (disk_unpack_pic) and return it */
 
-struct Bitmap far *F_15BBE(int id, int mode)
+struct Bitmap far *disk_bm(int id, int mode)
 {
     int h;
     int w1;

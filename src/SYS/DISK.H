@@ -50,7 +50,7 @@ int disk_read_index(int n);                             /* 0x1552B */
 void disk_free_pic(int n);                              /* 0x158DE */
 struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm);/* 0x1592E */
 void disk_pic_size(int id, int *w, int *h, int *x);     /* 0x15B7F */
-struct Bitmap far *F_15BBE(int id, int mode);           /* 0x15BBE */
+struct Bitmap far *disk_bm(int id, int mode);           /* 0x15BBE */
 int disk_cache_list(int *list);                         /* 0x15C07 */
 int disk_load_list(int *list, int n);                   /* 0x15C4A */
 void disk_free_list(int *list);                         /* 0x15C95 */

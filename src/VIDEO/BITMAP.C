@@ -259,7 +259,7 @@ void bitmap_put_pic(struct Bitmap far *dst, int n, unsigned char x, unsigned cha
 {
     struct Bitmap far *p;
 
-    p = F_15BBE(n, ARENA_HIGH_STACK);
+    p = disk_bm(n, ARENA_HIGH_STACK);
     bitmap_put(dst, p, x, y, 3);
     g_lastPic = p;
     F_19438(1);
@@ -274,7 +274,7 @@ void bitmap_draw_pic(struct Bitmap far *dst, int n, unsigned char x, unsigned ch
     struct Blt blt;
     struct Bitmap far *bm;
 
-    bm = F_15BBE(n, ARENA_HIGH_STACK);
+    bm = disk_bm(n, ARENA_HIGH_STACK);
     blt.w = bm->width;
     blt.h = blt.fc = bm->height;
     blt.sx = blt.sy = 0;

@@ -17,7 +17,7 @@
 
 extern int g_hercules;                                  /* DS:0042 */
 extern int g_sysHooked;                                 /* DS:0044 */
-extern int g_0046;                                      /* DS:0046 */
+extern int g_hercModeSet;                                      /* DS:0046 */
 extern int g_videoSet;                                  /* DS:0048 */
 extern int g_004a;                                      /* DS:004A */
 extern int g_004c;                                      /* DS:004C */

@@ -122,7 +122,7 @@ void F_065AF(int a1)
     py4 = 4;
     id = m < 2 ? 0x4c3 : 0x4c5;
     cursor_ctl(CURSOR_HIDE);
-    pic = F_15BBE(id, ARENA_HIGH_STACK);
+    pic = disk_bm(id, ARENA_HIGH_STACK);
     bitmap_draw_pic(pic, 0x4c4, (unsigned char)x, (unsigned char)y4, 0);
     img = arena_bm(pic->width, pic->height, 0, ARENA_HIGH_STACK);
     popup_grab(px5, py4, pic->width, pic->height, img);
@@ -580,7 +580,7 @@ void near F_07367(void)
             F_19438(1);
             idx6 = -30 - k;
             a_7eaap.currentCar->appearance = ((idx6 & 0x1f) << 8) | (a_7eaap.currentCar->appearance & 0xe0ff);
-            bm3 = F_15BBE(1218, ARENA_HIGH_STACK);
+            bm3 = disk_bm(1218, ARENA_HIGH_STACK);
             bm1 = arena_bm(g_0294->width, g_0294->height, 0, ARENA_HIGH_STACK);
             bitmap_copy(g_0294, bm1, 1);
             q2 = &a784als[idx6 - 1];
@@ -758,7 +758,7 @@ static void near build_car_info(int *ids, char *vals)
 char *g_iTxt[4] = {"", "Fuel                  ", "", "Max speed      mph"};   /* DS:511E */
 int g_nCarb[5] = {1, 1, 3, 2, 2};   /* DS:5126 */
 int g_nBolt[6] = {1, 2, 2, 2, 2, 2};   /* DS:5130 */
-int g_513c[6] = {0, 3, 2, 2, 2, 2};   /* DS:513C */
+int g_nextPartCategory[6] = {0, 3, 2, 2, 2, 2};   /* DS:513C */
 int g_cPos[5][6] = {{5, 5, 0, 0, 0, 0}, {6, 6, 0, 0, 0, 0}, {7, 7, 8, 8, 9, 9}, {10, 10, 11, 11, 0, 0}, {12, 12, 13, 13, 0, 0}};   /* DS:5148 */
 int g_5184[1] = {0};   /* DS:5184 */
 int g_bPos[9] = {0, 1, 1, 5, 5, 5, 5, 5, 5};   /* DS:5186 */
@@ -1101,7 +1101,7 @@ void near garage_hood(struct Car *car)
                 game_message(0xea1);
             continue;
         case -2:
-            F_076A7(g_513c[cnt1], list4, buf, 0);
+            F_076A7(g_nextPartCategory[cnt1], list4, buf, 0);
         again:
             key = F_142CF(4, 1, 0, g_list, buf, 0);
             switch (key) {
@@ -1109,11 +1109,11 @@ void near garage_hood(struct Car *car)
                 key = menu_ix();
                 break;
             case 0x3ea:
-                if (g_513c[cnt1] == 0)
+                if (g_nextPartCategory[cnt1] == 0)
                     game_message(0xf97);
-                if (g_513c[cnt1] == 3)
+                if (g_nextPartCategory[cnt1] == 3)
                     game_message(0xfd7);
-                if (g_513c[cnt1] == 2)
+                if (g_nextPartCategory[cnt1] == 2)
                     game_message(0xfb5);
                 key = 0;
                 break;

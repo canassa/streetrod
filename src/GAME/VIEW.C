@@ -215,7 +215,7 @@ void view_load(void)
     int idx;
 
     marks_clear();
-    bm1 = F_15BBE(0x3ed, ARENA_HIGH_STACK);
+    bm1 = disk_bm(0x3ed, ARENA_HIGH_STACK);
     pkt1.w = bm1->width;
     pkt1.h = bm1->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
@@ -223,7 +223,7 @@ void view_load(void)
     (*g_videoOps.copy)(bm1, g8188w, &pkt1, 1);
     F_19438(1);
     sel = *(int *)&bw8aca == 0 ? g_scene : 0;
-    bm24 = F_15BBE(g_5e62[sel], ARENA_HIGH_STACK);
+    bm24 = disk_bm(g_5e62[sel], ARENA_HIGH_STACK);
     pkt1.w = bm24->width;
     pkt1.h = bm24->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
@@ -231,14 +231,14 @@ void view_load(void)
     (*g_videoOps.copy)(bm24, g82b4s, &pkt1, 1);
     F_19438(1);
     if (*(int *)&bw8aca == 0) {
-        bm24 = F_15BBE(0x4ed, ARENA_HIGH_STACK);
+        bm24 = disk_bm(0x4ed, ARENA_HIGH_STACK);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
         pkt1.dy = (r_vid.mode == VID_EGA ? DASH_Y - 1 : 0) + 1;
         (*g_videoOps.copy)(bm24, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt1, 1);
         F_19438(1);
-        bm24 = F_15BBE(0x4ee, ARENA_HIGH_STACK);
+        bm24 = disk_bm(0x4ee, ARENA_HIGH_STACK);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
@@ -246,9 +246,9 @@ void view_load(void)
         (*g_videoOps.copy)(bm24, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt1, 1);
         F_19438(1);
     }
-    ar767eu = F_15BBE(0x4f3, ARENA_LOW_STACK);
+    ar767eu = disk_bm(0x4f3, ARENA_LOW_STACK);
     if (*(int *)&bw8aca == 0) {
-        g764aw = F_15BBE(0x3f0, ARENA_LOW_STACK);
+        g764aw = disk_bm(0x3f0, ARENA_LOW_STACK);
         pkt1.w = g764aw->width;
         pkt1.h = g764aw->height;
         pkt1.sx = pkt1.sy = 0;
@@ -263,33 +263,33 @@ void view_load(void)
     pkt1.dy = SCREEN_HEIGHT - ar767eu->height;
     (*g_videoOps.copy)(ar767eu, g8188w, &pkt1, 1);
     marks_pop_low(1);
-    ax72f4 = F_15BBE(0x3ee, ARENA_LOW_STACK);
-    ak8bcat = F_15BBE(0x3ef, ARENA_LOW_STACK);
-    g8184y = F_15BBE(0x3f1, ARENA_LOW_STACK);
-    bz8b7ex = F_15BBE(0x4db, ARENA_LOW_STACK);
+    ax72f4 = disk_bm(0x3ee, ARENA_LOW_STACK);
+    ak8bcat = disk_bm(0x3ef, ARENA_LOW_STACK);
+    g8184y = disk_bm(0x3f1, ARENA_LOW_STACK);
+    bz8b7ex = disk_bm(0x4db, ARENA_LOW_STACK);
     if (*(int *)&bw8aca) {
         idx = w_8df0[bn7648].kind;
-        k_6e60 = F_15BBE(0x3f5, ARENA_LOW_STACK);
+        k_6e60 = disk_bm(0x3f5, ARENA_LOW_STACK);
         aw7aaex = k_6e60->height;
-        g8acew[0] = F_15BBE(g_opponentPics[idx][0], ARENA_LOW_STACK);
-        g8acew[1] = F_15BBE(g_opponentPics[idx][1], ARENA_LOW_STACK);
-        g8acew[2] = F_15BBE(g_opponentPics[idx][2], ARENA_HIGH_STACK);
+        g8acew[0] = disk_bm(g_opponentPics[idx][0], ARENA_LOW_STACK);
+        g8acew[1] = disk_bm(g_opponentPics[idx][1], ARENA_LOW_STACK);
+        g8acew[2] = disk_bm(g_opponentPics[idx][2], ARENA_HIGH_STACK);
         load = r_vid.mode == VID_EGA ? shrink_ega : r_vid.mode == VID_TANDY ? shrink_tandy : shrink_cga;
         for (il = 0; il < 3; il++)
             g8acew[3 + il] = (*load)(g8acew[2], g_shrinkMasks[0][il], g_shrinkMasks[0][il]);
         for (il = 0; il < 3; il++)
             g8acew[6 + il] = (*load)(g8acew[5], g_shrinkMasks[1][il], g_shrinkMasks[1][il]);
-        g8acew[9] = F_15BBE(g_opponentPics[idx][3], ARENA_LOW_STACK);
+        g8acew[9] = disk_bm(g_opponentPics[idx][3], ARENA_LOW_STACK);
         for (il = 0; il < 3; il++)
             g8acew[10 + il] = (*load)(g8acew[9], g_shrinkMasks[2][il], g_shrinkMasks[2][il]);
         ab7526x[0] = g8acew[0];
-        ab7526x[1] = F_15BBE(0x4d9, ARENA_LOW_STACK);
-        ab7526x[2] = F_15BBE(0x4da, ARENA_HIGH_STACK);
+        ab7526x[1] = disk_bm(0x4d9, ARENA_LOW_STACK);
+        ab7526x[2] = disk_bm(0x4da, ARENA_HIGH_STACK);
         ab7526x[2] = ab7526x[3] = (*load)(ab7526x[2], g_shrinkMasks[0][0], g_shrinkMasks[0][0]);
         F_19438(1);
         for (il = 0; il < 3; il++)
             ab7526x[4 + il] = ab7526x[3];
-        ab7526x[9] = F_15BBE(0x4de, ARENA_LOW_STACK);
+        ab7526x[9] = disk_bm(0x4de, ARENA_LOW_STACK);
         for (il = 0; il < 3; il++)
             ab7526x[10 + il] = (*load)(ab7526x[9], g_shrinkMasks[2][il], g_shrinkMasks[2][il]);
     }

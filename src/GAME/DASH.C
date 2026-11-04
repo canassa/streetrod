@@ -458,7 +458,7 @@ void dash_load_wheel(void)
         pkt.sx = pkt.sy = 0;
         pkt.dx = 0x88;
         for (i6 = 0; i6 < 3; i6++) {
-            bm = F_15BBE(g_wheelPicIds[i6], ARENA_LOW_STACK);
+            bm = disk_bm(g_wheelPicIds[i6], ARENA_LOW_STACK);
             if (r_vid.mode != VID_EGA || i6 < 2) {
                 g_wheelBackdrop.pages[i6] = g82b4s;
                 g_wheelBackdrop.y[i6] = g_wheelSlotY[i6];
@@ -472,7 +472,7 @@ void dash_load_wheel(void)
         }
     } else {
         for (i6 = 0; i6 < 3; i6++)
-            g_wheelBackdrop.pages[i6] = F_15BBE(g_wheelPicIds[i6], ARENA_LOW_STACK);
+            g_wheelBackdrop.pages[i6] = disk_bm(g_wheelPicIds[i6], ARENA_LOW_STACK);
     }
 }
 
@@ -580,14 +580,14 @@ void dash_init_shifter(int a, int b)
     int y;
 
     g_shifterDraw.track = &g_shifters[a ? 0 : b == 3 ? 1 : 2];
-    bm19 = F_15BBE(g_shifterDraw.track->id1, ARENA_HIGH_STACK);
+    bm19 = disk_bm(g_shifterDraw.track->id1, ARENA_HIGH_STACK);
     pk5.w = 0x30;
     pk5.h = 0x2b;
     pk5.sx = pk5.sy = 0;
     pk5.dx = 0x108;
     pk5.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + 0x17;
     (*g_videoOps.copy)(bm19, g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, &pk5, 1);
-    bm28 = F_15BBE(g_shifterDraw.track->id2, ARENA_HIGH_STACK);
+    bm28 = disk_bm(g_shifterDraw.track->id2, ARENA_HIGH_STACK);
     p3.w = p2.w = (pk5.w = bm28->width) + 8;
     p3.h = p2.h = pk5.h = bm28->height;
     p3.sx = p3.sy = 0;

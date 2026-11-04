@@ -57,7 +57,7 @@ extern char g_47f0;                                     /* DS:47F0 */
 extern char g_gearText[8];                              /* DS:47FE */
 extern struct Item g_part[];                            /* DS:4806 */
 extern int g_partWear[];                                /* DS:4966 */
-extern int g_496a;                                      /* DS:496A */
+extern int g_specPartWear;                                      /* DS:496A */
 extern int g_496c[2];                                   /* DS:496C */
 extern int g_betRaces;                                  /* DS:4970 */
 extern int g_dragWins;                                  /* DS:4972 */

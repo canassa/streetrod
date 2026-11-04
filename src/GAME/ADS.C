@@ -68,7 +68,7 @@ void ads_open(int *list, int base)
 
 static struct Bitmap far * near ad_picture(int n)
 {
-    return F_15BBE(0x403, n);
+    return disk_bm(0x403, n);
 }
 
 /* ads_run @ 0000:09CB (linear 0x009CB, 909 bytes) */

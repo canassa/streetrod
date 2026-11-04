@@ -236,7 +236,7 @@ static void near anim_run(int n)
             g_animation.command = &g_animScripts[g_animation.command->a];
             goto next;
         case ANIM_LOAD_IMAGE:
-            g_animation.object->img = F_15BBE(g_animation.command->a, ARENA_HIGH_STACK);
+            g_animation.object->img = disk_bm(g_animation.command->a, ARENA_HIGH_STACK);
             g_animation.command++;
             continue;
         case ANIM_SET_BOX:
