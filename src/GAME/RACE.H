@@ -4,6 +4,12 @@
 #define RACE_H
 #include "STRUCTS.H"
 
+struct GasInteraction {
+    int capActive;
+    int ragAvailable;
+    int pumpOn;
+};
+
 extern struct BodyPoints g_featurePos; /* DS:8264 */
 
 extern int g_gasSpotIds[];                              /* DS:53B6 */

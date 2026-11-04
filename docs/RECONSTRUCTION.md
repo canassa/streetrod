@@ -211,6 +211,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **GameClock** (`g_gameClock`, DS:05FC..0607): garage_day and elapsed-time accounting compute actionTicks + biosTicks - timeBase. SAVEGAME resets and serializes that same clock, while SYS advances biosTicks. g_tick remains a separate scheduler clock. Separate globals also match; this grouping is a natural reconstruction choice.
 
+- **GasInteraction** (`g_gasState`, DS:6CA4..6CA9): clear_gas_spots resets all three interaction flags together; the cap, nozzle and rag handlers set them and race_gas_station tests them when enabling the matching hotspots. Separate globals also match; this grouping is a natural reconstruction choice.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only

@@ -39,9 +39,7 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_tankCapIsActive;                       /* DS:6CA4 */
-static int g_ragAvailable;                       /* DS:6CA6 */
-static int g_pumpOnState;                       /* DS:6CA8 */
+static struct GasInteraction g_gasState; /* DS:6CA4 */
 static int near find_gas_spot(int);
 static void near clear_gas_spots(void);
 static void near place_gas_spot(int, int, int, int, int);
@@ -116,9 +114,9 @@ static void near clear_gas_spots(void)
 {
     int k;
 
-    g_ragAvailable = 0;
-    g_pumpOnState = 0;
-    g_tankCapIsActive = 0;
+    g_gasState.ragAvailable = 0;
+    g_gasState.pumpOn = 0;
+    g_gasState.capActive = 0;
     for (k = 0; k < 6; k++)
         g_hots[find_gas_spot(g_gasSpotIds[k])].kind = 14;
 }
@@ -142,8 +140,8 @@ static void near spots_idle(void)
     place_gas_spot(2, 0x3f, 100, 12, 23);
     place_gas_spot(1, 0x54, 0xa8, 0x1f, 15);
     sort_gas_spots();
-    g_ragAvailable = 1;
-    g_pumpOnState = 1;
+    g_gasState.ragAvailable = 1;
+    g_gasState.pumpOn = 1;
 }
 
 /* spots_cap @ 0000:B525 (linear 0x0B525, 45 bytes) */
@@ -153,7 +151,7 @@ static void near spots_cap(void)
     clear_gas_spots();
     place_gas_spot(4, g_featurePos.gasCapX - 10, g_featurePos.gasCapY - 5, 18, 12);
     sort_gas_spots();
-    g_tankCapIsActive = 1;
+    g_gasState.capActive = 1;
 }
 
 /* spots_nozzle @ 0000:B552 (linear 0x0B552, 73 bytes) */
@@ -164,8 +162,8 @@ static void near spots_nozzle(void)
     place_gas_spot(2, 0x34, 100, 16, 23);
     place_gas_spot(4, g_featurePos.gasCapX - 1, g_featurePos.gasCapY - 1, 10, 9);
     sort_gas_spots();
-    g_pumpOnState = 1;
-    g_tankCapIsActive = 1;
+    g_gasState.pumpOn = 1;
+    g_gasState.capActive = 1;
 }
 
 /* spots_rag @ 0000:B59B (linear 0x0B59B, 124 bytes) */
@@ -179,7 +177,7 @@ static void near spots_rag(void)
     place_gas_spot(1, 0x3e, 0xa5, 0x35, 18);
     place_gas_spot(3, 0xc4, 0x5a, 16, 14);
     sort_gas_spots();
-    g_ragAvailable = 1;
+    g_gasState.ragAvailable = 1;
 }
 
 /* spots_none @ 0000:B617 (linear 0x0B617, 4 bytes) */
@@ -349,7 +347,7 @@ top:
             g_waitUntil = g_tick + 0x4c;
             break;
         case 1:
-            if (g_ragAvailable == 0)
+            if (g_gasState.ragAvailable == 0)
                 break;
             if (dl.f0c == 1) {
                 cursor_ctl(dl.f0c = 3);
@@ -367,7 +365,7 @@ top:
                 goto redraw;
             }
         case 2:
-            if (g_pumpOnState == 0)
+            if (g_gasState.pumpOn == 0)
                 break;
             if (dl.f0c == 1) {
                 cursor_ctl(dl.f0c = 2);
@@ -393,7 +391,7 @@ top:
             dl.f1a = 0;
             break;
         case 4:
-            if (g_tankCapIsActive == 0)
+            if (g_gasState.capActive == 0)
                 break;
             if (dl.f0c == 1) {
                 if (video_anim_active(2)) {
