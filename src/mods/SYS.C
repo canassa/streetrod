@@ -22,6 +22,7 @@
 #include "MOUSE.H"
 #include "MUSIC.H"
 #include "M_02B9A.H"
+#include "PC.H"
 #include "RACE.H"
 #include "RANDOM.H"
 #include "ROAD.H"
@@ -202,7 +203,7 @@ void sys_unhook(void)
     outp(0x43, 0x36);
     outp(0x40, 0);
     outp(0x40, 0);
-    _dos_setvect(8, w_7aaa);
+    _dos_setvect(TIMER_INT, w_7aaa);
     _enable();
     kbdoff_unhook();
     g_kbdHooked = 0;
@@ -334,8 +335,8 @@ void sys_init(void)
     outp(0x43, 0x36);
     outp(0x40, 0);
     outp(0x40, 0x40);
-    w_7aaa = _dos_getvect(8);
-    _dos_setvect(8, sys_timer_isr);
+    w_7aaa = _dos_getvect(TIMER_INT);
+    _dos_setvect(TIMER_INT, sys_timer_isr);
     _enable();
     kbdget_hook();
     g_kbdHooked = 1;
@@ -690,7 +691,7 @@ void sys_music_stop(void)
 void sys_drive_start(void)
 {
     g_060a = 0;
-    _dos_setvect(8, sys_drive_isr);
+    _dos_setvect(TIMER_INT, sys_drive_isr);
     if (!g_demo && g_mousePresent) {
         mouse_poll();
         g_mouseAccX = g_mouseAccY = 0;
@@ -712,7 +713,7 @@ void sys_drive_start(void)
 
 void sys_drive_stop(void)
 {
-    _dos_setvect(8, sys_timer_isr);
+    _dos_setvect(TIMER_INT, sys_timer_isr);
     g_sirenOn = 0;
     g_squealOn = 0;
     g_onShoulder = 0;

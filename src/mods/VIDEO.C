@@ -10,6 +10,7 @@
 #include "DRAW.H"
 #include "MAIN.H"
 #include "MENU.H"
+#include "PC.H"
 #include "SCRATCH.H"
 #include "SCREENS.H"
 #include "SOUND.H"
@@ -352,13 +353,13 @@ void F_112CB(int reg, char color)
     if (color > 7)
         color |= 0x10;
     g_palette[reg] = color;
-    r.h.ah = 0x10;
-    r.h.al = reg > 15;
+    r.h.ah = VIDEO_PALETTE_REGS;
+    r.h.al = reg > EGA_PALETTE_LAST;
     r.h.bl = reg;
     r.h.bh = color;
     while (!(inp(0x3da) & 8))
         ;
-    int86x(0x10, &r, &r, &s);
+    int86x(BIOS_VIDEO, &r, &r, &s);
 }
 
 char iz8248;
@@ -387,7 +388,7 @@ void video_set_palette(char *table)
     dest = (char far *)pal;
     s.es = FP_SEG(dest);
     r.x.dx = FP_OFF(dest);
-    r.h.ah = 0x10;
-    r.h.al = 2;
-    int86x(0x10, &r, &r, &s);
+    r.h.ah = VIDEO_PALETTE_REGS;
+    r.h.al = PALETTE_SET_ALL;
+    int86x(BIOS_VIDEO, &r, &r, &s);
 }

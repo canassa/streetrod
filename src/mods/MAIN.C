@@ -57,9 +57,9 @@ static void near dos_print(char *s)
     crlf[3] = 0;
     strcpy(text, s);
     strcat(text, crlf);
-    inr.h.ah = 9;
+    inr.h.ah = DOS_WRITE_STRING;
     inr.x.dx = (int)text;
-    int86(0x21, &inr, &outr);
+    int86(DOS_INT, &inr, &outr);
 }
 
 char *g_videoMenu[6] = {"                    1 - CGA      320 x 200 x  4 colors", "                    2 - EGA      320 x 200 x 16 colors", "                    3 - VGA      320 x 200 x 16 colors", "                    4 - Hercules monochrome", "                    5 - Tandy    320 x 200 x 16 colors", "\n                  Esc - Back to DOS"};   /* DS:0244 */
@@ -77,8 +77,8 @@ static int near show_video_menu(int mode)
 
     if (mode < 1 || mode > 5)
         mode = 1;
-    r.x.ax = 3;
-    int86(0x10, &r, &r);
+    r.x.ax = (VIDEO_SET_MODE << 8) | MODE_TEXT80;
+    int86(BIOS_VIDEO, &r, &r);
     memcpy(rec, "\n           Recommended mode: #", 32);
     strcat(rec, g_videoMenu[mode - 1] + 20);
     dos_print("\n\n\n\n\n\n                    STREET ROD:  Video Options\n");
@@ -108,12 +108,12 @@ static int near is_vga(void)
     int s;
     int c;
 
-    r.h.ah = 0x1a;
-    r.h.al = 0;
-    int86(0x10, &r, &r);
+    r.h.ah = VIDEO_GET_DCC;
+    r.h.al = DCC_READ;
+    int86(BIOS_VIDEO, &r, &r);
     s = r.h.al;
     c = r.h.bl;
-    return s && c == 8;
+    return s && c == DCC_VGA_COLOR;
 }
 
 /* main_set_mode @ 0000:01D1 (linear 0x001D1, 33 bytes) */
@@ -123,7 +123,7 @@ void main_set_mode(int ax)
     union REGS r;
 
     r.x.ax = ax;
-    int86(0x10, &r, &r);
+    int86(BIOS_VIDEO, &r, &r);
 }
 
 /* main_set_palette @ 0000:01F2 (linear 0x001F2, 52 bytes) */
@@ -132,11 +132,11 @@ void main_set_palette(unsigned char color)
 {
     union REGS r;
 
-    r.x.ax = 0x0b00;
-    r.h.bh = 1;
+    r.x.ax = VIDEO_SET_PALETTE << 8;
+    r.h.bh = CGA_SELECT_PALETTE;
     r.h.bl = color;
     if (r_vid.mode != -4)
-        int86(0x10, &r, &r);
+        int86(BIOS_VIDEO, &r, &r);
 }
 
 int g_useMouse = 1;   /* DS:0262 */
@@ -235,10 +235,10 @@ static void near set_video_mode(int mode)
     switch (mode) {
     case 2:
     case 3:
-        main_set_mode(0xd);
+        main_set_mode(MODE_EGA_320_200_16);
         break;
     case 5:
-        main_set_mode(9);
+        main_set_mode(MODE_TANDY_320_200_16);
         outp(0x3df, 0xf6);
         break;
     case 4:
@@ -252,8 +252,8 @@ static void near set_video_mode(int mode)
         break;
     case 1:
     case 6:
-        main_set_mode(4);
-        main_set_palette(1);
+        main_set_mode(MODE_CGA_320_200_4);
+        main_set_palette(CGA_PALETTE_CYAN_MAGENTA_WHITE);
         break;
     }
     g_videoSet = 1;

@@ -888,3 +888,16 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - The comma-form macro preserves the byte-access sequence of the original two statements under MAIN.C's /Oalsi. Recorded this C shape in .claude/skills/msc51-recipe-book/SKILL.md.
+## 2026-11-04 13:13 CET: Name interrupt and BIOS/DOS/mouse API constants
+
+### What I did
+- Added BIOS_VIDEO (10h), DOS_INT (21h), MOUSE_INT (33h), and TIMER_INT (8/IRQ0) in PC.H and used them at every C interrupt/vector call site. Kept intdos as the DOS API wrapper it already was.
+- Named BIOS mode/page/CGA palette/EGA palette/DCC functions, DCC read and VGA colour codes, modes 03h/04h/09h/0Dh, CGA palette selection and colour sets, EGA palette-register limit and set-all subfunction, DOS write-string and seek/start-of-file codes, mouse reset/position/motion functions, and mouse left/right button masks. DASH.C's two main_set_palette arguments now use the same palette names as MAIN.C.
+- Preserved statement structure: AX constants use shifts and OR; mouse AH and AL assignments remain separate. No functions, globals, locals, or files renamed, no assembly edited, no source comments added. ./sr headers generated PC.H includes and MAKEFILE dependencies for the new users.
+- All gates passed: empty-work ./sr check --all: 572/572 still match (551 MATCH, 21 MATCH*); removed work again before ./sr build: Packed EXE vs orig/SR.EXE: IDENTICAL, 572/572 functions at original positions, 748/748 near-call encodings exact. Headers and DGROUP clean; 41 unit tests OK; DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL.
+- ASM suggestion only: a separate shared src/include/PC.INC with MASM EQU definitions for interrupt numbers and AH/AL selectors would be natural for HERCDET, KBDGET, KBDOFF, M_02B9A, and VIDDET. Keep byte/word register loads as written and add INCLUDE dependencies when implementing it; C PC.H pointer expressions are not MASM input.
+
+### What I learned
+- API meanings checked against Ralf Brown's Interrupt List: BIOS functions/modes/palettes in https://raw.githubusercontent.com/cirosantilli/ralf-brown-interrupt-list/master/inter61a/INTERRUP.A ; DOS seek and write-string in https://raw.githubusercontent.com/cirosantilli/ralf-brown-interrupt-list/master/inter61b/INTERRUP.F ; mouse reset/position/motion at https://www.delorie.com/djgpp/doc/rbinter/id/75/59.html , https://www.delorie.com/djgpp/doc/rbinter/id/78/59.html , https://delorie.com/djgpp/doc/rbinter/id/86/59.html .
+- No unidentified literal API function codes remain at C call sites. Game menu IDs 1..6 and internal negative display modes stay literals because they are not BIOS mode numbers. VIDEO.C's colour conversion threshold 7 and bit 10h, palette sizes 16/17, hardware retrace port 3DAh/mask 8, and other hardware-port values remain outside this interrupt-API naming scope. The palette-versus-border selector remains the original boolean expression (now reg > EGA_PALETTE_LAST); generic zero/null/carry tests, the DOS '$' terminator, and shifts by byte/word widths are unchanged. ASM API literals are intentionally retained per task.
+- Named constant expressions preserve the original packed register stores; the MSC recipe book records the verified AX and split mouse-register forms.
