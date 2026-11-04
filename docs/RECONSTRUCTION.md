@@ -219,6 +219,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **CursorDraw** (`g_cursorStamp`, DS:6C46..6C4B): SYS saves the drawn cursor position and tracks whether it needs repainting as one cursor drawing state. MSC supplies the final byte of alignment padding. Separate globals also match; this grouping is a natural reconstruction choice.
 
+- **Vibrato** (`g_vibrato`, DS:6C52..6C55): sys_timer_isr uses gain and divisor together to modulate PIT channel 2. Separate globals also match; this grouping is a natural reconstruction choice.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only

@@ -4,6 +4,11 @@
 #define SYS_H
 #include "STRUCTS.H"
 
+struct Vibrato {
+    int gain;
+    int divisor;
+};
+
 struct CursorDraw {
     int x;
     int y;

@@ -37,8 +37,7 @@ static struct CursorDraw g_cursorStamp; /* DS:6C46 */
 static int g_keyGroup;                         /* DS:6C4C */
 static char g_6c4e;                        /* DS:6C4E */
 static int g_demoChoice;                        /* DS:6C50 */
-static int g_vibGain;                        /* DS:6C52 */
-static int g_vibDivisor;                        /* DS:6C54 */
+static struct Vibrato g_vibrato; /* DS:6C52 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Dev g_songBgState;
@@ -924,9 +923,9 @@ void interrupt far sys_timer_isr(void)
     if (g_voice->active && --g_voice->ticksLeft) {
         if (g_vibratoActive && g_voice->divisor.w && !--g_vibCount) {
             g_toneShapePlaybackPointer->phase = g_toneShapePlaybackPointer->phase % g_toneShapePlaybackPointer->length;
-            g_vibDivisor = g_toneShapes[g_toneShapePlaybackPointer->waveform][g_toneShapePlaybackPointer->phase++] * g_vibGain + g_voice->divisor.w;
-            outp(PIT_CH2, g_vibDivisor);
-            outp(PIT_CH2, g_vibDivisor >> 8);
+            g_vibrato.divisor = g_toneShapes[g_toneShapePlaybackPointer->waveform][g_toneShapePlaybackPointer->phase++] * g_vibrato.gain + g_voice->divisor.w;
+            outp(PIT_CH2, g_vibrato.divisor);
+            outp(PIT_CH2, g_vibrato.divisor >> 8);
             g_vibCount = g_toneShapePlaybackPointer->delay;
         }
     } else if (g_voice->active && g_voice->ticksLeft == 0) {
@@ -959,7 +958,7 @@ void interrupt far sys_timer_isr(void)
         } else {
             if (g_vibratoActive) {
                 g_vibCount = g_toneShapePlaybackPointer->delay;
-                g_vibGain = (unsigned)g_toneShapePlaybackPointer->depth * g_voice->divisor.w / 1000;
+                g_vibrato.gain = (unsigned)g_toneShapePlaybackPointer->depth * g_voice->divisor.w / 1000;
             }
             outp(PIT_CH2, g_voice->divisor.b[0]);
             outp(PIT_CH2, g_voice->divisor.b[1]);
