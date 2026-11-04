@@ -184,7 +184,7 @@ void sys_timer_remove(int n)
         if (i < 0)
             g_timerNext = 0x7fffffffL;
         else
-            g_timerNext = g_timers[i].key;
+            g_timerNext = g_timers[i].deadline;
     }
     i = g_timers[n].prv;
     if (i >= 0)
@@ -486,13 +486,13 @@ int sys_wait_input(int ticks)
         }
         if (g_timerNext <= g_tick) {
             p = &g_timers[i = g_timerFirst];
-            switch (p->fa) {
+            switch (p->action) {
             case 0:
             default:
                 sys_timer_remove(i);
                 break;
             case 1:
-                res = p->fc;
+                res = p->argument;
                 sys_timer_remove(i);
                 video_anim_resume(res);
                 break;
@@ -596,25 +596,25 @@ int sys_timer_add(int delay, int pri)
     if (delay) {
         for (;;) {
             if (cur3 >= 0) {
-                if ((key = g_timers[cur3].key) > when) {
+                if ((key = g_timers[cur3].deadline) > when) {
                     cur3 = g_timers[prev = cur3].nxt;
                     continue;
                 }
                 if (when > key)
                     break;
                 for (;;) {
-                    if (g_timers[cur3].f8 >= pri)
+                    if (g_timers[cur3].priority >= pri)
                         break;
                     cur3 = g_timers[prev = cur3].nxt;
-                    if (cur3 < 0 || g_timers[cur3].key != key)
+                    if (cur3 < 0 || g_timers[cur3].deadline != key)
                         break;
                 }
             }
             break;
         }
     }
-    g_timers[i].key = when;
-    g_timers[i].f8 = pri;
+    g_timers[i].deadline = when;
+    g_timers[i].priority = pri;
     g_timerFree = g_timers[i].nxt;
     g_timers[i].nxt = cur3;
     if (cur3 < 0) {
@@ -638,8 +638,8 @@ void sys_timer_anim(int fc, int delay)
     int n;
 
     n = sys_timer_add(delay, g8ef6q);
-    g_timers[n].fa = 1;
-    g_timers[n].fc = fc;
+    g_timers[n].action = 1;
+    g_timers[n].argument = fc;
 }
 
 /* sys_timer_cancel @ 0000:19BC (linear 0x019BC, 73 bytes) */
@@ -650,8 +650,8 @@ void sys_timer_cancel(int n)
     int i;
 
     for (i = g_timerFirst; i >= 0; i = g_timers[i].nxt)
-        if ((p = g_timers + i)->fa == 1 && p->fc == n)
-            p->fa = 0;
+        if ((p = g_timers + i)->action == 1 && p->argument == n)
+            p->action = 0;
 }
 
 /* sys_music_start @ 0000:1A05 (linear 0x01A05, 119 bytes) */

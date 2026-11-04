@@ -341,10 +341,10 @@ struct Model {
 struct Link {
     int nxt;
     int prv;
-    long key;
-    int f8;
-    int fa;
-    int fc;
+    long deadline;
+    int priority;
+    int action;
+    int argument;
     char pad[4];
 };
 
