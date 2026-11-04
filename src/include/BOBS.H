@@ -4,6 +4,18 @@
 #define BOBS_H
 #include "STRUCTS.H"
 
+#define NUM_RACERS 22
+#define RACER_KING 21
+#define RACER_COP_ENTRY 10
+#define RACERS_PER_GROUP 7
+
+enum RacerStatus {
+    RACER_EMPTY = -1,
+    RACER_NOT_MET = 0,
+    RACER_MET = 1
+};
+
+extern struct Racer av7ff8[];                           /* DS:7FF8 */
 extern int g_bannerX;                                   /* DS:51EE */
 extern int g_passCount;                                 /* DS:51F0 */
 extern int g_lastRival;                                 /* DS:51F8 */

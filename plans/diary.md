@@ -1208,3 +1208,9 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - DISK.H: `NUM_RACERS` 22 (the 18-byte racer records, 396 bytes in the save game), `RACER_KING` 21 (named "The King" in HOT_DATA; ending, rematch, king_status, reset on defeat), `RACER_COP_ENTRY` 10 (an ordinary rival, "Steve", whose entry cop_appears borrows for the chase's shift penalty; the police drivetrain itself is car spec 25), `RACERS_PER_GROUP` 7 (init_racers fills three rank groups of seven), and `enum RacerStatus` (`RACER_EMPTY` -1, `RACER_NOT_MET`, `RACER_MET`) for the char field Racer.status. Done by a Codex agent.
 - Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
+
+## 2026-11-05 21:00 CET: The racer table lives with the racer code
+
+### What I did
+- `struct Racer av7ff8[NUM_RACERS]` is defined in BOBS.C (most racer logic) instead of DISK.C, and its constants (`NUM_RACERS`, `RACER_KING`, `RACER_COP_ENTRY`, `RACERS_PER_GROUP`, `enum RacerStatus`) and extern moved from DISK.H to BOBS.H. DISK.C still mentions the table first in link order (its save table g_dataBlocks), so LINK's communal slot is unchanged. CLAUDE.md rule 4e now says a communal may be defined in any file at or after its first mention.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.

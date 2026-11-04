@@ -7,6 +7,7 @@
 #include "SAVEGAME.H"
 #include "ARENA.H"
 #include "BITMAP.H"
+#include "BOBS.H"
 #include "CURSOR.H"
 #include "DASH.H"
 #include "DISK.H"

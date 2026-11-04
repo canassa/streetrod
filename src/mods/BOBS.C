@@ -103,6 +103,7 @@ static int near maybe_carhop(int mode, int arg, int pct1, int pct2)
 }
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
+struct Racer av7ff8[NUM_RACERS];
 struct Spec *g_oppSpecPointer;
 struct Racer *g7d84o;
 int g_rivalHereState;
