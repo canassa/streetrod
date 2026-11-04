@@ -17,6 +17,13 @@ static struct Node * near F_03FF0(int idx, int a);
 /* F_01BAE @ 0000:1bae (linear 0x01bae, 1076 bytes) */
 
 
+/* Loop optimization is off from here to the end of the file. The file is
+   compiled /Oalsi, but in the shipped code the loops of F_01BAE, F_01FE2 and
+   F_0238C (the timer interrupt handler) are plain /Ol-off loops: counters and
+   pointers stay in memory, the test is reached by a jmp, no induction
+   variables. No for/while/do formulation reproduces that under /Ol (/Ol takes
+   every such loop here); this one pragma reproduces all three functions. */
+#pragma loop_opt(off)
 
 void F_01BAE(void)
 {

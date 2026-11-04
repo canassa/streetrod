@@ -90,12 +90,7 @@ def prepare():
         stem = f'U_{start:05X}'
         flags = module.unit_flags(members)
         if unit['kind'] == 'c':
-            parts = []
-            for source in unit['sources']:
-                source_flags = next(r['flags'] or config.DEFAULT_FLAGS for r in members if r['src'] == source)
-                opt = re.search(r'/O(\w+)', source_flags)
-                loop = opt is not None and 'l' in opt[1]
-                parts.append('#pragma loop_opt('+('on' if loop else 'off')+')\n'+(config.ROOT/source).read_text())
+            parts = [(config.ROOT/source).read_text() for source in unit['sources']]
             text = ('#include "CRT.H"\n'
                     + ''.join(build.near_declarations(config.ROOT/s) for s in unit['sources'])
                     + module.merge(parts))
