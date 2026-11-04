@@ -4,6 +4,13 @@
 #define SYS_H
 #include "STRUCTS.H"
 
+struct TimerPriorities {
+    int animation;
+    int unused2;
+    int unused4;
+    int unused6;
+};
+
 extern struct InputState g_input; /* DS:05D0 */
 
 extern struct TimerPriorities g_videoPrioritiesValues; /* DS:8EF6 */

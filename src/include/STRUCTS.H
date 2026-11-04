@@ -727,13 +727,6 @@ struct ListDialog {
     struct Hot *header;
 };
 
-struct TimerPriorities {
-    int animation;
-    int unused2;
-    int unused4;
-    int unused6;
-};
-
 struct PartSelection {
     int wirePic;
     int slot;

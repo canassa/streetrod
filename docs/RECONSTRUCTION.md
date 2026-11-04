@@ -189,7 +189,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **ListDialog** (`g_menuList`, DS:8B9A..8BA3): a natural, byte-identical reconstruction choice; separate globals also match.
 
-- **TimerPriorities** (`g_videoPrioritiesValues`, DS:8EF6..8EFD): a natural, byte-identical reconstruction choice; separate globals also match.
+- **TimerPriorities** (`g_videoPrioritiesValues`, DS:8EF6..8EFD; type in SYS.H): a natural, byte-identical reconstruction choice; separate globals also match.
 
 - **PartSelection** (`g_videoPartCursor`, DS:82AC..82B3): a natural, byte-identical reconstruction choice; separate globals also match.
 
