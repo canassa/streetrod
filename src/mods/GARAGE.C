@@ -166,7 +166,7 @@ void F_06750(int x)
 
 void F_067CF(int a)
 {
-    if (r_vid.mode == -2 || r_vid.mode == -6) {
+    if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) {
         if (gz8249) {
             F_112CB(6, g_50c2[a][0]);
             F_112CB(7, g_50c2[a][1]);
@@ -349,7 +349,7 @@ int near F_06B06(int mode)
             else
                 F_181C8(4, m_8272.specIndex, n, m_8272.appearance.shade, 0, 0x98, 0, g_5030[m_8272.tireVariant]);
         } else {
-            bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xc7);
+            bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), 0xc7);
             g_29ff[0] = 0;
         }
         break;
@@ -408,7 +408,7 @@ void near F_06F6B(void)
 
     if (!a_7eaap.currentCar)
         game_message(0x0efa);
-    else if (r_vid.mode != -2 && r_vid.mode != -6)
+    else if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         game_message(0x18ad);
     else {
         bm1 = menu_grab(14, &x, &y, ARENA_HIGH_STACK);

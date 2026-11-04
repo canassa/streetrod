@@ -10,6 +10,7 @@
 #include "DRVTICK.H"
 #include "MAIN.H"
 #include "MARKS.H"
+#include "PC.H"
 #include "POPUP.H"
 #include "RACE.H"
 #include "ROAD.H"
@@ -43,14 +44,14 @@ int drive_run(void)
         dash_set_view(3);
         marks_clear();
         (*bl78be)();
-        g_dashBuffered = r_vid.mode == -3 && g_egaCard;
+        g_dashBuffered = r_vid.mode == VID_CGA && g_egaCard;
         if (g_dashBuffered) {
-            popup_grab(0, 0x64, 0x140, 0x64, g755cu);
+            popup_grab(0, DASH_Y, SCREEN_WIDTH, DASH_HEIGHT, g755cu);
             r_vid.copyToFront = 1;
-            screen_fill_rect(0, 0, 0x140, 0xc8, 0);
+            screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
             r_vid.copyToFront = sv;
         }
-        if (r_vid.mode == -2)
+        if (r_vid.mode == VID_EGA)
             g_driveRebuild = 1;
         else
             g_driveRebuild = 0;
@@ -70,13 +71,13 @@ int drive_run(void)
         blt.sx = 0;
         blt.sy = blt.dx = blt.dy = 0;
         (*b_78a2)(src, g8188w, &blt, 1);
-        if (r_vid.mode == -2)
+        if (r_vid.mode == VID_EGA)
             (*b_78a2)(src, g82b4s, &blt, 1);
         blt.w = src->width;
         blt.h = 0x5a;
         blt.sx = blt.dx = 0;
-        blt.sy = 0x64;
-        blt.dy = (r_vid.mode == -2 || g_dashBuffered) ? 0 : 0x64;
+        blt.sy = DASH_Y;
+        blt.dy = (r_vid.mode == VID_EGA || g_dashBuffered) ? 0 : DASH_Y;
         (*b_78a2)(src, g_dashBuffered ? g755cu : bm7678, &blt, 1);
         F_19438(1);
         view_load();
@@ -100,14 +101,14 @@ int drive_run(void)
             dash_draw_clock();
     } while (g_driveRebuild > 1);
     g_driveRebuild = 0;
-    if (r_vid.mode == -2) {
-        crtc_set_split(0x63);
-        af824ax = 0x64;
+    if (r_vid.mode == VID_EGA) {
+        crtc_set_split(DASH_Y - 1);
+        af824ax = DASH_Y;
     } else
         af824ax = 0;
     road_start();
-    if (r_vid.mode != -2) {
-        blt.w = 0x140;
+    if (r_vid.mode != VID_EGA) {
+        blt.w = SCREEN_WIDTH;
         blt.h = 0x12;
         blt.dy = blt.sy = blt.sx = blt.dx = 0;
         (*b_78a2)(g8188w, bm7678, &blt, 1);
@@ -115,9 +116,9 @@ int drive_run(void)
     if (g_dashBuffered) {
         g_dashBuffered = 0;
         blt.w = g755cu->width;
-        blt.h = 0x64;
+        blt.h = DASH_HEIGHT;
         blt.sy = blt.sx = blt.dx = 0;
-        blt.dy = 0x64;
+        blt.dy = DASH_Y;
         (*b_78a2)(g755cu, bm7678, &blt, 1);
         oldf05 = dash_move_needle(g_driveEng.speed, oldf05, 0);
         if (!g_autoTrans)
@@ -150,20 +151,20 @@ int drive_run(void)
         }
     }
     marks_clear();
-    if (r_vid.mode == -2) {
+    if (r_vid.mode == VID_EGA) {
         blt.w = w;
-        blt.h = 0x64;
+        blt.h = DASH_HEIGHT;
         blt.sx = 0;
         blt.sy = 0;
         blt.dx = 0;
-        blt.dy = g_vga ? 0x64 : 0x65;
+        blt.dy = g_vga ? DASH_Y : 0x65;
         (*b_78a2)(bm7678, g_drawPage == 1 ? g82b4s : g8188w, &blt, 1);
         blt.w = w;
         blt.h = 1;
         blt.sx = 0;
         blt.sy = 0;
         blt.dx = 0;
-        blt.dy = 0x64;
+        blt.dy = DASH_Y;
         (*b_78a2)(bm7678, g_drawPage == 1 ? g82b4s : g8188w, &blt, 1);
         crtc_set_split(-1);
         af824ax = 0;

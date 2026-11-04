@@ -14,6 +14,7 @@
 #include "MAIN.H"
 #include "MEM.H"
 #include "MENU.H"
+#include "PC.H"
 #include "RANDOM.H"
 #include "SCREEN.H"
 #include "SYS.H"
@@ -68,7 +69,7 @@ int fame_protect_check(void)
     screen_text(c, 0x48, a);
     cursor_ctl(CURSOR_SHOW_NOW);
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
-    if (r_vid.mode == -2 || r_vid.mode == -6)
+    if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
         video_set_palette(g_protectPal);
     else
         (*m_present)();
@@ -93,13 +94,13 @@ int fame_end_menu(void)
     char c3;
     int key;
 
-    screen_status_init(190);
+    screen_status_init(SCREEN_BODY_HEIGHT);
     r_vid.copyToFront = 1;
     c01 = x_colors.text;
     c1 = x_colors.textBg;
     c3 = x_colors.line;
     c21 = x_colors.fill;
-    if (r_vid.mode != -2 && r_vid.mode != -6) {
+    if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) {
         x_colors.text = 3;
         x_colors.textBg = 0;
         x_colors.line = 2;
@@ -110,7 +111,7 @@ int fame_end_menu(void)
         x_colors.line = 13;
         x_colors.fill = 3;
     }
-    screen_fill_rect(0, 0, 320, 190, x_colors.textBg);
+    screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_BODY_HEIGHT, x_colors.textBg);
     draw_frame(r_vid.back, 100, 50, 120, 90);
     draw_frame(r_vid.front, 100, 50, 120, 90);
     draw_frame(r_vid.back, 102, 52, 116, 86);
@@ -198,14 +199,14 @@ void fame_show(int add)
     old = g_picMaxH;
     pos7 = -1;
     (*bl78be)();
-    g_picMaxH = 200;
+    g_picMaxH = SCREEN_HEIGHT;
     r_vid.copyToFront = 1;
     F_118D4(5, -1);
     g_picMaxH = old;
     video_swap_pal();
     sv286 = bustyle->c28;
     sv23 = bustyle->c23;
-    if (r_vid.mode == -2 || r_vid.mode == -6) {
+    if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) {
         bustyle->c28 = g_fameColors1;
         bustyle->c23 = g_fameColors2;
     }
@@ -224,7 +225,7 @@ void fame_show(int add)
         }
         insert_entry(pos7);
     }
-    if (r_vid.mode != -2 && r_vid.mode != -6) {
+    if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) {
         x_colors.text = 3;
         x_colors.textBg = 2;
     } else {

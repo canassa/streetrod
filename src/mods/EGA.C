@@ -66,14 +66,14 @@ void ega_draw_text(struct Bitmap far *bm, int x, int y, char *str)
             byte = 0;
         wd = *(pen = (unsigned char far *)&g_font[byte]);
         cols += wd;
-        if (cols > 320) {
+        if (cols > SCREEN_WIDTH) {
             cols -= wd;
             break;
         }
         g = sh + wd;
         if (g <= 8) {
             r = q;
-            for (left = 8; left--; r += 0x28)
+            for (left = 8; left--; r += EGA_PITCH)
                 *r |= *++pen >> sh;
             sh = g;
             if (sh == 8) {
@@ -83,7 +83,7 @@ void ega_draw_text(struct Bitmap far *bm, int x, int y, char *str)
         } else {
             q[1] = 0;
             r = q;
-            for (left = 8; left--; r += 0x28)
+            for (left = 8; left--; r += EGA_PITCH)
                 *(unsigned far *)r |= _rotr(*++pen, sh);
             sh = g & 7;
             q++;
@@ -117,7 +117,7 @@ void ega_draw_text(struct Bitmap far *bm, int x, int y, char *str)
     fill = pen = bits;
     r = q = bm->bits.p + bm->pitch * y + (x >> 3);
     l = bm->pitch;
-    for (; g != 0; g--, q += l, r = q, fill = pen += 0x28) {
+    for (; g != 0; g--, q += l, r = q, fill = pen += EGA_PITCH) {
         if (e) {
             ch = *r;
             outp(GC_DATA, e);

@@ -4,6 +4,8 @@
 #define CARPIC_H
 #include "STRUCTS.H"
 
+#define BACKDROP_ROWS 70
+
 extern int g_delayScale;                                /* DS:58E2 */
 extern int g_dashBuffered;                                      /* DS:58E4 */
 extern int g_autoTrans;                                 /* DS:58E6 */

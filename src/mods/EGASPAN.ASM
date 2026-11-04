@@ -182,7 +182,7 @@ _egaspan_fill_below  PROC    FAR
         mov     ax,_g_clipYMax
         mov     dx,[bp+6]
         sub     ax,dx
-        mov     dx,28h
+        mov     dx,EGA_PITCH
         mul     dx
         mov     cx,ax
         mov     ax,_av787at
@@ -190,7 +190,7 @@ _egaspan_fill_below  PROC    FAR
         push    es
         pop     ds
         mov     ax,[bp+6]
-        mov     dx,28h
+        mov     dx,EGA_PITCH
         mul     dx
         mov     di,ax
         mov     si,di
@@ -224,7 +224,7 @@ _egaspan_fill_below  ENDP
 _egaspan_pixel_addr  PROC    NEAR
         mov     cl,bl
         push    dx
-        mov     dx,28h
+        mov     dx,EGA_PITCH
         mul     dx
         pop     dx
         shr     bx,1

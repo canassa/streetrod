@@ -26,6 +26,7 @@
 #include "MESSAGES.H"
 #include "MUSIC.H"
 #include "M_02B9A.H"
+#include "PC.H"
 #include "PERF.H"
 #include "POPUP.H"
 #include "RANDOM.H"
@@ -533,7 +534,7 @@ static void near show_crash(void)
     struct Blt pkt;
     int fast, i;
 
-    fast = r_vid.mode == -2 && g_vga == 0;
+    fast = r_vid.mode == VID_EGA && g_vga == 0;
     sound_crash();
     marks_clear();
     a = F_15BBE(0x4eb, ARENA_LOW_STACK);
@@ -760,7 +761,7 @@ done:
         menu_push(0x18);
         sys_wait_input(0);
         sprintf(temp, "You have been fined $%2d for speeding", i);
-        F_11421(-1, temp, 0x140 - o_8250);
+        F_11421(-1, temp, SCREEN_WIDTH - o_8250);
         game_pause(0xfa);
         if (i <= a_7eaap.money)
             goto pay;
@@ -768,7 +769,7 @@ done:
         menu_pop(1);
         menu_pop(1);
         F_11540(-a_7eaap.money);
-        F_11421(-1, " ", 0x140 - o_8250);
+        F_11421(-1, " ", SCREEN_WIDTH - o_8250);
         return 4;
 pay:
         F_11540(-i);
@@ -776,7 +777,7 @@ pay:
         game_pause(g_msgTicks);
         g_waitUntil = cost;
         menu_pop(1);
-        F_11421(-1, "", 0x140 - o_8250);
+        F_11421(-1, "", SCREEN_WIDTH - o_8250);
     } else if (g_driveEng.stopFlags == 0x81) {
         cursor_ctl(CURSOR_SHOW_NOW);
         game_message(0xecb2);
@@ -1119,7 +1120,7 @@ static void near rival_accelerate(void)
                 g_oppEngState.gearIndex++;
                 if (g_oppEngState.autoSelector == 0)
                     g_shiftPoint = g_oppEngState.gearIndex < g_oppEngState.gearCount ? g_oppEngState.shiftRpm - 100 * g_rivalShiftPen
-                           : bu8acc < 4 && r_vid.mode != -6 ? 0x14b4 : 0x1518;
+                           : bu8acc < 4 && r_vid.mode != VID_TANDY ? 0x14b4 : 0x1518;
                 g_oppEngState.rpmPerSpeed = g_oppEngState.f34[g_oppEngState.gearIndex];
                 g_oppEngState.rpm = g_oppEngState.speed * g_oppEngState.rpmPerSpeed;
                 if ((r = &g_oppEngState.gear[g_oppEngState.gearIndex].bands[g_rpmBand = 1])->maxRpm <= g_oppEngState.rpm) {

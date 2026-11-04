@@ -1040,3 +1040,38 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - Value flow prevents plausible but wrong names: Spr12.b10/b11 and State8272.m8272/m8274 locate the saved body-paint region and shade overlays, not the engine. Hot.f6 and Win.w/h have contradictory interpretations across record views, so a one-role rename would mislead.
 - The five Colors slots are accessed only by constant indices; removing the obsolete initializer-array braces preserves both code and initialized bytes. Style palettes remain arrays because their indices vary; no packed/overlaid record was retyped.
 - Survey-only local follow-ups include EDIT.C edit_line pos (saved fill colour), GARAGE.C tune_timing gear (ignition timing), DISK.C disk_read_index height (largest packed byte count), DISK.C disk_pic_size x (flags parameter), and EGASPR bitmap/frame pointer locals named height/key/box. They need an independent stack-layout pass.
+
+## 2026-11-04 14:27 CET: Name shared screen geometry
+
+### What I did
+- Named EGA_PITCH in PC.H/PC.INC at confirmed planar-byte strides; named BACKDROP_ROWS in CARPIC.H at the scratch reserve and car-display height, with its equivalent-source-form choice recorded in docs/RECONSTRUCTION.md.
+- Named SCREEN_W/SCREEN_H, SCREEN_BODY_H/STATUS_BAR_H and DASH_Y/DASH_H at confirmed screen bounds, status-strip geometry and dashboard origins/buffer heights. No function, global or struct-member names changed; no source comments were added.
+- Surveyed other recurring geometry in work/geom/SURVEY.md, including numeric coincidences left literal: CGA word counts, interleaved EGA reveal steps, wheel sentinels, road distances, asset sizes and mirror clip coordinates.
+- Merged main and reran every gate: 572/572 functions match; clean packed build and DOS-native MAKE are IDENTICAL to orig/SR.EXE; header and DGROUP checks clean; all 53 unit tests pass.
+
+### What I learned
+- SCREEN_H and DASH_H were header guards as well as useful dimension names; their guards must be SCREEN_H_INCLUDED and DASH_H_INCLUDED. Shared numeric definitions in PC.H must also be defined in PC.INC (test_shared_pc_constants).
+- DRIVE's previous-wheel value 100 and DASH's b != 100 are a sentinel, distinct from the dashboard origin 100. EGACOPY's 200-byte row step is five EGA scanlines, distinct from the screen height. These distinctions are recorded in work/geom/SURVEY.md.
+
+## 2026-11-05 15:00 CET: Named screen geometry
+
+### What I did
+- `EGA_PITCH` (40, the EGA row stride per plane) and `SCREEN_WIDTH`/`SCREEN_HEIGHT` (320x200) in PC.H; `BACKDROP_ROWS` (70, the reserve at the top of the scratch page) in CARPIC.H, recorded in RECONSTRUCTION.md as a choice among identical forms; `SCREEN_BODY_HEIGHT`/`STATUS_BAR_HEIGHT` (190/10) in SCREEN.H; `DASH_Y`/`DASH_HEIGHT` (100/100) in DASH.H. Done by a Codex agent; the first spelling (`SCREEN_H`, `DASH_H`) collided with the SCREEN.H/DASH.H include guards, so the dimensions are spelled out and the guards stay standard.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
+
+## 2026-11-04 14:33 CET: Name video mode codes
+
+### What I did
+- Defined VID_EGA (-2), VID_CGA (-3), VID_HERCULES (-4), and VID_TANDY (-6) in MAIN.H, the header of MAIN.C, which owns r_vid; supplied the corresponding MASM equates in MAIN.INC for the far screen descriptors.
+- Replaced format literals in mode comparisons, switches, bitmap flags, bitmap constructor arguments, and screen descriptors. Preserved alignment masks, generic bitmap flags, and menu result codes.
+- Verified 572/572 function matches, a clean byte-identical packed build, clean header and DGROUP checks, 53 passing unit tests, and a byte-identical native DOSBox MAKE build.
+
+### What I learned
+- video_init assigns front->flags to r_vid.mode: its EGA path uses four 1-bit planes, its CGA default uses 2 bits per pixel, and its Tandy path uses 4 bits per pixel. init_screens supplies the Hercules and hardware selection evidence.
+- Negative format constants preserve the bytes of the previous hexadecimal signed-byte assignments and MASM DB screen descriptors; both build paths remain identical to orig/SR.EXE.
+
+## 2026-11-05 16:00 CET: Named video mode codes
+
+### What I did
+- `VID_EGA` (-2), `VID_CGA` (-3), `VID_HERCULES` (-4), `VID_TANDY` (-6) name the pixel format held by `r_vid.mode` and the screen bitmaps' `flags` (EGA 4 planes 8 px/byte; CGA 2 bpp; Hercules mono at B000; Tandy 4 bpp 2 px/byte), in MAIN.H for C and PC.INC for the assembler; all ~190 comparisons and the flags assignments use them. Done by a Codex agent.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.

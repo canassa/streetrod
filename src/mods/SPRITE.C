@@ -7,6 +7,7 @@
 #include "GARGFX.H"
 #include "MAIN.H"
 #include "MARKS.H"
+#include "PC.H"
 #include "POPUP.H"
 #include "SYS.H"
 #include "VIDEO.H"
@@ -100,7 +101,7 @@ struct Sprite *sprite_setup(int x, int y, struct Bitmap far **imgs, char (*cell)
     for (i = 0; i < n; i++) {
         g77bal[i].pos = *imgs++;
         if (cell)
-            g77bal[i].data = r_vid.mode == -2 ? cell++ : &am6e68x[i];
+            g77bal[i].data = r_vid.mode == VID_EGA ? cell++ : &am6e68x[i];
         else
             g77bal[i].data = 0;
         g77bal[i].nxt[0] = &g77bal[i + 1];
@@ -116,7 +117,7 @@ struct Sprite *sprite_setup(int x, int y, struct Bitmap far **imgs, char (*cell)
     g7d18m.save = save;
     g7d18m.rc[0] = a8;
     g7d18m.rc[1] = a9;
-    if (r_vid.mode == -2) {
+    if (r_vid.mode == VID_EGA) {
         for (i = 0; i < 2; i++) {
             g_sprPageRing[i].bm = g_pageBmps[i];
             g_sprPageRing[i].pageIndex = i;
@@ -300,7 +301,7 @@ void sprite_slide_v(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
         dir = -1;
     }
     n1++;
-    img2 = popup_grab(x, 0, bm->width, 200, 0);
+    img2 = popup_grab(x, 0, bm->width, SCREEN_HEIGHT, 0);
     save = F_1934E(img2->width, img2->height, 0, ARENA_HIGH_STACK);
     bitmap_copy(img2, save, 1);
     sp = sprite_setup(x, bm->height + y0 - 1, &bm, 0, 1, img2, save, 0, 0);
@@ -314,7 +315,7 @@ void sprite_slide_v(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
     }
     if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.front, r_vid.back, x, (y0 > y1 ? y1 : y0) < 0 ? 0 : (y0 > y1 ? y1 : y0), bm->width + x,
-            (y0 < y1 ? y1 : y0) + bm->height > 199 ? 199 : (y0 < y1 ? y1 : y0) + bm->height);
+            (y0 < y1 ? y1 : y0) + bm->height > (SCREEN_HEIGHT - 1) ? (SCREEN_HEIGHT - 1) : (y0 < y1 ? y1 : y0) + bm->height);
     z_8b7c = old;
     F_19438(2);
 }

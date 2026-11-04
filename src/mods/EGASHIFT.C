@@ -72,10 +72,10 @@ static void near write_plane_row(unsigned char far *dst, unsigned char *src, int
 
     if (shift) {
         for (e = 0, h = (w + 7) / 8; e < 4; e++)
-            shift_row_bits(src + e * 40, shift, h);
+            shift_row_bits(src + e * EGA_PITCH, shift, h);
     }
     a = src;
-    b = src + 40;
+    b = src + EGA_PITCH;
     c = src + 80;
     d = src + 120;
     if (off) {
@@ -153,7 +153,7 @@ void egashift_blit(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r
     int p;                 /* bytes per row */
     unsigned char far *a;  /* source row */
     unsigned char far *b;  /* destination row */
-    unsigned char c[4][40];
+    unsigned char c[4][EGA_PITCH];
     unsigned d;            /* plane size in bytes */
     int e;
     int f;                 /* rows */

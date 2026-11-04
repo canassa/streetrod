@@ -215,7 +215,7 @@ _cursblt_ega  PROC  FAR
         push    di
         push    si
         les     di,DWORD PTR [bp+12h]
-        mov     ax,28h
+        mov     ax,EGA_PITCH
         mov     bx,[bp+18h]
         mul     bl
         add     di,ax
@@ -226,7 +226,7 @@ _cursblt_ega  PROC  FAR
         mov     ax,3
         sub     ax,[bp+1Ah]
         mov     [bp-4],ax
-        mov     ax,28h
+        mov     ax,EGA_PITCH
         sub     ax,[bp+1Ah]
         mov     [bp-2],ax
         lds     si,DWORD PTR [bp+0Eh]

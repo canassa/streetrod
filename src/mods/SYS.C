@@ -217,7 +217,7 @@ void sys_exit(void)
     if (g_demo) {
         g_demo = (g_demo == 0x62) ? 0 : 1;
         screen_wait_msg("Quit demo");
-        screen_fill_rect(0, 0, 320, 200, 0);
+        screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     }
     if (g_sysHooked)
         sys_unhook();
@@ -451,7 +451,7 @@ int sys_wait_input(int ticks)
             g_demoQuit = 0x63;
             sys_exit();
         }
-        if (g_protectCycle && (r_vid.mode == -2 || r_vid.mode == -6)
+        if (g_protectCycle && (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
             && !(g_tick & 0xf) && g_musicOn && g_speakerOn) {
             old = g_protectPal[8];
             g_protectPal[8] = g_protectPal[7];

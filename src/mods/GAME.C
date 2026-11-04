@@ -24,6 +24,7 @@
 #include "MESSAGES.H"
 #include "MUSIC.H"
 #include "M_02B9A.H"
+#include "PC.H"
 #include "PERF.H"
 #include "POPUP.H"
 #include "RACE.H"
@@ -75,7 +76,7 @@ static int near start_game(void)
     g_demo = ag8bcet;
     if (by70e2 == 0) {
         disk_load_data();
-        if (r_vid.mode == -2)
+        if (r_vid.mode == VID_EGA)
             disk_cache_list(g_gamePics);
     }
     disk_load_list(g_gamePics, 1);
@@ -147,7 +148,7 @@ static int near read_paper(void)
     cursor_ctl(CURSOR_SHOW);
     r_vid.copyToFront = old;
     if (r_vid.copyToFront)
-        bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
+        bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), (SCREEN_BODY_HEIGHT - 1));
     cursor_ctl(1);
     return menu_wait(7);
 }
@@ -526,21 +527,21 @@ static void near buy_from_ads(int tab)
                 break;
             cursor_ctl(CURSOR_HIDE_NOW);
             marks_clear();
-            bm1 = F_1934E(0x140, 0x52, 0, ARENA_LOW_BASE);
-            popup_grab(0, 0x40, 0x140, 0x52, bm1);
+            bm1 = F_1934E(SCREEN_WIDTH, 0x52, 0, ARENA_LOW_BASE);
+            popup_grab(0, 0x40, SCREEN_WIDTH, 0x52, bm1);
             x_colors = bustyle->colors;
-            ck = (r_vid.mode == -2 || r_vid.mode == -6) ? g_carBg16[5] : g_carBg4[5];
-            screen_fill_rect(0, 0x41, 0x140, 0x46, ck);
-            screen_fill_rect(0, 0x87, 0x140, 0xa, x_colors.textBg);
-            if (r_vid.mode != -2 && r_vid.mode != -6) {
+            ck = (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) ? g_carBg16[5] : g_carBg4[5];
+            screen_fill_rect(0, 0x41, SCREEN_WIDTH, 0x46, ck);
+            screen_fill_rect(0, 0x87, SCREEN_WIDTH, 0xa, x_colors.textBg);
+            if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) {
                 sv = x_colors.line;
                 x_colors.line = 3;
                 draw_vline(r_vid.back, 0, 0x40, 0x52);
-                draw_vline(r_vid.back, 0x13f, 0x40, 0x52);
+                draw_vline(r_vid.back, (SCREEN_WIDTH - 1), 0x40, 0x52);
                 draw_vline(r_vid.front, 0, 0x40, 0x52);
-                draw_vline(r_vid.front, 0x13f, 0x40, 0x52);
-                screen_hline(0, 0x40, 0x140);
-                screen_hline(0, 0x91, 0x140);
+                draw_vline(r_vid.front, (SCREEN_WIDTH - 1), 0x40, 0x52);
+                screen_hline(0, 0x40, SCREEN_WIDTH);
+                screen_hline(0, 0x91, SCREEN_WIDTH);
                 x_colors.line = sv;
             }
             if (color == -1) {
@@ -550,7 +551,7 @@ static void near buy_from_ads(int tab)
             x1 = ((unsigned)specn - (unsigned)g7d86n) / 10;
             y = (((specn->parts >> 8) & 7) == 2) ? 8 : 0;
             F_181C8(7, x1, y, 0, 0, 0x86, 0, g_5030[(specn->parts >> 4) & 3]);
-            screen_text((0x140 - dash_text_width(g_offerName)) / 2, 0x88, g_offerName);
+            screen_text((SCREEN_WIDTH - dash_text_width(g_offerName)) / 2, 0x88, g_offerName);
             cursor_ctl(CURSOR_SHOW_NOW);
             g_anyInput = 1;
             menu_wait(0x18);

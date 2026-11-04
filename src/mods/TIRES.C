@@ -13,6 +13,7 @@
 #include "MARKS.H"
 #include "MEM.H"
 #include "MUSIC.H"
+#include "PC.H"
 #include "POPUP.H"
 #include "SCREEN.H"
 #include "SOUND.H"
@@ -117,7 +118,7 @@ static void near swap_wheel(int a, int *p, int *q)
     bitmap_copy(g_tireFrames[0], g_6df2a, 3);
     g_6ce6sz = g_tireFrames[0]->height - g_tireUnderPicPtr->height;
     bitmap_underlay(g_tireUnderPicPtr, g_tireFrames[0], g_6d3eaas, g_6ce6sz);
-    if (r_vid.mode == -2)
+    if (r_vid.mode == VID_EGA)
         (*dz78b6)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     g_6ce8rz.x1 = 0;
     g_6ce8rz.y1 = 0;
@@ -130,7 +131,7 @@ static void near swap_wheel(int a, int *p, int *q)
             *g_6df2a = *g_tireFrames[0];
         F_10AFD(3);
     }
-    if (r_vid.mode == -2)
+    if (r_vid.mode == VID_EGA)
         (*dz78b6)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     for (i = 1; i < 4; i++) {
         g_6da2 = (i * 2 + g_6d3eaas) & ~r_vid.mask;
@@ -151,7 +152,7 @@ static void near swap_wheel(int a, int *p, int *q)
         F_10AFD(2);
     sound_wheel_roll(0);
     marks_pop_low(6);
-    if (r_vid.mode == -2)
+    if (r_vid.mode == VID_EGA)
         (*dz78b6)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     g_tireFrames[0] = F_15BBE(*q, ARENA_LOW_STACK);
     g_6d3eaas = ((unsigned char)a & 7) >> 1;
@@ -179,7 +180,7 @@ static void near swap_wheel(int a, int *p, int *q)
     while ((*g78c6c)(g_6d3caat))
         F_10AFD(2);
     sound_wheel_roll(0);
-    if (r_vid.mode == -2)
+    if (r_vid.mode == VID_EGA)
         (*dz78b6)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     g_6ce8rz.x1 = 0;
     g_6ce8rz.y1 = 0;
@@ -231,8 +232,8 @@ void F_1B213(int *a, int *b)
     for (n = 0; n < 3; n++)
         g_liftPics[n] = F_15BBE(g_liftPicIds[n], ARENA_LOW_STACK);
     screen_fill_rect(0x88, 0xba - g_liftPics[1]->height, g_liftPics[1]->width, g_liftPics[1]->height,
-            (r_vid.mode != -2 && r_vid.mode != -6) ? g_carBg4[1] : g_carBg16[1]);
-    g_spriteBgY = (r_vid.mode == -6) ? 0x97 - g_liftPics[0]->height : 0;
+            (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? g_carBg4[1] : g_carBg16[1]);
+    g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x97 - g_liftPics[0]->height : 0;
     g_6d28agz = F_1934E(g_liftPics[1]->width, 0xba - g_spriteBgY, 0, ARENA_LOW_STACK);
     popup_grab(r_vid.mask & 0x88, g_spriteBgY, g_liftPics[1]->width, 0xba - g_spriteBgY, g_6d28agz);
     carpic_build(&g_liftCar, modelm, attr3, tinto, 0, 0, 0, 1);
@@ -268,7 +269,7 @@ void F_1B213(int *a, int *b)
     blt.dy = 0x99 - blt.h;
     (*b_78a2)(g_groundStripPointer, r_vid.back, &blt, 1);
     F_19438(2);
-    g_spriteBgY = (r_vid.mode == -6) ? 0x92 - g_liftCar->height : 0;
+    g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x92 - g_liftCar->height : 0;
     g_carLiftBackdrop = F_1934E(g_liftCar->width, 0x99 - g_spriteBgY, 1, ARENA_LOW_STACK);
     popup_grab(g_6da0, g_spriteBgY, g_liftCar->width, 0x99 - g_spriteBgY, g_carLiftBackdrop);
     dash_fmemset(g_carLiftBackdrop->alt.p, 0xff, g_carLiftBackdrop->planesize / r_vid.planes);
@@ -280,7 +281,7 @@ void F_1B213(int *a, int *b)
     (*ab78aat)(g_liftPics[0], g_carLiftBackdrop, &clip6, 1);
     (*b_78a2)(g_liftPics[0], g_carLiftBackdrop, &clip6, 2);
     g_columnBitmapPtr = F_15BBE(0x4c7, ARENA_HIGH_STACK);
-    g_spriteBgY = (r_vid.mode == -6) ? 0x76 : 0;
+    g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x76 : 0;
     pic = grab_wheel_column(g_wheelX2Value);
     dst = grab_wheel_column(g_6dd4);
     F_19438(1);
@@ -300,12 +301,12 @@ void F_1B213(int *a, int *b)
     blt.dx = 0x88;
     blt.dy = 0;
     (*ab78aat)(g_liftPics[2], g_6d24ajz, &blt, 1);
-    if (r_vid.mode == -2) {
+    if (r_vid.mode == VID_EGA) {
         g_6cd4oz = &g_6cf4wz;
-        mem_set_bitmap(g_6cd4oz, g_pageBmps[2]->bits.p, 0, g_liftCar->width, 200, -2);
-        mem_set_bitmap(g_wheelBuf, g_pageBmps[2]->bits.p + g_liftCar->pitch, 0, pic->width, 200, -2);
-        mem_set_bitmap(g_rollBuf, g_pageBmps[3]->bits.p, 0, 0x140, g_6d24ajz->height, -2);
-        mem_set_bitmap(g_jackBuf, g_pageBmps[3]->bits.p, 0, g_6d28agz->width, 200, -2);
+        mem_set_bitmap(g_6cd4oz, g_pageBmps[2]->bits.p, 0, g_liftCar->width, SCREEN_HEIGHT, VID_EGA);
+        mem_set_bitmap(g_wheelBuf, g_pageBmps[2]->bits.p + g_liftCar->pitch, 0, pic->width, SCREEN_HEIGHT, VID_EGA);
+        mem_set_bitmap(g_rollBuf, g_pageBmps[3]->bits.p, 0, SCREEN_WIDTH, g_6d24ajz->height, VID_EGA);
+        mem_set_bitmap(g_jackBuf, g_pageBmps[3]->bits.p, 0, g_6d28agz->width, SCREEN_HEIGHT, VID_EGA);
         blt.w = g_carLiftBackdrop->width;
         blt.h = g_liftCar->height + 4;
         blt.sx = blt.dx = 0;
@@ -323,7 +324,7 @@ void F_1B213(int *a, int *b)
         blt.h = g_liftPics[0]->height + 0x21;
         blt.sy = blt.dy = 0x99 - g_liftPics[0]->height;
         (*b_78a2)(g_6d28agz, g_jackBuf, &blt, 1);
-    } else if (r_vid.mode != -6) {
+    } else if (r_vid.mode != VID_TANDY) {
         g_6cd4oz = F_1934E(g_carLiftBackdrop->width, g_carLiftBackdrop->height, 0, ARENA_LOW_STACK);
         *g_wheelBuf = *pic;
         g_wheelBuf->bits.p = g_6cd4oz->bits.p;
@@ -335,20 +336,20 @@ void F_1B213(int *a, int *b)
         g_jackBuf->bits.p = g_6cd4oz->bits.p;
         g_jackBuf->alt.p = 0;
     }
-    g_spriteBgY = (r_vid.mode == -6) ? 0x97 - g_liftPics[0]->height : 0;
-    if (r_vid.mode == -2)
+    g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x97 - g_liftPics[0]->height : 0;
+    if (r_vid.mode == VID_EGA)
         (*dz78b6)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     g_6d3caat = sprite_setup(0x88, 0xb9, &g_liftPics[1], 0, 1, g_jackBuf, g_6d28agz, 0, 0);
     sprite_set_step(g_6d3caat, 0, 0x21, 0, -1);
     while ((*g78c6c)(g_6d3caat))
         F_10AFD(3);
     F_16381(1);
-    g_spriteBgY = (r_vid.mode == -6) ? 0x92 - g_liftCar->height : 0;
+    g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x92 - g_liftCar->height : 0;
     g_6cf0zz = F_15BBE(*a, ARENA_HIGH_STACK);
     bitmap_underlay(g_6cf0zz, g_liftCar, g_6dd4, ybot);
     bitmap_underlay(g_6cf0zz, g_liftCar, g_wheelX2Value, ybot);
     F_19438(1);
-    if (r_vid.mode == -2)
+    if (r_vid.mode == VID_EGA)
         (*dz78b6)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     g_6ce8rz.x1 = 0;
     g_6ce8rz.y1 = 0;
@@ -380,11 +381,11 @@ void F_1B213(int *a, int *b)
         (*b_78a2)(g_liftPics[frame], g_carLiftBackdrop, &clip6, 2);
     }
     sound_jack(0);
-    g_spriteBgY = (r_vid.mode == -6) ? 0x76 : 0;
+    g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x76 : 0;
     g_tireBackdrop = dst;
     swap_wheel(g_6da0 + g_6dd4, a, b);
     g_tireBackdrop = pic;
-    if (r_vid.mode == -2) {
+    if (r_vid.mode == VID_EGA) {
         blt.w = pic->width;
         blt.h = 0x23;
         blt.sx = blt.dx = 0;
@@ -397,10 +398,10 @@ void F_1B213(int *a, int *b)
     blt.sy = 0x9c - blt.h;
     blt.dy = 0;
     (*b_78a2)(r_vid.front, g_6d24ajz, &blt, 1);
-    if (r_vid.mode == -2)
+    if (r_vid.mode == VID_EGA)
         (*b_78a2)(r_vid.front, g_rollBuf, &blt, 1);
     swap_wheel(g_6da0 + g_wheelX2Value, a, b);
-    g_spriteBgY = (r_vid.mode == -6) ? 0x92 - g_liftCar->height : 0;
+    g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x92 - g_liftCar->height : 0;
     g_tireFrames[0] = F_15BBE(*b, ARENA_LOW_STACK);
     blt.w = g_liftCar->width;
     blt.h = g_tireFrames[0]->height;
@@ -409,7 +410,7 @@ void F_1B213(int *a, int *b)
     (*b_78a2)(g_vehicleBottomBmp, g_liftCar, &blt, 3);
     bitmap_underlay(g_tireFrames[0], g_liftCar, g_6dd4, ybot);
     bitmap_underlay(g_tireFrames[0], g_liftCar, g_wheelX2Value, ybot);
-    if (r_vid.mode == -2)
+    if (r_vid.mode == VID_EGA)
         (*dz78b6)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     frame = 2;
     rev = 1;
@@ -444,8 +445,8 @@ void F_1B213(int *a, int *b)
     }
     sound_jack(0);
     F_16381(0);
-    g_spriteBgY = (r_vid.mode == -6) ? 0x97 - g_liftPics[0]->height : 0;
-    if (r_vid.mode == -2)
+    g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x97 - g_liftPics[0]->height : 0;
+    if (r_vid.mode == VID_EGA)
         (*dz78b6)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
     g_6d3caat = sprite_setup(0x88, 0x99, &g_liftPics[1], 0, 1, g_jackBuf, g_6d28agz, 0, 0);
     sprite_set_step(g_6d3caat, 0, 0x21, 0, 1);

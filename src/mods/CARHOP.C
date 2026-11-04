@@ -10,6 +10,7 @@
 #include "MAIN.H"
 #include "MARKS.H"
 #include "MEM.H"
+#include "PC.H"
 #include "POPUP.H"
 #include "SPRITE.H"
 #include "SYS.H"
@@ -65,9 +66,9 @@ static void near grab_strip(struct Bitmap far **pbm)
     int w, x, h;
 
     disk_pic_size(0x474, &w, &h, &x);
-    mem_set_bitmap(*pbm, g_pageBmps[2]->bits.p + 0x46 * g_pageBmps[2]->pitch, 0L, w, h, r_vid.mode == -2 ? -2 : -1);
-    if (r_vid.mode == -2) {
-        egalatch_rect(r_vid.front->bits.p, (*pbm)->bits.p - 0xaa0, (*pbm)->pitch, (*pbm)->height, 0, 0x44, 0x28);
+    mem_set_bitmap(*pbm, g_pageBmps[2]->bits.p + BACKDROP_ROWS * g_pageBmps[2]->pitch, 0L, w, h, r_vid.mode == VID_EGA ? VID_EGA : -1);
+    if (r_vid.mode == VID_EGA) {
+        egalatch_rect(r_vid.front->bits.p, (*pbm)->bits.p - 0xaa0, (*pbm)->pitch, (*pbm)->height, 0, 0x44, EGA_PITCH);
     } else {
         popup_grab(0, 0x44, w, h, *pbm);
     }
@@ -177,7 +178,7 @@ void carhop_skate(int a, int b)
         (*ab78aat)(bm27, t, &r2, 0);
         carpic_patch_bg(t, 0, 0, t->width, 0x29, 0xc8, 0x44, 0xa3, 2);
     }
-    if (r_vid.mode != -2)
+    if (r_vid.mode != VID_EGA)
         (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
     marks_release();
 }
