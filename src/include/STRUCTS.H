@@ -230,11 +230,6 @@ struct Seq {
     signed char dy;
 };
 
-/* four movement steps of a sprite run (16 bytes), copied whole into a local */
-struct Steps {
-    struct Seq s[4];
-};
-
 /* one animation frame: 12 bytes, the ring links nxt[0..2] (F_195F3 builds g77bal[]) */
 struct Frame {
     struct Bitmap far *pos;
@@ -376,12 +371,6 @@ struct Pair {
     int b;
 };
 
-
-struct Strip {
-    int far **p;
-    char pad[12];
-    int mask;
-};
 
 struct Dlg {
     int f0;
@@ -620,15 +609,10 @@ struct Cell {
     unsigned char y;
 };
 
-/* the CGA text font (F_1C2CA): 4 header bytes, then 18-byte glyphs for ' '..'z': a width in half pixels and 8 rows of bits */
+/* one glyph of the CGA text font (F_1C2CA; 91 glyphs for ' '..'z' from 0ED2:0004): a width in half pixels and 8 rows of bits */
 struct CgaGlyph {
     unsigned w;
     unsigned rows[8];
-};
-
-struct CgaFont {
-    int hdr[2];
-    struct CgaGlyph g[0x5b];
 };
 
 /* DS:7EAA..7EC2: one COMMON block in the original (folded from 11 placeholder

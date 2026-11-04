@@ -15,7 +15,6 @@ PROGRESS = ROOT / "docs" / "PROGRESS.md"
 # Linear addresses in the unpacked load image.
 CODE_END = 0x2BEB0
 CRT = (0x1E160, 0x21960)
-EMULATOR = (0x2BEB0, 0x2E3E0)
 DGROUP_SEG = 0x3E96
 
 STATUSES = ("todo", "wip", "matched", "partial", "blocked", "skip")

@@ -54,8 +54,7 @@ extern char g_47ec;                                     /* DS:47EC */
 extern char g_47ed;                                     /* DS:47ED */
 extern int g_47ee;                                      /* DS:47EE */
 extern char g_47f0;                                     /* DS:47F0 */
-extern int g_47fe[3];                                   /* DS:47FE */
-extern int g_4804;                                      /* DS:4804 */
+extern char g_47fe[8];                                  /* DS:47FE */
 extern struct Item g_4806[];                            /* DS:4806 */
 extern int g_4966[];                                    /* DS:4966 */
 extern int g_496a;                                      /* DS:496A */

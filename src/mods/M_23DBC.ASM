@@ -233,24 +233,26 @@ _F_23F2E  PROC    NEAR
         ret
 _F_23F2E  ENDP
 
+; F_23F4D @ 21A0:254D (linear 0x23F4D, 26 bytes)
 ; EGA bit-plane reader. CX selects a bit, ES:SI addresses the pixel byte;
 ; DX is the graphics controller port. Returns the four-plane colour in BL.
-        PUBLIC _F_23F4D
-_F_23F4D PROC NEAR
-        mov ax,0304h
-        mov ch,1
-        shl ch,cl
-        xor bl,bl
+
+        PUBLIC  _F_23F4D
+_F_23F4D  PROC    NEAR
+        mov     ax,0304h
+        mov     ch,1
+        shl     ch,cl
+        xor     bl,bl
 plane:
-        out dx,ax
-        mov bh,es:[si]
-        and bh,ch
-        shr bh,cl
-        shl bl,1
-        or bl,bh
-        dec ah
-        jge plane
+        out     dx,ax
+        mov     bh,es:[si]
+        and     bh,ch
+        shr     bh,cl
+        shl     bl,1
+        or      bl,bh
+        dec     ah
+        jge     plane
         ret
-_F_23F4D ENDP
+_F_23F4D  ENDP
 
         END

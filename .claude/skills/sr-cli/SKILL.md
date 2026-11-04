@@ -26,7 +26,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 | `tools/sr/fileheaders.py` | per-file headers: owner of each global/function from its definition, one header per source file (`owners_layout`: the code files, the data-only files of src/mods in link order, then src/data), and the include blocks of the C sources (`./sr headers`) |
 | `tools/sr/layout.py` | the MSC 5.1 local-layout rule (`./sr layout`): bucket hash, block slot reuse, `/Ol` variant, rename suggestions |
 | `tools/sr/lint.py` | the CLAUDE.md rule 4 lint, plus missing-prototype warnings from `/W3` |
-| `tools/sr/dgroup.py` | `./sr dgroup`: original DGROUP ownership from positions (literal pools of the layout objects pin each unit; runs between pools go to referrers; `FORCE_OWNER`/`DATA_UNITS` for assembler data and data-only files), declaration slots, C/MASM definition text with symbolic pointers, insertion into the unit's file, `link_order` |
+| `tools/sr/dgroup.py` | `./sr dgroup`: original DGROUP ownership from positions (literal pools of the layout objects pin each unit; runs between pools go to referrers; `FORCE_OWNER`/`DATA_UNITS` for assembler data and data-only files), declaration slots, the C definition text of each item (`report`), `check_sources` (`./sr dgroup check`, the only consumer of ownership), `link_order` |
 | `tools/sr/datacheck.py` | a file's own `_DATA` against the original: base from the code's references, bytes, every data fixup resolved by symbol; `module.gate(..., con)` reports it (strict once the file defines data) |
 | `tools/sr/db.py` | SQLite schema and helpers; the `aliases` table (filled by `crtnames`) holds the extra library names of a function, and `refs` accepts any of them for a call |
 
@@ -112,9 +112,9 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
   from LINK's NE segment 2:4060: length + sum((byte|0x20) << (1-based-index&3)),
   low byte selects bucket. Bucket chains insert at head. Within a bucket the most
   recently created symbol (first EXTDEF/COMDEF/PUBDEF in link order) is allocated
-  first; blocks over one byte are word-aligned. COMMON is now C tentative definitions
-  only (src/link/GCOMMON.ASM is gone); renaming any of them can move the layout. Disassembly and 45-name
-  forward/reverse declaration probes are in work/binary-match; helper linkhash.py.
+  first; blocks over one byte are word-aligned. COMMON is C tentative definitions
+  only; renaming any of them can move the layout. The
+  hash is `tools/sr/linkhash.py`.
   Historical global names are unknown; do not confuse reconstructed placeholders
   with recovered names. Verify allocation with actual LINK output.
 - Multiple literal-pool bases in one object can indicate missing named
@@ -123,7 +123,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 ## DGROUP lessons (2026-11-04)
 
 - The analysis reads the freshest objects (`work/layout/BUILD/<file stem>/`), the `/Fc` listing for literal sizes (`"\0"` is two bytes) and the source definitions for array bounds: run `./sr build` before `./sr dgroup`. Definitions carry `/* DS:xxxx */`. The sources are the truth for data definitions: `./sr dgroup check` only verifies that each named item is defined in the file that owned it (since 2026-11-04 there is no writer; the old `apply --write` regenerated every definition from the model and reverted hand edits).
-- `aliases --write` deletes the alias rows: run it once. A later decl change that creates new overlaps needs a fresh run, and the run also removes `EXTRN` lines for the aliases in `.ASM` files (put the base's EXTRN before the first use when it only exists in a later `.DATA` block).
+- An overlapping DB name (an alias) is a view of its base: write it as `base[i]` (or a member) in the sources and delete its DB row; `./sr dgroup check` fails while one exists, and also when the layout holds a global the DB lacks (add it with `./sr global`). There is no writer (the old `aliases --write` / `register --write` are gone).
 - The DB is WAL-backed: restoring `db/sr.sqlite` from a backup needs `-wal`/`-shm` removed first.
 - An assembler unit's data goes into its one `.DATA` section, after its EXTRNs: `PUBLIC  _name` then `_name DW ...` (the label typed by its first element), several values per line, text as quoted strings, `n DUP (v)` for runs, `EVEN` for an alignment byte (MASM 5.1 pads with 00h in data, 90h in code). DUP becomes LIDATA, which omf.py expands. `./sr dgroup check` recognises a MASM definition as `PUBLIC _x` plus a `_x LABEL|DB|DW|DD|DQ` line.
 

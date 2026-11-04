@@ -6,7 +6,6 @@ descent didn't reach (functions only called through pointers or jump tables).
 """
 
 import re
-import struct
 
 from . import config
 from .disasm import branch_target, decode
@@ -107,10 +106,10 @@ def scan():
                     covered[a + k] = start
 
     def segof(a):
-        for s in segl:
-            if s * 16 <= a < s * 16 + 0x10000:
-                return s
-        return None
+        # The code segment that contains a: the nearest segment base below it. A routine
+        # found without a far caller (prologue or gap search) gets that segment.
+        below = [s for s in segl if s * 16 <= a]
+        return max(below) if below else None
 
     descend(list(entries))
     descend(list(weak - entries))
@@ -134,6 +133,7 @@ def scan():
                      for a, f in funcs.items())
     for (_, lo, seg), (hi, _, _) in zip(extents, extents[1:]):
         if lo < hi:
+            seg = segof(lo)
             descend([(seg, a - seg * 16) for a in gap_entries(img, lo, hi, seg)])
 
     rows = []
@@ -238,12 +238,9 @@ def classify(start, insns):
     return "c" if fp >= 2 else "asm"
 
 
+
 def far_call_operand(im, ins):
     """Linear target of a relocated `call far` instruction, else None."""
     if ins.bytes[0] == 0x9A and ins.addr + 3 in im.reloc_pos:
         return im.word(ins.addr + 3) * 16 + im.word(ins.addr + 1)
     return None
-
-
-def unpack_word(b, i):
-    return struct.unpack("<H", b[i : i + 2])[0]

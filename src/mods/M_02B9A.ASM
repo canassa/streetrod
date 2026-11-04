@@ -111,9 +111,7 @@ _g_47ee DW      0                        ; DS:47EE int
 _g_47f0 DB      0                        ; DS:47F0 char
 S_47f1  DB      '`Bankroll:`$', 0        ; DS:47F1 string
         PUBLIC  _g_47fe
-_g_47fe DW      4720h, 6165h, 3A72h      ; DS:47FE int[3]
-        PUBLIC  _g_4804
-_g_4804 DW      20h                      ; DS:4804 int
+_g_47fe DB      ' Gear: ', 0             ; DS:47FE char[]
         PUBLIC  _g_4806
 _g_4806 DW      13h                      ; DS:4806 struct Item[]
         DB      0, 1, 0, 0

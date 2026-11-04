@@ -100,13 +100,6 @@ def update(con, addr, **fields):
     con.commit()
 
 
-def names_at(con, addr):
-    """Every name a call to this address may use: the DB name plus library aliases."""
-    names = {label(con, addr)}
-    names.update(r[0] for r in con.execute("SELECT name FROM aliases WHERE addr = ?", (addr,)))
-    return names
-
-
 def label(con, addr):
     row = con.execute("SELECT name FROM functions WHERE addr = ?", (addr,)).fetchone()
     if row and row["name"]:

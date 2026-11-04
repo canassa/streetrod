@@ -15,7 +15,6 @@ expanded as `$(NAME)`, `target: dependencies` with `\\` continuation lines, and 
 that start with white space. A C object's command is `$(CC) <its flags> [/NT<segment>]
 <source>`; a MASM object's is `$(ASM) <its flags> <source>,<obj>,<lst>;`.
 """
-import os
 import re
 from pathlib import Path
 

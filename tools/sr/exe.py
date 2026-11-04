@@ -23,14 +23,6 @@ class Image:
     def word(self, a):
         return struct.unpack("<H", self.img[a : a + 2])[0]
 
-    def far_call_targets(self):
-        """(seg, off) of every `call far seg:off` whose segment word is relocated."""
-        out = set()
-        for p in self.relocs:
-            if self.img[p - 3] == 0x9A:
-                out.add((self.word(p), self.word(p - 2)))
-        return out
-
     def dgroup_string(self, off, minlen=3):
         """The NUL-terminated string at DS:off, or None if it doesn't look like text."""
         base = config.DGROUP_SEG * 16 + off

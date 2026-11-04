@@ -122,14 +122,7 @@ _g_28ec DB      'Wanna quit ?', 0        ; DS:28EC char[]
         PUBLIC  _g_28f9
 _g_28f9 DB      'Back to the garage', 0  ; DS:28F9 char[]
         PUBLIC  _g_290c
-_g_290c DB      43h                      ; DS:290C char
-        PUBLIC  _g_290d
-_g_290d DB      6Ch                      ; DS:290D char
-; DS:290E int[8]
-        PUBLIC  _g_290e
-_g_290e DW      6369h, 206Bh, 6568h, 6572h, 7420h, 206Fh, 6465h, 7469h
-        PUBLIC  _g_291e
-_g_291e DB      0                        ; DS:291E char
+_g_290c DB      'Click here to edit', 0  ; DS:290C char[]
         PUBLIC  _g_291f
 _g_291f DB      31 DUP (0)               ; DS:291F char[]
         PUBLIC  _g_293e

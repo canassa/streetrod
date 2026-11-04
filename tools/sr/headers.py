@@ -12,9 +12,6 @@ _dry = None     # {path: new bytes, or None for a deletion} while checking
 
 
 def generate(con, rewrite_sources=False):
-    inc = config.INCLUDE
-    inc.mkdir(parents=True, exist_ok=True)
-
     from . import fileheaders
     missing = fileheaders.generate(con, rewrite_sources=rewrite_sources)
     if missing:
@@ -24,12 +21,10 @@ def generate(con, rewrite_sources=False):
     from . import makefile
     makefile.sync_deps()
 
-    structs = inc / "STRUCTS.H"
-    if structs.exists():
-        text = structs.read_text(errors="replace")
-        if text.rstrip().rsplit("\n", 1)[-1].strip() != "#endif":
-            raise SystemExit("src/include/STRUCTS.H: something was added after the closing #endif; "
-                             "move it inside the include guard")
+    text = (config.INCLUDE / "STRUCTS.H").read_text(errors="replace")
+    if text.rstrip().rsplit("\n", 1)[-1].strip() != "#endif":
+        raise SystemExit("src/include/STRUCTS.H: something was added after the closing #endif; "
+                         "move it inside the include guard")
 
 
 def check(con):

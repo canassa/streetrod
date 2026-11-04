@@ -10,7 +10,6 @@ from . import config
 from .headers import _remove, _write
 
 _BANNER = "/* {name} - declarations of what {owner} defines. */\n"
-_INC = re.compile(r'^#include\s+"(GLOBALS|PROTOS|STRUCTS)\.H"\s*$|^#include\s+"[A-Z0-9_]+\.H"\s*/\*\s*file\s*\*/\s*$', re.M)
 _KEEP = {'STRUCTS'}
 # runtime variables the game reads directly; MSC's own headers declare them
 _SYSTEM = {'errno': 'stdlib.h', '_doserrno': 'stdlib.h', '_amblksiz': 'malloc.h'}
