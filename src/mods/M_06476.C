@@ -787,8 +787,7 @@ void F_079EB(void)
 
 void near F_07AA4(void)
 {
-    int n;
-    int flags[2];
+    int flags[3];   /* by key 1, 2; flags[0] is the original's unused 2-byte slot below flags[1] */
     char buf[142];
     int prev;
     struct Car *owner;
@@ -802,9 +801,9 @@ void near F_07AA4(void)
     }
     for (k = 0; k < 2; k++) {
         if (prev = owner->b14[k])
-            flags[k] = prev == 1 ? 1 : 2;
+            flags[k + 1] = prev == 1 ? 1 : 2;
         else
-            flags[k] = 0;
+            flags[k + 1] = 0;
         g_1804[k].f0 = 11;
     }
     m_8272.m8286 = owner->slot6 ? g_49d2[((struct Row8 *)((char *)g_4806 + 2))[owner->slot6->idx].kind] : 0;
@@ -852,7 +851,7 @@ void near F_07AA4(void)
                     F_16B97();
                     g_05fc += 0x666L;
                     for (k = 2; k--;) {
-                        flags[k] = 1;
+                        flags[k + 1] = 1;
                         F_123F4(owner->b14[k] = 1, k);
                         F_16B61();
                         g_1804[k].f0 = 11;
@@ -872,9 +871,9 @@ void near F_07AA4(void)
         case 2:
             if (m_8272.m8286 == 0)
                 break;
-            if (flags[k-- - 1] == 2) {
+            if (flags[k--] == 2) {
                 if (--owner->b14[k] <= 1) {
-                    flags[k] = owner->b14[k] = 0;
+                    flags[k + 1] = owner->b14[k] = 0;
                     F_12525(k);
                     F_16B61();
                     F_00D78();
@@ -882,7 +881,7 @@ void near F_07AA4(void)
                     F_123F4(owner->b14[k], k);
                     F_16CF3();
                 }
-                if (flags[0] || flags[1])
+                if (flags[1] || flags[2])
                     break;
                 F_12784(m_8272.m8286, 0);
                 g_05fc += 0x666L;
@@ -890,9 +889,9 @@ void near F_07AA4(void)
                 owner->b14[0] = owner->b14[1] = 0;
                 F_07789(&owner->slot6);
                 F_00D78();
-            } else if (flags[k] == 1) {
+            } else if (flags[k + 1] == 1) {
                 if (owner->b14[k] == 3) {
-                    flags[k] = 2;
+                    flags[k + 1] = 2;
                     break;
                 }
                 F_123F4(++owner->b14[k], k);
@@ -902,7 +901,7 @@ void near F_07AA4(void)
                 F_123F4(owner->b14[k] = 1, k);
                 F_16B61();
                 F_120FE(-2);
-                flags[k] = 1;
+                flags[k + 1] = 1;
             }
             break;
         }

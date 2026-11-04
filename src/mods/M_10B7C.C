@@ -312,7 +312,7 @@ int F_11213(struct Obj *o, struct Cmd *c)
             return 0;
         }
         if (g_6c3ea--) {
-            int t1, t2, t3;
+            struct Colors save;     /* PROVISIONAL: never used; fills the 6-byte frame slot (original local unknown) */
             old = x_colors.c[3];
             x_colors.c[3] = (g_6c3ea & 1) ? 4 : 0;
             F_1377F(r_vid.back, 0x33, 0x6f, 2);

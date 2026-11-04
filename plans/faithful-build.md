@@ -32,7 +32,13 @@ it gets there through the steps below.
 ## Not hacks, but not original either (document, cannot be recovered)
 
 - Names: globals, statics, far storage, struct members, file names, segment names. Many are constrained by LINK's and MSC's hash orders; they are placeholders that reproduce the layout.
-- PROVISIONAL source: the two unreachable far accesses (`x_trk0`/`x_trk1`, M_0F38A.C), the filler `g_6c42`, the evidence-only structs (`State70C0`, `State7D2E`, `State7E8A`).
+- PROVISIONAL source (each marked in the source; reproduces an artifact, the original text is unknown):
+  - M_0F38A.C F_0F4B7/F_0F62E: two unreachable far accesses (`return; { extern char far x_trk0[][2]; ... }`, `x_trk1`) for two SEG constants in CONST (DS:68E6, DS:68E8) nothing reads; EQUs in TRACKPTS.ASM; the only block-scope `extern`s lint allows.
+  - M_10B7C.C F_11213: an unreferenced inner-block `struct Colors save` (6-byte frame slot) and the dead store `old = x_colors.c[3]`.
+  - M_113A2.C F_118D4, M_123F4.C F_12A17/F_12DD8/F_12F99: `long unused`, a 4-byte frame slot above the `struct Blt` local.
+  - M_06476.C F_07AA4: `int flags[3]` indexed by key (1, 2), whose never-touched `flags[0]` is the 2-byte frame slot (an interpretation: it replaced an unreferenced `int n`; consistent with `flags[k--]`, not proven).
+  - M_238A2.C: the braced `GCREG`/`SEQREG` register-write macros (F_23C3B needs the block boundary after `GCREG(5, 0)`; the macro names and their use elsewhere in the file are a reconstruction).
+  - The filler `g_6c42`; the evidence-only structs (`State70C0`, `State7D2E`, `State7E8A`).
 - Data files (`src/data/*.ASM`, MESSAGES.ASM, CARMASK*.C, HOTSPOT.C): the assets as source records. Their original form is unknown (could have been converter output); the records are a fair form.
 - emu2 runs the compiler and assembler instead of DOS. It is proven byte-identical to DOSBox-X on every source; the final build should run in DOSBox-X end to end anyway.
 

@@ -101,7 +101,9 @@ void F_0F4B7(int i, int *x1, int *y1, int *x2, int *y2)
     /* PROVISIONAL: the original CONST holds two more SEG constants for the track segment
        (DS:68E6 with this function's, DS:68E8 later) that no instruction reads: MSC leaves
        them behind for unreachable far accesses to two other far symbols. The statements and
-       symbol names are not recoverable; these keep the bytes and the relocation order. */
+       symbol names are not recoverable; these keep the bytes and the relocation order. The
+       block-scope extern is part of that provisional text (rule 4: tools/sr/lint.py excepts
+       exactly these two declarations; the symbols are EQUs in TRACKPTS.ASM). */
     return;
     { extern char far x_trk0[][2]; *x1 = x_trk0[i][0]; }
 }

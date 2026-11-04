@@ -841,7 +841,6 @@ static void near F_0A544(void)
     blt.dx = g_526a[0].x - 0x50;
     blt.dy = 0x2c - g_526a[0].h;
     (*ab78aat)(pic3, pic15, &blt, 1);
-    { }
     blt.w = p3->w;
     blt.h = p3->h;
     blt.sx = p3->x - 0x50;
