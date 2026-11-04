@@ -5,6 +5,8 @@ description: Recipe book for byte-matching Microsoft C 5.1 (medium model) codege
 
 # MSC 5.1 recipe book
 
+`work/...` paths below cite scratch experiments that were not kept (work/ is not in git); the rule stated in each row is the reproducible part.
+
 Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in the source, sometimes a flag (once per module), and never "the compiler".
 
 ## Fingerprints: this is MSC 5.1 C

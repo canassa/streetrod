@@ -6,8 +6,21 @@ LIB 3.11 / LINK 5.01 on them (under DOSBox-X, unmodified binaries) produces `ori
 Nothing between the files in git and the tools may rewrite text, extract library members or
 choose link order outside the response file.
 
-Assessment of 2026-11-04 (after aa49a8d). `./sr build --layout` is IDENTICAL today, but
-it gets there through the steps below.
+**Status (2026-11-04): done.** `src/` holds one source file per original object, the
+checked-in `src/MAKEFILE` (MAKE 4.07) and `src/SR.LNK`. `MAKE MAKEFILE` in DOSBox-X
+(`./dosbox.sh --make`) and the host build (`./sr build`, the same commands under emu2 and
+DOSBox-X) both produce `orig/SR.EXE` byte for byte. Nothing rewrites a file between git and
+the tools. Data definitions live in the sources (`./sr dgroup check` only verifies them),
+and the headers are source (`./sr headers --check`). What the tree contains beyond the
+recovered facts is listed in [docs/RECONSTRUCTION.md](../docs/RECONSTRUCTION.md).
+
+Nothing in the build remains to be done. What is still open is the reconstruction itself:
+real names, the record structure of HOTSPOT.C's flattened tables, the original text behind
+the PROVISIONAL dummies, and the remaining compiler warnings that need struct retyping
+(C4047). None of it is needed for the identical build.
+
+The rest of this file records how the build got there (the assessment of 2026-11-04,
+after aa49a8d, with each step's resolution).
 
 ## What the current build does that the developers did not
 
@@ -29,24 +42,17 @@ it gets there through the steps below.
 - The legacy `./sr build` (work/game: four renamed code segments, public near definitions in staging copies, 55 unresolved symbols) and the README section that presents it as the build. `src/data/SLOTS.ASM` (unused; SLOTS.C is linked).
 - ~~`LAYOUT.JSON`~~: **gone** (2026-11-04). The units' spans are the DB functions' `src`, flags and segments are MAKEFILE lines, `code_starts` follows from the segment names, the link order is SR.LNK, the data-only files' DGROUP ranges and the order evidence are `dgroup.DATA_UNITS` / `ORDER_HINTS` (analysis, not build input). The host build runs the MAKEFILE's commands as written (emu2 for CL/MASM/LIB, DOSBox-X for LINK); `./dosbox.sh --make` runs MAKE itself in DOSBox-X.
 
-## Not hacks, but not original either (document, cannot be recovered)
+## Not hacks, but not original either
 
-- Names: globals, statics, far storage, struct members, file names, segment names. Many are constrained by LINK's and MSC's hash orders; they are placeholders that reproduce the layout.
-- PROVISIONAL source (each marked in the source; reproduces an artifact, the original text is unknown):
-  - M_0F38A.C F_0F4B7/F_0F62E: two unreachable far accesses (`return; { extern char far x_trk0[][2]; ... }`, `x_trk1`) for two SEG constants in CONST (DS:68E6, DS:68E8) nothing reads; EQUs in TRACKPTS.ASM; the only block-scope `extern`s lint allows.
-  - M_10B7C.C F_11213: an unreferenced inner-block `struct Colors save` (6-byte frame slot) and the dead store `old = x_colors.c[3]`.
-  - M_113A2.C F_118D4, M_123F4.C F_12A17/F_12DD8/F_12F99: `long unused`, a 4-byte frame slot above the `struct Blt` local.
-  - M_06476.C F_07AA4: `int flags[3]` indexed by key (1, 2), whose never-touched `flags[0]` is the 2-byte frame slot (an interpretation: it replaced an unreferenced `int n`; consistent with `flags[k--]`, not proven).
-  - M_238A2.C: the braced `GCREG`/`SEQREG` register-write macros (F_23C3B needs the block boundary after `GCREG(5, 0)`; the macro names and their use elsewhere in the file are a reconstruction).
-  - The filler `g_6c42`; the evidence-only structs (`State70C0`, `State7D2E`, `State7E8A`).
-- Data files (`src/data/*.ASM`, MESSAGES.ASM, CARMASK*.C, HOTSPOT.C): the assets as source records. Their original form is unknown (could have been converter output); the records are a fair form.
-- emu2 runs the compiler and assembler instead of DOS. It is proven byte-identical to DOSBox-X on every source, and `./dosbox.sh --make` runs the whole MAKEFILE in DOSBox-X (IDENTICAL).
+Moved to [docs/RECONSTRUCTION.md](../docs/RECONSTRUCTION.md), which lists every
+reconstruction choice with its evidence and limits.
 
 ## Order of work
 
 1. ~~MLIBCE: build it with LIB in the build, link with the default library, delete the extracted-member machinery and the `runtime`/`emulator` plan.~~ Done.
 2. CRTORDER: done (M_21962.ASM is small model; see item 2).
-3. Source fixes that do not need the merge: `main`, CRT.H, non-static near functions with header prototypes (done); loop pragmas are done (explicit `#pragma loop_opt` in M_01BAE.C, M_03C8D.C, M_2382D.C).
+3. Source fixes that do not need the merge: `main`, CRT.H, non-static near functions with header prototypes (done); loop pragmas are done (explicit `#pragma loop_opt`, now in M_00D58.C, M_039C0.C, M_23262.C).
 4. ~~Merge each unit into one real file (C and asm), with its own segment directive and pragmas; switch `./sr check` to unit compiles; delete STB, merge/split.~~ Done (2026-11-04).
 5. ~~Check in MAKEFILE + LINK.RSP (+ the LIB step); the build is `MAKE` under DOSBox-X; retire the legacy build, LAYOUT.JSON, SLOTS.ASM; update README/CLAUDE.md.~~ Done (2026-11-04): `src/MAKEFILE` + `src/SR.LNK`; `./sr build` runs their commands and needs neither the DB nor orig/ for the build part; headers in git are source (`./sr headers --check`).
-6. Repair `work/dg/run.sh` / `./sr dgroup apply` or retire it once the data lives in final files. Since the merge it works on whole files and no longer adds blank lines to `.ASM`, but `apply all --write` still alternates `g_4fa6` between M_0542E.C and M_039C0.C (different units) depending on the objects of the previous build; both placements build IDENTICAL and match 572/572.
+6. ~~Repair or retire `./sr dgroup apply`.~~ Done (2026-11-04): the sources are the truth for data; `apply`, `asm`, `register --write` and `aliases --write` are gone, and `./sr dgroup check` verifies ownership, alias views and DB coverage without writing.
+7. ~~Final cleanup: unused structs, stale DB notes, dead tool code, scratch-script references in the docs, the reconstruction list.~~ Done (2026-11-04).

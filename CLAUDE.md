@@ -48,8 +48,7 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 ./sr status                    # summary + regenerate docs/PROGRESS.md
 ./sr dgroup report [lo hi]     # original DGROUP: owner unit, declaration slot and C definition of every item
 ./sr dgroup problems           # named strings used as literals, aliases, untyped tables, fallbacks
-./sr dgroup check              # every initialized global defined in the file that owned it (exit 1 if not)
-./sr dgroup aliases --write    # rewrite overlapping DB views as base[i]; `register --write` adds recovered globals
+./sr dgroup check              # every initialized global defined in the file that owned it, no DB alias views, no layout global the DB lacks (exit 1 if not)
 ./sr dgroup order              # the link order recovered from DGROUP and ORDER_HINTS; exit 1 unless src/SR.LNK agrees
 ./sr module units [-v]         # candidate same-file spans from near-call evidence
 ```
@@ -210,5 +209,6 @@ Never redirect a DOS program's output to a file without a timeout and a size bou
 | `tools/sr/` | The CLI |
 | `db/sr.sqlite` | Functions, callees, named globals |
 | `docs/PROGRESS.md` | Generated progress report |
+| `docs/RECONSTRUCTION.md` | What in the tree is a reconstruction choice, not recovered fact; update it when adding one |
 | `plans/diary.md` | Captain's log |
-| `work/` | Scratch output (ignored). `work/op/tryv.sh ADDR V.C...` checks variants and restores the source, `work/op/diffv.sh ADDR V.C [--full]` diffs one, `work/op/regions.py` prints a diff as address ranges; `work/bp/x2.py DIR FLAGS` lists small test functions (`T*.C`, 8.3 names) |
+| `work/` | Scratch output (ignored). Nothing in it is needed to reproduce a documented result; `work/...` paths in DB notes and the recipe book name experiments that were not kept. To try a source variant, edit the file, `./sr check` / `./sr diff` the function, then `git checkout` the file; small test functions are compiled with `tools/sr/dosbox.py` jobs (`Job(path, flags, name)`, `compile_all`) |
