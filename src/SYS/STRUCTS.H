@@ -125,9 +125,24 @@ union Word {
     unsigned char b[2];
 };
 
+enum ToneSlot {
+    TONE_END = -1,
+    TONE_PROGRAMMABLE = 0,
+    TONE_PLAIN = 1,
+    TONE_LIGHT_VIBRATO = 2,
+    TONE_WIDE_VIBRATO = 3,
+    TONE_TRILL = 4
+};
+
+enum Waveform {
+    WAVE_TRIANGLE = 0,
+    WAVE_SAWTOOTH = 1,
+    WAVE_PULSE = 2
+};
+
 struct Tone {
     int phase;
-    int waveform;
+    enum Waveform waveform;
     int depth;
     int length;
     int delay;
@@ -284,8 +299,8 @@ struct Dev {
     int far *cur;
     int *repeatTable;
     int *repeatCursor;
-    int *toneTable;
-    int *toneCursor;
+    enum ToneSlot *toneTable;
+    enum ToneSlot *toneCursor;
 };
 
 enum HotKind {

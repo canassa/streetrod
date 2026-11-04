@@ -1750,3 +1750,38 @@ followed by `./sr build` (96/96 objects, 572/572 function positions and bytes,
 `nix-shell shell.nix --run "python3 -m unittest discover -s tests"`
 (68 tests, OK). The clean build removed every probe and compiled experiment;
 the matrices above preserve their forms and results. No work/ files are committed.
+
+## 2026-11-04 22:49 CET: Tone slots and waveforms
+
+### What I did
+
+Verified the MUSIC/SOUND tables with `./sr data` and the setter, its five callers,
+and music ISR with `./sr show`. Added ToneSlot for the programmable, plain,
+light/wide vibrato and trill slots and the tone-list end marker. Added Waveform
+for the triangle, sawtooth and pulse rows. Applied the enums to the waveform
+member/parameter, tone-list arrays and their Dev pointers, and replaced the
+corresponding literals in initializers and calls. Renamed mu_set_vibrato's four
+parameters to waveform, length, depth and delay. Removed its redundant description;
+no new source comments were added and address comments were preserved.
+
+Named 13 items (six tone constants, three waveform constants, four parameters).
+Kept F_16943 and F_16A2F unchanged: source references and disassembly reveal no
+callers or triggering events. Recorded individual evidence and both skips in
+work/LEDGER.md. No external/global identifiers changed, so communal/static name
+hashes and external-symbol name budgets needed no candidate spelling changes.
+
+All gates passed: headers --check; check --all (572/572: 551 MATCH, 21 MATCH*);
+rm -rf work followed by sr build (Packed EXE vs orig/SR.EXE: IDENTICAL,
+572/572 functions at original positions and 748/748 exact near calls);
+dgroup check and order; all 68 unit tests; and dosbox.sh --make
+(DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL).
+
+### What I learned
+
+The third waveform's full row is a single positive pulse, not an eight-sample
+square wave. The trill slot selects only its first two samples, alternating the
+base divisor with a larger divisor (lower pitch). The light and wide triangle
+slots differ only in depth (4 versus 6). MSC 5.1 keeps the enum fields, lists and
+parameters byte-identical to their int counterparts throughout both builds.
+The tone-list -1 words are trailing markers in the original data; the ISR resets
+the tone cursor when the repeat-list terminator is reached.

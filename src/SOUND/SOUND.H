@@ -6,8 +6,8 @@
 
 extern int g_songRepeats[];                             /* DS:5858 */
 extern char g_jingleRepeats[];                          /* DS:587E */
-extern int g_songTones[];                               /* DS:5882 */
-extern int g_jingleTones[];                             /* DS:58CC */
+extern enum ToneSlot g_songTones[];                               /* DS:5882 */
+extern enum ToneSlot g_jingleTones[];                             /* DS:58CC */
 extern int g_musicOn;                                   /* DS:58D0 */
 extern struct Dev *g_voice;                             /* DS:58D2 */
 extern int g_voiceNum;                                  /* DS:58D4 */

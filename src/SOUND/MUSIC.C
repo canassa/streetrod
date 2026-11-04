@@ -7,7 +7,7 @@
 #include "SYS.H"
 
 int g_toneShapes[3][8] = {{0, 1, 2, 1, 0, -1, -2, -1}, {0, 1, 2, 3, 4, 5, 6, 7}, {0, 1, 0, 0, 0, 0, 0, 0}};   /* DS:57F6 */
-struct Tone g_tones[5] = {{0, 0, 0, 0, 0}, {0, 0, 0, 8, 10}, {0, 0, 4, 8, 1}, {0, 0, 6, 8, 1}, {0, 2, 5, 2, 1}};   /* DS:5826 */
+struct Tone g_tones[5] = {{0, WAVE_TRIANGLE, 0, 0, 0}, {0, WAVE_TRIANGLE, 0, 8, 10}, {0, WAVE_TRIANGLE, 4, 8, 1}, {0, WAVE_TRIANGLE, 6, 8, 1}, {0, WAVE_PULSE, 5, 2, 1}};   /* DS:5826 */
 
 /* mu_play @ 0F38:6F0A (linear 0x1628A, 179 bytes)
 
@@ -43,18 +43,16 @@ void mu_play(void far *song, void *tones)
     }
 }
 
-/* mu_set_vibrato @ 0F38:6FBD (linear 0x1633D, 47 bytes)
+/* mu_set_vibrato @ 0F38:6FBD (linear 0x1633D, 47 bytes) */
 
-   If on, fill the first entry of the sound table; g_vibratoActive = on either way */
-
-void mu_set_vibrato(int on, int a, int b, int c, int d)
+void mu_set_vibrato(int on, enum Waveform waveform, int length, int depth, int delay)
 {
     if (on) {
-        g_tones[0].phase = 0;
-        g_tones[0].waveform = a;
-        g_tones[0].depth = c;
-        g_tones[0].length = b;
-        g_tones[0].delay = d;
+        g_tones[TONE_PROGRAMMABLE].phase = 0;
+        g_tones[TONE_PROGRAMMABLE].waveform = waveform;
+        g_tones[TONE_PROGRAMMABLE].depth = depth;
+        g_tones[TONE_PROGRAMMABLE].length = length;
+        g_tones[TONE_PROGRAMMABLE].delay = delay;
     }
     g_vibratoActive = on;
 }
