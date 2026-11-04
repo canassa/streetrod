@@ -16,6 +16,11 @@ static void near F_03C3E(struct Node *p7);
 /* F_03C8D @ 0000:3C8D (linear 0x03C8D, 804 bytes) */
 
 
+/* The file is compiled /Oalsi, but the loops of F_03C8D are plain /Ol-off
+   loops in the shipped code (list counters and pointers kept in memory, test
+   reached by a jmp). No for/while/do formulation reproduces that under /Ol,
+   so loop optimization is switched off for this function only. */
+#pragma loop_opt(off)
 
 static void near F_03C8D(void)
 {
@@ -103,3 +108,5 @@ static void near F_03C8D(void)
         F_11540(price1);
     }
 }
+
+#pragma loop_opt(on)
