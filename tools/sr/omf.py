@@ -128,13 +128,41 @@ class Obj:
                     buf.extend(b"\0" * (off + len(body) - len(buf)))
                 buf[off : off + len(body)] = body
                 last = (seg, off)
+            elif t == 0xA2:  # LIDATA (MASM DUP): expanded into the segment's bytes
+                seg, k = self._index(rec, 0)
+                off = struct.unpack("<H", rec[k : k + 2])[0]
+                body, k = bytearray(), k + 2
+                while k < len(rec):
+                    part, k = self._iterated(rec, k)
+                    body += part
+                buf = self.data.setdefault(seg, bytearray())
+                if len(buf) < off + len(body):
+                    buf.extend(b"\0" * (off + len(body) - len(buf)))
+                buf[off : off + len(body)] = body
             elif t == 0x9C:
+                # fixups of a LIDATA template (runtime library objects) are not recorded
                 self._fixupp(rec, last, threads)
             if t not in (0x9C, 0xA0):
                 last = None
             if t == 0x8A:
                 break
             i += 3 + n
+
+    @staticmethod
+    def _iterated(rec, k):
+        """One LIDATA data block (16-bit form): repeat count, block count, then the content
+        (a counted byte string, or that many nested blocks)."""
+        repeat, blocks = struct.unpack("<HH", rec[k : k + 4])
+        k += 4
+        if blocks == 0:
+            content = bytes(rec[k + 1 : k + 1 + rec[k]])
+            k += 1 + rec[k]
+        else:
+            content = bytearray()
+            for _ in range(blocks):
+                part, k = Obj._iterated(rec, k)
+                content += part
+        return bytes(content) * repeat, k
 
     def _fixupp(self, rec, last, threads):
         k = 0

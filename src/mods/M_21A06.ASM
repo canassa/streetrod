@@ -1,22 +1,25 @@
         .MODEL MEDIUM
 
+        .DATA
+        EXTRN   _g_0254:WORD
+
+        .CODE S21A0_TEXT
+
 ; F_21A06 @ 21A0:0006 (linear 0x21A06, 14 bytes)
 ; Wait for the start of vertical retrace on the CRT status port 3DAh:
 ; first until the display is not in the middle of a retrace, then until bit 3 sets.
 
-        .CODE S21A0_TEXT
-
         PUBLIC  _F_21A06
 _F_21A06  PROC    FAR
         mov     dx,3DAh
-L21A06_wait1:
+wait1a:
         in      al,dx
         test    al,1
-        jne     L21A06_wait1
-L21A06_wait2:
+        jne     wait1a
+wait2a:
         in      al,dx
         test    al,8
-        je      L21A06_wait2
+        je      wait2a
         ret
 _F_21A06  ENDP
 
@@ -25,13 +28,8 @@ _F_21A06  ENDP
 ; retrace. The CRTC base port comes from the BIOS data area (0040:0063).
 ; A line value of -1 means the bottom of the screen (1FFh, or 3FFh when
 ; g_0254 is set). With g_0254 clear only the plain VGA bits are used; otherwise
-; the extra overflow bits live in registers 7 and 9 and the value is L21A14_biased.
+; the extra overflow bits live in registers 7 and 9 and the value is biased.
 ; F_21A14(line)
-
-        .DATA
-        EXTRN   _g_0254:WORD
-
-        .CODE S21A0_TEXT
 
         PUBLIC  _F_21A14
 _F_21A14  PROC    FAR
@@ -41,28 +39,28 @@ _F_21A14  PROC    FAR
         mov     es,ax
         mov     dx,es:[63h]
         add     dl,6
-L21A14_wait1:
+wait1b:
         in      al,dx
         test    al,8
-        jne     L21A14_wait1
-L21A14_wait2:
+        jne     wait1b
+wait2b:
         in      al,dx
         test    al,8
-        je      L21A14_wait2
+        je      wait2b
         sub     dl,6
         mov     ax,[bp+6]
         cmp     ax,0FFFFh
-        jne     L21A14_have
+        jne     have
         cmp     _g_0254,0
-        je      L21A14_short1ff
+        je      short1ff
         mov     ax,3FFh
-        jmp     SHORT L21A14_have
-L21A14_short1ff:
+        jmp     SHORT have
+short1ff:
         mov     ax,1FFh
-L21A14_have:
+have:
         nop
         cmp     _g_0254,0
-        jne     L21A14_wide
+        jne     wide
         mov     bh,ah
         and     bh,1
         mov     cl,4
@@ -79,11 +77,11 @@ L21A14_have:
         sti
         pop     bp
         ret
-L21A14_wide:
+wide:
         cmp     ax,0C8h
-        jg      L21A14_biased
+        jg      biased
         add     ax,64h
-L21A14_biased:
+biased:
         mov     bh,ah
         mov     bl,bh
         and     bx,201h

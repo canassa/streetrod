@@ -1,14 +1,14 @@
         .MODEL MEDIUM
 
-; F_0E926 @ 0e92:0006 (linear 0x0E926, 201 bytes)
-; Run-length decoder with a byte dictionary (tables g_4eee and g_4efe copied to
-; the stack). 0 and 0FFh start a literal L0E926_run: the L0E926_next byte is the repeat count.
-
         .DATA
         EXTRN   _g_4eee:BYTE
         EXTRN   _g_4efe:BYTE
 
         .CODE S0E92_TEXT
+
+; F_0E926 @ 0E92:0006 (linear 0x0E926, 201 bytes)
+; Run-length decoder with a byte dictionary (tables g_4eee and g_4efe copied to
+; the stack). 0 and 0FFh start a literal run: the next byte is the repeat count.
 
         PUBLIC  _F_0E926
 _F_0E926  PROC  FAR
@@ -31,8 +31,8 @@ _F_0E926  PROC  FAR
         sub     cx,cx
         mov     si,[bp+10h]
         mov     dx,[bp+12h]
-        jmp     L0E926_test_n
-L0E926_fill_idx:
+        jmp     test_n
+fill_idx:
         mov     bx,cx
         mov     di,[bx+si]
         and     di,0FFh
@@ -40,9 +40,9 @@ L0E926_fill_idx:
         inc     al
         mov     [bp+di-12Ah],al
         inc     cx
-L0E926_test_n:
+test_n:
         cmp     cx,dx
-        jl      L0E926_fill_idx
+        jl      fill_idx
         mov     [bp-8],cx
         mov     WORD PTR [bp-8],0
         mov     cx,8
@@ -59,17 +59,17 @@ L0E926_test_n:
         mov     [bp-0Ah],dx
         les     di,DWORD PTR [bp+6]
         lds     bx,DWORD PTR [bp+0Ah]
-L0E926_next:
+next:
         cmp     dx,0
-        jle     L0E926_fin
+        jle     fin
         dec     dx
         mov     al,es:[di]
         inc     di
         or      al,al
-        je      L0E926_run
+        je      run
         cmp     al,0FFh
-        jne     L0E926_other
-L0E926_run:
+        jne     other
+run:
         dec     dx
         mov     cl,es:[di]
         inc     di
@@ -77,22 +77,22 @@ L0E926_run:
         add     [bp-0Ah],cx
         dec     WORD PTR [bp-0Ah]
         inc     cx
-L0E926_fill:
+fill:
         mov     [bx],al
         inc     bx
         dec     cx
-        jne     L0E926_fill
-        jmp     L0E926_next
-L0E926_other:
+        jne     fill
+        jmp     next
+other:
         sub     ah,ah
         mov     si,ax
         mov     ah,[bp+si-12Ah]
         or      ah,ah
-        jne     L0E926_coded
+        jne     coded
         mov     [bx],al
         inc     bx
-        jmp     L0E926_next
-L0E926_coded:
+        jmp     next
+coded:
         mov     al,ah
         sub     ah,ah
         mov     si,ax
@@ -101,8 +101,8 @@ L0E926_coded:
         sub     ch,ch
         add     [bp-0Ah],cx
         dec     WORD PTR [bp-0Ah]
-        jmp     L0E926_fill
-L0E926_fin:
+        jmp     fill
+fin:
         mov     ax,[bp-0Ah]
         pop     ds
         pop     es

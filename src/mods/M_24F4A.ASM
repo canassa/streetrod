@@ -1,5 +1,7 @@
         .MODEL MEDIUM
 
+        .CODE S24F4_TEXT
+
 ; F_24F4A @ 24F4:000A (linear 0x24F4A, 2569 bytes)
 ; F_24F4A(dst_far, src_seg, si_off, bx_off, bp_off, bx_si_pitch, w, h,
 ;         bp_pitch, di_pitch): masked blit, three source streams in the
@@ -12,8 +14,6 @@
 ; over, so they are addressed through CS at fixed offsets (the routine sits
 ; at offset 0Ah of its code segment).
 
-        .CODE S24F4_TEXT
-
         PUBLIC  _F_24F4A
 _F_24F4A  PROC    FAR
         push    bp
@@ -22,17 +22,17 @@ _F_24F4A  PROC    FAR
         push    di
         push    si
         cmp     WORD PTR [bp+16h],0
-        jg      L24F4A_haveh
-        jmp     L24F4A_done
-L24F4A_haveh:
+        jg      haveh
+        jmp     done
+haveh:
         cmp     WORD PTR [bp+14h],0
-        jg      L24F4A_havew
-        jmp     L24F4A_done
+        jg      havew
+        jmp     done
 savebp  DW      0
 bppitch DW      0
 dipitch DW      0
 sipitch DW      0
-L24F4A_havew:
+havew:
         mov     cs:savebp,bp
         mov     ds,[bp+0Ah]
         mov     si,[bp+0Ch]
@@ -49,9 +49,9 @@ L24F4A_havew:
         shr     cl,1
         mov     dx,40h
         test    ch,80h
-        je      L24F4A_narrow
+        je      narrow
         mov     dx,50h
-L24F4A_narrow:
+narrow:
         sub     dl,cl
         shl     dx,1
         mov     ax,dx
@@ -59,23 +59,23 @@ L24F4A_narrow:
         shl     dx,1
         shl     dx,1
         test    ch,80h
-        jne     L24F4A_wide
+        jne     wide
         sub     dx,ax
         add     dx,120h
-        jmp     SHORT L24F4A_havedx
-L24F4A_wide:
+        jmp     SHORT havedx
+wide:
         add     dx,ax
-L24F4A_havedx:
+havedx:
         and     ch,1
-        je      L24F4A_evenw
-        jmp     NEAR PTR L24F4A_oddw
-L24F4A_evenw:
-        add     dx,OFFSET L24F4A_evenwords
+        je      evenw
+        jmp     NEAR PTR oddw
+evenw:
+        add     dx,OFFSET evenwords
         mov     cx,[bp+16h]
         mov     bp,[bp+10h]
-L24F4A_evenrow:
+evenrow:
         jmp     dx
-L24F4A_evenwords:
+evenwords:
 k       =       9Eh
         REPT    80
         mov     ax,[bx+k]
@@ -90,18 +90,18 @@ k       =       k-2
         add     bp,cs:bppitch
         add     di,cs:dipitch
         dec     cx
-        je      L24F4A_evenexit
-        jmp     L24F4A_evenrow
-L24F4A_evenexit:
-        jmp     NEAR PTR L24F4A_finish
-L24F4A_oddw:
+        je      evenexit
+        jmp     evenrow
+evenexit:
+        jmp     NEAR PTR finish
+oddw:
         sub     dx,12h
-        add     dx,OFFSET L24F4A_oddwords
+        add     dx,OFFSET oddwords
         mov     cx,[bp+16h]
         mov     bp,[bp+10h]
-L24F4A_oddrow:
+oddrow:
         jmp     dx
-L24F4A_oddwords:
+oddwords:
 k       =       9Dh
         REPT    79
         mov     ax,[bx+k]
@@ -120,11 +120,11 @@ k       =       k-2
         add     bp,cs:bppitch
         add     di,cs:dipitch
         dec     cx
-        je      L24F4A_finish
-        jmp     L24F4A_oddrow
-L24F4A_finish:
+        je      finish
+        jmp     oddrow
+finish:
         mov     bp,cs:savebp
-L24F4A_done:
+done:
         pop     si
         pop     di
         pop     ds
