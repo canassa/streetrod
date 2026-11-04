@@ -222,3 +222,13 @@ comments or rewrite the declarations or function bodies.
   undocumented entities from XML. Clear old XML before each run and deduplicate
   declarations/definitions. Missing documentation and invalid documentation are
   separate measures; the former is a baseline, the latter fails.
+
+## Naming recovered objects
+
+- INPUTDAT.ASM in INPUT holds shared input state and game tables with four BIOS
+  mode helpers (`id_`). File names describe recovered objects, not recovered original
+  spellings. Rename with `sr rename`; a subsystem move also needs `git mv` of source
+  and header and the MAKEFILE source path updated before `sr headers`. Preserve the
+  numeric FORCE_OWNER code-address key. Gate the renamed THEADR/object filename
+  with a clean packed build and DOS-native MAKE; function matches alone do not
+  establish that object metadata is absent from the EXE.

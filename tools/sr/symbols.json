@@ -3519,17 +3519,17 @@
       "seg": 0,
       "size": 266
     },
-    "mb_apply_mode_a": {
+    "id_apply_mode_a": {
       "off": 11200,
       "seg": 0,
       "size": 34
     },
-    "mb_apply_mode_b": {
+    "id_apply_mode_b": {
       "off": 11234,
       "seg": 0,
       "size": 34
     },
-    "mb_store_mode_a": {
+    "id_store_mode_a": {
       "off": 11162,
       "seg": 0,
       "size": 19
@@ -4224,7 +4224,7 @@
       "seg": 0,
       "size": 804
     },
-    "set_g47ec_47ed": {
+    "id_store_mode_b": {
       "off": 11181,
       "seg": 0,
       "size": 19

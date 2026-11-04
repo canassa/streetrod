@@ -1,7 +1,7 @@
 #include <conio.h>
 #include "STRUCTS.H"
 #include "MUSIC.H"
-#include "M_02B9A.H"
+#include "INPUTDAT.H"
 #include "PC.H"
 #include "SOUND.H"
 #include "SYS.H"

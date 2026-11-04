@@ -3,7 +3,7 @@
 #include "PERF.H"
 #include "DISK.H"
 #include "GARAGE.H"
-#include "M_02B9A.H"
+#include "INPUTDAT.H"
 #include "SCREEN.H"
 
 int g_gearSpeedPct[4][5] = {{0, 25, 50, 100, 0}, {0, 25, 50, 100, 0}, {0, 25, 50, 75, 100}, {0, 30, 50, 80, 100}};

@@ -2132,3 +2132,44 @@ The newly enum-typed state/category objects and named constants preserve the mea
   partial omissions already fail Doxygen. Bare symbol mentions still need human
   review. Deleted XML must be cleared to keep coverage honest; the denominator
   must come from sources rather than the partially extracted XML tree.
+
+## 2026-11-04 23:30 CET: Name the shared input-data object
+
+### What I did
+
+Renamed src/SYS/M_02B9A.ASM and its header through sr rename to INPUTDAT.ASM/H,
+then moved them to src/INPUT and updated the MAKEFILE source path. Assigned the
+unique id_ prefix: id_store_mode_a, id_store_mode_b (formerly set_g47ec_47ed),
+id_apply_mode_a and id_apply_mode_b. Read the complete module, its original
+instructions/data and every C/ASM user; kept the game tables, counters, labels
+and list storage with the input state and BIOS mode helpers in the same object.
+Updated CLAUDE.md, reconstruction choices, the sr-cli skill and placeholder owners.
+The numeric FORCE_OWNER key 0x02B9A is unchanged; sr rename updated symbols.json.
+
+Rechecked g_4734, g_4742, g_4744, g_47d1 and g_47f0 against the globalsB audit
+entry retained in merge parent 3d65106^2. Its ignored per-item ledger is unavailable
+in Git, so independently traced all five again. No new naming evidence: g_4734
+has no references beyond its declarations; g_4742/g_4744 only receive the selected
+cursor-pair words at original 0x12155/0x12163 and have no readers; g_47d1's
+1D/1E/1F bytes are not read by the handlers that compare those immediate codes;
+g_47f0 is an unreferenced zero before the bankroll string, and the equal numeric
+transmission-picture ID is not a pointer. Retained all five with separate evidence
+in work/LEDGER.md. Named five scoped items (module plus four procs), skipped five.
+
+All gates passed: headers; format (157 files); 572/572 functions; clean build with
+96/96 objects and packed EXE IDENTICAL; DGROUP ownership/order; 92 unit tests;
+DOS-native MAKE IDENTICAL. The linked functions occupy all 572 original positions
+and all 748 near calls are exact. Inspected INPUTDAT.OBJ's THEADR record: it now
+contains INPUT\INPUTDAT.ASM. Neither the old nor new filename occurs in the packed
+EXE, and direct comparison against orig/SR.EXE confirms byte identity. No push or merge.
+
+### What I learned
+
+A descriptive filename labels a recovered object without asserting an original
+filename. Shared input state is enough to name INPUTDAT despite its mixed game
+tables and uncalled BIOS helpers; preserving the boundary matters. The subsystem
+move needs source/header git moves and the MAKEFILE source path changed before
+sr headers synchronizes dependencies. The sr-cli skill records this workflow.
+A numeric FORCE_OWNER key is a code address, not a stale filename. The packed and
+DOS-native comparisons prove the renamed THEADR/object metadata does not reach
+the shipped EXE; matching functions alone would not establish that.
