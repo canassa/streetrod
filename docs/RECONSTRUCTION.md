@@ -51,7 +51,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 ## Source forms
 
 - **Equivalent forms.** Wherever several C forms compile to the same bytes, the source uses
-  one of them. The DB notes list some arbitrary picks: the equal-arm ternaries
+  one of them. Some arbitrary picks: the equal-arm ternaries
   `!x ? 1 : 1` in sys_drive_isr (the condition leaves no code), `case -2: case -1:` in game_run
   (any run above -3 gives the same code), the empty increment of `for (; *str; str)` in
   ega_draw_text, and `i = 4` after swap_wheel's loops.
@@ -64,9 +64,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   guess, only "a ?: or assignment-condition with value 3" is evidence.
 - **Block-layout forms.** MSC 5.1 emits basic blocks in source order (with cross-jumping),
   so a jump the original's layout shows has to be somewhere in the source. Where no
-  structured form gives the layout, the source has a `goto` or a particular loop form,
-  with the reason in the function's DB note. 74 `goto`s in 11 files; the layout-driven
-  ones: bobs_visit's `while` whose body ends in a redundant `goto test;` (BOBS.C: the
+  structured form gives the layout, the source has a `goto` or a particular loop form.
+  74 `goto`s in 11 files; the layout-driven ones: bobs_visit's `while` whose body ends in a redundant `goto test;` (BOBS.C: the
   original's body-before-test layout, and it keeps `/Ol` from enregistering `n`),
   race_outcome's `goto finishstop` from both arms, race_reset_eng's `goto nx;` to the label right
   after its `else`, anim_run's `goto next;` (a `continue` there would pull the loop
@@ -217,7 +216,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   (three fixed menu records, then six records of another list) and `g_boltHot` are Hot
   records too; insert_hot sorts them by (x1, y1).
 - **HERCDET.ASM's key maps.** 43 lists of (scan code, value) pairs, each ended by a 0
-  byte, one per screen (`g_keyMaps[]`). They are local labels; the DB and HERCDET.H only know
+  byte, one per screen (`g_keyMaps[]`). They are local labels; HERCDET.H only knows
   the first, `g_5580`, as the 543-byte area (no C code names it; the DGROUP model needs
   its extent). DS:5727 is a 0 byte between two lists that no pointer names, written as an
   unreferenced empty list.

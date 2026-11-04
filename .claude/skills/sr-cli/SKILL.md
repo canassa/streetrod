@@ -1,6 +1,6 @@
 ---
 name: sr-cli
-description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod project, i.e. the scanner, DB schema, DOSBox compile backend, OBJ/COD parsers, and the byte comparer. Use when a command is wrong or missing, or when the workflow needs a new tool. Keeps CLAUDE.md and the skills in sync with the CLI.
+description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod project, i.e. the scanner, the source loader, the DOSBox compile backend, OBJ/COD parsers, and the byte comparer. Use when a command is wrong or missing, or when the workflow needs a new tool. Keeps CLAUDE.md and the skills in sync with the CLI.
 ---
 
 # sr-cli
@@ -11,33 +11,33 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 |---|---|
 | `tools/sr/cli.py` | argparse commands; one `cmd_*` function each |
 | `tools/sr/config.py` | paths, default flags, address ranges (CRT, emulator, DGROUP) |
+| `tools/sr/source.py` | the symbol tables every command reads (there is no DB): game functions from the comment above each definition (`/* name @ SSSS:OOOO (linear 0xAAAAA, N bytes) */`, `; name @ ...` in MASM; distance from `near` / `PROC NEAR`), prototypes, DGROUP globals and far data from the headers' `extern` lines and address comments, file statics from their `/* DS:XXXX */` definitions, and `runtime()`: the scanner's runtime functions named by `lib.locate_all` (aliases, the library's DGROUP data publics, callees), cached in `work/cache/runtime.json` keyed by the EXE, the libraries and the code. Rows are dicts (`addr seg off size kind far name src proto`; `globals_()` by offset, `global_offsets()` by name with every runtime name). `reload()` after editing sources |
 | `tools/sr/exe.py` | the unpacked image, relocations, DGROUP strings |
 | `tools/sr/disasm.py` | capstone wrapper; decodes the `INT 34h`-`3Dh` emulator ops as `emu_*` |
 | `tools/sr/scan.py` | function finder (recursive descent plus prologue passes) and the C/asm/CRT classifier |
 | `tools/sr/dosbox.py` | `Job` and `compile_all`: lays jobs out in `work/<name>-<pid>/Jnnnn` (safe in parallel) and runs them with the `SR_EMU` backend: `emu2` (default, `emu2.py`) or `dosbox` (one headless DOSBox-X boot over RUN.BAT); the source is copied unchanged (`C:` work dir, `D:` MSC 5.1, `E:` src/include, `F:` MASM 5.1) |
 | `tools/sr/emu2.py` | the emu2 backend: one `timeout`-bounded emu2 process per job (`SR_JOBS` threads), same drives and current directory as DOSBox, DOS stdout to `CC.LOG`, own `TMP` per job. emu2 itself is `tools/nix/emu2.nix` (upstream pin + `emu2-flush-before-fork.patch`) |
-| `tools/scripts/emucmp.py` | proves emu2 == DOSBox-X: snapshots sources and headers, compiles every source × flag sets, the 46 sweep combos, probes (FP, errors, MASM) and optionally `--streetrod DIR` under both, compares every output file |
+| `tools/scripts/emucmp.py` | proves emu2 == DOSBox-X: snapshots sources and headers, compiles every source × flag sets, the 46 sweep combos, probes (FP, errors, MASM) and compiles under both, compares every output file |
 | `tools/sr/omf.py` | OBJ segments, data, fixups with their targets, publics, externs (incl. MSC's LEXTDEF/LPUBDEF for statics) |
 | `tools/sr/cod.py` | `/Fc` listing: procedure start/end, the locals layout, `_BSS` statics; `from_publics` + `asm_lengths` give an assembled function's extent (its PUBLIC, its PROC length from the MASM listing) |
 | `tools/sr/match.py` | byte compare (fixups masked, near calls out of the function counted separately with their targets) and the two-column diff |
-| `tools/sr/lib.py` | finds MSC library modules in the EXE (`crtnames`); `locate` returns every public at an address, since a module can publish two names for one offset (`__aFlmul` = `__aFulmul`) |
+| `tools/sr/lib.py` | finds MSC library modules in the EXE (`crtnames`); `locate` returns every public at an address, since a module can publish two names for one offset (`__aFlmul` = `__aFulmul`); `locate_all` also places the located modules' data publics in DGROUP from their code's fixups |
 | `tools/sr/refs.py` | resolves every fixup to its symbol and checks it against the original instruction |
-| `tools/sr/headers.py` | `./sr headers`: calls `fileheaders.py` (the per-file headers, include blocks) and `makefile.sync_deps`; `check()` is the dry run of `--check` (every write goes through `headers._write`/`_remove`, which record instead of writing). Headers and sources are LF, MAKEFILE/SR.LNK CRLF. Never called by `build` or `check` |
-| `tools/sr/fileheaders.py` | per-file headers: owner of each global/function from its definition, one header per source file (`owners_layout`: the code files, the data-only files of src/mods in link order, then src/data), and the include blocks of the C sources (`./sr headers`) |
+| `tools/sr/headers.py` | `./sr headers`: calls `fileheaders.py` (include blocks) and `makefile.sync_deps`; `check()` is the dry run of `--check` (every write goes through `headers._write`, which records instead of writing) and returns the headers' problems too. Headers and sources are LF, MAKEFILE/SR.LNK CRLF. Never called by `build` or `check`. The headers themselves are hand-written |
+| `tools/sr/fileheaders.py` | the include blocks of the C sources: owner of each name is the header that declares it (`owners_layout`: the code files, the data-only files of src/mods in link order, then src/data); problems: a name declared twice, or by a header whose file does not define it |
 | `tools/sr/layout.py` | the MSC 5.1 local-layout rule (`./sr layout`): bucket hash, block slot reuse, `/Ol` variant, rename suggestions |
 | `tools/sr/lint.py` | the CLAUDE.md rule 4 lint, plus missing-prototype warnings from `/W3` |
 | `tools/sr/dgroup.py` | `./sr dgroup`: original DGROUP ownership from positions (literal pools of the layout objects pin each unit; runs between pools go to referrers; `FORCE_OWNER`/`DATA_UNITS` for assembler data and data-only files), declaration slots, the C definition text of each item (`report`), `check_sources` (`./sr dgroup check`, the only consumer of ownership), `link_order` |
-| `tools/sr/datacheck.py` | a file's own `_DATA` against the original: base from the code's references, bytes, every data fixup resolved by symbol; `module.gate(..., con)` reports it (strict once the file defines data) |
-| `tools/sr/rename.py` | `./sr rename OLD NEW` / `--file PAIRS`: one whole-word pass (`name` and MASM `_name`) over the sources, headers, docs, skills, tools and tests (not plans/diary.md, not the generated PROGRESS.md), the DB name and notes; a file rename `git mv`s the source, `git rm`s its old header, updates `functions.src`, the MAKEFILE and SR.LNK (link block rewrapped), then the headers are regenerated. A new name must be unused, ignoring case (DB names, aliases, every identifier of the sources) |
-| `tools/sr/db.py` | SQLite schema and helpers; the `aliases` table (filled by `crtnames`) holds the extra library names of a function, and `refs` accepts any of them for a call |
+| `tools/sr/datacheck.py` | a file's own `_DATA` against the original: base from the code's references, bytes, every data fixup resolved by symbol; `module.gate(..., data=True)` reports it (strict once the file defines data) |
+| `tools/sr/rename.py` | `./sr rename OLD NEW` / `--file PAIRS`: one whole-word pass (`name` and MASM `_name`) over the sources, headers, docs, skills, tools and tests (not plans/diary.md); a file rename `git mv`s the source and its header (include guard renamed), updates the MAKEFILE and SR.LNK (link block rewrapped), then runs `./sr headers`. A new name must be unused, ignoring case (function, global and far data names, the runtime's names and aliases, every identifier of the sources). Runtime functions keep their library names |
 
 - `tools/sr/makefile.py`: src/MAKEFILE and src/SR.LNK. `parse` handles the MAKE 4.07 subset the file uses (`#` comments, `NAME=value` macros, `target: deps` with `\` continuations, tab-indented commands); `compile_rules()` (blocks whose command starts `$(CC)`/`$(ASM)`: `Rule.flags`, `.segment` from `/NT`, `.source` DOS path, `.path` host file), `rule('LIB'|'LINK')`, `link_order()`. `set_flags` (`./sr flags`) and `sync_deps` (`./sr headers`) are the only writers.
-- `tools/sr/module.py`: the source files. `sources()` is every MAKEFILE object, `files()` the code files with their extent (span of the DB functions whose `src` they are), `code_starts()` the first file of each segment; `File.command` is the per-file part of the line (`flags` + `/NT<segment>` for C). `file_of(row)` / `find_file(name)`. `gate()` compares a file's whole span (resolves in-file EXTDEF calls and code-segment offsets per function frame, masks the rest, counts near calls out of the file). `units()` derives candidate same-file spans from near / `push cs; call near` edges (`./sr module units`). `cli._check_rows` compiles each file once (`_file_jobs`), compares the functions asked for, runs `_file_gates` and stores each gate on its functions' `Result.module`; a function's `nearcalls` is then the number of its near calls to other objects.
-- `tools/sr/linklayout.py`: `./sr build`: copies src/ to work/layout, runs each MAKEFILE block as written (`build.run_dos` under emu2, one `BUILD/<stem>` tree each; `build.link` runs the LINK line in DOSBox-X), then (unless `--no-verify`) `gate_objects`, the unpacked link and the comparison. The build part must not read the DB or orig/.
+- `tools/sr/module.py`: the source files. `sources()` is every MAKEFILE object, `files()` the code files with their extent (span of the functions they define), `code_starts()` the first file of each segment; `File.command` is the per-file part of the line (`flags` + `/NT<segment>` for C). `file_of(row)` / `find_file(name)`. `gate()` compares a file's whole span (resolves in-file EXTDEF calls and code-segment offsets per function frame, masks the rest, counts near calls out of the file). `units()` derives candidate same-file spans from near / `push cs; call near` edges (`./sr module units`). `cli._check_rows` compiles each file once (`_file_jobs`), compares the functions asked for, runs `_file_gates` and stores each gate on its functions' `Result.module`; a function's `nearcalls` is then the number of its near calls to other objects.
+- `tools/sr/linklayout.py`: `./sr build`: copies src/ to work/layout, runs each MAKEFILE block as written (`build.run_dos` under emu2, one `BUILD/<stem>` tree each; `build.link` runs the LINK line in DOSBox-X), then (unless `--no-verify`) `gate_objects`, the unpacked link and the comparison. The build part must not read orig/.
 
 ## Rules
 
-- **`./sr scan` must keep human data.** It updates seg/off/size/far, and it never overwrites `name`, `status`, `src`, `notes` or `kind` of existing rows. Flags are not in the DB: they are the file's, in src/MAKEFILE. If the scanner stops finding a row, it warns and doesn't delete it.
+- **Nothing is stored.** Every table is derived from the sources, the headers, the EXE and the libraries (`source.py`); a cache under `work/` must be keyed by everything it is derived from. `./sr scan` only compares the scanner with the sources (exit 1 on a difference); flags are the file's, in src/MAKEFILE.
 - **The comparer must stay strict.** Only bytes covered by an OBJ fixup are masked, plus near-call displacements whose target is outside the function. Never add a mask to get a function to pass; if a real class of unverifiable bytes appears, report it as its own count (like `nearcalls`) and get the user's agreement.
 - **Every emulator run is bounded** by `timeout` (rule in CLAUDE.md); emu2 also by RLIMIT_FSIZE.
 - **The backends must stay byte-identical.** After changing `dosbox.py`, `emu2.py`, `tools/nix/emu2.nix` or the job layout, run `nix-shell shell.nix --run 'python3 tools/scripts/emucmp.py '` and expect `IDENTICAL`. Never make a backend the default, or change its pin, without that. The only tolerated differences are MASM's LST page-header time and its "symbol space free" line (emu2 gives MASM the full 640K; DOSBox-X keeps COMMAND.COM resident), which `emucmp` reports separately.
@@ -48,7 +48,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 ## Known limitations (fix when they bite)
 
 - `sr scan` reaches functions through calls, far-pointer tables and prologue patterns. Functions only reached by computed jumps can be missed or split into fragments (a few `kind=c` rows without a prologue are fragments of bigger functions).
-- `sr check` compares a procedure by name against the extent recorded by the scanner. A function with a jump table after its code may have its extent end early.
+- `sr check` compares a procedure by name against the extent in its address comment. A function with a jump table after its code may have its extent end early.
 - A near call to a function of another object can't be verified from one object (`MATCH*`, 21 functions); `./sr build` verifies all 748 near-call encodings.
 - An assembled function's extent is its `PROC` length in the MASM listing; without a listing, it runs to the next `PUBLIC` in the OBJ. Every procedure of an `.ASM` is `PUBLIC`.
 
@@ -58,13 +58,13 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 - MASM 5.1 labels are file-global (no `.MODEL` language): a local label name used by two procedures of one file is numbered (`done1`, `done2`).
 - External near EXTDEF fixups must be counted even when their raw displacement is zero.
 - Near-call hulls are candidate grouping spans, not proof of an original C file; the units come from the relocation table (CLAUDE.md 4c).
-- The scanner now discovers complete prologue-free routines in bounded gaps. It requires reachable instruction coverage, in-gap branches, returns, and only trailing alignment; it rejects the entire gap on ambiguous bytes. The shipped-image regression covers nine recovered game routines and the retired 0x0F8C2 false positive. Existing human metadata is preserved by `scan`.
+- The scanner now discovers complete prologue-free routines in bounded gaps. It requires reachable instruction coverage, in-gap branches, returns, and only trailing alignment; it rejects the entire gap on ambiguous bytes. The shipped-image regression covers nine recovered game routines and the retired 0x0F8C2 false positive.
 - Run `nix-shell shell.nix --run 'python3 -m unittest discover -s tests -v'` for scanner/gate regressions, then the full `./sr check --all` gate.
 
 ## Linked-build lessons (2026-11-03)
 
 - The sources name `main` and declare the cross-object near functions public
-  (`T near F`, prototype in the owner's header via `./sr proto ADDR "T near @(...)"`);
+  (`T near F`, prototype `T near F(...);   /* 0xAAAAA */` in the owner's header);
   nothing rewrites the text before CL or MASM sees it.
 - MSC MAKE 4.07 takes `MAKE MAKEFILE`, not `/f`, and processes rules sequentially;
   the link rule is last. It accepts macros, `\` continuations whose next line starts
@@ -124,8 +124,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 ## DGROUP lessons (2026-11-04)
 
 - The analysis reads the freshest objects (`work/layout/BUILD/<file stem>/`), the `/Fc` listing for literal sizes (`"\0"` is two bytes) and the source definitions for array bounds: run `./sr build` before `./sr dgroup`. Definitions carry `/* DS:xxxx */`. The sources are the truth for data definitions: `./sr dgroup check` only verifies that each named item is defined in the file that owned it (since 2026-11-04 there is no writer; the old `apply --write` regenerated every definition from the model and reverted hand edits).
-- An overlapping DB name (an alias) is a view of its base: write it as `base[i]` (or a member) in the sources and delete its DB row; `./sr dgroup check` fails while one exists, and also when the layout holds a global the DB lacks (add it with `./sr global`). There is no writer (the old `aliases --write` / `register --write` are gone).
-- The DB is WAL-backed: restoring `db/sr.sqlite` from a backup needs `-wal`/`-shm` removed first.
+- An overlapping name (an alias) is a view of its base: write it as `base[i]` (or a member) in the sources and drop its declaration; `./sr dgroup check` fails while one exists, and also when the layout holds a global the sources lack (declare it in the owner's header with its `/* DS:XXXX */`). There is no writer (the old `aliases --write` / `register --write` are gone).
 - An assembler unit's data goes into its one `.DATA` section, after its EXTRNs: `PUBLIC  _name` then `_name DW ...` (the label typed by its first element), several values per line, text as quoted strings, `n DUP (v)` for runs, `EVEN` for an alignment byte (MASM 5.1 pads with 00h in data, 90h in code). DUP becomes LIDATA, which omf.py expands. `./sr dgroup check` recognises a MASM definition as `PUBLIC _x` plus a `_x LABEL|DB|DW|DD|DQ` line.
 
 ## Link-structure lessons (2026-11-04)
