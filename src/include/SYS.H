@@ -17,7 +17,7 @@ extern int g_05d6; /* DS:05D6 */
 extern int g_05d8; /* DS:05D8 */
 extern int g_05da; /* DS:05DA */
 
-extern struct TimerPriorities g_videoPrioritiesValues; /* DS:8EF6 */
+extern struct TimerPriorities g_sysTimerPriorities; /* DS:8EF6 */
 
 extern int g_timerFirst;                                /* DS:0566 */
 extern int g_timerHead;                                 /* DS:0568 */
