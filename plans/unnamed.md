@@ -1,108 +1,75 @@
 # Unnamed symbols (placeholders still in the tree)
 
-Generated from the sources on main (2026-11-05). Placeholder = `F_xxxxx` functions, `g_xxxx` / hash-tuned globals (e.g. `ai70e4t`, `g_6c8aaav`), `M_xxxxx` files. Runtime names (errno, _doserrno, _amblksiz) excluded.
+Generated from the sources on main (2026-11-05, after the second naming pass). Placeholder = `F_xxxxx` functions, `g_xxxx` / hash-tuned globals, `M_xxxxx` files. Most remaining statics and communals are understood but no accurate name fits their hash window (see plans/diary.md); runtime names excluded.
 
-- Functions: 62 of 573 game functions
-- Globals: 420 of 826 DGROUP globals (initialized: 161, static (_BSS, MSC name hash): 51, communal (LINK hash bucket): 208)
-- Far data: 7 of 23
+- Functions: 49 of 572 game functions
+- Globals: 313 of 823 (initialized: 85, static (_BSS, MSC name hash): 35, communal (LINK hash bucket): 193)
+- Far data: 2 of 23
 - Files: M_02B9A.ASM
 
 ## Functions
 
-| addr | name | file | kind | size | callers |
-|---|---|---|---|---|---|
-| 02374 | F_02374 | SYS.C | c | 24 | 4 |
-| 02B9A | F_02B9A | M_02B9A.ASM | asm | 19 | 0 |
-| 02BC0 | F_02BC0 | M_02B9A.ASM | asm | 34 | 0 |
-| 02BE2 | F_02BE2 | M_02B9A.ASM | asm | 34 | 0 |
-| 064A3 | F_064A3 | GARAGE.C | c | 134 | 3 |
-| 06529 | F_06529 | GARAGE.C | c | 19 | 3 |
-| 065AF | F_065AF | GARAGE.C | c | 417 | 2 |
-| 06750 | F_06750 | GARAGE.C | c | 127 | 1 |
-| 067CF | F_067CF | GARAGE.C | c | 88 | 6 |
-| 06827 | F_06827 | GARAGE.C | c | 91 | 4 |
-| 06AA6 | F_06AA6 | GARAGE.C | c | 50 | 2 |
-| 06B06 | F_06B06 | GARAGE.C | c | 1125 | 1 |
-| 06F6B | F_06F6B | GARAGE.C | c | 431 | 1 |
-| 0711A | F_0711A | GARAGE.C | c | 589 | 1 |
-| 07367 | F_07367 | GARAGE.C | c | 832 | 1 |
-| 076A7 | F_076A7 | GARAGE.C | c | 154 | 4 |
-| 07741 | F_07741 | GARAGE.C | c | 72 | 4 |
-| 077B7 | F_077B7 | GARAGE.C | c | 73 | 4 |
-| 07800 | F_07800 | GARAGE.C | c | 241 | 1 |
-| 079EB | F_079EB | GARAGE.C | c | 185 | 1 |
-| 07AA4 | F_07AA4 | GARAGE.C | c | 1090 | 1 |
-| 07EE6 | F_07EE6 | GARAGE.C | c | 203 | 3 |
-| 0E218 | F_0E218 | PERF.C | c | 849 | 4 |
-| 0F8C2 | F_0F8C2 |  | c | 176 | 0 |
-| 10AFD | F_10AFD | DASH.C | c | 75 | 7 |
-| 10B7C | F_10B7C | VIDEO.C | c | 16 | 2 |
-| 10B8C | F_10B8C | VIDEO.C | c | 16 | 2 |
-| 10B9C | F_10B9C | VIDEO.C | c | 16 | 1 |
-| 112CB | F_112CB | VIDEO.C | c | 89 | 6 |
-| 11421 | F_11421 | SCREEN.C | c | 287 | 14 |
-| 11540 | F_11540 | SCREEN.C | c | 83 | 10 |
-| 11593 | F_11593 | SCREEN.C | c | 214 | 7 |
-| 118D4 | F_118D4 | SCREEN.C | c | 228 | 12 |
-| 119B8 | F_119B8 | SCREEN.C | c | 30 | 12 |
-| 123F4 | F_123F4 | GARGFX.C | c | 305 | 2 |
-| 12525 | F_12525 | GARGFX.C | c | 297 | 1 |
-| 1264E | F_1264E | GARGFX.C | c | 310 | 2 |
-| 12784 | F_12784 | GARGFX.C | c | 87 | 1 |
-| 127DB | F_127DB | GARGFX.C | c | 160 | 1 |
-| 12CD1 | F_12CD1 | GARGFX.C | c | 263 | 1 |
-| 135E5 | F_135E5 | GARGFX.C | c | 156 | 2 |
-| 142CF | F_142CF | MENU.C | c | 114 | 8 |
-| 14C8B | F_14C8B | MENU.C | c | 4 | 8 |
-| 15BBE | F_15BBE | DISK.C | c | 73 | 34 |
-| 16381 | F_16381 | MUSIC.C | c | 61 | 6 |
-| 168C8 | F_168C8 | SOUND.C | c | 43 | 1 |
-| 168F3 | F_168F3 | SOUND.C | c | 80 | 1 |
-| 16943 | F_16943 | SOUND.C | c | 80 | 0 |
-| 16993 | F_16993 | SOUND.C | c | 78 | 2 |
-| 169E1 | F_169E1 | SOUND.C | c | 78 | 1 |
-| 16A2F | F_16A2F | SOUND.C | c | 43 | 0 |
-| 16A5A | F_16A5A | SOUND.C | c | 78 | 2 |
-| 16B61 | F_16B61 | SOUND.C | c | 54 | 2 |
-| 16B97 | F_16B97 | SOUND.C | c | 42 | 2 |
-| 16BC1 | F_16BC1 | SOUND.C | c | 34 | 3 |
-| 16C8F | F_16C8F | SOUND.C | c | 100 | 1 |
-| 16CF3 | F_16CF3 | SOUND.C | c | 38 | 4 |
-| 17AAE | F_17AAE | CARPIC.C | c | 312 | 1 |
-| 181C8 | F_181C8 | CARPIC.C | c | 2323 | 8 |
-| 1934E | F_1934E | ARENA.C | c | 134 | 27 |
-| 19438 | F_19438 | MARKS.C | c | 66 | 36 |
-| 1B213 | F_1B213 | TIRES.C | c | 3849 | 1 |
+| addr | name | file | size |
+|---|---|---|---|
+| 064A3 | F_064A3 | GARAGE.C | 134 |
+| 06529 | F_06529 | GARAGE.C | 19 |
+| 065AF | F_065AF | GARAGE.C | 417 |
+| 06750 | F_06750 | GARAGE.C | 127 |
+| 067CF | F_067CF | GARAGE.C | 88 |
+| 06827 | F_06827 | GARAGE.C | 91 |
+| 06AA6 | F_06AA6 | GARAGE.C | 50 |
+| 06B06 | F_06B06 | GARAGE.C | 1125 |
+| 06F6B | F_06F6B | GARAGE.C | 431 |
+| 0711A | F_0711A | GARAGE.C | 589 |
+| 07367 | F_07367 | GARAGE.C | 832 |
+| 076A7 | F_076A7 | GARAGE.C | 154 |
+| 07741 | F_07741 | GARAGE.C | 72 |
+| 077B7 | F_077B7 | GARAGE.C | 73 |
+| 07800 | F_07800 | GARAGE.C | 241 |
+| 079EB | F_079EB | GARAGE.C | 185 |
+| 07AA4 | F_07AA4 | GARAGE.C | 1090 |
+| 07EE6 | F_07EE6 | GARAGE.C | 203 |
+| 0E218 | F_0E218 | PERF.C | 849 |
+| 10AFD | F_10AFD | DASH.C | 75 |
+| 10B7C | F_10B7C | VIDEO.C | 16 |
+| 112CB | F_112CB | VIDEO.C | 89 |
+| 11421 | F_11421 | SCREEN.C | 287 |
+| 11540 | F_11540 | SCREEN.C | 83 |
+| 11593 | F_11593 | SCREEN.C | 214 |
+| 118D4 | F_118D4 | SCREEN.C | 228 |
+| 119B8 | F_119B8 | SCREEN.C | 30 |
+| 123F4 | F_123F4 | GARGFX.C | 305 |
+| 12525 | F_12525 | GARGFX.C | 297 |
+| 1264E | F_1264E | GARGFX.C | 310 |
+| 12784 | F_12784 | GARGFX.C | 87 |
+| 127DB | F_127DB | GARGFX.C | 160 |
+| 135E5 | F_135E5 | GARGFX.C | 156 |
+| 142CF | F_142CF | MENU.C | 114 |
+| 14C8B | F_14C8B | MENU.C | 4 |
+| 15BBE | F_15BBE | DISK.C | 73 |
+| 16381 | F_16381 | MUSIC.C | 61 |
+| 168F3 | F_168F3 | SOUND.C | 80 |
+| 16943 | F_16943 | SOUND.C | 80 |
+| 16A2F | F_16A2F | SOUND.C | 43 |
+| 16A5A | F_16A5A | SOUND.C | 78 |
+| 16B61 | F_16B61 | SOUND.C | 54 |
+| 16B97 | F_16B97 | SOUND.C | 42 |
+| 16BC1 | F_16BC1 | SOUND.C | 34 |
+| 16CF3 | F_16CF3 | SOUND.C | 38 |
+| 181C8 | F_181C8 | CARPIC.C | 2323 |
+| 1934E | F_1934E | ARENA.C | 134 |
+| 19438 | F_19438 | MARKS.C | 66 |
+| 1B213 | F_1B213 | TIRES.C | 3849 |
 
-## Globals: initialized (161)
+## Globals: initialized (85)
 
 | DS | name | decl | used in |
 |---|---|---|---|
 | 0046 | g_0046 | `int @` | MAIN.C |
 | 004A | g_004a | `int @` | MAIN.C |
 | 004C | g_004c | `int @` | DASH.C, MAIN.C |
-| 0252 | g_0252 | `int @` | MAIN.C, VIDDET.ASM |
-| 0282 | g_0282 | `int @` | BOBS.C, GAME.C, GARAGE.C, MAIN.C |
-| 0284 | g_0284 | `int @` | BOBS.C, CARPIC.C, CGASPR.C, CRUISE.C, EGASPR.C, GAME.C, GARAGE.C, MAIN.C, RACE.C, ROAD.C, SPRITE.C, TANDYSPR.C, VIEW.C |
-| 0288 | g_0288 | `struct Bitmap far *@` | CARPIC.C, MAIN.C, SPRITE.C |
-| 028C | g_028c | `struct Bitmap far *@` | CARPIC.C, MAIN.C, RACE.C |
-| 0290 | g_0290 | `struct Bitmap far *@` | CARPIC.C, MAIN.C, RACE.C |
 | 0294 | g_0294 | `struct Bitmap far *@` | ARENA.C, CARPIC.C, GARAGE.C, MAIN.C, MARKS.C |
-| 0298 | g_0298 | `int @[7]` | CARPIC.C, MAIN.C |
-| 02A6 | g_02a6 | `int @[7]` | CARPIC.C, MAIN.C |
-| 02B4 | g_02b4 | `int @[7]` | CARPIC.C, GAME.C, MAIN.C, TIRES.C |
-| 02C2 | g_02c2 | `int @[7]` | CARPIC.C, GAME.C, MAIN.C, TIRES.C |
-| 02D0 | g_02d0 | `int @` | CARPIC.C, CGASPR.C, EGASPR.C, MAIN.C, TANDYSPR.C, WALKER.C |
-| 02D4 | g_02d4 | `char @[]` | DASH.C |
 | 02EE | g_02ee | `signed char @[24][2]` | DASH.C |
-| 031E | g_031e | `unsigned char @[][2]` | DASH.C |
-| 0450 | g_0450 | `int @` | VIDEO.C |
-| 0472 | g_0472 | `int @` | VIDEO.C |
-| 0524 | g_0524 | `int @` | ADS.C |
-| 0526 | g_0526 | `int @` | ADS.C |
-| 0528 | g_0528 | `int @` | ADS.C |
-| 052A | g_052a | `int @` | ADS.C |
-| 052C | g_052c | `int @` | ADS.C |
 | 052E | g_052e | `int @` | ADS.C |
 | 0530 | g_0530 | `int @[3]` | ADS.C |
 | 0570 | g_0570 | `char @` | SYS.C |
@@ -120,48 +87,15 @@ Generated from the sources on main (2026-11-05). Placeholder = `F_xxxxx` functio
 | 060A | g_060a | `int @` | SYS.C |
 | 064D | g_064d | `char @` | SYS.C |
 | 06A2 | g_06a2 | `int @` | SYS.C |
-| 06AC | g_06ac | `int @` | SYS.C |
-| 06E4 | g_06e4 | `int @` | SYS.C |
-| 06EA | g_06ea | `char @` | SYS.C |
-| 06EC | g_06ec | `struct Pair @[]` | CURSOR.C |
-| 077E | g_077e | `char @[]` | GARGFX.C |
-| 078C | g_078c | `char @[]` | GARGFX.C |
-| 0792 | g_0792 | `struct Bitmap far *@` | EGASLIDE.C, GARGFX.C, SPRITE.C |
-| 07C6 | g_07c6 | `int @[]` | DISK.C, MENU.C |
-| 09F4 | g_09f4 | `struct Hot @[]` | GARAGE.C, GARGFX.C, HOTSPOT.C, MENU.C, RACE.C, SYS.C |
 | 121C | g_121c | `struct Hot @[]` | GARAGE.C, HOTSPOT.C |
 | 134E | g_134e | `struct Hot @[]` | GARAGE.C, HOTSPOT.C |
 | 1804 | g_1804 | `struct Hot @[]` | GARAGE.C, HOTSPOT.C |
-| 184C | g_184c | `struct Hot @[]` | GARGFX.C, HOTSPOT.C |
 | 1948 | g_1948 | `struct Hot @[]` | GARGFX.C, HOTSPOT.C |
 | 1A44 | g_1a44 | `struct Hot @[]` | HOTSPOT.C, RACE.C |
 | 1E34 | g_1e34 | `struct Hot @[]` | GARAGE.C, HOTSPOT.C |
 | 239E | g_239e | `char @[]` | BOBS.C, DISK.C, GARAGE.C, MENU.C, MESSAGES.ASM, SYS.C |
-| 291F | g_291f | `char @[]` | MESSAGES.ASM, SCREEN.C |
-| 2990 | g_2990 | `char @[]` | GAME.C, MESSAGES.ASM |
-| 29F8 | g_29f8 | `char @[]` | GAME.C, MESSAGES.ASM |
 | 29FF | g_29ff | `char @[]` | GARAGE.C, MESSAGES.ASM |
-| 2A2E | g_2a2e | `char @[]` | MESSAGES.ASM, SAVEGAME.C |
-| 2A5F | g_2a5f | `char @[]` | GAME.C, MESSAGES.ASM |
-| 2BA5 | g_2ba5 | `int @` | GARGFX.C, MESSAGES.ASM |
-| 2BA7 | g_2ba7 | `int @` | GARGFX.C, MESSAGES.ASM |
-| 2C01 | g_2c01 | `char @[]` | ADS.C, MESSAGES.ASM, POPUP.C, RACE.C |
-| 2C02 | g_2c02 | `char @[]` | ADS.C, BOBS.C, DISK.C, GAME.C, GARAGE.C, MENU.C, MESSAGES.ASM, SAVEGAME.C |
 | 39C9 | g_39c9 | `char @[]` | GARAGE.C, MESSAGES.ASM |
-| 3A80 | g_3a80 | `char @` | MESSAGES.ASM |
-| 3AA2 | g_3aa2 | `char @` | MESSAGES.ASM |
-| 3AC1 | g_3ac1 | `char @` | MESSAGES.ASM |
-| 3AD8 | g_3ad8 | `char @` | MESSAGES.ASM |
-| 3AEA | g_3aea | `char @` | MESSAGES.ASM |
-| 3AFB | g_3afb | `char @` | MESSAGES.ASM |
-| 3B17 | g_3b17 | `char @` | MESSAGES.ASM |
-| 3B2B | g_3b2b | `char @` | MESSAGES.ASM |
-| 3B4F | g_3b4f | `char @` | MESSAGES.ASM |
-| 3B73 | g_3b73 | `char @` | MESSAGES.ASM |
-| 3B98 | g_3b98 | `char @` | MESSAGES.ASM |
-| 3BB6 | g_3bb6 | `char @` | MESSAGES.ASM |
-| 3BD8 | g_3bd8 | `char @` | MESSAGES.ASM |
-| 3BF8 | g_3bf8 | `char @` | MESSAGES.ASM |
 | 4733 | g_4733 | `signed char @` | CURSOR.C, GARAGE.C, M_02B9A.ASM, SYS.C |
 | 4734 | g_4734 | `int @` | M_02B9A.ASM |
 | 4742 | g_4742 | `int @` | CURSOR.C, M_02B9A.ASM |
@@ -170,12 +104,6 @@ Generated from the sources on main (2026-11-05). Placeholder = `F_xxxxx` functio
 | 474C | g_474c | `int @[]` | M_02B9A.ASM, SYS.C |
 | 4752 | g_4752 | `int @[]` | M_02B9A.ASM, SYS.C |
 | 47D1 | g_47d1 | `char @[3]` | M_02B9A.ASM |
-| 47D8 | g_47d8 | `int @[8]` | M_02B9A.ASM, SYS.C |
-| 47E8 | g_47e8 | `int @` | JOY.ASM, KBD.ASM, M_02B9A.ASM |
-| 47EA | g_47ea | `char @` | M_02B9A.ASM |
-| 47EB | g_47eb | `char @` | M_02B9A.ASM |
-| 47EC | g_47ec | `char @` | M_02B9A.ASM |
-| 47ED | g_47ed | `char @` | M_02B9A.ASM |
 | 47F0 | g_47f0 | `char @` | M_02B9A.ASM |
 | 4806 | g_4806 | `struct Item @[]` | BOBS.C, CRUISE.C, GAME.C, GARAGE.C, GARGFX.C, M_02B9A.ASM, PERF.C, RACE.C, SYS.C |
 | 496A | g_496a | `int @` | M_02B9A.ASM, PERF.C |
@@ -186,7 +114,6 @@ Generated from the sources on main (2026-11-05). Placeholder = `F_xxxxx` functio
 | 49CA | g_49ca | `int @[]` | GARAGE.C, M_02B9A.ASM |
 | 49D2 | g_49d2 | `int @[]` | GARAGE.C, M_02B9A.ASM |
 | 49DC | g_49dc | `char *@` | BOBS.C, GAME.C, GARAGE.C, M_02B9A.ASM, RACE.C |
-| 49E0 | g_49e0 | `int @[]` | GAME.C, GARAGE.C, M_02B9A.ASM, RACE.C, SAVEGAME.C |
 | 4BED | g_4bed | `char @` | FAME.C |
 | 4F46 | g_4f46 | `struct Car *@` | GAME.C, GARAGE.C |
 | 4F48 | g_4f48 | `struct Car *@` | GAME.C, GARAGE.C |
@@ -209,23 +136,7 @@ Generated from the sources on main (2026-11-05). Placeholder = `F_xxxxx` functio
 | 5186 | g_5186 | `int @[]` | GARAGE.C |
 | 5198 | g_5198 | `int @[]` | GARAGE.C |
 | 519A | g_519a | `int @[]` | GARAGE.C |
-| 51EC | g_51ec | `int @` | BOBS.C, DRVTICK.C |
-| 54D2 | g_54d2 | `int @` | RACE.C |
-| 54D4 | g_54d4 | `int @` | RACE.C, ROAD.C |
-| 54D6 | g_54d6 | `int @` | RACE.C |
-| 54D8 | g_54d8 | `int @` | RACE.C |
-| 54DA | g_54da | `int @` | RACE.C, SYS.C |
-| 5504 | g_5504 | `int @[][5]` | PERF.C |
 | 5568 | g_5568 | `int @[]` | PERF.C |
-| 5580 | g_5580 | `unsigned char @[543]` | HERCDET.ASM |
-| 58E4 | g_58e4 | `int @` | CARPIC.C, DASH.C, DRIVE.C |
-| 58EE | g_58ee | `int @` | CARPIC.C, DRIVE.C, SCREEN.C |
-| 5A10 | g_5a10 | `struct Rect @` | CARPIC.C |
-| 5A18 | g_5a18 | `struct Rect @` | CARPIC.C |
-| 5AA6 | g_5aa6 | `char @` | BITMAP.C, CARPIC.C, WALKER.C |
-| 5AB0 | g_5ab0 | `struct Bitmap far *@` | TIRES.C |
-| 5AB4 | g_5ab4 | `struct Bitmap far *@` | TIRES.C |
-| 5AB8 | g_5ab8 | `struct Bitmap far *@` | TIRES.C |
 | 5AF3 | g_5af3 | `char @` | VIDDET.ASM |
 | 5E3C | g_5e3c | `int @` | VIEW.C |
 | 5E62 | g_5e62 | `int @[]` | VIEW.C |
@@ -240,43 +151,27 @@ Generated from the sources on main (2026-11-05). Placeholder = `F_xxxxx` functio
 | 6068 | g_6068 | `struct List @` | SCENERY.C |
 | 6076 | g_6076 | `int @` | SCENERY.C |
 
-## Globals: static (_BSS, MSC name hash) (51)
+## Globals: static (_BSS, MSC name hash) (35)
 
 | DS | name | decl | used in |
 |---|---|---|---|
 | 6C42 | g_6c42 | `int @[2]` | POPUP.C |
 | 6C4E | g_6c4e | `char @` | SYS.C |
-| 6CA4 | g_6ca4rz | `int @` | RACE.C |
 | 6CA6 | g_6ca6qz | `int @` | RACE.C |
 | 6CA8 | g_6ca8pz | `int @` | RACE.C |
-| 6CAA | g_6caaaa | `int @` | RACE.C |
 | 6CD4 | g_6cd4oz | `struct Bitmap far *@` | TIRES.C |
-| 6CD8 | g_6cd8lz | `int @` | TIRES.C |
-| 6CDA | g_6cdaaa | `struct Bitmap far *@[3]` | TIRES.C |
 | 6CE6 | g_6ce6sz | `int @` | TIRES.C |
 | 6CE8 | g_6ce8rz | `struct Rect @` | TIRES.C |
 | 6CF0 | g_6cf0zz | `struct Bitmap far *@` | TIRES.C |
 | 6CF4 | g_6cf4wz | `struct Bitmap @` | TIRES.C |
 | 6D24 | g_6d24ajz | `struct Bitmap far *@` | TIRES.C |
 | 6D28 | g_6d28agz | `struct Bitmap far *@` | TIRES.C |
-| 6D2C | g_6d2c0nz | `struct Bitmap far *@` | TIRES.C |
-| 6D30 | g_6d30 | `struct Bitmap far *@` | TIRES.C |
-| 6D34 | g_6d34 | `struct Bitmap far *@` | TIRES.C |
-| 6D38 | g_6d38 | `struct Bitmap far *@` | TIRES.C |
 | 6D3C | g_6d3caat | `struct Sprite *@` | TIRES.C |
 | 6D3E | g_6d3eaas | `int @` | TIRES.C |
-| 6D40 | g_6d400 | `struct Bitmap @` | TIRES.C |
-| 6D70 | g_6d700 | `struct Bitmap @` | TIRES.C |
 | 6DA0 | g_6da0 | `int @` | TIRES.C |
 | 6DA2 | g_6da2 | `int @` | TIRES.C |
-| 6DA4 | g_6da4 | `struct Bitmap @` | TIRES.C |
 | 6DD4 | g_6dd4 | `int @` | TIRES.C |
-| 6DD6 | g_6dd6 | `struct Bitmap far *@` | TIRES.C |
-| 6DDA | g_6dda | `struct Bitmap far *@` | TIRES.C |
-| 6DDE | g_6dde | `struct Bitmap far *@` | TIRES.C |
 | 6DF2 | g_6df2a | `struct Bitmap far *@` | TIRES.C |
-| 6DF6 | g_6df6a | `struct Bitmap far *@` | TIRES.C |
-| 6DFA | g_6dfa7 | `struct Bitmap far *@` | TIRES.C |
 | 6E04 | g_6e04aay | `int @` | VIEW.C |
 | 6E06 | g_6e06aax | `int @` | VIEW.C |
 | 6E08 | g_6e08aaw | `int *@` | VIEW.C |
@@ -296,7 +191,7 @@ Generated from the sources on main (2026-11-05). Placeholder = `F_xxxxx` functio
 | 6E28 | g_6e28a | `int *@` | VIEW.C |
 | 6E2A | g_6e2a9 | `int @` | VIEW.C |
 
-## Globals: communal (LINK hash bucket) (208)
+## Globals: communal (LINK hash bucket) (193)
 
 | DS | name | decl | used in |
 |---|---|---|---|
@@ -319,7 +214,6 @@ Generated from the sources on main (2026-11-05). Placeholder = `F_xxxxx` functio
 | 755A | g755av | `int @` | RACE.C |
 | 755C | g755cu | `struct Bitmap far *@` | DASH.C, DRIVE.C, MAIN.C |
 | 7560 | af7560z | `int far *@` | ROAD.C |
-| 7564 | ab7564z | `char far *@` | DISK.C, MAIN.C |
 | 7568 | bm7568 | `struct Obj @[]` | GARAGE.C, VIDEO.C |
 | 7644 | g7644m | `int @` | RACE.C |
 | 7646 | bucount | `int @` | DISK.C, FAME.C |
@@ -355,32 +249,27 @@ Generated from the sources on main (2026-11-05). Placeholder = `F_xxxxx` functio
 | 78D6 | g78d6c | `void (far *@)(int, int, int, int)` | VIEW.C |
 | 78DA | bp78da | `void (far *@)(int, int)` | VIEW.C |
 | 78DE | bl78de | `int @` | ARENA.C, MARKS.C |
-| 78E0 | e_78e0 | `struct Eng @` | CRUISE.C, DRIVE.C, DRVTICK.C, GAME.C, RACE.C, ROAD.C, SYS.C |
 | 79A2 | as79a2z | `int @` | BOBS.C, RACE.C |
 | 79A4 | d_79a4 | `int @` | BOBS.C, RACE.C |
 | 79A6 | jz79a6 | `int @` | CRUISE.C, DRVTICK.C, RACE.C |
 | 79A8 | fz79a8 | `char @[2]` | HOTSPOT.C |
 | 79AA | bs79aa | `struct Dev @` | MUSIC.C, SOUND.C, SYS.C |
 | 79C6 | ao79c6t | `struct Dev @` | MUSIC.C, SYS.C |
-| 79E2 | g79e2g | `struct Eng @` | DRVTICK.C, RACE.C |
 | 7AA4 | ah7aa4w | `char @[6]` | HOTSPOT.C |
 | 7AAA | w_7aaa | `void (interrupt far *@)(void)` | SYS.C |
 | 7AAE | aw7aaex | `int @` | ROAD.C, VIEW.C |
 | 7AB0 | al7ab0u | `int @[]` | ROAD.C |
 | 7ACA | az7acaz | `int @` | VIEW.C |
 | 7ACC | r_7acc | `int @` | VIEW.C |
-| 7ACE | n_7ace | `int @[]` | ROAD.C |
 | 7AE8 | ac7ae8t | `int @` | VIEW.C |
 | 7AEA | az7aeau | `int @` | VIEW.C |
 | 7B14 | g7b14o | `int @` | ARENA.C, MARKS.C |
 | 7D16 | a_7d16q | `int @` | DISK.C, GAME.C |
 | 7D18 | g7d18m | `struct Sprite @` | SPRITE.C |
 | 7D2E | ao7d2ev | `struct State7D2E @` | DRVTICK.C, RACE.C, ROAD.C, SYS.C, VIEW.C |
-| 7D40 | g7d40q | `int @` | BOBS.C, RACE.C |
 | 7D62 | g7d62p | `unsigned far *@` | ROAD.C, VIEW.C |
 | 7D66 | g7d66n | `int @` | CRUISE.C, DRVTICK.C, VIEW.C |
 | 7D68 | g7d68m | `unsigned @[][3]` | BOBS.C, DISK.C |
-| 7D7A | ar7d7au | `struct Spec *@` | BOBS.C, RACE.C |
 | 7D7C | ap7d7cv | `int @` | RACE.C, VIEW.C |
 | 7D7E | gz7d7e | `int @` | RACE.C, ROAD.C |
 | 7D80 | g7d80q | `int @` | ARENA.C, MARKS.C |
@@ -397,12 +286,10 @@ Generated from the sources on main (2026-11-05). Placeholder = `F_xxxxx` functio
 | 7F32 | g7f32s | `char @[]` | BOBS.C, SYS.C |
 | 7F82 | g7f82r | `int @` | BOBS.C, RACE.C |
 | 7F84 | g7f84q | `int @` | ADS.C |
-| 7F86 | bm7f86 | `int @` | BOBS.C |
 | 7F88 | a_7f88d | `int @` | RACE.C |
 | 7F8A | at7f8au | `int @[]` | ROAD.C |
 | 7FA4 | al7fa4z | `int @` | VIEW.C |
 | 7FA6 | by7fa6 | `int @` | VIEW.C |
-| 7FA8 | bw7fa8 | `struct Bitmap @` | CARPIC.C |
 | 7FD8 | g7fd8e | `int @[]` | ROAD.C |
 | 7FF2 | dz7ff2 | `int @` | VIEW.C |
 | 7FF4 | g7ff4g | `int @` | VIEW.C |
@@ -431,7 +318,6 @@ Generated from the sources on main (2026-11-05). Placeholder = `F_xxxxx` functio
 | 8264 | h_8264 | `int @` | CARPIC.C, RACE.C |
 | 8266 | d_8266 | `int @` | CARPIC.C, RACE.C, VIDEO.C |
 | 8268 | ap8268t | `int @` | CARPIC.C, RACE.C, VIDEO.C |
-| 826A | g826af | `int @` | CARPIC.C, RACE.C |
 | 826C | ae826cv | `int @` | CARPIC.C, RACE.C |
 | 826E | ar826e | `int @` | CARPIC.C, RACE.C |
 | 8270 | q_8270 | `int @` | CARPIC.C, RACE.C |
@@ -475,7 +361,6 @@ Generated from the sources on main (2026-11-05). Placeholder = `F_xxxxx` functio
 | 8B7E | bz8b7ex | `struct Bitmap far *@` | VIEW.C |
 | 8B82 | am8b82y | `int far *@` | VIEW.C |
 | 8B86 | ai8b86y | `int @[]` | MENU.C |
-| 8B8E | g8b8eb | `int @` | MENU.C, SYS.C |
 | 8B90 | ao8b90v | `struct Lims @` | MENU.C, SYS.C |
 | 8B98 | av8b98 | `char @` | MENU.C |
 | 8B9A | a_8b9ap | `int @` | MENU.C, SAVEGAME.C |
@@ -483,7 +368,6 @@ Generated from the sources on main (2026-11-05). Placeholder = `F_xxxxx` functio
 | 8B9E | az8b9ez | `int *@` | MENU.C |
 | 8BA0 | x_8ba0 | `int @` | MENU.C |
 | 8BA2 | az8ba2t | `struct Hot *@` | EDIT.C, MENU.C |
-| 8BA4 | ax8ba4u | `char @` | MENU.C |
 | 8BA6 | av8ba6v | `struct Hot *@` | MENU.C |
 | 8BA8 | at8ba8v | `struct Hot *@` | MENU.C, SYS.C |
 | 8BAA | az8baa | `int @` | MENU.C, SYS.C |
@@ -492,31 +376,22 @@ Generated from the sources on main (2026-11-05). Placeholder = `F_xxxxx` functio
 | 8BC0 | cz8bc0y | `int @` | BOBS.C, SYS.C |
 | 8BC2 | ay8bc2z | `int @` | RACE.C, VIEW.C |
 | 8BC4 | p_8bc4 | `float @` | RACE.C |
-| 8BC8 | h_8bc8 | `int @` | DISK.C |
 | 8BCA | ak8bcat | `struct Bitmap far *@` | VIEW.C |
 | 8BCE | ag8bcet | `int @` | GAME.C, MAIN.C |
 | 8BD0 | cz8bd0y | `int @` | RACE.C, ROAD.C |
 | 8DD2 | s_8dd2 | `int @` | DISK.C |
-| 8DD4 | aw8dd4x | `char *@` | DISK.C |
 | 8DD6 | au8dd6y | `char *@` | DISK.C |
-| 8DD8 | h_8dd8 | `int @[][3]` | BOBS.C, DISK.C |
 | 8DF0 | w_8df0 | `struct Model @[]` | BOBS.C, CARPIC.C, DISK.C, GARAGE.C, PERF.C, SAVEGAME.C, VIEW.C |
 | 8EF4 | a8ef4fv | `char @[2]` | HOTSPOT.C |
 | 8EF6 | g8ef6q | `int @` | SYS.C |
 | 8EF8 | g_8ef8 | `int @` | SYS.C |
 | 8EFA | aj8efax | `int @` | SYS.C |
 | 8EFC | bw8efc | `int @` | SYS.C |
-| 8EFE | av8efe | `int @` | MENU.C |
 | 8F00 | o_8f00 | `int @` | ARENA.C, MARKS.C |
 
-## Far data (7)
+## Far data (2)
 
 | seg:off | name | decl |
 |---|---|---|
-| 2F93:0000 | g_2f93_0000 | `int far @[]` |
-| 2F93:002C | g_2f93_002c | `int far @[]` |
 | 2F93:0050 | g_2f93_0050 | `int far @[]` |
-| 2F93:007C | g_2f93_007c | `int far @[]` |
-| 2F93:00A0 | g_2f93_00a0 | `int far @[]` |
 | 2F93:00B0 | g_2f93_00b0 | `int far @[]` |
-| 2F93:00C0 | g_2f93_00c0 | `int far @[]` |

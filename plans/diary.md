@@ -941,3 +941,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - The boundary-tie caveat in CLAUDE.md rules 4e/4f matters here: function gates passed while linked static/communal addresses moved. Linker-map diagnostics identified the affected candidates; restoring placeholders or using original-bucket/strict-window alternatives restored byte identity.
 - The reviewed g_scene spelling survives the compiler budget in the complete initialized-data batch; the g_loc fallback was unnecessary. No tooling or declaration-layout changes were needed.
+
+## 2026-11-05 10:30 CET: Second naming pass (Codex investigation, Claude review)
+
+### What I did
+- A Codex agent investigated every remaining placeholder (490 entries) and proposed 254 names with file:line evidence; an independent Claude review approved 205, changed 48 to more accurate or modest names (e.g. compose/restore buffers `g_wheelBuf`, not "save"; overlay areas, not "clip"; `make_bolt_overlay`, not `save_bolt`) and rejected one (`g_5568`). It confirmed three wrong existing names: `Car.weight` is the car's value, the matching `game_make_car` parameter, and `Part.h` is the span colour.
+- Codex applied 127 of the 256 approved entries (all functions, initialized globals, far data and the three member/parameter corrections; 16 of 31 statics and 15 of 129 communals). The other statics and communals keep placeholders: their accurate names miss the hash window that fixes their address (trial ties moved 83 and 280 packed bytes while every function still matched).
+- plans/unnamed.md is regenerated from the sources: 49 functions, 313 globals (85 initialized, 35 statics, 193 communals), 2 far-data labels and M_02B9A.ASM remain.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
+
+### What I learned
+- Function gates alone do not catch hash placement: only the linked build does. Communal windows are narrow enough that most descriptive names cannot be placed; those symbols are understood but stay placeholders.
