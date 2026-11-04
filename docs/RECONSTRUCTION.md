@@ -175,6 +175,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **RenderRows** (`g_renderRows`, DS:6E08..6E29): a natural, byte-identical reconstruction choice; separate globals also match.
 
+- **TireWork** (`g_tires`, DS:6CD4..6DFD): a natural, byte-identical reconstruction choice; separate globals also match.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only
