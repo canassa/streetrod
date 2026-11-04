@@ -790,3 +790,12 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - Adopted the naming conventions of the Betrayal at Krondor reconstruction (its CONTRIBUTING.md / CLAUDE.md) in CLAUDE.md: `camelCase` locals, `g_camelCase` globals, `SCREAMING_SNAKE_CASE` constants and enum values, `PascalCase` types, `camelCase` members, `module_snake_case` public functions, `static snake_case` private ones; plus DOS 8.3 upper-case file names named for the module, "name only from evidence", "never add comments" and `NULL` for pointers.
 - Added what makes a rename load-bearing here: local frame order, LINK's communal hash and MSC's static hash, and the external-symbol budget.
+
+## 2026-11-05 01:00 CET: `/Oi` instead of `#pragma intrinsic`
+
+### What I did
+- The 25 per-file `#pragma intrinsic` lists were the reconstruction's per-function pragmas, merged. In the 7 files that already had `/Oi` they were redundant; the other 18 match with the pragma deleted and `i` added to their command line. No game C code calls a library routine that has an inline form (only the runtime calls strcpy/strlen/memcpy/memset), and all 38 C files without `/Oi` match with it added, so `/Oi` alone explains every inline inp/outp/abs/_rotl/_rotr/memcpy/memset/_enable/_disable/sin/cos. No pragma intrinsic/function is left in src.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, tests OK.
+
+### What I learned
+- The bytes cannot tell `/Oi` from the pragma, so `/Oi` is the simpler explanation, not a proven fact (recorded in RECONSTRUCTION.md). A pragma only has to precede the first use (M_1D8C4.C: between the two functions it works, at the end of the file it does not).
