@@ -648,7 +648,7 @@ static void near insert_hot(struct Hot *arr, struct Hot *item, int n)
 
 /* gx_build_hots @ 0F38:40CA (linear 0x1344A, 411 bytes)
 
-   Build the sorted list of menu items in g_engineHots: the 3 fixed records are copied from g_1948,
+   Build the sorted list of menu items in g_engineHots: the 3 fixed records are copied from g_engineHotTemplate,
    then for each of 9 slots (grouped by the counts in g_nBolt) that is enabled in o_8290 an item is
    inserted at the position gx_bolt_pos gives for the slot's coordinates, plus a last item picked by
    g_slotSelec.wirePic. g_slotSelec.slot/g_slotSelec.subslot are saved and restored around it. */
@@ -665,7 +665,7 @@ void gx_build_hots(int *xs, int *ys)
 
     rx = g_slotSelec.slot;
     rh = g_slotSelec.subslot;
-    item = g_1948;
+    item = g_engineHotTemplate;
     len = (num = 3) * sizeof(struct Hot);
     memcpy(g_engineHots, item, len);
     g_boltHot.textOffset = g_offBolt;

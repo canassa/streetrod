@@ -316,7 +316,7 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
     struct Bitmap far *bm;
     struct Bitmap far *bm2n;
 
-    m2 = &w_8df0[idx];
+    m2 = &g_models[idx];
     p12 = &g_layoutAutoSprArray[idx];
     p69 = &g_pointsModelService[idx];
     *out = di_bm(g7d86n[idx].bodyPic, ARENA_LOW_STACK);
@@ -344,12 +344,12 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
         row8 = 0;
     if ((flags & 8) && idx != 0x19)
         bm_draw_pic(*out, m2->f4, p12->b5, p12->b6, 1);
-    blt.w = g_0294->width;
-    blt.h = g_0294->height;
+    blt.w = g_stickerBg->width;
+    blt.h = g_stickerBg->height;
     blt.sx = p12->stickerX;
     blt.sy = p12->stickerY;
     blt.dx = blt.dy = 0;
-    (*g_videoOps.copy)(*out, g_0294, &blt, 1);
+    (*g_videoOps.copy)(*out, g_stickerBg, &blt, 1);
     if (kk > 0) {
         pp8 = &a784als[kk - 1];
         bm_draw_pic(*out, pp8->id, p12->stickerX + pp8->dx, p12->stickerY + pp8->dy, 0);
@@ -488,8 +488,8 @@ again:
                 ch_save_bg();
         } else
             ma_release();
-        if (!g_0294)
-            g_0294 = ar_bm(0x40, 0x19, 0, ARENA_LOW_BASE);
+        if (!g_stickerBg)
+            g_stickerBg = ar_bm(0x40, 0x19, 0, ARENA_LOW_BASE);
         cp_build(bms6, idx, flags, kk, q, ids, 1, n2);
         if (r_vid.mode == VID_TANDY && kind != 3 && kind != 7 && kind != 8) {
             make_frames(bms6, n2, g_spriteBottomCut, hh8, tmpn);

@@ -436,7 +436,7 @@ void near ga_paint(void)
                 mn_pop(1);
                 pu_show(bm1, x, y);
                 ma_pop_high(1);
-                pu_show(g_0294, m_8272.stickerX, m_8272.stickerY);
+                pu_show(g_stickerBg, m_8272.stickerX, m_8272.stickerY);
                 a_7eaap.currentCar->appearance &= 0xe0ff;
                 ga_palette(a_7eaap.currentCar->paintScheme = idx4);
                 vi_palette_reg(12, 5);
@@ -471,7 +471,7 @@ void near ga_body(unsigned mask)
     int key;
     int cost;
 
-    p9 = &w_8df0[a_7eaap.currentCar->specIndex];
+    p9 = &g_models[a_7eaap.currentCar->specIndex];
     if (!a_7eaap.currentCar) {
         gm_message(0x0efa);
         return;
@@ -528,7 +528,7 @@ void near ga_body(unsigned mask)
         r7 = gm_car_look(a_7eaap.currentCar);
         cp_show_car(8, n9, r7, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0x98, 0,
                 g_tirePics[g_parts[a_7eaap.currentCar->tires->idx].variant]);
-        F_16BC1();
+        so_noise();
         cu_ctl(CURSOR_SHOW_NOW);
         g_gameClock.actionTicks += val5;
         sc_add_money(-cost);
@@ -581,8 +581,8 @@ void near ga_stickers(void)
             idx6 = -30 - k;
             a_7eaap.currentCar->appearance = ((idx6 & 0x1f) << 8) | (a_7eaap.currentCar->appearance & 0xe0ff);
             bm3 = di_bm(1218, ARENA_HIGH_STACK);
-            bm1 = ar_bm(g_0294->width, g_0294->height, 0, ARENA_HIGH_STACK);
-            bm_copy(g_0294, bm1, 1);
+            bm1 = ar_bm(g_stickerBg->width, g_stickerBg->height, 0, ARENA_HIGH_STACK);
+            bm_copy(g_stickerBg, bm1, 1);
             q2 = &a784als[idx6 - 1];
             bm_draw_pic(bm1, q2->id, (char)(q2->dx + m_8272.stickerSubX), (char)q2->dy, 0);
             bm4 = ar_bm(bm1->width, bm1->height, 0, ARENA_HIGH_STACK);

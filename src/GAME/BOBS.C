@@ -329,9 +329,9 @@ static void near select_rival(int n)
             g_selectedRacerPointer->sticker = rn_int(20) < skill ? rn_int(9) : 0;
         else if (g_selectedRacerPointer->sticker > 0 && g_selectedRacerPointer->betRaces > 10)
             g_selectedRacerPointer->sticker = rn_int(40) < skill ? rn_int(9) : g_selectedRacerPointer->sticker;
-        if (w_8df0[bn7648].frontBumperPic > 0 && w_8df0[bn7648].rearBumperPic > 0 && g_selectedRacerPointer->betRaces > 8)
+        if (g_models[bn7648].frontBumperPic > 0 && g_models[bn7648].rearBumperPic > 0 && g_selectedRacerPointer->betRaces > 8)
             g_selectedRacerPointer->bodyMods |= rn_int(25) < skill ? 3 : g_selectedRacerPointer->bodyMods;
-        if (w_8df0[bn7648].roofPic > 0 && g_selectedRacerPointer->betRaces > 8)
+        if (g_models[bn7648].roofPic > 0 && g_selectedRacerPointer->betRaces > 8)
             g_selectedRacerPointer->bodyMods |= rn_int(30) < skill ? 4 : g_selectedRacerPointer->bodyMods;
     } else
         g_isKingState = 1;

@@ -73,9 +73,9 @@ void sg_init_racer(int k, int *list)
     y = (g7d86n[x].rank >> 1) + 1;
     g_racerRecordsArray[k].bodyMods = ((g7d86n[x].parts >> 8 & 7) == 2) ? 8 : 0;
     g_racerRecordsArray[k].sticker = (rn_int(20) < y) ? rn_int(9) : 0;
-    if (w_8df0[x].frontBumperPic > 0 && w_8df0[x].rearBumperPic > 0)
+    if (g_models[x].frontBumperPic > 0 && g_models[x].rearBumperPic > 0)
         g_racerRecordsArray[k].bodyMods |= (rn_int(25) < y) ? 3 : 0;
-    if (w_8df0[x].roofPic > 0)
+    if (g_models[x].roofPic > 0)
         g_racerRecordsArray[k].bodyMods |= (rn_int(30) < y) ? 4 : 0;
 }
 

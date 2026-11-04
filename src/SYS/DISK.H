@@ -42,7 +42,7 @@ extern int g_countLibBmB;                                      /* DS:8DD2 */
 extern char *g_library1Path;                                   /* DS:8DD4 */
 extern char *g_picLibBPath;                                   /* DS:8DD6 */
 extern int g_acceptProbability[][3];                                 /* DS:8DD8 */
-extern struct Model w_8df0[];                           /* DS:8DF0 */
+extern struct Model g_models[];                           /* DS:8DF0 */
 int di_seek(int handle, long pos);                    /* 0x15396 */
 int di_read_index(int n);                             /* 0x1552B */
 void di_free_pic(int n);                              /* 0x158DE */

@@ -1,6 +1,6 @@
 # Budget-cramped names still constrained
 
-Rechecked on naming4 after naming the understood function placeholders. These meanings are established, but the intended spellings still fail a communal hash window or the cumulative compiler budget.
+Rechecked on naming5. Meanings remain established; the intended spellings below failed the hash window or the cumulative per-file compiler budget. Each budget trial compiled all changed code files; rejected trials were restored.
 
 | Original placeholder | Current name | Intended name | Constraint |
 |---|---|---|---|
@@ -27,5 +27,12 @@ Rechecked on naming4 after naming the understood function placeholders. These me
 | g_5148 | g_cPos | g_carbBoltPositions | GARAGE.C compiler budget |
 | g_5186 | g_bPos | g_boltPositions | GARAGE.C compiler budget |
 | g_519a | g_bIdx | g_boltSides | GARAGE.C compiler budget |
+| g_1804 | g_1804 | g_transBoltHots | Per-file compiler budget (naming5) |
+| g_1e34 | g_1e34 | g_bodyModHots | Per-file compiler budget (naming5) |
+| g_29ff | g_29ff | g_garageText | Per-file compiler budget (naming5) |
+| g_49d2 | g_49d2 | g_transPics | Per-file compiler budget (naming5) |
+| g_49dc | g_49dc | g_bankrollLabel | Per-file compiler budget (naming5) |
+| g_5184 | g_5184 | g_boltSlots | Per-file compiler budget (naming5) |
+| g_5198 | g_5198 | g_boltSubslots | Per-file compiler budget (naming5) |
 
-Fixed names have been dropped. Five former entries are now struct members: `g_videoOps.show`, `g_penPoint.x`, and `g_gameClock.actionTicks`/`biosTicks`/`timeBase`. Intended public function spellings retain the approved module prefixes (`mn_sel`, `ar_bitmap`). Evidence, individual budget trials, and the applied ledger are under uncommitted `work/naming4/`.
+Fixed names have been dropped. Five former entries are struct members: `g_videoOps.show`, `g_penPoint.x`, and `g_gameClock.actionTicks`/`biosTicks`/`timeBase`. Public function spellings retain the approved module prefixes. Evidence, rejected budget/hash trials, grouping candidates, and the applied ledger are under uncommitted `work/naming5/`.

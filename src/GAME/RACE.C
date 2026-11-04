@@ -618,7 +618,7 @@ static void near blow_engine(int n)
         a_7eaap.currentCar->wireState = 0;
     }
     sy_reset_queues();
-    F_16BC1();
+    so_noise();
     gm_popup(-n, -1, 0x49);
 }
 
@@ -636,7 +636,7 @@ static void near drop_transmission(int n)
             *q++ = 0;
     }
     sy_reset_queues();
-    F_16BC1();
+    so_noise();
     gm_popup(-n, -1, 0x49);
 }
 

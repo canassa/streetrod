@@ -1405,3 +1405,18 @@ The first verbose rename batch crossed GARAGE.C's coupled symbol budget: the tra
 
 ### What I learned
 - The naming agent's evidence for a sound helper came from one caller. Name sound effects only after looking at every caller.
+
+## 2026-11-04 20:17 CET: Evidence-backed naming pass five
+
+### What I did
+
+- Named F_16BC1 as so_noise after checking all three callers; renamed ten globals/statics for sticker background, engine menu template, cursor steps, line widths, click state, sky clipping, road-row limit, and model records. No storage or comments added; key maps untouched.
+- Reviewed the remaining placeholders and both far sound sequences; retained names without sufficient identity evidence. Recorded every direct reference, proposed meaning, hash trial, compiler trial, deferred grouping, and skipped name in uncommitted work/naming5/FINDINGS.md and LEDGER.tsv.
+- Retried all 23 cramped spellings: three hash failures and twenty compiler-budget failures. Regenerated plans/unnamed.md and added seven newly understood constrained names to plans/cramped-names.md.
+- All gates passed: headers, 572/572 functions, clean build with packed EXE IDENTICAL, DGROUP ownership/order, 62 unit tests, DOS-native MAKE IDENTICAL. A mechanical audit confirmed source/header changes are identifier substitutions only.
+
+### What I learned
+
+- Renaming the road-row-limit static widened its neighbor's hash window, allowing g_skyClipY. A shorter so_noise spelling recovered enough cumulative compiler budget for g_stickerBg; the coupled constraints in CLAUDE.md rules 4d/4f apply to the final set of names.
+- VIEW's line-width pointers decrement into preceding words: the mixed table at DS:5E62 is not purely picture IDs. Several projected row arrays and bolt mappings likewise extend across placeholder declarations; these grouping candidates are documented for a later structural pass.
+- The two unused jingle wrappers have no callers in either the source search or binary call graph. Their musical parameters do not prove the intended effect names.

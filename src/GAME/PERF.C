@@ -42,9 +42,9 @@ void near pf_drivetrain(struct Car *c, struct Eng *e)
     c3 = g_parts[qn[2]->idx].variant;
     d = g_parts[n6k->idx].variant;
     e1 = g_parts[m->idx].variant;
-    vl = ((c->appearance & 0x2000) || w_8df0[c->specIndex].roofPic == 0) * 0.09
-        + ((c->appearance & 0x8000) || w_8df0[c->specIndex].rearBumperPic == 0) * 0.05
-        + ((c->appearance & 0x4000) || w_8df0[c->specIndex].frontBumperPic == 0) * 0.01
+    vl = ((c->appearance & 0x2000) || g_models[c->specIndex].roofPic == 0) * 0.09
+        + ((c->appearance & 0x8000) || g_models[c->specIndex].rearBumperPic == 0) * 0.05
+        + ((c->appearance & 0x4000) || g_models[c->specIndex].frontBumperPic == 0) * 0.01
         + g_modelScore[g7d86n[c->specIndex].rank] * 0.1 / 88.0
         + g_carbManifoldFit[c3][bl] * 0.15 / 100.0
         + g_engineScore[a3] * 0.25 / 100.0
@@ -168,9 +168,9 @@ int near pf_vmax(int n)
     c3 = g_parts[qn[2]->idx].variant;
     d = g_parts[n6k->idx].variant;
     e1 = g_parts[m->idx].variant;
-    vl = ((p6->appearance & 0x2000) || w_8df0[p6->specIndex].roofPic == 0) * 0.09
-        + ((p6->appearance & 0x8000) || w_8df0[p6->specIndex].rearBumperPic == 0) * 0.05
-        + ((p6->appearance & 0x4000) || w_8df0[p6->specIndex].frontBumperPic == 0) * 0.01
+    vl = ((p6->appearance & 0x2000) || g_models[p6->specIndex].roofPic == 0) * 0.09
+        + ((p6->appearance & 0x8000) || g_models[p6->specIndex].rearBumperPic == 0) * 0.05
+        + ((p6->appearance & 0x4000) || g_models[p6->specIndex].frontBumperPic == 0) * 0.01
         + g_modelScore[g7d86n[p6->specIndex].rank] * 0.1 / 88.0
         + g_carbManifoldFit[c3][bl] * 0.15 / 100.0
         + g_engineScore[a3] * 0.25 / 100.0

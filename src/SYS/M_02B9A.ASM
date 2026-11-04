@@ -65,11 +65,11 @@ _g_savedCursorX DW      0                        ; DS:4746 int
 _g_savedCursorY DW      0                        ; DS:4748 int
         PUBLIC  _g_474a
 _g_474a DW      0FFFFh                   ; DS:474A int
-        PUBLIC  _g_474c
-_g_474c DW      0, 1, 0FFFFh             ; DS:474C int[]
+        PUBLIC  _g_cursorStepX
+_g_cursorStepX DW      0, 1, 0FFFFh             ; DS:474C int[]
 ; DS:4752 int[]
-        PUBLIC  _g_4752
-_g_4752 DW      0, 1, 101h, 100h, 1FFh, 1, 0FFh, 0FF01h, 0FF00h, 0FFFFh
+        PUBLIC  _g_cursorStepY
+_g_cursorStepY DW      0, 1, 101h, 100h, 1FFh, 1, 0FFh, 0FF01h, 0FF00h, 0FFFFh
         PUBLIC  _g_scanMap
 _g_scanMap DB      0, 1Bh, '1234567890-', 0  ; DS:4766 char[]
         DB      0, 0, 'QWERTYUIOP', 0

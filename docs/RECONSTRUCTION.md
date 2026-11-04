@@ -289,7 +289,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   `g_hotBobs[3]`) or computes a run-time difference (`g_134e - g_gar`, `g_1a44 - g_hotGasStation`),
   which proves separate symbols; each array starts at the first record so named. Where
   the original's other boundaries were (one array per menu list, or fewer), and the
-  arrays' names, are not recoverable. `g_engineHots` (a runtime list gx_build_hots builds), `g_1948`
+  arrays' names, are not recoverable. `g_engineHots` (a runtime list gx_build_hots builds), `g_engineHotTemplate`
   (three fixed menu records, then six records of another list) and `g_boltHot` are Hot
   records too; insert_hot sorts them by (x1, y1).
 - **KEYMAPS.ASM's key maps.** 42 referenced lists of (scan code, value) pairs, each ended
