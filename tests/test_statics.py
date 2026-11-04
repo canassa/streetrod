@@ -5,7 +5,7 @@ import re
 import tempfile
 import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
-from sr import cod, fileheaders, module
+from sr import cod, fileheaders, module, source
 
 LISTING = """_BSS      SEGMENT\r
 COMM NEAR\t_bn7648:\tBYTE:\t 2\r
@@ -41,7 +41,8 @@ class StaticsTests(unittest.TestCase):
                 self.assertEqual(len(re.findall(rf'^static [^;(]*\b{n}\b', text, re.M)), 1, (f.rel, n))
                 self.assertNotIn(n, owner, (f.rel, n))
                 owner[n] = f.rel
-        self.assertGreater(len(owner), 100)
+        self.assertTrue(owner)
+        self.assertEqual(owner, {g['name']: g['static'] for g in source.statics()})
 
 
 if __name__ == '__main__':
