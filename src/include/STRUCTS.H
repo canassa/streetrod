@@ -302,19 +302,19 @@ struct Win {
 
 struct Racer {
     signed char f0;
-    char f1;
+    char shiftPenalty;
     signed char f2;
     char f3;
-    int f4;
-    int f6;
-    int f8;
-    signed char fa;
-    char fb;
-    signed char fc;
-    char fd;
-    char fe;
-    signed char ff;
-    char f10;
+    int overlayPic;
+    int nameOffset;
+    int specIndex;
+    signed char paintScheme;
+    char status;
+    signed char betRaces;
+    char betWins;
+    char bodyMods;
+    signed char paintShade;
+    char lostCarOnce;
     char pad11;
 };
 
@@ -355,12 +355,12 @@ struct Pair {
 
 
 struct Dlg {
-    int f0;
-    int f2;
+    int specIndex;
+    int bodyMods;
     struct Bitmap far *bm1;
     struct Bitmap far *bm2;
     int f0c;
-    int f0e;
+    int gallonsLeft;
     int f10;
     int f12;
     int f14;

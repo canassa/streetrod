@@ -245,7 +245,7 @@ static void near leave_station(struct Dlg *d)
         carpic_patch_bg(p, 0x60, 0, 0x30, 0x40, 0xc8, 0x51, 0xa9, 2);
     }
     a_7eaap.m7eb0->fuel = a_7eaap.m7eb0->fuel > 0xaa ? 0xaa : a_7eaap.m7eb0->fuel;
-    F_181C8(2, d->f0, d->f2, (a_7eaap.m7eb0->appearance >> 8) & 0x1f, 0, 0xa9, 1,
+    F_181C8(2, d->specIndex, d->bodyMods, (a_7eaap.m7eb0->appearance >> 8) & 0x1f, 0, 0xa9, 1,
             g_5030[g_4806[a_7eaap.m7eb0->tires->idx].variant]);
     menu_pop(1);
     marks_clear();
@@ -272,9 +272,9 @@ void race_gas_station(void)
     (*m_present)();
     dl.f0c = 1;
     cursor_ctl(1);
-    dl.f0 = a_7eaap.m7eb0->specIndex;
-    dl.f2 = game_car_look(a_7eaap.m7eb0);
-    F_181C8(4, dl.f0, dl.f2, (a_7eaap.m7eb0->appearance >> 8) & 0x1f, 0, 0xa9, 1,
+    dl.specIndex = a_7eaap.m7eb0->specIndex;
+    dl.bodyMods = game_car_look(a_7eaap.m7eb0);
+    F_181C8(4, dl.specIndex, dl.bodyMods, (a_7eaap.m7eb0->appearance >> 8) & 0x1f, 0, 0xa9, 1,
             g_5030[g_4806[a_7eaap.m7eb0->tires->idx].variant]);
     F_16381(0);
     label = popup_grab(0x50, 0xaa, 0x28, 0xc, 0);
@@ -293,7 +293,7 @@ void race_gas_station(void)
     dl.f10 = 1;
     dl.f16 = 0;
     dl.f18 = 1;
-    dl.f0e = (0xbe - a_7eaap.m7eb0->fuel) / 0x1e;
+    dl.gallonsLeft = (0xbe - a_7eaap.m7eb0->fuel) / 0x1e;
     show_tank_cap(&dl, 0x472);
     spots_idle();
     menu_push(0x17);
@@ -308,11 +308,11 @@ top:
             if (dl.f0c == 3)
                 goto top;
             if (dl.f1a) {
-                dl.f0e--;
+                dl.gallonsLeft--;
                 a_7eaap.m7eb0->fuel += 0x1e;
                 done = 1;
                 F_11540(-(pos <= a_7eaap.m7eaa ? pos : (int)a_7eaap.m7eaa));
-                if (dl.f0e == 0 || pos > a_7eaap.m7eaa) {
+                if (dl.gallonsLeft == 0 || pos > a_7eaap.m7eaa) {
                     if (video_anim_active(2)) {
                         sound_pump(0);
                         video_anim_stop(2);
@@ -406,11 +406,11 @@ top:
                 show_tank_cap(&dl, 0x472);
                 dl.f12 = 0;
                 cursor_ctl(dl.f0c = 2);
-                if (dl.f0e > 0 && pos <= a_7eaap.m7eaa)
+                if (dl.gallonsLeft > 0 && pos <= a_7eaap.m7eaa)
                     game_message(0x18dd);
                 goto both;
             }
-            if (dl.f0e == 0 || pos > a_7eaap.m7eaa)
+            if (dl.gallonsLeft == 0 || pos > a_7eaap.m7eaa)
                 game_message(0x10b5);
             else {
                 show_tank_cap(&dl, 0x471);
@@ -711,11 +711,11 @@ int near race_outcome(void)
         if (kind == 5) {
             found = game_make_car(bn7648, g_oppSpecPointer->price, 0);
             found->tires->wear = random_int(500);
-            found->appearance = ((g7d84o->ff & 0x1f) << 8) | (found->appearance & 0xe0ff);
-            found->appearance = (((g7d84o->fe & 4) != 0 & 1) << 13) | (found->appearance & 0xdfff);
-            found->appearance = (((g7d84o->fe & 2) != 0 & 1) << 14) | (found->appearance & 0xbfff);
-            found->appearance = (((g7d84o->fe & 1) != 0 & 1) << 15) | (found->appearance & 0x7fff);
-            found->paintScheme = g7d84o->fa;
+            found->appearance = ((g7d84o->paintShade & 0x1f) << 8) | (found->appearance & 0xe0ff);
+            found->appearance = (((g7d84o->bodyMods & 4) != 0 & 1) << 13) | (found->appearance & 0xdfff);
+            found->appearance = (((g7d84o->bodyMods & 2) != 0 & 1) << 14) | (found->appearance & 0xbfff);
+            found->appearance = (((g7d84o->bodyMods & 1) != 0 & 1) << 15) | (found->appearance & 0x7fff);
+            found->paintScheme = g7d84o->paintScheme;
             if (found->modelKind > a_7eaap.m7eb0->modelKind) {
                 a_7eaap.m7eb0->next = a_7eaap.m7eb2->next;
                 a_7eaap.m7eb2 = a_7eaap.m7eb0;
@@ -723,8 +723,8 @@ int near race_outcome(void)
                 perf_drivetrain(a_7eaap.m7eb0, &g_driveEng);
             }
             if (g_demo == 0 || g7f82r != g_demoRacer) {
-                if (g7d84o->f10 != 0 || g_isKingState != 0)
-                    g7d84o->fb = 0xff;
+                if (g7d84o->lostCarOnce != 0 || g_isKingState != 0)
+                    g7d84o->status = 0xff;
                 else {
                     for (i = 0, units = 0; i < 25; i++)
                         if (g7d86n[i].modelKind < g_oppSpecPointer->modelKind)
@@ -732,9 +732,9 @@ int near race_outcome(void)
                     if (units > 0) {
                         list[0] = units;
                         savegame_init_racer(g7f82r, list);
-                        g7d84o->f10 = 1;
+                        g7d84o->lostCarOnce = 1;
                     } else
-                        g7d84o->fb = 0xff;
+                        g7d84o->status = 0xff;
                     goto done;
                 }
             }
@@ -964,7 +964,7 @@ static void near init_rival_eng(void)
     struct Range *r;
 
     perf_drivetrain_spec(bn7648, &g_oppEngState);
-    g_rivalShiftPen = g7d84o->f1;
+    g_rivalShiftPen = g7d84o->shiftPenalty;
     race_reset_eng(&g_oppEngState);
     g_oppEngState.f18 = 0;
     g_oppEngState.f40 = g_oppEngState.f34[0];
@@ -1351,7 +1351,7 @@ static void near cop_appears(void)
     old = g_oppEngState.f0;
     g7d84o = &av7ff8[10];
     perf_drivetrain_spec(0x19, &g_oppEngState);
-    g_rivalShiftPen = g7d84o->f1;
+    g_rivalShiftPen = g7d84o->shiftPenalty;
     fit_gear(old, &g_oppEngState);
     cruise_rival_paint(5);
     for (n1 = 0; n1 < 12; n1++)

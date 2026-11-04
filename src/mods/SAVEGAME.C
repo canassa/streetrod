@@ -52,27 +52,27 @@ void savegame_init_racer(int k, int *list)
     while ((i = random_int(6)) == 5)
         if (random_int(2) == 1)
             break;
-    av7ff8[k].fa = i;
-    av7ff8[k].fb = 0;
-    av7ff8[k].fc = 0;
-    av7ff8[k].fd = 0;
-    av7ff8[k].fe = 0;
-    av7ff8[k].ff = 0;
-    av7ff8[k].f10 = 0;
+    av7ff8[k].paintScheme = i;
+    av7ff8[k].status = 0;
+    av7ff8[k].betRaces = 0;
+    av7ff8[k].betWins = 0;
+    av7ff8[k].bodyMods = 0;
+    av7ff8[k].paintShade = 0;
+    av7ff8[k].lostCarOnce = 0;
     n = list[0];
     do {
         i = random_int(n);
     } while (list[i + 1] == -1);
-    av7ff8[k].f8 = list[i + 1];
+    av7ff8[k].specIndex = list[i + 1];
     list[i + 1] = -1;
-    x = av7ff8[k].f8;
+    x = av7ff8[k].specIndex;
     y = (g7d86n[x].modelKind >> 1) + 1;
-    av7ff8[k].fe = ((g7d86n[x].parts >> 8 & 7) == 2) ? 8 : 0;
-    av7ff8[k].ff = (random_int(20) < y) ? random_int(9) : 0;
+    av7ff8[k].bodyMods = ((g7d86n[x].parts >> 8 & 7) == 2) ? 8 : 0;
+    av7ff8[k].paintShade = (random_int(20) < y) ? random_int(9) : 0;
     if (w_8df0[x].frontBumperPic > 0 && w_8df0[x].rearBumperPic > 0)
-        av7ff8[k].fe |= (random_int(25) < y) ? 3 : 0;
+        av7ff8[k].bodyMods |= (random_int(25) < y) ? 3 : 0;
     if (w_8df0[x].roofPic > 0)
-        av7ff8[k].fe |= (random_int(30) < y) ? 4 : 0;
+        av7ff8[k].bodyMods |= (random_int(30) < y) ? 4 : 0;
 }
 
 /* init_racers @ 0000:5584 (linear 0x05584, 293 bytes) */
@@ -104,12 +104,12 @@ static void near init_racers(void)
         savegame_init_racer(k++, bm);
     for (i = 0; i < 7; i++)
         savegame_init_racer(k++, cl);
-    av7ff8[21].fb = 0;
+    av7ff8[21].status = 0;
     if (g_demo) {
         an[0] = 1;
         an[1] = 0x18;
         savegame_init_racer(g_demoRacer, an);
-        av7ff8[g_demoRacer].f6 = 0x629;
+        av7ff8[g_demoRacer].nameOffset = 0x629;
     }
 }
 

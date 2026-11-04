@@ -131,7 +131,7 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
     int x, n, old;
 
     old = g_carPassBy;
-    strcpy(g7f32s, g_desc + g7d84o->f6);
+    strcpy(g7f32s, g_desc + g7d84o->nameOffset);
     strcat(g7f32s, "  ");
     strcat(g7f32s, g_desc + g_oppSpecPointer->nameOffset);
     x = g_scene == 6;
@@ -156,7 +156,7 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
     }
     F_11421(-1, "", 0);
     F_11421(g_bannerX, g7f32s, cz8bc0y);
-    F_181C8(mode, b, g7d84o->fe, g7d84o->ff, c, d, e, f);
+    F_181C8(mode, b, g7d84o->bodyMods, g7d84o->paintShade, c, d, e, f);
     if (old)
         mode = 2;
     if (mode == 2)
@@ -199,7 +199,7 @@ static int near king_status(void)
 
     any = 0;
     for (k = 0; k < 21; k++)
-        if (av7ff8[k].fb != -1)
+        if (av7ff8[k].status != -1)
             any = 1;
     if (any == 0)
         return 0;
@@ -236,7 +236,7 @@ static int near king_chance(void)
         else
             v = 12;
     } else {
-        if (av7ff8[21].fb == 1)
+        if (av7ff8[21].status == 1)
             v = 10;
         else
             v = 50;
@@ -254,10 +254,10 @@ static void near build_rival_pool(int flag)
     int m, found, k, low;
 
     for (k = 0; k < 21; k++) {
-        item = &g7d86n[av7ff8[k].f8];
-        map[k].dr = abs(F_0E218(av7ff8[k].f8) - F_0E218(-1));
-        map[k].dk = abs(g7d86n[av7ff8[k].f8].modelKind - g7d86n[a_7eaap.m7eb0->specIndex].modelKind);
-        map[k].taken = (av7ff8[k].fb != -1) ? 0 : 1;
+        item = &g7d86n[av7ff8[k].specIndex];
+        map[k].dr = abs(F_0E218(av7ff8[k].specIndex) - F_0E218(-1));
+        map[k].dk = abs(g7d86n[av7ff8[k].specIndex].modelKind - g7d86n[a_7eaap.m7eb0->specIndex].modelKind);
+        map[k].taken = (av7ff8[k].status != -1) ? 0 : 1;
     }
     g_poolCount = 0;
     found = 1;
@@ -318,26 +318,26 @@ static void near select_rival(int n)
 
     g7f82r = n;
     g7d84o = &av7ff8[n];
-    g_oppSpecPointer = &g7d86n[bn7648 = g7d84o->f8];
+    g_oppSpecPointer = &g7d86n[bn7648 = g7d84o->specIndex];
     if (n != 0x15) {
         g_isKingState = 0;
-        g7d84o->fb = 1;
+        g7d84o->status = 1;
         skill = (g_oppSpecPointer->modelKind >> 1) + 1;
-        if (g7d84o->ff == 0 && g7d84o->fc > 5)
-            g7d84o->ff = random_int(20) < skill ? random_int(9) : 0;
-        else if (g7d84o->ff > 0 && g7d84o->fc > 10)
-            g7d84o->ff = random_int(40) < skill ? random_int(9) : g7d84o->ff;
-        if (w_8df0[bn7648].frontBumperPic > 0 && w_8df0[bn7648].rearBumperPic > 0 && g7d84o->fc > 8)
-            g7d84o->fe |= random_int(25) < skill ? 3 : g7d84o->fe;
-        if (w_8df0[bn7648].roofPic > 0 && g7d84o->fc > 8)
-            g7d84o->fe |= random_int(30) < skill ? 4 : g7d84o->fe;
+        if (g7d84o->paintShade == 0 && g7d84o->betRaces > 5)
+            g7d84o->paintShade = random_int(20) < skill ? random_int(9) : 0;
+        else if (g7d84o->paintShade > 0 && g7d84o->betRaces > 10)
+            g7d84o->paintShade = random_int(40) < skill ? random_int(9) : g7d84o->paintShade;
+        if (w_8df0[bn7648].frontBumperPic > 0 && w_8df0[bn7648].rearBumperPic > 0 && g7d84o->betRaces > 8)
+            g7d84o->bodyMods |= random_int(25) < skill ? 3 : g7d84o->bodyMods;
+        if (w_8df0[bn7648].roofPic > 0 && g7d84o->betRaces > 8)
+            g7d84o->bodyMods |= random_int(30) < skill ? 4 : g7d84o->bodyMods;
     } else
         g_isKingState = 1;
     m_8272.m827a = g_oppSpecPointer->bodyPic;
     m_8272.m827e = (g_oppSpecPointer->parts >> 4) & 3;
-    m_8272.m827c = g7d84o->fa;
+    m_8272.m827c = g7d84o->paintScheme;
     F_067CF(m_8272.m827c);
-    m_8272.m8280 = g7d84o->f4;
+    m_8272.m8280 = g7d84o->overlayPic;
 }
 
 /* rival_arrives @ 0000:9A27 (linear 0x09A27, 92 bytes) */
@@ -359,13 +359,13 @@ static void near list_met_rivals(int *ids, int *slots, int *kinds)
     int i, n;
 
     if (king_status() == 0)
-        av7ff8[21].fb = 1;
+        av7ff8[21].status = 1;
     else
-        av7ff8[21].fb = 0;
+        av7ff8[21].status = 0;
     for (i = 0, n = 0; i <= 21; i++) {
-        if (av7ff8[i].fb == 1) {
+        if (av7ff8[i].status == 1) {
             slots[n] = i;
-            ids[++n] = av7ff8[i].f6;
+            ids[++n] = av7ff8[i].nameOffset;
             kinds[n] = 7;
         }
     }
@@ -452,7 +452,7 @@ calc:
         bonus2 = 4;
     else
         bonus2 = 6;
-    adj9 = (2 * g7d84o->fd - g7d84o->fc) * scorel / 4;
+    adj9 = (2 * g7d84o->betWins - g7d84o->betRaces) * scorel / 4;
     scorel += adj9 + bonus2;
     if (g_demo)
         scorel += (scorel >> 2) + 10;
@@ -824,10 +824,10 @@ static void near play_ending(void)
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.f16 = 0;
     (*m_present)();
-    av7ff8[21].f4 = 0x4c1;
+    av7ff8[21].overlayPic = 0x4c1;
     select_rival(0x15);
-    F_181C8(4, bn7648, g7d84o->fe, g7d84o->ff, 1, 0x98, 0, g_5030[m_8272.m827e]);
-    av7ff8[21].f4 = 0x4dc;
+    F_181C8(4, bn7648, g7d84o->bodyMods, g7d84o->paintShade, 1, 0x98, 0, g_5030[m_8272.m827e]);
+    av7ff8[21].overlayPic = 0x4dc;
     pic24 = F_1934E(0x50, 0x2c, 0, 3);
     popup_grab(0x78, 0x45, 0x50, 0x2c, pic24);
     pic3 = F_15BBE(6, 1);
@@ -1031,7 +1031,7 @@ test:
                     if (g_isKingState) {
                         if (bo7676 == 0) {
                             g_kingDragWon = 0;
-                            av7ff8[21].fb = 0;
+                            av7ff8[21].status = 0;
                             g_dragWins -= 3;
                             g_roadWins -= 2;
                         } else if (a_7eaap.m7ec0 == 0)
@@ -1059,9 +1059,9 @@ test:
                             g_roadWins++;
                     }
                     if (m_8272.m8278 != 1) {
-                        g7d84o->fc++;
+                        g7d84o->betRaces++;
                         if (bo7676 == 0)
-                            g7d84o->fd++;
+                            g7d84o->betWins++;
                     }
                     if (place == 2 || place == 1) {
                         menu_pop(1);
