@@ -13,16 +13,16 @@ struct Box {
     int sy;
     int dx;
     int dy;
-    char pad[0x1c - 12];
+    char unused[0x1c - 12];
 };
 
 struct Obj {
     int id;
     int scriptIndex;
     int pendingTimers;
-    int f6;
+    int unused1;
     struct Bitmap far *img;
-    void far *fc;
+    void far *unused2;
     struct Box box;
 };
 
@@ -41,7 +41,7 @@ struct Style {
     struct Colors c2d;
     struct Colors c32;
     struct Colors colors;
-    char pad2[5];
+    char unused[5];
     struct Colors hilite;
     struct Colors popup;
     struct Colors bank; /* fifth palette bank, part of the 80-byte record */

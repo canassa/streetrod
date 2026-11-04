@@ -68,7 +68,7 @@ void gx_trans_bolt(int frame, int slot)
     blt.dx = x;
     blt.dy = y;
     blt.w = 0x10;
-    blt.h = blt.fc = 6;
+    blt.h = blt.unused1 = 6;
     (*g_videoOps.copy)(pict, r_vid.back, &blt, 1);
     cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
@@ -93,7 +93,7 @@ void gx_trans_drop(int slot)
     blt.dx = x = 0xb8;
     blt.dy = y = g_tboltY[slot] + 10;
     blt.w = 0x10;
-    blt.h = blt.fc = 6;
+    blt.h = blt.unused1 = 6;
     (*g_videoOps.copy)(pict, r_vid.back, &blt, 1);
     cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront) {
@@ -293,7 +293,7 @@ void gx_draw_bolt(int n)
     cu_ctl(CURSOR_HIDE_NOW);
     saved = pict = di_bm(n, ARENA_HIGH_STACK);
     ypos -= saved->height;
-    height = move.h = move.fc = saved->height;
+    height = move.h = move.unused1 = saved->height;
     px -= 2;
     move.sy = ypos;
     move.dy = ypos += 9;
@@ -339,7 +339,7 @@ void gx_drop_bolt(void)
         wide = 0x10;
     xpos &= r_vid.mask;
     blt.w = pict->width;
-    rows = blt.h = blt.fc = pict->height;
+    rows = blt.h = blt.unused1 = pict->height;
     blt.sx = x1;
     blt.dx = x1 += 0x60;
     y1 -= rows;
@@ -471,7 +471,7 @@ void gx_erase_part(int n, int flag)
     move.sy = py;
     move.dy = py += 9;
     w = move.w = pict->width + 8;
-    h = move.h = move.fc = pict->height;
+    h = move.h = move.unused1 = pict->height;
     (*g_videoOps.copy)(r_vid.hoodBg, r_vid.back, &move, 1);
     ma_pop_high(1);
     cu_ctl(CURSOR_SHOW);
@@ -568,7 +568,7 @@ void gx_draw_bolts(int *a, int *b, int flag)
     blt.sy = 0;
     blt.dy = 9;
     blt.w = r_vid.hoodBg->width;
-    blt.h = blt.fc = r_vid.hoodBg->height;
+    blt.h = blt.unused1 = r_vid.hoodBg->height;
     (*g_videoOps.copy)(r_vid.hoodBg, r_vid.back, &blt, 1);
     for (i = 0; i < 9; i++) {
         if (id = g_engineBoltPicIds[i]) {

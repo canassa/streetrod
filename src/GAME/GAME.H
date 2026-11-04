@@ -62,7 +62,7 @@ struct Car {
     char engineBolts[9];
     char wireState;
     signed char timing;
-    char pad21;
+    char unused;
     int fuel;
     unsigned appearance; /* bits 8-12 sticker (ga_menu), 13 roof chopped, 14 front and 15 rear bumper stripped */
     struct Car *next;

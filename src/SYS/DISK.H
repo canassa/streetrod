@@ -18,9 +18,9 @@ struct Spec {
    are nonzero when the roof can be chopped and the front and rear bumpers stripped (ga_body) */
 struct Model {
     signed char kind;
-    char pad1;
+    char unused;
     int roofPic;
-    int f4;
+    int engineOverlayPic;
     int frontBumperPic;
     int rearBumperPic;
 };

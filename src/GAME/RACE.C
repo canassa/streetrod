@@ -180,7 +180,7 @@ static void near show_tank_cap(struct Dlg *d, int id)
     struct Bitmap far *back, far *label, far *work;
     struct Blt box;
 
-    if (d->f14)
+    if (d->nozzleOnPump)
         back = d->bm1;
     else
         back = d->bm2;
@@ -190,7 +190,7 @@ static void near show_tank_cap(struct Dlg *d, int id)
     work = ar_bm(back->width, back->height, 0, ARENA_HIGH_STACK);
     bm_copy(back, work, 1);
     box.w = label->width;
-    box.h = box.fc = label->height;
+    box.h = box.unused1 = label->height;
     box.sx = box.sy = 0;
     box.dx = (~r_vid.mask & g_featurePos.gasCapX) - box.w + 24;
     box.dy = 12 - label->height;
@@ -204,21 +204,21 @@ static void near leave_station(struct Dlg *d)
 {
     struct Bitmap far *p;
 
-    if (d->f0c != GAS_HAND_EMPTY)
+    if (d->hand != GAS_HAND_EMPTY)
         cu_ctl(1);
-    if (d->f12) {
+    if (d->nozzleInTank) {
         show_tank_cap(d, 0x472);
-        if (d->f18) {
+        if (d->nozzlePenaltyDue) {
             sc_add_money(g_driver.money >= 10 ? -10 : -(int)g_driver.money);
-            d->f18 = 0;
+            d->nozzlePenaltyDue = 0;
         }
     }
-    if (d->f14 == 0) {
+    if (d->nozzleOnPump == 0) {
         pu_show(g_pumpWithNozzle, 0x40, 0x64);
-        if (d->f18)
+        if (d->nozzlePenaltyDue)
             sc_add_money(g_driver.money >= 10 ? -10 : -(int)g_driver.money);
     }
-    if (d->f10 == 0) {
+    if (d->attendantAbsent == 0) {
         cu_ctl(CURSOR_HIDE);
         p = di_bm(0x4d1, ARENA_HIGH_STACK);
         cu_ctl(CURSOR_SHOW);
@@ -249,7 +249,7 @@ void ra_gas_station(void)
     sc_label(g_cashLabel);
     r_vid.copyToFront = 1;
     (*g_videoOps.show)();
-    dl.f0c = GAS_HAND_EMPTY;
+    dl.hand = GAS_HAND_EMPTY;
     cu_ctl(1);
     dl.specIndex = g_driver.currentCar->specIndex;
     dl.bodyMods = gm_car_look(g_driver.currentCar);
@@ -264,14 +264,14 @@ void ra_gas_station(void)
     pu_show(g_pumpWithNozzle, 0x40, 0x64);
     r_vid.copyToFront = 1;
     pos = 1;
-    dl.f1a = 0;
+    dl.pumping = 0;
     wait1 = 0x28;
     done = 0;
-    dl.f12 = 0;
-    dl.f14 = 1;
-    dl.f10 = 1;
-    dl.f16 = 0;
-    dl.f18 = 1;
+    dl.nozzleInTank = 0;
+    dl.nozzleOnPump = 1;
+    dl.attendantAbsent = 1;
+    dl.unused = 0;
+    dl.nozzlePenaltyDue = 1;
     dl.fillsLeft = (0xbe - g_driver.currentCar->fuel) / 0x1e;
     show_tank_cap(&dl, 0x472);
     spots_idle();
@@ -284,9 +284,9 @@ top:
             ;
         switch (key) {
         case KR_TIMEOUT:
-            if (dl.f0c == GAS_HAND_RAG)
+            if (dl.hand == GAS_HAND_RAG)
                 goto top;
-            if (dl.f1a) {
+            if (dl.pumping) {
                 dl.fillsLeft--;
                 g_driver.currentCar->fuel += 0x1e;
                 done = 1;
@@ -296,7 +296,7 @@ top:
                         so_pump(0);
                         vi_anim_stop(2);
                     }
-                    if (dl.f10)
+                    if (dl.attendantAbsent)
                         goto tail;
                 fin:
                     leave_station(&dl);
@@ -309,32 +309,32 @@ top:
                 spots_none();
                 mn_push(KM_GAS_STATION);
                 pos <<= 1;
-                dl.f16 = 1;
+                dl.unused = 1;
                 gm_play_anim(3);
                 gm_message(0x19e1);
-                dl.f10 = 0;
+                dl.attendantAbsent = 0;
                 if (done)
                     goto fin;
-                dl.f18 = 0;
-                if (dl.f0c == GAS_HAND_EMPTY) {
+                dl.nozzlePenaltyDue = 0;
+                if (dl.hand == GAS_HAND_EMPTY) {
                     pu_show(g_pumpNoNozzle, 0x40, 0x64);
-                    cu_ctl(dl.f0c = GAS_HAND_NOZZLE);
-                    dl.f14 = 0;
+                    cu_ctl(dl.hand = GAS_HAND_NOZZLE);
+                    dl.nozzleOnPump = 0;
                 }
                 show_tank_cap(&dl, 0x471);
-                dl.f12 = 1;
-                cu_ctl(dl.f0c = GAS_HAND_EMPTY);
+                dl.nozzleInTank = 1;
+                cu_ctl(dl.hand = GAS_HAND_EMPTY);
                 vi_anim_start(2);
                 so_pump(1);
-                dl.f1a = 1;
+                dl.pumping = 1;
             }
             g_waitUntil = g_tick + 0x4c;
             break;
         case KR_GAS_RAG:
             if (g_fuelStationActions.ragAvailable == 0)
                 break;
-            if (dl.f0c == GAS_HAND_EMPTY) {
-                cu_ctl(dl.f0c = GAS_HAND_RAG);
+            if (dl.hand == GAS_HAND_EMPTY) {
+                cu_ctl(dl.hand = GAS_HAND_RAG);
                 sc_picture_at(0x473, 0x50, 0xaa, -1);
                 mn_pop(1);
                 spots_rag();
@@ -342,7 +342,7 @@ top:
                 mn_push(KM_GAS_STATION);
                 goto top;
             } else {
-                cu_ctl(dl.f0c = GAS_HAND_EMPTY);
+                cu_ctl(dl.hand = GAS_HAND_EMPTY);
                 pu_show(label, 0x50, 0xaa);
                 mn_pop(1);
                 spots_idle();
@@ -351,40 +351,40 @@ top:
         case KR_GAS_PUMP:
             if (g_fuelStationActions.nozzleAvailable == 0)
                 break;
-            if (dl.f0c == GAS_HAND_EMPTY) {
-                cu_ctl(dl.f0c = GAS_HAND_NOZZLE);
+            if (dl.hand == GAS_HAND_EMPTY) {
+                cu_ctl(dl.hand = GAS_HAND_NOZZLE);
                 pu_show(g_pumpNoNozzle, 0x40, 0x64);
-                dl.f14 = 0;
+                dl.nozzleOnPump = 0;
             both:
                 mn_pop(1);
                 spots_nozzle();
             } else {
                 if (pos > g_driver.money || done) {
-                    dl.f18 = 0;
+                    dl.nozzlePenaltyDue = 0;
                     goto fin;
                 }
-                cu_ctl(dl.f0c = GAS_HAND_EMPTY);
+                cu_ctl(dl.hand = GAS_HAND_EMPTY);
                 pu_show(g_pumpWithNozzle, 0x40, 0x64);
-                dl.f14 = 1;
+                dl.nozzleOnPump = 1;
                 mn_pop(1);
                 spots_idle();
             }
             mn_push(KM_GAS_STATION);
         tail:
             g_waitUntil = g_tick + 20;
-            dl.f1a = 0;
+            dl.pumping = 0;
             break;
         case KR_GAS_CAP:
             if (g_fuelStationActions.capAvailable == 0)
                 break;
-            if (dl.f0c == GAS_HAND_EMPTY) {
+            if (dl.hand == GAS_HAND_EMPTY) {
                 if (vi_anim_active(2)) {
                     so_pump(0);
                     vi_anim_stop(2);
                 }
                 show_tank_cap(&dl, 0x472);
-                dl.f12 = 0;
-                cu_ctl(dl.f0c = GAS_HAND_NOZZLE);
+                dl.nozzleInTank = 0;
+                cu_ctl(dl.hand = GAS_HAND_NOZZLE);
                 if (dl.fillsLeft > 0 && pos <= g_driver.money)
                     gm_message(0x18dd);
                 goto both;
@@ -393,15 +393,15 @@ top:
                 gm_message(0x10b5);
             else {
                 show_tank_cap(&dl, 0x471);
-                dl.f12 = 1;
-                cu_ctl(dl.f0c = GAS_HAND_EMPTY);
+                dl.nozzleInTank = 1;
+                cu_ctl(dl.hand = GAS_HAND_EMPTY);
                 vi_anim_start(2);
                 so_pump(1);
                 mn_pop(1);
                 spots_cap();
                 mn_push(KM_GAS_STATION);
                 g_waitUntil = g_tick + 0x4c;
-                dl.f1a = 1;
+                dl.pumping = 1;
             }
             break;
         case KR_GAS_LEAVE:
@@ -896,14 +896,14 @@ void near ra_reset_eng(struct Eng *p)
     _enable();
     g_fireLatch = 0;
     p->speed = p->gearIndex = p->rpmBand = p->steeringInput = p->steering = 0;
-    p->stopFlags = p->fbe = p->elapsedTicks = 0;
+    p->stopFlags = p->unused5 = p->elapsedTicks = 0;
     if (p->automatic) {
         p->gear[2].bands[1].maxRpm = p->gear[2].bands[2].minRpm = p->shiftRpm;
         p->autoSelector = SELECTOR_NEUTRAL;
     }
-    p->f28 = p->f26 = -1;
+    p->unused3 = p->unused2 = -1;
     p->rpm = 0x5dc;
-    p->rpmPerSpeed = p->f2a;
+    p->rpmPerSpeed = p->initialRpmPerSpeed;
     p->accelStep = p->gear[0].bands[0].accelStep;
     p->decelStep = p->gear[0].bands[0].decelStep;
     p->maxRpm = p->gear[0].bands[0].maxRpm;
@@ -945,7 +945,7 @@ static void near init_rival_eng(void)
     g_shiftPenalty = g_selectedRacerPointer->shiftPenalty;
     ra_reset_eng(&g_oppEngState);
     g_oppEngState.gearIndex = 0;
-    g_oppEngState.rpmPerSpeed = g_oppEngState.f34[0];
+    g_oppEngState.rpmPerSpeed = g_oppEngState.gearRpmPerSpeed[0];
     g_oppEngState.rpm = 0x5dc;
     g_oppEngState.speed = 0x5dc / g_oppEngState.rpmPerSpeed;
     if ((r = g_oppEngState.gear[0].bands + (g_rpmBand = 1))->maxRpm <= 0x5dc) {
@@ -1016,7 +1016,7 @@ static void near fit_gear(int rpm, struct Eng *p)
     struct Range *r;
 
     for (p->gearIndex = 1;; p->gearIndex++) {
-        p->rpmPerSpeed = p->f34[p->gearIndex];
+        p->rpmPerSpeed = p->gearRpmPerSpeed[p->gearIndex];
         p->rpm = p->rpmPerSpeed * rpm;
         if ((r = &p->gear[p->gearIndex].bands[1])->maxRpm > p->rpm) {
             p->rpmBand = g_rpmBand = p->rpm >= r->minRpm;
@@ -1056,8 +1056,8 @@ static void near rival_accelerate(void)
             if (g_rivalCurveBrake == 0) {
                 g_rivalCurveBrake = 1;
                 vl = g_rivalPace.topSpeed - (g_roadOppPos.roadIndex > g_trackViewMotion.roadIndex
-                                                 ? g_selectedRacerPointer->f2
-                                                 : g_selectedRacerPointer->f2 >> 1);
+                                                 ? g_selectedRacerPointer->drivingPenalty
+                                                 : g_selectedRacerPointer->drivingPenalty >> 1);
                 if (vl < g_oppEngState.speed)
                     fit_gear(vl, &g_oppEngState);
             }
@@ -1105,7 +1105,7 @@ static void near rival_accelerate(void)
                                        ? g_oppEngState.shiftRpm - 100 * g_shiftPenalty
                                    : g_processorSpeedRating < 4 && r_vid.mode != VID_TANDY ? 0x14b4
                                                                                            : 0x1518;
-                g_oppEngState.rpmPerSpeed = g_oppEngState.f34[g_oppEngState.gearIndex];
+                g_oppEngState.rpmPerSpeed = g_oppEngState.gearRpmPerSpeed[g_oppEngState.gearIndex];
                 g_oppEngState.rpm = g_oppEngState.speed * g_oppEngState.rpmPerSpeed;
                 if ((r = &g_oppEngState.gear[g_oppEngState.gearIndex].bands[g_rpmBand = 1])->maxRpm <=
                     g_oppEngState.rpm) {
@@ -1437,7 +1437,7 @@ void ra_tick(void)
             return;
         }
         if (g_ramAllowed && g_contactFrames > 3 && g_pursuitPhaseIndex < COP_APPROACHING) {
-            if (rn_int((g_selectedRacerPointer->f2 >> 2) + 2) == 0) {
+            if (rn_int((g_selectedRacerPointer->drivingPenalty >> 2) + 2) == 0) {
                 so_bump();
                 so_bump();
                 g_trackViewMotion.lateralX += 300;

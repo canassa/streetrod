@@ -13,7 +13,7 @@ struct Node {
 struct Node2 {
     int a;
     int b;
-    char pad[0x22];
+    char carData[0x22];
     struct Node2 *next;
 };
 

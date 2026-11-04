@@ -218,7 +218,7 @@ int sc_picture(int a, int b)
         sc_fill_rect(0, 0, SCREEN_WIDTH, g_picturePlacement.maxHeight, b);
     pkt.w = p->width;
     pkt.h = p->height > g_picturePlacement.maxHeight ? g_picturePlacement.maxHeight : p->height;
-    pkt.sx = pkt.sy = pkt.fc = 0;
+    pkt.sx = pkt.sy = pkt.unused1 = 0;
     pkt.dx = g_picturePlacement.x;
     pkt.dy = g_picturePlacement.y;
     (*g_videoOps.copy)(p, r_vid.back, &pkt, 1);

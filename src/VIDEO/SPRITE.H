@@ -47,8 +47,8 @@ struct Blt16 {
     int sy;
     int dx;
     int dy;
-    int fc;
-    int fe;
+    int unused1;
+    int unused2;
 };
 #include "CARPIC.H"
 

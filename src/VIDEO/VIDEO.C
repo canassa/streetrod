@@ -170,8 +170,8 @@ void vi_anim_stop(int n)
     o = &g_scriptObjsData[g_animScripts[g_animScriptStart[n]].a];
     if (o->img)
         o->img = 0;
-    if (o->fc)
-        o->fc = 0;
+    if (o->unused2)
+        o->unused2 = 0;
     g_animScripts[g_animScriptStart[n]].a = -1;
     o->id = -1;
     if (o->pendingTimers)

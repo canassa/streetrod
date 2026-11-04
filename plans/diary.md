@@ -2285,3 +2285,18 @@ Ownership inventory (the original 98 definitions):
 - MSC packs literal pools consecutively and does not round `_DATA` at module end. Objects larger than one byte are aligned before emission; scalar char and one-byte aggregates are not. All-char structs can have odd sizes without tail padding. LINK supplies WORD inter-object alignment. MASM does not align a DW after DB automatically. The measured examples and exceptions are in the msc51-recipe-book skill.
 - An unreferenced zero byte is not enough evidence for either a variable or a missing module. FAME's 4BED is a genuine existing module boundary; SAVEGAME's 501D and VIDDET's 5AF3 have indistinguishable in-object and data-only-split explanations. Packed identity is necessary but cannot recover object membership for inert data without fixups.
 - Shared private BSS plus contiguous code is stronger evidence against splitting SYS than the broad near-call hull from sr module units (explicit near interfaces join separate objects too). The 064D byte is neither the tested literal-pool alignment nor a supported object boundary; its semantic purpose remains unknown. See the per-candidate classifications and exact original instruction addresses in docs/RECONSTRUCTION.md.
+
+## 2026-11-04 23:58 CET: Name remaining placeholder struct members
+
+### What I did
+
+- Audited all 43 fNN/pad/unk struct-member candidates in the headers and their source consumers; renamed all 43 without changing declaration types, array extents or ordering. No globals or local variables were renamed. Excluded the timer parameter fc and DOS file handles fd7/fd8.
+- Named gas-station hand/nozzle/pumping state, the racer bet tolerance class and driving penalty, the model engine overlay picture, and drivetrain ratios from their reads and writes, checking original disassembly and HOT_DATA records. Applied the existing unread/reset-only member convention to the remaining unused storage.
+- Followed the actual shared layouts: Mask.y is Band.y passed through the sprite frame cells; Node2.carData contains allocated Car fields; Win.next is Hot.next through the documented alternate view. Independently compared all affected struct declarations against a pre-edit snapshot, permitting only the member identifier substitutions.
+- Wrote one evidence line per member to work/LEDGER.md. Regenerated plans/unnamed.md from tools/sr/source.py; its address-bearing inventory is unchanged because this pass only names members.
+- Gates passed: headers and format checks; 572/572 function matches; clean packed build IDENTICAL; DGROUP ownership and order checks; 102 unit tests; Doxygen 0 diagnostics. Native DOS MAKE also produced an IDENTICAL packed SR.EXE.
+
+### What I learned
+
+- A pad label can hide live data accessed through another record type. The Mask/Band, Node2/Car and Win/Hot paths must be followed before deciding that storage is unused; the per-item paths are in work/LEDGER.md and the alternate-view convention is in docs/RECONSTRUCTION.md.
+- Eng.fbe captures elapsedTicks when driving stops, but nothing reads that snapshot. Following docs/RECONSTRUCTION.md, it is now an unused member rather than claiming an active stop-time feature. Eng.initialRpmPerSpeed, by contrast, is read to seed rpmPerSpeed during reset even though there is no writer.

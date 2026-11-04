@@ -56,7 +56,7 @@ void near pf_drivetrain(struct Car *c, struct Eng *e)
         xl = g_gearSpeedPct[d][i] * w9 / 100.0;
         if (xl == 0.0)
             xl = 0.2;
-        e->f34[i] = (int)(5700.0 / xl);
+        e->gearRpmPerSpeed[i] = (int)(5700.0 / xl);
         gl = &e->gear[i];
         gl->bands[0].minRpm = 0;
         gl->bands[1].minRpm = gl->bands[0].maxRpm = g_rpmBands[a3][0];
@@ -72,11 +72,12 @@ void near pf_drivetrain(struct Car *c, struct Eng *e)
     }
     e->automatic = e->autoSelector = (d == TRANS_AUTOMATIC);
     if (e->automatic) {
-        e->f26 = e->f28 = -1;
+        e->unused2 = e->unused3 = -1;
         e->autoShiftRpm = gl->bands[1].maxRpm;
     }
     e->shiftRpm = g_shiftRpm[a3];
-    e->f34[5] = (int)((int)(0x82 - g_carData[c->specIndex].rank) * 5.0 / 50.0 + g_5568[g_parts[m->idx].variant]);
+    e->gearRpmPerSpeed[5] =
+        (int)((int)(0x82 - g_carData[c->specIndex].rank) * 5.0 / 50.0 + g_5568[g_parts[m->idx].variant]);
     e->gearCount = g_transGears[d];
     e->shifterDirty = 1;
 }

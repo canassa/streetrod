@@ -199,10 +199,10 @@ int di_read_index(int which)
         }
         sl->vramPlane = NOT_IN_VRAM;
         sl->ptr.p = 0;
-        sl->f24 = 0;
-        sl->f28 = 0;
-        sl->f2c = -1;
-        sl->f2e = 1;
+        sl->unused4 = 0;
+        sl->unused5 = 0;
+        sl->unused6 = -1;
+        sl->unused7 = 1;
         if (sl->packedSize > height)
             height = sl->packedSize;
     }

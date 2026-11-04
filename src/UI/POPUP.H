@@ -14,7 +14,7 @@ struct Win {
     int h;
     int tx;
     int ty;
-    int pad;
+    int next;
 };
 
 extern struct Win g_popupWins[];
