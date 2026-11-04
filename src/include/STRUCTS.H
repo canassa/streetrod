@@ -702,12 +702,8 @@ struct BodyPoints {
 
 
 struct MirrorEdges {
-    int buildingY[6];
-    int prevBuildingY;
-    int lastBuildingY;
-    int rightX[6];
-    int prevRightX;
-    int lastRightX;
+    int buildingY[8];
+    int rightX[8];
 };
 
 struct BuildingRows {

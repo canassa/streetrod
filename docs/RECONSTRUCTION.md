@@ -184,7 +184,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **Right scenery cursor / mirror road projection** (`g_rightSideTerrainRow`, DS:8634..8637; `g_mirYProj[8]`, DS:8638..8647): keep the right-side scenery cursor separate from the full eight-row mirror Y array; the array form is byte-identical.
 
-- **MirrorEdges** (`g_videoMirrorEdgesSet`, DS:864A..8669): a natural, byte-identical reconstruction choice; separate globals also match.
+- **MirrorEdges** (`g_mirGeom`, DS:864A..8669): a natural, byte-identical reconstruction choice; separate globals also match.
 
 - **BuildingRows** (`g_currentBuildingRowsInfo`, DS:7AB0..7ACD): a natural, byte-identical reconstruction choice; separate globals also match.
 

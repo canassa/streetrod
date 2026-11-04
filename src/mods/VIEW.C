@@ -1251,15 +1251,15 @@ static void near render_mirror(void)
     int w2;
 
     g_renderRows.leftX = &g7f30t;
-    g_renderRows.rightX = &g_videoMirrorEdgesSet.lastRightX;
+    g_renderRows.rightX = &g_mirGeom.rightX[7];
     g_renderRows.y = &g_mirYProj[7];
     g_renderRows.leftOuterX = &al70c0x.m70d0;
     g_renderRows.rightOuterX = &dz70e0;
-    g_renderRows.buildingY = &g_videoMirrorEdgesSet.lastBuildingY;
+    g_renderRows.buildingY = &g_mirGeom.buildingY[7];
     g_renderRows.prevLeftX = &e_7f2e;
-    g_renderRows.prevRightX = &g_videoMirrorEdgesSet.prevRightX;
+    g_renderRows.prevRightX = &g_mirGeom.rightX[6];
     g_renderRows.prevY = &g_mirYProj[6];
-    g_renderRows.prevBuildingY = &g_videoMirrorEdgesSet.prevBuildingY;
+    g_renderRows.prevBuildingY = &g_mirGeom.buildingY[6];
     g_renderRows.prevLeftOuterX = &al70c0x.m70ce;
     g_renderRows.prevRightOuterX = &al70c0x.m70de;
     g_renderRows.lineWidth = &g_5e92;
