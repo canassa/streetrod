@@ -269,7 +269,7 @@ void F_06AA6(void)
 
 static int near is_broke(void)
 {
-    if (a_7eaap.currentCar == 0 && a_7eaap.ownedCars == 0 && a_7eaap.spareParts == 0 && a_7eaap.money < 400L)
+    if (a_7eaap.currentCar == 0 && a_7eaap.otherCars == 0 && a_7eaap.spareParts == 0 && a_7eaap.money < 400L)
         return 1;
     return 0;
 }
@@ -320,9 +320,9 @@ int near F_06B06(int mode)
         else {
             F_118D4(0x408, -1);
             F_10B7C();
-            if (mode == 2 && a_7eaap.currentCar == 0 && a_7eaap.ownedCars) {
-                a_7eaap.currentCar = a_7eaap.ownedCars;
-                a_7eaap.ownedCars = a_7eaap.currentCar->next;
+            if (mode == 2 && a_7eaap.currentCar == 0 && a_7eaap.otherCars) {
+                a_7eaap.currentCar = a_7eaap.otherCars;
+                a_7eaap.otherCars = a_7eaap.currentCar->next;
                 mode = 1;
             }
         }
@@ -336,7 +336,7 @@ int near F_06B06(int mode)
                 F_067CF(m_8272.paintScheme);
             m_8272.overlayPic = 0;
             m_8272.specIndex = a_7eaap.currentCar->specIndex;
-            m_8272.appearance.shade = (a_7eaap.currentCar->appearance >> 8) & 0x1f;
+            m_8272.appearance.sticker = (a_7eaap.currentCar->appearance >> 8) & 0x1f;
             m_8272.appearance.roof = (a_7eaap.currentCar->appearance >> 13) & 1;
             m_8272.appearance.front = (a_7eaap.currentCar->appearance >> 14) & 1;
             m_8272.appearance.rear = (a_7eaap.currentCar->appearance >> 15) & 1;
@@ -345,9 +345,9 @@ int near F_06B06(int mode)
             n = game_car_look(a_7eaap.currentCar);
             strcpy(g_29ff, g_desc + g7d86n[a_7eaap.currentCar->specIndex].nameOffset);
             if (mode == 2)
-                F_181C8(3, m_8272.specIndex, n, m_8272.appearance.shade, 0, 0x98, 0, g_5030[m_8272.tireVariant]);
+                F_181C8(3, m_8272.specIndex, n, m_8272.appearance.sticker, 0, 0x98, 0, g_5030[m_8272.tireVariant]);
             else
-                F_181C8(4, m_8272.specIndex, n, m_8272.appearance.shade, 0, 0x98, 0, g_5030[m_8272.tireVariant]);
+                F_181C8(4, m_8272.specIndex, n, m_8272.appearance.sticker, 0, 0x98, 0, g_5030[m_8272.tireVariant]);
         } else {
             bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), 0xc7);
             g_29ff[0] = 0;
@@ -436,7 +436,7 @@ void near F_06F6B(void)
                 menu_pop(1);
                 popup_show(bm1, x, y);
                 F_19438(1);
-                popup_show(g_0294, m_8272.paintX, m_8272.paintY);
+                popup_show(g_0294, m_8272.stickerX, m_8272.stickerY);
                 a_7eaap.currentCar->appearance &= 0xe0ff;
                 F_067CF(a_7eaap.currentCar->paintScheme = idx4);
                 F_112CB(12, 5);
@@ -584,15 +584,15 @@ void near F_07367(void)
             bm1 = F_1934E(g_0294->width, g_0294->height, 0, ARENA_HIGH_STACK);
             bitmap_copy(g_0294, bm1, 1);
             q2 = &a784als[idx6 - 1];
-            bitmap_draw_pic(bm1, q2->id, (char)(q2->dx + m_8272.paintSubByteX), (char)q2->dy, 0);
+            bitmap_draw_pic(bm1, q2->id, (char)(q2->dx + m_8272.stickerSubX), (char)q2->dy, 0);
             bm4 = F_1934E(bm1->width, bm1->height, 0, ARENA_HIGH_STACK);
             bitmap_copy(bm1, bm4, 1);
             A2.sx = B1.sx = C.sx = 0;
             A2.sy = B1.sy = C.sy = 0;
             A2.dy = B1.dy = 0;
             A2.dx = B1.dx = 0;
-            C.dx = m_8272.paintX;
-            C.dy = m_8272.paintY;
+            C.dx = m_8272.stickerX;
+            C.dy = m_8272.stickerY;
             B1.h = B1.fc = A2.h = C.h = bm1->height;
             A2.w = B1.w = C.w = 8;
             F_168F3(1);
@@ -606,7 +606,7 @@ void near F_07367(void)
                 C.w += 8;
                 B1.dx += 8;
             }
-            popup_show(bm1, m_8272.paintX, m_8272.paintY);
+            popup_show(bm1, m_8272.stickerX, m_8272.stickerY);
             F_19438(3);
             F_168F3(0);
             g_05fc += 0x222L;
@@ -1071,7 +1071,7 @@ void near garage_hood(struct Car *car)
         switch (key) {
         case -1:
             menu_pop(1);
-            r_vid.scratch = 0;
+            r_vid.hoodBg = 0;
             marks_release();
             return;
         case 13:

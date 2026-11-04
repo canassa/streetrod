@@ -323,7 +323,7 @@ void gargfx_draw_bolt(int n)
     move.dy = ypos += 9;
     move.dx = (move.sx = px) + 0x60;
     move.w = 6;
-    (*am78a6t)(r_vid.scratch, r_vid.back, &move);
+    (*am78a6t)(r_vid.hoodBg, r_vid.back, &move);
     if (flag = px & ~r_vid.mask) {
         saved = F_1934E(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
         bitmap_shift_right(pict, flag, saved);
@@ -371,7 +371,7 @@ void gargfx_drop_bolt(void)
     y1 -= rows;
     blt.sy = y1;
     blt.dy = y1 += 9;
-    (*am78a6t)(r_vid.scratch, r_vid.back, &blt);
+    (*am78a6t)(r_vid.hoodBg, r_vid.back, &blt);
     if (r_vid.copyToFront) {
         xpos += 0x60;
         ypos += 9 - rows;
@@ -462,7 +462,7 @@ void gargfx_draw_part(int n, int flag)
     if (flag == 0) {
         move.dx = x;
         move.dy = ypos;
-        (*ab78aat)(saved, r_vid.scratch, &move, 1);
+        (*ab78aat)(saved, r_vid.hoodBg, &move, 1);
     }
     if (g_partAnimate) {
         (*bl78ce)(0xd, 0x93, x + 0x60, r_vid.copyToFront ? 0xd - height : ypos, ypos + 9, saved);
@@ -479,7 +479,7 @@ void gargfx_draw_part(int n, int flag)
 
 /* gargfx_erase_part @ 0F38:3C19 (linear 0x12F99, 259 bytes)
 
-   Draw item picture n at the current slot position, 20 above it, via the r_vid.f8 buffer,
+   Draw item picture n at the current slot position, 20 above it, via the r_vid.hoodBg buffer,
    and copy the area to the front buffer when the screen is shadowed. */
 
 void gargfx_erase_part(int n, int flag)
@@ -504,7 +504,7 @@ void gargfx_erase_part(int n, int flag)
     move.dy = py += 9;
     w = move.w = pict->width + 8;
     h = move.h = move.fc = pict->height;
-    (*b_78a2)(r_vid.scratch, r_vid.back, &move, 1);
+    (*b_78a2)(r_vid.hoodBg, r_vid.back, &move, 1);
     F_19438(1);
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
@@ -513,7 +513,7 @@ void gargfx_erase_part(int n, int flag)
 
 /* gargfx_draw_wires @ 0F38:3D1C (linear 0x1309C, 281 bytes)
 
-   Draw the current pair of slot pictures: the strip from r_vid.f8 and the sprite ap82acz,
+   Draw the current pair of slot pictures: the strip from r_vid.hoodBg and the sprite ap82acz,
    copying the area to the front buffer when the screen is shadowed. */
 
 void gargfx_draw_wires(void)
@@ -532,8 +532,8 @@ void gargfx_draw_wires(void)
     blt.w = 0x20;
     xs = blt.dx = (blt.sx = g_wiresPos[next * 2]) + 0x60;
     ys = blt.dy = (blt.sy = g_wiresPos[next * 2 + 1]) + 9;
-    blt.h = r_vid.scratch->height - blt.sy - 4;
-    (*b_78a2)(r_vid.scratch, r_vid.back, &blt, 1);
+    blt.h = r_vid.hoodBg->height - blt.sy - 4;
+    (*b_78a2)(r_vid.hoodBg, r_vid.back, &blt, 1);
     bitmap_draw_pic(r_vid.back, ap82acz, (unsigned char)(x2 = g_wiresPos[pair * 2] + 0x60), (unsigned char)(y2 = g_wiresPos[pair * 2 + 1] + 9), 0);
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
@@ -543,7 +543,7 @@ void gargfx_draw_wires(void)
 /* gargfx_draw_parts @ 0F38:3E35 (linear 0x131B5, 248 bytes)
 
    Draw the item pictures of a car's parts for slots 0, 1 and then 2..4, with the
-   screen shadow off (g_partAnimate). Loads the r_vid.f8 strip first when it isn't there yet. */
+   screen shadow off (g_partAnimate). Loads the r_vid.hoodBg strip first when it isn't there yet. */
 
 void gargfx_draw_parts(struct Car *car)
 {
@@ -554,10 +554,10 @@ void gargfx_draw_parts(struct Car *car)
 
     mode = hz82ae;
     g_partAnimate = 0;
-    if (r_vid.scratch == 0)
-        r_vid.scratch = F_15BBE(0x42d, ARENA_LOW_STACK);
+    if (r_vid.hoodBg == 0)
+        r_vid.hoodBg = F_15BBE(0x42d, ARENA_LOW_STACK);
     else
-        disk_unpack_pic(0x42d, r_vid.scratch);
+        disk_unpack_pic(0x42d, r_vid.hoodBg);
     if (type = o_8290[0]) {
         hz82ae = 0;
         gargfx_draw_part(type, 0);
@@ -583,8 +583,8 @@ void gargfx_draw_parts(struct Car *car)
 /* gargfx_draw_bolts @ 0F38:3F2D (linear 0x132AD, 286 bytes)
 
    Redraw all nine slot pictures (a and b give each slot's mode and sub-mode) into the
-   back buffer over the r_vid.f8 strip, then the ap82acz sprite, and an optional label when flag is set.
-   The screen shadow r_vid.f16 is switched off meanwhile and the area is copied to the front afterwards. */
+   back buffer over the r_vid.hoodBg strip, then the ap82acz sprite, and an optional label when flag is set.
+   The screen shadow r_vid.copyToFront is switched off meanwhile and the area is copied to the front afterwards. */
 
 void gargfx_draw_bolts(int *a, int *b, int flag)
 {
@@ -603,9 +603,9 @@ void gargfx_draw_bolts(int *a, int *b, int flag)
     blt.dx = 0x60;
     blt.sy = 0;
     blt.dy = 9;
-    blt.w = r_vid.scratch->width;
-    blt.h = blt.fc = r_vid.scratch->height;
-    (*b_78a2)(r_vid.scratch, r_vid.back, &blt, 1);
+    blt.w = r_vid.hoodBg->width;
+    blt.h = blt.fc = r_vid.hoodBg->height;
+    (*b_78a2)(r_vid.hoodBg, r_vid.back, &blt, 1);
     for (i = 0; i < 9; i++) {
         if (id = af829ax[i]) {
             hz82ae = a[i];

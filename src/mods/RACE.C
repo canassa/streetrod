@@ -294,7 +294,7 @@ void race_gas_station(void)
     dl.f10 = 1;
     dl.f16 = 0;
     dl.f18 = 1;
-    dl.gallonsLeft = (0xbe - a_7eaap.currentCar->fuel) / 0x1e;
+    dl.fillsLeft = (0xbe - a_7eaap.currentCar->fuel) / 0x1e;
     show_tank_cap(&dl, 0x472);
     spots_idle();
     menu_push(0x17);
@@ -309,11 +309,11 @@ top:
             if (dl.f0c == 3)
                 goto top;
             if (dl.f1a) {
-                dl.gallonsLeft--;
+                dl.fillsLeft--;
                 a_7eaap.currentCar->fuel += 0x1e;
                 done = 1;
                 F_11540(-(pos <= a_7eaap.money ? pos : (int)a_7eaap.money));
-                if (dl.gallonsLeft == 0 || pos > a_7eaap.money) {
+                if (dl.fillsLeft == 0 || pos > a_7eaap.money) {
                     if (video_anim_active(2)) {
                         sound_pump(0);
                         video_anim_stop(2);
@@ -407,11 +407,11 @@ top:
                 show_tank_cap(&dl, 0x472);
                 dl.f12 = 0;
                 cursor_ctl(dl.f0c = 2);
-                if (dl.gallonsLeft > 0 && pos <= a_7eaap.money)
+                if (dl.fillsLeft > 0 && pos <= a_7eaap.money)
                     game_message(0x18dd);
                 goto both;
             }
-            if (dl.gallonsLeft == 0 || pos > a_7eaap.money)
+            if (dl.fillsLeft == 0 || pos > a_7eaap.money)
                 game_message(0x10b5);
             else {
                 show_tank_cap(&dl, 0x471);
@@ -712,14 +712,14 @@ int near race_outcome(void)
         if (kind == 5) {
             found = game_make_car(bn7648, g_oppSpecPointer->price, 0);
             found->tires->wear = random_int(500);
-            found->appearance = ((g7d84o->paintShade & 0x1f) << 8) | (found->appearance & 0xe0ff);
+            found->appearance = ((g7d84o->sticker & 0x1f) << 8) | (found->appearance & 0xe0ff);
             found->appearance = (((g7d84o->bodyMods & 4) != 0 & 1) << 13) | (found->appearance & 0xdfff);
             found->appearance = (((g7d84o->bodyMods & 2) != 0 & 1) << 14) | (found->appearance & 0xbfff);
             found->appearance = (((g7d84o->bodyMods & 1) != 0 & 1) << 15) | (found->appearance & 0x7fff);
             found->paintScheme = g7d84o->paintScheme;
-            if (found->modelKind > a_7eaap.currentCar->modelKind) {
-                a_7eaap.currentCar->next = a_7eaap.ownedCars->next;
-                a_7eaap.ownedCars = a_7eaap.currentCar;
+            if (found->rank > a_7eaap.currentCar->rank) {
+                a_7eaap.currentCar->next = a_7eaap.otherCars->next;
+                a_7eaap.otherCars = a_7eaap.currentCar;
                 a_7eaap.currentCar = found;
                 perf_drivetrain(a_7eaap.currentCar, &g_driveEng);
             }
@@ -728,7 +728,7 @@ int near race_outcome(void)
                     g7d84o->status = 0xff;
                 else {
                     for (i = 0, units = 0; i < 25; i++)
-                        if (g7d86n[i].modelKind < g_oppSpecPointer->modelKind)
+                        if (g7d86n[i].rank < g_oppSpecPointer->rank)
                             list[++units] = i;
                     if (units > 0) {
                         list[0] = units;

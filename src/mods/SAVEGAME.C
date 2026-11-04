@@ -59,7 +59,7 @@ void savegame_init_racer(int k, int *list)
     av7ff8[k].betRaces = 0;
     av7ff8[k].betWins = 0;
     av7ff8[k].bodyMods = 0;
-    av7ff8[k].paintShade = 0;
+    av7ff8[k].sticker = 0;
     av7ff8[k].lostCarOnce = 0;
     n = list[0];
     do {
@@ -68,9 +68,9 @@ void savegame_init_racer(int k, int *list)
     av7ff8[k].specIndex = list[i + 1];
     list[i + 1] = -1;
     x = av7ff8[k].specIndex;
-    y = (g7d86n[x].modelKind >> 1) + 1;
+    y = (g7d86n[x].rank >> 1) + 1;
     av7ff8[k].bodyMods = ((g7d86n[x].parts >> 8 & 7) == 2) ? 8 : 0;
-    av7ff8[k].paintShade = (random_int(20) < y) ? random_int(9) : 0;
+    av7ff8[k].sticker = (random_int(20) < y) ? random_int(9) : 0;
     if (w_8df0[x].frontBumperPic > 0 && w_8df0[x].rearBumperPic > 0)
         av7ff8[k].bodyMods |= (random_int(25) < y) ? 3 : 0;
     if (w_8df0[x].roofPic > 0)
@@ -86,7 +86,7 @@ static void near init_racers(void)
 
     i = na1 = nb = nc = 0;
     for (; i < 25; i++) {
-        v = g7d86n[i].modelKind;
+        v = g7d86n[i].rank;
         if (v >= 6)
             cl[++nc] = i;
         else if (v < 3)
@@ -344,7 +344,7 @@ int near savegame_load(void)
         || _dos_read(fd7, g_driverName, 0x24, &n) != 0 || n != 0x24
         || (pools_init(0), 0)
         || read_cars(fd7, &a_7eaap.currentCar, 1)
-        || read_cars(fd7, &a_7eaap.ownedCars, 0)
+        || read_cars(fd7, &a_7eaap.otherCars, 0)
         || read_nodes(fd7, &a_7eaap.spareParts)
         || _dos_read(fd7, &g_betRaces, 8, &n) != 0 || n != 8
         || _dos_read(fd7, av7ff8, 0x18c, &n) != 0 || n != 0x18c
@@ -479,7 +479,7 @@ again:
     if (_dos_creat(name, 0, &fd8)
         || _dos_write(fd8, g_driverName, 0x24, &n) != 0 || n != 0x24
         || write_cars(fd8, a_7eaap.currentCar, 1)
-        || write_cars(fd8, a_7eaap.ownedCars, 0)
+        || write_cars(fd8, a_7eaap.otherCars, 0)
         || write_nodes(fd8, a_7eaap.spareParts)
         || _dos_write(fd8, &g_betRaces, 8, &n) != 0 || n != 8
         || _dos_write(fd8, av7ff8, 0x18c, &n) != 0 || n != 0x18c

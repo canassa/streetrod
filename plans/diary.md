@@ -1075,3 +1075,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - `VID_EGA` (-2), `VID_CGA` (-3), `VID_HERCULES` (-4), `VID_TANDY` (-6) name the pixel format held by `r_vid.mode` and the screen bitmaps' `flags` (EGA 4 planes 8 px/byte; CGA 2 bpp; Hercules mono at B000; Tandy 4 bpp 2 px/byte), in MAIN.H for C and PC.INC for the assembler; all ~190 comparisons and the flags assignments use them. Done by a Codex agent.
 - Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
+
+## 2026-11-04 14:41 CET: Correct reviewed struct member names
+
+### What I did
+- Resolved the in-progress main merge across 12 files, retaining both diary histories, main's video/geometry constants and the branch's member names; committed as 73f6945. Conflict-marker and whitespace checks were clean, and all required gates passed before the review corrections.
+- Corrected Spec/Car.rank, Dlg.fillsLeft, Racer/Look.sticker, Spr12/State8272 sticker coordinates and Video.hoodBg. Confirmed the optional Hot.palIndex and State7EAA.otherCars corrections from their palette and car-list consumers. Updated only existing stale member references and the wrong appearance comment; no source comments added, parameters or globals renamed.
+- Both the merged baseline and corrected tree passed 572/572 function checks, fresh-layout byte-identical packed builds, clean headers/DGROUP checks, all 53 unit tests and byte-identical native DOSBox MAKE builds. Logs: work/members/merge-*.log and work/members/fix-*.log. A source audit confirmed only member declarations/accesses and existing comment corrections changed.
+
+### What I learned
+- Rank is an ordinal 0..8 used for score lookup, class buckets, rival distance and won-car comparisons; each refuel fill adds three gallons. Appearance bits 8..12 and the $5 overlays represent stickers, distinct from the $20 paint scheme. These corrections now live in src/include/STRUCTS.H and their consumers.
+- The persistent hood background stores picture 0x42d with installed parts, Hot selects one Colors palette, and otherCars omits currentCar; their names now express those roles.

@@ -78,7 +78,7 @@ struct Car {
     int value;
     int specIndex;
     char paintScheme;
-    unsigned char modelKind;
+    unsigned char rank;
     struct Node *transmission;
     struct Rack rack;
     struct Node *tires;
@@ -88,7 +88,7 @@ struct Car {
     signed char timing;
     char pad21;
     int fuel;
-    unsigned appearance;    /* bits 8-12 paint shade (F_06B06), 13 roof chopped, 14 front and 15 rear bumper stripped */
+    unsigned appearance;    /* bits 8-12 sticker (F_06B06), 13 roof chopped, 14 front and 15 rear bumper stripped */
     struct Car *next;
 };
 
@@ -278,7 +278,7 @@ struct Dev {
 
 struct Hot {
     int kind;
-    int style;
+    int palIndex;
     int textOffset;
     int f6;
     int x1;
@@ -313,21 +313,21 @@ struct Racer {
     signed char betRaces;
     char betWins;
     char bodyMods;
-    signed char paintShade;
+    signed char sticker;
     char lostCarOnce;
     char pad11;
 };
 
 struct Spec {
     int price;
-    unsigned char modelKind;
+    unsigned char rank;
     signed char next;
     unsigned parts;
     int nameOffset;
     int bodyPic;
 };
 
-/* one car model (10 bytes, w_8df0[], indexed by Car.f2): kind picks its sprites (view_load); f2, f6, f8
+/* one car model (10 bytes, w_8df0[], indexed by Car.specIndex): kind picks its sprites (view_load); roofPic, frontBumperPic, rearBumperPic
    are nonzero when the roof can be chopped and the front and rear bumpers stripped (F_0711A) */
 struct Model {
     signed char kind;
@@ -360,7 +360,7 @@ struct Dlg {
     struct Bitmap far *bm1;
     struct Bitmap far *bm2;
     int f0c;
-    int gallonsLeft;
+    int fillsLeft;
     int f10;
     int f12;
     int f14;
@@ -490,7 +490,7 @@ struct Panel {
 
 /* 12-byte table entry (g7682n[]), read as bytes by carpic_build */
 struct Spr12 {
-    unsigned char wheelX1, wheelX2, b2, b3, roofX, b5, b6, frontBumperY, rearBumperX, rearBumperY, paintX, paintY;
+    unsigned char wheelX1, wheelX2, b2, b3, roofX, b5, b6, frontBumperY, rearBumperX, rearBumperY, stickerX, stickerY;
 };
 
 /* 6-byte table entry (ap818c[]) */
@@ -513,7 +513,7 @@ struct Step {
 
 struct Look {
     unsigned lo : 8;
-    unsigned shade : 5;
+    unsigned sticker : 5;
     unsigned roof : 1;
     unsigned front : 1;
     unsigned rear : 1;
@@ -532,7 +532,7 @@ struct Cand {
 struct Video {
     struct Bitmap far *front;
     struct Bitmap far *back;
-    struct Bitmap far *scratch;
+    struct Bitmap far *hoodBg;
     int mode;
     int planes;     /* 4 on EGA (-2), else 1 */
     int shift;      /* log2 pixels per byte: 3, 2, 1 */
@@ -619,7 +619,7 @@ struct State7EAA {
     long money;
     int m7eae;
     struct Car *currentCar;
-    struct Car *ownedCars;
+    struct Car *otherCars;
     struct Node2 *freeCars;
     int carCount;
     struct Node *spareParts;
@@ -632,9 +632,9 @@ struct State7EAA {
 /* DS:8272..8290: one COMMON block in the original (folded from 11 placeholder
    globals: the compiler budget of the original translation units requires fewer external symbols) */
 struct State8272 {
-    int paintX;
-    int paintY;
-    int paintSubByteX;
+    int stickerX;
+    int stickerY;
+    int stickerSubX;
     int betType;
     int bodyPic;
     int paintScheme;

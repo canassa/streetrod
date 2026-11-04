@@ -91,7 +91,7 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
 
     r_vid.front = front;
     r_vid.back = back;
-    r_vid.scratch = 0;
+    r_vid.hoodBg = 0;
     r_vid.copyToFront = 1;
     switch (r_vid.mode = front->flags) {
     case VID_EGA:

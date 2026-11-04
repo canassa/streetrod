@@ -45,7 +45,7 @@ void near perf_drivetrain(struct Car *c, struct Eng *e)
     vl = ((c->appearance & 0x2000) || w_8df0[c->specIndex].roofPic == 0) * 0.09
         + ((c->appearance & 0x8000) || w_8df0[c->specIndex].rearBumperPic == 0) * 0.05
         + ((c->appearance & 0x4000) || w_8df0[c->specIndex].frontBumperPic == 0) * 0.01
-        + g_modelScore[g7d86n[c->specIndex].modelKind] * 0.1 / 88.0
+        + g_modelScore[g7d86n[c->specIndex].rank] * 0.1 / 88.0
         + g_carbManifoldFit[c3][bl] * 0.15 / 100.0
         + g_engineScore[a3] * 0.25 / 100.0
         + g_transScore[d] * 0.15 / 100.0
@@ -78,7 +78,7 @@ void near perf_drivetrain(struct Car *c, struct Eng *e)
         e->autoShiftRpm = gl->bands[1].maxRpm;
     }
     e->shiftRpm = g_shiftRpm[a3];
-    e->f34[5] = (int)((int)(0x82 - g7d86n[c->specIndex].modelKind) * 5.0 / 50.0 + g_5568[g_4806[m->idx].variant]);
+    e->f34[5] = (int)((int)(0x82 - g7d86n[c->specIndex].rank) * 5.0 / 50.0 + g_5568[g_4806[m->idx].variant]);
     e->gearCount = g_transGears[d];
     e->shifterDirty = 1;
 }
@@ -117,7 +117,7 @@ void near perf_drivetrain_spec(int n, struct Eng *e)
 
 /* F_0E218 @ 0000:E218 (linear 0x0E218, 849 bytes)
 
-   Rating of the car spec n (the car in a_7eaap.m7eb0 when n is negative): builds the
+   Rating of the car spec n (the car in a_7eaap.currentCar when n is negative): builds the
    car the way perf_drivetrain_spec does, then folds its parts into one number. */
 
 int near F_0E218(int n)
@@ -171,7 +171,7 @@ int near F_0E218(int n)
     vl = ((p6->appearance & 0x2000) || w_8df0[p6->specIndex].roofPic == 0) * 0.09
         + ((p6->appearance & 0x8000) || w_8df0[p6->specIndex].rearBumperPic == 0) * 0.05
         + ((p6->appearance & 0x4000) || w_8df0[p6->specIndex].frontBumperPic == 0) * 0.01
-        + g_modelScore[g7d86n[p6->specIndex].modelKind] * 0.1 / 88.0
+        + g_modelScore[g7d86n[p6->specIndex].rank] * 0.1 / 88.0
         + g_carbManifoldFit[c3][bl] * 0.15 / 100.0
         + g_engineScore[a3] * 0.25 / 100.0
         + g_transScore[d] * 0.15 / 100.0

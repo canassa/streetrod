@@ -44,7 +44,7 @@ char g_wearText[12] = "(xx% worn)";   /* DS:07AA */
 
 /* menu_draw_hot @ 0F38:465E (linear 0x139DE, 1032 bytes)
 
-   Draw a hot spot and the spots linked behind it (the chain through Hot.f10 masked with
+   Draw a hot spot and the spots linked behind it (the chain through Hot.next masked with
    g_hotChain), by kind: 4/12 filled box with optional centred text, 5/6/10 text only, 7/8 header bar,
    13 first-time marker. Grows the touched rectangle g_drawnMinX..g_drawnMaxY. */
 
@@ -62,9 +62,9 @@ void menu_draw_hot(struct Hot *p)
         switch (p->kind) {
         case 4:
         case 12:
-            if (p->style > 0) {
-                if (p->style != colr)
-                    x_colors = bustyle->pal[colr = p->style];
+            if (p->palIndex > 0) {
+                if (p->palIndex != colr)
+                    x_colors = bustyle->pal[colr = p->palIndex];
                 draw_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, h = p->y2 - p->y1);
                 if (x_colors.frame)
                     draw_bevel(r_vid.back, p->x1, p->y1, w, h);
@@ -81,8 +81,8 @@ void menu_draw_hot(struct Hot *p)
             g_drawnMaxY = p->y2 < g_drawnMaxY ? g_drawnMaxY : p->y2;
             continue;
         case 10:
-            if (p->style != colr)
-                x_colors = bustyle->pal[colr = p->style];
+            if (p->palIndex != colr)
+                x_colors = bustyle->pal[colr = p->palIndex];
             draw_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, h = p->y2 - p->y1);
             draw_bevel(r_vid.back, p->x1, p->y1, w, h);
             str = g_239e + p->textOffset;
@@ -90,13 +90,13 @@ void menu_draw_hot(struct Hot *p)
                       p->y1 + ((h - 8) >> 1), str);
             goto box;
         case 5:
-            if (p->style != colr)
-                x_colors = bustyle->pal[colr = p->style];
+            if (p->palIndex != colr)
+                x_colors = bustyle->pal[colr = p->palIndex];
             (*a_78aem)(r_vid.back, p->x1, p->y1, g_239e + p->textOffset);
             goto box;
         case 6:
-            if (p->style != colr)
-                x_colors = bustyle->pal[colr = p->style];
+            if (p->palIndex != colr)
+                x_colors = bustyle->pal[colr = p->palIndex];
             str = g_239e + p->textOffset;
             (*a_78aem)(r_vid.back, ((p->x2 - p->x1 - dash_text_width(str)) >> 1) + p->x1,
                       ((p->y2 - p->y1 - 8) >> 1) + p->y1, str);
@@ -104,8 +104,8 @@ void menu_draw_hot(struct Hot *p)
         case 7:
             g_headerEditableState = 1;
         case 8:
-            if (p->style != colr)
-                x_colors = bustyle->pal[colr = p->style];
+            if (p->palIndex != colr)
+                x_colors = bustyle->pal[colr = p->palIndex];
             draw_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, 8);
             str = g_239e + p->textOffset;
             if (p->kind == 8)
@@ -563,7 +563,7 @@ restore:
         case -6:
             if (kind == 5 && !strcmp(g_blankName, bufpl))
                 strcpy(bufpl, "\0");
-            x_colors = bustyle->pal[hotn->style];
+            x_colors = bustyle->pal[hotn->palIndex];
             menu_push(0x18);
             edit_line(hotn->x1, hotn->y1, bufpl, n9);
             menu_pop(1);

@@ -283,9 +283,9 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
     h_8264 = p69->rearGlassX && p69->rearGlassY;
     d_8266 = p69->frontGlassX;
     ap8268t = p69->frontGlassY;
-    m_8272.paintSubByteX = ~r_vid.mask & p12->paintX;
-    m_8272.paintX = r_vid.mask & p12->paintX;
-    m_8272.paintY = p12->paintY;
+    m_8272.stickerSubX = ~r_vid.mask & p12->stickerX;
+    m_8272.stickerX = r_vid.mask & p12->stickerX;
+    m_8272.stickerY = p12->stickerY;
     if (flags & 2)
         bitmap_put_pic(*out, m2->frontBumperPic, 0, p12->frontBumperY);
     if (flags & 1)
@@ -302,13 +302,13 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
         bitmap_draw_pic(*out, m2->f4, p12->b5, p12->b6, 1);
     blt.w = g_0294->width;
     blt.h = g_0294->height;
-    blt.sx = p12->paintX;
-    blt.sy = p12->paintY;
+    blt.sx = p12->stickerX;
+    blt.sy = p12->stickerY;
     blt.dx = blt.dy = 0;
     (*b_78a2)(*out, g_0294, &blt, 1);
     if (kk > 0) {
         pp8 = &a784als[kk - 1];
-        bitmap_draw_pic(*out, pp8->id, p12->paintX + pp8->dx, p12->paintY + pp8->dy, 0);
+        bitmap_draw_pic(*out, pp8->id, p12->stickerX + pp8->dx, p12->stickerY + pp8->dy, 0);
     }
     if (q) {
         bm = F_15BBE(m_8272.overlayPic, ARENA_HIGH_STACK);
@@ -477,8 +477,8 @@ again:
     }
     ar826e += x0;
     q_8270 += aw8260y;
-    m_8272.paintX += x0;
-    m_8272.paintY += aw8260y;
+    m_8272.stickerX += x0;
+    m_8272.stickerY += aw8260y;
     ang2 = (kind == 1 || kind == 4) ? x0 - right : x0;
     if (g_carPassBy != 2) {
         if (r_vid.mode == VID_EGA) {

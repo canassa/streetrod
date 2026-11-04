@@ -338,7 +338,7 @@ struct Car * near game_make_car(int idx, int value, struct Car *old)
     car->specIndex = idx;
     car->value = value;
     car->fuel = 0x28;
-    car->modelKind = g7d86n[idx].modelKind;
+    car->rank = g7d86n[idx].rank;
     while ((i = random_int(6)) == 5)
         if (random_int(2) == 1)
             break;
@@ -396,8 +396,8 @@ struct Car * near game_make_car(int idx, int value, struct Car *old)
     car->appearance &= 0x7fff;
     if (old == 0) {
         if (a_7eaap.currentCar) {
-            car->next = a_7eaap.ownedCars;
-            a_7eaap.ownedCars = car;
+            car->next = a_7eaap.otherCars;
+            a_7eaap.otherCars = car;
         } else
             a_7eaap.currentCar = car;
     }
@@ -633,7 +633,7 @@ static int near your_cars(void)
             n = 1;
             g_list[1] = g7d86n[(tbl[1] = a_7eaap.currentCar)->specIndex].nameOffset;
         }
-        for (cur = a_7eaap.ownedCars; cur; cur = cur->next) {
+        for (cur = a_7eaap.otherCars; cur; cur = cur->next) {
             n++;
             g_list[n] = g7d86n[(tbl[n] = cur)->specIndex].nameOffset;
         }
@@ -648,12 +648,12 @@ static int near your_cars(void)
             g_4f46 = a_7eaap.currentCar;
             if (g_4f48 != g_4f46) {
                 if (item == ((a_7eaap.currentCar != 0) + 1))
-                    a_7eaap.ownedCars = g_4f48->next;
+                    a_7eaap.otherCars = g_4f48->next;
                 else
                     tbl[item - 1]->next = g_4f48->next;
                 if (a_7eaap.currentCar) {
-                    a_7eaap.currentCar->next = a_7eaap.ownedCars;
-                    a_7eaap.ownedCars = a_7eaap.currentCar;
+                    a_7eaap.currentCar->next = a_7eaap.otherCars;
+                    a_7eaap.otherCars = a_7eaap.currentCar;
                 }
                 a_7eaap.currentCar = g_4f48;
             } else
@@ -736,7 +736,7 @@ static int near your_cars(void)
             a_7eaap.currentCar = 0;
         } else {
             if (item == ((a_7eaap.currentCar != 0) + 1))
-                a_7eaap.ownedCars = cur->next;
+                a_7eaap.otherCars = cur->next;
             else
                 tbl[item - 1]->next = cur->next;
             game_scrap_car(cur, 0);
@@ -839,7 +839,7 @@ void near game_run(void)
                         buy_from_ads(kind);
                     if (a_7eaap.currentCar == 0)
                         v = 2;
-                    if (a_7eaap.currentCar == 0 && a_7eaap.ownedCars)
+                    if (a_7eaap.currentCar == 0 && a_7eaap.otherCars)
                         v = 1;
                     g_05fc += 0x222;
                 }
@@ -886,7 +886,7 @@ void near game_run(void)
                         v = 0;
                     }
                 } else {
-                    if (a_7eaap.ownedCars)
+                    if (a_7eaap.otherCars)
                         game_message(0x0f16);
                     else
                         game_message(0x0efa);
@@ -908,7 +908,7 @@ void near game_run(void)
                     } else {
                         savegame_save();
                         v = 2;
-                        if (a_7eaap.currentCar == 0 && a_7eaap.ownedCars)
+                        if (a_7eaap.currentCar == 0 && a_7eaap.otherCars)
                             v = 1;
                         continue;
                     }

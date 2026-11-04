@@ -157,7 +157,7 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
     }
     F_11421(-1, "", 0);
     F_11421(g_bannerX, g7f32s, cz8bc0y);
-    F_181C8(mode, b, g7d84o->bodyMods, g7d84o->paintShade, c, d, e, f);
+    F_181C8(mode, b, g7d84o->bodyMods, g7d84o->sticker, c, d, e, f);
     if (old)
         mode = 2;
     if (mode == 2)
@@ -184,7 +184,7 @@ static int near spec_class(int n)
 {
     int v;
 
-    v = g7d86n[n].modelKind;
+    v = g7d86n[n].rank;
     if (v < 3)
         return 0;
     if (v >= 7)
@@ -257,7 +257,7 @@ static void near build_rival_pool(int flag)
     for (k = 0; k < 21; k++) {
         item = &g7d86n[av7ff8[k].specIndex];
         map[k].dr = abs(F_0E218(av7ff8[k].specIndex) - F_0E218(-1));
-        map[k].dk = abs(g7d86n[av7ff8[k].specIndex].modelKind - g7d86n[a_7eaap.currentCar->specIndex].modelKind);
+        map[k].dk = abs(g7d86n[av7ff8[k].specIndex].rank - g7d86n[a_7eaap.currentCar->specIndex].rank);
         map[k].taken = (av7ff8[k].status != -1) ? 0 : 1;
     }
     g_poolCount = 0;
@@ -323,11 +323,11 @@ static void near select_rival(int n)
     if (n != 0x15) {
         g_isKingState = 0;
         g7d84o->status = 1;
-        skill = (g_oppSpecPointer->modelKind >> 1) + 1;
-        if (g7d84o->paintShade == 0 && g7d84o->betRaces > 5)
-            g7d84o->paintShade = random_int(20) < skill ? random_int(9) : 0;
-        else if (g7d84o->paintShade > 0 && g7d84o->betRaces > 10)
-            g7d84o->paintShade = random_int(40) < skill ? random_int(9) : g7d84o->paintShade;
+        skill = (g_oppSpecPointer->rank >> 1) + 1;
+        if (g7d84o->sticker == 0 && g7d84o->betRaces > 5)
+            g7d84o->sticker = random_int(20) < skill ? random_int(9) : 0;
+        else if (g7d84o->sticker > 0 && g7d84o->betRaces > 10)
+            g7d84o->sticker = random_int(40) < skill ? random_int(9) : g7d84o->sticker;
         if (w_8df0[bn7648].frontBumperPic > 0 && w_8df0[bn7648].rearBumperPic > 0 && g7d84o->betRaces > 8)
             g7d84o->bodyMods |= random_int(25) < skill ? 3 : g7d84o->bodyMods;
         if (w_8df0[bn7648].roofPic > 0 && g7d84o->betRaces > 8)
@@ -687,7 +687,7 @@ static void near pop_rival_hood(void)
     g_waitUntil = g_tick + 800;
     while ((n = sys_wait_input(3000)) == 0)
         ;
-    r_vid.scratch = 0;
+    r_vid.hoodBg = 0;
     popup_show(pict, 0x60, 9);
     marks_release();
     menu_pop(1);
@@ -827,7 +827,7 @@ static void near play_ending(void)
     (*m_present)();
     av7ff8[21].overlayPic = 0x4c1;
     select_rival(0x15);
-    F_181C8(4, bn7648, g7d84o->bodyMods, g7d84o->paintShade, 1, 0x98, 0, g_5030[m_8272.tireVariant]);
+    F_181C8(4, bn7648, g7d84o->bodyMods, g7d84o->sticker, 1, 0x98, 0, g_5030[m_8272.tireVariant]);
     av7ff8[21].overlayPic = 0x4dc;
     pic24 = F_1934E(0x50, 0x2c, 0, ARENA_HIGH_BASE);
     popup_grab(0x78, 0x45, 0x50, 0x2c, pic24);

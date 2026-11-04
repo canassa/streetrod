@@ -31,7 +31,7 @@ void near pools_init(int reset)
     a_7eaap.carCount = a_7eaap.partCount = 0;
     if (reset) {
         a_7eaap.currentCar = 0;
-        a_7eaap.ownedCars = 0;
+        a_7eaap.otherCars = 0;
         a_7eaap.spareParts = 0;
         a_7eaap.money = 0;
         a_7eaap.m7eae = 10;
