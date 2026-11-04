@@ -237,7 +237,7 @@ static void near leave_station(struct Dlg *d)
         cp_patch_bg(p, 0x60, 0, 0x30, 0x40, 0xc8, 0x51, 0xa9, 2);
     }
     a_7eaap.currentCar->fuel = a_7eaap.currentCar->fuel > 0xaa ? 0xaa : a_7eaap.currentCar->fuel;
-    cp_show_car(2, d->specIndex, d->bodyMods, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
+    cp_show_car(CAR_DRIVE_OUT, d->specIndex, d->bodyMods, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
             g_tirePics[g_parts[a_7eaap.currentCar->tires->idx].variant]);
     mn_pop(1);
     ma_clear();
@@ -266,7 +266,7 @@ void ra_gas_station(void)
     cu_ctl(1);
     dl.specIndex = a_7eaap.currentCar->specIndex;
     dl.bodyMods = gm_car_look(a_7eaap.currentCar);
-    cp_show_car(4, dl.specIndex, dl.bodyMods, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
+    cp_show_car(CAR_PULL_IN, dl.specIndex, dl.bodyMods, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
             g_tirePics[g_parts[a_7eaap.currentCar->tires->idx].variant]);
     mu_suspend(0);
     label = pu_grab(0x50, 0xaa, 0x28, 0xc, 0);

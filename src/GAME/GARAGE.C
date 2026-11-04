@@ -307,7 +307,7 @@ int near ga_menu(int mode)
         }
         if (g_old) {
             n = gm_car_look(g_old);
-            cp_show_car(6, g_old->specIndex, n, (g_old->appearance >> 8) & 0x1f,
+            cp_show_car(CAR_BACK_OUT, g_old->specIndex, n, (g_old->appearance >> 8) & 0x1f,
                     0, 0x98, 0, g_tirePics[g_parts[g_old->tires->idx].variant]);
             ga_clear_name();
             mn_push(KM_GARAGE);
@@ -346,9 +346,9 @@ int near ga_menu(int mode)
             n = gm_car_look(a_7eaap.currentCar);
             strcpy(g_29ff, g_desc + g7d86n[a_7eaap.currentCar->specIndex].nameOffset);
             if (mode == 2)
-                cp_show_car(3, m_8272.specIndex, n, m_8272.appearance.sticker, 0, 0x98, 0, g_tirePics[m_8272.tireVariant]);
+                cp_show_car(CAR_SHOW_BACK_PAGE, m_8272.specIndex, n, m_8272.appearance.sticker, 0, 0x98, 0, g_tirePics[m_8272.tireVariant]);
             else
-                cp_show_car(4, m_8272.specIndex, n, m_8272.appearance.sticker, 0, 0x98, 0, g_tirePics[m_8272.tireVariant]);
+                cp_show_car(CAR_PULL_IN, m_8272.specIndex, n, m_8272.appearance.sticker, 0, 0x98, 0, g_tirePics[m_8272.tireVariant]);
         } else {
             bm_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), 0xc7);
             g_29ff[0] = 0;
@@ -527,7 +527,7 @@ void near ga_body(unsigned mask)
         ma_pop_high(1);
         n9 = a_7eaap.currentCar->specIndex;
         r7 = gm_car_look(a_7eaap.currentCar);
-        cp_show_car(8, n9, r7, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0x98, 0,
+        cp_show_car(CAR_SHOW_BACKDROP, n9, r7, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0x98, 0,
                 g_tirePics[g_parts[a_7eaap.currentCar->tires->idx].variant]);
         so_noise();
         cu_ctl(CURSOR_SHOW_NOW);
