@@ -16,7 +16,7 @@ static void near pulse_train_back(int a, int *p, int count, int reps);
 static int near fill_range(int *buf, int start, int end, int step);
 static void near noise(int range, int bits, int count);
 static void near warble(long freq, int period, int hi, int step, int cycles, int reps);
-static void near siren_sweep(int a, int b, int c, int d, int e);
+static void near sweep_up_down(int a, int b, int c, int d, int e);
 static void near tone_burst(int a, int b, int c, int d);
 static void near noise_sweep_down(int a, int b, int c, int d, int e);
 static void near noise_sweep_up(int a, int b, int c, int d, int e);
@@ -141,12 +141,12 @@ static void near sweep_down(int start, int end, int step, int delay)
         play_tone((long)start, delay);
 }
 
-/* siren_sweep @ 0F38:71E4 (linear 0x16564, 174 bytes)
+/* sweep_up_down @ 0F38:71E4 (linear 0x16564, 174 bytes)
 
    Siren: reps times sweep the tone from centre - width up to centre + width and back down
    again, in steps of step, each tone held for dur */
 
-static void near siren_sweep(int centre, int width, int step, int dur, int reps)
+static void near sweep_up_down(int centre, int width, int step, int dur, int reps)
 {
     int j;
     int k;
@@ -428,7 +428,7 @@ void sound_buzz(void)
 {
     if (g_soundOn) {
         sound_on();
-        siren_sweep(3000, 10, 10, 60, 9);
+        sweep_up_down(3000, 10, 10, 60, 9);
         sound_off();
     }
 }
@@ -441,7 +441,7 @@ void F_16B61(void)
 {
     if (g_soundOn) {
         sound_on();
-        siren_sweep(random_int(100) + 6200, 40, 10, 1, 10);
+        sweep_up_down(random_int(100) + 6200, 40, 10, 1, 10);
         sound_off();
     }
 }
@@ -454,7 +454,7 @@ void F_16B97(void)
 {
     if (g_soundOn) {
         sound_on();
-        siren_sweep(5200, 40, 10, 1, 10);
+        sweep_up_down(5200, 40, 10, 1, 10);
         sound_off();
     }
 }

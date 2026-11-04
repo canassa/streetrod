@@ -3,7 +3,7 @@
         .DATA
         EXTRN   _av787at:WORD
         EXTRN   _g_egaGcFunction:WORD
-        EXTRN   _g_viewClip:BYTE
+        EXTRN   _g_viewRect:BYTE
         EXTRN   _g_clipXMax:WORD
         EXTRN   _g_clipXMin:WORD
         EXTRN   _g_clipYMax:WORD

@@ -381,7 +381,7 @@ int near F_06B06(int mode)
         g_0282 |= 0x10;
     } else {
         F_16381(0);
-        sys_input_reset();
+        sys_reset_queues();
         r = menu_wait(10);
     }
     F_06529(0);

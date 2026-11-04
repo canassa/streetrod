@@ -11,7 +11,7 @@ extern int g_0450;                                      /* DS:0450 */
 extern char g_blackPalette[16];                         /* DS:0452 */
 extern unsigned char g_altPalette[16];                  /* DS:0462 */
 extern int g_0472;                                      /* DS:0472 */
-extern struct Bitmap far *g_videoPageBms[];             /* DS:7316 */
+extern struct Bitmap far *g_pageBmps[];                 /* DS:7316 */
 extern struct Obj bm7568[];                             /* DS:7568 */
 extern struct Style *bustyle;                           /* DS:787E */
 extern int (far *ab78aat)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);/* DS:78AA */

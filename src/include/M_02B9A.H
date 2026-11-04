@@ -30,8 +30,8 @@ extern int g_clickY;                                    /* DS:473A */
 extern int g_click2X;                                   /* DS:473C */
 extern int g_click2Y;                                   /* DS:473E */
 extern int g_inputLock;                                 /* DS:4740 */
-extern int g_cursorHotX;                                /* DS:4742 */
-extern int g_cursorHotY;                                /* DS:4744 */
+extern int g_4742;                                      /* DS:4742 */
+extern int g_4744;                                      /* DS:4744 */
 extern int g_savedCursorX;                              /* DS:4746 */
 extern int g_savedCursorY;                              /* DS:4748 */
 extern int g_474a;                                      /* DS:474A */

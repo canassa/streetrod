@@ -83,7 +83,7 @@ static int near find_gas_spot(int id)
     int base, n, i;
 
     base = ((unsigned)g_hotGasStation - (unsigned)g_09f4) / sizeof(struct Hot);
-    n = ((unsigned)g_hotAttendant - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
+    n = ((unsigned)g_1a44 - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
     for (i = 0; i < n; i++)
         if (g_09f4[base + i].f6 == id)
             return base + i;
@@ -96,7 +96,7 @@ static void near sort_gas_spots(void)
     int base, n;
 
     base = ((unsigned)g_hotGasStation - (unsigned)g_09f4) / sizeof(struct Hot);
-    n = ((unsigned)g_hotAttendant - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
+    n = ((unsigned)g_1a44 - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
     F_135E5(base, n);
 }
 
@@ -522,7 +522,7 @@ static void near show_ticket(void)
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.f16 = 1;
     cursor_ctl(-2);
-    sys_input_reset();
+    sys_reset_queues();
 }
 
 /* show_crash @ 0000:C1D8 (linear 0x0C1D8, 559 bytes) */
@@ -571,9 +571,9 @@ static void near show_crash(void)
     }
     cursor_ctl(-2);
     (*m_present)();
-    sys_input_reset();
+    sys_reset_queues();
     game_pause(0x64);
-    sys_input_reset();
+    sys_reset_queues();
     marks_clear();
 }
 
@@ -625,7 +625,7 @@ static void near blow_engine(int n)
             *q++ = 0;
         a_7eaap.m7eb0->f1f = 0;
     }
-    sys_input_reset();
+    sys_reset_queues();
     F_16BC1();
     game_popup(-n, -1, 0x49);
 }
@@ -643,12 +643,12 @@ static void near drop_transmission(int n)
         for (i = 0, q = a_7eaap.m7eb0->b14; i < 2; i++)
             *q++ = 0;
     }
-    sys_input_reset();
+    sys_reset_queues();
     F_16BC1();
     game_popup(-n, -1, 0x49);
 }
 
-int g_tireGrip[3][5] = {{2, 5, 8, 11, 14}, {0, 2, 4, 6, 8}, {0, 0, 1, 2, 4}};   /* DS:54B2 */
+int g_tireSlip[3][5] = {{2, 5, 8, 11, 14}, {0, 2, 4, 6, 8}, {0, 0, 1, 2, 4}};   /* DS:54B2 */
 int g_lastTicks = 0;   /* DS:54D0 */
 int g_54d2 = 0;   /* DS:54D2 */
 int g_54d4 = 1;   /* DS:54D4 */
@@ -826,7 +826,7 @@ finishstop:
                 ptr[2] = ' ';
                 itoa(v, ptr, 10);
                 ptr[strlen(ptr)] = ' ';
-                sys_input_reset();
+                sys_reset_queues();
                 game_message(0x1513);
             } else {
                 if (e_78e0.f0 > 0x3c) {
@@ -868,7 +868,7 @@ finishstop:
                     g_keyMaps[sel][1].val = 0xcf;
                 }
                 menu_push(sel);
-                sys_input_reset();
+                sys_reset_queues();
                 while ((i = sys_wait_input(3000)) == 0)
                     ;
                 menu_pop(1);
@@ -934,7 +934,7 @@ void near race_reset_eng(struct Eng *p)
     bz8630z = -1;
     g_6caaaa = a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc;
     car = a_7eaap.m7eb0->slot12;
-    p->fc = g_tireGrip[g_4806[car->idx].f2][car->b / 2000];
+    p->fc = g_tireSlip[g_4806[car->idx].f2][car->b / 2000];
     if (car->b < 8000)
         p->fa = 0;
     else {
@@ -996,7 +996,7 @@ void near race_run(void)
     one = 1;
     cursor_ctl(-4);
     cursor_ctl(1);
-    sys_input_reset();
+    sys_reset_queues();
     race_reset_eng(&e_78e0);
     init_rival_eng();
     if (a_7eaap.m7ec0 == 1 && g7d40q == 0) {
@@ -1006,10 +1006,10 @@ void near race_run(void)
         a_7f88d = 0;
     jz79a6 = 0;
     bw8aca = 1;
-    cruise_run();
+    cruise_drive();
     sys_drive_stop();
     g_waitUntil = 0;
-    sys_input_reset();
+    sys_reset_queues();
     F_11593(g_49dc);
     if (ao7d2ev.m7d30 > 200) {
         if (random_int(3) > 0) {
@@ -1218,7 +1218,7 @@ static void near move_player(void)
             g79e2g.fbc |= 1;
         else
             e_78e0.fbc |= 1;
-        sys_car_halt();
+        F_02374();
     }
 }
 
@@ -1244,7 +1244,7 @@ static void near move_rival(void)
             e_78e0.fbc |= 1;
         else
             g79e2g.fbc |= 1;
-        sys_car_halt();
+        F_02374();
         return;
     }
     flag = g_terrain3[ar7e8av.m7e8a + 4] & 0xe0;
@@ -1402,7 +1402,7 @@ void race_tick(void)
     case 3:
         if (ar7e8av.m7e8a - 2 > ao7d2ev.m7d30) {
             e_78e0.fbc |= 0x41;
-            sys_car_halt();
+            F_02374();
             return;
         }
         break;
@@ -1421,7 +1421,7 @@ void race_tick(void)
                 e_78e0.fbc |= 0x41;
             sound_siren(0);
         }
-        sys_car_halt();
+        F_02374();
         return;
     }
     if (ay8bc2z == 0)
@@ -1432,7 +1432,7 @@ void race_tick(void)
         return;
     if (by72f2 && a_7f88d <= 1) {
         e_78e0.fbc |= 3;
-        sys_car_halt();
+        F_02374();
         return;
     }
     if (ap7d7cv == 0 && ao7d2ev.m7d34 > 1) {

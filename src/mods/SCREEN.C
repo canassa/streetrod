@@ -189,7 +189,7 @@ void screen_wait_msg(char *msg)
         if (g_58ee)
             video_set_palette(g_promptPalette);
         r_vid.f16 = 1;
-        sys_input_reset();
+        sys_reset_queues();
         back = r_vid.back;
         r_vid.back = r_vid.front;
         menu_modal(0x20);

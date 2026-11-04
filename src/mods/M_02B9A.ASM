@@ -54,10 +54,10 @@ _g_click2X DW      0                        ; DS:473C int
 _g_click2Y DW      0                        ; DS:473E int
         PUBLIC  _g_inputLock
 _g_inputLock DW      0                        ; DS:4740 int
-        PUBLIC  _g_cursorHotX
-_g_cursorHotX DW      0                        ; DS:4742 int
-        PUBLIC  _g_cursorHotY
-_g_cursorHotY DW      0                        ; DS:4744 int
+        PUBLIC  _g_4742
+_g_4742 DW      0                        ; DS:4742 int
+        PUBLIC  _g_4744
+_g_4744 DW      0                        ; DS:4744 int
         PUBLIC  _g_savedCursorX
 _g_savedCursorX DW      0                        ; DS:4746 int
         PUBLIC  _g_savedCursorY

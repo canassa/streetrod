@@ -833,7 +833,7 @@ def main():
 
     s = sub.add_parser("rename", help="rename a function, global or source file everywhere (DB, sources, "
                        "MAKEFILE, SR.LNK, docs, tools), then regenerate the headers")
-    s.add_argument("old", nargs="?", help="current name (maybe_carhop, g_hercules) or source file (M_xxxxx.C)")
+    s.add_argument("old", nargs="?", help="current name (maybe_walker, g_hercules) or source file (M_xxxxx.C)")
     s.add_argument("new", nargs="?")
     s.add_argument("--file", help="a file of OLD NEW lines (# comments) applied at once")
     s.add_argument("-n", "--dry-run", action="store_true", help="report what would change, write nothing")

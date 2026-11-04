@@ -13,7 +13,7 @@ extern struct Hot g_1804[];                             /* DS:1804 */
 extern struct Hot g_184c[];                             /* DS:184C */
 extern struct Hot g_1948[];                             /* DS:1948 */
 extern struct Hot g_hotGasStation[];                    /* DS:19EA */
-extern struct Hot g_hotAttendant[];                     /* DS:1A44 */
+extern struct Hot g_1a44[];                             /* DS:1A44 */
 extern struct Hot g_hotRepair[];                        /* DS:1AC2 */
 extern struct Hot g_hotReadyBox[];                      /* DS:1D80 */
 extern struct Hot g_1e34[];                             /* DS:1E34 */

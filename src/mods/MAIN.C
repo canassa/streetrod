@@ -363,8 +363,8 @@ int main(int argc, char **argv)
         d = disk_read_index(2);
         disk_load_data();
         if (r_vid.mode == -2)
-            disk_cache_list(g_garagePics);
-        disk_load_list(g_garagePics, 1);
+            disk_cache_list(g_gamePics);
+        disk_load_list(g_gamePics, 1);
     } else {
         by70e2 = 0;
         disk_free_list(g_titlePics);

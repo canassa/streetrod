@@ -8,7 +8,7 @@ extern int g_opponentPics[][4];                         /* DS:5E14 */
 extern int g_5e3c;                                      /* DS:5E3C */
 extern int g_drawPage;                                  /* DS:5E3E */
 extern int g_showPage;                                  /* DS:5E40 */
-extern struct Clip g_viewClip;                          /* DS:5E42 */
+extern struct Clip g_viewRect;                          /* DS:5E42 */
 extern int g_clipXMin;                                  /* DS:5E4E */
 extern int g_clipYMin;                                  /* DS:5E50 */
 extern int g_clipYMax;                                  /* DS:5E52 */

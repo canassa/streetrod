@@ -36,7 +36,7 @@ void cruise_go(void)
             race_reset_eng(&e_78e0);
             jz79a6 = 0;
             bw8aca = 0;
-            cruise_run();
+            cruise_drive();
         }
     }
 }
@@ -71,9 +71,9 @@ void cruise_rival_paint(int mode)
 
 int g7d66n;
 
-/* cruise_run @ 0000:8E2D (linear 0x08E2D, 123 bytes) */
+/* cruise_drive @ 0000:8E2D (linear 0x08E2D, 123 bytes) */
 
-int cruise_run(void)
+int cruise_drive(void)
 {
     int r, saved;
 

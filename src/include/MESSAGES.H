@@ -27,7 +27,7 @@ extern int g_2ba5;                                      /* DS:2BA5 */
 extern int g_2ba7;                                      /* DS:2BA7 */
 extern int g_offSquelch;                                /* DS:2BA9 */
 extern int g_offTunes;                                  /* DS:2BAB */
-extern int g_screenHot[];                               /* DS:2BAD */
+extern int g_groupHot[];                                /* DS:2BAD */
 extern char g_2c01[];                                   /* DS:2C01 */
 extern char g_2c02[];                                   /* DS:2C02 */
 extern char g_39c9[];                                   /* DS:39C9 */

@@ -118,7 +118,7 @@ struct Sprite *sprite_setup(int x, int y, struct Bitmap far **imgs, char (*cell)
     g7d18m.rc[1] = a9;
     if (r_vid.mode == -2) {
         for (i = 0; i < 2; i++) {
-            g_sprPageRing[i].bm = g_videoPageBms[i];
+            g_sprPageRing[i].bm = g_pageBmps[i];
             g_sprPageRing[i].idx = i;
             g_sprPageRing[i].r.x1 = g_sprPageRing[i].r.y1 = 0;
             g_sprPageRing[i].r.x2 = g_sprPageRing[i].r.y2 = -1;

@@ -36,7 +36,7 @@ int drvtick_step(void)
             if (g_51ec == 0)
                 F_16381(1);
             sys_drive_start();
-            sys_input_reset();
+            sys_reset_queues();
             jz79a6 = 1;
             F_11421(-1, "Get ready !", 0);
             g_waitUntil = g_tick + random_int(103) + 110;
@@ -75,7 +75,7 @@ int drvtick_step(void)
             if (g_51ec == 0)
                 F_16381(1);
             sys_drive_start();
-            sys_input_reset();
+            sys_reset_queues();
             jz79a6 = 1;
             F_11421(-1, "Cruising in town...", 0);
             e_78e0.f1a = 1;

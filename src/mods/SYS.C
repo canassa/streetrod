@@ -136,9 +136,9 @@ void sys_music_resume(void)
     }
 }
 
-/* sys_input_reset @ 0000:0E24 (linear 0x00E24, 231 bytes) */
+/* sys_reset_queues @ 0000:0E24 (linear 0x00E24, 231 bytes) */
 
-void sys_input_reset(void)
+void sys_reset_queues(void)
 {
     int i;
     long deadline;
@@ -340,7 +340,7 @@ void sys_init(void)
     kbdget_hook();
     g_kbdHooked = 1;
     outp(0x43, 0xb6);
-    sys_input_reset();
+    sys_reset_queues();
     g_sysHooked = 1;
 }
 
@@ -857,8 +857,8 @@ void sys_demo_step(void)
             if (num > g_demoChoice) {
                 g_demoKey = g_keyMaps[g_keyGroup][g_demoChoice].key;
                 mask = g_keyMaps[g_keyGroup][g_demoChoice].val + 0x32;
-                step = g_screenHot[g_keyGroup];
-                for (; step - g_screenHot[g_keyGroup] < 32 && g_09f4[step].f6 != mask; step++)
+                step = g_groupHot[g_keyGroup];
+                for (; step - g_groupHot[g_keyGroup] < 32 && g_09f4[step].f6 != mask; step++)
                     ;
                 if (g_09f4[step].f6 == mask) {
                     cx = (g_09f4[step].x1 + g_09f4[step].x2) / 2;
@@ -1032,9 +1032,9 @@ int ao8228u;
 long b_82bc;
 int z_8b7c;
 
-/* sys_car_halt @ 0000:2374 (linear 0x02374, 24 bytes) */
+/* F_02374 @ 0000:2374 (linear 0x02374, 24 bytes) */
 
-void sys_car_halt(void)
+void F_02374(void)
 {
     e_78e0.f14 = e_78e0.f16 = e_78e0.f2 = e_78e0.f4 = g_05d6 = 0;
     e_78e0.fbe = e_78e0.fc0;
@@ -1203,7 +1203,7 @@ void interrupt far sys_drive_isr(void)
                     a_7eaap.m7eb0->rack.s[0]->b++;
                 if ((i = a_7eaap.m7eb0->rack.s[0]->b) >= 9900) {
                     e_78e0.fbc |= 5;
-                    sys_car_halt();
+                    F_02374();
                 }
                 if (flag) {
                     e_78e0.fe += e_78e0.f14;
@@ -1213,7 +1213,7 @@ void interrupt far sys_drive_isr(void)
                         e_78e0.fe = 5700;
                         if (15 - i / 1000 < ++g_overRev) {
                             e_78e0.fbc |= 5;
-                            sys_car_halt();
+                            F_02374();
                         }
                     }
                 } else if (e_78e0.fe > 1500 ||
@@ -1233,7 +1233,7 @@ void interrupt far sys_drive_isr(void)
                             (e_78e0.f20 == 0 && flag && e_78e0.fe > 5000 &&
                              i / 100 + 100 > random_int(3277))) {
                             e_78e0.fbc |= 0x11;
-                            sys_car_halt();
+                            F_02374();
                         }
                     }
                     if ((prev || (!e_78e0.f42 && !flag)) && e_78e0.f18 > 0)
@@ -1291,7 +1291,7 @@ void interrupt far sys_drive_isr(void)
                                                : ((-e_78e0.f4 >> 2) + 1);
                 if (bw8aca && road_check_crash()) {
                     e_78e0.fbc |= 0x21;
-                    sys_car_halt();
+                    F_02374();
                 }
                 g_driveBusy = 0;
             }

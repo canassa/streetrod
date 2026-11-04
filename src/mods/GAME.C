@@ -76,9 +76,9 @@ static int near start_game(void)
     if (by70e2 == 0) {
         disk_load_data();
         if (r_vid.mode == -2)
-            disk_cache_list(g_garagePics);
+            disk_cache_list(g_gamePics);
     }
-    disk_load_list(g_garagePics, 1);
+    disk_load_list(g_gamePics, 1);
     cursor_ctl(-2);
     return -1;
 }

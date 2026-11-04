@@ -3,7 +3,6 @@
 #include "STRUCTS.H"
 #include "BITMAP.H"
 #include "ARENA.H"
-#include "CARHOP.H"
 #include "CARPIC.H"
 #include "DASH.H"
 #include "DISK.H"
@@ -11,6 +10,7 @@
 #include "MARKS.H"
 #include "MEM.H"
 #include "VIDEO.H"
+#include "WALKER.H"
 
 /* bitmap_copy @ 0F38:AB50 (linear 0x19ED0, 114 bytes)
 

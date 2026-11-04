@@ -176,8 +176,8 @@ _g_offSquelch DW      336h                     ; DS:2BA9 int
         PUBLIC  _g_offTunes
 _g_offTunes DW      325h                     ; DS:2BAB int
 ; DS:2BAD int[]
-        PUBLIC  _g_screenHot
-_g_screenHot DW      29h, 0, 2, 6, 1Ah, 2Eh, 43h, 48h, 4Dh, 6Ch, 73h, 87h
+        PUBLIC  _g_groupHot
+_g_groupHot DW      29h, 0, 2, 6, 1Ah, 2Eh, 43h, 48h, 4Dh, 6Ch, 73h, 87h
         DW      9Ch, 0A3h, 0A6h, 0ADh, 0B2h, 0B7h, 0B9h, 0BFh, 0C5h
         DW      0CBh, 0DDh, 0E2h, 0EAh, 0EDh, 0F4h, 0FAh, 102h, 107h
         DW      10Ch, 111h, 116h, 11Bh, 11Fh, 124h, 12Fh, 142h, 15Dh

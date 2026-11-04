@@ -150,7 +150,7 @@ void menu_push(int id)
         cursor_ctl(-3);
         ai8b86y[g8b8eb++] = av8efe = id;
         ao8b90v.x1 = ao8b90v.x2 = ao8b90v.y1 = ao8b90v.y2 = -1;
-        ai8bacx = (p = &g_09f4[g_screenHot[id]])->f4;
+        ai8bacx = (p = &g_09f4[g_groupHot[id]])->f4;
         av8ba6v = (p + 1)->f0 > 9 ? p + 1 : 0;
         a_8b9ca = a_8b9ap = az8ba2t = 0;
         ax8ba4u = 0;
@@ -210,7 +210,7 @@ void menu_bbox(int id, int *x, int *y, int *w, int *h)
 {
     struct Hot *p;
 
-    p = &g_09f4[g_screenHot[id]];
+    p = &g_09f4[g_groupHot[id]];
     g_drawnMinX = g_drawnMinY = 1000;
     g_drawnMaxX = g_drawnMaxY = 1;
     while (p->f10) {

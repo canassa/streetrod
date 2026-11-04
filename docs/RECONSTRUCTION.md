@@ -215,7 +215,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   space: `Hot.f10` links a record to the next by its index into `g_09f4`, and the code
   reaches records as `&g_09f4[n]`. It is split into arrays where code names a record
   directly (`g_hotBuy[0].f0`, `g_hotRepair[7].f0`, `g_hotReadyBox[i].y1`, `g_1e34[0].f4`, `g_1804[k]`,
-  `g_hotBobs[3]`) or computes a run-time difference (`g_134e - g_121c`, `g_hotAttendant - g_hotGasStation`),
+  `g_hotBobs[3]`) or computes a run-time difference (`g_134e - g_121c`, `g_1a44 - g_hotGasStation`),
   which proves separate symbols; each array starts at the first record so named. Where
   the original's other boundaries were (one array per menu list, or fewer), and the
   arrays' names, are not recoverable. `g_184c` (a runtime list gargfx_build_hots builds), `g_1948`

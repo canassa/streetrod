@@ -26,7 +26,7 @@ static void near anim_run(int n);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Colors x_colors;
-struct Bitmap far *g_videoPageBms[4];
+struct Bitmap far *g_pageBmps[4];
 struct Obj bm7568[5];
 struct Style *bustyle;
 int (far *ab78aat)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
@@ -129,17 +129,17 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
     (*m_present)();
     menu_reset();
     g_graphicsUp = 1;
-    g_videoPageBms[0] = r_vid.front;
-    g_videoPageBms[1] = r_vid.back;
-    g_videoPageBms[2] = &g_screens[2];
+    g_pageBmps[0] = r_vid.front;
+    g_pageBmps[1] = r_vid.back;
+    g_pageBmps[2] = &g_screens[2];
     if (r_vid.mode == -2) {
-        *g_videoPageBms[2] = *r_vid.back;
-        g_videoPageBms[2]->bits.w.off = 0x4000;
-        g_videoPageBms[2]->bits.w.seg = 0xa000;
-        g_videoPageBms[3] = &g_egaPage3;
-        *g_videoPageBms[3] = *r_vid.back;
-        g_videoPageBms[3]->bits.w.off = 0x6000;
-        g_videoPageBms[3]->bits.w.seg = 0xa000;
+        *g_pageBmps[2] = *r_vid.back;
+        g_pageBmps[2]->bits.w.off = 0x4000;
+        g_pageBmps[2]->bits.w.seg = 0xa000;
+        g_pageBmps[3] = &g_egaPage3;
+        *g_pageBmps[3] = *r_vid.back;
+        g_pageBmps[3]->bits.w.off = 0x6000;
+        g_pageBmps[3]->bits.w.seg = 0xa000;
     }
 }
 

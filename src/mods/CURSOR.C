@@ -103,8 +103,8 @@ void cursor_ctl(int mode)
     a = a < 0 ? 0 : a > 319 ? 319 : a;
     b = b < 0 ? 0 : b > 199 ? 199 : b;
     if (mode >= 0) {
-        g_cursorHotX = g_06ec[g_cursor2.n = mode].a;
-        g_cursorHotY = g_06ec[mode].b;
+        g_4742 = g_06ec[g_cursor2.n = mode].a;
+        g_4744 = g_06ec[mode].b;
         g_cursor2.off = cursor_shape_off(g_cursor2.n);
         cursor_draw(a, b);
     } else if (mode >= -2) {

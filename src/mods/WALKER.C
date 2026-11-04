@@ -1,5 +1,5 @@
 #include "STRUCTS.H"
-#include "CARHOP.H"
+#include "WALKER.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "BOBS.H"
@@ -65,7 +65,7 @@ static void near grab_strip(struct Bitmap far **pbm)
     int w, x, h;
 
     disk_pic_size(0x474, &w, &h, &x);
-    mem_set_bitmap(*pbm, g_videoPageBms[2]->bits.p + 0x46 * g_videoPageBms[2]->pitch, 0L, w, h, r_vid.mode == -2 ? -2 : -1);
+    mem_set_bitmap(*pbm, g_pageBmps[2]->bits.p + 0x46 * g_pageBmps[2]->pitch, 0L, w, h, r_vid.mode == -2 ? -2 : -1);
     if (r_vid.mode == -2) {
         egalatch_rect(r_vid.front->bits.p, (*pbm)->bits.p - 0xaa0, (*pbm)->pitch, (*pbm)->height, 0, 0x44, 0x28);
     } else {
@@ -73,12 +73,12 @@ static void near grab_strip(struct Bitmap far **pbm)
     }
 }
 
-/* carhop_walk @ 0F38:99D9 (linear 0x18D59, 1156 bytes)
+/* walker_walk @ 0F38:99D9 (linear 0x18D59, 1156 bytes)
 
    Build the sprite animation of a moving car body: the cells from the sheet, the pages, the 0x54
    step run */
 
-void carhop_walk(int a, int b)
+void walker_walk(int a, int b)
 {
     struct Blt r2;
     struct Bitmap far *t;
@@ -182,11 +182,11 @@ void carhop_walk(int a, int b)
     marks_release();
 }
 
-/* carhop_save_bg @ 0F38:9E5D (linear 0x191DD, 94 bytes)
+/* walker_save_bg @ 0F38:9E5D (linear 0x191DD, 94 bytes)
 
    Allocate the 0x30 x 0x29 bitmap g_carhopBg and clear a 200 x 68 rectangle of it */
 
-void carhop_save_bg(void)
+void walker_save_bg(void)
 {
     struct Blt pkt;
 

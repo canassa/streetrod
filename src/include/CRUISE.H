@@ -10,6 +10,6 @@ extern int jz79a6;                                      /* DS:79A6 */
 extern int g7d66n;                                      /* DS:7D66 */
 void cruise_go(void);                                   /* 0x08D26 */
 void cruise_rival_paint(int mode);                      /* 0x08D9C */
-int cruise_run(void);                                   /* 0x08E2D */
+int cruise_drive(void);                                 /* 0x08E2D */
 
 #endif

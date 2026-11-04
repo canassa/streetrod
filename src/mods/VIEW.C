@@ -69,7 +69,7 @@ int g_opponentPics[5][4] = {{1003, 1004, 1057, 1091}, {1010, 1012, 1011, 1239}, 
 int g_5e3c = 0;   /* DS:5E3C */
 int g_drawPage = 1;   /* DS:5E3E */
 int g_showPage = 2;   /* DS:5E40 */
-struct Clip g_viewClip = {320, 82, 0, 18, 0, 18};   /* DS:5E42 */
+struct Clip g_viewRect = {320, 82, 0, 18, 0, 18};   /* DS:5E42 */
 int g_clipXMin = 0;   /* DS:5E4E */
 int g_clipYMin = 18;   /* DS:5E50 */
 int g_clipYMax = 101;   /* DS:5E52 */
@@ -141,7 +141,7 @@ static void near flip_page(void)
         av787at = (g_drawPage == 1) ? 0xa200 : 0xa400;
         egapage_show(g_showPage);
     } else {
-        (*b_78a2)(g8188w, r_vid.front, (struct Blt *)&g_viewClip, 1);
+        (*b_78a2)(g8188w, r_vid.front, (struct Blt *)&g_viewRect, 1);
         av787at = g8188w->bits.w.seg;
         at767ct = g8188w->bits.w.off;
     }

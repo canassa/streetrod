@@ -25,7 +25,7 @@ DATA_END = 0x629C          # first runtime _DATA byte (crt0's _asizds)
 BSS_START, BSS_PRIVATE_END, COMMON_START, END = 0x6C22, 0x6E2C, 0x6E60, 0x8F02
 # Recovered array bounds and typed table pieces (from the earlier data audit).
 BOUNDS = {'g_videoMenu': 6, 'g_gearNames': 7, 'g_palette': 16, 'g_protectPal': 16, 'g_5082': 4, 'g_511e': 4,
-          'g_keyMaps': 43, 'g_scenery': 21, 'g_scanMap': 0x66, 'g_4806': 44, 'g_4998': 5, 'ae7312y': 5, 'g_videoPageBms': 4}
+          'g_keyMaps': 43, 'g_scenery': 21, 'g_scanMap': 0x66, 'g_4806': 44, 'g_4998': 5, 'ae7312y': 5, 'g_pageBmps': 4}
 REGIONS = [(0x6076, 0x6078, 'int @'), (0x2ee, 0x31e, 'signed char @[24][2]'), (0x358, 0x36e, 'signed char @[11][2]'),
            (0x462, 0x472, 'unsigned char @[16]'), (0x5d4, 0x5d6, 'int @'),
            (0x4734, 0x4736, 'int @'), (0x474a, 0x474c, 'int @'),

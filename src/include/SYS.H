@@ -91,7 +91,7 @@ extern int bw8efc;                                      /* DS:8EFC */
 void sys_hover_reset(void);                             /* 0x00D78 */
 void sys_music_pause(void);                             /* 0x00D99 */
 void sys_music_resume(void);                            /* 0x00DD8 */
-void sys_input_reset(void);                             /* 0x00E24 */
+void sys_reset_queues(void);                            /* 0x00E24 */
 void sys_timer_remove(int n);                           /* 0x00F0B */
 void sys_unhook(void);                                  /* 0x00FB7 */
 void sys_exit(void);                                    /* 0x00FEA */
@@ -110,7 +110,7 @@ void sys_drive_stop(void);                              /* 0x01B27 */
 int sys_sign(int x);                                    /* 0x01B91 */
 void sys_demo_step(void);                               /* 0x01BAE */
 void interrupt far sys_timer_isr(void);                 /* 0x01FE2 */
-void sys_car_halt(void);                                /* 0x02374 */
+void F_02374(void);                                     /* 0x02374 */
 void interrupt far sys_drive_isr(void);                 /* 0x0238C */
 
 #endif

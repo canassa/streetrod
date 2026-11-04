@@ -1,4 +1,4 @@
-; Car-mask Part records: dx,dy,w,h.
+; Scenery sprite span records: dx,dy,length,colour.
 SPANS1 SEGMENT PARA PUBLIC 'FAR_DATA'
         PUBLIC  _g_spans1
 

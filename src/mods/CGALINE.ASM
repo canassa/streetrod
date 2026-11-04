@@ -4,7 +4,7 @@
         EXTRN   _at767ct:WORD
         EXTRN   _av787at:WORD
         EXTRN   _g_hercules:WORD
-        EXTRN   _g_viewClip:BYTE
+        EXTRN   _g_viewRect:BYTE
         EXTRN   _g_clipXMax:WORD
         EXTRN   _g_clipXMin:WORD
         EXTRN   _g_clipYMax:WORD

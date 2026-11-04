@@ -22,7 +22,7 @@
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_score;                        /* DS:6C5E */
 static int near elapsed_hours(void);
-static int near entry_beats_score(int i);
+static int near score_beats_entry(int i);
 static void near insert_entry(int pos);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
@@ -127,7 +127,7 @@ int fame_end_menu(void)
     case -2:
     case -1:
         if (g_picsFreed) {
-            disk_load_list(g_garagePics, 1);
+            disk_load_list(g_gamePics, 1);
             g_picsFreed = 0;
         }
         break;
@@ -135,9 +135,9 @@ int fame_end_menu(void)
     return key;
 }
 
-/* entry_beats_score @ 0000:32D0 (linear 0x032D0, 36 bytes) */
+/* score_beats_entry @ 0000:32D0 (linear 0x032D0, 36 bytes) */
 
-static int near entry_beats_score(int i)
+static int near score_beats_entry(int i)
 {
     return atoi(aytablex[i].score) > g_score;
 }
@@ -213,7 +213,7 @@ void fame_show(int add)
     if (add) {
         g_score = elapsed_hours();
         for (i = 0; i < bucount; i++)
-            if (entry_beats_score(i)) {
+            if (score_beats_entry(i)) {
                 pos7 = i;
                 break;
             }
