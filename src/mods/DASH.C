@@ -404,23 +404,23 @@ void dash_set_view(int mode)
         r_vid.front = g_savedFront;
         r_vid.back = g_savedBack;
         if (r_vid.mode == -2) {
-            outp(0x3d4, 0x13);
-            outp(0x3d5, 0x14);
+            outp(CRTC_INDEX, CRTC_OFFSET);
+            outp(CRTC_DATA, 0x14);
             crtc_set_split(-1);
-            outp(0x3d4, 0xc);
-            outp(0x3d5, 0);
-            outp(0x3d4, 0xd);
-            outp(0x3d5, 0);
+            outp(CRTC_INDEX, CRTC_START_HI);
+            outp(CRTC_DATA, 0);
+            outp(CRTC_INDEX, CRTC_START_LO);
+            outp(CRTC_DATA, 0);
         }
         r_vid.f16 = 1;
         screen_status_init(0xbe);
         break;
     case 2:
         if (r_vid.mode == -2) {
-            outp(0x3d4, 0xc);
-            outp(0x3d5, 0);
-            outp(0x3d4, 0xd);
-            outp(0x3d5, 0);
+            outp(CRTC_INDEX, CRTC_START_HI);
+            outp(CRTC_DATA, 0);
+            outp(CRTC_INDEX, CRTC_START_LO);
+            outp(CRTC_DATA, 0);
         }
         r_vid.f16 = 1;
         break;
@@ -435,13 +435,13 @@ void dash_set_view(int mode)
         r_vid.front = g_savedFront;
         r_vid.back = g_savedBack;
         if (r_vid.mode == -2) {
-            outp(0x3d4, 0x13);
-            outp(0x3d5, 0x14);
+            outp(CRTC_INDEX, CRTC_OFFSET);
+            outp(CRTC_DATA, 0x14);
             crtc_set_split(-1);
-            outp(0x3d4, 0xc);
-            outp(0x3d5, 0);
-            outp(0x3d4, 0xd);
-            outp(0x3d5, 0);
+            outp(CRTC_INDEX, CRTC_START_HI);
+            outp(CRTC_DATA, 0);
+            outp(CRTC_INDEX, CRTC_START_LO);
+            outp(CRTC_DATA, 0);
         }
         r_vid.f16 = 1;
         (*m_present)();
@@ -714,14 +714,14 @@ void F_10AFD(int n)
 
     for (i = 0; i < n; i++) {
         if (r_vid.mode != -4) {
-            while (inp(0x3da) & 8)
+            while (inp(INPUT_STATUS) & STATUS_VRETRACE)
                 ;
-            while (!(inp(0x3da) & 8))
+            while (!(inp(INPUT_STATUS) & STATUS_VRETRACE))
                 ;
         } else {
-            while (!(inp(0x3ba) & 0x80))
+            while (!(inp(MONO_STATUS) & HERC_STATUS_VSYNC))
                 ;
-            while (inp(0x3ba) & 0x80)
+            while (inp(MONO_STATUS) & HERC_STATUS_VSYNC)
                 ;
         }
     }

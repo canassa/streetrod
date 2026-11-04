@@ -5,6 +5,7 @@
 #include "BOBS.H"
 #include "CGABLT.H"
 #include "MAIN.H"
+#include "PC.H"
 #include "SPRITE.H"
 #include "VIDEO.H"
 
@@ -118,14 +119,14 @@ int cgaspr_step(struct Sprite *s)
     blt.sx = s->seq->dx ? blt.dx : 0;
     blt.sy = s->seq->dy ? blt.dy : 0;
     if (r_vid.mode != -4) {
-        while (inp(0x3da) & 8)
+        while (inp(INPUT_STATUS) & STATUS_VRETRACE)
             ;
-        while (!(inp(0x3da) & 8))
+        while (!(inp(INPUT_STATUS) & STATUS_VRETRACE))
             ;
     } else {
-        while (!(inp(0x3ba) & 0x80))
+        while (!(inp(MONO_STATUS) & HERC_STATUS_VSYNC))
             ;
-        while (inp(0x3ba) & 0x80)
+        while (inp(MONO_STATUS) & HERC_STATUS_VSYNC)
             ;
     }
     cgablt_copy(bits, pg->bm, &blt, 1);

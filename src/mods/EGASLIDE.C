@@ -8,6 +8,7 @@
 #include "MAIN.H"
 #include "MASKBLT.H"
 #include "MASKOR.H"
+#include "PC.H"
 #include "VIDEO.H"
 
 /* egaslide_sprite @ 21A0:28EC (linear 0x242EC, 790 bytes)
@@ -86,14 +87,14 @@ void egaslide_sprite(int top, int bottom, int x, int y0, int y1, struct Bitmap f
         m = 0;
         curn = src0;
         for (; k5 < 9; k5 <<= 1, m++, curn.w.off += psizem) {
-            outp(0x3c4, 2);
-            outp(0x3c5, k5);
-            outp(0x3ce, 4);
-            outp(0x3cf, m);
+            outp(SEQ_INDEX, SEQ_MAP_MASK);
+            outp(SEQ_DATA, k5);
+            outp(GC_INDEX, GC_READ_MAP);
+            outp(GC_DATA, m);
             maskor_blit(dstm, curn.w.seg, curn.w.off, alt16.w.off, (char)pitch, (char)pitch, (char)hh8, (char)bpitch);
         }
-        outp(0x3c4, 2);
-        outp(0x3c5, 0xf);
+        outp(SEQ_INDEX, SEQ_MAP_MASK);
+        outp(SEQ_DATA, SEQ_ALL_PLANES);
         if (r_vid.f16) {
             if (g_0792)
                 (*ab78aat)(g_0792, r_vid.back, &u_70ac, 1);

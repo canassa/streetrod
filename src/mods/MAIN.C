@@ -239,14 +239,14 @@ static void near set_video_mode(int mode)
         break;
     case 5:
         main_set_mode(MODE_TANDY_320_200_16);
-        outp(0x3df, 0xf6);
+        outp(TANDY_PAGE, 0xf6);
         break;
     case 4:
         hercgfx_set_mode();
         p = r_vid.mode == -4 ? (int far *)MONO_VRAM : (int far *)CGA_VRAM;
         while (p < (int far *)((r_vid.mode == -4 ? (long)MONO_VRAM : (long)CGA_VRAM) + 0x8000L))
             *p++ = 0;
-        outp(0x3b8, 0x2a);
+        outp(MONO_MODE, (MODE_CTRL_GRAPHICS | MODE_CTRL_VIDEO | MODE_CTRL_BLINK));
         g_0046 = 1;
         g_hercules = 1;
         break;

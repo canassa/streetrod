@@ -230,8 +230,8 @@ static int near load_pic(int n, int load, char far *dst)
         if (disk_seek(*g_curHandle, offset))
             goto bad;
         if (sl->f1e != 0xff) {
-            outp(0x3c4, 2);
-            outp(0x3c5, 1 << sl->f1e);
+            outp(SEQ_INDEX, SEQ_MAP_MASK);
+            outp(SEQ_DATA, 1 << sl->f1e);
         }
         retries = 0;
         total = ent->f1c + 1;
@@ -244,8 +244,8 @@ static int near load_pic(int n, int load, char far *dst)
                 movedata(sl->ptr.w.seg, sl->ptr.w.off, FP_SEG(fp), FP_OFF(fp), ent->f1c);
                 sl->ptr.p = fp;
                 F_19438(1);
-                outp(0x3c4, 2);
-                outp(0x3c5, 0xf);
+                outp(SEQ_INDEX, SEQ_MAP_MASK);
+                outp(SEQ_DATA, SEQ_ALL_PLANES);
                 return 3;
             }
             if (g_curDrive > 2)
@@ -313,8 +313,8 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
     for (j = 0; j < 16; j++)
         colors16[j] = cur->pal[j];
     if (sl->f1e != 0xff) {
-        outp(0x3ce, 4);
-        outp(0x3cf, sl->f1e);
+        outp(GC_INDEX, GC_READ_MAP);
+        outp(GC_DATA, sl->f1e);
     }
     src = sl->ptr.p + 1;
     num = cur->f1c - 1;
@@ -338,8 +338,8 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
         rle_decode(src, pic->bits.p == 0 ? pic->alt.p : pic->bits.p, num, colors16, 16);
     }
     if (sl->f1e != 0xff) {
-        outp(0x3c4, 2);
-        outp(0x3c5, 0xf);
+        outp(SEQ_INDEX, SEQ_MAP_MASK);
+        outp(SEQ_DATA, SEQ_ALL_PLANES);
     }
     if (res == 2)
         sl->ptr.p = 0;

@@ -15,6 +15,7 @@
 #include "EGASPR.H"
 #include "FONTDATA.H"
 #include "MENU.H"
+#include "PC.H"
 #include "SCREEN.H"
 #include "VIDEO.H"
 
@@ -106,12 +107,12 @@ void ega_draw_text(struct Bitmap far *bm, int x, int y, char *str)
         part = bm->height - y;
     g824cd = x + cols - d;
     bq824e = y;
-    outp(0x3ce, 5);
-    outp(0x3cf, 2);
-    outp(0x3c4, 2);
-    outp(0x3c5, 0xf);
-    outp(0x3ce, 8);
-    outp(0x3cf, 0xff);
+    outp(GC_INDEX, GC_MODE);
+    outp(GC_DATA, GC_WRITE_MODE2);
+    outp(SEQ_INDEX, SEQ_MAP_MASK);
+    outp(SEQ_DATA, SEQ_ALL_PLANES);
+    outp(GC_INDEX, GC_BIT_MASK);
+    outp(GC_DATA, GC_MASK_ALL);
     g = part;
     fill = pen = bits;
     r = q = bm->bits.p + bm->pitch * y + (x >> 3);
@@ -119,35 +120,35 @@ void ega_draw_text(struct Bitmap far *bm, int x, int y, char *str)
     for (; g != 0; g--, q += l, r = q, fill = pen += 0x28) {
         if (e) {
             ch = *r;
-            outp(0x3cf, e);
+            outp(GC_DATA, e);
             *r = x_colors.c[1];
             ch = *r;
-            outp(0x3cf, *fill);
+            outp(GC_DATA, *fill);
             fill++;
             *r = x_colors.c[0];
             r++;
         }
         for (left = k; left != 0; left--) {
-            outp(0x3cf, 0xff);
+            outp(GC_DATA, GC_MASK_ALL);
             *r = x_colors.c[1];
             ch = *r;
-            outp(0x3cf, *fill);
+            outp(GC_DATA, *fill);
             fill++;
             *r = x_colors.c[0];
             r++;
         }
         if (o) {
             ch = *r;
-            outp(0x3cf, o);
+            outp(GC_DATA, o);
             *r = x_colors.c[1];
             ch = *r;
-            outp(0x3cf, *fill);
+            outp(GC_DATA, *fill);
             fill++;
             *r = x_colors.c[0];
         }
     }
-    outp(0x3ce, 8);
-    outp(0x3cf, 0xff);
-    outp(0x3ce, 5);
-    outp(0x3cf, 0);
+    outp(GC_INDEX, GC_BIT_MASK);
+    outp(GC_DATA, GC_MASK_ALL);
+    outp(GC_INDEX, GC_MODE);
+    outp(GC_DATA, GC_WRITE_MODE0);
 }

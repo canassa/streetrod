@@ -3,6 +3,7 @@
 #include <memory.h>
 #include "STRUCTS.H"
 #include "EGACOPY.H"
+#include "PC.H"
 #include "SYS.H"
 
 int g_revealOffsets[5] = {0, 80, 160, 40, 120};   /* DS:5C0C */
@@ -13,13 +14,13 @@ int g_revealOffsets[5] = {0, 80, 160, 40, 120};   /* DS:5C0C */
 
 void egacopy_page(char far *src, char far *dst)
 {
-    outp(0x3ce, 5);
-    outp(0x3cf, 1);
-    outp(0x3c4, 2);
-    outp(0x3c5, 15);
+    outp(GC_INDEX, GC_MODE);
+    outp(GC_DATA, GC_WRITE_MODE1);
+    outp(SEQ_INDEX, SEQ_MAP_MASK);
+    outp(SEQ_DATA, SEQ_ALL_PLANES);
     movedata(FP_SEG(src), FP_OFF(src), FP_SEG(dst), FP_OFF(dst), 8000);
-    outp(0x3ce, 5);
-    outp(0x3cf, 0);
+    outp(GC_INDEX, GC_MODE);
+    outp(GC_DATA, GC_WRITE_MODE0);
 }
 
 /* egacopy_reveal @ 21A0:1722 (linear 0x23122, 267 bytes)
@@ -37,10 +38,10 @@ void egacopy_reveal(char far *dst, char far *src)
     char far *c;
     char far *b;
 
-    outp(0x3c4, 2);
-    outp(0x3c5, 15);
-    outp(0x3ce, 8);
-    outp(0x3cf, 0xff);
+    outp(SEQ_INDEX, SEQ_MAP_MASK);
+    outp(SEQ_DATA, SEQ_ALL_PLANES);
+    outp(GC_INDEX, GC_BIT_MASK);
+    outp(GC_DATA, GC_MASK_ALL);
     e = 0;
     do {
         d = g_tick + 3;
@@ -50,16 +51,16 @@ void egacopy_reveal(char far *dst, char far *src)
         c = src + h;
         do {
             b = a;
-            outp(0x3ce, 5);
-            outp(0x3cf, 2);
+            outp(GC_INDEX, GC_MODE);
+            outp(GC_DATA, GC_WRITE_MODE2);
             g = 40;
             do {
                 *b = 0;
                 b++;
                 g--;
             } while (g != 0);
-            outp(0x3ce, 5);
-            outp(0x3cf, 1);
+            outp(GC_INDEX, GC_MODE);
+            outp(GC_DATA, GC_WRITE_MODE1);
             movedata(FP_SEG(c), FP_OFF(c), FP_SEG(a), FP_OFF(a), 40);
             f++;
             a += 200;
@@ -69,8 +70,8 @@ void egacopy_reveal(char far *dst, char far *src)
             ;
         e++;
     } while (e < 5);
-    outp(0x3ce, 8);
-    outp(0x3cf, 0xff);
-    outp(0x3ce, 5);
-    outp(0x3cf, 0);
+    outp(GC_INDEX, GC_BIT_MASK);
+    outp(GC_DATA, GC_MASK_ALL);
+    outp(GC_INDEX, GC_MODE);
+    outp(GC_DATA, GC_WRITE_MODE0);
 }

@@ -2,6 +2,7 @@
 #include "STRUCTS.H"
 #include "MUSIC.H"
 #include "M_02B9A.H"
+#include "PC.H"
 #include "SOUND.H"
 #include "SYS.H"
 
@@ -22,7 +23,7 @@ void music_play(void far *song, void *tones)
             g_savedMusicOn = -1;
         }
         if (g_musicOn == 0) {
-            outp(0x61, inp(0x61) & 0xfc);
+            outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
             g_speakerOn = 0;
         }
         g_voiceNum = 1;
@@ -63,7 +64,7 @@ void music_set_vibrato(int on, int a, int b, int c, int d)
 void music_stop(void)
 {
     g_vibratoActive = 0;
-    outp(0x61, inp(0x61) & 0xfc);
+    outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
     sys_music_stop();
 }
 

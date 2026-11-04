@@ -440,10 +440,10 @@ void cga_screen_off(void)
 {
     switch (r_vid.mode) {
     case -3:
-        outp(0x3d8, 2);
+        outp(CGA_MODE, MODE_CTRL_GRAPHICS);
         break;
     case -4:
-        outp(0x3b8, 0x22);
+        outp(MONO_MODE, (MODE_CTRL_GRAPHICS | MODE_CTRL_BLINK));
         break;
     }
     gz8249 = 0;
@@ -456,10 +456,10 @@ void cga_screen_on(void)
 {
     switch (r_vid.mode) {
     case -3:
-        outp(0x3d8, 0x2a);
+        outp(CGA_MODE, (MODE_CTRL_GRAPHICS | MODE_CTRL_VIDEO | MODE_CTRL_BLINK));
         break;
     case -4:
-        outp(0x3b8, 0x2a);
+        outp(MONO_MODE, (MODE_CTRL_GRAPHICS | MODE_CTRL_VIDEO | MODE_CTRL_BLINK));
         break;
     }
     gz8249 = 1;

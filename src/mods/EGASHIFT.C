@@ -2,6 +2,7 @@
 #include <conio.h>
 #include "STRUCTS.H"
 #include "EGASHIFT.H"
+#include "PC.H"
 
 static void near shift_row_bits(unsigned char *p, int n, int len);
 static void near write_plane_row(unsigned char far *dst, unsigned char *src, int w, int off, int shift);
@@ -9,8 +10,8 @@ static void near write_plane_row(unsigned char far *dst, unsigned char *src, int
 /* EGA/VGA register writes (graphics controller, sequencer). Written as braced blocks: the
    block boundary is visible in egashift_blit's code; every other pair in the file (and the 38
    such pairs of seven other files) compiles the same either way. */
-#define GCREG(i, v)  { outp(0x3ce, (i)); outp(0x3cf, (v)); }
-#define SEQREG(i, v) { outp(0x3c4, (i)); outp(0x3c5, (v)); }
+#define GCREG(i, v)  { outp(GC_INDEX, (i)); outp(GC_DATA, (v)); }
+#define SEQREG(i, v) { outp(SEQ_INDEX, (i)); outp(SEQ_DATA, (v)); }
 
 unsigned char g_leftBitMasks[8] = {128, 192, 224, 240, 248, 252, 254, 255};   /* DS:5C16 */
 int g_egaGcFunction = 0;   /* DS:5C1E */
@@ -82,62 +83,62 @@ static void near write_plane_row(unsigned char far *dst, unsigned char *src, int
         e = off + w;
         if (e < 8)
             g &= g_leftBitMasks[e - 1];
-        GCREG(8, g);
-        SEQREG(2, 1);
+        GCREG(GC_BIT_MASK, g);
+        SEQREG(SEQ_MAP_MASK, SEQ_PLANE0);
         f = *dst;
         *dst = *a++ & g;
-        SEQREG(2, 2);
+        SEQREG(SEQ_MAP_MASK, SEQ_PLANE1);
         f = *dst;
         *dst = *b++ & g;
-        SEQREG(2, 4);
+        SEQREG(SEQ_MAP_MASK, SEQ_PLANE2);
         f = *dst;
         *dst = *c++ & g;
-        SEQREG(2, 8);
+        SEQREG(SEQ_MAP_MASK, SEQ_PLANE3);
         f = *dst;
         *dst++ = *d++ & g;
         w -= 8 - off;
     }
-    GCREG(8, 0xff);
+    GCREG(GC_BIT_MASK, GC_MASK_ALL);
     if (w > 7) {
         int j;
 
         j = -w / -8;
         w += -j << 3;
         do {
-            SEQREG(2, 1);
+            SEQREG(SEQ_MAP_MASK, SEQ_PLANE0);
             f = *dst;
             *dst = *a++;
-            SEQREG(2, 2);
+            SEQREG(SEQ_MAP_MASK, SEQ_PLANE1);
             f = *dst;
             *dst = *b++;
-            SEQREG(2, 4);
+            SEQREG(SEQ_MAP_MASK, SEQ_PLANE2);
             f = *dst;
             *dst = *c++;
-            SEQREG(2, 8);
+            SEQREG(SEQ_MAP_MASK, SEQ_PLANE3);
             f = *dst;
             *dst = *d++;
             dst++;
         } while (--j != 0);
     }
     if (w > 0) {
-        outp(0x3ce, 8);
+        outp(GC_INDEX, GC_BIT_MASK);
         g = g_leftBitMasks[w - 1];
-        outp(0x3cf, g);
-        SEQREG(2, 1);
+        outp(GC_DATA, g);
+        SEQREG(SEQ_MAP_MASK, SEQ_PLANE0);
         f = *dst;
         *dst = *a & g;
-        SEQREG(2, 2);
+        SEQREG(SEQ_MAP_MASK, SEQ_PLANE1);
         f = *dst;
         *dst = *b & g;
-        SEQREG(2, 4);
+        SEQREG(SEQ_MAP_MASK, SEQ_PLANE2);
         f = *dst;
         *dst = *c & g;
-        SEQREG(2, 8);
+        SEQREG(SEQ_MAP_MASK, SEQ_PLANE3);
         f = *dst;
         *dst++ = *d & g;
     }
-    GCREG(8, 0xff);
-    SEQREG(2, 0xf);
+    GCREG(GC_BIT_MASK, GC_MASK_ALL);
+    SEQREG(SEQ_MAP_MASK, SEQ_ALL_PLANES);
 }
 
 /* egashift_blit @ 21A0:223B (linear 0x23C3B, 383 bytes)
@@ -166,7 +167,7 @@ void egashift_blit(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r
     p = (r->sx + r->w - 1) / 8 - r->sx / 8 + 1;
     f = r->h;
     d = bm1->planesize >> 2;
-    GCREG(5, 0);
+    GCREG(GC_MODE, GC_WRITE_MODE0);
     j = r->dx & 7;
     h = j - (r->sx & 7);
     for (e = 0; e < f; e++) {
