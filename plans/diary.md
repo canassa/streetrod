@@ -1044,3 +1044,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - `EGA_PITCH` (40, the EGA row stride per plane) and `SCREEN_WIDTH`/`SCREEN_HEIGHT` (320x200) in PC.H; `BACKDROP_ROWS` (70, the reserve at the top of the scratch page) in CARPIC.H, recorded in RECONSTRUCTION.md as a choice among identical forms; `SCREEN_BODY_HEIGHT`/`STATUS_BAR_HEIGHT` (190/10) in SCREEN.H; `DASH_Y`/`DASH_HEIGHT` (100/100) in DASH.H. Done by a Codex agent; the first spelling (`SCREEN_H`, `DASH_H`) collided with the SCREEN.H/DASH.H include guards, so the dimensions are spelled out and the guards stay standard.
 - Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
+
+## 2026-11-04 14:33 CET: Name video mode codes
+
+### What I did
+- Defined VID_EGA (-2), VID_CGA (-3), VID_HERCULES (-4), and VID_TANDY (-6) in MAIN.H, the header of MAIN.C, which owns r_vid; supplied the corresponding MASM equates in MAIN.INC for the far screen descriptors.
+- Replaced format literals in mode comparisons, switches, bitmap flags, bitmap constructor arguments, and screen descriptors. Preserved alignment masks, generic bitmap flags, and menu result codes.
+- Verified 572/572 function matches, a clean byte-identical packed build, clean header and DGROUP checks, 53 passing unit tests, and a byte-identical native DOSBox MAKE build.
+
+### What I learned
+- video_init assigns front->flags to r_vid.mode: its EGA path uses four 1-bit planes, its CGA default uses 2 bits per pixel, and its Tandy path uses 4 bits per pixel. init_screens supplies the Hercules and hardware selection evidence.
+- Negative format constants preserve the bytes of the previous hexadecimal signed-byte assignments and MASM DB screen descriptors; both build paths remain identical to orig/SR.EXE.

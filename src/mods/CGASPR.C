@@ -118,7 +118,7 @@ int cgaspr_step(struct Sprite *s)
     blt.dy = min(rc.y1, c2.y1);
     blt.sx = s->seq->dx ? blt.dx : 0;
     blt.sy = s->seq->dy ? blt.dy : 0;
-    if (r_vid.mode != -4) {
+    if (r_vid.mode != VID_HERCULES) {
         while (inp(INPUT_STATUS) & STATUS_VRETRACE)
             ;
         while (!(inp(INPUT_STATUS) & STATUS_VRETRACE))

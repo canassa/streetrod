@@ -481,7 +481,7 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
             bitmap_copy_box(r_vid.back, r_vid.front, wx8 - 1, wy7 - 1, right + 1, bottom9 + 1);
 restore:
         x_colors = bustyle->pal[idx2];
-        if (r_vid.mode == -4)
+        if (r_vid.mode == VID_HERCULES)
             x_colors.c[0] = 0;
         while ((key2 = sys_wait_input(0)) == 0) {
             i = az8baa > 0 && topk + az8baa <= count5;

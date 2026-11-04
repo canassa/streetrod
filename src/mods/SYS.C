@@ -451,7 +451,7 @@ int sys_wait_input(int ticks)
             g_demoQuit = 0x63;
             sys_exit();
         }
-        if (g_protectCycle && (r_vid.mode == -2 || r_vid.mode == -6)
+        if (g_protectCycle && (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
             && !(g_tick & 0xf) && g_musicOn && g_speakerOn) {
             old = g_protectPal[8];
             g_protectPal[8] = g_protectPal[7];

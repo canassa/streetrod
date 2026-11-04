@@ -78,7 +78,7 @@ void cga_draw_text(struct Bitmap far *bm, int x, int y, char *s)
     lmask = 0xff;
     rmask = 0xff;
     memset(buf7, 0, sizeof buf7);
-    if (r_vid.mode == -4)
+    if (r_vid.mode == VID_HERCULES)
         x_colors.c[0] = 0;
     t = x_colors.c[0];
     fg7 = (t << 2) | (t << 4) | (t << 6) | t;
@@ -157,7 +157,7 @@ void cga_draw_text(struct Bitmap far *bm, int x, int y, char *s)
         pp2 += 40;
     }
     b0 = b1 = bm->bits.p;
-    cga5 = (r_vid.mode == -4 ? 0xb000 : 0xb800) == FP_SEG(b0);
+    cga5 = (r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800) == FP_SEG(b0);
     b1 += bm->planesize >> 1;
     b0 += bm->pitch * (y >> 1);
     b0 += x >> 2;
@@ -173,7 +173,7 @@ void cga_draw_text(struct Bitmap far *bm, int x, int y, char *s)
             if ((r6 + y) & 1) {
                 *s1 &= lmask;
                 *s1 |= *fill & lm28;
-                if (cga5 && r_vid.mode == -4)
+                if (cga5 && r_vid.mode == VID_HERCULES)
                     s1[0x2000] = *s1;
                 s1 += bm->pitch;
                 s0 += bm->pitch;
@@ -196,7 +196,7 @@ void cga_draw_text(struct Bitmap far *bm, int x, int y, char *s)
         for (i = 0; i < h; i++, from += 80) {
             if ((y + i) & 1) {
                 movedata(dseg4, (unsigned)from, seg1, off1, nb2);
-                if (cga5 && r_vid.mode == -4)
+                if (cga5 && r_vid.mode == VID_HERCULES)
                     movedata(dseg4, (unsigned)from, seg1, off1 + 0x2000, nb2);
                 off0 += 80;
                 off1 += 80;
@@ -216,7 +216,7 @@ void cga_draw_text(struct Bitmap far *bm, int x, int y, char *s)
             if ((r6 + y) & 1) {
                 *s1 &= rmask;
                 *s1 |= *fill;
-                if (cga5 && r_vid.mode == -4)
+                if (cga5 && r_vid.mode == VID_HERCULES)
                     s1[0x2000] = *s1;
                 s1 += bm->pitch;
                 s0 += bm->pitch;
@@ -378,8 +378,8 @@ void cga_recolor_rect(struct Bitmap far *bm, int a, int b, int x1, int y1, int x
 void cga_copy_page(char far *src, char far *dst)
 {
     movedata(FP_SEG(src), FP_OFF(src), FP_SEG(dst), FP_OFF(dst), 0x4000);
-    if (r_vid.mode == -4 && (r_vid.mode == -4 ? 0xb000 : 0xb800) == FP_SEG(dst))
-        movedata(r_vid.mode == -4 ? 0xb200 : 0xba00, 0, 0xb400, 0, 0x2000);
+    if (r_vid.mode == VID_HERCULES && (r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800) == FP_SEG(dst))
+        movedata(r_vid.mode == VID_HERCULES ? 0xb200 : 0xba00, 0, 0xb400, 0, 0x2000);
 }
 
 /* cga_reveal @ 1C11:0E30 (linear 0x1CF40, 283 bytes)
@@ -408,7 +408,7 @@ void cga_reveal(char far *dst, char far *src)
             for (e = (int far *)d, k = 0x28; k; k--)
                 *e++ = 0;
             movedata(FP_SEG(s2), FP_OFF(s2), FP_SEG(d), FP_OFF(d), 0x50);
-            if ((y & 1) && r_vid.mode == -4) {
+            if ((y & 1) && r_vid.mode == VID_HERCULES) {
                 d += 0x2000;
                 for (e = (int far *)d, k = 0x28; k; k--)
                     *e++ = 0;
@@ -439,10 +439,10 @@ void cga_set_page(int page)
 void cga_screen_off(void)
 {
     switch (r_vid.mode) {
-    case -3:
+    case VID_CGA:
         outp(CGA_MODE, MODE_CTRL_GRAPHICS);
         break;
-    case -4:
+    case VID_HERCULES:
         outp(MONO_MODE, (MODE_CTRL_GRAPHICS | MODE_CTRL_BLINK));
         break;
     }
@@ -455,10 +455,10 @@ void cga_screen_off(void)
 void cga_screen_on(void)
 {
     switch (r_vid.mode) {
-    case -3:
+    case VID_CGA:
         outp(CGA_MODE, (MODE_CTRL_GRAPHICS | MODE_CTRL_VIDEO | MODE_CTRL_BLINK));
         break;
-    case -4:
+    case VID_HERCULES:
         outp(MONO_MODE, (MODE_CTRL_GRAPHICS | MODE_CTRL_VIDEO | MODE_CTRL_BLINK));
         break;
     }

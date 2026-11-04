@@ -28,7 +28,7 @@ void arena_reset(void)
 
 void arena_init(void)
 {
-    if (r_vid.mode == -6)
+    if (r_vid.mode == VID_TANDY)
         g_arenaBase = ARENA_FIXED_BASE;
     else
         g_arenaBase = mem_alloc(0xfde8, 1);

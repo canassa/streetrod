@@ -166,7 +166,7 @@ void F_06750(int x)
 
 void F_067CF(int a)
 {
-    if (r_vid.mode == -2 || r_vid.mode == -6) {
+    if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) {
         if (gz8249) {
             F_112CB(6, g_50c2[a][0]);
             F_112CB(7, g_50c2[a][1]);
@@ -408,7 +408,7 @@ void near F_06F6B(void)
 
     if (!a_7eaap.m7eb0)
         game_message(0x0efa);
-    else if (r_vid.mode != -2 && r_vid.mode != -6)
+    else if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         game_message(0x18ad);
     else {
         bm1 = menu_grab(14, &x, &y, ARENA_HIGH_STACK);

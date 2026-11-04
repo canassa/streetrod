@@ -94,7 +94,7 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
     r_vid.f8 = 0;
     r_vid.f16 = 1;
     switch (r_vid.mode = front->flags) {
-    case -2:
+    case VID_EGA:
         r_vid.planes = 4;
         r_vid.shift = 3;
         r_vid.bpp = 1;
@@ -111,9 +111,9 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
         r_vid.bpp = 2;
         r_vid.mask = -4;
         bustyle = &g_style4;
-        r_vid.front->flags = -3;
+        r_vid.front->flags = VID_CGA;
         break;
-    case -6:
+    case VID_TANDY:
         r_vid.planes = 1;
         r_vid.shift = 1;
         r_vid.bpp = 4;
@@ -134,7 +134,7 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
     g_pageBmps[0] = r_vid.front;
     g_pageBmps[1] = r_vid.back;
     g_pageBmps[2] = &g_screens[2];
-    if (r_vid.mode == -2) {
+    if (r_vid.mode == VID_EGA) {
         *g_pageBmps[2] = *r_vid.back;
         g_pageBmps[2]->bits.w.off = 0x4000;
         g_pageBmps[2]->bits.w.seg = 0xa000;

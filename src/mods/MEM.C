@@ -61,7 +61,7 @@ char far *mem_alloc(unsigned n, int fatal)
 
     if (p = _fmalloc(n)) {
         if (FP_SEG(p) == g_dataSeg ||
-            (r_vid.mode == -6 && (unsigned long)(p + n) >= 0x80000000UL))
+            (r_vid.mode == VID_TANDY && (unsigned long)(p + n) >= 0x80000000UL))
             _ffree(p);
         else
             return p;

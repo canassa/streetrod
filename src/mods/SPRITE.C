@@ -101,7 +101,7 @@ struct Sprite *sprite_setup(int x, int y, struct Bitmap far **imgs, char (*cell)
     for (i = 0; i < n; i++) {
         g77bal[i].pos = *imgs++;
         if (cell)
-            g77bal[i].data = r_vid.mode == -2 ? cell++ : &am6e68x[i];
+            g77bal[i].data = r_vid.mode == VID_EGA ? cell++ : &am6e68x[i];
         else
             g77bal[i].data = 0;
         g77bal[i].nxt[0] = &g77bal[i + 1];
@@ -117,7 +117,7 @@ struct Sprite *sprite_setup(int x, int y, struct Bitmap far **imgs, char (*cell)
     g7d18m.save = save;
     g7d18m.rc[0] = a8;
     g7d18m.rc[1] = a9;
-    if (r_vid.mode == -2) {
+    if (r_vid.mode == VID_EGA) {
         for (i = 0; i < 2; i++) {
             g_sprPageRing[i].bm = g_pageBmps[i];
             g_sprPageRing[i].idx = i;

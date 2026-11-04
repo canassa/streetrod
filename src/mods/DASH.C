@@ -68,10 +68,10 @@ static void near restore_under(int x, int y, int w, int h, int kind)
     pkt.w = (w & 0xfff8) + 0x10;
     pkt.h = h;
     pkt.sx = 0x108;
-    pkt.sy = (r_vid.mode == -2 ? DASH_Y : 0) + (kind == 1 ? 5 : kind == 2 ? 12 : 35);
+    pkt.sy = (r_vid.mode == VID_EGA ? DASH_Y : 0) + (kind == 1 ? 5 : kind == 2 ? 12 : 35);
     pkt.dx = x & 0xfff8;
     pkt.dy = y;
-    (*b_78a2)(r_vid.mode == -2 ? bm7678 : g82b4s, bm7678, &pkt, 1);
+    (*b_78a2)(r_vid.mode == VID_EGA ? bm7678 : g82b4s, bm7678, &pkt, 1);
 }
 
 /* save_under @ 0F38:0098 (linear 0x0F418, 159 bytes) */
@@ -85,8 +85,8 @@ static void near save_under(int x, int y, int w, int h, int kind)
     pkt.sx = x & 0xfff8;
     pkt.sy = y;
     pkt.dx = 0x108;
-    pkt.dy = (r_vid.mode == -2 ? DASH_Y : 0) + (kind == 1 ? 5 : kind == 2 ? 12 : 35);
-    (*b_78a2)(g_dashBuffered ? g755cu : bm7678, r_vid.mode == -2 ? bm7678 : g82b4s, &pkt, 1);
+    pkt.dy = (r_vid.mode == VID_EGA ? DASH_Y : 0) + (kind == 1 ? 5 : kind == 2 ? 12 : 35);
+    (*b_78a2)(g_dashBuffered ? g755cu : bm7678, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt, 1);
 }
 
 /* dash_speedo_pts @ 0F38:0137 (linear 0x0F4B7, 155 bytes) */
@@ -98,9 +98,9 @@ void dash_speedo_pts(int i, int *x1, int *y1, int *x2, int *y2)
     else if (i > 0x82)
         i = 0x82;
     *x1 = g_needlePts[0][i][0] + 0xc4;
-    *y1 = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[0][i][1] + 0x2a;
+    *y1 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[0][i][1] + 0x2a;
     *x2 = g_needlePts[1][i][0] + 0xc4;
-    *y2 = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[1][i][1] + 0x2a;
+    *y2 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[1][i][1] + 0x2a;
     /* PROVISIONAL: the original CONST holds two more SEG constants for the track segment
        (DS:68E6 with this function's, DS:68E8 later) that no instruction reads: MSC leaves
        them behind for unreachable far accesses to two other far symbols. The statements and
@@ -118,7 +118,7 @@ void dash_speedo_init(int i)
     int miny3, minx4, y1, x2, x11, y2, color;
     unsigned saveOff, saveSeg;
 
-    color = (r_vid.mode == -2 || r_vid.mode == -6) ? 11 : 3;
+    color = (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) ? 11 : 3;
     dash_speedo_pts(i, &x11, &y1, &x2, &y2);
     minx4 = x11 > x2 ? x2 : x11;
     miny3 = y1 > y2 ? y2 : y1;
@@ -126,7 +126,7 @@ void dash_speedo_init(int i)
     if (g_dashBuffered == 0) {
         saveSeg = av787at;
         saveOff = at767ct;
-        av787at = r_vid.mode == -2 ? 0xa000 : r_vid.mode == -4 ? 0xb000 : 0xb800;
+        av787at = r_vid.mode == VID_EGA ? 0xa000 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
         at767ct = 0;
         (*a_78d2)(x11, y1, x2, y2, color);
         av787at = saveSeg;
@@ -143,9 +143,9 @@ void dash_tach_pts(int i, int *x1, int *y1, int *x2, int *y2)
     else if (i > 0x82)
         i = 0x82;
     *x1 = g_needlePts[0][i][0] + 0x91;
-    *y1 = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[0][i][1] + 0x2a;
+    *y1 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[0][i][1] + 0x2a;
     *x2 = g_needlePts[1][i][0] + 0x91;
-    *y2 = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[1][i][1] + 0x2a;
+    *y2 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[1][i][1] + 0x2a;
     /* PROVISIONAL: second unreachable far access, see dash_speedo_pts. */
     return;
     { extern char far x_trk1[][2]; *x2 = x_trk1[i][0]; }
@@ -158,7 +158,7 @@ void dash_tach_init(int v)
     int miny3, minx4, y1, x2, x11, y2, color;
     unsigned saveOff, saveSeg;
 
-    color = r_vid.mode == -2 ? 11 : 3;
+    color = r_vid.mode == VID_EGA ? 11 : 3;
     dash_tach_pts(v / 0x2b, &x11, &y1, &x2, &y2);
     minx4 = x11 > x2 ? x2 : x11;
     miny3 = y1 > y2 ? y2 : y1;
@@ -166,7 +166,7 @@ void dash_tach_init(int v)
     if (g_dashBuffered == 0) {
         saveSeg = av787at;
         saveOff = at767ct;
-        av787at = r_vid.mode == -2 ? 0xa000 : r_vid.mode == -4 ? 0xb000 : 0xb800;
+        av787at = r_vid.mode == VID_EGA ? 0xa000 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
         at767ct = 0;
         (*a_78d2)(x11, y1, x2, y2, color);
         av787at = saveSeg;
@@ -182,10 +182,10 @@ int dash_move_needle(int cur, int old, int flag)
     unsigned saveOff, saveSeg;
 
     if (g_needleColor < 0)
-        g_needleColor = (r_vid.mode == -2 || r_vid.mode == -6) ? 11 : 3;
+        g_needleColor = (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) ? 11 : 3;
     saveSeg = av787at;
     saveOff = at767ct;
-    av787at = r_vid.mode == -2 ? 0xa000 : r_vid.mode == -4 ? 0xb000 : 0xb800;
+    av787at = r_vid.mode == VID_EGA ? 0xa000 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
     at767ct = 0;
     if (flag) {
         dash_tach_pts(old / 0x2b, &x11, &y1, &x2, &y2);
@@ -233,10 +233,10 @@ void dash_draw_clock(void)
 
     pi3 = 3.1415926535;
     if (g_needleColor < 0)
-        g_needleColor = (r_vid.mode == -2 || r_vid.mode == -6) ? 11 : 3;
+        g_needleColor = (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) ? 11 : 3;
     ssegk = av787at;
     soffn = at767ct;
-    av787at = r_vid.mode == -2 ? 0xa000 : r_vid.mode == -4 ? 0xb000 : 0xb800;
+    av787at = r_vid.mode == VID_EGA ? 0xa000 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
     at767ct = 0;
     F_064A3(&h4, &m);
     h4 >>= 1;
@@ -250,13 +250,13 @@ void dash_draw_clock(void)
         w6 = 5;
     rad5 = al * pi3 / 180.0;
     x14 = (int)(cos(rad5) * 5.0) + 0x91;
-    y13 = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) - (int)(sin(rad5) * 5.0) + 0x2a;
+    y13 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - (int)(sin(rad5) * 5.0) + 0x2a;
     x2 = (int)(cos(rad5) * 13.0) + 0x91;
-    y2 = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) - (int)(sin(rad5) * 13.0) + 0x2a;
+    y2 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - (int)(sin(rad5) * 13.0) + 0x2a;
     x3 = (int)(cos((al + w6) * pi3 / 180.0) * 9.0) + 0x91;
-    y3 = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) - (int)(sin((al + w6) * pi3 / 180.0) * 9.0) + 0x2a;
+    y3 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - (int)(sin((al + w6) * pi3 / 180.0) * 9.0) + 0x2a;
     x4 = (int)(cos((al - w6) * pi3 / 180.0) * 9.0) + 0x91;
-    y4 = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) - (int)(sin((al - w6) * pi3 / 180.0) * 9.0) + 0x2a;
+    y4 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - (int)(sin((al - w6) * pi3 / 180.0) * 9.0) + 0x2a;
     (*a_78d2)(x14, y13, x2, y2, g_needleColor);
     (*a_78d2)(x14, y13, x3, y3, g_needleColor);
     (*a_78d2)(x14, y13, x4, y4, g_needleColor);
@@ -270,13 +270,13 @@ void dash_draw_clock(void)
         w6 = 4;
     rad5 = a2 * pi3 / 180.0;
     x14 = (int)(cos(rad5) * 5.0) + 0x91;
-    y13 = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) - (int)(sin(rad5) * 5.0) + 0x2a;
+    y13 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - (int)(sin(rad5) * 5.0) + 0x2a;
     x2 = (int)(cos(rad5) * 18.0) + 0x91;
-    y2 = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) - (int)(sin(rad5) * 18.0) + 0x2a;
+    y2 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - (int)(sin(rad5) * 18.0) + 0x2a;
     x3 = (int)(cos((a2 + w6) * pi3 / 180.0) * 9.0) + 0x91;
-    y3 = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) - (int)(sin((a2 + w6) * pi3 / 180.0) * 9.0) + 0x2a;
+    y3 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - (int)(sin((a2 + w6) * pi3 / 180.0) * 9.0) + 0x2a;
     x4 = (int)(cos((a2 - w6) * pi3 / 180.0) * 9.0) + 0x91;
-    y4 = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) - (int)(sin((a2 - w6) * pi3 / 180.0) * 9.0) + 0x2a;
+    y4 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - (int)(sin((a2 - w6) * pi3 / 180.0) * 9.0) + 0x2a;
     (*a_78d2)(x14, y13, x2, y2, g_needleColor);
     (*a_78d2)(x14, y13, x3, y3, g_needleColor);
     (*a_78d2)(x14, y13, x4, y4, g_needleColor);
@@ -346,10 +346,10 @@ void dash_intro(void)
     int saved;
 
     saved = g_picMaxH;
-    if (r_vid.mode == -2 || r_vid.mode == -6)
+    if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
         (*bl78be)();
     g_picMaxH = SCREEN_HEIGHT;
-    if (r_vid.mode != -2 && r_vid.mode != -6)
+    if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         main_set_palette(CGA_PALETTE_GREEN_RED_BROWN);
     F_119B8(3, 0x28, 0x28, 0);
     disk_free_pic(3);
@@ -359,13 +359,13 @@ void dash_intro(void)
     disk_free_pic(1);
     dash_wait_key(400);
     (*m_present)();
-    if (r_vid.mode != -2 && r_vid.mode != -6)
+    if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         main_set_palette(CGA_PALETTE_CYAN_MAGENTA_WHITE);
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
     F_118D4(4, 0);
     disk_free_pic(4);
     dash_wait_key(400);
-    if (r_vid.mode == -2 || r_vid.mode == -6)
+    if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
         video_set_palette(g_introPalette);
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
     dash_wait_key(400);
@@ -404,7 +404,7 @@ void dash_set_view(int mode)
     case 1:
         r_vid.front = g_savedFront;
         r_vid.back = g_savedBack;
-        if (r_vid.mode == -2) {
+        if (r_vid.mode == VID_EGA) {
             outp(CRTC_INDEX, CRTC_OFFSET);
             outp(CRTC_DATA, 0x14);
             crtc_set_split(-1);
@@ -417,7 +417,7 @@ void dash_set_view(int mode)
         screen_status_init(SCREEN_BODY_HEIGHT);
         break;
     case 2:
-        if (r_vid.mode == -2) {
+        if (r_vid.mode == VID_EGA) {
             outp(CRTC_INDEX, CRTC_START_HI);
             outp(CRTC_DATA, 0);
             outp(CRTC_INDEX, CRTC_START_LO);
@@ -428,14 +428,14 @@ void dash_set_view(int mode)
     case 3:
         r_vid.back = r_vid.front = g_savedFront;
         r_vid.f16 = 0;
-        screen_status_init(r_vid.mode == -2 ? 0x5a : SCREEN_BODY_HEIGHT);
+        screen_status_init(r_vid.mode == VID_EGA ? 0x5a : SCREEN_BODY_HEIGHT);
         if (bw8aca)
             F_11593(g_gearLabel);
         break;
     case 4:
         r_vid.front = g_savedFront;
         r_vid.back = g_savedBack;
-        if (r_vid.mode == -2) {
+        if (r_vid.mode == VID_EGA) {
             outp(CRTC_INDEX, CRTC_OFFSET);
             outp(CRTC_DATA, 0x14);
             crtc_set_split(-1);
@@ -458,14 +458,14 @@ void dash_load_wheel(void)
     struct Bitmap far *bm;
     struct Blt pkt;
 
-    if (r_vid.mode != -2) {
+    if (r_vid.mode != VID_EGA) {
         pkt.w = 0xb8;
         pkt.h = 0x1a;
         pkt.sx = pkt.sy = 0;
         pkt.dx = 0x88;
         for (i6 = 0; i6 < 3; i6++) {
             bm = F_15BBE(g_wheelPicIds[i6], ARENA_LOW_STACK);
-            if (r_vid.mode != -2 || i6 < 2) {
+            if (r_vid.mode != VID_EGA || i6 < 2) {
                 g_wheelPages[i6] = g82b4s;
                 g_wheelY[i6] = g_wheelSlotY[i6];
             } else {
@@ -494,7 +494,7 @@ void dash_steer_marker(int n)
 
     seg = av787at;
     off = at767ct;
-    av787at = r_vid.mode == -2 ? 0xa200 : r_vid.mode == -4 ? 0xb000 : 0xb800;
+    av787at = r_vid.mode == VID_EGA ? 0xa200 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
     at767ct = 0;
     view_unclip_top();
     x = g_steerPoints[n][0];
@@ -526,38 +526,38 @@ void dash_draw_wheel(int a, int b, struct Bitmap far *dst)
     if (sel < 3 && sel != g_wheelShown) {
         pkt1.w = 0xb8;
         pkt1.h = 0x1a;
-        if (r_vid.mode != -2) {
+        if (r_vid.mode != VID_EGA) {
             pkt1.sx = 0x88;
             pkt1.sy = g_wheelY[sel];
         } else
             pkt1.sx = pkt1.sy = 0;
         pkt1.dx = 0x50;
-        pkt1.dy = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) + 0x3f;
+        pkt1.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + 0x3f;
         (*b_78a2)(g_wheelPages[sel], dst, &pkt1, 1);
         g_wheelShown = sel;
     }
     if (b != 100) {
         x = g_steerPoints[b][0];
-        y2 = (r_vid.mode == -2 ? 0 : DASH_Y) + g_steerPoints[b][1];
+        y2 = (r_vid.mode == VID_EGA ? 0 : DASH_Y) + g_steerPoints[b][1];
         restore_under(x - 2, y2 - 2, 5, 5, 1);
     }
     x = g_steerPoints[a][0];
-    y2 = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) + g_steerPoints[a][1];
+    y2 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + g_steerPoints[a][1];
     save_under(x - 2, y2 - 2, 5, 5, 1);
     if (g_dashBuffered == 0) {
         seg = av787at;
         off = at767ct;
-        av787at = r_vid.mode == -2 ? 0xa000 : r_vid.mode == -4 ? 0xb000 : 0xb800;
+        av787at = r_vid.mode == VID_EGA ? 0xa000 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
         at767ct = 0;
         view_unclip_top();
-        if (r_vid.mode != -2) {
+        if (r_vid.mode != VID_EGA) {
             ymax = g_clipYMax;
             ymin2 = g_clipYMin;
             g_clipYMax = SCREEN_BODY_HEIGHT;
             g_clipYMin = DASH_Y;
         }
         view_draw_dot(x, y2);
-        if (r_vid.mode != -2) {
+        if (r_vid.mode != VID_EGA) {
             g_clipYMax = ymax;
             g_clipYMin = ymin2;
         }
@@ -591,7 +591,7 @@ void dash_init_shifter(int a, int b)
     pk5.h = 0x2b;
     pk5.sx = pk5.sy = 0;
     pk5.dx = 0x108;
-    pk5.dy = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) + 0x17;
+    pk5.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + 0x17;
     (*b_78a2)(bm19, g_dashBuffered ? g755cu : bm7678, &pk5, 1);
     bm28 = F_15BBE(g_shifter->id2, ARENA_HIGH_STACK);
     p3.w = p2.w = (pk5.w = bm28->width) + 8;
@@ -637,7 +637,7 @@ void dash_draw_shifter(struct Bitmap far *dst, struct Eng *e)
         pkt1.sy = g_shiftSlots[g_knobPos].b;
         x = g_shifter->pt[g_knobPos * 2] & 0xfff8;
         pkt1.dx = x + 0x108;
-        pkt1.dy = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) + g_shifter->pt[g_knobPos * 2 + 1] + 0x17;
+        pkt1.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + g_shifter->pt[g_knobPos * 2 + 1] + 0x17;
         pkt1.w = 0x30 - x > 0x20 ? 0x20 : 0x30 - x;
         (*b_78a2)(g82b4s, dst, (struct Blt *)&pkt1, 1);
     }
@@ -645,7 +645,7 @@ void dash_draw_shifter(struct Bitmap far *dst, struct Eng *e)
     pkt1.sy = g_shiftSlots[idx3].b + 0x13;
     x = g_shifter->pt[idx3 * 2] & 0xfff8;
     pkt1.dx = x + 0x108;
-    pkt1.dy = (r_vid.mode == -2 || g_dashBuffered ? 0 : DASH_Y) + g_shifter->pt[idx3 * 2 + 1] + 0x17;
+    pkt1.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + g_shifter->pt[idx3 * 2 + 1] + 0x17;
     pkt1.w = 0x30 - x > 0x20 ? 0x20 : 0x30 - x;
     (*b_78a2)(g82b4s, dst, (struct Blt *)&pkt1, 1);
     g_knobPos = idx3;
@@ -714,7 +714,7 @@ void F_10AFD(int n)
     int i;
 
     for (i = 0; i < n; i++) {
-        if (r_vid.mode != -4) {
+        if (r_vid.mode != VID_HERCULES) {
             while (inp(INPUT_STATUS) & STATUS_VRETRACE)
                 ;
             while (!(inp(INPUT_STATUS) & STATUS_VRETRACE))
