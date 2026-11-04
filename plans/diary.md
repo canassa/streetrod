@@ -638,3 +638,12 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - Nothing in the check depended on the stub bodies touching a communal (no external-symbol budget effect at these sizes).
 
+
+## 2026-11-04 13:00 CET: The runtime comes from a combined MLIBCE.LIB
+
+### What I did
+- The layout build no longer extracts 100 MSC library members. LIB 3.11 builds `MLIBCE.LIB` from the untouched MLIBCR+LIBH+EM+MLIBFP (in that order, as MSC SETUP combines them), as a real build step and the first rule of the generated MAKEFILE/BUILD.BAT. LINK runs `/MAP /STACK:2560 /EXEPACK` with an empty library field and no `/NOD`: the objects' default-library record picks MLIBCE. `_archive_objects`, `RUNTIME\` and LAYOUT.JSON's `runtime`/`emulator` lists are gone.
+- Result: `./sr build --layout` IDENTICAL from an empty work dir, `./sr check --all` 572/572, tests OK.
+
+### What I learned
+- The "recovered runtime order" was the order LINK extracts members from this combined library; other component orders differ by 5381..12426 bytes. The combined library keeps all 402 component modules, so only the order matters.
