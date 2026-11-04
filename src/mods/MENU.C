@@ -25,7 +25,7 @@ static int g_drawnMaxY;                         /* DS:6C5C */
 static char * near wear_text(int wear);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-void (far *bp78ba)(struct Bitmap far *, int, int, int, int, int, int);
+void (far *g_drvRecolorRegion)(struct Bitmap far *, int, int, int, int, int, int);
 int bq824e;
 int ai8b86y[4];
 char av8b98;
@@ -498,14 +498,14 @@ restore:
                 y1 = w->h;
                 x2 = w->tx;
                 if (kind != 0x26)
-                    (*bp78ba)(r_vid.back, x_colors.c[0], sv5, x1, y1, x2, w->h + 8);
+                    (*g_drvRecolorRegion)(r_vid.back, x_colors.c[0], sv5, x1, y1, x2, w->h + 8);
                 y2 = w->ty;
             } else
                 nw5 = -1;
             if (curl >= 0) {
                 w = (struct Win *)(0x12 * curl + a_8b9ap);
                 if (kind != 0x26)
-                    (*bp78ba)(r_vid.back, sv5, x_colors.c[0], w->w, w->h, w->tx, w->h + 8);
+                    (*g_drvRecolorRegion)(r_vid.back, sv5, x_colors.c[0], w->w, w->h, w->tx, w->h + 8);
                 x1 = (w->w > x1) ? x1 : w->w;
                 y1 = (w->h > y1) ? y1 : w->h;
                 x2 = (w->tx < x2) ? x2 : w->tx;
