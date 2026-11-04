@@ -179,14 +179,14 @@ int disk_read_index(int which)
             screen_wait_msg(g_msgBadFormat);
             sys_exit();
         }
-        sl->f1e = 0xff;
+        sl->vramPlane = 0xff;
         sl->ptr.p = 0;
         sl->f24 = 0;
         sl->f28 = 0;
         sl->f2c = -1;
         sl->f2e = 1;
-        if (sl->f1c > height)
-            height = sl->f1c;
+        if (sl->packedSize > height)
+            height = sl->packedSize;
     }
     return height;
 }
@@ -216,32 +216,32 @@ static int near load_pic(int n, int load, char far *dst)
     ent = sl = &g_slot[n];
     if (sl->ptr.p == 0) {
         if (load) {
-            fp = mem_vram_alloc(ent->f1c, &pool);
-            sl->ptr.p = fp == 0 ? (char far *)0 : arena_alloc(ent->f1c + 1, 2);
-            sl->f1e = pool;
+            fp = mem_vram_alloc(ent->packedSize, &pool);
+            sl->ptr.p = fp == 0 ? (char far *)0 : arena_alloc(ent->packedSize + 1, 2);
+            sl->vramPlane = pool;
         } else {
-            sl->ptr.p = dst ? dst : mem_alloc(ent->f1c + 1, 0);
-            sl->f1e = 0xff;
+            sl->ptr.p = dst ? dst : mem_alloc(ent->packedSize + 1, 0);
+            sl->vramPlane = 0xff;
         }
         if (sl->ptr.p == 0)
             return 0;
         open_lib(num);
-        offset = (long)(*g_curCount * 0x1e + 2) + ent->f18;
+        offset = (long)(*g_curCount * 0x1e + 2) + ent->dataOffset;
         if (disk_seek(*g_curHandle, offset))
             goto bad;
-        if (sl->f1e != 0xff) {
+        if (sl->vramPlane != 0xff) {
             outp(SEQ_INDEX, SEQ_MAP_MASK);
-            outp(SEQ_DATA, 1 << sl->f1e);
+            outp(SEQ_DATA, 1 << sl->vramPlane);
         }
         retries = 0;
-        total = ent->f1c + 1;
+        total = ent->packedSize + 1;
         for (;;) {
             if (_dos_read(*g_curHandle, sl->ptr.p, total, &got) || got != total)
                 goto bad;
             if (*sl->ptr.p == (char)0xbc && sl->ptr.p[total - 1] == (char)0xbc) {
-                if (sl->f1e == 0xff)
+                if (sl->vramPlane == 0xff)
                     goto done;
-                movedata(sl->ptr.w.seg, sl->ptr.w.off, FP_SEG(fp), FP_OFF(fp), ent->f1c);
+                movedata(sl->ptr.w.seg, sl->ptr.w.off, FP_SEG(fp), FP_OFF(fp), ent->packedSize);
                 sl->ptr.p = fp;
                 F_19438(1);
                 outp(SEQ_INDEX, SEQ_MAP_MASK);
@@ -307,17 +307,17 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
     res = load_pic(id, 0, g_imageBufferPointer);
     cur = sl = &g_slot[pic_index(id)];
     if (g_picNewHeader)
-        pic = mem_new_bitmap(cur->f0, cur->f2, cur->f6, 1, bm);
+        pic = mem_new_bitmap(cur->width, cur->height, cur->bitmapFlags, 1, bm);
     else
         pic = bm;
     for (j = 0; j < 16; j++)
         colors16[j] = cur->pal[j];
-    if (sl->f1e != 0xff) {
+    if (sl->vramPlane != 0xff) {
         outp(GC_INDEX, GC_READ_MAP);
-        outp(GC_DATA, sl->f1e);
+        outp(GC_DATA, sl->vramPlane);
     }
     src = sl->ptr.p + 1;
-    num = cur->f1c - 1;
+    num = cur->packedSize - 1;
     if (r_vid.mode == -2) {
         if (pic->bits.p == 0) {
             rle_decode(src, pic->alt.p, num, colors16, 16);
@@ -337,7 +337,7 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
     } else {
         rle_decode(src, pic->bits.p == 0 ? pic->alt.p : pic->bits.p, num, colors16, 16);
     }
-    if (sl->f1e != 0xff) {
+    if (sl->vramPlane != 0xff) {
         outp(SEQ_INDEX, SEQ_MAP_MASK);
         outp(SEQ_DATA, SEQ_ALL_PLANES);
     }
@@ -354,9 +354,9 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
 void disk_pic_size(int n, int *w, int *h, int *x)
 {
     n = pic_index(n);
-    *w = g_slot[n].f0;
-    *h = g_slot[n].f2;
-    *x = g_slot[n].f6;
+    *w = g_slot[n].width;
+    *h = g_slot[n].height;
+    *x = g_slot[n].bitmapFlags;
 }
 
 /* F_15BBE @ 0F38:683E (linear 0x15BBE, 73 bytes)

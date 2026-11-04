@@ -45,15 +45,15 @@ union FarPtr {
 };
 
 struct Slot {
-    int f0;
-    int f2;
+    int width;
+    int height;
     char pad4[2];
-    unsigned char f6;
+    unsigned char bitmapFlags;
     unsigned char pal[16];
     char pad17;
-    long f18;
-    int f1c;
-    unsigned char f1e;
+    long dataOffset;
+    int packedSize;
+    unsigned char vramPlane;
     char pad1f;
     union FarPtr ptr;
     long f24;
