@@ -5,6 +5,7 @@
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "BOBS.H"
+#include "CARHOP.H"
 #include "CURSOR.H"
 #include "DASH.H"
 #include "DISK.H"
@@ -22,7 +23,6 @@
 #include "SPRITE.H"
 #include "SYS.H"
 #include "VIDEO.H"
-#include "WALKER.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct Rect g_lastCarRect;                 /* DS:6CBC */
@@ -444,7 +444,7 @@ again:
                 g_pumpNoNozzle = F_1934E(w2, h2, 0, ARENA_LOW_BASE);
             }
             if (g_scene == 2 || g_scene == 6)
-                walker_save_bg();
+                carhop_save_bg();
         } else
             marks_release();
         if (!g_0294)

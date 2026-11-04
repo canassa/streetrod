@@ -1008,6 +1008,25 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - New `./sr pic` (tools/sr/pics.py): reads the resource libraries in orig/freeware (LIB1/LIB2 and the CGA variants), decodes a picture exactly as the game's loader and RLE unpacker do (EGA planar and CGA forms), and writes a PNG or prints it inline with the kitty graphics protocol (`--list`, `--scale`, `--cells` to cut sprite sheets like `cut_sheet`, palettes). All 554 pictures decode. Done by a Codex agent.
 - Used it on the walker's sprite sheets: two 11-frame rows of a blonde woman on roller skates carrying a tray, facing right then left. The drive-in figure is a roller-skating carhop.
+
+## 2026-11-05 13:30 CET: The walker is a carhop
+
+### What I did
+- The drive-in figure's sprite sheets (pictures 1141/1142) show a blonde woman on roller skates carrying a tray, so the module is CARHOP.C again: `carhop_skate` (was walker_walk; skates in from the left or back out), `carhop_save_bg`, `maybe_carhop` (BOBS.C), `CARHOP_ENTER`/`CARHOP_LEAVE`, and the state static `g_carhop` (-1 none, 0 may come, 1 present; chosen to keep its MSC hash slot, key 99).
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
+
+### What I learned
+- The game's pictures are evidence too: the review's modest "walker" was right on the code alone, and the sprite settled it.
+
+## 2026-11-05 14:00 CET: What produced `bits.p + 0x46 * pitch`?
+
+### What I did
+- Investigated the three `g_pageBmps[2]->bits.p + 0x46 * pitch` sites (CARPIC.C make_bands and make_frames, the carhop's grab_strip) with 27 candidate source forms compiled by MSC 5.1. Exact at all three: the literal, a #define or enum, a row macro, either operand order, long variants, and the structural forms `sizeof` of a 70-byte record, a constant member offset (`offsetof` after `char backdrop[70]`) and a typed 70-byte row pointer. Different: any runtime source of 70 (struct field, bitmap height, table, helper call, sub-bitmap header) and `70U` (`mul` instead of `imul`).
+- The rest of the evidence favours a fixed 70-row reserve at the top of a reusable page (the backdrop is at most 70 rows, `70 - g_spriteBottomCut`; other 70s are the car display height; TIRES.C reuses the same pages differently; no declarations or consumers back a record). No source changed; the geometry pass names it `BACKDROP_ROWS`, recorded as a choice among identical forms.
+
+### What I learned
+- MSC canonicalizes `70 * p` and `p * 70` to `mov ax,70; imul p`, so operand order says nothing here; signed vs unsigned does (`imul` vs `mul`).
+
 ## 2026-11-04 14:20 CET: Name struct members from typed-use evidence
 
 ### What I did

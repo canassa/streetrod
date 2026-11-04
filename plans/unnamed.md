@@ -234,15 +234,15 @@ Generated from the sources on main (2026-11-05, after the second naming pass). P
 | 7884 | bq7884 | `int @[]` | ROAD.C, VIEW.C |
 | 789E | g789eu | `int @` | VIEW.C |
 | 78A0 | f_78a0 | `int @` | VIEW.C |
-| 78A2 | b_78a2 | `int (far *@)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int)` | ADS.C, BITMAP.C, BOBS.C, CARPIC.C, CGA.C, CURSOR.C, DASH.C, DRIVE.C, EGA.C, GARAGE.C, GARGFX.C, POPUP.C, RACE.C, SCREEN.C, TANDY.C, TIRES.C, VIDEO.C, VIEW.C, WALKER.C |
+| 78A2 | b_78a2 | `int (far *@)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int)` | ADS.C, BITMAP.C, BOBS.C, CARPIC.C, CGA.C, CURSOR.C, DASH.C, DRIVE.C, EGA.C, GARAGE.C, GARGFX.C, POPUP.C, RACE.C, SCREEN.C, TANDY.C, TIRES.C, VIDEO.C, VIEW.C, CARHOP.C |
 | 78A6 | am78a6t | `int (far *@)(struct Bitmap far *, struct Bitmap far *, struct Blt *)` | GARGFX.C |
-| 78AA | ab78aat | `int (far *@)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int)` | BITMAP.C, BOBS.C, CARPIC.C, CGASPR.C, EGASLIDE.C, GARAGE.C, GARGFX.C, RACE.C, SPRITE.C, TANDYSPR.C, TIRES.C, VIDEO.C, VIEW.C, WALKER.C |
+| 78AA | ab78aat | `int (far *@)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int)` | BITMAP.C, BOBS.C, CARPIC.C, CGASPR.C, EGASLIDE.C, GARAGE.C, GARGFX.C, RACE.C, SPRITE.C, TANDYSPR.C, TIRES.C, VIDEO.C, VIEW.C, CARHOP.C |
 | 78AE | a_78aem | `void (far *@)(struct Bitmap far *, int, int, char *)` | ADS.C, EDIT.C, FAME.C, GARAGE.C, MENU.C, POPUP.C, RACE.C, SCREEN.C |
 | 78B2 | ap78b2z | `void (far *@)(char far *, char far *, char far *, char far *, int, int, int, int)` | CURSOR.C |
-| 78B6 | dz78b6 | `void (far *@)(char far *, char far *)` | BOBS.C, CARPIC.C, DRIVE.C, RACE.C, TIRES.C, WALKER.C |
+| 78B6 | dz78b6 | `void (far *@)(char far *, char far *)` | BOBS.C, CARPIC.C, DRIVE.C, RACE.C, TIRES.C, CARHOP.C |
 | 78BE | bl78be | `void (far *@)(void)` | BOBS.C, CRUISE.C, DASH.C, DRIVE.C, FAME.C, GAME.C, SCREEN.C |
 | 78C2 | m_present | `void (far *@)(void)` | BOBS.C, DASH.C, DRIVE.C, FAME.C, GARAGE.C, RACE.C, SAVEGAME.C, SCREEN.C, SYS.C, VIDEO.C |
-| 78C6 | g78c6c | `int (far *@)(struct Sprite *)` | CARPIC.C, SPRITE.C, TIRES.C, WALKER.C |
+| 78C6 | g78c6c | `int (far *@)(struct Sprite *)` | CARPIC.C, SPRITE.C, TIRES.C, CARHOP.C |
 | 78CA | s_blit | `void (far *@)(char far *, char far *)` | BOBS.C, DASH.C, FAME.C |
 | 78CE | bl78ce | `void (far *@)(int, int, int, int, int, struct Bitmap far *)` | GARGFX.C |
 | 78D2 | a_78d2 | `void (far *@)(int, int, int, int, int)` | DASH.C, DRAW.C, VIEW.C |
@@ -299,7 +299,7 @@ Generated from the sources on main (2026-11-05, after the second naming pass). P
 | 8188 | g8188w | `struct Bitmap far *@` | DRIVE.C, ROAD.C, VIEW.C |
 | 818C | ap818c | `struct Spr6 @[]` | CARPIC.C, DISK.C |
 | 8228 | ao8228u | `int @` | CRUISE.C, DRIVE.C, SYS.C, VIEW.C |
-| 822A | r_vid | `struct Video @` | ADS.C, ARENA.C, BITMAP.C, BOBS.C, CARPIC.C, CGA.C, CGASPR.C, CRUISE.C, CURSOR.C, DASH.C, DISK.C, DRIVE.C, EDIT.C, EGASLIDE.C, EGASPAN.ASM, FAME.C, GAME.C, GARAGE.C, GARGFX.C, MAIN.C, MEM.C, MENU.C, POPUP.C, RACE.C, ROAD.C, SAVEGAME.C, SCREEN.C, SHRINK.C, SPRITE.C, SYS.C, TANDYSPR.C, TIRES.C, VIDEO.C, VIEW.C, WALKER.C |
+| 822A | r_vid | `struct Video @` | ADS.C, ARENA.C, BITMAP.C, BOBS.C, CARPIC.C, CGA.C, CGASPR.C, CRUISE.C, CURSOR.C, DASH.C, DISK.C, DRIVE.C, EDIT.C, EGASLIDE.C, EGASPAN.ASM, FAME.C, GAME.C, GARAGE.C, GARGFX.C, MAIN.C, MEM.C, MENU.C, POPUP.C, RACE.C, ROAD.C, SAVEGAME.C, SCREEN.C, SHRINK.C, SPRITE.C, SYS.C, TANDYSPR.C, TIRES.C, VIDEO.C, VIEW.C, CARHOP.C |
 | 8242 | x_colors | `struct Colors @` | ADS.C, CGA.C, DRAW.C, EDIT.C, EGA.C, FAME.C, GAME.C, GARAGE.C, MENU.C, POPUP.C, RACE.C, SAVEGAME.C, SCREEN.C, TANDY.C, VIDEO.C |
 | 8248 | iz8248 | `char @` | VIDEO.C |
 | 8249 | gz8249 | `char @` | CGA.C, CRUISE.C, DASH.C, FAME.C, GARAGE.C, SCREEN.C |
@@ -311,9 +311,9 @@ Generated from the sources on main (2026-11-05, after the second naming pass). P
 | 8254 | as8254y | `int @` | SCREEN.C |
 | 8256 | aq8256z | `int @` | BOBS.C, SCREEN.C, SYS.C |
 | 8258 | g8258z | `int @` | SCREEN.C |
-| 825A | bu825a | `struct Bitmap far *@` | CARPIC.C, SPRITE.C, VIDEO.C, WALKER.C |
-| 825E | ac825et | `int @` | BOBS.C, CARPIC.C, GARAGE.C, SPRITE.C, SYS.C, VIDEO.C, WALKER.C |
-| 8260 | aw8260y | `int @` | BOBS.C, CARPIC.C, GARAGE.C, SPRITE.C, VIDEO.C, WALKER.C |
+| 825A | bu825a | `struct Bitmap far *@` | CARPIC.C, SPRITE.C, VIDEO.C, CARHOP.C |
+| 825E | ac825et | `int @` | BOBS.C, CARPIC.C, GARAGE.C, SPRITE.C, SYS.C, VIDEO.C, CARHOP.C |
+| 8260 | aw8260y | `int @` | BOBS.C, CARPIC.C, GARAGE.C, SPRITE.C, VIDEO.C, CARHOP.C |
 | 8262 | l_8262 | `int @` | CARPIC.C, SPRITE.C |
 | 8264 | h_8264 | `int @` | CARPIC.C, RACE.C |
 | 8266 | d_8266 | `int @` | CARPIC.C, RACE.C, VIDEO.C |
