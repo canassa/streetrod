@@ -5,8 +5,6 @@
 #include "EGACOPY.H"
 #include "SYS.H"
 
-#pragma intrinsic(outp)
-
 int g_revealOffsets[5] = {0, 80, 160, 40, 120};   /* DS:5C0C */
 
 /* egacopy_page @ 21A0:16DC (linear 0x230DC, 70 bytes)

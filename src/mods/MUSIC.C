@@ -5,8 +5,6 @@
 #include "SOUND.H"
 #include "SYS.H"
 
-#pragma intrinsic(inp, outp)
-
 int g_toneShapes[3][8] = {{0, 1, 2, 1, 0, -1, -2, -1}, {0, 1, 2, 3, 4, 5, 6, 7}, {0, 1, 0, 0, 0, 0, 0, 0}};   /* DS:57F6 */
 struct Tone g_tones[5] = {{0, 0, 0, 0, 0}, {0, 0, 0, 8, 10}, {0, 0, 4, 8, 1}, {0, 0, 6, 8, 1}, {0, 2, 5, 2, 1}};   /* DS:5826 */
 

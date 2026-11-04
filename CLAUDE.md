@@ -6,10 +6,10 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 
 - **Compiler:** Microsoft C 5.1 (`toolchain/msc51`). Confirmed by library matches: the C runtime is `MLIBCR.LIB` and the 8087 emulator is `EM.LIB`.
 - **Memory model:** medium (`/AM`): far code, near data. Floating point uses the emulator (`/FPi`).
-- **Flags are per file:** `/AM /O... /Gs /FPi` with `/Oals` (26 files), `/Oalsi` (19), `/Oas` (7), `/Oasi`, `/Oa` and no `/O` (one each); MASM `/Ml` (27). Each file's command line is its block in `src/MAKEFILE` (`./sr flags FILE`); the data-only C files use `/AM /Oas /Gs /FPi`.
+- **Flags are per file:** `/AM /O... /Gs /FPi` with `/Oals` (26 files), `/Oalsi` (19), `/Oas` (7), `/Oasi`, `/Oa` and no `/O` (one each); MASM `/Ml` (25). Each file's command line is its block in `src/MAKEFILE` (`./sr flags FILE`); the data-only C files use `/AM /Oas /Gs /FPi`.
 - **Packing:** Microsoft EXEPACK. `orig/SR_unpacked.EXE` is the unpacked image and is what every tool reads.
 - **Addresses** are linear offsets into the load image (file offset minus the `0x22D0` header). `seg:off` is the segment value the callers use.
-- **Size:** 719 real functions: 506 game C, 66 game asm, and 147 MSC runtime entries (`kind = crt`, `status = skip`, never reconstructed).
+- **Size:** 719 real functions: 509 game C, 63 game asm, and 147 MSC runtime entries (`kind = crt`, `status = skip`, never reconstructed).
 - **Hand-written asm:** line drawing, unrolled sprite blitters, video helpers, and small register-saving helpers. They are rebuilt with MASM 5.1 (`toolchain/masm51`, same 1988 release as the compiler) from `src/mods/M_xxxxx.ASM`.
 
 ## The `sr` CLI
@@ -64,7 +64,7 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 The build definition is checked in, as the developers had it: `src/MAKEFILE` (MSC MAKE 4.07,
 written like MSC 5.1's own `STARTUP\MAKEFILE`: macros `CC=CL /c /W3 /Fc /IINCLUDE` and
 `ASM=MASM`, one block per object with its source and the headers it includes) and the LINK
-response file `src/SR.LNK` (the 97 objects in link order). MAKE runs the blocks in file order:
+response file `src/SR.LNK` (the 95 objects in link order). MAKE runs the blocks in file order:
 LIB 3.11 combines MSC's untouched libraries into `MLIBCE.LIB`
 (`LIB MLIBCE.LIB +MLIBCR.LIB+LIBH.LIB+EM.LIB+MLIBFP.LIB;`, the component order matters), each
 object's `$(CC) <flags> /NT<segment> MODS\<file>` or `$(ASM) /Ml ...` line, then
@@ -86,9 +86,9 @@ functions, all 748 near calls), and the packed `SRPACKED.EXE` must be byte-ident
 ### Source files: `src/mods/`
 
 Every original object is one source file in `src/mods/` with one block in `src/MAKEFILE`
-(82 code files, plus the data-only HOTSPOT.C, MESSAGES.ASM, SCENERY.C, SCENERY2.C; their DGROUP
+(80 code files, plus the data-only HOTSPOT.C, MESSAGES.ASM, SCENERY.C, SCENERY2.C; their DGROUP
 ranges are `dgroup.DATA_UNITS`). A code file's extent in the image is the span of the DB
-functions whose `src` it is (`module.files()`). The 55 C files and 27 MASM files hold
+functions whose `src` it is (`module.files()`). The 55 C files and 25 MASM files hold
 their functions in address order: includes, the file-scope statics and `static ... near`
 forward declarations, then each function with its comment, initialized data before the
 function whose literals precede it. Names are `M_<first addr>` until the real file name is known.
@@ -98,7 +98,7 @@ function whose literals precede it. Names are `M_<first addr>` until the real fi
   segment's first address / 16). An assembler file names that segment in its own `.CODE` directive
   (SPEAKER.ASM is a `.MODEL SMALL` file with an explicit `SEGMENT`, see its comment).
   `./sr flags FILE` prints or sets it. Code that must not be loop-optimized under the file's
-  `/Ol` carries the real `#pragma loop_opt(off)` (SYS.C, GAME.C, EGABLIT.C).
+  `/Ol` carries the real `#pragma loop_opt(off)` (SYS.C, GAME.C).
 - **What is compiled is the file in git.** `./sr check` and `./sr build` copy it unchanged; no
   placeholders, no text rewriting.
 - **The file gate.** `./sr check` on any function compiles its whole file and also compares

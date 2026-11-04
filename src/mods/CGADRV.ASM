@@ -1,9 +1,7 @@
         .MODEL MEDIUM
 
         .DATA
-        EXTRN   _b_78a2:DWORD
         EXTRN   _g_hercules:WORD
-        EXTRN   _g_cgaHooks:DWORD
 
         .CODE S1C11_TEXT
 
@@ -237,24 +235,5 @@ done3:
         pop     bp
         ret
 _cgadrv_blit_ilv  ENDP
-
-; cgadrv_install @ 1C11:01A8 (linear 0x1C2B8, 18 bytes)
-; Install the default blit hooks: copy the 15-entry far-pointer table
-; at g_cgaHooks over the hook table starting at b_78a2.
-
-        PUBLIC  _cgadrv_install
-_cgadrv_install  PROC    FAR
-        push    di
-        push    si
-        mov     di,OFFSET _b_78a2
-        mov     si,OFFSET _g_cgaHooks
-        push    ds
-        pop     es
-        mov     cx,1Eh
-        repne   movsw
-        pop     si
-        pop     di
-        ret
-_cgadrv_install  ENDP
 
         END

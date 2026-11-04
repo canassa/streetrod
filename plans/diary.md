@@ -790,3 +790,31 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - Adopted the naming conventions of the Betrayal at Krondor reconstruction (its CONTRIBUTING.md / CLAUDE.md) in CLAUDE.md: `camelCase` locals, `g_camelCase` globals, `SCREAMING_SNAKE_CASE` constants and enum values, `PascalCase` types, `camelCase` members, `module_snake_case` public functions, `static snake_case` private ones; plus DOS 8.3 upper-case file names named for the module, "name only from evidence", "never add comments" and `NULL` for pointers.
 - Added what makes a rename load-bearing here: local frame order, LINK's communal hash and MSC's static hash, and the external-symbol budget.
+
+## 2026-11-05 01:00 CET: `/Oi` instead of `#pragma intrinsic`
+
+### What I did
+- The 25 per-file `#pragma intrinsic` lists were the reconstruction's per-function pragmas, merged. In the 7 files that already had `/Oi` they were redundant; the other 18 match with the pragma deleted and `i` added to their command line. No game C code calls a library routine that has an inline form (only the runtime calls strcpy/strlen/memcpy/memset), and all 38 C files without `/Oi` match with it added, so `/Oi` alone explains every inline inp/outp/abs/_rotl/_rotr/memcpy/memset/_enable/_disable/sin/cos. No pragma intrinsic/function is left in src.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, tests OK.
+
+### What I learned
+- The bytes cannot tell `/Oi` from the pragma, so `/Oi` is the simpler explanation, not a proven fact (recorded in RECONSTRUCTION.md). A pragma only has to precede the first use (M_1D8C4.C: between the two functions it works, at the end of the file it does not).
+
+## 2026-11-05 01:30 CET: The loop pragmas survive a second search
+
+### What I did
+- Retested the five `loop_opt(off)` functions (F_01BAE, F_01FE2, F_0238C in M_00D58.C; F_03C8D in M_039C0.C; F_2382D in M_23262.C) against every alternative: the files without `l` (13 other functions break: they hold plain locals in cx or si/di with exit stores, e.g. F_01843, F_236D5, F_049ED), extra `/On`/`/Op`/`/Ow`/`/Or`, a 32-case matrix of `volatile`, `register`, static/global counters, `&i`, calls, `setjmp`, intrinsics and `interrupt`, and goto/`while(1)`/`for(;;)`/`continue`/`?:`/comma rewrites of the real functions. Object membership is proven three ways (word-aligned code segments with F_2382D and F_03C8D at odd addresses, `_BSS` statics shared across M_00D58's pragma, CONST doubles shared by F_03C8D and F_049ED). No source changed; RECONSTRUCTION.md records the result.
+
+### What I learned
+- MSC 5.1 ignores `volatile`. `/Ol` leaves a loop alone only when it is entered by a jump; a `goto` to the very next statement makes F_0238C match, but nothing else jumps to that loop head, so the pragma is the better explanation. M_039C0.C also matches as `/Oasi` plus one `loop_opt(on)` after F_03C8D. An `if` + goto loop inside a `for` crashes C1 under `/Ol` (C1001).
+
+## 2026-11-05 02:30 CET: Review of the assembler routines; the hook installers are C
+
+### What I did
+- Reviewed all 66 routines of the 27 MASM objects against MSC 5.1 output, compiling C candidates for the borderline ones (F_02C2B, F_21A06, F_26458, the hook stubs). 63 are hand-written (register calling conventions, inline `int`, `lds`/`les` on arguments, `xchg`/`loop`/`xlat`, code-segment scratch words, computed jumps, flags as results, MSC-impossible idioms such as `xor ah,ah` or `push si` before `push di`); the evidence is in DB notes.
+- F_1C2B8, F_22352 and F_22B28 copy a driver's 15 far hook pointers over DS:78A2 as one struct assignment: MSC 5.1's `rep movsw` is F2 A5, MASM's F3 A5, and the assembler source had to spell it `repne movsw`. Each is now C, the first function of the driver file whose table it copies (`struct Hooks` in STRUCTS.H); M_22352.ASM and M_22B28.ASM are gone (95 objects). Their placement has no relocation evidence and is a reconstruction choice (RECONSTRUCTION.md).
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, `headers --check`, `dgroup check`, `dgroup order` clean, tests OK.
+
+### What I learned
+- The `rep` prefix byte classifies code: every F2 movs in SR.EXE is in C, every F3 movs in asm or the runtime. MSC's `inp`/`outpw` reload `dx` each pass and load the value before the port.
+- MSC emits far initialized data as PARA 'FAR_DATA' segments, so most of src/data could have been C; the EXE cannot tell. The hook block DS:78A2..78DE was one struct in the original (copied as one); its 15 separate globals are a reconstruction.

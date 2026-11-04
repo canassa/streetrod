@@ -3,8 +3,6 @@
 #include "STRUCTS.H"
 #include "EGASHIFT.H"
 
-#pragma intrinsic(_rotl, _rotr, outp)
-
 static void near shift_row_bits(unsigned char *p, int n, int len);
 static void near write_plane_row(unsigned char far *dst, unsigned char *src, int w, int off, int shift);
 

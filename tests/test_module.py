@@ -15,7 +15,7 @@ class SourceFileTests(unittest.TestCase):
         self.assertEqual(len({f.rel for f in fs}), len(fs))
         for f in fs:
             self.assertTrue(f.flags.strip(), f.rel)
-        self.assertEqual(len(module.files()), 82)
+        self.assertEqual(len(module.files()), 80)
         self.assertEqual(len(module.code_starts()), 17)
 
     def test_functions_point_at_their_file(self):

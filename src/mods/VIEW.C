@@ -18,8 +18,6 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-#pragma intrinsic(abs)
-
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6e04aay;                      /* DS:6E04 */
 static int g_6e06aax;                      /* DS:6E06 */

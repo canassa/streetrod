@@ -24,8 +24,6 @@
 #include "VIDEO.H"
 #include "VIEW.H"
 
-#pragma intrinsic(abs, cos, sin, outp, inp)
-
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_wheelY[3];                      /* DS:6C22 */
 static struct Bitmap far *g_wheelPages[3];    /* DS:6C28 */

@@ -10,8 +10,6 @@
 #include "MASKOR.H"
 #include "VIDEO.H"
 
-#pragma intrinsic(outp)
-
 /* egaslide_sprite @ 21A0:28EC (linear 0x242EC, 790 bytes)
 
    Copy a range of rows of a planar sprite sheet into the back page, plane by plane */

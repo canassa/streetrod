@@ -13,8 +13,6 @@
 #include "SYS.H"
 #include "VIEW.H"
 
-#pragma intrinsic(abs)
-
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_buildX;                       /* DS:6DFE */
 static int g_buildEntry;                         /* DS:6E00 */

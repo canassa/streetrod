@@ -10,8 +10,6 @@
 #include "SPEAKER.H"
 #include "SYS.H"
 
-#pragma intrinsic(outp, inp)
-
 static void near play_tone(long freq, int n);
 static void near pulse_train(int a, int *p, int count, int reps);
 static void near pulse_train_back(int a, int *p, int count, int reps);

@@ -2,8 +2,6 @@
 #include "STRUCTS.H"
 #include "EGARECOL.H"
 
-#pragma intrinsic(outp)
-
 /* egarecol_rect @ 21A0:1508 (linear 0x22F08, 468 bytes)
 
    Fill a rectangle in a planar VGA bitmap using the bit mask register */

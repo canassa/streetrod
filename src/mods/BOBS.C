@@ -31,8 +31,6 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-#pragma intrinsic(abs)
-
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_carhop;                         /* DS:6C84 */
 static int g_ordered;                         /* DS:6C88 */

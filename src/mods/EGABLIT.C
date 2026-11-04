@@ -9,8 +9,6 @@
 #include "MASKBLT.H"
 #include "MASKOR.H"
 
-#pragma intrinsic(inp, outp)
-
 /* egablit_copy @ 21A0:1862 (linear 0x23262, 647 bytes)
 
    Copy a rectangle between planar VGA bitmaps, plane by plane */
@@ -233,14 +231,6 @@ void egablit_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *
     }
 }
 
-/* The file is compiled /Oals, but this copy loop is a plain /Ol-off loop in the
-   shipped code (byte moves through memory variables). Under /Ol MSC turns the
-   inner loop into rep movsw, and every for/while/do form gets registers and
-   loop temps. A word move would also break the write-mode-1 latch copy (the
-   second byte's latches are written to both bytes), a likely reason the
-   programmer switched the loop optimizer off here. */
-#pragma loop_opt(off)
-
 /* egablit_latch_pack @ 21A0:1E2D (linear 0x2382D, 117 bytes)
 
    Copy a w by h block of planar VGA video memory using write mode 1 (latch copy) */
@@ -254,9 +244,16 @@ void egablit_latch_pack(char far *src, int w, int h, char far *dst, int pitch)
     if (h >= 1) {
         outp(0x3ce, 5);
         outp(0x3cf, 1);
-        for (row = 0; row < h; row++, src += pitch) {
+        row = 0;
+        goto test;
+    next:
+        row++;
+        src += pitch;
+    test:
+        if (row < h) {
             for (col = 0, p = src; col < w; col++)
                 *dst++ = *p++;
+            goto next;
         }
         outp(0x3ce, 5);
         outp(0x3cf, 0);

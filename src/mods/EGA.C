@@ -18,9 +18,14 @@
 #include "SCREEN.H"
 #include "VIDEO.H"
 
-#pragma intrinsic(outp, memset, _rotr)
-
 void (far *g_egaHooks[15])() = {egablit_copy, egashift_blit, egablit_masked, ega_draw_text, cursblt_ega, egacopy_page, egarecol_rect, dash_pal_blank, dash_pal_show, egaspr_step, egacopy_reveal, egaslide_sprite, egaline_draw, egaspan_fill, egaspan_fill_below};   /* DS:5BD0 */
+
+/* egadrv_install @ 21A0:1128 (linear 0x22B28, 18 bytes) */
+
+void egadrv_install(void)
+{
+    *(struct Hooks *)&b_78a2 = *(struct Hooks *)g_egaHooks;
+}
 
 /* ega_draw_text @ 21A0:113A (linear 0x22B3A, 973 bytes)
 

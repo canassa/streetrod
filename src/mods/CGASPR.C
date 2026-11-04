@@ -8,8 +8,6 @@
 #include "SPRITE.H"
 #include "VIDEO.H"
 
-#pragma intrinsic(inp)
-
 static void near restore_rect(struct Rect *rect, struct Bitmap far *bm2, struct Bitmap far *bm1, int flag);
 
 /* restore_rect @ 1C11:17B4 (linear 0x1D8C4, 97 bytes)

@@ -27,6 +27,8 @@ Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in
 - Intrinsics: inline `strlen` (`mov cx,0xffff; xor ax,ax; repne scasb; not cx; dec cx`) or `strcpy` (the same scan, then `shr cx,1; rep movsw; adc cx,cx; rep movsb`) means `/Oi` (`0x032F4`). A `loop` instruction means `/Ol`. `cli`/`sti` in compiled code come from the `_disable()`/`_enable()` intrinsics (MSC 5.1 README).
 - `abs(x)`: `cwd; xor ax,dx; sub ax,dx`.
 - Small struct copy: `movsw ... movsb` without `rep` (a 5-byte struct: `movsw; movsw; movsb`).
+- Struct assignment `a = b;` of a larger struct: `push di; push si` (no frame if nothing else needs one), `mov di,OFFSET a; mov si,OFFSET b; push ds; pop es; mov cx,N/2; f2 a5`. MSC 5.1 encodes its `rep movsw` with the **F2** prefix (disassembled `repne movsw`); MASM's `rep` is F3, so `f2 a5` in a routine is compiled C. The `memcpy` intrinsic is different (`shr cx,1; rep movsw; adc cx,cx; rep movsb`, also F2). In SR.EXE every `f2 a4`/`f2 a5` (116) is in a C function and every `f3 a4`/`f3 a5` in asm (19) or the runtime (11); the three hook installers `0x1C2B8`, `0x22352`, `0x22B28` had been taken for asm.
+- Port loops: MSC's `inp`/`outpw` reload `mov dx,PORT` inside every loop iteration and load the value before the port (`mov ax,0F01h; mov dx,3CEh`), and never reuse a constant left in `ax` (`xor ax,ax; out; inc ax; out`). `dx` loaded once before two `in` loops (`0x21A06`) or `mov dx` before `mov ax` (`0x26458`) is hand-written.
 
 ## C shapes (what the source looked like)
 
@@ -46,7 +48,7 @@ Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in
 | identical tails, one branch jumping into the other's | cross-jumping of duplicated source: write both branches out in full (`0x19438`, `0x16381`, `0x168C8`) |
 | a `je` that skips into the middle of a branch, landing on a store | that store is unconditional source after the `if` (`0x1633D`) |
 | `jcc` to an earlier address | a loop: `while ((x = f()) == 0) ;` (`0x14294`) |
-| `mov al,[bp-2]; sub ah,ah; out dx,al; mov al,[bp-1]; out dx,al` | `outp` (intrinsic: `/Oi` or `#pragma intrinsic(outp)`) of the bytes of a `union { int i; unsigned char b[2]; }` local (`0x16455`) |
+| `mov al,[bp-2]; sub ah,ah; out dx,al; mov al,[bp-1]; out dx,al` | `outp` (intrinsic, `/Oi`) of the bytes of a `union { int i; unsigned char b[2]; }` local (`0x16455`) |
 | `union REGS` local, word store at `[bp-14]` then byte at `[bp-11]` | `r.x.ax = ...; r.h.bh = ...`; `ax` at -14, `bx` at -12 (`bl`, `bh` at -11) (`0x001F2`) |
 | `call f; mov cx,K; imul cx` | `f() * K`; a constant-first `mov ax,K; imul [mem]` is `K * var` or `var * K` (`0x03375`) |
 | `a%n + b%n + c%n` evaluated `c` first | MSC evaluates such sums right to left; write them in natural order (`0x15236`) |
@@ -62,7 +64,7 @@ Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in
 | `sub sp,N` larger than the used slots, the extra never touched | unreferenced locals still get slots under `/Oas`; under `/Oals` (`0x11213`) function-scope ones got none and inner-block ones did. Keep them, and note it |
 | INT 21h/33h via `int86`, byte stores to `[bp-N]` and `[bp-N+1]` | `r.h.ah = X; r.h.al = Y;`, not `r.x.ax` (`0x16D57`) |
 | `sub bx,bx; mov es,bx; ... es:[0xCC]` | interrupt vector test `*(long far *)0xccL == 0L` (`0x16D1A`) |
-| `in al,dx` / `out dx,al` in compiled code | `inp`/`outp` with `#pragma intrinsic(inp, outp)` and `<conio.h>` |
+| `in al,dx` / `out dx,al` in compiled code | `inp`/`outp` under `/Oi`, with `<conio.h>` |
 | `and al,0xf8` on an int expression | `x & 0xfff8`: MSC narrows the mask to the byte it changes |
 | `cwd; xor ax,dx; sub ax,dx; sar; xor; sub` | signed division by a power of two, e.g. `(w + 7) / 8` on an `int` (`0x23C3B`) |
 | `/Ol`: a product stored to a nameless temp before the loop, the back edge jumping past it; or `i` counted down in `si` with a `cmp n,0; jg` guard | loop-invariant hoisting and induction variables: write the plain `for (i = 0; i < n; i++)` with `w * h` inside; no named temp (`0x23262`, `0x238A2`) |
@@ -71,11 +73,11 @@ Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in
 | `mov cx,N; lea di,[bp-X]; mov si,OFFSET s; mov ax,ss; mov es,ax; shr cx,1; rep movsw; adc cx,cx; rep movsb` | `memcpy(buf, "literal", N)` under `/Oi`; MSC 5.1 can't initialise an auto array (C2073) (`0x00082`) |
 | `cmp byte [x],1; sbb ax,ax; neg ax` | `!x` on a `char` (`0x08D26`) |
 | `mov es,[seg]; lea bx,[bx]` and a store of `bx`/`es` to a far pointer local | assign it inside the dereference: `wd = *(pen = (unsigned char far *)&tbl[i]);`; separate statements give an immediate segment (`0x22B3A`) |
-| `mov ax,K; mov [n],ax; mov cx,S; imul cx` before an inline `rep movsw` copy, constant not folded | `len = (num = K) * sizeof(struct X); memcpy(dst, item, len);` with `#pragma intrinsic(memcpy)`: an assignment's value still in `ax` isn't folded (`0x1344A`) |
+| `mov ax,K; mov [n],ax; mov cx,S; imul cx` before an inline `rep movsw` copy, constant not folded | `len = (num = K) * sizeof(struct X); memcpy(dst, item, len);` under `/Oi`: an assignment's value still in `ax` isn't folded (`0x1344A`) |
 | call first, compare second in `f()*2 + (g == K)` | write the comparison as the left operand: `(g == K) + f() * 2` (`0x1344A`) |
 | empty-body search loop `jmp test; inc; test; jcc inc` | `for (; cond1 && t[i].f != v; i++) ;`; `while` lays it out differently (`0x01BAE`) |
 | `cwd; sub ax,dx; sar ax,1` on a `strlen` | `(int)strlen(p) / 2`; `size_t` gives `shr` (`0x01BAE`) |
-| `_enable`/`_disable` as calls in an ISR | `#pragma intrinsic(inp, outp, _enable, _disable)` in that source (`0x01FE2`) |
+| `_enable`/`_disable` as calls in an ISR | `/Oi` for that source (`0x01FE2`) |
 | `mov ax,[v]; cmp ax,K1; jne +3; jmp; cmp ax,K2` | a `switch`; an `if` chain compares memory, `cmp [v],K1` (`0x17BE6`) |
 | `cmp byte es:[bx+di],0xff` | an `unsigned char far *`; a `char` pointer gives `mov al; cbw; cmp ax,0xff` (`0x17BE6`) |
 | `/Ol` inline far-to-near block move: `push si; push di; shr cx,1; ... push ds; mov ds,dx; rep movsw; jae; movsb; pop ds; ...; add di,si` | `for (off = 0; off < n; off++) near[off] = far[off];` with both element types the same signedness; the index's exit value is the final `add di,si` (`0x1D741`, `0x221AC`) |
@@ -91,7 +93,7 @@ Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in
 | one body for cases 2..5 and the default, placed at the end | `case 2: case 3: case 4: case 5: default: body` (`0x0B08C`) |
 | `inc ax; jne` after storing a value | `if ((w = r) == -1)`; `w = r; if (w == -1)` gives `cmp ax,0xffff` (`0x05B4A`) |
 | `/Ol` loop over `p[i]` keeping two induction pointers and a user `i` | `if (!p[i]) continue;` then the body; `if (p[i]) {...}` merges them and makes `i` a counter (`0x1D925`, `0x23FD9`) |
-| `fld st(0); fstp xword [tmp]` after `cos(r)` | MSC's FP CSE of a repeated pure call with identical argument trees; write `r = expr;` separately (gives `fst [r]`) and `cos(r)`/`sin(r)` (`0x0F972`). `sin`/`cos` with the argument in `st(0)` need `#pragma intrinsic(sin, cos)` |
+| `fld st(0); fstp xword [tmp]` after `cos(r)` | MSC's FP CSE of a repeated pure call with identical argument trees; write `r = expr;` separately (gives `fst [r]`) and `cos(r)`/`sin(r)` (`0x0F972`). `sin`/`cos` with the argument in `st(0)` need `/Oi` |
 | `sar word [h],1; add word [h],0x14` | compound assignments `h >>= 1; h += 0x14;`; `h = (h >> 1) + 0x14` goes through `ax` (`0x0F972`) |
 | `mov [tmp],ax; fild word [tmp]` on unsigned char arithmetic | an `(int)` cast: without it MSC widens to unsigned long (`sub dx,dx; fild dword`) (`0x0DCBE`) |
 | `/Ol`: a value computed once before the loop and passed unchanged every pass, though the source recomputes it | `/Ol` hoists `x = f(n)` out of the loop even when `n` changes (a 5.1 optimizer bug the shipped code has): write the assignment in the body (`0x16830`) |
@@ -135,7 +137,7 @@ Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in
 | `cmp ax,63h; jle; mov ax,63h` with no local | `(int)E > 99 ? 99 : (int)E`: MSC shares the repeated expression (`0x0C407`) |
 | `mov bx,[p]; add [p],2; mov [bx],ax` vs `mov bx,[p]; mov [bx],ax; add [p],2` | `*p++ = f();` vs `*p = f(); p++;` (`0x27D4B`) |
 | a first loop iteration peeled with constants pushed, then the same body as a loop | `r = 4;` then the loop: MSC propagates the constant along the fall-through into the first pass only (`0x27D4B`) |
-| inline `abs` pattern in a module without `/Oi` | `#pragma intrinsic(abs)` in that source (`0x2834C`) |
+| inline `abs`, `inp`/`outp`, `_rotl`/`_rotr` in a module without `/Oi` | add `i` to the file's flags, not a `#pragma intrinsic`: no C code in the EXE calls an intrinsic-capable routine and every C file matches under `/Oi` (`0x2834C`) |
 | `default:` body placed first in the code | `default:` written first in the `switch` (`0x12909`) |
 | `inc ax; mov cx,K; mul cx` where MSC would fold `(g+1)*K` | `unsigned off = K; ((int)g + 1) * off` (`0x11EA8`) |
 | `or byte [a+1],4` / `and byte [a+1],0xf` on an int array | `a[i] \|= 0x400;` / `a[i] &= 0x0fff;`: MSC narrows to the changed byte; the array base is the displacement minus 1 (`0x267F8`) |
@@ -326,6 +328,7 @@ A natural while loop can have the correct body-before-test layout but cause /Ol 
 - `#pragma loop_opt(off)` anywhere inside a function body switches `/Ol` off for the **whole** function, and a later `loop_opt(on)` in the same body doesn't turn it back on. A pragma placed after the last statement, just before the closing `}`, has no effect on that function. A goto-form outer loop doesn't help either. A pragma can never give one loop `/Ol` and another loop in the same function none (`s2/T0..T6`, real `0x0AB8B` variants W8, W14, W15).
 - `/Ol` skips a loop whose body has too many branch blocks. On `0x0AB8B`'s race loop, one extra `if (c) f();` still optimized it, but two extra ifs, an `if/else`, or an if plus a `?:` stopped it. Three extra straight-line calls did not. A codeless `if (x) ;` emits no code but still counts when it splits a block. Code outside the loop does not count. So an original loop with no `/Ol` but the same code as ours may just be bigger in IL terms.
 - `/Ol` also skips a loop when code jumps into it from outside, for example `goto next;` before a `while` whose body ends in `next:`. In `0x0AB8B` that form also moved the body head after the test, so the shape that matched there was a backward `goto test` to a label in front of the `while` (see "Loop retry label" above).
+- The entry point decides, not the `goto` itself (measured 2026-11-05, `work/f2382d/v2`..`v18`, `0x2382D`). `row = 0; goto test; next: row++; src += pitch; test: if (row < h) { for (...) ...; goto next; }` enters the loop at `test`, away from the back edge's target `next`: `/Ol` leaves that loop **and the `for` nested in it** as plain memory loops (egablit_latch_pack matches without its `loop_opt(off)`; `if (row >= h) goto done;` and `while (row < h) { ...; goto next; }` at `test` match too, so does an early `if (h < 1) return;`). The same loop with the label at its entry (`again: if (row < h) { ...; row++; goto again; }`) is optimized exactly like the `for` (`rep movsw`, `di` down-counter), a forward `goto` to a label on the `for` or to the next statement changes nothing, and an outer `for` around a mid-entered inner goto loop is still optimized (its registers cover the inner body; no C1001 for that shape). The tree's fill_quad (`goto test; loop: ...; test: if (c) goto loop;`) escapes `/Ol` the same way.
 
 ### Empty scan after a switch's first break (0x081AB, 2026-11-03)
 
@@ -351,7 +354,7 @@ Do not infer that an optimized scan itself is disabled just because its exit is 
 | `push cs; call near` versus `lcall` to a far function in the same segment | Same file versus different files: MSC near-calls every function defined anywhere in its file, explicit `far` or not |
 | Relocation runs that interleave two units in the packed table | One object; code/data records are cut about every 945 bytes from the object start, so an unexpected split means the object started elsewhere |
 | A function matches alone but its loop loses SI/DI register variables in the merged file | Compiler budget: too many distinct external symbols (count + name length) before it. Bisect by replacing earlier bodies with declarations; fix with the original's grouping (structs, arrays, offsets into one table), not with flags |
-| A rename (no code change) breaks a function far down a file: its loops lose register variables | The same budget: name characters count, for external symbols and for the file's statics alike (a static function renamed 11 characters longer broke F_07AA4, a static variable 5 longer broke F_2969D). Measure the slack by lengthening a few earlier names until the function diverges, then pick shorter accurate names |
+| A rename (no code change) breaks a function far down a file: its loops lose register variables | The same budget: name characters count, for external symbols and for the file's statics alike (a static function renamed 11 characters longer broke F_07AA4, a static variable 5 longer broke view_mirror_row). Measure the slack by lengthening a few earlier names until the function diverges, then pick shorter accurate names |
 | MSC code (LEDATA) record boundaries | Cut at 99 fixups or ~944 bytes from the object start; the original relocation runs therefore fix where an object starts |
 | Two memory operands of `>`/`<`/`+`: which one MSC loads into AX | MSC loads the simpler operand and keeps the other as the memory operand; a tie (plain/plain or member/member) loads the right one of a comparison and the left one of an addition. `mov ax,[a]; cmp [b],ax` for `b > a` where our `a` is a struct member means `b` is a member too (DS:7D30 against `e_78e0.fa`; DS:70C0 + DS:7D2E). Fold the plain operand into its struct, check bucket order |
 | `mov ax, OFFSET a; sub ax, OFFSET b` in the original | `a` and `b` are distinct symbols (same-symbol differences fold to constants) |

@@ -56,24 +56,38 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 - **Block-layout forms.** MSC 5.1 emits basic blocks in source order (with cross-jumping),
   so a jump the original's layout shows has to be somewhere in the source. Where no
   structured form gives the layout, the source has a `goto` or a particular loop form,
-  with the reason in the function's DB note. 74 `goto`s in 11 files; the layout-driven
+  with the reason in the function's DB note. 76 `goto`s in 12 files; the layout-driven
   ones: bobs_visit's `while` whose body ends in a redundant `goto test;` (BOBS.C: the
   original's body-before-test layout, and it keeps `/Ol` from enregistering `n`),
   race_outcome's `goto finishstop` from both arms, race_reset_eng's `goto nx;` to the label right
   after its `else`, anim_run's `goto next;` (a `continue` there would pull the loop
   increment up), menu_draw_hot's `goto box;`, menu_hit's `goto next;` into a then-branch,
   menu_list's `goto restore;`, load_pic's `goto done;` (a `break` moves the after-loop block),
-  fill_quad's goto loop (escapes `/Ol`, see `loop_opt` below), render_mirror/view_draw's `goto next`,
+  fill_quad's and egablit_latch_pack's goto loops (escape `/Ol`, see `loop_opt` below), render_mirror/view_draw's `goto next`,
   F_181C8's `again`/`done`, savegame_save's shared retry tail; and the loop forms
   `for (;; g_inputKey = 0)` in edit_line (the increment gives the `jmp test` entry) and
   ads_open's accumulation inside the inner `while` test (keeps `cx` for the outer loop).
   That the original had a jump at each of these points is evidence; the exact statement
   (a `goto`, a `continue`, a differently nested `if`) is not.
-- **`#pragma loop_opt`** in SYS.C (off before sys_demo_step, to the end of the file),
-  GAME.C (off/on around sell_parts) and EGABLIT.C (off before egablit_latch_pack). These five
-  functions keep plain memory loops that the file's `/Ol` would otherwise optimize. Only
-  `goto` loops escape `/Ol`, and a pragma is the more plausible source. Where exactly the
-  pragmas sat in the original is unknown.
+- **`#pragma loop_opt`** in SYS.C (off before sys_demo_step, to the end of the file) and
+  GAME.C (off/on around sell_parts). These four functions keep plain memory loops that the
+  file's `/Ol` would otherwise optimize; the rest of each file needs `/Ol` (13 functions in
+  the three files measured break without it). `volatile`, `register`, static or global
+  counters, taken addresses, calls, intrinsics and `interrupt` do not stop MSC 5.1's loop
+  optimizer (it ignores `volatile`); only a loop entered away from the target of its back
+  edge escapes it (together with every loop nested in it), and for these four the only
+  goto forms tried that match are jumps to the next statement (the mid-entry form below
+  was not tried on them). A pragma is the more plausible source. Where exactly the pragmas sat is unknown: in SYS.C the `off` fits anywhere
+  after sys_timer_cancel, and GAME.C matches equally as `/Oasi` with one `loop_opt(on)` after
+  sell_parts. egablit_latch_pack (EGABLIT.C, `/Oalsi`) carried a third pragma until its row loop was
+  written as `row = 0; goto test; next: row++; src += pitch; test: if (row < h) { for
+  (...) ...; goto next; }`: the loop is entered at `test`, not at `next`, so `/Ol` leaves
+  it and the inner `for` as plain memory loops and the bytes match with no pragma.
+  `if (row >= h) goto done;` or `while (row < h) { ...; goto next; }` at `test`, and an
+  early `if (h < 1) return;`, match as well; the same loop with its label at the entry
+  (`again: if (row < h) { ...; goto again; }`) is optimized exactly like the `for`. Which
+  of these forms the original had, or whether it was the pragma after all, the bytes do
+  not say.
 - **`GCREG`/`SEQREG`** in EGASHIFT.C. egashift_blit needs a block boundary after `GCREG(5, 0)`.
   Braced register-write macros give it. Their names, and the fact that every other port
   pair of the file uses them, are a reconstruction (braced and unbraced pairs compile
@@ -81,6 +95,13 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 - **F_07AA4's `int flags[3]`** (GARAGE.C), indexed by key 1 and 2. The element that is
   never touched, `flags[0]`, fills the original's unused 2-byte frame slot. This is an
   interpretation (it matches `flags[k--]`) and is not proven.
+- **`/Oi`, not `#pragma intrinsic`.** No compiled C code in the EXE calls a library routine
+  that has an intrinsic form (only the runtime calls `strcpy`, `strlen`, `memcpy` and
+  `memset`), and every C file matches with `/Oi` added to its flags. The 18 files whose
+  inline `inp`/`outp`/`abs`/`_rotl`/`_rotr`/`memcpy`/`memset` came from a
+  `#pragma intrinsic` now have `/Oi`; the 7 that had both lost the redundant pragma. The
+  bytes do not show which of the two the original used. The other 20 C files without
+  `/Oi` use none of these functions, so their `i` is unknown.
 - **PROVISIONAL dummies** (each is marked in the source). They reproduce something in the
   EXE whose original text is unknown:
   - video_anim_hook's unused inner-block `struct Colors save` (VIDEO.C): a 6-byte frame slot.
@@ -98,6 +119,18 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
     `+= 0`, `|= 0`, `if (g_49e0[0]) ;` and comparisons compile to nothing or to a compare;
     stores to locals stay stores. The two functions share the idiom, so the original
     probably had one construct (a macro, an emptied switch) in both.
+- **The hook installers** cgadrv_install (CGA.C), tandydrv_install (TANDY.C) and egadrv_install
+  (EGA.C): `*(struct Hooks *)&b_78a2 = *(struct Hooks *)g_cgaHooks;`. Their bytes are
+  MSC 5.1's struct assignment (`push di; push si`, no frame, `mov cx,1Eh` and `f2 a5`:
+  MSC writes `rep movsw` with the F2 prefix, MASM's `rep` is F3; the `memcpy` intrinsic
+  adds `shr cx,1 ... rep movsb`). So the original assigned one 60-byte struct: the hook
+  block DS:78A2..78DE was a struct, and each driver's table probably one too. The
+  reconstruction keeps the 15 hook globals (named for LINK's communal hash, CLAUDE.md 4e)
+  and the arrays, and copies them through the 15-pointer `struct Hooks`. Each installer
+  is the first function of the driver file whose table it copies (that file's table
+  needs no forced owner then). The EXE does not decide this placement: none of the three
+  has a segment relocation, so a one-function file of its own, or for tandydrv_install and egadrv_install
+  the end of the C file before (TANDYBLT.C, TANDYSPR.C), gives the same image.
 - **Evidence-only structs** `State70C0`, `State7D2E` and `State7E8A`. MSC's operand order
   shows that these blocks are struct members, not plain variables (recipe book). Their
   extent and member types are a reconstruction.
@@ -157,8 +190,9 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
     assembler keyboard handlers.
   - DS:5580..57F6 goes to HERCDET.ASM: a pointer table at an odd address, which no C
     compiler can place.
-  - The three driver hook tables go to the C file after each assembler stub: their
-    relocations are listed in descending order, as MSC emits them.
+  - DS:5AEE..5B04 goes to VIDDET.ASM: after the bytes its video detection writes, one
+    byte and three strings ("Tandy", "Tandy", "CGA") that no code references, before the
+    hook table of CGA.C.
 - **Data-only units** (`dgroup.DATA_UNITS`):
   - HOTSPOT.C (DS:09F4..239E) exists because the functions of the neighbouring code units
     match only without these tables (MSC's frame layout depends on the number of

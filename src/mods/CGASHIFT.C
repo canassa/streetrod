@@ -2,8 +2,6 @@
 #include "STRUCTS.H"
 #include "CGASHIFT.H"
 
-#pragma intrinsic(_rotl, _rotr)
-
 static void near shift_pixels(unsigned char *p, int n, int cnt);
 static void near put_pixels(char far *dst, unsigned char *src, int n, int ph);
 

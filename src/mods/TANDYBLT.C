@@ -10,8 +10,6 @@
 #include "MASKOR.H"
 #include "TANDYCPY.H"
 
-#pragma intrinsic(_rotr, _rotl)
-
 static void near split_banks(int x, int x0, int y, int *b, int *a);
 static void near copy_from_tandy(struct Bitmap far *src, struct Bitmap far *dst, struct Clip *o);
 static void near shift_nibbles(unsigned char *p, int dir, int n);

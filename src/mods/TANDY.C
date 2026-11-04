@@ -18,6 +18,13 @@
 void (far *g_tandyHooks[15])() = {tandyblt_copy, tandyblt_shifted, tandyblt_masked, tandy_draw_text, cursblt_tandy, tandy_copy_page, tandy_recolor_rect, dash_pal_blank, dash_pal_show, tandyspr_step, tandy_reveal, sprite_slide_v, tandylin_draw, tandylin_span, tandylin_fill_below};   /* DS:5B8A */
 int g_tandyRevealOrder[5] = {0, 2, 4, 1, 3};   /* DS:5BC6 */
 
+/* tandydrv_install @ 21A0:0952 (linear 0x22352, 18 bytes) */
+
+void tandydrv_install(void)
+{
+    *(struct Hooks *)&b_78a2 = *(struct Hooks *)g_tandyHooks;
+}
+
 /* tandy_draw_text @ 21A0:0964 (linear 0x22364, 235 bytes)
 
    Render a glyph into a scratch buffer and copy it to the interleaved screen, 8 rows at most */

@@ -28,8 +28,6 @@
 #include "TIRES.H"
 #include "VIDEO.H"
 
-#pragma intrinsic(inp, outp, abs)
-
 static int near day_to_date(int v, int *out);
 static void near place_spots(int n, int x, int y);
 static void near hide_spots(void);

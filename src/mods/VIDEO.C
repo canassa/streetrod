@@ -16,8 +16,6 @@
 #include "SPRITE.H"
 #include "SYS.H"
 
-#pragma intrinsic(outp, inp)
-
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct Cmd *g_cmd;                  /* DS:6C38 */
 static struct Obj *g_obj;                  /* DS:6C3A */

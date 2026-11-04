@@ -85,7 +85,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 
 ## Whole-binary layout lessons (2026-11-03)
 
-- `./sr build` compiles/gates the 82 code files + the data-only files and
+- `./sr build` compiles/gates the 80 code files + the data-only files and
   src/data records, one object each. The runtime comes from
   MLIBCE.LIB, built by LIB 3.11 from the untouched MLIBCR+LIBH+EM+MLIBFP and
   linked as the default library; preparation never reads original game bytes.

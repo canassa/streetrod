@@ -31,8 +31,6 @@
 #include "VIDDET.H"
 #include "VIDEO.H"
 
-#pragma intrinsic(inp, outp, _enable, _disable, abs)
-
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_cursorDrawX;                         /* DS:6C46 */
 static int g_cursorDrawY;                         /* DS:6C48 */

@@ -11,8 +11,6 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-#pragma intrinsic(abs)
-
 /* sprite_rect_and @ 0F38:A0FA (linear 0x1947A, 158 bytes)
 
    Intersect rectangles a and b into out, snapped to the r_vid.mask pixel mask; 0 if they do not

@@ -22,8 +22,6 @@
 #include "SYS.H"
 #include "TANDYPIC.H"
 
-#pragma intrinsic(outp)
-
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_curDrive;                         /* DS:6C68 */
 static int *g_curCount;                        /* DS:6C6A */

@@ -18,8 +18,6 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-#pragma intrinsic(memcpy)
-
 static int near engine_index(void);
 static int near carb_pos(int *px, int *py);
 static void near F_12CD1(void);

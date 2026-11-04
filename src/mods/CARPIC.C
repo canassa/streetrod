@@ -23,8 +23,6 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-#pragma intrinsic(outp)
-
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct Rect g_lastCarRect;                 /* DS:6CBC */
 static void near blit_planes(char far *src, char far *dst, char far *mask, int w, int h, int n, int step);
