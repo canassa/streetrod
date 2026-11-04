@@ -1086,3 +1086,9 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - Rank is an ordinal 0..8 used for score lookup, class buckets, rival distance and won-car comparisons; each refuel fill adds three gallons. Appearance bits 8..12 and the $5 overlays represent stickers, distinct from the $20 paint scheme. These corrections now live in src/include/STRUCTS.H and their consumers.
 - The persistent hood background stores picture 0x42d with installed parts, Hot selects one Colors palette, and otherCars omits currentCar; their names now express those roles.
+
+## 2026-11-05 17:00 CET: Struct member names
+
+### What I did
+- A Codex agent surveyed 71 records and named 155 struct members from their uses (e.g. `Colors` = `text`, `textBg`, `fill`, `line`, `frame`, split from `char c[5]` because every access used a constant index; the hot-spot record's `kind`, `palIndex`, `textOffset`, `next`); 256 members keep placeholders. An independent review confirmed 143 and corrected the rest: six "paint" names are stickers (the game's "Stickers - $5" overlays, distinct from "New paint job - $20"), as was the older `Look.shade`; `modelKind` is a 0..8 `rank`; `gallonsLeft` counts 3-gallon `fillsLeft`; `Video.scratch` holds the garage hood picture (`hoodBg`). Comments naming old members were updated.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
