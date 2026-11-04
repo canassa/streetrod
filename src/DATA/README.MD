@@ -17,7 +17,7 @@ placeholders: the shipped EXE does not record them.
 
 DGROUP is not here. Each C source defines its own initialized globals and literals
 (marked `/* DS:xxxx */`; `./sr dgroup check` verifies the ownership). Its uninitialized storage is
-file statics (`_BSS`) or communals. `src/mods/MESSAGES.ASM` is an assembler data file
+file statics (`_BSS`) or communals. `src/UI/MESSAGES.ASM` is an assembler data file
 for DS:239E..4718. The runtime's DGROUP comes from MLIBCE.LIB.
 
 The CGA font's segment frame is 0ED2 and its first glyph is at offset 4. The three bytes

@@ -14,7 +14,7 @@ class SourceTests(unittest.TestCase):
         self.assertEqual(sum(r['kind'] == 'asm' for r in fs), 63)
         by = {r['name']: r for r in fs}
         self.assertEqual(by['garage_day'], dict(addr=0x06476, seg=0, off=0x6476, size=45, kind='c', far=1,
-                                                name='garage_day', src='src/mods/GARAGE.C', proto='int @(void)'))
+                                                name='garage_day', src='src/GAME/GARAGE.C', proto='int @(void)'))
         self.assertEqual(by['F_06B06']['far'], 0)
         self.assertEqual(by['F_06B06']['proto'], 'int near @(int mode)')
         self.assertEqual(by['cgaline_pixel_addr']['far'], 0)
@@ -39,7 +39,7 @@ class SourceTests(unittest.TestCase):
         self.assertEqual(gs[0x5030]['decl'], 'int @[][4]')
         self.assertEqual(gs[0x5030]['header'], 'GARAGE')
         self.assertEqual(gs[0x6C36], dict(off=0x6C36, name='g_knobPos', decl='int @', header=None,
-                                          static='src/mods/DASH.C'))
+                                          static='src/GAME/DASH.C'))
         self.assertEqual(gs[0x6C42]['name'], 'g_6c42')
         far = {g['name']: g for g in source.fardata()}
         self.assertEqual((far['g_screen1']['seg'], far['g_screen1']['off'], far['g_screen1']['decl']),

@@ -4,14 +4,14 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace as NS
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
-from sr import cod, module, source
+from sr import cod, config, module, source
 
 class SourceFileTests(unittest.TestCase):
     def test_one_source_per_object(self):
-        # every source in src/mods is one object of src/MAKEFILE, with one command line
+        # every source in src/ is one object of src/MAKEFILE, with one command line
         fs = module.sources()
-        self.assertEqual(sorted(f.path.name for f in fs if f.path.parent == module.MODS),
-                         sorted(p.name for p in module.MODS.iterdir()))
+        self.assertEqual(sorted(f.path.name for f in fs),
+                         sorted(p.name for p in config.source_files('.C', '.ASM')))
         self.assertEqual(len({f.rel for f in fs}), len(fs))
         for f in fs:
             self.assertTrue(f.flags.strip(), f.rel)

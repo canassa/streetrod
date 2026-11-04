@@ -1,7 +1,7 @@
 """The symbol tables the tools work with, read from the sources (and, for the C runtime, from
 the EXE and MSC's libraries). Nothing is stored: every command reads the files as they are.
 
-- Game functions: the comment above each definition in src/mods,
+- Game functions: the comment above each definition in src/,
   `/* name @ SSSS:OOOO (linear 0xAAAAA, N bytes) */` (`; name @ ...` in MASM); the file that
   holds it is its source, its extension the kind (c, asm). Near or far: the definition
   (`near` before the C name, `PROC NEAR`/`PROC FAR`). The prototype: its header line.
@@ -27,7 +27,6 @@ from pathlib import Path
 
 from . import config
 
-MODS = config.SRC / 'mods'
 _FUNC = re.compile(r'^(?:/\*|;) (\w+) @ ([0-9A-F]{4}):([0-9A-F]{4}) \(linear 0x([0-9A-F]{5}), (\d+) bytes\)(?: \*/)?$',
                    re.M)
 _EXTERN = re.compile(r'^extern\s+(.+?);\s*/\* (DS|[0-9A-F]{4}):([0-9A-F]{4}) \*/\s*$')
@@ -44,9 +43,8 @@ def reload():
 
 
 def source_files():
-    """The game's C and MASM sources (src/mods, src/data)."""
-    return sorted(p for d in ('mods', 'data') for p in (config.SRC / d).glob('*')
-                  if p.suffix.upper() in ('.C', '.ASM'))
+    """The game's C and MASM sources (src/, src/DATA)."""
+    return config.source_files('.C', '.ASM')
 
 
 def _rel(path):
@@ -110,7 +108,7 @@ def game_functions():
 def headers():
     """{'globals', 'fardata', 'functions'} declared by the per-file headers (not STRUCTS.H)."""
     out = dict(globals=[], fardata=[], functions=[])
-    for path in sorted(config.INCLUDE.glob('*.H')):
+    for path in config.source_files('.H'):
         if path.stem.upper() == 'STRUCTS':
             continue
         stem = path.stem.upper()

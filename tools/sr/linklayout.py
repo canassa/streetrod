@@ -2,7 +2,7 @@
 then verify the result against the original.
 
 The build needs only src/ and toolchain/. work/layout is a copy of src/, the developer's
-directory: MAKEFILE, SR.LNK, MODS\\, DATA\\ and INCLUDE\\. Every description block of the
+directory: MAKEFILE, SR.LNK, SRENV.BAT and subsystem folders. Every description block of the
 MAKEFILE runs exactly as written, in its own copy of that tree (work/layout/BUILD/<stem>):
 LIB and each object's CL or MASM line under emu2, in parallel; then the link block's LINK
 line in DOSBox-X, which reads SR.LNK. Nothing is generated: the objects, their command lines
@@ -15,7 +15,7 @@ image (its functions are those its source defines), the link is repeated without
 import concurrent.futures
 import shutil
 
-from . import build, config, makefile
+from . import build, config, emu2, makefile
 
 OUT = config.WORK/'layout'
 
@@ -69,7 +69,7 @@ def run_block(rule):
     shutil.rmtree(root, ignore_errors=True)
     (root/'TMP').mkdir(parents=True)
     if rule.compiler:
-        shutil.copytree(config.INCLUDE, root/config.INCLUDE.relative_to(config.SRC))
+        config.stage_headers(root)
         source = root/rule.path.relative_to(config.SRC)
         source.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(rule.path, source)
@@ -121,7 +121,7 @@ def run(prepare_only=False, objects_only=False, verify=True):
           f'and {link.target}', flush=True)
     if prepare_only:
         return 0
-    with concurrent.futures.ThreadPoolExecutor(max_workers=12) as pool:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=emu2.workers(len(rules) + 1)) as pool:
         results = list(pool.map(run_block, [lib, *rules]))
     failures = [(r.target, e) for r, e in zip([lib, *rules], results) if e]
     print(f'{len(results)-len(failures)}/{len(results)} MAKEFILE blocks before the link ran', flush=True)

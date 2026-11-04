@@ -10,7 +10,7 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 - **Packing:** Microsoft EXEPACK. `orig/SR_unpacked.EXE` is the unpacked image and is what every tool reads.
 - **Addresses** are linear offsets into the load image (file offset minus the `0x22D0` header). `seg:off` is the segment value the callers use.
 - **Size:** 719 real functions: 509 game C, 63 game asm, and 147 MSC runtime entries (kind `crt`, never reconstructed, named from the MSC libraries).
-- **Hand-written asm:** line drawing, unrolled sprite blitters, video helpers, and small register-saving helpers. They are rebuilt with MASM 5.1 (`toolchain/masm51`, same 1988 release as the compiler) from the `.ASM` files of `src/mods/`.
+- **Hand-written asm:** line drawing, unrolled sprite blitters, video helpers, and small register-saving helpers. They are rebuilt with MASM 5.1 (`toolchain/masm51`, same 1988 release as the compiler) from the `.ASM` files of `src/`.
 
 ## The `sr` CLI
 
@@ -55,15 +55,15 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 ### The build
 
 The build definition is checked in, as the developers had it: `src/MAKEFILE` (MSC MAKE 4.07,
-written like MSC 5.1's own `STARTUP\MAKEFILE`: macros `CC=CL /c /W3 /Fc /IINCLUDE` and
+written like MSC 5.1's own `STARTUP\MAKEFILE`: macros `CC=CL /c /W3 /Fc` and
 `ASM=MASM`, one block per object with its source and the headers it includes) and the LINK
 response file `src/SR.LNK` (the 96 objects in link order). MAKE runs the blocks in file order:
 LIB 3.11 combines MSC's untouched libraries into `MLIBCE.LIB`
 (`LIB MLIBCE.LIB +MLIBCR.LIB+LIBH.LIB+EM.LIB+MLIBFP.LIB;`, the component order matters), each
-object's `$(CC) <flags> /NT<segment> MODS\<file>` or `$(ASM) /Ml ...` line, then
+object's `$(CC) <flags> /NT<segment> SYS\<file>` or `$(ASM) /Ml ...` line, then
 `LINK /MAP /STACK:2560 /EXEPACK @SR.LNK` with the objects' default library. The build directory
 is `src/` itself (C:), with MSC 5.1 on D: and MASM 5.1 on F: and MSC SETUP's environment
-(`PATH`, `INCLUDE`, `LIB`, `TMP`; `build.DOS_ENV`).
+(`PATH`, `INCLUDE`, `LIB`, `TMP`; `build.DOS_ENV`). Run `SRENV.BAT` before MAKE; it supplies the project folder list for INCLUDE. Headers stay beside their sources; shared STRUCTS.H, PC.H, PC.INC and MAIN.INC live in SYS. MASM does not search its source folder. The host reads the same batch file for its environment, and check jobs stage all headers flat on E:.
 
 `./sr build` (`make`) copies `src/` to `work/layout` and runs every block exactly as written:
 CL, MASM and LIB under emu2 (in parallel, each in its own copy under `work/layout/BUILD/<stem>`),
@@ -76,9 +76,9 @@ functions, all 748 near calls), and the packed `SRPACKED.EXE` must be byte-ident
 `src/` (no host tool involved) and compares its `SR.EXE` too. Neither `./sr build` nor
 `./sr check` writes `src/`.
 
-### Source files: `src/mods/`
+### Source files: subsystem folders under `src/`
 
-Every original object is one source file in `src/mods/` with one block in `src/MAKEFILE`
+Every original object is one source file in its subsystem folder under `src/` with one block in `src/MAKEFILE`
 (80 code files, plus the data-only HOTSPOT.C, MESSAGES.ASM, KEYMAPS.ASM, SCENERY.C, SCENERY2.C; their DGROUP
 ranges are `dgroup.DATA_UNITS`). A code file's extent in the image is the span of the
 functions it defines (`module.files()`). The 55 C files and 25 MASM files hold
@@ -159,13 +159,13 @@ MSC 5.1 assigns stack slots to locals in an order set by a hash of the identifie
 
 ### 4. Declarations come from the defining file's header, never ad hoc
 
-As in the original, each source file has its own header: `src/include/<FILE>.H` declares what that file defines (one header per source file, e.g. `BOBS.H` for BOBS.C; standalone data files get theirs, e.g. `SCREENS.H`, `MESSAGES.H`). A `.C` includes `STRUCTS.H`, its own header, and the headers of the files whose globals and functions it uses, and declares nothing itself. Module headers may also define constants; these are owned by the header and need no duplicate source definition. The headers are hand-written source and are what the build compiles; each declaration line ends in its address comment, which the tools read (rule 5). `./sr headers` rewrites every C source's include block from them and the C and MASM include dependencies in `src/MAKEFILE`; run it after adding a reference to another file's symbol or a declaration. `./sr headers --check` (and the test suite) fails when those have drifted, or when a header declares a name its file does not define or two headers declare one name. Unused declarations do not count against the compiler budget (rule 4d), so the include lists cannot change code.
+As in the original, each source file has its own header: `src/<folder>/<FILE>.H` declares what that file defines (one header per source file, e.g. `BOBS.H` for BOBS.C; standalone data files get theirs, e.g. `SCREENS.H`, `MESSAGES.H`). A `.C` includes `STRUCTS.H`, its own header, and the headers of the files whose globals and functions it uses, and declares nothing itself. Module headers may also define constants; these are owned by the header and need no duplicate source definition. The headers are hand-written source and are what the build compiles; each declaration line ends in its address comment, which the tools read (rule 5). `./sr headers` rewrites every C source's include block from them and the C and MASM include dependencies in `src/MAKEFILE`; run it after adding a reference to another file's symbol or a declaration. `./sr headers --check` (and the test suite) fails when those have drifted, or when a header declares a name its file does not define or two headers declare one name. Unused declarations do not count against the compiler budget (rule 4d), so the include lists cannot change code.
 
 - **Globals:** `extern TYPE NAME;   /* DS:XXXX */` in the defining file's header. One name per DGROUP offset, project-wide.
 - **Far data:** `extern TYPE far NAME[];   /* SSSS:OOOO */` in the defining file's header.
 - **Far functions:** `TYPE NAME(ARGS);   /* 0xAAAAA */` in the defining file's header. A call without a prototype fails the check (MSC's C4071 at `/W3`). A CRT function may have several library names (`aFlmul`/`aFulmul`); they come from the library (`./sr crtnames`) and `refs` accepts any.
 - **Near functions other files call:** about 29 near functions are called (`call near`, no `push cs`) from other objects sharing the code segment. They are public `T near F(...)` definitions (not `static`), prototyped `T near F(ARGS);   /* 0xAAAAA */` in the owner's header; their callers include that header and do not forward-declare them. Only file-local near functions stay `static`.
-- **Struct types:** shared types in `src/include/STRUCTS.H`; types used by only one module in that module's header. Hand-written, one definition per type.
+- **Struct types:** shared types in `src/SYS/STRUCTS.H`; types used by only one module in that module's header. Hand-written, one definition per type.
 - **Allowed in a `.C`:** standard MSC headers, and `static ... near` forward declarations of its own static functions.
 - **Asm:** `EXTRN` names must be the declared names (the `refs` check enforces it).
 
@@ -185,7 +185,7 @@ MSC 5.1's code generator degrades (fewer loop register variables, other temps) o
 
 ### 4e. Uninitialized storage is communal, and LINK's hash fixes the names
 
-DS:6E60..8F02 (`c_common`) holds no labels: every block is a C tentative definition (`int x;`, `struct T a[N];`), placed in the file that first mentions it or in any later file that uses it (the slot is fixed by the first mention, an `extern` counts; e.g. the racer table is defined in BOBS.C though DISK.C mentions it first), under the comment `/* Uninitialized storage: communals ... */`. LINK 5.01 allocates communals by symbol-hash bucket (ascending; `tools/sr/linkhash.py`), and within a bucket the most recently created symbol first (created at its first EXTDEF/COMDEF/PUBDEF in link order). Blocks larger than one byte are word-aligned. A block's address therefore constrains its name: renaming a COMMON global, adding one, or moving its first mention to another object can move every later block. Check any such change with `./sr build` (it must print `Packed EXE vs orig/SR.EXE: IDENTICAL`). The current names were chosen to satisfy this (same length as the old placeholder where possible), so they are still placeholders, not recovered names. There is no assembler COMMON storage left. Every array and struct has the size the original allocated, taken from the save-game table at DS:4EA4/4EBE (block addresses and byte counts) where one exists. Operand order in MSC comparisons and additions also tells whether an operand is a struct member or a plain variable (see the recipe book); several placeholder structs (`State70C0`, `State7D2E`, `State7E8A`) exist only because of that evidence. Unreferenced blocks are `char` communals in `src/mods/HOTSPOT.C`.
+DS:6E60..8F02 (`c_common`) holds no labels: every block is a C tentative definition (`int x;`, `struct T a[N];`), placed in the file that first mentions it or in any later file that uses it (the slot is fixed by the first mention, an `extern` counts; e.g. the racer table is defined in BOBS.C though DISK.C mentions it first), under the comment `/* Uninitialized storage: communals ... */`. LINK 5.01 allocates communals by symbol-hash bucket (ascending; `tools/sr/linkhash.py`), and within a bucket the most recently created symbol first (created at its first EXTDEF/COMDEF/PUBDEF in link order). Blocks larger than one byte are word-aligned. A block's address therefore constrains its name: renaming a COMMON global, adding one, or moving its first mention to another object can move every later block. Check any such change with `./sr build` (it must print `Packed EXE vs orig/SR.EXE: IDENTICAL`). The current names were chosen to satisfy this (same length as the old placeholder where possible), so they are still placeholders, not recovered names. There is no assembler COMMON storage left. Every array and struct has the size the original allocated, taken from the save-game table at DS:4EA4/4EBE (block addresses and byte counts) where one exists. Operand order in MSC comparisons and additions also tells whether an operand is a struct member or a plain variable (see the recipe book); several placeholder structs (`State70C0`, `State7D2E`, `State7E8A`) exist only because of that evidence. Unreferenced blocks are `char` communals in `src/UI/HOTSPOT.C`.
 
 ### 4f. File-local storage is `static`, and MSC's hash fixes the order
 
@@ -235,9 +235,9 @@ Never redirect a DOS program's output to a file without a timeout and a size bou
 | `dist/` | Downloads as fetched (freeware zip, archive.org, The Good Old Days image) |
 | `toolchain/msc51/` | MSC 5.1 `BIN`, `INCLUDE`, `LIB`, plus the original disk images |
 | `toolchain/masm51/` | MASM 5.1 `BIN`, `INCLUDE`, docs, plus the original disk images (`F:` in DOSBox) |
-| `src/mods/` | One source file per original object (8.3 names for what each module is, e.g. GARAGE.C, CGALINE.ASM), plus the data-only HOTSPOT.C, MESSAGES.ASM, KEYMAPS.ASM, SCENERY.C, SCENERY2.C |
+| `src/{SYS,UI,GAME,VIDEO,CGA,EGA,TANDY,HERC,INPUT,SOUND}/` | One source file and same-name header per original object (8.3 names for what each module is, e.g. GARAGE.C, CGALINE.ASM), plus the data-only HOTSPOT.C, MESSAGES.ASM, KEYMAPS.ASM, SCENERY.C, SCENERY2.C |
 | `src/MAKEFILE`, `src/SR.LNK` | The build: one block per object with its command line (MSC MAKE 4.07), the LINK response file (link order) |
-| `src/include/` | per-file headers and `STRUCTS.H` (hand-written); `/IINCLUDE` in the MAKEFILE |
+| `src/SRENV.BAT` | INCLUDE search path: subsystem folders, DATA, then compiler headers; run before MAKE |
 | `tools/sr/` | The CLI |
 | `docs/RECONSTRUCTION.md` | What in the tree is a reconstruction choice, not recovered fact; update it when adding one |
 | `plans/diary.md` | Captain's log |

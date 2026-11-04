@@ -1,6 +1,6 @@
 """Per-file headers, as the original was organized: every source file (one link unit, i.e.
 one original translation unit, or one standalone data/assembler file) declares what it
-defines in src/include/<STEM>.H, and each C source includes the headers of the files whose
+defines in its same-folder <STEM>.H, and each C source includes the headers of the files whose
 globals and functions it uses. The headers are hand-written source (each declaration with
 its address comment, which `source.py` reads); `./sr headers` rewrites the C sources'
 include blocks from them and checks that each header's names are defined by its file."""
@@ -17,16 +17,16 @@ _SYSTEM = {'errno': 'stdlib.h', '_doserrno': 'stdlib.h', '_amblksiz': 'malloc.h'
 
 def owners_layout():
     """[(stem, [source path])] for every original file: the code files (in address order),
-    the data-only files of src/mods (in link order), then the standalone data files."""
+    the data-only files outside DATA (in link order), then the standalone data files."""
     from . import makefile, module
     code = [f.path for f in module.files()]
     order = {o: k for k, o in enumerate(makefile.link_order())}
-    data = sorted((r.path for r in makefile.compile_rules() if r.path.parent == module.MODS and r.path not in code),
+    data = sorted((r.path for r in makefile.compile_rules() if r.path.parent.name != 'DATA' and r.path not in code),
                   key=lambda p: order.get(p.stem.upper() + '.OBJ', len(order)))
     out, seen = [], set()
     for p in code + data:
         out.append((p.stem.upper(), [p])); seen.add(p)
-    for p in sorted((config.SRC / 'data').glob('*.[CA]*')):
+    for p in config.source_files('.C', '.ASM'):
         if p.suffix.upper() in ('.C', '.ASM') and p not in seen:
             out.append((p.stem.upper(), [p]))
     return out
@@ -89,7 +89,7 @@ def generate():
     for kind in ('globals', 'fardata', 'functions'):
         for d in source.headers()[kind]:
             decls.setdefault(d['name'], []).append(d['header'])
-    for path in sorted(config.INCLUDE.glob('*.H')):
+    for path in config.source_files('.H'):
         macros = re.findall(r'^#[ \t]*define[ \t]+([A-Za-z_]\w*)(?:\([^\n)]*\))?[ \t]+[^\s]',
                             _strip(path.read_text(encoding='latin-1')), re.M)
         for name in macros:
@@ -104,7 +104,7 @@ def generate():
         owner[name] = hs[0]
     made = {h for hs in decls.values() for h in hs} & (stems | _STANDALONE)
     for h in sorted({h for hs in decls.values() for h in hs} - stems - _STANDALONE):
-        problems.append(f'src/include/{h}.H: no source file {h}.C or {h}.ASM')
+        problems.append(f'{config.source_path(h + ".H").relative_to(config.SRC)}: no source file {h}.C or {h}.ASM')
     for stem, srcs in files:
         mine = {n for n, h in owner.items() if h == stem}
         defined = set().union(*(_defines(p, mine) for p in srcs))

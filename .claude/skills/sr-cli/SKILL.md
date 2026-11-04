@@ -11,12 +11,12 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 |---|---|
 | `tools/sr/cli.py` | argparse commands; one `cmd_*` function each |
 | `tools/sr/pics.py` | `./sr pic`: resource directory/RLE decoder, EGA planar and CGA packed pixels, stdlib PNG and kitty graphics output; `--list`, `--png`, `--scale`, `--cells COLS N`, `--mode ega|cga`, `--palette game|intro|standard|cga-green` |
-| `tools/sr/config.py` | paths, default flags, address ranges (CRT, emulator, DGROUP) |
+| `tools/sr/config.py` | paths, address ranges, recursive source/header index, header staging and the INCLUDE environment read from SRENV.BAT |
 | `tools/sr/source.py` | the symbol tables every command reads (there is no DB): game functions from the comment above each definition (`/* name @ SSSS:OOOO (linear 0xAAAAA, N bytes) */`, `; name @ ...` in MASM; distance from `near` / `PROC NEAR`), prototypes, DGROUP globals and far data from the headers' `extern` lines and address comments, file statics from their `/* DS:XXXX */` definitions, and `runtime()`: the scanner's runtime functions named by `lib.locate_all` (aliases, the library's DGROUP data publics, callees), cached in `work/cache/runtime.json` keyed by the EXE, the libraries and the code. Rows are dicts (`addr seg off size kind far name src proto`; `globals_()` by offset, `global_offsets()` by name with every runtime name). `reload()` after editing sources |
 | `tools/sr/exe.py` | the unpacked image, relocations, DGROUP strings |
 | `tools/sr/disasm.py` | capstone wrapper; decodes the `INT 34h`-`3Dh` emulator ops as `emu_*` |
 | `tools/sr/scan.py` | function finder (recursive descent plus prologue passes) and the C/asm/CRT classifier |
-| `tools/sr/dosbox.py` | `Job` and `compile_all`: lays jobs out in `work/<name>-<pid>/Jnnnn` (safe in parallel) and runs them with the `SR_EMU` backend: `emu2` (default, `emu2.py`) or `dosbox` (one headless DOSBox-X boot over RUN.BAT); the source is copied unchanged (`C:` work dir, `D:` MSC 5.1, `E:` src/include, `F:` MASM 5.1) |
+| `tools/sr/dosbox.py` | `Job` and `compile_all`: lays jobs out in `work/<name>-<pid>/Jnnnn` (safe in parallel) and runs them with the `SR_EMU` backend: `emu2` (default, `emu2.py`) or `dosbox` (one headless DOSBox-X boot over RUN.BAT); the source is copied unchanged (`C:` work dir, `D:` MSC 5.1, `E:` a flat snapshot of all project headers, `F:` MASM 5.1) |
 | `tools/sr/emu2.py` | the emu2 backend: one `timeout`-bounded emu2 process per job (`SR_JOBS` threads), same drives and current directory as DOSBox, DOS stdout to `CC.LOG`, own `TMP` per job. emu2 itself is `tools/nix/emu2.nix` (upstream pin + `emu2-flush-before-fork.patch`) |
 | `tools/scripts/emucmp.py` | proves emu2 == DOSBox-X: snapshots sources and headers, compiles every source × flag sets, the 46 sweep combos, probes (FP, errors, MASM) and compiles under both, compares every output file |
 | `tools/sr/omf.py` | OBJ segments, data, fixups with their targets, publics, externs (incl. MSC's LEXTDEF/LPUBDEF for statics) |
@@ -25,7 +25,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 | `tools/sr/lib.py` | finds MSC library modules in the EXE (`crtnames`); `locate` returns every public at an address, since a module can publish two names for one offset (`__aFlmul` = `__aFulmul`); `locate_all` also places the located modules' data publics in DGROUP from their code's fixups |
 | `tools/sr/refs.py` | resolves every fixup to its symbol and checks it against the original instruction |
 | `tools/sr/headers.py` | `./sr headers`: calls `fileheaders.py` (include blocks) and `makefile.sync_deps`; `check()` is the dry run of `--check` (every write goes through `headers._write`, which records instead of writing) and returns the headers' problems too. Headers and sources are LF, MAKEFILE/SR.LNK CRLF. Never called by `build` or `check`. The headers themselves are hand-written |
-| `tools/sr/fileheaders.py` | the include blocks of the C sources: declarations and macros with replacement text identify the header for each used name; include guards are excluded. `STRUCTS.H` and `PC.H` are standalone headers without owning sources. Module-header macros need no duplicate definition in the source; function and data declarations must match their source's definitions (`owners_layout`: code files, data-only files of src/mods in link order, then src/data); duplicate declarations are errors |
+| `tools/sr/fileheaders.py` | the include blocks of the C sources: declarations and macros with replacement text identify the header for each used name; include guards are excluded. `STRUCTS.H` and `PC.H` are standalone headers without owning sources. Module-header macros need no duplicate definition in the source; function and data declarations must match their source's definitions (`owners_layout`: code files, data-only files outside DATA in link order, then src/DATA); duplicate declarations are errors |
 | `tools/sr/layout.py` | the MSC 5.1 local-layout rule (`./sr layout`): bucket hash, block slot reuse, `/Ol` variant, rename suggestions |
 | `tools/sr/lint.py` | the CLAUDE.md rule 4 lint, plus missing-prototype warnings from `/W3` |
 | `tools/sr/dgroup.py` | `./sr dgroup`: original DGROUP ownership from positions (literal pools of the layout objects pin each unit; runs between pools go to referrers; `FORCE_OWNER`/`DATA_UNITS` for assembler data and data-only files), declaration slots, the C definition text of each item (`report`), `check_sources` (`./sr dgroup check`, the only consumer of ownership), `link_order` |
@@ -69,9 +69,9 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
   nothing rewrites the text before CL or MASM sees it.
 - MSC MAKE 4.07 takes `MAKE MAKEFILE`, not `/f`, and processes rules sequentially;
   the link rule is last. It accepts macros, `\` continuations whose next line starts
-  with a tab (as in MSC's STARTUP\MAKEFILE) and paths like `MODS\X.C`. CL writes the
+  with a tab (as in MSC's STARTUP\MAKEFILE) and paths like `SYS\X.C`. CL writes the
   OBJ and `/Fc` listing into the current directory; a source path only changes the
-  object's THEADR record (`MODS\X.C`), not code or segment names.
+  object's THEADR record (`SYS\X.C`), not code or segment names.
 - CL uses fixed intermediate filenames. A shared native-build directory must
   compile serially; the comparison backend avoids this with isolated job dirs.
 - LINK 5.01.21 crashes under emu2 on the full game. Use bounded DOSBox-X for LINK.
@@ -87,7 +87,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 ## Whole-binary layout lessons (2026-11-03)
 
 - `./sr build` compiles/gates the 80 code files + the data-only files and
-  src/data records, one object each. The runtime comes from
+  src/DATA records, one object each. The runtime comes from
   MLIBCE.LIB, built by LIB 3.11 from the untouched MLIBCR+LIBH+EM+MLIBFP and
   linked as the default library; preparation never reads original game bytes.
 - `./sr linkcheck [EXE]` is the raw linked-file gate. It masks nothing, fails on
@@ -135,7 +135,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 - Storage objects need `ASSUME DS:DGROUP`, or MASM writes their PUBDEFs without the group and every reference resolves segment-relative.
 - Runtime members: declared `_DATA` length can exceed the data records (`DUP (?)`); read SEGDEF lengths when tiling runtime data.
 
-- MASM uses `src/include/PC.INC` unchanged. The check backends find it through `INCLUDE=E:\`; linked and native builds use `INCLUDE=C:\INCLUDE` before the toolchain directories. `sr headers` maintains recursive MASM include dependencies as well as C headers.
+- MASM uses `src/SYS/PC.INC` unchanged. The check backends find it through `INCLUDE=E:\`; linked and native builds read INCLUDE from `src/SRENV.BAT`. `sr headers` maintains recursive MASM include dependencies as well as C headers.
 - MASM 5.1 accepts a 32-bit far-pointer literal in `EQU`/`DD`, but `EGA_VRAM + 2000h` overflows its expression evaluator (A2029). Define the complete `A000:2000` pointer literal with its own `EQU`.
 
 ## Picture resources
@@ -154,3 +154,9 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 - Recovered DGROUP fallback regions must not create synthetic aliases inside a fully covering source aggregate. Explicit overlapping source declarations still require the normal alias diagnostics.
 - Grouping statics lowers the symbol count without removing storage. Ownership tests compare actual declarations and uniqueness, not a fixed minimum number of symbols.
 - `check_data_types.py` audits STRUCTS.H; owner-header records need an additional real-compiler sizeof/offsetof probe. The phase-2 probe checked RenderRows, TireWork and TimerPriorities (50 checks).
+
+## Subsystem layout (2026-11-04)
+
+- Project sources and headers share uppercase subsystem folders; DATA holds asset sources and headers. Use `config.source_index()` / `source_path(name)` rather than assuming a folder. Duplicate filenames are rejected.
+- Check jobs stage every header unchanged in a flat HEADERS directory mounted on E: under both backends. Linked builds preserve the subsystem folders and read INCLUDE from SRENV.BAT.
+- Native DOSBox command sequences must use `call SRENV.BAT` so execution continues to MAKE. The 87-character INCLUDE line was proved with native MAKE before moving the files; keep it below the DOS command-line limit.

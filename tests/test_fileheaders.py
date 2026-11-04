@@ -19,7 +19,7 @@ class MacroHeaderTests(unittest.TestCase):
             used.write_text('#include "STRUCTS.H"\nlong tick = *BIOS_TICKS;\n')
             unused.write_text('#include "STRUCTS.H"\n#include "PC.H"\n'
                               'char *s = "BIOS_TICKS";\n')
-            with patch.object(config, 'INCLUDE', root), \
+            with patch.object(config, 'SRC', root), \
                     patch.object(fileheaders, 'owners_layout', return_value=[('USED', [used]), ('UNUSED', [unused])]), \
                     patch.object(source, 'headers', return_value=dict(globals=[], fardata=[], functions=[])):
                 self.assertEqual(fileheaders.generate(), [])
@@ -36,11 +36,11 @@ class MacroHeaderTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             (root / 'UNKNOWN.H').write_text('#define FIXED_ADDR ((char far *)0x80000000L)\n')
-            with patch.object(config, 'INCLUDE', root), \
+            with patch.object(config, 'SRC', root), \
                     patch.object(fileheaders, 'owners_layout', return_value=[]), \
                     patch.object(source, 'headers', return_value=dict(globals=[], fardata=[], functions=[])):
                 self.assertEqual(fileheaders.generate(),
-                                 ['src/include/UNKNOWN.H: no source file UNKNOWN.C or UNKNOWN.ASM'])
+                                 ['UNKNOWN.H: no source file UNKNOWN.C or UNKNOWN.ASM'])
 
     def test_module_header_constants_follow_callers_without_source_definitions(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -51,7 +51,7 @@ class MacroHeaderTests(unittest.TestCase):
             caller = root / 'CALLER.C'
             owned.write_text('#include "STRUCTS.H"\nint value;\n')
             caller.write_text('#include "STRUCTS.H"\nint mode = SHOW;\n')
-            with patch.object(config, 'INCLUDE', root), \
+            with patch.object(config, 'SRC', root), \
                     patch.object(fileheaders, 'owners_layout', return_value=[('OWNED', [owned]), ('CALLER', [caller])]), \
                     patch.object(source, 'headers', return_value=dict(globals=[], fardata=[], functions=[])):
                 self.assertEqual(fileheaders.generate(), [])
@@ -70,7 +70,7 @@ class MacroHeaderTests(unittest.TestCase):
             for stem in ('A', 'B'):
                 (root / (stem + '.H')).write_text('#define MODE 1\n')
                 (root / (stem + '.C')).write_text('#include "STRUCTS.H"\n')
-            with patch.object(config, 'INCLUDE', root), \
+            with patch.object(config, 'SRC', root), \
                     patch.object(fileheaders, 'owners_layout', return_value=[(stem, [root / (stem + '.C')]) for stem in ('A', 'B')]), \
                     patch.object(source, 'headers', return_value=dict(globals=[], fardata=[], functions=[])):
                 self.assertEqual(fileheaders.generate(), ['MODE is declared in A.H and B.H'])
@@ -81,7 +81,7 @@ class MacroHeaderTests(unittest.TestCase):
             (root / 'OWNED.H').write_text('#define MODE 1\nextern int missing;\n')
             owned = root / 'OWNED.C'
             owned.write_text('#include "STRUCTS.H"\n')
-            with patch.object(config, 'INCLUDE', root), \
+            with patch.object(config, 'SRC', root), \
                     patch.object(fileheaders, 'owners_layout', return_value=[('OWNED', [owned])]), \
                     patch.object(source, 'headers', return_value=dict(globals=[dict(name='missing', header='OWNED')], fardata=[], functions=[])):
                 self.assertEqual(fileheaders.generate(), ['missing: declared in OWNED.H, but OWNED.C does not define it'])
