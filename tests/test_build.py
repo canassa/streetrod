@@ -73,9 +73,14 @@ class MakefileTests(unittest.TestCase):
     def test_shared_pc_constants(self):
         asm = dict(re.findall(r'^(\w+)\s+EQU\s+(\w+)\s*$',
                               config.source_path('PC.INC').read_text(), re.M))
-        shared = re.findall(r'^#define (\w+) (0x[\da-f]+|\d+)\s*$',
+        shared = re.findall(r'^#define[ \t]+(\w+)[ \t]+(0x[\da-f]+|\d+)\s*$',
                             config.source_path('PC.H').read_text(), re.M | re.I)
+        c_only = {'EQUIP_VIDEO_COLOR80': 0x20}
         for name, value in shared:
+            if name in c_only:
+                self.assertNotIn(name, asm)
+                self.assertEqual(int(value, 0), c_only[name])
+                continue
             self.assertIn(name, asm)
             literal = asm[name]
             actual = int(literal[:-1], 16) if literal.lower().endswith('h') else int(literal)

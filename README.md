@@ -121,3 +121,15 @@ counts.
 [docs/RECONSTRUCTION.md](docs/RECONSTRUCTION.md) lists everything in the tree that is a
 reconstruction choice rather than recovered fact: names, file and segment names, data-only
 files, provisional dummies, source forms the code cannot decide, and the build file's form.
+
+## C formatting
+
+`./sr format` formats every `.C` and `.H` under `src/`; pass file paths to limit
+it. `./sr format --check` writes nothing and exits nonzero on drift. Assembly and
+`.INC` files are excluded, including when passed explicitly. The pinned style is
+`tools/sr/clang-format.yaml`, applied explicitly so editors cannot discover it as
+`.clang-format`. `./sr headers` and `./sr rename` format the C text they change.
+
+The nix shell supplies clang-format and lefthook. Install the staged-C formatting
+hook once with `nix-shell shell.nix --run "lefthook install"`; it formats staged
+C sources and headers and re-stages them. Run the byte-match gates before committing.

@@ -3,7 +3,7 @@
 # SR_EMU picks the compile backend (emu2 default, dosbox).
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ready() { command -v dosbox-x >/dev/null && command -v emu2 >/dev/null && python3 -c 'import capstone' 2>/dev/null; }
+ready() { command -v dosbox-x >/dev/null && command -v emu2 >/dev/null && command -v clang-format >/dev/null && python3 -c 'import capstone' 2>/dev/null; }
 if ! ready; then
     # Entering nix-shell costs ~2 s per call, more than a compile. Cache the shell's nix
     # store PATH entries, keyed by shell.nix; refresh when it changes or a path is gone (GC).

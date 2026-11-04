@@ -369,6 +369,21 @@ def cmd_layout(args):
         print("  note: /Ol with a register local in a nested block is not modelled; ./sr check it")
 
 
+def cmd_format(args):
+    from sr import format as formatter
+    import subprocess
+    targets = args.files or formatter.default_targets()
+    try:
+        drift = formatter.format_files(targets, check=args.check)
+    except (ValueError, OSError, subprocess.CalledProcessError) as exc:
+        sys.exit(str(exc))
+    for path in drift:
+        print(f"would format {path}")
+    if drift:
+        sys.exit(f"{len(drift)} file(s) need formatting")
+    print(f"{'checked' if args.check else 'formatted'} {len(targets)} file(s)")
+
+
 def cmd_headers(args):
     from sr import headers
     if args.check:
@@ -597,6 +612,11 @@ def main():
     s.add_argument("--ol", action="store_true", help="the function is compiled with /Ol (block slot reuse differs)")
     s.add_argument("--bucket", type=int, help="list common readable names in bucket N (0-15) instead")
     s.set_defaults(func=cmd_layout)
+
+    s = sub.add_parser("format", help="format C sources and headers with the pinned clang-format style")
+    s.add_argument("files", nargs="*", type=Path, help="default: every .C/.H under src/; never assembly")
+    s.add_argument("--check", action="store_true", help="write nothing; exit 1 if formatting differs")
+    s.set_defaults(func=cmd_format)
 
     s = sub.add_parser("headers", help="rewrite the sources' include blocks and the MAKEFILE dependencies from the headers")
     s.add_argument("--check", action="store_true", help="write nothing; exit 1 if a run would change a file or a header is wrong")

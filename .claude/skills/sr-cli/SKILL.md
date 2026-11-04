@@ -9,6 +9,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 
 | File | Job |
 |---|---|
+| `tools/sr/format.py` | `./sr format [files]` / `--check`: explicit pinned style in `clang-format.yaml`, C/H only; headers and rename format changed C text |
 | `tools/sr/cli.py` | argparse commands; one `cmd_*` function each |
 | `tools/sr/pics.py` | `./sr pic`: resource directory/RLE decoder, EGA planar and CGA packed pixels, stdlib PNG and kitty graphics output; `--list`, `--png`, `--scale`, `--cells COLS N`, `--mode ega|cga`, `--palette game|intro|standard|cga-green` |
 | `tools/sr/config.py` | paths, address ranges, recursive source/header index, header staging and the INCLUDE environment read from SRENV.BAT |
@@ -191,4 +192,18 @@ hashes, local-name constraints, symbol budgets and compiler layout choices. Do n
 add storage banners or decompilation explanations to `src/`. Preserve existing
 game-behaviour comments and every PROVISIONAL marker with its full text.
 `./sr headers` maintains includes and dependencies only; it must not add storage
-comments or rewrite the declarations or function bodies.
+comments or change declaration/function tokens; it formats C text when rewriting includes.
+
+## C formatting (2026-11-04)
+
+- Run `./sr format --check` with the other gates. The nix shell supplies clang-format
+  and lefthook; `lefthook install` enables staged-C formatting and re-staging.
+- `headers._write` formats changed C/H bytes before writing or recording dry-run
+  drift. Rename formats each changed C/H before its include/dependency sync. Keep
+  formatting out of build/check so those compile the checked-in bytes.
+- Header declarations can wrap across lines. `source.headers` reads semicolon-ended
+  declarations before normalizing whitespace; never parse prototypes line by line.
+- When comparing C tokens around macro formatting, remove backslash-newline splices
+  first (C translation phase two). Added continuation lines do not add C tokens.
+- Tests that read `#define` constants must accept variable horizontal whitespace.
+  EQUIP_VIDEO_COLOR80 is C-only; shared PC.H/PC.INC constants still agree by value.

@@ -3,6 +3,8 @@ from pathlib import Path
 import sys
 import re
 import unittest
+import tempfile
+from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
 from sr import config, module, source
 
@@ -63,6 +65,26 @@ class SourceTests(unittest.TestCase):
         far = {g['name']: g for g in source.fardata()}
         self.assertEqual((far['g_screen1']['seg'], far['g_screen1']['off'], far['g_screen1']['decl']),
                          (0x2E3E, 0x30, 'struct Bitmap far @'))
+
+    def test_wrapped_header_declarations(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / 'WRAPPED.H'
+            path.write_text('#ifndef WRAPPED_H\n#define WRAPPED_H\n'
+                            'enum Mode { FIRST, LAST };\n'
+                            'extern void (interrupt far *previous)(\n    void);\n'
+                            'int near draw(int x,\n    int y);\n#endif\n')
+            addresses = dict(data={'previous': {'off': 16}},
+                             functions={'draw': dict(seg=1, off=2, size=3)})
+            source.headers.cache_clear()
+            try:
+                with patch.object(config, 'source_files', return_value=[path]), \
+                        patch.object(source, 'symbol_addresses', return_value=addresses):
+                    rows = source.headers()
+                    self.assertEqual([r['name'] for r in rows['globals']], ['previous'])
+                    self.assertEqual([r['name'] for r in rows['functions']], ['draw'])
+                    self.assertEqual(rows['functions'][0]['proto'], 'int near @(int x, int y)')
+            finally:
+                source.headers.cache_clear()
 
     def test_declared_name(self):
         self.assertEqual(source.declared_name('int (far *g_stepSpriteFrm)(struct Sprite *)'), 'g_stepSpriteFrm')

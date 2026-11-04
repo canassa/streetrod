@@ -129,7 +129,11 @@ def rename(pairs, dry=False):
             n = (len(spat.findall(raw)) if spat else 0) + (len(fpat.findall(raw)) if fpat else 0)
             report.append(f"{p.relative_to(config.ROOT)}: {n} replacements")
             if not dry:
-                p.write_bytes(new.encode("latin-1"))
+                data = new.encode("latin-1")
+                if p.suffix.upper() in ('.C', '.H'):
+                    from .format import format_bytes
+                    data = format_bytes(data, p)
+                p.write_bytes(data)
     for old, (new, (kind, key)) in syms.items():
         report.append(f"{kind} {old} -> {new}")
     for src, dst in moves:

@@ -117,7 +117,11 @@ def headers():
         if path.stem.upper() == 'STRUCTS':
             continue
         stem = path.stem.upper()
-        for ln in _strip(path.read_text(encoding='latin-1')).splitlines():
+        clean = _strip(path.read_text(encoding='latin-1'))
+        declarations = re.finditer(
+            r'^(?:extern\s+[^;{}]+|[A-Za-z_][^;{}]*\([^;{}]*\))\s*;', clean, re.M)
+        for declaration in declarations:
+            ln = ' '.join(declaration.group().split())
             m = _EXTERN.match(ln)
             if m:
                 name = declared_name(m[1])

@@ -42,6 +42,11 @@ def _write(path, text, crlf=False):
     data = (text.replace("\n", "\r\n") if crlf else text).encode("latin-1")
     if path.exists() and path.read_bytes() == data:
         return
+    if path.suffix.upper() in ('.C', '.H'):
+        from .format import format_bytes
+        data = format_bytes(data, path)
+        if path.exists() and path.read_bytes() == data:
+            return
     if _dry is not None:
         _dry[path] = data
         return

@@ -17,6 +17,7 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 `./sr` drives everything (it enters `shell.nix` on its own if `dosbox-x` or capstone is missing). Original addresses and function sizes live in `tools/sr/symbols.json`; every command joins them by name to definitions and declarations from the sources and headers (`tools/sr/source.py`, see rule 5). Run `./sr <command> -h` for options.
 
 ```
+./sr format [FILES...]         # format C/H explicitly; --check reports drift without writing
 ./sr build                     # run src/MAKEFILE (work/layout/SRPACKED.EXE), then verify; must end `Packed EXE vs orig/SR.EXE: IDENTICAL`
 ./sr build --no-verify         # only the build: no gates, no comparison (needs no orig/)
 ./sr build --prepare-only      # only copy src/ (MAKEFILE, SR.LNK, sources, headers) to work/layout
@@ -348,7 +349,9 @@ The EXE is the ground truth for what must match; the sources and headers record 
 
 ### 6. Keep the gate green
 
-Before finishing any change to sources, flags or tooling, run `./sr check --all`. A regression in a matched function blocks the change.
+Before finishing any change to sources, flags or tooling, run `./sr headers --check`,
+`./sr format --check`, `./sr check --all`, a clean `./sr build`, `./sr dgroup check`,
+`./sr dgroup order`, and `nix-shell shell.nix --run "python3 -m unittest discover -s tests"`. A regression in a matched function blocks the change.
 
 ### 7. Surface structural blockers immediately
 
@@ -387,3 +390,15 @@ Never redirect a DOS program's output to a file without a timeout and a size bou
 | `docs/RECONSTRUCTION.md` | What in the tree is a reconstruction choice, not recovered fact; update it when adding one |
 | `plans/diary.md` | Captain's log |
 | `work/` | Scratch output (ignored). Nothing in it is needed to reproduce a documented result; `work/...` paths in the recipe book name experiments that were not kept. To try a source variant, edit the file, `./sr check` / `./sr diff` the function, then `git checkout` the file; small test functions are compiled with `tools/sr/dosbox.py` jobs (`Job(path, flags, name)`, `compile_all`) |
+
+## C formatting
+
+`./sr format` formats every `.C` and `.H` under `src/`; pass file paths to limit
+it. `./sr format --check` writes nothing and exits nonzero on drift. Assembly and
+`.INC` files are excluded, including when passed explicitly. The pinned style is
+`tools/sr/clang-format.yaml`, applied explicitly so editors cannot discover it as
+`.clang-format`. `./sr headers` and `./sr rename` format the C text they change.
+
+The nix shell supplies clang-format and lefthook. Install the staged-C formatting
+hook once with `nix-shell shell.nix --run "lefthook install"`; it formats staged
+C sources and headers and re-stages them. Run the byte-match gates before committing.

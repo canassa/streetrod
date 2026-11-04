@@ -1,0 +1,20 @@
+# Explicit style for ./sr format, headers and rename. No tree-wide .clang-format.
+Language: Cpp
+BasedOnStyle: LLVM
+IndentWidth: 4
+UseTab: Never
+ColumnLimit: 120
+PointerAlignment: Right
+DerivePointerAlignment: false
+AlignConsecutiveDeclarations: false
+SortIncludes: Never
+ReflowComments: false
+MaxEmptyLinesToKeep: 2
+AllowShortEnumsOnASingleLine: false
+# Keep bodies expanded — function bodies stay multi-line and readable.
+AllowShortFunctionsOnASingleLine: None
+AllowShortBlocksOnASingleLine: Never
+AllowShortIfStatementsOnASingleLine: Never
+AttributeMacros: [far, near, huge, interrupt, cdecl, _cdecl, pascal, _far, _near, register]
+# Match the existing function/control-block brace layout.
+BreakBeforeBraces: Linux

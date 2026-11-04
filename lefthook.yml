@@ -1,0 +1,7 @@
+# Install once from the nix shell: lefthook install.
+pre-commit:
+  jobs:
+    - name: clang-format (C)
+      glob: "*.{c,h,C,H}"
+      run: ./sr format {staged_files}
+      stage_fixed: true

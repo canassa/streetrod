@@ -1990,3 +1990,66 @@ The newly enum-typed state/category objects and named constants preserve the mea
   deleting by keyword; keep unresolved reconstruction choices marked PROVISIONAL.
 - Source comments and executable tokens can be checked independently. This cleanup
   changed no C/MASM tokens; the fresh packed build also confirms byte identity.
+
+## 2026-11-04 23:25 CET: Explicit C formatting and staged-file hook
+
+### What I did
+
+- Read bak2's pinned style, formatter helper/command and lefthook configuration.
+  Added clang-tools and lefthook to shell.nix and taught the sr launcher to bring
+  clang-format onto PATH. Added explicit tools/sr/clang-format.yaml and
+   / : default all 157 C/H files under src/,
+  case-insensitive extensions, reject assembly/INC and missing explicit targets
+  before writing. The style is never a tree-wide .clang-format.
+- Compared six styles against the original 157-file tree with clang-format 21.1.8
+  (changed files, added/deleted lines): bak2 75, +2310/-2089; Allman 88,
+  +5411/-2742; Linux/100 columns 69, +1781/-1053; Linux/100 without bracket
+  alignment 69, +1531/-1047; Linux/120 64, +1321/-886; Linux/120 without bracket
+  alignment 64, +1020/-882. Kept Linux/120 with alignment: the smaller unaligned
+  candidate packs multiple hotspot records onto a line. This is the smallest
+  sensible measured choice retaining the tables' record-per-line readability.
+  Kept LLVM/4 spaces, right pointers, include order, unchanged comment prose,
+  expanded bodies/enums, and MSC attributes including _far, _near and register.
+- Reviewed SOUND.C's g_songTones, UI/HOTSPOT.C and INPUT/KEYMAPS.H: tones and
+  hotspot records stay on separate lines; enum members stay expanded. No
+  clang-format off/on regions were needed or added. The final formatting pass
+  changes 64 C/H files (+1303/-868); clang-format preserves some existing line
+  breaks, so its stable output after candidate review differs slightly from a
+  direct pass on the original sources.
+- headers._write formats changed C/H text before writing or recording dry-run
+  drift; rename formats each changed C/H before its header/dependency sync.
+  Fixed source.headers to read wrapped semicolon-ended declarations instead of
+  individual lines. Added formatter/CLI, DOS qualifiers/K&R text, no-write check,
+  idempotence, target validation, generator dry-run, rename and wrapped-header
+  tests (92 total). Fixed the existing PC constant test's exact-one-space regex;
+  it now checks the pre-existing C-only EQUIP_VIDEO_COLOR80 explicitly and still
+  verifies every shared numeric constant against PC.INC.
+- Added lefthook.yml to format/re-stage staged C/H files; documented
+  sync hooks: ✔️(pre-commit) in README and CLAUDE, added the
+  format check to the gates, and updated the sr-cli skill with formatting/parser
+  lessons. Validated lefthook's configuration and exercised the hook in an
+  isolated temporary git repository: a staged C filename containing spaces was
+  formatted and re-staged; staged ASM bytes were untouched.
+- All gates passed before committing: headers --check; format --check (157);
+  check --all (572/572, 551 MATCH and 21 MATCH*); rm -rf work followed by build
+  (96/96 objects, 572/572 original positions and raw bytes, 748/748 near calls,
+  packed EXE IDENTICAL); dgroup check; dgroup order; unittest discover (92, OK).
+  Also inspected sr show ga_day and git diff --check. Normalized compiler warning
+  messages and counts from all CC.LOG files exactly equal the baseline, with no
+  new warnings. Compared all 157 C/H token streams after C phase-two macro-line
+  splicing: identical, including exact literals; all ASM/INC bytes unchanged.
+- Tooling/docs/tests and the full-tree formatting are committed separately on
+  branch format. Nothing is merged or pushed.
+
+### What I learned
+
+- Function braces were already on their own line and control-block braces
+  attached: Linux placement avoids Allman's unnecessary churn. A wider column
+  limit cuts wrapping changes, while aligned initializers keep hotspot rows and
+  long tone lists readable without formatter suppression comments.
+- Source-analysis tools must accept formatter-wrapped declarations. Macro
+  continuations also need phase-two splicing before a meaningful token audit;
+  formatter-added backslash/newline pairs do not change C preprocessing tokens.
+- Tests parsing C preprocessor lines can accidentally omit aligned definitions
+  when they demand one literal space. Accept horizontal whitespace and explicitly
+  distinguish the existing C-only hardware constants from shared C/MASM values.
