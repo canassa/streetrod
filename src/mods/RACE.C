@@ -506,7 +506,7 @@ static void near show_ticket(void)
     *p2 = 0;
     (*a_78aem)(r_vid.back, 0x5e, 0x48, g_driverName);
     *p2 = d;
-    desc3 = g7d86n[a_7eaap.m7eb0->specIndex].f6;
+    desc3 = g7d86n[a_7eaap.m7eb0->specIndex].nameOffset;
     endk = desc3 + strcspn(g_descHdr + desc3 + 8, " `.") + 7;
     for (p2 = g_descHdr + desc3 + 1, wk = 0; *p2 && wk < maxw2; p2++)
         wk += g_font[*p2 - 32].w;
@@ -709,7 +709,7 @@ int near race_outcome(void)
         game_message(g_isKingState == 0 ? (i = g_winMsgs[kind]) : a_7eaap.m7ec0 == 0 ? 0x14bd : 0x14d6);
         F_11540(v);
         if (kind == 5) {
-            found = game_make_car(bn7648, g_oppSpecPointer->f0, 0);
+            found = game_make_car(bn7648, g_oppSpecPointer->price, 0);
             found->tires->wear = random_int(500);
             found->appearance = ((g7d84o->ff & 0x1f) << 8) | (found->appearance & 0xe0ff);
             found->appearance = (((g7d84o->fe & 4) != 0 & 1) << 13) | (found->appearance & 0xdfff);
@@ -727,7 +727,7 @@ int near race_outcome(void)
                     g7d84o->fb = 0xff;
                 else {
                     for (i = 0, units = 0; i < 25; i++)
-                        if (g7d86n[i].f2 < g_oppSpecPointer->f2)
+                        if (g7d86n[i].modelKind < g_oppSpecPointer->modelKind)
                             list[++units] = i;
                     if (units > 0) {
                         list[0] = units;

@@ -42,10 +42,10 @@ void near perf_drivetrain(struct Car *c, struct Eng *e)
     c3 = g_4806[qn[2]->idx].variant;
     d = g_4806[n6k->idx].variant;
     e1 = g_4806[m->idx].variant;
-    vl = ((c->appearance & 0x2000) || w_8df0[c->specIndex].f2 == 0) * 0.09
-        + ((c->appearance & 0x8000) || w_8df0[c->specIndex].f8 == 0) * 0.05
-        + ((c->appearance & 0x4000) || w_8df0[c->specIndex].f6 == 0) * 0.01
-        + g_modelScore[g7d86n[c->specIndex].f2] * 0.1 / 88.0
+    vl = ((c->appearance & 0x2000) || w_8df0[c->specIndex].roofPic == 0) * 0.09
+        + ((c->appearance & 0x8000) || w_8df0[c->specIndex].rearBumperPic == 0) * 0.05
+        + ((c->appearance & 0x4000) || w_8df0[c->specIndex].frontBumperPic == 0) * 0.01
+        + g_modelScore[g7d86n[c->specIndex].modelKind] * 0.1 / 88.0
         + g_carbManifoldFit[c3][bl] * 0.15 / 100.0
         + g_engineScore[a3] * 0.25 / 100.0
         + g_transScore[d] * 0.15 / 100.0
@@ -78,7 +78,7 @@ void near perf_drivetrain(struct Car *c, struct Eng *e)
         e->f22 = gl->r[1].f2;
     }
     e->f1e = g_shiftRpm[a3];
-    e->f34[5] = (int)((int)(0x82 - g7d86n[c->specIndex].f2) * 5.0 / 50.0 + g_5568[g_4806[m->idx].variant]);
+    e->f34[5] = (int)((int)(0x82 - g7d86n[c->specIndex].modelKind) * 5.0 / 50.0 + g_5568[g_4806[m->idx].variant]);
     e->f1c = g_transGears[d];
     e->f1a = 1;
 }
@@ -101,17 +101,17 @@ void near perf_drivetrain_spec(int n, struct Eng *e)
     car.tires = &lo;
     s = &g7d86n[n];
     car.rack.parts[3] = car.rack.parts[4] = 0;
-    t = ((s->f4 >> 14) & 3) + 0x16;
-    for (i = g_5126[(s->f4 >> 11) & 7] + 1; i >= 0; i--) {
+    t = ((s->parts >> 14) & 3) + 0x16;
+    for (i = g_5126[(s->parts >> 11) & 7] + 1; i >= 0; i--) {
         car.rack.parts[i] = &nd[i];
         nd[i].wear = g_496a;
         nd[i].idx = t;
     }
-    i = (s->f4 >> 6) & 3;
-    na.idx = (t = (s->f4 & 0xf) >> 1) + (i == 3) + i * 3 + 9;
-    lo.idx = ((s->f4 >> 4) & 3) + 0x28;
-    nd[0].idx = ((s->f4 >> 8) & 7) * 3 + t;
-    nd[1].idx = (j = (s->f4 >> 11) & 7) * 3 + t + 0x19;
+    i = (s->parts >> 6) & 3;
+    na.idx = (t = (s->parts & 0xf) >> 1) + (i == 3) + i * 3 + 9;
+    lo.idx = ((s->parts >> 4) & 3) + 0x28;
+    nd[0].idx = ((s->parts >> 8) & 7) * 3 + t;
+    nd[1].idx = (j = (s->parts >> 11) & 7) * 3 + t + 0x19;
     perf_drivetrain(&car, e);
 }
 
@@ -147,17 +147,17 @@ int near F_0E218(int n)
         car.tires = &lon;
         s = &g7d86n[n];
         car.rack.parts[3] = car.rack.parts[4] = 0;
-        t = ((s->f4 >> 14) & 3) + 0x16;
-        for (i = g_5126[(s->f4 >> 11) & 7] + 1; i >= 0; i--) {
+        t = ((s->parts >> 14) & 3) + 0x16;
+        for (i = g_5126[(s->parts >> 11) & 7] + 1; i >= 0; i--) {
             car.rack.parts[i] = &ndm[i];
             ndm[i].wear = g_496a;
             ndm[i].idx = t;
         }
-        i = (s->f4 >> 6) & 3;
-        na.idx = (t = (s->f4 & 0xf) >> 1) + (i == 3) + i * 3 + 9;
-        lon.idx = ((s->f4 >> 4) & 3) + 0x28;
-        ndm[0].idx = ((s->f4 >> 8) & 7) * 3 + t;
-        ndm[1].idx = (j = (s->f4 >> 11) & 7) * 3 + t + 0x19;
+        i = (s->parts >> 6) & 3;
+        na.idx = (t = (s->parts & 0xf) >> 1) + (i == 3) + i * 3 + 9;
+        lon.idx = ((s->parts >> 4) & 3) + 0x28;
+        ndm[0].idx = ((s->parts >> 8) & 7) * 3 + t;
+        ndm[1].idx = (j = (s->parts >> 11) & 7) * 3 + t + 0x19;
         p6 = &car;
     }
     qn = p6->rack.parts;
@@ -168,10 +168,10 @@ int near F_0E218(int n)
     c3 = g_4806[qn[2]->idx].variant;
     d = g_4806[n6k->idx].variant;
     e1 = g_4806[m->idx].variant;
-    vl = ((p6->appearance & 0x2000) || w_8df0[p6->specIndex].f2 == 0) * 0.09
-        + ((p6->appearance & 0x8000) || w_8df0[p6->specIndex].f8 == 0) * 0.05
-        + ((p6->appearance & 0x4000) || w_8df0[p6->specIndex].f6 == 0) * 0.01
-        + g_modelScore[g7d86n[p6->specIndex].f2] * 0.1 / 88.0
+    vl = ((p6->appearance & 0x2000) || w_8df0[p6->specIndex].roofPic == 0) * 0.09
+        + ((p6->appearance & 0x8000) || w_8df0[p6->specIndex].rearBumperPic == 0) * 0.05
+        + ((p6->appearance & 0x4000) || w_8df0[p6->specIndex].frontBumperPic == 0) * 0.01
+        + g_modelScore[g7d86n[p6->specIndex].modelKind] * 0.1 / 88.0
         + g_carbManifoldFit[c3][bl] * 0.15 / 100.0
         + g_engineScore[a3] * 0.25 / 100.0
         + g_transScore[d] * 0.15 / 100.0

@@ -66,12 +66,12 @@ void savegame_init_racer(int k, int *list)
     av7ff8[k].f8 = list[i + 1];
     list[i + 1] = -1;
     x = av7ff8[k].f8;
-    y = (g7d86n[x].f2 >> 1) + 1;
-    av7ff8[k].fe = ((g7d86n[x].f4 >> 8 & 7) == 2) ? 8 : 0;
+    y = (g7d86n[x].modelKind >> 1) + 1;
+    av7ff8[k].fe = ((g7d86n[x].parts >> 8 & 7) == 2) ? 8 : 0;
     av7ff8[k].ff = (random_int(20) < y) ? random_int(9) : 0;
-    if (w_8df0[x].f6 > 0 && w_8df0[x].f8 > 0)
+    if (w_8df0[x].frontBumperPic > 0 && w_8df0[x].rearBumperPic > 0)
         av7ff8[k].fe |= (random_int(25) < y) ? 3 : 0;
-    if (w_8df0[x].f2 > 0)
+    if (w_8df0[x].roofPic > 0)
         av7ff8[k].fe |= (random_int(30) < y) ? 4 : 0;
 }
 
@@ -84,7 +84,7 @@ static void near init_racers(void)
 
     i = na1 = nb = nc = 0;
     for (; i < 25; i++) {
-        v = g7d86n[i].f2;
+        v = g7d86n[i].modelKind;
         if (v >= 6)
             cl[++nc] = i;
         else if (v < 3)

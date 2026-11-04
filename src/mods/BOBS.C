@@ -133,7 +133,7 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
     old = g_carPassBy;
     strcpy(g7f32s, g_desc + g7d84o->f6);
     strcat(g7f32s, "  ");
-    strcat(g7f32s, g_desc + g_oppSpecPointer->f6);
+    strcat(g7f32s, g_desc + g_oppSpecPointer->nameOffset);
     x = g_scene == 6;
     if (mode == 4)
         g_walkState = -1;
@@ -183,7 +183,7 @@ static int near spec_class(int n)
 {
     int v;
 
-    v = g7d86n[n].f2;
+    v = g7d86n[n].modelKind;
     if (v < 3)
         return 0;
     if (v >= 7)
@@ -256,7 +256,7 @@ static void near build_rival_pool(int flag)
     for (k = 0; k < 21; k++) {
         item = &g7d86n[av7ff8[k].f8];
         map[k].dr = abs(F_0E218(av7ff8[k].f8) - F_0E218(-1));
-        map[k].dk = abs(g7d86n[av7ff8[k].f8].f2 - g7d86n[a_7eaap.m7eb0->specIndex].f2);
+        map[k].dk = abs(g7d86n[av7ff8[k].f8].modelKind - g7d86n[a_7eaap.m7eb0->specIndex].modelKind);
         map[k].taken = (av7ff8[k].fb != -1) ? 0 : 1;
     }
     g_poolCount = 0;
@@ -322,19 +322,19 @@ static void near select_rival(int n)
     if (n != 0x15) {
         g_isKingState = 0;
         g7d84o->fb = 1;
-        skill = (g_oppSpecPointer->f2 >> 1) + 1;
+        skill = (g_oppSpecPointer->modelKind >> 1) + 1;
         if (g7d84o->ff == 0 && g7d84o->fc > 5)
             g7d84o->ff = random_int(20) < skill ? random_int(9) : 0;
         else if (g7d84o->ff > 0 && g7d84o->fc > 10)
             g7d84o->ff = random_int(40) < skill ? random_int(9) : g7d84o->ff;
-        if (w_8df0[bn7648].f6 > 0 && w_8df0[bn7648].f8 > 0 && g7d84o->fc > 8)
+        if (w_8df0[bn7648].frontBumperPic > 0 && w_8df0[bn7648].rearBumperPic > 0 && g7d84o->fc > 8)
             g7d84o->fe |= random_int(25) < skill ? 3 : g7d84o->fe;
-        if (w_8df0[bn7648].f2 > 0 && g7d84o->fc > 8)
+        if (w_8df0[bn7648].roofPic > 0 && g7d84o->fc > 8)
             g7d84o->fe |= random_int(30) < skill ? 4 : g7d84o->fe;
     } else
         g_isKingState = 1;
-    m_8272.m827a = g_oppSpecPointer->f8;
-    m_8272.m827e = (g_oppSpecPointer->f4 >> 4) & 3;
+    m_8272.m827a = g_oppSpecPointer->bodyPic;
+    m_8272.m827e = (g_oppSpecPointer->parts >> 4) & 3;
     m_8272.m827c = g7d84o->fa;
     F_067CF(m_8272.m827c);
     m_8272.m8280 = g7d84o->f4;
@@ -434,7 +434,7 @@ calc:
     chm = g7d84o->f0;
     p18 = spec_class(bn7648);
     p27 = spec_class(a_7eaap.m7eb0->specIndex);
-    clsl = (g_oppSpecPointer->f4 >> 8) & 7;
+    clsl = (g_oppSpecPointer->parts >> 8) & 7;
     item1 = g_4806[a_7eaap.m7eb0->rack.parts[0]->idx].variant;
     v11 = ag8baey[chm][row];
     v2 = g7d68m[p18][clsl];

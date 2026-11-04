@@ -329,7 +329,7 @@ int near F_06B06(int mode)
         r_vid.f16 = 1;
         (*m_present)();
         if (a_7eaap.m7eb0) {
-            m_8272.m827a = g7d86n[a_7eaap.m7eb0->specIndex].f8;
+            m_8272.m827a = g7d86n[a_7eaap.m7eb0->specIndex].bodyPic;
             m_8272.m827c = a_7eaap.m7eb0->paintScheme;
             m_8272.m827e = g_4806[a_7eaap.m7eb0->tires->idx].variant;
             if (mode == 1)
@@ -343,7 +343,7 @@ int near F_06B06(int mode)
             for (r = 0; r < 5; r++)
                 o_8290[r] = a_7eaap.m7eb0->rack.parts[r]->idx;
             n = game_car_look(a_7eaap.m7eb0);
-            strcpy(g_29ff, g_desc + g7d86n[a_7eaap.m7eb0->specIndex].f6);
+            strcpy(g_29ff, g_desc + g7d86n[a_7eaap.m7eb0->specIndex].nameOffset);
             if (mode == 2)
                 F_181C8(3, m_8272.m8282, n, m_8272.m8284.shade, 0, 0x98, 0, g_5030[m_8272.m827e]);
             else
@@ -477,7 +477,7 @@ void near F_0711A(unsigned mask)
         return;
     }
     if (mask & 4) {
-        if (p9->f2 == 0) {
+        if (p9->roofPic == 0) {
             game_message(0x1914);
             return;
         }
@@ -486,7 +486,7 @@ void near F_0711A(unsigned mask)
         val5 = 0x2220;
     }
     if (mask & 2) {
-        if (p9->f6 == 0) {
+        if (p9->frontBumperPic == 0) {
             game_message(0x1936);
             return;
         }
@@ -495,7 +495,7 @@ void near F_0711A(unsigned mask)
         val5 = 0x888;
     }
     if (mask & 1) {
-        if (p9->f8 == 0) {
+        if (p9->rearBumperPic == 0) {
             game_message(0x1936);
             return;
         }
@@ -847,7 +847,7 @@ void near F_07AA4(void)
                     break;
                 prev = m_8272.m8286;
                 m_8272.m8286 = g_49d2[g_4806[tbl[k]->idx].variant];
-                if (g7d86n[owner->specIndex].f4 & g_4806[tbl[k]->idx].fitMask & 0xf) {
+                if (g7d86n[owner->specIndex].parts & g_4806[tbl[k]->idx].fitMask & 0xf) {
                     F_07741(F_077B7(tbl[k]), &owner->transmission);
                     cursor_ctl(-4);
                     F_16A5A(1);
@@ -1132,7 +1132,7 @@ void near garage_hood(struct Car *car)
             default:
                 goto again;
             case 0:
-                ok = g_4806[list4[key]->idx].fitMask & g7d86n[car->specIndex].f4 & 0xf;
+                ok = g_4806[list4[key]->idx].fitMask & g7d86n[car->specIndex].parts & 0xf;
                 hz82ae = 0;
                 step = 0;
                 car->f1f = -1;
@@ -1140,7 +1140,7 @@ void near garage_hood(struct Car *car)
                 g_05fc += ok ? 0x666 : 0x888;
                 break;
             case 1:
-                ok = (g_4806[k = list4[key]->idx].fitMask & g7d86n[car->specIndex].f4 & 0xf) != 0
+                ok = (g_4806[k = list4[key]->idx].fitMask & g7d86n[car->specIndex].parts & 0xf) != 0
                      && g_4978[g_4806[car->rack.parts[0]->idx].variant][tmp29 = g_4806[k].variant] != 0;
                 hz82ae = 1;
                 step = 1;
@@ -1152,7 +1152,7 @@ void near garage_hood(struct Car *car)
             case 2:
             case 3:
             case 4:
-                ok = (g_4806[k = list4[key]->idx].fitMask & g7d86n[car->specIndex].f4 & 0xf) != 0
+                ok = (g_4806[k = list4[key]->idx].fitMask & g7d86n[car->specIndex].parts & 0xf) != 0
                      && g_4988[tmp29 = g_4806[car->rack.parts[1]->idx].variant][g_4806[k].variant] != 0;
                 g_05fc += ok ? 0x199u : 0x222u;
                 step = 3;

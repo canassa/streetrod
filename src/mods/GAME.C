@@ -337,7 +337,7 @@ struct Car * near game_make_car(int idx, int value, struct Car *old)
     car->specIndex = idx;
     car->value = value;
     car->fuel = 0x28;
-    car->modelKind = g7d86n[idx].f2;
+    car->modelKind = g7d86n[idx].modelKind;
     while ((i = random_int(6)) == 5)
         if (random_int(2) == 1)
             break;
@@ -345,20 +345,20 @@ struct Car * near game_make_car(int idx, int value, struct Car *old)
     car->f1f = 1;
     car->timing = random_int(13) - 8;
     car->transmission = node = (old == 0) ? game_new_part() : car->transmission;
-    w = (g7d86n[idx].f4 >> 6) & 3;
-    w = (kind = (g7d86n[idx].f4 & 0xf) >> 1) + (w == 3) + 3 * w + 9;
+    w = (g7d86n[idx].parts >> 6) & 3;
+    w = (kind = (g7d86n[idx].parts & 0xf) >> 1) + (w == 3) + 3 * w + 9;
     node->idx = w;
     node->value = g_4806[w].value;
     node->wear = g_partWear[1];
     node->next = 0;
     car->rack.parts[0] = node = (old == 0) ? game_new_part() : car->rack.parts[0];
-    w = (g7d86n[idx].f4 >> 8 & 7) * 3 + kind;
+    w = (g7d86n[idx].parts >> 8 & 7) * 3 + kind;
     node->idx = w;
     node->value = g_4806[w].value;
     node->wear = g_partWear[0];
     node->next = 0;
     car->tires = node = (old == 0) ? game_new_part() : car->tires;
-    w = (g7d86n[idx].f4 >> 4 & 3) + 0x28;
+    w = (g7d86n[idx].parts >> 4 & 3) + 0x28;
     node->idx = w;
     node->value = g_4806[w].value;
     node->wear = g_partWear[4];
@@ -366,12 +366,12 @@ struct Car * near game_make_car(int idx, int value, struct Car *old)
     car->rack.parts[1] = node = (old == 0) ? game_new_part() : car->rack.parts[1];
     for (i = 3; i < 9; i++)
         car->engineBolts[i] = 0;
-    w = (i = g7d86n[idx].f4 >> 11 & 7) * 3 + kind + 0x19;
+    w = (i = g7d86n[idx].parts >> 11 & 7) * 3 + kind + 0x19;
     node->idx = w;
     node->value = g_4806[w].value;
     node->wear = g_partWear[3];
     node->next = 0;
-    w = (g7d86n[idx].f4 >> 14 & 3) + 0x16;
+    w = (g7d86n[idx].parts >> 14 & 3) + 0x16;
     i = g_5126[i] - 1;
     for (j = 2; j > i; j--)
         car->rack.parts[j + 2] = 0;
@@ -468,7 +468,7 @@ static void near buy_from_ads(int tab)
     n = 2;
     i5 = price6 = 0;
     for (k3 = a_7d16q; k3 >= 0; k3 = g7d86n[k3].next) {
-        g_list[n++] = g7d86n[k3].f6;
+        g_list[n++] = g7d86n[k3].nameOffset;
         list4[i5++] = k3;
     }
     g_list[n++] = 0xcfd;
@@ -490,8 +490,8 @@ static void near buy_from_ads(int tab)
             price6 = g_4806[i5].value;
             g_hotBuy[0].f0 = 0xe;
         } else {
-            k3 = (specn = &g7d86n[i5 = list4[n - 2]])->f6;
-            price6 = specn->f0;
+            k3 = (specn = &g7d86n[i5 = list4[n - 2]])->nameOffset;
+            price6 = specn->price;
             g_hotBuy[0].f0 = 10;
         }
         strcpy(g_offerName, g_desc + k3);
@@ -548,8 +548,8 @@ static void near buy_from_ads(int tab)
                 F_067CF(color);
             }
             x1 = ((unsigned)specn - (unsigned)g7d86n) / 10;
-            y = (((specn->f4 >> 8) & 7) == 2) ? 8 : 0;
-            F_181C8(7, x1, y, 0, 0, 0x86, 0, g_5030[(specn->f4 >> 4) & 3]);
+            y = (((specn->parts >> 8) & 7) == 2) ? 8 : 0;
+            F_181C8(7, x1, y, 0, 0, 0x86, 0, g_5030[(specn->parts >> 4) & 3]);
             screen_text((0x140 - dash_text_width(g_offerName)) / 2, 0x88, g_offerName);
             cursor_ctl(-2);
             g_anyInput = 1;
@@ -630,11 +630,11 @@ static int near your_cars(void)
         n = 0;
         if (a_7eaap.m7eb0) {
             n = 1;
-            g_list[1] = g7d86n[(tbl[1] = a_7eaap.m7eb0)->specIndex].f6;
+            g_list[1] = g7d86n[(tbl[1] = a_7eaap.m7eb0)->specIndex].nameOffset;
         }
         for (cur = a_7eaap.m7eb2; cur; cur = cur->next) {
             n++;
-            g_list[n] = g7d86n[(tbl[n] = cur)->specIndex].f6;
+            g_list[n] = g7d86n[(tbl[n] = cur)->specIndex].nameOffset;
         }
         g_list[0] = n;
         switch (item = F_142CF(0xb, (n > item) ? item : n, 0, g_list, 0, 0)) {
@@ -666,7 +666,7 @@ static int near your_cars(void)
         }
         cur = tbl[item = F_14C8B()];
         offer = price = (int)((random_int(20) + 75.0) * cur->value / 100.0);
-        strcpy(g_offerName, g_desc + g7d86n[cur->specIndex].f6);
+        strcpy(g_offerName, g_desc + g7d86n[cur->specIndex].nameOffset);
         g_offerAmount[0] = 0;
         pict = menu_grab(12, &rx, &ye, 1);
         menu_push(12);

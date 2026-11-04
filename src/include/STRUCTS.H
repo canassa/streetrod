@@ -319,12 +319,12 @@ struct Racer {
 };
 
 struct Spec {
-    int f0;
-    unsigned char f2;
+    int price;
+    unsigned char modelKind;
     signed char next;
-    unsigned f4;
-    int f6;
-    int f8;
+    unsigned parts;
+    int nameOffset;
+    int bodyPic;
 };
 
 /* one car model (10 bytes, w_8df0[], indexed by Car.f2): kind picks its sprites (view_load); f2, f6, f8
@@ -332,10 +332,10 @@ struct Spec {
 struct Model {
     signed char kind;
     char pad1;
-    int f2;
+    int roofPic;
     int f4;
-    int f6;
-    int f8;
+    int frontBumperPic;
+    int rearBumperPic;
 };
 
 struct Link {

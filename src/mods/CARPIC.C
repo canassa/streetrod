@@ -275,7 +275,7 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
     m2 = &w_8df0[idx];
     p12 = &g7682n[idx];
     p69 = &ap818c[idx];
-    *out = F_15BBE(g7d86n[idx].f8, 1);
+    *out = F_15BBE(g7d86n[idx].bodyPic, 1);
     ar826e = p69->b0;
     q_8270 = p69->b1;
     g_backGlassXState = p69->b2;
@@ -287,11 +287,11 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
     m_8272.m8272 = r_vid.mask & p12->b10;
     m_8272.m8274 = p12->b11;
     if (flags & 2)
-        bitmap_put_pic(*out, m2->f6, 0, p12->b7);
+        bitmap_put_pic(*out, m2->frontBumperPic, 0, p12->b7);
     if (flags & 1)
-        bitmap_put_pic(*out, m2->f8, p12->b8, p12->b9);
+        bitmap_put_pic(*out, m2->rearBumperPic, p12->b8, p12->b9);
     if (flags & 4) {
-        bitmap_put_pic(*out, m2->f2, p12->b4, 0);
+        bitmap_put_pic(*out, m2->roofPic, p12->b4, 0);
         for (j5 = 0; j5 < at70a8->planesize / r_vid.planes; j5++)
             if (((unsigned char far *)at70a8->alt.p)[j5] != 0xff)
                 break;
@@ -419,7 +419,7 @@ void F_181C8(int kind, int idx, int flags, int kk, int q, int bot, int mode2, in
     cursor_ctl(-4);
 again:
     n2 = (kind == 3 || kind == 7 || kind == 8) ? 1 : 4;
-    disk_pic_size(g7d86n[idx].f8, &w1, &h7, &x7);
+    disk_pic_size(g7d86n[idx].bodyPic, &w1, &h7, &x7);
     g_spriteBottomCut = g_carBottomCuts[g_scene];
     tmpn = (r_vid.mode != -2 && r_vid.mode != -6) ? g_carBg4[g_scene] : g_carBg16[g_scene];
     hh8 = (kind == 3 || kind == 7 || kind == 8) ? h7 - g_spriteBottomCut : g_carBandHeights[g_scene];
