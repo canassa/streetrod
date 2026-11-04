@@ -1294,3 +1294,16 @@ Tooling lessons are recorded in [sr-cli](../.claude/skills/sr-cli/SKILL.md); the
 
 ### What I learned
 - A source path reaches only the OBJ's THEADR record; the EXE never sees it.
+
+## 2026-11-04 18:41 CET: Natural records, round two
+
+### What I did
+- Grouped 15 narrow records, one struct per commit: TimerHead, GameClock, GasInteraction, PicturePlacement, Animation, CursorDraw, Vibrato, RandomState, ArchiveSelection, ViewPages, RivalPace, WheelBackdrop, ShifterDraw, ViewClip and DemoControl.
+- Documented each reconstruction choice in docs/RECONSTRUCTION.md and the game-clock names in plans/cramped-names.md. Kept ambiguous unused tails and array-like projection runs separate; the manager's scratch decision log records the candidate review.
+- Fixed the private-header type discovery gap in a separate tooling commit with a regression test. cdata.Types and the MSC shape audit now share the indexed module headers; see .claude/skills/sr-cli/SKILL.md.
+- Preserved the C and assembly consumers, static hash order and initialized data ownership. Every accepted record passed 572/572 functions, a fresh IDENTICAL packed build, header/DGROUP/order checks and the unit suite.
+
+### What I learned
+- The former Deadlines cluster is the game clock, with elapsed time computed as actionTicks + biosTicks - timeBase. The saved-game format preserves action time and the BIOS-time delta separately.
+- road_project_ahead fills 15 values through the 13-word right-X array, reaching its two named endpoint words. The right-outer pair similarly follows another 13-word projection array. These runs suggest full arrays rather than new endpoint records; widening the latter writer is outside this task's owned span.
+- Palette and backward row-count pointer walks likewise do not establish the proposed wrapper boundaries. Extra unused bytes alone do not justify extending an existing engine, sprite-band, popup or scenery record.

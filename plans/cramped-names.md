@@ -43,3 +43,11 @@ g_6e2a9 g_oldF g_prevRivalFrame
 - `g_xTextR` is now `g_penPoint.x`, the X coordinate of the last text endpoint.
 
 The other entries above remain outside the selected records; their names were not changed in this pass.
+
+## Resolved by struct grouping on branch structs2
+
+- `g_addT` is now `g_gameClock.actionTicks`.
+- `g_sysT` is now `g_gameClock.biosTicks`.
+- `g_tRef` is now `g_gameClock.timeBase`.
+
+The shared clock calculation and SAVEGAME accounting establish these meanings; the three members no longer need budget-cramped spellings.

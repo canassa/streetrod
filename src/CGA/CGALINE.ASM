@@ -489,7 +489,7 @@ _cgaline_span  ENDP
 
 ; cgaline_fill_below @ 1C11:1FEE (linear 0x1E0FE, 96 bytes)
 ; Fill whole screen lines with a 2-bit pattern, from line y1 down to the
-; bottom clip line (g_clipYMax). The colour is turned into a pattern
+; bottom clip line (g_viewClip.yMax). The colour is turned into a pattern
 ; byte via g_cgaDitherOdd; every second line gets the pattern rotated by 2 bits.
 ; cgaline_fill_below(y1, colour)
 
