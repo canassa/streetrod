@@ -2,6 +2,96 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
+enum GasHand {
+    GAS_HAND_EMPTY = 1,
+    GAS_HAND_NOZZLE = 2,
+    GAS_HAND_RAG = 3
+};
+
+enum TimerAction {
+    TIMER_CANCELLED = 0,
+    TIMER_RESUME_ANIM = 1
+};
+
+enum HotKind {
+    HOT_EMPTY = 0,
+    HOT_MENU = 1,
+    HOT_LIST = 2,
+    HOT_LIST_NO_FRAME = 3,
+    HOT_BOX = 4,
+    HOT_TEXT = 5,
+    HOT_CENTER_TEXT = 6,
+    HOT_EDIT_HEADER = 7,
+    HOT_HEADER = 8,
+    HOT_END = 9,
+    HOT_BUTTON = 10,
+    HOT_REGION = 11,
+    HOT_PANEL = 12,
+    HOT_ROW = 13,
+    HOT_DISABLED = 14
+};
+
+enum TireVariant {
+    TIRES_STANDARD = 0,
+    TIRES_BRAND_NAME = 1,
+    TIRES_RACING_SLICKS = 2
+};
+
+enum ManifoldVariant {
+    MANIFOLD_TWO_BARREL = 0,
+    MANIFOLD_FOUR_BARREL = 1,
+    MANIFOLD_DUAL_QUAD = 2,
+    MANIFOLD_TRI_POWER = 3,
+    MANIFOLD_RACING = 4
+};
+
+enum CarburetorVariant {
+    CARB_TWO_BARREL = 0,
+    CARB_FOUR_BARREL = 1,
+    CARB_RACING = 2
+};
+
+enum TransmissionVariant {
+    TRANS_AUTOMATIC = 0,
+    TRANS_THREE_SPEED = 1,
+    TRANS_FOUR_SPEED = 2,
+    TRANS_RACING = 3
+};
+
+enum EngineVariant {
+    ENGINE_V6 = 0,
+    ENGINE_V8_SMALL = 1,
+    ENGINE_V8_LARGE = 2
+};
+
+enum PartCategory {
+    PART_ENGINE = 0,
+    PART_TRANSMISSION = 1,
+    PART_CARBURETOR = 2,
+    PART_MANIFOLD = 3,
+    PART_TIRES = 4
+};
+
+enum AutoSelector {
+    SELECTOR_MANUAL = 0,
+    SELECTOR_NEUTRAL = 1,
+    SELECTOR_DRIVE = 2
+};
+
+
+enum WireState {
+    WIRES_DISCONNECTED = -1,
+    WIRES_ABSENT = 0,
+    WIRES_CONNECTED = 1
+};
+
+
+enum RaceType {
+    RACE_DRAG = 0,
+    RACE_ROAD = 1
+};
+
+
 struct Mouse {
     int dx;
     int dy;
@@ -289,7 +379,7 @@ struct Dev {
 };
 
 struct Hot {
-    int kind;
+    enum HotKind kind;
     int palIndex;
     int textOffset;
     int f6;
@@ -355,7 +445,7 @@ struct Link {
     int prv;
     long deadline;
     int priority;
-    int action;
+    enum TimerAction action;
     int argument;
     char pad[4];
 };
@@ -371,7 +461,7 @@ struct Dlg {
     int bodyMods;
     struct Bitmap far *bm1;
     struct Bitmap far *bm2;
-    int f0c;
+    enum GasHand f0c;
     int fillsLeft;
     int f10;
     int f12;
@@ -431,7 +521,7 @@ struct Eng {
     int shiftRpm;
     int automatic;
     int autoShiftRpm;
-    int autoSelector;
+    enum AutoSelector autoSelector;
     int f26;
     int f28;
     int f2a;
@@ -564,6 +654,14 @@ struct Pages {
 
 /* mouse cursor state at DS:7aec (cu_init sets it up, cu_ctl/cu_draw move it). The four
    rectangle members compare as nested members (cu_draw), which plain globals don't reproduce. */
+enum CursorDrawState {
+    CURSOR_ERASE_BUFFERED = -2,
+    CURSOR_ERASE_NOW = -1,
+    CURSOR_HIDDEN = 0,
+    CURSOR_DRAWN = 1,
+    CURSOR_DRAW_BUFFERED = 2
+};
+
 struct Cursor {
     struct Bitmap far *save;    /* background under the cursor */
     struct Clip clip;           /* last drawn strip; memset as 12 bytes */
@@ -634,7 +732,7 @@ struct State7EAA {
     struct Node *freeParts;
     int partCount;
     int adIndex;
-    int raceType;
+    enum RaceType raceType;
 };
 
 /* DS:8272..8290: one COMMON block in the original (folded from 11 placeholder

@@ -118,7 +118,7 @@ int av_run(void)
                 cntz++;
                 row7++;
                 row7->y1 = y - 2;
-                row7->kind = 0xb;
+                row7->kind = HOT_REGION;
                 item = *next++;
                 row7->f6 = item >= 0xcd8 ? 0 : i;
                 g_videoOps.drawText(r_vid.back, 0x44, y, str = g_desc + item);
@@ -148,7 +148,7 @@ int av_run(void)
                 dr_hline(r_vid.back, 0x44, y + 1, 0xb8);
             row7++;
             while (row7->f6 >= 0) {
-                row7->kind = 0xe;
+                row7->kind = HOT_DISABLED;
                 row7++;
             }
             g_adRedraw = 0;

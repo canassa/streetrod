@@ -35,7 +35,7 @@ int g_carbBoltOff[10] = {10, -1, 21, -1, 11, -1, 29, -1, 11, -1};   /* DS:076A *
 char g_partSlotMap[14] = {29, 0, -1, -1, 2, 2, 2, 2, 3, 4, 2, 3, 2, 3};   /* DS:077E */
 char g_carbPosBase[6] = {5, 6, 7, 10, 12, 0};   /* DS:078C */
 struct Bitmap far *g_boltOverlay = 0;   /* DS:0792 */
-struct Hot g_boltHot = {11, 0, 0, 1, 0, 0, 0, 0, 0};   /* DS:0796 */
+struct Hot g_boltHot = {HOT_REGION, 0, 0, 1, 0, 0, 0, 0, 0};   /* DS:0796 */
 
 /* gx_trans_bolt @ 0F38:3074 (linear 0x123F4, 305 bytes)
 
@@ -696,7 +696,7 @@ void gx_build_hots(int *xs, int *ys)
         insert_hot(g_engineHots, &g_boltHot, num);
         num++;
     }
-    g_engineHots[num].kind = 9;
+    g_engineHots[num].kind = HOT_END;
     g_slotSelec.slot = rx;
     g_slotSelec.subslot = rh;
     sy_hover_reset();

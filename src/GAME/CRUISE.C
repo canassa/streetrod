@@ -14,7 +14,7 @@
 #include "VIDEO.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-int g_phaseDriveRunState;
+enum DrivePhase g_phaseDriveRunState;
 
 char g_savedPal12 = -1;   /* DS:51AC */
 char g_savedPal3 = -1;   /* DS:51AD */
@@ -34,7 +34,7 @@ void cr_go(void)
             cu_ctl(CURSOR_HIDE_NOW);
             g_autoTrans = !g_parts[a_7eaap.currentCar->transmission->idx].variant;
             ra_reset_eng(&g_driveEng);
-            g_phaseDriveRunState = 0;
+            g_phaseDriveRunState = DRIVE_START;
             bw8aca = 0;
             cr_drive();
         }
@@ -48,7 +48,7 @@ void cr_rival_paint(int mode)
     char a, b;
 
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) {
-        if (mode == -1) {
+        if (mode == RIVAL_PAINT_RESTORE) {
             a = g_savedPal12;
             b = g_savedPal3;
             g_savedPal12 = g_savedPal3 = -1;

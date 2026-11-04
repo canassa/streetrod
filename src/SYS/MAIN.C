@@ -26,11 +26,11 @@
 
 static void near dos_print(char *s);
 static int near is_vga(void);
-static int near show_video_menu(int mode);
+static int near show_video_menu(enum VideoChoice mode);
 static int near cpu_speed(void);
-static int near choose_video(int mode);
-static void near init_screens(int mode);
-static void near set_video_mode(int mode);
+static int near choose_video(enum VideoChoice mode);
+static void near init_screens(enum VideoChoice mode);
+static void near set_video_mode(enum VideoChoice mode);
 static void near check_slow_cpu(void);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
@@ -69,7 +69,7 @@ int g_vga = 0;   /* DS:0254 */
 
 /* show_video_menu @ 0000:0082 (linear 0x00082, 265 bytes) */
 
-static int near show_video_menu(int mode)
+static int near show_video_menu(enum VideoChoice mode)
 {
     union REGS r;
     char rec[84];
@@ -143,7 +143,7 @@ int g_useMouse = 1;   /* DS:0262 */
 
 /* choose_video @ 0000:0226 (linear 0x00226, 240 bytes) */
 
-static int near choose_video(int mode)
+static int near choose_video(enum VideoChoice mode)
 {
     int herc;
     int pick;
@@ -157,7 +157,7 @@ static int near choose_video(int mode)
         herc = 1;
     }
     if (g_egaCard)
-        mode = g_egaMemory == 3 ? VIDEO_CHOICE_EGA : 6;
+        mode = g_egaMemory == 3 ? VIDEO_CHOICE_EGA : VIDEO_CHOICE_CGA_ON_EGA;
     else
         mode = VIDEO_CHOICE_CGA;
     if (herc)
@@ -171,7 +171,7 @@ static int near choose_video(int mode)
     if (pick)
         mode = pick;
     if (mode == VIDEO_CHOICE_CGA && g_egaCard)
-        return 6;
+        return VIDEO_CHOICE_CGA_ON_EGA;
     if (mode == VIDEO_CHOICE_VGA) {
         g_vga = 1;
         return VIDEO_CHOICE_EGA;
@@ -181,7 +181,7 @@ static int near choose_video(int mode)
 
 /* init_screens @ 0000:0316 (linear 0x00316, 478 bytes) */
 
-static void near init_screens(int mode)
+static void near init_screens(enum VideoChoice mode)
 {
     switch (mode) {
     case VIDEO_CHOICE_VGA:
@@ -210,7 +210,7 @@ static void near init_screens(int mode)
     case VIDEO_CHOICE_CGA:
         g_screens[0].flags = VID_CGA;
         break;
-    case 6:
+    case VIDEO_CHOICE_CGA_ON_EGA:
         g_screens[0].flags = VID_CGA;
         SET_EQUIP_VIDEO(EQUIP_VIDEO_COLOR80);
         break;
@@ -228,7 +228,7 @@ static void near init_screens(int mode)
 
 /* set_video_mode @ 0000:04F4 (linear 0x004F4, 210 bytes) */
 
-static void near set_video_mode(int mode)
+static void near set_video_mode(enum VideoChoice mode)
 {
     int far *p;
 
@@ -251,7 +251,7 @@ static void near set_video_mode(int mode)
         g_hercules = 1;
         break;
     case VIDEO_CHOICE_CGA:
-    case 6:
+    case VIDEO_CHOICE_CGA_ON_EGA:
         mi_set_mode(MODE_CGA_320_200_4);
         mi_set_palette(CGA_PALETTE_CYAN_MAGENTA_WHITE);
         break;
@@ -298,7 +298,7 @@ static void near check_slow_cpu(void)
 
 int g_noUeMem = 0;   /* DS:0280 */
 int g_end = 0;   /* DS:0282 */
-int g_scene = 0;   /* DS:0284 */
+enum Scene g_scene = SCENE_NONE;   /* DS:0284 */
 int g_carAnim = 0;   /* DS:0286 */
 struct Bitmap far *g_spritePic = 0;   /* DS:0288 */
 struct Bitmap far *g_pumpWithNozzle = 0;   /* DS:028C */
@@ -354,7 +354,7 @@ int main(int argc, char **argv)
     d = di_read_index(1);
     cu_init();
     so_init();
-    da_set_view(0);
+    da_set_view(DASH_VIEW_SAVE);
     if (r_vid.mode == VID_CGA && g_egaCard)
         g_bufBackgroundDashPtr = me_new_bitmap(SCREEN_WIDTH, DASH_HEIGHT, 0, -1, 0);
     g_imageBufferPointer = me_alloc(r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY ? 16000 : 18000, 1);

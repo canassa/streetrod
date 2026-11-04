@@ -115,7 +115,7 @@ static void near clear_gas_spots(void)
     g_fuelStationActions.nozzleAvailable = 0;
     g_fuelStationActions.capAvailable = 0;
     for (k = 0; k < 6; k++)
-        g_hots[find_gas_spot(g_gasSpotIds[k])].kind = 14;
+        g_hots[find_gas_spot(g_gasSpotIds[k])].kind = HOT_DISABLED;
 }
 
 /* place_gas_spot @ 0000:B49C (linear 0x0B49C, 66 bytes) */
@@ -126,7 +126,7 @@ static void near place_gas_spot(int id, int x, int y, int w, int h)
     p = &g_hots[find_gas_spot(id)];
     p->x2 = (p->x1 = x) + w - 1;
     p->y2 = (p->y1 = y) + h - 1;
-    p->kind = 11;
+    p->kind = HOT_REGION;
 }
 
 /* spots_idle @ 0000:B4DE (linear 0x0B4DE, 71 bytes) */
@@ -216,7 +216,7 @@ static void near leave_station(struct Dlg *d)
 {
     struct Bitmap far *p;
 
-    if (d->f0c != 1)
+    if (d->f0c != GAS_HAND_EMPTY)
         cu_ctl(1);
     if (d->f12) {
         show_tank_cap(d, 0x472);
@@ -241,7 +241,7 @@ static void near leave_station(struct Dlg *d)
             g_tirePics[g_parts[a_7eaap.currentCar->tires->idx].variant]);
     mn_pop(1);
     ma_clear();
-    g_scene = 1;
+    g_scene = SCENE_GARAGE;
     cr_go();
 }
 
@@ -257,12 +257,12 @@ void ra_gas_station(void)
     int key;
 
     sc_status_text(-1, "\0", 0);
-    g_scene = 3;
+    g_scene = SCENE_GAS_STATION;
     sc_picture(0x442, -1);
     sc_status_label(g_bankrollLabel);
     r_vid.copyToFront = 1;
     (*g_videoOps.show)();
-    dl.f0c = 1;
+    dl.f0c = GAS_HAND_EMPTY;
     cu_ctl(1);
     dl.specIndex = a_7eaap.currentCar->specIndex;
     dl.bodyMods = gm_car_look(a_7eaap.currentCar);
@@ -296,8 +296,8 @@ top:
         while ((key = sy_wait_input(3000)) == 0)
             ;
         switch (key) {
-        case 1000:
-            if (dl.f0c == 3)
+        case KR_TIMEOUT:
+            if (dl.f0c == GAS_HAND_RAG)
                 goto top;
             if (dl.f1a) {
                 dl.fillsLeft--;
@@ -329,25 +329,25 @@ top:
                 if (done)
                     goto fin;
                 dl.f18 = 0;
-                if (dl.f0c == 1) {
+                if (dl.f0c == GAS_HAND_EMPTY) {
                     pu_show(g_pumpNoNozzle, 0x40, 0x64);
-                    cu_ctl(dl.f0c = 2);
+                    cu_ctl(dl.f0c = GAS_HAND_NOZZLE);
                     dl.f14 = 0;
                 }
                 show_tank_cap(&dl, 0x471);
                 dl.f12 = 1;
-                cu_ctl(dl.f0c = 1);
+                cu_ctl(dl.f0c = GAS_HAND_EMPTY);
                 vi_anim_start(2);
                 so_pump(1);
                 dl.f1a = 1;
             }
             g_waitUntil = g_tick + 0x4c;
             break;
-        case 1:
+        case KR_GAS_RAG:
             if (g_fuelStationActions.ragAvailable == 0)
                 break;
-            if (dl.f0c == 1) {
-                cu_ctl(dl.f0c = 3);
+            if (dl.f0c == GAS_HAND_EMPTY) {
+                cu_ctl(dl.f0c = GAS_HAND_RAG);
                 sc_picture_at(0x473, 0x50, 0xaa, -1);
                 mn_pop(1);
                 spots_rag();
@@ -355,17 +355,17 @@ top:
                 mn_push(KM_GAS_STATION);
                 goto top;
             } else {
-                cu_ctl(dl.f0c = 1);
+                cu_ctl(dl.f0c = GAS_HAND_EMPTY);
                 pu_show(label, 0x50, 0xaa);
                 mn_pop(1);
                 spots_idle();
                 goto redraw;
             }
-        case 2:
+        case KR_GAS_PUMP:
             if (g_fuelStationActions.nozzleAvailable == 0)
                 break;
-            if (dl.f0c == 1) {
-                cu_ctl(dl.f0c = 2);
+            if (dl.f0c == GAS_HAND_EMPTY) {
+                cu_ctl(dl.f0c = GAS_HAND_NOZZLE);
                 pu_show(g_pumpNoNozzle, 0x40, 0x64);
                 dl.f14 = 0;
             both:
@@ -376,7 +376,7 @@ top:
                     dl.f18 = 0;
                     goto fin;
                 }
-                cu_ctl(dl.f0c = 1);
+                cu_ctl(dl.f0c = GAS_HAND_EMPTY);
                 pu_show(g_pumpWithNozzle, 0x40, 0x64);
                 dl.f14 = 1;
                 mn_pop(1);
@@ -387,17 +387,17 @@ top:
             g_waitUntil = g_tick + 20;
             dl.f1a = 0;
             break;
-        case 4:
+        case KR_GAS_CAP:
             if (g_fuelStationActions.capAvailable == 0)
                 break;
-            if (dl.f0c == 1) {
+            if (dl.f0c == GAS_HAND_EMPTY) {
                 if (vi_anim_active(2)) {
                     so_pump(0);
                     vi_anim_stop(2);
                 }
                 show_tank_cap(&dl, 0x472);
                 dl.f12 = 0;
-                cu_ctl(dl.f0c = 2);
+                cu_ctl(dl.f0c = GAS_HAND_NOZZLE);
                 if (dl.fillsLeft > 0 && pos <= a_7eaap.money)
                     gm_message(0x18dd);
                 goto both;
@@ -407,7 +407,7 @@ top:
             else {
                 show_tank_cap(&dl, 0x471);
                 dl.f12 = 1;
-                cu_ctl(dl.f0c = 1);
+                cu_ctl(dl.f0c = GAS_HAND_EMPTY);
                 vi_anim_start(2);
                 so_pump(1);
                 mn_pop(1);
@@ -417,12 +417,12 @@ top:
                 dl.f1a = 1;
             }
             break;
-        case 3:
+        case KR_GAS_LEAVE:
             gm_message(0x10f6);
             continue;
-        case 5:
+        case KR_GAS_FRONT_WINDSHIELD:
             break;
-        case 6:
+        case KR_GAS_REAR_WINDSHIELD:
             break;
         }
     }
@@ -440,7 +440,7 @@ static int near replace_tires(void)
         return 0;
     a_7eaap.currentCar->value -= gm_take_part(a_7eaap.currentCar->tires, 0);
     a_7eaap.currentCar->tires = 0;
-    ga_spares(4, tbl, 0, 0);
+    ga_spares(PART_TIRES, tbl, 0, 0);
     if (g_list[0]) {
         ga_install(ga_unlink(tbl[1]), &a_7eaap.currentCar->tires);
     } else {
@@ -615,7 +615,7 @@ static void near blow_engine(int n)
         }
         for (i = 0, q = a_7eaap.currentCar->engineBolts; i < 9; i++)
             *q++ = 0;
-        a_7eaap.currentCar->wireState = 0;
+        a_7eaap.currentCar->wireState = WIRES_ABSENT;
     }
     sy_reset_queues();
     so_noise();
@@ -669,9 +669,9 @@ int near ra_outcome(void)
 
     kind = g_raceWagerTerms.kind;
     v = g_raceWagerTerms.amount;
-    engine = g_driveEng.stopFlags & 4;
-    opt = g_driveEng.stopFlags & 0x10;
-    stop = g_driveEng.stopFlags == 5 || g_driveEng.stopFlags == 0x11 || g_driveEng.stopFlags == 0x15;
+    engine = g_driveEng.stopFlags & STOP_ENGINE;
+    opt = g_driveEng.stopFlags & STOP_TRANSMISSION;
+    stop = g_driveEng.stopFlags == (STOP_LOST | STOP_ENGINE) || g_driveEng.stopFlags == (STOP_LOST | STOP_TRANSMISSION) || g_driveEng.stopFlags == (STOP_LOST | STOP_ENGINE | STOP_TRANSMISSION);
     if (a_7eaap.currentCar->transmission->wear > 9900)
         a_7eaap.currentCar->transmission->wear = 9900;
     if (a_7eaap.currentCar->rack.parts[0]->wear > 9900)
@@ -684,21 +684,21 @@ int near ra_outcome(void)
     g_fireLatch = 0;
     g_buttons = 0;
     if (g_driveEng.automatic)
-        g_driveEng.autoSelector = 1;
+        g_driveEng.autoSelector = SELECTOR_NEUTRAL;
     if (g_failureTire)
-        g_driveEng.stopFlags |= 8;
+        g_driveEng.stopFlags |= STOP_TIRES;
     mn_push(KM_RACE_OUTCOME);
-    i = a_7eaap.raceType == 0 ? 5 : 15;
+    i = a_7eaap.raceType == RACE_DRAG ? 5 : 15;
     if (a_7eaap.currentCar->fuel > i)
         a_7eaap.currentCar->fuel -= i;
     else
         a_7eaap.currentCar->fuel = 0;
     (*g_videoOps.show)();
-    if (g_oppEngState.stopFlags & 1) {
+    if (g_oppEngState.stopFlags & STOP_LOST) {
         g_resultWin = 1;
         show_race_stats();
         cu_ctl(CURSOR_SHOW_NOW);
-        gm_message(g_isKingState == 0 ? (i = g_winMsgs[kind]) : a_7eaap.raceType == 0 ? 0x14bd : 0x14d6);
+        gm_message(g_isKingState == 0 ? (i = g_winMsgs[kind]) : a_7eaap.raceType == RACE_DRAG ? 0x14bd : 0x14d6);
         sc_add_money(v);
         if (kind == BET_CAR) {
             found = gm_make_car(bn7648, g_oppSpecPointer->price, 0);
@@ -733,16 +733,16 @@ int near ra_outcome(void)
         }
 done:
         mn_pop(1);
-        if (g_driveEng.stopFlags & 8)
+        if (g_driveEng.stopFlags & STOP_TIRES)
             if ((i = replace_tires()) != 0)
                 goto ret2;
         if (kind == BET_CAR)
             return 1;
         return 3;
-    } else if (g_driveEng.stopFlags & 0x40) {
+    } else if (g_driveEng.stopFlags & STOP_POLICE) {
         so_siren(0);
         show_ticket();
-        i = (g_driveEng.stopFlags & 8) ? replace_tires() : 0;
+        i = (g_driveEng.stopFlags & STOP_TIRES) ? replace_tires() : 0;
         if (g_driveEng.speed > 0x50)
             i += 0x4b;
         else if (g_driveEng.speed > 0x32)
@@ -769,7 +769,7 @@ pay:
         g_waitUntil = cost;
         mn_pop(1);
         sc_status_text(-1, "", SCREEN_WIDTH - g_statusLine.messageX);
-    } else if (g_driveEng.stopFlags == 0x81) {
+    } else if (g_driveEng.stopFlags == (STOP_LOST | STOP_JUMP_START)) {
         cu_ctl(CURSOR_SHOW_NOW);
         gm_message(0xecb2);
     } else {
@@ -778,11 +778,11 @@ pay:
             a_7eaap.currentCar = 0;
         }
         sc_add_money(-v);
-        if (g_driveEng.stopFlags == 1) {
+        if (g_driveEng.stopFlags == STOP_LOST) {
             show_race_stats();
             cu_ctl(CURSOR_SHOW_NOW);
             i = kind == BET_CAR ? 0x143a : 0x1427;
-            gm_message(g_isKingState == 0 ? i : a_7eaap.raceType == 0 ? 0x1450 : 0x146c);
+            gm_message(g_isKingState == 0 ? i : a_7eaap.raceType == RACE_DRAG ? 0x1450 : 0x146c);
             mn_pop(1);
             if (kind != BET_CAR)
                 return 3;
@@ -802,7 +802,7 @@ finishstop:
         } else {
             show_crash();
             if (kind == BET_CAR) {
-                if (g_driveEng.stopFlags & 8) {
+                if (g_driveEng.stopFlags & STOP_TIRES) {
                     gm_message(0x16f6);
                     replace_tires();
                 } else
@@ -828,7 +828,7 @@ finishstop:
                     i = 1;
                     v = rn_int(0x14) + 100;
                 } else {
-                    if (g_driveEng.stopFlags & 8) {
+                    if (g_driveEng.stopFlags & STOP_TIRES) {
                         gm_message(0x1590);
                         all = replace_tires();
                         goto fin;
@@ -842,19 +842,19 @@ finishstop:
                 ptr[2] = ' ';
                 itoa(v, ptr, 10);
                 ptr[strlen(ptr)] = ' ';
-                all = g_driveEng.stopFlags & 8;
+                all = g_driveEng.stopFlags & STOP_TIRES;
                 if (all)
                     strcpy(g_msgPlusTires, "Plus tires !");
                 else
                     g_msgPlusTires[0] = 0;
                 sel = i ? KM_GET_RUNNING : KM_REPAIR;
                 if ((long)v > a_7eaap.money) {
-                    g_hotRepair[0].kind = g_hotRepair[7].kind = 0xe;
+                    g_hotRepair[0].kind = g_hotRepair[7].kind = HOT_DISABLED;
                     g_keyMaps[sel][0].val = KV_REPAIR_JUNK;
                     g_keyMaps[sel][1].key = SC_ESC;
                     g_keyMaps[sel][1].val = KV_REPAIR_JUNK;
                 } else {
-                    g_hotRepair[0].kind = g_hotRepair[7].kind = 0xa;
+                    g_hotRepair[0].kind = g_hotRepair[7].kind = HOT_BUTTON;
                     g_keyMaps[sel][0].val = KV_REPAIR_FIX;
                     g_keyMaps[sel][1].key = SC_F;
                     g_keyMaps[sel][1].val = KV_REPAIR_FIX;
@@ -890,7 +890,7 @@ fin:
 
 struct State70C0 al70c0x;
 int g_idxAtCop;
-int a_7f88d;
+enum CopPhase a_7f88d;
 int bz8630z;
 
 /* ra_reset_eng @ 0000:CDAF (linear 0x0CDAF, 429 bytes) */
@@ -912,7 +912,7 @@ void near ra_reset_eng(struct Eng *p)
     p->stopFlags = p->fbe = p->elapsedTicks = 0;
     if (p->automatic) {
         p->gear[2].bands[1].maxRpm = p->gear[2].bands[2].minRpm = p->shiftRpm;
-        p->autoSelector = 1;
+        p->autoSelector = SELECTOR_NEUTRAL;
     }
     p->f28 = p->f26 = -1;
     p->rpm = 0x5dc;
@@ -924,7 +924,7 @@ void near ra_reset_eng(struct Eng *p)
     g_05d6 = 0;
     g_05d8 = g_05da = 0;
     bz8630z = -1;
-    g_finishLineIndex = a_7eaap.raceType == 0 ? 0x17c : 0x3fc;
+    g_finishLineIndex = a_7eaap.raceType == RACE_DRAG ? 0x17c : 0x3fc;
     car = a_7eaap.currentCar->tires;
     p->tireSlip = g_tireSlip[g_parts[car->idx].variant][car->wear / 2000];
     if (car->wear < 8000)
@@ -991,12 +991,12 @@ void near ra_run(void)
     sy_reset_queues();
     ra_reset_eng(&g_driveEng);
     init_rival_eng();
-    if (a_7eaap.raceType == 1 && g_isKingState == 0) {
+    if (a_7eaap.raceType == RACE_ROAD && g_isKingState == 0) {
         if (a_7f88d = !rn_int(4))
             g_idxAtCop = rn_int(255) + 0x1fe;
     } else
-        a_7f88d = 0;
-    g_phaseDriveRunState = 0;
+        a_7f88d = COP_ABSENT;
+    g_phaseDriveRunState = DRIVE_START;
     bw8aca = 1;
     cr_drive();
     sy_drive_stop();
@@ -1013,7 +1013,7 @@ void near ra_run(void)
                 a_7eaap.currentCar->timing = rn_int(8) - 4;
         }
         slot = a_7eaap.currentCar->tires;
-        slot->wear += (g_parts[slot->idx].variant == 0 ? (a_7eaap.raceType == 1 ? 700 : 300) : (a_7eaap.raceType == 1 ? 400 : 200)) + rn_int(300);
+        slot->wear += (g_parts[slot->idx].variant == TRANS_AUTOMATIC ? (a_7eaap.raceType == RACE_ROAD ? 700 : 300) : (a_7eaap.raceType == RACE_ROAD ? 400 : 200)) + rn_int(300);
         if (slot->wear > 10000)
             slot->wear = 10000;
     }
@@ -1077,7 +1077,7 @@ static void near rival_accelerate(void)
         }
         g_rivalCurveBrake = 0;
         d = ar7e8av.roadIndex - ao7d2ev.roadIndex;
-        if (d > 12 && (a_7eaap.raceType != 1 || g_isKingState == 0)) {
+        if (d > 12 && (a_7eaap.raceType != RACE_ROAD || g_isKingState == 0)) {
             if (g_driveEng.speed >= 0x61)
                 vl = g_rivalPace.fastSpeed;
             else if (g_isKingState)
@@ -1095,7 +1095,7 @@ static void near rival_accelerate(void)
                 vl = g_rivalPace.slowSpeed;
             goto chk;
         }
-        if (a_7f88d >= 2 && g_driveEng.speed > 50 && g_oppEngState.speed > g_driveEng.speed + 32)
+        if (a_7f88d >= COP_APPROACHING && g_driveEng.speed > 50 && g_oppEngState.speed > g_driveEng.speed + 32)
             fit_gear(g_driveEng.speed + 32, &g_oppEngState);
         else {
             g_oppEngState.rpm += g_oppEngState.accelStep;
@@ -1109,7 +1109,7 @@ static void near rival_accelerate(void)
             if (g_oppEngState.gearIndex < g_oppEngState.gearCount &&
                 ((g_oppEngState.autoSelector && g_oppEngState.rpm >= g_oppEngState.autoShiftRpm) || g_oppEngState.rpm >= g_shiftPoint)) {
                 g_oppEngState.gearIndex++;
-                if (g_oppEngState.autoSelector == 0)
+                if (g_oppEngState.autoSelector == SELECTOR_MANUAL)
                     g_shiftPoint = g_oppEngState.gearIndex < g_oppEngState.gearCount ? g_oppEngState.shiftRpm - 100 * g_shiftPenalty
                            : bu8acc < 4 && r_vid.mode != VID_TANDY ? 0x14b4 : 0x1518;
                 g_oppEngState.rpmPerSpeed = g_oppEngState.f34[g_oppEngState.gearIndex];
@@ -1207,9 +1207,9 @@ static void near move_player(void)
         rd_advance();
     if (ao7d2ev.roadIndex >= g_finishLineIndex && g_statsDone && g_driveEng.speed <= 0) {
         if (g_finishAheadPlayerState)
-            g_oppEngState.stopFlags |= 1;
+            g_oppEngState.stopFlags |= STOP_LOST;
         else
-            g_driveEng.stopFlags |= 1;
+            g_driveEng.stopFlags |= STOP_LOST;
         sy_stop_drive();
     }
 }
@@ -1233,9 +1233,9 @@ static void near move_rival(void)
     }
     if (ar7e8av.roadIndex >= g_finishLineIndex && g_statsDone && g_driveEng.speed <= 0) {
         if (g_finishAheadPlayerState == 0)
-            g_driveEng.stopFlags |= 1;
+            g_driveEng.stopFlags |= STOP_LOST;
         else
-            g_oppEngState.stopFlags |= 1;
+            g_oppEngState.stopFlags |= STOP_LOST;
         sy_stop_drive();
         return;
     }
@@ -1376,24 +1376,24 @@ void ra_tick(void)
         g_squealOn = 0;
     rival_accelerate();
     switch (a_7f88d) {
-    case 1:
+    case COP_WAITING:
         if (ao7d2ev.roadIndex >= g_idxAtCop) {
             if (ar7e8av.roadIndex + 5 <= ao7d2ev.roadIndex) {
                 a_7f88d++;
                 cop_appears();
             } else
-                a_7f88d = 0;
+                a_7f88d = COP_ABSENT;
         }
         break;
-    case 2:
+    case COP_APPROACHING:
         if (ar7e8av.roadIndex + 15 >= ao7d2ev.roadIndex) {
             a_7f88d++;
             so_siren(1);
         }
         break;
-    case 3:
+    case COP_PURSUING:
         if (ar7e8av.roadIndex - 2 > ao7d2ev.roadIndex) {
-            g_driveEng.stopFlags |= 0x41;
+            g_driveEng.stopFlags |= (STOP_LOST | STOP_POLICE);
             sy_stop_drive();
             return;
         }
@@ -1408,9 +1408,9 @@ void ra_tick(void)
     if (ao7d2ev.roadIndex >= g_finishLineIndex || ar7e8av.roadIndex >= g_finishLineIndex)
         ra_finish_stats();
     if (g_driveEng.stopFlags || g_oppEngState.stopFlags) {
-        if (a_7f88d >= 2) {
+        if (a_7f88d >= COP_APPROACHING) {
             if (g_driveEng.stopFlags)
-                g_driveEng.stopFlags |= 0x41;
+                g_driveEng.stopFlags |= (STOP_LOST | STOP_POLICE);
             so_siren(0);
         }
         sy_stop_drive();
@@ -1420,10 +1420,10 @@ void ra_tick(void)
         return;
     if (g_demo)
         return;
-    if ((a_7eaap.raceType == 0 ? 0x17c : 0x3fc) <= ao7d2ev.roadIndex)
+    if ((a_7eaap.raceType == RACE_DRAG ? 0x17c : 0x3fc) <= ao7d2ev.roadIndex)
         return;
-    if (by72f2 && a_7f88d <= 1) {
-        g_driveEng.stopFlags |= 3;
+    if (by72f2 && a_7f88d <= COP_WAITING) {
+        g_driveEng.stopFlags |= (STOP_LOST | STOP_COLLISION);
         sy_stop_drive();
         return;
     }
@@ -1440,7 +1440,7 @@ void ra_tick(void)
             }
             return;
         }
-        if (g_ramAllowed && g_contactFrames > 3 && a_7f88d < 2) {
+        if (g_ramAllowed && g_contactFrames > 3 && a_7f88d < COP_APPROACHING) {
             if (rn_int((g_selectedRacerPointer->f2 >> 2) + 2) == 0) {
                 so_bump();
                 so_bump();

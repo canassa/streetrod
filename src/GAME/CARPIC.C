@@ -235,7 +235,7 @@ void cp_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, struc
         break;
     default:
         *pb = ar_bm(start->width, y2, 0, ARENA_LOW_STACK);
-        if (g_scene == 6)
+        if (g_scene == SCENE_JAIL)
             bm_copy(start, *pb, 1);
         break;
     }
@@ -479,12 +479,12 @@ again:
         }
         if (kind == CAR_PULL_IN) {
             ma_clear();
-            if (g_scene == 3) {
+            if (g_scene == SCENE_GAS_STATION) {
                 di_pic_size(0x449, &w2, &h2, &x2);
                 g_pumpWithNozzle = ar_bm(w2, h2, 0, ARENA_LOW_BASE);
                 g_pumpNoNozzle = ar_bm(w2, h2, 0, ARENA_LOW_BASE);
             }
-            if (g_scene == 2 || g_scene == 6)
+            if (g_scene == SCENE_BOBS || g_scene == SCENE_JAIL)
                 ch_save_bg();
         } else
             ma_release();
@@ -591,7 +591,7 @@ again:
         g_carAnim = 0;
         g_lastCarRect = spr3->page->rect;
     }
-    if (g_scene == 3 && kind == CAR_PULL_IN) {
+    if (g_scene == SCENE_GAS_STATION && kind == CAR_PULL_IN) {
         scratch = ar_bm(0x18, 7, 0, ARENA_HIGH_STACK);
         blt.w = 0x10;
         blt.h = scratch->height;
@@ -607,7 +607,7 @@ again:
         blt.sx = blt.sy = 0;
         (*g_videoOps.copy)(scratch, bms6[0], &blt, 1);
     }
-    da_set_view(2);
+    da_set_view(DASH_VIEW_SHOW);
     if (r_vid.mode != VID_EGA)
         (*g_videoOps.copyPage)(r_vid.front->bits.p, r_vid.back->bits.p);
     if (g_carPassBy == 1) {
@@ -646,7 +646,7 @@ void cp_patch_bg(struct Bitmap far *dst, int p1, int p2, int p3, int p4, int p5,
         r.dy = lo7 - base7;
         (*g_videoOps.copy)(dst, g_backdrop, &r, 1);
     }
-    if (g_scene == 6) {
+    if (g_scene == SCENE_JAIL) {
         r.h = g_backdrop->height;
         r.sy = p7 - (BACKDROP_ROWS - 1);
         r.dy = 0;

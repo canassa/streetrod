@@ -295,7 +295,7 @@ static void near scan_save_slots(int create)
 
 /* sg_load @ 0000:5B4A (linear 0x05B4A, 873 bytes) */
 
-int near sg_load(void)
+enum SaveLoadResult near sg_load(void)
 {
     int fd7;
     char name[20];
@@ -320,12 +320,12 @@ int near sg_load(void)
     cu_ctl(CURSOR_SHOW_NOW);
     if (g_list[0] == 0) {
         mn_wait(KM_NO_SAVED_GAMES);
-        return -1;
+        return LOAD_CANCELLED;
     }
     r = mn_modal_list(KM_LOAD, 1, 0, g_list, 0, 0);
     switch (r) {
     case KR_CANCEL:
-        return -1;
+        return LOAD_CANCELLED;
     case KR_ACCEPT:
         r = mn_sel();
         break;
@@ -362,7 +362,7 @@ int near sg_load(void)
             init_new_game();
         }
         cu_ctl(CURSOR_SHOW);
-        return -666;
+        return LOAD_ERROR;
     }
     _dos_close(fd7);
     if (a_7eaap.currentCar)
@@ -370,7 +370,7 @@ int near sg_load(void)
     rd_build_layout(g_roadLayout);
     g_gameClock.timeBase = g_gameClock.biosTicks - delta;
     cu_ctl(CURSOR_SHOW_NOW);
-    return 0;
+    return LOAD_OK;
 }
 
 /* is_blank @ 0000:5EB3 (linear 0x05EB3, 55 bytes)

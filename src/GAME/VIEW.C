@@ -19,6 +19,13 @@
 #include "SLOTS.H"
 #include "SYS.H"
 
+enum QuadShape {
+    QUAD_LEFT_ENCLOSES_RIGHT = 2,
+    QUAD_RIGHT_ENCLOSES_LEFT = 3,
+    QUAD_LEFT_HIGHER = 4,
+    QUAD_RIGHT_HIGHER = 5
+};
+
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6e04aay;                      /* DS:6E04 */
 static int g_roadRowLimit;                      /* DS:6E06 */
@@ -404,7 +411,7 @@ static int near edge_step(int x1, int y1, int x2, int y2)
 
 static void near fill_quad(int col, int a, int b, int c, int d, int e, int f)
 {
-    int mode;
+    enum QuadShape mode;
     int dxa;
     int dxb;
     int racc6;
@@ -422,19 +429,19 @@ static void near fill_quad(int col, int a, int b, int c, int d, int e, int f)
         ymin2 = f > e ? e : f;
         ymax = c < d ? d : c;
         if (f < e && c > d) {
-            mode = 2;
+            mode = QUAD_LEFT_ENCLOSES_RIGHT;
             xlk = a;
             racc6 = a << 4;
         } else if (e < f && d > c) {
-            mode = 3;
+            mode = QUAD_RIGHT_ENCLOSES_LEFT;
             xr5 = b;
             xlk = b << 4;
         } else {
             if (f <= e && c <= d) {
-                mode = 4;
+                mode = QUAD_LEFT_HIGHER;
                 racc6 = a << 4;
             } else {
-                mode = 5;
+                mode = QUAD_RIGHT_HIGHER;
                 racc6 = b << 4;
             }
             laccl = racc6;
@@ -445,7 +452,7 @@ static void near fill_quad(int col, int a, int b, int c, int d, int e, int f)
         goto test;
     loop:
         switch (mode) {
-        case 2:
+        case QUAD_LEFT_ENCLOSES_RIGHT:
             if (y6 < e)
                 xr5 = (racc6 += dxa) >> 4;
             else if (y6 <= d)
@@ -453,7 +460,7 @@ static void near fill_quad(int col, int a, int b, int c, int d, int e, int f)
             else
                 xr5 = (racc6 += dxb) >> 4;
             break;
-        case 3:
+        case QUAD_RIGHT_ENCLOSES_LEFT:
             if (y6 < f)
                 xlk = (laccl += dxa) >> 4;
             else if (y6 <= c)
@@ -461,7 +468,7 @@ static void near fill_quad(int col, int a, int b, int c, int d, int e, int f)
             else
                 xlk = (laccl += dxb) >> 4;
             break;
-        case 4:
+        case QUAD_LEFT_HIGHER:
             if (y6 <= c)
                 xlk = a;
             else
@@ -471,7 +478,7 @@ static void near fill_quad(int col, int a, int b, int c, int d, int e, int f)
             else
                 xr5 = b;
             break;
-        case 5:
+        case QUAD_RIGHT_HIGHER:
             if (y6 < f)
                 xlk = (laccl += dxa) >> 4;
             else

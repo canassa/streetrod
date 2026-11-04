@@ -434,15 +434,15 @@ int sy_wait_input(int ticks)
             vi_palette_reg(8, g_protectPal[8]);
         }
         res = kg_key();
-        if (res > 0) {
+        if (res > KEY_NONE) {
             if (g_input.any) {
                 g_input.key = res;
-                return 0x3eb;
+                return KR_ANY_INPUT;
             }
-            if (res == 0x7f)
+            if (res == ASCII_DELETE)
                 sy_exit();
-        } else if (res < 0) {
-            res += 0x32;
+        } else if (res < KEY_NONE) {
+            res += 0x100 - KEY_VALUE_BASE;
             if (res == KR_MUSIC) {
                 if (g_voiceNum == 1) {
                     if (g_musicOn) {
@@ -459,11 +459,11 @@ int sy_wait_input(int ticks)
         if (g_timerQueue.nextDeadline <= g_tick) {
             p = &g_timers[i = g_timerQueue.earliest];
             switch (p->action) {
-            case 0:
+            case TIMER_CANCELLED:
             default:
                 sy_timer_remove(i);
                 break;
-            case 1:
+            case TIMER_RESUME_ANIM:
                 res = p->argument;
                 sy_timer_remove(i);
                 vi_anim_resume(res);
@@ -486,7 +486,7 @@ int sy_wait_input(int ticks)
             _enable();
             if (g_clickEnds) {
                 g_input.key = 0;
-                return 0x3eb;
+                return KR_ANY_INPUT;
             }
             if (g_menuLevel) {
                 if (i = (x >= g_boxSpotHitData.x1 && x < g_boxSpotHitData.x2 && y >= g_boxSpotHitData.y1 && y < g_boxSpotHitData.y2)
@@ -495,11 +495,11 @@ int sy_wait_input(int ticks)
             }
             if (g_input.any) {
                 g_input.key = 0;
-                return 0x3eb;
+                return KR_ANY_INPUT;
             }
         } else if (flag && g_waitUntil < g_tick) {
             g_waitUntil = 0L;
-            return 0x3e8;
+            return KR_TIMEOUT;
         }
         if (g_cVis > 0 && g_drawnCursor.dirty) {
             _disable();
@@ -610,7 +610,7 @@ void sy_timer_anim(int fc, int delay)
     int n;
 
     n = sy_timer_add(delay, g_sysTimerPriorities.animation);
-    g_timers[n].action = 1;
+    g_timers[n].action = TIMER_RESUME_ANIM;
     g_timers[n].argument = fc;
 }
 
@@ -623,7 +623,7 @@ void sy_timer_cancel(int n)
 
     for (i = g_timerQueue.earliest; i >= 0; i = g_timers[i].nxt)
         if ((p = g_timers + i)->action == 1 && p->argument == n)
-            p->action = 0;
+            p->action = TIMER_CANCELLED;
 }
 
 /* sy_music_start @ 0000:1A05 (linear 0x01A05, 119 bytes) */
@@ -1175,7 +1175,7 @@ void interrupt far sy_drive_isr(void)
                 if (!(g_gameClock.biosTicks & (!a_7eaap.raceType ? 0xf : 0xf)))
                     a_7eaap.currentCar->rack.parts[0]->wear++;
                 if ((i = a_7eaap.currentCar->rack.parts[0]->wear) >= 9900) {
-                    g_driveEng.stopFlags |= 5;
+                    g_driveEng.stopFlags |= (STOP_LOST | STOP_ENGINE);
                     sy_stop_drive();
                 }
                 if (flag) {
@@ -1185,7 +1185,7 @@ void interrupt far sy_drive_isr(void)
                     if (g_driveEng.rpm > 5700) {
                         g_driveEng.rpm = 5700;
                         if (15 - i / 1000 < ++g_overRev) {
-                            g_driveEng.stopFlags |= 5;
+                            g_driveEng.stopFlags |= (STOP_LOST | STOP_ENGINE);
                             sy_stop_drive();
                         }
                     }
@@ -1196,7 +1196,7 @@ void interrupt far sy_drive_isr(void)
                     g_overRev = 0;
                 top = g_driveEng.speed < 5 && !flag && g_driveEng.gearIndex > 0;
                 if (c || top ||
-                    (g_driveEng.automatic && g_driveEng.autoSelector > 1 &&
+                    (g_driveEng.automatic && g_driveEng.autoSelector > SELECTOR_NEUTRAL &&
                      ((flag && g_driveEng.rpm > g_driveEng.autoShiftRpm && g_driveEng.gearIndex < g_driveEng.gearCount) ||
                       (!flag && g_driveEng.gearIndex > 1 && !g_driveEng.rpmBand)))) {
                     a_7eaap.currentCar->transmission->wear += g_driveEng.rpm > 5000 ? 15 : 3;
@@ -1205,7 +1205,7 @@ void interrupt far sy_drive_isr(void)
                         if (i >= 9900 ||
                             (g_driveEng.automatic == 0 && flag && g_driveEng.rpm > 5000 &&
                              i / 100 + 100 > rn_int(3277))) {
-                            g_driveEng.stopFlags |= 0x11;
+                            g_driveEng.stopFlags |= (STOP_LOST | STOP_TRANSMISSION);
                             sy_stop_drive();
                         }
                     }
@@ -1216,10 +1216,10 @@ void interrupt far sy_drive_isr(void)
                         g_driveEng.gearIndex++;
                     if (g_driveEng.automatic) {
                         if (c)
-                            g_driveEng.autoSelector = g_driveEng.autoSelector == 1 ? 2 : 1;
+                            g_driveEng.autoSelector = g_driveEng.autoSelector == SELECTOR_NEUTRAL ? SELECTOR_DRIVE : SELECTOR_NEUTRAL;
                         if (top || g_driveEng.gearIndex == 0)
-                            g_driveEng.autoSelector = 1;
-                        if (g_driveEng.autoSelector == 1)
+                            g_driveEng.autoSelector = SELECTOR_NEUTRAL;
+                        if (g_driveEng.autoSelector == SELECTOR_NEUTRAL)
                             g_driveEng.gearIndex = 0;
                     } else if (top)
                         g_driveEng.gearIndex = 0;
@@ -1263,7 +1263,7 @@ void interrupt far sy_drive_isr(void)
                     g_driveEng.steering += g_driveEng.steering > 0 ? -((g_driveEng.steering >> 2) + 1)
                                                : ((-g_driveEng.steering >> 2) + 1);
                 if (bw8aca && rd_check_crash()) {
-                    g_driveEng.stopFlags |= 0x21;
+                    g_driveEng.stopFlags |= (STOP_LOST | STOP_ROADSIDE_CRASH);
                     sy_stop_drive();
                 }
                 g_driveBusy = 0;
