@@ -1092,3 +1092,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - A Codex agent surveyed 71 records and named 155 struct members from their uses (e.g. `Colors` = `text`, `textBg`, `fill`, `line`, `frame`, split from `char c[5]` because every access used a constant index; the hot-spot record's `kind`, `palIndex`, `textOffset`, `next`); 256 members keep placeholders. An independent review confirmed 143 and corrected the rest: six "paint" names are stickers (the game's "Stickers - $5" overlays, distinct from "New paint job - $20"), as was the older `Look.shade`; `modelKind` is a 0..8 `rank`; `gallonsLeft` counts 3-gallon `fillsLeft`; `Video.scratch` holds the garage hood picture (`hoodBg`). Comments naming old members were updated.
 - Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
+
+## 2026-11-04 14:42 CET: Name critical-error values
+
+### What I did
+- Named the int 24h device-error flag, retry permission, and write-protect/not-ready/paper-out codes in PC.H, with matching PC.INC equates. Reused MSC 5.1 DOS.H's _HARDERR_RETRY and _HARDERR_ABORT in sys_crit_error. No symbol or member renames and no source comments added.
+- Verified 572/572 function matches, a clean byte-identical packed build, clean header and DGROUP checks, 53 passing unit tests, and a byte-identical native DOSBox MAKE build.
+
+### What I learned
+- toolchain/msc51/INCLUDE/DOS.H:146-152 supplies the resume actions; BIN/README.DOC and BIN/CL.HLP contain no _harderr documentation (CL.HLP covers compiler flags).
+- Microsoft's MS-DOS 3.3 Programmer's Reference section 1.11.2 (https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/) confirms AH bits 7/4 and DI codes 0/2/9. CRIT_DEVICE_ERROR is broader than character-device-only: AH bit 7 can also indicate a bad in-memory FAT. The handler's messages and retry/exit branches agree with these meanings.
+- Tree-wide searches found no other uses with critical-error semantics. PC.H's numeric constants require matching PC.INC equates, enforced by test_shared_pc_constants.
