@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
-from sr import db, rename
+from sr import rename, source
 
 
 class RenameTests(unittest.TestCase):
@@ -25,9 +25,7 @@ class RenameTests(unittest.TestCase):
                          [('dos_print', 'a'), ('FAME.C', 'B.C')])
 
     def test_refuses_taken_and_bad_names(self):
-        con = db.connect()
-        used = con.execute("SELECT name FROM functions WHERE name = 'main'").fetchone()[0]
-        con.close()
+        used = next(r['name'] for r in source.functions() if r['name'] == 'main')
         for pairs in ([('dos_print', used)], [('dos_print', 'MAIN')], [('dos_print', '1x')],
                       [('FAME.C', 'protect.c')], [('FAME.C', 'PROTECT.ASM')], [('no_such_name', 'x_y')]):
             with self.assertRaises(SystemExit, msg=pairs):
@@ -35,9 +33,7 @@ class RenameTests(unittest.TestCase):
 
     def test_fit_windows(self):
         self.assertEqual(rename.static_key('g_score'), 34)
-        con = db.connect()
-        common = [r[0] for r in con.execute('SELECT name FROM globals WHERE off >= 0x6E60 AND off < 0x8F02 ORDER BY off')]
-        con.close()
+        common = [g['name'] for off, g in source.globals_().items() if 0x6E60 <= off < 0x8F02]
         lines = rename.fit(common[1], [common[1], 'zz_unlikely_name'])
         self.assertIn('window', lines[0])
         self.assertTrue(lines[1].endswith('fits') or lines[1].endswith('(build decides)'), lines)

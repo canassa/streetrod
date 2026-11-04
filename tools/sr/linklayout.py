@@ -8,9 +8,9 @@ LIB and each object's CL or MASM line under emu2, in parallel; then the link blo
 line in DOSBox-X, which reads SR.LNK. Nothing is generated: the objects, their command lines
 and the link order are the checked-in files.
 
-The verification is separate and reads the DB and orig/: each code object is gated against
-the original image (its functions are the DB rows whose `src` it is), the link is repeated
-without /EXEPACK for `./sr linkcheck`, and the packed EXE is compared with orig/SR.EXE.
+The verification is separate and reads orig/: each code object is gated against the original
+image (its functions are those its source defines), the link is repeated without /EXEPACK for
+`./sr linkcheck`, and the packed EXE is compared with orig/SR.EXE.
 """
 import concurrent.futures
 import shutil
@@ -82,12 +82,11 @@ def run_block(rule):
 
 def gate_objects(rules):
     """Verification: gate every code object against the original image. Returns failures."""
-    from . import cod, db, module
+    from . import cod, module, source
     from .exe import image
     from .omf import Obj
     original = image()
-    con = db.connect()
-    rows = [dict(r) for r in con.execute("SELECT * FROM functions WHERE status='matched' ORDER BY addr")]
+    rows = source.game_functions()
     by_path = {r.path: r for r in rules}
     failures = []
     built = set()
@@ -106,13 +105,12 @@ def gate_objects(rules):
         else:
             lengths = cod.asm_lengths(next(root.glob(rule.stem+'.[Ll][Ss][Tt]'), None))
             procs = [cod.from_publics(obj, module.fname(r), lengths) for r in members]
-        gate = module.gate(obj, procs, original.img, members, con=con)
+        gate = module.gate(obj, procs, original.img, members, data=True)
         if not gate.ok:
             failures.append((rule.stem, gate.line(rule.stem)))
     unbuilt = sorted({m['src'] for m in rows} - built)
     if unbuilt:
         failures.append(('MAKEFILE', 'does not compile ' + ', '.join(unbuilt)))
-    con.close()
     return failures
 
 

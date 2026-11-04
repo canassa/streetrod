@@ -7,13 +7,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from sr import cod, config, db, dosbox, layout  # noqa: E402
+from sr import cod, config, dosbox, layout, source  # noqa: E402
 from sr import module as mod  # noqa: E402
 from sr.disasm import branch_target, linear  # noqa: E402
 from sr.exe import image  # noqa: E402
 from sr.match import compare, diff_rows  # noqa: E402
 from sr.omf import Obj  # noqa: E402
-from sr.headers import generate as gen_headers  # noqa: E402
 from sr.lint import lint  # noqa: E402
 from sr.refs import verify  # noqa: E402
 from sr.scan import far_call_operand, scan  # noqa: E402
@@ -27,109 +26,76 @@ def hexa(a):
     return f"0x{a:05x}"
 
 
-def fn_name(row):
-    return row["name"] or f"F_{row['addr']:05X}"
+fn_name = source.fname
 
 
 # ---------------------------------------------------------------- scan / list / show
 
 
 def cmd_scan(args):
-    con = db.connect()
-    rows = scan()
-    known = {r["addr"] for r in con.execute("SELECT addr FROM functions")}
-    added = 0
-    for r in rows:
-        if r["addr"] in known:
-            con.execute("UPDATE functions SET seg=?, off=?, size=?, far=? WHERE addr=?",
-                        (r["seg"], r["off"], r["size"], r["far"], r["addr"]))
-        else:
-            status = "skip" if r["kind"] == "crt" else "todo"
-            con.execute("INSERT INTO functions (addr, seg, off, size, kind, far, status, updated) "
-                        "VALUES (?,?,?,?,?,?,?,?)",
-                        (r["addr"], r["seg"], r["off"], r["size"], r["kind"], r["far"], status, db.now()))
-            added += 1
-        con.execute("DELETE FROM callees WHERE caller = ?", (r["addr"],))
-        con.executemany("INSERT OR IGNORE INTO callees VALUES (?, ?)", [(r["addr"], c) for c in r["callees"]])
-    con.commit()
-    gone = known - {r["addr"] for r in rows}
-    print(f"{len(rows)} functions ({added} new, {len(rows) - added} updated)")
-    if gone:
-        print(f"warning: {len(gone)} DB rows no longer found by the scanner: "
-              + ", ".join(hexa(a) for a in sorted(gone)[:20]))
+    """Rediscover the functions in the EXE and compare them with what the sources define."""
+    rows = {r["addr"]: r for r in scan()}
+    game = {r["addr"]: r for r in source.game_functions()}
+    runtime = [r for r in rows.values() if r["kind"] == "crt"]
+    print(f"{len(rows)} functions in the EXE: {len(runtime)} runtime, {len(rows) - len(runtime)} game; "
+          f"the sources define {len(game)}")
+    extra = sorted(a for a, r in rows.items() if r["kind"] != "crt" and a not in game)
+    missing = sorted(a for a in game if a not in rows)
+    sized = sorted(a for a in game if a in rows and rows[a]["size"] != game[a]["size"])
+    if extra:
+        print(f"no source defines {len(extra)}: " + ", ".join(hexa(a) for a in extra[:20]))
+    if missing:
+        print(f"the scanner does not find {len(missing)}: " + ", ".join(fn_name(game[a]) for a in missing[:20]))
+    for a in sized:
+        print(f"{fn_name(game[a])}: {game[a]['size']} bytes in its comment, the scanner finds {rows[a]['size']}")
+    if extra or missing or sized:
+        sys.exit(1)
 
-
-
-_IDENT = re.compile(r"[A-Za-z_][A-Za-z0-9_]{0,30}")
-_DECL = re.compile(r"[A-Za-z0-9_ *\[\]()@,.]+")
-
-
-def check_ident(name):
-    # Every name and declaration lands in a shared header: one bad one breaks every build.
-    if not _IDENT.fullmatch(name):
-        raise SystemExit(f"{name!r} is not a C identifier (letters, digits, _, at most 31 chars)")
-
-
-def check_decl(decl):
-    if decl is not None and (decl.count("@") != 1 or not _DECL.fullmatch(decl)
-                             or "." in decl.replace("...", "")):  # a shell glob expanded to a file name
-        raise SystemExit(f"{decl!r}: a declaration needs exactly one @ and only C declarator characters")
 
 def cmd_list(args):
-    con = db.connect()
-    q, p = "SELECT * FROM functions WHERE 1=1", []
-    if args.status:
-        q += " AND status = ?"
-        p.append(args.status)
+    rows = source.functions()
     if args.kind:
-        q += " AND kind = ?"
-        p.append(args.kind)
+        rows = [r for r in rows if r["kind"] == args.kind]
     if args.seg:
-        q += " AND seg = ?"
-        p.append(int(args.seg, 16))
+        rows = [r for r in rows if r["seg"] == int(args.seg, 16)]
     if args.name:
-        q += " AND name LIKE ?"
-        p.append(f"%{args.name}%")
+        rows = [r for r in rows if args.name.lower() in fn_name(r).lower()]
     if args.max:
-        q += " AND size <= ?"
-        p.append(args.max)
+        rows = [r for r in rows if r["size"] <= args.max]
     if args.range:
         lo, hi = (int(x, 16) for x in args.range.split("-"))
-        q += " AND addr BETWEEN ? AND ?"
-        p += [lo, hi]
-    q += " ORDER BY " + ("size" if args.by_size else "addr")
-    rows = con.execute(q, p).fetchall()
-    print(f"{'addr':8} {'seg:off':10} {'size':>5} kind far {'status':8} {'mism':>4} name / src")
+        rows = [r for r in rows if lo <= r["addr"] <= hi]
+    if args.by_size:
+        rows = sorted(rows, key=lambda r: r["size"])
+    print(f"{'addr':8} {'seg:off':10} {'size':>5} kind far name / src")
     for r in rows[: args.limit]:
-        mism = "" if r["mismatches"] is None else str(r["mismatches"])
         extra = fn_name(r) + (f"  {r['src']}" if r["src"] else "")
-        print(f"{hexa(r['addr'])}  {r['seg']:04x}:{r['off']:04x} {r['size']:5} {r['kind']:4} {'F' if r['far'] else 'N':3} "
-              f"{r['status']:8} {mism:>4} {extra}")
+        print(f"{hexa(r['addr'])}  {r['seg']:04x}:{r['off']:04x} {r['size']:5} {r['kind']:4} {'F' if r['far'] else 'N':3} {extra}")
     if len(rows) > args.limit:
         print(f"... {len(rows) - args.limit} more (use --limit)")
 
 
-def annotate(con, im, row, ins):
+def annotate(names, im, row, ins):
     notes = []
     t = far_call_operand(im, ins)
     if t is not None:
-        notes.append(db.label(con, t))
+        notes.append(source.label(t))
     elif ins.bytes[0] == 0xE8 and ins.size == 3:
-        notes.append(db.label(con, branch_target(ins)))
+        notes.append(source.label(branch_target(ins)))
     if ins.mnemonic in ("call", "lcall", "jmp", "ljmp") or ins.mnemonic.startswith("j"):
         return "  ; " + ", ".join(notes) if notes else ""
     for m in re.finditer(r"0x([0-9a-f]{3,4})\b", ins.op_str):
         if re.search(r"\[[^\]]*\b[bs]p\b[^\]]*$", ins.op_str[: m.start()]):
             continue  # a frame offset, [bp - 0x110], not a DGROUP address
         v = int(m.group(1), 16)
-        g = con.execute("SELECT name FROM globals WHERE off = ?", (v,)).fetchone()
+        g = names.get(v)
         if g:
             # An immediate equal to a global's offset is only a guess: it may be a plain number.
             notes.append(g["name"] + ("" if "[" in ins.op_str or ins.mnemonic == "lea" else "?"))
         dpos = config.DGROUP_SEG * 16 + v
         if "[" in ins.op_str and dpos in im.reloc_pos:
             seg = im.word(dpos)
-            far = con.execute("SELECT name FROM fardata WHERE seg = ?", (seg,)).fetchall()
+            far = [f for f in source.fardata() if f["seg"] == seg]
             notes.append(f"segment constant {seg:04x}: far data" + (f" ({', '.join(f['name'] for f in far)})" if far else ""))
             continue
         s = im.dgroup_string(v)
@@ -140,22 +106,22 @@ def annotate(con, im, row, ins):
 
 
 def cmd_show(args):
-    con = db.connect()
     im = image()
-    row = db.resolve(con, args.fn)
+    row = source.resolve(args.fn)
+    names = source.globals_()
     print(f"{fn_name(row)} @ {row['seg']:04x}:{row['off']:04x} (linear {hexa(row['addr'])}), {row['size']} bytes, "
-          f"{'far' if row['far'] else 'near'}, kind {row['kind']}, status {row['status']}")
+          f"{'far' if row['far'] else 'near'}, kind {row['kind']}")
     if row["src"]:
         f = mod.file_of(row)
         print(f"  src: {row['src']} ({'CL' if f.kind == 'c' else 'MASM'} {f.command})")
-    if row["notes"]:
-        print(f"  notes: {row['notes']}")
-    callers = con.execute("SELECT caller FROM callees WHERE callee = ?", (row["addr"],)).fetchall()
-    callees = con.execute("SELECT callee FROM callees WHERE caller = ?", (row["addr"],)).fetchall()
+    elif row.get("module"):
+        print(f"  MSC 5.1 library module {row['module']}")
+    calls = source.callees()
+    callers = sorted(a for a, cs in calls.items() if row["addr"] in cs)
     if callers:
-        print("  called by: " + ", ".join(db.label(con, c["caller"]) for c in callers))
-    if callees:
-        print("  calls:     " + ", ".join(db.label(con, c["callee"]) for c in callees))
+        print("  called by: " + ", ".join(source.label(c) for c in callers))
+    if calls.get(row["addr"]):
+        print("  calls:     " + ", ".join(source.label(c) for c in calls[row["addr"]]))
     print()
     # Decoded at segment offsets (relative targets wrap at 64K like the CPU), printed as linear.
     base = row["seg"] * 16
@@ -166,26 +132,13 @@ def cmd_show(args):
             text = text.replace(f"0x{t:x}", f"0x{base + (t & 0xFFFF):x}")
             ins.op_str = ins.op_str.replace(f"0x{t:x}", f"0x{base + (t & 0xFFFF):x}")
         raw = ins.bytes.hex() if args.bytes else ""
-        print(f"  {ins.addr:05x}  {raw:<14}{text:<40}{annotate(con, im, row, ins)}")
-
-
-def cmd_next(args):
-    con = db.connect()
-    q = "SELECT * FROM functions WHERE status = 'todo' AND kind = ?"
-    rows = con.execute(q, (args.kind,)).fetchall()
-    if args.near:
-        a = db.resolve(con, args.near)["addr"]
-        rows.sort(key=lambda r: abs(r["addr"] - a))
-    else:
-        rows.sort(key=lambda r: r["size"])
-    for r in rows[: args.n]:
-        print(f"{hexa(r['addr'])}  {r['seg']:04x}:{r['off']:04x} {r['size']:5} bytes  {'far' if r['far'] else 'near'}")
+        print(f"  {ins.addr:05x}  {raw:<14}{text:<40}{annotate(names, im, row, ins)}")
 
 
 # ---------------------------------------------------------------- authoring / checking
 
 
-def _file_jobs(con, rows, flags_override=None):
+def _file_jobs(rows, flags_override=None):
     """One compile job per source file of `rows`: the whole file, with its command line."""
     fs = mod.files()
     jobs = {}
@@ -198,11 +151,11 @@ def _file_jobs(con, rows, flags_override=None):
     return jobs
 
 
-def _check_rows(con, rows, flags_override=None, quiet=False):
+def _check_rows(rows, flags_override=None, quiet=False):
     """Compile the files that define `rows` (once each), compare every function asked for,
     and run each file's gate over all its functions."""
     im = image()
-    jobs = _file_jobs(con, rows, flags_override)
+    jobs = _file_jobs(rows, flags_override)
     dosbox.compile_all(list(jobs.values()), name="check")
     results = {}
     for r in rows:
@@ -226,11 +179,11 @@ def _check_rows(con, rows, flags_override=None, quiet=False):
             results[r["addr"]] = None
             continue
         res = compare(obj, proc, im.img, r["addr"], r["size"])
-        res.refs = verify(con, obj, proc, im, r["addr"], r, procs)
+        res.refs = verify(obj, proc, im, r["addr"], r, procs)
         if not job.asm:
             res.lint = lint(job.src.read_text(errors="replace"), job.log)
         results[r["addr"]] = (res, proc, job)
-    _file_gates(con, im, jobs, results)
+    _file_gates(im, jobs, results)
     if not quiet:
         for job in jobs.values():
             shown = [ln for ln in job.log.splitlines() if re.search(r"warning C(?!4071|4016|4100)\d+|error", ln)]
@@ -242,45 +195,28 @@ def _check_rows(con, rows, flags_override=None, quiet=False):
     return results
 
 
-def _record(con, row, res):
-    was = row["status"]
-    if res is None:
-        return
-    if res.verdict.startswith("MATCH"):
-        db.update(con, row["addr"], status="matched", mismatches=0, nearcalls=res.nearcalls)
-    else:
-        # A matched function stays matched, so `check --all` keeps failing until someone fixes it
-        # (a shared type or prototype change usually) or deliberately reopens it with `sr mark`.
-        status = "wip" if was in ("todo", "wip") else was
-        db.update(con, row["addr"], status=status, mismatches=len(res.mismatches) + abs(res.size_exe - res.size_obj),
-                  nearcalls=res.nearcalls)
-        if was == "matched":
-            print(f"  !! REGRESSION: {fn_name(row)} was matched and no longer is. Fix it (often a shared "
-                  "global/prototype change), or reopen it with `./sr mark ADDR wip -m why`")
-
-
-def _rows_for(con, what):
+def _rows_for(what):
     """A function by address or name, or every function of a source file (BOBS.C)."""
     f = mod.find_file(what)
     if f is not None:
-        return mod.members(con, f.rel)
-    return [db.resolve(con, what)]
+        return mod.members(f.rel)
+    row = source.resolve(what)
+    if row["src"] is None:
+        raise SystemExit(f"{fn_name(row)} is a runtime function: no source defines it")
+    return [row]
 
 
 def cmd_check(args):
-    con = db.connect()
     if args.all:
-        rows = con.execute("SELECT * FROM functions WHERE status = 'matched' ORDER BY addr").fetchall()
+        rows = source.game_functions()
     elif args.fn:
-        rows = _rows_for(con, args.fn)
+        rows = _rows_for(args.fn)
     else:
         raise SystemExit("give a function (address or name), a source file, or --all")
-    results = _check_rows(con, rows, args.flags)
+    results = _check_rows(rows, args.flags)
     bad = 0
     for r in rows:
         res = results.get(r["addr"])
-        if args.flags is None:
-            _record(con, r, res[0] if res else None)
         if res is None or res[0].verdict == "DIFF":
             bad += 1
         if res and len(rows) == 1 and res[1].locals:
@@ -295,9 +231,10 @@ def cmd_check(args):
 
 
 def cmd_diff(args):
-    con = db.connect()
-    row = db.resolve(con, args.fn)
-    results = _check_rows(con, [row], args.flags)
+    if mod.find_file(args.fn) is not None:
+        raise SystemExit("give a function (address or name)")
+    row = _rows_for(args.fn)[0]
+    results = _check_rows([row], args.flags)
     res = results[row["addr"]]
     if res is None:
         sys.exit(1)
@@ -318,8 +255,7 @@ def cmd_diff(args):
 
 
 def cmd_sweep(args):
-    con = db.connect()
-    row = db.resolve(con, args.fn)
+    row = _rows_for(args.fn)[0]
     f = mod.file_of(row)
     if f.kind != "c":
         raise SystemExit("sweep is for C sources; MASM has no codegen flags to search")
@@ -347,67 +283,17 @@ def cmd_sweep(args):
 
 
 def cmd_crtnames(args):
-    from sr.lib import locate
-
-    con = db.connect()
-    libdir = config.TOOLCHAIN / "LIB"
-    found = locate([libdir / n for n in ("MLIBCR.LIB", "MLIBFP.LIB", "LIBH.LIB", "EM.LIB")])
-    named = 0
-    aliases = 0
-    for addr, pubs in sorted(found.items()):
-        row = con.execute("SELECT * FROM functions WHERE addr = ?", (addr,)).fetchone()
-        if row is None:
-            continue
-        names = [pub for pub, _ in pubs]
-        managed = row["kind"] == "crt" and (row["notes"] or "").startswith("MSC 5.1 library module ")
-        if row["name"] is None or row["name"] in names or managed:
-            pub, module = pubs[names.index(row["name"])] if row["name"] in names else pubs[0]
-            db.update(con, addr, name=pub, kind="crt", status="skip", notes=f"MSC 5.1 library module {module}")
-            named += 1
-        # Re-identification must invalidate false historical wrapper aliases.
-        con.execute("DELETE FROM aliases WHERE addr = ?", (addr,))
-        current = con.execute("SELECT name FROM functions WHERE addr = ?", (addr,)).fetchone()[0]
-        for pub in names:
-            if pub != current:
-                aliases += con.execute("INSERT OR IGNORE INTO aliases (addr, name) VALUES (?, ?)", (addr, pub)).rowcount
-    con.commit()
-    crt = con.execute("SELECT COUNT(*) FROM functions WHERE kind = 'crt'").fetchone()[0]
-    unnamed = con.execute("SELECT COUNT(*) FROM functions WHERE kind = 'crt' AND name IS NULL").fetchone()[0]
-    print(f"{len(found)} library addresses located, {named} functions named, {aliases} new aliases; "
-          f"{unnamed}/{crt} CRT rows still unnamed")
-
-
-# ---------------------------------------------------------------- bookkeeping
-
-
-def cmd_mark(args):
-    con = db.connect()
-    row = db.resolve(con, args.fn)
-    fields = {"status": args.status}
-    if args.message:
-        fields["notes"] = args.message
-    db.update(con, row["addr"], **fields)
-    print(f"{fn_name(row)}: {row['status']} -> {args.status}")
-
-
-def _sources():
-    return sorted(p for d in ("mods", "data") for p in (config.SRC / d).glob("*")
-                  if p.suffix.upper() in (".C", ".ASM"))
-
-
-def cmd_name(args):
-    con = db.connect()
-    row = db.resolve(con, args.fn)
-    if args.name is None:
-        print(fn_name(row))
-        return
-    check_ident(args.name)
-    old = fn_name(row)
-    users = [p.name for p in _sources() if re.search(rf"\b_?{old}\b", p.read_text(errors="replace"))]
-    if users and not args.force:
-        raise SystemExit(f"{old} is used by {', '.join(users)}; rename it there too, then rerun with --force")
-    db.update(con, row["addr"], name=args.name)
-    print(f"{hexa(row['addr'])}: {fn_name(row)} -> {args.name}")
+    """The runtime functions' names: the MSC 5.1 library modules located in the EXE."""
+    rt = source.runtime()
+    rows = rt["functions"]
+    unnamed = [r for r in rows if r["name"] is None]
+    print(f"{len(rows)} runtime functions, {len(rows) - len(unnamed)} named by their library module, "
+          f"{sum(map(len, rt['aliases'].values()))} aliases, {len(rt['data'])} library data publics placed in DGROUP")
+    if args.verbose:
+        for r in rows:
+            also = rt["aliases"].get(r["addr"])
+            print(f"  {hexa(r['addr'])} {fn_name(r):<14} {r['module'] or '(no library match)'}"
+                  + (f"  also {', '.join(also)}" if also else ""))
 
 
 def cmd_rename(args):
@@ -428,34 +314,14 @@ def cmd_fit(args):
         print(line)
 
 
-def cmd_kind(args):
-    con = db.connect()
-    row = db.resolve(con, args.fn)
-    fields = {"kind": args.kind}
-    if args.message:
-        fields["notes"] = args.message
-    db.update(con, row["addr"], **fields)
-    print(f"{fn_name(row)}: kind {row['kind']} -> {args.kind}")
-
-
-def cmd_note(args):
-    con = db.connect()
-    row = db.resolve(con, args.fn)
-    text = " ".join(args.text)
-    if row["notes"] and not args.replace:
-        text = row["notes"] + " | " + text
-    db.update(con, row["addr"], notes=text)
-
-
 def cmd_flags(args):
     """A source file's command line (one per file: its block in src/MAKEFILE)."""
-    con = db.connect()
-    f = mod.find_file(args.fn, mod.sources()) or mod.file_of(db.resolve(con, args.fn))
+    f = mod.find_file(args.fn, mod.sources()) or mod.file_of(_rows_for(args.fn)[0])
     if not args.flags:
         print(f"{f.path.name}: flags = {f.flags}" + (f" (compiled with /NT{f.segment})" if f.kind == "c" and f.segment else ""))
         return
     flags = " ".join(args.flags)
-    matched = [r for r in mod.members(con, f.rel) if r["status"] == "matched"]
+    matched = mod.members(f.rel)
     if matched and flags != f.flags and not args.force:
         raise SystemExit(f"{f.path.name} has {len(matched)} matched functions built with {f.flags}; "
                          "changing them may break them (--force, then ./sr check " + f.path.name + ")")
@@ -464,107 +330,9 @@ def cmd_flags(args):
     print(f"{f.path.name}: flags = {flags} (src/MAKEFILE)")
 
 
-def cmd_global(args):
-    con = db.connect()
-    if args.off is None:
-        for g in con.execute("SELECT * FROM globals ORDER BY off"):
-            print(f"DS:{g['off']:04x}  {g['name']:<24} {g['decl'] or '(no decl)'}")
-        for g in con.execute("SELECT * FROM fardata ORDER BY seg, off"):
-            print(f"{g['seg']:04x}:{g['off']:04x}  {g['name']:<22} {g['decl'] or '(no decl)'}  (far data)")
-        return
-    if ":" in args.off:
-        return _far_global(con, args)
-    off = int(args.off, 16)
-    if args.delete:
-        con.execute("DELETE FROM globals WHERE off = ?", (off,))
-        con.commit()
-        gen_headers(con)
-        print(f"DS:{off:04x} removed")
-        return
-    if args.name is None:
-        g = con.execute("SELECT * FROM globals WHERE off = ?", (off,)).fetchone()
-        print(f"DS:{off:04x}  {g['name']}  {g['decl'] or '(no decl)'}" if g else f"DS:{off:04x}: not declared")
-        return
-    check_ident(args.name)
-    check_decl(args.decl)
-    if args.decl and "@" not in args.decl:
-        raise SystemExit("--decl needs @ where the name goes, e.g. \"int @\" or \"struct Entry @[]\"")
-    clash = con.execute("SELECT off FROM globals WHERE name = ? AND off != ?", (args.name, off)).fetchone()
-    if clash:
-        raise SystemExit(f"{args.name} is already DS:{clash['off']:04x}")
-    old = con.execute("SELECT name FROM globals WHERE off = ?", (off,)).fetchone()
-    if old and old["name"] != args.name:
-        users = [p.name for p in _sources() if re.search(rf"\b_?{old['name']}\b", p.read_text(errors="replace"))]
-        if users:
-            raise SystemExit(f"DS:{off:04x} is {old['name']}, used by {', '.join(users)}; renaming would "
-                             f"break them. Use the existing name, or rename it in those files too")
-    con.execute("INSERT INTO globals (off, name, decl) VALUES (?, ?, ?) "
-                "ON CONFLICT(off) DO UPDATE SET name = excluded.name, decl = COALESCE(excluded.decl, decl)",
-                (off, args.name, args.decl))
-    con.commit()
-    gen_headers(con)
-    row = con.execute("SELECT * FROM globals WHERE off = ?", (off,)).fetchone()
-    print(f"DS:{off:04x} = {row['name']}  {row['decl'] or '(no decl yet)'}")
-
-
-def _far_global(con, args):
-    seg, off = (int(x, 16) for x in args.off.split(":"))
-    if args.delete:
-        con.execute("DELETE FROM fardata WHERE seg = ? AND off = ?", (seg, off))
-    elif args.name is None:
-        g = con.execute("SELECT * FROM fardata WHERE seg = ? AND off = ?", (seg, off)).fetchone()
-        print(f"{seg:04x}:{off:04x}  {g['name']}  {g['decl'] or '(no decl)'}" if g else f"{seg:04x}:{off:04x}: not declared")
-        return
-    else:
-        check_ident(args.name)
-        check_decl(args.decl)
-        if args.decl and ("@" not in args.decl or "far" not in args.decl):
-            raise SystemExit('far data needs a far declaration with @ for the name, e.g. "struct Slot far @[]"')
-        clash = con.execute("SELECT seg, off FROM fardata WHERE name = ? AND NOT (seg = ? AND off = ?)",
-                            (args.name, seg, off)).fetchone()
-        if clash or con.execute("SELECT 1 FROM globals WHERE name = ?", (args.name,)).fetchone():
-            raise SystemExit(f"{args.name} is already declared elsewhere")
-        con.execute("INSERT INTO fardata (seg, off, name, decl) VALUES (?, ?, ?, ?) ON CONFLICT(seg, off) DO UPDATE "
-                    "SET name = excluded.name, decl = COALESCE(excluded.decl, decl)", (seg, off, args.name, args.decl))
-    con.commit()
-    gen_headers(con)
-    print(f"{seg:04x}:{off:04x} " + ("removed" if args.delete else f"= {args.name}"))
-
-
-def cmd_proto(args):
-    con = db.connect()
-    row = db.resolve(con, args.fn)
-    if args.proto is None:
-        print(row["proto"] or "(no prototype)")
-        return
-    if args.proto == "":
-        db.update(con, row["addr"], proto=None)
-        gen_headers(con)
-        print(f"{fn_name(row)}: prototype cleared")
-        return
-    check_decl(args.proto)
-    if not row["far"] and "interrupt" not in args.proto and "near @" not in args.proto \
-            and not ("far @" in args.proto and args.force):
-        raise SystemExit(f"{fn_name(row)} is near (RET). A static module-mate is forward-declared in the "
-                         "callers' .C as `static T near F(...);`, not a header prototype. A near function "
-                         "other files call (same code segment) is public: `T near @(...)` goes into its file's "
-                         "header. (If C code really far-calls this near routine, an original bug, use "
-                         "`T far @(...)` with --force.)")
-    same = row["proto"] and re.sub(r"\w+(?=\s*[,)])", "", row["proto"]) == re.sub(r"\w+(?=\s*[,)])", "", args.proto)
-    if row["proto"] and row["proto"] != args.proto and not same and not args.force:
-        raise SystemExit(f"{fn_name(row)} already has {row['proto']!r}; other files rely on it "
-                         "(--force to replace, then ./sr check --all)")
-    if "@" not in args.proto:
-        raise SystemExit("the prototype needs @ where the name goes, e.g. \"int far @(int n)\"")
-    db.update(con, row["addr"], proto=args.proto)
-    gen_headers(con)
-    print(f"{fn_name(row)}: {args.proto.replace('@', fn_name(row))}")
-
-
 def cmd_data(args):
-    con = db.connect()
     im = image()
-    names = {g["off"]: g["name"] for g in con.execute("SELECT off, name FROM globals")}
+    names = {off: g["name"] for off, g in source.globals_().items()}
     off = int(args.off, 16)
     for a in range(off, off + args.n, 16):
         chunk = im.img[config.DGROUP_SEG * 16 + a : config.DGROUP_SEG * 16 + min(a + 16, off + args.n)]
@@ -602,82 +370,43 @@ def cmd_layout(args):
 
 
 def cmd_headers(args):
-    con = db.connect()
+    from sr import headers
     if args.check:
-        from sr.headers import check
-        drift = check(con)
+        drift, problems = headers.check()
         for p in sorted(drift):
-            print(("would delete " if drift[p] is None else "would rewrite ") + str(p.relative_to(config.ROOT)))
-        if drift:
-            sys.exit(f"{len(drift)} files differ from what ./sr headers writes")
-        print("the headers, the include blocks and the MAKEFILE dependencies are up to date")
+            print("would rewrite " + str(p.relative_to(config.ROOT)))
+        for p in problems:
+            print(p)
+        if drift or problems:
+            sys.exit(f"{len(drift)} files differ from what ./sr headers writes, {len(problems)} header problems")
+        print("the include blocks and the MAKEFILE dependencies are up to date; every header declares what its file defines")
         return
-    gen_headers(con, rewrite_sources=True)
-    print("wrote the per-file headers in src/include, the include blocks of the C sources "
-          "and the header dependencies in src/MAKEFILE")
-
-
-def cmd_status(args):
-    con = db.connect()
-    rows = con.execute("SELECT * FROM functions ORDER BY addr").fetchall()
-    kinds = {}
-    for r in rows:
-        k = kinds.setdefault(r["kind"], {})
-        n, b = k.get(r["status"], (0, 0))
-        k[r["status"]] = (n + 1, b + r["size"])
-    lines = ["# Progress", "", f"Generated by `./sr status` on {db.now()}. Do not edit by hand.", "",
-             "| kind | status | functions | bytes |", "|---|---|---|---|"]
-    for kind in sorted(kinds):
-        for st in config.STATUSES:
-            if st in kinds[kind]:
-                n, b = kinds[kind][st]
-                lines.append(f"| {kind} | {st} | {n} | {b} |")
-    parts = []
-    for kind, label in (("c", "C"), ("asm", "asm")):
-        # a skipped game row is a retired scanner false positive (0x0F8C2), not a function
-        sel = [r for r in rows if r["kind"] == kind and r["status"] != "skip"]
-        done = [r for r in sel if r["status"] == "matched"]
-        pct_n = 100 * len(done) / max(len(sel), 1)
-        pct_b = 100 * sum(r["size"] for r in done) / max(sum(r["size"] for r in sel), 1)
-        parts.append(f"{label} {len(done)}/{len(sel)} ({pct_n:.1f}% by count, {pct_b:.1f}% by bytes)")
-    summary = "Game functions matched: " + "; ".join(parts)
-    lines += ["", summary, ""]
-    flags = {f.rel: f.flags for f in mod.files()}
-    for title, st in (("Matched", "matched"), ("In progress", "wip"), ("Partial", "partial"), ("Blocked", "blocked")):
-        sel = [r for r in rows if r["status"] == st]
-        if not sel:
-            continue
-        lines += [f"## {title}", "", "| addr | name | size | src | flags | notes |", "|---|---|---|---|---|---|"]
-        for r in sel:
-            near = f" ({r['nearcalls']} near calls to other objects)" if r["nearcalls"] else ""
-            lines.append(f"| `{hexa(r['addr'])}` | `{fn_name(r)}` | {r['size']} | `{r['src'] or ''}` | {flags.get(r['src'], '')} | "
-                         f"{(r['notes'] or '') + near} |")
-        lines.append("")
-    config.PROGRESS.parent.mkdir(exist_ok=True)
-    config.PROGRESS.write_text("\n".join(lines))
-    print(summary)
-    print(f"wrote {config.PROGRESS.relative_to(config.ROOT)}")
+    problems = headers.generate()
+    for p in problems:
+        print(p)
+    print("wrote the include blocks of the C sources and the header dependencies in src/MAKEFILE")
+    if problems:
+        sys.exit(1)
 
 
 # ---------------------------------------------------------------- source files
 
 
-def _file_gates(con, im, jobs, results):
+def _file_gates(im, jobs, results):
     """Run the whole-span gate once per compiled file, over all its functions."""
     for job in jobs.values():
         if job.obj is None or (job.cod is None and not job.asm):
             continue
         f = job.file
         obj = Obj(job.obj)
-        ms = [m for m in mod.members(con, f.rel) if m["status"] == "matched"
-              or results.get(m["addr"])]
+        ms = mod.members(f.rel)
         if not ms:
             continue
         lengths = cod.asm_lengths(job.lst) if job.asm else None
         procs = ([cod.from_publics(obj, fn_name(m), lengths) for m in ms] if job.asm else cod.parse(job.cod))
         if not job.asm:
             obj.statics = cod.statics(job.cod)
-        g = mod.gate(obj, [p for p in procs if p is not None], im.img, ms, con=con)
+        g = mod.gate(obj, [p for p in procs if p is not None], im.img, ms, data=True)
         print(g.line(f.path.name))
         lo, hi = ms[0]["addr"], ms[-1]["addr"] + ms[-1]["size"]
         for m in ms:
@@ -692,19 +421,18 @@ def _file_gates(con, im, jobs, results):
 
 def cmd_module(args):
     """Candidate same-file spans from near-call evidence (how the files' extents were found)."""
-    con = db.connect()
     im = image()
     srcs = {f.rel: f for f in mod.files()}
-    for lo, hi in mod.units(con, im):
-        fs = con.execute("SELECT * FROM functions WHERE addr >= ? AND addr < ? ORDER BY addr", (lo, hi)).fetchall()
-        done = sum(f["status"] == "matched" for f in fs)
+    every = source.functions()
+    for lo, hi in mod.units(im):
+        fs = [f for f in every if lo <= f["addr"] < hi]
         files = sorted({f["src"] for f in fs if f["src"]})
         flags = sorted({srcs[s].flags for s in files if s in srcs})
-        print(f"{hexa(lo)}-{hexa(hi)}  {len(fs):3} functions, {done} matched"
+        print(f"{hexa(lo)}-{hexa(hi)}  {len(fs):3} functions"
               + (f", files {', '.join(Path(s).name for s in files)}" if files else "") + f"  flags: {' | '.join(flags)}")
         if args.verbose:
             for f in fs:
-                print(f"    {hexa(f['addr'])} {fn_name(f):<10} {f['status']:<8} {f['src'] or ''}")
+                print(f"    {hexa(f['addr'])} {fn_name(f):<10} {f['src'] or ''}")
 
 
 def cmd_dgroup(args):
@@ -770,17 +498,17 @@ def main():
     s = sub.add_parser("build", help="run src/MAKEFILE in work/layout (MSC 5.1, MASM 5.1, LIB 3.11, LINK 5.01), then verify against orig/")
     s.add_argument("--prepare-only", action="store_true", help="only copy src/ (MAKEFILE, SR.LNK, sources, headers) to work/layout")
     s.add_argument("--objects-only", action="store_true", help="compile (and gate) every object without linking")
-    s.add_argument("--no-verify", action="store_true", help="only build: no object gates, no comparison (needs neither orig/ nor the DB)")
+    s.add_argument("--no-verify", action="store_true", help="only build: no object gates, no comparison (needs no orig/)")
     s.set_defaults(func=cmd_build)
 
-    s = sub.add_parser("scan", help="(re)discover functions in the EXE and update the DB")
+    s = sub.add_parser("scan", help="rediscover the functions in the EXE, compare them with the sources' (exit 1 if they differ)")
     s.set_defaults(func=cmd_scan)
 
-    s = sub.add_parser("crtnames", help="name CRT functions by locating MSC 5.1 library modules")
+    s = sub.add_parser("crtnames", help="the runtime functions' names, from the MSC 5.1 library modules located in the EXE")
+    s.add_argument("-v", "--verbose", action="store_true", help="list them")
     s.set_defaults(func=cmd_crtnames)
 
     s = sub.add_parser("list", help="list functions")
-    s.add_argument("-s", "--status", choices=config.STATUSES)
     s.add_argument("-k", "--kind", choices=config.KINDS)
     s.add_argument("--seg", help="segment value, hex")
     s.add_argument("-n", "--name", help="name substring")
@@ -795,16 +523,10 @@ def main():
     s.add_argument("-b", "--bytes", action="store_true", help="also show raw bytes")
     s.set_defaults(func=cmd_show)
 
-    s = sub.add_parser("next", help="suggest todo functions to work on")
-    s.add_argument("-n", type=int, default=15)
-    s.add_argument("-k", "--kind", default="c", choices=config.KINDS)
-    s.add_argument("--near", help="sort by distance to this function (same module, likely same flags)")
-    s.set_defaults(func=cmd_next)
-
-    s = sub.add_parser("check", help="compile the function's whole source file, byte-compare; records the result")
+    s = sub.add_parser("check", help="compile the function's whole source file, byte-compare, gate the file")
     s.add_argument("fn", nargs="?", help="address, name, or a source file (BOBS.C: all its functions)")
     s.add_argument("--all", action="store_true", help="compile every file once, check every matched function (regression gate)")
-    s.add_argument("--flags", help="try these CL/MASM flags for the file without recording the result")
+    s.add_argument("--flags", help="try these CL/MASM flags for the file")
     s.set_defaults(func=cmd_check)
 
     s = sub.add_parser("diff", help="two-column instruction diff, ours vs original")
@@ -819,20 +541,8 @@ def main():
     s.add_argument("--top", type=int, default=10)
     s.set_defaults(func=cmd_sweep)
 
-    s = sub.add_parser("mark", help="set a function's status")
-    s.add_argument("fn")
-    s.add_argument("status", choices=config.STATUSES)
-    s.add_argument("-m", "--message", help="note to store with it")
-    s.set_defaults(func=cmd_mark)
-
-    s = sub.add_parser("name", help="name a function (no name: print the current one)")
-    s.add_argument("fn")
-    s.add_argument("name", nargs="?")
-    s.add_argument("--force", action="store_true", help="rename even though sources use the old name")
-    s.set_defaults(func=cmd_name)
-
-    s = sub.add_parser("rename", help="rename a function, global or source file everywhere (DB, sources, "
-                       "MAKEFILE, SR.LNK, docs, tools), then regenerate the headers")
+    s = sub.add_parser("rename", help="rename a function, global or source file everywhere (sources, headers, "
+                       "MAKEFILE, SR.LNK, docs, tools), then ./sr headers")
     s.add_argument("old", nargs="?", help="current name (maybe_walker, g_hercules) or source file (M_xxxxx.C)")
     s.add_argument("new", nargs="?")
     s.add_argument("--file", help="a file of OLD NEW lines (# comments) applied at once")
@@ -845,18 +555,6 @@ def main():
     s.add_argument("candidates", nargs="*")
     s.set_defaults(func=cmd_fit)
 
-    s = sub.add_parser("kind", help="correct the scanner's c/asm/crt guess")
-    s.add_argument("fn")
-    s.add_argument("kind", choices=config.KINDS)
-    s.add_argument("-m", "--message", help="why (stored as the note)")
-    s.set_defaults(func=cmd_kind)
-
-    s = sub.add_parser("note", help="append to a function's notes (--replace to overwrite)")
-    s.add_argument("fn")
-    s.add_argument("text", nargs="+")
-    s.add_argument("--replace", action="store_true")
-    s.set_defaults(func=cmd_note)
-
     s = sub.add_parser("flags", help="a source file's CL/MASM flags (no flags: print them)")
     s.add_argument("fn", help="a source file (BOBS.C) or a function in it")
     s.add_argument("flags", nargs="*")
@@ -867,19 +565,6 @@ def main():
     s.add_argument("op", choices=["units"])
     s.add_argument("-v", "--verbose", action="store_true")
     s.set_defaults(func=cmd_module)
-
-    s = sub.add_parser("global", help="name/declare a DGROUP global (no args: list them)")
-    s.add_argument("off", nargs="?", help="hex DGROUP offset, or SEG:OFF for far data")
-    s.add_argument("name", nargs="?")
-    s.add_argument("--decl", help='C declaration with @ for the name, e.g. "int @" or "struct Slot far @[]"')
-    s.add_argument("--delete", action="store_true", help="remove the entry")
-    s.set_defaults(func=cmd_global)
-
-    s = sub.add_parser("proto", help="set a function's prototype for its file's header (no proto: print it)")
-    s.add_argument("fn")
-    s.add_argument("proto", nargs="?", help='with @ for the name, e.g. "int far @(int n)"')
-    s.add_argument("--force", action="store_true", help="replace an existing prototype")
-    s.set_defaults(func=cmd_proto)
 
     s = sub.add_parser("data", help="hex dump of DGROUP bytes (initial values), with known globals")
     s.add_argument("off", help="DGROUP offset, hex")
@@ -896,12 +581,9 @@ def main():
     s.add_argument("--bucket", type=int, help="list common readable names in bucket N (0-15) instead")
     s.set_defaults(func=cmd_layout)
 
-    s = sub.add_parser("headers", help="regenerate the per-file headers, the sources' include blocks and the MAKEFILE dependencies")
-    s.add_argument("--check", action="store_true", help="write nothing; exit 1 if a regeneration would change a file")
+    s = sub.add_parser("headers", help="rewrite the sources' include blocks and the MAKEFILE dependencies from the headers")
+    s.add_argument("--check", action="store_true", help="write nothing; exit 1 if a run would change a file or a header is wrong")
     s.set_defaults(func=cmd_headers)
-
-    s = sub.add_parser("status", help="summary + regenerate docs/PROGRESS.md")
-    s.set_defaults(func=cmd_status)
 
     args = p.parse_args()
     args.func(args)

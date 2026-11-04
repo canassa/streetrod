@@ -1,16 +1,14 @@
 """Per-file headers, as the original was organized: every source file (one link unit, i.e.
 one original translation unit, or one standalone data/assembler file) declares what it
 defines in src/include/<STEM>.H, and each C source includes the headers of the files whose
-globals and functions it uses. The headers in git are source; `./sr headers` regenerates them
-from the DB (`./sr global`, `./sr proto`) and from where each definition is, and
-`./sr headers --check` reports drift."""
+globals and functions it uses. The headers are hand-written source (each declaration with
+its address comment, which `source.py` reads); `./sr headers` rewrites the C sources'
+include blocks from them and checks that each header's names are defined by its file."""
 import re
 
 from . import config
-from .headers import _remove, _write
+from .headers import _write
 
-_BANNER = "/* {name} - declarations of what {owner} defines. */\n"
-_KEEP = {'STRUCTS'}
 # runtime variables the game reads directly; MSC's own headers declare them
 _SYSTEM = {'errno': 'stdlib.h', '_doserrno': 'stdlib.h', '_amblksiz': 'malloc.h'}
 
@@ -80,52 +78,34 @@ def _defines(path, names):
     return found
 
 
-def generate(con, rewrite_sources=False):
-    glob = {g['name']: (g['off'], f"extern {g['decl'].replace('@', g['name'])};", f"DS:{g['off']:04X}")
-            for g in con.execute("SELECT off, name, decl FROM globals WHERE decl IS NOT NULL")}
-    far = {g['name']: ((g['seg'] << 16) | g['off'], f"extern {g['decl'].replace('@', g['name'])};",
-                       f"{g['seg']:04X}:{g['off']:04X}")
-           for g in con.execute("SELECT seg, off, name, decl FROM fardata WHERE decl IS NOT NULL")}
-    funcs = {}
-    for f in con.execute("SELECT addr, name, proto FROM functions WHERE proto IS NOT NULL AND (far = 1 OR proto LIKE "
-                         "'%interrupt%' OR proto LIKE '%far @%' OR proto LIKE '%near @%') AND kind != 'crt'"):
-        n = f['name'] or f"F_{f['addr']:05X}"
-        funcs[n] = (f['addr'], f"{f['proto'].replace('@', n)};", f"0x{f['addr']:05X}")
+def generate():
+    """Rewrite every C source's include block from the headers' declarations. Returns the
+    problems: a name declared by two headers, or by a header whose file does not define it."""
+    from . import source
+    decls = {}
+    for kind in ('globals', 'fardata', 'functions'):
+        for d in source.headers()[kind]:
+            decls.setdefault(d['name'], []).append(d['header'])
     files = owners_layout()
-    local = local_statics()
-    glob = {n: v for n, v in glob.items() if n not in local}
-    names = set(glob) | set(far) | set(funcs)
-    owner = {}
+    stems = {stem for stem, _ in files}
+    problems, owner = [], {}
+    for name, hs in sorted(decls.items()):
+        if len(hs) > 1:
+            problems.append(f'{name} is declared in ' + ' and '.join(f'{h}.H' for h in hs))
+        owner[name] = hs[0]
+    made = {h for hs in decls.values() for h in hs} & stems
+    for h in sorted({h for hs in decls.values() for h in hs} - stems):
+        problems.append(f'src/include/{h}.H: no source file {h}.C or {h}.ASM')
+    for stem, srcs in files:
+        mine = {n for n, h in owner.items() if h == stem}
+        defined = set().union(*(_defines(p, mine) for p in srcs))
+        for n in sorted(mine - defined):
+            problems.append(f'{n}: declared in {stem}.H, but {", ".join(p.name for p in srcs)} does not define it')
     for stem, srcs in files:
         for p in srcs:
-            for n in _defines(p, names):
-                if n in owner and owner[n] != stem:
-                    raise SystemExit(f'{n} is defined in both {owner[n]} and {stem}')
-                owner[n] = stem
-    inc = config.INCLUDE
-    made = set()
-    for stem, srcs in files:
-        mine = [n for n in names if owner.get(n) == stem]
-        if not mine:
-            continue
-        out = [_BANNER.format(name=f'{stem}.H', owner=', '.join(p.name for p in srcs)),
-               f'#ifndef {stem}_H', f'#define {stem}_H', '#include "STRUCTS.H"', '']
-        for table in (glob, far, funcs):
-            for n in sorted((n for n in mine if n in table), key=lambda n: table[n][0]):
-                out.append(table[n][1].ljust(56) + f'/* {table[n][2]} */')
-        out += ['', '#endif', '']
-        _write(inc / f'{stem}.H', '\n'.join(out))
-        made.add(stem)
-    for p in inc.glob('*.H'):          # headers of files that no longer define anything
-        if p.stem.upper() not in made | _KEEP and p.read_text(errors='replace').startswith('/* ' + p.name + ' - declarations of what'):
-            _remove(p)
-    missing = sorted(n for n in names if n not in owner and n not in _SYSTEM)
-    if rewrite_sources:
-        for stem, srcs in files:
-            for p in srcs:
-                if p.suffix.upper() == '.C':
-                    _rewrite_includes(p, stem, owner, made)
-    return missing
+            if p.suffix.upper() == '.C':
+                _rewrite_includes(p, stem, owner, made)
+    return problems
 
 
 def _rewrite_includes(path, stem, owner, made):

@@ -7,8 +7,8 @@ each item word-aligned when its type is. LINK concatenates the modules' _DATA in
 so the original offsets of a unit's literal pools pin the unit in the link order, and a named
 item's offset tells which function it was declared before.
 
-Reads the original image, the DB and the layout build's objects (`./sr build`, for
-the literal pools). The sources are the truth for the definitions: `check` verifies that every
+Reads the original image, the sources' symbols (source.py) and the layout build's objects
+(`./sr build`, for the literal pools). The sources are the truth for the definitions: `check` verifies that every
 named item is defined in the file that owned it; the build checks the bytes.
 """
 import bisect
@@ -16,7 +16,7 @@ import re
 import struct
 from pathlib import Path
 
-from . import config, db, makefile, module
+from . import config, makefile, module, source
 from .cdata import Types
 from .exe import image
 from .omf import Obj
@@ -107,24 +107,22 @@ def defined_in_sources(prefix='g_'):
 
 class Analysis:
     def __init__(self):
-        self.con = db.connect()
         self.im = image()
         self.types = Types()
         self.ds = config.DGROUP_SEG * 16
         self.dg = bytes(self.im.img[self.ds:self.ds + END])
-        self.globals = {r['off']: dict(r) for r in self.con.execute('SELECT * FROM globals ORDER BY off')}
+        self.globals = source.globals_()
         self.goffs = sorted(self.globals)
-        self.fardata = [(r['seg'], r['off'], r['name'], r['decl']) for r in
-                        self.con.execute('SELECT seg, off, name, decl FROM fardata ORDER BY seg, off')]
-        self.funcs = {r['addr']: dict(r) for r in self.con.execute('SELECT * FROM functions ORDER BY addr')}
+        self.fardata = [(r['seg'], r['off'], r['name'], r['decl']) for r in source.fardata()]
+        self.funcs = {r['addr']: r for r in source.functions()}
         self.faddrs = sorted(self.funcs)
-        files = module.files()      # the code files of src/MAKEFILE, extents from the DB
+        files = module.files()      # the code files of src/MAKEFILE, extents from their functions
         self.units = [dict(start=f.start, end=f.end, sources=[f.rel], kind=f.kind, flags=f.flags) for f in files]
         self.code_starts = module.code_starts(files)
         for u in self.units:
             u['region'] = max(c for c in self.code_starts if c <= u['start'])
             u['functions'] = [self.funcs[a] for a in self.faddrs if u['start'] <= a < u['end']
-                              and self.funcs[a]['status'] == 'matched']
+                              and self.funcs[a]['kind'] != 'crt']
         for lo, hi, src in DATA_UNITS:
             self.units.append(dict(start=DATA_KEY + lo, end=DATA_KEY + hi, kind='data', sources=[src],
                                    region=None, functions=[], lo=lo, hi=hi))
@@ -1064,18 +1062,18 @@ class Analysis:
                 problems.append(f'DS:{it.off:04X} {it.name}: not defined; {want} owned it')
             elif have != want:
                 problems.append(f'DS:{it.off:04X} {it.name}: defined in {have}, but {want} owned it')
-        for g in self.con.execute('SELECT off, name FROM globals WHERE off < ?', (DATA_END,)):
-            if g['name'] in defined and g['name'] not in seen:
+        for g in self.globals.values():
+            if g['off'] < DATA_END and g['name'] in defined and g['name'] not in seen:
                 problems.append(f'DS:{g["off"]:04X} {g["name"]}: defined in {defined[g["name"]]}, '
                                 'but the layout holds no such global (literal, alias or gap)')
         for name, (base, d) in self.aliases.items():
-            problems.append(f'{name}: a DB global inside {base.name} (+{d}); write it as a view of {base.name}')
+            problems.append(f'{name}: a global inside {base.name} (+{d}); write it as a view of {base.name}')
         for it in self.items:
             if it.kind == 'global' and it.synth and it.off not in self.globals:
-                problems.append(f'DS:{it.off:04X} {it.name}: the layout holds a global the DB lacks ({it.decl})')
+                problems.append(f'DS:{it.off:04X} {it.name}: the layout holds a global the sources lack ({it.decl})')
         return problems
 
-    # ------------------------------------------------------------ the DB
+    # ------------------------------------------------------------ link order
     def link_order(self):
         """The recovered order of the units: the literal-pool order with ORDER_HINTS applied."""
         order = list(self.order)

@@ -72,7 +72,7 @@ class Types:
         return dict(kind='scalar',name=name,size=size,align=min(2,max(1,size)),ctype=name),text[m.end():].strip()
 
     def declarator(self,base,decl):
-        # The identifier marker is @ in DB declarations and field names are
+        # The identifier marker is @ in declarations and field names are
         # normalized to it below. Function pointers are far in the medium model.
         before,after=decl.split('@',1)
         if '*' in before:

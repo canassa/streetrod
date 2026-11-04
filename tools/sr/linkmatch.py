@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 import struct
 
-from . import config, db, module
+from . import config, module, source
 from .exe import Image
 
 
@@ -45,9 +45,7 @@ def compare(executable, mapfile=None):
     # Mapped comparisons diagnose moved code; they NEVER change the raw verdict.
     if mapfile is not None:
         publics = map_publics(Path(mapfile))
-        con = db.connect()
-        rows = list(con.execute("SELECT * FROM functions WHERE status='matched' ORDER BY addr"))
-        con.close()
+        rows = source.game_functions()
         functions = []
         calls = []
         # A static function is not in the MAP: place it by a public of its own link unit

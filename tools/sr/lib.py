@@ -34,6 +34,26 @@ def objects(path):
             raise ValueError(f'{path}: unterminated archive member {name}')
 
 
+def _placements(obj, base, img, strict=True):
+    """{segment index: linear address} of a member placed at `base`: its code, and the DGROUP
+    segments its code refers to (from the original words at its fixups). None when two
+    references disagree (unless not strict: then the last one wins)."""
+    placements = {obj.code_seg: base}
+    for fix in obj.fixups:
+        if (fix.seg != obj.code_seg or fix.kind != 'seg' or fix.self_rel
+                or fix.loc not in (1, 5) or fix.index == obj.code_seg):
+            continue
+        if obj.segments[fix.index-1] not in ('_DATA', 'CONST', '_BSS'):
+            continue
+        actual = struct.unpack_from('<H', img, base+fix.pos)[0]
+        inline = int.from_bytes(obj.code[fix.pos:fix.pos+2], 'little')
+        location = config.DGROUP_SEG*16+actual-inline-fix.disp
+        if strict and fix.index in placements and placements[fix.index] != location:
+            return None
+        placements[fix.index] = location
+    return placements
+
+
 def candidates(libs, img, lo, hi):
     """Locate code, then reject candidates whose symbolic call targets disagree."""
     inventory = [(name, obj) for lib in libs for name, obj in objects(lib) if obj.code]
@@ -53,19 +73,10 @@ def candidates(libs, img, lo, hi):
         symbols = {}
         invalid = set()
         for base, _, obj in possible:
-            placements = {obj.code_seg: base}
-            for fix in obj.fixups:
-                if (fix.seg != obj.code_seg or fix.kind != 'seg' or fix.self_rel
-                        or fix.loc not in (1, 5) or fix.index == obj.code_seg):
-                    continue
-                if obj.segments[fix.index-1] not in ('_DATA', 'CONST', '_BSS'):
-                    continue
-                actual = struct.unpack_from('<H', img, base+fix.pos)[0]
-                inline = int.from_bytes(obj.code[fix.pos:fix.pos+2], 'little')
-                location = config.DGROUP_SEG*16+actual-inline-fix.disp
-                if fix.index in placements and placements[fix.index] != location:
-                    invalid.add((base, id(obj)))
-                placements[fix.index] = location
+            placements = _placements(obj, base, img)
+            if placements is None:
+                invalid.add((base, id(obj)))
+                placements = _placements(obj, base, img, strict=False)
             for symbol, (seg, offset) in obj.all_publics.items():
                 if seg in placements:
                     symbols.setdefault(symbol, set()).add(placements[seg]+offset)
@@ -112,8 +123,20 @@ def locate(libs, lo=config.CRT[0], hi=config.CRT[1]):
     Aliases must be actual publics at one offset, or independently verified
     identical implementations. Relocation-masked wrapper similarity is insufficient.
     """
-    found = {}
-    for base, name, obj in candidates(libs, image().img, lo, hi):
+    return locate_all(libs, lo, hi)[0]
+
+
+def locate_all(libs, lo=config.CRT[0], hi=config.CRT[1]):
+    """locate(), and {C name: DGROUP offset} of the located modules' data publics (placed by
+    their code's references; a public placed at two offsets is left out)."""
+    img = image().img
+    found, data = {}, {}
+    for base, name, obj in candidates(libs, img, lo, hi):
         for pub, off in obj.publics.items():
             found.setdefault(base+off, []).append((pub.lstrip('_'), name))
-    return found
+        placements = _placements(obj, base, img, strict=False)
+        for pub, (seg, off) in obj.all_publics.items():
+            if seg and seg != obj.code_seg and seg in placements:
+                data.setdefault(pub[1:] if pub.startswith('_') else pub, set()).add(
+                    placements[seg] + off - config.DGROUP_SEG*16)
+    return found, {n: min(v) for n, v in data.items() if len(v) == 1 and 0 <= min(v) < 0x10000}

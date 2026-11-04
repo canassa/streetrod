@@ -8,7 +8,7 @@ item, a DGROUP segment word the DGROUP paragraph.
 """
 import struct
 
-from . import config
+from . import config, source
 
 
 def _cstring(buf, off):
@@ -16,7 +16,7 @@ def _cstring(buf, off):
     return bytes(buf[off:end if end >= 0 else len(buf)])
 
 
-def check(obj, con, im, codebase):
+def check(obj, im, codebase):
     """problems (list of str) and (base, size) of the module's _DATA in the original."""
     problems = []
     if '_DATA' not in obj.segments:
@@ -37,7 +37,7 @@ def check(obj, con, im, codebase):
         bases.setdefault(base, []).append(f.pos)
     if not bases:
         return problems, None
-    globals_by_name = {g['name'].lstrip('_'): g['off'] for g in con.execute('SELECT off, name FROM globals')}
+    globals_by_name = {n.lstrip('_'): off for n, off in source.global_offsets().items()}
     if len(bases) > 1:
         shown = ', '.join(f'{b:04x} ({len(p)} refs)' for b, p in sorted(bases.items(), key=lambda kv: -len(kv[1])))
         problems.append(f'data layout: the code refers to our _DATA with different original bases: {shown}')
@@ -66,11 +66,9 @@ def check(obj, con, im, codebase):
     if bad:
         problems.append(f'data: {len(bad)} byte(s) differ from the original at DS:{base + bad[0]:04x}'
                         + (f', DS:{base + bad[1]:04x}' if len(bad) > 1 else '') + ' ...' * (len(bad) > 2))
-    far_by_name = {g['name']: (g['seg'], g['off']) for g in con.execute('SELECT seg, off, name FROM fardata')}
-    funcs = {f['addr']: (f['name'] or f'F_{f["addr"]:05X}') for f in con.execute('SELECT addr, name FROM functions')}
-    aliases = {}
-    for a, n in con.execute('SELECT addr, name FROM aliases'):
-        aliases.setdefault(a, set()).add(n)
+    far_by_name = {g['name']: (g['seg'], g['off']) for g in source.fardata()}
+    funcs = {f['addr']: source.fname(f) for f in source.functions()}
+    aliases = source.aliases()
     for f in dfix:
         at = ds + base + f.pos
         name = obj.target_name(f) or ''

@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace as NS
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
-from sr import cod, db, module
+from sr import cod, module, source
 
 class SourceFileTests(unittest.TestCase):
     def test_one_source_per_object(self):
@@ -19,13 +19,10 @@ class SourceFileTests(unittest.TestCase):
         self.assertEqual(len(module.code_starts()), 17)
 
     def test_functions_point_at_their_file(self):
-        con = db.connect()
         for f in module.files():
-            rows = con.execute("SELECT src FROM functions WHERE status = 'matched' AND addr >= ? AND addr < ?",
-                               (f.start, f.end)).fetchall()
+            rows = [r for r in source.functions() if f.start <= r['addr'] < f.end]
             self.assertTrue(rows, f.rel)
             self.assertEqual({r['src'] for r in rows}, {f.rel})
-        con.close()
 
     def test_command_line(self):
         fs = {f.path.name: f for f in module.files()}
