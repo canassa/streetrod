@@ -284,7 +284,7 @@ void F_12A17(int n)
 {
     struct Bitmap far *pict;
     struct Bitmap far *saved;
-    long unused;
+    long unused;    /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
     struct Blt move;
     int px;
     int height;
@@ -402,7 +402,7 @@ void F_12DD8(int n, int flag)
 {
     struct Bitmap far *pict;
     struct Bitmap far *saved;
-    long unused;
+    long unused;    /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
     int w;
     struct Blt move;
     int x;
@@ -456,7 +456,7 @@ void F_12DD8(int n, int flag)
 void F_12F99(int n)
 {
     struct Bitmap far *pict;
-    long unused;
+    long unused;    /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
     int w;
     struct Blt move;
     int h;

@@ -199,10 +199,9 @@ void F_1783E(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bi
         }
         F_19438(1);
         *pr1 = &g_5a10;
-        g_5a10.y2 = (*pa)->height - 1;
+        (*pr1)->y2 = (*pa)->height - 1;
         *pr2 = &g_5a18;
-        g_5a18.y1 = (*pa)->height - 15;
-        if (0) ;
+        (*pr2)->y1 = (*pa)->height - 15;
         (*pr2)->y2 = (*pa)->height - 1;
     }
 }

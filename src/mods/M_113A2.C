@@ -207,7 +207,7 @@ void F_1174E(char *msg)
 int F_118D4(int a, int b)
 {
     struct Bitmap far *p;
-    long unused;
+    long unused;    /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
     struct Blt pkt;
 
     F_120FE(-3);
