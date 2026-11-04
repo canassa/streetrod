@@ -1,4 +1,5 @@
 #include <dos.h>
+#include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -272,7 +273,7 @@ static void near scan_save_slots(int create)
     for (slot = 1, cnt = 0; slot <= 15; slot++) {
         itoa(slot, name + 8, 10);
         strcat(name, ".SAV");
-        if (_dos_open(name, 0, &fd7)) {
+        if (_dos_open(name, O_RDONLY, &fd7)) {
             g_saveSlots[slot] = 0;
         } else {
             if (_dos_read(fd7, hdr3, 0x24, &n) != 0 || n != 0x24)
@@ -340,7 +341,7 @@ int near savegame_load(void)
     strcpy(name + 1, ":HOTROD");
     itoa(g_saveSlots[r], name + 8, 10);
     strcat(name, ".SAV");
-    if (_dos_open(name, 0, &fd7)
+    if (_dos_open(name, O_RDONLY, &fd7)
         || _dos_read(fd7, g_driverName, 0x24, &n) != 0 || n != 0x24
         || (pools_init(0), 0)
         || read_cars(fd7, &a_7eaap.currentCar, 1)
@@ -476,7 +477,7 @@ again:
     strcpy(g_driverName, is_blank(g_saveName) ? g_desc + g_list[r] : g_saveName);
     delta = g_0600 - g_0604;
     name[0] = disk_data_drive();
-    if (_dos_creat(name, 0, &fd8)
+    if (_dos_creat(name, _A_NORMAL, &fd8)
         || _dos_write(fd8, g_driverName, 0x24, &n) != 0 || n != 0x24
         || write_cars(fd8, a_7eaap.currentCar, 1)
         || write_cars(fd8, a_7eaap.otherCars, 0)
