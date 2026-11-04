@@ -47,10 +47,10 @@ static int near your_cars(void);
 struct Car *g_4f46 = 0;   /* DS:4F46 */
 struct Car *g_4f48 = 0;   /* DS:4F48 */
 int g_4f4a = 0;   /* DS:4F4A */
-int g_4f4c = 0;   /* DS:4F4C */
-int g_4f4e[5] = {1022, 1023, 1025, 1024, 1026};   /* DS:4F4E */
-int g_4f58 = 0;   /* DS:4F58 */
-int g_4f5a = -1;   /* DS:4F5A */
+int g_picsFreed = 0;   /* DS:4F4C */
+int g_paperPics[5] = {1022, 1023, 1025, 1024, 1026};   /* DS:4F4E */
+int g_paperPick = 0;   /* DS:4F58 */
+int g_paperDay = -1;   /* DS:4F5A */
 
 /* start_game @ 0000:39C0 (linear 0x039C0, 195 bytes) */
 
@@ -72,13 +72,13 @@ static int near start_game(void)
     }
     road_generate();
     atnewName[0] = 0;
-    g_0610 = ag8bcet;
+    g_demo = ag8bcet;
     if (by70e2 == 0) {
         disk_load_data();
         if (r_vid.mode == -2)
-            disk_cache_list(g_4c28);
+            disk_cache_list(g_garagePics);
     }
-    disk_load_list(g_4c28, 1);
+    disk_load_list(g_garagePics, 1);
     F_120FE(-2);
     return -1;
 }
@@ -87,11 +87,11 @@ static int near start_game(void)
 
 void game_pause(int a)
 {
-    g_05cc = a + g_tick;
-    g_05d0 = 1;
+    g_waitUntil = a + g_tick;
+    g_anyInput = 1;
     sys_wait_input(30000);
-    g_05cc = 0;
-    g_05d0 = 0;
+    g_waitUntil = 0;
+    g_anyInput = 0;
 }
 
 /* game_message @ 0000:3AB8 (linear 0x03AB8, 84 bytes) */
@@ -100,13 +100,13 @@ void game_message(int n)
 {
     long saved;
 
-    saved = g_05cc;
+    saved = g_waitUntil;
     F_13DE6(24);
     popup_open(n);
-    game_pause(g_05dc);
+    game_pause(g_msgTicks);
     popup_close();
     F_13F21(1);
-    g_05cc = saved;
+    g_waitUntil = saved;
 }
 
 /* check_room @ 0000:3B0C (linear 0x03B0C, 39 bytes) */
@@ -135,13 +135,13 @@ static int near read_paper(void)
     old = r_vid.f16;
     r_vid.f16 = 0;
     F_118D4(0x3fd, -1);
-    if ((tune = F_06476()) != g_4f5a) {
-        if ((pick5 = random_int(5)) == g_4f58)
+    if ((tune = F_06476()) != g_paperDay) {
+        if ((pick5 = random_int(5)) == g_paperPick)
             pick5 = random_int(5);
-        g_4f58 = pick5;
-        g_4f5a = tune;
+        g_paperPick = pick5;
+        g_paperDay = tune;
     }
-    F_119B8(g_4f4e[g_4f58], 0, 0x88, -1);
+    F_119B8(g_paperPics[g_paperPick], 0, 0x88, -1);
     F_120FE(-3);
     F_06750(0x79);
     F_120FE(-1);
@@ -225,11 +225,11 @@ static void near sell_parts(void)
             lbl[nl] = 0x80;
         }
         g_49e0[0] = nl;
-        strcpy(g_2a3e, "Sell it");
-        g_579f[4]->key = 0x1f;
+        strcpy(g_msgSellChange, "Sell it");
+        g_keyMaps[4]->key = 0x1f;
         sel = F_142CF(4, sel <= g_49e0[0] ? sel : g_49e0[0], 0, g_49e0, lbl, 0);
-        g_579f[4]->key = 0x2e;
-        strcpy(g_2a3e, "Change");
+        g_keyMaps[4]->key = 0x2e;
+        strcpy(g_msgSellChange, "Change");
         switch ((int)sel) {
         case -4:
             return;
@@ -265,7 +265,7 @@ static void near sell_parts(void)
         strcpy(g_2a5f, &g_2c02[g_4806[type8].f6]);
         if (price1) {
             msg5 = 0x100a;
-            sprintf(g_3c0c, "Will you take $%-d ?", price1);
+            sprintf(g_msgWillYouTake, "Will you take $%-d ?", price1);
         } else
             msg5 = 0x1021;
         popup_open_at(msg5, -1, -1);
@@ -318,7 +318,7 @@ struct Node * near game_add_part(int idx, int a)
     n = game_new_part();
     n->idx = idx;
     it = &g_4806[idx];
-    n->b = g_4966[it->f4];
+    n->b = g_partWear[it->f4];
     n->a = a;
     n->next = a_7eaap.m7eb8;
     a_7eaap.m7eb8 = n;
@@ -349,19 +349,19 @@ struct Car * near game_make_car(int idx, int weight, struct Car *old)
     w = (kind = (g7d86n[idx].f4 & 0xf) >> 1) + (w == 3) + 3 * w + 9;
     node->idx = w;
     node->a = g_4806[w].f0;
-    node->b = g_4966[1];
+    node->b = g_partWear[1];
     node->next = 0;
     car->rack.s[0] = node = (old == 0) ? game_new_part() : car->rack.s[0];
     w = (g7d86n[idx].f4 >> 8 & 7) * 3 + kind;
     node->idx = w;
     node->a = g_4806[w].f0;
-    node->b = g_4966[0];
+    node->b = g_partWear[0];
     node->next = 0;
     car->slot12 = node = (old == 0) ? game_new_part() : car->slot12;
     w = (g7d86n[idx].f4 >> 4 & 3) + 0x28;
     node->idx = w;
     node->a = g_4806[w].f0;
-    node->b = g_4966[4];
+    node->b = g_partWear[4];
     node->next = 0;
     car->rack.s[1] = node = (old == 0) ? game_new_part() : car->rack.s[1];
     for (i = 3; i < 9; i++)
@@ -369,7 +369,7 @@ struct Car * near game_make_car(int idx, int weight, struct Car *old)
     w = (i = g7d86n[idx].f4 >> 11 & 7) * 3 + kind + 0x19;
     node->idx = w;
     node->a = g_4806[w].f0;
-    node->b = g_4966[3];
+    node->b = g_partWear[3];
     node->next = 0;
     w = (g7d86n[idx].f4 >> 14 & 3) + 0x16;
     i = g_5126[i] - 1;
@@ -379,7 +379,7 @@ struct Car * near game_make_car(int idx, int weight, struct Car *old)
         car->rack.s[i + 2] = node = (old == 0) ? game_new_part() : car->rack.s[i + 2];
         node->idx = w;
         node->a = g_4806[w].f0;
-        node->b = g_4966[2];
+        node->b = g_partWear[2];
         node->next = 0;
         car->b16[2 * i + 3] = 3;
         car->b16[2 * i + 4] = 3;
@@ -488,22 +488,22 @@ static void near buy_from_ads(int tab)
         if (used) {
             k3 = g_4806[i5 = list4[n + off6]].f6;
             price6 = g_4806[i5].f0;
-            g_11b0[0].f0 = 0xe;
+            g_hotBuy[0].f0 = 0xe;
         } else {
             k3 = (specn = &g7d86n[i5 = list4[n - 2]])->f6;
             price6 = specn->f0;
-            g_11b0[0].f0 = 10;
+            g_hotBuy[0].f0 = 10;
         }
         strcpy(g_2990, g_2c02 + k3);
-        sprintf(g_29d6, "$%-3d ?", price6);
+        sprintf(g_buyPrice, "$%-3d ?", price6);
         color = -1;
         for (;;) {
             n = F_14294(9);
             if (n == -20) {
-                if (g_0610 && (long)price6 > a_7eaap.m7eaa)
+                if (g_demo && (long)price6 > a_7eaap.m7eaa)
                     a_7eaap.m7eaa += 1999;
                 if ((long)price6 > a_7eaap.m7eaa) {
-                    p1 = strchr(g_3a5a, '$');
+                    p1 = strchr(g_msgShort, '$');
                     sprintf(++p1, "%d short.", price6 - (int)a_7eaap.m7eaa);
                     game_message(0xf1a8);
                     break;
@@ -552,9 +552,9 @@ static void near buy_from_ads(int tab)
             F_181C8(7, x1, y, 0, 0, 0x86, 0, g_5030[(specn->f4 >> 4) & 3]);
             screen_text((0x140 - dash_text_width(g_2990)) / 2, 0x88, g_2990);
             F_120FE(-2);
-            g_05d0 = 1;
+            g_anyInput = 1;
             F_14294(0x18);
-            g_05d0 = 0;
+            g_anyInput = 0;
             F_11BD3(bm1, 0, 0x40);
             marks_clear();
         }
@@ -568,7 +568,7 @@ done:
     g_0284 = 0;
 }
 
-char *g_4fa4 = g_3bf9;   /* DS:4FA4 */
+char *g_offerText = g_msgHowAbout;   /* DS:4FA4 */
 
 /* counter_offer @ 0000:4940 (linear 0x04940, 98 bytes) */
 
@@ -580,7 +580,7 @@ static int near counter_offer(unsigned *price)
     if (r = *price % 5)
         if ((*price -= r) == 0)
             *price = 5;
-    sprintf(g_4fa4, "How about $%-d ?", *price);
+    sprintf(g_offerText, "How about $%-d ?", *price);
     popup_open_at(0xff7, -1, -1);
     key = F_14294(0xd);
     popup_close();
@@ -765,11 +765,11 @@ void game_popup(int a, int b, int c)
 {
     long saved;
 
-    saved = g_05cc;
+    saved = g_waitUntil;
     popup_open_at(a, b, c);
-    game_pause(g_05dc);
+    game_pause(g_msgTicks);
     popup_close();
-    g_05cc = saved;
+    g_waitUntil = saved;
 }
 
 /* game_run @ 0000:503F (linear 0x0503F, 1007 bytes) */
@@ -969,11 +969,11 @@ void near game_run(void)
                 v = 0;
                 continue;
             case -40:
-                if (g_58d0) {
+                if (g_musicOn) {
                     sys_music_pause();
-                    g_58d0 = 0;
+                    g_musicOn = 0;
                 } else {
-                    g_58d0 = 1;
+                    g_musicOn = 1;
                     sys_music_resume();
                 }
                 v = 0;

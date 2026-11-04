@@ -65,7 +65,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   menu_list's `goto restore;`, load_pic's `goto done;` (a `break` moves the after-loop block),
   fill_quad's goto loop (escapes `/Ol`, see `loop_opt` below), render_mirror/view_draw's `goto next`,
   F_181C8's `again`/`done`, savegame_save's shared retry tail; and the loop forms
-  `for (;; g_05d2 = 0)` in edit_line (the increment gives the `jmp test` entry) and
+  `for (;; g_inputKey = 0)` in edit_line (the increment gives the `jmp test` entry) and
   ads_open's accumulation inside the inner `while` test (keeps `cx` for the outer loop).
   That the original had a jump at each of these points is evidence; the exact statement
   (a `goto`, a `continue`, a differently nested `if`) is not.
@@ -171,15 +171,15 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
 - **HOTSPOT.C's arrays.** DS:09F4..239E is 365 18-byte `struct Hot` records in one index
   space: `Hot.f10` links a record to the next by its index into `g_09f4`, and the code
   reaches records as `&g_09f4[n]`. It is split into arrays where code names a record
-  directly (`g_11b0[0].f0`, `g_1ac2[7].f0`, `g_1d80[i].y1`, `g_1e34[0].f4`, `g_1804[k]`,
-  `g_20aa[3]`) or computes a run-time difference (`g_134e - g_121c`, `g_1a44 - g_19ea`),
+  directly (`g_hotBuy[0].f0`, `g_hotRepair[7].f0`, `g_hotReadyBox[i].y1`, `g_1e34[0].f4`, `g_1804[k]`,
+  `g_hotBobs[3]`) or computes a run-time difference (`g_134e - g_121c`, `g_hotAttendant - g_hotGasStation`),
   which proves separate symbols; each array starts at the first record so named. Where
   the original's other boundaries were (one array per menu list, or fewer), and the
   arrays' names, are not recoverable. `g_184c` (a runtime list gargfx_build_hots builds), `g_1948`
-  (three fixed menu records, then six records of another list) and `g_0796` are Hot
+  (three fixed menu records, then six records of another list) and `g_boltHot` are Hot
   records too; insert_hot sorts them by (x1, y1).
 - **HERCDET.ASM's key maps.** 43 lists of (scan code, value) pairs, each ended by a 0
-  byte, one per screen (`g_579f[]`). They are local labels; the DB and HERCDET.H only know
+  byte, one per screen (`g_keyMaps[]`). They are local labels; the DB and HERCDET.H only know
   the first, `g_5580`, as the 543-byte area (no C code names it; the DGROUP model needs
   its extent). DS:5727 is a 0 byte between two lists that no pointer names, written as an
   unreferenced empty list.

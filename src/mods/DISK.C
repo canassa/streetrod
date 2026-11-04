@@ -55,23 +55,23 @@ static int near load_pic(int n, int load, char far *dst);
 static void near unscramble_hall(void);
 static void near scramble_hall(void);
 
-char *g_4ea2 = "hot_data";   /* DS:4EA2 */
-char *g_4ea4[13] = {(char *)av7ff8, (char *)g7d86n, (char *)w_8df0, (char *)g7682n, (char *)ai70e4t, (char *)ap818c, g_2c02, (char *)&a_7d16q, g_239e, (char *)g7d68m, (char *)ag8baey, (char *)h_8dd8, (char *)a784als};   /* DS:4EA4 */
-unsigned g_4ebe[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};   /* DS:4EBE */
-int g_4ed8 = 0;   /* DS:4ED8 */
-int g_4eda = 0;   /* DS:4EDA */
-char *g_4edc = "?:lib1";   /* DS:4EDC */
-char *g_4ede = "?:lib1c";   /* DS:4EDE */
-char *g_4ee0 = "?:lib2";   /* DS:4EE0 */
-char *g_4ee2 = "?:lib2c";   /* DS:4EE2 */
-char *g_4ee4 = "insert disk ? into drive ?";   /* DS:4EE4 */
-char *g_4ee6 = "copy all files to current directory";   /* DS:4EE6 */
-char *g_4ee8 = "bad file format";   /* DS:4EE8 */
-char *g_4eea = "write error";   /* DS:4EEA */
-char *g_4eec = "file not found: ????";   /* DS:4EEC */
-unsigned char g_4eee[16] = {1, 1, 2, 3, 4, 2, 3, 5, 6, 6, 4, 7, 7, 5, 8, 8};   /* DS:4EEE */
-unsigned char g_4efe[16] = {0, 255, 0, 0, 0, 255, 255, 0, 255, 0, 255, 255, 0, 255, 255, 0};   /* DS:4EFE */
-int g_4f0e = 1;   /* DS:4F0E */
+char *g_dataFileName = "hot_data";   /* DS:4EA2 */
+char *g_dataBlocks[13] = {(char *)av7ff8, (char *)g7d86n, (char *)w_8df0, (char *)g7682n, (char *)ai70e4t, (char *)ap818c, g_2c02, (char *)&a_7d16q, g_239e, (char *)g7d68m, (char *)ag8baey, (char *)h_8dd8, (char *)a784als};   /* DS:4EA4 */
+unsigned g_dataSizes[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};   /* DS:4EBE */
+int g_lib1Handle = 0;   /* DS:4ED8 */
+int g_lib2Handle = 0;   /* DS:4EDA */
+char *g_lib1Name = "?:lib1";   /* DS:4EDC */
+char *g_lib1cName = "?:lib1c";   /* DS:4EDE */
+char *g_lib2Name = "?:lib2";   /* DS:4EE0 */
+char *g_lib2cName = "?:lib2c";   /* DS:4EE2 */
+char *g_msgInsertDisk = "insert disk ? into drive ?";   /* DS:4EE4 */
+char *g_msgCopyFiles = "copy all files to current directory";   /* DS:4EE6 */
+char *g_msgBadFormat = "bad file format";   /* DS:4EE8 */
+char *g_msgWriteError = "write error";   /* DS:4EEA */
+char *g_msgNotFound = "file not found: ????";   /* DS:4EEC */
+unsigned char g_rleCounts[16] = {1, 1, 2, 3, 4, 2, 3, 5, 6, 6, 4, 7, 7, 5, 8, 8};   /* DS:4EEE */
+unsigned char g_rleValues[16] = {0, 255, 0, 0, 0, 255, 255, 0, 255, 0, 255, 255, 0, 255, 255, 0};   /* DS:4EFE */
+int g_picNewHeader = 1;   /* DS:4F0E */
 
 /* disk_seek @ 0F38:6016 (linear 0x15396, 65 bytes)
 
@@ -124,29 +124,29 @@ static void near open_lib(int n)
     if (pic_index(n) >= h_8bc8) {
         kind = 2;
         g_6c6e = au8dd6y;
-        g_6c6c = &g_4eda;
-        g_6c70a = &g_4ed8;
+        g_6c6c = &g_lib2Handle;
+        g_6c70a = &g_lib1Handle;
         g_6c6a = &s_8dd2;
     } else {
         kind = 1;
         g_6c6e = aw8dd4x;
-        g_6c6c = &g_4ed8;
-        g_6c70a = &g_4eda;
+        g_6c6c = &g_lib1Handle;
+        g_6c70a = &g_lib2Handle;
         g_6c6a = &h_8bc8;
     }
     if (*g_6c6c == 0) {
         _dos_close(*g_6c70a);
         *g_6c70a = 0;
-        g_4ee4[12] = kind == 1 ? '1' : (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
-        g_4ee4[25] = *g_6c6e;
+        g_msgInsertDisk[12] = kind == 1 ? '1' : (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
+        g_msgInsertDisk[25] = *g_6c6e;
         tries = 0;
         while (_dos_open(g_6c6e, 0, g_6c6c)) {
             if (tries++ == 3)
                 sys_exit();
-            screen_wait_msg(g_4ee4);
+            screen_wait_msg(g_msgInsertDisk);
         }
         if (_dos_read(*g_6c6c, (void far *)g_6c6a, 2, &got) || got != 2 || h_8bc8 + s_8dd2 != 0x115) {
-            screen_wait_msg(g_4ee8);
+            screen_wait_msg(g_msgBadFormat);
             sys_exit();
         }
     }
@@ -177,7 +177,7 @@ int disk_read_index(int which)
         sl = &g_slot[base + i];
         if (disk_seek(*g_6c6c, (long)(i * 0x1e + 2)) ||
             _dos_read(*g_6c6c, (void far *)sl, 0x1e, &got) || got != 0x1e) {
-            screen_wait_msg(g_4ee8);
+            screen_wait_msg(g_msgBadFormat);
             sys_exit();
         }
         sl->f1e = 0xff;
@@ -254,9 +254,9 @@ static int near load_pic(int n, int load, char far *dst)
             do {
                 if (++retries > 3)
                     sys_exit();
-                g_4ee4[12] = *g_6c6c == g_4ed8 ? 1 : (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
-                g_4ee4[25] = *g_6c6e;
-                screen_wait_msg(g_4ee4);
+                g_msgInsertDisk[12] = *g_6c6c == g_lib1Handle ? 1 : (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
+                g_msgInsertDisk[25] = *g_6c6e;
+                screen_wait_msg(g_msgInsertDisk);
                 _dos_close(*g_6c6c);
             } while (_dos_open(g_6c6e, 0, g_6c6c));
             if (!disk_seek(*g_6c6c, offset))
@@ -268,7 +268,7 @@ static int near load_pic(int n, int load, char far *dst)
     } else
         return 1;
 bad:
-    screen_wait_msg(g_4ee8);
+    screen_wait_msg(g_msgBadFormat);
     sys_exit();
 }
 
@@ -307,7 +307,7 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
     F_120FE(-4);
     res = load_pic(id, 0, ab7564z);
     cur = sl = &g_slot[pic_index(id)];
-    if (g_4f0e)
+    if (g_picNewHeader)
         pic = mem_new_bitmap(cur->f0, cur->f2, cur->f6, 1, bm);
     else
         pic = bm;
@@ -381,13 +381,13 @@ struct Bitmap far *F_15BBE(int id, int mode)
 /* disk_cache_list @ 0F38:6887 (linear 0x15C07, 67 bytes)
 
    Load every picture of the zero terminated list of picture numbers (see load_pic). Does
-   nothing when g_0280 is set. Returns 1 */
+   nothing when g_noUeMem is set. Returns 1 */
 
 int disk_cache_list(int *list)
 {
     int n;
 
-    if (g_0280)
+    if (g_noUeMem)
         return 1;
     while (n = *list++)
         load_pic(n, 1, 0L);
@@ -445,58 +445,58 @@ void disk_open_libs(int disks, int mode)
         disks = 2;
     else
         disks = 1;
-    aw8dd4x = (mode == 2 || mode == 5) ? g_4edc : g_4ede;
+    aw8dd4x = (mode == 2 || mode == 5) ? g_lib1Name : g_lib1cName;
     *aw8dd4x = g_6c68 + 0x40;
-    err = _dos_open(aw8dd4x, 0, &g_4ed8);
-    if (err || g_4ed8 == 0) {
+    err = _dos_open(aw8dd4x, 0, &g_lib1Handle);
+    if (err || g_lib1Handle == 0) {
         if (g_6c68 > 2) {
-            screen_wait_msg(g_4ee6);
+            screen_wait_msg(g_msgCopyFiles);
         } else {
-            strcpy(g_4eec + 0x10, aw8dd4x + 2);
-            screen_wait_msg(g_4eec);
+            strcpy(g_msgNotFound + 0x10, aw8dd4x + 2);
+            screen_wait_msg(g_msgNotFound);
         }
         sys_exit();
     }
-    if (_dos_read(g_4ed8, (void far *)&h_8bc8, 2, &err) || err != 2) {
-        screen_wait_msg(g_4ee8);
+    if (_dos_read(g_lib1Handle, (void far *)&h_8bc8, 2, &err) || err != 2) {
+        screen_wait_msg(g_msgBadFormat);
         sys_exit();
     }
-    au8dd6y = (mode == 2 || mode == 5) ? g_4ee0 : g_4ee2;
+    au8dd6y = (mode == 2 || mode == 5) ? g_lib2Name : g_lib2cName;
     *au8dd6y = *aw8dd4x;
-    if (_dos_open(au8dd6y, 0, &g_4eda) || g_4eda == 0) {
+    if (_dos_open(au8dd6y, 0, &g_lib2Handle) || g_lib2Handle == 0) {
         if (g_6c68 > 2) {
-            screen_wait_msg(g_4ee6);
+            screen_wait_msg(g_msgCopyFiles);
             sys_exit();
         } else if (disks == 1) {
-            g_4eda = 0;
+            g_lib2Handle = 0;
         } else {
             *au8dd6y = g_6c68 == 1 ? 'B' : 'A';
-            err = _dos_open(au8dd6y, 0, &g_4eda);
-            for (tries = 0; err || g_4eda == 0; tries++) {
+            err = _dos_open(au8dd6y, 0, &g_lib2Handle);
+            for (tries = 0; err || g_lib2Handle == 0; tries++) {
                 if (tries == 3)
                     sys_exit();
-                g_4ee4[12] = (mode != 2 && mode != 5) ? '3' : '2';
-                g_4ee4[0x19] = *au8dd6y;
-                screen_wait_msg(g_4ee4);
-                err = _dos_open(au8dd6y, 0, &g_4eda);
+                g_msgInsertDisk[12] = (mode != 2 && mode != 5) ? '3' : '2';
+                g_msgInsertDisk[0x19] = *au8dd6y;
+                screen_wait_msg(g_msgInsertDisk);
+                err = _dos_open(au8dd6y, 0, &g_lib2Handle);
             }
         }
     }
-    if (g_4eda) {
-        if (_dos_read(g_4eda, (void far *)&s_8dd2, 2, &err) || err != 2 || h_8bc8 + s_8dd2 != 0x115) {
-            screen_wait_msg(g_4ee8);
+    if (g_lib2Handle) {
+        if (_dos_read(g_lib2Handle, (void far *)&s_8dd2, 2, &err) || err != 2 || h_8bc8 + s_8dd2 != 0x115) {
+            screen_wait_msg(g_msgBadFormat);
             sys_exit();
         }
     }
 }
 
-char g_4f3a[12] = "?:hall_dat";   /* DS:4F3A */
+char g_hallFileName[12] = "?:hall_dat";   /* DS:4F3A */
 
 /* disk_load_data @ 0F38:6B79 (linear 0x15EF9, 196 bytes)
 
    Load the game data. Builds the file name g_6c72a from the first two characters of
-   au8dd6y and the text g_4ea2 points to (g_4ea2 ends up behind its terminator), opens it and
-   reads the 13 blocks of the data table (buffer g_4ea4[i], size g_4ebe[i]); any failure shows an
+   au8dd6y and the text g_dataFileName points to (g_dataFileName ends up behind its terminator), opens it and
+   reads the 13 blocks of the data table (buffer g_dataBlocks[i], size g_dataSizes[i]); any failure shows an
    error text. Ends by loading the hall of fame (disk_load_hall) */
 
 void disk_load_data(void)
@@ -510,14 +510,14 @@ void disk_load_data(void)
     drive = g_6c72a;
     *drive++ = au8dd6y[0];
     *drive++ = au8dd6y[1];
-    while (*drive++ = *g_4ea2++)
+    while (*drive++ = *g_dataFileName++)
         ;
     if (_dos_open(g_6c72a, 0, &fd)) {
         screen_wait_msg("Can't open data file");
         sys_exit();
     }
     for (i = j = 0; i < 13; i++) {
-        if (!_dos_read(fd, (void far *)g_4ea4[i], g_4ebe[i], &got) && got == g_4ebe[i])
+        if (!_dos_read(fd, (void far *)g_dataBlocks[i], g_dataSizes[i], &got) && got == g_dataSizes[i])
             continue;
         screen_wait_msg("Data disc read fail");
         sys_exit();
@@ -545,9 +545,9 @@ int disk_data_drive(void)
         if (_dos_open(g_6c72a, 0, &file)) {
             if (++tries > 3)
                 sys_exit();
-            g_4ee4[12] = (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
-            g_4ee4[25] = *au8dd6y;
-            screen_wait_msg(g_4ee4);
+            g_msgInsertDisk[12] = (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
+            g_msgInsertDisk[25] = *au8dd6y;
+            screen_wait_msg(g_msgInsertDisk);
         } else {
             _dos_close(file);
             open_lib(1000);
@@ -583,7 +583,7 @@ static void near unscramble_hall(void)
 
 /* disk_load_hall @ 0F38:6D09 (linear 0x16089, 201 bytes)
 
-   Read the hall of fame file (name g_4f3a, first character the drive of the game disk):
+   Read the hall of fame file (name g_hallFileName, first character the drive of the game disk):
    a count word, then bucount entries. Any read failure shows the error text. A missing file
    leaves the table empty */
 
@@ -594,18 +594,18 @@ void disk_load_hall(void)
     int got;
     int fd;
 
-    g_4f3a[0] = *au8dd6y;
+    g_hallFileName[0] = *au8dd6y;
     disk_data_drive();
-    if (_dos_open(g_4f3a, 0, &fd) || fd == 0)
+    if (_dos_open(g_hallFileName, 0, &fd) || fd == 0)
         bucount = 0;
     else {
         if (_dos_read(fd, (void far *)&bucount, 2, &got) || got != 2) {
-            screen_wait_msg(g_4ee8);
+            screen_wait_msg(g_msgBadFormat);
             sys_exit();
         }
         for (i = 0, p = aytablex; i < bucount; p++, i++) {
             if (_dos_read(fd, (void far *)p, sizeof *p, &got) || got != sizeof *p) {
-                screen_wait_msg(g_4ee8);
+                screen_wait_msg(g_msgBadFormat);
                 sys_exit();
             }
         }
@@ -616,7 +616,7 @@ void disk_load_hall(void)
 
 /* disk_save_hall @ 0F38:6DD2 (linear 0x16152, 312 bytes)
 
-   Write the hall of fame file (g_4f3a): the table is scrambled (scramble_hall), the file made
+   Write the hall of fame file (g_hallFileName): the table is scrambled (scramble_hall), the file made
    (asking for the disk until it works on a floppy), the count word and the bucount entries
    written. Any failure shows the error text and deletes the file. The table is unscrambled at
    the end (unscramble_hall) */
@@ -631,27 +631,27 @@ void disk_save_hall(void)
 
     scramble_hall();
     disk_data_drive();
-    got = _dos_creat(g_4f3a, 0, &fd);
+    got = _dos_creat(g_hallFileName, 0, &fd);
     if (g_6c68 > 2) {
         if (fd == 0 || got) {
-            screen_wait_msg(g_4eea);
+            screen_wait_msg(g_msgWriteError);
             sys_exit();
         }
     } else {
-        g_4ee4[12] = '1';
-        g_4ee4[25] = g_4f3a[0];
+        g_msgInsertDisk[12] = '1';
+        g_msgInsertDisk[25] = g_hallFileName[0];
         for (tries = 0; fd == 0 || got; tries++) {
             if (tries == 3)
                 sys_exit();
-            screen_wait_msg(g_4ee8);
-            got = _dos_creat(g_4f3a, 0, &fd);
+            screen_wait_msg(g_msgBadFormat);
+            got = _dos_creat(g_hallFileName, 0, &fd);
         }
     }
     if (_dos_write(fd, (void far *)&bucount, 2, &got) || got != 2) {
 bad:
-        screen_wait_msg(g_4eea);
-        unlink(g_4f3a);
-        screen_wait_msg(g_4eea);
+        screen_wait_msg(g_msgWriteError);
+        unlink(g_hallFileName);
+        screen_wait_msg(g_msgWriteError);
     } else {
         for (i = 0, p = aytablex; i < bucount; p++, i++)
             if (_dos_write(fd, (void far *)p, sizeof *p, &got) || got != sizeof *p)

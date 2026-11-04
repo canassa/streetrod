@@ -501,7 +501,7 @@ struct Pos6 {
     int dy;
 };
 
-/* one step of an animation table (g_521e): frame number, then the delay in ticks before the next */
+/* one step of an animation table (g_animSteps): frame number, then the delay in ticks before the next */
 struct Step {
     unsigned char frame;
     unsigned char delay;
@@ -560,7 +560,7 @@ struct Cursor {
     struct Rect r;              /* last drawn extent, x2 < 0 when none */
 };
 
-/* one cell of the intro picture tables g_526a / g_52e2 (6 bytes): source origin in the sheet,
+/* one cell of the intro picture tables g_endCellsA / g_endCellsB (6 bytes): source origin in the sheet,
    size, and the on-screen position (x is biased by 0x50) */
 struct Cell {
     unsigned char sx;

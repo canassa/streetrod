@@ -40,20 +40,20 @@ struct Band dz7ec2[4];
 struct Bitmap bw7fa8;
 int l_8262;
 
-int g_58e2 = 1;   /* DS:58E2 */
+int g_delayScale = 1;   /* DS:58E2 */
 int g_58e4 = 0;   /* DS:58E4 */
-int g_58e6 = 0;   /* DS:58E6 */
-int g_58e8[3] = {1001, 1002, 1000};   /* DS:58E8 */
+int g_autoTrans = 0;   /* DS:58E6 */
+int g_wheelPicIds[3] = {1001, 1002, 1000};   /* DS:58E8 */
 int g_58ee = 0;   /* DS:58EE */
-struct Cmd g_58f0[44] = {{1, 0, -1, -1}, {6, 0, 0, 0}, {2, 0, -1, -1}, {10, 0, 8, 1}, {9, 2, 48, 111}, {5, 0, 250, -1}, {11, 0, 10, 7}, {5, 0, 0, -1}, {11, 4, 10, 7}, {6, 0, 0, 0}, {4, 0, -1, -1}, {6, 0, 0, 0}, {3, 0, -1, -1}, {8, 0, 1233, 2}, {10, 0, 48, 64}, {9, 2, 200, 81}, {13, 0, -1, -1}, {11, 0, 16, 0}, {2, 1, 0, 0}, {11, 4, 16, 0}, {2, 1, 48, 0}, {11, 4, 16, 0}, {2, 1, 96, 0}, {11, 4, 20, 0}, {6, 0, 0, 0}, {5, 0, -1, -1}, {6, 0, 0, 0}, {6, 0, -1, -1}, {6, 0, 0, 0}, {7, 0, -1, -1}, {6, 0, 0, 0}, {8, 0, -1, -1}, {8, 0, 1075, 2}, {10, 0, 16, 94}, {9, 2, 160, 52}, {11, 0, 4, 0}, {2, 1, 0, 0}, {11, 4, 4, 0}, {2, 1, 16, 0}, {11, 4, 4, 0}, {2, 1, 32, 0}, {11, 4, 4, 36}, {6, 0, 0, 0}, {6, 0, 0, 0}};   /* DS:58F0 */
-int g_59f8[9] = {8, 0, 2, 12, 10, 25, 27, 29, 31};   /* DS:59F8 */
-struct Bitmap far *g_5a0a = (struct Bitmap far *)&bw7fa8;   /* DS:5A0A */
-int g_5a0e = 0;   /* DS:5A0E */
+struct Cmd g_animScripts[44] = {{1, 0, -1, -1}, {6, 0, 0, 0}, {2, 0, -1, -1}, {10, 0, 8, 1}, {9, 2, 48, 111}, {5, 0, 250, -1}, {11, 0, 10, 7}, {5, 0, 0, -1}, {11, 4, 10, 7}, {6, 0, 0, 0}, {4, 0, -1, -1}, {6, 0, 0, 0}, {3, 0, -1, -1}, {8, 0, 1233, 2}, {10, 0, 48, 64}, {9, 2, 200, 81}, {13, 0, -1, -1}, {11, 0, 16, 0}, {2, 1, 0, 0}, {11, 4, 16, 0}, {2, 1, 48, 0}, {11, 4, 16, 0}, {2, 1, 96, 0}, {11, 4, 20, 0}, {6, 0, 0, 0}, {5, 0, -1, -1}, {6, 0, 0, 0}, {6, 0, -1, -1}, {6, 0, 0, 0}, {7, 0, -1, -1}, {6, 0, 0, 0}, {8, 0, -1, -1}, {8, 0, 1075, 2}, {10, 0, 16, 94}, {9, 2, 160, 52}, {11, 0, 4, 0}, {2, 1, 0, 0}, {11, 4, 4, 0}, {2, 1, 16, 0}, {11, 4, 4, 0}, {2, 1, 32, 0}, {11, 4, 4, 36}, {6, 0, 0, 0}, {6, 0, 0, 0}};   /* DS:58F0 */
+int g_animScriptStart[9] = {8, 0, 2, 12, 10, 25, 27, 29, 31};   /* DS:59F8 */
+struct Bitmap far *g_backdrop = (struct Bitmap far *)&bw7fa8;   /* DS:5A0A */
+int g_carMoving = 0;   /* DS:5A0E */
 struct Rect g_5a10 = {0, 0, 80, 0};   /* DS:5A10 */
 struct Rect g_5a18 = {88, 0, 136, 0};   /* DS:5A18 */
-int g_5a20 = 0;   /* DS:5A20 */
-int g_5a22 = 0;   /* DS:5A22 */
-int g_5a24 = 0;   /* DS:5A24 */
+int g_backdropX = 0;   /* DS:5A20 */
+int g_backdropW = 0;   /* DS:5A22 */
+int g_carPassBy = 0;   /* DS:5A24 */
 
 /* blit_planes @ 0F38:8126 (linear 0x174A6, 116 bytes)
 
@@ -171,12 +171,12 @@ void carpic_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, s
     start->height = y2;
     start->planesize = y2 * size * r_vid.planes;
     if (r_vid.mode == -6) {
-        if (g_5a22 == 0)
-            g_5a22 = src->width;
-        *pa = F_1934E(g_5a22, y2, flag, 1);
-        blt.w = g_5a22;
+        if (g_backdropW == 0)
+            g_backdropW = src->width;
+        *pa = F_1934E(g_backdropW, y2, flag, 1);
+        blt.w = g_backdropW;
         blt.h = y2;
-        blt.sx = g_5a20;
+        blt.sx = g_backdropX;
         blt.sy = blt.dx = blt.dy = 0;
         (*b_78a2)(start, *pa, &blt, 1);
     } else {
@@ -228,14 +228,14 @@ static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstb
     struct Blt b;
     int t;
 
-    g_4f0e = 0;
+    g_picNewHeader = 0;
     tmp1 = F_1934E(0x10, 0x46, 1, 2);
     disk_unpack_pic(id1, tmp1);
     save1 = tmp1->bits.p;
     tmp1->bits.p = 0;
     disk_unpack_pic(id2, tmp1);
     tmp1->bits.p = save1;
-    g_4f0e = 1;
+    g_picNewHeader = 1;
     bitmap_copy(tmp1, dstbm, 1);
     b.h = bu825a->height;
     b.sy = 0;
@@ -426,15 +426,15 @@ again:
     hh8 = (kind == 3 || kind == 7 || kind == 8) ? h7 - g_02d0 : g_0298[g_0284];
     x0 = ((0x140 - w1) / 2 + 4) & 0xfff8;
     right = kind == 2 ? 0x140 - x0 : x0 + w1;
-    if (g_5a24 != 2) {
+    if (g_carPassBy != 2) {
         if (kind == 4) {
             g_4f4a = 1;
             if (r_vid.mode == -2) {
-                mem_set_bitmap(g_5a0a, bp7316[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -2);
-                egalatch_rect(r_vid.back->bits.p, g_5a0a->bits.p - 0x28 * top7, 0x28, g_5a0a->height, 0, top7, 0x28);
+                mem_set_bitmap(g_backdrop, bp7316[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -2);
+                egalatch_rect(r_vid.back->bits.p, g_backdrop->bits.p - 0x28 * top7, 0x28, g_backdrop->height, 0, top7, 0x28);
             } else {
-                mem_set_bitmap(g_5a0a, bp7316[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -1);
-                F_11A72(0, top7, 0x140, g_5a0a->height, g_5a0a);
+                mem_set_bitmap(g_backdrop, bp7316[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -1);
+                F_11A72(0, top7, 0x140, g_backdrop->height, g_backdrop);
             }
         }
         if (kind == 4) {
@@ -457,14 +457,14 @@ again:
             marks_pop_low(3);
         }
         if (kind != 3 && kind != 7 && kind != 8) {
-            if (g_5a24 != 1) {
-                g_5a22 = right;
-                g_5a20 = kind == 2 ? x0 : 0;
+            if (g_carPassBy != 1) {
+                g_backdropW = right;
+                g_backdropX = kind == 2 ? x0 : 0;
             } else {
-                g_5a22 = 0x140;
-                g_5a20 = 0;
+                g_backdropW = 0x140;
+                g_backdropX = 0;
             }
-            carpic_backdrop(g_5a0a, &pan, mode2 ? 0x448 : 0, &pb8, 0x46, h7, &pr16, &pr26);
+            carpic_backdrop(g_backdrop, &pan, mode2 ? 0x448 : 0, &pb8, 0x46, h7, &pr16, &pr26);
         }
     }
     ac825et = x0;
@@ -481,10 +481,10 @@ again:
     m_8272.m8272 += x0;
     m_8272.m8274 += aw8260y;
     ang2 = (kind == 1 || kind == 4) ? x0 - right : x0;
-    if (g_5a24 != 2) {
+    if (g_carPassBy != 2) {
         if (r_vid.mode == -2) {
             if (kind == 3 || kind == 8)
-                mask3 = g_5a0a->bits.p + ((g_5a0a->height - hh8) * g_5a0a->pitch + x0 / 8);
+                mask3 = g_backdrop->bits.p + ((g_backdrop->height - hh8) * g_backdrop->pitch + x0 / 8);
             else
                 mask3 = 0;
             make_bands(dz7ec2, bms6, n2, g_02d0, hh8, mask3, tmpn);
@@ -496,9 +496,9 @@ again:
                     blt.w = w1;
                     blt.h = h7 - g_02d0;
                     blt.sx = x0;
-                    blt.sy = g_5a0a->height - h7;
+                    blt.sy = g_backdrop->height - h7;
                     blt.dx = blt.dy = 0;
-                    (*b_78a2)(g_5a0a, bm48, &blt, 1);
+                    (*b_78a2)(g_backdrop, bm48, &blt, 1);
                 } else
                     F_11A72(x0, aw8260y, bm48->width, bm48->height, bm48);
                 blt.w = w1;
@@ -538,17 +538,17 @@ again:
     if (kind == 6)
         spr3->page->r = g_6cbc;
     if (kind == 4 || kind == 1 || kind == 2 || kind == 6) {
-        g_0286 = 1;
-        g_5a0e = 1;
-        if (g_5a24 != 2)
+        g_carAnim = 1;
+        g_carMoving = 1;
+        if (g_carPassBy != 2)
             sys_drive_start();
         while ((*g78c6c)(spr3))
             ;
-        if (g_5a24 != 1)
+        if (g_carPassBy != 1)
             sys_drive_stop();
         bu825a = g_0288;
-        g_5a0e = 0;
-        g_0286 = 0;
+        g_carMoving = 0;
+        g_carAnim = 0;
         g_6cbc = spr3->page->r;
     }
     if (g_0284 == 3 && kind == 4) {
@@ -570,15 +570,15 @@ again:
     dash_set_view(2);
     if (r_vid.mode != -2)
         (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
-    if (g_5a24 == 1) {
+    if (g_carPassBy == 1) {
         kind = 2;
-        g_5a24 = 2;
+        g_carPassBy = 2;
         goto again;
     }
 done:
-    g_02d0 = g_5a22 = g_5a20 = 0;
+    g_02d0 = g_backdropW = g_backdropX = 0;
     marks_release();
-    g_5a24 = 0;
+    g_carPassBy = 0;
     F_120FE(-2);
 }
 
@@ -594,7 +594,7 @@ void carpic_patch_bg(struct Bitmap far *dst, int p1, int p2, int p3, int p4, int
     int top;
 
     base7 = p7 - 0x45;
-    top = g_5a0a->height + base7 - 1;
+    top = g_backdrop->height + base7 - 1;
     lo7 = p6 < base7 ? base7 : p6;
     hi1 = p6 + p4 - 1 > top ? top : p6 + p4 - 1;
     if (lo7 <= hi1) {
@@ -604,16 +604,16 @@ void carpic_patch_bg(struct Bitmap far *dst, int p1, int p2, int p3, int p4, int
         r.sy = p2 + lo7 - p6;
         r.dx = p5;
         r.dy = lo7 - base7;
-        (*b_78a2)(dst, g_5a0a, &r, 1);
+        (*b_78a2)(dst, g_backdrop, &r, 1);
     }
     if (g_0284 == 6) {
-        r.h = g_5a0a->height;
+        r.h = g_backdrop->height;
         r.sy = p7 - 0x45;
         r.dy = 0;
         for (i9 = 0; i9 < 7; i9++) {
-            r.w = g_5338[i9].w;
-            r.sx = r.dx = g_5338[i9].x;
-            (*b_78a2)(r_vid.front, g_5a0a, &r, 1);
+            r.w = g_jailBars[i9].w;
+            r.sx = r.dx = g_jailBars[i9].x;
+            (*b_78a2)(r_vid.front, g_backdrop, &r, 1);
         }
     }
 }

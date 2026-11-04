@@ -32,17 +32,17 @@ static void near build_right_closed(void);
 static void near build_narrows(void);
 static void near build_left_closed(void);
 
-int g_5c20[22] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, -4, -4, -4, -3, -2, -1};   /* DS:5C20 */
-int g_5c4c[38] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, -5, -5, -5, -5, -5, -5, -4, -3, -2, -1, 0, 0, 1, 2, 3, 4, 4, 4, 4, 3, 2, 1};   /* DS:5C4C */
-int g_5c98[17] = {1, 2, 3, 3, 3, 2, 1, 0, 0, 0, -1, -2, -3, -3, -3, -2, -1};   /* DS:5C98 */
-int g_5cba = 12;   /* DS:5CBA */
-int g_5cbc[10][12] = {{2, 3, 1, 7, 4, 10, 5, 8, 6, 2, 9, 1}, {11, 4, 8, 1, 6, 9, 2, 5, 7, 2, 3, 1}, {1, 5, 1, 3, 8, 11, 6, 7, 2, 4, 9, 1}, {3, 1, 4, 9, 2, 6, 8, 1, 3, 8, 10, 2}, {10, 9, 5, 1, 6, 2, 3, 7, 4, 2, 8, 2}, {2, 3, 8, 10, 5, 11, 4, 7, 1, 6, 9, 2}, {1, 5, 9, 1, 4, 2, 3, 10, 8, 4, 1, 9}, {2, 4, 7, 11, 2, 5, 8, 4, 1, 7, 6, 2}, {2, 6, 8, 10, 6, 1, 3, 7, 5, 1, 4, 9}, {1, 3, 1, 6, 1, 4, 9, 10, 6, 8, 2, 3}};   /* DS:5CBC */
-struct Bitmap g_5dac = {320, 200, 8000, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0}, {(char far *)0xA2000000L}, {0}, 40, -2};   /* DS:5DAC */
-struct Bitmap g_5ddc = {320, 200, 8000, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0}, {(char far *)0xA4000000L}, {0}, 40, -2};   /* DS:5DDC */
-int g_5e0c = 0;   /* DS:5E0C */
-int g_5e0e = 0;   /* DS:5E0E */
-int g_5e10 = 0;   /* DS:5E10 */
-int g_5e12 = 0;   /* DS:5E12 */
+int g_hillProfile[22] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, -4, -4, -4, -3, -2, -1};   /* DS:5C20 */
+int g_hillDipProfile[38] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, -5, -5, -5, -5, -5, -5, -4, -3, -2, -1, 0, 0, 1, 2, 3, 4, 4, 4, 4, 3, 2, 1};   /* DS:5C4C */
+int g_bumpProfile[17] = {1, 2, 3, 3, 3, 2, 1, 0, 0, 0, -1, -2, -3, -3, -3, -2, -1};   /* DS:5C98 */
+int g_layoutLen = 12;   /* DS:5CBA */
+int g_roadLayouts[10][12] = {{2, 3, 1, 7, 4, 10, 5, 8, 6, 2, 9, 1}, {11, 4, 8, 1, 6, 9, 2, 5, 7, 2, 3, 1}, {1, 5, 1, 3, 8, 11, 6, 7, 2, 4, 9, 1}, {3, 1, 4, 9, 2, 6, 8, 1, 3, 8, 10, 2}, {10, 9, 5, 1, 6, 2, 3, 7, 4, 2, 8, 2}, {2, 3, 8, 10, 5, 11, 4, 7, 1, 6, 9, 2}, {1, 5, 9, 1, 4, 2, 3, 10, 8, 4, 1, 9}, {2, 4, 7, 11, 2, 5, 8, 4, 1, 7, 6, 2}, {2, 6, 8, 10, 6, 1, 3, 7, 5, 1, 4, 9}, {1, 3, 1, 6, 1, 4, 9, 10, 6, 8, 2, 3}};   /* DS:5CBC */
+struct Bitmap g_egaPage1 = {320, 200, 8000, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0}, {(char far *)0xA2000000L}, {0}, 40, -2};   /* DS:5DAC */
+struct Bitmap g_egaPage2 = {320, 200, 8000, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0}, {(char far *)0xA4000000L}, {0}, 40, -2};   /* DS:5DDC */
+int g_roadLayout = 0;   /* DS:5E0C */
+int g_onShoulder = 0;   /* DS:5E0E */
+int g_turnRight = 0;   /* DS:5E10 */
+int g_turnLeft = 0;   /* DS:5E12 */
 
 /* rnd @ 2645:016A (linear 0x265BA, 16 bytes)
 
@@ -175,7 +175,7 @@ static void near build_hill(void)
     g_6e00 += 20;
     for (i = 0; i < 22; i++) {
         if (g_6e00 < 0x442)
-            g_terrain4[g_6e00++] = g_5c20[i];
+            g_terrain4[g_6e00++] = g_hillProfile[i];
         else
             break;
     }
@@ -196,7 +196,7 @@ static void near build_dip(void)
     g_6e00 += 10;
     for (i = 0; i < 22; i++) {
         if (g_6e00 < 0x442)
-            g_terrain4[g_6e00++] = -g_5c20[i];
+            g_terrain4[g_6e00++] = -g_hillProfile[i];
         else
             break;
     }
@@ -217,7 +217,7 @@ static void near build_hill_dip(void)
     g_6e00 += 6;
     for (i = 0; i < 38; i++) {
         if (g_6e00 < 0x442)
-            g_terrain4[g_6e00++] = g_5c4c[i];
+            g_terrain4[g_6e00++] = g_hillDipProfile[i];
         else
             break;
     }
@@ -238,7 +238,7 @@ static void near build_dip_hill(void)
     g_6e00 += 8;
     for (i = 0; i < 38; i++) {
         if (g_6e00 < 0x442)
-            g_terrain4[g_6e00++] = -g_5c4c[i];
+            g_terrain4[g_6e00++] = -g_hillDipProfile[i];
         else
             break;
     }
@@ -334,9 +334,9 @@ void road_build_layout(int n)
             g_terrain3[i] |= 8;
     }
     if (n == 100)
-        g_5e0c = rnd(10);
-    for (i = 0; i < g_5cba; i++) {
-        switch (g_5cbc[g_5e0c][i]) {
+        g_roadLayout = rnd(10);
+    for (i = 0; i < g_layoutLen; i++) {
+        switch (g_roadLayouts[g_roadLayout][i]) {
         case 1: build_left_curve(); break;
         case 2: build_right_curve(); break;
         case 3: build_hill(); break;
@@ -367,8 +367,8 @@ void road_generate(void)
 
     if (r_vid.mode == -2) {
         bm7678 = &g_2fa3_0000;
-        g8188w = &g_5dac;
-        g82b4s = &g_5ddc;
+        g8188w = &g_egaPage1;
+        g82b4s = &g_egaPage2;
     } else {
         bm7678 = r_vid.front;
         g8188w = r_vid.back;
@@ -562,10 +562,10 @@ void road_generate(void)
     i = 220;
     do {
         for (j = 0; j < 17; j++)
-            g_terrain4[i++] = g_5c98[j];
+            g_terrain4[i++] = g_bumpProfile[j];
         i += 20;
         for (j = 0; j < 17; j++)
-            g_terrain4[i++] = -g_5c98[j];
+            g_terrain4[i++] = -g_bumpProfile[j];
         i += 30;
     } while (i + 90 < 0x17c);
     g_terrain3[385] |= 0x100;
@@ -933,7 +933,7 @@ void road_advance(void)
         ao7d2ev.m7d2e = 0xce4;
     }
     ao7d2ev.m7d3e = *af7880z;
-    if (g_0610 != 0 || g_0612 != 0 || (a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc) < ao7d2ev.m7d30) {
+    if (g_demo != 0 || g_autoDrive != 0 || (a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc) < ao7d2ev.m7d30) {
         goal6 = 0x960;
         if (ar7e8av.m7e90 > 0x960)
             goal6 -= 0x140;
@@ -959,20 +959,20 @@ void road_advance(void)
 
 int road_check_crash(void)
 {
-    g_5e0e = 0;
+    g_onShoulder = 0;
     if (g7d82p - 0x104 < ao7d2ev.m7d36 - 0x1e && ao7d2ev.m7d36 + 0x46 < cz8bd0y + 0x104) {
         if (g7d82p > ao7d2ev.m7d36 - 0x1e) {
             if ((g_terrain0[ao7d2ev.m7d30] & 0x1000) || (g_terrain0[ao7d2ev.m7d30 - 1] & 0x1000))
                 return 1;
             if (g_terrain3[ao7d2ev.m7d30 + 1] & 0xf000)
                 return 1;
-            g_5e0e = 1;
+            g_onShoulder = 1;
         } else if (ao7d2ev.m7d36 + 0x46 > cz8bd0y) {
             if ((g_terrain1[ao7d2ev.m7d30] & 0x1000) || (g_terrain1[ao7d2ev.m7d30 - 1] & 0x1000))
                 return 1;
             if (g_terrain3[ao7d2ev.m7d30 + 1] & 0xf002)
                 return 1;
-            g_5e0e = 1;
+            g_onShoulder = 1;
         }
         return 0;
     }
@@ -983,7 +983,7 @@ int road_check_crash(void)
 
 void road_start(void)
 {
-    g_5e10 = g_5e12 = 0;
+    g_turnRight = g_turnLeft = 0;
     road_reset();
     view_start();
 }
@@ -1013,7 +1013,7 @@ void road_update(void)
     if (ao7d2ev.m7d34 > 0 && aw7aaex > 0)
         aw7aaex -= 4;
     road_draw_frame();
-    if (g_0610 == 0 && g_0612 == 0) {
+    if (g_demo == 0 && g_autoDrive == 0) {
         if (at787cu)
             ao7d2ev.m7d36 += 25;
         else if (e_78e0.f0)
@@ -1023,13 +1023,13 @@ void road_update(void)
         ao7d2ev.m7d32 += ao7d2ev.m7d34;
         if (ao7d2ev.m7d32 >= 8)
             road_advance();
-        if ((g_terrain0[ao7d2ev.m7d30 + 7] & 1) || g_5e12) {
-            g_5e12 = 1;
+        if ((g_terrain0[ao7d2ev.m7d30 + 7] & 1) || g_turnLeft) {
+            g_turnLeft = 1;
             road_turn(1);
         }
-        if ((g_terrain1[ao7d2ev.m7d30 + 6] & 1) || g_5e10) {
+        if ((g_terrain1[ao7d2ev.m7d30 + 6] & 1) || g_turnRight) {
             road_turn(-1);
-            g_5e10 = 1;
+            g_turnRight = 1;
         }
     }
 }

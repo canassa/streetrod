@@ -19,10 +19,10 @@
 static struct Rect g_6cc4;                 /* DS:6CC4 */
 static struct Bitmap far *g_6ccc;          /* DS:6CCC */
 
-struct Sheet g_5a26[2] = {{1142, 6, 11}, {1141, 6, 11}};   /* DS:5A26 */
-char g_5a32[84] = {4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 11};   /* DS:5A32 */
-struct Seq g_5a86[4] = {{78, 3, 0}, {3, 2, 0}, {3, 1, 0}, {-1, 0, 0}};   /* DS:5A86 */
-struct Seq g_5a96[4] = {{4, -1, 0}, {3, -2, 0}, {77, -3, 0}, {-1, 0, 0}};   /* DS:5A96 */
+struct Sheet g_carhopSheets[2] = {{1142, 6, 11}, {1141, 6, 11}};   /* DS:5A26 */
+char g_carhopFrames[84] = {4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 11};   /* DS:5A32 */
+struct Seq g_carhopInSeq[4] = {{78, 3, 0}, {3, 2, 0}, {3, 1, 0}, {-1, 0, 0}};   /* DS:5A86 */
+struct Seq g_carhopOutSeq[4] = {{4, -1, 0}, {3, -2, 0}, {77, -3, 0}, {-1, 0, 0}};   /* DS:5A96 */
 char g_5aa6 = 0;   /* DS:5AA6 */
 
 /* cut_sheet @ 0F38:985C (linear 0x18BDC, 179 bytes)
@@ -38,9 +38,9 @@ static void near cut_sheet(struct Bitmap far **out, int n)
     struct Bitmap far *sheet;
     int i;
 
-    id5 = g_5a26[n].id;
-    cols8 = g_5a26[n].cols;
-    cells = g_5a26[n].n;
+    id5 = g_carhopSheets[n].id;
+    cols8 = g_carhopSheets[n].cols;
+    cells = g_carhopSheets[n].n;
     sheet = F_15BBE(id5, 2);
     r.w = sheet->width / cols8;
     r.h = sheet->height >> 1;
@@ -144,7 +144,7 @@ void carhop_walk(int a, int b)
     cut_sheet(&tab2[1], a);
     fr = F_1934E(0x30, 0x29, 1, 2);
     sp2 = sprite_setup(a == 0 ? -40 : 200, 0x6c, &fr, 0, 1, B7, tab2[0], &rcb1, 0);
-    p9 = a == 0 ? g_5a86 : g_5a96;
+    p9 = a == 0 ? g_carhopInSeq : g_carhopOutSeq;
     for (i = 0; i < 4; i++)
         trk7[i] = *p9++;
     sp2->seq = trk7;
@@ -156,7 +156,7 @@ void carhop_walk(int a, int b)
     for (i = 0; i < 0x54; i++) {
         x = sp2->x;
         v3 = x & ~r_vid.mask;
-        bitmap_shift_right(tab2[g_5a32[i]], v3, fr);
+        bitmap_shift_right(tab2[g_carhopFrames[i]], v3, fr);
         tm7 = g_tick + 2;
         okn = (*g78c6c)(sp2);
         while (tm7 > g_tick)

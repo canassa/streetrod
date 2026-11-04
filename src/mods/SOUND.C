@@ -24,23 +24,23 @@ static void near noise_sweep_down(int a, int b, int c, int d, int e);
 static void near noise_sweep_up(int a, int b, int c, int d, int e);
 static void near sweep_down(int start, int end, int step, int delay);
 
-int g_5858[19] = {2, 1, 0, 2, 2, 0, 2, 1, 0, 1, 0, 0, 2, 2, 0, 2, 1, 0, -1};   /* DS:5858 */
-char g_587e[4] = {0, 0, -1, -1};   /* DS:587E */
-int g_5882[37] = {1, 2, 1, 2, 3, 3, 1, 2, 1, 3, 1, 4, 4, 1, 2, 1, 3, 1, 2, 1, 3, 4, 4, 1, 2, 1, 3, 4, 1, 1, 1, 2, 1, 4, 3, 3, -1};   /* DS:5882 */
-int g_58cc[2] = {0, -1};   /* DS:58CC */
-int g_58d0 = 1;   /* DS:58D0 */
-struct Dev *g_58d2 = &bs79aa;   /* DS:58D2 */
-int g_58d4 = 1;   /* DS:58D4 */
-int g_58d6 = -1;   /* DS:58D6 */
-int g_58d8 = 0;   /* DS:58D8 */
-int g_58da = 0;   /* DS:58DA */
-int g_58dc = 0;   /* DS:58DC */
+int g_songRepeats[19] = {2, 1, 0, 2, 2, 0, 2, 1, 0, 1, 0, 0, 2, 2, 0, 2, 1, 0, -1};   /* DS:5858 */
+char g_jingleRepeats[4] = {0, 0, -1, -1};   /* DS:587E */
+int g_songTones[37] = {1, 2, 1, 2, 3, 3, 1, 2, 1, 3, 1, 4, 4, 1, 2, 1, 3, 1, 2, 1, 3, 4, 4, 1, 2, 1, 3, 4, 1, 1, 1, 2, 1, 4, 3, 3, -1};   /* DS:5882 */
+int g_jingleTones[2] = {0, -1};   /* DS:58CC */
+int g_musicOn = 1;   /* DS:58D0 */
+struct Dev *g_voice = &bs79aa;   /* DS:58D2 */
+int g_voiceNum = 1;   /* DS:58D4 */
+int g_savedMusicOn = -1;   /* DS:58D6 */
+int g_musicSuspended = 0;   /* DS:58D8 */
+int g_squealOn = 0;   /* DS:58DA */
+int g_sirenOn = 0;   /* DS:58DC */
 
 /* sound_calibrate @ 0F38:703E (linear 0x163BE, 151 bytes)
 
    Calibrate the speed of the machine: counts how often speaker_delay(n) can be called within
    one BIOS timer tick (the long at 0040:006C). Counts above 848 are scaled by 3/4. Also sets
-   g_58e2 to 256 on the way */
+   g_delayScale to 256 on the way */
 
 int sound_calibrate(int n)
 {
@@ -48,7 +48,7 @@ int sound_calibrate(int n)
     int count;
 
     count = 0;
-    g_58e2 = 0x100;
+    g_delayScale = 0x100;
     tick = *(long far *)0x46cL;
     while (tick == *(long far *)0x46cL)
         ;
@@ -81,7 +81,7 @@ void sound_set_freq(long freq)
 
 void sound_init(void)
 {
-    g_58e2 = sound_calibrate(10);
+    g_delayScale = sound_calibrate(10);
     outp(0x43, 0xb6);
     sound_set_freq(25000L);
 }
@@ -94,7 +94,7 @@ void sound_on(void)
 {
     sound_set_freq(25000L);
     outp(0x61, inp(0x61) | 3);
-    g_47cf = 1;
+    g_speakerOn = 1;
 }
 
 /* sound_off @ 0F38:713D (linear 0x164BD, 15 bytes)
@@ -104,7 +104,7 @@ void sound_on(void)
 void sound_off(void)
 {
     outp(0x61, inp(0x61) & 0xfc);
-    g_47cf = 0;
+    g_speakerOn = 0;
 }
 
 /* play_tone @ 0F38:714C (linear 0x164CC, 29 bytes)
@@ -298,9 +298,9 @@ static void near noise_sweep_up(int start, int end, int gap, int step, int dur)
 void F_168C8(int on)
 {
     if (on)
-        music_play(g_2f93_00c0, g_587e);
+        music_play(g_2f93_00c0, g_jingleRepeats);
     else
-        music_play(g_2e6b_0000, g_5858);
+        music_play(g_2e6b_0000, g_songRepeats);
 }
 
 /* F_168F3 @ 0F38:7573 (linear 0x168F3, 80 bytes)
@@ -310,10 +310,10 @@ void F_168C8(int on)
 void F_168F3(int on)
 {
     if (on) {
-        music_play(g_2f93_00a0, g_587e);
+        music_play(g_2f93_00a0, g_jingleRepeats);
         music_set_vibrato(1, 0, 8, 10, 1);
     } else
-        music_play(g_2e6b_0000, g_5858);
+        music_play(g_2e6b_0000, g_songRepeats);
 }
 
 /* F_16943 @ 0F38:75C3 (linear 0x16943, 80 bytes)
@@ -323,10 +323,10 @@ void F_168F3(int on)
 void F_16943(int on)
 {
     if (on) {
-        music_play(g_2f93_00b0, g_587e);
+        music_play(g_2f93_00b0, g_jingleRepeats);
         music_set_vibrato(1, 0, 8, 5, 1);
     } else
-        music_play(g_2e6b_0000, g_5858);
+        music_play(g_2e6b_0000, g_songRepeats);
 }
 
 /* F_16993 @ 0F38:7613 (linear 0x16993, 78 bytes)
@@ -336,10 +336,10 @@ void F_16943(int on)
 void F_16993(int on)
 {
     if (on) {
-        music_play(g_2f93_0000, g_587e);
+        music_play(g_2f93_0000, g_jingleRepeats);
         music_set_vibrato(1, 1, 8, 30, 1);
     } else
-        music_play(g_2e6b_0000, g_5858);
+        music_play(g_2e6b_0000, g_songRepeats);
 }
 
 /* F_169E1 @ 0F38:7661 (linear 0x169E1, 78 bytes)
@@ -349,10 +349,10 @@ void F_16993(int on)
 void F_169E1(int on)
 {
     if (on) {
-        music_play(g_2f93_002c, g_587e);
+        music_play(g_2f93_002c, g_jingleRepeats);
         music_set_vibrato(1, 1, 8, 20, 1);
     } else
-        music_play(g_2e6b_0000, g_5858);
+        music_play(g_2e6b_0000, g_songRepeats);
 }
 
 /* F_16A2F @ 0F38:76AF (linear 0x16A2F, 43 bytes)
@@ -362,9 +362,9 @@ void F_169E1(int on)
 void F_16A2F(int on)
 {
     if (on)
-        music_play(g_2f93_0050, g_587e);
+        music_play(g_2f93_0050, g_jingleRepeats);
     else
-        music_play(g_2e6b_0000, g_5858);
+        music_play(g_2e6b_0000, g_songRepeats);
 }
 
 /* F_16A5A @ 0F38:76DA (linear 0x16A5A, 78 bytes)
@@ -374,10 +374,10 @@ void F_16A2F(int on)
 void F_16A5A(int on)
 {
     if (on) {
-        music_play(g_2f93_007c, g_587e);
+        music_play(g_2f93_007c, g_jingleRepeats);
         music_set_vibrato(1, 1, 8, 14, 1);
     } else
-        music_play(g_2e6b_0000, g_5858);
+        music_play(g_2e6b_0000, g_songRepeats);
 }
 
 /* sound_siren @ 0F38:7728 (linear 0x16AA8, 25 bytes) */
@@ -385,9 +385,9 @@ void F_16A5A(int on)
 void sound_siren(int on)
 {
     if (on)
-        g_58dc = 1;
+        g_sirenOn = 1;
     else
-        g_58dc = 0;
+        g_sirenOn = 0;
 }
 
 /* sound_squeal @ 0F38:7741 (linear 0x16AC1, 25 bytes) */
@@ -395,16 +395,16 @@ void sound_siren(int on)
 void sound_squeal(int on)
 {
     if (on)
-        g_58da = 1;
+        g_squealOn = 1;
     else
-        g_58da = 0;
+        g_squealOn = 0;
 }
 
 /* sound_warble1 @ 0F38:775A (linear 0x16ADA, 48 bytes) */
 
 void sound_warble1(void)
 {
-    if (g_47ce) {
+    if (g_soundOn) {
         sound_on();
         warble(30000L, 300, 100, 6, 1, 2);
         sound_off();
@@ -415,7 +415,7 @@ void sound_warble1(void)
 
 void sound_warble2(void)
 {
-    if (g_47ce) {
+    if (g_soundOn) {
         sound_on();
         warble(30000L, 200, 70, 5, 1, 3);
         sound_off();
@@ -428,7 +428,7 @@ void sound_warble2(void)
 
 void sound_buzz(void)
 {
-    if (g_47ce) {
+    if (g_soundOn) {
         sound_on();
         siren_sweep(3000, 10, 10, 60, 9);
         sound_off();
@@ -441,7 +441,7 @@ void sound_buzz(void)
 
 void F_16B61(void)
 {
-    if (g_47ce) {
+    if (g_soundOn) {
         sound_on();
         siren_sweep(random_int(100) + 6200, 40, 10, 1, 10);
         sound_off();
@@ -454,7 +454,7 @@ void F_16B61(void)
 
 void F_16B97(void)
 {
-    if (g_47ce) {
+    if (g_soundOn) {
         sound_on();
         siren_sweep(5200, 40, 10, 1, 10);
         sound_off();
@@ -467,7 +467,7 @@ void F_16B97(void)
 
 void F_16BC1(void)
 {
-    if (g_47ce) {
+    if (g_soundOn) {
         sound_on();
         noise(200, 10, 60);
         sound_off();
@@ -483,7 +483,7 @@ void sound_crash(void)
     register int i;
     int count;
 
-    if (g_47ce) {
+    if (g_soundOn) {
         count = 3;
         for (i = count; i; i--) {
             sound_on();
@@ -502,7 +502,7 @@ void sound_crash(void)
 
 void F_16C8F(void)
 {
-    if (g_47ce) {
+    if (g_soundOn) {
         sound_on();
         tone_burst(2000, 8000, 100, 10);
         noise(120, 2, 30);
@@ -519,7 +519,7 @@ void F_16C8F(void)
 
 void F_16CF3(void)
 {
-    if (g_47ce) {
+    if (g_soundOn) {
         sound_on();
         sweep_down(130, 90, 4, 1000);
         sound_off();

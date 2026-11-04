@@ -8,10 +8,10 @@ from sr import db, rename
 
 class RenameTests(unittest.TestCase):
     def test_whole_words_in_c_and_masm(self):
-        pat = rename._pattern({'F_00100': 'menu_draw', 'g_0042': 'g_count'})
-        text = ('EXTRN _F_00100:FAR\n call _F_00100\n F_00100(g_0042, g_00420, xF_00100, $S1_g_0042);\n'
+        pat = rename._pattern({'F_00100': 'menu_draw', 'g_hercules': 'g_count'})
+        text = ('EXTRN _F_00100:FAR\n call _F_00100\n F_00100(g_hercules, g_00420, xF_00100, $S1_g_0042);\n'
                 '/* F_00100 @ 0000:0100 */')
-        self.assertEqual(rename._sub(pat, {'F_00100': 'menu_draw', 'g_0042': 'g_count'}, text),
+        self.assertEqual(rename._sub(pat, {'F_00100': 'menu_draw', 'g_hercules': 'g_count'}, text),
                          'EXTRN _menu_draw:FAR\n call _menu_draw\n menu_draw(g_count, g_00420, xF_00100, $S1_g_0042);\n'
                          '/* menu_draw @ 0000:0100 */')
 

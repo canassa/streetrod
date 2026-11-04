@@ -5,10 +5,10 @@
 #include "STRUCTS.H"
 
 extern struct ManualEntry g_manual[];                   /* DS:4B62 */
-extern int g_4bc8;                                      /* DS:4BC8 */
-extern int g_4bca[];                                    /* DS:4BCA */
-extern struct Colors g_4be2;                            /* DS:4BE2 */
-extern struct Colors g_4be8;                            /* DS:4BE8 */
+extern int g_protectCycle;                              /* DS:4BC8 */
+extern int g_fameRowY[];                                /* DS:4BCA */
+extern struct Colors g_fameColors1;                     /* DS:4BE2 */
+extern struct Colors g_fameColors2;                     /* DS:4BE8 */
 extern char g_4bed;                                     /* DS:4BED */
 extern int bucount;                                     /* DS:7646 */
 extern char atnewName[];                                /* DS:7E9A */

@@ -38,12 +38,12 @@ int aw8260y;
 int d_8266;
 int ap8268t;
 
-struct Style g_03a0 = {{{""}, {{13, 9, 9, 15, 1}}, {{9, 13, 13, 15, 1}}, {{1, 5, 5, 1, 1}}, {{1, 5, 5, 4, 1}}, {{15, 9, 9, 15, 1}}, {{14, 15, 15, 10, 1}}}, {{1, 4, 4, 1, 1}}, {{1, 3, 3, 4, 2}}, {{15, 9, 9, 15, 1}}, {{13, 9, 9, 15, 1}}, {{11, 2, 2, 11, 1}}, {1, 4, 4, 11, 1}, {{1, 4, 4, 1, 1}}, {{1, 4, 4, 1, 1}}, {{1, 3, 3, 4, 1}}};   /* DS:03A0 */
-struct Style g_03f0 = {{{""}, {{1, 2, 2, 3, 1}}, {{2, 1, 1, 3, 1}}, {{0, 3, 3, 0, 1}}, {{0, 3, 3, 2, 1}}, {{3, 2, 2, 3, 1}}, {{2, 1, 1, 1, 1}}}, {{0, 3, 3, 0, 1}}, {{0, 3, 3, 2, 2}}, {{3, 2, 2, 3, 1}}, {{1, 2, 2, 3, 1}}, {{0, 2, 2, 0, 1}}, {0, 3, 3, 1, 1}, {{0, 3, 3, 0, 1}}, {{0, 3, 3, 0, 1}}, {{1, 2, 2, 3, 1}}};   /* DS:03F0 */
+struct Style g_style16 = {{{""}, {{13, 9, 9, 15, 1}}, {{9, 13, 13, 15, 1}}, {{1, 5, 5, 1, 1}}, {{1, 5, 5, 4, 1}}, {{15, 9, 9, 15, 1}}, {{14, 15, 15, 10, 1}}}, {{1, 4, 4, 1, 1}}, {{1, 3, 3, 4, 2}}, {{15, 9, 9, 15, 1}}, {{13, 9, 9, 15, 1}}, {{11, 2, 2, 11, 1}}, {1, 4, 4, 11, 1}, {{1, 4, 4, 1, 1}}, {{1, 4, 4, 1, 1}}, {{1, 3, 3, 4, 1}}};   /* DS:03A0 */
+struct Style g_style4 = {{{""}, {{1, 2, 2, 3, 1}}, {{2, 1, 1, 3, 1}}, {{0, 3, 3, 0, 1}}, {{0, 3, 3, 2, 1}}, {{3, 2, 2, 3, 1}}, {{2, 1, 1, 1, 1}}}, {{0, 3, 3, 0, 1}}, {{0, 3, 3, 2, 2}}, {{3, 2, 2, 3, 1}}, {{1, 2, 2, 3, 1}}, {{0, 2, 2, 0, 1}}, {0, 3, 3, 1, 1}, {{0, 3, 3, 0, 1}}, {{0, 3, 3, 0, 1}}, {{1, 2, 2, 3, 1}}};   /* DS:03F0 */
 unsigned char g_palette[16] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14};   /* DS:0440 */
 int g_0450 = 0;   /* DS:0450 */
-char g_0452[16] = "";   /* DS:0452 */
-unsigned char g_0462[16] = {9, 1, 8, 0, 15, 7, 11, 3, 14, 2, 4, 12, 13, 10, 6, 14};   /* DS:0462 */
+char g_blackPalette[16] = "";   /* DS:0452 */
+unsigned char g_altPalette[16] = {9, 1, 8, 0, 15, 7, 11, 3, 14, 2, 4, 12, 13, 10, 6, 14};   /* DS:0462 */
 int g_0472 = 0;   /* DS:0472 */
 
 /* F_10B7C @ 0F38:17FC (linear 0x10B7C, 16 bytes) */
@@ -99,7 +99,7 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
         r_vid.shift = 3;
         r_vid.bpp = 1;
         r_vid.mask = -8;
-        bustyle = &g_03a0;
+        bustyle = &g_style16;
         outp(0x3d4, 0xc);
         outp(0x3d5, 0);
         outp(0x3d4, 0xd);
@@ -110,7 +110,7 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
         r_vid.shift = 2;
         r_vid.bpp = 2;
         r_vid.mask = -4;
-        bustyle = &g_03f0;
+        bustyle = &g_style4;
         r_vid.front->flags = -3;
         break;
     case -6:
@@ -118,7 +118,7 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
         r_vid.shift = 1;
         r_vid.bpp = 4;
         r_vid.mask = -2;
-        bustyle = &g_03a0;
+        bustyle = &g_style16;
         break;
     }
     x_colors = bustyle->pal[1];
@@ -151,12 +151,12 @@ void video_anim_stop(int n)
 {
     struct Obj *o;
 
-    o = &bm7568[g_58f0[g_59f8[n]].a];
+    o = &bm7568[g_animScripts[g_animScriptStart[n]].a];
     if (o->img)
         o->img = 0;
     if (o->fc)
         o->fc = 0;
-    g_58f0[g_59f8[n]].a = -1;
+    g_animScripts[g_animScriptStart[n]].a = -1;
     o->id = -1;
     if (o->f4)
         sys_timer_cancel(n);
@@ -198,7 +198,7 @@ static void near anim_run(int n)
     wait = 1;
     F_120FE(-3);
     g_obj = &bm7568[n];
-    g_cmd = &g_58f0[k = g_obj->f2];
+    g_cmd = &g_animScripts[k = g_obj->f2];
     g_box = &g_obj->box;
     for (; k >= 0; k++) {
         switch (g_cmd->op) {
@@ -238,7 +238,7 @@ static void near anim_run(int n)
             F_120FE(-1);
             return;
         case 7:
-            g_cmd = &g_58f0[g_cmd->a];
+            g_cmd = &g_animScripts[g_cmd->a];
             goto next;
         case 8:
             g_obj->img = F_15BBE(g_cmd->a, 2);
@@ -284,9 +284,9 @@ int video_anim_start(int n)
 
     for (i = 0; i < 5; i++) {
         if (bm7568[i].id == -1) {
-            g_58f0[g_59f8[n]].a = i;
+            g_animScripts[g_animScriptStart[n]].a = i;
             bm7568[i].id = n;
-            bm7568[i].f2 = g_59f8[n] + 1;
+            bm7568[i].f2 = g_animScriptStart[n] + 1;
             bm7568[i].f4 = 0;
             anim_run(i);
             break;
@@ -301,7 +301,7 @@ void video_anim_resume(int n)
 {
     int k;
 
-    k = g_58f0[g_59f8[n]].a;
+    k = g_animScripts[g_animScriptStart[n]].a;
     bm7568[k].f4--;
     anim_run(k);
 }
@@ -310,7 +310,7 @@ void video_anim_resume(int n)
 
 int video_anim_active(int n)
 {
-    return g_58f0[g_59f8[n]].a >= 0;
+    return g_animScripts[g_animScriptStart[n]].a >= 0;
 }
 
 /* video_anim_hook @ 0F38:1E93 (linear 0x11213, 184 bytes) */

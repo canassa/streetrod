@@ -81,10 +81,10 @@ void cursor_init(void)
     g_cursor2.n = 1;
     g_cursor2.off = cursor_shape_off(1);
     g_cursor2.r.x2 = -1;
-    g_472a = 0x9e;
-    g_472c = 0x80;
-    g_4746 = 0;
-    g_4748 = 0;
+    g_cursorX = 0x9e;
+    g_cursorY = 0x80;
+    g_savedCursorX = 0;
+    g_savedCursorY = 0;
     ap8247u = 2;
 }
 
@@ -98,13 +98,13 @@ void F_120FE(int mode)
     int a;
     int b;
 
-    a = g_472a;
-    b = g_472c;
+    a = g_cursorX;
+    b = g_cursorY;
     a = a < 0 ? 0 : a > 319 ? 319 : a;
     b = b < 0 ? 0 : b > 199 ? 199 : b;
     if (mode >= 0) {
-        g_4742 = g_06ec[g_cursor2.n = mode].a;
-        g_4744 = g_06ec[mode].b;
+        g_cursorHotX = g_06ec[g_cursor2.n = mode].a;
+        g_cursorHotY = g_06ec[mode].b;
         g_cursor2.off = cursor_shape_off(g_cursor2.n);
         cursor_draw(a, b);
     } else if (mode >= -2) {

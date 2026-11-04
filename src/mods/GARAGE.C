@@ -964,15 +964,15 @@ static void near tune_timing(struct Car *car)
     p = bm7568 + video_anim_start(8);
     tmp = g_0600;
     sys_music_pause();
-    g_58d4 = 2;
-    if (g_47ce) {
+    g_voiceNum = 2;
+    if (g_soundOn) {
         outp(0x61, inp(0x61) | 3);
-        g_47cf = 1;
+        g_speakerOn = 1;
     }
     do {
-        if (g_47ce && g_47ce != g_47cf) {
+        if (g_soundOn && g_soundOn != g_speakerOn) {
             outp(0x61, inp(0x61) | 3);
-            g_47cf = 1;
+            g_speakerOn = 1;
         }
         gear = car->f20;
         w.w = (abs(gear) << 10) + 30000;
@@ -984,9 +984,9 @@ static void near tune_timing(struct Car *car)
         bitmap_copy_box(r_vid.back, r_vid.front, 0xb0, y, 0xb7, y + 10);
         F_120FE(-2);
         while ((key = sys_wait_input(0)) == 0) {
-            if (g_47ce && g_47ce != g_47cf) {
+            if (g_soundOn && g_soundOn != g_speakerOn) {
                 outp(0x61, inp(0x61) | 3);
-                g_47cf = 1;
+                g_speakerOn = 1;
             }
         }
         switch (key) {
@@ -1003,8 +1003,8 @@ static void near tune_timing(struct Car *car)
         }
     } while (key != -1);
     outp(0x61, inp(0x61) & 0xfc);
-    g_47cf = 0;
-    g_58d4 = 1;
+    g_speakerOn = 0;
+    g_voiceNum = 1;
     sys_music_resume();
     video_anim_stop(8);
     n = ((unsigned)g_0600 - (unsigned)tmp) * 3;

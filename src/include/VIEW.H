@@ -4,22 +4,22 @@
 #define VIEW_H
 #include "STRUCTS.H"
 
-extern int g_5e14[][4];                                 /* DS:5E14 */
+extern int g_opponentPics[][4];                         /* DS:5E14 */
 extern int g_5e3c;                                      /* DS:5E3C */
-extern int g_5e3e;                                      /* DS:5E3E */
-extern int g_5e40;                                      /* DS:5E40 */
-extern struct Clip g_5e42;                              /* DS:5E42 */
-extern int g_clip_xmin;                                 /* DS:5E4E */
-extern int g_clip_ymin;                                 /* DS:5E50 */
-extern int g_clip_ymax;                                 /* DS:5E52 */
-extern int g_clip_xmax;                                 /* DS:5E54 */
-extern unsigned char g_5e56[3][4];                      /* DS:5E56 */
+extern int g_drawPage;                                  /* DS:5E3E */
+extern int g_showPage;                                  /* DS:5E40 */
+extern struct Clip g_viewClip;                          /* DS:5E42 */
+extern int g_clipXMin;                                  /* DS:5E4E */
+extern int g_clipYMin;                                  /* DS:5E50 */
+extern int g_clipYMax;                                  /* DS:5E52 */
+extern int g_clipXMax;                                  /* DS:5E54 */
+extern unsigned char g_shrinkMasks[3][4];               /* DS:5E56 */
 extern int g_5e62[];                                    /* DS:5E62 */
 extern int g_5e86;                                      /* DS:5E86 */
 extern int g_5e88[5];                                   /* DS:5E88 */
 extern int g_5e92;                                      /* DS:5E92 */
 extern int g_5e94[4];                                   /* DS:5E94 */
-extern struct Ball g_5e9c[];                            /* DS:5E9C */
+extern struct Ball g_sheetRects[];                      /* DS:5E9C */
 extern struct Bitmap far *k_6e60;                       /* DS:6E60 */
 extern int dz70e0;                                      /* DS:70E0 */
 extern struct Bitmap far *ax72f4;                       /* DS:72F4 */

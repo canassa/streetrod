@@ -44,7 +44,7 @@ int drive_run(void)
         dash_set_view(3);
         marks_clear();
         (*bl78be)();
-        g_58e4 = r_vid.mode == -3 && g_0250;
+        g_58e4 = r_vid.mode == -3 && g_egaCard;
         if (g_58e4) {
             F_11A72(0, 0x64, 0x140, 0x64, g755cu);
             r_vid.f16 = 1;
@@ -56,7 +56,7 @@ int drive_run(void)
         else
             g_58ee = 0;
         src = F_15BBE(0x3f6, 2);
-        if (g_58e6) {
+        if (g_autoTrans) {
             pict = F_15BBE(0x4d8, 2);
             blt.w = pict->width;
             blt.h = pict->height;
@@ -93,7 +93,7 @@ int drive_run(void)
         dash_speedo_init(oldf05 = e_78e0.f0);
         if (!g_58e4)
             oldf05 = dash_move_needle(e_78e0.f0, oldf05, 0);
-        if (!g_58e6) {
+        if (!g_autoTrans) {
             dash_tach_init(oldfe);
             if (!g_58e4)
                 oldfe = dash_move_needle(e_78e0.fe, oldfe, 1);
@@ -121,7 +121,7 @@ int drive_run(void)
         blt.dy = 0x64;
         (*b_78a2)(g755cu, bm7678, &blt, 1);
         oldf05 = dash_move_needle(e_78e0.f0, oldf05, 0);
-        if (!g_58e6)
+        if (!g_autoTrans)
             oldfe = dash_move_needle(e_78e0.fe, oldfe, 1);
         else
             dash_draw_clock();
@@ -130,8 +130,8 @@ int drive_run(void)
     (*m_present)();
     for (;;) {
         road_update();
-        if (g_0610 == 0x63) {
-            g_0610--;
+        if (g_demo == 0x63) {
+            g_demo--;
             sys_exit();
         }
         if (ret = drvtick_step())
@@ -143,7 +143,7 @@ int drive_run(void)
             cur = ao8228u;
         if (abs(e_78e0.f0 - oldf05) > 1)
             oldf05 = dash_move_needle(e_78e0.f0, oldf05, 0);
-        if (!g_58e6 && abs(e_78e0.fe - oldfe) > 1)
+        if (!g_autoTrans && abs(e_78e0.fe - oldfe) > 1)
             oldfe = dash_move_needle(e_78e0.fe, oldfe, 1);
         if (shiftx5 != bp82c2) {
             dash_draw_wheel(shiftx5, bp82c2, bm7678);
@@ -157,19 +157,19 @@ int drive_run(void)
         blt.sx = 0;
         blt.sy = 0;
         blt.dx = 0;
-        blt.dy = g_0254 ? 0x64 : 0x65;
-        (*b_78a2)(bm7678, g_5e3e == 1 ? g82b4s : g8188w, &blt, 1);
+        blt.dy = g_vga ? 0x64 : 0x65;
+        (*b_78a2)(bm7678, g_drawPage == 1 ? g82b4s : g8188w, &blt, 1);
         blt.w = w;
         blt.h = 1;
         blt.sx = 0;
         blt.sy = 0;
         blt.dx = 0;
         blt.dy = 0x64;
-        (*b_78a2)(bm7678, g_5e3e == 1 ? g82b4s : g8188w, &blt, 1);
+        (*b_78a2)(bm7678, g_drawPage == 1 ? g82b4s : g8188w, &blt, 1);
         crtc_set_split(-1);
         af824ax = 0;
-        (*dz78b6)(g_5e3e == 1 ? g82b4s->bits.p : g8188w->bits.p, bm7678->bits.p);
-        (*dz78b6)(g_5e3e == 1 ? g82b4s->bits.p : g8188w->bits.p, g_5e3e == 1 ? g8188w->bits.p : g82b4s->bits.p);
+        (*dz78b6)(g_drawPage == 1 ? g82b4s->bits.p : g8188w->bits.p, bm7678->bits.p);
+        (*dz78b6)(g_drawPage == 1 ? g82b4s->bits.p : g8188w->bits.p, g_drawPage == 1 ? g8188w->bits.p : g82b4s->bits.p);
     } else
         (*dz78b6)(bm7678->bits.p, g8188w->bits.p);
     dash_set_view(1);

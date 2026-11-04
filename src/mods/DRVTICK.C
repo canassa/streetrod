@@ -19,8 +19,8 @@ static int g_6c82;                         /* DS:6C82 */
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Eng g79e2g;
 
-int g_51d8[5] = {42, 26, 12, 8, 4};   /* DS:51D8 */
-int g_51e2[5] = {0, 200, 125, 71, 56};   /* DS:51E2 */
+int g_cruiseRpmSteps[5] = {42, 26, 12, 8, 4};   /* DS:51D8 */
+int g_cruiseRatios[5] = {0, 200, 125, 71, 56};   /* DS:51E2 */
 int g_51ec = 0;   /* DS:51EC */
 
 /* drvtick_step @ 0000:8EA8 (linear 0x08EA8, 675 bytes) */
@@ -39,7 +39,7 @@ int drvtick_step(void)
             sys_input_reset();
             jz79a6 = 1;
             F_11421(-1, "Get ready !", 0);
-            g_05cc = g_tick + random_int(103) + 110;
+            g_waitUntil = g_tick + random_int(103) + 110;
             return e_78e0.fbc | g79e2g.fbc;
         case 1:
             if (e_78e0.f0 > 0) {
@@ -47,7 +47,7 @@ int drvtick_step(void)
                 e_78e0.fbc |= 0x81;
                 return 1;
             }
-            if (g_05cc <= g_tick) {
+            if (g_waitUntil <= g_tick) {
                 jz79a6 = 2;
                 F_11421(-1, "Go !", 0);
                 g7d66n = 1;
@@ -82,29 +82,29 @@ int drvtick_step(void)
             e_78e0.f18 = 1;
             if (e_78e0.f24 == 1)
                 e_78e0.f24 = 2;
-            g_6c82 = g_51d8[0];
+            g_6c82 = g_cruiseRpmSteps[0];
             return 0;
         case 1:
-            if (g_0610 == 0) {
+            if (g_demo == 0) {
                 key = kbdget_key();
                 if (key == 0x1b || key == 0x1f)
-                    g_47ee = 1;
-                if (g_05f2) {
+                    g_firePressed = 1;
+                if (g_mousePresent) {
                     mouse_buttons();
-                    g_47ee |= g_05ee;
+                    g_firePressed |= g_mouseLeft;
                 }
-                if (g_471d) {
+                if (g_joystick) {
                     joy_read();
-                    g_47ee |= g_471c;
+                    g_firePressed |= g_joyButtons;
                 }
             }
-            if (g_0610 == 99) {
-                g_0610--;
+            if (g_demo == 99) {
+                g_demo--;
                 sys_exit();
             }
-            if ((g_terrain0[ao7d2ev.m7d30 + 1] & 1) || (g_terrain1[ao7d2ev.m7d30 + 1] & 1) || g_47ee) {
-                g_4736 = 0;
-                g_4732 = 0;
+            if ((g_terrain0[ao7d2ev.m7d30 + 1] & 1) || (g_terrain1[ao7d2ev.m7d30 + 1] & 1) || g_firePressed) {
+                g_click = 0;
+                g_buttons = 0;
                 sys_drive_stop();
                 return 1;
             }
@@ -112,13 +112,13 @@ int drvtick_step(void)
             if (e_78e0.fe > 4700)
                 e_78e0.fe = 4700;
             if (e_78e0.f18)
-                e_78e0.f0 = e_78e0.fe / g_51e2[e_78e0.f18];
+                e_78e0.f0 = e_78e0.fe / g_cruiseRatios[e_78e0.f18];
             if (e_78e0.fe > 4500) {
                 if (e_78e0.f18 < e_78e0.f1c) {
                     e_78e0.f1a = 1;
                     e_78e0.f18++;
-                    g_6c82 = g_51d8[e_78e0.f18];
-                    e_78e0.fe = g_51e2[e_78e0.f18] * e_78e0.f0;
+                    g_6c82 = g_cruiseRpmSteps[e_78e0.f18];
+                    e_78e0.fe = g_cruiseRatios[e_78e0.f18] * e_78e0.f0;
                 } else
                     g_6c82 = 0;
             }

@@ -2,8 +2,8 @@
 
         .DATA
         EXTRN   _b_78a2:DWORD
-        EXTRN   _g_0042:WORD
-        EXTRN   _g_5b04:DWORD
+        EXTRN   _g_hercules:WORD
+        EXTRN   _g_cgaHooks:DWORD
 
         .CODE S1C11_TEXT
 
@@ -49,7 +49,7 @@ _cgadrv_blit_rect  ENDP
 ; Copy rows of bytes into an interleaved (CGA/Hercules style) screen:
 ; the destination row address alternates between the even bank and the
 ; odd bank 0x2000 bytes further on. On a Hercules segment (B000-B400 with
-; g_0042 set) an odd starting row is also written 0x2000 bytes up first.
+; g_hercules set) an odd starting row is also written 0x2000 bytes up first.
 ; cgadrv_blit_to_ilv(src far, dst far, width, rows, src_skip, dst_skip, row)
 
         PUBLIC  _cgadrv_blit_to_ilv
@@ -60,7 +60,7 @@ _cgadrv_blit_to_ilv  PROC    FAR
         push    di
         push    si
         mov     ah,0
-        cmp     _g_0042,0
+        cmp     _g_hercules,0
         je      setup1
         les     di,DWORD PTR [bp+10]    ; dst
         mov     cx,es
@@ -138,7 +138,7 @@ _cgadrv_blit_ilv  PROC    FAR
         push    di
         push    si
         mov     WORD PTR [bp-2],0
-        cmp     _g_0042,0
+        cmp     _g_hercules,0
         je      setup2
         les     di,DWORD PTR [bp+10]    ; dst
         mov     cx,es
@@ -240,14 +240,14 @@ _cgadrv_blit_ilv  ENDP
 
 ; cgadrv_install @ 1C11:01A8 (linear 0x1C2B8, 18 bytes)
 ; Install the default blit hooks: copy the 15-entry far-pointer table
-; at g_5b04 over the hook table starting at b_78a2.
+; at g_cgaHooks over the hook table starting at b_78a2.
 
         PUBLIC  _cgadrv_install
 _cgadrv_install  PROC    FAR
         push    di
         push    si
         mov     di,OFFSET _b_78a2
-        mov     si,OFFSET _g_5b04
+        mov     si,OFFSET _g_cgaHooks
         push    ds
         pop     es
         mov     cx,1Eh

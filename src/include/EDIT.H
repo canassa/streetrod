@@ -4,7 +4,7 @@
 #define EDIT_H
 #include "STRUCTS.H"
 
-extern char g_09f2;                                     /* DS:09F2 */
+extern char g_editDigits;                               /* DS:09F2 */
 int edit_line(int x, int y, char *s, int color);        /* 0x14C90 */
 int edit_number(int x, int y, char *s, int *out);       /* 0x150B7 */
 int edit_spot_number(int *out, char *buf);              /* 0x15127 */

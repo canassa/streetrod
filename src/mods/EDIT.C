@@ -15,13 +15,13 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-char g_09f2 = 0;   /* DS:09F2 */
+char g_editDigits = 0;   /* DS:09F2 */
 
 /* edit_line @ 0F38:5910 (linear 0x14C90, 1063 bytes)
 
    Line editor. Edit the string buf (at most max characters, clipped to the width of
    the back bitmap) at x, y on the back page until Enter or a negative event; backspace, printable
-   characters 0x20..0x5A (digits only when g_09f2), a blinking block cursor. Returns the last key. */
+   characters 0x20..0x5A (digits only when g_editDigits), a blinking block cursor. Returns the last key. */
 
 int edit_line(int x, int y, char *buf, int max)
 {
@@ -50,23 +50,23 @@ int edit_line(int x, int y, char *buf, int max)
     F_120FE(-1);
     if (r_vid.f16)
         bitmap_copy_box(r_vid.back, r_vid.front, x, y, x + w, y + 8);
-    ip = g_290c[0];
-    g_290c[0] = 0;
+    ip = g_msgClickToEdit[0];
+    g_msgClickToEdit[0] = 0;
     sys_hover_reset();
     ret = sys_keymap_restore(1);
-    kbd_text_on(g_09f2);
-    n = g_05d0;
-    g_05d0 = 1;
-    g_05d2 = 0;
+    kbd_text_on(g_editDigits);
+    n = g_anyInput;
+    g_anyInput = 1;
+    g_inputKey = 0;
     dest[1] = 0;
     end = strlen(buf);
-    for (;; g_05d2 = 0) {
+    for (;; g_inputKey = 0) {
         if ((key = sys_wait_input(0x23)) != 0) {
             if (key < 0)
                 break;
-            key = g_05d2;
+            key = g_inputKey;
             if (key == 13) {
-                if (!g_09f2 || *buf)
+                if (!g_editDigits || *buf)
                     break;
                 sound_buzz();
                 continue;
@@ -75,7 +75,7 @@ int edit_line(int x, int y, char *buf, int max)
                 if (key != 8) {
                     if (key < 0x20 || key > 0x5a)
                         continue;
-                    if (g_09f2 && (key < 0x30 || key > 0x39)) {
+                    if (g_editDigits && (key < 0x30 || key > 0x39)) {
                         sound_buzz();
                         continue;
                     }
@@ -124,9 +124,9 @@ int edit_line(int x, int y, char *buf, int max)
         bitmap_copy_box(r_vid.back, r_vid.front, cx - 6, y, cx, y + 8);
     x_colors.c[3] = oc;
     x_colors.c[2] = pos;
-    g_290c[0] = ip;
+    g_msgClickToEdit[0] = ip;
     sys_hover_reset();
-    g_05d0 = n;
+    g_anyInput = n;
     kbd_text_off();
     if (ret)
         sys_keymap_set(ret);
@@ -146,10 +146,10 @@ int edit_number(int x, int y, char *s, int *out)
 
     x_colors = bustyle->pal[5];
     screen_text(x, y, s);
-    g_09f2 = 1;
+    g_editDigits = 1;
     buf[0] = 0;
     rl = edit_line(g824cd, bq824e, buf, 20);
-    g_09f2 = 0;
+    g_editDigits = 0;
     *out = atoi(buf);
     return rl > 0 ? 0 : rl;
 }
@@ -165,10 +165,10 @@ int edit_spot_number(int *out, char *buf)
     int rl;
 
     x_colors = bustyle->pal[az8ba2t->f2];
-    g_09f2 = 1;
+    g_editDigits = 1;
     rl = edit_line(az8ba2t->x1, az8ba2t->y1, buf,
         (az8ba2t->x2 - az8ba2t->x1) / 6 > 10 ? 10 : (az8ba2t->x2 - az8ba2t->x1) / 6);
-    g_09f2 = 0;
+    g_editDigits = 0;
     *out = atoi(buf);
     return rl > 0 ? 0 : rl;
 }

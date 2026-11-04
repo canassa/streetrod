@@ -3,11 +3,11 @@
         .DATA
         EXTRN   _at767ct:WORD
         EXTRN   _av787at:WORD
-        EXTRN   _g_5e42:BYTE
-        EXTRN   _g_clip_xmax:WORD
-        EXTRN   _g_clip_xmin:WORD
-        EXTRN   _g_clip_ymax:WORD
-        EXTRN   _g_clip_ymin:WORD
+        EXTRN   _g_viewClip:BYTE
+        EXTRN   _g_clipXMax:WORD
+        EXTRN   _g_clipXMin:WORD
+        EXTRN   _g_clipYMax:WORD
+        EXTRN   _g_clipYMin:WORD
 
         .CODE S2487_TEXT
 
@@ -321,14 +321,14 @@ _tandylin_span  PROC  FAR
         push    si
         push    di
         mov     ax,[bp+10]              ; y
-        cmp     _g_clip_ymin,ax
+        cmp     _g_clipYMin,ax
         jg      done_jmp
-        cmp     _g_clip_ymax,ax
+        cmp     _g_clipYMax,ax
         jl      done_jmp
         mov     ax,[bp+6]               ; x1
         mov     bx,[bp+8]               ; x2
-        mov     cx,_g_clip_xmin
-        mov     dx,_g_clip_xmax
+        mov     cx,_g_clipXMin
+        mov     dx,_g_clipXMax
         cmp     cx,bx
         jg      done_jmp
         cmp     dx,ax
@@ -418,7 +418,7 @@ _tandylin_fill_below  PROC  FAR
         push    si
         push    di
         mov     ax,[bp+6]               ; y
-        cmp     _g_clip_ymax,ax
+        cmp     _g_clipYMax,ax
         jl      done3
         mov     ax,[bp+8]               ; color
         mov     ah,al
@@ -432,7 +432,7 @@ _tandylin_fill_below  PROC  FAR
         xor     si,si
 bank:
         mov     ax,[bp+6]
-        mov     bx,_g_clip_ymax
+        mov     bx,_g_clipYMax
         mov     cx,bx
         sub     cx,ax
         shr     cx,1

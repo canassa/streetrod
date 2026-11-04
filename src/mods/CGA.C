@@ -21,10 +21,10 @@
 
 #pragma intrinsic(_rotl, outp)
 
-void (far *g_5b04[15])() = {cgablt_copy, cgashift_blit, cgablt_masked, cga_draw_text, cursblt_cga, cga_copy_page, cga_recolor_rect, cga_screen_off, cga_screen_on, cgaspr_step, cga_reveal, sprite_slide_v, cgaline_draw, cgaline_span, cgaline_fill_below};   /* DS:5B04 */
-unsigned char g_5b40[4] = {192, 48, 12, 3};   /* DS:5B40 */
-unsigned char g_5b44[4] = {63, 207, 243, 252};   /* DS:5B44 */
-int g_5b48[5] = {0, 2, 4, 1, 3};   /* DS:5B48 */
+void (far *g_cgaHooks[15])() = {cgablt_copy, cgashift_blit, cgablt_masked, cga_draw_text, cursblt_cga, cga_copy_page, cga_recolor_rect, cga_screen_off, cga_screen_on, cgaspr_step, cga_reveal, sprite_slide_v, cgaline_draw, cgaline_span, cgaline_fill_below};   /* DS:5B04 */
+unsigned char g_cgaPixMask[4] = {192, 48, 12, 3};   /* DS:5B40 */
+unsigned char g_cgaPixKeep[4] = {63, 207, 243, 252};   /* DS:5B44 */
+int g_cgaRevealOrder[5] = {0, 2, 4, 1, 3};   /* DS:5B48 */
 
 /* cga_draw_text @ 1C11:01BA (linear 0x1C2CA, 1337 bytes)
 
@@ -223,7 +223,7 @@ void cga_draw_text(struct Bitmap far *bm, int x, int y, char *s)
 }
 
 #define PIX(k, cv, bv) \
-    if ((*p5 & g_5b40[k]) != (cv)) { *p5 &= g_5b44[k]; *p5 |= (bv); }
+    if ((*p5 & g_cgaPixMask[k]) != (cv)) { *p5 &= g_cgaPixKeep[k]; *p5 |= (bv); }
 
 #define EDGES_LEFT \
     if (lx) { \
@@ -392,7 +392,7 @@ void cga_reveal(char far *dst, char far *src)
 
     for (pass = 0; pass < 5; pass++) {
         deadline = g_tick + 5;
-        for (y = g_5b48[pass]; y < 200; y += 5) {
+        for (y = g_cgaRevealOrder[pass]; y < 200; y += 5) {
             d = dst + (y >> 1) * 0x50;
             s2 = src + (y >> 1) * 0x50;
             if (y & 1) {

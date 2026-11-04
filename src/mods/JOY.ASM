@@ -1,25 +1,25 @@
         .MODEL MEDIUM
 
         .DATA
-        EXTRN   _g_4718:WORD
-        EXTRN   _g_471c:BYTE
-        EXTRN   _g_472a:WORD
-        EXTRN   _g_472c:WORD
-        EXTRN   _g_472e:BYTE
-        EXTRN   _g_472f:BYTE
-        EXTRN   _g_4730:BYTE
-        EXTRN   _g_4732:BYTE
-        EXTRN   _g_4736:BYTE
-        EXTRN   _g_4737:BYTE
-        EXTRN   _g_4738:WORD
-        EXTRN   _g_473a:WORD
-        EXTRN   _g_473c:WORD
-        EXTRN   _g_473e:WORD
-        EXTRN   _g_4740:WORD
-        EXTRN   _g_4766:BYTE
-        EXTRN   _g_47cc:BYTE
-        EXTRN   _g_47ce:BYTE
-        EXTRN   _g_47d0:BYTE
+        EXTRN   _g_joyX:WORD
+        EXTRN   _g_joyButtons:BYTE
+        EXTRN   _g_cursorX:WORD
+        EXTRN   _g_cursorY:WORD
+        EXTRN   _g_keyDx:BYTE
+        EXTRN   _g_keyDy:BYTE
+        EXTRN   _g_lastDx:BYTE
+        EXTRN   _g_buttons:BYTE
+        EXTRN   _g_click:BYTE
+        EXTRN   _g_click2:BYTE
+        EXTRN   _g_clickX:WORD
+        EXTRN   _g_clickY:WORD
+        EXTRN   _g_click2X:WORD
+        EXTRN   _g_click2Y:WORD
+        EXTRN   _g_inputLock:WORD
+        EXTRN   _g_scanMap:BYTE
+        EXTRN   _g_demoKey:BYTE
+        EXTRN   _g_soundOn:BYTE
+        EXTRN   _g_lastKey:BYTE
         EXTRN   _g_47e8:WORD
 
         .CODE S0000_TEXT
@@ -60,7 +60,7 @@ poll:
         jne     poll
         sti
         mov     dl,2
-        mov     di,OFFSET _g_4718
+        mov     di,OFFSET _g_joyX
 next:
         pop     bx
         sub     bx,400h
@@ -88,20 +88,20 @@ skip:
         mov     cl,4
         shr     al,cl
         and     al,3
-        mov     _g_471c,al
+        mov     _g_joyButtons,al
         je      nobtn
-        cmp     _g_4732,0
+        cmp     _g_buttons,0
         jne     held
-        mov     _g_4736,al
-        mov     ax,_g_472a
-        mov     _g_4738,ax
-        mov     ax,_g_472c
-        mov     _g_473a,ax
+        mov     _g_click,al
+        mov     ax,_g_cursorX
+        mov     _g_clickX,ax
+        mov     ax,_g_cursorY
+        mov     _g_clickY,ax
 held:
-        or      _g_4732,2
+        or      _g_buttons,2
         jmp     SHORT done1
 nobtn:
-        and     _g_4732,0FDh
+        and     _g_buttons,0FDh
 done1:
         pop     es
         pop     ds
@@ -127,7 +127,7 @@ _joy_demo_key  PROC  FAR
         push    bx
         push    ds
         push    es
-        mov     al,_g_47cc
+        mov     al,_g_demoKey
         xor     ah,ah
         push    ax
         mov     ah,al
@@ -153,7 +153,7 @@ L3:
         mov     ax,56h
 L4:
         mov     bx,ax
-        mov     al,_g_4766[bx]
+        mov     al,_g_scanMap[bx]
         cmp     al,0
         je      L9
         jg      L10
@@ -166,25 +166,25 @@ L4:
         cmp     BYTE PTR _g_47e8[bx],0
         jne     done2
         mov     BYTE PTR _g_47e8[bx],1
-        mov     _g_4740,0FFFFh
-        mov     al,_g_4766[bx]
-        add     _g_472e,al
-        mov     al,_g_4766[bx+1]
-        add     _g_472f,al
-        mov     ax,WORD PTR _g_4766[bx]
-        mov     WORD PTR _g_4730,ax     ; g_4730 and g_4731
-        mov     _g_4740,0
+        mov     _g_inputLock,0FFFFh
+        mov     al,_g_scanMap[bx]
+        add     _g_keyDx,al
+        mov     al,_g_scanMap[bx+1]
+        add     _g_keyDy,al
+        mov     ax,WORD PTR _g_scanMap[bx]
+        mov     WORD PTR _g_lastDx,ax     ; g_lastDx and g_lastDy
+        mov     _g_inputLock,0
         jmp     SHORT done2
 L6:
         cmp     BYTE PTR _g_47e8[bx],0
         je      done2
-        mov     _g_4740,0FFFFh
+        mov     _g_inputLock,0FFFFh
         mov     BYTE PTR _g_47e8[bx],0
-        mov     al,_g_4766[bx]
-        sub     _g_472e,al
-        mov     al,_g_4766[bx+1]
-        sub     _g_472f,al
-        mov     _g_4740,0
+        mov     al,_g_scanMap[bx]
+        sub     _g_keyDx,al
+        mov     al,_g_scanMap[bx+1]
+        sub     _g_keyDy,al
+        mov     _g_inputLock,0
         jmp     SHORT done2
 L9:
         popf
@@ -198,10 +198,10 @@ L10:
         je      L16
         cmp     al,1Dh
         jne     L12
-        xor     _g_47ce,1
+        xor     _g_soundOn,1
         jmp     SHORT done2
 L12:
-        mov     _g_47d0,al
+        mov     _g_lastKey,al
         jmp     SHORT done2
 L11:
         cmp     al,1Fh
@@ -216,33 +216,33 @@ done2:
         pop     ax
         ret
 L14:
-        cmp     _g_4732,0
+        cmp     _g_buttons,0
         jne     L14b
-        mov     _g_4740,0FFFFh
-        mov     _g_4736,1Fh
-        mov     ax,_g_472a
-        mov     _g_4738,ax
-        mov     ax,_g_472c
-        mov     _g_473a,ax
-        mov     _g_4740,0
+        mov     _g_inputLock,0FFFFh
+        mov     _g_click,1Fh
+        mov     ax,_g_cursorX
+        mov     _g_clickX,ax
+        mov     ax,_g_cursorY
+        mov     _g_clickY,ax
+        mov     _g_inputLock,0
 L14b:
-        or      _g_4732,1
+        or      _g_buttons,1
         jmp     SHORT done2
 L15:
-        mov     _g_4740,0FFFFh
-        and     _g_4732,0FEh
-        mov     _g_4740,0
+        mov     _g_inputLock,0FFFFh
+        and     _g_buttons,0FEh
+        mov     _g_inputLock,0
         jmp     SHORT done2
 L16:
-        cmp     _g_4732,0
+        cmp     _g_buttons,0
         jne     L16b
-        mov     _g_4740,0FFFFh
-        mov     _g_4737,1Eh
-        mov     ax,_g_472a
-        mov     _g_473c,ax
-        mov     ax,_g_472c
-        mov     _g_473e,ax
-        mov     _g_4740,0
+        mov     _g_inputLock,0FFFFh
+        mov     _g_click2,1Eh
+        mov     ax,_g_cursorX
+        mov     _g_click2X,ax
+        mov     ax,_g_cursorY
+        mov     _g_click2Y,ax
+        mov     _g_inputLock,0
 L16b:
         jmp     SHORT done2
 L17:

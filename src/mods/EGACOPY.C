@@ -7,7 +7,7 @@
 
 #pragma intrinsic(outp)
 
-int g_5c0c[5] = {0, 80, 160, 40, 120};   /* DS:5C0C */
+int g_revealOffsets[5] = {0, 80, 160, 40, 120};   /* DS:5C0C */
 
 /* egacopy_page @ 21A0:16DC (linear 0x230DC, 70 bytes)
 
@@ -47,7 +47,7 @@ void egacopy_reveal(char far *dst, char far *src)
     do {
         d = g_tick + 3;
         f = 0;
-        h = g_5c0c[e];
+        h = g_revealOffsets[e];
         a = dst + h;
         c = src + h;
         do {

@@ -7,11 +7,11 @@
 extern struct Car *g_4f46;                              /* DS:4F46 */
 extern struct Car *g_4f48;                              /* DS:4F48 */
 extern int g_4f4a;                                      /* DS:4F4A */
-extern int g_4f4c;                                      /* DS:4F4C */
-extern int g_4f4e[];                                    /* DS:4F4E */
-extern int g_4f58;                                      /* DS:4F58 */
-extern int g_4f5a;                                      /* DS:4F5A */
-extern char *g_4fa4;                                    /* DS:4FA4 */
+extern int g_picsFreed;                                 /* DS:4F4C */
+extern int g_paperPics[];                               /* DS:4F4E */
+extern int g_paperPick;                                 /* DS:4F58 */
+extern int g_paperDay;                                  /* DS:4F5A */
+extern char *g_offerText;                               /* DS:4FA4 */
 void game_pause(int a);                                 /* 0x03A83 */
 void game_message(int n);                               /* 0x03AB8 */
 struct Node * near game_new_part(void);                 /* 0x03C1B */

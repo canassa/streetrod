@@ -3,25 +3,25 @@
         .DATA
         EXTRN   _at767ct:WORD
         EXTRN   _av787at:WORD
-        EXTRN   _g_0042:WORD
-        EXTRN   _g_5e42:BYTE
-        EXTRN   _g_clip_xmax:WORD
-        EXTRN   _g_clip_xmin:WORD
-        EXTRN   _g_clip_ymax:WORD
-        EXTRN   _g_clip_ymin:WORD
+        EXTRN   _g_hercules:WORD
+        EXTRN   _g_viewClip:BYTE
+        EXTRN   _g_clipXMax:WORD
+        EXTRN   _g_clipXMin:WORD
+        EXTRN   _g_clipYMax:WORD
+        EXTRN   _g_clipYMin:WORD
 
-        PUBLIC  _g_5b56
-_g_5b56 DB      0, 55h, 0AAh, 0FFh       ; DS:5B56 char[4]
+        PUBLIC  _g_cgaColorByte
+_g_cgaColorByte DB      0, 55h, 0AAh, 0FFh       ; DS:5B56 char[4]
 ; DS:5B5A char[16]
-        PUBLIC  _g_5b5a
-_g_5b5a DB      0, 0, 2, 0, 3, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 3
+        PUBLIC  _g_cgaColorMap
+_g_cgaColorMap DB      0, 0, 2, 0, 3, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 3
 ; DS:5B6A char[16]
-        PUBLIC  _g_5b6a
-_g_5b6a DB      0, 0, 55h, 0EEh, 0FFh, 0, 0, 0, 55h, 77h, 0AAh, 0, 0AAh
+        PUBLIC  _g_cgaDitherOdd
+_g_cgaDitherOdd DB      0, 0, 55h, 0EEh, 0FFh, 0, 0, 0, 55h, 77h, 0AAh, 0, 0AAh
         DB      55h, 0AAh, 0AAh
 ; DS:5B7A char[16]
-        PUBLIC  _g_5b7a
-_g_5b7a DB      0, 0, 55h, 0BBh, 0FFh, 0, 0, 0, 55h, 0DDh, 0AAh, 0, 0AAh
+        PUBLIC  _g_cgaDitherEven
+_g_cgaDitherEven DB      0, 0, 55h, 0BBh, 0FFh, 0, 0, 0, 55h, 0DDh, 0AAh, 0, 0AAh
         DB      55h, 0AAh, 0AAh
 
         .CODE S1C11_TEXT
@@ -49,7 +49,7 @@ _cgaline_draw  PROC    FAR
         mov     si,2000h
         mov     di,0E050h
         mov     WORD PTR [bp-0Ah],0
-        cmp     _g_0042,0
+        cmp     _g_hercules,0
         je      gotdx
         cmp     _av787at,0B000h
         jb      gotdx
@@ -177,7 +177,7 @@ horiz:
         shr     bx,cl
         mov     cx,ax
         sub     cx,bx
-        mov     bx,OFFSET _g_5b56
+        mov     bx,OFFSET _g_cgaColorByte
         mov     al,[bp+14]
         xlat
         or      dh,dh
@@ -351,7 +351,7 @@ _cgaline_pixel_addr  ENDP
 ; cgaline_span @ 1C11:1EC2 (linear 0x1DFD2, 300 bytes)
 ; Draw a horizontal line with 2 bits per pixel into the interleaved
 ; (CGA/Hercules style) screen, clipped to the clip rectangle. On a Hercules
-; segment (B000-B400 with g_0042 set) an odd line is also drawn 0x2000 bytes
+; segment (B000-B400 with g_hercules set) an odd line is also drawn 0x2000 bytes
 ; up, which is what the flag byte in the code segment records.
 ; cgaline_span(x1, x2, y, colour)
 
@@ -364,7 +364,7 @@ _cgaline_span  PROC    FAR
         push    si
         push    di
         mov     BYTE PTR cs:dbl,0
-        cmp     _g_0042,0
+        cmp     _g_hercules,0
         je      clip
         cmp     _av787at,0B000h
         jb      clip
@@ -375,14 +375,14 @@ _cgaline_span  PROC    FAR
         mov     BYTE PTR cs:dbl,1
 clip:
         mov     ax,[bp+10]
-        cmp     _g_clip_ymin,ax
+        cmp     _g_clipYMin,ax
         jg      skip1
-        cmp     _g_clip_ymax,ax
+        cmp     _g_clipYMax,ax
         jl      skip1
         mov     ax,[bp+6]
         mov     bx,[bp+8]
-        mov     cx,_g_clip_xmin
-        mov     dx,_g_clip_xmax
+        mov     cx,_g_clipXMin
+        mov     dx,_g_clipXMax
         cmp     cx,bx
         jg      skip1
         cmp     dx,ax
@@ -428,10 +428,10 @@ ordered:
         sub     cx,bx
         test    WORD PTR [bp+10],1
         je      evenline
-        mov     bx,OFFSET _g_5b6a
+        mov     bx,OFFSET _g_cgaDitherOdd
         jmp     SHORT gotpat
 evenline:
-        mov     bx,OFFSET _g_5b7a
+        mov     bx,OFFSET _g_cgaDitherEven
 gotpat:
         mov     al,[bp+12]
         xlat
@@ -491,8 +491,8 @@ _cgaline_span  ENDP
 
 ; cgaline_fill_below @ 1C11:1FEE (linear 0x1E0FE, 96 bytes)
 ; Fill whole screen lines with a 2-bit pattern, from line y1 down to the
-; bottom clip line (g_clip_ymax). The colour is turned into a pattern
-; byte via g_5b6a; every second line gets the pattern rotated by 2 bits.
+; bottom clip line (g_clipYMax). The colour is turned into a pattern
+; byte via g_cgaDitherOdd; every second line gets the pattern rotated by 2 bits.
 ; cgaline_fill_below(y1, colour)
 
         PUBLIC  _cgaline_fill_below
@@ -502,9 +502,9 @@ _cgaline_fill_below  PROC    FAR
         push    si
         push    di
         mov     ax,[bp+6]
-        cmp     _g_clip_ymax,ax
+        cmp     _g_clipYMax,ax
         jl      done3
-        mov     bx,OFFSET _g_5b6a
+        mov     bx,OFFSET _g_cgaDitherOdd
         mov     ax,[bp+8]
         xor     ah,ah
         xlat
@@ -513,7 +513,7 @@ _cgaline_fill_below  PROC    FAR
         xor     si,si
 again:
         mov     ax,[bp+6]
-        mov     bx,_g_clip_ymax
+        mov     bx,_g_clipYMax
         mov     cx,bx
         sub     cx,ax
         shr     cx,1
@@ -553,7 +553,7 @@ _cgaline_fill_below  ENDP
 
 ; cgaline_map_color @ 1C11:204E (linear 0x1E15E, 16 bytes)
 ; Map a colour in al to a CGA 2-bit pixel value: 0-3 stay as they are,
-; 4-15 go through the table g_5b5a, anything above becomes 3.
+; 4-15 go through the table g_cgaColorMap, anything above becomes 3.
 
         PUBLIC  _cgaline_map_color
 _cgaline_map_color  PROC    NEAR
@@ -565,7 +565,7 @@ _cgaline_map_color  PROC    NEAR
 done4:
         ret
 mapped:
-        mov     bx,OFFSET _g_5b5a
+        mov     bx,OFFSET _g_cgaColorMap
         xlat
         ret
 _cgaline_map_color  ENDP

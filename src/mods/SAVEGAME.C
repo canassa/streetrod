@@ -35,11 +35,11 @@ static void near scan_save_slots(int create);
 static int near is_blank(char *p);
 static int near write_cars(int handle, struct Car *c, int flag);
 
-char g_4fa6[] = "The game must have a name !";   /* DS:4FA6 */
-char g_4fc2[16] = {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};   /* DS:4FC2 */
-int g_4fd2[16] = {6661, 6678, 6695, 6712, 6729, 6746, 6763, 6780, 6797, 6814, 6831, 6848, 6865, 6882, 6899, 6916};   /* DS:4FD2 */
-char *g_4ff2 = g_4fa6;   /* DS:4FF2 */
-int g_4ff4 = 0;   /* DS:4FF4 */
+char g_noNameMsg[] = "The game must have a name !";   /* DS:4FA6 */
+char g_saveSlots[16] = {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};   /* DS:4FC2 */
+int g_slotNameOfs[16] = {6661, 6678, 6695, 6712, 6729, 6746, 6763, 6780, 6797, 6814, 6831, 6848, 6865, 6882, 6899, 6916};   /* DS:4FD2 */
+char *g_noNameMsgPtr = g_noNameMsg;   /* DS:4FF2 */
+int g_demoRacer = 0;   /* DS:4FF4 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 
@@ -95,7 +95,7 @@ static void near init_racers(void)
     an[0] = na1;
     bm[0] = nb;
     cl[0] = nc;
-    if (g_0610)
+    if (g_demo)
         an[0] = --na1;
     k = 0;
     for (i = 0; i < 7; i++)
@@ -105,11 +105,11 @@ static void near init_racers(void)
     for (i = 0; i < 7; i++)
         savegame_init_racer(k++, cl);
     av7ff8[21].fb = 0;
-    if (g_0610) {
+    if (g_demo) {
         an[0] = 1;
         an[1] = 0x18;
-        savegame_init_racer(g_4ff4, an);
-        av7ff8[g_4ff4].f6 = 0x629;
+        savegame_init_racer(g_demoRacer, an);
+        av7ff8[g_demoRacer].f6 = 0x629;
     }
 }
 
@@ -119,14 +119,14 @@ static void near init_new_game(void)
 {
     pools_init(1);
     a_7eaap.m7eaa = 750L;
-    if (g_0610)
+    if (g_demo)
         a_7eaap.m7eaa = 10000L;
     a_7eaap.m7eae = 10;
     road_build_layout(100);
     init_racers();
     g_05fc = 0L;
     g_0604 = g_0600;
-    g_4970 = g_4972 = g_4974 = g_4976 = 0;
+    g_betRaces = g_dragWins = g_roadWins = g_kingDragWon = 0;
 }
 
 /* savegame_new @ 0000:570C (linear 0x0570C, 137 bytes) */
@@ -271,18 +271,18 @@ static void near scan_save_slots(int create)
         itoa(slot, name + 8, 10);
         strcat(name, ".SAV");
         if (_dos_open(name, 0, &fd7)) {
-            g_4fc2[slot] = 0;
+            g_saveSlots[slot] = 0;
         } else {
             if (_dos_read(fd7, hdr3, 0x24, &n) != 0 || n != 0x24)
-                g_4fc2[slot] = 0;
+                g_saveSlots[slot] = 0;
             else {
-                g_4fc2[slot] = slot;
-                strncpy(g_2c02 + (g_49e0[++cnt] = g_4fd2[slot]), hdr3, 15);
+                g_saveSlots[slot] = slot;
+                strncpy(g_2c02 + (g_49e0[++cnt] = g_slotNameOfs[slot]), hdr3, 15);
             }
             _dos_close(fd7);
         }
-        if (create && g_4fc2[slot] == 0) {
-            strcpy(g_2c02 + (g_49e0[++cnt] = g_4fd2[slot]), g_4607);
+        if (create && g_saveSlots[slot] == 0) {
+            strcpy(g_2c02 + (g_49e0[++cnt] = g_slotNameOfs[slot]), g_blankName);
         }
     }
     g_49e0[0] = cnt;
@@ -330,13 +330,13 @@ int near savegame_load(void)
         break;
     }
     for (i = 1, cntl = 0; cntl < r; i++)
-        if (g_4fc2[i])
+        if (g_saveSlots[i])
             cntl++;
     r = i - 1;
     F_120FE(-4);
     name[0] = disk_data_drive();
     strcpy(name + 1, ":HOTROD");
-    itoa(g_4fc2[r], name + 8, 10);
+    itoa(g_saveSlots[r], name + 8, 10);
     strcat(name, ".SAV");
     if (_dos_open(name, 0, &fd7)
         || _dos_read(fd7, atnewName, 0x24, &n) != 0 || n != 0x24
@@ -344,11 +344,11 @@ int near savegame_load(void)
         || read_cars(fd7, &a_7eaap.m7eb0, 1)
         || read_cars(fd7, &a_7eaap.m7eb2, 0)
         || read_nodes(fd7, &a_7eaap.m7eb8)
-        || _dos_read(fd7, &g_4970, 8, &n) != 0 || n != 8
+        || _dos_read(fd7, &g_betRaces, 8, &n) != 0 || n != 8
         || _dos_read(fd7, av7ff8, 0x18c, &n) != 0 || n != 0x18c
         || _dos_read(fd7, &g_05fc, 4, &n) != 0 || n != 4
         || _dos_read(fd7, &delta, 4, &n) != 0 || n != 4
-        || _dos_read(fd7, &g_5e0c, 2, &n) != 0 || n != 2) {
+        || _dos_read(fd7, &g_roadLayout, 2, &n) != 0 || n != 2) {
         F_120FE(-2);
         F_14294(0x1f);
         F_120FE(-3);
@@ -362,7 +362,7 @@ int near savegame_load(void)
     _dos_close(fd7);
     if (a_7eaap.m7eb0)
         F_067CF(a_7eaap.m7eb0->f4);
-    road_build_layout(g_5e0c);
+    road_build_layout(g_roadLayout);
     g_0604 = g_0600 - delta;
     F_120FE(-2);
     return 0;
@@ -383,7 +383,7 @@ static int near is_blank(char *p)
 }
 
 char g_501d = 0;   /* DS:501D */
-char g_501e[] = "Buy a car first !";   /* DS:501E */
+char g_buyCarMsg[] = "Buy a car first !";   /* DS:501E */
 
 /* savegame_save @ 0000:5EEA (linear 0x05EEA, 1332 bytes) */
 
@@ -417,7 +417,7 @@ void near savegame_save(void)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 320, 190);
     strcpy(g_2a2e, atnewName);
 again:
-    for (r = 1; r <= g_49e0[0] && g_4fc2[r]; r++)
+    for (r = 1; r <= g_49e0[0] && g_saveSlots[r]; r++)
         ;
     if (r > g_49e0[0])
         r = g_49e0[0];
@@ -439,7 +439,7 @@ again:
     }
     sel = r;
     if (is_blank(g_2a2e) && is_blank(g_2c02 + g_49e0[r])) {
-        screen_msg_box(g_4ff2);
+        screen_msg_box(g_noNameMsgPtr);
         F_120FE(-4);
         goto again;
     }
@@ -463,7 +463,7 @@ again:
     strcpy(name + 1, ":HOTROD");
     itoa(r, name + 8, 10);
     strcat(name + 1, ".SAV");
-    key = g_4fc2[r] ? menu_modal(0x1e) : 0;
+    key = g_saveSlots[r] ? menu_modal(0x1e) : 0;
     F_120FE(-4);
     switch (key) {
     case -0x15:
@@ -479,11 +479,11 @@ again:
         || write_cars(fd8, a_7eaap.m7eb0, 1)
         || write_cars(fd8, a_7eaap.m7eb2, 0)
         || write_nodes(fd8, a_7eaap.m7eb8)
-        || _dos_write(fd8, &g_4970, 8, &n) != 0 || n != 8
+        || _dos_write(fd8, &g_betRaces, 8, &n) != 0 || n != 8
         || _dos_write(fd8, av7ff8, 0x18c, &n) != 0 || n != 0x18c
         || _dos_write(fd8, &g_05fc, 4, &n) != 0 || n != 4
         || _dos_write(fd8, &delta, 4, &n) != 0 || n != 4
-        || _dos_write(fd8, &g_5e0c, 2, &n) != 0 || n != 2) {
+        || _dos_write(fd8, &g_roadLayout, 2, &n) != 0 || n != 2) {
         F_120FE(-2);
         menu_modal(6);
         F_120FE(-4);

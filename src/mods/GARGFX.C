@@ -28,18 +28,18 @@ static void near insert_hot(struct Hot *arr, struct Hot *item, int num);
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 void (far *bl78ce)(int, int, int, int, int, struct Bitmap far *);
 
-char g_06fc = 1;   /* DS:06FC */
-int g_06fe[2] = {78, 93};   /* DS:06FE */
-int g_0702[3][2] = {{24, 68}, {24, 68}, {16, 68}};   /* DS:0702 */
-int g_070e[6] = {109, 112, 120, 111, 124, 116};   /* DS:070E */
-int g_071a[12] = {75, 113, 64, 122, 83, 110, 72, 119, 83, 118, 72, 127};   /* DS:071A */
-int g_0732[8] = {68, 74, 144, 74, 68, 74, 160, 74};   /* DS:0732 */
-int g_0742[10][2] = {{90, 70}, {98, 70}, {94, 70}, {64, 70}, {90, 70}, {115, 70}, {72, 71}, {111, 71}, {71, 69}, {115, 69}};   /* DS:0742 */
-int g_076a[10] = {10, -1, 21, -1, 11, -1, 29, -1, 11, -1};   /* DS:076A */
+char g_partAnimate = 1;   /* DS:06FC */
+int g_tboltY[2] = {78, 93};   /* DS:06FE */
+int g_enginePos[3][2] = {{24, 68}, {24, 68}, {16, 68}};   /* DS:0702 */
+int g_engineBoltPos[6] = {109, 112, 120, 111, 124, 116};   /* DS:070E */
+int g_wiresPos[12] = {75, 113, 64, 122, 83, 110, 72, 119, 83, 118, 72, 127};   /* DS:071A */
+int g_manifoldBoltPos[8] = {68, 74, 144, 74, 68, 74, 160, 74};   /* DS:0732 */
+int g_carbPos[10][2] = {{90, 70}, {98, 70}, {94, 70}, {64, 70}, {90, 70}, {115, 70}, {72, 71}, {111, 71}, {71, 69}, {115, 69}};   /* DS:0742 */
+int g_carbBoltOff[10] = {10, -1, 21, -1, 11, -1, 29, -1, 11, -1};   /* DS:076A */
 char g_077e[14] = {29, 0, -1, -1, 2, 2, 2, 2, 3, 4, 2, 3, 2, 3};   /* DS:077E */
 char g_078c[6] = {5, 6, 7, 10, 12, 0};   /* DS:078C */
 struct Bitmap far *g_0792 = 0;   /* DS:0792 */
-struct Hot g_0796 = {11, 0, 0, 1, 0, 0, 0, 0, 0};   /* DS:0796 */
+struct Hot g_boltHot = {11, 0, 0, 1, 0, 0, 0, 0, 0};   /* DS:0796 */
 
 /* F_123F4 @ 0F38:3074 (linear 0x123F4, 305 bytes)
 
@@ -57,7 +57,7 @@ void F_123F4(int frame, int slot)
     F_120FE(-3);
     pict = F_15BBE(0x44f, 2);
     x = 0xb8;
-    y = g_06fe[slot] + 10;
+    y = g_tboltY[slot] + 10;
     if (frame == 1 && r_vid.f16) {
         blt.w = 0x10;
         blt.h = 6;
@@ -97,7 +97,7 @@ void F_12525(int slot)
     pict = F_15BBE(0x44f, 2);
     blt.sx = blt.sy = 0;
     blt.dx = x = 0xb8;
-    blt.dy = y = g_06fe[slot] + 10;
+    blt.dy = y = g_tboltY[slot] + 10;
     blt.w = 0x10;
     blt.h = blt.fc = 6;
     (*b_78a2)(pict, r_vid.back, &blt, 1);
@@ -182,7 +182,7 @@ void F_127DB(int n, char far *s)
 
     saved = r_vid.f16;
     if (n) {
-        g_06fc = 0;
+        g_partAnimate = 0;
         r_vid.f16 = 0;
         F_120FE(-3);
         F_1264E(n, 0);
@@ -191,7 +191,7 @@ void F_127DB(int n, char far *s)
         F_120FE(-1);
         if (r_vid.f16 = saved)
             bitmap_copy_box(r_vid.back, r_vid.front, 0x20, 10, 0xe7, 0xb8);
-        g_06fc = 1;
+        g_partAnimate = 1;
     }
 }
 
@@ -240,8 +240,8 @@ static int near carb_pos(int *px, int *py)
         r = 4;
         break;
     }
-    *px = g_0742[t = hz82ae - 4][0];
-    *py = g_0742[t][1];
+    *px = g_carbPos[t = hz82ae - 4][0];
+    *py = g_carbPos[t][1];
     return r;
 }
 
@@ -258,8 +258,8 @@ void gargfx_part_pos(int *px, int *py)
         carb_pos(px, py);
         break;
     case 0:
-        *px = g_0702[n = engine_index()][0];
-        *py = g_0702[n][1];
+        *px = g_enginePos[n = engine_index()][0];
+        *py = g_enginePos[n][1];
         break;
     case 1:
         *px = 0x38;
@@ -280,20 +280,20 @@ void gargfx_bolt_pos(int *px, int *py)
     switch (hz82ae) {
     default:
         slot = carb_pos(px, py);
-        *px += g_076a[(slot += g82b2t) * 2];
-        *py += g_076a[slot * 2 + 1];
+        *px += g_carbBoltOff[(slot += g82b2t) * 2];
+        *py += g_carbBoltOff[slot * 2 + 1];
         break;
     case 0:
-        *px = g_070e[(slot = engine_index()) * 2];
-        *py = g_070e[slot * 2 + 1];
+        *px = g_engineBoltPos[(slot = engine_index()) * 2];
+        *py = g_engineBoltPos[slot * 2 + 1];
         break;
     case 1:
         item = o_8290[1];
         slot = (item == 0x438 || item == 0x437) ? 0 : 2;
         if (g82b2t == 1)
             slot++;
-        *px = g_0732[slot * 2];
-        *py = g_0732[slot * 2 + 1];
+        *px = g_manifoldBoltPos[slot * 2];
+        *py = g_manifoldBoltPos[slot * 2 + 1];
         break;
     }
 }
@@ -408,8 +408,8 @@ static void near F_12CD1(void)
         what = ad829cy[i = (kind != 2) ? 1 : 0];
         if (what != 0x43f && what != 0x440)
             return;
-        px = g_0732[i * 2] - 2;
-        py = g_0732[i * 2 + 1];
+        px = g_manifoldBoltPos[i * 2] - 2;
+        py = g_manifoldBoltPos[i * 2 + 1];
         picture = F_15BBE(what, 1);
         g_0792 = F_1934E(picture->width + 8, picture->height, picture->alt.p != 0, 2);
         bitmap_shift_right(picture, px & ~r_vid.mask, g_0792);
@@ -442,7 +442,7 @@ void gargfx_draw_part(int n, int flag)
 
     z = 0;
     gargfx_part_pos(&x, &ypos);
-    if (g_06fc)
+    if (g_partAnimate)
         F_120FE(-4);
     saved = pict = F_15BBE(n, 2);
     w = saved->width;
@@ -466,7 +466,7 @@ void gargfx_draw_part(int n, int flag)
         move.dy = ypos;
         (*ab78aat)(saved, r_vid.f8, &move, 1);
     }
-    if (g_06fc) {
+    if (g_partAnimate) {
         (*bl78ce)(0xd, 0x93, x + 0x60, r_vid.f16 ? 0xd - height : ypos, ypos + 9, saved);
         F_120FE(-2);
     }
@@ -532,11 +532,11 @@ void gargfx_draw_wires(void)
     next = (ap82acz == 0x446) ? pair++ : pair + 1;
     F_120FE(-3);
     blt.w = 0x20;
-    xs = blt.dx = (blt.sx = g_071a[next * 2]) + 0x60;
-    ys = blt.dy = (blt.sy = g_071a[next * 2 + 1]) + 9;
+    xs = blt.dx = (blt.sx = g_wiresPos[next * 2]) + 0x60;
+    ys = blt.dy = (blt.sy = g_wiresPos[next * 2 + 1]) + 9;
     blt.h = r_vid.f8->height - blt.sy - 4;
     (*b_78a2)(r_vid.f8, r_vid.back, &blt, 1);
-    bitmap_draw_pic(r_vid.back, ap82acz, (unsigned char)(x2 = g_071a[pair * 2] + 0x60), (unsigned char)(y2 = g_071a[pair * 2 + 1] + 9), 0);
+    bitmap_draw_pic(r_vid.back, ap82acz, (unsigned char)(x2 = g_wiresPos[pair * 2] + 0x60), (unsigned char)(y2 = g_wiresPos[pair * 2 + 1] + 9), 0);
     F_120FE(-1);
     if (r_vid.f16)
         bitmap_copy_box(r_vid.back, r_vid.front, x2 > xs ? xs : x2, y2 > ys ? ys : y2, blt.w + x2 + 0x18, blt.h + y2 + 0x18);
@@ -545,7 +545,7 @@ void gargfx_draw_wires(void)
 /* gargfx_draw_parts @ 0F38:3E35 (linear 0x131B5, 248 bytes)
 
    Draw the item pictures of a car's parts for slots 0, 1 and then 2..4, with the
-   screen shadow off (g_06fc). Loads the r_vid.f8 strip first when it isn't there yet. */
+   screen shadow off (g_partAnimate). Loads the r_vid.f8 strip first when it isn't there yet. */
 
 void gargfx_draw_parts(struct Car *car)
 {
@@ -555,7 +555,7 @@ void gargfx_draw_parts(struct Car *car)
     int other;
 
     mode = hz82ae;
-    g_06fc = 0;
+    g_partAnimate = 0;
     if (r_vid.f8 == 0)
         r_vid.f8 = F_15BBE(0x42d, 1);
     else
@@ -578,7 +578,7 @@ void gargfx_draw_parts(struct Car *car)
             }
         }
     }
-    g_06fc = 1;
+    g_partAnimate = 1;
     hz82ae = mode;
 }
 
@@ -675,7 +675,7 @@ void gargfx_build_hots(int *xs, int *ys)
     item = g_1948;
     len = (num = 3) * sizeof(struct Hot);
     memcpy(g_184c, item, len);
-    g_0796.f4 = g_2ba5;
+    g_boltHot.f4 = g_2ba5;
     i = lane = j = 0;
     for (; i < 9; i++) {
         if (o_8290[lane]) {
@@ -684,10 +684,10 @@ void gargfx_build_hots(int *xs, int *ys)
             gargfx_bolt_pos(&x, &y);
             x += 0x60;
             y += 9;
-            g_0796.f6 = i + 1;
-            g_0796.x2 = (g_0796.x1 = x - 2) + 5;
-            g_0796.y1 = (g_0796.y2 = y + 2) - 15;
-            insert_hot(g_184c, &g_0796, num);
+            g_boltHot.f6 = i + 1;
+            g_boltHot.x2 = (g_boltHot.x1 = x - 2) + 5;
+            g_boltHot.y1 = (g_boltHot.y2 = y + 2) - 15;
+            insert_hot(g_184c, &g_boltHot, num);
             num++;
         }
         if (++j == g_5130[lane]) {
@@ -696,12 +696,12 @@ void gargfx_build_hots(int *xs, int *ys)
         }
     }
     if (o_8290[0]) {
-        g_0796.f4 = g_2ba7;
-        g_0796.f6 = 13;
+        g_boltHot.f4 = g_2ba7;
+        g_boltHot.f6 = 13;
         i = (ap82acz == 0x446) + engine_index() * 2;
-        g_0796.x2 = (g_0796.x1 = g_071a[i * 2] + 0x5b) + 10;
-        g_0796.y2 = (g_0796.y1 = g_071a[i * 2 + 1] + 2) + 15;
-        insert_hot(g_184c, &g_0796, num);
+        g_boltHot.x2 = (g_boltHot.x1 = g_wiresPos[i * 2] + 0x5b) + 10;
+        g_boltHot.y2 = (g_boltHot.y1 = g_wiresPos[i * 2 + 1] + 2) + 15;
+        insert_hot(g_184c, &g_boltHot, num);
         num++;
     }
     g_184c[num].f0 = 9;

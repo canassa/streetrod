@@ -39,13 +39,13 @@ struct Hot *av8ba6v;
 int ai8bacx;
 int av8efe;
 
-int g_07a8 = 0;   /* DS:07A8 */
-char g_07aa[12] = "(xx% worn)";   /* DS:07AA */
+int g_hotChain = 0;   /* DS:07A8 */
+char g_wearText[12] = "(xx% worn)";   /* DS:07AA */
 
 /* menu_draw_hot @ 0F38:465E (linear 0x139DE, 1032 bytes)
 
    Draw a hot spot and the spots linked behind it (the chain through Hot.f10 masked with
-   g_07a8), by kind: 4/12 filled box with optional centred text, 5/6/10 text only, 7/8 header bar,
+   g_hotChain), by kind: 4/12 filled box with optional centred text, 5/6/10 text only, 7/8 header bar,
    13 first-time marker. Grows the touched rectangle g_6c56..g_6c5c. */
 
 void menu_draw_hot(struct Hot *p)
@@ -56,7 +56,7 @@ void menu_draw_hot(struct Hot *p)
     int nxt;
 
     colr = 0;
-    if (!g_07a8 && r_vid.f16)
+    if (!g_hotChain && r_vid.f16)
         F_120FE(-3);
     do {
         switch (p->f0) {
@@ -128,8 +128,8 @@ void menu_draw_hot(struct Hot *p)
             continue;
         }
         break;
-    } while ((nxt = p->f10 & g_07a8) ? (p = &g_09f4[nxt], 1) : 0);
-    if (!g_07a8 && r_vid.f16) {
+    } while ((nxt = p->f10 & g_hotChain) ? (p = &g_09f4[nxt], 1) : 0);
+    if (!g_hotChain && r_vid.f16) {
         F_120FE(-1);
         bitmap_copy_box(r_vid.back, r_vid.front, p->x1 - 3, p->y1 - 3, p->x2 + 6, p->y2 + 6);
     }
@@ -150,18 +150,18 @@ void F_13DE6(int id)
         F_120FE(-3);
         ai8b86y[g8b8eb++] = av8efe = id;
         ao8b90v.x1 = ao8b90v.x2 = ao8b90v.y1 = ao8b90v.y2 = -1;
-        ai8bacx = (p = &g_09f4[g_2bad[id]])->f4;
+        ai8bacx = (p = &g_09f4[g_screenHot[id]])->f4;
         av8ba6v = (p + 1)->f0 > 9 ? p + 1 : 0;
         a_8b9ca = a_8b9ap = az8ba2t = 0;
         ax8ba4u = 0;
         av8b98 = p->f0 == 3;
         saved = x_colors;
-        g_07a8 = -1;
+        g_hotChain = -1;
         g_6c56 = g_6c58 = 1000;
         g_6c5a = g_6c5c = -1;
         if (p->f10)
             menu_draw_hot(&g_09f4[p->f10]);
-        g_07a8 = 0;
+        g_hotChain = 0;
         x_colors = saved;
         F_120FE(-1);
         if (r_vid.f16 && g_6c5a >= 0)
@@ -210,7 +210,7 @@ void menu_bbox(int id, int *x, int *y, int *w, int *h)
 {
     struct Hot *p;
 
-    p = &g_09f4[g_2bad[id]];
+    p = &g_09f4[g_screenHot[id]];
     g_6c56 = g_6c58 = 1000;
     g_6c5a = g_6c5c = 1;
     while (p->f10) {
@@ -374,11 +374,11 @@ int F_142CF(int a, int b, int *c, int *list, char *buf, char **d)
     return res;
 }
 
-char g_07be[4] = "   ";   /* DS:07BE */
+char g_wearPad[4] = "   ";   /* DS:07BE */
 
 /* wear_text @ 0F38:4FC1 (linear 0x14341, 77 bytes)
 
-   Wear text for a part: "(new)" when wear is 0, else "(xx% worn)" built in place in g_07aa
+   Wear text for a part: "(new)" when wear is 0, else "(xx% worn)" built in place in g_wearText
    (initialised data "(xx% worn)") with the number written over the xx */
 
 static char * near wear_text(int wear)
@@ -387,10 +387,10 @@ static char * near wear_text(int wear)
 
     if (wear == 0)
         return "(`new`)";
-    g_07aa[3] = ' ';
-    itoa(wear, p = g_07aa + 1, 10);
+    g_wearText[3] = ' ';
+    itoa(wear, p = g_wearText + 1, 10);
     p[strlen(p)] = '%';
-    return g_07aa;
+    return g_wearText;
 }
 
 int g_07c6[277] = {0, 1, 2, 3, 5, 6, 7, 4, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276};   /* DS:07C6 */
@@ -442,7 +442,7 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
         if (!ax8ba4u) {
             strcpy(bufpl, g_2c02 + lp11[sel]);
             if (buf && (wear = buf1[sel]) != -128) {
-                strcat(bufpl, g_07be);
+                strcat(bufpl, g_wearPad);
                 strcat(bufpl, wear_text(wear));
             }
             menu_draw_hot(hotn);
@@ -469,7 +469,7 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
             (*a_78aem)(r_vid.back, x, w->h, labeln);
             draw_fill_rect(r_vid.back, g824cd - 1, bq824e, w->tx - g824cd + 1, 8);
             if (buf && (wear = *bpl) != -128)
-                (*a_78aem)(r_vid.back, w->tx - strlen(g_07aa) * 6, w->h, wear_text(wear));
+                (*a_78aem)(r_vid.back, w->tx - strlen(g_wearText) * 6, w->h, wear_text(wear));
         }
         if (!av8b98) {
             w = (struct Win *)(0x12 * sel + a_8b9ap);
@@ -523,10 +523,10 @@ restore:
                 if (hotn) {
                     if (!ax8ba4u || i == sel) {
                         strcpy(bufpl, g_2c02 + lp11[i]);
-                        if (kind == 5 && !strcmp(g_4607, bufpl))
+                        if (kind == 5 && !strcmp(g_blankName, bufpl))
                             strcpy(bufpl, "\0");
                         if (buf && (wear = buf1[i]) != -128) {
-                            strcat(bufpl, g_07be);
+                            strcat(bufpl, g_wearPad);
                             strcat(bufpl, wear_text(wear));
                         }
                         menu_draw_hot(hotn);
@@ -561,7 +561,7 @@ restore:
             F_13F21(1);
             return key2;
         case -6:
-            if (kind == 5 && !strcmp(g_4607, bufpl))
+            if (kind == 5 && !strcmp(g_blankName, bufpl))
                 strcpy(bufpl, "\0");
             x_colors = bustyle->pal[hotn->f2];
             F_13DE6(0x18);

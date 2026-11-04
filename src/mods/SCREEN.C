@@ -25,7 +25,7 @@ int au8252x;
 int as8254y;
 int aq8256z;
 
-char *g_msgs[7] = {"0", "1", "2", "3", "4", "N", "D"};   /* DS:0482 */
+char *g_gearNames[7] = {"0", "1", "2", "3", "4", "N", "D"};   /* DS:0482 */
 
 /* screen_status_init @ 0F38:2022 (linear 0x113A2, 127 bytes) */
 
@@ -121,7 +121,7 @@ void screen_show_gear(int i)
 
     saved = aq8256z;
     aq8256z = 1;
-    F_11421(g8258z, g_msgs[i], 8);
+    F_11421(g8258z, g_gearNames[i], 8);
     aq8256z = saved;
 }
 
@@ -151,10 +151,10 @@ void screen_msg_box(char *s)
     menu_modal(0x1d);
 }
 
-char g_04ac[18] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14, 0, 0};   /* DS:04AC */
-int g_04be = 0;   /* DS:04BE */
-int g_04c0 = 0;   /* DS:04C0 */
-int g_04c2 = 190;   /* DS:04C2 */
+char g_promptPalette[18] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14, 0, 0};   /* DS:04AC */
+int g_picX = 0;   /* DS:04BE */
+int g_picY = 0;   /* DS:04C0 */
+int g_picMaxH = 190;   /* DS:04C2 */
 
 /* screen_wait_msg @ 0F38:23CE (linear 0x1174E, 390 bytes)
 
@@ -169,8 +169,8 @@ void screen_wait_msg(char *msg)
     struct Bitmap far *back;
 
     saved = r_vid.f16;
-    strcpy(g_293e, msg);
-    strcpy(g_2967, "Hit Return when ready ...");
+    strcpy(g_promptLine1, msg);
+    strcpy(g_promptLine2, "Hit Return when ready ...");
     if (ap8247u >= 1) {
         if (g_58ee) {
             screen_fill_rect(0, 0, 320, 200, 0);
@@ -183,11 +183,11 @@ void screen_wait_msg(char *msg)
         }
         dx = af824ax ? 5 : 0x50;
         for (i = 0; i < 5; i++) {
-            g_1d80[i].y1 += dx;
-            g_1d80[i].y2 += dx;
+            g_hotReadyBox[i].y1 += dx;
+            g_hotReadyBox[i].y2 += dx;
         }
         if (g_58ee)
-            video_set_palette(g_04ac);
+            video_set_palette(g_promptPalette);
         r_vid.f16 = 1;
         sys_input_reset();
         back = r_vid.back;
@@ -195,8 +195,8 @@ void screen_wait_msg(char *msg)
         menu_modal(0x20);
         r_vid.back = back;
         for (i = 0; i < 5; i++) {
-            g_1d80[i].y1 -= dx;
-            g_1d80[i].y2 -= dx;
+            g_hotReadyBox[i].y1 -= dx;
+            g_hotReadyBox[i].y2 -= dx;
         }
         r_vid.f16 = saved;
         gz8249 = prev;
@@ -204,9 +204,9 @@ void screen_wait_msg(char *msg)
             (*bl78be)();
     } else {
         puts(" ");
-        puts(g_293e);
-        puts(g_2967);
-        if (g_05e0) {
+        puts(g_promptLine1);
+        puts(g_promptLine2);
+        if (g_kbdHooked) {
             while (!kbdget_key())
                 ;
         } else {
@@ -219,7 +219,7 @@ void screen_wait_msg(char *msg)
 
 /* F_118D4 @ 0F38:2554 (linear 0x118D4, 228 bytes)
 
-   Blit bitmap number a to the back buffer at (g_04be, g_04c0), then copy the rectangle to the front
+   Blit bitmap number a to the back buffer at (g_picX, g_picY), then copy the rectangle to the front
    buffer. b >= 0 first fills the screen with color b. */
 
 int F_118D4(int a, int b)
@@ -231,17 +231,17 @@ int F_118D4(int a, int b)
     F_120FE(-3);
     p = F_15BBE(a, 2);
     if (b >= 0)
-        screen_fill_rect(0, 0, 320, g_04c2, b);
+        screen_fill_rect(0, 0, 320, g_picMaxH, b);
     pkt.w = p->width;
-    pkt.h = p->height > g_04c2 ? g_04c2 : p->height;
+    pkt.h = p->height > g_picMaxH ? g_picMaxH : p->height;
     pkt.sx = pkt.sy = pkt.fc = 0;
-    pkt.dx = g_04be;
-    pkt.dy = g_04c0;
+    pkt.dx = g_picX;
+    pkt.dy = g_picY;
     (*b_78a2)(p, r_vid.back, &pkt, 1);
     F_120FE(-1);
     if (r_vid.f16)
-        bitmap_copy_box(r_vid.back, r_vid.front, g_04be, g_04c0, pkt.dx + pkt.w - 1, pkt.dy + pkt.h - 1);
-    g_04be = g_04c0 = 0;
+        bitmap_copy_box(r_vid.back, r_vid.front, g_picX, g_picY, pkt.dx + pkt.w - 1, pkt.dy + pkt.h - 1);
+    g_picX = g_picY = 0;
     F_19438(1);
 }
 
@@ -249,8 +249,8 @@ int F_118D4(int a, int b)
 
 int F_119B8(int a, int b, int c, int d)
 {
-    g_04be = b;
-    g_04c0 = c;
+    g_picX = b;
+    g_picY = c;
     return F_118D4(a, d);
 }
 

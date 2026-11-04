@@ -21,9 +21,9 @@ int g7f84q;
 static struct Bitmap far * near ad_picture(int n);
 
 struct Pages g_pages = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 0, 0, 0};   /* DS:04FE */
-struct Bitmap far *g_051c = 0;   /* DS:051C */
-char g_0520 = 0;   /* DS:0520 */
-int g_0522 = 0;   /* DS:0522 */
+struct Bitmap far *g_adPicture = 0;   /* DS:051C */
+char g_adRedraw = 0;   /* DS:0520 */
+int g_adBlt = 0;   /* DS:0522 */
 int g_0524 = 0;   /* DS:0524 */
 int g_0526 = 0;   /* DS:0526 */
 int g_0528 = 0;   /* DS:0528 */
@@ -31,7 +31,7 @@ int g_052a = 0;   /* DS:052A */
 int g_052c = 0;   /* DS:052C */
 int g_052e = 0;   /* DS:052E */
 int g_0530[3] = {0, 0, 0};   /* DS:0530 */
-int g_0536 = 0;   /* DS:0536 */
+int g_adResume = 0;   /* DS:0536 */
 
 /* ads_open @ 0000:08B4 (linear 0x008B4, 259 bytes) */
 
@@ -42,7 +42,7 @@ void ads_open(int *list, int base)
     int *ptr;
     int first;
 
-    g_0536 = 0;
+    g_adResume = 0;
     marks_clear();
     g_pages.list = list;
     g_pages.n = 0;
@@ -62,10 +62,10 @@ void ads_open(int *list, int base)
     }
     x_colors = bustyle->hilite;
     F_120FE(-3);
-    g_0522 = 0x40;
+    g_adBlt = 0x40;
     g_0524 = 0xbe;
     g_0526 = g_0528 = g_052a = g_052c = g_052e = 0;
-    g_0520 = 1;
+    g_adRedraw = 1;
     F_13DE6(8);
     F_120FE(-1);
 }
@@ -96,23 +96,23 @@ int ads_run(void)
 
     limit = *g_pages.list;
     for (;;) {
-        if (g_0520) {
+        if (g_adRedraw) {
             F_120FE(-4);
             x_colors = bustyle->hilite;
-            g_051c = ad_picture(2);
+            g_adPicture = ad_picture(2);
             draw_fill_rect(r_vid.back, 0x40, 0, 0xc0, 0xbe);
             g_0526 = g_052a = 0;
-            b_78a2(g_051c, r_vid.back, (struct Blt *)&g_0522, 1);
+            b_78a2(g_adPicture, r_vid.back, (struct Blt *)&g_adBlt, 1);
             g_0526 = 0x40;
             g_052a = 0x100;
-            b_78a2(g_051c, r_vid.back, (struct Blt *)&g_0522, 1);
+            b_78a2(g_adPicture, r_vid.back, (struct Blt *)&g_adBlt, 1);
             F_19438(1);
             hsave = r_vid.back->height;
             r_vid.back->height = 0xbe;
             y = 0;
-            i = g_0536 ? a_7eaap.m7ebe : g_pages.start[g_pages.cur];
+            i = g_adResume ? a_7eaap.m7ebe : g_pages.start[g_pages.cur];
             next = g_pages.list + i;
-            row7 = g_0f82;
+            row7 = g_hotPageRows;
             cntz = 0;
             a_7eaap.m7ebe = i;
             do {
@@ -147,7 +147,7 @@ int ads_run(void)
                 }
             } while (y < 0xbd && ++i <= limit);
             g7f84q = i;
-            g_0536 = 1;
+            g_adResume = 1;
             row7->y2 = y + 1 > 0xbd ? 0xbd : y + 1;
             if (row7->y2 < 0xbd)
                 draw_hline(r_vid.back, 0x44, y + 1, 0xb8);
@@ -156,7 +156,7 @@ int ads_run(void)
                 row7->f0 = 0xe;
                 row7++;
             }
-            g_0520 = 0;
+            g_adRedraw = 0;
             r_vid.back->height = hsave;
             F_120FE(-1);
             if (r_vid.f16)
@@ -179,16 +179,16 @@ int ads_run(void)
                 if (--g7f84q < 1)
                     g7f84q = limit;
             a_7eaap.m7ebe = g7f84q;
-            g_0520 = 1;
+            g_adRedraw = 1;
             continue;
         case -2:
             if (++g_pages.cur >= g_pages.n)
                 g_pages.cur = 0;
             a_7eaap.m7ebe = g7f84q + (y > 0xc1 ? 0 : 1);
-            g_0520 = 1;
+            g_adRedraw = 1;
             continue;
         default:
-            g_0520 = 1;
+            g_adRedraw = 1;
         }
         return key;
     }
@@ -200,6 +200,6 @@ void ads_close(void)
 {
     marks_clear();
     g_pages.list = 0;
-    g_051c = 0;
+    g_adPicture = 0;
     F_13F21(1);
 }

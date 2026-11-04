@@ -1,7 +1,7 @@
         .MODEL MEDIUM
 
         .DATA
-        EXTRN   _g_0254:WORD
+        EXTRN   _g_vga:WORD
 
         .CODE S21A0_TEXT
 
@@ -27,7 +27,7 @@ _crtc_wait_vsync  ENDP
 ; Set the CRTC line compare register (split screen row) during vertical
 ; retrace. The CRTC base port comes from the BIOS data area (0040:0063).
 ; A line value of -1 means the bottom of the screen (1FFh, or 3FFh when
-; g_0254 is set). With g_0254 clear only the plain VGA bits are used; otherwise
+; g_vga is set). With g_vga clear only the plain VGA bits are used; otherwise
 ; the extra overflow bits live in registers 7 and 9 and the value is biased.
 ; crtc_set_split(line)
 
@@ -51,7 +51,7 @@ wait2b:
         mov     ax,[bp+6]
         cmp     ax,0FFFFh
         jne     have
-        cmp     _g_0254,0
+        cmp     _g_vga,0
         je      short1ff
         mov     ax,3FFh
         jmp     SHORT have
@@ -59,7 +59,7 @@ short1ff:
         mov     ax,1FFh
 have:
         nop
-        cmp     _g_0254,0
+        cmp     _g_vga,0
         jne     wide
         mov     bh,ah
         and     bh,1

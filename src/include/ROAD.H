@@ -4,17 +4,17 @@
 #define ROAD_H
 #include "STRUCTS.H"
 
-extern int g_5c20[];                                    /* DS:5C20 */
-extern int g_5c4c[];                                    /* DS:5C4C */
-extern int g_5c98[17];                                  /* DS:5C98 */
-extern int g_5cba;                                      /* DS:5CBA */
-extern int g_5cbc[][12];                                /* DS:5CBC */
-extern struct Bitmap g_5dac;                            /* DS:5DAC */
-extern struct Bitmap g_5ddc;                            /* DS:5DDC */
-extern int g_5e0c;                                      /* DS:5E0C */
-extern int g_5e0e;                                      /* DS:5E0E */
-extern int g_5e10;                                      /* DS:5E10 */
-extern int g_5e12;                                      /* DS:5E12 */
+extern int g_hillProfile[];                             /* DS:5C20 */
+extern int g_hillDipProfile[];                          /* DS:5C4C */
+extern int g_bumpProfile[17];                           /* DS:5C98 */
+extern int g_layoutLen;                                 /* DS:5CBA */
+extern int g_roadLayouts[][12];                         /* DS:5CBC */
+extern struct Bitmap g_egaPage1;                        /* DS:5DAC */
+extern struct Bitmap g_egaPage2;                        /* DS:5DDC */
+extern int g_roadLayout;                                /* DS:5E0C */
+extern int g_onShoulder;                                /* DS:5E0E */
+extern int g_turnRight;                                 /* DS:5E10 */
+extern int g_turnLeft;                                  /* DS:5E12 */
 extern unsigned far *q_72ee;                            /* DS:72EE */
 extern int at72f8[];                                    /* DS:72F8 */
 extern int far *af7560z;                                /* DS:7560 */

@@ -4,17 +4,17 @@
 #define SOUND_H
 #include "STRUCTS.H"
 
-extern int g_5858[];                                    /* DS:5858 */
-extern char g_587e[];                                   /* DS:587E */
-extern int g_5882[];                                    /* DS:5882 */
-extern int g_58cc[];                                    /* DS:58CC */
-extern int g_58d0;                                      /* DS:58D0 */
-extern struct Dev *g_58d2;                              /* DS:58D2 */
-extern int g_58d4;                                      /* DS:58D4 */
-extern int g_58d6;                                      /* DS:58D6 */
-extern int g_58d8;                                      /* DS:58D8 */
-extern int g_58da;                                      /* DS:58DA */
-extern int g_58dc;                                      /* DS:58DC */
+extern int g_songRepeats[];                             /* DS:5858 */
+extern char g_jingleRepeats[];                          /* DS:587E */
+extern int g_songTones[];                               /* DS:5882 */
+extern int g_jingleTones[];                             /* DS:58CC */
+extern int g_musicOn;                                   /* DS:58D0 */
+extern struct Dev *g_voice;                             /* DS:58D2 */
+extern int g_voiceNum;                                  /* DS:58D4 */
+extern int g_savedMusicOn;                              /* DS:58D6 */
+extern int g_musicSuspended;                            /* DS:58D8 */
+extern int g_squealOn;                                  /* DS:58DA */
+extern int g_sirenOn;                                   /* DS:58DC */
 int sound_calibrate(int n);                             /* 0x163BE */
 void sound_set_freq(long freq);                         /* 0x16455 */
 void sound_init(void);                                  /* 0x16481 */

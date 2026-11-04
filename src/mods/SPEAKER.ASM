@@ -4,18 +4,18 @@
 ; 1C11 and 2196. Small model rejects .CODE name (A2063), so the far code has its own SEGMENT.
 
         .DATA
-        EXTRN   _g_58e2:WORD
+        EXTRN   _g_delayScale:WORD
 
-        PUBLIC  _g_58de
-_g_58de DW      1                        ; DS:58DE int
-        PUBLIC  _g_58e0
-_g_58e0 DW      1                        ; DS:58E0 int
+        PUBLIC  _g_tunePtr
+_g_tunePtr DW      1                        ; DS:58DE int
+        PUBLIC  _g_toneDelay
+_g_toneDelay DW      1                        ; DS:58E0 int
 
 S2196_TEXT SEGMENT WORD PUBLIC 'CODE'
         ASSUME  CS:S2196_TEXT
 
 ; speaker_delay @ 2196:0002 (linear 0x21962, 27 bytes)
-; Busy-wait delay: spin for n * g_58e2 units, in 16-bit chunks of a LOOP count
+; Busy-wait delay: spin for n * g_delayScale units, in 16-bit chunks of a LOOP count
 ; (the high byte of the product counts the outer repetitions).
 ; speaker_delay(n)
 
@@ -24,7 +24,7 @@ _speaker_delay  PROC    FAR
         push    bp
         mov     bp,sp
         mov     ax,[bp+6]
-        mul     _g_58e2
+        mul     _g_delayScale
         xor     bh,bh
         mov     bl,dh
         mov     dh,dl
@@ -42,9 +42,9 @@ _speaker_delay  ENDP
 ; speaker_play @ 2196:001D (linear 0x2197D, 136 bytes)
 ; Play a tune on the PC speaker. The argument points at a table of
 ; 3-word records (length, two frequency counters, duty/step word) ending
-; with a zero length word; g_58de keeps the read pointer so the caller's
+; with a zero length word; g_tunePtr keeps the read pointer so the caller's
 ; table advances one record per step. The speaker is toggled through port 61h,
-; g_58e0 is the delay count of the half-wave loop.
+; g_toneDelay is the delay count of the half-wave loop.
 ; speaker_play(table)
 
         PUBLIC  _speaker_play
@@ -52,9 +52,9 @@ _speaker_play  PROC    FAR
         push    bp
         mov     bp,sp
         mov     bx,[bp+6]
-        mov     _g_58de,bx
+        mov     _g_tunePtr,bx
 next:
-        mov     bx,_g_58de
+        mov     bx,_g_tunePtr
         mov     ax,[bx]
         cmp     ax,0
         je      done
@@ -69,7 +69,7 @@ next:
         mov     cx,[bx]
         inc     bx
         inc     bx
-        mov     _g_58de,bx
+        mov     _g_tunePtr,bx
         mov     bh,cl
         mov     cl,1
         xor     bl,bl
@@ -109,7 +109,7 @@ tone:
         or      al,ah
         out     61h,al
         mov     ax,cx
-        mov     cx,_g_58e0
+        mov     cx,_g_toneDelay
 spin2:
         loop    spin2
         mov     cx,ax

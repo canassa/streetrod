@@ -4,9 +4,9 @@
 #define MENU_H
 #include "STRUCTS.H"
 
-extern int g_07a8;                                      /* DS:07A8 */
-extern char g_07aa[];                                   /* DS:07AA */
-extern char g_07be[4];                                  /* DS:07BE */
+extern int g_hotChain;                                  /* DS:07A8 */
+extern char g_wearText[];                               /* DS:07AA */
+extern char g_wearPad[4];                               /* DS:07BE */
 extern int g_07c6[];                                    /* DS:07C6 */
 extern void (far *bp78ba)(struct Bitmap far *, int, int, int, int, int, int);/* DS:78BA */
 extern int bq824e;                                      /* DS:824E */

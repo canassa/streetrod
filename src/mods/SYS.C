@@ -58,47 +58,47 @@ int g_8ef8;
 int aj8efax;
 int bw8efc;
 
-int g_0566 = -1;   /* DS:0566 */
-int g_0568 = -1;   /* DS:0568 */
-int g_056a = 0;   /* DS:056A */
-long g_056c = 2147483647L;   /* DS:056C */
+int g_timerFirst = -1;   /* DS:0566 */
+int g_timerHead = -1;   /* DS:0568 */
+int g_timerFree = 0;   /* DS:056A */
+long g_timerNext = 2147483647L;   /* DS:056C */
 char g_0570 = 0;   /* DS:0570 */
-char g_0571 = 0;   /* DS:0571 */
-struct Link g_0572[4] = {{0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}};   /* DS:0572 */
+char g_timerBusy = 0;   /* DS:0571 */
+struct Link g_timers[4] = {{0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}};   /* DS:0572 */
 int g_05ba = 0;   /* DS:05BA */
 int g_05bc[8] = {0, 0, 0, 0, 0, 0, 0, 0};   /* DS:05BC */
-long g_05cc = 0L;   /* DS:05CC */
-int g_05d0 = 0;   /* DS:05D0 */
-int g_05d2 = 0;   /* DS:05D2 */
+long g_waitUntil = 0L;   /* DS:05CC */
+int g_anyInput = 0;   /* DS:05D0 */
+int g_inputKey = 0;   /* DS:05D2 */
 int g_05d4 = 32767;   /* DS:05D4 */
 int g_05d6 = 0;   /* DS:05D6 */
 int g_05d8 = 0;   /* DS:05D8 */
 int g_05da = 0;   /* DS:05DA */
-int g_05dc = 350;   /* DS:05DC */
-int g_05de = 0;   /* DS:05DE */
-int g_05e0 = 0;   /* DS:05E0 */
-int g_05e2 = 0;   /* DS:05E2 */
-int g_05e4 = 0;   /* DS:05E4 */
-int g_05e6 = 0;   /* DS:05E6 */
-int g_05e8 = 0;   /* DS:05E8 */
-int g_05ea = 0;   /* DS:05EA */
-int g_05ec = 0;   /* DS:05EC */
-int g_05ee = 0;   /* DS:05EE */
-int g_05f0 = 10;   /* DS:05F0 */
-char g_05f2 = 3;   /* DS:05F2 */
+int g_msgTicks = 350;   /* DS:05DC */
+int g_clickEnds = 0;   /* DS:05DE */
+int g_kbdHooked = 0;   /* DS:05E0 */
+int g_mouseDx = 0;   /* DS:05E2 */
+int g_mouseDy = 0;   /* DS:05E4 */
+int g_mouseAccX = 0;   /* DS:05E6 */
+int g_mouseAccY = 0;   /* DS:05E8 */
+int g_mouseShiftX = 0;   /* DS:05EA */
+int g_mouseShiftY = 0;   /* DS:05EC */
+int g_mouseLeft = 0;   /* DS:05EE */
+int g_mouseRight = 10;   /* DS:05F0 */
+char g_mousePresent = 3;   /* DS:05F2 */
 char g_05f3 = 0;   /* DS:05F3 */
 int g_05f4[2] = {0, 0};   /* DS:05F4 */
 long g_tick = 0L;   /* DS:05F8 */
 long g_05fc = 0L;   /* DS:05FC */
 long g_0600 = 0L;   /* DS:0600 */
 long g_0604 = 0L;   /* DS:0604 */
-char g_0608 = 0;   /* DS:0608 */
-char g_0609 = 0;   /* DS:0609 */
+char g_tickDiv = 0;   /* DS:0608 */
+char g_driveDiv = 0;   /* DS:0609 */
 int g_060a = 0;   /* DS:060A */
-char *g_060c = "cannot read drive ?";   /* DS:060C */
-char *g_060e = "disk ? is write protected";   /* DS:060E */
-int g_0610 = 0;   /* DS:0610 */
-int g_0612 = 0;   /* DS:0612 */
+char *g_errRead = "cannot read drive ?";   /* DS:060C */
+char *g_errWriteProt = "disk ? is write protected";   /* DS:060E */
+int g_demo = 0;   /* DS:0610 */
+int g_autoDrive = 0;   /* DS:0612 */
 
 /* sys_hover_reset @ 0000:0D78 (linear 0x00D78, 33 bytes) */
 
@@ -107,8 +107,8 @@ void sys_hover_reset(void)
     g_6c4a = 1;
     ao8b90v.x2 = -1;
     az8baa = 0x7d00;
-    g_4736 = 0;
-    g_4737 = 0;
+    g_click = 0;
+    g_click2 = 0;
     kbdget_key();
 }
 
@@ -116,12 +116,12 @@ void sys_hover_reset(void)
 
 void sys_music_pause(void)
 {
-    if (g_58d2->off) {
-        g_58d2->off = 0;
+    if (g_voice->off) {
+        g_voice->off = 0;
         outp(0x61, inp(0x61) & 0xfc);
-        g_47cf = 0;
-        g_58d2->dirty = 1;
-        g_09f4[F_06827(-40)].f4 = g_2bab;
+        g_speakerOn = 0;
+        g_voice->dirty = 1;
+        g_09f4[F_06827(-40)].f4 = g_offTunes;
         sys_hover_reset();
     }
 }
@@ -130,10 +130,10 @@ void sys_music_pause(void)
 
 void sys_music_resume(void)
 {
-    if (g_58d0 && !g_58d2->off && g_58d2->lc != g_58d2->l8) {
-        g_58d2->off = 1;
-        g_58d2->dirty = 1;
-        g_09f4[F_06827(-40)].f4 = g_2ba9;
+    if (g_musicOn && !g_voice->off && g_voice->lc != g_voice->l8) {
+        g_voice->off = 1;
+        g_voice->dirty = 1;
+        g_09f4[F_06827(-40)].f4 = g_offSquelch;
         sys_hover_reset();
     }
 }
@@ -145,12 +145,12 @@ void sys_input_reset(void)
     int i;
     long deadline;
 
-    g_0566 = g_0568 = -1;
-    g_056a = 0;
-    g_056c = 0x7fffffffL;
-    g_0570 = g_0571 = 0;
+    g_timerFirst = g_timerHead = -1;
+    g_timerFree = 0;
+    g_timerNext = 0x7fffffffL;
+    g_0570 = g_timerBusy = 0;
     for (i = 0; i < 4; i++)
-        g_0572[i].nxt = i + 1;
+        g_timers[i].nxt = i + 1;
     g_05ba = -1;
     deadline = g_tick + 10;
     while (deadline > g_tick) {
@@ -159,15 +159,15 @@ void sys_input_reset(void)
         if (i)
             deadline = g_tick + 10;
     }
-    g_05cc = 0;
-    if (g_0610 == 0 && g_05f2) {
+    g_waitUntil = 0;
+    if (g_demo == 0 && g_mousePresent) {
         mouse_poll();
-        g_05e6 = g_05e8 = 0;
+        g_mouseAccX = g_mouseAccY = 0;
     }
-    g_4736 = 0;
+    g_click = 0;
     for (i = 0; i < 8; i++)
         g_47d8[i] = 0;
-    g_4732 = g_472e = g_472f = g_4730 = g_4731 = 0;
+    g_buttons = g_keyDx = g_keyDy = g_lastDx = g_lastDy = 0;
 }
 
 /* sys_timer_remove @ 0000:0F0B (linear 0x00F0B, 172 bytes) */
@@ -176,24 +176,24 @@ void sys_timer_remove(int n)
 {
     register int i;
 
-    i = g_0572[n].nxt;
+    i = g_timers[n].nxt;
     if (i >= 0)
-        g_0572[i].prv = g_0572[n].prv;
+        g_timers[i].prv = g_timers[n].prv;
     else {
-        i = g_0572[n].prv;
-        g_0566 = i;
+        i = g_timers[n].prv;
+        g_timerFirst = i;
         if (i < 0)
-            g_056c = 0x7fffffffL;
+            g_timerNext = 0x7fffffffL;
         else
-            g_056c = g_0572[i].key;
+            g_timerNext = g_timers[i].key;
     }
-    i = g_0572[n].prv;
+    i = g_timers[n].prv;
     if (i >= 0)
-        g_0572[i].nxt = g_0572[n].nxt;
+        g_timers[i].nxt = g_timers[n].nxt;
     else
-        g_0568 = g_0572[n].nxt;
-    g_0572[n].nxt = g_056a;
-    g_056a = n;
+        g_timerHead = g_timers[n].nxt;
+    g_timers[n].nxt = g_timerFree;
+    g_timerFree = n;
 }
 
 /* sys_unhook @ 0000:0FB7 (linear 0x00FB7, 51 bytes) */
@@ -207,33 +207,33 @@ void sys_unhook(void)
     _dos_setvect(8, w_7aaa);
     _enable();
     kbdoff_unhook();
-    g_05e0 = 0;
-    g_0044 = 0;
+    g_kbdHooked = 0;
+    g_sysHooked = 0;
 }
 
 /* sys_exit @ 0000:0FEA (linear 0x00FEA, 113 bytes) */
 
 void sys_exit(void)
 {
-    if (g_0610) {
-        g_0610 = (g_0610 == 0x62) ? 0 : 1;
+    if (g_demo) {
+        g_demo = (g_demo == 0x62) ? 0 : 1;
         screen_wait_msg("Quit demo");
         screen_fill_rect(0, 0, 320, 200, 0);
     }
-    if (g_0044)
+    if (g_sysHooked)
         sys_unhook();
-    if (g_0048) {
+    if (g_videoSet) {
         (*m_present)();
         viddet_restore();
     }
     outp(0x61, inp(0x61) & 0xfc);
-    g_47cf = 0;
+    g_speakerOn = 0;
     exit(5);
 }
 
 char g_064d = 0;   /* DS:064D */
-char g_064e = 0;   /* DS:064E */
-struct KeyMap g_0650[30] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};   /* DS:0650 */
+char g_keymapGroup = 0;   /* DS:064E */
+struct KeyMap g_keymapSaved[30] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};   /* DS:0650 */
 
 /* sys_crit_error @ 0000:105B (linear 0x0105B, 182 bytes) */
 
@@ -252,12 +252,12 @@ void sys_crit_error(unsigned deverr, unsigned char errcode)
         action = 1;
     switch (errcode) {
     case 0:
-        g_060e[5] = deverr + 'A';
-        screen_wait_msg(g_060e);
+        g_errWriteProt[5] = deverr + 'A';
+        screen_wait_msg(g_errWriteProt);
         break;
     case 2:
-        g_060c[strlen(g_060c) - 1] = deverr + 'A';
-        screen_wait_msg(g_060c);
+        g_errRead[strlen(g_errRead) - 1] = deverr + 'A';
+        screen_wait_msg(g_errRead);
         break;
     case 9:
         screen_wait_msg("printer out of paper");
@@ -297,40 +297,40 @@ void sys_init(void)
     for (j = 1; j; j++)
         if (((v = inp(0x201)) & 0xf3) == 0xf0)
             break;
-    if (g_0610 == 0 && j != 0 && v != first) {
-        g_471d = 1;
+    if (g_demo == 0 && j != 0 && v != first) {
+        g_joystick = 1;
         joy_read();
-        sumx = g_4718;
-        sumy = g_471a;
+        sumx = g_joyX;
+        sumy = g_joyY;
         joy_read();
-        sumx += g_4718;
-        sumy += g_471a;
+        sumx += g_joyX;
+        sumy += g_joyY;
         joy_read();
-        sumx += g_4718;
-        sumy += g_471a;
-        g_471e = sumx / 3;
-        g_4720 = sumy / 3;
-        g_4722 = -(g_471e >> 1);
-        g_4724 = g_471e >> 1;
-        g_4726 = -(g_4720 >> 1);
-        g_4728 = g_4720 >> 1;
+        sumx += g_joyX;
+        sumy += g_joyY;
+        g_joyCenterX = sumx / 3;
+        g_joyCenterY = sumy / 3;
+        g_joyMinX = -(g_joyCenterX >> 1);
+        g_joyMaxX = g_joyCenterX >> 1;
+        g_joyMinY = -(g_joyCenterY >> 1);
+        g_joyMaxY = g_joyCenterY >> 1;
     }
-    if (g_0610 == 0 && g_0262 && mouse_reset() == -1) {
-        g_05f2 = 1;
-        g_05e6 = g_05e8 = 0;
-        g_05ea = 1;
-        g_05ec = 1;
+    if (g_demo == 0 && g_useMouse && mouse_reset() == -1) {
+        g_mousePresent = 1;
+        g_mouseAccX = g_mouseAccY = 0;
+        g_mouseShiftX = 1;
+        g_mouseShiftY = 1;
     } else
-        g_05f2 = 0;
+        g_mousePresent = 0;
     g_6c46 = -1;
     g_6c48 = -1;
     bs79aa.off = 0;
     bs79aa.l8 = g_2e6b_0000;
     bs79aa.cur = bs79aa.lc = bs79aa.l8;
-    bs79aa.f16 = bs79aa.f14 = g_5858;
-    bs79aa.f1a = bs79aa.f18 = g_5882;
+    bs79aa.f16 = bs79aa.f14 = g_songRepeats;
+    bs79aa.f1a = bs79aa.f18 = g_songTones;
     ao79c6t.off = 0;
-    ao79c6t.f1a = ao79c6t.f18 = g_58cc;
+    ao79c6t.f1a = ao79c6t.f18 = g_jingleTones;
     _harderr(sys_crit_error);
     _disable();
     outp(0x43, 0x36);
@@ -340,10 +340,10 @@ void sys_init(void)
     _dos_setvect(8, sys_timer_isr);
     _enable();
     kbdget_hook();
-    g_05e0 = 1;
+    g_kbdHooked = 1;
     outp(0x43, 0xb6);
     sys_input_reset();
-    g_0044 = 1;
+    g_sysHooked = 1;
 }
 
 /* sys_keymap_set @ 0000:12DE (linear 0x012DE, 179 bytes) */
@@ -356,22 +356,22 @@ void sys_keymap_set(int n)
     char c;
 
     num = 1;
-    if (g_0610)
-        g_47cc = 0;
+    if (g_demo)
+        g_demoKey = 0;
     g_6c4c = n;
     sys_keymap_restore(0);
-    g_064e = n;
-    p = g_579f[n];
-    q = g_0650;
+    g_keymapGroup = n;
+    p = g_keyMaps[n];
+    q = g_keymapSaved;
     for (; p->key; p++, q++, num++) {
         if (num >= 30)
             break;
-        q->val = g_4766[q->key = c = p->key];
-        g_4766[c] = p->val;
+        q->val = g_scanMap[q->key = c = p->key];
+        g_scanMap[c] = p->val;
     }
-    p = g_579f[42];
-    q->val = g_4766[q->key = c = p->key];
-    g_4766[c] = p->val;
+    p = g_keyMaps[42];
+    q->val = g_scanMap[q->key = c = p->key];
+    g_scanMap[c] = p->val;
     q[1].key = 0;
 }
 
@@ -384,40 +384,40 @@ int sys_keymap_restore(int keep)
 
     for (i = 0; i < 8; i++)
         g_47d8[i] = 0;
-    g_472e = g_472f = g_4730 = g_4731 = 0;
-    i = g_064e;
+    g_keyDx = g_keyDy = g_lastDx = g_lastDy = 0;
+    i = g_keymapGroup;
     if (i) {
         if (keep) {
-            for (p = g_0650; p->key; p++)
+            for (p = g_keymapSaved; p->key; p++)
                 if (p->val >= 0x20)
-                    g_4766[p->key] = p->val;
+                    g_scanMap[p->key] = p->val;
         } else {
-            for (p = g_0650; p->key; p++)
-                g_4766[p->key] = p->val;
-            g_064e = 0;
+            for (p = g_keymapSaved; p->key; p++)
+                g_scanMap[p->key] = p->val;
+            g_keymapGroup = 0;
         }
     }
     return i;
 }
 
-char g_0692[16] = {0, 0, 8, 7, 15, 7, 15, 8, 7, 2, 4, 12, 5, 10, 6, 14};   /* DS:0692 */
+char g_protectPal[16] = {0, 0, 8, 7, 15, 7, 15, 8, 7, 2, 4, 12, 5, 10, 6, 14};   /* DS:0692 */
 int g_06a2 = 0;   /* DS:06A2 */
-int g_06a4 = 0;   /* DS:06A4 */
-char g_06a6 = 0;   /* DS:06A6 */
-char g_06a7 = 0;   /* DS:06A7 */
-int g_06a8 = 0;   /* DS:06A8 */
-int g_06aa = 0;   /* DS:06AA */
+int g_demoQuit = 0;   /* DS:06A4 */
+char g_demoKeyDown = 0;   /* DS:06A6 */
+char g_demoMoving = 0;   /* DS:06A7 */
+int g_demoCount = 0;   /* DS:06A8 */
+int g_demoLastGroup = 0;   /* DS:06AA */
 int g_06ac = 0;   /* DS:06AC */
-int g_06ae = 0;   /* DS:06AE */
-int g_06b0 = 0;   /* DS:06B0 */
-int g_06b2 = 0;   /* DS:06B2 */
-int g_06b4[22] = {-1, 0, -1, 0, 1, 1, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 0, 0, 2};   /* DS:06B4 */
-char g_06e0 = 0;   /* DS:06E0 */
-int g_06e2 = 1;   /* DS:06E2 */
+int g_demoTargetX = 0;   /* DS:06AE */
+int g_demoTargetY = 0;   /* DS:06B0 */
+int g_demoScriptPos = 0;   /* DS:06B2 */
+int g_demoScript[22] = {-1, 0, -1, 0, 1, 1, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 0, 0, 2};   /* DS:06B4 */
+char g_cursorBusy = 0;   /* DS:06E0 */
+int g_vibCount = 1;   /* DS:06E2 */
 int g_06e4 = 0;   /* DS:06E4 */
-int g_06e6 = 0;   /* DS:06E6 */
-char g_06e8 = 0;   /* DS:06E8 */
-char g_06e9 = 0;   /* DS:06E9 */
+int g_overRev = 0;   /* DS:06E6 */
+char g_driveBusy = 0;   /* DS:06E8 */
+char g_lastFire = 0;   /* DS:06E9 */
 char g_06ea = 0;   /* DS:06EA */
 
 /* sys_wait_input @ 0000:1417 (linear 0x01417, 1068 bytes) */
@@ -442,30 +442,30 @@ int sys_wait_input(int ticks)
         aq8256z = 1;
         F_11421(-1, "", 0);
         aq8256z = 1;
-        F_11421(g_51ee, "", cz8bc0y);
+        F_11421(g_bannerX, "", cz8bc0y);
         g7f32s[0] = 0;
     }
-    flag = g_05cc != 0L;
+    flag = g_waitUntil != 0L;
     end = (long)ticks + g_tick;
     do {
-        if (g_0610 == 0x63 && g_06a4 != 0x63) {
-            g_06a4 = 0x63;
+        if (g_demo == 0x63 && g_demoQuit != 0x63) {
+            g_demoQuit = 0x63;
             sys_exit();
         }
-        if (g_4bc8 && (r_vid.mode == -2 || r_vid.mode == -6)
-            && !(g_tick & 0xf) && g_58d0 && g_47cf) {
-            old = g_0692[8];
-            g_0692[8] = g_0692[7];
-            g_0692[7] = g_0692[6];
-            g_0692[6] = old;
+        if (g_protectCycle && (r_vid.mode == -2 || r_vid.mode == -6)
+            && !(g_tick & 0xf) && g_musicOn && g_speakerOn) {
+            old = g_protectPal[8];
+            g_protectPal[8] = g_protectPal[7];
+            g_protectPal[7] = g_protectPal[6];
+            g_protectPal[6] = old;
             F_112CB(6, old);
-            F_112CB(7, g_0692[7]);
-            F_112CB(8, g_0692[8]);
+            F_112CB(7, g_protectPal[7]);
+            F_112CB(8, g_protectPal[8]);
         }
         res = kbdget_key();
         if (res > 0) {
-            if (g_05d0) {
-                g_05d2 = res;
+            if (g_anyInput) {
+                g_inputKey = res;
                 return 0x3eb;
             }
             if (res == 0x7f)
@@ -473,20 +473,20 @@ int sys_wait_input(int ticks)
         } else if (res < 0) {
             res += 0x32;
             if (res == -0x28) {
-                if (g_58d4 == 1) {
-                    if (g_58d0) {
+                if (g_voiceNum == 1) {
+                    if (g_musicOn) {
                         sys_music_pause();
-                        g_58d0 = 0;
+                        g_musicOn = 0;
                     } else {
-                        g_58d0 = 1;
+                        g_musicOn = 1;
                         sys_music_resume();
                     }
                 }
             } else
                 return res;
         }
-        if (g_056c <= g_tick) {
-            p = &g_0572[i = g_0566];
+        if (g_timerNext <= g_tick) {
+            p = &g_timers[i = g_timerFirst];
             switch (p->fa) {
             case 0:
             default:
@@ -499,22 +499,22 @@ int sys_wait_input(int ticks)
                 break;
             }
         }
-        if (g_0610 == 0 && g_05f2) {
+        if (g_demo == 0 && g_mousePresent) {
             mouse_poll();
-            if (g_6c4a |= (g_05e2 != 0 || g_05e4 != 0)) {
-                g_472a += g_05e2;
-                g_472c += g_05e4;
+            if (g_6c4a |= (g_mouseDx != 0 || g_mouseDy != 0)) {
+                g_cursorX += g_mouseDx;
+                g_cursorY += g_mouseDy;
             }
         }
-        if (g_4736 | g_4737) {
+        if (g_click | g_click2) {
             _disable();
-            g_6c4e = g_4736;
-            x = g_4738;
-            y = g_473a;
-            g_4737 = g_4736 = 0;
+            g_6c4e = g_click;
+            x = g_clickX;
+            y = g_clickY;
+            g_click2 = g_click = 0;
             _enable();
-            if (g_05de) {
-                g_05d2 = 0;
+            if (g_clickEnds) {
+                g_inputKey = 0;
                 return 0x3eb;
             }
             if (g8b8eb) {
@@ -522,24 +522,24 @@ int sys_wait_input(int ticks)
                         ? az8baa : menu_hit(x, y))
                     return i;
             }
-            if (g_05d0) {
-                g_05d2 = 0;
+            if (g_anyInput) {
+                g_inputKey = 0;
                 return 0x3eb;
             }
-        } else if (flag && g_05cc < g_tick) {
-            g_05cc = 0L;
+        } else if (flag && g_waitUntil < g_tick) {
+            g_waitUntil = 0L;
             return 0x3e8;
         }
         if (g_4733 > 0 && g_6c4a) {
             _disable();
-            if ((g_6c46 = g_472a) < 0)
-                g_6c46 = g_472a = 0;
+            if ((g_6c46 = g_cursorX) < 0)
+                g_6c46 = g_cursorX = 0;
             else if (g_6c46 > 0x13a)
-                g_6c46 = g_472a = 0x13a;
-            if ((g_6c48 = g_472c) < 0)
-                g_6c48 = g_472c = 0;
+                g_6c46 = g_cursorX = 0x13a;
+            if ((g_6c48 = g_cursorY) < 0)
+                g_6c48 = g_cursorY = 0;
             else if (g_6c48 > 0xc2)
-                g_6c48 = g_472c = 0xc2;
+                g_6c48 = g_cursorY = 0xc2;
             g_6c4a = 0;
             _enable();
             cursor_draw(x = g_6c46, y = g_6c48);
@@ -552,7 +552,7 @@ int sys_wait_input(int ticks)
                             aq8256z = 1;
                             F_11421(-1, "", 0);
                             aq8256z = 1;
-                            F_11421(g_51ee, "", cz8bc0y);
+                            F_11421(g_bannerX, "", cz8bc0y);
                         }
                         F_11421(-1, g_239e + at8ba8v->f4, 0);
                         bit = 1;
@@ -563,7 +563,7 @@ int sys_wait_input(int ticks)
                         bit = 0;
                     }
                     if (g_6c4c == 0x25)
-                        F_11421(g_51ee, g7f32s, cz8bc0y);
+                        F_11421(g_bannerX, g7f32s, cz8bc0y);
                     else if (res)
                         F_11421(-1, "", 0);
                 }
@@ -585,50 +585,50 @@ int sys_timer_add(int delay, int pri)
     int prev;
     long when, key;
 
-    g_0571 = 1;
-    i = g_056a;
+    g_timerBusy = 1;
+    i = g_timerFree;
     if (i < 0) {
-        g_0571 = 0;
+        g_timerBusy = 0;
         return -1;
     }
-    cur3 = g_0568;
+    cur3 = g_timerHead;
     prev = -1;
     when = g_tick + delay;
     if (delay) {
         for (;;) {
             if (cur3 >= 0) {
-                if ((key = g_0572[cur3].key) > when) {
-                    cur3 = g_0572[prev = cur3].nxt;
+                if ((key = g_timers[cur3].key) > when) {
+                    cur3 = g_timers[prev = cur3].nxt;
                     continue;
                 }
                 if (when > key)
                     break;
                 for (;;) {
-                    if (g_0572[cur3].f8 >= pri)
+                    if (g_timers[cur3].f8 >= pri)
                         break;
-                    cur3 = g_0572[prev = cur3].nxt;
-                    if (cur3 < 0 || g_0572[cur3].key != key)
+                    cur3 = g_timers[prev = cur3].nxt;
+                    if (cur3 < 0 || g_timers[cur3].key != key)
                         break;
                 }
             }
             break;
         }
     }
-    g_0572[i].key = when;
-    g_0572[i].f8 = pri;
-    g_056a = g_0572[i].nxt;
-    g_0572[i].nxt = cur3;
+    g_timers[i].key = when;
+    g_timers[i].f8 = pri;
+    g_timerFree = g_timers[i].nxt;
+    g_timers[i].nxt = cur3;
     if (cur3 < 0) {
-        g_0566 = i;
-        g_056c = when;
+        g_timerFirst = i;
+        g_timerNext = when;
     } else
-        g_0572[cur3].prv = i;
-    g_0572[i].prv = prev;
+        g_timers[cur3].prv = i;
+    g_timers[i].prv = prev;
     if (prev < 0)
-        g_0568 = i;
+        g_timerHead = i;
     else
-        g_0572[prev].nxt = i;
-    g_0571 = 0;
+        g_timers[prev].nxt = i;
+    g_timerBusy = 0;
     return i;
 }
 
@@ -639,8 +639,8 @@ void sys_timer_anim(int fc, int delay)
     int n;
 
     n = sys_timer_add(delay, g8ef6q);
-    g_0572[n].fa = 1;
-    g_0572[n].fc = fc;
+    g_timers[n].fa = 1;
+    g_timers[n].fc = fc;
 }
 
 /* sys_timer_cancel @ 0000:19BC (linear 0x019BC, 73 bytes) */
@@ -650,8 +650,8 @@ void sys_timer_cancel(int n)
     struct Link *p;
     int i;
 
-    for (i = g_0566; i >= 0; i = g_0572[i].nxt)
-        if ((p = g_0572 + i)->fa == 1 && p->fc == n)
+    for (i = g_timerFirst; i >= 0; i = g_timers[i].nxt)
+        if ((p = g_timers + i)->fa == 1 && p->fc == n)
             p->fa = 0;
 }
 
@@ -659,20 +659,20 @@ void sys_timer_cancel(int n)
 
 void sys_music_start(int n, int cnt)
 {
-    if (g_58d0) {
-        g_58d2->off = 0;
+    if (g_musicOn) {
+        g_voice->off = 0;
         outp(0x61, inp(0x61) & 0xfc);
-        g_47cf = 0;
-        g_58d2->f4 = 0;
-        g_58d2->dirty = 1;
-        g_58d2->lc = g_58d2->cur = g_58d2->l8 + n;
-        g_58d2->f2 = cnt + 1;
-        g_58d2->f1a = g_58d2->f18;
-        bn82c4 = g_tones + *g_58d2->f1a;
+        g_speakerOn = 0;
+        g_voice->f4 = 0;
+        g_voice->dirty = 1;
+        g_voice->lc = g_voice->cur = g_voice->l8 + n;
+        g_voice->f2 = cnt + 1;
+        g_voice->f1a = g_voice->f18;
+        bn82c4 = g_tones + *g_voice->f1a;
         t_72ec = 1;
-        g_58d2->off = 1;
+        g_voice->off = 1;
     } else {
-        g_58d2->off = 0;
+        g_voice->off = 0;
     }
 }
 
@@ -680,11 +680,11 @@ void sys_music_start(int n, int cnt)
 
 void sys_music_stop(void)
 {
-    g_58d2->off = 0;
+    g_voice->off = 0;
     outp(0x61, inp(0x61) & 0xfc);
-    g_47cf = 0;
-    g_58d2->dirty = 1;
-    g_58d2->lc = g_58d2->cur = g_58d2->l8;
+    g_speakerOn = 0;
+    g_voice->dirty = 1;
+    g_voice->lc = g_voice->cur = g_voice->l8;
 }
 
 /* sys_drive_start @ 0000:1AAD (linear 0x01AAD, 122 bytes) */
@@ -693,20 +693,20 @@ void sys_drive_start(void)
 {
     g_060a = 0;
     _dos_setvect(8, sys_drive_isr);
-    if (!g_0610 && g_05f2) {
+    if (!g_demo && g_mousePresent) {
         mouse_poll();
-        g_05e6 = g_05e8 = 0;
-        g_05ea = 1;
-        g_05ec = 6;
+        g_mouseAccX = g_mouseAccY = 0;
+        g_mouseShiftX = 1;
+        g_mouseShiftY = 6;
     }
-    g_4730 = g_4731 = g_4732 = g_4736 = 0;
+    g_lastDx = g_lastDy = g_buttons = g_click = 0;
     e_78e0.f2 = e_78e0.f4 = 0;
-    g_0609 = 0;
+    g_driveDiv = 0;
     outp(0x42, 0x1e);
     outp(0x42, 0);
-    if (g_47ce) {
+    if (g_soundOn) {
         outp(0x61, inp(0x61) | 3);
-        g_47cf = 1;
+        g_speakerOn = 1;
     }
 }
 
@@ -715,18 +715,18 @@ void sys_drive_start(void)
 void sys_drive_stop(void)
 {
     _dos_setvect(8, sys_timer_isr);
-    g_58dc = 0;
-    g_58da = 0;
-    g_5e0e = 0;
+    g_sirenOn = 0;
+    g_squealOn = 0;
+    g_onShoulder = 0;
     outp(0x61, inp(0x61) & 0xfc);
-    g_47cf = 0;
-    if (!g_0610 && g_05f2) {
+    g_speakerOn = 0;
+    if (!g_demo && g_mousePresent) {
         mouse_poll();
-        g_05e6 = g_05e8 = 0;
-        g_05ea = 1;
-        g_05ec = 1;
+        g_mouseAccX = g_mouseAccY = 0;
+        g_mouseShiftX = 1;
+        g_mouseShiftY = 1;
     }
-    g_4730 = g_4731 = g_4732 = g_4736 = 0;
+    g_lastDx = g_lastDy = g_buttons = g_click = 0;
 }
 
 /* sys_sign @ 0000:1B91 (linear 0x01B91, 29 bytes) */
@@ -761,18 +761,18 @@ void sys_demo_step(void)
 
     if (g_6c4c == 2)
         random_int(-1);
-    if (g_06a6) {
-        g_47cc |= 0x80;
-        g_06a6 = 0;
+    if (g_demoKeyDown) {
+        g_demoKey |= 0x80;
+        g_demoKeyDown = 0;
         joy_demo_key();
         return;
     }
-    if (!g_06a7) {
+    if (!g_demoMoving) {
         if (g_06ac && g_6c4c == 10) {
             g_06ac = 0;
-            g_06a8 = 15;
+            g_demoCount = 15;
         }
-        num = (int)strlen((char *)g_579f[g_6c4c]) / 2;
+        num = (int)strlen((char *)g_keyMaps[g_6c4c]) / 2;
         k = 0;
         switch (g_6c4c) {
         case 14:
@@ -788,7 +788,7 @@ void sys_demo_step(void)
             k = 1;
             break;
         case 23:
-            g_06a8 = 4;
+            g_demoCount = 4;
             break;
         case 8:
             k = 4;
@@ -804,22 +804,22 @@ void sys_demo_step(void)
             num--;
             break;
         }
-        if (g_6c4c == 10 && g_06aa != 10) {
-            g_6c50a = num - g_06a8++ - 1;
-            g_06a8 = g_06a8 % num;
+        if (g_6c4c == 10 && g_demoLastGroup != 10) {
+            g_6c50a = num - g_demoCount++ - 1;
+            g_demoCount = g_demoCount % num;
         } else
             g_6c50a = random_int(num + k);
         switch (g_6c4c) {
         case 21:
             if ((g_6c50a >= 0 && g_6c50a < 9) || g_6c50a == 12)
                 g_6c50a = 9;
-            if (g_06aa == 28)
+            if (g_demoLastGroup == 28)
                 g_6c50a = 11;
             break;
         case 20:
-            g_6c50a = g_06b4[g_06b2++];
+            g_6c50a = g_demoScript[g_demoScriptPos++];
             if (g_6c50a == 2)
-                g_06b2 = 0;
+                g_demoScriptPos = 0;
             break;
         case 23:
             if (g_6c50a)
@@ -828,7 +828,7 @@ void sys_demo_step(void)
             g_6c50a = 1;
             break;
         case 4:
-            if (g_06a8 < 11)
+            if (g_demoCount < 11)
                 g_6c50a = 0;
             else
                 g_6c50a = num - 1;
@@ -838,11 +838,11 @@ void sys_demo_step(void)
             g_6c50a = 0;
             break;
         case 36:
-            if (g_06aa == 36)
+            if (g_demoLastGroup == 36)
                 g_6c50a = 0;
             break;
         case 11:
-            if (g_06aa == 11)
+            if (g_demoLastGroup == 11)
                 g_6c50a = 10;
             break;
         case 27:
@@ -854,64 +854,64 @@ void sys_demo_step(void)
             break;
         }
         if (g_6c4c == 8)
-            g_06ae = 160;
+            g_demoTargetX = 160;
         if (g_6c50a >= 0) {
             if (num > g_6c50a) {
-                g_47cc = g_579f[g_6c4c][g_6c50a].key;
-                mask = g_579f[g_6c4c][g_6c50a].val + 0x32;
-                step = g_2bad[g_6c4c];
-                for (; step - g_2bad[g_6c4c] < 32 && g_09f4[step].f6 != mask; step++)
+                g_demoKey = g_keyMaps[g_6c4c][g_6c50a].key;
+                mask = g_keyMaps[g_6c4c][g_6c50a].val + 0x32;
+                step = g_screenHot[g_6c4c];
+                for (; step - g_screenHot[g_6c4c] < 32 && g_09f4[step].f6 != mask; step++)
                     ;
                 if (g_09f4[step].f6 == mask) {
                     cx = (g_09f4[step].x1 + g_09f4[step].x2) / 2;
                     if (cx)
-                        g_06ae = cx;
+                        g_demoTargetX = cx;
                     if (g_6c4c == 8)
-                        g_06ae = 160;
+                        g_demoTargetX = 160;
                     cy = (g_09f4[step].y1 + g_09f4[step].y2) / 2;
                     if (cy)
-                        g_06b0 = cy;
+                        g_demoTargetY = cy;
                 }
             } else {
                 if (num == g_6c50a)
-                    g_47cc = 0x1c;
+                    g_demoKey = 0x1c;
                 if (num + 1 == g_6c50a)
-                    g_47cc = 0x39;
+                    g_demoKey = 0x39;
                 if (num + 2 == g_6c50a)
-                    g_47cc = 0x48;
+                    g_demoKey = 0x48;
                 if (num + 3 == g_6c50a)
-                    g_47cc = 0x50;
+                    g_demoKey = 0x50;
                 if (num + 4 == g_6c50a)
-                    g_47cc = 0x4b;
+                    g_demoKey = 0x4b;
                 if (num + 5 == g_6c50a)
-                    g_47cc = 0x4d;
+                    g_demoKey = 0x4d;
             }
         } else
-            g_47cc = 0x4c;
+            g_demoKey = 0x4c;
     }
-    if ((g_06ae && g_472a != g_06ae) || (g_06b0 && g_472c != g_06b0)) {
-        g_06a7 = 1;
+    if ((g_demoTargetX && g_cursorX != g_demoTargetX) || (g_demoTargetY && g_cursorY != g_demoTargetY)) {
+        g_demoMoving = 1;
         return;
     }
-    g_06a7 = 0;
-    if (g_6c4c == 0x25 && g_06ac < 10 && g_47cc == 0x22)
-        g_47cc = 0x1c;
-    if (g_6c4c == 10 && g_06aa == 10) {
-        g_47cc = 0x1c;
-        g_06aa = 0;
+    g_demoMoving = 0;
+    if (g_6c4c == 0x25 && g_06ac < 10 && g_demoKey == 0x22)
+        g_demoKey = 0x1c;
+    if (g_6c4c == 10 && g_demoLastGroup == 10) {
+        g_demoKey = 0x1c;
+        g_demoLastGroup = 0;
     } else
-        g_06aa = g_6c4c;
+        g_demoLastGroup = g_6c4c;
     if (a_7eaap.m7eb8 == 0 && g_6c4c == 7)
         game_add_part(0x2a, g_4806[42].f0);
     if (a_7eaap.m7eb0 == 0) {
         if (g_6c4c == 10)
-            g_47cc = 0x31;
-        if (g_6c4c == 8 && (g_47cc == 1 || g_47cc == 0x22 || g_47cc == 0x19))
-            g_47cc = 0x39;
+            g_demoKey = 0x31;
+        if (g_6c4c == 8 && (g_demoKey == 1 || g_demoKey == 0x22 || g_demoKey == 0x19))
+            g_demoKey = 0x39;
     }
-    if (g_47cc == 0x46)
-        g_47cc = 0x1c;
-    g_06a6 = 1;
+    if (g_demoKey == 0x46)
+        g_demoKey = 0x1c;
+    g_demoKeyDown = 1;
     joy_demo_key();
 }
 
@@ -923,107 +923,107 @@ void interrupt far sys_timer_isr(void)
     register int delta;
 
     g_tick++;
-    if (g_0608--) {
+    if (g_tickDiv--) {
         outp(0x20, 0x20);
         _enable();
     } else {
         (*w_7aaa)();
-        g_0608 = 3;
+        g_tickDiv = 3;
         g_0600++;
     }
-    if (!g_47ce && g_47ce != g_47cf) {
+    if (!g_soundOn && g_soundOn != g_speakerOn) {
         outp(0x61, inp(0x61) & 0xfc);
-        g_47cf = 0;
+        g_speakerOn = 0;
     }
-    if (g_0610) {
-        if (((g_06a6 ? 0xf : 0x7f) & g_tick) == 0)
+    if (g_demo) {
+        if (((g_demoKeyDown ? 0xf : 0x7f) & g_tick) == 0)
             sys_demo_step();
-        if ((g_06ae || g_06b0) && (g_472a != g_06ae || g_472c != g_06b0)) {
-            g_472a += sys_sign(g_06ae - g_472a);
-            g_472c += sys_sign(g_06b0 - g_472c);
+        if ((g_demoTargetX || g_demoTargetY) && (g_cursorX != g_demoTargetX || g_cursorY != g_demoTargetY)) {
+            g_cursorX += sys_sign(g_demoTargetX - g_cursorX);
+            g_cursorY += sys_sign(g_demoTargetY - g_cursorY);
             g_6c4a = 1;
         }
     }
-    if (g_58d2->off && --g_58d2->f2) {
-        if (t_72ec && g_58d2->f0.w && !--g_06e2) {
+    if (g_voice->off && --g_voice->f2) {
+        if (t_72ec && g_voice->f0.w && !--g_vibCount) {
             bn82c4->f0 = bn82c4->f0 % bn82c4->f3;
-            g_6c54a = g_57f6[bn82c4->f1][bn82c4->f0++] * g_6c52a + g_58d2->f0.w;
+            g_6c54a = g_toneShapes[bn82c4->f1][bn82c4->f0++] * g_6c52a + g_voice->f0.w;
             outp(0x42, g_6c54a);
             outp(0x42, g_6c54a >> 8);
-            g_06e2 = bn82c4->f4;
+            g_vibCount = bn82c4->f4;
         }
-    } else if (g_58d2->off && g_58d2->f2 == 0) {
-        while (!(g_58d2->f2 = *g_58d2->cur++)) {
-            if (*g_58d2->cur++ == 0) {
+    } else if (g_voice->off && g_voice->f2 == 0) {
+        while (!(g_voice->f2 = *g_voice->cur++)) {
+            if (*g_voice->cur++ == 0) {
                 outp(0x61, inp(0x61) & 0xfc);
-                g_47cf = 0;
-                g_58d2->off = 0;
-                g_58d2->dirty = 1;
-                g_58d2->lc = g_58d2->cur = g_58d2->l8;
+                g_speakerOn = 0;
+                g_voice->off = 0;
+                g_voice->dirty = 1;
+                g_voice->lc = g_voice->cur = g_voice->l8;
                 goto tail;
             }
-            g_58d2->f1a++;
-            if (*g_58d2->f16 < ++g_58d2->f4) {
-                if (*++g_58d2->f16 < 0) {
-                    g_58d2->cur = g_58d2->l8 + 2;
-                    g_58d2->f16 = g_58d2->f14;
-                    g_58d2->f1a = g_58d2->f18;
+            g_voice->f1a++;
+            if (*g_voice->f16 < ++g_voice->f4) {
+                if (*++g_voice->f16 < 0) {
+                    g_voice->cur = g_voice->l8 + 2;
+                    g_voice->f16 = g_voice->f14;
+                    g_voice->f1a = g_voice->f18;
                 }
-                g_58d2->lc = g_58d2->cur;
-                g_58d2->f4 = 0;
+                g_voice->lc = g_voice->cur;
+                g_voice->f4 = 0;
             } else
-                g_58d2->cur = g_58d2->lc;
-            bn82c4 = g_tones + *g_58d2->f1a;
+                g_voice->cur = g_voice->lc;
+            bn82c4 = g_tones + *g_voice->f1a;
         }
-        if (!(g_58d2->f0.w = *g_58d2->cur++)) {
-            g_58d2->dirty = 1;
+        if (!(g_voice->f0.w = *g_voice->cur++)) {
+            g_voice->dirty = 1;
             outp(0x61, inp(0x61) & 0xfc);
-            g_47cf = 0;
+            g_speakerOn = 0;
         } else {
             if (t_72ec) {
-                g_06e2 = bn82c4->f4;
-                g_6c52a = (unsigned)bn82c4->f2 * g_58d2->f0.w / 1000;
+                g_vibCount = bn82c4->f4;
+                g_6c52a = (unsigned)bn82c4->f2 * g_voice->f0.w / 1000;
             }
-            outp(0x42, g_58d2->f0.b[0]);
-            outp(0x42, g_58d2->f0.b[1]);
-            if (g_47ce && (g_47ce != g_47cf || g_58d2->dirty)) {
+            outp(0x42, g_voice->f0.b[0]);
+            outp(0x42, g_voice->f0.b[1]);
+            if (g_soundOn && (g_soundOn != g_speakerOn || g_voice->dirty)) {
                 outp(0x61, inp(0x61) | 3);
-                g_47cf = 1;
-                if (g_58d2->dirty)
-                    g_58d2->dirty = 0;
+                g_speakerOn = 1;
+                if (g_voice->dirty)
+                    g_voice->dirty = 0;
             }
         }
     }
 tail:
     if (g_4733 > 0) {
         _disable();
-        if (!g_06e0) {
-            g_06e0 = 1;
+        if (!g_cursorBusy) {
+            g_cursorBusy = 1;
             _enable();
             x = y = 0;
-            if (g_4740 == 0) {
-                if (delta = g_472e)
+            if (g_inputLock == 0) {
+                if (delta = g_keyDx)
                     x = delta > 0 ? 1 : -1;
-                if (delta = g_472f)
+                if (delta = g_keyDy)
                     y = delta > 0 ? 1 : -1;
             }
-            if (g_0610 == 0 && g_471d) {
+            if (g_demo == 0 && g_joystick) {
                 joy_read();
-                if ((delta = g_4718) < g_4722)
+                if ((delta = g_joyX) < g_joyMinX)
                     x = -1;
-                else if (g_4724 < delta)
+                else if (g_joyMaxX < delta)
                     x = 1;
-                if ((delta = g_471a) < g_4726)
+                if ((delta = g_joyY) < g_joyMinY)
                     y = -1;
-                else if (g_4728 < delta)
+                else if (g_joyMaxY < delta)
                     y = 1;
             }
             if (x | y) {
-                g_472a += g_474c[x];
-                g_472c += g_4752[y];
+                g_cursorX += g_474c[x];
+                g_cursorY += g_4752[y];
                 g_6c4a = 1;
             }
-            g_06e0 = 0;
+            g_cursorBusy = 0;
         }
     }
 }
@@ -1059,22 +1059,22 @@ void interrupt far sys_drive_isr(void)
     unsigned r;
 
     g_tick++;
-    if (g_0608--) {
+    if (g_tickDiv--) {
         outp(0x20, 0x20);
         _enable();
-        if (g_47ce) {
-            if (g_47ce != g_47cf) {
+        if (g_soundOn) {
+            if (g_soundOn != g_speakerOn) {
                 outp(0x61, inp(0x61) | 3);
-                g_47cf = 1;
+                g_speakerOn = 1;
             }
-            if (g_0608 & 1) {
-                if (g_0286 == 0) {
+            if (g_tickDiv & 1) {
+                if (g_carAnim == 0) {
                     r = (unsigned)(((long)e_78e0.fe * e_78e0.fe) >> 10);
                     r += r >> (r + 2) >> 3;
                     val.w = 50000 - ((e_78e0.fe == 5700 ? 10000 : 0) + r);
                     outp(0x42, val.b[0]);
                     outp(0x42, val.b[1]);
-                } else if (g_5a0e) {
+                } else if (g_carMoving) {
                     off = ac825et - z_8b7c;
                     r = off < 0 ? -off : off;
                     r = (r >> 1) * r;
@@ -1086,7 +1086,7 @@ void interrupt far sys_drive_isr(void)
                 }
             } else {
                 g_06ea ^= 1;
-                if (g_58dc) {
+                if (g_sirenOn) {
                     if (g_06e4++ < 10)
                         val.w = 0x54b;
                     else
@@ -1095,7 +1095,7 @@ void interrupt far sys_drive_isr(void)
                     outp(0x42, val.b[1]);
                     if (g_06e4 > 20)
                         g_06e4 = 0;
-                } else if (g_58da || g_5e0e) {
+                } else if (g_squealOn || g_onShoulder) {
                     if (g_06ea) {
                         val.w = 0x95;
                         outp(0x42, val.b[0]);
@@ -1103,71 +1103,71 @@ void interrupt far sys_drive_isr(void)
                     }
                 }
             }
-        } else if (g_47ce != g_47cf) {
+        } else if (g_soundOn != g_speakerOn) {
             outp(0x61, inp(0x61) & 0xfc);
-            g_47cf = 0;
+            g_speakerOn = 0;
         }
     } else {
         g_0600++;
         (*w_7aaa)();
-        g_0608 = 3;
-        if (bw8aca && !g_0286 && --g_0609 <= 0) {
-            g_0609 = 3;
+        g_tickDiv = 3;
+        if (bw8aca && !g_carAnim && --g_driveDiv <= 0) {
+            g_driveDiv = 3;
             _disable();
-            if (!g_06e8) {
-                g_06e8 = 1;
+            if (!g_driveBusy) {
+                g_driveBusy = 1;
                 _enable();
                 flag = s = prev = c = 0;
-                if (g_4740 == 0) {
-                    if (n = g_472e) {
+                if (g_inputLock == 0) {
+                    if (n = g_keyDx) {
                         s = 1;
-                        g_472a = n > 0 ? 1 : -1;
+                        g_cursorX = n > 0 ? 1 : -1;
                     }
-                    if (n = g_472f) {
+                    if (n = g_keyDy) {
                         if (n > 0)
                             prev = 1;
                         else
                             flag = 1;
                     }
-                    if (g_0610 == 0 && g_471d) {
+                    if (g_demo == 0 && g_joystick) {
                         joy_read();
-                        if ((n = g_4718) < g_4722) {
+                        if ((n = g_joyX) < g_joyMinX) {
                             g_6c4a = s = 1;
-                            g_472a += -1;
-                        } else if (g_4724 < n) {
+                            g_cursorX += -1;
+                        } else if (g_joyMaxX < n) {
                             g_6c4a = s = 1;
-                            g_472a++;
+                            g_cursorX++;
                         }
-                        if ((n = g_471a) < g_4726) {
+                        if ((n = g_joyY) < g_joyMinY) {
                             g_6c4a = flag = 1;
-                            g_472c += -1;
-                        } else if (g_4728 < n) {
+                            g_cursorY += -1;
+                        } else if (g_joyMaxY < n) {
                             g_6c4a = prev = 1;
-                            g_472c++;
+                            g_cursorY++;
                         }
                     }
-                    if (g_0610 == 0 && g_05f2) {
+                    if (g_demo == 0 && g_mousePresent) {
                         mouse_poll();
-                        if (g_05e4 > 0) {
+                        if (g_mouseDy > 0) {
                             g_6c4a = 1;
-                            g_472c++;
+                            g_cursorY++;
                             prev = 1;
                         }
-                        if (n = g_05e2) {
+                        if (n = g_mouseDx) {
                             g_6c4a = s = 1;
-                            g_472a += n > 0 ? 1 : -1;
+                            g_cursorX += n > 0 ? 1 : -1;
                         }
-                        if (g_05f0)
+                        if (g_mouseRight)
                             flag = 1;
                     }
                 }
-                c = g_4732 && !g_06e9;
-                g_06e9 = g_4732;
-                if (g_47cd) {
+                c = g_buttons && !g_lastFire;
+                g_lastFire = g_buttons;
+                if (g_fireLatch) {
                     c = 1;
-                    g_47cd = 0;
+                    g_fireLatch = 0;
                 }
-                if (g_0610 || g_0612) {
+                if (g_demo || g_autoDrive) {
                     if (e_78e0.f14 * 4 + e_78e0.fe < 5700) {
                         if (ar7e8av.m7e8a > ao7d2ev.m7d30 ||
                             (!a_7eaap.m7ec0 ? 0x17c : 0x3fc) - 60 < ao7d2ev.m7d30)
@@ -1213,7 +1213,7 @@ void interrupt far sys_drive_isr(void)
                         e_78e0.fe = 5690;
                     if (e_78e0.fe > 5700) {
                         e_78e0.fe = 5700;
-                        if (15 - i / 1000 < ++g_06e6) {
+                        if (15 - i / 1000 < ++g_overRev) {
                             e_78e0.fbc |= 5;
                             sys_car_halt();
                         }
@@ -1222,14 +1222,14 @@ void interrupt far sys_drive_isr(void)
                            (e_78e0.f18 > 0 && e_78e0.fe > e_78e0.f16))
                     e_78e0.fe -= e_78e0.f16;
                 if (e_78e0.fe < 5700)
-                    g_06e6 = 0;
+                    g_overRev = 0;
                 top = e_78e0.f0 < 5 && !flag && e_78e0.f18 > 0;
                 if (c || top ||
                     (e_78e0.f20 && e_78e0.f24 > 1 &&
                      ((flag && e_78e0.fe > e_78e0.f22 && e_78e0.f18 < e_78e0.f1c) ||
                       (!flag && e_78e0.f18 > 1 && !e_78e0.f42)))) {
                     a_7eaap.m7eb0->slot6->b += e_78e0.fe > 5000 ? 15 : 3;
-                    if (g_0610 == 0) {
+                    if (g_demo == 0) {
                         i = a_7eaap.m7eb0->slot6->b;
                         if (i >= 9900 ||
                             (e_78e0.f20 == 0 && flag && e_78e0.fe > 5000 &&
@@ -1266,7 +1266,7 @@ void interrupt far sys_drive_isr(void)
                     e_78e0.f14 = sp->f4;
                     e_78e0.f16 = sp->f6;
                 }
-                if (prev || (g_5e0e && e_78e0.f0 > 8)) {
+                if (prev || (g_onShoulder && e_78e0.f0 > 8)) {
                     if ((e_78e0.f0 -= (e_78e0.f0 >> 4) + 2) < 0)
                         e_78e0.f0 = 0;
                     if ((e_78e0.fe = e_78e0.f0 * e_78e0.f40) < 1500)
@@ -1277,14 +1277,14 @@ void interrupt far sys_drive_isr(void)
                     e_78e0.fe = 30 * e_78e0.f0 + 1500;
                 } else if (e_78e0.f40)
                     e_78e0.f0 = e_78e0.fe / e_78e0.f40;
-                if (s && abs(e_78e0.f2 + g_472a) > abs(e_78e0.f2)) {
-                    if (abs(g_472a) + abs(e_78e0.f4) == abs(e_78e0.f4 + g_472a) &&
+                if (s && abs(e_78e0.f2 + g_cursorX) > abs(e_78e0.f2)) {
+                    if (abs(g_cursorX) + abs(e_78e0.f4) == abs(e_78e0.f4 + g_cursorX) &&
                         abs(e_78e0.f2) < abs(e_78e0.f4))
                         e_78e0.f2 = e_78e0.f4;
-                    e_78e0.f2 += g_472a << 1;
+                    e_78e0.f2 += g_cursorX << 1;
                     if (abs(e_78e0.f2) > 24)
                         e_78e0.f2 = e_78e0.f2 > 0 ? 24 : -24;
-                    g_472a = 0;
+                    g_cursorX = 0;
                     e_78e0.f4 = e_78e0.f2;
                 } else
                     e_78e0.f2 = 0;
@@ -1295,7 +1295,7 @@ void interrupt far sys_drive_isr(void)
                     e_78e0.fbc |= 0x21;
                     sys_car_halt();
                 }
-                g_06e8 = 0;
+                g_driveBusy = 0;
             }
         }
     }

@@ -2,19 +2,19 @@
 
         .DATA
         EXTRN   _av787at:WORD
-        EXTRN   _g_5c1e:WORD
-        EXTRN   _g_5e42:BYTE
-        EXTRN   _g_clip_xmax:WORD
-        EXTRN   _g_clip_xmin:WORD
-        EXTRN   _g_clip_ymax:WORD
-        EXTRN   _g_clip_ymin:WORD
+        EXTRN   _g_egaGcFunction:WORD
+        EXTRN   _g_viewClip:BYTE
+        EXTRN   _g_clipXMax:WORD
+        EXTRN   _g_clipXMin:WORD
+        EXTRN   _g_clipYMax:WORD
+        EXTRN   _g_clipYMin:WORD
         EXTRN   _r_vid:WORD
 
         .CODE S2645_TEXT
 
 ; egaspan_begin @ 2645:0008 (linear 0x26458, 21 bytes)
 ; EGA/VGA: enable set/reset on all four planes (GC index 1 = 0Fh), then
-; program GC index 3 (data rotate / function select) from the high byte of g_5c1e.
+; program GC index 3 (data rotate / function select) from the high byte of g_egaGcFunction.
 
         PUBLIC  _egaspan_begin
 _egaspan_begin  PROC    FAR
@@ -23,7 +23,7 @@ _egaspan_begin  PROC    FAR
         mov     dx,3CEh
         mov     ax,0F01h
         out     dx,ax
-        mov     ax,_g_5c1e
+        mov     ax,_g_egaGcFunction
         mov     al,3
         out     dx,ax
 done1:
@@ -64,14 +64,14 @@ _egaspan_fill  PROC    FAR
         push    si
         push    di
         mov     ax,[bp+0Ah]
-        cmp     _g_clip_ymin,ax
+        cmp     _g_clipYMin,ax
         jg      reject
-        cmp     _g_clip_ymax,ax
+        cmp     _g_clipYMax,ax
         jl      reject
         mov     ax,[bp+6]
         mov     bx,[bp+8]
-        mov     cx,_g_clip_xmin
-        mov     dx,_g_clip_xmax
+        mov     cx,_g_clipXMin
+        mov     dx,_g_clipXMax
         cmp     cx,bx
         jg      reject
         cmp     dx,ax
@@ -166,7 +166,7 @@ _egaspan_fill_below  PROC    FAR
         push    si
         push    di
         mov     ax,[bp+6]
-        cmp     _g_clip_ymax,ax
+        cmp     _g_clipYMax,ax
         jl      done4
         mov     dx,3CEh
         mov     ah,[bp+8]
@@ -174,11 +174,11 @@ _egaspan_fill_below  PROC    FAR
         out     dx,ax
         mov     ax,0F01h
         out     dx,ax
-        mov     ax,_g_5c1e
+        mov     ax,_g_egaGcFunction
         mov     al,3
         out     dx,ax
         push    ds
-        mov     ax,_g_clip_ymax
+        mov     ax,_g_clipYMax
         mov     dx,[bp+6]
         sub     ax,dx
         mov     dx,28h

@@ -4,12 +4,12 @@
 #define VIDEO_H
 #include "STRUCTS.H"
 
-extern struct Style g_03a0;                             /* DS:03A0 */
-extern struct Style g_03f0;                             /* DS:03F0 */
+extern struct Style g_style16;                          /* DS:03A0 */
+extern struct Style g_style4;                           /* DS:03F0 */
 extern unsigned char g_palette[];                       /* DS:0440 */
 extern int g_0450;                                      /* DS:0450 */
-extern char g_0452[16];                                 /* DS:0452 */
-extern unsigned char g_0462[16];                        /* DS:0462 */
+extern char g_blackPalette[16];                         /* DS:0452 */
+extern unsigned char g_altPalette[16];                  /* DS:0462 */
 extern int g_0472;                                      /* DS:0472 */
 extern struct Bitmap far *bp7316[];                     /* DS:7316 */
 extern struct Obj bm7568[];                             /* DS:7568 */

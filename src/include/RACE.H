@@ -4,12 +4,12 @@
 #define RACE_H
 #include "STRUCTS.H"
 
-extern int g_53b6[];                                    /* DS:53B6 */
-extern int g_53c8[];                                    /* DS:53C8 */
-extern struct Spot g_53d4[];                            /* DS:53D4 */
-extern int g_53e6;                                      /* DS:53E6 */
-extern int g_54b2[][5];                                 /* DS:54B2 */
-extern int g_54d0;                                      /* DS:54D0 */
+extern int g_gasSpotIds[];                              /* DS:53B6 */
+extern int g_winMsgs[];                                 /* DS:53C8 */
+extern struct Spot g_crashPics[];                       /* DS:53D4 */
+extern int g_statsDone;                                 /* DS:53E6 */
+extern int g_tireGrip[][5];                             /* DS:54B2 */
+extern int g_lastTicks;                                 /* DS:54D0 */
 extern int g_54d2;                                      /* DS:54D2 */
 extern int g_54d4;                                      /* DS:54D4 */
 extern int g_54d6;                                      /* DS:54D6 */

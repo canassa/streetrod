@@ -7,7 +7,7 @@
 static void near shift_pixels(unsigned char *p, int n, int cnt);
 static void near put_pixels(char far *dst, unsigned char *src, int n, int ph);
 
-unsigned char g_5b52[4] = {192, 240, 252, 255};   /* DS:5B52 */
+unsigned char g_cgaLeadMask[4] = {192, 240, 252, 255};   /* DS:5B52 */
 
 /* shift_pixels @ 1C11:1480 (linear 0x1D590, 243 bytes)
 
@@ -23,7 +23,7 @@ static void near shift_pixels(unsigned char *p, int n, int cnt)
     unsigned char m;
 
     if (n > 0) {
-        m = g_5b52[n - 1];
+        m = g_cgaLeadMask[n - 1];
         nm = ~m;
         for (k = 0, carry = 0; k < cnt; k++) {
             r2 = _rotr(*p, n << 1);
@@ -34,7 +34,7 @@ static void near shift_pixels(unsigned char *p, int n, int cnt)
     } else if (n < 0) {
         p += cnt - 1;
         n = -n;
-        m = g_5b52[3 - n];
+        m = g_cgaLeadMask[3 - n];
         nm = ~m;
         for (k = 0, carry = 0; k < cnt; k++) {
             r2 = _rotl(*p, n << 1);
@@ -57,10 +57,10 @@ static void near put_pixels(char far *dst, unsigned char *src, int n, int ph)
 
     s = src;
     if (ph) {
-        m = g_5b52[ph - 1];
+        m = g_cgaLeadMask[ph - 1];
         e = ph + n;
         if (e < 4)
-            m |= ~g_5b52[e - 1];
+            m |= ~g_cgaLeadMask[e - 1];
         *dst &= m;
         *dst |= *s++ & ~m;
         dst++;
@@ -69,7 +69,7 @@ static void near put_pixels(char far *dst, unsigned char *src, int n, int ph)
     for (; n > 3; n -= 4)
         *dst++ = *s++;
     if (n > 0) {
-        m = g_5b52[n - 1];
+        m = g_cgaLeadMask[n - 1];
         *dst &= ~m;
         *dst |= *s & m;
     }

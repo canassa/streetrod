@@ -2,20 +2,20 @@
 
         .DATA
         EXTRN   _b_78a2:DWORD
-        EXTRN   _g_5bd0:DWORD
+        EXTRN   _g_egaHooks:DWORD
 
         .CODE S21A0_TEXT
 
 ; egadrv_install @ 21A0:1128 (linear 0x22B28, 18 bytes)
 ; Install an alternate set of blit hooks: copy the 15-entry far-pointer table
-; at g_5bd0 over the hook table starting at b_78a2.
+; at g_egaHooks over the hook table starting at b_78a2.
 
         PUBLIC  _egadrv_install
 _egadrv_install  PROC    FAR
         push    di
         push    si
         mov     di,OFFSET _b_78a2
-        mov     si,OFFSET _g_5bd0
+        mov     si,OFFSET _g_egaHooks
         push    ds
         pop     es
         mov     cx,1Eh

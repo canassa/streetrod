@@ -74,7 +74,7 @@ static void near move_player(void);
 static void near move_rival(void);
 static void near cop_appears(void);
 
-int g_53b6[6] = {2, 1, 4, 6, 5, 3};   /* DS:53B6 */
+int g_gasSpotIds[6] = {2, 1, 4, 6, 5, 3};   /* DS:53B6 */
 
 /* find_gas_spot @ 0000:B3CA (linear 0x0B3CA, 91 bytes) */
 
@@ -82,8 +82,8 @@ static int near find_gas_spot(int id)
 {
     int base, n, i;
 
-    base = ((unsigned)g_19ea - (unsigned)g_09f4) / sizeof(struct Hot);
-    n = ((unsigned)g_1a44 - (unsigned)g_19ea) / sizeof(struct Hot) + 1;
+    base = ((unsigned)g_hotGasStation - (unsigned)g_09f4) / sizeof(struct Hot);
+    n = ((unsigned)g_hotAttendant - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
     for (i = 0; i < n; i++)
         if (g_09f4[base + i].f6 == id)
             return base + i;
@@ -95,8 +95,8 @@ static void near sort_gas_spots(void)
 {
     int base, n;
 
-    base = ((unsigned)g_19ea - (unsigned)g_09f4) / sizeof(struct Hot);
-    n = ((unsigned)g_1a44 - (unsigned)g_19ea) / sizeof(struct Hot) + 1;
+    base = ((unsigned)g_hotGasStation - (unsigned)g_09f4) / sizeof(struct Hot);
+    n = ((unsigned)g_hotAttendant - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
     F_135E5(base, n);
 }
 
@@ -123,7 +123,7 @@ static void near clear_gas_spots(void)
     g_6ca8pz = 0;
     g_6ca4rz = 0;
     for (k = 0; k < 6; k++)
-        g_09f4[find_gas_spot(g_53b6[k])].f0 = 14;
+        g_09f4[find_gas_spot(g_gasSpotIds[k])].f0 = 14;
 }
 
 /* place_gas_spot @ 0000:B49C (linear 0x0B49C, 66 bytes) */
@@ -299,7 +299,7 @@ void race_gas_station(void)
     F_13DE6(0x17);
     F_120FE(-2);
 top:
-    g_05cc = g_tick + 20;
+    g_waitUntil = g_tick + 20;
     for (;;) {
         while ((key = sys_wait_input(3000)) == 0)
             ;
@@ -349,7 +349,7 @@ top:
                 F_16993(1);
                 dl.f1a = 1;
             }
-            g_05cc = g_tick + 0x4c;
+            g_waitUntil = g_tick + 0x4c;
             break;
         case 1:
             if (g_6ca6qz == 0)
@@ -392,7 +392,7 @@ top:
             }
             F_13DE6(0x17);
         tail:
-            g_05cc = g_tick + 20;
+            g_waitUntil = g_tick + 20;
             dl.f1a = 0;
             break;
         case 4:
@@ -421,7 +421,7 @@ top:
                 F_13F21(1);
                 spots_cap();
                 F_13DE6(0x17);
-                g_05cc = g_tick + 0x4c;
+                g_waitUntil = g_tick + 0x4c;
                 dl.f1a = 1;
             }
             break;
@@ -465,9 +465,9 @@ static int near replace_tires(void)
     return ret;
 }
 
-int g_53c8[6] = {4973, 5015, 5073, 5043, 5099, 5130};   /* DS:53C8 */
-struct Spot g_53d4[3] = {{1264, 64, 84}, {1266, 208, 82}, {1265, 272, 123}};   /* DS:53D4 */
-int g_53e6 = 0;   /* DS:53E6 */
+int g_winMsgs[6] = {4973, 5015, 5073, 5043, 5099, 5130};   /* DS:53C8 */
+struct Spot g_crashPics[3] = {{1264, 64, 84}, {1266, 208, 82}, {1265, 272, 123}};   /* DS:53D4 */
+int g_statsDone = 0;   /* DS:53E6 */
 
 /* show_ticket @ 0000:BF94 (linear 0x0BF94, 580 bytes) */
 
@@ -533,7 +533,7 @@ static void near show_crash(void)
     struct Blt pkt;
     int fast, i;
 
-    fast = r_vid.mode == -2 && g_0254 == 0;
+    fast = r_vid.mode == -2 && g_vga == 0;
     sound_crash();
     marks_clear();
     a = F_15BBE(0x4eb, 1);
@@ -558,12 +558,12 @@ static void near show_crash(void)
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
     if (e_78e0.f0 > 0x5a) {
         for (i = 0; i < 3; i++) {
-            a = F_15BBE(g_53d4[i].id, 1);
+            a = F_15BBE(g_crashPics[i].id, 1);
             pkt.w = a->width;
             pkt.h = a->height;
             pkt.sx = pkt.sy = 0;
-            pkt.dx = g_53d4[i].x;
-            pkt.dy = g_53d4[i].y;
+            pkt.dx = g_crashPics[i].x;
+            pkt.dy = g_crashPics[i].y;
             F_10AFD(0x14 - 8 * i);
             (*ab78aat)(a, r_vid.back, &pkt, 1);
             (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
@@ -581,7 +581,7 @@ static void near show_crash(void)
 
 void race_finish_stats(void)
 {
-    if (g_53e6 == 0) {
+    if (g_statsDone == 0) {
         if ((ar7e8av.m7e8a - ao7d2ev.m7d30) * 8 + ar7e8av.m7e8c <= ao7d2ev.m7d32)
             s_8632 = 1;
         else
@@ -589,7 +589,7 @@ void race_finish_stats(void)
         g7644m = b_82bc / e_78e0.fc0;
         p_8bc4 = e_78e0.fc0 / 6.068827333333334;
         dz82c8x = (int)((ao7d2ev.m7d30 - 200) * 100.0 / (ar7e8av.m7e8a - 200)) > 99 ? 99 : (int)((ao7d2ev.m7d30 - 200) * 100.0 / (ar7e8av.m7e8a - 200));
-        g_53e6 = 1;
+        g_statsDone = 1;
     }
 }
 
@@ -598,11 +598,11 @@ void race_finish_stats(void)
 static void near show_race_stats(void)
 {
     if (bo7676) {
-        sprintf(g_2b3f, "Your``winning``time %2.1f sec.,`avg. speed %2d mph", p_8bc4, g7644m);
-        strcpy(g_2b72, "Congratulations !");
+        sprintf(g_raceResult1, "Your``winning``time %2.1f sec.,`avg. speed %2d mph", p_8bc4, g7644m);
+        strcpy(g_raceResult2, "Congratulations !");
     } else {
-        sprintf(g_2b3f, "In %2.1f sec you covered only %2d%%", p_8bc4, dz82c8x);
-        sprintf(g_2b72, "of the distance. Your avg. speed %2d mph.", g7644m);
+        sprintf(g_raceResult1, "In %2.1f sec you covered only %2d%%", p_8bc4, dz82c8x);
+        sprintf(g_raceResult2, "of the distance. Your avg. speed %2d mph.", g7644m);
     }
     F_13DE6(0x21);
     F_13F21(1);
@@ -648,8 +648,8 @@ static void near drop_transmission(int n)
     game_popup(-n, -1, 0x49);
 }
 
-int g_54b2[3][5] = {{2, 5, 8, 11, 14}, {0, 2, 4, 6, 8}, {0, 0, 1, 2, 4}};   /* DS:54B2 */
-int g_54d0 = 0;   /* DS:54D0 */
+int g_tireGrip[3][5] = {{2, 5, 8, 11, 14}, {0, 2, 4, 6, 8}, {0, 0, 1, 2, 4}};   /* DS:54B2 */
+int g_lastTicks = 0;   /* DS:54D0 */
 int g_54d2 = 0;   /* DS:54D2 */
 int g_54d4 = 1;   /* DS:54D4 */
 int g_54d6 = 0;   /* DS:54D6 */
@@ -687,10 +687,10 @@ int near race_outcome(void)
     if (a_7eaap.m7eb0->slot12->b > 9900)
         a_7eaap.m7eb0->slot12->b = 9900;
     bo7676 = 0;
-    g_53e6 = 0;
+    g_statsDone = 0;
     b_82bc = 0;
-    g_47cd = 0;
-    g_4732 = 0;
+    g_fireLatch = 0;
+    g_buttons = 0;
     if (e_78e0.f20)
         e_78e0.f24 = 1;
     if (at787cu)
@@ -706,7 +706,7 @@ int near race_outcome(void)
         bo7676 = 1;
         show_race_stats();
         F_120FE(-2);
-        game_message(g7d40q == 0 ? (i = g_53c8[kind]) : a_7eaap.m7ec0 == 0 ? 0x14bd : 0x14d6);
+        game_message(g7d40q == 0 ? (i = g_winMsgs[kind]) : a_7eaap.m7ec0 == 0 ? 0x14bd : 0x14d6);
         F_11540(v);
         if (kind == 5) {
             found = game_make_car(bn7648, ar7d7au->f0, 0);
@@ -722,7 +722,7 @@ int near race_outcome(void)
                 a_7eaap.m7eb0 = found;
                 perf_drivetrain(a_7eaap.m7eb0, &e_78e0);
             }
-            if (g_0610 == 0 || g7f82r != g_4ff4) {
+            if (g_demo == 0 || g7f82r != g_demoRacer) {
                 if (g7d84o->f10 != 0 || g7d40q != 0)
                     g7d84o->fb = 0xff;
                 else {
@@ -772,9 +772,9 @@ done:
         return 4;
 pay:
         F_11540(-i);
-        cost = g_05cc;
-        game_pause(g_05dc);
-        g_05cc = cost;
+        cost = g_waitUntil;
+        game_pause(g_msgTicks);
+        g_waitUntil = cost;
         F_13F21(1);
         F_11421(-1, "", 0x140 - o_8250);
     } else if (e_78e0.fbc == 0x81) {
@@ -819,7 +819,7 @@ finishstop:
                 v = game_scrap_car(a_7eaap.m7eb0, 0) / 10 + 0x13;
                 a_7eaap.m7eb0 = 0;
                 F_11540(v);
-                ptr = g_4115;
+                ptr = g_msgTotaled;
                 while (*ptr++ != '$')
                     ;
                 ptr[1] = ' ';
@@ -845,27 +845,27 @@ finishstop:
                     F_13F21(1);
                     return 1;
                 }
-                ptr = strchr(i ? g_2b09 : g_2ab2, '$') + 1;
+                ptr = strchr(i ? g_msgRunCost : g_msgRepairCost, '$') + 1;
                 ptr[1] = ' ';
                 ptr[2] = ' ';
                 itoa(v, ptr, 10);
                 ptr[strlen(ptr)] = ' ';
                 all = e_78e0.fbc & 8;
                 if (all)
-                    strcpy(g_2aea, "Plus tires !");
+                    strcpy(g_msgPlusTires, "Plus tires !");
                 else
-                    g_2aea[0] = 0;
+                    g_msgPlusTires[0] = 0;
                 sel = i ? 0x1a : 0x19;
                 if ((long)v > a_7eaap.m7eaa) {
-                    g_1ac2[0].f0 = g_1ac2[7].f0 = 0xe;
-                    g_579f[sel][0].val = 0xd0;
-                    g_579f[sel][1].key = 1;
-                    g_579f[sel][1].val = 0xd0;
+                    g_hotRepair[0].f0 = g_hotRepair[7].f0 = 0xe;
+                    g_keyMaps[sel][0].val = 0xd0;
+                    g_keyMaps[sel][1].key = 1;
+                    g_keyMaps[sel][1].val = 0xd0;
                 } else {
-                    g_1ac2[0].f0 = g_1ac2[7].f0 = 0xa;
-                    g_579f[sel][0].val = 0xcf;
-                    g_579f[sel][1].key = 0x21;
-                    g_579f[sel][1].val = 0xcf;
+                    g_hotRepair[0].f0 = g_hotRepair[7].f0 = 0xa;
+                    g_keyMaps[sel][0].val = 0xcf;
+                    g_keyMaps[sel][1].key = 0x21;
+                    g_keyMaps[sel][1].val = 0xcf;
                 }
                 F_13DE6(sel);
                 sys_input_reset();
@@ -909,13 +909,13 @@ void near race_reset_eng(struct Eng *p)
     int t;
 
     _disable();
-    if (g_4746 == 0 && g_4748 == 0) {
-        g_4746 = g_472a;
-        g_4748 = g_472c;
+    if (g_savedCursorX == 0 && g_savedCursorY == 0) {
+        g_savedCursorX = g_cursorX;
+        g_savedCursorY = g_cursorY;
     }
-    g_472a = g_472c = g_4730 = g_4731 = 0;
+    g_cursorX = g_cursorY = g_lastDx = g_lastDy = 0;
     _enable();
-    g_47cd = 0;
+    g_fireLatch = 0;
     p->f0 = p->f18 = p->f42 = p->f2 = p->f4 = 0;
     p->fbc = p->fbe = p->fc0 = 0;
     if (p->f20) {
@@ -934,7 +934,7 @@ void near race_reset_eng(struct Eng *p)
     bz8630z = -1;
     g_6caaaa = a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc;
     car = a_7eaap.m7eb0->slot12;
-    p->fc = g_54b2[g_4806[car->idx].f2][car->b / 2000];
+    p->fc = g_tireGrip[g_4806[car->idx].f2][car->b / 2000];
     if (car->b < 8000)
         p->fa = 0;
     else {
@@ -948,13 +948,13 @@ void near race_reset_eng(struct Eng *p)
     }
 nx:
     at787cu = 0;
-    g_54d0 = 0;
+    g_lastTicks = 0;
     g_6cacaa = F_0E218(bn7648);
     g_6cb2 = (int)(g_6cacaa * 0.7);
     g_6cb0 = (int)(g_6cacaa * 0.8);
     g_6caeaa = bu8acc < 4 ? 10 : 16;
     g_54d2 = 0;
-    g_53e6 = 0;
+    g_statsDone = 0;
 }
 
 /* init_rival_eng @ 0000:CF5C (linear 0x0CF5C, 213 bytes) */
@@ -1008,7 +1008,7 @@ void near race_run(void)
     bw8aca = 1;
     cruise_run();
     sys_drive_stop();
-    g_05cc = 0;
+    g_waitUntil = 0;
     sys_input_reset();
     F_11593(g_49dc);
     if (ao7d2ev.m7d30 > 200) {
@@ -1069,8 +1069,8 @@ static void near rival_accelerate(void)
 
     old3 = g79e2g.f0;
     _disable();
-    ticks = e_78e0.fc0 - g_54d0;
-    g_54d0 = e_78e0.fc0;
+    ticks = e_78e0.fc0 - g_lastTicks;
+    g_lastTicks = e_78e0.fc0;
     _enable();
     r = &g79e2g.gear[g79e2g.f18].r[g_6cb8];
     for (i5 = 0; i5 < ticks; i5++) {
@@ -1213,7 +1213,7 @@ static void near move_player(void)
     ao7d2ev.m7d32 += ao7d2ev.m7d34 = e_78e0.f0 ? race_speed_step(e_78e0.f0) : 0;
     if (ao7d2ev.m7d32 >= 8)
         road_advance();
-    if (ao7d2ev.m7d30 >= g_6caaaa && g_53e6 && e_78e0.f0 <= 0) {
+    if (ao7d2ev.m7d30 >= g_6caaaa && g_statsDone && e_78e0.f0 <= 0) {
         if (s_8632)
             g79e2g.fbc |= 1;
         else
@@ -1239,7 +1239,7 @@ static void near move_rival(void)
         ar7e8av.m7e8a += ar7e8av.m7e8c >> 3;
         ar7e8av.m7e8c &= 7;
     }
-    if (ar7e8av.m7e8a >= g_6caaaa && g_53e6 && e_78e0.f0 <= 0) {
+    if (ar7e8av.m7e8a >= g_6caaaa && g_statsDone && e_78e0.f0 <= 0) {
         if (s_8632 == 0)
             e_78e0.fbc |= 1;
         else
@@ -1377,11 +1377,11 @@ void race_tick(void)
         screen_show_gear(bz8630z = e_78e0.f18);
     if (e_78e0.fa && ao7d2ev.m7d30 > e_78e0.fa)
         at787cu = 1;
-    if (g_58da == 0) {
+    if (g_squealOn == 0) {
         if (abs(e_78e0.f4) >= 12)
-            g_58da = 1;
+            g_squealOn = 1;
     } else if (abs(e_78e0.f4) < 10)
-        g_58da = 0;
+        g_squealOn = 0;
     rival_accelerate();
     switch (a_7f88d) {
     case 1:
@@ -1426,7 +1426,7 @@ void race_tick(void)
     }
     if (ay8bc2z == 0)
         return;
-    if (g_0610)
+    if (g_demo)
         return;
     if ((a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc) <= ao7d2ev.m7d30)
         return;

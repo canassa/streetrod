@@ -29,8 +29,8 @@ static void near insert_entry(int pos);
 struct Entry aytablex[10];
 
 struct ManualEntry g_manual[51] = {{2, 2}, {3, 11}, {4, 6}, {6, 5}, {7, 9}, {8, 1}, {9, 4}, {10, 6}, {11, 10}, {12, 1}, {14, 7}, {15, 12}, {16, 2}, {18, 3}, {19, 11}, {20, 5}, {22, 10}, {23, 6}, {1, 3}, {2, 5}, {3, 9}, {4, 4}, {5, 8}, {6, 10}, {7, 7}, {8, 2}, {9, 12}, {10, 5}, {11, 1}, {12, 3}, {13, 11}, {14, 9}, {15, 8}, {16, 4}, {17, 6}, {18, 1}, {19, 10}, {20, 8}, {21, 9}, {22, 12}, {23, 7}, {24, 2}, {25, 3}, {26, 1}, {27, 8}, {28, 5}, {29, 11}, {30, 10}, {31, 4}, {32, 12}, {33, 9}};   /* DS:4B62 */
-int g_4bc8 = 0;   /* DS:4BC8 */
-int g_4bca[10] = {59, 70, 81, 92, 103, 114, 125, 136, 147, 158};   /* DS:4BCA */
+int g_protectCycle = 0;   /* DS:4BC8 */
+int g_fameRowY[10] = {59, 70, 81, 92, 103, 114, 125, 136, 147, 158};   /* DS:4BCA */
 
 /* fame_protect_check @ 0000:2FC8 (linear 0x02FC8, 403 bytes)
 
@@ -69,14 +69,14 @@ int fame_protect_check(void)
     F_120FE(-2);
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
     if (r_vid.mode == -2 || r_vid.mode == -6)
-        video_set_palette(g_0692);
+        video_set_palette(g_protectPal);
     else
         (*m_present)();
     gz8249 = 1;
     r_vid.f16 = 1;
-    g_4bc8 = 1;
+    g_protectCycle = 1;
     e = F_14294(0x27);
-    g_4bc8 = 0;
+    g_protectCycle = 0;
     F_11421(-1, "", 0);
     if (g_manual[d].color != e)
         return 0;
@@ -126,9 +126,9 @@ int fame_end_menu(void)
     switch (key) {
     case -2:
     case -1:
-        if (g_4f4c) {
-            disk_load_list(g_4c28, 1);
-            g_4f4c = 0;
+        if (g_picsFreed) {
+            disk_load_list(g_garagePics, 1);
+            g_picsFreed = 0;
         }
         break;
     }
@@ -177,8 +177,8 @@ static int near elapsed_hours(void)
     return F_06476() * 24 + a + 12;
 }
 
-struct Colors g_4be2 = {{3, 5, 5, 4, 1}};   /* DS:4BE2 */
-struct Colors g_4be8 = {{3, 4, 4, 3, 1}};   /* DS:4BE8 */
+struct Colors g_fameColors1 = {{3, 5, 5, 4, 1}};   /* DS:4BE2 */
+struct Colors g_fameColors2 = {{3, 4, 4, 3, 1}};   /* DS:4BE8 */
 char g_4bed = 0;   /* DS:4BED */
 
 /* fame_show @ 0000:339F (linear 0x0339F, 628 bytes) */
@@ -195,19 +195,19 @@ void fame_show(int add)
     struct Colors sv23;
     int old;
 
-    old = g_04c2;
+    old = g_picMaxH;
     pos7 = -1;
     (*bl78be)();
-    g_04c2 = 200;
+    g_picMaxH = 200;
     r_vid.f16 = 1;
     F_118D4(5, -1);
-    g_04c2 = old;
+    g_picMaxH = old;
     video_swap_pal();
     sv286 = bustyle->c28;
     sv23 = bustyle->c23;
     if (r_vid.mode == -2 || r_vid.mode == -6) {
-        bustyle->c28 = g_4be2;
-        bustyle->c23 = g_4be8;
+        bustyle->c28 = g_fameColors1;
+        bustyle->c23 = g_fameColors2;
     }
     (*m_present)();
     if (add) {
@@ -232,21 +232,21 @@ void fame_show(int add)
         x_colors.c[1] = 0;
     }
     for (i = 0, p = aytablex; i < bucount; i++) {
-        (*a_78aem)(r_vid.back, 46, g_4bca[i], p->name);
+        (*a_78aem)(r_vid.back, 46, g_fameRowY[i], p->name);
         x = 161;
         n2 = atoi(p->score);
         while (n2 < 1000) {
             n2 *= 10;
             x += 6;
         }
-        (*a_78aem)(r_vid.back, x, g_4bca[i], p->score);
+        (*a_78aem)(r_vid.back, x, g_fameRowY[i], p->score);
         p++;
-        (*a_78aem)(r_vid.back, 191, g_4bca[i], "hr");
+        (*a_78aem)(r_vid.back, 191, g_fameRowY[i], "hr");
     }
-    bitmap_copy_box(r_vid.back, r_vid.front, 46, g_4bca[0], 211, g_4bca[9] + 8);
+    bitmap_copy_box(r_vid.back, r_vid.front, 46, g_fameRowY[0], 211, g_fameRowY[9] + 8);
     if (pos7 >= 0) {
         strcpy(buf3, aytablex[pos7].name);
-        edit_line(46, g_4bca[pos7], buf3, 15);
+        edit_line(46, g_fameRowY[pos7], buf3, 15);
         strcpy(aytablex[pos7].name, buf3);
         disk_save_hall();
     } else {

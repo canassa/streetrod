@@ -1,8 +1,8 @@
         .MODEL MEDIUM
 
         .DATA
-        EXTRN   _g_47d4:WORD
-        EXTRN   _g_47d6:WORD
+        EXTRN   _g_oldInt9Seg:WORD
+        EXTRN   _g_oldInt9Off:WORD
 
         .CODE S0000_TEXT
 
@@ -11,8 +11,8 @@
         PUBLIC  _kbdoff_unhook
 _kbdoff_unhook  PROC  FAR
         push    ds
-        mov     dx,_g_47d6
-        mov     ax,_g_47d4
+        mov     dx,_g_oldInt9Off
+        mov     ax,_g_oldInt9Seg
         mov     ds,ax
         mov     ah,25h
         mov     al,9

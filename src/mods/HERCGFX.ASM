@@ -3,11 +3,11 @@
         .DATA
 
 ; DS:5ABC int[10]
-        PUBLIC  _g_5abc
-_g_5abc DW      3500h, 2801h, 2C02h, 803h, 0FC04h, 705h, 6406h, 7207h
+        PUBLIC  _g_hercCrtc
+_g_hercCrtc DW      3500h, 2801h, 2C02h, 803h, 0FC04h, 705h, 6406h, 7207h
         DW      208h, 209h
-        PUBLIC  _g_5ad0
-_g_5ad0 DB      7, 'P', 0                ; DS:5AD0 char[30]
+        PUBLIC  _g_hercBiosData
+_g_hercBiosData DB      7, 'P', 0                ; DS:5AD0 char[30]
         DB      0, 80h, 21 DUP (0), 0B4h, 3, 2, 0
 
         .CODE S0000_TEXT
@@ -24,7 +24,7 @@ _hercgfx_set_mode  PROC    NEAR
         mov     ax,40h
         mov     es,ax
         mov     di,49h
-        mov     si,OFFSET _g_5ad0
+        mov     si,OFFSET _g_hercBiosData
         mov     cx,1Eh
         even
         rep     movsb
@@ -35,7 +35,7 @@ _hercgfx_set_mode  PROC    NEAR
         xor     al,al
         out     dx,al
         sub     dl,4
-        mov     si,OFFSET _g_5abc
+        mov     si,OFFSET _g_hercCrtc
         mov     cx,0Ah
         even
 crtc:
@@ -43,7 +43,7 @@ crtc:
         out     dx,ax
         loop    crtc
         add     dl,4
-        mov     al,_g_5ad0+28
+        mov     al,_g_hercBiosData+28
         out     dx,al
         pop     di
         pop     si

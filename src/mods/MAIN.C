@@ -33,10 +33,10 @@ static void near check_slow_cpu(void);
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Video r_vid;
 
-int g_0042 = 0;   /* DS:0042 */
-int g_0044 = 0;   /* DS:0044 */
+int g_hercules = 0;   /* DS:0042 */
+int g_sysHooked = 0;   /* DS:0044 */
 int g_0046 = 0;   /* DS:0046 */
-int g_0048 = 0;   /* DS:0048 */
+int g_videoSet = 0;   /* DS:0048 */
 int g_004a = 0;   /* DS:004A */
 int g_004c = 0;   /* DS:004C */
 
@@ -60,9 +60,9 @@ static void near dos_print(char *s)
 }
 
 char *g_videoMenu[6] = {"                    1 - CGA      320 x 200 x  4 colors", "                    2 - EGA      320 x 200 x 16 colors", "                    3 - VGA      320 x 200 x 16 colors", "                    4 - Hercules monochrome", "                    5 - Tandy    320 x 200 x 16 colors", "\n                  Esc - Back to DOS"};   /* DS:0244 */
-int g_0250 = 0;   /* DS:0250 */
+int g_egaCard = 0;   /* DS:0250 */
 int g_0252 = 0;   /* DS:0252 */
-int g_0254 = 0;   /* DS:0254 */
+int g_vga = 0;   /* DS:0254 */
 
 /* show_video_menu @ 0000:0082 (linear 0x00082, 265 bytes) */
 
@@ -136,7 +136,7 @@ void main_set_palette(unsigned char color)
         int86(0x10, &r, &r);
 }
 
-int g_0262 = 1;   /* DS:0262 */
+int g_useMouse = 1;   /* DS:0262 */
 
 /* choose_video @ 0000:0226 (linear 0x00226, 240 bytes) */
 
@@ -148,13 +148,13 @@ static int near choose_video(int mode)
     herc = 0;
     viddet_detect();
     if (g_0252)
-        g_0250 = 1;
-    if (hercdet_bios_mono() && (g_0250 == 1 || hercdet_detect())) {
-        g_0250 = 0;
+        g_egaCard = 1;
+    if (hercdet_bios_mono() && (g_egaCard == 1 || hercdet_detect())) {
+        g_egaCard = 0;
         herc = 1;
     }
-    if (g_0250)
-        mode = g_5af1 == 3 ? 2 : 6;
+    if (g_egaCard)
+        mode = g_egaMemory == 3 ? 2 : 6;
     else
         mode = 1;
     if (herc)
@@ -167,10 +167,10 @@ static int near choose_video(int mode)
     pick = show_video_menu(mode);
     if (pick)
         mode = pick;
-    if (mode == 1 && g_0250)
+    if (mode == 1 && g_egaCard)
         return 6;
     if (mode == 3) {
-        g_0254 = 1;
+        g_vga = 1;
         return 2;
     }
     return mode;
@@ -182,7 +182,7 @@ static void near init_screens(int mode)
 {
     switch (mode) {
     case 3:
-        g_0254 = 1;
+        g_vga = 1;
     case 2:
         r_vid.mode = -2;
         *(unsigned char far *)0x410L &= 0xcf;
@@ -247,7 +247,7 @@ static void near set_video_mode(int mode)
             *p++ = 0;
         outp(0x3b8, 0x2a);
         g_0046 = 1;
-        g_0042 = 1;
+        g_hercules = 1;
         break;
     case 1:
     case 6:
@@ -255,7 +255,7 @@ static void near set_video_mode(int mode)
         main_set_palette(1);
         break;
     }
-    g_0048 = 1;
+    g_videoSet = 1;
 }
 
 /* cpu_speed @ 0000:05C6 (linear 0x005C6, 147 bytes) */
@@ -295,10 +295,10 @@ static void near check_slow_cpu(void)
         bl82c6 = 0;
 }
 
-int g_0280 = 0;   /* DS:0280 */
+int g_noUeMem = 0;   /* DS:0280 */
 int g_0282 = 0;   /* DS:0282 */
 int g_0284 = 0;   /* DS:0284 */
-int g_0286 = 0;   /* DS:0286 */
+int g_carAnim = 0;   /* DS:0286 */
 struct Bitmap far *g_0288 = 0;   /* DS:0288 */
 struct Bitmap far *g_028c = 0;   /* DS:028C */
 struct Bitmap far *g_0290 = 0;   /* DS:0290 */
@@ -323,21 +323,21 @@ int main(int argc, char **argv)
     bu8acc = cpu_speed();
     e = 2;
     b = 0;
-    g_0262 = 1;
+    g_useMouse = 1;
     ag8bcet = 0;
-    g_0612 = 0;
+    g_autoDrive = 0;
     for (c = 1; c < argc; c++) {
         argv++;
         if (memcmp(*argv, "1", 2) == 0)
             e = 1;
         else if (strcmpi(*argv, "nomouse") == 0)
-            g_0262 = 0;
+            g_useMouse = 0;
         else if (strcmpi(*argv, "demo") == 0)
             ag8bcet = 1;
         else if (strcmpi(*argv, "auto") == 0)
-            g_0612 = 1;
+            g_autoDrive = 1;
         else if (strcmpi(*argv, "nouemem") == 0)
-            g_0280 = 1;
+            g_noUeMem = 1;
     }
     b = choose_video(b);
     mem_init();
@@ -354,20 +354,20 @@ int main(int argc, char **argv)
     cursor_init();
     sound_init();
     dash_set_view(0);
-    if (r_vid.mode == -3 && g_0250)
+    if (r_vid.mode == -3 && g_egaCard)
         g755cu = mem_new_bitmap(320, 100, 0, -1, 0);
     ab7564z = mem_alloc(r_vid.mode != -2 && r_vid.mode != -6 ? 16000 : 18000, 1);
-    a = disk_load_list(g_4c20, 0);
+    a = disk_load_list(g_titlePics, 0);
     if (a == 3) {
         by70e2 = 1;
         d = disk_read_index(2);
         disk_load_data();
         if (r_vid.mode == -2)
-            disk_cache_list(g_4c28);
-        disk_load_list(g_4c28, 1);
+            disk_cache_list(g_garagePics);
+        disk_load_list(g_garagePics, 1);
     } else {
         by70e2 = 0;
-        disk_free_list(g_4c20);
+        disk_free_list(g_titlePics);
     }
     game_run();
     sys_exit();

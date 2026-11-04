@@ -1,13 +1,13 @@
         .MODEL MEDIUM
 
         .DATA
-        EXTRN   _g_4eee:BYTE
-        EXTRN   _g_4efe:BYTE
+        EXTRN   _g_rleCounts:BYTE
+        EXTRN   _g_rleValues:BYTE
 
         .CODE S0E92_TEXT
 
 ; rle_decode @ 0E92:0006 (linear 0x0E926, 201 bytes)
-; Run-length decoder with a byte dictionary (tables g_4eee and g_4efe copied to
+; Run-length decoder with a byte dictionary (tables g_rleCounts and g_rleValues copied to
 ; the stack). 0 and 0FFh start a literal run: the next byte is the repeat count.
 
         PUBLIC  _rle_decode
@@ -47,13 +47,13 @@ test_n:
         mov     WORD PTR [bp-8],0
         mov     cx,8
         lea     di,[bp-2Ah]
-        mov     si,OFFSET _g_4eee
+        mov     si,OFFSET _g_rleCounts
         push    ss
         pop     es
         rep     movsw
         mov     cx,8
         lea     di,[bp-1Ah]
-        mov     si,OFFSET _g_4efe
+        mov     si,OFFSET _g_rleValues
         rep     movsw
         mov     dx,[bp+0Eh]
         mov     [bp-0Ah],dx

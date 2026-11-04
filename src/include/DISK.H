@@ -4,24 +4,24 @@
 #define DISK_H
 #include "STRUCTS.H"
 
-extern char *g_4ea2;                                    /* DS:4EA2 */
-extern char *g_4ea4[13];                                /* DS:4EA4 */
-extern unsigned g_4ebe[13];                             /* DS:4EBE */
-extern int g_4ed8;                                      /* DS:4ED8 */
-extern int g_4eda;                                      /* DS:4EDA */
-extern char *g_4edc;                                    /* DS:4EDC */
-extern char *g_4ede;                                    /* DS:4EDE */
-extern char *g_4ee0;                                    /* DS:4EE0 */
-extern char *g_4ee2;                                    /* DS:4EE2 */
-extern char *g_4ee4;                                    /* DS:4EE4 */
-extern char *g_4ee6;                                    /* DS:4EE6 */
-extern char *g_4ee8;                                    /* DS:4EE8 */
-extern char *g_4eea;                                    /* DS:4EEA */
-extern char *g_4eec;                                    /* DS:4EEC */
-extern unsigned char g_4eee[16];                        /* DS:4EEE */
-extern unsigned char g_4efe[16];                        /* DS:4EFE */
-extern int g_4f0e;                                      /* DS:4F0E */
-extern char g_4f3a[];                                   /* DS:4F3A */
+extern char *g_dataFileName;                            /* DS:4EA2 */
+extern char *g_dataBlocks[13];                          /* DS:4EA4 */
+extern unsigned g_dataSizes[13];                        /* DS:4EBE */
+extern int g_lib1Handle;                                /* DS:4ED8 */
+extern int g_lib2Handle;                                /* DS:4EDA */
+extern char *g_lib1Name;                                /* DS:4EDC */
+extern char *g_lib1cName;                               /* DS:4EDE */
+extern char *g_lib2Name;                                /* DS:4EE0 */
+extern char *g_lib2cName;                               /* DS:4EE2 */
+extern char *g_msgInsertDisk;                           /* DS:4EE4 */
+extern char *g_msgCopyFiles;                            /* DS:4EE6 */
+extern char *g_msgBadFormat;                            /* DS:4EE8 */
+extern char *g_msgWriteError;                           /* DS:4EEA */
+extern char *g_msgNotFound;                             /* DS:4EEC */
+extern unsigned char g_rleCounts[16];                   /* DS:4EEE */
+extern unsigned char g_rleValues[16];                   /* DS:4EFE */
+extern int g_picNewHeader;                              /* DS:4F0E */
+extern char g_hallFileName[];                           /* DS:4F3A */
 extern struct Panel ai70e4t[];                          /* DS:70E4 */
 extern struct Spr12 g7682n[];                           /* DS:7682 */
 extern struct Pos6 a784als[];                           /* DS:784A */

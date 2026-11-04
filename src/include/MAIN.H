@@ -4,21 +4,21 @@
 #define MAIN_H
 #include "STRUCTS.H"
 
-extern int g_0042;                                      /* DS:0042 */
-extern int g_0044;                                      /* DS:0044 */
+extern int g_hercules;                                  /* DS:0042 */
+extern int g_sysHooked;                                 /* DS:0044 */
 extern int g_0046;                                      /* DS:0046 */
-extern int g_0048;                                      /* DS:0048 */
+extern int g_videoSet;                                  /* DS:0048 */
 extern int g_004a;                                      /* DS:004A */
 extern int g_004c;                                      /* DS:004C */
 extern char *g_videoMenu[];                             /* DS:0244 */
-extern int g_0250;                                      /* DS:0250 */
+extern int g_egaCard;                                   /* DS:0250 */
 extern int g_0252;                                      /* DS:0252 */
-extern int g_0254;                                      /* DS:0254 */
-extern int g_0262;                                      /* DS:0262 */
-extern int g_0280;                                      /* DS:0280 */
+extern int g_vga;                                       /* DS:0254 */
+extern int g_useMouse;                                  /* DS:0262 */
+extern int g_noUeMem;                                   /* DS:0280 */
 extern int g_0282;                                      /* DS:0282 */
 extern int g_0284;                                      /* DS:0284 */
-extern int g_0286;                                      /* DS:0286 */
+extern int g_carAnim;                                   /* DS:0286 */
 extern struct Bitmap far *g_0288;                       /* DS:0288 */
 extern struct Bitmap far *g_028c;                       /* DS:028C */
 extern struct Bitmap far *g_0290;                       /* DS:0290 */

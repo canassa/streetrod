@@ -4,8 +4,8 @@
 #define POPUP_H
 #include "STRUCTS.H"
 
-extern struct Win g_04c4[];                             /* DS:04C4 */
-extern struct Bitmap far *g_04fa;                       /* DS:04FA */
+extern struct Win g_popupWins[];                        /* DS:04C4 */
+extern struct Bitmap far *g_popupSave;                  /* DS:04FA */
 struct Bitmap far *F_11A72(int x, int y, int w, int h, struct Bitmap far *src);/* 0x11A72 */
 void popup_put(struct Bitmap far *bm, int x, int y);    /* 0x11B6F */
 void F_11BD3(struct Bitmap far *bm, int x, int y);      /* 0x11BD3 */

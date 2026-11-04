@@ -23,11 +23,11 @@ static void near restore_rect_back(struct Rect *r, struct Bitmap far *a, struct 
     blt.dx = r->x1;
     blt.dy = r->y1;
     if (horiz) {
-        blt.sx = r->x1 - g_5a20;
+        blt.sx = r->x1 - g_backdropX;
         blt.sy = 0;
     } else {
         blt.sx = 0;
-        blt.sy = blt.dy - g_5aa8;
+        blt.sy = blt.dy - g_spriteBgY;
     }
     tandyblt_copy(b, a, &blt, 1);
 }
@@ -73,11 +73,11 @@ int tandyspr_step(struct Sprite *s)
         blt.sx = 0;
         blt.dx = s->x;
         if (s->seq->dx) {
-            blt.mx = blt.dx - g_5a20 < 0 ? 0 : blt.dx - g_5a20;
+            blt.mx = blt.dx - g_backdropX < 0 ? 0 : blt.dx - g_backdropX;
             blt.my = 0;
         } else {
             blt.mx = 0;
-            blt.my = blt.dy - g_5aa8 < 0 ? 0 : blt.dy - g_5aa8;
+            blt.my = blt.dy - g_spriteBgY < 0 ? 0 : blt.dy - g_spriteBgY;
         }
         tandyblt_compose(fr->pos, r_vid.back, fp, &blt);
         if (d) {
@@ -88,10 +88,10 @@ int tandyspr_step(struct Sprite *s)
     } else {
         blt.my = 0;
         for (idx = 0; idx < 6; idx++) {
-            if (sprite_clip_span(g_539a[idx].a, g_539a[idx].b, s, (struct Blt16 *)&blt)) {
+            if (sprite_clip_span(g_jailGaps[idx].a, g_jailGaps[idx].b, s, (struct Blt16 *)&blt)) {
                 blt.dy = u;
                 blt.h = t;
-                blt.mx = blt.dx - g_5a20;
+                blt.mx = blt.dx - g_backdropX;
                 tandyblt_compose(fr->pos, r_vid.back, fp, &blt);
                 if (d) {
                     blt.dy += t;
@@ -119,9 +119,9 @@ int tandyspr_step(struct Sprite *s)
             blt.dy = e.y1;
             if (fp->pitch == fr->pos->pitch) {
                 blt.sx = 0;
-                blt.sy = e.y1 - g_5aa8;
+                blt.sy = e.y1 - g_spriteBgY;
             } else {
-                blt.sx = e.x1 - g_5a20;
+                blt.sx = e.x1 - g_backdropX;
                 blt.sy = e.y1 - s->y;
             }
             (*ab78aat)(fp, r_vid.back, &blt, 0);

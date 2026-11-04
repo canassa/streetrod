@@ -77,7 +77,7 @@ int cgaspr_step(struct Sprite *s)
         }
     } else {
         for (idx = 0; idx < 6; idx++) {
-            if (sprite_clip_span(g_539a[idx].a, g_539a[idx].b, s, (struct Blt16 *)&blt)) {
+            if (sprite_clip_span(g_jailGaps[idx].a, g_jailGaps[idx].b, s, (struct Blt16 *)&blt)) {
                 blt.dy = u;
                 blt.h = t;
                 cgablt_compose(fr->pos, bits, fp, &blt);

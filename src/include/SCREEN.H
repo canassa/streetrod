@@ -4,11 +4,11 @@
 #define SCREEN_H
 #include "STRUCTS.H"
 
-extern char *g_msgs[];                                  /* DS:0482 */
-extern char g_04ac[];                                   /* DS:04AC */
-extern int g_04be;                                      /* DS:04BE */
-extern int g_04c0;                                      /* DS:04C0 */
-extern int g_04c2;                                      /* DS:04C2 */
+extern char *g_gearNames[];                             /* DS:0482 */
+extern char g_promptPalette[];                          /* DS:04AC */
+extern int g_picX;                                      /* DS:04BE */
+extern int g_picY;                                      /* DS:04C0 */
+extern int g_picMaxH;                                   /* DS:04C2 */
 extern void (far *a_78aem)(struct Bitmap far *, int, int, char *);/* DS:78AE */
 extern struct State7EAA a_7eaap;                        /* DS:7EAA */
 extern char af824ax;                                    /* DS:824A */

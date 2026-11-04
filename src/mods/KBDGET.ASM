@@ -1,9 +1,9 @@
         .MODEL MEDIUM
 
         .DATA
-        EXTRN   _g_47d0:BYTE
-        EXTRN   _g_47d4:WORD
-        EXTRN   _g_47d6:WORD
+        EXTRN   _g_lastKey:BYTE
+        EXTRN   _g_oldInt9Seg:WORD
+        EXTRN   _g_oldInt9Off:WORD
 
         .CODE S0000_TEXT
         EXTRN   _kbd_isr:FAR
@@ -13,9 +13,9 @@
         PUBLIC  _kbdget_key
 _kbdget_key  PROC  FAR
         cli
-        mov     al,_g_47d0
+        mov     al,_g_lastKey
         xor     ah,ah
-        mov     _g_47d0,0
+        mov     _g_lastKey,0
         sti
         ret
 _kbdget_key  ENDP
@@ -28,8 +28,8 @@ _kbdget_hook  PROC  FAR
         mov     ah,35h
         mov     al,9
         int     21h
-        mov     _g_47d4,es
-        mov     _g_47d6,bx
+        mov     _g_oldInt9Seg,es
+        mov     _g_oldInt9Off,bx
         mov     ax,SEG _kbd_isr
         mov     ds,ax
         mov     dx,OFFSET _kbd_isr

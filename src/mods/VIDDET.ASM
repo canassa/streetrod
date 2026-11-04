@@ -2,19 +2,19 @@
 
         .DATA
         EXTRN   _cursblt_cga:FAR
-        EXTRN   _g_0250:WORD
+        EXTRN   _g_egaCard:WORD
         EXTRN   _g_0252:WORD
 
-        PUBLIC  _g_5aee
-_g_5aee DB      0                        ; DS:5AEE char
-        PUBLIC  _g_5aef
-_g_5aef DB      0                        ; DS:5AEF char
-        PUBLIC  _g_5af0
-_g_5af0 DB      0                        ; DS:5AF0 char
-        PUBLIC  _g_5af1
-_g_5af1 DB      0                        ; DS:5AF1 char
-        PUBLIC  _g_5af2
-_g_5af2 DB      0                        ; DS:5AF2 char
+        PUBLIC  _g_savedVideoMode
+_g_savedVideoMode DB      0                        ; DS:5AEE char
+        PUBLIC  _g_egaMono
+_g_egaMono DB      0                        ; DS:5AEF char
+        PUBLIC  _g_savedEquip
+_g_savedEquip DB      0                        ; DS:5AF0 char
+        PUBLIC  _g_egaMemory
+_g_egaMemory DB      0                        ; DS:5AF1 char
+        PUBLIC  _g_egaSwitches
+_g_egaSwitches DB      0                        ; DS:5AF2 char
         PUBLIC  _g_5af3
 _g_5af3 DB      0                        ; DS:5AF3 char
 S_5af4  DB      'Tandy', 0               ; DS:5AF4 string
@@ -35,10 +35,10 @@ _viddet_restore  PROC  FAR
         xor     ax,ax
         mov     es,ax
         mov     si,410h
-        mov     al,_g_5af0
+        mov     al,_g_savedEquip
         mov     es:[si],al
         mov     ah,0
-        mov     al,_g_5aee
+        mov     al,_g_savedVideoMode
         int     10h
         pop     si
         pop     di
@@ -59,21 +59,21 @@ _viddet_detect  PROC  FAR
         push    si
         mov     ax,0F00h
         int     10h
-        mov     _g_5aee,al
+        mov     _g_savedVideoMode,al
         xor     ax,ax
         mov     es,ax
         mov     si,410h
         mov     al,es:[si]
-        mov     _g_5af0,al
+        mov     _g_savedEquip,al
         mov     ah,12h
         mov     bl,10h
         int     10h
-        mov     _g_5aef,bh
-        mov     _g_5af2,cl
+        mov     _g_egaMono,bh
+        mov     _g_egaSwitches,cl
         cmp     bl,10h
         je      probe
-        mov     _g_0250,1
-        mov     _g_5af1,bl
+        mov     _g_egaCard,1
+        mov     _g_egaMemory,bl
         cmp     cl,0Fh
         jge     probe
         cmp     bh,1
@@ -86,8 +86,8 @@ _viddet_detect  PROC  FAR
         je      mono
         cmp     cl,8
         jle     probe
-        mov     _g_5af1,bl
-        mov     _g_0250,1
+        mov     _g_egaMemory,bl
+        mov     _g_egaCard,1
         jmp     done
 probe:
         mov     dx,3D4h
@@ -106,7 +106,7 @@ probe:
         mov     al,bh
         out     dx,al
         je      done
-        mov     _g_0250,2
+        mov     _g_egaCard,2
         jmp     done
 mono:
         mov     _g_0252,1

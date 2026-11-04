@@ -14,8 +14,8 @@ static void near write_plane_row(unsigned char far *dst, unsigned char *src, int
 #define GCREG(i, v)  { outp(0x3ce, (i)); outp(0x3cf, (v)); }
 #define SEQREG(i, v) { outp(0x3c4, (i)); outp(0x3c5, (v)); }
 
-unsigned char g_5c16[8] = {128, 192, 224, 240, 248, 252, 254, 255};   /* DS:5C16 */
-int g_5c1e = 0;   /* DS:5C1E */
+unsigned char g_leftBitMasks[8] = {128, 192, 224, 240, 248, 252, 254, 255};   /* DS:5C16 */
+int g_egaGcFunction = 0;   /* DS:5C1E */
 
 /* shift_row_bits @ 21A0:1EA2 (linear 0x238A2, 235 bytes)
 
@@ -32,7 +32,7 @@ static void near shift_row_bits(unsigned char *p, int n, int len)
     unsigned char f;
 
     if (n > 0) {
-        f = g_5c16[n - 1];
+        f = g_leftBitMasks[n - 1];
         d = ~f;
         e = 0;
         a = 0;
@@ -45,7 +45,7 @@ static void near shift_row_bits(unsigned char *p, int n, int len)
     } else if (n < 0) {
         p += len - 1;
         n = -n;
-        f = g_5c16[7 - n];
+        f = g_leftBitMasks[7 - n];
         d = ~f;
         e = 0;
         a = 0;
@@ -80,10 +80,10 @@ static void near write_plane_row(unsigned char far *dst, unsigned char *src, int
     c = src + 80;
     d = src + 120;
     if (off) {
-        g = ~g_5c16[off - 1];
+        g = ~g_leftBitMasks[off - 1];
         e = off + w;
         if (e < 8)
-            g &= g_5c16[e - 1];
+            g &= g_leftBitMasks[e - 1];
         GCREG(8, g);
         SEQREG(2, 1);
         f = *dst;
@@ -123,7 +123,7 @@ static void near write_plane_row(unsigned char far *dst, unsigned char *src, int
     }
     if (w > 0) {
         outp(0x3ce, 8);
-        g = g_5c16[w - 1];
+        g = g_leftBitMasks[w - 1];
         outp(0x3cf, g);
         SEQREG(2, 1);
         f = *dst;

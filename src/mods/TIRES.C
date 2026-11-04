@@ -55,8 +55,8 @@ static struct Bitmap far *g_6dfa7;         /* DS:6DFA */
 static struct Bitmap far * near grab_wheel_column(int n);
 static void near swap_wheel(int a, int *p, int *q);
 
-int g_5aa8 = 0;   /* DS:5AA8 */
-int g_5aaa[3] = {1034, 1035, 1036};   /* DS:5AAA */
+int g_spriteBgY = 0;   /* DS:5AA8 */
+int g_jackPicIds[3] = {1034, 1035, 1036};   /* DS:5AAA */
 struct Bitmap far *g_5ab0 = (struct Bitmap far *)&g_6da4;   /* DS:5AB0 */
 struct Bitmap far *g_5ab4 = (struct Bitmap far *)&g_6d400;   /* DS:5AB4 */
 struct Bitmap far *g_5ab8 = (struct Bitmap far *)&g_6d700;   /* DS:5AB8 */
@@ -91,9 +91,9 @@ static struct Bitmap far *near grab_wheel_column(int n)
     blt.h = g_6df6a->height;
     blt.sx = n & r_vid.mask;
     blt.sy = blt.dx = 0;
-    blt.dy = -(g_6df6a->height + g_5aa8 - 0x95);
-    c = F_1934E(0x28, 0x9c - g_5aa8, 1, 1);
-    F_11A72(blt.sx + g_6da0, g_5aa8, 0x28, 0x9c - g_5aa8, c);
+    blt.dy = -(g_6df6a->height + g_spriteBgY - 0x95);
+    c = F_1934E(0x28, 0x9c - g_spriteBgY, 1, 1);
+    F_11A72(blt.sx + g_6da0, g_spriteBgY, 0x28, 0x9c - g_spriteBgY, c);
     dash_fmemset(c->alt.p, 0xff, c->planesize / r_vid.planes);
     (*ab78aat)(g_6df6a, c, &blt, 1);
     (*b_78a2)(g_6df6a, c, &blt, 2);
@@ -122,7 +122,7 @@ static void near swap_wheel(int a, int *p, int *q)
     g_6ce8rz.x1 = 0;
     g_6ce8rz.y1 = 0;
     g_6ce8rz.x2 = g_6d2c0nz->width - 1;
-    g_6ce8rz.y2 = g_6d2c0nz->height + g_5aa8 - 1;
+    g_6ce8rz.y2 = g_6d2c0nz->height + g_spriteBgY - 1;
     g_6d3caat = sprite_setup(a & r_vid.mask, 0x94, &g_6df2a, 0, 1, g_5ab0, g_6d2c0nz, &g_6ce8rz, 0);
     sprite_set_step(g_6d3caat, 0, 8, 0, 1);
     while ((*g78c6c)(g_6d3caat)) {
@@ -184,7 +184,7 @@ static void near swap_wheel(int a, int *p, int *q)
     g_6ce8rz.x1 = 0;
     g_6ce8rz.y1 = 0;
     g_6ce8rz.x2 = g_6d2c0nz->width - 1;
-    g_6ce8rz.y2 = g_6d2c0nz->height + g_5aa8 - 1;
+    g_6ce8rz.y2 = g_6d2c0nz->height + g_spriteBgY - 1;
     g_6d3caat = sprite_setup(a, 0x9b, &g_6de2a[g_6d3eaas], 0, 1, g_5ab0, g_6d2c0nz, &g_6ce8rz, 0);
     sprite_set_step(g_6d3caat, 0, 8, 0, -1);
     while ((*g78c6c)(g_6d3caat)) {
@@ -229,12 +229,12 @@ void F_1B213(int *a, int *b)
     attr3 = game_car_look(a_7eaap.m7eb0);
     tinto = (a_7eaap.m7eb0->f24 >> 8) & 0x1f;
     for (n = 0; n < 3; n++)
-        g_6cdaaa[n] = F_15BBE(g_5aaa[n], 1);
+        g_6cdaaa[n] = F_15BBE(g_jackPicIds[n], 1);
     screen_fill_rect(0x88, 0xba - g_6cdaaa[1]->height, g_6cdaaa[1]->width, g_6cdaaa[1]->height,
             (r_vid.mode != -2 && r_vid.mode != -6) ? g_02b4[1] : g_02c2[1]);
-    g_5aa8 = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
-    g_6d28agz = F_1934E(g_6cdaaa[1]->width, 0xba - g_5aa8, 0, 1);
-    F_11A72(r_vid.mask & 0x88, g_5aa8, g_6cdaaa[1]->width, 0xba - g_5aa8, g_6d28agz);
+    g_spriteBgY = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
+    g_6d28agz = F_1934E(g_6cdaaa[1]->width, 0xba - g_spriteBgY, 0, 1);
+    F_11A72(r_vid.mask & 0x88, g_spriteBgY, g_6cdaaa[1]->width, 0xba - g_spriteBgY, g_6d28agz);
     carpic_build(&g_6df6a, modelm, attr3, tinto, 0, 0, 0, 1);
     g_6dd4 = g7682n[modelm].b0;
     g_6cd8lz = g7682n[modelm].b1;
@@ -268,19 +268,19 @@ void F_1B213(int *a, int *b)
     blt.dy = 0x99 - blt.h;
     (*b_78a2)(g_6d34, r_vid.back, &blt, 1);
     F_19438(2);
-    g_5aa8 = (r_vid.mode == -6) ? 0x92 - g_6df6a->height : 0;
-    g_6dfa7 = F_1934E(g_6df6a->width, 0x99 - g_5aa8, 1, 1);
-    F_11A72(g_6da0, g_5aa8, g_6df6a->width, 0x99 - g_5aa8, g_6dfa7);
+    g_spriteBgY = (r_vid.mode == -6) ? 0x92 - g_6df6a->height : 0;
+    g_6dfa7 = F_1934E(g_6df6a->width, 0x99 - g_spriteBgY, 1, 1);
+    F_11A72(g_6da0, g_spriteBgY, g_6df6a->width, 0x99 - g_spriteBgY, g_6dfa7);
     dash_fmemset(g_6dfa7->alt.p, 0xff, g_6dfa7->planesize / r_vid.planes);
     clip6.w = g_6cdaaa[1]->width;
     clip6.h = g_6cdaaa[1]->height;
     clip6.sx = clip6.sy = 0;
     clip6.dx = 0x88 - g_6da0;
-    clip6.dy = -(g_6cdaaa[1]->height + g_5aa8 - 0x9a);
+    clip6.dy = -(g_6cdaaa[1]->height + g_spriteBgY - 0x9a);
     (*ab78aat)(g_6cdaaa[0], g_6dfa7, &clip6, 1);
     (*b_78a2)(g_6cdaaa[0], g_6dfa7, &clip6, 2);
     g_6d30 = F_15BBE(0x4c7, 2);
-    g_5aa8 = (r_vid.mode == -6) ? 0x76 : 0;
+    g_spriteBgY = (r_vid.mode == -6) ? 0x76 : 0;
     pic = grab_wheel_column(g_6cd8lz);
     dst = grab_wheel_column(g_6dd4);
     F_19438(1);
@@ -335,7 +335,7 @@ void F_1B213(int *a, int *b)
         g_5ab8->bits.p = g_6cd4oz->bits.p;
         g_5ab8->alt.p = 0;
     }
-    g_5aa8 = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
+    g_spriteBgY = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
     if (r_vid.mode == -2)
         (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
     g_6d3caat = sprite_setup(0x88, 0xb9, &g_6cdaaa[1], 0, 1, g_5ab8, g_6d28agz, 0, 0);
@@ -343,7 +343,7 @@ void F_1B213(int *a, int *b)
     while ((*g78c6c)(g_6d3caat))
         F_10AFD(3);
     F_16381(1);
-    g_5aa8 = (r_vid.mode == -6) ? 0x92 - g_6df6a->height : 0;
+    g_spriteBgY = (r_vid.mode == -6) ? 0x92 - g_6df6a->height : 0;
     g_6cf0zz = F_15BBE(*a, 2);
     bitmap_underlay(g_6cf0zz, g_6df6a, g_6dd4, ybot);
     bitmap_underlay(g_6cf0zz, g_6df6a, g_6cd8lz, ybot);
@@ -353,7 +353,7 @@ void F_1B213(int *a, int *b)
     g_6ce8rz.x1 = 0;
     g_6ce8rz.y1 = 0;
     g_6ce8rz.x2 = g_6dfa7->width - 1;
-    g_6ce8rz.y2 = g_6dfa7->height + g_5aa8 - 1;
+    g_6ce8rz.y2 = g_6dfa7->height + g_spriteBgY - 1;
     g_6d3caat = sprite_setup(g_6da0, 0x98, &g_6df6a, 0, 1, g_6cd4oz, g_6dfa7, &g_6ce8rz, 0);
     sprite_set_step(g_6d3caat, 0, 7, 0, -1);
     frame = 0;
@@ -380,7 +380,7 @@ void F_1B213(int *a, int *b)
         (*b_78a2)(g_6cdaaa[frame], g_6dfa7, &clip6, 2);
     }
     F_169E1(0);
-    g_5aa8 = (r_vid.mode == -6) ? 0x76 : 0;
+    g_spriteBgY = (r_vid.mode == -6) ? 0x76 : 0;
     g_6d2c0nz = dst;
     swap_wheel(g_6da0 + g_6dd4, a, b);
     g_6d2c0nz = pic;
@@ -400,7 +400,7 @@ void F_1B213(int *a, int *b)
     if (r_vid.mode == -2)
         (*b_78a2)(r_vid.front, g_5ab4, &blt, 1);
     swap_wheel(g_6da0 + g_6cd8lz, a, b);
-    g_5aa8 = (r_vid.mode == -6) ? 0x92 - g_6df6a->height : 0;
+    g_spriteBgY = (r_vid.mode == -6) ? 0x92 - g_6df6a->height : 0;
     g_6de2a[0] = F_15BBE(*b, 1);
     blt.w = g_6df6a->width;
     blt.h = g_6de2a[0]->height;
@@ -418,7 +418,7 @@ void F_1B213(int *a, int *b)
     g_6ce8rz.x1 = 0;
     g_6ce8rz.y1 = 0;
     g_6ce8rz.x2 = g_6dfa7->width - 1;
-    g_6ce8rz.y2 = g_6dfa7->height + g_5aa8 - 1;
+    g_6ce8rz.y2 = g_6dfa7->height + g_spriteBgY - 1;
     g_6d3caat = sprite_setup(g_6da0, 0x94, &g_6df6a, 0, 1, g_6cd4oz, g_6dfa7, &g_6ce8rz, 0);
     sprite_set_step(g_6d3caat, 0, 9, 0, 1);
     F_169E1(1);
@@ -444,7 +444,7 @@ void F_1B213(int *a, int *b)
     }
     F_169E1(0);
     F_16381(0);
-    g_5aa8 = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
+    g_spriteBgY = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
     if (r_vid.mode == -2)
         (*dz78b6)(bp7316[0]->bits.p, bp7316[1]->bits.p);
     g_6d3caat = sprite_setup(0x88, 0x99, &g_6cdaaa[1], 0, 1, g_5ab8, g_6d28agz, 0, 0);
@@ -457,6 +457,6 @@ void F_1B213(int *a, int *b)
     r_vid.f16 = sv401;
     m_8272.m8272 = s72;
     m_8272.m8274 = s74;
-    g_5aa8 = 0;
+    g_spriteBgY = 0;
     F_120FE(-2);
 }

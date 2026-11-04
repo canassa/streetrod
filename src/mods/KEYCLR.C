@@ -6,5 +6,5 @@
 
 void keyclr_flush(void)
 {
-    g_47d0 = 0;
+    g_lastKey = 0;
 }

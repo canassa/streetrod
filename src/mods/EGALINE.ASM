@@ -2,7 +2,7 @@
 
         .DATA
         EXTRN   _av787at:WORD
-        EXTRN   _g_5c1e:WORD
+        EXTRN   _g_egaGcFunction:WORD
 
         .CODE S21A0_TEXT
 
@@ -26,7 +26,7 @@ _egaline_draw  PROC  FAR
         out     dx,ax
         mov     ax,0F01h
         out     dx,ax
-        mov     ax,_g_5c1e
+        mov     ax,_g_egaGcFunction
         mov     al,3
         out     dx,ax
         mov     si,40                   ; row stride

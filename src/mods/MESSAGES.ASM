@@ -117,24 +117,24 @@ _g_239e DB      0, 0, '________________________', 0  ; DS:239E char[]
         DB      'Rebuild roof - $70', 0
         DB      'Strip bumper - $15', 0
         DB      'Restore bumper - $15', 0
-        PUBLIC  _g_28ec
-_g_28ec DB      'Wanna quit ?', 0        ; DS:28EC char[]
-        PUBLIC  _g_28f9
-_g_28f9 DB      'Back to the garage', 0  ; DS:28F9 char[]
-        PUBLIC  _g_290c
-_g_290c DB      'Click here to edit', 0  ; DS:290C char[]
+        PUBLIC  _g_msgWannaQuit
+_g_msgWannaQuit DB      'Wanna quit ?', 0        ; DS:28EC char[]
+        PUBLIC  _g_msgBackToGarage
+_g_msgBackToGarage DB      'Back to the garage', 0  ; DS:28F9 char[]
+        PUBLIC  _g_msgClickToEdit
+_g_msgClickToEdit DB      'Click here to edit', 0  ; DS:290C char[]
         PUBLIC  _g_291f
 _g_291f DB      31 DUP (0)               ; DS:291F char[]
-        PUBLIC  _g_293e
-_g_293e DB      41 DUP (0)               ; DS:293E char[]
-        PUBLIC  _g_2967
-_g_2967 DB      41 DUP (0)               ; DS:2967 char[]
+        PUBLIC  _g_promptLine1
+_g_promptLine1 DB      41 DUP (0)               ; DS:293E char[]
+        PUBLIC  _g_promptLine2
+_g_promptLine2 DB      41 DUP (0)               ; DS:2967 char[]
 ; DS:2990 char[]
         PUBLIC  _g_2990
 _g_2990 DB      0, ',,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,', 0
         DB      'You want to buy it for '
-        PUBLIC  _g_29d6
-_g_29d6 DB      0, '----------', 0       ; DS:29D6 char[]
+        PUBLIC  _g_buyPrice
+_g_buyPrice DB      0, '----------', 0       ; DS:29D6 char[]
         DB      'How about ', 0
         DB      '          ', 0
         PUBLIC  _g_29f8
@@ -144,8 +144,8 @@ _g_29f8 DB      0, '     ', 0            ; DS:29F8 char[]
 _g_29ff DB      0, '.............................................', 0
         PUBLIC  _g_2a2e
 _g_2a2e DB      0, '              ', 0   ; DS:2A2E char[]
-        PUBLIC  _g_2a3e
-_g_2a3e DB      'Change', 0              ; DS:2A3E char[]
+        PUBLIC  _g_msgSellChange
+_g_msgSellChange DB      'Change', 0              ; DS:2A3E char[]
         DB      0, 0, 0, 0, 'Forget it', 0
         DB      0, 'OK', 0
         DB      8 DUP (0)
@@ -154,30 +154,30 @@ _g_2a3e DB      'Change', 0              ; DS:2A3E char[]
 _g_2a5f DB      0, '222222222222222222222222222222222222222222222', 0
         DB      'Oh, well, it could have been worse.', 0
 ; DS:2AB2 char[]
-        PUBLIC  _g_2ab2
-_g_2ab2 DB      '$123 for``parts``and``you``are``back``on``the``stree'
+        PUBLIC  _g_msgRepairCost
+_g_msgRepairCost DB      '$123 for``parts``and``you``are``back``on``the``stree'
         DB      'ts.', 0
-        PUBLIC  _g_2aea
-_g_2aea DB      31 DUP (0)               ; DS:2AEA char[]
+        PUBLIC  _g_msgPlusTires
+_g_msgPlusTires DB      31 DUP (0)               ; DS:2AEA char[]
 ; DS:2B09 char[]
-        PUBLIC  _g_2b09
-_g_2b09 DB      "Damn.``It'll``cost $123 to``get``this``baby``running"
+        PUBLIC  _g_msgRunCost
+_g_msgRunCost DB      "Damn.``It'll``cost $123 to``get``this``baby``running"
         DB      ".", 0
-        PUBLIC  _g_2b3f
-_g_2b3f DB      51 DUP (0)               ; DS:2B3F char[]
-        PUBLIC  _g_2b72
-_g_2b72 DB      51 DUP (0)               ; DS:2B72 char[]
+        PUBLIC  _g_raceResult1
+_g_raceResult1 DB      51 DUP (0)               ; DS:2B3F char[]
+        PUBLIC  _g_raceResult2
+_g_raceResult2 DB      51 DUP (0)               ; DS:2B72 char[]
         PUBLIC  _g_2ba5
 _g_2ba5 DW      3E9h                     ; DS:2BA5 int
         PUBLIC  _g_2ba7
 _g_2ba7 DW      3F0h                     ; DS:2BA7 int
-        PUBLIC  _g_2ba9
-_g_2ba9 DW      336h                     ; DS:2BA9 int
-        PUBLIC  _g_2bab
-_g_2bab DW      325h                     ; DS:2BAB int
+        PUBLIC  _g_offSquelch
+_g_offSquelch DW      336h                     ; DS:2BA9 int
+        PUBLIC  _g_offTunes
+_g_offTunes DW      325h                     ; DS:2BAB int
 ; DS:2BAD int[]
-        PUBLIC  _g_2bad
-_g_2bad DW      29h, 0, 2, 6, 1Ah, 2Eh, 43h, 48h, 4Dh, 6Ch, 73h, 87h
+        PUBLIC  _g_screenHot
+_g_screenHot DW      29h, 0, 2, 6, 1Ah, 2Eh, 43h, 48h, 4Dh, 6Ch, 73h, 87h
         DW      9Ch, 0A3h, 0A6h, 0ADh, 0B2h, 0B7h, 0B9h, 0BFh, 0C5h
         DW      0CBh, 0DDh, 0E2h, 0EAh, 0EDh, 0F4h, 0FAh, 102h, 107h
         DW      10Ch, 111h, 116h, 11Bh, 11Fh, 124h, 12Fh, 142h, 15Dh
@@ -294,8 +294,8 @@ _g_39c9 DB      "You've got``too``much``junk``in``your``garage`!", 0
         DB      1, 'Sell some cars first`!', 0
         DB      1, 'Sell some parts first`!', 0
         DB      2
-        PUBLIC  _g_3a5a
-_g_3a5a DB      "No go, hot shot. You're $12345 short.", 0  ; DS:3A5A char[]
+        PUBLIC  _g_msgShort
+_g_msgShort DB      "No go, hot shot. You're $12345 short.", 0  ; DS:3A5A char[]
         PUBLIC  _g_3a80
 _g_3a80 DB      2                        ; DS:3A80 char
 S_3a81  DB      "Your car's not running, speedy`!", 0  ; DS:3A81 string
@@ -337,11 +337,11 @@ _g_3bd8 DB      2                        ; DS:3BD8 char
 S_3bd9  DB      "You've got no spare manifold`!", 0  ; DS:3BD9 string
         PUBLIC  _g_3bf8
 _g_3bf8 DB      1                        ; DS:3BF8 char
-        PUBLIC  _g_3bf9
-_g_3bf9 DB      'How about $1234 ?', 0   ; DS:3BF9 char[]
+        PUBLIC  _g_msgHowAbout
+_g_msgHowAbout DB      'How about $1234 ?', 0   ; DS:3BF9 char[]
         DB      1
-        PUBLIC  _g_3c0c
-_g_3c0c DB      'Will you take $1234 ?', 0  ; DS:3C0C char[]
+        PUBLIC  _g_msgWillYouTake
+_g_msgWillYouTake DB      'Will you take $1234 ?', 0  ; DS:3C0C char[]
         DB      2, "I'll take it off your hands for nothing.", 0
         DB      2, "You must be crazy. I'll take it`!", 0
         DB      1, 'No way`!', 0
@@ -394,8 +394,8 @@ _g_3c0c DB      'Will you take $1234 ?', 0  ; DS:3C0C char[]
         DB      3, 'You ran a good race.', 0
         DB      'You deserve to be King of the County`!', 0
         DB      3
-        PUBLIC  _g_4115
-_g_4115 DB      "Lucky you weren't killed, 'cause the car", 0  ; DS:4115 char[]
+        PUBLIC  _g_msgTotaled
+_g_msgTotaled DB      "Lucky you weren't killed, 'cause the car", 0  ; DS:4115 char[]
         DB      'is totaled. You get $123 for scrap.', 0
         DB      3, "Lucky you're so slow. You only lost", 0
         DB      'the race.', 0
@@ -438,8 +438,8 @@ _g_4115 DB      "Lucky you weren't killed, 'cause the car", 0  ; DS:4115 char[]
         DB      1, 'Your tank is empty`!', 0
         DB      2, 'Yo, you need full service, dummy`!', 0
         DB      1
-        PUBLIC  _g_4607
-_g_4607 DB      '_______________', 0     ; DS:4607 char[]
+        PUBLIC  _g_blankName
+_g_blankName DB      '_______________', 0     ; DS:4607 char[]
         DB      1, '012345678901234', 0
         DB      1, '012345678901234', 0
         DB      1, '012345678901234', 0

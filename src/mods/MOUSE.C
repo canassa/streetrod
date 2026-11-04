@@ -31,8 +31,8 @@ void mouse_buttons(void)
     r.h.ah = 0;
     r.h.al = 3;
     int86(0x33, &r, &r);
-    g_05ee = r.h.bl & 1;
-    g_05f0 = r.h.bl & 2;
+    g_mouseLeft = r.h.bl & 1;
+    g_mouseRight = r.h.bl & 2;
 }
 
 /* mouse_motion @ 0F38:7A14 (linear 0x16D94, 51 bytes)
@@ -60,42 +60,42 @@ void mouse_poll(void)
     int mag, neg;
 
     mouse_motion(&mx, &my);
-    g_05e6 += mx;
-    g_05e8 += my;
-    if (g_05e6 < 0) {
-        mag = -g_05e6;
+    g_mouseAccX += mx;
+    g_mouseAccY += my;
+    if (g_mouseAccX < 0) {
+        mag = -g_mouseAccX;
         neg = -1;
     } else {
-        mag = g_05e6;
+        mag = g_mouseAccX;
         neg = 0;
     }
-    g_05e2 = mag >> g_05ea;
-    if (g_05e2) {
+    g_mouseDx = mag >> g_mouseShiftX;
+    if (g_mouseDx) {
         if (neg)
-            g_05e2 = -g_05e2;
-        g_05e6 = 0;
+            g_mouseDx = -g_mouseDx;
+        g_mouseAccX = 0;
     }
-    if (g_05e8 < 0) {
-        mag = -g_05e8;
+    if (g_mouseAccY < 0) {
+        mag = -g_mouseAccY;
         neg = -1;
     } else {
-        mag = g_05e8;
+        mag = g_mouseAccY;
         neg = 0;
     }
-    g_05e4 = mag >> g_05ec;
-    if (g_05e4) {
+    g_mouseDy = mag >> g_mouseShiftY;
+    if (g_mouseDy) {
         if (neg)
-            g_05e4 = -g_05e4;
-        g_05e8 = 0;
+            g_mouseDy = -g_mouseDy;
+        g_mouseAccY = 0;
     }
     mouse_buttons();
-    if (g_05ee) {
-        if (g_4732 == 0) {
-            g_4736 = 1;
-            g_4738 = g_472a;
-            g_473a = g_472c;
+    if (g_mouseLeft) {
+        if (g_buttons == 0) {
+            g_click = 1;
+            g_clickX = g_cursorX;
+            g_clickY = g_cursorY;
         }
-        g_4732 |= 4;
+        g_buttons |= 4;
     } else
-        g_4732 &= ~4;
+        g_buttons &= ~4;
 }

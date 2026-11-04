@@ -4,8 +4,8 @@
 #define TIRES_H
 #include "STRUCTS.H"
 
-extern int g_5aa8;                                      /* DS:5AA8 */
-extern int g_5aaa[3];                                   /* DS:5AAA */
+extern int g_spriteBgY;                                 /* DS:5AA8 */
+extern int g_jackPicIds[3];                             /* DS:5AAA */
 extern struct Bitmap far *g_5ab0;                       /* DS:5AB0 */
 extern struct Bitmap far *g_5ab4;                       /* DS:5AB4 */
 extern struct Bitmap far *g_5ab8;                       /* DS:5AB8 */

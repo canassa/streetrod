@@ -67,7 +67,7 @@ int egaspr_step(struct Sprite *s)
         egablit_sprite(box->pos, count->bm, height, (struct Mask *)box->data, (struct Blt *)&dest);
     } else {
         for (i = 0; i < 6; i++) {
-            if (sprite_clip_span(g_539a[i].a, g_539a[i].b, s, &dest))
+            if (sprite_clip_span(g_jailGaps[i].a, g_jailGaps[i].b, s, &dest))
                 egablit_sprite(box->pos, count->bm, height, (struct Mask *)box->data, (struct Blt *)&dest);
         }
     }
