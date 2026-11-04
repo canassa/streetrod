@@ -1338,3 +1338,15 @@ Tooling lessons are recorded in [sr-cli](../.claude/skills/sr-cli/SKILL.md); the
 - The former Deadlines cluster is the game clock, with elapsed time computed as actionTicks + biosTicks - timeBase. The saved-game format preserves action time and the BIOS-time delta separately.
 - road_project_ahead fills 15 values through the 13-word right-X array, reaching its two named endpoint words. The right-outer pair similarly follows another 13-word projection array. These runs suggest full arrays rather than new endpoint records; widening the latter writer is outside this task's owned span.
 - Palette and backward row-count pointer walks likewise do not establish the proposed wrapper boundaries. Extra unused bytes alone do not justify extending an existing engine, sprite-band, popup or scenery record.
+
+## 2026-11-04 19:03 CET: Apply the round-two independent struct review
+
+### What I did
+- Split ArchiveSelection into PicLibSelection plus the initial DOS drive and hot_data path; split AnimRun from the persistent pump blink countdown; restricted RivalPace to speed targets and named speedMargin.
+- Renamed cached wheel data to WheelPoses/bitmaps, TimerHead to TimerQueue and first to earliest. Used accurate hash-fitting names g_drawnCursor and g_fuelStationActions for the cursor and gas-action records.
+- Corrected the reconstruction choices and added the requested four shared-record role comments and GameClock spacing. Updated the scratch ledger and candidate decisions.
+- Each of the six source correction commits passed 572/572 functions, a fresh IDENTICAL packed build, headers/DGROUP/order and 62 unit tests before continuing.
+
+### What I learned
+- The independent review separated selected-library state from session/game-data state, interpreter position from hook countdown lifetime, and pace targets from shift-point state. The corrected roles are recorded in docs/RECONSTRUCTION.md.
+- Current compiler probes confirm that demo targets share the movement role but cannot be folded into DemoControl with the current expression form: target/cursor comparison operands swap, producing four wrong references in each of sys_demo_step and sys_timer_isr. Including the script index fails identically. The exact boundaries and logs are in work/structs2/DECISIONS.md.

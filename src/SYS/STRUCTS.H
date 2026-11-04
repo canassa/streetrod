@@ -733,23 +733,28 @@ struct Wager {
     enum BetKind kind;
     int amount;
 };
+
+/* Game time from action ticks, BIOS ticks and a saved time base. */
 struct GameClock {
     long actionTicks;
     long biosTicks;
     long timeBase;
 };
 
+/* Picture destination and maximum drawing height. */
 struct PicturePlacement {
     int x;
     int y;
     int maxHeight;
 };
 
+/* Draw and show page indices. */
 struct ViewPages {
     int draw;
     int show;
 };
 
+/* Clipping bounds shared by VIEW and the span drawing routines. */
 struct ViewClip {
     int xMin;
     int yMin;

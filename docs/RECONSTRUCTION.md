@@ -235,7 +235,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **ViewClip** (`g_viewClip`, DS:5E4E..5E55): VIEW and the CGA/EGA/Tandy span assemblers use all four bounds as one clipping rectangle. Assembly references use a WORD external with the corresponding member displacement. Separate globals also match; this grouping is a natural reconstruction choice.
 
-- **DemoControl** (`g_demoControl`, DS:06A4..06AD): sys_demo_step shares key-down, movement, count, previous group and auto-shift controls with SYS input and interrupt paths. The leading unused word and target coordinates stay separate. Separate globals also match; this grouping is a natural reconstruction choice.
+- **DemoControl** (`g_demoControl`, DS:06A4..06AD): sys_demo_step shares key-down, movement, count, previous group and auto-shift controls with SYS input and interrupt paths. The leading unused word stays separate. Target X/Y have the same demo-movement role, but folding them into this record reverses the cursor/target operands in sys_demo_step and sys_timer_isr (four wrong fixup references in each). Adding the script position too produces the same failures. The targets and script index therefore remain separate to preserve byte identity; this boundary is a compiler constraint rather than a semantic distinction. Separate globals also match; this grouping is a natural reconstruction choice.
 
 ## Compiler warnings
 
