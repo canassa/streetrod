@@ -1393,3 +1393,15 @@ Validation: ./sr headers --check; ./sr check --all (572/572: 551 MATCH, 21 MATCH
 ### What I learned
 
 The first verbose rename batch crossed GARAGE.C's coupled symbol budget: the transmission function grew from 1090 to 1113 bytes, causing the whole-file gate to fail while other modules still matched. Reverting global expansions alone did not repair it. Short, clear garage action names and consistent trans/hots spellings for transmission graphics and hotspots allow all 43 evidenced function placeholders to be named; incremental trials then identify which global expansions still fit. A failed cumulative trial does not mean a function cannot be named: refinements restored all initially rejected function renames. The previous rival-frame static fits MSC key 204 in its 177..256 window, while the intended hall-count, rival-banner and right-road-edge names still fail their unchanged communal hash windows. A synthesized sweep's trigger is stronger naming evidence than an unverified claim about its timbre: so_part_set names the placement cue without asserting that it sounds like a clunk.
+
+## 2026-11-04 20:40 CET: Review of naming pass 4
+
+### What I did
+- An independent review checked all 47 names against the code. It found no wrong names. Two were doubtful, and I acted on both:
+  - `gx_trans_bolts` draws the transmission picture and then its two bolts, so I renamed it `gx_trans_draw`.
+  - `so_body_change` is only a `noise(200, 10, 60)` call. RACE.C plays it for the blown engine and the dropped transmission as well, so "body change" fits one caller of three. I put back `F_16BC1`: we know what it does, but not what the sound is.
+- `cp_show_car` and `ti_change` still had old descriptions from before their names ("pop-up picture (car part…)", "car showroom sprite sequence") that contradicted what the code does. I removed them and kept the address lines.
+- All gates pass: headers, 572/572, packed EXE IDENTICAL, DGROUP check/order, tests.
+
+### What I learned
+- The naming agent's evidence for a sound helper came from one caller. Name sound effects only after looking at every caller.

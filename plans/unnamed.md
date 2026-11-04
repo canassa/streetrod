@@ -8,6 +8,7 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 |---|---|---|---|
 | 16943 | F_16943 | src/SOUND/SOUND.C | 80 |
 | 16A2F | F_16A2F | src/SOUND/SOUND.C | 43 |
+| 16BC1 | F_16BC1 | src/SOUND/SOUND.C | 34 |
 
 ## Globals and statics
 

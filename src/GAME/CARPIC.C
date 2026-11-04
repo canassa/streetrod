@@ -427,10 +427,7 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
     }
 }
 
-/* cp_show_car @ 0F38:8E48 (linear 0x181C8, 2323 bytes)
-
-   Draw a pop-up picture (car part, kind 1..8) with its frame sprite, saving and restoring the
-   screen behind it */
+/* cp_show_car @ 0F38:8E48 (linear 0x181C8, 2323 bytes) */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void cp_show_car(int kind, int idx, int flags, int kk, int q, int bot, int mode2, int *ids)

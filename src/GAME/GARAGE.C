@@ -528,7 +528,7 @@ void near ga_body(unsigned mask)
         r7 = gm_car_look(a_7eaap.currentCar);
         cp_show_car(8, n9, r7, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0x98, 0,
                 g_tirePics[g_parts[a_7eaap.currentCar->tires->idx].variant]);
-        so_body_change();
+        F_16BC1();
         cu_ctl(CURSOR_SHOW_NOW);
         g_gameClock.actionTicks += val5;
         sc_add_money(-cost);
@@ -815,7 +815,7 @@ void near ga_transmission(void)
     r_vid.copyToFront = !m_8272.transmissionPic;
     sc_picture_at(0x42e, 0x20, 10, -1);
     r_vid.copyToFront = 1;
-    gx_trans_bolts(m_8272.transmissionPic, owner->transmissionBolts);
+    gx_trans_draw(m_8272.transmissionPic, owner->transmissionBolts);
     mn_push(20);
     for (;;) {
         while ((k = sy_wait_input(3000)) == 0)

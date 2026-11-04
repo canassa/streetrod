@@ -168,9 +168,7 @@ static void near swap_wheel(int a, int *p, int *q)
     ma_pop_low(6);
 }
 
-/* ti_change @ 0F38:BE93 (linear 0x1B213, 3849 bytes)
-
-   The car showroom sprite sequence (strip sprites slide across the screen in both directions) */
+/* ti_change @ 0F38:BE93 (linear 0x1B213, 3849 bytes) */
 
 void ti_change(int *a, int *b)
 {

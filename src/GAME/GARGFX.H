@@ -26,7 +26,7 @@ void gx_trans_bolt(int a, int b);                             /* 0x123F4 */
 void gx_trans_drop(int a);                                    /* 0x12525 */
 void gx_trans_pic(int n, int flag);                          /* 0x1264E */
 void gx_trans_clear(int n, int flag);                          /* 0x12784 */
-void gx_trans_bolts(int n, char far *s);                       /* 0x127DB */
+void gx_trans_draw(int n, char far *s);                       /* 0x127DB */
 void gx_part_pos(int *px, int *py);                 /* 0x12909 */
 void gx_bolt_pos(int *px, int *py);                 /* 0x12964 */
 void gx_draw_bolt(int n);                           /* 0x12A17 */

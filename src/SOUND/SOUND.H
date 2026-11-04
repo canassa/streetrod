@@ -32,7 +32,7 @@ void so_squeal(int on);                              /* 0x16AC1 */
 void so_buzz(void);                                  /* 0x16B3A */
 void so_bolt(void);                                     /* 0x16B61 */
 void so_part_set(void);                                     /* 0x16B97 */
-void so_body_change(void);                                     /* 0x16BC1 */
+void F_16BC1(void);                                     /* 0x16BC1 */
 void so_crash(void);                                 /* 0x16BE3 */
 void so_bump(void);                                     /* 0x16C8F */
 void so_bolt_turn(void);                                     /* 0x16CF3 */

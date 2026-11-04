@@ -166,12 +166,12 @@ void gx_trans_clear(int n, int flag)
     ma_pop_high(1);
 }
 
-/* gx_trans_bolts @ 0F38:345B (linear 0x127DB, 160 bytes)
+/* gx_trans_draw @ 0F38:345B (linear 0x127DB, 160 bytes)
 
    Redraw the dialog picture n and its two bars; s gives the bar states.
    The screen shadow flag is switched off while drawing and the area is copied to the front afterwards. */
 
-void gx_trans_bolts(int n, char far *s)
+void gx_trans_draw(int n, char far *s)
 {
     int saved;
     int i;
