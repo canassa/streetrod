@@ -20,7 +20,7 @@
 #include "SYS.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_skyClipY;                      /* DS:6E04 */
+static int g_6e04aay;                      /* DS:6E04 */
 static int g_roadRowLimit;                      /* DS:6E06 */
 static struct RenderRows g_renderRows; /* DS:6E08 */
 static int g_prevRivalFrame;                        /* DS:6E2A */
@@ -59,9 +59,9 @@ struct Clip g_viewRect = {SCREEN_WIDTH, 82, 0, 18, 0, 18};   /* DS:5E42 */
 struct ViewClip g_viewClip = {0, 18, 101, (SCREEN_WIDTH - 1)}; /* DS:5E4E */
 unsigned char g_shrinkMasks[3][4] = {{87, 37, 34, 0}, {247, 117, 82, 0}, {117, 84, 33, 0}};   /* DS:5E56 */
 int g_5e62[18] = {1258, 1237, 1236, 1238, 8, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0};   /* DS:5E62 */
-int g_lastRoadLineWidth = 0;   /* DS:5E86 */
+int g_5e86 = 0;   /* DS:5E86 */
 int g_5e88[5] = {0, 0, 0, 0, 0};   /* DS:5E88 */
-int g_lastMirrorLineWidth = 0;   /* DS:5E92 */
+int g_5e92 = 0;   /* DS:5E92 */
 int g_5e94[4] = {0, 0, 0, 0};   /* DS:5E94 */
 struct Ball g_sheetRects[7] = {{256, 8, 8}, {240, 16, 13}, {208, 32, 19}, {168, 40, 24}, {120, 48, 30}, {64, 56, 37}, {0, 64, 43}};   /* DS:5E9C */
 
@@ -364,14 +364,14 @@ static void near render_backdrop(void)
         b.sx = ll;
         b.dx = 0;
         (*g_videoOps.copy)(g8188w, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
-        g_skyClipY = v + 8;
+        g_6e04aay = v + 8;
         for (i = 14; i; i--) {
-            if (bq7884[i] < g_skyClipY) {
-                g_skyClipY = bq7884[i];
+            if (bq7884[i] < g_6e04aay) {
+                g_6e04aay = bq7884[i];
                 g_roadRowLimit = i;
             }
         }
-        (*g_videoOps.fillBelow)(g_skyClipY, 9);
+        (*g_videoOps.fillBelow)(g_6e04aay, 9);
     } else
         (*g_videoOps.fillBelow)(0x3f, 1);
 }
@@ -1206,7 +1206,7 @@ static void near render_opponent(void)
         b.sx = 0;
         b.dx = ra - (b.w >> 1);
         b.sy = 0;
-        b.dy = (seln < 9 ? (rb < g_skyClipY ? g_skyClipY : rb) : rb) - b.h;
+        b.dy = (seln < 9 ? (rb < g_6e04aay ? g_6e04aay : rb) : rb) - b.h;
         if (seln == 2 && b.dy + b.h >= 0x65)
             b.dy = 0x65 - b.h;
     }
@@ -1258,7 +1258,7 @@ static void near render_mirror(void)
     g_renderRows.prevBuildingY = &g_mirGeom.buildingY[6];
     g_renderRows.prevLeftOuterX = &al70c0x.m70ce;
     g_renderRows.prevRightOuterX = &al70c0x.m70de;
-    g_renderRows.lineWidth = &g_lastMirrorLineWidth;
+    g_renderRows.lineWidth = &g_5e92;
     g_renderRows.leftFlags = (int far *)(q_72ee - 8);
     g_renderRows.rightFlags = (int far *)(g_rightSideTerrainRow - 8);
     am8b82y = (int far *)(g7d62p - 8);
@@ -1414,7 +1414,7 @@ void vw_draw(void)
     g_renderRows.prevBuildingY = &g_yBuildingTopArray[13];
     g_renderRows.prevLeftOuterX = &al7fa4z;
     g_renderRows.prevRightOuterX = &dz7ff2;
-    g_renderRows.lineWidth = &g_lastRoadLineWidth;
+    g_renderRows.lineWidth = &g_5e86;
     g_renderRows.leftFlags = (int far *)(q_72ee + 14);
     g_renderRows.rightFlags = (int far *)(g_rightSideTerrainRow + 14);
     am8b82y = (int far *)(g7d62p + 14);

@@ -29,9 +29,9 @@ extern struct Clip g_viewRect;                          /* DS:5E42 */
 extern struct ViewClip g_viewClip; /* DS:5E4E */
 extern unsigned char g_shrinkMasks[3][4];               /* DS:5E56 */
 extern int g_5e62[];                                    /* DS:5E62 */
-extern int g_lastRoadLineWidth;                                      /* DS:5E86 */
+extern int g_5e86;                                      /* DS:5E86 */
 extern int g_5e88[5];                                   /* DS:5E88 */
-extern int g_lastMirrorLineWidth;                                      /* DS:5E92 */
+extern int g_5e92;                                      /* DS:5E92 */
 extern int g_5e94[4];                                   /* DS:5E94 */
 extern struct Ball g_sheetRects[];                      /* DS:5E9C */
 extern struct Bitmap far *k_6e60;                       /* DS:6E60 */

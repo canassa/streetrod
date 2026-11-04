@@ -49,7 +49,9 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 | 5AF3 | g_5af3 | `char @` | VIDDET |
 | 5E3C | g_5e3c | `int @` | VIEW |
 | 5E62 | g_5e62 | `int @[]` | VIEW |
+| 5E86 | g_5e86 | `int @` | VIEW |
 | 5E88 | g_5e88 | `int @[5]` | VIEW |
+| 5E92 | g_5e92 | `int @` | VIEW |
 | 5E94 | g_5e94 | `int @[4]` | VIEW |
 | 5EC6 | g_5ec6 | `int @` | SCENERY |
 | 6010 | g_6010 | `struct Run @[7]` | SCENERY |
@@ -58,6 +60,7 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 | 6068 | g_6068 | `struct List @` | SCENERY |
 | 6076 | g_6076 | `int @` | SCENERY |
 | 6C42 | g_6c42 | `int @[2]` | src/UI/POPUP.C |
+| 6E04 | g_6e04aay | `int @` | src/GAME/VIEW.C |
 | 6E60 | k_6e60 | `struct Bitmap far *@` | VIEW |
 | 70C0 | al70c0x | `struct State70C0 @` | RACE |
 | 70E0 | dz70e0 | `int @` | VIEW |

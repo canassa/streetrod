@@ -1420,3 +1420,15 @@ The first verbose rename batch crossed GARAGE.C's coupled symbol budget: the tra
 - Renaming the road-row-limit static widened its neighbor's hash window, allowing g_skyClipY. A shorter so_noise spelling recovered enough cumulative compiler budget for g_stickerBg; the coupled constraints in CLAUDE.md rules 4d/4f apply to the final set of names.
 - VIEW's line-width pointers decrement into preceding words: the mixed table at DS:5E62 is not purely picture IDs. Several projected row arrays and bolt mappings likewise extend across placeholder declarations; these grouping candidates are documented for a later structural pass.
 - The two unused jingle wrappers have no callers in either the source search or binary call graph. Their musical parameters do not prove the intended effect names.
+
+## 2026-11-04 21:10 CET: Review of naming pass 5
+
+### What I did
+- An independent review found 8 of the 11 names supported and 3 doubtful. I put the three doubtful ones back to placeholders:
+  - `g_lastRoadLineWidth` and `g_lastMirrorLineWidth` are never read or written by name. Each only seeds the `g_renderRows.lineWidth` pointer, which then walks down a per-row width table that starts inside `g_5e62`/`g_5e88`. "last" was wrong, and the real table boundaries are a struct/array question for later.
+  - `g_skyClipY`: nothing in the code shows "sky". It is the topmost road-row Y, used as a lower bound and passed to `fillBelow`.
+- All gates pass after the reverts: headers, 572/572, packed EXE IDENTICAL, DGROUP check/order, tests.
+
+### What I learned
+- `bq7884` is declared `int[13]`, but VIEW.C reads its indices 13 and 14. Either the declared extent is wrong or the original read past it. Still open.
+- The placeholder globals that were skipped all got one blanket reason. The next pass needs one reason per item.
