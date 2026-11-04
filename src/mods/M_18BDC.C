@@ -15,6 +15,7 @@
 #include "M_19ED0.H"
 #include "M_24E78.H"
 
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static struct Rect g_6cc4;                 /* DS:6CC4 */
 static struct Bitmap far *g_6ccc;          /* DS:6CCC */
 

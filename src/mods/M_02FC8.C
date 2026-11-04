@@ -19,12 +19,13 @@
 #include "M_15396.H"
 #include "M_19ED0.H"
 
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static int g_score;                        /* DS:6C5E */
 static int near score_index(void);
 static int near entry_beats_score(int i);
 static void near insert_entry(int pos);
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 struct Entry aytablex[10];
 
 struct ManualEntry g_manual[51] = {{2, 2}, {3, 11}, {4, 6}, {6, 5}, {7, 9}, {8, 1}, {9, 4}, {10, 6}, {11, 10}, {12, 1}, {14, 7}, {15, 12}, {16, 2}, {18, 3}, {19, 11}, {20, 5}, {22, 10}, {23, 6}, {1, 3}, {2, 5}, {3, 9}, {4, 4}, {5, 8}, {6, 10}, {7, 7}, {8, 2}, {9, 12}, {10, 5}, {11, 1}, {12, 3}, {13, 11}, {14, 9}, {15, 8}, {16, 4}, {17, 6}, {18, 1}, {19, 10}, {20, 8}, {21, 9}, {22, 12}, {23, 7}, {24, 2}, {25, 3}, {26, 1}, {27, 8}, {28, 5}, {29, 11}, {30, 10}, {31, 4}, {32, 12}, {33, 9}};   /* DS:4B62 */

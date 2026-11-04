@@ -2,7 +2,7 @@
 #include "M_03614.H"
 #include "M_113A2.H"
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 struct Node2 as83b0[16];
 struct Node aj866au[140];
 

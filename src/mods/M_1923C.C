@@ -3,9 +3,10 @@
 #include "M_00000.H"
 #include "M_036A8.H"
 
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static char far *g_6cd0;                   /* DS:6CD0 */
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 int bl78de;
 int g7b14o;
 int g7d80q;

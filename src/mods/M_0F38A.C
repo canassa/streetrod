@@ -26,6 +26,7 @@
 
 #pragma intrinsic(abs, cos, sin, outp, inp)
 
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static int g_6c22[3];                      /* DS:6C22 */
 static struct Bitmap far *g_6c28gzz[3];    /* DS:6C28 */
 static void near F_0F418(int x, int y, int w, int h, int kind);
@@ -33,7 +34,7 @@ static void near F_0F38A(int x, int y, int w, int h, int kind);
 static struct Track *g_6c34;               /* DS:6C34 */
 static int g_6c36;                         /* DS:6C36 */
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 struct Bitmap far *bm7678;
 unsigned at767ct;
 unsigned av787at;

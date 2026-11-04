@@ -20,6 +20,7 @@
 #include "M_1947A.H"
 #include "M_19ED0.H"
 
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static struct Bitmap far *g_6cd4oz;        /* DS:6CD4 */
 static int g_6cd8lz;                       /* DS:6CD8 */
 static struct Bitmap far *g_6cdaaa[3];     /* DS:6CDA */
@@ -49,7 +50,7 @@ static struct Bitmap far *g_6df2a;         /* DS:6DF2 */
 static struct Bitmap far *g_6df6a;         /* DS:6DF6 */
 static struct Bitmap far *g_6dfa7;         /* DS:6DFA */
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 
 static struct Bitmap far * near F_1A9B2(int n);
 static void near F_1ABAC(int a, int *p, int *q);

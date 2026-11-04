@@ -17,13 +17,14 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static int g_6c56;                         /* DS:6C56 */
 static int g_6c58;                         /* DS:6C58 */
 static int g_6c5a;                         /* DS:6C5A */
 static int g_6c5c;                         /* DS:6C5C */
 static char * near F_14341(int wear);
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 void (far *bp78ba)(struct Bitmap far *, int, int, int, int, int, int);
 int bq824e;
 int ai8b86y[4];

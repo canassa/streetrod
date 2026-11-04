@@ -13,9 +13,10 @@
 #include "M_16D1A.H"
 #include "SLOTS.H"
 
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static int g_6c82;                         /* DS:6C82 */
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 struct Eng g79e2g;
 
 int g_51d8[5] = {42, 26, 12, 8, 4};   /* DS:51D8 */

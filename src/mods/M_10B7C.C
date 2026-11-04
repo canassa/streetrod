@@ -18,6 +18,7 @@
 
 #pragma intrinsic(outp, inp)
 
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static struct Cmd *g_cmd;                  /* DS:6C38 */
 static struct Obj *g_obj;                  /* DS:6C3A */
 static struct Box *g_box;                  /* DS:6C3C */
@@ -25,7 +26,7 @@ static int g_6c3ea;                        /* DS:6C3E */
 static void near F_10DDF(void);
 static void near F_10E3D(int n);
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 struct Colors x_colors;
 struct Bitmap far *bp7316[4];
 struct Obj bm7568[5];

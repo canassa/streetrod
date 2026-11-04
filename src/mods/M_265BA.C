@@ -15,6 +15,7 @@
 
 #pragma intrinsic(abs)
 
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static int g_6dfeaa;                       /* DS:6DFE */
 static int g_6e00;                         /* DS:6E00 */
 static int g_6e02;                         /* DS:6E02 */
@@ -571,7 +572,7 @@ void F_27198(void)
     F_26FE1(100);
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 unsigned far *q_72ee;
 int at72f8[13];
 int far *af7560z;

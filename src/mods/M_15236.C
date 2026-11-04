@@ -2,6 +2,7 @@
 #include "STRUCTS.H"
 #include "M_15236.H"
 
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static int g_rngA;                         /* DS:6C62 */
 static int g_rngB;                         /* DS:6C64 */
 static int g_rngC;                         /* DS:6C66 */

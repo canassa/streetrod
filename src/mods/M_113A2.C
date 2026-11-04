@@ -19,7 +19,7 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 int o_8250;
 int au8252x;
 int as8254y;

@@ -14,8 +14,9 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static struct Win *g_6c40;                 /* DS:6C40 */
-static int g_6c42[2];                      /* DS:6C42 */
+static int g_6c42[2];                      /* DS:6C42 PROVISIONAL: 4 unreferenced bytes after g_6c40 */
 
 struct Win g_04c4[3] = {{1072, 1, 72, 30, 152, 37, 0, 6, 144}, {1073, 1, 80, 30, 232, 37, 0, 6, 223}, {1074, 2, 80, 20, 232, 46, 0, 6, 223}};   /* DS:04C4 */
 struct Bitmap far *g_04fa = 0;   /* DS:04FA */
