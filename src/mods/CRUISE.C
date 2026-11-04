@@ -47,7 +47,7 @@ void cruise_rival_paint(int mode)
 {
     char a, b;
 
-    if (r_vid.mode == -2 || r_vid.mode == -6) {
+    if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) {
         if (mode == -1) {
             a = g_savedPal12;
             b = g_savedPal3;

@@ -5,6 +5,7 @@
 #include "EGABLIT.H"
 #include "DASH.H"
 #include "EGALATCH.H"
+#include "MAIN.H"
 #include "MASKBG.H"
 #include "MASKBLT.H"
 #include "MASKOR.H"
@@ -50,16 +51,16 @@ void egablit_copy(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *re
         o = 4;
     }
     c = N ? 5 : 4;
-    M = (dst->flags == -2) ? EGA_PITCH : dst->pitch;
-    g = (dst->flags == -2) ? 0 : dst->height * M;
+    M = (dst->flags == VID_EGA) ? EGA_PITCH : dst->pitch;
+    g = (dst->flags == VID_EGA) ? 0 : dst->height * M;
     m += h.sy * M + h.sx;
     p = src->height;
-    i = (src->flags == -2) ? EGA_PITCH : src->pitch;
-    e = (src->flags == -2) ? 0 : p * i;
+    i = (src->flags == VID_EGA) ? EGA_PITCH : src->pitch;
+    e = (src->flags == VID_EGA) ? 0 : p * i;
     a += h.dy * i + h.dx;
     d = h.w;
     j = h.h;
-    if (src->flags == -2 && dst->flags == -2) {
+    if (src->flags == VID_EGA && dst->flags == VID_EGA) {
         egalatch_rect(m, a, d, j, 0, 0, EGA_PITCH);
         return;
     }
@@ -145,7 +146,7 @@ void egablit_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitma
     a = bm2->height;
     K = bm2->pitch;
     h = bm3->pitch;
-    f = (bm2->flags == -2) ? 0 : a * K;
+    f = (bm2->flags == VID_EGA) ? 0 : a * K;
     c = bm2->bits.p + i.dy * K + i.dx;
     M = bm1->bits.w.seg;
     m = bm1->bits.w.off + i.sx + i.sy * g;
@@ -206,8 +207,8 @@ void egablit_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *
     h = e.h;
     n = bm1->height * d;
     p = bm2->height;
-    g = (bm2->flags == -2) ? EGA_PITCH : bm2->pitch;
-    c = (bm2->flags == -2) ? 0 : p * g;
+    g = (bm2->flags == VID_EGA) ? EGA_PITCH : bm2->pitch;
+    c = (bm2->flags == VID_EGA) ? 0 : p * g;
     a = bm2->bits.p + e.dy * g + e.dx;
     l = bm1->bits.w.seg;
     j = bm1->bits.w.off + e.sx + e.sy * d;

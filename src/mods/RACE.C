@@ -534,7 +534,7 @@ static void near show_crash(void)
     struct Blt pkt;
     int fast, i;
 
-    fast = r_vid.mode == -2 && g_vga == 0;
+    fast = r_vid.mode == VID_EGA && g_vga == 0;
     sound_crash();
     marks_clear();
     a = F_15BBE(0x4eb, ARENA_LOW_STACK);
@@ -1120,7 +1120,7 @@ static void near rival_accelerate(void)
                 g_oppEngState.f18++;
                 if (g_oppEngState.f24 == 0)
                     g_shiftPoint = g_oppEngState.f18 < g_oppEngState.f1c ? g_oppEngState.f1e - 100 * g_rivalShiftPen
-                           : bu8acc < 4 && r_vid.mode != -6 ? 0x14b4 : 0x1518;
+                           : bu8acc < 4 && r_vid.mode != VID_TANDY ? 0x14b4 : 0x1518;
                 g_oppEngState.f40 = g_oppEngState.f34[g_oppEngState.f18];
                 g_oppEngState.fe = g_oppEngState.f0 * g_oppEngState.f40;
                 if ((r = &g_oppEngState.gear[g_oppEngState.f18].r[g_rpmBand = 1])->f2 <= g_oppEngState.fe) {

@@ -45,14 +45,14 @@ void cursor_init(void)
 
     bytes = 0x600;
     size = (r_vid.planes + 1) * bytes + 0x60;
-    if (r_vid.mode != -2)
+    if (r_vid.mode != VID_EGA)
         size += (0x18 >> r_vid.shift) << 4;
     mem = (struct Bitmap far *)mem_alloc(size, 1);
     mem->bits.p = (char far *)mem + 0x30;
     img = mem_new_bitmap(0x18 << r_vid.shift, 0x40, 1, -1, mem);
     g_cursor2.save = (struct Bitmap far *)(img->alt.p + bytes);
-    mem_set_bitmap(g_cursor2.save, r_vid.mode == -2 ? CURSOR_EGA_SAVE : (char far *)(g_cursor2.save + 1), 0L,
-            (0x18 >> r_vid.shift) << r_vid.shift, 0x10, r_vid.mode == -2 ? -2 : -1);
+    mem_set_bitmap(g_cursor2.save, r_vid.mode == VID_EGA ? CURSOR_EGA_SAVE : (char far *)(g_cursor2.save + 1), 0L,
+            (0x18 >> r_vid.shift) << r_vid.shift, 0x10, r_vid.mode == VID_EGA ? VID_EGA : -1);
     memset(&g_cursor2.clip, 0, 12);
     g_cursor2.state = 0;
     pict = F_15BBE(2, ARENA_HIGH_STACK);
@@ -72,7 +72,7 @@ void cursor_init(void)
     marks_clear();
     g_cursor2.shape = img->bits.p;
     g_cursor2.mask = img->alt.p;
-    if (r_vid.mode == -2) {
+    if (r_vid.mode == VID_EGA) {
         fp = (unsigned far *)g_cursor2.mask;
         step = img->planesize >> 3;
         while (step--) {
@@ -142,7 +142,7 @@ void cursor_draw(int x, int y)
 
     if (g_cursor2.state) {
         if (g_cursor2.clip.w > 0) {
-            if (r_vid.mode == -2)
+            if (r_vid.mode == VID_EGA)
                 egalatch_to_page(g_cursor2.save->bits.p, g_cursor2.clip.w >> 3, g_cursor2.clip.h, r_vid.back->bits.p + EGA_PITCH * g_cursor2.clip.dy + (g_cursor2.clip.dx >> 3), 0x18 >> r_vid.shift);
             else
                 (*b_78a2)(g_cursor2.save, r_vid.back, (struct Blt *)&g_cursor2.clip, 1);

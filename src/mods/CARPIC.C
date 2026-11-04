@@ -126,7 +126,7 @@ static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int co
 
     base2 = g_pageBmps[2]->bits.p + BACKDROP_ROWS * g_pageBmps[2]->pitch;
     H5 = B[0]->height - y2 - h;
-    v = (r_vid.mode == -6 ? color << 4 : color << 2 | color << 4 | color << 6) | color;
+    v = (r_vid.mode == VID_TANDY ? color << 4 : color << 2 | color << 4 | color << 6) | color;
     maxw = B[0]->width;
     for (i = 1; i < n; i++)
         if (B[i]->width > maxw)
@@ -169,7 +169,7 @@ void carpic_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, s
     start->bits.w.off += h * size;
     start->height = y2;
     start->planesize = y2 * size * r_vid.planes;
-    if (r_vid.mode == -6) {
+    if (r_vid.mode == VID_TANDY) {
         if (g_backdropW == 0)
             g_backdropW = src->width;
         *pa = F_1934E(g_backdropW, y2, flag, ARENA_LOW_STACK);
@@ -183,10 +183,10 @@ void carpic_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, s
         bitmap_copy(start, *pa, 1);
     }
     switch (r_vid.mode) {
-    case -2:
+    case VID_EGA:
         *pb = start;
         break;
-    case -6:
+    case VID_TANDY:
         *pb = 0;
         break;
     default:
@@ -199,7 +199,7 @@ void carpic_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, s
     *pr2 = 0;
     if (flag) {
         p2 = F_15BBE(mode, ARENA_HIGH_STACK);
-        if (r_vid.mode == -6) {
+        if (r_vid.mode == VID_TANDY) {
             blt.sy = p2->height - y2;
             (*b_78a2)(p2, *pa, &blt, 2);
         } else {
@@ -317,15 +317,15 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
     }
     j5 = 1;
     for (j5 = 1; j5 < n; j5++)
-        out[j5] = F_1934E((*out)->width + (r_vid.mode == -6 ? 0 : 8), (*out)->height,
-            r_vid.mode != -6, ARENA_LOW_STACK);
+        out[j5] = F_1934E((*out)->width + (r_vid.mode == VID_TANDY ? 0 : 8), (*out)->height,
+            r_vid.mode != VID_TANDY, ARENA_LOW_STACK);
     if (n > 1) {
         switch (r_vid.mode) {
-        case -2:
+        case VID_EGA:
             for (j5 = 1; j5 < n; j5++)
                 bitmap_shift_right(out[j5 - 1], 2, out[j5]);
             break;
-        case -6:
+        case VID_TANDY:
             for (j5 = 1; j5 < n; j5++) {
                 bitmap_copy(out[0], out[j5], 1);
                 out[j5]->alt.p = out[0]->alt.p;
@@ -343,10 +343,10 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
             bm = F_15BBE(ids[j5], ARENA_HIGH_STACK);
             h = out[j5]->height - bm->height;
             switch (r_vid.mode) {
-            case -2:
+            case VID_EGA:
                 off = j5 * 2;
                 break;
-            case -6:
+            case VID_TANDY:
                 off = 0;
                 g_keepMask = n - 1 > j5;
                 break;
@@ -365,10 +365,10 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
         h = (*out)->height - bm2n->height;
         for (j5 = 0; j5 < n; j5++) {
             switch (r_vid.mode) {
-            case -2:
+            case VID_EGA:
                 off = j5 * 2;
                 break;
-            case -6:
+            case VID_TANDY:
                 off = 0;
                 g_keepMask = n - 1 > j5;
                 break;
@@ -421,15 +421,15 @@ again:
     n2 = (kind == 3 || kind == 7 || kind == 8) ? 1 : 4;
     disk_pic_size(g7d86n[idx].f8, &w1, &h7, &x7);
     g_spriteBottomCut = g_carBottomCuts[g_scene];
-    tmpn = (r_vid.mode != -2 && r_vid.mode != -6) ? g_carBg4[g_scene] : g_carBg16[g_scene];
+    tmpn = (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? g_carBg4[g_scene] : g_carBg16[g_scene];
     hh8 = (kind == 3 || kind == 7 || kind == 8) ? h7 - g_spriteBottomCut : g_carBandHeights[g_scene];
     x0 = ((SCREEN_WIDTH - w1) / 2 + 4) & 0xfff8;
     right = kind == 2 ? SCREEN_WIDTH - x0 : x0 + w1;
     if (g_carPassBy != 2) {
         if (kind == 4) {
             g_4f4a = 1;
-            if (r_vid.mode == -2) {
-                mem_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, SCREEN_WIDTH, BACKDROP_ROWS - g_spriteBottomCut, -2);
+            if (r_vid.mode == VID_EGA) {
+                mem_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, SCREEN_WIDTH, BACKDROP_ROWS - g_spriteBottomCut, VID_EGA);
                 egalatch_rect(r_vid.back->bits.p, g_backdrop->bits.p - EGA_PITCH * top7, EGA_PITCH, g_backdrop->height, 0, top7, EGA_PITCH);
             } else {
                 mem_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, SCREEN_WIDTH, BACKDROP_ROWS - g_spriteBottomCut, -1);
@@ -450,7 +450,7 @@ again:
         if (!g_0294)
             g_0294 = F_1934E(0x40, 0x19, 0, ARENA_LOW_BASE);
         carpic_build(bms6, idx, flags, kk, q, ids, 1, n2);
-        if (r_vid.mode == -6 && kind != 3 && kind != 7 && kind != 8) {
+        if (r_vid.mode == VID_TANDY && kind != 3 && kind != 7 && kind != 8) {
             make_frames(bms6, n2, g_spriteBottomCut, hh8, tmpn);
             bms6[1] = bms6[2] = bms6[3] = bms6[0];
             marks_pop_low(3);
@@ -481,14 +481,14 @@ again:
     m_8272.m8274 += aw8260y;
     ang2 = (kind == 1 || kind == 4) ? x0 - right : x0;
     if (g_carPassBy != 2) {
-        if (r_vid.mode == -2) {
+        if (r_vid.mode == VID_EGA) {
             if (kind == 3 || kind == 8)
                 mask3 = g_backdrop->bits.p + ((g_backdrop->height - hh8) * g_backdrop->pitch + x0 / 8);
             else
                 mask3 = 0;
             make_bands(dz7ec2, bms6, n2, g_spriteBottomCut, hh8, mask3, tmpn);
         }
-        if (!((r_vid.mode == -2 || r_vid.mode == -6) && r_vid.mode != -6)) {
+        if (!((r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) && r_vid.mode != VID_TANDY)) {
             if (kind == 3 || kind == 7 || kind == 8) {
                 bm48 = F_1934E(w1, h7 - g_spriteBottomCut, 0, ARENA_LOW_STACK);
                 if (kind != 7) {
@@ -504,10 +504,10 @@ again:
                 blt.h = blt.fc = h7 - g_spriteBottomCut;
                 blt.dx = blt.dy = blt.sx = blt.sy = 0;
                 (*ab78aat)(bms6[0], bm48, &blt, 1);
-            } else if (r_vid.mode != -6)
+            } else if (r_vid.mode != VID_TANDY)
                 make_frames(bms6, n2, g_spriteBottomCut, hh8, tmpn);
         }
-        if (!((r_vid.mode == -2 || r_vid.mode == -6) && r_vid.mode != -6)) {
+        if (!((r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) && r_vid.mode != VID_TANDY)) {
             blt.w = w1;
             blt.h = h7 - g_spriteBottomCut;
             blt.sx = blt.sy = 0;
@@ -515,7 +515,7 @@ again:
             blt.dy = bot - h7 + 1;
         }
         if (kind == 3) {
-            if (r_vid.mode == -2)
+            if (r_vid.mode == VID_EGA)
                 egalatch_to_page(dz7ec2[0].p, bms6[0]->pitch, bms6[0]->height - g_spriteBottomCut,
                     r_vid.back->bits.p + ((bot - h7) * EGA_PITCH + (x0 >> 3)) + EGA_PITCH, bms6[0]->pitch);
             else
@@ -523,7 +523,7 @@ again:
             (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
             goto done;
         } else if (kind == 7 || kind == 8) {
-            if (r_vid.mode == -2)
+            if (r_vid.mode == VID_EGA)
                 egalatch_to_page(dz7ec2[0].p, bms6[0]->pitch, h7 - g_spriteBottomCut,
                     r_vid.front->bits.p + ((bot - h7) * EGA_PITCH + (x0 >> 3)) + EGA_PITCH, bms6[0]->pitch);
             else
@@ -567,7 +567,7 @@ again:
         (*b_78a2)(scratch, bms6[0], &blt, 1);
     }
     dash_set_view(2);
-    if (r_vid.mode != -2)
+    if (r_vid.mode != VID_EGA)
         (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
     if (g_carPassBy == 1) {
         kind = 2;

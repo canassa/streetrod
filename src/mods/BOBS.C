@@ -878,7 +878,7 @@ static void near play_ending(void)
     if (flag8 == 0) {
         pic58 = F_15BBE(7, ARENA_LOW_STACK);
         cntz = 9;
-        if (r_vid.mode == -6) {
+        if (r_vid.mode == VID_TANDY) {
             arena_shrink(10000);
             cntz--;
         }

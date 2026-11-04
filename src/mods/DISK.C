@@ -102,7 +102,7 @@ static int near pic_index(int n)
         n -= 0x3df;
     else
         n--;
-    if (r_vid.mode != -2 && r_vid.mode != -6)
+    if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         return g_cgaPicMap[n];
     else
         return n;
@@ -136,7 +136,7 @@ static void near open_lib(int n)
     if (*g_curHandle == 0) {
         _dos_close(*g_otherHandle);
         *g_otherHandle = 0;
-        g_msgInsertDisk[12] = kind == 1 ? '1' : (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
+        g_msgInsertDisk[12] = kind == 1 ? '1' : (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3' : '2';
         g_msgInsertDisk[25] = *g_curName;
         tries = 0;
         while (_dos_open(g_curName, 0, g_curHandle)) {
@@ -253,7 +253,7 @@ static int near load_pic(int n, int load, char far *dst)
             do {
                 if (++retries > 3)
                     sys_exit();
-                g_msgInsertDisk[12] = *g_curHandle == g_lib1Handle ? 1 : (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
+                g_msgInsertDisk[12] = *g_curHandle == g_lib1Handle ? 1 : (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3' : '2';
                 g_msgInsertDisk[25] = *g_curName;
                 screen_wait_msg(g_msgInsertDisk);
                 _dos_close(*g_curHandle);
@@ -318,7 +318,7 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
     }
     src = sl->ptr.p + 1;
     num = cur->f1c - 1;
-    if (r_vid.mode == -2) {
+    if (r_vid.mode == VID_EGA) {
         if (pic->bits.p == 0) {
             rle_decode(src, pic->alt.p, num, colors16, 16);
         } else {
@@ -326,7 +326,7 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
             if (pic->alt.p)
                 maskblt_make_mask(pic->bits.p, pic->alt.p, pic->planesize);
         }
-    } else if (r_vid.mode == -6) {
+    } else if (r_vid.mode == VID_TANDY) {
         if (pic->bits.p == 0) {
             tandypic_unpack_mask(src, pic->alt.p, pic->planesize, colors16);
         } else {
@@ -544,7 +544,7 @@ int disk_data_drive(void)
         if (_dos_open(g_dataPath, 0, &file)) {
             if (++tries > 3)
                 sys_exit();
-            g_msgInsertDisk[12] = (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
+            g_msgInsertDisk[12] = (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3' : '2';
             g_msgInsertDisk[25] = *au8dd6y;
             screen_wait_msg(g_msgInsertDisk);
         } else {

@@ -4,6 +4,11 @@
 #define MAIN_H
 #include "STRUCTS.H"
 
+#define VID_EGA (-2)
+#define VID_CGA (-3)
+#define VID_HERCULES (-4)
+#define VID_TANDY (-6)
+
 #define VIDEO_CHOICE_CGA 1
 #define VIDEO_CHOICE_EGA 2
 #define VIDEO_CHOICE_VGA 3

@@ -88,7 +88,7 @@ struct Ball g_sheetRects[7] = {{256, 8, 8}, {240, 16, 13}, {208, 32, 19}, {168, 
 
 static void near select_draw_page(void)
 {
-    if (r_vid.mode == -2) {
+    if (r_vid.mode == VID_EGA) {
         av787at = (g_drawPage == 1) ? 0xa200 : 0xa400;
         egapage_show(g_showPage);
     } else {
@@ -136,7 +136,7 @@ static void near flip_page(void)
 {
     int t;
 
-    if (r_vid.mode == -2) {
+    if (r_vid.mode == VID_EGA) {
         t = g_drawPage;
         g_drawPage = g_showPage;
         g_showPage = t;
@@ -264,15 +264,15 @@ void view_load(void)
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
-        pkt1.dy = (r_vid.mode == -2 ? DASH_Y - 1 : 0) + 1;
-        (*b_78a2)(bm24, r_vid.mode == -2 ? bm7678 : g82b4s, &pkt1, 1);
+        pkt1.dy = (r_vid.mode == VID_EGA ? DASH_Y - 1 : 0) + 1;
+        (*b_78a2)(bm24, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt1, 1);
         F_19438(1);
         bm24 = F_15BBE(0x4ee, ARENA_HIGH_STACK);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
-        pkt1.dy = (r_vid.mode == -2 ? DASH_Y - 1 : 0) + 0x2c;
-        (*b_78a2)(bm24, r_vid.mode == -2 ? bm7678 : g82b4s, &pkt1, 1);
+        pkt1.dy = (r_vid.mode == VID_EGA ? DASH_Y - 1 : 0) + 0x2c;
+        (*b_78a2)(bm24, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt1, 1);
         F_19438(1);
     }
     ar767eu = F_15BBE(0x4f3, ARENA_LOW_STACK);
@@ -303,7 +303,7 @@ void view_load(void)
         g8acew[0] = F_15BBE(g_opponentPics[idx][0], ARENA_LOW_STACK);
         g8acew[1] = F_15BBE(g_opponentPics[idx][1], ARENA_LOW_STACK);
         g8acew[2] = F_15BBE(g_opponentPics[idx][2], ARENA_HIGH_STACK);
-        load = r_vid.mode == -2 ? shrink_ega : r_vid.mode == -6 ? shrink_tandy : shrink_cga;
+        load = r_vid.mode == VID_EGA ? shrink_ega : r_vid.mode == VID_TANDY ? shrink_tandy : shrink_cga;
         for (il = 0; il < 3; il++)
             g8acew[3 + il] = (*load)(g8acew[2], g_shrinkMasks[0][il], g_shrinkMasks[0][il]);
         for (il = 0; il < 3; il++)
@@ -1010,10 +1010,10 @@ static void near render_scaled_pic(int x, int y, int n, int align, int clip, int
         b.sy = 0x66;
         break;
     case 2:
-        b.sy = (r_vid.mode == -2 ? DASH_Y - 1 : 0) + 1;
+        b.sy = (r_vid.mode == VID_EGA ? DASH_Y - 1 : 0) + 1;
         break;
     case 3:
-        b.sy = (r_vid.mode == -2 ? DASH_Y - 1 : 0) + 0x2c;
+        b.sy = (r_vid.mode == VID_EGA ? DASH_Y - 1 : 0) + 0x2c;
         break;
     }
     if (align == 1)
@@ -1033,7 +1033,7 @@ static void near render_scaled_pic(int x, int y, int n, int align, int clip, int
     if (mode == 1)
         (*b_78a2)(g82b4s, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
     else
-        (*b_78a2)(r_vid.mode == -2 ? bm7678 : g82b4s, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
+        (*b_78a2)(r_vid.mode == VID_EGA ? bm7678 : g82b4s, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
 }
 
 /* render_gantry @ 2645:3CCC (linear 0x2A11C, 247 bytes) */
@@ -1417,7 +1417,7 @@ static void near render_mirror(void)
     pkt1.sx = 0xf8;
     pkt1.sy = 0x16;
     pkt1.dx = 8;
-    pkt1.dy = (r_vid.mode == -2 ? 0 : DASH_Y) + 3;
+    pkt1.dy = (r_vid.mode == VID_EGA ? 0 : DASH_Y) + 3;
     (*b_78a2)(g_drawPage == 1 ? g8188w : g82b4s, bm7678, &pkt1, 1);
 }
 

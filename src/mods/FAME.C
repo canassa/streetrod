@@ -69,7 +69,7 @@ int fame_protect_check(void)
     screen_text(c, 0x48, a);
     cursor_ctl(CURSOR_SHOW_NOW);
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
-    if (r_vid.mode == -2 || r_vid.mode == -6)
+    if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
         video_set_palette(g_protectPal);
     else
         (*m_present)();
@@ -100,7 +100,7 @@ int fame_end_menu(void)
     c1 = x_colors.c[1];
     c3 = x_colors.c[3];
     c21 = x_colors.c[2];
-    if (r_vid.mode != -2 && r_vid.mode != -6) {
+    if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) {
         x_colors.c[0] = 3;
         x_colors.c[1] = 0;
         x_colors.c[3] = 2;
@@ -206,7 +206,7 @@ void fame_show(int add)
     video_swap_pal();
     sv286 = bustyle->c28;
     sv23 = bustyle->c23;
-    if (r_vid.mode == -2 || r_vid.mode == -6) {
+    if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) {
         bustyle->c28 = g_fameColors1;
         bustyle->c23 = g_fameColors2;
     }
@@ -225,7 +225,7 @@ void fame_show(int add)
         }
         insert_entry(pos7);
     }
-    if (r_vid.mode != -2 && r_vid.mode != -6) {
+    if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) {
         x_colors.c[0] = 3;
         x_colors.c[1] = 2;
     } else {
