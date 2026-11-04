@@ -4,6 +4,6 @@
 #define CGAFONT_H
 #include "STRUCTS.H"
 
-extern struct CgaGlyph far g_cgaFont[];                 /* 0ED2:0004 */
+extern struct CgaGlyph far g_cgaFont[];
 
 #endif

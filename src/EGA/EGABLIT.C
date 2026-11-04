@@ -11,9 +11,7 @@
 #include "MASKOR.H"
 #include "PC.H"
 
-/* eb_copy @ 21A0:1862 (linear 0x23262, 647 bytes)
-
-   Copy a rectangle between planar VGA bitmaps, plane by plane */
+/* Copy a rectangle between planar VGA bitmaps, plane by plane */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void eb_copy(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, int flags)
@@ -96,9 +94,7 @@ void eb_copy(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, i
     }
 }
 
-/* eb_sprite @ 21A0:1AE9 (linear 0x234E9, 492 bytes)
-
-   Masked blit between planar VGA bitmaps */
+/* Masked blit between planar VGA bitmaps */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void eb_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *bm3,
@@ -177,9 +173,7 @@ void eb_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far
     }
 }
 
-/* eb_masked @ 21A0:1CD5 (linear 0x236D5, 344 bytes)
-
-   Blit between planar VGA bitmaps through one of two hand-written plane routines */
+/* Blit between planar VGA bitmaps through one of two hand-written plane routines */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void eb_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int flag)
@@ -241,9 +235,7 @@ void eb_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, in
    programmer switched the loop optimizer off here. */
 #pragma loop_opt(off)
 
-/* eb_latch_pack @ 21A0:1E2D (linear 0x2382D, 117 bytes)
-
-   Copy a w by h block of planar VGA video memory using write mode 1 (latch copy) */
+/* Copy a w by h block of planar VGA video memory using write mode 1 (latch copy) */
 
 void eb_latch_pack(char far *src, int w, int h, char far *dst, int pitch)
 {

@@ -6,11 +6,9 @@
 #include "PC.H"
 #include "SYS.H"
 
-int g_revealOffsets[5] = {0, 80, 160, 40, 120};   /* DS:5C0C */
+int g_revealOffsets[5] = {0, 80, 160, 40, 120};
 
-/* ec_page @ 21A0:16DC (linear 0x230DC, 70 bytes)
-
-   Copy 8000 bytes between planar VGA buffers using write mode 1 (latch copy) */
+/* Copy 8000 bytes between planar VGA buffers using write mode 1 (latch copy) */
 
 void ec_page(char far *src, char far *dst)
 {
@@ -23,9 +21,7 @@ void ec_page(char far *src, char far *dst)
     outp(GC_DATA, GC_WRITE_MODE0);
 }
 
-/* ec_reveal @ 21A0:1722 (linear 0x23122, 267 bytes)
-
-   Copy 5 bands of 40 rows between planar VGA buffers, paced by the tick counter */
+/* Copy 5 bands of 40 rows between planar VGA buffers, paced by the tick counter */
 
 void ec_reveal(char far *dst, char far *src)
 {

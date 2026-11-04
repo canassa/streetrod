@@ -26,8 +26,6 @@
 
         .CODE S0000_TEXT
 
-; kb_text_on @ 0000:2C04 (linear 0x02C04, 39 bytes)
-
         PUBLIC  _kb_text_on
 _kb_text_on  PROC  FAR
         push    bp
@@ -46,8 +44,6 @@ skip57:
         ret
 _kb_text_on  ENDP
 
-; kb_text_off @ 0000:2C2B (linear 0x02C2B, 23 bytes)
-
         PUBLIC  _kb_text_off
 _kb_text_off  PROC  FAR
         cli
@@ -59,7 +55,6 @@ _kb_text_off  PROC  FAR
         ret
 _kb_text_off  ENDP
 
-; kb_isr @ 0000:2C42 (linear 0x02C42, 366 bytes)
 ; int 9 keyboard ISR (installed by kg_hook)
 
         PUBLIC  _kb_isr

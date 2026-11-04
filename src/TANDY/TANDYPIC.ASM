@@ -6,7 +6,6 @@
 
         .CODE S2462_TEXT
 
-; tp_init @ 2462:000E (linear 0x2462E, 76 bytes)
 ; Near helper shared by tp_unpack and tp_unpack_mask, which keep its tables in their own
 ; frame: [bp-110h] 16 bytes (copy of g_rleCounts), [bp-120h] 16 bytes (copy of
 ; g_rleValues), [bp-100h] 256 bytes mapping a colour byte of the palette passed at
@@ -48,7 +47,6 @@ index_loop:
         ret
 _tp_init  ENDP
 
-; tp_unpack @ 2462:005A (linear 0x2467A, 198 bytes)
 ; tp_unpack(src_far, dst_far, count, palette): like tp_unpack_mask, but ORs the pixels
 ; into the destination, one bit plane at a time: the plane colour word is kept
 ; at [bp-122h] (1111h, shifted left after each pass over the buffer).
@@ -160,7 +158,6 @@ done1:
         ret
 _tp_unpack  ENDP
 
-; tp_unpack_mask @ 2462:0120 (linear 0x24740, 139 bytes)
 ; tp_unpack_mask(src_far, dst_far, count, palette): expand a compressed 4-bit image.
 ; Each pattern byte gives 8 bits; every set bit makes one 4-bit pixel 0Fh in
 ; the two output words.  Code 0 skips pixels, 0FFh fills with 0FFFFh.
@@ -249,7 +246,6 @@ done2:
         ret
 _tp_unpack_mask  ENDP
 
-; tp_or_nibbles @ 2462:01AB (linear 0x247CB, 73 bytes)
 ; Near helper of tp_unpack: expand the 8 bits of al into two words of 4-bit
 ; pixels, masking the colour word kept in the caller's frame ([bp-122h]), and
 ; OR them into the destination (es:di).
@@ -299,7 +295,6 @@ b8:
         ret
 _tp_or_nibbles  ENDP
 
-; tp_read_code @ 2462:01F4 (linear 0x24814, 53 bytes)
 ; Near helper of tp_unpack and tp_unpack_mask: fetch the next code from ds:si.
 ; A code byte of 0 or 0FFh is followed by a count byte: returns cx = count+1
 ; and al = the code.  Any other byte is a pixel pattern looked up through the
@@ -339,7 +334,6 @@ run:
         ret
 _tp_read_code  ENDP
 
-; tp_make_mask @ 2462:0229 (linear 0x24849, 48 bytes)
 ; tp_make_mask(src_far, dst_far, count): turn count bytes of packed 4-bit pixels
 ; into a byte-per-pair mask: a nibble that is zero sets the corresponding
 ; nibble of the mask (0F0h for the high one, 0Fh for the low one).

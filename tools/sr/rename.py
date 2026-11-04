@@ -21,7 +21,7 @@ def text_files():
     root = config.ROOT
     out = config.source_files('.C', '.ASM', '.H', '.INC')
     out += [p for p in config.SRC.rglob('*') if p.suffix.upper() == '.MD']
-    out += [root / "CLAUDE.md", root / "README.md"]
+    out += [root / "CLAUDE.md", root / "README.md", source.SYMBOLS]
     out += list((root / "docs").glob("*.md"))
     out += list((root / ".claude" / "skills").rglob("*.md"))
     out += list((root / "tools" / "sr").glob("*.py")) + list((root / "tests").glob("*.py"))

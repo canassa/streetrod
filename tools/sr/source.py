@@ -1,22 +1,8 @@
-"""The symbol tables the tools work with, read from the sources (and, for the C runtime, from
-the EXE and MSC's libraries). Nothing is stored: every command reads the files as they are.
+"""Symbol tables from source declarations and tools/sr/symbols.json.
 
-- Game functions: the comment above each definition in src/,
-  `/* name @ SSSS:OOOO (linear 0xAAAAA, N bytes) */` (`; name @ ...` in MASM); the file that
-  holds it is its source, its extension the kind (c, asm). Near or far: the definition
-  (`near` before the C name, `PROC NEAR`/`PROC FAR`). The prototype: its header line.
-- DGROUP globals: the headers' `extern` declarations and their `/* DS:XXXX */`, and each C
-  file's uninitialized `static` definitions with their `/* DS:XXXX */` (statics are in no
-  header).
-- Far data: the headers' `extern` declarations with a `/* SSSS:OOOO */`.
-- Runtime functions: the scanner's functions in the runtime range (`scan.scan()`), named by
-  the MSC 5.1 library modules located in the EXE (`lib.locate()`); the other publics of a
-  located address are its aliases. Derived from orig/ and toolchain/, cached in work/.
-
-Rows are dicts with the keys the tools use: functions `addr seg off size kind far name src
-proto` (a runtime function also has `module`; `name` is None where no library matches),
-globals `off name decl header` (`static` set for a file static, `header` None for it), far
-data `seg off name decl header`.
+Only original function extents and data addresses are stored. Names connect those
+addresses to the current definitions and headers; source files, declarations and
+near/far distance are derived. Runtime symbols come from the EXE and MSC libraries.
 """
 import functools
 import hashlib
@@ -27,11 +13,16 @@ from pathlib import Path
 
 from . import config
 
-_FUNC = re.compile(r'^(?:/\*|;) (\w+) @ ([0-9A-F]{4}):([0-9A-F]{4}) \(linear 0x([0-9A-F]{5}), (\d+) bytes\)(?: \*/)?$',
-                   re.M)
-_EXTERN = re.compile(r'^extern\s+(.+?);\s*/\* (DS|[0-9A-F]{4}):([0-9A-F]{4}) \*/\s*$')
-_PROTO = re.compile(r'^(.+\));\s*/\* 0x([0-9A-F]{5}) \*/\s*$')
-_STATIC = re.compile(r'^static\s+([^;{}=()]*?)\s*;\s*/\* DS:([0-9A-F]{4})\b[^*]*\*/\s*$')
+SYMBOLS = Path(__file__).with_name('symbols.json')
+_EXTERN = re.compile(r'^extern\s+(.+?);\s*$')
+_PROTO = re.compile(r'^(.+\));\s*$')
+_STATIC = re.compile(r'^static\s+([^;{}=()]*?)\s*;\s*$')
+
+
+def symbol_addresses():
+    return json.loads(SYMBOLS.read_text())
+
+
 _DECLARED = re.compile(r'\b([A-Za-z_]\w*)\s*(?=(?:\[[^\]]*\]\s*)*(?:;|$|\)\s*\())')
 LIBS = ('MLIBCR.LIB', 'MLIBFP.LIB', 'LIBH.LIB', 'EM.LIB')
 
@@ -67,7 +58,7 @@ def _template(decl, name):
 def _c_far(text, at, name):
     m = re.compile(rf'^([^\n;{{}}]*?)\b{re.escape(name)}\s*\(', re.M).search(text, at)
     if m is None:
-        raise SystemExit(f'{name}: no definition after its comment')
+        raise SystemExit(f'{name}: no definition')
     words = re.findall(r'\w+', m.group(1))
     return 0 if words and words[-1] == 'near' else 1
 
@@ -81,67 +72,88 @@ def _asm_far(text, name):
 
 @functools.cache
 def game_functions():
-    """Every function the sources define, by address."""
-    protos = {f['name']: (f['proto'], f['addr']) for f in headers()['functions']}
+    """Every recorded game function, located in its current source file."""
+    from .fileheaders import _strip
+    addresses = symbol_addresses()['functions']
+    protos = {f['name']: f['proto'] for f in headers()['functions']}
     rows = []
     for path in source_files():
         text = path.read_text(encoding='latin-1')
         kind = 'c' if path.suffix.upper() == '.C' else 'asm'
-        for m in _FUNC.finditer(text):
-            name, seg, off, addr, size = m[1], int(m[2], 16), int(m[3], 16), int(m[4], 16), int(m[5])
-            if seg * 16 + off != addr:
-                raise SystemExit(f'{path.name}: {name} @ {seg:04X}:{off:04X} is not linear {addr:05X}')
-            far = _c_far(text, m.end(), name) if kind == 'c' else _asm_far(text, name)
-            proto = protos.get(name)
-            if proto and proto[1] != addr:
-                raise SystemExit(f'{name}: its header says 0x{proto[1]:05X}, its definition 0x{addr:05X}')
-            rows.append(dict(addr=addr, seg=seg, off=off, size=size, kind=kind, far=far, name=name,
-                             src=_rel(path), proto=proto[0] if proto else None))
+        if kind == 'c':
+            clean = _strip(text)
+            definitions = re.findall(r'^([A-Za-z_][^\n;{}]*?\b([A-Za-z_]\w*)[ \t]*\([^;{}]*\))\s*\{', clean, re.M)
+            names = [name for _, name in definitions]
+        else:
+            names = re.findall(r'^_(\w+)\s+PROC\s+(?:FAR|NEAR)\b', text, re.M | re.I)
+        for name in names:
+            if name not in addresses:
+                raise SystemExit(f'{path.name}: {name}: missing function in {SYMBOLS.name}')
+            loc = addresses[name]
+            seg, off, size = (loc[k] for k in ('seg', 'off', 'size'))
+            far = _c_far(clean, 0, name) if kind == 'c' else _asm_far(text, name)
+            rows.append(dict(addr=seg * 16 + off, seg=seg, off=off, size=size, kind=kind,
+                             far=far, name=name, src=_rel(path), proto=protos.get(name)))
+    found = [r['name'] for r in rows]
+    missing = addresses.keys() - set(found)
+    if missing:
+        raise SystemExit('functions without definitions: ' + ', '.join(sorted(missing)))
+    if len(found) != len(set(found)):
+        raise SystemExit('duplicate function definitions')
     rows.sort(key=lambda r: r['addr'])
     for a, b in zip(rows, rows[1:]):
-        if a['addr'] == b['addr'] or a['name'] == b['name']:
-            raise SystemExit(f"{a['name']} and {b['name']} ({a['src']}, {b['src']}): two definitions of one function")
+        if a['addr'] == b['addr']:
+            raise SystemExit(f"{a['name']} and {b['name']}: two functions at one address")
     return rows
 
 
 @functools.cache
 def headers():
-    """{'globals', 'fardata', 'functions'} declared by the per-file headers (not STRUCTS.H)."""
+    """Declarations from per-file headers, joined to the original addresses by name."""
+    from .fileheaders import _strip
+    addresses = symbol_addresses()
     out = dict(globals=[], fardata=[], functions=[])
     for path in config.source_files('.H'):
         if path.stem.upper() == 'STRUCTS':
             continue
         stem = path.stem.upper()
-        for ln in path.read_text(encoding='latin-1').splitlines():
+        for ln in _strip(path.read_text(encoding='latin-1')).splitlines():
             m = _EXTERN.match(ln)
             if m:
                 name = declared_name(m[1])
-                row = dict(off=int(m[3], 16), name=name, decl=_template(m[1], name), header=stem)
-                if m[2] == 'DS':
-                    out['globals'].append(row)
-                else:
-                    out['fardata'].append(dict(seg=int(m[2], 16), **row))
+                if name not in addresses['data']:
+                    raise SystemExit(f'{path.name}: {name}: missing data address in {SYMBOLS.name}')
+                row = dict(**addresses['data'][name], name=name, decl=_template(m[1], name), header=stem)
+                out['fardata' if 'seg' in row else 'globals'].append(row)
                 continue
             m = _PROTO.match(ln)
             if m:
                 name = re.search(r'(\w+)\s*\(', m[1]).group(1)
-                out['functions'].append(dict(name=name, proto=_template(m[1], name), addr=int(m[2], 16), header=stem))
+                if name not in addresses['functions']:
+                    raise SystemExit(f'{path.name}: {name}: missing function in {SYMBOLS.name}')
+                loc = addresses['functions'][name]
+                out['functions'].append(dict(name=name, proto=_template(m[1], name),
+                                             addr=loc['seg'] * 16 + loc['off'], header=stem))
     return out
 
 
 @functools.cache
 def statics():
-    """The C files' uninitialized file-scope statics: [row] with `static` = the source."""
+    """Uninitialized file statics, with original addresses joined by name."""
+    from .fileheaders import _strip
+    addresses = symbol_addresses()['data']
     out = []
     for path in source_files():
         if path.suffix.upper() != '.C':
             continue
-        for ln in path.read_text(encoding='latin-1').splitlines():
+        for ln in _strip(path.read_text(encoding='latin-1')).splitlines():
             m = _STATIC.match(ln)
             if m:
                 name = declared_name(m[1])
-                out.append(dict(off=int(m[2], 16), name=name, decl=_template(m[1], name), header=None,
-                                static=_rel(path)))
+                if name not in addresses:
+                    raise SystemExit(f'{path.name}: {name}: missing static address in {SYMBOLS.name}')
+                out.append(dict(off=addresses[name]['off'], name=name, decl=_template(m[1], name),
+                                header=None, static=_rel(path)))
     return out
 
 

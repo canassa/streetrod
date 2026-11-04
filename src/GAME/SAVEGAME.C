@@ -40,15 +40,13 @@ static void near scan_save_slots(int create);
 static int near is_blank(char *p);
 static int near write_cars(int handle, struct Car *c, int flag);
 
-char g_noNameMsg[] = "The game must have a name !";   /* DS:4FA6 */
-char g_saveSlots[16] = {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};   /* DS:4FC2 */
-int g_slotNameOfs[16] = {6661, 6678, 6695, 6712, 6729, 6746, 6763, 6780, 6797, 6814, 6831, 6848, 6865, 6882, 6899, 6916};   /* DS:4FD2 */
-char *g_noNameMsgPtr = g_noNameMsg;   /* DS:4FF2 */
-int g_demoRacer = 0;   /* DS:4FF4 */
+char g_noNameMsg[] = "The game must have a name !";
+char g_saveSlots[16] = {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int g_slotNameOfs[16] = {6661, 6678, 6695, 6712, 6729, 6746, 6763, 6780, 6797, 6814, 6831, 6848, 6865, 6882, 6899, 6916};
+char *g_noNameMsgPtr = g_noNameMsg;
+int g_demoRacer = 0;
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-
-/* sg_init_racer @ 0000:542E (linear 0x0542E, 342 bytes) */
 
 void sg_init_racer(int k, int *list)
 {
@@ -79,8 +77,6 @@ void sg_init_racer(int k, int *list)
     if (g_models[x].roofPic > 0)
         g_racerRecordsArray[k].bodyMods |= (rn_int(30) < y) ? 4 : 0;
 }
-
-/* init_racers @ 0000:5584 (linear 0x05584, 293 bytes) */
 
 static void near init_racers(void)
 {
@@ -118,8 +114,6 @@ static void near init_racers(void)
     }
 }
 
-/* init_new_game @ 0000:56A9 (linear 0x056A9, 99 bytes) */
-
 static void near init_new_game(void)
 {
     pl_init(1);
@@ -133,8 +127,6 @@ static void near init_new_game(void)
     g_gameClock.timeBase = g_gameClock.biosTicks;
     g_betRaces = g_dragWins = g_roadWins = g_kingDragWon = 0;
 }
-
-/* sg_new @ 0000:570C (linear 0x0570C, 137 bytes) */
 
 int near sg_new(void)
 {
@@ -156,8 +148,6 @@ int near sg_new(void)
     }
 }
 
-/* write_nodes @ 0000:5795 (linear 0x05795, 71 bytes) */
-
 static int near write_nodes(int handle, struct Node *p)
 {
     unsigned written;
@@ -168,8 +158,6 @@ static int near write_nodes(int handle, struct Node *p)
     }
     return 0;
 }
-
-/* read_nodes @ 0000:57DC (linear 0x057DC, 146 bytes) */
 
 static int near read_nodes(int handle, struct Node **head)
 {
@@ -199,8 +187,6 @@ static int near read_nodes(int handle, struct Node **head)
     return 0;
 }
 
-/* write_cars @ 0000:586E (linear 0x0586E, 161 bytes) */
-
 static int near write_cars(int handle, struct Car *c, int flag)
 {
     int i;
@@ -220,8 +206,6 @@ static int near write_cars(int handle, struct Car *c, int flag)
     }
     return 0;
 }
-
-/* read_cars @ 0000:590F (linear 0x0590F, 231 bytes) */
 
 static int near read_cars(int handle, struct Car **head, int flag)
 {
@@ -259,8 +243,6 @@ static int near read_cars(int handle, struct Car **head, int flag)
     return 0;
 }
 
-/* scan_save_slots @ 0000:59F6 (linear 0x059F6, 340 bytes) */
-
 static void near scan_save_slots(int create)
 {
     int fd7;
@@ -292,8 +274,6 @@ static void near scan_save_slots(int create)
     }
     g_list[0] = cnt;
 }
-
-/* sg_load @ 0000:5B4A (linear 0x05B4A, 873 bytes) */
 
 int near sg_load(void)
 {
@@ -373,9 +353,7 @@ int near sg_load(void)
     return 0;
 }
 
-/* is_blank @ 0000:5EB3 (linear 0x05EB3, 55 bytes)
-
-   True if the string is only spaces and underscores */
+/* True if the string is only spaces and underscores */
 
 static int near is_blank(char *p)
 {
@@ -387,10 +365,8 @@ static int near is_blank(char *p)
     return 1;
 }
 
-char g_501d = 0;   /* DS:501D */
-char g_buyCarMsg[] = "Buy a car first !";   /* DS:501E */
-
-/* sg_save @ 0000:5EEA (linear 0x05EEA, 1332 bytes) */
+char g_501d = 0;
+char g_buyCarMsg[] = "Buy a car first !";
 
 void near sg_save(void)
 {
@@ -504,8 +480,6 @@ again:
     }
     goto again;
 }
-
-/* sg_menu @ 0000:641E (linear 0x0641E, 87 bytes) */
 
 int near sg_menu(void)
 {

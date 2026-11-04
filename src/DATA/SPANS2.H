@@ -4,6 +4,6 @@
 #define SPANS2_H
 #include "STRUCTS.H"
 
-extern struct Part far g_spans2[];                      /* 3324:0000 */
+extern struct Part far g_spans2[];
 
 #endif

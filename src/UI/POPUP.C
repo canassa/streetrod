@@ -15,15 +15,13 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static struct Win *g_popupLayout;                 /* DS:6C40 */
-static int g_6c42[2];                      /* DS:6C42 PROVISIONAL: 4 unreferenced bytes after g_popupLayout */
+static struct Win *g_popupLayout;
+static int g_6c42[2];                      /* PROVISIONAL: 4 unreferenced bytes after g_popupLayout */
 
-struct Win g_popupWins[3] = {{1072, 1, 72, 30, 152, 37, 0, 6, 144}, {1073, 1, 80, 30, 232, 37, 0, 6, 223}, {1074, 2, 80, 20, 232, 46, 0, 6, 223}};   /* DS:04C4 */
-struct Bitmap far *g_popupSave = 0;   /* DS:04FA */
+struct Win g_popupWins[3] = {{1072, 1, 72, 30, 152, 37, 0, 6, 144}, {1073, 1, 80, 30, 232, 37, 0, 6, 223}, {1074, 2, 80, 20, 232, 46, 0, 6, 223}};
+struct Bitmap far *g_popupSave = 0;
 
-/* pu_grab @ 0F38:26F2 (linear 0x11A72, 253 bytes)
-
-   Copy the rectangle (x, y, w, h) of the back buffer into pict new bitmap and return it.
+/* Copy the rectangle (x, y, w, h) of the back buffer into pict new bitmap and return it.
    The x range is rounded to the pixel grid r_vid.mask. src, when given, is the bitmap to reuse. */
 
 struct Bitmap far *pu_grab(int x, int y, int w, int h, struct Bitmap far *src)
@@ -53,9 +51,7 @@ struct Bitmap far *pu_grab(int x, int y, int w, int h, struct Bitmap far *src)
     return pict;
 }
 
-/* pu_put @ 0F38:27EF (linear 0x11B6F, 100 bytes)
-
-   Blit bitmap bm to the back buffer at (x, y), x rounded to the pixel grid r_vid.mask */
+/* Blit bitmap bm to the back buffer at (x, y), x rounded to the pixel grid r_vid.mask */
 
 void pu_put(struct Bitmap far *bm, int x, int y)
 {
@@ -71,9 +67,7 @@ void pu_put(struct Bitmap far *bm, int x, int y)
     cu_ctl(CURSOR_SHOW);
 }
 
-/* pu_show @ 0F38:2853 (linear 0x11BD3, 81 bytes)
-
-   Draw bitmap bm at (x, y) on the back buffer and copy the covered rectangle to the front buffer */
+/* Draw bitmap bm at (x, y) on the back buffer and copy the covered rectangle to the front buffer */
 
 void pu_show(struct Bitmap far *bm, int x, int y)
 {
@@ -82,9 +76,7 @@ void pu_show(struct Bitmap far *bm, int x, int y)
         bm_copy_box(r_vid.back, r_vid.front, x, y, bm->width + x - 1, bm->height + y - 1);
 }
 
-/* pu_open @ 0F38:28A4 (linear 0x11C24, 446 bytes)
-
-   Pop up message window n (negative n: the window is removed again afterwards).
+/* Pop up message window n (negative n: the window is removed again afterwards).
    The text is the run of NUL-terminated lines that follows the window's index byte in g_descHdr. */
 
 void pu_open(int n)
@@ -131,9 +123,7 @@ void pu_open(int n)
     g_clickEnds = 1;
 }
 
-/* pu_open_at @ 0F38:2A62 (linear 0x11DE2, 125 bytes)
-
-   Pop up message window n with its position temporarily set to (x, y); idx negative coordinate
+/* Pop up message window n with its position temporarily set to (x, y); idx negative coordinate
    keeps the default */
 
 void pu_open_at(int n, int x, int y)
@@ -155,9 +145,7 @@ void pu_open_at(int n, int x, int y)
     g_clickEnds = 0;
 }
 
-/* pu_close @ 0F38:2ADF (linear 0x11E5F, 61 bytes)
-
-   Remove the pop-up window: put back the saved background */
+/* Remove the pop-up window: put back the saved background */
 
 void pu_close(void)
 {

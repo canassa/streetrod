@@ -38,19 +38,15 @@ static int near is_broke(void);
 static void near remove_part(struct Node **slot);
 static void near tune_timing(struct Car *car);
 
-int g_tirePics[3][4] = {{1065, 1066, 1067, 1068}, {1028, 1029, 1030, 1031}, {1106, 1107, 1108, 1109}};   /* DS:5030 */
-int g_colX = 33;   /* DS:5048 */
-int g_rowY[4] = {14, 107, 15, 105};   /* DS:504A */
-int g_wOff[4] = {0, 5, 9, 14};   /* DS:5052 */
-
-/* ga_day @ 0000:6476 (linear 0x06476, 45 bytes) */
+int g_tirePics[3][4] = {{1065, 1066, 1067, 1068}, {1028, 1029, 1030, 1031}, {1106, 1107, 1108, 1109}};
+int g_colX = 33;
+int g_rowY[4] = {14, 107, 15, 105};
+int g_wOff[4] = {0, 5, 9, 14};
 
 int ga_day(void)
 {
     return (int)((g_gameClock.actionTicks + g_gameClock.biosTicks - g_gameClock.timeBase) / 6552) > 91 ? 91 : (int)((g_gameClock.actionTicks + g_gameClock.biosTicks - g_gameClock.timeBase) / 6552);
 }
-
-/* ga_time @ 0000:64A3 (linear 0x064A3, 134 bytes) */
 
 void ga_time(int *a, int *b)
 {
@@ -65,15 +61,11 @@ void ga_time(int *a, int *b)
     *b = (long)((unsigned long)(unsigned)(r - 546 * *a) * 60) / 546;
 }
 
-/* ga_check_end @ 0000:6529 (linear 0x06529, 19 bytes) */
-
 void ga_check_end(int n)
 {
     if (ga_day() >= 91)
         g_end |= 1;
 }
-
-/* day_to_date @ 0000:653C (linear 0x0653C, 115 bytes) */
 
 static int near day_to_date(int v, int *out)
 {
@@ -97,8 +89,6 @@ static int near day_to_date(int v, int *out)
     }
     return r;
 }
-
-/* ga_calendar @ 0000:65AF (linear 0x065AF, 417 bytes) */
 
 void ga_calendar(int a1)
 {
@@ -139,12 +129,10 @@ void ga_calendar(int a1)
     ma_pop_high(1);
 }
 
-char *g_mon[4] = {"June", "July", "August", "September"};   /* DS:5082 */
-int g_hIds[5] = {11, 13, 9, 10, 12};   /* DS:508A */
+char *g_mon[4] = {"June", "July", "August", "September"};
+int g_hIds[5] = {11, 13, 9, 10, 12};
 
-/* ga_date @ 0000:6750 (linear 0x06750, 127 bytes)
-
-   Draws the current date ("Month day, 1963") */
+/* Draws the current date ("Month day, 1963") */
 
 void ga_date(int x)
 {
@@ -163,8 +151,6 @@ void ga_date(int x)
     x_colors = sv;
 }
 
-/* ga_palette @ 0000:67CF (linear 0x067CF, 88 bytes) */
-
 void ga_palette(int a)
 {
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) {
@@ -180,8 +166,6 @@ void ga_palette(int a)
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct State8272 m_8272;
 
-/* ga_hotspot @ 0000:6827 (linear 0x06827, 91 bytes) */
-
 int ga_hotspot(int id)
 {
     int n, k, base;
@@ -193,8 +177,6 @@ int ga_hotspot(int id)
             return base + k;
 }
 
-/* sort_spots @ 0000:6882 (linear 0x06882, 49 bytes) */
-
 static void near sort_spots(void)
 {
     int base, n;
@@ -204,8 +186,6 @@ static void near sort_spots(void)
     gx_sort_hots(base, n);
 }
 
-/* hide_spots @ 0000:68B3 (linear 0x068B3, 53 bytes) */
-
 static void near hide_spots(void)
 {
     int i;
@@ -214,9 +194,7 @@ static void near hide_spots(void)
         g_hots[ga_hotspot(g_hIds[i])].kind = 14;
 }
 
-/* place_spots @ 0000:68E8 (linear 0x068E8, 446 bytes)
-
-   Rect + hotspot setup for the 5 button rects of panel n */
+/* Rect + hotspot setup for the 5 button rects of panel n */
 
 static void near place_spots(int n, int x, int y)
 {
@@ -256,8 +234,6 @@ static void near place_spots(int n, int x, int y)
     hotspot->kind = 11;
 }
 
-/* ga_clear_name @ 0000:6AA6 (linear 0x06AA6, 50 bytes) */
-
 void ga_clear_name(void)
 {
     char *s;
@@ -266,8 +242,6 @@ void ga_clear_name(void)
     strcpy(g_carName, s);
 }
 
-/* is_broke @ 0000:6AD8 (linear 0x06AD8, 46 bytes) */
-
 static int near is_broke(void)
 {
     if (a_7eaap.currentCar == 0 && a_7eaap.otherCars == 0 && a_7eaap.spareParts == 0 && a_7eaap.money < 400L)
@@ -275,10 +249,8 @@ static int near is_broke(void)
     return 0;
 }
 
-char g_paint[6][2] = {{4, 12}, {3, 11}, {2, 10}, {5, 13}, {1, 9}, {7, 15}};   /* DS:50C2 */
-int g_pad[7] = {0, 5, 5, 5, 5, 0, 0};   /* DS:50CE */
-
-/* ga_menu @ 0000:6B06 (linear 0x06B06, 1125 bytes) */
+char g_paint[6][2] = {{4, 12}, {3, 11}, {2, 10}, {5, 13}, {1, 9}, {7, 15}};
+int g_pad[7] = {0, 5, 5, 5, 5, 0, 0};
 
 int near ga_menu(int mode)
 {
@@ -397,8 +369,6 @@ int near ga_menu(int mode)
     return r;
 }
 
-/* ga_paint @ 0000:6F6B (linear 0x06F6B, 431 bytes) */
-
 void near ga_paint(void)
 {
     struct Bitmap far *bm1;
@@ -456,8 +426,6 @@ void near ga_paint(void)
         ma_pop_high(1);
     }
 }
-
-/* ga_body @ 0000:711A (linear 0x0711A, 589 bytes) */
 
 void near ga_body(unsigned mask)
 {
@@ -542,8 +510,6 @@ void near ga_body(unsigned mask)
     }
 }
 
-/* ga_stickers @ 0000:7367 (linear 0x07367, 832 bytes) */
-
 void near ga_stickers(void)
 {
     struct Bitmap far *bm1;
@@ -623,8 +589,6 @@ void near ga_stickers(void)
     }
 }
 
-/* ga_spares @ 0000:76A7 (linear 0x076A7, 154 bytes) */
-
 void near ga_spares(int t, struct Node **list, char *buf, int start)
 {
     struct Node *p;
@@ -648,8 +612,6 @@ void near ga_spares(int t, struct Node **list, char *buf, int start)
     g_list[0] = n;
 }
 
-/* ga_install @ 0000:7741 (linear 0x07741, 72 bytes) */
-
 void near ga_install(struct Node *n, struct Node **slot)
 {
     if (*slot) {
@@ -661,16 +623,12 @@ void near ga_install(struct Node *n, struct Node **slot)
     a_7eaap.currentCar->value += gm_part_value(n);
 }
 
-/* remove_part @ 0000:7789 (linear 0x07789, 46 bytes) */
-
 static void near remove_part(struct Node **slot)
 {
     (*slot)->next = a_7eaap.spareParts;
     a_7eaap.currentCar->value -= gm_part_value(a_7eaap.spareParts = *slot);
     *slot = 0;
 }
-
-/* ga_unlink @ 0000:77B7 (linear 0x077B7, 73 bytes) */
 
 struct Node * near ga_unlink(struct Node *n)
 {
@@ -687,8 +645,6 @@ struct Node * near ga_unlink(struct Node *n)
         q->next = p1->next;
     return p1;
 }
-
-/* ga_tires @ 0000:7800 (linear 0x07800, 241 bytes) */
 
 void near ga_tires(void)
 {
@@ -720,8 +676,6 @@ void near ga_tires(void)
     ti_change(g_tirePics[y], g_tirePics[cur]);
     g_gameClock.actionTicks += 0x444L;
 }
-
-/* build_car_info @ 0000:78F1 (linear 0x078F1, 250 bytes) */
 
 static void near build_car_info(int *ids, char *vals)
 {
@@ -756,15 +710,13 @@ static void near build_car_info(int *ids, char *vals)
     g_list[0] = count;
 }
 
-char *g_iTxt[4] = {"", "Fuel                  ", "", "Max speed      mph"};   /* DS:511E */
-int g_nCarb[5] = {1, 1, 3, 2, 2};   /* DS:5126 */
-int g_nBolt[6] = {1, 2, 2, 2, 2, 2};   /* DS:5130 */
-int g_nextPartCategory[6] = {0, 3, 2, 2, 2, 2};   /* DS:513C */
-int g_cPos[5][6] = {{5, 5, 0, 0, 0, 0}, {6, 6, 0, 0, 0, 0}, {7, 7, 8, 8, 9, 9}, {10, 10, 11, 11, 0, 0}, {12, 12, 13, 13, 0, 0}};   /* DS:5148 */
-int g_boltSlots[10] = {0, 0, 1, 1, 5, 5, 5, 5, 5, 5};   /* DS:5184 */
-int g_boltSubslots[10] = {0, 0, 0, 1, 0, 1, 0, 1, 0, 1};   /* DS:5198 */
-
-/* ga_info @ 0000:79EB (linear 0x079EB, 185 bytes) */
+char *g_iTxt[4] = {"", "Fuel                  ", "", "Max speed      mph"};
+int g_nCarb[5] = {1, 1, 3, 2, 2};
+int g_nBolt[6] = {1, 2, 2, 2, 2, 2};
+int g_nextPartCategory[6] = {0, 3, 2, 2, 2, 2};
+int g_cPos[5][6] = {{5, 5, 0, 0, 0, 0}, {6, 6, 0, 0, 0, 0}, {7, 7, 8, 8, 9, 9}, {10, 10, 11, 11, 0, 0}, {12, 12, 13, 13, 0, 0}};
+int g_boltSlots[10] = {0, 0, 1, 1, 5, 5, 5, 5, 5, 5};
+int g_boltSubslots[10] = {0, 0, 0, 1, 0, 1, 0, 1, 0, 1};
 
 void ga_info(void)
 {
@@ -786,8 +738,6 @@ void ga_info(void)
         return;
     }
 }
-
-/* ga_transmission @ 0000:7AA4 (linear 0x07AA4, 1090 bytes) */
 
 void near ga_transmission(void)
 {
@@ -912,8 +862,6 @@ void near ga_transmission(void)
     }
 }
 
-/* ga_ready @ 0000:7EE6 (linear 0x07EE6, 203 bytes) */
-
 int ga_ready(struct Car *car, int flag)
 {
     int n, i;
@@ -938,8 +886,6 @@ int ga_ready(struct Car *car, int flag)
             return 0;
     return 1;
 }
-
-/* tune_timing @ 0000:7FB1 (linear 0x07FB1, 506 bytes) */
 
 static void near tune_timing(struct Car *car)
 {
@@ -1011,9 +957,7 @@ static void near tune_timing(struct Car *car)
     mn_pop(1);
 }
 
-/* ga_hood @ 0000:81AB (linear 0x081AB, 2938 bytes)
-
-   The garage screen: install, remove and tune parts */
+/* The garage screen: install, remove and tune parts */
 
 void near ga_hood(struct Car *car)
 {

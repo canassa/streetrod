@@ -19,27 +19,25 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_drawnMinX;                         /* DS:6C56 */
-static int g_drawnMinY;                         /* DS:6C58 */
-static int g_drawnMaxX;                         /* DS:6C5A */
-static int g_drawnMaxY;                         /* DS:6C5C */
+static int g_drawnMinX;
+static int g_drawnMinY;
+static int g_drawnMaxX;
+static int g_drawnMaxY;
 static char * near wear_text(int wear);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int g_menuGrpHistoryList[4];
 char g_hideSelectFrameVal;
-struct ListDialog g_menuList; /* DS:8B9A */
+struct ListDialog g_menuList;
 char g_headerEditableState;
 struct Hot *g_hotsCurMenu;
 int ai8bacx;
 int g_hotMenuGroupState;
 
-int g_hotChain = 0;   /* DS:07A8 */
-char g_wearText[12] = "(xx% worn)";   /* DS:07AA */
+int g_hotChain = 0;
+char g_wearText[12] = "(xx% worn)";
 
-/* mn_draw_hot @ 0F38:465E (linear 0x139DE, 1032 bytes)
-
-   Draw a hot spot and the spots linked behind it (the chain through Hot.next masked with
+/* Draw a hot spot and the spots linked behind it (the chain through Hot.next masked with
    g_hotChain), by kind: 4/12 filled box with optional centred text, 5/6/10 text only, 7/8 header bar,
    13 first-time marker. Grows the touched rectangle g_drawnMinX..g_drawnMaxY. */
 
@@ -130,9 +128,7 @@ void mn_draw_hot(struct Hot *p)
     }
 }
 
-/* mn_push @ 0F38:4A66 (linear 0x13DE6, 315 bytes)
-
-   Push hot spot id onto the saved state stack (at most four deep) and draw it: the
+/* Push hot spot id onto the saved state stack (at most four deep) and draw it: the
    current entry globals are reset, mn_draw_hot draws the linked spot, and the touched area is copied
    from the back buffer to the front when the screen shadow is on */
 
@@ -166,9 +162,7 @@ void mn_push(enum ScreenId id)
     }
 }
 
-/* mn_pop @ 0F38:4BA1 (linear 0x13F21, 94 bytes)
-
-   Pop the saved state stack: close the current entry; when keep is set and an entry remains,
+/* Pop the saved state stack: close the current entry; when keep is set and an entry remains,
    reopen the one below it, otherwise reset the entry globals to "none" */
 
 void mn_pop(int keep)
@@ -187,8 +181,6 @@ void mn_pop(int keep)
     }
 }
 
-/* mn_reset @ 0F38:4BFF (linear 0x13F7F, 27 bytes) */
-
 void mn_reset(void)
 {
     g_menuLevel = ai8bacx = 0;
@@ -196,9 +188,7 @@ void mn_reset(void)
     g_boxSpotHitData.x1 = g_boxSpotHitData.y1 = g_boxSpotHitData.x2 = g_boxSpotHitData.y2 = g_cursHoverCodeVal = 0;
 }
 
-/* mn_bbox @ 0F38:4C1A (linear 0x13F9A, 246 bytes)
-
-   Bounding box of hot spot id and the spots linked after it (through f10), widened by 3
+/* Bounding box of hot spot id and the spots linked after it (through f10), widened by 3
    and clipped to the 320 x 200 screen. *x and *y receive the top left corner, *w and *h the size */
 
 void mn_bbox(enum ScreenId id, int *x, int *y, int *w, int *h)
@@ -227,9 +217,7 @@ void mn_bbox(enum ScreenId id, int *x, int *y, int *w, int *h)
     *h -= *y;
 }
 
-/* mn_grab @ 0F38:4D10 (linear 0x14090, 157 bytes)
-
-   Copy the screen area around hot spot id (see mn_bbox, which updates *px and *py to the
+/* Copy the screen area around hot spot id (see mn_bbox, which updates *px and *py to the
    box corner) into a bitmap of the given mode and return it. The x range is rounded to r_vid.mask */
 
 struct Bitmap far *mn_grab(enum ScreenId id, int *px, int *py, int mode)
@@ -252,9 +240,7 @@ struct Bitmap far *mn_grab(enum ScreenId id, int *px, int *py, int mode)
     return pu_grab(*px, y1, w4, h3, bits9);
 }
 
-/* mn_hit @ 0F38:4DAD (linear 0x1412D, 276 bytes)
-
-   Find the hot spot of the current menu (list at g_hotsCurMenu) under the point (x, y). On a hit
+/* Find the hot spot of the current menu (list at g_hotsCurMenu) under the point (x, y). On a hit
    the spot's box goes to g_boxSpotHitData and its id (f6) is returned; on a miss g_boxSpotHitData gets the free
    rectangle around the point and 0 is returned */
 
@@ -316,9 +302,7 @@ int mn_hit(int x, int y)
     return g_cursHoverCodeVal = 0;
 }
 
-/* mn_modal @ 0F38:4EC1 (linear 0x14241, 83 bytes)
-
-   Grab the screen area around hot spot id, show the spot (waiting for a key through
+/* Grab the screen area around hot spot id, show the spot (waiting for a key through
    mn_wait), put the saved area back and return the key */
 
 int mn_modal(enum ScreenId id)
@@ -335,8 +319,6 @@ int mn_modal(enum ScreenId id)
     return res;
 }
 
-/* mn_wait @ 0F38:4F14 (linear 0x14294, 59 bytes) */
-
 int mn_wait(enum ScreenId a)
 {
     int key;
@@ -348,9 +330,7 @@ int mn_wait(enum ScreenId a)
     return key;
 }
 
-/* mn_modal_list @ 0F38:4F4F (linear 0x142CF, 114 bytes)
-
-   Run the mn_list dialog over a grabbed screen area (see mn_modal) and restore the area
+/* Run the mn_list dialog over a grabbed screen area (see mn_modal) and restore the area
    afterwards; 0x3ea when *list is zero */
 
 int mn_modal_list(enum ScreenId a, int b, int *c, int *list, char *buf, char **d)
@@ -369,11 +349,9 @@ int mn_modal_list(enum ScreenId a, int b, int *c, int *list, char *buf, char **d
     return res;
 }
 
-char g_wearPad[4] = "   ";   /* DS:07BE */
+char g_wearPad[4] = "   ";
 
-/* wear_text @ 0F38:4FC1 (linear 0x14341, 77 bytes)
-
-   Wear text for a part: "(new)" when wear is 0, else "(xx% worn)" built in place in g_wearText
+/* Wear text for a part: "(new)" when wear is 0, else "(xx% worn)" built in place in g_wearText
    (initialised data "(xx% worn)") with the number written over the xx */
 
 static char * near wear_text(int wear)
@@ -388,11 +366,9 @@ static char * near wear_text(int wear)
     return g_wearText;
 }
 
-int g_cgaPicMap[277] = {0, 1, 2, 3, 5, 6, 7, 4, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276};   /* DS:07C6 */
+int g_cgaPicMap[277] = {0, 1, 2, 3, 5, 6, 7, 4, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276};
 
-/* mn_list @ 0F38:500E (linear 0x1438E, 2301 bytes)
-
-   List dialog. Shows the entries list[1..list[0]] (offsets into the string table g_desc,
+/* List dialog. Shows the entries list[1..list[0]] (offsets into the string table g_desc,
    or, when negative, d[-entry - 1]) in the windows of the current menu, optionally with a column c
    of x offsets and wear values buf[1..]; arrow/page keys scroll, a positive key2 picks an entry,
    a hotn spot (g_menuList.header) shows the picked text and is edited in place on Enter.
@@ -593,9 +569,7 @@ scroll:
     }
 }
 
-/* mn_sel @ 0F38:590B (linear 0x14C8B, 4 bytes)
-
-   Accessor, returns g_menuList.selection */
+/* Accessor, returns g_menuList.selection */
 
 int mn_sel(void)
 {

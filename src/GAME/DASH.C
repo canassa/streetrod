@@ -31,33 +31,31 @@
 #define GAUGE_CENTER_Y 0x2a
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static struct WheelPoses g_wheelPoses; /* DS:6C22 */
+static struct WheelPoses g_wheelPoses;
 static void near save_under(int x, int y, int w, int h, int kind);
 static void near restore_under(int x, int y, int w, int h, int kind);
-static struct ShifterDraw g_shifterDraw; /* DS:6C34 */
+static struct ShifterDraw g_shifterDraw;
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Bitmap far *bm7678;
 unsigned at767ct;
 unsigned av787at;
-struct Hooks g_videoOps; /* DS:78A2 */
+struct Hooks g_videoOps;
 char gz8249;
 struct Bitmap far *g82b4s;
 char bw8aca;
 
-int g_needleColor = -1;   /* DS:02D2 */
-char g_introPalette[18] = {0, 8, 7, 15, 14, 1, 9, 11, 0, 2, 4, 12, 13, 10, 5, 6, 0, 0};   /* DS:02D4 */
-struct Bitmap far *g_savedBack = 0;   /* DS:02E6 */
-struct Bitmap far *g_savedFront = 0;   /* DS:02EA */
-signed char g_steerLeftPoints[24][2] = {{87, 69}, {88, 64}, {90, 58}, {91, 54}, {93, 49}, {95, 45}, {98, 40}, {101, 36}, {104, 33}, {108, 29}, {111, 26}, {114, 23}, {118, 20}, {121, 19}, {125, 16}, {-127, 14}, {-122, 12}, {-117, 11}, {-113, 9}, {-108, 8}, {-104, 7}, {-99, 7}, {-95, 6}, {-91, 6}};   /* DS:02EE */
-unsigned char g_steerPoints[25][2] = {{170, 6}, {175, 6}, {179, 6}, {183, 7}, {188, 7}, {192, 8}, {197, 9}, {201, 11}, {206, 12}, {211, 14}, {215, 16}, {219, 19}, {222, 20}, {226, 23}, {229, 26}, {232, 29}, {236, 33}, {239, 36}, {242, 40}, {245, 45}, {247, 49}, {249, 54}, {250, 58}, {252, 64}, {253, 69}};   /* DS:031E */
-int g_wheelShown = 0;   /* DS:0350 */
-int g_wheelSlotY[3] = {148, 174, 73};   /* DS:0352 */
-signed char g_shiftPts[11][2] = {{14, 17}, {14, 28}, {13, 12}, {13, 2}, {13, 20}, {22, 2}, {13, 12}, {13, 2}, {13, 20}, {22, 2}, {22, 20}};   /* DS:0358 */
-struct Track g_shifters[3] = {{2, 1229, 1232, 8, g_shiftPts[0]}, {4, 1227, 1230, 19, g_shiftPts[2]}, {5, 1228, 1231, 19, g_shiftPts[6]}};   /* DS:036E */
-struct Pair g_shiftSlots[5] = {{0, 162}, {32, 162}, {64, 162}, {96, 162}, {264, 102}};   /* DS:038C */
-
-/* restore_under @ 0F38:000A (linear 0x0F38A, 142 bytes) */
+int g_needleColor = -1;
+char g_introPalette[18] = {0, 8, 7, 15, 14, 1, 9, 11, 0, 2, 4, 12, 13, 10, 5, 6, 0, 0};
+struct Bitmap far *g_savedBack = 0;
+struct Bitmap far *g_savedFront = 0;
+signed char g_steerLeftPoints[24][2] = {{87, 69}, {88, 64}, {90, 58}, {91, 54}, {93, 49}, {95, 45}, {98, 40}, {101, 36}, {104, 33}, {108, 29}, {111, 26}, {114, 23}, {118, 20}, {121, 19}, {125, 16}, {-127, 14}, {-122, 12}, {-117, 11}, {-113, 9}, {-108, 8}, {-104, 7}, {-99, 7}, {-95, 6}, {-91, 6}};
+unsigned char g_steerPoints[25][2] = {{170, 6}, {175, 6}, {179, 6}, {183, 7}, {188, 7}, {192, 8}, {197, 9}, {201, 11}, {206, 12}, {211, 14}, {215, 16}, {219, 19}, {222, 20}, {226, 23}, {229, 26}, {232, 29}, {236, 33}, {239, 36}, {242, 40}, {245, 45}, {247, 49}, {249, 54}, {250, 58}, {252, 64}, {253, 69}};
+int g_wheelShown = 0;
+int g_wheelSlotY[3] = {148, 174, 73};
+signed char g_shiftPts[11][2] = {{14, 17}, {14, 28}, {13, 12}, {13, 2}, {13, 20}, {22, 2}, {13, 12}, {13, 2}, {13, 20}, {22, 2}, {22, 20}};
+struct Track g_shifters[3] = {{2, 1229, 1232, 8, g_shiftPts[0]}, {4, 1227, 1230, 19, g_shiftPts[2]}, {5, 1228, 1231, 19, g_shiftPts[6]}};
+struct Pair g_shiftSlots[5] = {{0, 162}, {32, 162}, {64, 162}, {96, 162}, {264, 102}};
 
 static void near restore_under(int x, int y, int w, int h, int kind)
 {
@@ -72,8 +70,6 @@ static void near restore_under(int x, int y, int w, int h, int kind)
     (*g_videoOps.copy)(r_vid.mode == VID_EGA ? bm7678 : g82b4s, bm7678, &pkt, 1);
 }
 
-/* save_under @ 0F38:0098 (linear 0x0F418, 159 bytes) */
-
 static void near save_under(int x, int y, int w, int h, int kind)
 {
     struct Blt pkt;
@@ -86,8 +82,6 @@ static void near save_under(int x, int y, int w, int h, int kind)
     pkt.dy = (r_vid.mode == VID_EGA ? DASH_Y : 0) + (kind == 1 ? 5 : kind == 2 ? 12 : 35);
     (*g_videoOps.copy)(g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt, 1);
 }
-
-/* da_speedo_pts @ 0F38:0137 (linear 0x0F4B7, 155 bytes) */
 
 void da_speedo_pts(int i, int *x1, int *y1, int *x2, int *y2)
 {
@@ -108,8 +102,6 @@ void da_speedo_pts(int i, int *x1, int *y1, int *x2, int *y2)
     return;
     { extern char far x_trk0[][2]; *x1 = x_trk0[i][0]; }
 }
-
-/* da_speedo_init @ 0F38:01D2 (linear 0x0F552, 220 bytes) */
 
 void da_speedo_init(int i)
 {
@@ -132,8 +124,6 @@ void da_speedo_init(int i)
     }
 }
 
-/* da_tach_pts @ 0F38:02AE (linear 0x0F62E, 155 bytes) */
-
 void da_tach_pts(int i, int *x1, int *y1, int *x2, int *y2)
 {
     if (i < 0)
@@ -148,8 +138,6 @@ void da_tach_pts(int i, int *x1, int *y1, int *x2, int *y2)
     return;
     { extern char far x_trk1[][2]; *x2 = x_trk1[i][0]; }
 }
-
-/* da_tach_init @ 0F38:0349 (linear 0x0F6C9, 220 bytes) */
 
 void da_tach_init(int v)
 {
@@ -171,8 +159,6 @@ void da_tach_init(int v)
         at767ct = saveOff;
     }
 }
-
-/* da_move_needle @ 0F38:0425 (linear 0x0F7A5, 461 bytes) */
 
 int da_move_needle(int cur, int old, int flag)
 {
@@ -213,9 +199,7 @@ int da_move_needle(int cur, int old, int flag)
     return cur;
 }
 
-/* da_draw_clock @ 0F38:05F2 (linear 0x0F972, 1339 bytes)
-
-   Draws the clock: the hour hand (width 5 or 8) and the minute hand (width 4 or 8), each a
+/* Draws the clock: the hour hand (width 5 or 8) and the minute hand (width 4 or 8), each a
    diamond of five lines around the face centre, from the time ga_time returns. */
 
 void da_draw_clock(void)
@@ -284,23 +268,17 @@ void da_draw_clock(void)
     at767ct = soffn;
 }
 
-/* da_pal_blank @ 0F38:0B2D (linear 0x0FEAD, 18 bytes) */
-
 void da_pal_blank(void)
 {
     vi_set_palette(g_blackPalette);
     gz8249 = 0;
 }
 
-/* da_pal_show @ 0F38:0B3F (linear 0x0FEBF, 18 bytes) */
-
 void da_pal_show(void)
 {
     vi_set_palette(g_palette);
     gz8249 = 1;
 }
-
-/* da_wait_key @ 0F38:0B51 (linear 0x0FED1, 159 bytes) */
 
 void da_wait_key(int ticks)
 {
@@ -337,8 +315,6 @@ void da_wait_key(int ticks)
     }
 }
 
-/* da_intro @ 0F38:0BF0 (linear 0x0FF70, 370 bytes) */
-
 void da_intro(void)
 {
     int saved;
@@ -372,8 +348,6 @@ void da_intro(void)
     (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
 }
 
-/* da_time_up @ 0F38:0D62 (linear 0x100E2, 91 bytes) */
-
 void da_time_up(void)
 {
     gm_message(0x17bb);
@@ -386,8 +360,6 @@ void da_time_up(void)
     (*g_videoOps.show)();
     gm_pause(300);
 }
-
-/* da_set_view @ 0F38:0DBD (linear 0x1013D, 406 bytes) */
 
 void da_set_view(int mode)
 {
@@ -448,8 +420,6 @@ void da_set_view(int mode)
     }
 }
 
-/* da_load_wheel @ 0F38:0F53 (linear 0x102D3, 321 bytes) */
-
 void da_load_wheel(void)
 {
     int i6;
@@ -480,8 +450,6 @@ void da_load_wheel(void)
     }
 }
 
-/* da_steer_marker @ 0F38:1094 (linear 0x10414, 156 bytes) */
-
 void da_steer_marker(int n)
 {
     int x, y2;
@@ -508,8 +476,6 @@ void da_steer_marker(int n)
     av787at = seg;
     at767ct = off;
 }
-
-/* da_draw_wheel @ 0F38:1130 (linear 0x104B0, 455 bytes) */
 
 void da_draw_wheel(int a, int b, struct Bitmap far *dst)
 {
@@ -565,9 +531,7 @@ void da_draw_wheel(int a, int b, struct Bitmap far *dst)
     }
 }
 
-/* da_init_shifter @ 0F38:12F7 (linear 0x10677, 507 bytes)
-
-   Draws the car sprite at the top of the screen and, for each of the g_shifterDraw.track->n points of the
+/* Draws the car sprite at the top of the screen and, for each of the g_shifterDraw.track->n points of the
    track, the wheel sprite (the position comes from the (x, y) pair, the source rectangle from
    g_shiftSlots). da_draw_shifter is the per-frame update that draws the same pieces. */
 
@@ -616,8 +580,6 @@ void da_init_shifter(int a, int b)
     ma_pop_high(2);
 }
 
-/* da_draw_shifter @ 0F38:14F2 (linear 0x10872, 334 bytes) */
-
 void da_draw_shifter(struct Bitmap far *dst, struct Eng *e)
 {
     struct Blt16 pkt1;
@@ -650,8 +612,6 @@ void da_draw_shifter(struct Bitmap far *dst, struct Eng *e)
     e->shifterDirty = 0;
 }
 
-/* da_fmemset @ 0F38:1640 (linear 0x109C0, 64 bytes) */
-
 void da_fmemset(char far *p, int c, unsigned n)
 {
     char far *q;
@@ -660,9 +620,7 @@ void da_fmemset(char far *p, int c, unsigned n)
         *q++ = c;
 }
 
-/* da_clip_blt @ 0F38:1680 (linear 0x10A00, 253 bytes)
-
-   Clips the rectangle in to the destination bitmap, then to the
+/* Clips the rectangle in to the destination bitmap, then to the
    source bitmap; the result goes to out. Returns 1 if anything is left. The x values of in
    are shifted down by r_vid.shift. */
 
@@ -705,8 +663,6 @@ int da_clip_blt(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *in, 
     return out->w > 0 && out->h > 0;
 }
 
-/* da_wait_retrace @ 0F38:177D (linear 0x10AFD, 75 bytes) */
-
 void da_wait_retrace(int n)
 {
     int i;
@@ -725,8 +681,6 @@ void da_wait_retrace(int n)
         }
     }
 }
-
-/* da_text_width @ 0F38:17C8 (linear 0x10B48, 52 bytes) */
 
 int da_text_width(char *s)
 {

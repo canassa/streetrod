@@ -10,9 +10,7 @@ static int near count_bits(unsigned char b);
 static struct Bitmap far * near alloc_shrunk(struct Bitmap far *p, unsigned char a, unsigned char b);
 static void near expand_mask(unsigned char v, char *pa, char *pb);
 
-/* count_bits @ 2645:528C (linear 0x2B6DC, 43 bytes)
-
-   Counts the set bits of a byte. */
+/* Counts the set bits of a byte. */
 
 static int near count_bits(unsigned char b)
 {
@@ -27,8 +25,6 @@ static int near count_bits(unsigned char b)
     }
     return count;
 }
-
-/* alloc_shrunk @ 2645:52B7 (linear 0x2B707, 336 bytes) */
 
 static struct Bitmap far * near alloc_shrunk(struct Bitmap far *p, unsigned char a, unsigned char b)
 {
@@ -63,8 +59,6 @@ static struct Bitmap far * near alloc_shrunk(struct Bitmap far *p, unsigned char
     da_fmemset(q->alt.p, 0xff, q->planesize / (unsigned)r_vid.planes);
     return q;
 }
-
-/* sr_ega @ 2645:5407 (linear 0x2B857, 497 bytes) */
 
 struct Bitmap far *sr_ega(struct Bitmap far *p, unsigned char a, unsigned char b)
 {
@@ -139,8 +133,6 @@ struct Bitmap far *sr_ega(struct Bitmap far *p, unsigned char a, unsigned char b
     return q;
 }
 
-/* expand_mask @ 2645:55F8 (linear 0x2BA48, 120 bytes) */
-
 static void near expand_mask(unsigned char v, char *pa, char *pb)
 {
     int m;
@@ -154,8 +146,6 @@ static void near expand_mask(unsigned char v, char *pa, char *pb)
         if (v & m)
             *pb |= 3 << sh;
 }
-
-/* sr_cga @ 2645:5670 (linear 0x2BAC0, 533 bytes) */
 
 struct Bitmap far *sr_cga(struct Bitmap far *p, unsigned char a, unsigned char c)
 {
@@ -231,8 +221,6 @@ struct Bitmap far *sr_cga(struct Bitmap far *p, unsigned char a, unsigned char c
     }
     return q;
 }
-
-/* sr_tandy @ 2645:5885 (linear 0x2BCD5, 470 bytes) */
 
 struct Bitmap far *sr_tandy(struct Bitmap far *p, unsigned char a, unsigned char c)
 {

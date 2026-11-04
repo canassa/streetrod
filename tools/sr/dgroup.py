@@ -934,8 +934,7 @@ class Analysis:
             return '{' + ', '.join(vals) + '}'
         raise ValueError(k)
 
-    def definition(self, it, comment=True):
-        tail = f'   /* DS:{it.off:04X} */' if comment else ''
+    def definition(self, it):
         if it.kind == 'global':
             decl = it.decl.replace('@', it.name)
             node = it.node
@@ -943,13 +942,13 @@ class Analysis:
             if node['kind'] == 'array' and '[]' in it.decl:
                 if not (v.startswith('"') and node['count'] == len(self.cstring(it.off)) + 1):
                     decl = decl.replace('[]', f'[{node["count"]}]', 1)
-            return f'{decl} = {v};{tail}'
+            return f'{decl} = {v};'
         if it.kind == 'gap':
             if it.note == 'align':
                 return ''
             if it.off % 2 == 0 and it.size % 2 == 0:
-                return f'int g_{it.off:04x}[{it.size // 2}] = {{0}};{tail}   /* unreferenced zero storage */'
-            return f'char g_{it.off:04x}[{it.size}] = {{0}};{tail}   /* unreferenced zero storage */'
+                return f'int g_{it.off:04x}[{it.size // 2}] = {{0}};   /* unreferenced zero storage */'
+            return f'char g_{it.off:04x}[{it.size}] = {{0}};   /* unreferenced zero storage */'
         if it.kind == 'str':
             return f'/* {it.off:04x}: {self.clit(self.cstring(it.off))} ({it.note or "initializer string"}) */'
         if it.kind == 'alias':
@@ -1028,7 +1027,7 @@ class Analysis:
                 desc = f'lit {it.fn:05X} {self.clit(self.cstring(it.off))[:50]}'
             else:
                 try:
-                    desc = self.definition(it, comment=False)
+                    desc = self.definition(it)
                 except Exception as e:  # noqa
                     desc = f'{it.kind} {it.name} {it.decl}: !! {e}'
             lines.append(f'{it.off:04x} {it.size:5d} {owner} {slot} {desc[:150]}' + (f'   ; {it.note}' if it.note else ''))

@@ -1,4 +1,4 @@
-"""source.py: the symbol tables read from the sources, the headers and the EXE."""
+"""source.py: the symbol tables read from sources, headers, symbols.json and the EXE."""
 from pathlib import Path
 import sys
 import unittest
@@ -22,6 +22,17 @@ class SourceTests(unittest.TestCase):
         # the functions of a file are contiguous: no other file's function inside its extent
         for f in module.files():
             self.assertEqual({r['src'] for r in fs if f.start <= r['addr'] < f.end}, {f.rel})
+
+    def test_address_metadata_is_minimal_and_complete(self):
+        addresses = source.symbol_addresses()
+        self.assertEqual(set(addresses), {'functions', 'data'})
+        self.assertEqual(set(addresses['functions']), {r['name'] for r in source.game_functions()})
+        for row in addresses['functions'].values():
+            self.assertEqual(set(row), {'seg', 'off', 'size'})
+        named_data = source.headers()['globals'] + source.headers()['fardata'] + source.statics()
+        self.assertEqual(set(addresses['data']), {r['name'] for r in named_data})
+        for row in addresses['data'].values():
+            self.assertIn(set(row), ({'off'}, {'seg', 'off'}))
 
     def test_runtime(self):
         rt = [r for r in source.functions() if r['kind'] == 'crt']

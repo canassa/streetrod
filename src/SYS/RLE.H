@@ -4,6 +4,6 @@
 #define RLE_H
 #include "STRUCTS.H"
 
-void rl_decode(char far *src, char far *dst, int len, unsigned char *pal, int n);/* 0x0E926 */
+void rl_decode(char far *src, char far *dst, int len, unsigned char *pal, int n);
 
 #endif

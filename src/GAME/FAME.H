@@ -4,17 +4,17 @@
 #define FAME_H
 #include "STRUCTS.H"
 
-extern struct ManualEntry g_manual[];                   /* DS:4B62 */
-extern int g_protectCycle;                              /* DS:4BC8 */
-extern int g_fameRowY[];                                /* DS:4BCA */
-extern struct Colors g_fameColors1;                     /* DS:4BE2 */
-extern struct Colors g_fameColors2;                     /* DS:4BE8 */
-extern char g_4bed;                                     /* DS:4BED */
-extern int g_nScore;                                     /* DS:7646 */
-extern char g_driverName[];                             /* DS:7E9A */
-extern struct Entry g_hallFameTbl[];                         /* DS:82CA */
-int fa_protect_check(void);                           /* 0x02FC8 */
-int fa_end_menu(void);                                /* 0x0315B */
-void fa_show(int add);                                /* 0x0339F */
+extern struct ManualEntry g_manual[];
+extern int g_protectCycle;
+extern int g_fameRowY[];
+extern struct Colors g_fameColors1;
+extern struct Colors g_fameColors2;
+extern char g_4bed;
+extern int g_nScore;
+extern char g_driverName[];
+extern struct Entry g_hallFameTbl[];
+int fa_protect_check(void);
+int fa_end_menu(void);
+void fa_show(int add);
 
 #endif

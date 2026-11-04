@@ -31,9 +31,9 @@
 enum LoadResult { LOAD_NO_MEMORY, LOAD_CACHED, LOAD_READ, LOAD_READ_VRAM };
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_initialDrive; /* DS:6C68 */
-static struct PicLibSelection g_picLib; /* DS:6C6A */
-static char g_dataPath[16]; /* DS:6C72 */
+static int g_initialDrive;
+static struct PicLibSelection g_picLib;
+static char g_dataPath[16];
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Model g_models[26];
@@ -57,27 +57,25 @@ static enum LoadResult near load_pic(int n, int load, char far *dst);
 static void near unscramble_hall(void);
 static void near scramble_hall(void);
 
-char *g_dataFileName = "hot_data";   /* DS:4EA2 */
-char *g_dataBlocks[13] = {(char *)g_racerRecordsArray, (char *)g7d86n, (char *)g_models, (char *)g_layoutAutoSprArray, (char *)ai70e4t, (char *)g_pointsModelService, g_desc, (char *)&g_usedCarAdFirst, g_txt, (char *)g_carRatingsTable, (char *)g_rivalStakeToleranceTable, (char *)g_acceptProbability, (char *)a784als};   /* DS:4EA4 */
-unsigned g_dataSizes[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};   /* DS:4EBE */
-int g_lib1Handle = 0;   /* DS:4ED8 */
-int g_lib2Handle = 0;   /* DS:4EDA */
-char *g_lib1Name = "?:lib1";   /* DS:4EDC */
-char *g_lib1cName = "?:lib1c";   /* DS:4EDE */
-char *g_lib2Name = "?:lib2";   /* DS:4EE0 */
-char *g_lib2cName = "?:lib2c";   /* DS:4EE2 */
-char *g_msgInsertDisk = "insert disk ? into drive ?";   /* DS:4EE4 */
-char *g_msgCopyFiles = "copy all files to current directory";   /* DS:4EE6 */
-char *g_msgBadFormat = "bad file format";   /* DS:4EE8 */
-char *g_msgWriteError = "write error";   /* DS:4EEA */
-char *g_msgNotFound = "file not found: ????";   /* DS:4EEC */
-unsigned char g_rleCounts[16] = {1, 1, 2, 3, 4, 2, 3, 5, 6, 6, 4, 7, 7, 5, 8, 8};   /* DS:4EEE */
-unsigned char g_rleValues[16] = {0, 255, 0, 0, 0, 255, 255, 0, 255, 0, 255, 255, 0, 255, 255, 0};   /* DS:4EFE */
-int g_picNewHeader = 1;   /* DS:4F0E */
+char *g_dataFileName = "hot_data";
+char *g_dataBlocks[13] = {(char *)g_racerRecordsArray, (char *)g7d86n, (char *)g_models, (char *)g_layoutAutoSprArray, (char *)ai70e4t, (char *)g_pointsModelService, g_desc, (char *)&g_usedCarAdFirst, g_txt, (char *)g_carRatingsTable, (char *)g_rivalStakeToleranceTable, (char *)g_acceptProbability, (char *)a784als};
+unsigned g_dataSizes[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};
+int g_lib1Handle = 0;
+int g_lib2Handle = 0;
+char *g_lib1Name = "?:lib1";
+char *g_lib1cName = "?:lib1c";
+char *g_lib2Name = "?:lib2";
+char *g_lib2cName = "?:lib2c";
+char *g_msgInsertDisk = "insert disk ? into drive ?";
+char *g_msgCopyFiles = "copy all files to current directory";
+char *g_msgBadFormat = "bad file format";
+char *g_msgWriteError = "write error";
+char *g_msgNotFound = "file not found: ????";
+unsigned char g_rleCounts[16] = {1, 1, 2, 3, 4, 2, 3, 5, 6, 6, 4, 7, 7, 5, 8, 8};
+unsigned char g_rleValues[16] = {0, 255, 0, 0, 0, 255, 255, 0, 255, 0, 255, 255, 0, 255, 255, 0};
+int g_picNewHeader = 1;
 
-/* di_seek @ 0F38:6016 (linear 0x15396, 65 bytes)
-
-   Seek the DOS file handle to the absolute position pos (INT 21h function 42h, method 0).
+/* Seek the DOS file handle to the absolute position pos (INT 21h function 42h, method 0).
    Returns 0 on success, else the error in _doserrno, also copied to errno */
 
 int di_seek(int handle, long pos)
@@ -94,9 +92,7 @@ int di_seek(int handle, long pos)
     return errno = _doserrno;
 }
 
-/* pic_index @ 0F38:6057 (linear 0x153D7, 50 bytes)
-
-   Map a picture number to its table index: numbers from 1000 on are shifted down, the rest
+/* Map a picture number to its table index: numbers from 1000 on are shifted down, the rest
    are 1 based. In the video modes -2 and -6 that is the result, else g_cgaPicMap translates it */
 
 static int near pic_index(int n)
@@ -111,9 +107,7 @@ static int near pic_index(int n)
         return n;
 }
 
-/* open_lib @ 0F38:6089 (linear 0x15409, 290 bytes)
-
-   Make sure the picture file holding picture number n is open (the pictures come in two
+/* Make sure the picture file holding picture number n is open (the pictures come in two
    files, split at g_lib1Count). Closes the other one, asks for the right disk until the open works
    and checks the file header word */
 
@@ -154,9 +148,7 @@ static void near open_lib(int n)
     }
 }
 
-/* di_read_index @ 0F38:61AB (linear 0x1552B, 271 bytes)
-
-   Read the picture headers of one picture file into g_slot: which 1 is the first file,
+/* Read the picture headers of one picture file into g_slot: which 1 is the first file,
    anything else the second (its entries follow the first file's, g_lib1Count of them). Clears the
    run time fields of each entry. Returns the largest data size found */
 
@@ -194,9 +186,7 @@ int di_read_index(int which)
     return height;
 }
 
-/* load_pic @ 0F38:62BA (linear 0x1563A, 676 bytes)
-
-   Bring picture number n into memory. With load set the picture goes through a work
+/* Bring picture number n into memory. With load set the picture goes through a work
    area in the fast pool (me_vram_alloc) and is copied there after it has been read; otherwise it is read
    into dst, or into a new block when dst is 0. The file position and the disk are looked after by
    open_lib and the read is repeated after asking for the disk again when the data does not start
@@ -274,9 +264,7 @@ bad:
     sy_exit();
 }
 
-/* di_free_pic @ 0F38:655E (linear 0x158DE, 80 bytes)
-
-   Frees and clears the far pointer in slot n of the far table g_slot. */
+/* Frees and clears the far pointer in slot n of the far table g_slot. */
 
 void di_free_pic(int n)
 {
@@ -289,9 +277,7 @@ void di_free_pic(int n)
     }
 }
 
-/* di_unpack_pic @ 0F38:65AE (linear 0x1592E, 593 bytes)
-
-   Unpack picture number id into the bitmap bm (a new one when bm is 0). The picture is
+/* Unpack picture number id into the bitmap bm (a new one when bm is 0). The picture is
    loaded to the work area g_imageBufferPointer first; its data is RLE coded (rl_decode) and expanded for the video
    mode in use into the planes bits and alt of the bitmap. Returns the bitmap */
 
@@ -350,9 +336,7 @@ struct Bitmap far *di_unpack_pic(int id, struct Bitmap far *bm)
     return pic;
 }
 
-/* di_pic_size @ 0F38:67FF (linear 0x15B7F, 63 bytes)
-
-   Fields of slot picture number n: *w, *h and the byte *x */
+/* Fields of slot picture number n: *w, *h and the byte *x */
 
 void di_pic_size(int n, int *w, int *h, int *x)
 {
@@ -362,9 +346,7 @@ void di_pic_size(int n, int *w, int *h, int *x)
     *x = g_slot[n].bitmapFlags;
 }
 
-/* di_bm @ 0F38:683E (linear 0x15BBE, 73 bytes)
-
-   Allocate a bitmap of the given mode for slot picture id, draw the picture into it
+/* Allocate a bitmap of the given mode for slot picture id, draw the picture into it
    (di_unpack_pic) and return it */
 
 struct Bitmap far *di_bm(int id, int mode)
@@ -380,9 +362,7 @@ struct Bitmap far *di_bm(int id, int mode)
     return bm;
 }
 
-/* di_cache_list @ 0F38:6887 (linear 0x15C07, 67 bytes)
-
-   Load every picture of the zero terminated list of picture numbers (see load_pic). Does
+/* Load every picture of the zero terminated list of picture numbers (see load_pic). Does
    nothing when g_noUeMem is set. Returns 1 */
 
 int di_cache_list(int *list)
@@ -396,9 +376,7 @@ int di_cache_list(int *list)
     return 1;
 }
 
-/* di_load_list @ 0F38:68CA (linear 0x15C4A, 75 bytes)
-
-   Try the pictures of the zero terminated list in turn with load_pic (load flag 0) and
+/* Try the pictures of the zero terminated list in turn with load_pic (load flag 0) and
    count the ones that succeed. A failure ends the walk unless all is set. Returns the count */
 
 int di_load_list(int *list, int all)
@@ -417,9 +395,7 @@ int di_load_list(int *list, int all)
     return count;
 }
 
-/* di_free_list @ 0F38:6915 (linear 0x15C95, 46 bytes)
-
-   Free the pictures listed in the zero terminated array of picture numbers */
+/* Free the pictures listed in the zero terminated array of picture numbers */
 
 void di_free_list(int *list)
 {
@@ -429,9 +405,7 @@ void di_free_list(int *list)
         di_free_pic(n);
 }
 
-/* di_open_libs @ 0F38:6943 (linear 0x15CC3, 566 bytes)
-
-   Open the two picture files (names g_library1Path and g_picLibBPath, drive letter patched into their
+/* Open the two picture files (names g_library1Path and g_picLibBPath, drive letter patched into their
    first character) and read the entry counts g_lib1Count and g_countLibBmB from their headers. disks is the
    number of disk drives wanted: 2 only when the equipment word says there are two floppies. mode 2
    and 5 pick the other file names. Any failure shows an error text */
@@ -492,11 +466,9 @@ void di_open_libs(int disks, int mode)
     }
 }
 
-char g_hallFileName[12] = "?:hall_dat";   /* DS:4F3A */
+char g_hallFileName[12] = "?:hall_dat";
 
-/* di_load_data @ 0F38:6B79 (linear 0x15EF9, 196 bytes)
-
-   Load the game data. Builds the file name g_dataPath from the first two characters of
+/* Load the game data. Builds the file name g_dataPath from the first two characters of
    g_picLibBPath and the text g_dataFileName points to (g_dataFileName ends up behind its terminator), opens it and
    reads the 13 blocks of the data table (buffer g_dataBlocks[i], size g_dataSizes[i]); any failure shows an
    error text. Ends by loading the hall of fame (di_load_hall) */
@@ -528,9 +500,7 @@ void di_load_data(void)
     di_load_hall();
 }
 
-/* di_data_drive @ 0F38:6C3D (linear 0x15FBD, 146 bytes)
-
-   Make sure the game disk is in the drive: tries to open the file g_dataPath (asking for
+/* Make sure the game disk is in the drive: tries to open the file g_dataPath (asking for
    disk 2 again and again) and closes it. From the third drive on (g_initialDrive > 2, a hard disk) it
    returns the drive letter code g_initialDrive + 0x40 at once. Otherwise returns the first character of
    g_dataPath */
@@ -558,9 +528,7 @@ int di_data_drive(void)
     }
 }
 
-/* scramble_hall @ 0F38:6CCF (linear 0x1604F, 29 bytes)
-
-   Set the high bit of all 230 bytes of g_hallFameTbl (10 hall of fame entries of 23 bytes) to scramble
+/* Set the high bit of all 230 bytes of g_hallFameTbl (10 hall of fame entries of 23 bytes) to scramble
    it before it is written to the file (see di_save_hall) */
 
 static void near scramble_hall(void)
@@ -571,9 +539,7 @@ static void near scramble_hall(void)
         ((char *)g_hallFameTbl)[i] |= 0x80;
 }
 
-/* unscramble_hall @ 0F38:6CEC (linear 0x1606C, 29 bytes)
-
-   Clear the high bit of all 230 bytes of g_hallFameTbl again, unscrambling the hall of fame */
+/* Clear the high bit of all 230 bytes of g_hallFameTbl again, unscrambling the hall of fame */
 
 static void near unscramble_hall(void)
 {
@@ -583,9 +549,7 @@ static void near unscramble_hall(void)
         ((char *)g_hallFameTbl)[i] &= 0x7f;
 }
 
-/* di_load_hall @ 0F38:6D09 (linear 0x16089, 201 bytes)
-
-   Read the hall of fame file (name g_hallFileName, first character the drive of the game disk):
+/* Read the hall of fame file (name g_hallFileName, first character the drive of the game disk):
    a count word, then g_nScore entries. Any read failure shows the error text. A missing file
    leaves the table empty */
 
@@ -616,9 +580,7 @@ void di_load_hall(void)
     }
 }
 
-/* di_save_hall @ 0F38:6DD2 (linear 0x16152, 312 bytes)
-
-   Write the hall of fame file (g_hallFileName): the table is scrambled (scramble_hall), the file made
+/* Write the hall of fame file (g_hallFileName): the table is scrambled (scramble_hall), the file made
    (asking for the disk until it works on a floppy), the count word and the g_nScore entries
    written. Any failure shows the error text and deletes the file. The table is unscrambled at
    the end (unscramble_hall) */

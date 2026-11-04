@@ -11,9 +11,7 @@
 
 static void near restore_rect_latch(struct Rect *r, struct Bitmap far *dst, struct Bitmap far *src, int rows);
 
-/* restore_rect_latch @ 21A0:2568 (linear 0x23F68, 113 bytes)
-
-   Copy a rectangle between two planar bitmaps with ea_rect */
+/* Copy a rectangle between two planar bitmaps with ea_rect */
 
 static void near restore_rect_latch(struct Rect *r, struct Bitmap far *dst, struct Bitmap far *src, int rows)
 {
@@ -23,9 +21,7 @@ static void near restore_rect_latch(struct Rect *r, struct Bitmap far *dst, stru
             r->y2 - r->y1 + 1, r->x1 >> 3, r->y1, dst->pitch);
 }
 
-/* es_step @ 21A0:25D9 (linear 0x23FD9, 787 bytes)
-
-   Advance a sprite to its next display page and redraw it there */
+/* Advance a sprite to its next display page and redraw it there */
 
 int es_step(struct Sprite *s)
 {

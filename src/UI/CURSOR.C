@@ -15,18 +15,14 @@
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Cursor g_cursor2;
 
-struct Pair g_cursorPairs[4] = {{1, 1}, {2, 2}, {1, 1}, {8, 8}};   /* DS:06EC */
-
-/* cu_shape_off @ 0F38:2B1C (linear 0x11E9C, 12 bytes) */
+struct Pair g_cursorPairs[4] = {{1, 1}, {2, 2}, {1, 1}, {8, 8}};
 
 unsigned cu_shape_off(unsigned n)
 {
     return n * g_cursor2.shapeSize;
 }
 
-/* cu_init @ 0F38:2B28 (linear 0x11EA8, 598 bytes)
-
-   Set up the off-screen work bitmap and the scratch strip used by the pop-up code */
+/* Set up the off-screen work bitmap and the scratch strip used by the pop-up code */
 
 void cu_init(void)
 {
@@ -88,9 +84,7 @@ void cu_init(void)
     g_graphicsUp = 2;
 }
 
-/* cu_ctl @ 0F38:2D7E (linear 0x120FE, 269 bytes)
-
-   Mouse cursor control. mode >= 0 selects cursor shape number mode and moves it to the
+/* Mouse cursor control. mode >= 0 selects cursor shape number mode and moves it to the
    (clamped) mouse position; -1/-2 show it and -3/-4 hide it (nested by a counter). */
 
 void cu_ctl(int mode)
@@ -128,9 +122,7 @@ void cu_ctl(int mode)
     }
 }
 
-/* cu_draw @ 0F38:2E8B (linear 0x1220B, 488 bytes)
-
-   Move the saved-background cursor strip to (x, y): restore what it covered, save and draw anew */
+/* Move the saved-background cursor strip to (x, y): restore what it covered, save and draw anew */
 
 void cu_draw(int x, int y)
 {

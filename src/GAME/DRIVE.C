@@ -20,9 +20,7 @@
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Bitmap far *g8188w;
 
-/* dv_run @ 0F38:7B22 (linear 0x16EA2, 1540 bytes)
-
-   Gearbox/drive screen loop: draws the dashboard, then redraws the changing parts until
+/* Gearbox/drive screen loop: draws the dashboard, then redraws the changing parts until
    dt_step reports an input. Returns that value. */
 
 int dv_run(void)

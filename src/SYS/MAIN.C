@@ -36,14 +36,12 @@ static void near check_slow_cpu(void);
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Video r_vid;
 
-int g_hercules = 0;   /* DS:0042 */
-int g_sysHooked = 0;   /* DS:0044 */
-int g_hercModeSet = 0;   /* DS:0046 */
-int g_videoSet = 0;   /* DS:0048 */
-int g_004a = 0;   /* DS:004A */
-int g_004c = 0;   /* DS:004C */
-
-/* dos_print @ 0000:0000 (linear 0x00000, 130 bytes) */
+int g_hercules = 0;
+int g_sysHooked = 0;
+int g_hercModeSet = 0;
+int g_videoSet = 0;
+int g_004a = 0;
+int g_004c = 0;
 
 static void near dos_print(char *s)
 {
@@ -62,12 +60,10 @@ static void near dos_print(char *s)
     int86(DOS_INT, &inr, &outr);
 }
 
-char *g_videoMenu[6] = {"                    1 - CGA      320 x 200 x  4 colors", "                    2 - EGA      320 x 200 x 16 colors", "                    3 - VGA      320 x 200 x 16 colors", "                    4 - Hercules monochrome", "                    5 - Tandy    320 x 200 x 16 colors", "\n                  Esc - Back to DOS"};   /* DS:0244 */
-int g_egaCard = 0;   /* DS:0250 */
-int g_forceEga = 0;   /* DS:0252 */
-int g_vga = 0;   /* DS:0254 */
-
-/* show_video_menu @ 0000:0082 (linear 0x00082, 265 bytes) */
+char *g_videoMenu[6] = {"                    1 - CGA      320 x 200 x  4 colors", "                    2 - EGA      320 x 200 x 16 colors", "                    3 - VGA      320 x 200 x 16 colors", "                    4 - Hercules monochrome", "                    5 - Tandy    320 x 200 x 16 colors", "\n                  Esc - Back to DOS"};
+int g_egaCard = 0;
+int g_forceEga = 0;
+int g_vga = 0;
 
 static int near show_video_menu(int mode)
 {
@@ -100,8 +96,6 @@ static int near show_video_menu(int mode)
     return choice;
 }
 
-/* is_vga @ 0000:018B (linear 0x0018B, 70 bytes) */
-
 static int near is_vga(void)
 {
     union REGS r;
@@ -116,8 +110,6 @@ static int near is_vga(void)
     return s && c == DCC_VGA_COLOR;
 }
 
-/* mi_set_mode @ 0000:01D1 (linear 0x001D1, 33 bytes) */
-
 void mi_set_mode(int ax)
 {
     union REGS r;
@@ -125,8 +117,6 @@ void mi_set_mode(int ax)
     r.x.ax = ax;
     int86(BIOS_VIDEO, &r, &r);
 }
-
-/* mi_set_palette @ 0000:01F2 (linear 0x001F2, 52 bytes) */
 
 void mi_set_palette(unsigned char color)
 {
@@ -139,9 +129,7 @@ void mi_set_palette(unsigned char color)
         int86(BIOS_VIDEO, &r, &r);
 }
 
-int g_useMouse = 1;   /* DS:0262 */
-
-/* choose_video @ 0000:0226 (linear 0x00226, 240 bytes) */
+int g_useMouse = 1;
 
 static int near choose_video(int mode)
 {
@@ -178,8 +166,6 @@ static int near choose_video(int mode)
     }
     return mode;
 }
-
-/* init_screens @ 0000:0316 (linear 0x00316, 478 bytes) */
 
 static void near init_screens(int mode)
 {
@@ -226,8 +212,6 @@ static void near init_screens(int mode)
     da_fmemset(g_screens[2].bits.p, 0, 0x4000);
 }
 
-/* set_video_mode @ 0000:04F4 (linear 0x004F4, 210 bytes) */
-
 static void near set_video_mode(int mode)
 {
     int far *p;
@@ -259,8 +243,6 @@ static void near set_video_mode(int mode)
     g_videoSet = 1;
 }
 
-/* cpu_speed @ 0000:05C6 (linear 0x005C6, 147 bytes) */
-
 static int near cpu_speed(void)
 {
     long count;
@@ -286,8 +268,6 @@ int g_hasSlowCpu;
 int bu8acc;
 int g_attractSwitchStartup;
 
-/* check_slow_cpu @ 0000:0659 (linear 0x00659, 22 bytes) */
-
 static void near check_slow_cpu(void)
 {
     if (bu8acc < 4)
@@ -296,21 +276,19 @@ static void near check_slow_cpu(void)
         g_hasSlowCpu = 0;
 }
 
-int g_noUeMem = 0;   /* DS:0280 */
-int g_end = 0;   /* DS:0282 */
-int g_scene = 0;   /* DS:0284 */
-int g_carAnim = 0;   /* DS:0286 */
-struct Bitmap far *g_spritePic = 0;   /* DS:0288 */
-struct Bitmap far *g_pumpWithNozzle = 0;   /* DS:028C */
-struct Bitmap far *g_pumpNoNozzle = 0;   /* DS:0290 */
-struct Bitmap far *g_stickerBg = 0;   /* DS:0294 */
-int g_carBandHeights[7] = {0, 19, 31, 29, 0, 0, 30};   /* DS:0298 */
-int g_carBottomCuts[7] = {0, 0, 8, 0, 0, 0, 9};   /* DS:02A6 */
-int g_carBg4[7] = {0, 2, 0, 2, 0, 0, 0};   /* DS:02B4 */
-int g_carBg16[7] = {0, 3, 1, 3, 0, 3, 1};   /* DS:02C2 */
-int g_spriteBottomCut = 0;   /* DS:02D0 */
-
-/* main @ 0000:066F (linear 0x0066F, 580 bytes) */
+int g_noUeMem = 0;
+int g_end = 0;
+int g_scene = 0;
+int g_carAnim = 0;
+struct Bitmap far *g_spritePic = 0;
+struct Bitmap far *g_pumpWithNozzle = 0;
+struct Bitmap far *g_pumpNoNozzle = 0;
+struct Bitmap far *g_stickerBg = 0;
+int g_carBandHeights[7] = {0, 19, 31, 29, 0, 0, 30};
+int g_carBottomCuts[7] = {0, 0, 8, 0, 0, 0, 9};
+int g_carBg4[7] = {0, 2, 0, 2, 0, 0, 0};
+int g_carBg16[7] = {0, 3, 1, 3, 0, 3, 1};
+int g_spriteBottomCut = 0;
 
 int main(int argc, char **argv)
 {

@@ -1,8 +1,8 @@
 """Per-file headers, as the original was organized: every source file (one link unit, i.e.
 one original translation unit, or one standalone data/assembler file) declares what it
 defines in its same-folder <STEM>.H, and each C source includes the headers of the files whose
-globals and functions it uses. The headers are hand-written source (each declaration with
-its address comment, which `source.py` reads); `./sr headers` rewrites the C sources'
+globals and functions it uses. The headers are hand-written source (declarations joined by name
+to original addresses in symbols.json); `./sr headers` rewrites the C sources'
 include blocks from them and checks that each header's names are defined by its file."""
 import re
 

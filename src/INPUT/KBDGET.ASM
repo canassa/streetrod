@@ -9,8 +9,6 @@
         .CODE S0000_TEXT
         EXTRN   _kb_isr:FAR
 
-; kg_key @ 0000:2DB6 (linear 0x02DB6, 13 bytes)
-
         PUBLIC  _kg_key
 _kg_key  PROC  FAR
         cli
@@ -20,8 +18,6 @@ _kg_key  PROC  FAR
         sti
         ret
 _kg_key  ENDP
-
-; kg_hook @ 0000:2DC3 (linear 0x02DC3, 31 bytes)
 
         PUBLIC  _kg_hook
 _kg_hook  PROC  FAR

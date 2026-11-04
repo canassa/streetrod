@@ -15,6 +15,13 @@ class RenameTests(unittest.TestCase):
                          'EXTRN _menu_draw:FAR\n call _menu_draw\n menu_draw(g_count, g_00420, xF_00100, $S1_g_0042);\n'
                          '/* menu_draw @ 0000:0100 */')
 
+    def test_address_metadata_is_renamed(self):
+        self.assertIn(source.SYMBOLS, rename.text_files())
+        text = '{"functions": {"ga_day": {"off": 25718, "seg": 0, "size": 45}}}'
+        pat = rename._pattern({'ga_day': 'ga_test'})
+        self.assertEqual(rename._sub(pat, {'ga_day': 'ga_test'}, text),
+                         text.replace('ga_day', 'ga_test'))
+
     def test_file_stems(self):
         pat = rename._pattern({'FAME': 'PROTECT'}, prefix=False)
         self.assertEqual(rename._sub(pat, {'FAME': 'PROTECT'}, 'SYS\\FAME.C FAME.OBJ _M_02FC8'),

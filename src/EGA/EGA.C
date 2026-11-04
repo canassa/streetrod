@@ -18,18 +18,14 @@
 #include "SCREEN.H"
 #include "VIDEO.H"
 
-struct Hooks g_egaHooks = {eb_copy, ex_blit, eb_masked, eg_draw_text, uc_ega, ec_page, er_rect, da_pal_blank, da_pal_show, es_step, ec_reveal, ev_sprite, el_draw, en_fill, en_fill_below};   /* DS:5BD0 */
-
-/* eg_install @ 21A0:1128 (linear 0x22B28, 18 bytes) */
+struct Hooks g_egaHooks = {eb_copy, ex_blit, eb_masked, eg_draw_text, uc_ega, ec_page, er_rect, da_pal_blank, da_pal_show, es_step, ec_reveal, ev_sprite, el_draw, en_fill, en_fill_below};
 
 void eg_install(void)
 {
     g_videoOps = g_egaHooks;
 }
 
-/* eg_draw_text @ 21A0:113A (linear 0x22B3A, 973 bytes)
-
-   Draw a string in the 8-pixel-high font into a planar EGA/VGA bitmap, composing the glyph rows in
+/* Draw a string in the 8-pixel-high font into a planar EGA/VGA bitmap, composing the glyph rows in
    a 320 byte buffer first */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 

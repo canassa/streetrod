@@ -24,22 +24,20 @@ static void near insert_hot(struct Hot *arr, struct Hot *item, int num);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 
-char g_partAnimate = 1;   /* DS:06FC */
-int g_tboltY[2] = {78, 93};   /* DS:06FE */
-int g_enginePos[3][2] = {{24, 68}, {24, 68}, {16, 68}};   /* DS:0702 */
-int g_engineBoltPos[6] = {109, 112, 120, 111, 124, 116};   /* DS:070E */
-int g_wiresPos[12] = {75, 113, 64, 122, 83, 110, 72, 119, 83, 118, 72, 127};   /* DS:071A */
-int g_manifoldBoltPos[8] = {68, 74, 144, 74, 68, 74, 160, 74};   /* DS:0732 */
-int g_carbPos[10][2] = {{90, 70}, {98, 70}, {94, 70}, {64, 70}, {90, 70}, {115, 70}, {72, 71}, {111, 71}, {71, 69}, {115, 69}};   /* DS:0742 */
-int g_carbBoltOff[10] = {10, -1, 21, -1, 11, -1, 29, -1, 11, -1};   /* DS:076A */
-char g_partSlotMap[14] = {29, 0, -1, -1, 2, 2, 2, 2, 3, 4, 2, 3, 2, 3};   /* DS:077E */
-char g_carbPosBase[6] = {5, 6, 7, 10, 12, 0};   /* DS:078C */
-struct Bitmap far *g_boltOverlay = 0;   /* DS:0792 */
-struct Hot g_boltHot = {11, 0, 0, 1, 0, 0, 0, 0, 0};   /* DS:0796 */
+char g_partAnimate = 1;
+int g_tboltY[2] = {78, 93};
+int g_enginePos[3][2] = {{24, 68}, {24, 68}, {16, 68}};
+int g_engineBoltPos[6] = {109, 112, 120, 111, 124, 116};
+int g_wiresPos[12] = {75, 113, 64, 122, 83, 110, 72, 119, 83, 118, 72, 127};
+int g_manifoldBoltPos[8] = {68, 74, 144, 74, 68, 74, 160, 74};
+int g_carbPos[10][2] = {{90, 70}, {98, 70}, {94, 70}, {64, 70}, {90, 70}, {115, 70}, {72, 71}, {111, 71}, {71, 69}, {115, 69}};
+int g_carbBoltOff[10] = {10, -1, 21, -1, 11, -1, 29, -1, 11, -1};
+char g_partSlotMap[14] = {29, 0, -1, -1, 2, 2, 2, 2, 3, 4, 2, 3, 2, 3};
+char g_carbPosBase[6] = {5, 6, 7, 10, 12, 0};
+struct Bitmap far *g_boltOverlay = 0;
+struct Hot g_boltHot = {11, 0, 0, 1, 0, 0, 0, 0, 0};
 
-/* gx_trans_bolt @ 0F38:3074 (linear 0x123F4, 305 bytes)
-
-   Draw the 64 x 6 bar for slot of the dialog; frame selects the highlighted frame.
+/* Draw the 64 x 6 bar for slot of the dialog; frame selects the highlighted frame.
    When frame == 1 and the screen is shadowed, the old bar is grabbed and pasted first. */
 
 void gx_trans_bolt(int frame, int slot)
@@ -76,9 +74,7 @@ void gx_trans_bolt(int frame, int slot)
     ma_pop_high(1);
 }
 
-/* gx_trans_drop @ 0F38:31A5 (linear 0x12525, 297 bytes)
-
-   Draw the bar for slot "slot" of the dialog, then (screen shadowed) grab it back and paste the
+/* Draw the bar for slot "slot" of the dialog, then (screen shadowed) grab it back and paste the
    frame */
 
 void gx_trans_drop(int slot)
@@ -111,9 +107,7 @@ void gx_trans_drop(int slot)
     ma_pop_high(1);
 }
 
-/* gx_trans_pic @ 0F38:32CE (linear 0x1264E, 310 bytes)
-
-   Show picture n centered in the dialog area; flag moves it left by 24.
+/* Show picture n centered in the dialog area; flag moves it left by 24.
    With the screen shadowed the area under it is saved around the draw and restored afterwards. */
 
 void gx_trans_pic(int n, int flag)
@@ -151,9 +145,7 @@ void gx_trans_pic(int n, int flag)
     ma_pop_high(1);
 }
 
-/* gx_trans_clear @ 0F38:3404 (linear 0x12784, 87 bytes)
-
-   Paste picture 0x42e at (0x20, 10) */
+/* Paste picture 0x42e at (0x20, 10) */
 
 void gx_trans_clear(int n, int flag)
 {
@@ -166,9 +158,7 @@ void gx_trans_clear(int n, int flag)
     ma_pop_high(1);
 }
 
-/* gx_trans_draw @ 0F38:345B (linear 0x127DB, 160 bytes)
-
-   Redraw the dialog picture n and its two bars; s gives the bar states.
+/* Redraw the dialog picture n and its two bars; s gives the bar states.
    The screen shadow flag is switched off while drawing and the area is copied to the front afterwards. */
 
 void gx_trans_draw(int n, char far *s)
@@ -194,11 +184,9 @@ void gx_trans_draw(int n, char far *s)
 struct Blt g_cpyBoltPatchRecord;
 int o_8290[5];
 int g_engineBoltPicIds[9];
-struct PartSelection g_slotSelec; /* DS:82AC */
+struct PartSelection g_slotSelec;
 
-/* engine_index @ 0F38:34FB (linear 0x1287B, 33 bytes)
-
-   Slot number for the item in o_8290: 0x434..0x436 map to 0..2 (anything else is returned as it is) */
+/* Slot number for the item in o_8290: 0x434..0x436 map to 0..2 (anything else is returned as it is) */
 
 static int near engine_index(void)
 {
@@ -212,9 +200,7 @@ static int near engine_index(void)
     }
 }
 
-/* carb_pos @ 0F38:351C (linear 0x1289C, 109 bytes)
-
-   Position (x, y) of the current slot in the lower table; returns the offset for the item type */
+/* Position (x, y) of the current slot in the lower table; returns the offset for the item type */
 
 static int near carb_pos(int *px, int *py)
 {
@@ -237,9 +223,7 @@ static int near carb_pos(int *px, int *py)
     return r;
 }
 
-/* gx_part_pos @ 0F38:3589 (linear 0x12909, 91 bytes)
-
-   Screen position (*px, *py) of the current slot, by game mode g_slotSelec.slot */
+/* Screen position (*px, *py) of the current slot, by game mode g_slotSelec.slot */
 
 void gx_part_pos(int *px, int *py)
 {
@@ -260,9 +244,7 @@ void gx_part_pos(int *px, int *py)
     }
 }
 
-/* gx_bolt_pos @ 0F38:35E4 (linear 0x12964, 179 bytes)
-
-   Position (*px, *py) for the current item: looked up per slot, with an offset added in one mode */
+/* Position (*px, *py) for the current item: looked up per slot, with an offset added in one mode */
 
 void gx_bolt_pos(int *px, int *py)
 {
@@ -290,9 +272,7 @@ void gx_bolt_pos(int *px, int *py)
     }
 }
 
-/* gx_draw_bolt @ 0F38:3697 (linear 0x12A17, 357 bytes)
-
-   Draw picture n (item id) at the current slot position and restore the background strip
+/* Draw picture n (item id) at the current slot position and restore the background strip
    behind it. With the screen shadowed the picture is first copied into a bitmap 8 pixels wider. */
 
 void gx_draw_bolt(int n)
@@ -330,9 +310,7 @@ void gx_draw_bolt(int n)
         ma_pop_high(1);
 }
 
-/* gx_drop_bolt @ 0F38:37FC (linear 0x12B7C, 341 bytes)
-
-   Redraw the marker picture (0x43f) at the current slot position, aligned to the pixel grid.
+/* Redraw the marker picture (0x43f) at the current slot position, aligned to the pixel grid.
    With the screen shadowed the area is also copied to the front buffer and a label is drawn beside it. */
 
 void gx_drop_bolt(void)
@@ -379,9 +357,7 @@ void gx_drop_bolt(void)
     ma_pop_high(1);
 }
 
-/* make_bolt_overlay @ 0F38:3951 (linear 0x12CD1, 263 bytes)
-
-   For the marker items 0x43f/0x440 of the current slot, save a copy of the picture
+/* For the marker items 0x43f/0x440 of the current slot, save a copy of the picture
    (shifted to the pixel grid) in g_boltOverlay and set up the blit g_cpyBoltPatchRecord that draws it. */
 
 static void near make_bolt_overlay(void)
@@ -414,9 +390,7 @@ static void near make_bolt_overlay(void)
     }
 }
 
-/* gx_draw_part @ 0F38:3A58 (linear 0x12DD8, 449 bytes)
-
-   Draw item picture n at the current slot position, aligned to the pixel grid;
+/* Draw item picture n at the current slot position, aligned to the pixel grid;
    flag (nonzero) raises it by 20 and skips the blit to the back buffer. Frees the temporary copies. */
 
 void gx_draw_part(int n, int flag)
@@ -471,9 +445,7 @@ void gx_draw_part(int n, int flag)
         ma_pop_high(1);
 }
 
-/* gx_erase_part @ 0F38:3C19 (linear 0x12F99, 259 bytes)
-
-   Draw item picture n at the current slot position, 20 above it, via the r_vid.hoodBg buffer,
+/* Draw item picture n at the current slot position, 20 above it, via the r_vid.hoodBg buffer,
    and copy the area to the front buffer when the screen is shadowed. */
 
 void gx_erase_part(int n, int flag)
@@ -505,9 +477,7 @@ void gx_erase_part(int n, int flag)
         bm_copy_box(r_vid.back, r_vid.front, px, py, px + w, py + h);
 }
 
-/* gx_draw_wires @ 0F38:3D1C (linear 0x1309C, 281 bytes)
-
-   Draw the current pair of slot pictures: the strip from r_vid.hoodBg and the sprite g_slotSelec.wirePic,
+/* Draw the current pair of slot pictures: the strip from r_vid.hoodBg and the sprite g_slotSelec.wirePic,
    copying the area to the front buffer when the screen is shadowed. */
 
 void gx_draw_wires(void)
@@ -534,9 +504,7 @@ void gx_draw_wires(void)
         bm_copy_box(r_vid.back, r_vid.front, x2 > xs ? xs : x2, y2 > ys ? ys : y2, blt.w + x2 + 0x18, blt.h + y2 + 0x18);
 }
 
-/* gx_draw_parts @ 0F38:3E35 (linear 0x131B5, 248 bytes)
-
-   Draw the item pictures of a car's parts for slots 0, 1 and then 2..4, with the
+/* Draw the item pictures of a car's parts for slots 0, 1 and then 2..4, with the
    screen shadow off (g_partAnimate). Loads the r_vid.hoodBg strip first when it isn't there yet. */
 
 void gx_draw_parts(struct Car *car)
@@ -574,9 +542,7 @@ void gx_draw_parts(struct Car *car)
     g_slotSelec.slot = mode;
 }
 
-/* gx_draw_bolts @ 0F38:3F2D (linear 0x132AD, 286 bytes)
-
-   Redraw all nine slot pictures (a and b give each slot's mode and sub-mode) into the
+/* Redraw all nine slot pictures (a and b give each slot's mode and sub-mode) into the
    back buffer over the r_vid.hoodBg strip, then the g_slotSelec.wirePic sprite, and an optional label when flag is set.
    The screen shadow r_vid.copyToFront is switched off meanwhile and the area is copied to the front afterwards. */
 
@@ -619,9 +585,7 @@ void gx_draw_bolts(int *a, int *b, int flag)
     g_slotSelec.subslot = prev2;
 }
 
-/* insert_hot @ 0F38:404B (linear 0x133CB, 127 bytes)
-
-   Insert item into the array arr of n records, which is sorted by (x1, y1): it goes before
+/* Insert item into the array arr of n records, which is sorted by (x1, y1): it goes before
    the first record that compares greater, the rest are moved up by one. */
 
 static void near insert_hot(struct Hot *arr, struct Hot *item, int n)
@@ -645,9 +609,7 @@ static void near insert_hot(struct Hot *arr, struct Hot *item, int n)
     *p = *item;
 }
 
-/* gx_build_hots @ 0F38:40CA (linear 0x1344A, 411 bytes)
-
-   Build the sorted list of menu items in g_engineHots: the 3 fixed records are copied from g_engineHotTemplate,
+/* Build the sorted list of menu items in g_engineHots: the 3 fixed records are copied from g_engineHotTemplate,
    then for each of 9 slots (grouped by the counts in g_nBolt) that is enabled in o_8290 an item is
    inserted at the position gx_bolt_pos gives for the slot's coordinates, plus a last item picked by
    g_slotSelec.wirePic. g_slotSelec.slot/g_slotSelec.subslot are saved and restored around it. */
@@ -702,9 +664,7 @@ void gx_build_hots(int *xs, int *ys)
     sy_hover_reset();
 }
 
-/* gx_sort_hots @ 0F38:4265 (linear 0x135E5, 156 bytes)
-
-   Sort n hot spots of g_hots starting at first by x1 (exchange sort, ascending) */
+/* Sort n hot spots of g_hots starting at first by x1 (exchange sort, ascending) */
 
 void gx_sort_hots(int first, int n)
 {

@@ -12,7 +12,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 | `tools/sr/cli.py` | argparse commands; one `cmd_*` function each |
 | `tools/sr/pics.py` | `./sr pic`: resource directory/RLE decoder, EGA planar and CGA packed pixels, stdlib PNG and kitty graphics output; `--list`, `--png`, `--scale`, `--cells COLS N`, `--mode ega|cga`, `--palette game|intro|standard|cga-green` |
 | `tools/sr/config.py` | paths, address ranges, recursive source/header index, header staging and the INCLUDE environment read from SRENV.BAT |
-| `tools/sr/source.py` | the symbol tables every command reads (there is no DB): game functions from the comment above each definition (`/* name @ SSSS:OOOO (linear 0xAAAAA, N bytes) */`, `; name @ ...` in MASM; distance from `near` / `PROC NEAR`), prototypes, DGROUP globals and far data from the headers' `extern` lines and address comments, file statics from their `/* DS:XXXX */` definitions, and `runtime()`: the scanner's runtime functions named by `lib.locate_all` (aliases, the library's DGROUP data publics, callees), cached in `work/cache/runtime.json` keyed by the EXE, the libraries and the code. Rows are dicts (`addr seg off size kind far name src proto`; `globals_()` by offset, `global_offsets()` by name with every runtime name). `reload()` after editing sources |
+| `tools/sr/source.py` | joins original function extents and data addresses in `tools/sr/symbols.json` by name to current source definitions and header declarations; derives source ownership, prototypes and near/far distance. Runtime functions, aliases, DGROUP publics and callees come from the EXE and MSC libraries, cached in `work/cache/runtime.json`. `reload()` after editing sources or metadata |
 | `tools/sr/exe.py` | the unpacked image, relocations, DGROUP strings |
 | `tools/sr/disasm.py` | capstone wrapper; decodes the `INT 34h`-`3Dh` emulator ops as `emu_*` |
 | `tools/sr/scan.py` | function finder (recursive descent plus prologue passes) and the C/asm/CRT classifier |
@@ -38,7 +38,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 
 ## Rules
 
-- **Nothing is stored.** Every table is derived from the sources, the headers, the EXE and the libraries (`source.py`); a cache under `work/` must be keyed by everything it is derived from. `./sr scan` only compares the scanner with the sources (exit 1 on a difference); flags are the file's, in src/MAKEFILE.
+- **Original locations are stored.** `tools/sr/symbols.json` holds only function segment/offset/size and data addresses, keyed by name. Register new symbols there; `./sr rename` maintains names. Declarations and ownership are derived from source and headers; a cache under `work/` must be keyed by everything it is derived from. `./sr scan` only compares the scanner with the sources (exit 1 on a difference); flags are the file's, in src/MAKEFILE.
 - **The comparer must stay strict.** Only bytes covered by an OBJ fixup are masked, plus near-call displacements whose target is outside the function. Never add a mask to get a function to pass; if a real class of unverifiable bytes appears, report it as its own count (like `nearcalls`) and get the user's agreement.
 - **Every emulator run is bounded** by `timeout` (rule in CLAUDE.md); emu2 also by RLIMIT_FSIZE.
 - **The backends must stay byte-identical.** After changing `dosbox.py`, `emu2.py`, `tools/nix/emu2.nix` or the job layout, run `nix-shell shell.nix --run 'python3 tools/scripts/emucmp.py '` and expect `IDENTICAL`. Never make a backend the default, or change its pin, without that. The only tolerated differences are MASM's LST page-header time and its "symbol space free" line (emu2 gives MASM the full 640K; DOSBox-X keeps COMMAND.COM resident), which `emucmp` reports separately.
@@ -49,7 +49,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 ## Known limitations (fix when they bite)
 
 - `sr scan` reaches functions through calls, far-pointer tables and prologue patterns. Functions only reached by computed jumps can be missed or split into fragments (a few `kind=c` rows without a prologue are fragments of bigger functions).
-- `sr check` compares a procedure by name against the extent in its address comment. A function with a jump table after its code may have its extent end early.
+- `sr check` compares a procedure by name against the extent in `tools/sr/symbols.json`. A function with a jump table after its code may have its extent end early.
 - A near call to a function of another object can't be verified from one object (`MATCH*`, 21 functions); `./sr build` verifies all 748 near-call encodings.
 - An assembled function's extent is its `PROC` length in the MASM listing; without a listing, it runs to the next `PUBLIC` in the OBJ. Every procedure of an `.ASM` is `PUBLIC`.
 
@@ -124,8 +124,8 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 
 ## DGROUP lessons (2026-11-04)
 
-- The analysis reads the freshest objects (`work/layout/BUILD/<file stem>/`), the `/Fc` listing for literal sizes (`"\0"` is two bytes) and the source definitions for array bounds: run `./sr build` before `./sr dgroup`. Definitions carry `/* DS:xxxx */`. The sources are the truth for data definitions: `./sr dgroup check` only verifies that each named item is defined in the file that owned it (since 2026-11-04 there is no writer; the old `apply --write` regenerated every definition from the model and reverted hand edits).
-- An overlapping name (an alias) is a view of its base: write it as `base[i]` (or a member) in the sources and drop its declaration; `./sr dgroup check` fails while one exists, and also when the layout holds a global the sources lack (declare it in the owner's header with its `/* DS:XXXX */`). There is no writer (the old `aliases --write` / `register --write` are gone).
+- The analysis reads the freshest objects (`work/layout/BUILD/<file stem>/`), the `/Fc` listing for literal sizes (`"\0"` is two bytes) and the source definitions for array bounds: run `./sr build` before `./sr dgroup`. Definitions carry no address annotations; original addresses live in `tools/sr/symbols.json`. The sources are the truth for data definitions: `./sr dgroup check` only verifies that each named item is defined in the file that owned it (since 2026-11-04 there is no writer; the old `apply --write` regenerated every definition from the model and reverted hand edits).
+- An overlapping name (an alias) is a view of its base: write it as `base[i]` (or a member) in the sources and drop its declaration; `./sr dgroup check` fails while one exists, and also when the layout holds a global the sources lack (declare it in the owner's header and register its address in `tools/sr/symbols.json`). There is no writer (the old `aliases --write` / `register --write` are gone).
 - An assembler unit's data goes into its one `.DATA` section, after its EXTRNs: `PUBLIC  _name` then `_name DW ...` (the label typed by its first element), several values per line, text as quoted strings, `n DUP (v)` for runs, `EVEN` for an alignment byte (MASM 5.1 pads with 00h in data, 90h in code). DUP becomes LIDATA, which omf.py expands. `./sr dgroup check` recognises a MASM definition as `PUBLIC _x` plus a `_x LABEL|DB|DW|DD|DQ` line.
 
 ## Link-structure lessons (2026-11-04)

@@ -19,21 +19,17 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-struct Hooks g_cgaHooks = {cb_copy, cx_blit, cb_masked, cg_draw_text, uc_cga, cg_copy_page, cg_recolor_rect, cg_screen_off, cg_screen_on, cs_step, cg_reveal, sp_slide_v, cl_draw, cl_span, cl_fill_below};   /* DS:5B04 */
-unsigned char g_cgaPixMask[4] = {192, 48, 12, 3};   /* DS:5B40 */
-unsigned char g_cgaPixKeep[4] = {63, 207, 243, 252};   /* DS:5B44 */
-int g_cgaRevealOrder[5] = {0, 2, 4, 1, 3};   /* DS:5B48 */
-
-/* cg_install @ 1C11:01A8 (linear 0x1C2B8, 18 bytes) */
+struct Hooks g_cgaHooks = {cb_copy, cx_blit, cb_masked, cg_draw_text, uc_cga, cg_copy_page, cg_recolor_rect, cg_screen_off, cg_screen_on, cs_step, cg_reveal, sp_slide_v, cl_draw, cl_span, cl_fill_below};
+unsigned char g_cgaPixMask[4] = {192, 48, 12, 3};
+unsigned char g_cgaPixKeep[4] = {63, 207, 243, 252};
+int g_cgaRevealOrder[5] = {0, 2, 4, 1, 3};
 
 void cg_install(void)
 {
     g_videoOps = g_cgaHooks;
 }
 
-/* cg_draw_text @ 1C11:01BA (linear 0x1C2CA, 1337 bytes)
-
-   Draw a string of 8-pixel-high CGA/Hercules text into a bitmap at pixel x, y, through an 8x80 byte
+/* Draw a string of 8-pixel-high CGA/Hercules text into a bitmap at pixel x, y, through an 8x80 byte
    scratch buffer */
 
 void cg_draw_text(struct Bitmap far *bm, int x, int y, char *s)
@@ -251,9 +247,7 @@ void cg_draw_text(struct Bitmap far *bm, int x, int y, char *s)
         PIX(2, c2, b2) \
     }
 
-/* cg_recolor_rect @ 1C11:06F3 (linear 0x1C803, 1764 bytes)
-
-   Fill a rectangle of 2-bit CGA pixels with a colour, recolouring every pixel that is not colour
+/* Fill a rectangle of 2-bit CGA pixels with a colour, recolouring every pixel that is not colour
    c1l */
 
 void cg_recolor_rect(struct Bitmap far *bm, int a, int b, int x1, int y1, int x2, int y2)
@@ -370,9 +364,7 @@ void cg_recolor_rect(struct Bitmap far *bm, int a, int b, int x1, int y1, int x2
     }
 }
 
-/* cg_copy_page @ 1C11:0DD7 (linear 0x1CEE7, 89 bytes)
-
-   Copy a 16K video page, and on Hercules also its fourth bank */
+/* Copy a 16K video page, and on Hercules also its fourth bank */
 
 void cg_copy_page(char far *src, char far *dst)
 {
@@ -381,9 +373,7 @@ void cg_copy_page(char far *src, char far *dst)
         movedata(r_vid.mode == VID_HERCULES ? 0xb200 : 0xba00, 0, 0xb400, 0, 0x2000);
 }
 
-/* cg_reveal @ 1C11:0E30 (linear 0x1CF40, 283 bytes)
-
-   Dissolve one 80-byte-per-line CGA screen into another, five interleaved passes */
+/* Dissolve one 80-byte-per-line CGA screen into another, five interleaved passes */
 
 void cg_reveal(char far *dst, char far *src)
 {
@@ -419,9 +409,7 @@ void cg_reveal(char far *dst, char far *src)
     }
 }
 
-/* cg_set_page @ 1C11:0F4B (linear 0x1D05B, 37 bytes)
-
-   BIOS video function 5, select the active display page */
+/* BIOS video function 5, select the active display page */
 
 void cg_set_page(int page)
 {
@@ -432,9 +420,7 @@ void cg_set_page(int page)
     int86(BIOS_VIDEO, &r, &r);
 }
 
-/* cg_screen_off @ 1C11:0F70 (linear 0x1D080, 36 bytes)
-
-   Unreferenced video-control routine. */
+/* Unreferenced video-control routine. */
 void cg_screen_off(void)
 {
     switch (r_vid.mode) {
@@ -448,9 +434,7 @@ void cg_screen_off(void)
     gz8249 = 0;
 }
 
-/* cg_screen_on @ 1C11:0F94 (linear 0x1D0A4, 36 bytes)
-
-   Unreferenced video-control routine. */
+/* Unreferenced video-control routine. */
 void cg_screen_on(void)
 {
     switch (r_vid.mode) {

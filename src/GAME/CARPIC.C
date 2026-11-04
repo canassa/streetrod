@@ -25,7 +25,7 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static struct Rect g_lastCarRect;                 /* DS:6CBC */
+static struct Rect g_lastCarRect;
 static void near blit_planes(char far *src, char far *dst, char far *mask, int w, int h, int n, int step);
 static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2, int h, char far *mask, char c);
 static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int color);
@@ -38,11 +38,11 @@ struct Band g_carSpriteStrips[4];
 struct Bitmap g_carBackdropHdrBmp;
 int g_carVisibleHtValue;
 
-int g_delayScale = 1;   /* DS:58E2 */
-int g_dashBuffered = 0;   /* DS:58E4 */
-int g_autoTrans = 0;   /* DS:58E6 */
-int g_wheelPicIds[3] = {1001, 1002, 1000};   /* DS:58E8 */
-int g_driveRebuild = 0;   /* DS:58EE */
+int g_delayScale = 1;
+int g_dashBuffered = 0;
+int g_autoTrans = 0;
+int g_wheelPicIds[3] = {1001, 1002, 1000};
+int g_driveRebuild = 0;
 struct Cmd g_animScripts[44] = {
     {ANIM_NOP_1, 0, -1, -1},
     {ANIM_STOP, 0, 0, 0},
@@ -88,19 +88,17 @@ struct Cmd g_animScripts[44] = {
     {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 4, 36},
     {ANIM_STOP, 0, 0, 0},
     {ANIM_STOP, 0, 0, 0}
-};   /* DS:58F0 */
-int g_animScriptStart[9] = {8, 0, 2, 12, 10, 25, 27, 29, 31};   /* DS:59F8 */
-struct Bitmap far *g_backdrop = (struct Bitmap far *)&g_carBackdropHdrBmp;   /* DS:5A0A */
-int g_carMoving = 0;   /* DS:5A0E */
-struct Rect g_overlayRectA = {0, 0, 80, 0};   /* DS:5A10 */
-struct Rect g_overlayRectB = {88, 0, 136, 0};   /* DS:5A18 */
-int g_backdropX = 0;   /* DS:5A20 */
-int g_backdropW = 0;   /* DS:5A22 */
-int g_carPassBy = 0;   /* DS:5A24 */
+};
+int g_animScriptStart[9] = {8, 0, 2, 12, 10, 25, 27, 29, 31};
+struct Bitmap far *g_backdrop = (struct Bitmap far *)&g_carBackdropHdrBmp;
+int g_carMoving = 0;
+struct Rect g_overlayRectA = {0, 0, 80, 0};
+struct Rect g_overlayRectB = {88, 0, 136, 0};
+int g_backdropX = 0;
+int g_backdropW = 0;
+int g_carPassBy = 0;
 
-/* blit_planes @ 0F38:8126 (linear 0x174A6, 116 bytes)
-
-   Blit one 4-plane EGA image row set, one plane at a time via the sequencer map mask */
+/* Blit one 4-plane EGA image row set, one plane at a time via the sequencer map mask */
 
 static void near blit_planes(char far *src, char far *dst, char far *mask, int w, int h, int n, int step)
 {
@@ -117,9 +115,7 @@ static void near blit_planes(char far *src, char far *dst, char far *mask, int w
     outp(SEQ_DATA, SEQ_ALL_PLANES);
 }
 
-/* make_bands @ 0F38:819A (linear 0x1751A, 412 bytes)
-
-   For each of n bitmaps, lay a band of h rows into the scratch bitmap g_pageBmps[2], fill or copy it,
+/* For each of n bitmaps, lay a band of h rows into the scratch bitmap g_pageBmps[2], fill or copy it,
    then blit the bitmap through the EGA planes */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
@@ -152,9 +148,7 @@ static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2
     }
 }
 
-/* make_frames @ 0F38:8336 (linear 0x176B6, 392 bytes)
-
-   Copy n bitmaps into the table g_bandRecordsSprArray, each filled with a colour pattern and h rows high, in
+/* Copy n bitmaps into the table g_bandRecordsSprArray, each filled with a colour pattern and h rows high, in
    space cut from the scratch bitmap g_pageBmps[2] */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
@@ -191,9 +185,7 @@ static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int co
     ma_pop_high(1);
 }
 
-/* cp_backdrop @ 0F38:84BE (linear 0x1783E, 624 bytes)
-
-   Make a copy of a bitmap header that views the rows below y0, plus a bitmap to hold them (*pa), a
+/* Make a copy of a bitmap header that views the rows below y0, plus a bitmap to hold them (*pa), a
    second one (*pb), and two clip rects */
 
 void cp_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bitmap far **pb,
@@ -259,9 +251,7 @@ void cp_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, struc
     }
 }
 
-/* build_pump_strip @ 0F38:872E (linear 0x17AAE, 312 bytes)
-
-   Render a 16x70 strip into a scratch bitmap with two draw passes and blit it onto two bitmaps */
+/* Render a 16x70 strip into a scratch bitmap with two draw passes and blit it onto two bitmaps */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 static void near build_pump_strip(int x, int y, int sx0, int top, struct Bitmap far *dstbm, int id1, int id2)
@@ -295,9 +285,7 @@ static void near build_pump_strip(int x, int y, int sx0, int top, struct Bitmap 
     ma_pop_high(1);
 }
 
-/* cp_build @ 0F38:8866 (linear 0x17BE6, 1506 bytes)
-
-   Load the bitmap of car part idx into out[0], paint its marks, and build the n frame copies
+/* Load the bitmap of car part idx into out[0], paint its marks, and build the n frame copies
    out[1..] */
 
 void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *ids, int w, int n)
@@ -427,7 +415,6 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
     }
 }
 
-/* cp_show_car @ 0F38:8E48 (linear 0x181C8, 2323 bytes) */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void cp_show_car(enum CarAnimKind kind, int idx, int flags, int kk, int q, int bot, int mode2, int *ids)
@@ -622,9 +609,7 @@ done:
     cu_ctl(CURSOR_SHOW_NOW);
 }
 
-/* cp_patch_bg @ 0F38:975B (linear 0x18ADB, 256 bytes)
-
-   Blit a clipped band of a bitmap through the blit hook, then the seven frame cells onto the front
+/* Blit a clipped band of a bitmap through the blit hook, then the seven frame cells onto the front
    buffer */
 
 void cp_patch_bg(struct Bitmap far *dst, int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8)

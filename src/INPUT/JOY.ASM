@@ -27,8 +27,6 @@
 
         .CODE S0000_TEXT
 
-; jy_read @ 0000:2DF4 (linear 0x02DF4, 159 bytes)
-
         PUBLIC  _jy_read
 _jy_read  PROC  FAR
         push    ax
@@ -121,7 +119,6 @@ timeout:
         jmp     done1
 _jy_read  ENDP
 
-; jy_demo_key @ 0000:2E93 (linear 0x02E93, 309 bytes)
 ; keyboard scan code handler, variant of the int 9 ISR kb_isr (retf, no port I/O)
 
         PUBLIC  _jy_demo_key

@@ -1,0 +1,4947 @@
+{
+  "data": {
+    "a784als": {
+      "off": 30794
+    },
+    "a8ef4fv": {
+      "off": 36596
+    },
+    "a_7eaap": {
+      "off": 32426
+    },
+    "a_7f88d": {
+      "off": 32648
+    },
+    "ab7526x": {
+      "off": 29990
+    },
+    "ac825et": {
+      "off": 33374
+    },
+    "af7880z": {
+      "off": 30848
+    },
+    "ah7aa4w": {
+      "off": 31396
+    },
+    "ai70e4t": {
+      "off": 28900
+    },
+    "ai8bacx": {
+      "off": 35756
+    },
+    "ak8bcat": {
+      "off": 35786
+    },
+    "al70c0x": {
+      "off": 28864
+    },
+    "am8b82y": {
+      "off": 35714
+    },
+    "ao7d2ev": {
+      "off": 32046
+    },
+    "ao8228u": {
+      "off": 33320
+    },
+    "ap7d7cv": {
+      "off": 32124
+    },
+    "ar767eu": {
+      "off": 30334
+    },
+    "ar7e8av": {
+      "off": 32394
+    },
+    "at767ct": {
+      "off": 30332
+    },
+    "av787at": {
+      "off": 30842
+    },
+    "aw7aaex": {
+      "off": 31406
+    },
+    "aw8260y": {
+      "off": 33376
+    },
+    "ax72f4": {
+      "off": 29428
+    },
+    "ay8bc2z": {
+      "off": 35778
+    },
+    "bm7568": {
+      "off": 30056
+    },
+    "bm7678": {
+      "off": 30328
+    },
+    "bn7648": {
+      "off": 30280
+    },
+    "bu8acc": {
+      "off": 35532
+    },
+    "bustyle": {
+      "off": 30846
+    },
+    "bw8aca": {
+      "off": 35530
+    },
+    "by72f2": {
+      "off": 29426
+    },
+    "bz7ee2": {
+      "off": 32482
+    },
+    "bz8630z": {
+      "off": 34352
+    },
+    "bz8b7ex": {
+      "off": 35710
+    },
+    "dz82c8x": {
+      "off": 33480
+    },
+    "fz79a8": {
+      "off": 31144
+    },
+    "g764aw": {
+      "off": 30282
+    },
+    "g7d18m": {
+      "off": 32024
+    },
+    "g7d62p": {
+      "off": 32098
+    },
+    "g7d66n": {
+      "off": 32102
+    },
+    "g7d86n": {
+      "off": 32134
+    },
+    "g7ff6f": {
+      "off": 32758
+    },
+    "g8184y": {
+      "off": 33156
+    },
+    "g8188w": {
+      "off": 33160
+    },
+    "g82b4s": {
+      "off": 33460
+    },
+    "g8acew": {
+      "off": 35534
+    },
+    "g_004a": {
+      "off": 74
+    },
+    "g_004c": {
+      "off": 76
+    },
+    "g_05ba": {
+      "off": 1466
+    },
+    "g_05bc": {
+      "off": 1468
+    },
+    "g_05d4": {
+      "off": 1492
+    },
+    "g_05d6": {
+      "off": 1494
+    },
+    "g_05d8": {
+      "off": 1496
+    },
+    "g_05da": {
+      "off": 1498
+    },
+    "g_05f4": {
+      "off": 1524
+    },
+    "g_060a": {
+      "off": 1546
+    },
+    "g_064d": {
+      "off": 1613
+    },
+    "g_06a2": {
+      "off": 1698
+    },
+    "g_2f93_0050": {
+      "off": 80,
+      "seg": 12179
+    },
+    "g_2f93_00b0": {
+      "off": 176,
+      "seg": 12179
+    },
+    "g_4734": {
+      "off": 18228
+    },
+    "g_4742": {
+      "off": 18242
+    },
+    "g_4744": {
+      "off": 18244
+    },
+    "g_47d1": {
+      "off": 18385
+    },
+    "g_47f0": {
+      "off": 18416
+    },
+    "g_4bed": {
+      "off": 19437
+    },
+    "g_4f4a": {
+      "off": 20298
+    },
+    "g_501d": {
+      "off": 20509
+    },
+    "g_5568": {
+      "off": 21864
+    },
+    "g_5af3": {
+      "off": 23283
+    },
+    "g_5e3c": {
+      "off": 24124
+    },
+    "g_5e94": {
+      "off": 24212
+    },
+    "g_5ec6": {
+      "off": 24262
+    },
+    "g_6076": {
+      "off": 24694
+    },
+    "g_6c42": {
+      "off": 27714
+    },
+    "g_6e04aay": {
+      "off": 28164
+    },
+    "g_acceptMsgs": {
+      "off": 21008
+    },
+    "g_acceptProbability": {
+      "off": 36312
+    },
+    "g_adIdxEndPageState": {
+      "off": 32644
+    },
+    "g_adPacket": {
+      "off": 1314
+    },
+    "g_adPicture": {
+      "off": 1308
+    },
+    "g_adRedraw": {
+      "off": 1312
+    },
+    "g_adResume": {
+      "off": 1334
+    },
+    "g_allocationNodesPartList": {
+      "off": 34410
+    },
+    "g_altPalette": {
+      "off": 1122
+    },
+    "g_animCells": {
+      "off": 21082
+    },
+    "g_animRun": {
+      "off": 27704
+    },
+    "g_animScriptStart": {
+      "off": 23032
+    },
+    "g_animScripts": {
+      "off": 22768
+    },
+    "g_animSteps": {
+      "off": 21022
+    },
+    "g_arenaBase": {
+      "off": 27856
+    },
+    "g_arenaTopVal": {
+      "off": 30942
+    },
+    "g_attractSwitchStartup": {
+      "off": 35790
+    },
+    "g_autoDrive": {
+      "off": 1554
+    },
+    "g_autoSprImagePtr": {
+      "off": 33370
+    },
+    "g_autoTrans": {
+      "off": 22758
+    },
+    "g_backdrop": {
+      "off": 23050
+    },
+    "g_backdropW": {
+      "off": 23074
+    },
+    "g_backdropX": {
+      "off": 23072
+    },
+    "g_bandRecordsSprArray": {
+      "off": 28264
+    },
+    "g_bankrollLabel": {
+      "off": 18908
+    },
+    "g_bannerX": {
+      "off": 20974
+    },
+    "g_barJailPixels": {
+      "off": 28260
+    },
+    "g_bendStep": {
+      "off": 28162
+    },
+    "g_betRaces": {
+      "off": 18800
+    },
+    "g_biosModeA": {
+      "off": 18411
+    },
+    "g_biosModeB": {
+      "off": 18413
+    },
+    "g_blackPalette": {
+      "off": 1106
+    },
+    "g_blankName": {
+      "off": 17927
+    },
+    "g_boltHot": {
+      "off": 1942
+    },
+    "g_boltOverlay": {
+      "off": 1938
+    },
+    "g_boltPics": {
+      "off": 18890
+    },
+    "g_boltSlots": {
+      "off": 20868
+    },
+    "g_boltSubslots": {
+      "off": 20888
+    },
+    "g_boxSpotHitData": {
+      "off": 35728
+    },
+    "g_boxText": {
+      "off": 10527
+    },
+    "g_brakeTicks": {
+      "off": 21722
+    },
+    "g_bufBackgroundDashPtr": {
+      "off": 30044
+    },
+    "g_buildEntry": {
+      "off": 28160
+    },
+    "g_buildX": {
+      "off": 28158
+    },
+    "g_bumpAlternate": {
+      "off": 21714
+    },
+    "g_bumpProfile": {
+      "off": 23704
+    },
+    "g_buttons": {
+      "off": 18226
+    },
+    "g_buyCarMsg": {
+      "off": 20510
+    },
+    "g_buyPrice": {
+      "off": 10710
+    },
+    "g_cPos": {
+      "off": 20808
+    },
+    "g_cVis": {
+      "off": 18227
+    },
+    "g_carAnim": {
+      "off": 646
+    },
+    "g_carBackdropHdrBmp": {
+      "off": 32680
+    },
+    "g_carBandHeights": {
+      "off": 664
+    },
+    "g_carBg16": {
+      "off": 706
+    },
+    "g_carBg4": {
+      "off": 692
+    },
+    "g_carBottomCuts": {
+      "off": 678
+    },
+    "g_carMoving": {
+      "off": 23054
+    },
+    "g_carName": {
+      "off": 10751
+    },
+    "g_carPassBy": {
+      "off": 23076
+    },
+    "g_carRatingsTable": {
+      "off": 32104
+    },
+    "g_carSpriteStrips": {
+      "off": 32450
+    },
+    "g_carVisibleHtValue": {
+      "off": 33378
+    },
+    "g_carbBoltOff": {
+      "off": 1898
+    },
+    "g_carbFit": {
+      "off": 18824
+    },
+    "g_carbManifoldFit": {
+      "off": 21806
+    },
+    "g_carbPos": {
+      "off": 1858
+    },
+    "g_carbPosBase": {
+      "off": 1932
+    },
+    "g_carhop": {
+      "off": 27780
+    },
+    "g_carhopBg": {
+      "off": 27852
+    },
+    "g_carhopFrames": {
+      "off": 23090
+    },
+    "g_carhopInSeq": {
+      "off": 23174
+    },
+    "g_carhopOutSeq": {
+      "off": 23190
+    },
+    "g_carhopRect": {
+      "off": 27844
+    },
+    "g_carhopSheets": {
+      "off": 23078
+    },
+    "g_carsGoneHdr": {
+      "off": 15082
+    },
+    "g_cgaColorByte": {
+      "off": 23382
+    },
+    "g_cgaColorMap": {
+      "off": 23386
+    },
+    "g_cgaDitherEven": {
+      "off": 23418
+    },
+    "g_cgaDitherOdd": {
+      "off": 23402
+    },
+    "g_cgaFont": {
+      "off": 4,
+      "seg": 3794
+    },
+    "g_cgaHooks": {
+      "off": 23300
+    },
+    "g_cgaLeadMask": {
+      "off": 23378
+    },
+    "g_cgaPicMap": {
+      "off": 1990
+    },
+    "g_cgaPixKeep": {
+      "off": 23364
+    },
+    "g_cgaPixMask": {
+      "off": 23360
+    },
+    "g_cgaRevealOrder": {
+      "off": 23368
+    },
+    "g_click": {
+      "off": 18230
+    },
+    "g_click2": {
+      "off": 18231
+    },
+    "g_click2X": {
+      "off": 18236
+    },
+    "g_click2Y": {
+      "off": 18238
+    },
+    "g_clickEnds": {
+      "off": 1502
+    },
+    "g_clickX": {
+      "off": 18232
+    },
+    "g_clickY": {
+      "off": 18234
+    },
+    "g_clockPrev": {
+      "off": 31402
+    },
+    "g_colScreenBorder": {
+      "off": 33352
+    },
+    "g_colX": {
+      "off": 20552
+    },
+    "g_contactFrames": {
+      "off": 21720
+    },
+    "g_countLibBmB": {
+      "off": 36306
+    },
+    "g_cpyBoltPatchRecord": {
+      "off": 28844
+    },
+    "g_crashPics": {
+      "off": 21460
+    },
+    "g_cruiseRatios": {
+      "off": 20962
+    },
+    "g_cruiseRpmStep": {
+      "off": 27778
+    },
+    "g_cruiseRpmSteps": {
+      "off": 20952
+    },
+    "g_curHoverPointer": {
+      "off": 35752
+    },
+    "g_cursHoverCodeVal": {
+      "off": 35754
+    },
+    "g_cursor2": {
+      "off": 31468
+    },
+    "g_cursorBusy": {
+      "off": 1760
+    },
+    "g_cursorPairs": {
+      "off": 1772
+    },
+    "g_cursorStepX": {
+      "off": 18250
+    },
+    "g_cursorStepY": {
+      "off": 18256
+    },
+    "g_cursorX": {
+      "off": 18218
+    },
+    "g_cursorY": {
+      "off": 18220
+    },
+    "g_dashBuffered": {
+      "off": 22756
+    },
+    "g_dataBlocks": {
+      "off": 20132
+    },
+    "g_dataFileName": {
+      "off": 20130
+    },
+    "g_dataPath": {
+      "off": 27762
+    },
+    "g_dataSeg": {
+      "off": 27744
+    },
+    "g_dataSizes": {
+      "off": 20158
+    },
+    "g_delayScale": {
+      "off": 22754
+    },
+    "g_demo": {
+      "off": 1552
+    },
+    "g_demoChoice": {
+      "off": 27728
+    },
+    "g_demoControl": {
+      "off": 1700
+    },
+    "g_demoKey": {
+      "off": 18380
+    },
+    "g_demoRacer": {
+      "off": 20468
+    },
+    "g_demoScript": {
+      "off": 1716
+    },
+    "g_demoScriptPos": {
+      "off": 1714
+    },
+    "g_demoTargetX": {
+      "off": 1710
+    },
+    "g_demoTargetY": {
+      "off": 1712
+    },
+    "g_desc": {
+      "off": 11266
+    },
+    "g_descHdr": {
+      "off": 11265
+    },
+    "g_dirHeld": {
+      "off": 18392
+    },
+    "g_directionSteps": {
+      "off": 18262
+    },
+    "g_displaySplitYVal": {
+      "off": 33354
+    },
+    "g_dragWins": {
+      "off": 18802
+    },
+    "g_drawnCursor": {
+      "off": 27718
+    },
+    "g_drawnMaxX": {
+      "off": 27738
+    },
+    "g_drawnMaxY": {
+      "off": 27740
+    },
+    "g_drawnMinX": {
+      "off": 27734
+    },
+    "g_drawnMinY": {
+      "off": 27736
+    },
+    "g_driveBusy": {
+      "off": 1768
+    },
+    "g_driveDiv": {
+      "off": 1545
+    },
+    "g_driveEng": {
+      "off": 30944
+    },
+    "g_driveRebuild": {
+      "off": 22766
+    },
+    "g_driverIdxSelVal": {
+      "off": 32642
+    },
+    "g_driverName": {
+      "off": 32410
+    },
+    "g_edgeBmpJail": {
+      "off": 33464
+    },
+    "g_edgeXR": {
+      "off": 35792
+    },
+    "g_editDigits": {
+      "off": 2546
+    },
+    "g_egaCard": {
+      "off": 592
+    },
+    "g_egaGcFunction": {
+      "off": 23582
+    },
+    "g_egaHooks": {
+      "off": 23504
+    },
+    "g_egaMemory": {
+      "off": 23281
+    },
+    "g_egaMono": {
+      "off": 23279
+    },
+    "g_egaPage0": {
+      "off": 0,
+      "seg": 12195
+    },
+    "g_egaPage1": {
+      "off": 23980
+    },
+    "g_egaPage2": {
+      "off": 24028
+    },
+    "g_egaPage3": {
+      "off": 0,
+      "seg": 11880
+    },
+    "g_egaSwitches": {
+      "off": 23282
+    },
+    "g_end": {
+      "off": 642
+    },
+    "g_endCellsA": {
+      "off": 21098
+    },
+    "g_endCellsB": {
+      "off": 21218
+    },
+    "g_endPics": {
+      "off": 21272
+    },
+    "g_endPics2": {
+      "off": 21288
+    },
+    "g_engineBoltPicIds": {
+      "off": 33434
+    },
+    "g_engineBoltPos": {
+      "off": 1806
+    },
+    "g_engineHotTemplate": {
+      "off": 6472
+    },
+    "g_engineHots": {
+      "off": 6220
+    },
+    "g_enginePos": {
+      "off": 1794
+    },
+    "g_engineScore": {
+      "off": 21836
+    },
+    "g_errRead": {
+      "off": 1548
+    },
+    "g_errWriteProt": {
+      "off": 1550
+    },
+    "g_failureTire": {
+      "off": 30844
+    },
+    "g_fameColors1": {
+      "off": 19426
+    },
+    "g_fameColors2": {
+      "off": 19432
+    },
+    "g_fameRowY": {
+      "off": 19402
+    },
+    "g_featurePos": {
+      "off": 33380
+    },
+    "g_finishAheadPlayerState": {
+      "off": 34354
+    },
+    "g_finishLineIndex": {
+      "off": 27818
+    },
+    "g_finishMeanSpeedVal": {
+      "off": 30276
+    },
+    "g_fireLatch": {
+      "off": 18381
+    },
+    "g_firePressed": {
+      "off": 18414
+    },
+    "g_font": {
+      "off": 0,
+      "seg": 3743
+    },
+    "g_forceEga": {
+      "off": 594
+    },
+    "g_frmTable": {
+      "off": 30650
+    },
+    "g_fuelStationActions": {
+      "off": 27812
+    },
+    "g_gameClock": {
+      "off": 1532
+    },
+    "g_gamePics": {
+      "off": 19496
+    },
+    "g_gar": {
+      "off": 4636
+    },
+    "g_gasSpotIds": {
+      "off": 21430
+    },
+    "g_gearLabel": {
+      "off": 18910
+    },
+    "g_gearNames": {
+      "off": 1154
+    },
+    "g_gearSpeedPct": {
+      "off": 21724
+    },
+    "g_gearText": {
+      "off": 18430
+    },
+    "g_graphicsUp": {
+      "off": 33351
+    },
+    "g_groupHot": {
+      "off": 11181
+    },
+    "g_hIds": {
+      "off": 20618
+    },
+    "g_hallFameTbl": {
+      "off": 33482
+    },
+    "g_hallFileName": {
+      "off": 20282
+    },
+    "g_hasSlowCpu": {
+      "off": 33478
+    },
+    "g_headerEditableState": {
+      "off": 35748
+    },
+    "g_hercBiosData": {
+      "off": 23248
+    },
+    "g_hercCrtc": {
+      "off": 23228
+    },
+    "g_hercModeSet": {
+      "off": 70
+    },
+    "g_hercules": {
+      "off": 66
+    },
+    "g_hereCurvePtr": {
+      "off": 30048
+    },
+    "g_hideSelectFrameVal": {
+      "off": 35736
+    },
+    "g_hillDipProfile": {
+      "off": 23628
+    },
+    "g_hillProfile": {
+      "off": 23584
+    },
+    "g_hotBobs": {
+      "off": 8362
+    },
+    "g_hotBodyChange": {
+      "off": 7732
+    },
+    "g_hotBuy": {
+      "off": 4528
+    },
+    "g_hotCalendar": {
+      "off": 4942
+    },
+    "g_hotChain": {
+      "off": 1960
+    },
+    "g_hotGasExit": {
+      "off": 6724
+    },
+    "g_hotGasStation": {
+      "off": 6634
+    },
+    "g_hotMenuGroupState": {
+      "off": 36606
+    },
+    "g_hotPageRows": {
+      "off": 3970
+    },
+    "g_hotReadyBox": {
+      "off": 7552
+    },
+    "g_hotRepair": {
+      "off": 6850
+    },
+    "g_hotTransBolts": {
+      "off": 6148
+    },
+    "g_hots": {
+      "off": 2548
+    },
+    "g_hotsCurMenu": {
+      "off": 35750
+    },
+    "g_howAboutHdr": {
+      "off": 15352
+    },
+    "g_iTxt": {
+      "off": 20766
+    },
+    "g_idxAtCop": {
+      "off": 30042
+    },
+    "g_imageBufferPointer": {
+      "off": 30052
+    },
+    "g_initialDrive": {
+      "off": 27752
+    },
+    "g_input": {
+      "off": 1488
+    },
+    "g_inputLock": {
+      "off": 18240
+    },
+    "g_introPalette": {
+      "off": 724
+    },
+    "g_isKingState": {
+      "off": 32064
+    },
+    "g_jackBuf": {
+      "off": 23224
+    },
+    "g_jackSound": {
+      "off": 44,
+      "seg": 12179
+    },
+    "g_jailBars": {
+      "off": 21304
+    },
+    "g_jailGaps": {
+      "off": 21402
+    },
+    "g_jingleRepeats": {
+      "off": 22654
+    },
+    "g_jingleTones": {
+      "off": 22732
+    },
+    "g_joyButtons": {
+      "off": 18204
+    },
+    "g_joyCenterX": {
+      "off": 18206
+    },
+    "g_joyCenterY": {
+      "off": 18208
+    },
+    "g_joyMaxX": {
+      "off": 18212
+    },
+    "g_joyMaxY": {
+      "off": 18216
+    },
+    "g_joyMinX": {
+      "off": 18210
+    },
+    "g_joyMinY": {
+      "off": 18214
+    },
+    "g_joySavedSp": {
+      "off": 18408
+    },
+    "g_joyX": {
+      "off": 18200
+    },
+    "g_joyY": {
+      "off": 18202
+    },
+    "g_joystick": {
+      "off": 18205
+    },
+    "g_junk": {
+      "off": 14793
+    },
+    "g_justArrived": {
+      "off": 27810
+    },
+    "g_kbdHooked": {
+      "off": 1504
+    },
+    "g_keepCruiseMusic": {
+      "off": 20972
+    },
+    "g_keepMask": {
+      "off": 23206
+    },
+    "g_keyDx": {
+      "off": 18222
+    },
+    "g_keyDy": {
+      "off": 18223
+    },
+    "g_keyGroup": {
+      "off": 27724
+    },
+    "g_keyMapData": {
+      "off": 21888
+    },
+    "g_keyMaps": {
+      "off": 22431
+    },
+    "g_keymapGroup": {
+      "off": 1614
+    },
+    "g_keymapSaved": {
+      "off": 1616
+    },
+    "g_kiddingHdr": {
+      "off": 15041
+    },
+    "g_kingDragWon": {
+      "off": 18806
+    },
+    "g_lastCarRect": {
+      "off": 27836
+    },
+    "g_lastClick": {
+      "off": 27726
+    },
+    "g_lastDx": {
+      "off": 18224
+    },
+    "g_lastDy": {
+      "off": 18225
+    },
+    "g_lastFire": {
+      "off": 1769
+    },
+    "g_lastKey": {
+      "off": 18384
+    },
+    "g_lastPic": {
+      "off": 28840
+    },
+    "g_lastRival": {
+      "off": 20984
+    },
+    "g_lastTicks": {
+      "off": 21712
+    },
+    "g_layoutAutoSprArray": {
+      "off": 30338
+    },
+    "g_layoutLen": {
+      "off": 23738
+    },
+    "g_leftBitMasks": {
+      "off": 23574
+    },
+    "g_leftEdgeX": {
+      "off": 32130
+    },
+    "g_lhsRdMirrorX": {
+      "off": 32546
+    },
+    "g_lib1Count": {
+      "off": 35784
+    },
+    "g_lib1Handle": {
+      "off": 20184
+    },
+    "g_lib1Name": {
+      "off": 20188
+    },
+    "g_lib1cName": {
+      "off": 20190
+    },
+    "g_lib2Handle": {
+      "off": 20186
+    },
+    "g_lib2Name": {
+      "off": 20192
+    },
+    "g_lib2cName": {
+      "off": 20194
+    },
+    "g_library1Path": {
+      "off": 36308
+    },
+    "g_liftPicIds": {
+      "off": 23210
+    },
+    "g_list": {
+      "off": 18912
+    },
+    "g_loHeapLimit": {
+      "off": 36608
+    },
+    "g_loadedIntroBmps": {
+      "off": 28898
+    },
+    "g_lowArenaMarker": {
+      "off": 31508
+    },
+    "g_manifoldBoltPos": {
+      "off": 1842
+    },
+    "g_manifoldFit": {
+      "off": 18808
+    },
+    "g_manual": {
+      "off": 19298
+    },
+    "g_markerIndexHigh": {
+      "off": 32128
+    },
+    "g_menuGrpHistoryList": {
+      "off": 35718
+    },
+    "g_menuLevel": {
+      "off": 35726
+    },
+    "g_menuList": {
+      "off": 35738
+    },
+    "g_mirGeom": {
+      "off": 34378
+    },
+    "g_mirYProj": {
+      "off": 34360
+    },
+    "g_modeBitsA": {
+      "off": 18410
+    },
+    "g_modeBitsB": {
+      "off": 18412
+    },
+    "g_modelScore": {
+      "off": 21870
+    },
+    "g_models": {
+      "off": 36336
+    },
+    "g_mon": {
+      "off": 20610
+    },
+    "g_mouse": {
+      "off": 1506
+    },
+    "g_mphAccumulator": {
+      "off": 33468
+    },
+    "g_msgBackToGarage": {
+      "off": 10489
+    },
+    "g_msgBadFormat": {
+      "off": 20200
+    },
+    "g_msgClickToEdit": {
+      "off": 10508
+    },
+    "g_msgCopyFiles": {
+      "off": 20198
+    },
+    "g_msgHowAbout": {
+      "off": 15353
+    },
+    "g_msgInsertDisk": {
+      "off": 20196
+    },
+    "g_msgNotFound": {
+      "off": 20204
+    },
+    "g_msgPlusTires": {
+      "off": 10986
+    },
+    "g_msgRepairCost": {
+      "off": 10930
+    },
+    "g_msgRunCost": {
+      "off": 11017
+    },
+    "g_msgSellChange": {
+      "off": 10814
+    },
+    "g_msgShort": {
+      "off": 14938
+    },
+    "g_msgTicks": {
+      "off": 1500
+    },
+    "g_msgTotaled": {
+      "off": 16661
+    },
+    "g_msgWannaQuit": {
+      "off": 10476
+    },
+    "g_msgWillYouTake": {
+      "off": 15372
+    },
+    "g_msgWriteError": {
+      "off": 20202
+    },
+    "g_musicOn": {
+      "off": 22736
+    },
+    "g_musicSuspended": {
+      "off": 22744
+    },
+    "g_nBolt": {
+      "off": 20784
+    },
+    "g_nCarb": {
+      "off": 20774
+    },
+    "g_nScore": {
+      "off": 30278
+    },
+    "g_needleColor": {
+      "off": 722
+    },
+    "g_needlePts": {
+      "off": 0,
+      "seg": 11847
+    },
+    "g_new": {
+      "off": 20296
+    },
+    "g_nextPartCategory": {
+      "off": 20796
+    },
+    "g_noCarHdr": {
+      "off": 15099
+    },
+    "g_noCarbHdr": {
+      "off": 15286
+    },
+    "g_noEngineHdr": {
+      "off": 15256
+    },
+    "g_noManifoldHdr": {
+      "off": 15320
+    },
+    "g_noNameMsg": {
+      "off": 20390
+    },
+    "g_noNameMsgPtr": {
+      "off": 20466
+    },
+    "g_noRunHdr": {
+      "off": 14976
+    },
+    "g_noSparesHdr": {
+      "off": 15147
+    },
+    "g_noTiresHdr": {
+      "off": 15183
+    },
+    "g_noTransHdr": {
+      "off": 15219
+    },
+    "g_noTuneHdr": {
+      "off": 15010
+    },
+    "g_noUeMem": {
+      "off": 640
+    },
+    "g_offBolt": {
+      "off": 11173
+    },
+    "g_offSquelch": {
+      "off": 11177
+    },
+    "g_offTunes": {
+      "off": 11179
+    },
+    "g_offWires": {
+      "off": 11175
+    },
+    "g_offerAmount": {
+      "off": 10744
+    },
+    "g_offerName": {
+      "off": 10640
+    },
+    "g_offerText": {
+      "off": 20388
+    },
+    "g_offsetArenaMarksList": {
+      "off": 35586
+    },
+    "g_old": {
+      "off": 20294
+    },
+    "g_oldInt9Off": {
+      "off": 18390
+    },
+    "g_oldInt9Seg": {
+      "off": 18388
+    },
+    "g_onShoulder": {
+      "off": 24078
+    },
+    "g_oppEngState": {
+      "off": 31202
+    },
+    "g_oppSpecPointer": {
+      "off": 32122
+    },
+    "g_opponentPics": {
+      "off": 24084
+    },
+    "g_ordered": {
+      "off": 27784
+    },
+    "g_overRev": {
+      "off": 1766
+    },
+    "g_overlayRectA": {
+      "off": 23056
+    },
+    "g_overlayRectB": {
+      "off": 23064
+    },
+    "g_pad": {
+      "off": 20686
+    },
+    "g_pageBmps": {
+      "off": 29462
+    },
+    "g_pages": {
+      "off": 1278
+    },
+    "g_paint": {
+      "off": 20674
+    },
+    "g_palette": {
+      "off": 1088
+    },
+    "g_paperDay": {
+      "off": 20314
+    },
+    "g_paperPick": {
+      "off": 20312
+    },
+    "g_paperPics": {
+      "off": 20302
+    },
+    "g_partAnimate": {
+      "off": 1788
+    },
+    "g_partMoveSound": {
+      "off": 124,
+      "seg": 12179
+    },
+    "g_partPics": {
+      "off": 18840
+    },
+    "g_partSlotMap": {
+      "off": 1918
+    },
+    "g_partWear": {
+      "off": 18790
+    },
+    "g_parts": {
+      "off": 18438
+    },
+    "g_partsGoneHdr": {
+      "off": 15064
+    },
+    "g_passCount": {
+      "off": 20976
+    },
+    "g_penPoint": {
+      "off": 33356
+    },
+    "g_phaseDriveRunState": {
+      "off": 31142
+    },
+    "g_picLib": {
+      "off": 27754
+    },
+    "g_picLibBPath": {
+      "off": 36310
+    },
+    "g_picNewHeader": {
+      "off": 20238
+    },
+    "g_pickCarHdr": {
+      "off": 15127
+    },
+    "g_picsFreed": {
+      "off": 20300
+    },
+    "g_picturePlacement": {
+      "off": 1214
+    },
+    "g_pointsModelService": {
+      "off": 33164
+    },
+    "g_poolCount": {
+      "off": 27782
+    },
+    "g_poolRivals": {
+      "off": 27786
+    },
+    "g_popupLayout": {
+      "off": 27712
+    },
+    "g_popupSave": {
+      "off": 1274
+    },
+    "g_popupWins": {
+      "off": 1220
+    },
+    "g_prevRivalFrame": {
+      "off": 28202
+    },
+    "g_promptLine1": {
+      "off": 10558
+    },
+    "g_promptLine2": {
+      "off": 10599
+    },
+    "g_promptPalette": {
+      "off": 1196
+    },
+    "g_protectCycle": {
+      "off": 19400
+    },
+    "g_protectPal": {
+      "off": 1682
+    },
+    "g_pumpBlinkCount": {
+      "off": 27710
+    },
+    "g_pumpNoNozzle": {
+      "off": 656
+    },
+    "g_pumpSound": {
+      "off": 0,
+      "seg": 12179
+    },
+    "g_pumpWithNozzle": {
+      "off": 652
+    },
+    "g_raceResult1": {
+      "off": 11071
+    },
+    "g_raceResult2": {
+      "off": 11122
+    },
+    "g_raceSecsElapsedValue": {
+      "off": 35780
+    },
+    "g_raceWagerTerms": {
+      "off": 31138
+    },
+    "g_racerRecordsArray": {
+      "off": 32760
+    },
+    "g_ramAllowed": {
+      "off": 32126
+    },
+    "g_random": {
+      "off": 27746
+    },
+    "g_refuseMsgs": {
+      "off": 20988
+    },
+    "g_renderRows": {
+      "off": 28168
+    },
+    "g_resultWin": {
+      "off": 30326
+    },
+    "g_revealOffsets": {
+      "off": 23564
+    },
+    "g_rhsOuterXArray": {
+      "off": 32728
+    },
+    "g_rightSideTerrainRow": {
+      "off": 34356
+    },
+    "g_rightXProjectionTable": {
+      "off": 31438
+    },
+    "g_rivalCurveBrake": {
+      "off": 21718
+    },
+    "g_rivalHereState": {
+      "off": 32646
+    },
+    "g_rivalLeft": {
+      "off": 21716
+    },
+    "g_rivalPace": {
+      "off": 27820
+    },
+    "g_rivalStakeToleranceTable": {
+      "off": 35758
+    },
+    "g_rleCounts": {
+      "off": 20206
+    },
+    "g_rleValues": {
+      "off": 20222
+    },
+    "g_roadLXArray": {
+      "off": 29432
+    },
+    "g_roadLayout": {
+      "off": 24076
+    },
+    "g_roadLayouts": {
+      "off": 23740
+    },
+    "g_roadLineWidths": {
+      "off": 24170
+    },
+    "g_roadOuterLeftXArray": {
+      "off": 32650
+    },
+    "g_roadRowLimit": {
+      "off": 28166
+    },
+    "g_roadWins": {
+      "off": 18804
+    },
+    "g_roadYProjectionArray": {
+      "off": 30852
+    },
+    "g_rollBuf": {
+      "off": 23220
+    },
+    "g_rowY": {
+      "off": 20554
+    },
+    "g_rpmBand": {
+      "off": 27832
+    },
+    "g_rpmBands": {
+      "off": 21794
+    },
+    "g_rpmStepBase": {
+      "off": 21764
+    },
+    "g_salePartName": {
+      "off": 10847
+    },
+    "g_saveName": {
+      "off": 10798
+    },
+    "g_saveSlots": {
+      "off": 20418
+    },
+    "g_savedBack": {
+      "off": 742
+    },
+    "g_savedCursorX": {
+      "off": 18246
+    },
+    "g_savedCursorY": {
+      "off": 18248
+    },
+    "g_savedEquip": {
+      "off": 23280
+    },
+    "g_savedFront": {
+      "off": 746
+    },
+    "g_savedMusicOn": {
+      "off": 22742
+    },
+    "g_savedPal12": {
+      "off": 20908
+    },
+    "g_savedPal3": {
+      "off": 20909
+    },
+    "g_savedVideoMode": {
+      "off": 23278
+    },
+    "g_scanMap": {
+      "off": 18278
+    },
+    "g_scene": {
+      "off": 644
+    },
+    "g_sceneBitmapIds": {
+      "off": 24162
+    },
+    "g_scenery": {
+      "off": 24696
+    },
+    "g_score": {
+      "off": 27742
+    },
+    "g_screen1": {
+      "off": 48,
+      "seg": 11838
+    },
+    "g_screens": {
+      "off": 0,
+      "seg": 11838
+    },
+    "g_secondaryMusicStateData": {
+      "off": 31174
+    },
+    "g_selectedRacerPointer": {
+      "off": 32132
+    },
+    "g_seqSpriteMoveData": {
+      "off": 30286
+    },
+    "g_sheetRects": {
+      "off": 24220
+    },
+    "g_shiftPenalty": {
+      "off": 27828
+    },
+    "g_shiftPoint": {
+      "off": 27834
+    },
+    "g_shiftPts": {
+      "off": 856
+    },
+    "g_shiftRpm": {
+      "off": 21850
+    },
+    "g_shiftSlots": {
+      "off": 908
+    },
+    "g_shifterDraw": {
+      "off": 27700
+    },
+    "g_shifters": {
+      "off": 878
+    },
+    "g_shrinkMasks": {
+      "off": 24150
+    },
+    "g_sirenOn": {
+      "off": 22748
+    },
+    "g_sirenPhase": {
+      "off": 1764
+    },
+    "g_slot": {
+      "off": 0,
+      "seg": 14491
+    },
+    "g_slotNameOfs": {
+      "off": 20434
+    },
+    "g_slotSelec": {
+      "off": 33452
+    },
+    "g_song": {
+      "off": 0,
+      "seg": 11883
+    },
+    "g_songBgState": {
+      "off": 31146
+    },
+    "g_songRepeats": {
+      "off": 22616
+    },
+    "g_songTones": {
+      "off": 22658
+    },
+    "g_soundOn": {
+      "off": 18382
+    },
+    "g_spans1": {
+      "off": 0,
+      "seg": 12198
+    },
+    "g_spans2": {
+      "off": 0,
+      "seg": 13092
+    },
+    "g_speakerOn": {
+      "off": 18383
+    },
+    "g_sprArrowSignL": {
+      "off": 24918
+    },
+    "g_sprArrowSignLLod": {
+      "off": 24876
+    },
+    "g_sprArrowSignUp": {
+      "off": 25010
+    },
+    "g_sprArrowSignUpLod": {
+      "off": 24968
+    },
+    "g_sprBarricade": {
+      "off": 24588
+    },
+    "g_sprBarricadeLod": {
+      "off": 24546
+    },
+    "g_sprBush": {
+      "off": 24496
+    },
+    "g_sprBushLod": {
+      "off": 24454
+    },
+    "g_sprChevronL": {
+      "off": 25102
+    },
+    "g_sprChevronLLod": {
+      "off": 25060
+    },
+    "g_sprChevronR": {
+      "off": 25148
+    },
+    "g_sprChevronRLod": {
+      "off": 25106
+    },
+    "g_sprCityLimits": {
+      "off": 24964
+    },
+    "g_sprCityLimitsLod": {
+      "off": 24922
+    },
+    "g_sprDot": {
+      "off": 24690
+    },
+    "g_sprDotLod": {
+      "off": 24684
+    },
+    "g_sprHydrant": {
+      "off": 24404
+    },
+    "g_sprHydrantLod": {
+      "off": 24356
+    },
+    "g_sprLargeRock": {
+      "off": 24680
+    },
+    "g_sprLargeRockLod": {
+      "off": 24638
+    },
+    "g_sprNarrowSign": {
+      "off": 25056
+    },
+    "g_sprNarrowSignLod": {
+      "off": 25014
+    },
+    "g_sprPageRing": {
+      "off": 32066
+    },
+    "g_sprPole": {
+      "off": 24780
+    },
+    "g_sprPoleLod": {
+      "off": 24738
+    },
+    "g_sprPost": {
+      "off": 24352
+    },
+    "g_sprPostLod": {
+      "off": 24310
+    },
+    "g_sprSCurveSign": {
+      "off": 25194
+    },
+    "g_sprSCurveSign2": {
+      "off": 25240
+    },
+    "g_sprSCurveSign2Lod": {
+      "off": 25198
+    },
+    "g_sprSCurveSignLod": {
+      "off": 25152
+    },
+    "g_sprSmallRock": {
+      "off": 24634
+    },
+    "g_sprSmallRockLod": {
+      "off": 24592
+    },
+    "g_sprSpeedSign": {
+      "off": 24542
+    },
+    "g_sprSpeedSignLod": {
+      "off": 24500
+    },
+    "g_sprTree": {
+      "off": 24306
+    },
+    "g_sprTree2": {
+      "off": 24826
+    },
+    "g_sprTree2Lod": {
+      "off": 24784
+    },
+    "g_sprTree3": {
+      "off": 24872
+    },
+    "g_sprTree3Lod": {
+      "off": 24830
+    },
+    "g_sprTreeLod": {
+      "off": 24264
+    },
+    "g_sprWarnSign": {
+      "off": 24450
+    },
+    "g_sprWarnSignLod": {
+      "off": 24408
+    },
+    "g_spriteBgY": {
+      "off": 23208
+    },
+    "g_spriteBottomCut": {
+      "off": 720
+    },
+    "g_spritePic": {
+      "off": 648
+    },
+    "g_squealOn": {
+      "off": 22746
+    },
+    "g_squealPhase": {
+      "off": 1770
+    },
+    "g_statsDone": {
+      "off": 21478
+    },
+    "g_statusLine": {
+      "off": 33360
+    },
+    "g_steerLeftPoints": {
+      "off": 750
+    },
+    "g_steerPoints": {
+      "off": 798
+    },
+    "g_steeringOld": {
+      "off": 33474
+    },
+    "g_stickerBg": {
+      "off": 660
+    },
+    "g_stickerSound": {
+      "off": 160,
+      "seg": 12179
+    },
+    "g_storageCarAllocTable": {
+      "off": 33712
+    },
+    "g_strOpp": {
+      "off": 32562
+    },
+    "g_style16": {
+      "off": 928
+    },
+    "g_style4": {
+      "off": 1008
+    },
+    "g_swapArmedRivalValue": {
+      "off": 34376
+    },
+    "g_sysHooked": {
+      "off": 68
+    },
+    "g_sysTimerPriorities": {
+      "off": 36598
+    },
+    "g_tandyHooks": {
+      "off": 23434
+    },
+    "g_tandyRevealOrder": {
+      "off": 23494
+    },
+    "g_targetLane": {
+      "off": 27830
+    },
+    "g_tboltY": {
+      "off": 1790
+    },
+    "g_terrain0": {
+      "off": 13296,
+      "seg": 14491
+    },
+    "g_terrain1": {
+      "off": 15536,
+      "seg": 14491
+    },
+    "g_terrain2": {
+      "off": 17776,
+      "seg": 14491
+    },
+    "g_terrain3": {
+      "off": 20016,
+      "seg": 14491
+    },
+    "g_terrain4": {
+      "off": 22256,
+      "seg": 14491
+    },
+    "g_tick": {
+      "off": 1528
+    },
+    "g_tickDiv": {
+      "off": 1544
+    },
+    "g_timerQueue": {
+      "off": 1382
+    },
+    "g_timers": {
+      "off": 1394
+    },
+    "g_tirePics": {
+      "off": 20528
+    },
+    "g_tireSlip": {
+      "off": 21682
+    },
+    "g_tires": {
+      "off": 27860
+    },
+    "g_titlePics": {
+      "off": 19488
+    },
+    "g_toneDelay": {
+      "off": 22752
+    },
+    "g_toneShapePlaybackPointer": {
+      "off": 33476
+    },
+    "g_toneShapes": {
+      "off": 22518
+    },
+    "g_tones": {
+      "off": 22566
+    },
+    "g_transGears": {
+      "off": 21856
+    },
+    "g_transPics": {
+      "off": 18898
+    },
+    "g_transScore": {
+      "off": 21842
+    },
+    "g_tunePtr": {
+      "off": 22750
+    },
+    "g_turnLeft": {
+      "off": 24082
+    },
+    "g_turnRight": {
+      "off": 24080
+    },
+    "g_txt": {
+      "off": 9118
+    },
+    "g_useMouse": {
+      "off": 610
+    },
+    "g_usedCarAdFirst": {
+      "off": 32022
+    },
+    "g_vga": {
+      "off": 596
+    },
+    "g_vibCount": {
+      "off": 1762
+    },
+    "g_vibrato": {
+      "off": 27730
+    },
+    "g_vibratoActive": {
+      "off": 29420
+    },
+    "g_videoMenu": {
+      "off": 580
+    },
+    "g_videoOps": {
+      "off": 30882
+    },
+    "g_videoSet": {
+      "off": 72
+    },
+    "g_viewClip": {
+      "off": 24142
+    },
+    "g_viewPages": {
+      "off": 24126
+    },
+    "g_viewRect": {
+      "off": 24130
+    },
+    "g_voice": {
+      "off": 22738
+    },
+    "g_voiceNum": {
+      "off": 22740
+    },
+    "g_vramBase": {
+      "off": 19476
+    },
+    "g_vramUsed": {
+      "off": 19480
+    },
+    "g_wOff": {
+      "off": 20562
+    },
+    "g_wRivBanner": {
+      "off": 35776
+    },
+    "g_waitUntil": {
+      "off": 1484
+    },
+    "g_wearPad": {
+      "off": 1982
+    },
+    "g_wearText": {
+      "off": 1962
+    },
+    "g_wheelBuf": {
+      "off": 23216
+    },
+    "g_wheelPicIds": {
+      "off": 22760
+    },
+    "g_wheelPoses": {
+      "off": 27682
+    },
+    "g_wheelRollSound": {
+      "off": 192,
+      "seg": 12179
+    },
+    "g_wheelShown": {
+      "off": 848
+    },
+    "g_wheelSlotY": {
+      "off": 850
+    },
+    "g_winMsgs": {
+      "off": 21448
+    },
+    "g_wiresPos": {
+      "off": 1818
+    },
+    "g_xCoordSprite": {
+      "off": 35708
+    },
+    "g_xMoneyRhsVal": {
+      "off": 33472
+    },
+    "g_yBuildingTopArray": {
+      "off": 31408
+    },
+    "gz8249": {
+      "off": 33353
+    },
+    "k_6e60": {
+      "off": 28256
+    },
+    "m_8272": {
+      "off": 33394
+    },
+    "o_8290": {
+      "off": 33424
+    },
+    "q_72ee": {
+      "off": 29422
+    },
+    "r_vid": {
+      "off": 33322
+    },
+    "x_colors": {
+      "off": 33346
+    }
+  },
+  "functions": {
+    "F_16943": {
+      "off": 30147,
+      "seg": 3896,
+      "size": 80
+    },
+    "F_16A2F": {
+      "off": 30383,
+      "seg": 3896,
+      "size": 43
+    },
+    "accepts_bet": {
+      "off": 39877,
+      "seg": 0,
+      "size": 424
+    },
+    "ad_picture": {
+      "off": 2487,
+      "seg": 0,
+      "size": 20
+    },
+    "alloc_shrunk": {
+      "off": 21175,
+      "seg": 9797,
+      "size": 336
+    },
+    "anim_run": {
+      "off": 6845,
+      "seg": 3896,
+      "size": 780
+    },
+    "anim_set_box": {
+      "off": 6751,
+      "seg": 3896,
+      "size": 94
+    },
+    "ar_alloc": {
+      "off": 40748,
+      "seg": 3896,
+      "size": 162
+    },
+    "ar_bm": {
+      "off": 40910,
+      "seg": 3896,
+      "size": 134
+    },
+    "ar_init": {
+      "off": 40681,
+      "seg": 3896,
+      "size": 49
+    },
+    "ar_reset": {
+      "off": 40636,
+      "seg": 3896,
+      "size": 45
+    },
+    "ar_shrink": {
+      "off": 40730,
+      "seg": 3896,
+      "size": 18
+    },
+    "av_close": {
+      "off": 3416,
+      "seg": 0,
+      "size": 32
+    },
+    "av_open": {
+      "off": 2228,
+      "seg": 0,
+      "size": 259
+    },
+    "av_run": {
+      "off": 2507,
+      "seg": 0,
+      "size": 909
+    },
+    "blit_cell": {
+      "off": 41820,
+      "seg": 0,
+      "size": 186
+    },
+    "blit_planes": {
+      "off": 33062,
+      "seg": 3896,
+      "size": 116
+    },
+    "blow_engine": {
+      "off": 50476,
+      "seg": 0,
+      "size": 128
+    },
+    "bm_and_mask": {
+      "off": 46107,
+      "seg": 3896,
+      "size": 231
+    },
+    "bm_copy": {
+      "off": 43856,
+      "seg": 3896,
+      "size": 114
+    },
+    "bm_copy_box": {
+      "off": 46506,
+      "seg": 3896,
+      "size": 136
+    },
+    "bm_draw_masked": {
+      "off": 44880,
+      "seg": 3896,
+      "size": 418
+    },
+    "bm_draw_pic": {
+      "off": 46004,
+      "seg": 3896,
+      "size": 103
+    },
+    "bm_far_copy": {
+      "off": 46338,
+      "seg": 3896,
+      "size": 28
+    },
+    "bm_grab": {
+      "off": 46366,
+      "seg": 3896,
+      "size": 140
+    },
+    "bm_opaque_span": {
+      "off": 43970,
+      "seg": 3896,
+      "size": 253
+    },
+    "bm_put": {
+      "off": 45855,
+      "seg": 3896,
+      "size": 65
+    },
+    "bm_put_pic": {
+      "off": 45920,
+      "seg": 3896,
+      "size": 84
+    },
+    "bm_shift_right": {
+      "off": 44223,
+      "seg": 3896,
+      "size": 657
+    },
+    "bm_underlay": {
+      "off": 45298,
+      "seg": 3896,
+      "size": 557
+    },
+    "bo_jail": {
+      "off": 45196,
+      "seg": 0,
+      "size": 829
+    },
+    "bo_visit": {
+      "off": 43915,
+      "seg": 0,
+      "size": 1210
+    },
+    "build_car_info": {
+      "off": 30961,
+      "seg": 0,
+      "size": 250
+    },
+    "build_dip": {
+      "off": 1885,
+      "seg": 9797,
+      "size": 149
+    },
+    "build_dip_hill": {
+      "off": 2181,
+      "seg": 9797,
+      "size": 149
+    },
+    "build_hill": {
+      "off": 1738,
+      "seg": 9797,
+      "size": 147
+    },
+    "build_hill_dip": {
+      "off": 2034,
+      "seg": 9797,
+      "size": 147
+    },
+    "build_left_closed": {
+      "off": 2747,
+      "seg": 9797,
+      "size": 214
+    },
+    "build_left_curve": {
+      "off": 378,
+      "seg": 9797,
+      "size": 281
+    },
+    "build_narrows": {
+      "off": 2544,
+      "seg": 9797,
+      "size": 203
+    },
+    "build_pump_strip": {
+      "off": 34606,
+      "seg": 3896,
+      "size": 312
+    },
+    "build_right_closed": {
+      "off": 2330,
+      "seg": 9797,
+      "size": 214
+    },
+    "build_right_curve": {
+      "off": 659,
+      "seg": 9797,
+      "size": 277
+    },
+    "build_rival_pool": {
+      "off": 38470,
+      "seg": 0,
+      "size": 520
+    },
+    "build_s_curve_lr": {
+      "off": 936,
+      "seg": 9797,
+      "size": 401
+    },
+    "build_s_curve_rl": {
+      "off": 1337,
+      "seg": 9797,
+      "size": 401
+    },
+    "buy_from_ads": {
+      "off": 17451,
+      "seg": 0,
+      "size": 1301
+    },
+    "carb_pos": {
+      "off": 13596,
+      "seg": 3896,
+      "size": 109
+    },
+    "cb_compose": {
+      "off": 4229,
+      "seg": 7185,
+      "size": 205
+    },
+    "cb_copy": {
+      "off": 4792,
+      "seg": 7185,
+      "size": 456
+    },
+    "cb_masked": {
+      "off": 4434,
+      "seg": 7185,
+      "size": 358
+    },
+    "cd_blit_ilv": {
+      "off": 196,
+      "seg": 7185,
+      "size": 228
+    },
+    "cd_blit_rect": {
+      "off": 12,
+      "seg": 7185,
+      "size": 48
+    },
+    "cd_blit_to_ilv": {
+      "off": 60,
+      "seg": 7185,
+      "size": 136
+    },
+    "cg_copy_page": {
+      "off": 3543,
+      "seg": 7185,
+      "size": 89
+    },
+    "cg_draw_text": {
+      "off": 442,
+      "seg": 7185,
+      "size": 1337
+    },
+    "cg_install": {
+      "off": 424,
+      "seg": 7185,
+      "size": 18
+    },
+    "cg_recolor_rect": {
+      "off": 1779,
+      "seg": 7185,
+      "size": 1764
+    },
+    "cg_reveal": {
+      "off": 3632,
+      "seg": 7185,
+      "size": 283
+    },
+    "cg_screen_off": {
+      "off": 3952,
+      "seg": 7185,
+      "size": 36
+    },
+    "cg_screen_on": {
+      "off": 3988,
+      "seg": 7185,
+      "size": 36
+    },
+    "cg_set_page": {
+      "off": 3915,
+      "seg": 7185,
+      "size": 37
+    },
+    "ch_save_bg": {
+      "off": 40541,
+      "seg": 3896,
+      "size": 94
+    },
+    "ch_skate": {
+      "off": 39385,
+      "seg": 3896,
+      "size": 1156
+    },
+    "challenge": {
+      "off": 40301,
+      "seg": 0,
+      "size": 907
+    },
+    "check_room": {
+      "off": 15116,
+      "seg": 0,
+      "size": 39
+    },
+    "check_slow_cpu": {
+      "off": 1625,
+      "seg": 0,
+      "size": 22
+    },
+    "choose_video": {
+      "off": 550,
+      "seg": 0,
+      "size": 240
+    },
+    "cl_draw": {
+      "off": 7186,
+      "seg": 7185,
+      "size": 647
+    },
+    "cl_fill_below": {
+      "off": 8174,
+      "seg": 7185,
+      "size": 96
+    },
+    "cl_map_color": {
+      "off": 8270,
+      "seg": 7185,
+      "size": 16
+    },
+    "cl_pixel_addr": {
+      "off": 7833,
+      "seg": 7185,
+      "size": 40
+    },
+    "cl_span": {
+      "off": 7874,
+      "seg": 7185,
+      "size": 300
+    },
+    "clear_gas_spots": {
+      "off": 46166,
+      "seg": 0,
+      "size": 70
+    },
+    "clip_blit": {
+      "off": 9009,
+      "seg": 9797,
+      "size": 80
+    },
+    "clip_blit_y": {
+      "off": 8956,
+      "seg": 9797,
+      "size": 53
+    },
+    "clip_mirror": {
+      "off": 9207,
+      "seg": 9797,
+      "size": 25
+    },
+    "clip_vline": {
+      "off": 9089,
+      "seg": 9797,
+      "size": 111
+    },
+    "cop_appears": {
+      "off": 55698,
+      "seg": 0,
+      "size": 147
+    },
+    "copy_from_cga": {
+      "off": 4024,
+      "seg": 7185,
+      "size": 205
+    },
+    "copy_from_tandy": {
+      "off": 172,
+      "seg": 8608,
+      "size": 208
+    },
+    "count_bits": {
+      "off": 21132,
+      "seg": 9797,
+      "size": 43
+    },
+    "counter_offer": {
+      "off": 18752,
+      "seg": 0,
+      "size": 98
+    },
+    "cp_backdrop": {
+      "off": 33982,
+      "seg": 3896,
+      "size": 624
+    },
+    "cp_build": {
+      "off": 34918,
+      "seg": 3896,
+      "size": 1506
+    },
+    "cp_patch_bg": {
+      "off": 38747,
+      "seg": 3896,
+      "size": 256
+    },
+    "cp_show_car": {
+      "off": 36424,
+      "seg": 3896,
+      "size": 2323
+    },
+    "cpu_speed": {
+      "off": 1478,
+      "seg": 0,
+      "size": 147
+    },
+    "cr_drive": {
+      "off": 36397,
+      "seg": 0,
+      "size": 123
+    },
+    "cr_go": {
+      "off": 36134,
+      "seg": 0,
+      "size": 118
+    },
+    "cr_rival_paint": {
+      "off": 36252,
+      "seg": 0,
+      "size": 145
+    },
+    "cs_step": {
+      "off": 6165,
+      "seg": 7185,
+      "size": 1021
+    },
+    "ct_set_split": {
+      "off": 20,
+      "seg": 8608,
+      "size": 151
+    },
+    "ct_wait_vsync": {
+      "off": 6,
+      "seg": 8608,
+      "size": 14
+    },
+    "cu_ctl": {
+      "off": 11646,
+      "seg": 3896,
+      "size": 269
+    },
+    "cu_draw": {
+      "off": 11915,
+      "seg": 3896,
+      "size": 488
+    },
+    "cu_init": {
+      "off": 11048,
+      "seg": 3896,
+      "size": 598
+    },
+    "cu_shape_off": {
+      "off": 11036,
+      "seg": 3896,
+      "size": 12
+    },
+    "cut_sheet": {
+      "off": 39004,
+      "seg": 3896,
+      "size": 179
+    },
+    "cx_blit": {
+      "off": 5681,
+      "seg": 7185,
+      "size": 386
+    },
+    "da_clip_blt": {
+      "off": 5760,
+      "seg": 3896,
+      "size": 253
+    },
+    "da_draw_clock": {
+      "off": 1522,
+      "seg": 3896,
+      "size": 1339
+    },
+    "da_draw_shifter": {
+      "off": 5362,
+      "seg": 3896,
+      "size": 334
+    },
+    "da_draw_wheel": {
+      "off": 4400,
+      "seg": 3896,
+      "size": 455
+    },
+    "da_fmemset": {
+      "off": 5696,
+      "seg": 3896,
+      "size": 64
+    },
+    "da_init_shifter": {
+      "off": 4855,
+      "seg": 3896,
+      "size": 507
+    },
+    "da_intro": {
+      "off": 3056,
+      "seg": 3896,
+      "size": 370
+    },
+    "da_load_wheel": {
+      "off": 3923,
+      "seg": 3896,
+      "size": 321
+    },
+    "da_move_needle": {
+      "off": 1061,
+      "seg": 3896,
+      "size": 461
+    },
+    "da_pal_blank": {
+      "off": 2861,
+      "seg": 3896,
+      "size": 18
+    },
+    "da_pal_show": {
+      "off": 2879,
+      "seg": 3896,
+      "size": 18
+    },
+    "da_set_view": {
+      "off": 3517,
+      "seg": 3896,
+      "size": 406
+    },
+    "da_speedo_init": {
+      "off": 466,
+      "seg": 3896,
+      "size": 220
+    },
+    "da_speedo_pts": {
+      "off": 311,
+      "seg": 3896,
+      "size": 155
+    },
+    "da_steer_marker": {
+      "off": 4244,
+      "seg": 3896,
+      "size": 156
+    },
+    "da_tach_init": {
+      "off": 841,
+      "seg": 3896,
+      "size": 220
+    },
+    "da_tach_pts": {
+      "off": 686,
+      "seg": 3896,
+      "size": 155
+    },
+    "da_text_width": {
+      "off": 6088,
+      "seg": 3896,
+      "size": 52
+    },
+    "da_time_up": {
+      "off": 3426,
+      "seg": 3896,
+      "size": 91
+    },
+    "da_wait_key": {
+      "off": 2897,
+      "seg": 3896,
+      "size": 159
+    },
+    "da_wait_retrace": {
+      "off": 6013,
+      "seg": 3896,
+      "size": 75
+    },
+    "day_to_date": {
+      "off": 25916,
+      "seg": 0,
+      "size": 115
+    },
+    "di_bm": {
+      "off": 26686,
+      "seg": 3896,
+      "size": 73
+    },
+    "di_cache_list": {
+      "off": 26759,
+      "seg": 3896,
+      "size": 67
+    },
+    "di_data_drive": {
+      "off": 27709,
+      "seg": 3896,
+      "size": 146
+    },
+    "di_free_list": {
+      "off": 26901,
+      "seg": 3896,
+      "size": 46
+    },
+    "di_free_pic": {
+      "off": 25950,
+      "seg": 3896,
+      "size": 80
+    },
+    "di_load_data": {
+      "off": 27513,
+      "seg": 3896,
+      "size": 196
+    },
+    "di_load_hall": {
+      "off": 27913,
+      "seg": 3896,
+      "size": 201
+    },
+    "di_load_list": {
+      "off": 26826,
+      "seg": 3896,
+      "size": 75
+    },
+    "di_open_libs": {
+      "off": 26947,
+      "seg": 3896,
+      "size": 566
+    },
+    "di_pic_size": {
+      "off": 26623,
+      "seg": 3896,
+      "size": 63
+    },
+    "di_read_index": {
+      "off": 25003,
+      "seg": 3896,
+      "size": 271
+    },
+    "di_save_hall": {
+      "off": 28114,
+      "seg": 3896,
+      "size": 312
+    },
+    "di_seek": {
+      "off": 24598,
+      "seg": 3896,
+      "size": 65
+    },
+    "di_unpack_pic": {
+      "off": 26030,
+      "seg": 3896,
+      "size": 593
+    },
+    "dos_print": {
+      "off": 0,
+      "seg": 0,
+      "size": 130
+    },
+    "dr_bevel": {
+      "off": 17458,
+      "seg": 3896,
+      "size": 421
+    },
+    "dr_fill_rect": {
+      "off": 17154,
+      "seg": 3896,
+      "size": 154
+    },
+    "dr_frame": {
+      "off": 17879,
+      "seg": 3896,
+      "size": 134
+    },
+    "dr_hline": {
+      "off": 17407,
+      "seg": 3896,
+      "size": 51
+    },
+    "dr_vline": {
+      "off": 17308,
+      "seg": 3896,
+      "size": 99
+    },
+    "drop_last_word": {
+      "off": 37462,
+      "seg": 0,
+      "size": 78
+    },
+    "drop_transmission": {
+      "off": 50604,
+      "seg": 0,
+      "size": 103
+    },
+    "dt_step": {
+      "off": 36520,
+      "seg": 0,
+      "size": 675
+    },
+    "dv_run": {
+      "off": 31522,
+      "seg": 3896,
+      "size": 1540
+    },
+    "ea_rect": {
+      "off": 8,
+      "seg": 9447,
+      "size": 131
+    },
+    "ea_to_page": {
+      "off": 139,
+      "seg": 9447,
+      "size": 79
+    },
+    "eb_copy": {
+      "off": 6242,
+      "seg": 8608,
+      "size": 647
+    },
+    "eb_latch_pack": {
+      "off": 7725,
+      "seg": 8608,
+      "size": 117
+    },
+    "eb_masked": {
+      "off": 7381,
+      "seg": 8608,
+      "size": 344
+    },
+    "eb_sprite": {
+      "off": 6889,
+      "seg": 8608,
+      "size": 492
+    },
+    "ec_page": {
+      "off": 5852,
+      "seg": 8608,
+      "size": 70
+    },
+    "ec_reveal": {
+      "off": 5922,
+      "seg": 8608,
+      "size": 267
+    },
+    "ed_line": {
+      "off": 22800,
+      "seg": 3896,
+      "size": 1063
+    },
+    "ed_number": {
+      "off": 23863,
+      "seg": 3896,
+      "size": 112
+    },
+    "ed_number_box": {
+      "off": 24094,
+      "seg": 3896,
+      "size": 54
+    },
+    "ed_spot_number": {
+      "off": 23975,
+      "seg": 3896,
+      "size": 119
+    },
+    "ed_text_box": {
+      "off": 24148,
+      "seg": 3896,
+      "size": 98
+    },
+    "edge_step": {
+      "off": 11516,
+      "seg": 9797,
+      "size": 36
+    },
+    "eg_draw_text": {
+      "off": 4410,
+      "seg": 8608,
+      "size": 973
+    },
+    "eg_install": {
+      "off": 4392,
+      "seg": 8608,
+      "size": 18
+    },
+    "el_draw": {
+      "off": 9148,
+      "seg": 8608,
+      "size": 370
+    },
+    "el_get_pixel": {
+      "off": 9549,
+      "seg": 8608,
+      "size": 26
+    },
+    "el_pixel_addr": {
+      "off": 9518,
+      "seg": 8608,
+      "size": 31
+    },
+    "elapsed_hours": {
+      "off": 13173,
+      "seg": 0,
+      "size": 42
+    },
+    "en_begin": {
+      "off": 8,
+      "seg": 9797,
+      "size": 21
+    },
+    "en_end": {
+      "off": 29,
+      "seg": 9797,
+      "size": 23
+    },
+    "en_fill": {
+      "off": 52,
+      "seg": 9797,
+      "size": 179
+    },
+    "en_fill_below": {
+      "off": 231,
+      "seg": 9797,
+      "size": 100
+    },
+    "en_pixel_addr": {
+      "off": 331,
+      "seg": 9797,
+      "size": 31
+    },
+    "engine_index": {
+      "off": 13563,
+      "seg": 3896,
+      "size": 33
+    },
+    "ep_show": {
+      "off": 6190,
+      "seg": 8608,
+      "size": 52
+    },
+    "er_rect": {
+      "off": 5384,
+      "seg": 8608,
+      "size": 468
+    },
+    "es_step": {
+      "off": 9689,
+      "seg": 8608,
+      "size": 787
+    },
+    "ev_sprite": {
+      "off": 10476,
+      "seg": 8608,
+      "size": 790
+    },
+    "ex_blit": {
+      "off": 8763,
+      "seg": 8608,
+      "size": 383
+    },
+    "expand_mask": {
+      "off": 22008,
+      "seg": 9797,
+      "size": 120
+    },
+    "fa_end_menu": {
+      "off": 12635,
+      "seg": 0,
+      "size": 373
+    },
+    "fa_protect_check": {
+      "off": 12232,
+      "seg": 0,
+      "size": 403
+    },
+    "fa_show": {
+      "off": 13215,
+      "seg": 0,
+      "size": 628
+    },
+    "fill_quad": {
+      "off": 11552,
+      "seg": 9797,
+      "size": 523
+    },
+    "fill_range": {
+      "off": 29562,
+      "seg": 3896,
+      "size": 115
+    },
+    "find_gas_spot": {
+      "off": 46026,
+      "seg": 0,
+      "size": 91
+    },
+    "fit_gear": {
+      "off": 53726,
+      "seg": 0,
+      "size": 191
+    },
+    "flip_page": {
+      "off": 8840,
+      "seg": 9797,
+      "size": 116
+    },
+    "free_car": {
+      "off": 16340,
+      "seg": 0,
+      "size": 28
+    },
+    "free_part": {
+      "off": 15422,
+      "seg": 0,
+      "size": 28
+    },
+    "ga_body": {
+      "off": 28954,
+      "seg": 0,
+      "size": 589
+    },
+    "ga_calendar": {
+      "off": 26031,
+      "seg": 0,
+      "size": 417
+    },
+    "ga_check_end": {
+      "off": 25897,
+      "seg": 0,
+      "size": 19
+    },
+    "ga_clear_name": {
+      "off": 27302,
+      "seg": 0,
+      "size": 50
+    },
+    "ga_date": {
+      "off": 26448,
+      "seg": 0,
+      "size": 127
+    },
+    "ga_day": {
+      "off": 25718,
+      "seg": 0,
+      "size": 45
+    },
+    "ga_hood": {
+      "off": 33195,
+      "seg": 0,
+      "size": 2938
+    },
+    "ga_hotspot": {
+      "off": 26663,
+      "seg": 0,
+      "size": 91
+    },
+    "ga_info": {
+      "off": 31211,
+      "seg": 0,
+      "size": 185
+    },
+    "ga_install": {
+      "off": 30529,
+      "seg": 0,
+      "size": 72
+    },
+    "ga_menu": {
+      "off": 27398,
+      "seg": 0,
+      "size": 1125
+    },
+    "ga_paint": {
+      "off": 28523,
+      "seg": 0,
+      "size": 431
+    },
+    "ga_palette": {
+      "off": 26575,
+      "seg": 0,
+      "size": 88
+    },
+    "ga_ready": {
+      "off": 32486,
+      "seg": 0,
+      "size": 203
+    },
+    "ga_spares": {
+      "off": 30375,
+      "seg": 0,
+      "size": 154
+    },
+    "ga_stickers": {
+      "off": 29543,
+      "seg": 0,
+      "size": 832
+    },
+    "ga_time": {
+      "off": 25763,
+      "seg": 0,
+      "size": 134
+    },
+    "ga_tires": {
+      "off": 30720,
+      "seg": 0,
+      "size": 241
+    },
+    "ga_transmission": {
+      "off": 31396,
+      "seg": 0,
+      "size": 1090
+    },
+    "ga_unlink": {
+      "off": 30647,
+      "seg": 0,
+      "size": 73
+    },
+    "gm_add_part": {
+      "off": 16368,
+      "seg": 0,
+      "size": 70
+    },
+    "gm_car_look": {
+      "off": 18850,
+      "seg": 0,
+      "size": 75
+    },
+    "gm_make_car": {
+      "off": 16438,
+      "seg": 0,
+      "size": 848
+    },
+    "gm_message": {
+      "off": 15032,
+      "seg": 0,
+      "size": 84
+    },
+    "gm_new_car": {
+      "off": 16305,
+      "seg": 0,
+      "size": 35
+    },
+    "gm_new_part": {
+      "off": 15387,
+      "seg": 0,
+      "size": 35
+    },
+    "gm_part_value": {
+      "off": 15450,
+      "seg": 0,
+      "size": 51
+    },
+    "gm_pause": {
+      "off": 14979,
+      "seg": 0,
+      "size": 53
+    },
+    "gm_play_anim": {
+      "off": 20426,
+      "seg": 0,
+      "size": 48
+    },
+    "gm_popup": {
+      "off": 20474,
+      "seg": 0,
+      "size": 69
+    },
+    "gm_run": {
+      "off": 20543,
+      "seg": 0,
+      "size": 1007
+    },
+    "gm_scrap_car": {
+      "off": 17343,
+      "seg": 0,
+      "size": 108
+    },
+    "gm_take_part": {
+      "off": 17286,
+      "seg": 0,
+      "size": 57
+    },
+    "grab_strip": {
+      "off": 39183,
+      "seg": 3896,
+      "size": 202
+    },
+    "grab_wheel_column": {
+      "off": 46642,
+      "seg": 3896,
+      "size": 506
+    },
+    "gx_bolt_pos": {
+      "off": 13796,
+      "seg": 3896,
+      "size": 179
+    },
+    "gx_build_hots": {
+      "off": 16586,
+      "seg": 3896,
+      "size": 411
+    },
+    "gx_draw_bolt": {
+      "off": 13975,
+      "seg": 3896,
+      "size": 357
+    },
+    "gx_draw_bolts": {
+      "off": 16173,
+      "seg": 3896,
+      "size": 286
+    },
+    "gx_draw_part": {
+      "off": 14936,
+      "seg": 3896,
+      "size": 449
+    },
+    "gx_draw_parts": {
+      "off": 15925,
+      "seg": 3896,
+      "size": 248
+    },
+    "gx_draw_wires": {
+      "off": 15644,
+      "seg": 3896,
+      "size": 281
+    },
+    "gx_drop_bolt": {
+      "off": 14332,
+      "seg": 3896,
+      "size": 341
+    },
+    "gx_erase_part": {
+      "off": 15385,
+      "seg": 3896,
+      "size": 259
+    },
+    "gx_part_pos": {
+      "off": 13705,
+      "seg": 3896,
+      "size": 91
+    },
+    "gx_sort_hots": {
+      "off": 16997,
+      "seg": 3896,
+      "size": 156
+    },
+    "gx_trans_bolt": {
+      "off": 12404,
+      "seg": 3896,
+      "size": 305
+    },
+    "gx_trans_clear": {
+      "off": 13316,
+      "seg": 3896,
+      "size": 87
+    },
+    "gx_trans_draw": {
+      "off": 13403,
+      "seg": 3896,
+      "size": 160
+    },
+    "gx_trans_drop": {
+      "off": 12709,
+      "seg": 3896,
+      "size": 297
+    },
+    "gx_trans_pic": {
+      "off": 13006,
+      "seg": 3896,
+      "size": 310
+    },
+    "hd_bios_mono": {
+      "off": 58819,
+      "seg": 0,
+      "size": 14
+    },
+    "hd_detect": {
+      "off": 58756,
+      "seg": 0,
+      "size": 63
+    },
+    "hd_ram_test": {
+      "off": 58730,
+      "seg": 0,
+      "size": 26
+    },
+    "hg_set_mode": {
+      "off": 58834,
+      "seg": 0,
+      "size": 61
+    },
+    "hide_spots": {
+      "off": 26803,
+      "seg": 0,
+      "size": 53
+    },
+    "init_new_game": {
+      "off": 22185,
+      "seg": 0,
+      "size": 99
+    },
+    "init_racers": {
+      "off": 21892,
+      "seg": 0,
+      "size": 293
+    },
+    "init_rival_eng": {
+      "off": 53084,
+      "seg": 0,
+      "size": 213
+    },
+    "init_screens": {
+      "off": 790,
+      "seg": 0,
+      "size": 478
+    },
+    "insert_entry": {
+      "off": 13044,
+      "seg": 0,
+      "size": 129
+    },
+    "insert_hot": {
+      "off": 16459,
+      "seg": 3896,
+      "size": 127
+    },
+    "is_blank": {
+      "off": 24243,
+      "seg": 0,
+      "size": 55
+    },
+    "is_broke": {
+      "off": 27352,
+      "seg": 0,
+      "size": 46
+    },
+    "is_vga": {
+      "off": 395,
+      "seg": 0,
+      "size": 70
+    },
+    "jy_demo_key": {
+      "off": 11923,
+      "seg": 0,
+      "size": 309
+    },
+    "jy_read": {
+      "off": 11764,
+      "seg": 0,
+      "size": 159
+    },
+    "kb_isr": {
+      "off": 11330,
+      "seg": 0,
+      "size": 366
+    },
+    "kb_text_off": {
+      "off": 11307,
+      "seg": 0,
+      "size": 23
+    },
+    "kb_text_on": {
+      "off": 11268,
+      "seg": 0,
+      "size": 39
+    },
+    "kc_flush": {
+      "off": 11696,
+      "seg": 0,
+      "size": 6
+    },
+    "kg_hook": {
+      "off": 11715,
+      "seg": 0,
+      "size": 31
+    },
+    "kg_key": {
+      "off": 11702,
+      "seg": 0,
+      "size": 13
+    },
+    "king_chance": {
+      "off": 38385,
+      "seg": 0,
+      "size": 85
+    },
+    "king_status": {
+      "off": 38230,
+      "seg": 0,
+      "size": 155
+    },
+    "ko_unhook": {
+      "off": 11746,
+      "seg": 0,
+      "size": 18
+    },
+    "leave_station": {
+      "off": 46871,
+      "seg": 0,
+      "size": 394
+    },
+    "list_met_rivals": {
+      "off": 39555,
+      "seg": 0,
+      "size": 113
+    },
+    "load_pic": {
+      "off": 25274,
+      "seg": 3896,
+      "size": 676
+    },
+    "look_for_rival": {
+      "off": 39668,
+      "seg": 0,
+      "size": 209
+    },
+    "ma_clear": {
+      "off": 41044,
+      "seg": 3896,
+      "size": 42
+    },
+    "ma_pop_high": {
+      "off": 41144,
+      "seg": 3896,
+      "size": 66
+    },
+    "ma_pop_low": {
+      "off": 41118,
+      "seg": 3896,
+      "size": 26
+    },
+    "ma_release": {
+      "off": 41086,
+      "seg": 3896,
+      "size": 32
+    },
+    "main": {
+      "off": 1647,
+      "seg": 0,
+      "size": 580
+    },
+    "make_bands": {
+      "off": 33178,
+      "seg": 3896,
+      "size": 412
+    },
+    "make_bolt_overlay": {
+      "off": 14673,
+      "seg": 3896,
+      "size": 263
+    },
+    "make_frames": {
+      "off": 33590,
+      "seg": 3896,
+      "size": 392
+    },
+    "maybe_carhop": {
+      "off": 37196,
+      "seg": 0,
+      "size": 266
+    },
+    "mb_apply_mode_a": {
+      "off": 11200,
+      "seg": 0,
+      "size": 34
+    },
+    "mb_apply_mode_b": {
+      "off": 11234,
+      "seg": 0,
+      "size": 34
+    },
+    "mb_store_mode_a": {
+      "off": 11162,
+      "seg": 0,
+      "size": 19
+    },
+    "me_alloc": {
+      "off": 14089,
+      "seg": 0,
+      "size": 98
+    },
+    "me_data_segment": {
+      "off": 13992,
+      "seg": 0,
+      "size": 22
+    },
+    "me_free": {
+      "off": 14038,
+      "seg": 0,
+      "size": 19
+    },
+    "me_init": {
+      "off": 14014,
+      "seg": 0,
+      "size": 24
+    },
+    "me_new_bitmap": {
+      "off": 14187,
+      "seg": 0,
+      "size": 277
+    },
+    "me_out_of_memory": {
+      "off": 14057,
+      "seg": 0,
+      "size": 32
+    },
+    "me_set_bitmap": {
+      "off": 14596,
+      "seg": 0,
+      "size": 99
+    },
+    "me_vram_alloc": {
+      "off": 14695,
+      "seg": 0,
+      "size": 88
+    },
+    "me_wrap_bitmap": {
+      "off": 14464,
+      "seg": 0,
+      "size": 132
+    },
+    "mg_blit": {
+      "off": 10,
+      "seg": 9460,
+      "size": 2569
+    },
+    "mi_set_mode": {
+      "off": 465,
+      "seg": 0,
+      "size": 33
+    },
+    "mi_set_palette": {
+      "off": 498,
+      "seg": 0,
+      "size": 52
+    },
+    "mk_copy": {
+      "off": 10,
+      "seg": 9780,
+      "size": 183
+    },
+    "mk_make_mask": {
+      "off": 193,
+      "seg": 9780,
+      "size": 86
+    },
+    "mn_bbox": {
+      "off": 19482,
+      "seg": 3896,
+      "size": 246
+    },
+    "mn_draw_hot": {
+      "off": 18014,
+      "seg": 3896,
+      "size": 1032
+    },
+    "mn_grab": {
+      "off": 19728,
+      "seg": 3896,
+      "size": 157
+    },
+    "mn_hit": {
+      "off": 19885,
+      "seg": 3896,
+      "size": 276
+    },
+    "mn_list": {
+      "off": 20494,
+      "seg": 3896,
+      "size": 2301
+    },
+    "mn_modal": {
+      "off": 20161,
+      "seg": 3896,
+      "size": 83
+    },
+    "mn_modal_list": {
+      "off": 20303,
+      "seg": 3896,
+      "size": 114
+    },
+    "mn_pop": {
+      "off": 19361,
+      "seg": 3896,
+      "size": 94
+    },
+    "mn_push": {
+      "off": 19046,
+      "seg": 3896,
+      "size": 315
+    },
+    "mn_reset": {
+      "off": 19455,
+      "seg": 3896,
+      "size": 27
+    },
+    "mn_sel": {
+      "off": 22795,
+      "seg": 3896,
+      "size": 4
+    },
+    "mn_wait": {
+      "off": 20244,
+      "seg": 3896,
+      "size": 59
+    },
+    "mo_buttons": {
+      "off": 31191,
+      "seg": 3896,
+      "size": 61
+    },
+    "mo_motion": {
+      "off": 31252,
+      "seg": 3896,
+      "size": 51
+    },
+    "mo_poll": {
+      "off": 31303,
+      "seg": 3896,
+      "size": 218
+    },
+    "mo_reset": {
+      "off": 31130,
+      "seg": 3896,
+      "size": 61
+    },
+    "move_player": {
+      "off": 54820,
+      "seg": 0,
+      "size": 89
+    },
+    "move_rival": {
+      "off": 54909,
+      "seg": 0,
+      "size": 789
+    },
+    "mr_blit": {
+      "off": 4,
+      "seg": 9621,
+      "size": 2549
+    },
+    "ms_find": {
+      "off": 2,
+      "seg": 9312,
+      "size": 43
+    },
+    "mu_play": {
+      "off": 28426,
+      "seg": 3896,
+      "size": 179
+    },
+    "mu_set_vibrato": {
+      "off": 28605,
+      "seg": 3896,
+      "size": 47
+    },
+    "mu_stop": {
+      "off": 28652,
+      "seg": 3896,
+      "size": 21
+    },
+    "mu_suspend": {
+      "off": 28673,
+      "seg": 3896,
+      "size": 61
+    },
+    "noise": {
+      "off": 29796,
+      "seg": 3896,
+      "size": 76
+    },
+    "noise_sweep_down": {
+      "off": 29872,
+      "seg": 3896,
+      "size": 76
+    },
+    "noise_sweep_up": {
+      "off": 29948,
+      "seg": 3896,
+      "size": 76
+    },
+    "open_lib": {
+      "off": 24713,
+      "seg": 3896,
+      "size": 290
+    },
+    "pf_drivetrain": {
+      "off": 56510,
+      "seg": 0,
+      "size": 1060
+    },
+    "pf_drivetrain_spec": {
+      "off": 57570,
+      "seg": 0,
+      "size": 310
+    },
+    "pf_vmax": {
+      "off": 57880,
+      "seg": 0,
+      "size": 849
+    },
+    "pic_index": {
+      "off": 24663,
+      "seg": 3896,
+      "size": 50
+    },
+    "pick_rival": {
+      "off": 38990,
+      "seg": 0,
+      "size": 108
+    },
+    "pl_init": {
+      "off": 13844,
+      "seg": 0,
+      "size": 148
+    },
+    "place_gas_spot": {
+      "off": 46236,
+      "seg": 0,
+      "size": 66
+    },
+    "place_spots": {
+      "off": 26856,
+      "seg": 0,
+      "size": 446
+    },
+    "play_cell_anim": {
+      "off": 42006,
+      "seg": 0,
+      "size": 302
+    },
+    "play_ending": {
+      "off": 42308,
+      "seg": 0,
+      "size": 1607
+    },
+    "play_tone": {
+      "off": 29004,
+      "seg": 3896,
+      "size": 29
+    },
+    "pop_rival_hood": {
+      "off": 41573,
+      "seg": 0,
+      "size": 247
+    },
+    "pu_close": {
+      "off": 10975,
+      "seg": 3896,
+      "size": 61
+    },
+    "pu_grab": {
+      "off": 9970,
+      "seg": 3896,
+      "size": 253
+    },
+    "pu_open": {
+      "off": 10404,
+      "seg": 3896,
+      "size": 446
+    },
+    "pu_open_at": {
+      "off": 10850,
+      "seg": 3896,
+      "size": 125
+    },
+    "pu_put": {
+      "off": 10223,
+      "seg": 3896,
+      "size": 100
+    },
+    "pu_show": {
+      "off": 10323,
+      "seg": 3896,
+      "size": 81
+    },
+    "pulse_train": {
+      "off": 29330,
+      "seg": 3896,
+      "size": 116
+    },
+    "pulse_train_back": {
+      "off": 29446,
+      "seg": 3896,
+      "size": 116
+    },
+    "put_nibbles": {
+      "off": 1836,
+      "seg": 8608,
+      "size": 128
+    },
+    "put_pixels": {
+      "off": 5491,
+      "seg": 7185,
+      "size": 190
+    },
+    "ra_finish_stats": {
+      "off": 50183,
+      "seg": 0,
+      "size": 144
+    },
+    "ra_gas_station": {
+      "off": 47265,
+      "seg": 0,
+      "size": 1587
+    },
+    "ra_outcome": {
+      "off": 50707,
+      "seg": 0,
+      "size": 1948
+    },
+    "ra_reset_eng": {
+      "off": 52655,
+      "seg": 0,
+      "size": 429
+    },
+    "ra_run": {
+      "off": 53297,
+      "seg": 0,
+      "size": 429
+    },
+    "ra_speed_step": {
+      "off": 54596,
+      "seg": 0,
+      "size": 224
+    },
+    "ra_tick": {
+      "off": 55845,
+      "seg": 0,
+      "size": 664
+    },
+    "rd_advance": {
+      "off": 7932,
+      "seg": 9797,
+      "size": 367
+    },
+    "rd_build_layout": {
+      "off": 2961,
+      "seg": 9797,
+      "size": 439
+    },
+    "rd_check_crash": {
+      "off": 8299,
+      "seg": 9797,
+      "size": 169
+    },
+    "rd_draw_frame": {
+      "off": 7838,
+      "seg": 9797,
+      "size": 94
+    },
+    "rd_generate": {
+      "off": 3400,
+      "seg": 9797,
+      "size": 2517
+    },
+    "rd_mirror_x": {
+      "off": 6125,
+      "seg": 9797,
+      "size": 59
+    },
+    "rd_mirror_y": {
+      "off": 6184,
+      "seg": 9797,
+      "size": 53
+    },
+    "rd_proj_x": {
+      "off": 5999,
+      "seg": 9797,
+      "size": 66
+    },
+    "rd_proj_y": {
+      "off": 6065,
+      "seg": 9797,
+      "size": 60
+    },
+    "rd_project_ahead": {
+      "off": 6395,
+      "seg": 9797,
+      "size": 721
+    },
+    "rd_project_behind": {
+      "off": 7116,
+      "seg": 9797,
+      "size": 722
+    },
+    "rd_reset": {
+      "off": 6237,
+      "seg": 9797,
+      "size": 158
+    },
+    "rd_seek": {
+      "off": 5917,
+      "seg": 9797,
+      "size": 82
+    },
+    "rd_start": {
+      "off": 8468,
+      "seg": 9797,
+      "size": 18
+    },
+    "rd_turn": {
+      "off": 8486,
+      "seg": 9797,
+      "size": 23
+    },
+    "rd_update": {
+      "off": 8509,
+      "seg": 9797,
+      "size": 272
+    },
+    "read_cars": {
+      "off": 22799,
+      "seg": 0,
+      "size": 231
+    },
+    "read_nodes": {
+      "off": 22492,
+      "seg": 0,
+      "size": 146
+    },
+    "read_paper": {
+      "off": 15155,
+      "seg": 0,
+      "size": 232
+    },
+    "remove_part": {
+      "off": 30601,
+      "seg": 0,
+      "size": 46
+    },
+    "render_backdrop": {
+      "off": 10626,
+      "seg": 9797,
+      "size": 648
+    },
+    "render_buildings": {
+      "off": 13530,
+      "seg": 9797,
+      "size": 725
+    },
+    "render_gantry": {
+      "off": 15564,
+      "seg": 9797,
+      "size": 247
+    },
+    "render_hydrant": {
+      "off": 15162,
+      "seg": 9797,
+      "size": 63
+    },
+    "render_left_buildings": {
+      "off": 14814,
+      "seg": 9797,
+      "size": 47
+    },
+    "render_mirror": {
+      "off": 17405,
+      "seg": 9797,
+      "size": 1935
+    },
+    "render_mirror_buildings": {
+      "off": 14255,
+      "seg": 9797,
+      "size": 559
+    },
+    "render_mirror_frame": {
+      "off": 16091,
+      "seg": 9797,
+      "size": 178
+    },
+    "render_mirror_left": {
+      "off": 14935,
+      "seg": 9797,
+      "size": 47
+    },
+    "render_mirror_right": {
+      "off": 14982,
+      "seg": 9797,
+      "size": 46
+    },
+    "render_mirror_row": {
+      "off": 15028,
+      "seg": 9797,
+      "size": 11
+    },
+    "render_object": {
+      "off": 15083,
+      "seg": 9797,
+      "size": 79
+    },
+    "render_opponent": {
+      "off": 16269,
+      "seg": 9797,
+      "size": 1136
+    },
+    "render_overlays": {
+      "off": 15932,
+      "seg": 9797,
+      "size": 159
+    },
+    "render_right_buildings": {
+      "off": 14861,
+      "seg": 9797,
+      "size": 46
+    },
+    "render_row": {
+      "off": 14907,
+      "seg": 9797,
+      "size": 28
+    },
+    "render_scaled_pic": {
+      "off": 15225,
+      "seg": 9797,
+      "size": 339
+    },
+    "render_start_signal": {
+      "off": 15811,
+      "seg": 9797,
+      "size": 121
+    },
+    "replace_tires": {
+      "off": 48852,
+      "seg": 0,
+      "size": 192
+    },
+    "restore_rect": {
+      "off": 6068,
+      "seg": 7185,
+      "size": 97
+    },
+    "restore_rect_back": {
+      "off": 3316,
+      "seg": 8608,
+      "size": 110
+    },
+    "restore_rect_latch": {
+      "off": 9576,
+      "seg": 8608,
+      "size": 113
+    },
+    "restore_under": {
+      "off": 10,
+      "seg": 3896,
+      "size": 142
+    },
+    "rival_accelerate": {
+      "off": 53917,
+      "seg": 0,
+      "size": 679
+    },
+    "rival_arrives": {
+      "off": 39463,
+      "seg": 0,
+      "size": 92
+    },
+    "rl_decode": {
+      "off": 6,
+      "seg": 3730,
+      "size": 201
+    },
+    "rn_int": {
+      "off": 24246,
+      "seg": 3896,
+      "size": 352
+    },
+    "rnd": {
+      "off": 362,
+      "seg": 9797,
+      "size": 16
+    },
+    "save_under": {
+      "off": 152,
+      "seg": 3896,
+      "size": 159
+    },
+    "sc_add_money": {
+      "off": 8640,
+      "seg": 3896,
+      "size": 83
+    },
+    "sc_fill_rect": {
+      "off": 8986,
+      "seg": 3896,
+      "size": 130
+    },
+    "sc_hline": {
+      "off": 9892,
+      "seg": 3896,
+      "size": 78
+    },
+    "sc_msg_box": {
+      "off": 9116,
+      "seg": 3896,
+      "size": 50
+    },
+    "sc_picture": {
+      "off": 9556,
+      "seg": 3896,
+      "size": 228
+    },
+    "sc_picture_at": {
+      "off": 9784,
+      "seg": 3896,
+      "size": 30
+    },
+    "sc_show_gear": {
+      "off": 8937,
+      "seg": 3896,
+      "size": 49
+    },
+    "sc_status_init": {
+      "off": 8226,
+      "seg": 3896,
+      "size": 127
+    },
+    "sc_status_label": {
+      "off": 8723,
+      "seg": 3896,
+      "size": 214
+    },
+    "sc_status_text": {
+      "off": 8353,
+      "seg": 3896,
+      "size": 287
+    },
+    "sc_text": {
+      "off": 9814,
+      "seg": 3896,
+      "size": 78
+    },
+    "sc_wait_msg": {
+      "off": 9166,
+      "seg": 3896,
+      "size": 390
+    },
+    "scan_save_slots": {
+      "off": 23030,
+      "seg": 0,
+      "size": 340
+    },
+    "score_beats_entry": {
+      "off": 13008,
+      "seg": 0,
+      "size": 36
+    },
+    "scramble_hall": {
+      "off": 27855,
+      "seg": 3896,
+      "size": 29
+    },
+    "select_draw_page": {
+      "off": 8782,
+      "seg": 9797,
+      "size": 58
+    },
+    "select_rival": {
+      "off": 39098,
+      "seg": 0,
+      "size": 365
+    },
+    "sell_parts": {
+      "off": 15501,
+      "seg": 0,
+      "size": 804
+    },
+    "set_g47ec_47ed": {
+      "off": 11181,
+      "seg": 0,
+      "size": 19
+    },
+    "set_jail_spots": {
+      "off": 45125,
+      "seg": 0,
+      "size": 71
+    },
+    "set_video_mode": {
+      "off": 1268,
+      "seg": 0,
+      "size": 210
+    },
+    "setup_bobs_spots": {
+      "off": 41208,
+      "seg": 0,
+      "size": 365
+    },
+    "sg_init_racer": {
+      "off": 21550,
+      "seg": 0,
+      "size": 342
+    },
+    "sg_load": {
+      "off": 23370,
+      "seg": 0,
+      "size": 873
+    },
+    "sg_menu": {
+      "off": 25630,
+      "seg": 0,
+      "size": 87
+    },
+    "sg_new": {
+      "off": 22284,
+      "seg": 0,
+      "size": 137
+    },
+    "sg_save": {
+      "off": 24298,
+      "seg": 0,
+      "size": 1332
+    },
+    "sgn": {
+      "off": 12075,
+      "seg": 9797,
+      "size": 29
+    },
+    "shift_nibbles": {
+      "off": 1655,
+      "seg": 8608,
+      "size": 181
+    },
+    "shift_pixels": {
+      "off": 5248,
+      "seg": 7185,
+      "size": 243
+    },
+    "shift_row_bits": {
+      "off": 7842,
+      "seg": 8608,
+      "size": 235
+    },
+    "show_crash": {
+      "off": 49624,
+      "seg": 0,
+      "size": 559
+    },
+    "show_race_stats": {
+      "off": 50327,
+      "seg": 0,
+      "size": 149
+    },
+    "show_rival_car": {
+      "off": 37540,
+      "seg": 0,
+      "size": 640
+    },
+    "show_tank_cap": {
+      "off": 46619,
+      "seg": 0,
+      "size": 252
+    },
+    "show_ticket": {
+      "off": 49044,
+      "seg": 0,
+      "size": 580
+    },
+    "show_video_menu": {
+      "off": 130,
+      "seg": 0,
+      "size": 265
+    },
+    "sk_delay": {
+      "off": 2,
+      "seg": 8598,
+      "size": 27
+    },
+    "sk_play": {
+      "off": 29,
+      "seg": 8598,
+      "size": 136
+    },
+    "so_bolt": {
+      "off": 30689,
+      "seg": 3896,
+      "size": 54
+    },
+    "so_bolt_turn": {
+      "off": 31091,
+      "seg": 3896,
+      "size": 38
+    },
+    "so_bump": {
+      "off": 30991,
+      "seg": 3896,
+      "size": 100
+    },
+    "so_buzz": {
+      "off": 30650,
+      "seg": 3896,
+      "size": 39
+    },
+    "so_calibrate": {
+      "off": 28734,
+      "seg": 3896,
+      "size": 151
+    },
+    "so_crash": {
+      "off": 30819,
+      "seg": 3896,
+      "size": 172
+    },
+    "so_init": {
+      "off": 28929,
+      "seg": 3896,
+      "size": 33
+    },
+    "so_jack": {
+      "off": 30305,
+      "seg": 3896,
+      "size": 78
+    },
+    "so_noise": {
+      "off": 30785,
+      "seg": 3896,
+      "size": 34
+    },
+    "so_off": {
+      "off": 28989,
+      "seg": 3896,
+      "size": 15
+    },
+    "so_on": {
+      "off": 28962,
+      "seg": 3896,
+      "size": 27
+    },
+    "so_part_move": {
+      "off": 30426,
+      "seg": 3896,
+      "size": 78
+    },
+    "so_part_set": {
+      "off": 30743,
+      "seg": 3896,
+      "size": 42
+    },
+    "so_pump": {
+      "off": 30227,
+      "seg": 3896,
+      "size": 78
+    },
+    "so_set_freq": {
+      "off": 28885,
+      "seg": 3896,
+      "size": 44
+    },
+    "so_siren": {
+      "off": 30504,
+      "seg": 3896,
+      "size": 25
+    },
+    "so_squeal": {
+      "off": 30529,
+      "seg": 3896,
+      "size": 25
+    },
+    "so_sticker": {
+      "off": 30067,
+      "seg": 3896,
+      "size": 80
+    },
+    "so_warble1": {
+      "off": 30554,
+      "seg": 3896,
+      "size": 48
+    },
+    "so_warble2": {
+      "off": 30602,
+      "seg": 3896,
+      "size": 48
+    },
+    "so_wheel_roll": {
+      "off": 30024,
+      "seg": 3896,
+      "size": 43
+    },
+    "sort_gas_spots": {
+      "off": 46117,
+      "seg": 0,
+      "size": 49
+    },
+    "sort_spots": {
+      "off": 26754,
+      "seg": 0,
+      "size": 49
+    },
+    "sp_advance": {
+      "off": 43575,
+      "seg": 3896,
+      "size": 139
+    },
+    "sp_car_clip": {
+      "off": 41368,
+      "seg": 3896,
+      "size": 86
+    },
+    "sp_clip_box": {
+      "off": 41454,
+      "seg": 3896,
+      "size": 133
+    },
+    "sp_clip_span": {
+      "off": 43714,
+      "seg": 3896,
+      "size": 142
+    },
+    "sp_plan_drive": {
+      "off": 42990,
+      "seg": 3896,
+      "size": 144
+    },
+    "sp_plan_move": {
+      "off": 42669,
+      "seg": 3896,
+      "size": 321
+    },
+    "sp_rect_and": {
+      "off": 41210,
+      "seg": 3896,
+      "size": 158
+    },
+    "sp_rect_sub": {
+      "off": 42169,
+      "seg": 3896,
+      "size": 236
+    },
+    "sp_reverse": {
+      "off": 42405,
+      "seg": 3896,
+      "size": 184
+    },
+    "sp_set_step": {
+      "off": 42589,
+      "seg": 3896,
+      "size": 80
+    },
+    "sp_setup": {
+      "off": 41587,
+      "seg": 3896,
+      "size": 582
+    },
+    "sp_slide_v": {
+      "off": 43134,
+      "seg": 3896,
+      "size": 441
+    },
+    "spec_class": {
+      "off": 38180,
+      "seg": 0,
+      "size": 50
+    },
+    "split_banks": {
+      "off": 380,
+      "seg": 8608,
+      "size": 143
+    },
+    "spots_cap": {
+      "off": 46373,
+      "seg": 0,
+      "size": 45
+    },
+    "spots_idle": {
+      "off": 46302,
+      "seg": 0,
+      "size": 71
+    },
+    "spots_none": {
+      "off": 46615,
+      "seg": 0,
+      "size": 4
+    },
+    "spots_nozzle": {
+      "off": 46418,
+      "seg": 0,
+      "size": 73
+    },
+    "spots_rag": {
+      "off": 46491,
+      "seg": 0,
+      "size": 124
+    },
+    "sr_cga": {
+      "off": 22128,
+      "seg": 9797,
+      "size": 533
+    },
+    "sr_ega": {
+      "off": 21511,
+      "seg": 9797,
+      "size": 497
+    },
+    "sr_tandy": {
+      "off": 22661,
+      "seg": 9797,
+      "size": 470
+    },
+    "start_game": {
+      "off": 14784,
+      "seg": 0,
+      "size": 195
+    },
+    "swap_wheel": {
+      "off": 47148,
+      "seg": 3896,
+      "size": 1639
+    },
+    "sweep_down": {
+      "off": 29106,
+      "seg": 3896,
+      "size": 50
+    },
+    "sweep_up_down": {
+      "off": 29156,
+      "seg": 3896,
+      "size": 174
+    },
+    "sy_crit_error": {
+      "off": 4187,
+      "seg": 0,
+      "size": 182
+    },
+    "sy_demo_step": {
+      "off": 7086,
+      "seg": 0,
+      "size": 1076
+    },
+    "sy_drive_isr": {
+      "off": 9100,
+      "seg": 0,
+      "size": 2062
+    },
+    "sy_drive_start": {
+      "off": 6829,
+      "seg": 0,
+      "size": 122
+    },
+    "sy_drive_stop": {
+      "off": 6951,
+      "seg": 0,
+      "size": 106
+    },
+    "sy_exit": {
+      "off": 4074,
+      "seg": 0,
+      "size": 113
+    },
+    "sy_hover_reset": {
+      "off": 3448,
+      "seg": 0,
+      "size": 33
+    },
+    "sy_init": {
+      "off": 4369,
+      "seg": 0,
+      "size": 461
+    },
+    "sy_keymap_restore": {
+      "off": 5009,
+      "seg": 0,
+      "size": 134
+    },
+    "sy_keymap_set": {
+      "off": 4830,
+      "seg": 0,
+      "size": 179
+    },
+    "sy_music_pause": {
+      "off": 3481,
+      "seg": 0,
+      "size": 63
+    },
+    "sy_music_resume": {
+      "off": 3544,
+      "seg": 0,
+      "size": 76
+    },
+    "sy_music_start": {
+      "off": 6661,
+      "seg": 0,
+      "size": 119
+    },
+    "sy_music_stop": {
+      "off": 6780,
+      "seg": 0,
+      "size": 49
+    },
+    "sy_reset_queues": {
+      "off": 3620,
+      "seg": 0,
+      "size": 231
+    },
+    "sy_sign": {
+      "off": 7057,
+      "seg": 0,
+      "size": 29
+    },
+    "sy_stop_drive": {
+      "off": 9076,
+      "seg": 0,
+      "size": 24
+    },
+    "sy_timer_add": {
+      "off": 6211,
+      "seg": 0,
+      "size": 327
+    },
+    "sy_timer_anim": {
+      "off": 6538,
+      "seg": 0,
+      "size": 50
+    },
+    "sy_timer_cancel": {
+      "off": 6588,
+      "seg": 0,
+      "size": 73
+    },
+    "sy_timer_isr": {
+      "off": 8162,
+      "seg": 0,
+      "size": 914
+    },
+    "sy_timer_remove": {
+      "off": 3851,
+      "seg": 0,
+      "size": 172
+    },
+    "sy_unhook": {
+      "off": 4023,
+      "seg": 0,
+      "size": 51
+    },
+    "sy_wait_input": {
+      "off": 5143,
+      "seg": 0,
+      "size": 1068
+    },
+    "ta_copy_page": {
+      "off": 3081,
+      "seg": 8608,
+      "size": 29
+    },
+    "ta_draw_text": {
+      "off": 2404,
+      "seg": 8608,
+      "size": 235
+    },
+    "ta_install": {
+      "off": 2386,
+      "seg": 8608,
+      "size": 18
+    },
+    "ta_recolor_rect": {
+      "off": 2639,
+      "seg": 8608,
+      "size": 442
+    },
+    "ta_reveal": {
+      "off": 3110,
+      "seg": 8608,
+      "size": 205
+    },
+    "tb_compose": {
+      "off": 523,
+      "seg": 8608,
+      "size": 333
+    },
+    "tb_copy": {
+      "off": 1195,
+      "seg": 8608,
+      "size": 460
+    },
+    "tb_masked": {
+      "off": 856,
+      "seg": 8608,
+      "size": 339
+    },
+    "tb_shifted": {
+      "off": 1964,
+      "seg": 8608,
+      "size": 421
+    },
+    "ti_change": {
+      "off": 48787,
+      "seg": 3896,
+      "size": 3849
+    },
+    "tl_draw": {
+      "off": 10,
+      "seg": 9351,
+      "size": 545
+    },
+    "tl_fill_below": {
+      "off": 777,
+      "seg": 9351,
+      "size": 104
+    },
+    "tl_pixel_addr": {
+      "off": 555,
+      "seg": 9351,
+      "size": 44
+    },
+    "tl_span": {
+      "off": 599,
+      "seg": 9351,
+      "size": 178
+    },
+    "tone_burst": {
+      "off": 29033,
+      "seg": 3896,
+      "size": 73
+    },
+    "tp_init": {
+      "off": 14,
+      "seg": 9314,
+      "size": 76
+    },
+    "tp_make_mask": {
+      "off": 553,
+      "seg": 9314,
+      "size": 48
+    },
+    "tp_or_nibbles": {
+      "off": 427,
+      "seg": 9314,
+      "size": 73
+    },
+    "tp_read_code": {
+      "off": 500,
+      "seg": 9314,
+      "size": 53
+    },
+    "tp_unpack": {
+      "off": 90,
+      "seg": 9314,
+      "size": 198
+    },
+    "tp_unpack_mask": {
+      "off": 288,
+      "seg": 9314,
+      "size": 139
+    },
+    "ts_step": {
+      "off": 3426,
+      "seg": 8608,
+      "size": 965
+    },
+    "tt_copy": {
+      "off": 203,
+      "seg": 9406,
+      "size": 216
+    },
+    "tt_render": {
+      "off": 2,
+      "seg": 9406,
+      "size": 201
+    },
+    "tune_timing": {
+      "off": 32689,
+      "seg": 0,
+      "size": 506
+    },
+    "ty_screen": {
+      "off": 71,
+      "seg": 9432,
+      "size": 177
+    },
+    "ty_to_screen": {
+      "off": 4,
+      "seg": 9432,
+      "size": 67
+    },
+    "uc_cga": {
+      "off": 193,
+      "seg": 3692,
+      "size": 180
+    },
+    "uc_ega": {
+      "off": 373,
+      "seg": 3692,
+      "size": 240
+    },
+    "uc_tandy": {
+      "off": 2,
+      "seg": 3692,
+      "size": 191
+    },
+    "unscramble_hall": {
+      "off": 27884,
+      "seg": 3896,
+      "size": 29
+    },
+    "vd_detect": {
+      "off": 58927,
+      "seg": 0,
+      "size": 146
+    },
+    "vd_restore": {
+      "off": 58896,
+      "seg": 0,
+      "size": 31
+    },
+    "vi_anim_active": {
+      "off": 7794,
+      "seg": 3896,
+      "size": 33
+    },
+    "vi_anim_hook": {
+      "off": 7827,
+      "seg": 3896,
+      "size": 184
+    },
+    "vi_anim_resume": {
+      "off": 7745,
+      "seg": 3896,
+      "size": 49
+    },
+    "vi_anim_start": {
+      "off": 7625,
+      "seg": 3896,
+      "size": 120
+    },
+    "vi_anim_stop": {
+      "off": 6636,
+      "seg": 3896,
+      "size": 115
+    },
+    "vi_bobs_pal": {
+      "off": 6156,
+      "seg": 3896,
+      "size": 16
+    },
+    "vi_garage_pal": {
+      "off": 6140,
+      "seg": 3896,
+      "size": 16
+    },
+    "vi_init": {
+      "off": 6233,
+      "seg": 3896,
+      "size": 403
+    },
+    "vi_name_pal": {
+      "off": 6172,
+      "seg": 3896,
+      "size": 16
+    },
+    "vi_palette_reg": {
+      "off": 8011,
+      "seg": 3896,
+      "size": 89
+    },
+    "vi_set_palette": {
+      "off": 8100,
+      "seg": 3896,
+      "size": 124
+    },
+    "vi_swap_pal": {
+      "off": 6188,
+      "seg": 3896,
+      "size": 45
+    },
+    "vw_clip": {
+      "off": 9232,
+      "seg": 9797,
+      "size": 25
+    },
+    "vw_draw": {
+      "off": 19340,
+      "seg": 9797,
+      "size": 1774
+    },
+    "vw_draw_dot": {
+      "off": 15039,
+      "seg": 9797,
+      "size": 44
+    },
+    "vw_load": {
+      "off": 9257,
+      "seg": 9797,
+      "size": 1369
+    },
+    "vw_mirror_row": {
+      "off": 12877,
+      "seg": 9797,
+      "size": 653
+    },
+    "vw_road_row": {
+      "off": 12104,
+      "seg": 9797,
+      "size": 773
+    },
+    "vw_sprite": {
+      "off": 11274,
+      "seg": 9797,
+      "size": 242
+    },
+    "vw_start": {
+      "off": 21114,
+      "seg": 9797,
+      "size": 17
+    },
+    "vw_unclip_top": {
+      "off": 9200,
+      "seg": 9797,
+      "size": 7
+    },
+    "warble": {
+      "off": 29677,
+      "seg": 3896,
+      "size": 119
+    },
+    "wear_text": {
+      "off": 20417,
+      "seg": 3896,
+      "size": 77
+    },
+    "write_cars": {
+      "off": 22638,
+      "seg": 0,
+      "size": 161
+    },
+    "write_nodes": {
+      "off": 22421,
+      "seg": 0,
+      "size": 71
+    },
+    "write_plane_row": {
+      "off": 8077,
+      "seg": 8608,
+      "size": 686
+    },
+    "your_cars": {
+      "off": 18925,
+      "seg": 0,
+      "size": 1501
+    }
+  }
+}

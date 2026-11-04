@@ -4,10 +4,10 @@
 #define MUSIC_H
 #include "STRUCTS.H"
 
-extern int g_toneShapes[][8];                           /* DS:57F6 */
-extern struct Tone g_tones[];                           /* DS:5826 */
-void mu_play(void far *song, void *tones);           /* 0x1628A */
-void mu_set_vibrato(int on, int a, int b, int c, int d);/* 0x1633D */
-void mu_suspend(int on);                                   /* 0x16381 */
+extern int g_toneShapes[][8];
+extern struct Tone g_tones[];
+void mu_play(void far *song, void *tones);
+void mu_set_vibrato(int on, int a, int b, int c, int d);
+void mu_suspend(int on);
 
 #endif

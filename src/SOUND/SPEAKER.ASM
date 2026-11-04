@@ -8,14 +8,13 @@
         EXTRN   _g_delayScale:WORD
 
         PUBLIC  _g_tunePtr
-_g_tunePtr DW      1                        ; DS:58DE int
+_g_tunePtr DW      1
         PUBLIC  _g_toneDelay
-_g_toneDelay DW      1                        ; DS:58E0 int
+_g_toneDelay DW      1
 
 S2196_TEXT SEGMENT WORD PUBLIC 'CODE'
         ASSUME  CS:S2196_TEXT
 
-; sk_delay @ 2196:0002 (linear 0x21962, 27 bytes)
 ; Busy-wait delay: spin for n * g_delayScale units, in 16-bit chunks of a LOOP count
 ; (the high byte of the product counts the outer repetitions).
 ; sk_delay(n)
@@ -40,7 +39,6 @@ spin1:
         ret
 _sk_delay  ENDP
 
-; sk_play @ 2196:001D (linear 0x2197D, 136 bytes)
 ; Play a tune on the PC speaker. The argument points at a table of
 ; 3-word records (length, two frequency counters, duty/step word) ending
 ; with a zero length word; g_tunePtr keeps the read pointer so the caller's

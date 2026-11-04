@@ -3,7 +3,6 @@
 
         .CODE S0000_TEXT
 
-; hd_ram_test @ 0000:E56A (linear 0x0E56A, 26 bytes)
 ; Is there RAM at es:3FFFh that holds a written value? Result in ZF
 ; (equal: the byte at 7FFFh read back the same after the increment).
 
@@ -17,7 +16,6 @@ _hd_ram_test  PROC  FAR
         ret
 _hd_ram_test  ENDP
 
-; hd_detect @ 0000:E584 (linear 0x0E584, 63 bytes)
 ; Hercules detection: does the status port 3BAh toggle bit 7, and is
 ; there memory at B000h that survives the config switch.
 
@@ -59,7 +57,6 @@ done:
         ret
 _hd_detect  ENDP
 
-; hd_bios_mono @ 0000:E5C3 (linear 0x0E5C3, 14 bytes)
 ; BIOS equipment word: 0x30 in the video bits means monochrome.
 
         PUBLIC  _hd_bios_mono

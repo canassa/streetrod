@@ -24,9 +24,7 @@
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 
-char *g_gearNames[7] = {"0", "1", "2", "3", "4", "N", "D"};   /* DS:0482 */
-
-/* sc_status_init @ 0F38:2022 (linear 0x113A2, 127 bytes) */
+char *g_gearNames[7] = {"0", "1", "2", "3", "4", "N", "D"};
 
 void sc_status_init(int y)
 {
@@ -42,10 +40,8 @@ void sc_status_init(int y)
 
 struct State7EAA a_7eaap;
 struct TextEnd g_penPoint;
-struct StatusText g_statusLine; /* DS:824C */
+struct StatusText g_statusLine;
 int g_xMoneyRhsVal;
-
-/* sc_status_text @ 0F38:20A1 (linear 0x11421, 287 bytes) */
 
 void sc_status_text(int x, char *s, int w)
 {
@@ -76,8 +72,6 @@ void sc_status_text(int x, char *s, int w)
     x_colors = saved;
 }
 
-/* sc_add_money @ 0F38:21C0 (linear 0x11540, 83 bytes) */
-
 void sc_add_money(int n)
 {
     int old;
@@ -89,8 +83,6 @@ void sc_add_money(int n)
     g_xMoneyRhsVal = g_penPoint.x;
     g_statusLine.shown = old;
 }
-
-/* sc_status_label @ 0F38:2213 (linear 0x11593, 214 bytes) */
 
 void sc_status_label(char *s)
 {
@@ -111,8 +103,6 @@ void sc_status_label(char *s)
         bm_copy_box(r_vid.back, r_vid.front, 0, g_statusLine.y, g_statusLine.messageX, g_statusLine.y + 7);
 }
 
-/* sc_show_gear @ 0F38:22E9 (linear 0x11669, 49 bytes) */
-
 void sc_show_gear(int i)
 {
     int saved;
@@ -124,8 +114,6 @@ void sc_show_gear(int i)
 }
 
 char g_displaySplitYVal;
-
-/* sc_fill_rect @ 0F38:231A (linear 0x1169A, 130 bytes) */
 
 void sc_fill_rect(int x, int y, int w, int h, char color)
 {
@@ -141,20 +129,16 @@ void sc_fill_rect(int x, int y, int w, int h, char color)
     cu_ctl(CURSOR_SHOW);
 }
 
-/* sc_msg_box @ 0F38:239C (linear 0x1171C, 50 bytes) */
-
 void sc_msg_box(char *s)
 {
     strcpy(g_boxText, s);
     mn_modal(KM_MESSAGE_BOX);
 }
 
-char g_promptPalette[18] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14, 0, 0};   /* DS:04AC */
-struct PicturePlacement g_picturePlacement = {0, 0, SCREEN_BODY_HEIGHT}; /* DS:04BE */
+char g_promptPalette[18] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14, 0, 0};
+struct PicturePlacement g_picturePlacement = {0, 0, SCREEN_BODY_HEIGHT};
 
-/* sc_wait_msg @ 0F38:23CE (linear 0x1174E, 390 bytes)
-
-   Show a message and wait for a key ("Hit Return when ready ...") */
+/* Show a message and wait for a key ("Hit Return when ready ...") */
 
 void sc_wait_msg(char *msg)
 {
@@ -213,9 +197,7 @@ void sc_wait_msg(char *msg)
     }
 }
 
-/* sc_picture @ 0F38:2554 (linear 0x118D4, 228 bytes)
-
-   Blit bitmap number a to the back buffer at (g_picturePlacement.x, g_picturePlacement.y), then copy the rectangle to the front
+/* Blit bitmap number a to the back buffer at (g_picturePlacement.x, g_picturePlacement.y), then copy the rectangle to the front
    buffer. b >= 0 first fills the screen with color b. */
 
 int sc_picture(int a, int b)
@@ -241,8 +223,6 @@ int sc_picture(int a, int b)
     ma_pop_high(1);
 }
 
-/* sc_picture_at @ 0F38:2638 (linear 0x119B8, 30 bytes) */
-
 int sc_picture_at(int a, int b, int c, int d)
 {
     g_picturePlacement.x = b;
@@ -250,9 +230,7 @@ int sc_picture_at(int a, int b, int c, int d)
     return sc_picture(a, d);
 }
 
-/* sc_text @ 0F38:2656 (linear 0x119D6, 78 bytes)
-
-   Draw string s at (x, y) on the back buffer, then copy the 8 pixel high strip to the front buffer */
+/* Draw string s at (x, y) on the back buffer, then copy the 8 pixel high strip to the front buffer */
 
 void sc_text(int x, int y, char *s)
 {
@@ -261,9 +239,7 @@ void sc_text(int x, int y, char *s)
         bm_copy_box(r_vid.back, r_vid.front, x, y, g_penPoint.x - 1, y + 7);
 }
 
-/* sc_hline @ 0F38:26A4 (linear 0x11A24, 78 bytes)
-
-   Draw a horizontal run of w pixels at (x, y) on the back buffer and copy it to the front buffer */
+/* Draw a horizontal run of w pixels at (x, y) on the back buffer and copy it to the front buffer */
 
 void sc_hline(int x, int y, int w)
 {

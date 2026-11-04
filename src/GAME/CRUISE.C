@@ -16,10 +16,8 @@
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int g_phaseDriveRunState;
 
-char g_savedPal12 = -1;   /* DS:51AC */
-char g_savedPal3 = -1;   /* DS:51AD */
-
-/* cr_go @ 0000:8D26 (linear 0x08D26, 118 bytes) */
+char g_savedPal12 = -1;
+char g_savedPal3 = -1;
 
 void cr_go(void)
 {
@@ -40,8 +38,6 @@ void cr_go(void)
         }
     }
 }
-
-/* cr_rival_paint @ 0000:8D9C (linear 0x08D9C, 145 bytes) */
 
 void cr_rival_paint(int mode)
 {
@@ -70,8 +66,6 @@ void cr_rival_paint(int mode)
 }
 
 int g7d66n;
-
-/* cr_drive @ 0000:8E2D (linear 0x08E2D, 123 bytes) */
 
 int cr_drive(void)
 {

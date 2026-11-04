@@ -13,9 +13,7 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-/* sp_rect_and @ 0F38:A0FA (linear 0x1947A, 158 bytes)
-
-   Intersect rectangles a and b into out, snapped to the r_vid.mask pixel mask; 0 if they do not
+/* Intersect rectangles a and b into out, snapped to the r_vid.mask pixel mask; 0 if they do not
    overlap */
 
 struct Rect *sp_rect_and(struct Rect *a, struct Rect *b, struct Rect *out)
@@ -34,9 +32,7 @@ struct Rect *sp_rect_and(struct Rect *a, struct Rect *b, struct Rect *out)
     return out;
 }
 
-/* sp_car_clip @ 0F38:A198 (linear 0x19518, 86 bytes)
-
-   Clip the rectangle (x, y, w, h) against the screen window; result in out */
+/* Clip the rectangle (x, y, w, h) against the screen window; result in out */
 
 struct Rect *sp_car_clip(int x, int y, int w, int h, struct Rect *out)
 {
@@ -59,9 +55,7 @@ struct Seq g_seqSpriteMoveData[10];
 struct Sprite g7d18m;
 struct Page g_sprPageRing[2];
 
-/* sp_clip_box @ 0F38:A1EE (linear 0x1956E, 133 bytes)
-
-   Clip the box (c, d, a, b) to 0..amax x 0..bmax, snap to the r_vid.mask pixel mask; result in out */
+/* Clip the box (c, d, a, b) to 0..amax x 0..bmax, snap to the r_vid.mask pixel mask; result in out */
 
 void sp_clip_box(int a, int b, int c, int d, int amax, int bmax, struct Rect *out)
 {
@@ -88,9 +82,7 @@ void sp_clip_box(int a, int b, int c, int d, int amax, int bmax, struct Rect *ou
     out->y2 = d + b - 1;
 }
 
-/* sp_setup @ 0F38:A273 (linear 0x195F3, 582 bytes)
-
-   Set up the sprite g7d18m from n frame images: the ring of frames, the display pages and the
+/* Set up the sprite g7d18m from n frame images: the ring of frames, the display pages and the
    clipped rectangle */
 
 struct Sprite *sp_setup(int x, int y, struct Bitmap far **imgs, char (*cell)[8], int n, struct Bitmap far *img,
@@ -142,9 +134,7 @@ struct Sprite *sp_setup(int x, int y, struct Bitmap far **imgs, char (*cell)[8],
     return &g7d18m;
 }
 
-/* sp_rect_sub @ 0F38:A4B9 (linear 0x19839, 236 bytes)
-
-   Subtract rectangle a from b along one axis into out; NULL when nothing is left */
+/* Subtract rectangle a from b along one axis into out; NULL when nothing is left */
 
 struct Rect *sp_rect_sub(struct Rect *a, struct Rect *b, struct Rect *out, int horiz)
 {
@@ -180,9 +170,7 @@ struct Rect *sp_rect_sub(struct Rect *a, struct Rect *b, struct Rect *out, int h
     return out;
 }
 
-/* sp_reverse @ 0F38:A5A5 (linear 0x19925, 184 bytes)
-
-   Rotate the ring of four frames of f1 sprite and pick the one for the current heading */
+/* Rotate the ring of four frames of f1 sprite and pick the one for the current heading */
 
 void sp_reverse(struct Sprite *s)
 {
@@ -213,9 +201,7 @@ void sp_reverse(struct Sprite *s)
     }
 }
 
-/* sp_set_step @ 0F38:A65D (linear 0x199DD, 80 bytes)
-
-   Store step i of a sprite's motion sequence and terminate the sequence after it */
+/* Store step i of a sprite's motion sequence and terminate the sequence after it */
 
 void sp_set_step(struct Sprite *s, int i, int count, signed char dx, signed char dy)
 {
@@ -227,9 +213,7 @@ void sp_set_step(struct Sprite *s, int i, int count, signed char dx, signed char
     s->seq[i + 1].dy = 0;
 }
 
-/* sp_plan_move @ 0F38:A6AD (linear 0x19A2D, 321 bytes)
-
-   Split a move of size d into the three phases of a sprite's motion sequence */
+/* Split a move of size d into the three phases of a sprite's motion sequence */
 
 void sp_plan_move(struct Sprite *s, enum CarAnimKind mode, int a, int b, int c, int d, int e, int f)
 {
@@ -255,9 +239,7 @@ void sp_plan_move(struct Sprite *s, enum CarAnimKind mode, int a, int b, int c, 
     sp_set_step(s, 3, -1, 0, 0);
 }
 
-/* sp_plan_drive @ 0F38:A7EE (linear 0x19B6E, 144 bytes)
-
-   Build the motion sequence of a sprite for a given direction */
+/* Build the motion sequence of a sprite for a given direction */
 
 void sp_plan_drive(struct Sprite *s, enum CarAnimKind mode, int d)
 {
@@ -279,9 +261,7 @@ void sp_plan_drive(struct Sprite *s, enum CarAnimKind mode, int d)
     }
 }
 
-/* sp_slide_v @ 0F38:A87E (linear 0x19BFE, 441 bytes)
-
-   Slide a one-frame sprite of bitmap bm from y0 to y1 at column x, refreshing the front page under
+/* Slide a one-frame sprite of bitmap bm from y0 to y1 at column x, refreshing the front page under
    it */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
@@ -321,9 +301,7 @@ void sp_slide_v(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
     ma_pop_high(2);
 }
 
-/* sp_advance @ 0F38:AA37 (linear 0x19DB7, 139 bytes)
-
-   Advance a sprite one tick along its motion sequence */
+/* Advance a sprite one tick along its motion sequence */
 
 void sp_advance(struct Sprite *s)
 {
@@ -345,9 +323,7 @@ void sp_advance(struct Sprite *s)
     }
 }
 
-/* sp_clip_span @ 0F38:AAC2 (linear 0x19E42, 142 bytes)
-
-   Clip a span [pos, pos+len) against a sprite's frame, masked to r_vid.mask */
+/* Clip a span [pos, pos+len) against a sprite's frame, masked to r_vid.mask */
 
 int sp_clip_span(int pos, int len, struct Sprite *s, struct Blt16 *o)
 {

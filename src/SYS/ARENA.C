@@ -6,7 +6,7 @@
 #define ARENA_FIXED_BASE ((char far *)0x80000000L)
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static char far *g_arenaBase;                   /* DS:6CD0 */
+static char far *g_arenaBase;
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int g_arenaTopVal;
@@ -15,16 +15,12 @@ int g_markerIndexHigh;
 unsigned g_offsetArenaMarksList[61];
 int g_loHeapLimit;
 
-/* ar_reset @ 0F38:9EBC (linear 0x1923C, 45 bytes) */
-
 void ar_reset(void)
 {
     g_offsetArenaMarksList[g_lowArenaMarker = 0] = g_loHeapLimit = 0;
     g_offsetArenaMarksList[g_markerIndexHigh = 60] = g_arenaTopVal = -536;
     g_stickerBg = 0;
 }
-
-/* ar_init @ 0F38:9EE9 (linear 0x19269, 49 bytes) */
 
 void ar_init(void)
 {
@@ -35,18 +31,14 @@ void ar_init(void)
     ar_reset();
 }
 
-/* ar_shrink @ 0F38:9F1A (linear 0x1929A, 18 bytes)
-
-   Give back size bytes to the arena, top of the g_lowArenaMarker marker stack */
+/* Give back size bytes to the arena, top of the g_lowArenaMarker marker stack */
 
 void ar_shrink(int size)
 {
     g_offsetArenaMarksList[g_lowArenaMarker] -= size;
 }
 
-/* ar_alloc @ 0F38:9F2C (linear 0x192AC, 162 bytes)
-
-   Allocate size bytes from the arena at g_arenaBase; mode picks which of four marker stacks is used */
+/* Allocate size bytes from the arena at g_arenaBase; mode picks which of four marker stacks is used */
 
 char far *ar_alloc(int size, int mode)
 {
@@ -79,9 +71,7 @@ char far *ar_alloc(int size, int mode)
     return p;
 }
 
-/* ar_bm @ 0F38:9FCE (linear 0x1934E, 134 bytes)
-
-   Allocate a bitmap w x h from the arena (header plus pixel rows) and initialise it */
+/* Allocate a bitmap w x h from the arena (header plus pixel rows) and initialise it */
 
 struct Bitmap far *ar_bm(int w, int h, int flags, int mode)
 {

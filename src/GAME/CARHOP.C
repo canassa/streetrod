@@ -16,18 +16,16 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static struct Rect g_carhopRect;                 /* DS:6CC4 */
-static struct Bitmap far *g_carhopBg;          /* DS:6CCC */
+static struct Rect g_carhopRect;
+static struct Bitmap far *g_carhopBg;
 
-struct Sheet g_carhopSheets[2] = {{1142, 6, 11}, {1141, 6, 11}};   /* DS:5A26 */
-char g_carhopFrames[84] = {4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 11};   /* DS:5A32 */
-struct Seq g_carhopInSeq[4] = {{78, 3, 0}, {3, 2, 0}, {3, 1, 0}, {-1, 0, 0}};   /* DS:5A86 */
-struct Seq g_carhopOutSeq[4] = {{4, -1, 0}, {3, -2, 0}, {77, -3, 0}, {-1, 0, 0}};   /* DS:5A96 */
-char g_keepMask = 0;   /* DS:5AA6 */
+struct Sheet g_carhopSheets[2] = {{1142, 6, 11}, {1141, 6, 11}};
+char g_carhopFrames[84] = {4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 11};
+struct Seq g_carhopInSeq[4] = {{78, 3, 0}, {3, 2, 0}, {3, 1, 0}, {-1, 0, 0}};
+struct Seq g_carhopOutSeq[4] = {{4, -1, 0}, {3, -2, 0}, {77, -3, 0}, {-1, 0, 0}};
+char g_keepMask = 0;
 
-/* cut_sheet @ 0F38:985C (linear 0x18BDC, 179 bytes)
-
-   Cut a sheet bitmap into equal cells, one sub-bitmap per cell */
+/* Cut a sheet bitmap into equal cells, one sub-bitmap per cell */
 
 static void near cut_sheet(struct Bitmap far **out, int n)
 {
@@ -56,9 +54,7 @@ static void near cut_sheet(struct Bitmap far **out, int n)
     }
 }
 
-/* grab_strip @ 0F38:990F (linear 0x18C8F, 202 bytes)
-
-   Draw a bitmap into the work area, then copy it on to the front buffer */
+/* Draw a bitmap into the work area, then copy it on to the front buffer */
 
 static void near grab_strip(struct Bitmap far **pbm)
 {
@@ -73,9 +69,7 @@ static void near grab_strip(struct Bitmap far **pbm)
     }
 }
 
-/* ch_skate @ 0F38:99D9 (linear 0x18D59, 1156 bytes)
-
-   Build the sprite animation of a moving car body: the cells from the sheet, the pages, the 0x54
+/* Build the sprite animation of a moving car body: the cells from the sheet, the pages, the 0x54
    step run */
 
 void ch_skate(int a, int b)
@@ -182,9 +176,7 @@ void ch_skate(int a, int b)
     ma_release();
 }
 
-/* ch_save_bg @ 0F38:9E5D (linear 0x191DD, 94 bytes)
-
-   Allocate the 0x30 x 0x29 bitmap g_carhopBg and clear a 200 x 68 rectangle of it */
+/* Allocate the 0x30 x 0x29 bitmap g_carhopBg and clear a 200 x 68 rectangle of it */
 
 void ch_save_bg(void)
 {

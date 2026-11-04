@@ -94,8 +94,8 @@ Addresses are linear offsets into the unpacked load image (`orig/SR_unpacked.EXE
 ## Usage
 
 `CLAUDE.md` describes the workflow and the `./sr` CLI, which drives everything: compiling,
-byte comparison and the gates. There is no database: the tools read every name, address and
-declaration from the sources and headers. `make check` runs the
+byte comparison and the gates. Original function extents and data addresses live in `tools/sr/symbols.json`; the tools
+join them by name to definitions and declarations in the sources and headers. `make check` runs the
 per-function regression gate (`./sr check --all`).
 `./sr linkcheck work/layout/SR.EXE` compares the unpacked link with `orig/SR_unpacked.EXE`
 and does not mask any bytes. Its report is `work/layout/BYTE-MATCH.JSON`. The header, the

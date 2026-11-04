@@ -4,7 +4,7 @@
 #define DRIVE_H
 #include "STRUCTS.H"
 
-extern struct Bitmap far *g8188w;                       /* DS:8188 */
-int dv_run(void);                                    /* 0x16EA2 */
+extern struct Bitmap far *g8188w;
+int dv_run(void);
 
 #endif

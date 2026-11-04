@@ -2,7 +2,6 @@
 
         .CODE S24D8_TEXT
 
-; ty_to_screen @ 24D8:0004 (linear 0x24D84, 67 bytes)
 ; ty_to_screen(src_far, dst_far, bytes, rows, src_skip, dst_wrap, y): copy rows of
 ; bytes into the interleaved screen.  Four banks of 2000h; after every fourth
 ; row the destination steps back by 6000h and forward by dst_wrap.
@@ -48,7 +47,6 @@ done1:
         ret
 _ty_to_screen  ENDP
 
-; ty_screen @ 24D8:0047 (linear 0x24DC7, 177 bytes)
 ; ty_screen(src_far, dst_far, bytes, rows, sx, sy, dx, dy): like ty_to_screen but
 ; both ends are positions in the interleaved screen: offset = (y / 4) * 160 +
 ; x, plus 2000h per (y & 1) and 4000h per (y & 2).

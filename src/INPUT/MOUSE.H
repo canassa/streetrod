@@ -4,9 +4,9 @@
 #define MOUSE_H
 #include "STRUCTS.H"
 
-int mo_reset(void);                                  /* 0x16D1A */
-void mo_buttons(void);                               /* 0x16D57 */
-void mo_motion(int *dx, int *dy);                    /* 0x16D94 */
-void mo_poll(void);                                  /* 0x16DC7 */
+int mo_reset(void);
+void mo_buttons(void);
+void mo_motion(int *dx, int *dy);
+void mo_poll(void);
 
 #endif

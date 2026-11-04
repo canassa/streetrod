@@ -3,9 +3,7 @@
 #include "EGAPAGE.H"
 #include "PC.H"
 
-/* ep_show @ 21A0:182E (linear 0x2322E, 52 bytes)
-
-   Set the CRTC start address and wait for a vertical retrace */
+/* Set the CRTC start address and wait for a vertical retrace */
 
 void ep_show(int n)
 {

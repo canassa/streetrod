@@ -10,7 +10,6 @@
 
         .CODE S2645_TEXT
 
-; en_begin @ 2645:0008 (linear 0x26458, 21 bytes)
 ; EGA/VGA: enable set/reset on all four planes (GC index 1 = 0Fh), then
 ; program GC index 3 (data rotate / function select) from the high byte of g_egaGcFunction.
 
@@ -28,7 +27,6 @@ done1:
         ret
 _en_begin  ENDP
 
-; en_end @ 2645:001D (linear 0x2646D, 23 bytes)
 ; Restore the graphics controller defaults: set/reset 0, enable set/reset 0,
 ; function select 0, bit mask FFh.
 
@@ -49,7 +47,6 @@ done2:
         ret
 _en_end  ENDP
 
-; en_fill @ 2645:0034 (linear 0x26484, 179 bytes)
 ; en_fill(x1, x2, y, colour): EGA horizontal line from x1 to x2 on row y,
 ; clipped to the clip rectangle.  Set/reset colour in GC index 0, bit mask
 ; (GC index 8) used for the partial first and last bytes.
@@ -151,7 +148,6 @@ done3:
         ret
 _en_fill  ENDP
 
-; en_fill_below @ 2645:00E7 (linear 0x26537, 100 bytes)
 ; en_fill_below(y, colour): EGA, fill the rows from y down to the bottom of the clip
 ; rectangle by copying within segment av787at with the set/reset colour (a
 ; latch copy of 40 bytes per row), then restore the graphics controller.
@@ -213,7 +209,6 @@ done4:
         ret
 _en_fill_below  ENDP
 
-; en_pixel_addr @ 2645:014B (linear 0x2659B, 31 bytes)
 ; en_pixel_addr(ax = y, bx = x): EGA address of a pixel.  Out: bx = y * 40 + x / 8,
 ; es = av787at, cl = 7 - (x & 7), ah = 1.
 

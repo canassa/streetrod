@@ -4,6 +4,6 @@
 #define TANDYSPR_H
 #include "STRUCTS.H"
 
-int ts_step(struct Sprite *s);                    /* 0x22762 */
+int ts_step(struct Sprite *s);
 
 #endif

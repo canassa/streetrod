@@ -20,8 +20,8 @@
 #include "SYS.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static struct AnimRun g_animRun; /* DS:6C38 */
-static int g_pumpBlinkCount; /* DS:6C3E */
+static struct AnimRun g_animRun;
+static int g_pumpBlinkCount;
 static void near anim_set_box(void);
 static void near anim_run(int n);
 
@@ -34,27 +34,21 @@ struct Bitmap far *g_autoSprImagePtr;
 int ac825et;
 int aw8260y;
 
-struct Style g_style16 = {{{0, 0, 0, 0, 0}, {13, 9, 9, 15, 1}, {9, 13, 13, 15, 1}, {1, 5, 5, 1, 1}, {1, 5, 5, 4, 1}, {15, 9, 9, 15, 1}, {14, 15, 15, 10, 1}}, {1, 4, 4, 1, 1}, {1, 3, 3, 4, 2}, {15, 9, 9, 15, 1}, {13, 9, 9, 15, 1}, {11, 2, 2, 11, 1}, {1, 4, 4, 11, 1}, {1, 4, 4, 1, 1}, {1, 4, 4, 1, 1}, {1, 3, 3, 4, 1}};   /* DS:03A0 */
-struct Style g_style4 = {{{0, 0, 0, 0, 0}, {1, 2, 2, 3, 1}, {2, 1, 1, 3, 1}, {0, 3, 3, 0, 1}, {0, 3, 3, 2, 1}, {3, 2, 2, 3, 1}, {2, 1, 1, 1, 1}}, {0, 3, 3, 0, 1}, {0, 3, 3, 2, 2}, {3, 2, 2, 3, 1}, {1, 2, 2, 3, 1}, {0, 2, 2, 0, 1}, {0, 3, 3, 1, 1}, {0, 3, 3, 0, 1}, {0, 3, 3, 0, 1}, {1, 2, 2, 3, 1}};   /* DS:03F0 */
-unsigned char g_palette[17] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14};   /* DS:0440 */
-char g_blackPalette[16] = "";   /* DS:0452 */
-unsigned char g_altPalette[17] = {9, 1, 8, 0, 15, 7, 11, 3, 14, 2, 4, 12, 13, 10, 6, 14};   /* DS:0462 */
-
-/* vi_garage_pal @ 0F38:17FC (linear 0x10B7C, 16 bytes) */
+struct Style g_style16 = {{{0, 0, 0, 0, 0}, {13, 9, 9, 15, 1}, {9, 13, 13, 15, 1}, {1, 5, 5, 1, 1}, {1, 5, 5, 4, 1}, {15, 9, 9, 15, 1}, {14, 15, 15, 10, 1}}, {1, 4, 4, 1, 1}, {1, 3, 3, 4, 2}, {15, 9, 9, 15, 1}, {13, 9, 9, 15, 1}, {11, 2, 2, 11, 1}, {1, 4, 4, 11, 1}, {1, 4, 4, 1, 1}, {1, 4, 4, 1, 1}, {1, 3, 3, 4, 1}};
+struct Style g_style4 = {{{0, 0, 0, 0, 0}, {1, 2, 2, 3, 1}, {2, 1, 1, 3, 1}, {0, 3, 3, 0, 1}, {0, 3, 3, 2, 1}, {3, 2, 2, 3, 1}, {2, 1, 1, 1, 1}}, {0, 3, 3, 0, 1}, {0, 3, 3, 2, 2}, {3, 2, 2, 3, 1}, {1, 2, 2, 3, 1}, {0, 2, 2, 0, 1}, {0, 3, 3, 1, 1}, {0, 3, 3, 0, 1}, {0, 3, 3, 0, 1}, {1, 2, 2, 3, 1}};
+unsigned char g_palette[17] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14};
+char g_blackPalette[16] = "";
+unsigned char g_altPalette[17] = {9, 1, 8, 0, 15, 7, 11, 3, 14, 2, 4, 12, 13, 10, 6, 14};
 
 void vi_garage_pal(void)
 {
     vi_palette_reg(12, 5);
 }
 
-/* vi_bobs_pal @ 0F38:180C (linear 0x10B8C, 16 bytes) */
-
 void vi_bobs_pal(void)
 {
     vi_palette_reg(12, 13);
 }
-
-/* vi_name_pal @ 0F38:181C (linear 0x10B9C, 16 bytes) */
 
 void vi_name_pal(void)
 {
@@ -62,8 +56,6 @@ void vi_name_pal(void)
     g_palette[7] = 1;
     g_palette[8] = 3;
 }
-
-/* vi_swap_pal @ 0F38:182C (linear 0x10BAC, 45 bytes) */
 
 void vi_swap_pal(void)
 {
@@ -76,8 +68,6 @@ void vi_swap_pal(void)
         g_altPalette[i] = save;
     }
 }
-
-/* vi_init @ 0F38:1859 (linear 0x10BD9, 403 bytes) */
 
 void vi_init(struct Bitmap far *front, struct Bitmap far *back)
 {
@@ -139,8 +129,6 @@ void vi_init(struct Bitmap far *front, struct Bitmap far *back)
     }
 }
 
-/* vi_anim_stop @ 0F38:19EC (linear 0x10D6C, 115 bytes) */
-
 void vi_anim_stop(int n)
 {
     struct Obj *o;
@@ -155,8 +143,6 @@ void vi_anim_stop(int n)
     if (o->pendingTimers)
         sy_timer_cancel(n);
 }
-
-/* anim_set_box @ 0F38:1A5F (linear 0x10DDF, 94 bytes) */
 
 static void near anim_set_box(void)
 {
@@ -177,9 +163,7 @@ static void near anim_set_box(void)
     }
 }
 
-/* anim_run @ 0F38:1ABD (linear 0x10E3D, 780 bytes)
-
-   Run the script of one Obj slot */
+/* Run the script of one Obj slot */
 
 static void near anim_run(int n)
 {
@@ -270,8 +254,6 @@ static void near anim_run(int n)
     }
 }
 
-/* vi_anim_start @ 0F38:1DC9 (linear 0x11149, 120 bytes) */
-
 int vi_anim_start(int n)
 {
     int i;
@@ -289,8 +271,6 @@ int vi_anim_start(int n)
     return i;
 }
 
-/* vi_anim_resume @ 0F38:1E41 (linear 0x111C1, 49 bytes) */
-
 void vi_anim_resume(int n)
 {
     int k;
@@ -300,14 +280,10 @@ void vi_anim_resume(int n)
     anim_run(k);
 }
 
-/* vi_anim_active @ 0F38:1E72 (linear 0x111F2, 33 bytes) */
-
 int vi_anim_active(int n)
 {
     return g_animScripts[g_animScriptStart[n]].a >= 0;
 }
-
-/* vi_anim_hook @ 0F38:1E93 (linear 0x11213, 184 bytes) */
 
 int vi_anim_hook(struct Obj *o, struct Cmd *c)
 {
@@ -336,9 +312,7 @@ int vi_anim_hook(struct Obj *o, struct Cmd *c)
     }
 }
 
-/* vi_palette_reg @ 0F38:1F4B (linear 0x112CB, 89 bytes)
-
-   Set EGA palette register reg to color (BIOS int 10h function 10h), waiting for vertical retrace */
+/* Set EGA palette register reg to color (BIOS int 10h function 10h), waiting for vertical retrace */
 
 void vi_palette_reg(int reg, char color)
 {
@@ -359,9 +333,7 @@ void vi_palette_reg(int reg, char color)
 
 char g_colScreenBorder;
 
-/* vi_set_palette @ 0F38:1FA4 (linear 0x11324, 124 bytes)
-
-   Load all 16 EGA palette registers plus the overscan color (BIOS int 10h function 10h, al = 2) */
+/* Load all 16 EGA palette registers plus the overscan color (BIOS int 10h function 10h, al = 2) */
 
 void vi_set_palette(char *table)
 {

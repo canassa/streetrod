@@ -2,7 +2,6 @@
 
         .CODE S24F4_TEXT
 
-; mg_blit @ 24F4:000A (linear 0x24F4A, 2569 bytes)
 ; mg_blit(dst_far, src_seg, si_off, bx_off, bp_off, bx_si_pitch, w, h,
 ;         bp_pitch, di_pitch): masked blit, three source streams in the
 ; segment src_seg: dst = (bx[] & bp[]) | si[], 16 bits at a time, fully

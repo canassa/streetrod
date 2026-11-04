@@ -1675,3 +1675,20 @@ nix-shell shell.nix --run "python3 -m unittest discover -s tests" (68 tests, OK)
 - The hub table includes radius-5 axis samples, despite the task's approximate
   3-to-4-pixel description. Both ends use positive-up coordinates, converted to
   screen coordinates around (196,42) or (145,42), with the existing DASH_Y offset.
+
+## 2026-11-04 22:46 CET: Remove source address annotations
+
+### What I did
+
+- Removed 2,131 decompilation address annotations from 181 C, header, MASM and include files. Kept explanatory function prose, PROVISIONAL notes and budget/hash comments; removed alignment padding. No symbols were renamed permanently.
+- Added `tools/sr/symbols.json`: 572 original function segment/offset/size records and 686 named data addresses. All function, header and static rows compare identically to the pre-strip snapshot. Declarations, file ownership, prototypes, kind and near/far distance are still derived from source. Runtime names and addresses still come from the EXE and MSC libraries. Original extents and data addresses cannot be inferred reliably from the current semantic names and declarations alone, so only those facts are stored.
+- Switched `tools/sr/source.py` to join that metadata by name, with failures for missing metadata/definitions and duplicate functions. `./sr rename` includes the metadata; exercised and reversed a function rename, a global rename and a source/header file rename. `./sr headers` continues to derive include/dependency blocks from ordinary declarations. Removed address emission from `dgroup`'s definition renderer.
+- Added reusable `tools/strip_address_comments.py` (`nix-shell shell.nix --run 'python3 tools/strip_address_comments.py'`; `--check` checks without writing). It handles C/H and ASM/INC, protects quoted strings, retains accompanying prose and is idempotent. Register any new symbols in the metadata before stripping legacy comments on a later main. Updated CLAUDE.md, README.md, both relevant skills, DATA documentation, reconstruction documentation and tool descriptions.
+- Added regression coverage for minimal/complete metadata, metadata renames, stripping, multiline prose, unrelated comments, literals, MASM/INC, CRLF and token boundaries. Source-token comparison found no code changes across 196 source/header files; a second stripper run removed zero annotations.
+- Gates passed: `./sr headers --check`; `./sr check --all` (572/572); `rm -rf work && ./sr build` (96/96 objects, Packed EXE vs orig/SR.EXE: IDENTICAL); `./sr dgroup check`; `./sr dgroup order`; `nix-shell shell.nix --run "python3 -m unittest discover -s tests"` (74 tests). Also `./sr scan` agrees on all 572 game functions and `git diff --check` passes.
+
+### What I learned
+
+- Address consumers were centralized in source.py; fileheaders, module, refs, check, scan, dgroup and rename depend on its rows. Headers rewrite include blocks and MAKEFILE dependencies rather than generating prototype text. Data-definition rendering was another place that could reintroduce annotations.
+- Other decompilation-flavoured comments remain for human review: "File-local storage (_BSS): names chosen to fit MSC's name-hash order ..."; "Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets ..."; "Local names are placeholders chosen to reproduce the original stack layout."; SLOTS' FAR_BSS/hash-order explanation; STRUCTS.H's DS:7EAA..7EC2 and DS:8272..8290 COMMON-block/folded-placeholder/compiler-budget explanations; PROVISIONAL needle references, unused frame fillers and original g_list load notes; compiler layout and optimization explanations in EGA sources. These are prose evidence rather than address-only annotations and were preserved.
+- Source-file rename round trips can rewrap the LINK dependency block even when the final names match the originals. Restored its original formatting after that verification; headers/dependencies still check cleanly.

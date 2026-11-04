@@ -4,10 +4,10 @@
 #define DRVTICK_H
 #include "STRUCTS.H"
 
-extern int g_cruiseRpmSteps[];                          /* DS:51D8 */
-extern int g_cruiseRatios[];                            /* DS:51E2 */
-extern int g_keepCruiseMusic;                                      /* DS:51EC */
-extern struct Eng g_oppEngState;                               /* DS:79E2 */
-int dt_step(void);                                 /* 0x08EA8 */
+extern int g_cruiseRpmSteps[];
+extern int g_cruiseRatios[];
+extern int g_keepCruiseMusic;
+extern struct Eng g_oppEngState;
+int dt_step(void);
 
 #endif

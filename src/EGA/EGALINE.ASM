@@ -7,7 +7,6 @@
 
         .CODE S21A0_TEXT
 
-; el_draw @ 21A0:23BC (linear 0x23DBC, 370 bytes)
 ; Bresenham line in the 640x200 planar EGA screen (40 bytes per row),
 ; el_draw(x1, y1, x2, y2, color), using write mode 3 style set/reset
 ; (GC regs: 0 = set/reset, 1 = enable set/reset, 3 = function, 8 = bit mask).
@@ -211,7 +210,6 @@ done:
         ret
 _el_draw  ENDP
 
-; el_pixel_addr @ 21A0:252E (linear 0x23F2E, 31 bytes)
 ; Planar pixel address helper. In: ax = y, bx = x.
 ; Out: bx = y*40 + x/8, es = video segment, cl = 7 - (x & 7), ah = 1.
 
@@ -234,7 +232,6 @@ _el_pixel_addr  PROC    NEAR
         ret
 _el_pixel_addr  ENDP
 
-; el_get_pixel @ 21A0:254D (linear 0x23F4D, 26 bytes)
 ; EGA bit-plane reader. CX selects a bit, ES:SI addresses the pixel byte;
 ; DX is the graphics controller port. Returns the four-plane colour in BL.
 

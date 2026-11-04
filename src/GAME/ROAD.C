@@ -18,9 +18,9 @@
 #define EGA_PAGE2_BITS ((char far *)0xa4000000L)
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_buildX;                       /* DS:6DFE */
-static int g_buildEntry;                         /* DS:6E00 */
-static int g_bendStep;                         /* DS:6E02 */
+static int g_buildX;
+static int g_buildEntry;
+static int g_bendStep;
 static int near rnd(int n);
 static void near build_left_curve(void);
 static void near build_right_curve(void);
@@ -34,28 +34,24 @@ static void near build_right_closed(void);
 static void near build_narrows(void);
 static void near build_left_closed(void);
 
-int g_hillProfile[22] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, -4, -4, -4, -3, -2, -1};   /* DS:5C20 */
-int g_hillDipProfile[38] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, -5, -5, -5, -5, -5, -5, -4, -3, -2, -1, 0, 0, 1, 2, 3, 4, 4, 4, 4, 3, 2, 1};   /* DS:5C4C */
-int g_bumpProfile[17] = {1, 2, 3, 3, 3, 2, 1, 0, 0, 0, -1, -2, -3, -3, -3, -2, -1};   /* DS:5C98 */
-int g_layoutLen = 12;   /* DS:5CBA */
-int g_roadLayouts[10][12] = {{2, 3, 1, 7, 4, 10, 5, 8, 6, 2, 9, 1}, {11, 4, 8, 1, 6, 9, 2, 5, 7, 2, 3, 1}, {1, 5, 1, 3, 8, 11, 6, 7, 2, 4, 9, 1}, {3, 1, 4, 9, 2, 6, 8, 1, 3, 8, 10, 2}, {10, 9, 5, 1, 6, 2, 3, 7, 4, 2, 8, 2}, {2, 3, 8, 10, 5, 11, 4, 7, 1, 6, 9, 2}, {1, 5, 9, 1, 4, 2, 3, 10, 8, 4, 1, 9}, {2, 4, 7, 11, 2, 5, 8, 4, 1, 7, 6, 2}, {2, 6, 8, 10, 6, 1, 3, 7, 5, 1, 4, 9}, {1, 3, 1, 6, 1, 4, 9, 10, 6, 8, 2, 3}};   /* DS:5CBC */
-struct Bitmap g_egaPage1 = {SCREEN_WIDTH, SCREEN_HEIGHT, 8000, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0}, {EGA_PAGE1_BITS}, {0}, EGA_PITCH, VID_EGA};   /* DS:5DAC */
-struct Bitmap g_egaPage2 = {SCREEN_WIDTH, SCREEN_HEIGHT, 8000, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0}, {EGA_PAGE2_BITS}, {0}, EGA_PITCH, VID_EGA};   /* DS:5DDC */
-int g_roadLayout = 0;   /* DS:5E0C */
-int g_onShoulder = 0;   /* DS:5E0E */
-int g_turnRight = 0;   /* DS:5E10 */
-int g_turnLeft = 0;   /* DS:5E12 */
+int g_hillProfile[22] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, -4, -4, -4, -3, -2, -1};
+int g_hillDipProfile[38] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, -5, -5, -5, -5, -5, -5, -4, -3, -2, -1, 0, 0, 1, 2, 3, 4, 4, 4, 4, 3, 2, 1};
+int g_bumpProfile[17] = {1, 2, 3, 3, 3, 2, 1, 0, 0, 0, -1, -2, -3, -3, -3, -2, -1};
+int g_layoutLen = 12;
+int g_roadLayouts[10][12] = {{2, 3, 1, 7, 4, 10, 5, 8, 6, 2, 9, 1}, {11, 4, 8, 1, 6, 9, 2, 5, 7, 2, 3, 1}, {1, 5, 1, 3, 8, 11, 6, 7, 2, 4, 9, 1}, {3, 1, 4, 9, 2, 6, 8, 1, 3, 8, 10, 2}, {10, 9, 5, 1, 6, 2, 3, 7, 4, 2, 8, 2}, {2, 3, 8, 10, 5, 11, 4, 7, 1, 6, 9, 2}, {1, 5, 9, 1, 4, 2, 3, 10, 8, 4, 1, 9}, {2, 4, 7, 11, 2, 5, 8, 4, 1, 7, 6, 2}, {2, 6, 8, 10, 6, 1, 3, 7, 5, 1, 4, 9}, {1, 3, 1, 6, 1, 4, 9, 10, 6, 8, 2, 3}};
+struct Bitmap g_egaPage1 = {SCREEN_WIDTH, SCREEN_HEIGHT, 8000, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0}, {EGA_PAGE1_BITS}, {0}, EGA_PITCH, VID_EGA};
+struct Bitmap g_egaPage2 = {SCREEN_WIDTH, SCREEN_HEIGHT, 8000, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0}, {EGA_PAGE2_BITS}, {0}, EGA_PITCH, VID_EGA};
+int g_roadLayout = 0;
+int g_onShoulder = 0;
+int g_turnRight = 0;
+int g_turnLeft = 0;
 
-/* rnd @ 2645:016A (linear 0x265BA, 16 bytes)
-
-   Near wrapper around rn_int, used by the track builder */
+/* Near wrapper around rn_int, used by the track builder */
 
 static int near rnd(int n)
 {
     return rn_int(n);
 }
-
-/* build_left_curve @ 2645:017A (linear 0x265CA, 281 bytes) */
 
 static void near build_left_curve(void)
 {
@@ -79,8 +75,6 @@ static void near build_left_curve(void)
     g_buildX = i * g_bendStep;
 }
 
-/* build_right_curve @ 2645:0293 (linear 0x266E3, 277 bytes) */
-
 static void near build_right_curve(void)
 {
     int i;
@@ -102,8 +96,6 @@ static void near build_right_curve(void)
     }
     g_buildX = i * g_bendStep;
 }
-
-/* build_s_curve_lr @ 2645:03A8 (linear 0x267F8, 401 bytes) */
 
 static void near build_s_curve_lr(void)
 {
@@ -135,8 +127,6 @@ static void near build_s_curve_lr(void)
     g_buildX = i * g_bendStep;
 }
 
-/* build_s_curve_rl @ 2645:0539 (linear 0x26989, 401 bytes) */
-
 static void near build_s_curve_rl(void)
 {
     int i;
@@ -167,8 +157,6 @@ static void near build_s_curve_rl(void)
     g_buildX = i * g_bendStep;
 }
 
-/* build_hill @ 2645:06CA (linear 0x26B1A, 147 bytes) */
-
 static void near build_hill(void)
 {
     int i, start;
@@ -186,9 +174,7 @@ static void near build_hill(void)
         g_terrain2[i] = g_buildX;
 }
 
-/* build_dip @ 2645:075D (linear 0x26BAD, 149 bytes)
-
-   Builds a terrain hill section */
+/* Builds a terrain hill section */
 
 static void near build_dip(void)
 {
@@ -207,9 +193,7 @@ static void near build_dip(void)
         g_terrain2[i] = g_buildX;
 }
 
-/* build_hill_dip @ 2645:07F2 (linear 0x26C42, 147 bytes)
-
-   Builds a terrain hill section */
+/* Builds a terrain hill section */
 
 static void near build_hill_dip(void)
 {
@@ -228,9 +212,7 @@ static void near build_hill_dip(void)
         g_terrain2[i] = g_buildX;
 }
 
-/* build_dip_hill @ 2645:0885 (linear 0x26CD5, 149 bytes)
-
-   Builds a terrain hill section */
+/* Builds a terrain hill section */
 
 static void near build_dip_hill(void)
 {
@@ -248,8 +230,6 @@ static void near build_dip_hill(void)
     for (i = start; i < g_buildEntry; i++)
         g_terrain2[i] = g_buildX;
 }
-
-/* build_right_closed @ 2645:091A (linear 0x26D6A, 214 bytes) */
 
 static void near build_right_closed(void)
 {
@@ -271,8 +251,6 @@ static void near build_right_closed(void)
         g_terrain2[i] = g_buildX;
 }
 
-/* build_narrows @ 2645:09F0 (linear 0x26E40, 203 bytes) */
-
 static void near build_narrows(void)
 {
     int i, start;
@@ -292,8 +270,6 @@ static void near build_narrows(void)
     for (i = start; i < g_buildEntry; i++)
         g_terrain2[i] = g_buildX;
 }
-
-/* build_left_closed @ 2645:0ABB (linear 0x26F0B, 214 bytes) */
 
 static void near build_left_closed(void)
 {
@@ -315,9 +291,7 @@ static void near build_left_closed(void)
         g_terrain2[i] = g_buildX;
 }
 
-/* rd_build_layout @ 2645:0B91 (linear 0x26FE1, 439 bytes)
-
-   Builds the track profile arrays from the section list of the chosen layout. */
+/* Builds the track profile arrays from the section list of the chosen layout. */
 
 void rd_build_layout(int n)
 {
@@ -358,9 +332,7 @@ void rd_build_layout(int n)
     }
 }
 
-/* rd_generate @ 2645:0D48 (linear 0x27198, 2517 bytes)
-
-   Builds the terrain flag arrays for a new track: start/finish area, hills,
+/* Builds the terrain flag arrays for a new track: start/finish area, hills,
    then the random features, and finally calls the track builder. */
 
 void rd_generate(void)
@@ -581,19 +553,17 @@ int far *g_hereCurvePtr;
 int far *af7880z;
 int g_roadYProjectionArray[15];
 int aw7aaex;
-int g_yBuildingTopArray[15]; /* DS:7AB0 */
+int g_yBuildingTopArray[15];
 int g_rightXProjectionTable[15];
 unsigned far *g7d62p;
 int g_lhsRdMirrorX[8];
 int g_roadOuterLeftXArray[15];
 int g_rhsOuterXArray[15];
 unsigned far *g_rightSideTerrainRow;
-int g_mirYProj[8]; /* DS:8634 */
-struct MirrorEdges g_mirGeom; /* DS:864A */
+int g_mirYProj[8];
+struct MirrorEdges g_mirGeom;
 
-/* rd_seek @ 2645:171D (linear 0x27B6D, 82 bytes)
-
-   Points the terrain pointers at entry n of each terrain array. */
+/* Points the terrain pointers at entry n of each terrain array. */
 
 void rd_seek(int n)
 {
@@ -603,8 +573,6 @@ void rd_seek(int n)
     af7880z = &g_terrain4[n];
     g_hereCurvePtr = &g_terrain2[n];
 }
-
-/* rd_proj_x @ 2645:176F (linear 0x27BBF, 66 bytes) */
 
 int rd_proj_x(int a, int b, int c)
 {
@@ -619,8 +587,6 @@ int rd_proj_x(int a, int b, int c)
     return 0xa0 - u;
 }
 
-/* rd_proj_y @ 2645:17B1 (linear 0x27C01, 60 bytes) */
-
 int rd_proj_y(int a, int b, int c)
 {
     int u, v;
@@ -634,8 +600,6 @@ int rd_proj_y(int a, int b, int c)
     return u + 0x3c;
 }
 
-/* rd_mirror_x @ 2645:17ED (linear 0x27C3D, 59 bytes) */
-
 int rd_mirror_x(int a, int b, int c)
 {
     int u, v;
@@ -647,8 +611,6 @@ int rd_mirror_x(int a, int b, int c)
     u = v / a;
     return 0x118 - u;
 }
-
-/* rd_mirror_y @ 2645:1828 (linear 0x27C78, 53 bytes) */
 
 int rd_mirror_y(int a, int b, int c)
 {
@@ -662,9 +624,7 @@ int rd_mirror_y(int a, int b, int c)
     return u + 0x24;
 }
 
-/* rd_reset @ 2645:185D (linear 0x27CAD, 158 bytes)
-
-   Resets the terrain scroll state for a new track. */
+/* Resets the terrain scroll state for a new track. */
 
 void rd_reset(void)
 {
@@ -697,9 +657,7 @@ void rd_reset(void)
     g_ramAllowed = 1;
 }
 
-/* rd_project_ahead @ 2645:18FB (linear 0x27D4B, 721 bytes)
-
-   Fills the per-row projection tables (15 rows, the first one peeled) from the
+/* Fills the per-row projection tables (15 rows, the first one peeled) from the
    terrain pointers, walking the track forward. rd_project_behind is the backward twin. */
 
 void rd_project_ahead(void)
@@ -785,9 +743,7 @@ void rd_project_ahead(void)
     } while (--k7);
 }
 
-/* rd_project_behind @ 2645:1BCC (linear 0x2801C, 722 bytes)
-
-   Fills the per-row projection tables (8 rows, the first one peeled) from the
+/* Fills the per-row projection tables (8 rows, the first one peeled) from the
    terrain pointers, walking the track backward. rd_project_ahead is the forward twin. */
 
 void rd_project_behind(void)
@@ -873,9 +829,7 @@ void rd_project_behind(void)
     } while (--k7);
 }
 
-/* rd_draw_frame @ 2645:1E9E (linear 0x282EE, 94 bytes)
-
-   Rebuilds the projection tables for both directions, then waits 9 ticks. */
+/* Rebuilds the projection tables for both directions, then waits 9 ticks. */
 
 void rd_draw_frame(void)
 {
@@ -891,8 +845,6 @@ void rd_draw_frame(void)
     while (deadline > g_tick)
         ;
 }
-
-/* rd_advance @ 2645:1EFC (linear 0x2834C, 367 bytes) */
 
 void rd_advance(void)
 {
@@ -954,9 +906,7 @@ void rd_advance(void)
     }
 }
 
-/* rd_check_crash @ 2645:206B (linear 0x284BB, 169 bytes)
-
-   Returns 1 when the car at the current terrain index would hit something. */
+/* Returns 1 when the car at the current terrain index would hit something. */
 
 int rd_check_crash(void)
 {
@@ -980,16 +930,12 @@ int rd_check_crash(void)
     return 1;
 }
 
-/* rd_start @ 2645:2114 (linear 0x28564, 18 bytes) */
-
 void rd_start(void)
 {
     g_turnRight = g_turnLeft = 0;
     rd_reset();
     vw_start();
 }
-
-/* rd_turn @ 2645:2126 (linear 0x28576, 23 bytes) */
 
 void rd_turn(int dir)
 {
@@ -998,8 +944,6 @@ void rd_turn(int dir)
     else
         ao7d2ev.m7d3c -= 3;
 }
-
-/* rd_update @ 2645:213D (linear 0x2858D, 272 bytes) */
 
 void rd_update(void)
 {

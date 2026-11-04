@@ -38,30 +38,30 @@ enum AnimWaitMode {
     ANIM_WAIT_COPY_TO_FRONT = 4
 };
 
-extern struct Style g_style16;                          /* DS:03A0 */
-extern struct Style g_style4;                           /* DS:03F0 */
-extern unsigned char g_palette[17];                       /* DS:0440 */
-extern char g_blackPalette[16];                         /* DS:0452 */
-extern unsigned char g_altPalette[17];                  /* DS:0462 */
-extern struct Bitmap far *g_pageBmps[];                 /* DS:7316 */
-extern struct Obj bm7568[];                             /* DS:7568 */
-extern struct Style *bustyle;                           /* DS:787E */
-extern struct Colors x_colors;                          /* DS:8242 */
-extern char g_colScreenBorder;                                     /* DS:8248 */
-extern struct Bitmap far *g_autoSprImagePtr;                       /* DS:825A */
-extern int ac825et;                                     /* DS:825E */
-extern int aw8260y;                                     /* DS:8260 */
-void vi_garage_pal(void);                                     /* 0x10B7C */
-void vi_bobs_pal(void);                                     /* 0x10B8C */
-void vi_name_pal(void);                                     /* 0x10B9C */
-void vi_swap_pal(void);                              /* 0x10BAC */
-void vi_init(struct Bitmap far *front, struct Bitmap far *back);/* 0x10BD9 */
-void vi_anim_stop(int n);                            /* 0x10D6C */
-int vi_anim_start(int n);                            /* 0x11149 */
-void vi_anim_resume(int n);                          /* 0x111C1 */
-int vi_anim_active(int n);                           /* 0x111F2 */
-int vi_anim_hook(struct Obj *o, struct Cmd *c);      /* 0x11213 */
-void vi_palette_reg(int reg, char color);                      /* 0x112CB */
-void vi_set_palette(char *table);                    /* 0x11324 */
+extern struct Style g_style16;
+extern struct Style g_style4;
+extern unsigned char g_palette[17];
+extern char g_blackPalette[16];
+extern unsigned char g_altPalette[17];
+extern struct Bitmap far *g_pageBmps[];
+extern struct Obj bm7568[];
+extern struct Style *bustyle;
+extern struct Colors x_colors;
+extern char g_colScreenBorder;
+extern struct Bitmap far *g_autoSprImagePtr;
+extern int ac825et;
+extern int aw8260y;
+void vi_garage_pal(void);
+void vi_bobs_pal(void);
+void vi_name_pal(void);
+void vi_swap_pal(void);
+void vi_init(struct Bitmap far *front, struct Bitmap far *back);
+void vi_anim_stop(int n);
+int vi_anim_start(int n);
+void vi_anim_resume(int n);
+int vi_anim_active(int n);
+int vi_anim_hook(struct Obj *o, struct Cmd *c);
+void vi_palette_reg(int reg, char color);
+void vi_set_palette(char *table);
 
 #endif

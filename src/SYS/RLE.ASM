@@ -6,7 +6,6 @@
 
         .CODE S0E92_TEXT
 
-; rl_decode @ 0E92:0006 (linear 0x0E926, 201 bytes)
 ; Run-length decoder with a byte dictionary (tables g_rleCounts and g_rleValues copied to
 ; the stack). 0 and 0FFh start a literal run: the next byte is the repeat count.
 

@@ -6,20 +6,18 @@
 #include "M_02B9A.H"
 #include "SCREEN.H"
 
-int g_gearSpeedPct[4][5] = {{0, 25, 50, 100, 0}, {0, 25, 50, 100, 0}, {0, 25, 50, 75, 100}, {0, 30, 50, 80, 100}};   /* DS:54DC */
-int g_rpmStepBase[3][5] = {{500, 600, 300, 100, 70}, {600, 700, 350, 120, 90}, {600, 760, 380, 140, 90}};   /* DS:5504 */
-int g_rpmBands[3][2] = {{2900, 4500}, {2900, 5000}, {2500, 5200}};   /* DS:5522 */
-int g_carbManifoldFit[3][5] = {{0, 0, 100, 0, 0}, {0, 50, 0, 100, 75}, {0, 0, 0, 50, 100}};   /* DS:552E */
-int g_engineScore[3] = {0, 50, 100};   /* DS:554C */
-int g_transScore[4] = {0, 33, 66, 100};   /* DS:5552 */
-int g_shiftRpm[3] = {4500, 5000, 5200};   /* DS:555A */
-int g_transGears[4] = {3, 3, 4, 4};   /* DS:5560 */
-int g_5568[3] = {9, 8, 5};   /* DS:5568 */
-int g_modelScore[9] = {40, 44, 48, 60, 64, 68, 80, 84, 88};   /* DS:556E */
+int g_gearSpeedPct[4][5] = {{0, 25, 50, 100, 0}, {0, 25, 50, 100, 0}, {0, 25, 50, 75, 100}, {0, 30, 50, 80, 100}};
+int g_rpmStepBase[3][5] = {{500, 600, 300, 100, 70}, {600, 700, 350, 120, 90}, {600, 760, 380, 140, 90}};
+int g_rpmBands[3][2] = {{2900, 4500}, {2900, 5000}, {2500, 5200}};
+int g_carbManifoldFit[3][5] = {{0, 0, 100, 0, 0}, {0, 50, 0, 100, 75}, {0, 0, 0, 50, 100}};
+int g_engineScore[3] = {0, 50, 100};
+int g_transScore[4] = {0, 33, 66, 100};
+int g_shiftRpm[3] = {4500, 5000, 5200};
+int g_transGears[4] = {3, 3, 4, 4};
+int g_5568[3] = {9, 8, 5};
+int g_modelScore[9] = {40, 44, 48, 60, 64, 68, 80, 84, 88};
 
-/* pf_drivetrain @ 0000:DCBE (linear 0x0DCBE, 1060 bytes)
-
-   Fills the drive train e (gear ranges, ratio table, limits) for the car c. The first half
+/* Fills the drive train e (gear ranges, ratio table, limits) for the car c. The first half
    is the rating computation of pf_vmax. */
 
 void near pf_drivetrain(struct Car *c, struct Eng *e)
@@ -83,9 +81,7 @@ void near pf_drivetrain(struct Car *c, struct Eng *e)
     e->shifterDirty = 1;
 }
 
-/* pf_drivetrain_spec @ 0000:E0E2 (linear 0x0E0E2, 310 bytes)
-
-   Builds a struct Car from the spec n of g7d86n and hands it to pf_drivetrain. */
+/* Builds a struct Car from the spec n of g7d86n and hands it to pf_drivetrain. */
 
 void near pf_drivetrain_spec(int n, struct Eng *e)
 {
@@ -115,9 +111,7 @@ void near pf_drivetrain_spec(int n, struct Eng *e)
     pf_drivetrain(&car, e);
 }
 
-/* pf_vmax @ 0000:E218 (linear 0x0E218, 849 bytes)
-
-   Rating of the car spec n (the car in a_7eaap.currentCar when n is negative): builds the
+/* Rating of the car spec n (the car in a_7eaap.currentCar when n is negative): builds the
    car the way pf_drivetrain_spec does, then folds its parts into one number. */
 
 int near pf_vmax(int n)

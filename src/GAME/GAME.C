@@ -45,15 +45,13 @@ static int near check_room(void);
 static void near sell_parts(void);
 static int near your_cars(void);
 
-struct Car *g_old = 0;   /* DS:4F46 */
-struct Car *g_new = 0;   /* DS:4F48 */
-int g_4f4a = 0;   /* DS:4F4A */
-int g_picsFreed = 0;   /* DS:4F4C */
-int g_paperPics[5] = {1022, 1023, 1025, 1024, 1026};   /* DS:4F4E */
-int g_paperPick = 0;   /* DS:4F58 */
-int g_paperDay = -1;   /* DS:4F5A */
-
-/* start_game @ 0000:39C0 (linear 0x039C0, 195 bytes) */
+struct Car *g_old = 0;
+struct Car *g_new = 0;
+int g_4f4a = 0;
+int g_picsFreed = 0;
+int g_paperPics[5] = {1022, 1023, 1025, 1024, 1026};
+int g_paperPick = 0;
+int g_paperDay = -1;
 
 static int near start_game(void)
 {
@@ -84,8 +82,6 @@ static int near start_game(void)
     return -1;
 }
 
-/* gm_pause @ 0000:3A83 (linear 0x03A83, 53 bytes) */
-
 void gm_pause(int a)
 {
     g_waitUntil = a + g_tick;
@@ -94,8 +90,6 @@ void gm_pause(int a)
     g_waitUntil = 0;
     g_input.any = 0;
 }
-
-/* gm_message @ 0000:3AB8 (linear 0x03AB8, 84 bytes) */
 
 void gm_message(int n)
 {
@@ -110,8 +104,6 @@ void gm_message(int n)
     g_waitUntil = saved;
 }
 
-/* check_room @ 0000:3B0C (linear 0x03B0C, 39 bytes) */
-
 static int near check_room(void)
 {
     if (a_7eaap.carCount > 15) {
@@ -124,8 +116,6 @@ static int near check_room(void)
     }
     return 0;
 }
-
-/* read_paper @ 0000:3B33 (linear 0x03B33, 232 bytes) */
 
 static int near read_paper(void)
 {
@@ -153,8 +143,6 @@ static int near read_paper(void)
     return mn_wait(KM_NEWSPAPER);
 }
 
-/* gm_new_part @ 0000:3C1B (linear 0x03C1B, 35 bytes) */
-
 struct Node * near gm_new_part(void)
 {
     struct Node *p;
@@ -166,8 +154,6 @@ struct Node * near gm_new_part(void)
     return p;
 }
 
-/* free_part @ 0000:3C3E (linear 0x03C3E, 28 bytes) */
-
 static void near free_part(struct Node *p)
 {
     p->next = a_7eaap.freeParts;
@@ -175,8 +161,6 @@ static void near free_part(struct Node *p)
     a_7eaap.freeParts = p;
     a_7eaap.partCount--;
 }
-
-/* gm_part_value @ 0000:3C5A (linear 0x03C5A, 51 bytes) */
 
 int gm_part_value(struct Node *n)
 {
@@ -194,8 +178,6 @@ int gm_part_value(struct Node *n)
    reached by a jmp). No for/while/do formulation reproduces that under /Ol,
    so loop optimization is switched off for this function only. */
 #pragma loop_opt(off)
-
-/* sell_parts @ 0000:3C8D (linear 0x03C8D, 804 bytes) */
 
 static void near sell_parts(void)
 {
@@ -286,8 +268,6 @@ static void near sell_parts(void)
 
 #pragma loop_opt(on)
 
-/* gm_new_car @ 0000:3FB1 (linear 0x03FB1, 35 bytes) */
-
 struct Node2 * near gm_new_car(void)
 {
     struct Node2 *p;
@@ -299,8 +279,6 @@ struct Node2 * near gm_new_car(void)
     return p;
 }
 
-/* free_car @ 0000:3FD4 (linear 0x03FD4, 28 bytes) */
-
 static void near free_car(struct Node2 *p)
 {
     p->next = a_7eaap.freeCars;
@@ -308,8 +286,6 @@ static void near free_car(struct Node2 *p)
     a_7eaap.freeCars = p;
     a_7eaap.carCount--;
 }
-
-/* gm_add_part @ 0000:3FF0 (linear 0x03FF0, 70 bytes) */
 
 struct Node * near gm_add_part(int idx, int a)
 {
@@ -325,8 +301,6 @@ struct Node * near gm_add_part(int idx, int a)
     a_7eaap.spareParts = n;
     return n;
 }
-
-/* gm_make_car @ 0000:4036 (linear 0x04036, 848 bytes) */
 
 struct Car * near gm_make_car(int idx, int value, struct Car *old)
 {
@@ -404,8 +378,6 @@ struct Car * near gm_make_car(int idx, int value, struct Car *old)
     return car;
 }
 
-/* gm_take_part @ 0000:4386 (linear 0x04386, 57 bytes) */
-
 int near gm_take_part(struct Node *n, int keep)
 {
     int r;
@@ -420,8 +392,6 @@ int near gm_take_part(struct Node *n, int keep)
         free_part(n);
     return r;
 }
-
-/* gm_scrap_car @ 0000:43BF (linear 0x043BF, 108 bytes) */
 
 int near gm_scrap_car(struct Car *c, int keep)
 {
@@ -440,8 +410,6 @@ int near gm_scrap_car(struct Car *c, int keep)
     free_car((struct Node2 *)c);
     return r;
 }
-
-/* buy_from_ads @ 0000:442B (linear 0x0442B, 1301 bytes) */
 
 static void near buy_from_ads(int tab)
 {
@@ -569,9 +537,7 @@ done:
     g_scene = 0;
 }
 
-char *g_offerText = g_msgHowAbout;   /* DS:4FA4 */
-
-/* counter_offer @ 0000:4940 (linear 0x04940, 98 bytes) */
+char *g_offerText = g_msgHowAbout;
 
 static int near counter_offer(unsigned *price)
 {
@@ -588,8 +554,6 @@ static int near counter_offer(unsigned *price)
     return key;
 }
 
-/* gm_car_look @ 0000:49A2 (linear 0x049A2, 75 bytes) */
-
 int gm_car_look(struct Car *c)
 {
     int r;
@@ -605,8 +569,6 @@ int gm_car_look(struct Car *c)
         r |= 8;
     return r;
 }
-
-/* your_cars @ 0000:49ED (linear 0x049ED, 1501 bytes) */
 
 static int near your_cars(void)
 {
@@ -751,16 +713,12 @@ tail:
     }
 }
 
-/* gm_play_anim @ 0000:4FCA (linear 0x04FCA, 48 bytes) */
-
 void gm_play_anim(int h)
 {
     vi_anim_start(h);
     while (vi_anim_active(h))
         sy_wait_input(10);
 }
-
-/* gm_popup @ 0000:4FFA (linear 0x04FFA, 69 bytes) */
 
 void gm_popup(int a, int b, int c)
 {
@@ -772,8 +730,6 @@ void gm_popup(int a, int b, int c)
     pu_close();
     g_waitUntil = saved;
 }
-
-/* gm_run @ 0000:503F (linear 0x0503F, 1007 bytes) */
 
 void near gm_run(void)
 {

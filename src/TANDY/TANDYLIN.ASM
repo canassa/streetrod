@@ -8,7 +8,6 @@
 
         .CODE S2487_TEXT
 
-; tl_draw @ 2487:000A (linear 0x2487A, 545 bytes)
 ; tl_draw(x1, y1, x2, y2, color): Bresenham line in the 320x200 16-colour screen
 ; (four interlaced banks of 2000h bytes, two pixels per byte), the sibling of
 ; el_draw. Vertical lines go pixel by pixel, horizontal ones fill whole bytes.
@@ -275,7 +274,6 @@ done1:
         ret
 _tl_draw  ENDP
 
-; tl_pixel_addr @ 2487:022B (linear 0x24A9B, 44 bytes)
 ; Pixel address helper for the nibble packed 320x200 screen, interlaced in
 ; four banks of 80 bytes per line.  In: ax = y, bx = x.
 ; Out: bx = offset, es = video segment, cl = 0 or 4 (shift of the pixel in
@@ -307,7 +305,6 @@ even1:
         ret
 _tl_pixel_addr  ENDP
 
-; tl_span @ 2487:0257 (linear 0x24AC7, 178 bytes)
 ; Clipped horizontal span fill in the 16-colour planar-less (nibble packed)
 ; framebuffer: fill_span(x1, x2, y, color), clipped to the clip window.
 
@@ -404,7 +401,6 @@ done2:
         ret
 _tl_span  ENDP
 
-; tl_fill_below @ 2487:0309 (linear 0x24B79, 104 bytes)
 ; tl_fill_below(y, color): fill the lines from y down to the bottom of the clip
 ; window with a colour, four interlaced banks one after the other.
 

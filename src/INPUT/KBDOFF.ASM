@@ -7,8 +7,6 @@
 
         .CODE S0000_TEXT
 
-; ko_unhook @ 0000:2DE2 (linear 0x02DE2, 18 bytes)
-
         PUBLIC  _ko_unhook
 _ko_unhook  PROC  FAR
         push    ds

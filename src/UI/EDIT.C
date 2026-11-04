@@ -16,11 +16,9 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-char g_editDigits = 0;   /* DS:09F2 */
+char g_editDigits = 0;
 
-/* ed_line @ 0F38:5910 (linear 0x14C90, 1063 bytes)
-
-   Line editor. Edit the string buf (at most max characters, clipped to the width of
+/* Line editor. Edit the string buf (at most max characters, clipped to the width of
    the back bitmap) at x, y on the back page until Enter or a negative event; backspace, printable
    characters 0x20..0x5A (digits only when g_editDigits), a blinking block cursor. Returns the last key. */
 
@@ -134,9 +132,7 @@ int ed_line(int x, int y, char *buf, int max)
     return key;
 }
 
-/* ed_number @ 0F38:5D37 (linear 0x150B7, 112 bytes)
-
-   Number prompt: draw the prompt s at (x, y) in the style's colours, let the player edit a
+/* Number prompt: draw the prompt s at (x, y) in the style's colours, let the player edit a
    text of up to 20 characters at (g_penPoint.x, g_penPoint.y) and store its value in *out. Returns the result
    of the editor when that is 0 or negative, else 0 */
 
@@ -155,9 +151,7 @@ int ed_number(int x, int y, char *s, int *out)
     return rl > 0 ? 0 : rl;
 }
 
-/* ed_spot_number @ 0F38:5DA7 (linear 0x15127, 119 bytes)
-
-   Number field of the current hot spot g_menuList.header: edit a text into buf (at most 10 characters,
+/* Number field of the current hot spot g_menuList.header: edit a text into buf (at most 10 characters,
    fewer when the box is narrow: 6 pixels each) with the spot's colours and store its value in *out.
    Returns the editor's result when that is 0 or negative, else 0 */
 
@@ -174,9 +168,7 @@ int ed_spot_number(int *out, char *buf)
     return rl > 0 ? 0 : rl;
 }
 
-/* ed_number_box @ 0F38:5E1E (linear 0x1519E, 54 bytes)
-
-   Show hot spot id, read a number into *out with ed_spot_number and close the spot again;
+/* Show hot spot id, read a number into *out with ed_spot_number and close the spot again;
    returns the editor's result */
 
 int ed_number_box(enum ScreenId id, int *out)
@@ -191,9 +183,7 @@ int ed_number_box(enum ScreenId id, int *out)
     return res;
 }
 
-/* ed_text_box @ 0F38:5E54 (linear 0x151D4, 98 bytes)
-
-   Show hot spot id and let the player edit the text s (at most len characters) in its box
+/* Show hot spot id and let the player edit the text s (at most len characters) in its box
    with the spot's colours; returns the editor's result when that is 0 or negative, else 0 */
 
 int ed_text_box(enum ScreenId id, int len, char *s)

@@ -10,6 +10,6 @@ struct RandomState {
     int c;
 };
 
-int rn_int(int n);                                  /* 0x15236 */
+int rn_int(int n);
 
 #endif

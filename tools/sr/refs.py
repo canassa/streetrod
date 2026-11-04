@@ -4,7 +4,7 @@ The byte compare masks fixups, so on its own it can't tell `g_score` from `g_cou
 Here each fixup is resolved against the original instruction:
 
 - data (offset into DGROUP through an EXTDEF): the original's word must be the offset
-  of that global (its `/* DS:XXXX */`, source.py), plus the displacement and the addend compiled into the instruction;
+  of that global (symbols.json, read by source.py), plus the displacement and the addend compiled into the instruction;
 - far calls (ptr32 to an EXTDEF): the original's seg:off must be the function of that name;
 - near calls to an EXTDEF (asm): the original's rel16 must land on the function of that name;
 - our own data (string literals, statics): the bytes must equal the original's at that offset;
@@ -229,7 +229,7 @@ def verify(obj, proc, im, addr, row, procs=()):
         else:
             r.unchecked += 1
 
-    # A function address as a value: seg and offset may be split differently from the comment's
+    # A function address as a value: seg and offset may be split differently from the recorded
     # seg:off (the linker normalises to the callee's own segment), so compare linear addresses.
     for sym, half in fnptr.items():
         where = (half.get("off") or half.get("seg"))[1]

@@ -5,7 +5,7 @@
 
         .DATA
         PUBLIC  _g_txt
-_g_txt DB      0, 0, '________________________', 0  ; DS:239E char[]
+_g_txt DB      0, 0, '________________________', 0
         DB      '________________________', 0
         DB      '________________________', 0
         DB      '________________________', 0
@@ -118,64 +118,64 @@ _g_txt DB      0, 0, '________________________', 0  ; DS:239E char[]
         DB      'Strip bumper - $15', 0
         DB      'Restore bumper - $15', 0
         PUBLIC  _g_msgWannaQuit
-_g_msgWannaQuit DB      'Wanna quit ?', 0        ; DS:28EC char[]
+_g_msgWannaQuit DB      'Wanna quit ?', 0
         PUBLIC  _g_msgBackToGarage
-_g_msgBackToGarage DB      'Back to the garage', 0  ; DS:28F9 char[]
+_g_msgBackToGarage DB      'Back to the garage', 0
         PUBLIC  _g_msgClickToEdit
-_g_msgClickToEdit DB      'Click here to edit', 0  ; DS:290C char[]
+_g_msgClickToEdit DB      'Click here to edit', 0
         PUBLIC  _g_boxText
-_g_boxText DB      31 DUP (0)               ; DS:291F char[]
+_g_boxText DB      31 DUP (0)
         PUBLIC  _g_promptLine1
-_g_promptLine1 DB      41 DUP (0)               ; DS:293E char[]
+_g_promptLine1 DB      41 DUP (0)
         PUBLIC  _g_promptLine2
-_g_promptLine2 DB      41 DUP (0)               ; DS:2967 char[]
-; DS:2990 char[]
+_g_promptLine2 DB      41 DUP (0)
+
         PUBLIC  _g_offerName
 _g_offerName DB      0, ',,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,', 0
         DB      'You want to buy it for '
         PUBLIC  _g_buyPrice
-_g_buyPrice DB      0, '----------', 0       ; DS:29D6 char[]
+_g_buyPrice DB      0, '----------', 0
         DB      'How about ', 0
         DB      '          ', 0
         PUBLIC  _g_offerAmount
-_g_offerAmount DB      0, '     ', 0            ; DS:29F8 char[]
-; DS:29FF char[]
+_g_offerAmount DB      0, '     ', 0
+
         PUBLIC  _g_carName
 _g_carName DB      0, '.............................................', 0
         PUBLIC  _g_saveName
-_g_saveName DB      0, '              ', 0   ; DS:2A2E char[]
+_g_saveName DB      0, '              ', 0
         PUBLIC  _g_msgSellChange
-_g_msgSellChange DB      'Change', 0              ; DS:2A3E char[]
+_g_msgSellChange DB      'Change', 0
         DB      0, 0, 0, 0, 'Forget it', 0
         DB      0, 'OK', 0
         DB      8 DUP (0)
-; DS:2A5F char[]
+
         PUBLIC  _g_salePartName
 _g_salePartName DB      0, '222222222222222222222222222222222222222222222', 0
         DB      'Oh, well, it could have been worse.', 0
-; DS:2AB2 char[]
+
         PUBLIC  _g_msgRepairCost
 _g_msgRepairCost DB      '$123 for``parts``and``you``are``back``on``the``stree'
         DB      'ts.', 0
         PUBLIC  _g_msgPlusTires
-_g_msgPlusTires DB      31 DUP (0)               ; DS:2AEA char[]
-; DS:2B09 char[]
+_g_msgPlusTires DB      31 DUP (0)
+
         PUBLIC  _g_msgRunCost
 _g_msgRunCost DB      "Damn.``It'll``cost $123 to``get``this``baby``running"
         DB      ".", 0
         PUBLIC  _g_raceResult1
-_g_raceResult1 DB      51 DUP (0)               ; DS:2B3F char[]
+_g_raceResult1 DB      51 DUP (0)
         PUBLIC  _g_raceResult2
-_g_raceResult2 DB      51 DUP (0)               ; DS:2B72 char[]
+_g_raceResult2 DB      51 DUP (0)
         PUBLIC  _g_offBolt
-_g_offBolt DW      3E9h                     ; DS:2BA5 int
+_g_offBolt DW      3E9h
         PUBLIC  _g_offWires
-_g_offWires DW      3F0h                     ; DS:2BA7 int
+_g_offWires DW      3F0h
         PUBLIC  _g_offSquelch
-_g_offSquelch DW      336h                     ; DS:2BA9 int
+_g_offSquelch DW      336h
         PUBLIC  _g_offTunes
-_g_offTunes DW      325h                     ; DS:2BAB int
-; DS:2BAD int[]
+_g_offTunes DW      325h
+
         PUBLIC  _g_groupHot
 _g_groupHot DW      29h, 0, 2, 6, 1Ah, 2Eh, 43h, 48h, 4Dh, 6Ch, 73h, 87h
         DW      9Ch, 0A3h, 0A6h, 0ADh, 0B2h, 0B7h, 0B9h, 0BFh, 0C5h
@@ -183,9 +183,9 @@ _g_groupHot DW      29h, 0, 2, 6, 1Ah, 2Eh, 43h, 48h, 4Dh, 6Ch, 73h, 87h
         DW      10Ch, 111h, 116h, 11Bh, 11Fh, 124h, 12Fh, 142h, 15Dh
         DW      149h, 156h, 158h
         PUBLIC  _g_descHdr
-_g_descHdr DB      0                        ; DS:2C01 char[]
+_g_descHdr DB      0
         PUBLIC  _g_desc
-_g_desc DB      1851 DUP (0), 1, 'GM V-6 engine', 0  ; DS:2C02 char[]
+_g_desc DB      1851 DUP (0), 1, 'GM V-6 engine', 0
         DB      1, 'Ford V-6 engine', 0
         DB      1, 'Chrysler V-6 engine', 0
         DB      2, 'GM V-8 engine. 283 cu.in.', 0
@@ -287,7 +287,7 @@ _g_desc DB      1851 DUP (0), 1, 'GM V-6 engine', 0  ; DS:2C02 char[]
         DB      3, "You've got``too``much``junk``in``your``garage`!", 0
         DB      "You're gonna hafta sell a part.", 0
         DB      3
-; DS:39C9 char[]
+
         PUBLIC  _g_junk
 _g_junk DB      "You've got``too``much``junk``in``your``garage`!", 0
         DB      'Must``sell``12``parts``to``make``enough``room.', 0
@@ -295,53 +295,53 @@ _g_junk DB      "You've got``too``much``junk``in``your``garage`!", 0
         DB      1, 'Sell some parts first`!', 0
         DB      2
         PUBLIC  _g_msgShort
-_g_msgShort DB      "No go, hot shot. You're $12345 short.", 0  ; DS:3A5A char[]
+_g_msgShort DB      "No go, hot shot. You're $12345 short.", 0
         PUBLIC  _g_noRunHdr
-_g_noRunHdr DB      2                        ; DS:3A80 char
-S_3a81  DB      "Your car's not running, speedy`!", 0  ; DS:3A81 string
+_g_noRunHdr DB      2
+S_3a81  DB      "Your car's not running, speedy`!", 0
         PUBLIC  _g_noTuneHdr
-_g_noTuneHdr DB      2                        ; DS:3AA2 char
-S_3aa3  DB      "Can't tune that mess, klutz`!", 0  ; DS:3AA3 string
+_g_noTuneHdr DB      2
+S_3aa3  DB      "Can't tune that mess, klutz`!", 0
         PUBLIC  _g_kiddingHdr
-_g_kiddingHdr DB      1                        ; DS:3AC1 char
-S_3ac2  DB      'You must be kidding`!', 0  ; DS:3AC2 string
+_g_kiddingHdr DB      1
+S_3ac2  DB      'You must be kidding`!', 0
         PUBLIC  _g_partsGoneHdr
-_g_partsGoneHdr DB      1                        ; DS:3AD8 char
-S_3ad9  DB      'All parts gone`!', 0    ; DS:3AD9 string
+_g_partsGoneHdr DB      1
+S_3ad9  DB      'All parts gone`!', 0
         PUBLIC  _g_carsGoneHdr
-_g_carsGoneHdr DB      1                        ; DS:3AEA char
-S_3aeb  DB      'All cars gone`!', 0     ; DS:3AEB string
+_g_carsGoneHdr DB      1
+S_3aeb  DB      'All cars gone`!', 0
         PUBLIC  _g_noCarHdr
-_g_noCarHdr DB      2                        ; DS:3AFB char
-S_3afc  DB      "You've got no car, dummy`!", 0  ; DS:3AFC string
+_g_noCarHdr DB      2
+S_3afc  DB      "You've got no car, dummy`!", 0
         PUBLIC  _g_pickCarHdr
-_g_pickCarHdr DB      1                        ; DS:3B17 char
-S_3b18  DB      'Pick a car first`!', 0  ; DS:3B18 string
+_g_pickCarHdr DB      1
+S_3b18  DB      'Pick a car first`!', 0
         PUBLIC  _g_noSparesHdr
-_g_noSparesHdr DB      2                        ; DS:3B2B char
-S_3b2c  DB      "You've got no spare parts, dummy`!", 0  ; DS:3B2C string
+_g_noSparesHdr DB      2
+S_3b2c  DB      "You've got no spare parts, dummy`!", 0
         PUBLIC  _g_noTiresHdr
-_g_noTiresHdr DB      2                        ; DS:3B4F char
-S_3b50  DB      "You've got no spare tires, dummy`!", 0  ; DS:3B50 string
+_g_noTiresHdr DB      2
+S_3b50  DB      "You've got no spare tires, dummy`!", 0
         PUBLIC  _g_noTransHdr
-_g_noTransHdr DB      2                        ; DS:3B73 char
-S_3b74  DB      "You've got no spare transmissions`!", 0  ; DS:3B74 string
+_g_noTransHdr DB      2
+S_3b74  DB      "You've got no spare transmissions`!", 0
         PUBLIC  _g_noEngineHdr
-_g_noEngineHdr DB      2                        ; DS:3B98 char
-S_3b99  DB      "You've got no spare engine`!", 0  ; DS:3B99 string
+_g_noEngineHdr DB      2
+S_3b99  DB      "You've got no spare engine`!", 0
         PUBLIC  _g_noCarbHdr
-_g_noCarbHdr DB      2                        ; DS:3BB6 char
-S_3bb7  DB      "You've got no spare carburator`!", 0  ; DS:3BB7 string
+_g_noCarbHdr DB      2
+S_3bb7  DB      "You've got no spare carburator`!", 0
         PUBLIC  _g_noManifoldHdr
-_g_noManifoldHdr DB      2                        ; DS:3BD8 char
-S_3bd9  DB      "You've got no spare manifold`!", 0  ; DS:3BD9 string
+_g_noManifoldHdr DB      2
+S_3bd9  DB      "You've got no spare manifold`!", 0
         PUBLIC  _g_howAboutHdr
-_g_howAboutHdr DB      1                        ; DS:3BF8 char
+_g_howAboutHdr DB      1
         PUBLIC  _g_msgHowAbout
-_g_msgHowAbout DB      'How about $1234 ?', 0   ; DS:3BF9 char[]
+_g_msgHowAbout DB      'How about $1234 ?', 0
         DB      1
         PUBLIC  _g_msgWillYouTake
-_g_msgWillYouTake DB      'Will you take $1234 ?', 0  ; DS:3C0C char[]
+_g_msgWillYouTake DB      'Will you take $1234 ?', 0
         DB      2, "I'll take it off your hands for nothing.", 0
         DB      2, "You must be crazy. I'll take it`!", 0
         DB      1, 'No way`!', 0
@@ -395,7 +395,7 @@ _g_msgWillYouTake DB      'Will you take $1234 ?', 0  ; DS:3C0C char[]
         DB      'You deserve to be King of the County`!', 0
         DB      3
         PUBLIC  _g_msgTotaled
-_g_msgTotaled DB      "Lucky you weren't killed, 'cause the car", 0  ; DS:4115 char[]
+_g_msgTotaled DB      "Lucky you weren't killed, 'cause the car", 0
         DB      'is totaled. You get $123 for scrap.', 0
         DB      3, "Lucky you're so slow. You only lost", 0
         DB      'the race.', 0
@@ -439,7 +439,7 @@ _g_msgTotaled DB      "Lucky you weren't killed, 'cause the car", 0  ; DS:4115 c
         DB      2, 'Yo, you need full service, dummy`!', 0
         DB      1
         PUBLIC  _g_blankName
-_g_blankName DB      '_______________', 0     ; DS:4607 char[]
+_g_blankName DB      '_______________', 0
         DB      1, '012345678901234', 0
         DB      1, '012345678901234', 0
         DB      1, '012345678901234', 0

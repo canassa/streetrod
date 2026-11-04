@@ -33,13 +33,13 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_carhop;                         /* DS:6C84 */
-static int g_ordered;                         /* DS:6C88 */
+static int g_carhop;
+static int g_ordered;
 static void near drop_last_word(char *s);
 static int near maybe_carhop(int mode, int arg, int pct1, int pct2);
-static int g_poolCount;                         /* DS:6C86 */
-static int g_poolRivals[12];                  /* DS:6C8A */
-static int g_justArrived;                         /* DS:6CA2 */
+static int g_poolCount;
+static int g_poolRivals[12];
+static int g_justArrived;
 static void near build_rival_pool(int);
 static void near select_rival(int);
 static int near king_status(void);
@@ -59,10 +59,8 @@ static int near challenge(int);
 static void near play_cell_anim(void);
 static void near set_jail_spots(int id, char c);
 
-int g_bannerX = 100;   /* DS:51EE */
-int g_passCount = 0;   /* DS:51F0 */
-
-/* maybe_carhop @ 0000:914C (linear 0x0914C, 266 bytes) */
+int g_bannerX = 100;
+int g_passCount = 0;
 
 static int near maybe_carhop(int mode, int arg, int pct1, int pct2)
 {
@@ -108,8 +106,6 @@ struct Spec *g_oppSpecPointer;
 struct Racer *g_selectedRacerPointer;
 int g_rivalHereState;
 
-/* drop_last_word @ 0000:9256 (linear 0x09256, 78 bytes) */
-
 static void near drop_last_word(char *s)
 {
     int i;
@@ -124,9 +120,7 @@ static void near drop_last_word(char *s)
         s[i] = 0;
 }
 
-int g_lastRival = -1;   /* DS:51F8 */
-
-/* show_rival_car @ 0000:92A4 (linear 0x092A4, 640 bytes) */
+int g_lastRival = -1;
 
 static void near show_rival_car(enum CarAnimKind mode, int b, int c, int d, int e, int *f)
 {
@@ -179,8 +173,6 @@ int bn7648;
 int g_isKingState;
 int g_driverIdxSelVal;
 
-/* spec_class @ 0000:9524 (linear 0x09524, 50 bytes) */
-
 static int near spec_class(int n)
 {
     int v;
@@ -192,8 +184,6 @@ static int near spec_class(int n)
         return 2;
     return 1;
 }
-
-/* king_status @ 0000:9556 (linear 0x09556, 155 bytes) */
 
 static int near king_status(void)
 {
@@ -221,8 +211,6 @@ static int near king_status(void)
     return 3;
 }
 
-/* king_chance @ 0000:95F1 (linear 0x095F1, 85 bytes) */
-
 static int near king_chance(void)
 {
     int kind, v;
@@ -245,8 +233,6 @@ static int near king_chance(void)
     }
     return v;
 }
-
-/* build_rival_pool @ 0000:9646 (linear 0x09646, 520 bytes) */
 
 static void near build_rival_pool(int flag)
 {
@@ -294,8 +280,6 @@ static void near build_rival_pool(int flag)
     }
 }
 
-/* pick_rival @ 0000:984E (linear 0x0984E, 108 bytes) */
-
 static int near pick_rival(int chance, int arg)
 {
     int pick;
@@ -311,8 +295,6 @@ static int near pick_rival(int chance, int arg)
     g_lastRival = pick;
     return pick;
 }
-
-/* select_rival @ 0000:98BA (linear 0x098BA, 365 bytes) */
 
 static void near select_rival(int n)
 {
@@ -342,8 +324,6 @@ static void near select_rival(int n)
     m_8272.overlayPic = g_selectedRacerPointer->overlayPic;
 }
 
-/* rival_arrives @ 0000:9A27 (linear 0x09A27, 92 bytes) */
-
 static void near rival_arrives(int n, enum CarAnimKind a, int mode)
 {
     select_rival(n);
@@ -353,8 +333,6 @@ static void near rival_arrives(int n, enum CarAnimKind a, int mode)
         g_carPassBy = king_status() == 1;
     show_rival_car(a, bn7648, 1, 0xa3, 0, g_tirePics[m_8272.tireVariant]);
 }
-
-/* list_met_rivals @ 0000:9A83 (linear 0x09A83, 113 bytes) */
 
 static void near list_met_rivals(int *ids, int *slots, int *kinds)
 {
@@ -374,12 +352,10 @@ static void near list_met_rivals(int *ids, int *slots, int *kinds)
     ids[0] = n;
 }
 
-struct Wager g_raceWagerTerms; /* DS:79A2 */
+struct Wager g_raceWagerTerms;
 
-int g_refuseMsgs[2][5] = {{4779, 4803, 4822, 4840, 4663}, {4663, 4675, 4694, 4715, 4727}};   /* DS:51FC */
-int g_acceptMsgs[2][3] = {{4859, 4867, 4875}, {4743, 4756, 4767}};   /* DS:5210 */
-
-/* look_for_rival @ 0000:9AF4 (linear 0x09AF4, 209 bytes) */
+int g_refuseMsgs[2][5] = {{4779, 4803, 4822, 4840, 4663}, {4663, 4675, 4694, 4715, 4727}};
+int g_acceptMsgs[2][3] = {{4859, 4867, 4875}, {4743, 4756, 4767}};
 
 static int near look_for_rival(enum CarAnimKind n)
 {
@@ -404,8 +380,6 @@ static int near look_for_rival(enum CarAnimKind n)
         return 0;
     }
 }
-
-/* accepts_bet @ 0000:9BC5 (linear 0x09BC5, 424 bytes) */
 
 static int near accepts_bet(enum BetKind kind)
 {
@@ -459,8 +433,6 @@ calc:
         scorel += (scorel >> 2) + 10;
     return rn_int(100) <= scorel;
 }
-
-/* challenge @ 0000:9D6D (linear 0x09D6D, 907 bytes) */
 
 static int near challenge(int arg)
 {
@@ -603,8 +575,6 @@ quit:
     return 0;
 }
 
-/* setup_bobs_spots @ 0000:A0F8 (linear 0x0A0F8, 365 bytes) */
-
 static void near setup_bobs_spots(int a, int b)
 {
     struct Hot save;
@@ -656,14 +626,12 @@ static void near setup_bobs_spots(int a, int b)
     }
 }
 
-struct Step g_animSteps[30] = {{2, 15}, {3, 15}, {4, 22}, {5, 15}, {6, 37}, {5, 15}, {6, 45}, {5, 15}, {4, 15}, {3, 15}, {2, 15}, {8, 90}, {7, 15}, {9, 15}, {10, 30}, {9, 15}, {7, 7}, {8, 75}, {11, 15}, {12, 30}, {13, 15}, {12, 15}, {11, 15}, {8, 90}, {7, 15}, {9, 15}, {10, 30}, {9, 15}, {7, 7}, {14, 15}};   /* DS:521E */
-char g_animCells[16] = {1, 15, 7, 8, 9, 10, 11, 12, 2, 3, 0, 1, 5, 6, 13, 4};   /* DS:525A */
-struct Cell g_endCellsA[20] = {{0, 0, 48, 24, 80, 0}, {48, 0, 32, 24, 88, 0}, {80, 0, 32, 24, 96, 0}, {112, 0, 64, 24, 88, 0}, {0, 24, 40, 44, 96, 0}, {40, 24, 40, 44, 96, 0}, {80, 24, 40, 44, 96, 0}, {120, 24, 40, 44, 96, 0}, {0, 68, 40, 44, 96, 0}, {40, 68, 40, 44, 96, 0}, {80, 68, 40, 44, 96, 0}, {120, 68, 40, 44, 96, 0}, {0, 112, 40, 44, 96, 0}, {40, 112, 40, 44, 96, 0}, {80, 112, 40, 44, 96, 0}, {120, 112, 40, 44, 96, 0}, {0, 156, 48, 44, 88, 0}, {48, 156, 56, 44, 80, 0}, {104, 156, 56, 44, 80, 0}, {160, 156, 40, 44, 96, 0}};   /* DS:526A */
-struct Cell g_endCellsB[9] = {{208, 54, 8, 2, 128, 84}, {200, 54, 8, 3, 112, 88}, {184, 54, 16, 4, 96, 94}, {160, 54, 24, 10, 112, 113}, {160, 86, 40, 10, 128, 113}, {160, 65, 48, 20, 136, 104}, {160, 1, 112, 52, 128, 70}, {0, 1, 160, 97, 112, 52}, {0, 99, 224, 101, 80, 51}};   /* DS:52E2 */
-int g_endPics[8] = {1201, 1217, 1106, 1107, 1108, 1109, 1073, 0};   /* DS:5318 */
-int g_endPics2[3] = {6, 7, 0};   /* DS:5328 */
-
-/* pop_rival_hood @ 0000:A265 (linear 0x0A265, 247 bytes) */
+struct Step g_animSteps[30] = {{2, 15}, {3, 15}, {4, 22}, {5, 15}, {6, 37}, {5, 15}, {6, 45}, {5, 15}, {4, 15}, {3, 15}, {2, 15}, {8, 90}, {7, 15}, {9, 15}, {10, 30}, {9, 15}, {7, 7}, {8, 75}, {11, 15}, {12, 30}, {13, 15}, {12, 15}, {11, 15}, {8, 90}, {7, 15}, {9, 15}, {10, 30}, {9, 15}, {7, 7}, {14, 15}};
+char g_animCells[16] = {1, 15, 7, 8, 9, 10, 11, 12, 2, 3, 0, 1, 5, 6, 13, 4};
+struct Cell g_endCellsA[20] = {{0, 0, 48, 24, 80, 0}, {48, 0, 32, 24, 88, 0}, {80, 0, 32, 24, 96, 0}, {112, 0, 64, 24, 88, 0}, {0, 24, 40, 44, 96, 0}, {40, 24, 40, 44, 96, 0}, {80, 24, 40, 44, 96, 0}, {120, 24, 40, 44, 96, 0}, {0, 68, 40, 44, 96, 0}, {40, 68, 40, 44, 96, 0}, {80, 68, 40, 44, 96, 0}, {120, 68, 40, 44, 96, 0}, {0, 112, 40, 44, 96, 0}, {40, 112, 40, 44, 96, 0}, {80, 112, 40, 44, 96, 0}, {120, 112, 40, 44, 96, 0}, {0, 156, 48, 44, 88, 0}, {48, 156, 56, 44, 80, 0}, {104, 156, 56, 44, 80, 0}, {160, 156, 40, 44, 96, 0}};
+struct Cell g_endCellsB[9] = {{208, 54, 8, 2, 128, 84}, {200, 54, 8, 3, 112, 88}, {184, 54, 16, 4, 96, 94}, {160, 54, 24, 10, 112, 113}, {160, 86, 40, 10, 128, 113}, {160, 65, 48, 20, 136, 104}, {160, 1, 112, 52, 128, 70}, {0, 1, 160, 97, 112, 52}, {0, 99, 224, 101, 80, 51}};
+int g_endPics[8] = {1201, 1217, 1106, 1107, 1108, 1109, 1073, 0};
+int g_endPics2[3] = {6, 7, 0};
 
 static void near pop_rival_hood(void)
 {
@@ -693,9 +661,7 @@ static void near pop_rival_hood(void)
     mn_pop(1);
 }
 
-/* blit_cell @ 0000:A35C (linear 0x0A35C, 186 bytes)
-
-   Blit sprite-sheet cell n (7 per row) of bm into dst */
+/* Blit sprite-sheet cell n (7 per row) of bm into dst */
 
 static void near blit_cell(struct Bitmap far *bm, int n, struct Bitmap far *dst)
 {
@@ -732,8 +698,6 @@ static void near blit_cell(struct Bitmap far *bm, int n, struct Bitmap far *dst)
 struct Bitmap far *g_barJailPixels;
 int g_resultWin;
 struct Bitmap far *g_edgeBmpJail;
-
-/* play_cell_anim @ 0000:A416 (linear 0x0A416, 302 bytes) */
 
 static void near play_cell_anim(void)
 {
@@ -772,8 +736,6 @@ static void near play_cell_anim(void)
     mn_pop(1);
     ma_release();
 }
-
-/* play_ending @ 0000:A544 (linear 0x0A544, 1607 bytes) */
 
 static void near play_ending(void)
 {
@@ -930,10 +892,8 @@ static void near play_ending(void)
     di_free_list(g_endPics);
 }
 
-struct Btn g_jailBars[7] = {{&g_barJailPixels, 0, 0, 16, 149, 40, 5}, {&g_barJailPixels, 0, 0, 16, 149, 96, 5}, {&g_barJailPixels, 0, 0, 16, 149, 152, 5}, {&g_barJailPixels, 0, 0, 16, 149, 208, 5}, {&g_barJailPixels, 0, 0, 16, 149, 264, 5}, {&g_edgeBmpJail, 0, 0, 32, 149, 0, 5}, {&g_edgeBmpJail, 32, 0, 32, 149, 288, 5}};   /* DS:5338 */
-struct Pair g_jailGaps[6] = {{32, 8}, {56, 40}, {112, 40}, {168, 40}, {224, 40}, {280, 8}};   /* DS:539A */
-
-/* bo_visit @ 0000:AB8B (linear 0x0AB8B, 1210 bytes) */
+struct Btn g_jailBars[7] = {{&g_barJailPixels, 0, 0, 16, 149, 40, 5}, {&g_barJailPixels, 0, 0, 16, 149, 96, 5}, {&g_barJailPixels, 0, 0, 16, 149, 152, 5}, {&g_barJailPixels, 0, 0, 16, 149, 208, 5}, {&g_barJailPixels, 0, 0, 16, 149, 264, 5}, {&g_edgeBmpJail, 0, 0, 32, 149, 0, 5}, {&g_edgeBmpJail, 32, 0, 32, 149, 288, 5}};
+struct Pair g_jailGaps[6] = {{32, 8}, {56, 40}, {112, 40}, {168, 40}, {224, 40}, {280, 8}};
 
 void bo_visit(void)
 {
@@ -1114,8 +1074,6 @@ test:
     }
 }
 
-/* set_jail_spots @ 0000:B045 (linear 0x0B045, 71 bytes) */
-
 static void near set_jail_spots(int id, char c)
 {
     struct Hot *h;
@@ -1131,8 +1089,6 @@ static void near set_jail_spots(int id, char c)
     h[4].kind = id;
     g_keyMaps[KM_BOBS]->key = c;
 }
-
-/* bo_jail @ 0000:B08C (linear 0x0B08C, 829 bytes) */
 
 void bo_jail(void)
 {

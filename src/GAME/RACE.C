@@ -39,7 +39,7 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static struct GasInteraction g_fuelStationActions; /* DS:6CA4 */
+static struct GasInteraction g_fuelStationActions;
 static int near find_gas_spot(int);
 static void near clear_gas_spots(void);
 static void near place_gas_spot(int, int, int, int, int);
@@ -57,12 +57,12 @@ static void near blow_engine(int n);
 static void near drop_transmission(int n);
 static int near replace_tires(void);
 static void near show_ticket(void);
-static int g_finishLineIndex;                       /* DS:6CAA */
-static struct RivalPace g_rivalPace; /* DS:6CAC */
-static int g_shiftPenalty; /* DS:6CB4 */
-static int g_targetLane;                         /* DS:6CB6 */
-static int g_rpmBand;                         /* DS:6CB8 */
-static int g_shiftPoint;                         /* DS:6CBA */
+static int g_finishLineIndex;
+static struct RivalPace g_rivalPace;
+static int g_shiftPenalty;
+static int g_targetLane;
+static int g_rpmBand;
+static int g_shiftPoint;
 static void near init_rival_eng(void);
 static void near fit_gear(int rpm, struct Eng *p);
 static void near rival_accelerate(void);
@@ -70,9 +70,7 @@ static void near move_player(void);
 static void near move_rival(void);
 static void near cop_appears(void);
 
-int g_gasSpotIds[6] = {2, 1, 4, 6, 5, 3};   /* DS:53B6 */
-
-/* find_gas_spot @ 0000:B3CA (linear 0x0B3CA, 91 bytes) */
+int g_gasSpotIds[6] = {2, 1, 4, 6, 5, 3};
 
 static int near find_gas_spot(int id)
 {
@@ -84,8 +82,6 @@ static int near find_gas_spot(int id)
         if (g_hots[base + i].f6 == id)
             return base + i;
 }
-
-/* sort_gas_spots @ 0000:B425 (linear 0x0B425, 49 bytes) */
 
 static void near sort_gas_spots(void)
 {
@@ -99,13 +95,11 @@ static void near sort_gas_spots(void)
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int g_finishMeanSpeedVal;
 char g_failureTire;
-struct BodyPoints g_featurePos; /* DS:8264 */
+struct BodyPoints g_featurePos;
 int g_steeringOld;
 int dz82c8x;
 int g_finishAheadPlayerState;
 float g_raceSecsElapsedValue;
-
-/* clear_gas_spots @ 0000:B456 (linear 0x0B456, 70 bytes) */
 
 static void near clear_gas_spots(void)
 {
@@ -118,8 +112,6 @@ static void near clear_gas_spots(void)
         g_hots[find_gas_spot(g_gasSpotIds[k])].kind = 14;
 }
 
-/* place_gas_spot @ 0000:B49C (linear 0x0B49C, 66 bytes) */
-
 static void near place_gas_spot(int id, int x, int y, int w, int h)
 {
     struct Hot *p;
@@ -128,8 +120,6 @@ static void near place_gas_spot(int id, int x, int y, int w, int h)
     p->y2 = (p->y1 = y) + h - 1;
     p->kind = 11;
 }
-
-/* spots_idle @ 0000:B4DE (linear 0x0B4DE, 71 bytes) */
 
 static void near spots_idle(void)
 {
@@ -141,8 +131,6 @@ static void near spots_idle(void)
     g_fuelStationActions.nozzleAvailable = 1;
 }
 
-/* spots_cap @ 0000:B525 (linear 0x0B525, 45 bytes) */
-
 static void near spots_cap(void)
 {
     clear_gas_spots();
@@ -150,8 +138,6 @@ static void near spots_cap(void)
     sort_gas_spots();
     g_fuelStationActions.capAvailable = 1;
 }
-
-/* spots_nozzle @ 0000:B552 (linear 0x0B552, 73 bytes) */
 
 static void near spots_nozzle(void)
 {
@@ -162,8 +148,6 @@ static void near spots_nozzle(void)
     g_fuelStationActions.nozzleAvailable = 1;
     g_fuelStationActions.capAvailable = 1;
 }
-
-/* spots_rag @ 0000:B59B (linear 0x0B59B, 124 bytes) */
 
 static void near spots_rag(void)
 {
@@ -177,14 +161,10 @@ static void near spots_rag(void)
     g_fuelStationActions.ragAvailable = 1;
 }
 
-/* spots_none @ 0000:B617 (linear 0x0B617, 4 bytes) */
-
 static void near spots_none(void)
 {
     clear_gas_spots();
 }
-
-/* show_tank_cap @ 0000:B61B (linear 0x0B61B, 252 bytes) */
 
 static void near show_tank_cap(struct Dlg *d, int id)
 {
@@ -209,8 +189,6 @@ static void near show_tank_cap(struct Dlg *d, int id)
     pu_show(work, g_featurePos.gasCapX - 16, g_featurePos.gasCapY - 5);
     ma_pop_high(2);
 }
-
-/* leave_station @ 0000:B717 (linear 0x0B717, 394 bytes) */
 
 static void near leave_station(struct Dlg *d)
 {
@@ -244,8 +222,6 @@ static void near leave_station(struct Dlg *d)
     g_scene = 1;
     cr_go();
 }
-
-/* ra_gas_station @ 0000:B8A1 (linear 0x0B8A1, 1587 bytes) */
 
 void ra_gas_station(void)
 {
@@ -428,8 +404,6 @@ top:
     }
 }
 
-/* replace_tires @ 0000:BED4 (linear 0x0BED4, 192 bytes) */
-
 static int near replace_tires(void)
 {
     struct Node *tbl[142];
@@ -457,11 +431,9 @@ static int near replace_tires(void)
     return ret;
 }
 
-int g_winMsgs[6] = {4973, 5015, 5073, 5043, 5099, 5130};   /* DS:53C8 */
-struct Spot g_crashPics[3] = {{1264, 64, 84}, {1266, 208, 82}, {1265, 272, 123}};   /* DS:53D4 */
-int g_statsDone = 0;   /* DS:53E6 */
-
-/* show_ticket @ 0000:BF94 (linear 0x0BF94, 580 bytes) */
+int g_winMsgs[6] = {4973, 5015, 5073, 5043, 5099, 5130};
+struct Spot g_crashPics[3] = {{1264, 64, 84}, {1266, 208, 82}, {1265, 272, 123}};
+int g_statsDone = 0;
 
 static void near show_ticket(void)
 {
@@ -517,8 +489,6 @@ static void near show_ticket(void)
     sy_reset_queues();
 }
 
-/* show_crash @ 0000:C1D8 (linear 0x0C1D8, 559 bytes) */
-
 static void near show_crash(void)
 {
     struct Bitmap far *a, far *b;
@@ -569,8 +539,6 @@ static void near show_crash(void)
     ma_clear();
 }
 
-/* ra_finish_stats @ 0000:C407 (linear 0x0C407, 144 bytes) */
-
 void ra_finish_stats(void)
 {
     if (g_statsDone == 0) {
@@ -585,8 +553,6 @@ void ra_finish_stats(void)
     }
 }
 
-/* show_race_stats @ 0000:C497 (linear 0x0C497, 149 bytes) */
-
 static void near show_race_stats(void)
 {
     if (g_resultWin) {
@@ -599,8 +565,6 @@ static void near show_race_stats(void)
     mn_push(KM_RACE_STATS);
     mn_pop(1);
 }
-
-/* blow_engine @ 0000:C52C (linear 0x0C52C, 128 bytes) */
 
 static void near blow_engine(int n)
 {
@@ -622,8 +586,6 @@ static void near blow_engine(int n)
     gm_popup(-n, -1, 0x49);
 }
 
-/* drop_transmission @ 0000:C5AC (linear 0x0C5AC, 103 bytes) */
-
 static void near drop_transmission(int n)
 {
     char *q;
@@ -640,15 +602,13 @@ static void near drop_transmission(int n)
     gm_popup(-n, -1, 0x49);
 }
 
-int g_tireSlip[3][5] = {{2, 5, 8, 11, 14}, {0, 2, 4, 6, 8}, {0, 0, 1, 2, 4}};   /* DS:54B2 */
-int g_lastTicks = 0;   /* DS:54D0 */
-int g_bumpAlternate = 0;   /* DS:54D2 */
-int g_rivalLeft = 1;   /* DS:54D4 */
-int g_rivalCurveBrake = 0;   /* DS:54D6 */
-int g_contactFrames = 0;   /* DS:54D8 */
-int g_brakeTicks = 0;   /* DS:54DA */
-
-/* ra_outcome @ 0000:C613 (linear 0x0C613, 1948 bytes) */
+int g_tireSlip[3][5] = {{2, 5, 8, 11, 14}, {0, 2, 4, 6, 8}, {0, 0, 1, 2, 4}};
+int g_lastTicks = 0;
+int g_bumpAlternate = 0;
+int g_rivalLeft = 1;
+int g_rivalCurveBrake = 0;
+int g_contactFrames = 0;
+int g_brakeTicks = 0;
 
 int near ra_outcome(void)
 {
@@ -893,8 +853,6 @@ int g_idxAtCop;
 int a_7f88d;
 int bz8630z;
 
-/* ra_reset_eng @ 0000:CDAF (linear 0x0CDAF, 429 bytes) */
-
 void near ra_reset_eng(struct Eng *p)
 {
     struct Node *car;
@@ -949,8 +907,6 @@ nx:
     g_statsDone = 0;
 }
 
-/* init_rival_eng @ 0000:CF5C (linear 0x0CF5C, 213 bytes) */
-
 static void near init_rival_eng(void)
 {
     struct Range *r;
@@ -977,8 +933,6 @@ static void near init_rival_eng(void)
     ar7e8av.roadFraction = 0;
     g_targetLane = ar7e8av.lateralX = ((al70c0x.leftEdge + ao7d2ev.rightEdge) >> 1) - 200;
 }
-
-/* ra_run @ 0000:D031 (linear 0x0D031, 429 bytes) */
 
 void near ra_run(void)
 {
@@ -1019,9 +973,7 @@ void near ra_run(void)
     }
 }
 
-/* fit_gear @ 0000:D1DE (linear 0x0D1DE, 191 bytes)
-
-   Steps p->f18 up from 1 until gear[f18].r[1].f2 exceeds f34[f18] * rpm or
+/* Steps p->f18 up from 1 until gear[f18].r[1].f2 exceeds f34[f18] * rpm or
    f18 reaches f1c. The four pointers the loop advances in memory are /Ol induction temps for the p->f18 indexing. */
 
 static void near fit_gear(int rpm, struct Eng *p)
@@ -1046,8 +998,6 @@ static void near fit_gear(int rpm, struct Eng *p)
     p->accelStep = r->accelStep;
     p->speed = p->rpm / p->rpmPerSpeed;
 }
-
-/* rival_accelerate @ 0000:D29D (linear 0x0D29D, 679 bytes) */
 
 static void near rival_accelerate(void)
 {
@@ -1138,8 +1088,6 @@ static void near rival_accelerate(void)
     }
 }
 
-/* ra_speed_step @ 0000:D544 (linear 0x0D544, 224 bytes) */
-
 int ra_speed_step(int rpm)
 {
     if (rpm <= 0)
@@ -1198,8 +1146,6 @@ int g_swapArmedRivalValue;
 struct Bitmap far *g8acew[13];
 int g_edgeXR;
 
-/* move_player @ 0000:D624 (linear 0x0D624, 89 bytes) */
-
 static void near move_player(void)
 {
     ao7d2ev.roadFraction += ao7d2ev.distanceStep = g_driveEng.speed ? ra_speed_step(g_driveEng.speed) : 0;
@@ -1213,8 +1159,6 @@ static void near move_player(void)
         sy_stop_drive();
     }
 }
-
-/* move_rival @ 0000:D67D (linear 0x0D67D, 789 bytes) */
 
 static void near move_rival(void)
 {
@@ -1333,8 +1277,6 @@ static void near move_rival(void)
     }
 }
 
-/* cop_appears @ 0000:D992 (linear 0x0D992, 147 bytes) */
-
 static void near cop_appears(void)
 {
     int n1;
@@ -1355,8 +1297,6 @@ static void near cop_appears(void)
 
 int by72f2;
 int ay8bc2z;
-
-/* ra_tick @ 0000:DA25 (linear 0x0DA25, 664 bytes) */
 
 void ra_tick(void)
 {

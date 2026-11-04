@@ -3,9 +3,7 @@
 #include "DASH.H"
 #include "VIDEO.H"
 
-/* dr_fill_rect @ 0F38:4302 (linear 0x13682, 154 bytes)
-
-   Fill the rectangle (x, y, w, h) of bitmap s with colour x_colors.fill, clipped to its size,
+/* Fill the rectangle (x, y, w, h) of bitmap s with colour x_colors.fill, clipped to its size,
    one horizontal line at a time through the line routine g_videoOps.drawLine */
 
 void dr_fill_rect(struct Bitmap far *s, int x, int y, int w, int h)
@@ -32,9 +30,7 @@ void dr_fill_rect(struct Bitmap far *s, int x, int y, int w, int h)
     at767ct = oldoff;
 }
 
-/* dr_vline @ 0F38:439C (linear 0x1371C, 99 bytes)
-
-   Vertical line of height h at (x, y) in bitmap s with colour x_colors.line, clipped to the bitmap */
+/* Vertical line of height h at (x, y) in bitmap s with colour x_colors.line, clipped to the bitmap */
 
 void dr_vline(struct Bitmap far *s, int x, int y, int h)
 {
@@ -52,9 +48,7 @@ void dr_vline(struct Bitmap far *s, int x, int y, int h)
     at767ct = oldoff;
 }
 
-/* dr_hline @ 0F38:43FF (linear 0x1377F, 51 bytes)
-
-   Horizontal line of width w at (x, y) in bitmap s, drawn with colour x_colors.line */
+/* Horizontal line of width w at (x, y) in bitmap s, drawn with colour x_colors.line */
 
 void dr_hline(struct Bitmap far *s, int x, int y, int w)
 {
@@ -66,9 +60,7 @@ void dr_hline(struct Bitmap far *s, int x, int y, int w)
     x_colors.fill = old;
 }
 
-/* dr_bevel @ 0F38:4432 (linear 0x137B2, 421 bytes)
-
-   Draw a raised box frame of width 3 around the rectangle (x, y, w, h) of bitmap s: four
+/* Draw a raised box frame of width 3 around the rectangle (x, y, w, h) of bitmap s: four
    filled bars in colour x_colors.fill (x_colors.line when the style in x_colors.frame is 3), then an inner
    highlight made of two vertical and two horizontal lines, doubled when the style is 2 */
 
@@ -112,9 +104,7 @@ void dr_bevel(struct Bitmap far *s, int x, int y, int w, int h)
     }
 }
 
-/* dr_frame @ 0F38:45D7 (linear 0x13957, 134 bytes)
-
-   Draw a frame around the rectangle (x, y, w, h) of bitmap s, one pixel outside it:
+/* Draw a frame around the rectangle (x, y, w, h) of bitmap s, one pixel outside it:
    two vertical lines and two horizontal ones */
 
 void dr_frame(struct Bitmap far *s, int x, int y, int w, int h)

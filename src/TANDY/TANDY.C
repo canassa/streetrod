@@ -15,19 +15,15 @@
 #include "TANDYTXT.H"
 #include "VIDEO.H"
 
-struct Hooks g_tandyHooks = {tb_copy, tb_shifted, tb_masked, ta_draw_text, uc_tandy, ta_copy_page, ta_recolor_rect, da_pal_blank, da_pal_show, ts_step, ta_reveal, sp_slide_v, tl_draw, tl_span, tl_fill_below};   /* DS:5B8A */
-int g_tandyRevealOrder[5] = {0, 2, 4, 1, 3};   /* DS:5BC6 */
-
-/* ta_install @ 21A0:0952 (linear 0x22352, 18 bytes) */
+struct Hooks g_tandyHooks = {tb_copy, tb_shifted, tb_masked, ta_draw_text, uc_tandy, ta_copy_page, ta_recolor_rect, da_pal_blank, da_pal_show, ts_step, ta_reveal, sp_slide_v, tl_draw, tl_span, tl_fill_below};
+int g_tandyRevealOrder[5] = {0, 2, 4, 1, 3};
 
 void ta_install(void)
 {
     g_videoOps = g_tandyHooks;
 }
 
-/* ta_draw_text @ 21A0:0964 (linear 0x22364, 235 bytes)
-
-   Render a glyph into a scratch buffer and copy it to the interleaved screen, 8 rows at most */
+/* Render a glyph into a scratch buffer and copy it to the interleaved screen, 8 rows at most */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void ta_draw_text(struct Bitmap far *bm, int x, int y, int glyph)
@@ -57,9 +53,7 @@ void ta_draw_text(struct Bitmap far *bm, int x, int y, int glyph)
     }
 }
 
-/* ta_recolor_rect @ 21A0:0A4F (linear 0x2244F, 442 bytes)
-
-   Replace one colour by another inside a rectangle of a 2-pixel-per-byte interlaced bitmap */
+/* Replace one colour by another inside a rectangle of a 2-pixel-per-byte interlaced bitmap */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void ta_recolor_rect(struct Bitmap far *bm, int from, int to, int x1, int y1, int x2, int y2)
@@ -132,18 +126,14 @@ void ta_recolor_rect(struct Bitmap far *bm, int from, int to, int x1, int y1, in
     }
 }
 
-/* ta_copy_page @ 21A0:0C09 (linear 0x22609, 29 bytes)
-
-   Copy a 32K block (a full EGA/VGA-sized buffer) */
+/* Copy a 32K block (a full EGA/VGA-sized buffer) */
 
 void ta_copy_page(char far *src, char far *dst)
 {
     bm_far_copy(src, dst, 0x8000);
 }
 
-/* ta_reveal @ 21A0:0C26 (linear 0x22626, 205 bytes)
-
-   Clear one source row, then copy the same row from the second screen: five interlaced passes over
+/* Clear one source row, then copy the same row from the second screen: five interlaced passes over
    the lines */
 /* kl: index over the five line phases (name chosen for the stack layout). */
 

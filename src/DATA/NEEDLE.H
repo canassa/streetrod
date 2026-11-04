@@ -15,6 +15,6 @@ enum NeedleEnd {
 
 #define NEEDLE_MAX_POS 0x82
 
-extern struct NeedlePoint far g_needlePts[2][NEEDLE_MAX_POS + 1];                /* 2E47:0000 */
+extern struct NeedlePoint far g_needlePts[2][NEEDLE_MAX_POS + 1];
 
 #endif

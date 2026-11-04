@@ -23,21 +23,19 @@ static void near noise_sweep_down(int a, int b, int c, int d, int e);
 static void near noise_sweep_up(int a, int b, int c, int d, int e);
 static void near sweep_down(int start, int end, int step, int delay);
 
-int g_songRepeats[19] = {2, 1, 0, 2, 2, 0, 2, 1, 0, 1, 0, 0, 2, 2, 0, 2, 1, 0, -1};   /* DS:5858 */
-char g_jingleRepeats[4] = {0, 0, -1, -1};   /* DS:587E */
-int g_songTones[37] = {1, 2, 1, 2, 3, 3, 1, 2, 1, 3, 1, 4, 4, 1, 2, 1, 3, 1, 2, 1, 3, 4, 4, 1, 2, 1, 3, 4, 1, 1, 1, 2, 1, 4, 3, 3, -1};   /* DS:5882 */
-int g_jingleTones[2] = {0, -1};   /* DS:58CC */
-int g_musicOn = 1;   /* DS:58D0 */
-struct Dev *g_voice = &g_songBgState;   /* DS:58D2 */
-int g_voiceNum = 1;   /* DS:58D4 */
-int g_savedMusicOn = -1;   /* DS:58D6 */
-int g_musicSuspended = 0;   /* DS:58D8 */
-int g_squealOn = 0;   /* DS:58DA */
-int g_sirenOn = 0;   /* DS:58DC */
+int g_songRepeats[19] = {2, 1, 0, 2, 2, 0, 2, 1, 0, 1, 0, 0, 2, 2, 0, 2, 1, 0, -1};
+char g_jingleRepeats[4] = {0, 0, -1, -1};
+int g_songTones[37] = {1, 2, 1, 2, 3, 3, 1, 2, 1, 3, 1, 4, 4, 1, 2, 1, 3, 1, 2, 1, 3, 4, 4, 1, 2, 1, 3, 4, 1, 1, 1, 2, 1, 4, 3, 3, -1};
+int g_jingleTones[2] = {0, -1};
+int g_musicOn = 1;
+struct Dev *g_voice = &g_songBgState;
+int g_voiceNum = 1;
+int g_savedMusicOn = -1;
+int g_musicSuspended = 0;
+int g_squealOn = 0;
+int g_sirenOn = 0;
 
-/* so_calibrate @ 0F38:703E (linear 0x163BE, 151 bytes)
-
-   Calibrate the speed of the machine: counts how often sk_delay(n) can be called within
+/* Calibrate the speed of the machine: counts how often sk_delay(n) can be called within
    one BIOS timer tick (the long at 0040:006C). Counts above 848 are scaled by 3/4. Also sets
    g_delayScale to 256 on the way */
 
@@ -61,9 +59,7 @@ int so_calibrate(int n)
     return count;
 }
 
-/* so_set_freq @ 0F38:70D5 (linear 0x16455, 44 bytes)
-
-   Program PIT channel 2 for a tone of the given frequency */
+/* Program PIT channel 2 for a tone of the given frequency */
 
 void so_set_freq(long freq)
 {
@@ -74,9 +70,7 @@ void so_set_freq(long freq)
     outp(PIT_CH2, div.b[1]);
 }
 
-/* so_init @ 0F38:7101 (linear 0x16481, 33 bytes)
-
-   Set up the PIT for sound (channel 2, mode 3) and program a tone (divisor from 25000) */
+/* Set up the PIT for sound (channel 2, mode 3) and program a tone (divisor from 25000) */
 
 void so_init(void)
 {
@@ -85,9 +79,7 @@ void so_init(void)
     so_set_freq(25000L);
 }
 
-/* so_on @ 0F38:7122 (linear 0x164A2, 27 bytes)
-
-   Speaker on: program the tone for 25000 and set bits 0 and 1 of port 61h */
+/* Speaker on: program the tone for 25000 and set bits 0 and 1 of port 61h */
 
 void so_on(void)
 {
@@ -96,9 +88,7 @@ void so_on(void)
     g_speakerOn = 1;
 }
 
-/* so_off @ 0F38:713D (linear 0x164BD, 15 bytes)
-
-   Speaker off: clear bits 0 and 1 of port 61h */
+/* Speaker off: clear bits 0 and 1 of port 61h */
 
 void so_off(void)
 {
@@ -106,9 +96,7 @@ void so_off(void)
     g_speakerOn = 0;
 }
 
-/* play_tone @ 0F38:714C (linear 0x164CC, 29 bytes)
-
-   Play the tone of frequency freq for n ticks (sk_delay) */
+/* Play the tone of frequency freq for n ticks (sk_delay) */
 
 static void near play_tone(long freq, int n)
 {
@@ -116,9 +104,7 @@ static void near play_tone(long freq, int n)
     sk_delay(n);
 }
 
-/* tone_burst @ 0F38:7169 (linear 0x164E9, 73 bytes)
-
-   Play count random tones with frequencies from lo up to hi, each held for dur ticks */
+/* Play count random tones with frequencies from lo up to hi, each held for dur ticks */
 
 static void near tone_burst(int lo, int hi, int dur, int count)
 {
@@ -130,9 +116,7 @@ static void near tone_burst(int lo, int hi, int dur, int count)
         play_tone((long)(rn_int(span) + lo), dur);
 }
 
-/* sweep_down @ 0F38:71B2 (linear 0x16532, 50 bytes)
-
-   Sweep a tone downwards from start while it is >= end, in steps of step */
+/* Sweep a tone downwards from start while it is >= end, in steps of step */
 
 static void near sweep_down(int start, int end, int step, int delay)
 {
@@ -142,9 +126,7 @@ static void near sweep_down(int start, int end, int step, int delay)
         play_tone((long)start, delay);
 }
 
-/* sweep_up_down @ 0F38:71E4 (linear 0x16564, 174 bytes)
-
-   Siren: reps times sweep the tone from centre - width up to centre + width and back down
+/* Siren: reps times sweep the tone from centre - width up to centre + width and back down
    again, in steps of step, each tone held for dur */
 
 static void near sweep_up_down(int centre, int width, int step, int dur, int reps)
@@ -160,9 +142,7 @@ static void near sweep_up_down(int centre, int width, int step, int dur, int rep
     }
 }
 
-/* pulse_train @ 0F38:7292 (linear 0x16612, 116 bytes)
-
-   Square wave on the speaker: for each of count tones in table, flip bit 1 of port 61h
+/* Square wave on the speaker: for each of count tones in table, flip bit 1 of port 61h
    with delays *p and a - *p, reps times */
 
 static void near pulse_train(int a, int *p, int count, int reps)
@@ -181,9 +161,7 @@ static void near pulse_train(int a, int *p, int count, int reps)
     }
 }
 
-/* pulse_train_back @ 0F38:7306 (linear 0x16686, 116 bytes)
-
-   Same as pulse_train with the table walked backwards: square wave on the speaker: for each of count
+/* Same as pulse_train with the table walked backwards: square wave on the speaker: for each of count
    tones in table, flip bit 1 of port 61h
    with delays *p and a - *p, reps times */
 
@@ -203,9 +181,7 @@ static void near pulse_train_back(int a, int *p, int count, int reps)
     }
 }
 
-/* fill_range @ 0F38:737A (linear 0x166FA, 115 bytes)
-
-   Fill buf with the values from start to end in steps of step (up or down); returns how many */
+/* Fill buf with the values from start to end in steps of step (up or down); returns how many */
 
 static int near fill_range(int *buf, int start, int end, int step)
 {
@@ -223,9 +199,7 @@ static int near fill_range(int *buf, int start, int end, int step)
     return count;
 }
 
-/* warble @ 0F38:73ED (linear 0x1676D, 119 bytes)
-
-   Warble: set the tone to freq, then reps times play the square wave half made by
+/* Warble: set the tone to freq, then reps times play the square wave half made by
    fill_range (from 1 to hi in steps of step) forwards and backwards */
 
 static void near warble(long freq, int period, int hi, int step, int cycles, int reps)
@@ -242,9 +216,7 @@ static void near warble(long freq, int period, int hi, int step, int cycles, int
     }
 }
 
-/* noise @ 0F38:7464 (linear 0x167E4, 76 bytes)
-
-   Noise: speaker off, then count times flip bit 1 of port 61h and wait for a random time
+/* Noise: speaker off, then count times flip bit 1 of port 61h and wait for a random time
    (rn_int(range) | bits) */
 
 static void near noise(int range, int bits, int count)
@@ -260,9 +232,7 @@ static void near noise(int range, int bits, int count)
     }
 }
 
-/* noise_sweep_down @ 0F38:74B0 (linear 0x16830, 76 bytes)
-
-   Sweep noise bursts downwards from start while it is > end, in steps of step */
+/* Sweep noise bursts downwards from start while it is > end, in steps of step */
 
 static void near noise_sweep_down(int start, int end, int gap, int step, int dur)
 {
@@ -275,9 +245,7 @@ static void near noise_sweep_down(int start, int end, int gap, int step, int dur
     }
 }
 
-/* noise_sweep_up @ 0F38:74FC (linear 0x1687C, 76 bytes)
-
-   Sweep noise bursts upwards from start while it is < end, in steps of step */
+/* Sweep noise bursts upwards from start while it is < end, in steps of step */
 
 static void near noise_sweep_up(int start, int end, int gap, int step, int dur)
 {
@@ -290,9 +258,7 @@ static void near noise_sweep_up(int start, int end, int gap, int step, int dur)
     }
 }
 
-/* so_wheel_roll @ 0F38:7548 (linear 0x168C8, 43 bytes)
-
-   Starts one of two sounds through mu_play; `on` selects which. */
+/* Starts one of two sounds through mu_play; `on` selects which. */
 
 void so_wheel_roll(int on)
 {
@@ -302,9 +268,7 @@ void so_wheel_roll(int on)
         mu_play(g_song, g_songRepeats);
 }
 
-/* so_sticker @ 0F38:7573 (linear 0x168F3, 80 bytes)
-
-   Starts one of two sounds through mu_play; `on` selects which */
+/* Starts one of two sounds through mu_play; `on` selects which */
 
 void so_sticker(int on)
 {
@@ -315,9 +279,7 @@ void so_sticker(int on)
         mu_play(g_song, g_songRepeats);
 }
 
-/* F_16943 @ 0F38:75C3 (linear 0x16943, 80 bytes)
-
-   Starts one of two sounds through mu_play; `on` selects which */
+/* Starts one of two sounds through mu_play; `on` selects which */
 
 void F_16943(int on)
 {
@@ -328,9 +290,7 @@ void F_16943(int on)
         mu_play(g_song, g_songRepeats);
 }
 
-/* so_pump @ 0F38:7613 (linear 0x16993, 78 bytes)
-
-   Starts one of two sounds through mu_play; `on` selects which */
+/* Starts one of two sounds through mu_play; `on` selects which */
 
 void so_pump(int on)
 {
@@ -341,9 +301,7 @@ void so_pump(int on)
         mu_play(g_song, g_songRepeats);
 }
 
-/* so_jack @ 0F38:7661 (linear 0x169E1, 78 bytes)
-
-   Starts one of two sounds through mu_play; `on` selects which */
+/* Starts one of two sounds through mu_play; `on` selects which */
 
 void so_jack(int on)
 {
@@ -354,9 +312,7 @@ void so_jack(int on)
         mu_play(g_song, g_songRepeats);
 }
 
-/* F_16A2F @ 0F38:76AF (linear 0x16A2F, 43 bytes)
-
-   Starts one of two sounds through mu_play; `on` selects which */
+/* Starts one of two sounds through mu_play; `on` selects which */
 
 void F_16A2F(int on)
 {
@@ -366,9 +322,7 @@ void F_16A2F(int on)
         mu_play(g_song, g_songRepeats);
 }
 
-/* so_part_move @ 0F38:76DA (linear 0x16A5A, 78 bytes)
-
-   Starts one of two sounds through mu_play; `on` selects which */
+/* Starts one of two sounds through mu_play; `on` selects which */
 
 void so_part_move(int on)
 {
@@ -379,8 +333,6 @@ void so_part_move(int on)
         mu_play(g_song, g_songRepeats);
 }
 
-/* so_siren @ 0F38:7728 (linear 0x16AA8, 25 bytes) */
-
 void so_siren(int on)
 {
     if (on)
@@ -389,8 +341,6 @@ void so_siren(int on)
         g_sirenOn = 0;
 }
 
-/* so_squeal @ 0F38:7741 (linear 0x16AC1, 25 bytes) */
-
 void so_squeal(int on)
 {
     if (on)
@@ -398,8 +348,6 @@ void so_squeal(int on)
     else
         g_squealOn = 0;
 }
-
-/* so_warble1 @ 0F38:775A (linear 0x16ADA, 48 bytes) */
 
 void so_warble1(void)
 {
@@ -410,8 +358,6 @@ void so_warble1(void)
     }
 }
 
-/* so_warble2 @ 0F38:778A (linear 0x16B0A, 48 bytes) */
-
 void so_warble2(void)
 {
     if (g_soundOn) {
@@ -421,9 +367,7 @@ void so_warble2(void)
     }
 }
 
-/* so_buzz @ 0F38:77BA (linear 0x16B3A, 39 bytes)
-
-   Sound effect, only when sound is on */
+/* Sound effect, only when sound is on */
 
 void so_buzz(void)
 {
@@ -434,9 +378,7 @@ void so_buzz(void)
     }
 }
 
-/* so_bolt @ 0F38:77E1 (linear 0x16B61, 54 bytes)
-
-   Sound effect with a random start pitch */
+/* Sound effect with a random start pitch */
 
 void so_bolt(void)
 {
@@ -447,9 +389,7 @@ void so_bolt(void)
     }
 }
 
-/* so_part_set @ 0F38:7817 (linear 0x16B97, 42 bytes)
-
-   Sound effect */
+/* Sound effect */
 
 void so_part_set(void)
 {
@@ -460,9 +400,7 @@ void so_part_set(void)
     }
 }
 
-/* so_noise @ 0F38:7841 (linear 0x16BC1, 34 bytes)
-
-   Sound effect */
+/* Sound effect */
 
 void so_noise(void)
 {
@@ -473,9 +411,7 @@ void so_noise(void)
     }
 }
 
-/* so_crash @ 0F38:7863 (linear 0x16BE3, 172 bytes)
-
-   Sound effect, three repeats of a noise burst, a click and a blip */
+/* Sound effect, three repeats of a noise burst, a click and a blip */
 
 void so_crash(void)
 {
@@ -495,9 +431,7 @@ void so_crash(void)
     }
 }
 
-/* so_bump @ 0F38:790F (linear 0x16C8F, 100 bytes)
-
-   Sound effect, two noise bursts each followed by a click run */
+/* Sound effect, two noise bursts each followed by a click run */
 
 void so_bump(void)
 {
@@ -512,9 +446,7 @@ void so_bump(void)
     }
 }
 
-/* so_bolt_turn @ 0F38:7973 (linear 0x16CF3, 38 bytes)
-
-   Sound effect, a falling sweep */
+/* Sound effect, a falling sweep */
 
 void so_bolt_turn(void)
 {

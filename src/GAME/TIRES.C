@@ -21,22 +21,20 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static struct TireWork g_tires; /* DS:6CD4 */
+static struct TireWork g_tires;
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 
 static struct Bitmap far * near grab_wheel_column(int n);
 static void near swap_wheel(int a, int *p, int *q);
 
-int g_spriteBgY = 0;   /* DS:5AA8 */
-int g_liftPicIds[3] = {1034, 1035, 1036};   /* DS:5AAA */
-struct Bitmap far *g_wheelBuf = (struct Bitmap far *)&g_tires.wheelHeader;   /* DS:5AB0 */
-struct Bitmap far *g_rollBuf = (struct Bitmap far *)&g_tires.rollHeader;   /* DS:5AB4 */
-struct Bitmap far *g_jackBuf = (struct Bitmap far *)&g_tires.jackHeader;   /* DS:5AB8 */
+int g_spriteBgY = 0;
+int g_liftPicIds[3] = {1034, 1035, 1036};
+struct Bitmap far *g_wheelBuf = (struct Bitmap far *)&g_tires.wheelHeader;
+struct Bitmap far *g_rollBuf = (struct Bitmap far *)&g_tires.rollHeader;
+struct Bitmap far *g_jackBuf = (struct Bitmap far *)&g_tires.jackHeader;
 
-/* grab_wheel_column @ 0F38:B632 (linear 0x1A9B2, 506 bytes)
-
-   Build the two scratch bitmaps for a shifted background strip and its 0x28-wide column */
+/* Build the two scratch bitmaps for a shifted background strip and its 0x28-wide column */
 
 static struct Bitmap far *near grab_wheel_column(int n)
 {
@@ -73,9 +71,7 @@ static struct Bitmap far *near grab_wheel_column(int n)
     return c;
 }
 
-/* swap_wheel @ 0F38:B82C (linear 0x1ABAC, 1639 bytes)
-
-   Build the four shifted copies of a background strip and animate the sprite over them */
+/* Build the four shifted copies of a background strip and animate the sprite over them */
 
 static void near swap_wheel(int a, int *p, int *q)
 {
@@ -167,8 +163,6 @@ static void near swap_wheel(int a, int *p, int *q)
     }
     ma_pop_low(6);
 }
-
-/* ti_change @ 0F38:BE93 (linear 0x1B213, 3849 bytes) */
 
 void ti_change(int *a, int *b)
 {

@@ -13,12 +13,10 @@ static void near write_plane_row(unsigned char far *dst, unsigned char *src, int
 #define GCREG(i, v)  { outp(GC_INDEX, (i)); outp(GC_DATA, (v)); }
 #define SEQREG(i, v) { outp(SEQ_INDEX, (i)); outp(SEQ_DATA, (v)); }
 
-unsigned char g_leftBitMasks[8] = {128, 192, 224, 240, 248, 252, 254, 255};   /* DS:5C16 */
-int g_egaGcFunction = 0;   /* DS:5C1E */
+unsigned char g_leftBitMasks[8] = {128, 192, 224, 240, 248, 252, 254, 255};
+int g_egaGcFunction = 0;
 
-/* shift_row_bits @ 21A0:1EA2 (linear 0x238A2, 235 bytes)
-
-   Shift a row of bytes right (n > 0) or left (n < 0) by n bits, carrying between bytes */
+/* Shift a row of bytes right (n > 0) or left (n < 0) by n bits, carrying between bytes */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 static void near shift_row_bits(unsigned char *p, int n, int len)
@@ -57,9 +55,7 @@ static void near shift_row_bits(unsigned char *p, int n, int len)
     }
 }
 
-/* write_plane_row @ 21A0:1F8D (linear 0x2398D, 686 bytes)
-
-   Write one 4 plane row (40 bytes per plane) to planar VGA memory, shifted and edge masked */
+/* Write one 4 plane row (40 bytes per plane) to planar VGA memory, shifted and edge masked */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 static void near write_plane_row(unsigned char far *dst, unsigned char *src, int w, int off, int shift)
@@ -141,9 +137,7 @@ static void near write_plane_row(unsigned char far *dst, unsigned char *src, int
     SEQREG(SEQ_MAP_MASK, SEQ_ALL_PLANES);
 }
 
-/* ex_blit @ 21A0:223B (linear 0x23C3B, 383 bytes)
-
-   Copy a rectangle of a planar VGA bitmap to another, via a per-row 4 plane buffer */
+/* Copy a rectangle of a planar VGA bitmap to another, via a per-row 4 plane buffer */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 /* The braces of GCREG(5, 0) are load-bearing: a block ends the basic block that holds the
    r->sx / 8 CSE in si, so /Ol does not give it a stack slot (the original has none). */

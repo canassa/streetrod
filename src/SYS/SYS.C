@@ -33,11 +33,11 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static struct CursorDraw g_drawnCursor; /* DS:6C46 */
-static enum ScreenId g_keyGroup;                         /* DS:6C4C */
-static char g_lastClick;                        /* DS:6C4E */
-static int g_demoChoice;                        /* DS:6C50 */
-static struct Vibrato g_vibrato; /* DS:6C52 */
+static struct CursorDraw g_drawnCursor;
+static enum ScreenId g_keyGroup;
+static char g_lastClick;
+static int g_demoChoice;
+static struct Vibrato g_vibrato;
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Dev g_songBgState;
@@ -49,34 +49,32 @@ struct Lims g_boxSpotHitData;
 struct Hot *g_curHoverPointer;
 int g_cursHoverCodeVal;
 int g_wRivBanner;
-struct TimerPriorities g_sysTimerPriorities; /* DS:8EF6 */
+struct TimerPriorities g_sysTimerPriorities;
 
-struct TimerQueue g_timerQueue = {-1, -1, 0, 2147483647L, 0, 0}; /* DS:0566 */
-struct Link g_timers[4] = {{0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}};   /* DS:0572 */
-int g_05ba = 0;   /* DS:05BA */
-int g_05bc[8] = {0, 0, 0, 0, 0, 0, 0, 0};   /* DS:05BC */
-long g_waitUntil = 0L;   /* DS:05CC */
-struct InputState g_input = {0, 0}; /* DS:05D0 */
-int g_05d4 = 32767; /* DS:05D4 */
-int g_05d6 = 0; /* DS:05D6 */
-int g_05d8 = 0; /* DS:05D8 */
-int g_05da = 0; /* DS:05DA */
-int g_msgTicks = 350;   /* DS:05DC */
-int g_clickEnds = 0;   /* DS:05DE */
-int g_kbdHooked = 0;   /* DS:05E0 */
-struct Mouse g_mouse = {0, 0, 0, 0, 0, 0, 0, 10, 3};   /* DS:05E2 */
-int g_05f4[2] = {0, 0};   /* DS:05F4 */
-long g_tick = 0L;   /* DS:05F8 */
-struct GameClock g_gameClock = {0L, 0L, 0L}; /* DS:05FC */
-char g_tickDiv = 0;   /* DS:0608 */
-char g_driveDiv = 0;   /* DS:0609 */
-int g_060a = 0;   /* DS:060A */
-char *g_errRead = "cannot read drive ?";   /* DS:060C */
-char *g_errWriteProt = "disk ? is write protected";   /* DS:060E */
-int g_demo = 0;   /* DS:0610 */
-int g_autoDrive = 0;   /* DS:0612 */
-
-/* sy_hover_reset @ 0000:0D78 (linear 0x00D78, 33 bytes) */
+struct TimerQueue g_timerQueue = {-1, -1, 0, 2147483647L, 0, 0};
+struct Link g_timers[4] = {{0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}};
+int g_05ba = 0;
+int g_05bc[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+long g_waitUntil = 0L;
+struct InputState g_input = {0, 0};
+int g_05d4 = 32767;
+int g_05d6 = 0;
+int g_05d8 = 0;
+int g_05da = 0;
+int g_msgTicks = 350;
+int g_clickEnds = 0;
+int g_kbdHooked = 0;
+struct Mouse g_mouse = {0, 0, 0, 0, 0, 0, 0, 10, 3};
+int g_05f4[2] = {0, 0};
+long g_tick = 0L;
+struct GameClock g_gameClock = {0L, 0L, 0L};
+char g_tickDiv = 0;
+char g_driveDiv = 0;
+int g_060a = 0;
+char *g_errRead = "cannot read drive ?";
+char *g_errWriteProt = "disk ? is write protected";
+int g_demo = 0;
+int g_autoDrive = 0;
 
 void sy_hover_reset(void)
 {
@@ -87,8 +85,6 @@ void sy_hover_reset(void)
     g_click2 = 0;
     kg_key();
 }
-
-/* sy_music_pause @ 0000:0D99 (linear 0x00D99, 63 bytes) */
 
 void sy_music_pause(void)
 {
@@ -102,8 +98,6 @@ void sy_music_pause(void)
     }
 }
 
-/* sy_music_resume @ 0000:0DD8 (linear 0x00DD8, 76 bytes) */
-
 void sy_music_resume(void)
 {
     if (g_musicOn && !g_voice->active && g_voice->phraseStart != g_voice->song) {
@@ -113,8 +107,6 @@ void sy_music_resume(void)
         sy_hover_reset();
     }
 }
-
-/* sy_reset_queues @ 0000:0E24 (linear 0x00E24, 231 bytes) */
 
 void sy_reset_queues(void)
 {
@@ -146,8 +138,6 @@ void sy_reset_queues(void)
     g_buttons = g_keyDx = g_keyDy = g_lastDx = g_lastDy = 0;
 }
 
-/* sy_timer_remove @ 0000:0F0B (linear 0x00F0B, 172 bytes) */
-
 void sy_timer_remove(int n)
 {
     register int i;
@@ -172,8 +162,6 @@ void sy_timer_remove(int n)
     g_timerQueue.free = n;
 }
 
-/* sy_unhook @ 0000:0FB7 (linear 0x00FB7, 51 bytes) */
-
 void sy_unhook(void)
 {
     _disable();
@@ -186,8 +174,6 @@ void sy_unhook(void)
     g_kbdHooked = 0;
     g_sysHooked = 0;
 }
-
-/* sy_exit @ 0000:0FEA (linear 0x00FEA, 113 bytes) */
 
 void sy_exit(void)
 {
@@ -207,11 +193,9 @@ void sy_exit(void)
     exit(5);
 }
 
-char g_064d = 0;   /* DS:064D */
-char g_keymapGroup = 0;   /* DS:064E */
-struct KeyMap g_keymapSaved[30] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};   /* DS:0650 */
-
-/* sy_crit_error @ 0000:105B (linear 0x0105B, 182 bytes) */
+char g_064d = 0;
+char g_keymapGroup = 0;
+struct KeyMap g_keymapSaved[30] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 
 void sy_crit_error(unsigned deverr, unsigned char errcode)
 {
@@ -250,8 +234,6 @@ void sy_crit_error(unsigned deverr, unsigned char errcode)
         sy_exit();
     _hardresume(action);
 }
-
-/* sy_init @ 0000:1111 (linear 0x01111, 461 bytes) */
 
 void sy_init(void)
 {
@@ -322,8 +304,6 @@ void sy_init(void)
     g_sysHooked = 1;
 }
 
-/* sy_keymap_set @ 0000:12DE (linear 0x012DE, 179 bytes) */
-
 void sy_keymap_set(enum ScreenId n)
 {
     struct KeyMap *p;
@@ -351,8 +331,6 @@ void sy_keymap_set(enum ScreenId n)
     q[1].key = 0;
 }
 
-/* sy_keymap_restore @ 0000:1391 (linear 0x01391, 134 bytes) */
-
 int sy_keymap_restore(int keep)
 {
     int i;
@@ -376,22 +354,20 @@ int sy_keymap_restore(int keep)
     return i;
 }
 
-char g_protectPal[16] = {0, 0, 8, 7, 15, 7, 15, 8, 7, 2, 4, 12, 5, 10, 6, 14};   /* DS:0692 */
-int g_06a2 = 0;   /* DS:06A2 */
-struct DemoControl g_demoControl = {0, 0, 0, 0, 0, 0}; /* DS:06A4 */
-int g_demoTargetX = 0;   /* DS:06AE */
-int g_demoTargetY = 0;   /* DS:06B0 */
-int g_demoScriptPos = 0;   /* DS:06B2 */
-int g_demoScript[22] = {-1, 0, -1, 0, 1, 1, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 0, 0, 2};   /* DS:06B4 */
-char g_cursorBusy = 0;   /* DS:06E0 */
-int g_vibCount = 1;   /* DS:06E2 */
-int g_sirenPhase = 0;   /* DS:06E4 */
-int g_overRev = 0;   /* DS:06E6 */
-char g_driveBusy = 0;   /* DS:06E8 */
-char g_lastFire = 0;   /* DS:06E9 */
-char g_squealPhase = 0;   /* DS:06EA */
-
-/* sy_wait_input @ 0000:1417 (linear 0x01417, 1068 bytes) */
+char g_protectPal[16] = {0, 0, 8, 7, 15, 7, 15, 8, 7, 2, 4, 12, 5, 10, 6, 14};
+int g_06a2 = 0;
+struct DemoControl g_demoControl = {0, 0, 0, 0, 0, 0};
+int g_demoTargetX = 0;
+int g_demoTargetY = 0;
+int g_demoScriptPos = 0;
+int g_demoScript[22] = {-1, 0, -1, 0, 1, 1, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 0, 0, 2};
+char g_cursorBusy = 0;
+int g_vibCount = 1;
+int g_sirenPhase = 0;
+int g_overRev = 0;
+char g_driveBusy = 0;
+char g_lastFire = 0;
+char g_squealPhase = 0;
 
 int sy_wait_input(int ticks)
 {
@@ -548,8 +524,6 @@ struct Eng g_driveEng;
 int g_vibratoActive;
 struct Tone *g_toneShapePlaybackPointer;
 
-/* sy_timer_add @ 0000:1843 (linear 0x01843, 327 bytes) */
-
 int sy_timer_add(int delay, int pri)
 {
     register int i, cur3;
@@ -603,8 +577,6 @@ int sy_timer_add(int delay, int pri)
     return i;
 }
 
-/* sy_timer_anim @ 0000:198A (linear 0x0198A, 50 bytes) */
-
 void sy_timer_anim(int fc, int delay)
 {
     int n;
@@ -613,8 +585,6 @@ void sy_timer_anim(int fc, int delay)
     g_timers[n].action = 1;
     g_timers[n].argument = fc;
 }
-
-/* sy_timer_cancel @ 0000:19BC (linear 0x019BC, 73 bytes) */
 
 void sy_timer_cancel(int n)
 {
@@ -625,8 +595,6 @@ void sy_timer_cancel(int n)
         if ((p = g_timers + i)->action == 1 && p->argument == n)
             p->action = 0;
 }
-
-/* sy_music_start @ 0000:1A05 (linear 0x01A05, 119 bytes) */
 
 void sy_music_start(int n, int cnt)
 {
@@ -647,8 +615,6 @@ void sy_music_start(int n, int cnt)
     }
 }
 
-/* sy_music_stop @ 0000:1A7C (linear 0x01A7C, 49 bytes) */
-
 void sy_music_stop(void)
 {
     g_voice->active = 0;
@@ -657,8 +623,6 @@ void sy_music_stop(void)
     g_voice->dirty = 1;
     g_voice->phraseStart = g_voice->cur = g_voice->song;
 }
-
-/* sy_drive_start @ 0000:1AAD (linear 0x01AAD, 122 bytes) */
 
 void sy_drive_start(void)
 {
@@ -681,8 +645,6 @@ void sy_drive_start(void)
     }
 }
 
-/* sy_drive_stop @ 0000:1B27 (linear 0x01B27, 106 bytes) */
-
 void sy_drive_stop(void)
 {
     _dos_setvect(TIMER_INT, sy_timer_isr);
@@ -700,8 +662,6 @@ void sy_drive_stop(void)
     g_lastDx = g_lastDy = g_buttons = g_click = 0;
 }
 
-/* sy_sign @ 0000:1B91 (linear 0x01B91, 29 bytes) */
-
 int sy_sign(int x)
 {
     if (x == 0)
@@ -718,8 +678,6 @@ int sy_sign(int x)
    variables. No for/while/do formulation reproduces that under /Ol (/Ol takes
    every such loop here); this one pragma reproduces all three functions. */
 #pragma loop_opt(off)
-
-/* sy_demo_step @ 0000:1BAE (linear 0x01BAE, 1076 bytes) */
 
 void sy_demo_step(void)
 {
@@ -886,8 +844,6 @@ void sy_demo_step(void)
     jy_demo_key();
 }
 
-/* sy_timer_isr @ 0000:1FE2 (linear 0x01FE2, 914 bytes) */
-
 void interrupt far sy_timer_isr(void)
 {
     int x, y;
@@ -1005,15 +961,11 @@ int ao8228u;
 long g_mphAccumulator;
 int g_xCoordSprite;
 
-/* sy_stop_drive @ 0000:2374 (linear 0x02374, 24 bytes) */
-
 void sy_stop_drive(void)
 {
     g_driveEng.accelStep = g_driveEng.decelStep = g_driveEng.steeringInput = g_driveEng.steering = g_05d6 = 0;
     g_driveEng.fbe = g_driveEng.elapsedTicks;
 }
-
-/* sy_drive_isr @ 0000:238C (linear 0x0238C, 2062 bytes) */
 
 void interrupt far sy_drive_isr(void)
 {

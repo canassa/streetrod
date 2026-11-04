@@ -7,7 +7,7 @@ description: Reconstruct or rework ONE Street Rod function in its source file so
 
 The per-function loop. `./sr check` is the oracle: `MATCH` (or `MATCH*`) is done, anything else isn't.
 
-All 572 game functions are matched and live in their original object's file (`src/<folder>/M_xxxxx.C|ASM`, one per object of `src/MAKEFILE`). A function is always edited in that file and compiled with the whole file and the file's MAKEFILE command line: there are no per-function files, placeholders or flags any more. A function the scanner newly finds (`./sr scan` reports it) goes into the file whose span contains it, with its address comment above it (`/* name @ SSSS:OOOO (linear 0xAAAAA, N bytes) */`): that comment is what the tools know about the function (a file's extent is the span of its functions).
+All 572 game functions are matched and live in their original object's file (`src/<folder>/M_xxxxx.C|ASM`, one per object of `src/MAKEFILE`). A function is always edited in that file and compiled with the whole file and the file's MAKEFILE command line: there are no per-function files, placeholders or flags any more. A function the scanner newly finds (`./sr scan` reports it) goes into the file whose span contains it, with its original segment, offset and size registered by name in `tools/sr/symbols.json`; the file extent is the span of its functions. Do not add address comments.
 
 ## 0. Pick
 
@@ -26,7 +26,7 @@ All 572 game functions are matched and live in their original object's file (`sr
 - **Control flow.** Find the shapes in the recipe book (boolean results, switch dispatch, loops).
 - **Callees.** Every far callee needs a prototype in its file's header, `int name(int n);   /* 0xAAAAA */` (look there first; another file may already rely on it). Use its current name, or `F_xxxxx` until you know what it does.
 - **Far data.** `mov es,[0xNNNN]` with `./sr show` saying "segment constant" is a `far` array in its own segment: declare it in the defining file's header as `extern T far g_name[];   /* SSSS:OOOO */`, never as a DGROUP word.
-- **Globals.** `[0xNNNN]` is a DGROUP global. `./sr show` names the known ones (the headers' `/* DS:XXXX */` lines, statics' definitions); declare a missing one in its file's header, `extern int g_NNNN;   /* DS:NNNN */`. Struct types go in `src/SYS/STRUCTS.H`, inside the include guard (before the final `#endif`); reuse an existing one when the offsets fit.
+- **Globals.** `[0xNNNN]` is a DGROUP global. `./sr show` names the known ones (addresses in `tools/sr/symbols.json`, joined to header declarations and static definitions); declare a missing one in its file's header, `extern int g_NNNN;`, and register its offset in `tools/sr/symbols.json`. Struct types go in `src/SYS/STRUCTS.H`, inside the include guard (before the final `#endif`); reuse an existing one when the offsets fit.
 
 ## 2. Write the C
 
@@ -36,7 +36,7 @@ Edit the function where it is in its file (`./sr show` prints the file and its c
 
 **Callees.** `push cs; call near` in the original means the callee is in the same file, which it now really is. A call to a function of another file (far, or a public near function in the same code segment) needs that file's header prototype. A prototype inferred only from callers is a guess: say so in the diary.
 
-The procedure name must equal the name in the function's address comment (rename with `./sr rename`, or keep `F_xxxxx`), because `./sr check` finds the procedure by that name in the listing.
+The procedure name must equal the name in `tools/sr/symbols.json` (rename with `./sr rename`, or keep `F_xxxxx`), because `./sr check` finds the procedure by that name in the listing.
 
 ## 3. Check, diff, iterate
 

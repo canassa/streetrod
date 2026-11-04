@@ -9,22 +9,21 @@
         EXTRN   _g_viewClip:WORD
 
         PUBLIC  _g_cgaColorByte
-_g_cgaColorByte DB      0, 55h, 0AAh, 0FFh       ; DS:5B56 char[4]
-; DS:5B5A char[16]
+_g_cgaColorByte DB      0, 55h, 0AAh, 0FFh
+
         PUBLIC  _g_cgaColorMap
 _g_cgaColorMap DB      0, 0, 2, 0, 3, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 3
-; DS:5B6A char[16]
+
         PUBLIC  _g_cgaDitherOdd
 _g_cgaDitherOdd DB      0, 0, 55h, 0EEh, 0FFh, 0, 0, 0, 55h, 77h, 0AAh, 0, 0AAh
         DB      55h, 0AAh, 0AAh
-; DS:5B7A char[16]
+
         PUBLIC  _g_cgaDitherEven
 _g_cgaDitherEven DB      0, 0, 55h, 0BBh, 0FFh, 0, 0, 0, 55h, 0DDh, 0AAh, 0, 0AAh
         DB      55h, 0AAh, 0AAh
 
         .CODE S1C11_TEXT
 
-; cl_draw @ 1C11:1C12 (linear 0x1DD22, 647 bytes)
 ; Draw a line with 2 bits per pixel into the interleaved (CGA/Hercules
 ; style) screen, Bresenham style. A horizontal line is a byte-fill with edge
 ; masks, a vertical one a per-line loop, anything else steps along its major
@@ -319,7 +318,6 @@ done1:
         ret
 _cl_draw  ENDP
 
-; cl_pixel_addr @ 1C11:1E99 (linear 0x1DFA9, 40 bytes)
 ; Pixel address helper for the interleaved 2-bit mode. In: ax = y, bx = x.
 ; Out: bx = byte offset of the pixel (scan line, bank and x/4 folded together) + at767ct, es = av787at, cl = 2 * (3 - (x & 3)).
 
@@ -346,7 +344,6 @@ _cl_pixel_addr  PROC    NEAR
         ret
 _cl_pixel_addr  ENDP
 
-; cl_span @ 1C11:1EC2 (linear 0x1DFD2, 300 bytes)
 ; Draw a horizontal line with 2 bits per pixel into the interleaved
 ; (CGA/Hercules style) screen, clipped to the clip rectangle. On a Hercules
 ; segment (B000-B400 with g_hercules set) an odd line is also drawn 0x2000 bytes
@@ -487,7 +484,6 @@ done2:
         ret
 _cl_span  ENDP
 
-; cl_fill_below @ 1C11:1FEE (linear 0x1E0FE, 96 bytes)
 ; Fill whole screen lines with a 2-bit pattern, from line y1 down to the
 ; bottom clip line (g_viewClip.yMax). The colour is turned into a pattern
 ; byte via g_cgaDitherOdd; every second line gets the pattern rotated by 2 bits.
@@ -549,7 +545,6 @@ done3:
         ret
 _cl_fill_below  ENDP
 
-; cl_map_color @ 1C11:204E (linear 0x1E15E, 16 bytes)
 ; Map a colour in al to a CGA 2-bit pixel value: 0-3 stay as they are,
 ; 4-15 go through the table g_cgaColorMap, anything above becomes 3.
 

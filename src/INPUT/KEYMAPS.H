@@ -111,7 +111,7 @@ enum KeyMapByte {
     KV_REPAIR_JUNK = 0xce + KR_REPAIR_JUNK
 };
 
-extern unsigned char g_keyMapData[543];                       /* DS:5580 */
-extern struct KeyMap *g_keyMaps[];                      /* DS:579F */
+extern unsigned char g_keyMapData[543];
+extern struct KeyMap *g_keyMaps[];
 
 #endif

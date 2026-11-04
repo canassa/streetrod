@@ -20,10 +20,10 @@
 #include "SYS.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_6e04aay;                      /* DS:6E04 */
-static int g_roadRowLimit;                      /* DS:6E06 */
-static struct RenderRows g_renderRows; /* DS:6E08 */
-static int g_prevRivalFrame;                        /* DS:6E2A */
+static int g_6e04aay;
+static int g_roadRowLimit;
+static struct RenderRows g_renderRows;
+static int g_prevRivalFrame;
 static void near clip_blit_y(struct Blt *b);
 static int near edge_step(int x1, int y1, int x2, int y2);
 static int near sgn(int n);
@@ -52,18 +52,16 @@ static void near render_overlays(void);
 static void near render_mirror(void);
 static void near select_draw_page(void);
 
-int g_opponentPics[5][4] = {{1003, 1004, 1057, 1091}, {1010, 1012, 1011, 1239}, {1010, 1247, 1248, 1092}, {1010, 1249, 1250, 1251}, {1010, 1253, 1252, 1254}};   /* DS:5E14 */
-int g_5e3c = 0;   /* DS:5E3C */
-struct ViewPages g_viewPages = {1, 2}; /* DS:5E3E */
-struct Clip g_viewRect = {SCREEN_WIDTH, 82, 0, 18, 0, 18};   /* DS:5E42 */
-struct ViewClip g_viewClip = {0, 18, 101, (SCREEN_WIDTH - 1)}; /* DS:5E4E */
-unsigned char g_shrinkMasks[3][4] = {{87, 37, 34, 0}, {247, 117, 82, 0}, {117, 84, 33, 0}};   /* DS:5E56 */
-int g_sceneBitmapIds[4] = {1258, 1237, 1236, 1238};   /* DS:5E62 */
-int g_roadLineWidths[21] = {8, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};   /* DS:5E6A */
-int g_5e94[4] = {0, 0, 0, 0};   /* DS:5E94 */
-struct Ball g_sheetRects[7] = {{256, 8, 8}, {240, 16, 13}, {208, 32, 19}, {168, 40, 24}, {120, 48, 30}, {64, 56, 37}, {0, 64, 43}};   /* DS:5E9C */
-
-/* select_draw_page @ 2645:224E (linear 0x2869E, 58 bytes) */
+int g_opponentPics[5][4] = {{1003, 1004, 1057, 1091}, {1010, 1012, 1011, 1239}, {1010, 1247, 1248, 1092}, {1010, 1249, 1250, 1251}, {1010, 1253, 1252, 1254}};
+int g_5e3c = 0;
+struct ViewPages g_viewPages = {1, 2};
+struct Clip g_viewRect = {SCREEN_WIDTH, 82, 0, 18, 0, 18};
+struct ViewClip g_viewClip = {0, 18, 101, (SCREEN_WIDTH - 1)};
+unsigned char g_shrinkMasks[3][4] = {{87, 37, 34, 0}, {247, 117, 82, 0}, {117, 84, 33, 0}};
+int g_sceneBitmapIds[4] = {1258, 1237, 1236, 1238};
+int g_roadLineWidths[21] = {8, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int g_5e94[4] = {0, 0, 0, 0};
+struct Ball g_sheetRects[7] = {{256, 8, 8}, {240, 16, 13}, {208, 32, 19}, {168, 40, 24}, {120, 48, 30}, {64, 56, 37}, {0, 64, 43}};
 
 static void near select_draw_page(void)
 {
@@ -86,8 +84,6 @@ struct Bitmap far *bz8b7ex;
 int far *am8b82y;
 struct Bitmap far *ak8bcat;
 
-/* flip_page @ 2645:2288 (linear 0x286D8, 116 bytes) */
-
 static void near flip_page(void)
 {
     int t;
@@ -105,9 +101,7 @@ static void near flip_page(void)
     }
 }
 
-/* clip_blit_y @ 2645:22FC (linear 0x2874C, 53 bytes)
-
-   Clips the vertical extent of a blit rectangle to the clip window. */
+/* Clips the vertical extent of a blit rectangle to the clip window. */
 
 static void near clip_blit_y(struct Blt *b)
 {
@@ -120,9 +114,7 @@ static void near clip_blit_y(struct Blt *b)
         b->h -= b->dy + b->h - g_viewClip.yMax;
 }
 
-/* clip_blit @ 2645:2331 (linear 0x28781, 80 bytes)
-
-   Clips a blit rectangle to the clip window, vertically and then
+/* Clips a blit rectangle to the clip window, vertically and then
    horizontally. */
 
 static void near clip_blit(struct Blt *b)
@@ -141,9 +133,7 @@ static void near clip_blit(struct Blt *b)
     }
 }
 
-/* clip_vline @ 2645:2381 (linear 0x287D1, 111 bytes)
-
-   Draws a clipped vertical line (color, x, y1, y2). */
+/* Draws a clipped vertical line (color, x, y1, y2). */
 
 static void near clip_vline(int color, int x, int y1, int y2)
 {
@@ -156,16 +146,12 @@ static void near clip_vline(int color, int x, int y1, int y2)
     }
 }
 
-/* vw_unclip_top @ 2645:23F0 (linear 0x28840, 7 bytes) */
-
 void vw_unclip_top(void)
 {
     g_viewClip.yMin = 0;
 }
 
-/* clip_mirror @ 2645:23F7 (linear 0x28847, 25 bytes)
-
-   Sets the clip window to x 242..317, y 22..42. */
+/* Sets the clip window to x 242..317, y 22..42. */
 
 static void near clip_mirror(void)
 {
@@ -175,9 +161,7 @@ static void near clip_mirror(void)
     g_viewClip.yMax = 0x2a;
 }
 
-/* vw_clip @ 2645:2410 (linear 0x28860, 25 bytes)
-
-   Sets the clip window to x 0..319, y 18..101. */
+/* Sets the clip window to x 0..319, y 18..101. */
 
 void vw_clip(void)
 {
@@ -186,8 +170,6 @@ void vw_clip(void)
     g_viewClip.yMax = 0x65;
     g_viewClip.xMax = (SCREEN_WIDTH - 1);
 }
-
-/* vw_load @ 2645:2429 (linear 0x28879, 1369 bytes) */
 
 void vw_load(void)
 {
@@ -280,8 +262,6 @@ void vw_load(void)
     }
 }
 
-/* render_backdrop @ 2645:2982 (linear 0x28DD2, 648 bytes) */
-
 static void near render_backdrop(void)
 {
     int r;
@@ -361,8 +341,6 @@ static void near render_backdrop(void)
         (*g_videoOps.fillBelow)(0x3f, 1);
 }
 
-/* vw_sprite @ 2645:2C0A (linear 0x2905A, 242 bytes) */
-
 void vw_sprite(int x, int y, int first, struct List l, int dir)
 {
     struct Run run;
@@ -391,16 +369,12 @@ void vw_sprite(int x, int y, int first, struct List l, int dir)
     }
 }
 
-/* edge_step @ 2645:2CFC (linear 0x2914C, 36 bytes) */
-
 static int near edge_step(int x1, int y1, int x2, int y2)
 {
     if (y2 == y1)
         return 0;
     return ((x2 - x1) << 4) / (y2 - y1);
 }
-
-/* fill_quad @ 2645:2D20 (linear 0x29170, 523 bytes) */
 
 static void near fill_quad(int col, int a, int b, int c, int d, int e, int f)
 {
@@ -493,8 +467,6 @@ static void near fill_quad(int col, int a, int b, int c, int d, int e, int f)
     }
 }
 
-/* sgn @ 2645:2F2B (linear 0x2937B, 29 bytes) */
-
 static int near sgn(int n)
 {
     if (n > 0)
@@ -503,8 +475,6 @@ static int near sgn(int n)
         return -1;
     return 0;
 }
-
-/* vw_road_row @ 2645:2F48 (linear 0x29398, 773 bytes) */
 
 void vw_road_row(int n)
 {
@@ -603,8 +573,6 @@ void vw_road_row(int n)
     }
 }
 
-/* vw_mirror_row @ 2645:324D (linear 0x2969D, 653 bytes) */
-
 void vw_mirror_row(void)
 {
     int xl;
@@ -694,8 +662,6 @@ void vw_mirror_row(void)
         cx0k = ((xl + xrl) >> 1) - (wid >> 1);
     }
 }
-
-/* render_buildings @ 2645:34DA (linear 0x2992A, 725 bytes) */
 
 static void near render_buildings(int a, int b, int c, int d, int e, int f, int rev)
 {
@@ -792,8 +758,6 @@ static void near render_buildings(int a, int b, int c, int d, int e, int f, int 
     }
 }
 
-/* render_mirror_buildings @ 2645:37AF (linear 0x29BFF, 559 bytes) */
-
 static void near render_mirror_buildings(int a, int b, int c, int d, int e, int f, int rev)
 {
     int c10;
@@ -864,21 +828,15 @@ static void near render_mirror_buildings(int a, int b, int c, int d, int e, int 
     }
 }
 
-/* render_left_buildings @ 2645:39DE (linear 0x29E2E, 47 bytes) */
-
 static void near render_left_buildings(void)
 {
     render_buildings(*g_renderRows.prevLeftOuterX, *g_renderRows.leftOuterX, *g_renderRows.prevY, *g_renderRows.y, *g_renderRows.buildingY, *g_renderRows.prevBuildingY, 1);
 }
 
-/* render_right_buildings @ 2645:3A0D (linear 0x29E5D, 46 bytes) */
-
 static void near render_right_buildings(void)
 {
     render_buildings(*g_renderRows.rightOuterX, *g_renderRows.prevRightOuterX, *g_renderRows.y, *g_renderRows.prevY, *g_renderRows.prevBuildingY, *g_renderRows.buildingY, 0);
 }
-
-/* render_row @ 2645:3A3B (linear 0x29E8B, 28 bytes) */
 
 static void near render_row(int n)
 {
@@ -889,21 +847,15 @@ static void near render_row(int n)
     vw_road_row(n);
 }
 
-/* render_mirror_left @ 2645:3A57 (linear 0x29EA7, 47 bytes) */
-
 static void near render_mirror_left(void)
 {
     render_mirror_buildings(*g_renderRows.prevLeftOuterX, *g_renderRows.leftOuterX, *g_renderRows.prevY, *g_renderRows.y, *g_renderRows.buildingY, *g_renderRows.prevBuildingY, 1);
 }
 
-/* render_mirror_right @ 2645:3A86 (linear 0x29ED6, 46 bytes) */
-
 static void near render_mirror_right(void)
 {
     render_mirror_buildings(*g_renderRows.rightOuterX, *g_renderRows.prevRightOuterX, *g_renderRows.y, *g_renderRows.prevY, *g_renderRows.prevBuildingY, *g_renderRows.buildingY, 0);
 }
-
-/* render_mirror_row @ 2645:3AB4 (linear 0x29F04, 11 bytes) */
 
 static void near render_mirror_row(void)
 {
@@ -912,16 +864,12 @@ static void near render_mirror_row(void)
     vw_mirror_row();
 }
 
-/* vw_draw_dot @ 2645:3ABF (linear 0x29F0F, 44 bytes) */
-
 void vw_draw_dot(int x, int y)
 {
     en_begin();
     vw_sprite(x, y, 0, *g_scenery[20], 1);
     en_end();
 }
-
-/* render_object @ 2645:3AEB (linear 0x29F3B, 79 bytes) */
 
 static void near render_object(int x, int y, int n, int f, int idx)
 {
@@ -935,8 +883,6 @@ static void near render_object(int x, int y, int n, int f, int idx)
     vw_sprite(x, y, n, *g_scenery[idx], f);
 }
 
-/* render_hydrant @ 2645:3B3A (linear 0x29F8A, 63 bytes) */
-
 static void near render_hydrant(int x, int y, int n, int f)
 {
     n = 9 - n;
@@ -946,8 +892,6 @@ static void near render_hydrant(int x, int y, int n, int f)
         n = 0;
     vw_sprite(x, y, n, *g_scenery[2], f);
 }
-
-/* render_scaled_pic @ 2645:3B79 (linear 0x29FC9, 339 bytes) */
 
 static void near render_scaled_pic(int x, int y, int n, int align, int clip, int mode)
 {
@@ -992,8 +936,6 @@ static void near render_scaled_pic(int x, int y, int n, int align, int clip, int
         (*g_videoOps.copy)(r_vid.mode == VID_EGA ? bm7678 : g82b4s, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
 }
 
-/* render_gantry @ 2645:3CCC (linear 0x2A11C, 247 bytes) */
-
 static void near render_gantry(int x1, int x2, int y1, int y2, int n, int clip, int flags)
 {
     int j;
@@ -1019,8 +961,6 @@ static void near render_gantry(int x1, int x2, int y1, int y2, int n, int clip, 
         render_object((x1 + x2) >> 1, y1, n, 1, (flags & 0x4000) ? 12 : 14);
 }
 
-/* render_start_signal @ 2645:3DC3 (linear 0x2A213, 121 bytes) */
-
 static void near render_start_signal(void)
 {
     struct Blt b;
@@ -1040,8 +980,6 @@ static void near render_start_signal(void)
     }
 }
 
-/* render_overlays @ 2645:3E3C (linear 0x2A28C, 159 bytes) */
-
 static void near render_overlays(void)
 {
     struct Blt b;
@@ -1058,8 +996,6 @@ static void near render_overlays(void)
     b.dy = 0x5f;
     (*g_videoOps.maskedBlit)(ak8bcat, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
 }
-
-/* render_mirror_frame @ 2645:3EDB (linear 0x2A32B, 178 bytes) */
 
 static void near render_mirror_frame(void)
 {
@@ -1079,8 +1015,6 @@ static void near render_mirror_frame(void)
     clip_blit_y(&b);
     (*g_videoOps.copy)(bz8b7ex, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
 }
-
-/* render_opponent @ 2645:3F8D (linear 0x2A3DD, 1136 bytes) */
 
 static void near render_opponent(void)
 {
@@ -1219,8 +1153,6 @@ static void near render_opponent(void)
         }
     }
 }
-
-/* render_mirror @ 2645:43FD (linear 0x2A84D, 1935 bytes) */
 
 static void near render_mirror(void)
 {
@@ -1376,8 +1308,6 @@ static void near render_mirror(void)
     pkt1.dy = (r_vid.mode == VID_EGA ? 0 : DASH_Y) + 3;
     (*g_videoOps.copy)(g_viewPages.draw == 1 ? g8188w : g82b4s, bm7678, &pkt1, 1);
 }
-
-/* vw_draw @ 2645:4B8C (linear 0x2AFDC, 1774 bytes) */
 
 void vw_draw(void)
 {
@@ -1543,8 +1473,6 @@ void vw_draw(void)
         render_start_signal();
     flip_page();
 }
-
-/* vw_start @ 2645:527A (linear 0x2B6CA, 17 bytes) */
 
 void vw_start(void)
 {

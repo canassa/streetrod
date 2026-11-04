@@ -4,7 +4,7 @@
 #define BOBS_H
 #include "STRUCTS.H"
 
-extern struct Wager g_raceWagerTerms; /* DS:79A2 */
+extern struct Wager g_raceWagerTerms;
 
 #define NUM_RACERS 22
 #define RACER_KING 21
@@ -17,30 +17,30 @@ enum RacerStatus {
     RACER_MET = 1
 };
 
-extern struct Racer g_racerRecordsArray[];                           /* DS:7FF8 */
-extern int g_bannerX;                                   /* DS:51EE */
-extern int g_passCount;                                 /* DS:51F0 */
-extern int g_lastRival;                                 /* DS:51F8 */
-extern int g_refuseMsgs[][5];                           /* DS:51FC */
-extern int g_acceptMsgs[][3];                           /* DS:5210 */
-extern struct Step g_animSteps[];                       /* DS:521E */
-extern char g_animCells[16];                            /* DS:525A */
-extern struct Cell g_endCellsA[20];                     /* DS:526A */
-extern struct Cell g_endCellsB[9];                      /* DS:52E2 */
-extern int g_endPics[];                                 /* DS:5318 */
-extern int g_endPics2[];                                /* DS:5328 */
-extern struct Btn g_jailBars[7];                        /* DS:5338 */
-extern struct Pair g_jailGaps[];                        /* DS:539A */
-extern struct Bitmap far *g_barJailPixels;                       /* DS:6E64 */
-extern int bn7648;                                      /* DS:7648 */
-extern int g_resultWin;                                      /* DS:7676 */
-extern int g_isKingState;                                      /* DS:7D40 */
-extern struct Spec *g_oppSpecPointer;                            /* DS:7D7A */
-extern struct Racer *g_selectedRacerPointer;                            /* DS:7D84 */
-extern int g_driverIdxSelVal;                                      /* DS:7F82 */
-extern int g_rivalHereState;                                      /* DS:7F86 */
-extern struct Bitmap far *g_edgeBmpJail;                       /* DS:82B8 */
-void bo_visit(void);                                  /* 0x0AB8B */
-void bo_jail(void);                                   /* 0x0B08C */
+extern struct Racer g_racerRecordsArray[];
+extern int g_bannerX;
+extern int g_passCount;
+extern int g_lastRival;
+extern int g_refuseMsgs[][5];
+extern int g_acceptMsgs[][3];
+extern struct Step g_animSteps[];
+extern char g_animCells[16];
+extern struct Cell g_endCellsA[20];
+extern struct Cell g_endCellsB[9];
+extern int g_endPics[];
+extern int g_endPics2[];
+extern struct Btn g_jailBars[7];
+extern struct Pair g_jailGaps[];
+extern struct Bitmap far *g_barJailPixels;
+extern int bn7648;
+extern int g_resultWin;
+extern int g_isKingState;
+extern struct Spec *g_oppSpecPointer;
+extern struct Racer *g_selectedRacerPointer;
+extern int g_driverIdxSelVal;
+extern int g_rivalHereState;
+extern struct Bitmap far *g_edgeBmpJail;
+void bo_visit(void);
+void bo_jail(void);
 
 #endif

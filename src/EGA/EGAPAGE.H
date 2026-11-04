@@ -4,6 +4,6 @@
 #define EGAPAGE_H
 #include "STRUCTS.H"
 
-void ep_show(int n);                               /* 0x2322E */
+void ep_show(int n);
 
 #endif

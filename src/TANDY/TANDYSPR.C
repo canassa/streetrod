@@ -11,9 +11,7 @@
 
 static void near restore_rect_back(struct Rect *r, struct Bitmap far *a, struct Bitmap far *b, int horiz);
 
-/* restore_rect_back @ 21A0:0CF4 (linear 0x226F4, 110 bytes)
-
-   Blit a rectangle between two bitmaps, offset by a scroll origin */
+/* Blit a rectangle between two bitmaps, offset by a scroll origin */
 
 static void near restore_rect_back(struct Rect *r, struct Bitmap far *a, struct Bitmap far *b, int horiz)
 {
@@ -32,9 +30,7 @@ static void near restore_rect_back(struct Rect *r, struct Bitmap far *a, struct 
     tb_copy(b, a, &blt, 1);
 }
 
-/* ts_step @ 21A0:0D62 (linear 0x22762, 965 bytes)
-
-   Erase and redraw one sprite on the screen page r_vid.back through the masked blitters, then flush
+/* Erase and redraw one sprite on the screen page r_vid.back through the masked blitters, then flush
    the touched rectangle to the page and advance the sprite */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 

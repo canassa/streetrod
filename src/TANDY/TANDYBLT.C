@@ -15,9 +15,7 @@ static void near copy_from_tandy(struct Bitmap far *src, struct Bitmap far *dst,
 static void near shift_nibbles(unsigned char *p, int dir, int n);
 static void near put_nibbles(char far *dst, char *src, int n, int odd);
 
-/* copy_from_tandy @ 21A0:00AC (linear 0x21AAC, 208 bytes)
-
-   Copy rows from a four-bank interleaved bitmap to a linear bitmap, one row per movedata */
+/* Copy rows from a four-bank interleaved bitmap to a linear bitmap, one row per movedata */
 
 static void near copy_from_tandy(struct Bitmap far *src, struct Bitmap far *dst, struct Clip *blt)
 {
@@ -47,9 +45,7 @@ static void near copy_from_tandy(struct Bitmap far *src, struct Bitmap far *dst,
     }
 }
 
-/* split_banks @ 21A0:017C (linear 0x21B7C, 143 bytes)
-
-   For the four interleaved banks work out the byte count and start offset of each */
+/* For the four interleaved banks work out the byte count and start offset of each */
 
 static void near split_banks(int x, int x0, int y, int *b, int *a)
 {
@@ -74,9 +70,7 @@ static void near split_banks(int x, int x0, int y, int *b, int *a)
     }
 }
 
-/* tb_compose @ 21A0:020B (linear 0x21C0B, 333 bytes)
-
-   Masked blit between interleaved-bank bitmaps, one mg_blit call per bank */
+/* Masked blit between interleaved-bank bitmaps, one mg_blit call per bank */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void tb_compose(struct Bitmap far *dst, struct Bitmap far *src, struct Bitmap far *mask, struct Blt *in)
@@ -121,9 +115,7 @@ void tb_compose(struct Bitmap far *dst, struct Bitmap far *src, struct Bitmap fa
     }
 }
 
-/* tb_masked @ 21A0:0358 (linear 0x21D58, 339 bytes)
-
-   Blit between bitmaps through the blitter selected by flag, in banks when the destination is
+/* Blit between bitmaps through the blitter selected by flag, in banks when the destination is
    interleaved */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
@@ -169,9 +161,7 @@ void tb_masked(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *in, i
     }
 }
 
-/* tb_copy @ 21A0:04AB (linear 0x21EAB, 460 bytes)
-
-   Clipped blit between bitmaps, picking the plain, interleaved or planar copy routine */
+/* Clipped blit between bitmaps, picking the plain, interleaved or planar copy routine */
 
 void tb_copy(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *r, int flags)
 {
@@ -208,9 +198,7 @@ void tb_copy(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *r, int 
     }
 }
 
-/* shift_nibbles @ 21A0:0677 (linear 0x22077, 181 bytes)
-
-   Shift a run of packed nibbles by one nibble, forwards or backwards */
+/* Shift a run of packed nibbles by one nibble, forwards or backwards */
 
 static void near shift_nibbles(unsigned char *p, int dir, int n)
 {
@@ -237,9 +225,7 @@ static void near shift_nibbles(unsigned char *p, int dir, int n)
     }
 }
 
-/* put_nibbles @ 21A0:072C (linear 0x2212C, 128 bytes)
-
-   Copy n packed nibbles to a far buffer, starting at the low nibble when odd */
+/* Copy n packed nibbles to a far buffer, starting at the low nibble when odd */
 
 static void near put_nibbles(char far *dst, char *src, int n, int odd)
 {
@@ -260,9 +246,7 @@ static void near put_nibbles(char far *dst, char *src, int n, int odd)
     }
 }
 
-/* tb_shifted @ 21A0:07AC (linear 0x221AC, 421 bytes)
-
-   Copy rows between 2-pixel-per-byte bitmaps, shifting each row through a buffer by a nibble */
+/* Copy rows between 2-pixel-per-byte bitmaps, shifting each row through a buffer by a nibble */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void tb_shifted(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *blt)

@@ -5,9 +5,7 @@
 #include "PC.H"
 #include "SYS.H"
 
-/* mo_reset @ 0F38:799A (linear 0x16D1A, 61 bytes)
-
-   Mouse driver present? Returns the INT 33h reset result (0 if the vector is empty) */
+/* Mouse driver present? Returns the INT 33h reset result (0 if the vector is empty) */
 
 int mo_reset(void)
 {
@@ -21,9 +19,7 @@ int mo_reset(void)
     return r.x.ax;
 }
 
-/* mo_buttons @ 0F38:79D7 (linear 0x16D57, 61 bytes)
-
-   Mouse function 3, buttons: bl bit 0 and bit 1 stored in two globals */
+/* Mouse function 3, buttons: bl bit 0 and bit 1 stored in two globals */
 
 void mo_buttons(void)
 {
@@ -36,9 +32,7 @@ void mo_buttons(void)
     g_mouse.right = r.h.bl & MOUSE_RIGHT_BUTTON;
 }
 
-/* mo_motion @ 0F38:7A14 (linear 0x16D94, 51 bytes)
-
-   Mouse function 0Bh, motion counters returned through two pointers */
+/* Mouse function 0Bh, motion counters returned through two pointers */
 
 void mo_motion(int *dx, int *dy)
 {
@@ -51,9 +45,7 @@ void mo_motion(int *dx, int *dy)
     *dy = r.x.dx;
 }
 
-/* mo_poll @ 0F38:7A47 (linear 0x16DC7, 218 bytes)
-
-   Mouse motion polling; accumulates mickeys and converts to pixel steps */
+/* Mouse motion polling; accumulates mickeys and converts to pixel steps */
 
 void mo_poll(void)
 {

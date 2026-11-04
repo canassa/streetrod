@@ -11,9 +11,7 @@
 
 static void near restore_rect(struct Rect *rect, struct Bitmap far *bm2, struct Bitmap far *bm1, int flag);
 
-/* restore_rect @ 1C11:17B4 (linear 0x1D8C4, 97 bytes)
-
-   Blit the part of one bitmap that lies under a rectangle */
+/* Blit the part of one bitmap that lies under a rectangle */
 
 static void near restore_rect(struct Rect *rect, struct Bitmap far *bm2, struct Bitmap far *bm1, int flag)
 {
@@ -26,9 +24,7 @@ static void near restore_rect(struct Rect *rect, struct Bitmap far *bm2, struct 
     cb_copy(bm1, bm2, (struct Blt *)&c, 1);
 }
 
-/* cs_step @ 1C11:1815 (linear 0x1D925, 1021 bytes)
-
-   Erase and redraw one sprite: restore the background under its old rectangles, draw it over the
+/* Erase and redraw one sprite: restore the background under its old rectangles, draw it over the
    screen pg and advance it */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 

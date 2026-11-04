@@ -14,16 +14,14 @@
 #include "SYS.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_cruiseRpmStep;                         /* DS:6C82 */
+static int g_cruiseRpmStep;
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Eng g_oppEngState;
 
-int g_cruiseRpmSteps[5] = {42, 26, 12, 8, 4};   /* DS:51D8 */
-int g_cruiseRatios[5] = {0, 200, 125, 71, 56};   /* DS:51E2 */
-int g_keepCruiseMusic = 0;   /* DS:51EC */
-
-/* dt_step @ 0000:8EA8 (linear 0x08EA8, 675 bytes) */
+int g_cruiseRpmSteps[5] = {42, 26, 12, 8, 4};
+int g_cruiseRatios[5] = {0, 200, 125, 71, 56};
+int g_keepCruiseMusic = 0;
 
 int dt_step(void)
 {

@@ -47,7 +47,7 @@ def cmd_scan(args):
     if missing:
         print(f"the scanner does not find {len(missing)}: " + ", ".join(fn_name(game[a]) for a in missing[:20]))
     for a in sized:
-        print(f"{fn_name(game[a])}: {game[a]['size']} bytes in its comment, the scanner finds {rows[a]['size']}")
+        print(f"{fn_name(game[a])}: {game[a]['size']} bytes in symbols.json, the scanner finds {rows[a]['size']}")
     if extra or missing or sized:
         sys.exit(1)
 

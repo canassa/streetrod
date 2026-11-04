@@ -51,8 +51,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   `./sr headers`) and a single `STRUCTS.H` is a plausible organisation, not a recovered one.
   Unused declarations cost nothing (rule 4d), so the include lists cannot be checked
   against the code.
-- **Annotations.** The function header comments (`/* NAME @ SSSS:OOOO (linear ...) */`), the
-  `/* DS:xxxx */` markers and the comments in general belong to the reconstruction.
+- **Annotations.** Original addresses and function extents are kept in `tools/sr/symbols.json`, separate from the source. The remaining explanatory comments belong to the reconstruction.
 
 ## Source forms
 

@@ -7,24 +7,23 @@
         EXTRN   _g_forceEga:WORD
 
         PUBLIC  _g_savedVideoMode
-_g_savedVideoMode DB      0                        ; DS:5AEE char
+_g_savedVideoMode DB      0
         PUBLIC  _g_egaMono
-_g_egaMono DB      0                        ; DS:5AEF char
+_g_egaMono DB      0
         PUBLIC  _g_savedEquip
-_g_savedEquip DB      0                        ; DS:5AF0 char
+_g_savedEquip DB      0
         PUBLIC  _g_egaMemory
-_g_egaMemory DB      0                        ; DS:5AF1 char
+_g_egaMemory DB      0
         PUBLIC  _g_egaSwitches
-_g_egaSwitches DB      0                        ; DS:5AF2 char
+_g_egaSwitches DB      0
         PUBLIC  _g_5af3
-_g_5af3 DB      0                        ; DS:5AF3 char
-S_5af4  DB      'Tandy', 0               ; DS:5AF4 string
-S_5afa  DB      'Tandy', 0               ; DS:5AFA string
-S_5b00  DB      'CGA', 0                 ; DS:5B00 string
+_g_5af3 DB      0
+S_5af4  DB      'Tandy', 0
+S_5afa  DB      'Tandy', 0
+S_5b00  DB      'CGA', 0
 
         .CODE S0000_TEXT
 
-; vd_restore @ 0000:E610 (linear 0x0E610, 31 bytes)
 ; Restore the equipment byte and the BIOS video mode saved by vd_detect.
 
         PUBLIC  _vd_restore
@@ -48,7 +47,6 @@ _vd_restore  PROC  FAR
         ret
 _vd_restore  ENDP
 
-; vd_detect @ 0000:E62F (linear 0x0E62F, 146 bytes)
 ; Video adapter detection: saves the current mode and equipment byte,
 ; asks the EGA BIOS, falls back to probing the CRTC cursor register (VGA/CGA).
 

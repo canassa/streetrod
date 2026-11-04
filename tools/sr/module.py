@@ -4,7 +4,7 @@ Each file has one command line, its MAKEFILE block: `$(CC) <flags> /NT<segment> 
 for C (the code segment it shares with its neighbours), `$(ASM) <flags> <source>,...;` for
 MASM (an assembler file names its code segment in its `.CODE` directive). `./sr check` and
 `./sr build` compile the file as it is in git with that line. A code file's extent in the
-image is the span of the functions it defines (their address comments, `source.py`). The module gate compares the file's
+image is the span of the functions it defines (their extents in symbols.json, read by `source.py`). The module gate compares the file's
 whole span with the image: bytes between functions, internal near-call displacements,
 internal calls and code-segment offsets. References to other objects and DGROUP stay
 relocation-masked and are checked by `refs`.
@@ -206,7 +206,7 @@ def gate(obj, procs, img, rows, data=False):
         end_exe += 1                         # the trailing alignment nop
     g.size_obj, g.size_exe = hi - lo, end_exe - first["addr"]
     off0 = first["off"] - p0.start          # segment offset of object offset 0
-    # Callers may reach members through different frames (the address comment has the one they use),
+    # Callers may reach members through different frames (symbols.json records the one they use),
     # so a code-segment offset is relative to the frame of the member that holds it.
     frames = [(find(procs, fname(r)).start, r["off"] - find(procs, fname(r)).start) for r in rows
               if find(procs, fname(r)) is not None]

@@ -112,7 +112,7 @@ ENDM
         .DATA
 
         PUBLIC  _g_keyMapData
-_g_keyMapData LABEL BYTE                  ; DS:5580
+_g_keyMapData LABEL BYTE
 K_RACE_OUTCOME LABEL BYTE
         KEY SC_N,          -1
         KEY SC_ENTER,      -1
@@ -421,7 +421,7 @@ K_MUSIC LABEL BYTE
         DB 0
 
         PUBLIC  _g_keyMaps
-_g_keyMaps DW      42                       ; DS:579F struct KeyMap *[]
+_g_keyMaps DW      42
         DW      OFFSET DGROUP:K_RACE_OUTCOME
         DW      OFFSET DGROUP:K_START_GAME
         DW      OFFSET DGROUP:K_LOAD

@@ -22,7 +22,7 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_score;                        /* DS:6C5E */
+static int g_score;
 static int near elapsed_hours(void);
 static int near score_beats_entry(int i);
 static void near insert_entry(int pos);
@@ -30,13 +30,11 @@ static void near insert_entry(int pos);
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Entry g_hallFameTbl[10];
 
-struct ManualEntry g_manual[51] = {{2, 2}, {3, 11}, {4, 6}, {6, 5}, {7, 9}, {8, 1}, {9, 4}, {10, 6}, {11, 10}, {12, 1}, {14, 7}, {15, 12}, {16, 2}, {18, 3}, {19, 11}, {20, 5}, {22, 10}, {23, 6}, {1, 3}, {2, 5}, {3, 9}, {4, 4}, {5, 8}, {6, 10}, {7, 7}, {8, 2}, {9, 12}, {10, 5}, {11, 1}, {12, 3}, {13, 11}, {14, 9}, {15, 8}, {16, 4}, {17, 6}, {18, 1}, {19, 10}, {20, 8}, {21, 9}, {22, 12}, {23, 7}, {24, 2}, {25, 3}, {26, 1}, {27, 8}, {28, 5}, {29, 11}, {30, 10}, {31, 4}, {32, 12}, {33, 9}};   /* DS:4B62 */
-int g_protectCycle = 0;   /* DS:4BC8 */
-int g_fameRowY[10] = {59, 70, 81, 92, 103, 114, 125, 136, 147, 158};   /* DS:4BCA */
+struct ManualEntry g_manual[51] = {{2, 2}, {3, 11}, {4, 6}, {6, 5}, {7, 9}, {8, 1}, {9, 4}, {10, 6}, {11, 10}, {12, 1}, {14, 7}, {15, 12}, {16, 2}, {18, 3}, {19, 11}, {20, 5}, {22, 10}, {23, 6}, {1, 3}, {2, 5}, {3, 9}, {4, 4}, {5, 8}, {6, 10}, {7, 7}, {8, 2}, {9, 12}, {10, 5}, {11, 1}, {12, 3}, {13, 11}, {14, 9}, {15, 8}, {16, 4}, {17, 6}, {18, 1}, {19, 10}, {20, 8}, {21, 9}, {22, 12}, {23, 7}, {24, 2}, {25, 3}, {26, 1}, {27, 8}, {28, 5}, {29, 11}, {30, 10}, {31, 4}, {32, 12}, {33, 9}};
+int g_protectCycle = 0;
+int g_fameRowY[10] = {59, 70, 81, 92, 103, 114, 125, 136, 147, 158};
 
-/* fa_protect_check @ 0000:2FC8 (linear 0x02FC8, 403 bytes)
-
-   The manual lookup copy protection: asks for the colour of the car key or car
+/* The manual lookup copy protection: asks for the colour of the car key or car
    icon on a random manual page and returns 1 if the answer matches. */
 
 int fa_protect_check(void)
@@ -84,8 +82,6 @@ int fa_protect_check(void)
         return 0;
     return 1;
 }
-
-/* fa_end_menu @ 0000:315B (linear 0x0315B, 373 bytes) */
 
 int fa_end_menu(void)
 {
@@ -137,8 +133,6 @@ int fa_end_menu(void)
     return key;
 }
 
-/* score_beats_entry @ 0000:32D0 (linear 0x032D0, 36 bytes) */
-
 static int near score_beats_entry(int i)
 {
     return atoi(g_hallFameTbl[i].score) > g_score;
@@ -146,8 +140,6 @@ static int near score_beats_entry(int i)
 
 int g_nScore;
 char g_driverName[16];
-
-/* insert_entry @ 0000:32F4 (linear 0x032F4, 129 bytes) */
 
 static void near insert_entry(int pos)
 {
@@ -168,8 +160,6 @@ static void near insert_entry(int pos)
     }
 }
 
-/* elapsed_hours @ 0000:3375 (linear 0x03375, 42 bytes) */
-
 static int near elapsed_hours(void)
 {
     int a;
@@ -179,11 +169,9 @@ static int near elapsed_hours(void)
     return ga_day() * 24 + a + 12;
 }
 
-struct Colors g_fameColors1 = {3, 5, 5, 4, 1};   /* DS:4BE2 */
-struct Colors g_fameColors2 = {3, 4, 4, 3, 1};   /* DS:4BE8 */
-char g_4bed = 0;   /* DS:4BED */
-
-/* fa_show @ 0000:339F (linear 0x0339F, 628 bytes) */
+struct Colors g_fameColors1 = {3, 5, 5, 4, 1};
+struct Colors g_fameColors2 = {3, 4, 4, 3, 1};
+char g_4bed = 0;
 
 void fa_show(int add)
 {

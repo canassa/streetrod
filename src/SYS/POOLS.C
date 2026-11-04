@@ -6,8 +6,6 @@
 struct Node2 g_storageCarAllocTable[16];
 struct Node g_allocationNodesPartList[140];
 
-/* pl_init @ 0000:3614 (linear 0x03614, 148 bytes) */
-
 void near pl_init(int reset)
 {
     struct Node2 *p2;
