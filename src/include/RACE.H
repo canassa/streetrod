@@ -26,7 +26,7 @@ extern int gz7d7e;                                      /* DS:7D7E */
 extern int g7d82p;                                      /* DS:7D82 */
 extern int a_7f88d;                                     /* DS:7F88 */
 extern int h_8264;                                      /* DS:8264 */
-extern int g826af;                                      /* DS:826A */
+extern int g_backGlassXState;                                      /* DS:826A */
 extern int ae826cv;                                     /* DS:826C */
 extern int ar826e;                                      /* DS:826E */
 extern int q_8270;                                      /* DS:8270 */

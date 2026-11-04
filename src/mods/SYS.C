@@ -46,7 +46,7 @@ struct Dev bs79aa;
 struct Dev ao79c6t;
 void (interrupt far *w_7aaa)(void);
 char g7f32s[80];
-int g8b8eb;
+int g_menuLevel;
 struct Lims ao8b90v;
 struct Hot *at8ba8v;
 int az8baa;
@@ -515,7 +515,7 @@ int sys_wait_input(int ticks)
                 g_inputKey = 0;
                 return 0x3eb;
             }
-            if (g8b8eb) {
+            if (g_menuLevel) {
                 if (i = (x >= ao8b90v.x1 && x < ao8b90v.x2 && y >= ao8b90v.y1 && y < ao8b90v.y2)
                         ? az8baa : menu_hit(x, y))
                     return i;
@@ -541,7 +541,7 @@ int sys_wait_input(int ticks)
             g_cursorDirty = 0;
             _enable();
             cursor_draw(x = g_cursorDrawX, y = g_cursorDrawY);
-            if (g8b8eb
+            if (g_menuLevel
                 && (x < ao8b90v.x1 || x >= ao8b90v.x2 || y < ao8b90v.y1 || y >= ao8b90v.y2)) {
                 res = az8baa;
                 if (i = menu_hit(x, y)) {
@@ -571,7 +571,7 @@ int sys_wait_input(int ticks)
     return 0;
 }
 
-struct Eng e_78e0;
+struct Eng g_driveEng;
 int g_vibratoActive;
 struct Tone *bn82c4;
 
@@ -698,7 +698,7 @@ void sys_drive_start(void)
         g_mouseShiftY = 6;
     }
     g_lastDx = g_lastDy = g_buttons = g_click = 0;
-    e_78e0.f2 = e_78e0.f4 = 0;
+    g_driveEng.f2 = g_driveEng.f4 = 0;
     g_driveDiv = 0;
     outp(0x42, 0x1e);
     outp(0x42, 0);
@@ -1036,8 +1036,8 @@ int z_8b7c;
 
 void sys_stop_drive(void)
 {
-    e_78e0.f14 = e_78e0.f16 = e_78e0.f2 = e_78e0.f4 = g_05d6 = 0;
-    e_78e0.fbe = e_78e0.fc0;
+    g_driveEng.f14 = g_driveEng.f16 = g_driveEng.f2 = g_driveEng.f4 = g_05d6 = 0;
+    g_driveEng.fbe = g_driveEng.fc0;
 }
 
 /* sys_drive_isr @ 0000:238C (linear 0x0238C, 2062 bytes) */
@@ -1067,9 +1067,9 @@ void interrupt far sys_drive_isr(void)
             }
             if (g_tickDiv & 1) {
                 if (g_carAnim == 0) {
-                    r = (unsigned)(((long)e_78e0.fe * e_78e0.fe) >> 10);
+                    r = (unsigned)(((long)g_driveEng.fe * g_driveEng.fe) >> 10);
                     r += r >> (r + 2) >> 3;
-                    val.w = 50000 - ((e_78e0.fe == 5700 ? 10000 : 0) + r);
+                    val.w = 50000 - ((g_driveEng.fe == 5700 ? 10000 : 0) + r);
                     outp(0x42, val.b[0]);
                     outp(0x42, val.b[1]);
                 } else if (g_carMoving) {
@@ -1166,131 +1166,131 @@ void interrupt far sys_drive_isr(void)
                     g_fireLatch = 0;
                 }
                 if (g_demo || g_autoDrive) {
-                    if (e_78e0.f14 * 4 + e_78e0.fe < 5700) {
+                    if (g_driveEng.f14 * 4 + g_driveEng.fe < 5700) {
                         if (ar7e8av.m7e8a > ao7d2ev.m7d30 ||
                             (!a_7eaap.m7ec0 ? 0x17c : 0x3fc) - 60 < ao7d2ev.m7d30)
                             flag = 1;
-                    } else if (e_78e0.f18 < e_78e0.f1c && ao8228u) {
+                    } else if (g_driveEng.f18 < g_driveEng.f1c && ao8228u) {
                         c = 1;
                         flag = 1;
                         g_autoShifts++;
                     }
-                    if (e_78e0.fe < 2000 && e_78e0.f18 > 1 && !flag)
+                    if (g_driveEng.fe < 2000 && g_driveEng.f18 > 1 && !flag)
                         c = 1;
-                    if (e_78e0.f20 && e_78e0.f18 > 0)
+                    if (g_driveEng.f20 && g_driveEng.f18 > 0)
                         c = 0;
                 }
                 if (bw8aca) {
-                    b_82bc += e_78e0.f0;
-                    e_78e0.fc0++;
+                    b_82bc += g_driveEng.f0;
+                    g_driveEng.fc0++;
                 }
                 if ((!a_7eaap.m7ec0 ? 0x17c : 0x3fc) < ao7d2ev.m7d30) {
                     prev = 1;
                     flag = s = 0;
-                    if (e_78e0.f0 > 15)
-                        e_78e0.f0 -= 15;
+                    if (g_driveEng.f0 > 15)
+                        g_driveEng.f0 -= 15;
                 }
                 if (g_brakeTicks > 0) {
                     prev = 1;
                     flag = s = 0;
                     g_brakeTicks--;
                 }
-                if (e_78e0.fe > 5000) {
+                if (g_driveEng.fe > 5000) {
                     a_7eaap.m7eb0->rack.s[0]->b += !a_7eaap.m7ec0 ? 1 : 1;
                     a_7eaap.m7eb0->slot6->b += !a_7eaap.m7ec0 ? 1 : 1;
                 }
                 if (!(g_0600 & (!a_7eaap.m7ec0 ? 0xf : 0xf)))
                     a_7eaap.m7eb0->rack.s[0]->b++;
                 if ((i = a_7eaap.m7eb0->rack.s[0]->b) >= 9900) {
-                    e_78e0.fbc |= 5;
+                    g_driveEng.fbc |= 5;
                     sys_stop_drive();
                 }
                 if (flag) {
-                    e_78e0.fe += e_78e0.f14;
-                    if (e_78e0.f20 && e_78e0.fe > 5690)
-                        e_78e0.fe = 5690;
-                    if (e_78e0.fe > 5700) {
-                        e_78e0.fe = 5700;
+                    g_driveEng.fe += g_driveEng.f14;
+                    if (g_driveEng.f20 && g_driveEng.fe > 5690)
+                        g_driveEng.fe = 5690;
+                    if (g_driveEng.fe > 5700) {
+                        g_driveEng.fe = 5700;
                         if (15 - i / 1000 < ++g_overRev) {
-                            e_78e0.fbc |= 5;
+                            g_driveEng.fbc |= 5;
                             sys_stop_drive();
                         }
                     }
-                } else if (e_78e0.fe > 1500 ||
-                           (e_78e0.f18 > 0 && e_78e0.fe > e_78e0.f16))
-                    e_78e0.fe -= e_78e0.f16;
-                if (e_78e0.fe < 5700)
+                } else if (g_driveEng.fe > 1500 ||
+                           (g_driveEng.f18 > 0 && g_driveEng.fe > g_driveEng.f16))
+                    g_driveEng.fe -= g_driveEng.f16;
+                if (g_driveEng.fe < 5700)
                     g_overRev = 0;
-                top = e_78e0.f0 < 5 && !flag && e_78e0.f18 > 0;
+                top = g_driveEng.f0 < 5 && !flag && g_driveEng.f18 > 0;
                 if (c || top ||
-                    (e_78e0.f20 && e_78e0.f24 > 1 &&
-                     ((flag && e_78e0.fe > e_78e0.f22 && e_78e0.f18 < e_78e0.f1c) ||
-                      (!flag && e_78e0.f18 > 1 && !e_78e0.f42)))) {
-                    a_7eaap.m7eb0->slot6->b += e_78e0.fe > 5000 ? 15 : 3;
+                    (g_driveEng.f20 && g_driveEng.f24 > 1 &&
+                     ((flag && g_driveEng.fe > g_driveEng.f22 && g_driveEng.f18 < g_driveEng.f1c) ||
+                      (!flag && g_driveEng.f18 > 1 && !g_driveEng.f42)))) {
+                    a_7eaap.m7eb0->slot6->b += g_driveEng.fe > 5000 ? 15 : 3;
                     if (g_demo == 0) {
                         i = a_7eaap.m7eb0->slot6->b;
                         if (i >= 9900 ||
-                            (e_78e0.f20 == 0 && flag && e_78e0.fe > 5000 &&
+                            (g_driveEng.f20 == 0 && flag && g_driveEng.fe > 5000 &&
                              i / 100 + 100 > random_int(3277))) {
-                            e_78e0.fbc |= 0x11;
+                            g_driveEng.fbc |= 0x11;
                             sys_stop_drive();
                         }
                     }
-                    if ((prev || (!e_78e0.f42 && !flag)) && e_78e0.f18 > 0)
-                        e_78e0.f18--;
-                    else if ((flag || (e_78e0.f42 > 0 && !prev)) &&
-                             e_78e0.f18 < e_78e0.f1c)
-                        e_78e0.f18++;
-                    if (e_78e0.f20) {
+                    if ((prev || (!g_driveEng.f42 && !flag)) && g_driveEng.f18 > 0)
+                        g_driveEng.f18--;
+                    else if ((flag || (g_driveEng.f42 > 0 && !prev)) &&
+                             g_driveEng.f18 < g_driveEng.f1c)
+                        g_driveEng.f18++;
+                    if (g_driveEng.f20) {
                         if (c)
-                            e_78e0.f24 = e_78e0.f24 == 1 ? 2 : 1;
-                        if (top || e_78e0.f18 == 0)
-                            e_78e0.f24 = 1;
-                        if (e_78e0.f24 == 1)
-                            e_78e0.f18 = 0;
+                            g_driveEng.f24 = g_driveEng.f24 == 1 ? 2 : 1;
+                        if (top || g_driveEng.f18 == 0)
+                            g_driveEng.f24 = 1;
+                        if (g_driveEng.f24 == 1)
+                            g_driveEng.f18 = 0;
                     } else if (top)
-                        e_78e0.f18 = 0;
-                    e_78e0.f1a = 1;
-                    e_78e0.f40 = e_78e0.f34[e_78e0.f18];
-                    if ((e_78e0.fe = e_78e0.f0 * e_78e0.f40) == 0)
-                        e_78e0.fe = 1505;
+                        g_driveEng.f18 = 0;
+                    g_driveEng.f1a = 1;
+                    g_driveEng.f40 = g_driveEng.f34[g_driveEng.f18];
+                    if ((g_driveEng.fe = g_driveEng.f0 * g_driveEng.f40) == 0)
+                        g_driveEng.fe = 1505;
                 }
                 i = -1;
                 do {
-                    sp = &e_78e0.gear[e_78e0.f18].r[++i];
-                } while (i < 2 && sp->f2 < e_78e0.fe);
-                if (i != e_78e0.f42 || e_78e0.f1a) {
-                    e_78e0.f42 = i;
-                    e_78e0.f14 = sp->f4;
-                    e_78e0.f16 = sp->f6;
+                    sp = &g_driveEng.gear[g_driveEng.f18].r[++i];
+                } while (i < 2 && sp->f2 < g_driveEng.fe);
+                if (i != g_driveEng.f42 || g_driveEng.f1a) {
+                    g_driveEng.f42 = i;
+                    g_driveEng.f14 = sp->f4;
+                    g_driveEng.f16 = sp->f6;
                 }
-                if (prev || (g_onShoulder && e_78e0.f0 > 8)) {
-                    if ((e_78e0.f0 -= (e_78e0.f0 >> 4) + 2) < 0)
-                        e_78e0.f0 = 0;
-                    if ((e_78e0.fe = e_78e0.f0 * e_78e0.f40) < 1500)
-                        e_78e0.fe = 1500;
-                } else if (e_78e0.f18 == 0 && e_78e0.f0) {
-                    if (e_78e0.f0)
-                        e_78e0.f0--;
-                    e_78e0.fe = 30 * e_78e0.f0 + 1500;
-                } else if (e_78e0.f40)
-                    e_78e0.f0 = e_78e0.fe / e_78e0.f40;
-                if (s && abs(e_78e0.f2 + g_cursorX) > abs(e_78e0.f2)) {
-                    if (abs(g_cursorX) + abs(e_78e0.f4) == abs(e_78e0.f4 + g_cursorX) &&
-                        abs(e_78e0.f2) < abs(e_78e0.f4))
-                        e_78e0.f2 = e_78e0.f4;
-                    e_78e0.f2 += g_cursorX << 1;
-                    if (abs(e_78e0.f2) > 24)
-                        e_78e0.f2 = e_78e0.f2 > 0 ? 24 : -24;
+                if (prev || (g_onShoulder && g_driveEng.f0 > 8)) {
+                    if ((g_driveEng.f0 -= (g_driveEng.f0 >> 4) + 2) < 0)
+                        g_driveEng.f0 = 0;
+                    if ((g_driveEng.fe = g_driveEng.f0 * g_driveEng.f40) < 1500)
+                        g_driveEng.fe = 1500;
+                } else if (g_driveEng.f18 == 0 && g_driveEng.f0) {
+                    if (g_driveEng.f0)
+                        g_driveEng.f0--;
+                    g_driveEng.fe = 30 * g_driveEng.f0 + 1500;
+                } else if (g_driveEng.f40)
+                    g_driveEng.f0 = g_driveEng.fe / g_driveEng.f40;
+                if (s && abs(g_driveEng.f2 + g_cursorX) > abs(g_driveEng.f2)) {
+                    if (abs(g_cursorX) + abs(g_driveEng.f4) == abs(g_driveEng.f4 + g_cursorX) &&
+                        abs(g_driveEng.f2) < abs(g_driveEng.f4))
+                        g_driveEng.f2 = g_driveEng.f4;
+                    g_driveEng.f2 += g_cursorX << 1;
+                    if (abs(g_driveEng.f2) > 24)
+                        g_driveEng.f2 = g_driveEng.f2 > 0 ? 24 : -24;
                     g_cursorX = 0;
-                    e_78e0.f4 = e_78e0.f2;
+                    g_driveEng.f4 = g_driveEng.f2;
                 } else
-                    e_78e0.f2 = 0;
-                if (abs(e_78e0.f4) > 0)
-                    e_78e0.f4 += e_78e0.f4 > 0 ? -((e_78e0.f4 >> 2) + 1)
-                                               : ((-e_78e0.f4 >> 2) + 1);
+                    g_driveEng.f2 = 0;
+                if (abs(g_driveEng.f4) > 0)
+                    g_driveEng.f4 += g_driveEng.f4 > 0 ? -((g_driveEng.f4 >> 2) + 1)
+                                               : ((-g_driveEng.f4 >> 2) + 1);
                 if (bw8aca && road_check_crash()) {
-                    e_78e0.fbc |= 0x21;
+                    g_driveEng.fbc |= 0x21;
                     sys_stop_drive();
                 }
                 g_driveBusy = 0;

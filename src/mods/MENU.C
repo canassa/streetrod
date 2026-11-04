@@ -34,10 +34,10 @@ int a_8b9ca;
 int *az8b9ez;
 int x_8ba0;
 struct Hot *az8ba2t;
-char ax8ba4u;
+char g_headerEditableState;
 struct Hot *av8ba6v;
 int ai8bacx;
-int av8efe;
+int g_hotMenuGroupState;
 
 int g_hotChain = 0;   /* DS:07A8 */
 char g_wearText[12] = "(xx% worn)";   /* DS:07AA */
@@ -102,7 +102,7 @@ void menu_draw_hot(struct Hot *p)
                       ((p->y2 - p->y1 - 8) >> 1) + p->y1, str);
             goto box;
         case 7:
-            ax8ba4u = 1;
+            g_headerEditableState = 1;
         case 8:
             if (p->f2 != colr)
                 x_colors = bustyle->pal[colr = p->f2];
@@ -146,14 +146,14 @@ void menu_push(int id)
     struct Hot *p;
     struct Colors saved;
 
-    if (g8b8eb < 4) {
+    if (g_menuLevel < 4) {
         cursor_ctl(-3);
-        ai8b86y[g8b8eb++] = av8efe = id;
+        ai8b86y[g_menuLevel++] = g_hotMenuGroupState = id;
         ao8b90v.x1 = ao8b90v.x2 = ao8b90v.y1 = ao8b90v.y2 = -1;
         ai8bacx = (p = &g_hots[g_groupHot[id]])->f4;
         av8ba6v = (p + 1)->f0 > 9 ? p + 1 : 0;
         a_8b9ca = a_8b9ap = az8ba2t = 0;
-        ax8ba4u = 0;
+        g_headerEditableState = 0;
         av8b98 = p->f0 == 3;
         saved = x_colors;
         g_hotChain = -1;
@@ -178,14 +178,14 @@ void menu_push(int id)
 
 void menu_pop(int keep)
 {
-    if (g8b8eb) {
+    if (g_menuLevel) {
         sys_keymap_restore(0);
         av8ba6v = 0;
-        if (--g8b8eb && keep) {
-            --g8b8eb;
-            menu_push(ai8b86y[g8b8eb]);
+        if (--g_menuLevel && keep) {
+            --g_menuLevel;
+            menu_push(ai8b86y[g_menuLevel]);
         } else {
-            av8efe = 0;
+            g_hotMenuGroupState = 0;
             av8ba6v = 0;
             ao8b90v.x1 = ao8b90v.y1 = ao8b90v.x2 = ao8b90v.y2 = az8baa = -1;
         }
@@ -196,7 +196,7 @@ void menu_pop(int keep)
 
 void menu_reset(void)
 {
-    g8b8eb = ai8bacx = 0;
+    g_menuLevel = ai8bacx = 0;
     av8ba6v = 0;
     ao8b90v.x1 = ao8b90v.y1 = ao8b90v.x2 = ao8b90v.y2 = az8baa = 0;
 }
@@ -439,7 +439,7 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
     if (hotn = az8ba2t) {
         bufpl = g_239e + hotn->f4;
         n9 = (hotn->x2 - hotn->x1) / 6;
-        if (!ax8ba4u) {
+        if (!g_headerEditableState) {
             strcpy(bufpl, g_desc + lp11[sel]);
             if (buf && (wear = buf1[sel]) != -128) {
                 strcat(bufpl, g_wearPad);
@@ -521,7 +521,7 @@ restore:
                 x_8ba0 = topk + key2;
                 i = topk + key2 - 1;
                 if (hotn) {
-                    if (!ax8ba4u || i == sel) {
+                    if (!g_headerEditableState || i == sel) {
                         strcpy(bufpl, g_desc + lp11[i]);
                         if (kind == 5 && !strcmp(g_blankName, bufpl))
                             strcpy(bufpl, "\0");

@@ -30,7 +30,7 @@ extern int g_carBg16[7];                                   /* DS:02C2 */
 extern int g_spriteBottomCut;                                      /* DS:02D0 */
 extern int by70e2;                                      /* DS:70E2 */
 extern struct Bitmap far *g755cu;                       /* DS:755C */
-extern char far *ab7564z;                               /* DS:7564 */
+extern char far *g_imageBufferPointer;                               /* DS:7564 */
 extern struct Video r_vid;                              /* DS:822A */
 extern char g_graphicsUp;                               /* DS:8247 */
 extern int bl82c6;                                      /* DS:82C6 */

@@ -41,11 +41,11 @@ int a_7d16q;
 unsigned g7d68m[3][3];
 struct Spr6 ap818c[26];
 unsigned ag8baey[3][3];
-int h_8bc8;
+int g_lib1Count;
 int s_8dd2;
-char *aw8dd4x;
+char *g_library1Path;
 char *au8dd6y;
-int h_8dd8[4][3];
+int g_acceptProbability[4][3];
 
 static int near pic_index(int n);
 static void near open_lib(int n);
@@ -54,7 +54,7 @@ static void near unscramble_hall(void);
 static void near scramble_hall(void);
 
 char *g_dataFileName = "hot_data";   /* DS:4EA2 */
-char *g_dataBlocks[13] = {(char *)av7ff8, (char *)g7d86n, (char *)w_8df0, (char *)g7682n, (char *)ai70e4t, (char *)ap818c, g_desc, (char *)&a_7d16q, g_239e, (char *)g7d68m, (char *)ag8baey, (char *)h_8dd8, (char *)a784als};   /* DS:4EA4 */
+char *g_dataBlocks[13] = {(char *)av7ff8, (char *)g7d86n, (char *)w_8df0, (char *)g7682n, (char *)ai70e4t, (char *)ap818c, g_desc, (char *)&a_7d16q, g_239e, (char *)g7d68m, (char *)ag8baey, (char *)g_acceptProbability, (char *)a784als};   /* DS:4EA4 */
 unsigned g_dataSizes[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};   /* DS:4EBE */
 int g_lib1Handle = 0;   /* DS:4ED8 */
 int g_lib2Handle = 0;   /* DS:4EDA */
@@ -110,7 +110,7 @@ static int near pic_index(int n)
 /* open_lib @ 0F38:6089 (linear 0x15409, 290 bytes)
 
    Make sure the picture file holding picture number n is open (the pictures come in two
-   files, split at h_8bc8). Closes the other one, asks for the right disk until the open works
+   files, split at g_lib1Count). Closes the other one, asks for the right disk until the open works
    and checks the file header word */
 
 static void near open_lib(int n)
@@ -119,7 +119,7 @@ static void near open_lib(int n)
     int tries;
     unsigned got;
 
-    if (pic_index(n) >= h_8bc8) {
+    if (pic_index(n) >= g_lib1Count) {
         kind = 2;
         g_curName = au8dd6y;
         g_curHandle = &g_lib2Handle;
@@ -127,10 +127,10 @@ static void near open_lib(int n)
         g_curCount = &s_8dd2;
     } else {
         kind = 1;
-        g_curName = aw8dd4x;
+        g_curName = g_library1Path;
         g_curHandle = &g_lib1Handle;
         g_otherHandle = &g_lib2Handle;
-        g_curCount = &h_8bc8;
+        g_curCount = &g_lib1Count;
     }
     if (*g_curHandle == 0) {
         _dos_close(*g_otherHandle);
@@ -143,7 +143,7 @@ static void near open_lib(int n)
                 sys_exit();
             screen_wait_msg(g_msgInsertDisk);
         }
-        if (_dos_read(*g_curHandle, (void far *)g_curCount, 2, &got) || got != 2 || h_8bc8 + s_8dd2 != 0x115) {
+        if (_dos_read(*g_curHandle, (void far *)g_curCount, 2, &got) || got != 2 || g_lib1Count + s_8dd2 != 0x115) {
             screen_wait_msg(g_msgBadFormat);
             sys_exit();
         }
@@ -153,7 +153,7 @@ static void near open_lib(int n)
 /* disk_read_index @ 0F38:61AB (linear 0x1552B, 271 bytes)
 
    Read the picture headers of one picture file into g_slot: which 1 is the first file,
-   anything else the second (its entries follow the first file's, h_8bc8 of them). Clears the
+   anything else the second (its entries follow the first file's, g_lib1Count of them). Clears the
    run time fields of each entry. Returns the largest data size found */
 
 int disk_read_index(int which)
@@ -166,11 +166,11 @@ int disk_read_index(int which)
     int base;
     struct Slot far *sl;
 
-    base = which == 1 ? 0 : h_8bc8;
+    base = which == 1 ? 0 : g_lib1Count;
     num = which == 1 ? 1 : 1000;
     height = 0;
     open_lib(num);
-    count = which == 1 ? h_8bc8 : s_8dd2;
+    count = which == 1 ? g_lib1Count : s_8dd2;
     for (i = 0; i < count; i++) {
         sl = &g_slot[base + i];
         if (disk_seek(*g_curHandle, (long)(i * 0x1e + 2)) ||
@@ -288,7 +288,7 @@ void disk_free_pic(int n)
 /* disk_unpack_pic @ 0F38:65AE (linear 0x1592E, 593 bytes)
 
    Unpack picture number id into the bitmap bm (a new one when bm is 0). The picture is
-   loaded to the work area ab7564z first; its data is RLE coded (rle_decode) and expanded for the video
+   loaded to the work area g_imageBufferPointer first; its data is RLE coded (rle_decode) and expanded for the video
    mode in use into the planes bits and alt of the bitmap. Returns the bitmap */
 
 struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
@@ -303,7 +303,7 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
     struct Slot far *sl;
 
     cursor_ctl(-4);
-    res = load_pic(id, 0, ab7564z);
+    res = load_pic(id, 0, g_imageBufferPointer);
     cur = sl = &g_slot[pic_index(id)];
     if (g_picNewHeader)
         pic = mem_new_bitmap(cur->f0, cur->f2, cur->f6, 1, bm);
@@ -427,8 +427,8 @@ void disk_free_list(int *list)
 
 /* disk_open_libs @ 0F38:6943 (linear 0x15CC3, 566 bytes)
 
-   Open the two picture files (names aw8dd4x and au8dd6y, drive letter patched into their
-   first character) and read the entry counts h_8bc8 and s_8dd2 from their headers. disks is the
+   Open the two picture files (names g_library1Path and au8dd6y, drive letter patched into their
+   first character) and read the entry counts g_lib1Count and s_8dd2 from their headers. disks is the
    number of disk drives wanted: 2 only when the equipment word says there are two floppies. mode 2
    and 5 pick the other file names. Any failure shows an error text */
 
@@ -443,24 +443,24 @@ void disk_open_libs(int disks, int mode)
         disks = 2;
     else
         disks = 1;
-    aw8dd4x = (mode == 2 || mode == 5) ? g_lib1Name : g_lib1cName;
-    *aw8dd4x = g_curDrive + 0x40;
-    err = _dos_open(aw8dd4x, 0, &g_lib1Handle);
+    g_library1Path = (mode == 2 || mode == 5) ? g_lib1Name : g_lib1cName;
+    *g_library1Path = g_curDrive + 0x40;
+    err = _dos_open(g_library1Path, 0, &g_lib1Handle);
     if (err || g_lib1Handle == 0) {
         if (g_curDrive > 2) {
             screen_wait_msg(g_msgCopyFiles);
         } else {
-            strcpy(g_msgNotFound + 0x10, aw8dd4x + 2);
+            strcpy(g_msgNotFound + 0x10, g_library1Path + 2);
             screen_wait_msg(g_msgNotFound);
         }
         sys_exit();
     }
-    if (_dos_read(g_lib1Handle, (void far *)&h_8bc8, 2, &err) || err != 2) {
+    if (_dos_read(g_lib1Handle, (void far *)&g_lib1Count, 2, &err) || err != 2) {
         screen_wait_msg(g_msgBadFormat);
         sys_exit();
     }
     au8dd6y = (mode == 2 || mode == 5) ? g_lib2Name : g_lib2cName;
-    *au8dd6y = *aw8dd4x;
+    *au8dd6y = *g_library1Path;
     if (_dos_open(au8dd6y, 0, &g_lib2Handle) || g_lib2Handle == 0) {
         if (g_curDrive > 2) {
             screen_wait_msg(g_msgCopyFiles);
@@ -481,7 +481,7 @@ void disk_open_libs(int disks, int mode)
         }
     }
     if (g_lib2Handle) {
-        if (_dos_read(g_lib2Handle, (void far *)&s_8dd2, 2, &err) || err != 2 || h_8bc8 + s_8dd2 != 0x115) {
+        if (_dos_read(g_lib2Handle, (void far *)&s_8dd2, 2, &err) || err != 2 || g_lib1Count + s_8dd2 != 0x115) {
             screen_wait_msg(g_msgBadFormat);
             sys_exit();
         }

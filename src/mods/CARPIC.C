@@ -35,7 +35,7 @@ struct Bitmap am6e68x[12];
 struct Bitmap far *at70a8;
 int (far *g78c6c)(struct Sprite *);
 struct Band dz7ec2[4];
-struct Bitmap bw7fa8;
+struct Bitmap g_carBackdropHdrBmp;
 int l_8262;
 
 int g_delayScale = 1;   /* DS:58E2 */
@@ -45,7 +45,7 @@ int g_wheelPicIds[3] = {1001, 1002, 1000};   /* DS:58E8 */
 int g_driveRebuild = 0;   /* DS:58EE */
 struct Cmd g_animScripts[44] = {{1, 0, -1, -1}, {6, 0, 0, 0}, {2, 0, -1, -1}, {10, 0, 8, 1}, {9, 2, 48, 111}, {5, 0, 250, -1}, {11, 0, 10, 7}, {5, 0, 0, -1}, {11, 4, 10, 7}, {6, 0, 0, 0}, {4, 0, -1, -1}, {6, 0, 0, 0}, {3, 0, -1, -1}, {8, 0, 1233, 2}, {10, 0, 48, 64}, {9, 2, 200, 81}, {13, 0, -1, -1}, {11, 0, 16, 0}, {2, 1, 0, 0}, {11, 4, 16, 0}, {2, 1, 48, 0}, {11, 4, 16, 0}, {2, 1, 96, 0}, {11, 4, 20, 0}, {6, 0, 0, 0}, {5, 0, -1, -1}, {6, 0, 0, 0}, {6, 0, -1, -1}, {6, 0, 0, 0}, {7, 0, -1, -1}, {6, 0, 0, 0}, {8, 0, -1, -1}, {8, 0, 1075, 2}, {10, 0, 16, 94}, {9, 2, 160, 52}, {11, 0, 4, 0}, {2, 1, 0, 0}, {11, 4, 4, 0}, {2, 1, 16, 0}, {11, 4, 4, 0}, {2, 1, 32, 0}, {11, 4, 4, 36}, {6, 0, 0, 0}, {6, 0, 0, 0}};   /* DS:58F0 */
 int g_animScriptStart[9] = {8, 0, 2, 12, 10, 25, 27, 29, 31};   /* DS:59F8 */
-struct Bitmap far *g_backdrop = (struct Bitmap far *)&bw7fa8;   /* DS:5A0A */
+struct Bitmap far *g_backdrop = (struct Bitmap far *)&g_carBackdropHdrBmp;   /* DS:5A0A */
 int g_carMoving = 0;   /* DS:5A0E */
 struct Rect g_overlayRectA = {0, 0, 80, 0};   /* DS:5A10 */
 struct Rect g_overlayRectB = {88, 0, 136, 0};   /* DS:5A18 */
@@ -277,7 +277,7 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
     *out = F_15BBE(g7d86n[idx].f8, 1);
     ar826e = p69->b0;
     q_8270 = p69->b1;
-    g826af = p69->b2;
+    g_backGlassXState = p69->b2;
     ae826cv = p69->b3;
     h_8264 = p69->b2 && p69->b3;
     d_8266 = p69->b4;
@@ -471,7 +471,7 @@ again:
     if (d_8266 > 0) {
         d_8266 += x0;
         ap8268t += aw8260y;
-        g826af += x0;
+        g_backGlassXState += x0;
         ae826cv += aw8260y;
     }
     ar826e += x0;

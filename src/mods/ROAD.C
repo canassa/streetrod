@@ -581,7 +581,7 @@ int far *af7880z;
 int bq7884[13];
 int aw7aaex;
 int al7ab0u[13];
-int n_7ace[13];
+int g_rightXProjectionTable[13];
 unsigned far *g7d62p;
 int g7f22s[6];
 int at7f8au[13];
@@ -708,7 +708,7 @@ void road_project_ahead(void)
 
     flag8 = (*g7d62p & 1) || (*g7d62p & 0xf000);
     bits = *g7d62p++ & 0xe0;
-    p11 = n_7ace;
+    p11 = g_rightXProjectionTable;
     p2 = at72f8;
     p3 = bq7884;
     p42 = at7f8au;
@@ -946,9 +946,9 @@ void road_advance(void)
         else
             ao7d2ev.m7d36 = goal6;
         if (abs(*af7560z - ao7d2ev.m7d3c) > 0) {
-            e_78e0.f4 = (ao7d2ev.m7d3c - *af7560z) * 2;
-            if (abs(e_78e0.f4) > 24)
-                e_78e0.f4 = e_78e0.f4 > 0 ? 24 : -24;
+            g_driveEng.f4 = (ao7d2ev.m7d3c - *af7560z) * 2;
+            if (abs(g_driveEng.f4) > 24)
+                g_driveEng.f4 = g_driveEng.f4 > 0 ? 24 : -24;
         }
         ao7d2ev.m7d3c = *af7560z;
     }
@@ -1003,8 +1003,8 @@ void road_turn(int dir)
 
 void road_update(void)
 {
-    if (e_78e0.f2 && e_78e0.f0 && abs(ao7d2ev.m7d3c - *af7560z - e_78e0.f2) < 200)
-        ao7d2ev.m7d3c -= (e_78e0.f2 >> 1) + 1;
+    if (g_driveEng.f2 && g_driveEng.f0 && abs(ao7d2ev.m7d3c - *af7560z - g_driveEng.f2) < 200)
+        ao7d2ev.m7d3c -= (g_driveEng.f2 >> 1) + 1;
     if (!bw8aca) {
         if (bl82c6)
             ao7d2ev.m7d34 = 6;
@@ -1017,8 +1017,8 @@ void road_update(void)
     if (g_demo == 0 && g_autoDrive == 0) {
         if (at787cu)
             ao7d2ev.m7d36 += 25;
-        else if (e_78e0.f0)
-            ao7d2ev.m7d36 -= (ao7d2ev.m7d3c - *af7560z) * (ao7d2ev.m7d34 + e_78e0.fc) >> 2;
+        else if (g_driveEng.f0)
+            ao7d2ev.m7d36 -= (ao7d2ev.m7d3c - *af7560z) * (ao7d2ev.m7d34 + g_driveEng.fc) >> 2;
     }
     if (!bw8aca) {
         ao7d2ev.m7d32 += ao7d2ev.m7d34;

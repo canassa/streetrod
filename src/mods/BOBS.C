@@ -102,9 +102,9 @@ static int near maybe_walker(int mode, int arg, int pct1, int pct2)
 }
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-struct Spec *ar7d7au;
+struct Spec *g_oppSpecPointer;
 struct Racer *g7d84o;
-int bm7f86;
+int g_rivalHereState;
 
 /* drop_last_word @ 0000:9256 (linear 0x09256, 78 bytes) */
 
@@ -133,13 +133,13 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
     old = g_carPassBy;
     strcpy(g7f32s, g_desc + g7d84o->f6);
     strcat(g7f32s, "  ");
-    strcat(g7f32s, g_desc + ar7d7au->f6);
+    strcat(g7f32s, g_desc + g_oppSpecPointer->f6);
     x = g_scene == 6;
     if (mode == 4)
         g_walkState = -1;
-    bm7f86 = mode == 2;
-    if (mode == 1 && !maybe_walker(0, bm7f86, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, 10))
-        maybe_walker(1, bm7f86, 20, 0);
+    g_rivalHereState = mode == 2;
+    if (mode == 1 && !maybe_walker(0, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, 10))
+        maybe_walker(1, g_rivalHereState, 20, 0);
     if (g7f32s[n = strlen(g7f32s) - 1] == '.')
         g7f32s[n] = 0;
     for (;;) {
@@ -167,14 +167,14 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
     }
     if (mode == 4)
         g_walkState = 0;
-    bm7f86 = (mode == 2) ? 0 : 1;
-    if (!(x && bm7f86))
-        if (!maybe_walker(0, bm7f86, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, bm7f86 == 0 ? 8 : 0))
-            maybe_walker(1, bm7f86, 40, 0);
+    g_rivalHereState = (mode == 2) ? 0 : 1;
+    if (!(x && g_rivalHereState))
+        if (!maybe_walker(0, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, g_rivalHereState == 0 ? 8 : 0))
+            maybe_walker(1, g_rivalHereState, 40, 0);
 }
 
 int bn7648;
-int g7d40q;
+int g_isKingState;
 int g7f82r;
 
 /* spec_class @ 0000:9524 (linear 0x09524, 50 bytes) */
@@ -318,11 +318,11 @@ static void near select_rival(int n)
 
     g7f82r = n;
     g7d84o = &av7ff8[n];
-    ar7d7au = &g7d86n[bn7648 = g7d84o->f8];
+    g_oppSpecPointer = &g7d86n[bn7648 = g7d84o->f8];
     if (n != 0x15) {
-        g7d40q = 0;
+        g_isKingState = 0;
         g7d84o->fb = 1;
-        skill = (ar7d7au->f2 >> 1) + 1;
+        skill = (g_oppSpecPointer->f2 >> 1) + 1;
         if (g7d84o->ff == 0 && g7d84o->fc > 5)
             g7d84o->ff = random_int(20) < skill ? random_int(9) : 0;
         else if (g7d84o->ff > 0 && g7d84o->fc > 10)
@@ -332,9 +332,9 @@ static void near select_rival(int n)
         if (w_8df0[bn7648].f2 > 0 && g7d84o->fc > 8)
             g7d84o->fe |= random_int(30) < skill ? 4 : g7d84o->fe;
     } else
-        g7d40q = 1;
-    m_8272.m827a = ar7d7au->f8;
-    m_8272.m827e = (ar7d7au->f4 >> 4) & 3;
+        g_isKingState = 1;
+    m_8272.m827a = g_oppSpecPointer->f8;
+    m_8272.m827e = (g_oppSpecPointer->f4 >> 4) & 3;
     m_8272.m827c = g7d84o->fa;
     F_067CF(m_8272.m827c);
     m_8272.m8280 = g7d84o->f4;
@@ -391,7 +391,7 @@ static int near look_for_rival(int n)
     case -4:
         return 0;
     case -3:
-        if (bm7f86) {
+        if (g_rivalHereState) {
             F_11421(-1, "", 0);
             show_rival_car(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
         }
@@ -434,7 +434,7 @@ calc:
     chm = g7d84o->f0;
     p18 = spec_class(bn7648);
     p27 = spec_class(a_7eaap.m7eb0->f2);
-    clsl = (ar7d7au->f4 >> 8) & 7;
+    clsl = (g_oppSpecPointer->f4 >> 8) & 7;
     item1 = g_4806[a_7eaap.m7eb0->rack.s[0]->idx].f2;
     v11 = ag8baey[chm][row];
     v2 = g7d68m[p18][clsl];
@@ -445,7 +445,7 @@ calc:
         c6 = 2;
     else
         c6 = 1;
-    scorel = h_8dd8[col][c6];
+    scorel = g_acceptProbability[col][c6];
     if ((a_7eaap.m7eb0->f24 & 0x1f00) == 0)
         bonus2 = 0;
     else if (a_7eaap.m7eb0->f24 & 0x100)
@@ -961,14 +961,14 @@ void bobs_visit(void)
     if (random_int(100) < 25)
         play_cell_anim();
     cursor_ctl(-2);
-    bm7f86 = 0;
+    g_rivalHereState = 0;
     g_walkState = -1;
     g_ordered = 0;
     g_justArrived = 1;
     g_scene = 2;
     g_mouseLeft = g_joyButtons = g_buttons = 0;
     for (;;) {
-        setup_bobs_spots(bm7f86, !g_walkState & !g_ordered);
+        setup_bobs_spots(g_rivalHereState, !g_walkState & !g_ordered);
         menu_push(0x25);
         g_waitUntil = flag == 0 ? (unsigned)(class == 4 ? 140 : 280) + g_tick : g_tick + 5;
         flag = 0;
@@ -990,7 +990,7 @@ void bobs_visit(void)
             F_06529(0);
             if (g_end)
                 return;
-            if (bm7f86 == 0)
+            if (g_rivalHereState == 0)
                 goto race;
             F_11421(-1, "", 0);
             show_rival_car(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
@@ -1009,7 +1009,7 @@ out:
             menu_pop(1);
             break;
         case 2:
-            if (bm7f86 == 0) {
+            if (g_rivalHereState == 0) {
                 g_waitUntil = g_tick;
 race:
                 rival_arrives(pick_rival(rival, 0), class, 2);
@@ -1020,7 +1020,7 @@ race:
                 F_11421(-1, "", 0);
                 F_11421(g_bannerX, "", cz8bc0y);
 test:
-                while ((F_11421(-1, "", 0), challenge(g7d40q))) {
+                while ((F_11421(-1, "", 0), challenge(g_isKingState))) {
                     g7f32s[0] = 0;
                     F_11421(g_bannerX, " ", cz8bc0y);
                     place = race_outcome();
@@ -1028,7 +1028,7 @@ test:
                     cruise_rival_paint(-1);
                     if (m_8272.m8278 != 1)
                         g_betRaces++;
-                    if (g7d40q) {
+                    if (g_isKingState) {
                         if (bo7676 == 0) {
                             g_kingDragWon = 0;
                             av7ff8[21].fb = 0;
@@ -1077,7 +1077,7 @@ test:
                     F_11593(g_49dc);
                     (*m_present)();
                     class = 4;
-                    bm7f86 = 0;
+                    g_rivalHereState = 0;
                     g_walkState = -1;
                     g_ordered = 0;
                     n = 0;
@@ -1092,9 +1092,9 @@ test:
             }
             break;
         case 3:
-            if (bm7f86 == 0)
+            if (g_rivalHereState == 0)
                 goto out;
-            if (n > 0 || g7d40q) {
+            if (n > 0 || g_isKingState) {
                 game_message(0x122c);
                 show_rival_car(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
                 n = 0;
@@ -1178,7 +1178,7 @@ void bobs_jail(void)
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.f16 = 1;
     (*m_present)();
-    bm7f86 = 0;
+    g_rivalHereState = 0;
     g_walkState = -1;
     g_ordered = 0;
     cursor_ctl(1);

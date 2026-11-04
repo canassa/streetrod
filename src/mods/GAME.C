@@ -851,7 +851,7 @@ void near game_run(void)
                 }
                 if (a_7eaap.m7eb0) {
                     if (F_07EE6(a_7eaap.m7eb0, 1)) {
-                        perf_drivetrain(a_7eaap.m7eb0, &e_78e0);
+                        perf_drivetrain(a_7eaap.m7eb0, &g_driveEng);
                         if (kind == 2) {
                             if (a_7eaap.m7eb0->f22 < 9) {
                                 game_message(0x172e);

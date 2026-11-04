@@ -17,7 +17,7 @@
 static int g_cruiseRpmStep;                         /* DS:6C82 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-struct Eng g79e2g;
+struct Eng g_oppEngState;
 
 int g_cruiseRpmSteps[5] = {42, 26, 12, 8, 4};   /* DS:51D8 */
 int g_cruiseRatios[5] = {0, 200, 125, 71, 56};   /* DS:51E2 */
@@ -40,11 +40,11 @@ int drvtick_step(void)
             jz79a6 = 1;
             F_11421(-1, "Get ready !", 0);
             g_waitUntil = g_tick + random_int(103) + 110;
-            return e_78e0.fbc | g79e2g.fbc;
+            return g_driveEng.fbc | g_oppEngState.fbc;
         case 1:
-            if (e_78e0.f0 > 0) {
+            if (g_driveEng.f0 > 0) {
                 sys_drive_stop();
-                e_78e0.fbc |= 0x81;
+                g_driveEng.fbc |= 0x81;
                 return 1;
             }
             if (g_waitUntil <= g_tick) {
@@ -52,18 +52,18 @@ int drvtick_step(void)
                 F_11421(-1, "Go !", 0);
                 g7d66n = 1;
             }
-            return e_78e0.fbc | g79e2g.fbc;
+            return g_driveEng.fbc | g_oppEngState.fbc;
         case 2:
             race_tick();
-            if (e_78e0.fbc || g79e2g.fbc)
+            if (g_driveEng.fbc || g_oppEngState.fbc)
                 return 1;
-            if (e_78e0.f0 > 0) {
+            if (g_driveEng.f0 > 0) {
                 F_11421(-1, "    ", 0);
                 jz79a6 = 3;
             }
             return 0;
         case 3:
-            if (e_78e0.fbc || g79e2g.fbc)
+            if (g_driveEng.fbc || g_oppEngState.fbc)
                 return 1;
             race_tick();
             return 0;
@@ -78,10 +78,10 @@ int drvtick_step(void)
             sys_reset_queues();
             jz79a6 = 1;
             F_11421(-1, "Cruising in town...", 0);
-            e_78e0.f1a = 1;
-            e_78e0.f18 = 1;
-            if (e_78e0.f24 == 1)
-                e_78e0.f24 = 2;
+            g_driveEng.f1a = 1;
+            g_driveEng.f18 = 1;
+            if (g_driveEng.f24 == 1)
+                g_driveEng.f24 = 2;
             g_cruiseRpmStep = g_cruiseRpmSteps[0];
             return 0;
         case 1:
@@ -108,17 +108,17 @@ int drvtick_step(void)
                 sys_drive_stop();
                 return 1;
             }
-            e_78e0.fe += g_cruiseRpmStep;
-            if (e_78e0.fe > 4700)
-                e_78e0.fe = 4700;
-            if (e_78e0.f18)
-                e_78e0.f0 = e_78e0.fe / g_cruiseRatios[e_78e0.f18];
-            if (e_78e0.fe > 4500) {
-                if (e_78e0.f18 < e_78e0.f1c) {
-                    e_78e0.f1a = 1;
-                    e_78e0.f18++;
-                    g_cruiseRpmStep = g_cruiseRpmSteps[e_78e0.f18];
-                    e_78e0.fe = g_cruiseRatios[e_78e0.f18] * e_78e0.f0;
+            g_driveEng.fe += g_cruiseRpmStep;
+            if (g_driveEng.fe > 4700)
+                g_driveEng.fe = 4700;
+            if (g_driveEng.f18)
+                g_driveEng.f0 = g_driveEng.fe / g_cruiseRatios[g_driveEng.f18];
+            if (g_driveEng.fe > 4500) {
+                if (g_driveEng.f18 < g_driveEng.f1c) {
+                    g_driveEng.f1a = 1;
+                    g_driveEng.f18++;
+                    g_cruiseRpmStep = g_cruiseRpmSteps[g_driveEng.f18];
+                    g_driveEng.fe = g_cruiseRatios[g_driveEng.f18] * g_driveEng.f0;
                 } else
                     g_cruiseRpmStep = 0;
             }

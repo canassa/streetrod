@@ -22,7 +22,7 @@ extern int far *af7880z;                                /* DS:7880 */
 extern int bq7884[];                                    /* DS:7884 */
 extern int aw7aaex;                                     /* DS:7AAE */
 extern int al7ab0u[];                                   /* DS:7AB0 */
-extern int n_7ace[];                                    /* DS:7ACE */
+extern int g_rightXProjectionTable[];                                    /* DS:7ACE */
 extern unsigned far *g7d62p;                            /* DS:7D62 */
 extern int g7f22s[];                                    /* DS:7F22 */
 extern int at7f8au[];                                   /* DS:7F8A */

@@ -68,7 +68,7 @@ extern char g_driveBusy;                                /* DS:06E8 */
 extern char g_lastFire;                                 /* DS:06E9 */
 extern char g_squealPhase;                                     /* DS:06EA */
 extern int g_vibratoActive;                             /* DS:72EC */
-extern struct Eng e_78e0;                               /* DS:78E0 */
+extern struct Eng g_driveEng;                               /* DS:78E0 */
 extern struct Dev bs79aa;                               /* DS:79AA */
 extern struct Dev ao79c6t;                              /* DS:79C6 */
 extern void (interrupt far *w_7aaa)(void);              /* DS:7AAA */
@@ -79,7 +79,7 @@ extern int ao8228u;                                     /* DS:8228 */
 extern long b_82bc;                                     /* DS:82BC */
 extern struct Tone *bn82c4;                             /* DS:82C4 */
 extern int z_8b7c;                                      /* DS:8B7C */
-extern int g8b8eb;                                      /* DS:8B8E */
+extern int g_menuLevel;                                      /* DS:8B8E */
 extern struct Lims ao8b90v;                             /* DS:8B90 */
 extern struct Hot *at8ba8v;                             /* DS:8BA8 */
 extern int az8baa;                                      /* DS:8BAA */
