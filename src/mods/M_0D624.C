@@ -5,6 +5,7 @@
 #include "M_08D26.H"
 #include "M_08EA8.H"
 #include "M_0914C.H"
+#include "M_0DCBE.H"
 #include "M_15396.H"
 #include "M_265BA.H"
 #include "SLOTS.H"
@@ -27,8 +28,6 @@ struct Bitmap far *g8acew[13];
 int cz8bd0y;
 
 static void near F_0D1DE(int rpm, struct Eng *p);
-static void near F_0E0E2(int n, struct Eng *p);
-static int near F_0E218(int n);
 
 /* F_0D624 @ 0000:D624 (linear 0x0D624, 89 bytes) */
 

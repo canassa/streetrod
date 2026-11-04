@@ -60,7 +60,10 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 ## Linked-build lessons (2026-11-03)
 
 - `build.py` stages actual code without `.STB`, gives cross-object near functions
-  public linkage and a shared `/NT` code segment, and maps F_0066F to `main`.
+  public linkage and a shared `/NT` code segment (legacy). Since 2026-11-04 the sources
+  themselves name `main` and declare the cross-object near functions public
+  (`T near F`, prototype in the owner's header via `./sr proto ADDR "T near @(...)"`);
+  `--layout` no longer rewrites either.
   Keep these adaptations separate from the original-byte comparison pipeline.
 - MSC MAKE 4.07 takes `MAKE MAKEFILE`, not `/f`, and processes rules sequentially;
   put the link rule last. `ENV.BAT` sets the same four drives as the host wrapper.

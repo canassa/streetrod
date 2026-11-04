@@ -22,8 +22,6 @@
 #include "M_1923C.H"
 #include "M_193D4.H"
 
-static struct Car * near F_04036(int idx, int weight, struct Car *old);
-static struct Node * near F_03FF0(int idx, int a);
 
 /* F_0442B @ 0000:442B (linear 0x0442B, 1301 bytes) */
 

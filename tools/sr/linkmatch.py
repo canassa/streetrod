@@ -50,16 +50,30 @@ def compare(executable, mapfile=None):
         con.close()
         functions = []
         calls = []
+        # A static function is not in the MAP: place it by a public of its own link unit
+        # (one object, so the distance between them is fixed).
+        units = json.loads((config.SRC/'link/LAYOUT.JSON').read_text())['units']
+        unit_of = {s: u['start'] for u in units for s in u['sources']}
+        mapped = {}
+        for row in rows:
+            frame = publics.get('_' + (row['name'] or f"F_{row['addr']:05X}"))
+            if frame is not None:
+                mapped.setdefault(unit_of.get(row['src']), []).append((row['addr'], frame[0]*16+frame[1]))
         for row in rows:
             name = row['name'] or f"F_{row['addr']:05X}"
-            symbol = '_main' if row['addr'] == 0x66f else '_' + name
+            symbol = '_' + name
             frame = publics.get(symbol)
             item = dict(addr=row['addr'], name=name, symbol=symbol)
-            if frame is None:
+            if frame is not None:
+                pos = frame[0]*16+frame[1]
+            elif mapped.get(unit_of.get(row['src'])):
+                anchor, at = min(mapped[unit_of[row['src']]], key=lambda a: abs(a[0]-row['addr']))
+                pos = at + row['addr'] - anchor
+                item['static'] = True
+            else:
                 item['missing'] = True
                 functions.append(item)
                 continue
-            pos = frame[0]*16+frame[1]
             size = row['size']
             expected = target.img[row['addr']:row['addr']+size]
             actual = built.img[pos:pos+size]

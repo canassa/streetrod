@@ -5,6 +5,7 @@
 #include "MESSAGES.H"
 #include "M_02B9A.H"
 #include "M_02DF4.H"
+#include "M_039C0.H"
 #include "M_0E56A.H"
 #include "M_113A2.H"
 #include "M_15236.H"
@@ -12,7 +13,6 @@
 static int g_6c4c;                         /* DS:6C4C */
 static int g_6c50a;                        /* DS:6C50 */
 
-static struct Node * near F_03FF0(int idx, int a);
 
 /* F_01BAE @ 0000:1bae (linear 0x01bae, 1076 bytes) */
 

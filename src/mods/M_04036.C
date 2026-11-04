@@ -6,15 +6,12 @@
 #include "M_15236.H"
 #include "M_15396.H"
 
-static struct Node * near F_03C1B(void);
-static struct Node2 * near F_03FB1(void);
-static int near F_04386(struct Node *n, int keep);
 
 /* F_04036 @ 0000:4036 (linear 0x04036, 848 bytes) */
 
 
 
-static struct Car * near F_04036(int idx, int weight, struct Car *old)
+struct Car * near F_04036(int idx, int weight, struct Car *old)
 {
     struct Node *node;
     struct Car *car;
@@ -93,7 +90,7 @@ static struct Car * near F_04036(int idx, int weight, struct Car *old)
 /* F_04386 @ 0000:4386 (linear 0x04386, 57 bytes) */
 
 
-static int near F_04386(struct Node *n, int keep)
+int near F_04386(struct Node *n, int keep)
 {
     int r;
 
@@ -112,7 +109,7 @@ static int near F_04386(struct Node *n, int keep)
 
 
 
-static int near F_043BF(struct Car *c, int keep)
+int near F_043BF(struct Car *c, int keep)
 {
     register struct Node **p2;
     int r;

@@ -8,6 +8,7 @@
 #include "M_00D58.H"
 #include "M_02B9A.H"
 #include "M_02FC8.H"
+#include "M_03614.H"
 #include "M_06476.H"
 #include "M_10B7C.H"
 #include "M_113A2.H"
@@ -19,7 +20,6 @@
 #include "M_265BA.H"
 #include <stdio.h>
 
-static void near F_03614(int reset);
 static void near F_056A9(void);
 static int near F_057DC(int handle, struct Node **head);
 static int near F_0590F(int handle, struct Car **head, int flag);
@@ -32,7 +32,7 @@ static int near F_05795(int handle, struct Node *p);
 
 
 
-static int near F_05B4A(void)
+int near F_05B4A(void)
 {
     int fd7;
     char name[20];
@@ -130,7 +130,7 @@ char g_501e[] = "Buy a car first !";   /* DS:501E */
 
 
 
-static void near F_05EEA(void)
+void near F_05EEA(void)
 {
     int cmp;
     char sv7;

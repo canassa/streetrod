@@ -1,2 +1,0 @@
-#include "STRUCTS.H"
-static struct Node * near F_03FF0(int idx, int a) { return 0; }

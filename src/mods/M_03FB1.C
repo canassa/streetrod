@@ -6,7 +6,7 @@
 /* F_03FB1 @ 0000:3FB1 (linear 0x03FB1, 35 bytes) */
 
 
-static struct Node2 * near F_03FB1(void)
+struct Node2 * near F_03FB1(void)
 {
     struct Node2 *p;
 
@@ -31,7 +31,7 @@ static void near F_03FD4(struct Node2 *p)
 /* F_03FF0 @ 0000:3FF0 (linear 0x03FF0, 70 bytes) */
 
 
-static struct Node * near F_03FF0(int idx, int a)
+struct Node * near F_03FF0(int idx, int a)
 {
     struct Node *n;
     struct Item *it;

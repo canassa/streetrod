@@ -7,7 +7,7 @@
 /* F_0641E @ 0000:641E (linear 0x0641E, 87 bytes) */
 
 
-static int near F_0641E(void)
+int near F_0641E(void)
 {
     struct Bitmap far *p;
     int row;

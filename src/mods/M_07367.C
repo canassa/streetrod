@@ -19,7 +19,7 @@
 /* F_07367 @ 0000:7367 (linear 0x07367, 832 bytes) */
 
 
-static void near F_07367(void)
+void near F_07367(void)
 {
     struct Bitmap far *bm1;
     struct Bitmap far *bm3;
@@ -101,7 +101,7 @@ static void near F_07367(void)
 /* F_076A7 @ 0000:76A7 (linear 0x076A7, 154 bytes) */
 
 
-static void near F_076A7(int t, struct Node **list, char *buf, int start)
+void near F_076A7(int t, struct Node **list, char *buf, int start)
 {
     struct Node *p;
     struct Item *ent7;
@@ -127,7 +127,7 @@ static void near F_076A7(int t, struct Node **list, char *buf, int start)
 /* F_07741 @ 0000:7741 (linear 0x07741, 72 bytes) */
 
 
-static void near F_07741(struct Node *n, struct Node **slot)
+void near F_07741(struct Node *n, struct Node **slot)
 {
     if (*slot) {
         (*slot)->next = a_7eaap.m7eb8;
@@ -151,7 +151,7 @@ static void near F_07789(struct Node **slot)
 /* F_077B7 @ 0000:77B7 (linear 0x077B7, 73 bytes) */
 
 
-static struct Node * near F_077B7(struct Node *n)
+struct Node * near F_077B7(struct Node *n)
 {
     struct Node *p1, *q;
 

@@ -20,7 +20,7 @@ int g_5560[4] = {3, 3, 4, 4};   /* DS:5560 */
 int g_5568[3] = {9, 8, 5};   /* DS:5568 */
 int g_556e[9] = {40, 44, 48, 60, 64, 68, 80, 84, 88};   /* DS:556E */
 
-static void near F_0DCBE(struct Car *c, struct Eng *e)
+void near F_0DCBE(struct Car *c, struct Eng *e)
 {
     double w9, vl;
     struct Gear *gl;

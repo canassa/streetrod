@@ -13,6 +13,7 @@
 #include "M_08D26.H"
 #include "M_08EA8.H"
 #include "M_0914C.H"
+#include "M_0DCBE.H"
 #include "M_0E56A.H"
 #include "M_0F38A.H"
 #include "M_10B7C.H"
@@ -60,20 +61,12 @@ static void near F_0B552(void);
 static void near F_0B59B(void);
 static void near F_0B617(void);
 static void near F_0B717(struct Dlg *);
-static struct Node * near F_03FF0(int, int);
-static int near F_04386(struct Node *, int);
-static void near F_076A7(int, struct Node **, char *, int);
-static void near F_07741(struct Node *, struct Node **);
-static struct Node * near F_077B7(struct Node *);
 static void near F_0C1D8(void);
 static void near F_0C497(void);
 static void near F_0C52C(int n);
 static void near F_0C5AC(int n);
 static int near F_0BED4(void);
 static void near F_0BF94(void);
-static struct Car * near F_04036(int idx, int weight, struct Car *old);
-static int near F_043BF(struct Car *c, int keep);
-static void near F_0DCBE(struct Car *c, struct Eng *e);
 
 /* F_0B456 @ 0000:B456 (linear 0x0B456, 70 bytes) */
 
@@ -651,7 +644,7 @@ int g_54da = 0;   /* DS:54DA */
 
 
 
-static int near F_0C613(void)
+int near F_0C613(void)
 {
     int units;
     char opt;

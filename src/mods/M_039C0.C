@@ -117,7 +117,7 @@ static int near F_03B33(void)
 /* F_03C1B @ 0000:3C1B (linear 0x03C1B, 35 bytes) */
 
 
-static struct Node * near F_03C1B(void)
+struct Node * near F_03C1B(void)
 {
     struct Node *p;
 

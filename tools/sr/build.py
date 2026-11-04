@@ -92,7 +92,7 @@ def code_segment(addr):
 
 def header_deps(text):
     """MAKEFILE dependencies: the quoted headers a C source includes."""
-    return ''.join(' INCLUDE\\' + h for h in dict.fromkeys(['CRT.H', *re.findall(r'^#include\s+"(\w+\.H)"', text, re.M)]))
+    return ''.join(' INCLUDE\\' + h for h in dict.fromkeys(re.findall(r'^#include\s+"(\w+\.H)"', text, re.M)))
 
 
 def near_declarations(path):
@@ -135,12 +135,10 @@ def prepare():
         if any(code_segment(r['addr']) != seg for r in members):
             raise SystemExit(f'{source}: crosses a code segment boundary')
         if path.suffix == '.C':
-            text = '#include \"CRT.H\"\n' + near_declarations(path) + text
+            text = near_declarations(path) + text
             # Split compilation groups share real near interfaces. No .STB code
             # enters the executable; expose near definitions across object files.
             text = re.sub(r'\bstatic\s+(?=[^;{}\n]*\bnear\b)', '', text)
-            if any(r['addr'] == 0x66F for r in members):
-                text = '#define F_0066F main\n' + text
             flags = members[0]['flags'] or config.DEFAULT_FLAGS
             program = 'CL'
             args = ['/c', '/W3', *flags.split(), '/NT' + seg, path.name]

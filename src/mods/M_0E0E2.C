@@ -6,7 +6,6 @@
 #include "M_15396.H"
 #include <math.h>
 
-static void near F_0DCBE(struct Car *c, struct Eng *e);
 
 /* F_0E0E2 @ 0000:E0E2 (linear 0x0E0E2, 310 bytes)
 
@@ -14,7 +13,7 @@ static void near F_0DCBE(struct Car *c, struct Eng *e);
 
 
 
-static void near F_0E0E2(int n, struct Eng *e)
+void near F_0E0E2(int n, struct Eng *e)
 {
     struct Car car;
     struct Node nd[5];
@@ -48,7 +47,7 @@ static void near F_0E0E2(int n, struct Eng *e)
    car the way F_0E0E2 does, then folds its parts into one number. */
 
 
-static int near F_0E218(int n)
+int near F_0E218(int n)
 {
     double w9, vl;
     struct Spec *s;

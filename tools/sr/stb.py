@@ -1,8 +1,10 @@
 """Expand an .STB sidecar: `@NAME` lines become placeholder definitions built from the DB prototype.
 
 A hand-written far placeholder goes stale (C2086) whenever someone refines the callee's
-prototype in the DB. `@F_13DE6` always repeats the current one. Near (static) placeholders
-have no DB prototype and stay hand-written.
+prototype in the DB. `@F_13DE6` always repeats the current one; so does `@F_03C1B` for a
+public near function (`T near @(...)`, declared in its file's header) defined by another
+source of the same link unit. Static near placeholders have no DB prototype and stay
+hand-written.
 """
 
 import re
@@ -15,7 +17,7 @@ _LINE = re.compile(r"^@([A-Za-z_]\w*)\s*$", re.M)
 def placeholder(proto, name):
     head = proto.replace("@", name)
     ret = proto.split("@")[0].strip()
-    body = "{ }" if ret in ("void", "void far", "void interrupt far") else "{ return 0; }"
+    body = "{ }" if re.fullmatch(r"void(\s+(far|near|interrupt))*", ret) else "{ return 0; }"
     return f"{head} {body}"
 
 

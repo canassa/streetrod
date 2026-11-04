@@ -17,7 +17,6 @@
 #include "M_193D4.H"
 
 static int near F_04940(unsigned *price);
-static int near F_043BF(struct Car *c, int keep);
 
 /* F_049ED @ 0000:49ED (linear 0x049ED, 1501 bytes) */
 

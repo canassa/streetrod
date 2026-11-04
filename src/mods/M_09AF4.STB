@@ -4,6 +4,3 @@ static void near F_092A4(int a, int b, int c, int d, int e, int *f) { }
 static void near F_09A83(int *a, int *b, int *c) { }
 static int near F_09524(int n) { return 0; }
 static int near F_09556(void) { }
-static void near F_0D031(void) { }
-static struct Car * near F_04036(int idx, int weight, struct Car *old) { }
-static void near F_081AB(struct Car *c) { }
