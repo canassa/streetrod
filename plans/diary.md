@@ -2053,3 +2053,24 @@ The newly enum-typed state/category objects and named constants preserve the mea
 - Tests parsing C preprocessor lines can accidentally omit aligned definitions
   when they demand one literal space. Accept horizontal whitespace and explicitly
   distinguish the existing C-only hardware constants from shared C/MASM values.
+
+## 2026-11-04 23:25 CET: Formatting diary correction
+
+### What I did
+
+- Correct the command references in the preceding entry: the new CLI commands
+  are `./sr format [files]` and `./sr format --check`, and the documented hook
+  installation command is `nix-shell shell.nix --run "lefthook install"`.
+- An unquoted shell heredoc evaluated those inline examples while writing that
+  entry. The first two commands failed without changing files; the third installed
+  the pre-commit hook. The actual commits then exercised it successfully: tooling
+  skipped C inspection, and the formatting commit formatted/re-staged 64 C/H files.
+  This supplements the earlier isolated-hook test. The hook is now installed.
+- The separate commits are 73a6015 (tooling/docs/tests) and 1ee6263 (C formatting).
+  Post-commit headers/format checks remain clean; no source bytes changed after
+  the successful clean build, function checks, warning comparison and 92 tests.
+
+### What I learned
+
+- Always quote documentation heredoc delimiters. Insert a generated date in a
+  separate printf so Markdown backticks remain literal text, never shell commands.
