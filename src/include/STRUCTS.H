@@ -725,10 +725,6 @@ struct PartSelection {
 struct InputState {
     int any;
     int key;
-    int unused4;
-    int unused6;
-    int unused8;
-    int unusedA;
 };
 
 enum BetKind { BET_NONE, BET_10, BET_50, BET_25, BET_100, BET_CAR };

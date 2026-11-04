@@ -926,8 +926,8 @@ void near race_reset_eng(struct Eng *p)
     p->decelStep = p->gear[0].bands[0].decelStep;
     p->maxRpm = p->gear[0].bands[0].maxRpm;
     p->minRpm = p->gear[0].bands[0].minRpm;
-    g_input.unused6 = 0;
-    g_input.unused8 = g_input.unusedA = 0;
+    g_05d6 = 0;
+    g_05d8 = g_05da = 0;
     bz8630z = -1;
     g_finishLineIndex = a_7eaap.raceType == 0 ? 0x17c : 0x3fc;
     car = a_7eaap.currentCar->tires;

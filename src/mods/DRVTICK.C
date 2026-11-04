@@ -32,7 +32,7 @@ int drvtick_step(void)
     if (bw8aca) {
         switch (g_phaseDriveRunState) {
         case 0:
-            g_input.unused6 = 0;
+            g_05d6 = 0;
             if (g_keepCruiseMusic == 0)
                 F_16381(1);
             sys_drive_start();
@@ -71,7 +71,7 @@ int drvtick_step(void)
     } else {
         switch (g_phaseDriveRunState) {
         case 0:
-            g_input.unused6 = 0;
+            g_05d6 = 0;
             if (g_keepCruiseMusic == 0)
                 F_16381(1);
             sys_drive_start();

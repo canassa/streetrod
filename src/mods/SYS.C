@@ -64,7 +64,11 @@ struct Link g_timers[4] = {{0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0,
 int g_05ba = 0;   /* DS:05BA */
 int g_05bc[8] = {0, 0, 0, 0, 0, 0, 0, 0};   /* DS:05BC */
 long g_waitUntil = 0L;   /* DS:05CC */
-struct InputState g_input = {0, 0, 32767, 0, 0, 0}; /* DS:05D0 */
+struct InputState g_input = {0, 0}; /* DS:05D0 */
+int g_05d4 = 32767; /* DS:05D4 */
+int g_05d6 = 0; /* DS:05D6 */
+int g_05d8 = 0; /* DS:05D8 */
+int g_05da = 0; /* DS:05DA */
 int g_msgTicks = 350;   /* DS:05DC */
 int g_clickEnds = 0;   /* DS:05DE */
 int g_kbdHooked = 0;   /* DS:05E0 */
@@ -1020,7 +1024,7 @@ int g_xCoordSprite;
 
 void sys_stop_drive(void)
 {
-    g_driveEng.accelStep = g_driveEng.decelStep = g_driveEng.steeringInput = g_driveEng.steering = g_input.unused6 = 0;
+    g_driveEng.accelStep = g_driveEng.decelStep = g_driveEng.steeringInput = g_driveEng.steering = g_05d6 = 0;
     g_driveEng.fbe = g_driveEng.elapsedTicks;
 }
 
