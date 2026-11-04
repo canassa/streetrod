@@ -1411,11 +1411,11 @@ void view_draw(void)
     g_renderRows.y = &f_78a0;
     g_renderRows.leftOuterX = &by7fa6;
     g_renderRows.rightOuterX = &g7ff4g;
-    g_renderRows.buildingY = &g_currentBuildingRowsInfo.lastY;
+    g_renderRows.buildingY = &g_yBuildingTopArray[14];
     g_renderRows.prevLeftX = &a7312av;
     g_renderRows.prevRightX = &ac7ae8t;
     g_renderRows.prevY = &g789eu;
-    g_renderRows.prevBuildingY = &g_currentBuildingRowsInfo.prevY;
+    g_renderRows.prevBuildingY = &g_yBuildingTopArray[13];
     g_renderRows.prevLeftOuterX = &al7fa4z;
     g_renderRows.prevRightOuterX = &dz7ff2;
     g_renderRows.lineWidth = &g_5e86;

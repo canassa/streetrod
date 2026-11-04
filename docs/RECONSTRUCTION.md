@@ -186,7 +186,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **MirrorEdges** (`g_mirGeom`, DS:864A..8669): a natural, byte-identical reconstruction choice; separate globals also match.
 
-- **BuildingRows** (`g_currentBuildingRowsInfo`, DS:7AB0..7ACD): a natural, byte-identical reconstruction choice; separate globals also match.
+- **Forward building rows** (`g_yBuildingTopArray[15]`, DS:7AB0..7ACD): one full-length array matches its fifteen-entry writer and is byte-identical; the preceding backdrop reveal height remains separate.
 
 - **ListDialog** (`g_menuList`, DS:8B9A..8BA3): a natural, byte-identical reconstruction choice; separate globals also match.
 

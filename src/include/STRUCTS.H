@@ -706,11 +706,6 @@ struct MirrorEdges {
     int rightX[8];
 };
 
-struct BuildingRows {
-    int y[13];
-    int prevY;
-    int lastY;
-};
 
 struct ListDialog {
     int lineBase;

@@ -4,7 +4,7 @@
 #define ROAD_H
 #include "STRUCTS.H"
 
-extern struct BuildingRows g_currentBuildingRowsInfo; /* DS:7AB0 */
+extern int g_yBuildingTopArray[15]; /* DS:7AB0 */
 
 extern struct MirrorEdges g_mirGeom; /* DS:864A */
 

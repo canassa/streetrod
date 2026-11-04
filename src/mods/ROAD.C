@@ -581,7 +581,7 @@ int far *g_hereCurvePtr;
 int far *af7880z;
 int bq7884[13];
 int aw7aaex;
-struct BuildingRows g_currentBuildingRowsInfo; /* DS:7AB0 */
+int g_yBuildingTopArray[15]; /* DS:7AB0 */
 int g_rightXProjectionTable[13];
 unsigned far *g7d62p;
 int g_lhsRdMirrorX[6];
@@ -713,7 +713,7 @@ void road_project_ahead(void)
     p3 = bq7884;
     p42 = g_xOuterLProjArray;
     p5l = g_rhsOuterXArray;
-    p6 = g_currentBuildingRowsInfo.y;
+    p6 = g_yBuildingTopArray;
     rowz = 4;
     d1 = ao7d2ev.m7d3e - *af7880z++;
     d2 = ao7d2ev.m7d3c - *g_hereCurvePtr++;
