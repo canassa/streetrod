@@ -54,12 +54,7 @@ int g_cursHoverCodeVal;
 int g_wRivBanner;
 struct TimerPriorities g_sysTimerPriorities; /* DS:8EF6 */
 
-int g_timerFirst = -1;   /* DS:0566 */
-int g_timerHead = -1;   /* DS:0568 */
-int g_timerFree = 0;   /* DS:056A */
-long g_timerNext = 2147483647L;   /* DS:056C */
-char g_0570 = 0;   /* DS:0570 */
-char g_timerBusy = 0;   /* DS:0571 */
+struct TimerHead g_timerQueue = {-1, -1, 0, 2147483647L, 0, 0}; /* DS:0566 */
 struct Link g_timers[4] = {{0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}};   /* DS:0572 */
 int g_05ba = 0;   /* DS:05BA */
 int g_05bc[8] = {0, 0, 0, 0, 0, 0, 0, 0};   /* DS:05BC */
@@ -131,10 +126,10 @@ void sys_reset_queues(void)
     int i;
     long deadline;
 
-    g_timerFirst = g_timerHead = -1;
-    g_timerFree = 0;
-    g_timerNext = 0x7fffffffL;
-    g_0570 = g_timerBusy = 0;
+    g_timerQueue.first = g_timerQueue.head = -1;
+    g_timerQueue.free = 0;
+    g_timerQueue.nextDeadline = 0x7fffffffL;
+    g_timerQueue.unused = g_timerQueue.busy = 0;
     for (i = 0; i < 4; i++)
         g_timers[i].nxt = i + 1;
     g_05ba = -1;
@@ -167,19 +162,19 @@ void sys_timer_remove(int n)
         g_timers[i].prv = g_timers[n].prv;
     else {
         i = g_timers[n].prv;
-        g_timerFirst = i;
+        g_timerQueue.first = i;
         if (i < 0)
-            g_timerNext = 0x7fffffffL;
+            g_timerQueue.nextDeadline = 0x7fffffffL;
         else
-            g_timerNext = g_timers[i].deadline;
+            g_timerQueue.nextDeadline = g_timers[i].deadline;
     }
     i = g_timers[n].prv;
     if (i >= 0)
         g_timers[i].nxt = g_timers[n].nxt;
     else
-        g_timerHead = g_timers[n].nxt;
-    g_timers[n].nxt = g_timerFree;
-    g_timerFree = n;
+        g_timerQueue.head = g_timers[n].nxt;
+    g_timers[n].nxt = g_timerQueue.free;
+    g_timerQueue.free = n;
 }
 
 /* sys_unhook @ 0000:0FB7 (linear 0x00FB7, 51 bytes) */
@@ -471,8 +466,8 @@ int sys_wait_input(int ticks)
             } else
                 return res;
         }
-        if (g_timerNext <= g_tick) {
-            p = &g_timers[i = g_timerFirst];
+        if (g_timerQueue.nextDeadline <= g_tick) {
+            p = &g_timers[i = g_timerQueue.first];
             switch (p->action) {
             case 0:
             default:
@@ -571,13 +566,13 @@ int sys_timer_add(int delay, int pri)
     int prev;
     long when, key;
 
-    g_timerBusy = 1;
-    i = g_timerFree;
+    g_timerQueue.busy = 1;
+    i = g_timerQueue.free;
     if (i < 0) {
-        g_timerBusy = 0;
+        g_timerQueue.busy = 0;
         return -1;
     }
-    cur3 = g_timerHead;
+    cur3 = g_timerQueue.head;
     prev = -1;
     when = g_tick + delay;
     if (delay) {
@@ -602,19 +597,19 @@ int sys_timer_add(int delay, int pri)
     }
     g_timers[i].deadline = when;
     g_timers[i].priority = pri;
-    g_timerFree = g_timers[i].nxt;
+    g_timerQueue.free = g_timers[i].nxt;
     g_timers[i].nxt = cur3;
     if (cur3 < 0) {
-        g_timerFirst = i;
-        g_timerNext = when;
+        g_timerQueue.first = i;
+        g_timerQueue.nextDeadline = when;
     } else
         g_timers[cur3].prv = i;
     g_timers[i].prv = prev;
     if (prev < 0)
-        g_timerHead = i;
+        g_timerQueue.head = i;
     else
         g_timers[prev].nxt = i;
-    g_timerBusy = 0;
+    g_timerQueue.busy = 0;
     return i;
 }
 
@@ -636,7 +631,7 @@ void sys_timer_cancel(int n)
     struct Link *p;
     int i;
 
-    for (i = g_timerFirst; i >= 0; i = g_timers[i].nxt)
+    for (i = g_timerQueue.first; i >= 0; i = g_timers[i].nxt)
         if ((p = g_timers + i)->action == 1 && p->argument == n)
             p->action = 0;
 }

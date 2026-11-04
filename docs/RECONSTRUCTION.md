@@ -207,6 +207,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **Blt** (`g_adPacket`, DS:0522..0535): a natural, byte-identical reconstruction choice; separate globals also match.
 
+- **TimerHead** (`g_timerQueue`, DS:0566..0571): The timer insertion/removal/reset paths use the first, head, free, next-deadline and busy fields as one queue control record. The reset-only byte is explicit unused storage; timer entries and later spare words stay separate. Separate globals also match; this grouping is a natural reconstruction choice.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only

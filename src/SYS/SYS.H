@@ -4,6 +4,15 @@
 #define SYS_H
 #include "STRUCTS.H"
 
+struct TimerHead {
+    int first;
+    int head;
+    int free;
+    long nextDeadline;
+    char unused;
+    char busy;
+};
+
 struct TimerPriorities {
     int animation;
     int unused2;
@@ -19,12 +28,7 @@ extern int g_05da; /* DS:05DA */
 
 extern struct TimerPriorities g_sysTimerPriorities; /* DS:8EF6 */
 
-extern int g_timerFirst;                                /* DS:0566 */
-extern int g_timerHead;                                 /* DS:0568 */
-extern int g_timerFree;                                 /* DS:056A */
-extern long g_timerNext;                                /* DS:056C */
-extern char g_0570;                                     /* DS:0570 */
-extern char g_timerBusy;                                /* DS:0571 */
+extern struct TimerHead g_timerQueue; /* DS:0566 */
 extern struct Link g_timers[];                          /* DS:0572 */
 extern int g_05ba;                                      /* DS:05BA */
 extern int g_05bc[8];                                   /* DS:05BC */
