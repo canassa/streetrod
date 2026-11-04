@@ -1214,3 +1214,9 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - `struct Racer av7ff8[NUM_RACERS]` is defined in BOBS.C (most racer logic) instead of DISK.C, and its constants (`NUM_RACERS`, `RACER_KING`, `RACER_COP_ENTRY`, `RACERS_PER_GROUP`, `enum RacerStatus`) and extern moved from DISK.H to BOBS.H. DISK.C still mentions the table first in link order (its save table g_dataBlocks), so LINK's communal slot is unchanged. CLAUDE.md rule 4e now says a communal may be defined in any file at or after its first mention.
 - Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
+
+## 2026-11-05 21:30 CET: The keymap tables are their own data module
+
+### What I did
+- HERCDET.ASM held the three Hercules/mono detection routines and, by its data run, the keymap tables at DS:5580 (`g_keyMapData`, and `g_keyMaps` at odd DS:579F, so assembler). Nothing references across the two, and the tables (near pointers) produce no MZ relocations, so the relocation evidence never tied them to that object. They are now a data-only KEYMAPS.ASM, linked directly before HERCDET.OBJ, written with ordinary MASM directives; one file versus two is undecidable from the EXE (RECONSTRUCTION.md). Done by a Codex agent.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup/order checks clean, tests OK.
