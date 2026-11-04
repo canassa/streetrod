@@ -647,3 +647,11 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - The "recovered runtime order" was the order LINK extracts members from this combined library; other component orders differ by 5381..12426 bytes. The combined library keeps all 402 component modules, so only the order matters.
+
+## 2026-11-04 13:30 CET: Loop pragmas are source text, not injected
+
+### What I did
+- `linklayout.prepare` no longer writes `#pragma loop_opt` before each member source; a unit is the plain concatenation of its sources.
+- Five functions lose their match under one flag set per file: F_01BAE, F_01FE2, F_0238C (unit 00D78), F_03C8D (039C0), F_2382D (23262). Each diverges at a structured loop the shipped code keeps as an /Ol-off memory loop. for/while/do rewrites (and the `unsigned char` trick for F_2382D's latch copy) all still get registers and loop temps; only `goto` loops escape /Ol, which is less plausible than a pragma. The sources now carry the real MSC 5.1 pragma with a comment: one `loop_opt(off)` before F_01BAE (to the end of the file), off/on around F_03C8D, off before F_2382D.
+- The other members recorded without `l` (M_039C0, M_03FB1, M_04940) match under the file's /Ol unchanged.
+- Result: `./sr build --layout` IDENTICAL from an empty work dir, `./sr check --all` 572/572, tests OK.
