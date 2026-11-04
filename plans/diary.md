@@ -1202,3 +1202,9 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - HOT_DATA contains 22 18-byte racer records; slot 21 is named The King and is excluded from the ordinary rival pool. SAVEGAME.C assigns seven racers each from rank pools below 3, 3 through 5, and 6 upward.
 - Slot 10 is Steve, an ordinary middle-group rival, also reused by cop_appears for the chase shift penalty. RACER_COP_ENTRY describes that use without claiming a dedicated police-only slot.
 - RACE.C removes rivals after losing their car with status 0xff; BOBS.C excludes status -1 from its pool, marks selected rivals 1, and lists only 1. Status 0 is initially not met and also hides the King until available. This evidence is recorded with the constants in the commit body.
+
+## 2026-11-05 20:30 CET: Racer table constants
+
+### What I did
+- DISK.H: `NUM_RACERS` 22 (the 18-byte racer records, 396 bytes in the save game), `RACER_KING` 21 (named "The King" in HOT_DATA; ending, rematch, king_status, reset on defeat), `RACER_COP_ENTRY` 10 (an ordinary rival, "Steve", whose entry cop_appears borrows for the chase's shift penalty; the police drivetrain itself is car spec 25), `RACERS_PER_GROUP` 7 (init_racers fills three rank groups of seven), and `enum RacerStatus` (`RACER_EMPTY` -1, `RACER_NOT_MET`, `RACER_MET`) for the char field Racer.status. Done by a Codex agent.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
