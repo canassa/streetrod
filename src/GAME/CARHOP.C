@@ -41,7 +41,7 @@ static void near cut_sheet(struct Bitmap far **out, int n)
     id5 = g_carhopSheets[n].id;
     cols8 = g_carhopSheets[n].cols;
     cells = g_carhopSheets[n].n;
-    sheet = F_15BBE(id5, ARENA_HIGH_STACK);
+    sheet = disk_bm(id5, ARENA_HIGH_STACK);
     r.w = sheet->width / cols8;
     r.h = sheet->height >> 1;
     r.sx = 0;

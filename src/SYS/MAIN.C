@@ -38,7 +38,7 @@ struct Video r_vid;
 
 int g_hercules = 0;   /* DS:0042 */
 int g_sysHooked = 0;   /* DS:0044 */
-int g_0046 = 0;   /* DS:0046 */
+int g_hercModeSet = 0;   /* DS:0046 */
 int g_videoSet = 0;   /* DS:0048 */
 int g_004a = 0;   /* DS:004A */
 int g_004c = 0;   /* DS:004C */
@@ -247,7 +247,7 @@ static void near set_video_mode(int mode)
         while (p < (int far *)((r_vid.mode == VID_HERCULES ? (long)MONO_VRAM : (long)CGA_VRAM) + 0x8000L))
             *p++ = 0;
         outp(MONO_MODE, (MODE_CTRL_GRAPHICS | MODE_CTRL_VIDEO | MODE_CTRL_BLINK));
-        g_0046 = 1;
+        g_hercModeSet = 1;
         g_hercules = 1;
         break;
     case VIDEO_CHOICE_CGA:

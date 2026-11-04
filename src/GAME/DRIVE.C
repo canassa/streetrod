@@ -54,9 +54,9 @@ int drive_run(void)
             g_driveRebuild = 1;
         else
             g_driveRebuild = 0;
-        src = F_15BBE(0x3f6, ARENA_HIGH_STACK);
+        src = disk_bm(0x3f6, ARENA_HIGH_STACK);
         if (g_autoTrans) {
-            pict = F_15BBE(0x4d8, ARENA_HIGH_STACK);
+            pict = disk_bm(0x4d8, ARENA_HIGH_STACK);
             blt.w = pict->width;
             blt.h = pict->height;
             blt.sx = blt.sy = 0;

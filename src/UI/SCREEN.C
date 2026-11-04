@@ -226,7 +226,7 @@ int F_118D4(int a, int b)
     struct Blt pkt;
 
     cursor_ctl(CURSOR_HIDE);
-    p = F_15BBE(a, ARENA_HIGH_STACK);
+    p = disk_bm(a, ARENA_HIGH_STACK);
     if (b >= 0)
         screen_fill_rect(0, 0, SCREEN_WIDTH, g_picMaxH, b);
     pkt.w = p->width;

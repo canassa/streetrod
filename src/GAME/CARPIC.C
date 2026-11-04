@@ -242,7 +242,7 @@ void carpic_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, s
     *pr1 = 0;
     *pr2 = 0;
     if (flag) {
-        p2 = F_15BBE(mode, ARENA_HIGH_STACK);
+        p2 = disk_bm(mode, ARENA_HIGH_STACK);
         if (r_vid.mode == VID_TANDY) {
             blt.sy = p2->height - y2;
             (*g_videoOps.copy)(p2, *pa, &blt, 2);
@@ -319,7 +319,7 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
     m2 = &w_8df0[idx];
     p12 = &g_layoutAutoSprArray[idx];
     p69 = &g_pointsModelService[idx];
-    *out = F_15BBE(g7d86n[idx].bodyPic, ARENA_LOW_STACK);
+    *out = disk_bm(g7d86n[idx].bodyPic, ARENA_LOW_STACK);
     g_featurePos.gasCapX = p69->fuelCapX;
     g_featurePos.gasCapY = p69->fuelCapY;
     g_featurePos.rearGlassX = p69->rearGlassX;
@@ -355,7 +355,7 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
         bitmap_draw_pic(*out, pp8->id, p12->stickerX + pp8->dx, p12->stickerY + pp8->dy, 0);
     }
     if (q) {
-        bm = F_15BBE(m_8272.overlayPic, ARENA_HIGH_STACK);
+        bm = disk_bm(m_8272.overlayPic, ARENA_HIGH_STACK);
         bitmap_underlay(bm, *out, p12->b2, p12->b3 - bm->height + row8 + 1);
         F_19438(1);
     }
@@ -384,7 +384,7 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
     }
     if (ids) {
         for (j5 = 0; j5 < n; j5++) {
-            bm = F_15BBE(ids[j5], ARENA_HIGH_STACK);
+            bm = disk_bm(ids[j5], ARENA_HIGH_STACK);
             h = out[j5]->height - bm->height;
             switch (r_vid.mode) {
             case VID_EGA:
@@ -404,7 +404,7 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
         }
     }
     if (w) {
-        bm2n = F_15BBE(0x49d, ARENA_HIGH_STACK);
+        bm2n = disk_bm(0x49d, ARENA_HIGH_STACK);
         bitmap_opaque_span(*out, &left, &right1);
         h = (*out)->height - bm2n->height;
         for (j5 = 0; j5 < n; j5++) {

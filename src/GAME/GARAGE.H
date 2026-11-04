@@ -15,7 +15,7 @@ extern int g_pad[];                                    /* DS:50CE */
 extern char *g_iTxt[];                                  /* DS:511E */
 extern int g_nCarb[];                                    /* DS:5126 */
 extern int g_nBolt[];                                    /* DS:5130 */
-extern int g_513c[];                                    /* DS:513C */
+extern int g_nextPartCategory[];                                    /* DS:513C */
 extern int g_cPos[][6];                                 /* DS:5148 */
 extern int g_5184[];                                    /* DS:5184 */
 extern int g_bPos[];                                    /* DS:5186 */

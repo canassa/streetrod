@@ -52,7 +52,7 @@ void cursor_init(void)
             (0x18 >> r_vid.shift) << r_vid.shift, 0x10, r_vid.mode == VID_EGA ? VID_EGA : -1);
     memset(&g_cursor2.clip, 0, 12);
     g_cursor2.state = 0;
-    pict = F_15BBE(2, ARENA_HIGH_STACK);
+    pict = disk_bm(2, ARENA_HIGH_STACK);
     if (pict == 0)
         mem_out_of_memory();
     blt.w = 0x18;
