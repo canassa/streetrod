@@ -929,7 +929,7 @@ void near F_0CDAF(struct Eng *p)
     p->f16 = p->gear[0].r[0].f6;
     p->f12 = p->gear[0].r[0].f2;
     p->f10 = p->gear[0].r[0].f0;
-    g_5d6 = 0;
+    g_05d6 = 0;
     g_05d8 = g_05da = 0;
     bz8630z = -1;
     g_6caaaa = a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc;

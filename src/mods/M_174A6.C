@@ -546,7 +546,7 @@ again:
             ;
         if (g_5a24 != 1)
             F_01B27();
-        bu825a = (struct Bitmap far *)g_288;
+        bu825a = g_0288;
         g_5a0e = 0;
         g_0286 = 0;
         g_6cbc = spr3->page->r;

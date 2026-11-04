@@ -100,7 +100,7 @@ struct Sprite *F_195F3(int x, int y, struct Bitmap far **imgs, char (*cell)[8], 
 
     y -= (*imgs)->height - 1;
     for (i = 0; i < n; i++) {
-        g77bal[i].pos = (long)*imgs++;
+        g77bal[i].pos = *imgs++;
         if (cell)
             g77bal[i].data = r_vid.mode == -2 ? cell++ : &am6e68x[i];
         else
@@ -330,7 +330,7 @@ void F_19DB7(struct Sprite *s)
     int n;
 
     z_8b7c = s->x;
-    g_288 = s->frame->pos;
+    g_0288 = s->frame->pos;
     s->seq->count--;
     if (s->seq->count == 0)
         s->seq++;

@@ -317,7 +317,7 @@ void F_0FED1(int ticks)
         }
         if (g_05f2) {
             F_16D57();
-            if (g_5ee)
+            if (g_05ee)
                 break;
         }
         if (g_471d) {

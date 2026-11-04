@@ -32,7 +32,7 @@ int F_08EA8(void)
     if (bw8aca) {
         switch (jz79a6) {
         case 0:
-            g_5d6 = 0;
+            g_05d6 = 0;
             if (g_51ec == 0)
                 F_16381(1);
             F_01AAD();
@@ -71,7 +71,7 @@ int F_08EA8(void)
     } else {
         switch (jz79a6) {
         case 0:
-            g_5d6 = 0;
+            g_05d6 = 0;
             if (g_51ec == 0)
                 F_16381(1);
             F_01AAD();
@@ -91,7 +91,7 @@ int F_08EA8(void)
                     g_47ee = 1;
                 if (g_05f2) {
                     F_16D57();
-                    g_47ee |= g_5ee;
+                    g_47ee |= g_05ee;
                 }
                 if (g_471d) {
                     F_02DF4();

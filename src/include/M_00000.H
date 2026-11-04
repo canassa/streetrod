@@ -19,7 +19,7 @@ extern int g_0280;                                      /* DS:0280 */
 extern int g_0282;                                      /* DS:0282 */
 extern int g_0284;                                      /* DS:0284 */
 extern int g_0286;                                      /* DS:0286 */
-extern long g_288;                                      /* DS:0288 */
+extern struct Bitmap far *g_0288;                       /* DS:0288 */
 extern struct Bitmap far *g_028c;                       /* DS:028C */
 extern struct Bitmap far *g_0290;                       /* DS:0290 */
 extern struct Bitmap far *g_0294;                       /* DS:0294 */

@@ -23,7 +23,7 @@ char g_51ad = -1;   /* DS:51AD */
 
 void F_08D26(void)
 {
-    g_47ee = g_5ee = g_471c = g_4732 = 0;
+    g_47ee = g_05ee = g_471c = g_4732 = 0;
     if (g_0284) {
         if (a_7eaap.m7eb0->f22 > 2)
             a_7eaap.m7eb0->f22 -= 2;
