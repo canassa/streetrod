@@ -221,6 +221,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **Vibrato** (`g_vibrato`, DS:6C52..6C55): sys_timer_isr uses gain and divisor together to modulate PIT channel 2. Separate globals also match; this grouping is a natural reconstruction choice.
 
+- **RandomState** (`g_random`, DS:6C62..6C67): random_int seeds and updates all three Wichmann-Hill generator words together. Separate globals also match; this grouping is a natural reconstruction choice.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only

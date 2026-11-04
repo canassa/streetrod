@@ -4,6 +4,12 @@
 #define RANDOM_H
 #include "STRUCTS.H"
 
+struct RandomState {
+    int a;
+    int b;
+    int c;
+};
+
 int random_int(int n);                                  /* 0x15236 */
 
 #endif

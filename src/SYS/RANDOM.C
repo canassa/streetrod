@@ -3,9 +3,7 @@
 #include "RANDOM.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_rngA;                         /* DS:6C62 */
-static int g_rngB;                         /* DS:6C64 */
-static int g_rngC;                         /* DS:6C66 */
+static struct RandomState g_random; /* DS:6C62 */
 
 /* random_int @ 0F38:5EB6 (linear 0x15236, 352 bytes)
 
@@ -19,34 +17,34 @@ int random_int(int n)
         register int x;
 
         time(&t);
-        x = g_rngC = g_rngB = g_rngA = (int)t % 30000 + 1;
+        x = g_random.c = g_random.b = g_random.a = (int)t % 30000 + 1;
         do {
             x = 171 * (x % 177) - 2 * (x / 177);
             if (x < 0)
                 x += 30269;
         } while (x > 30000);
-        g_rngB = x;
-        x = g_rngC;
+        g_random.b = x;
+        x = g_random.c;
         do {
             x = 170 * (x % 178) - 63 * (x / 178);
             if (x < 0)
                 x += 30323;
         } while (x > 30000);
-        g_rngC = x;
+        g_random.c = x;
         return -1;
     } else {
         int r;
 
-        g_rngA = 171 * (g_rngA % 177) - 2 * (g_rngA / 177);
-        if (g_rngA < 0)
-            g_rngA += 30269;
-        g_rngB = 172 * (g_rngB % 176) - 35 * (g_rngB / 176);
-        if (g_rngB < 0)
-            g_rngB += 30307;
-        g_rngC = 170 * (g_rngC % 178) - 63 * (g_rngC / 178);
-        if (g_rngC < 0)
-            g_rngC += 30323;
-        r = (g_rngA % n + g_rngB % n + g_rngC % n) % n;
+        g_random.a = 171 * (g_random.a % 177) - 2 * (g_random.a / 177);
+        if (g_random.a < 0)
+            g_random.a += 30269;
+        g_random.b = 172 * (g_random.b % 176) - 35 * (g_random.b / 176);
+        if (g_random.b < 0)
+            g_random.b += 30307;
+        g_random.c = 170 * (g_random.c % 178) - 63 * (g_random.c / 178);
+        if (g_random.c < 0)
+            g_random.c += 30323;
+        r = (g_random.a % n + g_random.b % n + g_random.c % n) % n;
         return r;
     }
 }
