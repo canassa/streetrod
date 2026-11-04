@@ -17,11 +17,10 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 `./sr` drives everything (it enters `shell.nix` on its own if `dosbox-x` or capstone is missing). The DB is `db/sr.sqlite`. Run `./sr <command> -h` for options.
 
 ```
-./sr build --layout            # recover original code positions/link order in work/layout
-./sr linkcheck [EXE]            # fail unless the linked file matches, no byte masks
-./sr build                     # compile/link the runnable game into work/game/SR.EXE
-./sr build --prepare-only      # emit DOS-native MAKEFILE, ENV.BAT, BUILD.BAT and LINK.RSP
-./sr build --objects-only      # compile actual objects without linking
+./sr build                     # build work/layout/SRPACKED.EXE; must end `Packed EXE vs orig/SR.EXE: IDENTICAL`
+./sr build --prepare-only      # only write the DOS build tree: sources, MAKEFILE, BUILD.BAT, ENV.BAT, LINK.RSP
+./sr build --objects-only      # compile and gate every object without linking
+./sr linkcheck [EXE]            # unmasked comparison of work/layout/SR.EXE (unpacked link) with the unpacked original
 ./sr scan                      # rediscover functions in the EXE, update the DB (keeps names/status/src)
 ./sr crtnames                  # name CRT functions by locating MSC 5.1 library modules in the EXE (also records their aliases)
 ./sr list [-s todo] [-k c] [--seg 0f38] [-r 10d6c-168f2] [--max 100] [--by-size]
@@ -50,7 +49,7 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 ./sr dgroup problems           # named strings used as literals, aliases, untyped tables, fallbacks
 ./sr dgroup apply UNIT... --write  # write a unit's data definitions into its module sources (marked /* DS:xxxx */)
 ./sr dgroup aliases --write    # rewrite overlapping DB views as base[i]; `register --write` adds recovered globals
-./sr dgroup asm                # regenerate src/data/DGROUP.ASM: the data no module owns yet
+./sr dgroup asm                # list initialized DGROUP data no source owns (none left; exit 1 if any)
 ./sr dgroup order --write      # the recovered link order into src/link/LAYOUT.JSON
 ```
 
@@ -58,26 +57,17 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 
 **Compile backend: `SR_EMU`.** `emu2` (default) runs `CL`/`MASM` under [emu2](https://github.com/dmsc/emu2), a user-space 8086 + DOS-call emulator with no boot: one process per job, run in parallel (`SR_JOBS`, default 16), ~25 ms per small compile. `SR_EMU=dosbox` is the original one-DOSBox-X-boot-per-batch backend. Both give byte-identical OBJ, COD and CC.LOG (proved on every source here and in ../msc51 with `tools/scripts/emucmp.py`; rerun it after touching either backend or `tools/nix/emu2.nix`). The `./sr` wrapper caches the nix-shell PATH in `work/.nix-path-<hash>` (refreshed when `shell.nix` changes), so a command no longer pays ~2 s to enter the shell. Ported from ../msc51, which has the measurements.
 
-### Linked game build
+### The build
 
-`make` / `./sr build` compiles real modules without `.STB` placeholders, assembles
-`src/data/` records, and links MSC's MLIBCR, MLIBFP, LIBH and EM libraries.
-Shared near interfaces use four named code segments and public near definitions
-in staging copies; the source used by the byte-match gate stays unchanged.
-LINK runs in DOSBox-X because emu2 crashes on this link workload. The generated
-DOS Makefile works with MSC MAKE 4.07 (`ENV.BAT`, then `MAKE MAKEFILE`).
-`./sr build --layout` uses `src/link/LAYOUT.JSON`, original region boundaries,
-whole-source groups, and MSC's combined library: it builds `MLIBCE.LIB` with LIB 3.11
-(`LIB MLIBCE.LIB +MLIBCR.LIB+LIBH.LIB+EM.LIB+MLIBFP.LIB;`, the component order matters)
-and links `/MAP /STACK:2560 /EXEPACK` with the objects' default library (no `/NOD`). All
-116 source jobs are compiled and gated. It puts all 572 game functions at their
-original addresses and reproduces all 748 E8 call encodings. Whole-file matching
-is still red: initialized data/literals, uninitialized storage and MZ metadata
-remain. Use `./sr linkcheck work/layout/SR.EXE`; its JSON includes raw differences,
-relocation positions, mapped function positions and every near-call encoding.
-
-The legacy runnable build is not proof of original whole-EXE layout. See README.md
-and src/data/README.md for usage and source-data validation.
+`./sr build` (alias `--layout`; `make`) is the faithful build in `work/layout`: LIB 3.11
+combines MSC's untouched libraries into `MLIBCE.LIB` (`LIB MLIBCE.LIB +MLIBCR.LIB+LIBH.LIB+EM.LIB+MLIBFP.LIB;`,
+the component order matters), CL/MASM compile every object of `src/link/LAYOUT.JSON` once (under
+emu2, each code object gated against the original), and LINK 5.01 (in DOSBox-X: emu2 crashes on
+this link) links `/MAP /STACK:2560 /EXEPACK` with the objects' default library. The packed result
+`SRPACKED.EXE` is byte-identical to `orig/SR.EXE`; `SR.EXE` is the same link unpacked, for
+`./sr linkcheck` and its `BYTE-MATCH.JSON` (positions of all 572 functions, all 748 near calls).
+The generated `MAKEFILE` (MSC MAKE 4.07) and `BUILD.BAT` build the same file natively in DOSBox-X
+(`./dosbox.sh`; README.md).
 
 ### Modules: `src/mods/`
 
@@ -138,11 +128,11 @@ As in the original, each source file has its own header: `src/include/<FILE>.H` 
 
 ### 4b. Data belongs to the file that owned it
 
-The original DGROUP is the modules' `_DATA` in link order: each translation unit's string literals (in parse order) and its initialized globals (flushed after the next function's literals). `./sr dgroup` recovers the owner and the declaration slot of every item from those positions and writes the definitions into the module sources with a `/* DS:xxxx */` marker; `src/data/DGROUP.ASM` only holds what no module owns yet. A module that defines data is gated on it (`datacheck`: base, bytes and every pointer). Overlapping DB names are views, rewritten as `base[i]`; a literal referenced twice at one address is a named array; a unit whose function stops matching once its tables are defined did not own them (MSC's frame layout depends on the number of file-scope definitions), so they go to a data-only unit.
+The original DGROUP is the modules' `_DATA` in link order: each translation unit's string literals (in parse order) and its initialized globals (flushed after the next function's literals). `./sr dgroup` recovers the owner and the declaration slot of every item from those positions and writes the definitions into the module sources with a `/* DS:xxxx */` marker; every item has an owner (`./sr dgroup asm` lists any that does not). A module that defines data is gated on it (`datacheck`: base, bytes and every pointer). Overlapping DB names are views, rewritten as `base[i]`; a literal referenced twice at one address is a named array; a unit whose function stops matching once its tables are defined did not own them (MSC's frame layout depends on the number of file-scope definitions), so they go to a data-only unit.
 
 ### 4c. Objects and link order come from the relocation table
 
-LINK lists relocations object by object, each data record's fixups in descending offset (MSC; MASM ascending). `orig/SR.EXE`'s packed relocation table therefore shows which units were one object and in which order objects were linked. A far call between two functions proves two files (MSC near-calls every function defined in the same file). `src/link/LAYOUT.JSON` holds the recovered units, `link_order` (written by `./sr dgroup order --write`), `order_hints` with the evidence for each, and the runtime member order. `./sr build --layout` ends with the packed EXE's comparison against `orig/SR.EXE`.
+LINK lists relocations object by object, each data record's fixups in descending offset (MSC; MASM ascending). `orig/SR.EXE`'s packed relocation table therefore shows which units were one object and in which order objects were linked. A far call between two functions proves two files (MSC near-calls every function defined in the same file). `src/link/LAYOUT.JSON` holds the recovered units, `link_order` (written by `./sr dgroup order --write`), `order_hints` with the evidence for each, and the runtime member order. `./sr build` ends with the packed EXE's comparison against `orig/SR.EXE`.
 
 ### 4d. The compiler budget: global symbols are load-bearing
 

@@ -1,48 +1,38 @@
-# Reconstructed game storage
+# Far data and far storage
 
-These MASM 5.1 files provide initialized data and working storage for the real
-linked executable. The build assembles these sources directly; it does not read
-or extract sections from the original executable. No check-only `.STB` definitions
-are linked into the game.
+These files hold the game's far data segments as source records. The build assembles or
+compiles each one as an object of its own and links it at its recovered place. Nothing is
+extracted from the original executable. The names of the files, segments and labels are
+placeholders: the shipped EXE does not record them.
 
-`DGROUP.ASM` describes the named globals, literal strings, typed table fields,
-car-mask Run/List records, and symbolic pointers. Original offsets remain as
-annotations and overlapping aliases. The linker may move the whole block.
-Near pointers explicitly use DGROUP. Overlapping globals are real LABELs
-placed with ORG: MASM EQU aliases lose the PUBDEF group association. Code and far-data
-externals are declared outside segments to avoid imposing an incorrect frame.
+| File | What |
+|---|---|
+| `FONTDATA.ASM` | EGA font: 91 nine-byte glyphs (`'CODE'` class, linked before the code region at 0F38A) |
+| `CGAFONT.ASM` | CGA font: 91 eighteen-byte glyphs, WORD aligned |
+| `SCREENS.ASM`, `SCREEN2.ASM`, `SCRATCH.ASM` | Screen and scratch Bitmap descriptors |
+| `TRACKPTS.ASM` | Track coordinates |
+| `SONG.ASM`, `EFFECTS.ASM` | Sound instruction words |
+| `PARTS1.ASM`, `PARTS2.ASM` | Car-mask Part records |
+| `SLOTS.C` | 277 Slot records and five terrain work arrays: far communals (`FAR_BSS`) |
 
-The old runtime intervals DS:0000–0041 and DS:629C–6C21 are reserved as zero
-storage to preserve relative game-data offsets. Their original contents are not
-copied. MSC libraries supply their own startup, heap, stdio and floating-point
-state. The game reads `errno`, `_doserrno` and `_amblksiz` through MSC's
-`<stdlib.h>` and `<malloc.h>`. Game storage beginning at old DS:6C22 is zeroed:
-the unpacked file's FF filler is not an initializer.
+DGROUP is not here. Each C source defines its own initialized globals and literals
+(marked `/* DS:xxxx */`, written by `./sr dgroup apply`). Its uninitialized storage is
+file statics (`_BSS`) or communals. `src/mods/MESSAGES.ASM` is an assembler data file
+for DS:239E..4718. The runtime's DGROUP comes from MLIBCE.LIB.
 
-PARTS2 ends at 3884:0000. The following 0x170-byte block belongs to
-EM.LIB (via MLIBCE.LIB), which supplies it in the layout build before SLOTS at 389B:0000.
-Those bytes were previously misidentified as the end of the Part array.
+The CGA font's segment frame is 0ED2 and its first glyph is at offset 4. The three bytes
+before it belong to the last EGA glyph, and one alignment byte follows them. There is no
+CGA header, and the arrays do not overlap.
 
-Far-data modules contain font glyphs, Bitmap descriptors, track coordinates,
-sound instruction words, car-mask Part records, Slot records and terrain arrays.
-The EGA font has 91 nine-byte glyphs. The CGA font has 91 eighteen-byte
-glyphs and WORD alignment. Its original segment frame is 0ED2 and its first
-glyph is at offset 4: the preceding three bytes belong to the last EGA glyph,
-followed by one alignment byte. There is no CGA header and the arrays do not
-overlap. The earlier header/overlap interpretation was incorrect.
+PARTS2 ends at 3884:0000. The next 0x170 bytes are EM.LIB's EMULATOR_DATA, which comes
+from MLIBCE.LIB. Earlier these bytes were misread as the end of the Part array. LINK puts
+the far communals of `SLOTS.C` after every object (389B:0000), and it orders them by the
+hash bucket of each symbol. That is why the names were chosen to fit the original order.
 
-The reconstruction catalog and its checks live in
-`tools/scripts/reconstruct_data.py`. It refuses unidentified nonzero data.
-It is an audit/authoring tool, not a build dependency:
+`tools/scripts/check_data_types.py` compiles `sizeof`/`offsetof` for every struct in
+`STRUCTS.H` with MSC 5.1 and compares them with the Python type model that `./sr dgroup`
+uses to write data definitions:
 
 ```
 nix-shell shell.nix --run 'python3 tools/scripts/check_data_types.py'
-nix-shell shell.nix --run 'python3 tools/scripts/reconstruct_data.py --verify-built'
 ```
-
-The first check compares 74 type sizes and 408 field offsets with actual MSC
-output. The second checks source records against the reconstruction and then
-compares every byte of linked game data, resolving pointers through `SR.MAP`
-instead of ignoring relocation bytes. Use `--write-source` only when deliberately
-updating the recovered records. Array bounds and identified continuation ranges
-are recorded in that script; they are not inferred during normal compilation.

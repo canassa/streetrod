@@ -1,53 +1,69 @@
 # Street Rod
 
 Reverse engineering of Street Rod (Logical Design Works / California Dreams, 1989), DOS version 1.0.
+The C and assembly sources rebuild the shipped `SR.EXE` byte for byte with the original tools.
 
 ## Build the game
 
-On the host, with Nix and the checked-out MSC/MASM toolchains:
+The build uses the tools the game was built with, as unmodified binaries in `toolchain/`:
+Microsoft C 5.1 (`CL`), MASM 5.1, LIB 3.11 and LINK 5.01.
+
+1. LIB combines MSC's medium-model emulator libraries into `MLIBCE.LIB`, as MSC SETUP
+   does: `LIB MLIBCE.LIB +MLIBCR.LIB+LIBH.LIB+EM.LIB+MLIBFP.LIB;` (the component order
+   matters).
+2. CL and MASM compile each original object from its source once, with that file's flags.
+3. LINK links the objects in the recovered order with `/MAP /STACK:2560 /EXEPACK`. It takes
+   the runtime from `MLIBCE.LIB`, which the objects name as their default library.
+
+The result is byte-identical to `orig/SR.EXE` (SHA-1 `3a5e28b795313028b7e77d147122f41cb29de334`).
+All game data, including fonts, sprite records, track points and music, comes from source.
+The build never reads data out of the original executable.
+
+### On the host
 
 ```sh
-nix-shell shell.nix --run make   # or ./sr build
+./sr build          # or: nix-shell shell.nix --run make
 ```
 
-This compiles 147 game modules and 12 reconstructed data modules, then links
-`work/game/SR.EXE` with the original MSC 5.1 libraries. It also writes `SR.MAP`,
-compiler logs and linker diagnostics. All game data comes from `src/data/` source;
-the build does not extract it from the original EXE.
+This writes the build tree to `work/layout`, compiles every object (CL, MASM and LIB under
+emu2, in parallel) and checks each code object against the original. Then it links in
+DOSBox-X. It ends with `Packed EXE vs orig/SR.EXE: IDENTICAL`. The packed EXE is
+`work/layout/SRPACKED.EXE`. `work/layout/SR.EXE` is the same link without `/EXEPACK`, which
+`./sr linkcheck` reads. `./sr build --objects-only` stops before linking.
 
-For a DOS-native build, run `./sr build --prepare-only` on the host, then mount these directories
-in DOSBox-X (substitute the checkout's absolute path):
+### Natively in DOS
+
+`./sr build --prepare-only` writes only the DOS build tree: the sources, `INCLUDE\`,
+`MAKEFILE` (for MSC MAKE 4.07), `BUILD.BAT` (an unconditional rebuild), `ENV.BAT` and
+`LINK.RSP`. In DOSBox-X (`./dosbox.sh` sets up these drives):
 
 ```text
-mount c /path/to/streetrod/work/game
-mount d /path/to/streetrod/toolchain/msc51
-mount e /path/to/streetrod/work/game/INCLUDE
-mount f /path/to/streetrod/toolchain/masm51
+mount c work/layout
+mount d toolchain/msc51
+mount e work/layout/INCLUDE
+mount f toolchain/masm51
 c:
 ENV.BAT
 MAKE MAKEFILE
 ```
 
-`BUILD.BAT` is also provided as an unconditional rebuild. MSC's MAKE 4.07 takes
-its input filename positionally and processes rules in order. The generated
-Makefile uses this syntax rather than NMAKE syntax.
+`BUILD.BAT` gives the same result as `MAKE MAKEFILE`. Either one leaves the packed
+`C:\SR.EXE`, identical to `orig/SR.EXE`. Both take about 20 s in DOSBox-X with `cycles=max`.
+MAKE 4.07 reads its makefile name as an argument and runs the rules in file order, so
+the generated MAKEFILE uses that syntax and not NMAKE's.
 
-Run the resulting EXE from a directory containing the assets in `orig/freeware/`.
-Keep the original EXE intact; copy the assets and rebuilt EXE to a separate run
-directory. The retail manual-color protection is preserved.
-
-`make objects` compiles without linking; `make check` runs the reconstruction
-regression gate. See [src/data/README.md](src/data/README.md) for the data audits.
-`./sr build --layout` reproduces the shipped EXE byte for byte (see below); the legacy
-`./sr build` is a runnable but differently laid-out build.
+To play the build, copy it and the assets in `orig/freeware/` to a separate directory. Leave
+`orig/` untouched. The retail manual-color copy protection is still in the EXE.
 
 ## Findings so far
 
-- Microsoft C 5.1, medium model, with the 8087 emulator; flags vary by module.
-- All 506 C and 66 assembly game functions are grouped in 147 verified modules.
-- The 147 MSC runtime entries are supplied by the original libraries.
-- MSC local-variable names affect stack layout; the CLI models that rule.
-- The original EXE is EXEPACK-packed. The rebuilt executable is unpacked.
+- Microsoft C 5.1, medium model, with the 8087 emulator. Each source file has its own flags.
+- All 506 C and 66 assembly game functions are reconstructed. Each one sits at its original
+  address in the rebuilt EXE.
+- The 147 MSC runtime entries come from the original libraries.
+- MSC's local-variable names affect stack layout, and LINK's symbol hash affects where
+  communal storage goes. The CLI models both.
+- The original EXE is EXEPACK-packed by LINK `/EXEPACK`.
 
 Addresses are linear offsets into the unpacked load image (`orig/SR_unpacked.EXE` minus its `0x22D0` byte header).
 
@@ -60,27 +76,22 @@ Addresses are linear offsets into the unpacked load image (`orig/SR_unpacked.EXE
 | `orig/freeware/` | The files from the freeware download, as shipped. Its `SR.EXE` has the protection NOPed out at file offset `0x334E` |
 | `orig/extra/` | `LIB2C` and `README.VGA` from the original disks, missing from the freeware copy (taken from the archive.org copy) |
 | `dist/` | The downloads as fetched: streetrodonline.com `sr1pc.zip`, archive.org `msdos_Street_Rod_1989`, and The Good Old Days `001593` (a 720K image with an uncracked EXE whose CGA/Hercules menu strings were edited) |
-| `toolchain/msc51/` | MSC 5.1 `BIN`, `INCLUDE` and `LIB`, unpacked from the WinWorld 5.25" disk set in `toolchain/msc51/dist/` |
-| `src/mods/` | Reconstructed C and assembly compilation groups |
-| `src/data/` | Reconstructed initialized data and working storage |
+| `toolchain/msc51/` | MSC 5.1 `BIN` (CL, LIB, LINK, MAKE), `INCLUDE` and `LIB`, unpacked from the WinWorld 5.25" disk set in `toolchain/msc51/dist/` |
+| `toolchain/masm51/` | MASM 5.1 |
+| `src/mods/` | The game's C and assembly sources |
+| `src/data/` | Far data and storage as source records (see [src/data/README.md](src/data/README.md)) |
+| `src/include/` | One header per source file (generated by `./sr headers`), and `STRUCTS.H` |
+| `src/link/LAYOUT.JSON` | The recovered objects and link order |
 | `tools/sr/` | The `sr` CLI; `tools/unexepack.py` removes EXEPACK |
 | `db/sr.sqlite` | Function database |
 | `work/` | Scratch output (ignored) |
 
 ## Usage
 
-`CLAUDE.md` describes the workflow and the `./sr` CLI, which drives everything (compile in DOSBox-X, byte compare, the function DB, progress in `docs/PROGRESS.md`). `./dosbox.sh` opens an interactive DOSBox-X with the toolchain on `D:`.
-
-### Original binary layout
-
-`./sr build --layout` rebuilds the recovered code/link order into `work/layout`.
-All 572 game functions land at their original addresses, and all 748 near-call
-encodings match. `./sr dgroup` recovers which module owned each DGROUP item from the
-original data positions and writes the definitions into the module sources. The build
-combines MSC's untouched MLIBCR, LIBH, EM and MLIBFP into `MLIBCE.LIB` with LIB 3.11
-(as MSC SETUP does), then links `/MAP /STACK:2560 /EXEPACK` against it as the objects'
-default library into `work/layout/SRPACKED.EXE`, which is byte-identical to `orig/SR.EXE`
-(SHA-1 `3a5e28b795313028b7e77d147122f41cb29de334`). `./sr linkcheck work/layout/SR.EXE` compares the linked file
-without masking relocations or padding and returns nonzero until it is identical.
-The detailed report is `work/layout/BYTE-MATCH.JSON`. Against the unpacked reference the
-header and relocation order still differ: the unpacker synthesized both.
+`CLAUDE.md` describes the workflow and the `./sr` CLI, which drives everything: compiling,
+byte comparison, the function DB, and progress in `docs/PROGRESS.md`. `make check` runs the
+per-function regression gate (`./sr check --all`).
+`./sr linkcheck work/layout/SR.EXE` compares the unpacked link with `orig/SR_unpacked.EXE`
+and does not mask any bytes. Its report is `work/layout/BYTE-MATCH.JSON`. The header and
+relocation order still differ there, because the unpacker synthesized both. The packed
+comparison above is the one that counts.
