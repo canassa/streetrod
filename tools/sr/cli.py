@@ -22,6 +22,11 @@ SWEEP_OPTS = ["/Od", "/Os", "/Ot", "/Oa", "/Oas", "/Oat", "/Ol", "/Ols", "/Olt",
               "/Ox", "/O"]
 
 
+def cmd_docs(args):
+    from sr import docs
+    sys.exit(docs.main())
+
+
 def hexa(a):
     return f"0x{a:05x}"
 
@@ -621,6 +626,9 @@ def main():
     s = sub.add_parser("headers", help="rewrite the sources' include blocks and the MAKEFILE dependencies from the headers")
     s.add_argument("--check", action="store_true", help="write nothing; exit 1 if a run would change a file or a header is wrong")
     s.set_defaults(func=cmd_headers)
+
+    s = sub.add_parser("docs", help="build Doxygen HTML/XML, lint with warnings as failures, report coverage")
+    s.set_defaults(func=cmd_docs)
 
     args = p.parse_args()
     args.func(args)

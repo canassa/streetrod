@@ -10,6 +10,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 | File | Job |
 |---|---|
 | `tools/sr/format.py` | `./sr format [files]` / `--check`: explicit pinned style in `clang-format.yaml`, C/H only; headers and rename format changed C text |
+| `tools/sr/docs.py` | `./sr docs`: Doxygen HTML/XML build, diagnostic gate, XML parameter lint and source-inventory coverage; config in Doxyfile, regression fixtures in tests/test_docs.py |
 | `tools/sr/cli.py` | argparse commands; one `cmd_*` function each |
 | `tools/sr/pics.py` | `./sr pic`: resource directory/RLE decoder, EGA planar and CGA packed pixels, stdlib PNG and kitty graphics output; `--list`, `--png`, `--scale`, `--cells COLS N`, `--mode ega|cga`, `--palette game|intro|standard|cga-green` |
 | `tools/sr/config.py` | paths, address ranges, recursive source/header index, header staging and the INCLUDE environment read from SRENV.BAT |
@@ -207,3 +208,17 @@ comments or change declaration/function tokens; it formats C text when rewriting
   first (C translation phase two). Added continuation lines do not add C tokens.
 - Tests that read `#define` constants must accept variable horizontal whitespace.
   EQUIP_VIDEO_COLOR80 is C-only; shared PC.H/PC.INC constants still agree by value.
+comments or rewrite the declarations or function bodies.
+
+## Documentation tooling lessons (2026-11-04)
+
+- `./sr docs` needs Doxygen and Graphviz even when DOS tools and capstone are
+  already available. The wrapper checks those tools for this subcommand before
+  accepting the current shell or cached Nix PATH.
+- Doxygen 1.17 does not warn when all parameter docs are absent in the measured
+  fixture. The XML check in docs.py closes that gap; do not remove it based on
+  WARN_NO_PARAMDOC alone. Bare symbol mentions still require human review.
+- Keep coverage denominators in the source inventory: EXTRACT_ALL=NO omits
+  undocumented entities from XML. Clear old XML before each run and deduplicate
+  declarations/definitions. Missing documentation and invalid documentation are
+  separate measures; the former is a baseline, the latter fails.
