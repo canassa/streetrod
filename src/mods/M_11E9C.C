@@ -11,7 +11,7 @@
 #include "M_19ED0.H"
 #include "M_24E78.H"
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 void (far *ap78b2z)(char far *, char far *, char far *, char far *, int, int, int, int);
 struct Cursor g_cursor2;
 

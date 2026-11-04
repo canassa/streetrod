@@ -17,20 +17,20 @@ extern long g_05cc;                                     /* DS:05CC */
 extern int g_05d0;                                      /* DS:05D0 */
 extern int g_05d2;                                      /* DS:05D2 */
 extern int g_05d4;                                      /* DS:05D4 */
-extern int g_5d6;                                       /* DS:05D6 */
+extern int g_05d6;                                      /* DS:05D6 */
 extern int g_05d8;                                      /* DS:05D8 */
 extern int g_05da;                                      /* DS:05DA */
 extern int g_05dc;                                      /* DS:05DC */
 extern int g_05de;                                      /* DS:05DE */
 extern int g_05e0;                                      /* DS:05E0 */
-extern int g_5e2;                                       /* DS:05E2 */
-extern int g_5e4;                                       /* DS:05E4 */
-extern int g_5e6;                                       /* DS:05E6 */
-extern int g_5e8;                                       /* DS:05E8 */
-extern int g_5ea;                                       /* DS:05EA */
-extern int g_5ec;                                       /* DS:05EC */
-extern int g_5ee;                                       /* DS:05EE */
-extern int g_5f0;                                       /* DS:05F0 */
+extern int g_05e2;                                      /* DS:05E2 */
+extern int g_05e4;                                      /* DS:05E4 */
+extern int g_05e6;                                      /* DS:05E6 */
+extern int g_05e8;                                      /* DS:05E8 */
+extern int g_05ea;                                      /* DS:05EA */
+extern int g_05ec;                                      /* DS:05EC */
+extern int g_05ee;                                      /* DS:05EE */
+extern int g_05f0;                                      /* DS:05F0 */
 extern char g_05f2;                                     /* DS:05F2 */
 extern char g_05f3;                                     /* DS:05F3 */
 extern int g_05f4[2];                                   /* DS:05F4 */
@@ -48,7 +48,7 @@ extern int g_0612;                                      /* DS:0612 */
 extern char g_064d;                                     /* DS:064D */
 extern char g_064e;                                     /* DS:064E */
 extern struct KeyMap g_0650[];                          /* DS:0650 */
-extern unsigned char g_0692[];                          /* DS:0692 */
+extern char g_0692[];                                   /* DS:0692 */
 extern int g_06a2;                                      /* DS:06A2 */
 extern int g_06a4;                                      /* DS:06A4 */
 extern char g_06a6;                                     /* DS:06A6 */

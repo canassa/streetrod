@@ -24,7 +24,7 @@
 
 #pragma intrinsic(outp)
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6c68;                         /* DS:6C68 */
 static int *g_6c6a;                        /* DS:6C6A */
 static int *g_6c6c;                        /* DS:6C6C */
@@ -32,7 +32,7 @@ static char *g_6c6e;                       /* DS:6C6E */
 static int *g_6c70a;                       /* DS:6C70 */
 static char g_6c72a[16];                   /* DS:6C72 */
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Model w_8df0[26];
 struct Racer av7ff8[22];
 struct Spec g7d86n[26];

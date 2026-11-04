@@ -26,7 +26,7 @@
 
 #pragma intrinsic(abs, cos, sin, outp, inp)
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6c22[3];                      /* DS:6C22 */
 static struct Bitmap far *g_6c28gzz[3];    /* DS:6C28 */
 static void near F_0F418(int x, int y, int w, int h, int kind);
@@ -34,7 +34,7 @@ static void near F_0F38A(int x, int y, int w, int h, int kind);
 static struct Track *g_6c34;               /* DS:6C34 */
 static int g_6c36;                         /* DS:6C36 */
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Bitmap far *bm7678;
 unsigned at767ct;
 unsigned av787at;
@@ -105,8 +105,8 @@ void F_0F4B7(int i, int *x1, int *y1, int *x2, int *y2)
        (DS:68E6 with this function's, DS:68E8 later) that no instruction reads: MSC leaves
        them behind for unreachable far accesses to two other far symbols. The statements and
        symbol names are not recoverable; these keep the bytes and the relocation order. The
-       block-scope extern is part of that provisional text (rule 4: tools/sr/lint.py excepts
-       exactly these two declarations; the symbols are EQUs in TRACKPTS.ASM). */
+       block-scope extern is part of that provisional text (the symbols are labels in
+       TRACKPTS.ASM; see docs/RECONSTRUCTION.md). */
     return;
     { extern char far x_trk0[][2]; *x1 = x_trk0[i][0]; }
 }
@@ -317,7 +317,7 @@ void F_0FED1(int ticks)
         }
         if (g_05f2) {
             F_16D57();
-            if (g_5ee)
+            if (g_05ee)
                 break;
         }
         if (g_471d) {

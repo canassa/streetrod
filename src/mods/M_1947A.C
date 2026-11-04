@@ -53,7 +53,7 @@ struct Rect *F_19518(int x, int y, int w, int h, struct Rect *out)
     return F_1947A(&scr, &rect, out);
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Frame g77bal[12];
 struct Seq g_764e[10];
 struct Sprite g7d18m;
@@ -100,7 +100,7 @@ struct Sprite *F_195F3(int x, int y, struct Bitmap far **imgs, char (*cell)[8], 
 
     y -= (*imgs)->height - 1;
     for (i = 0; i < n; i++) {
-        g77bal[i].pos = (long)*imgs++;
+        g77bal[i].pos = *imgs++;
         if (cell)
             g77bal[i].data = r_vid.mode == -2 ? cell++ : &am6e68x[i];
         else
@@ -135,8 +135,8 @@ struct Sprite *F_195F3(int x, int y, struct Bitmap far **imgs, char (*cell)[8], 
         aq7d42[0].link = aq7d42;
     }
     g7d18m.page = aq7d42;
-    F_1956E(((struct Bitmap far *)g7d18m.frame->pos)->width,
-        ((struct Bitmap far *)g7d18m.frame->pos)->height, g7d18m.x, g7d18m.y,
+    F_1956E(g7d18m.frame->pos->width,
+        g7d18m.frame->pos->height, g7d18m.x, g7d18m.y,
         aq7d42[0].bm->width, aq7d42[0].bm->height, &aq7d42[0].r);
     g7d18m.seq = g_764e;
     return &g7d18m;
@@ -330,7 +330,7 @@ void F_19DB7(struct Sprite *s)
     int n;
 
     z_8b7c = s->x;
-    g_288 = s->frame->pos;
+    g_0288 = s->frame->pos;
     s->seq->count--;
     if (s->seq->count == 0)
         s->seq++;
@@ -354,7 +354,7 @@ int F_19E42(int pos, int len, struct Sprite *s, struct Blt16 *o)
     int a, b, c, d;
 
     b = s->x & r_vid.mask;
-    a = ((struct Bitmap far *)s->frame->pos)->width;
+    a = s->frame->pos->width;
     if (pos + len <= b || b + a < pos)
         return 0;
     c = (b < pos) ? pos : b;

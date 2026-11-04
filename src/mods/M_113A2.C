@@ -19,7 +19,7 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int o_8250;
 int au8252x;
 int as8254y;
@@ -183,8 +183,8 @@ void F_1174E(char *msg)
         }
         dx = af824ax ? 5 : 0x50;
         for (i = 0; i < 5; i++) {
-            g_1d8a[i].x1 += dx;
-            g_1d8a[i].x2 += dx;
+            g_1d80[i].y1 += dx;
+            g_1d80[i].y2 += dx;
         }
         if (g_58ee)
             F_11324(g_04ac);
@@ -195,8 +195,8 @@ void F_1174E(char *msg)
         F_14241(0x20);
         r_vid.back = back;
         for (i = 0; i < 5; i++) {
-            g_1d8a[i].x1 -= dx;
-            g_1d8a[i].x2 -= dx;
+            g_1d80[i].y1 -= dx;
+            g_1d80[i].y2 -= dx;
         }
         r_vid.f16 = saved;
         gz8249 = prev;

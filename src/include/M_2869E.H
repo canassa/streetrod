@@ -8,7 +8,7 @@ extern int g_5e14[][4];                                 /* DS:5E14 */
 extern int g_5e3c;                                      /* DS:5E3C */
 extern int g_5e3e;                                      /* DS:5E3E */
 extern int g_5e40;                                      /* DS:5E40 */
-extern struct Blt12 g_5e42;                             /* DS:5E42 */
+extern struct Clip g_5e42;                              /* DS:5E42 */
 extern int g_clip_xmin;                                 /* DS:5E4E */
 extern int g_clip_ymin;                                 /* DS:5E50 */
 extern int g_clip_ymax;                                 /* DS:5E52 */

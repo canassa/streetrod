@@ -13,7 +13,7 @@
 #include "M_16EA2.H"
 #include "M_174A6.H"
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int jz79a6;
 
 char g_51ac = -1;   /* DS:51AC */
@@ -23,7 +23,7 @@ char g_51ad = -1;   /* DS:51AD */
 
 void F_08D26(void)
 {
-    g_47ee = g_5ee = g_471c = g_4732 = 0;
+    g_47ee = g_05ee = g_471c = g_4732 = 0;
     if (g_0284) {
         if (a_7eaap.m7eb0->f22 > 2)
             a_7eaap.m7eb0->f22 -= 2;
@@ -54,8 +54,8 @@ void F_08D9C(int mode)
             g_51ac = g_51ad = -1;
         } else {
             if (g_51ac == -1) {
-                g_51ac = (*(char *)&g_palette[12]);
-                g_51ad = (*(char *)&g_palette[3]);
+                g_51ac = g_palette[12];
+                g_51ad = g_palette[3];
             }
             a = g_50c2[mode][0];
             b = g_50c2[mode][1];
@@ -64,8 +64,8 @@ void F_08D9C(int mode)
             F_112CB(12, a);
             F_112CB(3, b);
         }
-        (*(char *)&g_palette[12]) = a;
-        (*(char *)&g_palette[3]) = b;
+        g_palette[12] = a;
+        g_palette[3] = b;
     }
 }
 

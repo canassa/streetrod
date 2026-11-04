@@ -5,9 +5,7 @@ pkgs.mkShell {
     gnumake
     (callPackage ./tools/nix/emu2.nix { })  # default compile backend, see tools/sr/emu2.py
     (python3.withPackages (p: [ p.capstone ]))
-    nasm
-    mtools
-    p7zip
+    p7zip  # unpacks the .7z archives (and the FAT disk image) in dist/ and toolchain/*/dist/
     sqlite
   ];
 }

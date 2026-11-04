@@ -226,9 +226,9 @@ static void near F_03C8D(void)
         }
         g_49e0[0] = nl;
         strcpy(g_2a3e, "Sell it");
-        *(*(char * *)&g_579f[4]) = 0x1f;
+        g_579f[4]->key = 0x1f;
         sel = F_142CF(4, sel <= g_49e0[0] ? sel : g_49e0[0], 0, g_49e0, lbl, 0);
-        *(*(char * *)&g_579f[4]) = 0x2e;
+        g_579f[4]->key = 0x2e;
         strcpy(g_2a3e, "Change");
         switch ((int)sel) {
         case -4:
@@ -488,11 +488,11 @@ static void near F_0442B(int tab)
         if (used) {
             k3 = g_4806[i5 = list4[n + off6]].f6;
             price6 = g_4806[i5].f0;
-            g_11b0 = 0xe;
+            g_11b0[0].f0 = 0xe;
         } else {
             k3 = (specn = &g7d86n[i5 = list4[n - 2]])->f6;
             price6 = specn->f0;
-            g_11b0 = 10;
+            g_11b0[0].f0 = 10;
         }
         strcpy(g_2990, g_2c02 + k3);
         sprintf(g_29d6, "$%-3d ?", price6);
@@ -661,7 +661,7 @@ static int near F_049ED(void)
         case -2:
             break;
         default:
-            if (item > 0)
+            if (item > 0)       /* PROVISIONAL: the original loads g_49e0[0] here and drops it */
                 g_49e0[0] = g_49e0[0];
         }
         cur = tbl[item = F_14C8B()];
@@ -726,7 +726,7 @@ static int near F_049ED(void)
             mid = a_7eaap.m7eb0->f2;
             result = F_049A2(a_7eaap.m7eb0);
             F_181C8(6, mid, result, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0x98, 0,
-                    g_5030[((struct Row8 *)((char *)g_4806 + 2))[a_7eaap.m7eb0->slot12->idx].kind]);
+                    g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
             F_13F21(1);
             F_06AA6();
             F_13DE6(10);

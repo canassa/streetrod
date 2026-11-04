@@ -13,10 +13,10 @@
 #include "M_16D1A.H"
 #include "SLOTS.H"
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6c82;                         /* DS:6C82 */
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Eng g79e2g;
 
 int g_51d8[5] = {42, 26, 12, 8, 4};   /* DS:51D8 */
@@ -32,7 +32,7 @@ int F_08EA8(void)
     if (bw8aca) {
         switch (jz79a6) {
         case 0:
-            g_5d6 = 0;
+            g_05d6 = 0;
             if (g_51ec == 0)
                 F_16381(1);
             F_01AAD();
@@ -71,7 +71,7 @@ int F_08EA8(void)
     } else {
         switch (jz79a6) {
         case 0:
-            g_5d6 = 0;
+            g_05d6 = 0;
             if (g_51ec == 0)
                 F_16381(1);
             F_01AAD();
@@ -91,7 +91,7 @@ int F_08EA8(void)
                     g_47ee = 1;
                 if (g_05f2) {
                     F_16D57();
-                    g_47ee |= g_5ee;
+                    g_47ee |= g_05ee;
                 }
                 if (g_471d) {
                     F_02DF4();

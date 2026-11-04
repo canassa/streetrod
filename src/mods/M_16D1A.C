@@ -31,8 +31,8 @@ void F_16D57(void)
     r.h.ah = 0;
     r.h.al = 3;
     int86(0x33, &r, &r);
-    g_5ee = r.h.bl & 1;
-    g_5f0 = r.h.bl & 2;
+    g_05ee = r.h.bl & 1;
+    g_05f0 = r.h.bl & 2;
 }
 
 /* F_16D94 @ 0F38:7A14 (linear 0x16D94, 51 bytes)
@@ -60,36 +60,36 @@ void F_16DC7(void)
     int mag, neg;
 
     F_16D94(&mx, &my);
-    g_5e6 += mx;
-    g_5e8 += my;
-    if (g_5e6 < 0) {
-        mag = -g_5e6;
+    g_05e6 += mx;
+    g_05e8 += my;
+    if (g_05e6 < 0) {
+        mag = -g_05e6;
         neg = -1;
     } else {
-        mag = g_5e6;
+        mag = g_05e6;
         neg = 0;
     }
-    g_5e2 = mag >> g_5ea;
-    if (g_5e2) {
+    g_05e2 = mag >> g_05ea;
+    if (g_05e2) {
         if (neg)
-            g_5e2 = -g_5e2;
-        g_5e6 = 0;
+            g_05e2 = -g_05e2;
+        g_05e6 = 0;
     }
-    if (g_5e8 < 0) {
-        mag = -g_5e8;
+    if (g_05e8 < 0) {
+        mag = -g_05e8;
         neg = -1;
     } else {
-        mag = g_5e8;
+        mag = g_05e8;
         neg = 0;
     }
-    g_5e4 = mag >> g_5ec;
-    if (g_5e4) {
+    g_05e4 = mag >> g_05ec;
+    if (g_05e4) {
         if (neg)
-            g_5e4 = -g_5e4;
-        g_5e8 = 0;
+            g_05e4 = -g_05e4;
+        g_05e8 = 0;
     }
     F_16D57();
-    if (g_5ee) {
+    if (g_05ee) {
         if (g_4732 == 0) {
             g_4736 = 1;
             g_4738 = g_472a;

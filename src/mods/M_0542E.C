@@ -41,7 +41,7 @@ int g_4fd2[16] = {6661, 6678, 6695, 6712, 6729, 6746, 6763, 6780, 6797, 6814, 68
 char *g_4ff2 = g_4fa6;   /* DS:4FF2 */
 int g_4ff4 = 0;   /* DS:4FF4 */
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 
 /* F_0542E @ 0000:542E (linear 0x0542E, 342 bytes) */
 
@@ -325,7 +325,7 @@ int near F_05B4A(void)
         r = F_14C8B();
         break;
     default:
-        if (r >= 1)
+        if (r >= 1)             /* PROVISIONAL: the original loads g_49e0[0] here and drops it */
             g_49e0[0] = g_49e0[0];
         break;
     }

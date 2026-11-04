@@ -25,14 +25,14 @@
 
 #pragma intrinsic(outp)
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct Rect g_6cbc;                 /* DS:6CBC */
 static void near F_174A6(char far *src, char far *dst, char far *mask, int w, int h, int n, int step);
 static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, int h, char far *mask, char c);
 static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color);
 static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstbm, int id1, int id2);
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Bitmap am6e68x[12];
 struct Bitmap far *at70a8;
 int (far *g78c6c)(struct Sprite *);
@@ -546,7 +546,7 @@ again:
             ;
         if (g_5a24 != 1)
             F_01B27();
-        bu825a = (struct Bitmap far *)g_288;
+        bu825a = g_0288;
         g_5a0e = 0;
         g_0286 = 0;
         g_6cbc = spr3->page->r;

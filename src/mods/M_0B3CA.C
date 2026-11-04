@@ -37,7 +37,7 @@
 #include "M_265BA.H"
 #include "SLOTS.H"
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6ca4rz;                       /* DS:6CA4 */
 static int g_6ca6qz;                       /* DS:6CA6 */
 static int g_6ca8pz;                       /* DS:6CA8 */
@@ -100,7 +100,7 @@ static void near F_0B425(void)
     F_135E5(base, n);
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int g7644m;
 char at787cu;
 int h_8264;
@@ -275,7 +275,7 @@ void F_0B8A1(void)
     dl.f0 = a_7eaap.m7eb0->f2;
     dl.f2 = F_049A2(a_7eaap.m7eb0);
     F_181C8(4, dl.f0, dl.f2, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0xa9, 1,
-            g_5030[((struct Row8 *)((char *)g_4806 + 2))[a_7eaap.m7eb0->slot12->idx].kind]);
+            g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
     F_16381(0);
     label = F_11A72(0x50, 0xaa, 0x28, 0xc, 0);
     dl.bm1 = F_11A72(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
@@ -857,12 +857,12 @@ finishstop:
                     g_2aea[0] = 0;
                 sel = i ? 0x1a : 0x19;
                 if ((long)v > a_7eaap.m7eaa) {
-                    g_1ac2 = (*(int *)&g_1ac4[62]) = 0xe;
+                    g_1ac2[0].f0 = g_1ac2[7].f0 = 0xe;
                     g_579f[sel][0].val = 0xd0;
                     g_579f[sel][1].key = 1;
                     g_579f[sel][1].val = 0xd0;
                 } else {
-                    g_1ac2 = (*(int *)&g_1ac4[62]) = 0xa;
+                    g_1ac2[0].f0 = g_1ac2[7].f0 = 0xa;
                     g_579f[sel][0].val = 0xcf;
                     g_579f[sel][1].key = 0x21;
                     g_579f[sel][1].val = 0xcf;
@@ -929,12 +929,12 @@ void near F_0CDAF(struct Eng *p)
     p->f16 = p->gear[0].r[0].f6;
     p->f12 = p->gear[0].r[0].f2;
     p->f10 = p->gear[0].r[0].f0;
-    g_5d6 = 0;
+    g_05d6 = 0;
     g_05d8 = g_05da = 0;
     bz8630z = -1;
     g_6caaaa = a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc;
     car = a_7eaap.m7eb0->slot12;
-    p->fc = g_54b2[((struct Row8 *)((char *)g_4806 + 2))[car->idx].kind][car->b / 2000];
+    p->fc = g_54b2[g_4806[car->idx].f2][car->b / 2000];
     if (car->b < 8000)
         p->fa = 0;
     else {
@@ -1021,7 +1021,7 @@ void near F_0D031(void)
                 a_7eaap.m7eb0->f20 = random_int(8) - 4;
         }
         slot = a_7eaap.m7eb0->slot12;
-        slot->b += (((struct Row8 *)((char *)g_4806 + 2))[slot->idx].kind == 0 ? (a_7eaap.m7ec0 == 1 ? 700 : 300) : (a_7eaap.m7ec0 == 1 ? 400 : 200)) + random_int(300);
+        slot->b += (g_4806[slot->idx].f2 == 0 ? (a_7eaap.m7ec0 == 1 ? 700 : 300) : (a_7eaap.m7ec0 == 1 ? 400 : 200)) + random_int(300);
         if (slot->b > 10000)
             slot->b = 10000;
     }

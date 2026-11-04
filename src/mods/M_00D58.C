@@ -33,7 +33,7 @@
 
 #pragma intrinsic(inp, outp, _enable, _disable, abs)
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6c46;                         /* DS:6C46 */
 static int g_6c48;                         /* DS:6C48 */
 static char g_6c4a;                        /* DS:6C4A */
@@ -43,7 +43,7 @@ static int g_6c50a;                        /* DS:6C50 */
 static int g_6c52a;                        /* DS:6C52 */
 static int g_6c54a;                        /* DS:6C54 */
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Dev bs79aa;
 struct Dev ao79c6t;
 void (interrupt far *w_7aaa)(void);
@@ -71,20 +71,20 @@ long g_05cc = 0L;   /* DS:05CC */
 int g_05d0 = 0;   /* DS:05D0 */
 int g_05d2 = 0;   /* DS:05D2 */
 int g_05d4 = 32767;   /* DS:05D4 */
-int g_5d6 = 0;   /* DS:05D6 */
+int g_05d6 = 0;   /* DS:05D6 */
 int g_05d8 = 0;   /* DS:05D8 */
 int g_05da = 0;   /* DS:05DA */
 int g_05dc = 350;   /* DS:05DC */
 int g_05de = 0;   /* DS:05DE */
 int g_05e0 = 0;   /* DS:05E0 */
-int g_5e2 = 0;   /* DS:05E2 */
-int g_5e4 = 0;   /* DS:05E4 */
-int g_5e6 = 0;   /* DS:05E6 */
-int g_5e8 = 0;   /* DS:05E8 */
-int g_5ea = 0;   /* DS:05EA */
-int g_5ec = 0;   /* DS:05EC */
-int g_5ee = 0;   /* DS:05EE */
-int g_5f0 = 10;   /* DS:05F0 */
+int g_05e2 = 0;   /* DS:05E2 */
+int g_05e4 = 0;   /* DS:05E4 */
+int g_05e6 = 0;   /* DS:05E6 */
+int g_05e8 = 0;   /* DS:05E8 */
+int g_05ea = 0;   /* DS:05EA */
+int g_05ec = 0;   /* DS:05EC */
+int g_05ee = 0;   /* DS:05EE */
+int g_05f0 = 10;   /* DS:05F0 */
 char g_05f2 = 3;   /* DS:05F2 */
 char g_05f3 = 0;   /* DS:05F3 */
 int g_05f4[2] = {0, 0};   /* DS:05F4 */
@@ -162,7 +162,7 @@ void F_00E24(void)
     g_05cc = 0;
     if (g_0610 == 0 && g_05f2) {
         F_16DC7();
-        g_5e6 = g_5e8 = 0;
+        g_05e6 = g_05e8 = 0;
     }
     g_4736 = 0;
     for (i = 0; i < 8; i++)
@@ -317,9 +317,9 @@ void F_01111(void)
     }
     if (g_0610 == 0 && g_0262 && F_16D1A() == -1) {
         g_05f2 = 1;
-        g_5e6 = g_5e8 = 0;
-        g_5ea = 1;
-        g_5ec = 1;
+        g_05e6 = g_05e8 = 0;
+        g_05ea = 1;
+        g_05ec = 1;
     } else
         g_05f2 = 0;
     g_6c46 = -1;
@@ -400,7 +400,7 @@ int F_01391(int keep)
     return i;
 }
 
-unsigned char g_0692[16] = {0, 0, 8, 7, 15, 7, 15, 8, 7, 2, 4, 12, 5, 10, 6, 14};   /* DS:0692 */
+char g_0692[16] = {0, 0, 8, 7, 15, 7, 15, 8, 7, 2, 4, 12, 5, 10, 6, 14};   /* DS:0692 */
 int g_06a2 = 0;   /* DS:06A2 */
 int g_06a4 = 0;   /* DS:06A4 */
 char g_06a6 = 0;   /* DS:06A6 */
@@ -454,13 +454,13 @@ int F_01417(int ticks)
         }
         if (g_4bc8 && (r_vid.mode == -2 || r_vid.mode == -6)
             && !(g_tick & 0xf) && g_58d0 && g_47cf) {
-            old = ((char *)((char *)g_0692 + 6))[2];
-            ((char *)((char *)g_0692 + 6))[2] = ((char *)((char *)g_0692 + 6))[1];
-            ((char *)((char *)g_0692 + 6))[1] = ((char *)((char *)g_0692 + 6))[0];
-            ((char *)((char *)g_0692 + 6))[0] = old;
+            old = g_0692[8];
+            g_0692[8] = g_0692[7];
+            g_0692[7] = g_0692[6];
+            g_0692[6] = old;
             F_112CB(6, old);
-            F_112CB(7, ((char *)((char *)g_0692 + 6))[1]);
-            F_112CB(8, ((char *)((char *)g_0692 + 6))[2]);
+            F_112CB(7, g_0692[7]);
+            F_112CB(8, g_0692[8]);
         }
         res = F_02DB6();
         if (res > 0) {
@@ -501,9 +501,9 @@ int F_01417(int ticks)
         }
         if (g_0610 == 0 && g_05f2) {
             F_16DC7();
-            if (g_6c4a |= (g_5e2 != 0 || g_5e4 != 0)) {
-                g_472a += g_5e2;
-                g_472c += g_5e4;
+            if (g_6c4a |= (g_05e2 != 0 || g_05e4 != 0)) {
+                g_472a += g_05e2;
+                g_472c += g_05e4;
             }
         }
         if (g_4736 | g_4737) {
@@ -695,9 +695,9 @@ void F_01AAD(void)
     _dos_setvect(8, F_0238C);
     if (!g_0610 && g_05f2) {
         F_16DC7();
-        g_5e6 = g_5e8 = 0;
-        g_5ea = 1;
-        g_5ec = 6;
+        g_05e6 = g_05e8 = 0;
+        g_05ea = 1;
+        g_05ec = 6;
     }
     g_4730 = g_4731 = g_4732 = g_4736 = 0;
     e_78e0.f2 = e_78e0.f4 = 0;
@@ -722,9 +722,9 @@ void F_01B27(void)
     g_47cf = 0;
     if (!g_0610 && g_05f2) {
         F_16DC7();
-        g_5e6 = g_5e8 = 0;
-        g_5ea = 1;
-        g_5ec = 1;
+        g_05e6 = g_05e8 = 0;
+        g_05ea = 1;
+        g_05ec = 1;
     }
     g_4730 = g_4731 = g_4732 = g_4736 = 0;
 }
@@ -1038,7 +1038,7 @@ int z_8b7c;
 
 void F_02374(void)
 {
-    e_78e0.f14 = e_78e0.f16 = e_78e0.f2 = e_78e0.f4 = g_5d6 = 0;
+    e_78e0.f14 = e_78e0.f16 = e_78e0.f2 = e_78e0.f4 = g_05d6 = 0;
     e_78e0.fbe = e_78e0.fc0;
 }
 
@@ -1148,16 +1148,16 @@ void interrupt far F_0238C(void)
                     }
                     if (g_0610 == 0 && g_05f2) {
                         F_16DC7();
-                        if (g_5e4 > 0) {
+                        if (g_05e4 > 0) {
                             g_6c4a = 1;
                             g_472c++;
                             prev = 1;
                         }
-                        if (n = g_5e2) {
+                        if (n = g_05e2) {
                             g_6c4a = s = 1;
                             g_472a += n > 0 ? 1 : -1;
                         }
-                        if (g_5f0)
+                        if (g_05f0)
                             flag = 1;
                     }
                 }

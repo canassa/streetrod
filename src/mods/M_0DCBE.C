@@ -37,11 +37,11 @@ void near F_0DCBE(struct Car *c, struct Eng *e)
     qn = c->rack.s;
     n6k = c->slot6;
     m = c->slot12;
-    a3 = ((struct Row8 *)((char *)g_4806 + 2))[qn[0]->idx].kind;
-    bl = ((struct Row8 *)((char *)g_4806 + 2))[qn[1]->idx].kind;
-    c3 = ((struct Row8 *)((char *)g_4806 + 2))[qn[2]->idx].kind;
-    d = ((struct Row8 *)((char *)g_4806 + 2))[n6k->idx].kind;
-    e1 = ((struct Row8 *)((char *)g_4806 + 2))[m->idx].kind;
+    a3 = g_4806[qn[0]->idx].f2;
+    bl = g_4806[qn[1]->idx].f2;
+    c3 = g_4806[qn[2]->idx].f2;
+    d = g_4806[n6k->idx].f2;
+    e1 = g_4806[m->idx].f2;
     vl = ((c->f24 & 0x2000) || w_8df0[c->f2].f2 == 0) * 0.09
         + ((c->f24 & 0x8000) || w_8df0[c->f2].f8 == 0) * 0.05
         + ((c->f24 & 0x4000) || w_8df0[c->f2].f6 == 0) * 0.01
@@ -78,7 +78,7 @@ void near F_0DCBE(struct Car *c, struct Eng *e)
         e->f22 = gl->r[1].f2;
     }
     e->f1e = g_555a[a3];
-    e->f34[5] = (int)((int)(0x82 - g7d86n[c->f2].f2) * 5.0 / 50.0 + g_5568[((struct Row8 *)((char *)g_4806 + 2))[m->idx].kind]);
+    e->f34[5] = (int)((int)(0x82 - g7d86n[c->f2].f2) * 5.0 / 50.0 + g_5568[g_4806[m->idx].f2]);
     e->f1c = g_5560[d];
     e->f1a = 1;
 }
@@ -163,11 +163,11 @@ int near F_0E218(int n)
     qn = p6->rack.s;
     n6k = p6->slot6;
     m = p6->slot12;
-    a3 = ((struct Row8 *)((char *)g_4806 + 2))[qn[0]->idx].kind;
-    bl = ((struct Row8 *)((char *)g_4806 + 2))[qn[1]->idx].kind;
-    c3 = ((struct Row8 *)((char *)g_4806 + 2))[qn[2]->idx].kind;
-    d = ((struct Row8 *)((char *)g_4806 + 2))[n6k->idx].kind;
-    e1 = ((struct Row8 *)((char *)g_4806 + 2))[m->idx].kind;
+    a3 = g_4806[qn[0]->idx].f2;
+    bl = g_4806[qn[1]->idx].f2;
+    c3 = g_4806[qn[2]->idx].f2;
+    d = g_4806[n6k->idx].f2;
+    e1 = g_4806[m->idx].f2;
     vl = ((p6->f24 & 0x2000) || w_8df0[p6->f2].f2 == 0) * 0.09
         + ((p6->f24 & 0x8000) || w_8df0[p6->f2].f8 == 0) * 0.05
         + ((p6->f24 & 0x4000) || w_8df0[p6->f2].f6 == 0) * 0.01

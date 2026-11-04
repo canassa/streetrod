@@ -23,9 +23,9 @@
 static int near F_1287B(void);
 static int near F_1289C(int *px, int *py);
 static void near F_12CD1(void);
-static void near F_133CB(struct Link *arr, struct Link *item, int num);
+static void near F_133CB(struct Hot *arr, struct Hot *item, int num);
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 void (far *bl78ce)(int, int, int, int, int, struct Bitmap far *);
 
 char g_06fc = 1;   /* DS:06FC */
@@ -39,7 +39,7 @@ int g_076a[10] = {10, -1, 21, -1, 11, -1, 29, -1, 11, -1};   /* DS:076A */
 char g_077e[14] = {29, 0, -1, -1, 2, 2, 2, 2, 3, 4, 2, 3, 2, 3};   /* DS:077E */
 char g_078c[6] = {5, 6, 7, 10, 12, 0};   /* DS:078C */
 struct Bitmap far *g_0792 = 0;   /* DS:0792 */
-struct NewLink g_0796 = {11, 0, 0, 1, 0, 0, 0, 0, ""};   /* DS:0796 */
+struct Hot g_0796 = {11, 0, 0, 1, 0, 0, 0, 0, 0};   /* DS:0796 */
 
 /* F_123F4 @ 0F38:3074 (linear 0x123F4, 305 bytes)
 
@@ -570,7 +570,7 @@ void F_131B5(struct Car *car)
         if (type = o_8290[1]) {
             hz82ae = 1;
             F_12DD8(type, 0);
-            slot = g_078c[((struct Row8 *)((char *)g_4806 + 2))[car->rack.s[1]->idx].kind];
+            slot = g_078c[g_4806[car->rack.s[1]->idx].f2];
             for (type = 0; type < 3; type++) {
                 hz82ae = slot++;
                 if (other = o_8290[type + 2])
@@ -629,23 +629,23 @@ void F_132AD(int *a, int *b, int flag)
 
 /* F_133CB @ 0F38:404B (linear 0x133CB, 127 bytes)
 
-   Insert item into the array arr of n records, which is sorted by (f8, fa): it goes before
+   Insert item into the array arr of n records, which is sorted by (x1, y1): it goes before
    the first record that compares greater, the rest are moved up by one. */
 
-static void near F_133CB(struct Link *arr, struct Link *item, int n)
+static void near F_133CB(struct Hot *arr, struct Hot *item, int n)
 {
-    struct Link *p;
+    struct Hot *p;
     int i;
 
     p = arr;
     for (i = 0; i < n; i++, p++) {
-        if (item->f8 < p->f8) {
-            memmove(p + 1, p, (n - i) * sizeof(struct Link));
+        if (item->x1 < p->x1) {
+            memmove(p + 1, p, (n - i) * sizeof(struct Hot));
             *p = *item;
             return;
         }
-        if (item->f8 <= p->f8 && item->fa < p->fa) {
-            memmove(p + 1, p, (n - i) * sizeof(struct Link));
+        if (item->x1 <= p->x1 && item->y1 < p->y1) {
+            memmove(p + 1, p, (n - i) * sizeof(struct Hot));
             *p = *item;
             return;
         }
@@ -667,13 +667,13 @@ void F_1344A(int *xs, int *ys)
     int x, i, y;
     int rh, rx;
     int j;
-    struct Link *item;
+    struct Hot *item;
     int len;
 
     rx = hz82ae;
     rh = g82b2t;
     item = g_1948;
-    len = (num = 3) * sizeof(struct Link);
+    len = (num = 3) * sizeof(struct Hot);
     memcpy(g_184c, item, len);
     g_0796.f4 = g_2ba5;
     i = lane = j = 0;
@@ -685,9 +685,9 @@ void F_1344A(int *xs, int *ys)
             x += 0x60;
             y += 9;
             g_0796.f6 = i + 1;
-            g_0796.fc = (g_0796.f8 = x - 2) + 5;
-            g_0796.fa = (g_0796.fe = y + 2) - 15;
-            F_133CB(g_184c, (struct Link *)&g_0796, num);
+            g_0796.x2 = (g_0796.x1 = x - 2) + 5;
+            g_0796.y1 = (g_0796.y2 = y + 2) - 15;
+            F_133CB(g_184c, &g_0796, num);
             num++;
         }
         if (++j == g_5130[lane]) {
@@ -699,12 +699,12 @@ void F_1344A(int *xs, int *ys)
         g_0796.f4 = g_2ba7;
         g_0796.f6 = 13;
         i = (ap82acz == 0x446) + F_1287B() * 2;
-        g_0796.fc = (g_0796.f8 = g_071a[i * 2] + 0x5b) + 10;
-        g_0796.fe = (g_0796.fa = g_071a[i * 2 + 1] + 2) + 15;
-        F_133CB(g_184c, (struct Link *)&g_0796, num);
+        g_0796.x2 = (g_0796.x1 = g_071a[i * 2] + 0x5b) + 10;
+        g_0796.y2 = (g_0796.y1 = g_071a[i * 2 + 1] + 2) + 15;
+        F_133CB(g_184c, &g_0796, num);
         num++;
     }
-    g_184c[num].nxt = 9;
+    g_184c[num].f0 = 9;
     hz82ae = rx;
     g82b2t = rh;
     F_00D78();

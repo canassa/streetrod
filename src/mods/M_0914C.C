@@ -33,7 +33,7 @@
 
 #pragma intrinsic(abs)
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6c84;                         /* DS:6C84 */
 static int g_6c88;                         /* DS:6C88 */
 static void near F_09256(char *s);
@@ -103,7 +103,7 @@ static int near F_0914C(int mode, int arg, int pct1, int pct2)
     return r;
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Spec *ar7d7au;
 struct Racer *g7d84o;
 int bm7f86;
@@ -968,7 +968,7 @@ void F_0AB8B(void)
     g_6c88 = 0;
     g_6ca2 = 1;
     g_0284 = 2;
-    g_5ee = g_471c = g_4732 = 0;
+    g_05ee = g_471c = g_4732 = 0;
     for (;;) {
         F_0A0F8(bm7f86, !g_6c84 & !g_6c88);
         F_13DE6(0x25);
@@ -1131,7 +1131,7 @@ static void near F_0B045(int id, char c)
     h[2].f0 = id;
     h[3].f0 = id;
     h[4].f0 = id;
-    *(*(char * *)&g_579f[37]) = c;
+    g_579f[37]->key = c;
 }
 
 /* F_0B08C @ 0000:B08C (linear 0x0B08C, 829 bytes) */
