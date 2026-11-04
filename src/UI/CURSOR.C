@@ -98,8 +98,8 @@ void cu_ctl(int mode)
     a = a<0 ? 0 : a>(SCREEN_WIDTH - 1) ? (SCREEN_WIDTH - 1) : a;
     b = b<0 ? 0 : b>(SCREEN_HEIGHT - 1) ? (SCREEN_HEIGHT - 1) : b;
     if (mode >= 0) {
-        g_4742 = g_cursorPairs[g_cursor2.shapeIndex = mode].a;
-        g_4744 = g_cursorPairs[mode].b;
+        g_unused14 = g_cursorPairs[g_cursor2.shapeIndex = mode].a;
+        g_unused15 = g_cursorPairs[mode].b;
         g_cursor2.shapeOffset = cu_shape_off(g_cursor2.shapeIndex);
         cu_draw(a, b);
     } else if (mode >= CURSOR_SHOW_NOW) {

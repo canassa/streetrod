@@ -16,7 +16,7 @@ int g_engineScore[3] = {0, 50, 100};
 int g_transScore[4] = {0, 33, 66, 100};
 int g_shiftRpm[3] = {4500, 5000, 5200};
 int g_transGears[4] = {3, 3, 4, 4};
-int g_5568[3] = {9, 8, 5};
+int g_tireFactors[3] = {9, 8, 5};
 int g_modelScore[9] = {40, 44, 48, 60, 64, 68, 80, 84, 88};
 
 /* Fills the drive train e (gear ranges, ratio table, limits) for the car c. The first half
@@ -76,7 +76,7 @@ void near pf_drivetrain(struct Car *c, struct Eng *e)
         e->autoShiftRpm = gl->bands[1].maxRpm;
     }
     e->shiftRpm = g_shiftRpm[a3];
-    e->f34[5] = (int)((int)(0x82 - g_carData[c->specIndex].rank) * 5.0 / 50.0 + g_5568[g_parts[m->idx].variant]);
+    e->f34[5] = (int)((int)(0x82 - g_carData[c->specIndex].rank) * 5.0 / 50.0 + g_tireFactors[g_parts[m->idx].variant]);
     e->gearCount = g_transGears[d];
     e->shifterDirty = 1;
 }

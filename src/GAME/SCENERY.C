@@ -2,7 +2,7 @@
 #include "SCENERY2.H"
 #include "SPANS1.H"
 
-int g_5ec6 = 0;
+int g_unused22 = 0;
 struct List g_sprTree = {7, g_sprTreeLod};
 struct Run g_sprTreeLod[7] = {{13, g_spans1},        {22, g_spans1 + 13},   {47, g_spans1 + 35},  {88, g_spans1 + 82},
                               {127, g_spans1 + 170}, {165, g_spans1 + 297}, {245, g_spans1 + 462}};
@@ -39,7 +39,7 @@ struct Run g_sprLargeRockLod[7] = {{22, g_spans1 + 3278}, {22, g_spans1 + 3278},
                                    {95, g_spans1 + 3476}};
 struct List g_sprDot = {1, g_sprDotLod};
 struct Run g_sprDotLod[1] = {{5, g_spans1 + 3571}};
-int g_6076 = 15;
+int g_unused23 = 15;
 struct List *g_scenery[21] = {&g_sprTree,       &g_sprPost,      &g_sprHydrant,    &g_sprWarnSign,   &g_sprBush,
                               &g_sprSpeedSign,  &g_sprBarricade, &g_sprSmallRock,  &g_sprLargeRock,  &g_sprPole,
                               &g_sprTree2,      &g_sprTree3,     &g_sprArrowSignL, &g_sprCityLimits, &g_sprArrowSignUp,

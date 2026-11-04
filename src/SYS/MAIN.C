@@ -39,8 +39,8 @@ int g_hercules = 0;
 int g_sysHooked = 0;
 int g_hercModeSet = 0;
 int g_videoSet = 0;
-int g_004a = 0;
-int g_004c = 0;
+int g_unused1 = 0;
+int g_dashViewSaved = 0;
 
 
 static void near dos_print(char *s)

@@ -908,8 +908,8 @@ void near ra_reset_eng(struct Eng *p)
     p->decelStep = p->gear[0].bands[0].decelStep;
     p->maxRpm = p->gear[0].bands[0].maxRpm;
     p->minRpm = p->gear[0].bands[0].minRpm;
-    g_05d6 = 0;
-    g_05d8 = g_05da = 0;
+    g_unused6 = 0;
+    g_unused7 = g_unused8 = 0;
     g_shownShiftPosition = -1;
     g_finishLineIndex = g_driver.raceType == RACE_DRAG ? 0x17c : 0x3fc;
     car = g_driver.currentCar->tires;

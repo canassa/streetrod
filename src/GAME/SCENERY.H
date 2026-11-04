@@ -15,7 +15,7 @@ struct List {
     struct Run *items;
 };
 
-extern int g_5ec6;
+extern int g_unused22;
 extern struct Run g_sprTreeLod[7];
 extern struct List g_sprTree;
 extern struct Run g_sprPostLod[7];
@@ -36,7 +36,7 @@ extern struct Run g_sprLargeRockLod[7];
 extern struct List g_sprLargeRock;
 extern struct Run g_sprDotLod[1];
 extern struct List g_sprDot;
-extern int g_6076;
+extern int g_unused23;
 extern struct List *g_scenery[];
 
 #endif

@@ -63,8 +63,8 @@ _g_lastDy DB      0
 _g_buttons DB      0
         PUBLIC  _g_cVis
 _g_cVis DB      0
-        PUBLIC  _g_4734
-_g_4734 DW      1
+        PUBLIC  _g_unused13
+_g_unused13 DW      1
         PUBLIC  _g_click
 _g_click DB      0
         PUBLIC  _g_click2
@@ -79,10 +79,10 @@ _g_click2X DW      0
 _g_click2Y DW      0
         PUBLIC  _g_inputLock
 _g_inputLock DW      0
-        PUBLIC  _g_4742
-_g_4742 DW      0
-        PUBLIC  _g_4744
-_g_4744 DW      0
+        PUBLIC  _g_unused14
+_g_unused14 DW      0
+        PUBLIC  _g_unused15
+_g_unused15 DW      0
         PUBLIC  _g_savedCursorX
 _g_savedCursorX DW      0
         PUBLIC  _g_savedCursorY
@@ -111,8 +111,8 @@ _g_soundOn DB      1
 _g_speakerOn DB      0
         PUBLIC  _g_lastKey
 _g_lastKey DB      0
-        PUBLIC  _g_47d1
-_g_47d1 DB      1Dh, 1Eh, 1Fh
+        PUBLIC  _g_unused16
+_g_unused16 DB      1Dh, 1Eh, 1Fh
         PUBLIC  _g_oldInt9Seg
 _g_oldInt9Seg DW      0
         PUBLIC  _g_oldInt9Off
@@ -131,8 +131,8 @@ _g_modeBitsB DB      0
 _g_biosModeB DB      0
         PUBLIC  _g_firePressed
 _g_firePressed DW      0
-        PUBLIC  _g_47f0
-_g_47f0 DB      0
+        PUBLIC  _g_unused17
+_g_unused17 DB      0
 S_47f1  DB      '`Bankroll:`$', 0
         PUBLIC  _g_gearText
 _g_gearText DB      ' Gear: ', 0

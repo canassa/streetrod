@@ -61,7 +61,7 @@ class SourceTests(unittest.TestCase):
         self.assertEqual(gs[0x5030]['header'], 'GARAGE')
         self.assertEqual(gs[0x6C34], dict(off=0x6C34, name='g_shifterDraw', decl='struct ShifterDraw @', header=None,
                                           static='src/GAME/DASH.C'))
-        self.assertEqual(gs[0x6C42]['name'], 'g_6c42')
+        self.assertEqual(gs[0x6C42]['name'], 'g_unused24')
         far = {g['name']: g for g in source.fardata()}
         self.assertEqual((far['g_screen1']['seg'], far['g_screen1']['off'], far['g_screen1']['decl']),
                          (0x2E3E, 0x30, 'struct Bitmap far @'))

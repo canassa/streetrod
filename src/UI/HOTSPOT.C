@@ -348,8 +348,8 @@ struct Hot g_hotBobs[42] = {{HOT_REGION, 0, 1113, 1, 0, 157, 320, 191, 0},
                             {HOT_BOX, 1, 0, 52, 40, 134, 280, 153, 362},
                             {HOT_END, 0, 0, 0, 0, 0, 0, 0, 0}};
 
-char fz79a8[2];
-char ah7aa4w[6];
-char bz7ee2[64];
-char g7ff6f[2];
-char a8ef4fv[2];
+char g_unused596[2];
+char g_unused696[6];
+char g_unused1239[64];
+char g_unused1449[2];
+char g_unused34[2];

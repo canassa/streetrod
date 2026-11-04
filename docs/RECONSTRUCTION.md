@@ -24,6 +24,19 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   Placeholders of the same length were kept where possible. Where a descriptive name
   was found that keeps the bucket or key order (`./sr fit`), it replaced the placeholder;
   its spelling (`g_drawnMinX`, `g_sprPageRing`) was picked to fit.
+- **Unused global names.** Globals with no evidence-backed meaning use `g_unusedN`.
+  Numbers 1..24 follow the former placeholders in ascending DGROUP address order;
+  positions 2, 18 and 19 instead received `g_dashViewSaved`, `g_carPulledIn` and
+  `g_tireFactors` from their writes and indexing. Missing numbers are intentional.
+  Five unreferenced HOTSPOT communals use `g_unused596`, `g_unused696`,
+  `g_unused1239`, `g_unused1449` and `g_unused34`, respectively in address order.
+  Their suffixes satisfy LINK's bucket windows rather than encode addresses or
+  sizes; the first two retain bucket ties, verified by the packed build.
+  `g_unused24` preserves the POPUP static ordering and its full PROVISIONAL marker.
+  Here unused includes storage written but never read; the names claim no original
+  purpose. The tire factors {9, 8, 5} feed drivetrain slot 5, but its intended
+  gameplay interpretation remains unproven. Identifier growth is checked by the
+  full function gate, including GARAGE.C and VIEW.C.
 - **Local variables.** MSC's slot order depends on a hash of the names (CLAUDE.md 3).
   Names with digit suffixes come from `./sr layout -w` and only reproduce the frame.
 - **Struct types and members** (in the primary global owner's header, or the
@@ -167,7 +180,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
     The tip reaches radius 18 and the hub radius 5; the latter includes axial
     `(0,5)` and `(5,0)` samples. The point struct preserves the complete object code
     and the existing CONST fixup order (offsets 2, 0, then 4).
-  - `g_6c42` (POPUP.C): four unreferenced `_BSS` bytes after `g_popupLayout`.
+  - `g_unused24` (POPUP.C): four unreferenced `_BSS` bytes after `g_popupLayout`.
   - `g_list[0] = g_list[0];` in the default cases of your_cars (GAME.C) and sg_load
     (SAVEGAME.C): after the menu mn_modal_list returns a positive item, the original loads
     `g_list[0]` (the list's item count) into `ax` and drops it. MSC drops the store of a
@@ -403,7 +416,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   all screen IDs against their pointer-table slots (including the unused lists),
   and every SC_ hardware constant between PC.H and PC.INC. This prevents drift
   without generating or rewriting the historical-language source files.
-- **HOTSPOT.C's filler communals** (`char fz79a8[2]` and the other unreferenced
+- **HOTSPOT.C's filler communals** (`char g_unused596[2]` and the other unreferenced
   tentative definitions at the end of the file). No code references these blocks. Their types and sizes
   are invented to fill the gaps between referenced communals, and their names fit LINK's
   hash.
@@ -500,14 +513,14 @@ Retained storage is not explained by these alignment rules:
 
 | Candidates | Removal evidence / limit |
 |---|---|
-| g_064d | Deletion shifts g_keymapGroup 064E -> 064D and g_keymapSaved 0650 -> 064E; SYS `_DATA` shrinks 435 -> 433 bytes. Its meaning is unknown; the following char does not induce alignment. |
-| g_47f0 | Local offset 216 is already even: EVEN emits nothing. Deletion moves the bankroll string and later data; `_DATA` shrinks 998 -> 996 bytes. Meaning unresolved. |
-| g_47d1 | Contains 1D, 1E, 1F, not zeros. Deletion shifts the following saved interrupt words back three bytes. EVEN supplies only one byte, not three. |
-| g_05bc / g_05f4 | SYS shrinks by 16 / 4 bytes; already-aligned following data moves by that amount. |
-| g_5e3c / g_5e94 | VIEW shrinks by 2 / 8 bytes; g_viewPages / g_sheetRects move back respectively. |
-| g_6c42 | POPUP `_BSS` shrinks 6 -> 2 bytes, moving later modules' static storage. Four bytes cannot be a single WORD alignment pad. Preserve its existing PROVISIONAL marker. |
-| g_004a / g_06a2 | Additional unused zero words found by auditing all source/header symbols. Deletion shrinks MAIN / SYS `_DATA` by two and moves following globals. |
-| fz79a8 / ah7aa4w / bz7ee2 / g7ff6f / a8ef4fv | HOTSPOT tentative arrays allocate 2 / 6 / 64 / 2 / 2 bytes through COMDEF. They are explicit communal blocks, not initialized-data or literal padding; purpose remains unknown. |
+| g_unused11 | Deletion shifts g_keymapGroup 064E -> 064D and g_keymapSaved 0650 -> 064E; SYS `_DATA` shrinks 435 -> 433 bytes. Its meaning is unknown; the following char does not induce alignment. |
+| g_unused17 | Local offset 216 is already even: EVEN emits nothing. Deletion moves the bankroll string and later data; `_DATA` shrinks 998 -> 996 bytes. Meaning unresolved. |
+| g_unused16 | Contains 1D, 1E, 1F, not zeros. Deletion shifts the following saved interrupt words back three bytes. EVEN supplies only one byte, not three. |
+| g_unused4 / g_unused9 | SYS shrinks by 16 / 4 bytes; already-aligned following data moves by that amount. |
+| g_unused20 / g_unused21 | VIEW shrinks by 2 / 8 bytes; g_viewPages / g_sheetRects move back respectively. |
+| g_unused24 | POPUP `_BSS` shrinks 6 -> 2 bytes, moving later modules' static storage. Four bytes cannot be a single WORD alignment pad. Preserve its existing PROVISIONAL marker. |
+| g_unused1 / g_unused12 | Additional unused zero words found by auditing all source/header symbols. Deletion shrinks MAIN / SYS `_DATA` by two and moves following globals. |
+| g_unused596 / g_unused696 / g_unused1239 / g_unused1449 / g_unused34 | HOTSPOT tentative arrays allocate 2 / 6 / 64 / 2 / 2 bytes through COMDEF. They are explicit communal blocks, not initialized-data or literal padding; purpose remains unknown. |
 
 The full audit also found unused nonzero tables, message headers and constants;
 being unreferenced is insufficient reason to remove them. Named data in retained
@@ -542,7 +555,7 @@ Cuts before sy_crit_error (105B) or sy_init (1111) additionally violate the WORD
 code-contribution alignment. SYS's two literal pools surround the keymap data:
 0614..064C precedes it, and sy_wait_input's six empty literals at 068C..0691
 follow it. Moving only the keymap tables to an object after SYS cannot interleave
-that new contribution between SYS's own pools. Retain g_064d as category (c),
+that new contribution between SYS's own pools. Retain g_unused11 as category (c),
 required explicit storage of unknown meaning, rather than claiming a proven
 independent historical variable or a compiler pad.
 

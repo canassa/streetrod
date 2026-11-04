@@ -402,7 +402,7 @@ void da_set_view(enum DashView mode)
             g_savedFront = r_vid.front;
             g_savedBack = r_vid.back;
         }
-        g_004c = 1;
+        g_dashViewSaved = 1;
         break;
     case DASH_VIEW_RESTORE:
         r_vid.front = g_savedFront;

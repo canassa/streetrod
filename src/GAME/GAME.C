@@ -49,7 +49,7 @@ static enum GarageMode near your_cars(void);
 
 struct Car *g_old = 0;
 struct Car *g_new = 0;
-int g_4f4a = 0;
+int g_carPulledIn = 0;
 int g_picsFreed = 0;
 int g_paperPics[5] = {1022, 1023, 1025, 1024, 1026};
 int g_paperPick = 0;
@@ -798,7 +798,7 @@ void near gm_run(void)
                 if (kind != KR_LOAD_GAME && kind != KR_NEW_GAME && kind == KR_END_QUIT)
                     return;
                 cu_ctl(CURSOR_SHOW_NOW);
-                g_4f4a = 0;
+                g_carPulledIn = 0;
                 break;
             }
             v = GARAGE_REDRAW;

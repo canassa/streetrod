@@ -2285,3 +2285,16 @@ Ownership inventory (the original 98 definitions):
 - MSC packs literal pools consecutively and does not round `_DATA` at module end. Objects larger than one byte are aligned before emission; scalar char and one-byte aggregates are not. All-char structs can have odd sizes without tail padding. LINK supplies WORD inter-object alignment. MASM does not align a DW after DB automatically. The measured examples and exceptions are in the msc51-recipe-book skill.
 - An unreferenced zero byte is not enough evidence for either a variable or a missing module. FAME's 4BED is a genuine existing module boundary; SAVEGAME's 501D and VIDDET's 5AF3 have indistinguishable in-object and data-only-split explanations. Packed identity is necessary but cannot recover object membership for inert data without fixups.
 - Shared private BSS plus contiguous code is stronger evidence against splitting SYS than the broad near-call hull from sr module units (explicit near interfaces join separate objects too). The 064D byte is neither the tested literal-pool alignment nor a supported object boundary; its semantic purpose remains unknown. See the per-candidate classifications and exact original instruction addresses in docs/RECONSTRUCTION.md.
+
+## 2026-11-04 23:56 CET: Replace remaining address-style globals
+
+### What I did
+
+- Reviewed all 29 globals in the unused task against source uses, disassembly and original data. Renamed three from evidence: g_004c -> g_dashViewSaved, g_4f4a -> g_carPulledIn, g_5568 -> g_tireFactors. Renamed the other 26 to g_unusedN; skipped none. Struct members and the two far sound tables remain outside this task.
+- Used ./sr fit for all placements, preserving the POPUP static order and fitting all five HOTSPOT communal buckets. Retained the complete PROVISIONAL marker. Updated cross-references through ./sr rename, regenerated plans/unnamed.md from tools/sr/source.py, documented the scheme in docs/RECONSTRUCTION.md, and wrote the per-item evidence to work/LEDGER.md.
+- Gates passed: headers, formatting, 572/572 functions, clean packed build IDENTICAL, DOS-native build IDENTICAL, DGROUP check/order, 102 unit tests, documentation with zero diagnostics.
+
+### What I learned
+
+- Written-but-unread state does not establish its intended consumer: cursor-pair copies, drive resets and the rival-view expression retain unused names. Tire indexing establishes the factor table's input, but does not settle the gameplay interpretation of drivetrain slot 5.
+- A communal suffix can fit a bucket window without preserving its old exact bucket: g_unused34 uses bucket 243 in the 240..246 window. Two other names retain neighbor ties and are confirmed by both identical builds. The naming policy and placement reasoning are recorded in docs/RECONSTRUCTION.md under Names.

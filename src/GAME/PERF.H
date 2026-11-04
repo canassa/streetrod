@@ -15,7 +15,7 @@ extern int g_engineScore[];
 extern int g_transScore[];
 extern int g_shiftRpm[];
 extern int g_transGears[];
-extern int g_5568[];
+extern int g_tireFactors[];
 extern int g_modelScore[];
 void near pf_drivetrain(struct Car *c, struct Eng *e);
 void near pf_drivetrain_spec(int n, struct Eng *e);

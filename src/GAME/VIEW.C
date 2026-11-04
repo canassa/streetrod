@@ -64,14 +64,14 @@ int g_opponentPics[5][4] = {{1003, 1004, 1057, 1091},
                             {1010, 1247, 1248, 1092},
                             {1010, 1249, 1250, 1251},
                             {1010, 1253, 1252, 1254}};
-int g_5e3c = 0;
+int g_unused20 = 0;
 struct ViewPages g_viewPages = {1, 2};
 struct Clip g_viewRect = {SCREEN_WIDTH, 82, 0, 18, 0, 18};
 struct ViewClip g_viewClip = {0, 18, 101, (SCREEN_WIDTH - 1)};
 unsigned char g_shrinkMasks[3][4] = {{87, 37, 34, 0}, {247, 117, 82, 0}, {117, 84, 33, 0}};
 int g_sceneBitmapIds[4] = {1258, 1237, 1236, 1238};
 int g_roadLineWidths[21] = {8, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-int g_5e94[4] = {0, 0, 0, 0};
+int g_unused21[4] = {0, 0, 0, 0};
 struct Ball g_sheetRects[7] = {{256, 8, 8},   {240, 16, 13}, {208, 32, 19}, {168, 40, 24},
                                {120, 48, 30}, {64, 56, 37},  {0, 64, 43}};
 
@@ -1129,7 +1129,7 @@ static void near render_opponent(void)
                g_roadOppPos.distanceStep < g_trackViewMotion.distanceStep;
     g_prevRivalFrame = g_picOpponent;
     g_picOpponent = seln;
-    g_5ec6 = xk > 16 ? (xk + 8) & 15 : 0;
+    g_unused22 = xk > 16 ? (xk + 8) & 15 : 0;
     t1 = xk;
     if (seln == 0)
         t1 += 16;

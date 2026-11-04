@@ -182,37 +182,37 @@ struct TimerPriorities {
 };
 
 extern struct InputState g_input;
-extern int g_05d4;
-extern int g_05d6;
-extern int g_05d8;
-extern int g_05da;
+extern int g_unused5;
+extern int g_unused6;
+extern int g_unused7;
+extern int g_unused8;
 
 extern struct TimerPriorities g_sysTimerPriorities;
 
 extern struct TimerQueue g_timerQueue;
 extern struct Link g_timers[];
-extern int g_05ba;
-extern int g_05bc[8];
+extern int g_unused3;
+extern int g_unused4[8];
 extern long g_waitUntil;
 extern int g_msgTicks;
 extern int g_clickEnds;
 extern int g_kbdHooked;
 extern struct Mouse g_mouse;
-extern int g_05f4[2];
+extern int g_unused9[2];
 extern long g_tick;
 extern struct GameClock g_gameClock;
 extern char g_tickDiv;
 extern char g_driveDiv;
-extern int g_060a;
+extern int g_unused10;
 extern char *g_errRead;
 extern char *g_errWriteProt;
 extern int g_demo;
 extern int g_autoDrive;
-extern char g_064d;
+extern char g_unused11;
 extern char g_keymapGroup;
 extern struct KeyMap g_keymapSaved[];
 extern char g_protectPal[];
-extern int g_06a2;
+extern int g_unused12;
 extern struct DemoControl g_demoControl;
 extern int g_demoTargetX;
 extern int g_demoTargetY;

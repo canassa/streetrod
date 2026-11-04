@@ -397,9 +397,9 @@ Measured with real MSC 5.1 `/AM /Oalsi /Gs /FPi` and MASM 5.1 `/Ml` through emu2
 
 Removed g_501d (alignment before SAVEGAME's message array), g_4bed (LINK padding
 between FAME and the next module), and replaced g_5af3 with EVEN in VIDDET.
-g_064d stays: the following scalar g_keymapGroup moves 064E -> 064D without it,
-then g_keymapSaved moves 0650 -> 064E. g_47f0 is at an even offset, so EVEN
-cannot replace it. Nonzero 1D/1E/1F at g_47d1 is real data, not zero padding.
+g_unused11 stays: the following scalar g_keymapGroup moves 064E -> 064D without it,
+then g_keymapSaved moves 0650 -> 064E. g_unused17 is at an even offset, so EVEN
+cannot replace it. Nonzero 1D/1E/1F at g_unused16 is real data, not zero padding.
 See docs/RECONSTRUCTION.md and the padbytes diary entry for the retained candidates.
 
 
@@ -409,7 +409,7 @@ across a contiguous function span constrains splits more strongly than near-call
 hulls (which can cross explicit near interfaces). SYS's DS:6C46/6C4C statics span
 0D78..2B9A; splitting before sy_keymap_set produces six wrong external far calls.
 The six empty sy_wait_input literals after the keymap tables also prevent moving
-just those tables after all SYS data. g_064d is retained required storage.
+just those tables after all SYS data. g_unused11 is retained required storage.
 For unused data without relocations, byte identity may not decide: standalone
 MSGONLY after SAVEGAME and VDSTRS after VIDDET each produced IDENTICAL packed
 EXEs. Keep those as alternative findings, not established original file splits.

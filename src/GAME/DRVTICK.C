@@ -28,7 +28,7 @@ int dt_step(void)
     if (g_runRacingFlag) {
         switch (g_phaseDriveRunState) {
         case DRIVE_START:
-            g_05d6 = 0;
+            g_unused6 = 0;
             if (g_keepCruiseMusic == 0)
                 mu_suspend(1);
             sy_drive_start();
@@ -67,7 +67,7 @@ int dt_step(void)
     } else {
         switch (g_phaseDriveRunState) {
         case DRIVE_START:
-            g_05d6 = 0;
+            g_unused6 = 0;
             if (g_keepCruiseMusic == 0)
                 mu_suspend(1);
             sy_drive_start();

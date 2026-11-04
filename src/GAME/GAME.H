@@ -70,7 +70,7 @@ struct Car {
 
 extern struct Car *g_old;
 extern struct Car *g_new;
-extern int g_4f4a;
+extern int g_carPulledIn;
 extern int g_picsFreed;
 extern int g_paperPics[];
 extern int g_paperPick;

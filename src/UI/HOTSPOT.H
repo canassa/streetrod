@@ -48,10 +48,10 @@ extern struct Hot g_hotRepair[];
 extern struct Hot g_hotReadyBox[];
 extern struct Hot g_bodyAsk[];
 extern struct Hot g_hotBobs[];
-extern char fz79a8[2];
-extern char ah7aa4w[6];
-extern char bz7ee2[64];
-extern char g7ff6f[2];
-extern char a8ef4fv[2];
+extern char g_unused596[2];
+extern char g_unused696[6];
+extern char g_unused1239[64];
+extern char g_unused1449[2];
+extern char g_unused34[2];
 
 #endif

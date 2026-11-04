@@ -447,7 +447,7 @@ again:
     right = kind == CAR_DRIVE_OUT ? SCREEN_WIDTH - x0 : x0 + w1;
     if (g_carPassBy != 2) {
         if (kind == CAR_PULL_IN) {
-            g_4f4a = 1;
+            g_carPulledIn = 1;
             if (r_vid.mode == VID_EGA) {
                 me_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, SCREEN_WIDTH, BACKDROP_ROWS - g_spriteBottomCut,
                               VID_EGA);

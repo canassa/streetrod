@@ -16,7 +16,7 @@
 #include "VIDEO.H"
 
 static struct Win *g_popupLayout;
-static int g_6c42[2]; /* PROVISIONAL: 4 unreferenced bytes after g_popupLayout */
+static int g_unused24[2]; /* PROVISIONAL: 4 unreferenced bytes after g_popupLayout */
 
 struct Win g_popupWins[3] = {{1072, 1, 72, 30, 152, 37, 0, 6, 144},
                              {1073, 1, 80, 30, 232, 37, 0, 6, 223},

@@ -57,14 +57,14 @@ struct RenderRows {
 };
 
 extern int g_opponentPics[][4];
-extern int g_5e3c;
+extern int g_unused20;
 extern struct ViewPages g_viewPages;
 extern struct Clip g_viewRect;
 extern struct ViewClip g_viewClip;
 extern unsigned char g_shrinkMasks[3][4];
 extern int g_sceneBitmapIds[4];
 extern int g_roadLineWidths[21];
-extern int g_5e94[4];
+extern int g_unused21[4];
 extern struct Ball g_sheetRects[];
 extern struct Bitmap far *g_lightsBm;
 extern struct Bitmap far *g_windowStrutArt;
