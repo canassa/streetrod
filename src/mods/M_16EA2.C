@@ -16,8 +16,6 @@
 #include "M_265BA.H"
 #include "M_2869E.H"
 
-#pragma intrinsic(abs)
-
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Bitmap far *g8188w;
 

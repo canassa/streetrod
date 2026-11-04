@@ -81,6 +81,13 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 - **F_07AA4's `int flags[3]`** (M_06476.C), indexed by key 1 and 2. The element that is
   never touched, `flags[0]`, fills the original's unused 2-byte frame slot. This is an
   interpretation (it matches `flags[k--]`) and is not proven.
+- **`/Oi`, not `#pragma intrinsic`.** No compiled C code in the EXE calls a library routine
+  that has an intrinsic form (only the runtime calls `strcpy`, `strlen`, `memcpy` and
+  `memset`), and every C file matches with `/Oi` added to its flags. The 18 files whose
+  inline `inp`/`outp`/`abs`/`_rotl`/`_rotr`/`memcpy`/`memset` came from a
+  `#pragma intrinsic` now have `/Oi`; the 7 that had both lost the redundant pragma. The
+  bytes do not show which of the two the original used. The other 20 C files without
+  `/Oi` use none of these functions, so their `i` is unknown.
 - **PROVISIONAL dummies** (each is marked in the source). They reproduce something in the
   EXE whose original text is unknown:
   - F_11213's unused inner-block `struct Colors save` (M_10B7C.C): a 6-byte frame slot.

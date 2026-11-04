@@ -5,8 +5,6 @@
 #include "M_230DC.H"
 #include "M_00D58.H"
 
-#pragma intrinsic(outp)
-
 int g_5c0c[5] = {0, 80, 160, 40, 120};   /* DS:5C0C */
 
 /* F_230DC @ 21A0:16DC (linear 0x230DC, 70 bytes)

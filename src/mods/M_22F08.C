@@ -2,8 +2,6 @@
 #include "STRUCTS.H"
 #include "M_22F08.H"
 
-#pragma intrinsic(outp)
-
 /* F_22F08 @ 21A0:1508 (linear 0x22F08, 468 bytes)
 
    Fill a rectangle in a planar VGA bitmap using the bit mask register */

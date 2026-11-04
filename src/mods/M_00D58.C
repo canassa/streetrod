@@ -31,8 +31,6 @@
 #include "M_265BA.H"
 #include "SONG.H"
 
-#pragma intrinsic(inp, outp, _enable, _disable, abs)
-
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6c46;                         /* DS:6C46 */
 static int g_6c48;                         /* DS:6C48 */

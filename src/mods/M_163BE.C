@@ -10,8 +10,6 @@
 #include "M_21962.H"
 #include "SONG.H"
 
-#pragma intrinsic(outp, inp)
-
 static void near F_164CC(long freq, int n);
 static void near F_16612(int a, int *p, int count, int reps);
 static void near F_16686(int a, int *p, int count, int reps);
