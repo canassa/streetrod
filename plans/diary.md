@@ -770,3 +770,17 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - "Click here to edit" (`g_290c`) and " Gear: " (`g_47fe`) are strings instead of char/int pieces (no code reference into their middle).
 - New docs/RECONSTRUCTION.md lists every reconstruction choice with its evidence and limits; plans/faithful-build.md is marked done; docs no longer depend on scratch scripts in work/.
 - Result: `./sr build` IDENTICAL from an empty work dir, `./dosbox.sh --make` IDENTICAL, `./sr check --all` 572/572, tests OK, `headers --check`, `dgroup check` and `dgroup order` clean.
+
+## 2026-11-04 23:00 CET: Second audit fixed; the faithful build is finished
+
+### What I did
+- A second independent audit (read-only, fresh clone) confirmed the build runs exactly the commands in src/MAKEFILE, writes nothing into src/, and works without orig/ and db/; it listed small remaining issues, all fixed:
+- HOTSPOT.C is all `struct Hot`: DS:09F4..239E is 365 18-byte records in one index space (f10 is the next record's index into g_09f4). The split/flattened tables are Hot arrays starting at the record the code names (`g_11b0[6]`, `g_1ac2[39]`, `g_1d80[10]`, `g_1e34[35]`); the Link/Button/NewLink/Row8/Blt12 views are gone.
+- `g_0288` is `struct Bitmap far *` (two C4047 gone); `g_05d6..g_05f0` have 4-digit names; the keymaps are 43 labelled pair lists; EFFECTS streams are `int far[]`; M_02DB0.H exists; MAKEFILE blocks follow link order (checked by the build); source comments no longer cite tools or dates; STRUCTS.H comments are in place; generated view casts became plain indexing.
+- The `g_49e0[0] = g_49e0[0];` dead load in F_049ED/F_05B4A stays, PROVISIONAL (only an empty `switch` gives the same bytes). docs/RECONSTRUCTION.md gained the layout gotos, the budget structs and message offsets, undecided return types and a warnings section (109 at /W3, which are believed original).
+- Verified in a fresh clone with orig/ and db/ removed: `./sr build --no-verify` gives SR.EXE SHA-1 3a5e28b7..., the shipped file.
+- Result: `./sr build` IDENTICAL from an empty work dir, `./dosbox.sh --make` IDENTICAL, `./sr check --all` 572/572, `headers --check`, `dgroup check`, `dgroup order` clean, tests OK.
+
+### What I learned
+- Link, NewLink, Button and Win were all views of one 18-byte hot-spot record; the f10 index chain makes the table one array.
+- Whether a table is `char` or `unsigned char` shows in callers (cbw vs zero extension): evidence for the element type.
