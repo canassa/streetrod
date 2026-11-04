@@ -1061,3 +1061,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - `VID_EGA` (-2), `VID_CGA` (-3), `VID_HERCULES` (-4), `VID_TANDY` (-6) name the pixel format held by `r_vid.mode` and the screen bitmaps' `flags` (EGA 4 planes 8 px/byte; CGA 2 bpp; Hercules mono at B000; Tandy 4 bpp 2 px/byte), in MAIN.H for C and PC.INC for the assembler; all ~190 comparisons and the flags assignments use them. Done by a Codex agent.
 - Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
+
+## 2026-11-04 14:42 CET: Name critical-error values
+
+### What I did
+- Named the int 24h device-error flag, retry permission, and write-protect/not-ready/paper-out codes in PC.H, with matching PC.INC equates. Reused MSC 5.1 DOS.H's _HARDERR_RETRY and _HARDERR_ABORT in sys_crit_error. No symbol or member renames and no source comments added.
+- Verified 572/572 function matches, a clean byte-identical packed build, clean header and DGROUP checks, 53 passing unit tests, and a byte-identical native DOSBox MAKE build.
+
+### What I learned
+- toolchain/msc51/INCLUDE/DOS.H:146-152 supplies the resume actions; BIN/README.DOC and BIN/CL.HLP contain no _harderr documentation (CL.HLP covers compiler flags).
+- Microsoft's MS-DOS 3.3 Programmer's Reference section 1.11.2 (https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/) confirms AH bits 7/4 and DI codes 0/2/9. CRIT_DEVICE_ERROR is broader than character-device-only: AH bit 7 can also indicate a bad in-memory FAT. The handler's messages and retry/exit branches agree with these meanings.
+- Tree-wide searches found no other uses with critical-error semantics. PC.H's numeric constants require matching PC.INC equates, enforced by test_shared_pc_constants.
