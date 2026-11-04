@@ -1026,3 +1026,15 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - MSC canonicalizes `70 * p` and `p * 70` to `mov ax,70; imul p`, so operand order says nothing here; signed vs unsigned does (`imul` vs `mul`).
+
+## 2026-11-04 14:27 CET: Name shared screen geometry
+
+### What I did
+- Named EGA_PITCH in PC.H/PC.INC at confirmed planar-byte strides; named BACKDROP_ROWS in CARPIC.H at the scratch reserve and car-display height, with its equivalent-source-form choice recorded in docs/RECONSTRUCTION.md.
+- Named SCREEN_W/SCREEN_H, SCREEN_BODY_H/STATUS_BAR_H and DASH_Y/DASH_H at confirmed screen bounds, status-strip geometry and dashboard origins/buffer heights. No function, global or struct-member names changed; no source comments were added.
+- Surveyed other recurring geometry in work/geom/SURVEY.md, including numeric coincidences left literal: CGA word counts, interleaved EGA reveal steps, wheel sentinels, road distances, asset sizes and mirror clip coordinates.
+- Merged main and reran every gate: 572/572 functions match; clean packed build and DOS-native MAKE are IDENTICAL to orig/SR.EXE; header and DGROUP checks clean; all 53 unit tests pass.
+
+### What I learned
+- SCREEN_H and DASH_H were header guards as well as useful dimension names; their guards must be SCREEN_H_INCLUDED and DASH_H_INCLUDED. Shared numeric definitions in PC.H must also be defined in PC.INC (test_shared_pc_constants).
+- DRIVE's previous-wheel value 100 and DASH's b != 100 are a sentinel, distinct from the dashboard origin 100. EGACOPY's 200-byte row step is five EGA scanlines, distinct from the screen height. These distinctions are recorded in work/geom/SURVEY.md.
