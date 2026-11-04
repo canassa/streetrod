@@ -24,14 +24,7 @@ static struct Bitmap far * near ad_picture(int n);
 struct Pages g_pages = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 0, 0, 0};   /* DS:04FE */
 struct Bitmap far *g_adPicture = 0;   /* DS:051C */
 char g_adRedraw = 0;   /* DS:0520 */
-int g_adBlt = 0;   /* DS:0522 */
-int g_adHeight = 0;   /* DS:0524 */
-int g_adSrcX = 0;   /* DS:0526 */
-int g_adSrcY = 0;   /* DS:0528 */
-int g_adDstX = 0;   /* DS:052A */
-int g_adDstY = 0;   /* DS:052C */
-int g_052e = 0;   /* DS:052E */
-int g_0530[3] = {0, 0, 0};   /* DS:0530 */
+struct Blt g_adPacket = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; /* DS:0522 */
 int g_adResume = 0;   /* DS:0536 */
 
 /* ads_open @ 0000:08B4 (linear 0x008B4, 259 bytes) */
@@ -63,9 +56,9 @@ void ads_open(int *list, int base)
     }
     x_colors = bustyle->hilite;
     cursor_ctl(CURSOR_HIDE);
-    g_adBlt = 0x40;
-    g_adHeight = SCREEN_BODY_HEIGHT;
-    g_adSrcX = g_adSrcY = g_adDstX = g_adDstY = g_052e = 0;
+    g_adPacket.w = 0x40;
+    g_adPacket.h = SCREEN_BODY_HEIGHT;
+    g_adPacket.sx = g_adPacket.sy = g_adPacket.dx = g_adPacket.dy = g_adPacket.fc = 0;
     g_adRedraw = 1;
     menu_push(8);
     cursor_ctl(CURSOR_SHOW);
@@ -102,11 +95,11 @@ int ads_run(void)
             x_colors = bustyle->hilite;
             g_adPicture = ad_picture(2);
             draw_fill_rect(r_vid.back, 0x40, 0, 0xc0, SCREEN_BODY_HEIGHT);
-            g_adSrcX = g_adDstX = 0;
-            g_videoOps.copy(g_adPicture, r_vid.back, (struct Blt *)&g_adBlt, 1);
-            g_adSrcX = 0x40;
-            g_adDstX = 0x100;
-            g_videoOps.copy(g_adPicture, r_vid.back, (struct Blt *)&g_adBlt, 1);
+            g_adPacket.sx = g_adPacket.dx = 0;
+            g_videoOps.copy(g_adPicture, r_vid.back, &g_adPacket, 1);
+            g_adPacket.sx = 0x40;
+            g_adPacket.dx = 0x100;
+            g_videoOps.copy(g_adPicture, r_vid.back, &g_adPacket, 1);
             F_19438(1);
             hsave = r_vid.back->height;
             r_vid.back->height = SCREEN_BODY_HEIGHT;
