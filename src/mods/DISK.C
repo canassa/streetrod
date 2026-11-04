@@ -24,6 +24,11 @@
 #include "SYS.H"
 #include "TANDYPIC.H"
 
+#define PIC_MARK 0xbc
+#define NOT_IN_VRAM 0xff
+
+enum LoadResult { LOAD_NO_MEMORY, LOAD_CACHED, LOAD_READ, LOAD_READ_VRAM };
+
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_curDrive;                         /* DS:6C68 */
 static int *g_curCount;                        /* DS:6C6A */
@@ -51,7 +56,7 @@ int g_acceptProbability[4][3];
 
 static int near pic_index(int n);
 static void near open_lib(int n);
-static int near load_pic(int n, int load, char far *dst);
+static enum LoadResult near load_pic(int n, int load, char far *dst);
 static void near unscramble_hall(void);
 static void near scramble_hall(void);
 
@@ -180,7 +185,7 @@ int disk_read_index(int which)
             screen_wait_msg(g_msgBadFormat);
             sys_exit();
         }
-        sl->vramPlane = 0xff;
+        sl->vramPlane = NOT_IN_VRAM;
         sl->ptr.p = 0;
         sl->f24 = 0;
         sl->f28 = 0;
@@ -201,7 +206,7 @@ int disk_read_index(int which)
    and end with 0xbc. Returns 0 when there was no memory, 1 when the picture was loaded already,
    2 and 3 when it has just been read (3: copied to the fast pool) */
 
-static int near load_pic(int n, int load, char far *dst)
+static enum LoadResult near load_pic(int n, int load, char far *dst)
 {
     int num;
     int total;
@@ -222,15 +227,15 @@ static int near load_pic(int n, int load, char far *dst)
             sl->vramPlane = pool;
         } else {
             sl->ptr.p = dst ? dst : mem_alloc(ent->packedSize + 1, 0);
-            sl->vramPlane = 0xff;
+            sl->vramPlane = NOT_IN_VRAM;
         }
         if (sl->ptr.p == 0)
-            return 0;
+            return LOAD_NO_MEMORY;
         open_lib(num);
         offset = (long)(*g_curCount * 0x1e + 2) + ent->dataOffset;
         if (disk_seek(*g_curHandle, offset))
             goto bad;
-        if (sl->vramPlane != 0xff) {
+        if (sl->vramPlane != NOT_IN_VRAM) {
             outp(SEQ_INDEX, SEQ_MAP_MASK);
             outp(SEQ_DATA, 1 << sl->vramPlane);
         }
@@ -239,15 +244,15 @@ static int near load_pic(int n, int load, char far *dst)
         for (;;) {
             if (_dos_read(*g_curHandle, sl->ptr.p, total, &got) || got != total)
                 goto bad;
-            if (*sl->ptr.p == (char)0xbc && sl->ptr.p[total - 1] == (char)0xbc) {
-                if (sl->vramPlane == 0xff)
+            if (*sl->ptr.p == (char)PIC_MARK && sl->ptr.p[total - 1] == (char)PIC_MARK) {
+                if (sl->vramPlane == NOT_IN_VRAM)
                     goto done;
                 movedata(sl->ptr.w.seg, sl->ptr.w.off, FP_SEG(fp), FP_OFF(fp), ent->packedSize);
                 sl->ptr.p = fp;
                 F_19438(1);
                 outp(SEQ_INDEX, SEQ_MAP_MASK);
                 outp(SEQ_DATA, SEQ_ALL_PLANES);
-                return 3;
+                return LOAD_READ_VRAM;
             }
             if (g_curDrive > 2)
                 goto bad;
@@ -264,9 +269,9 @@ static int near load_pic(int n, int load, char far *dst)
             goto bad;
         }
     done:
-        return 2;
+        return LOAD_READ;
     } else
-        return 1;
+        return LOAD_CACHED;
 bad:
     screen_wait_msg(g_msgBadFormat);
     sys_exit();
@@ -300,7 +305,7 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
     unsigned char colors16[16];
     struct Slot far *cur;
     int j;
-    int res;
+    enum LoadResult res;
     struct Bitmap far *pic;
     struct Slot far *sl;
 
@@ -313,7 +318,7 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
         pic = bm;
     for (j = 0; j < 16; j++)
         colors16[j] = cur->pal[j];
-    if (sl->vramPlane != 0xff) {
+    if (sl->vramPlane != NOT_IN_VRAM) {
         outp(GC_INDEX, GC_READ_MAP);
         outp(GC_DATA, sl->vramPlane);
     }
@@ -338,11 +343,11 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
     } else {
         rle_decode(src, pic->bits.p == 0 ? pic->alt.p : pic->bits.p, num, colors16, 16);
     }
-    if (sl->vramPlane != 0xff) {
+    if (sl->vramPlane != NOT_IN_VRAM) {
         outp(SEQ_INDEX, SEQ_MAP_MASK);
         outp(SEQ_DATA, SEQ_ALL_PLANES);
     }
-    if (res == 2)
+    if (res == LOAD_READ)
         sl->ptr.p = 0;
     cursor_ctl(CURSOR_SHOW_NOW);
     return pic;
@@ -406,7 +411,7 @@ int disk_load_list(int *list, int all)
 
     count = 0;
     while (n = *list++) {
-        if (!load_pic(n, 0, 0L)) {
+        if (load_pic(n, 0, 0L) == LOAD_NO_MEMORY) {
             if (!all)
                 return count;
         } else

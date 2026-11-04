@@ -1174,3 +1174,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - MSC 5.1's fcntl.h supplies plain open-flag constants without prototypes, so including it at the existing dos.h call sites preserves code generation. The existing header tool already preserves arbitrary system includes in their original order.
 - Final integration validation: git merge main was already up to date; repeated sr check --all (572/572), a clean-layout build (packed EXE IDENTICAL), header/DGROUP checks and all 53 unit tests successfully. DOS-native dosbox.sh --make also produced IDENTICAL SR.EXE (SHA-1 3a5e28b795313028b7e77d147122f41cb29de334).
+
+## 2026-11-04 15:11 CET: load_pic results and picture markers
+
+### What I did
+- Typed load_pic and disk_unpack_pic's res as enum LoadResult, named all four outcomes, and made disk_load_list's allocation-failure comparison explicit.
+- Defined PIC_MARK and NOT_IN_VRAM in DISK.C after verifying all vramPlane accesses stay in that file. Kept the member byte-sized and added no code comments.
+- Verified the full DISK.C module and all 572 functions match; res remains a word at [bp-24]. Clean sr build and DOS-native MAKE both produce an EXE byte-identical to orig/SR.EXE. Header and DGROUP checks and all 53 unit tests pass.
+
+### What I learned
+- The three load_pic callers respectively retain the result to clear the shared-buffer reference after LOAD_READ, ignore it while caching, and test LOAD_NO_MEMORY while loading a list.
+- This change confirms the existing CLAUDE.md enum rule without requiring a new code-generation rule: the enum local preserves its stack slot and comparison bytes.
