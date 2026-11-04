@@ -170,15 +170,15 @@ static void near anim_set_box(void)
     case 0:
         break;
     case 1:
-        g_box->x1 = g_cmd->a;
-        g_box->y1 = g_cmd->b;
+        g_box->sx = g_cmd->a;
+        g_box->sy = g_cmd->b;
         break;
     case 3:
-        g_box->x1 = g_cmd->a;
-        g_box->y1 = g_cmd->b;
+        g_box->sx = g_cmd->a;
+        g_box->sy = g_cmd->b;
     case 2:
-        g_box->x2 = g_cmd->a;
-        g_box->y2 = g_cmd->b;
+        g_box->dx = g_cmd->a;
+        g_box->dy = g_cmd->b;
         break;
     }
 }
@@ -214,14 +214,14 @@ static void near anim_run(int n)
             (*ab78aat)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
             break;
         case 13:
-            if (!sprite_car_clip(g_box->x2, g_box->y2, g_box->w, g_box->h, &res))
+            if (!sprite_car_clip(g_box->dx, g_box->dy, g_box->w, g_box->h, &res))
                 break;
             blt.w = res.x2 - res.x1;
             blt.h = res.y2 - res.y1 + 1;
             blt.sx = res.x1 - ac825et;
             blt.sy = res.y1 - aw8260y;
-            tx = res.x1 - g_box->x2;
-            ty = res.y1 - g_box->y2;
+            tx = res.x1 - g_box->dx;
+            ty = res.y1 - g_box->dy;
             for (y = 0; y < g_obj->img->height; y += g_box->h) {
                 for (x1 = 0; x1 < g_obj->img->width; x1 += g_box->w) {
                     blt.dx = tx + x1;
@@ -259,16 +259,16 @@ static void near anim_run(int n)
             if (wait)
                 cursor_ctl(CURSOR_SHOW);
             if (g_cmd->sub == 4 && r_vid.copyToFront)
-                bitmap_copy_box(r_vid.back, r_vid.front, g_box->x2, g_box->y2,
-                        g_box->x2 + g_box->w - 1, g_box->y2 + g_box->h - 1);
+                bitmap_copy_box(r_vid.back, r_vid.front, g_box->dx, g_box->dy,
+                        g_box->dx + g_box->w - 1, g_box->dy + g_box->h - 1);
             return;
         case 12:
             cursor_ctl(CURSOR_SHOW);
             wait = 0;
             if (!r_vid.copyToFront)
                 break;
-            bitmap_copy_box(r_vid.back, r_vid.front, g_box->x2, g_box->y2,
-                    g_box->x2 + g_box->w - 1, g_box->y2 + g_box->h - 1);
+            bitmap_copy_box(r_vid.back, r_vid.front, g_box->dx, g_box->dy,
+                    g_box->dx + g_box->w - 1, g_box->dy + g_box->h - 1);
             break;
         }
         g_cmd++;
