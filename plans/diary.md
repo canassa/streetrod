@@ -702,3 +702,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - Declaration order inside a file shows in the object's symbol records (EXTDEF/LEXTDEF/COMDEF order), not in the EXE: reordered include blocks changed records and the EXE stayed identical.
 - Open: `./sr dgroup apply` still moves `g_4fa6` between M_0542E.C and M_039C0.C depending on the previous build; both are IDENTICAL, so ownership of DS:4FA6 is not decided by the evidence the tool uses.
+
+## 2026-11-04 17:00 CET: Deterministic `dgroup apply`, system headers first
+
+### What I did
+- `./sr dgroup apply` moved DS:4FA6 (`g_4fa6`) between M_0542E.C and M_039C0.C on every run: `refs_to` counted a C initializer's reference to another file's global (EXTDEF fixup in `_DATA`) but not the same reference to the file's own `_DATA`, and credited own-`_DATA` code fixups (literals included) to the preceding public. DS:4FA6's only user is M_0542E's `char *g_4ff2 = g_4fa6;`. References now count the same wherever the global is defined; the report changes only at DS:4FA6, which stays in M_0542E. Apply is a fixed point from both placements and after a clean build.
+- Include blocks: system headers first (existing order), then STRUCTS.H, the file's own header, the used headers; 29 sources reordered.
+- Result: `./sr build` IDENTICAL from an empty work dir, `./sr check --all` 572/572, tests OK.
+
+### What I learned
+- Ownership evidence must be symmetric under moving a definition, or the previous apply feeds the next one.
+- DS:4FA6 holds the text "The game must have a name !" but is declared `int[14]`; a `char[]` string is the likely original (open).
