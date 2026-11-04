@@ -63,7 +63,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   after its `else`, anim_run's `goto next;` (a `continue` there would pull the loop
   increment up), menu_draw_hot's `goto box;`, menu_hit's `goto next;` into a then-branch,
   menu_list's `goto restore;`, load_pic's `goto done;` (a `break` moves the after-loop block),
-  F_29170's goto loop (escapes `/Ol`, see `loop_opt` below), F_2A84D/F_2AFDC's `goto next`,
+  fill_quad's goto loop (escapes `/Ol`, see `loop_opt` below), render_mirror/view_draw's `goto next`,
   F_181C8's `again`/`done`, savegame_save's shared retry tail; and the loop forms
   `for (;; g_05d2 = 0)` in edit_line (the increment gives the `jmp test` entry) and
   ads_open's accumulation inside the inner `while` test (keeps `cx` for the outer loop).
@@ -112,7 +112,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   argument of game_message), so the original may have had named constants there. That the
   blocks are grouped is evidence; the member list (a wider State8272 changes garage_hood's
   loop temps, so the arrays from DS:8290 stay separate) and the spelling are not.
-- **Per-module type views.** ROADVIEW.C reads the char `bw8aca` (DS:8ACA) as a word, so it
+- **Per-module type views.** VIEW.C reads the char `bw8aca` (DS:8ACA) as a word, so it
   writes `*(int *)&bw8aca`. The original file probably had an `extern int` of its own
   there. `struct Win` (MENU.C, SAVEGAME.C) is a second view of the 18-byte hot-spot record
   `struct Hot`: `a_8b9ap` holds the address of the first menu-line record as an `int`

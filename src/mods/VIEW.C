@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "STRUCTS.H"
-#include "ROADVIEW.H"
+#include "VIEW.H"
 #include "BOBS.H"
 #include "CRUISE.H"
 #include "DASH.H"
@@ -39,33 +39,33 @@ static int far *g_6e20a;                   /* DS:6E20 */
 static int far *g_6e24a;                   /* DS:6E24 */
 static int *g_6e28a;                       /* DS:6E28 */
 static int g_6e2a9;                        /* DS:6E2A */
-static void near F_2874C(struct Blt *b);
-static int near F_2914C(int x1, int y1, int x2, int y2);
-static int near F_2937B(int n);
-static void near F_29170(int mode, int a, int b, int c, int d, int e, int f);
-static void near F_2992A(int, int, int, int, int, int, int);
-static void near F_29E2E(void);
-static void near F_29E5D(void);
-static void near F_29BFF(int, int, int, int, int, int, int);
-static void near F_29EA7(void);
-static void near F_29ED6(void);
-static void near F_28781(struct Blt *b);
-static void near F_287D1(int color, int x, int y1, int y2);
-static void near F_29FC9(int x, int y, int n, int align, int clip, int mode);
-static void near F_29F3B(int x, int y, int n, int f, int idx);
-static void near F_28847(void);
-static void near F_29F04(void);
-static void near F_29F8A(int x, int y, int n, int f);
-static void near F_2A11C(int x1, int x2, int y1, int y2, int n, int clip, int flags);
-static void near F_2A32B(void);
-static void near F_2A3DD(void);
-static void near F_286D8(void);
-static void near F_28DD2(void);
-static void near F_29E8B(int n);
-static void near F_2A213(void);
-static void near F_2A28C(void);
-static void near F_2A84D(void);
-static void near F_2869E(void);
+static void near clip_blit_y(struct Blt *b);
+static int near edge_step(int x1, int y1, int x2, int y2);
+static int near sgn(int n);
+static void near fill_quad(int mode, int a, int b, int c, int d, int e, int f);
+static void near render_buildings(int, int, int, int, int, int, int);
+static void near render_left_buildings(void);
+static void near render_right_buildings(void);
+static void near render_mirror_buildings(int, int, int, int, int, int, int);
+static void near render_mirror_left(void);
+static void near render_mirror_right(void);
+static void near clip_blit(struct Blt *b);
+static void near clip_vline(int color, int x, int y1, int y2);
+static void near render_scaled_pic(int x, int y, int n, int align, int clip, int mode);
+static void near render_object(int x, int y, int n, int f, int idx);
+static void near clip_mirror(void);
+static void near render_mirror_row(void);
+static void near render_hydrant(int x, int y, int n, int f);
+static void near render_gantry(int x1, int x2, int y1, int y2, int n, int clip, int flags);
+static void near render_mirror_frame(void);
+static void near render_opponent(void);
+static void near flip_page(void);
+static void near render_backdrop(void);
+static void near render_row(int n);
+static void near render_start_signal(void);
+static void near render_overlays(void);
+static void near render_mirror(void);
+static void near select_draw_page(void);
 
 int g_5e14[5][4] = {{1003, 1004, 1057, 1091}, {1010, 1012, 1011, 1239}, {1010, 1247, 1248, 1092}, {1010, 1249, 1250, 1251}, {1010, 1253, 1252, 1254}};   /* DS:5E14 */
 int g_5e3c = 0;   /* DS:5E3C */
@@ -84,9 +84,9 @@ int g_5e92 = 0;   /* DS:5E92 */
 int g_5e94[4] = {0, 0, 0, 0};   /* DS:5E94 */
 struct Ball g_5e9c[7] = {{256, 8, 8}, {240, 16, 13}, {208, 32, 19}, {168, 40, 24}, {120, 48, 30}, {64, 56, 37}, {0, 64, 43}};   /* DS:5E9C */
 
-/* F_2869E @ 2645:224E (linear 0x2869E, 58 bytes) */
+/* select_draw_page @ 2645:224E (linear 0x2869E, 58 bytes) */
 
-static void near F_2869E(void)
+static void near select_draw_page(void)
 {
     if (r_vid.mode == -2) {
         av787at = (g_5e3e == 1) ? 0xa200 : 0xa400;
@@ -130,9 +130,9 @@ struct Bitmap far *bz8b7ex;
 int far *am8b82y;
 struct Bitmap far *ak8bcat;
 
-/* F_286D8 @ 2645:2288 (linear 0x286D8, 116 bytes) */
+/* flip_page @ 2645:2288 (linear 0x286D8, 116 bytes) */
 
-static void near F_286D8(void)
+static void near flip_page(void)
 {
     int t;
 
@@ -149,11 +149,11 @@ static void near F_286D8(void)
     }
 }
 
-/* F_2874C @ 2645:22FC (linear 0x2874C, 53 bytes)
+/* clip_blit_y @ 2645:22FC (linear 0x2874C, 53 bytes)
 
    Clips the vertical extent of a blit rectangle to the clip window. */
 
-static void near F_2874C(struct Blt *b)
+static void near clip_blit_y(struct Blt *b)
 {
     if (b->dy < g_clip_ymin) {
         b->h -= g_clip_ymin - b->dy;
@@ -164,12 +164,12 @@ static void near F_2874C(struct Blt *b)
         b->h -= b->dy + b->h - g_clip_ymax;
 }
 
-/* F_28781 @ 2645:2331 (linear 0x28781, 80 bytes)
+/* clip_blit @ 2645:2331 (linear 0x28781, 80 bytes)
 
    Clips a blit rectangle to the clip window, vertically and then
    horizontally. */
 
-static void near F_28781(struct Blt *b)
+static void near clip_blit(struct Blt *b)
 {
     if (b->dy < g_clip_ymin) {
         b->h -= g_clip_ymin - b->dy;
@@ -185,11 +185,11 @@ static void near F_28781(struct Blt *b)
     }
 }
 
-/* F_287D1 @ 2645:2381 (linear 0x287D1, 111 bytes)
+/* clip_vline @ 2645:2381 (linear 0x287D1, 111 bytes)
 
    Draws a clipped vertical line (color, x, y1, y2). */
 
-static void near F_287D1(int color, int x, int y1, int y2)
+static void near clip_vline(int color, int x, int y1, int y2)
 {
     if (y2 >= g_clip_ymin && y1 <= g_clip_ymax && x >= g_clip_xmin && x <= g_clip_xmax) {
         y1 = (y1 < g_clip_ymin) ? g_clip_ymin : y1;
@@ -200,18 +200,18 @@ static void near F_287D1(int color, int x, int y1, int y2)
     }
 }
 
-/* F_28840 @ 2645:23F0 (linear 0x28840, 7 bytes) */
+/* view_unclip_top @ 2645:23F0 (linear 0x28840, 7 bytes) */
 
-void F_28840(void)
+void view_unclip_top(void)
 {
     g_clip_ymin = 0;
 }
 
-/* F_28847 @ 2645:23F7 (linear 0x28847, 25 bytes)
+/* clip_mirror @ 2645:23F7 (linear 0x28847, 25 bytes)
 
    Sets the clip window to x 242..317, y 22..42. */
 
-static void near F_28847(void)
+static void near clip_mirror(void)
 {
     g_clip_xmin = 0xf2;
     g_clip_ymin = 0x16;
@@ -219,11 +219,11 @@ static void near F_28847(void)
     g_clip_ymax = 0x2a;
 }
 
-/* F_28860 @ 2645:2410 (linear 0x28860, 25 bytes)
+/* view_clip @ 2645:2410 (linear 0x28860, 25 bytes)
 
    Sets the clip window to x 0..319, y 18..101. */
 
-void F_28860(void)
+void view_clip(void)
 {
     g_clip_xmin = 0;
     g_clip_ymin = 0x12;
@@ -231,9 +231,9 @@ void F_28860(void)
     g_clip_xmax = 0x13f;
 }
 
-/* F_28879 @ 2645:2429 (linear 0x28879, 1369 bytes) */
+/* view_load @ 2645:2429 (linear 0x28879, 1369 bytes) */
 
-void F_28879(void)
+void view_load(void)
 {
     struct Bitmap far *bm1;
     struct Bitmap far *(far *load)(struct Bitmap far *, unsigned char, unsigned char);
@@ -303,7 +303,7 @@ void F_28879(void)
         g8acew[0] = F_15BBE(g_5e14[idx][0], 1);
         g8acew[1] = F_15BBE(g_5e14[idx][1], 1);
         g8acew[2] = F_15BBE(g_5e14[idx][2], 2);
-        load = r_vid.mode == -2 ? F_2B857 : r_vid.mode == -6 ? F_2BCD5 : F_2BAC0;
+        load = r_vid.mode == -2 ? shrink_ega : r_vid.mode == -6 ? shrink_tandy : shrink_cga;
         for (il = 0; il < 3; il++)
             g8acew[3 + il] = (*load)(g8acew[2], g_5e56[0][il], g_5e56[0][il]);
         for (il = 0; il < 3; il++)
@@ -324,9 +324,9 @@ void F_28879(void)
     }
 }
 
-/* F_28DD2 @ 2645:2982 (linear 0x28DD2, 648 bytes) */
+/* render_backdrop @ 2645:2982 (linear 0x28DD2, 648 bytes) */
 
-static void near F_28DD2(void)
+static void near render_backdrop(void)
 {
     int r;
     int n8 = 0xf0;
@@ -338,7 +338,7 @@ static void near F_28DD2(void)
 
     b.dy = 0x12;
     if (*(int *)&bw8aca) {
-        v = F_27C01(n8, m5 * 2, ao7d2ev.m7d3e);
+        v = road_proj_y(n8, m5 * 2, ao7d2ev.m7d3e);
         b.h = v - 0x1e;
         b.sy = 0x9a - b.h;
         if (ao7d2ev.m7d3c > 0) {
@@ -385,7 +385,7 @@ static void near F_28DD2(void)
         b.dx = 0;
         b.dy = 0x2f;
     }
-    F_2874C(&b);
+    clip_blit_y(&b);
     (*b_78a2)(g8188w, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
     g_6e06aax = 14;
     if (*(int *)&bw8aca) {
@@ -405,9 +405,9 @@ static void near F_28DD2(void)
         (*bp78da)(0x3f, 1);
 }
 
-/* F_2905A @ 2645:2C0A (linear 0x2905A, 242 bytes) */
+/* view_sprite @ 2645:2C0A (linear 0x2905A, 242 bytes) */
 
-void F_2905A(int x, int y, int first, struct List l, int dir)
+void view_sprite(int x, int y, int first, struct List l, int dir)
 {
     struct Run run;
     int px;
@@ -435,18 +435,18 @@ void F_2905A(int x, int y, int first, struct List l, int dir)
     }
 }
 
-/* F_2914C @ 2645:2CFC (linear 0x2914C, 36 bytes) */
+/* edge_step @ 2645:2CFC (linear 0x2914C, 36 bytes) */
 
-static int near F_2914C(int x1, int y1, int x2, int y2)
+static int near edge_step(int x1, int y1, int x2, int y2)
 {
     if (y2 == y1)
         return 0;
     return ((x2 - x1) << 4) / (y2 - y1);
 }
 
-/* F_29170 @ 2645:2D20 (linear 0x29170, 523 bytes) */
+/* fill_quad @ 2645:2D20 (linear 0x29170, 523 bytes) */
 
-static void near F_29170(int col, int a, int b, int c, int d, int e, int f)
+static void near fill_quad(int col, int a, int b, int c, int d, int e, int f)
 {
     int mode;
     int dxa;
@@ -483,8 +483,8 @@ static void near F_29170(int col, int a, int b, int c, int d, int e, int f)
             }
             laccl = racc6;
         }
-        dxa = F_2914C(a, f, b, e);
-        dxb = F_2914C(a, c, b, d);
+        dxa = edge_step(a, f, b, e);
+        dxb = edge_step(a, c, b, d);
         y6 = ymin2;
         goto test;
     loop:
@@ -537,9 +537,9 @@ static void near F_29170(int col, int a, int b, int c, int d, int e, int f)
     }
 }
 
-/* F_2937B @ 2645:2F2B (linear 0x2937B, 29 bytes) */
+/* sgn @ 2645:2F2B (linear 0x2937B, 29 bytes) */
 
-static int near F_2937B(int n)
+static int near sgn(int n)
 {
     if (n > 0)
         return 1;
@@ -548,9 +548,9 @@ static int near F_2937B(int n)
     return 0;
 }
 
-/* F_29398 @ 2645:2F48 (linear 0x29398, 773 bytes) */
+/* view_road_row @ 2645:2F48 (linear 0x29398, 773 bytes) */
 
-void F_29398(int n)
+void view_road_row(int n)
 {
     int xl;
     int ybot6;
@@ -582,22 +582,22 @@ void F_29398(int n)
     xrs = xrl << 4;
     yk = *g_6e1a;
     ybot6 = *g_6e1e;
-    dxlm = F_2914C(*g_6e10, ybot6, xl, yk);
-    dxr7 = F_2914C(*g_6e1c, ybot6, xrl, yk);
+    dxlm = edge_step(*g_6e10, ybot6, xl, yk);
+    dxr7 = edge_step(*g_6e1c, ybot6, xrl, yk);
     flagk = *am8b82y & 1;
     if (flagk) {
         xl2 = *g_6e0awz;
         xr28 = *g_6e0euz;
         xl2s6 = xl2 << 4;
         xr2s6 = xr28 << 4;
-        dxl2k = F_2914C(*g_6e12, ybot6, xl2, yk);
-        dxr26 = F_2914C(*g_6e16, ybot6, xr28, yk);
+        dxl2k = edge_step(*g_6e12, ybot6, xl2, yk);
+        dxr26 = edge_step(*g_6e16, ybot6, xr28, yk);
     }
     if (*am8b82y & 8) {
         wid = *g_6e28a;
         cx0k = ((xl + xrl) >> 1) - (wid >> 1);
     }
-    if (F_2937B(ybot6 - yk) < 0)
+    if (sgn(ybot6 - yk) < 0)
         return;
     for (cnt = ybot6 - yk; cnt && yk <= 101; cnt--, yk++) {
         if (flagk) {
@@ -647,9 +647,9 @@ void F_29398(int n)
     }
 }
 
-/* F_2969D @ 2645:324D (linear 0x2969D, 653 bytes) */
+/* view_mirror_row @ 2645:324D (linear 0x2969D, 653 bytes) */
 
-void F_2969D(void)
+void view_mirror_row(void)
 {
     int xl;
     int ybot6;
@@ -680,22 +680,22 @@ void F_2969D(void)
     xrs = xrl << 4;
     yk = *g_6e1a;
     ybot6 = *g_6e1e;
-    dxlm = F_2914C(*g_6e10, ybot6, xl, yk);
-    dxr7 = F_2914C(*g_6e1c, ybot6, xrl, yk);
+    dxlm = edge_step(*g_6e10, ybot6, xl, yk);
+    dxr7 = edge_step(*g_6e1c, ybot6, xrl, yk);
     flagk = *am8b82y & 1;
     if (flagk) {
         xl2 = *g_6e0awz;
         xr28 = *g_6e0euz;
         xl2s6 = xl2 << 4;
         xr2s6 = xr28 << 4;
-        dxl2k = F_2914C(*g_6e12, ybot6, xl2, yk);
-        dxr26 = F_2914C(*g_6e16, ybot6, xr28, yk);
+        dxl2k = edge_step(*g_6e12, ybot6, xl2, yk);
+        dxr26 = edge_step(*g_6e16, ybot6, xr28, yk);
     }
     if (*am8b82y & 8) {
         wid = *g_6e28a;
         cx0k = ((xl + xrl) >> 1) - (wid >> 1);
     }
-    if (F_2937B(ybot6 - yk) < 0)
+    if (sgn(ybot6 - yk) < 0)
         return;
     for (cnt = ybot6 - yk; cnt && yk <= 42; cnt--, yk++) {
         if (flagk) {
@@ -739,9 +739,9 @@ void F_2969D(void)
     }
 }
 
-/* F_2992A @ 2645:34DA (linear 0x2992A, 725 bytes) */
+/* render_buildings @ 2645:34DA (linear 0x2992A, 725 bytes) */
 
-static void near F_2992A(int a, int b, int c, int d, int e, int f, int rev)
+static void near render_buildings(int a, int b, int c, int d, int e, int f, int rev)
 {
     int c10;
     int a41;
@@ -764,14 +764,14 @@ static void near F_2992A(int a, int b, int c, int d, int e, int f, int rev)
     }
     if (!(*am8b82y & 4)) {
         if (c10)
-            F_29170(2, a, b, c, d, e, f);
+            fill_quad(2, a, b, c, d, e, f);
         else
-            F_29170(3, a, b, c, d, e, f);
+            fill_quad(3, a, b, c, d, e, f);
         if (a41) {
             if (b8l) {
-                F_29170(4, a, b, f, e, e - d + e, f - c + f);
+                fill_quad(4, a, b, f, e, e - d + e, f - c + f);
             } else {
-                F_29170(4, a, b, f, e, e - ((d - e) >> 1), f - ((c - f) >> 1));
+                fill_quad(4, a, b, f, e, e - ((d - e) >> 1), f - ((c - f) >> 1));
             }
         }
         if (am8b82y[-1] & 4) {
@@ -836,9 +836,9 @@ static void near F_2992A(int a, int b, int c, int d, int e, int f, int rev)
     }
 }
 
-/* F_29BFF @ 2645:37AF (linear 0x29BFF, 559 bytes) */
+/* render_mirror_buildings @ 2645:37AF (linear 0x29BFF, 559 bytes) */
 
-static void near F_29BFF(int a, int b, int c, int d, int e, int f, int rev)
+static void near render_mirror_buildings(int a, int b, int c, int d, int e, int f, int rev)
 {
     int c10;
     int a41;
@@ -858,14 +858,14 @@ static void near F_29BFF(int a, int b, int c, int d, int e, int f, int rev)
         }
         if (!(*am8b82y & 4)) {
             if (c10)
-                F_29170(2, a, b, c, d, e, f);
+                fill_quad(2, a, b, c, d, e, f);
             else
-                F_29170(3, a, b, c, d, e, f);
+                fill_quad(3, a, b, c, d, e, f);
             if (a41) {
                 if (rev)
-                    F_29170(4, a, b, f, e, e - ((d - e) >> 1), f - ((c - f) >> 1));
+                    fill_quad(4, a, b, f, e, e - ((d - e) >> 1), f - ((c - f) >> 1));
                 else
-                    F_29170(4, a, b, f, e, e - d + e, f - c + f);
+                    fill_quad(4, a, b, f, e, e - d + e, f - c + f);
             }
             if (am8b82y[1] & 4) {
                 if (rev)
@@ -908,66 +908,66 @@ static void near F_29BFF(int a, int b, int c, int d, int e, int f, int rev)
     }
 }
 
-/* F_29E2E @ 2645:39DE (linear 0x29E2E, 47 bytes) */
+/* render_left_buildings @ 2645:39DE (linear 0x29E2E, 47 bytes) */
 
-static void near F_29E2E(void)
+static void near render_left_buildings(void)
 {
-    F_2992A(*g_6e12, *g_6e0awz, *g_6e1e, *g_6e1a, *g_6e0cvz, *g_6e14, 1);
+    render_buildings(*g_6e12, *g_6e0awz, *g_6e1e, *g_6e1a, *g_6e0cvz, *g_6e14, 1);
 }
 
-/* F_29E5D @ 2645:3A0D (linear 0x29E5D, 46 bytes) */
+/* render_right_buildings @ 2645:3A0D (linear 0x29E5D, 46 bytes) */
 
-static void near F_29E5D(void)
+static void near render_right_buildings(void)
 {
-    F_2992A(*g_6e0euz, *g_6e16, *g_6e1a, *g_6e1e, *g_6e14, *g_6e0cvz, 0);
+    render_buildings(*g_6e0euz, *g_6e16, *g_6e1a, *g_6e1e, *g_6e14, *g_6e0cvz, 0);
 }
 
-/* F_29E8B @ 2645:3A3B (linear 0x29E8B, 28 bytes) */
+/* render_row @ 2645:3A3B (linear 0x29E8B, 28 bytes) */
 
-static void near F_29E8B(int n)
+static void near render_row(int n)
 {
     if (*(int *)&bw8aca == 0) {
-        F_29E2E();
-        F_29E5D();
+        render_left_buildings();
+        render_right_buildings();
     }
-    F_29398(n);
+    view_road_row(n);
 }
 
-/* F_29EA7 @ 2645:3A57 (linear 0x29EA7, 47 bytes) */
+/* render_mirror_left @ 2645:3A57 (linear 0x29EA7, 47 bytes) */
 
-static void near F_29EA7(void)
+static void near render_mirror_left(void)
 {
-    F_29BFF(*g_6e12, *g_6e0awz, *g_6e1e, *g_6e1a, *g_6e0cvz, *g_6e14, 1);
+    render_mirror_buildings(*g_6e12, *g_6e0awz, *g_6e1e, *g_6e1a, *g_6e0cvz, *g_6e14, 1);
 }
 
-/* F_29ED6 @ 2645:3A86 (linear 0x29ED6, 46 bytes) */
+/* render_mirror_right @ 2645:3A86 (linear 0x29ED6, 46 bytes) */
 
-static void near F_29ED6(void)
+static void near render_mirror_right(void)
 {
-    F_29BFF(*g_6e0euz, *g_6e16, *g_6e1a, *g_6e1e, *g_6e14, *g_6e0cvz, 0);
+    render_mirror_buildings(*g_6e0euz, *g_6e16, *g_6e1a, *g_6e1e, *g_6e14, *g_6e0cvz, 0);
 }
 
-/* F_29F04 @ 2645:3AB4 (linear 0x29F04, 11 bytes) */
+/* render_mirror_row @ 2645:3AB4 (linear 0x29F04, 11 bytes) */
 
-static void near F_29F04(void)
+static void near render_mirror_row(void)
 {
-    F_29EA7();
-    F_29ED6();
-    F_2969D();
+    render_mirror_left();
+    render_mirror_right();
+    view_mirror_row();
 }
 
-/* F_29F0F @ 2645:3ABF (linear 0x29F0F, 44 bytes) */
+/* view_draw_dot @ 2645:3ABF (linear 0x29F0F, 44 bytes) */
 
-void F_29F0F(int x, int y)
+void view_draw_dot(int x, int y)
 {
     egaspan_begin();
-    F_2905A(x, y, 0, *g_6078[20], 1);
+    view_sprite(x, y, 0, *g_6078[20], 1);
     egaspan_end();
 }
 
-/* F_29F3B @ 2645:3AEB (linear 0x29F3B, 79 bytes) */
+/* render_object @ 2645:3AEB (linear 0x29F3B, 79 bytes) */
 
-static void near F_29F3B(int x, int y, int n, int f, int idx)
+static void near render_object(int x, int y, int n, int f, int idx)
 {
     n = 9 - n;
     if (n >= 7)
@@ -976,24 +976,24 @@ static void near F_29F3B(int x, int y, int n, int f, int idx)
         n = 0;
     if (y > 0x65)
         y = 0x65;
-    F_2905A(x, y, n, *g_6078[idx], f);
+    view_sprite(x, y, n, *g_6078[idx], f);
 }
 
-/* F_29F8A @ 2645:3B3A (linear 0x29F8A, 63 bytes) */
+/* render_hydrant @ 2645:3B3A (linear 0x29F8A, 63 bytes) */
 
-static void near F_29F8A(int x, int y, int n, int f)
+static void near render_hydrant(int x, int y, int n, int f)
 {
     n = 9 - n;
     if (n >= 8)
         n = 7;
     if (n < 0)
         n = 0;
-    F_2905A(x, y, n, *g_6078[2], f);
+    view_sprite(x, y, n, *g_6078[2], f);
 }
 
-/* F_29FC9 @ 2645:3B79 (linear 0x29FC9, 339 bytes) */
+/* render_scaled_pic @ 2645:3B79 (linear 0x29FC9, 339 bytes) */
 
-static void near F_29FC9(int x, int y, int n, int align, int clip, int mode)
+static void near render_scaled_pic(int x, int y, int n, int align, int clip, int mode)
 {
     struct Blt b;
 
@@ -1027,45 +1027,45 @@ static void near F_29FC9(int x, int y, int n, int align, int clip, int mode)
     else
         b.dy = y - b.h;
     if (clip)
-        F_28781(&b);
+        clip_blit(&b);
     else
-        F_2874C(&b);
+        clip_blit_y(&b);
     if (mode == 1)
         (*b_78a2)(g82b4s, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
     else
         (*b_78a2)(r_vid.mode == -2 ? bm7678 : g82b4s, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
 }
 
-/* F_2A11C @ 2645:3CCC (linear 0x2A11C, 247 bytes) */
+/* render_gantry @ 2645:3CCC (linear 0x2A11C, 247 bytes) */
 
-static void near F_2A11C(int x1, int x2, int y1, int y2, int n, int clip, int flags)
+static void near render_gantry(int x1, int x2, int y1, int y2, int n, int clip, int flags)
 {
     int j;
 
     for (j = *g_6e28a + 1; j; j--) {
         egaspan_end();
-        F_287D1(10, x1 - j, y1, y2);
-        F_287D1(10, x2 + j, y1, y2);
+        clip_vline(10, x1 - j, y1, y2);
+        clip_vline(10, x2 + j, y1, y2);
         egaspan_begin();
         (*g78d6c)(x1, x2, y1 + j - 1, 10);
     }
     if (flags & 0x1000)
-        F_29F3B((x1 + x2) >> 1, y1, n, 1, 13);
+        render_object((x1 + x2) >> 1, y1, n, 1, 13);
     else if (flags & 0x2000) {
         egaspan_end();
-        F_29FC9((x1 + x2) >> 1, y1, n, 0, clip, 1);
+        render_scaled_pic((x1 + x2) >> 1, y1, n, 0, clip, 1);
         egaspan_begin();
     } else if (*am8b82y & 1) {
         egaspan_end();
-        F_29FC9((x1 + x2) >> 1, y1, n, 0, clip, (flags & 0x4000) ? 2 : 3);
+        render_scaled_pic((x1 + x2) >> 1, y1, n, 0, clip, (flags & 0x4000) ? 2 : 3);
         egaspan_begin();
     } else
-        F_29F3B((x1 + x2) >> 1, y1, n, 1, (flags & 0x4000) ? 12 : 14);
+        render_object((x1 + x2) >> 1, y1, n, 1, (flags & 0x4000) ? 12 : 14);
 }
 
-/* F_2A213 @ 2645:3DC3 (linear 0x2A213, 121 bytes) */
+/* render_start_signal @ 2645:3DC3 (linear 0x2A213, 121 bytes) */
 
-static void near F_2A213(void)
+static void near render_start_signal(void)
 {
     struct Blt b;
 
@@ -1084,9 +1084,9 @@ static void near F_2A213(void)
     }
 }
 
-/* F_2A28C @ 2645:3E3C (linear 0x2A28C, 159 bytes) */
+/* render_overlays @ 2645:3E3C (linear 0x2A28C, 159 bytes) */
 
-static void near F_2A28C(void)
+static void near render_overlays(void)
 {
     struct Blt b;
 
@@ -1103,9 +1103,9 @@ static void near F_2A28C(void)
     (*ab78aat)(ak8bcat, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
 }
 
-/* F_2A32B @ 2645:3EDB (linear 0x2A32B, 178 bytes) */
+/* render_mirror_frame @ 2645:3EDB (linear 0x2A32B, 178 bytes) */
 
-static void near F_2A32B(void)
+static void near render_mirror_frame(void)
 {
     struct Blt b;
 
@@ -1120,13 +1120,13 @@ static void near F_2A32B(void)
     b.sx = b.sy = 0;
     b.dx = 0xf0;
     b.dy = k_8646 - 2;
-    F_2874C(&b);
+    clip_blit_y(&b);
     (*b_78a2)(bz8b7ex, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
 }
 
-/* F_2A3DD @ 2645:3F8D (linear 0x2A3DD, 1136 bytes) */
+/* render_opponent @ 2645:3F8D (linear 0x2A3DD, 1136 bytes) */
 
-static void near F_2A3DD(void)
+static void near render_opponent(void)
 {
     struct Blt b;
     int seln;
@@ -1204,12 +1204,12 @@ static void near F_2A3DD(void)
     rd = ao7d2ev.m7d3c - g_terrain2[a2];
     if (seln < 9) {
         t1 += 4;
-        ra = F_27BBF(t1, ar7e8av.m7e90, rd);
-        rb = F_27C01(t1, 2000, rc);
+        ra = road_proj_x(t1, ar7e8av.m7e90, rd);
+        rb = road_proj_y(t1, 2000, rc);
     } else {
         t1 = -t1;
-        ra = F_27C3D(t1, ar7e8av.m7e90, -rd);
-        rb = F_27C78(t1, 2000, -rc);
+        ra = road_mirror_x(t1, ar7e8av.m7e90, -rd);
+        rb = road_mirror_y(t1, 2000, -rc);
     }
     if (seln == 0) {
         bm = g8acew[seln];
@@ -1243,30 +1243,30 @@ static void near F_2A3DD(void)
     if (seln >= 9) {
         if (g_clip_xmin == 0) {
             flag9 = 1;
-            F_28847();
+            clip_mirror();
         }
     } else if (g_clip_xmin != 0) {
         flag9 = 1;
-        F_28860();
+        view_clip();
     }
     if (b.dx + b.w >= g_clip_xmin && b.dx < g_clip_xmax) {
         if (seln >= 9)
-            F_28781(&b);
+            clip_blit(&b);
         else
-            F_2874C(&b);
+            clip_blit_y(&b);
         (*ab78aat)(g8acew[seln], g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
         if (flag9) {
             if (g_clip_xmin == 0)
-                F_28847();
+                clip_mirror();
             else
-                F_28860();
+                view_clip();
         }
     }
 }
 
-/* F_2A84D @ 2645:43FD (linear 0x2A84D, 1935 bytes) */
+/* render_mirror @ 2645:43FD (linear 0x2A84D, 1935 bytes) */
 
-static void near F_2A84D(void)
+static void near render_mirror(void)
 {
     int w36;
     struct Blt pkt1;
@@ -1292,15 +1292,15 @@ static void near F_2A84D(void)
     g_6e24a = (int far *)(aw8634x - 8);
     am8b82y = (int far *)(g7d62p - 8);
     egaspan_end();
-    F_2A32B();
+    render_mirror_frame();
     egaspan_begin();
-    F_28847();
+    clip_mirror();
     for (i = 7; i; i--) {
-        F_29F04();
+        render_mirror_row();
         if (*am8b82y & 4)
             goto next;
         if (*am8b82y & 0xf000)
-            F_2A11C(*g_6e08aaw, *g_6e18, -((*g_6e1a - *g_6e0cvz) * 4 - *g_6e1a), *g_6e1a, i + 5, 1, *am8b82y & 0xf000);
+            render_gantry(*g_6e08aaw, *g_6e18, -((*g_6e1a - *g_6e0cvz) * 4 - *g_6e1a), *g_6e1a, i + 5, 1, *am8b82y & 0xf000);
         if (i >= 6)
             goto next;
         f3 = *am8b82y & 1;
@@ -1309,85 +1309,85 @@ static void near F_2A84D(void)
         w36 = *am8b82y;
         if (w11 & 0x20) {
             if (f3)
-                F_29F3B(*g_6e08aaw, *g_6e1a, i + 5, -1, 0);
+                render_object(*g_6e08aaw, *g_6e1a, i + 5, -1, 0);
             else
-                F_29F3B(*g_6e0awz, *g_6e1a, i + 5, -1, 0);
+                render_object(*g_6e0awz, *g_6e1a, i + 5, -1, 0);
         }
         if (w11 & 0x100) {
             if (f3)
-                F_29F3B(*g_6e08aaw, *g_6e1a, i + 5, -1, 4);
+                render_object(*g_6e08aaw, *g_6e1a, i + 5, -1, 4);
             else if (w11 & 0x200)
-                F_29F3B(*g_6e0awz - *g_6e08aaw + *g_6e0awz, *g_6e1a, i + 5, -1, 4);
+                render_object(*g_6e0awz - *g_6e08aaw + *g_6e0awz, *g_6e1a, i + 5, -1, 4);
             else
-                F_29F3B(*g_6e0awz, *g_6e1a, i + 5, -1, 4);
+                render_object(*g_6e0awz, *g_6e1a, i + 5, -1, 4);
         }
         if (w11 & 0x800)
-            F_29F3B(*g_6e08aaw, *g_6e1a, i + 5, 1, 3);
+            render_object(*g_6e08aaw, *g_6e1a, i + 5, 1, 3);
         if (w11 & 0x1000)
-            F_29F3B(*g_6e08aaw, *g_6e1a, i + 5, 1, 6);
+            render_object(*g_6e08aaw, *g_6e1a, i + 5, 1, 6);
         if (f3) {
             if (w11 & 0x40)
-                F_29F8A(*g_6e08aaw, *g_6e1a, i + 5, 1);
+                render_hydrant(*g_6e08aaw, *g_6e1a, i + 5, 1);
             if (w2 & 0x40)
-                F_29F8A(*g_6e18, *g_6e1a, i + 5, -1);
+                render_hydrant(*g_6e18, *g_6e1a, i + 5, -1);
         } else {
             if (w11 & 1)
-                F_29F3B(*g_6e08aaw, *g_6e1a, i + 5, 1, 1);
+                render_object(*g_6e08aaw, *g_6e1a, i + 5, 1, 1);
             if (w11 & 4)
-                F_29F3B(*g_6e08aaw, *g_6e1a, i + 5, -1, 7);
+                render_object(*g_6e08aaw, *g_6e1a, i + 5, -1, 7);
             if (w11 & 8)
-                F_29F3B(*g_6e08aaw, *g_6e1a, i + 5, -1, 8);
+                render_object(*g_6e08aaw, *g_6e1a, i + 5, -1, 8);
             if (w11 & 0x40)
-                F_29F3B(-(((*g_6e08aaw - *g_6e0awz) >> 1) - *g_6e0awz), *g_6e1a, i + 5, -1, 10);
+                render_object(-(((*g_6e08aaw - *g_6e0awz) >> 1) - *g_6e0awz), *g_6e1a, i + 5, -1, 10);
             if (w11 & 0x80)
-                F_29F3B(*g_6e0awz, *g_6e1a, i + 5, -1, 11);
+                render_object(*g_6e0awz, *g_6e1a, i + 5, -1, 11);
             if (w2 & 1)
-                F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 1);
+                render_object(*g_6e18, *g_6e1a, i + 5, 1, 1);
             if (w2 & 4)
-                F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 7);
+                render_object(*g_6e18, *g_6e1a, i + 5, 1, 7);
             if (w2 & 8)
-                F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 8);
+                render_object(*g_6e18, *g_6e1a, i + 5, 1, 8);
             if (w2 & 0x40)
-                F_29F3B(*g_6e0euz, *g_6e1a, i + 5, 1, 10);
+                render_object(*g_6e0euz, *g_6e1a, i + 5, 1, 10);
             if (w2 & 0x80)
-                F_29F3B(((*g_6e0euz - *g_6e18) >> 1) + *g_6e0euz, *g_6e1a, i + 5, 1, 11);
+                render_object(((*g_6e0euz - *g_6e18) >> 1) + *g_6e0euz, *g_6e1a, i + 5, 1, 11);
             if (w36 & 2)
-                F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 9);
+                render_object(*g_6e18, *g_6e1a, i + 5, 1, 9);
         }
         if (w2 & 0x20) {
             if (f3)
-                F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 0);
+                render_object(*g_6e18, *g_6e1a, i + 5, 1, 0);
             else
-                F_29F3B(*g_6e0euz, *g_6e1a, i + 5, 1, 0);
+                render_object(*g_6e0euz, *g_6e1a, i + 5, 1, 0);
         }
         if (w2 & 0x100) {
             if (f3)
-                F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 4);
+                render_object(*g_6e18, *g_6e1a, i + 5, 1, 4);
             else if (w2 & 0x200)
-                F_29F3B((*g_6e0euz << 1) - *g_6e18, *g_6e1a, i + 5, 1, 4);
+                render_object((*g_6e0euz << 1) - *g_6e18, *g_6e1a, i + 5, 1, 4);
             else
-                F_29F3B(*g_6e0euz, *g_6e1a, i + 5, 1, 4);
+                render_object(*g_6e0euz, *g_6e1a, i + 5, 1, 4);
         }
         if (w2 & 0x2000)
-            F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 0x12);
+            render_object(*g_6e18, *g_6e1a, i + 5, 1, 0x12);
         if (w2 & 0x4000)
-            F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 0x13);
+            render_object(*g_6e18, *g_6e1a, i + 5, 1, 0x13);
         if (w2 & 0x800)
-            F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 3);
+            render_object(*g_6e18, *g_6e1a, i + 5, 1, 3);
         if (w2 & 0x1000)
-            F_29F3B(*g_6e18, *g_6e1a, i + 5, -1, 6);
+            render_object(*g_6e18, *g_6e1a, i + 5, -1, 6);
         if (w36 & 0x100)
-            F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 5);
+            render_object(*g_6e18, *g_6e1a, i + 5, 1, 5);
         if (w36 & 0x200)
-            F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 0x10);
+            render_object(*g_6e18, *g_6e1a, i + 5, 1, 0x10);
         if (w36 & 0x400)
-            F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 0x11);
+            render_object(*g_6e18, *g_6e1a, i + 5, 1, 0x11);
         if (w36 & 0x800)
-            F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 0xf);
+            render_object(*g_6e18, *g_6e1a, i + 5, 1, 0xf);
     next:
         if (ao7d2ev.m7d30 - ar7e8av.m7e8a == i && *(int *)&bw8aca) {
             egaspan_end();
-            F_2A3DD();
+            render_opponent();
             egaspan_begin();
         }
         g_6e10--;
@@ -1407,11 +1407,11 @@ static void near F_2A84D(void)
         g_6e16--;
         g_6e14--;
     }
-    F_28860();
-    F_287D1(2, 0xf0, 0x17, 0x2a);
-    F_287D1(4, 0xf1, 0x17, 0x2a);
-    F_287D1(4, 0x13e, 0x17, 0x2a);
-    F_287D1(2, 0x13f, 0x17, 0x2a);
+    view_clip();
+    clip_vline(2, 0xf0, 0x17, 0x2a);
+    clip_vline(4, 0xf1, 0x17, 0x2a);
+    clip_vline(4, 0x13e, 0x17, 0x2a);
+    clip_vline(2, 0x13f, 0x17, 0x2a);
     pkt1.w = 0x20;
     pkt1.h = g8184y->height - 6;
     pkt1.sx = 0xf8;
@@ -1421,9 +1421,9 @@ static void near F_2A84D(void)
     (*b_78a2)(g_5e3e == 1 ? g8188w : g82b4s, bm7678, &pkt1, 1);
 }
 
-/* F_2AFDC @ 2645:4B8C (linear 0x2AFDC, 1774 bytes) */
+/* view_draw @ 2645:4B8C (linear 0x2AFDC, 1774 bytes) */
 
-void F_2AFDC(void)
+void view_draw(void)
 {
     int w36;
     int w11;
@@ -1447,12 +1447,12 @@ void F_2AFDC(void)
     g_6e20a = (int far *)(q_72ee + 14);
     g_6e24a = (int far *)(aw8634x + 14);
     am8b82y = (int far *)(g7d62p + 14);
-    F_28860();
-    F_28DD2();
+    view_clip();
+    render_backdrop();
     egaspan_begin();
     for (i = 14; i; i--) {
         if (i <= g_6e06aax)
-            F_29E8B(i);
+            render_row(i);
         if (*am8b82y & 4)
             goto next;
         if (i >= 11)
@@ -1463,99 +1463,99 @@ void F_2AFDC(void)
         w36 = *am8b82y;
         if (w11 & 0x20) {
             if (f3)
-                F_29F3B(*g_6e08aaw, *g_6e1a, i, -1, 0);
+                render_object(*g_6e08aaw, *g_6e1a, i, -1, 0);
             else
-                F_29F3B(*g_6e0awz, *g_6e1a, i, -1, 0);
+                render_object(*g_6e0awz, *g_6e1a, i, -1, 0);
         }
         if (w11 & 0x100) {
             if (f3)
-                F_29F3B(*g_6e08aaw, *g_6e1a, i, -1, 4);
+                render_object(*g_6e08aaw, *g_6e1a, i, -1, 4);
             else if (w11 & 0x200)
-                F_29F3B(*g_6e0awz - *g_6e08aaw + *g_6e0awz, *g_6e1a, i, -1, 4);
+                render_object(*g_6e0awz - *g_6e08aaw + *g_6e0awz, *g_6e1a, i, -1, 4);
             else
-                F_29F3B(*g_6e0awz, *g_6e1a, i, -1, 4);
+                render_object(*g_6e0awz, *g_6e1a, i, -1, 4);
         }
         if (w11 & 0x800)
-            F_29F3B(*g_6e08aaw, *g_6e1a, i, 1, 3);
+            render_object(*g_6e08aaw, *g_6e1a, i, 1, 3);
         if (w11 & 0x1000)
-            F_29F3B(*g_6e08aaw, *g_6e1a, i, 1, 6);
+            render_object(*g_6e08aaw, *g_6e1a, i, 1, 6);
         if (w11 & 1) {
             if (f3) {
                 egaspan_end();
-                F_29FC9(*g_6e08aaw, (*g_6e0cvz + *g_6e1a) >> 1, i, 1, 0, 1);
+                render_scaled_pic(*g_6e08aaw, (*g_6e0cvz + *g_6e1a) >> 1, i, 1, 0, 1);
                 egaspan_begin();
             } else
-                F_29F3B(*g_6e08aaw, *g_6e1a, i, 1, 1);
+                render_object(*g_6e08aaw, *g_6e1a, i, 1, 1);
         }
         if (f3) {
             if (w11 & 0x40)
-                F_29F8A(*g_6e08aaw, *g_6e1a, i, 1);
+                render_hydrant(*g_6e08aaw, *g_6e1a, i, 1);
             if (w2 & 0x40)
-                F_29F8A(*g_6e18, *g_6e1a, i, -1);
+                render_hydrant(*g_6e18, *g_6e1a, i, -1);
         } else {
             if (w11 & 4)
-                F_29F3B(*g_6e08aaw, *g_6e1a, i, -1, 7);
+                render_object(*g_6e08aaw, *g_6e1a, i, -1, 7);
             if (w11 & 8)
-                F_29F3B(*g_6e08aaw, *g_6e1a, i, -1, 8);
+                render_object(*g_6e08aaw, *g_6e1a, i, -1, 8);
             if (w11 & 0x40)
-                F_29F3B(-(((*g_6e08aaw - *g_6e0awz) >> 1) - *g_6e0awz), *g_6e1a, i, -1, 10);
+                render_object(-(((*g_6e08aaw - *g_6e0awz) >> 1) - *g_6e0awz), *g_6e1a, i, -1, 10);
             if (w11 & 0x80)
-                F_29F3B(*g_6e0awz, *g_6e1a, i, -1, 11);
+                render_object(*g_6e0awz, *g_6e1a, i, -1, 11);
             if (w2 & 4)
-                F_29F3B(*g_6e18, *g_6e1a, i, 1, 7);
+                render_object(*g_6e18, *g_6e1a, i, 1, 7);
             if (w2 & 8)
-                F_29F3B(*g_6e18, *g_6e1a, i, 1, 8);
+                render_object(*g_6e18, *g_6e1a, i, 1, 8);
             if (w2 & 0x40)
-                F_29F3B(*g_6e0euz, *g_6e1a, i, 1, 10);
+                render_object(*g_6e0euz, *g_6e1a, i, 1, 10);
             if (w2 & 0x80)
-                F_29F3B(((*g_6e0euz - *g_6e18) >> 1) + *g_6e0euz, *g_6e1a, i, 1, 11);
+                render_object(((*g_6e0euz - *g_6e18) >> 1) + *g_6e0euz, *g_6e1a, i, 1, 11);
             if (w36 & 2)
-                F_29F3B(*g_6e18, *g_6e1a, i, 1, 9);
+                render_object(*g_6e18, *g_6e1a, i, 1, 9);
         }
         if (w2 & 0x20) {
             if (f3)
-                F_29F3B(*g_6e18, *g_6e1a, i, 1, 0);
+                render_object(*g_6e18, *g_6e1a, i, 1, 0);
             else
-                F_29F3B(*g_6e0euz, *g_6e1a, i, 1, 0);
+                render_object(*g_6e0euz, *g_6e1a, i, 1, 0);
         }
         if (w2 & 0x100) {
             if (f3)
-                F_29F3B(*g_6e18, *g_6e1a, i, 1, 4);
+                render_object(*g_6e18, *g_6e1a, i, 1, 4);
             else if (w2 & 0x200)
-                F_29F3B((*g_6e0euz << 1) - *g_6e18, *g_6e1a, i, 1, 4);
+                render_object((*g_6e0euz << 1) - *g_6e18, *g_6e1a, i, 1, 4);
             else
-                F_29F3B(*g_6e0euz, *g_6e1a, i, 1, 4);
+                render_object(*g_6e0euz, *g_6e1a, i, 1, 4);
         }
         if (w2 & 0x2000)
-            F_29F3B(*g_6e18, *g_6e1a, i, 1, 0x12);
+            render_object(*g_6e18, *g_6e1a, i, 1, 0x12);
         if (w2 & 0x4000)
-            F_29F3B(*g_6e18, *g_6e1a, i, 1, 0x13);
+            render_object(*g_6e18, *g_6e1a, i, 1, 0x13);
         if (w2 & 0x800)
-            F_29F3B(*g_6e18, *g_6e1a, i, 1, 3);
+            render_object(*g_6e18, *g_6e1a, i, 1, 3);
         if (w2 & 0x1000)
-            F_29F3B(*g_6e18, *g_6e1a, i, -1, 6);
+            render_object(*g_6e18, *g_6e1a, i, -1, 6);
         if (w2 & 1) {
             if (f3) {
                 egaspan_end();
-                F_29FC9(*g_6e18, (*g_6e0cvz + *g_6e1a) >> 1, i, -1, 0, 1);
+                render_scaled_pic(*g_6e18, (*g_6e0cvz + *g_6e1a) >> 1, i, -1, 0, 1);
                 egaspan_begin();
             } else
-                F_29F3B(*g_6e18, *g_6e1a, i, 1, 1);
+                render_object(*g_6e18, *g_6e1a, i, 1, 1);
         }
         if (w36 & 0xf000)
-            F_2A11C(*g_6e08aaw, *g_6e18, -((*g_6e1a - *g_6e0cvz) * 4 - *g_6e1a), *g_6e1a, i, 0, w36 & 0xf000);
+            render_gantry(*g_6e08aaw, *g_6e18, -((*g_6e1a - *g_6e0cvz) * 4 - *g_6e1a), *g_6e1a, i, 0, w36 & 0xf000);
         if (w36 & 0x100)
-            F_29F3B(*g_6e18, *g_6e1a, i, 1, 5);
+            render_object(*g_6e18, *g_6e1a, i, 1, 5);
         if (w36 & 0x800)
-            F_29F3B(*g_6e18, *g_6e1a, i, 1, 0xf);
+            render_object(*g_6e18, *g_6e1a, i, 1, 0xf);
         if (w36 & 0x200)
-            F_29F3B(*g_6e18, *g_6e1a, i, 1, 0x10);
+            render_object(*g_6e18, *g_6e1a, i, 1, 0x10);
         if (w36 & 0x400)
-            F_29F3B(*g_6e18, *g_6e1a, i, 1, 0x11);
+            render_object(*g_6e18, *g_6e1a, i, 1, 0x11);
     next:
         if (ar7e8av.m7e8a - ao7d2ev.m7d30 == i && *(int *)&bw8aca) {
             egaspan_end();
-            F_2A3DD();
+            render_opponent();
             egaspan_begin();
         }
         g_6e10--;
@@ -1577,22 +1577,22 @@ void F_2AFDC(void)
     }
     if (ar7e8av.m7e8a == ao7d2ev.m7d30 && *(int *)&bw8aca) {
         egaspan_end();
-        F_2A3DD();
+        render_opponent();
         egaspan_begin();
     }
-    F_2A84D();
+    render_mirror();
     egaspan_end();
-    F_2A28C();
+    render_overlays();
     if (*(int *)&bw8aca)
-        F_2A213();
-    F_286D8();
+        render_start_signal();
+    flip_page();
 }
 
-/* F_2B6CA @ 2645:527A (linear 0x2B6CA, 17 bytes) */
+/* view_start @ 2645:527A (linear 0x2B6CA, 17 bytes) */
 
-void F_2B6CA(void)
+void view_start(void)
 {
     ap7d7cv = g_6e2a9 = 0;
-    F_2869E();
-    F_282EE();
+    select_draw_page();
+    road_draw_frame();
 }

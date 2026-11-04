@@ -1291,7 +1291,7 @@ void interrupt far sys_drive_isr(void)
                 if (abs(e_78e0.f4) > 0)
                     e_78e0.f4 += e_78e0.f4 > 0 ? -((e_78e0.f4 >> 2) + 1)
                                                : ((-e_78e0.f4 >> 2) + 1);
-                if (bw8aca && F_284BB()) {
+                if (bw8aca && road_check_crash()) {
                     e_78e0.fbc |= 0x21;
                     sys_car_halt();
                 }

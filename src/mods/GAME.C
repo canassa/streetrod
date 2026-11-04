@@ -70,7 +70,7 @@ static int near start_game(void)
             sys_exit();
         F_120FE(-4);
     }
-    F_27198();
+    road_generate();
     atnewName[0] = 0;
     g_0610 = ag8bcet;
     if (by70e2 == 0) {

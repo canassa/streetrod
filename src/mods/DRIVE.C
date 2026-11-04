@@ -12,9 +12,9 @@
 #include "POPUP.H"
 #include "RACE.H"
 #include "ROAD.H"
-#include "ROADVIEW.H"
 #include "SCREEN.H"
 #include "SYS.H"
+#include "VIEW.H"
 
 #pragma intrinsic(abs)
 
@@ -80,7 +80,7 @@ int drive_run(void)
         blt.dy = (r_vid.mode == -2 || g_58e4) ? 0 : 0x64;
         (*b_78a2)(src, g_58e4 ? g755cu : bm7678, &blt, 1);
         F_19438(1);
-        F_28879();
+        view_load();
         dash_init_shifter(e_78e0.f24, e_78e0.f1c);
         dash_draw_shifter(g_58e4 ? g755cu : bm7678, &e_78e0);
         shiftx5 = 0;
@@ -106,7 +106,7 @@ int drive_run(void)
         af824ax = 0x64;
     } else
         af824ax = 0;
-    F_28564();
+    road_start();
     if (r_vid.mode != -2) {
         blt.w = 0x140;
         blt.h = 0x12;
@@ -129,7 +129,7 @@ int drive_run(void)
     }
     (*m_present)();
     for (;;) {
-        F_2858D();
+        road_update();
         if (g_0610 == 0x63) {
             g_0610--;
             sys_exit();

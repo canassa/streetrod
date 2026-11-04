@@ -122,7 +122,7 @@ static void near init_new_game(void)
     if (g_0610)
         a_7eaap.m7eaa = 10000L;
     a_7eaap.m7eae = 10;
-    F_26FE1(100);
+    road_build_layout(100);
     init_racers();
     g_05fc = 0L;
     g_0604 = g_0600;
@@ -362,7 +362,7 @@ int near savegame_load(void)
     _dos_close(fd7);
     if (a_7eaap.m7eb0)
         F_067CF(a_7eaap.m7eb0->f4);
-    F_26FE1(g_5e0c);
+    road_build_layout(g_5e0c);
     g_0604 = g_0600 - delta;
     F_120FE(-2);
     return 0;

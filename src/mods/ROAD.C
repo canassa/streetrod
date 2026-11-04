@@ -6,12 +6,12 @@
 #include "MAIN.H"
 #include "RACE.H"
 #include "RANDOM.H"
-#include "ROADVIEW.H"
 #include "SCREEN.H"
 #include "SCREEN2.H"
 #include "SCREENS.H"
 #include "SLOTS.H"
 #include "SYS.H"
+#include "VIEW.H"
 
 #pragma intrinsic(abs)
 
@@ -19,18 +19,18 @@
 static int g_6dfeaa;                       /* DS:6DFE */
 static int g_6e00;                         /* DS:6E00 */
 static int g_6e02;                         /* DS:6E02 */
-static int near F_265BA(int n);
-static void near F_265CA(void);
-static void near F_266E3(void);
-static void near F_267F8(void);
-static void near F_26989(void);
-static void near F_26B1A(void);
-static void near F_26BAD(void);
-static void near F_26C42(void);
-static void near F_26CD5(void);
-static void near F_26D6A(void);
-static void near F_26E40(void);
-static void near F_26F0B(void);
+static int near rnd(int n);
+static void near build_left_curve(void);
+static void near build_right_curve(void);
+static void near build_s_curve_lr(void);
+static void near build_s_curve_rl(void);
+static void near build_hill(void);
+static void near build_dip(void);
+static void near build_hill_dip(void);
+static void near build_dip_hill(void);
+static void near build_right_closed(void);
+static void near build_narrows(void);
+static void near build_left_closed(void);
 
 int g_5c20[22] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, -4, -4, -4, -3, -2, -1};   /* DS:5C20 */
 int g_5c4c[38] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, -5, -5, -5, -5, -5, -5, -4, -3, -2, -1, 0, 0, 1, 2, 3, 4, 4, 4, 4, 3, 2, 1};   /* DS:5C4C */
@@ -44,18 +44,18 @@ int g_5e0e = 0;   /* DS:5E0E */
 int g_5e10 = 0;   /* DS:5E10 */
 int g_5e12 = 0;   /* DS:5E12 */
 
-/* F_265BA @ 2645:016A (linear 0x265BA, 16 bytes)
+/* rnd @ 2645:016A (linear 0x265BA, 16 bytes)
 
    Near wrapper around random_int, used by the track builder */
 
-static int near F_265BA(int n)
+static int near rnd(int n)
 {
     return random_int(n);
 }
 
-/* F_265CA @ 2645:017A (linear 0x265CA, 281 bytes) */
+/* build_left_curve @ 2645:017A (linear 0x265CA, 281 bytes) */
 
-static void near F_265CA(void)
+static void near build_left_curve(void)
 {
     int i;
 
@@ -77,9 +77,9 @@ static void near F_265CA(void)
     g_6dfeaa = i * g_6e02;
 }
 
-/* F_266E3 @ 2645:0293 (linear 0x266E3, 277 bytes) */
+/* build_right_curve @ 2645:0293 (linear 0x266E3, 277 bytes) */
 
-static void near F_266E3(void)
+static void near build_right_curve(void)
 {
     int i;
 
@@ -101,9 +101,9 @@ static void near F_266E3(void)
     g_6dfeaa = i * g_6e02;
 }
 
-/* F_267F8 @ 2645:03A8 (linear 0x267F8, 401 bytes) */
+/* build_s_curve_lr @ 2645:03A8 (linear 0x267F8, 401 bytes) */
 
-static void near F_267F8(void)
+static void near build_s_curve_lr(void)
 {
     int i;
 
@@ -133,9 +133,9 @@ static void near F_267F8(void)
     g_6dfeaa = i * g_6e02;
 }
 
-/* F_26989 @ 2645:0539 (linear 0x26989, 401 bytes) */
+/* build_s_curve_rl @ 2645:0539 (linear 0x26989, 401 bytes) */
 
-static void near F_26989(void)
+static void near build_s_curve_rl(void)
 {
     int i;
 
@@ -165,9 +165,9 @@ static void near F_26989(void)
     g_6dfeaa = i * g_6e02;
 }
 
-/* F_26B1A @ 2645:06CA (linear 0x26B1A, 147 bytes) */
+/* build_hill @ 2645:06CA (linear 0x26B1A, 147 bytes) */
 
-static void near F_26B1A(void)
+static void near build_hill(void)
 {
     int i, start;
 
@@ -184,11 +184,11 @@ static void near F_26B1A(void)
         g_terrain2[i] = g_6dfeaa;
 }
 
-/* F_26BAD @ 2645:075D (linear 0x26BAD, 149 bytes)
+/* build_dip @ 2645:075D (linear 0x26BAD, 149 bytes)
 
    Builds a terrain hill section */
 
-static void near F_26BAD(void)
+static void near build_dip(void)
 {
     int i, start;
 
@@ -205,11 +205,11 @@ static void near F_26BAD(void)
         g_terrain2[i] = g_6dfeaa;
 }
 
-/* F_26C42 @ 2645:07F2 (linear 0x26C42, 147 bytes)
+/* build_hill_dip @ 2645:07F2 (linear 0x26C42, 147 bytes)
 
    Builds a terrain hill section */
 
-static void near F_26C42(void)
+static void near build_hill_dip(void)
 {
     int i, start;
 
@@ -226,11 +226,11 @@ static void near F_26C42(void)
         g_terrain2[i] = g_6dfeaa;
 }
 
-/* F_26CD5 @ 2645:0885 (linear 0x26CD5, 149 bytes)
+/* build_dip_hill @ 2645:0885 (linear 0x26CD5, 149 bytes)
 
    Builds a terrain hill section */
 
-static void near F_26CD5(void)
+static void near build_dip_hill(void)
 {
     int i, start;
 
@@ -247,9 +247,9 @@ static void near F_26CD5(void)
         g_terrain2[i] = g_6dfeaa;
 }
 
-/* F_26D6A @ 2645:091A (linear 0x26D6A, 214 bytes) */
+/* build_right_closed @ 2645:091A (linear 0x26D6A, 214 bytes) */
 
-static void near F_26D6A(void)
+static void near build_right_closed(void)
 {
     int i, start;
 
@@ -269,9 +269,9 @@ static void near F_26D6A(void)
         g_terrain2[i] = g_6dfeaa;
 }
 
-/* F_26E40 @ 2645:09F0 (linear 0x26E40, 203 bytes) */
+/* build_narrows @ 2645:09F0 (linear 0x26E40, 203 bytes) */
 
-static void near F_26E40(void)
+static void near build_narrows(void)
 {
     int i, start;
 
@@ -291,9 +291,9 @@ static void near F_26E40(void)
         g_terrain2[i] = g_6dfeaa;
 }
 
-/* F_26F0B @ 2645:0ABB (linear 0x26F0B, 214 bytes) */
+/* build_left_closed @ 2645:0ABB (linear 0x26F0B, 214 bytes) */
 
-static void near F_26F0B(void)
+static void near build_left_closed(void)
 {
     int i, start;
 
@@ -313,11 +313,11 @@ static void near F_26F0B(void)
         g_terrain2[i] = g_6dfeaa;
 }
 
-/* F_26FE1 @ 2645:0B91 (linear 0x26FE1, 439 bytes)
+/* road_build_layout @ 2645:0B91 (linear 0x26FE1, 439 bytes)
 
    Builds the track profile arrays from the section list of the chosen layout. */
 
-void F_26FE1(int n)
+void road_build_layout(int n)
 {
     int i;
 
@@ -334,20 +334,20 @@ void F_26FE1(int n)
             g_terrain3[i] |= 8;
     }
     if (n == 100)
-        g_5e0c = F_265BA(10);
+        g_5e0c = rnd(10);
     for (i = 0; i < g_5cba; i++) {
         switch (g_5cbc[g_5e0c][i]) {
-        case 1: F_265CA(); break;
-        case 2: F_266E3(); break;
-        case 3: F_26B1A(); break;
-        case 4: F_26BAD(); break;
-        case 5: F_26C42(); break;
-        case 6: F_26CD5(); break;
-        case 7: F_26D6A(); break;
-        case 8: F_26F0B(); break;
-        case 9: F_26E40(); break;
-        case 10: F_267F8(); break;
-        case 11: F_26989(); break;
+        case 1: build_left_curve(); break;
+        case 2: build_right_curve(); break;
+        case 3: build_hill(); break;
+        case 4: build_dip(); break;
+        case 5: build_hill_dip(); break;
+        case 6: build_dip_hill(); break;
+        case 7: build_right_closed(); break;
+        case 8: build_left_closed(); break;
+        case 9: build_narrows(); break;
+        case 10: build_s_curve_lr(); break;
+        case 11: build_s_curve_rl(); break;
         }
     }
     for (; g_6e00 < 0x460; g_6e00++) {
@@ -356,12 +356,12 @@ void F_26FE1(int n)
     }
 }
 
-/* F_27198 @ 2645:0D48 (linear 0x27198, 2517 bytes)
+/* road_generate @ 2645:0D48 (linear 0x27198, 2517 bytes)
 
    Builds the terrain flag arrays for a new track: start/finish area, hills,
    then the random features, and finally calls the track builder. */
 
-void F_27198(void)
+void road_generate(void)
 {
     int cnt, i, j;
 
@@ -402,10 +402,10 @@ void F_27198(void)
             i += 3;
         } else {
             if ((i + 4) % 16 == 0 || (i + 8) % 16 == 0 || (i + 12) % 16 == 0) {
-                if (F_265BA(2) == 0) {
+                if (rnd(2) == 0) {
                     g_terrain0[i - 1] |= 4;
                     g_terrain0[i] |= 4;
-                    if (F_265BA(3) == 0) {
+                    if (rnd(3) == 0) {
                         g_terrain0[i - 1] |= 8;
                         g_terrain0[i] |= 8;
                     }
@@ -414,7 +414,7 @@ void F_27198(void)
                     g_terrain0[i - 2] |= 4;
                     g_terrain0[i] |= 4;
                     g_terrain0[i - 1] |= 4;
-                    if (F_265BA(3) == 0) {
+                    if (rnd(3) == 0) {
                         g_terrain0[i - 2] |= 8;
                         g_terrain0[i] |= 8;
                         g_terrain0[i - 1] |= 8;
@@ -424,10 +424,10 @@ void F_27198(void)
             } else
                 g_terrain0[i] |= 0x80;
             if ((i + 5) % 16 == 0 || (i + 9) % 16 == 0 || (i + 12) % 16 == 0) {
-                if (F_265BA(3) != 0) {
+                if (rnd(3) != 0) {
                     g_terrain1[i - 1] |= 4;
                     g_terrain1[i] |= 4;
-                    if (F_265BA(2) == 0) {
+                    if (rnd(2) == 0) {
                         g_terrain1[i - 1] |= 8;
                         g_terrain1[i] |= 8;
                     }
@@ -436,7 +436,7 @@ void F_27198(void)
                     g_terrain1[i - 2] |= 4;
                     g_terrain1[i] |= 4;
                     g_terrain1[i - 1] |= 4;
-                    if (F_265BA(4) == 0) {
+                    if (rnd(4) == 0) {
                         g_terrain1[i - 2] |= 8;
                         g_terrain1[i] |= 8;
                         g_terrain1[i - 1] |= 8;
@@ -445,22 +445,22 @@ void F_27198(void)
                 }
             } else
                 g_terrain1[i] |= 0x80;
-            if (F_265BA(cnt * 40 + 6) == 0 && !(g_terrain0[i] & 0x10))
+            if (rnd(cnt * 40 + 6) == 0 && !(g_terrain0[i] & 0x10))
                 g_terrain0[i] |= 0x20;
-            if (F_265BA(cnt * 40 + 7) == 0 && !(g_terrain1[i] & 0x10))
+            if (rnd(cnt * 40 + 7) == 0 && !(g_terrain1[i] & 0x10))
                 g_terrain1[i] |= 0x20;
-            if (F_265BA(cnt * 40 + 3) == 0 && !(g_terrain0[i] & 0x10))
+            if (rnd(cnt * 40 + 3) == 0 && !(g_terrain0[i] & 0x10))
                 g_terrain0[i] |= 0x100;
-            if (F_265BA(cnt * 40 + 4) == 0 && !(g_terrain1[i] & 0x10))
+            if (rnd(cnt * 40 + 4) == 0 && !(g_terrain1[i] & 0x10))
                 g_terrain1[i] |= 0x100;
         }
     }
-    g_terrain3[F_265BA(45) + 10] |= 0x4000;
-    g_terrain3[F_265BA(45) + 10] |= 0x8000;
-    g_terrain3[F_265BA(55) + 65] |= 0x4000;
-    g_terrain3[F_265BA(55) + 65] |= 0x8000;
-    g_terrain3[F_265BA(55) + 115] |= 0x4000;
-    g_terrain3[F_265BA(55) + 115] |= 0x8000;
+    g_terrain3[rnd(45) + 10] |= 0x4000;
+    g_terrain3[rnd(45) + 10] |= 0x8000;
+    g_terrain3[rnd(55) + 65] |= 0x4000;
+    g_terrain3[rnd(55) + 65] |= 0x8000;
+    g_terrain3[rnd(55) + 115] |= 0x4000;
+    g_terrain3[rnd(55) + 115] |= 0x8000;
     g_terrain1[44] |= 1;
     g_terrain0[29] |= 0x1000;
     g_terrain0[24] |= 0x800;
@@ -484,12 +484,12 @@ void F_27198(void)
         }
         if ((i + 2) % (cnt * 8 + 8) == 0)
             g_terrain3[i] |= 2;
-        if (F_265BA(cnt * 200 + 7) == 0)
+        if (rnd(cnt * 200 + 7) == 0)
             g_terrain0[i] |= 0x20;
-        if (F_265BA(cnt * 200 + 9) == 0)
+        if (rnd(cnt * 200 + 9) == 0)
             g_terrain1[i] |= 0x20;
         if (cnt == 0) {
-            if (F_265BA(35) == 0) {
+            if (rnd(35) == 0) {
                 g_terrain0[i] |= 0x40;
                 g_terrain0[i - 1] |= 0x40;
                 g_terrain0[i - 2] |= 0x40;
@@ -497,42 +497,42 @@ void F_27198(void)
                 g_terrain0[i - 1] &= ~0x20;
                 g_terrain0[i - 2] &= ~0x20;
             }
-            if (F_265BA(25) == 0) {
+            if (rnd(25) == 0) {
                 g_terrain1[i] |= 0x40;
                 g_terrain1[i - 2] |= 0x40;
                 g_terrain1[i] &= ~0x20;
                 g_terrain1[i - 2] &= ~0x20;
             }
         } else {
-            if (F_265BA(cnt * 100 + 35) == 0) {
+            if (rnd(cnt * 100 + 35) == 0) {
                 g_terrain0[i] |= 0x40;
                 g_terrain0[i] &= ~0x20;
             }
-            if (F_265BA(cnt * 100 + 25) == 0) {
+            if (rnd(cnt * 100 + 25) == 0) {
                 g_terrain1[i] |= 0x40;
                 g_terrain1[i] &= ~0x20;
             }
         }
-        if (F_265BA(cnt * 100 + 7) == 0 && !(g_terrain0[i] & 0x80))
+        if (rnd(cnt * 100 + 7) == 0 && !(g_terrain0[i] & 0x80))
             g_terrain0[i] |= 0x80;
-        if (F_265BA(cnt * 100 + 9) == 0 && !(g_terrain1[i] & 0x80))
+        if (rnd(cnt * 100 + 9) == 0 && !(g_terrain1[i] & 0x80))
             g_terrain1[i] |= 0x80;
-        if (F_265BA(cnt * 100 + 21) == 0)
+        if (rnd(cnt * 100 + 21) == 0)
             g_terrain0[i] |= 4;
-        if (F_265BA(cnt * 100 + 25) == 0)
+        if (rnd(cnt * 100 + 25) == 0)
             g_terrain1[i] |= 4;
-        if (F_265BA(cnt * 100 + 23) == 0 && !(g_terrain0[i] & 4))
+        if (rnd(cnt * 100 + 23) == 0 && !(g_terrain0[i] & 4))
             g_terrain0[i] |= 8;
-        if (F_265BA(cnt * 100 + 30) == 0 && !(g_terrain1[i] & 4))
+        if (rnd(cnt * 100 + 30) == 0 && !(g_terrain1[i] & 4))
             g_terrain1[i] |= 8;
-        if (F_265BA(cnt * 50 + 4) == 0) {
+        if (rnd(cnt * 50 + 4) == 0) {
             g_terrain0[i] |= 0x100;
-            if (F_265BA(2) == 0)
+            if (rnd(2) == 0)
                 g_terrain0[i] |= 0x200;
         }
-        if (F_265BA(cnt * 50 + 4) == 0) {
+        if (rnd(cnt * 50 + 4) == 0) {
             g_terrain1[i] |= 0x100;
-            if (F_265BA(2) == 0)
+            if (rnd(2) == 0)
                 g_terrain1[i] |= 0x200;
         }
     }
@@ -543,18 +543,18 @@ void F_27198(void)
     g_terrain1[1019] &= 0x1801;
     g_terrain3[1019] |= 0x2010;
     {
-        i = F_265BA(140) + 220;
+        i = rnd(140) + 220;
         j = (g_terrain1[i] & 2) ? i - 1 : i;
         g_terrain0[j] &= 0x1801;
         g_terrain1[j] &= 0x1801;
         g_terrain3[j] |= 0x8000;
-        i = F_265BA(600) + 390;
+        i = rnd(600) + 390;
         j = (g_terrain1[i] & 2) ? i - 1 : i;
         g_terrain0[j] &= 0x1801;
         g_terrain1[j] &= 0x1801;
         g_terrain3[j] |= 0x8000;
     }
-    i = F_265BA(600) + 390;
+    i = rnd(600) + 390;
     j = (g_terrain1[i] & 2) ? i - 1 : i;
     g_terrain0[j] &= 0x1801;
     g_terrain1[j] &= 0x1801;
@@ -569,7 +569,7 @@ void F_27198(void)
         i += 30;
     } while (i + 90 < 0x17c);
     g_terrain3[385] |= 0x100;
-    F_26FE1(100);
+    road_build_layout(100);
 }
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
@@ -590,11 +590,11 @@ int as8638y[6];
 int aj864ax[6];
 int ay865a[6];
 
-/* F_27B6D @ 2645:171D (linear 0x27B6D, 82 bytes)
+/* road_seek @ 2645:171D (linear 0x27B6D, 82 bytes)
 
    Points the terrain pointers at entry n of each terrain array. */
 
-void F_27B6D(int n)
+void road_seek(int n)
 {
     q_72ee = &g_terrain0[n];
     aw8634x = &g_terrain1[n];
@@ -603,9 +603,9 @@ void F_27B6D(int n)
     af7560z = &g_terrain2[n];
 }
 
-/* F_27BBF @ 2645:176F (linear 0x27BBF, 66 bytes) */
+/* road_proj_x @ 2645:176F (linear 0x27BBF, 66 bytes) */
 
-int F_27BBF(int a, int b, int c)
+int road_proj_x(int a, int b, int c)
 {
     int u, v;
 
@@ -618,9 +618,9 @@ int F_27BBF(int a, int b, int c)
     return 0xa0 - u;
 }
 
-/* F_27C01 @ 2645:17B1 (linear 0x27C01, 60 bytes) */
+/* road_proj_y @ 2645:17B1 (linear 0x27C01, 60 bytes) */
 
-int F_27C01(int a, int b, int c)
+int road_proj_y(int a, int b, int c)
 {
     int u, v;
 
@@ -633,9 +633,9 @@ int F_27C01(int a, int b, int c)
     return u + 0x3c;
 }
 
-/* F_27C3D @ 2645:17ED (linear 0x27C3D, 59 bytes) */
+/* road_mirror_x @ 2645:17ED (linear 0x27C3D, 59 bytes) */
 
-int F_27C3D(int a, int b, int c)
+int road_mirror_x(int a, int b, int c)
 {
     int u, v;
 
@@ -647,9 +647,9 @@ int F_27C3D(int a, int b, int c)
     return 0x118 - u;
 }
 
-/* F_27C78 @ 2645:1828 (linear 0x27C78, 53 bytes) */
+/* road_mirror_y @ 2645:1828 (linear 0x27C78, 53 bytes) */
 
-int F_27C78(int a, int b, int c)
+int road_mirror_y(int a, int b, int c)
 {
     int u, v;
 
@@ -661,11 +661,11 @@ int F_27C78(int a, int b, int c)
     return u + 0x24;
 }
 
-/* F_27CAD @ 2645:185D (linear 0x27CAD, 158 bytes)
+/* road_reset @ 2645:185D (linear 0x27CAD, 158 bytes)
 
    Resets the terrain scroll state for a new track. */
 
-void F_27CAD(void)
+void road_reset(void)
 {
     if (bw8aca)
         ao7d2ev.m7d30 = 200;
@@ -681,7 +681,7 @@ void F_27CAD(void)
             ao7d2ev.m7d30 = 115;
             break;
         }
-    F_27B6D(ao7d2ev.m7d30);
+    road_seek(ao7d2ev.m7d30);
     g7d82p = 1500;
     cz8bd0y = 3300;
     ao7d2ev.m7d32 = 0;
@@ -696,12 +696,12 @@ void F_27CAD(void)
     gz7d7e = 1;
 }
 
-/* F_27D4B @ 2645:18FB (linear 0x27D4B, 721 bytes)
+/* road_project_ahead @ 2645:18FB (linear 0x27D4B, 721 bytes)
 
    Fills the per-row projection tables (15 rows, the first one peeled) from the
-   terrain pointers, walking the track forward. F_2801C is the backward twin. */
+   terrain pointers, walking the track forward. road_project_behind is the backward twin. */
 
-void F_27D4B(void)
+void road_project_ahead(void)
 {
     int *p5l, k7, bits, *p11, rowz, flag8, *p2, *p3, d1, d2, *p42, *p6;
 
@@ -716,26 +716,26 @@ void F_27D4B(void)
     rowz = 4;
     d1 = ao7d2ev.m7d3e - *af7880z++;
     d2 = ao7d2ev.m7d3c - *af7560z++;
-    *p3++ = F_27C01(rowz, 2000, d1);
+    *p3++ = road_proj_y(rowz, 2000, d1);
     if (bits) {
         if (bits & 0x80) {
-            *p11++ = F_27BBF(rowz, 0xaf0, d2);
-            *p2++ = F_27BBF(rowz, 2000, d2);
+            *p11++ = road_proj_x(rowz, 0xaf0, d2);
+            *p2++ = road_proj_x(rowz, 2000, d2);
         } else if (bits & 0x20) {
-            *p11++ = F_27BBF(rowz, 0xce4, d2);
-            *p2++ = F_27BBF(rowz, 2000, d2);
+            *p11++ = road_proj_x(rowz, 0xce4, d2);
+            *p2++ = road_proj_x(rowz, 2000, d2);
         } else {
-            *p11++ = F_27BBF(rowz, 0xaf0, d2);
-            *p2++ = F_27BBF(rowz, 1500, d2);
+            *p11++ = road_proj_x(rowz, 0xaf0, d2);
+            *p2++ = road_proj_x(rowz, 1500, d2);
         }
     } else {
-        *p11++ = F_27BBF(rowz, 0xce4, d2);
-        *p2++ = F_27BBF(rowz, 1500, d2);
+        *p11++ = road_proj_x(rowz, 0xce4, d2);
+        *p2++ = road_proj_x(rowz, 1500, d2);
     }
-    *p5l++ = F_27BBF(rowz, 0xe74, d2);
-    *p42++ = F_27BBF(rowz, 0x44c, d2);
+    *p5l++ = road_proj_x(rowz, 0xe74, d2);
+    *p42++ = road_proj_x(rowz, 0x44c, d2);
     if (flag8)
-        *p6++ = F_27C01(rowz, 0x76c, d1);
+        *p6++ = road_proj_y(rowz, 0x76c, d1);
     else
         p6++;
     rowz = 12 - ao7d2ev.m7d32;
@@ -750,46 +750,46 @@ void F_27D4B(void)
         af7560z++;
         if (bits) {
             if (bits & 0x80) {
-                *p11 = F_27BBF(rowz, 0xaf0, d2);
+                *p11 = road_proj_x(rowz, 0xaf0, d2);
                 p11++;
-                *p2 = F_27BBF(rowz, 2000, d2);
+                *p2 = road_proj_x(rowz, 2000, d2);
                 p2++;
             } else if (bits & 0x20) {
-                *p11 = F_27BBF(rowz, 0xce4, d2);
+                *p11 = road_proj_x(rowz, 0xce4, d2);
                 p11++;
-                *p2 = F_27BBF(rowz, 2000, d2);
+                *p2 = road_proj_x(rowz, 2000, d2);
                 p2++;
             } else {
-                *p11 = F_27BBF(rowz, 0xaf0, d2);
+                *p11 = road_proj_x(rowz, 0xaf0, d2);
                 p11++;
-                *p2 = F_27BBF(rowz, 1500, d2);
+                *p2 = road_proj_x(rowz, 1500, d2);
                 p2++;
             }
         } else {
-            *p11 = F_27BBF(rowz, 0xce4, d2);
+            *p11 = road_proj_x(rowz, 0xce4, d2);
             p11++;
-            *p2 = F_27BBF(rowz, 1500, d2);
+            *p2 = road_proj_x(rowz, 1500, d2);
             p2++;
         }
-        *p3 = F_27C01(rowz, 2000, d1);
+        *p3 = road_proj_y(rowz, 2000, d1);
         p3++;
-        *p5l = F_27BBF(rowz, 0xe74, d2);
+        *p5l = road_proj_x(rowz, 0xe74, d2);
         p5l++;
-        *p42 = F_27BBF(rowz, 0x44c, d2);
+        *p42 = road_proj_x(rowz, 0x44c, d2);
         p42++;
         if (flag8)
-            *p6 = F_27C01(rowz, 0x76c, d1);
+            *p6 = road_proj_y(rowz, 0x76c, d1);
         p6++;
         rowz += 8;
     } while (--k7);
 }
 
-/* F_2801C @ 2645:1BCC (linear 0x2801C, 722 bytes)
+/* road_project_behind @ 2645:1BCC (linear 0x2801C, 722 bytes)
 
    Fills the per-row projection tables (8 rows, the first one peeled) from the
-   terrain pointers, walking the track backward. F_27D4B is the forward twin. */
+   terrain pointers, walking the track backward. road_project_ahead is the forward twin. */
 
-void F_2801C(void)
+void road_project_behind(void)
 {
     int *p5l, k7, bits, *p11, rowz, flag8, *p2, *p3, d1, d2, *p42, *p6;
 
@@ -804,26 +804,26 @@ void F_2801C(void)
     rowz = 8;
     d1 = *af7880z-- - ao7d2ev.m7d3e;
     d2 = *af7560z-- - ao7d2ev.m7d3c;
-    *p3++ = F_27C78(rowz, 2000, d1);
+    *p3++ = road_mirror_y(rowz, 2000, d1);
     if (bits) {
         if (bits & 0x80) {
-            *p11++ = F_27C3D(rowz, 0xaf0, d2);
-            *p2++ = F_27C3D(rowz, 2000, d2);
+            *p11++ = road_mirror_x(rowz, 0xaf0, d2);
+            *p2++ = road_mirror_x(rowz, 2000, d2);
         } else if (bits & 0x20) {
-            *p11++ = F_27C3D(rowz, 0xce4, d2);
-            *p2++ = F_27C3D(rowz, 2000, d2);
+            *p11++ = road_mirror_x(rowz, 0xce4, d2);
+            *p2++ = road_mirror_x(rowz, 2000, d2);
         } else {
-            *p11++ = F_27C3D(rowz, 0xaf0, d2);
-            *p2++ = F_27C3D(rowz, 1500, d2);
+            *p11++ = road_mirror_x(rowz, 0xaf0, d2);
+            *p2++ = road_mirror_x(rowz, 1500, d2);
         }
     } else {
-        *p11++ = F_27C3D(rowz, 0xce4, d2);
-        *p2++ = F_27C3D(rowz, 1500, d2);
+        *p11++ = road_mirror_x(rowz, 0xce4, d2);
+        *p2++ = road_mirror_x(rowz, 1500, d2);
     }
-    *p5l++ = F_27C3D(rowz, 0xe74, d2);
-    *p42++ = F_27C3D(rowz, 0x44c, d2);
+    *p5l++ = road_mirror_x(rowz, 0xe74, d2);
+    *p42++ = road_mirror_x(rowz, 0x44c, d2);
     if (flag8)
-        *p6++ = F_27C78(rowz, 0x76c, d1);
+        *p6++ = road_mirror_y(rowz, 0x76c, d1);
     else
         p6++;
     rowz = ao7d2ev.m7d32 + 8;
@@ -838,67 +838,67 @@ void F_2801C(void)
         af7560z--;
         if (bits) {
             if (bits & 0x80) {
-                *p11 = F_27C3D(rowz, 0xaf0, d2);
+                *p11 = road_mirror_x(rowz, 0xaf0, d2);
                 p11++;
-                *p2 = F_27C3D(rowz, 2000, d2);
+                *p2 = road_mirror_x(rowz, 2000, d2);
                 p2++;
             } else if (bits & 0x20) {
-                *p11 = F_27C3D(rowz, 0xce4, d2);
+                *p11 = road_mirror_x(rowz, 0xce4, d2);
                 p11++;
-                *p2 = F_27C3D(rowz, 2000, d2);
+                *p2 = road_mirror_x(rowz, 2000, d2);
                 p2++;
             } else {
-                *p11 = F_27C3D(rowz, 0xaf0, d2);
+                *p11 = road_mirror_x(rowz, 0xaf0, d2);
                 p11++;
-                *p2 = F_27C3D(rowz, 1500, d2);
+                *p2 = road_mirror_x(rowz, 1500, d2);
                 p2++;
             }
         } else {
-            *p11 = F_27C3D(rowz, 0xce4, d2);
+            *p11 = road_mirror_x(rowz, 0xce4, d2);
             p11++;
-            *p2 = F_27C3D(rowz, 1500, d2);
+            *p2 = road_mirror_x(rowz, 1500, d2);
             p2++;
         }
-        *p3 = F_27C78(rowz, 2000, d1);
+        *p3 = road_mirror_y(rowz, 2000, d1);
         p3++;
-        *p5l = F_27C3D(rowz, 0xe74, d2);
+        *p5l = road_mirror_x(rowz, 0xe74, d2);
         p5l++;
-        *p42 = F_27C3D(rowz, 0x44c, d2);
+        *p42 = road_mirror_x(rowz, 0x44c, d2);
         p42++;
         if (flag8)
-            *p6 = F_27C78(rowz, 0x76c, d1);
+            *p6 = road_mirror_y(rowz, 0x76c, d1);
         p6++;
         rowz += 8;
     } while (--k7);
 }
 
-/* F_282EE @ 2645:1E9E (linear 0x282EE, 94 bytes)
+/* road_draw_frame @ 2645:1E9E (linear 0x282EE, 94 bytes)
 
    Rebuilds the projection tables for both directions, then waits 9 ticks. */
 
-void F_282EE(void)
+void road_draw_frame(void)
 {
     long deadline;
 
-    F_27B6D(ao7d2ev.m7d30);
-    F_27D4B();
-    F_27B6D(ao7d2ev.m7d30);
-    F_2801C();
-    F_27B6D(ao7d2ev.m7d30);
+    road_seek(ao7d2ev.m7d30);
+    road_project_ahead();
+    road_seek(ao7d2ev.m7d30);
+    road_project_behind();
+    road_seek(ao7d2ev.m7d30);
     deadline = g_tick + 9;
-    F_2AFDC();
+    view_draw();
     while (deadline > g_tick)
         ;
 }
 
-/* F_2834C @ 2645:1EFC (linear 0x2834C, 367 bytes) */
+/* road_advance @ 2645:1EFC (linear 0x2834C, 367 bytes) */
 
-void F_2834C(void)
+void road_advance(void)
 {
     int bits7, goal6, diff;
 
     ao7d2ev.m7d30 += ao7d2ev.m7d32 >> 3;
-    F_27B6D(ao7d2ev.m7d30);
+    road_seek(ao7d2ev.m7d30);
     ao7d2ev.m7d32 &= 7;
     bits7 = *g7d62p & 0xe0;
     if (bits7) {
@@ -953,11 +953,11 @@ void F_2834C(void)
     }
 }
 
-/* F_284BB @ 2645:206B (linear 0x284BB, 169 bytes)
+/* road_check_crash @ 2645:206B (linear 0x284BB, 169 bytes)
 
    Returns 1 when the car at the current terrain index would hit something. */
 
-int F_284BB(void)
+int road_check_crash(void)
 {
     g_5e0e = 0;
     if (g7d82p - 0x104 < ao7d2ev.m7d36 - 0x1e && ao7d2ev.m7d36 + 0x46 < cz8bd0y + 0x104) {
@@ -979,18 +979,18 @@ int F_284BB(void)
     return 1;
 }
 
-/* F_28564 @ 2645:2114 (linear 0x28564, 18 bytes) */
+/* road_start @ 2645:2114 (linear 0x28564, 18 bytes) */
 
-void F_28564(void)
+void road_start(void)
 {
     g_5e10 = g_5e12 = 0;
-    F_27CAD();
-    F_2B6CA();
+    road_reset();
+    view_start();
 }
 
-/* F_28576 @ 2645:2126 (linear 0x28576, 23 bytes) */
+/* road_turn @ 2645:2126 (linear 0x28576, 23 bytes) */
 
-void F_28576(int dir)
+void road_turn(int dir)
 {
     if (dir == 1)
         ao7d2ev.m7d3c += 3;
@@ -998,9 +998,9 @@ void F_28576(int dir)
         ao7d2ev.m7d3c -= 3;
 }
 
-/* F_2858D @ 2645:213D (linear 0x2858D, 272 bytes) */
+/* road_update @ 2645:213D (linear 0x2858D, 272 bytes) */
 
-void F_2858D(void)
+void road_update(void)
 {
     if (e_78e0.f2 && e_78e0.f0 && abs(ao7d2ev.m7d3c - *af7560z - e_78e0.f2) < 200)
         ao7d2ev.m7d3c -= (e_78e0.f2 >> 1) + 1;
@@ -1012,7 +1012,7 @@ void F_2858D(void)
     }
     if (ao7d2ev.m7d34 > 0 && aw7aaex > 0)
         aw7aaex -= 4;
-    F_282EE();
+    road_draw_frame();
     if (g_0610 == 0 && g_0612 == 0) {
         if (at787cu)
             ao7d2ev.m7d36 += 25;
@@ -1022,13 +1022,13 @@ void F_2858D(void)
     if (!bw8aca) {
         ao7d2ev.m7d32 += ao7d2ev.m7d34;
         if (ao7d2ev.m7d32 >= 8)
-            F_2834C();
+            road_advance();
         if ((g_terrain0[ao7d2ev.m7d30 + 7] & 1) || g_5e12) {
             g_5e12 = 1;
-            F_28576(1);
+            road_turn(1);
         }
         if ((g_terrain1[ao7d2ev.m7d30 + 6] & 1) || g_5e10) {
-            F_28576(-1);
+            road_turn(-1);
             g_5e10 = 1;
         }
     }

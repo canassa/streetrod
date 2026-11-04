@@ -6,15 +6,15 @@
 #include "MASKBLT.H"
 #include "TANDYPIC.H"
 
-static int near F_2B6DC(unsigned char b);
-static struct Bitmap far * near F_2B707(struct Bitmap far *p, unsigned char a, unsigned char b);
-static void near F_2BA48(unsigned char v, char *pa, char *pb);
+static int near count_bits(unsigned char b);
+static struct Bitmap far * near alloc_shrunk(struct Bitmap far *p, unsigned char a, unsigned char b);
+static void near expand_mask(unsigned char v, char *pa, char *pb);
 
-/* F_2B6DC @ 2645:528C (linear 0x2B6DC, 43 bytes)
+/* count_bits @ 2645:528C (linear 0x2B6DC, 43 bytes)
 
    Counts the set bits of a byte. */
 
-static int near F_2B6DC(unsigned char b)
+static int near count_bits(unsigned char b)
 {
     int count;
     int bit;
@@ -28,9 +28,9 @@ static int near F_2B6DC(unsigned char b)
     return count;
 }
 
-/* F_2B707 @ 2645:52B7 (linear 0x2B707, 336 bytes) */
+/* alloc_shrunk @ 2645:52B7 (linear 0x2B707, 336 bytes) */
 
-static struct Bitmap far * near F_2B707(struct Bitmap far *p, unsigned char a, unsigned char b)
+static struct Bitmap far * near alloc_shrunk(struct Bitmap far *p, unsigned char a, unsigned char b)
 {
     int nb1;
     int rows6;
@@ -41,8 +41,8 @@ static struct Bitmap far * near F_2B707(struct Bitmap far *p, unsigned char a, u
     int remk;
     int na;
 
-    na = F_2B6DC(a);
-    nb1 = F_2B6DC(b);
+    na = count_bits(a);
+    nb1 = count_bits(b);
     bytes = ((p->width & ~7) * nb1) >> 3;
     remk = p->width & 7;
     for (t = 0, m2 = 0x80; t < remk; t++) {
@@ -64,9 +64,9 @@ static struct Bitmap far * near F_2B707(struct Bitmap far *p, unsigned char a, u
     return q;
 }
 
-/* F_2B857 @ 2645:5407 (linear 0x2B857, 497 bytes) */
+/* shrink_ega @ 2645:5407 (linear 0x2B857, 497 bytes) */
 
-struct Bitmap far *F_2B857(struct Bitmap far *p, unsigned char a, unsigned char b)
+struct Bitmap far *shrink_ega(struct Bitmap far *p, unsigned char a, unsigned char b)
 {
     unsigned char far *dpl;
     struct Bitmap far *q;
@@ -81,9 +81,9 @@ struct Bitmap far *F_2B857(struct Bitmap far *p, unsigned char a, unsigned char 
     unsigned char k4, bbk, tk;
     int bit, sh4, na;
 
-    na = F_2B6DC(a);
-    nbn = F_2B6DC(b);
-    q = F_2B707(p, a, b);
+    na = count_bits(a);
+    nbn = count_bits(b);
+    q = alloc_shrunk(p, a, b);
     sp = p->bits.p;
     sh4 = p->height;
     spitch = p->pitch;
@@ -139,9 +139,9 @@ struct Bitmap far *F_2B857(struct Bitmap far *p, unsigned char a, unsigned char 
     return q;
 }
 
-/* F_2BA48 @ 2645:55F8 (linear 0x2BA48, 120 bytes) */
+/* expand_mask @ 2645:55F8 (linear 0x2BA48, 120 bytes) */
 
-static void near F_2BA48(unsigned char v, char *pa, char *pb)
+static void near expand_mask(unsigned char v, char *pa, char *pb)
 {
     int m;
     int sh;
@@ -155,9 +155,9 @@ static void near F_2BA48(unsigned char v, char *pa, char *pb)
             *pb |= 3 << sh;
 }
 
-/* F_2BAC0 @ 2645:5670 (linear 0x2BAC0, 533 bytes) */
+/* shrink_cga @ 2645:5670 (linear 0x2BAC0, 533 bytes) */
 
-struct Bitmap far *F_2BAC0(struct Bitmap far *p, unsigned char a, unsigned char c)
+struct Bitmap far *shrink_cga(struct Bitmap far *p, unsigned char a, unsigned char c)
 {
     unsigned char far *dpl;
     struct Bitmap far *q;
@@ -177,7 +177,7 @@ struct Bitmap far *F_2BAC0(struct Bitmap far *p, unsigned char a, unsigned char 
     unsigned char mm, v4;
     int j;
 
-    q = F_2B707(p, a, c);
+    q = alloc_shrunk(p, a, c);
     sp = p->bits.p;
     ap8 = p->alt.p;
     shn = p->height;
@@ -185,7 +185,7 @@ struct Bitmap far *F_2BAC0(struct Bitmap far *p, unsigned char a, unsigned char 
     dpl = q->bits.p;
     ap26 = q->alt.p;
     ml = 0x80;
-    F_2BA48(c, &pa8, &pb1);
+    expand_mask(c, &pa8, &pb1);
     for (y = 0; y < shn; y++) {
         if (a & ml) {
             cnt4 = out = 0;
@@ -232,9 +232,9 @@ struct Bitmap far *F_2BAC0(struct Bitmap far *p, unsigned char a, unsigned char 
     return q;
 }
 
-/* F_2BCD5 @ 2645:5885 (linear 0x2BCD5, 470 bytes) */
+/* shrink_tandy @ 2645:5885 (linear 0x2BCD5, 470 bytes) */
 
-struct Bitmap far *F_2BCD5(struct Bitmap far *p, unsigned char a, unsigned char c)
+struct Bitmap far *shrink_tandy(struct Bitmap far *p, unsigned char a, unsigned char c)
 {
     unsigned char far *dpl;
     struct Bitmap far *q;
@@ -246,7 +246,7 @@ struct Bitmap far *F_2BCD5(struct Bitmap far *p, unsigned char a, unsigned char 
     int spitchn, sh;
     unsigned char mm2;
 
-    q = F_2B707(p, a, c);
+    q = alloc_shrunk(p, a, c);
     sp = p->bits.p;
     sh = p->height;
     spitchn = p->pitch;

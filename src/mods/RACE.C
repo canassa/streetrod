@@ -1212,7 +1212,7 @@ static void near move_player(void)
 {
     ao7d2ev.m7d32 += ao7d2ev.m7d34 = e_78e0.f0 ? race_speed_step(e_78e0.f0) : 0;
     if (ao7d2ev.m7d32 >= 8)
-        F_2834C();
+        road_advance();
     if (ao7d2ev.m7d30 >= g_6caaaa && g_53e6 && e_78e0.f0 <= 0) {
         if (s_8632)
             g79e2g.fbc |= 1;

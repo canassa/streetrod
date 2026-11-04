@@ -340,7 +340,7 @@ Do not infer that an optimized scan itself is disabled just because its exit is 
 |---|---|
 | One string address referenced from two instructions ( twice) | A named  array (), never two literals: MSC emits one  per literal token |
 | A function's literal pool order differs from the source order of the two calls, code otherwise identical (race_outcome:  before ) |  with the other arm's statements first; swapping / arms changes the code, the goto shape does not |
-| A function stops matching when the module gains many file-scope definitions (F_2969D: 40 dummies break it, 10 do not; frame  and SI/DI use change) | The tables were in another translation unit: make a data-only file () |
+| A function stops matching when the module gains many file-scope definitions (view_mirror_row: 40 dummies break it, 10 do not; frame  and SI/DI use change) | The tables were in another translation unit: make a data-only file () |
 |  | A two-byte literal; the pool shows  where  would leave one byte |
 |  compiles differently from  (register use, frame) | The original used scalar globals after a 12-byte record, not struct members |
 | Pointer table at an odd DS address (DS:579F) | Assembler data (); the C compiler word-aligns every array, struct and pointer, only scalar  is unaligned |

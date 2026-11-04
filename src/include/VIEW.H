@@ -1,7 +1,7 @@
-/* ROADVIEW.H - declarations of what ROADVIEW.C defines. */
+/* VIEW.H - declarations of what VIEW.C defines. */
 
-#ifndef ROADVIEW_H
-#define ROADVIEW_H
+#ifndef VIEW_H
+#define VIEW_H
 #include "STRUCTS.H"
 
 extern int g_5e14[][4];                                 /* DS:5E14 */
@@ -51,14 +51,14 @@ extern int as8668u;                                     /* DS:8668 */
 extern struct Bitmap far *bz8b7ex;                      /* DS:8B7E */
 extern int far *am8b82y;                                /* DS:8B82 */
 extern struct Bitmap far *ak8bcat;                      /* DS:8BCA */
-void F_28840(void);                                     /* 0x28840 */
-void F_28860(void);                                     /* 0x28860 */
-void F_28879(void);                                     /* 0x28879 */
-void F_2905A(int x, int y, int first, struct List l, int dir);/* 0x2905A */
-void F_29398(int n);                                    /* 0x29398 */
-void F_2969D(void);                                     /* 0x2969D */
-void F_29F0F(int x, int y);                             /* 0x29F0F */
-void F_2AFDC(void);                                     /* 0x2AFDC */
-void F_2B6CA(void);                                     /* 0x2B6CA */
+void view_unclip_top(void);                             /* 0x28840 */
+void view_clip(void);                                   /* 0x28860 */
+void view_load(void);                                   /* 0x28879 */
+void view_sprite(int x, int y, int first, struct List l, int dir);/* 0x2905A */
+void view_road_row(int n);                              /* 0x29398 */
+void view_mirror_row(void);                             /* 0x2969D */
+void view_draw_dot(int x, int y);                       /* 0x29F0F */
+void view_draw(void);                                   /* 0x2AFDC */
+void view_start(void);                                  /* 0x2B6CA */
 
 #endif

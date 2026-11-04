@@ -323,7 +323,7 @@ struct Spec {
     int f8;
 };
 
-/* one car model (10 bytes, w_8df0[], indexed by Car.f2): kind picks its sprites (F_28879); f2, f6, f8
+/* one car model (10 bytes, w_8df0[], indexed by Car.f2): kind picks its sprites (view_load); f2, f6, f8
    are nonzero when the roof can be chopped and the front and rear bumpers stripped (F_0711A) */
 struct Model {
     signed char kind;

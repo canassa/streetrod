@@ -18,11 +18,11 @@
 #include "MOUSE.H"
 #include "M_02B9A.H"
 #include "NEEDLE.H"
-#include "ROADVIEW.H"
 #include "SCREEN.H"
 #include "SOUND.H"
 #include "SYS.H"
 #include "VIDEO.H"
+#include "VIEW.H"
 
 #pragma intrinsic(abs, cos, sin, outp, inp)
 
@@ -496,17 +496,17 @@ void dash_steer_marker(int n)
     off = at767ct;
     av787at = r_vid.mode == -2 ? 0xa200 : r_vid.mode == -4 ? 0xb000 : 0xb800;
     at767ct = 0;
-    F_28840();
+    view_unclip_top();
     x = g_031e[n][0];
     y2 = g_031e[n][1] + 100;
     ymax = g_clip_ymax;
     ymin2 = g_clip_ymin;
     g_clip_ymax = 190;
     g_clip_ymin = 100;
-    F_29F0F(x, y2);
+    view_draw_dot(x, y2);
     g_clip_ymax = ymax;
     g_clip_ymin = ymin2;
-    F_28860();
+    view_clip();
     av787at = seg;
     at767ct = off;
 }
@@ -549,19 +549,19 @@ void dash_draw_wheel(int a, int b, struct Bitmap far *dst)
         off = at767ct;
         av787at = r_vid.mode == -2 ? 0xa000 : r_vid.mode == -4 ? 0xb000 : 0xb800;
         at767ct = 0;
-        F_28840();
+        view_unclip_top();
         if (r_vid.mode != -2) {
             ymax = g_clip_ymax;
             ymin2 = g_clip_ymin;
             g_clip_ymax = 190;
             g_clip_ymin = 100;
         }
-        F_29F0F(x, y2);
+        view_draw_dot(x, y2);
         if (r_vid.mode != -2) {
             g_clip_ymax = ymax;
             g_clip_ymin = ymin2;
         }
-        F_28860();
+        view_clip();
         av787at = seg;
         at767ct = off;
     }
