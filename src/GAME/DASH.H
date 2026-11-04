@@ -4,6 +4,11 @@
 #define DASH_H
 #include "STRUCTS.H"
 
+struct WheelBackdrop {
+    int y[3];
+    struct Bitmap far *pages[3];
+};
+
 extern struct Hooks g_videoOps; /* DS:78A2 */
 
 #define DASH_Y 100

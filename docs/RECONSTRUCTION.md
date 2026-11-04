@@ -229,6 +229,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **RivalPace** (`g_rivalPace`, DS:6CAC..6CB5): init_rival_eng and cop_appears derive the fast/slow speeds from the top speed; rival_accelerate consumes those targets, lead and shift penalty together. The target lane, RPM band and shift point remain separate. Separate globals also match; this grouping is a natural reconstruction choice.
 
+- **WheelBackdrop** (`g_wheelBackdrop`, DS:6C22..6C33): dash_load_wheel chooses each saved wheel page and its Y coordinate together, and dash_draw_wheel reads both to restore the same rectangle. Shifter state remains separate. Separate globals also match; this grouping is a natural reconstruction choice.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only
