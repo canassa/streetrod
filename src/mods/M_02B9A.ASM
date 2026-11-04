@@ -2,7 +2,6 @@
 
         .DATA
 
-        ; data (recovered DGROUP layout)
         PUBLIC  _g_4718
 _g_4718 DW      0                        ; DS:4718 int
         PUBLIC  _g_471a

@@ -5,7 +5,6 @@
         EXTRN   _g_0250:WORD
         EXTRN   _g_0252:WORD
 
-        ; data (recovered DGROUP layout)
         PUBLIC  _g_5aee
 _g_5aee DB      0                        ; DS:5AEE char
         PUBLIC  _g_5aef

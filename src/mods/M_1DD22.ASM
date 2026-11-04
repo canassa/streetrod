@@ -10,7 +10,6 @@
         EXTRN   _g_clip_ymax:WORD
         EXTRN   _g_clip_ymin:WORD
 
-        ; data (recovered DGROUP layout)
         PUBLIC  _g_5b56
 _g_5b56 DB      0, 55h, 0AAh, 0FFh       ; DS:5B56 char[4]
 ; DS:5B5A char[16]

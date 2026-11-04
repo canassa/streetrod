@@ -2,7 +2,6 @@
 
         .DATA
 
-        ; data (recovered DGROUP layout)
 ; DS:5ABC int[10]
         PUBLIC  _g_5abc
 _g_5abc DW      3500h, 2801h, 2C02h, 803h, 0FC04h, 705h, 6406h, 7207h

@@ -1,7 +1,7 @@
         .MODEL MEDIUM
 
-; Initialized data DS:239E..4718, recovered from the original layout
-; (./sr dgroup). Odd-address words and arrays: assembler data, not C definitions.
+; Initialized data DS:239E..4718: the menu and message texts and their tables.
+; Words and arrays at odd addresses: assembler data, not C definitions.
 
         .DATA
         PUBLIC  _g_239e

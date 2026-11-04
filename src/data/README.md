@@ -16,7 +16,7 @@ placeholders: the shipped EXE does not record them.
 | `SLOTS.C` | 277 Slot records and five terrain work arrays: far communals (`FAR_BSS`) |
 
 DGROUP is not here. Each C source defines its own initialized globals and literals
-(marked `/* DS:xxxx */`, written by `./sr dgroup apply`). Its uninitialized storage is
+(marked `/* DS:xxxx */`; `./sr dgroup check` verifies the ownership). Its uninitialized storage is
 file statics (`_BSS`) or communals. `src/mods/MESSAGES.ASM` is an assembler data file
 for DS:239E..4718. The runtime's DGROUP comes from MLIBCE.LIB.
 

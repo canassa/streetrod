@@ -6,7 +6,6 @@
         .DATA
         EXTRN   _g_58e2:WORD
 
-        ; data (recovered DGROUP layout)
         PUBLIC  _g_58de
 _g_58de DW      1                        ; DS:58DE int
         PUBLIC  _g_58e0

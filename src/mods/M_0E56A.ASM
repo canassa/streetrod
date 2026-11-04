@@ -2,7 +2,6 @@
 
         .DATA
 
-        ; data (recovered DGROUP layout)
 ; DS:5580 unsigned char[543]
         PUBLIC  _g_5580
 _g_5580 DB      31h, 0CDh, 1Ch, 0CDh, 18h, 0CCh, 0, 18h, 0CCh, 1Ch, 0CBh
