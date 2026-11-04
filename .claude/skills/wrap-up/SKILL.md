@@ -38,7 +38,7 @@ Go through "What I learned" and put each lesson where the next session will see 
 | a step in the loop that was missing, wrong or in the wrong order | `decompile-function` |
 | a fact about the binary, a new rule, a changed default (flags, layout) | `CLAUDE.md` |
 | a CLI bug, gotcha or new command | fix it with `sr-cli`; document in `CLAUDE.md` |
-| a module boundary or per-module flags | `./sr note` on the functions, plus the diary |
+| a file boundary (LAYOUT.JSON unit) or a file's flags | `./sr note` on the functions, plus the diary |
 
 Keep skills short. When you add a row, check whether an older row is now redundant or wrong, and fix it.
 
