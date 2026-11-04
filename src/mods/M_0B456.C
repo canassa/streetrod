@@ -1,7 +1,6 @@
 #include "STRUCTS.H"
 #include "M_0B3CA.H"
 #include "FONTDATA.H"
-#include "GBSS.H"
 #include "HOTSPOT.H"
 #include "MESSAGES.H"
 #include "M_00000.H"
@@ -32,6 +31,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+static int g_6ca4rz;                       /* DS:6CA4 */
+static int g_6ca6qz;                       /* DS:6CA6 */
+static int g_6ca8pz;                       /* DS:6CA8 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 int g7644m;
@@ -80,9 +83,9 @@ static void near F_0B456(void)
 {
     int k;
 
-    g_6ca6 = 0;
-    g_6ca8 = 0;
-    g_6ca4 = 0;
+    g_6ca6qz = 0;
+    g_6ca8pz = 0;
+    g_6ca4rz = 0;
     for (k = 0; k < 6; k++)
         g_09f4[F_0B3CA(g_53b6[k])].f0 = 14;
 }
@@ -110,8 +113,8 @@ static void near F_0B4DE(void)
     F_0B49C(2, 0x3f, 100, 12, 23);
     F_0B49C(1, 0x54, 0xa8, 0x1f, 15);
     F_0B425();
-    g_6ca6 = 1;
-    g_6ca8 = 1;
+    g_6ca6qz = 1;
+    g_6ca8pz = 1;
 }
 
 /* F_0B525 @ 0000:B525 (linear 0x0B525, 45 bytes) */
@@ -123,7 +126,7 @@ static void near F_0B525(void)
     F_0B456();
     F_0B49C(4, ar826e - 10, q_8270 - 5, 18, 12);
     F_0B425();
-    g_6ca4 = 1;
+    g_6ca4rz = 1;
 }
 
 /* F_0B552 @ 0000:B552 (linear 0x0B552, 73 bytes) */
@@ -136,8 +139,8 @@ static void near F_0B552(void)
     F_0B49C(2, 0x34, 100, 16, 23);
     F_0B49C(4, ar826e - 1, q_8270 - 1, 10, 9);
     F_0B425();
-    g_6ca8 = 1;
-    g_6ca4 = 1;
+    g_6ca8pz = 1;
+    g_6ca4rz = 1;
 }
 
 /* F_0B59B @ 0000:B59B (linear 0x0B59B, 124 bytes) */
@@ -153,7 +156,7 @@ static void near F_0B59B(void)
     F_0B49C(1, 0x3e, 0xa5, 0x35, 18);
     F_0B49C(3, 0xc4, 0x5a, 16, 14);
     F_0B425();
-    g_6ca6 = 1;
+    g_6ca6qz = 1;
 }
 
 /* F_0B617 @ 0000:B617 (linear 0x0B617, 4 bytes) */
@@ -330,7 +333,7 @@ top:
             g_05cc = g_tick + 0x4c;
             break;
         case 1:
-            if (g_6ca6 == 0)
+            if (g_6ca6qz == 0)
                 break;
             if (dl.f0c == 1) {
                 F_120FE(dl.f0c = 3);
@@ -348,7 +351,7 @@ top:
                 goto redraw;
             }
         case 2:
-            if (g_6ca8 == 0)
+            if (g_6ca8pz == 0)
                 break;
             if (dl.f0c == 1) {
                 F_120FE(dl.f0c = 2);
@@ -374,7 +377,7 @@ top:
             dl.f1a = 0;
             break;
         case 4:
-            if (g_6ca4 == 0)
+            if (g_6ca4rz == 0)
                 break;
             if (dl.f0c == 1) {
                 if (F_111F2(2)) {

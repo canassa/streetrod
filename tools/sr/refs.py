@@ -51,6 +51,23 @@ class Refs:
         return s
 
 
+def bss_ref(obj, globals_by_name, off, orig):
+    """None if _BSS+off of our object is original DS:orig, else the problem. The fixup names
+    only the segment, so any static of the listing may be the base (`a[i - 1]` lands in the
+    item before `a`); the reference is right when one of them maps there."""
+    items = sorted(getattr(obj, "statics", {}).items())
+    for o, (n, sz) in items:
+        if n in globals_by_name and (globals_by_name[n] + off - o) & 0xFFFF == orig:
+            return None
+    at = [(o, n) for o, (n, sz) in items if o <= off < o + max(sz, 1)]
+    if not at:
+        return f"_BSS+{off:04x} is no static in the listing (original DS:{orig:04x})"
+    o, n = at[0]
+    if n not in globals_by_name:
+        return f"static {n} is not a known global (original DS:{orig:04x})"
+    return f"{n}+{off - o} is DS:{(globals_by_name[n] + off - o) & 0xFFFF:04x}, original refers to DS:{orig:04x}"
+
+
 def verify(con, obj, proc, im, addr, row, procs=()):
     img = im.img
     r = Refs()
@@ -164,6 +181,14 @@ def verify(con, obj, proc, im, addr, row, procs=()):
                 want = (globals_by_name[_canon(pub_name)] + off - pub_off) & 0xFFFF
                 if want != orig:
                     r.problems.append(f"{where}: {_canon(pub_name)}+{off - pub_off} is DS:{want:04x}, original refers to DS:{orig:04x}")
+                else:
+                    r.ok += 1
+                continue
+            if seg_name == "_BSS":
+                # file-local uninitialized storage: named by the listing, placed by the DB
+                problem = bss_ref(obj, globals_by_name, off, orig)
+                if problem:
+                    r.problems.append(f"{where}: {problem}")
                 else:
                     r.ok += 1
                 continue

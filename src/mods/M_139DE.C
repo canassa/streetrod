@@ -1,6 +1,5 @@
 #include "STRUCTS.H"
 #include "M_139DE.H"
-#include "GBSS.H"
 #include "HOTSPOT.H"
 #include "MESSAGES.H"
 #include "M_00000.H"
@@ -17,6 +16,11 @@
 #include "M_19ED0.H"
 #include <string.h>
 #include <stdlib.h>
+
+static int g_6c56;                         /* DS:6C56 */
+static int g_6c58;                         /* DS:6C58 */
+static int g_6c5a;                         /* DS:6C5A */
+static int g_6c5c;                         /* DS:6C5C */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 void (far *bp78ba)(struct Bitmap far *, int, int, int, int, int, int);

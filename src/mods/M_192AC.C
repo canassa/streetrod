@@ -1,8 +1,9 @@
 #include "STRUCTS.H"
 #include "M_1923C.H"
-#include "GBSS.H"
 #include "M_00000.H"
 #include "M_036A8.H"
+
+static char far *g_6cd0;                   /* DS:6CD0 */
 
 /* F_192AC: allocate size bytes from the arena at g_6cd0; mode picks which of four marker stacks is used */
 

@@ -246,6 +246,7 @@ def _check_rows(con, rows, flags_override=None, quiet=False):
         else:
             procs = cod.parse(job.cod)
             proc = cod.find(procs, fn_name(r))
+            obj.statics = cod.statics(job.cod)
             found = ", ".join(p.c_name for p in procs)
         if proc is None:
             print(f"{hexa(r['addr'])}: no procedure {fn_name(r)} in {job.src.name} (found: {found})")
@@ -694,6 +695,8 @@ def _module_gates(con, im, jobs, rows, results, flags_override=None):
         obj = Obj(job.obj)
         ms = mod.members(con, name)
         procs = ([cod.from_publics(obj, fn_name(m)) for m in ms] if job.asm else cod.parse(job.cod))
+        if not job.asm:
+            obj.statics = cod.statics(job.cod)
         g = mod.gate(obj, [p for p in procs if p is not None], im.img, ms, con=con)
         gates[name] = g
         print(g.line(name))

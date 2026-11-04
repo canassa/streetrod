@@ -58,7 +58,6 @@ def prepare():
         jobs.append(dict(stem=stem, source=filename, program='MASM',
                          args=['/Ml', f'{filename},{stem}.OBJ,{stem}.LST;']))
         return stem+'.OBJ'
-    sequence.append(assembly(config.SRC/'link'/'GBSS.ASM'))
     order = plan.get('link_order')
     units = plan['units'] + [dict(d, kind='data') for d in plan.get('data_units', [])]
     if order:
@@ -195,6 +194,7 @@ def run(prepare_only=False, objects_only=False):
             members = job['members']
             if job['program'] == 'CL':
                 procs = cod.parse(root/(job['stem'].lower()+'.cod'))
+                obj.statics = cod.statics(root/(job['stem'].lower()+'.cod'))
                 members = [{**r, 'name': 'main'} if r['addr'] == 0x66f else r for r in members]
             else:
                 procs = [cod.from_publics(obj, module.fname(r)) for r in members]

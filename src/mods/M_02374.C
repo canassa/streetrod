@@ -1,6 +1,5 @@
 #include "STRUCTS.H"
 #include "M_00D58.H"
-#include "GBSS.H"
 #include "M_00000.H"
 #include "M_02B9A.H"
 #include "M_02DF4.H"
@@ -16,6 +15,8 @@
 #include <conio.h>
 #include <dos.h>
 #include <stdlib.h>
+
+static char g_6c4a;                        /* DS:6C4A */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct State7E8A ar7e8av;

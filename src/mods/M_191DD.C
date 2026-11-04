@@ -1,9 +1,10 @@
 #include "STRUCTS.H"
 #include "M_18BDC.H"
-#include "GBSS.H"
 #include "M_00000.H"
 #include "M_0F38A.H"
 #include "M_1923C.H"
+
+static struct Bitmap far *g_6ccc;          /* DS:6CCC */
 
 /* F_191DD: allocate the 0x30 x 0x29 bitmap g_6ccc and clear a 200 x 68 rectangle of it */
 

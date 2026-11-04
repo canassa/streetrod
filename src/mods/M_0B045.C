@@ -1,6 +1,5 @@
 #include "STRUCTS.H"
 #include "M_0914C.H"
-#include "GBSS.H"
 #include "HOTSPOT.H"
 #include "MESSAGES.H"
 #include "M_00000.H"
@@ -15,6 +14,9 @@
 #include "M_15236.H"
 #include "M_15396.H"
 #include "M_193D4.H"
+
+static int g_6c84;                         /* DS:6C84 */
+static int g_6c88;                         /* DS:6C88 */
 
 static void near F_0B045(int id, char c);
 static int near F_095F1(void);

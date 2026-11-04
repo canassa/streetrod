@@ -106,6 +106,15 @@ def check(obj, con, im, codebase):
                 problems.append(f'{where}: pointer into our data at +{off:04x} (DS:{base + off:04x}), original DS:{orig_w:04x}')
             elif mine != theirs:
                 problems.append(f'{where}: our data at +{off:04x} holds {mine[:30]!r}, original DS:{orig_w:04x} holds {theirs[:30]!r}')
+        elif f.kind == 'seg' and obj.segments[f.index - 1] == '_BSS' and f.loc in (1, 3, 5):
+            # a pointer to one of our file-local statics
+            from .refs import bss_ref
+            orig_w, seg = struct.unpack('<HH', img[at:at + 4]) if f.loc == 3 else (struct.unpack('<H', img[at:at + 2])[0], None)
+            problem = bss_ref(obj, globals_by_name, (inline + f.disp) & 0xFFFF, orig_w)
+            if seg is not None and seg != config.DGROUP_SEG:
+                problem = f'far pointer to our _BSS, original segment {seg:04x}'
+            if problem:
+                problems.append(f'{where}: {problem}')
         elif f.loc == 2 and f.kind == 'grp':
             orig_w = struct.unpack('<H', img[at:at + 2])[0]
             if orig_w != config.DGROUP_SEG:

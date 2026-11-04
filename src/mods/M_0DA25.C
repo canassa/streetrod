@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include "STRUCTS.H"
 #include "M_0B3CA.H"
-#include "GBSS.H"
 #include "M_00D58.H"
 #include "M_08EA8.H"
 #include "M_0914C.H"
@@ -9,6 +8,8 @@
 #include "M_15236.H"
 #include "M_163BE.H"
 #include "SLOTS.H"
+
+static int g_6caaaa;                       /* DS:6CAA */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 int by72f2;
@@ -70,7 +71,7 @@ void F_0DA25(void)
     d = ar7e8av.m7e90;
     F_0D624();
     F_0D67D();
-    if (ao7d2ev.m7d30 >= g_6caa || ar7e8av.m7e8a >= g_6caa)
+    if (ao7d2ev.m7d30 >= g_6caaaa || ar7e8av.m7e8a >= g_6caaaa)
         F_0C407();
     if (e_78e0.fbc || g79e2g.fbc) {
         if (a_7f88d >= 2) {

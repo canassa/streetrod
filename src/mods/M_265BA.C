@@ -1,6 +1,5 @@
 #include "STRUCTS.H"
 #include "M_265BA.H"
-#include "GBSS.H"
 #include "M_00000.H"
 #include "M_0F38A.H"
 #include "M_15236.H"
@@ -8,6 +7,10 @@
 #include "SCREEN2.H"
 #include "SCREENS.H"
 #include "SLOTS.H"
+
+static int g_6dfeaa;                       /* DS:6DFE */
+static int g_6e00;                         /* DS:6E00 */
+static int g_6e02;                         /* DS:6E02 */
 
 static int near F_265BA(int n);
 static void near F_265CA(void);
@@ -50,21 +53,21 @@ static void near F_265CA(void)
     int i;
 
     for (i = g_6e00; i < g_6e00 + 50; i++)
-        g_terrain2[i] = g_6dfe;
+        g_terrain2[i] = g_6dfeaa;
     g_terrain3[g_6e00] |= 0x200;
     g_6e00 += 5;
     g_terrain0[g_6e00] &= 0x1801;
     g_terrain1[g_6e00] &= 0x1801;
     g_terrain3[g_6e00] |= 0x200;
     g_6e00 += 6;
-    for (i = g_6dfe / g_6e02; i < g_6dfe / g_6e02 + 40; i++, g_6e00++) {
+    for (i = g_6dfeaa / g_6e02; i < g_6dfeaa / g_6e02 + 40; i++, g_6e00++) {
         if (g_6e00 < 0x442) {
             g_terrain3[g_6e00] |= 8;
             g_terrain2[g_6e00] = i * g_6e02;
         } else
             break;
     }
-    g_6dfe = i * g_6e02;
+    g_6dfeaa = i * g_6e02;
 }
 
 /* F_266E3 @ 2645:0293 (linear 0x266E3, 277 bytes) */
@@ -75,21 +78,21 @@ static void near F_266E3(void)
     int i;
 
     for (i = g_6e00; i < g_6e00 + 50; i++)
-        g_terrain2[i] = g_6dfe;
+        g_terrain2[i] = g_6dfeaa;
     g_terrain0[g_6e00] &= 0x1801;
     g_terrain1[g_6e00] &= 0x1801;
     g_terrain3[g_6e00] |= 0x400;
     g_6e00 += 3;
     g_terrain3[g_6e00] |= 0x400;
     g_6e00 += 3;
-    for (i = g_6dfe / g_6e02; i > g_6dfe / g_6e02 - 45; i--, g_6e00++) {
+    for (i = g_6dfeaa / g_6e02; i > g_6dfeaa / g_6e02 - 45; i--, g_6e00++) {
         if (g_6e00 < 0x442) {
             g_terrain3[g_6e00] |= 8;
             g_terrain2[g_6e00] = i * g_6e02;
         } else
             break;
     }
-    g_6dfe = i * g_6e02;
+    g_6dfeaa = i * g_6e02;
 }
 
 /* F_267F8 @ 2645:03A8 (linear 0x267F8, 401 bytes) */
@@ -100,29 +103,29 @@ static void near F_267F8(void)
     int i;
 
     for (i = g_6e00; i < g_6e00 + 90; i++)
-        g_terrain2[i] = g_6dfe;
+        g_terrain2[i] = g_6dfeaa;
     g_6e00++;
     g_terrain0[g_6e00] &= 0x1801;
     g_terrain1[g_6e00] &= 0x1801;
     g_terrain1[g_6e00] |= 0x2000;
     g_6e00 += 6;
     g_terrain1[g_6e00] |= 0x2000;
-    for (i = g_6dfe / g_6e02; i < g_6dfe / g_6e02 + 40; i++, g_6e00++) {
+    for (i = g_6dfeaa / g_6e02; i < g_6dfeaa / g_6e02 + 40; i++, g_6e00++) {
         if (g_6e00 < 0x442) {
             g_terrain3[g_6e00] |= 8;
             g_terrain2[g_6e00] = i * g_6e02;
         } else
             break;
     }
-    g_6dfe = i * g_6e02;
-    for (; i > g_6dfe / g_6e02 - 43; i--, g_6e00++) {
+    g_6dfeaa = i * g_6e02;
+    for (; i > g_6dfeaa / g_6e02 - 43; i--, g_6e00++) {
         if (g_6e00 < 0x442) {
             g_terrain3[g_6e00] |= 8;
             g_terrain2[g_6e00] = i * g_6e02;
         } else
             break;
     }
-    g_6dfe = i * g_6e02;
+    g_6dfeaa = i * g_6e02;
 }
 
 /* F_26989 @ 2645:0539 (linear 0x26989, 401 bytes) */
@@ -133,29 +136,29 @@ static void near F_26989(void)
     int i;
 
     for (i = g_6e00; i < g_6e00 + 90; i++)
-        g_terrain2[i] = g_6dfe;
+        g_terrain2[i] = g_6dfeaa;
     g_6e00++;
     g_terrain0[g_6e00] &= 0x1801;
     g_terrain1[g_6e00] &= 0x1801;
     g_terrain1[g_6e00] |= 0x4000;
     g_6e00 += 6;
     g_terrain1[g_6e00] |= 0x4000;
-    for (i = g_6dfe / g_6e02; i > g_6dfe / g_6e02 - 35; i--, g_6e00++) {
+    for (i = g_6dfeaa / g_6e02; i > g_6dfeaa / g_6e02 - 35; i--, g_6e00++) {
         if (g_6e00 < 0x442) {
             g_terrain3[g_6e00] |= 8;
             g_terrain2[g_6e00] = i * g_6e02;
         } else
             break;
     }
-    g_6dfe = i * g_6e02;
-    for (; i < g_6dfe / g_6e02 + 48; i++, g_6e00++) {
+    g_6dfeaa = i * g_6e02;
+    for (; i < g_6dfeaa / g_6e02 + 48; i++, g_6e00++) {
         if (g_6e00 < 0x442) {
             g_terrain3[g_6e00] |= 8;
             g_terrain2[g_6e00] = i * g_6e02;
         } else
             break;
     }
-    g_6dfe = i * g_6e02;
+    g_6dfeaa = i * g_6e02;
 }
 
 /* F_26B1A @ 2645:06CA (linear 0x26B1A, 147 bytes) */
@@ -175,7 +178,7 @@ static void near F_26B1A(void)
     }
     g_6e00 += 8;
     for (i = start; i < g_6e00; i++)
-        g_terrain2[i] = g_6dfe;
+        g_terrain2[i] = g_6dfeaa;
 }
 
 /* F_26BAD (near, builds a terrain hill section) */
@@ -195,7 +198,7 @@ static void near F_26BAD(void)
     }
     g_6e00 += 18;
     for (i = start; i < g_6e00; i++)
-        g_terrain2[i] = g_6dfe;
+        g_terrain2[i] = g_6dfeaa;
 }
 
 /* F_26C42 (near, builds a terrain hill section) */
@@ -215,7 +218,7 @@ static void near F_26C42(void)
     }
     g_6e00 += 6;
     for (i = start; i < g_6e00; i++)
-        g_terrain2[i] = g_6dfe;
+        g_terrain2[i] = g_6dfeaa;
 }
 
 /* F_26CD5 (near, builds a terrain hill section) */
@@ -235,7 +238,7 @@ static void near F_26CD5(void)
     }
     g_6e00 += 4;
     for (i = start; i < g_6e00; i++)
-        g_terrain2[i] = g_6dfe;
+        g_terrain2[i] = g_6dfeaa;
 }
 
 /* F_26D6A @ 2645:091A (linear 0x26D6A, 214 bytes) */
@@ -258,7 +261,7 @@ static void near F_26D6A(void)
     g_terrain3[g_6e00++] &= 0xff7;
     g_6e00 += 3;
     for (i = start; i < g_6e00; i++)
-        g_terrain2[i] = g_6dfe;
+        g_terrain2[i] = g_6dfeaa;
 }
 
 /* F_26E40 @ 2645:09F0 (linear 0x26E40, 203 bytes) */
@@ -281,7 +284,7 @@ static void near F_26E40(void)
     }
     g_terrain3[g_6e00] &= 0x0fff;
     for (i = start; i < g_6e00; i++)
-        g_terrain2[i] = g_6dfe;
+        g_terrain2[i] = g_6dfeaa;
 }
 
 /* F_26F0B @ 2645:0ABB (linear 0x26F0B, 214 bytes) */
@@ -304,7 +307,7 @@ static void near F_26F0B(void)
     g_terrain3[g_6e00++] &= 0xff7;
     g_6e00 += 2;
     for (i = start; i < g_6e00; i++)
-        g_terrain2[i] = g_6dfe;
+        g_terrain2[i] = g_6dfeaa;
 }
 
 /* F_26FE1 @ 2645:0B91 (linear 0x26FE1, 439 bytes)
@@ -318,7 +321,7 @@ void F_26FE1(int n)
     int i;
 
     g_6e00 = 0x186;
-    g_6dfe = 0;
+    g_6dfeaa = 0;
     g_6e02 = bl82c6 ? 2 : 3;
     for (i = 0x17c; i < 0x460; i++) {
         g_terrain2[i] = 0;
@@ -347,7 +350,7 @@ void F_26FE1(int n)
         }
     }
     for (; g_6e00 < 0x460; g_6e00++) {
-        g_terrain2[g_6e00] = g_6dfe;
+        g_terrain2[g_6e00] = g_6dfeaa;
         g_terrain4[g_6e00] = 0;
     }
 }

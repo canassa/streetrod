@@ -1,6 +1,5 @@
 #include "STRUCTS.H"
 #include "M_0914C.H"
-#include "GBSS.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_02B9A.H"
@@ -23,6 +22,10 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 #include <stdlib.h>
+
+static int g_6c84;                         /* DS:6C84 */
+static int g_6c88;                         /* DS:6C88 */
+static int g_6ca2;                         /* DS:6CA2 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Bitmap far *c_6e64;

@@ -1,6 +1,5 @@
 #include "STRUCTS.H"
 #include "M_0B3CA.H"
-#include "GBSS.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_08D26.H"
@@ -10,6 +9,13 @@
 #include "M_265BA.H"
 #include "SLOTS.H"
 #include <string.h>
+
+static int g_6caaaa;                       /* DS:6CAA */
+static int g_6cacaa;                       /* DS:6CAC */
+static int g_6cb0;                         /* DS:6CB0 */
+static int g_6cb2;                         /* DS:6CB2 */
+static int g_6cb4;                         /* DS:6CB4 */
+static int g_6cb6;                         /* DS:6CB6 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Bitmap far *ab7526x[13];
@@ -32,7 +38,7 @@ static void near F_0D624(void)
     ao7d2ev.m7d32 += ao7d2ev.m7d34 = e_78e0.f0 ? F_0D544(e_78e0.f0) : 0;
     if (ao7d2ev.m7d32 >= 8)
         F_2834C();
-    if (ao7d2ev.m7d30 >= g_6caa && g_53e6 && e_78e0.f0 <= 0) {
+    if (ao7d2ev.m7d30 >= g_6caaaa && g_53e6 && e_78e0.f0 <= 0) {
         if (s_8632)
             g79e2g.fbc |= 1;
         else
@@ -60,7 +66,7 @@ static void near F_0D67D(void)
         ar7e8av.m7e8a += ar7e8av.m7e8c >> 3;
         ar7e8av.m7e8c &= 7;
     }
-    if (ar7e8av.m7e8a >= g_6caa && g_53e6 && e_78e0.f0 <= 0) {
+    if (ar7e8av.m7e8a >= g_6caaaa && g_53e6 && e_78e0.f0 <= 0) {
         if (s_8632 == 0)
             e_78e0.fbc |= 1;
         else
@@ -179,7 +185,7 @@ static void near F_0D992(void)
     F_08D9C(5);
     for (n1 = 0; n1 < 12; n1++)
         g8acew[n1] = ab7526x[n1];
-    g_6cac = F_0E218(0x19);
-    g_6cb2 = (int)(g_6cac * 0.6);
-    g_6cb0 = (int)(g_6cac * 0.8);
+    g_6cacaa = F_0E218(0x19);
+    g_6cb2 = (int)(g_6cacaa * 0.6);
+    g_6cb0 = (int)(g_6cacaa * 0.8);
 }

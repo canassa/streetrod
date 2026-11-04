@@ -1,6 +1,5 @@
 #include "STRUCTS.H"
 #include "M_11A72.H"
-#include "GBSS.H"
 #include "MESSAGES.H"
 #include "M_00000.H"
 #include "M_00D58.H"
@@ -14,6 +13,9 @@
 #include "M_19ED0.H"
 #include <stdlib.h>
 #include <string.h>
+
+static struct Win *g_6c40;                 /* DS:6C40 */
+static int g_6c42[2];                      /* DS:6C42 */
 
 /* F_11A72: copy the rectangle (x, y, w, h) of the back buffer into pict new bitmap and return it.
    The x range is rounded to the pixel grid r_vid.mask. src, when given, is the bitmap to reuse. */

@@ -1,7 +1,10 @@
 #include <time.h>
 #include "STRUCTS.H"
 #include "M_15236.H"
-#include "GBSS.H"
+
+static int g_rngA;                         /* DS:6C62 */
+static int g_rngB;                         /* DS:6C64 */
+static int g_rngC;                         /* DS:6C66 */
 
 /* Wichmann-Hill style generator: three 15-bit LCG state words.
    n <= 0 seeds from the clock and returns -1, n > 0 returns a value in 0..n-1. */

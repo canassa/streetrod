@@ -1,7 +1,6 @@
 #include "STRUCTS.H"
 #include "M_2869E.H"
 #include "CARMASKS.H"
-#include "GBSS.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_08D26.H"
@@ -18,6 +17,25 @@
 #include "M_2B6DC.H"
 #include "SLOTS.H"
 #include <stdlib.h>
+
+static int g_6e04aay;                      /* DS:6E04 */
+static int g_6e06aax;                      /* DS:6E06 */
+static int *g_6e08aaw;                     /* DS:6E08 */
+static int *g_6e0awz;                      /* DS:6E0A */
+static int *g_6e0cvz;                      /* DS:6E0C */
+static int *g_6e0euz;                      /* DS:6E0E */
+static int *g_6e10;                        /* DS:6E10 */
+static int *g_6e12;                        /* DS:6E12 */
+static int *g_6e14;                        /* DS:6E14 */
+static int *g_6e16;                        /* DS:6E16 */
+static int *g_6e18;                        /* DS:6E18 */
+static int *g_6e1a;                        /* DS:6E1A */
+static int *g_6e1c;                        /* DS:6E1C */
+static int *g_6e1e;                        /* DS:6E1E */
+static int far *g_6e20a;                   /* DS:6E20 */
+static int far *g_6e24a;                   /* DS:6E24 */
+static int *g_6e28a;                       /* DS:6E28 */
+static int g_6e2a9;                        /* DS:6E2A */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 int a7312av;
@@ -348,20 +366,20 @@ static void near F_28DD2(void)
     }
     F_2874C(&b);
     (*b_78a2)(g8188w, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
-    g_6e06 = 14;
+    g_6e06aax = 14;
     if (*(int *)&bw8aca) {
         b.w = r;
         b.sx = ll;
         b.dx = 0;
         (*b_78a2)(g8188w, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
-        g_6e04 = v + 8;
+        g_6e04aay = v + 8;
         for (i = 14; i; i--) {
-            if (bq7884[i] < g_6e04) {
-                g_6e04 = bq7884[i];
-                g_6e06 = i;
+            if (bq7884[i] < g_6e04aay) {
+                g_6e04aay = bq7884[i];
+                g_6e06aax = i;
             }
         }
-        (*bp78da)(g_6e04, 9);
+        (*bp78da)(g_6e04aay, 9);
     } else
         (*bp78da)(0x3f, 1);
 }
@@ -544,7 +562,7 @@ void F_29398(int n)
     int xl2s6;
     int m2;
 
-    xl = *g_6e08;
+    xl = *g_6e08aaw;
     xrl = *g_6e18;
     xlsn = xl << 4;
     xrs = xrl << 4;
@@ -554,15 +572,15 @@ void F_29398(int n)
     dxr7 = F_2914C(*g_6e1c, ybot6, xrl, yk);
     flagk = *am8b82y & 1;
     if (flagk) {
-        xl2 = *g_6e0a;
-        xr28 = *g_6e0e;
+        xl2 = *g_6e0awz;
+        xr28 = *g_6e0euz;
         xl2s6 = xl2 << 4;
         xr2s6 = xr28 << 4;
         dxl2k = F_2914C(*g_6e12, ybot6, xl2, yk);
         dxr26 = F_2914C(*g_6e16, ybot6, xr28, yk);
     }
     if (*am8b82y & 8) {
-        wid = *g_6e28;
+        wid = *g_6e28a;
         cx0k = ((xl + xrl) >> 1) - (wid >> 1);
     }
     if (F_2937B(ybot6 - yk) < 0)
@@ -571,7 +589,7 @@ void F_29398(int n)
         if (flagk) {
             if (*am8b82y & 4)
                 break;
-            if (*g_6e20 & 0x80) {
+            if (*g_6e20a & 0x80) {
                 m17 = xl2 + ((xl - xl2) >> 1);
                 (*g78d6c)(xl2, m17, yk, 4);
                 (*g78d6c)(m17, xl, yk, 9);
@@ -582,7 +600,7 @@ void F_29398(int n)
                 if (cnt == last2 && n < 6)
                     (*g78d6c)(xl2, xl, yk, 2);
             }
-            if (*g_6e24 & 0x80) {
+            if (*g_6e24a & 0x80) {
                 m2 = xr28 - ((xr28 - xrl) >> 1);
                 (*g78d6c)(m2, xr28, yk, 4);
                 (*g78d6c)(xrl, m2, yk, 9);
@@ -644,7 +662,7 @@ void F_2969D(void)
     int xl2s6;
     int m2;
 
-    xl = *g_6e08;
+    xl = *g_6e08aaw;
     xrl = *g_6e18;
     xlsn = xl << 4;
     xrs = xrl << 4;
@@ -654,15 +672,15 @@ void F_2969D(void)
     dxr7 = F_2914C(*g_6e1c, ybot6, xrl, yk);
     flagk = *am8b82y & 1;
     if (flagk) {
-        xl2 = *g_6e0a;
-        xr28 = *g_6e0e;
+        xl2 = *g_6e0awz;
+        xr28 = *g_6e0euz;
         xl2s6 = xl2 << 4;
         xr2s6 = xr28 << 4;
         dxl2k = F_2914C(*g_6e12, ybot6, xl2, yk);
         dxr26 = F_2914C(*g_6e16, ybot6, xr28, yk);
     }
     if (*am8b82y & 8) {
-        wid = *g_6e28;
+        wid = *g_6e28a;
         cx0k = ((xl + xrl) >> 1) - (wid >> 1);
     }
     if (F_2937B(ybot6 - yk) < 0)
@@ -671,14 +689,14 @@ void F_2969D(void)
         if (flagk) {
             if (*am8b82y & 4)
                 break;
-            if (*g_6e20 & 0x80) {
+            if (*g_6e20a & 0x80) {
                 m17 = xl2 + ((xl - xl2) >> 1);
                 (*g78d6c)(xl2, m17, yk, 4);
                 (*g78d6c)(m17, xl, yk, 9);
             } else {
                 (*g78d6c)(xl2, xl, yk, 4);
             }
-            if (*g_6e24 & 0x80) {
+            if (*g_6e24a & 0x80) {
                 m2 = xr28 - ((xr28 - xrl) >> 1);
                 (*g78d6c)(m2, xr28, yk, 4);
                 (*g78d6c)(xrl, m2, yk, 9);
@@ -724,15 +742,15 @@ static void near F_2992A(int a, int b, int c, int d, int e, int f, int rev)
 
     t8l = *am8b82y & 1;
     if (rev) {
-        a41 = g_6e20[0] & 4;
-        b8l = g_6e20[0] & 8;
-        b4 = g_6e20[-1] & 4;
-        c10 = g_6e20[0] & 0x10;
+        a41 = g_6e20a[0] & 4;
+        b8l = g_6e20a[0] & 8;
+        b4 = g_6e20a[-1] & 4;
+        c10 = g_6e20a[0] & 0x10;
     } else {
-        a41 = g_6e24[0] & 4;
-        b8l = g_6e24[0] & 8;
-        b4 = g_6e24[-1] & 4;
-        c10 = g_6e24[0] & 0x10;
+        a41 = g_6e24a[0] & 4;
+        b8l = g_6e24a[0] & 8;
+        b4 = g_6e24a[-1] & 4;
+        c10 = g_6e24a[0] & 0x10;
     }
     if (!(*am8b82y & 4)) {
         if (c10)
@@ -822,13 +840,13 @@ static void near F_29BFF(int a, int b, int c, int d, int e, int f, int rev)
 
     if (t8l = *am8b82y & 1) {
         if (rev) {
-            a41 = g_6e20[0] & 4;
-            b4 = g_6e20[1] & 4;
-            c10 = g_6e20[0] & 0x10;
+            a41 = g_6e20a[0] & 4;
+            b4 = g_6e20a[1] & 4;
+            c10 = g_6e20a[0] & 0x10;
         } else {
-            a41 = g_6e24[0] & 4;
-            b4 = g_6e24[1] & 4;
-            c10 = g_6e24[0] & 0x10;
+            a41 = g_6e24a[0] & 4;
+            b4 = g_6e24a[1] & 4;
+            c10 = g_6e24a[0] & 0x10;
         }
         if (!(*am8b82y & 4)) {
             if (c10)
@@ -888,7 +906,7 @@ static void near F_29BFF(int a, int b, int c, int d, int e, int f, int rev)
 
 static void near F_29E2E(void)
 {
-    F_2992A(*g_6e12, *g_6e0a, *g_6e1e, *g_6e1a, *g_6e0c, *g_6e14, 1);
+    F_2992A(*g_6e12, *g_6e0awz, *g_6e1e, *g_6e1a, *g_6e0cvz, *g_6e14, 1);
 }
 
 /* F_29E5D @ (linear 0x29E5D) */
@@ -897,7 +915,7 @@ static void near F_29E2E(void)
 
 static void near F_29E5D(void)
 {
-    F_2992A(*g_6e0e, *g_6e16, *g_6e1a, *g_6e1e, *g_6e14, *g_6e0c, 0);
+    F_2992A(*g_6e0euz, *g_6e16, *g_6e1a, *g_6e1e, *g_6e14, *g_6e0cvz, 0);
 }
 
 /* F_29E8B @ 2645:3A3B (linear 0x29E8B, 28 bytes) */
@@ -919,7 +937,7 @@ static void near F_29E8B(int n)
 
 static void near F_29EA7(void)
 {
-    F_29BFF(*g_6e12, *g_6e0a, *g_6e1e, *g_6e1a, *g_6e0c, *g_6e14, 1);
+    F_29BFF(*g_6e12, *g_6e0awz, *g_6e1e, *g_6e1a, *g_6e0cvz, *g_6e14, 1);
 }
 
 /* F_29ED6 @ (linear 0x29ED6) */
@@ -928,7 +946,7 @@ static void near F_29EA7(void)
 
 static void near F_29ED6(void)
 {
-    F_29BFF(*g_6e0e, *g_6e16, *g_6e1a, *g_6e1e, *g_6e14, *g_6e0c, 0);
+    F_29BFF(*g_6e0euz, *g_6e16, *g_6e1a, *g_6e1e, *g_6e14, *g_6e0cvz, 0);
 }
 
 /* F_29F04 @ 2645:3AB4 (linear 0x29F04, 11 bytes) */
@@ -1035,7 +1053,7 @@ static void near F_2A11C(int x1, int x2, int y1, int y2, int n, int clip, int fl
 {
     int j;
 
-    for (j = *g_6e28 + 1; j; j--) {
+    for (j = *g_6e28a + 1; j; j--) {
         F_2646D();
         F_287D1(10, x1 - j, y1, y2);
         F_287D1(10, x2 + j, y1, y2);
@@ -1173,7 +1191,7 @@ static void near F_2A3DD(void)
             if (ap7d7cv == 12)
                 return;
             seln = ap7d7cv + 1;
-        } else if (seln != g_6e2a) {
+        } else if (seln != g_6e2a9) {
             if ((seln <= 8 && ap7d7cv > 9) || (seln >= 9 && ap7d7cv <= 8 && ap7d7cv > 0))
                 seln = ap7d7cv - 1;
             else if (ap7d7cv == 0)
@@ -1193,7 +1211,7 @@ static void near F_2A3DD(void)
     ay8bc2z = seln == 0 || (seln == 2 && xk <= 10);
     by72f2 = seln == 2 && xk <= 10 && abs(z9) < 180 &&
         (bu8acc < 4 ? 100 : 180) > abs(z9) && ar7e8av.m7e8e < ao7d2ev.m7d34;
-    g_6e2a = ap7d7cv;
+    g_6e2a9 = ap7d7cv;
     ap7d7cv = seln;
     g_5ec6 = xk > 16 ? (xk + 8) & 15 : 0;
     t1 = xk;
@@ -1236,7 +1254,7 @@ static void near F_2A3DD(void)
         b.sx = 0;
         b.dx = ra - (b.w >> 1);
         b.sy = 0;
-        b.dy = (seln < 9 ? (rb < g_6e04 ? g_6e04 : rb) : rb) - b.h;
+        b.dy = (seln < 9 ? (rb < g_6e04aay ? g_6e04aay : rb) : rb) - b.h;
         if (seln == 2 && b.dy + b.h >= 0x65)
             b.dy = 0x65 - b.h;
     }
@@ -1278,21 +1296,21 @@ static void near F_2A84D(void)
     int f3;
     int w2;
 
-    g_6e08 = &g7f30t;
+    g_6e08aaw = &g7f30t;
     g_6e18 = &as8668u;
     g_6e1a = &k_8646;
-    g_6e0a = &al70c0x.m70d0;
-    g_6e0e = &dz70e0;
-    g_6e0c = &g_8658;
+    g_6e0awz = &al70c0x.m70d0;
+    g_6e0euz = &dz70e0;
+    g_6e0cvz = &g_8658;
     g_6e10 = &e_7f2e;
     g_6e1c = &au8666t;
     g_6e1e = &aw8644v;
     g_6e14 = &au8656u;
     g_6e12 = &al70c0x.m70ce;
     g_6e16 = &al70c0x.m70de;
-    g_6e28 = &g_5e92;
-    g_6e20 = (int far *)(q_72ee - 8);
-    g_6e24 = (int far *)(aw8634x - 8);
+    g_6e28a = &g_5e92;
+    g_6e20a = (int far *)(q_72ee - 8);
+    g_6e24a = (int far *)(aw8634x - 8);
     am8b82y = (int far *)(g7d62p - 8);
     F_2646D();
     F_2A32B();
@@ -1303,47 +1321,47 @@ static void near F_2A84D(void)
         if (*am8b82y & 4)
             goto next;
         if (*am8b82y & 0xf000)
-            F_2A11C(*g_6e08, *g_6e18, -((*g_6e1a - *g_6e0c) * 4 - *g_6e1a), *g_6e1a, i + 5, 1, *am8b82y & 0xf000);
+            F_2A11C(*g_6e08aaw, *g_6e18, -((*g_6e1a - *g_6e0cvz) * 4 - *g_6e1a), *g_6e1a, i + 5, 1, *am8b82y & 0xf000);
         if (i >= 6)
             goto next;
         f3 = *am8b82y & 1;
-        w11 = *g_6e20;
-        w2 = *g_6e24;
+        w11 = *g_6e20a;
+        w2 = *g_6e24a;
         w36 = *am8b82y;
         if (w11 & 0x20) {
             if (f3)
-                F_29F3B(*g_6e08, *g_6e1a, i + 5, -1, 0);
+                F_29F3B(*g_6e08aaw, *g_6e1a, i + 5, -1, 0);
             else
-                F_29F3B(*g_6e0a, *g_6e1a, i + 5, -1, 0);
+                F_29F3B(*g_6e0awz, *g_6e1a, i + 5, -1, 0);
         }
         if (w11 & 0x100) {
             if (f3)
-                F_29F3B(*g_6e08, *g_6e1a, i + 5, -1, 4);
+                F_29F3B(*g_6e08aaw, *g_6e1a, i + 5, -1, 4);
             else if (w11 & 0x200)
-                F_29F3B(*g_6e0a - *g_6e08 + *g_6e0a, *g_6e1a, i + 5, -1, 4);
+                F_29F3B(*g_6e0awz - *g_6e08aaw + *g_6e0awz, *g_6e1a, i + 5, -1, 4);
             else
-                F_29F3B(*g_6e0a, *g_6e1a, i + 5, -1, 4);
+                F_29F3B(*g_6e0awz, *g_6e1a, i + 5, -1, 4);
         }
         if (w11 & 0x800)
-            F_29F3B(*g_6e08, *g_6e1a, i + 5, 1, 3);
+            F_29F3B(*g_6e08aaw, *g_6e1a, i + 5, 1, 3);
         if (w11 & 0x1000)
-            F_29F3B(*g_6e08, *g_6e1a, i + 5, 1, 6);
+            F_29F3B(*g_6e08aaw, *g_6e1a, i + 5, 1, 6);
         if (f3) {
             if (w11 & 0x40)
-                F_29F8A(*g_6e08, *g_6e1a, i + 5, 1);
+                F_29F8A(*g_6e08aaw, *g_6e1a, i + 5, 1);
             if (w2 & 0x40)
                 F_29F8A(*g_6e18, *g_6e1a, i + 5, -1);
         } else {
             if (w11 & 1)
-                F_29F3B(*g_6e08, *g_6e1a, i + 5, 1, 1);
+                F_29F3B(*g_6e08aaw, *g_6e1a, i + 5, 1, 1);
             if (w11 & 4)
-                F_29F3B(*g_6e08, *g_6e1a, i + 5, -1, 7);
+                F_29F3B(*g_6e08aaw, *g_6e1a, i + 5, -1, 7);
             if (w11 & 8)
-                F_29F3B(*g_6e08, *g_6e1a, i + 5, -1, 8);
+                F_29F3B(*g_6e08aaw, *g_6e1a, i + 5, -1, 8);
             if (w11 & 0x40)
-                F_29F3B(-(((*g_6e08 - *g_6e0a) >> 1) - *g_6e0a), *g_6e1a, i + 5, -1, 10);
+                F_29F3B(-(((*g_6e08aaw - *g_6e0awz) >> 1) - *g_6e0awz), *g_6e1a, i + 5, -1, 10);
             if (w11 & 0x80)
-                F_29F3B(*g_6e0a, *g_6e1a, i + 5, -1, 11);
+                F_29F3B(*g_6e0awz, *g_6e1a, i + 5, -1, 11);
             if (w2 & 1)
                 F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 1);
             if (w2 & 4)
@@ -1351,9 +1369,9 @@ static void near F_2A84D(void)
             if (w2 & 8)
                 F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 8);
             if (w2 & 0x40)
-                F_29F3B(*g_6e0e, *g_6e1a, i + 5, 1, 10);
+                F_29F3B(*g_6e0euz, *g_6e1a, i + 5, 1, 10);
             if (w2 & 0x80)
-                F_29F3B(((*g_6e0e - *g_6e18) >> 1) + *g_6e0e, *g_6e1a, i + 5, 1, 11);
+                F_29F3B(((*g_6e0euz - *g_6e18) >> 1) + *g_6e0euz, *g_6e1a, i + 5, 1, 11);
             if (w36 & 2)
                 F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 9);
         }
@@ -1361,15 +1379,15 @@ static void near F_2A84D(void)
             if (f3)
                 F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 0);
             else
-                F_29F3B(*g_6e0e, *g_6e1a, i + 5, 1, 0);
+                F_29F3B(*g_6e0euz, *g_6e1a, i + 5, 1, 0);
         }
         if (w2 & 0x100) {
             if (f3)
                 F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 4);
             else if (w2 & 0x200)
-                F_29F3B((*g_6e0e << 1) - *g_6e18, *g_6e1a, i + 5, 1, 4);
+                F_29F3B((*g_6e0euz << 1) - *g_6e18, *g_6e1a, i + 5, 1, 4);
             else
-                F_29F3B(*g_6e0e, *g_6e1a, i + 5, 1, 4);
+                F_29F3B(*g_6e0euz, *g_6e1a, i + 5, 1, 4);
         }
         if (w2 & 0x2000)
             F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 0x12);
@@ -1396,16 +1414,16 @@ static void near F_2A84D(void)
         g_6e10--;
         g_6e1c--;
         g_6e1e--;
-        g_6e08--;
+        g_6e08aaw--;
         g_6e18--;
         g_6e1a--;
-        g_6e28--;
-        g_6e20++;
-        g_6e24++;
+        g_6e28a--;
+        g_6e20a++;
+        g_6e24a++;
         am8b82y++;
-        g_6e0a--;
-        g_6e0e--;
-        g_6e0c--;
+        g_6e0awz--;
+        g_6e0euz--;
+        g_6e0cvz--;
         g_6e12--;
         g_6e16--;
         g_6e14--;
@@ -1436,84 +1454,84 @@ void F_2AFDC(void)
     int f3;
     int w2;
 
-    g_6e08 = &br7314;
+    g_6e08aaw = &br7314;
     g_6e18 = &az7aeau;
     g_6e1a = &f_78a0;
-    g_6e0a = &by7fa6;
-    g_6e0e = &g7ff4g;
-    g_6e0c = &r_7acc;
+    g_6e0awz = &by7fa6;
+    g_6e0euz = &g7ff4g;
+    g_6e0cvz = &r_7acc;
     g_6e10 = &a7312av;
     g_6e1c = &ac7ae8t;
     g_6e1e = &g789eu;
     g_6e14 = &az7acaz;
     g_6e12 = &al7fa4z;
     g_6e16 = &dz7ff2;
-    g_6e28 = &g_5e86;
-    g_6e20 = (int far *)(q_72ee + 14);
-    g_6e24 = (int far *)(aw8634x + 14);
+    g_6e28a = &g_5e86;
+    g_6e20a = (int far *)(q_72ee + 14);
+    g_6e24a = (int far *)(aw8634x + 14);
     am8b82y = (int far *)(g7d62p + 14);
     F_28860();
     F_28DD2();
     F_26458();
     for (i = 14; i; i--) {
-        if (i <= g_6e06)
+        if (i <= g_6e06aax)
             F_29E8B(i);
         if (*am8b82y & 4)
             goto next;
         if (i >= 11)
             goto next;
         f3 = *am8b82y & 1;
-        w11 = *g_6e20;
-        w2 = *g_6e24;
+        w11 = *g_6e20a;
+        w2 = *g_6e24a;
         w36 = *am8b82y;
         if (w11 & 0x20) {
             if (f3)
-                F_29F3B(*g_6e08, *g_6e1a, i, -1, 0);
+                F_29F3B(*g_6e08aaw, *g_6e1a, i, -1, 0);
             else
-                F_29F3B(*g_6e0a, *g_6e1a, i, -1, 0);
+                F_29F3B(*g_6e0awz, *g_6e1a, i, -1, 0);
         }
         if (w11 & 0x100) {
             if (f3)
-                F_29F3B(*g_6e08, *g_6e1a, i, -1, 4);
+                F_29F3B(*g_6e08aaw, *g_6e1a, i, -1, 4);
             else if (w11 & 0x200)
-                F_29F3B(*g_6e0a - *g_6e08 + *g_6e0a, *g_6e1a, i, -1, 4);
+                F_29F3B(*g_6e0awz - *g_6e08aaw + *g_6e0awz, *g_6e1a, i, -1, 4);
             else
-                F_29F3B(*g_6e0a, *g_6e1a, i, -1, 4);
+                F_29F3B(*g_6e0awz, *g_6e1a, i, -1, 4);
         }
         if (w11 & 0x800)
-            F_29F3B(*g_6e08, *g_6e1a, i, 1, 3);
+            F_29F3B(*g_6e08aaw, *g_6e1a, i, 1, 3);
         if (w11 & 0x1000)
-            F_29F3B(*g_6e08, *g_6e1a, i, 1, 6);
+            F_29F3B(*g_6e08aaw, *g_6e1a, i, 1, 6);
         if (w11 & 1) {
             if (f3) {
                 F_2646D();
-                F_29FC9(*g_6e08, (*g_6e0c + *g_6e1a) >> 1, i, 1, 0, 1);
+                F_29FC9(*g_6e08aaw, (*g_6e0cvz + *g_6e1a) >> 1, i, 1, 0, 1);
                 F_26458();
             } else
-                F_29F3B(*g_6e08, *g_6e1a, i, 1, 1);
+                F_29F3B(*g_6e08aaw, *g_6e1a, i, 1, 1);
         }
         if (f3) {
             if (w11 & 0x40)
-                F_29F8A(*g_6e08, *g_6e1a, i, 1);
+                F_29F8A(*g_6e08aaw, *g_6e1a, i, 1);
             if (w2 & 0x40)
                 F_29F8A(*g_6e18, *g_6e1a, i, -1);
         } else {
             if (w11 & 4)
-                F_29F3B(*g_6e08, *g_6e1a, i, -1, 7);
+                F_29F3B(*g_6e08aaw, *g_6e1a, i, -1, 7);
             if (w11 & 8)
-                F_29F3B(*g_6e08, *g_6e1a, i, -1, 8);
+                F_29F3B(*g_6e08aaw, *g_6e1a, i, -1, 8);
             if (w11 & 0x40)
-                F_29F3B(-(((*g_6e08 - *g_6e0a) >> 1) - *g_6e0a), *g_6e1a, i, -1, 10);
+                F_29F3B(-(((*g_6e08aaw - *g_6e0awz) >> 1) - *g_6e0awz), *g_6e1a, i, -1, 10);
             if (w11 & 0x80)
-                F_29F3B(*g_6e0a, *g_6e1a, i, -1, 11);
+                F_29F3B(*g_6e0awz, *g_6e1a, i, -1, 11);
             if (w2 & 4)
                 F_29F3B(*g_6e18, *g_6e1a, i, 1, 7);
             if (w2 & 8)
                 F_29F3B(*g_6e18, *g_6e1a, i, 1, 8);
             if (w2 & 0x40)
-                F_29F3B(*g_6e0e, *g_6e1a, i, 1, 10);
+                F_29F3B(*g_6e0euz, *g_6e1a, i, 1, 10);
             if (w2 & 0x80)
-                F_29F3B(((*g_6e0e - *g_6e18) >> 1) + *g_6e0e, *g_6e1a, i, 1, 11);
+                F_29F3B(((*g_6e0euz - *g_6e18) >> 1) + *g_6e0euz, *g_6e1a, i, 1, 11);
             if (w36 & 2)
                 F_29F3B(*g_6e18, *g_6e1a, i, 1, 9);
         }
@@ -1521,15 +1539,15 @@ void F_2AFDC(void)
             if (f3)
                 F_29F3B(*g_6e18, *g_6e1a, i, 1, 0);
             else
-                F_29F3B(*g_6e0e, *g_6e1a, i, 1, 0);
+                F_29F3B(*g_6e0euz, *g_6e1a, i, 1, 0);
         }
         if (w2 & 0x100) {
             if (f3)
                 F_29F3B(*g_6e18, *g_6e1a, i, 1, 4);
             else if (w2 & 0x200)
-                F_29F3B((*g_6e0e << 1) - *g_6e18, *g_6e1a, i, 1, 4);
+                F_29F3B((*g_6e0euz << 1) - *g_6e18, *g_6e1a, i, 1, 4);
             else
-                F_29F3B(*g_6e0e, *g_6e1a, i, 1, 4);
+                F_29F3B(*g_6e0euz, *g_6e1a, i, 1, 4);
         }
         if (w2 & 0x2000)
             F_29F3B(*g_6e18, *g_6e1a, i, 1, 0x12);
@@ -1542,13 +1560,13 @@ void F_2AFDC(void)
         if (w2 & 1) {
             if (f3) {
                 F_2646D();
-                F_29FC9(*g_6e18, (*g_6e0c + *g_6e1a) >> 1, i, -1, 0, 1);
+                F_29FC9(*g_6e18, (*g_6e0cvz + *g_6e1a) >> 1, i, -1, 0, 1);
                 F_26458();
             } else
                 F_29F3B(*g_6e18, *g_6e1a, i, 1, 1);
         }
         if (w36 & 0xf000)
-            F_2A11C(*g_6e08, *g_6e18, -((*g_6e1a - *g_6e0c) * 4 - *g_6e1a), *g_6e1a, i, 0, w36 & 0xf000);
+            F_2A11C(*g_6e08aaw, *g_6e18, -((*g_6e1a - *g_6e0cvz) * 4 - *g_6e1a), *g_6e1a, i, 0, w36 & 0xf000);
         if (w36 & 0x100)
             F_29F3B(*g_6e18, *g_6e1a, i, 1, 5);
         if (w36 & 0x800)
@@ -1566,16 +1584,16 @@ void F_2AFDC(void)
         g_6e10--;
         g_6e1c--;
         g_6e1e--;
-        g_6e08--;
+        g_6e08aaw--;
         g_6e18--;
         g_6e1a--;
-        g_6e28--;
-        g_6e20--;
-        g_6e24--;
+        g_6e28a--;
+        g_6e20a--;
+        g_6e24a--;
         am8b82y--;
-        g_6e0a--;
-        g_6e0e--;
-        g_6e0c--;
+        g_6e0awz--;
+        g_6e0euz--;
+        g_6e0cvz--;
         g_6e12--;
         g_6e16--;
         g_6e14--;

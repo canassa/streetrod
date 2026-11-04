@@ -1,6 +1,5 @@
 #include "STRUCTS.H"
 #include "M_00D58.H"
-#include "GBSS.H"
 #include "HOTSPOT.H"
 #include "MESSAGES.H"
 #include "M_00000.H"
@@ -25,6 +24,12 @@
 #include <dos.h>
 #include <stdlib.h>
 #include <string.h>
+
+static int g_6c46;                         /* DS:6C46 */
+static int g_6c48;                         /* DS:6C48 */
+static char g_6c4a;                        /* DS:6C4A */
+static int g_6c4c;                         /* DS:6C4C */
+static char g_6c4e;                        /* DS:6C4E */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Dev bs79aa;

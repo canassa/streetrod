@@ -1,6 +1,5 @@
 #include "STRUCTS.H"
 #include "M_0F38A.H"
-#include "GBSS.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_02B9A.H"
@@ -22,6 +21,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <conio.h>
+
+static int g_6c22[3];                      /* DS:6C22 */
+static struct Bitmap far *g_6c28gzz[3];    /* DS:6C28 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Bitmap far *bm7678;
@@ -474,19 +476,19 @@ void F_102D3(void)
         for (i6 = 0; i6 < 3; i6++) {
             bm = F_15BBE(g_58e8[i6], 1);
             if (r_vid.mode != -2 || i6 < 2) {
-                g_6c28[i6] = g82b4s;
+                g_6c28gzz[i6] = g82b4s;
                 g_6c22[i6] = g_0352[i6];
             } else {
-                g_6c28[i6] = bm7678;
+                g_6c28gzz[i6] = bm7678;
                 g_6c22[i6] = g_0352[i6] + 0x66;
             }
             pkt.dy = g_6c22[i6];
-            (*b_78a2)(bm, g_6c28[i6], &pkt, 1);
+            (*b_78a2)(bm, g_6c28gzz[i6], &pkt, 1);
             F_1941E(1);
         }
     } else {
         for (i6 = 0; i6 < 3; i6++)
-            g_6c28[i6] = F_15BBE(g_58e8[i6], 1);
+            g_6c28gzz[i6] = F_15BBE(g_58e8[i6], 1);
     }
 }
 
@@ -544,7 +546,7 @@ void F_104B0(int a, int b, struct Bitmap far *dst)
             pkt1.sx = pkt1.sy = 0;
         pkt1.dx = 0x50;
         pkt1.dy = (r_vid.mode == -2 || g_58e4 ? 0 : 100) + 0x3f;
-        (*b_78a2)(g_6c28[sel], dst, &pkt1, 1);
+        (*b_78a2)(g_6c28gzz[sel], dst, &pkt1, 1);
         g_0350 = sel;
     }
     if (b != 100) {

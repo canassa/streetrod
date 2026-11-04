@@ -1,8 +1,9 @@
 #include "STRUCTS.H"
 #include "M_1923C.H"
-#include "GBSS.H"
 #include "M_00000.H"
 #include "M_036A8.H"
+
+static char far *g_6cd0;                   /* DS:6CD0 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 int bl78de;

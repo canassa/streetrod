@@ -15,6 +15,9 @@ MODS = config.SRC / "mods"
 _NAME = re.compile(r"^[A-Z0-9_]{1,8}\.(C|ASM)$")
 _HEAD = re.compile(r"^/\* (\w+) @ [0-9A-Fa-f]{4}:[0-9A-Fa-f]{4} \(linear 0x([0-9A-Fa-f]{5})", re.M)
 _HOIST = re.compile(r"^(#include .*|static [^;{]*\bnear\b[^;{]*\([^;{]*\);)\s*$")
+# a file-local uninitialized variable: every member source that uses it repeats the definition,
+# the merged file has it once at the top (its position only breaks _BSS hash ties)
+_STATIC = re.compile(r"^static [^;{}=()]*;(\s*/\*.*\*/)?\s*$")
 
 
 def fname(row):
@@ -84,7 +87,7 @@ def merge(texts):
     for t in texts:
         keep = []
         for ln in t.splitlines():
-            if _HOIST.match(ln):
+            if _HOIST.match(ln) or _STATIC.match(ln):
                 if ln.strip() not in seen:
                     seen.add(ln.strip())
                     top.append(ln.rstrip())

@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "STRUCTS.H"
 #include "M_02FC8.H"
-#include "GBSS.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_036A8.H"
@@ -15,6 +14,8 @@
 #include "M_15236.H"
 #include "M_15396.H"
 #include <stdlib.h>
+
+static int g_score;                        /* DS:6C5E */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Entry aytablex[10];

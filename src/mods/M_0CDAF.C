@@ -1,7 +1,6 @@
 #include <dos.h>
 #include "STRUCTS.H"
 #include "M_0B3CA.H"
-#include "GBSS.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_02B9A.H"
@@ -13,6 +12,16 @@
 #include "M_11E9C.H"
 #include "M_15236.H"
 #include "SLOTS.H"
+
+static int g_6caaaa;                       /* DS:6CAA */
+static int g_6cacaa;                       /* DS:6CAC */
+static int g_6caeaa;                       /* DS:6CAE */
+static int g_6cb0;                         /* DS:6CB0 */
+static int g_6cb2;                         /* DS:6CB2 */
+static int g_6cb4;                         /* DS:6CB4 */
+static int g_6cb6;                         /* DS:6CB6 */
+static int g_6cb8;                         /* DS:6CB8 */
+static int g_6cba;                         /* DS:6CBA */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct State70C0 al70c0x;
@@ -59,7 +68,7 @@ static void near F_0CDAF(struct Eng *p)
     g_5d6 = 0;
     g_05d8 = g_05da = 0;
     bz8630z = -1;
-    g_6caa = a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc;
+    g_6caaaa = a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc;
     car = a_7eaap.m7eb0->slot12;
     p->fc = g_54b2[((struct Row8 *)((char *)g_4806 + 2))[car->idx].kind][car->b / 2000];
     if (car->b < 8000)
@@ -68,7 +77,7 @@ static void near F_0CDAF(struct Eng *p)
         if (car->b + random_int(2000) <= 9500)
             p->fa = 0;
         else {
-            t = (g_6caa - 200) >> 1;
+            t = (g_6caaaa - 200) >> 1;
             p->fa = random_int(t >> 1) + t + 200;
         }
         goto nx;
@@ -76,10 +85,10 @@ static void near F_0CDAF(struct Eng *p)
 nx:
     at787cu = 0;
     g_54d0 = 0;
-    g_6cac = F_0E218(bn7648);
-    g_6cb2 = (int)(g_6cac * 0.7);
-    g_6cb0 = (int)(g_6cac * 0.8);
-    g_6cae = bu8acc < 4 ? 10 : 16;
+    g_6cacaa = F_0E218(bn7648);
+    g_6cb2 = (int)(g_6cacaa * 0.7);
+    g_6cb0 = (int)(g_6cacaa * 0.8);
+    g_6caeaa = bu8acc < 4 ? 10 : 16;
     g_54d2 = 0;
     g_53e6 = 0;
 }
@@ -211,7 +220,7 @@ static void near F_0D29D(void)
         if (g_terrain2[ar7e8av.m7e8a] != g_terrain2[ar7e8av.m7e8a + 1]) {
             if (g_54d6 == 0) {
                 g_54d6 = 1;
-                vl = g_6cac - (ar7e8av.m7e8a > ao7d2ev.m7d30 ? g7d84o->f2 : g7d84o->f2 >> 1);
+                vl = g_6cacaa - (ar7e8av.m7e8a > ao7d2ev.m7d30 ? g7d84o->f2 : g7d84o->f2 >> 1);
                 if (vl < g79e2g.f0)
                     F_0D1DE(vl, &g79e2g);
             }
@@ -232,7 +241,7 @@ static void near F_0D29D(void)
                 continue;
             }
         } else if (d > -5 && d < 5) {
-            vl = e_78e0.f0 + g_6cae;
+            vl = e_78e0.f0 + g_6caeaa;
             if (ao7d2ev.m7d30 >= 30 && vl < g_6cb2)
                 vl = g_6cb2;
             goto chk;
@@ -270,7 +279,7 @@ static void near F_0D29D(void)
             g79e2g.f0 = g79e2g.fe / g79e2g.f40;
         }
     }
-    if (ar7e8av.m7e8a >= g_6caa) {
+    if (ar7e8av.m7e8a >= g_6caaaa) {
         liml = ao7d2ev.m7d30 + 5 < ar7e8av.m7e8a ? 5 : 10;
         g79e2g.f0 = old3;
         if (liml < old3)

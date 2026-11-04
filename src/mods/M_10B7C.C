@@ -1,6 +1,5 @@
 #include "STRUCTS.H"
 #include "M_10B7C.H"
-#include "GBSS.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_0F38A.H"
@@ -16,6 +15,11 @@
 #include "SCREENS.H"
 #include <conio.h>
 #include <dos.h>
+
+static struct Cmd *g_cmd;                  /* DS:6C38 */
+static struct Obj *g_obj;                  /* DS:6C3A */
+static struct Box *g_box;                  /* DS:6C3C */
+static int g_6c3ea;                        /* DS:6C3E */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Colors x_colors;
@@ -311,17 +315,17 @@ int F_11213(struct Obj *o, struct Cmd *c)
     switch (o->id) {
     case 2:
         if (c->a) {
-            g_6c3e = c->a;
+            g_6c3ea = c->a;
             F_16993(1);
             return 0;
         }
-        if (g_6c3e--) {
+        if (g_6c3ea--) {
             int t1, t2, t3;
             old = x_colors.c[3];
-            x_colors.c[3] = (g_6c3e & 1) ? 4 : 0;
+            x_colors.c[3] = (g_6c3ea & 1) ? 4 : 0;
             F_1377F(r_vid.back, 0x33, 0x6f, 2);
-            if (!(g_6c3e & 3)) {
-                x_colors.c[3] = (g_6c3e & 4) ? 4 : 0;
+            if (!(g_6c3ea & 3)) {
+                x_colors.c[3] = (g_6c3ea & 4) ? 4 : 0;
                 F_1377F(r_vid.back, 0x30, 0x6f, 2);
             }
             return 0;

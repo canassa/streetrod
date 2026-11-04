@@ -1,6 +1,5 @@
 #include "STRUCTS.H"
 #include "M_18BDC.H"
-#include "GBSS.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_036A8.H"
@@ -15,6 +14,9 @@
 #include "M_1947A.H"
 #include "M_19ED0.H"
 #include "M_24E78.H"
+
+static struct Rect g_6cc4;                 /* DS:6CC4 */
+static struct Bitmap far *g_6ccc;          /* DS:6CCC */
 
 struct Sheet g_5a26[2] = {{1142, 6, 11}, {1141, 6, 11}};   /* DS:5A26 */
 char g_5a32[84] = {4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 11};   /* DS:5A32 */

@@ -46,6 +46,35 @@ def parse(path):
     return procs
 
 
+_SIZES = {"DB": 1, "DW": 2, "DD": 4, "DQ": 8, "DT": 10}
+
+
+def statics(path):
+    """{offset: (name, size)} of the _BSS items in a listing. MSC writes them in symbol-table
+    order with `ORG $+n` / `ORG $-n` steps; a file-scope static is `$Snnn_name` (or `_name`)."""
+    out, loc, inside = {}, 0, False
+    for line in path.read_text(errors="replace").splitlines():
+        if re.match(r"^_BSS\s+SEGMENT\s*$", line):
+            inside, loc = True, 0
+            continue
+        if not inside:
+            continue
+        if re.match(r"^_BSS\s+ENDS", line):
+            inside = False
+            continue
+        m = re.match(r"^\s*ORG\s+\$([+-]\d+)", line)
+        if m:
+            loc += int(m.group(1))
+            continue
+        m = re.match(r"^(\S+)\s+(DB|DW|DD|DQ|DT)\s+0*([0-9A-Fa-f]+)H\s+DUP\s*\(\?\)", line)
+        if m:
+            name = re.sub(r"^(\$S\d+_|_)", "", m.group(1))
+            size = _SIZES[m.group(2)] * int(m.group(3), 16)
+            out[loc] = (name, size)
+            loc += size
+    return out
+
+
 def find(procs, name):
     for p in procs:
         if p.c_name == name or p.name == name:

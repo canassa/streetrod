@@ -601,3 +601,17 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - The include lists do not affect code: unused declarations cost nothing in MSC's external-symbol budget, as expected.
 - The plain `./sr build` (all-files game build, not the layout link) has not linked since before the DGROUP work: at a497236 it had 368 unresolved data symbols, now 158 (the private BSS at DS:6C22..6E2C and other data only the layout link provides). `./sr build --layout` is the build that matters.
+
+## 2026-11-04 10:30 CET: File-local `_BSS` storage as C statics
+
+### What I did
+- Replaced src/link/GBSS.ASM (labels for DS:6C22..6E2C) with `static` definitions in the sources: 103 blocks in 18 link units, every one used by a single original file. The per-unit blocks follow link order, so each object's `_BSS` is its own run.
+- Measured MSC 5.1's order of uninitialized statics in `_BSS` with scratch compiles (135 names, both declaration orders): key `sum(byte & 0xDF) mod 256` ascending, ties newest-declared first. Not declaration order, not LINK's hash.
+- Renamed 43 statics so each file's keys increase with address (suffixes on the placeholders, as for COMMON). Sized `g_6c72a[16]` and `g_6c8aaav[12]`; the 4 unreferenced bytes after `g_6c40` are a PROVISIONAL `static int g_6c42[2]`.
+- Tooling: `cod.statics()` reads `_BSS` names and `ORG` offsets from the listing; refs and datacheck resolve `_BSS` fixups through it (any static may be the base, as in `a[i - 1]`); headers and GLOBALS.H skip file-local statics; `module.merge` hoists and dedupes a unit's shared static lines; the layout link no longer assembles GBSS.ASM. The M_0B456.STB placeholder for F_0B425 no longer writes a static.
+- Result: `./sr check --all` 572/572, `./sr build --layout` IDENTICAL from an empty work dir, tests OK. The plain `./sr build` is down to 55 unresolved symbols (from 158).
+
+### What I learned
+- MSC's `_BSS` order for statics is a 256-bucket table keyed by the name's byte sum with bit 5 cleared; a static declared after an `extern` of the same name (C4074) becomes public `_name` instead of `$Snnn_name`, so headers must not declare statics.
+- Open: `work/dg/run.sh` no longer round-trips, also on 0aef06c: `./sr dgroup apply` moves `g_4fa6` from M_0542E.C to M_04940.C (then U_0542E fails to compile) and adds a blank line to six .ASM files.
+

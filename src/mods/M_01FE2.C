@@ -2,11 +2,14 @@
 #include <dos.h>
 #include "STRUCTS.H"
 #include "M_00D58.H"
-#include "GBSS.H"
 #include "M_02B9A.H"
 #include "M_02DF4.H"
 #include "M_1628A.H"
 #include "M_163BE.H"
+
+static char g_6c4a;                        /* DS:6C4A */
+static int g_6c52a;                        /* DS:6C52 */
+static int g_6c54a;                        /* DS:6C54 */
 
 /* F_01FE2 @ 0000:1fe2 (linear 0x01fe2, 914 bytes) */
 
@@ -43,9 +46,9 @@ void interrupt far F_01FE2(void)
     if (g_58d2->off && --g_58d2->f2) {
         if (t_72ec && g_58d2->f0.w && !--g_06e2) {
             bn82c4->f0 = bn82c4->f0 % bn82c4->f3;
-            g_6c54 = g_57f6[bn82c4->f1][bn82c4->f0++] * g_6c52 + g_58d2->f0.w;
-            outp(0x42, g_6c54);
-            outp(0x42, g_6c54 >> 8);
+            g_6c54a = g_57f6[bn82c4->f1][bn82c4->f0++] * g_6c52a + g_58d2->f0.w;
+            outp(0x42, g_6c54a);
+            outp(0x42, g_6c54a >> 8);
             g_06e2 = bn82c4->f4;
         }
     } else if (g_58d2->off && g_58d2->f2 == 0) {
@@ -78,7 +81,7 @@ void interrupt far F_01FE2(void)
         } else {
             if (t_72ec) {
                 g_06e2 = bn82c4->f4;
-                g_6c52 = (unsigned)bn82c4->f2 * g_58d2->f0.w / 1000;
+                g_6c52a = (unsigned)bn82c4->f2 * g_58d2->f0.w / 1000;
             }
             outp(0x42, g_58d2->f0.b[0]);
             outp(0x42, g_58d2->f0.b[1]);

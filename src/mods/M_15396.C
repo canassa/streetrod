@@ -1,7 +1,6 @@
 #include <dos.h>
 #include "STRUCTS.H"
 #include "M_15396.H"
-#include "GBSS.H"
 #include "MESSAGES.H"
 #include "M_00000.H"
 #include "M_00D58.H"
@@ -22,6 +21,13 @@
 #include <string.h>
 #include <io.h>
 #include <stdlib.h>
+
+static int g_6c68;                         /* DS:6C68 */
+static int *g_6c6a;                        /* DS:6C6A */
+static int *g_6c6c;                        /* DS:6C6C */
+static char *g_6c6e;                       /* DS:6C6E */
+static int *g_6c70a;                       /* DS:6C70 */
+static char g_6c72a[16];                   /* DS:6C72 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Model w_8df0[26];
@@ -114,18 +120,18 @@ static void near F_15409(int n)
         kind = 2;
         g_6c6e = au8dd6y;
         g_6c6c = &g_4eda;
-        g_6c70 = &g_4ed8;
+        g_6c70a = &g_4ed8;
         g_6c6a = &s_8dd2;
     } else {
         kind = 1;
         g_6c6e = aw8dd4x;
         g_6c6c = &g_4ed8;
-        g_6c70 = &g_4eda;
+        g_6c70a = &g_4eda;
         g_6c6a = &h_8bc8;
     }
     if (*g_6c6c == 0) {
-        _dos_close(*g_6c70);
-        *g_6c70 = 0;
+        _dos_close(*g_6c70a);
+        *g_6c70a = 0;
         g_4ee4[12] = kind == 1 ? '1' : (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
         g_4ee4[25] = *g_6c6e;
         tries = 0;
@@ -482,7 +488,7 @@ void F_15CC3(int disks, int mode)
     }
 }
 
-/* F_15EF9: load the game data. Builds the file name g_6c72 from the first two characters of
+/* F_15EF9: load the game data. Builds the file name g_6c72a from the first two characters of
    au8dd6y and the text g_4ea2 points to (g_4ea2 ends up behind its terminator), opens it and
    reads the 13 blocks of the data table (buffer g_4ea4[i], size g_4ebe[i]); any failure shows an
    error text. Ends by loading the hall of fame (F_16089) */
@@ -497,12 +503,12 @@ void F_15EF9(void)
     char *drive;
     int j;
 
-    drive = g_6c72;
+    drive = g_6c72a;
     *drive++ = au8dd6y[0];
     *drive++ = au8dd6y[1];
     while (*drive++ = *g_4ea2++)
         ;
-    if (_dos_open(g_6c72, 0, &fd)) {
+    if (_dos_open(g_6c72a, 0, &fd)) {
         F_1174E("Can't open data file");
         F_00FEA();
     }
@@ -516,10 +522,10 @@ void F_15EF9(void)
     F_16089();
 }
 
-/* F_15FBD: make sure the game disk is in the drive: tries to open the file g_6c72 (asking for
+/* F_15FBD: make sure the game disk is in the drive: tries to open the file g_6c72a (asking for
    disk 2 again and again) and closes it. From the third drive on (g_6c68 > 2, a hard disk) it
    returns the drive letter code g_6c68 + 0x40 at once. Otherwise returns the first character of
-   g_6c72 */
+   g_6c72a */
 
 
 
@@ -532,7 +538,7 @@ int F_15FBD(void)
     if (g_6c68 > 2)
         return (char)(g_6c68 + 0x40);
     for (;;) {
-        if (_dos_open(g_6c72, 0, &file)) {
+        if (_dos_open(g_6c72a, 0, &file)) {
             if (++tries > 3)
                 F_00FEA();
             g_4ee4[12] = (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
@@ -541,7 +547,7 @@ int F_15FBD(void)
         } else {
             _dos_close(file);
             F_15409(1000);
-            return g_6c72[0];
+            return g_6c72a[0];
         }
     }
 }

@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "STRUCTS.H"
 #include "M_02FC8.H"
-#include "GBSS.H"
 #include "M_00000.H"
 #include "M_0F38A.H"
 #include "M_10B7C.H"
@@ -10,6 +9,8 @@
 #include "M_14C90.H"
 #include "M_15396.H"
 #include "M_19ED0.H"
+
+static int g_score;                        /* DS:6C5E */
 
 static int near score_index(void);
 static int near entry_beats_score(int i);

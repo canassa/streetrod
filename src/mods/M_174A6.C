@@ -2,7 +2,6 @@
 #include <dos.h>
 #include "STRUCTS.H"
 #include "M_174A6.H"
-#include "GBSS.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_036A8.H"
@@ -23,6 +22,8 @@
 #include "M_23262.H"
 #include "M_24E78.H"
 #include "M_25954.H"
+
+static struct Rect g_6cbc;                 /* DS:6CBC */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Bitmap am6e68x[12];

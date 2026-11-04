@@ -14,7 +14,11 @@ def generate(con):
 
     out = [_BANNER.format(name="GLOBALS.H", how="`./sr global`"),
            "#ifndef GLOBALS_H", "#define GLOBALS_H", '#include "STRUCTS.H"', ""]
+    from . import fileheaders
+    local = fileheaders.local_statics()   # file-local: declared only by their own sources
     for g in con.execute("SELECT off, name, decl FROM globals ORDER BY off"):
+        if g["name"] in local:
+            continue
         if g["decl"]:
             out.append(f"extern {g['decl'].replace('@', g['name'])};".ljust(56) + f"/* DS:{g['off']:04X} */")
         else:
@@ -38,7 +42,6 @@ def generate(con):
     out += ["", "#endif", ""]
     _write(inc / "PROTOS.H", "\n".join(out))
 
-    from . import fileheaders           # per-file headers (the game sources use these)
     missing = fileheaders.generate(con)
     if missing:
         print("warning: no source defines " + ", ".join(missing[:12]) + (" ..." if len(missing) > 12 else ""))

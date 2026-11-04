@@ -1,11 +1,12 @@
 #include <dos.h>
 #include "STRUCTS.H"
 #include "M_036A8.H"
-#include "GBSS.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_113A2.H"
 #include <malloc.h>
+
+static unsigned g_6c60;                    /* DS:6C60 */
 
 static void near F_03614(int reset);
 

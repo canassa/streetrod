@@ -1,7 +1,6 @@
 #include <string.h>
 #include "STRUCTS.H"
 #include "M_00D58.H"
-#include "GBSS.H"
 #include "HOTSPOT.H"
 #include "MESSAGES.H"
 #include "M_02B9A.H"
@@ -9,6 +8,9 @@
 #include "M_0E56A.H"
 #include "M_113A2.H"
 #include "M_15236.H"
+
+static int g_6c4c;                         /* DS:6C4C */
+static int g_6c50a;                        /* DS:6C50 */
 
 static struct Node * near F_03FF0(int idx, int a);
 
@@ -71,60 +73,60 @@ void F_01BAE(void)
             break;
         }
         if (g_6c4c == 10 && g_06aa != 10) {
-            g_6c50 = num - g_06a8++ - 1;
+            g_6c50a = num - g_06a8++ - 1;
             g_06a8 = g_06a8 % num;
         } else
-            g_6c50 = random_int(num + k);
+            g_6c50a = random_int(num + k);
         switch (g_6c4c) {
         case 21:
-            if ((g_6c50 >= 0 && g_6c50 < 9) || g_6c50 == 12)
-                g_6c50 = 9;
+            if ((g_6c50a >= 0 && g_6c50a < 9) || g_6c50a == 12)
+                g_6c50a = 9;
             if (g_06aa == 28)
-                g_6c50 = 11;
+                g_6c50a = 11;
             break;
         case 20:
-            g_6c50 = g_06b4[g_06b2++];
-            if (g_6c50 == 2)
+            g_6c50a = g_06b4[g_06b2++];
+            if (g_6c50a == 2)
                 g_06b2 = 0;
             break;
         case 23:
-            if (g_6c50)
+            if (g_6c50a)
                 break;
         case 2:
-            g_6c50 = 1;
+            g_6c50a = 1;
             break;
         case 4:
             if (g_06a8 < 11)
-                g_6c50 = 0;
+                g_6c50a = 0;
             else
-                g_6c50 = num - 1;
+                g_6c50a = num - 1;
             break;
         case 34:
         case 41:
-            g_6c50 = 0;
+            g_6c50a = 0;
             break;
         case 36:
             if (g_06aa == 36)
-                g_6c50 = 0;
+                g_6c50a = 0;
             break;
         case 11:
             if (g_06aa == 11)
-                g_6c50 = 10;
+                g_6c50a = 10;
             break;
         case 27:
-            g_6c50 = 5;
+            g_6c50a = 5;
             break;
         case 7:
             if (a_7eaap.m7eb0 == 0)
-                g_6c50 = 0;
+                g_6c50a = 0;
             break;
         }
         if (g_6c4c == 8)
             g_06ae = 160;
-        if (g_6c50 >= 0) {
-            if (num > g_6c50) {
-                g_47cc = g_579f[g_6c4c][g_6c50].key;
-                mask = g_579f[g_6c4c][g_6c50].val + 0x32;
+        if (g_6c50a >= 0) {
+            if (num > g_6c50a) {
+                g_47cc = g_579f[g_6c4c][g_6c50a].key;
+                mask = g_579f[g_6c4c][g_6c50a].val + 0x32;
                 step = g_2bad[g_6c4c];
                 for (; step - g_2bad[g_6c4c] < 32 && g_09f4[step].f6 != mask; step++)
                     ;
@@ -139,17 +141,17 @@ void F_01BAE(void)
                         g_06b0 = cy;
                 }
             } else {
-                if (num == g_6c50)
+                if (num == g_6c50a)
                     g_47cc = 0x1c;
-                if (num + 1 == g_6c50)
+                if (num + 1 == g_6c50a)
                     g_47cc = 0x39;
-                if (num + 2 == g_6c50)
+                if (num + 2 == g_6c50a)
                     g_47cc = 0x48;
-                if (num + 3 == g_6c50)
+                if (num + 3 == g_6c50a)
                     g_47cc = 0x50;
-                if (num + 4 == g_6c50)
+                if (num + 4 == g_6c50a)
                     g_47cc = 0x4b;
-                if (num + 5 == g_6c50)
+                if (num + 5 == g_6c50a)
                     g_47cc = 0x4d;
             }
         } else

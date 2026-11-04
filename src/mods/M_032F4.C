@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include "STRUCTS.H"
 #include "M_02FC8.H"
-#include "GBSS.H"
 #include "M_06476.H"
+
+static int g_score;                        /* DS:6C5E */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 int bucount;

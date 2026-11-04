@@ -1,6 +1,5 @@
 #include "STRUCTS.H"
 #include "M_08EA8.H"
-#include "GBSS.H"
 #include "M_00D58.H"
 #include "M_02B9A.H"
 #include "M_02DB6.H"
@@ -13,6 +12,8 @@
 #include "M_1628A.H"
 #include "M_16D1A.H"
 #include "SLOTS.H"
+
+static int g_6c82;                         /* DS:6C82 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Eng g79e2g;

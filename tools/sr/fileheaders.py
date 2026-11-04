@@ -39,6 +39,22 @@ def _strip(text):
     return re.sub(r'"(\\.|[^"\\])*"|\'(\\.|[^\'\\])*\'', '""', text)
 
 
+def file_statics(path):
+    """Names of the uninitialized file-scope `static` variables a C source defines."""
+    if path.suffix.upper() != '.C':
+        return set()
+    out = set()
+    for ln in _strip(path.read_text(encoding='latin-1')).splitlines():
+        if re.match(r'static\s[^;{}=()]*;\s*$', ln):
+            out.add(re.search(r'(\w+)\s*(\[[^]]*\]\s*)*;', ln).group(1))
+    return out
+
+
+def local_statics():
+    """Every file-local uninitialized static of the game sources."""
+    return {n for _, srcs in owners_layout() for p in srcs for n in file_statics(p)}
+
+
 def _defines(path, names):
     """Names from `names` that this source defines (C file-scope definitions, MASM PUBLICs)."""
     text = _strip(path.read_text(encoding='latin-1'))
@@ -74,8 +90,11 @@ def generate(con, rewrite_sources=False):
                          "'%interrupt%' OR proto LIKE '%far @%') AND kind != 'crt'"):
         n = f['name'] or f"F_{f['addr']:05X}"
         funcs[n] = (f['addr'], f"{f['proto'].replace('@', n)};", f"0x{f['addr']:05X}")
+    files = owners_layout()
+    local = local_statics()
+    glob = {n: v for n, v in glob.items() if n not in local}
     names = set(glob) | set(far) | set(funcs)
-    owner, files = {}, owners_layout()
+    owner = {}
     for stem, srcs in files:
         for p in srcs:
             for n in _defines(p, names):
@@ -97,7 +116,7 @@ def generate(con, rewrite_sources=False):
         _write(inc / f'{stem}.H', '\n'.join(out))
         made.add(stem)
     for p in inc.glob('*.H'):          # headers of files that no longer define anything
-        if p.stem.upper() not in made | _KEEP and p.read_text(errors='replace').startswith('/* ' + p.name + ' - what'):
+        if p.stem.upper() not in made | _KEEP and p.read_text(errors='replace').startswith('/* ' + p.name + ' - declarations of what'):
             p.unlink()
     missing = sorted(n for n in names if n not in owner and n not in _SYSTEM)
     if rewrite_sources:

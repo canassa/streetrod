@@ -1,6 +1,5 @@
 #include "STRUCTS.H"
 #include "M_0914C.H"
-#include "GBSS.H"
 #include "M_00D58.H"
 #include "M_02B9A.H"
 #include "M_0542E.H"
@@ -10,6 +9,10 @@
 #include "M_15396.H"
 #include "M_174A6.H"
 #include <stdlib.h>
+
+static int g_6c86;                         /* DS:6C86 */
+static int g_6c8aaav[12];                  /* DS:6C8A */
+static int g_6ca2;                         /* DS:6CA2 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 int bn7648;
@@ -125,7 +128,7 @@ static void near F_09646(int flag)
                 found = 1;
             }
         if (found) {
-            g_6c8a[g_6c86++] = result;
+            g_6c8aaav[g_6c86++] = result;
             map[result].taken = 1;
         }
     } while (found);
@@ -133,12 +136,12 @@ static void near F_09646(int flag)
     k = g_6c86;
     for (; flag == 0 && k > 6; k--)
         if (map[k - 1].dk > 1)
-            g_6c8a[k - 1] = g_6c8a[m++];
+            g_6c8aaav[k - 1] = g_6c8aaav[m++];
     if (g_0610) {
-        g_6c8a[g_6c86++] = g_4ff4;
-        g_6c8a[g_6c86++] = g_4ff4;
+        g_6c8aaav[g_6c86++] = g_4ff4;
+        g_6c8aaav[g_6c86++] = g_4ff4;
         if (g_6ca2) {
-            g_6c8a[(g_6c86 = 1) - 1] = g_4ff4;
+            g_6c8aaav[(g_6c86 = 1) - 1] = g_4ff4;
         }
         g_6ca2 = 0;
     }
@@ -157,9 +160,9 @@ static int near F_0984E(int chance, int arg)
     F_09646(arg);
     if (g_6c86 == 0)
         return 0x15;
-    pick = g_6c8a[random_int(g_6c86)];
+    pick = g_6c8aaav[random_int(g_6c86)];
     if (pick == g_51f8)
-        pick = g_6c8a[random_int(g_6c86)];
+        pick = g_6c8aaav[random_int(g_6c86)];
     g_51f8 = pick;
     return pick;
 }
