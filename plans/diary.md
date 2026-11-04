@@ -1002,3 +1002,9 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - Directory bytes 7..22 are dictionary tokens, not RGB palette entries. Picture color indices use VIDEO.C's g_palette by default; DASH.C changes to g_introPalette for the credits. The command exposes explicit palette choices rather than executing scene-specific animation/palette scripts. CGA uses bright cyan/magenta/white by default, with the alternate bright green/red/yellow palette available. Tandy output remains outside this command's supported modes.
 - Packed spans include the leading BC sentinel but exclude the trailing sentinel; adjacent entries share that boundary byte. Word +4 is unused by the game and does not describe the actual expanded length of mask-only EGA pictures. Sprite transparency comes from the complement of the OR of the EGA planes, or the stored CGA mask (all visible mask pixels in the resources are 0 or 3). Details and examples are recorded in the sr-cli skill's Picture resources section.
+
+## 2026-11-05 13:00 CET: `./sr pic` decodes the game's pictures
+
+### What I did
+- New `./sr pic` (tools/sr/pics.py): reads the resource libraries in orig/freeware (LIB1/LIB2 and the CGA variants), decodes a picture exactly as the game's loader and RLE unpacker do (EGA planar and CGA forms), and writes a PNG or prints it inline with the kitty graphics protocol (`--list`, `--scale`, `--cells` to cut sprite sheets like `cut_sheet`, palettes). All 554 pictures decode. Done by a Codex agent.
+- Used it on the walker's sprite sheets: two 11-frame rows of a blonde woman on roller skates carrying a tray, facing right then left. The drive-in figure is a roller-skating carhop.
