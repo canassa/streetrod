@@ -26,9 +26,10 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   its spelling (`g_drawnMinX`, `g_sprPageRing`) was picked to fit.
 - **Local variables.** MSC's slot order depends on a hash of the names (CLAUDE.md 3).
   Names with digit suffixes come from `./sr layout -w` and only reproduce the frame.
-- **Struct types and members** (`src/include/STRUCTS.H`). The sizes and offsets come from
-  the code. Tags and member names are invented. A member that no code touches is padding
-  (`pad`, `fNN`).
+- **Struct types and members** (shared types in `src/include/STRUCTS.H`, private types in
+  their owner's header). Sizes and offsets come from the code; tags and member names are
+  invented. Untouched members are unused storage (`pad`, `fNN`); explicit spare fields
+  are distinguished from the compiler's automatic alignment padding.
 - **Files.** Each object's file is named for what its code does (GARAGE.C, DISK.C,
   CGABLT.C, ...); SCENERY.C/SCENERY2.C and the `src/data/` names likewise describe their
   data. These are labels for recovered objects: a file boundary is evidence, its name is

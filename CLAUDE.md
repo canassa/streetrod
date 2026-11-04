@@ -165,7 +165,7 @@ As in the original, each source file has its own header: `src/include/<FILE>.H` 
 - **Far data:** `extern TYPE far NAME[];   /* SSSS:OOOO */` in the defining file's header.
 - **Far functions:** `TYPE NAME(ARGS);   /* 0xAAAAA */` in the defining file's header. A call without a prototype fails the check (MSC's C4071 at `/W3`). A CRT function may have several library names (`aFlmul`/`aFulmul`); they come from the library (`./sr crtnames`) and `refs` accepts any.
 - **Near functions other files call:** about 29 near functions are called (`call near`, no `push cs`) from other objects sharing the code segment. They are public `T near F(...)` definitions (not `static`), prototyped `T near F(ARGS);   /* 0xAAAAA */` in the owner's header; their callers include that header and do not forward-declare them. Only file-local near functions stay `static`.
-- **Struct types:** `src/include/STRUCTS.H`, hand-written, one definition per type.
+- **Struct types:** shared types in `src/include/STRUCTS.H`; types used by only one module in that module's header. Hand-written, one definition per type.
 - **Allowed in a `.C`:** standard MSC headers, and `static ... near` forward declarations of its own static functions.
 - **Asm:** `EXTRN` names must be the declared names (the `refs` check enforces it).
 
