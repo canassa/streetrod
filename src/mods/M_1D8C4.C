@@ -1,3 +1,5 @@
+#include <conio.h>
+#include <stdlib.h>
 #include "STRUCTS.H"
 #include "M_1D8C4.H"
 #include "M_00000.H"
@@ -5,8 +7,6 @@
 #include "M_10B7C.H"
 #include "M_1947A.H"
 #include "M_1D0C8.H"
-#include <conio.h>
-#include <stdlib.h>
 
 static void near F_1D8C4(struct Rect *rect, struct Bitmap far *bm2, struct Bitmap far *bm1, int flag);
 

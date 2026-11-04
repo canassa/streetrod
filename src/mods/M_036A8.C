@@ -1,11 +1,11 @@
 #include <dos.h>
+#include <malloc.h>
 #include "STRUCTS.H"
 #include "M_036A8.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_03614.H"
 #include "M_113A2.H"
-#include <malloc.h>
 
 static unsigned g_6c60;                    /* DS:6C60 */
 

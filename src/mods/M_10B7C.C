@@ -1,3 +1,5 @@
+#include <conio.h>
+#include <dos.h>
 #include "STRUCTS.H"
 #include "M_10B7C.H"
 #include "M_00000.H"
@@ -13,8 +15,6 @@
 #include "M_19ED0.H"
 #include "SCRATCH.H"
 #include "SCREENS.H"
-#include <conio.h>
-#include <dos.h>
 
 static struct Cmd *g_cmd;                  /* DS:6C38 */
 static struct Obj *g_obj;                  /* DS:6C3A */

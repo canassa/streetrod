@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "STRUCTS.H"
 #include "M_1947A.H"
 #include "M_00000.H"
@@ -9,7 +10,6 @@
 #include "M_1923C.H"
 #include "M_193D4.H"
 #include "M_19ED0.H"
-#include <stdlib.h>
 
 /* F_1947A: intersect rectangles a and b into out, snapped to the r_vid.mask pixel mask; 0 if they do not overlap */
 

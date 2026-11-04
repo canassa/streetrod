@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <conio.h>
 #include "STRUCTS.H"
 #include "M_06476.H"
 #include "HOTSPOT.H"
@@ -23,10 +27,6 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 #include "M_1A9B2.H"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <conio.h>
 
 static int near F_0653C(int v, int *out);
 static void near F_068E8(int n, int x, int y);

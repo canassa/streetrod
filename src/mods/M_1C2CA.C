@@ -1,6 +1,7 @@
 #include <memory.h>
 #include <dos.h>
 #include <stdlib.h>
+#include <conio.h>
 #include "STRUCTS.H"
 #include "M_1C2CA.H"
 #include "CGAFONT.H"
@@ -17,7 +18,6 @@
 #include "M_1D590.H"
 #include "M_1D8C4.H"
 #include "M_1DD22.H"
-#include <conio.h>
 
 /* F_1C2CA: draw a string of 8-pixel-high CGA/Hercules text into a bitmap at pixel x, y, through an 8x80 byte scratch buffer */
 

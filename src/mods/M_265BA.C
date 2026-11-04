@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "STRUCTS.H"
 #include "M_265BA.H"
 #include "M_00000.H"
@@ -11,7 +12,6 @@
 #include "SCREEN2.H"
 #include "SCREENS.H"
 #include "SLOTS.H"
-#include <stdlib.h>
 
 static int g_6dfeaa;                       /* DS:6DFE */
 static int g_6e00;                         /* DS:6E00 */

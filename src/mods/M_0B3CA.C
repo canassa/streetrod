@@ -1,3 +1,7 @@
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <dos.h>
 #include "STRUCTS.H"
 #include "M_0B3CA.H"
 #include "FONTDATA.H"
@@ -32,10 +36,6 @@
 #include "M_19ED0.H"
 #include "M_265BA.H"
 #include "SLOTS.H"
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <dos.h>
 
 static int g_6ca4rz;                       /* DS:6CA4 */
 static int g_6ca6qz;                       /* DS:6CA6 */

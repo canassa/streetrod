@@ -1,7 +1,7 @@
 #include <stdlib.h>
+#include <conio.h>
 #include "STRUCTS.H"
 #include "M_238A2.H"
-#include <conio.h>
 
 static void near F_238A2(unsigned char *p, int n, int len);
 static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int off, int shift);

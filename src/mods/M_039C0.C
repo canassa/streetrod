@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <string.h>
 #include "STRUCTS.H"
 #include "M_039C0.H"
 #include "HOTSPOT.H"
@@ -32,8 +34,6 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 #include "M_265BA.H"
-#include <stdio.h>
-#include <string.h>
 
 static void near F_03C3E(struct Node *p7);
 static int near F_04940(unsigned *price);
