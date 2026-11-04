@@ -470,7 +470,7 @@ struct Lims {
     int y2;
 };
 
-/* what g_shifter points at (dash_draw_shifter, dash_init_shifter): number of points, bitmap ids of the two sprites, bitmap
+/* what g_shifterDraw.track points at (dash_draw_shifter, dash_init_shifter): number of points, bitmap ids of the two sprites, bitmap
    height at +6 and a table of (x, y) signed-byte pairs at +8 */
 struct Track {
     int n;

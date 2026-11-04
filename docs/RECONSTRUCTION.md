@@ -231,6 +231,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **WheelBackdrop** (`g_wheelBackdrop`, DS:6C22..6C33): dash_load_wheel chooses each saved wheel page and its Y coordinate together, and dash_draw_wheel reads both to restore the same rectangle. Shifter state remains separate. Separate globals also match; this grouping is a natural reconstruction choice.
 
+- **ShifterDraw** (`g_shifterDraw`, DS:6C34..6C37): dash_init_shifter selects a shifter track and resets its knob position; dash_draw_shifter uses both to restore the old knob and draw the new one. Separate globals also match; this grouping is a natural reconstruction choice.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only

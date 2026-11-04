@@ -4,6 +4,11 @@
 #define DASH_H
 #include "STRUCTS.H"
 
+struct ShifterDraw {
+    struct Track *track;
+    int knobPosition;
+};
+
 struct WheelBackdrop {
     int y[3];
     struct Bitmap far *pages[3];
