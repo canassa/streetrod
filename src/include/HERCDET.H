@@ -6,8 +6,8 @@
 
 extern unsigned char g_5580[543];                       /* DS:5580 */
 extern struct KeyMap *g_579f[];                         /* DS:579F */
-void F_0E56A(void);                                     /* 0x0E56A */
-int F_0E584(void);                                      /* 0x0E584 */
-int F_0E5C3(void);                                      /* 0x0E5C3 */
+void hercdet_ram_test(void);                            /* 0x0E56A */
+int hercdet_detect(void);                               /* 0x0E584 */
+int hercdet_bios_mono(void);                            /* 0x0E5C3 */
 
 #endif

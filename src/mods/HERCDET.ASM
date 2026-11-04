@@ -120,26 +120,26 @@ _g_579f DW      42                       ; DS:579F struct KeyMap *[]
 
         .CODE S0000_TEXT
 
-; F_0E56A @ 0000:E56A (linear 0x0E56A, 26 bytes)
+; hercdet_ram_test @ 0000:E56A (linear 0x0E56A, 26 bytes)
 ; Is there RAM at es:3FFFh that holds a written value? Result in ZF
 ; (equal: the byte at 7FFFh read back the same after the increment).
 
-        PUBLIC  _F_0E56A
-_F_0E56A  PROC  FAR
+        PUBLIC  _hercdet_ram_test
+_hercdet_ram_test  PROC  FAR
         mov     bl,es:[7FFFh]
         mov     cl,es:[3FFFh]
         inc     BYTE PTR es:[3FFFh]
         cmp     bl,es:[3FFFh]
         mov     es:[3FFFh],cl
         ret
-_F_0E56A  ENDP
+_hercdet_ram_test  ENDP
 
-; F_0E584 @ 0000:E584 (linear 0x0E584, 63 bytes)
+; hercdet_detect @ 0000:E584 (linear 0x0E584, 63 bytes)
 ; Hercules detection: does the status port 3BAh toggle bit 7, and is
 ; there memory at B000h that survives the config switch.
 
-        PUBLIC  _F_0E584
-_F_0E584  PROC  FAR
+        PUBLIC  _hercdet_detect
+_hercdet_detect  PROC  FAR
         mov     bx,100h
         mov     dx,3BAh
         in      al,dx
@@ -159,12 +159,12 @@ wait2:
 toggled:
         mov     ax,0B000h
         mov     es,ax
-        call    _F_0E56A
+        call    _hercdet_ram_test
         jne     found
         mov     al,1
         mov     dx,3BFh
         out     dx,al
-        call    _F_0E56A
+        call    _hercdet_ram_test
         je      none
 found:
         mov     al,1
@@ -174,13 +174,13 @@ none:
 done:
         or      al,al
         ret
-_F_0E584  ENDP
+_hercdet_detect  ENDP
 
-; F_0E5C3 @ 0000:E5C3 (linear 0x0E5C3, 14 bytes)
+; hercdet_bios_mono @ 0000:E5C3 (linear 0x0E5C3, 14 bytes)
 ; BIOS equipment word: 0x30 in the video bits means monochrome.
 
-        PUBLIC  _F_0E5C3
-_F_0E5C3  PROC  FAR
+        PUBLIC  _hercdet_bios_mono
+_hercdet_bios_mono  PROC  FAR
         int     11h
         and     ax,30h
         cmp     ax,30h
@@ -188,6 +188,6 @@ _F_0E5C3  PROC  FAR
         mov     ax,0
 mono:
         ret
-_F_0E5C3  ENDP
+_hercdet_bios_mono  ENDP
 
         END

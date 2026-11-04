@@ -39,7 +39,7 @@ void egablit_copy(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *re
     int o;                /* first plane */
 
     N = (flags & 2) && dst->alt.p && src->alt.p;
-    if (!F_10A00(dst, src, rect, &h))
+    if (!dash_clip_blt(dst, src, rect, &h))
         return;
     if (flags & 1) {
         m = dst->bits.p;
@@ -134,7 +134,7 @@ void egablit_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitma
         p = 0;
         n = 0;
     }
-    if (!F_10A00(bm1, bm2, r, &i))
+    if (!dash_clip_blt(bm1, bm2, r, &i))
         return;
     g = bm1->pitch;
     N = bm1->height * g;
@@ -200,7 +200,7 @@ void egablit_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *
     int m;                /* current plane */
     int n;                /* bm1 plane size */
 
-    if (!F_10A00(bm1, bm2, r, &e))
+    if (!dash_clip_blt(bm1, bm2, r, &e))
         return;
     d = bm1->pitch;
     b = e.w;

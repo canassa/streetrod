@@ -20,10 +20,10 @@
 
 #pragma intrinsic(memcpy)
 
-static int near F_1287B(void);
-static int near F_1289C(int *px, int *py);
+static int near engine_index(void);
+static int near carb_pos(int *px, int *py);
 static void near F_12CD1(void);
-static void near F_133CB(struct Hot *arr, struct Hot *item, int num);
+static void near insert_hot(struct Hot *arr, struct Hot *item, int num);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 void (far *bl78ce)(int, int, int, int, int, struct Bitmap far *);
@@ -204,11 +204,11 @@ int ap82acz;
 int hz82ae;
 int g82b2t;
 
-/* F_1287B @ 0F38:34FB (linear 0x1287B, 33 bytes)
+/* engine_index @ 0F38:34FB (linear 0x1287B, 33 bytes)
 
    Slot number for the item in o_8290: 0x434..0x436 map to 0..2 (anything else is returned as it is) */
 
-static int near F_1287B(void)
+static int near engine_index(void)
 {
     switch (o_8290[0]) {
     case 0x434:
@@ -220,11 +220,11 @@ static int near F_1287B(void)
     }
 }
 
-/* F_1289C @ 0F38:351C (linear 0x1289C, 109 bytes)
+/* carb_pos @ 0F38:351C (linear 0x1289C, 109 bytes)
 
    Position (x, y) of the current slot in the lower table; returns the offset for the item type */
 
-static int near F_1289C(int *px, int *py)
+static int near carb_pos(int *px, int *py)
 {
     int r;
     int t;
@@ -245,20 +245,20 @@ static int near F_1289C(int *px, int *py)
     return r;
 }
 
-/* F_12909 @ 0F38:3589 (linear 0x12909, 91 bytes)
+/* gargfx_part_pos @ 0F38:3589 (linear 0x12909, 91 bytes)
 
    Screen position (*px, *py) of the current slot, by game mode hz82ae */
 
-void F_12909(int *px, int *py)
+void gargfx_part_pos(int *px, int *py)
 {
     int n;
 
     switch (hz82ae) {
     default:
-        F_1289C(px, py);
+        carb_pos(px, py);
         break;
     case 0:
-        *px = g_0702[n = F_1287B()][0];
+        *px = g_0702[n = engine_index()][0];
         *py = g_0702[n][1];
         break;
     case 1:
@@ -268,23 +268,23 @@ void F_12909(int *px, int *py)
     }
 }
 
-/* F_12964 @ 0F38:35E4 (linear 0x12964, 179 bytes)
+/* gargfx_bolt_pos @ 0F38:35E4 (linear 0x12964, 179 bytes)
 
    Position (*px, *py) for the current item: looked up per slot, with an offset added in one mode */
 
-void F_12964(int *px, int *py)
+void gargfx_bolt_pos(int *px, int *py)
 {
     int slot;
     int item;
 
     switch (hz82ae) {
     default:
-        slot = F_1289C(px, py);
+        slot = carb_pos(px, py);
         *px += g_076a[(slot += g82b2t) * 2];
         *py += g_076a[slot * 2 + 1];
         break;
     case 0:
-        *px = g_070e[(slot = F_1287B()) * 2];
+        *px = g_070e[(slot = engine_index()) * 2];
         *py = g_070e[slot * 2 + 1];
         break;
     case 1:
@@ -298,12 +298,12 @@ void F_12964(int *px, int *py)
     }
 }
 
-/* F_12A17 @ 0F38:3697 (linear 0x12A17, 357 bytes)
+/* gargfx_draw_bolt @ 0F38:3697 (linear 0x12A17, 357 bytes)
 
    Draw picture n (item id) at the current slot position and restore the background strip
    behind it. With the screen shadowed the picture is first copied into a bitmap 8 pixels wider. */
 
-void F_12A17(int n)
+void gargfx_draw_bolt(int n)
 {
     struct Bitmap far *pict;
     struct Bitmap far *saved;
@@ -315,7 +315,7 @@ void F_12A17(int n)
     int ypos;
 
     flag = 0;
-    F_12964(&px, &ypos);
+    gargfx_bolt_pos(&px, &ypos);
     F_120FE(-4);
     saved = pict = F_15BBE(n, 2);
     ypos -= saved->height;
@@ -338,12 +338,12 @@ void F_12A17(int n)
         F_19438(1);
 }
 
-/* F_12B7C @ 0F38:37FC (linear 0x12B7C, 341 bytes)
+/* gargfx_drop_bolt @ 0F38:37FC (linear 0x12B7C, 341 bytes)
 
    Redraw the marker picture (0x43f) at the current slot position, aligned to the pixel grid.
    With the screen shadowed the area is also copied to the front buffer and a label is drawn beside it. */
 
-void F_12B7C(void)
+void gargfx_drop_bolt(void)
 {
     int ypos;
     int rows;
@@ -354,7 +354,7 @@ void F_12B7C(void)
     struct Blt blt;
     struct Bitmap far *pict;
 
-    F_12964(&xpos, &ypos);
+    gargfx_bolt_pos(&xpos, &ypos);
     x1 = xpos - 2;
     y1 = ypos;
     F_120FE(-4);
@@ -422,12 +422,12 @@ static void near F_12CD1(void)
     }
 }
 
-/* F_12DD8 @ 0F38:3A58 (linear 0x12DD8, 449 bytes)
+/* gargfx_draw_part @ 0F38:3A58 (linear 0x12DD8, 449 bytes)
 
    Draw item picture n at the current slot position, aligned to the pixel grid;
    flag (nonzero) raises it by 20 and skips the blit to the back buffer. Frees the temporary copies. */
 
-void F_12DD8(int n, int flag)
+void gargfx_draw_part(int n, int flag)
 {
     struct Bitmap far *pict;
     struct Bitmap far *saved;
@@ -441,7 +441,7 @@ void F_12DD8(int n, int flag)
     int mask;
 
     z = 0;
-    F_12909(&x, &ypos);
+    gargfx_part_pos(&x, &ypos);
     if (g_06fc)
         F_120FE(-4);
     saved = pict = F_15BBE(n, 2);
@@ -479,12 +479,12 @@ void F_12DD8(int n, int flag)
         F_19438(1);
 }
 
-/* F_12F99 @ 0F38:3C19 (linear 0x12F99, 259 bytes)
+/* gargfx_erase_part @ 0F38:3C19 (linear 0x12F99, 259 bytes)
 
    Draw item picture n at the current slot position, 20 above it, via the r_vid.f8 buffer,
    and copy the area to the front buffer when the screen is shadowed. */
 
-void F_12F99(int n, int flag)
+void gargfx_erase_part(int n, int flag)
 {
     struct Bitmap far *pict;
     long unused;    /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
@@ -494,7 +494,7 @@ void F_12F99(int n, int flag)
     int px;
     int py;
 
-    F_12909(&px, &py);
+    gargfx_part_pos(&px, &py);
     py -= 0x14;
     F_120FE(-3);
     pict = F_15BBE(n, 2);
@@ -513,12 +513,12 @@ void F_12F99(int n, int flag)
         bitmap_copy_box(r_vid.back, r_vid.front, px, py, px + w, py + h);
 }
 
-/* F_1309C @ 0F38:3D1C (linear 0x1309C, 281 bytes)
+/* gargfx_draw_wires @ 0F38:3D1C (linear 0x1309C, 281 bytes)
 
    Draw the current pair of slot pictures: the strip from r_vid.f8 and the sprite ap82acz,
    copying the area to the front buffer when the screen is shadowed. */
 
-void F_1309C(void)
+void gargfx_draw_wires(void)
 {
     int next;
     int ys;
@@ -528,7 +528,7 @@ void F_1309C(void)
     int x2;
     struct Blt blt;
 
-    pair = F_1287B() * 2;
+    pair = engine_index() * 2;
     next = (ap82acz == 0x446) ? pair++ : pair + 1;
     F_120FE(-3);
     blt.w = 0x20;
@@ -542,12 +542,12 @@ void F_1309C(void)
         bitmap_copy_box(r_vid.back, r_vid.front, x2 > xs ? xs : x2, y2 > ys ? ys : y2, blt.w + x2 + 0x18, blt.h + y2 + 0x18);
 }
 
-/* F_131B5 @ 0F38:3E35 (linear 0x131B5, 248 bytes)
+/* gargfx_draw_parts @ 0F38:3E35 (linear 0x131B5, 248 bytes)
 
    Draw the item pictures of a car's parts for slots 0, 1 and then 2..4, with the
    screen shadow off (g_06fc). Loads the r_vid.f8 strip first when it isn't there yet. */
 
-void F_131B5(struct Car *car)
+void gargfx_draw_parts(struct Car *car)
 {
     int mode;
     int slot;
@@ -562,19 +562,19 @@ void F_131B5(struct Car *car)
         F_1592E(0x42d, r_vid.f8);
     if (type = o_8290[0]) {
         hz82ae = 0;
-        F_12DD8(type, 0);
+        gargfx_draw_part(type, 0);
         if (type == 0x434)
             g_078c[0] = 4;
         else
             g_078c[0] = 5;
         if (type = o_8290[1]) {
             hz82ae = 1;
-            F_12DD8(type, 0);
+            gargfx_draw_part(type, 0);
             slot = g_078c[g_4806[car->rack.s[1]->idx].f2];
             for (type = 0; type < 3; type++) {
                 hz82ae = slot++;
                 if (other = o_8290[type + 2])
-                    F_12DD8(other, 0);
+                    gargfx_draw_part(other, 0);
             }
         }
     }
@@ -582,13 +582,13 @@ void F_131B5(struct Car *car)
     hz82ae = mode;
 }
 
-/* F_132AD @ 0F38:3F2D (linear 0x132AD, 286 bytes)
+/* gargfx_draw_bolts @ 0F38:3F2D (linear 0x132AD, 286 bytes)
 
    Redraw all nine slot pictures (a and b give each slot's mode and sub-mode) into the
    back buffer over the r_vid.f8 strip, then the ap82acz sprite, and an optional label when flag is set.
    The screen shadow r_vid.f16 is switched off meanwhile and the area is copied to the front afterwards. */
 
-void F_132AD(int *a, int *b, int flag)
+void gargfx_draw_bolts(int *a, int *b, int flag)
 {
     int prev2;
     int prev;
@@ -612,11 +612,11 @@ void F_132AD(int *a, int *b, int flag)
         if (id = af829ax[i]) {
             hz82ae = a[i];
             g82b2t = b[i];
-            F_12A17(id);
+            gargfx_draw_bolt(id);
         }
     }
     if (ap82acz)
-        F_1309C();
+        gargfx_draw_wires();
     if (flag) {
         F_119B8(0x4c6, 0x60, 0x94, -1);
         blt.h = 0xaf;
@@ -627,12 +627,12 @@ void F_132AD(int *a, int *b, int flag)
     g82b2t = prev2;
 }
 
-/* F_133CB @ 0F38:404B (linear 0x133CB, 127 bytes)
+/* insert_hot @ 0F38:404B (linear 0x133CB, 127 bytes)
 
    Insert item into the array arr of n records, which is sorted by (x1, y1): it goes before
    the first record that compares greater, the rest are moved up by one. */
 
-static void near F_133CB(struct Hot *arr, struct Hot *item, int n)
+static void near insert_hot(struct Hot *arr, struct Hot *item, int n)
 {
     struct Hot *p;
     int i;
@@ -653,14 +653,14 @@ static void near F_133CB(struct Hot *arr, struct Hot *item, int n)
     *p = *item;
 }
 
-/* F_1344A @ 0F38:40CA (linear 0x1344A, 411 bytes)
+/* gargfx_build_hots @ 0F38:40CA (linear 0x1344A, 411 bytes)
 
    Build the sorted list of menu items in g_184c: the 3 fixed records are copied from g_1948,
    then for each of 9 slots (grouped by the counts in g_5130) that is enabled in o_8290 an item is
-   inserted at the position F_12964 gives for the slot's coordinates, plus a last item picked by
+   inserted at the position gargfx_bolt_pos gives for the slot's coordinates, plus a last item picked by
    ap82acz. hz82ae/g82b2t are saved and restored around it. */
 
-void F_1344A(int *xs, int *ys)
+void gargfx_build_hots(int *xs, int *ys)
 {
     int lane;
     int num;
@@ -681,13 +681,13 @@ void F_1344A(int *xs, int *ys)
         if (o_8290[lane]) {
             hz82ae = xs[i];
             g82b2t = ys[i];
-            F_12964(&x, &y);
+            gargfx_bolt_pos(&x, &y);
             x += 0x60;
             y += 9;
             g_0796.f6 = i + 1;
             g_0796.x2 = (g_0796.x1 = x - 2) + 5;
             g_0796.y1 = (g_0796.y2 = y + 2) - 15;
-            F_133CB(g_184c, &g_0796, num);
+            insert_hot(g_184c, &g_0796, num);
             num++;
         }
         if (++j == g_5130[lane]) {
@@ -698,10 +698,10 @@ void F_1344A(int *xs, int *ys)
     if (o_8290[0]) {
         g_0796.f4 = g_2ba7;
         g_0796.f6 = 13;
-        i = (ap82acz == 0x446) + F_1287B() * 2;
+        i = (ap82acz == 0x446) + engine_index() * 2;
         g_0796.x2 = (g_0796.x1 = g_071a[i * 2] + 0x5b) + 10;
         g_0796.y2 = (g_0796.y1 = g_071a[i * 2 + 1] + 2) + 15;
-        F_133CB(g_184c, &g_0796, num);
+        insert_hot(g_184c, &g_0796, num);
         num++;
     }
     g_184c[num].f0 = 9;

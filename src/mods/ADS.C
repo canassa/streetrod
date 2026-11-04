@@ -100,7 +100,7 @@ int ads_run(void)
             F_120FE(-4);
             x_colors = bustyle->hilite;
             g_051c = ad_picture(2);
-            F_13682(r_vid.back, 0x40, 0, 0xc0, 0xbe);
+            draw_fill_rect(r_vid.back, 0x40, 0, 0xc0, 0xbe);
             g_0526 = g_052a = 0;
             b_78a2(g_051c, r_vid.back, (struct Blt *)&g_0522, 1);
             g_0526 = 0x40;
@@ -116,7 +116,7 @@ int ads_run(void)
             cntz = 0;
             a_7eaap.m7ebe = i;
             do {
-                F_1377F(r_vid.back, 0x44, y + 1, 0xb8);
+                draw_hline(r_vid.back, 0x44, y + 1, 0xb8);
                 y += 3;
                 if (y > 0xbd)
                     break;
@@ -150,7 +150,7 @@ int ads_run(void)
             g_0536 = 1;
             row7->y2 = y + 1 > 0xbd ? 0xbd : y + 1;
             if (row7->y2 < 0xbd)
-                F_1377F(r_vid.back, 0x44, y + 1, 0xb8);
+                draw_hline(r_vid.back, 0x44, y + 1, 0xb8);
             row7++;
             while (row7->f6 >= 0) {
                 row7->f0 = 0xe;

@@ -313,9 +313,9 @@ top:
                 done = 1;
                 F_11540(-(pos <= a_7eaap.m7eaa ? pos : (int)a_7eaap.m7eaa));
                 if (dl.f0e == 0 || pos > a_7eaap.m7eaa) {
-                    if (F_111F2(2)) {
+                    if (video_anim_active(2)) {
                         F_16993(0);
-                        F_10D6C(2);
+                        video_anim_stop(2);
                     }
                     if (dl.f10)
                         goto tail;
@@ -345,7 +345,7 @@ top:
                 show_tank_cap(&dl, 0x471);
                 dl.f12 = 1;
                 F_120FE(dl.f0c = 1);
-                F_11149(2);
+                video_anim_start(2);
                 F_16993(1);
                 dl.f1a = 1;
             }
@@ -399,9 +399,9 @@ top:
             if (g_6ca4rz == 0)
                 break;
             if (dl.f0c == 1) {
-                if (F_111F2(2)) {
+                if (video_anim_active(2)) {
                     F_16993(0);
-                    F_10D6C(2);
+                    video_anim_stop(2);
                 }
                 show_tank_cap(&dl, 0x472);
                 dl.f12 = 0;
@@ -416,7 +416,7 @@ top:
                 show_tank_cap(&dl, 0x471);
                 dl.f12 = 1;
                 F_120FE(dl.f0c = 1);
-                F_11149(2);
+                video_anim_start(2);
                 F_16993(1);
                 F_13F21(1);
                 spots_cap();
@@ -554,7 +554,7 @@ static void near show_crash(void)
     pkt.sx = pkt.sy = pkt.dx = 0;
     pkt.dy = fast ? 0x78 : 0x77;
     (*b_78a2)(b, r_vid.back, &pkt, 1);
-    F_10414(bp82c2);
+    dash_steer_marker(bp82c2);
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
     if (e_78e0.f0 > 0x5a) {
         for (i = 0; i < 3; i++) {
@@ -720,7 +720,7 @@ int near race_outcome(void)
                 a_7eaap.m7eb0->f26 = a_7eaap.m7eb2->f26;
                 a_7eaap.m7eb2 = a_7eaap.m7eb0;
                 a_7eaap.m7eb0 = found;
-                F_0DCBE(a_7eaap.m7eb0, &e_78e0);
+                perf_drivetrain(a_7eaap.m7eb0, &e_78e0);
             }
             if (g_0610 == 0 || g7f82r != g_4ff4) {
                 if (g7d84o->f10 != 0 || g7d40q != 0)
@@ -963,7 +963,7 @@ static void near init_rival_eng(void)
 {
     struct Range *r;
 
-    F_0E0E2(bn7648, &g79e2g);
+    perf_drivetrain_spec(bn7648, &g79e2g);
     g_6cb4 = g7d84o->f1;
     race_reset_eng(&g79e2g);
     g79e2g.f18 = 0;
@@ -1350,7 +1350,7 @@ static void near cop_appears(void)
 
     old = g79e2g.f0;
     g7d84o = &av7ff8[10];
-    F_0E0E2(0x19, &g79e2g);
+    perf_drivetrain_spec(0x19, &g79e2g);
     g_6cb4 = g7d84o->f1;
     fit_gear(old, &g79e2g);
     cruise_rival_paint(5);
@@ -1372,9 +1372,9 @@ void race_tick(void)
 
     if (e_78e0.f24) {
         if (e_78e0.f24 != bz8630z)
-            F_11669((bz8630z = e_78e0.f24) + 4);
+            screen_show_gear((bz8630z = e_78e0.f24) + 4);
     } else if (e_78e0.f18 != bz8630z)
-        F_11669(bz8630z = e_78e0.f18);
+        screen_show_gear(bz8630z = e_78e0.f18);
     if (e_78e0.fa && ao7d2ev.m7d30 > e_78e0.fa)
         at787cu = 1;
     if (g_58da == 0) {

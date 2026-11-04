@@ -94,7 +94,7 @@ static struct Bitmap far *near F_1A9B2(int n)
     blt.dy = -(g_6df6a->height + g_5aa8 - 0x95);
     c = F_1934E(0x28, 0x9c - g_5aa8, 1, 1);
     F_11A72(blt.sx + g_6da0, g_5aa8, 0x28, 0x9c - g_5aa8, c);
-    F_109C0(c->alt.p, 0xff, c->planesize / r_vid.planes);
+    dash_fmemset(c->alt.p, 0xff, c->planesize / r_vid.planes);
     (*ab78aat)(g_6df6a, c, &blt, 1);
     (*b_78a2)(g_6df6a, c, &blt, 2);
     return c;
@@ -230,7 +230,7 @@ void F_1B213(int *a, int *b)
     tinto = (a_7eaap.m7eb0->f24 >> 8) & 0x1f;
     for (n = 0; n < 3; n++)
         g_6cdaaa[n] = F_15BBE(g_5aaa[n], 1);
-    F_1169A(0x88, 0xba - g_6cdaaa[1]->height, g_6cdaaa[1]->width, g_6cdaaa[1]->height,
+    screen_fill_rect(0x88, 0xba - g_6cdaaa[1]->height, g_6cdaaa[1]->width, g_6cdaaa[1]->height,
             (r_vid.mode != -2 && r_vid.mode != -6) ? g_02b4[1] : g_02c2[1]);
     g_5aa8 = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
     g_6d28agz = F_1934E(g_6cdaaa[1]->width, 0xba - g_5aa8, 0, 1);
@@ -271,7 +271,7 @@ void F_1B213(int *a, int *b)
     g_5aa8 = (r_vid.mode == -6) ? 0x92 - g_6df6a->height : 0;
     g_6dfa7 = F_1934E(g_6df6a->width, 0x99 - g_5aa8, 1, 1);
     F_11A72(g_6da0, g_5aa8, g_6df6a->width, 0x99 - g_5aa8, g_6dfa7);
-    F_109C0(g_6dfa7->alt.p, 0xff, g_6dfa7->planesize / r_vid.planes);
+    dash_fmemset(g_6dfa7->alt.p, 0xff, g_6dfa7->planesize / r_vid.planes);
     clip6.w = g_6cdaaa[1]->width;
     clip6.h = g_6cdaaa[1]->height;
     clip6.sx = clip6.sy = 0;

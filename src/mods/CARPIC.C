@@ -141,7 +141,7 @@ static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color)
         am6e68x[i] = *bm1;
         am6e68x[i].bits.p = base2;
         base2 += bm1->planesize;
-        F_109C0(bm1->bits.p, v, bm1->planesize);
+        dash_fmemset(bm1->bits.p, v, bm1->planesize);
         (*ab78aat)(B[i], bm1, &pkt1, 1);
         bitmap_copy(bm1, &am6e68x[i], 1);
     }
@@ -567,7 +567,7 @@ again:
         blt.sx = blt.sy = 0;
         (*b_78a2)(scratch, bms6[0], &blt, 1);
     }
-    F_1013D(2);
+    dash_set_view(2);
     if (r_vid.mode != -2)
         (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
     if (g_5a24 == 1) {

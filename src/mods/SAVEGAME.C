@@ -424,7 +424,7 @@ again:
     if (sel == 0)
         sel = r;
     F_120FE(-2);
-    switch (r = F_1438E(5, sel, 0, g_49e0, 0, 0)) {
+    switch (r = menu_list(5, sel, 0, g_49e0, 0, 0)) {
     case -4:
         return;
     default:
@@ -439,7 +439,7 @@ again:
     }
     sel = r;
     if (is_blank(g_2a2e) && is_blank(g_2c02 + g_49e0[r])) {
-        F_1171C(g_4ff2);
+        screen_msg_box(g_4ff2);
         F_120FE(-4);
         goto again;
     }
@@ -453,8 +453,8 @@ again:
         sv7 = x_colors.c[3];
         x_colors.c[3] = x_colors.c[1];
         wk = ((struct Win *)a_8b9ap)->tx - ((struct Win *)a_8b9ap)->w;
-        F_13957(r_vid.back, box7->w, box7->h, wk, 8);
-        F_13957(r_vid.front, box7->w, box7->h, wk, 8);
+        draw_frame(r_vid.back, box7->w, box7->h, wk, 8);
+        draw_frame(r_vid.front, box7->w, box7->h, wk, 8);
         x_colors = pal4;
         x_colors.c[3] = sv7;
         F_120FE(-1);
@@ -463,7 +463,7 @@ again:
     strcpy(name + 1, ":HOTROD");
     itoa(r, name + 8, 10);
     strcat(name + 1, ".SAV");
-    key = g_4fc2[r] ? F_14241(0x1e) : 0;
+    key = g_4fc2[r] ? menu_modal(0x1e) : 0;
     F_120FE(-4);
     switch (key) {
     case -0x15:
@@ -485,7 +485,7 @@ again:
         || _dos_write(fd8, &delta, 4, &n) != 0 || n != 4
         || _dos_write(fd8, &g_5e0c, 2, &n) != 0 || n != 2) {
         F_120FE(-2);
-        F_14241(6);
+        menu_modal(6);
         F_120FE(-4);
         if (fd8 > -1) {
             _dos_close(fd8);

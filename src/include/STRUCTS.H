@@ -160,7 +160,7 @@ struct Obj {
 };
 
 /* blit request handed to the b_78a2.. hooks (20 bytes). The first six ints are the same as
-   struct Clip; F_10A00 reads only those. mx, my: origin in the mask bitmap (tandyblt_compose). */
+   struct Clip; dash_clip_blt reads only those. mx, my: origin in the mask bitmap (tandyblt_compose). */
 struct Blt {
     int w;
     int h;
@@ -174,7 +174,7 @@ struct Blt {
     int my;
 };
 
-/* clipped rectangle (12 bytes): size, source origin, destination origin. F_10A00 takes struct Blt *
+/* clipped rectangle (12 bytes): size, source origin, destination origin. dash_clip_blt takes struct Blt *
    but reads and writes only these first 12 bytes, so callers with a Clip local pass it cast. */
 struct Clip {
     int w;
@@ -445,7 +445,7 @@ struct Btn {
     int y;
 };
 
-/* the free area around the pointer found by F_1412D (x1, x2: left and right limits; y1, y2: top
+/* the free area around the pointer found by menu_hit (x1, x2: left and right limits; y1, y2: top
    and bottom) or, on a hit, the box of the hot spot */
 struct Lims {
     int x1;
@@ -454,7 +454,7 @@ struct Lims {
     int y2;
 };
 
-/* what g_6c34 points at (F_10872, F_10677): number of points, bitmap ids of the two sprites, bitmap
+/* what g_6c34 points at (dash_draw_shifter, dash_init_shifter): number of points, bitmap ids of the two sprites, bitmap
    height at +6 and a table of (x, y) signed-byte pairs at +8 */
 struct Track {
     int n;
@@ -464,7 +464,7 @@ struct Track {
     signed char *pt;
 };
 
-/* 16-byte blit packet of F_10872 (struct Blt without the last two words) */
+/* 16-byte blit packet of dash_draw_shifter (struct Blt without the last two words) */
 struct Blt16 {
     int w;
     int h;
@@ -522,7 +522,7 @@ struct Cand {
     int dk;
 };
 
-/* DS:822A, the display state set by F_10BD9: the visible and drawing bitmaps, a scratch bitmap,
+/* DS:822A, the display state set by video_init: the visible and drawing bitmaps, a scratch bitmap,
    the video mode (front->flags), and per-mode geometry. Members, not plain globals: /Ol never
    hoists r_vid.mode into a register (0x004F4, 0x10AFD). */
 struct Video {
@@ -546,14 +546,14 @@ struct Pages {
     int *list;
 };
 
-/* mouse cursor state at DS:7aec (F_11EA8 sets it up, F_120FE/F_1220B move it). The four
-   rectangle members compare as nested members (F_1220B), which plain globals don't reproduce. */
+/* mouse cursor state at DS:7aec (cursor_init sets it up, F_120FE/cursor_draw move it). The four
+   rectangle members compare as nested members (cursor_draw), which plain globals don't reproduce. */
 struct Cursor {
     struct Bitmap far *save;    /* background under the cursor */
     struct Clip clip;           /* last drawn strip; memset as 12 bytes */
     char far *shape;
     char far *mask;
-    unsigned off;               /* shape offset, F_11E9C(n) */
+    unsigned off;               /* shape offset, cursor_shape_off(n) */
     unsigned size;              /* bytes per shape */
     int n;                      /* shape number */
     char state;                 /* 0 hidden, 1 shown, <0 hide pending */

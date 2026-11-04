@@ -150,7 +150,7 @@ void bitmap_draw_masked(struct Bitmap far *dst, struct Bitmap far *src, struct B
         j = dst;
     (*ab78aat)(j, src, &e, 1);
     if (flag) {
-        if (F_10A00(j, src, &e, &a)) {
+        if (dash_clip_blt(j, src, &e, &a)) {
             d = j->pitch;
             b = a.w;
             h = a.h;
@@ -295,7 +295,7 @@ void bitmap_and_mask(struct Bitmap far *src, struct Bitmap far *dst, struct Blt 
     char far *h;
     int b, c, e, f, g, i;
 
-    if (F_10A00(src, dst, in, &d)) {
+    if (dash_clip_blt(src, dst, in, &d)) {
         c = d.w;
         e = d.h;
         b = src->pitch - c;

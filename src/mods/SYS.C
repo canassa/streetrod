@@ -217,14 +217,14 @@ void sys_exit(void)
 {
     if (g_0610) {
         g_0610 = (g_0610 == 0x62) ? 0 : 1;
-        F_1174E("Quit demo");
-        F_1169A(0, 0, 320, 200, 0);
+        screen_wait_msg("Quit demo");
+        screen_fill_rect(0, 0, 320, 200, 0);
     }
     if (g_0044)
         sys_unhook();
     if (g_0048) {
         (*m_present)();
-        F_0E610();
+        viddet_restore();
     }
     outp(0x61, inp(0x61) & 0xfc);
     g_47cf = 0;
@@ -253,20 +253,20 @@ void sys_crit_error(unsigned deverr, unsigned char errcode)
     switch (errcode) {
     case 0:
         g_060e[5] = deverr + 'A';
-        F_1174E(g_060e);
+        screen_wait_msg(g_060e);
         break;
     case 2:
         g_060c[strlen(g_060c) - 1] = deverr + 'A';
-        F_1174E(g_060c);
+        screen_wait_msg(g_060c);
         break;
     case 9:
-        F_1174E("printer out of paper");
+        screen_wait_msg("printer out of paper");
         break;
     default:
         if (disk)
-            F_1174E("disk error");
+            screen_wait_msg("disk error");
         else {
-            F_1174E("hardware error");
+            screen_wait_msg("hardware error");
             action = 2;
         }
     }
@@ -495,7 +495,7 @@ int sys_wait_input(int ticks)
             case 1:
                 res = p->fc;
                 sys_timer_remove(i);
-                F_111C1(res);
+                video_anim_resume(res);
                 break;
             }
         }
@@ -519,7 +519,7 @@ int sys_wait_input(int ticks)
             }
             if (g8b8eb) {
                 if (i = (x >= ao8b90v.x1 && x < ao8b90v.x2 && y >= ao8b90v.y1 && y < ao8b90v.y2)
-                        ? az8baa : F_1412D(x, y))
+                        ? az8baa : menu_hit(x, y))
                     return i;
             }
             if (g_05d0) {
@@ -542,11 +542,11 @@ int sys_wait_input(int ticks)
                 g_6c48 = g_472c = 0xc2;
             g_6c4a = 0;
             _enable();
-            F_1220B(x = g_6c46, y = g_6c48);
+            cursor_draw(x = g_6c46, y = g_6c48);
             if (g8b8eb
                 && (x < ao8b90v.x1 || x >= ao8b90v.x2 || y < ao8b90v.y1 || y >= ao8b90v.y2)) {
                 res = az8baa;
-                if (i = F_1412D(x, y)) {
+                if (i = menu_hit(x, y)) {
                     if (res != i) {
                         if (g_6c4c == 0x25) {
                             aq8256z = 1;

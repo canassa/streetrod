@@ -67,7 +67,7 @@ void cgablt_compose(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitma
     sak = bm1->alt.p;
     db = bm2->bits.p;
     mb = bm3->bits.p;
-    if (F_10A00(bm1, bm2, r, (struct Blt *)&out7)) {
+    if (dash_clip_blt(bm1, bm2, r, (struct Blt *)&out7)) {
         soff = bm1->pitch * out7.sy + out7.sx;
         doff = bm2->pitch * out7.dy + out7.dx;
         maskbg_blit(db + doff, FP_SEG(sbz), (unsigned)sbz + soff, (unsigned)sak + soff, (unsigned)mb + doff,
@@ -99,7 +99,7 @@ void cgablt_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r
     int segn;
     int soff;
 
-    if (!F_10A00(bm1, bm2, r, &ol))
+    if (!dash_clip_blt(bm1, bm2, r, &ol))
         return;
     pitch1 = bm1->pitch;
     w = ol.w;
@@ -148,7 +148,7 @@ void cgablt_copy(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, 
 
     f = flags & 1;
     g8 = (flags & 2) && bm1->alt.p && bm2->alt.p ? 1 : 0;
-    if (F_10A00(bm1, bm2, r, (struct Blt *)&o)) {
+    if (dash_clip_blt(bm1, bm2, r, (struct Blt *)&o)) {
         if (bm1->flags < -1 && bm2->flags < -1)
             cgadrv_blit_ilv(bm1->bits.p, bm2->bits.p, o.w, o.h, o.sx, o.sy, o.dx, o.dy);
         else if (bm1->flags < -1)

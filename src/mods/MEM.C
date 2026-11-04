@@ -48,7 +48,7 @@ void mem_out_of_memory(void)
     char *msg;
 
     msg = "Not enough memory to run Street Rod !";
-    F_1174E(msg);
+    screen_wait_msg(msg);
     sys_exit();
 }
 

@@ -145,7 +145,7 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
     if (g7f32s[n = strlen(g7f32s) - 1] == '.')
         g7f32s[n] = 0;
     for (;;) {
-        cz8bc0y = F_10B48(g7f32s);
+        cz8bc0y = dash_text_width(g7f32s);
         n = 320 - (ar82c0 + cz8bc0y);
         n = n > 0 ? n >> 1 : 0;
         n = n < 15 ? 15 : n;
@@ -805,7 +805,7 @@ static void near play_ending(void)
 
     flag8 = 0;
     F_120FE(-4);
-    F_113A2(0xbe);
+    screen_status_init(0xbe);
     F_119B8(9, 8, 0x14, 2);
     r_vid.f16 = 0;
     savedl = g_04c2;

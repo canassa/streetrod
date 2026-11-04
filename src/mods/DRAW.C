@@ -3,12 +3,12 @@
 #include "DASH.H"
 #include "VIDEO.H"
 
-/* F_13682 @ 0F38:4302 (linear 0x13682, 154 bytes)
+/* draw_fill_rect @ 0F38:4302 (linear 0x13682, 154 bytes)
 
    Fill the rectangle (x, y, w, h) of bitmap s with colour x_colors.c[2], clipped to its size,
    one horizontal line at a time through the line routine a_78d2 */
 
-void F_13682(struct Bitmap far *s, int x, int y, int w, int h)
+void draw_fill_rect(struct Bitmap far *s, int x, int y, int w, int h)
 {
     int col;
     unsigned oldseg;
@@ -32,11 +32,11 @@ void F_13682(struct Bitmap far *s, int x, int y, int w, int h)
     at767ct = oldoff;
 }
 
-/* F_1371C @ 0F38:439C (linear 0x1371C, 99 bytes)
+/* draw_vline @ 0F38:439C (linear 0x1371C, 99 bytes)
 
    Vertical line of height h at (x, y) in bitmap s with colour x_colors.c[3], clipped to the bitmap */
 
-void F_1371C(struct Bitmap far *s, int x, int y, int h)
+void draw_vline(struct Bitmap far *s, int x, int y, int h)
 {
     unsigned oldseg;
     unsigned oldoff;
@@ -52,27 +52,27 @@ void F_1371C(struct Bitmap far *s, int x, int y, int h)
     at767ct = oldoff;
 }
 
-/* F_1377F @ 0F38:43FF (linear 0x1377F, 51 bytes)
+/* draw_hline @ 0F38:43FF (linear 0x1377F, 51 bytes)
 
    Horizontal line of width w at (x, y) in bitmap s, drawn with colour x_colors.c[3] */
 
-void F_1377F(struct Bitmap far *s, int x, int y, int w)
+void draw_hline(struct Bitmap far *s, int x, int y, int w)
 {
     char old;
 
     old = x_colors.c[2];
     x_colors.c[2] = x_colors.c[3];
-    F_13682(s, x, y, w, 1);
+    draw_fill_rect(s, x, y, w, 1);
     x_colors.c[2] = old;
 }
 
-/* F_137B2 @ 0F38:4432 (linear 0x137B2, 421 bytes)
+/* draw_bevel @ 0F38:4432 (linear 0x137B2, 421 bytes)
 
    Draw a raised box frame of width 3 around the rectangle (x, y, w, h) of bitmap s: four
    filled bars in colour x_colors.c[2] (x_colors.c[3] when the style in x_colors.c[4] is 3), then an inner
    highlight made of two vertical and two horizontal lines, doubled when the style is 2 */
 
-void F_137B2(struct Bitmap far *s, int x, int y, int w, int h)
+void draw_bevel(struct Bitmap far *s, int x, int y, int w, int h)
 {
     int bm = x_colors.c[4] == 2 ? 3 : 3;
     int bh6;
@@ -92,32 +92,32 @@ void F_137B2(struct Bitmap far *s, int x, int y, int w, int h)
     old = x_colors.c[2];
     if (x_colors.c[4] == 3)
         x_colors.c[2] = x_colors.c[3];
-    F_13682(s, left, top8, bm, bh6);
-    F_13682(s, x, bottom, w, bm);
-    F_13682(s, right2, top8, bm, bh6);
-    F_13682(s, x, top8, w, bm);
+    draw_fill_rect(s, left, top8, bm, bh6);
+    draw_fill_rect(s, x, bottom, w, bm);
+    draw_fill_rect(s, right2, top8, bm, bh6);
+    draw_fill_rect(s, x, top8, w, bm);
     if (x_colors.c[4] == 3)
         x_colors.c[2] = old;
     else {
-        F_1371C(s, left + 1, top8 + 1, bh6 - 2);
-        F_1377F(s, left + 1, bottom + 1, bw - 2);
-        F_1371C(s, right2 + 1, top8 + 1, bh6 - 2);
-        F_1377F(s, left + 1, top8 + 1, bw - 2);
+        draw_vline(s, left + 1, top8 + 1, bh6 - 2);
+        draw_hline(s, left + 1, bottom + 1, bw - 2);
+        draw_vline(s, right2 + 1, top8 + 1, bh6 - 2);
+        draw_hline(s, left + 1, top8 + 1, bw - 2);
         if (x_colors.c[4] == 2) {
-            F_1371C(s, left + 2, top8 + 2, bh6 - 4);
-            F_1377F(s, left + 2, bottom, bw - 4);
-            F_1371C(s, right2, top8 + 2, bh6 - 4);
-            F_1377F(s, left + 2, top8 + 2, bw - 4);
+            draw_vline(s, left + 2, top8 + 2, bh6 - 4);
+            draw_hline(s, left + 2, bottom, bw - 4);
+            draw_vline(s, right2, top8 + 2, bh6 - 4);
+            draw_hline(s, left + 2, top8 + 2, bw - 4);
         }
     }
 }
 
-/* F_13957 @ 0F38:45D7 (linear 0x13957, 134 bytes)
+/* draw_frame @ 0F38:45D7 (linear 0x13957, 134 bytes)
 
    Draw a frame around the rectangle (x, y, w, h) of bitmap s, one pixel outside it:
    two vertical lines and two horizontal ones */
 
-void F_13957(struct Bitmap far *s, int x, int y, int w, int h)
+void draw_frame(struct Bitmap far *s, int x, int y, int w, int h)
 {
     int x1;
     int x2;
@@ -128,8 +128,8 @@ void F_13957(struct Bitmap far *s, int x, int y, int w, int h)
     x2 = x + w;
     y1 = y - 1;
     y2 = y + h;
-    F_1371C(s, x1, y1, h + 2);
-    F_1377F(s, x, y2, w);
-    F_1371C(s, x2, y1, h + 2);
-    F_1377F(s, x, y1, w);
+    draw_vline(s, x1, y1, h + 2);
+    draw_hline(s, x, y2, w);
+    draw_vline(s, x2, y1, h + 2);
+    draw_hline(s, x, y1, w);
 }

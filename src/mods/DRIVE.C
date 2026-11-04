@@ -41,14 +41,14 @@ int F_16EA2(void)
 
     sv = r_vid.f16;
     do {
-        F_1013D(3);
+        dash_set_view(3);
         F_193D4();
         (*bl78be)();
         g_58e4 = r_vid.mode == -3 && g_0250;
         if (g_58e4) {
             F_11A72(0, 0x64, 0x140, 0x64, g755cu);
             r_vid.f16 = 1;
-            F_1169A(0, 0, 0x140, 0xc8, 0);
+            screen_fill_rect(0, 0, 0x140, 0xc8, 0);
             r_vid.f16 = sv;
         }
         if (r_vid.mode == -2)
@@ -81,24 +81,24 @@ int F_16EA2(void)
         (*b_78a2)(src, g_58e4 ? g755cu : bm7678, &blt, 1);
         F_19438(1);
         F_28879();
-        F_10677(e_78e0.f24, e_78e0.f1c);
-        F_10872(g_58e4 ? g755cu : bm7678, &e_78e0);
+        dash_init_shifter(e_78e0.f24, e_78e0.f1c);
+        dash_draw_shifter(g_58e4 ? g755cu : bm7678, &e_78e0);
         shiftx5 = 0;
         bp82c2 = 0x64;
-        F_102D3();
-        F_104B0(0, bp82c2, g_58e4 ? g755cu : bm7678);
+        dash_load_wheel();
+        dash_draw_wheel(0, bp82c2, g_58e4 ? g755cu : bm7678);
         bp82c2 = 0;
         ret = 0;
         oldfe = e_78e0.fe;
-        F_0F552(oldf05 = e_78e0.f0);
+        dash_speedo_init(oldf05 = e_78e0.f0);
         if (!g_58e4)
-            oldf05 = F_0F7A5(e_78e0.f0, oldf05, 0);
+            oldf05 = dash_move_needle(e_78e0.f0, oldf05, 0);
         if (!g_58e6) {
-            F_0F6C9(oldfe);
+            dash_tach_init(oldfe);
             if (!g_58e4)
-                oldfe = F_0F7A5(e_78e0.fe, oldfe, 1);
+                oldfe = dash_move_needle(e_78e0.fe, oldfe, 1);
         } else if (!g_58e4)
-            F_0F972();
+            dash_draw_clock();
     } while (g_58ee > 1);
     g_58ee = 0;
     if (r_vid.mode == -2) {
@@ -120,12 +120,12 @@ int F_16EA2(void)
         blt.sy = blt.sx = blt.dx = 0;
         blt.dy = 0x64;
         (*b_78a2)(g755cu, bm7678, &blt, 1);
-        oldf05 = F_0F7A5(e_78e0.f0, oldf05, 0);
+        oldf05 = dash_move_needle(e_78e0.f0, oldf05, 0);
         if (!g_58e6)
-            oldfe = F_0F7A5(e_78e0.fe, oldfe, 1);
+            oldfe = dash_move_needle(e_78e0.fe, oldfe, 1);
         else
-            F_0F972();
-        F_104B0(shiftx5, bp82c2, bm7678);
+            dash_draw_clock();
+        dash_draw_wheel(shiftx5, bp82c2, bm7678);
     }
     (*m_present)();
     for (;;) {
@@ -138,15 +138,15 @@ int F_16EA2(void)
             break;
         shiftx5 = e_78e0.f4;
         if (e_78e0.f1a)
-            F_10872(bm7678, &e_78e0);
+            dash_draw_shifter(bm7678, &e_78e0);
         if (cur != ao8228u)
             cur = ao8228u;
         if (abs(e_78e0.f0 - oldf05) > 1)
-            oldf05 = F_0F7A5(e_78e0.f0, oldf05, 0);
+            oldf05 = dash_move_needle(e_78e0.f0, oldf05, 0);
         if (!g_58e6 && abs(e_78e0.fe - oldfe) > 1)
-            oldfe = F_0F7A5(e_78e0.fe, oldfe, 1);
+            oldfe = dash_move_needle(e_78e0.fe, oldfe, 1);
         if (shiftx5 != bp82c2) {
-            F_104B0(shiftx5, bp82c2, bm7678);
+            dash_draw_wheel(shiftx5, bp82c2, bm7678);
             bp82c2 = shiftx5;
         }
     }
@@ -172,6 +172,6 @@ int F_16EA2(void)
         (*dz78b6)(g_5e3e == 1 ? g82b4s->bits.p : g8188w->bits.p, g_5e3e == 1 ? g8188w->bits.p : g82b4s->bits.p);
     } else
         (*dz78b6)(bm7678->bits.p, g8188w->bits.p);
-    F_1013D(1);
+    dash_set_view(1);
     return ret;
 }

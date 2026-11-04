@@ -961,7 +961,7 @@ static void near tune_timing(struct Car *car)
     blt.sy = 0;
     blt.dx = 0xb0;
     F_119B8(0x42f, 0x60, 9, -1);
-    p = bm7568 + F_11149(8);
+    p = bm7568 + video_anim_start(8);
     tmp = g_0600;
     sys_music_pause();
     g_58d4 = 2;
@@ -1006,7 +1006,7 @@ static void near tune_timing(struct Car *car)
     g_47cf = 0;
     g_58d4 = 1;
     sys_music_resume();
-    F_10D6C(8);
+    video_anim_stop(8);
     n = ((unsigned)g_0600 - (unsigned)tmp) * 3;
     n = n > 0x444 ? 0x444 : n;
     g_05fc += n;
@@ -1059,12 +1059,12 @@ void near garage_hood(struct Car *car)
             g_5186[k] = g_5148[tmp29][k - 3];
     }
     F_120FE(-4);
-    F_131B5(car);
-    F_132AD(g_5186, g_519a, car == a_7eaap.m7eb0);
+    gargfx_draw_parts(car);
+    gargfx_draw_bolts(g_5186, g_519a, car == a_7eaap.m7eb0);
     F_120FE(-2);
     if (car != a_7eaap.m7eb0)
         return;
-    F_1344A(g_5186, g_519a);
+    gargfx_build_hots(g_5186, g_519a);
     F_13DE6(0x15);
     for (;;) {
         while ((key = sys_wait_input(3000)) == 0)
@@ -1081,22 +1081,22 @@ void near garage_hood(struct Car *car)
                 continue;
             if (car->f1f > 0) {
                 ap82acz = 0x447;
-                F_1309C();
+                gargfx_draw_wires();
                 g_05fc += 0x6d;
-                F_1344A(g_5186, g_519a);
+                gargfx_build_hots(g_5186, g_519a);
                 continue;
             }
             ap82acz = 0x446;
-            F_1309C();
+            gargfx_draw_wires();
             g_05fc += 0x6d;
             hz82ae = 0;
-            F_1344A(g_5186, g_519a);
+            gargfx_build_hots(g_5186, g_519a);
             break;
         case -3:
             if (F_07EE6(car, 0)) {
                 tune_timing(car);
                 F_120FE(-4);
-                F_132AD(g_5186, g_519a, 1);
+                gargfx_draw_bolts(g_5186, g_519a, 1);
                 F_120FE(-2);
             } else
                 game_message(0xea1);
@@ -1193,35 +1193,35 @@ void near garage_hood(struct Car *car)
                 F_07741(F_077B7(list4[key]), &car->rack.s[sel2]);
                 F_120FE(-4);
                 F_16A5A(1);
-                F_12DD8(o_8290[sel2], 0);
+                gargfx_draw_part(o_8290[sel2], 0);
                 F_16A5A(0);
                 F_16B97();
                 if (sel2 == 0) {
                     g_4998[1][0] = k == 0x434 ? 0x438 : 0x439;
                     g_5148[0][0] = g_5148[0][1] = k == 0x434 ? 4 : 5;
                     ap82acz = 0x446;
-                    F_1309C();
+                    gargfx_draw_wires();
                 }
                 for (k = g_5130[cnt1]; --k >= 0;) {
                     g82b2t = k;
-                    F_12A17(af829ax[step + k] = g_49ca[1]);
+                    gargfx_draw_bolt(af829ax[step + k] = g_49ca[1]);
                     F_16B61();
                     havek[step + k + 1] = 1;
                     car->b16[step + k] = 1;
                 }
-                F_1344A(g_5186, g_519a);
+                gargfx_build_hots(g_5186, g_519a);
                 F_120FE(-2);
                 cnt1++;
                 car->f20 = random_int(13) - 8;
                 continue;
             } else {
                 F_16A5A(1);
-                F_12DD8(o_8290[sel2], 1);
+                gargfx_draw_part(o_8290[sel2], 1);
                 F_16A5A(0);
                 F_16B97();
                 game_message(0x10cd);
                 F_16A5A(1);
-                F_12F99(o_8290[sel2], 1);
+                gargfx_erase_part(o_8290[sel2], 1);
                 F_16A5A(0);
                 o_8290[sel2] = 0;
                 if (sel2 == 0) {
@@ -1245,10 +1245,10 @@ void near garage_hood(struct Car *car)
                 g82b2t = g_5198[key];
                 if (--car->b16[key - 1] <= 1) {
                     af829ax[key - 1] = havek[key] = car->b16[key - 1] = 0;
-                    F_12B7C();
+                    gargfx_drop_bolt();
                     F_16B61();
                 } else {
-                    F_12A17(af829ax[key - 1] = g_49ca[car->b16[key - 1]]);
+                    gargfx_draw_bolt(af829ax[key - 1] = g_49ca[car->b16[key - 1]]);
                     F_16CF3();
                 }
             done:
@@ -1288,13 +1288,13 @@ void near garage_hood(struct Car *car)
                     af829ax[key - 1] = g_49ca[++car->b16[key - 1]];
                     hz82ae = g_5184[key];
                     g82b2t = g_5198[key];
-                    F_12A17(af829ax[key - 1]);
+                    gargfx_draw_bolt(af829ax[key - 1]);
                     F_16CF3();
                     continue;
                 }
                 hz82ae = g_5184[key];
                 g82b2t = g_5198[key];
-                F_12A17(af829ax[key - 1] = g_49ca[1]);
+                gargfx_draw_bolt(af829ax[key - 1] = g_49ca[1]);
                 F_16B61();
                 havek[key] = 1;
                 car->b16[key - 1] = 1;
@@ -1321,9 +1321,9 @@ void near garage_hood(struct Car *car)
             o_8290[sel2] = 0;
             if (ok)
                 hz82ae = ok - 1;
-            F_131B5(car);
-            F_132AD(g_5186, g_519a, 1);
-            F_1344A(g_5186, g_519a);
+            gargfx_draw_parts(car);
+            gargfx_draw_bolts(g_5186, g_519a, 1);
+            gargfx_build_hots(g_5186, g_519a);
             car->f20 = random_int(13) - 8;
             F_120FE(-2);
         }

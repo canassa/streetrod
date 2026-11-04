@@ -56,11 +56,11 @@ int g_4f5a = -1;   /* DS:4F5A */
 
 static int near start_game(void)
 {
-    F_1013D(0);
+    dash_set_view(0);
     sys_music_start(2, 10);
-    F_0FF70();
+    dash_intro();
     (*bl78be)();
-    F_1013D(1);
+    dash_set_view(1);
     random_int(-1);
     (*bl78be)();
     if (by70e2 == 0)
@@ -102,9 +102,9 @@ void game_message(int n)
 
     saved = g_05cc;
     F_13DE6(24);
-    F_11C24(n);
+    popup_open(n);
     game_pause(g_05dc);
-    F_11E5F();
+    popup_close();
     F_13F21(1);
     g_05cc = saved;
 }
@@ -268,9 +268,9 @@ static void near sell_parts(void)
             sprintf(g_3c0c, "Will you take $%-d ?", price1);
         } else
             msg5 = 0x1021;
-        F_11DE2(msg5, -1, -1);
-        nl = F_14241(16);
-        F_11E5F();
+        popup_open_at(msg5, -1, -1);
+        nl = menu_modal(16);
+        popup_close();
         if (nl == -0x15)
             continue;
         if (sel == 1)
@@ -530,17 +530,17 @@ static void near buy_from_ads(int tab)
             F_11A72(0, 0x40, 0x140, 0x52, bm1);
             x_colors = bustyle->colors;
             ck = (r_vid.mode == -2 || r_vid.mode == -6) ? g_02c2[5] : g_02b4[5];
-            F_1169A(0, 0x41, 0x140, 0x46, ck);
-            F_1169A(0, 0x87, 0x140, 0xa, x_colors.c[1]);
+            screen_fill_rect(0, 0x41, 0x140, 0x46, ck);
+            screen_fill_rect(0, 0x87, 0x140, 0xa, x_colors.c[1]);
             if (r_vid.mode != -2 && r_vid.mode != -6) {
                 sv = x_colors.c[3];
                 x_colors.c[3] = 3;
-                F_1371C(r_vid.back, 0, 0x40, 0x52);
-                F_1371C(r_vid.back, 0x13f, 0x40, 0x52);
-                F_1371C(r_vid.front, 0, 0x40, 0x52);
-                F_1371C(r_vid.front, 0x13f, 0x40, 0x52);
-                F_11A24(0, 0x40, 0x140);
-                F_11A24(0, 0x91, 0x140);
+                draw_vline(r_vid.back, 0, 0x40, 0x52);
+                draw_vline(r_vid.back, 0x13f, 0x40, 0x52);
+                draw_vline(r_vid.front, 0, 0x40, 0x52);
+                draw_vline(r_vid.front, 0x13f, 0x40, 0x52);
+                screen_hline(0, 0x40, 0x140);
+                screen_hline(0, 0x91, 0x140);
                 x_colors.c[3] = sv;
             }
             if (color == -1) {
@@ -550,7 +550,7 @@ static void near buy_from_ads(int tab)
             x1 = ((unsigned)specn - (unsigned)g7d86n) / 10;
             y = (((specn->f4 >> 8) & 7) == 2) ? 8 : 0;
             F_181C8(7, x1, y, 0, 0, 0x86, 0, g_5030[(specn->f4 >> 4) & 3]);
-            F_119D6((0x140 - F_10B48(g_2990)) / 2, 0x88, g_2990);
+            screen_text((0x140 - dash_text_width(g_2990)) / 2, 0x88, g_2990);
             F_120FE(-2);
             g_05d0 = 1;
             F_14294(0x18);
@@ -581,9 +581,9 @@ static int near counter_offer(unsigned *price)
         if ((*price -= r) == 0)
             *price = 5;
     sprintf(g_4fa4, "How about $%-d ?", *price);
-    F_11DE2(0xff7, -1, -1);
+    popup_open_at(0xff7, -1, -1);
     key = F_14294(0xd);
-    F_11E5F();
+    popup_close();
     return key;
 }
 
@@ -754,8 +754,8 @@ tail:
 
 void game_play_anim(int h)
 {
-    F_11149(h);
-    while (F_111F2(h))
+    video_anim_start(h);
+    while (video_anim_active(h))
         sys_wait_input(10);
 }
 
@@ -766,9 +766,9 @@ void game_popup(int a, int b, int c)
     long saved;
 
     saved = g_05cc;
-    F_11DE2(a, b, c);
+    popup_open_at(a, b, c);
     game_pause(g_05dc);
-    F_11E5F();
+    popup_close();
     g_05cc = saved;
 }
 
@@ -813,7 +813,7 @@ void near game_run(void)
             F_16381(0);
             if (kind == 0x29a) {
                 if (g_0282 == 1)
-                    F_100E2();
+                    dash_time_up();
                 fame_show(g_0282 & 2);
                 F_120FE(1);
                 g_0282 = 0;
@@ -851,7 +851,7 @@ void near game_run(void)
                 }
                 if (a_7eaap.m7eb0) {
                     if (F_07EE6(a_7eaap.m7eb0, 1)) {
-                        F_0DCBE(a_7eaap.m7eb0, &e_78e0);
+                        perf_drivetrain(a_7eaap.m7eb0, &e_78e0);
                         if (kind == 2) {
                             if (a_7eaap.m7eb0->f22 < 9) {
                                 game_message(0x172e);

@@ -46,7 +46,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   `!x ? 1 : 1` in sys_drive_isr (the condition leaves no code), `case -2: case -1:` in game_run
   (any run above -3 gives the same code), the empty increment of `for (; *str; str)` in
   ega_draw_text, and `i = 4` after F_1ABAC's loops.
-- **F_137B2's `int bm = x_colors.c[4] == 2 ? 3 : 3;`** (DRAW.C). The original stores 3
+- **draw_bevel's `int bm = x_colors.c[4] == 2 ? 3 : 3;`** (DRAW.C). The original stores 3
   through `ax` and reloads `bm` from memory (including a `bm * 2` CSE in `si`), so the
   constant was not propagated; a plain `int bm = 3` (also as a statement, `volatile`, any
   flags) is folded. An equal-arm `?:` gives exactly that: the compare goes, the value stays
@@ -60,9 +60,9 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   ones: bobs_visit's `while` whose body ends in a redundant `goto test;` (BOBS.C: the
   original's body-before-test layout, and it keeps `/Ol` from enregistering `n`),
   race_outcome's `goto finishstop` from both arms, race_reset_eng's `goto nx;` to the label right
-  after its `else`, F_10E3D's `goto next;` (a `continue` there would pull the loop
-  increment up), F_139DE's `goto box;`, F_1412D's `goto next;` into a then-branch,
-  F_1438E's `goto restore;`, F_1563A's `goto done;` (a `break` moves the after-loop block),
+  after its `else`, anim_run's `goto next;` (a `continue` there would pull the loop
+  increment up), menu_draw_hot's `goto box;`, menu_hit's `goto next;` into a then-branch,
+  menu_list's `goto restore;`, F_1563A's `goto done;` (a `break` moves the after-loop block),
   F_29170's goto loop (escapes `/Ol`, see `loop_opt` below), F_2A84D/F_2AFDC's `goto next`,
   F_181C8's `again`/`done`, savegame_save's shared retry tail; and the loop forms
   `for (;; g_05d2 = 0)` in F_14C90 (the increment gives the `jmp test` entry) and
@@ -83,8 +83,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   interpretation (it matches `flags[k--]`) and is not proven.
 - **PROVISIONAL dummies** (each is marked in the source). They reproduce something in the
   EXE whose original text is unknown:
-  - F_11213's unused inner-block `struct Colors save` (VIDEO.C): a 6-byte frame slot.
-  - `long unused` in F_118D4 (SCREEN.C), F_12A17, F_12DD8 and F_12F99 (GARGFX.C): a
+  - video_anim_hook's unused inner-block `struct Colors save` (VIDEO.C): a 6-byte frame slot.
+  - `long unused` in F_118D4 (SCREEN.C), gargfx_draw_bolt, gargfx_draw_part and gargfx_erase_part (GARGFX.C): a
     4-byte slot above the `struct Blt` local.
   - `x_trk0`/`x_trk1` (DASH.C, labels in `src/data/NEEDLE.ASM`): two unreachable far
     accesses for the two SEG constants in CONST (DS:68E6, DS:68E8) that nothing reads.
@@ -117,7 +117,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   there. `struct Win` (MENU.C, SAVEGAME.C) is a second view of the 18-byte hot-spot record
   `struct Hot`: `a_8b9ap` holds the address of the first menu-line record as an `int`
   (`a_8b9ap = (int)p`) and the code computes `(struct Win *)(0x12 * sel + a_8b9ap)`.
-  Declaring it `struct Hot *` and writing `a_8b9ap + sel` makes F_1438E 10 bytes shorter,
+  Declaring it `struct Hot *` and writing `a_8b9ap + sel` makes menu_list 10 bytes shorter,
   so the int arithmetic is evidence; that there were two struct names is not.
 - **Return types the code does not decide.** `main` (MAIN.C) and F_118D4 (SCREEN.C)
   are `int` but end without a `return` (C4035); F_119B8 returns F_118D4's value. race_outcome
@@ -133,14 +133,14 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
 - C4051 "data conversion" (94, in 24 files): mostly an `int` value stored into or passed
   as a `char` (colours, flags, drive letters), a few `int`/`long` mixes. Believed original:
   casts would not change a byte, and the original need not have compiled at `/W2`.
-- C4100 "unreferenced formal parameter" (5): F_06529 `n`, F_12784 `n` and `flag`, F_12F99
+- C4100 "unreferenced formal parameter" (5): F_06529 `n`, F_12784 `n` and `flag`, gargfx_erase_part
   `flag`, F_18ADB `p8`. Their callers push these arguments and the callees ignore them; the
   call sites decide the parameter count. Believed original.
 - C4101 "unreferenced local variable" (5): the PROVISIONAL frame-filler locals above.
   Reconstruction.
 - C4035 "no return value" (2) and C4033 "function must return a value" (1): the return
   types above. Believed original.
-- C4047 "different levels of indirection" (2): F_139DE's
+- C4047 "different levels of indirection" (2): menu_draw_hot's
   `a_8b9ca = a_8b9ap = az8ba2t = 0;` assigns the `struct Hot *` through to the two ints
   (int-held pointer, see `struct Win`), and F_195F3's
   `g77bal[i].data = r_vid.mode == -2 ? cell++ : &am6e68x[i];` mixes a `char (*)[8]` cell
@@ -175,9 +175,9 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   `g_20aa[3]`) or computes a run-time difference (`g_134e - g_121c`, `g_1a44 - g_19ea`),
   which proves separate symbols; each array starts at the first record so named. Where
   the original's other boundaries were (one array per menu list, or fewer), and the
-  arrays' names, are not recoverable. `g_184c` (a runtime list F_1344A builds), `g_1948`
+  arrays' names, are not recoverable. `g_184c` (a runtime list gargfx_build_hots builds), `g_1948`
   (three fixed menu records, then six records of another list) and `g_0796` are Hot
-  records too; F_133CB sorts them by (x1, y1).
+  records too; insert_hot sorts them by (x1, y1).
 - **HERCDET.ASM's key maps.** 43 lists of (scan code, value) pairs, each ended by a 0
   byte, one per screen (`g_579f[]`). They are local labels; the DB and HERCDET.H only know
   the first, `g_5580`, as the 543-byte area (no C code names it; the DGROUP model needs

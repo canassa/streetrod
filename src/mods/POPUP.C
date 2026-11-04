@@ -53,11 +53,11 @@ struct Bitmap far *F_11A72(int x, int y, int w, int h, struct Bitmap far *src)
     return pict;
 }
 
-/* F_11B6F @ 0F38:27EF (linear 0x11B6F, 100 bytes)
+/* popup_put @ 0F38:27EF (linear 0x11B6F, 100 bytes)
 
    Blit bitmap bm to the back buffer at (x, y), x rounded to the pixel grid r_vid.mask */
 
-void F_11B6F(struct Bitmap far *bm, int x, int y)
+void popup_put(struct Bitmap far *bm, int x, int y)
 {
     struct Blt pkt;
 
@@ -77,17 +77,17 @@ void F_11B6F(struct Bitmap far *bm, int x, int y)
 
 void F_11BD3(struct Bitmap far *bm, int x, int y)
 {
-    F_11B6F(bm, x, y);
+    popup_put(bm, x, y);
     if (r_vid.f16)
         bitmap_copy_box(r_vid.back, r_vid.front, x, y, bm->width + x - 1, bm->height + y - 1);
 }
 
-/* F_11C24 @ 0F38:28A4 (linear 0x11C24, 446 bytes)
+/* popup_open @ 0F38:28A4 (linear 0x11C24, 446 bytes)
 
    Pop up message window n (negative n: the window is removed again afterwards).
    The text is the run of NUL-terminated lines that follows the window's index byte in g_2c01. */
 
-void F_11C24(int n)
+void popup_open(int n)
 {
     char *txt;
     int close;
@@ -100,7 +100,7 @@ void F_11C24(int n)
 
     F_120FE(-3);
     if (g_04fa) {
-        F_11B6F(g_04fa, g_6c40->x, g_6c40->y);
+        popup_put(g_04fa, g_6c40->x, g_6c40->y);
         F_19438(1);
         g_04fa = 0;
     }
@@ -117,7 +117,7 @@ void F_11C24(int n)
     y1 += g_6c40->ty;
     lines = g_6c40->lines;
     while (lines--) {
-        (*a_78aem)(r_vid.back, ((w1 - F_10B48(txt)) >> 1) + x0, y1, txt);
+        (*a_78aem)(r_vid.back, ((w1 - dash_text_width(txt)) >> 1) + x0, y1, txt);
         txt = txt + strlen(txt) + 1;
         y1 += 9;
     }
@@ -131,12 +131,12 @@ void F_11C24(int n)
     g_05de = 1;
 }
 
-/* F_11DE2 @ 0F38:2A62 (linear 0x11DE2, 125 bytes)
+/* popup_open_at @ 0F38:2A62 (linear 0x11DE2, 125 bytes)
 
    Pop up message window n with its position temporarily set to (x, y); idx negative coordinate
    keeps the default */
 
-void F_11DE2(int n, int x, int y)
+void popup_open_at(int n, int x, int y)
 {
     int idx;
     int ox;
@@ -149,17 +149,17 @@ void F_11DE2(int n, int x, int y)
         g_04c4[idx].x = x;
     if (y >= 0)
         g_04c4[idx].y = y;
-    F_11C24(n);
+    popup_open(n);
     g_04c4[idx].x = ox;
     g_04c4[idx].y = oy;
     g_05de = 0;
 }
 
-/* F_11E5F @ 0F38:2ADF (linear 0x11E5F, 61 bytes)
+/* popup_close @ 0F38:2ADF (linear 0x11E5F, 61 bytes)
 
    Remove the pop-up window: put back the saved background */
 
-void F_11E5F(void)
+void popup_close(void)
 {
     if (g_04fa) {
         F_11BD3(g_04fa, g_6c40->x, g_6c40->y);

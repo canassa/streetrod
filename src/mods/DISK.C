@@ -143,10 +143,10 @@ static void near F_15409(int n)
         while (_dos_open(g_6c6e, 0, g_6c6c)) {
             if (tries++ == 3)
                 sys_exit();
-            F_1174E(g_4ee4);
+            screen_wait_msg(g_4ee4);
         }
         if (_dos_read(*g_6c6c, (void far *)g_6c6a, 2, &got) || got != 2 || h_8bc8 + s_8dd2 != 0x115) {
-            F_1174E(g_4ee8);
+            screen_wait_msg(g_4ee8);
             sys_exit();
         }
     }
@@ -177,7 +177,7 @@ int F_1552B(int which)
         sl = &g_slot[base + i];
         if (F_15396(*g_6c6c, (long)(i * 0x1e + 2)) ||
             _dos_read(*g_6c6c, (void far *)sl, 0x1e, &got) || got != 0x1e) {
-            F_1174E(g_4ee8);
+            screen_wait_msg(g_4ee8);
             sys_exit();
         }
         sl->f1e = 0xff;
@@ -256,7 +256,7 @@ static int near F_1563A(int n, int load, char far *dst)
                     sys_exit();
                 g_4ee4[12] = *g_6c6c == g_4ed8 ? 1 : (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
                 g_4ee4[25] = *g_6c6e;
-                F_1174E(g_4ee4);
+                screen_wait_msg(g_4ee4);
                 _dos_close(*g_6c6c);
             } while (_dos_open(g_6c6e, 0, g_6c6c));
             if (!F_15396(*g_6c6c, offset))
@@ -268,7 +268,7 @@ static int near F_1563A(int n, int load, char far *dst)
     } else
         return 1;
 bad:
-    F_1174E(g_4ee8);
+    screen_wait_msg(g_4ee8);
     sys_exit();
 }
 
@@ -290,7 +290,7 @@ void F_158DE(int n)
 /* F_1592E @ 0F38:65AE (linear 0x1592E, 593 bytes)
 
    Unpack picture number id into the bitmap bm (a new one when bm is 0). The picture is
-   loaded to the work area ab7564z first; its data is RLE coded (F_0E926) and expanded for the video
+   loaded to the work area ab7564z first; its data is RLE coded (rle_decode) and expanded for the video
    mode in use into the planes bits and alt of the bitmap. Returns the bitmap */
 
 struct Bitmap far *F_1592E(int id, struct Bitmap far *bm)
@@ -321,9 +321,9 @@ struct Bitmap far *F_1592E(int id, struct Bitmap far *bm)
     num = cur->f1c - 1;
     if (r_vid.mode == -2) {
         if (pic->bits.p == 0) {
-            F_0E926(src, pic->alt.p, num, colors16, 16);
+            rle_decode(src, pic->alt.p, num, colors16, 16);
         } else {
-            F_0E926(src, pic->bits.p, num, colors16, 16);
+            rle_decode(src, pic->bits.p, num, colors16, 16);
             if (pic->alt.p)
                 maskblt_make_mask(pic->bits.p, pic->alt.p, pic->planesize);
         }
@@ -336,7 +336,7 @@ struct Bitmap far *F_1592E(int id, struct Bitmap far *bm)
                 tandypic_make_mask(pic->bits.p, pic->alt.p, pic->planesize);
         }
     } else {
-        F_0E926(src, pic->bits.p == 0 ? pic->alt.p : pic->bits.p, num, colors16, 16);
+        rle_decode(src, pic->bits.p == 0 ? pic->alt.p : pic->bits.p, num, colors16, 16);
     }
     if (sl->f1e != 0xff) {
         outp(0x3c4, 2);
@@ -450,22 +450,22 @@ void F_15CC3(int disks, int mode)
     err = _dos_open(aw8dd4x, 0, &g_4ed8);
     if (err || g_4ed8 == 0) {
         if (g_6c68 > 2) {
-            F_1174E(g_4ee6);
+            screen_wait_msg(g_4ee6);
         } else {
             strcpy(g_4eec + 0x10, aw8dd4x + 2);
-            F_1174E(g_4eec);
+            screen_wait_msg(g_4eec);
         }
         sys_exit();
     }
     if (_dos_read(g_4ed8, (void far *)&h_8bc8, 2, &err) || err != 2) {
-        F_1174E(g_4ee8);
+        screen_wait_msg(g_4ee8);
         sys_exit();
     }
     au8dd6y = (mode == 2 || mode == 5) ? g_4ee0 : g_4ee2;
     *au8dd6y = *aw8dd4x;
     if (_dos_open(au8dd6y, 0, &g_4eda) || g_4eda == 0) {
         if (g_6c68 > 2) {
-            F_1174E(g_4ee6);
+            screen_wait_msg(g_4ee6);
             sys_exit();
         } else if (disks == 1) {
             g_4eda = 0;
@@ -477,14 +477,14 @@ void F_15CC3(int disks, int mode)
                     sys_exit();
                 g_4ee4[12] = (mode != 2 && mode != 5) ? '3' : '2';
                 g_4ee4[0x19] = *au8dd6y;
-                F_1174E(g_4ee4);
+                screen_wait_msg(g_4ee4);
                 err = _dos_open(au8dd6y, 0, &g_4eda);
             }
         }
     }
     if (g_4eda) {
         if (_dos_read(g_4eda, (void far *)&s_8dd2, 2, &err) || err != 2 || h_8bc8 + s_8dd2 != 0x115) {
-            F_1174E(g_4ee8);
+            screen_wait_msg(g_4ee8);
             sys_exit();
         }
     }
@@ -513,13 +513,13 @@ void F_15EF9(void)
     while (*drive++ = *g_4ea2++)
         ;
     if (_dos_open(g_6c72a, 0, &fd)) {
-        F_1174E("Can't open data file");
+        screen_wait_msg("Can't open data file");
         sys_exit();
     }
     for (i = j = 0; i < 13; i++) {
         if (!_dos_read(fd, (void far *)g_4ea4[i], g_4ebe[i], &got) && got == g_4ebe[i])
             continue;
-        F_1174E("Data disc read fail");
+        screen_wait_msg("Data disc read fail");
         sys_exit();
     }
     _dos_close(fd);
@@ -547,7 +547,7 @@ int F_15FBD(void)
                 sys_exit();
             g_4ee4[12] = (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
             g_4ee4[25] = *au8dd6y;
-            F_1174E(g_4ee4);
+            screen_wait_msg(g_4ee4);
         } else {
             _dos_close(file);
             F_15409(1000);
@@ -600,12 +600,12 @@ void F_16089(void)
         bucount = 0;
     else {
         if (_dos_read(fd, (void far *)&bucount, 2, &got) || got != 2) {
-            F_1174E(g_4ee8);
+            screen_wait_msg(g_4ee8);
             sys_exit();
         }
         for (i = 0, p = aytablex; i < bucount; p++, i++) {
             if (_dos_read(fd, (void far *)p, sizeof *p, &got) || got != sizeof *p) {
-                F_1174E(g_4ee8);
+                screen_wait_msg(g_4ee8);
                 sys_exit();
             }
         }
@@ -634,7 +634,7 @@ void F_16152(void)
     got = _dos_creat(g_4f3a, 0, &fd);
     if (g_6c68 > 2) {
         if (fd == 0 || got) {
-            F_1174E(g_4eea);
+            screen_wait_msg(g_4eea);
             sys_exit();
         }
     } else {
@@ -643,15 +643,15 @@ void F_16152(void)
         for (tries = 0; fd == 0 || got; tries++) {
             if (tries == 3)
                 sys_exit();
-            F_1174E(g_4ee8);
+            screen_wait_msg(g_4ee8);
             got = _dos_creat(g_4f3a, 0, &fd);
         }
     }
     if (_dos_write(fd, (void far *)&bucount, 2, &got) || got != 2) {
 bad:
-        F_1174E(g_4eea);
+        screen_wait_msg(g_4eea);
         unlink(g_4f3a);
-        F_1174E(g_4eea);
+        screen_wait_msg(g_4eea);
     } else {
         for (i = 0, p = aytablex; i < bucount; p++, i++)
             if (_dos_write(fd, (void far *)p, sizeof *p, &got) || got != sizeof *p)

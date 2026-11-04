@@ -23,8 +23,8 @@ static struct Cmd *g_cmd;                  /* DS:6C38 */
 static struct Obj *g_obj;                  /* DS:6C3A */
 static struct Box *g_box;                  /* DS:6C3C */
 static int g_6c3ea;                        /* DS:6C3E */
-static void near F_10DDF(void);
-static void near F_10E3D(int n);
+static void near anim_set_box(void);
+static void near anim_run(int n);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Colors x_colors;
@@ -69,9 +69,9 @@ void F_10B9C(void)
     g_palette[8] = 3;
 }
 
-/* F_10BAC @ 0F38:182C (linear 0x10BAC, 45 bytes) */
+/* video_swap_pal @ 0F38:182C (linear 0x10BAC, 45 bytes) */
 
-void F_10BAC(void)
+void video_swap_pal(void)
 {
     int i;
     unsigned char save;
@@ -83,9 +83,9 @@ void F_10BAC(void)
     }
 }
 
-/* F_10BD9 @ 0F38:1859 (linear 0x10BD9, 403 bytes) */
+/* video_init @ 0F38:1859 (linear 0x10BD9, 403 bytes) */
 
-void F_10BD9(struct Bitmap far *front, struct Bitmap far *back)
+void video_init(struct Bitmap far *front, struct Bitmap far *back)
 {
     int i;
 
@@ -129,7 +129,7 @@ void F_10BD9(struct Bitmap far *front, struct Bitmap far *back)
         bm7568[i].id = bm7568[i].f2 = -1;
     } while (i);
     (*m_present)();
-    F_13F7F();
+    menu_reset();
     ap8247u = 1;
     bp7316[0] = r_vid.front;
     bp7316[1] = r_vid.back;
@@ -145,9 +145,9 @@ void F_10BD9(struct Bitmap far *front, struct Bitmap far *back)
     }
 }
 
-/* F_10D6C @ 0F38:19EC (linear 0x10D6C, 115 bytes) */
+/* video_anim_stop @ 0F38:19EC (linear 0x10D6C, 115 bytes) */
 
-void F_10D6C(int n)
+void video_anim_stop(int n)
 {
     struct Obj *o;
 
@@ -162,9 +162,9 @@ void F_10D6C(int n)
         sys_timer_cancel(n);
 }
 
-/* F_10DDF @ 0F38:1A5F (linear 0x10DDF, 94 bytes) */
+/* anim_set_box @ 0F38:1A5F (linear 0x10DDF, 94 bytes) */
 
-static void near F_10DDF(void)
+static void near anim_set_box(void)
 {
     switch (g_cmd->sub) {
     case 0:
@@ -183,11 +183,11 @@ static void near F_10DDF(void)
     }
 }
 
-/* F_10E3D @ 0F38:1ABD (linear 0x10E3D, 780 bytes)
+/* anim_run @ 0F38:1ABD (linear 0x10E3D, 780 bytes)
 
    Run the script of one Obj slot */
 
-static void near F_10E3D(int n)
+static void near anim_run(int n)
 {
     int k;
     int wait;
@@ -206,11 +206,11 @@ static void near F_10E3D(int n)
         case 3:
             break;
         case 2:
-            F_10DDF();
+            anim_set_box();
             (*b_78a2)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
             break;
         case 4:
-            F_10DDF();
+            anim_set_box();
             (*ab78aat)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
             break;
         case 13:
@@ -231,10 +231,10 @@ static void near F_10E3D(int n)
             }
             break;
         case 5:
-            if (!F_11213(g_obj, g_cmd))
+            if (!video_anim_hook(g_obj, g_cmd))
                 break;
         case 6:
-            F_10D6C(g_obj->id);
+            video_anim_stop(g_obj->id);
             F_120FE(-1);
             return;
         case 7:
@@ -245,7 +245,7 @@ static void near F_10E3D(int n)
             g_cmd++;
             continue;
         case 9:
-            F_10DDF();
+            anim_set_box();
             break;
         case 10:
             g_box->w = g_cmd->a;
@@ -276,9 +276,9 @@ static void near F_10E3D(int n)
     }
 }
 
-/* F_11149 @ 0F38:1DC9 (linear 0x11149, 120 bytes) */
+/* video_anim_start @ 0F38:1DC9 (linear 0x11149, 120 bytes) */
 
-int F_11149(int n)
+int video_anim_start(int n)
 {
     int i;
 
@@ -288,34 +288,34 @@ int F_11149(int n)
             bm7568[i].id = n;
             bm7568[i].f2 = g_59f8[n] + 1;
             bm7568[i].f4 = 0;
-            F_10E3D(i);
+            anim_run(i);
             break;
         }
     }
     return i;
 }
 
-/* F_111C1 @ 0F38:1E41 (linear 0x111C1, 49 bytes) */
+/* video_anim_resume @ 0F38:1E41 (linear 0x111C1, 49 bytes) */
 
-void F_111C1(int n)
+void video_anim_resume(int n)
 {
     int k;
 
     k = g_58f0[g_59f8[n]].a;
     bm7568[k].f4--;
-    F_10E3D(k);
+    anim_run(k);
 }
 
-/* F_111F2 @ 0F38:1E72 (linear 0x111F2, 33 bytes) */
+/* video_anim_active @ 0F38:1E72 (linear 0x111F2, 33 bytes) */
 
-int F_111F2(int n)
+int video_anim_active(int n)
 {
     return g_58f0[g_59f8[n]].a >= 0;
 }
 
-/* F_11213 @ 0F38:1E93 (linear 0x11213, 184 bytes) */
+/* video_anim_hook @ 0F38:1E93 (linear 0x11213, 184 bytes) */
 
-int F_11213(struct Obj *o, struct Cmd *c)
+int video_anim_hook(struct Obj *o, struct Cmd *c)
 {
     int old;
 
@@ -330,10 +330,10 @@ int F_11213(struct Obj *o, struct Cmd *c)
             struct Colors save;     /* PROVISIONAL: never used; fills the 6-byte frame slot (original local unknown) */
             old = x_colors.c[3];
             x_colors.c[3] = (g_6c3ea & 1) ? 4 : 0;
-            F_1377F(r_vid.back, 0x33, 0x6f, 2);
+            draw_hline(r_vid.back, 0x33, 0x6f, 2);
             if (!(g_6c3ea & 3)) {
                 x_colors.c[3] = (g_6c3ea & 4) ? 4 : 0;
-                F_1377F(r_vid.back, 0x30, 0x6f, 2);
+                draw_hline(r_vid.back, 0x30, 0x6f, 2);
             }
             return 0;
         }
@@ -365,11 +365,11 @@ void F_112CB(int reg, char color)
 
 char iz8248;
 
-/* F_11324 @ 0F38:1FA4 (linear 0x11324, 124 bytes)
+/* video_set_palette @ 0F38:1FA4 (linear 0x11324, 124 bytes)
 
    Load all 16 EGA palette registers plus the overscan color (BIOS int 10h function 10h, al = 2) */
 
-void F_11324(char *table)
+void video_set_palette(char *table)
 {
     char pal[17];
     char far *dest;

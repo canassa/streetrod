@@ -104,7 +104,7 @@ void tandyblt_compose(struct Bitmap far *dst, struct Bitmap far *src, struct Bit
     alt_a = dst->alt;
     bits_bn = src->bits;
     bits_cm = mask->bits;
-    if (!F_10A00(dst, src, in, (struct Blt *)&clip9))
+    if (!dash_clip_blt(dst, src, in, (struct Blt *)&clip9))
         return;
     pa = dst->pitch;
     wz = clip9.w;
@@ -147,7 +147,7 @@ void tandyblt_masked(struct Bitmap far *src, struct Bitmap far *dst, struct Blt 
     int dy2;
     int seg;
 
-    if (!F_10A00(src, dst, in, &clip))
+    if (!dash_clip_blt(src, dst, in, &clip))
         return;
     pa6 = src->pitch;
     w = clip.w;
@@ -187,7 +187,7 @@ void tandyblt_copy(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *r
 
     f = flags & 1;
     g8 = (flags & 2) && src->alt.p && dst->alt.p;
-    if (!F_10A00(src, dst, r, (struct Blt *)&o))
+    if (!dash_clip_blt(src, dst, r, (struct Blt *)&o))
         return;
     if (src->flags < -1 && dst->flags < -1)
         tandycpy_screen(src->bits.p, dst->bits.p, o.w, o.h, o.sx, o.sy, o.dx, o.dy);

@@ -146,10 +146,10 @@ static int near choose_video(int mode)
     int pick;
 
     herc = 0;
-    F_0E62F();
+    viddet_detect();
     if (g_0252)
         g_0250 = 1;
-    if (F_0E5C3() && (g_0250 == 1 || F_0E584())) {
+    if (hercdet_bios_mono() && (g_0250 == 1 || hercdet_detect())) {
         g_0250 = 0;
         herc = 1;
     }
@@ -198,8 +198,8 @@ static void near init_screens(int mode)
         g_screens[1].flags = g_screens[2].flags = 0xfa;
         g_screens[1].bits.p = (char far *)0x90000000L;
         g_screens[2].bits.p = mem_alloc(0x8000, 1);
-        F_109C0(g_screens[1].bits.p, 0, 0x8000);
-        F_109C0(g_screens[2].bits.p, 0, 0x8000);
+        dash_fmemset(g_screens[1].bits.p, 0, 0x8000);
+        dash_fmemset(g_screens[2].bits.p, 0, 0x8000);
         return;
     case 4:
         g_screens[0].flags = 0xfc;
@@ -220,9 +220,9 @@ static void near init_screens(int mode)
     g_screens[0].pitch = g_screens[1].pitch = 0x50;
     g_screens[1].flags = 0xfd;
     g_screens[1].bits.p = mem_alloc(0x4000, 1);
-    F_109C0(g_screens[1].bits.p, 0, 0x4000);
+    dash_fmemset(g_screens[1].bits.p, 0, 0x4000);
     g_screens[2].bits.p = mem_alloc(0x4000, 1);
-    F_109C0(g_screens[2].bits.p, 0, 0x4000);
+    dash_fmemset(g_screens[2].bits.p, 0, 0x4000);
 }
 
 /* set_video_mode @ 0000:04F4 (linear 0x004F4, 210 bytes) */
@@ -241,7 +241,7 @@ static void near set_video_mode(int mode)
         outp(0x3df, 0xf6);
         break;
     case 4:
-        F_0E5D2();
+        hercgfx_set_mode();
         p = r_vid.mode == -4 ? (int far *)0xb0000000L : (int far *)0xb8000000L;
         while (p < (int far *)((r_vid.mode == -4 ? 0xb0000000L : 0xb8000000L) + 0x8000L))
             *p++ = 0;
@@ -344,16 +344,16 @@ int main(int argc, char **argv)
     F_19269();
     init_screens(b);
     set_video_mode(b);
-    F_10BD9(g_screens, &g_screen1);
+    video_init(g_screens, &g_screen1);
     sys_init();
     if (r_vid.mode == -2 || r_vid.mode == -6)
-        F_11324(g_palette);
+        video_set_palette(g_palette);
     F_15CC3(e, b);
     check_slow_cpu();
     d = F_1552B(1);
-    F_11EA8();
+    cursor_init();
     F_16481();
-    F_1013D(0);
+    dash_set_view(0);
     if (r_vid.mode == -3 && g_0250)
         g755cu = mem_new_bitmap(320, 100, 0, -1, 0);
     ab7564z = mem_alloc(r_vid.mode != -2 && r_vid.mode != -6 ? 16000 : 18000, 1);

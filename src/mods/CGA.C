@@ -21,7 +21,7 @@
 
 #pragma intrinsic(_rotl, outp)
 
-void (far *g_5b04[15])() = {cgablt_copy, cgashift_blit, cgablt_masked, cga_draw_text, F_0E781, cga_copy_page, cga_recolor_rect, cga_screen_off, cga_screen_on, cgaspr_step, cga_reveal, F_19BFE, cgaline_draw, cgaline_span, cgaline_fill_below};   /* DS:5B04 */
+void (far *g_5b04[15])() = {cgablt_copy, cgashift_blit, cgablt_masked, cga_draw_text, cursblt_cga, cga_copy_page, cga_recolor_rect, cga_screen_off, cga_screen_on, cgaspr_step, cga_reveal, F_19BFE, cgaline_draw, cgaline_span, cgaline_fill_below};   /* DS:5B04 */
 unsigned char g_5b40[4] = {192, 48, 12, 3};   /* DS:5B40 */
 unsigned char g_5b44[4] = {63, 207, 243, 252};   /* DS:5B44 */
 int g_5b48[5] = {0, 2, 4, 1, 3};   /* DS:5B48 */

@@ -64,12 +64,12 @@ int fame_protect_check(void)
         c = 0x55;
         break;
     }
-    F_119D6(0x79, 0x3f, b);
-    F_119D6(c, 0x48, a);
+    screen_text(0x79, 0x3f, b);
+    screen_text(c, 0x48, a);
     F_120FE(-2);
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
     if (r_vid.mode == -2 || r_vid.mode == -6)
-        F_11324(g_0692);
+        video_set_palette(g_0692);
     else
         (*m_present)();
     gz8249 = 1;
@@ -93,7 +93,7 @@ int fame_end_menu(void)
     char c3;
     int key;
 
-    F_113A2(190);
+    screen_status_init(190);
     r_vid.f16 = 1;
     c01 = x_colors.c[0];
     c1 = x_colors.c[1];
@@ -110,11 +110,11 @@ int fame_end_menu(void)
         x_colors.c[3] = 13;
         x_colors.c[2] = 3;
     }
-    F_1169A(0, 0, 320, 190, x_colors.c[1]);
-    F_13957(r_vid.back, 100, 50, 120, 90);
-    F_13957(r_vid.front, 100, 50, 120, 90);
-    F_13957(r_vid.back, 102, 52, 116, 86);
-    F_13957(r_vid.front, 102, 52, 116, 86);
+    screen_fill_rect(0, 0, 320, 190, x_colors.c[1]);
+    draw_frame(r_vid.back, 100, 50, 120, 90);
+    draw_frame(r_vid.front, 100, 50, 120, 90);
+    draw_frame(r_vid.back, 102, 52, 116, 86);
+    draw_frame(r_vid.front, 102, 52, 116, 86);
     x_colors.c[0] = c01;
     x_colors.c[1] = c1;
     x_colors.c[3] = c3;
@@ -202,7 +202,7 @@ void fame_show(int add)
     r_vid.f16 = 1;
     F_118D4(5, -1);
     g_04c2 = old;
-    F_10BAC();
+    video_swap_pal();
     sv286 = bustyle->c28;
     sv23 = bustyle->c23;
     if (r_vid.mode == -2 || r_vid.mode == -6) {
@@ -250,10 +250,10 @@ void fame_show(int add)
         strcpy(aytablex[pos7].name, buf3);
         F_16152();
     } else {
-        F_0FED1(700);
+        dash_wait_key(700);
     }
     (*bl78be)();
     bustyle->c28 = sv286;
     bustyle->c23 = sv23;
-    F_10BAC();
+    video_swap_pal();
 }

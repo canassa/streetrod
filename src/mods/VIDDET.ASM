@@ -1,7 +1,7 @@
         .MODEL MEDIUM
 
         .DATA
-        EXTRN   _F_0E781:FAR
+        EXTRN   _cursblt_cga:FAR
         EXTRN   _g_0250:WORD
         EXTRN   _g_0252:WORD
 
@@ -23,11 +23,11 @@ S_5b00  DB      'CGA', 0                 ; DS:5B00 string
 
         .CODE S0000_TEXT
 
-; F_0E610 @ 0000:E610 (linear 0x0E610, 31 bytes)
-; Restore the equipment byte and the BIOS video mode saved by F_0E62F.
+; viddet_restore @ 0000:E610 (linear 0x0E610, 31 bytes)
+; Restore the equipment byte and the BIOS video mode saved by viddet_detect.
 
-        PUBLIC  _F_0E610
-_F_0E610  PROC  FAR
+        PUBLIC  _viddet_restore
+_viddet_restore  PROC  FAR
         push    bp
         mov     bp,sp
         push    di
@@ -45,14 +45,14 @@ _F_0E610  PROC  FAR
         mov     sp,bp
         pop     bp
         ret
-_F_0E610  ENDP
+_viddet_restore  ENDP
 
-; F_0E62F @ 0000:E62F (linear 0x0E62F, 146 bytes)
+; viddet_detect @ 0000:E62F (linear 0x0E62F, 146 bytes)
 ; Video adapter detection: saves the current mode and equipment byte,
 ; asks the EGA BIOS, falls back to probing the CRTC cursor register (VGA/CGA).
 
-        PUBLIC  _F_0E62F
-_F_0E62F  PROC  FAR
+        PUBLIC  _viddet_detect
+_viddet_detect  PROC  FAR
         push    bp
         mov     bp,sp
         push    di
@@ -116,6 +116,6 @@ done:
         mov     sp,bp
         pop     bp
         ret
-_F_0E62F  ENDP
+_viddet_detect  ENDP
 
         END

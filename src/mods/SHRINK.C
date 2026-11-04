@@ -59,8 +59,8 @@ static struct Bitmap far * near F_2B707(struct Bitmap far *p, unsigned char a, u
         m2 >>= 1;
     }
     q = F_1934E(bytes, rows6, p->alt.p != 0, 1);
-    F_109C0(q->bits.p, 0, q->planesize);
-    F_109C0(q->alt.p, 0xff, q->planesize / (unsigned)r_vid.planes);
+    dash_fmemset(q->bits.p, 0, q->planesize);
+    dash_fmemset(q->alt.p, 0xff, q->planesize / (unsigned)r_vid.planes);
     return q;
 }
 

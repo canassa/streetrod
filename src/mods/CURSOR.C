@@ -17,18 +17,18 @@ struct Cursor g_cursor2;
 
 struct Pair g_06ec[4] = {{1, 1}, {2, 2}, {1, 1}, {8, 8}};   /* DS:06EC */
 
-/* F_11E9C @ 0F38:2B1C (linear 0x11E9C, 12 bytes) */
+/* cursor_shape_off @ 0F38:2B1C (linear 0x11E9C, 12 bytes) */
 
-unsigned F_11E9C(unsigned n)
+unsigned cursor_shape_off(unsigned n)
 {
     return n * g_cursor2.size;
 }
 
-/* F_11EA8 @ 0F38:2B28 (linear 0x11EA8, 598 bytes)
+/* cursor_init @ 0F38:2B28 (linear 0x11EA8, 598 bytes)
 
    Set up the off-screen work bitmap and the scratch strip used by the pop-up code */
 
-void F_11EA8(void)
+void cursor_init(void)
 {
     unsigned bytes;
     int size;
@@ -79,7 +79,7 @@ void F_11EA8(void)
     }
     g_cursor2.size = img->pitch << 4;
     g_cursor2.n = 1;
-    g_cursor2.off = F_11E9C(1);
+    g_cursor2.off = cursor_shape_off(1);
     g_cursor2.r.x2 = -1;
     g_472a = 0x9e;
     g_472c = 0x80;
@@ -105,34 +105,34 @@ void F_120FE(int mode)
     if (mode >= 0) {
         g_4742 = g_06ec[g_cursor2.n = mode].a;
         g_4744 = g_06ec[mode].b;
-        g_cursor2.off = F_11E9C(g_cursor2.n);
-        F_1220B(a, b);
+        g_cursor2.off = cursor_shape_off(g_cursor2.n);
+        cursor_draw(a, b);
     } else if (mode >= -2) {
         if (++g_4733 > 0) {
             g_cursor2.state = (mode == -1) + 1;
             if (g_cursor2.r.x2 >= 0)
-                F_1220B(g_cursor2.r.x1, g_cursor2.r.y1);
+                cursor_draw(g_cursor2.r.x1, g_cursor2.r.y1);
             else
-                F_1220B(a, b);
+                cursor_draw(a, b);
             g_cursor2.state = 1;
         }
     } else {
         if (--g_4733 >= 0) {
             g_cursor2.state = -((mode == -3) - 0xff);
             if (g_cursor2.r.x2 >= 0)
-                F_1220B(g_cursor2.r.x1, g_cursor2.r.y1);
+                cursor_draw(g_cursor2.r.x1, g_cursor2.r.y1);
             else
-                F_1220B(a, b);
+                cursor_draw(a, b);
             g_cursor2.state = 0;
         }
     }
 }
 
-/* F_1220B @ 0F38:2E8B (linear 0x1220B, 488 bytes)
+/* cursor_draw @ 0F38:2E8B (linear 0x1220B, 488 bytes)
 
    Move the saved-background cursor strip to (x, y): restore what it covered, save and draw anew */
 
-void F_1220B(int x, int y)
+void cursor_draw(int x, int y)
 {
     int a;
     int b;

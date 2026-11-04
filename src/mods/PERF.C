@@ -17,12 +17,12 @@ int g_5560[4] = {3, 3, 4, 4};   /* DS:5560 */
 int g_5568[3] = {9, 8, 5};   /* DS:5568 */
 int g_556e[9] = {40, 44, 48, 60, 64, 68, 80, 84, 88};   /* DS:556E */
 
-/* F_0DCBE @ 0000:DCBE (linear 0x0DCBE, 1060 bytes)
+/* perf_drivetrain @ 0000:DCBE (linear 0x0DCBE, 1060 bytes)
 
    Fills the drive train e (gear ranges, ratio table, limits) for the car c. The first half
    is the rating computation of F_0E218. */
 
-void near F_0DCBE(struct Car *c, struct Eng *e)
+void near perf_drivetrain(struct Car *c, struct Eng *e)
 {
     double w9, vl;
     struct Gear *gl;
@@ -83,11 +83,11 @@ void near F_0DCBE(struct Car *c, struct Eng *e)
     e->f1a = 1;
 }
 
-/* F_0E0E2 @ 0000:E0E2 (linear 0x0E0E2, 310 bytes)
+/* perf_drivetrain_spec @ 0000:E0E2 (linear 0x0E0E2, 310 bytes)
 
-   Builds a struct Car from the spec n of g7d86n and hands it to F_0DCBE. */
+   Builds a struct Car from the spec n of g7d86n and hands it to perf_drivetrain. */
 
-void near F_0E0E2(int n, struct Eng *e)
+void near perf_drivetrain_spec(int n, struct Eng *e)
 {
     struct Car car;
     struct Node nd[5];
@@ -112,13 +112,13 @@ void near F_0E0E2(int n, struct Eng *e)
     lo.idx = ((s->f4 >> 4) & 3) + 0x28;
     nd[0].idx = ((s->f4 >> 8) & 7) * 3 + t;
     nd[1].idx = (j = (s->f4 >> 11) & 7) * 3 + t + 0x19;
-    F_0DCBE(&car, e);
+    perf_drivetrain(&car, e);
 }
 
 /* F_0E218 @ 0000:E218 (linear 0x0E218, 849 bytes)
 
    Rating of the car spec n (the car in a_7eaap.m7eb0 when n is negative): builds the
-   car the way F_0E0E2 does, then folds its parts into one number. */
+   car the way perf_drivetrain_spec does, then folds its parts into one number. */
 
 int near F_0E218(int n)
 {

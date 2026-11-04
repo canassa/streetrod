@@ -43,9 +43,9 @@ int F_14C90(int x, int y, char *buf, int max)
     x_colors.c[2] = x_colors.c[1];
     x_colors.c[3] = x_colors.c[0];
     F_120FE(-3);
-    F_13682(r_vid.back, x, y, w, 8);
+    draw_fill_rect(r_vid.back, x, y, w, 8);
     (*a_78aem)(r_vid.back, x, y, buf);
-    F_1371C(r_vid.back, cx = g824cd, cy = bq824e, 8);
+    draw_vline(r_vid.back, cx = g824cd, cy = bq824e, 8);
     colr = -1;
     F_120FE(-1);
     if (r_vid.f16)
@@ -82,11 +82,11 @@ int F_14C90(int x, int y, char *buf, int max)
                 }
                 F_120FE(-3);
                 x_colors.c[3] = x_colors.c[1];
-                F_1371C(r_vid.back, cx, cy, 8);
+                draw_vline(r_vid.back, cx, cy, 8);
                 if (key == 8) {
                     if (end > 0) {
                         dest[0] = buf[--end];
-                        cx -= F_10B48(dest);
+                        cx -= dash_text_width(dest);
                         px = cx;
                         (*a_78aem)(r_vid.back, cx, cy, " ");
                     } else
@@ -99,7 +99,7 @@ int F_14C90(int x, int y, char *buf, int max)
                 } else
                     F_16B3A();
                 x_colors.c[3] = x_colors.c[0];
-                F_1371C(r_vid.back, cx, cy, 8);
+                draw_vline(r_vid.back, cx, cy, 8);
                 colr = -1;
                 F_120FE(-1);
                 if (r_vid.f16)
@@ -108,7 +108,7 @@ int F_14C90(int x, int y, char *buf, int max)
         } else {
             F_120FE(-3);
             x_colors.c[3] = colr ? x_colors.c[1] : x_colors.c[0];
-            F_1371C(r_vid.back, cx, cy, 8);
+            draw_vline(r_vid.back, cx, cy, 8);
             colr = ~colr;
             F_120FE(-1);
             if (r_vid.f16)
@@ -118,7 +118,7 @@ int F_14C90(int x, int y, char *buf, int max)
     buf[end] = 0;
     F_120FE(-3);
     x_colors.c[3] = x_colors.c[1];
-    F_1371C(r_vid.back, cx, cy, 8);
+    draw_vline(r_vid.back, cx, cy, 8);
     F_120FE(-1);
     if (r_vid.f16)
         bitmap_copy_box(r_vid.back, r_vid.front, cx - 6, y, cx, y + 8);
@@ -145,7 +145,7 @@ int F_150B7(int x, int y, char *s, int *out)
     int rl;
 
     x_colors = bustyle->pal[5];
-    F_119D6(x, y, s);
+    screen_text(x, y, s);
     g_09f2 = 1;
     buf[0] = 0;
     rl = F_14C90(g824cd, bq824e, buf, 20);
