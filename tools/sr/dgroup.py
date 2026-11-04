@@ -1114,46 +1114,111 @@ class Analysis:
                 out.setdefault(it.slot, []).append(text)
         return out
 
+    # MASM data is written the way an assembler programmer types it: the label on the first
+    # data line (typed by its first element), several values per line, text as quoted
+    # strings, runs as DUP, the C type as a plain comment.
+    MASM_WIDTH = 72
+
     def masm_lines(self, items, label_public=True):
         """MASM data records for items (remaining data or an assembly unit's own data)."""
         lines, externs = [], {}
         for it in items:
-            if it.kind == 'lit':
+            if it.kind in ('lit', 'alias'):
                 continue
             if it.kind == 'gap':
                 if it.note == 'align':
-                    lines.append(f'        DB 0 ; +{it.off:04X} alignment')
+                    lines.append('        EVEN')
                 else:
-                    lines.append(f'        DB {it.size} DUP (0) ; +{it.off:04X}')
+                    lines.append(self.masm_line('', 'DB', f'{it.size} DUP (0)', 'unused'))
                 continue
             if it.kind == 'str':
-                lines.append(f'S_{it.off:04x} LABEL BYTE')
-                lines.append('        ' + self.masm_string(self.cstring(it.off)) + f' ; +{it.off:04X}')
-                continue
-            if it.kind == 'alias':
+                rows = [('DB', toks) for toks in self.masm_text(self.cstring(it.off) + b'\0')]
+                lines += self.masm_rows(f'S_{it.off:04x}', rows, f'DS:{it.off:04X} string')
                 continue
             if it.node is None:
                 raise ValueError(f'{it!r} has no declaration')
-            if label_public:
-                lines.append(f'        PUBLIC _{it.name}')
-            lines.append(f'_{it.name} LABEL BYTE ; +{it.off:04X} {it.decl}')
-            lines += self.masm_value(it.node, it.off, externs)
+            ctype = re.sub(r'\s+', ' ', it.decl.replace('@', ' ')).replace(' [', '[').strip()
+            rows = self.masm_rows(f'_{it.name}', self.masm_value(it.node, it.off, externs),
+                                  f'DS:{it.off:04X} {ctype}')
+            if label_public:     # after a comment line of its own
+                rows.insert(1 if rows[0].startswith(';') else 0, f'        PUBLIC  _{it.name}')
+            lines += rows
         return lines, externs
 
+    @classmethod
+    def masm_line(cls, label, op, operands, comment=None):
+        head = (label.ljust(7) + ' ' if label else '        ') + op.ljust(8) + operands
+        if comment:
+            head = head.ljust(40) + ' ; ' + comment if len(head) < 40 else head + '  ; ' + comment
+        return head.rstrip()
+
+    def masm_rows(self, label, rows, comment):
+        """Lines for [(op, [operand tokens])]: operands wrap at MASM_WIDTH; the label and
+        the comment go on the first line."""
+        out = []
+        for op, toks in rows:
+            cur = []
+            for t in toks:
+                if cur and len(', '.join(cur + [t])) > self.MASM_WIDTH - 16:
+                    out.append((op, cur)); cur = []
+                cur.append(t)
+            if cur:
+                out.append((op, cur))
+        lines = [self.masm_line(label if k == 0 else '', op, ', '.join(toks), comment if k == 0 else None)
+                 for k, (op, toks) in enumerate(out)]
+        if len(lines[0]) > self.MASM_WIDTH + 8:     # a long first line: the comment above it
+            lines[0:1] = ['; ' + comment, self.masm_line(label, out[0][0], ', '.join(out[0][1]))]
+        return lines
+
     @staticmethod
-    def masm_string(s):
-        vals, part = [], ''
-        for b in s:
-            if 32 <= b < 127 and b != 39:
-                part += chr(b)
+    def masm_num(v):
+        return str(v) if v < 10 else (f'0{v:X}h' if f'{v:X}'[0] in 'ABCDEF' else f'{v:X}h')
+
+    @classmethod
+    def masm_runs(cls, vals):
+        """Operand tokens for numbers: five or more equal values become a DUP."""
+        toks, i = [], 0
+        while i < len(vals):
+            j = i
+            while j < len(vals) and vals[j] == vals[i]:
+                j += 1
+            if j - i >= 5:
+                toks.append(f'{j - i} DUP ({cls.masm_num(vals[i])})')
             else:
-                if part:
-                    vals.append("'" + part + "'"); part = ''
-                vals.append(str(b))
-        if part:
-            vals.append("'" + part + "'")
-        vals.append('0')
-        return 'DB ' + ', '.join(vals)
+                toks += [cls.masm_num(v) for v in vals[i:j]]
+            i = j
+        return toks
+
+    @classmethod
+    def masm_text(cls, data):
+        """Operand rows for character bytes: printable runs as strings, other bytes as
+        numbers; a row ends after each NUL that ends text."""
+        rows, cur, i = [], [], 0
+        while i < len(data):
+            j = i
+            while j < len(data) and 32 <= data[j] < 127:
+                j += 1
+            if j - i < 4 and (j == len(data) or data[j] != 0):
+                j = i              # a few characters inside binary data are numbers
+            if j > i:
+                s = data[i:j].decode('latin-1')
+                q = '"' if "'" in s and '"' not in s else "'"
+                s = s.replace(q, q + q)
+                for k in range(0, len(s), cls.MASM_WIDTH - 20):
+                    cur.append(q + s[k:k + cls.MASM_WIDTH - 20] + q)
+                i = j
+                if i < len(data) and data[i] == 0:
+                    cur.append('0'); i += 1
+                    rows.append(cur); cur = []
+                continue
+            j = i + 1
+            while j < len(data) and not 32 <= data[j] < 127:
+                j += 1
+            cur += cls.masm_runs(list(data[i:j]))
+            i = j
+        if cur:
+            rows.append(cur)
+        return rows
 
     def masm_symbol(self, off, externs):
         """MASM operand for a near pointer to DGROUP `off`."""
@@ -1172,32 +1237,58 @@ class Analysis:
         return f'OFFSET DGROUP:_{name}' + (f'+{off - base}' if off != base else '')
 
     def masm_value(self, node, off, externs):
-        lines = []
+        """[(op, [operand tokens])] for one item: one row per element of an array of
+        arrays or structures, a new row where the element size changes, pointers one
+        per row."""
+        cells = []          # (row, op, kind, value): kind 'num' (int), 'chr' (byte of char type), 'sym' (text)
+        elem = node['elem']['size'] if node['kind'] == 'array' and node['elem']['kind'] != 'scalar' else None
+        pos = off
         for loff, leaf, label in self.types.leaves(node, off, ''):
+            for b in self.dg[pos:loff]:               # padding between fields
+                cells.append(((pos - off) // elem if elem else 0, 'DB', 'num', b)); pos += 1
+            row = (loff - off) // elem if elem else 0
+            size = leaf['size']
+            pos = loff + size
             if leaf['kind'] == 'scalar':
-                v = int.from_bytes(self.dg[loff:loff + leaf['size']], 'little')
-                op = {1: 'DB', 2: 'DW', 4: 'DD', 8: 'DQ'}[leaf['size']]
-                lines.append(f'        {op} 0{v:X}h')
-            elif leaf['size'] == 2:
-                lines.append(f'        DW {self.masm_symbol(self.im.word(self.ds + loff), externs)}')
+                v = int.from_bytes(self.dg[loff:loff + size], 'little')
+                op = {1: 'DB', 2: 'DW', 4: 'DD', 8: 'DQ'}[size]
+                cells.append((row, op, 'chr' if leaf['name'] == 'char' else 'num', v))
+            elif size == 2:
+                cells.append((row, 'DW', 'sym', self.masm_symbol(self.im.word(self.ds + loff), externs)))
             else:
                 o, s = self.im.word(self.ds + loff), self.im.word(self.ds + loff + 2)
                 if self.ds + loff + 2 not in self.im.reloc_pos:
-                    lines.append(f'        DD 0{s:04X}{o:04X}h')
+                    cells.append((row, 'DD', 'num', s << 16 | o))
                 elif s == config.DGROUP_SEG:
-                    lines.append(f'        DW {self.masm_symbol(o, externs)}, SEG DGROUP')
+                    cells.append((row, 'DW', 'sym', f'{self.masm_symbol(o, externs)}, SEG DGROUP'))
                 else:
                     a = s * 16 + o
                     f = self.funcs.get(a)
                     if f is not None:
                         sym = '_' + (f['name'] or f'F_{a:05X}')
                         externs[sym] = 'FAR' if f['far'] else 'NEAR'
-                        lines.append(f'        DD {sym}')
+                        cells.append((row, 'DD', 'sym', sym))
                     else:
                         best = max(((fs, fo, n) for fs, fo, n, d in self.fardata if fs == s and fo <= o), key=lambda t: t[1])
                         externs['_' + best[2]] = 'BYTE'
-                        lines.append(f'        DW OFFSET _{best[2]}+{o - best[1]}, SEG _{best[2]}')
-        return lines
+                        cells.append((row, 'DW', 'sym', f'OFFSET _{best[2]}+{o - best[1]}, SEG _{best[2]}'))
+        rows, k = [], 0
+        while k < len(cells):
+            row, op, kind = cells[k][:3]
+            j = k
+            while j < len(cells) and cells[j][:3] == (row, op, kind) and (kind != 'sym' or j == k):
+                j += 1
+            vals = [c[3] for c in cells[k:j]]
+            if kind == 'sym':
+                rows.append((op, vals))
+            elif kind == 'chr' and elem is None:
+                rows += [(op, toks) for toks in self.masm_text(bytes(vals))]
+            elif kind == 'chr':
+                rows.append((op, [t for toks in self.masm_text(bytes(vals)) for t in toks]))
+            else:
+                rows.append((op, self.masm_runs(vals)))
+            k = j
+        return rows
 
     def unowned(self):
         """The initialized data no C or MASM module owns, in original order, as MASM lines."""
@@ -1267,12 +1358,12 @@ class Analysis:
         if u['kind'] == 'data' and u['sources'][0].upper().endswith('.ASM'):
             items = [it for it in self.items if it.owner == ustart and it.kind != 'lit']
             body, externs = self.masm_lines(items, label_public=True)
-            own = {ln.split()[0] for ln in body if ' LABEL BYTE' in ln}
+            own = {f'_{it.name}' for it in items if it.kind == 'global'}
             ext = [f'        EXTRN   {s}:{k}' for s, k in sorted(externs.items()) if s not in own]
             head = ['        .MODEL MEDIUM', '',
                     f'; Initialized data DS:{u["lo"]:04X}..{u["hi"]:04X}, recovered from the original layout',
                     '; (./sr dgroup). Odd-address words and arrays: assembler data, not C definitions.', '',
-                    '        .DATA'] + ext
+                    '        .DATA'] + ext + ([''] if ext else [])
             path = config.ROOT / u['sources'][0]
             changed[path] = '\n'.join(head + body + ['', '        END', ''])
             if write:
@@ -1311,7 +1402,7 @@ class Analysis:
             if not items:
                 return changed
             lines, externs = self.masm_lines(items, label_public=True)
-            own = {ln.split()[0] for ln in lines if ' LABEL BYTE' in ln}
+            own = {f'_{it.name}' for it in items if it.kind == 'global'}
             path = config.ROOT / u['functions'][0]['src']
             text = path.read_text(errors='replace')
             text = self._strip_asm_definitions(text, [it.name for it in items if it.kind == 'global'])
@@ -1327,13 +1418,13 @@ class Analysis:
                 m = re.search(r'(?m)^\s*\.DATA\s*$', text)
             # after the EXTRNs that follow .DATA
             pos = m.end()
-            for em in re.finditer(r'(?m)^\s*EXTRN\s+[^\n]*$', text[pos:]):
-                if text[pos:pos + em.start()].strip():
-                    break
+            while em := re.match(r'\s*\n[ \t]*EXTRN\b[^\n]*', text[pos:]):
                 pos += em.end()
             ext = ''.join(f'        EXTRN   {s}:{k}\n' for s, k in sorted(externs.items())
                           if s not in own and not re.search(rf'EXTRN\s+{re.escape(s)}:', text))
-            text = text[:pos] + '\n' + ext + block + text[pos:]
+            # a blank line between the EXTRNs and the data
+            sep = '\n\n' if ext or text[m.end():pos].strip() else '\n'
+            text = text[:pos] + sep + ext + block + text[pos:]
             text = re.sub(r'\n{3,}', '\n\n', text)   # rerunning must not add blank lines
             changed[path] = text
         else:

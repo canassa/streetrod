@@ -11,66 +11,19 @@
         EXTRN   _g_clip_ymin:WORD
 
         ; data (recovered DGROUP layout)
-        PUBLIC _g_5b56
-_g_5b56 LABEL BYTE ; +5B56 char @[4]
-        DB 00h
-        DB 055h
-        DB 0AAh
-        DB 0FFh
-        PUBLIC _g_5b5a
-_g_5b5a LABEL BYTE ; +5B5A char @[16]
-        DB 00h
-        DB 00h
-        DB 02h
-        DB 00h
-        DB 03h
-        DB 01h
-        DB 02h
-        DB 01h
-        DB 01h
-        DB 01h
-        DB 02h
-        DB 01h
-        DB 02h
-        DB 01h
-        DB 01h
-        DB 03h
-        PUBLIC _g_5b6a
-_g_5b6a LABEL BYTE ; +5B6A char @[16]
-        DB 00h
-        DB 00h
-        DB 055h
-        DB 0EEh
-        DB 0FFh
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 055h
-        DB 077h
-        DB 0AAh
-        DB 00h
-        DB 0AAh
-        DB 055h
-        DB 0AAh
-        DB 0AAh
-        PUBLIC _g_5b7a
-_g_5b7a LABEL BYTE ; +5B7A char @[16]
-        DB 00h
-        DB 00h
-        DB 055h
-        DB 0BBh
-        DB 0FFh
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 055h
-        DB 0DDh
-        DB 0AAh
-        DB 00h
-        DB 0AAh
-        DB 055h
-        DB 0AAh
-        DB 0AAh
+        PUBLIC  _g_5b56
+_g_5b56 DB      0, 55h, 0AAh, 0FFh       ; DS:5B56 char[4]
+; DS:5B5A char[16]
+        PUBLIC  _g_5b5a
+_g_5b5a DB      0, 0, 2, 0, 3, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 3
+; DS:5B6A char[16]
+        PUBLIC  _g_5b6a
+_g_5b6a DB      0, 0, 55h, 0EEh, 0FFh, 0, 0, 0, 55h, 77h, 0AAh, 0, 0AAh
+        DB      55h, 0AAh, 0AAh
+; DS:5B7A char[16]
+        PUBLIC  _g_5b7a
+_g_5b7a DB      0, 0, 55h, 0BBh, 0FFh, 0, 0, 0, 55h, 0DDh, 0AAh, 0, 0AAh
+        DB      55h, 0AAh, 0AAh
 
         .CODE S1C11_TEXT
 

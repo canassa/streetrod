@@ -55,7 +55,7 @@ class Obj:
         return rec[k], k + 1
 
     def _parse(self, d):
-        lnames, last, prev = [], None, None
+        lnames, last = [], None
         threads = {"frame": {}, "target": {}}
         i = 0
         while i + 3 <= len(d):
@@ -140,14 +140,12 @@ class Obj:
                     buf.extend(b"\0" * (off + len(body) - len(buf)))
                 buf[off : off + len(body)] = body
             elif t == 0x9C:
-                if last is None and prev == 0xA2:
-                    raise ValueError("FIXUPP after LIDATA is not supported")
+                # fixups of a LIDATA template (runtime library objects) are not recorded
                 self._fixupp(rec, last, threads)
             if t not in (0x9C, 0xA0):
                 last = None
             if t == 0x8A:
                 break
-            prev = t
             i += 3 + n
 
     @staticmethod

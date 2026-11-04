@@ -6,30 +6,21 @@
         EXTRN   _g_0252:WORD
 
         ; data (recovered DGROUP layout)
-        PUBLIC _g_5aee
-_g_5aee LABEL BYTE ; +5AEE char @
-        DB 00h
-        PUBLIC _g_5aef
-_g_5aef LABEL BYTE ; +5AEF char @
-        DB 00h
-        PUBLIC _g_5af0
-_g_5af0 LABEL BYTE ; +5AF0 char @
-        DB 00h
-        PUBLIC _g_5af1
-_g_5af1 LABEL BYTE ; +5AF1 char @
-        DB 00h
-        PUBLIC _g_5af2
-_g_5af2 LABEL BYTE ; +5AF2 char @
-        DB 00h
-        PUBLIC _g_5af3
-_g_5af3 LABEL BYTE ; +5AF3 char @
-        DB 00h
-S_5af4 LABEL BYTE
-        DB 'Tandy', 0 ; +5AF4
-S_5afa LABEL BYTE
-        DB 'Tandy', 0 ; +5AFA
-S_5b00 LABEL BYTE
-        DB 'CGA', 0 ; +5B00
+        PUBLIC  _g_5aee
+_g_5aee DB      0                        ; DS:5AEE char
+        PUBLIC  _g_5aef
+_g_5aef DB      0                        ; DS:5AEF char
+        PUBLIC  _g_5af0
+_g_5af0 DB      0                        ; DS:5AF0 char
+        PUBLIC  _g_5af1
+_g_5af1 DB      0                        ; DS:5AF1 char
+        PUBLIC  _g_5af2
+_g_5af2 DB      0                        ; DS:5AF2 char
+        PUBLIC  _g_5af3
+_g_5af3 DB      0                        ; DS:5AF3 char
+S_5af4  DB      'Tandy', 0               ; DS:5AF4 string
+S_5afa  DB      'Tandy', 0               ; DS:5AFA string
+S_5b00  DB      'CGA', 0                 ; DS:5B00 string
 
         .CODE S0000_TEXT
 

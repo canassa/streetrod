@@ -7,12 +7,10 @@
         EXTRN   _g_58e2:WORD
 
         ; data (recovered DGROUP layout)
-        PUBLIC _g_58de
-_g_58de LABEL BYTE ; +58DE int @
-        DW 01h
-        PUBLIC _g_58e0
-_g_58e0 LABEL BYTE ; +58E0 int @
-        DW 01h
+        PUBLIC  _g_58de
+_g_58de DW      1                        ; DS:58DE int
+        PUBLIC  _g_58e0
+_g_58e0 DW      1                        ; DS:58E0 int
 
 S2196_TEXT SEGMENT WORD PUBLIC 'CODE'
         ASSUME  CS:S2196_TEXT
