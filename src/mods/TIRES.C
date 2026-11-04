@@ -209,7 +209,7 @@ void F_1B213(int *a, int *b)
     g_tires.jackColumn = arena_bm(g_tires.liftPics[1]->width, 0xba - g_spriteBgY, 0, ARENA_LOW_STACK);
     popup_grab(r_vid.mask & 0x88, g_spriteBgY, g_tires.liftPics[1]->width, 0xba - g_spriteBgY, g_tires.jackColumn);
     carpic_build(&g_tires.liftCar, modelm, attr3, tinto, 0, 0, 0, 1);
-    g_tires.wheelX = g_layoutAutoSprArray[modelm].wheelX1;
+    g_tires.wheelX1 = g_layoutAutoSprArray[modelm].wheelX1;
     g_tires.wheelX2 = g_layoutAutoSprArray[modelm].wheelX2;
     blt.w = g_tires.liftCar->width;
     blt.h = 0x1c;
@@ -255,7 +255,7 @@ void F_1B213(int *a, int *b)
     g_tires.column = F_15BBE(0x4c7, ARENA_HIGH_STACK);
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x76 : 0;
     pic = grab_wheel_column(g_tires.wheelX2);
-    dst = grab_wheel_column(g_tires.wheelX);
+    dst = grab_wheel_column(g_tires.wheelX1);
     F_19438(1);
     g_tires.rollCanvas = arena_bm(g_tires.liftCar->width + g_tires.carX, 0x1c, 0, ARENA_LOW_STACK);
     popup_grab(0, 0x80, g_tires.liftCar->width + g_tires.carX, 0x1c, g_tires.rollCanvas);
@@ -274,8 +274,8 @@ void F_1B213(int *a, int *b)
     blt.dy = 0;
     (*g_videoOps.maskedBlit)(g_tires.liftPics[2], g_tires.rollCanvas, &blt, 1);
     if (r_vid.mode == VID_EGA) {
-        g_tires.savedVehicle = &g_tires.liftBuffer;
-        mem_set_bitmap(g_tires.savedVehicle, g_pageBmps[2]->bits.p, 0, g_tires.liftCar->width, SCREEN_HEIGHT, VID_EGA);
+        g_tires.liftBuf = &g_tires.liftHeader;
+        mem_set_bitmap(g_tires.liftBuf, g_pageBmps[2]->bits.p, 0, g_tires.liftCar->width, SCREEN_HEIGHT, VID_EGA);
         mem_set_bitmap(g_wheelBuf, g_pageBmps[2]->bits.p + g_tires.liftCar->pitch, 0, pic->width, SCREEN_HEIGHT, VID_EGA);
         mem_set_bitmap(g_rollBuf, g_pageBmps[3]->bits.p, 0, SCREEN_WIDTH, g_tires.rollCanvas->height, VID_EGA);
         mem_set_bitmap(g_jackBuf, g_pageBmps[3]->bits.p, 0, g_tires.jackColumn->width, SCREEN_HEIGHT, VID_EGA);
@@ -283,7 +283,7 @@ void F_1B213(int *a, int *b)
         blt.h = g_tires.liftCar->height + 4;
         blt.sx = blt.dx = 0;
         blt.sy = blt.dy = 0x95 - g_tires.liftCar->height;
-        (*g_videoOps.copy)(g_tires.liftBackdrop, g_tires.savedVehicle, &blt, 1);
+        (*g_videoOps.copy)(g_tires.liftBackdrop, g_tires.liftBuf, &blt, 1);
         blt.w = pic->width;
         blt.h = 0x23;
         blt.sy = blt.dy = 0x79;
@@ -297,15 +297,15 @@ void F_1B213(int *a, int *b)
         blt.sy = blt.dy = 0x99 - g_tires.liftPics[0]->height;
         (*g_videoOps.copy)(g_tires.jackColumn, g_jackBuf, &blt, 1);
     } else if (r_vid.mode != VID_TANDY) {
-        g_tires.savedVehicle = arena_bm(g_tires.liftBackdrop->width, g_tires.liftBackdrop->height, 0, ARENA_LOW_STACK);
+        g_tires.liftBuf = arena_bm(g_tires.liftBackdrop->width, g_tires.liftBackdrop->height, 0, ARENA_LOW_STACK);
         *g_wheelBuf = *pic;
-        g_wheelBuf->bits.p = g_tires.savedVehicle->bits.p;
+        g_wheelBuf->bits.p = g_tires.liftBuf->bits.p;
         g_wheelBuf->alt.p = 0;
         *g_rollBuf = *g_tires.rollCanvas;
-        g_rollBuf->bits.p = g_tires.savedVehicle->bits.p;
+        g_rollBuf->bits.p = g_tires.liftBuf->bits.p;
         g_rollBuf->alt.p = 0;
         *g_jackBuf = *g_tires.jackColumn;
-        g_jackBuf->bits.p = g_tires.savedVehicle->bits.p;
+        g_jackBuf->bits.p = g_tires.liftBuf->bits.p;
         g_jackBuf->alt.p = 0;
     }
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x97 - g_tires.liftPics[0]->height : 0;
@@ -318,7 +318,7 @@ void F_1B213(int *a, int *b)
     F_16381(1);
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x92 - g_tires.liftCar->height : 0;
     g_tires.wheelBitmap = F_15BBE(*a, ARENA_HIGH_STACK);
-    bitmap_underlay(g_tires.wheelBitmap, g_tires.liftCar, g_tires.wheelX, ybot);
+    bitmap_underlay(g_tires.wheelBitmap, g_tires.liftCar, g_tires.wheelX1, ybot);
     bitmap_underlay(g_tires.wheelBitmap, g_tires.liftCar, g_tires.wheelX2, ybot);
     F_19438(1);
     if (r_vid.mode == VID_EGA)
@@ -327,7 +327,7 @@ void F_1B213(int *a, int *b)
     g_tires.overlayBounds.y1 = 0;
     g_tires.overlayBounds.x2 = g_tires.liftBackdrop->width - 1;
     g_tires.overlayBounds.y2 = g_tires.liftBackdrop->height + g_spriteBgY - 1;
-    g_tires.sprite = sprite_setup(g_tires.carX, 0x98, &g_tires.liftCar, 0, 1, g_tires.savedVehicle, g_tires.liftBackdrop, &g_tires.overlayBounds, 0);
+    g_tires.sprite = sprite_setup(g_tires.carX, 0x98, &g_tires.liftCar, 0, 1, g_tires.liftBuf, g_tires.liftBackdrop, &g_tires.overlayBounds, 0);
     sprite_set_step(g_tires.sprite, 0, 7, 0, -1);
     frame = 0;
     rev = 0;
@@ -355,7 +355,7 @@ void F_1B213(int *a, int *b)
     sound_jack(0);
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x76 : 0;
     g_tires.backdrop = dst;
-    swap_wheel(g_tires.carX + g_tires.wheelX, a, b);
+    swap_wheel(g_tires.carX + g_tires.wheelX1, a, b);
     g_tires.backdrop = pic;
     if (r_vid.mode == VID_EGA) {
         blt.w = pic->width;
@@ -366,7 +366,7 @@ void F_1B213(int *a, int *b)
     }
     blt.w = 0x28;
     blt.h = g_tires.rollCanvas->height;
-    blt.sx = blt.dx = g_tires.carX + g_tires.wheelX;
+    blt.sx = blt.dx = g_tires.carX + g_tires.wheelX1;
     blt.sy = 0x9c - blt.h;
     blt.dy = 0;
     (*g_videoOps.copy)(r_vid.front, g_tires.rollCanvas, &blt, 1);
@@ -380,7 +380,7 @@ void F_1B213(int *a, int *b)
     blt.dy = g_tires.liftCar->height - g_tires.frames[0]->height;
     blt.sx = blt.sy = blt.dx = 0;
     (*g_videoOps.copy)(g_tires.vehicleBottom, g_tires.liftCar, &blt, 3);
-    bitmap_underlay(g_tires.frames[0], g_tires.liftCar, g_tires.wheelX, ybot);
+    bitmap_underlay(g_tires.frames[0], g_tires.liftCar, g_tires.wheelX1, ybot);
     bitmap_underlay(g_tires.frames[0], g_tires.liftCar, g_tires.wheelX2, ybot);
     if (r_vid.mode == VID_EGA)
         (*g_videoOps.copyPage)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
@@ -392,7 +392,7 @@ void F_1B213(int *a, int *b)
     g_tires.overlayBounds.y1 = 0;
     g_tires.overlayBounds.x2 = g_tires.liftBackdrop->width - 1;
     g_tires.overlayBounds.y2 = g_tires.liftBackdrop->height + g_spriteBgY - 1;
-    g_tires.sprite = sprite_setup(g_tires.carX, 0x94, &g_tires.liftCar, 0, 1, g_tires.savedVehicle, g_tires.liftBackdrop, &g_tires.overlayBounds, 0);
+    g_tires.sprite = sprite_setup(g_tires.carX, 0x94, &g_tires.liftCar, 0, 1, g_tires.liftBuf, g_tires.liftBackdrop, &g_tires.overlayBounds, 0);
     sprite_set_step(g_tires.sprite, 0, 9, 0, 1);
     sound_jack(1);
     while ((*g_videoOps.spriteStep)(g_tires.sprite)) {

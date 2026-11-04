@@ -5,13 +5,13 @@
 #include "STRUCTS.H"
 
 struct TireWork {
-    struct Bitmap far *savedVehicle;
+    struct Bitmap far *liftBuf;
     int wheelX2;
     struct Bitmap far *liftPics[3];
     int underlayY;
     struct Rect overlayBounds;
     struct Bitmap far *wheelBitmap;
-    struct Bitmap liftBuffer;
+    struct Bitmap liftHeader;
     struct Bitmap far *rollCanvas;
     struct Bitmap far *jackColumn;
     struct Bitmap far *backdrop;
@@ -25,7 +25,7 @@ struct TireWork {
     int carX;
     int rollShift;
     struct Bitmap wheelHeader;
-    int wheelX;
+    int wheelX1;
     struct Bitmap far *vehicleBottom;
     struct Bitmap far *groundOverlay;
     struct Bitmap far *basePic;
