@@ -535,7 +535,7 @@ again:
     spr3 = sprite_setup(ang2, bot, bms6, (char (*)[8])dz7ec2, n2, pb8, pan, pr16, pr26);
     sprite_plan_drive(spr3, kind, right);
     if (kind == 6)
-        spr3->page->r = g_lastCarRect;
+        spr3->page->rect = g_lastCarRect;
     if (kind == 4 || kind == 1 || kind == 2 || kind == 6) {
         g_carAnim = 1;
         g_carMoving = 1;
@@ -548,7 +548,7 @@ again:
         bu825a = g_spritePic;
         g_carMoving = 0;
         g_carAnim = 0;
-        g_lastCarRect = spr3->page->r;
+        g_lastCarRect = spr3->page->rect;
     }
     if (g_scene == 3 && kind == 4) {
         scratch = F_1934E(0x18, 7, 0, 2);

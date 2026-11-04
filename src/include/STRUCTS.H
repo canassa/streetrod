@@ -253,8 +253,8 @@ struct Band {
 /* one display page of the sprite engine (16 bytes): its bitmap, the clipped rectangle, the link to the next page */
 struct Page {
     struct Bitmap far *bm;
-    struct Rect r;
-    int idx;
+    struct Rect rect;
+    int pageIndex;
     struct Page *link;
 };
 
@@ -532,13 +532,13 @@ struct Cand {
 struct Video {
     struct Bitmap far *front;
     struct Bitmap far *back;
-    struct Bitmap far *f8;
+    struct Bitmap far *scratch;
     int mode;
     int planes;     /* 4 on EGA (-2), else 1 */
     int shift;      /* log2 pixels per byte: 3, 2, 1 */
     int bpp;        /* bits per pixel: 1, 2, 4 */
     int mask;       /* ~(pixels per byte - 1): -8, -4, -2 */
-    int f16;
+    int copyToFront;
 };
 
 /* DS:04FE, the pages of a list menu (ads_open fills it, ads_run pages through it): start[k] is the
@@ -557,11 +557,11 @@ struct Cursor {
     struct Clip clip;           /* last drawn strip; memset as 12 bytes */
     char far *shape;
     char far *mask;
-    unsigned off;               /* shape offset, cursor_shape_off(n) */
-    unsigned size;              /* bytes per shape */
-    int n;                      /* shape number */
+    unsigned shapeOffset;               /* shape offset, cursor_shape_off(n) */
+    unsigned shapeSize;              /* bytes per shape */
+    int shapeIndex;                      /* shape number */
     char state;                 /* 0 hidden, 1 shown, <0 hide pending */
-    struct Rect r;              /* last drawn extent, x2 < 0 when none */
+    struct Rect drawnRect;              /* last drawn extent, x2 < 0 when none */
 };
 
 /* one cell of the intro picture tables g_endCellsA / g_endCellsB (6 bytes): source origin in the sheet,

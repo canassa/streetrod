@@ -49,7 +49,7 @@ int fame_protect_check(void)
     d = random_int(0x33);
     f = d < 0x12;
     F_11421(-1, "", 0);
-    r_vid.f16 = 0;
+    r_vid.copyToFront = 0;
     F_119B8(8, 8, 0, 0);
     disk_free_pic(8);
     switch (f) {
@@ -73,7 +73,7 @@ int fame_protect_check(void)
     else
         (*m_present)();
     gz8249 = 1;
-    r_vid.f16 = 1;
+    r_vid.copyToFront = 1;
     g_protectCycle = 1;
     e = menu_wait(0x27);
     g_protectCycle = 0;
@@ -94,7 +94,7 @@ int fame_end_menu(void)
     int key;
 
     screen_status_init(190);
-    r_vid.f16 = 1;
+    r_vid.copyToFront = 1;
     c01 = x_colors.text;
     c1 = x_colors.textBg;
     c3 = x_colors.line;
@@ -199,7 +199,7 @@ void fame_show(int add)
     pos7 = -1;
     (*bl78be)();
     g_picMaxH = 200;
-    r_vid.f16 = 1;
+    r_vid.copyToFront = 1;
     F_118D4(5, -1);
     g_picMaxH = old;
     video_swap_pal();

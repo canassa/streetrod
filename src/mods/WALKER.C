@@ -149,8 +149,8 @@ void walker_walk(int a, int b)
         trk7[i] = *p9++;
     sp2->seq = trk7;
     if (a == 1) {
-        sp2->page->r = g_carhopRect;
-        sp2->page->link->r = g_carhopRect;
+        sp2->page->rect = g_carhopRect;
+        sp2->page->link->rect = g_carhopRect;
     }
     g_spriteBottomCut = 0;
     for (i = 0; i < 0x54; i++) {
@@ -163,7 +163,7 @@ void walker_walk(int a, int b)
             ;
     }
     okn = (*g78c6c)(sp2);
-    g_carhopRect = sp2->page->r;
+    g_carhopRect = sp2->page->rect;
     if (a == 1) {
         carpic_patch_bg(g_carhopBg, 0, 0, 0x30, 0x29, 0xc8, 0x44, 0xa3, 2);
     } else {

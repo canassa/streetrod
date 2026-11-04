@@ -353,7 +353,7 @@ void dash_intro(void)
     F_119B8(3, 0x28, 0x28, 0);
     disk_free_pic(3);
     (*m_present)();
-    r_vid.f16 = 0;
+    r_vid.copyToFront = 0;
     F_118D4(1, -1);
     disk_free_pic(1);
     dash_wait_key(400);
@@ -380,7 +380,7 @@ void dash_time_up(void)
     game_message(0x17bb);
     (*bl78be)();
     cursor_ctl(-4);
-    r_vid.f16 = 1;
+    r_vid.copyToFront = 1;
     screen_fill_rect(0, 0, 320, 200, 0);
     F_065AF(1);
     F_10B7C();
@@ -412,7 +412,7 @@ void dash_set_view(int mode)
             outp(CRTC_INDEX, CRTC_START_LO);
             outp(CRTC_DATA, 0);
         }
-        r_vid.f16 = 1;
+        r_vid.copyToFront = 1;
         screen_status_init(0xbe);
         break;
     case 2:
@@ -422,11 +422,11 @@ void dash_set_view(int mode)
             outp(CRTC_INDEX, CRTC_START_LO);
             outp(CRTC_DATA, 0);
         }
-        r_vid.f16 = 1;
+        r_vid.copyToFront = 1;
         break;
     case 3:
         r_vid.back = r_vid.front = g_savedFront;
-        r_vid.f16 = 0;
+        r_vid.copyToFront = 0;
         screen_status_init(r_vid.mode == -2 ? 0x5a : 0xbe);
         if (bw8aca)
             F_11593(g_gearLabel);
@@ -443,7 +443,7 @@ void dash_set_view(int mode)
             outp(CRTC_INDEX, CRTC_START_LO);
             outp(CRTC_DATA, 0);
         }
-        r_vid.f16 = 1;
+        r_vid.copyToFront = 1;
         (*m_present)();
         break;
     }

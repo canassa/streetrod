@@ -159,7 +159,7 @@ int ads_run(void)
             g_adRedraw = 0;
             r_vid.back->height = hsave;
             cursor_ctl(-1);
-            if (r_vid.f16)
+            if (r_vid.copyToFront)
                 bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
             sys_hover_reset();
         }

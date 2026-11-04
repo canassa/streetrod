@@ -90,8 +90,8 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
 
     r_vid.front = front;
     r_vid.back = back;
-    r_vid.f8 = 0;
-    r_vid.f16 = 1;
+    r_vid.scratch = 0;
+    r_vid.copyToFront = 1;
     switch (r_vid.mode = front->flags) {
     case -2:
         r_vid.planes = 4;
@@ -257,14 +257,14 @@ static void near anim_run(int n)
             g_obj->pendingTimers++;
             if (wait)
                 cursor_ctl(-1);
-            if (g_cmd->sub == 4 && r_vid.f16)
+            if (g_cmd->sub == 4 && r_vid.copyToFront)
                 bitmap_copy_box(r_vid.back, r_vid.front, g_box->x2, g_box->y2,
                         g_box->x2 + g_box->w - 1, g_box->y2 + g_box->h - 1);
             return;
         case 12:
             cursor_ctl(-1);
             wait = 0;
-            if (!r_vid.f16)
+            if (!r_vid.copyToFront)
                 break;
             bitmap_copy_box(r_vid.back, r_vid.front, g_box->x2, g_box->y2,
                     g_box->x2 + g_box->w - 1, g_box->y2 + g_box->h - 1);

@@ -48,7 +48,7 @@ int edit_line(int x, int y, char *buf, int max)
     draw_vline(r_vid.back, cx = g824cd, cy = bq824e, 8);
     colr = -1;
     cursor_ctl(-1);
-    if (r_vid.f16)
+    if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, x, y, x + w, y + 8);
     ip = g_msgClickToEdit[0];
     g_msgClickToEdit[0] = 0;
@@ -102,7 +102,7 @@ int edit_line(int x, int y, char *buf, int max)
                 draw_vline(r_vid.back, cx, cy, 8);
                 colr = -1;
                 cursor_ctl(-1);
-                if (r_vid.f16)
+                if (r_vid.copyToFront)
                     bitmap_copy_box(r_vid.back, r_vid.front, px, cy, px + 6, cy + 8);
             }
         } else {
@@ -111,7 +111,7 @@ int edit_line(int x, int y, char *buf, int max)
             draw_vline(r_vid.back, cx, cy, 8);
             colr = ~colr;
             cursor_ctl(-1);
-            if (r_vid.f16)
+            if (r_vid.copyToFront)
                 bitmap_copy_box(r_vid.back, r_vid.front, cx, cy, cx + 1, cy + 8);
         }
     }
@@ -120,7 +120,7 @@ int edit_line(int x, int y, char *buf, int max)
     x_colors.line = x_colors.textBg;
     draw_vline(r_vid.back, cx, cy, 8);
     cursor_ctl(-1);
-    if (r_vid.f16)
+    if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, cx - 6, y, cx, y + 8);
     x_colors.line = oc;
     x_colors.fill = pos;

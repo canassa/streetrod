@@ -56,7 +56,7 @@ void menu_draw_hot(struct Hot *p)
     int nxt;
 
     colr = 0;
-    if (!g_hotChain && r_vid.f16)
+    if (!g_hotChain && r_vid.copyToFront)
         cursor_ctl(-3);
     do {
         switch (p->kind) {
@@ -129,7 +129,7 @@ void menu_draw_hot(struct Hot *p)
         }
         break;
     } while ((nxt = p->next & g_hotChain) ? (p = &g_hots[nxt], 1) : 0);
-    if (!g_hotChain && r_vid.f16) {
+    if (!g_hotChain && r_vid.copyToFront) {
         cursor_ctl(-1);
         bitmap_copy_box(r_vid.back, r_vid.front, p->x1 - 3, p->y1 - 3, p->x2 + 6, p->y2 + 6);
     }
@@ -164,7 +164,7 @@ void menu_push(int id)
         g_hotChain = 0;
         x_colors = saved;
         cursor_ctl(-1);
-        if (r_vid.f16 && g_drawnMaxX >= 0)
+        if (r_vid.copyToFront && g_drawnMaxX >= 0)
             bitmap_copy_box(r_vid.back, r_vid.front, g_drawnMinX - 3, g_drawnMinY - 3, g_drawnMaxX + 6, g_drawnMaxY + 6);
         sys_keymap_set(id);
         sys_hover_reset();
@@ -477,7 +477,7 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
             draw_frame(r_vid.back, w->w, w->h, ww9, 8);
         }
         cursor_ctl(-1);
-        if (r_vid.f16)
+        if (r_vid.copyToFront)
             bitmap_copy_box(r_vid.back, r_vid.front, wx8 - 1, wy7 - 1, right + 1, bottom9 + 1);
 restore:
         x_colors = bustyle->pal[idx2];
@@ -512,7 +512,7 @@ restore:
                 y2 = (w->ty < y2) ? y2 : w->ty;
             }
             cursor_ctl(-1);
-            if (r_vid.f16)
+            if (r_vid.copyToFront)
                 bitmap_copy_box(r_vid.back, r_vid.front, x1, y1, x2, y2);
             curl = nw5;
         }
@@ -545,7 +545,7 @@ restore:
                     w = (struct Win *)(0x12 * i + a_8b9ap);
                     draw_frame(r_vid.back, w->w, w->h, ww9, 8);
                     cursor_ctl(-1);
-                    if (r_vid.f16)
+                    if (r_vid.copyToFront)
                         bitmap_copy_box(r_vid.back, r_vid.front,
                             (w->w - 1 > x1) ? x1 : w->w - 1,
                             (w->h - 1 > y1) ? y1 : w->h - 1,

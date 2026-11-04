@@ -218,12 +218,12 @@ void F_1B213(int *a, int *b)
     int sv401;
     int s74;
 
-    sv401 = r_vid.f16;
+    sv401 = r_vid.copyToFront;
     s72 = m_8272.m8272;
     s74 = m_8272.m8274;
     marks_release();
     cursor_ctl(-4);
-    r_vid.f16 = 0;
+    r_vid.copyToFront = 0;
     g_6da0 = z_8b7c;
     modelm = a_7eaap.m7eb0->specIndex;
     attr3 = game_car_look(a_7eaap.m7eb0);
@@ -454,7 +454,7 @@ void F_1B213(int *a, int *b)
     marks_release();
     (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
     z_8b7c = g_6da0;
-    r_vid.f16 = sv401;
+    r_vid.copyToFront = sv401;
     m_8272.m8272 = s72;
     m_8272.m8274 = s74;
     g_spriteBgY = 0;

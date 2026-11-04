@@ -135,9 +135,9 @@ int near savegame_new(void)
 {
     int sel;
 
-    r_vid.f16 = 0;
+    r_vid.copyToFront = 0;
     F_119B8(0x3f8, 0x10, 6, 0);
-    r_vid.f16 = 1;
+    r_vid.copyToFront = 1;
     video_name_pal();
     bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
     (*m_present)();
@@ -302,14 +302,14 @@ int near savegame_load(void)
 
     cursor_ctl(-4);
     scan_save_slots(0);
-    r = r_vid.f16;
-    r_vid.f16 = 0;
+    r = r_vid.copyToFront;
+    r_vid.copyToFront = 0;
     F_118D4(0x3f7, 0);
     if (g_list[0]) {
         F_119B8(0x3fa, 0xf0, 100, -1);
         F_119B8(0x3fc, 0xf0, 0x8c, -1);
     }
-    r_vid.f16 = r;
+    r_vid.copyToFront = r;
     if (r)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 320, 190);
     cursor_ctl(-2);
@@ -406,13 +406,13 @@ void near savegame_save(void)
     sel = 0;
     cursor_ctl(-4);
     scan_save_slots(1);
-    r = r_vid.f16;
-    r_vid.f16 = 0;
+    r = r_vid.copyToFront;
+    r_vid.copyToFront = 0;
     F_118D4(0x3f7, 0);
     F_119B8(0x3f9, 0x48, 0xa9, -1);
     F_119B8(0x3fb, 0xf0, 100, -1);
     F_119B8(0x3fc, 0xf0, 0x8c, -1);
-    r_vid.f16 = r;
+    r_vid.copyToFront = r;
     if (r)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 320, 190);
     strcpy(g_saveName, g_driverName);

@@ -268,7 +268,7 @@ void race_gas_station(void)
     g_scene = 3;
     F_118D4(0x442, -1);
     F_11593(g_49dc);
-    r_vid.f16 = 1;
+    r_vid.copyToFront = 1;
     (*m_present)();
     dl.f0c = 1;
     cursor_ctl(1);
@@ -279,11 +279,11 @@ void race_gas_station(void)
     F_16381(0);
     label = popup_grab(0x50, 0xaa, 0x28, 0xc, 0);
     dl.bm1 = popup_grab(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
-    r_vid.f16 = 0;
+    r_vid.copyToFront = 0;
     popup_show(g_pumpNoNozzle, 0x40, 0x64);
     dl.bm2 = popup_grab(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
     popup_show(g_pumpWithNozzle, 0x40, 0x64);
-    r_vid.f16 = 1;
+    r_vid.copyToFront = 1;
     pos = 1;
     dl.f1a = 0;
     wait1 = 0x28;
@@ -496,7 +496,7 @@ static void near show_ticket(void)
     pkt.dy = 0x14;
     (*b_78a2)(a, r_vid.back, &pkt, 1);
     maxw2 = a->width - 8;
-    r_vid.f16 = 0;
+    r_vid.copyToFront = 0;
     x_colors = bustyle->hilite;
     for (p2 = g_driverName, wk = 0; *p2 && wk < maxw2; p2++)
         wk += g_font[*p2 - 32].w;
@@ -520,7 +520,7 @@ static void near show_ticket(void)
     g_descHdr[endk + 1] = e;
     *p2 = d;
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
-    r_vid.f16 = 1;
+    r_vid.copyToFront = 1;
     cursor_ctl(-2);
     sys_reset_queues();
 }

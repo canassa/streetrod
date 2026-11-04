@@ -686,7 +686,7 @@ static void near pop_rival_hood(void)
     g_waitUntil = g_tick + 800;
     while ((n = sys_wait_input(3000)) == 0)
         ;
-    r_vid.f8 = 0;
+    r_vid.scratch = 0;
     popup_show(pict, 0x60, 9);
     marks_release();
     menu_pop(1);
@@ -805,7 +805,7 @@ static void near play_ending(void)
     cursor_ctl(-4);
     screen_status_init(0xbe);
     F_119B8(9, 8, 0x14, 2);
-    r_vid.f16 = 0;
+    r_vid.copyToFront = 0;
     savedl = g_picMaxH;
     g_picMaxH = 0xc8;
     (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
@@ -822,7 +822,7 @@ static void near play_ending(void)
     r = disk_load_list(g_endPics, 0);
     r = disk_load_list(g_endPics2, 0);
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
-    r_vid.f16 = 0;
+    r_vid.copyToFront = 0;
     (*m_present)();
     av7ff8[21].overlayPic = 0x4c1;
     select_rival(0x15);
@@ -924,7 +924,7 @@ static void near play_ending(void)
     (*b_78a2)(pic4, r_vid.back, &blt, 1);
     game_pause(0x32);
     game_message(0x183c);
-    r_vid.f16 = 0;
+    r_vid.copyToFront = 0;
     arena_reset();
     disk_free_list(g_endPics2);
     disk_free_list(g_endPics);
@@ -954,7 +954,7 @@ void bobs_visit(void)
     F_118D4(0x445, -1);
     video_bobs_pal();
     F_11593(g_49dc);
-    g_cursor2.r.x2 = -1;
+    g_cursor2.drawnRect.x2 = -1;
     cursor_ctl(1);
     (*m_present)();
     F_16381(0);
@@ -1148,7 +1148,7 @@ void bobs_jail(void)
     old = 0;
     mode = 4;
     flag = 0;
-    r_vid.f16 = 0;
+    r_vid.copyToFront = 0;
     cursor_ctl(-3);
     marks_clear();
     x_82b8 = F_15BBE(0x4e7, 1);
@@ -1176,7 +1176,7 @@ void bobs_jail(void)
     F_11421(-1, "", 0);
     F_11593(g_49dc);
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
-    r_vid.f16 = 1;
+    r_vid.copyToFront = 1;
     (*m_present)();
     g_rivalHereState = 0;
     g_walkState = -1;

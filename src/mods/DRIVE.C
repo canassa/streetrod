@@ -37,7 +37,7 @@ int drive_run(void)
     int shiftx5;
     int ret;
 
-    sv = r_vid.f16;
+    sv = r_vid.copyToFront;
     do {
         dash_set_view(3);
         marks_clear();
@@ -45,9 +45,9 @@ int drive_run(void)
         g_dashBuffered = r_vid.mode == -3 && g_egaCard;
         if (g_dashBuffered) {
             popup_grab(0, 0x64, 0x140, 0x64, g755cu);
-            r_vid.f16 = 1;
+            r_vid.copyToFront = 1;
             screen_fill_rect(0, 0, 0x140, 0xc8, 0);
-            r_vid.f16 = sv;
+            r_vid.copyToFront = sv;
         }
         if (r_vid.mode == -2)
             g_driveRebuild = 1;

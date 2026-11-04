@@ -117,7 +117,7 @@ void F_065AF(int a1)
     row5 = e9 / 7 - g_5052[m];
     x = 18 * col + g_5048;
     y4 = 7 * row5 + g_504a[m];
-    r_vid.f16 = 1;
+    r_vid.copyToFront = 1;
     px5 = 80;
     py4 = 4;
     id = m < 2 ? 0x4c3 : 0x4c5;
@@ -313,7 +313,7 @@ int near F_06B06(int mode)
             menu_pop(1);
         }
     case 2:
-        r_vid.f16 = 0;
+        r_vid.copyToFront = 0;
     case 1:
         if (mode == 3)
             mode = 1;
@@ -326,7 +326,7 @@ int near F_06B06(int mode)
                 mode = 1;
             }
         }
-        r_vid.f16 = 1;
+        r_vid.copyToFront = 1;
         (*m_present)();
         if (a_7eaap.m7eb0) {
             m_8272.m827a = g7d86n[a_7eaap.m7eb0->specIndex].bodyPic;
@@ -432,7 +432,7 @@ void near F_06F6B(void)
                     game_message(0x10a1);
                     break;
                 }
-                r_vid.f16 = 1;
+                r_vid.copyToFront = 1;
                 menu_pop(1);
                 popup_show(bm1, x, y);
                 F_19438(1);
@@ -562,7 +562,7 @@ void near F_07367(void)
     else if (a_7eaap.m7eaa < 5L)
         game_message(0x1975);
     else {
-        r_vid.f16 = 1;
+        r_vid.copyToFront = 1;
         x = 24;
         y = 11;
         bm1 = F_1934E(264, 69, 0, 2);
@@ -812,9 +812,9 @@ void near F_07AA4(void)
         g_1804[k].kind = 11;
     }
     m_8272.m8286 = owner->transmission ? g_49d2[g_4806[owner->transmission->idx].variant] : 0;
-    r_vid.f16 = !m_8272.m8286;
+    r_vid.copyToFront = !m_8272.m8286;
     F_119B8(0x42e, 0x20, 10, -1);
-    r_vid.f16 = 1;
+    r_vid.copyToFront = 1;
     F_127DB(m_8272.m8286, owner->transmissionBolts);
     menu_push(20);
     for (;;) {
@@ -1071,7 +1071,7 @@ void near garage_hood(struct Car *car)
         switch (key) {
         case -1:
             menu_pop(1);
-            r_vid.f8 = 0;
+            r_vid.scratch = 0;
             marks_release();
             return;
         case 13:

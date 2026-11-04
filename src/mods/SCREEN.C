@@ -37,7 +37,7 @@ void screen_status_init(int y)
     aq8256z = 0;
     x_colors = bustyle->colors;
     draw_fill_rect(r_vid.back, 0, y, 320, 10);
-    if (r_vid.f16)
+    if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, y, 319, y + 9);
 }
 
@@ -73,7 +73,7 @@ void F_11421(int x, char *s, int w)
     (*a_78aem)(r_vid.back, left, ypos, s);
     aq8256z = *s;
     cursor_ctl(-1);
-    if (r_vid.f16)
+    if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, x > 8 ? x - 8 : x, ypos, x + wd, ypos + 7);
     x_colors = saved;
 }
@@ -98,18 +98,18 @@ void F_11593(char *s)
 {
     int saved;
 
-    saved = r_vid.f16;
+    saved = r_vid.copyToFront;
     x_colors = bustyle->colors;
     cursor_ctl(-3);
     draw_fill_rect(r_vid.back, 0, au8252x, o_8250 & 0xfff8, 8);
     (*a_78aem)(r_vid.back, 0, au8252x, s);
     g8258z = (g824cd + 7) & 0xfff8;
-    r_vid.f16 = 0;
+    r_vid.copyToFront = 0;
     if (s[1] != 'G' && s[1] != ' ')
         F_11540(0);
-    r_vid.f16 = saved;
+    r_vid.copyToFront = saved;
     cursor_ctl(-1);
-    if (r_vid.f16)
+    if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, au8252x, o_8250, au8252x + 7);
 }
 
@@ -137,7 +137,7 @@ void screen_fill_rect(int x, int y, int w, int h, char color)
     cursor_ctl(-3);
     x_colors.fill = color;
     draw_fill_rect(r_vid.back, x, y, w, h);
-    if (r_vid.f16)
+    if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, x, y, x + w - 1, y + h - 1);
     x_colors.fill = old;
     cursor_ctl(-1);
@@ -168,7 +168,7 @@ void screen_wait_msg(char *msg)
     int i;
     struct Bitmap far *back;
 
-    saved = r_vid.f16;
+    saved = r_vid.copyToFront;
     strcpy(g_promptLine1, msg);
     strcpy(g_promptLine2, "Hit Return when ready ...");
     if (g_graphicsUp >= 1) {
@@ -188,7 +188,7 @@ void screen_wait_msg(char *msg)
         }
         if (g_driveRebuild)
             video_set_palette(g_promptPalette);
-        r_vid.f16 = 1;
+        r_vid.copyToFront = 1;
         sys_reset_queues();
         back = r_vid.back;
         r_vid.back = r_vid.front;
@@ -198,7 +198,7 @@ void screen_wait_msg(char *msg)
             g_hotReadyBox[i].y1 -= dx;
             g_hotReadyBox[i].y2 -= dx;
         }
-        r_vid.f16 = saved;
+        r_vid.copyToFront = saved;
         gz8249 = prev;
         if (!prev)
             (*bl78be)();
@@ -239,7 +239,7 @@ int F_118D4(int a, int b)
     pkt.dy = g_picY;
     (*b_78a2)(p, r_vid.back, &pkt, 1);
     cursor_ctl(-1);
-    if (r_vid.f16)
+    if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, g_picX, g_picY, pkt.dx + pkt.w - 1, pkt.dy + pkt.h - 1);
     g_picX = g_picY = 0;
     F_19438(1);
@@ -261,7 +261,7 @@ int F_119B8(int a, int b, int c, int d)
 void screen_text(int x, int y, char *s)
 {
     (*a_78aem)(r_vid.back, x, y, s);
-    if (r_vid.f16)
+    if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, x, y, g824cd - 1, y + 7);
 }
 
@@ -272,6 +272,6 @@ void screen_text(int x, int y, char *s)
 void screen_hline(int x, int y, int w)
 {
     draw_hline(r_vid.back, x, y, w);
-    if (r_vid.f16)
+    if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, x, y, x + w - 1, y);
 }

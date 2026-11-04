@@ -95,7 +95,7 @@ void egaslide_sprite(int top, int bottom, int x, int y0, int y1, struct Bitmap f
         }
         outp(SEQ_INDEX, SEQ_MAP_MASK);
         outp(SEQ_DATA, SEQ_ALL_PLANES);
-        if (r_vid.f16) {
+        if (r_vid.copyToFront) {
             if (g_boltOverlay)
                 (*ab78aat)(g_boltOverlay, r_vid.back, &u_70ac, 1);
             crtc_wait_vsync();

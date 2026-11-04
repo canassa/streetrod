@@ -78,7 +78,7 @@ void popup_put(struct Bitmap far *bm, int x, int y)
 void popup_show(struct Bitmap far *bm, int x, int y)
 {
     popup_put(bm, x, y);
-    if (r_vid.f16)
+    if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, x, y, bm->width + x - 1, bm->height + y - 1);
 }
 
@@ -122,7 +122,7 @@ void popup_open(int n)
         y1 += 9;
     }
     cursor_ctl(-1);
-    if (r_vid.f16)
+    if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, g_popupLayout->x, g_popupLayout->y, g_popupLayout->x + w1 - 1, g_popupLayout->y + h1 - 1);
     if (close) {
         F_19438(1);

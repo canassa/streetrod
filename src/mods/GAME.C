@@ -132,8 +132,8 @@ static int near read_paper(void)
     int tune;
     int old;
 
-    old = r_vid.f16;
-    r_vid.f16 = 0;
+    old = r_vid.copyToFront;
+    r_vid.copyToFront = 0;
     F_118D4(0x3fd, -1);
     if ((tune = garage_day()) != g_paperDay) {
         if ((pick5 = random_int(5)) == g_paperPick)
@@ -145,8 +145,8 @@ static int near read_paper(void)
     cursor_ctl(-3);
     F_06750(0x79);
     cursor_ctl(-1);
-    r_vid.f16 = old;
-    if (r_vid.f16)
+    r_vid.copyToFront = old;
+    if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
     cursor_ctl(1);
     return menu_wait(7);
