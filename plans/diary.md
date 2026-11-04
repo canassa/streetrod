@@ -725,3 +725,13 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - A source path (`MODS\X.C`) changes only the OBJ's THEADR record, never code or segment names.
+
+## 2026-11-04 19:00 CET: Codegen dummies: four replaced by natural source, three documented
+
+### What I did
+- F_0A544's empty `{ }` was no longer needed. F_1783E's `if (0) ;` became the clip-rect stores through `*pr1`/`*pr2`: the pointer stores kill the known `*pr2` and `(*pa)->height`, which is why the original reloads them. F_23C3B's `if (p > 40) ;` became braced register-write macros `GCREG`/`SEQREG` used for every port pair of M_238A2.C (a reconstruction: any braced block ends the basic block holding the CSE; bracing 38 other pairs elsewhere changes no bytes). F_07AA4's `int n` became a key-indexed `int flags[3]` whose element 0 is the frame hole (an interpretation).
+- F_11213's three unused ints are one unused inner-block `struct Colors save`; it, the four `long unused` (F_118D4, F_12A17, F_12DD8, F_12F99) and the x_trk0/x_trk1 dead far accesses in M_0F38A.C stay, each commented PROVISIONAL in the source and listed in plans/faithful-build.md. Lint now rejects `extern` at any block depth except those two declarations. DB notes updated.
+- Result: `./sr build` IDENTICAL from an empty work dir, `./sr check --all` 572/572, tests OK.
+
+### What I learned
+- A non-empty braced block is the same basic-block boundary as a code-less `if`; before inventing a boundary, check whether stores through pointers explain the reloads.
