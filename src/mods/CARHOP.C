@@ -66,7 +66,7 @@ static void near grab_strip(struct Bitmap far **pbm)
     int w, x, h;
 
     disk_pic_size(0x474, &w, &h, &x);
-    mem_set_bitmap(*pbm, g_pageBmps[2]->bits.p + 0x46 * g_pageBmps[2]->pitch, 0L, w, h, r_vid.mode == -2 ? -2 : -1);
+    mem_set_bitmap(*pbm, g_pageBmps[2]->bits.p + BACKDROP_ROWS * g_pageBmps[2]->pitch, 0L, w, h, r_vid.mode == -2 ? -2 : -1);
     if (r_vid.mode == -2) {
         egalatch_rect(r_vid.front->bits.p, (*pbm)->bits.p - 0xaa0, (*pbm)->pitch, (*pbm)->height, 0, 0x44, EGA_PITCH);
     } else {

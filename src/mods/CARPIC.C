@@ -86,7 +86,7 @@ static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2
     int j;
     char far *base;
 
-    base = g_pageBmps[2]->bits.p + 0x46 * g_pageBmps[2]->pitch;
+    base = g_pageBmps[2]->bits.p + BACKDROP_ROWS * g_pageBmps[2]->pitch;
     for (i = 0; i < n; i++) {
         A[i].p = base;
         A[i].y = B[i]->height - y2 - h;
@@ -124,7 +124,7 @@ static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int co
     int H5;
     int maxw;
 
-    base2 = g_pageBmps[2]->bits.p + 0x46 * g_pageBmps[2]->pitch;
+    base2 = g_pageBmps[2]->bits.p + BACKDROP_ROWS * g_pageBmps[2]->pitch;
     H5 = B[0]->height - y2 - h;
     v = (r_vid.mode == -6 ? color << 4 : color << 2 | color << 4 | color << 6) | color;
     maxw = B[0]->width;
@@ -228,7 +228,7 @@ static void near build_pump_strip(int x, int y, int sx0, int top, struct Bitmap 
     int t;
 
     g_picNewHeader = 0;
-    tmp1 = F_1934E(0x10, 0x46, 1, ARENA_HIGH_STACK);
+    tmp1 = F_1934E(0x10, BACKDROP_ROWS, 1, ARENA_HIGH_STACK);
     disk_unpack_pic(id1, tmp1);
     save1 = tmp1->bits.p;
     tmp1->bits.p = 0;
@@ -245,7 +245,7 @@ static void near build_pump_strip(int x, int y, int sx0, int top, struct Bitmap 
     b.dx = (-t < 0) ? 0 : -t;
     (*ab78aat)(bu825a, dstbm, &b, 1);
     b.w = 0x10;
-    b.h = 0x46;
+    b.h = BACKDROP_ROWS;
     b.dx = b.dy = b.sx = b.sy = 0;
     (*ab78aat)(tmp1, dstbm, &b, 0);
     F_19438(1);
@@ -415,7 +415,7 @@ void F_181C8(int kind, int idx, int flags, int kk, int q, int bot, int mode2, in
     int x7;
     struct Bitmap far *pan;
 
-    top7 = bot - 0x45;
+    top7 = bot - (BACKDROP_ROWS - 1);
     cursor_ctl(CURSOR_HIDE_NOW);
 again:
     n2 = (kind == 3 || kind == 7 || kind == 8) ? 1 : 4;
@@ -429,10 +429,10 @@ again:
         if (kind == 4) {
             g_4f4a = 1;
             if (r_vid.mode == -2) {
-                mem_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, 0x140, 0x46 - g_spriteBottomCut, -2);
+                mem_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, 0x140, BACKDROP_ROWS - g_spriteBottomCut, -2);
                 egalatch_rect(r_vid.back->bits.p, g_backdrop->bits.p - EGA_PITCH * top7, EGA_PITCH, g_backdrop->height, 0, top7, EGA_PITCH);
             } else {
-                mem_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, 0x140, 0x46 - g_spriteBottomCut, -1);
+                mem_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, 0x140, BACKDROP_ROWS - g_spriteBottomCut, -1);
                 popup_grab(0, top7, 0x140, g_backdrop->height, g_backdrop);
             }
         }
@@ -463,7 +463,7 @@ again:
                 g_backdropW = 0x140;
                 g_backdropX = 0;
             }
-            carpic_backdrop(g_backdrop, &pan, mode2 ? 0x448 : 0, &pb8, 0x46, h7, &pr16, &pr26);
+            carpic_backdrop(g_backdrop, &pan, mode2 ? 0x448 : 0, &pb8, BACKDROP_ROWS, h7, &pr16, &pr26);
         }
     }
     ac825et = x0;
@@ -592,7 +592,7 @@ void carpic_patch_bg(struct Bitmap far *dst, int p1, int p2, int p3, int p4, int
     struct Blt r;
     int top;
 
-    base7 = p7 - 0x45;
+    base7 = p7 - (BACKDROP_ROWS - 1);
     top = g_backdrop->height + base7 - 1;
     lo7 = p6 < base7 ? base7 : p6;
     hi1 = p6 + p4 - 1 > top ? top : p6 + p4 - 1;
@@ -607,7 +607,7 @@ void carpic_patch_bg(struct Bitmap far *dst, int p1, int p2, int p3, int p4, int
     }
     if (g_scene == 6) {
         r.h = g_backdrop->height;
-        r.sy = p7 - 0x45;
+        r.sy = p7 - (BACKDROP_ROWS - 1);
         r.dy = 0;
         for (i9 = 0; i9 < 7; i9++) {
             r.w = g_jailBars[i9].w;
