@@ -249,7 +249,7 @@ void view_load(void)
     pkt1.dy = 0x66;
     (*b_78a2)(bm1, g8188w, &pkt1, 1);
     F_19438(1);
-    sel = *(int *)&bw8aca == 0 ? g_0284 : 0;
+    sel = *(int *)&bw8aca == 0 ? g_scene : 0;
     bm24 = F_15BBE(g_5e62[sel], 2);
     pkt1.w = bm24->width;
     pkt1.h = bm24->height;

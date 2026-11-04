@@ -4,7 +4,7 @@
 #define CURSOR_H
 #include "STRUCTS.H"
 
-extern struct Pair g_06ec[];                            /* DS:06EC */
+extern struct Pair g_cursorPairs[];                            /* DS:06EC */
 extern void (far *ap78b2z)(char far *, char far *, char far *, char far *, int, int, int, int);/* DS:78B2 */
 extern struct Cursor g_cursor2;                         /* DS:7AEC */
 unsigned cursor_shape_off(unsigned n);                  /* 0x11E9C */

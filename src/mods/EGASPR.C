@@ -52,15 +52,15 @@ int egaspr_step(struct Sprite *s)
     key = s->img;
     height = s->save;
     sprite_clip_box(box->pos->width,
-        box->pos->height - g_02d0, s->x, s->y,
+        box->pos->height - g_spriteBottomCut, s->x, s->y,
         count->bm->width, count->bm->height, &clip);
     if (sprite_rect_sub(&clip, &count->r, &f, s->seq->dx))
         restore_rect_latch(&f, count->bm, key, s->seq->dx);
     count->r = clip;
-    dest.h = box->pos->height - g_02d0;
+    dest.h = box->pos->height - g_spriteBottomCut;
     dest.sy = 0;
     dest.dy = s->y;
-    if (g_0284 != 6) {
+    if (g_scene != 6) {
         dest.w = box->pos->width;
         dest.sx = 0;
         dest.dx = s->x;

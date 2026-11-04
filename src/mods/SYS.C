@@ -119,7 +119,7 @@ void sys_music_pause(void)
         outp(0x61, inp(0x61) & 0xfc);
         g_speakerOn = 0;
         g_voice->dirty = 1;
-        g_09f4[F_06827(-40)].f4 = g_offTunes;
+        g_hots[F_06827(-40)].f4 = g_offTunes;
         sys_hover_reset();
     }
 }
@@ -131,7 +131,7 @@ void sys_music_resume(void)
     if (g_musicOn && !g_voice->off && g_voice->lc != g_voice->l8) {
         g_voice->off = 1;
         g_voice->dirty = 1;
-        g_09f4[F_06827(-40)].f4 = g_offSquelch;
+        g_hots[F_06827(-40)].f4 = g_offSquelch;
         sys_hover_reset();
     }
 }
@@ -164,7 +164,7 @@ void sys_reset_queues(void)
     }
     g_click = 0;
     for (i = 0; i < 8; i++)
-        g_47d8[i] = 0;
+        g_dirHeld[i] = 0;
     g_buttons = g_keyDx = g_keyDy = g_lastDx = g_lastDy = 0;
 }
 
@@ -381,7 +381,7 @@ int sys_keymap_restore(int keep)
     struct KeyMap *p;
 
     for (i = 0; i < 8; i++)
-        g_47d8[i] = 0;
+        g_dirHeld[i] = 0;
     g_keyDx = g_keyDy = g_lastDx = g_lastDy = 0;
     i = g_keymapGroup;
     if (i) {
@@ -405,18 +405,18 @@ char g_demoKeyDown = 0;   /* DS:06A6 */
 char g_demoMoving = 0;   /* DS:06A7 */
 int g_demoCount = 0;   /* DS:06A8 */
 int g_demoLastGroup = 0;   /* DS:06AA */
-int g_06ac = 0;   /* DS:06AC */
+int g_autoShifts = 0;   /* DS:06AC */
 int g_demoTargetX = 0;   /* DS:06AE */
 int g_demoTargetY = 0;   /* DS:06B0 */
 int g_demoScriptPos = 0;   /* DS:06B2 */
 int g_demoScript[22] = {-1, 0, -1, 0, 1, 1, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 0, 0, 2};   /* DS:06B4 */
 char g_cursorBusy = 0;   /* DS:06E0 */
 int g_vibCount = 1;   /* DS:06E2 */
-int g_06e4 = 0;   /* DS:06E4 */
+int g_sirenPhase = 0;   /* DS:06E4 */
 int g_overRev = 0;   /* DS:06E6 */
 char g_driveBusy = 0;   /* DS:06E8 */
 char g_lastFire = 0;   /* DS:06E9 */
-char g_06ea = 0;   /* DS:06EA */
+char g_squealPhase = 0;   /* DS:06EA */
 
 /* sys_wait_input @ 0000:1417 (linear 0x01417, 1068 bytes) */
 
@@ -766,8 +766,8 @@ void sys_demo_step(void)
         return;
     }
     if (!g_demoMoving) {
-        if (g_06ac && g_keyGroup == 10) {
-            g_06ac = 0;
+        if (g_autoShifts && g_keyGroup == 10) {
+            g_autoShifts = 0;
             g_demoCount = 15;
         }
         num = (int)strlen((char *)g_keyMaps[g_keyGroup]) / 2;
@@ -858,15 +858,15 @@ void sys_demo_step(void)
                 g_demoKey = g_keyMaps[g_keyGroup][g_demoChoice].key;
                 mask = g_keyMaps[g_keyGroup][g_demoChoice].val + 0x32;
                 step = g_groupHot[g_keyGroup];
-                for (; step - g_groupHot[g_keyGroup] < 32 && g_09f4[step].f6 != mask; step++)
+                for (; step - g_groupHot[g_keyGroup] < 32 && g_hots[step].f6 != mask; step++)
                     ;
-                if (g_09f4[step].f6 == mask) {
-                    cx = (g_09f4[step].x1 + g_09f4[step].x2) / 2;
+                if (g_hots[step].f6 == mask) {
+                    cx = (g_hots[step].x1 + g_hots[step].x2) / 2;
                     if (cx)
                         g_demoTargetX = cx;
                     if (g_keyGroup == 8)
                         g_demoTargetX = 160;
-                    cy = (g_09f4[step].y1 + g_09f4[step].y2) / 2;
+                    cy = (g_hots[step].y1 + g_hots[step].y2) / 2;
                     if (cy)
                         g_demoTargetY = cy;
                 }
@@ -892,7 +892,7 @@ void sys_demo_step(void)
         return;
     }
     g_demoMoving = 0;
-    if (g_keyGroup == 0x25 && g_06ac < 10 && g_demoKey == 0x22)
+    if (g_keyGroup == 0x25 && g_autoShifts < 10 && g_demoKey == 0x22)
         g_demoKey = 0x1c;
     if (g_keyGroup == 10 && g_demoLastGroup == 10) {
         g_demoKey = 0x1c;
@@ -1083,18 +1083,18 @@ void interrupt far sys_drive_isr(void)
                     outp(0x42, val.b[1]);
                 }
             } else {
-                g_06ea ^= 1;
+                g_squealPhase ^= 1;
                 if (g_sirenOn) {
-                    if (g_06e4++ < 10)
+                    if (g_sirenPhase++ < 10)
                         val.w = 0x54b;
                     else
                         val.w = 0x712;
                     outp(0x42, val.b[0]);
                     outp(0x42, val.b[1]);
-                    if (g_06e4 > 20)
-                        g_06e4 = 0;
+                    if (g_sirenPhase > 20)
+                        g_sirenPhase = 0;
                 } else if (g_squealOn || g_onShoulder) {
-                    if (g_06ea) {
+                    if (g_squealPhase) {
                         val.w = 0x95;
                         outp(0x42, val.b[0]);
                         outp(0x42, val.b[1]);
@@ -1173,7 +1173,7 @@ void interrupt far sys_drive_isr(void)
                     } else if (e_78e0.f18 < e_78e0.f1c && ao8228u) {
                         c = 1;
                         flag = 1;
-                        g_06ac++;
+                        g_autoShifts++;
                     }
                     if (e_78e0.fe < 2000 && e_78e0.f18 > 1 && !flag)
                         c = 1;
@@ -1190,10 +1190,10 @@ void interrupt far sys_drive_isr(void)
                     if (e_78e0.f0 > 15)
                         e_78e0.f0 -= 15;
                 }
-                if (g_54da > 0) {
+                if (g_brakeTicks > 0) {
                     prev = 1;
                     flag = s = 0;
-                    g_54da--;
+                    g_brakeTicks--;
                 }
                 if (e_78e0.fe > 5000) {
                     a_7eaap.m7eb0->rack.s[0]->b += !a_7eaap.m7ec0 ? 1 : 1;

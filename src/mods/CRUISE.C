@@ -24,7 +24,7 @@ char g_savedPal3 = -1;   /* DS:51AD */
 void cruise_go(void)
 {
     g_firePressed = g_mouseLeft = g_joyButtons = g_buttons = 0;
-    if (g_0284) {
+    if (g_scene) {
         if (a_7eaap.m7eb0->f22 > 2)
             a_7eaap.m7eb0->f22 -= 2;
         else

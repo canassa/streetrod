@@ -19,7 +19,7 @@
         EXTRN   _g_fireLatch:BYTE
         EXTRN   _g_soundOn:BYTE
         EXTRN   _g_lastKey:BYTE
-        EXTRN   _g_47e8:WORD
+        EXTRN   _g_joySavedSp:WORD
         EXTRN   _g_firePressed:WORD
 
         .CODE S0000_TEXT
@@ -123,9 +123,9 @@ L4:
         mov     bx,ax
         popf
         jne     L6
-        cmp     BYTE PTR _g_47e8[bx],0
+        cmp     BYTE PTR _g_joySavedSp[bx],0
         jne     done
-        mov     BYTE PTR _g_47e8[bx],1
+        mov     BYTE PTR _g_joySavedSp[bx],1
         mov     _g_inputLock,0FFFFh
         mov     al,_g_scanMap[bx]
         add     _g_keyDx,al
@@ -136,10 +136,10 @@ L4:
         mov     _g_inputLock,0
         jmp     SHORT done
 L6:
-        cmp     BYTE PTR _g_47e8[bx],0
+        cmp     BYTE PTR _g_joySavedSp[bx],0
         je      done
         mov     _g_inputLock,0FFFFh
-        mov     BYTE PTR _g_47e8[bx],0
+        mov     BYTE PTR _g_joySavedSp[bx],0
         mov     al,_g_scanMap[bx]
         sub     _g_keyDx,al
         mov     al,_g_scanMap[bx+1]

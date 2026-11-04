@@ -7,7 +7,7 @@
 extern int g_hotChain;                                  /* DS:07A8 */
 extern char g_wearText[];                               /* DS:07AA */
 extern char g_wearPad[4];                               /* DS:07BE */
-extern int g_07c6[];                                    /* DS:07C6 */
+extern int g_cgaPicMap[];                                    /* DS:07C6 */
 extern void (far *g_drvRecolorRegion)(struct Bitmap far *, int, int, int, int, int, int);/* DS:78BA */
 extern int bq824e;                                      /* DS:824E */
 extern int ai8b86y[];                                   /* DS:8B86 */

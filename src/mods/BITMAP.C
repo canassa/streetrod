@@ -224,7 +224,7 @@ void bitmap_underlay(struct Bitmap far *src, struct Bitmap far *dst, int x, int 
         dm1 = dm;
         sm1 = sm;
     }
-    if (!g_5aa6) {
+    if (!g_keepMask) {
         for (r = 0, dm1 = dm, sm1 = sm; r < h; r++) {
             for (c8 = 0; c8 < spitch; c8++)
                 *dm1++ &= *sm1++;

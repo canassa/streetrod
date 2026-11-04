@@ -4,8 +4,8 @@
 
 ; DS:5580: the key maps of g_keyMaps, one per screen: (scan code, key value) pairs, each list
 ; ended by a 0 byte.
-        PUBLIC  _g_5580
-_g_5580 DB      31h, 0CDh,  1Ch, 0CDh,  18h, 0CCh,  0  ; DS:5580
+        PUBLIC  _g_keyMapData
+_g_keyMapData DB      31h, 0CDh,  1Ch, 0CDh,  18h, 0CCh,  0  ; DS:5580
 K_5587  DB      18h, 0CCh,  1Ch, 0CBh,  0
 K_558c  DB      2, 0CFh,  3, 0D0h,  4, 0D1h,  5, 0D2h,  6, 0D3h,  7, 0D4h
         DB      8, 0D5h,  9, 0D6h,  0Ah, 0D7h,  0Bh, 0D8h,  3Bh, 0D9h,  3Ch, 0DAh
@@ -74,7 +74,7 @@ K_5795  DB      31h, 0CDh,  26h, 0CCh,  10h, 0D2h,  0
 K_579c  DB      32h, 0A6h,  0
         PUBLIC  _g_keyMaps
 _g_keyMaps DW      42                       ; DS:579F struct KeyMap *[]
-        DW      OFFSET DGROUP:_g_5580
+        DW      OFFSET DGROUP:_g_keyMapData
         DW      OFFSET DGROUP:K_5587
         DW      OFFSET DGROUP:K_558c
         DW      OFFSET DGROUP:K_55b3

@@ -54,7 +54,7 @@ static void near unscramble_hall(void);
 static void near scramble_hall(void);
 
 char *g_dataFileName = "hot_data";   /* DS:4EA2 */
-char *g_dataBlocks[13] = {(char *)av7ff8, (char *)g7d86n, (char *)w_8df0, (char *)g7682n, (char *)ai70e4t, (char *)ap818c, g_2c02, (char *)&a_7d16q, g_239e, (char *)g7d68m, (char *)ag8baey, (char *)h_8dd8, (char *)a784als};   /* DS:4EA4 */
+char *g_dataBlocks[13] = {(char *)av7ff8, (char *)g7d86n, (char *)w_8df0, (char *)g7682n, (char *)ai70e4t, (char *)ap818c, g_desc, (char *)&a_7d16q, g_239e, (char *)g7d68m, (char *)ag8baey, (char *)h_8dd8, (char *)a784als};   /* DS:4EA4 */
 unsigned g_dataSizes[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};   /* DS:4EBE */
 int g_lib1Handle = 0;   /* DS:4ED8 */
 int g_lib2Handle = 0;   /* DS:4EDA */
@@ -93,7 +93,7 @@ int disk_seek(int handle, long pos)
 /* pic_index @ 0F38:6057 (linear 0x153D7, 50 bytes)
 
    Map a picture number to its table index: numbers from 1000 on are shifted down, the rest
-   are 1 based. In the video modes -2 and -6 that is the result, else g_07c6 translates it */
+   are 1 based. In the video modes -2 and -6 that is the result, else g_cgaPicMap translates it */
 
 static int near pic_index(int n)
 {
@@ -102,7 +102,7 @@ static int near pic_index(int n)
     else
         n--;
     if (r_vid.mode != -2 && r_vid.mode != -6)
-        return g_07c6[n];
+        return g_cgaPicMap[n];
     else
         return n;
 }

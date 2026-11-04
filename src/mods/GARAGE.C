@@ -68,7 +68,7 @@ void F_064A3(int *a, int *b)
 void F_06529(int n)
 {
     if (garage_day() >= 91)
-        g_0282 |= 1;
+        g_end |= 1;
 }
 
 /* day_to_date @ 0000:653C (linear 0x0653C, 115 bytes) */
@@ -107,7 +107,7 @@ void F_065AF(int a1)
     int e9, col, day, bl;
 
     F_06529(0);
-    if (a1 == 0 && g_0282)
+    if (a1 == 0 && g_end)
         return;
     d9 = garage_day();
     F_064A3(&al, &bl);
@@ -184,10 +184,10 @@ int F_06827(int id)
 {
     int n, k, base;
 
-    base = ((unsigned)g_121c - (unsigned)g_09f4) / sizeof(struct Hot);
+    base = ((unsigned)g_121c - (unsigned)g_hots) / sizeof(struct Hot);
     n = ((unsigned)g_134e - (unsigned)g_121c) / sizeof(struct Hot) + 1;
     for (k = 0; k < n; k++)
-        if (g_09f4[base + k].f6 == id)
+        if (g_hots[base + k].f6 == id)
             return base + k;
 }
 
@@ -197,7 +197,7 @@ static void near sort_spots(void)
 {
     int base, n;
 
-    base = ((unsigned)g_121c - (unsigned)g_09f4) / sizeof(struct Hot);
+    base = ((unsigned)g_121c - (unsigned)g_hots) / sizeof(struct Hot);
     n = ((unsigned)g_134e - (unsigned)g_121c) / sizeof(struct Hot) + 1;
     F_135E5(base, n);
 }
@@ -209,7 +209,7 @@ static void near hide_spots(void)
     int i;
 
     for (i = 0; i < 5; i++)
-        g_09f4[F_06827(g_508a[i])].f0 = 14;
+        g_hots[F_06827(g_508a[i])].f0 = 14;
 }
 
 /* place_spots @ 0000:68E8 (linear 0x068E8, 446 bytes)
@@ -222,31 +222,31 @@ static void near place_spots(int n, int x, int y)
     struct Hot *hotspot;
 
     panel = &ai70e4t[n];
-    hotspot = &g_09f4[F_06827(11)];
+    hotspot = &g_hots[F_06827(11)];
     hotspot->x1 = panel->r[0].x + x;
     hotspot->y1 = panel->r[0].y + y;
     hotspot->x2 = (unsigned)hotspot->x1 + panel->r[0].w;
     hotspot->y2 = (unsigned)hotspot->y1 + panel->r[0].h;
     hotspot->f0 = 11;
-    hotspot = &g_09f4[F_06827(13)];
+    hotspot = &g_hots[F_06827(13)];
     hotspot->x1 = panel->r[1].x + x;
     hotspot->y1 = panel->r[1].y + y;
     hotspot->x2 = (unsigned)hotspot->x1 + panel->r[1].w;
     hotspot->y2 = (unsigned)hotspot->y1 + panel->r[1].h;
     hotspot->f0 = 11;
-    hotspot = &g_09f4[F_06827(9)];
+    hotspot = &g_hots[F_06827(9)];
     hotspot->x1 = panel->r[2].x + x;
     hotspot->y1 = panel->r[2].y + y;
     hotspot->x2 = (unsigned)hotspot->x1 + panel->r[2].w;
     hotspot->y2 = (unsigned)hotspot->y1 + panel->r[2].h;
     hotspot->f0 = 11;
-    hotspot = &g_09f4[F_06827(10)];
+    hotspot = &g_hots[F_06827(10)];
     hotspot->x1 = panel->r[3].x + x;
     hotspot->y1 = panel->r[3].y + y;
     hotspot->x2 = (unsigned)hotspot->x1 + panel->r[3].w;
     hotspot->y2 = (unsigned)hotspot->y1 + panel->r[3].h;
     hotspot->f0 = 11;
-    hotspot = &g_09f4[F_06827(12)];
+    hotspot = &g_hots[F_06827(12)];
     hotspot->x1 = panel->r[4].x + x;
     hotspot->y1 = panel->r[4].y + y;
     hotspot->x2 = (unsigned)hotspot->x1 + panel->r[4].w;
@@ -287,14 +287,14 @@ int near F_06B06(int mode)
     if (g_4733 > 0)
         cursor_ctl(-4);
     F_06529(0);
-    if (g_0282) {
-        if (g_0282 & 1)
+    if (g_end) {
+        if (g_end & 1)
             cursor_ctl(-2);
         return 0x29a;
     }
     cursor_ctl(0);
     F_11421(-1, "", 0);
-    g_0284 = 1;
+    g_scene = 1;
     switch (mode) {
     case 3:
         if (g_4f48 == 0) {
@@ -342,7 +342,7 @@ int near F_06B06(int mode)
             for (r = 0; r < 5; r++)
                 o_8290[r] = a_7eaap.m7eb0->rack.s[r]->idx;
             n = game_car_look(a_7eaap.m7eb0);
-            strcpy(g_29ff, g_2c02 + g7d86n[a_7eaap.m7eb0->f2].f6);
+            strcpy(g_29ff, g_desc + g7d86n[a_7eaap.m7eb0->f2].f6);
             if (mode == 2)
                 F_181C8(3, m_8272.m8282, n, m_8272.m8284.shade, 0, 0x98, 0, g_5030[m_8272.m827e]);
             else
@@ -378,18 +378,18 @@ int near F_06B06(int mode)
     }
     if (is_broke()) {
         game_message(0x17ff);
-        g_0282 |= 0x10;
+        g_end |= 0x10;
     } else {
         F_16381(0);
         sys_reset_queues();
         r = menu_wait(10);
     }
     F_06529(0);
-    if (g_0282 & 0x10)
-        g_0282 = 0x10;
-    if (g_0282) {
+    if (g_end & 0x10)
+        g_end = 0x10;
+    if (g_end) {
         r = 0x29a;
-        if ((g_0282 & 1) == 0)
+        if ((g_end & 1) == 0)
             cursor_ctl(-4);
     }
     return r;
@@ -635,7 +635,7 @@ void near F_076A7(int t, struct Node **list, char *buf, int start)
         if ((ent7 = &g_4806[p->idx])->f4 == t) {
             n++;
             list[n] = p;
-            g_49e0[n] = ent7->f6;
+            g_list[n] = ent7->f6;
             if (p->b != -128)
                 buf[n] = p->b / 100;
             else
@@ -643,7 +643,7 @@ void near F_076A7(int t, struct Node **list, char *buf, int start)
         }
         p = p->next;
     }
-    g_49e0[0] = n;
+    g_list[0] = n;
 }
 
 /* F_07741 @ 0000:7741 (linear 0x07741, 72 bytes) */
@@ -702,7 +702,7 @@ void near F_07800(void)
         return;
     }
     F_076A7(4, tbl, line, 0);
-    switch (F_142CF(4, 1, 0, g_49e0, line, 0)) {
+    switch (F_142CF(4, 1, 0, g_list, line, 0)) {
     case -4:
         return;
     case -3:
@@ -739,7 +739,7 @@ static void near build_car_info(int *ids, char *vals)
             count++;
             it = &g_4806[node->idx];
             ids[count] = g_50ce[n];
-            g_49e0[count] = it->f6;
+            g_list[count] = it->f6;
             if (node->b != -0x80)
                 vals[count] = node->b / 100;
             else
@@ -747,11 +747,11 @@ static void near build_car_info(int *ids, char *vals)
         }
     }
     for (n = 1; n <= 4; n++) {
-        g_49e0[++count] = -n;
+        g_list[++count] = -n;
         vals[count] = 0x80;
         ids[count] = 0;
     }
-    g_49e0[0] = count;
+    g_list[0] = count;
 }
 
 char *g_511e[4] = {"", "Fuel                  ", "", "Max speed      mph"};   /* DS:511E */
@@ -778,7 +778,7 @@ void F_079EB(void)
     build_car_info(ids, vals);
     sprintf(g_511e[3] + 9, " %3i mph", F_07EE6(a_7eaap.m7eb0, 1) ? F_0E218(-1) : 0);
     sprintf(g_511e[1] + 5, " %2i gallons", a_7eaap.m7eb0->f22 / 10);
-    switch (F_142CF(0x26, 1, ids, g_49e0, vals, g_511e)) {
+    switch (F_142CF(0x26, 1, ids, g_list, vals, g_511e)) {
     case -3:
         return;
     case 0x3ea:
@@ -826,7 +826,7 @@ void near F_07AA4(void)
         case -2:
             F_076A7(1, tbl, buf, 0);
             for (;;) {
-                switch (k = F_142CF(4, 1, 0, g_49e0, buf, 0)) {
+                switch (k = F_142CF(4, 1, 0, g_list, buf, 0)) {
                 case -3:
                     if (owner->slot6) {
                         game_message(0x1875);
@@ -1102,7 +1102,7 @@ void near garage_hood(struct Car *car)
         case -2:
             F_076A7(g_513c[cnt1], list4, buf, 0);
         again:
-            key = F_142CF(4, 1, 0, g_49e0, buf, 0);
+            key = F_142CF(4, 1, 0, g_list, buf, 0);
             switch (key) {
             case -3:
                 key = F_14C8B();

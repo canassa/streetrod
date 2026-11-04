@@ -217,17 +217,17 @@ static void near sell_parts(void)
     for (;; tries3++) {
         for (p7 = a_7eaap.m7eb8, nl = 0; p7; p7 = p7->next) {
             nl++;
-            g_49e0[nl] = (ip = &g_4806[(list8[nl] = p7)->idx])->f6;
+            g_list[nl] = (ip = &g_4806[(list8[nl] = p7)->idx])->f6;
             if (p7->b != -0x80) {
                 lbl[nl] = p7->b / 100;
                 continue;
             }
             lbl[nl] = 0x80;
         }
-        g_49e0[0] = nl;
+        g_list[0] = nl;
         strcpy(g_msgSellChange, "Sell it");
         g_keyMaps[4]->key = 0x1f;
-        sel = F_142CF(4, sel <= g_49e0[0] ? sel : g_49e0[0], 0, g_49e0, lbl, 0);
+        sel = F_142CF(4, sel <= g_list[0] ? sel : g_list[0], 0, g_list, lbl, 0);
         g_keyMaps[4]->key = 0x2e;
         strcpy(g_msgSellChange, "Change");
         switch ((int)sel) {
@@ -262,7 +262,7 @@ static void near sell_parts(void)
             break;
         }
         price1 = price1 / 5 * 5;
-        strcpy(g_2a5f, &g_2c02[g_4806[type8].f6]);
+        strcpy(g_salePartName, &g_desc[g_4806[type8].f6]);
         if (price1) {
             msg5 = 0x100a;
             sprintf(g_msgWillYouTake, "Will you take $%-d ?", price1);
@@ -463,25 +463,25 @@ static void near buy_from_ads(int tab)
     char color;
 
     color = 0;
-    g_0284 = 5;
-    g_49e0[1] = 0xcd8;
+    g_scene = 5;
+    g_list[1] = 0xcd8;
     n = 2;
     i5 = price6 = 0;
     for (k3 = a_7d16q; k3 >= 0; k3 = g7d86n[k3].next) {
-        g_49e0[n++] = g7d86n[k3].f6;
+        g_list[n++] = g7d86n[k3].f6;
         list4[i5++] = k3;
     }
-    g_49e0[n++] = 0xcfd;
+    g_list[n++] = 0xcfd;
     n0 = n;
     off6 = i5 - n0;
     for (k3 = 0; k3 < 0x2c; k3++) {
         if (g_4806[k3].f0 >= 0x14) {
-            g_49e0[n++] = g_4806[k3].f6;
+            g_list[n++] = g_4806[k3].f6;
             list4[i5++] = k3;
         }
     }
-    g_49e0[0] = n - 1;
-    ads_open(g_49e0, (tab == 1) ? 2 : 0x1c);
+    g_list[0] = n - 1;
+    ads_open(g_list, (tab == 1) ? 2 : 0x1c);
     goto test;
     do {
         used = n >= n0;
@@ -494,7 +494,7 @@ static void near buy_from_ads(int tab)
             price6 = specn->f0;
             g_hotBuy[0].f0 = 10;
         }
-        strcpy(g_2990, g_2c02 + k3);
+        strcpy(g_offerName, g_desc + k3);
         sprintf(g_buyPrice, "$%-3d ?", price6);
         color = -1;
         for (;;) {
@@ -529,7 +529,7 @@ static void near buy_from_ads(int tab)
             bm1 = F_1934E(0x140, 0x52, 0, 0);
             popup_grab(0, 0x40, 0x140, 0x52, bm1);
             x_colors = bustyle->colors;
-            ck = (r_vid.mode == -2 || r_vid.mode == -6) ? g_02c2[5] : g_02b4[5];
+            ck = (r_vid.mode == -2 || r_vid.mode == -6) ? g_carBg16[5] : g_carBg4[5];
             screen_fill_rect(0, 0x41, 0x140, 0x46, ck);
             screen_fill_rect(0, 0x87, 0x140, 0xa, x_colors.c[1]);
             if (r_vid.mode != -2 && r_vid.mode != -6) {
@@ -550,7 +550,7 @@ static void near buy_from_ads(int tab)
             x1 = ((unsigned)specn - (unsigned)g7d86n) / 10;
             y = (((specn->f4 >> 8) & 7) == 2) ? 8 : 0;
             F_181C8(7, x1, y, 0, 0, 0x86, 0, g_5030[(specn->f4 >> 4) & 3]);
-            screen_text((0x140 - dash_text_width(g_2990)) / 2, 0x88, g_2990);
+            screen_text((0x140 - dash_text_width(g_offerName)) / 2, 0x88, g_offerName);
             cursor_ctl(-2);
             g_anyInput = 1;
             menu_wait(0x18);
@@ -565,7 +565,7 @@ done:
     ads_close();
     if (a_7eaap.m7eb0)
         F_067CF(a_7eaap.m7eb0->f4);
-    g_0284 = 0;
+    g_scene = 0;
 }
 
 char *g_offerText = g_msgHowAbout;   /* DS:4FA4 */
@@ -630,14 +630,14 @@ static int near your_cars(void)
         n = 0;
         if (a_7eaap.m7eb0) {
             n = 1;
-            g_49e0[1] = g7d86n[(tbl[1] = a_7eaap.m7eb0)->f2].f6;
+            g_list[1] = g7d86n[(tbl[1] = a_7eaap.m7eb0)->f2].f6;
         }
         for (cur = a_7eaap.m7eb2; cur; cur = cur->f26) {
             n++;
-            g_49e0[n] = g7d86n[(tbl[n] = cur)->f2].f6;
+            g_list[n] = g7d86n[(tbl[n] = cur)->f2].f6;
         }
-        g_49e0[0] = n;
-        switch (item = F_142CF(0xb, (n > item) ? item : n, 0, g_49e0, 0, 0)) {
+        g_list[0] = n;
+        switch (item = F_142CF(0xb, (n > item) ? item : n, 0, g_list, 0, 0)) {
         case 0x3ea:
             game_message(ticks ? 0xee9 : 0xefa);
         case -3:
@@ -661,17 +661,17 @@ static int near your_cars(void)
         case -2:
             break;
         default:
-            if (item > 0)       /* PROVISIONAL: the original loads g_49e0[0] here and drops it */
-                g_49e0[0] = g_49e0[0];
+            if (item > 0)       /* PROVISIONAL: the original loads g_list[0] here and drops it */
+                g_list[0] = g_list[0];
         }
         cur = tbl[item = F_14C8B()];
         offer = price = (int)((random_int(20) + 75.0) * cur->weight / 100.0);
-        strcpy(g_2990, g_2c02 + g7d86n[cur->f2].f6);
-        g_29f8[0] = 0;
+        strcpy(g_offerName, g_desc + g7d86n[cur->f2].f6);
+        g_offerAmount[0] = 0;
         pict = menu_grab(12, &rx, &ye, 1);
         menu_push(12);
         do {
-            if ((n = edit_spot_number(&cash, g_29f8)) == -22)
+            if ((n = edit_spot_number(&cash, g_offerAmount)) == -22)
                 goto tail;
         } while (cash == 0);
         if ((unsigned)(cur->weight * 1.15) < cash) {
@@ -681,7 +681,7 @@ static int near your_cars(void)
         if (cur->weight < cash) {
             game_message(0x106e);
             do {
-                if ((n = edit_spot_number(&cash, g_29f8)) == -22)
+                if ((n = edit_spot_number(&cash, g_offerAmount)) == -22)
                     goto tail;
             } while (cash == 0);
             if (cur->weight < cash) {
@@ -696,7 +696,7 @@ static int near your_cars(void)
         }
         if (cash > offer) {
             do {
-                if ((n = edit_spot_number(&cash, g_29f8)) == -22)
+                if ((n = edit_spot_number(&cash, g_offerAmount)) == -22)
                     goto tail;
             } while (cash == 0);
         }
@@ -707,7 +707,7 @@ static int near your_cars(void)
         }
         if (cash > offer) {
             do {
-                if ((n = edit_spot_number(&cash, g_29f8)) == -22)
+                if ((n = edit_spot_number(&cash, g_offerAmount)) == -22)
                     goto tail;
             } while (cash == 0);
         }
@@ -812,11 +812,11 @@ void near game_run(void)
         while ((kind = F_06B06(v)) != 0) {
             F_16381(0);
             if (kind == 0x29a) {
-                if (g_0282 == 1)
+                if (g_end == 1)
                     dash_time_up();
-                fame_show(g_0282 & 2);
+                fame_show(g_end & 2);
                 cursor_ctl(1);
-                g_0282 = 0;
+                g_end = 0;
                 again = 1;
                 kind = fame_end_menu();
                 if (kind != -2 && kind != -1 && kind == 4)
@@ -858,7 +858,7 @@ void near game_run(void)
                                 v = 0;
                                 continue;
                             }
-                            g_0284 = 2;
+                            g_scene = 2;
                             cruise_go();
                             g_05fc += 0x222;
                             bobs_visit();
@@ -873,7 +873,7 @@ void near game_run(void)
                                 v = 0;
                                 continue;
                             }
-                            g_0284 = 3;
+                            g_scene = 3;
                             cruise_go();
                             g_05fc += 0x222;
                             race_gas_station();

@@ -21,7 +21,7 @@ struct Eng g79e2g;
 
 int g_cruiseRpmSteps[5] = {42, 26, 12, 8, 4};   /* DS:51D8 */
 int g_cruiseRatios[5] = {0, 200, 125, 71, 56};   /* DS:51E2 */
-int g_51ec = 0;   /* DS:51EC */
+int g_keepCruiseMusic = 0;   /* DS:51EC */
 
 /* drvtick_step @ 0000:8EA8 (linear 0x08EA8, 675 bytes) */
 
@@ -33,7 +33,7 @@ int drvtick_step(void)
         switch (jz79a6) {
         case 0:
             g_05d6 = 0;
-            if (g_51ec == 0)
+            if (g_keepCruiseMusic == 0)
                 F_16381(1);
             sys_drive_start();
             sys_reset_queues();
@@ -72,7 +72,7 @@ int drvtick_step(void)
         switch (jz79a6) {
         case 0:
             g_05d6 = 0;
-            if (g_51ec == 0)
+            if (g_keepCruiseMusic == 0)
                 F_16381(1);
             sys_drive_start();
             sys_reset_queues();

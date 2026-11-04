@@ -57,9 +57,9 @@ static void near swap_wheel(int a, int *p, int *q);
 
 int g_spriteBgY = 0;   /* DS:5AA8 */
 int g_liftPicIds[3] = {1034, 1035, 1036};   /* DS:5AAA */
-struct Bitmap far *g_5ab0 = (struct Bitmap far *)&g_6da4;   /* DS:5AB0 */
-struct Bitmap far *g_5ab4 = (struct Bitmap far *)&g_6d400;   /* DS:5AB4 */
-struct Bitmap far *g_5ab8 = (struct Bitmap far *)&g_6d700;   /* DS:5AB8 */
+struct Bitmap far *g_wheelBuf = (struct Bitmap far *)&g_6da4;   /* DS:5AB0 */
+struct Bitmap far *g_rollBuf = (struct Bitmap far *)&g_6d400;   /* DS:5AB4 */
+struct Bitmap far *g_jackBuf = (struct Bitmap far *)&g_6d700;   /* DS:5AB8 */
 
 /* grab_wheel_column @ 0F38:B632 (linear 0x1A9B2, 506 bytes)
 
@@ -123,7 +123,7 @@ static void near swap_wheel(int a, int *p, int *q)
     g_6ce8rz.y1 = 0;
     g_6ce8rz.x2 = g_6d2c0nz->width - 1;
     g_6ce8rz.y2 = g_6d2c0nz->height + g_spriteBgY - 1;
-    g_6d3caat = sprite_setup(a & r_vid.mask, 0x94, &g_6df2a, 0, 1, g_5ab0, g_6d2c0nz, &g_6ce8rz, 0);
+    g_6d3caat = sprite_setup(a & r_vid.mask, 0x94, &g_6df2a, 0, 1, g_wheelBuf, g_6d2c0nz, &g_6ce8rz, 0);
     sprite_set_step(g_6d3caat, 0, 8, 0, 1);
     while ((*g78c6c)(g_6d3caat)) {
         if (g_6d3caat->y == 0x7d)
@@ -144,7 +144,7 @@ static void near swap_wheel(int a, int *p, int *q)
         bitmap_underlay(g_6d38, g_tireFrames[4 - i], g_6da2, g_6ce6sz);
     }
     i = 4;
-    g_6d3caat = sprite_setup(a, 0x9b, g_tireFrames, 0, 4, g_5ab4, g_6d24ajz, 0, 0);
+    g_6d3caat = sprite_setup(a, 0x9b, g_tireFrames, 0, 4, g_rollBuf, g_6d24ajz, 0, 0);
     sprite_set_step(g_6d3caat, 0, (a + g_tireFrames[0]->width) >> 1, -2, 0);
     sound_wheel_roll(1);
     while ((*g78c6c)(g_6d3caat))
@@ -173,7 +173,7 @@ static void near swap_wheel(int a, int *p, int *q)
         bitmap_underlay(g_6d38, g_tireFrames[i], (i * 2) & ~r_vid.mask, g_6ce6sz);
     }
     i = 4;
-    g_6d3caat = sprite_setup(-g_tireFrames[0]->width, 0x9b, g_tireFrames, 0, 4, g_5ab4, g_6d24ajz, 0, 0);
+    g_6d3caat = sprite_setup(-g_tireFrames[0]->width, 0x9b, g_tireFrames, 0, 4, g_rollBuf, g_6d24ajz, 0, 0);
     sprite_set_step(g_6d3caat, 0, (a + g_tireFrames[0]->width >> 1) + 1, 2, 0);
     sound_wheel_roll(1);
     while ((*g78c6c)(g_6d3caat))
@@ -185,7 +185,7 @@ static void near swap_wheel(int a, int *p, int *q)
     g_6ce8rz.y1 = 0;
     g_6ce8rz.x2 = g_6d2c0nz->width - 1;
     g_6ce8rz.y2 = g_6d2c0nz->height + g_spriteBgY - 1;
-    g_6d3caat = sprite_setup(a, 0x9b, &g_tireFrames[g_6d3eaas], 0, 1, g_5ab0, g_6d2c0nz, &g_6ce8rz, 0);
+    g_6d3caat = sprite_setup(a, 0x9b, &g_tireFrames[g_6d3eaas], 0, 1, g_wheelBuf, g_6d2c0nz, &g_6ce8rz, 0);
     sprite_set_step(g_6d3caat, 0, 8, 0, -1);
     while ((*g78c6c)(g_6d3caat)) {
         if (g_6d3caat->y == 0x7d)
@@ -231,7 +231,7 @@ void F_1B213(int *a, int *b)
     for (n = 0; n < 3; n++)
         g_6cdaaa[n] = F_15BBE(g_liftPicIds[n], 1);
     screen_fill_rect(0x88, 0xba - g_6cdaaa[1]->height, g_6cdaaa[1]->width, g_6cdaaa[1]->height,
-            (r_vid.mode != -2 && r_vid.mode != -6) ? g_02b4[1] : g_02c2[1]);
+            (r_vid.mode != -2 && r_vid.mode != -6) ? g_carBg4[1] : g_carBg16[1]);
     g_spriteBgY = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
     g_6d28agz = F_1934E(g_6cdaaa[1]->width, 0xba - g_spriteBgY, 0, 1);
     popup_grab(r_vid.mask & 0x88, g_spriteBgY, g_6cdaaa[1]->width, 0xba - g_spriteBgY, g_6d28agz);
@@ -303,9 +303,9 @@ void F_1B213(int *a, int *b)
     if (r_vid.mode == -2) {
         g_6cd4oz = &g_6cf4wz;
         mem_set_bitmap(g_6cd4oz, g_pageBmps[2]->bits.p, 0, g_6df6a->width, 200, -2);
-        mem_set_bitmap(g_5ab0, g_pageBmps[2]->bits.p + g_6df6a->pitch, 0, pic->width, 200, -2);
-        mem_set_bitmap(g_5ab4, g_pageBmps[3]->bits.p, 0, 0x140, g_6d24ajz->height, -2);
-        mem_set_bitmap(g_5ab8, g_pageBmps[3]->bits.p, 0, g_6d28agz->width, 200, -2);
+        mem_set_bitmap(g_wheelBuf, g_pageBmps[2]->bits.p + g_6df6a->pitch, 0, pic->width, 200, -2);
+        mem_set_bitmap(g_rollBuf, g_pageBmps[3]->bits.p, 0, 0x140, g_6d24ajz->height, -2);
+        mem_set_bitmap(g_jackBuf, g_pageBmps[3]->bits.p, 0, g_6d28agz->width, 200, -2);
         blt.w = g_6dfa7->width;
         blt.h = g_6df6a->height + 4;
         blt.sx = blt.dx = 0;
@@ -314,31 +314,31 @@ void F_1B213(int *a, int *b)
         blt.w = pic->width;
         blt.h = 0x23;
         blt.sy = blt.dy = 0x79;
-        (*b_78a2)(dst, g_5ab0, &blt, 1);
+        (*b_78a2)(dst, g_wheelBuf, &blt, 1);
         blt.w = g_6d24ajz->width;
         blt.h = g_6d24ajz->height;
         blt.sy = blt.dy = 0;
-        (*b_78a2)(g_6d24ajz, g_5ab4, &blt, 1);
+        (*b_78a2)(g_6d24ajz, g_rollBuf, &blt, 1);
         blt.w = g_6d28agz->width;
         blt.h = g_6cdaaa[0]->height + 0x21;
         blt.sy = blt.dy = 0x99 - g_6cdaaa[0]->height;
-        (*b_78a2)(g_6d28agz, g_5ab8, &blt, 1);
+        (*b_78a2)(g_6d28agz, g_jackBuf, &blt, 1);
     } else if (r_vid.mode != -6) {
         g_6cd4oz = F_1934E(g_6dfa7->width, g_6dfa7->height, 0, 1);
-        *g_5ab0 = *pic;
-        g_5ab0->bits.p = g_6cd4oz->bits.p;
-        g_5ab0->alt.p = 0;
-        *g_5ab4 = *g_6d24ajz;
-        g_5ab4->bits.p = g_6cd4oz->bits.p;
-        g_5ab4->alt.p = 0;
-        *g_5ab8 = *g_6d28agz;
-        g_5ab8->bits.p = g_6cd4oz->bits.p;
-        g_5ab8->alt.p = 0;
+        *g_wheelBuf = *pic;
+        g_wheelBuf->bits.p = g_6cd4oz->bits.p;
+        g_wheelBuf->alt.p = 0;
+        *g_rollBuf = *g_6d24ajz;
+        g_rollBuf->bits.p = g_6cd4oz->bits.p;
+        g_rollBuf->alt.p = 0;
+        *g_jackBuf = *g_6d28agz;
+        g_jackBuf->bits.p = g_6cd4oz->bits.p;
+        g_jackBuf->alt.p = 0;
     }
     g_spriteBgY = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
     if (r_vid.mode == -2)
         (*dz78b6)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
-    g_6d3caat = sprite_setup(0x88, 0xb9, &g_6cdaaa[1], 0, 1, g_5ab8, g_6d28agz, 0, 0);
+    g_6d3caat = sprite_setup(0x88, 0xb9, &g_6cdaaa[1], 0, 1, g_jackBuf, g_6d28agz, 0, 0);
     sprite_set_step(g_6d3caat, 0, 0x21, 0, -1);
     while ((*g78c6c)(g_6d3caat))
         F_10AFD(3);
@@ -389,7 +389,7 @@ void F_1B213(int *a, int *b)
         blt.h = 0x23;
         blt.sx = blt.dx = 0;
         blt.sy = blt.dy = 0x79;
-        (*b_78a2)(pic, g_5ab0, &blt, 1);
+        (*b_78a2)(pic, g_wheelBuf, &blt, 1);
     }
     blt.w = 0x28;
     blt.h = g_6d24ajz->height;
@@ -398,7 +398,7 @@ void F_1B213(int *a, int *b)
     blt.dy = 0;
     (*b_78a2)(r_vid.front, g_6d24ajz, &blt, 1);
     if (r_vid.mode == -2)
-        (*b_78a2)(r_vid.front, g_5ab4, &blt, 1);
+        (*b_78a2)(r_vid.front, g_rollBuf, &blt, 1);
     swap_wheel(g_6da0 + g_6cd8lz, a, b);
     g_spriteBgY = (r_vid.mode == -6) ? 0x92 - g_6df6a->height : 0;
     g_tireFrames[0] = F_15BBE(*b, 1);
@@ -447,7 +447,7 @@ void F_1B213(int *a, int *b)
     g_spriteBgY = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
     if (r_vid.mode == -2)
         (*dz78b6)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
-    g_6d3caat = sprite_setup(0x88, 0x99, &g_6cdaaa[1], 0, 1, g_5ab8, g_6d28agz, 0, 0);
+    g_6d3caat = sprite_setup(0x88, 0x99, &g_6cdaaa[1], 0, 1, g_jackBuf, g_6d28agz, 0, 0);
     sprite_set_step(g_6d3caat, 0, 0x21, 0, 1);
     while ((*g78c6c)(g_6d3caat))
         F_10AFD(3);

@@ -55,18 +55,18 @@ extern char g_demoKeyDown;                              /* DS:06A6 */
 extern char g_demoMoving;                               /* DS:06A7 */
 extern int g_demoCount;                                 /* DS:06A8 */
 extern int g_demoLastGroup;                             /* DS:06AA */
-extern int g_06ac;                                      /* DS:06AC */
+extern int g_autoShifts;                                      /* DS:06AC */
 extern int g_demoTargetX;                               /* DS:06AE */
 extern int g_demoTargetY;                               /* DS:06B0 */
 extern int g_demoScriptPos;                             /* DS:06B2 */
 extern int g_demoScript[];                              /* DS:06B4 */
 extern char g_cursorBusy;                               /* DS:06E0 */
 extern int g_vibCount;                                  /* DS:06E2 */
-extern int g_06e4;                                      /* DS:06E4 */
+extern int g_sirenPhase;                                      /* DS:06E4 */
 extern int g_overRev;                                   /* DS:06E6 */
 extern char g_driveBusy;                                /* DS:06E8 */
 extern char g_lastFire;                                 /* DS:06E9 */
-extern char g_06ea;                                     /* DS:06EA */
+extern char g_squealPhase;                                     /* DS:06EA */
 extern int g_vibratoActive;                             /* DS:72EC */
 extern struct Eng e_78e0;                               /* DS:78E0 */
 extern struct Dev bs79aa;                               /* DS:79AA */

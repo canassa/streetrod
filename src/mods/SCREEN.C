@@ -147,7 +147,7 @@ void screen_fill_rect(int x, int y, int w, int h, char color)
 
 void screen_msg_box(char *s)
 {
-    strcpy(g_291f, s);
+    strcpy(g_boxText, s);
     menu_modal(0x1d);
 }
 
@@ -172,9 +172,9 @@ void screen_wait_msg(char *msg)
     strcpy(g_promptLine1, msg);
     strcpy(g_promptLine2, "Hit Return when ready ...");
     if (g_graphicsUp >= 1) {
-        if (g_58ee) {
+        if (g_driveRebuild) {
             screen_fill_rect(0, 0, 320, 200, 0);
-            g_58ee++;
+            g_driveRebuild++;
         }
         prev = gz8249;
         if (!prev) {
@@ -186,7 +186,7 @@ void screen_wait_msg(char *msg)
             g_hotReadyBox[i].y1 += dx;
             g_hotReadyBox[i].y2 += dx;
         }
-        if (g_58ee)
+        if (g_driveRebuild)
             video_set_palette(g_promptPalette);
         r_vid.f16 = 1;
         sys_reset_queues();

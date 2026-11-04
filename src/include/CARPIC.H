@@ -5,16 +5,16 @@
 #include "STRUCTS.H"
 
 extern int g_delayScale;                                /* DS:58E2 */
-extern int g_58e4;                                      /* DS:58E4 */
+extern int g_dashBuffered;                                      /* DS:58E4 */
 extern int g_autoTrans;                                 /* DS:58E6 */
 extern int g_wheelPicIds[3];                            /* DS:58E8 */
-extern int g_58ee;                                      /* DS:58EE */
+extern int g_driveRebuild;                                      /* DS:58EE */
 extern struct Cmd g_animScripts[];                      /* DS:58F0 */
 extern int g_animScriptStart[];                         /* DS:59F8 */
 extern struct Bitmap far *g_backdrop;                   /* DS:5A0A */
 extern int g_carMoving;                                 /* DS:5A0E */
-extern struct Rect g_5a10;                              /* DS:5A10 */
-extern struct Rect g_5a18;                              /* DS:5A18 */
+extern struct Rect g_overlayRectA;                              /* DS:5A10 */
+extern struct Rect g_overlayRectB;                              /* DS:5A18 */
 extern int g_backdropX;                                 /* DS:5A20 */
 extern int g_backdropW;                                 /* DS:5A22 */
 extern int g_carPassBy;                                 /* DS:5A24 */

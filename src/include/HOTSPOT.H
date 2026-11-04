@@ -4,13 +4,13 @@
 #define HOTSPOT_H
 #include "STRUCTS.H"
 
-extern struct Hot g_09f4[];                             /* DS:09F4 */
+extern struct Hot g_hots[];                             /* DS:09F4 */
 extern struct Hot g_hotPageRows[];                      /* DS:0F82 */
 extern struct Hot g_hotBuy[];                           /* DS:11B0 */
 extern struct Hot g_121c[];                             /* DS:121C */
 extern struct Hot g_134e[];                             /* DS:134E */
 extern struct Hot g_1804[];                             /* DS:1804 */
-extern struct Hot g_184c[];                             /* DS:184C */
+extern struct Hot g_engineHots[];                             /* DS:184C */
 extern struct Hot g_1948[];                             /* DS:1948 */
 extern struct Hot g_hotGasStation[];                    /* DS:19EA */
 extern struct Hot g_1a44[];                             /* DS:1A44 */

@@ -82,10 +82,10 @@ static int near find_gas_spot(int id)
 {
     int base, n, i;
 
-    base = ((unsigned)g_hotGasStation - (unsigned)g_09f4) / sizeof(struct Hot);
+    base = ((unsigned)g_hotGasStation - (unsigned)g_hots) / sizeof(struct Hot);
     n = ((unsigned)g_1a44 - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
     for (i = 0; i < n; i++)
-        if (g_09f4[base + i].f6 == id)
+        if (g_hots[base + i].f6 == id)
             return base + i;
 }
 
@@ -95,7 +95,7 @@ static void near sort_gas_spots(void)
 {
     int base, n;
 
-    base = ((unsigned)g_hotGasStation - (unsigned)g_09f4) / sizeof(struct Hot);
+    base = ((unsigned)g_hotGasStation - (unsigned)g_hots) / sizeof(struct Hot);
     n = ((unsigned)g_1a44 - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
     F_135E5(base, n);
 }
@@ -123,7 +123,7 @@ static void near clear_gas_spots(void)
     g_6ca8pz = 0;
     g_6ca4rz = 0;
     for (k = 0; k < 6; k++)
-        g_09f4[find_gas_spot(g_gasSpotIds[k])].f0 = 14;
+        g_hots[find_gas_spot(g_gasSpotIds[k])].f0 = 14;
 }
 
 /* place_gas_spot @ 0000:B49C (linear 0x0B49C, 66 bytes) */
@@ -131,7 +131,7 @@ static void near clear_gas_spots(void)
 static void near place_gas_spot(int id, int x, int y, int w, int h)
 {
     struct Hot *p;
-    p = &g_09f4[find_gas_spot(id)];
+    p = &g_hots[find_gas_spot(id)];
     p->x2 = (p->x1 = x) + w - 1;
     p->y2 = (p->y1 = y) + h - 1;
     p->f0 = 11;
@@ -234,7 +234,7 @@ static void near leave_station(struct Dlg *d)
         }
     }
     if (d->f14 == 0) {
-        popup_show(g_028c, 0x40, 0x64);
+        popup_show(g_pumpWithNozzle, 0x40, 0x64);
         if (d->f18)
             F_11540(a_7eaap.m7eaa >= 10 ? -10 : -(int)a_7eaap.m7eaa);
     }
@@ -249,7 +249,7 @@ static void near leave_station(struct Dlg *d)
             g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
     menu_pop(1);
     marks_clear();
-    g_0284 = 1;
+    g_scene = 1;
     cruise_go();
 }
 
@@ -265,7 +265,7 @@ void race_gas_station(void)
     int key;
 
     F_11421(-1, "\0", 0);
-    g_0284 = 3;
+    g_scene = 3;
     F_118D4(0x442, -1);
     F_11593(g_49dc);
     r_vid.f16 = 1;
@@ -280,9 +280,9 @@ void race_gas_station(void)
     label = popup_grab(0x50, 0xaa, 0x28, 0xc, 0);
     dl.bm1 = popup_grab(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
     r_vid.f16 = 0;
-    popup_show(g_0290, 0x40, 0x64);
+    popup_show(g_pumpNoNozzle, 0x40, 0x64);
     dl.bm2 = popup_grab(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
-    popup_show(g_028c, 0x40, 0x64);
+    popup_show(g_pumpWithNozzle, 0x40, 0x64);
     r_vid.f16 = 1;
     pos = 1;
     dl.f1a = 0;
@@ -338,7 +338,7 @@ top:
                     goto fin;
                 dl.f18 = 0;
                 if (dl.f0c == 1) {
-                    popup_show(g_0290, 0x40, 0x64);
+                    popup_show(g_pumpNoNozzle, 0x40, 0x64);
                     cursor_ctl(dl.f0c = 2);
                     dl.f14 = 0;
                 }
@@ -374,7 +374,7 @@ top:
                 break;
             if (dl.f0c == 1) {
                 cursor_ctl(dl.f0c = 2);
-                popup_show(g_0290, 0x40, 0x64);
+                popup_show(g_pumpNoNozzle, 0x40, 0x64);
                 dl.f14 = 0;
             both:
                 menu_pop(1);
@@ -385,7 +385,7 @@ top:
                     goto fin;
                 }
                 cursor_ctl(dl.f0c = 1);
-                popup_show(g_028c, 0x40, 0x64);
+                popup_show(g_pumpWithNozzle, 0x40, 0x64);
                 dl.f14 = 1;
                 menu_pop(1);
                 spots_idle();
@@ -449,7 +449,7 @@ static int near replace_tires(void)
     a_7eaap.m7eb0->weight -= game_take_part(a_7eaap.m7eb0->slot12, 0);
     a_7eaap.m7eb0->slot12 = 0;
     F_076A7(4, tbl, 0, 0);
-    if (g_49e0[0]) {
+    if (g_list[0]) {
         F_07741(F_077B7(tbl[1]), &a_7eaap.m7eb0->slot12);
     } else {
         a_7eaap.m7eaa -= 0x32;
@@ -507,17 +507,17 @@ static void near show_ticket(void)
     (*a_78aem)(r_vid.back, 0x5e, 0x48, g_driverName);
     *p2 = d;
     desc3 = g7d86n[a_7eaap.m7eb0->f2].f6;
-    endk = desc3 + strcspn(g_2c01 + desc3 + 8, " `.") + 7;
-    for (p2 = g_2c01 + desc3 + 1, wk = 0; *p2 && wk < maxw2; p2++)
+    endk = desc3 + strcspn(g_descHdr + desc3 + 8, " `.") + 7;
+    for (p2 = g_descHdr + desc3 + 1, wk = 0; *p2 && wk < maxw2; p2++)
         wk += g_font[*p2 - 32].w;
     if (wk >= maxw2)
         p2--;
     d = cl = *p2;
     *p2 = 0;
-    e = g_2c01[endk + 1];
-    g_2c01[endk + 1] = 0;
-    (*a_78aem)(r_vid.back, 0x5e, 0x63, g_2c01 + desc3 + 1);
-    g_2c01[endk + 1] = e;
+    e = g_descHdr[endk + 1];
+    g_descHdr[endk + 1] = 0;
+    (*a_78aem)(r_vid.back, 0x5e, 0x63, g_descHdr + desc3 + 1);
+    g_descHdr[endk + 1] = e;
     *p2 = d;
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.f16 = 1;
@@ -650,11 +650,11 @@ static void near drop_transmission(int n)
 
 int g_tireSlip[3][5] = {{2, 5, 8, 11, 14}, {0, 2, 4, 6, 8}, {0, 0, 1, 2, 4}};   /* DS:54B2 */
 int g_lastTicks = 0;   /* DS:54D0 */
-int g_54d2 = 0;   /* DS:54D2 */
-int g_54d4 = 1;   /* DS:54D4 */
-int g_54d6 = 0;   /* DS:54D6 */
-int g_54d8 = 0;   /* DS:54D8 */
-int g_54da = 0;   /* DS:54DA */
+int g_bumpAlternate = 0;   /* DS:54D2 */
+int g_rivalLeft = 1;   /* DS:54D4 */
+int g_rivalCurveBrake = 0;   /* DS:54D6 */
+int g_contactFrames = 0;   /* DS:54D8 */
+int g_brakeTicks = 0;   /* DS:54DA */
 
 /* race_outcome @ 0000:C613 (linear 0x0C613, 1948 bytes) */
 
@@ -953,7 +953,7 @@ nx:
     g_rivalSlow = (int)(g_rivalTop * 0.7);
     g_rivalFast = (int)(g_rivalTop * 0.8);
     g_rivalLead = bu8acc < 4 ? 10 : 16;
-    g_54d2 = 0;
+    g_bumpAlternate = 0;
     g_statsDone = 0;
 }
 
@@ -1075,15 +1075,15 @@ static void near rival_accelerate(void)
     r = &g79e2g.gear[g79e2g.f18].r[g_rpmBand];
     for (i5 = 0; i5 < ticks; i5++) {
         if (g_terrain2[ar7e8av.m7e8a] != g_terrain2[ar7e8av.m7e8a + 1]) {
-            if (g_54d6 == 0) {
-                g_54d6 = 1;
+            if (g_rivalCurveBrake == 0) {
+                g_rivalCurveBrake = 1;
                 vl = g_rivalTop - (ar7e8av.m7e8a > ao7d2ev.m7d30 ? g7d84o->f2 : g7d84o->f2 >> 1);
                 if (vl < g79e2g.f0)
                     fit_gear(vl, &g79e2g);
             }
             continue;
         }
-        g_54d6 = 0;
+        g_rivalCurveBrake = 0;
         d = ar7e8av.m7e8a - ao7d2ev.m7d30;
         if (d > 12 && (a_7eaap.m7ec0 != 1 || g7d40q == 0)) {
             if (e_78e0.f0 >= 0x61)
@@ -1253,44 +1253,44 @@ static void near move_rival(void)
     if (dist > 12) {
         g_targetLane = (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1;
         if (slope)
-            g_54d4 = slope < 0;
+            g_rivalLeft = slope < 0;
         g_8648 = 1;
     } else if (dist > 6) {
         gz7d7e = 1;
         if (slope) {
             if (slope < 0) {
                 g_targetLane = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
-                g_54d4 = 1;
+                g_rivalLeft = 1;
             } else {
                 g_targetLane = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
-                g_54d4 = 0;
+                g_rivalLeft = 0;
             }
         } else
-            g_targetLane = flag ? (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1 : g_54d4 ? ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200 : ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
+            g_targetLane = flag ? (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1 : g_rivalLeft ? ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200 : ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
     } else if ((bu8acc < 4 ? 4 : 2) < dist) {
         if (slope) {
             if (slope < 0) {
                 g_targetLane = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
-                g_54d4 = 1;
+                g_rivalLeft = 1;
             } else {
                 g_targetLane = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
-                g_54d4 = 0;
+                g_rivalLeft = 0;
             }
         } else if (flag)
             g_targetLane = (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1;
         else if (g_8648) {
-            if (g_54d4)
+            if (g_rivalLeft)
                 g_targetLane = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
             else
                 g_targetLane = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
             g_8648 = 0;
-            g_54d4 = !g_54d4;
+            g_rivalLeft = !g_rivalLeft;
         }
     } else if (dist > -4) {
         if (ar7e8av.m7e8e > ao7d2ev.m7d34) {
             if (ap7d7cv >= 9) {
                 if ((t = ao7d2ev.m7d36 - 330) > g7d82p + 480) {
-                    g_54d4 = 1;
+                    g_rivalLeft = 1;
                     g_targetLane = t;
                     if (ao7d2ev.m7d36 - ar7e8av.m7e90 < 280) {
                         ar7e8av.m7e8a = ao7d2ev.m7d30 - 1;
@@ -1298,7 +1298,7 @@ static void near move_rival(void)
                     }
                 } else {
                     if ((t = ao7d2ev.m7d36 + 430) < cz8bd0y - 30) {
-                        g_54d4 = 0;
+                        g_rivalLeft = 0;
                         g_targetLane = t + 200;
                         if (ar7e8av.m7e90 - ao7d2ev.m7d36 < 580) {
                             ar7e8av.m7e8a = ao7d2ev.m7d30 - 2;
@@ -1319,13 +1319,13 @@ static void near move_rival(void)
         if (slope) {
             if (slope < 0) {
                 g_targetLane = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
-                g_54d4 = 1;
+                g_rivalLeft = 1;
             } else {
                 g_targetLane = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
-                g_54d4 = 0;
+                g_rivalLeft = 0;
             }
         } else
-            g_targetLane = flag ? (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1 : g_54d4 ? ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200 : ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
+            g_targetLane = flag ? (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1 : g_rivalLeft ? ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200 : ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
     } else {
         g_targetLane = (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1;
         g_8648 = 1;
@@ -1436,31 +1436,31 @@ void race_tick(void)
         return;
     }
     if (ap7d7cv == 0 && ao7d2ev.m7d34 > 1) {
-        g_54d8++;
+        g_contactFrames++;
         if (e_78e0.f2 < 0) {
             if (g_terrain2[ao7d2ev.m7d30] - g_terrain2[ao7d2ev.m7d30 + 1] >= 0 || ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) >= ao7d2ev.m7d36) {
                 sound_bump();
-                if (g_54d2 == 0) {
+                if (g_bumpAlternate == 0) {
                     ar7e8av.m7e8a--;
-                    g_54d2 = 1;
+                    g_bumpAlternate = 1;
                 } else
-                    g_54d2 = 0;
+                    g_bumpAlternate = 0;
             }
             return;
         }
-        if (gz7d7e && g_54d8 > 3 && a_7f88d < 2) {
+        if (gz7d7e && g_contactFrames > 3 && a_7f88d < 2) {
             if (random_int((g7d84o->f2 >> 2) + 2) == 0) {
                 sound_bump();
                 sound_bump();
                 ao7d2ev.m7d36 += 300;
                 if (e_78e0.f0 > 20)
-                    g_54da = 2;
+                    g_brakeTicks = 2;
                 gz7d7e = 0;
                 ao7d2ev.m7d3c += random_int(2) ? 15 : -15;
                 sound_bump();
             }
-            g_54d8 = 0;
+            g_contactFrames = 0;
         }
     } else if (ap7d7cv)
-        g_54d8 = 0;
+        g_contactFrames = 0;
 }

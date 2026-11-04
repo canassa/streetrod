@@ -12,22 +12,22 @@ extern int g_004a;                                      /* DS:004A */
 extern int g_004c;                                      /* DS:004C */
 extern char *g_videoMenu[];                             /* DS:0244 */
 extern int g_egaCard;                                   /* DS:0250 */
-extern int g_0252;                                      /* DS:0252 */
+extern int g_forceEga;                                      /* DS:0252 */
 extern int g_vga;                                       /* DS:0254 */
 extern int g_useMouse;                                  /* DS:0262 */
 extern int g_noUeMem;                                   /* DS:0280 */
-extern int g_0282;                                      /* DS:0282 */
-extern int g_0284;                                      /* DS:0284 */
+extern int g_end;                                      /* DS:0282 */
+extern int g_scene;                                      /* DS:0284 */
 extern int g_carAnim;                                   /* DS:0286 */
-extern struct Bitmap far *g_0288;                       /* DS:0288 */
-extern struct Bitmap far *g_028c;                       /* DS:028C */
-extern struct Bitmap far *g_0290;                       /* DS:0290 */
+extern struct Bitmap far *g_spritePic;                       /* DS:0288 */
+extern struct Bitmap far *g_pumpWithNozzle;                       /* DS:028C */
+extern struct Bitmap far *g_pumpNoNozzle;                       /* DS:0290 */
 extern struct Bitmap far *g_0294;                       /* DS:0294 */
-extern int g_0298[7];                                   /* DS:0298 */
-extern int g_02a6[7];                                   /* DS:02A6 */
-extern int g_02b4[7];                                   /* DS:02B4 */
-extern int g_02c2[7];                                   /* DS:02C2 */
-extern int g_02d0;                                      /* DS:02D0 */
+extern int g_carBandHeights[7];                                   /* DS:0298 */
+extern int g_carBottomCuts[7];                                   /* DS:02A6 */
+extern int g_carBg4[7];                                   /* DS:02B4 */
+extern int g_carBg16[7];                                   /* DS:02C2 */
+extern int g_spriteBottomCut;                                      /* DS:02D0 */
 extern int by70e2;                                      /* DS:70E2 */
 extern struct Bitmap far *g755cu;                       /* DS:755C */
 extern char far *ab7564z;                               /* DS:7564 */

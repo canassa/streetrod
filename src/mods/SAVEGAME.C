@@ -277,15 +277,15 @@ static void near scan_save_slots(int create)
                 g_saveSlots[slot] = 0;
             else {
                 g_saveSlots[slot] = slot;
-                strncpy(g_2c02 + (g_49e0[++cnt] = g_slotNameOfs[slot]), hdr3, 15);
+                strncpy(g_desc + (g_list[++cnt] = g_slotNameOfs[slot]), hdr3, 15);
             }
             _dos_close(fd7);
         }
         if (create && g_saveSlots[slot] == 0) {
-            strcpy(g_2c02 + (g_49e0[++cnt] = g_slotNameOfs[slot]), g_blankName);
+            strcpy(g_desc + (g_list[++cnt] = g_slotNameOfs[slot]), g_blankName);
         }
     }
-    g_49e0[0] = cnt;
+    g_list[0] = cnt;
 }
 
 /* savegame_load @ 0000:5B4A (linear 0x05B4A, 873 bytes) */
@@ -305,7 +305,7 @@ int near savegame_load(void)
     r = r_vid.f16;
     r_vid.f16 = 0;
     F_118D4(0x3f7, 0);
-    if (g_49e0[0]) {
+    if (g_list[0]) {
         F_119B8(0x3fa, 0xf0, 100, -1);
         F_119B8(0x3fc, 0xf0, 0x8c, -1);
     }
@@ -313,11 +313,11 @@ int near savegame_load(void)
     if (r)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 320, 190);
     cursor_ctl(-2);
-    if (g_49e0[0] == 0) {
+    if (g_list[0] == 0) {
         menu_wait(15);
         return -1;
     }
-    r = F_142CF(3, 1, 0, g_49e0, 0, 0);
+    r = F_142CF(3, 1, 0, g_list, 0, 0);
     switch (r) {
     case -4:
         return -1;
@@ -325,8 +325,8 @@ int near savegame_load(void)
         r = F_14C8B();
         break;
     default:
-        if (r >= 1)             /* PROVISIONAL: the original loads g_49e0[0] here and drops it */
-            g_49e0[0] = g_49e0[0];
+        if (r >= 1)             /* PROVISIONAL: the original loads g_list[0] here and drops it */
+            g_list[0] = g_list[0];
         break;
     }
     for (i = 1, cntl = 0; cntl < r; i++)
@@ -415,22 +415,22 @@ void near savegame_save(void)
     r_vid.f16 = r;
     if (r)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 320, 190);
-    strcpy(g_2a2e, g_driverName);
+    strcpy(g_saveName, g_driverName);
 again:
-    for (r = 1; r <= g_49e0[0] && g_saveSlots[r]; r++)
+    for (r = 1; r <= g_list[0] && g_saveSlots[r]; r++)
         ;
-    if (r > g_49e0[0])
-        r = g_49e0[0];
+    if (r > g_list[0])
+        r = g_list[0];
     if (sel == 0)
         sel = r;
     cursor_ctl(-2);
-    switch (r = menu_list(5, sel, 0, g_49e0, 0, 0)) {
+    switch (r = menu_list(5, sel, 0, g_list, 0, 0)) {
     case -4:
         return;
     default:
         if ((int)r < 1)
             return;
-        if (r > g_49e0[0])
+        if (r > g_list[0])
             return;
         break;
     case -3:
@@ -438,12 +438,12 @@ again:
         break;
     }
     sel = r;
-    if (is_blank(g_2a2e) && is_blank(g_2c02 + g_49e0[r])) {
+    if (is_blank(g_saveName) && is_blank(g_desc + g_list[r])) {
         screen_msg_box(g_noNameMsgPtr);
         cursor_ctl(-4);
         goto again;
     }
-    for (i5 = 1; i5 <= 15 && (cmp = strcmp(g_2a2e, g_2c02 + g_49e0[i5])) != 0; i5++)
+    for (i5 = 1; i5 <= 15 && (cmp = strcmp(g_saveName, g_desc + g_list[i5])) != 0; i5++)
         ;
     if (cmp == 0) {
         cursor_ctl(-3);
@@ -471,7 +471,7 @@ again:
     case -0x14:
         unlink(name);
     }
-    strcpy(g_driverName, is_blank(g_2a2e) ? g_2c02 + g_49e0[r] : g_2a2e);
+    strcpy(g_driverName, is_blank(g_saveName) ? g_desc + g_list[r] : g_saveName);
     delta = g_0600 - g_0604;
     name[0] = disk_data_drive();
     if (_dos_creat(name, 0, &fd8)

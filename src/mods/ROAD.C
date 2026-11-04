@@ -671,7 +671,7 @@ void road_reset(void)
     if (bw8aca)
         ao7d2ev.m7d30 = 200;
     else
-        switch (g_0284) {
+        switch (g_scene) {
         case 1:
             ao7d2ev.m7d30 = 10;
             break;
@@ -692,7 +692,7 @@ void road_reset(void)
     ao7d2ev.m7d3e = 0;
     ao7d2ev.m7d3c = 0;
     ao7d2ev.m7d34 = 0;
-    g_54d4 = 1;
+    g_rivalLeft = 1;
     g_8648 = !random_int(2);
     gz7d7e = 1;
 }

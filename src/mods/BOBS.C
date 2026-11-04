@@ -131,10 +131,10 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
     int x, n, old;
 
     old = g_carPassBy;
-    strcpy(g7f32s, g_2c02 + g7d84o->f6);
+    strcpy(g7f32s, g_desc + g7d84o->f6);
     strcat(g7f32s, "  ");
-    strcat(g7f32s, g_2c02 + ar7d7au->f6);
-    x = g_0284 == 6;
+    strcat(g7f32s, g_desc + ar7d7au->f6);
+    x = g_scene == 6;
     if (mode == 4)
         g_walkState = -1;
     bm7f86 = mode == 2;
@@ -716,7 +716,7 @@ static void near blit_cell(struct Bitmap far *bm, int n, struct Bitmap far *dst)
     cell.sy = 50 * row;
     cell.dx = 184;
     cell.dy = 73;
-    if (g_0284 == 6) {
+    if (g_scene == 6) {
         bl.w = 16;
         bl.h = 50;
         bl.sx = 208;
@@ -814,7 +814,7 @@ static void near play_ending(void)
     (*m_present)();
     game_pause(0x2ee);
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
-    g_0284 = 1;
+    g_scene = 1;
     pic15 = F_1934E(0x50, 0x2c, 0, 3);
     popup_grab(0x78, 0x45, 0x50, 0x2c, pic15);
     disk_free_list(g_gamePics);
@@ -965,7 +965,7 @@ void bobs_visit(void)
     g_walkState = -1;
     g_ordered = 0;
     g_justArrived = 1;
-    g_0284 = 2;
+    g_scene = 2;
     g_mouseLeft = g_joyButtons = g_buttons = 0;
     for (;;) {
         setup_bobs_spots(bm7f86, !g_walkState & !g_ordered);
@@ -974,7 +974,7 @@ void bobs_visit(void)
         flag = 0;
         rival = class == 4 ? 0 : king_chance();
         F_06529(0);
-        if (g_0282)
+        if (g_end)
             return;
         while ((choice = sys_wait_input(3000)) == 0)
             ;
@@ -983,12 +983,12 @@ void bobs_visit(void)
             g7f32s[0] = 0;
             F_11421(g_bannerX, " ", cz8bc0y);
             menu_pop(1);
-            g_0284 = 1;
+            g_scene = 1;
             cruise_go();
             return;
         case 1000:
             F_06529(0);
-            if (g_0282)
+            if (g_end)
                 return;
             if (bm7f86 == 0)
                 goto race;
@@ -1040,7 +1040,7 @@ test:
                             F_16381(0);
                             menu_pop(1);
                             play_ending();
-                            g_0282 |= 2;
+                            g_end |= 2;
                             return;
                         }
                     }
@@ -1049,7 +1049,7 @@ test:
                         menu_pop(1);
                         bobs_jail();
                         cursor_ctl(-4);
-                        g_0282 |= 4;
+                        g_end |= 4;
                         return;
                     }
                     if (bo7676 && m_8272.m8278 != 1) {
@@ -1065,11 +1065,11 @@ test:
                     }
                     if (place == 2 || place == 1) {
                         menu_pop(1);
-                        g_0284 = place == 2 ? 0 : 1;
-                        if (g_0284 == 1)
-                            g_51ec = 1;
+                        g_scene = place == 2 ? 0 : 1;
+                        if (g_scene == 1)
+                            g_keepCruiseMusic = 1;
                         cruise_go();
-                        g_51ec = 0;
+                        g_keepCruiseMusic = 0;
                         return;
                     }
                     F_16381(0);
@@ -1183,7 +1183,7 @@ void bobs_jail(void)
     g_ordered = 0;
     cursor_ctl(1);
     cursor_ctl(-1);
-    g_0284 = 6;
+    g_scene = 6;
     set_jail_spots(14, 16);
     for (;;) {
         menu_push(0x25);
@@ -1199,7 +1199,7 @@ void bobs_jail(void)
         case 1:
             menu_pop(1);
             set_jail_spots(11, 34);
-            g_0284 = 1;
+            g_scene = 1;
             return;
         case 1000:
             if (random_int(100) < 6) {
