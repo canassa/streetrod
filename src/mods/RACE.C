@@ -38,7 +38,7 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_6ca4rz;                       /* DS:6CA4 */
+static int g_tankCapIsActive;                       /* DS:6CA4 */
 static int g_6ca6qz;                       /* DS:6CA6 */
 static int g_6ca8pz;                       /* DS:6CA8 */
 static int near find_gas_spot(int);
@@ -58,7 +58,7 @@ static void near blow_engine(int n);
 static void near drop_transmission(int n);
 static int near replace_tires(void);
 static void near show_ticket(void);
-static int g_6caaaa;                       /* DS:6CAA */
+static int g_finishLineIndex;                       /* DS:6CAA */
 static int g_rivalTop;                       /* DS:6CAC */
 static int g_rivalLead;                       /* DS:6CAE */
 static int g_rivalFast;                         /* DS:6CB0 */
@@ -121,7 +121,7 @@ static void near clear_gas_spots(void)
 
     g_6ca6qz = 0;
     g_6ca8pz = 0;
-    g_6ca4rz = 0;
+    g_tankCapIsActive = 0;
     for (k = 0; k < 6; k++)
         g_hots[find_gas_spot(g_gasSpotIds[k])].f0 = 14;
 }
@@ -156,7 +156,7 @@ static void near spots_cap(void)
     clear_gas_spots();
     place_gas_spot(4, ar826e - 10, q_8270 - 5, 18, 12);
     sort_gas_spots();
-    g_6ca4rz = 1;
+    g_tankCapIsActive = 1;
 }
 
 /* spots_nozzle @ 0000:B552 (linear 0x0B552, 73 bytes) */
@@ -168,7 +168,7 @@ static void near spots_nozzle(void)
     place_gas_spot(4, ar826e - 1, q_8270 - 1, 10, 9);
     sort_gas_spots();
     g_6ca8pz = 1;
-    g_6ca4rz = 1;
+    g_tankCapIsActive = 1;
 }
 
 /* spots_rag @ 0000:B59B (linear 0x0B59B, 124 bytes) */
@@ -396,7 +396,7 @@ top:
             dl.f1a = 0;
             break;
         case 4:
-            if (g_6ca4rz == 0)
+            if (g_tankCapIsActive == 0)
                 break;
             if (dl.f0c == 1) {
                 if (video_anim_active(2)) {
@@ -932,7 +932,7 @@ void near race_reset_eng(struct Eng *p)
     g_05d6 = 0;
     g_05d8 = g_05da = 0;
     bz8630z = -1;
-    g_6caaaa = a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc;
+    g_finishLineIndex = a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc;
     car = a_7eaap.m7eb0->slot12;
     p->fc = g_tireSlip[g_4806[car->idx].f2][car->b / 2000];
     if (car->b < 8000)
@@ -941,7 +941,7 @@ void near race_reset_eng(struct Eng *p)
         if (car->b + random_int(2000) <= 9500)
             p->fa = 0;
         else {
-            t = (g_6caaaa - 200) >> 1;
+            t = (g_finishLineIndex - 200) >> 1;
             p->fa = random_int(t >> 1) + t + 200;
         }
         goto nx;
@@ -1136,7 +1136,7 @@ static void near rival_accelerate(void)
             g79e2g.f0 = g79e2g.fe / g79e2g.f40;
         }
     }
-    if (ar7e8av.m7e8a >= g_6caaaa) {
+    if (ar7e8av.m7e8a >= g_finishLineIndex) {
         liml = ao7d2ev.m7d30 + 5 < ar7e8av.m7e8a ? 5 : 10;
         g79e2g.f0 = old3;
         if (liml < old3)
@@ -1213,7 +1213,7 @@ static void near move_player(void)
     ao7d2ev.m7d32 += ao7d2ev.m7d34 = e_78e0.f0 ? race_speed_step(e_78e0.f0) : 0;
     if (ao7d2ev.m7d32 >= 8)
         road_advance();
-    if (ao7d2ev.m7d30 >= g_6caaaa && g_statsDone && e_78e0.f0 <= 0) {
+    if (ao7d2ev.m7d30 >= g_finishLineIndex && g_statsDone && e_78e0.f0 <= 0) {
         if (s_8632)
             g79e2g.fbc |= 1;
         else
@@ -1239,7 +1239,7 @@ static void near move_rival(void)
         ar7e8av.m7e8a += ar7e8av.m7e8c >> 3;
         ar7e8av.m7e8c &= 7;
     }
-    if (ar7e8av.m7e8a >= g_6caaaa && g_statsDone && e_78e0.f0 <= 0) {
+    if (ar7e8av.m7e8a >= g_finishLineIndex && g_statsDone && e_78e0.f0 <= 0) {
         if (s_8632 == 0)
             e_78e0.fbc |= 1;
         else
@@ -1413,7 +1413,7 @@ void race_tick(void)
     d = ar7e8av.m7e90;
     move_player();
     move_rival();
-    if (ao7d2ev.m7d30 >= g_6caaaa || ar7e8av.m7e8a >= g_6caaaa)
+    if (ao7d2ev.m7d30 >= g_finishLineIndex || ar7e8av.m7e8a >= g_finishLineIndex)
         race_finish_stats();
     if (e_78e0.fbc || g79e2g.fbc) {
         if (a_7f88d >= 2) {
