@@ -1319,3 +1319,9 @@ Tooling lessons are recorded in [sr-cli](../.claude/skills/sr-cli/SKILL.md); the
 
 ### What I learned
 - The reviewed names preserve the compiler budget and data layout in both build paths. No further semantic or structural changes were needed.
+
+## 2026-11-06 02:00 CET: Four more names; the rest is budget-bound
+
+### What I did
+- A Codex agent reviewed the remaining 46 functions, 128 globals and 2 far-data placeholders: `F_15BBE` -> `disk_bm` (size, allocate and unpack a picture), `g_0046` -> `g_hercModeSet`, `g_496a` -> `g_specPartWear`, `g_513c` -> `g_nextPartCategory`. Most other placeholders are understood (the GARAGE.C clock, calendar, date line, paint and sticker dialogs, body modifications, spare-parts menu) but kept because GARAGE.C is at MSC's per-file name budget and the `garage_` prefix alone is as long as an `F_xxxxx` placeholder.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup/order checks clean, tests OK.
