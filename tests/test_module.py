@@ -30,8 +30,8 @@ class SourceFileTests(unittest.TestCase):
     def test_command_line(self):
         fs = {f.path.name: f for f in module.files()}
         self.assertTrue(fs['M_0F38A.C'].command.endswith(' /NTS0F38_TEXT'))
-        self.assertEqual(fs['M_24602.ASM'].command, '/Ml')   # MASM: the segment is in .CODE
-        self.assertIn('.CODE S2460_TEXT', fs['M_24602.ASM'].path.read_text())
+        self.assertEqual(fs['MEMSTR.ASM'].command, '/Ml')   # MASM: the segment is in .CODE
+        self.assertIn('.CODE S2460_TEXT', fs['MEMSTR.ASM'].path.read_text())
 
     def test_asm_extent_from_the_listing(self):
         # data between two PROCs (a flag byte in the code segment) belongs to neither

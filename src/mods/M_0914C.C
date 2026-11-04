@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "STRUCTS.H"
 #include "M_0914C.H"
+#include "BITMAP.H"
 #include "HOTSPOT.H"
 #include "MESSAGES.H"
 #include "M_00000.H"
@@ -29,7 +30,6 @@
 #include "M_18BDC.H"
 #include "M_1923C.H"
 #include "M_193D4.H"
-#include "M_19ED0.H"
 
 #pragma intrinsic(abs)
 

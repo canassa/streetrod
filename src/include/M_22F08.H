@@ -1,9 +1,0 @@
-/* M_22F08.H - declarations of what M_22F08.C defines. */
-
-#ifndef M_22F08_H
-#define M_22F08_H
-#include "STRUCTS.H"
-
-void F_22F08(struct Bitmap far *bm, int mode, char color, int x1, int y1, int x2, int y2);/* 0x22F08 */
-
-#endif

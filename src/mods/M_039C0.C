@@ -2,6 +2,7 @@
 #include <string.h>
 #include "STRUCTS.H"
 #include "M_039C0.H"
+#include "BITMAP.H"
 #include "HOTSPOT.H"
 #include "MESSAGES.H"
 #include "M_00000.H"
@@ -32,7 +33,6 @@
 #include "M_174A6.H"
 #include "M_1923C.H"
 #include "M_193D4.H"
-#include "M_19ED0.H"
 #include "M_265BA.H"
 
 static void near F_03C3E(struct Node *p7);

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "STRUCTS.H"
 #include "M_1947A.H"
+#include "BITMAP.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_10B7C.H"
@@ -9,7 +10,6 @@
 #include "M_174A6.H"
 #include "M_1923C.H"
 #include "M_193D4.H"
-#include "M_19ED0.H"
 
 #pragma intrinsic(abs)
 

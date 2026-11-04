@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "STRUCTS.H"
 #include "M_0542E.H"
+#include "BITMAP.H"
 #include "MESSAGES.H"
 #include "M_00000.H"
 #include "M_00D58.H"
@@ -23,7 +24,6 @@
 #include "M_15236.H"
 #include "M_15396.H"
 #include "M_193D4.H"
-#include "M_19ED0.H"
 #include "M_265BA.H"
 
 static void near F_05584(void);

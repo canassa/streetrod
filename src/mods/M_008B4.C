@@ -1,6 +1,7 @@
 #include <string.h>
 #include "STRUCTS.H"
 #include "M_008B4.H"
+#include "BITMAP.H"
 #include "HOTSPOT.H"
 #include "MESSAGES.H"
 #include "M_00000.H"
@@ -13,7 +14,6 @@
 #include "M_139DE.H"
 #include "M_15396.H"
 #include "M_193D4.H"
-#include "M_19ED0.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int g7f84q;

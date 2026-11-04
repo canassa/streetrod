@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "STRUCTS.H"
 #include "M_16EA2.H"
+#include "CRTC.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_08EA8.H"
@@ -12,7 +13,6 @@
 #include "M_15396.H"
 #include "M_174A6.H"
 #include "M_193D4.H"
-#include "M_21A06.H"
 #include "M_265BA.H"
 #include "M_2869E.H"
 

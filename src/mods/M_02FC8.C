@@ -3,6 +3,7 @@
 #include <string.h>
 #include "STRUCTS.H"
 #include "M_02FC8.H"
+#include "BITMAP.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_036A8.H"
@@ -17,7 +18,6 @@
 #include "M_14C90.H"
 #include "M_15236.H"
 #include "M_15396.H"
-#include "M_19ED0.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_score;                        /* DS:6C5E */

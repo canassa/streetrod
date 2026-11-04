@@ -1,5 +1,6 @@
 #include "STRUCTS.H"
 #include "M_1A9B2.H"
+#include "BITMAP.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_036A8.H"
@@ -18,7 +19,6 @@
 #include "M_1923C.H"
 #include "M_193D4.H"
 #include "M_1947A.H"
-#include "M_19ED0.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct Bitmap far *g_6cd4oz;        /* DS:6CD4 */

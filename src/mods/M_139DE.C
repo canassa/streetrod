@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "STRUCTS.H"
 #include "M_139DE.H"
+#include "BITMAP.H"
 #include "HOTSPOT.H"
 #include "MESSAGES.H"
 #include "M_00000.H"
@@ -15,7 +16,6 @@
 #include "M_14C90.H"
 #include "M_1923C.H"
 #include "M_193D4.H"
-#include "M_19ED0.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6c56;                         /* DS:6C56 */

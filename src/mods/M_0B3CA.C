@@ -4,6 +4,7 @@
 #include <dos.h>
 #include "STRUCTS.H"
 #include "M_0B3CA.H"
+#include "BITMAP.H"
 #include "FONTDATA.H"
 #include "HOTSPOT.H"
 #include "MESSAGES.H"
@@ -33,7 +34,6 @@
 #include "M_174A6.H"
 #include "M_1923C.H"
 #include "M_193D4.H"
-#include "M_19ED0.H"
 #include "M_265BA.H"
 #include "SLOTS.H"
 

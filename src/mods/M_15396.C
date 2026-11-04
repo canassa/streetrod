@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "STRUCTS.H"
 #include "M_15396.H"
+#include "MASKBLT.H"
 #include "MESSAGES.H"
 #include "M_00000.H"
 #include "M_00D58.H"
@@ -18,9 +19,8 @@
 #include "M_139DE.H"
 #include "M_1923C.H"
 #include "M_193D4.H"
-#include "M_2462E.H"
-#include "M_2634A.H"
 #include "SLOTS.H"
+#include "TANDYPIC.H"
 
 #pragma intrinsic(outp)
 

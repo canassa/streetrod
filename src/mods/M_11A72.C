@@ -2,6 +2,7 @@
 #include <string.h>
 #include "STRUCTS.H"
 #include "M_11A72.H"
+#include "BITMAP.H"
 #include "MESSAGES.H"
 #include "M_00000.H"
 #include "M_00D58.H"
@@ -12,7 +13,6 @@
 #include "M_11E9C.H"
 #include "M_1923C.H"
 #include "M_193D4.H"
-#include "M_19ED0.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct Win *g_6c40;                 /* DS:6C40 */

@@ -2,6 +2,10 @@
 #include <dos.h>
 #include "STRUCTS.H"
 #include "M_174A6.H"
+#include "BITMAP.H"
+#include "EGABLIT.H"
+#include "EGALATCH.H"
+#include "MASKOR.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_036A8.H"
@@ -18,10 +22,6 @@
 #include "M_1923C.H"
 #include "M_193D4.H"
 #include "M_1947A.H"
-#include "M_19ED0.H"
-#include "M_23262.H"
-#include "M_24E78.H"
-#include "M_25954.H"
 
 #pragma intrinsic(outp)
 

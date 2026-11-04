@@ -2,6 +2,7 @@
 #include <dos.h>
 #include "STRUCTS.H"
 #include "M_10B7C.H"
+#include "BITMAP.H"
 #include "M_00000.H"
 #include "M_00D58.H"
 #include "M_0F38A.H"
@@ -12,7 +13,6 @@
 #include "M_163BE.H"
 #include "M_174A6.H"
 #include "M_1947A.H"
-#include "M_19ED0.H"
 #include "SCRATCH.H"
 #include "SCREENS.H"
 

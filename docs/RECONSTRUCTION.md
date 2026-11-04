@@ -70,11 +70,11 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   That the original had a jump at each of these points is evidence; the exact statement
   (a `goto`, a `continue`, a differently nested `if`) is not.
 - **`#pragma loop_opt`** in M_00D58.C (off before F_01BAE, to the end of the file),
-  M_039C0.C (off/on around F_03C8D) and M_23262.C (off before F_2382D). These five
+  M_039C0.C (off/on around F_03C8D) and EGABLIT.C (off before F_2382D). These five
   functions keep plain memory loops that the file's `/Ol` would otherwise optimize. Only
   `goto` loops escape `/Ol`, and a pragma is the more plausible source. Where exactly the
   pragmas sat in the original is unknown.
-- **`GCREG`/`SEQREG`** in M_238A2.C. F_23C3B needs a block boundary after `GCREG(5, 0)`.
+- **`GCREG`/`SEQREG`** in EGASHIFT.C. F_23C3B needs a block boundary after `GCREG(5, 0)`.
   Braced register-write macros give it. Their names, and the fact that every other port
   pair of the file uses them, are a reconstruction (braced and unbraced pairs compile
   the same everywhere else).
