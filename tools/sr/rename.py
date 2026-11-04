@@ -94,9 +94,10 @@ def rename(pairs, dry=False):
         if _FILE.fullmatch(old.upper()) and "." in old:
             if not _FILE.fullmatch(new) or new.rsplit(".", 1)[1] != old.upper().rsplit(".", 1)[1]:
                 raise SystemExit(f"{new}: a source file name is DOS 8.3, upper case, same extension as {old}")
-            src = next((p for p in (config.SRC / "mods").iterdir() if p.name.upper() == old.upper()), None)
+            src = next((p for d in ("mods", "data") for p in (config.SRC / d).iterdir()
+                        if p.name.upper() == old.upper()), None)
             if src is None:
-                raise SystemExit(f"{old}: not a file of src/mods")
+                raise SystemExit(f"{old}: not a file of src/mods or src/data")
             ostem, nstem = src.stem.upper(), new.rsplit(".", 1)[0]
             if any(p.stem.upper() == nstem for d in ("mods", "data") for p in (config.SRC / d).iterdir()) \
                     or (config.INCLUDE / f"{nstem}.H").exists() and nstem != ostem:

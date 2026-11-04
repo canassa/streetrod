@@ -1,5 +1,5 @@
 ; Two arrays of 131 signed coordinate pairs.
-TRACKPTS SEGMENT PARA PUBLIC 'FAR_DATA'
+NEEDLE SEGMENT PARA PUBLIC 'FAR_DATA'
 ; PROVISIONAL symbols for the two unreachable far references in DASH.C
         PUBLIC  _x_trk0
         PUBLIC  _g_2e47_0000
@@ -45,6 +45,6 @@ _x_trk1 LABEL   BYTE
         DB      4,0, 4,0, 4,0, 4,-1, 4,-1, 4,-1, 4,-1, 4,-1
         DB      4,-1, 4,-2, 4,-2, 4,-2, 4,-2, 4,-2, 4,-2, 4,-2
         DB      3,-3, 3,-3, 3,-3
-TRACKPTS ENDS
+NEEDLE ENDS
 
         END

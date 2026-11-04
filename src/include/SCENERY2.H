@@ -1,7 +1,7 @@
-/* CARMASK2.H - declarations of what CARMASK2.C defines. */
+/* SCENERY2.H - declarations of what SCENERY2.C defines. */
 
-#ifndef CARMASK2_H
-#define CARMASK2_H
+#ifndef SCENERY2_H
+#define SCENERY2_H
 #include "STRUCTS.H"
 
 extern struct Run g_60a2[7];                            /* DS:60A2 */

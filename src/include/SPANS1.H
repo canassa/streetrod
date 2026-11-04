@@ -1,7 +1,7 @@
-/* PARTS1.H - declarations of what PARTS1.ASM defines. */
+/* SPANS1.H - declarations of what SPANS1.ASM defines. */
 
-#ifndef PARTS1_H
-#define PARTS1_H
+#ifndef SPANS1_H
+#define SPANS1_H
 #include "STRUCTS.H"
 
 extern struct Part far g_parts1[];                      /* 2FA6:0000 */

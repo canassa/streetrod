@@ -10,9 +10,9 @@ placeholders: the shipped EXE does not record them.
 | `FONTDATA.ASM` | EGA font: 91 nine-byte glyphs (`'CODE'` class, linked before the code region at 0F38A) |
 | `CGAFONT.ASM` | CGA font: 91 eighteen-byte glyphs, WORD aligned |
 | `SCREENS.ASM`, `SCREEN2.ASM`, `SCRATCH.ASM` | Screen and scratch Bitmap descriptors |
-| `TRACKPTS.ASM` | Track coordinates |
+| `NEEDLE.ASM` | Gauge needle points (tip and hub, 131 positions) |
 | `SONG.ASM`, `EFFECTS.ASM` | Sound instruction words |
-| `PARTS1.ASM`, `PARTS2.ASM` | Car-mask Part records |
+| `SPANS1.ASM`, `SPANS2.ASM` | Span records of the roadside sprites |
 | `SLOTS.C` | 277 Slot records and five terrain work arrays: far communals (`FAR_BSS`) |
 
 DGROUP is not here. Each C source defines its own initialized globals and literals
@@ -24,7 +24,7 @@ The CGA font's segment frame is 0ED2 and its first glyph is at offset 4. The thr
 before it belong to the last EGA glyph, and one alignment byte follows them. There is no
 CGA header, and the arrays do not overlap.
 
-PARTS2 ends at 3884:0000. The next 0x170 bytes are EM.LIB's EMULATOR_DATA, which comes
+SPANS2 ends at 3884:0000. The next 0x170 bytes are EM.LIB's EMULATOR_DATA, which comes
 from MLIBCE.LIB. Earlier these bytes were misread as the end of the Part array. LINK puts
 the far communals of `SLOTS.C` after every object (389B:0000), and it orders them by the
 hash bucket of each symbol. That is why the names were chosen to fit the original order.

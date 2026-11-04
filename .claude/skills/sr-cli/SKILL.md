@@ -107,7 +107,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 - OMF COMDEF consumes external indices. Keep all DATA publics, and select the
   nonempty named code segment if MASM .MODEL first declares an empty default.
 - CGA glyphs start at 0ED2:0004, WORD aligned after the complete EGA font. The
-  old CgaFont header/overlap was a frame-offset artifact. PARTS2 ends at 3884,
+  old CgaFont header/overlap was a frame-offset artifact. SPANS2 ends at 3884,
   followed by EM.LIB's 0x170-byte EMULATOR_DATA, then SLOTS at 389B.
 - LINK 5.01.21 COMMON allocation walks 256 symbol-hash buckets. Hash recovered
   from LINK's NE segment 2:4060: length + sum((byte|0x20) << (1-based-index&3)),

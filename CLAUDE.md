@@ -86,7 +86,7 @@ functions, all 748 near calls), and the packed `SRPACKED.EXE` must be byte-ident
 ### Source files: `src/mods/`
 
 Every original object is one source file in `src/mods/` with one block in `src/MAKEFILE`
-(82 code files, plus the data-only HOTSPOT.C, MESSAGES.ASM, CARMASKS.C, CARMASK2.C; their DGROUP
+(82 code files, plus the data-only HOTSPOT.C, MESSAGES.ASM, SCENERY.C, SCENERY2.C; their DGROUP
 ranges are `dgroup.DATA_UNITS`). A code file's extent in the image is the span of the DB
 functions whose `src` it is (`module.files()`). The 55 C files and 27 MASM files hold
 their functions in address order: includes, the file-scope statics and `static ... near`
@@ -235,7 +235,7 @@ Never redirect a DOS program's output to a file without a timeout and a size bou
 | `dist/` | Downloads as fetched (freeware zip, archive.org, The Good Old Days image) |
 | `toolchain/msc51/` | MSC 5.1 `BIN`, `INCLUDE`, `LIB`, plus the original disk images |
 | `toolchain/masm51/` | MASM 5.1 `BIN`, `INCLUDE`, docs, plus the original disk images (`F:` in DOSBox) |
-| `src/mods/` | One source file per original object (`M_xxxxx.C` / `.ASM`, 8.3 names), plus the data-only HOTSPOT.C, MESSAGES.ASM, CARMASKS.C, CARMASK2.C |
+| `src/mods/` | One source file per original object (`M_xxxxx.C` / `.ASM`, 8.3 names), plus the data-only HOTSPOT.C, MESSAGES.ASM, SCENERY.C, SCENERY2.C |
 | `src/MAKEFILE`, `src/SR.LNK` | The build: one block per object with its command line (MSC MAKE 4.07), the LINK response file (link order) |
 | `src/include/` | per-file headers (maintained by `./sr headers`), `STRUCTS.H` (hand-written); `/IINCLUDE` in the MAKEFILE |
 | `tools/sr/` | The CLI |

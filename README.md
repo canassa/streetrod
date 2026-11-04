@@ -19,7 +19,7 @@ in: [`src/MAKEFILE`](src/MAKEFILE) for MSC MAKE 4.07 and the LINK response file
    the runtime from `MLIBCE.LIB`, which the objects name as their default library.
 
 The result is byte-identical to `orig/SR.EXE` (SHA-1 `3a5e28b795313028b7e77d147122f41cb29de334`).
-All game data, including fonts, sprite records, track points and music, comes from source.
+All game data, including fonts, sprite records, gauge needle points and music, comes from source.
 The build never reads data out of the original executable.
 
 ### Natively in DOS

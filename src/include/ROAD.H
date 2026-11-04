@@ -1,7 +1,7 @@
-/* M_265BA.H - declarations of what M_265BA.C defines. */
+/* ROAD.H - declarations of what ROAD.C defines. */
 
-#ifndef M_265BA_H
-#define M_265BA_H
+#ifndef ROAD_H
+#define ROAD_H
 #include "STRUCTS.H"
 
 extern int g_5c20[];                                    /* DS:5C20 */

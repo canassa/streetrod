@@ -22,8 +22,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 - **Struct types and members** (`src/include/STRUCTS.H`). The sizes and offsets come from
   the code. Tags and member names are invented. A member that no code touches is padding
   (`pad`, `fNN`).
-- **Files.** `M_<first address>.C/.ASM`, plus HOTSPOT.C, MESSAGES.ASM, CARMASKS.C and
-  CARMASK2.C for the data-only units and the `src/data/` names. These are labels for
+- **Files.** `M_<first address>.C/.ASM`, plus HOTSPOT.C, MESSAGES.ASM, SCENERY.C and
+  SCENERY2.C for the data-only units and the `src/data/` names. These are labels for
   recovered objects: a file boundary is evidence, its name is not (a source path only
   changes an object's THEADR record).
 - **Code segments** `S<region>_TEXT` (`/NT` in the MAKEFILE, `.CODE` in assembler files).
@@ -86,7 +86,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   - F_11213's unused inner-block `struct Colors save` (VIDEO.C): a 6-byte frame slot.
   - `long unused` in F_118D4 (SCREEN.C), F_12A17, F_12DD8 and F_12F99 (GARGFX.C): a
     4-byte slot above the `struct Blt` local.
-  - `x_trk0`/`x_trk1` (DASH.C, labels in `src/data/TRACKPTS.ASM`): two unreachable far
+  - `x_trk0`/`x_trk1` (DASH.C, labels in `src/data/NEEDLE.ASM`): two unreachable far
     accesses for the two SEG constants in CONST (DS:68E6, DS:68E8) that nothing reads.
   - `g_6c42` (POPUP.C): four unreferenced `_BSS` bytes after `g_6c40`.
   - `g_49e0[0] = g_49e0[0];` in the default cases of F_049ED (GAME.C) and F_05B4A
@@ -112,7 +112,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   argument of F_03AB8), so the original may have had named constants there. That the
   blocks are grouped is evidence; the member list (a wider State8272 changes F_081AB's
   loop temps, so the arrays from DS:8290 stay separate) and the spelling are not.
-- **Per-module type views.** M_2869E.C reads the char `bw8aca` (DS:8ACA) as a word, so it
+- **Per-module type views.** ROADVIEW.C reads the char `bw8aca` (DS:8ACA) as a word, so it
   writes `*(int *)&bw8aca`. The original file probably had an `extern int` of its own
   there. `struct Win` (MENU.C, SAVEGAME.C) is a second view of the 18-byte hot-spot record
   `struct Hot`: `a_8b9ap` holds the address of the first menu-line record as an `int`
@@ -165,7 +165,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
     file-scope definitions).
   - MESSAGES.ASM (DS:239E..4718) holds odd-address ints and count-prefixed records that C
     cannot place.
-  - CARMASKS.C and CARMASK2.C are two files because MSC emits a global before an earlier
+  - SCENERY.C and SCENERY2.C are two files because MSC emits a global before an earlier
     initializer that takes its address.
   The splits are evidence; the files' names and contents beyond the bytes are not.
 - **HOTSPOT.C's arrays.** DS:09F4..239E is 365 18-byte `struct Hot` records in one index
@@ -192,8 +192,8 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   alignment. The DUP and EVEN choices are presentation. DUP produces LIDATA records where
   the original may have had LEDATA, so the objects can differ from the originals in record
   types. The EXE is identical.
-- **Far data assets** (`src/data/*.ASM`, SLOTS.C). Fonts, screens, track points, sound and
-  car-mask parts are written as source records. Their original form is unknown (they may
+- **Far data assets** (`src/data/*.ASM`, SLOTS.C). Fonts, screens, gauge needle points, sound and
+  roadside sprite spans are written as source records. Their original form is unknown (they may
   have been converter output or binary includes). The segment, file and label names are
   placeholders.
 

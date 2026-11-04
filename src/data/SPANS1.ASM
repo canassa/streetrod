@@ -1,5 +1,5 @@
 ; Car-mask Part records: dx,dy,w,h.
-PARTS1 SEGMENT PARA PUBLIC 'FAR_DATA'
+SPANS1 SEGMENT PARA PUBLIC 'FAR_DATA'
         PUBLIC  _g_parts1
 
 PART    MACRO   dx, dy, w, h
@@ -3583,6 +3583,6 @@ _g_parts1 LABEL   BYTE                   ; struct Part far[]
         PART    -2, 0, 5, 11             ; part 3573
         PART    -2, 1, 5, 11             ; part 3574
         PART    -1, 2, 3, 11             ; part 3575
-PARTS1 ENDS
+SPANS1 ENDS
 
         END

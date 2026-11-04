@@ -1,5 +1,5 @@
 #include "STRUCTS.H"
-#include "M_2B6DC.H"
+#include "SHRINK.H"
 #include "ARENA.H"
 #include "DASH.H"
 #include "MAIN.H"

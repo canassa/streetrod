@@ -1,7 +1,7 @@
-/* M_2869E.H - declarations of what M_2869E.C defines. */
+/* ROADVIEW.H - declarations of what ROADVIEW.C defines. */
 
-#ifndef M_2869E_H
-#define M_2869E_H
+#ifndef ROADVIEW_H
+#define ROADVIEW_H
 #include "STRUCTS.H"
 
 extern int g_5e14[][4];                                 /* DS:5E14 */

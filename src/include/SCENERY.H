@@ -1,7 +1,7 @@
-/* CARMASKS.H - declarations of what CARMASKS.C defines. */
+/* SCENERY.H - declarations of what SCENERY.C defines. */
 
-#ifndef CARMASKS_H
-#define CARMASKS_H
+#ifndef SCENERY_H
+#define SCENERY_H
 #include "STRUCTS.H"
 
 extern int g_5ec6;                                      /* DS:5EC6 */

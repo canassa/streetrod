@@ -47,8 +47,8 @@ DATA_UNITS = [(0x09F4, 0x239E, 'src/mods/HOTSPOT.C'),
               (0x239E, 0x4718, 'src/mods/MESSAGES.ASM'),
               # MSC emits a global whose address an earlier initializer takes before that
               # initializer: the table at DS:6078 precedes the second set, so two files
-              (0x5EC6, 0x60A2, 'src/mods/CARMASKS.C'),
-              (0x60A2, 0x629C, 'src/mods/CARMASK2.C')]
+              (0x5EC6, 0x60A2, 'src/mods/SCENERY.C'),
+              (0x60A2, 0x629C, 'src/mods/SCENERY2.C')]
 DATA_KEY = 0x100000
 # Relocation-order evidence for objects whose position no literal pool pins: (units, after,
 # why). `link_order()` moves the units after `after`; each code segment's units then keep

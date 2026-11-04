@@ -17,11 +17,11 @@
 #include "MARKS.H"
 #include "MOUSE.H"
 #include "M_02B9A.H"
-#include "M_2869E.H"
+#include "NEEDLE.H"
+#include "ROADVIEW.H"
 #include "SCREEN.H"
 #include "SOUND.H"
 #include "SYS.H"
-#include "TRACKPTS.H"
 #include "VIDEO.H"
 
 #pragma intrinsic(abs, cos, sin, outp, inp)
@@ -106,7 +106,7 @@ void F_0F4B7(int i, int *x1, int *y1, int *x2, int *y2)
        them behind for unreachable far accesses to two other far symbols. The statements and
        symbol names are not recoverable; these keep the bytes and the relocation order. The
        block-scope extern is part of that provisional text (the symbols are labels in
-       TRACKPTS.ASM; see docs/RECONSTRUCTION.md). */
+       NEEDLE.ASM; see docs/RECONSTRUCTION.md). */
     return;
     { extern char far x_trk0[][2]; *x1 = x_trk0[i][0]; }
 }
