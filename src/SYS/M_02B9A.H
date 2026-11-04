@@ -65,8 +65,8 @@ extern char g_manifoldFit[][5];                                /* DS:4978 */
 extern char g_carbFit[][3];                                /* DS:4988 */
 extern int g_partPics[][5];                                 /* DS:4998 */
 extern int g_boltPics[];                                    /* DS:49CA */
-extern int g_49d2[];                                    /* DS:49D2 */
-extern char *g_49dc;                                    /* DS:49DC */
+extern int g_transPics[];                                    /* DS:49D2 */
+extern char *g_bankrollLabel;                                    /* DS:49DC */
 extern char *g_gearLabel;                               /* DS:49DE */
 extern int g_list[];                                    /* DS:49E0 */
 void mb_store_mode_a(char a, char b);                           /* 0x02B9A */

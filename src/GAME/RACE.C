@@ -79,7 +79,7 @@ static int near find_gas_spot(int id)
     int base, n, i;
 
     base = ((unsigned)g_hotGasStation - (unsigned)g_hots) / sizeof(struct Hot);
-    n = ((unsigned)g_1a44 - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
+    n = ((unsigned)g_hotGasExit - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
     for (i = 0; i < n; i++)
         if (g_hots[base + i].f6 == id)
             return base + i;
@@ -92,7 +92,7 @@ static void near sort_gas_spots(void)
     int base, n;
 
     base = ((unsigned)g_hotGasStation - (unsigned)g_hots) / sizeof(struct Hot);
-    n = ((unsigned)g_1a44 - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
+    n = ((unsigned)g_hotGasExit - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
     gx_sort_hots(base, n);
 }
 
@@ -259,7 +259,7 @@ void ra_gas_station(void)
     sc_status_text(-1, "\0", 0);
     g_scene = 3;
     sc_picture(0x442, -1);
-    sc_status_label(g_49dc);
+    sc_status_label(g_bankrollLabel);
     r_vid.copyToFront = 1;
     (*g_videoOps.show)();
     dl.f0c = 1;
@@ -1002,7 +1002,7 @@ void near ra_run(void)
     sy_drive_stop();
     g_waitUntil = 0;
     sy_reset_queues();
-    sc_status_label(g_49dc);
+    sc_status_label(g_bankrollLabel);
     if (ao7d2ev.roadIndex > 200) {
         if (rn_int(3) > 0) {
             if (a_7eaap.currentCar->timing > 0)

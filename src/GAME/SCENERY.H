@@ -19,10 +19,10 @@ extern struct Run g_sprSpeedSignLod[7];                 /* DS:5FB4 */
 extern struct List g_sprSpeedSign;                      /* DS:5FDE */
 extern struct Run g_sprBarricadeLod[7];                 /* DS:5FE2 */
 extern struct List g_sprBarricade;                      /* DS:600C */
-extern struct Run g_6010[7];                            /* DS:6010 */
-extern struct List g_603a;                              /* DS:603A */
-extern struct Run g_603e[7];                            /* DS:603E */
-extern struct List g_6068;                              /* DS:6068 */
+extern struct Run g_sprSmallRockLod[7];                            /* DS:6010 */
+extern struct List g_sprSmallRock;                              /* DS:603A */
+extern struct Run g_sprLargeRockLod[7];                            /* DS:603E */
+extern struct List g_sprLargeRock;                              /* DS:6068 */
 extern struct Run g_sprDotLod[1];                       /* DS:606C */
 extern struct List g_sprDot;                            /* DS:6072 */
 extern int g_6076;                                      /* DS:6076 */

@@ -1524,3 +1524,17 @@ All gates passed: headers; 572/572 functions (551 MATCH, 21 MATCH*); a clean bui
 ### What I learned
 
 The cursor-step declarations hid two different mistakes: the -1 entries preceded their named bases, while the supposed Y-table tail was actually sixteen direction bytes reached through negative scan-map offsets. The held-direction writes likewise addressed their real array through the unrelated saved-SP word. The garage slot mappings have a zero entry before the nine bolt positions; both one-based and zero-based consumers establish ten entries. GAME's explicit category reads prove five part-wear values, including the word PERF had named separately. Palette swapping reaches seventeen bytes, with natural alignment supplying the following byte; alignment is not another source global. A largest key map of nineteen bindings needs only twenty-one saved entries including music and sentinel, so the defensive thirty-entry guard does not prove a larger allocation.
+
+## 2026-11-04 22:23 CET: initialized-data placeholder naming (globalsB)
+
+### What I did
+
+Audited all 39 exact g_XXXX placeholders and both uncalled SOUND.C wrappers. Renamed 12 globals: the left steering points; the Calendar, transmission-bolt, gas-exit and body-change hotspots; the current car-name buffer; transmission picture IDs; the bankroll label; and the small/large rock sprite lists and their LOD arrays. Read their uses, original disassembly and initial bytes; decoded the rock spans using vw_sprite's drawing rules. Left the other 27 globals and two functions unchanged, with a separate concrete reason for each in work/LEDGER.md. Regenerated plans/unnamed.md from tools/sr/source.py. No hash-style placeholders were changed.
+
+Validation passed: headers --check; check --all (572/572); a clean rm -rf work followed by sr build (packed EXE IDENTICAL, 572/572 functions at original positions, 748/748 near calls exact); dgroup check and order; all 67 unit tests; and dosbox.sh --make (DOS-native EXE IDENTICAL).
+
+### What I learned
+
+The apparently unused DS:02EE table is reached by negative indexes from g_steerPoints: the driving ISR bounds steering to -24..24, so the preceding 24 pairs form its left arc. A source-name search alone misses that use. The four hotspot allocations cross screen boundaries; their first directly addressed controls supply the names, while g_groupHot and ScreenId establish the additional screen lists in each allocation. The first unnamed hotspot is Calendar, not a garage exit.
+
+Several SYS words are reset-only rather than configuration/detection values: g_05ba gets -1 only in queue reset, g_05d6 is cleared at driving transitions, g_05d8/g_05da only in engine reset, and g_060a only when installing the driving ISR. Those writes do not establish their intended roles. The tire-dependent PERF expression ends in f34[5], whose consumers only select gear slots 0..4; calling the unused sixth value a gear ratio or braking coefficient would go beyond the evidence. Neither uncalled sound wrapper supplies an event identity.

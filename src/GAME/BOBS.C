@@ -953,7 +953,7 @@ void bo_visit(void)
     g_cursorY = 0x80;
     sc_picture(0x445, -1);
     vi_bobs_pal();
-    sc_status_label(g_49dc);
+    sc_status_label(g_bankrollLabel);
     g_cursor2.drawnRect.x2 = -1;
     cu_ctl(1);
     (*g_videoOps.show)();
@@ -1074,7 +1074,7 @@ test:
                     }
                     mu_suspend(0);
                     sc_picture(0x445, -1);
-                    sc_status_label(g_49dc);
+                    sc_status_label(g_bankrollLabel);
                     (*g_videoOps.show)();
                     class = 4;
                     g_rivalHereState = 0;
@@ -1174,7 +1174,7 @@ void bo_jail(void)
         (*g_videoOps.copy)(*g_jailBars[i].src, r_vid.back, &blt, 1);
     }
     sc_status_text(-1, "", 0);
-    sc_status_label(g_49dc);
+    sc_status_label(g_bankrollLabel);
     (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.copyToFront = 1;
     (*g_videoOps.show)();

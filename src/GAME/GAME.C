@@ -798,7 +798,7 @@ void near gm_run(void)
         }
         if (kind && again)
             continue;
-        sc_status_label(g_49dc);
+        sc_status_label(g_bankrollLabel);
         v = 1;
         if (kind == 0 && w == KR_OLD_GAME && a_7eaap.currentCar)
             v = 2;

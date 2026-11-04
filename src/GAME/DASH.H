@@ -23,7 +23,7 @@ extern int g_needleColor;                               /* DS:02D2 */
 extern char g_introPalette[];                                   /* DS:02D4 */
 extern struct Bitmap far *g_savedBack;                  /* DS:02E6 */
 extern struct Bitmap far *g_savedFront;                 /* DS:02EA */
-extern signed char g_02ee[24][2];                       /* DS:02EE */
+extern signed char g_steerLeftPoints[24][2];                       /* DS:02EE */
 extern unsigned char g_steerPoints[][2];                       /* DS:031E */
 extern int g_wheelShown;                                /* DS:0350 */
 extern int g_wheelSlotY[3];                             /* DS:0352 */
