@@ -21,6 +21,7 @@ data `seg off name decl header`.
 import functools
 import hashlib
 import json
+import os
 import re
 from pathlib import Path
 
@@ -214,7 +215,7 @@ def runtime():
     data = dict(key=key, functions=functions, aliases=aliases, callees=callees, data=libdata)
     try:
         cache.parent.mkdir(parents=True, exist_ok=True)
-        tmp = cache.with_suffix('.tmp%d' % id(data))
+        tmp = cache.with_suffix(f'.tmp{os.getpid()}')
         tmp.write_text(json.dumps(data))
         tmp.replace(cache)
     except OSError:
