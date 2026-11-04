@@ -1271,3 +1271,17 @@ Tooling lessons are recorded in [sr-cli](../.claude/skills/sr-cli/SKILL.md); the
 
 ### What I learned
 - Members carry no hash or budget constraint, so records turn hash-blocked globals into freely nameable members; only the object name must fit.
+
+## 2026-11-04 18:17 CET: Subsystem source layout
+
+### What I did
+- Proved the 87-character SRENV.BAT INCLUDE line with native DOSBox-X MAKE on a scratch copy of the decided layout before moving files; packed EXE was IDENTICAL.
+- Moved 197 files with git mv in a separate commit, preserving their bytes. All names under src are uppercase DOS 8.3; sources and same-name headers share their subsystem folder, shared headers are in SYS, assets and their headers in DATA.
+- Updated MAKEFILE paths and dependencies, source/header indexing, check-job header staging, build environment, rename tooling, DGROUP, picture loading, backend comparison, tests and documentation. Object names and SR.LNK are unchanged; C, ASM, H and INC contents are unchanged.
+- From empty work directories: ./sr check --all passed 572/572 and ./sr build ended IDENTICAL. Native ./dosbox.sh --make also ended IDENTICAL. Headers, DGROUP ownership and order were clean; 61 unit tests passed, and ./sr show main succeeded.
+- Repeated all required gates in a fresh clone under work/fresh: 572/572, host and native EXEs IDENTICAL, headers and DGROUP clean, 61 unit tests passed.
+- Full emucmp passed IDENTICAL: 623 source/flag jobs, 138 sweep jobs and 49 probes; zero substantive differences. Nothing under work is committed; no push or merge.
+
+### What I learned
+- DOSBox command sequences need call SRENV.BAT to continue to MAKE after the batch file. MASM needs INCLUDE even for headers beside its source. The shared environment and staging rules are recorded in .claude/skills/sr-cli/SKILL.md.
+- A recursive filename index lets compiler jobs stage unchanged headers either flat for E: or in their original folders for the linked build; duplicate filenames are rejected so search order cannot silently select another header.

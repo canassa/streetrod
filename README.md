@@ -14,7 +14,7 @@ in: [`src/MAKEFILE`](src/MAKEFILE) for MSC MAKE 4.07 and the LINK response file
    does: `LIB MLIBCE.LIB +MLIBCR.LIB+LIBH.LIB+EM.LIB+MLIBFP.LIB;` (the component order
    matters).
 2. CL and MASM compile each original object from its source once, with that file's flags
-   (`MODS\` the game's sources, `DATA\` far data, `INCLUDE\` the headers).
+   (each subsystem folder holds its sources and headers; `DATA\` holds far data).
 3. `LINK /MAP /STACK:2560 /EXEPACK @SR.LNK` links the objects in the recovered order. It takes
    the runtime from `MLIBCE.LIB`, which the objects name as their default library.
 
@@ -24,15 +24,17 @@ The build never reads data out of the original executable.
 
 ### Natively in DOS
 
+Run `SRENV.BAT` before MAKE: MSC searches the including file's folder first, but MASM searches only INCLUDE. The 87-character batch line covers every project folder without lengthening compiler commands.
+
 The DOS drives are `C:` the build directory (a copy of `src/`), `D:` `toolchain/msc51` and
 `F:` `toolchain/masm51`, with the environment MSC SETUP sets up:
 
 ```text
 set PATH=D:\BIN;F:\BIN
-set INCLUDE=D:\INCLUDE;F:\INCLUDE
 set LIB=D:\LIB
 set TMP=C:\TMP
 c:
+call SRENV.BAT
 MAKE MAKEFILE
 ```
 
@@ -81,9 +83,9 @@ Addresses are linear offsets into the unpacked load image (`orig/SR_unpacked.EXE
 | `dist/` | The downloads as fetched: streetrodonline.com `sr1pc.zip`, archive.org `msdos_Street_Rod_1989`, and The Good Old Days `001593` (a 720K image with an uncracked EXE whose CGA/Hercules menu strings were edited) |
 | `toolchain/msc51/` | MSC 5.1 `BIN` (CL, LIB, LINK, MAKE), `INCLUDE` and `LIB`, unpacked from the WinWorld 5.25" disk set in `toolchain/msc51/dist/` |
 | `toolchain/masm51/` | MASM 5.1 |
-| `src/mods/` | The game's C and assembly sources |
-| `src/data/` | Far data and storage as source records (see [src/data/README.md](src/data/README.md)) |
-| `src/include/` | One header per source file (`./sr headers` keeps the include blocks in step), and `STRUCTS.H` |
+| `src/SYS/`, `UI/`, `GAME/`, `VIDEO/`, `CGA/`, `EGA/`, `TANDY/`, `HERC/`, `INPUT/`, `SOUND/` | C and assembly sources with their same-name headers |
+| `src/DATA/` | Far data and storage as source records (see [src/DATA/README.MD](src/DATA/README.MD)) |
+| `src/SRENV.BAT` | DOS include search path for the subsystem folders, DATA and the compiler headers |
 | `src/MAKEFILE`, `src/SR.LNK` | The build: MSC MAKE 4.07 makefile and LINK response file (the recovered link order) |
 | `tools/sr/` | The `sr` CLI; `tools/unexepack.py` removes EXEPACK |
 | `docs/` | `RECONSTRUCTION.md` (the reconstruction choices) |
