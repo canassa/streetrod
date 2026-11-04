@@ -718,7 +718,7 @@ struct ListDialog {
 struct PartSelection {
     int wirePic;
     int slot;
-    char unused[2];
+    int unused;
     int subslot;
 };
 

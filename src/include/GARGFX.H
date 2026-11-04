@@ -4,7 +4,7 @@
 #define GARGFX_H
 #include "STRUCTS.H"
 
-extern struct PartSelection g_videoPartCursor; /* DS:82AC */
+extern struct PartSelection g_slotSelec; /* DS:82AC */
 
 extern char g_partAnimate;                              /* DS:06FC */
 extern int g_tboltY[];                                  /* DS:06FE */

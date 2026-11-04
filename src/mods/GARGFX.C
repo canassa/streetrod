@@ -195,7 +195,7 @@ struct Blt g_cpyBoltPatchRecord;
 int o_8290[5];
 int af829ax[1];
 int ad829cy[8];
-struct PartSelection g_videoPartCursor; /* DS:82AC */
+struct PartSelection g_slotSelec; /* DS:82AC */
 
 /* engine_index @ 0F38:34FB (linear 0x1287B, 33 bytes)
 
@@ -222,7 +222,7 @@ static int near carb_pos(int *px, int *py)
     int r;
     int t;
 
-    switch (o_8290[g_partSlotMap[g_videoPartCursor.slot]]) {
+    switch (o_8290[g_partSlotMap[g_slotSelec.slot]]) {
     case 0x43c:
         r = 0;
         break;
@@ -233,20 +233,20 @@ static int near carb_pos(int *px, int *py)
         r = 4;
         break;
     }
-    *px = g_carbPos[t = g_videoPartCursor.slot - 4][0];
+    *px = g_carbPos[t = g_slotSelec.slot - 4][0];
     *py = g_carbPos[t][1];
     return r;
 }
 
 /* gargfx_part_pos @ 0F38:3589 (linear 0x12909, 91 bytes)
 
-   Screen position (*px, *py) of the current slot, by game mode g_videoPartCursor.slot */
+   Screen position (*px, *py) of the current slot, by game mode g_slotSelec.slot */
 
 void gargfx_part_pos(int *px, int *py)
 {
     int n;
 
-    switch (g_videoPartCursor.slot) {
+    switch (g_slotSelec.slot) {
     default:
         carb_pos(px, py);
         break;
@@ -270,10 +270,10 @@ void gargfx_bolt_pos(int *px, int *py)
     int slot;
     int item;
 
-    switch (g_videoPartCursor.slot) {
+    switch (g_slotSelec.slot) {
     default:
         slot = carb_pos(px, py);
-        *px += g_carbBoltOff[(slot += g_videoPartCursor.subslot) * 2];
+        *px += g_carbBoltOff[(slot += g_slotSelec.subslot) * 2];
         *py += g_carbBoltOff[slot * 2 + 1];
         break;
     case 0:
@@ -283,7 +283,7 @@ void gargfx_bolt_pos(int *px, int *py)
     case 1:
         item = o_8290[1];
         slot = (item == 0x438 || item == 0x437) ? 0 : 2;
-        if (g_videoPartCursor.subslot == 1)
+        if (g_slotSelec.subslot == 1)
             slot++;
         *px = g_manifoldBoltPos[slot * 2];
         *py = g_manifoldBoltPos[slot * 2 + 1];
@@ -395,7 +395,7 @@ static void near make_bolt_overlay(void)
     struct Bitmap far *picture;
 
     if (o_8290[1] == 0x437) {
-        kind = g_partSlotMap[g_videoPartCursor.slot];
+        kind = g_partSlotMap[g_slotSelec.slot];
         if (kind == 3)
             return;
         what = ad829cy[i = (kind != 2) ? 1 : 0];
@@ -508,7 +508,7 @@ void gargfx_erase_part(int n, int flag)
 
 /* gargfx_draw_wires @ 0F38:3D1C (linear 0x1309C, 281 bytes)
 
-   Draw the current pair of slot pictures: the strip from r_vid.hoodBg and the sprite g_videoPartCursor.wirePic,
+   Draw the current pair of slot pictures: the strip from r_vid.hoodBg and the sprite g_slotSelec.wirePic,
    copying the area to the front buffer when the screen is shadowed. */
 
 void gargfx_draw_wires(void)
@@ -522,14 +522,14 @@ void gargfx_draw_wires(void)
     struct Blt blt;
 
     pair = engine_index() * 2;
-    next = (g_videoPartCursor.wirePic == 0x446) ? pair++ : pair + 1;
+    next = (g_slotSelec.wirePic == 0x446) ? pair++ : pair + 1;
     cursor_ctl(CURSOR_HIDE);
     blt.w = 0x20;
     xs = blt.dx = (blt.sx = g_wiresPos[next * 2]) + 0x60;
     ys = blt.dy = (blt.sy = g_wiresPos[next * 2 + 1]) + 9;
     blt.h = r_vid.hoodBg->height - blt.sy - 4;
     (*g_videoOps.copy)(r_vid.hoodBg, r_vid.back, &blt, 1);
-    bitmap_draw_pic(r_vid.back, g_videoPartCursor.wirePic, (unsigned char)(x2 = g_wiresPos[pair * 2] + 0x60), (unsigned char)(y2 = g_wiresPos[pair * 2 + 1] + 9), 0);
+    bitmap_draw_pic(r_vid.back, g_slotSelec.wirePic, (unsigned char)(x2 = g_wiresPos[pair * 2] + 0x60), (unsigned char)(y2 = g_wiresPos[pair * 2 + 1] + 9), 0);
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, x2 > xs ? xs : x2, y2 > ys ? ys : y2, blt.w + x2 + 0x18, blt.h + y2 + 0x18);
@@ -547,38 +547,38 @@ void gargfx_draw_parts(struct Car *car)
     int type;
     int other;
 
-    mode = g_videoPartCursor.slot;
+    mode = g_slotSelec.slot;
     g_partAnimate = 0;
     if (r_vid.hoodBg == 0)
         r_vid.hoodBg = F_15BBE(0x42d, ARENA_LOW_STACK);
     else
         disk_unpack_pic(0x42d, r_vid.hoodBg);
     if (type = o_8290[0]) {
-        g_videoPartCursor.slot = 0;
+        g_slotSelec.slot = 0;
         gargfx_draw_part(type, 0);
         if (type == 0x434)
             g_carbPosBase[0] = 4;
         else
             g_carbPosBase[0] = 5;
         if (type = o_8290[1]) {
-            g_videoPartCursor.slot = 1;
+            g_slotSelec.slot = 1;
             gargfx_draw_part(type, 0);
             slot = g_carbPosBase[g_part[car->rack.parts[1]->idx].variant];
             for (type = 0; type < 3; type++) {
-                g_videoPartCursor.slot = slot++;
+                g_slotSelec.slot = slot++;
                 if (other = o_8290[type + 2])
                     gargfx_draw_part(other, 0);
             }
         }
     }
     g_partAnimate = 1;
-    g_videoPartCursor.slot = mode;
+    g_slotSelec.slot = mode;
 }
 
 /* gargfx_draw_bolts @ 0F38:3F2D (linear 0x132AD, 286 bytes)
 
    Redraw all nine slot pictures (a and b give each slot's mode and sub-mode) into the
-   back buffer over the r_vid.hoodBg strip, then the g_videoPartCursor.wirePic sprite, and an optional label when flag is set.
+   back buffer over the r_vid.hoodBg strip, then the g_slotSelec.wirePic sprite, and an optional label when flag is set.
    The screen shadow r_vid.copyToFront is switched off meanwhile and the area is copied to the front afterwards. */
 
 void gargfx_draw_bolts(int *a, int *b, int flag)
@@ -590,8 +590,8 @@ void gargfx_draw_bolts(int *a, int *b, int flag)
     int shadow;
     struct Blt blt;
 
-    prev = g_videoPartCursor.slot;
-    prev2 = g_videoPartCursor.subslot;
+    prev = g_slotSelec.slot;
+    prev2 = g_slotSelec.subslot;
     shadow = r_vid.copyToFront;
     r_vid.copyToFront = 0;
     blt.sx = 0;
@@ -603,12 +603,12 @@ void gargfx_draw_bolts(int *a, int *b, int flag)
     (*g_videoOps.copy)(r_vid.hoodBg, r_vid.back, &blt, 1);
     for (i = 0; i < 9; i++) {
         if (id = af829ax[i]) {
-            g_videoPartCursor.slot = a[i];
-            g_videoPartCursor.subslot = b[i];
+            g_slotSelec.slot = a[i];
+            g_slotSelec.subslot = b[i];
             gargfx_draw_bolt(id);
         }
     }
-    if (g_videoPartCursor.wirePic)
+    if (g_slotSelec.wirePic)
         gargfx_draw_wires();
     if (flag) {
         F_119B8(0x4c6, 0x60, 0x94, -1);
@@ -616,8 +616,8 @@ void gargfx_draw_bolts(int *a, int *b, int flag)
     }
     if (r_vid.copyToFront = shadow)
         bitmap_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + blt.w - 1, blt.dy + blt.h - 1);
-    g_videoPartCursor.slot = prev;
-    g_videoPartCursor.subslot = prev2;
+    g_slotSelec.slot = prev;
+    g_slotSelec.subslot = prev2;
 }
 
 /* insert_hot @ 0F38:404B (linear 0x133CB, 127 bytes)
@@ -651,7 +651,7 @@ static void near insert_hot(struct Hot *arr, struct Hot *item, int n)
    Build the sorted list of menu items in g_engineHots: the 3 fixed records are copied from g_1948,
    then for each of 9 slots (grouped by the counts in g_nBolt) that is enabled in o_8290 an item is
    inserted at the position gargfx_bolt_pos gives for the slot's coordinates, plus a last item picked by
-   g_videoPartCursor.wirePic. g_videoPartCursor.slot/g_videoPartCursor.subslot are saved and restored around it. */
+   g_slotSelec.wirePic. g_slotSelec.slot/g_slotSelec.subslot are saved and restored around it. */
 
 void gargfx_build_hots(int *xs, int *ys)
 {
@@ -663,8 +663,8 @@ void gargfx_build_hots(int *xs, int *ys)
     struct Hot *item;
     int len;
 
-    rx = g_videoPartCursor.slot;
-    rh = g_videoPartCursor.subslot;
+    rx = g_slotSelec.slot;
+    rh = g_slotSelec.subslot;
     item = g_1948;
     len = (num = 3) * sizeof(struct Hot);
     memcpy(g_engineHots, item, len);
@@ -672,8 +672,8 @@ void gargfx_build_hots(int *xs, int *ys)
     i = lane = j = 0;
     for (; i < 9; i++) {
         if (o_8290[lane]) {
-            g_videoPartCursor.slot = xs[i];
-            g_videoPartCursor.subslot = ys[i];
+            g_slotSelec.slot = xs[i];
+            g_slotSelec.subslot = ys[i];
             gargfx_bolt_pos(&x, &y);
             x += 0x60;
             y += 9;
@@ -691,15 +691,15 @@ void gargfx_build_hots(int *xs, int *ys)
     if (o_8290[0]) {
         g_boltHot.textOffset = g_offWires;
         g_boltHot.f6 = 13;
-        i = (g_videoPartCursor.wirePic == 0x446) + engine_index() * 2;
+        i = (g_slotSelec.wirePic == 0x446) + engine_index() * 2;
         g_boltHot.x2 = (g_boltHot.x1 = g_wiresPos[i * 2] + 0x5b) + 10;
         g_boltHot.y2 = (g_boltHot.y1 = g_wiresPos[i * 2 + 1] + 2) + 15;
         insert_hot(g_engineHots, &g_boltHot, num);
         num++;
     }
     g_engineHots[num].kind = 9;
-    g_videoPartCursor.slot = rx;
-    g_videoPartCursor.subslot = rh;
+    g_slotSelec.slot = rx;
+    g_slotSelec.subslot = rh;
     sys_hover_reset();
 }
 

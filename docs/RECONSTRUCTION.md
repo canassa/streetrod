@@ -28,7 +28,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   Names with digit suffixes come from `./sr layout -w` and only reproduce the frame.
 - **Struct types and members** (shared types in `src/include/STRUCTS.H`, private types in
   their owner's header). Sizes and offsets come from the code; tags and member names are
-  invented. Untouched members are unused storage (`pad`, `fNN`); explicit spare fields
+  invented. Untouched members are unused storage (`pad`, `fNN`, `unusedN`); explicit spare fields
   are distinguished from the compiler's automatic alignment padding.
 - **Files.** Each object's file is named for what its code does (GARAGE.C, DISK.C,
   CGABLT.C, ...); SCENERY.C/SCENERY2.C and the `src/data/` names likewise describe their
@@ -192,7 +192,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **TimerPriorities** (`g_videoPrioritiesValues`, DS:8EF6..8EFD; type in SYS.H): a natural, byte-identical reconstruction choice; separate globals also match.
 
-- **PartSelection** (`g_videoPartCursor`, DS:82AC..82B3): a natural, byte-identical reconstruction choice; separate globals also match.
+- **PartSelection** (`g_slotSelec`, DS:82AC..82B3): a natural, byte-identical reconstruction choice; separate globals also match.
 
 - **InputState** (`g_input`, DS:05D0..05D3): natural record of the any-input latch and input key only; the unused sentinel and drive-reset words at 05D4..05DB stay separate with neutral placeholder names.
 
