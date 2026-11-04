@@ -869,3 +869,12 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - Header generation previously tracked address-annotated declarations only. Macro ownership now participates too, excluding empty include guards; the sr-cli skill documents the standalone-header exception.
 - Platform names were checked against the 1988 Microsoft Press reference (equipment flags at 0040:0010, ticks at 0040:006C, display segments) and Microsoft's mouse reference (INT 33h; vector offset 33h * 4 = CCh): https://msarchive.pcjs.org/mspl13/msdos/norton/ and https://bitsavers.trailing-edge.com/pdf/microsoft/mouse/Microsoft_Mouse_Programmers_Reference_1989.pdf .
 - Recasting the shared char far video pointers as int far pointers, and as long for the original packed-pointer limit arithmetic, preserves every compiled byte. Full clean builds verify the macro substitutions in initialized bitmap data too.
+
+## 2026-11-05 07:30 CET: Named fixed PC memory addresses
+
+### What I did
+- The bare far-address casts became named constants. PC facts are in the new shared header src/include/PC.H (no owning .C, like STRUCTS.H): `BIOS_EQUIP` (0000:0410), `BIOS_TICKS` (0000:046C, both old spellings unified), `MOUSE_VECTOR` (the int 33h vector at 0000:00CC), `CGA_VRAM`, `MONO_VRAM`, `EGA_VRAM`, `BIOS_ROM` (searched for "TANDY"). Single-file addresses are `#define`s at the top of their file (ROAD.C's EGA page buffers, CURSOR.C's EGA save area, MAIN.C's Tandy second screen, ARENA.C's fixed base). `./sr headers` accepts standalone constant headers and includes PC.H where its names are used. Done by a Codex agent in a Rex pane.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
+
+### What I learned
+- MSC 5.1 offers no helpers for fixed addresses (dos.h has only FP_SEG/FP_OFF; MK_FP and peek/poke are Turbo C), so a cast long constant was the period idiom; the macro names cost nothing at codegen.
