@@ -114,11 +114,11 @@ union Word {
 };
 
 struct Tone {
-    int f0;
-    int f1;
-    int f2;
-    int f3;
-    int f4;
+    int phase;
+    int waveform;
+    int depth;
+    int length;
+    int delay;
 };
 
 struct Bitmap {
@@ -262,18 +262,18 @@ struct Dev {
     union {
         int w;
         unsigned char b[2];
-    } f0;
-    int f2;
-    int f4;
-    char off;
+    } divisor;
+    int ticksLeft;
+    int repeatCount;
+    char active;
     char dirty;
-    int far *l8;
-    int far *lc;
+    int far *song;
+    int far *phraseStart;
     int far *cur;
-    int *f14;
-    int *f16;
-    int *f18;
-    int *f1a;
+    int *repeatTable;
+    int *repeatCursor;
+    int *toneTable;
+    int *toneCursor;
 };
 
 struct Hot {
