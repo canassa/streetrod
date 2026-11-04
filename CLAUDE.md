@@ -34,6 +34,7 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 ./sr flags FILE|ADDR [FLAGS]   # a file's CL/MASM flags: its src/MAKEFILE line (--force when it has matched functions)
 ./sr rename OLD NEW            # rename a function, global or source file everywhere: sources, headers, MAKEFILE, SR.LNK, docs, tools; then ./sr headers (--file PAIRS, -n)
 ./sr fit OLD CAND...            # would a renamed communal/static stay at its address? (LINK bucket / MSC key window, 4e/4f)
+./sr pic [ID...] [--list] [--png OUT.png] [--scale N] [--cells COLS N] [--mode ega|cga] [--palette game|intro|standard|cga-green]  # decode resource pictures; default output is inline kitty graphics
 ./sr data 4eee [N]             # hex dump of DGROUP bytes with known globals
 ./sr headers                   # rewrite every C source's include block and the MAKEFILE dependencies from the headers
 ./sr headers --check           # write nothing; exit 1 if that would change a file or a header declares a name its file does not define
