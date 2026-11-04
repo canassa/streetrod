@@ -29,20 +29,20 @@ class SourceFileTests(unittest.TestCase):
 
     def test_command_line(self):
         fs = {f.path.name: f for f in module.files()}
-        self.assertTrue(fs['M_0F38A.C'].command.endswith(' /NTS0F38_TEXT'))
-        self.assertEqual(fs['M_24602.ASM'].command, '/Ml')   # MASM: the segment is in .CODE
-        self.assertIn('.CODE S2460_TEXT', fs['M_24602.ASM'].path.read_text())
+        self.assertTrue(fs['DASH.C'].command.endswith(' /NTS0F38_TEXT'))
+        self.assertEqual(fs['MEMSTR.ASM'].command, '/Ml')   # MASM: the segment is in .CODE
+        self.assertIn('.CODE S2460_TEXT', fs['MEMSTR.ASM'].path.read_text())
 
     def test_asm_extent_from_the_listing(self):
         # data between two PROCs (a flag byte in the code segment) belongs to neither
         with tempfile.TemporaryDirectory() as d:
             lst = Path(d) / 'T.LST'
-            lst.write_text('_F_1DFA9 . . . . . . . . . . . .  \tN PROC\t0287\tS1C11_TEXT\tGlobal\tLength = 0028\n')
+            lst.write_text('_cgaline_pixel_addr . . . . . . . . . . . .  \tN PROC\t0287\tS1C11_TEXT\tGlobal\tLength = 0028\n')
             lengths = cod.asm_lengths(lst)
-        self.assertEqual(lengths, {'_F_1DFA9': 0x28})
-        obj = NS(publics={'_F_1DFA9': 0x287, '_F_1DFD2': 0x2b0}, code=bytes(0x300))
-        self.assertEqual(cod.from_publics(obj, 'F_1DFA9').end, 0x2b0)
-        self.assertEqual(cod.from_publics(obj, 'F_1DFA9', lengths).end, 0x2af)
+        self.assertEqual(lengths, {'_cgaline_pixel_addr': 0x28})
+        obj = NS(publics={'_cgaline_pixel_addr': 0x287, '_cgaline_span': 0x2b0}, code=bytes(0x300))
+        self.assertEqual(cod.from_publics(obj, 'cgaline_pixel_addr').end, 0x2b0)
+        self.assertEqual(cod.from_publics(obj, 'cgaline_pixel_addr', lengths).end, 0x2af)
 
 
 class GateTests(unittest.TestCase):

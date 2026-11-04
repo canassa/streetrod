@@ -28,7 +28,7 @@ class MakefileTests(unittest.TestCase):
                                       '+D:\\LIB\\EM.LIB+D:\\LIB\\MLIBFP.LIB;')
         self.assertEqual((exe, mapfile, libs), ('SR.EXE', 'SR.MAP', ''))
         # the fonts (class CODE) are linked just before the first file of code segment S0F38
-        k = objects.index('M_0F38A.OBJ')
+        k = objects.index('DASH.OBJ')
         self.assertEqual(objects[k - 2:k], ['FONTDATA.OBJ', 'CGAFONT.OBJ'])
         self.assertEqual(objects[-1], 'SLOTS.OBJ')
 
@@ -45,8 +45,8 @@ class MakefileTests(unittest.TestCase):
                 self.assertEqual(r.deps, [r.source])
         fs = {f.path.name: f for f in module.files()}
         self.assertTrue(all(f.segment for f in fs.values()))
-        self.assertEqual(fs['M_0F38A.C'].rule.command,
-                         'CL /c /W3 /Fc /IINCLUDE /AM /Oalsi /Gs /FPi /NTS0F38_TEXT MODS\\M_0F38A.C')
+        self.assertEqual(fs['DASH.C'].rule.command,
+                         'CL /c /W3 /Fc /IINCLUDE /AM /Oalsi /Gs /FPi /NTS0F38_TEXT MODS\\DASH.C')
 
     def test_parser_and_edits(self):
         text = ('# comment\r\nX=D:\\LIB\r\nCC=CL /c\r\n\r\nA.OBJ: MODS\\A.C \\\r\n\tINCLUDE\\A.H\r\n'
@@ -90,7 +90,7 @@ class MakefileTests(unittest.TestCase):
     def test_link_report_includes_fixup_errors(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            (root / 'LINK.LOG').write_text('M_00000.OBJ : error L2002: fixup overflow\n')
+            (root / 'LINK.LOG').write_text('MAIN.OBJ : error L2002: fixup overflow\n')
             with contextlib.redirect_stdout(io.StringIO()):
                 report = build.link_report(root)
             self.assertEqual(report['missing_symbols'], [])

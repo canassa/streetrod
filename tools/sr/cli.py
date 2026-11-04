@@ -260,7 +260,7 @@ def _record(con, row, res):
 
 
 def _rows_for(con, what):
-    """A function by address or name, or every function of a source file (M_0914C.C)."""
+    """A function by address or name, or every function of a source file (BOBS.C)."""
     f = mod.find_file(what)
     if f is not None:
         return mod.members(con, f.rel)
@@ -408,6 +408,24 @@ def cmd_name(args):
         raise SystemExit(f"{old} is used by {', '.join(users)}; rename it there too, then rerun with --force")
     db.update(con, row["addr"], name=args.name)
     print(f"{hexa(row['addr'])}: {fn_name(row)} -> {args.name}")
+
+
+def cmd_rename(args):
+    from sr import rename
+    if args.file:
+        pairs = rename.parse_pairs(Path(args.file).read_text().splitlines())
+    elif args.old and args.new:
+        pairs = [(args.old, args.new)]
+    else:
+        raise SystemExit("give OLD NEW, or --file PAIRS")
+    for line in rename.rename(pairs, dry=args.dry_run):
+        print(line)
+
+
+def cmd_fit(args):
+    from sr import rename
+    for line in rename.fit(args.old, args.candidates):
+        print(line)
 
 
 def cmd_kind(args):
@@ -784,7 +802,7 @@ def main():
     s.set_defaults(func=cmd_next)
 
     s = sub.add_parser("check", help="compile the function's whole source file, byte-compare; records the result")
-    s.add_argument("fn", nargs="?", help="address, name, or a source file (M_0914C.C: all its functions)")
+    s.add_argument("fn", nargs="?", help="address, name, or a source file (BOBS.C: all its functions)")
     s.add_argument("--all", action="store_true", help="compile every file once, check every matched function (regression gate)")
     s.add_argument("--flags", help="try these CL/MASM flags for the file without recording the result")
     s.set_defaults(func=cmd_check)
@@ -813,6 +831,20 @@ def main():
     s.add_argument("--force", action="store_true", help="rename even though sources use the old name")
     s.set_defaults(func=cmd_name)
 
+    s = sub.add_parser("rename", help="rename a function, global or source file everywhere (DB, sources, "
+                       "MAKEFILE, SR.LNK, docs, tools), then regenerate the headers")
+    s.add_argument("old", nargs="?", help="current name (maybe_walker, g_hercules) or source file (M_xxxxx.C)")
+    s.add_argument("new", nargs="?")
+    s.add_argument("--file", help="a file of OLD NEW lines (# comments) applied at once")
+    s.add_argument("-n", "--dry-run", action="store_true", help="report what would change, write nothing")
+    s.set_defaults(func=cmd_rename)
+
+    s = sub.add_parser("fit", help="would these names keep a communal/static global at its address "
+                       "(LINK bucket / MSC static key window)?")
+    s.add_argument("old", help="the global's current name")
+    s.add_argument("candidates", nargs="*")
+    s.set_defaults(func=cmd_fit)
+
     s = sub.add_parser("kind", help="correct the scanner's c/asm/crt guess")
     s.add_argument("fn")
     s.add_argument("kind", choices=config.KINDS)
@@ -826,7 +858,7 @@ def main():
     s.set_defaults(func=cmd_note)
 
     s = sub.add_parser("flags", help="a source file's CL/MASM flags (no flags: print them)")
-    s.add_argument("fn", help="a source file (M_0914C.C) or a function in it")
+    s.add_argument("fn", help="a source file (BOBS.C) or a function in it")
     s.add_argument("flags", nargs="*")
     s.add_argument("--force", action="store_true", help="allow changing the flags of a file with matched functions")
     s.set_defaults(func=cmd_flags)

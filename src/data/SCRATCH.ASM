@@ -1,8 +1,8 @@
 ; Zero-initialized scratch Bitmap descriptor.
 SCRATCH SEGMENT PARA PUBLIC 'FAR_DATA'
-        PUBLIC  _g_2e68_0000
+        PUBLIC  _g_egaPage3
 
-_g_2e68_0000 LABEL   BYTE                ; struct Bitmap far
+_g_egaPage3 LABEL   BYTE                ; struct Bitmap far
         DW      0, 0, 0                  ; width, height, planesize
         DB      30 DUP (0)               ; pad
         DD      0, 0                     ; bits, alt

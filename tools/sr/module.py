@@ -93,7 +93,7 @@ def file_of(row, fs=None):
 
 
 def find_file(name, fs=None):
-    """A source file by its name (M_0914C.C) or path, or None."""
+    """A source file by its name (BOBS.C) or path, or None."""
     for f in fs or files():
         if name.upper() in (f.rel.upper(), f.path.name.upper()):
             return f

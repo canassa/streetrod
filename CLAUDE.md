@@ -10,7 +10,7 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 - **Packing:** Microsoft EXEPACK. `orig/SR_unpacked.EXE` is the unpacked image and is what every tool reads.
 - **Addresses** are linear offsets into the load image (file offset minus the `0x22D0` header). `seg:off` is the segment value the callers use.
 - **Size:** 719 real functions: 509 game C, 63 game asm, and 147 MSC runtime entries (`kind = crt`, `status = skip`, never reconstructed).
-- **Hand-written asm:** line drawing, unrolled sprite blitters, video helpers, and small register-saving helpers. They are rebuilt with MASM 5.1 (`toolchain/masm51`, same 1988 release as the compiler) from `src/mods/M_xxxxx.ASM`.
+- **Hand-written asm:** line drawing, unrolled sprite blitters, video helpers, and small register-saving helpers. They are rebuilt with MASM 5.1 (`toolchain/masm51`, same 1988 release as the compiler) from the `.ASM` files of `src/mods/`.
 
 ## The `sr` CLI
 
@@ -33,7 +33,9 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 ./sr diff ADDR|NAME [--full]   # two-column instruction diff, ours vs original
 ./sr sweep ADDR|NAME           # compile the function's file under 46 /O flag combinations, score the function
 ./sr flags FILE|ADDR [FLAGS]   # a file's CL/MASM flags: its src/MAKEFILE line (--force when it has matched functions)
-./sr name ADDR NAME            # name a function
+./sr name ADDR NAME            # name a function (DB only)
+./sr rename OLD NEW            # rename a function, global or source file everywhere: DB, sources, MAKEFILE, SR.LNK, docs, tools; then ./sr headers (--file PAIRS, -n)
+./sr fit OLD CAND...            # would a renamed communal/static stay at its address? (LINK bucket / MSC key window, 4e/4f)
 ./sr global 82ca g_table --decl "struct Entry @[]"   # declare a DGROUP global (no args: list them)
 ./sr proto 15236 "int @(int n)" # a far (or public near) function's prototype (goes into its file's header) ("" clears; --force replaces an existing one)
 ./sr data 4eee [N]             # hex dump of DGROUP bytes with known globals
@@ -84,24 +86,24 @@ functions, all 748 near calls), and the packed `SRPACKED.EXE` must be byte-ident
 ### Source files: `src/mods/`
 
 Every original object is one source file in `src/mods/` with one block in `src/MAKEFILE`
-(80 code files, plus the data-only HOTSPOT.C, MESSAGES.ASM, CARMASKS.C, CARMASK2.C; their DGROUP
+(80 code files, plus the data-only HOTSPOT.C, MESSAGES.ASM, SCENERY.C, SCENERY2.C; their DGROUP
 ranges are `dgroup.DATA_UNITS`). A code file's extent in the image is the span of the DB
 functions whose `src` it is (`module.files()`). The 55 C files and 25 MASM files hold
 their functions in address order: includes, the file-scope statics and `static ... near`
 forward declarations, then each function with its comment, initialized data before the
-function whose literals precede it. Names are `M_<first addr>` until the real file name is known.
+function whose literals precede it. Each file is named for what the module is (GARAGE.C, DISK.C); M_02B9A.ASM keeps its address name until its identity is known.
 
 - **One command line per file:** its MAKEFILE block. A C file's line ends in
   `/NT S<region>_TEXT` (the code segment shared by near interfaces, a placeholder name: the
   segment's first address / 16). An assembler file names that segment in its own `.CODE` directive
-  (M_21962.ASM is a `.MODEL SMALL` file with an explicit `SEGMENT`, see its comment).
+  (SPEAKER.ASM is a `.MODEL SMALL` file with an explicit `SEGMENT`, see its comment).
   `./sr flags FILE` prints or sets it. Code that must not be loop-optimized under the file's
-  `/Ol` carries the real `#pragma loop_opt(off)` (M_00D58.C, M_039C0.C, M_23262.C).
+  `/Ol` carries the real `#pragma loop_opt(off)` (SYS.C, GAME.C, EGABLIT.C).
 - **What is compiled is the file in git.** `./sr check` and `./sr build` copy it unchanged; no
   placeholders, no text rewriting.
 - **The file gate.** `./sr check` on any function compiles its whole file and also compares
   the whole span against the image: bytes between functions (including code-segment data such
-  as M_1DD22.ASM's `dbl` flag byte), internal near-call displacements, internal calls and
+  as CGALINE.ASM's `dbl` flag byte), internal near-call displacements, internal calls and
   jump-table offsets. References to other objects and DGROUP remain relocation-masked and
   checked by `refs:`. A near call to another object is counted (`MATCH*`) and verified by the
   linked build (`Near-call encodings: 748/748 exact`).
@@ -136,8 +138,8 @@ A *module* is one original source file (one object). The `module_` prefix of its
 **A rename is a change to verify, not a free edit.** In this project names are often load-bearing:
 - local names decide the stack frame layout (rule 3);
 - uninitialized globals are placed by LINK's communal hash (rule 4e) and file-local statics by MSC's name hash (rule 4f): renaming one can move others;
-- external symbols' name lengths count toward MSC's per-file budget (rule 4d), so renaming an external function or global can change the code of a later function in any file that references it.
-Every rename must keep `./sr check --all`, `./sr build` and `./dosbox.sh --make` IDENTICAL. Rename through the tools so the DB, sources, headers, MAKEFILE and SR.LNK stay consistent (`./sr name`, `./sr global`, then `./sr headers`).
+- external symbols' name lengths count toward MSC's per-file budget (rule 4d), and so do a file's static function names: renaming a function or global can change the code of a later function in any file that references it. GARAGE.C (F_07AA4) and VIEW.C (F_2969D) have almost no slack left.
+Every rename must keep `./sr check --all`, `./sr build` and `./dosbox.sh --make` IDENTICAL. Rename through the tools so the DB, sources, headers, MAKEFILE and SR.LNK stay consistent (`./sr rename OLD NEW`, or `./sr rename M_xxxxx.C NAME.C` for a file; it regenerates the headers).
 
 - **Never add comments.** Do not add comments to the code unless instructed to; all documentation is human-reviewed.
 - **`NULL` for pointers.** Use `NULL` for a null pointer, never bare `0`; reserve `0` for integers (in the medium model `NULL` is `0` for data pointers, so it is byte-free — verify).
@@ -164,7 +166,7 @@ MSC 5.1 assigns stack slots to locals in an order set by a hash of the identifie
 
 ### 4. Declarations come from the defining file's header, never ad hoc
 
-As in the original, each source file has its own header: `src/include/<FILE>.H` declares what that file defines (one header per source file, e.g. `M_0914C.H` for M_0914C.C; standalone data files get theirs, e.g. `SCREENS.H`, `MESSAGES.H`). A `.C` includes `STRUCTS.H`, its own header, and the headers of the files whose globals and functions it uses, and declares nothing itself. The headers in git are source and are what the build compiles. They and the include blocks are maintained by `./sr headers`: declarations come from the DB, ownership from where the definition is (`./sr global` and `./sr proto` rerun it). Run `./sr headers` after adding a reference to another file's symbol or moving a definition; it also updates the header dependencies in `src/MAKEFILE`. `./sr headers --check` (and the test suite) fails when the files have drifted from the DB. Unused declarations do not count against the compiler budget (rule 4d), so the include lists cannot change code.
+As in the original, each source file has its own header: `src/include/<FILE>.H` declares what that file defines (one header per source file, e.g. `BOBS.H` for BOBS.C; standalone data files get theirs, e.g. `SCREENS.H`, `MESSAGES.H`). A `.C` includes `STRUCTS.H`, its own header, and the headers of the files whose globals and functions it uses, and declares nothing itself. The headers in git are source and are what the build compiles. They and the include blocks are maintained by `./sr headers`: declarations come from the DB, ownership from where the definition is (`./sr global` and `./sr proto` rerun it). Run `./sr headers` after adding a reference to another file's symbol or moving a definition; it also updates the header dependencies in `src/MAKEFILE`. `./sr headers --check` (and the test suite) fails when the files have drifted from the DB. Unused declarations do not count against the compiler budget (rule 4d), so the include lists cannot change code.
 
 - **Globals:** `./sr global OFF NAME --decl "TYPE @"`. One name per DGROUP offset, project-wide.
 - **Far functions:** `./sr proto ADDR "TYPE @(ARGS)"`. A call without a prototype fails the check (MSC's C4071 at `/W3`). A CRT function may have several library names (`aFlmul`/`aFulmul`); `crtnames` records them in the `aliases` table and `refs` accepts any.
@@ -185,7 +187,7 @@ LINK lists relocations object by object, each data record's fixups in descending
 
 ### 4d. The compiler budget: global symbols are load-bearing
 
-MSC 5.1's code generator degrades (fewer loop register variables, other temps) once the external symbols referenced so far in a file exceed a budget measured in symbols plus name characters. A function can match alone and fail in its real file. External functions, external data and communals count; locals, statics, prototypes, literals and initialized data do not. Folding globals into the structs/arrays they were (with code evidence: a run-time `a - b` between two addresses or a direct `g[i]` index proves separate symbols) is how the original files stayed under it. `./sr build` must stay IDENTICAL against `orig/SR.EXE`.
+MSC 5.1's code generator degrades (fewer loop register variables, other temps) once the external symbols referenced so far in a file exceed a budget measured in symbols plus name characters. A function can match alone and fail in its real file. External functions, external data, communals and the file's own statics (static functions and the static variables it references, names included) count; locals, prototypes, literals and initialized data do not. Folding globals into the structs/arrays they were (with code evidence: a run-time `a - b` between two addresses or a direct `g[i]` index proves separate symbols) is how the original files stayed under it. `./sr build` must stay IDENTICAL against `orig/SR.EXE`.
 
 ### 4e. Uninitialized storage is communal, and LINK's hash fixes the names
 
@@ -193,7 +195,7 @@ DS:6E60..8F02 (`c_common`) holds no labels: every block is a C tentative definit
 
 ### 4f. File-local storage is `static`, and MSC's hash fixes the order
 
-DS:6C22..6E2C (`_BSS`) is file-local: every block is used by one original file, so it is an uninitialized `static` there (`static int g_6c46;   /* DS:6C46 */`), and LINK concatenates the objects' `_BSS` in link order. Within one object MSC 5.1 orders its uninitialized statics by `sum(byte & 0xDF) mod 256` of the name, ascending; equal keys put the later declaration first; ints and larger items are word-aligned. Renaming a static therefore moves the statics of its own file only: keep the keys of a file's statics increasing in address order (`./sr build` must stay IDENTICAL). The names are placeholders chosen for that, like the COMMON ones. Each static is defined once, at the top of its file. Statics are not in any header; they stay in the DB for `./sr check`, which resolves a `_BSS` fixup by the names and offsets in the compiler listing. `g_6c42` (4 unreferenced bytes after `g_6c40`) is PROVISIONAL filler.
+DS:6C22..6E2C (`_BSS`) is file-local: every block is used by one original file, so it is an uninitialized `static` there (`static int g_cursorDrawX;   /* DS:6C46 */`), and LINK concatenates the objects' `_BSS` in link order. Within one object MSC 5.1 orders its uninitialized statics by `sum(byte & 0xDF) mod 256` of the name, ascending; equal keys put the later declaration first; ints and larger items are word-aligned. Renaming a static therefore moves the statics of its own file only: keep the keys of a file's statics increasing in address order (`./sr build` must stay IDENTICAL). The names are placeholders chosen for that, like the COMMON ones. Each static is defined once, at the top of its file. Statics are not in any header; they stay in the DB for `./sr check`, which resolves a `_BSS` fixup by the names and offsets in the compiler listing. `g_6c42` (4 unreferenced bytes after `g_popupLayout`) is PROVISIONAL filler.
 
 ### 5. The DB comes from the EXE and the CLI
 
@@ -233,7 +235,7 @@ Never redirect a DOS program's output to a file without a timeout and a size bou
 | `dist/` | Downloads as fetched (freeware zip, archive.org, The Good Old Days image) |
 | `toolchain/msc51/` | MSC 5.1 `BIN`, `INCLUDE`, `LIB`, plus the original disk images |
 | `toolchain/masm51/` | MASM 5.1 `BIN`, `INCLUDE`, docs, plus the original disk images (`F:` in DOSBox) |
-| `src/mods/` | One source file per original object (`M_xxxxx.C` / `.ASM`, 8.3 names), plus the data-only HOTSPOT.C, MESSAGES.ASM, CARMASKS.C, CARMASK2.C |
+| `src/mods/` | One source file per original object (8.3 names for what each module is, e.g. GARAGE.C, CGALINE.ASM), plus the data-only HOTSPOT.C, MESSAGES.ASM, SCENERY.C, SCENERY2.C |
 | `src/MAKEFILE`, `src/SR.LNK` | The build: one block per object with its command line (MSC MAKE 4.07), the LINK response file (link order) |
 | `src/include/` | per-file headers (maintained by `./sr headers`), `STRUCTS.H` (hand-written); `/IINCLUDE` in the MAKEFILE |
 | `tools/sr/` | The CLI |

@@ -24,8 +24,8 @@ from .omf import Obj
 DATA_END = 0x629C          # first runtime _DATA byte (crt0's _asizds)
 BSS_START, BSS_PRIVATE_END, COMMON_START, END = 0x6C22, 0x6E2C, 0x6E60, 0x8F02
 # Recovered array bounds and typed table pieces (from the earlier data audit).
-BOUNDS = {'g_videoMenu': 6, 'g_msgs': 7, 'g_palette': 16, 'g_0692': 16, 'g_5082': 4, 'g_511e': 4,
-          'g_579f': 43, 'g_6078': 21, 'g_4766': 0x66, 'g_4806': 44, 'g_4998': 5, 'ae7312y': 5, 'bp7316': 4}
+BOUNDS = {'g_videoMenu': 6, 'g_gearNames': 7, 'g_palette': 16, 'g_protectPal': 16, 'g_5082': 4, 'g_511e': 4,
+          'g_keyMaps': 43, 'g_scenery': 21, 'g_scanMap': 0x66, 'g_4806': 44, 'g_4998': 5, 'ae7312y': 5, 'g_pageBmps': 4}
 REGIONS = [(0x6076, 0x6078, 'int @'), (0x2ee, 0x31e, 'signed char @[24][2]'), (0x358, 0x36e, 'signed char @[11][2]'),
            (0x462, 0x472, 'unsigned char @[16]'), (0x5d4, 0x5d6, 'int @'),
            (0x4734, 0x4736, 'int @'), (0x474a, 0x474c, 'int @'),
@@ -35,8 +35,8 @@ REGIONS = [(0x6076, 0x6078, 'int @'), (0x2ee, 0x31e, 'signed char @[24][2]'), (0
 FORCE_OWNER = [(0x5580, 0x57F6, 0x0E56A),
                # keyboard/mouse state and tables shared with the assembler keyboard handlers
                (0x4718, 0x4AFE, 0x02B9A),
-               # M_0E610.ASM's unreferenced tail (a byte and three strings) before the hook
-               # table of M_1C2CA.C
+               # VIDDET.ASM's unreferenced tail (a byte and three strings) before the hook
+               # table of CGA.C
                (0x5AEE, 0x5B04, 0x0E610)]
 # Data-only translation units: tables a code unit cannot have held (MSC's frame layout of a
 # unit's functions changes with the number of file-scope definitions; these functions match
@@ -47,15 +47,15 @@ DATA_UNITS = [(0x09F4, 0x239E, 'src/mods/HOTSPOT.C'),
               (0x239E, 0x4718, 'src/mods/MESSAGES.ASM'),
               # MSC emits a global whose address an earlier initializer takes before that
               # initializer: the table at DS:6078 precedes the second set, so two files
-              (0x5EC6, 0x60A2, 'src/mods/CARMASKS.C'),
-              (0x60A2, 0x629C, 'src/mods/CARMASK2.C')]
+              (0x5EC6, 0x60A2, 'src/mods/SCENERY.C'),
+              (0x60A2, 0x629C, 'src/mods/SCENERY2.C')]
 DATA_KEY = 0x100000
 # Relocation-order evidence for objects whose position no literal pool pins: (units, after,
 # why). `link_order()` moves the units after `after`; each code segment's units then keep
 # their code order.
 ORDER_HINTS = [
     (('24602', '2462E', '2487A', '24BE2'), '22352',
-     'the original relocation table lists F_24BE2 SEG fixup between M_22364 and M_226F4'),
+     'the original relocation table lists tandytxt_render SEG fixup between TANDY and TANDYSPR'),
     (('26458', '265BA', '2869E', '2B6DC', '105EC6', '1060A2'), '242EC',
      'the original relocation table lists 23F68 and 242EC before the C units of segment 2645; '
      'the car-mask data follows 286D8 in DGROUP'),
@@ -453,9 +453,9 @@ class Analysis:
         defined now (the previous `apply`): a reference counts the same as an EXTDEF fixup
         when another file defines the global and as a fixup to the object's own _DATA, inside
         the global's extent, when this file does. In a C object both code and data
-        initializers count (`char *g_4ff2 = g_4fa6;` is M_0542E's reference to DS:4FA6, which
-        no code uses; counting it only as an external made DS:4FA6 flip between M_039C0 and
-        M_0542E on every apply). In an assembler object only code counts: its data tables
+        initializers count (`char *g_noNameMsgPtr = g_noNameMsg;` is SAVEGAME's reference to DS:4FA6, which
+        no code uses; counting it only as an external made DS:4FA6 flip between GAME and
+        SAVEGAME on every apply). In an assembler object only code counts: its data tables
         point into the blocks FORCE_OWNER and DATA_UNITS assign anyway."""
         if hasattr(self, '_refs'):
             return self._refs

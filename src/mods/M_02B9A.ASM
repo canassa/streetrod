@@ -2,66 +2,66 @@
 
         .DATA
 
-        PUBLIC  _g_4718
-_g_4718 DW      0                        ; DS:4718 int
-        PUBLIC  _g_471a
-_g_471a DW      0                        ; DS:471A int
-        PUBLIC  _g_471c
-_g_471c DB      0                        ; DS:471C char
-        PUBLIC  _g_471d
-_g_471d DB      0                        ; DS:471D char
-        PUBLIC  _g_471e
-_g_471e DW      0                        ; DS:471E int
-        PUBLIC  _g_4720
-_g_4720 DW      0                        ; DS:4720 int
-        PUBLIC  _g_4722
-_g_4722 DW      0                        ; DS:4722 int
-        PUBLIC  _g_4724
-_g_4724 DW      0                        ; DS:4724 int
-        PUBLIC  _g_4726
-_g_4726 DW      0                        ; DS:4726 int
-        PUBLIC  _g_4728
-_g_4728 DW      0                        ; DS:4728 int
-        PUBLIC  _g_472a
-_g_472a DW      9Eh                      ; DS:472A int
-        PUBLIC  _g_472c
-_g_472c DW      80h                      ; DS:472C int
-        PUBLIC  _g_472e
-_g_472e DB      0                        ; DS:472E char
-        PUBLIC  _g_472f
-_g_472f DB      0                        ; DS:472F char
-        PUBLIC  _g_4730
-_g_4730 DB      0                        ; DS:4730 char
-        PUBLIC  _g_4731
-_g_4731 DB      0                        ; DS:4731 char
-        PUBLIC  _g_4732
-_g_4732 DB      0                        ; DS:4732 char
+        PUBLIC  _g_joyX
+_g_joyX DW      0                        ; DS:4718 int
+        PUBLIC  _g_joyY
+_g_joyY DW      0                        ; DS:471A int
+        PUBLIC  _g_joyButtons
+_g_joyButtons DB      0                        ; DS:471C char
+        PUBLIC  _g_joystick
+_g_joystick DB      0                        ; DS:471D char
+        PUBLIC  _g_joyCenterX
+_g_joyCenterX DW      0                        ; DS:471E int
+        PUBLIC  _g_joyCenterY
+_g_joyCenterY DW      0                        ; DS:4720 int
+        PUBLIC  _g_joyMinX
+_g_joyMinX DW      0                        ; DS:4722 int
+        PUBLIC  _g_joyMaxX
+_g_joyMaxX DW      0                        ; DS:4724 int
+        PUBLIC  _g_joyMinY
+_g_joyMinY DW      0                        ; DS:4726 int
+        PUBLIC  _g_joyMaxY
+_g_joyMaxY DW      0                        ; DS:4728 int
+        PUBLIC  _g_cursorX
+_g_cursorX DW      9Eh                      ; DS:472A int
+        PUBLIC  _g_cursorY
+_g_cursorY DW      80h                      ; DS:472C int
+        PUBLIC  _g_keyDx
+_g_keyDx DB      0                        ; DS:472E char
+        PUBLIC  _g_keyDy
+_g_keyDy DB      0                        ; DS:472F char
+        PUBLIC  _g_lastDx
+_g_lastDx DB      0                        ; DS:4730 char
+        PUBLIC  _g_lastDy
+_g_lastDy DB      0                        ; DS:4731 char
+        PUBLIC  _g_buttons
+_g_buttons DB      0                        ; DS:4732 char
         PUBLIC  _g_4733
 _g_4733 DB      0                        ; DS:4733 signed char
         PUBLIC  _g_4734
 _g_4734 DW      1                        ; DS:4734 int
-        PUBLIC  _g_4736
-_g_4736 DB      0                        ; DS:4736 char
-        PUBLIC  _g_4737
-_g_4737 DB      0                        ; DS:4737 char
-        PUBLIC  _g_4738
-_g_4738 DW      0                        ; DS:4738 int
-        PUBLIC  _g_473a
-_g_473a DW      0                        ; DS:473A int
-        PUBLIC  _g_473c
-_g_473c DW      0                        ; DS:473C int
-        PUBLIC  _g_473e
-_g_473e DW      0                        ; DS:473E int
-        PUBLIC  _g_4740
-_g_4740 DW      0                        ; DS:4740 int
+        PUBLIC  _g_click
+_g_click DB      0                        ; DS:4736 char
+        PUBLIC  _g_click2
+_g_click2 DB      0                        ; DS:4737 char
+        PUBLIC  _g_clickX
+_g_clickX DW      0                        ; DS:4738 int
+        PUBLIC  _g_clickY
+_g_clickY DW      0                        ; DS:473A int
+        PUBLIC  _g_click2X
+_g_click2X DW      0                        ; DS:473C int
+        PUBLIC  _g_click2Y
+_g_click2Y DW      0                        ; DS:473E int
+        PUBLIC  _g_inputLock
+_g_inputLock DW      0                        ; DS:4740 int
         PUBLIC  _g_4742
 _g_4742 DW      0                        ; DS:4742 int
         PUBLIC  _g_4744
 _g_4744 DW      0                        ; DS:4744 int
-        PUBLIC  _g_4746
-_g_4746 DW      0                        ; DS:4746 int
-        PUBLIC  _g_4748
-_g_4748 DW      0                        ; DS:4748 int
+        PUBLIC  _g_savedCursorX
+_g_savedCursorX DW      0                        ; DS:4746 int
+        PUBLIC  _g_savedCursorY
+_g_savedCursorY DW      0                        ; DS:4748 int
         PUBLIC  _g_474a
 _g_474a DW      0FFFFh                   ; DS:474A int
         PUBLIC  _g_474c
@@ -69,30 +69,30 @@ _g_474c DW      0, 1, 0FFFFh             ; DS:474C int[]
 ; DS:4752 int[]
         PUBLIC  _g_4752
 _g_4752 DW      0, 1, 101h, 100h, 1FFh, 1, 0FFh, 0FF01h, 0FF00h, 0FFFFh
-        PUBLIC  _g_4766
-_g_4766 DB      0, 1Bh, '1234567890-', 0  ; DS:4766 char[]
+        PUBLIC  _g_scanMap
+_g_scanMap DB      0, 1Bh, '1234567890-', 0  ; DS:4766 char[]
         DB      0, 0, 'QWERTYUIOP', 0
         DB      0, 0Dh, 1Dh, 'ASDFGHJKL', 0
         DB      0, 0FCh, 0, 0F8h, 'ZXCVBNM', 0
         DB      5 DUP (0), 1Fh, 13 DUP (0), 0FEh, 0FCh, 0FAh, 0F2h, 0F8h
         DB      0, 0F6h, 0F6h, 0F4h, 0F2h, 0F0h, 1Fh, 0, 0, 1Fh
         DB      16 DUP (0)
-        PUBLIC  _g_47cc
-_g_47cc DB      0                        ; DS:47CC char
-        PUBLIC  _g_47cd
-_g_47cd DB      0                        ; DS:47CD char
-        PUBLIC  _g_47ce
-_g_47ce DB      1                        ; DS:47CE char
-        PUBLIC  _g_47cf
-_g_47cf DB      0                        ; DS:47CF char
-        PUBLIC  _g_47d0
-_g_47d0 DB      0                        ; DS:47D0 char
+        PUBLIC  _g_demoKey
+_g_demoKey DB      0                        ; DS:47CC char
+        PUBLIC  _g_fireLatch
+_g_fireLatch DB      0                        ; DS:47CD char
+        PUBLIC  _g_soundOn
+_g_soundOn DB      1                        ; DS:47CE char
+        PUBLIC  _g_speakerOn
+_g_speakerOn DB      0                        ; DS:47CF char
+        PUBLIC  _g_lastKey
+_g_lastKey DB      0                        ; DS:47D0 char
         PUBLIC  _g_47d1
 _g_47d1 DB      1Dh, 1Eh, 1Fh            ; DS:47D1 char[3]
-        PUBLIC  _g_47d4
-_g_47d4 DW      0                        ; DS:47D4 int
-        PUBLIC  _g_47d6
-_g_47d6 DW      0                        ; DS:47D6 int
+        PUBLIC  _g_oldInt9Seg
+_g_oldInt9Seg DW      0                        ; DS:47D4 int
+        PUBLIC  _g_oldInt9Off
+_g_oldInt9Off DW      0                        ; DS:47D6 int
         PUBLIC  _g_47d8
 _g_47d8 DW      8 DUP (0)                ; DS:47D8 int[8]
         PUBLIC  _g_47e8
@@ -105,13 +105,13 @@ _g_47eb DB      0                        ; DS:47EB char
 _g_47ec DB      0                        ; DS:47EC char
         PUBLIC  _g_47ed
 _g_47ed DB      0                        ; DS:47ED char
-        PUBLIC  _g_47ee
-_g_47ee DW      0                        ; DS:47EE int
+        PUBLIC  _g_firePressed
+_g_firePressed DW      0                        ; DS:47EE int
         PUBLIC  _g_47f0
 _g_47f0 DB      0                        ; DS:47F0 char
 S_47f1  DB      '`Bankroll:`$', 0        ; DS:47F1 string
-        PUBLIC  _g_47fe
-_g_47fe DB      ' Gear: ', 0             ; DS:47FE char[]
+        PUBLIC  _g_gearText
+_g_gearText DB      ' Gear: ', 0             ; DS:47FE char[]
         PUBLIC  _g_4806
 _g_4806 DW      13h                      ; DS:4806 struct Item[]
         DB      0, 1, 0, 0
@@ -245,20 +245,20 @@ _g_4806 DW      13h                      ; DS:4806 struct Item[]
         DW      0
         DB      0, 0, 0, 0
         DW      0
-        PUBLIC  _g_4966
-_g_4966 DW      0, 0                     ; DS:4966 int[]
+        PUBLIC  _g_partWear
+_g_partWear DW      0, 0                     ; DS:4966 int[]
         PUBLIC  _g_496a
 _g_496a DW      0FF80h                   ; DS:496A int
         PUBLIC  _g_496c
 _g_496c DW      0FF80h, 0                ; DS:496C int[2]
-        PUBLIC  _g_4970
-_g_4970 DW      0                        ; DS:4970 int
-        PUBLIC  _g_4972
-_g_4972 DW      0                        ; DS:4972 int
-        PUBLIC  _g_4974
-_g_4974 DW      0                        ; DS:4974 int
-        PUBLIC  _g_4976
-_g_4976 DW      0                        ; DS:4976 int
+        PUBLIC  _g_betRaces
+_g_betRaces DW      0                        ; DS:4970 int
+        PUBLIC  _g_dragWins
+_g_dragWins DW      0                        ; DS:4972 int
+        PUBLIC  _g_roadWins
+_g_roadWins DW      0                        ; DS:4974 int
+        PUBLIC  _g_kingDragWon
+_g_kingDragWon DW      0                        ; DS:4976 int
         PUBLIC  _g_4978
 _g_4978 DB      1, 0, 1, 0, 0            ; DS:4978 char[][5]
         DB      1, 1, 0, 1, 1
@@ -283,8 +283,8 @@ _g_49ca DW      0, 43Fh, 440h, 441h      ; DS:49CA int[]
 _g_49d2 DW      44Bh, 44Ch, 44Dh, 44Eh, 47F0h  ; DS:49D2 int[]
         PUBLIC  _g_49dc
 _g_49dc DW      OFFSET DGROUP:S_47f1     ; DS:49DC char *
-        PUBLIC  _g_49de
-_g_49de DW      OFFSET DGROUP:_g_47fe    ; DS:49DE char *
+        PUBLIC  _g_gearLabel
+_g_gearLabel DW      OFFSET DGROUP:_g_gearText    ; DS:49DE char *
         PUBLIC  _g_49e0
 _g_49e0 DW      143 DUP (0)              ; DS:49E0 int[]
 

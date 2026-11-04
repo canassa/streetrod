@@ -1,8 +1,8 @@
 ; Music word instruction stream.
 SONG SEGMENT PARA PUBLIC 'FAR_DATA'
-        PUBLIC  _g_2e6b_0000
+        PUBLIC  _g_song
 
-_g_2e6b_0000 LABEL   WORD                ; int far[]
+_g_song LABEL   WORD                ; int far[]
         DW      0, 0, 5, 474h, 5, 54Bh, 5, 5F1h
         DW      5, 6ACh, 5, 711h, 5, 8E8h, 1Bh, 0
         DW      5, 2A5h, 5, 0, 5, 2F8h, 5, 0

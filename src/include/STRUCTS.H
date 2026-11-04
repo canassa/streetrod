@@ -160,7 +160,7 @@ struct Obj {
 };
 
 /* blit request handed to the b_78a2.. hooks (20 bytes). The first six ints are the same as
-   struct Clip; F_10A00 reads only those. mx, my: origin in the mask bitmap (F_21C0B). */
+   struct Clip; dash_clip_blt reads only those. mx, my: origin in the mask bitmap (tandyblt_compose). */
 struct Blt {
     int w;
     int h;
@@ -174,7 +174,7 @@ struct Blt {
     int my;
 };
 
-/* clipped rectangle (12 bytes): size, source origin, destination origin. F_10A00 takes struct Blt *
+/* clipped rectangle (12 bytes): size, source origin, destination origin. dash_clip_blt takes struct Blt *
    but reads and writes only these first 12 bytes, so callers with a Clip local pass it cast. */
 struct Clip {
     int w;
@@ -221,7 +221,7 @@ struct Seq {
     signed char dy;
 };
 
-/* one animation frame: 12 bytes, the ring links nxt[0..2] (F_195F3 builds g77bal[]) */
+/* one animation frame: 12 bytes, the ring links nxt[0..2] (sprite_setup builds g77bal[]) */
 struct Frame {
     struct Bitmap far *pos;
     struct Bitmap *data;
@@ -323,7 +323,7 @@ struct Spec {
     int f8;
 };
 
-/* one car model (10 bytes, w_8df0[], indexed by Car.f2): kind picks its sprites (F_28879); f2, f6, f8
+/* one car model (10 bytes, w_8df0[], indexed by Car.f2): kind picks its sprites (view_load); f2, f6, f8
    are nonzero when the roof can be chopped and the front and rear bumpers stripped (F_0711A) */
 struct Model {
     signed char kind;
@@ -445,7 +445,7 @@ struct Btn {
     int y;
 };
 
-/* the free area around the pointer found by F_1412D (x1, x2: left and right limits; y1, y2: top
+/* the free area around the pointer found by menu_hit (x1, x2: left and right limits; y1, y2: top
    and bottom) or, on a hit, the box of the hot spot */
 struct Lims {
     int x1;
@@ -454,7 +454,7 @@ struct Lims {
     int y2;
 };
 
-/* what g_6c34 points at (F_10872, F_10677): number of points, bitmap ids of the two sprites, bitmap
+/* what g_shifter points at (dash_draw_shifter, dash_init_shifter): number of points, bitmap ids of the two sprites, bitmap
    height at +6 and a table of (x, y) signed-byte pairs at +8 */
 struct Track {
     int n;
@@ -464,7 +464,7 @@ struct Track {
     signed char *pt;
 };
 
-/* 16-byte blit packet of F_10872 (struct Blt without the last two words) */
+/* 16-byte blit packet of dash_draw_shifter (struct Blt without the last two words) */
 struct Blt16 {
     int w;
     int h;
@@ -484,7 +484,7 @@ struct Panel {
     struct Offs r[5];
 };
 
-/* 12-byte table entry (g7682n[]), read as bytes by F_17BE6 */
+/* 12-byte table entry (g7682n[]), read as bytes by carpic_build */
 struct Spr12 {
     unsigned char b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11;
 };
@@ -501,7 +501,7 @@ struct Pos6 {
     int dy;
 };
 
-/* one step of an animation table (g_521e): frame number, then the delay in ticks before the next */
+/* one step of an animation table (g_animSteps): frame number, then the delay in ticks before the next */
 struct Step {
     unsigned char frame;
     unsigned char delay;
@@ -515,14 +515,14 @@ struct Look {
     unsigned rear : 1;
 };
 
-/* one candidate of F_09646: rating difference to the current car, an "already taken" flag, kind difference */
+/* one candidate of build_rival_pool: rating difference to the current car, an "already taken" flag, kind difference */
 struct Cand {
     int dr;
     int taken;
     int dk;
 };
 
-/* DS:822A, the display state set by F_10BD9: the visible and drawing bitmaps, a scratch bitmap,
+/* DS:822A, the display state set by video_init: the visible and drawing bitmaps, a scratch bitmap,
    the video mode (front->flags), and per-mode geometry. Members, not plain globals: /Ol never
    hoists r_vid.mode into a register (0x004F4, 0x10AFD). */
 struct Video {
@@ -537,7 +537,7 @@ struct Video {
     int f16;
 };
 
-/* DS:04FE, the pages of a list menu (F_008B4 fills it, F_009CB pages through it): start[k] is the
+/* DS:04FE, the pages of a list menu (ads_open fills it, ads_run pages through it): start[k] is the
    first entry of page k, n the page count, cur the current page, list the menu (count, then items). */
 struct Pages {
     int start[12];
@@ -546,21 +546,21 @@ struct Pages {
     int *list;
 };
 
-/* mouse cursor state at DS:7aec (F_11EA8 sets it up, F_120FE/F_1220B move it). The four
-   rectangle members compare as nested members (F_1220B), which plain globals don't reproduce. */
+/* mouse cursor state at DS:7aec (cursor_init sets it up, cursor_ctl/cursor_draw move it). The four
+   rectangle members compare as nested members (cursor_draw), which plain globals don't reproduce. */
 struct Cursor {
     struct Bitmap far *save;    /* background under the cursor */
     struct Clip clip;           /* last drawn strip; memset as 12 bytes */
     char far *shape;
     char far *mask;
-    unsigned off;               /* shape offset, F_11E9C(n) */
+    unsigned off;               /* shape offset, cursor_shape_off(n) */
     unsigned size;              /* bytes per shape */
     int n;                      /* shape number */
     char state;                 /* 0 hidden, 1 shown, <0 hide pending */
     struct Rect r;              /* last drawn extent, x2 < 0 when none */
 };
 
-/* one cell of the intro picture tables g_526a / g_52e2 (6 bytes): source origin in the sheet,
+/* one cell of the intro picture tables g_endCellsA / g_endCellsB (6 bytes): source origin in the sheet,
    size, and the on-screen position (x is biased by 0x50) */
 struct Cell {
     unsigned char sx;
@@ -571,7 +571,7 @@ struct Cell {
     unsigned char y;
 };
 
-/* one glyph of the CGA text font (F_1C2CA; 91 glyphs for ' '..'z' from 0ED2:0004): a width in half pixels and 8 rows of bits */
+/* one glyph of the CGA text font (cga_draw_text; 91 glyphs for ' '..'z' from 0ED2:0004): a width in half pixels and 8 rows of bits */
 struct CgaGlyph {
     unsigned w;
     unsigned rows[8];

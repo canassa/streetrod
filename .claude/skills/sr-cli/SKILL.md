@@ -28,6 +28,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 | `tools/sr/lint.py` | the CLAUDE.md rule 4 lint, plus missing-prototype warnings from `/W3` |
 | `tools/sr/dgroup.py` | `./sr dgroup`: original DGROUP ownership from positions (literal pools of the layout objects pin each unit; runs between pools go to referrers; `FORCE_OWNER`/`DATA_UNITS` for assembler data and data-only files), declaration slots, the C definition text of each item (`report`), `check_sources` (`./sr dgroup check`, the only consumer of ownership), `link_order` |
 | `tools/sr/datacheck.py` | a file's own `_DATA` against the original: base from the code's references, bytes, every data fixup resolved by symbol; `module.gate(..., con)` reports it (strict once the file defines data) |
+| `tools/sr/rename.py` | `./sr rename OLD NEW` / `--file PAIRS`: one whole-word pass (`name` and MASM `_name`) over the sources, headers, docs, skills, tools and tests (not plans/diary.md, not the generated PROGRESS.md), the DB name and notes; a file rename `git mv`s the source, `git rm`s its old header, updates `functions.src`, the MAKEFILE and SR.LNK (link block rewrapped), then the headers are regenerated. A new name must be unused, ignoring case (DB names, aliases, every identifier of the sources) |
 | `tools/sr/db.py` | SQLite schema and helpers; the `aliases` table (filled by `crtnames`) holds the extra library names of a function, and `refs` accepts any of them for a call |
 
 - `tools/sr/makefile.py`: src/MAKEFILE and src/SR.LNK. `parse` handles the MAKE 4.07 subset the file uses (`#` comments, `NAME=value` macros, `target: deps` with `\` continuations, tab-indented commands); `compile_rules()` (blocks whose command starts `$(CC)`/`$(ASM)`: `Rule.flags`, `.segment` from `/NT`, `.source` DOS path, `.path` host file), `rule('LIB'|'LINK')`, `link_order()`. `set_flags` (`./sr flags`) and `sync_deps` (`./sr headers`) are the only writers.
@@ -106,7 +107,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 - OMF COMDEF consumes external indices. Keep all DATA publics, and select the
   nonempty named code segment if MASM .MODEL first declares an empty default.
 - CGA glyphs start at 0ED2:0004, WORD aligned after the complete EGA font. The
-  old CgaFont header/overlap was a frame-offset artifact. PARTS2 ends at 3884,
+  old CgaFont header/overlap was a frame-offset artifact. SPANS2 ends at 3884,
   followed by EM.LIB's 0x170-byte EMULATOR_DATA, then SLOTS at 389B.
 - LINK 5.01.21 COMMON allocation walks 256 symbol-hash buckets. Hash recovered
   from LINK's NE segment 2:4060: length + sum((byte|0x20) << (1-based-index&3)),
