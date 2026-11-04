@@ -211,13 +211,13 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **GameClock** (`g_gameClock`, DS:05FC..0607): garage_day and elapsed-time accounting compute actionTicks + biosTicks - timeBase. SAVEGAME resets and serializes that same clock, while SYS advances biosTicks. g_tick remains a separate scheduler clock. Separate globals also match; this grouping is a natural reconstruction choice.
 
-- **GasInteraction** (`g_gasState`, DS:6CA4..6CA9): clear_gas_spots resets all three interaction flags together; the cap, nozzle and rag handlers set them and race_gas_station tests them when enabling the matching hotspots. Separate globals also match; this grouping is a natural reconstruction choice.
+- **GasInteraction** (`g_fuelStationActions`, DS:6CA4..6CA9): clear_gas_spots resets all three interaction flags together; the cap, nozzle and rag handlers set them and race_gas_station tests them when enabling the matching hotspots. Separate globals also match; this grouping is a natural reconstruction choice.
 
 - **PicturePlacement** (`g_picturePlacement`, DS:04BE..04C3): Screen picture drawing uses the x/y destination and maximum height together to clip and place one bitmap. Separate globals also match; this grouping is a natural reconstruction choice.
 
 - **AnimRun** (`g_animRun`, DS:6C38..6C3D): anim_run and anim_set_box use command, object and box pointers as the current interpreter position. The pump hook countdown (`g_pumpBlinkCount`, DS:6C3E) persists across calls and stays separate. Separate globals also match; the interpreter record is a natural reconstruction choice.
 
-- **CursorDraw** (`g_cursorStamp`, DS:6C46..6C4B): SYS saves the drawn cursor position and tracks whether it needs repainting as one cursor drawing state. MSC supplies the final byte of alignment padding. Separate globals also match; this grouping is a natural reconstruction choice.
+- **CursorDraw** (`g_drawnCursor`, DS:6C46..6C4B): SYS saves the drawn cursor position and tracks whether it needs repainting as one cursor drawing state. MSC supplies the final byte of alignment padding. Separate globals also match; this grouping is a natural reconstruction choice.
 
 - **Vibrato** (`g_vibrato`, DS:6C52..6C55): sys_timer_isr uses gain and divisor together to modulate PIT channel 2. Separate globals also match; this grouping is a natural reconstruction choice.
 
