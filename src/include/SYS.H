@@ -23,16 +23,7 @@ extern int g_05da;                                      /* DS:05DA */
 extern int g_msgTicks;                                  /* DS:05DC */
 extern int g_clickEnds;                                 /* DS:05DE */
 extern int g_kbdHooked;                                 /* DS:05E0 */
-extern int g_mouseDx;                                   /* DS:05E2 */
-extern int g_mouseDy;                                   /* DS:05E4 */
-extern int g_mouseAccX;                                 /* DS:05E6 */
-extern int g_mouseAccY;                                 /* DS:05E8 */
-extern int g_mouseShiftX;                               /* DS:05EA */
-extern int g_mouseShiftY;                               /* DS:05EC */
-extern int g_mouseLeft;                                 /* DS:05EE */
-extern int g_mouseRight;                                /* DS:05F0 */
-extern char g_mousePresent;                             /* DS:05F2 */
-extern char g_05f3;                                     /* DS:05F3 */
+extern struct Mouse g_mouse;                            /* DS:05E2 */
 extern int g_05f4[2];                                   /* DS:05F4 */
 extern long g_tick;                                     /* DS:05F8 */
 extern long g_05fc;                                     /* DS:05FC */

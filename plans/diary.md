@@ -1126,3 +1126,33 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - `enum AnimOp` names the op codes anim_run interprets (`ANIM_BLIT`, `ANIM_BLIT_MASKED`, `ANIM_HOOK`, `ANIM_STOP`, `ANIM_JUMP`, `ANIM_LOAD_IMAGE`, `ANIM_SET_BOX`, `ANIM_SET_SIZE`, `ANIM_WAIT`, `ANIM_COPY_TO_FRONT`, `ANIM_TILE_CAR`; ops 1 and 3 do nothing in anim_run and are `ANIM_NOP_1`/`ANIM_NOP_3`), `enum BoxSet` the box updates (`BOX_KEEP`, `BOX_SET_SOURCE`, `BOX_SET_DESTINATION`, `BOX_SET_BOTH`) and `enum AnimWaitMode` the wait variants; the `g_animScripts` initializer uses them. `struct Cmd`'s op/sub stay 1-byte chars (MSC 5.1 enums are int-sized). `struct Box`'s first fields are the blit's `sx`/`sy`/`dx`/`dy` (source frame in the sheet, destination on screen); it stays a 28-byte record. Done by a Codex agent.
 - Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
+
+## 2026-11-04 14:50 CET: mouse record evidence and tail padding
+
+### What I did
+- Surveyed every mouse global reference and neighboring initialized data in SYS. Compared nine struct boundaries with the real compiler and all-file gates; recorded the experiments in work/mouse/REPORT.md.
+- Folded DS:05E2..05F2 into struct Mouse g_mouse; its compiler tail padding supplies the previously unreferenced zero byte at 05F3. Kept neighboring input flags, unused 05F4 words and clocks separate. Updated all six C consumers; no assembly source references these values.
+- Verified 572/572 functions, the packed build and DOS-native MAKE byte-identical, 53 unit tests OK, and headers/DGROUP clean before merging main. The final gates are repeated after that merge.
+
+### What I learned
+- The nine mouse fields are undecidable as separate globals versus a struct: both forms have identical code and no budget effect. This is documented as a natural reconstruction choice in docs/RECONSTRUCTION.md.
+- Folding g_tick while keeping earlier deadlines separate reverses long-comparison operands in SYS and DRVTICK. The tested clock extensions are ruled out.
+- A trailing unreferenced initialized char can represent struct padding; retaining it separately after folding inserts extra bytes. Added this evidence to the msc51 recipe book.
+
+## 2026-11-04 14:52 CET: mouse gates after merging main
+
+### What I did
+- Merged main at 9d23432, kept both diary entries and the critical-error constants, and repeated all required checks on the combined source.
+- Result: 572/572 functions and every file gate pass; clean packed build and native DOSBox MAKE IDENTICAL; headers/DGROUP clean; 53 unit tests OK. Final evidence is in work/mouse/REPORT.md.
+
+### What I learned
+- The mouse record and main's critical-error changes compose without any byte changes.
+
+## 2026-11-04 14:55 CET: mouse gates after animation merge
+
+### What I did
+- Main advanced during final verification; merged its 7e49ad5 animation work, preserving both diary sides and the automatically merged struct definitions.
+- Repeated all gates again: 572/572 functions, clean packed build IDENTICAL, native MAKE IDENTICAL, headers/DGROUP clean, 53 tests OK. Updated work/mouse/REPORT.md with the final merged state.
+
+### What I learned
+- Main's animation naming changes also compose with the mouse record without byte differences.
