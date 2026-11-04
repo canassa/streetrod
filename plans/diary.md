@@ -1038,3 +1038,9 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - SCREEN_H and DASH_H were header guards as well as useful dimension names; their guards must be SCREEN_H_INCLUDED and DASH_H_INCLUDED. Shared numeric definitions in PC.H must also be defined in PC.INC (test_shared_pc_constants).
 - DRIVE's previous-wheel value 100 and DASH's b != 100 are a sentinel, distinct from the dashboard origin 100. EGACOPY's 200-byte row step is five EGA scanlines, distinct from the screen height. These distinctions are recorded in work/geom/SURVEY.md.
+
+## 2026-11-05 15:00 CET: Named screen geometry
+
+### What I did
+- `EGA_PITCH` (40, the EGA row stride per plane) and `SCREEN_WIDTH`/`SCREEN_HEIGHT` (320x200) in PC.H; `BACKDROP_ROWS` (70, the reserve at the top of the scratch page) in CARPIC.H, recorded in RECONSTRUCTION.md as a choice among identical forms; `SCREEN_BODY_HEIGHT`/`STATUS_BAR_HEIGHT` (190/10) in SCREEN.H; `DASH_Y`/`DASH_HEIGHT` (100/100) in DASH.H. Done by a Codex agent; the first spelling (`SCREEN_H`, `DASH_H`) collided with the SCREEN.H/DASH.H include guards, so the dimensions are spelled out and the guards stay standard.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
