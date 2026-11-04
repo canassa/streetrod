@@ -4,6 +4,16 @@
 #define GARAGE_H
 #include "STRUCTS.H"
 
+#define GARAGE_GAME_ENDED 0x29a
+
+enum GarageMode {
+    GARAGE_KEEP = 0,
+    GARAGE_DRIVE_IN = 1,
+    GARAGE_REDRAW = 2,
+    GARAGE_SWAP = 3
+};
+
+
 extern int g_tirePics[][4];                                 /* DS:5030 */
 extern int g_colX;                                      /* DS:5048 */
 extern int g_rowY[];                                    /* DS:504A */
@@ -15,7 +25,7 @@ extern int g_pad[];                                    /* DS:50CE */
 extern char *g_iTxt[];                                  /* DS:511E */
 extern int g_nCarb[];                                    /* DS:5126 */
 extern int g_nBolt[];                                    /* DS:5130 */
-extern int g_nextCat[];                                    /* DS:513C */
+extern enum PartCategory g_nextCat[];                                    /* DS:513C */
 extern int g_cPos[][6];                                 /* DS:5148 */
 extern int g_boltSlots[10];                                    /* DS:5184 */
 extern int g_boltSubslots[10];                                    /* DS:5198 */
@@ -28,11 +38,11 @@ void ga_date(int x);                                    /* 0x06750 */
 void ga_palette(int a);                                    /* 0x067CF */
 int ga_hotspot(int n);                                     /* 0x06827 */
 void ga_clear_name(void);                                     /* 0x06AA6 */
-int near ga_menu(int mode);                             /* 0x06B06 */
+int near ga_menu(enum GarageMode mode);                             /* 0x06B06 */
 void near ga_paint(void);                                /* 0x06F6B */
 void near ga_body(unsigned mask);                       /* 0x0711A */
 void near ga_stickers(void);                                /* 0x07367 */
-void near ga_spares(int t, struct Node **list, char *buf, int start);/* 0x076A7 */
+void near ga_spares(enum PartCategory t, struct Node **list, char *buf, int start);/* 0x076A7 */
 void near ga_install(struct Node *n, struct Node **slot);  /* 0x07741 */
 struct Node * near ga_unlink(struct Node *n);             /* 0x077B7 */
 void near ga_tires(void);                                /* 0x07800 */

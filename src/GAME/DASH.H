@@ -4,6 +4,15 @@
 #define DASH_H
 #include "STRUCTS.H"
 
+enum DashView {
+    DASH_VIEW_SAVE = 0,
+    DASH_VIEW_RESTORE = 1,
+    DASH_VIEW_SHOW = 2,
+    DASH_VIEW_DRIVE = 3,
+    DASH_VIEW_RESTORE_SHOW = 4
+};
+
+
 struct ShifterDraw {
     struct Track *track;
     int knobPosition;
@@ -47,7 +56,7 @@ void far da_pal_show(void);                           /* 0x0FEBF */
 void da_wait_key(int n);                              /* 0x0FED1 */
 void da_intro(void);                                  /* 0x0FF70 */
 void da_time_up(void);                                /* 0x100E2 */
-void da_set_view(int n);                              /* 0x1013D */
+void da_set_view(enum DashView n);                              /* 0x1013D */
 void da_load_wheel(void);                             /* 0x102D3 */
 void da_steer_marker(int a);                          /* 0x10414 */
 void da_draw_wheel(int a, int b, struct Bitmap far *dst);/* 0x104B0 */

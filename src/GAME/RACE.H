@@ -4,6 +4,22 @@
 #define RACE_H
 #include "STRUCTS.H"
 
+enum CopPhase {
+    COP_ABSENT = 0,
+    COP_WAITING = 1,
+    COP_APPROACHING = 2,
+    COP_PURSUING = 3
+};
+
+#define STOP_LOST 0x01
+#define STOP_COLLISION 0x02
+#define STOP_ENGINE 0x04
+#define STOP_TIRES 0x08
+#define STOP_TRANSMISSION 0x10
+#define STOP_ROADSIDE_CRASH 0x20
+#define STOP_POLICE 0x40
+#define STOP_JUMP_START 0x80
+
 struct RivalPace {
     int topSpeed;
     int speedMargin;
@@ -39,7 +55,7 @@ extern char g_failureTire;                                    /* DS:787C */
 extern int g_picOpponent;                                     /* DS:7D7C */
 extern int g_ramAllowed;                                      /* DS:7D7E */
 extern int g_leftEdgeX;                                      /* DS:7D82 */
-extern int g_pursuitPhaseIndex;                                     /* DS:7F88 */
+extern enum CopPhase g_pursuitPhaseIndex;                                     /* DS:7F88 */
 extern int g_steeringOld;                                      /* DS:82C2 */
 extern int g_coveredRacePct;                                     /* DS:82C8 */
 extern int g_shownShiftPosition;                                     /* DS:8630 */

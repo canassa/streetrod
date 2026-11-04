@@ -51,7 +51,7 @@ void near pf_drivetrain(struct Car *c, struct Eng *e)
         + g_transScore[d] * 0.15 / 100.0
         + (1.0 - fabs(c->timing / 8.0)) * 0.2;
     vl = (10000.0 - qn[0]->wear) / 10000.0 * vl;
-    vl = (d == 0 ? 0.8 : 1.0) * vl * 0.3 + 0.7;
+    vl = (d == TRANS_AUTOMATIC ? 0.8 : 1.0) * vl * 0.3 + 0.7;
     w9 = vl * 130.0;
     if (w9 > 130.0)
         w9 = 130.0;
@@ -66,13 +66,13 @@ void near pf_drivetrain(struct Car *c, struct Eng *e)
         gl->bands[2].minRpm = gl->bands[1].maxRpm = g_rpmBands[a3][1];
         gl->bands[2].maxRpm = 0x1644;
         v3 = (int)(g_rpmStepBase[a3][i] * vl);
-        gl->bands[0].accelStep = ((i == 1 && e1 == 2) ? 3 : 1) * ((i == 1 && e1 != 2) ? 2 : 1) * (v3 / (i ? 5 : 1));
+        gl->bands[0].accelStep = ((i == 1 && e1 == TIRES_RACING_SLICKS) ? 3 : 1) * ((i == 1 && e1 != TIRES_RACING_SLICKS) ? 2 : 1) * (v3 / (i ? 5 : 1));
         gl->bands[1].accelStep = v3;
         gl->bands[2].accelStep = v3 / (i ? 10 : 1);
         for (k = 0; k < 3; k++)
             gl->bands[k].decelStep = i ? v3 / (5 - i) : v3;
     }
-    e->automatic = e->autoSelector = (d == 0);
+    e->automatic = e->autoSelector = (d == TRANS_AUTOMATIC);
     if (e->automatic) {
         e->f26 = e->f28 = -1;
         e->autoShiftRpm = gl->bands[1].maxRpm;
@@ -104,7 +104,7 @@ void near pf_drivetrain_spec(int n, struct Eng *e)
     t = ((s->parts >> 14) & 3) + 0x16;
     for (i = g_nCarb[(s->parts >> 11) & 7] + 1; i >= 0; i--) {
         car.rack.parts[i] = &nd[i];
-        nd[i].wear = g_partWear[2];
+        nd[i].wear = g_partWear[PART_CARBURETOR];
         nd[i].idx = t;
     }
     i = (s->parts >> 6) & 3;
@@ -150,7 +150,7 @@ int near pf_vmax(int n)
         t = ((s->parts >> 14) & 3) + 0x16;
         for (i = g_nCarb[(s->parts >> 11) & 7] + 1; i >= 0; i--) {
             car.rack.parts[i] = &ndm[i];
-            ndm[i].wear = g_partWear[2];
+            ndm[i].wear = g_partWear[PART_CARBURETOR];
             ndm[i].idx = t;
         }
         i = (s->parts >> 6) & 3;
@@ -177,7 +177,7 @@ int near pf_vmax(int n)
         + g_transScore[d] * 0.15 / 100.0
         + (1.0 - fabs(p6->timing / 8.0)) * 0.2;
     vl = (10000.0 - qn[0]->wear) / 10000.0 * vl;
-    vl = (d == 0 ? 0.8 : 1.0) * vl * 0.3 + 0.7;
+    vl = (d == TRANS_AUTOMATIC ? 0.8 : 1.0) * vl * 0.3 + 0.7;
     w9 = vl * 130.0;
     if (w9 > 130.0)
         w9 = 130.0;

@@ -264,7 +264,7 @@ void sp_plan_drive(struct Sprite *s, enum CarAnimKind mode, int d)
     switch (mode) {
     case CAR_DRIVE_IN:
     case CAR_PULL_IN:
-        if (g_scene == 1)
+        if (g_scene == SCENE_GARAGE)
             sp_plan_move(s, CAR_DRIVE_IN, 8, 4, 2, d, 0, 0x3c);
         else
             sp_plan_move(s, CAR_DRIVE_IN, 8, 4, 2, d, 0x19, 0x37);

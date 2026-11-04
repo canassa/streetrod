@@ -280,7 +280,7 @@ int g_pad[7] = {0, 5, 5, 5, 5, 0, 0};   /* DS:50CE */
 
 /* ga_menu @ 0000:6B06 (linear 0x06B06, 1125 bytes) */
 
-int near ga_menu(int mode)
+int near ga_menu(enum GarageMode mode)
 {
     char *p;
     int r;
@@ -292,13 +292,13 @@ int near ga_menu(int mode)
     if (g_end) {
         if (g_end & 1)
             cu_ctl(CURSOR_SHOW_NOW);
-        return 0x29a;
+        return GARAGE_GAME_ENDED;
     }
     cu_ctl(0);
     sc_status_text(-1, "", 0);
-    g_scene = 1;
+    g_scene = SCENE_GARAGE;
     switch (mode) {
-    case 3:
+    case GARAGE_SWAP:
         if (g_new == 0) {
             cu_ctl(CURSOR_SHOW_NOW);
             gm_message(0x1867);
@@ -313,18 +313,18 @@ int near ga_menu(int mode)
             mn_push(KM_GARAGE);
             mn_pop(1);
         }
-    case 2:
+    case GARAGE_REDRAW:
         r_vid.copyToFront = 0;
-    case 1:
-        if (mode == 3)
-            mode = 1;
+    case GARAGE_DRIVE_IN:
+        if (mode == GARAGE_SWAP)
+            mode = GARAGE_DRIVE_IN;
         else {
             sc_picture(0x408, -1);
             vi_garage_pal();
-            if (mode == 2 && g_driver.currentCar == 0 && g_driver.otherCars) {
+            if (mode == GARAGE_REDRAW && g_driver.currentCar == 0 && g_driver.otherCars) {
                 g_driver.currentCar = g_driver.otherCars;
                 g_driver.otherCars = g_driver.currentCar->next;
-                mode = 1;
+                mode = GARAGE_DRIVE_IN;
             }
         }
         r_vid.copyToFront = 1;
@@ -333,7 +333,7 @@ int near ga_menu(int mode)
             g_carDraw.bodyPic = g_carData[g_driver.currentCar->specIndex].bodyPic;
             g_carDraw.paintScheme = g_driver.currentCar->paintScheme;
             g_carDraw.tireVariant = g_parts[g_driver.currentCar->tires->idx].variant;
-            if (mode == 1)
+            if (mode == GARAGE_DRIVE_IN)
                 ga_palette(g_carDraw.paintScheme);
             g_carDraw.overlayPic = 0;
             g_carDraw.specIndex = g_driver.currentCar->specIndex;
@@ -345,7 +345,7 @@ int near ga_menu(int mode)
                 g_partsPics[r] = g_driver.currentCar->rack.parts[r]->idx;
             n = gm_car_look(g_driver.currentCar);
             strcpy(g_carName, g_desc + g_carData[g_driver.currentCar->specIndex].nameOffset);
-            if (mode == 2)
+            if (mode == GARAGE_REDRAW)
                 cp_show_car(CAR_SHOW_BACK_PAGE, g_carDraw.specIndex, n, g_carDraw.appearance.sticker, 0, 0x98, 0, g_tirePics[g_carDraw.tireVariant]);
             else
                 cp_show_car(CAR_PULL_IN, g_carDraw.specIndex, n, g_carDraw.appearance.sticker, 0, 0x98, 0, g_tirePics[g_carDraw.tireVariant]);
@@ -354,7 +354,7 @@ int near ga_menu(int mode)
             g_carName[0] = 0;
         }
         break;
-    case 0:
+    case GARAGE_KEEP:
         break;
     }
     if (g_driver.currentCar)
@@ -390,7 +390,7 @@ int near ga_menu(int mode)
     if (g_end & 0x10)
         g_end = 0x10;
     if (g_end) {
-        r = 0x29a;
+        r = GARAGE_GAME_ENDED;
         if ((g_end & 1) == 0)
             cu_ctl(CURSOR_HIDE_NOW);
     }
@@ -420,15 +420,15 @@ void near ga_paint(void)
             while ((key = sy_wait_input(3000)) == 0)
                 ;
             switch (key) {
-            case 1:
+            case KR_PAINT_PREVIOUS:
                 if (--idx4 < 0)
                     idx4 = 5;
                 continue;
-            case 2:
+            case KR_PAINT_NEXT:
                 if (++idx4 >= 6)
                     idx4 = 0;
                 continue;
-            case 3:
+            case KR_PAINT_GO_AHEAD:
                 if (g_driver.money < 20L) {
                     gm_message(0x10a1);
                     break;
@@ -625,7 +625,7 @@ void near ga_stickers(void)
 
 /* ga_spares @ 0000:76A7 (linear 0x076A7, 154 bytes) */
 
-void near ga_spares(int t, struct Node **list, char *buf, int start)
+void near ga_spares(enum PartCategory t, struct Node **list, char *buf, int start)
 {
     struct Node *p;
     struct Item *ent7;
@@ -703,14 +703,14 @@ void near ga_tires(void)
         gm_message(0x0efa);
         return;
     }
-    ga_spares(4, tbl, line, 0);
+    ga_spares(PART_TIRES, tbl, line, 0);
     switch (mn_modal_list(KM_SPARE_PARTS, 1, 0, g_list, line, 0)) {
     case KR_CANCEL:
         return;
     case KR_ACCEPT:
         sel = mn_sel();
         break;
-    case 0x3ea:
+    case KR_EMPTY_LIST:
         gm_message(0x0f4e);
         return;
     }
@@ -759,7 +759,7 @@ static void near car_info(int *ids, char *vals)
 char *g_iTxt[4] = {"", "Fuel                  ", "", "Max speed      mph"};   /* DS:511E */
 int g_nCarb[5] = {1, 1, 3, 2, 2};   /* DS:5126 */
 int g_nBolt[6] = {1, 2, 2, 2, 2, 2};   /* DS:5130 */
-int g_nextCat[6] = {0, 3, 2, 2, 2, 2};   /* DS:513C */
+enum PartCategory g_nextCat[6] = {PART_ENGINE, PART_MANIFOLD, PART_CARBURETOR, PART_CARBURETOR, PART_CARBURETOR, PART_CARBURETOR};   /* DS:513C */
 int g_cPos[5][6] = {{5, 5, 0, 0, 0, 0}, {6, 6, 0, 0, 0, 0}, {7, 7, 8, 8, 9, 9}, {10, 10, 11, 11, 0, 0}, {12, 12, 13, 13, 0, 0}};   /* DS:5148 */
 int g_boltSlots[10] = {0, 0, 1, 1, 5, 5, 5, 5, 5, 5};   /* DS:5184 */
 int g_boltSubslots[10] = {0, 0, 0, 1, 0, 1, 0, 1, 0, 1};   /* DS:5198 */
@@ -781,7 +781,7 @@ void ga_info(void)
     switch (mn_modal_list(KM_CAR_INFO, 1, ids, g_list, vals, g_iTxt)) {
     case KR_ACCEPT:
         return;
-    case 0x3ea:
+    case KR_EMPTY_LIST:
         gm_message(0x0f4e);
         return;
     }
@@ -824,7 +824,7 @@ void near ga_transmission(void)
             mn_pop(1);
             return;
         case KR_TRANS_PARTS:
-            ga_spares(1, tbl, buf, 0);
+            ga_spares(PART_TRANSMISSION, tbl, buf, 0);
             for (;;) {
                 switch (k = mn_modal_list(KM_SPARE_PARTS, 1, 0, g_list, buf, 0)) {
                 case KR_ACCEPT:
@@ -837,7 +837,7 @@ void near ga_transmission(void)
                 case KR_CANCEL:
                     k = 0;
                     break;
-                case 0x3ea:
+                case KR_EMPTY_LIST:
                     gm_message(0xf72);
                     k = 0;
                     break;
@@ -1043,9 +1043,9 @@ void near ga_hood(struct Car *car)
             g_engineBoltPicIds[key - 1] = 0;
         }
     }
-    g_slotSelec.wirePic = car->wireState != 0 ? (car->wireState > 0 ? 0x447 : 0x446) : 0;
+    g_slotSelec.wirePic = car->wireState != WIRES_ABSENT ? (car->wireState > 0 ? 0x447 : 0x446) : 0;
     if (p6 = car->rack.parts[0])
-        g_partPics[1][0] = g_parts[p6->idx].variant == 0 ? 0x438 : 0x439;
+        g_partPics[1][0] = g_parts[p6->idx].variant == MANIFOLD_TWO_BARREL ? 0x438 : 0x439;
     for (key = 0; key < 5; key++)
         g_partsPics[key] = (p6 = car->rack.parts[key]) ? g_partPics[key][g_parts[p6->idx].variant] : 0;
     g_cPos[0][0] = g_cPos[0][1] = g_partsPics[0] == 0x434 ? 4 : 5;
@@ -1075,7 +1075,7 @@ void near ga_hood(struct Car *car)
             return;
         case KR_ENGINE_WIRES:
             car->wireState = -car->wireState;
-            if (car->wireState == 0)
+            if (car->wireState == WIRES_ABSENT)
                 continue;
             if (car->wireState > 0) {
                 g_slotSelec.wirePic = 0x447;
@@ -1107,12 +1107,12 @@ void near ga_hood(struct Car *car)
             case KR_ACCEPT:
                 key = mn_sel();
                 break;
-            case 0x3ea:
-                if (g_nextCat[cnt1] == 0)
+            case KR_EMPTY_LIST:
+                if (g_nextCat[cnt1] == PART_ENGINE)
                     gm_message(0xf97);
-                if (g_nextCat[cnt1] == 3)
+                if (g_nextCat[cnt1] == PART_MANIFOLD)
                     gm_message(0xfd7);
-                if (g_nextCat[cnt1] == 2)
+                if (g_nextCat[cnt1] == PART_CARBURETOR)
                     gm_message(0xfb5);
                 key = 0;
                 break;
@@ -1134,7 +1134,7 @@ void near ga_hood(struct Car *car)
                 ok = g_parts[list4[key]->idx].fitMask & g_carData[car->specIndex].parts & 0xf;
                 g_slotSelec.slot = 0;
                 step = 0;
-                car->wireState = -1;
+                car->wireState = WIRES_DISCONNECTED;
                 g_slotSelec.wirePic = 0x446;
                 g_gameClock.actionTicks += ok ? 0x666 : 0x888;
                 break;
@@ -1223,7 +1223,7 @@ void near ga_hood(struct Car *car)
                 so_part_move(0);
                 g_partsPics[sel2] = 0;
                 if (sel2 == 0) {
-                    car->wireState = 0;
+                    car->wireState = WIRES_ABSENT;
                     g_slotSelec.wirePic = 0;
                 }
                 goto again;
@@ -1301,12 +1301,12 @@ void near ga_hood(struct Car *car)
         }
         sel2 = -1;
         ok = 0;
-        if (cnt1 == 1 && car->wireState == -1) {
+        if (cnt1 == 1 && car->wireState == WIRES_DISCONNECTED) {
             for (key = 1; key < 2 && !havek[key]; key++)
                 continue;
             if (key == 2) {
                 sel2 = 0;
-                car->wireState = 0;
+                car->wireState = WIRES_ABSENT;
                 g_slotSelec.wirePic = 0;
                 g_gameClock.actionTicks += 0x666;
             }

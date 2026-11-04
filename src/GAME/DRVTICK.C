@@ -31,38 +31,38 @@ int dt_step(void)
 
     if (g_runRacingFlag) {
         switch (g_phaseDriveRunState) {
-        case 0:
+        case DRIVE_START:
             g_05d6 = 0;
             if (g_keepCruiseMusic == 0)
                 mu_suspend(1);
             sy_drive_start();
             sy_reset_queues();
-            g_phaseDriveRunState = 1;
+            g_phaseDriveRunState = DRIVE_STAGING;
             sc_status_text(-1, "Get ready !", 0);
             g_waitUntil = g_tick + rn_int(103) + 110;
             return g_driveEng.stopFlags | g_oppEngState.stopFlags;
-        case 1:
+        case DRIVE_STAGING:
             if (g_driveEng.speed > 0) {
                 sy_drive_stop();
-                g_driveEng.stopFlags |= 0x81;
+                g_driveEng.stopFlags |= (STOP_LOST | STOP_JUMP_START);
                 return 1;
             }
             if (g_waitUntil <= g_tick) {
-                g_phaseDriveRunState = 2;
+                g_phaseDriveRunState = DRIVE_WAIT_FOR_MOTION;
                 sc_status_text(-1, "Go !", 0);
                 g_startingGoActive = 1;
             }
             return g_driveEng.stopFlags | g_oppEngState.stopFlags;
-        case 2:
+        case DRIVE_WAIT_FOR_MOTION:
             ra_tick();
             if (g_driveEng.stopFlags || g_oppEngState.stopFlags)
                 return 1;
             if (g_driveEng.speed > 0) {
                 sc_status_text(-1, "    ", 0);
-                g_phaseDriveRunState = 3;
+                g_phaseDriveRunState = DRIVE_RUNNING;
             }
             return 0;
-        case 3:
+        case DRIVE_RUNNING:
             if (g_driveEng.stopFlags || g_oppEngState.stopFlags)
                 return 1;
             ra_tick();
@@ -70,24 +70,24 @@ int dt_step(void)
         }
     } else {
         switch (g_phaseDriveRunState) {
-        case 0:
+        case DRIVE_START:
             g_05d6 = 0;
             if (g_keepCruiseMusic == 0)
                 mu_suspend(1);
             sy_drive_start();
             sy_reset_queues();
-            g_phaseDriveRunState = 1;
+            g_phaseDriveRunState = DRIVE_CRUISING;
             sc_status_text(-1, "Cruising in town...", 0);
             g_driveEng.shifterDirty = 1;
             g_driveEng.gearIndex = 1;
-            if (g_driveEng.autoSelector == 1)
-                g_driveEng.autoSelector = 2;
+            if (g_driveEng.autoSelector == SELECTOR_NEUTRAL)
+                g_driveEng.autoSelector = SELECTOR_DRIVE;
             g_cruiseRpmStep = g_cruiseRpmSteps[0];
             return 0;
-        case 1:
+        case DRIVE_CRUISING:
             if (g_demo == 0) {
                 key = kg_key();
-                if (key == 0x1b || key == 0x1f)
+                if (key == ASCII_ESCAPE || key == KEY_FIRE)
                     g_firePressed = 1;
                 if (g_mouse.present) {
                     mo_buttons();

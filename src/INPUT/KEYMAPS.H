@@ -2,6 +2,8 @@
 #define KEYMAPS_H
 #include "STRUCTS.H"
 
+#define KEY_VALUE_BASE 0xce
+
 enum ScreenId {
     KM_NONE = 0,
     KM_RACE_OUTCOME = 1,
@@ -49,6 +51,52 @@ enum ScreenId {
 };
 
 enum InputResult {
+    KR_PAPER_CARS = 1,
+    KR_PAPER_PARTS = 2,
+    KR_END_QUIT = 4,
+    KR_GAR_NEWSPAPER = 1,
+    KR_GAR_STREET = 2,
+    KR_GAR_CALENDAR = 3,
+    KR_GAR_QUIT = 4,
+    KR_GAR_SELL_PARTS = 5,
+    KR_GAR_CARS = 6,
+    KR_GAR_PAINT = 7,
+    KR_GAR_TIRES = 8,
+    KR_GAR_TRANSMISSION = 9,
+    KR_GAR_HOOD = 10,
+    KR_GAR_REAR_BUMPER = 11,
+    KR_GAR_FRONT_BUMPER = 12,
+    KR_GAR_ROOF = 13,
+    KR_GAR_STICKERS = 14,
+    KR_GAR_TANK = 15,
+    KR_GAR_CAR_INFO = 16,
+    KR_GAR_DRINK = 17,
+    KR_BOBS_GARAGE = 1,
+    KR_BOBS_CHALLENGE = 2,
+    KR_BOBS_HOOD = 3,
+    KR_BOBS_FIND_RIVAL = 4,
+    KR_BOBS_ORDER = 5,
+    KR_GAS_RAG = 1,
+    KR_GAS_PUMP = 2,
+    KR_GAS_LEAVE = 3,
+    KR_GAS_CAP = 4,
+    KR_GAS_FRONT_WINDSHIELD = 5,
+    KR_GAS_REAR_WINDSHIELD = 6,
+    KR_PAINT_PREVIOUS = 1,
+    KR_PAINT_NEXT = 2,
+    KR_PAINT_GO_AHEAD = 3,
+    KR_RACE_DRAG = 1,
+    KR_RACE_ROAD = 2,
+    KR_BET_FOR_KICKS = 1,
+    KR_BET_10 = 2,
+    KR_BET_50 = 3,
+    KR_BET_25 = 7,
+    KR_BET_100 = 8,
+    KR_BET_PINK_SLIPS = 9,
+
+    KR_TIMEOUT = 1000,
+    KR_EMPTY_LIST = 1002,
+    KR_ANY_INPUT = 1003,
     KR_NO = -21,
     KR_MUSIC = -40,
     KR_MESSAGE_DISMISS = -26,
@@ -107,8 +155,8 @@ enum InputResult {
 };
 
 enum KeyMapByte {
-    KV_REPAIR_FIX = 0xce + KR_REPAIR_FIX,
-    KV_REPAIR_JUNK = 0xce + KR_REPAIR_JUNK
+    KV_REPAIR_FIX = KEY_VALUE_BASE + KR_REPAIR_FIX,
+    KV_REPAIR_JUNK = KEY_VALUE_BASE + KR_REPAIR_JUNK
 };
 
 extern unsigned char g_keyMapData[543];                       /* DS:5580 */

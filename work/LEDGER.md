@@ -89,3 +89,11 @@ Measured allowance: unshortened merged GARAGE needs at least41 characters saved 
 Tested charges: existing live symbol name growth costs one byte per character once per symbol. Referenced externals/communals, prior definitions (public/static functions and initialized/uninitialized data even if unused), and current-function locals count. Earlier locals are released; unused externs/prototypes, type/member/enum names, literal contents and not-yet-used later definitions do not charge this earlier function. At the exact boundary, new int data with C names of length1/11 requires23/33 more bytes (N+22); two names q/qq require47; new one-character near/far or called-extern function requires27 (N+26). These are measured forms and current headroom, not a recovered absolute compiler heap size. See the diary for probe matrix and limitations.
 
 Follow-up gates: headers --check PASS; check --all572/572; clean build after deleting work IDENTICAL; dgroup check/order PASS;68 unit tests PASS; DOS-native MAKE IDENTICAL; LINK-map communal offsets unchanged. Full module-gate probes confirm10415-byte MODULE MATCH for +7 external or current-local name characters, and10438-byte MODULE DIFF for +8. Final sources equal main1ba3f6a plus only the original globalsA mappings and the eight documented renames.
+
+## Follow-up: merge main15363a1 (tones and states)
+
+Resolved13 conflicts using main's declarations/statements and the existing globalsA/budget identifier mappings. Kept enum DrivePhase/GarageMode/CopPhase/PartCategory and named stop/input constants with the renamed objects. Full source comparison against main plus known renames passed. No additional renames.
+
+Budget remains7:0..7 added external/current-local characters preserve1090-byte ga_transmission; +8 gives1113. Whole GARAGE.C module gates independently pass at+7 (10415 bytes, zero mismatches) and fail at+8 (10438). Earlier local growth through+10 is unchanged. States consumed0 spare characters.
+
+All gates PASS: headers,572/572 function regression, packed build after deleting work IDENTICAL, dgroup check/order,68 unit tests, DOS-native MAKE IDENTICAL; LINK-map communal addresses unchanged. Regenerated plans/unnamed.md; retained reports under work/states-merge.

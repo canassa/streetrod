@@ -21,6 +21,11 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
+enum ManualKind {
+    MANUAL_CAR_KEY = 0,
+    MANUAL_CAR_ICON = 1
+};
+
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_score;                        /* DS:6C5E */
 static int near elapsed_hours(void);
@@ -41,7 +46,7 @@ int g_fameRowY[10] = {59, 70, 81, 92, 103, 114, 125, 136, 147, 158};   /* DS:4BC
 
 int fa_protect_check(void)
 {
-    int f;
+    enum ManualKind f;
     int e;
     int d;
     int c;
@@ -55,12 +60,12 @@ int fa_protect_check(void)
     sc_picture_at(8, 8, 0, 0);
     di_free_pic(8);
     switch (f) {
-    case 0:
+    case MANUAL_CAR_KEY:
         sprintf(b, "What`is`the`color`of");
         sprintf(a, "the`car`key`on`page`%d?", g_manual[d].page);
         c = 0x72;
         break;
-    case 1:
+    case MANUAL_CAR_ICON:
         sprintf(b, "What`is`the`color`of");
         sprintf(a, "    `the`car`icon`on`page`%d?  ", g_manual[d].page);
         c = 0x55;

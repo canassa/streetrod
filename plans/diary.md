@@ -1751,6 +1751,70 @@ followed by `./sr build` (96/96 objects, 572/572 function positions and bytes,
 (68 tests, OK). The clean build removed every probe and compiled experiment;
 the matrices above preserve their forms and results. No work/ files are committed.
 
+## 2026-11-04 22:49 CET: Tone slots and waveforms
+
+### What I did
+
+Verified the MUSIC/SOUND tables with `./sr data` and the setter, its five callers,
+and music ISR with `./sr show`. Added ToneSlot for the programmable, plain,
+light/wide vibrato and trill slots and the tone-list end marker. Added Waveform
+for the triangle, sawtooth and pulse rows. Applied the enums to the waveform
+member/parameter, tone-list arrays and their Dev pointers, and replaced the
+corresponding literals in initializers and calls. Renamed mu_set_vibrato's four
+parameters to waveform, length, depth and delay. Removed its redundant description;
+no new source comments were added and address comments were preserved.
+
+Named 13 items (six tone constants, three waveform constants, four parameters).
+Kept F_16943 and F_16A2F unchanged: source references and disassembly reveal no
+callers or triggering events. Recorded individual evidence and both skips in
+work/LEDGER.md. No external/global identifiers changed, so communal/static name
+hashes and external-symbol name budgets needed no candidate spelling changes.
+
+All gates passed: headers --check; check --all (572/572: 551 MATCH, 21 MATCH*);
+rm -rf work followed by sr build (Packed EXE vs orig/SR.EXE: IDENTICAL,
+572/572 functions at original positions and 748/748 exact near calls);
+dgroup check and order; all 68 unit tests; and dosbox.sh --make
+(DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL).
+
+### What I learned
+
+The third waveform's full row is a single positive pulse, not an eight-sample
+square wave. The trill slot selects only its first two samples, alternating the
+base divisor with a larger divisor (lower pitch). The light and wide triangle
+slots differ only in depth (4 versus 6). MSC 5.1 keeps the enum fields, lists and
+parameters byte-identical to their int counterparts throughout both builds.
+The tone-list -1 words are trailing markers in the original data; the ISR resets
+the tone cursor when the repeat-list terminator is reached.
+## 2026-11-04 22:45 CET: Name drive phases, state values and translated input
+
+### What I did
+
+Named the shared race/cruise phase, automatic selector, race type, scene, dashboard and garage modes, road sections, hotspot kinds, timer actions, King eligibility, rival arrival, carhop state, police phase, gas-station hand state, cursor drawing state and save-load outcomes. Named independent stop bits without changing their int bitmask storage. Preserved placeholder global identifiers and all existing source comments.
+
+Traced every kg_key call through the KBD/JOY writers and g_scanMap: its signed byte is translated ASCII/control or encoded menu input, not a scan code. Named ASCII controls and the fire token, wrote the negative-byte menu adjustment as 0x100 - KEY_VALUE_BASE, and named all timeout (1000), empty-list (1002) and captured-input (1003) producers and consumers. Reused existing MASM KR_* action names in C and retained C-only results outside the encoded keymap domain.
+
+Recovered five part categories and separate engine, transmission, carburetor, manifold and tire variant sets from g_parts, its description offsets and drivetrain/garage consumers. Kept category and variant byte-sized and named their MASM initializer constants. Updated the existing prototype/keymap tests for enum parameters, the shared encoding base and C-only results.
+
+The complete sweep ledger is work/LEDGER.md: 50 named entries and 40 specific skips, including each kg_key site, excluded index/arithmetic domains, existing named sets and the unproven scaled-picture identities. No variable/function identifiers changed, so no communal/static spelling fits were required.
+
+Validation: ./sr headers --check passed; ./sr check --all passed 572/572; a build after rm -rf work and the final build both reported Packed EXE vs orig/SR.EXE: IDENTICAL; ./sr dgroup check and order passed; all 68 unit tests passed; ./dosbox.sh --make reported DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL. The final linked image retains all 572 function positions and 748 near-call encodings.
+
+### What I learned
+
+Drive phase 1 has two roles, staging in a race and active cruising, so one enum can expose two aliases while preserving the shared storage. Part variant has category-specific meanings; a single variant enum would hide the real distinction. The keyboard byte's sign selects its decoding path, and the 0x32 adjustment follows directly from the 0xCE encoding base. Menu results 1000/1002/1003 originate in C and have no MASM key-byte counterparts. Existing positive KR_* action names were already present in KEYMAPS.ASM and needed reuse in C, including the front/rear bumper mapping and pump action.
+
+## 2026-11-04 22:49 CET: Merge main hotspot and needle work into states
+
+### What I did
+
+Merged main at 1ba3f6a into states. Kept main's complete HotKind definition and Hot.id member unchanged, removed the duplicate enum, and mapped all states-only hotspot spellings onto main's names. Kept HOT_LAST_NONCLICKABLE for hit-test boundaries. No additional hotspot enumerators were needed. Resolved the dashboard overlap by preserving the needle point types, endpoints and gauge-center constants from main alongside the states dashboard enums. Retained main's hotspot source/data changes and both branches' diary entries.
+
+Updated work/LEDGER.md with the canonical hotspot names and merge result. Validation passed: ./sr headers --check; ./sr check --all (572/572); rm -rf work followed by ./sr build (Packed EXE vs orig/SR.EXE: IDENTICAL); ./sr dgroup check and order; all 68 unit tests; and ./dosbox.sh --make (DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL). The merged HotKind and Hot definitions were also compared directly with main and match exactly.
+
+### What I learned
+
+Main already covered every hotspot kind proved by the states sweep. Its link-box, list-row and centered-text/header names provide a complete shared vocabulary, so the merge only needed spelling reconciliation and preservation of the independent state/input enums.
+
 ## 2026-11-04 22:30 CET: globalsA communal and BSS names
 
 ### What I did
@@ -1814,3 +1878,17 @@ New symbols consume fixed storage as well as name bytes. Starting at the41-chara
 Updated CLAUDE.md4d and the recipe-book budget rows to correct the old initialized-data/local-name exclusions and record the measured7-byte allowance. Scratch source variants, frozen baseline headers, sweep scripts and output tables live under work/budget; the durable facts, limitations and rename evidence are also appended to work/LEDGER.md. For future naming passes: sum the length deltas once per contributing symbol, include the current locals, retain a margin, and remeasure if symbols, bodies or flags change. Never compensate with source-shape or linker-layout tricks.
 
 Final validation: headers --check passes; check --all is572/572 (551 MATCH,21 MATCH*); the build after rm -rf work reports Packed EXE vs orig/SR.EXE: IDENTICAL; dgroup check/order pass; all68 unit tests pass; DOS-native MAKE is IDENTICAL (SHA1 3a5e28b795313028b7e77d147122f41cb29de334). The LINK map has no communal address differences. Full module gates also validate the measured allowance: control, external-name +7 and same-stack-hash local-name +7 all match10415 bytes with zero mismatches and28 in-module references verified; +8 grows the module to10438 in both independent cases. The synthetic external name is mapped back only when verifying its unchanged reference identity; no trial spellings or macros enter the committed sources.
+
+## 2026-11-04 22:54 CET: Merge tones and state enums into globalsA
+
+### What I did
+
+Merged main15363a1, including tones4a25f02 and the states branch. Resolved all13 conflicting files from main and reapplied the existing globalsA and budget renames to those same lines, preserving enum types and constants for drive/garage/cop phases, stop flags, part categories and translated input results. Preserved both previous globalsA diary entries. Compared every C/H/ASM file against the merged main tip plus the known identifier mappings: all agree; no new shortening or source-shape change was needed. Regenerated plans/unnamed.md from the source inventory.
+
+Reran the0..10-character headroom sweeps and whole-object boundary gates. GARAGE.C remains10415 bytes and ga_transmission1090. External-name +7 and same-stack-hash current-local +7 both yield full MODULE MATCH; +8 grows ga_transmission to1113 and the module to10438. Prior-function local growth through+10 still has no effect. The states merge consumes **zero of the seven measured spare name characters**.
+
+All gates passed: headers --check; check --all572/572 (551 MATCH,21 MATCH*); rm -rf work followed by build (packed IDENTICAL); dgroup check/order; all68 unit tests; DOS-native MAKE (IDENTICAL, SHA1 3a5e28b795313028b7e77d147122f41cb29de334). The LINK map has no communal address changes. Logs and boundary results are retained in work/states-merge.
+
+### What I learned
+
+The newly enum-typed state/category objects and named constants preserve the measured compiler allowance as well as the original machine bytes. This confirms the earlier distinction between contributing live symbol names and type/member/enum spellings. Main's enum declarations and our renamed globals coexist directly; reverting enum types to int or changing constants is unnecessary.

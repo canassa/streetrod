@@ -4,16 +4,29 @@
 #define MAIN_H
 #include "STRUCTS.H"
 
+enum Scene {
+    SCENE_NONE = 0,
+    SCENE_GARAGE = 1,
+    SCENE_BOBS = 2,
+    SCENE_GAS_STATION = 3,
+    SCENE_ADVERTS = 5,
+    SCENE_JAIL = 6
+};
+
+
 #define VID_EGA (-2)
 #define VID_CGA (-3)
 #define VID_HERCULES (-4)
 #define VID_TANDY (-6)
 
-#define VIDEO_CHOICE_CGA 1
-#define VIDEO_CHOICE_EGA 2
-#define VIDEO_CHOICE_VGA 3
-#define VIDEO_CHOICE_HERCULES 4
-#define VIDEO_CHOICE_TANDY 5
+enum VideoChoice {
+    VIDEO_CHOICE_CGA = 1,
+    VIDEO_CHOICE_EGA = 2,
+    VIDEO_CHOICE_VGA = 3,
+    VIDEO_CHOICE_HERCULES = 4,
+    VIDEO_CHOICE_TANDY = 5,
+    VIDEO_CHOICE_CGA_ON_EGA = 6
+};
 
 extern int g_hercules;                                  /* DS:0042 */
 extern int g_sysHooked;                                 /* DS:0044 */
@@ -28,7 +41,7 @@ extern int g_vga;                                       /* DS:0254 */
 extern int g_useMouse;                                  /* DS:0262 */
 extern int g_noUeMem;                                   /* DS:0280 */
 extern int g_end;                                      /* DS:0282 */
-extern int g_scene;                                      /* DS:0284 */
+extern enum Scene g_scene;                                      /* DS:0284 */
 extern int g_carAnim;                                   /* DS:0286 */
 extern struct Bitmap far *g_spritePic;                       /* DS:0288 */
 extern struct Bitmap far *g_pumpWithNozzle;                       /* DS:028C */

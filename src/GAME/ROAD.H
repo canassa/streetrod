@@ -4,6 +4,21 @@
 #define ROAD_H
 #include "STRUCTS.H"
 
+enum RoadSection {
+    SECTION_LEFT_CURVE = 1,
+    SECTION_RIGHT_CURVE = 2,
+    SECTION_HILL = 3,
+    SECTION_DIP = 4,
+    SECTION_HILL_DIP = 5,
+    SECTION_DIP_HILL = 6,
+    SECTION_RIGHT_CLOSED = 7,
+    SECTION_LEFT_CLOSED = 8,
+    SECTION_NARROWS = 9,
+    SECTION_S_CURVE_LR = 10,
+    SECTION_S_CURVE_RL = 11
+};
+
+
 extern int g_yBuildingTopArray[15]; /* DS:7AB0 */
 
 extern struct MirrorEdges g_mirGeom; /* DS:864A */
@@ -15,7 +30,7 @@ extern int g_hillProfile[];                             /* DS:5C20 */
 extern int g_hillDipProfile[];                          /* DS:5C4C */
 extern int g_bumpProfile[17];                           /* DS:5C98 */
 extern int g_layoutLen;                                 /* DS:5CBA */
-extern int g_roadLayouts[][12];                         /* DS:5CBC */
+extern enum RoadSection g_roadLayouts[][12];                         /* DS:5CBC */
 extern struct Bitmap g_egaPage1;                        /* DS:5DAC */
 extern struct Bitmap g_egaPage2;                        /* DS:5DDC */
 extern int g_roadLayout;                                /* DS:5E0C */

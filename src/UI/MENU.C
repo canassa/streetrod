@@ -360,7 +360,7 @@ int mn_modal_list(enum ScreenId a, int b, int *c, int *list, char *buf, char **d
     int res;
 
     if (*list == 0)
-        return 0x3ea;
+        return KR_EMPTY_LIST;
     bm1 = mn_grab(a, &x, &y1, ARENA_HIGH_STACK);
     res = mn_list(a, b, c, list, buf, d);
     pu_show(bm1, x, y1);
@@ -416,7 +416,7 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
     topk = 0;
     curl = -1;
     if (*list == 0)
-        return 0x3ea;
+        return KR_EMPTY_LIST;
     sel--;
     lp11 = list + 1;
     count5 = *list;
@@ -491,14 +491,14 @@ restore:
                 x1 = w->w;
                 y1 = w->h;
                 x2 = w->tx;
-                if (kind != 0x26)
+                if (kind != KM_CAR_INFO)
                     (*g_videoOps.recolorRegion)(r_vid.back, x_colors.text, sv5, x1, y1, x2, w->h + 8);
                 y2 = w->ty;
             } else
                 nw5 = -1;
             if (curl >= 0) {
                 w = (struct Win *)(0x12 * curl + g_menuList.lineBase);
-                if (kind != 0x26)
+                if (kind != KM_CAR_INFO)
                     (*g_videoOps.recolorRegion)(r_vid.back, sv5, x_colors.text, w->w, w->h, w->tx, w->h + 8);
                 x1 = (w->w > x1) ? x1 : w->w;
                 y1 = (w->h > y1) ? y1 : w->h;
@@ -517,7 +517,7 @@ restore:
                 if (hotn) {
                     if (!g_headerEditableState || i == sel) {
                         strcpy(bufpl, g_desc + lp11[i]);
-                        if (kind == 5 && !strcmp(g_blankName, bufpl))
+                        if (kind == KM_SAVE && !strcmp(g_blankName, bufpl))
                             strcpy(bufpl, "\0");
                         if (buf && (wear = buf1[i]) != -128) {
                             strcat(bufpl, g_wearPad);
@@ -555,7 +555,7 @@ restore:
             mn_pop(1);
             return key2;
         case KR_EDIT_HEADER:
-            if (kind == 5 && !strcmp(g_blankName, bufpl))
+            if (kind == KM_SAVE && !strcmp(g_blankName, bufpl))
                 strcpy(bufpl, "\0");
             x_colors = bustyle->pal[hotn->palIndex];
             mn_push(KM_MESSAGE);

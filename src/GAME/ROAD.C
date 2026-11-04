@@ -38,7 +38,7 @@ int g_hillProfile[22] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, -4,
 int g_hillDipProfile[38] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, -5, -5, -5, -5, -5, -5, -4, -3, -2, -1, 0, 0, 1, 2, 3, 4, 4, 4, 4, 3, 2, 1};   /* DS:5C4C */
 int g_bumpProfile[17] = {1, 2, 3, 3, 3, 2, 1, 0, 0, 0, -1, -2, -3, -3, -3, -2, -1};   /* DS:5C98 */
 int g_layoutLen = 12;   /* DS:5CBA */
-int g_roadLayouts[10][12] = {{2, 3, 1, 7, 4, 10, 5, 8, 6, 2, 9, 1}, {11, 4, 8, 1, 6, 9, 2, 5, 7, 2, 3, 1}, {1, 5, 1, 3, 8, 11, 6, 7, 2, 4, 9, 1}, {3, 1, 4, 9, 2, 6, 8, 1, 3, 8, 10, 2}, {10, 9, 5, 1, 6, 2, 3, 7, 4, 2, 8, 2}, {2, 3, 8, 10, 5, 11, 4, 7, 1, 6, 9, 2}, {1, 5, 9, 1, 4, 2, 3, 10, 8, 4, 1, 9}, {2, 4, 7, 11, 2, 5, 8, 4, 1, 7, 6, 2}, {2, 6, 8, 10, 6, 1, 3, 7, 5, 1, 4, 9}, {1, 3, 1, 6, 1, 4, 9, 10, 6, 8, 2, 3}};   /* DS:5CBC */
+enum RoadSection g_roadLayouts[10][12] = {{SECTION_RIGHT_CURVE, SECTION_HILL, SECTION_LEFT_CURVE, SECTION_RIGHT_CLOSED, SECTION_DIP, SECTION_S_CURVE_LR, SECTION_HILL_DIP, SECTION_LEFT_CLOSED, SECTION_DIP_HILL, SECTION_RIGHT_CURVE, SECTION_NARROWS, SECTION_LEFT_CURVE}, {SECTION_S_CURVE_RL, SECTION_DIP, SECTION_LEFT_CLOSED, SECTION_LEFT_CURVE, SECTION_DIP_HILL, SECTION_NARROWS, SECTION_RIGHT_CURVE, SECTION_HILL_DIP, SECTION_RIGHT_CLOSED, SECTION_RIGHT_CURVE, SECTION_HILL, SECTION_LEFT_CURVE}, {SECTION_LEFT_CURVE, SECTION_HILL_DIP, SECTION_LEFT_CURVE, SECTION_HILL, SECTION_LEFT_CLOSED, SECTION_S_CURVE_RL, SECTION_DIP_HILL, SECTION_RIGHT_CLOSED, SECTION_RIGHT_CURVE, SECTION_DIP, SECTION_NARROWS, SECTION_LEFT_CURVE}, {SECTION_HILL, SECTION_LEFT_CURVE, SECTION_DIP, SECTION_NARROWS, SECTION_RIGHT_CURVE, SECTION_DIP_HILL, SECTION_LEFT_CLOSED, SECTION_LEFT_CURVE, SECTION_HILL, SECTION_LEFT_CLOSED, SECTION_S_CURVE_LR, SECTION_RIGHT_CURVE}, {SECTION_S_CURVE_LR, SECTION_NARROWS, SECTION_HILL_DIP, SECTION_LEFT_CURVE, SECTION_DIP_HILL, SECTION_RIGHT_CURVE, SECTION_HILL, SECTION_RIGHT_CLOSED, SECTION_DIP, SECTION_RIGHT_CURVE, SECTION_LEFT_CLOSED, SECTION_RIGHT_CURVE}, {SECTION_RIGHT_CURVE, SECTION_HILL, SECTION_LEFT_CLOSED, SECTION_S_CURVE_LR, SECTION_HILL_DIP, SECTION_S_CURVE_RL, SECTION_DIP, SECTION_RIGHT_CLOSED, SECTION_LEFT_CURVE, SECTION_DIP_HILL, SECTION_NARROWS, SECTION_RIGHT_CURVE}, {SECTION_LEFT_CURVE, SECTION_HILL_DIP, SECTION_NARROWS, SECTION_LEFT_CURVE, SECTION_DIP, SECTION_RIGHT_CURVE, SECTION_HILL, SECTION_S_CURVE_LR, SECTION_LEFT_CLOSED, SECTION_DIP, SECTION_LEFT_CURVE, SECTION_NARROWS}, {SECTION_RIGHT_CURVE, SECTION_DIP, SECTION_RIGHT_CLOSED, SECTION_S_CURVE_RL, SECTION_RIGHT_CURVE, SECTION_HILL_DIP, SECTION_LEFT_CLOSED, SECTION_DIP, SECTION_LEFT_CURVE, SECTION_RIGHT_CLOSED, SECTION_DIP_HILL, SECTION_RIGHT_CURVE}, {SECTION_RIGHT_CURVE, SECTION_DIP_HILL, SECTION_LEFT_CLOSED, SECTION_S_CURVE_LR, SECTION_DIP_HILL, SECTION_LEFT_CURVE, SECTION_HILL, SECTION_RIGHT_CLOSED, SECTION_HILL_DIP, SECTION_LEFT_CURVE, SECTION_DIP, SECTION_NARROWS}, {SECTION_LEFT_CURVE, SECTION_HILL, SECTION_LEFT_CURVE, SECTION_DIP_HILL, SECTION_LEFT_CURVE, SECTION_DIP, SECTION_NARROWS, SECTION_S_CURVE_LR, SECTION_DIP_HILL, SECTION_LEFT_CLOSED, SECTION_RIGHT_CURVE, SECTION_HILL}};   /* DS:5CBC */
 struct Bitmap g_egaPage1 = {SCREEN_WIDTH, SCREEN_HEIGHT, 8000, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0}, {EGA_PAGE1_BITS}, {0}, EGA_PITCH, VID_EGA};   /* DS:5DAC */
 struct Bitmap g_egaPage2 = {SCREEN_WIDTH, SCREEN_HEIGHT, 8000, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0}, {EGA_PAGE2_BITS}, {0}, EGA_PITCH, VID_EGA};   /* DS:5DDC */
 int g_roadLayout = 0;   /* DS:5E0C */
@@ -339,17 +339,17 @@ void rd_build_layout(int n)
         g_roadLayout = rnd(10);
     for (i = 0; i < g_layoutLen; i++) {
         switch (g_roadLayouts[g_roadLayout][i]) {
-        case 1: build_left_curve(); break;
-        case 2: build_right_curve(); break;
-        case 3: build_hill(); break;
-        case 4: build_dip(); break;
-        case 5: build_hill_dip(); break;
-        case 6: build_dip_hill(); break;
-        case 7: build_right_closed(); break;
-        case 8: build_left_closed(); break;
-        case 9: build_narrows(); break;
-        case 10: build_s_curve_lr(); break;
-        case 11: build_s_curve_rl(); break;
+        case SECTION_LEFT_CURVE: build_left_curve(); break;
+        case SECTION_RIGHT_CURVE: build_right_curve(); break;
+        case SECTION_HILL: build_hill(); break;
+        case SECTION_DIP: build_dip(); break;
+        case SECTION_HILL_DIP: build_hill_dip(); break;
+        case SECTION_DIP_HILL: build_dip_hill(); break;
+        case SECTION_RIGHT_CLOSED: build_right_closed(); break;
+        case SECTION_LEFT_CLOSED: build_left_closed(); break;
+        case SECTION_NARROWS: build_narrows(); break;
+        case SECTION_S_CURVE_LR: build_s_curve_lr(); break;
+        case SECTION_S_CURVE_RL: build_s_curve_rl(); break;
         }
     }
     for (; g_buildEntry < 0x460; g_buildEntry++) {
@@ -672,13 +672,13 @@ void rd_reset(void)
         g_trackViewMotion.roadIndex = 200;
     else
         switch (g_scene) {
-        case 1:
+        case SCENE_GARAGE:
             g_trackViewMotion.roadIndex = 10;
             break;
-        case 2:
+        case SCENE_BOBS:
             g_trackViewMotion.roadIndex = 65;
             break;
-        case 3:
+        case SCENE_GAS_STATION:
             g_trackViewMotion.roadIndex = 115;
             break;
         }
@@ -934,7 +934,7 @@ void rd_advance(void)
         g_trackViewMotion.rightEdge = 0xce4;
     }
     g_trackViewMotion.roadHeight = *g_heightRoadPtr;
-    if (g_demo != 0 || g_autoDrive != 0 || (g_driver.raceType == 0 ? 0x17c : 0x3fc) < g_trackViewMotion.roadIndex) {
+    if (g_demo != 0 || g_autoDrive != 0 || (g_driver.raceType == RACE_DRAG ? 0x17c : 0x3fc) < g_trackViewMotion.roadIndex) {
         goal6 = 0x960;
         if (g_roadOppPos.lateralX > 0x960)
             goal6 -= 0x140;
