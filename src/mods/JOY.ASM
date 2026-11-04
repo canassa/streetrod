@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .DATA
         EXTRN   _g_joyX:WORD
@@ -41,9 +42,9 @@ _joy_read  PROC  FAR
         mov     es,ax
         mov     _g_joySavedSp,sp
         cli
-        mov     dx,201h
+        mov     dx,GAME_PORT
         mov     cx,400h
-        mov     bx,3
+        mov     bx,GAME_JOY1_AXES
         out     dx,al
         out     dx,al
 poll:
@@ -82,7 +83,7 @@ skip:
         sub     di,4
         or      dl,dl
         jne     next
-        mov     dx,201h
+        mov     dx,GAME_PORT
         in      al,dx
         not     al
         mov     cl,4

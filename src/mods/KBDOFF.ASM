@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .DATA
         EXTRN   _g_oldInt9Seg:WORD
@@ -14,9 +15,9 @@ _kbdoff_unhook  PROC  FAR
         mov     dx,_g_oldInt9Off
         mov     ax,_g_oldInt9Seg
         mov     ds,ax
-        mov     ah,25h
-        mov     al,9
-        int     21h
+        mov     ah,DOS_SET_VECTOR
+        mov     al,KEYBOARD_INT
+        int     DOS_INT
         pop     ds
         ret
 _kbdoff_unhook  ENDP

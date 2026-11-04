@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .DATA
         EXTRN   _av787at:WORD
@@ -20,14 +21,14 @@ _egaline_draw  PROC  FAR
         sub     sp,8
         push    si
         push    di
-        mov     dx,3CEh
+        mov     dx,GC_INDEX
         mov     ah,[bp+14]              ; color
         xor     al,al
         out     dx,ax
-        mov     ax,0F01h
+        mov     ax,(SEQ_ALL_PLANES SHL 8) OR GC_ENABLE_SET_RESET
         out     dx,ax
         mov     ax,_g_egaGcFunction
-        mov     al,3
+        mov     al,GC_DATA_ROTATE
         out     dx,ax
         mov     si,40                   ; row stride
         mov     cx,[bp+10]
@@ -69,7 +70,7 @@ x_is_major:
         mov     di,bx
         shl     ah,cl
         mov     bl,ah
-        mov     al,8
+        mov     al,GC_BIT_MASK
         pop     cx
         inc     cx
         jmp     WORD PTR [bp-8]
@@ -87,7 +88,7 @@ v_ordered:
         push    cx
         call    _egaline_pixel_addr
         shl     ah,cl
-        mov     al,8
+        mov     al,GC_BIT_MASK
         out     dx,ax
         pop     cx
 v_loop:
@@ -118,8 +119,8 @@ horizontal:
         mov     cx,ax
         sub     cx,bx
         mov     bx,dx
-        mov     dx,3CEh
-        mov     al,8
+        mov     dx,GC_INDEX
+        mov     al,GC_BIT_MASK
         push    es
         pop     ds
         mov     si,di
@@ -199,9 +200,9 @@ done:
         out     dx,ax
         inc     ax
         out     dx,ax
-        mov     al,3
+        mov     al,GC_DATA_ROTATE
         out     dx,ax
-        mov     ax,0FF08h
+        mov     ax,(GC_MASK_ALL SHL 8) OR GC_BIT_MASK
         out     dx,ax
         pop     di
         pop     si
@@ -239,7 +240,7 @@ _egaline_pixel_addr  ENDP
 
         PUBLIC  _egaline_get_pixel
 _egaline_get_pixel  PROC    NEAR
-        mov     ax,0304h
+        mov     ax,(3 SHL 8) OR GC_READ_MAP
         mov     ch,1
         shl     ch,cl
         xor     bl,bl

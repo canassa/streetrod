@@ -14,7 +14,7 @@ mkdir -p "$TREE/TMP"
 cp -R "$HERE/src/." "$TREE/"
 
 args=(-c "mount c \"$TREE\"" -c "mount d \"$HERE/toolchain/msc51\"" -c "mount f \"$HERE/toolchain/masm51\""
-      -c "set PATH=D:\\BIN;F:\\BIN" -c "set INCLUDE=D:\\INCLUDE;F:\\INCLUDE" -c "set LIB=D:\\LIB"
+      -c "set PATH=D:\\BIN;F:\\BIN" -c "set INCLUDE=C:\\INCLUDE;D:\\INCLUDE;F:\\INCLUDE" -c "set LIB=D:\\LIB"
       -c "set TMP=C:\\TMP" -c "c:")
 if [ "${1:-}" != "--make" ]; then
     exec dosbox-x "${args[@]}" "$@"

@@ -193,12 +193,14 @@ def link_order(path=None):
 
 
 def header_deps(source):
-    """INCLUDE\\X.H for every project header a C source includes (directly or through
+    """INCLUDE\\X.H or INCLUDE\\X.INC for every project header a source includes (directly or through
     another project header), sorted."""
     seen, todo = set(), [source]
     while todo:
         text = todo.pop().read_text(encoding='latin-1')
-        for h in re.findall(r'^#include\s+"(\w+\.H)"', text, re.M | re.I):
+        pattern = (r'^\s*INCLUDE\s+(\w+\.INC)\b' if source.suffix.upper() == '.ASM'
+                   else r'^#include\s+"(\w+\.H)"')
+        for h in re.findall(pattern, text, re.M | re.I):
             p = config.INCLUDE / h.upper()
             if h.upper() not in seen and p.exists():
                 seen.add(h.upper())
@@ -236,13 +238,11 @@ def set_flags(stem, flags, path=None):
 
 
 def sync_deps(path=None):
-    """Make every C object's dependencies its source plus the headers it includes
+    """Make every object's dependencies its source plus the headers it includes
     (run by `./sr headers` and every header regeneration). Returns the changed targets."""
     path = Path(path or MAKEFILE)
     changed = []
     for r in reversed(compile_rules(path)):
-        if r.compiler != 'CL':
-            continue
         want = [r.source, *header_deps(r.path)]
         if r.deps != want:
             _replace(r, _block(r.target, want, r.raw[0]), path)

@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .DATA
         EXTRN   _av787at:WORD
@@ -20,11 +21,11 @@
 _egaspan_begin  PROC    FAR
         cmp     _r_vid+12,-2
         jne     done1
-        mov     dx,3CEh
-        mov     ax,0F01h
+        mov     dx,GC_INDEX
+        mov     ax,(SEQ_ALL_PLANES SHL 8) OR GC_ENABLE_SET_RESET
         out     dx,ax
         mov     ax,_g_egaGcFunction
-        mov     al,3
+        mov     al,GC_DATA_ROTATE
         out     dx,ax
 done1:
         ret
@@ -38,14 +39,14 @@ _egaspan_begin  ENDP
 _egaspan_end  PROC    FAR
         cmp     _r_vid+12,-2
         jne     done2
-        mov     dx,3CEh
+        mov     dx,GC_INDEX
         xor     ax,ax
         out     dx,ax
         inc     ax
         out     dx,ax
-        mov     al,3
+        mov     al,GC_DATA_ROTATE
         out     dx,ax
-        mov     ax,0FF08h
+        mov     ax,(GC_MASK_ALL SHL 8) OR GC_BIT_MASK
         out     dx,ax
 done2:
         ret
@@ -94,7 +95,7 @@ rightok:
         xchg    [bp+8],ax
         mov     [bp+6],ax
 ordered:
-        mov     dx,3CEh
+        mov     dx,GC_INDEX
         mov     ah,[bp+0Ch]
         xor     al,al
         out     dx,ax
@@ -120,8 +121,8 @@ ordered:
         mov     cx,ax
         sub     cx,bx
         mov     bx,dx
-        mov     dx,3CEh
-        mov     al,8
+        mov     dx,GC_INDEX
+        mov     al,GC_BIT_MASK
         push    es
         pop     ds
         mov     si,di
@@ -168,14 +169,14 @@ _egaspan_fill_below  PROC    FAR
         mov     ax,[bp+6]
         cmp     _g_clipYMax,ax
         jl      done4
-        mov     dx,3CEh
+        mov     dx,GC_INDEX
         mov     ah,[bp+8]
         xor     al,al
         out     dx,ax
-        mov     ax,0F01h
+        mov     ax,(SEQ_ALL_PLANES SHL 8) OR GC_ENABLE_SET_RESET
         out     dx,ax
         mov     ax,_g_egaGcFunction
-        mov     al,3
+        mov     al,GC_DATA_ROTATE
         out     dx,ax
         push    ds
         mov     ax,_g_clipYMax
@@ -193,8 +194,8 @@ _egaspan_fill_below  PROC    FAR
         mul     dx
         mov     di,ax
         mov     si,di
-        mov     dx,3CEh
-        mov     al,8
+        mov     dx,GC_INDEX
+        mov     al,GC_BIT_MASK
         mov     ah,0FFh
         out     dx,ax
         rep     movsb
@@ -203,9 +204,9 @@ _egaspan_fill_below  PROC    FAR
         out     dx,ax
         inc     ax
         out     dx,ax
-        mov     al,3
+        mov     al,GC_DATA_ROTATE
         out     dx,ax
-        mov     ax,0FF08h
+        mov     ax,(GC_MASK_ALL SHL 8) OR GC_BIT_MASK
         out     dx,ax
 done4:
         pop     di

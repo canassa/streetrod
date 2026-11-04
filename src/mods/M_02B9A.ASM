@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .DATA
 
@@ -332,14 +333,14 @@ _m_02b9a_apply_mode_a  PROC  FAR
         sub     ax,ax
         mov     es,ax
         cli
-        mov     al,es:[0410h]
-        and     al,0CFh
+        mov     al,es:[BIOS_EQUIP]
+        and     al,0FFh - EQUIP_VIDEO_MASK
         or      al,_g_modeBitsA
-        mov     es:[0410h],al
-        mov     ah,0
+        mov     es:[BIOS_EQUIP],al
+        mov     ah,VIDEO_SET_MODE
         mov     al,_g_biosModeA
         sti
-        int     10h
+        int     BIOS_VIDEO
         pop     ax
         pop     bp
         ret
@@ -355,14 +356,14 @@ _m_02b9a_apply_mode_b  PROC  FAR
         sub     ax,ax
         mov     es,ax
         cli
-        mov     al,es:[0410h]
-        and     al,0CFh
+        mov     al,es:[BIOS_EQUIP]
+        and     al,0FFh - EQUIP_VIDEO_MASK
         or      al,_g_modeBitsB
-        mov     es:[0410h],al
-        mov     ah,0
+        mov     es:[BIOS_EQUIP],al
+        mov     ah,VIDEO_SET_MODE
         mov     al,_g_biosModeB
         sti
-        int     10h
+        int     BIOS_VIDEO
         pop     ax
         pop     bp
         ret

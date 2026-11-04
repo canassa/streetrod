@@ -1,6 +1,7 @@
 """The checked-in build: src/MAKEFILE (MSC MAKE 4.07) and src/SR.LNK are what ./sr build runs."""
 import contextlib
 import io
+import re
 from pathlib import Path
 import sys
 import tempfile
@@ -42,7 +43,7 @@ class MakefileTests(unittest.TestCase):
                 self.assertEqual(r.deps, [r.source, *makefile.header_deps(r.path)], r.target)
             else:
                 self.assertEqual(r.args[-1], f'{r.source},{r.stem}.OBJ,{r.stem}.LST;')
-                self.assertEqual(r.deps, [r.source])
+                self.assertEqual(r.deps, [r.source, *makefile.header_deps(r.path)])
         fs = {f.path.name: f for f in module.files()}
         self.assertTrue(all(f.segment for f in fs.values()))
         self.assertEqual(fs['DASH.C'].rule.command,
@@ -68,6 +69,39 @@ class MakefileTests(unittest.TestCase):
             self.assertTrue(new.startswith('# comment\r\nX=D:\\LIB\r\n'))
             self.assertEqual(makefile.rules(p)[0].deps, a.deps)
             self.assertEqual(makefile.rules(p)[1].command, lib.command)
+
+    def test_shared_pc_constants(self):
+        asm = dict(re.findall(r'^(\w+)\s+EQU\s+(\w+)\s*$',
+                              (config.INCLUDE / 'PC.INC').read_text(), re.M))
+        shared = re.findall(r'^#define (\w+) (0x[\da-f]+|\d+)\s*$',
+                            (config.INCLUDE / 'PC.H').read_text(), re.M | re.I)
+        for name, value in shared:
+            self.assertIn(name, asm)
+            literal = asm[name]
+            actual = int(literal[:-1], 16) if literal.lower().endswith('h') else int(literal)
+            self.assertEqual(actual, int(value, 0), name)
+
+    def test_asm_include_dependencies(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            include = root / 'include'
+            include.mkdir()
+            (include / 'PC.INC').write_text('INCLUDE BITS.INC\n')
+            (include / 'BITS.INC').write_text('GC_MODE EQU 5\nINCLUDE PC.INC\n')
+            asm = root / 'A.ASM'
+            asm.write_text('        .MODEL MEDIUM\n        include pc.inc ; hardware\n'
+                           '; INCLUDE UNUSED.INC\n')
+            mk = root / 'MAKEFILE'
+            mk.write_text('ASM=MASM\nA.OBJ: A.ASM\n\t$(ASM) /Ml A.ASM,A.OBJ,A.LST;\n')
+            with patch.object(config, 'INCLUDE', include), patch.object(config, 'SRC', root):
+                self.assertEqual(makefile.header_deps(asm), ['INCLUDE\\BITS.INC', 'INCLUDE\\PC.INC'])
+                self.assertEqual(makefile.sync_deps(mk), ['A.OBJ'])
+                self.assertEqual(makefile.compile_rules(mk)[0].deps,
+                                 ['A.ASM', 'INCLUDE\\BITS.INC', 'INCLUDE\\PC.INC'])
+                self.assertEqual(makefile.sync_deps(mk), [])
+                asm.write_text('        .MODEL MEDIUM\n')
+                self.assertEqual(makefile.sync_deps(mk), ['A.OBJ'])
+                self.assertEqual(makefile.compile_rules(mk)[0].deps, ['A.ASM'])
 
     def test_prepare_copies_src(self):
         with tempfile.TemporaryDirectory() as tmp:

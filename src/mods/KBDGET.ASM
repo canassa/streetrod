@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .DATA
         EXTRN   _g_lastKey:BYTE
@@ -25,17 +26,17 @@ _kbdget_key  ENDP
         PUBLIC  _kbdget_hook
 _kbdget_hook  PROC  FAR
         push    ds
-        mov     ah,35h
-        mov     al,9
-        int     21h
+        mov     ah,DOS_GET_VECTOR
+        mov     al,KEYBOARD_INT
+        int     DOS_INT
         mov     _g_oldInt9Seg,es
         mov     _g_oldInt9Off,bx
         mov     ax,SEG _kbd_isr
         mov     ds,ax
         mov     dx,OFFSET _kbd_isr
-        mov     ah,25h
-        mov     al,9
-        int     21h
+        mov     ah,DOS_SET_VECTOR
+        mov     al,KEYBOARD_INT
+        int     DOS_INT
         pop     ds
         ret
 _kbdget_hook  ENDP
