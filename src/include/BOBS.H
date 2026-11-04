@@ -4,6 +4,8 @@
 #define BOBS_H
 #include "STRUCTS.H"
 
+extern struct Wager g_screenBetInfo; /* DS:79A2 */
+
 #define NUM_RACERS 22
 #define RACER_KING 21
 #define RACER_COP_ENTRY 10
@@ -32,8 +34,6 @@ extern struct Pair g_jailGaps[];                        /* DS:539A */
 extern struct Bitmap far *g_barJailPixels;                       /* DS:6E64 */
 extern int bn7648;                                      /* DS:7648 */
 extern int g_resultWin;                                      /* DS:7676 */
-extern int g_classBetValue;                                     /* DS:79A2 */
-extern int d_79a4;                                      /* DS:79A4 */
 extern int g_isKingState;                                      /* DS:7D40 */
 extern struct Spec *g_oppSpecPointer;                            /* DS:7D7A */
 extern struct Racer *g_selectedRacerPointer;                            /* DS:7D84 */

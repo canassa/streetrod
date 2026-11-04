@@ -749,4 +749,11 @@ struct InputState {
     int unused8;
     int unusedA;
 };
+
+enum BetKind { BET_NONE, BET_10, BET_50, BET_25, BET_100, BET_CAR };
+
+struct Wager {
+    enum BetKind kind;
+    int amount;
+};
 #endif

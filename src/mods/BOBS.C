@@ -374,8 +374,7 @@ static void near list_met_rivals(int *ids, int *slots, int *kinds)
     ids[0] = n;
 }
 
-int g_classBetValue;
-int d_79a4;
+struct Wager g_screenBetInfo; /* DS:79A2 */
 
 int g_refuseMsgs[2][5] = {{4779, 4803, 4822, 4840, 4663}, {4663, 4675, 4694, 4715, 4727}};   /* DS:51FC */
 int g_acceptMsgs[2][3] = {{4859, 4867, 4875}, {4743, 4756, 4767}};   /* DS:5210 */
@@ -499,13 +498,13 @@ static int near challenge(int arg)
                 }
                 a_7eaap.raceType = 0;
                 game_message(0x11d1);
-                g_classBetValue = 0;
+                g_screenBetInfo.kind = 0;
             } else {
                 a_7eaap.raceType = 1;
                 game_message(0x11f7);
-                g_classBetValue = 5;
+                g_screenBetInfo.kind = 5;
             }
-            d_79a4 = 0;
+            g_screenBetInfo.amount = 0;
             race_run();
             g_addT += a_7eaap.raceType == 0 ? 0x444u : 0x777u;
             return 2;
@@ -580,8 +579,8 @@ static int near challenge(int arg)
         }
         if ((long)price <= a_7eaap.money) {
             if (accepts_bet(kind)) {
-                g_classBetValue = kind;
-                d_79a4 = price;
+                g_screenBetInfo.kind = kind;
+                g_screenBetInfo.amount = price;
                 menu_pop(1);
                 popup_show(pict, x, sy);
                 pict = 0;

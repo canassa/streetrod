@@ -672,8 +672,8 @@ int near race_outcome(void)
     struct Car *found;
     int list[25];
 
-    kind = g_classBetValue;
-    v = d_79a4;
+    kind = g_screenBetInfo.kind;
+    v = g_screenBetInfo.amount;
     engine = g_driveEng.stopFlags & 4;
     opt = g_driveEng.stopFlags & 0x10;
     stop = g_driveEng.stopFlags == 5 || g_driveEng.stopFlags == 0x11 || g_driveEng.stopFlags == 0x15;
