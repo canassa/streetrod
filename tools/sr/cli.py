@@ -616,7 +616,8 @@ def cmd_status(args):
                 lines.append(f"| {kind} | {st} | {n} | {b} |")
     parts = []
     for kind, label in (("c", "C"), ("asm", "asm")):
-        sel = [r for r in rows if r["kind"] == kind]
+        # a skipped game row is a retired scanner false positive (0x0F8C2), not a function
+        sel = [r for r in rows if r["kind"] == kind and r["status"] != "skip"]
         done = [r for r in sel if r["status"] == "matched"]
         pct_n = 100 * len(done) / max(len(sel), 1)
         pct_b = 100 * sum(r["size"] for r in done) / max(sum(r["size"] for r in sel), 1)

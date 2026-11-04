@@ -145,7 +145,7 @@ def main():
     ap.add_argument("--streetrod", type=Path)
     ap.add_argument("--keep", action="store_true", help="keep work/emucmp-* trees")
     args = ap.parse_args()
-    base = config.WORK / f"emucmp-snap"
+    base = config.WORK / "emucmp-snap"
     shutil.rmtree(base, ignore_errors=True)
     # each file's command line (its src/MAKEFILE block)
     command = {f.path.name.upper(): f.command for f in module.sources()}

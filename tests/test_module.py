@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace as NS
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
-from sr import cod, config, db, module
+from sr import cod, db, module
 
 class SourceFileTests(unittest.TestCase):
     def test_one_source_per_object(self):

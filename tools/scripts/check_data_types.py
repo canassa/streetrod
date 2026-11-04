@@ -3,13 +3,15 @@ import sys,struct,json
 from pathlib import Path
 sys.path.insert(0,'tools')
 from sr.cdata import Types
-from sr import dosbox,config
+from sr import dosbox
 from sr.omf import Obj
 t=Types(); names=sorted(t.defs)
 checks=[]
 for name in names:
  node=t.named(name);checks.append(('sizeof('+name+')',node['size']))
  for field,off,child in node['fields']:
+  # offsetof() takes a member's address, which a bit-field has none of; struct Look
+  # (bit-fields packed into one word) is the only such type, so only its sizeof is checked
   if name=='struct Look':continue
   checks.append(('offsetof('+name+', '+field+')',off))
 out=Path('work/data-audit');out.mkdir(parents=True,exist_ok=True)

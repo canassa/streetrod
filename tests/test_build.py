@@ -106,7 +106,7 @@ class MakefileTests(unittest.TestCase):
         self.assertEqual(types.named('struct Bitmap')['size'], 48)
         self.assertEqual(types.named('struct Run')['size'], 6)
         self.assertEqual(types.named('struct List')['size'], 4)
-        self.assertEqual(types.named('struct CgaFont')['size'], 1642)
+        self.assertEqual(types.named('struct CgaGlyph')['size'], 18)
         self.assertEqual(number('2 * (3 + 4)'), 14)
         with self.assertRaises(ValueError):
             number('__import__("os")')
