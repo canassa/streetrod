@@ -920,3 +920,12 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - Verified ports and fields against Ralf Brown's port list (tables P0015, P0380, P0392/P0394, P0542, P0654/P0656, P0670/P0672, P0700/P0704/P0708, P0817/P0818): https://raw.githubusercontent.com/cirosantilli/ralf-brown-interrupt-list/master/inter61d/PORTS.A and https://raw.githubusercontent.com/cirosantilli/ralf-brown-interrupt-list/master/inter61d/PORTS.B . Tandy's 1000 SX Technical Reference, page 47, confirms 3DFh as the CRT Processor Page Register, with CRT page bits 0-2, processor page bits 3-5, and address-mode bits 6-7: https://www.lo-tech.co.uk/downloads/manuals/tandy/Tandy_1000SX_Technical_Reference_Manual.pdf . It is not a Hercules port.
 - A plain ~speaker-mask is a 16-bit complement and changed MUSIC/GARAGE/SOUND/SYS instructions, initially reducing the gate to 482/572. Byte-width complements `(0xff ^ PPI_SPEAKER_MASK)` and `(0xff ^ PPI_SPEAKER_DATA)` restored the exact original FCh/FDh masks. The MSC recipe book records the distinction. Graphics register naming, including EGASHIFT's existing braced macros, matched without structural changes.
+
+## 2026-11-05 09:30 CET: Named I/O ports and hardware registers
+
+### What I did
+- PC.H names the 17 I/O ports the C code uses (EGA graphics controller, sequencer, CRTC, input status, mono/Hercules and CGA mode control, Tandy page register, PPI port B, PIT channels and command, PIC command, game port) and the documented register indices and bits written to them (GC_MODE, GC_BIT_MASK, GC_READ_MAP, write/read modes, SEQ_MAP_MASK and plane bits, CRTC_START_HI/LO, CRTC_OFFSET, STATUS_VRETRACE, mode-control bits, speaker gate/data, PIT mode bytes, PIC_EOI, game-port masks). All outp/inp sites use them. Game data stays literal (Tandy page mapping value, CRTC start/stride data, PIT divisors, computed colours and masks). Done by a Codex agent.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers check clean, tests OK.
+
+### What I learned
+- Clearing speaker bits needs `0xff ^ MASK`, not `~MASK`: the int-promoted complement changes MSC's byte code.
