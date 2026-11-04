@@ -45,15 +45,15 @@ union FarPtr {
 };
 
 struct Slot {
-    int f0;
-    int f2;
+    int width;
+    int height;
     char pad4[2];
-    unsigned char f6;
+    unsigned char bitmapFlags;
     unsigned char pal[16];
     char pad17;
-    long f18;
-    int f1c;
-    unsigned char f1e;
+    long dataOffset;
+    int packedSize;
+    unsigned char vramPlane;
     char pad1f;
     union FarPtr ptr;
     long f24;
@@ -64,32 +64,32 @@ struct Slot {
 };
 
 struct Node {
-    int a;
-    int b;
+    int value;
+    int wear;
     int idx;
     struct Node *next;
 };
 
 struct Rack {
-    struct Node *s[5];
+    struct Node *parts[5];
 };
 
 struct Car {
     int value;
-    int f2;
-    char f4;
-    unsigned char f5;
-    struct Node *slot6;
+    int specIndex;
+    char paintScheme;
+    unsigned char rank;
+    struct Node *transmission;
     struct Rack rack;
-    struct Node *slot12;
-    char b14[2];
-    char b16[9];
-    char f1f;
-    signed char f20;
+    struct Node *tires;
+    char transmissionBolts[2];
+    char engineBolts[9];
+    char wireState;
+    signed char timing;
     char pad21;
-    int f22;
-    unsigned f24;    /* bits 8-12 paint shade (F_06B06), 13 roof chopped, 14 front and 15 rear bumper stripped */
-    struct Car *f26;
+    int fuel;
+    unsigned appearance;    /* bits 8-12 sticker (F_06B06), 13 roof chopped, 14 front and 15 rear bumper stripped */
+    struct Car *next;
 };
 
 struct Node2 {
@@ -100,12 +100,12 @@ struct Node2 {
 };
 
 struct Item {
-    int f0;
-    char f2;
-    char f3;
-    char f4;
+    int value;
+    char variant;
+    char fitMask;
+    char category;
     char pad3;
-    int f6;
+    int nameOffset;
 };
 
 union Word {
@@ -114,11 +114,11 @@ union Word {
 };
 
 struct Tone {
-    int f0;
-    int f1;
-    int f2;
-    int f3;
-    int f4;
+    int phase;
+    int waveform;
+    int depth;
+    int length;
+    int delay;
 };
 
 struct Bitmap {
@@ -151,8 +151,8 @@ struct Box {
 
 struct Obj {
     int id;
-    int f2;
-    int f4;
+    int scriptIndex;
+    int pendingTimers;
     int f6;
     struct Bitmap far *img;
     void far *fc;
@@ -186,7 +186,11 @@ struct Clip {
 };
 
 struct Colors {
-    char c[5];
+    char text;
+    char textBg;
+    char fill;
+    char line;
+    char frame;
 };
 
 struct Style {
@@ -249,8 +253,8 @@ struct Band {
 /* one display page of the sprite engine (16 bytes): its bitmap, the clipped rectangle, the link to the next page */
 struct Page {
     struct Bitmap far *bm;
-    struct Rect r;
-    int idx;
+    struct Rect rect;
+    int pageIndex;
     struct Page *link;
 };
 
@@ -258,30 +262,30 @@ struct Dev {
     union {
         int w;
         unsigned char b[2];
-    } f0;
-    int f2;
-    int f4;
-    char off;
+    } divisor;
+    int ticksLeft;
+    int repeatCount;
+    char active;
     char dirty;
-    int far *l8;
-    int far *lc;
+    int far *song;
+    int far *phraseStart;
     int far *cur;
-    int *f14;
-    int *f16;
-    int *f18;
-    int *f1a;
+    int *repeatTable;
+    int *repeatCursor;
+    int *toneTable;
+    int *toneCursor;
 };
 
 struct Hot {
-    int f0;
-    int f2;
-    int f4;
+    int kind;
+    int palIndex;
+    int textOffset;
     int f6;
     int x1;
     int y1;
     int x2;
     int y2;
-    int f10;
+    int next;
 };
 
 struct Win {
@@ -298,49 +302,49 @@ struct Win {
 
 struct Racer {
     signed char f0;
-    char f1;
+    char shiftPenalty;
     signed char f2;
     char f3;
-    int f4;
-    int f6;
-    int f8;
-    signed char fa;
-    char fb;
-    signed char fc;
-    char fd;
-    char fe;
-    signed char ff;
-    char f10;
+    int overlayPic;
+    int nameOffset;
+    int specIndex;
+    signed char paintScheme;
+    char status;
+    signed char betRaces;
+    char betWins;
+    char bodyMods;
+    signed char sticker;
+    char lostCarOnce;
     char pad11;
 };
 
 struct Spec {
-    int f0;
-    unsigned char f2;
+    int price;
+    unsigned char rank;
     signed char next;
-    unsigned f4;
-    int f6;
-    int f8;
+    unsigned parts;
+    int nameOffset;
+    int bodyPic;
 };
 
-/* one car model (10 bytes, w_8df0[], indexed by Car.f2): kind picks its sprites (view_load); f2, f6, f8
+/* one car model (10 bytes, w_8df0[], indexed by Car.specIndex): kind picks its sprites (view_load); roofPic, frontBumperPic, rearBumperPic
    are nonzero when the roof can be chopped and the front and rear bumpers stripped (F_0711A) */
 struct Model {
     signed char kind;
     char pad1;
-    int f2;
+    int roofPic;
     int f4;
-    int f6;
-    int f8;
+    int frontBumperPic;
+    int rearBumperPic;
 };
 
 struct Link {
     int nxt;
     int prv;
-    long key;
-    int f8;
-    int fa;
-    int fc;
+    long deadline;
+    int priority;
+    int action;
+    int argument;
     char pad[4];
 };
 
@@ -351,12 +355,12 @@ struct Pair {
 
 
 struct Dlg {
-    int f0;
-    int f2;
+    int specIndex;
+    int bodyMods;
     struct Bitmap far *bm1;
     struct Bitmap far *bm2;
     int f0c;
-    int f0e;
+    int fillsLeft;
     int f10;
     int f12;
     int f14;
@@ -373,7 +377,7 @@ struct KeyMap {
 
 struct Glyph {
     unsigned char w;
-    char pad[8];
+    char rows[8];
 };
 
 
@@ -385,48 +389,48 @@ struct Spot {
 
 /* one range of the engine curve: 8 bytes */
 struct Range {
-    int f0;
-    int f2;
-    int f4;
-    int f6;
+    int minRpm;
+    int maxRpm;
+    int accelStep;
+    int decelStep;
 };
 
 /* one gear: three ranges */
 struct Gear {
-    struct Range r[3];
+    struct Range bands[3];
 };
 
 /* drive train state; g_driveEng and g_oppEngState are two instances, 0xc2 bytes each */
 struct Eng {
-    int f0;
-    int f2;
-    int f4;
+    int speed;
+    int steeringInput;
+    int steering;
     char pad6[4];
-    int fa;
-    int fc;
-    int fe;
-    int f10;
-    int f12;
-    int f14;
-    int f16;
-    int f18;
-    int f1a;
-    int f1c;
-    int f1e;
-    int f20;
-    int f22;
-    int f24;
+    int tireFailureIndex;
+    int tireSlip;
+    int rpm;
+    int minRpm;
+    int maxRpm;
+    int accelStep;
+    int decelStep;
+    int gearIndex;
+    int shifterDirty;
+    int gearCount;
+    int shiftRpm;
+    int automatic;
+    int autoShiftRpm;
+    int autoSelector;
     int f26;
     int f28;
     int f2a;
     char pad2c[8];
     int f34[6];
-    int f40;
-    int f42;
+    int rpmPerSpeed;
+    int rpmBand;
     struct Gear gear[5];
-    int fbc;
+    int stopFlags;
     int fbe;
-    int fc0;
+    int elapsedTicks;
 };
 
 struct Sheet {
@@ -486,12 +490,12 @@ struct Panel {
 
 /* 12-byte table entry (g7682n[]), read as bytes by carpic_build */
 struct Spr12 {
-    unsigned char b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11;
+    unsigned char wheelX1, wheelX2, b2, b3, roofX, b5, b6, frontBumperY, rearBumperX, rearBumperY, stickerX, stickerY;
 };
 
 /* 6-byte table entry (ap818c[]) */
 struct Spr6 {
-    unsigned char b0, b1, b2, b3, b4, b5;
+    unsigned char fuelCapX, fuelCapY, rearGlassX, rearGlassY, frontGlassX, frontGlassY;
 };
 
 /* 6-byte table entry (a784als[]): bitmap id, then the (dx, dy) offset it is drawn at */
@@ -509,7 +513,7 @@ struct Step {
 
 struct Look {
     unsigned lo : 8;
-    unsigned shade : 5;
+    unsigned sticker : 5;
     unsigned roof : 1;
     unsigned front : 1;
     unsigned rear : 1;
@@ -528,13 +532,13 @@ struct Cand {
 struct Video {
     struct Bitmap far *front;
     struct Bitmap far *back;
-    struct Bitmap far *f8;
+    struct Bitmap far *hoodBg;
     int mode;
     int planes;     /* 4 on EGA (-2), else 1 */
     int shift;      /* log2 pixels per byte: 3, 2, 1 */
     int bpp;        /* bits per pixel: 1, 2, 4 */
     int mask;       /* ~(pixels per byte - 1): -8, -4, -2 */
-    int f16;
+    int copyToFront;
 };
 
 /* DS:04FE, the pages of a list menu (ads_open fills it, ads_run pages through it): start[k] is the
@@ -553,11 +557,11 @@ struct Cursor {
     struct Clip clip;           /* last drawn strip; memset as 12 bytes */
     char far *shape;
     char far *mask;
-    unsigned off;               /* shape offset, cursor_shape_off(n) */
-    unsigned size;              /* bytes per shape */
-    int n;                      /* shape number */
+    unsigned shapeOffset;               /* shape offset, cursor_shape_off(n) */
+    unsigned shapeSize;              /* bytes per shape */
+    int shapeIndex;                      /* shape number */
     char state;                 /* 0 hidden, 1 shown, <0 hide pending */
-    struct Rect r;              /* last drawn extent, x2 < 0 when none */
+    struct Rect drawnRect;              /* last drawn extent, x2 < 0 when none */
 };
 
 /* one cell of the intro picture tables g_endCellsA / g_endCellsB (6 bytes): source origin in the sheet,
@@ -579,12 +583,12 @@ struct CgaGlyph {
 
 /* DS:7D2E..7D3F: one communal; the code reads these as struct members */
 struct State7D2E {
-    int m7d2e;
-    int m7d30;
-    int m7d32;
-    int m7d34;
-    int m7d36;
-    int m7d38;
+    int rightEdge;
+    int roadIndex;
+    int roadFraction;
+    int distanceStep;
+    int lateralX;
+    int cameraY;
     int m7d3a;
     int m7d3c;
     int m7d3e;
@@ -592,16 +596,16 @@ struct State7D2E {
 
 /* DS:7E8A..7E99: one communal; the code reads these as struct members */
 struct State7E8A {
-    int m7e8a;
-    int m7e8c;
-    int m7e8e;
-    int m7e90;
+    int roadIndex;
+    int roadFraction;
+    int distanceStep;
+    int lateralX;
     char m7e92[8];
 };
 
 /* DS:70C0..70DF: one communal; the code reads these as struct members */
 struct State70C0 {
-    int m70c0;
+    int leftEdge;
     int m70c2[6];
     int m70ce;
     int m70d0;
@@ -612,33 +616,33 @@ struct State70C0 {
 /* DS:7EAA..7EC2: one COMMON block in the original (folded from 11 placeholder
    globals: the compiler budget of the original translation units requires fewer external symbols) */
 struct State7EAA {
-    long m7eaa;
+    long money;
     int m7eae;
-    struct Car *m7eb0;
-    struct Car *m7eb2;
-    struct Node2 *m7eb4;
-    int m7eb6;
-    struct Node *m7eb8;
-    struct Node *m7eba;
-    int m7ebc;
-    int m7ebe;
-    int m7ec0;
+    struct Car *currentCar;
+    struct Car *otherCars;
+    struct Node2 *freeCars;
+    int carCount;
+    struct Node *spareParts;
+    struct Node *freeParts;
+    int partCount;
+    int adIndex;
+    int raceType;
 };
 
 /* DS:8272..8290: one COMMON block in the original (folded from 11 placeholder
    globals: the compiler budget of the original translation units requires fewer external symbols) */
 struct State8272 {
-    int m8272;
-    int m8274;
-    int m8276;
-    int m8278;
-    int m827a;
-    int m827c;
-    int m827e;
-    int m8280;
-    int m8282;
-    struct Look m8284;
-    int m8286;
+    int stickerX;
+    int stickerY;
+    int stickerSubX;
+    int betType;
+    int bodyPic;
+    int paintScheme;
+    int tireVariant;
+    int overlayPic;
+    int specIndex;
+    struct Look appearance;
+    int transmissionPic;
     char pad8288[8];
 };
 

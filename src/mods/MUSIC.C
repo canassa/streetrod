@@ -17,7 +17,7 @@ struct Tone g_tones[5] = {{0, 0, 0, 0, 0}, {0, 0, 0, 8, 10}, {0, 0, 4, 8, 1}, {0
 
 void music_play(void far *song, void *tones)
 {
-    if (song == bs79aa.l8) {
+    if (song == bs79aa.song) {
         if (g_savedMusicOn != -1) {
             g_musicOn = g_savedMusicOn;
             g_savedMusicOn = -1;
@@ -28,7 +28,7 @@ void music_play(void far *song, void *tones)
         }
         g_voiceNum = 1;
         g_voice = &bs79aa;
-        bn82c4 = g_tones + *bs79aa.f1a;
+        bn82c4 = g_tones + *bs79aa.toneCursor;
         g_vibratoActive = 1;
     } else {
         if (g_savedMusicOn == -1) {
@@ -36,8 +36,8 @@ void music_play(void far *song, void *tones)
             g_musicOn = 1;
         }
         g_voiceNum = 2;
-        ao79c6t.cur = ao79c6t.lc = ao79c6t.l8 = song;
-        ao79c6t.f16 = ao79c6t.f14 = tones;
+        ao79c6t.cur = ao79c6t.phraseStart = ao79c6t.song = song;
+        ao79c6t.repeatCursor = ao79c6t.repeatTable = tones;
         g_voice = &ao79c6t;
         sys_music_start(2, 0);
     }
@@ -50,11 +50,11 @@ void music_play(void far *song, void *tones)
 void music_set_vibrato(int on, int a, int b, int c, int d)
 {
     if (on) {
-        g_tones[0].f0 = 0;
-        g_tones[0].f1 = a;
-        g_tones[0].f2 = c;
-        g_tones[0].f3 = b;
-        g_tones[0].f4 = d;
+        g_tones[0].phase = 0;
+        g_tones[0].waveform = a;
+        g_tones[0].depth = c;
+        g_tones[0].length = b;
+        g_tones[0].delay = d;
     }
     g_vibratoActive = on;
 }

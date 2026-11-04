@@ -56,7 +56,7 @@ void F_123F4(int frame, int slot)
     pict = F_15BBE(0x44f, ARENA_HIGH_STACK);
     x = 0xb8;
     y = g_tboltY[slot] + 10;
-    if (frame == 1 && r_vid.f16) {
+    if (frame == 1 && r_vid.copyToFront) {
         blt.w = 0x10;
         blt.h = 6;
         blt.sx = 0x40;
@@ -73,7 +73,7 @@ void F_123F4(int frame, int slot)
     blt.h = blt.fc = 6;
     (*b_78a2)(pict, r_vid.back, &blt, 1);
     cursor_ctl(CURSOR_SHOW);
-    if (r_vid.f16)
+    if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
     F_19438(1);
 }
@@ -100,7 +100,7 @@ void F_12525(int slot)
     blt.h = blt.fc = 6;
     (*b_78a2)(pict, r_vid.back, &blt, 1);
     cursor_ctl(CURSOR_SHOW);
-    if (r_vid.f16) {
+    if (r_vid.copyToFront) {
         bitmap_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
         F_16CF3();
         cursor_ctl(CURSOR_HIDE_NOW);
@@ -134,7 +134,7 @@ void F_1264E(int n, int flag)
     sy = 125 - (h1 = pict->height);
     if (flag)
         sx -= 0x18;
-    if (r_vid.f16) {
+    if (r_vid.copyToFront) {
         saved = popup_grab(sx - 8, sy, w1 + 8, h1, 0);
         (*bl78ce)(0xe, 0x94, sx - 8, 0x94, sy, pict);
         blt.sx = blt.sy = 0;
@@ -178,16 +178,16 @@ void F_127DB(int n, char far *s)
     int saved;
     int i;
 
-    saved = r_vid.f16;
+    saved = r_vid.copyToFront;
     if (n) {
         g_partAnimate = 0;
-        r_vid.f16 = 0;
+        r_vid.copyToFront = 0;
         cursor_ctl(CURSOR_HIDE);
         F_1264E(n, 0);
         for (i = 0; i < 2; i++)
             F_123F4(*s++, i);
         cursor_ctl(CURSOR_SHOW);
-        if (r_vid.f16 = saved)
+        if (r_vid.copyToFront = saved)
             bitmap_copy_box(r_vid.back, r_vid.front, 0x20, 10, 0xe7, 0xb8);
         g_partAnimate = 1;
     }
@@ -323,13 +323,13 @@ void gargfx_draw_bolt(int n)
     move.dy = ypos += 9;
     move.dx = (move.sx = px) + 0x60;
     move.w = 6;
-    (*am78a6t)(r_vid.f8, r_vid.back, &move);
+    (*am78a6t)(r_vid.hoodBg, r_vid.back, &move);
     if (flag = px & ~r_vid.mask) {
         saved = F_1934E(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
         bitmap_shift_right(pict, flag, saved);
     }
     px = (px & r_vid.mask) + 0x60;
-    (*bl78ce)(0xd, 0x93, px, (n == 0x43f && r_vid.f16) ? 0xd - height : ypos, ypos, saved);
+    (*bl78ce)(0xd, 0x93, px, (n == 0x43f && r_vid.copyToFront) ? 0xd - height : ypos, ypos, saved);
     cursor_ctl(CURSOR_SHOW_NOW);
     F_19438(1);
     if (pict != saved)
@@ -371,8 +371,8 @@ void gargfx_drop_bolt(void)
     y1 -= rows;
     blt.sy = y1;
     blt.dy = y1 += 9;
-    (*am78a6t)(r_vid.f8, r_vid.back, &blt);
-    if (r_vid.f16) {
+    (*am78a6t)(r_vid.hoodBg, r_vid.back, &blt);
+    if (r_vid.copyToFront) {
         xpos += 0x60;
         ypos += 9 - rows;
         bitmap_copy_box(r_vid.back, r_vid.front, xpos, ypos, xpos + wide, ypos + rows);
@@ -462,10 +462,10 @@ void gargfx_draw_part(int n, int flag)
     if (flag == 0) {
         move.dx = x;
         move.dy = ypos;
-        (*ab78aat)(saved, r_vid.f8, &move, 1);
+        (*ab78aat)(saved, r_vid.hoodBg, &move, 1);
     }
     if (g_partAnimate) {
-        (*bl78ce)(0xd, 0x93, x + 0x60, r_vid.f16 ? 0xd - height : ypos, ypos + 9, saved);
+        (*bl78ce)(0xd, 0x93, x + 0x60, r_vid.copyToFront ? 0xd - height : ypos, ypos + 9, saved);
         cursor_ctl(CURSOR_SHOW_NOW);
     }
     if (g_boltOverlay) {
@@ -479,7 +479,7 @@ void gargfx_draw_part(int n, int flag)
 
 /* gargfx_erase_part @ 0F38:3C19 (linear 0x12F99, 259 bytes)
 
-   Draw item picture n at the current slot position, 20 above it, via the r_vid.f8 buffer,
+   Draw item picture n at the current slot position, 20 above it, via the r_vid.hoodBg buffer,
    and copy the area to the front buffer when the screen is shadowed. */
 
 void gargfx_erase_part(int n, int flag)
@@ -504,16 +504,16 @@ void gargfx_erase_part(int n, int flag)
     move.dy = py += 9;
     w = move.w = pict->width + 8;
     h = move.h = move.fc = pict->height;
-    (*b_78a2)(r_vid.f8, r_vid.back, &move, 1);
+    (*b_78a2)(r_vid.hoodBg, r_vid.back, &move, 1);
     F_19438(1);
     cursor_ctl(CURSOR_SHOW);
-    if (r_vid.f16)
+    if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, px, py, px + w, py + h);
 }
 
 /* gargfx_draw_wires @ 0F38:3D1C (linear 0x1309C, 281 bytes)
 
-   Draw the current pair of slot pictures: the strip from r_vid.f8 and the sprite ap82acz,
+   Draw the current pair of slot pictures: the strip from r_vid.hoodBg and the sprite ap82acz,
    copying the area to the front buffer when the screen is shadowed. */
 
 void gargfx_draw_wires(void)
@@ -532,18 +532,18 @@ void gargfx_draw_wires(void)
     blt.w = 0x20;
     xs = blt.dx = (blt.sx = g_wiresPos[next * 2]) + 0x60;
     ys = blt.dy = (blt.sy = g_wiresPos[next * 2 + 1]) + 9;
-    blt.h = r_vid.f8->height - blt.sy - 4;
-    (*b_78a2)(r_vid.f8, r_vid.back, &blt, 1);
+    blt.h = r_vid.hoodBg->height - blt.sy - 4;
+    (*b_78a2)(r_vid.hoodBg, r_vid.back, &blt, 1);
     bitmap_draw_pic(r_vid.back, ap82acz, (unsigned char)(x2 = g_wiresPos[pair * 2] + 0x60), (unsigned char)(y2 = g_wiresPos[pair * 2 + 1] + 9), 0);
     cursor_ctl(CURSOR_SHOW);
-    if (r_vid.f16)
+    if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.back, r_vid.front, x2 > xs ? xs : x2, y2 > ys ? ys : y2, blt.w + x2 + 0x18, blt.h + y2 + 0x18);
 }
 
 /* gargfx_draw_parts @ 0F38:3E35 (linear 0x131B5, 248 bytes)
 
    Draw the item pictures of a car's parts for slots 0, 1 and then 2..4, with the
-   screen shadow off (g_partAnimate). Loads the r_vid.f8 strip first when it isn't there yet. */
+   screen shadow off (g_partAnimate). Loads the r_vid.hoodBg strip first when it isn't there yet. */
 
 void gargfx_draw_parts(struct Car *car)
 {
@@ -554,10 +554,10 @@ void gargfx_draw_parts(struct Car *car)
 
     mode = hz82ae;
     g_partAnimate = 0;
-    if (r_vid.f8 == 0)
-        r_vid.f8 = F_15BBE(0x42d, ARENA_LOW_STACK);
+    if (r_vid.hoodBg == 0)
+        r_vid.hoodBg = F_15BBE(0x42d, ARENA_LOW_STACK);
     else
-        disk_unpack_pic(0x42d, r_vid.f8);
+        disk_unpack_pic(0x42d, r_vid.hoodBg);
     if (type = o_8290[0]) {
         hz82ae = 0;
         gargfx_draw_part(type, 0);
@@ -568,7 +568,7 @@ void gargfx_draw_parts(struct Car *car)
         if (type = o_8290[1]) {
             hz82ae = 1;
             gargfx_draw_part(type, 0);
-            slot = g_carbPosBase[g_4806[car->rack.s[1]->idx].f2];
+            slot = g_carbPosBase[g_4806[car->rack.parts[1]->idx].variant];
             for (type = 0; type < 3; type++) {
                 hz82ae = slot++;
                 if (other = o_8290[type + 2])
@@ -583,8 +583,8 @@ void gargfx_draw_parts(struct Car *car)
 /* gargfx_draw_bolts @ 0F38:3F2D (linear 0x132AD, 286 bytes)
 
    Redraw all nine slot pictures (a and b give each slot's mode and sub-mode) into the
-   back buffer over the r_vid.f8 strip, then the ap82acz sprite, and an optional label when flag is set.
-   The screen shadow r_vid.f16 is switched off meanwhile and the area is copied to the front afterwards. */
+   back buffer over the r_vid.hoodBg strip, then the ap82acz sprite, and an optional label when flag is set.
+   The screen shadow r_vid.copyToFront is switched off meanwhile and the area is copied to the front afterwards. */
 
 void gargfx_draw_bolts(int *a, int *b, int flag)
 {
@@ -597,15 +597,15 @@ void gargfx_draw_bolts(int *a, int *b, int flag)
 
     prev = hz82ae;
     prev2 = g82b2t;
-    shadow = r_vid.f16;
-    r_vid.f16 = 0;
+    shadow = r_vid.copyToFront;
+    r_vid.copyToFront = 0;
     blt.sx = 0;
     blt.dx = 0x60;
     blt.sy = 0;
     blt.dy = 9;
-    blt.w = r_vid.f8->width;
-    blt.h = blt.fc = r_vid.f8->height;
-    (*b_78a2)(r_vid.f8, r_vid.back, &blt, 1);
+    blt.w = r_vid.hoodBg->width;
+    blt.h = blt.fc = r_vid.hoodBg->height;
+    (*b_78a2)(r_vid.hoodBg, r_vid.back, &blt, 1);
     for (i = 0; i < 9; i++) {
         if (id = af829ax[i]) {
             hz82ae = a[i];
@@ -619,7 +619,7 @@ void gargfx_draw_bolts(int *a, int *b, int flag)
         F_119B8(0x4c6, 0x60, 0x94, -1);
         blt.h = 0xaf;
     }
-    if (r_vid.f16 = shadow)
+    if (r_vid.copyToFront = shadow)
         bitmap_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + blt.w - 1, blt.dy + blt.h - 1);
     hz82ae = prev;
     g82b2t = prev2;
@@ -673,7 +673,7 @@ void gargfx_build_hots(int *xs, int *ys)
     item = g_1948;
     len = (num = 3) * sizeof(struct Hot);
     memcpy(g_engineHots, item, len);
-    g_boltHot.f4 = g_offBolt;
+    g_boltHot.textOffset = g_offBolt;
     i = lane = j = 0;
     for (; i < 9; i++) {
         if (o_8290[lane]) {
@@ -694,7 +694,7 @@ void gargfx_build_hots(int *xs, int *ys)
         }
     }
     if (o_8290[0]) {
-        g_boltHot.f4 = g_offWires;
+        g_boltHot.textOffset = g_offWires;
         g_boltHot.f6 = 13;
         i = (ap82acz == 0x446) + engine_index() * 2;
         g_boltHot.x2 = (g_boltHot.x1 = g_wiresPos[i * 2] + 0x5b) + 10;
@@ -702,7 +702,7 @@ void gargfx_build_hots(int *xs, int *ys)
         insert_hot(g_engineHots, &g_boltHot, num);
         num++;
     }
-    g_engineHots[num].f0 = 9;
+    g_engineHots[num].kind = 9;
     hz82ae = rx;
     g82b2t = rh;
     sys_hover_reset();

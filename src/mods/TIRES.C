@@ -219,16 +219,16 @@ void F_1B213(int *a, int *b)
     int sv401;
     int s74;
 
-    sv401 = r_vid.f16;
-    s72 = m_8272.m8272;
-    s74 = m_8272.m8274;
+    sv401 = r_vid.copyToFront;
+    s72 = m_8272.stickerX;
+    s74 = m_8272.stickerY;
     marks_release();
     cursor_ctl(CURSOR_HIDE_NOW);
-    r_vid.f16 = 0;
+    r_vid.copyToFront = 0;
     g_6da0 = z_8b7c;
-    modelm = a_7eaap.m7eb0->f2;
-    attr3 = game_car_look(a_7eaap.m7eb0);
-    tinto = (a_7eaap.m7eb0->f24 >> 8) & 0x1f;
+    modelm = a_7eaap.currentCar->specIndex;
+    attr3 = game_car_look(a_7eaap.currentCar);
+    tinto = (a_7eaap.currentCar->appearance >> 8) & 0x1f;
     for (n = 0; n < 3; n++)
         g_liftPics[n] = F_15BBE(g_liftPicIds[n], ARENA_LOW_STACK);
     screen_fill_rect(0x88, 0xba - g_liftPics[1]->height, g_liftPics[1]->width, g_liftPics[1]->height,
@@ -237,8 +237,8 @@ void F_1B213(int *a, int *b)
     g_6d28agz = F_1934E(g_liftPics[1]->width, 0xba - g_spriteBgY, 0, ARENA_LOW_STACK);
     popup_grab(r_vid.mask & 0x88, g_spriteBgY, g_liftPics[1]->width, 0xba - g_spriteBgY, g_6d28agz);
     carpic_build(&g_liftCar, modelm, attr3, tinto, 0, 0, 0, 1);
-    g_6dd4 = g7682n[modelm].b0;
-    g_wheelX2Value = g7682n[modelm].b1;
+    g_6dd4 = g7682n[modelm].wheelX1;
+    g_wheelX2Value = g7682n[modelm].wheelX2;
     blt.w = g_liftCar->width;
     blt.h = 0x1c;
     blt.sx = 0;
@@ -455,9 +455,9 @@ void F_1B213(int *a, int *b)
     marks_release();
     (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
     z_8b7c = g_6da0;
-    r_vid.f16 = sv401;
-    m_8272.m8272 = s72;
-    m_8272.m8274 = s74;
+    r_vid.copyToFront = sv401;
+    m_8272.stickerX = s72;
+    m_8272.stickerY = s74;
     g_spriteBgY = 0;
     cursor_ctl(CURSOR_SHOW_NOW);
 }

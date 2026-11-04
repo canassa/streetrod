@@ -38,8 +38,8 @@ int aw8260y;
 int d_8266;
 int ap8268t;
 
-struct Style g_style16 = {{{""}, {{13, 9, 9, 15, 1}}, {{9, 13, 13, 15, 1}}, {{1, 5, 5, 1, 1}}, {{1, 5, 5, 4, 1}}, {{15, 9, 9, 15, 1}}, {{14, 15, 15, 10, 1}}}, {{1, 4, 4, 1, 1}}, {{1, 3, 3, 4, 2}}, {{15, 9, 9, 15, 1}}, {{13, 9, 9, 15, 1}}, {{11, 2, 2, 11, 1}}, {1, 4, 4, 11, 1}, {{1, 4, 4, 1, 1}}, {{1, 4, 4, 1, 1}}, {{1, 3, 3, 4, 1}}};   /* DS:03A0 */
-struct Style g_style4 = {{{""}, {{1, 2, 2, 3, 1}}, {{2, 1, 1, 3, 1}}, {{0, 3, 3, 0, 1}}, {{0, 3, 3, 2, 1}}, {{3, 2, 2, 3, 1}}, {{2, 1, 1, 1, 1}}}, {{0, 3, 3, 0, 1}}, {{0, 3, 3, 2, 2}}, {{3, 2, 2, 3, 1}}, {{1, 2, 2, 3, 1}}, {{0, 2, 2, 0, 1}}, {0, 3, 3, 1, 1}, {{0, 3, 3, 0, 1}}, {{0, 3, 3, 0, 1}}, {{1, 2, 2, 3, 1}}};   /* DS:03F0 */
+struct Style g_style16 = {{{0, 0, 0, 0, 0}, {13, 9, 9, 15, 1}, {9, 13, 13, 15, 1}, {1, 5, 5, 1, 1}, {1, 5, 5, 4, 1}, {15, 9, 9, 15, 1}, {14, 15, 15, 10, 1}}, {1, 4, 4, 1, 1}, {1, 3, 3, 4, 2}, {15, 9, 9, 15, 1}, {13, 9, 9, 15, 1}, {11, 2, 2, 11, 1}, {1, 4, 4, 11, 1}, {1, 4, 4, 1, 1}, {1, 4, 4, 1, 1}, {1, 3, 3, 4, 1}};   /* DS:03A0 */
+struct Style g_style4 = {{{0, 0, 0, 0, 0}, {1, 2, 2, 3, 1}, {2, 1, 1, 3, 1}, {0, 3, 3, 0, 1}, {0, 3, 3, 2, 1}, {3, 2, 2, 3, 1}, {2, 1, 1, 1, 1}}, {0, 3, 3, 0, 1}, {0, 3, 3, 2, 2}, {3, 2, 2, 3, 1}, {1, 2, 2, 3, 1}, {0, 2, 2, 0, 1}, {0, 3, 3, 1, 1}, {0, 3, 3, 0, 1}, {0, 3, 3, 0, 1}, {1, 2, 2, 3, 1}};   /* DS:03F0 */
 unsigned char g_palette[16] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14};   /* DS:0440 */
 int g_palTail = 0;   /* DS:0450 */
 char g_blackPalette[16] = "";   /* DS:0452 */
@@ -91,8 +91,8 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
 
     r_vid.front = front;
     r_vid.back = back;
-    r_vid.f8 = 0;
-    r_vid.f16 = 1;
+    r_vid.hoodBg = 0;
+    r_vid.copyToFront = 1;
     switch (r_vid.mode = front->flags) {
     case VID_EGA:
         r_vid.planes = 4;
@@ -126,7 +126,7 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
     i = 5;
     do {
         i--;
-        bm7568[i].id = bm7568[i].f2 = -1;
+        bm7568[i].id = bm7568[i].scriptIndex = -1;
     } while (i);
     (*m_present)();
     menu_reset();
@@ -158,7 +158,7 @@ void video_anim_stop(int n)
         o->fc = 0;
     g_animScripts[g_animScriptStart[n]].a = -1;
     o->id = -1;
-    if (o->f4)
+    if (o->pendingTimers)
         sys_timer_cancel(n);
 }
 
@@ -198,7 +198,7 @@ static void near anim_run(int n)
     wait = 1;
     cursor_ctl(CURSOR_HIDE);
     g_obj = &bm7568[n];
-    g_cmd = &g_animScripts[k = g_obj->f2];
+    g_cmd = &g_animScripts[k = g_obj->scriptIndex];
     g_box = &g_obj->box;
     for (; k >= 0; k++) {
         switch (g_cmd->op) {
@@ -252,20 +252,20 @@ static void near anim_run(int n)
             g_box->h = g_cmd->b;
             break;
         case 11:
-            if (!(g_obj->f2 = g_cmd->b))
-                g_obj->f2 = ++k;
+            if (!(g_obj->scriptIndex = g_cmd->b))
+                g_obj->scriptIndex = ++k;
             sys_timer_anim(g_obj->id, g_cmd->a);
-            g_obj->f4++;
+            g_obj->pendingTimers++;
             if (wait)
                 cursor_ctl(CURSOR_SHOW);
-            if (g_cmd->sub == 4 && r_vid.f16)
+            if (g_cmd->sub == 4 && r_vid.copyToFront)
                 bitmap_copy_box(r_vid.back, r_vid.front, g_box->x2, g_box->y2,
                         g_box->x2 + g_box->w - 1, g_box->y2 + g_box->h - 1);
             return;
         case 12:
             cursor_ctl(CURSOR_SHOW);
             wait = 0;
-            if (!r_vid.f16)
+            if (!r_vid.copyToFront)
                 break;
             bitmap_copy_box(r_vid.back, r_vid.front, g_box->x2, g_box->y2,
                     g_box->x2 + g_box->w - 1, g_box->y2 + g_box->h - 1);
@@ -286,8 +286,8 @@ int video_anim_start(int n)
         if (bm7568[i].id == -1) {
             g_animScripts[g_animScriptStart[n]].a = i;
             bm7568[i].id = n;
-            bm7568[i].f2 = g_animScriptStart[n] + 1;
-            bm7568[i].f4 = 0;
+            bm7568[i].scriptIndex = g_animScriptStart[n] + 1;
+            bm7568[i].pendingTimers = 0;
             anim_run(i);
             break;
         }
@@ -302,7 +302,7 @@ void video_anim_resume(int n)
     int k;
 
     k = g_animScripts[g_animScriptStart[n]].a;
-    bm7568[k].f4--;
+    bm7568[k].pendingTimers--;
     anim_run(k);
 }
 
@@ -328,11 +328,11 @@ int video_anim_hook(struct Obj *o, struct Cmd *c)
         }
         if (g_blinkCount--) {
             struct Colors save;     /* PROVISIONAL: never used; fills the 6-byte frame slot (original local unknown) */
-            old = x_colors.c[3];
-            x_colors.c[3] = (g_blinkCount & 1) ? 4 : 0;
+            old = x_colors.line;
+            x_colors.line = (g_blinkCount & 1) ? 4 : 0;
             draw_hline(r_vid.back, 0x33, 0x6f, 2);
             if (!(g_blinkCount & 3)) {
-                x_colors.c[3] = (g_blinkCount & 4) ? 4 : 0;
+                x_colors.line = (g_blinkCount & 4) ? 4 : 0;
                 draw_hline(r_vid.back, 0x30, 0x6f, 2);
             }
             return 0;

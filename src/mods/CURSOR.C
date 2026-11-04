@@ -24,7 +24,7 @@ struct Pair g_cursorPairs[4] = {{1, 1}, {2, 2}, {1, 1}, {8, 8}};   /* DS:06EC */
 
 unsigned cursor_shape_off(unsigned n)
 {
-    return n * g_cursor2.size;
+    return n * g_cursor2.shapeSize;
 }
 
 /* cursor_init @ 0F38:2B28 (linear 0x11EA8, 598 bytes)
@@ -80,10 +80,10 @@ void cursor_init(void)
             fp++;
         }
     }
-    g_cursor2.size = img->pitch << 4;
-    g_cursor2.n = 1;
-    g_cursor2.off = cursor_shape_off(1);
-    g_cursor2.r.x2 = -1;
+    g_cursor2.shapeSize = img->pitch << 4;
+    g_cursor2.shapeIndex = 1;
+    g_cursor2.shapeOffset = cursor_shape_off(1);
+    g_cursor2.drawnRect.x2 = -1;
     g_cursorX = 0x9e;
     g_cursorY = 0x80;
     g_savedCursorX = 0;
@@ -106,15 +106,15 @@ void cursor_ctl(int mode)
     a = a < 0 ? 0 : a > (SCREEN_WIDTH - 1) ? (SCREEN_WIDTH - 1) : a;
     b = b < 0 ? 0 : b > (SCREEN_HEIGHT - 1) ? (SCREEN_HEIGHT - 1) : b;
     if (mode >= 0) {
-        g_4742 = g_cursorPairs[g_cursor2.n = mode].a;
+        g_4742 = g_cursorPairs[g_cursor2.shapeIndex = mode].a;
         g_4744 = g_cursorPairs[mode].b;
-        g_cursor2.off = cursor_shape_off(g_cursor2.n);
+        g_cursor2.shapeOffset = cursor_shape_off(g_cursor2.shapeIndex);
         cursor_draw(a, b);
     } else if (mode >= CURSOR_SHOW_NOW) {
         if (++g_4733 > 0) {
             g_cursor2.state = (mode == CURSOR_SHOW) + 1;
-            if (g_cursor2.r.x2 >= 0)
-                cursor_draw(g_cursor2.r.x1, g_cursor2.r.y1);
+            if (g_cursor2.drawnRect.x2 >= 0)
+                cursor_draw(g_cursor2.drawnRect.x1, g_cursor2.drawnRect.y1);
             else
                 cursor_draw(a, b);
             g_cursor2.state = 1;
@@ -122,8 +122,8 @@ void cursor_ctl(int mode)
     } else {
         if (--g_4733 >= 0) {
             g_cursor2.state = -((mode == CURSOR_HIDE) - 0xff);
-            if (g_cursor2.r.x2 >= 0)
-                cursor_draw(g_cursor2.r.x1, g_cursor2.r.y1);
+            if (g_cursor2.drawnRect.x2 >= 0)
+                cursor_draw(g_cursor2.drawnRect.x1, g_cursor2.drawnRect.y1);
             else
                 cursor_draw(a, b);
             g_cursor2.state = 0;
@@ -148,11 +148,11 @@ void cursor_draw(int x, int y)
                 (*b_78a2)(g_cursor2.save, r_vid.back, (struct Blt *)&g_cursor2.clip, 1);
             g_cursor2.clip.w = 0;
         } else {
-            g_cursor2.r.x1 = g_cursor2.r.y1 = 1000;
-            g_cursor2.r.x2 = g_cursor2.r.y2 = -1;
+            g_cursor2.drawnRect.x1 = g_cursor2.drawnRect.y1 = 1000;
+            g_cursor2.drawnRect.x2 = g_cursor2.drawnRect.y2 = -1;
         }
         if (g_cursor2.state < 0) {
-            if (g_cursor2.r.x2 < 0)
+            if (g_cursor2.drawnRect.x2 < 0)
                 return;
             if (g_cursor2.state < -1)
                 return;
@@ -162,16 +162,16 @@ void cursor_draw(int x, int y)
             g_cursor2.clip.w = SCREEN_WIDTH - g_cursor2.clip.dx > 0x18 ? 0x18 : SCREEN_WIDTH - g_cursor2.clip.dx;
             g_cursor2.clip.h = SCREEN_HEIGHT - y > 16 ? 16 : SCREEN_HEIGHT - y;
             g_cursor2.clip.dy = y;
-            a = (x & ~r_vid.mask) * (0x18 >> r_vid.shift) + g_cursor2.off;
+            a = (x & ~r_vid.mask) * (0x18 >> r_vid.shift) + g_cursor2.shapeOffset;
             (*ap78b2z)(g_cursor2.shape + a, g_cursor2.mask + a, g_cursor2.save->bits.p, r_vid.back->bits.p, g_cursor2.clip.dx >> r_vid.shift, y, g_cursor2.clip.w >> r_vid.shift, g_cursor2.clip.h);
         }
         a = x + 15;
         b = y + 15;
-        if (r_vid.f16 && g_cursor2.state == 1)
-            bitmap_copy_box(r_vid.back, r_vid.front, g_cursor2.r.x1 > x ? x : g_cursor2.r.x1, g_cursor2.r.y1 > y ? y : g_cursor2.r.y1, g_cursor2.r.x2 < a ? a : g_cursor2.r.x2, g_cursor2.r.y2 < b ? b : g_cursor2.r.y2);
-        g_cursor2.r.x1 = x;
-        g_cursor2.r.y1 = y;
-        g_cursor2.r.x2 = a;
-        g_cursor2.r.y2 = b;
+        if (r_vid.copyToFront && g_cursor2.state == 1)
+            bitmap_copy_box(r_vid.back, r_vid.front, g_cursor2.drawnRect.x1 > x ? x : g_cursor2.drawnRect.x1, g_cursor2.drawnRect.y1 > y ? y : g_cursor2.drawnRect.y1, g_cursor2.drawnRect.x2 < a ? a : g_cursor2.drawnRect.x2, g_cursor2.drawnRect.y2 < b ? b : g_cursor2.drawnRect.y2);
+        g_cursor2.drawnRect.x1 = x;
+        g_cursor2.drawnRect.y1 = y;
+        g_cursor2.drawnRect.x2 = a;
+        g_cursor2.drawnRect.y2 = b;
     }
 }

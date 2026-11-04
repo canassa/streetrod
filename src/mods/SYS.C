@@ -115,12 +115,12 @@ void sys_hover_reset(void)
 
 void sys_music_pause(void)
 {
-    if (g_voice->off) {
-        g_voice->off = 0;
+    if (g_voice->active) {
+        g_voice->active = 0;
         outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
         g_speakerOn = 0;
         g_voice->dirty = 1;
-        g_hots[F_06827(-40)].f4 = g_offTunes;
+        g_hots[F_06827(-40)].textOffset = g_offTunes;
         sys_hover_reset();
     }
 }
@@ -129,10 +129,10 @@ void sys_music_pause(void)
 
 void sys_music_resume(void)
 {
-    if (g_musicOn && !g_voice->off && g_voice->lc != g_voice->l8) {
-        g_voice->off = 1;
+    if (g_musicOn && !g_voice->active && g_voice->phraseStart != g_voice->song) {
+        g_voice->active = 1;
         g_voice->dirty = 1;
-        g_hots[F_06827(-40)].f4 = g_offSquelch;
+        g_hots[F_06827(-40)].textOffset = g_offSquelch;
         sys_hover_reset();
     }
 }
@@ -184,7 +184,7 @@ void sys_timer_remove(int n)
         if (i < 0)
             g_timerNext = 0x7fffffffL;
         else
-            g_timerNext = g_timers[i].key;
+            g_timerNext = g_timers[i].deadline;
     }
     i = g_timers[n].prv;
     if (i >= 0)
@@ -323,13 +323,13 @@ void sys_init(void)
         g_mousePresent = 0;
     g_cursorDrawX = -1;
     g_cursorDrawY = -1;
-    bs79aa.off = 0;
-    bs79aa.l8 = g_song;
-    bs79aa.cur = bs79aa.lc = bs79aa.l8;
-    bs79aa.f16 = bs79aa.f14 = g_songRepeats;
-    bs79aa.f1a = bs79aa.f18 = g_songTones;
-    ao79c6t.off = 0;
-    ao79c6t.f1a = ao79c6t.f18 = g_jingleTones;
+    bs79aa.active = 0;
+    bs79aa.song = g_song;
+    bs79aa.cur = bs79aa.phraseStart = bs79aa.song;
+    bs79aa.repeatCursor = bs79aa.repeatTable = g_songRepeats;
+    bs79aa.toneCursor = bs79aa.toneTable = g_songTones;
+    ao79c6t.active = 0;
+    ao79c6t.toneCursor = ao79c6t.toneTable = g_jingleTones;
     _harderr(sys_crit_error);
     _disable();
     outp(PIT_CMD, PIT_CH0_LOHI_MODE3);
@@ -486,13 +486,13 @@ int sys_wait_input(int ticks)
         }
         if (g_timerNext <= g_tick) {
             p = &g_timers[i = g_timerFirst];
-            switch (p->fa) {
+            switch (p->action) {
             case 0:
             default:
                 sys_timer_remove(i);
                 break;
             case 1:
-                res = p->fc;
+                res = p->argument;
                 sys_timer_remove(i);
                 video_anim_resume(res);
                 break;
@@ -553,7 +553,7 @@ int sys_wait_input(int ticks)
                             aq8256z = 1;
                             F_11421(g_bannerX, "", cz8bc0y);
                         }
-                        F_11421(-1, g_239e + at8ba8v->f4, 0);
+                        F_11421(-1, g_239e + at8ba8v->textOffset, 0);
                         bit = 1;
                     }
                 } else {
@@ -596,25 +596,25 @@ int sys_timer_add(int delay, int pri)
     if (delay) {
         for (;;) {
             if (cur3 >= 0) {
-                if ((key = g_timers[cur3].key) > when) {
+                if ((key = g_timers[cur3].deadline) > when) {
                     cur3 = g_timers[prev = cur3].nxt;
                     continue;
                 }
                 if (when > key)
                     break;
                 for (;;) {
-                    if (g_timers[cur3].f8 >= pri)
+                    if (g_timers[cur3].priority >= pri)
                         break;
                     cur3 = g_timers[prev = cur3].nxt;
-                    if (cur3 < 0 || g_timers[cur3].key != key)
+                    if (cur3 < 0 || g_timers[cur3].deadline != key)
                         break;
                 }
             }
             break;
         }
     }
-    g_timers[i].key = when;
-    g_timers[i].f8 = pri;
+    g_timers[i].deadline = when;
+    g_timers[i].priority = pri;
     g_timerFree = g_timers[i].nxt;
     g_timers[i].nxt = cur3;
     if (cur3 < 0) {
@@ -638,8 +638,8 @@ void sys_timer_anim(int fc, int delay)
     int n;
 
     n = sys_timer_add(delay, g8ef6q);
-    g_timers[n].fa = 1;
-    g_timers[n].fc = fc;
+    g_timers[n].action = 1;
+    g_timers[n].argument = fc;
 }
 
 /* sys_timer_cancel @ 0000:19BC (linear 0x019BC, 73 bytes) */
@@ -650,8 +650,8 @@ void sys_timer_cancel(int n)
     int i;
 
     for (i = g_timerFirst; i >= 0; i = g_timers[i].nxt)
-        if ((p = g_timers + i)->fa == 1 && p->fc == n)
-            p->fa = 0;
+        if ((p = g_timers + i)->action == 1 && p->argument == n)
+            p->action = 0;
 }
 
 /* sys_music_start @ 0000:1A05 (linear 0x01A05, 119 bytes) */
@@ -659,19 +659,19 @@ void sys_timer_cancel(int n)
 void sys_music_start(int n, int cnt)
 {
     if (g_musicOn) {
-        g_voice->off = 0;
+        g_voice->active = 0;
         outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
         g_speakerOn = 0;
-        g_voice->f4 = 0;
+        g_voice->repeatCount = 0;
         g_voice->dirty = 1;
-        g_voice->lc = g_voice->cur = g_voice->l8 + n;
-        g_voice->f2 = cnt + 1;
-        g_voice->f1a = g_voice->f18;
-        bn82c4 = g_tones + *g_voice->f1a;
+        g_voice->phraseStart = g_voice->cur = g_voice->song + n;
+        g_voice->ticksLeft = cnt + 1;
+        g_voice->toneCursor = g_voice->toneTable;
+        bn82c4 = g_tones + *g_voice->toneCursor;
         g_vibratoActive = 1;
-        g_voice->off = 1;
+        g_voice->active = 1;
     } else {
-        g_voice->off = 0;
+        g_voice->active = 0;
     }
 }
 
@@ -679,11 +679,11 @@ void sys_music_start(int n, int cnt)
 
 void sys_music_stop(void)
 {
-    g_voice->off = 0;
+    g_voice->active = 0;
     outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
     g_speakerOn = 0;
     g_voice->dirty = 1;
-    g_voice->lc = g_voice->cur = g_voice->l8;
+    g_voice->phraseStart = g_voice->cur = g_voice->song;
 }
 
 /* sys_drive_start @ 0000:1AAD (linear 0x01AAD, 122 bytes) */
@@ -699,7 +699,7 @@ void sys_drive_start(void)
         g_mouseShiftY = 6;
     }
     g_lastDx = g_lastDy = g_buttons = g_click = 0;
-    g_driveEng.f2 = g_driveEng.f4 = 0;
+    g_driveEng.steeringInput = g_driveEng.steering = 0;
     g_driveDiv = 0;
     outp(PIT_CH2, 0x1e);
     outp(PIT_CH2, 0);
@@ -797,7 +797,7 @@ void sys_demo_step(void)
             k = 2;
             break;
         case 9:
-            if (a_7eaap.m7eb0)
+            if (a_7eaap.currentCar)
                 break;
         case 13:
             num--;
@@ -848,7 +848,7 @@ void sys_demo_step(void)
             g_demoChoice = 5;
             break;
         case 7:
-            if (a_7eaap.m7eb0 == 0)
+            if (a_7eaap.currentCar == 0)
                 g_demoChoice = 0;
             break;
         }
@@ -900,9 +900,9 @@ void sys_demo_step(void)
         g_demoLastGroup = 0;
     } else
         g_demoLastGroup = g_keyGroup;
-    if (a_7eaap.m7eb8 == 0 && g_keyGroup == 7)
-        game_add_part(0x2a, g_4806[42].f0);
-    if (a_7eaap.m7eb0 == 0) {
+    if (a_7eaap.spareParts == 0 && g_keyGroup == 7)
+        game_add_part(0x2a, g_4806[42].value);
+    if (a_7eaap.currentCar == 0) {
         if (g_keyGroup == 10)
             g_demoKey = 0x31;
         if (g_keyGroup == 8 && (g_demoKey == 1 || g_demoKey == 0x22 || g_demoKey == 0x19))
@@ -943,48 +943,48 @@ void interrupt far sys_timer_isr(void)
             g_cursorDirty = 1;
         }
     }
-    if (g_voice->off && --g_voice->f2) {
-        if (g_vibratoActive && g_voice->f0.w && !--g_vibCount) {
-            bn82c4->f0 = bn82c4->f0 % bn82c4->f3;
-            g_vibDivisor = g_toneShapes[bn82c4->f1][bn82c4->f0++] * g_vibGain + g_voice->f0.w;
+    if (g_voice->active && --g_voice->ticksLeft) {
+        if (g_vibratoActive && g_voice->divisor.w && !--g_vibCount) {
+            bn82c4->phase = bn82c4->phase % bn82c4->length;
+            g_vibDivisor = g_toneShapes[bn82c4->waveform][bn82c4->phase++] * g_vibGain + g_voice->divisor.w;
             outp(PIT_CH2, g_vibDivisor);
             outp(PIT_CH2, g_vibDivisor >> 8);
-            g_vibCount = bn82c4->f4;
+            g_vibCount = bn82c4->delay;
         }
-    } else if (g_voice->off && g_voice->f2 == 0) {
-        while (!(g_voice->f2 = *g_voice->cur++)) {
+    } else if (g_voice->active && g_voice->ticksLeft == 0) {
+        while (!(g_voice->ticksLeft = *g_voice->cur++)) {
             if (*g_voice->cur++ == 0) {
                 outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
                 g_speakerOn = 0;
-                g_voice->off = 0;
+                g_voice->active = 0;
                 g_voice->dirty = 1;
-                g_voice->lc = g_voice->cur = g_voice->l8;
+                g_voice->phraseStart = g_voice->cur = g_voice->song;
                 goto tail;
             }
-            g_voice->f1a++;
-            if (*g_voice->f16 < ++g_voice->f4) {
-                if (*++g_voice->f16 < 0) {
-                    g_voice->cur = g_voice->l8 + 2;
-                    g_voice->f16 = g_voice->f14;
-                    g_voice->f1a = g_voice->f18;
+            g_voice->toneCursor++;
+            if (*g_voice->repeatCursor < ++g_voice->repeatCount) {
+                if (*++g_voice->repeatCursor < 0) {
+                    g_voice->cur = g_voice->song + 2;
+                    g_voice->repeatCursor = g_voice->repeatTable;
+                    g_voice->toneCursor = g_voice->toneTable;
                 }
-                g_voice->lc = g_voice->cur;
-                g_voice->f4 = 0;
+                g_voice->phraseStart = g_voice->cur;
+                g_voice->repeatCount = 0;
             } else
-                g_voice->cur = g_voice->lc;
-            bn82c4 = g_tones + *g_voice->f1a;
+                g_voice->cur = g_voice->phraseStart;
+            bn82c4 = g_tones + *g_voice->toneCursor;
         }
-        if (!(g_voice->f0.w = *g_voice->cur++)) {
+        if (!(g_voice->divisor.w = *g_voice->cur++)) {
             g_voice->dirty = 1;
             outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
             g_speakerOn = 0;
         } else {
             if (g_vibratoActive) {
-                g_vibCount = bn82c4->f4;
-                g_vibGain = (unsigned)bn82c4->f2 * g_voice->f0.w / 1000;
+                g_vibCount = bn82c4->delay;
+                g_vibGain = (unsigned)bn82c4->depth * g_voice->divisor.w / 1000;
             }
-            outp(PIT_CH2, g_voice->f0.b[0]);
-            outp(PIT_CH2, g_voice->f0.b[1]);
+            outp(PIT_CH2, g_voice->divisor.b[0]);
+            outp(PIT_CH2, g_voice->divisor.b[1]);
             if (g_soundOn && (g_soundOn != g_speakerOn || g_voice->dirty)) {
                 outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_MASK);
                 g_speakerOn = 1;
@@ -1037,8 +1037,8 @@ int z_8b7c;
 
 void sys_stop_drive(void)
 {
-    g_driveEng.f14 = g_driveEng.f16 = g_driveEng.f2 = g_driveEng.f4 = g_05d6 = 0;
-    g_driveEng.fbe = g_driveEng.fc0;
+    g_driveEng.accelStep = g_driveEng.decelStep = g_driveEng.steeringInput = g_driveEng.steering = g_05d6 = 0;
+    g_driveEng.fbe = g_driveEng.elapsedTicks;
 }
 
 /* sys_drive_isr @ 0000:238C (linear 0x0238C, 2062 bytes) */
@@ -1068,9 +1068,9 @@ void interrupt far sys_drive_isr(void)
             }
             if (g_tickDiv & 1) {
                 if (g_carAnim == 0) {
-                    r = (unsigned)(((long)g_driveEng.fe * g_driveEng.fe) >> 10);
+                    r = (unsigned)(((long)g_driveEng.rpm * g_driveEng.rpm) >> 10);
                     r += r >> (r + 2) >> 3;
-                    val.w = 50000 - ((g_driveEng.fe == 5700 ? 10000 : 0) + r);
+                    val.w = 50000 - ((g_driveEng.rpm == 5700 ? 10000 : 0) + r);
                     outp(PIT_CH2, val.b[0]);
                     outp(PIT_CH2, val.b[1]);
                 } else if (g_carMoving) {
@@ -1167,131 +1167,131 @@ void interrupt far sys_drive_isr(void)
                     g_fireLatch = 0;
                 }
                 if (g_demo || g_autoDrive) {
-                    if (g_driveEng.f14 * 4 + g_driveEng.fe < 5700) {
-                        if (ar7e8av.m7e8a > ao7d2ev.m7d30 ||
-                            (!a_7eaap.m7ec0 ? 0x17c : 0x3fc) - 60 < ao7d2ev.m7d30)
+                    if (g_driveEng.accelStep * 4 + g_driveEng.rpm < 5700) {
+                        if (ar7e8av.roadIndex > ao7d2ev.roadIndex ||
+                            (!a_7eaap.raceType ? 0x17c : 0x3fc) - 60 < ao7d2ev.roadIndex)
                             flag = 1;
-                    } else if (g_driveEng.f18 < g_driveEng.f1c && ao8228u) {
+                    } else if (g_driveEng.gearIndex < g_driveEng.gearCount && ao8228u) {
                         c = 1;
                         flag = 1;
                         g_autoShifts++;
                     }
-                    if (g_driveEng.fe < 2000 && g_driveEng.f18 > 1 && !flag)
+                    if (g_driveEng.rpm < 2000 && g_driveEng.gearIndex > 1 && !flag)
                         c = 1;
-                    if (g_driveEng.f20 && g_driveEng.f18 > 0)
+                    if (g_driveEng.automatic && g_driveEng.gearIndex > 0)
                         c = 0;
                 }
                 if (bw8aca) {
-                    b_82bc += g_driveEng.f0;
-                    g_driveEng.fc0++;
+                    b_82bc += g_driveEng.speed;
+                    g_driveEng.elapsedTicks++;
                 }
-                if ((!a_7eaap.m7ec0 ? 0x17c : 0x3fc) < ao7d2ev.m7d30) {
+                if ((!a_7eaap.raceType ? 0x17c : 0x3fc) < ao7d2ev.roadIndex) {
                     prev = 1;
                     flag = s = 0;
-                    if (g_driveEng.f0 > 15)
-                        g_driveEng.f0 -= 15;
+                    if (g_driveEng.speed > 15)
+                        g_driveEng.speed -= 15;
                 }
                 if (g_brakeTicks > 0) {
                     prev = 1;
                     flag = s = 0;
                     g_brakeTicks--;
                 }
-                if (g_driveEng.fe > 5000) {
-                    a_7eaap.m7eb0->rack.s[0]->b += !a_7eaap.m7ec0 ? 1 : 1;
-                    a_7eaap.m7eb0->slot6->b += !a_7eaap.m7ec0 ? 1 : 1;
+                if (g_driveEng.rpm > 5000) {
+                    a_7eaap.currentCar->rack.parts[0]->wear += !a_7eaap.raceType ? 1 : 1;
+                    a_7eaap.currentCar->transmission->wear += !a_7eaap.raceType ? 1 : 1;
                 }
-                if (!(g_0600 & (!a_7eaap.m7ec0 ? 0xf : 0xf)))
-                    a_7eaap.m7eb0->rack.s[0]->b++;
-                if ((i = a_7eaap.m7eb0->rack.s[0]->b) >= 9900) {
-                    g_driveEng.fbc |= 5;
+                if (!(g_0600 & (!a_7eaap.raceType ? 0xf : 0xf)))
+                    a_7eaap.currentCar->rack.parts[0]->wear++;
+                if ((i = a_7eaap.currentCar->rack.parts[0]->wear) >= 9900) {
+                    g_driveEng.stopFlags |= 5;
                     sys_stop_drive();
                 }
                 if (flag) {
-                    g_driveEng.fe += g_driveEng.f14;
-                    if (g_driveEng.f20 && g_driveEng.fe > 5690)
-                        g_driveEng.fe = 5690;
-                    if (g_driveEng.fe > 5700) {
-                        g_driveEng.fe = 5700;
+                    g_driveEng.rpm += g_driveEng.accelStep;
+                    if (g_driveEng.automatic && g_driveEng.rpm > 5690)
+                        g_driveEng.rpm = 5690;
+                    if (g_driveEng.rpm > 5700) {
+                        g_driveEng.rpm = 5700;
                         if (15 - i / 1000 < ++g_overRev) {
-                            g_driveEng.fbc |= 5;
+                            g_driveEng.stopFlags |= 5;
                             sys_stop_drive();
                         }
                     }
-                } else if (g_driveEng.fe > 1500 ||
-                           (g_driveEng.f18 > 0 && g_driveEng.fe > g_driveEng.f16))
-                    g_driveEng.fe -= g_driveEng.f16;
-                if (g_driveEng.fe < 5700)
+                } else if (g_driveEng.rpm > 1500 ||
+                           (g_driveEng.gearIndex > 0 && g_driveEng.rpm > g_driveEng.decelStep))
+                    g_driveEng.rpm -= g_driveEng.decelStep;
+                if (g_driveEng.rpm < 5700)
                     g_overRev = 0;
-                top = g_driveEng.f0 < 5 && !flag && g_driveEng.f18 > 0;
+                top = g_driveEng.speed < 5 && !flag && g_driveEng.gearIndex > 0;
                 if (c || top ||
-                    (g_driveEng.f20 && g_driveEng.f24 > 1 &&
-                     ((flag && g_driveEng.fe > g_driveEng.f22 && g_driveEng.f18 < g_driveEng.f1c) ||
-                      (!flag && g_driveEng.f18 > 1 && !g_driveEng.f42)))) {
-                    a_7eaap.m7eb0->slot6->b += g_driveEng.fe > 5000 ? 15 : 3;
+                    (g_driveEng.automatic && g_driveEng.autoSelector > 1 &&
+                     ((flag && g_driveEng.rpm > g_driveEng.autoShiftRpm && g_driveEng.gearIndex < g_driveEng.gearCount) ||
+                      (!flag && g_driveEng.gearIndex > 1 && !g_driveEng.rpmBand)))) {
+                    a_7eaap.currentCar->transmission->wear += g_driveEng.rpm > 5000 ? 15 : 3;
                     if (g_demo == 0) {
-                        i = a_7eaap.m7eb0->slot6->b;
+                        i = a_7eaap.currentCar->transmission->wear;
                         if (i >= 9900 ||
-                            (g_driveEng.f20 == 0 && flag && g_driveEng.fe > 5000 &&
+                            (g_driveEng.automatic == 0 && flag && g_driveEng.rpm > 5000 &&
                              i / 100 + 100 > random_int(3277))) {
-                            g_driveEng.fbc |= 0x11;
+                            g_driveEng.stopFlags |= 0x11;
                             sys_stop_drive();
                         }
                     }
-                    if ((prev || (!g_driveEng.f42 && !flag)) && g_driveEng.f18 > 0)
-                        g_driveEng.f18--;
-                    else if ((flag || (g_driveEng.f42 > 0 && !prev)) &&
-                             g_driveEng.f18 < g_driveEng.f1c)
-                        g_driveEng.f18++;
-                    if (g_driveEng.f20) {
+                    if ((prev || (!g_driveEng.rpmBand && !flag)) && g_driveEng.gearIndex > 0)
+                        g_driveEng.gearIndex--;
+                    else if ((flag || (g_driveEng.rpmBand > 0 && !prev)) &&
+                             g_driveEng.gearIndex < g_driveEng.gearCount)
+                        g_driveEng.gearIndex++;
+                    if (g_driveEng.automatic) {
                         if (c)
-                            g_driveEng.f24 = g_driveEng.f24 == 1 ? 2 : 1;
-                        if (top || g_driveEng.f18 == 0)
-                            g_driveEng.f24 = 1;
-                        if (g_driveEng.f24 == 1)
-                            g_driveEng.f18 = 0;
+                            g_driveEng.autoSelector = g_driveEng.autoSelector == 1 ? 2 : 1;
+                        if (top || g_driveEng.gearIndex == 0)
+                            g_driveEng.autoSelector = 1;
+                        if (g_driveEng.autoSelector == 1)
+                            g_driveEng.gearIndex = 0;
                     } else if (top)
-                        g_driveEng.f18 = 0;
-                    g_driveEng.f1a = 1;
-                    g_driveEng.f40 = g_driveEng.f34[g_driveEng.f18];
-                    if ((g_driveEng.fe = g_driveEng.f0 * g_driveEng.f40) == 0)
-                        g_driveEng.fe = 1505;
+                        g_driveEng.gearIndex = 0;
+                    g_driveEng.shifterDirty = 1;
+                    g_driveEng.rpmPerSpeed = g_driveEng.f34[g_driveEng.gearIndex];
+                    if ((g_driveEng.rpm = g_driveEng.speed * g_driveEng.rpmPerSpeed) == 0)
+                        g_driveEng.rpm = 1505;
                 }
                 i = -1;
                 do {
-                    sp = &g_driveEng.gear[g_driveEng.f18].r[++i];
-                } while (i < 2 && sp->f2 < g_driveEng.fe);
-                if (i != g_driveEng.f42 || g_driveEng.f1a) {
-                    g_driveEng.f42 = i;
-                    g_driveEng.f14 = sp->f4;
-                    g_driveEng.f16 = sp->f6;
+                    sp = &g_driveEng.gear[g_driveEng.gearIndex].bands[++i];
+                } while (i < 2 && sp->maxRpm < g_driveEng.rpm);
+                if (i != g_driveEng.rpmBand || g_driveEng.shifterDirty) {
+                    g_driveEng.rpmBand = i;
+                    g_driveEng.accelStep = sp->accelStep;
+                    g_driveEng.decelStep = sp->decelStep;
                 }
-                if (prev || (g_onShoulder && g_driveEng.f0 > 8)) {
-                    if ((g_driveEng.f0 -= (g_driveEng.f0 >> 4) + 2) < 0)
-                        g_driveEng.f0 = 0;
-                    if ((g_driveEng.fe = g_driveEng.f0 * g_driveEng.f40) < 1500)
-                        g_driveEng.fe = 1500;
-                } else if (g_driveEng.f18 == 0 && g_driveEng.f0) {
-                    if (g_driveEng.f0)
-                        g_driveEng.f0--;
-                    g_driveEng.fe = 30 * g_driveEng.f0 + 1500;
-                } else if (g_driveEng.f40)
-                    g_driveEng.f0 = g_driveEng.fe / g_driveEng.f40;
-                if (s && abs(g_driveEng.f2 + g_cursorX) > abs(g_driveEng.f2)) {
-                    if (abs(g_cursorX) + abs(g_driveEng.f4) == abs(g_driveEng.f4 + g_cursorX) &&
-                        abs(g_driveEng.f2) < abs(g_driveEng.f4))
-                        g_driveEng.f2 = g_driveEng.f4;
-                    g_driveEng.f2 += g_cursorX << 1;
-                    if (abs(g_driveEng.f2) > 24)
-                        g_driveEng.f2 = g_driveEng.f2 > 0 ? 24 : -24;
+                if (prev || (g_onShoulder && g_driveEng.speed > 8)) {
+                    if ((g_driveEng.speed -= (g_driveEng.speed >> 4) + 2) < 0)
+                        g_driveEng.speed = 0;
+                    if ((g_driveEng.rpm = g_driveEng.speed * g_driveEng.rpmPerSpeed) < 1500)
+                        g_driveEng.rpm = 1500;
+                } else if (g_driveEng.gearIndex == 0 && g_driveEng.speed) {
+                    if (g_driveEng.speed)
+                        g_driveEng.speed--;
+                    g_driveEng.rpm = 30 * g_driveEng.speed + 1500;
+                } else if (g_driveEng.rpmPerSpeed)
+                    g_driveEng.speed = g_driveEng.rpm / g_driveEng.rpmPerSpeed;
+                if (s && abs(g_driveEng.steeringInput + g_cursorX) > abs(g_driveEng.steeringInput)) {
+                    if (abs(g_cursorX) + abs(g_driveEng.steering) == abs(g_driveEng.steering + g_cursorX) &&
+                        abs(g_driveEng.steeringInput) < abs(g_driveEng.steering))
+                        g_driveEng.steeringInput = g_driveEng.steering;
+                    g_driveEng.steeringInput += g_cursorX << 1;
+                    if (abs(g_driveEng.steeringInput) > 24)
+                        g_driveEng.steeringInput = g_driveEng.steeringInput > 0 ? 24 : -24;
                     g_cursorX = 0;
-                    g_driveEng.f4 = g_driveEng.f2;
+                    g_driveEng.steering = g_driveEng.steeringInput;
                 } else
-                    g_driveEng.f2 = 0;
-                if (abs(g_driveEng.f4) > 0)
-                    g_driveEng.f4 += g_driveEng.f4 > 0 ? -((g_driveEng.f4 >> 2) + 1)
-                                               : ((-g_driveEng.f4 >> 2) + 1);
+                    g_driveEng.steeringInput = 0;
+                if (abs(g_driveEng.steering) > 0)
+                    g_driveEng.steering += g_driveEng.steering > 0 ? -((g_driveEng.steering >> 2) + 1)
+                                               : ((-g_driveEng.steering >> 2) + 1);
                 if (bw8aca && road_check_crash()) {
-                    g_driveEng.fbc |= 0x21;
+                    g_driveEng.stopFlags |= 0x21;
                     sys_stop_drive();
                 }
                 g_driveBusy = 0;
