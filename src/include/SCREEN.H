@@ -4,6 +4,9 @@
 #define SCREEN_H_INCLUDED
 #include "STRUCTS.H"
 
+#define SCREEN_BODY_H 190
+#define STATUS_BAR_H 10
+
 extern char *g_gearNames[];                             /* DS:0482 */
 extern char g_promptPalette[];                          /* DS:04AC */
 extern int g_picX;                                      /* DS:04BE */

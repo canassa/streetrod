@@ -148,7 +148,7 @@ static int near read_paper(void)
     cursor_ctl(CURSOR_SHOW);
     r_vid.f16 = old;
     if (r_vid.f16)
-        bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_W - 1), 0xbd);
+        bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_W - 1), (SCREEN_BODY_H - 1));
     cursor_ctl(1);
     return menu_wait(7);
 }

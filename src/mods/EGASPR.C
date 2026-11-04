@@ -6,6 +6,7 @@
 #include "EGAPAGE.H"
 #include "MAIN.H"
 #include "PC.H"
+#include "SCREEN.H"
 #include "SPRITE.H"
 
 static void near restore_rect_latch(struct Rect *r, struct Bitmap far *dst, struct Bitmap far *src, int rows);
@@ -40,7 +41,7 @@ int egaspr_step(struct Sprite *s)
 
     if (s->seq->count < 0) {
         count = s->page;
-        egalatch_rect(count->bm->bits.p, count->link->bm->bits.p, EGA_PITCH, 190, 0, 0, EGA_PITCH);
+        egalatch_rect(count->bm->bits.p, count->link->bm->bits.p, EGA_PITCH, SCREEN_BODY_H, 0, 0, EGA_PITCH);
         if (count->idx) {
             count = count->link;
             count->r = count->link->r;

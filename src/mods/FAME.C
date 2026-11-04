@@ -94,7 +94,7 @@ int fame_end_menu(void)
     char c3;
     int key;
 
-    screen_status_init(190);
+    screen_status_init(SCREEN_BODY_H);
     r_vid.f16 = 1;
     c01 = x_colors.c[0];
     c1 = x_colors.c[1];
@@ -111,7 +111,7 @@ int fame_end_menu(void)
         x_colors.c[3] = 13;
         x_colors.c[2] = 3;
     }
-    screen_fill_rect(0, 0, SCREEN_W, 190, x_colors.c[1]);
+    screen_fill_rect(0, 0, SCREEN_W, SCREEN_BODY_H, x_colors.c[1]);
     draw_frame(r_vid.back, 100, 50, 120, 90);
     draw_frame(r_vid.front, 100, 50, 120, 90);
     draw_frame(r_vid.back, 102, 52, 116, 86);

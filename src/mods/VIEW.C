@@ -264,14 +264,14 @@ void view_load(void)
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
-        pkt1.dy = (r_vid.mode == -2 ? 0x63 : 0) + 1;
+        pkt1.dy = (r_vid.mode == -2 ? DASH_Y - 1 : 0) + 1;
         (*b_78a2)(bm24, r_vid.mode == -2 ? bm7678 : g82b4s, &pkt1, 1);
         F_19438(1);
         bm24 = F_15BBE(0x4ee, ARENA_HIGH_STACK);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
-        pkt1.dy = (r_vid.mode == -2 ? 0x63 : 0) + 0x2c;
+        pkt1.dy = (r_vid.mode == -2 ? DASH_Y - 1 : 0) + 0x2c;
         (*b_78a2)(bm24, r_vid.mode == -2 ? bm7678 : g82b4s, &pkt1, 1);
         F_19438(1);
     }
@@ -1010,10 +1010,10 @@ static void near render_scaled_pic(int x, int y, int n, int align, int clip, int
         b.sy = 0x66;
         break;
     case 2:
-        b.sy = (r_vid.mode == -2 ? 0x63 : 0) + 1;
+        b.sy = (r_vid.mode == -2 ? DASH_Y - 1 : 0) + 1;
         break;
     case 3:
-        b.sy = (r_vid.mode == -2 ? 0x63 : 0) + 0x2c;
+        b.sy = (r_vid.mode == -2 ? DASH_Y - 1 : 0) + 0x2c;
         break;
     }
     if (align == 1)
@@ -1417,7 +1417,7 @@ static void near render_mirror(void)
     pkt1.sx = 0xf8;
     pkt1.sy = 0x16;
     pkt1.dx = 8;
-    pkt1.dy = (r_vid.mode == -2 ? 0 : 0x64) + 3;
+    pkt1.dy = (r_vid.mode == -2 ? 0 : DASH_Y) + 3;
     (*b_78a2)(g_drawPage == 1 ? g8188w : g82b4s, bm7678, &pkt1, 1);
 }
 

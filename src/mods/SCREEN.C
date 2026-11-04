@@ -38,9 +38,9 @@ void screen_status_init(int y)
     o_8250 = 0x58;
     aq8256z = 0;
     x_colors = bustyle->colors;
-    draw_fill_rect(r_vid.back, 0, y, SCREEN_W, 10);
+    draw_fill_rect(r_vid.back, 0, y, SCREEN_W, STATUS_BAR_H);
     if (r_vid.f16)
-        bitmap_copy_box(r_vid.back, r_vid.front, 0, y, (SCREEN_W - 1), y + 9);
+        bitmap_copy_box(r_vid.back, r_vid.front, 0, y, (SCREEN_W - 1), y + STATUS_BAR_H - 1);
 }
 
 void (far *a_78aem)(struct Bitmap far *, int, int, char *);
@@ -156,7 +156,7 @@ void screen_msg_box(char *s)
 char g_promptPalette[18] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14, 0, 0};   /* DS:04AC */
 int g_picX = 0;   /* DS:04BE */
 int g_picY = 0;   /* DS:04C0 */
-int g_picMaxH = 190;   /* DS:04C2 */
+int g_picMaxH = SCREEN_BODY_H;   /* DS:04C2 */
 
 /* screen_wait_msg @ 0F38:23CE (linear 0x1174E, 390 bytes)
 
