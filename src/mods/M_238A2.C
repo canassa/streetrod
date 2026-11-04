@@ -10,7 +10,7 @@ static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int 
 
 /* EGA/VGA register writes (graphics controller, sequencer). Written as braced blocks: the
    block boundary is visible in F_23C3B's code; every other pair in the file (and the 38
-   such pairs of seven other files, tried 2026-11-04) compiles the same either way. */
+   such pairs of seven other files) compiles the same either way. */
 #define GCREG(i, v)  { outp(0x3ce, (i)); outp(0x3cf, (v)); }
 #define SEQREG(i, v) { outp(0x3c4, (i)); outp(0x3c5, (v)); }
 

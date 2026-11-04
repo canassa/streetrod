@@ -33,7 +33,7 @@
 
 #pragma intrinsic(inp, outp, _enable, _disable, abs)
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6c46;                         /* DS:6C46 */
 static int g_6c48;                         /* DS:6C48 */
 static char g_6c4a;                        /* DS:6C4A */
@@ -43,7 +43,7 @@ static int g_6c50a;                        /* DS:6C50 */
 static int g_6c52a;                        /* DS:6C52 */
 static int g_6c54a;                        /* DS:6C54 */
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Dev bs79aa;
 struct Dev ao79c6t;
 void (interrupt far *w_7aaa)(void);

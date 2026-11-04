@@ -13,7 +13,7 @@
 #include "M_16EA2.H"
 #include "M_174A6.H"
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int jz79a6;
 
 char g_51ac = -1;   /* DS:51AC */

@@ -177,7 +177,7 @@ void F_067CF(int a)
     }
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct State8272 m_8272;
 
 /* F_06827 @ 0000:6827 (linear 0x06827, 91 bytes) */

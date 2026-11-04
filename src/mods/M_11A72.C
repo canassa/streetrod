@@ -14,7 +14,7 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct Win *g_6c40;                 /* DS:6C40 */
 static int g_6c42[2];                      /* DS:6C42 PROVISIONAL: 4 unreferenced bytes after g_6c40 */
 

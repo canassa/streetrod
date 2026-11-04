@@ -108,7 +108,6 @@ struct Item {
     int f6;
 };
 
-
 union Word {
     int w;
     unsigned char b[2];
@@ -132,7 +131,6 @@ struct Bitmap {
     int pitch;
     signed char flags;
 };
-
 
 struct Cmd {
     signed char op;
@@ -241,7 +239,6 @@ struct Sprite {
     struct Page *page;
 };
 
-/* one display page of the sprite engine (16 bytes): its bitmap, the clipped rectangle, the link to the next page */
 /* one saved band of a screen page (8 bytes): where it sits in the scratch bitmap, its first row and height */
 struct Band {
     char far *p;
@@ -249,6 +246,7 @@ struct Band {
     int h;
 };
 
+/* one display page of the sprite engine (16 bytes): its bitmap, the clipped rectangle, the link to the next page */
 struct Page {
     struct Bitmap far *bm;
     struct Rect r;
@@ -404,8 +402,7 @@ struct Gear {
     struct Range r[3];
 };
 
-/* drive train state; e_78e0 and g79e2g are two instances, 0xc2 bytes each. e_78e0.fa and .fc are
-   also declared as the plain ints g78ean, bn78ec: two modules saw them so (notes on 0x0DA25, 0x2858D) */
+/* drive train state; e_78e0 and g79e2g are two instances, 0xc2 bytes each */
 struct Eng {
     int f0;
     int f2;
@@ -437,6 +434,7 @@ struct Eng {
     int fbe;
     int fc0;
 };
+
 struct Sheet {
     int id;
     int cols;
@@ -473,17 +471,6 @@ struct Track {
 };
 
 /* 16-byte blit packet of F_10872 (struct Blt without the last two words) */
-/* the clip source rectangle at DS:5E42: the six leading Blt words, followed by the four
-   clip limits as separate globals (g_clip_xmin..) */
-struct Blt12 {
-    int w;
-    int h;
-    int sx;
-    int sy;
-    int dx;
-    int dy;
-};
-
 struct Blt16 {
     int w;
     int h;
@@ -502,7 +489,7 @@ struct Offs {
 struct Panel {
     struct Offs r[5];
 };
-/* 6-byte table entry: id, then a (dx, dy) pair of chars (g7844n) */
+
 /* 12-byte table entry (g7682n[]), read as bytes by F_17BE6 */
 struct Spr12 {
     unsigned char b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11;
@@ -513,6 +500,7 @@ struct Spr6 {
     unsigned char b0, b1, b2, b3, b4, b5;
 };
 
+/* 6-byte table entry (a784als[]): bitmap id, then the (dx, dy) offset it is drawn at */
 struct Pos6 {
     int id;
     int dx;
@@ -595,8 +583,6 @@ struct CgaGlyph {
     unsigned rows[8];
 };
 
-/* DS:7EAA..7EC2: one COMMON block in the original (folded from 11 placeholder
-   globals: the compiler budget of the original translation units requires fewer external symbols) */
 /* DS:7D2E..7D3F: one communal; the code reads these as struct members */
 struct State7D2E {
     int m7d2e;
@@ -629,6 +615,8 @@ struct State70C0 {
     int m70de;
 };
 
+/* DS:7EAA..7EC2: one COMMON block in the original (folded from 11 placeholder
+   globals: the compiler budget of the original translation units requires fewer external symbols) */
 struct State7EAA {
     long m7eaa;
     int m7eae;

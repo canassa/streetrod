@@ -53,7 +53,7 @@ struct Rect *F_19518(int x, int y, int w, int h, struct Rect *out)
     return F_1947A(&scr, &rect, out);
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Frame g77bal[12];
 struct Seq g_764e[10];
 struct Sprite g7d18m;

@@ -30,7 +30,7 @@ static void near F_00316(int mode);
 static void near F_004F4(int mode);
 static void near F_00659(void);
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Video r_vid;
 
 int g_0042 = 0;   /* DS:0042 */

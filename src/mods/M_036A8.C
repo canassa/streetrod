@@ -7,7 +7,7 @@
 #include "M_03614.H"
 #include "M_113A2.H"
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static unsigned g_6c60;                    /* DS:6C60 */
 
 /* data_segment @ 0000:36A8 (linear 0x036A8, 22 bytes) */

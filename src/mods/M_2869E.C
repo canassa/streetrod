@@ -20,7 +20,7 @@
 
 #pragma intrinsic(abs)
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6e04aay;                      /* DS:6E04 */
 static int g_6e06aax;                      /* DS:6E06 */
 static int *g_6e08aaw;                     /* DS:6E08 */
@@ -71,7 +71,7 @@ int g_5e14[5][4] = {{1003, 1004, 1057, 1091}, {1010, 1012, 1011, 1239}, {1010, 1
 int g_5e3c = 0;   /* DS:5E3C */
 int g_5e3e = 1;   /* DS:5E3E */
 int g_5e40 = 2;   /* DS:5E40 */
-struct Blt12 g_5e42 = {320, 82, 0, 18, 0, 18};   /* DS:5E42 */
+struct Clip g_5e42 = {320, 82, 0, 18, 0, 18};   /* DS:5E42 */
 int g_clip_xmin = 0;   /* DS:5E4E */
 int g_clip_ymin = 18;   /* DS:5E50 */
 int g_clip_ymax = 101;   /* DS:5E52 */
@@ -97,7 +97,7 @@ static void near F_2869E(void)
     }
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int a7312av;
 struct Bitmap far *k_6e60;
 int dz70e0;

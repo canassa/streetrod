@@ -37,7 +37,7 @@
 #include "M_265BA.H"
 #include "SLOTS.H"
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6ca4rz;                       /* DS:6CA4 */
 static int g_6ca6qz;                       /* DS:6CA6 */
 static int g_6ca8pz;                       /* DS:6CA8 */
@@ -100,7 +100,7 @@ static void near F_0B425(void)
     F_135E5(base, n);
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int g7644m;
 char at787cu;
 int h_8264;

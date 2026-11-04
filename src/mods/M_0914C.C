@@ -33,7 +33,7 @@
 
 #pragma intrinsic(abs)
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6c84;                         /* DS:6C84 */
 static int g_6c88;                         /* DS:6C88 */
 static void near F_09256(char *s);
@@ -103,7 +103,7 @@ static int near F_0914C(int mode, int arg, int pct1, int pct2)
     return r;
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Spec *ar7d7au;
 struct Racer *g7d84o;
 int bm7f86;
