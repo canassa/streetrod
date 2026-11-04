@@ -4,7 +4,7 @@ Each file has one command line, its MAKEFILE block: `$(CC) <flags> /NT<segment> 
 for C (the code segment it shares with its neighbours), `$(ASM) <flags> <source>,...;` for
 MASM (an assembler file names its code segment in its `.CODE` directive). `./sr check` and
 `./sr build` compile the file as it is in git with that line. A code file's extent in the
-image is the span of the DB functions whose `src` it is. The module gate compares the file's
+image is the span of the functions it defines (their address comments, `source.py`). The module gate compares the file's
 whole span with the image: bytes between functions, internal near-call displacements,
 internal calls and code-segment offsets. References to other objects and DGROUP stay
 relocation-masked and are checked by `refs`.
@@ -12,7 +12,7 @@ relocation-masked and are checked by `refs`.
 
 import re
 
-from . import config, db, makefile
+from . import config, makefile, source
 from .disasm import branch_target, linear
 
 MODS = config.SRC / "mods"
@@ -54,11 +54,11 @@ def asm_segment(path):
 
 
 def _extents():
-    con = db.connect()
-    rows = con.execute("SELECT src, MIN(addr) AS lo, MAX(addr + size) AS hi FROM functions "
-                       "WHERE src IS NOT NULL GROUP BY src").fetchall()
-    con.close()
-    return {r["src"]: (r["lo"], r["hi"]) for r in rows}
+    out = {}
+    for r in source.game_functions():
+        lo, hi = out.get(r["src"], (r["addr"], r["addr"] + r["size"]))
+        out[r["src"]] = (min(lo, r["addr"]), max(hi, r["addr"] + r["size"]))
+    return out
 
 
 def sources():
@@ -85,7 +85,7 @@ def code_starts(fs=None):
 
 
 def file_of(row, fs=None):
-    """The source file that defines a function (its DB `src`)."""
+    """The source file that defines a function (its `src`)."""
     for f in fs or files():
         if f.rel == row["src"]:
             return f
@@ -100,21 +100,21 @@ def find_file(name, fs=None):
     return None
 
 
-def members(con, src):
-    return con.execute("SELECT * FROM functions WHERE src = ? ORDER BY addr", (src,)).fetchall()
+def members(src):
+    return source.members(src)
 
 
 # ---------------------------------------------------------------- evidence
 
 
-def same_module_edges(con, im):
+def same_module_edges(im):
     """Near-call edges suggesting source groups within the same code segment.
 
     These are candidate spans, not proof of one C translation unit: explicit near
     interfaces can cross object files, and the first span includes MASM routines.
     """
-    rows = con.execute("SELECT * FROM functions WHERE kind = 'c'").fetchall()
-    by_addr = {r["addr"]: r for r in con.execute("SELECT * FROM functions")}
+    by_addr = {r["addr"]: r for r in source.functions()}
+    rows = [r for r in by_addr.values() if r["kind"] == "c"]
     edges = set()
     for r in rows:
         for ins in linear(im.img, r["addr"], r["addr"] + r["size"], ip0=r["off"]):
@@ -129,16 +129,16 @@ def same_module_edges(con, im):
     return edges
 
 
-def units(con, im):
+def units(im):
     """Candidate spans [lo, hi): hulls of connected near-call groups.
 
     Split at language, alignment and compiler limits; verify each resulting module.
     """
+    size = {r["addr"]: r["size"] for r in source.functions()}
     spans = []
-    for a, b in same_module_edges(con, im):
+    for a, b in same_module_edges(im):
         lo, hi = min(a, b), max(a, b)
-        end = con.execute("SELECT size FROM functions WHERE addr = ?", (hi,)).fetchone()[0]
-        spans.append([lo, hi + end])
+        spans.append([lo, hi + size[hi]])
     spans.sort()
     out = []
     for lo, hi in spans:
@@ -183,8 +183,9 @@ class Gate:
         return s
 
 
-def gate(obj, procs, img, rows, con=None):
-    """Compare the members' whole span in the object with the original image."""
+def gate(obj, procs, img, rows, data=False):
+    """Compare the members' whole span in the object with the original image (and with
+    `data`, the object's initialized data with the original DGROUP)."""
     from .cod import find
 
     g = Gate()
@@ -206,7 +207,7 @@ def gate(obj, procs, img, rows, con=None):
         end_exe += 1                         # the trailing alignment nop
     g.size_obj, g.size_exe = hi - lo, end_exe - first["addr"]
     off0 = first["off"] - p0.start          # segment offset of object offset 0
-    # Callers may reach members through different frames (the DB keeps the one they use),
+    # Callers may reach members through different frames (the address comment has the one they use),
     # so a code-segment offset is relative to the frame of the member that holds it.
     frames = [(find(procs, fname(r)).start, r["off"] - find(procs, fname(r)).start) for r in rows
               if find(procs, fname(r)) is not None]
@@ -252,10 +253,10 @@ def gate(obj, procs, img, rows, con=None):
     for i in range(lo, min(hi, lo + g.size_exe)):
         if i not in skip and obj.code[i] != img[base + i]:
             g.mismatches.append(base + i)
-    if con is not None:
+    if data:
         from .datacheck import check
         from .exe import image
-        problems, g.data = check(obj, con, image(), base)
+        problems, g.data = check(obj, image(), base)
         dseg = obj.segments.index('_DATA') + 1 if '_DATA' in obj.segments else None
         owns = dseg is not None and any(s == dseg for s, _ in obj.all_publics.values())
         if owns:

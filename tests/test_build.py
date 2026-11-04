@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
-from sr import build, config, db, headers, linklayout, makefile, module
+from sr import build, config, headers, linklayout, makefile, module
 from sr.cdata import Types, number
 
 
@@ -80,12 +80,12 @@ class MakefileTests(unittest.TestCase):
                 self.assertEqual((root / r.path.relative_to(config.SRC)).read_bytes(), r.path.read_bytes())
 
     def test_headers_are_current(self):
-        # the headers, include blocks and MAKEFILE dependencies in git are what ./sr headers writes
-        con = db.connect()
+        # the include blocks and MAKEFILE dependencies in git are what ./sr headers writes,
+        # and every header declares only what its file defines
         with contextlib.redirect_stdout(io.StringIO()):
-            drift = headers.check(con)
-        con.close()
+            drift, problems = headers.check()
         self.assertEqual(sorted(str(p) for p in drift), [])
+        self.assertEqual(problems, [])
 
     def test_link_report_includes_fixup_errors(self):
         with tempfile.TemporaryDirectory() as tmp:

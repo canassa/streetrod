@@ -1,4 +1,4 @@
-"""emucmp.py [--quick] [--streetrod DIR] [--keep] : prove the emu2 backend byte-identical to DOSBox-X.
+"""emucmp.py [--quick] [--keep] : prove the emu2 backend byte-identical to DOSBox-X.
 
 Compiles the same jobs under both backends and compares every file each job leaves behind
 (OBJ, COD, LST, CC.LOG) byte for byte. Job sets:
@@ -6,7 +6,6 @@ Compiles the same jobs under both backends and compares every file each job leav
     flag sets (/Ol, /Oi, /Ox, /Od, other models)
   - the 46 `./sr sweep` combos on a few sources
   - hand-written probes: floating point constants, errors and warnings, MASM
-  - with --streetrod DIR: every C/MASM source of that sister project with its DB flags
 Sources and headers are snapshot first (other agents edit them meanwhile).
 Run it through nix-shell: nix-shell shell.nix --run 'python3 tools/scripts/emucmp.py'.
 """
@@ -14,7 +13,6 @@ Run it through nix-shell: nix-shell shell.nix --run 'python3 tools/scripts/emucm
 import argparse
 import re
 import shutil
-import sqlite3
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -141,8 +139,7 @@ def compare(label, specs, include, chunk=40):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--quick", action="store_true", help="DB flags only, no flag spread")
-    ap.add_argument("--streetrod", type=Path)
+    ap.add_argument("--quick", action="store_true", help="each file's own flags only, no flag spread")
     ap.add_argument("--keep", action="store_true", help="keep work/emucmp-* trees")
     args = ap.parse_args()
     base = config.WORK / "emucmp-snap"
@@ -177,17 +174,6 @@ def main():
         fl = ["/Ml", "/Mx /Zi"] if name.endswith(".ASM") else FLAGSETS
         probes += [(pd / name, f) for f in fl]
     bad += compare("probes", probes, inc)
-
-    if args.streetrod:
-        sr = args.streetrod
-        srdb = sqlite3.connect(f"file:{sr / 'db' / 'sr.sqlite'}?mode=ro", uri=True)
-        flags = {Path(s).name.upper(): f for s, f in srdb.execute("SELECT src, flags FROM functions WHERE src IS NOT NULL")}
-        ssrcs, sinc = snapshot([sr / "src" / "funcs", sr / "src" / "mods"], sr / "src" / "include",
-                               base / "sr")
-        sspecs = [(p, flags.get(p.name) or ("/Ml" if p.suffix == ".ASM" else "/AM /Oas /Gs /FPi")) for p in ssrcs]
-        if not args.quick:
-            sspecs += [(p, "/AM /Ox /Gs /FPi") for p in ssrcs if p.suffix == ".C"]
-        bad += compare("streetrod", sspecs, sinc)
 
     if not args.keep:
         for p in config.WORK.glob("emucmp-*"):

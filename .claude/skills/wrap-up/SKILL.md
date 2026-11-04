@@ -1,15 +1,14 @@
 ---
 name: wrap-up
-description: End-of-session routine for the Street Rod project. Re-runs the regression gate, regenerates docs/PROGRESS.md, appends the captain's log entry to plans/diary.md, and folds what the session learned back into the skills and CLAUDE.md. Use at the end of any session with real work, or when the user says "wrap up", "log this", or "update the skills".
+description: End-of-session routine for the Street Rod project. Re-runs the regression gate, appends the captain's log entry to plans/diary.md, and folds what the session learned back into the skills and CLAUDE.md. Use at the end of any session with real work, or when the user says "wrap up", "log this", or "update the skills".
 ---
 
 # wrap-up
 
-## 1. Gate and progress
+## 1. Gate
 
 ```
 ./sr check --all          # must be green; if not, fix or report the regression before anything else
-./sr status               # regenerates docs/PROGRESS.md
 ```
 
 ## 2. Diary
@@ -38,7 +37,7 @@ Go through "What I learned" and put each lesson where the next session will see 
 | a step in the loop that was missing, wrong or in the wrong order | `decompile-function` |
 | a fact about the binary, a new rule, a changed default (flags, layout) | `CLAUDE.md` |
 | a CLI bug, gotcha or new command | fix it with `sr-cli`; document in `CLAUDE.md` |
-| a file boundary or a file's flags (its `src/MAKEFILE` line) | `./sr note` on the functions, plus the diary |
+| a file boundary or a file's flags (its `src/MAKEFILE` line) | the diary (and `docs/RECONSTRUCTION.md` if it is a choice, not a fact) |
 
 Keep skills short. When you add a row, check whether an older row is now redundant or wrong, and fix it.
 

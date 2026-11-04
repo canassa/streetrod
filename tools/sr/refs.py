@@ -3,8 +3,8 @@
 The byte compare masks fixups, so on its own it can't tell `g_score` from `g_count`.
 Here each fixup is resolved against the original instruction:
 
-- data (offset into DGROUP through an EXTDEF): the original's word must be the DB offset
-  of that global, plus the displacement and the addend compiled into the instruction;
+- data (offset into DGROUP through an EXTDEF): the original's word must be the offset
+  of that global (its `/* DS:XXXX */`, source.py), plus the displacement and the addend compiled into the instruction;
 - far calls (ptr32 to an EXTDEF): the original's seg:off must be the function of that name;
 - near calls to an EXTDEF (asm): the original's rel16 must land on the function of that name;
 - our own data (string literals, statics): the bytes must equal the original's at that offset;
@@ -17,7 +17,7 @@ checked by name against the original call target.
 import bisect
 import struct
 
-from . import config
+from . import config, source
 from .disasm import branch_target, linear
 
 
@@ -68,19 +68,17 @@ def bss_ref(obj, globals_by_name, off, orig):
     return f"{n}+{off - o} is DS:{(globals_by_name[n] + off - o) & 0xFFFF:04x}, original refers to DS:{orig:04x}"
 
 
-def verify(con, obj, proc, im, addr, row, procs=()):
+def verify(obj, proc, im, addr, row, procs=()):
     img = im.img
     r = Refs()
     lo, hi = proc.start, proc.end if proc.end is not None else len(obj.code)
-    globals_by_name = {g["name"].lstrip("_"): g["off"] for g in con.execute("SELECT off, name FROM globals")}
-    far_by_name = {g["name"]: (g["seg"], g["off"]) for g in con.execute("SELECT seg, off, name FROM fardata")}
-    funcs_by_addr = {f["addr"]: f for f in con.execute("SELECT addr, name, seg, off FROM functions")}
+    globals_by_name = {n.lstrip("_"): off for n, off in source.global_offsets().items()}
+    far_by_name = {g["name"]: (g["seg"], g["off"]) for g in source.fardata()}
+    funcs_by_addr = {f["addr"]: f for f in source.functions()}
     dgroup = config.DGROUP_SEG * 16
 
     funcs_by_name = {(f["name"] or f"F_{a:05X}"): f for a, f in funcs_by_addr.items()}
-    aliases = {}
-    for a, n in con.execute("SELECT addr, name FROM aliases"):
-        aliases.setdefault(a, set()).add(n)
+    aliases = source.aliases()
 
     def fn_at(lin):
         f = funcs_by_addr.get(lin)
@@ -185,7 +183,7 @@ def verify(con, obj, proc, im, addr, row, procs=()):
                     r.ok += 1
                 continue
             if seg_name == "_BSS":
-                # file-local uninitialized storage: named by the listing, placed by the DB
+                # file-local uninitialized storage: named by the listing, placed by its definition
                 problem = bss_ref(obj, globals_by_name, off, orig)
                 if problem:
                     r.problems.append(f"{where}: {problem}")
@@ -231,7 +229,7 @@ def verify(con, obj, proc, im, addr, row, procs=()):
         else:
             r.unchecked += 1
 
-    # A function address as a value: seg and offset may be split differently from the DB's
+    # A function address as a value: seg and offset may be split differently from the comment's
     # seg:off (the linker normalises to the callee's own segment), so compare linear addresses.
     for sym, half in fnptr.items():
         where = (half.get("off") or half.get("seg"))[1]

@@ -46,5 +46,5 @@ def lint(text, log=""):
             continue
         stmt += ch
     for m in _PROTO_WARN.finditer(log):
-        problems.append(m.group(0).strip() + " (add it with ./sr proto)")
+        problems.append(m.group(0).strip() + " (prototype it in the defining file's header)")
     return problems
