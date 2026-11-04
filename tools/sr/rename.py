@@ -59,9 +59,13 @@ def _taken(con, files):
     names |= {r[0].upper() for r in con.execute("SELECT name FROM aliases")}
     names |= {r[0].upper() for r in con.execute("SELECT name FROM globals")}
     names |= {r[0].upper() for r in con.execute("SELECT name FROM fardata")}
+    from .fileheaders import _strip
     for p in files:
         if p.suffix.upper() in (".C", ".ASM", ".H"):
-            for w in re.findall(r"[A-Za-z_]\w*", p.read_text(encoding="latin-1")):
+            text = p.read_text(encoding="latin-1")
+            # identifiers only: not the words of strings and comments
+            text = re.sub(r"'[^'\n]*'|\"[^\"\n]*\"|;[^\n]*", "", text) if p.suffix.upper() == ".ASM" else _strip(text)
+            for w in re.findall(r"[A-Za-z_]\w*", text):
                 names.add(w.upper())
                 if w.startswith("_"):
                     names.add(w[1:].upper())
