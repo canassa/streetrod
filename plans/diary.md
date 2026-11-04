@@ -984,3 +984,9 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - Module header constants need no duplicate C definition; the checker already used them for include ownership but mistakenly required that duplicate. The rule is now documented in CLAUDE.md and .claude/skills/sr-cli/SKILL.md and covered by tests/test_fileheaders.py.
 - Allocation modes 0/3 advance low/high persistent boundaries, while 1/2 push low/high markers. MARKS.C's release/pop behavior confirms their lifetime. The evidence table remains in work/args/SURVEY.md.
 - Original video menu strings support names for choices 1 through 5; internal choice 6 and signed driver encodings need a separate audit.
+
+## 2026-11-05 12:00 CET: Named mode and argument constants
+
+### What I did
+- Mode arguments whose meaning the callee defines are named in the owning module's header: `CURSOR_SHOW`/`CURSOR_SHOW_NOW`/`CURSOR_HIDE`/`CURSOR_HIDE_NOW` (cursor_ctl: the _NOW variants copy the cursor box back->front at once on double-buffered video), `ARENA_LOW_BASE`/`ARENA_LOW_STACK`/`ARENA_HIGH_STACK`/`ARENA_HIGH_BASE` (arena allocation modes, also forwarded by the bitmap and menu grab helpers), `WALKER_ENTER`/`WALKER_LEAVE`, and the video menu choices `VIDEO_CHOICE_CGA..TANDY`. `./sr headers --check` accepts constant definitions in module headers. Survey of other candidates kept by the Codex agent in its worktree. Done by a Codex agent.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
