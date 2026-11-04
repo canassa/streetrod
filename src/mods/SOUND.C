@@ -297,7 +297,7 @@ static void near noise_sweep_up(int start, int end, int gap, int step, int dur)
 void sound_wheel_roll(int on)
 {
     if (on)
-        music_play(g_2f93_00c0, g_jingleRepeats);
+        music_play(g_wheelRollSound, g_jingleRepeats);
     else
         music_play(g_song, g_songRepeats);
 }
@@ -309,7 +309,7 @@ void sound_wheel_roll(int on)
 void F_168F3(int on)
 {
     if (on) {
-        music_play(g_2f93_00a0, g_jingleRepeats);
+        music_play(g_stickerSound, g_jingleRepeats);
         music_set_vibrato(1, 0, 8, 10, 1);
     } else
         music_play(g_song, g_songRepeats);
@@ -335,7 +335,7 @@ void F_16943(int on)
 void sound_pump(int on)
 {
     if (on) {
-        music_play(g_2f93_0000, g_jingleRepeats);
+        music_play(g_pumpSound, g_jingleRepeats);
         music_set_vibrato(1, 1, 8, 30, 1);
     } else
         music_play(g_song, g_songRepeats);
@@ -348,7 +348,7 @@ void sound_pump(int on)
 void sound_jack(int on)
 {
     if (on) {
-        music_play(g_2f93_002c, g_jingleRepeats);
+        music_play(g_jackSound, g_jingleRepeats);
         music_set_vibrato(1, 1, 8, 20, 1);
     } else
         music_play(g_song, g_songRepeats);
@@ -373,7 +373,7 @@ void F_16A2F(int on)
 void F_16A5A(int on)
 {
     if (on) {
-        music_play(g_2f93_007c, g_jingleRepeats);
+        music_play(g_partMoveSound, g_jingleRepeats);
         music_set_vibrato(1, 1, 8, 14, 1);
     } else
         music_play(g_song, g_songRepeats);
