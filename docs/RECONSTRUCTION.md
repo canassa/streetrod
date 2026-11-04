@@ -50,6 +50,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 ## Source forms
 
+- **`BACKDROP_ROWS`** is a choice among byte-identical literal, `#define`, macro, `sizeof`-record and constant member-offset forms.
+
 - **Equivalent forms.** Wherever several C forms compile to the same bytes, the source uses
   one of them. Some arbitrary picks: the equal-arm ternaries
   `!x ? 1 : 1` in sys_drive_isr (the condition leaves no code), `case -2: case -1:` in game_run

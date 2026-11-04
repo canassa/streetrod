@@ -13,6 +13,7 @@
 #include "MARKS.H"
 #include "MEM.H"
 #include "MUSIC.H"
+#include "PC.H"
 #include "POPUP.H"
 #include "SCREEN.H"
 #include "SOUND.H"
@@ -302,10 +303,10 @@ void F_1B213(int *a, int *b)
     (*ab78aat)(g_liftPics[2], g_6d24ajz, &blt, 1);
     if (r_vid.mode == -2) {
         g_6cd4oz = &g_6cf4wz;
-        mem_set_bitmap(g_6cd4oz, g_pageBmps[2]->bits.p, 0, g_liftCar->width, 200, -2);
-        mem_set_bitmap(g_wheelBuf, g_pageBmps[2]->bits.p + g_liftCar->pitch, 0, pic->width, 200, -2);
-        mem_set_bitmap(g_rollBuf, g_pageBmps[3]->bits.p, 0, 0x140, g_6d24ajz->height, -2);
-        mem_set_bitmap(g_jackBuf, g_pageBmps[3]->bits.p, 0, g_6d28agz->width, 200, -2);
+        mem_set_bitmap(g_6cd4oz, g_pageBmps[2]->bits.p, 0, g_liftCar->width, SCREEN_HEIGHT, -2);
+        mem_set_bitmap(g_wheelBuf, g_pageBmps[2]->bits.p + g_liftCar->pitch, 0, pic->width, SCREEN_HEIGHT, -2);
+        mem_set_bitmap(g_rollBuf, g_pageBmps[3]->bits.p, 0, SCREEN_WIDTH, g_6d24ajz->height, -2);
+        mem_set_bitmap(g_jackBuf, g_pageBmps[3]->bits.p, 0, g_6d28agz->width, SCREEN_HEIGHT, -2);
         blt.w = g_carLiftBackdrop->width;
         blt.h = g_liftCar->height + 4;
         blt.sx = blt.dx = 0;

@@ -110,7 +110,7 @@ _egalatch_to_page  PROC    FAR
         mov     ax,[bp+0Ah]
         mov     dx,[bp+12h]
         sub     dx,ax
-        mov     bh,28h
+        mov     bh,EGA_PITCH
         sub     bh,al
 rows2:
         mov     cx,ax

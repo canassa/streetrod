@@ -50,17 +50,17 @@ void egablit_copy(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *re
         o = 4;
     }
     c = N ? 5 : 4;
-    M = (dst->flags == -2) ? 40 : dst->pitch;
+    M = (dst->flags == -2) ? EGA_PITCH : dst->pitch;
     g = (dst->flags == -2) ? 0 : dst->height * M;
     m += h.sy * M + h.sx;
     p = src->height;
-    i = (src->flags == -2) ? 40 : src->pitch;
+    i = (src->flags == -2) ? EGA_PITCH : src->pitch;
     e = (src->flags == -2) ? 0 : p * i;
     a += h.dy * i + h.dx;
     d = h.w;
     j = h.h;
     if (src->flags == -2 && dst->flags == -2) {
-        egalatch_rect(m, a, d, j, 0, 0, 40);
+        egalatch_rect(m, a, d, j, 0, 0, EGA_PITCH);
         return;
     }
     f = e == 0 || g == 0;
@@ -171,7 +171,7 @@ void egablit_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitma
         outp(SEQ_DATA, SEQ_ALL_PLANES);
     }
     if (p > 0) {
-        c += 40 * o;
+        c += EGA_PITCH * o;
         egalatch_to_page(n, d, p, c, g);
     }
 }
@@ -206,7 +206,7 @@ void egablit_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *
     h = e.h;
     n = bm1->height * d;
     p = bm2->height;
-    g = (bm2->flags == -2) ? 40 : bm2->pitch;
+    g = (bm2->flags == -2) ? EGA_PITCH : bm2->pitch;
     c = (bm2->flags == -2) ? 0 : p * g;
     a = bm2->bits.p + e.dy * g + e.dx;
     l = bm1->bits.w.seg;

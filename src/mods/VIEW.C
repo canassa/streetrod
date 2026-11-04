@@ -11,6 +11,7 @@
 #include "EGASPAN.H"
 #include "MAIN.H"
 #include "MARKS.H"
+#include "PC.H"
 #include "RACE.H"
 #include "ROAD.H"
 #include "SCENERY.H"
@@ -70,11 +71,11 @@ int g_opponentPics[5][4] = {{1003, 1004, 1057, 1091}, {1010, 1012, 1011, 1239}, 
 int g_5e3c = 0;   /* DS:5E3C */
 int g_drawPage = 1;   /* DS:5E3E */
 int g_showPage = 2;   /* DS:5E40 */
-struct Clip g_viewRect = {320, 82, 0, 18, 0, 18};   /* DS:5E42 */
+struct Clip g_viewRect = {SCREEN_WIDTH, 82, 0, 18, 0, 18};   /* DS:5E42 */
 int g_clipXMin = 0;   /* DS:5E4E */
 int g_clipYMin = 18;   /* DS:5E50 */
 int g_clipYMax = 101;   /* DS:5E52 */
-int g_clipXMax = 319;   /* DS:5E54 */
+int g_clipXMax = (SCREEN_WIDTH - 1);   /* DS:5E54 */
 unsigned char g_shrinkMasks[3][4] = {{87, 37, 34, 0}, {247, 117, 82, 0}, {117, 84, 33, 0}};   /* DS:5E56 */
 int g_5e62[18] = {1258, 1237, 1236, 1238, 8, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0};   /* DS:5E62 */
 int g_5e86 = 0;   /* DS:5E86 */
@@ -227,7 +228,7 @@ void view_clip(void)
     g_clipXMin = 0;
     g_clipYMin = 0x12;
     g_clipYMax = 0x65;
-    g_clipXMax = 0x13f;
+    g_clipXMax = (SCREEN_WIDTH - 1);
 }
 
 /* view_load @ 2645:2429 (linear 0x28879, 1369 bytes) */
@@ -263,14 +264,14 @@ void view_load(void)
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
-        pkt1.dy = (r_vid.mode == -2 ? 0x63 : 0) + 1;
+        pkt1.dy = (r_vid.mode == -2 ? DASH_Y - 1 : 0) + 1;
         (*b_78a2)(bm24, r_vid.mode == -2 ? bm7678 : g82b4s, &pkt1, 1);
         F_19438(1);
         bm24 = F_15BBE(0x4ee, ARENA_HIGH_STACK);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
-        pkt1.dy = (r_vid.mode == -2 ? 0x63 : 0) + 0x2c;
+        pkt1.dy = (r_vid.mode == -2 ? DASH_Y - 1 : 0) + 0x2c;
         (*b_78a2)(bm24, r_vid.mode == -2 ? bm7678 : g82b4s, &pkt1, 1);
         F_19438(1);
     }
@@ -288,7 +289,7 @@ void view_load(void)
     pkt1.w = ar767eu->width;
     pkt1.h = ar767eu->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
-    pkt1.dy = 0xc8 - ar767eu->height;
+    pkt1.dy = SCREEN_HEIGHT - ar767eu->height;
     (*b_78a2)(ar767eu, g8188w, &pkt1, 1);
     marks_pop_low(1);
     ax72f4 = F_15BBE(0x3ee, ARENA_LOW_STACK);
@@ -341,17 +342,17 @@ static void near render_backdrop(void)
         b.h = v - 0x1e;
         b.sy = 0x9a - b.h;
         if (ao7d2ev.m7d3c > 0) {
-            r = (ao7d2ev.m7d3c * 2 % 320) & ~7;
-            ll = 320 - r;
+            r = (ao7d2ev.m7d3c * 2 % SCREEN_WIDTH) & ~7;
+            ll = SCREEN_WIDTH - r;
         } else {
-            ll = (abs(ao7d2ev.m7d3c) * 2 % 320) & ~7;
-            r = 320 - ll;
+            ll = (abs(ao7d2ev.m7d3c) * 2 % SCREEN_WIDTH) & ~7;
+            r = SCREEN_WIDTH - ll;
         }
         b.w = ll;
         b.sx = 0;
         b.dx = r;
     } else {
-        b.w = 320;
+        b.w = SCREEN_WIDTH;
         b.sx = 0;
         b.sy = 0x66;
         b.dx = 0;
@@ -368,18 +369,18 @@ static void near render_backdrop(void)
     b.sy = 0xa3;
     if (*(int *)&bw8aca) {
         if (ao7d2ev.m7d3c > 0) {
-            r = (ao7d2ev.m7d3c * 4 % 320) & ~7;
-            ll = 320 - r;
+            r = (ao7d2ev.m7d3c * 4 % SCREEN_WIDTH) & ~7;
+            ll = SCREEN_WIDTH - r;
         } else {
-            ll = (abs(ao7d2ev.m7d3c) * 4 % 320) & ~7;
-            r = 320 - ll;
+            ll = (abs(ao7d2ev.m7d3c) * 4 % SCREEN_WIDTH) & ~7;
+            r = SCREEN_WIDTH - ll;
         }
         b.w = ll;
         b.sx = 0;
         b.dx = r;
         b.dy = v - 0xc;
     } else {
-        b.w = 320;
+        b.w = SCREEN_WIDTH;
         b.sx = 0;
         b.dx = 0;
         b.dy = 0x2f;
@@ -1009,10 +1010,10 @@ static void near render_scaled_pic(int x, int y, int n, int align, int clip, int
         b.sy = 0x66;
         break;
     case 2:
-        b.sy = (r_vid.mode == -2 ? 0x63 : 0) + 1;
+        b.sy = (r_vid.mode == -2 ? DASH_Y - 1 : 0) + 1;
         break;
     case 3:
-        b.sy = (r_vid.mode == -2 ? 0x63 : 0) + 0x2c;
+        b.sy = (r_vid.mode == -2 ? DASH_Y - 1 : 0) + 0x2c;
         break;
     }
     if (align == 1)
@@ -1410,13 +1411,13 @@ static void near render_mirror(void)
     clip_vline(2, 0xf0, 0x17, 0x2a);
     clip_vline(4, 0xf1, 0x17, 0x2a);
     clip_vline(4, 0x13e, 0x17, 0x2a);
-    clip_vline(2, 0x13f, 0x17, 0x2a);
+    clip_vline(2, (SCREEN_WIDTH - 1), 0x17, 0x2a);
     pkt1.w = 0x20;
     pkt1.h = g8184y->height - 6;
     pkt1.sx = 0xf8;
     pkt1.sy = 0x16;
     pkt1.dx = 8;
-    pkt1.dy = (r_vid.mode == -2 ? 0 : 0x64) + 3;
+    pkt1.dy = (r_vid.mode == -2 ? 0 : DASH_Y) + 3;
     (*b_78a2)(g_drawPage == 1 ? g8188w : g82b4s, bm7678, &pkt1, 1);
 }
 

@@ -4,6 +4,9 @@
 #define DASH_H
 #include "STRUCTS.H"
 
+#define DASH_Y 100
+#define DASH_HEIGHT 100
+
 extern int g_needleColor;                               /* DS:02D2 */
 extern char g_introPalette[];                                   /* DS:02D4 */
 extern struct Bitmap far *g_savedBack;                  /* DS:02E6 */

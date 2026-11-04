@@ -30,7 +30,7 @@ _egaline_draw  PROC  FAR
         mov     ax,_g_egaGcFunction
         mov     al,GC_DATA_ROTATE
         out     dx,ax
-        mov     si,40                   ; row stride
+        mov     si,EGA_PITCH                   ; row stride
         mov     cx,[bp+10]
         sub     cx,[bp+6]               ; dx = x2 - x1
         je      vertical
@@ -219,7 +219,7 @@ _egaline_draw  ENDP
 _egaline_pixel_addr  PROC    NEAR
         mov     cl,bl
         push    dx
-        mov     dx,40
+        mov     dx,EGA_PITCH
         mul     dx
         pop     dx
         shr     bx,1

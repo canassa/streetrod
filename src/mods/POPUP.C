@@ -10,6 +10,7 @@
 #include "MARKS.H"
 #include "MEM.H"
 #include "MESSAGES.H"
+#include "PC.H"
 #include "SCREEN.H"
 #include "SYS.H"
 #include "VIDEO.H"
@@ -34,8 +35,8 @@ struct Bitmap far *popup_grab(int x, int y, int w, int h, struct Bitmap far *src
     int ye;
     int color;
 
-    x2 = (x + w + ~r_vid.mask & r_vid.mask) > 320 ? 320 : (x + w + ~r_vid.mask & r_vid.mask);
-    ye = y + h > 200 ? 200 : y + h;
+    x2 = (x + w + ~r_vid.mask & r_vid.mask) > SCREEN_WIDTH ? SCREEN_WIDTH : (x + w + ~r_vid.mask & r_vid.mask);
+    ye = y + h > SCREEN_HEIGHT ? SCREEN_HEIGHT : y + h;
     x &= r_vid.mask;
     if (src) {
         color = src->alt.p != 0;
