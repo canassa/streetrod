@@ -1185,3 +1185,9 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - The three load_pic callers respectively retain the result to clear the shared-buffer reference after LOAD_READ, ignore it while caching, and test LOAD_NO_MEMORY while loading a list.
 - This change confirms the existing CLAUDE.md enum rule without requiring a new code-generation rule: the enum local preserves its stack slot and comparison bytes.
+
+## 2026-11-05 19:45 CET: CURSOR_EGA_SAVE derived, in CURSOR.H
+
+### What I did
+- The cursor's EGA background save area (A000:1F40) is now `#define CURSOR_EGA_SAVE (EGA_VRAM + EGA_PITCH * SCREEN_HEIGHT)` in CURSOR.H: the first byte past the visible 8000-byte page 0 in each plane, in the gap before page 1 at A000:2000. It must be video memory because cursor_draw restores it with the write-mode-1 latch copy (egalatch_to_page). MSC folds the expression to the same constant.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, tests OK.

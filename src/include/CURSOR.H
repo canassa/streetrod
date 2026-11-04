@@ -8,6 +8,7 @@
 #define CURSOR_SHOW_NOW (-2)
 #define CURSOR_HIDE (-3)
 #define CURSOR_HIDE_NOW (-4)
+#define CURSOR_EGA_SAVE (EGA_VRAM + EGA_PITCH * SCREEN_HEIGHT)
 
 extern struct Pair g_cursorPairs[];                            /* DS:06EC */
 extern void (far *ap78b2z)(char far *, char far *, char far *, char far *, int, int, int, int);/* DS:78B2 */
