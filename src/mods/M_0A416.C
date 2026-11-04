@@ -2,6 +2,13 @@
 #include "PROTOS.H"
 #include <stdlib.h>
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+struct Bitmap far *c_6e64;
+int bo7676;
+void (far *dz78b6)(char far *, char far *);
+int gz8176;
+struct Bitmap far *x_82b8;
+
 static void near F_0A35C(struct Bitmap far *, int, struct Bitmap far *);
 static void near F_098BA(int);
 static void near F_0A0F8(int, int);
@@ -44,7 +51,7 @@ static void near F_0A416(void)
                 going = 0;
             else {
                 F_10AFD(1);
-                F_0A35C(pict, g_525a[1 + g_521e[i].frame], g_vid.front);
+                F_0A35C(pict, g_525a[1 + g_521e[i].frame], r_vid.front);
                 g_05cc = g_tick + (int)g_521e[i].delay;
                 i++;
             }
@@ -52,8 +59,8 @@ static void near F_0A416(void)
         }
     } while (going);
     F_10AFD(1);
-    F_0A35C(pict, g_525a[1 + 1], g_vid.front);
-    F_0A35C(pict, g_525a[1 + 1], g_vid.back);
+    F_0A35C(pict, g_525a[1 + 1], r_vid.front);
+    F_0A35C(pict, g_525a[1 + 1], r_vid.back);
     F_13F21(1);
     F_193FE();
 }
@@ -92,15 +99,15 @@ static void near F_0A544(void)
     F_120FE(-4);
     F_113A2(0xbe);
     F_119B8(9, 8, 0x14, 2);
-    g_8240 = 0;
+    m_8240 = 0;
     savedl = g_04c2;
     g_04c2 = 0xc8;
-    (*g_78b6)(g_vid.front->bits.p, g_vid.back->bits.p);
+    (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
     F_118D4(0x408, -1);
     g_04c2 = savedl;
-    (*g_present)();
+    (*m_present)();
     F_03A83(0x2ee);
-    (*g_blit)(g_vid.front->bits.p, g_vid.back->bits.p);
+    (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
     g_0284 = 1;
     pic15 = F_1934E(0x50, 0x2c, 0, 3);
     F_11A72(0x78, 0x45, 0x50, 0x2c, pic15);
@@ -108,13 +115,13 @@ static void near F_0A544(void)
     g_4f4c = 1;
     r = F_15C4A(g_5318, 0);
     r = F_15C4A(g_5328, 0);
-    (*g_78b6)(g_vid.back->bits.p, g_vid.front->bits.p);
-    g_8240 = 0;
-    (*g_present)();
-    g_8176 = 0x4c1;
+    (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
+    m_8240 = 0;
+    (*m_present)();
+    gz8176 = 0x4c1;
     F_098BA(0x15);
-    F_181C8(4, g_7648, g_7d84->fe, g_7d84->ff, 1, 0x98, 0, g_5030[g_8272.m827e]);
-    g_8176 = 0x4dc;
+    F_181C8(4, bn7648, g7d84o->fe, g7d84o->ff, 1, 0x98, 0, g_5030[m_8272.m827e]);
+    gz8176 = 0x4dc;
     pic24 = F_1934E(0x50, 0x2c, 0, 3);
     F_11A72(0x78, 0x45, 0x50, 0x2c, pic24);
     pic3 = F_15BBE(6, 1);
@@ -126,7 +133,7 @@ static void near F_0A544(void)
     blt.sy = g_526a[0].sy;
     blt.dx = g_526a[0].x - 0x50;
     blt.dy = 0x2c - g_526a[0].h;
-    (*g_78aa)(pic3, pic15, &blt, 1);
+    (*ab78aat)(pic3, pic15, &blt, 1);
     { }
     blt.w = p3->w;
     blt.h = p3->h;
@@ -134,7 +141,7 @@ static void near F_0A544(void)
     blt.sy = 0x2c - p3->h;
     blt.dx = blt.sx;
     blt.dy = blt.sy;
-    (*g_78a2)(pic15, pic24, &blt, 1);
+    (*b_78a2)(pic15, pic24, &blt, 1);
     F_03A83(10);
     for (i2 = 1; i2 < 0x14; i2++) {
         if (i2 == 13)
@@ -147,7 +154,7 @@ static void near F_0A544(void)
         blt.sy = p3->sy;
         blt.dx = p3->x - 0x50;
         blt.dy = 0x2c - p3->h;
-        (*g_78aa)(pic3, pic4, &blt, 1);
+        (*ab78aat)(pic3, pic4, &blt, 1);
         blt.w = 0x50;
         blt.h = 0x2c;
         blt.sx = 0;
@@ -156,16 +163,16 @@ static void near F_0A544(void)
         blt.dy = 0x45;
         if (i2 < 0x13) {
             F_10AFD(10);
-            (*g_78a2)(pic4, g_vid.front, &blt, 1);
+            (*b_78a2)(pic4, r_vid.front, &blt, 1);
         }
         if (i2 == 0x12)
-            (*g_78a2)(pic4, g_vid.back, &blt, 1);
+            (*b_78a2)(pic4, r_vid.back, &blt, 1);
     }
     F_193D4();
     if (flag8 == 0) {
         pic58 = F_15BBE(7, 1);
         cntz = 9;
-        if (g_vid.mode == -6) {
+        if (r_vid.mode == -6) {
             F_1929A(10000);
             cntz--;
         }
@@ -183,14 +190,14 @@ static void near F_0A544(void)
             blt2k.sy = miny;
             blt2k.dx = 0;
             blt2k.dy = 0;
-            (*g_78a2)(g_vid.back, pic6m, &blt2k, 1);
+            (*b_78a2)(r_vid.back, pic6m, &blt2k, 1);
             blt2k.w = v2a = p2m->w;
             blt2k.h = v30 = p2m->h;
             blt2k.sx = p2m->sx;
             blt2k.sy = p2m->sy;
             blt2k.dx = (v32 = p2m->x) - minx;
             blt2k.dy = (v38l = p2m->y) - miny;
-            (*g_78aa)(pic58, pic6m, &blt2k, 1);
+            (*ab78aat)(pic58, pic6m, &blt2k, 1);
             blt2k.w = w8;
             blt2k.h = h8;
             blt2k.sx = 0;
@@ -198,7 +205,7 @@ static void near F_0A544(void)
             blt2k.dx = minx;
             blt2k.dy = miny;
             F_10AFD(8);
-            (*g_78a2)(pic6m, g_vid.front, &blt2k, 1);
+            (*b_78a2)(pic6m, r_vid.front, &blt2k, 1);
             F_19438(1);
         }
     }
@@ -206,19 +213,19 @@ static void near F_0A544(void)
     blt2k.sy = miny;
     F_03A83(0x50);
     F_10AFD(1);
-    (*g_78a2)(g_vid.back, g_vid.front, &blt2k, 1);
+    (*b_78a2)(r_vid.back, r_vid.front, &blt2k, 1);
     F_10AFD(1);
-    (*g_78a2)(pic4, g_vid.front, &blt, 1);
-    (*g_78a2)(pic4, g_vid.back, &blt, 1);
+    (*b_78a2)(pic4, r_vid.front, &blt, 1);
+    (*b_78a2)(pic4, r_vid.back, &blt, 1);
     F_03A83(0x32);
     F_03AB8(0x183c);
-    g_8240 = 0;
+    m_8240 = 0;
     F_1923C();
     F_15C95(g_5328);
     F_15C95(g_5318);
 }
 
-struct Btn g_5338[7] = {{&g_6e64, 0, 0, 16, 149, 40, 5}, {&g_6e64, 0, 0, 16, 149, 96, 5}, {&g_6e64, 0, 0, 16, 149, 152, 5}, {&g_6e64, 0, 0, 16, 149, 208, 5}, {&g_6e64, 0, 0, 16, 149, 264, 5}, {&g_82b8, 0, 0, 32, 149, 0, 5}, {&g_82b8, 32, 0, 32, 149, 288, 5}};   /* DS:5338 */
+struct Btn g_5338[7] = {{&c_6e64, 0, 0, 16, 149, 40, 5}, {&c_6e64, 0, 0, 16, 149, 96, 5}, {&c_6e64, 0, 0, 16, 149, 152, 5}, {&c_6e64, 0, 0, 16, 149, 208, 5}, {&c_6e64, 0, 0, 16, 149, 264, 5}, {&x_82b8, 0, 0, 32, 149, 0, 5}, {&x_82b8, 32, 0, 32, 149, 288, 5}};   /* DS:5338 */
 struct Pair g_539a[6] = {{32, 8}, {56, 40}, {112, 40}, {168, 40}, {224, 40}, {280, 8}};   /* DS:539A */
 
 /* F_0AB8B @ 0000:AB8B (linear 0x0AB8B, 1210 bytes) */
@@ -244,21 +251,21 @@ void F_0AB8B(void)
     F_118D4(0x445, -1);
     F_10B8C();
     F_11593(g_49dc);
-    g_cursor.r.x2 = -1;
+    g_cursor2.r.x2 = -1;
     F_120FE(1);
-    (*g_present)();
+    (*m_present)();
     F_16381(0);
     if (random_int(100) < 25)
         F_0A416();
     F_120FE(-2);
-    g_7f86 = 0;
+    bm7f86 = 0;
     g_6c84 = -1;
     g_6c88 = 0;
     g_6ca2 = 1;
     g_0284 = 2;
     g_5ee = g_471c = g_4732 = 0;
     for (;;) {
-        F_0A0F8(g_7f86, !g_6c84 & !g_6c88);
+        F_0A0F8(bm7f86, !g_6c84 & !g_6c88);
         F_13DE6(0x25);
         g_05cc = flag == 0 ? (unsigned)(class == 4 ? 140 : 280) + g_tick : g_tick + 5;
         flag = 0;
@@ -270,8 +277,8 @@ void F_0AB8B(void)
             ;
         switch (choice) {
         case 1:
-            g_7f32[0] = 0;
-            F_11421(g_51ee, " ", g_8bc0);
+            g7f32s[0] = 0;
+            F_11421(g_51ee, " ", cz8bc0y);
             F_13F21(1);
             g_0284 = 1;
             F_08D26();
@@ -280,10 +287,10 @@ void F_0AB8B(void)
             F_06529(0);
             if (g_0282)
                 return;
-            if (g_7f86 == 0)
+            if (bm7f86 == 0)
                 goto race;
             F_11421(-1, "", 0);
-            F_092A4(2, g_7648, 1, 0xa3, 0, g_5030[g_8272.m827e]);
+            F_092A4(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
             n = 0;
             F_13F21(1);
             break;
@@ -299,32 +306,32 @@ out:
             F_13F21(1);
             break;
         case 2:
-            if (g_7f86 == 0) {
+            if (bm7f86 == 0) {
                 g_05cc = g_tick;
 race:
                 F_09A27(F_0984E(rival, 0), class, 2);
                 class = 1;
                 F_13F21(1);
             } else {
-                g_8256 = 1;
+                aq8256z = 1;
                 F_11421(-1, "", 0);
-                F_11421(g_51ee, "", g_8bc0);
+                F_11421(g_51ee, "", cz8bc0y);
 test:
-                while ((F_11421(-1, "", 0), F_09D6D(g_7d40))) {
-                    g_7f32[0] = 0;
-                    F_11421(g_51ee, " ", g_8bc0);
+                while ((F_11421(-1, "", 0), F_09D6D(g7d40q))) {
+                    g7f32s[0] = 0;
+                    F_11421(g_51ee, " ", cz8bc0y);
                     place = F_0C613();
-                    (*g_78be)();
+                    (*bl78be)();
                     F_08D9C(-1);
-                    if (g_8272.m8278 != 1)
+                    if (m_8272.m8278 != 1)
                         g_4970++;
-                    if (g_7d40) {
-                        if (g_7676 == 0) {
+                    if (g7d40q) {
+                        if (bo7676 == 0) {
                             g_4976 = 0;
-                            g_817d = 0;
+                            g817da = 0;
                             g_4972 -= 3;
                             g_4974 -= 2;
-                        } else if (g_7eaa.m7ec0 == 0)
+                        } else if (a_7eaap.m7ec0 == 0)
                             g_4976 = 1;
                         else {
                             F_16381(0);
@@ -342,16 +349,16 @@ test:
                         g_0282 |= 4;
                         return;
                     }
-                    if (g_7676 && g_8272.m8278 != 1) {
-                        if (g_7eaa.m7ec0 == 0)
+                    if (bo7676 && m_8272.m8278 != 1) {
+                        if (a_7eaap.m7ec0 == 0)
                             g_4972++;
                         else
                             g_4974++;
                     }
-                    if (g_8272.m8278 != 1) {
-                        g_7d84->fc++;
-                        if (g_7676 == 0)
-                            g_7d84->fd++;
+                    if (m_8272.m8278 != 1) {
+                        g7d84o->fc++;
+                        if (bo7676 == 0)
+                            g7d84o->fd++;
                     }
                     if (place == 2 || place == 1) {
                         F_13F21(1);
@@ -365,9 +372,9 @@ test:
                     F_16381(0);
                     F_118D4(0x445, -1);
                     F_11593(g_49dc);
-                    (*g_present)();
+                    (*m_present)();
                     class = 4;
-                    g_7f86 = 0;
+                    bm7f86 = 0;
                     g_6c84 = -1;
                     g_6c88 = 0;
                     n = 0;
@@ -376,17 +383,17 @@ test:
                     F_09A27(0x15, 4, 0);
                     goto test;
                 }
-                F_092A4(2, g_7648, 1, 0xa3, 0, g_5030[g_8272.m827e]);
+                F_092A4(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
                 n = 0;
                 F_13F21(1);
             }
             break;
         case 3:
-            if (g_7f86 == 0)
+            if (bm7f86 == 0)
                 goto out;
-            if (n > 0 || g_7d40) {
+            if (n > 0 || g7d40q) {
                 F_03AB8(0x122c);
-                F_092A4(2, g_7648, 1, 0xa3, 0, g_5030[g_8272.m827e]);
+                F_092A4(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
                 n = 0;
             } else {
                 F_0A265();

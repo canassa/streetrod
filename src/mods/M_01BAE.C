@@ -57,7 +57,7 @@ void F_01BAE(void)
             k = 2;
             break;
         case 9:
-            if (g_7eaa.m7eb0)
+            if (a_7eaap.m7eb0)
                 break;
         case 13:
             num--;
@@ -108,7 +108,7 @@ void F_01BAE(void)
             g_6c50 = 5;
             break;
         case 7:
-            if (g_7eaa.m7eb0 == 0)
+            if (a_7eaap.m7eb0 == 0)
                 g_6c50 = 0;
             break;
         }
@@ -160,9 +160,9 @@ void F_01BAE(void)
         g_06aa = 0;
     } else
         g_06aa = g_6c4c;
-    if (g_7eaa.m7eb8 == 0 && g_6c4c == 7)
+    if (a_7eaap.m7eb8 == 0 && g_6c4c == 7)
         F_03FF0(0x2a, g_4806[42].f0);
-    if (g_7eaa.m7eb0 == 0) {
+    if (a_7eaap.m7eb0 == 0) {
         if (g_6c4c == 10)
             g_47cc = 0x31;
         if (g_6c4c == 8 && (g_47cc == 1 || g_47cc == 0x22 || g_47cc == 0x19))

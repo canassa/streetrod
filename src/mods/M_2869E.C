@@ -23,11 +23,11 @@ struct Ball g_5e9c[7] = {{256, 8, 8}, {240, 16, 13}, {208, 32, 19}, {168, 40, 24
 
 static void near F_2869E(void)
 {
-    if (g_vid.mode == -2) {
-        g_787a = (g_5e3e == 1) ? 0xa200 : 0xa400;
+    if (r_vid.mode == -2) {
+        av787at = (g_5e3e == 1) ? 0xa200 : 0xa400;
         F_2322E(g_5e40);
     } else {
-        g_787a = g_8188->bits.w.seg;
-        g_767c = g_8188->bits.w.off;
+        av787at = g8188w->bits.w.seg;
+        at767ct = g8188w->bits.w.off;
     }
 }

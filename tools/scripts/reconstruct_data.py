@@ -23,7 +23,7 @@ funcs={r['addr']:r for r in con.execute('select * from functions')}
 CRT=(0x629c,0x6c22);END=0x8f02
 bounds={'g_videoMenu':6,'g_msgs':7,'g_palette':16,'g_0692':16,
         'g_5082':4,'g_511e':4,'g_579f':43,'g_6078':21,
-        'g_4766':0x66,'g_4806':44,'g_4998':5,'g_7312':5,'g_7316':4}
+        'g_4766':0x66,'g_4806':44,'g_4998':5,'ae7312y':5,'bp7316':4}
 # Non-global portions of the same static tables. Each range is identified from
 # its reader and/or adjacent typed records; there is no catch-all raw-byte range.
 regions=[
@@ -188,7 +188,7 @@ for line in body:
   off=int(match[1],16)
   if off<bss_start:return match[0]
   if off<bss_private_end:anchor='_g_6c22';delta=off-bss_start
-  elif off>=common_start:anchor='_g_6e60';delta=off-common_start
+  elif off>=common_start:anchor='_k_6e60';delta=off-common_start
   else:raise ValueError('Initializer into runtime private BSS needs its real symbol: '+hex(off))
   layout_externs.add(anchor)
   return 'OFFSET DGROUP:'+anchor+'+'+hx(delta)

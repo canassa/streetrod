@@ -102,7 +102,11 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
   followed by EM.LIB's 0x170-byte EMULATOR_DATA, then SLOTS at 389B.
 - LINK 5.01.21 COMMON allocation walks 256 symbol-hash buckets. Hash recovered
   from LINK's NE segment 2:4060: length + sum((byte|0x20) << (1-based-index&3)),
-  low byte selects bucket. Bucket chains insert at head. Disassembly and 45-name
+  low byte selects bucket. Bucket chains insert at head. Within a bucket the most
+  recently created symbol (first EXTDEF/COMDEF/PUBDEF in link order) is allocated
+  first; blocks over one byte are word-aligned. COMMON is now C tentative definitions
+  plus 14 sized `COMM` views in src/link/GCOMMON.ASM; renaming any of them can
+  move the layout. Disassembly and 45-name
   forward/reverse declaration probes are in work/binary-match; helper linkhash.py.
   Historical global names are unknown; do not confuse reconstructed placeholders
   with recovered names. Verify allocation with actual LINK output.

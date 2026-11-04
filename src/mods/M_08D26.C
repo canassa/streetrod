@@ -1,6 +1,9 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+int jz79a6;
+
 char g_51ac = -1;   /* DS:51AC */
 char g_51ad = -1;   /* DS:51AD */
 
@@ -11,17 +14,17 @@ void F_08D26(void)
 {
     g_47ee = g_5ee = g_471c = g_4732 = 0;
     if (g_0284) {
-        if (g_7eaa.m7eb0->f22 > 2)
-            g_7eaa.m7eb0->f22 -= 2;
+        if (a_7eaap.m7eb0->f22 > 2)
+            a_7eaap.m7eb0->f22 -= 2;
         else
-            g_7eaa.m7eb0->f22 = 0;
-        (*g_78be)();
+            a_7eaap.m7eb0->f22 = 0;
+        (*bl78be)();
         if (g_47ee == 0) {
             F_120FE(-4);
-            g_58e6 = !g_4806[g_7eaa.m7eb0->slot6->idx].f2;
-            F_0CDAF(&g_78e0);
-            g_79a6 = 0;
-            g_8aca = 0;
+            g_58e6 = !g_4806[a_7eaap.m7eb0->slot6->idx].f2;
+            F_0CDAF(&e_78e0);
+            jz79a6 = 0;
+            bw8aca = 0;
             F_08E2D();
         }
     }
@@ -34,7 +37,7 @@ void F_08D9C(int mode)
 {
     char a, b;
 
-    if (g_vid.mode == -2 || g_vid.mode == -6) {
+    if (r_vid.mode == -2 || r_vid.mode == -6) {
         if (mode == -1) {
             a = g_51ac;
             b = g_51ad;
@@ -47,7 +50,7 @@ void F_08D9C(int mode)
             a = g_50c2[mode][0];
             b = g_50c2[mode][1];
         }
-        if (g_8249) {
+        if (gz8249) {
             F_112CB(12, a);
             F_112CB(3, b);
         }

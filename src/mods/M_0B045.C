@@ -45,22 +45,22 @@ void F_0B08C(void)
     old = 0;
     mode = 4;
     flag = 0;
-    g_vid.f16 = 0;
+    r_vid.f16 = 0;
     F_120FE(-3);
     F_193D4();
-    g_82b8 = F_15BBE(0x4e7, 1);
-    g_6e64 = F_15BBE(0x4e9, 1);
+    x_82b8 = F_15BBE(0x4e7, 1);
+    c_6e64 = F_15BBE(0x4e9, 1);
     F_118D4(0x445, -1);
     F_10B8C();
     pict = F_15BBE(0x4e8, 2);
     blt.w = pict->width;
     blt.h = 5;
     blt.dx = blt.dy = blt.sx = blt.sy = 0;
-    (*g_78a2)(pict, g_vid.back, &blt, 1);
+    (*b_78a2)(pict, r_vid.back, &blt, 1);
     blt.h = pict->height - 5;
     blt.sy = 5;
     blt.dy = 190 - blt.h;
-    (*g_78a2)(pict, g_vid.back, &blt, 1);
+    (*b_78a2)(pict, r_vid.back, &blt, 1);
     for (i = 0; i < 7; i++) {
         blt.w = g_5338[i].w;
         blt.h = g_5338[i].h;
@@ -68,14 +68,14 @@ void F_0B08C(void)
         blt.sy = g_5338[i].sy;
         blt.dx = g_5338[i].x;
         blt.dy = g_5338[i].y;
-        (*g_78a2)(*g_5338[i].src, g_vid.back, &blt, 1);
+        (*b_78a2)(*g_5338[i].src, r_vid.back, &blt, 1);
     }
     F_11421(-1, "", 0);
     F_11593(g_49dc);
-    (*g_78b6)(g_vid.back->bits.p, g_vid.front->bits.p);
-    g_vid.f16 = 1;
-    (*g_present)();
-    g_7f86 = 0;
+    (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
+    r_vid.f16 = 1;
+    (*m_present)();
+    bm7f86 = 0;
     g_6c84 = -1;
     g_6c88 = 0;
     F_120FE(1);
@@ -107,8 +107,8 @@ void F_0B08C(void)
             }
             F_09A27(F_0984E(who, 1), mode, 1);
             mode = 1;
-            g_7f32[0] = 0;
-            F_11421(g_51ee, " ", g_8bc0);
+            g7f32s[0] = 0;
+            F_11421(g_51ee, " ", cz8bc0y);
         case 2:
         case 3:
         case 4:

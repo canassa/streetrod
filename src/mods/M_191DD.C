@@ -15,5 +15,5 @@ void F_191DD(void)
     pkt.sx = 200;
     pkt.sy = 68;
     pkt.dx = pkt.dy = 0;
-    (*g_78a2)(g_vid.back, g_6ccc, &pkt, 1);
+    (*b_78a2)(r_vid.back, g_6ccc, &pkt, 1);
 }

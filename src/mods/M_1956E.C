@@ -3,7 +3,13 @@
 #include "STRUCTS.H"
 #include <stdlib.h>
 
-/* F_1956E: clip the box (c, d, a, b) to 0..amax x 0..bmax, snap to the g_vid.mask pixel mask; result in out */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+struct Seq g_764e[10];
+struct Dir aq77c0v[11];
+struct Sprite g7d18m;
+struct Page aq7d42[2];
+
+/* F_1956E: clip the box (c, d, a, b) to 0..amax x 0..bmax, snap to the r_vid.mask pixel mask; result in out */
 
 
 void F_1956E(int a, int b, int c, int d, int amax, int bmax, struct Rect *out)
@@ -16,7 +22,7 @@ void F_1956E(int a, int b, int c, int d, int amax, int bmax, struct Rect *out)
         if ((b = bmax - d) < 0)
             b = 0;
     }
-    if ((c &= g_vid.mask) < 0) {
+    if ((c &= r_vid.mask) < 0) {
         a += c;
         c = 0;
     }
@@ -24,14 +30,14 @@ void F_1956E(int a, int b, int c, int d, int amax, int bmax, struct Rect *out)
         if ((a = amax - c) < 0)
             a = 0;
     }
-    a &= g_vid.mask;
+    a &= r_vid.mask;
     out->x1 = c;
     out->x2 = c + a - 1;
     out->y1 = d;
     out->y2 = d + b - 1;
 }
 
-/* F_195F3: set up the sprite g_7d18 from n frame images: the ring of frames, the display pages and the clipped rectangle */
+/* F_195F3: set up the sprite g7d18m from n frame images: the ring of frames, the display pages and the clipped rectangle */
 
 
 struct Sprite *F_195F3(int x, int y, struct Bitmap far **imgs, char (*cell)[8], int n, struct Bitmap far *img,
@@ -41,46 +47,46 @@ struct Sprite *F_195F3(int x, int y, struct Bitmap far **imgs, char (*cell)[8], 
 
     y -= (*imgs)->height - 1;
     for (i = 0; i < n; i++) {
-        g_77ba[i].pos = (long)*imgs++;
+        g77bal[i].pos = (long)*imgs++;
         if (cell)
-            g_77ba[i].data = g_vid.mode == -2 ? cell++ : &g_6e68[i];
+            g77bal[i].data = r_vid.mode == -2 ? cell++ : &am6e68x[i];
         else
-            g_77ba[i].data = 0;
-        g_77ba[i].nxt[0] = &g_77ba[i + 1];
+            g77bal[i].data = 0;
+        g77bal[i].nxt[0] = &g77bal[i + 1];
     }
-    g_7d18.frame = g_77ba[i - 1].nxt[0] = g_77ba;
+    g7d18m.frame = g77bal[i - 1].nxt[0] = g77bal;
     for (i = 0; i < n; i++)
-        g_77ba[i].nxt[1] = g_77ba[i].nxt[0]->nxt[0];
+        g77bal[i].nxt[1] = g77bal[i].nxt[0]->nxt[0];
     for (i = 0; i < n; i++)
-        g_77ba[i].nxt[2] = g_77ba[i].nxt[1]->nxt[1];
-    g_7d18.img = img;
-    g_7d18.x = x;
-    g_7d18.y = y;
-    g_7d18.save = save;
-    g_7d18.rc[0] = a8;
-    g_7d18.rc[1] = a9;
-    if (g_vid.mode == -2) {
+        g77bal[i].nxt[2] = g77bal[i].nxt[1]->nxt[1];
+    g7d18m.img = img;
+    g7d18m.x = x;
+    g7d18m.y = y;
+    g7d18m.save = save;
+    g7d18m.rc[0] = a8;
+    g7d18m.rc[1] = a9;
+    if (r_vid.mode == -2) {
         for (i = 0; i < 2; i++) {
-            g_7d42[i].bm = g_7316[i];
-            g_7d42[i].idx = i;
-            g_7d42[i].r.x1 = g_7d42[i].r.y1 = 0;
-            g_7d42[i].r.x2 = g_7d42[i].r.y2 = -1;
-            g_7d42[i].link = &g_7d42[i + 1];
+            aq7d42[i].bm = bp7316[i];
+            aq7d42[i].idx = i;
+            aq7d42[i].r.x1 = aq7d42[i].r.y1 = 0;
+            aq7d42[i].r.x2 = aq7d42[i].r.y2 = -1;
+            aq7d42[i].link = &aq7d42[i + 1];
         }
-        g_7d42[i - 1].link = g_7d42;
+        aq7d42[i - 1].link = aq7d42;
     } else {
-        g_7d42[0].bm = g_vid.front;
-        g_7d42[0].idx = 0;
-        g_7d42[0].r.x1 = g_7d42[0].r.y1 = 0;
-        g_7d42[0].r.x2 = g_7d42[0].r.y2 = -1;
-        g_7d42[0].link = g_7d42;
+        aq7d42[0].bm = r_vid.front;
+        aq7d42[0].idx = 0;
+        aq7d42[0].r.x1 = aq7d42[0].r.y1 = 0;
+        aq7d42[0].r.x2 = aq7d42[0].r.y2 = -1;
+        aq7d42[0].link = aq7d42;
     }
-    g_7d18.page = g_7d42;
-    F_1956E(((struct Bitmap far *)g_7d18.frame->pos)->width,
-        ((struct Bitmap far *)g_7d18.frame->pos)->height, g_7d18.x, g_7d18.y,
-        g_7d42[0].bm->width, g_7d42[0].bm->height, &g_7d42[0].r);
-    g_7d18.seq = g_764e;
-    return &g_7d18;
+    g7d18m.page = aq7d42;
+    F_1956E(((struct Bitmap far *)g7d18m.frame->pos)->width,
+        ((struct Bitmap far *)g7d18m.frame->pos)->height, g7d18m.x, g7d18m.y,
+        aq7d42[0].bm->width, aq7d42[0].bm->height, &aq7d42[0].r);
+    g7d18m.seq = g_764e;
+    return &g7d18m;
 }
 
 /* F_19839: subtract rectangle a from b along one axis into out; NULL when nothing is left */
@@ -128,17 +134,17 @@ void F_19925(struct Sprite *s)
     struct Frame *f1, *f2, *f3, *f4;
     int idx;
 
-    s->x = g_8b7c;
+    s->x = z_8b7c;
     f4 = (f3 = (f2 = (f1 = s->frame)->nxt[0])->nxt[0])->nxt[0];
     f1->nxt[0] = f4;
     f2->nxt[0] = f1;
     f3->nxt[0] = f2;
     f4->nxt[0] = f3;
     for (idx = 0; idx < 4; idx++)
-        g_77c0[idx].f2 = g_77c0[idx].f0->nxt[0];
+        aq77c0v[idx].f2 = aq77c0v[idx].f0->nxt[0];
     for (idx = 0; idx < 4; idx++)
-        g_77c0[idx].f4 = g_77c0[idx].f2->nxt[1];
-    switch (g_8b7c & 7) {
+        aq77c0v[idx].f4 = aq77c0v[idx].f2->nxt[1];
+    switch (z_8b7c & 7) {
     case 0:
         break;
     case 6:
@@ -230,7 +236,7 @@ void F_19BFE(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
     struct Bitmap far *img2;
     int old;
 
-    old = g_8b7c;
+    old = z_8b7c;
     n1 = y1 - y0;
     dir = 1;
     if (n1 < 0) {
@@ -243,16 +249,16 @@ void F_19BFE(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
     F_19ED0(img2, save, 1);
     sp = F_195F3(x, bm->height + y0 - 1, &bm, 0, 1, img2, save, 0, 0);
     F_199DD(sp, 0, n1, 0, (char)dir);
-    sp->page->bm = g_vid.back;
-    while ((*g_78c6)(sp)) {
+    sp->page->bm = r_vid.back;
+    while ((*g78c6c)(sp)) {
         if (g_0792)
-            (*g_78aa)(g_0792, g_vid.back, &g_70ac, 1);
-        if (g_vid.f16)
-            F_1A92A(g_vid.back, g_vid.front, x, a, bm->width + x, b);
+            (*ab78aat)(g_0792, r_vid.back, &u_70ac, 1);
+        if (r_vid.f16)
+            F_1A92A(r_vid.back, r_vid.front, x, a, bm->width + x, b);
     }
-    if (g_vid.f16)
-        F_1A92A(g_vid.front, g_vid.back, x, (y0 > y1 ? y1 : y0) < 0 ? 0 : (y0 > y1 ? y1 : y0), bm->width + x,
+    if (r_vid.f16)
+        F_1A92A(r_vid.front, r_vid.back, x, (y0 > y1 ? y1 : y0) < 0 ? 0 : (y0 > y1 ? y1 : y0), bm->width + x,
             (y0 < y1 ? y1 : y0) + bm->height > 199 ? 199 : (y0 < y1 ? y1 : y0) + bm->height);
-    g_8b7c = old;
+    z_8b7c = old;
     F_19438(2);
 }

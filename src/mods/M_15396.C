@@ -7,6 +7,19 @@
 #include <string.h>
 #include <io.h>
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+struct Spr12 g7682n[26];
+struct Pos6 g7844n[9];
+int a_7d16q;
+unsigned g7d68m[3][3];
+struct Spr6 ap818c[26];
+unsigned ag8baey[3][3];
+int h_8bc8;
+int s_8dd2;
+char *aw8dd4x;
+char *au8dd6y;
+int h_8dd8[4][3];
+
 static int near F_153D7(int n);
 static void near F_15409(int n);
 static int near F_1563A(int n, int load, char far *dst);
@@ -18,7 +31,7 @@ static void near F_1604F(void);
    Returns 0 on success, else the error in g_6318, also copied to g_630d */
 
 char *g_4ea2 = "hot_data";   /* DS:4EA2 */
-char *g_4ea4[13] = {&g_7ff8, &g_7d86, &g_8df0, &g_7682, &g_70e4, &g_818c, g_2c02, &g_7d16, g_239e, &g_7d68, &g_8bae, &g_8dd8, (char *)&g_7844 + 6};   /* DS:4EA4 */
+char *g_4ea4[13] = {&av7ff8, &g7d86n, &w_8df0, &g7682n, &ai70e4t, &ap818c, g_2c02, &a_7d16q, g_239e, &g7d68m, &ag8baey, &h_8dd8, (char *)&g7844n + 6};   /* DS:4EA4 */
 unsigned g_4ebe[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};   /* DS:4EBE */
 int g_4ed8 = 0;   /* DS:4ED8 */
 int g_4eda = 0;   /* DS:4EDA */
@@ -59,14 +72,14 @@ static int near F_153D7(int n)
         n -= 0x3df;
     else
         n--;
-    if (g_vid.mode != -2 && g_vid.mode != -6)
+    if (r_vid.mode != -2 && r_vid.mode != -6)
         return g_07c6[n];
     else
         return n;
 }
 
 /* F_15409: make sure the picture file holding picture number n is open (the pictures come in two
-   files, split at g_8bc8). Closes the other one, asks for the right disk until the open works
+   files, split at h_8bc8). Closes the other one, asks for the right disk until the open works
    and checks the file header word */
 
 
@@ -77,23 +90,23 @@ static void near F_15409(int n)
     int tries;
     unsigned got;
 
-    if (F_153D7(n) >= g_8bc8) {
+    if (F_153D7(n) >= h_8bc8) {
         kind = 2;
-        g_6c6e = g_8dd6;
+        g_6c6e = au8dd6y;
         g_6c6c = &g_4eda;
         g_6c70 = &g_4ed8;
-        g_6c6a = &g_8dd2;
+        g_6c6a = &s_8dd2;
     } else {
         kind = 1;
-        g_6c6e = g_8dd4;
+        g_6c6e = aw8dd4x;
         g_6c6c = &g_4ed8;
         g_6c70 = &g_4eda;
-        g_6c6a = &g_8bc8;
+        g_6c6a = &h_8bc8;
     }
     if (*g_6c6c == 0) {
         _dos_close(*g_6c70);
         *g_6c70 = 0;
-        g_4ee4[12] = kind == 1 ? '1' : (g_vid.mode != -2 && g_vid.mode != -6) ? '3' : '2';
+        g_4ee4[12] = kind == 1 ? '1' : (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
         g_4ee4[25] = *g_6c6e;
         tries = 0;
         while (_dos_open(g_6c6e, 0, g_6c6c)) {
@@ -101,7 +114,7 @@ static void near F_15409(int n)
                 F_00FEA();
             F_1174E(g_4ee4);
         }
-        if (_dos_read(*g_6c6c, (void far *)g_6c6a, 2, &got) || got != 2 || g_8bc8 + g_8dd2 != 0x115) {
+        if (_dos_read(*g_6c6c, (void far *)g_6c6a, 2, &got) || got != 2 || h_8bc8 + s_8dd2 != 0x115) {
             F_1174E(g_4ee8);
             F_00FEA();
         }
@@ -109,7 +122,7 @@ static void near F_15409(int n)
 }
 
 /* F_1552B: read the picture headers of one picture file into g_slot: which 1 is the first file,
-   anything else the second (its entries follow the first file's, g_8bc8 of them). Clears the
+   anything else the second (its entries follow the first file's, h_8bc8 of them). Clears the
    run time fields of each entry. Returns the largest data size found */
 
 
@@ -124,11 +137,11 @@ int F_1552B(int which)
     int base;
     struct Slot far *sl;
 
-    base = which == 1 ? 0 : g_8bc8;
+    base = which == 1 ? 0 : h_8bc8;
     num = which == 1 ? 1 : 1000;
     height = 0;
     F_15409(num);
-    count = which == 1 ? g_8bc8 : g_8dd2;
+    count = which == 1 ? h_8bc8 : s_8dd2;
     for (i = 0; i < count; i++) {
         sl = &g_slot[base + i];
         if (F_15396(*g_6c6c, (long)(i * 0x1e + 2)) ||
@@ -212,7 +225,7 @@ static int near F_1563A(int n, int load, char far *dst)
             do {
                 if (++retries > 3)
                     F_00FEA();
-                g_4ee4[12] = *g_6c6c == g_4ed8 ? 1 : (g_vid.mode != -2 && g_vid.mode != -6) ? '3' : '2';
+                g_4ee4[12] = *g_6c6c == g_4ed8 ? 1 : (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
                 g_4ee4[25] = *g_6c6e;
                 F_1174E(g_4ee4);
                 _dos_close(*g_6c6c);
@@ -248,7 +261,7 @@ void F_158DE(int n)
 }
 
 /* F_1592E: unpack picture number id into the bitmap bm (a new one when bm is 0). The picture is
-   loaded to the work area g_7564 first; its data is RLE coded (F_0E926) and expanded for the video
+   loaded to the work area ab7564z first; its data is RLE coded (F_0E926) and expanded for the video
    mode in use into the planes bits and alt of the bitmap. Returns the bitmap */
 
 
@@ -267,7 +280,7 @@ struct Bitmap far *F_1592E(int id, struct Bitmap far *bm)
     struct Slot far *sl;
 
     F_120FE(-4);
-    res = F_1563A(id, 0, g_7564);
+    res = F_1563A(id, 0, ab7564z);
     cur = sl = &g_slot[F_153D7(id)];
     if (g_4f0e)
         pic = F_0376B(cur->f0, cur->f2, cur->f6, 1, bm);
@@ -281,7 +294,7 @@ struct Bitmap far *F_1592E(int id, struct Bitmap far *bm)
     }
     src = sl->ptr.p + 1;
     num = cur->f1c - 1;
-    if (g_vid.mode == -2) {
+    if (r_vid.mode == -2) {
         if (pic->bits.p == 0) {
             F_0E926(src, pic->alt.p, num, colors16, 16);
         } else {
@@ -289,7 +302,7 @@ struct Bitmap far *F_1592E(int id, struct Bitmap far *bm)
             if (pic->alt.p)
                 F_26401(pic->bits.p, pic->alt.p, pic->planesize);
         }
-    } else if (g_vid.mode == -6) {
+    } else if (r_vid.mode == -6) {
         if (pic->bits.p == 0) {
             F_24740(src, pic->alt.p, pic->planesize, colors16);
         } else {
@@ -387,8 +400,8 @@ void F_15C95(int *list)
         F_158DE(n);
 }
 
-/* F_15CC3: open the two picture files (names g_8dd4 and g_8dd6, drive letter patched into their
-   first character) and read the entry counts g_8bc8 and g_8dd2 from their headers. disks is the
+/* F_15CC3: open the two picture files (names aw8dd4x and au8dd6y, drive letter patched into their
+   first character) and read the entry counts h_8bc8 and s_8dd2 from their headers. disks is the
    number of disk drives wanted: 2 only when the equipment word says there are two floppies. mode 2
    and 5 pick the other file names. Any failure shows an error text */
 
@@ -404,45 +417,45 @@ void F_15CC3(int disks, int mode)
         disks = 2;
     else
         disks = 1;
-    g_8dd4 = (mode == 2 || mode == 5) ? g_4edc : g_4ede;
-    *g_8dd4 = g_6c68 + 0x40;
-    err = _dos_open(g_8dd4, 0, &g_4ed8);
+    aw8dd4x = (mode == 2 || mode == 5) ? g_4edc : g_4ede;
+    *aw8dd4x = g_6c68 + 0x40;
+    err = _dos_open(aw8dd4x, 0, &g_4ed8);
     if (err || g_4ed8 == 0) {
         if (g_6c68 > 2) {
             F_1174E(g_4ee6);
         } else {
-            strcpy(g_4eec + 0x10, g_8dd4 + 2);
+            strcpy(g_4eec + 0x10, aw8dd4x + 2);
             F_1174E(g_4eec);
         }
         F_00FEA();
     }
-    if (_dos_read(g_4ed8, (void far *)&g_8bc8, 2, &err) || err != 2) {
+    if (_dos_read(g_4ed8, (void far *)&h_8bc8, 2, &err) || err != 2) {
         F_1174E(g_4ee8);
         F_00FEA();
     }
-    g_8dd6 = (mode == 2 || mode == 5) ? g_4ee0 : g_4ee2;
-    *g_8dd6 = *g_8dd4;
-    if (_dos_open(g_8dd6, 0, &g_4eda) || g_4eda == 0) {
+    au8dd6y = (mode == 2 || mode == 5) ? g_4ee0 : g_4ee2;
+    *au8dd6y = *aw8dd4x;
+    if (_dos_open(au8dd6y, 0, &g_4eda) || g_4eda == 0) {
         if (g_6c68 > 2) {
             F_1174E(g_4ee6);
             F_00FEA();
         } else if (disks == 1) {
             g_4eda = 0;
         } else {
-            *g_8dd6 = g_6c68 == 1 ? 'B' : 'A';
-            err = _dos_open(g_8dd6, 0, &g_4eda);
+            *au8dd6y = g_6c68 == 1 ? 'B' : 'A';
+            err = _dos_open(au8dd6y, 0, &g_4eda);
             for (tries = 0; err || g_4eda == 0; tries++) {
                 if (tries == 3)
                     F_00FEA();
                 g_4ee4[12] = (mode != 2 && mode != 5) ? '3' : '2';
-                g_4ee4[0x19] = *g_8dd6;
+                g_4ee4[0x19] = *au8dd6y;
                 F_1174E(g_4ee4);
-                err = _dos_open(g_8dd6, 0, &g_4eda);
+                err = _dos_open(au8dd6y, 0, &g_4eda);
             }
         }
     }
     if (g_4eda) {
-        if (_dos_read(g_4eda, (void far *)&g_8dd2, 2, &err) || err != 2 || g_8bc8 + g_8dd2 != 0x115) {
+        if (_dos_read(g_4eda, (void far *)&s_8dd2, 2, &err) || err != 2 || h_8bc8 + s_8dd2 != 0x115) {
             F_1174E(g_4ee8);
             F_00FEA();
         }
@@ -450,7 +463,7 @@ void F_15CC3(int disks, int mode)
 }
 
 /* F_15EF9: load the game data. Builds the file name g_6c72 from the first two characters of
-   g_8dd6 and the text g_4ea2 points to (g_4ea2 ends up behind its terminator), opens it and
+   au8dd6y and the text g_4ea2 points to (g_4ea2 ends up behind its terminator), opens it and
    reads the 13 blocks of the data table (buffer g_4ea4[i], size g_4ebe[i]); any failure shows an
    error text. Ends by loading the hall of fame (F_16089) */
 
@@ -465,8 +478,8 @@ void F_15EF9(void)
     int j;
 
     drive = g_6c72;
-    *drive++ = g_8dd6[0];
-    *drive++ = g_8dd6[1];
+    *drive++ = au8dd6y[0];
+    *drive++ = au8dd6y[1];
     while (*drive++ = *g_4ea2++)
         ;
     if (_dos_open(g_6c72, 0, &fd)) {
@@ -502,8 +515,8 @@ int F_15FBD(void)
         if (_dos_open(g_6c72, 0, &file)) {
             if (++tries > 3)
                 F_00FEA();
-            g_4ee4[12] = (g_vid.mode != -2 && g_vid.mode != -6) ? '3' : '2';
-            g_4ee4[25] = *g_8dd6;
+            g_4ee4[12] = (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
+            g_4ee4[25] = *au8dd6y;
             F_1174E(g_4ee4);
         } else {
             _dos_close(file);
@@ -513,7 +526,7 @@ int F_15FBD(void)
     }
 }
 
-/* F_1604F: set the high bit of all 230 bytes of g_table (10 hall of fame entries of 23 bytes) to scramble
+/* F_1604F: set the high bit of all 230 bytes of aytablex (10 hall of fame entries of 23 bytes) to scramble
    it before it is written to the file (see F_16152) */
 
 
@@ -522,10 +535,10 @@ static void near F_1604F(void)
     int i;
 
     for (i = 0; i < 230; i++)
-        ((char *)g_table)[i] |= 0x80;
+        ((char *)aytablex)[i] |= 0x80;
 }
 
-/* F_1606C: clear the high bit of all 230 bytes of g_table again, unscrambling the hall of fame */
+/* F_1606C: clear the high bit of all 230 bytes of aytablex again, unscrambling the hall of fame */
 
 
 static void near F_1606C(void)
@@ -533,11 +546,11 @@ static void near F_1606C(void)
     int i;
 
     for (i = 0; i < 230; i++)
-        ((char *)g_table)[i] &= 0x7f;
+        ((char *)aytablex)[i] &= 0x7f;
 }
 
 /* F_16089: read the hall of fame file (name g_4f3a, first character the drive of the game disk):
-   a count word, then g_count entries. Any read failure shows the error text. A missing file
+   a count word, then bucount entries. Any read failure shows the error text. A missing file
    leaves the table empty */
 
 
@@ -549,16 +562,16 @@ void F_16089(void)
     int got;
     int fd;
 
-    g_4f3a[0] = *g_8dd6;
+    g_4f3a[0] = *au8dd6y;
     F_15FBD();
     if (_dos_open(g_4f3a, 0, &fd) || fd == 0)
-        g_count = 0;
+        bucount = 0;
     else {
-        if (_dos_read(fd, (void far *)&g_count, 2, &got) || got != 2) {
+        if (_dos_read(fd, (void far *)&bucount, 2, &got) || got != 2) {
             F_1174E(g_4ee8);
             F_00FEA();
         }
-        for (i = 0, p = g_table; i < g_count; p++, i++) {
+        for (i = 0, p = aytablex; i < bucount; p++, i++) {
             if (_dos_read(fd, (void far *)p, sizeof *p, &got) || got != sizeof *p) {
                 F_1174E(g_4ee8);
                 F_00FEA();
@@ -570,7 +583,7 @@ void F_16089(void)
 }
 
 /* F_16152: write the hall of fame file (g_4f3a): the table is scrambled (F_1604F), the file made
-   (asking for the disk until it works on a floppy), the count word and the g_count entries
+   (asking for the disk until it works on a floppy), the count word and the bucount entries
    written. Any failure shows the error text and deletes the file. The table is unscrambled at
    the end (F_1606C) */
 
@@ -602,13 +615,13 @@ void F_16152(void)
             got = _dos_creat(g_4f3a, 0, &fd);
         }
     }
-    if (_dos_write(fd, (void far *)&g_count, 2, &got) || got != 2) {
+    if (_dos_write(fd, (void far *)&bucount, 2, &got) || got != 2) {
 bad:
         F_1174E(g_4eea);
         unlink(g_4f3a);
         F_1174E(g_4eea);
     } else {
-        for (i = 0, p = g_table; i < g_count; p++, i++)
+        for (i = 0, p = aytablex; i < bucount; p++, i++)
             if (_dos_write(fd, (void far *)p, sizeof *p, &got) || got != sizeof *p)
                 goto bad;
         if (_dos_close(fd))

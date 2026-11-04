@@ -51,7 +51,7 @@ char far *F_03709(unsigned n, int fatal)
 
     if (p = _fmalloc(n)) {
         if (FP_SEG(p) == g_6c60 ||
-            (g_vid.mode == -6 && (unsigned long)(p + n) >= 0x80000000UL))
+            (r_vid.mode == -6 && (unsigned long)(p + n) >= 0x80000000UL))
             _ffree(p);
         else
             return p;
@@ -71,9 +71,9 @@ struct Bitmap far *F_0376B(int w, int h, int flags, int c, struct Bitmap far *me
     unsigned planesize;
     struct Bitmap far *bm;
 
-    pitch = ((w - 1) >> g_vid.shift) + 1;
+    pitch = ((w - 1) >> r_vid.shift) + 1;
     size = pitch * h;
-    planesize = size * g_vid.planes;
+    planesize = size * r_vid.planes;
     hdrl = 0x30;
     extra6 = 0;
     if (flags)
@@ -112,8 +112,8 @@ struct Bitmap far *F_03880(char far *bits, char far *alt, int w, int h, int flag
     int size;
     struct Bitmap far *bm;
 
-    pitch = ((w - 1) >> g_vid.shift) + 1;
-    size = pitch * h * g_vid.planes;
+    pitch = ((w - 1) >> r_vid.shift) + 1;
+    size = pitch * h * r_vid.planes;
     bm = (struct Bitmap far *)F_03709(0x30, 0);
     if (bm == 0)
         return 0;
@@ -132,8 +132,8 @@ void F_03904(struct Bitmap far *bm, char far *bits, char far *alt, int w, int h,
     int pitch;
     int size;
 
-    pitch = ((w - 1) >> g_vid.shift) + 1;
-    size = pitch * h * g_vid.planes;
+    pitch = ((w - 1) >> r_vid.shift) + 1;
+    size = pitch * h * r_vid.planes;
     bm->bits.p = bits;
     bm->alt.p = alt;
     bm->planesize = size;

@@ -2,6 +2,9 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+char iz8248;
+
 /* F_11324: load all 16 EGA palette registers plus the overscan color (BIOS int 10h function 10h, al = 2) */
 
 
@@ -21,7 +24,7 @@ void F_11324(char *table)
             *dest++ = *table;
         table++;
     }
-    pal[16] = g_8248;
+    pal[16] = iz8248;
     dest = (char far *)pal;
     s.es = FP_SEG(dest);
     r.x.dx = FP_OFF(dest);

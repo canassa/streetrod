@@ -1,6 +1,9 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+void (far *bl78ce)(int, int, int, int, int, struct Bitmap far *);
+
 /* F_123F4: draw the 64 x 6 bar for slot of the dialog; frame selects the highlighted frame.
    When frame == 1 and the screen is shadowed, the old bar is grabbed and pasted first. */
 
@@ -29,13 +32,13 @@ void F_123F4(int frame, int slot)
     pict = F_15BBE(0x44f, 2);
     x = 0xb8;
     y = g_06fe[slot] + 10;
-    if (frame == 1 && g_vid.f16) {
+    if (frame == 1 && r_vid.f16) {
         blt.w = 0x10;
         blt.h = 6;
         blt.sx = 0x40;
         blt.sy = 0;
         tmp = F_1A89E(pict, &blt, 2);
-        (*g_78ce)(0xe, 0x94, x, 8, y, tmp);
+        (*bl78ce)(0xe, 0x94, x, 8, y, tmp);
         F_19438(1);
     }
     blt.sx = frame << 4;
@@ -44,10 +47,10 @@ void F_123F4(int frame, int slot)
     blt.dy = y;
     blt.w = 0x10;
     blt.h = blt.fc = 6;
-    (*g_78a2)(pict, g_vid.back, &blt, 1);
+    (*b_78a2)(pict, r_vid.back, &blt, 1);
     F_120FE(-1);
-    if (g_vid.f16)
-        F_1A92A(g_vid.back, g_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
+    if (r_vid.f16)
+        F_1A92A(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
     F_19438(1);
 }
 
@@ -69,15 +72,15 @@ void F_12525(int slot)
     blt.dy = y = g_06fe[slot] + 10;
     blt.w = 0x10;
     blt.h = blt.fc = 6;
-    (*g_78a2)(pict, g_vid.back, &blt, 1);
+    (*b_78a2)(pict, r_vid.back, &blt, 1);
     F_120FE(-1);
-    if (g_vid.f16) {
-        F_1A92A(g_vid.back, g_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
+    if (r_vid.f16) {
+        F_1A92A(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + 15, blt.dy + 5);
         F_16CF3();
         F_120FE(-4);
         blt.sx = 0x40;
         tmp = F_1A89E(pict, &blt, 2);
-        (*g_78ce)(0xe, 0x94, x, y, 0x94, tmp);
+        (*bl78ce)(0xe, 0x94, x, y, 0x94, tmp);
         F_19438(1);
         F_120FE(-2);
     }
@@ -104,20 +107,20 @@ void F_1264E(int n, int flag)
     sy = 125 - (h1 = pict->height);
     if (flag)
         sx -= 0x18;
-    if (g_vid.f16) {
+    if (r_vid.f16) {
         saved = F_11A72(sx - 8, sy, w1 + 8, h1, 0);
-        (*g_78ce)(0xe, 0x94, sx - 8, 0x94, sy, pict);
+        (*bl78ce)(0xe, 0x94, sx - 8, 0x94, sy, pict);
         blt.sx = blt.sy = 0;
         blt.dx = 8;
         blt.dy = 0;
         blt.w = w1 + 8;
         blt.h = h1;
-        (*g_78aa)(pict, saved, &blt, 1);
+        (*ab78aat)(pict, saved, &blt, 1);
         F_120FE(-2);
         F_11BD3(saved, sx - 8, sy);
         F_19438(1);
     } else {
-        (*g_78ce)(0xe, 0x94, sx, sy, sy, pict);
+        (*bl78ce)(0xe, 0x94, sx, sy, sy, pict);
         F_120FE(-2);
     }
     F_19438(1);
@@ -146,17 +149,17 @@ void F_127DB(int n, char far *s)
     int saved;
     int i;
 
-    saved = g_vid.f16;
+    saved = r_vid.f16;
     if (n) {
         g_06fc = 0;
-        g_vid.f16 = 0;
+        r_vid.f16 = 0;
         F_120FE(-3);
         F_1264E(n, 0);
         for (i = 0; i < 2; i++)
             F_123F4(*s++, i);
         F_120FE(-1);
-        if (g_vid.f16 = saved)
-            F_1A92A(g_vid.back, g_vid.front, 0x20, 10, 0xe7, 0xb8);
+        if (r_vid.f16 = saved)
+            F_1A92A(r_vid.back, r_vid.front, 0x20, 10, 0xe7, 0xb8);
         g_06fc = 1;
     }
 }

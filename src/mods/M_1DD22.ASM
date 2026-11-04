@@ -113,6 +113,8 @@ _g_5b7a LABEL BYTE ; +5B7A char @[16]
 
 
 
+
+
         .CODE
 
         EXTRN   _F_1E15E:NEAR
@@ -132,9 +134,9 @@ _F_1DD22  PROC    FAR
         mov     WORD PTR [bp-0Ah],0
         cmp     _g_0042,0
         je      L1DD22_gotdx
-        cmp     _g_787a,0B000h
+        cmp     _av787at,0B000h
         jb      L1DD22_gotdx
-        cmp     _g_787a,0B400h
+        cmp     _av787at,0B400h
         ja      L1DD22_gotdx
         mov     WORD PTR [bp-0Ah],2
         mov     ax,[bp+8]
@@ -405,11 +407,11 @@ _F_1DD22  ENDP
 ; sr-member 0x1DFA9
 ; F_1DFA9 @ 1C11:1E99 (linear 0x1DFA9, 40 bytes)
 ; Pixel address helper for the interleaved 2-bit mode. In: ax = y, bx = x.
-; Out: bx = byte offset of the pixel (scan line, bank and x/4 folded together) + g_767c, es = g_787a, cl = 2 * (3 - (x & 3)).
+; Out: bx = byte offset of the pixel (scan line, bank and x/4 folded together) + at767ct, es = av787at, cl = 2 * (3 - (x & 3)).
 
         .DATA
-        EXTRN   _g_767c:WORD
-        EXTRN   _g_787a:WORD
+        EXTRN   _at767ct:WORD
+        EXTRN   _av787at:WORD
 
         .CODE
 
@@ -426,8 +428,8 @@ _F_1DFA9  PROC    NEAR
         add     bx,ax
         shr     bx,1
         shr     bx,1
-        add     bx,_g_767c
-        mov     ax,_g_787a
+        add     bx,_at767ct
+        mov     ax,_av787at
         mov     es,ax
         mov     ah,3
         and     cl,ah

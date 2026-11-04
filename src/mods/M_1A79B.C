@@ -57,7 +57,7 @@ struct Bitmap far *F_1A89E(struct Bitmap far *bm, struct Blt *r, int mode)
     a.sx = c;
     a.sy = e;
     a.dx = a.dy = 0;
-    (*g_78a2)(bm, f, &a, 3);
+    (*b_78a2)(bm, f, &a, 3);
     return f;
 }
 
@@ -76,9 +76,9 @@ void F_1A92A(struct Bitmap far *dst, struct Bitmap far *src, int x1, int y1, int
         x2 = 319;
     if (y2 > 199)
         y2 = 199;
-    pkt.w = ((x2 + ~g_vid.mask + 1) & g_vid.mask) - (x1 & g_vid.mask);
+    pkt.w = ((x2 + ~r_vid.mask + 1) & r_vid.mask) - (x1 & r_vid.mask);
     pkt.h = y2 - y1 + 1;
     pkt.sx = pkt.dx = x1;
     pkt.sy = pkt.dy = y1;
-    (*g_78a2)(dst, src, &pkt, 1);
+    (*b_78a2)(dst, src, &pkt, 1);
 }

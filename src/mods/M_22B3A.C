@@ -84,8 +84,8 @@ void F_22B3A(struct Bitmap far *bm, int x, int y, char *str)
     }
     if (y + (part = 8) > bm->height)
         part = bm->height - y;
-    g_824c = x + cols - d;
-    g_824e = y;
+    g824cd = x + cols - d;
+    bq824e = y;
     outp(0x3ce, 5);
     outp(0x3cf, 2);
     outp(0x3c4, 2);
@@ -100,30 +100,30 @@ void F_22B3A(struct Bitmap far *bm, int x, int y, char *str)
         if (e) {
             ch = *r;
             outp(0x3cf, e);
-            *r = g_colors.c[1];
+            *r = x_colors.c[1];
             ch = *r;
             outp(0x3cf, *fill);
             fill++;
-            *r = g_colors.c[0];
+            *r = x_colors.c[0];
             r++;
         }
         for (left = k; left != 0; left--) {
             outp(0x3cf, 0xff);
-            *r = g_colors.c[1];
+            *r = x_colors.c[1];
             ch = *r;
             outp(0x3cf, *fill);
             fill++;
-            *r = g_colors.c[0];
+            *r = x_colors.c[0];
             r++;
         }
         if (o) {
             ch = *r;
             outp(0x3cf, o);
-            *r = g_colors.c[1];
+            *r = x_colors.c[1];
             ch = *r;
             outp(0x3cf, *fill);
             fill++;
-            *r = g_colors.c[0];
+            *r = x_colors.c[0];
         }
     }
     outp(0x3ce, 8);

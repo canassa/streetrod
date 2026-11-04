@@ -3,6 +3,14 @@
 #include "PROTOS.H"
 #include "STRUCTS.H"
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+int al70c0x;
+int g755av;
+int ao7d2ev;
+int ar7e90;
+int a_7f88d;
+int bz8630z;
+
 static int near F_0E218(int n);
 static void near F_0CDAF(struct Eng *p);
 static void near F_0E0E2(int n, struct Eng *p);
@@ -41,9 +49,9 @@ static void near F_0CDAF(struct Eng *p)
     p->f10 = p->gear[0].r[0].f0;
     g_5d6 = 0;
     g_05d8 = g_05da = 0;
-    g_8630 = -1;
-    g_6caa = g_7eaa.m7ec0 == 0 ? 0x17c : 0x3fc;
-    car = g_7eaa.m7eb0->slot12;
+    bz8630z = -1;
+    g_6caa = a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc;
+    car = a_7eaap.m7eb0->slot12;
     p->fc = g_54b2[((struct Row8 *)((char *)g_4806 + 2))[car->idx].kind][car->b / 2000];
     if (car->b < 8000)
         p->fa = 0;
@@ -57,12 +65,12 @@ static void near F_0CDAF(struct Eng *p)
         goto nx;
     }
 nx:
-    g_787c = 0;
+    at787cu = 0;
     g_54d0 = 0;
-    g_6cac = F_0E218(g_7648);
+    g_6cac = F_0E218(bn7648);
     g_6cb2 = (int)(g_6cac * 0.7);
     g_6cb0 = (int)(g_6cac * 0.8);
-    g_6cae = g_8acc < 4 ? 10 : 16;
+    g_6cae = bu8acc < 4 ? 10 : 16;
     g_54d2 = 0;
     g_53e6 = 0;
 }
@@ -75,27 +83,27 @@ static void near F_0CF5C(void)
 {
     struct Range *r;
 
-    F_0E0E2(g_7648, &g_79e2);
-    g_6cb4 = g_7d84->f1;
-    F_0CDAF(&g_79e2);
-    g_79e2.f18 = 0;
-    g_79e2.f40 = g_79e2.f34[0];
-    g_79e2.fe = 0x5dc;
-    g_79e2.f0 = 0x5dc / g_79e2.f40;
-    if ((r = g_79e2.gear[0].r + (g_6cb8 = 1))->f2 <= 0x5dc) {
+    F_0E0E2(bn7648, &g79e2g);
+    g_6cb4 = g7d84o->f1;
+    F_0CDAF(&g79e2g);
+    g79e2g.f18 = 0;
+    g79e2g.f40 = g79e2g.f34[0];
+    g79e2g.fe = 0x5dc;
+    g79e2g.f0 = 0x5dc / g79e2g.f40;
+    if ((r = g79e2g.gear[0].r + (g_6cb8 = 1))->f2 <= 0x5dc) {
         g_6cb8 = 2;
         r++;
-    } else if (r->f0 > g_79e2.fe) {
+    } else if (r->f0 > g79e2g.fe) {
         g_6cb8 = 0;
         r--;
     }
-    g_79e2.f42 = g_6cb8;
-    g_79e2.f12 = r->f2;
-    g_79e2.f14 = r->f4;
-    g_6cba = g_79e2.f24 ? 0x14b4 : g_79e2.f1e - 100 * g_6cb4;
-    g_7e8a = 200;
-    g_7e8c = 0;
-    g_6cb6 = g_7e90 = ((g_70c0 + g_7d2e) >> 1) - 200;
+    g79e2g.f42 = g_6cb8;
+    g79e2g.f12 = r->f2;
+    g79e2g.f14 = r->f4;
+    g_6cba = g79e2g.f24 ? 0x14b4 : g79e2g.f1e - 100 * g_6cb4;
+    ar7e8av = 200;
+    a_7e8c = 0;
+    g_6cb6 = ar7e90 = ((al70c0x + ao7d2ev) >> 1) - 200;
 }
 
 /* F_0D031 @ 0000:D031 (linear 0x0D031, 429 bytes) */
@@ -111,31 +119,31 @@ static void near F_0D031(void)
     F_120FE(-4);
     F_120FE(1);
     F_00E24();
-    F_0CDAF(&g_78e0);
+    F_0CDAF(&e_78e0);
     F_0CF5C();
-    if (g_7eaa.m7ec0 == 1 && g_7d40 == 0) {
-        if (g_7f88 = !random_int(4))
-            g_755a = random_int(255) + 0x1fe;
+    if (a_7eaap.m7ec0 == 1 && g7d40q == 0) {
+        if (a_7f88d = !random_int(4))
+            g755av = random_int(255) + 0x1fe;
     } else
-        g_7f88 = 0;
-    g_79a6 = 0;
-    g_8aca = 1;
+        a_7f88d = 0;
+    jz79a6 = 0;
+    bw8aca = 1;
     F_08E2D();
     F_01B27();
     g_05cc = 0;
     F_00E24();
     F_11593(g_49dc);
-    if (g_7d30 > 200) {
+    if (ac7d30z > 200) {
         if (random_int(3) > 0) {
-            if (g_7eaa.m7eb0->f20 > 0)
-                g_7eaa.m7eb0->f20 = g_7eaa.m7eb0->f20 < random_int(4) ? random_int(4) : g_7eaa.m7eb0->f20;
-            else if (g_7eaa.m7eb0->f20 < 0)
-                g_7eaa.m7eb0->f20 = -random_int(8) < g_7eaa.m7eb0->f20 ? -random_int(8) : g_7eaa.m7eb0->f20;
+            if (a_7eaap.m7eb0->f20 > 0)
+                a_7eaap.m7eb0->f20 = a_7eaap.m7eb0->f20 < random_int(4) ? random_int(4) : a_7eaap.m7eb0->f20;
+            else if (a_7eaap.m7eb0->f20 < 0)
+                a_7eaap.m7eb0->f20 = -random_int(8) < a_7eaap.m7eb0->f20 ? -random_int(8) : a_7eaap.m7eb0->f20;
             else
-                g_7eaa.m7eb0->f20 = random_int(8) - 4;
+                a_7eaap.m7eb0->f20 = random_int(8) - 4;
         }
-        slot = g_7eaa.m7eb0->slot12;
-        slot->b += (((struct Row8 *)((char *)g_4806 + 2))[slot->idx].kind == 0 ? (g_7eaa.m7ec0 == 1 ? 700 : 300) : (g_7eaa.m7ec0 == 1 ? 400 : 200)) + random_int(300);
+        slot = a_7eaap.m7eb0->slot12;
+        slot->b += (((struct Row8 *)((char *)g_4806 + 2))[slot->idx].kind == 0 ? (a_7eaap.m7ec0 == 1 ? 700 : 300) : (a_7eaap.m7ec0 == 1 ? 400 : 200)) + random_int(300);
         if (slot->b > 10000)
             slot->b = 10000;
     }
@@ -184,82 +192,82 @@ static void near F_0D29D(void)
     int i5;
     int ticks;
 
-    old3 = g_79e2.f0;
+    old3 = g79e2g.f0;
     _disable();
-    ticks = g_78e0.fc0 - g_54d0;
-    g_54d0 = g_78e0.fc0;
+    ticks = e_78e0.fc0 - g_54d0;
+    g_54d0 = e_78e0.fc0;
     _enable();
-    r = &g_79e2.gear[g_79e2.f18].r[g_6cb8];
+    r = &g79e2g.gear[g79e2g.f18].r[g_6cb8];
     for (i5 = 0; i5 < ticks; i5++) {
-        if (g_terrain2[g_7e8a] != g_terrain2[g_7e8a + 1]) {
+        if (g_terrain2[ar7e8av] != g_terrain2[ar7e8av + 1]) {
             if (g_54d6 == 0) {
                 g_54d6 = 1;
-                vl = g_6cac - (g_7e8a > g_7d30 ? g_7d84->f2 : g_7d84->f2 >> 1);
-                if (vl < g_79e2.f0)
-                    F_0D1DE(vl, &g_79e2);
+                vl = g_6cac - (ar7e8av > ac7d30z ? g7d84o->f2 : g7d84o->f2 >> 1);
+                if (vl < g79e2g.f0)
+                    F_0D1DE(vl, &g79e2g);
             }
             continue;
         }
         g_54d6 = 0;
-        d = g_7e8a - g_7d30;
-        if (d > 12 && (g_7eaa.m7ec0 != 1 || g_7d40 == 0)) {
-            if (g_78e0.f0 >= 0x61)
+        d = ar7e8av - ac7d30z;
+        if (d > 12 && (a_7eaap.m7ec0 != 1 || g7d40q == 0)) {
+            if (e_78e0.f0 >= 0x61)
                 vl = g_6cb0;
-            else if (g_7d40)
+            else if (g7d40q)
                 vl = g_6cb0;
             else
                 vl = g_6cb2;
         chk:
-            if (vl < g_79e2.f0) {
-                F_0D1DE(vl, &g_79e2);
+            if (vl < g79e2g.f0) {
+                F_0D1DE(vl, &g79e2g);
                 continue;
             }
         } else if (d > -5 && d < 5) {
-            vl = g_78e0.f0 + g_6cae;
-            if (g_7d30 >= 30 && vl < g_6cb2)
+            vl = e_78e0.f0 + g_6cae;
+            if (ac7d30z >= 30 && vl < g_6cb2)
                 vl = g_6cb2;
             goto chk;
         }
-        if (g_7f88 >= 2 && g_78e0.f0 > 50 && g_79e2.f0 > g_78e0.f0 + 32)
-            F_0D1DE(g_78e0.f0 + 32, &g_79e2);
+        if (a_7f88d >= 2 && e_78e0.f0 > 50 && g79e2g.f0 > e_78e0.f0 + 32)
+            F_0D1DE(e_78e0.f0 + 32, &g79e2g);
         else {
-            g_79e2.fe += g_79e2.f14;
-            if (g_79e2.fe > g_6cba)
-                g_79e2.fe = g_6cba;
-            if (g_79e2.fe > g_79e2.f12) {
-                g_79e2.f42++;
-                g_79e2.f12 = (r = &g_79e2.gear[g_79e2.f18].r[g_79e2.f42])->f2;
-                g_79e2.f14 = r->f4;
+            g79e2g.fe += g79e2g.f14;
+            if (g79e2g.fe > g_6cba)
+                g79e2g.fe = g_6cba;
+            if (g79e2g.fe > g79e2g.f12) {
+                g79e2g.f42++;
+                g79e2g.f12 = (r = &g79e2g.gear[g79e2g.f18].r[g79e2g.f42])->f2;
+                g79e2g.f14 = r->f4;
             }
-            if (g_79e2.f18 < g_79e2.f1c &&
-                ((g_79e2.f24 && g_79e2.fe >= g_79e2.f22) || g_79e2.fe >= g_6cba)) {
-                g_79e2.f18++;
-                if (g_79e2.f24 == 0)
-                    g_6cba = g_79e2.f18 < g_79e2.f1c ? g_79e2.f1e - 100 * g_6cb4
-                           : g_8acc < 4 && g_vid.mode != -6 ? 0x14b4 : 0x1518;
-                g_79e2.f40 = g_79e2.f34[g_79e2.f18];
-                g_79e2.fe = g_79e2.f0 * g_79e2.f40;
-                if ((r = &g_79e2.gear[g_79e2.f18].r[g_6cb8 = 1])->f2 <= g_79e2.fe) {
+            if (g79e2g.f18 < g79e2g.f1c &&
+                ((g79e2g.f24 && g79e2g.fe >= g79e2g.f22) || g79e2g.fe >= g_6cba)) {
+                g79e2g.f18++;
+                if (g79e2g.f24 == 0)
+                    g_6cba = g79e2g.f18 < g79e2g.f1c ? g79e2g.f1e - 100 * g_6cb4
+                           : bu8acc < 4 && r_vid.mode != -6 ? 0x14b4 : 0x1518;
+                g79e2g.f40 = g79e2g.f34[g79e2g.f18];
+                g79e2g.fe = g79e2g.f0 * g79e2g.f40;
+                if ((r = &g79e2g.gear[g79e2g.f18].r[g_6cb8 = 1])->f2 <= g79e2g.fe) {
                     g_6cb8 = 2;
                     r++;
-                } else if (r->f0 > g_79e2.fe) {
+                } else if (r->f0 > g79e2g.fe) {
                     g_6cb8 = 0;
                     r--;
                 }
-                g_79e2.f42 = g_6cb8;
-                g_79e2.f12 = r->f2;
-                g_79e2.f14 = r->f4;
+                g79e2g.f42 = g_6cb8;
+                g79e2g.f12 = r->f2;
+                g79e2g.f14 = r->f4;
             }
-            g_79e2.f0 = g_79e2.fe / g_79e2.f40;
+            g79e2g.f0 = g79e2g.fe / g79e2g.f40;
         }
     }
-    if (g_7e8a >= g_6caa) {
-        liml = g_7d30 + 5 < g_7e8a ? 5 : 10;
-        g_79e2.f0 = old3;
+    if (ar7e8av >= g_6caa) {
+        liml = ac7d30z + 5 < ar7e8av ? 5 : 10;
+        g79e2g.f0 = old3;
         if (liml < old3)
-            g_79e2.f0 -= liml;
+            g79e2g.f0 -= liml;
         else
-            g_79e2.f0 = 0;
+            g79e2g.f0 = 0;
     }
 }
 
@@ -270,7 +278,7 @@ int F_0D544(int rpm)
 {
     if (rpm <= 0)
         return 0;
-    if (g_8acc < 4) {
+    if (bu8acc < 4) {
         if (rpm <= 0x47)
             return (rpm >> 3) + 1;
         return (rpm >> 2) - 8;

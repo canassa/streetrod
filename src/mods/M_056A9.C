@@ -19,10 +19,10 @@ static struct Node2 * near F_03FB1(void);
 static void near F_056A9(void)
 {
     F_03614(1);
-    g_7eaa.m7eaa = 750L;
+    a_7eaap.m7eaa = 750L;
     if (g_0610)
-        g_7eaa.m7eaa = 10000L;
-    g_7eaa.m7eae = 10;
+        a_7eaap.m7eaa = 10000L;
+    a_7eaap.m7eae = 10;
     F_26FE1(100);
     F_05584();
     g_05fc = 0L;
@@ -38,13 +38,13 @@ static int near F_0570C(void)
 {
     int sel;
 
-    g_vid.f16 = 0;
+    r_vid.f16 = 0;
     F_119B8(0x3f8, 0x10, 6, 0);
-    g_vid.f16 = 1;
+    r_vid.f16 = 1;
     F_10B9C();
-    F_1A92A(g_vid.back, g_vid.front, 0, 0, 0x13f, 0xbd);
-    (*g_present)();
-    switch (sel = F_151D4(2, 15, g_newName)) {
+    F_1A92A(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
+    (*m_present)();
+    switch (sel = F_151D4(2, 15, atnewName)) {
     case -3:
     case 0:
         F_056A9();

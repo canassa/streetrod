@@ -283,8 +283,8 @@ _F_2487A  ENDP
         EXTRN   _g_clip_xmin:WORD
         EXTRN   _g_clip_ymax:WORD
         EXTRN   _g_clip_xmax:WORD
-        EXTRN   _g_767c:WORD
-        EXTRN   _g_787a:WORD
+        EXTRN   _at767ct:WORD
+        EXTRN   _av787at:WORD
 
         .CODE
 
@@ -301,8 +301,8 @@ _F_24A9B  PROC  NEAR
         shr     ax,1
         add     bx,ax
         shr     bx,1
-        add     bx,_g_767c
-        mov     ax,_g_787a
+        add     bx,_at767ct
+        mov     ax,_av787at
         mov     es,ax
         mov     ah,1
         and     cl,ah

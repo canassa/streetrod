@@ -4,6 +4,17 @@
 #include "STRUCTS.H"
 #include <dos.h>
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+struct Bitmap far *bp7316[1];
+struct Obj bm7568[5];
+struct Style *bustyle;
+int (far *ab78aat)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
+struct Bitmap far *bu825a;
+int ac825et;
+int aw8260y;
+int d_8266;
+int ap8268t;
+
 static void near F_10DDF(void);
 static void near F_10E3D(int n);
 
@@ -65,59 +76,59 @@ void F_10BD9(struct Bitmap far *front, struct Bitmap far *back)
 {
     int i;
 
-    g_vid.front = front;
-    g_vid.back = back;
-    g_vid.f8 = 0;
-    g_vid.f16 = 1;
-    switch (g_vid.mode = front->flags) {
+    r_vid.front = front;
+    r_vid.back = back;
+    r_vid.f8 = 0;
+    r_vid.f16 = 1;
+    switch (r_vid.mode = front->flags) {
     case -2:
-        g_vid.planes = 4;
-        g_vid.shift = 3;
-        g_vid.bpp = 1;
-        g_vid.mask = -8;
-        g_style = &g_03a0;
+        r_vid.planes = 4;
+        r_vid.shift = 3;
+        r_vid.bpp = 1;
+        r_vid.mask = -8;
+        bustyle = &g_03a0;
         outp(0x3d4, 0xc);
         outp(0x3d5, 0);
         outp(0x3d4, 0xd);
         outp(0x3d5, 0);
         break;
     default:
-        g_vid.planes = 1;
-        g_vid.shift = 2;
-        g_vid.bpp = 2;
-        g_vid.mask = -4;
-        g_style = &g_03f0;
-        g_vid.front->flags = -3;
+        r_vid.planes = 1;
+        r_vid.shift = 2;
+        r_vid.bpp = 2;
+        r_vid.mask = -4;
+        bustyle = &g_03f0;
+        r_vid.front->flags = -3;
         break;
     case -6:
-        g_vid.planes = 1;
-        g_vid.shift = 1;
-        g_vid.bpp = 4;
-        g_vid.mask = -2;
-        g_style = &g_03a0;
+        r_vid.planes = 1;
+        r_vid.shift = 1;
+        r_vid.bpp = 4;
+        r_vid.mask = -2;
+        bustyle = &g_03a0;
         break;
     }
-    g_colors = g_style->pal[1];
-    g_8266 = g_8268 = -1;
+    x_colors = bustyle->pal[1];
+    d_8266 = ap8268t = -1;
     i = 5;
     do {
         i--;
-        g_7568[i].id = g_7568[i].f2 = -1;
+        bm7568[i].id = bm7568[i].f2 = -1;
     } while (i);
-    (*g_present)();
+    (*m_present)();
     F_13F7F();
-    g_8247 = 1;
-    g_7316[0] = g_vid.front;
-    g_7316[1] = g_vid.back;
-    g_7316[2] = &g_screens[2];
-    if (g_vid.mode == -2) {
-        *g_7316[2] = *g_vid.back;
-        g_7316[2]->bits.w.off = 0x4000;
-        g_7316[2]->bits.w.seg = 0xa000;
-        g_7316[3] = &g_2e68_0000;
-        *g_7316[3] = *g_vid.back;
-        g_7316[3]->bits.w.off = 0x6000;
-        g_7316[3]->bits.w.seg = 0xa000;
+    ap8247u = 1;
+    bp7316[0] = r_vid.front;
+    bp7316[1] = r_vid.back;
+    bp7316[2] = &g_screens[2];
+    if (r_vid.mode == -2) {
+        *bp7316[2] = *r_vid.back;
+        bp7316[2]->bits.w.off = 0x4000;
+        bp7316[2]->bits.w.seg = 0xa000;
+        bp7316[3] = &g_2e68_0000;
+        *bp7316[3] = *r_vid.back;
+        bp7316[3]->bits.w.off = 0x6000;
+        bp7316[3]->bits.w.seg = 0xa000;
     }
 }
 
@@ -125,7 +136,7 @@ void F_10D6C(int n)
 {
     struct Obj *o;
 
-    o = &g_7568[g_58f0[g_59f8[n]].a];
+    o = &bm7568[g_58f0[g_59f8[n]].a];
     if (o->img)
         o->img = 0;
     if (o->fc)
@@ -169,7 +180,7 @@ static void near F_10E3D(int n)
 
     wait = 1;
     F_120FE(-3);
-    g_obj = &g_7568[n];
+    g_obj = &bm7568[n];
     g_cmd = &g_58f0[k = g_obj->f2];
     g_box = &g_obj->box;
     for (; k >= 0; k++) {
@@ -179,26 +190,26 @@ static void near F_10E3D(int n)
             break;
         case 2:
             F_10DDF();
-            (*g_78a2)(g_obj->img, g_vid.back, (struct Blt *)g_box, 1);
+            (*b_78a2)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
             break;
         case 4:
             F_10DDF();
-            (*g_78aa)(g_obj->img, g_vid.back, (struct Blt *)g_box, 1);
+            (*ab78aat)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
             break;
         case 13:
             if (!F_19518(g_box->x2, g_box->y2, g_box->w, g_box->h, &res))
                 break;
             blt.w = res.x2 - res.x1;
             blt.h = res.y2 - res.y1 + 1;
-            blt.sx = res.x1 - g_825e;
-            blt.sy = res.y1 - g_8260;
+            blt.sx = res.x1 - ac825et;
+            blt.sy = res.y1 - aw8260y;
             tx = res.x1 - g_box->x2;
             ty = res.y1 - g_box->y2;
             for (y = 0; y < g_obj->img->height; y += g_box->h) {
                 for (x1 = 0; x1 < g_obj->img->width; x1 += g_box->w) {
                     blt.dx = tx + x1;
                     blt.dy = ty + y;
-                    (*g_78aa)(g_825a, g_obj->img, &blt, 1);
+                    (*ab78aat)(bu825a, g_obj->img, &blt, 1);
                 }
             }
             break;
@@ -230,16 +241,16 @@ static void near F_10E3D(int n)
             g_obj->f4++;
             if (wait)
                 F_120FE(-1);
-            if (g_cmd->sub == 4 && g_vid.f16)
-                F_1A92A(g_vid.back, g_vid.front, g_box->x2, g_box->y2,
+            if (g_cmd->sub == 4 && r_vid.f16)
+                F_1A92A(r_vid.back, r_vid.front, g_box->x2, g_box->y2,
                         g_box->x2 + g_box->w - 1, g_box->y2 + g_box->h - 1);
             return;
         case 12:
             F_120FE(-1);
             wait = 0;
-            if (!g_vid.f16)
+            if (!r_vid.f16)
                 break;
-            F_1A92A(g_vid.back, g_vid.front, g_box->x2, g_box->y2,
+            F_1A92A(r_vid.back, r_vid.front, g_box->x2, g_box->y2,
                     g_box->x2 + g_box->w - 1, g_box->y2 + g_box->h - 1);
             break;
         }
@@ -253,11 +264,11 @@ int F_11149(int n)
     int i;
 
     for (i = 0; i < 5; i++) {
-        if (g_7568[i].id == -1) {
+        if (bm7568[i].id == -1) {
             g_58f0[g_59f8[n]].a = i;
-            g_7568[i].id = n;
-            g_7568[i].f2 = g_59f8[n] + 1;
-            g_7568[i].f4 = 0;
+            bm7568[i].id = n;
+            bm7568[i].f2 = g_59f8[n] + 1;
+            bm7568[i].f4 = 0;
             F_10E3D(i);
             break;
         }
@@ -270,7 +281,7 @@ void F_111C1(int n)
     int k;
 
     k = g_58f0[g_59f8[n]].a;
-    g_7568[k].f4--;
+    bm7568[k].f4--;
     F_10E3D(k);
 }
 
@@ -292,12 +303,12 @@ int F_11213(struct Obj *o, struct Cmd *c)
         }
         if (g_6c3e--) {
             int t1, t2, t3;
-            old = g_colors.c[3];
-            g_colors.c[3] = (g_6c3e & 1) ? 4 : 0;
-            F_1377F(g_vid.back, 0x33, 0x6f, 2);
+            old = x_colors.c[3];
+            x_colors.c[3] = (g_6c3e & 1) ? 4 : 0;
+            F_1377F(r_vid.back, 0x33, 0x6f, 2);
             if (!(g_6c3e & 3)) {
-                g_colors.c[3] = (g_6c3e & 4) ? 4 : 0;
-                F_1377F(g_vid.back, 0x30, 0x6f, 2);
+                x_colors.c[3] = (g_6c3e & 4) ? 4 : 0;
+                F_1377F(r_vid.back, 0x30, 0x6f, 2);
             }
             return 0;
         }

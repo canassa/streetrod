@@ -2,6 +2,11 @@
 #include "PROTOS.H"
 #include <stdlib.h>
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+int bn7648;
+int g7d40q;
+int g7f82r;
+
 static int near F_0E218(int n);
 static void near F_09646(int);
 static void near F_098BA(int);
@@ -15,7 +20,7 @@ static int near F_09524(int n)
 {
     int v;
 
-    v = g_7d88[n].kind;
+    v = w_7d88[n].kind;
     if (v < 3)
         return 0;
     if (v >= 7)
@@ -32,7 +37,7 @@ static int near F_09556(void)
 
     any = 0;
     for (k = 0; k < 21; k++)
-        if (g_8000[k].f3 != -1)
+        if (p_8000[k].f3 != -1)
             any = 1;
     if (any == 0)
         return 0;
@@ -59,7 +64,7 @@ static int near F_095F1(void)
 {
     int kind, v;
 
-    if (g_7648 == 25)
+    if (bn7648 == 25)
         return 0;
     kind = F_09556();
     if (kind) {
@@ -70,7 +75,7 @@ static int near F_095F1(void)
         else
             v = 12;
     } else {
-        if (g_817d == 1)
+        if (g817da == 1)
             v = 10;
         else
             v = 50;
@@ -92,10 +97,10 @@ static void near F_09646(int flag)
     int m, found, k, low;
 
     for (k = 0; k < 21; k++) {
-        item = &g_7d86[g_8000[k].f0];
-        map[k].dr = abs(F_0E218(g_8000[k].f0) - F_0E218(-1));
-        map[k].dk = abs(g_7d88[g_8000[k].f0].kind - g_7d88[g_7eaa.m7eb0->f2].kind);
-        map[k].taken = (g_8000[k].f3 != -1) ? 0 : 1;
+        item = &g7d86n[p_8000[k].f0];
+        map[k].dr = abs(F_0E218(p_8000[k].f0) - F_0E218(-1));
+        map[k].dk = abs(w_7d88[p_8000[k].f0].kind - w_7d88[a_7eaap.m7eb0->f2].kind);
+        map[k].taken = (p_8000[k].f3 != -1) ? 0 : 1;
     }
     g_6c86 = 0;
     found = 1;
@@ -157,28 +162,28 @@ static void near F_098BA(int n)
 {
     int skill;
 
-    g_7f82 = n;
-    g_7d84 = &g_7ff8[n];
-    g_7d7a = &g_7d86[g_7648 = g_7d84->f8];
+    g7f82r = n;
+    g7d84o = &av7ff8[n];
+    ar7d7au = &g7d86n[bn7648 = g7d84o->f8];
     if (n != 0x15) {
-        g_7d40 = 0;
-        g_7d84->fb = 1;
-        skill = (g_7d7a->f2 >> 1) + 1;
-        if (g_7d84->ff == 0 && g_7d84->fc > 5)
-            g_7d84->ff = random_int(20) < skill ? random_int(9) : 0;
-        else if (g_7d84->ff > 0 && g_7d84->fc > 10)
-            g_7d84->ff = random_int(40) < skill ? random_int(9) : g_7d84->ff;
-        if (g_8df0[g_7648].f6 > 0 && g_8df0[g_7648].f8 > 0 && g_7d84->fc > 8)
-            g_7d84->fe |= random_int(25) < skill ? 3 : g_7d84->fe;
-        if (g_8df0[g_7648].f2 > 0 && g_7d84->fc > 8)
-            g_7d84->fe |= random_int(30) < skill ? 4 : g_7d84->fe;
+        g7d40q = 0;
+        g7d84o->fb = 1;
+        skill = (ar7d7au->f2 >> 1) + 1;
+        if (g7d84o->ff == 0 && g7d84o->fc > 5)
+            g7d84o->ff = random_int(20) < skill ? random_int(9) : 0;
+        else if (g7d84o->ff > 0 && g7d84o->fc > 10)
+            g7d84o->ff = random_int(40) < skill ? random_int(9) : g7d84o->ff;
+        if (w_8df0[bn7648].f6 > 0 && w_8df0[bn7648].f8 > 0 && g7d84o->fc > 8)
+            g7d84o->fe |= random_int(25) < skill ? 3 : g7d84o->fe;
+        if (w_8df0[bn7648].f2 > 0 && g7d84o->fc > 8)
+            g7d84o->fe |= random_int(30) < skill ? 4 : g7d84o->fe;
     } else
-        g_7d40 = 1;
-    g_8272.m827a = g_7d7a->f8;
-    g_8272.m827e = (g_7d7a->f4 >> 4) & 3;
-    g_8272.m827c = g_7d84->fa;
-    F_067CF(g_8272.m827c);
-    g_8272.m8280 = g_7d84->f4;
+        g7d40q = 1;
+    m_8272.m827a = ar7d7au->f8;
+    m_8272.m827e = (ar7d7au->f4 >> 4) & 3;
+    m_8272.m827c = g7d84o->fa;
+    F_067CF(m_8272.m827c);
+    m_8272.m8280 = g7d84o->f4;
 }
 
 /* F_09A27 @ 0000:9A27 (linear 0x09A27, 92 bytes) */
@@ -190,9 +195,9 @@ static void near F_09A27(int n, int a, int mode)
     F_098BA(n);
     if (mode == 1)
         g_5a24 = 1;
-    if (mode == 2 && g_7f82 == 0x15)
+    if (mode == 2 && g7f82r == 0x15)
         g_5a24 = F_09556() == 1;
-    F_092A4(a, g_7648, 1, 0xa3, 0, g_5030[g_8272.m827e]);
+    F_092A4(a, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
 }
 
 /* F_09A83 @ 0000:9A83 (linear 0x09A83, 113 bytes) */
@@ -204,13 +209,13 @@ static void near F_09A83(int *ids, int *slots, int *kinds)
     int i, n;
 
     if (F_09556() == 0)
-        g_817d = 1;
+        g817da = 1;
     else
-        g_817d = 0;
+        g817da = 0;
     for (i = 0, n = 0; i <= 21; i++) {
-        if (g_7ff8[i].fb == 1) {
+        if (av7ff8[i].fb == 1) {
             slots[n] = i;
-            ids[++n] = g_7ff8[i].f6;
+            ids[++n] = av7ff8[i].f6;
             kinds[n] = 7;
         }
     }

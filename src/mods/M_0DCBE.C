@@ -39,10 +39,10 @@ static void near F_0DCBE(struct Car *c, struct Eng *e)
     c3 = ((struct Row8 *)((char *)g_4806 + 2))[qn[2]->idx].kind;
     d = ((struct Row8 *)((char *)g_4806 + 2))[n6k->idx].kind;
     e1 = ((struct Row8 *)((char *)g_4806 + 2))[m->idx].kind;
-    vl = ((c->f24 & 0x2000) || g_8df0[c->f2].f2 == 0) * 0.09
-        + ((c->f24 & 0x8000) || g_8df0[c->f2].f8 == 0) * 0.05
-        + ((c->f24 & 0x4000) || g_8df0[c->f2].f6 == 0) * 0.01
-        + g_556e[g_7d86[c->f2].f2] * 0.1 / 88.0
+    vl = ((c->f24 & 0x2000) || w_8df0[c->f2].f2 == 0) * 0.09
+        + ((c->f24 & 0x8000) || w_8df0[c->f2].f8 == 0) * 0.05
+        + ((c->f24 & 0x4000) || w_8df0[c->f2].f6 == 0) * 0.01
+        + g_556e[g7d86n[c->f2].f2] * 0.1 / 88.0
         + g_552e[c3][bl] * 0.15 / 100.0
         + g_554c[a3] * 0.25 / 100.0
         + g_5552[d] * 0.15 / 100.0
@@ -75,7 +75,7 @@ static void near F_0DCBE(struct Car *c, struct Eng *e)
         e->f22 = gl->r[1].f2;
     }
     e->f1e = g_555a[a3];
-    e->f34[5] = (int)((int)(0x82 - g_7d88[c->f2].kind) * 5.0 / 50.0 + g_5568[((struct Row8 *)((char *)g_4806 + 2))[m->idx].kind]);
+    e->f34[5] = (int)((int)(0x82 - w_7d88[c->f2].kind) * 5.0 / 50.0 + g_5568[((struct Row8 *)((char *)g_4806 + 2))[m->idx].kind]);
     e->f1c = g_5560[d];
     e->f1a = 1;
 }

@@ -111,6 +111,6 @@ void F_001F2(unsigned char color)
     r.x.ax = 0x0b00;
     r.h.bh = 1;
     r.h.bl = color;
-    if (g_vid.mode != -4)
+    if (r_vid.mode != -4)
         int86(0x10, &r, &r);
 }

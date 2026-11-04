@@ -15,7 +15,7 @@ static void near F_07800(void)
     char line[142];
     int y, cur;
 
-    car = g_7eaa.m7eb0;
+    car = a_7eaap.m7eb0;
     if (car == 0) {
         F_03AB8(0x0efa);
         return;
@@ -50,9 +50,9 @@ static void near F_078F1(int *ids, char *vals)
     struct Node *gear[7];
 
     for (n = 0; n < 5; n++)
-        gear[n] = g_7eaa.m7eb0->rack.s[n];
-    gear[n++] = g_7eaa.m7eb0->slot6;
-    gear[n] = g_7eaa.m7eb0->slot12;
+        gear[n] = a_7eaap.m7eb0->rack.s[n];
+    gear[n++] = a_7eaap.m7eb0->slot6;
+    gear[n] = a_7eaap.m7eb0->slot12;
 
     for (count = 0, n = 0; n < 7; n++) {
         if (node = gear[n]) {
@@ -92,13 +92,13 @@ void F_079EB(void)
     int ids[143];
     char vals[144];
 
-    if (g_7eaa.m7eb0 == 0) {
+    if (a_7eaap.m7eb0 == 0) {
         F_03AB8(0x0efa);
         return;
     }
     F_078F1(ids, vals);
-    sprintf(g_511e[3] + 9, " %3i mph", F_07EE6(g_7eaa.m7eb0, 1) ? F_0E218(-1) : 0);
-    sprintf(g_511e[1] + 5, " %2i gallons", g_7eaa.m7eb0->f22 / 10);
+    sprintf(g_511e[3] + 9, " %3i mph", F_07EE6(a_7eaap.m7eb0, 1) ? F_0E218(-1) : 0);
+    sprintf(g_511e[1] + 5, " %2i gallons", a_7eaap.m7eb0->f22 / 10);
     switch (F_142CF(0x26, 1, ids, g_49e0, vals, g_511e)) {
     case -3:
         return;
@@ -121,7 +121,7 @@ static void near F_07AA4(void)
     int k;
     struct Node *tbl[142];
 
-    owner = g_7eaa.m7eb0;
+    owner = a_7eaap.m7eb0;
     if (!owner) {
         F_03AB8(0x0efa);
         return;
@@ -133,11 +133,11 @@ static void near F_07AA4(void)
             flags[k] = 0;
         g_1804[k].f0 = 11;
     }
-    g_8272.m8286 = owner->slot6 ? g_49d2[((struct Row8 *)((char *)g_4806 + 2))[owner->slot6->idx].kind] : 0;
-    g_vid.f16 = !g_8272.m8286;
+    m_8272.m8286 = owner->slot6 ? g_49d2[((struct Row8 *)((char *)g_4806 + 2))[owner->slot6->idx].kind] : 0;
+    r_vid.f16 = !m_8272.m8286;
     F_119B8(0x42e, 0x20, 10, -1);
-    g_vid.f16 = 1;
-    F_127DB(g_8272.m8286, owner->b14);
+    r_vid.f16 = 1;
+    F_127DB(m_8272.m8286, owner->b14);
     F_13DE6(20);
     for (;;) {
         while ((k = F_01417(3000)) == 0)
@@ -167,13 +167,13 @@ static void near F_07AA4(void)
                 }
                 if (!k)
                     break;
-                prev = g_8272.m8286;
-                g_8272.m8286 = g_49d2[((struct Row8 *)((char *)g_4806 + 2))[tbl[k]->idx].kind];
-                if (g_7d88[owner->f2].f2 & ((struct Row8 *)((char *)g_4806 + 2))[tbl[k]->idx].f1 & 0xf) {
+                prev = m_8272.m8286;
+                m_8272.m8286 = g_49d2[((struct Row8 *)((char *)g_4806 + 2))[tbl[k]->idx].kind];
+                if (w_7d88[owner->f2].f2 & ((struct Row8 *)((char *)g_4806 + 2))[tbl[k]->idx].f1 & 0xf) {
                     F_07741(F_077B7(tbl[k]), &owner->slot6);
                     F_120FE(-4);
                     F_16A5A(1);
-                    F_1264E(g_8272.m8286, 0);
+                    F_1264E(m_8272.m8286, 0);
                     F_16A5A(0);
                     F_16B97();
                     g_05fc += 0x666L;
@@ -187,16 +187,16 @@ static void near F_07AA4(void)
                     F_120FE(-2);
                     break;
                 }
-                    F_1264E(g_8272.m8286, 1);
+                    F_1264E(m_8272.m8286, 1);
                     F_03AB8(0x10cd);
-                    F_12784(g_8272.m8286, 1);
+                    F_12784(m_8272.m8286, 1);
                     g_05fc += 0x888L;
-                    g_8272.m8286 = prev;
+                    m_8272.m8286 = prev;
             }
             break;
         case 1:
         case 2:
-            if (g_8272.m8286 == 0)
+            if (m_8272.m8286 == 0)
                 break;
             if (flags[k-- - 1] == 2) {
                 if (--owner->b14[k] <= 1) {
@@ -210,9 +210,9 @@ static void near F_07AA4(void)
                 }
                 if (flags[0] || flags[1])
                     break;
-                F_12784(g_8272.m8286, 0);
+                F_12784(m_8272.m8286, 0);
                 g_05fc += 0x666L;
-                g_8272.m8286 = 0;
+                m_8272.m8286 = 0;
                 owner->b14[0] = owner->b14[1] = 0;
                 F_07789(&owner->slot6);
                 F_00D78();
@@ -286,7 +286,7 @@ static void near F_07FB1(struct Car *car)
     blt.sy = 0;
     blt.dx = 0xb0;
     F_119B8(0x42f, 0x60, 9, -1);
-    p = g_7568 + F_11149(8);
+    p = bm7568 + F_11149(8);
     tmp = g_0600;
     F_00D99();
     g_58d4 = 2;
@@ -305,8 +305,8 @@ static void near F_07FB1(struct Car *car)
         outp(0x42, w.b[1]);
         y = blt.dy = gear * 2 + 0x4b;
         F_120FE(-4);
-        (*g_78a2)(p->img, g_vid.back, &blt, 1);
-        F_1A92A(g_vid.back, g_vid.front, 0xb0, y, 0xb7, y + 10);
+        (*b_78a2)(p->img, r_vid.back, &blt, 1);
+        F_1A92A(r_vid.back, r_vid.front, 0xb0, y, 0xb7, y + 10);
         F_120FE(-2);
         while ((key = F_01417(0)) == 0) {
             if (g_47ce && g_47ce != g_47cf) {

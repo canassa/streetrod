@@ -7,7 +7,7 @@ static void near F_0DCBE(struct Car *c, struct Eng *e);
 
 /* F_0E0E2 @ 0000:E0E2 (linear 0x0E0E2, 310 bytes)
 
-   Builds a struct Car from the spec n of g_7d86 and hands it to F_0DCBE. */
+   Builds a struct Car from the spec n of g7d86n and hands it to F_0DCBE. */
 
 
 
@@ -23,7 +23,7 @@ static void near F_0E0E2(int n, struct Eng *e)
     car.f2 = n;
     car.slot6 = &na;
     car.slot12 = &lo;
-    s = &g_7d86[n];
+    s = &g7d86n[n];
     car.rack.s[3] = car.rack.s[4] = 0;
     t = ((s->f4 >> 14) & 3) + 0x16;
     for (i = g_5126[(s->f4 >> 11) & 7] + 1; i >= 0; i--) {
@@ -41,7 +41,7 @@ static void near F_0E0E2(int n, struct Eng *e)
 
 /* F_0E218 @ 0000:E218 (linear 0x0E218, 849 bytes)
 
-   Rating of the car spec n (the car in g_7eaa.m7eb0 when n is negative): builds the
+   Rating of the car spec n (the car in a_7eaap.m7eb0 when n is negative): builds the
    car the way F_0E0E2 does, then folds its parts into one number. */
 
 
@@ -64,13 +64,13 @@ static int near F_0E218(int n)
     struct Node na;
 
     if (n < 0)
-        p6 = g_7eaa.m7eb0;
+        p6 = a_7eaap.m7eb0;
     else {
         car.f20 = 0;
         car.f2 = n;
         car.slot6 = &na;
         car.slot12 = &lon;
-        s = &g_7d86[n];
+        s = &g7d86n[n];
         car.rack.s[3] = car.rack.s[4] = 0;
         t = ((s->f4 >> 14) & 3) + 0x16;
         for (i = g_5126[(s->f4 >> 11) & 7] + 1; i >= 0; i--) {
@@ -93,10 +93,10 @@ static int near F_0E218(int n)
     c3 = ((struct Row8 *)((char *)g_4806 + 2))[qn[2]->idx].kind;
     d = ((struct Row8 *)((char *)g_4806 + 2))[n6k->idx].kind;
     e1 = ((struct Row8 *)((char *)g_4806 + 2))[m->idx].kind;
-    vl = ((p6->f24 & 0x2000) || g_8df0[p6->f2].f2 == 0) * 0.09
-        + ((p6->f24 & 0x8000) || g_8df0[p6->f2].f8 == 0) * 0.05
-        + ((p6->f24 & 0x4000) || g_8df0[p6->f2].f6 == 0) * 0.01
-        + g_556e[g_7d86[p6->f2].f2] * 0.1 / 88.0
+    vl = ((p6->f24 & 0x2000) || w_8df0[p6->f2].f2 == 0) * 0.09
+        + ((p6->f24 & 0x8000) || w_8df0[p6->f2].f8 == 0) * 0.05
+        + ((p6->f24 & 0x4000) || w_8df0[p6->f2].f6 == 0) * 0.01
+        + g_556e[g7d86n[p6->f2].f2] * 0.1 / 88.0
         + g_552e[c3][bl] * 0.15 / 100.0
         + g_554c[a3] * 0.25 / 100.0
         + g_5552[d] * 0.15 / 100.0

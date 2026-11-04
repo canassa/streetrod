@@ -57,12 +57,12 @@ void F_1C2CA(struct Bitmap far *bm, int x, int y, char *s)
     lmask = 0xff;
     rmask = 0xff;
     memset(buf7, 0, sizeof buf7);
-    if (g_vid.mode == -4)
-        g_colors.c[0] = 0;
-    t = g_colors.c[0];
+    if (r_vid.mode == -4)
+        x_colors.c[0] = 0;
+    t = x_colors.c[0];
     fg7 = (t << 2) | (t << 4) | (t << 6) | t;
     fg7 |= fg7 << 8;
-    t = g_colors.c[1];
+    t = x_colors.c[1];
     bgn = (t << 2) | (t << 4) | (t << 6) | t;
     bgn |= bgn << 8;
     col4 = bitoff1 = shl;
@@ -100,8 +100,8 @@ void F_1C2CA(struct Bitmap far *bm, int x, int y, char *s)
             pp2++;
         }
     }
-    g_824c = ((col4 - shl) >> 1) + x;
-    g_824e = y;
+    g824cd = ((col4 - shl) >> 1) + x;
+    bq824e = y;
     if (col4 == shl)
         return;
     if (shl) {
@@ -136,7 +136,7 @@ void F_1C2CA(struct Bitmap far *bm, int x, int y, char *s)
         pp2 += 40;
     }
     b0 = b1 = bm->bits.p;
-    cga5 = (g_vid.mode == -4 ? 0xb000 : 0xb800) == FP_SEG(b0);
+    cga5 = (r_vid.mode == -4 ? 0xb000 : 0xb800) == FP_SEG(b0);
     b1 += bm->planesize >> 1;
     b0 += bm->pitch * (y >> 1);
     b0 += x >> 2;
@@ -152,7 +152,7 @@ void F_1C2CA(struct Bitmap far *bm, int x, int y, char *s)
             if ((r6 + y) & 1) {
                 *s1 &= lmask;
                 *s1 |= *fill & lm28;
-                if (cga5 && g_vid.mode == -4)
+                if (cga5 && r_vid.mode == -4)
                     s1[0x2000] = *s1;
                 s1 += bm->pitch;
                 s0 += bm->pitch;
@@ -175,7 +175,7 @@ void F_1C2CA(struct Bitmap far *bm, int x, int y, char *s)
         for (i = 0; i < h; i++, from += 80) {
             if ((y + i) & 1) {
                 movedata(dseg4, (unsigned)from, seg1, off1, nb2);
-                if (cga5 && g_vid.mode == -4)
+                if (cga5 && r_vid.mode == -4)
                     movedata(dseg4, (unsigned)from, seg1, off1 + 0x2000, nb2);
                 off0 += 80;
                 off1 += 80;
@@ -195,7 +195,7 @@ void F_1C2CA(struct Bitmap far *bm, int x, int y, char *s)
             if ((r6 + y) & 1) {
                 *s1 &= rmask;
                 *s1 |= *fill;
-                if (cga5 && g_vid.mode == -4)
+                if (cga5 && r_vid.mode == -4)
                     s1[0x2000] = *s1;
                 s1 += bm->pitch;
                 s0 += bm->pitch;
@@ -248,7 +248,7 @@ void F_1C803(struct Bitmap far *bm, int a, int b, int x1, int y1, int x2, int y2
     unsigned char c2, cc, w2;
     int i, y, v4, rx;
 
-    c1l = g_colors.c[1];
+    c1l = x_colors.c[1];
     if (x1 < 0)
         x1 = 0;
     if (x2 < 0)
@@ -354,8 +354,8 @@ void F_1C803(struct Bitmap far *bm, int a, int b, int x1, int y1, int x2, int y2
 void F_1CEE7(char far *src, char far *dst)
 {
     movedata(FP_SEG(src), FP_OFF(src), FP_SEG(dst), FP_OFF(dst), 0x4000);
-    if (g_vid.mode == -4 && (g_vid.mode == -4 ? 0xb000 : 0xb800) == FP_SEG(dst))
-        movedata(g_vid.mode == -4 ? 0xb200 : 0xba00, 0, 0xb400, 0, 0x2000);
+    if (r_vid.mode == -4 && (r_vid.mode == -4 ? 0xb000 : 0xb800) == FP_SEG(dst))
+        movedata(r_vid.mode == -4 ? 0xb200 : 0xba00, 0, 0xb400, 0, 0x2000);
 }
 
 /* F_1CF40: dissolve one 80-byte-per-line CGA screen into another, five interleaved passes */
@@ -383,7 +383,7 @@ void F_1CF40(char far *dst, char far *src)
             for (e = (int far *)d, k = 0x28; k; k--)
                 *e++ = 0;
             movedata(FP_SEG(s2), FP_OFF(s2), FP_SEG(d), FP_OFF(d), 0x50);
-            if ((y & 1) && g_vid.mode == -4) {
+            if ((y & 1) && r_vid.mode == -4) {
                 d += 0x2000;
                 for (e = (int far *)d, k = 0x28; k; k--)
                     *e++ = 0;
@@ -411,7 +411,7 @@ void F_1D05B(int page)
 /* Recovered unreferenced video-control routine at 0x1D080. */
 void F_1D080(void)
 {
-    switch (g_vid.mode) {
+    switch (r_vid.mode) {
     case -3:
         outp(0x3d8, 2);
         break;
@@ -419,14 +419,14 @@ void F_1D080(void)
         outp(0x3b8, 0x22);
         break;
     }
-    g_8249 = 0;
+    gz8249 = 0;
 }
 
 #pragma intrinsic(outp)
 /* Recovered unreferenced video-control routine at 0x1D0A4. */
 void F_1D0A4(void)
 {
-    switch (g_vid.mode) {
+    switch (r_vid.mode) {
     case -3:
         outp(0x3d8, 0x2a);
         break;
@@ -434,5 +434,5 @@ void F_1D0A4(void)
         outp(0x3b8, 0x2a);
         break;
     }
-    g_8249 = 1;
+    gz8249 = 1;
 }

@@ -48,7 +48,7 @@ static struct Bitmap far * near F_2B707(struct Bitmap far *p, unsigned char a, u
             bytes++;
         m2 >>= 1;
     }
-    bytes = (bytes + ~g_vid.mask) & g_vid.mask;
+    bytes = (bytes + ~r_vid.mask) & r_vid.mask;
     rows6 = ((p->height & ~7) * na) >> 3;
     remk = p->height & 7;
     for (t = 0, m2 = 0x80; t < remk; t++) {
@@ -58,7 +58,7 @@ static struct Bitmap far * near F_2B707(struct Bitmap far *p, unsigned char a, u
     }
     q = F_1934E(bytes, rows6, p->alt.p != 0, 1);
     F_109C0(q->bits.p, 0, q->planesize);
-    F_109C0(q->alt.p, 0xff, q->planesize / (unsigned)g_vid.planes);
+    F_109C0(q->alt.p, 0xff, q->planesize / (unsigned)r_vid.planes);
     return q;
 }
 

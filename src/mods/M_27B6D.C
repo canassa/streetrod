@@ -2,6 +2,30 @@
 #include "PROTOS.H"
 #include <stdlib.h>
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+int by70c2[6];
+int by70d2[6];
+unsigned far *q_72ee;
+int at72f8[13];
+int far *af7560z;
+int far *af7880z;
+int bq7884[13];
+int bn78ec;
+int aw7aaex;
+int al7ab0u[13];
+int n_7ace[13];
+int g7d38m;
+int g_7d3a;
+int ao7d3ex;
+unsigned far *g7d62p;
+int g7f22s[6];
+int at7f8au[13];
+int g7fd8e[13];
+unsigned far *aw8634x;
+int as8638y[6];
+int aj864ax[6];
+int ay865a[6];
+
 /* F_27B6D @ 2645:171D (linear 0x27B6D, 82 bytes)
 
    Points the terrain pointers at entry n of each terrain array. */
@@ -9,11 +33,11 @@
 
 void F_27B6D(int n)
 {
-    g_72ee = &g_terrain0[n];
-    g_8634 = &g_terrain1[n];
-    g_7d62 = &g_terrain3[n];
-    g_7880 = &g_terrain4[n];
-    g_7560 = &g_terrain2[n];
+    q_72ee = &g_terrain0[n];
+    aw8634x = &g_terrain1[n];
+    g7d62p = &g_terrain3[n];
+    af7880z = &g_terrain4[n];
+    af7560z = &g_terrain2[n];
 }
 
 /* F_27BBF @ 2645:176F (linear 0x27BBF, 66 bytes) */
@@ -24,7 +48,7 @@ int F_27BBF(int a, int b, int c)
     int u, v;
 
     b += a * c >> 2;
-    v = g_7d36 - b;
+    v = a_7d36m - b;
     u = v << 2;
     if (a == 0)
         a++;
@@ -40,7 +64,7 @@ int F_27C01(int a, int b, int c)
     int u, v;
 
     b += a * c;
-    v = b - g_7d38;
+    v = b - g7d38m;
     u = v << 2;
     if (a == 0)
         a++;
@@ -56,7 +80,7 @@ int F_27C3D(int a, int b, int c)
     int u, v;
 
     b += a * c >> 2;
-    v = g_7d36 - b;
+    v = a_7d36m - b;
     if (a == 0)
         a++;
     u = v / a;
@@ -71,7 +95,7 @@ int F_27C78(int a, int b, int c)
     int u, v;
 
     b += a * c;
-    v = b - g_7d38;
+    v = b - g7d38m;
     if (a == 0)
         a++;
     u = v / a;
@@ -85,33 +109,33 @@ int F_27C78(int a, int b, int c)
 
 void F_27CAD(void)
 {
-    if (g_8aca)
-        g_7d30 = 200;
+    if (bw8aca)
+        ac7d30z = 200;
     else
         switch (g_0284) {
         case 1:
-            g_7d30 = 10;
+            ac7d30z = 10;
             break;
         case 2:
-            g_7d30 = 65;
+            ac7d30z = 65;
             break;
         case 3:
-            g_7d30 = 115;
+            ac7d30z = 115;
             break;
         }
-    F_27B6D(g_7d30);
-    g_7d82 = 1500;
-    g_8bd0 = 3300;
-    g_7d32 = 0;
-    g_7d36 = 2560;
-    g_7d38 = 1900;
+    F_27B6D(ac7d30z);
+    g7d82p = 1500;
+    cz8bd0y = 3300;
+    bp7d32 = 0;
+    a_7d36m = 2560;
+    g7d38m = 1900;
     g_7d3a = 0;
-    g_7d3e = 0;
-    g_7d3c = 0;
-    g_7d34 = 0;
+    ao7d3ex = 0;
+    c_7d3c = 0;
+    aa7d34l = 0;
     g_54d4 = 1;
     g_8648 = !random_int(2);
-    g_7d7e = 1;
+    gz7d7e = 1;
 }
 
 /* F_27D4B @ 2645:18FB (linear 0x27D4B, 721 bytes)
@@ -124,17 +148,17 @@ void F_27D4B(void)
 {
     int *p5l, k7, bits, *p11, rowz, flag8, *p2, *p3, d1, d2, *p42, *p6;
 
-    flag8 = (*g_7d62 & 1) || (*g_7d62 & 0xf000);
-    bits = *g_7d62++ & 0xe0;
-    p11 = g_7ace;
-    p2 = g_72f8;
-    p3 = g_7884;
-    p42 = g_7f8a;
-    p5l = g_7fd8;
-    p6 = g_7ab0;
+    flag8 = (*g7d62p & 1) || (*g7d62p & 0xf000);
+    bits = *g7d62p++ & 0xe0;
+    p11 = n_7ace;
+    p2 = at72f8;
+    p3 = bq7884;
+    p42 = at7f8au;
+    p5l = g7fd8e;
+    p6 = al7ab0u;
     rowz = 4;
-    d1 = g_7d3e - *g_7880++;
-    d2 = g_7d3c - *g_7560++;
+    d1 = ao7d3ex - *af7880z++;
+    d2 = c_7d3c - *af7560z++;
     *p3++ = F_27C01(rowz, 2000, d1);
     if (bits) {
         if (bits & 0x80) {
@@ -157,16 +181,16 @@ void F_27D4B(void)
         *p6++ = F_27C01(rowz, 0x76c, d1);
     else
         p6++;
-    rowz = 12 - g_7d32;
+    rowz = 12 - bp7d32;
     k7 = 14;
     do {
-        flag8 = (*g_7d62 & 1) || (*g_7d62 & 0xf000);
-        bits = *g_7d62 & 0xe0;
-        g_7d62++;
-        d1 = g_7d3e - *g_7880;
-        g_7880++;
-        d2 = g_7d3c - *g_7560;
-        g_7560++;
+        flag8 = (*g7d62p & 1) || (*g7d62p & 0xf000);
+        bits = *g7d62p & 0xe0;
+        g7d62p++;
+        d1 = ao7d3ex - *af7880z;
+        af7880z++;
+        d2 = c_7d3c - *af7560z;
+        af7560z++;
         if (bits) {
             if (bits & 0x80) {
                 *p11 = F_27BBF(rowz, 0xaf0, d2);
@@ -213,17 +237,17 @@ void F_2801C(void)
 {
     int *p5l, k7, bits, *p11, rowz, flag8, *p2, *p3, d1, d2, *p42, *p6;
 
-    flag8 = (*g_7d62 & 1) || (*g_7d62 & 0xf000);
-    bits = *g_7d62-- & 0xe0;
-    p11 = g_865a;
-    p2 = g_7f22;
-    p3 = g_8638;
-    p42 = g_70c2;
-    p5l = g_70d2;
-    p6 = g_864a;
+    flag8 = (*g7d62p & 1) || (*g7d62p & 0xf000);
+    bits = *g7d62p-- & 0xe0;
+    p11 = ay865a;
+    p2 = g7f22s;
+    p3 = as8638y;
+    p42 = by70c2;
+    p5l = by70d2;
+    p6 = aj864ax;
     rowz = 8;
-    d1 = *g_7880-- - g_7d3e;
-    d2 = *g_7560-- - g_7d3c;
+    d1 = *af7880z-- - ao7d3ex;
+    d2 = *af7560z-- - c_7d3c;
     *p3++ = F_27C78(rowz, 2000, d1);
     if (bits) {
         if (bits & 0x80) {
@@ -246,16 +270,16 @@ void F_2801C(void)
         *p6++ = F_27C78(rowz, 0x76c, d1);
     else
         p6++;
-    rowz = g_7d32 + 8;
+    rowz = bp7d32 + 8;
     k7 = 7;
     do {
-        flag8 = (*g_7d62 & 1) || (*g_7d62 & 0xf000);
-        bits = *g_7d62 & 0xe0;
-        g_7d62--;
-        d1 = *g_7880 - g_7d3e;
-        g_7880--;
-        d2 = *g_7560 - g_7d3c;
-        g_7560--;
+        flag8 = (*g7d62p & 1) || (*g7d62p & 0xf000);
+        bits = *g7d62p & 0xe0;
+        g7d62p--;
+        d1 = *af7880z - ao7d3ex;
+        af7880z--;
+        d2 = *af7560z - c_7d3c;
+        af7560z--;
         if (bits) {
             if (bits & 0x80) {
                 *p11 = F_27C3D(rowz, 0xaf0, d2);
@@ -301,11 +325,11 @@ void F_282EE(void)
 {
     long deadline;
 
-    F_27B6D(g_7d30);
+    F_27B6D(ac7d30z);
     F_27D4B();
-    F_27B6D(g_7d30);
+    F_27B6D(ac7d30z);
     F_2801C();
-    F_27B6D(g_7d30);
+    F_27B6D(ac7d30z);
     deadline = g_tick + 9;
     F_2AFDC();
     while (deadline > g_tick)
@@ -321,59 +345,59 @@ void F_2834C(void)
 {
     int bits7, goal6, diff;
 
-    g_7d30 += g_7d32 >> 3;
-    F_27B6D(g_7d30);
-    g_7d32 &= 7;
-    bits7 = *g_7d62 & 0xe0;
+    ac7d30z += bp7d32 >> 3;
+    F_27B6D(ac7d30z);
+    bp7d32 &= 7;
+    bits7 = *g7d62p & 0xe0;
     if (bits7) {
         if (bits7 & 0x80) {
-            g_7d82 = 2000;
-            g_8bd0 = 0xaf0;
+            g7d82p = 2000;
+            cz8bd0y = 0xaf0;
         } else if (bits7 & 0x20) {
-            g_7d82 = 2000;
-            g_8bd0 = 0xce4;
+            g7d82p = 2000;
+            cz8bd0y = 0xce4;
         } else {
-            g_7d82 = 1500;
-            g_8bd0 = 0xaf0;
+            g7d82p = 1500;
+            cz8bd0y = 0xaf0;
         }
     } else {
-        g_7d82 = 1500;
-        g_8bd0 = 0xce4;
+        g7d82p = 1500;
+        cz8bd0y = 0xce4;
     }
-    bits7 = g_7d62[4] & 0xe0;
+    bits7 = g7d62p[4] & 0xe0;
     if (bits7) {
         if (bits7 & 0x80) {
-            g_70c0 = 2000;
-            g_7d2e = 0xaf0;
+            al70c0x = 2000;
+            ao7d2ev = 0xaf0;
         } else if (bits7 & 0x20) {
-            g_70c0 = 2000;
-            g_7d2e = 0xce4;
+            al70c0x = 2000;
+            ao7d2ev = 0xce4;
         } else {
-            g_70c0 = 1500;
-            g_7d2e = 0xaf0;
+            al70c0x = 1500;
+            ao7d2ev = 0xaf0;
         }
     } else {
-        g_70c0 = 1500;
-        g_7d2e = 0xce4;
+        al70c0x = 1500;
+        ao7d2ev = 0xce4;
     }
-    g_7d3e = *g_7880;
-    if (g_0610 != 0 || g_0612 != 0 || (g_7eaa.m7ec0 == 0 ? 0x17c : 0x3fc) < g_7d30) {
+    ao7d3ex = *af7880z;
+    if (g_0610 != 0 || g_0612 != 0 || (a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc) < ac7d30z) {
         goal6 = 0x960;
-        if (g_7e90 > 0x960)
+        if (ar7e90 > 0x960)
             goal6 -= 0x140;
         else
             goal6 += 0xa0;
-        diff = g_7d36 - goal6;
+        diff = a_7d36m - goal6;
         if (abs(diff) > 100)
-            g_7d36 = goal6 + (goal6 < g_7d36 ? 100 : -100);
+            a_7d36m = goal6 + (goal6 < a_7d36m ? 100 : -100);
         else
-            g_7d36 = goal6;
-        if (abs(*g_7560 - g_7d3c) > 0) {
-            g_78e0.f4 = (g_7d3c - *g_7560) * 2;
-            if (abs(g_78e0.f4) > 24)
-                g_78e0.f4 = g_78e0.f4 > 0 ? 24 : -24;
+            a_7d36m = goal6;
+        if (abs(*af7560z - c_7d3c) > 0) {
+            e_78e0.f4 = (c_7d3c - *af7560z) * 2;
+            if (abs(e_78e0.f4) > 24)
+                e_78e0.f4 = e_78e0.f4 > 0 ? 24 : -24;
         }
-        g_7d3c = *g_7560;
+        c_7d3c = *af7560z;
     }
 }
 
@@ -385,17 +409,17 @@ void F_2834C(void)
 int F_284BB(void)
 {
     g_5e0e = 0;
-    if (g_7d82 - 0x104 < g_7d36 - 0x1e && g_7d36 + 0x46 < g_8bd0 + 0x104) {
-        if (g_7d82 > g_7d36 - 0x1e) {
-            if ((g_terrain0[g_7d30] & 0x1000) || (g_terrain0[g_7d30 - 1] & 0x1000))
+    if (g7d82p - 0x104 < a_7d36m - 0x1e && a_7d36m + 0x46 < cz8bd0y + 0x104) {
+        if (g7d82p > a_7d36m - 0x1e) {
+            if ((g_terrain0[ac7d30z] & 0x1000) || (g_terrain0[ac7d30z - 1] & 0x1000))
                 return 1;
-            if (g_terrain3[g_7d30 + 1] & 0xf000)
+            if (g_terrain3[ac7d30z + 1] & 0xf000)
                 return 1;
             g_5e0e = 1;
-        } else if (g_7d36 + 0x46 > g_8bd0) {
-            if ((g_terrain1[g_7d30] & 0x1000) || (g_terrain1[g_7d30 - 1] & 0x1000))
+        } else if (a_7d36m + 0x46 > cz8bd0y) {
+            if ((g_terrain1[ac7d30z] & 0x1000) || (g_terrain1[ac7d30z - 1] & 0x1000))
                 return 1;
-            if (g_terrain3[g_7d30 + 1] & 0xf002)
+            if (g_terrain3[ac7d30z + 1] & 0xf002)
                 return 1;
             g_5e0e = 1;
         }
@@ -420,9 +444,9 @@ void F_28564(void)
 void F_28576(int dir)
 {
     if (dir == 1)
-        g_7d3c += 3;
+        c_7d3c += 3;
     else
-        g_7d3c -= 3;
+        c_7d3c -= 3;
 }
 
 /* F_2858D @ 2645:213D (linear 0x2858D, 272 bytes) */
@@ -432,32 +456,32 @@ void F_28576(int dir)
 
 void F_2858D(void)
 {
-    if (g_78e0.f2 && g_78e0.f0 && abs(g_7d3c - *g_7560 - g_78e0.f2) < 200)
-        g_7d3c -= (g_78e0.f2 >> 1) + 1;
-    if (!g_8aca) {
-        if (g_82c6)
-            g_7d34 = 6;
+    if (e_78e0.f2 && e_78e0.f0 && abs(c_7d3c - *af7560z - e_78e0.f2) < 200)
+        c_7d3c -= (e_78e0.f2 >> 1) + 1;
+    if (!bw8aca) {
+        if (bl82c6)
+            aa7d34l = 6;
         else
-            g_7d34 = 4;
+            aa7d34l = 4;
     }
-    if (g_7d34 > 0 && g_7aae > 0)
-        g_7aae -= 4;
+    if (aa7d34l > 0 && aw7aaex > 0)
+        aw7aaex -= 4;
     F_282EE();
     if (g_0610 == 0 && g_0612 == 0) {
-        if (g_787c)
-            g_7d36 += 25;
-        else if (g_78e0.f0)
-            g_7d36 -= (g_7d3c - *g_7560) * (g_7d34 + g_78ec) >> 2;
+        if (at787cu)
+            a_7d36m += 25;
+        else if (e_78e0.f0)
+            a_7d36m -= (c_7d3c - *af7560z) * (aa7d34l + bn78ec) >> 2;
     }
-    if (!g_8aca) {
-        g_7d32 += g_7d34;
-        if (g_7d32 >= 8)
+    if (!bw8aca) {
+        bp7d32 += aa7d34l;
+        if (bp7d32 >= 8)
             F_2834C();
-        if ((g_terrain0[g_7d30 + 7] & 1) || g_5e12) {
+        if ((g_terrain0[ac7d30z + 7] & 1) || g_5e12) {
             g_5e12 = 1;
             F_28576(1);
         }
-        if ((g_terrain1[g_7d30 + 6] & 1) || g_5e10) {
+        if ((g_terrain1[ac7d30z + 6] & 1) || g_5e10) {
             F_28576(-1);
             g_5e10 = 1;
         }

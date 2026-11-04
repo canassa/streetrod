@@ -4,6 +4,15 @@
 #include "PROTOS.H"
 #include "STRUCTS.H"
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+struct Bitmap am6e68x[12];
+struct Bitmap far *at70a8;
+struct Bitmap far *g_731e;
+int (far *g78c6c)(struct Sprite *);
+struct Band dz7ec2[4];
+struct Bitmap bw7fa8;
+int l_8262;
+
 static void near F_174A6(char far *src, char far *dst, char far *mask, int w, int h, int n, int step);
 static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, int h, char far *mask, char c);
 static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color);
@@ -21,7 +30,7 @@ int g_58e8[3] = {1001, 1002, 1000};   /* DS:58E8 */
 int g_58ee = 0;   /* DS:58EE */
 struct Cmd g_58f0[44] = {{1, 0, -1, -1}, {6, 0, 0, 0}, {2, 0, -1, -1}, {10, 0, 8, 1}, {9, 2, 48, 111}, {5, 0, 250, -1}, {11, 0, 10, 7}, {5, 0, 0, -1}, {11, 4, 10, 7}, {6, 0, 0, 0}, {4, 0, -1, -1}, {6, 0, 0, 0}, {3, 0, -1, -1}, {8, 0, 1233, 2}, {10, 0, 48, 64}, {9, 2, 200, 81}, {13, 0, -1, -1}, {11, 0, 16, 0}, {2, 1, 0, 0}, {11, 4, 16, 0}, {2, 1, 48, 0}, {11, 4, 16, 0}, {2, 1, 96, 0}, {11, 4, 20, 0}, {6, 0, 0, 0}, {5, 0, -1, -1}, {6, 0, 0, 0}, {6, 0, -1, -1}, {6, 0, 0, 0}, {7, 0, -1, -1}, {6, 0, 0, 0}, {8, 0, -1, -1}, {8, 0, 1075, 2}, {10, 0, 16, 94}, {9, 2, 160, 52}, {11, 0, 4, 0}, {2, 1, 0, 0}, {11, 4, 4, 0}, {2, 1, 16, 0}, {11, 4, 4, 0}, {2, 1, 32, 0}, {11, 4, 4, 36}, {6, 0, 0, 0}, {6, 0, 0, 0}};   /* DS:58F0 */
 int g_59f8[9] = {8, 0, 2, 12, 10, 25, 27, 29, 31};   /* DS:59F8 */
-struct Bitmap far *g_5a0a = (struct Bitmap far *)&g_7fa8;   /* DS:5A0A */
+struct Bitmap far *g_5a0a = (struct Bitmap far *)&bw7fa8;   /* DS:5A0A */
 int g_5a0e = 0;   /* DS:5A0E */
 struct Rect g_5a10 = {0, 0, 80, 0};   /* DS:5A10 */
 struct Rect g_5a18 = {88, 0, 136, 0};   /* DS:5A18 */
@@ -80,7 +89,7 @@ static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, i
     }
 }
 
-/* F_176B6: copy n bitmaps into the table g_6e68, each filled with a colour pattern and h rows high, in space cut from the scratch bitmap g_731e */
+/* F_176B6: copy n bitmaps into the table am6e68x, each filled with a colour pattern and h rows high, in space cut from the scratch bitmap g_731e */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 
@@ -96,7 +105,7 @@ static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color)
 
     base2 = g_731e->bits.p + 0x46 * g_731e->pitch;
     H5 = B[0]->height - y2 - h;
-    v = (g_vid.mode == -6 ? color << 4 : color << 2 | color << 4 | color << 6) | color;
+    v = (r_vid.mode == -6 ? color << 4 : color << 2 | color << 4 | color << 6) | color;
     maxw = B[0]->width;
     for (i = 1; i < n; i++)
         if (B[i]->width > maxw)
@@ -107,12 +116,12 @@ static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color)
     pkt1.sy = H5;
     i = pkt1.sx = pkt1.dx = pkt1.dy = 0;
     for (i = 0; i < n; i++) {
-        g_6e68[i] = *bm1;
-        g_6e68[i].bits.p = base2;
+        am6e68x[i] = *bm1;
+        am6e68x[i].bits.p = base2;
         base2 += bm1->planesize;
         F_109C0(bm1->bits.p, v, bm1->planesize);
-        (*g_78aa)(B[i], bm1, &pkt1, 1);
-        F_19ED0(bm1, &g_6e68[i], 1);
+        (*ab78aat)(B[i], bm1, &pkt1, 1);
+        F_19ED0(bm1, &am6e68x[i], 1);
     }
     F_19438(1);
 }
@@ -136,8 +145,8 @@ void F_1783E(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bi
     *start = *src;
     start->bits.w.off += h * size;
     start->height = y2;
-    start->planesize = y2 * size * g_vid.planes;
-    if (g_vid.mode == -6) {
+    start->planesize = y2 * size * r_vid.planes;
+    if (r_vid.mode == -6) {
         if (g_5a22 == 0)
             g_5a22 = src->width;
         *pa = F_1934E(g_5a22, y2, flag, 1);
@@ -145,12 +154,12 @@ void F_1783E(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bi
         blt.h = y2;
         blt.sx = g_5a20;
         blt.sy = blt.dx = blt.dy = 0;
-        (*g_78a2)(start, *pa, &blt, 1);
+        (*b_78a2)(start, *pa, &blt, 1);
     } else {
         *pa = F_1934E(src->width, y2, flag, 1);
         F_19ED0(start, *pa, 1);
     }
-    switch (g_vid.mode) {
+    switch (r_vid.mode) {
     case -2:
         *pb = start;
         break;
@@ -167,12 +176,12 @@ void F_1783E(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bi
     *pr2 = 0;
     if (flag) {
         p2 = F_15BBE(mode, 2);
-        if (g_vid.mode == -6) {
+        if (r_vid.mode == -6) {
             blt.sy = p2->height - y2;
-            (*g_78a2)(p2, *pa, &blt, 2);
+            (*b_78a2)(p2, *pa, &blt, 2);
         } else {
-            diff = p2->planesize / g_vid.planes - (*pa)->planesize / g_vid.planes;
-            F_1A882(p2->alt.p + diff, (*pa)->alt.p, (*pa)->planesize / g_vid.planes);
+            diff = p2->planesize / r_vid.planes - (*pa)->planesize / r_vid.planes;
+            F_1A882(p2->alt.p + diff, (*pa)->alt.p, (*pa)->planesize / r_vid.planes);
         }
         F_19438(1);
         *pr1 = &g_5a10;
@@ -204,18 +213,18 @@ static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstb
     tmp1->bits.p = save1;
     g_4f0e = 1;
     F_19ED0(tmp1, dstbm, 1);
-    b.h = g_825a->height;
+    b.h = bu825a->height;
     b.sy = 0;
-    b.dy = top - g_825a->height - y + 1;
+    b.dy = top - bu825a->height - y + 1;
     t = x - (sx0 & 0xfff8);
     b.sx = (t < 0) ? 0 : t;
     b.w = (t + 16 > 16) ? 16 : t + 16;
     b.dx = (-t < 0) ? 0 : -t;
-    (*g_78aa)(g_825a, dstbm, &b, 1);
+    (*ab78aat)(bu825a, dstbm, &b, 1);
     b.w = 0x10;
     b.h = 0x46;
     b.dx = b.dy = b.sx = b.sy = 0;
-    (*g_78aa)(tmp1, dstbm, &b, 0);
+    (*ab78aat)(tmp1, dstbm, &b, 0);
     F_19438(1);
 }
 
@@ -238,30 +247,30 @@ void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *id
     struct Bitmap far *bm;
     struct Bitmap far *bm2n;
 
-    m2 = &g_8df0[idx];
-    p12 = &g_7682[idx];
-    p69 = &g_818c[idx];
-    *out = F_15BBE(g_7d8e[idx].id, 1);
-    g_826e = p69->b0;
-    g_8270 = p69->b1;
-    g_826a = p69->b2;
-    g_826c = p69->b3;
-    g_8264 = p69->b2 && p69->b3;
-    g_8266 = p69->b4;
-    g_8268 = p69->b5;
-    g_8272.m8276 = ~g_vid.mask & p12->b10;
-    g_8272.m8272 = g_vid.mask & p12->b10;
-    g_8272.m8274 = p12->b11;
+    m2 = &w_8df0[idx];
+    p12 = &g7682n[idx];
+    p69 = &ap818c[idx];
+    *out = F_15BBE(g7d8ew[idx].id, 1);
+    ar826e = p69->b0;
+    q_8270 = p69->b1;
+    g826af = p69->b2;
+    ae826cv = p69->b3;
+    h_8264 = p69->b2 && p69->b3;
+    d_8266 = p69->b4;
+    ap8268t = p69->b5;
+    m_8272.m8276 = ~r_vid.mask & p12->b10;
+    m_8272.m8272 = r_vid.mask & p12->b10;
+    m_8272.m8274 = p12->b11;
     if (flags & 2)
         F_1A6E0(*out, m2->f6, 0, p12->b7);
     if (flags & 1)
         F_1A6E0(*out, m2->f8, p12->b8, p12->b9);
     if (flags & 4) {
         F_1A6E0(*out, m2->f2, p12->b4, 0);
-        for (j5 = 0; j5 < g_70a8->planesize / g_vid.planes; j5++)
-            if (((unsigned char far *)g_70a8->alt.p)[j5] != 0xff)
+        for (j5 = 0; j5 < at70a8->planesize / r_vid.planes; j5++)
+            if (((unsigned char far *)at70a8->alt.p)[j5] != 0xff)
                 break;
-        row8 = j5 / g_70a8->pitch;
+        row8 = j5 / at70a8->pitch;
     } else
         row8 = 0;
     if ((flags & 8) && idx != 0x19)
@@ -271,22 +280,22 @@ void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *id
     blt.sx = p12->b10;
     blt.sy = p12->b11;
     blt.dx = blt.dy = 0;
-    (*g_78a2)(*out, g_0294, &blt, 1);
+    (*b_78a2)(*out, g_0294, &blt, 1);
     if (kk > 0) {
-        pp8 = &g_7844[kk];
+        pp8 = &g7844n[kk];
         F_1A734(*out, pp8->id, p12->b10 + pp8->dx, p12->b11 + pp8->dy, 0);
     }
     if (q) {
-        bm = F_15BBE(g_8272.m8280, 2);
+        bm = F_15BBE(m_8272.m8280, 2);
         F_1A472(bm, *out, p12->b2, p12->b3 - bm->height + row8 + 1);
         F_19438(1);
     }
     j5 = 1;
     for (j5 = 1; j5 < n; j5++)
-        out[j5] = F_1934E((*out)->width + (g_vid.mode == -6 ? 0 : 8), (*out)->height,
-            g_vid.mode != -6, 1);
+        out[j5] = F_1934E((*out)->width + (r_vid.mode == -6 ? 0 : 8), (*out)->height,
+            r_vid.mode != -6, 1);
     if (n > 1) {
-        switch (g_vid.mode) {
+        switch (r_vid.mode) {
         case -2:
             for (j5 = 1; j5 < n; j5++)
                 F_1A03F(out[j5 - 1], 2, out[j5]);
@@ -308,7 +317,7 @@ void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *id
         for (j5 = 0; j5 < n; j5++) {
             bm = F_15BBE(ids[j5], 2);
             h = out[j5]->height - bm->height;
-            switch (g_vid.mode) {
+            switch (r_vid.mode) {
             case -2:
                 off = j5 * 2;
                 break;
@@ -330,7 +339,7 @@ void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *id
         F_19F42(*out, &left, &right1);
         h = (*out)->height - bm2n->height;
         for (j5 = 0; j5 < n; j5++) {
-            switch (g_vid.mode) {
+            switch (r_vid.mode) {
             case -2:
                 off = j5 * 2;
                 break;
@@ -384,18 +393,18 @@ void F_181C8(int kind, int idx, int flags, int kk, int q, int bot, int mode2, in
     F_120FE(-4);
 again:
     n2 = (kind == 3 || kind == 7 || kind == 8) ? 1 : 4;
-    F_15B7F(g_7d8e[idx].id, &w1, &h7, &x7);
+    F_15B7F(g7d8ew[idx].id, &w1, &h7, &x7);
     g_02d0 = g_02a6[g_0284];
-    tmpn = (g_vid.mode != -2 && g_vid.mode != -6) ? g_02b4[g_0284] : g_02c2[g_0284];
+    tmpn = (r_vid.mode != -2 && r_vid.mode != -6) ? g_02b4[g_0284] : g_02c2[g_0284];
     hh8 = (kind == 3 || kind == 7 || kind == 8) ? h7 - g_02d0 : g_0298[g_0284];
     x0 = ((0x140 - w1) / 2 + 4) & 0xfff8;
     right = kind == 2 ? 0x140 - x0 : x0 + w1;
     if (g_5a24 != 2) {
         if (kind == 4) {
             g_4f4a = 1;
-            if (g_vid.mode == -2) {
+            if (r_vid.mode == -2) {
                 F_03904(g_5a0a, g_731e->bits.p, 0, 0x140, 0x46 - g_02d0, -2);
-                F_24E78(g_vid.back->bits.p, g_5a0a->bits.p - 0x28 * top7, 0x28, g_5a0a->height, 0, top7, 0x28);
+                F_24E78(r_vid.back->bits.p, g_5a0a->bits.p - 0x28 * top7, 0x28, g_5a0a->height, 0, top7, 0x28);
             } else {
                 F_03904(g_5a0a, g_731e->bits.p, 0, 0x140, 0x46 - g_02d0, -1);
                 F_11A72(0, top7, 0x140, g_5a0a->height, g_5a0a);
@@ -415,7 +424,7 @@ again:
         if (!g_0294)
             g_0294 = F_1934E(0x40, 0x19, 0, 0);
         F_17BE6(bms6, idx, flags, kk, q, ids, 1, n2);
-        if (g_vid.mode == -6 && kind != 3 && kind != 7 && kind != 8) {
+        if (r_vid.mode == -6 && kind != 3 && kind != 7 && kind != 8) {
             F_176B6(bms6, n2, g_02d0, hh8, tmpn);
             bms6[1] = bms6[2] = bms6[3] = bms6[0];
             F_1941E(3);
@@ -431,29 +440,29 @@ again:
             F_1783E(g_5a0a, &pan, mode2 ? 0x448 : 0, &pb8, 0x46, h7, &pr16, &pr26);
         }
     }
-    g_825e = x0;
-    g_8260 = bot - bms6[0]->height + 1;
-    g_8262 = bms6[0]->height - g_02d0;
-    if (g_8266 > 0) {
-        g_8266 += x0;
-        g_8268 += g_8260;
-        g_826a += x0;
-        g_826c += g_8260;
+    ac825et = x0;
+    aw8260y = bot - bms6[0]->height + 1;
+    l_8262 = bms6[0]->height - g_02d0;
+    if (d_8266 > 0) {
+        d_8266 += x0;
+        ap8268t += aw8260y;
+        g826af += x0;
+        ae826cv += aw8260y;
     }
-    g_826e += x0;
-    g_8270 += g_8260;
-    g_8272.m8272 += x0;
-    g_8272.m8274 += g_8260;
+    ar826e += x0;
+    q_8270 += aw8260y;
+    m_8272.m8272 += x0;
+    m_8272.m8274 += aw8260y;
     ang2 = (kind == 1 || kind == 4) ? x0 - right : x0;
     if (g_5a24 != 2) {
-        if (g_vid.mode == -2) {
+        if (r_vid.mode == -2) {
             if (kind == 3 || kind == 8)
                 mask3 = g_5a0a->bits.p + ((g_5a0a->height - hh8) * g_5a0a->pitch + x0 / 8);
             else
                 mask3 = 0;
-            F_1751A(g_7ec2, bms6, n2, g_02d0, hh8, mask3, tmpn);
+            F_1751A(dz7ec2, bms6, n2, g_02d0, hh8, mask3, tmpn);
         }
-        if (!((g_vid.mode == -2 || g_vid.mode == -6) && g_vid.mode != -6)) {
+        if (!((r_vid.mode == -2 || r_vid.mode == -6) && r_vid.mode != -6)) {
             if (kind == 3 || kind == 7 || kind == 8) {
                 bm48 = F_1934E(w1, h7 - g_02d0, 0, 1);
                 if (kind != 7) {
@@ -462,17 +471,17 @@ again:
                     blt.sx = x0;
                     blt.sy = g_5a0a->height - h7;
                     blt.dx = blt.dy = 0;
-                    (*g_78a2)(g_5a0a, bm48, &blt, 1);
+                    (*b_78a2)(g_5a0a, bm48, &blt, 1);
                 } else
-                    F_11A72(x0, g_8260, bm48->width, bm48->height, bm48);
+                    F_11A72(x0, aw8260y, bm48->width, bm48->height, bm48);
                 blt.w = w1;
                 blt.h = blt.fc = h7 - g_02d0;
                 blt.dx = blt.dy = blt.sx = blt.sy = 0;
-                (*g_78aa)(bms6[0], bm48, &blt, 1);
-            } else if (g_vid.mode != -6)
+                (*ab78aat)(bms6[0], bm48, &blt, 1);
+            } else if (r_vid.mode != -6)
                 F_176B6(bms6, n2, g_02d0, hh8, tmpn);
         }
-        if (!((g_vid.mode == -2 || g_vid.mode == -6) && g_vid.mode != -6)) {
+        if (!((r_vid.mode == -2 || r_vid.mode == -6) && r_vid.mode != -6)) {
             blt.w = w1;
             blt.h = h7 - g_02d0;
             blt.sx = blt.sy = 0;
@@ -480,24 +489,24 @@ again:
             blt.dy = bot - h7 + 1;
         }
         if (kind == 3) {
-            if (g_vid.mode == -2)
-                F_24EFB(g_7ec2[0].p, bms6[0]->pitch, bms6[0]->height - g_02d0,
-                    g_vid.back->bits.p + ((bot - h7) * 0x28 + (x0 >> 3)) + 0x28, bms6[0]->pitch);
+            if (r_vid.mode == -2)
+                F_24EFB(dz7ec2[0].p, bms6[0]->pitch, bms6[0]->height - g_02d0,
+                    r_vid.back->bits.p + ((bot - h7) * 0x28 + (x0 >> 3)) + 0x28, bms6[0]->pitch);
             else
-                (*g_78a2)(bm48, g_vid.back, &blt, 1);
-            (*g_78b6)(g_vid.back->bits.p, g_vid.front->bits.p);
+                (*b_78a2)(bm48, r_vid.back, &blt, 1);
+            (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
             goto done;
         } else if (kind == 7 || kind == 8) {
-            if (g_vid.mode == -2)
-                F_24EFB(g_7ec2[0].p, bms6[0]->pitch, h7 - g_02d0,
-                    g_vid.front->bits.p + ((bot - h7) * 0x28 + (x0 >> 3)) + 0x28, bms6[0]->pitch);
+            if (r_vid.mode == -2)
+                F_24EFB(dz7ec2[0].p, bms6[0]->pitch, h7 - g_02d0,
+                    r_vid.front->bits.p + ((bot - h7) * 0x28 + (x0 >> 3)) + 0x28, bms6[0]->pitch);
             else
-                (*g_78a2)(bm48, g_vid.front, &blt, 1);
-            F_1A92A(g_vid.front, g_vid.back, x0, bot - h7 + 1, x0 + w1 - 1, bot);
+                (*b_78a2)(bm48, r_vid.front, &blt, 1);
+            F_1A92A(r_vid.front, r_vid.back, x0, bot - h7 + 1, x0 + w1 - 1, bot);
             goto done;
         }
     }
-    spr3 = F_195F3(ang2, bot, bms6, (char (*)[8])g_7ec2, n2, pb8, pan, pr16, pr26);
+    spr3 = F_195F3(ang2, bot, bms6, (char (*)[8])dz7ec2, n2, pb8, pan, pr16, pr26);
     F_19B6E(spr3, kind, right);
     if (kind == 6)
         spr3->page->r = g_6cbc;
@@ -506,11 +515,11 @@ again:
         g_5a0e = 1;
         if (g_5a24 != 2)
             F_01AAD();
-        while ((*g_78c6)(spr3))
+        while ((*g78c6c)(spr3))
             ;
         if (g_5a24 != 1)
             F_01B27();
-        g_825a = (struct Bitmap far *)g_288;
+        bu825a = (struct Bitmap far *)g_288;
         g_5a0e = 0;
         g_0286 = 0;
         g_6cbc = spr3->page->r;
@@ -519,21 +528,21 @@ again:
         scratch = F_1934E(0x18, 7, 0, 2);
         blt.w = 0x10;
         blt.h = scratch->height;
-        blt.sx = g_826e - g_825e;
-        blt.sy = g_8270 - g_8260;
+        blt.sx = ar826e - ac825et;
+        blt.sy = q_8270 - aw8260y;
         blt.dx = blt.dy = 0;
-        (*g_78a2)(bms6[0], scratch, &blt, 1);
+        (*b_78a2)(bms6[0], scratch, &blt, 1);
         F_1A734(bms6[0], 0x472, (char)blt.sx, (char)blt.sy, 0);
-        F_17AAE(0x40, 0x64, g_8b7c, bot, g_028c, 0x4c8, 0x4ca);
-        F_17AAE(0x40, 0x64, g_8b7c, bot, g_0290, 0x449, 0x44a);
+        F_17AAE(0x40, 0x64, z_8b7c, bot, g_028c, 0x4c8, 0x4ca);
+        F_17AAE(0x40, 0x64, z_8b7c, bot, g_0290, 0x449, 0x44a);
         blt.dx = blt.sx;
         blt.dy = blt.sy;
         blt.sx = blt.sy = 0;
-        (*g_78a2)(scratch, bms6[0], &blt, 1);
+        (*b_78a2)(scratch, bms6[0], &blt, 1);
     }
     F_1013D(2);
-    if (g_vid.mode != -2)
-        (*g_78b6)(g_vid.front->bits.p, g_vid.back->bits.p);
+    if (r_vid.mode != -2)
+        (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
     if (g_5a24 == 1) {
         kind = 2;
         g_5a24 = 2;

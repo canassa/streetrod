@@ -52,7 +52,7 @@ void F_065AF(int a1)
     row5 = e9 / 7 - g_5052[m];
     x = 18 * col + g_5048;
     y4 = 7 * row5 + g_504a[m];
-    g_vid.f16 = 1;
+    r_vid.f16 = 1;
     px5 = 80;
     py4 = 4;
     id = m < 2 ? 0x4c3 : 0x4c5;
@@ -91,10 +91,10 @@ void F_06750(int x)
     today = F_06476();
     mnum = F_0653C(today, &date);
     sprintf(buf, "%s %d, 1963", g_5082[mnum], date);
-    sv = g_colors;
-    g_colors = g_style->hilite;
-    (*g_78ae)(g_vid.back, 0x61, x, buf);
-    g_colors = sv;
+    sv = x_colors;
+    x_colors = bustyle->hilite;
+    (*a_78aem)(r_vid.back, 0x61, x, buf);
+    x_colors = sv;
 }
 
 /* F_067CF @ 0000:67CF (linear 0x067CF, 88 bytes) */
@@ -102,8 +102,8 @@ void F_06750(int x)
 
 void F_067CF(int a)
 {
-    if (g_vid.mode == -2 || g_vid.mode == -6) {
-        if (g_8249) {
+    if (r_vid.mode == -2 || r_vid.mode == -6) {
+        if (gz8249) {
             F_112CB(6, g_50c2[a][0]);
             F_112CB(7, g_50c2[a][1]);
         }

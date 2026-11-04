@@ -1,10 +1,10 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
-/* F_1929A: give back size bytes to the arena, top of the g_7b14 marker stack */
+/* F_1929A: give back size bytes to the arena, top of the g7b14o marker stack */
 
 
 void F_1929A(int size)
 {
-    g_8b02[g_7b14] -= size;
+    c_8b02[g7b14o] -= size;
 }

@@ -19,7 +19,7 @@ void interrupt far F_01FE2(void)
         outp(0x20, 0x20);
         _enable();
     } else {
-        (*g_7aaa)();
+        (*w_7aaa)();
         g_0608 = 3;
         g_0600++;
     }
@@ -37,12 +37,12 @@ void interrupt far F_01FE2(void)
         }
     }
     if (g_58d2->off && --g_58d2->f2) {
-        if (g_72ec && g_58d2->f0.w && !--g_06e2) {
-            g_82c4->f0 = g_82c4->f0 % g_82c4->f3;
-            g_6c54 = g_57f6[g_82c4->f1][g_82c4->f0++] * g_6c52 + g_58d2->f0.w;
+        if (t_72ec && g_58d2->f0.w && !--g_06e2) {
+            bn82c4->f0 = bn82c4->f0 % bn82c4->f3;
+            g_6c54 = g_57f6[bn82c4->f1][bn82c4->f0++] * g_6c52 + g_58d2->f0.w;
             outp(0x42, g_6c54);
             outp(0x42, g_6c54 >> 8);
-            g_06e2 = g_82c4->f4;
+            g_06e2 = bn82c4->f4;
         }
     } else if (g_58d2->off && g_58d2->f2 == 0) {
         while (!(g_58d2->f2 = *g_58d2->cur++)) {
@@ -65,16 +65,16 @@ void interrupt far F_01FE2(void)
                 g_58d2->f4 = 0;
             } else
                 g_58d2->cur = g_58d2->lc;
-            g_82c4 = g_tones + *g_58d2->f1a;
+            bn82c4 = g_tones + *g_58d2->f1a;
         }
         if (!(g_58d2->f0.w = *g_58d2->cur++)) {
             g_58d2->dirty = 1;
             outp(0x61, inp(0x61) & 0xfc);
             g_47cf = 0;
         } else {
-            if (g_72ec) {
-                g_06e2 = g_82c4->f4;
-                g_6c52 = (unsigned)g_82c4->f2 * g_58d2->f0.w / 1000;
+            if (t_72ec) {
+                g_06e2 = bn82c4->f4;
+                g_6c52 = (unsigned)bn82c4->f2 * g_58d2->f0.w / 1000;
             }
             outp(0x42, g_58d2->f0.b[0]);
             outp(0x42, g_58d2->f0.b[1]);

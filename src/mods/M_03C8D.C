@@ -28,7 +28,7 @@ static void near F_03C8D(void)
     tries3 = 0;
     sel = 1;
     for (;; tries3++) {
-        for (p7 = g_7eaa.m7eb8, nl = 0; p7; p7 = p7->next) {
+        for (p7 = a_7eaap.m7eb8, nl = 0; p7; p7 = p7->next) {
             nl++;
             g_49e0[nl] = (ip = &g_4806[(list8[nl] = p7)->idx])->f6;
             if (p7->b != -0x80) {
@@ -87,7 +87,7 @@ static void near F_03C8D(void)
         if (nl == -0x15)
             continue;
         if (sel == 1)
-            g_7eaa.m7eb8 = p7->next;
+            a_7eaap.m7eb8 = p7->next;
         else
             list8[sel - 1]->next = p7->next;
         F_03C3E(p7);

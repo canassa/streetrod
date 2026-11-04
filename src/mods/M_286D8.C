@@ -2,6 +2,41 @@
 #include "PROTOS.H"
 #include <stdlib.h>
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+struct Bitmap far *k_6e60;
+int g70cee;
+int dz70d0;
+int g70dee;
+int dz70e0;
+struct Bitmap far *ax72f4;
+int br7314;
+struct Bitmap far *g764aw;
+struct Bitmap far *ar767eu;
+int g789eu;
+int f_78a0;
+void (far *g78d6c)(int, int, int, int);
+void (far *bp78da)(int, int);
+int az7acaz;
+int r_7acc;
+int ac7ae8t;
+int az7aeau;
+int e_7f2e;
+int g7f30t;
+int al7fa4z;
+int by7fa6;
+int dz7ff2;
+int g7ff4g;
+struct Bitmap far *g8184y;
+int aw8644v;
+int k_8646;
+int au8656u;
+int g_8658;
+int au8666t;
+int as8668u;
+struct Bitmap far *bz8b7ex;
+int far *am8b82y;
+struct Bitmap far *ak8bcat;
+
 static void near F_2874C(struct Blt *b);
 static int near F_2914C(int x1, int y1, int x2, int y2);
 static int near F_2937B(int n);
@@ -36,16 +71,16 @@ static void near F_286D8(void)
 {
     int t;
 
-    if (g_vid.mode == -2) {
+    if (r_vid.mode == -2) {
         t = g_5e3e;
         g_5e3e = g_5e40;
         g_5e40 = t;
-        g_787a = (g_5e3e == 1) ? 0xa200 : 0xa400;
+        av787at = (g_5e3e == 1) ? 0xa200 : 0xa400;
         F_2322E(g_5e40);
     } else {
-        (*g_78a2)(g_8188, g_vid.front, &g_5e42, 1);
-        g_787a = g_8188->bits.w.seg;
-        g_767c = g_8188->bits.w.off;
+        (*b_78a2)(g8188w, r_vid.front, &g_5e42, 1);
+        av787at = g8188w->bits.w.seg;
+        at767ct = g8188w->bits.w.off;
     }
 }
 
@@ -99,7 +134,7 @@ static void near F_287D1(int color, int x, int y1, int y2)
         y1 = (y1 > g_clip_ymax) ? g_clip_ymax : y1;
         y2 = (y2 < g_clip_ymin) ? g_clip_ymin : y2;
         y2 = (y2 > g_clip_ymax) ? g_clip_ymax : y2;
-        (*g_78d2)(x, y1, x, y2, color);
+        (*a_78d2)(x, y1, x, y2, color);
     }
 }
 
@@ -156,78 +191,78 @@ void F_28879(void)
     pkt1.h = bm1->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
     pkt1.dy = 0x66;
-    (*g_78a2)(bm1, g_8188, &pkt1, 1);
+    (*b_78a2)(bm1, g8188w, &pkt1, 1);
     F_19438(1);
-    sel = *(int *)&g_8aca == 0 ? g_0284 : 0;
+    sel = *(int *)&bw8aca == 0 ? g_0284 : 0;
     bm24 = F_15BBE(g_5e62[sel], 2);
     pkt1.w = bm24->width;
     pkt1.h = bm24->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
     pkt1.dy = 0x66;
-    (*g_78a2)(bm24, g_82b4, &pkt1, 1);
+    (*b_78a2)(bm24, g82b4s, &pkt1, 1);
     F_19438(1);
-    if (*(int *)&g_8aca == 0) {
+    if (*(int *)&bw8aca == 0) {
         bm24 = F_15BBE(0x4ed, 2);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
-        pkt1.dy = (g_vid.mode == -2 ? 0x63 : 0) + 1;
-        (*g_78a2)(bm24, g_vid.mode == -2 ? g_7678 : g_82b4, &pkt1, 1);
+        pkt1.dy = (r_vid.mode == -2 ? 0x63 : 0) + 1;
+        (*b_78a2)(bm24, r_vid.mode == -2 ? bm7678 : g82b4s, &pkt1, 1);
         F_19438(1);
         bm24 = F_15BBE(0x4ee, 2);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
-        pkt1.dy = (g_vid.mode == -2 ? 0x63 : 0) + 0x2c;
-        (*g_78a2)(bm24, g_vid.mode == -2 ? g_7678 : g_82b4, &pkt1, 1);
+        pkt1.dy = (r_vid.mode == -2 ? 0x63 : 0) + 0x2c;
+        (*b_78a2)(bm24, r_vid.mode == -2 ? bm7678 : g82b4s, &pkt1, 1);
         F_19438(1);
     }
-    g_767e = F_15BBE(0x4f3, 1);
-    if (*(int *)&g_8aca == 0) {
-        g_764a = F_15BBE(0x3f0, 1);
-        pkt1.w = g_764a->width;
-        pkt1.h = g_764a->height;
+    ar767eu = F_15BBE(0x4f3, 1);
+    if (*(int *)&bw8aca == 0) {
+        g764aw = F_15BBE(0x3f0, 1);
+        pkt1.w = g764aw->width;
+        pkt1.h = g764aw->height;
         pkt1.sx = pkt1.sy = 0;
         pkt1.dx = 0x2c;
         pkt1.dy = 0xc;
-        (*g_78aa)(g_764a, g_767e, &pkt1, 1);
+        (*ab78aat)(g764aw, ar767eu, &pkt1, 1);
         F_1941E(1);
     }
-    pkt1.w = g_767e->width;
-    pkt1.h = g_767e->height;
+    pkt1.w = ar767eu->width;
+    pkt1.h = ar767eu->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
-    pkt1.dy = 0xc8 - g_767e->height;
-    (*g_78a2)(g_767e, g_8188, &pkt1, 1);
+    pkt1.dy = 0xc8 - ar767eu->height;
+    (*b_78a2)(ar767eu, g8188w, &pkt1, 1);
     F_1941E(1);
-    g_72f4 = F_15BBE(0x3ee, 1);
-    g_8bca = F_15BBE(0x3ef, 1);
-    g_8184 = F_15BBE(0x3f1, 1);
-    g_8b7e = F_15BBE(0x4db, 1);
-    if (*(int *)&g_8aca) {
-        idx = g_8df0[g_7648].kind;
-        g_6e60 = F_15BBE(0x3f5, 1);
-        g_7aae = g_6e60->height;
-        g_8ace[0] = F_15BBE(g_5e14[idx][0], 1);
-        g_8ace[1] = F_15BBE(g_5e14[idx][1], 1);
-        g_8ace[2] = F_15BBE(g_5e14[idx][2], 2);
-        load = g_vid.mode == -2 ? F_2B857 : g_vid.mode == -6 ? F_2BCD5 : F_2BAC0;
+    ax72f4 = F_15BBE(0x3ee, 1);
+    ak8bcat = F_15BBE(0x3ef, 1);
+    g8184y = F_15BBE(0x3f1, 1);
+    bz8b7ex = F_15BBE(0x4db, 1);
+    if (*(int *)&bw8aca) {
+        idx = w_8df0[bn7648].kind;
+        k_6e60 = F_15BBE(0x3f5, 1);
+        aw7aaex = k_6e60->height;
+        g8acew[0] = F_15BBE(g_5e14[idx][0], 1);
+        g8acew[1] = F_15BBE(g_5e14[idx][1], 1);
+        g8acew[2] = F_15BBE(g_5e14[idx][2], 2);
+        load = r_vid.mode == -2 ? F_2B857 : r_vid.mode == -6 ? F_2BCD5 : F_2BAC0;
         for (il = 0; il < 3; il++)
-            g_8ace[3 + il] = (*load)(g_8ace[2], g_5e56[0][il], g_5e56[0][il]);
+            g8acew[3 + il] = (*load)(g8acew[2], g_5e56[0][il], g_5e56[0][il]);
         for (il = 0; il < 3; il++)
-            g_8ace[6 + il] = (*load)(g_8ace[5], g_5e56[1][il], g_5e56[1][il]);
-        g_8ace[9] = F_15BBE(g_5e14[idx][3], 1);
+            g8acew[6 + il] = (*load)(g8acew[5], g_5e56[1][il], g_5e56[1][il]);
+        g8acew[9] = F_15BBE(g_5e14[idx][3], 1);
         for (il = 0; il < 3; il++)
-            g_8ace[10 + il] = (*load)(g_8ace[9], g_5e56[2][il], g_5e56[2][il]);
-        g_7526[0] = g_8ace[0];
-        g_7526[1] = F_15BBE(0x4d9, 1);
-        g_7526[2] = F_15BBE(0x4da, 2);
-        g_7526[2] = g_7526[3] = (*load)(g_7526[2], g_5e56[0][0], g_5e56[0][0]);
+            g8acew[10 + il] = (*load)(g8acew[9], g_5e56[2][il], g_5e56[2][il]);
+        ab7526x[0] = g8acew[0];
+        ab7526x[1] = F_15BBE(0x4d9, 1);
+        ab7526x[2] = F_15BBE(0x4da, 2);
+        ab7526x[2] = ab7526x[3] = (*load)(ab7526x[2], g_5e56[0][0], g_5e56[0][0]);
         F_19438(1);
         for (il = 0; il < 3; il++)
-            g_7526[4 + il] = g_7526[3];
-        g_7526[9] = F_15BBE(0x4de, 1);
+            ab7526x[4 + il] = ab7526x[3];
+        ab7526x[9] = F_15BBE(0x4de, 1);
         for (il = 0; il < 3; il++)
-            g_7526[10 + il] = (*load)(g_7526[9], g_5e56[2][il], g_5e56[2][il]);
+            ab7526x[10 + il] = (*load)(ab7526x[9], g_5e56[2][il], g_5e56[2][il]);
     }
 }
 
@@ -248,15 +283,15 @@ static void near F_28DD2(void)
     int i;
 
     b.dy = 0x12;
-    if (*(int *)&g_8aca) {
-        v = F_27C01(n8, m5 * 2, g_7d3e);
+    if (*(int *)&bw8aca) {
+        v = F_27C01(n8, m5 * 2, ao7d3ex);
         b.h = v - 0x1e;
         b.sy = 0x9a - b.h;
-        if (g_7d3c > 0) {
-            r = (g_7d3c * 2 % 320) & ~7;
+        if (c_7d3c > 0) {
+            r = (c_7d3c * 2 % 320) & ~7;
             ll = 320 - r;
         } else {
-            ll = (abs(g_7d3c) * 2 % 320) & ~7;
+            ll = (abs(c_7d3c) * 2 % 320) & ~7;
             r = 320 - ll;
         }
         b.w = ll;
@@ -269,21 +304,21 @@ static void near F_28DD2(void)
         b.dx = 0;
         b.h = 0x1d;
     }
-    (*g_78a2)(g_8188, g_5e3e == 1 ? g_8188 : g_82b4, &b, 1);
-    if (*(int *)&g_8aca) {
+    (*b_78a2)(g8188w, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
+    if (*(int *)&bw8aca) {
         b.w = r;
         b.sx = ll;
         b.dx = 0;
-        (*g_78a2)(g_8188, g_5e3e == 1 ? g_8188 : g_82b4, &b, 1);
+        (*b_78a2)(g8188w, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
     }
-    b.h = *(int *)&g_8aca ? 0x14 : 0x10;
+    b.h = *(int *)&bw8aca ? 0x14 : 0x10;
     b.sy = 0xa3;
-    if (*(int *)&g_8aca) {
-        if (g_7d3c > 0) {
-            r = (g_7d3c * 4 % 320) & ~7;
+    if (*(int *)&bw8aca) {
+        if (c_7d3c > 0) {
+            r = (c_7d3c * 4 % 320) & ~7;
             ll = 320 - r;
         } else {
-            ll = (abs(g_7d3c) * 4 % 320) & ~7;
+            ll = (abs(c_7d3c) * 4 % 320) & ~7;
             r = 320 - ll;
         }
         b.w = ll;
@@ -297,23 +332,23 @@ static void near F_28DD2(void)
         b.dy = 0x2f;
     }
     F_2874C(&b);
-    (*g_78a2)(g_8188, g_5e3e == 1 ? g_8188 : g_82b4, &b, 1);
+    (*b_78a2)(g8188w, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
     g_6e06 = 14;
-    if (*(int *)&g_8aca) {
+    if (*(int *)&bw8aca) {
         b.w = r;
         b.sx = ll;
         b.dx = 0;
-        (*g_78a2)(g_8188, g_5e3e == 1 ? g_8188 : g_82b4, &b, 1);
+        (*b_78a2)(g8188w, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
         g_6e04 = v + 8;
         for (i = 14; i; i--) {
-            if (g_7884[i] < g_6e04) {
-                g_6e04 = g_7884[i];
+            if (bq7884[i] < g_6e04) {
+                g_6e04 = bq7884[i];
                 g_6e06 = i;
             }
         }
-        (*g_78da)(g_6e04, 9);
+        (*bp78da)(g_6e04, 9);
     } else
-        (*g_78da)(0x3f, 1);
+        (*bp78da)(0x3f, 1);
 }
 
 /* F_2905A @ 2645:2C0A (linear 0x2905A, 242 bytes) */
@@ -334,14 +369,14 @@ void F_2905A(int x, int y, int first, struct List l, int dir)
                 px = x - run.parts[j].dx;
                 x2 = px - run.parts[j].w;
                 y1 = y + run.parts[j].dy;
-                (*g_78d6)(x2, px, y1, run.parts[j].h);
+                (*g78d6c)(x2, px, y1, run.parts[j].h);
             }
         } else {
             for (j = 0; j < run.n; j++) {
                 px = run.parts[j].dx + x;
                 x2 = px + run.parts[j].w;
                 y1 = y + run.parts[j].dy;
-                (*g_78d6)(px, x2, y1, run.parts[j].h);
+                (*g78d6c)(px, x2, y1, run.parts[j].h);
             }
         }
     }
@@ -376,7 +411,7 @@ static void near F_29170(int col, int a, int b, int c, int d, int e, int f)
 
     if (c == d && f == e) {
         for (y6 = f; y6 <= d; y6++)
-            (*g_78d6)(a, b, y6, col);
+            (*g78d6c)(a, b, y6, col);
     } else {
         ymin2 = f > e ? e : f;
         ymax = c < d ? d : c;
@@ -442,9 +477,9 @@ static void near F_29170(int col, int a, int b, int c, int d, int e, int f)
             break;
         }
         if (xlk > xr5)
-            (*g_78d6)(xr5, xlk, y6, col);
+            (*g78d6c)(xr5, xlk, y6, col);
         else
-            (*g_78d6)(xlk, xr5, y6, col);
+            (*g78d6c)(xlk, xr5, y6, col);
         y6++;
     test:
         if (y6 <= ymax && y6 <= g_clip_ymax)
@@ -502,7 +537,7 @@ void F_29398(int n)
     ybot6 = *g_6e1e;
     dxlm = F_2914C(*g_6e10, ybot6, xl, yk);
     dxr7 = F_2914C(*g_6e1c, ybot6, xrl, yk);
-    flagk = *g_8b82 & 1;
+    flagk = *am8b82y & 1;
     if (flagk) {
         xl2 = *g_6e0a;
         xr28 = *g_6e0e;
@@ -511,7 +546,7 @@ void F_29398(int n)
         dxl2k = F_2914C(*g_6e12, ybot6, xl2, yk);
         dxr26 = F_2914C(*g_6e16, ybot6, xr28, yk);
     }
-    if (*g_8b82 & 8) {
+    if (*am8b82y & 8) {
         wid = *g_6e28;
         cx0k = ((xl + xrl) >> 1) - (wid >> 1);
     }
@@ -519,37 +554,37 @@ void F_29398(int n)
         return;
     for (cnt = ybot6 - yk; cnt && yk <= 101; cnt--, yk++) {
         if (flagk) {
-            if (*g_8b82 & 4)
+            if (*am8b82y & 4)
                 break;
             if (*g_6e20 & 0x80) {
                 m17 = xl2 + ((xl - xl2) >> 1);
-                (*g_78d6)(xl2, m17, yk, 4);
-                (*g_78d6)(m17, xl, yk, 9);
+                (*g78d6c)(xl2, m17, yk, 4);
+                (*g78d6c)(m17, xl, yk, 9);
                 if (cnt == last2 && n < 6)
-                    (*g_78d6)(xl2, m17, yk, 2);
+                    (*g78d6c)(xl2, m17, yk, 2);
             } else {
-                (*g_78d6)(xl2, xl, yk, 4);
+                (*g78d6c)(xl2, xl, yk, 4);
                 if (cnt == last2 && n < 6)
-                    (*g_78d6)(xl2, xl, yk, 2);
+                    (*g78d6c)(xl2, xl, yk, 2);
             }
             if (*g_6e24 & 0x80) {
                 m2 = xr28 - ((xr28 - xrl) >> 1);
-                (*g_78d6)(m2, xr28, yk, 4);
-                (*g_78d6)(xrl, m2, yk, 9);
+                (*g78d6c)(m2, xr28, yk, 4);
+                (*g78d6c)(xrl, m2, yk, 9);
                 if (cnt == last2 && n < 6)
-                    (*g_78d6)(m2, xr28, yk, 2);
+                    (*g78d6c)(m2, xr28, yk, 2);
             } else {
-                (*g_78d6)(xrl, xr28, yk, 4);
+                (*g78d6c)(xrl, xr28, yk, 4);
                 if (cnt == last2 && n < 6)
-                    (*g_78d6)(xrl, xr28, yk, 2);
+                    (*g78d6c)(xrl, xr28, yk, 2);
             }
         } else {
-            (*g_78d6)(xl, xrl, yk, (*g_8b82 & 0x10) ? 15 : 1);
+            (*g78d6c)(xl, xrl, yk, (*am8b82y & 0x10) ? 15 : 1);
         }
-        if (*g_8b82 & 8) {
+        if (*am8b82y & 8) {
             t1 = cx0k;
             t2 = t1 + wid;
-            (*g_78d6)(t1, t2, yk, 4);
+            (*g78d6c)(t1, t2, yk, 4);
         }
         xlsn += dxlm;
         xrs += dxr7;
@@ -602,7 +637,7 @@ void F_2969D(void)
     ybot6 = *g_6e1e;
     dxlm = F_2914C(*g_6e10, ybot6, xl, yk);
     dxr7 = F_2914C(*g_6e1c, ybot6, xrl, yk);
-    flagk = *g_8b82 & 1;
+    flagk = *am8b82y & 1;
     if (flagk) {
         xl2 = *g_6e0a;
         xr28 = *g_6e0e;
@@ -611,7 +646,7 @@ void F_2969D(void)
         dxl2k = F_2914C(*g_6e12, ybot6, xl2, yk);
         dxr26 = F_2914C(*g_6e16, ybot6, xr28, yk);
     }
-    if (*g_8b82 & 8) {
+    if (*am8b82y & 8) {
         wid = *g_6e28;
         cx0k = ((xl + xrl) >> 1) - (wid >> 1);
     }
@@ -619,31 +654,31 @@ void F_2969D(void)
         return;
     for (cnt = ybot6 - yk; cnt && yk <= 42; cnt--, yk++) {
         if (flagk) {
-            if (*g_8b82 & 4)
+            if (*am8b82y & 4)
                 break;
             if (*g_6e20 & 0x80) {
                 m17 = xl2 + ((xl - xl2) >> 1);
-                (*g_78d6)(xl2, m17, yk, 4);
-                (*g_78d6)(m17, xl, yk, 9);
+                (*g78d6c)(xl2, m17, yk, 4);
+                (*g78d6c)(m17, xl, yk, 9);
             } else {
-                (*g_78d6)(xl2, xl, yk, 4);
+                (*g78d6c)(xl2, xl, yk, 4);
             }
             if (*g_6e24 & 0x80) {
                 m2 = xr28 - ((xr28 - xrl) >> 1);
-                (*g_78d6)(m2, xr28, yk, 4);
-                (*g_78d6)(xrl, m2, yk, 9);
+                (*g78d6c)(m2, xr28, yk, 4);
+                (*g78d6c)(xrl, m2, yk, 9);
             } else {
-                (*g_78d6)(xrl, xr28, yk, 4);
+                (*g78d6c)(xrl, xr28, yk, 4);
             }
         } else {
-            (*g_78d6)(242, xl, yk, 9);
-            (*g_78d6)(xrl, 317, yk, 9);
-            (*g_78d6)(xl, xrl, yk, 1);
+            (*g78d6c)(242, xl, yk, 9);
+            (*g78d6c)(xrl, 317, yk, 9);
+            (*g78d6c)(xl, xrl, yk, 1);
         }
-        if (*g_8b82 & 8) {
+        if (*am8b82y & 8) {
             t1 = cx0k;
             t2 = t1 + wid;
-            (*g_78d6)(t1, t2, yk, 4);
+            (*g78d6c)(t1, t2, yk, 4);
         }
         xlsn += dxlm;
         xrs += dxr7;
@@ -672,7 +707,7 @@ static void near F_2992A(int a, int b, int c, int d, int e, int f, int rev)
     int t8l;
     int y;
 
-    t8l = *g_8b82 & 1;
+    t8l = *am8b82y & 1;
     if (rev) {
         a41 = g_6e20[0] & 4;
         b8l = g_6e20[0] & 8;
@@ -684,7 +719,7 @@ static void near F_2992A(int a, int b, int c, int d, int e, int f, int rev)
         b4 = g_6e24[-1] & 4;
         c10 = g_6e24[0] & 0x10;
     }
-    if (!(*g_8b82 & 4)) {
+    if (!(*am8b82y & 4)) {
         if (c10)
             F_29170(2, a, b, c, d, e, f);
         else
@@ -696,17 +731,17 @@ static void near F_2992A(int a, int b, int c, int d, int e, int f, int rev)
                 F_29170(4, a, b, f, e, e - ((d - e) >> 1), f - ((c - f) >> 1));
             }
         }
-        if (g_8b82[-1] & 4) {
+        if (am8b82y[-1] & 4) {
             if (rev)
-                (*g_78d6)(g_clip_xmin, a, c - 1, 4);
+                (*g78d6c)(g_clip_xmin, a, c - 1, 4);
             else
-                (*g_78d6)(b, g_clip_xmax, d - 1, 4);
+                (*g78d6c)(b, g_clip_xmax, d - 1, 4);
             if (rev) {
                 for (y = f; y < c - 1; y++)
-                    (*g_78d6)(g_clip_xmin, a, y, 2);
+                    (*g78d6c)(g_clip_xmin, a, y, 2);
             } else {
                 for (y = e; y < d - 1; y++)
-                    (*g_78d6)(b, g_clip_xmax, y, 2);
+                    (*g78d6c)(b, g_clip_xmax, y, 2);
             }
         }
         if (a41 && !b4) {
@@ -720,7 +755,7 @@ static void near F_2992A(int a, int b, int c, int d, int e, int f, int rev)
                         x1 = a - b + a;
                         x2 = a - 1;
                         do
-                            (*g_78d6)(x1, x2, y, 2);
+                            (*g78d6c)(x1, x2, y, 2);
                         while (++y < f);
                     }
                 } else {
@@ -729,7 +764,7 @@ static void near F_2992A(int a, int b, int c, int d, int e, int f, int rev)
                         x2 = b + 1;
                         x1 = b * 2 - a;
                         do
-                            (*g_78d6)(x2, x1, y, 2);
+                            (*g78d6c)(x2, x1, y, 2);
                         while (++y < e);
                     }
                 }
@@ -740,7 +775,7 @@ static void near F_2992A(int a, int b, int c, int d, int e, int f, int rev)
                         x2 = a - b + a;
                         x1 = a - 1;
                         do
-                            (*g_78d6)(x2, x1, y, 2);
+                            (*g78d6c)(x2, x1, y, 2);
                         while (++y < f);
                     }
                 } else {
@@ -749,7 +784,7 @@ static void near F_2992A(int a, int b, int c, int d, int e, int f, int rev)
                         x2 = b + 1;
                         x1 = b * 2 - a;
                         do
-                            (*g_78d6)(x2, x1, y, 2);
+                            (*g78d6c)(x2, x1, y, 2);
                         while (++y < e);
                     }
                 }
@@ -770,7 +805,7 @@ static void near F_29BFF(int a, int b, int c, int d, int e, int f, int rev)
     int t8l;
     int y;
 
-    if (t8l = *g_8b82 & 1) {
+    if (t8l = *am8b82y & 1) {
         if (rev) {
             a41 = g_6e20[0] & 4;
             b4 = g_6e20[1] & 4;
@@ -780,7 +815,7 @@ static void near F_29BFF(int a, int b, int c, int d, int e, int f, int rev)
             b4 = g_6e24[1] & 4;
             c10 = g_6e24[0] & 0x10;
         }
-        if (!(*g_8b82 & 4)) {
+        if (!(*am8b82y & 4)) {
             if (c10)
                 F_29170(2, a, b, c, d, e, f);
             else
@@ -791,17 +826,17 @@ static void near F_29BFF(int a, int b, int c, int d, int e, int f, int rev)
                 else
                     F_29170(4, a, b, f, e, e - d + e, f - c + f);
             }
-            if (g_8b82[1] & 4) {
+            if (am8b82y[1] & 4) {
                 if (rev)
-                    (*g_78d6)(g_clip_xmin, a, c - 1, 4);
+                    (*g78d6c)(g_clip_xmin, a, c - 1, 4);
                 else
-                    (*g_78d6)(b, g_clip_xmax, d - 1, 4);
+                    (*g78d6c)(b, g_clip_xmax, d - 1, 4);
                 if (rev) {
                     for (y = f; y < c - 1; y++)
-                        (*g_78d6)(g_clip_xmin, a, y, 2);
+                        (*g78d6c)(g_clip_xmin, a, y, 2);
                 } else {
                     for (y = e; y < d - 1; y++)
-                        (*g_78d6)(b, g_clip_xmax, y, 2);
+                        (*g78d6c)(b, g_clip_xmax, y, 2);
                 }
             }
             if (a41 && !b4) {
@@ -814,7 +849,7 @@ static void near F_29BFF(int a, int b, int c, int d, int e, int f, int rev)
                         x1 = a - b + a;
                         x2 = a - 1;
                         do
-                            (*g_78d6)(x1, x2, y, 2);
+                            (*g78d6c)(x1, x2, y, 2);
                         while (++y < f);
                     }
                 } else {
@@ -823,7 +858,7 @@ static void near F_29BFF(int a, int b, int c, int d, int e, int f, int rev)
                         x2 = b + 1;
                         x1 = b * 2 - a;
                         do
-                            (*g_78d6)(x2, x1, y, 2);
+                            (*g78d6c)(x2, x1, y, 2);
                         while (++y < e);
                     }
                 }
@@ -856,7 +891,7 @@ static void near F_29E5D(void)
 
 static void near F_29E8B(int n)
 {
-    if (*(int *)&g_8aca == 0) {
+    if (*(int *)&bw8aca == 0) {
         F_29E2E();
         F_29E5D();
     }
@@ -951,10 +986,10 @@ static void near F_29FC9(int x, int y, int n, int align, int clip, int mode)
         b.sy = 0x66;
         break;
     case 2:
-        b.sy = (g_vid.mode == -2 ? 0x63 : 0) + 1;
+        b.sy = (r_vid.mode == -2 ? 0x63 : 0) + 1;
         break;
     case 3:
-        b.sy = (g_vid.mode == -2 ? 0x63 : 0) + 0x2c;
+        b.sy = (r_vid.mode == -2 ? 0x63 : 0) + 0x2c;
         break;
     }
     if (align == 1)
@@ -972,9 +1007,9 @@ static void near F_29FC9(int x, int y, int n, int align, int clip, int mode)
     else
         F_2874C(&b);
     if (mode == 1)
-        (*g_78a2)(g_82b4, g_5e3e == 1 ? g_8188 : g_82b4, &b, 1);
+        (*b_78a2)(g82b4s, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
     else
-        (*g_78a2)(g_vid.mode == -2 ? g_7678 : g_82b4, g_5e3e == 1 ? g_8188 : g_82b4, &b, 1);
+        (*b_78a2)(r_vid.mode == -2 ? bm7678 : g82b4s, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
 }
 
 /* F_2A11C @ 2645:3CCC (linear 0x2A11C, 247 bytes) */
@@ -990,7 +1025,7 @@ static void near F_2A11C(int x1, int x2, int y1, int y2, int n, int clip, int fl
         F_287D1(10, x1 - j, y1, y2);
         F_287D1(10, x2 + j, y1, y2);
         F_26458();
-        (*g_78d6)(x1, x2, y1 + j - 1, 10);
+        (*g78d6c)(x1, x2, y1 + j - 1, 10);
     }
     if (flags & 0x1000)
         F_29F3B((x1 + x2) >> 1, y1, n, 1, 13);
@@ -998,7 +1033,7 @@ static void near F_2A11C(int x1, int x2, int y1, int y2, int n, int clip, int fl
         F_2646D();
         F_29FC9((x1 + x2) >> 1, y1, n, 0, clip, 1);
         F_26458();
-    } else if (*g_8b82 & 1) {
+    } else if (*am8b82y & 1) {
         F_2646D();
         F_29FC9((x1 + x2) >> 1, y1, n, 0, clip, (flags & 0x4000) ? 2 : 3);
         F_26458();
@@ -1013,18 +1048,18 @@ static void near F_2A213(void)
 {
     struct Blt b;
 
-    if (g_7aae > 0) {
+    if (aw7aaex > 0) {
         b.w = 0x18;
-        b.h = g_7aae;
-        if (g_7d66) {
-            g_8228 = 1;
+        b.h = aw7aaex;
+        if (g7d66n) {
+            ao8228u = 1;
             b.sx = 0;
         } else
             b.sx = 0x18;
-        b.sy = 0x20 - g_7aae;
+        b.sy = 0x20 - aw7aaex;
         b.dx = 0x82;
         b.dy = 0x12;
-        (*g_78aa)(g_6e60, g_5e3e == 1 ? g_8188 : g_82b4, &b, 1);
+        (*ab78aat)(k_6e60, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
     }
 }
 
@@ -1035,17 +1070,17 @@ static void near F_2A28C(void)
 {
     struct Blt b;
 
-    b.w = g_72f4->width;
-    b.h = g_72f4->height;
+    b.w = ax72f4->width;
+    b.h = ax72f4->height;
     b.dx = b.sx = b.sy = 0;
     b.dy = 0x12;
-    (*g_78aa)(g_72f4, g_5e3e == 1 ? g_8188 : g_82b4, &b, 1);
-    b.w = g_8bca->width;
-    b.h = g_8bca->height;
+    (*ab78aat)(ax72f4, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
+    b.w = ak8bcat->width;
+    b.h = ak8bcat->height;
     b.sx = b.sy = 0;
     b.dx = 0x58;
     b.dy = 0x5f;
-    (*g_78aa)(g_8bca, g_5e3e == 1 ? g_8188 : g_82b4, &b, 1);
+    (*ab78aat)(ak8bcat, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
 }
 
 /* F_2A32B @ 2645:3EDB (linear 0x2A32B, 178 bytes) */
@@ -1056,19 +1091,19 @@ static void near F_2A32B(void)
 {
     struct Blt b;
 
-    b.w = g_8184->width;
-    b.h = g_8184->height;
+    b.w = g8184y->width;
+    b.h = g8184y->height;
     b.sx = b.sy = 0;
     b.dx = 0xf0;
     b.dy = 0x12;
-    (*g_78a2)(g_8184, g_5e3e == 1 ? g_8188 : g_82b4, &b, 1);
-    b.w = g_8b7e->width;
+    (*b_78a2)(g8184y, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
+    b.w = bz8b7ex->width;
     b.h = 2;
     b.sx = b.sy = 0;
     b.dx = 0xf0;
-    b.dy = g_8646 - 2;
+    b.dy = k_8646 - 2;
     F_2874C(&b);
-    (*g_78a2)(g_8b7e, g_5e3e == 1 ? g_8188 : g_82b4, &b, 1);
+    (*b_78a2)(bz8b7ex, g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
 }
 
 /* F_2A3DD @ 2645:3F8D (linear 0x2A3DD, 1136 bytes) */
@@ -1092,9 +1127,9 @@ static void near F_2A3DD(void)
     int rd;
     struct Bitmap far *bm;
 
-    a2 = g_7e8a;
-    xk = (a2 - g_7d30) * 8 + g_7e8c - g_7d32;
-    z9 = g_7e90 - g_7d36;
+    a2 = ar7e8av;
+    xk = (a2 - ac7d30z) * 8 + a_7e8c - bp7d32;
+    z9 = ar7e90 - a_7d36m;
     if (xk >= 0x78)
         seln = -1;
     else if (xk >= 0x10) {
@@ -1104,7 +1139,7 @@ static void near F_2A3DD(void)
         seln = ((0x10 - xk) >> 4) + 8;
     else if (xk <= 8) {
         if (abs(z9) < 180) {
-            if (g_7d7c <= 8)
+            if (ap7d7cv <= 8)
                 seln = 2;
             else
                 seln = 9;
@@ -1114,56 +1149,56 @@ static void near F_2A3DD(void)
         seln = 1;
     else
         seln = 3;
-    if (g_8acc >= 4 && seln != g_7d7c) {
+    if (bu8acc >= 4 && seln != ap7d7cv) {
         if (seln < 0) {
-            if (g_7d7c == 8)
+            if (ap7d7cv == 8)
                 return;
-            seln = g_7d7c + 1;
+            seln = ap7d7cv + 1;
         } else if (seln > 12) {
-            if (g_7d7c == 12)
+            if (ap7d7cv == 12)
                 return;
-            seln = g_7d7c + 1;
+            seln = ap7d7cv + 1;
         } else if (seln != g_6e2a) {
-            if ((seln <= 8 && g_7d7c > 9) || (seln >= 9 && g_7d7c <= 8 && g_7d7c > 0))
-                seln = g_7d7c - 1;
-            else if (g_7d7c == 0)
+            if ((seln <= 8 && ap7d7cv > 9) || (seln >= 9 && ap7d7cv <= 8 && ap7d7cv > 0))
+                seln = ap7d7cv - 1;
+            else if (ap7d7cv == 0)
                 seln = seln < 9 ? 1 : 9;
-            else if (g_7d7c == 9)
+            else if (ap7d7cv == 9)
                 seln = seln < 9 ? (z9 < 0 ? 0 : 2) : 10;
-            else if (g_7d7c == 1)
+            else if (ap7d7cv == 1)
                 seln = seln < 1 ? 0 : 3;
-            else if (g_7d7c == 3 && seln == 1)
+            else if (ap7d7cv == 3 && seln == 1)
                 ;
-            else if (seln > g_7d7c)
-                seln = g_7d7c + 1;
+            else if (seln > ap7d7cv)
+                seln = ap7d7cv + 1;
             else
-                seln = g_7d7c - 1;
+                seln = ap7d7cv - 1;
         }
     }
-    g_8bc2 = seln == 0 || (seln == 2 && xk <= 10);
-    g_72f2 = seln == 2 && xk <= 10 && abs(z9) < 180 &&
-        (g_8acc < 4 ? 100 : 180) > abs(z9) && g_7e8e < g_7d34;
-    g_6e2a = g_7d7c;
-    g_7d7c = seln;
+    ay8bc2z = seln == 0 || (seln == 2 && xk <= 10);
+    by72f2 = seln == 2 && xk <= 10 && abs(z9) < 180 &&
+        (bu8acc < 4 ? 100 : 180) > abs(z9) && an7e8ex < aa7d34l;
+    g_6e2a = ap7d7cv;
+    ap7d7cv = seln;
     g_5ec6 = xk > 16 ? (xk + 8) & 15 : 0;
     t1 = xk;
     if (seln == 0)
         t1 += 16;
     if (t1 < -2 && seln == 2)
         t1 += 8;
-    rc = g_7d3e - g_terrain4[a2];
-    rd = g_7d3c - g_terrain2[a2];
+    rc = ao7d3ex - g_terrain4[a2];
+    rd = c_7d3c - g_terrain2[a2];
     if (seln < 9) {
         t1 += 4;
-        ra = F_27BBF(t1, g_7e90, rd);
+        ra = F_27BBF(t1, ar7e90, rd);
         rb = F_27C01(t1, 2000, rc);
     } else {
         t1 = -t1;
-        ra = F_27C3D(t1, g_7e90, -rd);
+        ra = F_27C3D(t1, ar7e90, -rd);
         rb = F_27C78(t1, 2000, -rc);
     }
     if (seln == 0) {
-        bm = g_8ace[seln];
+        bm = g8acew[seln];
         b.w = bm->width;
         b.h = bm->height;
         if ((b.sx = b.w - ra + 0x40) < 0)
@@ -1172,7 +1207,7 @@ static void near F_2A3DD(void)
         b.sy = 0;
         b.dy = rb;
     } else if (seln == 1) {
-        bm = g_8ace[seln];
+        bm = g8acew[seln];
         b.w = bm->width;
         b.h = bm->height;
         b.sx = 0;
@@ -1180,7 +1215,7 @@ static void near F_2A3DD(void)
         b.sy = 0;
         b.dy = rb - b.h + 0x11;
     } else {
-        bm = g_8ace[seln];
+        bm = g8acew[seln];
         b.w = bm->width;
         b.h = bm->height;
         b.sx = 0;
@@ -1205,7 +1240,7 @@ static void near F_2A3DD(void)
             F_28781(&b);
         else
             F_2874C(&b);
-        (*g_78aa)(g_8ace[seln], g_5e3e == 1 ? g_8188 : g_82b4, &b, 1);
+        (*ab78aat)(g8acew[seln], g_5e3e == 1 ? g8188w : g82b4s, &b, 1);
         if (flag9) {
             if (g_clip_xmin == 0)
                 F_28847();
@@ -1228,38 +1263,38 @@ static void near F_2A84D(void)
     int f3;
     int w2;
 
-    g_6e08 = &g_7f30;
-    g_6e18 = &g_8668;
-    g_6e1a = &g_8646;
-    g_6e0a = &g_70d0;
-    g_6e0e = &g_70e0;
+    g_6e08 = &g7f30t;
+    g_6e18 = &as8668u;
+    g_6e1a = &k_8646;
+    g_6e0a = &dz70d0;
+    g_6e0e = &dz70e0;
     g_6e0c = &g_8658;
-    g_6e10 = &g_7f2e;
-    g_6e1c = &g_8666;
-    g_6e1e = &g_8644;
-    g_6e14 = &g_8656;
-    g_6e12 = &g_70ce;
-    g_6e16 = &g_70de;
+    g_6e10 = &e_7f2e;
+    g_6e1c = &au8666t;
+    g_6e1e = &aw8644v;
+    g_6e14 = &au8656u;
+    g_6e12 = &g70cee;
+    g_6e16 = &g70dee;
     g_6e28 = &g_5e92;
-    g_6e20 = (int far *)(g_72ee - 8);
-    g_6e24 = (int far *)(g_8634 - 8);
-    g_8b82 = (int far *)(g_7d62 - 8);
+    g_6e20 = (int far *)(q_72ee - 8);
+    g_6e24 = (int far *)(aw8634x - 8);
+    am8b82y = (int far *)(g7d62p - 8);
     F_2646D();
     F_2A32B();
     F_26458();
     F_28847();
     for (i = 7; i; i--) {
         F_29F04();
-        if (*g_8b82 & 4)
+        if (*am8b82y & 4)
             goto next;
-        if (*g_8b82 & 0xf000)
-            F_2A11C(*g_6e08, *g_6e18, -((*g_6e1a - *g_6e0c) * 4 - *g_6e1a), *g_6e1a, i + 5, 1, *g_8b82 & 0xf000);
+        if (*am8b82y & 0xf000)
+            F_2A11C(*g_6e08, *g_6e18, -((*g_6e1a - *g_6e0c) * 4 - *g_6e1a), *g_6e1a, i + 5, 1, *am8b82y & 0xf000);
         if (i >= 6)
             goto next;
-        f3 = *g_8b82 & 1;
+        f3 = *am8b82y & 1;
         w11 = *g_6e20;
         w2 = *g_6e24;
-        w36 = *g_8b82;
+        w36 = *am8b82y;
         if (w11 & 0x20) {
             if (f3)
                 F_29F3B(*g_6e08, *g_6e1a, i + 5, -1, 0);
@@ -1338,7 +1373,7 @@ static void near F_2A84D(void)
         if (w36 & 0x800)
             F_29F3B(*g_6e18, *g_6e1a, i + 5, 1, 0xf);
     next:
-        if (g_7d30 - g_7e8a == i && *(int *)&g_8aca) {
+        if (ac7d30z - ar7e8av == i && *(int *)&bw8aca) {
             F_2646D();
             F_2A3DD();
             F_26458();
@@ -1352,7 +1387,7 @@ static void near F_2A84D(void)
         g_6e28--;
         g_6e20++;
         g_6e24++;
-        g_8b82++;
+        am8b82y++;
         g_6e0a--;
         g_6e0e--;
         g_6e0c--;
@@ -1366,12 +1401,12 @@ static void near F_2A84D(void)
     F_287D1(4, 0x13e, 0x17, 0x2a);
     F_287D1(2, 0x13f, 0x17, 0x2a);
     pkt1.w = 0x20;
-    pkt1.h = g_8184->height - 6;
+    pkt1.h = g8184y->height - 6;
     pkt1.sx = 0xf8;
     pkt1.sy = 0x16;
     pkt1.dx = 8;
-    pkt1.dy = (g_vid.mode == -2 ? 0 : 0x64) + 3;
-    (*g_78a2)(g_5e3e == 1 ? g_8188 : g_82b4, g_7678, &pkt1, 1);
+    pkt1.dy = (r_vid.mode == -2 ? 0 : 0x64) + 3;
+    (*b_78a2)(g_5e3e == 1 ? g8188w : g82b4s, bm7678, &pkt1, 1);
 }
 
 /* F_2AFDC @ 2645:4B8C (linear 0x2AFDC, 1774 bytes) */
@@ -1386,36 +1421,36 @@ void F_2AFDC(void)
     int f3;
     int w2;
 
-    g_6e08 = &g_7314;
-    g_6e18 = &g_7aea;
-    g_6e1a = &g_78a0;
-    g_6e0a = &g_7fa6;
-    g_6e0e = &g_7ff4;
-    g_6e0c = &g_7acc;
-    g_6e10 = &g_7312;
-    g_6e1c = &g_7ae8;
-    g_6e1e = &g_789e;
-    g_6e14 = &g_7aca;
-    g_6e12 = &g_7fa4;
-    g_6e16 = &g_7ff2;
+    g_6e08 = &br7314;
+    g_6e18 = &az7aeau;
+    g_6e1a = &f_78a0;
+    g_6e0a = &by7fa6;
+    g_6e0e = &g7ff4g;
+    g_6e0c = &r_7acc;
+    g_6e10 = &ae7312y;
+    g_6e1c = &ac7ae8t;
+    g_6e1e = &g789eu;
+    g_6e14 = &az7acaz;
+    g_6e12 = &al7fa4z;
+    g_6e16 = &dz7ff2;
     g_6e28 = &g_5e86;
-    g_6e20 = (int far *)(g_72ee + 14);
-    g_6e24 = (int far *)(g_8634 + 14);
-    g_8b82 = (int far *)(g_7d62 + 14);
+    g_6e20 = (int far *)(q_72ee + 14);
+    g_6e24 = (int far *)(aw8634x + 14);
+    am8b82y = (int far *)(g7d62p + 14);
     F_28860();
     F_28DD2();
     F_26458();
     for (i = 14; i; i--) {
         if (i <= g_6e06)
             F_29E8B(i);
-        if (*g_8b82 & 4)
+        if (*am8b82y & 4)
             goto next;
         if (i >= 11)
             goto next;
-        f3 = *g_8b82 & 1;
+        f3 = *am8b82y & 1;
         w11 = *g_6e20;
         w2 = *g_6e24;
-        w36 = *g_8b82;
+        w36 = *am8b82y;
         if (w11 & 0x20) {
             if (f3)
                 F_29F3B(*g_6e08, *g_6e1a, i, -1, 0);
@@ -1508,7 +1543,7 @@ void F_2AFDC(void)
         if (w36 & 0x400)
             F_29F3B(*g_6e18, *g_6e1a, i, 1, 0x11);
     next:
-        if (g_7e8a - g_7d30 == i && *(int *)&g_8aca) {
+        if (ar7e8av - ac7d30z == i && *(int *)&bw8aca) {
             F_2646D();
             F_2A3DD();
             F_26458();
@@ -1522,7 +1557,7 @@ void F_2AFDC(void)
         g_6e28--;
         g_6e20--;
         g_6e24--;
-        g_8b82--;
+        am8b82y--;
         g_6e0a--;
         g_6e0e--;
         g_6e0c--;
@@ -1530,7 +1565,7 @@ void F_2AFDC(void)
         g_6e16--;
         g_6e14--;
     }
-    if (g_7e8a == g_7d30 && *(int *)&g_8aca) {
+    if (ar7e8av == ac7d30z && *(int *)&bw8aca) {
         F_2646D();
         F_2A3DD();
         F_26458();
@@ -1538,7 +1573,7 @@ void F_2AFDC(void)
     F_2A84D();
     F_2646D();
     F_2A28C();
-    if (*(int *)&g_8aca)
+    if (*(int *)&bw8aca)
         F_2A213();
     F_286D8();
 }

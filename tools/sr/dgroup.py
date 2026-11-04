@@ -26,7 +26,7 @@ DATA_END = 0x629C          # first runtime _DATA byte (crt0's _asizds)
 BSS_START, BSS_PRIVATE_END, COMMON_START, END = 0x6C22, 0x6E2C, 0x6E60, 0x8F02
 # Recovered array bounds and typed table pieces (from the earlier data audit).
 BOUNDS = {'g_videoMenu': 6, 'g_msgs': 7, 'g_palette': 16, 'g_0692': 16, 'g_5082': 4, 'g_511e': 4,
-          'g_579f': 43, 'g_6078': 21, 'g_4766': 0x66, 'g_4806': 44, 'g_4998': 5, 'g_7312': 5, 'g_7316': 4}
+          'g_579f': 43, 'g_6078': 21, 'g_4766': 0x66, 'g_4806': 44, 'g_4998': 5, 'ae7312y': 5, 'bp7316': 4}
 REGIONS = [(0x6076, 0x6078, 'int @'), (0x2ee, 0x31e, 'signed char @[24][2]'), (0x358, 0x36e, 'signed char @[11][2]'),
            (0x462, 0x472, 'unsigned char @[16]'), (0x5d4, 0x5d6, 'int @'),
            (0x11b2, 0x121c, 'unsigned @[53]'), (0x1ac4, 0x1d8a, 'unsigned @[355]'), (0x1e2c, 0x1e38, 'unsigned @[6]'),
@@ -53,6 +53,10 @@ DATA_UNITS = [(0x09F4, 0x239E, 'src/mods/HOTSPOT.C'),
               (0x60A2, 0x629C, 'src/mods/CARMASK2.C')]
 DATA_KEY = 0x100000
 PRINTABLE = set(range(32, 127)) | {9, 10, 13}
+
+
+# start of the hand-kept uninitialized declarations in a data-only unit source
+COMMUNAL_MARK = '/* Uninitialized storage: communals'
 
 
 class Item:
@@ -1264,6 +1268,10 @@ class Analysis:
                     lines.append(text)
             path = config.ROOT / u['sources'][0]
             changed[path] = '\n'.join(lines) + '\n'
+            # hand-kept communal declarations (uninitialized storage) follow the data
+            old = path.read_text() if path.exists() else ''
+            if COMMUNAL_MARK in old:
+                changed[path] += '\n' + old[old.index(COMMUNAL_MARK):]
             if write:
                 path.write_text(changed[path])
             return changed

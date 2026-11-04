@@ -11,14 +11,14 @@
         EXTRN   _g_clip_xmin:WORD
         EXTRN   _g_clip_ymax:WORD
         EXTRN   _g_clip_xmax:WORD
-        EXTRN   _g_vid:WORD
+        EXTRN   _r_vid:WORD
         EXTRN   _g_5c1e:WORD
 
         .CODE
 
         PUBLIC  _F_26458
 _F_26458  PROC    FAR
-        cmp     _g_vid+12,-2
+        cmp     _r_vid+12,-2
         jne     L26458_done
         mov     dx,3CEh
         mov     ax,0F01h
@@ -36,13 +36,13 @@ _F_26458  ENDP
 ; function select 0, bit mask FFh.
 
         .DATA
-        EXTRN   _g_vid:WORD
+        EXTRN   _r_vid:WORD
 
         .CODE
 
         PUBLIC  _F_2646D
 _F_2646D  PROC    FAR
-        cmp     _g_vid+12,-2
+        cmp     _r_vid+12,-2
         jne     L2646D_done
         mov     dx,3CEh
         xor     ax,ax
@@ -167,12 +167,12 @@ _F_26484  ENDP
 ; sr-member 0x26537
 ; F_26537 @ 2645:00E7 (linear 0x26537, 100 bytes)
 ; F_26537(y, colour): EGA, fill the rows from y down to the bottom of the clip
-; rectangle by copying within segment g_787a with the set/reset colour (a
+; rectangle by copying within segment av787at with the set/reset colour (a
 ; latch copy of 40 bytes per row), then restore the graphics controller.
 
         .DATA
         EXTRN   _g_5c1e:WORD
-        EXTRN   _g_787a:WORD
+        EXTRN   _av787at:WORD
 
         .CODE
 
@@ -202,7 +202,7 @@ _F_26537  PROC    FAR
         mov     dx,28h
         mul     dx
         mov     cx,ax
-        mov     ax,_g_787a
+        mov     ax,_av787at
         mov     es,ax
         push    es
         pop     ds
@@ -236,10 +236,10 @@ _F_26537  ENDP
 ; sr-member 0x2659B
 ; F_2659B @ 2645:014B (linear 0x2659B, 31 bytes)
 ; F_2659B(ax = y, bx = x): EGA address of a pixel.  Out: bx = y * 40 + x / 8,
-; es = g_787a, cl = 7 - (x & 7), ah = 1.
+; es = av787at, cl = 7 - (x & 7), ah = 1.
 
         .DATA
-        EXTRN   _g_787a:WORD
+        EXTRN   _av787at:WORD
 
         .CODE
 
@@ -254,7 +254,7 @@ _F_2659B  PROC    NEAR
         shr     bx,1
         shr     bx,1
         add     bx,ax
-        mov     ax,_g_787a
+        mov     ax,_av787at
         mov     es,ax
         and     cl,7
         xor     cl,7

@@ -104,7 +104,7 @@ int F_1D925(struct Sprite *s)
                 blt.sx = blt.dx = e.x1;
                 blt.sy = blt.dy = e.y1 - s->y;
             }
-            (*g_78aa)(fp, bits, &blt, 0);
+            (*ab78aat)(fp, bits, &blt, 0);
         }
     }
     blt.w = max(rc.x2, c2.x2) - min(rc.x1, c2.x1) + 1;
@@ -113,7 +113,7 @@ int F_1D925(struct Sprite *s)
     blt.dy = min(rc.y1, c2.y1);
     blt.sx = s->seq->dx ? blt.dx : 0;
     blt.sy = s->seq->dy ? blt.dy : 0;
-    if (g_vid.mode != -4) {
+    if (r_vid.mode != -4) {
         while (inp(0x3da) & 8)
             ;
         while (!(inp(0x3da) & 8))

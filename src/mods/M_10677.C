@@ -28,8 +28,8 @@ void F_10677(int a, int b)
     pk5.h = 0x2b;
     pk5.sx = pk5.sy = 0;
     pk5.dx = 0x108;
-    pk5.dy = (g_vid.mode == -2 || g_58e4 ? 0 : 100) + 0x17;
-    (*g_78a2)(bm19, g_58e4 ? g_755c : g_7678, &pk5, 1);
+    pk5.dy = (r_vid.mode == -2 || g_58e4 ? 0 : 100) + 0x17;
+    (*b_78a2)(bm19, g_58e4 ? g755cu : bm7678, &pk5, 1);
     bm28 = F_15BBE(g_6c34->id2, 2);
     p3.w = p2.w = (pk5.w = bm28->width) + 8;
     p3.h = p2.h = pk5.h = bm28->height;
@@ -44,11 +44,11 @@ void F_10677(int a, int b)
         cm2 = F_1A89E(bm19, &p2, 1);
         p3.dx = g_038c[i].a;
         p3.dy = g_038c[i].b;
-        (*g_78a2)(cm2, g_82b4, &p3, 1);
+        (*b_78a2)(cm2, g82b4s, &p3, 1);
         pk5.dx = x - p2.sx;
         F_1A2D0(bm28, cm2, &pk5, 0);
         p3.dy += 0x13;
-        (*g_78a2)(cm2, g_82b4, &p3, 1);
+        (*b_78a2)(cm2, g82b4s, &p3, 1);
         F_1941E(1);
     }
     g_6c36 = -1;
@@ -75,17 +75,17 @@ void F_10872(struct Bitmap far *dst, struct Eng *e)
         pkt1.sy = g_038c[g_6c36].b;
         x = g_6c34->pt[g_6c36 * 2] & 0xfff8;
         pkt1.dx = x + 0x108;
-        pkt1.dy = (g_vid.mode == -2 || g_58e4 ? 0 : 100) + g_6c34->pt[g_6c36 * 2 + 1] + 0x17;
+        pkt1.dy = (r_vid.mode == -2 || g_58e4 ? 0 : 100) + g_6c34->pt[g_6c36 * 2 + 1] + 0x17;
         pkt1.w = 0x30 - x > 0x20 ? 0x20 : 0x30 - x;
-        (*g_78a2)(g_82b4, dst, (struct Blt *)&pkt1, 1);
+        (*b_78a2)(g82b4s, dst, (struct Blt *)&pkt1, 1);
     }
     pkt1.sx = g_038c[idx3].a;
     pkt1.sy = g_038c[idx3].b + 0x13;
     x = g_6c34->pt[idx3 * 2] & 0xfff8;
     pkt1.dx = x + 0x108;
-    pkt1.dy = (g_vid.mode == -2 || g_58e4 ? 0 : 100) + g_6c34->pt[idx3 * 2 + 1] + 0x17;
+    pkt1.dy = (r_vid.mode == -2 || g_58e4 ? 0 : 100) + g_6c34->pt[idx3 * 2 + 1] + 0x17;
     pkt1.w = 0x30 - x > 0x20 ? 0x20 : 0x30 - x;
-    (*g_78a2)(g_82b4, dst, (struct Blt *)&pkt1, 1);
+    (*b_78a2)(g82b4s, dst, (struct Blt *)&pkt1, 1);
     g_6c36 = idx3;
     e->f1a = 0;
 }
@@ -105,7 +105,7 @@ void F_109C0(char far *p, int c, unsigned n)
 
    Clips the rectangle in to the destination bitmap, then to the
    source bitmap; the result goes to out. Returns 1 if anything is left. The x values of in
-   are shifted down by g_vid.shift. */
+   are shifted down by r_vid.shift. */
 
 
 int F_10A00(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *in, struct Blt *out)
@@ -114,15 +114,15 @@ int F_10A00(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *in, stru
     int w1, h;
     int sx, sy, dx, dy;
 
-    sx = in->sx >> g_vid.shift;
+    sx = in->sx >> r_vid.shift;
     sy = in->sy;
-    w1 = in->w >> g_vid.shift;
+    w1 = in->w >> r_vid.shift;
     h = in->h;
     if (sx + w1 > dst->pitch)
         w1 = dst->pitch - sx;
     if (sy + h > dst->height)
         h = dst->height - sy;
-    dx = in->dx >> g_vid.shift;
+    dx = in->dx >> r_vid.shift;
     dy = in->dy;
     if (dy < 0) {
         h += dy;
@@ -156,7 +156,7 @@ void F_10AFD(int n)
     int i;
 
     for (i = 0; i < n; i++) {
-        if (g_vid.mode != -4) {
+        if (r_vid.mode != -4) {
             while (inp(0x3da) & 8)
                 ;
             while (!(inp(0x3da) & 8))

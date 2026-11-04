@@ -3,6 +3,12 @@
 #include "PROTOS.H"
 #include "STRUCTS.H"
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+int by72f2;
+int g78ean;
+int c_7d3c;
+int ay8bc2z;
+
 static void near F_0D29D(void);
 static void near F_0D624(void);
 static void near F_0D67D(void);
@@ -16,97 +22,97 @@ void F_0DA25(void)
 {
     int a1, b, c1, d;
 
-    if (g_78e0.f24) {
-        if (g_78e0.f24 != g_8630)
-            F_11669((g_8630 = g_78e0.f24) + 4);
-    } else if (g_78e0.f18 != g_8630)
-        F_11669(g_8630 = g_78e0.f18);
-    if (g_78ea && g_7d30 > g_78ea)
-        g_787c = 1;
+    if (e_78e0.f24) {
+        if (e_78e0.f24 != bz8630z)
+            F_11669((bz8630z = e_78e0.f24) + 4);
+    } else if (e_78e0.f18 != bz8630z)
+        F_11669(bz8630z = e_78e0.f18);
+    if (g78ean && ac7d30z > g78ean)
+        at787cu = 1;
     if (g_58da == 0) {
-        if (abs(g_78e0.f4) >= 12)
+        if (abs(e_78e0.f4) >= 12)
             g_58da = 1;
-    } else if (abs(g_78e0.f4) < 10)
+    } else if (abs(e_78e0.f4) < 10)
         g_58da = 0;
     F_0D29D();
-    switch (g_7f88) {
+    switch (a_7f88d) {
     case 1:
-        if (g_7d30 >= g_755a) {
-            if (g_7e8a + 5 <= g_7d30) {
-                g_7f88++;
+        if (ac7d30z >= g755av) {
+            if (ar7e8av + 5 <= ac7d30z) {
+                a_7f88d++;
                 F_0D992();
             } else
-                g_7f88 = 0;
+                a_7f88d = 0;
         }
         break;
     case 2:
-        if (g_7e8a + 15 >= g_7d30) {
-            g_7f88++;
+        if (ar7e8av + 15 >= ac7d30z) {
+            a_7f88d++;
             F_16AA8(1);
         }
         break;
     case 3:
-        if (g_7e8a - 2 > g_7d30) {
-            g_78e0.fbc |= 0x41;
+        if (ar7e8av - 2 > ac7d30z) {
+            e_78e0.fbc |= 0x41;
             F_02374();
             return;
         }
         break;
     }
-    a1 = g_7d30 * 8 + g_7d32;
-    b = g_7e8a * 8 + g_7e8c;
-    c1 = g_7d36;
-    d = g_7e90;
+    a1 = ac7d30z * 8 + bp7d32;
+    b = ar7e8av * 8 + a_7e8c;
+    c1 = a_7d36m;
+    d = ar7e90;
     F_0D624();
     F_0D67D();
-    if (g_7d30 >= g_6caa || g_7e8a >= g_6caa)
+    if (ac7d30z >= g_6caa || ar7e8av >= g_6caa)
         F_0C407();
-    if (g_78e0.fbc || g_79e2.fbc) {
-        if (g_7f88 >= 2) {
-            if (g_78e0.fbc)
-                g_78e0.fbc |= 0x41;
+    if (e_78e0.fbc || g79e2g.fbc) {
+        if (a_7f88d >= 2) {
+            if (e_78e0.fbc)
+                e_78e0.fbc |= 0x41;
             F_16AA8(0);
         }
         F_02374();
         return;
     }
-    if (g_8bc2 == 0)
+    if (ay8bc2z == 0)
         return;
     if (g_0610)
         return;
-    if ((g_7eaa.m7ec0 == 0 ? 0x17c : 0x3fc) <= g_7d30)
+    if ((a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc) <= ac7d30z)
         return;
-    if (g_72f2 && g_7f88 <= 1) {
-        g_78e0.fbc |= 3;
+    if (by72f2 && a_7f88d <= 1) {
+        e_78e0.fbc |= 3;
         F_02374();
         return;
     }
-    if (g_7d7c == 0 && g_7d34 > 1) {
+    if (ap7d7cv == 0 && aa7d34l > 1) {
         g_54d8++;
-        if (g_78e0.f2 < 0) {
-            if (g_terrain2[g_7d30] - g_terrain2[g_7d30 + 1] >= 0 || ((g_70c0 + g_7d2e) >> 1) >= g_7d36) {
+        if (e_78e0.f2 < 0) {
+            if (g_terrain2[ac7d30z] - g_terrain2[ac7d30z + 1] >= 0 || ((al70c0x + ao7d2ev) >> 1) >= a_7d36m) {
                 F_16C8F();
                 if (g_54d2 == 0) {
-                    g_7e8a--;
+                    ar7e8av--;
                     g_54d2 = 1;
                 } else
                     g_54d2 = 0;
             }
             return;
         }
-        if (g_7d7e && g_54d8 > 3 && g_7f88 < 2) {
-            if (random_int((g_7d84->f2 >> 2) + 2) == 0) {
+        if (gz7d7e && g_54d8 > 3 && a_7f88d < 2) {
+            if (random_int((g7d84o->f2 >> 2) + 2) == 0) {
                 F_16C8F();
                 F_16C8F();
-                g_7d36 += 300;
-                if (g_78e0.f0 > 20)
+                a_7d36m += 300;
+                if (e_78e0.f0 > 20)
                     g_54da = 2;
-                g_7d7e = 0;
-                g_7d3c += random_int(2) ? 15 : -15;
+                gz7d7e = 0;
+                c_7d3c += random_int(2) ? 15 : -15;
                 F_16C8F();
             }
             g_54d8 = 0;
         }
-    } else if (g_7d7c)
+    } else if (ap7d7cv)
         g_54d8 = 0;
 }

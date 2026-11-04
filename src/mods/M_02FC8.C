@@ -3,6 +3,9 @@
 #include "PROTOS.H"
 #include <stdlib.h>
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+struct Entry aytablex[10];
+
 /* protect_check @ 0000:2FC8 (linear 0x02FC8, 403 bytes)
 
    The manual lookup copy protection: asks for the colour of the car key or car
@@ -24,7 +27,7 @@ int protect_check(void)
     d = random_int(0x33);
     f = d < 0x12;
     F_11421(-1, "", 0);
-    g_vid.f16 = 0;
+    r_vid.f16 = 0;
     F_119B8(8, 8, 0, 0);
     F_158DE(8);
     switch (f) {
@@ -42,13 +45,13 @@ int protect_check(void)
     F_119D6(0x79, 0x3f, b);
     F_119D6(c, 0x48, a);
     F_120FE(-2);
-    (*g_blit)(g_vid.front->bits.p, g_vid.back->bits.p);
-    if (g_vid.mode == -2 || g_vid.mode == -6)
+    (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
+    if (r_vid.mode == -2 || r_vid.mode == -6)
         F_11324(g_0692);
     else
-        (*g_present)();
-    g_8249 = 1;
-    g_vid.f16 = 1;
+        (*m_present)();
+    gz8249 = 1;
+    r_vid.f16 = 1;
     g_4bc8 = 1;
     e = F_14294(0x27);
     g_4bc8 = 0;
@@ -67,33 +70,33 @@ int F_0315B(void)
     int key;
 
     F_113A2(190);
-    g_vid.f16 = 1;
-    c01 = g_colors.c[0];
-    c1 = g_colors.c[1];
-    c3 = g_colors.c[3];
-    c21 = g_8244;
-    if (g_vid.mode != -2 && g_vid.mode != -6) {
-        g_colors.c[0] = 3;
-        g_colors.c[1] = 0;
-        g_colors.c[3] = 2;
-        g_8244 = 1;
+    r_vid.f16 = 1;
+    c01 = x_colors.c[0];
+    c1 = x_colors.c[1];
+    c3 = x_colors.c[3];
+    c21 = f_8244;
+    if (r_vid.mode != -2 && r_vid.mode != -6) {
+        x_colors.c[0] = 3;
+        x_colors.c[1] = 0;
+        x_colors.c[3] = 2;
+        f_8244 = 1;
     } else {
-        g_colors.c[0] = 15;
-        g_colors.c[1] = 1;
-        g_colors.c[3] = 13;
-        g_8244 = 3;
+        x_colors.c[0] = 15;
+        x_colors.c[1] = 1;
+        x_colors.c[3] = 13;
+        f_8244 = 3;
     }
-    F_1169A(0, 0, 320, 190, g_colors.c[1]);
-    F_13957(g_vid.back, 100, 50, 120, 90);
-    F_13957(g_vid.front, 100, 50, 120, 90);
-    F_13957(g_vid.back, 102, 52, 116, 86);
-    F_13957(g_vid.front, 102, 52, 116, 86);
-    g_colors.c[0] = c01;
-    g_colors.c[1] = c1;
-    g_colors.c[3] = c3;
-    g_8244 = c21;
+    F_1169A(0, 0, 320, 190, x_colors.c[1]);
+    F_13957(r_vid.back, 100, 50, 120, 90);
+    F_13957(r_vid.front, 100, 50, 120, 90);
+    F_13957(r_vid.back, 102, 52, 116, 86);
+    F_13957(r_vid.front, 102, 52, 116, 86);
+    x_colors.c[0] = c01;
+    x_colors.c[1] = c1;
+    x_colors.c[3] = c3;
+    f_8244 = c21;
     F_120FE(-2);
-    (*g_present)();
+    (*m_present)();
     key = F_14294(41);
     F_120FE(-4);
     switch (key) {
@@ -113,5 +116,5 @@ int F_0315B(void)
 
 static int near entry_beats_score(int i)
 {
-    return atoi(g_table[i].score) > g_score;
+    return atoi(aytablex[i].score) > g_score;
 }

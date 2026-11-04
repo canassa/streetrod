@@ -3,6 +3,10 @@
 #include <conio.h>
 #include <dos.h>
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+int t_72ec;
+struct Tone *bn82c4;
+
 /* F_01843 @ 0000:1843 (linear 0x01843, 327 bytes) */
 
 
@@ -66,7 +70,7 @@ void F_0198A(int fc, int delay)
 {
     int n;
 
-    n = F_01843(delay, g_8ef6);
+    n = F_01843(delay, g8ef6q);
     g_0572[n].fa = 1;
     g_0572[n].fc = fc;
 }
@@ -100,8 +104,8 @@ void F_01A05(int n, int cnt)
         g_58d2->lc = g_58d2->cur = g_58d2->l8 + n;
         g_58d2->f2 = cnt + 1;
         g_58d2->f1a = g_58d2->f18;
-        g_82c4 = g_tones + *g_58d2->f1a;
-        g_72ec = 1;
+        bn82c4 = g_tones + *g_58d2->f1a;
+        t_72ec = 1;
         g_58d2->off = 1;
     } else {
         g_58d2->off = 0;
@@ -138,7 +142,7 @@ void F_01AAD(void)
         g_5ec = 6;
     }
     g_4730 = g_4731 = g_4732 = g_4736 = 0;
-    g_78e0.f2 = g_78e0.f4 = 0;
+    e_78e0.f2 = e_78e0.f4 = 0;
     g_0609 = 0;
     outp(0x42, 0x1e);
     outp(0x42, 0);

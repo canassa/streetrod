@@ -6,6 +6,21 @@
 #include <string.h>
 #include "STRUCTS.H"
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+struct Dev bs79aa;
+struct Dev ao79c6t;
+void (interrupt far *w_7aaa)(void);
+char g7f32s[80];
+int g8b8eb;
+struct Lims ao8b90v;
+struct Hot *at8ba8v;
+int az8baa;
+int cz8bc0y;
+int g8ef6q;
+int g_8ef8;
+int aj8efax;
+int bw8efc;
+
 int g_0566 = -1;   /* DS:0566 */
 int g_0568 = -1;   /* DS:0568 */
 int g_056a = 0;   /* DS:056A */
@@ -54,8 +69,8 @@ int g_0612 = 0;   /* DS:0612 */
 void F_00D78(void)
 {
     g_6c4a = 1;
-    g_8b90.x2 = -1;
-    g_8baa = 0x7d00;
+    ao8b90v.x2 = -1;
+    az8baa = 0x7d00;
     g_4736 = 0;
     g_4737 = 0;
     F_02DB6();
@@ -162,7 +177,7 @@ void F_00FB7(void)
     outp(0x43, 0x36);
     outp(0x40, 0);
     outp(0x40, 0);
-    _dos_setvect(8, g_7aaa);
+    _dos_setvect(8, w_7aaa);
     _enable();
     F_02DE2();
     g_05e0 = 0;
@@ -184,7 +199,7 @@ void F_00FEA(void)
     if (g_0044)
         F_00FB7();
     if (g_0048) {
-        (*g_present)();
+        (*m_present)();
         F_0E610();
     }
     outp(0x61, inp(0x61) & 0xfc);
@@ -252,10 +267,10 @@ void F_01111(void)
 
     sumx = 0;
     sumy = 0;
-    g_8ef6 = 10;
+    g8ef6q = 10;
     g_8ef8 = 2;
-    g_8efa = 5;
-    g_8efc = 5;
+    aj8efax = 5;
+    bw8efc = 5;
     outp(0x201, 0);
     outp(0x201, 0);
     first = inp(0x201);
@@ -289,19 +304,19 @@ void F_01111(void)
         g_05f2 = 0;
     g_6c46 = -1;
     g_6c48 = -1;
-    g_79aa.off = 0;
-    g_79aa.l8 = g_2e6b_0000;
-    g_79aa.cur = g_79aa.lc = g_79aa.l8;
-    g_79aa.f16 = g_79aa.f14 = g_5858;
-    g_79aa.f1a = g_79aa.f18 = g_5882;
-    g_79c6.off = 0;
-    g_79c6.f1a = g_79c6.f18 = g_58cc;
+    bs79aa.off = 0;
+    bs79aa.l8 = g_2e6b_0000;
+    bs79aa.cur = bs79aa.lc = bs79aa.l8;
+    bs79aa.f16 = bs79aa.f14 = g_5858;
+    bs79aa.f1a = bs79aa.f18 = g_5882;
+    ao79c6t.off = 0;
+    ao79c6t.f1a = ao79c6t.f18 = g_58cc;
     _harderr(F_0105B);
     _disable();
     outp(0x43, 0x36);
     outp(0x40, 0);
     outp(0x40, 0x40);
-    g_7aaa = _dos_getvect(8);
+    w_7aaa = _dos_getvect(8);
     _dos_setvect(8, F_01FE2);
     _enable();
     F_02DC3();
@@ -408,11 +423,11 @@ int F_01417(int ticks)
     j = 0;
     bit = 0;
     if (g_6c4c == 0x16) {
-        g_8256 = 1;
+        aq8256z = 1;
         F_11421(-1, "", 0);
-        g_8256 = 1;
-        F_11421(g_51ee, "", g_8bc0);
-        g_7f32[0] = 0;
+        aq8256z = 1;
+        F_11421(g_51ee, "", cz8bc0y);
+        g7f32s[0] = 0;
     }
     flag = g_05cc != 0L;
     end = (long)ticks + g_tick;
@@ -421,7 +436,7 @@ int F_01417(int ticks)
             g_06a4 = 0x63;
             F_00FEA();
         }
-        if (g_4bc8 && (g_vid.mode == -2 || g_vid.mode == -6)
+        if (g_4bc8 && (r_vid.mode == -2 || r_vid.mode == -6)
             && !(g_tick & 0xf) && g_58d0 && g_47cf) {
             old = ((char *)((char *)g_0692 + 6))[2];
             ((char *)((char *)g_0692 + 6))[2] = ((char *)((char *)g_0692 + 6))[1];
@@ -486,9 +501,9 @@ int F_01417(int ticks)
                 g_05d2 = 0;
                 return 0x3eb;
             }
-            if (g_8b8e) {
-                if (i = (x >= g_8b90.x1 && x < g_8b90.x2 && y >= g_8b90.y1 && y < g_8b90.y2)
-                        ? g_8baa : F_1412D(x, y))
+            if (g8b8eb) {
+                if (i = (x >= ao8b90v.x1 && x < ao8b90v.x2 && y >= ao8b90v.y1 && y < ao8b90v.y2)
+                        ? az8baa : F_1412D(x, y))
                     return i;
             }
             if (g_05d0) {
@@ -512,18 +527,18 @@ int F_01417(int ticks)
             g_6c4a = 0;
             _enable();
             F_1220B(x = g_6c46, y = g_6c48);
-            if (g_8b8e
-                && (x < g_8b90.x1 || x >= g_8b90.x2 || y < g_8b90.y1 || y >= g_8b90.y2)) {
-                res = g_8baa;
+            if (g8b8eb
+                && (x < ao8b90v.x1 || x >= ao8b90v.x2 || y < ao8b90v.y1 || y >= ao8b90v.y2)) {
+                res = az8baa;
                 if (i = F_1412D(x, y)) {
                     if (res != i) {
                         if (g_6c4c == 0x25) {
-                            g_8256 = 1;
+                            aq8256z = 1;
                             F_11421(-1, "", 0);
-                            g_8256 = 1;
-                            F_11421(g_51ee, "", g_8bc0);
+                            aq8256z = 1;
+                            F_11421(g_51ee, "", cz8bc0y);
                         }
-                        F_11421(-1, g_239e + g_8ba8->f4, 0);
+                        F_11421(-1, g_239e + at8ba8v->f4, 0);
                         bit = 1;
                     }
                 } else {
@@ -532,7 +547,7 @@ int F_01417(int ticks)
                         bit = 0;
                     }
                     if (g_6c4c == 0x25)
-                        F_11421(g_51ee, g_7f32, g_8bc0);
+                        F_11421(g_51ee, g7f32s, cz8bc0y);
                     else if (res)
                         F_11421(-1, "", 0);
                 }

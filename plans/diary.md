@@ -558,3 +558,16 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - Global names and the number of distinct external symbols are load-bearing, like local names: a function can match alone and fail in its real file. When a merged file changes a late function's register allocation, first count the external symbols before it (`work/dg/a7/try.py` style bisection: replace bodies with declarations, then add dummy externals of different name lengths).
 - MSC code records: cut at 99 fixups or ~944 bytes; with LINK's per-record descending relocations this pins object start offsets.
 - Open: the two PROVISIONAL unreachable far accesses in M_0F38A.C (unrecoverable statements), the struct member names (address-based placeholders), the far storage names, and COMMON still comes from explicit labels (GCOMMON.ASM) rather than C communals in hash order.
+
+## 2026-11-04 05:00 CET: COMMON storage from per-file communals
+
+### What I did
+- Replaced the explicit labels of `src/link/GCOMMON.ASM` (DS:6E60..8F02) with C tentative definitions in the file that first mentions each block: 243 definitions in 39 files, plus 14 unreferenced blocks as `char` communals in HOTSPOT.C.
+- Chose names that make LINK's allocation reproduce the original addresses. A dynamic program over the hash buckets kept 6 names, gave 165 a same-length variant and 86 a longer one; only symbols first created in different objects may share a bucket. 237 globals renamed in the DB, sources and stubs.
+- Fourteen typed views overlap the next symbol (for example `struct Panel ai70e4t[]` with 4 bytes before `at70e8`). They stay as exact-size `COMM NEAR` records in GCOMMON.ASM. The odd 2-byte gap at DS:8245 became two 1-byte communals.
+- Lint now accepts function-pointer variable definitions; `./sr dgroup apply` keeps a data unit's communal block.
+- Result: `./sr check --all` 572/572, 17 tests, `./sr build --layout` IDENTICAL to orig/SR.EXE from an empty work dir.
+
+### What I learned
+- LINK 5.01 communal order: hash bucket ascending, within a bucket newest-created first; creation is the first mention of the name in link order, so an EXTDEF in an early object fixes the slot and the COMDEF may come from any later object.
+- The 14 overlapping views are the next structural question: each marks where our symbol split differs from the original (a struct or array spanning several of our globals).

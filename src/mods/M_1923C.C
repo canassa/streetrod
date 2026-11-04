@@ -1,13 +1,20 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+int bl78de;
+int g7b14o;
+int g7d80q;
+unsigned c_8b02[61];
+int o_8f00;
+
 /* F_1923C @ 0F38:9EBC (linear 0x1923c, 45 bytes) */
 
 
 void F_1923C(void)
 {
-    g_8b02[g_7b14 = 0] = g_8f00 = 0;
-    g_8b02[g_7d80 = 60] = g_78de = -536;
+    c_8b02[g7b14o = 0] = o_8f00 = 0;
+    c_8b02[g7d80q = 60] = bl78de = -536;
     g_0294 = 0;
 }
 
@@ -16,7 +23,7 @@ void F_1923C(void)
 
 void F_19269(void)
 {
-    if (g_vid.mode == -6)
+    if (r_vid.mode == -6)
         g_6cd0 = (char far *)0x80000000L;
     else
         g_6cd0 = F_03709(0xfde8, 1);

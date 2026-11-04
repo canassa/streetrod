@@ -13,7 +13,7 @@ void F_19ED0(struct Bitmap far *src, struct Bitmap far *dst, int e)
     pkt.w = src->width;
     pkt.h = src->height;
     pkt.dx = pkt.dy = pkt.sx = pkt.sy = 0;
-    (*g_78a2)(src, dst, &pkt, e);
+    (*b_78a2)(src, dst, &pkt, e);
 }
 
 /* F_19F42: find the first and last set pixel column of a bitmap */
@@ -39,12 +39,12 @@ void F_19F42(struct Bitmap far *bm, int *left, int *right)
     for (d = 0, b = 0x80; d < 8; d++, b >>= 1)
         if (!(c & b))
             break;
-    *left = d / g_vid.bpp;
+    *left = d / r_vid.bpp;
     for (d = 0, b = 1; d < 8; d++, b <<= 1)
         if (!(e & b))
             break;
-    *right = (bm->pitch << g_vid.shift) - 1;
-    *right -= d / g_vid.bpp;
+    *right = (bm->pitch << r_vid.shift) - 1;
+    *right -= d / r_vid.bpp;
 }
 
 /* F_1A03F: shift a bitmap (pixels and mask) right by n pixels into a new, wider bitmap */
@@ -69,7 +69,7 @@ struct Bitmap far *F_1A03F(struct Bitmap far *src, int n, struct Bitmap far *dst
     int j2;
     int mask;
 
-    shl5 = (n * g_vid.bpp) & 7;
+    shl5 = (n * r_vid.bpp) & 7;
     compl = 8 - shl5;
     mask = 0xff >> compl;
     h3 = src->height;
@@ -84,11 +84,11 @@ struct Bitmap far *F_1A03F(struct Bitmap far *src, int n, struct Bitmap far *dst
         acc1 &= *sp8;
         sp8 += pitch;
     }
-    extra8 = (acc1 & mask) == mask ? 0 : 1 << g_vid.shift;
+    extra8 = (acc1 & mask) == mask ? 0 : 1 << r_vid.shift;
     out = F_0376B(src->width + extra8, src->height, src->alt.p ? 1 : 0, -1, dst);
     dp8 = (unsigned char far *)out->bits.p;
     sp8 = (unsigned char far *)src->bits.p;
-    for (k = 0; k < h3 * g_vid.planes; k++) {
+    for (k = 0; k < h3 * r_vid.planes; k++) {
         for (i21 = 0, acc1 = 0; i21 < pitch; i21++) {
             *dp8++ = (*sp8 >> shl5) | (acc1 << compl);
             acc1 = mask & *sp8;
@@ -127,14 +127,14 @@ void F_1A2D0(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *r, int 
 
     for (i = 0; i < 10; i++)
         ((int *)&e)[i] = ((int *)r)[i];
-    f = r->dx & ~g_vid.mask;
+    f = r->dx & ~r_vid.mask;
     if (f > 0) {
         j = F_1934E(dst->width + 8, dst->height, dst->alt.p != 0L, 2);
         F_1A03F(dst, f, j);
         e.w = j->width;
     } else
         j = dst;
-    (*g_78aa)(j, src, &e, 1);
+    (*ab78aat)(j, src, &e, 1);
     if (flag) {
         if (F_10A00(j, src, &e, &a)) {
             d = j->pitch;
@@ -182,7 +182,7 @@ void F_1A472(struct Bitmap far *src, struct Bitmap far *dst, int x, int y)
     int pn;
     unsigned char far *dpk;
 
-    sh5 = x & ~g_vid.mask;
+    sh5 = x & ~r_vid.mask;
     if (sh5 > 0) {
         t7 = F_1934E(src->width + 8, src->height, src->alt.p != 0L, 2);
         F_1A03F(src, sh5, t7);
@@ -193,12 +193,12 @@ void F_1A472(struct Bitmap far *src, struct Bitmap far *dst, int x, int y)
     dskip6 = dpitch4 - spitch;
     pstep5 = (dst->height - t7->height) * dpitch4;
     h = t7->height;
-    off6 = y * dpitch4 + (x >> g_vid.shift);
+    off6 = y * dpitch4 + (x >> r_vid.shift);
     dpk = (unsigned char far *)dst->bits.p + off6;
     dm1 = dm = (unsigned char far *)dst->alt.p + off6;
     spn = (unsigned char far *)t7->bits.p;
     sm1 = sm = (unsigned char far *)t7->alt.p;
-    for (pn = 0; pn < g_vid.planes; pn++) {
+    for (pn = 0; pn < r_vid.planes; pn++) {
         for (r = 0; r < h; r++) {
             for (c8 = 0; c8 < spitch; c8++)
                 *dpk++ |= ~*sm1++ & *spn++ & *dm1++;
@@ -232,7 +232,7 @@ void F_1A69F(struct Bitmap far *dst, struct Bitmap far *bm, int x, int y, int mo
     pkt.sx = pkt.sy = 0;
     pkt.dx = x;
     pkt.dy = y;
-    (*g_78a2)(bm, dst, &pkt, mode);
+    (*b_78a2)(bm, dst, &pkt, mode);
 }
 
 /* F_1A6E0: blit to a bitmap fetched by index, remember it, advance the clock */
@@ -244,7 +244,7 @@ void F_1A6E0(struct Bitmap far *dst, int n, unsigned char x, unsigned char y)
 
     p = F_15BBE(n, 2);
     F_1A69F(dst, p, x, y, 3);
-    g_70a8 = p;
+    at70a8 = p;
     F_19438(1);
 }
 

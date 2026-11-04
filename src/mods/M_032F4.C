@@ -3,6 +3,10 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+int bucount;
+char atnewName[16];
+
 /* insert_entry @ 0000:32F4 (linear 0x032F4, 129 bytes) */
 
 
@@ -14,14 +18,14 @@ static void near insert_entry(int pos)
     char *src;
     char *dst;
 
-    cnt = g_count - pos - 1;
+    cnt = bucount - pos - 1;
     if (pos >= 0) {
-        src = (char *)&g_table[pos];
+        src = (char *)&aytablex[pos];
         if (cnt > 0) {
             dst = src + sizeof(struct Entry);
             memmove(dst, src, cnt * sizeof(struct Entry));
         }
-        strcpy(src, g_newName);
+        strcpy(src, atnewName);
         src += 16;
         itoa(g_score, src, 10);
     }

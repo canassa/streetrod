@@ -22,7 +22,7 @@ void F_18ADB(struct Bitmap far *dst, int p1, int p2, int p3, int p4, int p5, int
         r.sy = p2 + lo7 - p6;
         r.dx = p5;
         r.dy = lo7 - base7;
-        (*g_78a2)(dst, g_5a0a, &r, 1);
+        (*b_78a2)(dst, g_5a0a, &r, 1);
     }
     if (g_0284 == 6) {
         r.h = g_5a0a->height;
@@ -31,7 +31,7 @@ void F_18ADB(struct Bitmap far *dst, int p1, int p2, int p3, int p4, int p5, int
         for (i9 = 0; i9 < 7; i9++) {
             r.w = g_5338[i9].w;
             r.sx = r.dx = g_5338[i9].x;
-            (*g_78a2)(g_vid.front, g_5a0a, &r, 1);
+            (*b_78a2)(r_vid.front, g_5a0a, &r, 1);
         }
     }
 }

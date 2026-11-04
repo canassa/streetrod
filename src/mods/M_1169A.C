@@ -4,17 +4,21 @@
 #include <conio.h>
 #include <stdio.h>
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+char f_8244;
+char af824ax;
+
 void F_1169A(int x, int y, int w, int h, char color)
 {
     char old;
 
-    old = g_8244;
+    old = f_8244;
     F_120FE(-3);
-    g_8244 = color;
-    F_13682(g_vid.back, x, y, w, h);
-    if (g_vid.f16)
-        F_1A92A(g_vid.back, g_vid.front, x, y, x + w - 1, y + h - 1);
-    g_8244 = old;
+    f_8244 = color;
+    F_13682(r_vid.back, x, y, w, h);
+    if (r_vid.f16)
+        F_1A92A(r_vid.back, r_vid.front, x, y, x + w - 1, y + h - 1);
+    f_8244 = old;
     F_120FE(-1);
 }
 
@@ -40,40 +44,40 @@ void F_1174E(char *msg)
     int i;
     struct Bitmap far *back;
 
-    saved = g_vid.f16;
+    saved = r_vid.f16;
     strcpy(g_293e, msg);
     strcpy(g_2967, "Hit Return when ready ...");
-    if (g_8247 >= 1) {
+    if (ap8247u >= 1) {
         if (g_58ee) {
             F_1169A(0, 0, 320, 200, 0);
             g_58ee++;
         }
-        prev = g_8249;
+        prev = gz8249;
         if (!prev) {
-            g_8249 = 1;
-            (*g_present)();
+            gz8249 = 1;
+            (*m_present)();
         }
-        dx = g_824a ? 5 : 0x50;
+        dx = af824ax ? 5 : 0x50;
         for (i = 0; i < 5; i++) {
             g_1d8a[i].x1 += dx;
             g_1d8a[i].x2 += dx;
         }
         if (g_58ee)
             F_11324(g_04ac);
-        g_vid.f16 = 1;
+        r_vid.f16 = 1;
         F_00E24();
-        back = g_vid.back;
-        g_vid.back = g_vid.front;
+        back = r_vid.back;
+        r_vid.back = r_vid.front;
         F_14241(0x20);
-        g_vid.back = back;
+        r_vid.back = back;
         for (i = 0; i < 5; i++) {
             g_1d8a[i].x1 -= dx;
             g_1d8a[i].x2 -= dx;
         }
-        g_vid.f16 = saved;
-        g_8249 = prev;
+        r_vid.f16 = saved;
+        gz8249 = prev;
         if (!prev)
-            (*g_78be)();
+            (*bl78be)();
     } else {
         puts(" ");
         puts(g_293e);
@@ -108,10 +112,10 @@ int F_118D4(int a, int b)
     pkt.sx = pkt.sy = pkt.fc = 0;
     pkt.dx = g_04be;
     pkt.dy = g_04c0;
-    (*g_78a2)(p, g_vid.back, &pkt, 1);
+    (*b_78a2)(p, r_vid.back, &pkt, 1);
     F_120FE(-1);
-    if (g_vid.f16)
-        F_1A92A(g_vid.back, g_vid.front, g_04be, g_04c0, pkt.dx + pkt.w - 1, pkt.dy + pkt.h - 1);
+    if (r_vid.f16)
+        F_1A92A(r_vid.back, r_vid.front, g_04be, g_04c0, pkt.dx + pkt.w - 1, pkt.dy + pkt.h - 1);
     g_04be = g_04c0 = 0;
     F_19438(1);
 }

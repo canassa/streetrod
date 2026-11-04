@@ -2,7 +2,7 @@
 #include "PROTOS.H"
 #include "STRUCTS.H"
 
-/* F_1947A: intersect rectangles a and b into out, snapped to the g_vid.mask pixel mask; 0 if they do not overlap */
+/* F_1947A: intersect rectangles a and b into out, snapped to the r_vid.mask pixel mask; 0 if they do not overlap */
 
 
 struct Rect *F_1947A(struct Rect *a, struct Rect *b, struct Rect *out)
@@ -15,9 +15,9 @@ struct Rect *F_1947A(struct Rect *a, struct Rect *b, struct Rect *out)
         return 0;
     out->y1 = (a->y1 < b->y1) ? b->y1 : a->y1;
     out->y2 = (a->y2 > b->y2) ? b->y2 : a->y2;
-    out->x1 &= g_vid.mask;
-    out->x2 += ~g_vid.mask;
-    out->x2 &= g_vid.mask;
+    out->x1 &= r_vid.mask;
+    out->x2 += ~r_vid.mask;
+    out->x2 &= r_vid.mask;
     return out;
 }
 
@@ -28,10 +28,10 @@ struct Rect *F_19518(int x, int y, int w, int h, struct Rect *out)
 {
     struct Rect rect, scr;
 
-    scr.x1 = g_825e;
-    scr.x2 = g_825a->width + g_825e - 1;
-    scr.y1 = g_8260;
-    scr.y2 = g_8260 + g_8262 - 1;
+    scr.x1 = ac825et;
+    scr.x2 = bu825a->width + ac825et - 1;
+    scr.y1 = aw8260y;
+    scr.y2 = aw8260y + l_8262 - 1;
     rect.x1 = x;
     rect.x2 = x + w - 1;
     rect.y1 = y;

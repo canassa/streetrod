@@ -216,7 +216,7 @@ _line_ega  ENDP
 ; Out: bx = y*40 + x/8, es = video segment, cl = 7 - (x & 7), ah = 1.
 
         .DATA
-        EXTRN   _g_787a:WORD
+        EXTRN   _av787at:WORD
 
         .CODE
 
@@ -231,7 +231,7 @@ _F_23F2E  PROC    NEAR
         shr     bx,1
         shr     bx,1
         add     bx,ax
-        mov     ax,_g_787a
+        mov     ax,_av787at
         mov     es,ax
         and     cl,7
         xor     cl,7

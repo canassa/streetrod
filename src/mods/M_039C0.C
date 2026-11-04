@@ -14,23 +14,23 @@ static int near F_039C0(void)
     F_1013D(0);
     F_01A05(2, 10);
     F_0FF70();
-    (*g_78be)();
+    (*bl78be)();
     F_1013D(1);
     random_int(-1);
-    (*g_78be)();
-    if (g_70e2 == 0)
+    (*bl78be)();
+    if (by70e2 == 0)
         F_1552B(2);
-    if (g_8bce == 0) {
+    if (ag8bcet == 0) {
         if (protect_check() == 0)
             F_00FEA();
         F_120FE(-4);
     }
     F_27198();
-    g_newName[0] = 0;
-    g_0610 = g_8bce;
-    if (g_70e2 == 0) {
+    atnewName[0] = 0;
+    g_0610 = ag8bcet;
+    if (by70e2 == 0) {
         F_15EF9();
-        if (g_vid.mode == -2)
+        if (r_vid.mode == -2)
             F_15C07(g_4c28);
     }
     F_15C4A(g_4c28, 1);
@@ -62,11 +62,11 @@ void F_03AB8(int n)
 
 static int near F_03B0C(void)
 {
-    if (g_7eaa.m7eb6 > 15) {
+    if (a_7eaap.m7eb6 > 15) {
         F_03AB8(0x0e27);
         return 1;
     }
-    if (g_7eaa.m7ebc > 130) {
+    if (a_7eaap.m7ebc > 130) {
         F_03AB8(0x0e3f);
         return 1;
     }
@@ -79,8 +79,8 @@ static int near F_03B33(void)
     int tune;
     int old;
 
-    old = g_vid.f16;
-    g_vid.f16 = 0;
+    old = r_vid.f16;
+    r_vid.f16 = 0;
     F_118D4(0x3fd, -1);
     if ((tune = F_06476()) != g_4f5a) {
         if ((pick5 = random_int(5)) == g_4f58)
@@ -92,9 +92,9 @@ static int near F_03B33(void)
     F_120FE(-3);
     F_06750(0x79);
     F_120FE(-1);
-    g_vid.f16 = old;
-    if (g_vid.f16)
-        F_1A92A(g_vid.back, g_vid.front, 0, 0, 0x13f, 0xbd);
+    r_vid.f16 = old;
+    if (r_vid.f16)
+        F_1A92A(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
     F_120FE(1);
     return F_14294(7);
 }
@@ -106,10 +106,10 @@ static struct Node * near F_03C1B(void)
 {
     struct Node *p;
 
-    p = g_7eaa.m7eba;
-    g_7eaa.m7eba = p->next;
+    p = a_7eaap.m7eba;
+    a_7eaap.m7eba = p->next;
     p->next = 0;
-    g_7eaa.m7ebc++;
+    a_7eaap.m7ebc++;
     return p;
 }
 
@@ -118,10 +118,10 @@ static struct Node * near F_03C1B(void)
 
 static void near F_03C3E(struct Node *p)
 {
-    p->next = g_7eaa.m7eba;
+    p->next = a_7eaap.m7eba;
     p->idx = -1;
-    g_7eaa.m7eba = p;
-    g_7eaa.m7ebc--;
+    a_7eaap.m7eba = p;
+    a_7eaap.m7ebc--;
 }
 
 /* F_03C5A @ 0000:3C5A (linear 0x03C5A, 51 bytes) */

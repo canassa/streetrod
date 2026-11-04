@@ -31,13 +31,13 @@ static int near F_049ED(void)
     item = 1;
     for (;; ticks++) {
         n = 0;
-        if (g_7eaa.m7eb0) {
+        if (a_7eaap.m7eb0) {
             n = 1;
-            g_49e0[1] = g_7d86[(tbl[1] = g_7eaa.m7eb0)->f2].f6;
+            g_49e0[1] = g7d86n[(tbl[1] = a_7eaap.m7eb0)->f2].f6;
         }
-        for (cur = g_7eaa.m7eb2; cur; cur = cur->f26) {
+        for (cur = a_7eaap.m7eb2; cur; cur = cur->f26) {
             n++;
-            g_49e0[n] = g_7d86[(tbl[n] = cur)->f2].f6;
+            g_49e0[n] = g7d86n[(tbl[n] = cur)->f2].f6;
         }
         g_49e0[0] = n;
         switch (item = F_142CF(0xb, (n > item) ? item : n, 0, g_49e0, 0, 0)) {
@@ -47,17 +47,17 @@ static int near F_049ED(void)
             return 0;
         case -1:
             g_4f48 = tbl[item = F_14C8B()];
-            g_4f46 = g_7eaa.m7eb0;
+            g_4f46 = a_7eaap.m7eb0;
             if (g_4f48 != g_4f46) {
-                if (item == ((g_7eaa.m7eb0 != 0) + 1))
-                    g_7eaa.m7eb2 = g_4f48->f26;
+                if (item == ((a_7eaap.m7eb0 != 0) + 1))
+                    a_7eaap.m7eb2 = g_4f48->f26;
                 else
                     tbl[item - 1]->f26 = g_4f48->f26;
-                if (g_7eaa.m7eb0) {
-                    g_7eaa.m7eb0->f26 = g_7eaa.m7eb2;
-                    g_7eaa.m7eb2 = g_7eaa.m7eb0;
+                if (a_7eaap.m7eb0) {
+                    a_7eaap.m7eb0->f26 = a_7eaap.m7eb2;
+                    a_7eaap.m7eb2 = a_7eaap.m7eb0;
                 }
-                g_7eaa.m7eb0 = g_4f48;
+                a_7eaap.m7eb0 = g_4f48;
             } else
                 g_4f48 = 0;
             return 3;
@@ -69,7 +69,7 @@ static int near F_049ED(void)
         }
         cur = tbl[item = F_14C8B()];
         offer = price = (int)((random_int(20) + 75.0) * cur->weight / 100.0);
-        strcpy(g_2990, g_2c02 + g_7d86[cur->f2].f6);
+        strcpy(g_2990, g_2c02 + g7d86n[cur->f2].f6);
         g_29f8[0] = 0;
         pict = F_14090(12, &rx, &ye, 1);
         F_13DE6(12);
@@ -121,24 +121,24 @@ static int near F_049ED(void)
         F_03AB8((cur->weight > cash * 2) ? 0x104b : 0x1091);
         g_05fc += 0x888L;
         F_11540(cash);
-        if (item == 1 && g_7eaa.m7eb0) {
+        if (item == 1 && a_7eaap.m7eb0) {
             F_11BD3(pict, rx, ye);
             F_1941E(1);
             pict = 0;
             F_120FE(-4);
-            mid = g_7eaa.m7eb0->f2;
-            result = F_049A2(g_7eaa.m7eb0);
-            F_181C8(6, mid, result, (g_7eaa.m7eb0->f24 >> 8) & 0x1f, 0, 0x98, 0,
-                    g_5030[((struct Row8 *)((char *)g_4806 + 2))[g_7eaa.m7eb0->slot12->idx].kind]);
+            mid = a_7eaap.m7eb0->f2;
+            result = F_049A2(a_7eaap.m7eb0);
+            F_181C8(6, mid, result, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0x98, 0,
+                    g_5030[((struct Row8 *)((char *)g_4806 + 2))[a_7eaap.m7eb0->slot12->idx].kind]);
             F_13F21(1);
             F_06AA6();
             F_13DE6(10);
             F_120FE(-2);
-            F_043BF(g_7eaa.m7eb0, 0);
-            g_7eaa.m7eb0 = 0;
+            F_043BF(a_7eaap.m7eb0, 0);
+            a_7eaap.m7eb0 = 0;
         } else {
-            if (item == ((g_7eaa.m7eb0 != 0) + 1))
-                g_7eaa.m7eb2 = cur->f26;
+            if (item == ((a_7eaap.m7eb0 != 0) + 1))
+                a_7eaap.m7eb2 = cur->f26;
             else
                 tbl[item - 1]->f26 = cur->f26;
             F_043BF(cur, 0);

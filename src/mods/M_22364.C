@@ -23,11 +23,11 @@ void F_22364(struct Bitmap far *bm, int x, int y, int glyph)
 
     ph = x & 1;
     memset(buf3, 0, 0x500);
-    c1 = g_colors.c[0];
-    c2 = g_colors.c[1];
+    c1 = x_colors.c[0];
+    c2 = x_colors.c[1];
     n2 = F_24BE2(x, glyph, buf3, c1, c2);
-    g_824c = x + n2 - ph;
-    g_824e = y;
+    g824cd = x + n2 - ph;
+    bq824e = y;
     if (n2 != ph) {
         m3 = (n2 >> 1) - ph;
         if (y + (h = 8) > bm->height)

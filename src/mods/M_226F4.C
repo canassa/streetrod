@@ -23,7 +23,7 @@ static void near F_226F4(struct Rect *r, struct Bitmap far *a, struct Bitmap far
     F_21EAB(b, a, &blt, 1);
 }
 
-/* F_22762: erase and redraw one sprite on the screen page g_vid.back through the masked blitters, then flush the touched rectangle to the page and advance the sprite */
+/* F_22762: erase and redraw one sprite on the screen page r_vid.back through the masked blitters, then flush the touched rectangle to the page and advance the sprite */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 
@@ -52,7 +52,7 @@ int F_22762(struct Sprite *s)
     F_1956E(fr->pos->width, fr->pos->height - g_02d0,
         s->x, s->y, pg->bm->width, pg->bm->height, &rc);
     if (F_19839(&rc, &pg->r, &c2, s->seq->dx))
-        F_226F4(&c2, g_vid.back, fp, s->seq->dx);
+        F_226F4(&c2, r_vid.back, fp, s->seq->dx);
     pg->r = rc;
     top = d ? d->height : 0;
     t = blt.h = fr->pos->height - top - g_02d0;
@@ -69,11 +69,11 @@ int F_22762(struct Sprite *s)
             blt.mx = 0;
             blt.my = blt.dy - g_5aa8 < 0 ? 0 : blt.dy - g_5aa8;
         }
-        F_21C0B(fr->pos, g_vid.back, fp, &blt);
+        F_21C0B(fr->pos, r_vid.back, fp, &blt);
         if (d) {
             blt.dy += blt.h;
             blt.h = top;
-            F_21EAB((struct Bitmap far *)d, g_vid.back, &blt, 1);
+            F_21EAB((struct Bitmap far *)d, r_vid.back, &blt, 1);
         }
     } else {
         blt.my = 0;
@@ -82,11 +82,11 @@ int F_22762(struct Sprite *s)
                 blt.dy = u;
                 blt.h = t;
                 blt.mx = blt.dx - g_5a20;
-                F_21C0B(fr->pos, g_vid.back, fp, &blt);
+                F_21C0B(fr->pos, r_vid.back, fp, &blt);
                 if (d) {
                     blt.dy += t;
                     blt.h = top;
-                    F_21EAB((struct Bitmap far *)d, g_vid.back, &blt, 1);
+                    F_21EAB((struct Bitmap far *)d, r_vid.back, &blt, 1);
                 }
             }
         }
@@ -114,11 +114,11 @@ int F_22762(struct Sprite *s)
                 blt.sx = e.x1 - g_5a20;
                 blt.sy = e.y1 - s->y;
             }
-            (*g_78aa)(fp, g_vid.back, &blt, 0);
+            (*ab78aat)(fp, r_vid.back, &blt, 0);
         }
     }
-    if (g_vid.back->bits.p != pg->bm->bits.p)
-        F_1A92A(g_vid.back, pg->bm, rc.x1 > c2.x1 ? c2.x1 : rc.x1, rc.y1 > c2.y1 ? c2.y1 : rc.y1,
+    if (r_vid.back->bits.p != pg->bm->bits.p)
+        F_1A92A(r_vid.back, pg->bm, rc.x1 > c2.x1 ? c2.x1 : rc.x1, rc.y1 > c2.y1 ? c2.y1 : rc.y1,
             rc.x2 < c2.x2 ? c2.x2 : rc.x2, rc.y2 < c2.y2 ? c2.y2 : rc.y2);
     F_19DB7(s);
     return 1;

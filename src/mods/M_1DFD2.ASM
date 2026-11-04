@@ -15,7 +15,7 @@
         EXTRN   _g_clip_ymax:WORD
         EXTRN   _g_clip_xmax:WORD
         EXTRN   _g_0042:WORD
-        EXTRN   _g_787a:WORD
+        EXTRN   _av787at:WORD
         EXTRN   _g_5b6a:BYTE
         EXTRN   _g_5b7a:BYTE
 
@@ -34,9 +34,9 @@ _F_1DFD2  PROC    FAR
         mov     BYTE PTR cs:dbl,0
         cmp     _g_0042,0
         je      L1DFD2_clip
-        cmp     _g_787a,0B000h
+        cmp     _av787at,0B000h
         jb      L1DFD2_clip
-        cmp     _g_787a,0B400h
+        cmp     _av787at,0B400h
         ja      L1DFD2_clip
         test    WORD PTR [bp+10],1
         je      L1DFD2_clip

@@ -1,16 +1,22 @@
 #include "GLOBALS.H"
 #include "PROTOS.H"
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+int o_8250;
+int au8252x;
+int as8254y;
+int aq8256z;
+
 char *g_msgs[7] = {"0", "1", "2", "3", "4", "N", "D"};   /* DS:0482 */
 
 void F_113A2(int y)
 {
-    g_8252 = y + 1;
-    g_8254 = 0xa0;
-    g_8250 = 0x58;
-    g_8256 = 0;
-    g_colors = g_style->colors;
-    F_13682(g_vid.back, 0, y, 320, 10);
-    if (g_vid.f16)
-        F_1A92A(g_vid.back, g_vid.front, 0, y, 319, y + 9);
+    au8252x = y + 1;
+    as8254y = 0xa0;
+    o_8250 = 0x58;
+    aq8256z = 0;
+    x_colors = bustyle->colors;
+    F_13682(r_vid.back, 0, y, 320, 10);
+    if (r_vid.f16)
+        F_1A92A(r_vid.back, r_vid.front, 0, y, 319, y + 9);
 }

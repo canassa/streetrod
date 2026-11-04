@@ -35,8 +35,8 @@ static void near F_0442B(int tab)
     g_49e0[1] = 0xcd8;
     n = 2;
     i5 = price6 = 0;
-    for (k3 = g_7d16; k3 >= 0; k3 = g_7d88[k3].next) {
-        g_49e0[n++] = g_7d88[k3].f4;
+    for (k3 = a_7d16q; k3 >= 0; k3 = w_7d88[k3].next) {
+        g_49e0[n++] = w_7d88[k3].f4;
         list4[i5++] = k3;
     }
     g_49e0[n++] = 0xcfd;
@@ -58,7 +58,7 @@ static void near F_0442B(int tab)
             price6 = g_4806[i5].f0;
             g_11b0 = 0xe;
         } else {
-            k3 = (specn = &g_7d86[i5 = list4[n - 2]])->f6;
+            k3 = (specn = &g7d86n[i5 = list4[n - 2]])->f6;
             price6 = specn->f0;
             g_11b0 = 10;
         }
@@ -68,11 +68,11 @@ static void near F_0442B(int tab)
         for (;;) {
             n = F_14294(9);
             if (n == -20) {
-                if (g_0610 && (long)price6 > g_7eaa.m7eaa)
-                    g_7eaa.m7eaa += 1999;
-                if ((long)price6 > g_7eaa.m7eaa) {
+                if (g_0610 && (long)price6 > a_7eaap.m7eaa)
+                    a_7eaap.m7eaa += 1999;
+                if ((long)price6 > a_7eaap.m7eaa) {
                     p1 = strchr(g_3a5a, '$');
-                    sprintf(++p1, "%d short.", price6 - (int)g_7eaa.m7eaa);
+                    sprintf(++p1, "%d short.", price6 - (int)a_7eaap.m7eaa);
                     F_03AB8(0xf1a8);
                     break;
                 }
@@ -80,7 +80,7 @@ static void near F_0442B(int tab)
                 if (used) {
                     F_03FF0(i5, price6);
                     g_05fc += 0x222;
-                    if (g_7eaa.m7ebc > 0x82)
+                    if (a_7eaap.m7ebc > 0x82)
                         goto done;
                     break;
                 }
@@ -96,26 +96,26 @@ static void near F_0442B(int tab)
             F_193D4();
             bm1 = F_1934E(0x140, 0x52, 0, 0);
             F_11A72(0, 0x40, 0x140, 0x52, bm1);
-            g_colors = g_style->colors;
-            ck = (g_vid.mode == -2 || g_vid.mode == -6) ? g_02c2[5] : g_02b4[5];
+            x_colors = bustyle->colors;
+            ck = (r_vid.mode == -2 || r_vid.mode == -6) ? g_02c2[5] : g_02b4[5];
             F_1169A(0, 0x41, 0x140, 0x46, ck);
-            F_1169A(0, 0x87, 0x140, 0xa, g_colors.c[1]);
-            if (g_vid.mode != -2 && g_vid.mode != -6) {
-                sv = g_colors.c[3];
-                g_colors.c[3] = 3;
-                F_1371C(g_vid.back, 0, 0x40, 0x52);
-                F_1371C(g_vid.back, 0x13f, 0x40, 0x52);
-                F_1371C(g_vid.front, 0, 0x40, 0x52);
-                F_1371C(g_vid.front, 0x13f, 0x40, 0x52);
+            F_1169A(0, 0x87, 0x140, 0xa, x_colors.c[1]);
+            if (r_vid.mode != -2 && r_vid.mode != -6) {
+                sv = x_colors.c[3];
+                x_colors.c[3] = 3;
+                F_1371C(r_vid.back, 0, 0x40, 0x52);
+                F_1371C(r_vid.back, 0x13f, 0x40, 0x52);
+                F_1371C(r_vid.front, 0, 0x40, 0x52);
+                F_1371C(r_vid.front, 0x13f, 0x40, 0x52);
                 F_11A24(0, 0x40, 0x140);
                 F_11A24(0, 0x91, 0x140);
-                g_colors.c[3] = sv;
+                x_colors.c[3] = sv;
             }
             if (color == -1) {
                 color = random_int(5);
                 F_067CF(color);
             }
-            x1 = ((unsigned)specn - (unsigned)g_7d86) / 10;
+            x1 = ((unsigned)specn - (unsigned)g7d86n) / 10;
             y = (((specn->f4 >> 8) & 7) == 2) ? 8 : 0;
             F_181C8(7, x1, y, 0, 0, 0x86, 0, g_5030[(specn->f4 >> 4) & 3]);
             F_119D6((0x140 - F_10B48(g_2990)) / 2, 0x88, g_2990);
@@ -131,7 +131,7 @@ test:
     } while (n != -3);
 done:
     F_00D58();
-    if (g_7eaa.m7eb0)
-        F_067CF(g_7eaa.m7eb0->f4);
+    if (a_7eaap.m7eb0)
+        F_067CF(a_7eaap.m7eb0->f4);
     g_0284 = 0;
 }

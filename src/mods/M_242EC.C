@@ -27,7 +27,7 @@ void F_242EC(int top, int bottom, int x, int y0, int y1, struct Bitmap far *bm)
     int y;
     int i;
     int rowsn;            /* bm height */
-    int bpitch;           /* g_vid.back pitch */
+    int bpitch;           /* r_vid.back pitch */
     union FarPtr base1;
     union FarPtr abase;
     int m;
@@ -37,9 +37,9 @@ void F_242EC(int top, int bottom, int x, int y0, int y1, struct Bitmap far *bm)
     pitch = bm->pitch;
     rowsn = bm->height;
     psizem = pitch * rowsn;
-    bpitch = g_vid.back->pitch;
-    scratch = g_vid.back->bits.p + 0x2af0;
-    dst2k = g_vid.back->bits.p + top * bpitch + x;
+    bpitch = r_vid.back->pitch;
+    scratch = r_vid.back->bits.p + 0x2af0;
+    dst2k = r_vid.back->bits.p + top * bpitch + x;
     n = y1 - y0;
     base1 = bm->bits;
     if (n < 0) {
@@ -59,7 +59,7 @@ void F_242EC(int top, int bottom, int x, int y0, int y1, struct Bitmap far *bm)
         stepl = 2;
     }
     n = (n >> 1) + 1;
-    row = g_vid.back->bits.p + y0 * bpitch + x;
+    row = r_vid.back->bits.p + y0 * bpitch + x;
     F_26401(bm->bits.p, bm->alt.p, bm->planesize);
     abase = bm->alt;
     F_2382D(dst2k, pitch, bottom - top + 1, scratch, bpitch);
@@ -88,11 +88,11 @@ void F_242EC(int top, int bottom, int x, int y0, int y1, struct Bitmap far *bm)
         }
         outp(0x3c4, 2);
         outp(0x3c5, 0xf);
-        if (g_vid.f16) {
+        if (r_vid.f16) {
             if (g_0792)
-                (*g_78aa)(g_0792, g_vid.back, &g_70ac, 1);
+                (*ab78aat)(g_0792, r_vid.back, &u_70ac, 1);
             F_21A06();
-            F_24E78(g_vid.back->bits.p, g_vid.front->bits.p, pitch, bottom - top + 1, x, top, bpitch);
+            F_24E78(r_vid.back->bits.p, r_vid.front->bits.p, pitch, bottom - top + 1, x, top, bpitch);
             F_21A06();
         }
     }

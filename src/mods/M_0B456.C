@@ -5,6 +5,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+int g7644m;
+char at787cu;
+int ez7900;
+int bx7904;
+int g799cy;
+int az7a9e;
+int bp7d32;
+int a_7e8c;
+int h_8264;
+int g826af;
+int ae826cv;
+int ar826e;
+int q_8270;
+int bp82c2;
+int dz82c8x;
+int s_8632;
+float p_8bc4;
+
 static int near F_0B3CA(int);
 static void near F_0B456(void);
 static void near F_0B49C(int, int, int, int, int);
@@ -80,7 +99,7 @@ static void near F_0B4DE(void)
 static void near F_0B525(void)
 {
     F_0B456();
-    F_0B49C(4, g_826e - 10, g_8270 - 5, 18, 12);
+    F_0B49C(4, ar826e - 10, q_8270 - 5, 18, 12);
     F_0B425();
     g_6ca4 = 1;
 }
@@ -93,7 +112,7 @@ static void near F_0B552(void)
 {
     F_0B456();
     F_0B49C(2, 0x34, 100, 16, 23);
-    F_0B49C(4, g_826e - 1, g_8270 - 1, 10, 9);
+    F_0B49C(4, ar826e - 1, q_8270 - 1, 10, 9);
     F_0B425();
     g_6ca8 = 1;
     g_6ca4 = 1;
@@ -106,9 +125,9 @@ static void near F_0B552(void)
 static void near F_0B59B(void)
 {
     F_0B456();
-    if (g_8264)
-        F_0B49C(6, g_826a, g_826c, 20, 19);
-    F_0B49C(5, g_8266, g_8268, 22, 19);
+    if (h_8264)
+        F_0B49C(6, g826af, ae826cv, 20, 19);
+    F_0B49C(5, d_8266, ap8268t, 22, 19);
     F_0B49C(1, 0x3e, 0xa5, 0x35, 18);
     F_0B49C(3, 0xc4, 0x5a, 16, 14);
     F_0B425();
@@ -144,10 +163,10 @@ static void near F_0B61B(struct Dlg *d, int id)
     box.w = label->width;
     box.h = box.fc = label->height;
     box.sx = box.sy = 0;
-    box.dx = (~g_vid.mask & g_826e) - box.w + 24;
+    box.dx = (~r_vid.mask & ar826e) - box.w + 24;
     box.dy = 12 - label->height;
     F_1A2D0(label, work, &box, 0);
-    F_11BD3(work, g_826e - 16, g_8270 - 5);
+    F_11BD3(work, ar826e - 16, q_8270 - 5);
     F_19438(2);
 }
 
@@ -164,14 +183,14 @@ static void near F_0B717(struct Dlg *d)
     if (d->f12) {
         F_0B61B(d, 0x472);
         if (d->f18) {
-            F_11540(g_7eaa.m7eaa >= 10 ? -10 : -(int)g_7eaa.m7eaa);
+            F_11540(a_7eaap.m7eaa >= 10 ? -10 : -(int)a_7eaap.m7eaa);
             d->f18 = 0;
         }
     }
     if (d->f14 == 0) {
         F_11BD3(g_028c, 0x40, 0x64);
         if (d->f18)
-            F_11540(g_7eaa.m7eaa >= 10 ? -10 : -(int)g_7eaa.m7eaa);
+            F_11540(a_7eaap.m7eaa >= 10 ? -10 : -(int)a_7eaap.m7eaa);
     }
     if (d->f10 == 0) {
         F_120FE(-3);
@@ -179,9 +198,9 @@ static void near F_0B717(struct Dlg *d)
         F_120FE(-1);
         F_18ADB(p, 0x60, 0, 0x30, 0x40, 0xc8, 0x51, 0xa9, 2);
     }
-    g_7eaa.m7eb0->f22 = g_7eaa.m7eb0->f22 > 0xaa ? 0xaa : g_7eaa.m7eb0->f22;
-    F_181C8(2, d->f0, d->f2, (g_7eaa.m7eb0->f24 >> 8) & 0x1f, 0, 0xa9, 1,
-            g_5030[g_4806[g_7eaa.m7eb0->slot12->idx].f2]);
+    a_7eaap.m7eb0->f22 = a_7eaap.m7eb0->f22 > 0xaa ? 0xaa : a_7eaap.m7eb0->f22;
+    F_181C8(2, d->f0, d->f2, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0xa9, 1,
+            g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
     F_13F21(1);
     F_193D4();
     g_0284 = 1;
@@ -205,22 +224,22 @@ void F_0B8A1(void)
     g_0284 = 3;
     F_118D4(0x442, -1);
     F_11593(g_49dc);
-    g_8240 = 1;
-    (*g_present)();
+    m_8240 = 1;
+    (*m_present)();
     dl.f0c = 1;
     F_120FE(1);
-    dl.f0 = g_7eaa.m7eb0->f2;
-    dl.f2 = F_049A2(g_7eaa.m7eb0);
-    F_181C8(4, dl.f0, dl.f2, (g_7eaa.m7eb0->f24 >> 8) & 0x1f, 0, 0xa9, 1,
-            g_5030[((struct Row8 *)((char *)g_4806 + 2))[g_7eaa.m7eb0->slot12->idx].kind]);
+    dl.f0 = a_7eaap.m7eb0->f2;
+    dl.f2 = F_049A2(a_7eaap.m7eb0);
+    F_181C8(4, dl.f0, dl.f2, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0xa9, 1,
+            g_5030[((struct Row8 *)((char *)g_4806 + 2))[a_7eaap.m7eb0->slot12->idx].kind]);
     F_16381(0);
     label = F_11A72(0x50, 0xaa, 0x28, 0xc, 0);
-    dl.bm1 = F_11A72(g_826e - 0x10, g_8270 - 5, 0x18, 0xc, 0);
-    g_8240 = 0;
+    dl.bm1 = F_11A72(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
+    m_8240 = 0;
     F_11BD3(g_0290, 0x40, 0x64);
-    dl.bm2 = F_11A72(g_826e - 0x10, g_8270 - 5, 0x18, 0xc, 0);
+    dl.bm2 = F_11A72(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
     F_11BD3(g_028c, 0x40, 0x64);
-    g_8240 = 1;
+    m_8240 = 1;
     pos = 1;
     dl.f1a = 0;
     wait1 = 0x28;
@@ -230,7 +249,7 @@ void F_0B8A1(void)
     dl.f10 = 1;
     dl.f16 = 0;
     dl.f18 = 1;
-    dl.f0e = (0xbe - g_7eaa.m7eb0->f22) / 0x1e;
+    dl.f0e = (0xbe - a_7eaap.m7eb0->f22) / 0x1e;
     F_0B61B(&dl, 0x472);
     F_0B4DE();
     F_13DE6(0x17);
@@ -246,10 +265,10 @@ top:
                 goto top;
             if (dl.f1a) {
                 dl.f0e--;
-                g_7eaa.m7eb0->f22 += 0x1e;
+                a_7eaap.m7eb0->f22 += 0x1e;
                 done = 1;
-                F_11540(-(pos <= g_7eaa.m7eaa ? pos : (int)g_7eaa.m7eaa));
-                if (dl.f0e == 0 || pos > g_7eaa.m7eaa) {
+                F_11540(-(pos <= a_7eaap.m7eaa ? pos : (int)a_7eaap.m7eaa));
+                if (dl.f0e == 0 || pos > a_7eaap.m7eaa) {
                     if (F_111F2(2)) {
                         F_16993(0);
                         F_10D6C(2);
@@ -317,7 +336,7 @@ top:
                 F_13F21(1);
                 F_0B552();
             } else {
-                if (pos > g_7eaa.m7eaa || done) {
+                if (pos > a_7eaap.m7eaa || done) {
                     dl.f18 = 0;
                     goto fin;
                 }
@@ -343,11 +362,11 @@ top:
                 F_0B61B(&dl, 0x472);
                 dl.f12 = 0;
                 F_120FE(dl.f0c = 2);
-                if (dl.f0e > 0 && pos <= g_7eaa.m7eaa)
+                if (dl.f0e > 0 && pos <= a_7eaap.m7eaa)
                     F_03AB8(0x18dd);
                 goto both;
             }
-            if (dl.f0e == 0 || pos > g_7eaa.m7eaa)
+            if (dl.f0e == 0 || pos > a_7eaap.m7eaa)
                 F_03AB8(0x10b5);
             else {
                 F_0B61B(&dl, 0x471);
@@ -383,23 +402,23 @@ static int near F_0BED4(void)
     int ret;
 
     ret = 0;
-    if (g_7eaa.m7eb0 == 0)
+    if (a_7eaap.m7eb0 == 0)
         return 0;
-    g_7eaa.m7eb0->weight -= F_04386(g_7eaa.m7eb0->slot12, 0);
-    g_7eaa.m7eb0->slot12 = 0;
+    a_7eaap.m7eb0->weight -= F_04386(a_7eaap.m7eb0->slot12, 0);
+    a_7eaap.m7eb0->slot12 = 0;
     F_076A7(4, tbl, 0, 0);
     if (g_49e0[0]) {
-        F_07741(F_077B7(tbl[1]), &g_7eaa.m7eb0->slot12);
+        F_07741(F_077B7(tbl[1]), &a_7eaap.m7eb0->slot12);
     } else {
-        g_7eaa.m7eaa -= 0x32;
-        if (g_7eaa.m7eaa < 0) {
-            ret = (int)-g_7eaa.m7eaa;
-            g_7eaa.m7eaa = 0;
+        a_7eaap.m7eaa -= 0x32;
+        if (a_7eaap.m7eaa < 0) {
+            ret = (int)-a_7eaap.m7eaa;
+            a_7eaap.m7eaa = 0;
         }
         F_03FF0(0x28, g_4806[40].f0);
-        tbl[0] = g_7eaa.m7eb8;
-        g_7eaa.m7eb8 = tbl[0]->next;
-        F_07741(tbl[0], &g_7eaa.m7eb0->slot12);
+        tbl[0] = a_7eaap.m7eb8;
+        a_7eaap.m7eb8 = tbl[0]->next;
+        F_07741(tbl[0], &a_7eaap.m7eb0->slot12);
     }
     return ret;
 }
@@ -428,25 +447,25 @@ static void near F_0BF94(void)
     pkt.h = b->height;
     pkt.dx = pkt.sx = pkt.sy = 0;
     pkt.dy = 0x45;
-    (*g_78aa)(b, g_vid.back, &pkt, 1);
+    (*ab78aat)(b, r_vid.back, &pkt, 1);
     pkt.w = a->width;
     pkt.h = a->height;
     pkt.sx = pkt.sy = 0;
     pkt.dx = b->width;
     pkt.dy = 0x14;
-    (*g_78a2)(a, g_vid.back, &pkt, 1);
+    (*b_78a2)(a, r_vid.back, &pkt, 1);
     maxw2 = a->width - 8;
-    g_vid.f16 = 0;
-    g_colors = g_style->hilite;
-    for (p2 = g_newName, wk = 0; *p2 && wk < maxw2; p2++)
+    r_vid.f16 = 0;
+    x_colors = bustyle->hilite;
+    for (p2 = atnewName, wk = 0; *p2 && wk < maxw2; p2++)
         wk += g_font[*p2 - 32].w;
     if (wk >= maxw2)
         p2--;
     d = cl = *p2;
     *p2 = 0;
-    (*g_78ae)(g_vid.back, 0x5e, 0x48, g_newName);
+    (*a_78aem)(r_vid.back, 0x5e, 0x48, atnewName);
     *p2 = d;
-    desc3 = g_7d86[g_7eaa.m7eb0->f2].f6;
+    desc3 = g7d86n[a_7eaap.m7eb0->f2].f6;
     endk = desc3 + strcspn(g_2c01 + desc3 + 8, " `.") + 7;
     for (p2 = g_2c01 + desc3 + 1, wk = 0; *p2 && wk < maxw2; p2++)
         wk += g_font[*p2 - 32].w;
@@ -456,11 +475,11 @@ static void near F_0BF94(void)
     *p2 = 0;
     e = g_2c01[endk + 1];
     g_2c01[endk + 1] = 0;
-    (*g_78ae)(g_vid.back, 0x5e, 0x63, g_2c01 + desc3 + 1);
+    (*a_78aem)(r_vid.back, 0x5e, 0x63, g_2c01 + desc3 + 1);
     g_2c01[endk + 1] = e;
     *p2 = d;
-    (*g_78b6)(g_vid.back->bits.p, g_vid.front->bits.p);
-    g_vid.f16 = 1;
+    (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
+    r_vid.f16 = 1;
     F_120FE(-2);
     F_00E24();
 }
@@ -474,7 +493,7 @@ static void near F_0C1D8(void)
     struct Blt pkt;
     int fast, i;
 
-    fast = g_vid.mode == -2 && g_0254 == 0;
+    fast = r_vid.mode == -2 && g_0254 == 0;
     F_16BE3();
     F_193D4();
     a = F_15BBE(0x4eb, 1);
@@ -483,21 +502,21 @@ static void near F_0C1D8(void)
     pkt.h = 0x5a;
     pkt.sx = pkt.sy = pkt.dx = 0;
     pkt.dy = 0xb;
-    (*g_78aa)(a, g_vid.back, &pkt, 1);
+    (*ab78aat)(a, r_vid.back, &pkt, 1);
     pkt.w = a->width;
     pkt.h = a->height - 0x59;
     pkt.sy = 0x59;
     pkt.sx = pkt.dx = 0;
     pkt.dy = (fast ? 0x5a : 0x59) + 0xb;
-    (*g_78aa)(a, g_vid.back, &pkt, 1);
+    (*ab78aat)(a, r_vid.back, &pkt, 1);
     pkt.w = b->width;
     pkt.h = b->height;
     pkt.sx = pkt.sy = pkt.dx = 0;
     pkt.dy = fast ? 0x78 : 0x77;
-    (*g_78a2)(b, g_vid.back, &pkt, 1);
-    F_10414(g_82c2);
-    (*g_78b6)(g_vid.back->bits.p, g_vid.front->bits.p);
-    if (g_78e0.f0 > 0x5a) {
+    (*b_78a2)(b, r_vid.back, &pkt, 1);
+    F_10414(bp82c2);
+    (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
+    if (e_78e0.f0 > 0x5a) {
         for (i = 0; i < 3; i++) {
             a = F_15BBE(g_53d4[i].id, 1);
             pkt.w = a->width;
@@ -506,12 +525,12 @@ static void near F_0C1D8(void)
             pkt.dx = g_53d4[i].x;
             pkt.dy = g_53d4[i].y;
             F_10AFD(0x14 - 8 * i);
-            (*g_78aa)(a, g_vid.back, &pkt, 1);
-            (*g_78b6)(g_vid.back->bits.p, g_vid.front->bits.p);
+            (*ab78aat)(a, r_vid.back, &pkt, 1);
+            (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
         }
     }
     F_120FE(-2);
-    (*g_present)();
+    (*m_present)();
     F_00E24();
     F_03A83(0x64);
     F_00E24();
@@ -524,13 +543,13 @@ static void near F_0C1D8(void)
 void F_0C407(void)
 {
     if (g_53e6 == 0) {
-        if ((g_7e8a - g_7d30) * 8 + g_7e8c <= g_7d32)
-            g_8632 = 1;
+        if ((ar7e8av - ac7d30z) * 8 + a_7e8c <= bp7d32)
+            s_8632 = 1;
         else
-            g_8632 = 0;
-        g_7644 = g_82bc / g_78e0.fc0;
-        g_8bc4 = g_78e0.fc0 / 6.068827333333334;
-        g_82c8 = (int)((g_7d30 - 200) * 100.0 / (g_7e8a - 200)) > 99 ? 99 : (int)((g_7d30 - 200) * 100.0 / (g_7e8a - 200));
+            s_8632 = 0;
+        g7644m = b_82bc / e_78e0.fc0;
+        p_8bc4 = e_78e0.fc0 / 6.068827333333334;
+        dz82c8x = (int)((ac7d30z - 200) * 100.0 / (ar7e8av - 200)) > 99 ? 99 : (int)((ac7d30z - 200) * 100.0 / (ar7e8av - 200));
         g_53e6 = 1;
     }
 }
@@ -540,12 +559,12 @@ void F_0C407(void)
 
 static void near F_0C497(void)
 {
-    if (g_7676) {
-        sprintf(g_2b3f, "Your``winning``time %2.1f sec.,`avg. speed %2d mph", g_8bc4, g_7644);
+    if (bo7676) {
+        sprintf(g_2b3f, "Your``winning``time %2.1f sec.,`avg. speed %2d mph", p_8bc4, g7644m);
         strcpy(g_2b72, "Congratulations !");
     } else {
-        sprintf(g_2b3f, "In %2.1f sec you covered only %2d%%", g_8bc4, g_82c8);
-        sprintf(g_2b72, "of the distance. Your avg. speed %2d mph.", g_7644);
+        sprintf(g_2b3f, "In %2.1f sec you covered only %2d%%", p_8bc4, dz82c8x);
+        sprintf(g_2b72, "of the distance. Your avg. speed %2d mph.", g7644m);
     }
     F_13DE6(0x21);
     F_13F21(1);
@@ -561,14 +580,14 @@ static void near F_0C52C(int n)
     char *q;
     int i;
 
-    if (g_7eaa.m7eb0) {
-        for (i = 0, p = g_7eaa.m7eb0->rack.s; i < 5; i++, p++) {
-            g_7eaa.m7eb0->weight -= F_04386(*p, 0);
+    if (a_7eaap.m7eb0) {
+        for (i = 0, p = a_7eaap.m7eb0->rack.s; i < 5; i++, p++) {
+            a_7eaap.m7eb0->weight -= F_04386(*p, 0);
             *p = 0;
         }
-        for (i = 0, q = g_7eaa.m7eb0->b16; i < 9; i++)
+        for (i = 0, q = a_7eaap.m7eb0->b16; i < 9; i++)
             *q++ = 0;
-        g_7eaa.m7eb0->f1f = 0;
+        a_7eaap.m7eb0->f1f = 0;
     }
     F_00E24();
     F_16BC1();
@@ -584,10 +603,10 @@ static void near F_0C5AC(int n)
     char *q;
     int i;
 
-    if (g_7eaa.m7eb0) {
-        g_7eaa.m7eb0->weight -= F_04386(g_7eaa.m7eb0->slot6, 0);
-        g_7eaa.m7eb0->slot6 = 0;
-        for (i = 0, q = g_7eaa.m7eb0->b14; i < 2; i++)
+    if (a_7eaap.m7eb0) {
+        a_7eaap.m7eb0->weight -= F_04386(a_7eaap.m7eb0->slot6, 0);
+        a_7eaap.m7eb0->slot6 = 0;
+        for (i = 0, q = a_7eaap.m7eb0->b14; i < 2; i++)
             *q++ = 0;
     }
     F_00E24();
@@ -624,100 +643,100 @@ static int near F_0C613(void)
     struct Car *found;
     int list[25];
 
-    kind = g_79a2;
-    v = g_79a4;
-    engine = g_799c & 4;
-    opt = g_799c & 0x10;
-    stop = g_799c == 5 || g_799c == 0x11 || g_799c == 0x15;
-    if (g_7eaa.m7eb0->slot6->b > 9900)
-        g_7eaa.m7eb0->slot6->b = 9900;
-    if (g_7eaa.m7eb0->rack.s[0]->b > 9900)
-        g_7eaa.m7eb0->rack.s[0]->b = 9900;
-    if (g_7eaa.m7eb0->slot12->b > 9900)
-        g_7eaa.m7eb0->slot12->b = 9900;
-    g_7676 = 0;
+    kind = as79a2z;
+    v = d_79a4;
+    engine = g799cy & 4;
+    opt = g799cy & 0x10;
+    stop = g799cy == 5 || g799cy == 0x11 || g799cy == 0x15;
+    if (a_7eaap.m7eb0->slot6->b > 9900)
+        a_7eaap.m7eb0->slot6->b = 9900;
+    if (a_7eaap.m7eb0->rack.s[0]->b > 9900)
+        a_7eaap.m7eb0->rack.s[0]->b = 9900;
+    if (a_7eaap.m7eb0->slot12->b > 9900)
+        a_7eaap.m7eb0->slot12->b = 9900;
+    bo7676 = 0;
     g_53e6 = 0;
-    g_82bc = 0;
+    b_82bc = 0;
     g_47cd = 0;
     g_4732 = 0;
-    if (g_7900)
-        g_7904 = 1;
-    if (g_787c)
-        g_799c |= 8;
+    if (ez7900)
+        bx7904 = 1;
+    if (at787cu)
+        g799cy |= 8;
     F_13DE6(1);
-    i = g_7eaa.m7ec0 == 0 ? 5 : 15;
-    if (g_7eaa.m7eb0->f22 > i)
-        g_7eaa.m7eb0->f22 -= i;
+    i = a_7eaap.m7ec0 == 0 ? 5 : 15;
+    if (a_7eaap.m7eb0->f22 > i)
+        a_7eaap.m7eb0->f22 -= i;
     else
-        g_7eaa.m7eb0->f22 = 0;
-    (*g_present)();
-    if (g_7a9e & 1) {
-        g_7676 = 1;
+        a_7eaap.m7eb0->f22 = 0;
+    (*m_present)();
+    if (az7a9e & 1) {
+        bo7676 = 1;
         F_0C497();
         F_120FE(-2);
-        F_03AB8(g_7d40 == 0 ? (i = g_53c8[kind]) : g_7eaa.m7ec0 == 0 ? 0x14bd : 0x14d6);
+        F_03AB8(g7d40q == 0 ? (i = g_53c8[kind]) : a_7eaap.m7ec0 == 0 ? 0x14bd : 0x14d6);
         F_11540(v);
         if (kind == 5) {
-            found = F_04036(g_7648, g_7d7a->f0, 0);
+            found = F_04036(bn7648, ar7d7au->f0, 0);
             found->slot12->b = random_int(500);
-            found->f24 = ((g_7d84->ff & 0x1f) << 8) | (found->f24 & 0xe0ff);
-            found->f24 = (((g_7d84->fe & 4) != 0 & 1) << 13) | (found->f24 & 0xdfff);
-            found->f24 = (((g_7d84->fe & 2) != 0 & 1) << 14) | (found->f24 & 0xbfff);
-            found->f24 = (((g_7d84->fe & 1) != 0 & 1) << 15) | (found->f24 & 0x7fff);
-            found->f4 = g_7d84->fa;
-            if (found->f5 > g_7eaa.m7eb0->f5) {
-                g_7eaa.m7eb0->f26 = g_7eaa.m7eb2->f26;
-                g_7eaa.m7eb2 = g_7eaa.m7eb0;
-                g_7eaa.m7eb0 = found;
-                F_0DCBE(g_7eaa.m7eb0, &g_78e0);
+            found->f24 = ((g7d84o->ff & 0x1f) << 8) | (found->f24 & 0xe0ff);
+            found->f24 = (((g7d84o->fe & 4) != 0 & 1) << 13) | (found->f24 & 0xdfff);
+            found->f24 = (((g7d84o->fe & 2) != 0 & 1) << 14) | (found->f24 & 0xbfff);
+            found->f24 = (((g7d84o->fe & 1) != 0 & 1) << 15) | (found->f24 & 0x7fff);
+            found->f4 = g7d84o->fa;
+            if (found->f5 > a_7eaap.m7eb0->f5) {
+                a_7eaap.m7eb0->f26 = a_7eaap.m7eb2->f26;
+                a_7eaap.m7eb2 = a_7eaap.m7eb0;
+                a_7eaap.m7eb0 = found;
+                F_0DCBE(a_7eaap.m7eb0, &e_78e0);
             }
-            if (g_0610 == 0 || g_7f82 != g_4ff4) {
-                if (g_7d84->f10 != 0 || g_7d40 != 0)
-                    g_7d84->fb = 0xff;
+            if (g_0610 == 0 || g7f82r != g_4ff4) {
+                if (g7d84o->f10 != 0 || g7d40q != 0)
+                    g7d84o->fb = 0xff;
                 else {
                     for (i = 0, units = 0; i < 25; i++)
-                        if (g_7d88[i].kind < g_7d7a->f2)
+                        if (w_7d88[i].kind < ar7d7au->f2)
                             list[++units] = i;
                     if (units > 0) {
                         list[0] = units;
-                        F_0542E(g_7f82, list);
-                        g_7d84->f10 = 1;
+                        F_0542E(g7f82r, list);
+                        g7d84o->f10 = 1;
                     } else
-                        g_7d84->fb = 0xff;
+                        g7d84o->fb = 0xff;
                     goto done;
                 }
             }
         }
 done:
         F_13F21(1);
-        if (g_799c & 8)
+        if (g799cy & 8)
             if ((i = F_0BED4()) != 0)
                 goto ret2;
         if (kind == 5)
             return 1;
         return 3;
-    } else if (g_799c & 0x40) {
+    } else if (g799cy & 0x40) {
         F_16AA8(0);
         F_0BF94();
-        i = (g_799c & 8) ? F_0BED4() : 0;
-        if (g_78e0.f0 > 0x50)
+        i = (g799cy & 8) ? F_0BED4() : 0;
+        if (e_78e0.f0 > 0x50)
             i += 0x4b;
-        else if (g_78e0.f0 > 0x32)
+        else if (e_78e0.f0 > 0x32)
             i += 0x32;
         else
             i += 0x14;
         F_13DE6(0x18);
         F_01417(0);
         sprintf(temp, "You have been fined $%2d for speeding", i);
-        F_11421(-1, temp, 0x140 - g_8250);
+        F_11421(-1, temp, 0x140 - o_8250);
         F_03A83(0xfa);
-        if (i <= g_7eaa.m7eaa)
+        if (i <= a_7eaap.m7eaa)
             goto pay;
         F_03AB8(0x1793);
         F_13F21(1);
         F_13F21(1);
-        F_11540(-g_7eaa.m7eaa);
-        F_11421(-1, " ", 0x140 - g_8250);
+        F_11540(-a_7eaap.m7eaa);
+        F_11421(-1, " ", 0x140 - o_8250);
         return 4;
 pay:
         F_11540(-i);
@@ -725,21 +744,21 @@ pay:
         F_03A83(g_05dc);
         g_05cc = cost;
         F_13F21(1);
-        F_11421(-1, "", 0x140 - g_8250);
-    } else if (g_799c == 0x81) {
+        F_11421(-1, "", 0x140 - o_8250);
+    } else if (g799cy == 0x81) {
         F_120FE(-2);
         F_03AB8(0xecb2);
     } else {
         if (kind == 5) {
-            F_043BF(g_7eaa.m7eb0, 0);
-            g_7eaa.m7eb0 = 0;
+            F_043BF(a_7eaap.m7eb0, 0);
+            a_7eaap.m7eb0 = 0;
         }
         F_11540(-v);
-        if (g_799c == 1) {
+        if (g799cy == 1) {
             F_0C497();
             F_120FE(-2);
             i = kind == 5 ? 0x143a : 0x1427;
-            F_03AB8(g_7d40 == 0 ? i : g_7eaa.m7ec0 == 0 ? 0x1450 : 0x146c);
+            F_03AB8(g7d40q == 0 ? i : a_7eaap.m7ec0 == 0 ? 0x1450 : 0x146c);
             F_13F21(1);
             if (kind != 5)
                 return 3;
@@ -759,14 +778,14 @@ finishstop:
         } else {
             F_0C1D8();
             if (kind == 5) {
-                if (g_799c & 8) {
+                if (g799cy & 8) {
                     F_03AB8(0x16f6);
                     F_0BED4();
                 } else
                     F_03AB8(0x1658);
-            } else if (g_78e0.f0 > 0x5a) {
-                v = F_043BF(g_7eaa.m7eb0, 0) / 10 + 0x13;
-                g_7eaa.m7eb0 = 0;
+            } else if (e_78e0.f0 > 0x5a) {
+                v = F_043BF(a_7eaap.m7eb0, 0) / 10 + 0x13;
+                a_7eaap.m7eb0 = 0;
                 F_11540(v);
                 ptr = g_4115;
                 while (*ptr++ != '$')
@@ -778,14 +797,14 @@ finishstop:
                 F_00E24();
                 F_03AB8(0x1513);
             } else {
-                if (g_78e0.f0 > 0x3c) {
+                if (e_78e0.f0 > 0x3c) {
                     i = 0;
                     v = random_int(0x28) + 100;
-                } else if (g_78e0.f0 > 0x1e) {
+                } else if (e_78e0.f0 > 0x1e) {
                     i = 1;
                     v = random_int(0x14) + 100;
                 } else {
-                    if (g_799c & 8) {
+                    if (g799cy & 8) {
                         F_03AB8(0x1590);
                         all = F_0BED4();
                         goto fin;
@@ -799,13 +818,13 @@ finishstop:
                 ptr[2] = ' ';
                 itoa(v, ptr, 10);
                 ptr[strlen(ptr)] = ' ';
-                all = g_799c & 8;
+                all = g799cy & 8;
                 if (all)
                     strcpy(g_2aea, "Plus tires !");
                 else
                     g_2aea[0] = 0;
                 sel = i ? 0x1a : 0x19;
-                if ((long)v > g_7eaa.m7eaa) {
+                if ((long)v > a_7eaap.m7eaa) {
                     g_1ac2 = (*(int *)&g_1ac4[62]) = 0xe;
                     g_579f[sel][0].val = 0xd0;
                     g_579f[sel][1].key = 1;
@@ -829,8 +848,8 @@ finishstop:
                     F_13F21(1);
                     return 1;
                 case 2:
-                    F_11540((int)(g_7eaa.m7eb0->weight * 0.4));
-                    g_7eaa.m7eb0 = 0;
+                    F_11540((int)(a_7eaap.m7eb0->weight * 0.4));
+                    a_7eaap.m7eb0 = 0;
                     break;
                 default:
                     return;

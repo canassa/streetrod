@@ -311,14 +311,14 @@ void F_26FE1(int n)
 
     g_6e00 = 0x186;
     g_6dfe = 0;
-    g_6e02 = g_82c6 ? 2 : 3;
+    g_6e02 = bl82c6 ? 2 : 3;
     for (i = 0x17c; i < 0x460; i++) {
         g_terrain2[i] = 0;
         g_terrain4[i] = 0;
         g_terrain3[i] &= 0xf117;
         g_terrain1[i] &= 0x87ff;
         g_terrain0[i] &= 0xe7ff;
-        if ((i + 1) % (g_82c6 * 4 + 4) == 0)
+        if ((i + 1) % (bl82c6 * 4 + 4) == 0)
             g_terrain3[i] |= 8;
     }
     if (n == 100)
@@ -355,16 +355,16 @@ void F_27198(void)
 {
     int cnt, i, j;
 
-    if (g_vid.mode == -2) {
-        g_7678 = &g_2fa3_0000;
-        g_8188 = &g_5dac;
-        g_82b4 = &g_5ddc;
+    if (r_vid.mode == -2) {
+        bm7678 = &g_2fa3_0000;
+        g8188w = &g_5dac;
+        g82b4s = &g_5ddc;
     } else {
-        g_7678 = g_vid.front;
-        g_8188 = g_vid.back;
-        g_82b4 = &g_screens[2];
+        bm7678 = r_vid.front;
+        g8188w = r_vid.back;
+        g82b4s = &g_screens[2];
     }
-    cnt = g_82c6;
+    cnt = bl82c6;
     for (i = 0; i < 0xb4; i++) {
         g_terrain4[i] = 0;
         g_terrain2[i] = 0;
@@ -466,7 +466,7 @@ void F_27198(void)
         g_terrain3[i] = 0;
         g_terrain0[i] = 0;
         g_terrain1[i] = 0;
-        if ((i + 1) % (g_82c6 * 4 + 4) == 0)
+        if ((i + 1) % (bl82c6 * 4 + 4) == 0)
             g_terrain3[i] |= 8;
         if (i % (cnt * 4 + 4) == 0) {
             g_terrain0[i] |= 1;

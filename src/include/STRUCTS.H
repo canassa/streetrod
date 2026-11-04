@@ -161,7 +161,7 @@ struct Obj {
     struct Box box;
 };
 
-/* blit request handed to the g_78a2.. hooks (20 bytes). The first six ints are the same as
+/* blit request handed to the b_78a2.. hooks (20 bytes). The first six ints are the same as
    struct Clip; F_10A00 reads only those. mx, my: origin in the mask bitmap (F_21C0B). */
 struct Blt {
     int w;
@@ -251,7 +251,7 @@ struct Steps {
     struct Seq s[4];
 };
 
-/* one animation frame: 12 bytes, the ring links nxt[0..2] (F_195F3 builds g_77ba[]) */
+/* one animation frame: 12 bytes, the ring links nxt[0..2] (F_195F3 builds g77bal[]) */
 struct Frame {
     struct Bitmap far *pos;
     struct Bitmap *data;
@@ -360,7 +360,7 @@ struct Spec {
     int f8;
 };
 
-/* one car model (10 bytes, g_8df0[], indexed by Car.f2): kind picks its sprites (F_28879); f2, f6, f8
+/* one car model (10 bytes, w_8df0[], indexed by Car.f2): kind picks its sprites (F_28879); f2, f6, f8
    are nonzero when the roof can be chopped and the front and rear bumpers stripped (F_0711A) */
 struct Model {
     signed char kind;
@@ -458,8 +458,8 @@ struct Gear {
     struct Range r[3];
 };
 
-/* drive train state; g_78e0 and g_79e2 are two instances, 0xc2 bytes each. g_78e0.fa and .fc are
-   also declared as the plain ints g_78ea, g_78ec: two modules saw them so (notes on 0x0DA25, 0x2858D) */
+/* drive train state; e_78e0 and g79e2g are two instances, 0xc2 bytes each. e_78e0.fa and .fc are
+   also declared as the plain ints g78ean, bn78ec: two modules saw them so (notes on 0x0DA25, 0x2858D) */
 struct Eng {
     int f0;
     int f2;
@@ -556,18 +556,18 @@ struct Offs {
 struct Panel {
     struct Offs r[5];
 };
-/* 6-byte table entry: id, then a (dx, dy) pair of chars (g_7844) */
-/* 12-byte table entry (g_7682[]), read as bytes by F_17BE6 */
+/* 6-byte table entry: id, then a (dx, dy) pair of chars (g7844n) */
+/* 12-byte table entry (g7682n[]), read as bytes by F_17BE6 */
 struct Spr12 {
     unsigned char b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11;
 };
 
-/* 6-byte table entry (g_818c[]) */
+/* 6-byte table entry (ap818c[]) */
 struct Spr6 {
     unsigned char b0, b1, b2, b3, b4, b5;
 };
 
-/* 10-byte table entry (g_7d8e[]): the bitmap id first */
+/* 10-byte table entry (g7d8ew[]): the bitmap id first */
 struct Ent10 {
     int id;
     int f2, f4, f6, f8;
@@ -585,7 +585,7 @@ struct Step {
     unsigned char delay;
 };
 
-/* 20-byte room table entry (g_70e8): two rectangles as x, y, width, height bytes */
+/* 20-byte room table entry (at70e8): two rectangles as x, y, width, height bytes */
 struct Zone {
     unsigned char x, y, w, h;
     char pad4[4];
@@ -610,7 +610,7 @@ struct Cand {
 
 /* DS:822A, the display state set by F_10BD9: the visible and drawing bitmaps, a scratch bitmap,
    the video mode (front->flags), and per-mode geometry. Members, not plain globals: /Ol never
-   hoists g_vid.mode into a register (0x004F4, 0x10AFD). */
+   hoists r_vid.mode into a register (0x004F4, 0x10AFD). */
 struct Video {
     struct Bitmap far *front;
     struct Bitmap far *back;

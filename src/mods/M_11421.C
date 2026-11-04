@@ -2,6 +2,13 @@
 #include "PROTOS.H"
 #include <stdlib.h>
 
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+void (far *a_78aem)(struct Bitmap far *, int, int, char *);
+struct State7EAA a_7eaap;
+int g824cd;
+int g8258z;
+int ar82c0;
+
 void F_11421(int x, char *s, int w)
 {
     struct Colors saved;
@@ -9,26 +16,26 @@ void F_11421(int x, char *s, int w)
     int wd;
     int ypos;
 
-    saved = g_colors;
-    g_colors = g_style->colors;
+    saved = x_colors;
+    x_colors = bustyle->colors;
     if (w == 0)
-        w = g_8254;
+        w = as8254y;
     if (x < 0) {
-        x = g_8250;
+        x = o_8250;
         left = (x + (w - F_10B48(s)) / 2) & 0xfff8;
     } else
         left = x;
     wd = 320 - x;
-    ypos = g_8252;
+    ypos = au8252x;
     F_120FE(-3);
-    if (g_8256)
-        F_13682(g_vid.back, x - 1, ypos, wd, 8);
-    (*g_78ae)(g_vid.back, left, ypos, s);
-    g_8256 = *s;
+    if (aq8256z)
+        F_13682(r_vid.back, x - 1, ypos, wd, 8);
+    (*a_78aem)(r_vid.back, left, ypos, s);
+    aq8256z = *s;
     F_120FE(-1);
-    if (g_vid.f16)
-        F_1A92A(g_vid.back, g_vid.front, x > 8 ? x - 8 : x, ypos, x + wd, ypos + 7);
-    g_colors = saved;
+    if (r_vid.f16)
+        F_1A92A(r_vid.back, r_vid.front, x > 8 ? x - 8 : x, ypos, x + wd, ypos + 7);
+    x_colors = saved;
 }
 
 void F_11540(int n)
@@ -36,38 +43,38 @@ void F_11540(int n)
     int old;
     char buf[10];
 
-    old = g_8256;
-    g_8256 = 1;
-    F_11421(g_8258, ltoa(g_7eaa.m7eaa += n, buf, 10), 0x30);
-    g_82c0 = g_824c;
-    g_8256 = old;
+    old = aq8256z;
+    aq8256z = 1;
+    F_11421(g8258z, ltoa(a_7eaap.m7eaa += n, buf, 10), 0x30);
+    ar82c0 = g824cd;
+    aq8256z = old;
 }
 
 void F_11593(char *s)
 {
     int saved;
 
-    saved = g_vid.f16;
-    g_colors = g_style->colors;
+    saved = r_vid.f16;
+    x_colors = bustyle->colors;
     F_120FE(-3);
-    F_13682(g_vid.back, 0, g_8252, g_8250 & 0xfff8, 8);
-    (*g_78ae)(g_vid.back, 0, g_8252, s);
-    g_8258 = (g_824c + 7) & 0xfff8;
-    g_vid.f16 = 0;
+    F_13682(r_vid.back, 0, au8252x, o_8250 & 0xfff8, 8);
+    (*a_78aem)(r_vid.back, 0, au8252x, s);
+    g8258z = (g824cd + 7) & 0xfff8;
+    r_vid.f16 = 0;
     if (s[1] != 'G' && s[1] != ' ')
         F_11540(0);
-    g_vid.f16 = saved;
+    r_vid.f16 = saved;
     F_120FE(-1);
-    if (g_vid.f16)
-        F_1A92A(g_vid.back, g_vid.front, 0, g_8252, g_8250, g_8252 + 7);
+    if (r_vid.f16)
+        F_1A92A(r_vid.back, r_vid.front, 0, au8252x, o_8250, au8252x + 7);
 }
 
 void F_11669(int i)
 {
     int saved;
 
-    saved = g_8256;
-    g_8256 = 1;
-    F_11421(g_8258, g_msgs[i], 8);
-    g_8256 = saved;
+    saved = aq8256z;
+    aq8256z = 1;
+    F_11421(g8258z, g_msgs[i], 8);
+    aq8256z = saved;
 }
