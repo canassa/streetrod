@@ -120,6 +120,29 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
     4-byte slot above the `struct Blt` local.
   - `x_trk0`/`x_trk1` (DASH.C, labels in `src/DATA/NEEDLE.ASM`): two unreachable far
     accesses for the two SEG constants in CONST (DS:68E6, DS:68E8) that nothing reads.
+    MSC 5.1 experiments (2026-11-04, `/AM /Oalsi /Gs /FPi`) did not recover a natural
+    replacement. The live code uses only DS:68E4, with offsets 0/1 and 0x106/0x107.
+    Two separate tip/hub arrays require another ES reload: both functions grow from
+    155 to 159 bytes and emit only two needle SEG words, not three. Without `/Oa`
+    they grow to 172 bytes; `/Gt1` is ignored in medium model; `/NDNEEDLE` changes
+    the calling/data assumptions and gives 166 bytes. A `huge` table gives 257
+    bytes and no needle CONST word. A far struct containing both arrays, or a far
+    array of two-byte point structs, preserves live code but still emits just one
+    word when the unreachable accesses are removed. Global, file-static and local-static
+    far pointer initializers emit four-byte `_DATA` pointers, not spare CONST words;
+    unused automatic far pointers retain a four-byte frame slot and immediate SEG
+    stores. Unused scalar reads (also `register`) retain code/frame storage. A
+    discarded read, `sizeof`, an overwritten output store and an overwritten
+    self-subtraction emit no spare word; an empty `if (far_read) ;` retains segment
+    loading code. Both `if (0) far_read` and `if (0 && far_read)` leave unused SEG
+    words, like the existing post-return access. Thus unreachable control flow is
+    a measured explanation, not proof that the original contained `return` there.
+    The original expressions, alias offsets and symbol names remain unknown.
+  - `NeedlePoint`, `NEEDLE_TIP`/`NEEDLE_HUB` and gauge centre constants describe the
+    observed table and coordinate transforms, not recovered original declarations.
+    The tip reaches radius 18 and the hub radius 5; the latter includes axial
+    `(0,5)` and `(5,0)` samples. The point struct preserves the complete object code
+    and the existing CONST fixup order (offsets 2, 0, then 4).
   - `g_6c42` (POPUP.C): four unreferenced `_BSS` bytes after `g_popupLayout`.
   - `g_list[0] = g_list[0];` in the default cases of your_cars (GAME.C) and sg_load
     (SAVEGAME.C): after the menu mn_modal_list returns a positive item, the original loads

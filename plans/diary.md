@@ -1614,3 +1614,64 @@ Verified ./sr headers --check; ./sr check --all (572/572); a fresh rm -rf work f
 ### What I learned
 
 Kinds 3, 7 and 8 share one-frame rendering but differ in page/background handling: 3 draws on the back page and copies the full page forward; 7 uses the current screen beneath the car (no backdrop mask on EGA); 8 composites against the saved backdrop and refreshes only the car box. Their garage and advertisement callers confirm the distinction. Kind 4 saves the backdrop and scene-specific carhop/pump setup before the same decelerating arrival as kind 1. The pass-by path changes the kind to 2 and reuses the frames for departure. Kind 5 has neither a caller nor a distinguishing branch, so no meaning was invented for it. The shared enum and enum-typed parameters preserve all original machine bytes without changing any names subject to the communal, static or external-symbol budgets.
+
+## 2026-11-04 22:31 CET: Needle table and unused far segment constants
+
+### What I did
+
+Read DASH.C, its needle callers, NEEDLE.H/ASM, the original da_speedo_pts and
+da_tach_pts disassemblies, DS:68E0..68EF, RECONSTRUCTION.md, and the MSC recipe
+book. Worked on branch needle in ~/wt/needle only. Compiled 25 small probe jobs
+and 10 whole-DASH.C jobs with the real MSC 5.1 using tools.sr.dosbox.Job and
+compile_all (emu2). Inspected COD listings and OMF CONST fixups, including their
+record order; compared function sizes and non-fixup bytes to the current module.
+The ignored work/needle scripts and outputs were removed for the required clean
+build; the reproducible forms and results are recorded here and in the recipe book.
+
+Kept x_trk0/x_trk1 and both post-return statements: none of the natural candidates
+reproduced the complete code and CONST layout. Added NeedlePoint with signed x/y,
+NEEDLE_TIP/NEEDLE_HUB, NEEDLE_MAX_POS, and gauge centre constants; changed only the
+two point functions' coordinate expressions. Corrected the assembly's track 0/1
+wording to needle tip/hub. These names describe observed roles; no original spelling
+is claimed, and neither provisional alias has been given an invented role.
+
+Validation: ./sr headers --check; ./sr check DASH.C (whole module match);
+./sr check --all (572/572); rm -rf work && ./sr build (96/96 objects pass,
+Packed EXE vs orig/SR.EXE: IDENTICAL); ./sr dgroup check and ./sr dgroup order;
+nix-shell shell.nix --run "python3 -m unittest discover -s tests" (68 tests, OK).
+
+### What I learned
+
+- The live functions share DS:68E4 for every coordinate read, with offsets
+  0/1/0x106/0x107. Their original size is 155 bytes each. The existing needle
+  CONST fixups are recorded at offsets 2, 0, then 4, targeting x_trk0,
+  g_needlePts, x_trk1 respectively. Removing the dead accesses preserves live
+  instructions but drops the last two words; it cannot preserve the EXE.
+- Separate far tip/hub arrays under /AM /Oalsi /Gs /FPi add an ES reload before
+  the hub read (159 bytes) and give two needle words, both used. Removing /Oa
+  gives 172 bytes. /Gt1 warns that the threshold is ignored in this model and
+  leaves the split result unchanged. /NDNEEDLE gives 166 bytes and different
+  DS/SS assumptions. Merely linking both symbols in one segment does not let
+  MSC equate their segment constants.
+- A far record holding both coordinate arrays and a far array of two-byte point
+  structs preserve the live 155-byte code but only produce one needle word.
+  The point struct with the existing dead references preserves all CONST fixup
+  positions/order and the entire final packed EXE. A huge array instead gives
+  257-byte functions with segment normalization and no needle CONST word.
+- File-global, file-static and local-static `char far *p = (char far *)b`
+  initializers produce four-byte DD pointers in _DATA. Automatic `char far *p`
+  assigned or initialized from b[i], including register, retains a four-byte
+  slot and immediate segment store, not an unused CONST word. Unused int reads
+  from b[i][0], including register, retain frame/code too.
+- An unused declaration, `(void)b[i][0]`, and `sizeof(b[i][0])` leave no extra
+  word. With `*x=b[i][0]; *x=a[i][0]; *y=a[i][1];`, MSC removes the first store
+  and b's SEG word; overwriting `*x=b[i][0]-b[i][0]` does the same. An empty
+  `if (b[i][0]) ;` leaves segment/index instructions, so it does not match.
+- Both `return; *x=b[i][0];` and `if (0) *x=b[i][0];` retain b's SEG word with
+  no live instructions. `if (0 && b[i][0]) *x=1;` does too. This supports a
+  compiler-generated remnant of unreachable control flow, but cannot recover
+  the original statements, offsets, or symbol names. Do not turn that mechanism
+  into a confident claim that the original had a post-return statement.
+- The hub table includes radius-5 axis samples, despite the task's approximate
+  3-to-4-pixel description. Both ends use positive-up coordinates, converted to
+  screen coordinates around (196,42) or (145,42), with the existing DASH_Y offset.
