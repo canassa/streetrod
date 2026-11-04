@@ -745,4 +745,9 @@ struct PicturePlacement {
     int maxHeight;
 };
 
+struct ViewPages {
+    int draw;
+    int show;
+};
+
 #endif

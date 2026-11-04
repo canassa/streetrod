@@ -225,6 +225,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **ArchiveSelection** (`g_archive`, DS:6C68..6C81): open_lib and the disk loading paths select the drive, count, handles and archive name together, with the path buffer used by the same archive context. Separate globals also match; this grouping is a natural reconstruction choice.
 
+- **ViewPages** (`g_viewPages`, DS:5E3E..5E41): flip_page swaps draw and show page indices together and select_draw_page consumes the pair. The preceding unused word stays separate. Separate globals also match; this grouping is a natural reconstruction choice.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only
