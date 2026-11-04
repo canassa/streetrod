@@ -52,10 +52,7 @@ struct Lims g_boxSpotHitData;
 struct Hot *g_curHoverPointer;
 int g_cursHoverCodeVal;
 int g_wRivBanner;
-int g_animationPriCallback;
-int g_8ef8;
-int aj8efax;
-int bw8efc;
+struct TimerPriorities g_videoPrioritiesValues; /* DS:8EF6 */
 
 int g_timerFirst = -1;   /* DS:0566 */
 int g_timerHead = -1;   /* DS:0568 */
@@ -277,10 +274,10 @@ void sys_init(void)
 
     sumx = 0;
     sumy = 0;
-    g_animationPriCallback = 10;
-    g_8ef8 = 2;
-    aj8efax = 5;
-    bw8efc = 5;
+    g_videoPrioritiesValues.animation = 10;
+    g_videoPrioritiesValues.unused2 = 2;
+    g_videoPrioritiesValues.unused4 = 5;
+    g_videoPrioritiesValues.unused6 = 5;
     outp(GAME_PORT, 0);
     outp(GAME_PORT, 0);
     first = inp(GAME_PORT);
@@ -628,7 +625,7 @@ void sys_timer_anim(int fc, int delay)
 {
     int n;
 
-    n = sys_timer_add(delay, g_animationPriCallback);
+    n = sys_timer_add(delay, g_videoPrioritiesValues.animation);
     g_timers[n].action = 1;
     g_timers[n].argument = fc;
 }

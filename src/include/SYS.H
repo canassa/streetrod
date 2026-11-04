@@ -4,6 +4,8 @@
 #define SYS_H
 #include "STRUCTS.H"
 
+extern struct TimerPriorities g_videoPrioritiesValues; /* DS:8EF6 */
+
 extern int g_timerFirst;                                /* DS:0566 */
 extern int g_timerHead;                                 /* DS:0568 */
 extern int g_timerFree;                                 /* DS:056A */
@@ -75,10 +77,6 @@ extern struct Lims g_boxSpotHitData;                             /* DS:8B90 */
 extern struct Hot *g_curHoverPointer;                             /* DS:8BA8 */
 extern int g_cursHoverCodeVal;                                      /* DS:8BAA */
 extern int g_wRivBanner;                                     /* DS:8BC0 */
-extern int g_animationPriCallback;                                      /* DS:8EF6 */
-extern int g_8ef8;                                      /* DS:8EF8 */
-extern int aj8efax;                                     /* DS:8EFA */
-extern int bw8efc;                                      /* DS:8EFC */
 void sys_hover_reset(void);                             /* 0x00D78 */
 void sys_music_pause(void);                             /* 0x00D99 */
 void sys_music_resume(void);                            /* 0x00DD8 */
