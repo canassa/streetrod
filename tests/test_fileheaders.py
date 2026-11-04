@@ -85,3 +85,30 @@ class MacroHeaderTests(unittest.TestCase):
                     patch.object(fileheaders, 'owners_layout', return_value=[('OWNED', [owned])]), \
                     patch.object(source, 'headers', return_value=dict(globals=[dict(name='missing', header='OWNED')], fardata=[], functions=[])):
                 self.assertEqual(fileheaders.generate(), ['missing: declared in OWNED.H, but OWNED.C does not define it'])
+
+
+class EnumHeaderTests(unittest.TestCase):
+    def test_enum_header_follows_tag_and_member_usage(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / 'STRUCTS.H').write_text('enum Common { COMMON = 0 };\n')
+            (root / 'OWNED.H').write_text('enum Mode { SHOW = 1, HIDE, LAST = (1 << 3) };\n')
+            owned = root / 'OWNED.C'
+            caller = root / 'CALLER.C'
+            owned.write_text('#include "STRUCTS.H"\n')
+            caller.write_text('#include "STRUCTS.H"\nenum Mode value = HIDE;\nint common = COMMON;\n')
+            with patch.object(config, 'SRC', root), \
+                    patch.object(fileheaders, 'owners_layout', return_value=[('OWNED', [owned]), ('CALLER', [caller])]), \
+                    patch.object(source, 'headers', return_value=dict(globals=[], fardata=[], functions=[])):
+                self.assertEqual(fileheaders.generate(), [])
+                self.assertIn('#include "OWNED.H"', caller.read_text())
+                self.assertEqual(caller.read_text().count('#include \"STRUCTS.H\"'), 1)
+                before = caller.read_bytes()
+                self.assertEqual(fileheaders.generate(), [])
+                self.assertEqual(caller.read_bytes(), before)
+                caller.write_text('#include "STRUCTS.H"\nint value = LAST;\n')
+                self.assertEqual(fileheaders.generate(), [])
+                self.assertIn('#include "OWNED.H"', caller.read_text())
+                caller.write_text('#include "STRUCTS.H"\n/* Mode SHOW HIDE LAST */\n')
+                self.assertEqual(fileheaders.generate(), [])
+                self.assertNotIn('#include "OWNED.H"', caller.read_text())

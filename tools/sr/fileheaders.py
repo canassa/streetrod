@@ -85,15 +85,20 @@ def generate():
     problems: a name declared by two headers, or by a header whose file does not define it."""
     from . import source
     decls = {}
-    header_macros = set()
+    header_constants = set()
     for kind in ('globals', 'fardata', 'functions'):
         for d in source.headers()[kind]:
             decls.setdefault(d['name'], []).append(d['header'])
     for path in config.source_files('.H'):
         macros = re.findall(r'^#[ \t]*define[ \t]+([A-Za-z_]\w*)(?:\([^\n)]*\))?[ \t]+[^\s]',
                             _strip(path.read_text(encoding='latin-1')), re.M)
-        for name in macros:
-            header_macros.add(name)
+        enums = []
+        for tag, body in re.findall(r'\benum\s*(\w+)?\s*\{([^}]+)\}', _strip(path.read_text(encoding='latin-1')), re.S):
+            if tag:
+                enums.append(tag)
+            enums.extend(re.findall(r'(?:^|,)\s*([A-Za-z_]\w*)', body))
+        for name in macros + enums:
+            header_constants.add(name)
             decls.setdefault(name, []).append(path.stem.upper())
     files = owners_layout()
     stems = {stem for stem, _ in files}
@@ -108,7 +113,7 @@ def generate():
     for stem, srcs in files:
         mine = {n for n, h in owner.items() if h == stem}
         defined = set().union(*(_defines(p, mine) for p in srcs))
-        for n in sorted(mine - defined - header_macros):
+        for n in sorted(mine - defined - header_constants):
             problems.append(f'{n}: declared in {stem}.H, but {", ".join(p.name for p in srcs)} does not define it')
     for stem, srcs in files:
         for p in srcs:
@@ -124,7 +129,7 @@ def _rewrite_includes(path, stem, owner, made):
     The block is the run of #include lines at the top of the file."""
     raw = path.read_text(encoding='latin-1')
     ids = set(re.findall(r'\b[A-Za-z_]\w*\b', _strip(raw)))
-    need = sorted({owner[i] for i in ids if i in owner} & made - {stem})
+    need = sorted({owner[i] for i in ids if i in owner} & made - {stem, 'STRUCTS'})
     lines = raw.split('\n')
     at = [i for i, ln in enumerate(lines) if ln.startswith('#include')]
     if not at or not any(re.match(r'#include\s+"STRUCTS\.H"', lines[i]) for i in at):

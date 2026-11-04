@@ -41,8 +41,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   Which objects share a segment is recovered; the name is the segment's paragraph.
 - **Assembler labels.** `PROC` names are the functions' names. Local labels are made up
   (`done`, `next`, `row`, ...) and get a number where one file uses the same name twice.
-  Unnamed strings in assembler data are `S_<offset>`, KEYMAPS.ASM's key-map lists
-  `K_<offset>`.
+  Unnamed strings in assembler data are `S_<offset>`; unproven key-map lists
+  remain `K_<offset>`, while proven screens have descriptive `K_` labels.
 - **Folders.** SYS, UI, GAME, VIDEO, CGA, EGA, TANDY, HERC, INPUT, SOUND and DATA
   are the user-decided organization, not recovered original directories. Same-name headers
   live beside their sources; shared headers live in SYS. SRENV.BAT supplies INCLUDE for
@@ -293,8 +293,9 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   (three fixed menu records, then six records of another list) and `g_boltHot` are Hot
   records too; insert_hot sorts them by (x1, y1).
 - **KEYMAPS.ASM's key maps.** 42 referenced lists of (scan code, value) pairs, each ended
-  by a 0 byte, one per screen (`g_keyMaps[1..42]`; slot 0 holds the count). They are local labels; KEYMAPS.H only knows
-  the first, `g_keyMapData`, as the 543-byte area (no C code names it; the DGROUP model needs
+  by a 0 byte (`g_keyMaps[1..42]`; slot 0 holds the count), for screens plus the
+  shared music binding. They are local labels; KEYMAPS.H exports only the first
+  as a data symbol, `g_keyMapData`, for the 543-byte area (no C code names it; the DGROUP model needs
   its extent). DS:5727 is a 0 byte between two lists that no pointer names, written as an
   unreferenced empty list.
   The Hercules code never references the maps, and the maps contain only near DGROUP
@@ -304,6 +305,40 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   reproduces the same executable with ordinary `.MODEL MEDIUM` and `.DATA` directives;
   its empty default code segment changes no layout. One file versus two is undecidable
   from the EXE. The split and the order of these two objects are reconstruction choices.
+  The `SC_` hardware constants in PC.H/PC.INC, screen enum in KEYMAPS.H,
+  semantic value aliases and KEY/ITEM/ITEMS/STICKER macros are readability
+  reconstructions, not recovered original spelling or macro design. MASM 5.1
+  assembles the LOCAL/REPT/item arithmetic unchanged into the original bytes.
+  ITEM emits `0xCE + n`; ITEMS advances both scan and item, and STICKER emits
+  `0xB0 - n`. Arithmetic is emitted directly by DB: an unbracketed expression
+  passed to a nested MASM macro is split at spaces.
+  PC.H/PC.INC were chosen instead of another standalone header because scan codes
+  are hardware facts (CLAUDE.md). KEYMAPS.H owns the screen and byte-value enums;
+  byte fields stay byte-sized, while sy_keymap_set, g_keyGroup and the demo's
+  lastGroup use the int-sized screen enum. The header tool follows enum tags and
+  members as well as macros when choosing source includes.
+  Evidence for screen names is each menu caller, its associated Hot records and
+  g_txt strings, and the decoded newspaper, BOBS and sticker pictures.
+  Lists 17 (K_5688, empty) and 40 (K_578c) remain unnamed; 42 is the music binding
+  installed after every screen by sy_keymap_set, rather than a screen itself.
+  kg_key returns char, so sy_wait_input sign-extends negative byte values and
+  adds 0x32. Thus CF..DE select items 1..16; CB accepts the highlighted item
+  (the caller obtains it through mn_sel), and CA cancels in the load/save/parts
+  lists. These codes are context-dependent: CB is also Save Game, CC is Old Game
+  or Sell it, and CD is New Game or Switch it, so screen aliases carry those
+  meanings rather than assigning a universal action to CC/CD. The race map's
+  CC/CD remain numeric return-code names because their actions are unproven.
+  B4 dismisses the general message, B5 is See it, B6 Offer, B7 Forget it,
+  B8 Never mind, B9 No, BA OK, and A6 toggles music in sy_wait_input.
+  C4/C7 are scroll-down/up codes in mn_list, and advance/retard timing in the
+  timing screen. Sticker bytes AF..A8 decode to -31..-38 and select sticker
+  numbers 1..8 through ga_stickers' `-30 - key` expression.
+  The first spare-parts entry remains first for GAME.C's C/S Change/Sell patch;
+  the first two repair entries remain first for RACE.C's Fix/Junk affordability
+  patch. BOBS.C's jail setup changes its first G binding to Q and restores it.
+  The newspaper's third item stays numeric: the map returns 3 for G/Esc, whereas
+  the corresponding garage Hot record returns 4. No inferred equivalence is
+  encoded in a name.
 - **HOTSPOT.C's filler communals** (`char fz79a8[2]` and the others after the
   "Uninitialized storage" comment). No code references these blocks. Their types and sizes
   are invented to fill the gaps between referenced communals, and their names fit LINK's

@@ -9,6 +9,7 @@
 #include "DRAW.H"
 #include "EDIT.H"
 #include "HOTSPOT.H"
+#include "KEYMAPS.H"
 #include "MAIN.H"
 #include "MARKS.H"
 #include "MESSAGES.H"
@@ -558,7 +559,7 @@ restore:
             if (kind == 5 && !strcmp(g_blankName, bufpl))
                 strcpy(bufpl, "\0");
             x_colors = bustyle->pal[hotn->palIndex];
-            mn_push(0x18);
+            mn_push(KM_MESSAGE);
             ed_line(hotn->x1, hotn->y1, bufpl, n9);
             mn_pop(1);
             continue;

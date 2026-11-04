@@ -11,6 +11,7 @@
 #include "EDIT.H"
 #include "GAME.H"
 #include "GARAGE.H"
+#include "KEYMAPS.H"
 #include "MAIN.H"
 #include "MEM.H"
 #include "MENU.H"
@@ -76,7 +77,7 @@ int fa_protect_check(void)
     gz8249 = 1;
     r_vid.copyToFront = 1;
     g_protectCycle = 1;
-    e = mn_wait(0x27);
+    e = mn_wait(KM_MANUAL_COLORS);
     g_protectCycle = 0;
     sc_status_text(-1, "", 0);
     if (g_manual[d].color != e)
@@ -122,7 +123,7 @@ int fa_end_menu(void)
     x_colors.fill = c21;
     cu_ctl(CURSOR_SHOW_NOW);
     (*g_videoOps.show)();
-    key = mn_wait(41);
+    key = mn_wait(KM_END_MENU);
     cu_ctl(CURSOR_HIDE_NOW);
     switch (key) {
     case -2:

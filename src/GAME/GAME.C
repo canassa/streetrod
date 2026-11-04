@@ -102,7 +102,7 @@ void gm_message(int n)
     long saved;
 
     saved = g_waitUntil;
-    mn_push(24);
+    mn_push(KM_MESSAGE);
     pu_open(n);
     gm_pause(g_msgTicks);
     pu_close();
@@ -150,7 +150,7 @@ static int near read_paper(void)
     if (r_vid.copyToFront)
         bm_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), (SCREEN_BODY_HEIGHT - 1));
     cu_ctl(1);
-    return mn_wait(7);
+    return mn_wait(KM_NEWSPAPER);
 }
 
 /* gm_new_part @ 0000:3C1B (linear 0x03C1B, 35 bytes) */
@@ -227,9 +227,9 @@ static void near sell_parts(void)
         }
         g_list[0] = nl;
         strcpy(g_msgSellChange, "Sell it");
-        g_keyMaps[4]->key = 0x1f;
-        sel = mn_modal_list(4, sel <= g_list[0] ? sel : g_list[0], 0, g_list, lbl, 0);
-        g_keyMaps[4]->key = 0x2e;
+        g_keyMaps[KM_SPARE_PARTS]->key = SC_S;
+        sel = mn_modal_list(KM_SPARE_PARTS, sel <= g_list[0] ? sel : g_list[0], 0, g_list, lbl, 0);
+        g_keyMaps[KM_SPARE_PARTS]->key = SC_C;
         strcpy(g_msgSellChange, "Change");
         switch ((int)sel) {
         case -4:
@@ -270,7 +270,7 @@ static void near sell_parts(void)
         } else
             msg5 = 0x1021;
         pu_open_at(msg5, -1, -1);
-        nl = mn_modal(16);
+        nl = mn_modal(KM_SELL_PART_OFFER);
         pu_close();
         if (nl == -0x15)
             continue;
@@ -499,7 +499,7 @@ static void near buy_from_ads(int tab)
         sprintf(g_buyPrice, "$%-3d ?", price6);
         color = -1;
         for (;;) {
-            n = mn_wait(9);
+            n = mn_wait(KM_BUY);
             if (n == -20) {
                 if (g_demo && (long)price6 > a_7eaap.money)
                     a_7eaap.money += 1999;
@@ -554,7 +554,7 @@ static void near buy_from_ads(int tab)
             sc_text((SCREEN_WIDTH - da_text_width(g_offerName)) / 2, 0x88, g_offerName);
             cu_ctl(CURSOR_SHOW_NOW);
             g_input.any = 1;
-            mn_wait(0x18);
+            mn_wait(KM_MESSAGE);
             g_input.any = 0;
             pu_show(bm1, 0, 0x40);
             ma_clear();
@@ -583,7 +583,7 @@ static int near counter_offer(unsigned *price)
             *price = 5;
     sprintf(g_offerText, "How about $%-d ?", *price);
     pu_open_at(0xff7, -1, -1);
-    key = mn_wait(0xd);
+    key = mn_wait(KM_COUNTER_OFFER);
     pu_close();
     return key;
 }
@@ -638,7 +638,7 @@ static int near your_cars(void)
             g_list[n] = g7d86n[(tbl[n] = cur)->specIndex].nameOffset;
         }
         g_list[0] = n;
-        switch (item = mn_modal_list(0xb, (n > item) ? item : n, 0, g_list, 0, 0)) {
+        switch (item = mn_modal_list(KM_YOUR_CARS, (n > item) ? item : n, 0, g_list, 0, 0)) {
         case 0x3ea:
             gm_message(ticks ? 0xee9 : 0xefa);
         case -3:
@@ -669,8 +669,8 @@ static int near your_cars(void)
         offer = price = (int)((rn_int(20) + 75.0) * cur->value / 100.0);
         strcpy(g_offerName, g_desc + g7d86n[cur->specIndex].nameOffset);
         g_offerAmount[0] = 0;
-        pict = mn_grab(12, &rx, &ye, ARENA_LOW_STACK);
-        mn_push(12);
+        pict = mn_grab(KM_SELL_CAR_OFFER, &rx, &ye, ARENA_LOW_STACK);
+        mn_push(KM_SELL_CAR_OFFER);
         do {
             if ((n = ed_spot_number(&cash, g_offerAmount)) == -22)
                 goto tail;
@@ -730,7 +730,7 @@ static int near your_cars(void)
                     g_tirePics[g_parts[a_7eaap.currentCar->tires->idx].variant]);
             mn_pop(1);
             ga_clear_name();
-            mn_push(10);
+            mn_push(KM_GARAGE);
             cu_ctl(CURSOR_SHOW_NOW);
             gm_scrap_car(a_7eaap.currentCar, 0);
             a_7eaap.currentCar = 0;

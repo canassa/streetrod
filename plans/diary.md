@@ -1405,3 +1405,34 @@ The first verbose rename batch crossed GARAGE.C's coupled symbol budget: the tra
 
 ### What I learned
 - The naming agent's evidence for a sound helper came from one caller. Name sound effects only after looking at every caller.
+
+## 2026-11-04 20:14 CET: readable screen key maps
+
+### What I did
+
+Rewrote KEYMAPS.ASM as named screen lists and individual key/action bindings,
+with MASM 5.1 KEY, ITEM, REPT-based ITEMS and STICKER macros. Added shared SC_
+hardware constants to PC.H/PC.INC, screen and byte-value enums to KEYMAPS.H,
+and replaced proven C menu indices and runtime scan-code patches. Kept the
+spare-parts, repair and BOBS bindings in the positions their runtime edits require.
+Lists 17 and 40 and the race map's unknown actions retain placeholders.
+Extended sr headers to follow enum tags/members, with a regression test that also
+prevents duplicating STRUCTS.H. Recorded the evidence and reconstruction choices
+in docs/RECONSTRUCTION.md and the macro/header lessons in the sr-cli skill.
+
+All required gates passed on the final source: sr headers --check; sr check --all
+572/572; rm -rf work/build* followed by sr build (Packed EXE IDENTICAL);
+sr dgroup check and order; 63 unittest tests; dosbox.sh --make IDENTICAL.
+Also inspected sr show sy_keymap_set and decoded the relevant picture resources.
+
+### What I learned
+
+kg_key returns char: sy_wait_input sign-extends negative key bytes and adds 0x32.
+The same decoded code has different actions by screen, so CC/CD cannot honestly
+have one global semantic action name. The newspaper's G/Esc binding returns 3,
+while its garage Hot record returns 4; keep that discrepancy visible.
+MASM 5.1 accepts LOCAL assignment symbols and REPT, but an unbracketed arithmetic
+expression passed to a nested macro is split at spaces. Direct DB arithmetic
+inside ITEM/STICKER preserves it. Function matching alone does not gate this
+data-only object; the packed build caught the lost arithmetic before completion.
+The 42nd map is the shared M/music binding installed after every screen.

@@ -7,6 +7,7 @@
 #include "DISK.H"
 #include "DRAW.H"
 #include "HOTSPOT.H"
+#include "KEYMAPS.H"
 #include "MAIN.H"
 #include "MARKS.H"
 #include "MENU.H"
@@ -60,7 +61,7 @@ void av_open(int *list, int base)
     g_adPacket.h = SCREEN_BODY_HEIGHT;
     g_adPacket.sx = g_adPacket.sy = g_adPacket.dx = g_adPacket.dy = g_adPacket.fc = 0;
     g_adRedraw = 1;
-    mn_push(8);
+    mn_push(KM_ADVERTS);
     cu_ctl(CURSOR_SHOW);
 }
 

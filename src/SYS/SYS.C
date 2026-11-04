@@ -34,7 +34,7 @@
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct CursorDraw g_drawnCursor; /* DS:6C46 */
-static int g_keyGroup;                         /* DS:6C4C */
+static enum KeyMapId g_keyGroup;                         /* DS:6C4C */
 static char g_6c4e;                        /* DS:6C4E */
 static int g_demoChoice;                        /* DS:6C50 */
 static struct Vibrato g_vibrato; /* DS:6C52 */
@@ -324,7 +324,7 @@ void sy_init(void)
 
 /* sy_keymap_set @ 0000:12DE (linear 0x012DE, 179 bytes) */
 
-void sy_keymap_set(int n)
+void sy_keymap_set(enum KeyMapId n)
 {
     struct KeyMap *p;
     int num;
@@ -345,7 +345,7 @@ void sy_keymap_set(int n)
         q->val = g_scanMap[q->key = c = p->key];
         g_scanMap[c] = p->val;
     }
-    p = g_keyMaps[42];
+    p = g_keyMaps[KM_MUSIC];
     q->val = g_scanMap[q->key = c = p->key];
     g_scanMap[c] = p->val;
     q[1].key = 0;
@@ -409,7 +409,7 @@ int sy_wait_input(int ticks)
     res = 0;
     j = 0;
     bit = 0;
-    if (g_keyGroup == 0x16) {
+    if (g_keyGroup == KM_RACE_TYPE) {
         g_statusLine.shown = 1;
         sc_status_text(-1, "", 0);
         g_statusLine.shown = 1;
@@ -519,7 +519,7 @@ int sy_wait_input(int ticks)
                 res = g_cursHoverCodeVal;
                 if (i = mn_hit(x, y)) {
                     if (res != i) {
-                        if (g_keyGroup == 0x25) {
+                        if (g_keyGroup == KM_BOBS) {
                             g_statusLine.shown = 1;
                             sc_status_text(-1, "", 0);
                             g_statusLine.shown = 1;
@@ -533,7 +533,7 @@ int sy_wait_input(int ticks)
                         sc_status_text(-1, "", 0);
                         bit = 0;
                     }
-                    if (g_keyGroup == 0x25)
+                    if (g_keyGroup == KM_BOBS)
                         sc_status_text(g_bannerX, g_strOpp, g_wRivBanner);
                     else if (res)
                         sc_status_text(-1, "", 0);
@@ -730,7 +730,7 @@ void sy_demo_step(void)
     int step;
     int cy;
 
-    if (g_keyGroup == 2)
+    if (g_keyGroup == KM_START_GAME)
         rn_int(-1);
     if (g_demoControl.keyDown) {
         g_demoKey |= 0x80;
@@ -739,92 +739,92 @@ void sy_demo_step(void)
         return;
     }
     if (!g_demoControl.moving) {
-        if (g_demoControl.autoShifts && g_keyGroup == 10) {
+        if (g_demoControl.autoShifts && g_keyGroup == KM_GARAGE) {
             g_demoControl.autoShifts = 0;
             g_demoControl.count = 15;
         }
         num = (int)strlen((char *)g_keyMaps[g_keyGroup]) / 2;
         k = 0;
         switch (g_keyGroup) {
-        case 14:
-        case 18:
-        case 19:
-        case 22:
-        case 36:
+        case KM_PAINT:
+        case KM_DRAG_WAGER:
+        case KM_ROAD_WAGER:
+        case KM_RACE_TYPE:
+        case KM_CALL_RIVAL:
             num -= 2;
             break;
-        case 11:
+        case KM_YOUR_CARS:
             num -= 2;
-        case 37:
+        case KM_BOBS:
             k = 1;
             break;
-        case 23:
+        case KM_GAS_STATION:
             g_demoControl.count = 4;
             break;
-        case 8:
+        case KM_ADVERTS:
             k = 4;
             break;
-        case 28:
-        case 35:
+        case KM_TIMING:
+        case KM_STICKERS:
             k = 2;
             break;
-        case 9:
+        case KM_BUY:
             if (a_7eaap.currentCar)
                 break;
-        case 13:
+        case KM_COUNTER_OFFER:
             num--;
             break;
         }
-        if (g_keyGroup == 10 && g_demoControl.lastGroup != 10) {
+        if (g_keyGroup == KM_GARAGE && g_demoControl.lastGroup != KM_GARAGE) {
             g_demoChoice = num - g_demoControl.count++ - 1;
             g_demoControl.count = g_demoControl.count % num;
         } else
             g_demoChoice = rn_int(num + k);
         switch (g_keyGroup) {
-        case 21:
+        case KM_ENGINE:
             if ((g_demoChoice >= 0 && g_demoChoice < 9) || g_demoChoice == 12)
                 g_demoChoice = 9;
-            if (g_demoControl.lastGroup == 28)
+            if (g_demoControl.lastGroup == KM_TIMING)
                 g_demoChoice = 11;
             break;
-        case 20:
+        case KM_TRANSMISSION:
             g_demoChoice = g_demoScript[g_demoScriptPos++];
             if (g_demoChoice == 2)
                 g_demoScriptPos = 0;
             break;
-        case 23:
+        case KM_GAS_STATION:
             if (g_demoChoice)
                 break;
-        case 2:
+        case KM_START_GAME:
             g_demoChoice = 1;
             break;
-        case 4:
+        case KM_SPARE_PARTS:
             if (g_demoControl.count < 11)
                 g_demoChoice = 0;
             else
                 g_demoChoice = num - 1;
             break;
-        case 34:
-        case 41:
+        case KM_BODY_CHANGE:
+        case KM_END_MENU:
             g_demoChoice = 0;
             break;
-        case 36:
-            if (g_demoControl.lastGroup == 36)
+        case KM_CALL_RIVAL:
+            if (g_demoControl.lastGroup == KM_CALL_RIVAL)
                 g_demoChoice = 0;
             break;
-        case 11:
-            if (g_demoControl.lastGroup == 11)
+        case KM_YOUR_CARS:
+            if (g_demoControl.lastGroup == KM_YOUR_CARS)
                 g_demoChoice = 10;
             break;
-        case 27:
+        case KM_SAVE_RESTART_QUIT:
             g_demoChoice = 5;
             break;
-        case 7:
+        case KM_NEWSPAPER:
             if (a_7eaap.currentCar == 0)
                 g_demoChoice = 0;
             break;
         }
-        if (g_keyGroup == 8)
+        if (g_keyGroup == KM_ADVERTS)
             g_demoTargetX = 160;
         if (g_demoChoice >= 0) {
             if (num > g_demoChoice) {
@@ -837,7 +837,7 @@ void sy_demo_step(void)
                     cx = (g_hots[step].x1 + g_hots[step].x2) / 2;
                     if (cx)
                         g_demoTargetX = cx;
-                    if (g_keyGroup == 8)
+                    if (g_keyGroup == KM_ADVERTS)
                         g_demoTargetX = 160;
                     cy = (g_hots[step].y1 + g_hots[step].y2) / 2;
                     if (cy)
@@ -845,43 +845,43 @@ void sy_demo_step(void)
                 }
             } else {
                 if (num == g_demoChoice)
-                    g_demoKey = 0x1c;
+                    g_demoKey = SC_ENTER;
                 if (num + 1 == g_demoChoice)
-                    g_demoKey = 0x39;
+                    g_demoKey = SC_SPACE;
                 if (num + 2 == g_demoChoice)
-                    g_demoKey = 0x48;
+                    g_demoKey = SC_UP;
                 if (num + 3 == g_demoChoice)
-                    g_demoKey = 0x50;
+                    g_demoKey = SC_DOWN;
                 if (num + 4 == g_demoChoice)
-                    g_demoKey = 0x4b;
+                    g_demoKey = SC_LEFT;
                 if (num + 5 == g_demoChoice)
-                    g_demoKey = 0x4d;
+                    g_demoKey = SC_RIGHT;
             }
         } else
-            g_demoKey = 0x4c;
+            g_demoKey = SC_CENTER;
     }
     if ((g_demoTargetX && g_cursorX != g_demoTargetX) || (g_demoTargetY && g_cursorY != g_demoTargetY)) {
         g_demoControl.moving = 1;
         return;
     }
     g_demoControl.moving = 0;
-    if (g_keyGroup == 0x25 && g_demoControl.autoShifts < 10 && g_demoKey == 0x22)
-        g_demoKey = 0x1c;
-    if (g_keyGroup == 10 && g_demoControl.lastGroup == 10) {
-        g_demoKey = 0x1c;
-        g_demoControl.lastGroup = 0;
+    if (g_keyGroup == KM_BOBS && g_demoControl.autoShifts < 10 && g_demoKey == SC_G)
+        g_demoKey = SC_ENTER;
+    if (g_keyGroup == KM_GARAGE && g_demoControl.lastGroup == KM_GARAGE) {
+        g_demoKey = SC_ENTER;
+        g_demoControl.lastGroup = KM_NONE;
     } else
         g_demoControl.lastGroup = g_keyGroup;
-    if (a_7eaap.spareParts == 0 && g_keyGroup == 7)
+    if (a_7eaap.spareParts == 0 && g_keyGroup == KM_NEWSPAPER)
         gm_add_part(0x2a, g_parts[42].value);
     if (a_7eaap.currentCar == 0) {
-        if (g_keyGroup == 10)
-            g_demoKey = 0x31;
-        if (g_keyGroup == 8 && (g_demoKey == 1 || g_demoKey == 0x22 || g_demoKey == 0x19))
-            g_demoKey = 0x39;
+        if (g_keyGroup == KM_GARAGE)
+            g_demoKey = SC_N;
+        if (g_keyGroup == KM_ADVERTS && (g_demoKey == SC_ESC || g_demoKey == SC_G || g_demoKey == SC_P))
+            g_demoKey = SC_SPACE;
     }
-    if (g_demoKey == 0x46)
-        g_demoKey = 0x1c;
+    if (g_demoKey == SC_SCROLL_LOCK)
+        g_demoKey = SC_ENTER;
     g_demoControl.keyDown = 1;
     jy_demo_key();
 }

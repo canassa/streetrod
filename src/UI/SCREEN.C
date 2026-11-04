@@ -13,6 +13,7 @@
 #include "DRAW.H"
 #include "HOTSPOT.H"
 #include "KBDGET.H"
+#include "KEYMAPS.H"
 #include "MAIN.H"
 #include "MARKS.H"
 #include "MENU.H"
@@ -145,7 +146,7 @@ void sc_fill_rect(int x, int y, int w, int h, char color)
 void sc_msg_box(char *s)
 {
     strcpy(g_boxText, s);
-    mn_modal(0x1d);
+    mn_modal(KM_MESSAGE_BOX);
 }
 
 char g_promptPalette[18] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14, 0, 0};   /* DS:04AC */
@@ -187,7 +188,7 @@ void sc_wait_msg(char *msg)
         sy_reset_queues();
         back = r_vid.back;
         r_vid.back = r_vid.front;
-        mn_modal(0x20);
+        mn_modal(KM_READY);
         r_vid.back = back;
         for (i = 0; i < 5; i++) {
             g_hotReadyBox[i].y1 -= dx;

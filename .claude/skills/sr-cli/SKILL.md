@@ -160,3 +160,12 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 - Project sources and headers share uppercase subsystem folders; DATA holds asset sources and headers. Use `config.source_index()` / `source_path(name)` rather than assuming a folder. Duplicate filenames are rejected.
 - Check jobs stage every header unchanged in a flat HEADERS directory mounted on E: under both backends. Linked builds preserve the subsystem folders and read INCLUDE from SRENV.BAT.
 - Native DOSBox command sequences must use `call SRENV.BAT` so execution continues to MAKE. The 87-character INCLUDE line was proved with native MAKE before moving the files; keep it below the DOS command-line limit.
+
+## Key-map readability lessons (2026-11-04)
+
+- Header include discovery follows enum tags and members as well as macros;
+  enum constants belong to their defining header and need no source definition.
+- MASM 5.1 macro arguments split at spaces: emit arithmetic directly in DB
+  inside ITEM/STICKER, or bracket a nested argument. LOCAL assignment symbols
+  and REPT implement sequential item runs; verify data with the packed build,
+  since function checks do not cover a data-only key-map object.

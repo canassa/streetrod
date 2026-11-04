@@ -13,6 +13,7 @@
 #include "GAME.H"
 #include "GARGFX.H"
 #include "HOTSPOT.H"
+#include "KEYMAPS.H"
 #include "MAIN.H"
 #include "MARKS.H"
 #include "MENU.H"
@@ -309,7 +310,7 @@ int near ga_menu(int mode)
             cp_show_car(6, g_old->specIndex, n, (g_old->appearance >> 8) & 0x1f,
                     0, 0x98, 0, g_tirePics[g_parts[g_old->tires->idx].variant]);
             ga_clear_name();
-            mn_push(10);
+            mn_push(KM_GARAGE);
             mn_pop(1);
         }
     case 2:
@@ -383,7 +384,7 @@ int near ga_menu(int mode)
     } else {
         mu_suspend(0);
         sy_reset_queues();
-        r = mn_wait(10);
+        r = mn_wait(KM_GARAGE);
     }
     ga_check_end(0);
     if (g_end & 0x10)
@@ -411,8 +412,8 @@ void near ga_paint(void)
     else if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         gm_message(0x18ad);
     else {
-        bm1 = mn_grab(14, &x, &y, ARENA_HIGH_STACK);
-        mn_push(14);
+        bm1 = mn_grab(KM_PAINT, &x, &y, ARENA_HIGH_STACK);
+        mn_push(KM_PAINT);
         idx4 = a_7eaap.currentCar->paintScheme;
         for (;;) {
             vi_palette_reg(12, g_paint[idx4][0]);
@@ -507,9 +508,9 @@ void near ga_body(unsigned mask)
         gm_message(0x1959);
         return;
     }
-    bm1 = mn_grab(34, &x, &y, ARENA_HIGH_STACK);
+    bm1 = mn_grab(KM_BODY_CHANGE, &x, &y, ARENA_HIGH_STACK);
     g_1e34[0].textOffset = msg - g_txt;
-    mn_push(34);
+    mn_push(KM_BODY_CHANGE);
     while ((key = sy_wait_input(3000)) == 0)
         ;
     switch (key) {
@@ -568,7 +569,7 @@ void near ga_stickers(void)
         bm1 = ar_bm(264, 69, 0, ARENA_HIGH_STACK);
         pu_grab(x, y, 264, 69, bm1);
         sc_picture_at(1200, x, y, -1);
-        mn_push(35);
+        mn_push(KM_STICKERS);
         while ((k = sy_wait_input(3000)) == 0)
             ;
         switch (k) {
@@ -703,7 +704,7 @@ void near ga_tires(void)
         return;
     }
     ga_spares(4, tbl, line, 0);
-    switch (mn_modal_list(4, 1, 0, g_list, line, 0)) {
+    switch (mn_modal_list(KM_SPARE_PARTS, 1, 0, g_list, line, 0)) {
     case -4:
         return;
     case -3:
@@ -779,7 +780,7 @@ void ga_info(void)
     build_car_info(ids, vals);
     sprintf(g_iTxt[3] + 9, " %3i mph", ga_ready(a_7eaap.currentCar, 1) ? pf_vmax(-1) : 0);
     sprintf(g_iTxt[1] + 5, " %2i gallons", a_7eaap.currentCar->fuel / 10);
-    switch (mn_modal_list(0x26, 1, ids, g_list, vals, g_iTxt)) {
+    switch (mn_modal_list(KM_CAR_INFO, 1, ids, g_list, vals, g_iTxt)) {
     case -3:
         return;
     case 0x3ea:
@@ -816,7 +817,7 @@ void near ga_transmission(void)
     sc_picture_at(0x42e, 0x20, 10, -1);
     r_vid.copyToFront = 1;
     gx_trans_draw(m_8272.transmissionPic, owner->transmissionBolts);
-    mn_push(20);
+    mn_push(KM_TRANSMISSION);
     for (;;) {
         while ((k = sy_wait_input(3000)) == 0)
             ;
@@ -827,7 +828,7 @@ void near ga_transmission(void)
         case -2:
             ga_spares(1, tbl, buf, 0);
             for (;;) {
-                switch (k = mn_modal_list(4, 1, 0, g_list, buf, 0)) {
+                switch (k = mn_modal_list(KM_SPARE_PARTS, 1, 0, g_list, buf, 0)) {
                 case -3:
                     if (owner->transmission) {
                         gm_message(0x1875);
@@ -953,7 +954,7 @@ static void near tune_timing(struct Car *car)
     unsigned n;
     int gear;
 
-    mn_push(0x1c);
+    mn_push(KM_TIMING);
     blt.w = 8;
     blt.h = 11;
     blt.sx = 0x30;
@@ -1064,7 +1065,7 @@ void near ga_hood(struct Car *car)
     if (car != a_7eaap.currentCar)
         return;
     gx_build_hots(g_bPos, g_bIdx);
-    mn_push(0x15);
+    mn_push(KM_ENGINE);
     for (;;) {
         while ((key = sy_wait_input(3000)) == 0)
             ;
@@ -1103,7 +1104,7 @@ void near ga_hood(struct Car *car)
         case -2:
             ga_spares(g_nextPartCategory[cnt1], list4, buf, 0);
         again:
-            key = mn_modal_list(4, 1, 0, g_list, buf, 0);
+            key = mn_modal_list(KM_SPARE_PARTS, 1, 0, g_list, buf, 0);
             switch (key) {
             case -3:
                 key = mn_sel();

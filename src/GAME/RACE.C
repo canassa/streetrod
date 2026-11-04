@@ -288,7 +288,7 @@ void ra_gas_station(void)
     dl.fillsLeft = (0xbe - a_7eaap.currentCar->fuel) / 0x1e;
     show_tank_cap(&dl, 0x472);
     spots_idle();
-    mn_push(0x17);
+    mn_push(KM_GAS_STATION);
     cu_ctl(CURSOR_SHOW_NOW);
 top:
     g_waitUntil = g_tick + 20;
@@ -320,7 +320,7 @@ top:
                     goto top;
                 mn_pop(1);
                 spots_none();
-                mn_push(0x17);
+                mn_push(KM_GAS_STATION);
                 pos <<= 1;
                 dl.f16 = 1;
                 gm_play_anim(3);
@@ -352,7 +352,7 @@ top:
                 mn_pop(1);
                 spots_rag();
         redraw:
-                mn_push(0x17);
+                mn_push(KM_GAS_STATION);
                 goto top;
             } else {
                 cu_ctl(dl.f0c = 1);
@@ -382,7 +382,7 @@ top:
                 mn_pop(1);
                 spots_idle();
             }
-            mn_push(0x17);
+            mn_push(KM_GAS_STATION);
         tail:
             g_waitUntil = g_tick + 20;
             dl.f1a = 0;
@@ -412,7 +412,7 @@ top:
                 so_pump(1);
                 mn_pop(1);
                 spots_cap();
-                mn_push(0x17);
+                mn_push(KM_GAS_STATION);
                 g_waitUntil = g_tick + 0x4c;
                 dl.f1a = 1;
             }
@@ -596,7 +596,7 @@ static void near show_race_stats(void)
         sprintf(g_raceResult1, "In %2.1f sec you covered only %2d%%", g_raceSecsElapsedValue, dz82c8x);
         sprintf(g_raceResult2, "of the distance. Your avg. speed %2d mph.", g_finishMeanSpeedVal);
     }
-    mn_push(0x21);
+    mn_push(KM_RACE_STATS);
     mn_pop(1);
 }
 
@@ -687,7 +687,7 @@ int near ra_outcome(void)
         g_driveEng.autoSelector = 1;
     if (g_failureTire)
         g_driveEng.stopFlags |= 8;
-    mn_push(1);
+    mn_push(KM_RACE);
     i = a_7eaap.raceType == 0 ? 5 : 15;
     if (a_7eaap.currentCar->fuel > i)
         a_7eaap.currentCar->fuel -= i;
@@ -749,7 +749,7 @@ done:
             i += 0x32;
         else
             i += 0x14;
-        mn_push(0x18);
+        mn_push(KM_MESSAGE);
         sy_wait_input(0);
         sprintf(temp, "You have been fined $%2d for speeding", i);
         sc_status_text(-1, temp, SCREEN_WIDTH - g_statusLine.messageX);
@@ -847,17 +847,17 @@ finishstop:
                     strcpy(g_msgPlusTires, "Plus tires !");
                 else
                     g_msgPlusTires[0] = 0;
-                sel = i ? 0x1a : 0x19;
+                sel = i ? KM_GET_RUNNING : KM_REPAIR;
                 if ((long)v > a_7eaap.money) {
                     g_hotRepair[0].kind = g_hotRepair[7].kind = 0xe;
-                    g_keyMaps[sel][0].val = 0xd0;
-                    g_keyMaps[sel][1].key = 1;
-                    g_keyMaps[sel][1].val = 0xd0;
+                    g_keyMaps[sel][0].val = KV_REPAIR_JUNK;
+                    g_keyMaps[sel][1].key = SC_ESC;
+                    g_keyMaps[sel][1].val = KV_REPAIR_JUNK;
                 } else {
                     g_hotRepair[0].kind = g_hotRepair[7].kind = 0xa;
-                    g_keyMaps[sel][0].val = 0xcf;
-                    g_keyMaps[sel][1].key = 0x21;
-                    g_keyMaps[sel][1].val = 0xcf;
+                    g_keyMaps[sel][0].val = KV_REPAIR_FIX;
+                    g_keyMaps[sel][1].key = SC_F;
+                    g_keyMaps[sel][1].val = KV_REPAIR_FIX;
                 }
                 mn_push(sel);
                 sy_reset_queues();

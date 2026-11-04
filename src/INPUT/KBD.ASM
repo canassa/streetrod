@@ -34,11 +34,11 @@ _kb_text_on  PROC  FAR
         cli
         test    WORD PTR [bp+6],0FFFFh
         jne     skip57
-        mov     _g_scanMap+57,20h
+        mov     _g_scanMap+SC_SPACE,20h
 skip57:
-        mov     _g_scanMap+14,8
-        mov     _g_scanMap+51,2Ch
-        mov     _g_scanMap+52,2Eh
+        mov     _g_scanMap+SC_BACKSPACE,8
+        mov     _g_scanMap+SC_COMMA,2Ch
+        mov     _g_scanMap+SC_PERIOD,2Eh
         and     _g_buttons,0FEh
         sti
         pop     bp
@@ -50,10 +50,10 @@ _kb_text_on  ENDP
         PUBLIC  _kb_text_off
 _kb_text_off  PROC  FAR
         cli
-        mov     _g_scanMap+14,0
-        mov     _g_scanMap+51,0
-        mov     _g_scanMap+52,0
-        mov     _g_scanMap+57,1Fh
+        mov     _g_scanMap+SC_BACKSPACE,0
+        mov     _g_scanMap+SC_COMMA,0
+        mov     _g_scanMap+SC_PERIOD,0
+        mov     _g_scanMap+SC_SPACE,1Fh
         sti
         ret
 _kb_text_off  ENDP
@@ -83,13 +83,13 @@ _kb_isr  PROC  FAR
         xor     ah,ah
         cmp     _g_demo,0
         je      L1
-        cmp     al,1Dh
+        cmp     al,SC_CTRL
         je      L1
-        cmp     al,9Dh
+        cmp     al,SC_CTRL + 80h
         je      L1
-        cmp     al,32h
+        cmp     al,SC_M
         je      L1
-        cmp     al,1
+        cmp     al,SC_ESC
         jne     L0
         mov     _g_demo,63h
 L0:

@@ -1,121 +1,463 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
+
+KV_ITEM_BASE               EQU 0CEh
+KV_MUSIC                   EQU 0A6h
+KV_MESSAGE_DISMISS         EQU 0B4h
+KV_SEE_IT                  EQU 0B5h
+KV_OFFER                   EQU 0B6h
+KV_FORGET                  EQU 0B7h
+KV_NEVER_MIND              EQU 0B8h
+KV_NO                      EQU 0B9h
+KV_OK                      EQU 0BAh
+KV_SCROLL_DOWN             EQU 0C4h
+KV_SCROLL_UP               EQU 0C7h
+KV_CANCEL                  EQU 0CAh
+KV_ACCEPT                  EQU 0CBh
+KV_RETURN_MINUS_2          EQU 0CCh
+KV_RETURN_MINUS_1          EQU 0CDh
+
+KV_AD_CLOSE                EQU KV_ACCEPT
+KV_AD_NEXT                 EQU KV_RETURN_MINUS_2
+KV_AD_PREVIOUS             EQU KV_RETURN_MINUS_1
+KV_CLOSE_CARS              EQU KV_ACCEPT
+KV_ENGINE_DONE             EQU KV_RETURN_MINUS_1
+KV_ENGINE_PARTS            EQU KV_RETURN_MINUS_2
+KV_ENGINE_TIMING           EQU KV_ACCEPT
+KV_INFO_OK                 EQU KV_ACCEPT
+KV_LOAD_GAME               EQU KV_RETURN_MINUS_2
+KV_NEW_GAME                EQU KV_RETURN_MINUS_1
+KV_OLD_GAME                EQU KV_RETURN_MINUS_2
+KV_SAVE_GAME               EQU KV_ACCEPT
+KV_SELL_CAR                EQU KV_RETURN_MINUS_2
+KV_START_OK                EQU KV_ACCEPT
+KV_SWITCH_CAR              EQU KV_RETURN_MINUS_1
+KV_TIMING_DONE             EQU KV_RETURN_MINUS_1
+KV_TRANS_DONE              EQU KV_RETURN_MINUS_1
+KV_TRANS_PARTS             EQU KV_RETURN_MINUS_2
+
+KV_BET_50                  EQU 0D1h
+KV_BET_PINK_SLIPS          EQU 0D7h
+KV_BOBS_CHALLENGE          EQU 0D0h
+KV_BOBS_FIND_RIVAL         EQU 0D2h
+KV_BOBS_GARAGE             EQU 0CFh
+KV_BOBS_HOOD               EQU 0D1h
+KV_END_QUIT                EQU 0D2h
+KV_GAR_CALENDAR            EQU 0D1h
+KV_GAR_CARS                EQU 0D4h
+KV_GAR_CAR_INFO            EQU 0DEh
+KV_GAR_FRONT_BUMPER        EQU 0DAh
+KV_GAR_HOOD                EQU 0D8h
+KV_GAR_NEWSPAPER           EQU 0CFh
+KV_GAR_PAINT               EQU 0D5h
+KV_GAR_QUIT                EQU 0D2h
+KV_GAR_REAR_BUMPER         EQU 0D9h
+KV_GAR_ROOF                EQU 0DBh
+KV_GAR_SELL_PARTS          EQU 0D3h
+KV_GAR_STICKERS            EQU 0DCh
+KV_GAR_STREET              EQU 0D0h
+KV_GAR_TANK                EQU 0DDh
+KV_GAR_TIRES               EQU 0D6h
+KV_GAR_TRANSMISSION        EQU 0D7h
+KV_GAS_CAP                 EQU 0D2h
+KV_GAS_PUMP                EQU 0D0h
+KV_GAS_RAG                 EQU 0CFh
+KV_PAINT_GO_AHEAD          EQU 0D1h
+KV_PAINT_NEXT              EQU 0D0h
+KV_PAINT_PREVIOUS          EQU 0CFh
+KV_RACE_DRAG               EQU 0CFh
+KV_RACE_ROAD               EQU 0D0h
+KV_REPAIR_FIX              EQU 0CFh
+KV_REPAIR_JUNK             EQU 0D0h
+KV_TIMING_ADVANCE          EQU 0C4h
+KV_TIMING_RETARD           EQU 0C7h
+
+KV_BET_FOR_KICKS           EQU 0CFh
+
+KV_BET_10                  EQU 0D0h
+
+KV_BET_25                  EQU 0D5h
+
+KV_BET_100                 EQU 0D6h
+
+KEY MACRO sc, value
+        DB sc, value
+ENDM
+
+ITEM MACRO sc, number
+        DB sc, KV_ITEM_BASE + number
+ENDM
+
+ITEMS MACRO sc, first, count
+        LOCAL scan, number
+scan = sc
+number = first
+        REPT count
+        ITEM scan, number
+scan = scan + 1
+number = number + 1
+        ENDM
+ENDM
+
+STICKER MACRO sc, number
+        DB sc, 0B0h - number
+ENDM
 
         .DATA
 
-; DS:5580: the key maps of g_keyMaps, one per screen: (scan code, key value) pairs, each list
-; ended by a 0 byte.
         PUBLIC  _g_keyMapData
-_g_keyMapData DB      31h, 0CDh,  1Ch, 0CDh,  18h, 0CCh,  0  ; DS:5580
-K_5587  DB      18h, 0CCh,  1Ch, 0CBh,  0
-K_558c  DB      2, 0CFh,  3, 0D0h,  4, 0D1h,  5, 0D2h,  6, 0D3h,  7, 0D4h
-        DB      8, 0D5h,  9, 0D6h,  0Ah, 0D7h,  0Bh, 0D8h,  3Bh, 0D9h,  3Ch, 0DAh
-        DB      3Dh, 0DBh,  3Eh, 0DCh,  3Fh, 0DDh,  21h, 0CAh,  1, 0CAh,  26h, 0CBh
-        DB      1Ch, 0CBh,  0
-K_55b3  DB      2Eh, 0CBh,  2, 0CFh,  3, 0D0h,  4, 0D1h,  5, 0D2h,  6, 0D3h
-        DB      7, 0D4h,  8, 0D5h,  9, 0D6h,  0Ah, 0D7h,  0Bh, 0D8h,  1Ch, 0CBh
-        DB      1, 0CAh,  21h, 0CAh,  0
-K_55d0  DB      2, 0CFh,  3, 0D0h,  4, 0D1h,  5, 0D2h,  6, 0D3h,  7, 0D4h
-        DB      8, 0D5h,  9, 0D6h,  0Ah, 0D7h,  0Bh, 0D8h,  3Bh, 0D9h,  3Ch, 0DAh
-        DB      3Dh, 0DBh,  3Eh, 0DCh,  3Fh, 0DDh,  1Fh, 0CBh,  1Ch, 0CBh,  21h, 0CAh
-        DB      1, 0CAh,  0
-K_55f7  DB      1Ch, 0BAh,  18h, 0BAh,  0
-K_55fc  DB      2Eh, 0CFh,  16h, 0CFh,  19h, 0D0h,  1Eh, 0D0h,  22h, 0D1h,  1, 0D1h
-        DB      0
-K_5609  DB      19h, 0CDh,  31h, 0CCh,  1, 0CBh,  22h, 0CBh,  0
-K_5612  DB      1Ch, 0BAh,  1, 0B9h,  1Fh, 0B5h,  15h, 0BAh,  21h, 0B9h,  0
-K_561d  DB      31h, 0CFh,  20h, 0D0h,  2Dh, 0D1h,  10h, 0D2h,  26h, 0D3h,  2Eh, 0D4h
-        DB      1Fh, 0DCh,  14h, 0D6h,  1Eh, 0D7h,  23h, 0D8h,  13h, 0DBh,  19h, 0D5h
-        DB      22h, 0DDh,  17h, 0DEh,  30h, 0D9h,  21h, 0DAh,  0
-K_563e  DB      2, 0CFh,  3, 0D0h,  4, 0D1h,  5, 0D2h,  6, 0D3h,  7, 0D4h
-        DB      8, 0D5h,  9, 0D6h,  0Ah, 0D7h,  0Bh, 0D8h,  1Ch, 0CDh,  1Fh, 0CDh
-        DB      26h, 0CCh,  1, 0CBh,  21h, 0CBh,  0
-K_565d  DB      1Ch, 0B6h,  1, 0B8h,  18h, 0B6h,  31h, 0B8h,  0
-K_5666  DB      1Ch, 0BAh,  18h, 0BAh,  31h, 0B9h,  1, 0B9h,  0
-K_566f  DB      19h, 0CFh,  31h, 0D0h,  1Ch, 0D1h,  1, 0B7h,  21h, 0B7h,  0
-K_567a  DB      1Ch, 0BAh,  18h, 0BAh,  0
-K_567f  DB      31h, 0B9h,  18h, 0BAh,  1Ch, 0BAh,  1, 0B9h,  0
-K_5688  DB      0
-K_5689  DB      2, 0CFh,  3, 0D0h,  4, 0D1h,  1Ch, 0D1h,  1, 0B7h,  21h, 0B7h
-        DB      0
-K_5696  DB      2, 0D5h,  3, 0D6h,  4, 0D7h,  1Ch, 0D7h,  1, 0B7h,  21h, 0B7h
-        DB      0
-K_56a3  DB      2, 0CFh,  3, 0D0h,  20h, 0CDh,  1, 0CDh,  1Ch, 0CDh,  1Fh, 0CCh
-        DB      0
-K_56b0  DB      2, 0CFh,  3, 0D0h,  4, 0D1h,  5, 0D2h,  6, 0D3h,  7, 0D4h
-        DB      8, 0D5h,  9, 0D6h,  0Ah, 0D7h,  14h, 0CBh,  19h, 0CCh,  20h, 0CDh
-        DB      11h, 0DBh,  1, 0CDh,  1Fh, 0CCh,  0
-K_56cf  DB      20h, 0CFh,  13h, 0D0h,  1Ch, 0D0h,  1, 0B7h,  21h, 0B7h,  0
-K_56da  DB      13h, 0CFh,  19h, 0D0h,  14h, 0D2h,  0
-K_56e1  DB      1Ch, 0B4h,  0
-K_56e4  DB      1Ch, 0CFh,  21h, 0CFh,  1, 0D0h,  24h, 0D0h,  0
-K_56ed  DB      1Ch, 0CFh,  21h, 0CFh,  1, 0D0h,  24h, 0D0h,  0
-K_56f6  DB      31h, 0CDh,  18h, 0CCh,  1Fh, 0CBh,  1Ch, 0CBh,  10h, 0BAh,  1, 0B8h
-        DB      21h, 0B8h,  0
-K_5705  DB      1, 0CDh,  20h, 0CDh,  1Eh, 0C4h,  13h, 0C7h,  0
-K_570e  DB      18h, 0BAh,  1Ch, 0BAh,  0
-K_5713  DB      1, 0B9h,  21h, 0B9h,  1Ch, 0BAh,  22h, 0BAh,  0
-K_571c  DB      18h, 0BAh,  1Ch, 0BAh,  0
-K_5721  DB      18h, 0BAh,  1Ch, 0BAh,  0
-K_5726  DB      0
-        DB      0                        ; unreferenced empty list
-K_5728  DB      1Ch, 0BAh,  1, 0B8h,  18h, 0BAh,  21h, 0B8h,  0
-K_5731  DB      2, 0AFh,  3, 0AEh,  4, 0ADh,  5, 0ACh,  6, 0ABh,  7, 0AAh
-        DB      8, 0A9h,  9, 0A8h,  1, 0B8h,  1Fh, 0B8h,  0
-K_5746  DB      2Eh, 0CBh,  2, 0CFh,  3, 0D0h,  4, 0D1h,  5, 0D2h,  6, 0D3h
-        DB      7, 0D4h,  8, 0D5h,  9, 0D6h,  0Ah, 0D7h,  0Bh, 0D8h,  1Ch, 0CBh
-        DB      1, 0CAh,  21h, 0CAh,  0
-K_5763  DB      22h, 0CFh,  1Ch, 0D0h,  2Eh, 0D0h,  23h, 0D1h,  18h, 0D2h,  0
-K_576e  DB      1, 0CBh,  1Ch, 0CBh,  0
-K_5773  DB      2, 0CFh,  3, 0D0h,  4, 0D1h,  5, 0D2h,  6, 0D3h,  7, 0D4h
-        DB      8, 0D5h,  9, 0D6h,  0Ah, 0D7h,  0Bh, 0D8h,  3Bh, 0D9h,  3Ch, 0DAh
-        DB      0
-K_578c  DB      31h, 0D1h,  26h, 0D0h,  10h, 0D2h,  1Fh, 0CFh,  0
-K_5795  DB      31h, 0CDh,  26h, 0CCh,  10h, 0D2h,  0
-K_579c  DB      32h, 0A6h,  0
+_g_keyMapData LABEL BYTE                  ; DS:5580
+K_RACE LABEL BYTE
+        KEY SC_N,          KV_RETURN_MINUS_1
+        KEY SC_ENTER,      KV_RETURN_MINUS_1
+        KEY SC_O,          KV_RETURN_MINUS_2
+        DB 0
+
+K_START_GAME LABEL BYTE
+        KEY SC_O,          KV_OLD_GAME
+        KEY SC_ENTER,      KV_START_OK
+        DB 0
+
+K_LOAD LABEL BYTE
+        ITEMS SC_1,        1, 10
+        ITEMS SC_F1,       11, 5
+        KEY SC_F,          KV_CANCEL
+        KEY SC_ESC,        KV_CANCEL
+        KEY SC_L,          KV_ACCEPT
+        KEY SC_ENTER,      KV_ACCEPT
+        DB 0
+
+K_SPARE_PARTS LABEL BYTE
+        KEY SC_C,          KV_ACCEPT
+        ITEMS SC_1,        1, 10
+        KEY SC_ENTER,      KV_ACCEPT
+        KEY SC_ESC,        KV_CANCEL
+        KEY SC_F,          KV_CANCEL
+        DB 0
+
+K_SAVE LABEL BYTE
+        ITEMS SC_1,        1, 10
+        ITEMS SC_F1,       11, 5
+        KEY SC_S,          KV_ACCEPT
+        KEY SC_ENTER,      KV_ACCEPT
+        KEY SC_F,          KV_CANCEL
+        KEY SC_ESC,        KV_CANCEL
+        DB 0
+
+K_SAVE_ERROR LABEL BYTE
+        KEY SC_ENTER,      KV_OK
+        KEY SC_O,          KV_OK
+        DB 0
+
+K_NEWSPAPER LABEL BYTE
+        ITEM SC_C,         1
+        ITEM SC_U,         1
+        ITEM SC_P,         2
+        ITEM SC_A,         2
+        ITEM SC_G,         3
+        ITEM SC_ESC,       3
+        DB 0
+
+K_ADVERTS LABEL BYTE
+        KEY SC_P,          KV_AD_PREVIOUS
+        KEY SC_N,          KV_AD_NEXT
+        KEY SC_ESC,        KV_AD_CLOSE
+        KEY SC_G,          KV_AD_CLOSE
+        DB 0
+
+K_BUY LABEL BYTE
+        KEY SC_ENTER,      KV_OK
+        KEY SC_ESC,        KV_NO
+        KEY SC_S,          KV_SEE_IT
+        KEY SC_Y,          KV_OK
+        KEY SC_F,          KV_NO
+        DB 0
+
+K_GARAGE LABEL BYTE
+        KEY SC_N,          KV_GAR_NEWSPAPER
+        KEY SC_D,          KV_GAR_STREET
+        KEY SC_X,          KV_GAR_CALENDAR
+        KEY SC_Q,          KV_GAR_QUIT
+        KEY SC_L,          KV_GAR_SELL_PARTS
+        KEY SC_C,          KV_GAR_CARS
+        KEY SC_S,          KV_GAR_STICKERS
+        KEY SC_T,          KV_GAR_TIRES
+        KEY SC_A,          KV_GAR_TRANSMISSION
+        KEY SC_H,          KV_GAR_HOOD
+        KEY SC_R,          KV_GAR_ROOF
+        KEY SC_P,          KV_GAR_PAINT
+        KEY SC_G,          KV_GAR_TANK
+        KEY SC_I,          KV_GAR_CAR_INFO
+        KEY SC_B,          KV_GAR_REAR_BUMPER
+        KEY SC_F,          KV_GAR_FRONT_BUMPER
+        DB 0
+
+K_YOUR_CARS LABEL BYTE
+        ITEMS SC_1,        1, 10
+        KEY SC_ENTER,      KV_SWITCH_CAR
+        KEY SC_S,          KV_SWITCH_CAR
+        KEY SC_L,          KV_SELL_CAR
+        KEY SC_ESC,        KV_CLOSE_CARS
+        KEY SC_F,          KV_CLOSE_CARS
+        DB 0
+
+K_SELL_CAR_OFFER LABEL BYTE
+        KEY SC_ENTER,      KV_OFFER
+        KEY SC_ESC,        KV_NEVER_MIND
+        KEY SC_O,          KV_OFFER
+        KEY SC_N,          KV_NEVER_MIND
+        DB 0
+
+K_COUNTER_OFFER LABEL BYTE
+        KEY SC_ENTER,      KV_OK
+        KEY SC_O,          KV_OK
+        KEY SC_N,          KV_NO
+        KEY SC_ESC,        KV_NO
+        DB 0
+
+K_PAINT LABEL BYTE
+        KEY SC_P,          KV_PAINT_PREVIOUS
+        KEY SC_N,          KV_PAINT_NEXT
+        KEY SC_ENTER,      KV_PAINT_GO_AHEAD
+        KEY SC_ESC,        KV_FORGET
+        KEY SC_F,          KV_FORGET
+        DB 0
+
+K_NO_SAVED_GAMES LABEL BYTE
+        KEY SC_ENTER,      KV_OK
+        KEY SC_O,          KV_OK
+        DB 0
+
+K_SELL_PART_OFFER LABEL BYTE
+        KEY SC_N,          KV_NO
+        KEY SC_O,          KV_OK
+        KEY SC_ENTER,      KV_OK
+        KEY SC_ESC,        KV_NO
+        DB 0
+
+K_5688 LABEL BYTE
+        DB 0
+
+K_DRAG_WAGER LABEL BYTE
+        KEY SC_1,          KV_BET_FOR_KICKS
+        KEY SC_2,          KV_BET_10
+        KEY SC_3,          KV_BET_50
+        KEY SC_ENTER,      KV_BET_50
+        KEY SC_ESC,        KV_FORGET
+        KEY SC_F,          KV_FORGET
+        DB 0
+
+K_ROAD_WAGER LABEL BYTE
+        KEY SC_1,          KV_BET_25
+        KEY SC_2,          KV_BET_100
+        KEY SC_3,          KV_BET_PINK_SLIPS
+        KEY SC_ENTER,      KV_BET_PINK_SLIPS
+        KEY SC_ESC,        KV_FORGET
+        KEY SC_F,          KV_FORGET
+        DB 0
+
+K_TRANSMISSION LABEL BYTE
+        ITEM SC_1,         1
+        ITEM SC_2,         2
+        KEY SC_D,          KV_TRANS_DONE
+        KEY SC_ESC,        KV_TRANS_DONE
+        KEY SC_ENTER,      KV_TRANS_DONE
+        KEY SC_S,          KV_TRANS_PARTS
+        DB 0
+
+K_ENGINE LABEL BYTE
+        ITEMS SC_1,        1, 9
+        KEY SC_T,          KV_ENGINE_TIMING
+        KEY SC_P,          KV_ENGINE_PARTS
+        KEY SC_D,          KV_ENGINE_DONE
+        ITEM SC_W,         13
+        KEY SC_ESC,        KV_ENGINE_DONE
+        KEY SC_S,          KV_ENGINE_PARTS
+        DB 0
+
+K_RACE_TYPE LABEL BYTE
+        KEY SC_D,          KV_RACE_DRAG
+        KEY SC_R,          KV_RACE_ROAD
+        KEY SC_ENTER,      KV_RACE_ROAD
+        KEY SC_ESC,        KV_FORGET
+        KEY SC_F,          KV_FORGET
+        DB 0
+
+K_GAS_STATION LABEL BYTE
+        KEY SC_R,          KV_GAS_RAG
+        KEY SC_P,          KV_GAS_PUMP
+        KEY SC_T,          KV_GAS_CAP
+        DB 0
+
+K_MESSAGE LABEL BYTE
+        KEY SC_ENTER,      KV_MESSAGE_DISMISS
+        DB 0
+
+K_REPAIR LABEL BYTE
+        KEY SC_ENTER,      KV_REPAIR_FIX
+        KEY SC_F,          KV_REPAIR_FIX
+        KEY SC_ESC,        KV_REPAIR_JUNK
+        KEY SC_J,          KV_REPAIR_JUNK
+        DB 0
+
+K_GET_RUNNING LABEL BYTE
+        KEY SC_ENTER,      KV_REPAIR_FIX
+        KEY SC_F,          KV_REPAIR_FIX
+        KEY SC_ESC,        KV_REPAIR_JUNK
+        KEY SC_J,          KV_REPAIR_JUNK
+        DB 0
+
+K_SAVE_RESTART_QUIT LABEL BYTE
+        KEY SC_N,          KV_NEW_GAME
+        KEY SC_O,          KV_OLD_GAME
+        KEY SC_S,          KV_SAVE_GAME
+        KEY SC_ENTER,      KV_SAVE_GAME
+        KEY SC_Q,          KV_OK
+        KEY SC_ESC,        KV_NEVER_MIND
+        KEY SC_F,          KV_NEVER_MIND
+        DB 0
+
+K_TIMING LABEL BYTE
+        KEY SC_ESC,        KV_TIMING_DONE
+        KEY SC_D,          KV_TIMING_DONE
+        KEY SC_A,          KV_TIMING_ADVANCE
+        KEY SC_R,          KV_TIMING_RETARD
+        DB 0
+
+K_MESSAGE_BOX LABEL BYTE
+        KEY SC_O,          KV_OK
+        KEY SC_ENTER,      KV_OK
+        DB 0
+
+K_OVERWRITE_SAVE LABEL BYTE
+        KEY SC_ESC,        KV_NO
+        KEY SC_F,          KV_NO
+        KEY SC_ENTER,      KV_OK
+        KEY SC_G,          KV_OK
+        DB 0
+
+K_LOAD_ERROR LABEL BYTE
+        KEY SC_O,          KV_OK
+        KEY SC_ENTER,      KV_OK
+        DB 0
+
+K_READY LABEL BYTE
+        KEY SC_O,          KV_OK
+        KEY SC_ENTER,      KV_OK
+        DB 0
+
+K_RACE_STATS LABEL BYTE
+        DB 0
+        DB 0                             ; unreferenced empty list
+
+K_BODY_CHANGE LABEL BYTE
+        KEY SC_ENTER,      KV_OK
+        KEY SC_ESC,        KV_NEVER_MIND
+        KEY SC_O,          KV_OK
+        KEY SC_F,          KV_NEVER_MIND
+        DB 0
+
+K_STICKERS LABEL BYTE
+        STICKER SC_1,      1
+        STICKER SC_2,      2
+        STICKER SC_3,      3
+        STICKER SC_4,      4
+        STICKER SC_5,      5
+        STICKER SC_6,      6
+        STICKER SC_7,      7
+        STICKER SC_8,      8
+        KEY SC_ESC,        KV_NEVER_MIND
+        KEY SC_S,          KV_NEVER_MIND
+        DB 0
+
+K_CALL_RIVAL LABEL BYTE
+        KEY SC_C,          KV_ACCEPT
+        ITEMS SC_1,        1, 10
+        KEY SC_ENTER,      KV_ACCEPT
+        KEY SC_ESC,        KV_CANCEL
+        KEY SC_F,          KV_CANCEL
+        DB 0
+
+K_BOBS LABEL BYTE
+        KEY SC_G,          KV_BOBS_GARAGE
+        KEY SC_ENTER,      KV_BOBS_CHALLENGE
+        KEY SC_C,          KV_BOBS_CHALLENGE
+        KEY SC_H,          KV_BOBS_HOOD
+        KEY SC_O,          KV_BOBS_FIND_RIVAL
+        DB 0
+
+K_CAR_INFO LABEL BYTE
+        KEY SC_ESC,        KV_INFO_OK
+        KEY SC_ENTER,      KV_INFO_OK
+        DB 0
+
+K_MANUAL_COLORS LABEL BYTE
+        ITEMS SC_1,        1, 10
+        ITEM SC_F1,        11
+        ITEM SC_F2,        12
+        DB 0
+
+K_578c LABEL BYTE
+        ITEM SC_N,         3
+        ITEM SC_L,         2
+        ITEM SC_Q,         4
+        ITEM SC_S,         1
+        DB 0
+
+K_END_MENU LABEL BYTE
+        KEY SC_N,          KV_NEW_GAME
+        KEY SC_L,          KV_LOAD_GAME
+        KEY SC_Q,          KV_END_QUIT
+        DB 0
+
+K_MUSIC LABEL BYTE
+        KEY SC_M,          KV_MUSIC
+        DB 0
+
         PUBLIC  _g_keyMaps
 _g_keyMaps DW      42                       ; DS:579F struct KeyMap *[]
-        DW      OFFSET DGROUP:_g_keyMapData
-        DW      OFFSET DGROUP:K_5587
-        DW      OFFSET DGROUP:K_558c
-        DW      OFFSET DGROUP:K_55b3
-        DW      OFFSET DGROUP:K_55d0
-        DW      OFFSET DGROUP:K_55f7
-        DW      OFFSET DGROUP:K_55fc
-        DW      OFFSET DGROUP:K_5609
-        DW      OFFSET DGROUP:K_5612
-        DW      OFFSET DGROUP:K_561d
-        DW      OFFSET DGROUP:K_563e
-        DW      OFFSET DGROUP:K_565d
-        DW      OFFSET DGROUP:K_5666
-        DW      OFFSET DGROUP:K_566f
-        DW      OFFSET DGROUP:K_567a
-        DW      OFFSET DGROUP:K_567f
+        DW      OFFSET DGROUP:K_RACE
+        DW      OFFSET DGROUP:K_START_GAME
+        DW      OFFSET DGROUP:K_LOAD
+        DW      OFFSET DGROUP:K_SPARE_PARTS
+        DW      OFFSET DGROUP:K_SAVE
+        DW      OFFSET DGROUP:K_SAVE_ERROR
+        DW      OFFSET DGROUP:K_NEWSPAPER
+        DW      OFFSET DGROUP:K_ADVERTS
+        DW      OFFSET DGROUP:K_BUY
+        DW      OFFSET DGROUP:K_GARAGE
+        DW      OFFSET DGROUP:K_YOUR_CARS
+        DW      OFFSET DGROUP:K_SELL_CAR_OFFER
+        DW      OFFSET DGROUP:K_COUNTER_OFFER
+        DW      OFFSET DGROUP:K_PAINT
+        DW      OFFSET DGROUP:K_NO_SAVED_GAMES
+        DW      OFFSET DGROUP:K_SELL_PART_OFFER
         DW      OFFSET DGROUP:K_5688
-        DW      OFFSET DGROUP:K_5689
-        DW      OFFSET DGROUP:K_5696
-        DW      OFFSET DGROUP:K_56a3
-        DW      OFFSET DGROUP:K_56b0
-        DW      OFFSET DGROUP:K_56cf
-        DW      OFFSET DGROUP:K_56da
-        DW      OFFSET DGROUP:K_56e1
-        DW      OFFSET DGROUP:K_56e4
-        DW      OFFSET DGROUP:K_56ed
-        DW      OFFSET DGROUP:K_56f6
-        DW      OFFSET DGROUP:K_5705
-        DW      OFFSET DGROUP:K_570e
-        DW      OFFSET DGROUP:K_5713
-        DW      OFFSET DGROUP:K_571c
-        DW      OFFSET DGROUP:K_5721
-        DW      OFFSET DGROUP:K_5726
-        DW      OFFSET DGROUP:K_5728
-        DW      OFFSET DGROUP:K_5731
-        DW      OFFSET DGROUP:K_5746
-        DW      OFFSET DGROUP:K_5763
-        DW      OFFSET DGROUP:K_576e
-        DW      OFFSET DGROUP:K_5773
+        DW      OFFSET DGROUP:K_DRAG_WAGER
+        DW      OFFSET DGROUP:K_ROAD_WAGER
+        DW      OFFSET DGROUP:K_TRANSMISSION
+        DW      OFFSET DGROUP:K_ENGINE
+        DW      OFFSET DGROUP:K_RACE_TYPE
+        DW      OFFSET DGROUP:K_GAS_STATION
+        DW      OFFSET DGROUP:K_MESSAGE
+        DW      OFFSET DGROUP:K_REPAIR
+        DW      OFFSET DGROUP:K_GET_RUNNING
+        DW      OFFSET DGROUP:K_SAVE_RESTART_QUIT
+        DW      OFFSET DGROUP:K_TIMING
+        DW      OFFSET DGROUP:K_MESSAGE_BOX
+        DW      OFFSET DGROUP:K_OVERWRITE_SAVE
+        DW      OFFSET DGROUP:K_LOAD_ERROR
+        DW      OFFSET DGROUP:K_READY
+        DW      OFFSET DGROUP:K_RACE_STATS
+        DW      OFFSET DGROUP:K_BODY_CHANGE
+        DW      OFFSET DGROUP:K_STICKERS
+        DW      OFFSET DGROUP:K_CALL_RIVAL
+        DW      OFFSET DGROUP:K_BOBS
+        DW      OFFSET DGROUP:K_CAR_INFO
+        DW      OFFSET DGROUP:K_MANUAL_COLORS
         DW      OFFSET DGROUP:K_578c
-        DW      OFFSET DGROUP:K_5795
-        DW      OFFSET DGROUP:K_579c
+        DW      OFFSET DGROUP:K_END_MENU
+        DW      OFFSET DGROUP:K_MUSIC
         EVEN
 
         END

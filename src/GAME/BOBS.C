@@ -387,7 +387,7 @@ static int near look_for_rival(int n)
 
     sc_status_text(-1, "", 0);
     list_met_rivals(list, sel, kinds);
-    choice = mn_modal_list(0x24, 1, kinds, list, 0, 0);
+    choice = mn_modal_list(KM_CALL_RIVAL, 1, kinds, list, 0, 0);
     switch (choice) {
     case -4:
         return 0;
@@ -516,18 +516,18 @@ static int near challenge(int arg)
         gm_message(0x1761);
         return 0;
     }
-    pict = mn_grab(0x12, &x, &sy, ARENA_LOW_STACK);
-    mn_push(0x16);
+    pict = mn_grab(KM_DRAG_WAGER, &x, &sy, ARENA_LOW_STACK);
+    mn_push(KM_RACE_TYPE);
     g_waitUntil = g_tick + 800;
     while ((ch = sy_wait_input(3000)) == 0)
         ;
     switch (ch) {
     case 1:
-        num = 0x12;
+        num = KM_DRAG_WAGER;
         a_7eaap.raceType = 0;
         break;
     case 2:
-        num = 0x13;
+        num = KM_ROAD_WAGER;
         a_7eaap.raceType = 1;
         break;
     case -23:
@@ -683,7 +683,7 @@ static void near pop_rival_hood(void)
     gm_make_car(bn7648, 0, &chassis);
     ga_hood(&chassis);
     sc_status_text(-1, "", 0);
-    mn_push(0x18);
+    mn_push(KM_MESSAGE);
     g_waitUntil = g_tick + 800;
     while ((n = sy_wait_input(3000)) == 0)
         ;
@@ -744,7 +744,7 @@ static void near play_cell_anim(void)
     ma_release();
     pict = di_bm(0x4c9, ARENA_HIGH_STACK);
     i = 0;
-    mn_push(0x18);
+    mn_push(KM_MESSAGE);
     g_waitUntil = g_tick + 10;
     going = 1;
     do {
@@ -969,7 +969,7 @@ void bo_visit(void)
     g_mouse.left = g_joyButtons = g_buttons = 0;
     for (;;) {
         setup_bobs_spots(g_rivalHereState, !g_carhop & !g_ordered);
-        mn_push(0x25);
+        mn_push(KM_BOBS);
         g_waitUntil = flag == 0 ? (unsigned)(class == 4 ? 140 : 280) + g_tick : g_tick + 5;
         flag = 0;
         rival = class == 4 ? 0 : king_chance();
@@ -1129,7 +1129,7 @@ static void near set_jail_spots(int id, char c)
     h[2].kind = id;
     h[3].kind = id;
     h[4].kind = id;
-    g_keyMaps[37]->key = c;
+    g_keyMaps[KM_BOBS]->key = c;
 }
 
 /* bo_jail @ 0000:B08C (linear 0x0B08C, 829 bytes) */
@@ -1184,9 +1184,9 @@ void bo_jail(void)
     cu_ctl(1);
     cu_ctl(CURSOR_SHOW);
     g_scene = 6;
-    set_jail_spots(14, 16);
+    set_jail_spots(14, SC_Q);
     for (;;) {
-        mn_push(0x25);
+        mn_push(KM_BOBS);
         if (flag == 0)
             g_waitUntil = (mode == 4 ? 140u : 280u) + g_tick;
         else
@@ -1198,7 +1198,7 @@ void bo_jail(void)
         switch (ch) {
         case 1:
             mn_pop(1);
-            set_jail_spots(11, 34);
+            set_jail_spots(11, SC_G);
             g_scene = 1;
             return;
         case 1000:

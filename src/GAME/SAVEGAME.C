@@ -16,6 +16,7 @@
 #include "FAME.H"
 #include "GAME.H"
 #include "GARAGE.H"
+#include "KEYMAPS.H"
 #include "MAIN.H"
 #include "MARKS.H"
 #include "MENU.H"
@@ -318,10 +319,10 @@ int near sg_load(void)
         bm_copy_box(r_vid.back, r_vid.front, 0, 0, SCREEN_WIDTH, SCREEN_BODY_HEIGHT);
     cu_ctl(CURSOR_SHOW_NOW);
     if (g_list[0] == 0) {
-        mn_wait(15);
+        mn_wait(KM_NO_SAVED_GAMES);
         return -1;
     }
-    r = mn_modal_list(3, 1, 0, g_list, 0, 0);
+    r = mn_modal_list(KM_LOAD, 1, 0, g_list, 0, 0);
     switch (r) {
     case -4:
         return -1;
@@ -354,7 +355,7 @@ int near sg_load(void)
         || _dos_read(fd7, &delta, 4, &n) != 0 || n != 4
         || _dos_read(fd7, &g_roadLayout, 2, &n) != 0 || n != 2) {
         cu_ctl(CURSOR_SHOW_NOW);
-        mn_wait(0x1f);
+        mn_wait(KM_LOAD_ERROR);
         cu_ctl(CURSOR_HIDE);
         if (fd7 > -1) {
             _dos_close(fd7);
@@ -428,7 +429,7 @@ again:
     if (sel == 0)
         sel = r;
     cu_ctl(CURSOR_SHOW_NOW);
-    switch (r = mn_list(5, sel, 0, g_list, 0, 0)) {
+    switch (r = mn_list(KM_SAVE, sel, 0, g_list, 0, 0)) {
     case -4:
         return;
     default:
@@ -467,7 +468,7 @@ again:
     strcpy(name + 1, ":HOTROD");
     itoa(r, name + 8, 10);
     strcat(name + 1, ".SAV");
-    key = g_saveSlots[r] ? mn_modal(0x1e) : 0;
+    key = g_saveSlots[r] ? mn_modal(KM_OVERWRITE_SAVE) : 0;
     cu_ctl(CURSOR_HIDE_NOW);
     switch (key) {
     case -0x15:
@@ -489,7 +490,7 @@ again:
         || _dos_write(fd8, &delta, 4, &n) != 0 || n != 4
         || _dos_write(fd8, &g_roadLayout, 2, &n) != 0 || n != 2) {
         cu_ctl(CURSOR_SHOW_NOW);
-        mn_modal(6);
+        mn_modal(KM_SAVE_ERROR);
         cu_ctl(CURSOR_HIDE_NOW);
         if (fd8 > -1) {
             _dos_close(fd8);
@@ -513,8 +514,8 @@ int near sg_menu(void)
     int x;
     int y;
 
-    p = mn_grab(0x1b, &x, &y, ARENA_HIGH_STACK);
-    row = mn_wait(0x1b);
+    p = mn_grab(KM_SAVE_RESTART_QUIT, &x, &y, ARENA_HIGH_STACK);
+    row = mn_wait(KM_SAVE_RESTART_QUIT);
     pu_show(p, x, y);
     ma_pop_high(1);
     return row;
