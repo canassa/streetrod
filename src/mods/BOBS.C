@@ -34,13 +34,13 @@
 #pragma intrinsic(abs)
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_6c84;                         /* DS:6C84 */
-static int g_6c88;                         /* DS:6C88 */
+static int g_carhop;                         /* DS:6C84 */
+static int g_ordered;                         /* DS:6C88 */
 static void near drop_last_word(char *s);
 static int near maybe_carhop(int mode, int arg, int pct1, int pct2);
-static int g_6c86;                         /* DS:6C86 */
-static int g_6c8aaav[12];                  /* DS:6C8A */
-static int g_6ca2;                         /* DS:6CA2 */
+static int g_poolCount;                         /* DS:6C86 */
+static int g_poolRivals[12];                  /* DS:6C8A */
+static int g_justArrived;                         /* DS:6CA2 */
 static void near build_rival_pool(int);
 static void near select_rival(int);
 static int near king_status(void);
@@ -72,29 +72,29 @@ static int near maybe_carhop(int mode, int arg, int pct1, int pct2)
     r = 0;
     switch (mode) {
     case 0:
-        if (g_6c84 != 0)
+        if (g_carhop != 0)
             break;
         if (g_passCount < 3 || random_int(100) >= pct1)
             break;
         r = 1;
         F_120FE(-4);
         carhop_walk(0, arg);
-        g_6c84 = 1;
+        g_carhop = 1;
         if (random_int(100) < pct2) {
             F_10AFD(100);
             carhop_walk(1, arg);
-            g_6c84 = 0;
-            g_6c88 = 0;
+            g_carhop = 0;
+            g_ordered = 0;
         }
         break;
     case 1:
-        if (g_6c84 != 1 || random_int(100) >= pct1)
+        if (g_carhop != 1 || random_int(100) >= pct1)
             break;
         r = 1;
         F_120FE(-4);
         carhop_walk(1, arg);
-        g_6c84 = 0;
-        g_6c88 = 0;
+        g_carhop = 0;
+        g_ordered = 0;
         g_passCount = 0;
         break;
     }
@@ -138,9 +138,9 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
     strcat(g7f32s, g_2c02 + ar7d7au->f6);
     x = g_0284 == 6;
     if (mode == 4)
-        g_6c84 = -1;
+        g_carhop = -1;
     bm7f86 = mode == 2;
-    if (mode == 1 && !maybe_carhop(0, bm7f86, 10 * x + 75 * g_6c88 + (g_demo << 3) + 5, 10))
+    if (mode == 1 && !maybe_carhop(0, bm7f86, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, 10))
         maybe_carhop(1, bm7f86, 20, 0);
     if (g7f32s[n = strlen(g7f32s) - 1] == '.')
         g7f32s[n] = 0;
@@ -168,10 +168,10 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
         F_11421(g_bannerX, " ", cz8bc0y);
     }
     if (mode == 4)
-        g_6c84 = 0;
+        g_carhop = 0;
     bm7f86 = (mode == 2) ? 0 : 1;
     if (!(x && bm7f86))
-        if (!maybe_carhop(0, bm7f86, 10 * x + 75 * g_6c88 + (g_demo << 3) + 5, bm7f86 == 0 ? 8 : 0))
+        if (!maybe_carhop(0, bm7f86, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, bm7f86 == 0 ? 8 : 0))
             maybe_carhop(1, bm7f86, 40, 0);
 }
 
@@ -261,10 +261,10 @@ static void near build_rival_pool(int flag)
         map[k].dk = abs(g7d86n[av7ff8[k].f8].f2 - g7d86n[a_7eaap.m7eb0->f2].f2);
         map[k].taken = (av7ff8[k].fb != -1) ? 0 : 1;
     }
-    g_6c86 = 0;
+    g_poolCount = 0;
     found = 1;
     do {
-        if ((flag ? 21 : 9) <= g_6c86)
+        if ((flag ? 21 : 9) <= g_poolCount)
             break;
         found = 0;
         low = 0x7d00;
@@ -275,22 +275,22 @@ static void near build_rival_pool(int flag)
                 found = 1;
             }
         if (found) {
-            g_6c8aaav[g_6c86++] = result;
+            g_poolRivals[g_poolCount++] = result;
             map[result].taken = 1;
         }
     } while (found);
     m = 0;
-    k = g_6c86;
+    k = g_poolCount;
     for (; flag == 0 && k > 6; k--)
         if (map[k - 1].dk > 1)
-            g_6c8aaav[k - 1] = g_6c8aaav[m++];
+            g_poolRivals[k - 1] = g_poolRivals[m++];
     if (g_demo) {
-        g_6c8aaav[g_6c86++] = g_demoRacer;
-        g_6c8aaav[g_6c86++] = g_demoRacer;
-        if (g_6ca2) {
-            g_6c8aaav[(g_6c86 = 1) - 1] = g_demoRacer;
+        g_poolRivals[g_poolCount++] = g_demoRacer;
+        g_poolRivals[g_poolCount++] = g_demoRacer;
+        if (g_justArrived) {
+            g_poolRivals[(g_poolCount = 1) - 1] = g_demoRacer;
         }
-        g_6ca2 = 0;
+        g_justArrived = 0;
     }
 }
 
@@ -303,11 +303,11 @@ static int near pick_rival(int chance, int arg)
     if (random_int(100) < chance)
         return 0x15;
     build_rival_pool(arg);
-    if (g_6c86 == 0)
+    if (g_poolCount == 0)
         return 0x15;
-    pick = g_6c8aaav[random_int(g_6c86)];
+    pick = g_poolRivals[random_int(g_poolCount)];
     if (pick == g_lastRival)
-        pick = g_6c8aaav[random_int(g_6c86)];
+        pick = g_poolRivals[random_int(g_poolCount)];
     g_lastRival = pick;
     return pick;
 }
@@ -964,13 +964,13 @@ void bobs_visit(void)
         play_cell_anim();
     F_120FE(-2);
     bm7f86 = 0;
-    g_6c84 = -1;
-    g_6c88 = 0;
-    g_6ca2 = 1;
+    g_carhop = -1;
+    g_ordered = 0;
+    g_justArrived = 1;
     g_0284 = 2;
     g_mouseLeft = g_joyButtons = g_buttons = 0;
     for (;;) {
-        setup_bobs_spots(bm7f86, !g_6c84 & !g_6c88);
+        setup_bobs_spots(bm7f86, !g_carhop & !g_ordered);
         F_13DE6(0x25);
         g_waitUntil = flag == 0 ? (unsigned)(class == 4 ? 140 : 280) + g_tick : g_tick + 5;
         flag = 0;
@@ -1080,8 +1080,8 @@ test:
                     (*m_present)();
                     class = 4;
                     bm7f86 = 0;
-                    g_6c84 = -1;
-                    g_6c88 = 0;
+                    g_carhop = -1;
+                    g_ordered = 0;
                     n = 0;
                     if (g_kingDragWon == 0)
                         goto out;
@@ -1108,8 +1108,8 @@ test:
             F_13F21(1);
             break;
         case 5:
-            if (g_6c84 == 0)
-                g_6c88 = 1;
+            if (g_carhop == 0)
+                g_ordered = 1;
             F_13F21(1);
             break;
         }
@@ -1181,8 +1181,8 @@ void bobs_jail(void)
     r_vid.f16 = 1;
     (*m_present)();
     bm7f86 = 0;
-    g_6c84 = -1;
-    g_6c88 = 0;
+    g_carhop = -1;
+    g_ordered = 0;
     F_120FE(1);
     F_120FE(-1);
     g_0284 = 6;

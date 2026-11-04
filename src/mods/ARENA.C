@@ -4,7 +4,7 @@
 #include "MEM.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static char far *g_6cd0;                   /* DS:6CD0 */
+static char far *g_arenaBase;                   /* DS:6CD0 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int bl78de;
@@ -27,9 +27,9 @@ void arena_reset(void)
 void arena_init(void)
 {
     if (r_vid.mode == -6)
-        g_6cd0 = (char far *)0x80000000L;
+        g_arenaBase = (char far *)0x80000000L;
     else
-        g_6cd0 = mem_alloc(0xfde8, 1);
+        g_arenaBase = mem_alloc(0xfde8, 1);
     arena_reset();
 }
 
@@ -44,13 +44,13 @@ void arena_shrink(int size)
 
 /* arena_alloc @ 0F38:9F2C (linear 0x192AC, 162 bytes)
 
-   Allocate size bytes from the arena at g_6cd0; mode picks which of four marker stacks is used */
+   Allocate size bytes from the arena at g_arenaBase; mode picks which of four marker stacks is used */
 
 char far *arena_alloc(int size, int mode)
 {
     char far *p;
 
-    p = g_6cd0;
+    p = g_arenaBase;
     switch (mode) {
     case 0:
         p += o_8f00;

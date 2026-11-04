@@ -34,14 +34,14 @@
 #pragma intrinsic(inp, outp, _enable, _disable, abs)
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_6c46;                         /* DS:6C46 */
-static int g_6c48;                         /* DS:6C48 */
-static char g_6c4a;                        /* DS:6C4A */
-static int g_6c4c;                         /* DS:6C4C */
+static int g_cursorDrawX;                         /* DS:6C46 */
+static int g_cursorDrawY;                         /* DS:6C48 */
+static char g_cursorDirty;                        /* DS:6C4A */
+static int g_keyGroup;                         /* DS:6C4C */
 static char g_6c4e;                        /* DS:6C4E */
-static int g_6c50a;                        /* DS:6C50 */
-static int g_6c52a;                        /* DS:6C52 */
-static int g_6c54a;                        /* DS:6C54 */
+static int g_demoChoice;                        /* DS:6C50 */
+static int g_vibGain;                        /* DS:6C52 */
+static int g_vibDivisor;                        /* DS:6C54 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Dev bs79aa;
@@ -104,7 +104,7 @@ int g_autoDrive = 0;   /* DS:0612 */
 
 void sys_hover_reset(void)
 {
-    g_6c4a = 1;
+    g_cursorDirty = 1;
     ao8b90v.x2 = -1;
     az8baa = 0x7d00;
     g_click = 0;
@@ -322,8 +322,8 @@ void sys_init(void)
         g_mouseShiftY = 1;
     } else
         g_mousePresent = 0;
-    g_6c46 = -1;
-    g_6c48 = -1;
+    g_cursorDrawX = -1;
+    g_cursorDrawY = -1;
     bs79aa.off = 0;
     bs79aa.l8 = g_song;
     bs79aa.cur = bs79aa.lc = bs79aa.l8;
@@ -358,7 +358,7 @@ void sys_keymap_set(int n)
     num = 1;
     if (g_demo)
         g_demoKey = 0;
-    g_6c4c = n;
+    g_keyGroup = n;
     sys_keymap_restore(0);
     g_keymapGroup = n;
     p = g_keyMaps[n];
@@ -438,7 +438,7 @@ int sys_wait_input(int ticks)
     res = 0;
     j = 0;
     bit = 0;
-    if (g_6c4c == 0x16) {
+    if (g_keyGroup == 0x16) {
         aq8256z = 1;
         F_11421(-1, "", 0);
         aq8256z = 1;
@@ -501,7 +501,7 @@ int sys_wait_input(int ticks)
         }
         if (g_demo == 0 && g_mousePresent) {
             mouse_poll();
-            if (g_6c4a |= (g_mouseDx != 0 || g_mouseDy != 0)) {
+            if (g_cursorDirty |= (g_mouseDx != 0 || g_mouseDy != 0)) {
                 g_cursorX += g_mouseDx;
                 g_cursorY += g_mouseDy;
             }
@@ -530,25 +530,25 @@ int sys_wait_input(int ticks)
             g_waitUntil = 0L;
             return 0x3e8;
         }
-        if (g_4733 > 0 && g_6c4a) {
+        if (g_4733 > 0 && g_cursorDirty) {
             _disable();
-            if ((g_6c46 = g_cursorX) < 0)
-                g_6c46 = g_cursorX = 0;
-            else if (g_6c46 > 0x13a)
-                g_6c46 = g_cursorX = 0x13a;
-            if ((g_6c48 = g_cursorY) < 0)
-                g_6c48 = g_cursorY = 0;
-            else if (g_6c48 > 0xc2)
-                g_6c48 = g_cursorY = 0xc2;
-            g_6c4a = 0;
+            if ((g_cursorDrawX = g_cursorX) < 0)
+                g_cursorDrawX = g_cursorX = 0;
+            else if (g_cursorDrawX > 0x13a)
+                g_cursorDrawX = g_cursorX = 0x13a;
+            if ((g_cursorDrawY = g_cursorY) < 0)
+                g_cursorDrawY = g_cursorY = 0;
+            else if (g_cursorDrawY > 0xc2)
+                g_cursorDrawY = g_cursorY = 0xc2;
+            g_cursorDirty = 0;
             _enable();
-            cursor_draw(x = g_6c46, y = g_6c48);
+            cursor_draw(x = g_cursorDrawX, y = g_cursorDrawY);
             if (g8b8eb
                 && (x < ao8b90v.x1 || x >= ao8b90v.x2 || y < ao8b90v.y1 || y >= ao8b90v.y2)) {
                 res = az8baa;
                 if (i = menu_hit(x, y)) {
                     if (res != i) {
-                        if (g_6c4c == 0x25) {
+                        if (g_keyGroup == 0x25) {
                             aq8256z = 1;
                             F_11421(-1, "", 0);
                             aq8256z = 1;
@@ -562,7 +562,7 @@ int sys_wait_input(int ticks)
                         F_11421(-1, "", 0);
                         bit = 0;
                     }
-                    if (g_6c4c == 0x25)
+                    if (g_keyGroup == 0x25)
                         F_11421(g_bannerX, g7f32s, cz8bc0y);
                     else if (res)
                         F_11421(-1, "", 0);
@@ -759,7 +759,7 @@ void sys_demo_step(void)
     int step;
     int cy;
 
-    if (g_6c4c == 2)
+    if (g_keyGroup == 2)
         random_int(-1);
     if (g_demoKeyDown) {
         g_demoKey |= 0x80;
@@ -768,13 +768,13 @@ void sys_demo_step(void)
         return;
     }
     if (!g_demoMoving) {
-        if (g_06ac && g_6c4c == 10) {
+        if (g_06ac && g_keyGroup == 10) {
             g_06ac = 0;
             g_demoCount = 15;
         }
-        num = (int)strlen((char *)g_keyMaps[g_6c4c]) / 2;
+        num = (int)strlen((char *)g_keyMaps[g_keyGroup]) / 2;
         k = 0;
-        switch (g_6c4c) {
+        switch (g_keyGroup) {
         case 14:
         case 18:
         case 19:
@@ -804,86 +804,86 @@ void sys_demo_step(void)
             num--;
             break;
         }
-        if (g_6c4c == 10 && g_demoLastGroup != 10) {
-            g_6c50a = num - g_demoCount++ - 1;
+        if (g_keyGroup == 10 && g_demoLastGroup != 10) {
+            g_demoChoice = num - g_demoCount++ - 1;
             g_demoCount = g_demoCount % num;
         } else
-            g_6c50a = random_int(num + k);
-        switch (g_6c4c) {
+            g_demoChoice = random_int(num + k);
+        switch (g_keyGroup) {
         case 21:
-            if ((g_6c50a >= 0 && g_6c50a < 9) || g_6c50a == 12)
-                g_6c50a = 9;
+            if ((g_demoChoice >= 0 && g_demoChoice < 9) || g_demoChoice == 12)
+                g_demoChoice = 9;
             if (g_demoLastGroup == 28)
-                g_6c50a = 11;
+                g_demoChoice = 11;
             break;
         case 20:
-            g_6c50a = g_demoScript[g_demoScriptPos++];
-            if (g_6c50a == 2)
+            g_demoChoice = g_demoScript[g_demoScriptPos++];
+            if (g_demoChoice == 2)
                 g_demoScriptPos = 0;
             break;
         case 23:
-            if (g_6c50a)
+            if (g_demoChoice)
                 break;
         case 2:
-            g_6c50a = 1;
+            g_demoChoice = 1;
             break;
         case 4:
             if (g_demoCount < 11)
-                g_6c50a = 0;
+                g_demoChoice = 0;
             else
-                g_6c50a = num - 1;
+                g_demoChoice = num - 1;
             break;
         case 34:
         case 41:
-            g_6c50a = 0;
+            g_demoChoice = 0;
             break;
         case 36:
             if (g_demoLastGroup == 36)
-                g_6c50a = 0;
+                g_demoChoice = 0;
             break;
         case 11:
             if (g_demoLastGroup == 11)
-                g_6c50a = 10;
+                g_demoChoice = 10;
             break;
         case 27:
-            g_6c50a = 5;
+            g_demoChoice = 5;
             break;
         case 7:
             if (a_7eaap.m7eb0 == 0)
-                g_6c50a = 0;
+                g_demoChoice = 0;
             break;
         }
-        if (g_6c4c == 8)
+        if (g_keyGroup == 8)
             g_demoTargetX = 160;
-        if (g_6c50a >= 0) {
-            if (num > g_6c50a) {
-                g_demoKey = g_keyMaps[g_6c4c][g_6c50a].key;
-                mask = g_keyMaps[g_6c4c][g_6c50a].val + 0x32;
-                step = g_screenHot[g_6c4c];
-                for (; step - g_screenHot[g_6c4c] < 32 && g_09f4[step].f6 != mask; step++)
+        if (g_demoChoice >= 0) {
+            if (num > g_demoChoice) {
+                g_demoKey = g_keyMaps[g_keyGroup][g_demoChoice].key;
+                mask = g_keyMaps[g_keyGroup][g_demoChoice].val + 0x32;
+                step = g_screenHot[g_keyGroup];
+                for (; step - g_screenHot[g_keyGroup] < 32 && g_09f4[step].f6 != mask; step++)
                     ;
                 if (g_09f4[step].f6 == mask) {
                     cx = (g_09f4[step].x1 + g_09f4[step].x2) / 2;
                     if (cx)
                         g_demoTargetX = cx;
-                    if (g_6c4c == 8)
+                    if (g_keyGroup == 8)
                         g_demoTargetX = 160;
                     cy = (g_09f4[step].y1 + g_09f4[step].y2) / 2;
                     if (cy)
                         g_demoTargetY = cy;
                 }
             } else {
-                if (num == g_6c50a)
+                if (num == g_demoChoice)
                     g_demoKey = 0x1c;
-                if (num + 1 == g_6c50a)
+                if (num + 1 == g_demoChoice)
                     g_demoKey = 0x39;
-                if (num + 2 == g_6c50a)
+                if (num + 2 == g_demoChoice)
                     g_demoKey = 0x48;
-                if (num + 3 == g_6c50a)
+                if (num + 3 == g_demoChoice)
                     g_demoKey = 0x50;
-                if (num + 4 == g_6c50a)
+                if (num + 4 == g_demoChoice)
                     g_demoKey = 0x4b;
-                if (num + 5 == g_6c50a)
+                if (num + 5 == g_demoChoice)
                     g_demoKey = 0x4d;
             }
         } else
@@ -894,19 +894,19 @@ void sys_demo_step(void)
         return;
     }
     g_demoMoving = 0;
-    if (g_6c4c == 0x25 && g_06ac < 10 && g_demoKey == 0x22)
+    if (g_keyGroup == 0x25 && g_06ac < 10 && g_demoKey == 0x22)
         g_demoKey = 0x1c;
-    if (g_6c4c == 10 && g_demoLastGroup == 10) {
+    if (g_keyGroup == 10 && g_demoLastGroup == 10) {
         g_demoKey = 0x1c;
         g_demoLastGroup = 0;
     } else
-        g_demoLastGroup = g_6c4c;
-    if (a_7eaap.m7eb8 == 0 && g_6c4c == 7)
+        g_demoLastGroup = g_keyGroup;
+    if (a_7eaap.m7eb8 == 0 && g_keyGroup == 7)
         game_add_part(0x2a, g_4806[42].f0);
     if (a_7eaap.m7eb0 == 0) {
-        if (g_6c4c == 10)
+        if (g_keyGroup == 10)
             g_demoKey = 0x31;
-        if (g_6c4c == 8 && (g_demoKey == 1 || g_demoKey == 0x22 || g_demoKey == 0x19))
+        if (g_keyGroup == 8 && (g_demoKey == 1 || g_demoKey == 0x22 || g_demoKey == 0x19))
             g_demoKey = 0x39;
     }
     if (g_demoKey == 0x46)
@@ -941,15 +941,15 @@ void interrupt far sys_timer_isr(void)
         if ((g_demoTargetX || g_demoTargetY) && (g_cursorX != g_demoTargetX || g_cursorY != g_demoTargetY)) {
             g_cursorX += sys_sign(g_demoTargetX - g_cursorX);
             g_cursorY += sys_sign(g_demoTargetY - g_cursorY);
-            g_6c4a = 1;
+            g_cursorDirty = 1;
         }
     }
     if (g_voice->off && --g_voice->f2) {
         if (t_72ec && g_voice->f0.w && !--g_vibCount) {
             bn82c4->f0 = bn82c4->f0 % bn82c4->f3;
-            g_6c54a = g_toneShapes[bn82c4->f1][bn82c4->f0++] * g_6c52a + g_voice->f0.w;
-            outp(0x42, g_6c54a);
-            outp(0x42, g_6c54a >> 8);
+            g_vibDivisor = g_toneShapes[bn82c4->f1][bn82c4->f0++] * g_vibGain + g_voice->f0.w;
+            outp(0x42, g_vibDivisor);
+            outp(0x42, g_vibDivisor >> 8);
             g_vibCount = bn82c4->f4;
         }
     } else if (g_voice->off && g_voice->f2 == 0) {
@@ -982,7 +982,7 @@ void interrupt far sys_timer_isr(void)
         } else {
             if (t_72ec) {
                 g_vibCount = bn82c4->f4;
-                g_6c52a = (unsigned)bn82c4->f2 * g_voice->f0.w / 1000;
+                g_vibGain = (unsigned)bn82c4->f2 * g_voice->f0.w / 1000;
             }
             outp(0x42, g_voice->f0.b[0]);
             outp(0x42, g_voice->f0.b[1]);
@@ -1021,7 +1021,7 @@ tail:
             if (x | y) {
                 g_cursorX += g_474c[x];
                 g_cursorY += g_4752[y];
-                g_6c4a = 1;
+                g_cursorDirty = 1;
             }
             g_cursorBusy = 0;
         }
@@ -1132,29 +1132,29 @@ void interrupt far sys_drive_isr(void)
                     if (g_demo == 0 && g_joystick) {
                         joy_read();
                         if ((n = g_joyX) < g_joyMinX) {
-                            g_6c4a = s = 1;
+                            g_cursorDirty = s = 1;
                             g_cursorX += -1;
                         } else if (g_joyMaxX < n) {
-                            g_6c4a = s = 1;
+                            g_cursorDirty = s = 1;
                             g_cursorX++;
                         }
                         if ((n = g_joyY) < g_joyMinY) {
-                            g_6c4a = flag = 1;
+                            g_cursorDirty = flag = 1;
                             g_cursorY += -1;
                         } else if (g_joyMaxY < n) {
-                            g_6c4a = prev = 1;
+                            g_cursorDirty = prev = 1;
                             g_cursorY++;
                         }
                     }
                     if (g_demo == 0 && g_mousePresent) {
                         mouse_poll();
                         if (g_mouseDy > 0) {
-                            g_6c4a = 1;
+                            g_cursorDirty = 1;
                             g_cursorY++;
                             prev = 1;
                         }
                         if (n = g_mouseDx) {
-                            g_6c4a = s = 1;
+                            g_cursorDirty = s = 1;
                             g_cursorX += n > 0 ? 1 : -1;
                         }
                         if (g_mouseRight)

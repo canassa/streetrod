@@ -25,12 +25,12 @@
 #pragma intrinsic(outp)
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_6c68;                         /* DS:6C68 */
-static int *g_6c6a;                        /* DS:6C6A */
-static int *g_6c6c;                        /* DS:6C6C */
-static char *g_6c6e;                       /* DS:6C6E */
-static int *g_6c70a;                       /* DS:6C70 */
-static char g_6c72a[16];                   /* DS:6C72 */
+static int g_curDrive;                         /* DS:6C68 */
+static int *g_curCount;                        /* DS:6C6A */
+static int *g_curHandle;                        /* DS:6C6C */
+static char *g_curName;                       /* DS:6C6E */
+static int *g_otherHandle;                       /* DS:6C70 */
+static char g_dataPath[16];                   /* DS:6C72 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Model w_8df0[26];
@@ -123,29 +123,29 @@ static void near open_lib(int n)
 
     if (pic_index(n) >= h_8bc8) {
         kind = 2;
-        g_6c6e = au8dd6y;
-        g_6c6c = &g_lib2Handle;
-        g_6c70a = &g_lib1Handle;
-        g_6c6a = &s_8dd2;
+        g_curName = au8dd6y;
+        g_curHandle = &g_lib2Handle;
+        g_otherHandle = &g_lib1Handle;
+        g_curCount = &s_8dd2;
     } else {
         kind = 1;
-        g_6c6e = aw8dd4x;
-        g_6c6c = &g_lib1Handle;
-        g_6c70a = &g_lib2Handle;
-        g_6c6a = &h_8bc8;
+        g_curName = aw8dd4x;
+        g_curHandle = &g_lib1Handle;
+        g_otherHandle = &g_lib2Handle;
+        g_curCount = &h_8bc8;
     }
-    if (*g_6c6c == 0) {
-        _dos_close(*g_6c70a);
-        *g_6c70a = 0;
+    if (*g_curHandle == 0) {
+        _dos_close(*g_otherHandle);
+        *g_otherHandle = 0;
         g_msgInsertDisk[12] = kind == 1 ? '1' : (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
-        g_msgInsertDisk[25] = *g_6c6e;
+        g_msgInsertDisk[25] = *g_curName;
         tries = 0;
-        while (_dos_open(g_6c6e, 0, g_6c6c)) {
+        while (_dos_open(g_curName, 0, g_curHandle)) {
             if (tries++ == 3)
                 sys_exit();
             screen_wait_msg(g_msgInsertDisk);
         }
-        if (_dos_read(*g_6c6c, (void far *)g_6c6a, 2, &got) || got != 2 || h_8bc8 + s_8dd2 != 0x115) {
+        if (_dos_read(*g_curHandle, (void far *)g_curCount, 2, &got) || got != 2 || h_8bc8 + s_8dd2 != 0x115) {
             screen_wait_msg(g_msgBadFormat);
             sys_exit();
         }
@@ -175,8 +175,8 @@ int disk_read_index(int which)
     count = which == 1 ? h_8bc8 : s_8dd2;
     for (i = 0; i < count; i++) {
         sl = &g_slot[base + i];
-        if (disk_seek(*g_6c6c, (long)(i * 0x1e + 2)) ||
-            _dos_read(*g_6c6c, (void far *)sl, 0x1e, &got) || got != 0x1e) {
+        if (disk_seek(*g_curHandle, (long)(i * 0x1e + 2)) ||
+            _dos_read(*g_curHandle, (void far *)sl, 0x1e, &got) || got != 0x1e) {
             screen_wait_msg(g_msgBadFormat);
             sys_exit();
         }
@@ -227,8 +227,8 @@ static int near load_pic(int n, int load, char far *dst)
         if (sl->ptr.p == 0)
             return 0;
         open_lib(num);
-        offset = (long)(*g_6c6a * 0x1e + 2) + ent->f18;
-        if (disk_seek(*g_6c6c, offset))
+        offset = (long)(*g_curCount * 0x1e + 2) + ent->f18;
+        if (disk_seek(*g_curHandle, offset))
             goto bad;
         if (sl->f1e != 0xff) {
             outp(0x3c4, 2);
@@ -237,7 +237,7 @@ static int near load_pic(int n, int load, char far *dst)
         retries = 0;
         total = ent->f1c + 1;
         for (;;) {
-            if (_dos_read(*g_6c6c, sl->ptr.p, total, &got) || got != total)
+            if (_dos_read(*g_curHandle, sl->ptr.p, total, &got) || got != total)
                 goto bad;
             if (*sl->ptr.p == (char)0xbc && sl->ptr.p[total - 1] == (char)0xbc) {
                 if (sl->f1e == 0xff)
@@ -249,17 +249,17 @@ static int near load_pic(int n, int load, char far *dst)
                 outp(0x3c5, 0xf);
                 return 3;
             }
-            if (g_6c68 > 2)
+            if (g_curDrive > 2)
                 goto bad;
             do {
                 if (++retries > 3)
                     sys_exit();
-                g_msgInsertDisk[12] = *g_6c6c == g_lib1Handle ? 1 : (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
-                g_msgInsertDisk[25] = *g_6c6e;
+                g_msgInsertDisk[12] = *g_curHandle == g_lib1Handle ? 1 : (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
+                g_msgInsertDisk[25] = *g_curName;
                 screen_wait_msg(g_msgInsertDisk);
-                _dos_close(*g_6c6c);
-            } while (_dos_open(g_6c6e, 0, g_6c6c));
-            if (!disk_seek(*g_6c6c, offset))
+                _dos_close(*g_curHandle);
+            } while (_dos_open(g_curName, 0, g_curHandle));
+            if (!disk_seek(*g_curHandle, offset))
                 continue;
             goto bad;
         }
@@ -440,16 +440,16 @@ void disk_open_libs(int disks, int mode)
     int tries;
     int err;
 
-    _dos_getdrive((unsigned *)&g_6c68);
-    if (g_6c68 < 3 && disks > 1 && (equip = _bios_equiplist(), equip & 1) && (equip & 0xc0))
+    _dos_getdrive((unsigned *)&g_curDrive);
+    if (g_curDrive < 3 && disks > 1 && (equip = _bios_equiplist(), equip & 1) && (equip & 0xc0))
         disks = 2;
     else
         disks = 1;
     aw8dd4x = (mode == 2 || mode == 5) ? g_lib1Name : g_lib1cName;
-    *aw8dd4x = g_6c68 + 0x40;
+    *aw8dd4x = g_curDrive + 0x40;
     err = _dos_open(aw8dd4x, 0, &g_lib1Handle);
     if (err || g_lib1Handle == 0) {
-        if (g_6c68 > 2) {
+        if (g_curDrive > 2) {
             screen_wait_msg(g_msgCopyFiles);
         } else {
             strcpy(g_msgNotFound + 0x10, aw8dd4x + 2);
@@ -464,13 +464,13 @@ void disk_open_libs(int disks, int mode)
     au8dd6y = (mode == 2 || mode == 5) ? g_lib2Name : g_lib2cName;
     *au8dd6y = *aw8dd4x;
     if (_dos_open(au8dd6y, 0, &g_lib2Handle) || g_lib2Handle == 0) {
-        if (g_6c68 > 2) {
+        if (g_curDrive > 2) {
             screen_wait_msg(g_msgCopyFiles);
             sys_exit();
         } else if (disks == 1) {
             g_lib2Handle = 0;
         } else {
-            *au8dd6y = g_6c68 == 1 ? 'B' : 'A';
+            *au8dd6y = g_curDrive == 1 ? 'B' : 'A';
             err = _dos_open(au8dd6y, 0, &g_lib2Handle);
             for (tries = 0; err || g_lib2Handle == 0; tries++) {
                 if (tries == 3)
@@ -494,7 +494,7 @@ char g_hallFileName[12] = "?:hall_dat";   /* DS:4F3A */
 
 /* disk_load_data @ 0F38:6B79 (linear 0x15EF9, 196 bytes)
 
-   Load the game data. Builds the file name g_6c72a from the first two characters of
+   Load the game data. Builds the file name g_dataPath from the first two characters of
    au8dd6y and the text g_dataFileName points to (g_dataFileName ends up behind its terminator), opens it and
    reads the 13 blocks of the data table (buffer g_dataBlocks[i], size g_dataSizes[i]); any failure shows an
    error text. Ends by loading the hall of fame (disk_load_hall) */
@@ -507,12 +507,12 @@ void disk_load_data(void)
     char *drive;
     int j;
 
-    drive = g_6c72a;
+    drive = g_dataPath;
     *drive++ = au8dd6y[0];
     *drive++ = au8dd6y[1];
     while (*drive++ = *g_dataFileName++)
         ;
-    if (_dos_open(g_6c72a, 0, &fd)) {
+    if (_dos_open(g_dataPath, 0, &fd)) {
         screen_wait_msg("Can't open data file");
         sys_exit();
     }
@@ -528,10 +528,10 @@ void disk_load_data(void)
 
 /* disk_data_drive @ 0F38:6C3D (linear 0x15FBD, 146 bytes)
 
-   Make sure the game disk is in the drive: tries to open the file g_6c72a (asking for
-   disk 2 again and again) and closes it. From the third drive on (g_6c68 > 2, a hard disk) it
-   returns the drive letter code g_6c68 + 0x40 at once. Otherwise returns the first character of
-   g_6c72a */
+   Make sure the game disk is in the drive: tries to open the file g_dataPath (asking for
+   disk 2 again and again) and closes it. From the third drive on (g_curDrive > 2, a hard disk) it
+   returns the drive letter code g_curDrive + 0x40 at once. Otherwise returns the first character of
+   g_dataPath */
 
 int disk_data_drive(void)
 {
@@ -539,10 +539,10 @@ int disk_data_drive(void)
     int tries;
 
     tries = 0;
-    if (g_6c68 > 2)
-        return (char)(g_6c68 + 0x40);
+    if (g_curDrive > 2)
+        return (char)(g_curDrive + 0x40);
     for (;;) {
-        if (_dos_open(g_6c72a, 0, &file)) {
+        if (_dos_open(g_dataPath, 0, &file)) {
             if (++tries > 3)
                 sys_exit();
             g_msgInsertDisk[12] = (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
@@ -551,7 +551,7 @@ int disk_data_drive(void)
         } else {
             _dos_close(file);
             open_lib(1000);
-            return g_6c72a[0];
+            return g_dataPath[0];
         }
     }
 }
@@ -632,7 +632,7 @@ void disk_save_hall(void)
     scramble_hall();
     disk_data_drive();
     got = _dos_creat(g_hallFileName, 0, &fd);
-    if (g_6c68 > 2) {
+    if (g_curDrive > 2) {
         if (fd == 0 || got) {
             screen_wait_msg(g_msgWriteError);
             sys_exit();

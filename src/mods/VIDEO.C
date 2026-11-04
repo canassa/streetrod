@@ -22,7 +22,7 @@
 static struct Cmd *g_cmd;                  /* DS:6C38 */
 static struct Obj *g_obj;                  /* DS:6C3A */
 static struct Box *g_box;                  /* DS:6C3C */
-static int g_6c3ea;                        /* DS:6C3E */
+static int g_blinkCount;                        /* DS:6C3E */
 static void near anim_set_box(void);
 static void near anim_run(int n);
 
@@ -322,17 +322,17 @@ int video_anim_hook(struct Obj *o, struct Cmd *c)
     switch (o->id) {
     case 2:
         if (c->a) {
-            g_6c3ea = c->a;
+            g_blinkCount = c->a;
             F_16993(1);
             return 0;
         }
-        if (g_6c3ea--) {
+        if (g_blinkCount--) {
             struct Colors save;     /* PROVISIONAL: never used; fills the 6-byte frame slot (original local unknown) */
             old = x_colors.c[3];
-            x_colors.c[3] = (g_6c3ea & 1) ? 4 : 0;
+            x_colors.c[3] = (g_blinkCount & 1) ? 4 : 0;
             draw_hline(r_vid.back, 0x33, 0x6f, 2);
-            if (!(g_6c3ea & 3)) {
-                x_colors.c[3] = (g_6c3ea & 4) ? 4 : 0;
+            if (!(g_blinkCount & 3)) {
+                x_colors.c[3] = (g_blinkCount & 4) ? 4 : 0;
                 draw_hline(r_vid.back, 0x30, 0x6f, 2);
             }
             return 0;

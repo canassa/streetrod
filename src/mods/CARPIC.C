@@ -26,7 +26,7 @@
 #pragma intrinsic(outp)
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static struct Rect g_6cbc;                 /* DS:6CBC */
+static struct Rect g_lastCarRect;                 /* DS:6CBC */
 static void near blit_planes(char far *src, char far *dst, char far *mask, int w, int h, int n, int step);
 static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2, int h, char far *mask, char c);
 static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int color);
@@ -536,7 +536,7 @@ again:
     spr3 = sprite_setup(ang2, bot, bms6, (char (*)[8])dz7ec2, n2, pb8, pan, pr16, pr26);
     sprite_plan_drive(spr3, kind, right);
     if (kind == 6)
-        spr3->page->r = g_6cbc;
+        spr3->page->r = g_lastCarRect;
     if (kind == 4 || kind == 1 || kind == 2 || kind == 6) {
         g_carAnim = 1;
         g_carMoving = 1;
@@ -549,7 +549,7 @@ again:
         bu825a = g_0288;
         g_carMoving = 0;
         g_carAnim = 0;
-        g_6cbc = spr3->page->r;
+        g_lastCarRect = spr3->page->r;
     }
     if (g_0284 == 3 && kind == 4) {
         scratch = F_1934E(0x18, 7, 0, 2);

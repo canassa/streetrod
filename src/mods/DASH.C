@@ -27,12 +27,12 @@
 #pragma intrinsic(abs, cos, sin, outp, inp)
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_6c22[3];                      /* DS:6C22 */
-static struct Bitmap far *g_6c28gzz[3];    /* DS:6C28 */
+static int g_wheelY[3];                      /* DS:6C22 */
+static struct Bitmap far *g_wheelPages[3];    /* DS:6C28 */
 static void near save_under(int x, int y, int w, int h, int kind);
 static void near restore_under(int x, int y, int w, int h, int kind);
-static struct Track *g_6c34;               /* DS:6C34 */
-static int g_6c36;                         /* DS:6C36 */
+static struct Track *g_shifter;               /* DS:6C34 */
+static int g_knobPos;                         /* DS:6C36 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Bitmap far *bm7678;
@@ -466,19 +466,19 @@ void dash_load_wheel(void)
         for (i6 = 0; i6 < 3; i6++) {
             bm = F_15BBE(g_wheelPicIds[i6], 1);
             if (r_vid.mode != -2 || i6 < 2) {
-                g_6c28gzz[i6] = g82b4s;
-                g_6c22[i6] = g_wheelSlotY[i6];
+                g_wheelPages[i6] = g82b4s;
+                g_wheelY[i6] = g_wheelSlotY[i6];
             } else {
-                g_6c28gzz[i6] = bm7678;
-                g_6c22[i6] = g_wheelSlotY[i6] + 0x66;
+                g_wheelPages[i6] = bm7678;
+                g_wheelY[i6] = g_wheelSlotY[i6] + 0x66;
             }
-            pkt.dy = g_6c22[i6];
-            (*b_78a2)(bm, g_6c28gzz[i6], &pkt, 1);
+            pkt.dy = g_wheelY[i6];
+            (*b_78a2)(bm, g_wheelPages[i6], &pkt, 1);
             marks_pop_low(1);
         }
     } else {
         for (i6 = 0; i6 < 3; i6++)
-            g_6c28gzz[i6] = F_15BBE(g_wheelPicIds[i6], 1);
+            g_wheelPages[i6] = F_15BBE(g_wheelPicIds[i6], 1);
     }
 }
 
@@ -528,12 +528,12 @@ void dash_draw_wheel(int a, int b, struct Bitmap far *dst)
         pkt1.h = 0x1a;
         if (r_vid.mode != -2) {
             pkt1.sx = 0x88;
-            pkt1.sy = g_6c22[sel];
+            pkt1.sy = g_wheelY[sel];
         } else
             pkt1.sx = pkt1.sy = 0;
         pkt1.dx = 0x50;
         pkt1.dy = (r_vid.mode == -2 || g_58e4 ? 0 : 100) + 0x3f;
-        (*b_78a2)(g_6c28gzz[sel], dst, &pkt1, 1);
+        (*b_78a2)(g_wheelPages[sel], dst, &pkt1, 1);
         g_wheelShown = sel;
     }
     if (b != 100) {
@@ -569,7 +569,7 @@ void dash_draw_wheel(int a, int b, struct Bitmap far *dst)
 
 /* dash_init_shifter @ 0F38:12F7 (linear 0x10677, 507 bytes)
 
-   Draws the car sprite at the top of the screen and, for each of the g_6c34->n points of the
+   Draws the car sprite at the top of the screen and, for each of the g_shifter->n points of the
    track, the wheel sprite (the position comes from the (x, y) pair, the source rectangle from
    g_shiftSlots). dash_draw_shifter is the per-frame update that draws the same pieces. */
 
@@ -585,23 +585,23 @@ void dash_init_shifter(int a, int b)
     struct Bitmap far *bm28;
     int y;
 
-    g_6c34 = &g_shifters[a ? 0 : b == 3 ? 1 : 2];
-    bm19 = F_15BBE(g_6c34->id1, 2);
+    g_shifter = &g_shifters[a ? 0 : b == 3 ? 1 : 2];
+    bm19 = F_15BBE(g_shifter->id1, 2);
     pk5.w = 0x30;
     pk5.h = 0x2b;
     pk5.sx = pk5.sy = 0;
     pk5.dx = 0x108;
     pk5.dy = (r_vid.mode == -2 || g_58e4 ? 0 : 100) + 0x17;
     (*b_78a2)(bm19, g_58e4 ? g755cu : bm7678, &pk5, 1);
-    bm28 = F_15BBE(g_6c34->id2, 2);
+    bm28 = F_15BBE(g_shifter->id2, 2);
     p3.w = p2.w = (pk5.w = bm28->width) + 8;
     p3.h = p2.h = pk5.h = bm28->height;
     p3.sx = p3.sy = 0;
     p2.dx = p2.dy = 0;
     pk5.sx = pk5.sy = pk5.dy = 0;
-    for (i = 0; i < g_6c34->n; i++) {
-        x = g_6c34->pt[i * 2];
-        y = g_6c34->pt[i * 2 + 1];
+    for (i = 0; i < g_shifter->n; i++) {
+        x = g_shifter->pt[i * 2];
+        y = g_shifter->pt[i * 2 + 1];
         p2.sx = x & 0xfff8;
         p2.sy = y;
         cm2 = bitmap_grab(bm19, &p2, 1);
@@ -614,7 +614,7 @@ void dash_init_shifter(int a, int b)
         (*b_78a2)(cm2, g82b4s, &p3, 1);
         marks_pop_low(1);
     }
-    g_6c36 = -1;
+    g_knobPos = -1;
     F_19438(2);
 }
 
@@ -631,24 +631,24 @@ void dash_draw_shifter(struct Bitmap far *dst, struct Eng *e)
         idx3 = 0;
     else
         idx3 = e->f24 - 1;
-    pkt1.h = g_6c34->h;
-    if (g_6c36 >= 0) {
-        pkt1.sx = g_shiftSlots[g_6c36].a;
-        pkt1.sy = g_shiftSlots[g_6c36].b;
-        x = g_6c34->pt[g_6c36 * 2] & 0xfff8;
+    pkt1.h = g_shifter->h;
+    if (g_knobPos >= 0) {
+        pkt1.sx = g_shiftSlots[g_knobPos].a;
+        pkt1.sy = g_shiftSlots[g_knobPos].b;
+        x = g_shifter->pt[g_knobPos * 2] & 0xfff8;
         pkt1.dx = x + 0x108;
-        pkt1.dy = (r_vid.mode == -2 || g_58e4 ? 0 : 100) + g_6c34->pt[g_6c36 * 2 + 1] + 0x17;
+        pkt1.dy = (r_vid.mode == -2 || g_58e4 ? 0 : 100) + g_shifter->pt[g_knobPos * 2 + 1] + 0x17;
         pkt1.w = 0x30 - x > 0x20 ? 0x20 : 0x30 - x;
         (*b_78a2)(g82b4s, dst, (struct Blt *)&pkt1, 1);
     }
     pkt1.sx = g_shiftSlots[idx3].a;
     pkt1.sy = g_shiftSlots[idx3].b + 0x13;
-    x = g_6c34->pt[idx3 * 2] & 0xfff8;
+    x = g_shifter->pt[idx3 * 2] & 0xfff8;
     pkt1.dx = x + 0x108;
-    pkt1.dy = (r_vid.mode == -2 || g_58e4 ? 0 : 100) + g_6c34->pt[idx3 * 2 + 1] + 0x17;
+    pkt1.dy = (r_vid.mode == -2 || g_58e4 ? 0 : 100) + g_shifter->pt[idx3 * 2 + 1] + 0x17;
     pkt1.w = 0x30 - x > 0x20 ? 0x20 : 0x30 - x;
     (*b_78a2)(g82b4s, dst, (struct Blt *)&pkt1, 1);
-    g_6c36 = idx3;
+    g_knobPos = idx3;
     e->f1a = 0;
 }
 

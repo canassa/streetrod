@@ -14,7 +14,7 @@
 #include "SYS.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_6c82;                         /* DS:6C82 */
+static int g_cruiseRpmStep;                         /* DS:6C82 */
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Eng g79e2g;
@@ -82,7 +82,7 @@ int drvtick_step(void)
             e_78e0.f18 = 1;
             if (e_78e0.f24 == 1)
                 e_78e0.f24 = 2;
-            g_6c82 = g_cruiseRpmSteps[0];
+            g_cruiseRpmStep = g_cruiseRpmSteps[0];
             return 0;
         case 1:
             if (g_demo == 0) {
@@ -108,7 +108,7 @@ int drvtick_step(void)
                 sys_drive_stop();
                 return 1;
             }
-            e_78e0.fe += g_6c82;
+            e_78e0.fe += g_cruiseRpmStep;
             if (e_78e0.fe > 4700)
                 e_78e0.fe = 4700;
             if (e_78e0.f18)
@@ -117,10 +117,10 @@ int drvtick_step(void)
                 if (e_78e0.f18 < e_78e0.f1c) {
                     e_78e0.f1a = 1;
                     e_78e0.f18++;
-                    g_6c82 = g_cruiseRpmSteps[e_78e0.f18];
+                    g_cruiseRpmStep = g_cruiseRpmSteps[e_78e0.f18];
                     e_78e0.fe = g_cruiseRatios[e_78e0.f18] * e_78e0.f0;
                 } else
-                    g_6c82 = 0;
+                    g_cruiseRpmStep = 0;
             }
             return 0;
         }

@@ -16,8 +16,8 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static struct Rect g_6cc4;                 /* DS:6CC4 */
-static struct Bitmap far *g_6ccc;          /* DS:6CCC */
+static struct Rect g_carhopRect;                 /* DS:6CC4 */
+static struct Bitmap far *g_carhopBg;          /* DS:6CCC */
 
 struct Sheet g_carhopSheets[2] = {{1142, 6, 11}, {1141, 6, 11}};   /* DS:5A26 */
 char g_carhopFrames[84] = {4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 11};   /* DS:5A32 */
@@ -108,7 +108,7 @@ void carhop_walk(int a, int b)
         r3.h = 0x29;
         r3.dx = 0xc8;
         r3.dy = r3.sx = r3.sy = 0;
-        (*b_78a2)(g_6ccc, bm9, &r3, 1);
+        (*b_78a2)(g_carhopBg, bm9, &r3, 1);
     }
     if (b) {
         if (sprite_car_clip(0, 0x44, bm9->width, bm9->height, &rca2)) {
@@ -132,7 +132,7 @@ void carhop_walk(int a, int b)
         r2.h = 0x29;
         r2.sx = r2.sy = 0;
         r2.dx = r2.dy = 0;
-        (*b_78a2)(g_6ccc, bm27, &r2, 1);
+        (*b_78a2)(g_carhopBg, bm27, &r2, 1);
         r2.sx = 0xc8;
         (*b_78a2)(tab2[0], bm27, &r2, 2);
     }
@@ -149,8 +149,8 @@ void carhop_walk(int a, int b)
         trk7[i] = *p9++;
     sp2->seq = trk7;
     if (a == 1) {
-        sp2->page->r = g_6cc4;
-        sp2->page->link->r = g_6cc4;
+        sp2->page->r = g_carhopRect;
+        sp2->page->link->r = g_carhopRect;
     }
     g_02d0 = 0;
     for (i = 0; i < 0x54; i++) {
@@ -163,16 +163,16 @@ void carhop_walk(int a, int b)
             ;
     }
     okn = (*g78c6c)(sp2);
-    g_6cc4 = sp2->page->r;
+    g_carhopRect = sp2->page->r;
     if (a == 1) {
-        carpic_patch_bg(g_6ccc, 0, 0, 0x30, 0x29, 0xc8, 0x44, 0xa3, 2);
+        carpic_patch_bg(g_carhopBg, 0, 0, 0x30, 0x29, 0xc8, 0x44, 0xa3, 2);
     } else {
         t = F_1934E(fr->width, 0x29, 1, 2);
         r2.w = fr->width;
         r2.h = 0x29;
         r2.sx = r2.sy = 0;
         r2.dx = r2.dy = 0;
-        (*b_78a2)(g_6ccc, t, &r2, 1);
+        (*b_78a2)(g_carhopBg, t, &r2, 1);
         (*ab78aat)(fr, t, &r2, 1);
         (*ab78aat)(bm27, t, &r2, 0);
         carpic_patch_bg(t, 0, 0, t->width, 0x29, 0xc8, 0x44, 0xa3, 2);
@@ -184,17 +184,17 @@ void carhop_walk(int a, int b)
 
 /* carhop_save_bg @ 0F38:9E5D (linear 0x191DD, 94 bytes)
 
-   Allocate the 0x30 x 0x29 bitmap g_6ccc and clear a 200 x 68 rectangle of it */
+   Allocate the 0x30 x 0x29 bitmap g_carhopBg and clear a 200 x 68 rectangle of it */
 
 void carhop_save_bg(void)
 {
     struct Blt pkt;
 
-    g_6ccc = F_1934E(0x30, 0x29, 0, 0);
-    pkt.w = g_6ccc->width;
-    pkt.h = g_6ccc->height;
+    g_carhopBg = F_1934E(0x30, 0x29, 0, 0);
+    pkt.w = g_carhopBg->width;
+    pkt.h = g_carhopBg->height;
     pkt.sx = 200;
     pkt.sy = 68;
     pkt.dx = pkt.dy = 0;
-    (*b_78a2)(r_vid.back, g_6ccc, &pkt, 1);
+    (*b_78a2)(r_vid.back, g_carhopBg, &pkt, 1);
 }

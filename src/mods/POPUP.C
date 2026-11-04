@@ -15,8 +15,8 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static struct Win *g_6c40;                 /* DS:6C40 */
-static int g_6c42[2];                      /* DS:6C42 PROVISIONAL: 4 unreferenced bytes after g_6c40 */
+static struct Win *g_popupLayout;                 /* DS:6C40 */
+static int g_6c42[2];                      /* DS:6C42 PROVISIONAL: 4 unreferenced bytes after g_popupLayout */
 
 struct Win g_popupWins[3] = {{1072, 1, 72, 30, 152, 37, 0, 6, 144}, {1073, 1, 80, 30, 232, 37, 0, 6, 223}, {1074, 2, 80, 20, 232, 46, 0, 6, 223}};   /* DS:04C4 */
 struct Bitmap far *g_popupSave = 0;   /* DS:04FA */
@@ -100,7 +100,7 @@ void popup_open(int n)
 
     F_120FE(-3);
     if (g_popupSave) {
-        popup_put(g_popupSave, g_6c40->x, g_6c40->y);
+        popup_put(g_popupSave, g_popupLayout->x, g_popupLayout->y);
         F_19438(1);
         g_popupSave = 0;
     }
@@ -109,13 +109,13 @@ void popup_open(int n)
         n = -n;
     txt = g_2c01 + n + 1;
     rec = txt[-1] - 1;
-    g_6c40 = &g_popupWins[rec];
-    g_popupSave = F_11A72(x0 = g_6c40->x, y1 = g_6c40->y, w1 = g_6c40->w, h1 = g_6c40->h, 0);
-    bitmap_draw_pic(r_vid.back, g_6c40->bg, (unsigned char)x0, (unsigned char)y1, 0);
+    g_popupLayout = &g_popupWins[rec];
+    g_popupSave = F_11A72(x0 = g_popupLayout->x, y1 = g_popupLayout->y, w1 = g_popupLayout->w, h1 = g_popupLayout->h, 0);
+    bitmap_draw_pic(r_vid.back, g_popupLayout->bg, (unsigned char)x0, (unsigned char)y1, 0);
     x_colors = bustyle->popup;
-    x0 += g_6c40->tx;
-    y1 += g_6c40->ty;
-    lines = g_6c40->lines;
+    x0 += g_popupLayout->tx;
+    y1 += g_popupLayout->ty;
+    lines = g_popupLayout->lines;
     while (lines--) {
         (*a_78aem)(r_vid.back, ((w1 - dash_text_width(txt)) >> 1) + x0, y1, txt);
         txt = txt + strlen(txt) + 1;
@@ -123,7 +123,7 @@ void popup_open(int n)
     }
     F_120FE(-1);
     if (r_vid.f16)
-        bitmap_copy_box(r_vid.back, r_vid.front, g_6c40->x, g_6c40->y, g_6c40->x + w1 - 1, g_6c40->y + h1 - 1);
+        bitmap_copy_box(r_vid.back, r_vid.front, g_popupLayout->x, g_popupLayout->y, g_popupLayout->x + w1 - 1, g_popupLayout->y + h1 - 1);
     if (close) {
         F_19438(1);
         g_popupSave = 0;
@@ -162,7 +162,7 @@ void popup_open_at(int n, int x, int y)
 void popup_close(void)
 {
     if (g_popupSave) {
-        F_11BD3(g_popupSave, g_6c40->x, g_6c40->y);
+        F_11BD3(g_popupSave, g_popupLayout->x, g_popupLayout->y);
         F_19438(1);
         g_popupSave = 0;
     }

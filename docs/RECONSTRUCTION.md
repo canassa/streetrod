@@ -88,7 +88,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
     4-byte slot above the `struct Blt` local.
   - `x_trk0`/`x_trk1` (DASH.C, labels in `src/data/NEEDLE.ASM`): two unreachable far
     accesses for the two SEG constants in CONST (DS:68E6, DS:68E8) that nothing reads.
-  - `g_6c42` (POPUP.C): four unreferenced `_BSS` bytes after `g_6c40`.
+  - `g_6c42` (POPUP.C): four unreferenced `_BSS` bytes after `g_popupLayout`.
   - `g_49e0[0] = g_49e0[0];` in the default cases of your_cars (GAME.C) and savegame_load
     (SAVEGAME.C): after the menu F_142CF returns a positive item, the original loads
     `g_49e0[0]` (the list's item count) into `ax` and drops it. MSC drops the store of a

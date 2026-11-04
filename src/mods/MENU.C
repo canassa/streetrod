@@ -18,10 +18,10 @@
 #include "VIDEO.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_6c56;                         /* DS:6C56 */
-static int g_6c58;                         /* DS:6C58 */
-static int g_6c5a;                         /* DS:6C5A */
-static int g_6c5c;                         /* DS:6C5C */
+static int g_drawnMinX;                         /* DS:6C56 */
+static int g_drawnMinY;                         /* DS:6C58 */
+static int g_drawnMaxX;                         /* DS:6C5A */
+static int g_drawnMaxY;                         /* DS:6C5C */
 static char * near wear_text(int wear);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
@@ -46,7 +46,7 @@ char g_wearText[12] = "(xx% worn)";   /* DS:07AA */
 
    Draw a hot spot and the spots linked behind it (the chain through Hot.f10 masked with
    g_hotChain), by kind: 4/12 filled box with optional centred text, 5/6/10 text only, 7/8 header bar,
-   13 first-time marker. Grows the touched rectangle g_6c56..g_6c5c. */
+   13 first-time marker. Grows the touched rectangle g_drawnMinX..g_drawnMaxY. */
 
 void menu_draw_hot(struct Hot *p)
 {
@@ -75,10 +75,10 @@ void menu_draw_hot(struct Hot *p)
                 }
             }
         box:
-            g_6c56 = p->x1 > g_6c56 ? g_6c56 : p->x1;
-            g_6c5a = p->x2 < g_6c5a ? g_6c5a : p->x2;
-            g_6c58 = p->y1 > g_6c58 ? g_6c58 : p->y1;
-            g_6c5c = p->y2 < g_6c5c ? g_6c5c : p->y2;
+            g_drawnMinX = p->x1 > g_drawnMinX ? g_drawnMinX : p->x1;
+            g_drawnMaxX = p->x2 < g_drawnMaxX ? g_drawnMaxX : p->x2;
+            g_drawnMinY = p->y1 > g_drawnMinY ? g_drawnMinY : p->y1;
+            g_drawnMaxY = p->y2 < g_drawnMaxY ? g_drawnMaxY : p->y2;
             continue;
         case 10:
             if (p->f2 != colr)
@@ -157,15 +157,15 @@ void F_13DE6(int id)
         av8b98 = p->f0 == 3;
         saved = x_colors;
         g_hotChain = -1;
-        g_6c56 = g_6c58 = 1000;
-        g_6c5a = g_6c5c = -1;
+        g_drawnMinX = g_drawnMinY = 1000;
+        g_drawnMaxX = g_drawnMaxY = -1;
         if (p->f10)
             menu_draw_hot(&g_09f4[p->f10]);
         g_hotChain = 0;
         x_colors = saved;
         F_120FE(-1);
-        if (r_vid.f16 && g_6c5a >= 0)
-            bitmap_copy_box(r_vid.back, r_vid.front, g_6c56 - 3, g_6c58 - 3, g_6c5a + 6, g_6c5c + 6);
+        if (r_vid.f16 && g_drawnMaxX >= 0)
+            bitmap_copy_box(r_vid.back, r_vid.front, g_drawnMinX - 3, g_drawnMinY - 3, g_drawnMaxX + 6, g_drawnMaxY + 6);
         sys_keymap_set(id);
         sys_hover_reset();
     }
@@ -211,22 +211,22 @@ void menu_bbox(int id, int *x, int *y, int *w, int *h)
     struct Hot *p;
 
     p = &g_09f4[g_screenHot[id]];
-    g_6c56 = g_6c58 = 1000;
-    g_6c5a = g_6c5c = 1;
+    g_drawnMinX = g_drawnMinY = 1000;
+    g_drawnMaxX = g_drawnMaxY = 1;
     while (p->f10) {
         p = &g_09f4[p->f10];
-        g_6c56 = p->x1 > g_6c56 ? g_6c56 : p->x1;
-        g_6c5a = p->x2 < g_6c5a ? g_6c5a : p->x2;
-        g_6c58 = p->y1 > g_6c58 ? g_6c58 : p->y1;
-        g_6c5c = p->y2 < g_6c5c ? g_6c5c : p->y2;
+        g_drawnMinX = p->x1 > g_drawnMinX ? g_drawnMinX : p->x1;
+        g_drawnMaxX = p->x2 < g_drawnMaxX ? g_drawnMaxX : p->x2;
+        g_drawnMinY = p->y1 > g_drawnMinY ? g_drawnMinY : p->y1;
+        g_drawnMaxY = p->y2 < g_drawnMaxY ? g_drawnMaxY : p->y2;
     }
-    if ((*x = g_6c56 - 3) < 0)
+    if ((*x = g_drawnMinX - 3) < 0)
         *x = 0;
-    if ((*y = g_6c58 - 3) < 0)
+    if ((*y = g_drawnMinY - 3) < 0)
         *y = 0;
-    if ((*w = g_6c5a + 3) > 320)
+    if ((*w = g_drawnMaxX + 3) > 320)
         *w = 320;
-    if ((*h = g_6c5c + 3) > 200)
+    if ((*h = g_drawnMaxY + 3) > 200)
         *h = 200;
     *w -= *x;
     *h -= *y;

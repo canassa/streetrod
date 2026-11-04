@@ -59,14 +59,14 @@ static void near drop_transmission(int n);
 static int near replace_tires(void);
 static void near show_ticket(void);
 static int g_6caaaa;                       /* DS:6CAA */
-static int g_6cacaa;                       /* DS:6CAC */
-static int g_6caeaa;                       /* DS:6CAE */
-static int g_6cb0;                         /* DS:6CB0 */
-static int g_6cb2;                         /* DS:6CB2 */
-static int g_6cb4;                         /* DS:6CB4 */
-static int g_6cb6;                         /* DS:6CB6 */
-static int g_6cb8;                         /* DS:6CB8 */
-static int g_6cba;                         /* DS:6CBA */
+static int g_rivalTop;                       /* DS:6CAC */
+static int g_rivalLead;                       /* DS:6CAE */
+static int g_rivalFast;                         /* DS:6CB0 */
+static int g_rivalSlow;                         /* DS:6CB2 */
+static int g_rivalShiftPen;                         /* DS:6CB4 */
+static int g_targetLane;                         /* DS:6CB6 */
+static int g_rpmBand;                         /* DS:6CB8 */
+static int g_shiftPoint;                         /* DS:6CBA */
 static void near init_rival_eng(void);
 static void near fit_gear(int rpm, struct Eng *p);
 static void near rival_accelerate(void);
@@ -949,10 +949,10 @@ void near race_reset_eng(struct Eng *p)
 nx:
     at787cu = 0;
     g_lastTicks = 0;
-    g_6cacaa = F_0E218(bn7648);
-    g_6cb2 = (int)(g_6cacaa * 0.7);
-    g_6cb0 = (int)(g_6cacaa * 0.8);
-    g_6caeaa = bu8acc < 4 ? 10 : 16;
+    g_rivalTop = F_0E218(bn7648);
+    g_rivalSlow = (int)(g_rivalTop * 0.7);
+    g_rivalFast = (int)(g_rivalTop * 0.8);
+    g_rivalLead = bu8acc < 4 ? 10 : 16;
     g_54d2 = 0;
     g_statsDone = 0;
 }
@@ -964,26 +964,26 @@ static void near init_rival_eng(void)
     struct Range *r;
 
     perf_drivetrain_spec(bn7648, &g79e2g);
-    g_6cb4 = g7d84o->f1;
+    g_rivalShiftPen = g7d84o->f1;
     race_reset_eng(&g79e2g);
     g79e2g.f18 = 0;
     g79e2g.f40 = g79e2g.f34[0];
     g79e2g.fe = 0x5dc;
     g79e2g.f0 = 0x5dc / g79e2g.f40;
-    if ((r = g79e2g.gear[0].r + (g_6cb8 = 1))->f2 <= 0x5dc) {
-        g_6cb8 = 2;
+    if ((r = g79e2g.gear[0].r + (g_rpmBand = 1))->f2 <= 0x5dc) {
+        g_rpmBand = 2;
         r++;
     } else if (r->f0 > g79e2g.fe) {
-        g_6cb8 = 0;
+        g_rpmBand = 0;
         r--;
     }
-    g79e2g.f42 = g_6cb8;
+    g79e2g.f42 = g_rpmBand;
     g79e2g.f12 = r->f2;
     g79e2g.f14 = r->f4;
-    g_6cba = g79e2g.f24 ? 0x14b4 : g79e2g.f1e - 100 * g_6cb4;
+    g_shiftPoint = g79e2g.f24 ? 0x14b4 : g79e2g.f1e - 100 * g_rivalShiftPen;
     ar7e8av.m7e8a = 200;
     ar7e8av.m7e8c = 0;
-    g_6cb6 = ar7e8av.m7e90 = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
+    g_targetLane = ar7e8av.m7e90 = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
 }
 
 /* race_run @ 0000:D031 (linear 0x0D031, 429 bytes) */
@@ -1040,14 +1040,14 @@ static void near fit_gear(int rpm, struct Eng *p)
         p->f40 = p->f34[p->f18];
         p->fe = p->f40 * rpm;
         if ((r = &p->gear[p->f18].r[1])->f2 > p->fe) {
-            p->f42 = g_6cb8 = p->fe >= r->f0;
-            if (g_6cb8 == 0)
+            p->f42 = g_rpmBand = p->fe >= r->f0;
+            if (g_rpmBand == 0)
                 r = &p->gear[p->f18].r[0];
             break;
         }
         if (p->f18 == p->f1c) {
             r = &p->gear[p->f18].r[2];
-            p->f42 = g_6cb8 = 2;
+            p->f42 = g_rpmBand = 2;
             break;
         }
     }
@@ -1072,12 +1072,12 @@ static void near rival_accelerate(void)
     ticks = e_78e0.fc0 - g_lastTicks;
     g_lastTicks = e_78e0.fc0;
     _enable();
-    r = &g79e2g.gear[g79e2g.f18].r[g_6cb8];
+    r = &g79e2g.gear[g79e2g.f18].r[g_rpmBand];
     for (i5 = 0; i5 < ticks; i5++) {
         if (g_terrain2[ar7e8av.m7e8a] != g_terrain2[ar7e8av.m7e8a + 1]) {
             if (g_54d6 == 0) {
                 g_54d6 = 1;
-                vl = g_6cacaa - (ar7e8av.m7e8a > ao7d2ev.m7d30 ? g7d84o->f2 : g7d84o->f2 >> 1);
+                vl = g_rivalTop - (ar7e8av.m7e8a > ao7d2ev.m7d30 ? g7d84o->f2 : g7d84o->f2 >> 1);
                 if (vl < g79e2g.f0)
                     fit_gear(vl, &g79e2g);
             }
@@ -1087,49 +1087,49 @@ static void near rival_accelerate(void)
         d = ar7e8av.m7e8a - ao7d2ev.m7d30;
         if (d > 12 && (a_7eaap.m7ec0 != 1 || g7d40q == 0)) {
             if (e_78e0.f0 >= 0x61)
-                vl = g_6cb0;
+                vl = g_rivalFast;
             else if (g7d40q)
-                vl = g_6cb0;
+                vl = g_rivalFast;
             else
-                vl = g_6cb2;
+                vl = g_rivalSlow;
         chk:
             if (vl < g79e2g.f0) {
                 fit_gear(vl, &g79e2g);
                 continue;
             }
         } else if (d > -5 && d < 5) {
-            vl = e_78e0.f0 + g_6caeaa;
-            if (ao7d2ev.m7d30 >= 30 && vl < g_6cb2)
-                vl = g_6cb2;
+            vl = e_78e0.f0 + g_rivalLead;
+            if (ao7d2ev.m7d30 >= 30 && vl < g_rivalSlow)
+                vl = g_rivalSlow;
             goto chk;
         }
         if (a_7f88d >= 2 && e_78e0.f0 > 50 && g79e2g.f0 > e_78e0.f0 + 32)
             fit_gear(e_78e0.f0 + 32, &g79e2g);
         else {
             g79e2g.fe += g79e2g.f14;
-            if (g79e2g.fe > g_6cba)
-                g79e2g.fe = g_6cba;
+            if (g79e2g.fe > g_shiftPoint)
+                g79e2g.fe = g_shiftPoint;
             if (g79e2g.fe > g79e2g.f12) {
                 g79e2g.f42++;
                 g79e2g.f12 = (r = &g79e2g.gear[g79e2g.f18].r[g79e2g.f42])->f2;
                 g79e2g.f14 = r->f4;
             }
             if (g79e2g.f18 < g79e2g.f1c &&
-                ((g79e2g.f24 && g79e2g.fe >= g79e2g.f22) || g79e2g.fe >= g_6cba)) {
+                ((g79e2g.f24 && g79e2g.fe >= g79e2g.f22) || g79e2g.fe >= g_shiftPoint)) {
                 g79e2g.f18++;
                 if (g79e2g.f24 == 0)
-                    g_6cba = g79e2g.f18 < g79e2g.f1c ? g79e2g.f1e - 100 * g_6cb4
+                    g_shiftPoint = g79e2g.f18 < g79e2g.f1c ? g79e2g.f1e - 100 * g_rivalShiftPen
                            : bu8acc < 4 && r_vid.mode != -6 ? 0x14b4 : 0x1518;
                 g79e2g.f40 = g79e2g.f34[g79e2g.f18];
                 g79e2g.fe = g79e2g.f0 * g79e2g.f40;
-                if ((r = &g79e2g.gear[g79e2g.f18].r[g_6cb8 = 1])->f2 <= g79e2g.fe) {
-                    g_6cb8 = 2;
+                if ((r = &g79e2g.gear[g79e2g.f18].r[g_rpmBand = 1])->f2 <= g79e2g.fe) {
+                    g_rpmBand = 2;
                     r++;
                 } else if (r->f0 > g79e2g.fe) {
-                    g_6cb8 = 0;
+                    g_rpmBand = 0;
                     r--;
                 }
-                g79e2g.f42 = g_6cb8;
+                g79e2g.f42 = g_rpmBand;
                 g79e2g.f12 = r->f2;
                 g79e2g.f14 = r->f4;
             }
@@ -1251,7 +1251,7 @@ static void near move_rival(void)
     dist = ar7e8av.m7e8a - ao7d2ev.m7d30;
     slope = g_terrain2[ao7d2ev.m7d30 + 4] - g_terrain2[ao7d2ev.m7d30 + 5];
     if (dist > 12) {
-        g_6cb6 = (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1;
+        g_targetLane = (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1;
         if (slope)
             g_54d4 = slope < 0;
         g_8648 = 1;
@@ -1259,30 +1259,30 @@ static void near move_rival(void)
         gz7d7e = 1;
         if (slope) {
             if (slope < 0) {
-                g_6cb6 = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
+                g_targetLane = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
                 g_54d4 = 1;
             } else {
-                g_6cb6 = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
+                g_targetLane = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
                 g_54d4 = 0;
             }
         } else
-            g_6cb6 = flag ? (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1 : g_54d4 ? ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200 : ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
+            g_targetLane = flag ? (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1 : g_54d4 ? ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200 : ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
     } else if ((bu8acc < 4 ? 4 : 2) < dist) {
         if (slope) {
             if (slope < 0) {
-                g_6cb6 = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
+                g_targetLane = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
                 g_54d4 = 1;
             } else {
-                g_6cb6 = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
+                g_targetLane = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
                 g_54d4 = 0;
             }
         } else if (flag)
-            g_6cb6 = (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1;
+            g_targetLane = (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1;
         else if (g_8648) {
             if (g_54d4)
-                g_6cb6 = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
+                g_targetLane = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
             else
-                g_6cb6 = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
+                g_targetLane = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
             g_8648 = 0;
             g_54d4 = !g_54d4;
         }
@@ -1291,7 +1291,7 @@ static void near move_rival(void)
             if (ap7d7cv >= 9) {
                 if ((t = ao7d2ev.m7d36 - 330) > g7d82p + 480) {
                     g_54d4 = 1;
-                    g_6cb6 = t;
+                    g_targetLane = t;
                     if (ao7d2ev.m7d36 - ar7e8av.m7e90 < 280) {
                         ar7e8av.m7e8a = ao7d2ev.m7d30 - 1;
                         fit_gear(e_78e0.f0, &g79e2g);
@@ -1299,7 +1299,7 @@ static void near move_rival(void)
                 } else {
                     if ((t = ao7d2ev.m7d36 + 430) < cz8bd0y - 30) {
                         g_54d4 = 0;
-                        g_6cb6 = t + 200;
+                        g_targetLane = t + 200;
                         if (ar7e8av.m7e90 - ao7d2ev.m7d36 < 580) {
                             ar7e8av.m7e8a = ao7d2ev.m7d30 - 2;
                             fit_gear(e_78e0.f0, &g79e2g);
@@ -1310,33 +1310,33 @@ static void near move_rival(void)
                     }
                 }
             } else if (ap7d7cv == 0 || ap7d7cv == 2) {
-                g_6cb6 = ao7d2ev.m7d36 > ar7e8av.m7e90 ? ao7d2ev.m7d36 - 330 : ao7d2ev.m7d36 + 530;
+                g_targetLane = ao7d2ev.m7d36 > ar7e8av.m7e90 ? ao7d2ev.m7d36 - 330 : ao7d2ev.m7d36 + 530;
             }
         } else if (ap7d7cv == 0)
-            g_6cb6 = ao7d2ev.m7d36 - 330;
+            g_targetLane = ao7d2ev.m7d36 - 330;
     } else if (dist > -6) {
         gz7d7e = 1;
         if (slope) {
             if (slope < 0) {
-                g_6cb6 = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
+                g_targetLane = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
                 g_54d4 = 1;
             } else {
-                g_6cb6 = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
+                g_targetLane = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
                 g_54d4 = 0;
             }
         } else
-            g_6cb6 = flag ? (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1 : g_54d4 ? ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200 : ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
+            g_targetLane = flag ? (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1 : g_54d4 ? ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200 : ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) + 300;
     } else {
-        g_6cb6 = (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1;
+        g_targetLane = (al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1;
         g_8648 = 1;
     }
-    if (ar7e8av.m7e90 > g_6cb6) {
-        dist = (ar7e8av.m7e90 - g_6cb6) >> 3;
-        if (ar7e8av.m7e90 - dist > g_6cb6)
+    if (ar7e8av.m7e90 > g_targetLane) {
+        dist = (ar7e8av.m7e90 - g_targetLane) >> 3;
+        if (ar7e8av.m7e90 - dist > g_targetLane)
             ar7e8av.m7e90 -= dist;
     } else {
-        dist = (g_6cb6 - ar7e8av.m7e90) >> 3;
-        if (dist + ar7e8av.m7e90 < g_6cb6)
+        dist = (g_targetLane - ar7e8av.m7e90) >> 3;
+        if (dist + ar7e8av.m7e90 < g_targetLane)
             ar7e8av.m7e90 += dist;
     }
 }
@@ -1351,14 +1351,14 @@ static void near cop_appears(void)
     old = g79e2g.f0;
     g7d84o = &av7ff8[10];
     perf_drivetrain_spec(0x19, &g79e2g);
-    g_6cb4 = g7d84o->f1;
+    g_rivalShiftPen = g7d84o->f1;
     fit_gear(old, &g79e2g);
     cruise_rival_paint(5);
     for (n1 = 0; n1 < 12; n1++)
         g8acew[n1] = ab7526x[n1];
-    g_6cacaa = F_0E218(0x19);
-    g_6cb2 = (int)(g_6cacaa * 0.6);
-    g_6cb0 = (int)(g_6cacaa * 0.8);
+    g_rivalTop = F_0E218(0x19);
+    g_rivalSlow = (int)(g_rivalTop * 0.6);
+    g_rivalFast = (int)(g_rivalTop * 0.8);
 }
 
 int by72f2;

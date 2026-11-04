@@ -8,7 +8,7 @@
 #include "SYS.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static unsigned g_6c60;                    /* DS:6C60 */
+static unsigned g_dataSeg;                    /* DS:6C60 */
 
 /* mem_data_segment @ 0000:36A8 (linear 0x036A8, 22 bytes) */
 
@@ -25,7 +25,7 @@ int mem_data_segment(void)
 void near mem_init(void)
 {
     _amblksiz = 0x800;
-    g_6c60 = mem_data_segment();
+    g_dataSeg = mem_data_segment();
     pools_init(1);
 }
 
@@ -59,7 +59,7 @@ char far *mem_alloc(unsigned n, int fatal)
     char far *p;
 
     if (p = _fmalloc(n)) {
-        if (FP_SEG(p) == g_6c60 ||
+        if (FP_SEG(p) == g_dataSeg ||
             (r_vid.mode == -6 && (unsigned long)(p + n) >= 0x80000000UL))
             _ffree(p);
         else

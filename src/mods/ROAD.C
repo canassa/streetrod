@@ -16,9 +16,9 @@
 #pragma intrinsic(abs)
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_6dfeaa;                       /* DS:6DFE */
-static int g_6e00;                         /* DS:6E00 */
-static int g_6e02;                         /* DS:6E02 */
+static int g_buildX;                       /* DS:6DFE */
+static int g_buildEntry;                         /* DS:6E00 */
+static int g_bendStep;                         /* DS:6E02 */
 static int near rnd(int n);
 static void near build_left_curve(void);
 static void near build_right_curve(void);
@@ -59,22 +59,22 @@ static void near build_left_curve(void)
 {
     int i;
 
-    for (i = g_6e00; i < g_6e00 + 50; i++)
-        g_terrain2[i] = g_6dfeaa;
-    g_terrain3[g_6e00] |= 0x200;
-    g_6e00 += 5;
-    g_terrain0[g_6e00] &= 0x1801;
-    g_terrain1[g_6e00] &= 0x1801;
-    g_terrain3[g_6e00] |= 0x200;
-    g_6e00 += 6;
-    for (i = g_6dfeaa / g_6e02; i < g_6dfeaa / g_6e02 + 40; i++, g_6e00++) {
-        if (g_6e00 < 0x442) {
-            g_terrain3[g_6e00] |= 8;
-            g_terrain2[g_6e00] = i * g_6e02;
+    for (i = g_buildEntry; i < g_buildEntry + 50; i++)
+        g_terrain2[i] = g_buildX;
+    g_terrain3[g_buildEntry] |= 0x200;
+    g_buildEntry += 5;
+    g_terrain0[g_buildEntry] &= 0x1801;
+    g_terrain1[g_buildEntry] &= 0x1801;
+    g_terrain3[g_buildEntry] |= 0x200;
+    g_buildEntry += 6;
+    for (i = g_buildX / g_bendStep; i < g_buildX / g_bendStep + 40; i++, g_buildEntry++) {
+        if (g_buildEntry < 0x442) {
+            g_terrain3[g_buildEntry] |= 8;
+            g_terrain2[g_buildEntry] = i * g_bendStep;
         } else
             break;
     }
-    g_6dfeaa = i * g_6e02;
+    g_buildX = i * g_bendStep;
 }
 
 /* build_right_curve @ 2645:0293 (linear 0x266E3, 277 bytes) */
@@ -83,22 +83,22 @@ static void near build_right_curve(void)
 {
     int i;
 
-    for (i = g_6e00; i < g_6e00 + 50; i++)
-        g_terrain2[i] = g_6dfeaa;
-    g_terrain0[g_6e00] &= 0x1801;
-    g_terrain1[g_6e00] &= 0x1801;
-    g_terrain3[g_6e00] |= 0x400;
-    g_6e00 += 3;
-    g_terrain3[g_6e00] |= 0x400;
-    g_6e00 += 3;
-    for (i = g_6dfeaa / g_6e02; i > g_6dfeaa / g_6e02 - 45; i--, g_6e00++) {
-        if (g_6e00 < 0x442) {
-            g_terrain3[g_6e00] |= 8;
-            g_terrain2[g_6e00] = i * g_6e02;
+    for (i = g_buildEntry; i < g_buildEntry + 50; i++)
+        g_terrain2[i] = g_buildX;
+    g_terrain0[g_buildEntry] &= 0x1801;
+    g_terrain1[g_buildEntry] &= 0x1801;
+    g_terrain3[g_buildEntry] |= 0x400;
+    g_buildEntry += 3;
+    g_terrain3[g_buildEntry] |= 0x400;
+    g_buildEntry += 3;
+    for (i = g_buildX / g_bendStep; i > g_buildX / g_bendStep - 45; i--, g_buildEntry++) {
+        if (g_buildEntry < 0x442) {
+            g_terrain3[g_buildEntry] |= 8;
+            g_terrain2[g_buildEntry] = i * g_bendStep;
         } else
             break;
     }
-    g_6dfeaa = i * g_6e02;
+    g_buildX = i * g_bendStep;
 }
 
 /* build_s_curve_lr @ 2645:03A8 (linear 0x267F8, 401 bytes) */
@@ -107,30 +107,30 @@ static void near build_s_curve_lr(void)
 {
     int i;
 
-    for (i = g_6e00; i < g_6e00 + 90; i++)
-        g_terrain2[i] = g_6dfeaa;
-    g_6e00++;
-    g_terrain0[g_6e00] &= 0x1801;
-    g_terrain1[g_6e00] &= 0x1801;
-    g_terrain1[g_6e00] |= 0x2000;
-    g_6e00 += 6;
-    g_terrain1[g_6e00] |= 0x2000;
-    for (i = g_6dfeaa / g_6e02; i < g_6dfeaa / g_6e02 + 40; i++, g_6e00++) {
-        if (g_6e00 < 0x442) {
-            g_terrain3[g_6e00] |= 8;
-            g_terrain2[g_6e00] = i * g_6e02;
+    for (i = g_buildEntry; i < g_buildEntry + 90; i++)
+        g_terrain2[i] = g_buildX;
+    g_buildEntry++;
+    g_terrain0[g_buildEntry] &= 0x1801;
+    g_terrain1[g_buildEntry] &= 0x1801;
+    g_terrain1[g_buildEntry] |= 0x2000;
+    g_buildEntry += 6;
+    g_terrain1[g_buildEntry] |= 0x2000;
+    for (i = g_buildX / g_bendStep; i < g_buildX / g_bendStep + 40; i++, g_buildEntry++) {
+        if (g_buildEntry < 0x442) {
+            g_terrain3[g_buildEntry] |= 8;
+            g_terrain2[g_buildEntry] = i * g_bendStep;
         } else
             break;
     }
-    g_6dfeaa = i * g_6e02;
-    for (; i > g_6dfeaa / g_6e02 - 43; i--, g_6e00++) {
-        if (g_6e00 < 0x442) {
-            g_terrain3[g_6e00] |= 8;
-            g_terrain2[g_6e00] = i * g_6e02;
+    g_buildX = i * g_bendStep;
+    for (; i > g_buildX / g_bendStep - 43; i--, g_buildEntry++) {
+        if (g_buildEntry < 0x442) {
+            g_terrain3[g_buildEntry] |= 8;
+            g_terrain2[g_buildEntry] = i * g_bendStep;
         } else
             break;
     }
-    g_6dfeaa = i * g_6e02;
+    g_buildX = i * g_bendStep;
 }
 
 /* build_s_curve_rl @ 2645:0539 (linear 0x26989, 401 bytes) */
@@ -139,30 +139,30 @@ static void near build_s_curve_rl(void)
 {
     int i;
 
-    for (i = g_6e00; i < g_6e00 + 90; i++)
-        g_terrain2[i] = g_6dfeaa;
-    g_6e00++;
-    g_terrain0[g_6e00] &= 0x1801;
-    g_terrain1[g_6e00] &= 0x1801;
-    g_terrain1[g_6e00] |= 0x4000;
-    g_6e00 += 6;
-    g_terrain1[g_6e00] |= 0x4000;
-    for (i = g_6dfeaa / g_6e02; i > g_6dfeaa / g_6e02 - 35; i--, g_6e00++) {
-        if (g_6e00 < 0x442) {
-            g_terrain3[g_6e00] |= 8;
-            g_terrain2[g_6e00] = i * g_6e02;
+    for (i = g_buildEntry; i < g_buildEntry + 90; i++)
+        g_terrain2[i] = g_buildX;
+    g_buildEntry++;
+    g_terrain0[g_buildEntry] &= 0x1801;
+    g_terrain1[g_buildEntry] &= 0x1801;
+    g_terrain1[g_buildEntry] |= 0x4000;
+    g_buildEntry += 6;
+    g_terrain1[g_buildEntry] |= 0x4000;
+    for (i = g_buildX / g_bendStep; i > g_buildX / g_bendStep - 35; i--, g_buildEntry++) {
+        if (g_buildEntry < 0x442) {
+            g_terrain3[g_buildEntry] |= 8;
+            g_terrain2[g_buildEntry] = i * g_bendStep;
         } else
             break;
     }
-    g_6dfeaa = i * g_6e02;
-    for (; i < g_6dfeaa / g_6e02 + 48; i++, g_6e00++) {
-        if (g_6e00 < 0x442) {
-            g_terrain3[g_6e00] |= 8;
-            g_terrain2[g_6e00] = i * g_6e02;
+    g_buildX = i * g_bendStep;
+    for (; i < g_buildX / g_bendStep + 48; i++, g_buildEntry++) {
+        if (g_buildEntry < 0x442) {
+            g_terrain3[g_buildEntry] |= 8;
+            g_terrain2[g_buildEntry] = i * g_bendStep;
         } else
             break;
     }
-    g_6dfeaa = i * g_6e02;
+    g_buildX = i * g_bendStep;
 }
 
 /* build_hill @ 2645:06CA (linear 0x26B1A, 147 bytes) */
@@ -171,17 +171,17 @@ static void near build_hill(void)
 {
     int i, start;
 
-    start = g_6e00;
-    g_6e00 += 20;
+    start = g_buildEntry;
+    g_buildEntry += 20;
     for (i = 0; i < 22; i++) {
-        if (g_6e00 < 0x442)
-            g_terrain4[g_6e00++] = g_hillProfile[i];
+        if (g_buildEntry < 0x442)
+            g_terrain4[g_buildEntry++] = g_hillProfile[i];
         else
             break;
     }
-    g_6e00 += 8;
-    for (i = start; i < g_6e00; i++)
-        g_terrain2[i] = g_6dfeaa;
+    g_buildEntry += 8;
+    for (i = start; i < g_buildEntry; i++)
+        g_terrain2[i] = g_buildX;
 }
 
 /* build_dip @ 2645:075D (linear 0x26BAD, 149 bytes)
@@ -192,17 +192,17 @@ static void near build_dip(void)
 {
     int i, start;
 
-    start = g_6e00;
-    g_6e00 += 10;
+    start = g_buildEntry;
+    g_buildEntry += 10;
     for (i = 0; i < 22; i++) {
-        if (g_6e00 < 0x442)
-            g_terrain4[g_6e00++] = -g_hillProfile[i];
+        if (g_buildEntry < 0x442)
+            g_terrain4[g_buildEntry++] = -g_hillProfile[i];
         else
             break;
     }
-    g_6e00 += 18;
-    for (i = start; i < g_6e00; i++)
-        g_terrain2[i] = g_6dfeaa;
+    g_buildEntry += 18;
+    for (i = start; i < g_buildEntry; i++)
+        g_terrain2[i] = g_buildX;
 }
 
 /* build_hill_dip @ 2645:07F2 (linear 0x26C42, 147 bytes)
@@ -213,17 +213,17 @@ static void near build_hill_dip(void)
 {
     int i, start;
 
-    start = g_6e00;
-    g_6e00 += 6;
+    start = g_buildEntry;
+    g_buildEntry += 6;
     for (i = 0; i < 38; i++) {
-        if (g_6e00 < 0x442)
-            g_terrain4[g_6e00++] = g_hillDipProfile[i];
+        if (g_buildEntry < 0x442)
+            g_terrain4[g_buildEntry++] = g_hillDipProfile[i];
         else
             break;
     }
-    g_6e00 += 6;
-    for (i = start; i < g_6e00; i++)
-        g_terrain2[i] = g_6dfeaa;
+    g_buildEntry += 6;
+    for (i = start; i < g_buildEntry; i++)
+        g_terrain2[i] = g_buildX;
 }
 
 /* build_dip_hill @ 2645:0885 (linear 0x26CD5, 149 bytes)
@@ -234,17 +234,17 @@ static void near build_dip_hill(void)
 {
     int i, start;
 
-    start = g_6e00;
-    g_6e00 += 8;
+    start = g_buildEntry;
+    g_buildEntry += 8;
     for (i = 0; i < 38; i++) {
-        if (g_6e00 < 0x442)
-            g_terrain4[g_6e00++] = -g_hillDipProfile[i];
+        if (g_buildEntry < 0x442)
+            g_terrain4[g_buildEntry++] = -g_hillDipProfile[i];
         else
             break;
     }
-    g_6e00 += 4;
-    for (i = start; i < g_6e00; i++)
-        g_terrain2[i] = g_6dfeaa;
+    g_buildEntry += 4;
+    for (i = start; i < g_buildEntry; i++)
+        g_terrain2[i] = g_buildX;
 }
 
 /* build_right_closed @ 2645:091A (linear 0x26D6A, 214 bytes) */
@@ -253,20 +253,20 @@ static void near build_right_closed(void)
 {
     int i, start;
 
-    start = g_6e00;
-    g_6e00 += 3;
-    g_terrain1[g_6e00] |= 0x800;
-    g_6e00 += 4;
-    g_terrain3[g_6e00++] &= 0xff7;
-    g_terrain1[g_6e00++] |= 0x1000;
+    start = g_buildEntry;
+    g_buildEntry += 3;
+    g_terrain1[g_buildEntry] |= 0x800;
+    g_buildEntry += 4;
+    g_terrain3[g_buildEntry++] &= 0xff7;
+    g_terrain1[g_buildEntry++] |= 0x1000;
     for (i = 0; i < 10; i++) {
-        g_terrain3[g_6e00] |= 0x40;
-        g_terrain3[g_6e00++] &= 0xff7;
+        g_terrain3[g_buildEntry] |= 0x40;
+        g_terrain3[g_buildEntry++] &= 0xff7;
     }
-    g_terrain3[g_6e00++] &= 0xff7;
-    g_6e00 += 3;
-    for (i = start; i < g_6e00; i++)
-        g_terrain2[i] = g_6dfeaa;
+    g_terrain3[g_buildEntry++] &= 0xff7;
+    g_buildEntry += 3;
+    for (i = start; i < g_buildEntry; i++)
+        g_terrain2[i] = g_buildX;
 }
 
 /* build_narrows @ 2645:09F0 (linear 0x26E40, 203 bytes) */
@@ -275,20 +275,20 @@ static void near build_narrows(void)
 {
     int i, start;
 
-    start = g_6e00;
-    g_terrain3[g_6e00] |= 0x800;
-    g_6e00 += 4;
-    g_terrain0[g_6e00] &= 0x1801;
-    g_terrain1[g_6e00] &= 0x1801;
-    g_terrain3[g_6e00] |= 0x800;
-    g_6e00 += 6;
+    start = g_buildEntry;
+    g_terrain3[g_buildEntry] |= 0x800;
+    g_buildEntry += 4;
+    g_terrain0[g_buildEntry] &= 0x1801;
+    g_terrain1[g_buildEntry] &= 0x1801;
+    g_terrain3[g_buildEntry] |= 0x800;
+    g_buildEntry += 6;
     for (i = 0; i < 20; i++) {
-        g_terrain3[g_6e00] |= 0x80;
-        g_terrain3[g_6e00++] &= 0xff7;
+        g_terrain3[g_buildEntry] |= 0x80;
+        g_terrain3[g_buildEntry++] &= 0xff7;
     }
-    g_terrain3[g_6e00] &= 0x0fff;
-    for (i = start; i < g_6e00; i++)
-        g_terrain2[i] = g_6dfeaa;
+    g_terrain3[g_buildEntry] &= 0x0fff;
+    for (i = start; i < g_buildEntry; i++)
+        g_terrain2[i] = g_buildX;
 }
 
 /* build_left_closed @ 2645:0ABB (linear 0x26F0B, 214 bytes) */
@@ -297,20 +297,20 @@ static void near build_left_closed(void)
 {
     int i, start;
 
-    start = g_6e00;
-    g_6e00 += 4;
-    g_terrain0[g_6e00] |= 0x800;
-    g_6e00 += 4;
-    g_terrain3[g_6e00++] &= 0xff7;
-    g_terrain0[g_6e00++] |= 0x1000;
+    start = g_buildEntry;
+    g_buildEntry += 4;
+    g_terrain0[g_buildEntry] |= 0x800;
+    g_buildEntry += 4;
+    g_terrain3[g_buildEntry++] &= 0xff7;
+    g_terrain0[g_buildEntry++] |= 0x1000;
     for (i = 0; i < 10; i++) {
-        g_terrain3[g_6e00] |= 0x20;
-        g_terrain3[g_6e00++] &= 0xff7;
+        g_terrain3[g_buildEntry] |= 0x20;
+        g_terrain3[g_buildEntry++] &= 0xff7;
     }
-    g_terrain3[g_6e00++] &= 0xff7;
-    g_6e00 += 2;
-    for (i = start; i < g_6e00; i++)
-        g_terrain2[i] = g_6dfeaa;
+    g_terrain3[g_buildEntry++] &= 0xff7;
+    g_buildEntry += 2;
+    for (i = start; i < g_buildEntry; i++)
+        g_terrain2[i] = g_buildX;
 }
 
 /* road_build_layout @ 2645:0B91 (linear 0x26FE1, 439 bytes)
@@ -321,9 +321,9 @@ void road_build_layout(int n)
 {
     int i;
 
-    g_6e00 = 0x186;
-    g_6dfeaa = 0;
-    g_6e02 = bl82c6 ? 2 : 3;
+    g_buildEntry = 0x186;
+    g_buildX = 0;
+    g_bendStep = bl82c6 ? 2 : 3;
     for (i = 0x17c; i < 0x460; i++) {
         g_terrain2[i] = 0;
         g_terrain4[i] = 0;
@@ -350,9 +350,9 @@ void road_build_layout(int n)
         case 11: build_s_curve_rl(); break;
         }
     }
-    for (; g_6e00 < 0x460; g_6e00++) {
-        g_terrain2[g_6e00] = g_6dfeaa;
-        g_terrain4[g_6e00] = 0;
+    for (; g_buildEntry < 0x460; g_buildEntry++) {
+        g_terrain2[g_buildEntry] = g_buildX;
+        g_terrain4[g_buildEntry] = 0;
     }
 }
 
