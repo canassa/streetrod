@@ -615,14 +615,10 @@ struct State7E8A {
     char m7e92[8];
 };
 
-/* DS:70C0..70DF: one communal; the code reads these as struct members */
 struct State70C0 {
     int leftEdge;
-    int m70c2[6];
-    int m70ce;
-    int m70d0;
-    int m70d2[6];
-    int m70de;
+    int leftOuterX[8];
+    int rightOuterX[8];
 };
 
 /* DS:7EAA..7EC2: one COMMON block in the original (folded from 11 placeholder

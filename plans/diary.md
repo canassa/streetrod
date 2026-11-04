@@ -1483,3 +1483,30 @@ The same screen ID indexes both key maps and hotspot groups. Encoded key bytes
 and decoded menu results need distinct names: a raw byte constant in a C case
 would compile successfully while matching the wrong value. One encoding boundary
 and tests for the two language interfaces make that distinction checkable.
+
+## 2026-11-04 20:31 CET: restore complete road projection rows
+
+### What I did
+
+Recorded the access evidence first in work/rows15/FINDINGS.md. Restored all five
+forward projection arrays to 15 ints, the mirror left-X array to eight ints, and
+both mirror outer-X arrays to eight members inside State70C0. Removed the 13
+split-off communal words and replaced their uses with indices. Named the road Y
+and left outer-X tables from their projection roles. Split the four scene bitmap
+IDs from the shared 21-entry road line-width table and replaced its scalar seeds
+with indices 14 and 20. Regenerated plans/unnamed.md and recorded the sr fit lesson.
+
+All required gates pass: headers; 572/572 functions; clean packed build IDENTICAL;
+DGROUP ownership/order; 66 unit tests; DOS-native MAKE IDENTICAL. No work/ files
+are committed.
+
+### What I learned
+
+The apparent 13-entry tables were 15-entry arrays throughout: the projector writes
+one peeled row plus 14 iterations, and VIEW starts current/previous pointers at
+indices 14/13. The backward projector reveals the same split at eight rows.
+The forward and mirror line-width walks share the element at DS:5E86, proving a
+single table through DS:5E92. LINK accepts the folded allocations without moving
+definitions; the semantic Y and left outer-X names fit buckets 63 and 139, and
+all other communal addresses remain intact. Unreferenced zeros at DS:5E94 remain
+separate because no access proves they belong to the width table.

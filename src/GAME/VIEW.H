@@ -28,29 +28,14 @@ extern struct ViewPages g_viewPages; /* DS:5E3E */
 extern struct Clip g_viewRect;                          /* DS:5E42 */
 extern struct ViewClip g_viewClip; /* DS:5E4E */
 extern unsigned char g_shrinkMasks[3][4];               /* DS:5E56 */
-extern int g_5e62[];                                    /* DS:5E62 */
-extern int g_5e86;                                      /* DS:5E86 */
-extern int g_5e88[5];                                   /* DS:5E88 */
-extern int g_5e92;                                      /* DS:5E92 */
+extern int g_sceneBitmapIds[4];                         /* DS:5E62 */
+extern int g_roadLineWidths[21];                        /* DS:5E6A */
 extern int g_5e94[4];                                   /* DS:5E94 */
 extern struct Ball g_sheetRects[];                      /* DS:5E9C */
 extern struct Bitmap far *k_6e60;                       /* DS:6E60 */
-extern int dz70e0;                                      /* DS:70E0 */
 extern struct Bitmap far *ax72f4;                       /* DS:72F4 */
-extern int a7312av;                                     /* DS:7312 */
-extern int br7314;                                      /* DS:7314 */
 extern struct Bitmap far *g764aw;                       /* DS:764A */
 extern struct Bitmap far *ar767eu;                      /* DS:767E */
-extern int g789eu;                                      /* DS:789E */
-extern int f_78a0;                                      /* DS:78A0 */
-extern int ac7ae8t;                                     /* DS:7AE8 */
-extern int az7aeau;                                     /* DS:7AEA */
-extern int e_7f2e;                                      /* DS:7F2E */
-extern int g7f30t;                                      /* DS:7F30 */
-extern int al7fa4z;                                     /* DS:7FA4 */
-extern int by7fa6;                                      /* DS:7FA6 */
-extern int dz7ff2;                                      /* DS:7FF2 */
-extern int g7ff4g;                                      /* DS:7FF4 */
 extern struct Bitmap far *g8184y;                       /* DS:8184 */
 extern struct Bitmap far *bz8b7ex;                      /* DS:8B7E */
 extern int far *am8b82y;                                /* DS:8B82 */

@@ -48,10 +48,6 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 | 5568 | g_5568 | `int @[]` | PERF |
 | 5AF3 | g_5af3 | `char @` | VIDDET |
 | 5E3C | g_5e3c | `int @` | VIEW |
-| 5E62 | g_5e62 | `int @[]` | VIEW |
-| 5E86 | g_5e86 | `int @` | VIEW |
-| 5E88 | g_5e88 | `int @[5]` | VIEW |
-| 5E92 | g_5e92 | `int @` | VIEW |
 | 5E94 | g_5e94 | `int @[4]` | VIEW |
 | 5EC6 | g_5ec6 | `int @` | SCENERY |
 | 6010 | g_6010 | `struct Run @[7]` | SCENERY |
@@ -63,13 +59,10 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 | 6E04 | g_6e04aay | `int @` | src/GAME/VIEW.C |
 | 6E60 | k_6e60 | `struct Bitmap far *@` | VIEW |
 | 70C0 | al70c0x | `struct State70C0 @` | RACE |
-| 70E0 | dz70e0 | `int @` | VIEW |
 | 70E4 | ai70e4t | `struct Panel @[]` | DISK |
 | 72EE | q_72ee | `unsigned far *@` | ROAD |
 | 72F2 | by72f2 | `int @` | RACE |
 | 72F4 | ax72f4 | `struct Bitmap far *@` | VIEW |
-| 7312 | a7312av | `int @` | VIEW |
-| 7314 | br7314 | `int @` | VIEW |
 | 7526 | ab7526x | `struct Bitmap far *@[13]` | RACE |
 | 7568 | bm7568 | `struct Obj @[]` | VIDEO |
 | 7648 | bn7648 | `int @` | BOBS |
@@ -81,14 +74,9 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 | 787A | av787at | `unsigned @` | DASH |
 | 787E | bustyle | `struct Style *@` | VIDEO |
 | 7880 | af7880z | `int far *@` | ROAD |
-| 7884 | bq7884 | `int @[]` | ROAD |
-| 789E | g789eu | `int @` | VIEW |
-| 78A0 | f_78a0 | `int @` | VIEW |
 | 79A8 | fz79a8 | `char @[2]` | HOTSPOT |
 | 7AA4 | ah7aa4w | `char @[6]` | HOTSPOT |
 | 7AAE | aw7aaex | `int @` | ROAD |
-| 7AE8 | ac7ae8t | `int @` | VIEW |
-| 7AEA | az7aeau | `int @` | VIEW |
 | 7D18 | g7d18m | `struct Sprite @` | SPRITE |
 | 7D2E | ao7d2ev | `struct State7D2E @` | SYS |
 | 7D62 | g7d62p | `unsigned far *@` | ROAD |
@@ -98,13 +86,7 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 | 7E8A | ar7e8av | `struct State7E8A @` | SYS |
 | 7EAA | a_7eaap | `struct State7EAA @` | SCREEN |
 | 7EE2 | bz7ee2 | `char @[64]` | HOTSPOT |
-| 7F2E | e_7f2e | `int @` | VIEW |
-| 7F30 | g7f30t | `int @` | VIEW |
 | 7F88 | a_7f88d | `int @` | RACE |
-| 7FA4 | al7fa4z | `int @` | VIEW |
-| 7FA6 | by7fa6 | `int @` | VIEW |
-| 7FF2 | dz7ff2 | `int @` | VIEW |
-| 7FF4 | g7ff4g | `int @` | VIEW |
 | 7FF6 | g7ff6f | `char @[2]` | HOTSPOT |
 | 8184 | g8184y | `struct Bitmap far *@` | VIEW |
 | 8188 | g8188w | `struct Bitmap far *@` | DRIVE |

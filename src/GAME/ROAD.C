@@ -576,17 +576,17 @@ void rd_generate(void)
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 unsigned far *q_72ee;
-int g_roadLXArray[13];
+int g_roadLXArray[15];
 int far *g_hereCurvePtr;
 int far *af7880z;
-int bq7884[13];
+int g_roadYProjectionArray[15];
 int aw7aaex;
 int g_yBuildingTopArray[15]; /* DS:7AB0 */
-int g_rightXProjectionTable[13];
+int g_rightXProjectionTable[15];
 unsigned far *g7d62p;
-int g_lhsRdMirrorX[6];
-int g_xOuterLProjArray[13];
-int g_rhsOuterXArray[13];
+int g_lhsRdMirrorX[8];
+int g_roadOuterLeftXArray[15];
+int g_rhsOuterXArray[15];
 unsigned far *g_rightSideTerrainRow;
 int g_mirYProj[8]; /* DS:8634 */
 struct MirrorEdges g_mirGeom; /* DS:864A */
@@ -710,8 +710,8 @@ void rd_project_ahead(void)
     bits = *g7d62p++ & 0xe0;
     p11 = g_rightXProjectionTable;
     p2 = g_roadLXArray;
-    p3 = bq7884;
-    p42 = g_xOuterLProjArray;
+    p3 = g_roadYProjectionArray;
+    p42 = g_roadOuterLeftXArray;
     p5l = g_rhsOuterXArray;
     p6 = g_yBuildingTopArray;
     rowz = 4;
@@ -799,8 +799,8 @@ void rd_project_behind(void)
     p11 = g_mirGeom.rightX;
     p2 = g_lhsRdMirrorX;
     p3 = g_mirYProj;
-    p42 = al70c0x.m70c2;
-    p5l = al70c0x.m70d2;
+    p42 = al70c0x.leftOuterX;
+    p5l = al70c0x.rightOuterX;
     p6 = g_mirGeom.buildingY;
     rowz = 8;
     d1 = *af7880z-- - ao7d2ev.m7d3e;

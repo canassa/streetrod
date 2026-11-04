@@ -174,3 +174,5 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
   C KR_ constants are decoded input results, while KV_ constants are raw bytes
   restricted to runtime patches. tests/test_keymaps.py keeps C/ASM constants,
   pointer-table screen slots and PC scan-code definitions in agreement.
+
+- When folding split communal array tails, remove the tail declarations before asking `sr fit` for the new name window: it derives neighbours from current header symbols, not the intended aggregate size. Producers' pointer increments and consumers' descending current/previous-row pointers establish the full extent. A shared initialized width table can cross an apparent scalar boundary; trace both render directions before choosing its base and bounds, then verify with the packed build.

@@ -23,16 +23,16 @@ extern int g_onShoulder;                                /* DS:5E0E */
 extern int g_turnRight;                                 /* DS:5E10 */
 extern int g_turnLeft;                                  /* DS:5E12 */
 extern unsigned far *q_72ee;                            /* DS:72EE */
-extern int g_roadLXArray[];                                    /* DS:72F8 */
+extern int g_roadLXArray[15];                                    /* DS:72F8 */
 extern int far *g_hereCurvePtr;                                /* DS:7560 */
 extern int far *af7880z;                                /* DS:7880 */
-extern int bq7884[];                                    /* DS:7884 */
+extern int g_roadYProjectionArray[15];                                    /* DS:7884 */
 extern int aw7aaex;                                     /* DS:7AAE */
-extern int g_rightXProjectionTable[];                                    /* DS:7ACE */
+extern int g_rightXProjectionTable[15];                                    /* DS:7ACE */
 extern unsigned far *g7d62p;                            /* DS:7D62 */
-extern int g_lhsRdMirrorX[];                                    /* DS:7F22 */
-extern int g_xOuterLProjArray[];                                   /* DS:7F8A */
-extern int g_rhsOuterXArray[];                                    /* DS:7FD8 */
+extern int g_lhsRdMirrorX[8];                                    /* DS:7F22 */
+extern int g_roadOuterLeftXArray[15];                                   /* DS:7F8A */
+extern int g_rhsOuterXArray[15];                                    /* DS:7FD8 */
 void rd_build_layout(int n);                          /* 0x26FE1 */
 void rd_generate(void);                               /* 0x27198 */
 void rd_seek(int n);                                  /* 0x27B6D */

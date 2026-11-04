@@ -58,10 +58,8 @@ struct ViewPages g_viewPages = {1, 2}; /* DS:5E3E */
 struct Clip g_viewRect = {SCREEN_WIDTH, 82, 0, 18, 0, 18};   /* DS:5E42 */
 struct ViewClip g_viewClip = {0, 18, 101, (SCREEN_WIDTH - 1)}; /* DS:5E4E */
 unsigned char g_shrinkMasks[3][4] = {{87, 37, 34, 0}, {247, 117, 82, 0}, {117, 84, 33, 0}};   /* DS:5E56 */
-int g_5e62[18] = {1258, 1237, 1236, 1238, 8, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0};   /* DS:5E62 */
-int g_5e86 = 0;   /* DS:5E86 */
-int g_5e88[5] = {0, 0, 0, 0, 0};   /* DS:5E88 */
-int g_5e92 = 0;   /* DS:5E92 */
+int g_sceneBitmapIds[4] = {1258, 1237, 1236, 1238};   /* DS:5E62 */
+int g_roadLineWidths[21] = {8, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};   /* DS:5E6A */
 int g_5e94[4] = {0, 0, 0, 0};   /* DS:5E94 */
 struct Ball g_sheetRects[7] = {{256, 8, 8}, {240, 16, 13}, {208, 32, 19}, {168, 40, 24}, {120, 48, 30}, {64, 56, 37}, {0, 64, 43}};   /* DS:5E9C */
 
@@ -79,23 +77,10 @@ static void near select_draw_page(void)
 }
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-int a7312av;
 struct Bitmap far *k_6e60;
-int dz70e0;
 struct Bitmap far *ax72f4;
-int br7314;
 struct Bitmap far *g764aw;
 struct Bitmap far *ar767eu;
-int g789eu;
-int f_78a0;
-int ac7ae8t;
-int az7aeau;
-int e_7f2e;
-int g7f30t;
-int al7fa4z;
-int by7fa6;
-int dz7ff2;
-int g7ff4g;
 struct Bitmap far *g8184y;
 struct Bitmap far *bz8b7ex;
 int far *am8b82y;
@@ -223,7 +208,7 @@ void vw_load(void)
     (*g_videoOps.copy)(bm1, g8188w, &pkt1, 1);
     ma_pop_high(1);
     sel = *(int *)&bw8aca == 0 ? g_scene : 0;
-    bm24 = di_bm(g_5e62[sel], ARENA_HIGH_STACK);
+    bm24 = di_bm(g_sceneBitmapIds[sel], ARENA_HIGH_STACK);
     pkt1.w = bm24->width;
     pkt1.h = bm24->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
@@ -366,8 +351,8 @@ static void near render_backdrop(void)
         (*g_videoOps.copy)(g8188w, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
         g_6e04aay = v + 8;
         for (i = 14; i; i--) {
-            if (bq7884[i] < g_6e04aay) {
-                g_6e04aay = bq7884[i];
+            if (g_roadYProjectionArray[i] < g_6e04aay) {
+                g_6e04aay = g_roadYProjectionArray[i];
                 g_roadRowLimit = i;
             }
         }
@@ -1246,19 +1231,19 @@ static void near render_mirror(void)
     int f3;
     int w2;
 
-    g_renderRows.leftX = &g7f30t;
+    g_renderRows.leftX = &g_lhsRdMirrorX[7];
     g_renderRows.rightX = &g_mirGeom.rightX[7];
     g_renderRows.y = &g_mirYProj[7];
-    g_renderRows.leftOuterX = &al70c0x.m70d0;
-    g_renderRows.rightOuterX = &dz70e0;
+    g_renderRows.leftOuterX = &al70c0x.leftOuterX[7];
+    g_renderRows.rightOuterX = &al70c0x.rightOuterX[7];
     g_renderRows.buildingY = &g_mirGeom.buildingY[7];
-    g_renderRows.prevLeftX = &e_7f2e;
+    g_renderRows.prevLeftX = &g_lhsRdMirrorX[6];
     g_renderRows.prevRightX = &g_mirGeom.rightX[6];
     g_renderRows.prevY = &g_mirYProj[6];
     g_renderRows.prevBuildingY = &g_mirGeom.buildingY[6];
-    g_renderRows.prevLeftOuterX = &al70c0x.m70ce;
-    g_renderRows.prevRightOuterX = &al70c0x.m70de;
-    g_renderRows.lineWidth = &g_5e92;
+    g_renderRows.prevLeftOuterX = &al70c0x.leftOuterX[6];
+    g_renderRows.prevRightOuterX = &al70c0x.rightOuterX[6];
+    g_renderRows.lineWidth = &g_roadLineWidths[20];
     g_renderRows.leftFlags = (int far *)(q_72ee - 8);
     g_renderRows.rightFlags = (int far *)(g_rightSideTerrainRow - 8);
     am8b82y = (int far *)(g7d62p - 8);
@@ -1402,19 +1387,19 @@ void vw_draw(void)
     int f3;
     int w2;
 
-    g_renderRows.leftX = &br7314;
-    g_renderRows.rightX = &az7aeau;
-    g_renderRows.y = &f_78a0;
-    g_renderRows.leftOuterX = &by7fa6;
-    g_renderRows.rightOuterX = &g7ff4g;
+    g_renderRows.leftX = &g_roadLXArray[14];
+    g_renderRows.rightX = &g_rightXProjectionTable[14];
+    g_renderRows.y = &g_roadYProjectionArray[14];
+    g_renderRows.leftOuterX = &g_roadOuterLeftXArray[14];
+    g_renderRows.rightOuterX = &g_rhsOuterXArray[14];
     g_renderRows.buildingY = &g_yBuildingTopArray[14];
-    g_renderRows.prevLeftX = &a7312av;
-    g_renderRows.prevRightX = &ac7ae8t;
-    g_renderRows.prevY = &g789eu;
+    g_renderRows.prevLeftX = &g_roadLXArray[13];
+    g_renderRows.prevRightX = &g_rightXProjectionTable[13];
+    g_renderRows.prevY = &g_roadYProjectionArray[13];
     g_renderRows.prevBuildingY = &g_yBuildingTopArray[13];
-    g_renderRows.prevLeftOuterX = &al7fa4z;
-    g_renderRows.prevRightOuterX = &dz7ff2;
-    g_renderRows.lineWidth = &g_5e86;
+    g_renderRows.prevLeftOuterX = &g_roadOuterLeftXArray[13];
+    g_renderRows.prevRightOuterX = &g_rhsOuterXArray[13];
+    g_renderRows.lineWidth = &g_roadLineWidths[14];
     g_renderRows.leftFlags = (int far *)(q_72ee + 14);
     g_renderRows.rightFlags = (int far *)(g_rightSideTerrainRow + 14);
     am8b82y = (int far *)(g7d62p + 14);
