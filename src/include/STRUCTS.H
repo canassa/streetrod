@@ -154,10 +154,10 @@ struct Cmd {
 struct Box {
     int w;
     int h;
-    int x1;
-    int y1;
-    int x2;
-    int y2;
+    int sx;
+    int sy;
+    int dx;
+    int dy;
     char pad[0x1c - 12];
 };
 

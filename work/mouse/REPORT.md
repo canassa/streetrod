@@ -133,8 +133,9 @@ No artificial packing directive or initializer filler is used.
 
 ## Final verification
 
-Merged main at 9d23432, preserving its critical-error constants and both sides
-of the append-only diary conflict. No source conflict required resolution.
+Merged main at 9d23432 (critical-error constants), then at 7e49ad5
+(animation names), preserving both sides of each append-only diary conflict.
+No source conflict required resolution.
 Repeated every required gate against the merged source:
 
 - `SR_JOBS=6 ./sr check --all`: 572/572 (551 MATCH, 21 MATCH*); every file gate passes.
