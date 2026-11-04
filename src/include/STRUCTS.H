@@ -616,17 +616,17 @@ struct State70C0 {
 /* DS:7EAA..7EC2: one COMMON block in the original (folded from 11 placeholder
    globals: the compiler budget of the original translation units requires fewer external symbols) */
 struct State7EAA {
-    long m7eaa;
+    long money;
     int m7eae;
-    struct Car *m7eb0;
-    struct Car *m7eb2;
-    struct Node2 *m7eb4;
-    int m7eb6;
-    struct Node *m7eb8;
-    struct Node *m7eba;
-    int m7ebc;
-    int m7ebe;
-    int m7ec0;
+    struct Car *currentCar;
+    struct Car *ownedCars;
+    struct Node2 *freeCars;
+    int carCount;
+    struct Node *spareParts;
+    struct Node *freeParts;
+    int partCount;
+    int adIndex;
+    int raceType;
 };
 
 /* DS:8272..8290: one COMMON block in the original (folded from 11 placeholder

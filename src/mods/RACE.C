@@ -229,14 +229,14 @@ static void near leave_station(struct Dlg *d)
     if (d->f12) {
         show_tank_cap(d, 0x472);
         if (d->f18) {
-            F_11540(a_7eaap.m7eaa >= 10 ? -10 : -(int)a_7eaap.m7eaa);
+            F_11540(a_7eaap.money >= 10 ? -10 : -(int)a_7eaap.money);
             d->f18 = 0;
         }
     }
     if (d->f14 == 0) {
         popup_show(g_pumpWithNozzle, 0x40, 0x64);
         if (d->f18)
-            F_11540(a_7eaap.m7eaa >= 10 ? -10 : -(int)a_7eaap.m7eaa);
+            F_11540(a_7eaap.money >= 10 ? -10 : -(int)a_7eaap.money);
     }
     if (d->f10 == 0) {
         cursor_ctl(-3);
@@ -244,9 +244,9 @@ static void near leave_station(struct Dlg *d)
         cursor_ctl(-1);
         carpic_patch_bg(p, 0x60, 0, 0x30, 0x40, 0xc8, 0x51, 0xa9, 2);
     }
-    a_7eaap.m7eb0->fuel = a_7eaap.m7eb0->fuel > 0xaa ? 0xaa : a_7eaap.m7eb0->fuel;
-    F_181C8(2, d->specIndex, d->bodyMods, (a_7eaap.m7eb0->appearance >> 8) & 0x1f, 0, 0xa9, 1,
-            g_5030[g_4806[a_7eaap.m7eb0->tires->idx].variant]);
+    a_7eaap.currentCar->fuel = a_7eaap.currentCar->fuel > 0xaa ? 0xaa : a_7eaap.currentCar->fuel;
+    F_181C8(2, d->specIndex, d->bodyMods, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
+            g_5030[g_4806[a_7eaap.currentCar->tires->idx].variant]);
     menu_pop(1);
     marks_clear();
     g_scene = 1;
@@ -272,10 +272,10 @@ void race_gas_station(void)
     (*m_present)();
     dl.f0c = 1;
     cursor_ctl(1);
-    dl.specIndex = a_7eaap.m7eb0->specIndex;
-    dl.bodyMods = game_car_look(a_7eaap.m7eb0);
-    F_181C8(4, dl.specIndex, dl.bodyMods, (a_7eaap.m7eb0->appearance >> 8) & 0x1f, 0, 0xa9, 1,
-            g_5030[g_4806[a_7eaap.m7eb0->tires->idx].variant]);
+    dl.specIndex = a_7eaap.currentCar->specIndex;
+    dl.bodyMods = game_car_look(a_7eaap.currentCar);
+    F_181C8(4, dl.specIndex, dl.bodyMods, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
+            g_5030[g_4806[a_7eaap.currentCar->tires->idx].variant]);
     F_16381(0);
     label = popup_grab(0x50, 0xaa, 0x28, 0xc, 0);
     dl.bm1 = popup_grab(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
@@ -293,7 +293,7 @@ void race_gas_station(void)
     dl.f10 = 1;
     dl.f16 = 0;
     dl.f18 = 1;
-    dl.gallonsLeft = (0xbe - a_7eaap.m7eb0->fuel) / 0x1e;
+    dl.gallonsLeft = (0xbe - a_7eaap.currentCar->fuel) / 0x1e;
     show_tank_cap(&dl, 0x472);
     spots_idle();
     menu_push(0x17);
@@ -309,10 +309,10 @@ top:
                 goto top;
             if (dl.f1a) {
                 dl.gallonsLeft--;
-                a_7eaap.m7eb0->fuel += 0x1e;
+                a_7eaap.currentCar->fuel += 0x1e;
                 done = 1;
-                F_11540(-(pos <= a_7eaap.m7eaa ? pos : (int)a_7eaap.m7eaa));
-                if (dl.gallonsLeft == 0 || pos > a_7eaap.m7eaa) {
+                F_11540(-(pos <= a_7eaap.money ? pos : (int)a_7eaap.money));
+                if (dl.gallonsLeft == 0 || pos > a_7eaap.money) {
                     if (video_anim_active(2)) {
                         sound_pump(0);
                         video_anim_stop(2);
@@ -380,7 +380,7 @@ top:
                 menu_pop(1);
                 spots_nozzle();
             } else {
-                if (pos > a_7eaap.m7eaa || done) {
+                if (pos > a_7eaap.money || done) {
                     dl.f18 = 0;
                     goto fin;
                 }
@@ -406,11 +406,11 @@ top:
                 show_tank_cap(&dl, 0x472);
                 dl.f12 = 0;
                 cursor_ctl(dl.f0c = 2);
-                if (dl.gallonsLeft > 0 && pos <= a_7eaap.m7eaa)
+                if (dl.gallonsLeft > 0 && pos <= a_7eaap.money)
                     game_message(0x18dd);
                 goto both;
             }
-            if (dl.gallonsLeft == 0 || pos > a_7eaap.m7eaa)
+            if (dl.gallonsLeft == 0 || pos > a_7eaap.money)
                 game_message(0x10b5);
             else {
                 show_tank_cap(&dl, 0x471);
@@ -444,23 +444,23 @@ static int near replace_tires(void)
     int ret;
 
     ret = 0;
-    if (a_7eaap.m7eb0 == 0)
+    if (a_7eaap.currentCar == 0)
         return 0;
-    a_7eaap.m7eb0->value -= game_take_part(a_7eaap.m7eb0->tires, 0);
-    a_7eaap.m7eb0->tires = 0;
+    a_7eaap.currentCar->value -= game_take_part(a_7eaap.currentCar->tires, 0);
+    a_7eaap.currentCar->tires = 0;
     F_076A7(4, tbl, 0, 0);
     if (g_list[0]) {
-        F_07741(F_077B7(tbl[1]), &a_7eaap.m7eb0->tires);
+        F_07741(F_077B7(tbl[1]), &a_7eaap.currentCar->tires);
     } else {
-        a_7eaap.m7eaa -= 0x32;
-        if (a_7eaap.m7eaa < 0) {
-            ret = (int)-a_7eaap.m7eaa;
-            a_7eaap.m7eaa = 0;
+        a_7eaap.money -= 0x32;
+        if (a_7eaap.money < 0) {
+            ret = (int)-a_7eaap.money;
+            a_7eaap.money = 0;
         }
         game_add_part(0x28, g_4806[40].value);
-        tbl[0] = a_7eaap.m7eb8;
-        a_7eaap.m7eb8 = tbl[0]->next;
-        F_07741(tbl[0], &a_7eaap.m7eb0->tires);
+        tbl[0] = a_7eaap.spareParts;
+        a_7eaap.spareParts = tbl[0]->next;
+        F_07741(tbl[0], &a_7eaap.currentCar->tires);
     }
     return ret;
 }
@@ -506,7 +506,7 @@ static void near show_ticket(void)
     *p2 = 0;
     (*a_78aem)(r_vid.back, 0x5e, 0x48, g_driverName);
     *p2 = d;
-    desc3 = g7d86n[a_7eaap.m7eb0->specIndex].nameOffset;
+    desc3 = g7d86n[a_7eaap.currentCar->specIndex].nameOffset;
     endk = desc3 + strcspn(g_descHdr + desc3 + 8, " `.") + 7;
     for (p2 = g_descHdr + desc3 + 1, wk = 0; *p2 && wk < maxw2; p2++)
         wk += g_font[*p2 - 32].w;
@@ -616,14 +616,14 @@ static void near blow_engine(int n)
     char *q;
     int i;
 
-    if (a_7eaap.m7eb0) {
-        for (i = 0, p = a_7eaap.m7eb0->rack.parts; i < 5; i++, p++) {
-            a_7eaap.m7eb0->value -= game_take_part(*p, 0);
+    if (a_7eaap.currentCar) {
+        for (i = 0, p = a_7eaap.currentCar->rack.parts; i < 5; i++, p++) {
+            a_7eaap.currentCar->value -= game_take_part(*p, 0);
             *p = 0;
         }
-        for (i = 0, q = a_7eaap.m7eb0->engineBolts; i < 9; i++)
+        for (i = 0, q = a_7eaap.currentCar->engineBolts; i < 9; i++)
             *q++ = 0;
-        a_7eaap.m7eb0->f1f = 0;
+        a_7eaap.currentCar->f1f = 0;
     }
     sys_reset_queues();
     F_16BC1();
@@ -637,10 +637,10 @@ static void near drop_transmission(int n)
     char *q;
     int i;
 
-    if (a_7eaap.m7eb0) {
-        a_7eaap.m7eb0->value -= game_take_part(a_7eaap.m7eb0->transmission, 0);
-        a_7eaap.m7eb0->transmission = 0;
-        for (i = 0, q = a_7eaap.m7eb0->transmissionBolts; i < 2; i++)
+    if (a_7eaap.currentCar) {
+        a_7eaap.currentCar->value -= game_take_part(a_7eaap.currentCar->transmission, 0);
+        a_7eaap.currentCar->transmission = 0;
+        for (i = 0, q = a_7eaap.currentCar->transmissionBolts; i < 2; i++)
             *q++ = 0;
     }
     sys_reset_queues();
@@ -680,12 +680,12 @@ int near race_outcome(void)
     engine = g_driveEng.stopFlags & 4;
     opt = g_driveEng.stopFlags & 0x10;
     stop = g_driveEng.stopFlags == 5 || g_driveEng.stopFlags == 0x11 || g_driveEng.stopFlags == 0x15;
-    if (a_7eaap.m7eb0->transmission->wear > 9900)
-        a_7eaap.m7eb0->transmission->wear = 9900;
-    if (a_7eaap.m7eb0->rack.parts[0]->wear > 9900)
-        a_7eaap.m7eb0->rack.parts[0]->wear = 9900;
-    if (a_7eaap.m7eb0->tires->wear > 9900)
-        a_7eaap.m7eb0->tires->wear = 9900;
+    if (a_7eaap.currentCar->transmission->wear > 9900)
+        a_7eaap.currentCar->transmission->wear = 9900;
+    if (a_7eaap.currentCar->rack.parts[0]->wear > 9900)
+        a_7eaap.currentCar->rack.parts[0]->wear = 9900;
+    if (a_7eaap.currentCar->tires->wear > 9900)
+        a_7eaap.currentCar->tires->wear = 9900;
     bo7676 = 0;
     g_statsDone = 0;
     b_82bc = 0;
@@ -696,17 +696,17 @@ int near race_outcome(void)
     if (at787cu)
         g_driveEng.stopFlags |= 8;
     menu_push(1);
-    i = a_7eaap.m7ec0 == 0 ? 5 : 15;
-    if (a_7eaap.m7eb0->fuel > i)
-        a_7eaap.m7eb0->fuel -= i;
+    i = a_7eaap.raceType == 0 ? 5 : 15;
+    if (a_7eaap.currentCar->fuel > i)
+        a_7eaap.currentCar->fuel -= i;
     else
-        a_7eaap.m7eb0->fuel = 0;
+        a_7eaap.currentCar->fuel = 0;
     (*m_present)();
     if (g_oppEngState.stopFlags & 1) {
         bo7676 = 1;
         show_race_stats();
         cursor_ctl(-2);
-        game_message(g_isKingState == 0 ? (i = g_winMsgs[kind]) : a_7eaap.m7ec0 == 0 ? 0x14bd : 0x14d6);
+        game_message(g_isKingState == 0 ? (i = g_winMsgs[kind]) : a_7eaap.raceType == 0 ? 0x14bd : 0x14d6);
         F_11540(v);
         if (kind == 5) {
             found = game_make_car(bn7648, g_oppSpecPointer->price, 0);
@@ -716,11 +716,11 @@ int near race_outcome(void)
             found->appearance = (((g7d84o->bodyMods & 2) != 0 & 1) << 14) | (found->appearance & 0xbfff);
             found->appearance = (((g7d84o->bodyMods & 1) != 0 & 1) << 15) | (found->appearance & 0x7fff);
             found->paintScheme = g7d84o->paintScheme;
-            if (found->modelKind > a_7eaap.m7eb0->modelKind) {
-                a_7eaap.m7eb0->next = a_7eaap.m7eb2->next;
-                a_7eaap.m7eb2 = a_7eaap.m7eb0;
-                a_7eaap.m7eb0 = found;
-                perf_drivetrain(a_7eaap.m7eb0, &g_driveEng);
+            if (found->modelKind > a_7eaap.currentCar->modelKind) {
+                a_7eaap.currentCar->next = a_7eaap.ownedCars->next;
+                a_7eaap.ownedCars = a_7eaap.currentCar;
+                a_7eaap.currentCar = found;
+                perf_drivetrain(a_7eaap.currentCar, &g_driveEng);
             }
             if (g_demo == 0 || g7f82r != g_demoRacer) {
                 if (g7d84o->lostCarOnce != 0 || g_isKingState != 0)
@@ -762,12 +762,12 @@ done:
         sprintf(temp, "You have been fined $%2d for speeding", i);
         F_11421(-1, temp, 0x140 - o_8250);
         game_pause(0xfa);
-        if (i <= a_7eaap.m7eaa)
+        if (i <= a_7eaap.money)
             goto pay;
         game_message(0x1793);
         menu_pop(1);
         menu_pop(1);
-        F_11540(-a_7eaap.m7eaa);
+        F_11540(-a_7eaap.money);
         F_11421(-1, " ", 0x140 - o_8250);
         return 4;
 pay:
@@ -782,15 +782,15 @@ pay:
         game_message(0xecb2);
     } else {
         if (kind == 5) {
-            game_scrap_car(a_7eaap.m7eb0, 0);
-            a_7eaap.m7eb0 = 0;
+            game_scrap_car(a_7eaap.currentCar, 0);
+            a_7eaap.currentCar = 0;
         }
         F_11540(-v);
         if (g_driveEng.stopFlags == 1) {
             show_race_stats();
             cursor_ctl(-2);
             i = kind == 5 ? 0x143a : 0x1427;
-            game_message(g_isKingState == 0 ? i : a_7eaap.m7ec0 == 0 ? 0x1450 : 0x146c);
+            game_message(g_isKingState == 0 ? i : a_7eaap.raceType == 0 ? 0x1450 : 0x146c);
             menu_pop(1);
             if (kind != 5)
                 return 3;
@@ -816,8 +816,8 @@ finishstop:
                 } else
                     game_message(0x1658);
             } else if (g_driveEng.speed > 0x5a) {
-                v = game_scrap_car(a_7eaap.m7eb0, 0) / 10 + 0x13;
-                a_7eaap.m7eb0 = 0;
+                v = game_scrap_car(a_7eaap.currentCar, 0) / 10 + 0x13;
+                a_7eaap.currentCar = 0;
                 F_11540(v);
                 ptr = g_msgTotaled;
                 while (*ptr++ != '$')
@@ -856,7 +856,7 @@ finishstop:
                 else
                     g_msgPlusTires[0] = 0;
                 sel = i ? 0x1a : 0x19;
-                if ((long)v > a_7eaap.m7eaa) {
+                if ((long)v > a_7eaap.money) {
                     g_hotRepair[0].kind = g_hotRepair[7].kind = 0xe;
                     g_keyMaps[sel][0].val = 0xd0;
                     g_keyMaps[sel][1].key = 1;
@@ -880,8 +880,8 @@ finishstop:
                     menu_pop(1);
                     return 1;
                 case 2:
-                    F_11540((int)(a_7eaap.m7eb0->value * 0.4));
-                    a_7eaap.m7eb0 = 0;
+                    F_11540((int)(a_7eaap.currentCar->value * 0.4));
+                    a_7eaap.currentCar = 0;
                     break;
                 default:
                     return;
@@ -932,8 +932,8 @@ void near race_reset_eng(struct Eng *p)
     g_05d6 = 0;
     g_05d8 = g_05da = 0;
     bz8630z = -1;
-    g_finishLineIndex = a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc;
-    car = a_7eaap.m7eb0->tires;
+    g_finishLineIndex = a_7eaap.raceType == 0 ? 0x17c : 0x3fc;
+    car = a_7eaap.currentCar->tires;
     p->tireSlip = g_tireSlip[g_4806[car->idx].variant][car->wear / 2000];
     if (car->wear < 8000)
         p->tireFailureIndex = 0;
@@ -999,7 +999,7 @@ void near race_run(void)
     sys_reset_queues();
     race_reset_eng(&g_driveEng);
     init_rival_eng();
-    if (a_7eaap.m7ec0 == 1 && g_isKingState == 0) {
+    if (a_7eaap.raceType == 1 && g_isKingState == 0) {
         if (a_7f88d = !random_int(4))
             g755av = random_int(255) + 0x1fe;
     } else
@@ -1013,15 +1013,15 @@ void near race_run(void)
     F_11593(g_49dc);
     if (ao7d2ev.m7d30 > 200) {
         if (random_int(3) > 0) {
-            if (a_7eaap.m7eb0->timing > 0)
-                a_7eaap.m7eb0->timing = a_7eaap.m7eb0->timing < random_int(4) ? random_int(4) : a_7eaap.m7eb0->timing;
-            else if (a_7eaap.m7eb0->timing < 0)
-                a_7eaap.m7eb0->timing = -random_int(8) < a_7eaap.m7eb0->timing ? -random_int(8) : a_7eaap.m7eb0->timing;
+            if (a_7eaap.currentCar->timing > 0)
+                a_7eaap.currentCar->timing = a_7eaap.currentCar->timing < random_int(4) ? random_int(4) : a_7eaap.currentCar->timing;
+            else if (a_7eaap.currentCar->timing < 0)
+                a_7eaap.currentCar->timing = -random_int(8) < a_7eaap.currentCar->timing ? -random_int(8) : a_7eaap.currentCar->timing;
             else
-                a_7eaap.m7eb0->timing = random_int(8) - 4;
+                a_7eaap.currentCar->timing = random_int(8) - 4;
         }
-        slot = a_7eaap.m7eb0->tires;
-        slot->wear += (g_4806[slot->idx].variant == 0 ? (a_7eaap.m7ec0 == 1 ? 700 : 300) : (a_7eaap.m7ec0 == 1 ? 400 : 200)) + random_int(300);
+        slot = a_7eaap.currentCar->tires;
+        slot->wear += (g_4806[slot->idx].variant == 0 ? (a_7eaap.raceType == 1 ? 700 : 300) : (a_7eaap.raceType == 1 ? 400 : 200)) + random_int(300);
         if (slot->wear > 10000)
             slot->wear = 10000;
     }
@@ -1085,7 +1085,7 @@ static void near rival_accelerate(void)
         }
         g_rivalCurveBrake = 0;
         d = ar7e8av.m7e8a - ao7d2ev.m7d30;
-        if (d > 12 && (a_7eaap.m7ec0 != 1 || g_isKingState == 0)) {
+        if (d > 12 && (a_7eaap.raceType != 1 || g_isKingState == 0)) {
             if (g_driveEng.speed >= 0x61)
                 vl = g_rivalFast;
             else if (g_isKingState)
@@ -1428,7 +1428,7 @@ void race_tick(void)
         return;
     if (g_demo)
         return;
-    if ((a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc) <= ao7d2ev.m7d30)
+    if ((a_7eaap.raceType == 0 ? 0x17c : 0x3fc) <= ao7d2ev.m7d30)
         return;
     if (by72f2 && a_7f88d <= 1) {
         g_driveEng.stopFlags |= 3;

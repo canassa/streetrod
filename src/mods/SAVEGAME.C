@@ -118,9 +118,9 @@ static void near init_racers(void)
 static void near init_new_game(void)
 {
     pools_init(1);
-    a_7eaap.m7eaa = 750L;
+    a_7eaap.money = 750L;
     if (g_demo)
-        a_7eaap.m7eaa = 10000L;
+        a_7eaap.money = 10000L;
     a_7eaap.m7eae = 10;
     road_build_layout(100);
     init_racers();
@@ -341,9 +341,9 @@ int near savegame_load(void)
     if (_dos_open(name, 0, &fd7)
         || _dos_read(fd7, g_driverName, 0x24, &n) != 0 || n != 0x24
         || (pools_init(0), 0)
-        || read_cars(fd7, &a_7eaap.m7eb0, 1)
-        || read_cars(fd7, &a_7eaap.m7eb2, 0)
-        || read_nodes(fd7, &a_7eaap.m7eb8)
+        || read_cars(fd7, &a_7eaap.currentCar, 1)
+        || read_cars(fd7, &a_7eaap.ownedCars, 0)
+        || read_nodes(fd7, &a_7eaap.spareParts)
         || _dos_read(fd7, &g_betRaces, 8, &n) != 0 || n != 8
         || _dos_read(fd7, av7ff8, 0x18c, &n) != 0 || n != 0x18c
         || _dos_read(fd7, &g_05fc, 4, &n) != 0 || n != 4
@@ -360,8 +360,8 @@ int near savegame_load(void)
         return -666;
     }
     _dos_close(fd7);
-    if (a_7eaap.m7eb0)
-        F_067CF(a_7eaap.m7eb0->paintScheme);
+    if (a_7eaap.currentCar)
+        F_067CF(a_7eaap.currentCar->paintScheme);
     road_build_layout(g_roadLayout);
     g_0604 = g_0600 - delta;
     cursor_ctl(-2);
@@ -476,9 +476,9 @@ again:
     name[0] = disk_data_drive();
     if (_dos_creat(name, 0, &fd8)
         || _dos_write(fd8, g_driverName, 0x24, &n) != 0 || n != 0x24
-        || write_cars(fd8, a_7eaap.m7eb0, 1)
-        || write_cars(fd8, a_7eaap.m7eb2, 0)
-        || write_nodes(fd8, a_7eaap.m7eb8)
+        || write_cars(fd8, a_7eaap.currentCar, 1)
+        || write_cars(fd8, a_7eaap.ownedCars, 0)
+        || write_nodes(fd8, a_7eaap.spareParts)
         || _dos_write(fd8, &g_betRaces, 8, &n) != 0 || n != 8
         || _dos_write(fd8, av7ff8, 0x18c, &n) != 0 || n != 0x18c
         || _dos_write(fd8, &g_05fc, 4, &n) != 0 || n != 4

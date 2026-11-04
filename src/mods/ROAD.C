@@ -934,7 +934,7 @@ void road_advance(void)
         ao7d2ev.m7d2e = 0xce4;
     }
     ao7d2ev.m7d3e = *af7880z;
-    if (g_demo != 0 || g_autoDrive != 0 || (a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc) < ao7d2ev.m7d30) {
+    if (g_demo != 0 || g_autoDrive != 0 || (a_7eaap.raceType == 0 ? 0x17c : 0x3fc) < ao7d2ev.m7d30) {
         goal6 = 0x960;
         if (ar7e8av.m7e90 > 0x960)
             goal6 -= 0x140;

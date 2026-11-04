@@ -256,7 +256,7 @@ static void near build_rival_pool(int flag)
     for (k = 0; k < 21; k++) {
         item = &g7d86n[av7ff8[k].specIndex];
         map[k].dr = abs(F_0E218(av7ff8[k].specIndex) - F_0E218(-1));
-        map[k].dk = abs(g7d86n[av7ff8[k].specIndex].modelKind - g7d86n[a_7eaap.m7eb0->specIndex].modelKind);
+        map[k].dk = abs(g7d86n[av7ff8[k].specIndex].modelKind - g7d86n[a_7eaap.currentCar->specIndex].modelKind);
         map[k].taken = (av7ff8[k].status != -1) ? 0 : 1;
     }
     g_poolCount = 0;
@@ -433,9 +433,9 @@ static int near accepts_bet(int kind)
 calc:
     chm = g7d84o->f0;
     p18 = spec_class(bn7648);
-    p27 = spec_class(a_7eaap.m7eb0->specIndex);
+    p27 = spec_class(a_7eaap.currentCar->specIndex);
     clsl = (g_oppSpecPointer->parts >> 8) & 7;
-    item1 = g_4806[a_7eaap.m7eb0->rack.parts[0]->idx].variant;
+    item1 = g_4806[a_7eaap.currentCar->rack.parts[0]->idx].variant;
     v11 = ag8baey[chm][row];
     v2 = g7d68m[p18][clsl];
     v3 = g7d68m[p27][item1];
@@ -446,9 +446,9 @@ calc:
     else
         c6 = 1;
     scorel = g_acceptProbability[col][c6];
-    if ((a_7eaap.m7eb0->appearance & 0x1f00) == 0)
+    if ((a_7eaap.currentCar->appearance & 0x1f00) == 0)
         bonus2 = 0;
-    else if (a_7eaap.m7eb0->appearance & 0x100)
+    else if (a_7eaap.currentCar->appearance & 0x100)
         bonus2 = 4;
     else
         bonus2 = 6;
@@ -491,27 +491,27 @@ static int near challenge(int arg)
             break;
         case 0:
             if (g_kingDragWon == 0) {
-                if (a_7eaap.m7eb0->fuel < 22) {
+                if (a_7eaap.currentCar->fuel < 22) {
                     game_message(0x1761);
                     return 0;
                 }
-                a_7eaap.m7ec0 = 0;
+                a_7eaap.raceType = 0;
                 game_message(0x11d1);
                 as79a2z = 0;
             } else {
-                a_7eaap.m7ec0 = 1;
+                a_7eaap.raceType = 1;
                 game_message(0x11f7);
                 as79a2z = 5;
             }
             d_79a4 = 0;
             race_run();
-            g_05fc += a_7eaap.m7ec0 == 0 ? 0x444u : 0x777u;
+            g_05fc += a_7eaap.raceType == 0 ? 0x444u : 0x777u;
             return 2;
         }
         marks_release();
         return 0;
     }
-    if (a_7eaap.m7eb0->fuel < 7) {
+    if (a_7eaap.currentCar->fuel < 7) {
         game_message(0x1761);
         return 0;
     }
@@ -523,18 +523,18 @@ static int near challenge(int arg)
     switch (ch) {
     case 1:
         num = 0x12;
-        a_7eaap.m7ec0 = 0;
+        a_7eaap.raceType = 0;
         break;
     case 2:
         num = 0x13;
-        a_7eaap.m7ec0 = 1;
+        a_7eaap.raceType = 1;
         break;
     case -23:
     case 1000:
         game_message(0x122c);
         goto quit;
     }
-    if (a_7eaap.m7ec0 == 1 && a_7eaap.m7eb0->fuel < 17) {
+    if (a_7eaap.raceType == 1 && a_7eaap.currentCar->fuel < 17) {
         game_message(0x1761);
         goto quit;
     }
@@ -576,21 +576,21 @@ static int near challenge(int arg)
             kind = 5;
             break;
         }
-        if ((long)price <= a_7eaap.m7eaa) {
+        if ((long)price <= a_7eaap.money) {
             if (accepts_bet(kind)) {
                 as79a2z = kind;
                 d_79a4 = price;
                 menu_pop(1);
                 popup_show(pict, x, sy);
                 pict = 0;
-                game_message(g_acceptMsgs[a_7eaap.m7ec0][random_int(3)]);
+                game_message(g_acceptMsgs[a_7eaap.raceType][random_int(3)]);
                 race_run();
-                g_05fc += a_7eaap.m7ec0 == 0 ? 0x444u : 0x777u;
+                g_05fc += a_7eaap.raceType == 0 ? 0x444u : 0x777u;
                 return 2;
             }
             while ((ch = random_int(5)) == prev)
                 ;
-            game_message(g_refuseMsgs[a_7eaap.m7ec0][prev = ch]);
+            game_message(g_refuseMsgs[a_7eaap.raceType][prev = ch]);
         } else
             game_message(0x131b);
     }
@@ -1034,7 +1034,7 @@ test:
                             av7ff8[21].status = 0;
                             g_dragWins -= 3;
                             g_roadWins -= 2;
-                        } else if (a_7eaap.m7ec0 == 0)
+                        } else if (a_7eaap.raceType == 0)
                             g_kingDragWon = 1;
                         else {
                             F_16381(0);
@@ -1053,7 +1053,7 @@ test:
                         return;
                     }
                     if (bo7676 && m_8272.m8278 != 1) {
-                        if (a_7eaap.m7ec0 == 0)
+                        if (a_7eaap.raceType == 0)
                             g_dragWins++;
                         else
                             g_roadWins++;

@@ -87,7 +87,7 @@ void F_11540(int n)
 
     old = aq8256z;
     aq8256z = 1;
-    F_11421(g8258z, ltoa(a_7eaap.m7eaa += n, buf, 10), 0x30);
+    F_11421(g8258z, ltoa(a_7eaap.money += n, buf, 10), 0x30);
     ar82c0 = g824cd;
     aq8256z = old;
 }

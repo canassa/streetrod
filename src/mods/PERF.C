@@ -139,7 +139,7 @@ int near F_0E218(int n)
     struct Node na;
 
     if (n < 0)
-        p6 = a_7eaap.m7eb0;
+        p6 = a_7eaap.currentCar;
     else {
         car.timing = 0;
         car.specIndex = n;

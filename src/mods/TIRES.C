@@ -225,9 +225,9 @@ void F_1B213(int *a, int *b)
     cursor_ctl(-4);
     r_vid.copyToFront = 0;
     g_6da0 = z_8b7c;
-    modelm = a_7eaap.m7eb0->specIndex;
-    attr3 = game_car_look(a_7eaap.m7eb0);
-    tinto = (a_7eaap.m7eb0->appearance >> 8) & 0x1f;
+    modelm = a_7eaap.currentCar->specIndex;
+    attr3 = game_car_look(a_7eaap.currentCar);
+    tinto = (a_7eaap.currentCar->appearance >> 8) & 0x1f;
     for (n = 0; n < 3; n++)
         g_liftPics[n] = F_15BBE(g_liftPicIds[n], 1);
     screen_fill_rect(0x88, 0xba - g_liftPics[1]->height, g_liftPics[1]->width, g_liftPics[1]->height,

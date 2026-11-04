@@ -25,14 +25,14 @@ void cruise_go(void)
 {
     g_firePressed = g_mouseLeft = g_joyButtons = g_buttons = 0;
     if (g_scene) {
-        if (a_7eaap.m7eb0->fuel > 2)
-            a_7eaap.m7eb0->fuel -= 2;
+        if (a_7eaap.currentCar->fuel > 2)
+            a_7eaap.currentCar->fuel -= 2;
         else
-            a_7eaap.m7eb0->fuel = 0;
+            a_7eaap.currentCar->fuel = 0;
         (*bl78be)();
         if (g_firePressed == 0) {
             cursor_ctl(-4);
-            g_autoTrans = !g_4806[a_7eaap.m7eb0->transmission->idx].variant;
+            g_autoTrans = !g_4806[a_7eaap.currentCar->transmission->idx].variant;
             race_reset_eng(&g_driveEng);
             jz79a6 = 0;
             bw8aca = 0;
@@ -81,7 +81,7 @@ int cruise_drive(void)
         (*bl78be)();
     ao8228u = g7d66n = 0;
     saved = m_8272.m827c;
-    F_067CF(a_7eaap.m7eb0->paintScheme);
+    F_067CF(a_7eaap.currentCar->paintScheme);
     if (bw8aca)
         cruise_rival_paint(saved);
     r = drive_run();

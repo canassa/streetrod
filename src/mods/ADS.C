@@ -110,11 +110,11 @@ int ads_run(void)
             hsave = r_vid.back->height;
             r_vid.back->height = 0xbe;
             y = 0;
-            i = g_adResume ? a_7eaap.m7ebe : g_pages.start[g_pages.cur];
+            i = g_adResume ? a_7eaap.adIndex : g_pages.start[g_pages.cur];
             next = g_pages.list + i;
             row7 = g_hotPageRows;
             cntz = 0;
-            a_7eaap.m7ebe = i;
+            a_7eaap.adIndex = i;
             do {
                 draw_hline(r_vid.back, 0x44, y + 1, 0xb8);
                 y += 3;
@@ -171,20 +171,20 @@ int ads_run(void)
         case -1:
             if (--g_pages.cur < 0)
                 g_pages.cur = g_pages.n - 1;
-            g7f84q = a_7eaap.m7ebe - 1;
+            g7f84q = a_7eaap.adIndex - 1;
             if (g7f84q < 1)
                 g7f84q = limit;
             diff = 0xbd;
             while ((diff -= 9 * g_descHdr[g_pages.list[g7f84q]] + 3) > 0)
                 if (--g7f84q < 1)
                     g7f84q = limit;
-            a_7eaap.m7ebe = g7f84q;
+            a_7eaap.adIndex = g7f84q;
             g_adRedraw = 1;
             continue;
         case -2:
             if (++g_pages.cur >= g_pages.n)
                 g_pages.cur = 0;
-            a_7eaap.m7ebe = g7f84q + (y > 0xc1 ? 0 : 1);
+            a_7eaap.adIndex = g7f84q + (y > 0xc1 ? 0 : 1);
             g_adRedraw = 1;
             continue;
         default:

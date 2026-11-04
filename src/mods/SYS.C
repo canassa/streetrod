@@ -797,7 +797,7 @@ void sys_demo_step(void)
             k = 2;
             break;
         case 9:
-            if (a_7eaap.m7eb0)
+            if (a_7eaap.currentCar)
                 break;
         case 13:
             num--;
@@ -848,7 +848,7 @@ void sys_demo_step(void)
             g_demoChoice = 5;
             break;
         case 7:
-            if (a_7eaap.m7eb0 == 0)
+            if (a_7eaap.currentCar == 0)
                 g_demoChoice = 0;
             break;
         }
@@ -900,9 +900,9 @@ void sys_demo_step(void)
         g_demoLastGroup = 0;
     } else
         g_demoLastGroup = g_keyGroup;
-    if (a_7eaap.m7eb8 == 0 && g_keyGroup == 7)
+    if (a_7eaap.spareParts == 0 && g_keyGroup == 7)
         game_add_part(0x2a, g_4806[42].value);
-    if (a_7eaap.m7eb0 == 0) {
+    if (a_7eaap.currentCar == 0) {
         if (g_keyGroup == 10)
             g_demoKey = 0x31;
         if (g_keyGroup == 8 && (g_demoKey == 1 || g_demoKey == 0x22 || g_demoKey == 0x19))
@@ -1169,7 +1169,7 @@ void interrupt far sys_drive_isr(void)
                 if (g_demo || g_autoDrive) {
                     if (g_driveEng.accelStep * 4 + g_driveEng.rpm < 5700) {
                         if (ar7e8av.m7e8a > ao7d2ev.m7d30 ||
-                            (!a_7eaap.m7ec0 ? 0x17c : 0x3fc) - 60 < ao7d2ev.m7d30)
+                            (!a_7eaap.raceType ? 0x17c : 0x3fc) - 60 < ao7d2ev.m7d30)
                             flag = 1;
                     } else if (g_driveEng.gearIndex < g_driveEng.gearCount && ao8228u) {
                         c = 1;
@@ -1185,7 +1185,7 @@ void interrupt far sys_drive_isr(void)
                     b_82bc += g_driveEng.speed;
                     g_driveEng.elapsedTicks++;
                 }
-                if ((!a_7eaap.m7ec0 ? 0x17c : 0x3fc) < ao7d2ev.m7d30) {
+                if ((!a_7eaap.raceType ? 0x17c : 0x3fc) < ao7d2ev.m7d30) {
                     prev = 1;
                     flag = s = 0;
                     if (g_driveEng.speed > 15)
@@ -1197,12 +1197,12 @@ void interrupt far sys_drive_isr(void)
                     g_brakeTicks--;
                 }
                 if (g_driveEng.rpm > 5000) {
-                    a_7eaap.m7eb0->rack.parts[0]->wear += !a_7eaap.m7ec0 ? 1 : 1;
-                    a_7eaap.m7eb0->transmission->wear += !a_7eaap.m7ec0 ? 1 : 1;
+                    a_7eaap.currentCar->rack.parts[0]->wear += !a_7eaap.raceType ? 1 : 1;
+                    a_7eaap.currentCar->transmission->wear += !a_7eaap.raceType ? 1 : 1;
                 }
-                if (!(g_0600 & (!a_7eaap.m7ec0 ? 0xf : 0xf)))
-                    a_7eaap.m7eb0->rack.parts[0]->wear++;
-                if ((i = a_7eaap.m7eb0->rack.parts[0]->wear) >= 9900) {
+                if (!(g_0600 & (!a_7eaap.raceType ? 0xf : 0xf)))
+                    a_7eaap.currentCar->rack.parts[0]->wear++;
+                if ((i = a_7eaap.currentCar->rack.parts[0]->wear) >= 9900) {
                     g_driveEng.stopFlags |= 5;
                     sys_stop_drive();
                 }
@@ -1227,9 +1227,9 @@ void interrupt far sys_drive_isr(void)
                     (g_driveEng.automatic && g_driveEng.autoSelector > 1 &&
                      ((flag && g_driveEng.rpm > g_driveEng.autoShiftRpm && g_driveEng.gearIndex < g_driveEng.gearCount) ||
                       (!flag && g_driveEng.gearIndex > 1 && !g_driveEng.rpmBand)))) {
-                    a_7eaap.m7eb0->transmission->wear += g_driveEng.rpm > 5000 ? 15 : 3;
+                    a_7eaap.currentCar->transmission->wear += g_driveEng.rpm > 5000 ? 15 : 3;
                     if (g_demo == 0) {
-                        i = a_7eaap.m7eb0->transmission->wear;
+                        i = a_7eaap.currentCar->transmission->wear;
                         if (i >= 9900 ||
                             (g_driveEng.automatic == 0 && flag && g_driveEng.rpm > 5000 &&
                              i / 100 + 100 > random_int(3277))) {
