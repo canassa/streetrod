@@ -1285,3 +1285,12 @@ Tooling lessons are recorded in [sr-cli](../.claude/skills/sr-cli/SKILL.md); the
 ### What I learned
 - DOSBox command sequences need call SRENV.BAT to continue to MAKE after the batch file. MASM needs INCLUDE even for headers beside its source. The shared environment and staging rules are recorded in .claude/skills/sr-cli/SKILL.md.
 - A recursive filename index lets compiler jobs stage unchanged headers either flat for E: or in their original folders for the linked build; duplicate filenames are rejected so search order cannot silently select another header.
+
+## 2026-11-06 01:00 CET: Sources in subsystem folders
+
+### What I did
+- Moved every source with its header (one `git mv` commit) into src/SYS, UI, GAME (town screens and driving), VIDEO, CGA, EGA, TANDY, HERC, INPUT, SOUND and DATA; src/mods and src/include are gone. A checked-in `src/SRENV.BAT` sets INCLUDE to the folder list (MASM 5.1 does not search a source's own folder, and /I flags would exceed DOS's command line), proven in DOSBox-X MAKE before the move. The tools build one source index from src/**. Done by a Codex agent.
+- Result: `./sr build` IDENTICAL from an empty work dir and in a fresh clone, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup/order checks clean, tests OK.
+
+### What I learned
+- A source path reaches only the OBJ's THEADR record; the EXE never sees it.
