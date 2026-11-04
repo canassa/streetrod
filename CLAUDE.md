@@ -6,7 +6,7 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 
 - **Compiler:** Microsoft C 5.1 (`toolchain/msc51`). Confirmed by library matches: the C runtime is `MLIBCR.LIB` and the 8087 emulator is `EM.LIB`.
 - **Memory model:** medium (`/AM`): far code, near data. Floating point uses the emulator (`/FPi`).
-- **Flags are per file:** `/AM /O... /Gs /FPi` with `/Oals` (26 files), `/Oalsi` (19), `/Oas` (7), `/Oasi`, `/Oa` and no `/O` (one each); MASM `/Ml` (27). Each file's line is recorded in LAYOUT.JSON (`./sr flags FILE`); data-only files use `/AM /Oas /Gs /FPi`.
+- **Flags are per file:** `/AM /O... /Gs /FPi` with `/Oals` (26 files), `/Oalsi` (19), `/Oas` (7), `/Oasi`, `/Oa` and no `/O` (one each); MASM `/Ml` (27). Each file's command line is its block in `src/MAKEFILE` (`./sr flags FILE`); the data-only C files use `/AM /Oas /Gs /FPi`.
 - **Packing:** Microsoft EXEPACK. `orig/SR_unpacked.EXE` is the unpacked image and is what every tool reads.
 - **Addresses** are linear offsets into the load image (file offset minus the `0x22D0` header). `seg:off` is the segment value the callers use.
 - **Size:** 719 real functions: 506 game C, 66 game asm, and 147 MSC runtime entries (`kind = crt`, `status = skip`, never reconstructed).
@@ -17,9 +17,11 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 `./sr` drives everything (it enters `shell.nix` on its own if `dosbox-x` or capstone is missing). The DB is `db/sr.sqlite`. Run `./sr <command> -h` for options.
 
 ```
-./sr build                     # build work/layout/SRPACKED.EXE; must end `Packed EXE vs orig/SR.EXE: IDENTICAL`
-./sr build --prepare-only      # only write the DOS build tree: sources, MAKEFILE, BUILD.BAT, ENV.BAT, LINK.RSP
-./sr build --objects-only      # compile and gate every object without linking
+./sr build                     # run src/MAKEFILE (work/layout/SRPACKED.EXE), then verify; must end `Packed EXE vs orig/SR.EXE: IDENTICAL`
+./sr build --no-verify         # only the build: no gates, no comparison (needs neither orig/ nor the DB)
+./sr build --prepare-only      # only copy src/ (MAKEFILE, SR.LNK, sources, headers) to work/layout
+./sr build --objects-only      # run the MAKEFILE's compile blocks and gate every object, no link
+./dosbox.sh --make             # the DOS-native build: MAKE MAKEFILE in DOSBox-X on a copy of src/, compared with orig/SR.EXE
 ./sr linkcheck [EXE]            # unmasked comparison of work/layout/SR.EXE (unpacked link) with the unpacked original
 ./sr scan                      # rediscover functions in the EXE, update the DB (keeps names/status/src)
 ./sr crtnames                  # name CRT functions by locating MSC 5.1 library modules in the EXE (also records their aliases)
@@ -30,12 +32,13 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 ./sr check --all               # regression gate: every file compiled once, every matched function must still match
 ./sr diff ADDR|NAME [--full]   # two-column instruction diff, ours vs original
 ./sr sweep ADDR|NAME           # compile the function's file under 46 /O flag combinations, score the function
-./sr flags FILE|ADDR [FLAGS]   # a file's CL/MASM flags in LAYOUT.JSON (--force when it has matched functions)
+./sr flags FILE|ADDR [FLAGS]   # a file's CL/MASM flags: its src/MAKEFILE line (--force when it has matched functions)
 ./sr name ADDR NAME            # name a function
 ./sr global 82ca g_table --decl "struct Entry @[]"   # declare a DGROUP global (no args: list them)
 ./sr proto 15236 "int @(int n)" # a far (or public near) function's prototype (goes into its file's header) ("" clears; --force replaces an existing one)
 ./sr data 4eee [N]             # hex dump of DGROUP bytes with known globals
-./sr headers                   # regenerate the per-file headers and every source's include block
+./sr headers                   # regenerate the per-file headers, every source's include block and the MAKEFILE dependencies
+./sr headers --check           # write nothing; exit 1 if that would change a file
 ./sr layout a b:long '{ c }'   # predict the [bp-N] layout of locals from their names (--ol for /Ol)
 ./sr layout -w x cnt i         # suggest renames + declaration order for this top-to-bottom order
 ./sr layout --bucket 5          # readable names in bucket 5 (pick one instead of a digit-suffixed rename)
@@ -48,7 +51,7 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 ./sr dgroup apply UNIT... --write  # write a unit's data definitions into its source file (marked /* DS:xxxx */)
 ./sr dgroup aliases --write    # rewrite overlapping DB views as base[i]; `register --write` adds recovered globals
 ./sr dgroup asm                # list initialized DGROUP data no source owns (none left; exit 1 if any)
-./sr dgroup order --write      # the recovered link order into src/link/LAYOUT.JSON
+./sr dgroup order              # the link order recovered from DGROUP and ORDER_HINTS; exit 1 unless src/SR.LNK agrees
 ./sr module units [-v]         # candidate same-file spans from near-call evidence
 ```
 
@@ -58,28 +61,41 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 
 ### The build
 
-`./sr build` (alias `--layout`; `make`) is the faithful build in `work/layout`: LIB 3.11
-combines MSC's untouched libraries into `MLIBCE.LIB` (`LIB MLIBCE.LIB +MLIBCR.LIB+LIBH.LIB+EM.LIB+MLIBFP.LIB;`,
-the component order matters), CL/MASM compile every object of `src/link/LAYOUT.JSON` once (under
-emu2, each code object gated against the original), and LINK 5.01 (in DOSBox-X: emu2 crashes on
-this link) links `/MAP /STACK:2560 /EXEPACK` with the objects' default library. The packed result
-`SRPACKED.EXE` is byte-identical to `orig/SR.EXE`; `SR.EXE` is the same link unpacked, for
-`./sr linkcheck` and its `BYTE-MATCH.JSON` (positions of all 572 functions, all 748 near calls).
-The generated `MAKEFILE` (MSC MAKE 4.07) and `BUILD.BAT` build the same file natively in DOSBox-X
-(`./dosbox.sh`; README.md).
+The build definition is checked in, as the developers had it: `src/MAKEFILE` (MSC MAKE 4.07,
+written like MSC 5.1's own `STARTUP\MAKEFILE`: macros `CC=CL /c /W3 /Fc /IINCLUDE` and
+`ASM=MASM`, one block per object with its source and the headers it includes) and the LINK
+response file `src/SR.LNK` (the 97 objects in link order). MAKE runs the blocks in file order:
+LIB 3.11 combines MSC's untouched libraries into `MLIBCE.LIB`
+(`LIB MLIBCE.LIB +MLIBCR.LIB+LIBH.LIB+EM.LIB+MLIBFP.LIB;`, the component order matters), each
+object's `$(CC) <flags> /NT<segment> MODS\<file>` or `$(ASM) /Ml ...` line, then
+`LINK /MAP /STACK:2560 /EXEPACK @SR.LNK` with the objects' default library. The build directory
+is `src/` itself (C:), with MSC 5.1 on D: and MASM 5.1 on F: and MSC SETUP's environment
+(`PATH`, `INCLUDE`, `LIB`, `TMP`; `build.DOS_ENV`).
+
+`./sr build` (`make`) copies `src/` to `work/layout` and runs every block exactly as written:
+CL, MASM and LIB under emu2 (in parallel, each in its own copy under `work/layout/BUILD/<stem>`),
+LINK in DOSBox-X (emu2 crashes on this link). This part reads neither the DB nor `orig/`
+(`--no-verify` stops there). The verification follows: each code object is gated against the
+original (its functions are the DB rows whose `src` it is), the link is repeated without
+`/EXEPACK` into `SR.EXE` for `./sr linkcheck` and its `BYTE-MATCH.JSON` (positions of all 572
+functions, all 748 near calls), and the packed `SRPACKED.EXE` must be byte-identical to
+`orig/SR.EXE`. `./dosbox.sh --make` runs `MAKE MAKEFILE` natively in DOSBox-X on a fresh copy of
+`src/` (no host tool involved) and compares its `SR.EXE` too. Neither `./sr build` nor
+`./sr check` writes `src/`.
 
 ### Source files: `src/mods/`
 
-Every original object is one source file in `src/mods/`, the unit of `src/link/LAYOUT.JSON`
-(`units[]`: `start`, `end`, `sources` (one file), `kind`, `flags`; `data_units` for the data-only
-files HOTSPOT.C, MESSAGES.ASM, CARMASKS.C, CARMASK2.C). The 55 C files and 27 MASM files hold
+Every original object is one source file in `src/mods/` with one block in `src/MAKEFILE`
+(82 code files, plus the data-only HOTSPOT.C, MESSAGES.ASM, CARMASKS.C, CARMASK2.C; their DGROUP
+ranges are `dgroup.DATA_UNITS`). A code file's extent in the image is the span of the DB
+functions whose `src` it is (`module.files()`). The 55 C files and 27 MASM files hold
 their functions in address order: includes, the file-scope statics and `static ... near`
 forward declarations, then each function with its comment, initialized data before the
 function whose literals precede it. Names are `M_<first addr>` until the real file name is known.
 
-- **One command line per file.** `flags` in LAYOUT.JSON is the file's CL (or MASM) line; a C
-  file is also given `/NT S<region>_TEXT` (the code segment shared by near interfaces, a
-  placeholder name). An assembler file names that segment in its own `.CODE` directive
+- **One command line per file:** its MAKEFILE block. A C file's line ends in
+  `/NT S<region>_TEXT` (the code segment shared by near interfaces, a placeholder name: the
+  segment's first address / 16). An assembler file names that segment in its own `.CODE` directive
   (M_21962.ASM is a `.MODEL SMALL` file with an explicit `SEGMENT`, see its comment).
   `./sr flags FILE` prints or sets it. Code that must not be loop-optimized under the file's
   `/Ol` carries the real `#pragma loop_opt(off)` (M_00D58.C, M_039C0.C, M_23262.C).
@@ -120,7 +136,7 @@ MSC 5.1 assigns stack slots to locals in an order set by a hash of the identifie
 
 ### 4. Declarations come from the defining file's header, never ad hoc
 
-As in the original, each source file has its own header: `src/include/<FILE>.H` declares what that file defines (one header per source file, e.g. `M_0914C.H` for M_0914C.C; standalone data files get theirs, e.g. `SCREENS.H`, `MESSAGES.H`). A `.C` includes `STRUCTS.H`, its own header, and the headers of the files whose globals and functions it uses, and declares nothing itself. The headers and the include blocks are generated: declarations come from the DB, ownership from where the definition is. Run `./sr headers` after adding a reference to another file's symbol or moving a definition. Unused declarations do not count against the compiler budget (rule 4d), so the include lists cannot change code.
+As in the original, each source file has its own header: `src/include/<FILE>.H` declares what that file defines (one header per source file, e.g. `M_0914C.H` for M_0914C.C; standalone data files get theirs, e.g. `SCREENS.H`, `MESSAGES.H`). A `.C` includes `STRUCTS.H`, its own header, and the headers of the files whose globals and functions it uses, and declares nothing itself. The headers in git are source and are what the build compiles. They and the include blocks are maintained by `./sr headers`: declarations come from the DB, ownership from where the definition is (`./sr global` and `./sr proto` rerun it). Run `./sr headers` after adding a reference to another file's symbol or moving a definition; it also updates the header dependencies in `src/MAKEFILE`. `./sr headers --check` (and the test suite) fails when the files have drifted from the DB. Unused declarations do not count against the compiler budget (rule 4d), so the include lists cannot change code.
 
 - **Globals:** `./sr global OFF NAME --decl "TYPE @"`. One name per DGROUP offset, project-wide.
 - **Far functions:** `./sr proto ADDR "TYPE @(ARGS)"`. A call without a prototype fails the check (MSC's C4071 at `/W3`). A CRT function may have several library names (`aFlmul`/`aFulmul`); `crtnames` records them in the `aliases` table and `refs` accepts any.
@@ -137,23 +153,23 @@ The original DGROUP is the objects' `_DATA` in link order: each translation unit
 
 ### 4c. Objects and link order come from the relocation table
 
-LINK lists relocations object by object, each data record's fixups in descending offset (MSC; MASM ascending). `orig/SR.EXE`'s packed relocation table therefore shows which units were one object and in which order objects were linked. A far call between two functions proves two files (MSC near-calls every function defined in the same file). `src/link/LAYOUT.JSON` holds the recovered units, `link_order` (written by `./sr dgroup order --write`), `order_hints` with the evidence for each, and the runtime member order. `./sr build` ends with the packed EXE's comparison against `orig/SR.EXE`.
+LINK lists relocations object by object, each data record's fixups in descending offset (MSC; MASM ascending). `orig/SR.EXE`'s packed relocation table therefore shows which units were one object and in which order objects were linked. A far call between two functions proves two files (MSC near-calls every function defined in the same file). `src/SR.LNK` is the recovered link order. `./sr dgroup order` re-derives it (the literal pools pin the objects that have data; `dgroup.ORDER_HINTS` holds the relocation-table evidence for the others) and fails if SR.LNK disagrees. The fonts (FONTDATA, CGAFONT) are linked just before the first file of code segment S0F38, the far data after the game objects, SLOTS last. `./sr build` ends with the packed EXE's comparison against `orig/SR.EXE`.
 
 ### 4d. The compiler budget: global symbols are load-bearing
 
-MSC 5.1's code generator degrades (fewer loop register variables, other temps) once the external symbols referenced so far in a file exceed a budget measured in symbols plus name characters. A function can match alone and fail in its real file. External functions, external data and communals count; locals, statics, prototypes, literals and initialized data do not. Folding globals into the structs/arrays they were (with code evidence: a run-time `a - b` between two addresses or a direct `g[i]` index proves separate symbols) is how the original files stayed under it. `./sr build --layout` must stay IDENTICAL against `orig/SR.EXE`.
+MSC 5.1's code generator degrades (fewer loop register variables, other temps) once the external symbols referenced so far in a file exceed a budget measured in symbols plus name characters. A function can match alone and fail in its real file. External functions, external data and communals count; locals, statics, prototypes, literals and initialized data do not. Folding globals into the structs/arrays they were (with code evidence: a run-time `a - b` between two addresses or a direct `g[i]` index proves separate symbols) is how the original files stayed under it. `./sr build` must stay IDENTICAL against `orig/SR.EXE`.
 
 ### 4e. Uninitialized storage is communal, and LINK's hash fixes the names
 
-DS:6E60..8F02 (`c_common`) holds no labels: every block is a C tentative definition (`int x;`, `struct T a[N];`) in the file that first mentions it, under the comment `/* Uninitialized storage: communals ... */`. LINK 5.01 allocates communals by symbol-hash bucket (ascending; `tools/sr/linkhash.py`), and within a bucket the most recently created symbol first (created at its first EXTDEF/COMDEF/PUBDEF in link order). Blocks larger than one byte are word-aligned. A block's address therefore constrains its name: renaming a COMMON global, adding one, or moving its first mention to another object can move every later block. Check any such change with `./sr build --layout` (it must print `Packed EXE vs orig/SR.EXE: IDENTICAL`). The current names were chosen to satisfy this (same length as the old placeholder where possible), so they are still placeholders, not recovered names. There is no assembler COMMON storage left. Every array and struct has the size the original allocated, taken from the save-game table at DS:4EA4/4EBE (block addresses and byte counts) where one exists. Operand order in MSC comparisons and additions also tells whether an operand is a struct member or a plain variable (see the recipe book); several placeholder structs (`State70C0`, `State7D2E`, `State7E8A`) exist only because of that evidence. Unreferenced blocks are `char` communals in `src/mods/HOTSPOT.C` (kept across `./sr dgroup apply`).
+DS:6E60..8F02 (`c_common`) holds no labels: every block is a C tentative definition (`int x;`, `struct T a[N];`) in the file that first mentions it, under the comment `/* Uninitialized storage: communals ... */`. LINK 5.01 allocates communals by symbol-hash bucket (ascending; `tools/sr/linkhash.py`), and within a bucket the most recently created symbol first (created at its first EXTDEF/COMDEF/PUBDEF in link order). Blocks larger than one byte are word-aligned. A block's address therefore constrains its name: renaming a COMMON global, adding one, or moving its first mention to another object can move every later block. Check any such change with `./sr build` (it must print `Packed EXE vs orig/SR.EXE: IDENTICAL`). The current names were chosen to satisfy this (same length as the old placeholder where possible), so they are still placeholders, not recovered names. There is no assembler COMMON storage left. Every array and struct has the size the original allocated, taken from the save-game table at DS:4EA4/4EBE (block addresses and byte counts) where one exists. Operand order in MSC comparisons and additions also tells whether an operand is a struct member or a plain variable (see the recipe book); several placeholder structs (`State70C0`, `State7D2E`, `State7E8A`) exist only because of that evidence. Unreferenced blocks are `char` communals in `src/mods/HOTSPOT.C` (kept across `./sr dgroup apply`).
 
 ### 4f. File-local storage is `static`, and MSC's hash fixes the order
 
-DS:6C22..6E2C (`_BSS`) is file-local: every block is used by one original file, so it is an uninitialized `static` there (`static int g_6c46;   /* DS:6C46 */`), and LINK concatenates the objects' `_BSS` in link order. Within one object MSC 5.1 orders its uninitialized statics by `sum(byte & 0xDF) mod 256` of the name, ascending; equal keys put the later declaration first; ints and larger items are word-aligned. Renaming a static therefore moves the statics of its own file only: keep the keys of a file's statics increasing in address order (`./sr build --layout` must stay IDENTICAL). The names are placeholders chosen for that, like the COMMON ones. Each static is defined once, at the top of its file. Statics are not in any header; they stay in the DB for `./sr check`, which resolves a `_BSS` fixup by the names and offsets in the compiler listing. `g_6c42` (4 unreferenced bytes after `g_6c40`) is PROVISIONAL filler.
+DS:6C22..6E2C (`_BSS`) is file-local: every block is used by one original file, so it is an uninitialized `static` there (`static int g_6c46;   /* DS:6C46 */`), and LINK concatenates the objects' `_BSS` in link order. Within one object MSC 5.1 orders its uninitialized statics by `sum(byte & 0xDF) mod 256` of the name, ascending; equal keys put the later declaration first; ints and larger items are word-aligned. Renaming a static therefore moves the statics of its own file only: keep the keys of a file's statics increasing in address order (`./sr build` must stay IDENTICAL). The names are placeholders chosen for that, like the COMMON ones. Each static is defined once, at the top of its file. Statics are not in any header; they stay in the DB for `./sr check`, which resolves a `_BSS` fixup by the names and offsets in the compiler listing. `g_6c42` (4 unreferenced bytes after `g_6c40`) is PROVISIONAL filler.
 
 ### 5. The DB comes from the EXE and the CLI
 
-The EXE is the ground truth. `db/sr.sqlite` is derived from it by `./sr scan`, plus what we record through `sr` commands. The scanner also checks complete gaps for prologue-free routines, rejecting gaps that do not partition into bounded reachable code and trailing alignment; review new discoveries before matching them. Never edit the DB or the generated headers by hand, and never edit `docs/PROGRESS.md` (`./sr status` regenerates it).
+The EXE is the ground truth. `db/sr.sqlite` is derived from it by `./sr scan`, plus what we record through `sr` commands. The scanner also checks complete gaps for prologue-free routines, rejecting gaps that do not partition into bounded reachable code and trailing alignment; review new discoveries before matching them. Never edit the DB by hand (headers: change the DB, then `./sr headers`), and never edit `docs/PROGRESS.md` (`./sr status` regenerates it).
 
 ### 6. Keep the gate green
 
@@ -190,8 +206,8 @@ Never redirect a DOS program's output to a file without a timeout and a size bou
 | `toolchain/msc51/` | MSC 5.1 `BIN`, `INCLUDE`, `LIB`, plus the original disk images |
 | `toolchain/masm51/` | MASM 5.1 `BIN`, `INCLUDE`, docs, plus the original disk images (`F:` in DOSBox) |
 | `src/mods/` | One source file per original object (`M_xxxxx.C` / `.ASM`, 8.3 names), plus the data-only HOTSPOT.C, MESSAGES.ASM, CARMASKS.C, CARMASK2.C |
-| `src/link/LAYOUT.JSON` | The objects: span, source file, flags; link order and its evidence |
-| `src/include/` | per-file headers (generated), `STRUCTS.H` (hand-written); on the compiler's `INCLUDE` path as `E:` |
+| `src/MAKEFILE`, `src/SR.LNK` | The build: one block per object with its command line (MSC MAKE 4.07), the LINK response file (link order) |
+| `src/include/` | per-file headers (maintained by `./sr headers`), `STRUCTS.H` (hand-written); `/IINCLUDE` in the MAKEFILE |
 | `tools/sr/` | The CLI |
 | `db/sr.sqlite` | Functions, callees, named globals |
 | `docs/PROGRESS.md` | Generated progress report |

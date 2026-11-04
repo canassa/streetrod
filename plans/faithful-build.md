@@ -20,21 +20,21 @@ it gets there through the steps below.
 | 5 | Strips `static` from `near` functions | **Done** (2026-11-04): the 29 near functions called from other link units are public `T near F(...)` in the sources, prototyped in their owner's header (`./sr proto ... "T near @(...)"`); the strip is gone. |
 | 6 | Prepends `#include "CRT.H"` and near prototypes taken from `.STB` stubs | **Done** (2026-11-04): CRT.H deleted; the near prototypes come from the owning headers. |
 | 7 | `#define F_0066F main` | **Done** (2026-11-04): the function is `main` in M_00659.C and the DB. |
-| 8 | One CL flag set per unit = union of per-function DB flags (`module.unit_flags`); `/NT S<region>_TEXT` | **Recorded per file** (2026-11-04): LAYOUT.JSON `units[].flags` is the file's one line (7 distinct: 6 CL sets, `/Ml`); C adds `/NT S<region>_TEXT`. `functions.flags` is gone; `./sr flags FILE` edits the unit. Left: the MAKEFILE becomes the checked-in source of truth (item 5 below). The segment names are not in the EXE: placeholders, like other names. |
-| 9 | Places FONTDATA/CGAFONT by a region rule in code; the link order comes from LAYOUT.JSON | Just lines in a checked-in LINK response file. |
+| 8 | One CL flag set per unit = union of per-function DB flags (`module.unit_flags`); `/NT S<region>_TEXT` | **Recorded per file** (2026-11-04): LAYOUT.JSON `units[].flags` is the file's one line (7 distinct: 6 CL sets, `/Ml`); C adds `/NT S<region>_TEXT`. `functions.flags` is gone; `./sr flags FILE` edits the unit. **Done** (2026-11-04, branch faithful-makefile): each file's line is its block in the checked-in `src/MAKEFILE`, `/NT` written out. The segment names are not in the EXE: placeholders, like other names. |
+| 9 | Places FONTDATA/CGAFONT by a region rule in code; the link order comes from LAYOUT.JSON | **Done** (2026-11-04): lines of the checked-in `src/SR.LNK`; `./sr dgroup order` only checks it against the DGROUP evidence. |
 
 ## Scaffolding that goes away once the files are real
 
 - ~~`.STB` stubs (41), the per-source repetition of shared statics, `module.merge` / `split` / `merge_asm`~~: **gone** (2026-11-04) with `stb.py`, `module create/add/dissolve/list/show`, `./sr new`, `./sr src` and `functions.module`. `./sr check` compiles the function's whole file and runs its gate; 551 functions are `MATCH`, 21 `MATCH*` (near calls to public near functions of other objects in segment 0000, verified by the linked build).
 - The legacy `./sr build` (work/game: four renamed code segments, public near definitions in staging copies, 55 unresolved symbols) and the README section that presents it as the build. `src/data/SLOTS.ASM` (unused; SLOTS.C is linked).
-- `LAYOUT.JSON` shrinks to nothing once the MAKEFILE and LINK response file are the sources of truth; the Python side only runs MAKE in DOSBox-X and compares.
+- ~~`LAYOUT.JSON`~~: **gone** (2026-11-04). The units' spans are the DB functions' `src`, flags and segments are MAKEFILE lines, `code_starts` follows from the segment names, the link order is SR.LNK, the data-only files' DGROUP ranges and the order evidence are `dgroup.DATA_UNITS` / `ORDER_HINTS` (analysis, not build input). The host build runs the MAKEFILE's commands as written (emu2 for CL/MASM/LIB, DOSBox-X for LINK); `./dosbox.sh --make` runs MAKE itself in DOSBox-X.
 
 ## Not hacks, but not original either (document, cannot be recovered)
 
 - Names: globals, statics, far storage, struct members, file names, segment names. Many are constrained by LINK's and MSC's hash orders; they are placeholders that reproduce the layout.
 - PROVISIONAL source: the two unreachable far accesses (`x_trk0`/`x_trk1`, M_0F38A.C), the filler `g_6c42`, the evidence-only structs (`State70C0`, `State7D2E`, `State7E8A`).
 - Data files (`src/data/*.ASM`, MESSAGES.ASM, CARMASK*.C, HOTSPOT.C): the assets as source records. Their original form is unknown (could have been converter output); the records are a fair form.
-- emu2 runs the compiler and assembler instead of DOS. It is proven byte-identical to DOSBox-X on every source; the final build should run in DOSBox-X end to end anyway.
+- emu2 runs the compiler and assembler instead of DOS. It is proven byte-identical to DOSBox-X on every source, and `./dosbox.sh --make` runs the whole MAKEFILE in DOSBox-X (IDENTICAL).
 
 ## Order of work
 
@@ -42,5 +42,5 @@ it gets there through the steps below.
 2. CRTORDER: done (M_21962.ASM is small model; see item 2).
 3. Source fixes that do not need the merge: `main`, CRT.H, non-static near functions with header prototypes (done); loop pragmas are done (explicit `#pragma loop_opt` in M_01BAE.C, M_03C8D.C, M_2382D.C).
 4. ~~Merge each unit into one real file (C and asm), with its own segment directive and pragmas; switch `./sr check` to unit compiles; delete STB, merge/split.~~ Done (2026-11-04).
-5. Check in MAKEFILE + LINK.RSP (+ the LIB step); the build is `MAKE` under DOSBox-X; retire the legacy build, LAYOUT.JSON, SLOTS.ASM; update README/CLAUDE.md.
+5. ~~Check in MAKEFILE + LINK.RSP (+ the LIB step); the build is `MAKE` under DOSBox-X; retire the legacy build, LAYOUT.JSON, SLOTS.ASM; update README/CLAUDE.md.~~ Done (2026-11-04): `src/MAKEFILE` + `src/SR.LNK`; `./sr build` runs their commands and needs neither the DB nor orig/ for the build part; headers in git are source (`./sr headers --check`).
 6. Repair `work/dg/run.sh` / `./sr dgroup apply` or retire it once the data lives in final files. Since the merge it works on whole files and no longer adds blank lines to `.ASM`, but `apply all --write` still alternates `g_4fa6` between M_0542E.C and M_039C0.C (different units) depending on the objects of the previous build; both placements build IDENTICAL and match 572/572.

@@ -22,20 +22,21 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 | `tools/sr/match.py` | byte compare (fixups masked, near calls out of the function counted separately with their targets) and the two-column diff |
 | `tools/sr/lib.py` | finds MSC library modules in the EXE (`crtnames`); `locate` returns every public at an address, since a module can publish two names for one offset (`__aFlmul` = `__aFulmul`) |
 | `tools/sr/refs.py` | resolves every fixup to its symbol and checks it against the original instruction |
-| `tools/sr/headers.py` | checks STRUCTS.H and calls `fileheaders.py` (the per-file headers) |
-| `tools/sr/fileheaders.py` | per-file headers: owner of each global/function from its definition, one header per source file (`owners_layout`: LAYOUT.JSON's sources, then the standalone data files), and the include blocks of the C sources (`./sr headers`) |
+| `tools/sr/headers.py` | `./sr headers`: calls `fileheaders.py` (the per-file headers, include blocks) and `makefile.sync_deps`; `check()` is the dry run of `--check` (every write goes through `headers._write`/`_remove`, which record instead of writing). Headers and sources are LF, MAKEFILE/SR.LNK CRLF. Never called by `build` or `check` |
+| `tools/sr/fileheaders.py` | per-file headers: owner of each global/function from its definition, one header per source file (`owners_layout`: the code files, the data-only files of src/mods in link order, then src/data), and the include blocks of the C sources (`./sr headers`) |
 | `tools/sr/layout.py` | the MSC 5.1 local-layout rule (`./sr layout`): bucket hash, block slot reuse, `/Ol` variant, rename suggestions |
 | `tools/sr/lint.py` | the CLAUDE.md rule 4 lint, plus missing-prototype warnings from `/W3` |
 | `tools/sr/dgroup.py` | `./sr dgroup`: original DGROUP ownership from positions (literal pools of the layout objects pin each unit; runs between pools go to referrers; `FORCE_OWNER`/`DATA_UNITS` for assembler data and data-only files), declaration slots, C/MASM definition text with symbolic pointers, insertion into the unit's file, `link_order` |
 | `tools/sr/datacheck.py` | a file's own `_DATA` against the original: base from the code's references, bytes, every data fixup resolved by symbol; `module.gate(..., con)` reports it (strict once the file defines data) |
 | `tools/sr/db.py` | SQLite schema and helpers; the `aliases` table (filled by `crtnames`) holds the extra library names of a function, and `refs` accepts any of them for a call |
 
-- `tools/sr/module.py`: the source files. `files()` / `file_of(row)` / `find_file(name)` read LAYOUT.JSON's units (`File.command` is the CL/MASM line: the unit's `flags`, plus `/NT S<region>_TEXT` for C); `write_plan` saves it (`./sr flags`). `gate()` compares a file's whole span (resolves in-file EXTDEF calls and code-segment offsets per function frame, masks the rest, counts near calls out of the file). `units()` derives candidate same-file spans from near / `push cs; call near` edges (`./sr module units`). `cli._check_rows` compiles each file once (`_file_jobs`), compares the functions asked for, runs `_file_gates` and stores each gate on its functions' `Result.module`; a function's `nearcalls` is then the number of its near calls to other objects.
-- `tools/sr/linklayout.py`: `./sr build`: copies each file unchanged under its own name, compiles it with `File.command`, gates it, links.
+- `tools/sr/makefile.py`: src/MAKEFILE and src/SR.LNK. `parse` handles the MAKE 4.07 subset the file uses (`#` comments, `NAME=value` macros, `target: deps` with `\` continuations, tab-indented commands); `compile_rules()` (blocks whose command starts `$(CC)`/`$(ASM)`: `Rule.flags`, `.segment` from `/NT`, `.source` DOS path, `.path` host file), `rule('LIB'|'LINK')`, `link_order()`. `set_flags` (`./sr flags`) and `sync_deps` (`./sr headers`) are the only writers.
+- `tools/sr/module.py`: the source files. `sources()` is every MAKEFILE object, `files()` the code files with their extent (span of the DB functions whose `src` they are), `code_starts()` the first file of each segment; `File.command` is the per-file part of the line (`flags` + `/NT<segment>` for C). `file_of(row)` / `find_file(name)`. `gate()` compares a file's whole span (resolves in-file EXTDEF calls and code-segment offsets per function frame, masks the rest, counts near calls out of the file). `units()` derives candidate same-file spans from near / `push cs; call near` edges (`./sr module units`). `cli._check_rows` compiles each file once (`_file_jobs`), compares the functions asked for, runs `_file_gates` and stores each gate on its functions' `Result.module`; a function's `nearcalls` is then the number of its near calls to other objects.
+- `tools/sr/linklayout.py`: `./sr build`: copies src/ to work/layout, runs each MAKEFILE block as written (`build.run_dos` under emu2, one `BUILD/<stem>` tree each; `build.link` runs the LINK line in DOSBox-X), then (unless `--no-verify`) `gate_objects`, the unpacked link and the comparison. The build part must not read the DB or orig/.
 
 ## Rules
 
-- **`./sr scan` must keep human data.** It updates seg/off/size/far, and it never overwrites `name`, `status`, `src`, `notes` or `kind` of existing rows. Flags are not in the DB: they are the file's, in LAYOUT.JSON. If the scanner stops finding a row, it warns and doesn't delete it.
+- **`./sr scan` must keep human data.** It updates seg/off/size/far, and it never overwrites `name`, `status`, `src`, `notes` or `kind` of existing rows. Flags are not in the DB: they are the file's, in src/MAKEFILE. If the scanner stops finding a row, it warns and doesn't delete it.
 - **The comparer must stay strict.** Only bytes covered by an OBJ fixup are masked, plus near-call displacements whose target is outside the function. Never add a mask to get a function to pass; if a real class of unverifiable bytes appears, report it as its own count (like `nearcalls`) and get the user's agreement.
 - **Every emulator run is bounded** by `timeout` (rule in CLAUDE.md); emu2 also by RLIMIT_FSIZE.
 - **The backends must stay byte-identical.** After changing `dosbox.py`, `emu2.py`, `tools/nix/emu2.nix` or the job layout, run `nix-shell shell.nix --run 'python3 tools/scripts/emucmp.py '` and expect `IDENTICAL`. Never make a backend the default, or change its pin, without that. The only tolerated differences are MASM's LST page-header time and its "symbol space free" line (emu2 gives MASM the full 640K; DOSBox-X keeps COMMAND.COM resident), which `emucmp` reports separately.
@@ -65,7 +66,10 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
   (`T near F`, prototype in the owner's header via `./sr proto ADDR "T near @(...)"`);
   nothing rewrites the text before CL or MASM sees it.
 - MSC MAKE 4.07 takes `MAKE MAKEFILE`, not `/f`, and processes rules sequentially;
-  put the link rule last. `ENV.BAT` sets the same four drives as the host wrapper.
+  the link rule is last. It accepts macros, `\` continuations whose next line starts
+  with a tab (as in MSC's STARTUP\MAKEFILE) and paths like `MODS\X.C`. CL writes the
+  OBJ and `/Fc` listing into the current directory; a source path only changes the
+  object's THEADR record (`MODS\X.C`), not code or segment names.
 - CL uses fixed intermediate filenames. A shared native-build directory must
   compile serially; the comparison backend avoids this with isolated job dirs.
 - LINK 5.01.21 crashes under emu2 on the full game. Use bounded DOSBox-X for LINK.
@@ -126,6 +130,6 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 ## Link-structure lessons (2026-11-04)
 
 - `./sr dgroup apply all --write` strips every `/* DS:xxxx */` definition from `src/mods/*.C` before rewriting; reruns add no blank lines to `.ASM` files. After changing units, run the pipeline twice (the second pass reads the fresh objects of the new units). `work/dg/run.sh` is the pipeline.
-- `order_hints` in LAYOUT.JSON move units (data-only units too, key `10xxxx`) after another unit; afterwards each code segment's units are re-sorted into code order within their slots.
+- `dgroup.ORDER_HINTS` move units (data-only units too, key `10xxxx`) after another unit; afterwards each code segment's units are re-sorted into code order within their slots. `./sr dgroup order` compares the result with src/SR.LNK (the other objects keep their lines).
 - Storage objects need `ASSUME DS:DGROUP`, or MASM writes their PUBDEFs without the group and every reference resolves segment-relative.
 - Runtime members: declared `_DATA` length can exceed the data records (`DUP (?)`); read SEGDEF lengths when tiling runtime data.

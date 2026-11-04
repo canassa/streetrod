@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS functions (
     name       TEXT,                  -- C identifier once known
     status     TEXT NOT NULL DEFAULT 'todo',  -- todo | wip | matched | partial | blocked | skip
     src        TEXT,                  -- its source file (src/mods/, one per original object); its
-                                      -- flags are the file's, in src/link/LAYOUT.JSON
+                                      -- command line is the file's, in src/MAKEFILE
     mismatches INTEGER,               -- last check: differing bytes (excl. fixups)
     nearcalls  INTEGER,               -- last check: near-call displacements not verifiable
     notes      TEXT,
