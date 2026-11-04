@@ -171,7 +171,7 @@ struct Obj {
     struct Box box;
 };
 
-/* blit request handed to the b_78a2.. hooks (20 bytes). The first six ints are the same as
+/* blit request handed to the g_videoOps hooks (20 bytes). The first six ints are the same as
    struct Clip; dash_clip_blt reads only those. mx, my: origin in the mask bitmap (tandyblt_compose). */
 struct Blt {
     int w;

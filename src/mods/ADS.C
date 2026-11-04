@@ -96,10 +96,10 @@ int ads_run(void)
             g_adPicture = ad_picture(2);
             draw_fill_rect(r_vid.back, 0x40, 0, 0xc0, SCREEN_BODY_HEIGHT);
             g_adPacket.sx = g_adPacket.dx = 0;
-            g_videoOps.copy(g_adPicture, r_vid.back, &g_adPacket, 1);
+            (*g_videoOps.copy)(g_adPicture, r_vid.back, &g_adPacket, 1);
             g_adPacket.sx = 0x40;
             g_adPacket.dx = 0x100;
-            g_videoOps.copy(g_adPicture, r_vid.back, &g_adPacket, 1);
+            (*g_videoOps.copy)(g_adPicture, r_vid.back, &g_adPacket, 1);
             F_19438(1);
             hsave = r_vid.back->height;
             r_vid.back->height = SCREEN_BODY_HEIGHT;
