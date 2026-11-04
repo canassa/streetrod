@@ -740,4 +740,13 @@ struct PartSelection {
     char unused[2];
     int subslot;
 };
+
+struct InputState {
+    int any;
+    int key;
+    int unused4;
+    int unused6;
+    int unused8;
+    int unusedA;
+};
 #endif

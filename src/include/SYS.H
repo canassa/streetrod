@@ -4,6 +4,8 @@
 #define SYS_H
 #include "STRUCTS.H"
 
+extern struct InputState g_input; /* DS:05D0 */
+
 extern struct TimerPriorities g_videoPrioritiesValues; /* DS:8EF6 */
 
 extern int g_timerFirst;                                /* DS:0566 */
@@ -16,12 +18,6 @@ extern struct Link g_timers[];                          /* DS:0572 */
 extern int g_05ba;                                      /* DS:05BA */
 extern int g_05bc[8];                                   /* DS:05BC */
 extern long g_waitUntil;                                /* DS:05CC */
-extern int g_anyInput;                                  /* DS:05D0 */
-extern int g_inputKey;                                  /* DS:05D2 */
-extern int g_05d4;                                      /* DS:05D4 */
-extern int g_05d6;                                      /* DS:05D6 */
-extern int g_05d8;                                      /* DS:05D8 */
-extern int g_05da;                                      /* DS:05DA */
 extern int g_msgTicks;                                  /* DS:05DC */
 extern int g_clickEnds;                                 /* DS:05DE */
 extern int g_kbdHooked;                                 /* DS:05E0 */

@@ -64,12 +64,7 @@ struct Link g_timers[4] = {{0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0,
 int g_05ba = 0;   /* DS:05BA */
 int g_05bc[8] = {0, 0, 0, 0, 0, 0, 0, 0};   /* DS:05BC */
 long g_waitUntil = 0L;   /* DS:05CC */
-int g_anyInput = 0;   /* DS:05D0 */
-int g_inputKey = 0;   /* DS:05D2 */
-int g_05d4 = 32767;   /* DS:05D4 */
-int g_05d6 = 0;   /* DS:05D6 */
-int g_05d8 = 0;   /* DS:05D8 */
-int g_05da = 0;   /* DS:05DA */
+struct InputState g_input = {0, 0, 32767, 0, 0, 0}; /* DS:05D0 */
 int g_msgTicks = 350;   /* DS:05DC */
 int g_clickEnds = 0;   /* DS:05DE */
 int g_kbdHooked = 0;   /* DS:05E0 */
@@ -451,8 +446,8 @@ int sys_wait_input(int ticks)
         }
         res = kbdget_key();
         if (res > 0) {
-            if (g_anyInput) {
-                g_inputKey = res;
+            if (g_input.any) {
+                g_input.key = res;
                 return 0x3eb;
             }
             if (res == 0x7f)
@@ -501,7 +496,7 @@ int sys_wait_input(int ticks)
             g_click2 = g_click = 0;
             _enable();
             if (g_clickEnds) {
-                g_inputKey = 0;
+                g_input.key = 0;
                 return 0x3eb;
             }
             if (g_menuLevel) {
@@ -509,8 +504,8 @@ int sys_wait_input(int ticks)
                         ? g_cursHoverCodeVal : menu_hit(x, y))
                     return i;
             }
-            if (g_anyInput) {
-                g_inputKey = 0;
+            if (g_input.any) {
+                g_input.key = 0;
                 return 0x3eb;
             }
         } else if (flag && g_waitUntil < g_tick) {
@@ -1025,7 +1020,7 @@ int g_xCoordSprite;
 
 void sys_stop_drive(void)
 {
-    g_driveEng.accelStep = g_driveEng.decelStep = g_driveEng.steeringInput = g_driveEng.steering = g_05d6 = 0;
+    g_driveEng.accelStep = g_driveEng.decelStep = g_driveEng.steeringInput = g_driveEng.steering = g_input.unused6 = 0;
     g_driveEng.fbe = g_driveEng.elapsedTicks;
 }
 

@@ -193,6 +193,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **PartSelection** (`g_videoPartCursor`, DS:82AC..82B3): a natural, byte-identical reconstruction choice; separate globals also match.
 
+- **InputState** (`g_input`, DS:05D0..05DB): a natural, byte-identical reconstruction choice; separate globals also match.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only

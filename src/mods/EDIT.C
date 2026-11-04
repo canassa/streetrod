@@ -55,16 +55,16 @@ int edit_line(int x, int y, char *buf, int max)
     sys_hover_reset();
     ret = sys_keymap_restore(1);
     kbd_text_on(g_editDigits);
-    n = g_anyInput;
-    g_anyInput = 1;
-    g_inputKey = 0;
+    n = g_input.any;
+    g_input.any = 1;
+    g_input.key = 0;
     dest[1] = 0;
     end = strlen(buf);
-    for (;; g_inputKey = 0) {
+    for (;; g_input.key = 0) {
         if ((key = sys_wait_input(0x23)) != 0) {
             if (key < 0)
                 break;
-            key = g_inputKey;
+            key = g_input.key;
             if (key == 13) {
                 if (!g_editDigits || *buf)
                     break;
@@ -126,7 +126,7 @@ int edit_line(int x, int y, char *buf, int max)
     x_colors.fill = pos;
     g_msgClickToEdit[0] = ip;
     sys_hover_reset();
-    g_anyInput = n;
+    g_input.any = n;
     kbd_text_off();
     if (ret)
         sys_keymap_set(ret);
