@@ -689,3 +689,16 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - The last, empty `_DATA` contribution had no effect on segment order. The generated DOS tree is a complete 1988-tools build (C: work/layout, D: msc51, E: its INCLUDE, F: masm51).
+
+## 2026-11-04 16:30 CET: One source file per original object
+
+### What I did
+- Merged the split sources of the 82 code units into one file each (src/mods: 189 files -> 86; each file keeps its first source's name). C files are exactly the text the layout build compiled; asm files lost the `; sr-member` markers, prefix only clashing labels and name their segment in `.CODE`. Compiled under the old names, all 82 objects were byte-identical to the previous `U_*` objects.
+- Each file has one command line, LAYOUT.JSON `units[].flags` (the union of the old per-function flags, which the build already used); `functions.flags` and `functions.module` are dropped, `src` points at the file. `./sr check` compiles the whole file and gates it; the build compiles each file unchanged under its own name.
+- Removed the `.STB` sidecars, stb.py, merge/split, `module create/add/dissolve/list/show`, `./sr new`, `./sr src`, src/funcs support and docs/MODULES.md. An asm function's extent comes from its PROC length (M_1DD22 holds a data byte between two procedures).
+- Untracked the `__pycache__` directories (now in .gitignore).
+- Result: `./sr check --all` 572/572 (551 MATCH, 21 MATCH* = near calls to public near functions of other objects, verified by the linked build 748/748), `./sr build` IDENTICAL from an empty work dir, tests OK, emucmp IDENTICAL.
+
+### What I learned
+- Declaration order inside a file shows in the object's symbol records (EXTDEF/LEXTDEF/COMDEF order), not in the EXE: reordered include blocks changed records and the EXE stayed identical.
+- Open: `./sr dgroup apply` still moves `g_4fa6` between M_0542E.C and M_039C0.C depending on the previous build; both are IDENTICAL, so ownership of DS:4FA6 is not decided by the evidence the tool uses.
