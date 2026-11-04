@@ -17,13 +17,14 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static int g_6c56;                         /* DS:6C56 */
 static int g_6c58;                         /* DS:6C58 */
 static int g_6c5a;                         /* DS:6C5A */
 static int g_6c5c;                         /* DS:6C5C */
 static char * near F_14341(int wear);
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 void (far *bp78ba)(struct Bitmap far *, int, int, int, int, int, int);
 int bq824e;
 int ai8b86y[4];
@@ -38,12 +39,14 @@ struct Hot *av8ba6v;
 int ai8bacx;
 int av8efe;
 
-/* F_139DE: draw a hot spot and the spots linked behind it (the chain through Hot.f10 masked with
-   g_07a8), by kind: 4/12 filled box with optional centred text, 5/6/10 text only, 7/8 header bar,
-   13 first-time marker. Grows the touched rectangle g_6c56..g_6c5c. */
-
 int g_07a8 = 0;   /* DS:07A8 */
 char g_07aa[12] = "(xx% worn)";   /* DS:07AA */
+
+/* F_139DE @ 0F38:465E (linear 0x139DE, 1032 bytes)
+
+   Draw a hot spot and the spots linked behind it (the chain through Hot.f10 masked with
+   g_07a8), by kind: 4/12 filled box with optional centred text, 5/6/10 text only, 7/8 header bar,
+   13 first-time marker. Grows the touched rectangle g_6c56..g_6c5c. */
 
 void F_139DE(struct Hot *p)
 {
@@ -132,7 +135,9 @@ void F_139DE(struct Hot *p)
     }
 }
 
-/* F_13DE6: push hot spot id onto the saved state stack (at most four deep) and draw it: the
+/* F_13DE6 @ 0F38:4A66 (linear 0x13DE6, 315 bytes)
+
+   Push hot spot id onto the saved state stack (at most four deep) and draw it: the
    current entry globals are reset, F_139DE draws the linked spot, and the touched area is copied
    from the back buffer to the front when the screen shadow is on */
 
@@ -166,7 +171,9 @@ void F_13DE6(int id)
     }
 }
 
-/* F_13F21: pop the saved state stack: close the current entry; when keep is set and an entry remains,
+/* F_13F21 @ 0F38:4BA1 (linear 0x13F21, 94 bytes)
+
+   Pop the saved state stack: close the current entry; when keep is set and an entry remains,
    reopen the one below it, otherwise reset the entry globals to "none" */
 
 void F_13F21(int keep)
@@ -185,7 +192,7 @@ void F_13F21(int keep)
     }
 }
 
-/* F_13F7F @ 0F38:4BFF (linear 0x13f7f, 27 bytes) */
+/* F_13F7F @ 0F38:4BFF (linear 0x13F7F, 27 bytes) */
 
 void F_13F7F(void)
 {
@@ -194,7 +201,9 @@ void F_13F7F(void)
     ao8b90v.x1 = ao8b90v.y1 = ao8b90v.x2 = ao8b90v.y2 = az8baa = 0;
 }
 
-/* F_13F9A: bounding box of hot spot id and the spots linked after it (through f10), widened by 3
+/* F_13F9A @ 0F38:4C1A (linear 0x13F9A, 246 bytes)
+
+   Bounding box of hot spot id and the spots linked after it (through f10), widened by 3
    and clipped to the 320 x 200 screen. *x and *y receive the top left corner, *w and *h the size */
 
 void F_13F9A(int id, int *x, int *y, int *w, int *h)
@@ -223,7 +232,9 @@ void F_13F9A(int id, int *x, int *y, int *w, int *h)
     *h -= *y;
 }
 
-/* F_14090: copy the screen area around hot spot id (see F_13F9A, which updates *px and *py to the
+/* F_14090 @ 0F38:4D10 (linear 0x14090, 157 bytes)
+
+   Copy the screen area around hot spot id (see F_13F9A, which updates *px and *py to the
    box corner) into a bitmap of the given mode and return it. The x range is rounded to r_vid.mask */
 
 struct Bitmap far *F_14090(int id, int *px, int *py, int mode)
@@ -246,7 +257,9 @@ struct Bitmap far *F_14090(int id, int *px, int *py, int mode)
     return F_11A72(*px, y1, w4, h3, bits9);
 }
 
-/* F_1412D: find the hot spot of the current menu (list at av8ba6v) under the point (x, y). On a hit
+/* F_1412D @ 0F38:4DAD (linear 0x1412D, 276 bytes)
+
+   Find the hot spot of the current menu (list at av8ba6v) under the point (x, y). On a hit
    the spot's box goes to ao8b90v and its id (f6) is returned; on a miss ao8b90v gets the free
    rectangle around the point and 0 is returned */
 
@@ -308,7 +321,9 @@ int F_1412D(int x, int y)
     return az8baa = 0;
 }
 
-/* F_14241: grab the screen area around hot spot id, show the spot (waiting for a key through
+/* F_14241 @ 0F38:4EC1 (linear 0x14241, 83 bytes)
+
+   Grab the screen area around hot spot id, show the spot (waiting for a key through
    F_14294), put the saved area back and return the key */
 
 int F_14241(int id)
@@ -338,7 +353,9 @@ int F_14294(int a)
     return key;
 }
 
-/* F_142CF: run the F_1438E dialog over a grabbed screen area (see F_14241) and restore the area
+/* F_142CF @ 0F38:4F4F (linear 0x142CF, 114 bytes)
+
+   Run the F_1438E dialog over a grabbed screen area (see F_14241) and restore the area
    afterwards; 0x3ea when *list is zero */
 
 int F_142CF(int a, int b, int *c, int *list, char *buf, char **d)
@@ -357,10 +374,12 @@ int F_142CF(int a, int b, int *c, int *list, char *buf, char **d)
     return res;
 }
 
-/* F_14341: wear text for a part: "(new)" when wear is 0, else "(xx% worn)" built in place in g_07aa
-   (initialised data "(xx% worn)") with the number written over the xx */
-
 char g_07be[4] = "   ";   /* DS:07BE */
+
+/* F_14341 @ 0F38:4FC1 (linear 0x14341, 77 bytes)
+
+   Wear text for a part: "(new)" when wear is 0, else "(xx% worn)" built in place in g_07aa
+   (initialised data "(xx% worn)") with the number written over the xx */
 
 static char * near F_14341(int wear)
 {
@@ -374,13 +393,15 @@ static char * near F_14341(int wear)
     return g_07aa;
 }
 
-/* F_1438E: list dialog. Shows the entries list[1..list[0]] (offsets into the string table g_2c02,
+int g_07c6[277] = {0, 1, 2, 3, 5, 6, 7, 4, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276};   /* DS:07C6 */
+
+/* F_1438E @ 0F38:500E (linear 0x1438E, 2301 bytes)
+
+   List dialog. Shows the entries list[1..list[0]] (offsets into the string table g_2c02,
    or, when negative, d[-entry - 1]) in the windows of the current menu, optionally with a column c
    of x offsets and wear values buf[1..]; arrow/page keys scroll, a positive key2 picks an entry,
    a hotn spot (az8ba2t) shows the picked text and is edited in place on Enter.
    Returns the key2 that left the dialog, 0x3ea when the list is empty. */
-
-int g_07c6[277] = {0, 1, 2, 3, 5, 6, 7, 4, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276};   /* DS:07C6 */
 
 int F_1438E(int kind, int sel, int *c, int *list, char *buf, char **d)
 {
@@ -577,7 +598,9 @@ scroll:
     }
 }
 
-/* F_14C8B: accessor, returns x_8ba0 */
+/* F_14C8B @ 0F38:590B (linear 0x14C8B, 4 bytes)
+
+   Accessor, returns x_8ba0 */
 
 int F_14C8B(void)
 {

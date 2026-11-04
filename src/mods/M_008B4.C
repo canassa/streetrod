@@ -15,7 +15,7 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 int g7f84q;
 
 static struct Bitmap far * near F_009B7(int n);
@@ -34,7 +34,6 @@ int g_0530[3] = {0, 0, 0};   /* DS:0530 */
 int g_0536 = 0;   /* DS:0536 */
 
 /* F_008B4 @ 0000:08B4 (linear 0x008B4, 259 bytes) */
-
 
 void F_008B4(int *list, int base)
 {
@@ -73,15 +72,12 @@ void F_008B4(int *list, int base)
 
 /* F_009B7 @ 0000:09B7 (linear 0x009B7, 20 bytes) */
 
-
 static struct Bitmap far * near F_009B7(int n)
 {
     return F_15BBE(0x403, n);
 }
 
 /* F_009CB @ 0000:09CB (linear 0x009CB, 909 bytes) */
-
-
 
 int F_009CB(void)
 {
@@ -199,7 +195,6 @@ int F_009CB(void)
 }
 
 /* F_00D58 @ 0000:0D58 (linear 0x00D58, 32 bytes) */
-
 
 void F_00D58(void)
 {

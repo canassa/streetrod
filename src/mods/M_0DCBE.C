@@ -6,11 +6,6 @@
 #include "M_113A2.H"
 #include "M_15396.H"
 
-/* F_0DCBE @ 0000:DCBE (linear 0x0DCBE, 1060 bytes)
-
-   Fills the drive train e (gear ranges, ratio table, limits) for the car c. The first half
-   is the rating computation of F_0E218. */
-
 int g_54dc[4][5] = {{0, 25, 50, 100, 0}, {0, 25, 50, 100, 0}, {0, 25, 50, 75, 100}, {0, 30, 50, 80, 100}};   /* DS:54DC */
 int g_5504[3][5] = {{500, 600, 300, 100, 70}, {600, 700, 350, 120, 90}, {600, 760, 380, 140, 90}};   /* DS:5504 */
 int g_5522[3][2] = {{2900, 4500}, {2900, 5000}, {2500, 5200}};   /* DS:5522 */
@@ -21,6 +16,11 @@ int g_555a[3] = {4500, 5000, 5200};   /* DS:555A */
 int g_5560[4] = {3, 3, 4, 4};   /* DS:5560 */
 int g_5568[3] = {9, 8, 5};   /* DS:5568 */
 int g_556e[9] = {40, 44, 48, 60, 64, 68, 80, 84, 88};   /* DS:556E */
+
+/* F_0DCBE @ 0000:DCBE (linear 0x0DCBE, 1060 bytes)
+
+   Fills the drive train e (gear ranges, ratio table, limits) for the car c. The first half
+   is the rating computation of F_0E218. */
 
 void near F_0DCBE(struct Car *c, struct Eng *e)
 {

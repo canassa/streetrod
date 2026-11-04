@@ -13,6 +13,9 @@
 #include "SCREENS.H"
 #include "SLOTS.H"
 
+#pragma intrinsic(abs)
+
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static int g_6dfeaa;                       /* DS:6DFE */
 static int g_6e00;                         /* DS:6E00 */
 static int g_6e02;                         /* DS:6E02 */
@@ -41,7 +44,9 @@ int g_5e0e = 0;   /* DS:5E0E */
 int g_5e10 = 0;   /* DS:5E10 */
 int g_5e12 = 0;   /* DS:5E12 */
 
-/* F_265BA @ 2645:016A: near wrapper around random_int, used by the track builder */
+/* F_265BA @ 2645:016A (linear 0x265BA, 16 bytes)
+
+   Near wrapper around random_int, used by the track builder */
 
 static int near F_265BA(int n)
 {
@@ -179,7 +184,9 @@ static void near F_26B1A(void)
         g_terrain2[i] = g_6dfeaa;
 }
 
-/* F_26BAD (near, builds a terrain hill section) */
+/* F_26BAD @ 2645:075D (linear 0x26BAD, 149 bytes)
+
+   Builds a terrain hill section */
 
 static void near F_26BAD(void)
 {
@@ -198,7 +205,9 @@ static void near F_26BAD(void)
         g_terrain2[i] = g_6dfeaa;
 }
 
-/* F_26C42 (near, builds a terrain hill section) */
+/* F_26C42 @ 2645:07F2 (linear 0x26C42, 147 bytes)
+
+   Builds a terrain hill section */
 
 static void near F_26C42(void)
 {
@@ -217,7 +226,9 @@ static void near F_26C42(void)
         g_terrain2[i] = g_6dfeaa;
 }
 
-/* F_26CD5 (near, builds a terrain hill section) */
+/* F_26CD5 @ 2645:0885 (linear 0x26CD5, 149 bytes)
+
+   Builds a terrain hill section */
 
 static void near F_26CD5(void)
 {
@@ -561,7 +572,7 @@ void F_27198(void)
     F_26FE1(100);
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 unsigned far *q_72ee;
 int at72f8[13];
 int far *af7560z;
@@ -882,8 +893,6 @@ void F_282EE(void)
 
 /* F_2834C @ 2645:1EFC (linear 0x2834C, 367 bytes) */
 
-#pragma intrinsic(abs)
-
 void F_2834C(void)
 {
     int bits7, goal6, diff;
@@ -990,8 +999,6 @@ void F_28576(int dir)
 }
 
 /* F_2858D @ 2645:213D (linear 0x2858D, 272 bytes) */
-
-#pragma intrinsic(abs)
 
 void F_2858D(void)
 {

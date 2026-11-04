@@ -3,16 +3,17 @@
 #include "M_00000.H"
 #include "M_036A8.H"
 
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static char far *g_6cd0;                   /* DS:6CD0 */
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 int bl78de;
 int g7b14o;
 int g7d80q;
 unsigned c_8b02[61];
 int o_8f00;
 
-/* F_1923C @ 0F38:9EBC (linear 0x1923c, 45 bytes) */
+/* F_1923C @ 0F38:9EBC (linear 0x1923C, 45 bytes) */
 
 void F_1923C(void)
 {
@@ -32,14 +33,18 @@ void F_19269(void)
     F_1923C();
 }
 
-/* F_1929A: give back size bytes to the arena, top of the g7b14o marker stack */
+/* F_1929A @ 0F38:9F1A (linear 0x1929A, 18 bytes)
+
+   Give back size bytes to the arena, top of the g7b14o marker stack */
 
 void F_1929A(int size)
 {
     c_8b02[g7b14o] -= size;
 }
 
-/* F_192AC: allocate size bytes from the arena at g_6cd0; mode picks which of four marker stacks is used */
+/* F_192AC @ 0F38:9F2C (linear 0x192AC, 162 bytes)
+
+   Allocate size bytes from the arena at g_6cd0; mode picks which of four marker stacks is used */
 
 char far *F_192AC(int size, int mode)
 {
@@ -72,7 +77,9 @@ char far *F_192AC(int size, int mode)
     return p;
 }
 
-/* F_1934E: allocate a bitmap w x h from the arena (header plus pixel rows) and initialise it */
+/* F_1934E @ 0F38:9FCE (linear 0x1934E, 134 bytes)
+
+   Allocate a bitmap w x h from the arena (header plus pixel rows) and initialise it */
 
 struct Bitmap far *F_1934E(int w, int h, int flags, int mode)
 {

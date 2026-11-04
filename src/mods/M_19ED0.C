@@ -12,7 +12,9 @@
 #include "M_1923C.H"
 #include "M_193D4.H"
 
-/* F_19ED0: copy a bitmap into another through the blit hook */
+/* F_19ED0 @ 0F38:AB50 (linear 0x19ED0, 114 bytes)
+
+   Copy a bitmap into another through the blit hook */
 
 void F_19ED0(struct Bitmap far *src, struct Bitmap far *dst, int e)
 {
@@ -25,7 +27,9 @@ void F_19ED0(struct Bitmap far *src, struct Bitmap far *dst, int e)
     (*b_78a2)(src, dst, &pkt, e);
 }
 
-/* F_19F42: find the first and last set pixel column of a bitmap */
+/* F_19F42 @ 0F38:ABC2 (linear 0x19F42, 253 bytes)
+
+   Find the first and last set pixel column of a bitmap */
 
 void F_19F42(struct Bitmap far *bm, int *left, int *right)
 {
@@ -55,7 +59,9 @@ void F_19F42(struct Bitmap far *bm, int *left, int *right)
     *right -= d / r_vid.bpp;
 }
 
-/* F_1A03F: shift a bitmap (pixels and mask) right by n pixels into a new, wider bitmap */
+/* F_1A03F @ 0F38:ACBF (linear 0x1A03F, 657 bytes)
+
+   Shift a bitmap (pixels and mask) right by n pixels into a new, wider bitmap */
 
 struct Bitmap far *F_1A03F(struct Bitmap far *src, int n, struct Bitmap far *dst)
 {
@@ -120,7 +126,9 @@ struct Bitmap far *F_1A03F(struct Bitmap far *src, int n, struct Bitmap far *dst
     return out;
 }
 
-/* F_1A2D0: mask-blit src into dst, optionally and-ing the pixels together */
+/* F_1A2D0 @ 0F38:AF50 (linear 0x1A2D0, 418 bytes)
+
+   Mask-blit src into dst, optionally and-ing the pixels together */
 
 void F_1A2D0(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *r, int flag)
 {
@@ -165,7 +173,9 @@ void F_1A2D0(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *r, int 
         F_19438(1);
 }
 
-/* F_1A472: draw a masked bitmap into another at pixel (x, y), pre-shifting it to the byte phase */
+/* F_1A472 @ 0F38:B0F2 (linear 0x1A472, 557 bytes)
+
+   Draw a masked bitmap into another at pixel (x, y), pre-shifting it to the byte phase */
 
 void F_1A472(struct Bitmap far *src, struct Bitmap far *dst, int x, int y)
 {
@@ -225,7 +235,9 @@ void F_1A472(struct Bitmap far *src, struct Bitmap far *dst, int x, int y)
         F_19438(1);
 }
 
-/* F_1A69F: blit all of bm to dst at (x, y) through the blit hook */
+/* F_1A69F @ 0F38:B31F (linear 0x1A69F, 65 bytes)
+
+   Blit all of bm to dst at (x, y) through the blit hook */
 
 void F_1A69F(struct Bitmap far *dst, struct Bitmap far *bm, int x, int y, int mode)
 {
@@ -239,7 +251,9 @@ void F_1A69F(struct Bitmap far *dst, struct Bitmap far *bm, int x, int y, int mo
     (*b_78a2)(bm, dst, &pkt, mode);
 }
 
-/* F_1A6E0: blit to a bitmap fetched by index, remember it, advance the clock */
+/* F_1A6E0 @ 0F38:B360 (linear 0x1A6E0, 84 bytes)
+
+   Blit to a bitmap fetched by index, remember it, advance the clock */
 
 void F_1A6E0(struct Bitmap far *dst, int n, unsigned char x, unsigned char y)
 {
@@ -251,7 +265,9 @@ void F_1A6E0(struct Bitmap far *dst, int n, unsigned char x, unsigned char y)
     F_19438(1);
 }
 
-/* F_1A734: draw the bitmap with index n onto dst at (x, y) */
+/* F_1A734 @ 0F38:B3B4 (linear 0x1A734, 103 bytes)
+
+   Draw the bitmap with index n onto dst at (x, y) */
 
 void F_1A734(struct Bitmap far *dst, int n, unsigned char x, unsigned char y, int mode)
 {
@@ -268,7 +284,9 @@ void F_1A734(struct Bitmap far *dst, int n, unsigned char x, unsigned char y, in
     F_19438(1);
 }
 
-/* F_1A79B: and one bitmap rectangle into another */
+/* F_1A79B @ 0F38:B41B (linear 0x1A79B, 231 bytes)
+
+   And one bitmap rectangle into another */
 
 void F_1A79B(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *in)
 {
@@ -293,14 +311,18 @@ void F_1A79B(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *in)
     }
 }
 
-/* F_1A882 @ 0F38:B502 (linear 0x1a882, 28 bytes): far memory copy */
+/* F_1A882 @ 0F38:B502 (linear 0x1A882, 28 bytes)
+
+   Far memory copy */
 
 void F_1A882(char far *src, char far *dst, unsigned n)
 {
     movedata(FP_SEG(src), FP_OFF(src), FP_SEG(dst), FP_OFF(dst), n);
 }
 
-/* F_1A89E: grab the w x h area at (sx, sy) of a bitmap into a new bitmap */
+/* F_1A89E @ 0F38:B51E (linear 0x1A89E, 140 bytes)
+
+   Grab the w x h area at (sx, sy) of a bitmap into a new bitmap */
 
 struct Bitmap far *F_1A89E(struct Bitmap far *bm, struct Blt *r, int mode)
 {
@@ -322,7 +344,9 @@ struct Bitmap far *F_1A89E(struct Bitmap far *bm, struct Blt *r, int mode)
     return f;
 }
 
-/* F_1A92A: copy a screen rectangle between two screens, clipped to 320x200 */
+/* F_1A92A @ 0F38:B5AA (linear 0x1A92A, 136 bytes)
+
+   Copy a screen rectangle between two screens, clipped to 320x200 */
 
 void F_1A92A(struct Bitmap far *dst, struct Bitmap far *src, int x1, int y1, int x2, int y2)
 {

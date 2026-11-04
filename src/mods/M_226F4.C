@@ -11,7 +11,9 @@
 
 static void near F_226F4(struct Rect *r, struct Bitmap far *a, struct Bitmap far *b, int horiz);
 
-/* F_226F4: blit a rectangle between two bitmaps, offset by a scroll origin */
+/* F_226F4 @ 21A0:0CF4 (linear 0x226F4, 110 bytes)
+
+   Blit a rectangle between two bitmaps, offset by a scroll origin */
 
 static void near F_226F4(struct Rect *r, struct Bitmap far *a, struct Bitmap far *b, int horiz)
 {
@@ -30,10 +32,11 @@ static void near F_226F4(struct Rect *r, struct Bitmap far *a, struct Bitmap far
     F_21EAB(b, a, &blt, 1);
 }
 
-/* F_22762: erase and redraw one sprite on the screen page r_vid.back through the masked blitters, then flush the touched rectangle to the page and advance the sprite */
+/* F_22762 @ 21A0:0D62 (linear 0x22762, 965 bytes)
+
+   Erase and redraw one sprite on the screen page r_vid.back through the masked blitters, then flush
+   the touched rectangle to the page and advance the sprite */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
-
-
 
 int F_22762(struct Sprite *s)
 {

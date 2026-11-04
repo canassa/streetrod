@@ -35,13 +35,13 @@ static void near F_059F6(int create);
 static int near F_05EB3(char *p);
 static int near F_0586E(int handle, struct Car *c, int flag);
 
-int g_4fa6[14] = {26708, 8293, 24935, 25965, 27936, 29557, 8308, 24936, 25974, 24864, 28192, 28001, 8293, 33};   /* DS:4FA6 */
+char g_4fa6[] = "The game must have a name !";   /* DS:4FA6 */
 char g_4fc2[16] = {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};   /* DS:4FC2 */
 int g_4fd2[16] = {6661, 6678, 6695, 6712, 6729, 6746, 6763, 6780, 6797, 6814, 6831, 6848, 6865, 6882, 6899, 6916};   /* DS:4FD2 */
 char *g_4ff2 = g_4fa6;   /* DS:4FF2 */
 int g_4ff4 = 0;   /* DS:4FF4 */
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 
 /* F_0542E @ 0000:542E (linear 0x0542E, 342 bytes) */
 
@@ -368,7 +368,9 @@ int near F_05B4A(void)
     return 0;
 }
 
-/* F_05EB3 @ 0000:5EB3 (linear 0x05EB3, 55 bytes)  - true if the string is only spaces and underscores */
+/* F_05EB3 @ 0000:5EB3 (linear 0x05EB3, 55 bytes)
+
+   True if the string is only spaces and underscores */
 
 static int near F_05EB3(char *p)
 {

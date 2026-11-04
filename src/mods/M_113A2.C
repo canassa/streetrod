@@ -19,13 +19,15 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 int o_8250;
 int au8252x;
 int as8254y;
 int aq8256z;
 
 char *g_msgs[7] = {"0", "1", "2", "3", "4", "N", "D"};   /* DS:0482 */
+
+/* F_113A2 @ 0F38:2022 (linear 0x113A2, 127 bytes) */
 
 void F_113A2(int y)
 {
@@ -44,6 +46,8 @@ struct State7EAA a_7eaap;
 int g824cd;
 int g8258z;
 int ar82c0;
+
+/* F_11421 @ 0F38:20A1 (linear 0x11421, 287 bytes) */
 
 void F_11421(int x, char *s, int w)
 {
@@ -74,6 +78,8 @@ void F_11421(int x, char *s, int w)
     x_colors = saved;
 }
 
+/* F_11540 @ 0F38:21C0 (linear 0x11540, 83 bytes) */
+
 void F_11540(int n)
 {
     int old;
@@ -85,6 +91,8 @@ void F_11540(int n)
     ar82c0 = g824cd;
     aq8256z = old;
 }
+
+/* F_11593 @ 0F38:2213 (linear 0x11593, 214 bytes) */
 
 void F_11593(char *s)
 {
@@ -105,6 +113,8 @@ void F_11593(char *s)
         F_1A92A(r_vid.back, r_vid.front, 0, au8252x, o_8250, au8252x + 7);
 }
 
+/* F_11669 @ 0F38:22E9 (linear 0x11669, 49 bytes) */
+
 void F_11669(int i)
 {
     int saved;
@@ -116,6 +126,8 @@ void F_11669(int i)
 }
 
 char af824ax;
+
+/* F_1169A @ 0F38:231A (linear 0x1169A, 130 bytes) */
 
 void F_1169A(int x, int y, int w, int h, char color)
 {
@@ -131,6 +143,8 @@ void F_1169A(int x, int y, int w, int h, char color)
     F_120FE(-1);
 }
 
+/* F_1171C @ 0F38:239C (linear 0x1171C, 50 bytes) */
+
 void F_1171C(char *s)
 {
     strcpy(g_291f, s);
@@ -142,7 +156,9 @@ int g_04be = 0;   /* DS:04BE */
 int g_04c0 = 0;   /* DS:04C0 */
 int g_04c2 = 190;   /* DS:04C2 */
 
-/* F_1174E: show a message and wait for a key ("Hit Return when ready ...") */
+/* F_1174E @ 0F38:23CE (linear 0x1174E, 390 bytes)
+
+   Show a message and wait for a key ("Hit Return when ready ...") */
 
 void F_1174E(char *msg)
 {
@@ -201,7 +217,9 @@ void F_1174E(char *msg)
     }
 }
 
-/* F_118D4: blit bitmap number a to the back buffer at (g_04be, g_04c0), then copy the rectangle to the front
+/* F_118D4 @ 0F38:2554 (linear 0x118D4, 228 bytes)
+
+   Blit bitmap number a to the back buffer at (g_04be, g_04c0), then copy the rectangle to the front
    buffer. b >= 0 first fills the screen with color b. */
 
 int F_118D4(int a, int b)
@@ -236,7 +254,9 @@ int F_119B8(int a, int b, int c, int d)
     return F_118D4(a, d);
 }
 
-/* F_119D6: draw string s at (x, y) on the back buffer, then copy the 8 pixel high strip to the front buffer */
+/* F_119D6 @ 0F38:2656 (linear 0x119D6, 78 bytes)
+
+   Draw string s at (x, y) on the back buffer, then copy the 8 pixel high strip to the front buffer */
 
 void F_119D6(int x, int y, char *s)
 {
@@ -245,7 +265,9 @@ void F_119D6(int x, int y, char *s)
         F_1A92A(r_vid.back, r_vid.front, x, y, g824cd - 1, y + 7);
 }
 
-/* F_11A24: draw a horizontal run of w pixels at (x, y) on the back buffer and copy it to the front buffer */
+/* F_11A24 @ 0F38:26A4 (linear 0x11A24, 78 bytes)
+
+   Draw a horizontal run of w pixels at (x, y) on the back buffer and copy it to the front buffer */
 
 void F_11A24(int x, int y, int w)
 {

@@ -4,7 +4,7 @@
 #define M_0542E_H
 #include "STRUCTS.H"
 
-extern int g_4fa6[14];                                  /* DS:4FA6 */
+extern char g_4fa6[];                                   /* DS:4FA6 */
 extern char g_4fc2[];                                   /* DS:4FC2 */
 extern int g_4fd2[];                                    /* DS:4FD2 */
 extern char *g_4ff2;                                    /* DS:4FF2 */

@@ -109,8 +109,8 @@ void F_01AAD(void);                                     /* 0x01AAD */
 void F_01B27(void);                                     /* 0x01B27 */
 int F_01B91(int x);                                     /* 0x01B91 */
 void F_01BAE(void);                                     /* 0x01BAE */
-void interrupt far F_01FE2();                           /* 0x01FE2 */
+void interrupt far F_01FE2(void);                       /* 0x01FE2 */
 void F_02374(void);                                     /* 0x02374 */
-void interrupt far F_0238C();                           /* 0x0238C */
+void interrupt far F_0238C(void);                       /* 0x0238C */
 
 #endif

@@ -10,12 +10,16 @@
 #include "M_25954.H"
 #include "M_2634A.H"
 
+#pragma intrinsic(_rotr, _rotl)
+
 static void near F_21B7C(int x, int x0, int y, int *b, int *a);
 static void near F_21AAC(struct Bitmap far *src, struct Bitmap far *dst, struct Clip *o);
 static void near F_22077(unsigned char *p, int dir, int n);
 static void near F_2212C(char far *dst, char *src, int n, int odd);
 
-/* F_21AAC: copy rows from a four-bank interleaved bitmap to a linear bitmap, one row per movedata */
+/* F_21AAC @ 21A0:00AC (linear 0x21AAC, 208 bytes)
+
+   Copy rows from a four-bank interleaved bitmap to a linear bitmap, one row per movedata */
 
 static void near F_21AAC(struct Bitmap far *src, struct Bitmap far *dst, struct Clip *blt)
 {
@@ -45,7 +49,9 @@ static void near F_21AAC(struct Bitmap far *src, struct Bitmap far *dst, struct 
     }
 }
 
-/* F_21B7C: for the four interleaved banks work out the byte count and start offset of each */
+/* F_21B7C @ 21A0:017C (linear 0x21B7C, 143 bytes)
+
+   For the four interleaved banks work out the byte count and start offset of each */
 
 static void near F_21B7C(int x, int x0, int y, int *b, int *a)
 {
@@ -70,7 +76,9 @@ static void near F_21B7C(int x, int x0, int y, int *b, int *a)
     }
 }
 
-/* F_21C0B: masked blit between interleaved-bank bitmaps, one F_24F4A call per bank */
+/* F_21C0B @ 21A0:020B (linear 0x21C0B, 333 bytes)
+
+   Masked blit between interleaved-bank bitmaps, one F_24F4A call per bank */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void F_21C0B(struct Bitmap far *dst, struct Bitmap far *src, struct Bitmap far *mask, struct Blt *in)
@@ -115,7 +123,10 @@ void F_21C0B(struct Bitmap far *dst, struct Bitmap far *src, struct Bitmap far *
     }
 }
 
-/* F_21D58: blit between bitmaps through the blitter selected by flag, in banks when the destination is interleaved */
+/* F_21D58 @ 21A0:0358 (linear 0x21D58, 339 bytes)
+
+   Blit between bitmaps through the blitter selected by flag, in banks when the destination is
+   interleaved */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void F_21D58(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *in, int flag)
@@ -160,7 +171,9 @@ void F_21D58(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *in, int
     }
 }
 
-/* F_21EAB: clipped blit between bitmaps, picking the plain, interleaved or planar copy routine */
+/* F_21EAB @ 21A0:04AB (linear 0x21EAB, 460 bytes)
+
+   Clipped blit between bitmaps, picking the plain, interleaved or planar copy routine */
 
 void F_21EAB(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *r, int flags)
 {
@@ -197,9 +210,9 @@ void F_21EAB(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *r, int 
     }
 }
 
-/* F_22077: shift a run of packed nibbles by one nibble, forwards or backwards */
+/* F_22077 @ 21A0:0677 (linear 0x22077, 181 bytes)
 
-#pragma intrinsic(_rotr, _rotl)
+   Shift a run of packed nibbles by one nibble, forwards or backwards */
 
 static void near F_22077(unsigned char *p, int dir, int n)
 {
@@ -226,7 +239,9 @@ static void near F_22077(unsigned char *p, int dir, int n)
     }
 }
 
-/* F_2212C: copy n packed nibbles to a far buffer, starting at the low nibble when odd */
+/* F_2212C @ 21A0:072C (linear 0x2212C, 128 bytes)
+
+   Copy n packed nibbles to a far buffer, starting at the low nibble when odd */
 
 static void near F_2212C(char far *dst, char *src, int n, int odd)
 {
@@ -247,7 +262,9 @@ static void near F_2212C(char far *dst, char *src, int n, int odd)
     }
 }
 
-/* F_221AC: copy rows between 2-pixel-per-byte bitmaps, shifting each row through a buffer by a nibble */
+/* F_221AC @ 21A0:07AC (linear 0x221AC, 421 bytes)
+
+   Copy rows between 2-pixel-per-byte bitmaps, shifting each row through a buffer by a nibble */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void F_221AC(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *blt)
