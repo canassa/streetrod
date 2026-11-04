@@ -1168,8 +1168,8 @@ void interrupt far sys_drive_isr(void)
                 }
                 if (g_demo || g_autoDrive) {
                     if (g_driveEng.accelStep * 4 + g_driveEng.rpm < 5700) {
-                        if (ar7e8av.m7e8a > ao7d2ev.m7d30 ||
-                            (!a_7eaap.raceType ? 0x17c : 0x3fc) - 60 < ao7d2ev.m7d30)
+                        if (ar7e8av.roadIndex > ao7d2ev.roadIndex ||
+                            (!a_7eaap.raceType ? 0x17c : 0x3fc) - 60 < ao7d2ev.roadIndex)
                             flag = 1;
                     } else if (g_driveEng.gearIndex < g_driveEng.gearCount && ao8228u) {
                         c = 1;
@@ -1185,7 +1185,7 @@ void interrupt far sys_drive_isr(void)
                     b_82bc += g_driveEng.speed;
                     g_driveEng.elapsedTicks++;
                 }
-                if ((!a_7eaap.raceType ? 0x17c : 0x3fc) < ao7d2ev.m7d30) {
+                if ((!a_7eaap.raceType ? 0x17c : 0x3fc) < ao7d2ev.roadIndex) {
                     prev = 1;
                     flag = s = 0;
                     if (g_driveEng.speed > 15)

@@ -583,12 +583,12 @@ struct CgaGlyph {
 
 /* DS:7D2E..7D3F: one communal; the code reads these as struct members */
 struct State7D2E {
-    int m7d2e;
-    int m7d30;
-    int m7d32;
-    int m7d34;
-    int m7d36;
-    int m7d38;
+    int rightEdge;
+    int roadIndex;
+    int roadFraction;
+    int distanceStep;
+    int lateralX;
+    int cameraY;
     int m7d3a;
     int m7d3c;
     int m7d3e;
@@ -596,16 +596,16 @@ struct State7D2E {
 
 /* DS:7E8A..7E99: one communal; the code reads these as struct members */
 struct State7E8A {
-    int m7e8a;
-    int m7e8c;
-    int m7e8e;
-    int m7e90;
+    int roadIndex;
+    int roadFraction;
+    int distanceStep;
+    int lateralX;
     char m7e92[8];
 };
 
 /* DS:70C0..70DF: one communal; the code reads these as struct members */
 struct State70C0 {
-    int m70c0;
+    int leftEdge;
     int m70c2[6];
     int m70ce;
     int m70d0;

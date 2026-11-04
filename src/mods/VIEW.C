@@ -1139,9 +1139,9 @@ static void near render_opponent(void)
     int rd;
     struct Bitmap far *bm;
 
-    a2 = ar7e8av.m7e8a;
-    xk = (a2 - ao7d2ev.m7d30) * 8 + ar7e8av.m7e8c - ao7d2ev.m7d32;
-    z9 = ar7e8av.m7e90 - ao7d2ev.m7d36;
+    a2 = ar7e8av.roadIndex;
+    xk = (a2 - ao7d2ev.roadIndex) * 8 + ar7e8av.roadFraction - ao7d2ev.roadFraction;
+    z9 = ar7e8av.lateralX - ao7d2ev.lateralX;
     if (xk >= 0x78)
         seln = -1;
     else if (xk >= 0x10) {
@@ -1189,7 +1189,7 @@ static void near render_opponent(void)
     }
     ay8bc2z = seln == 0 || (seln == 2 && xk <= 10);
     by72f2 = seln == 2 && xk <= 10 && abs(z9) < 180 &&
-        (bu8acc < 4 ? 100 : 180) > abs(z9) && ar7e8av.m7e8e < ao7d2ev.m7d34;
+        (bu8acc < 4 ? 100 : 180) > abs(z9) && ar7e8av.distanceStep < ao7d2ev.distanceStep;
     g_6e2a9 = ap7d7cv;
     ap7d7cv = seln;
     g_5ec6 = xk > 16 ? (xk + 8) & 15 : 0;
@@ -1202,11 +1202,11 @@ static void near render_opponent(void)
     rd = ao7d2ev.m7d3c - g_terrain2[a2];
     if (seln < 9) {
         t1 += 4;
-        ra = road_proj_x(t1, ar7e8av.m7e90, rd);
+        ra = road_proj_x(t1, ar7e8av.lateralX, rd);
         rb = road_proj_y(t1, 2000, rc);
     } else {
         t1 = -t1;
-        ra = road_mirror_x(t1, ar7e8av.m7e90, -rd);
+        ra = road_mirror_x(t1, ar7e8av.lateralX, -rd);
         rb = road_mirror_y(t1, 2000, -rc);
     }
     if (seln == 0) {
@@ -1383,7 +1383,7 @@ static void near render_mirror(void)
         if (w36 & 0x800)
             render_object(*g_6e18, *g_6e1a, i + 5, 1, 0xf);
     next:
-        if (ao7d2ev.m7d30 - ar7e8av.m7e8a == i && *(int *)&bw8aca) {
+        if (ao7d2ev.roadIndex - ar7e8av.roadIndex == i && *(int *)&bw8aca) {
             egaspan_end();
             render_opponent();
             egaspan_begin();
@@ -1551,7 +1551,7 @@ void view_draw(void)
         if (w36 & 0x400)
             render_object(*g_6e18, *g_6e1a, i, 1, 0x11);
     next:
-        if (ar7e8av.m7e8a - ao7d2ev.m7d30 == i && *(int *)&bw8aca) {
+        if (ar7e8av.roadIndex - ao7d2ev.roadIndex == i && *(int *)&bw8aca) {
             egaspan_end();
             render_opponent();
             egaspan_begin();
@@ -1573,7 +1573,7 @@ void view_draw(void)
         g_6e16--;
         g_6e14--;
     }
-    if (ar7e8av.m7e8a == ao7d2ev.m7d30 && *(int *)&bw8aca) {
+    if (ar7e8av.roadIndex == ao7d2ev.roadIndex && *(int *)&bw8aca) {
         egaspan_end();
         render_opponent();
         egaspan_begin();

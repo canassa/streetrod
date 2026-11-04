@@ -102,7 +102,7 @@ int drvtick_step(void)
                 g_demo--;
                 sys_exit();
             }
-            if ((g_terrain0[ao7d2ev.m7d30 + 1] & 1) || (g_terrain1[ao7d2ev.m7d30 + 1] & 1) || g_firePressed) {
+            if ((g_terrain0[ao7d2ev.roadIndex + 1] & 1) || (g_terrain1[ao7d2ev.roadIndex + 1] & 1) || g_firePressed) {
                 g_click = 0;
                 g_buttons = 0;
                 sys_drive_stop();
