@@ -97,6 +97,18 @@ Addresses are linear offsets into the unpacked load image (`orig/SR_unpacked.EXE
 byte comparison and the gates. Original function extents and data addresses live in `tools/sr/symbols.json`; the tools
 join them by name to definitions and declarations in the sources and headers. `make check` runs the
 per-function regression gate (`./sr check --all`).
+
+After merging annotated sources, extract their current symbol names and addresses before stripping:
+
+```sh
+nix-shell shell.nix --run 'python3 tools/strip_address_comments.py --extract'
+nix-shell shell.nix --run 'python3 tools/strip_address_comments.py'
+```
+
+Extraction merges annotations with metadata for already stripped symbols, dropping stale names absent
+from source. Conflicting annotations abort without writing. Stripping refuses missing or conflicting
+metadata before changing any source; `--check` checks without writing.
+
 `./sr linkcheck work/layout/SR.EXE` compares the unpacked link with `orig/SR_unpacked.EXE`
 and does not mask any bytes. Its report is `work/layout/BYTE-MATCH.JSON`. The header, the
 relocation order and 14 bytes at the end of the load image still differ there (`load_image:

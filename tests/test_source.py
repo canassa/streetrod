@@ -1,6 +1,7 @@
 """source.py: the symbol tables read from sources, headers, symbols.json and the EXE."""
 from pathlib import Path
 import sys
+import re
 import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
 from sr import config, module, source
@@ -30,7 +31,14 @@ class SourceTests(unittest.TestCase):
         for row in addresses['functions'].values():
             self.assertEqual(set(row), {'seg', 'off', 'size'})
         named_data = source.headers()['globals'] + source.headers()['fardata'] + source.statics()
-        self.assertEqual(set(addresses['data']), {r['name'] for r in named_data})
+        declared = {r['name'] for r in named_data}
+        self.assertTrue(declared <= addresses['data'].keys())
+        asm_labels = set()
+        for path in config.source_files('.ASM', '.INC'):
+            asm_labels.update(name.removeprefix('_') for name in re.findall(
+                r'^([A-Za-z_]\w*)\s+(?:DB|DW|DD|DQ|DT|LABEL)\b',
+                path.read_text(encoding='latin-1'), re.M | re.I))
+        self.assertTrue(addresses['data'].keys() - declared <= asm_labels)
         for row in addresses['data'].values():
             self.assertIn(set(row), ({'off'}, {'seg', 'off'}))
 
