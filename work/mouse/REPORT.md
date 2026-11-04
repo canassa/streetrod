@@ -134,7 +134,8 @@ No artificial packing directive or initializer filler is used.
 ## Final verification
 
 Merged main at 9d23432 (critical-error constants), then at 7e49ad5
-(animation names), preserving both sides of each append-only diary conflict.
+(animation names), and finally fd66d7e (animation diary), preserving both sides
+of each append-only diary conflict.
 No source conflict required resolution.
 Repeated every required gate against the merged source:
 
@@ -151,3 +152,7 @@ Repeated every required gate against the merged source:
 No toolchain flags, compiler-budget padding symbols, assembly, or tooling were
 changed. The report, reconstruction notes and recipe-book lesson distinguish
 compatibility with a Mouse record from proof that it existed in the original.
+
+All six gate commands were repeated once more after merging the final diary-only
+main update fd66d7e, with the same results (merged3-* logs). No source changed
+after that final verification.

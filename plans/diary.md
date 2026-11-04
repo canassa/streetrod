@@ -1121,6 +1121,12 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - Box shares Blt's first six words, but its 16-byte tail has no established member meanings in current accesses; substituting the smaller Blt would change the object array layout.
 - The DGROUP C-data reader cannot parse typedef member types. Cmd.op/sub therefore retain explicit signed-char storage, as allowed by the task; enum values live in VIDEO.H.
 
+## 2026-11-05 18:00 CET: The animation scripts read as code
+
+### What I did
+- `enum AnimOp` names the op codes anim_run interprets (`ANIM_BLIT`, `ANIM_BLIT_MASKED`, `ANIM_HOOK`, `ANIM_STOP`, `ANIM_JUMP`, `ANIM_LOAD_IMAGE`, `ANIM_SET_BOX`, `ANIM_SET_SIZE`, `ANIM_WAIT`, `ANIM_COPY_TO_FRONT`, `ANIM_TILE_CAR`; ops 1 and 3 do nothing in anim_run and are `ANIM_NOP_1`/`ANIM_NOP_3`), `enum BoxSet` the box updates (`BOX_KEEP`, `BOX_SET_SOURCE`, `BOX_SET_DESTINATION`, `BOX_SET_BOTH`) and `enum AnimWaitMode` the wait variants; the `g_animScripts` initializer uses them. `struct Cmd`'s op/sub stay 1-byte chars (MSC 5.1 enums are int-sized). `struct Box`'s first fields are the blit's `sx`/`sy`/`dx`/`dy` (source frame in the sheet, destination on screen); it stays a 28-byte record. Done by a Codex agent.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
+
 ## 2026-11-04 14:50 CET: mouse record evidence and tail padding
 
 ### What I did
