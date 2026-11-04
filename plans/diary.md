@@ -878,3 +878,13 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - MSC 5.1 offers no helpers for fixed addresses (dos.h has only FP_SEG/FP_OFF; MK_FP and peek/poke are Turbo C), so a cast long constant was the period idiom; the macro names cost nothing at codegen.
+## 2026-11-04 13:05 CET: Name BIOS equipment video bits
+
+### What I did
+- Added EQUIP_VIDEO_MASK (0x30), EQUIP_VIDEO_COLOR80 (0x20), and SET_EQUIP_VIDEO(m) to PC.H. Replaced both equipment-byte update pairs in MAIN.C's init_screens with SET_EQUIP_VIDEO(EQUIP_VIDEO_COLOR80), retaining the two read-modify-writes and adding no source comments.
+- The requested comma expression with ~EQUIP_VIDEO_MASK matched on the first attempt; no casts, alternative masks, statement macro, or option-1 fallback were needed.
+- From empty work: ./sr check --all reported 572/572 still match (551 MATCH, 21 MATCH*). Removed work again before ./sr build: Packed EXE vs orig/SR.EXE: IDENTICAL; 572/572 game functions at original positions and 748/748 near-call encodings exact.
+- ./sr headers --check and ./sr dgroup check clean; unittest discover: 41 tests OK; ./dosbox.sh --make: DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL.
+
+### What I learned
+- The comma-form macro preserves the byte-access sequence of the original two statements under MAIN.C's /Oalsi. Recorded this C shape in .claude/skills/msc51-recipe-book/SKILL.md.
