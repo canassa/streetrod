@@ -40,7 +40,7 @@ static struct Vibrato g_vibrato;
 
 struct Dev g_songBgState;
 struct Dev g_secondaryMusicStateData;
-void (interrupt far *g_clockPrev)(void);
+void(interrupt far *g_clockPrev)(void);
 char g_strOpp[80];
 int g_menuLevel;
 struct Lims g_boxSpotHitData;
@@ -50,7 +50,8 @@ int g_wRivBanner;
 struct TimerPriorities g_sysTimerPriorities;
 
 struct TimerQueue g_timerQueue = {-1, -1, 0, 2147483647L, 0, 0};
-struct Link g_timers[4] = {{0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}};
+struct Link g_timers[4] = {
+    {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}};
 int g_05ba = 0;
 int g_05bc[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 long g_waitUntil = 0L;
@@ -75,7 +76,6 @@ int g_demo = 0;
 int g_autoDrive = 0;
 
 
-
 void sy_hover_reset(void)
 {
     g_drawnCursor.dirty = 1;
@@ -85,7 +85,6 @@ void sy_hover_reset(void)
     g_click2 = 0;
     kg_key();
 }
-
 
 
 void sy_music_pause(void)
@@ -101,7 +100,6 @@ void sy_music_pause(void)
 }
 
 
-
 void sy_music_resume(void)
 {
     if (g_musicOn && !g_voice->active && g_voice->phraseStart != g_voice->song) {
@@ -111,7 +109,6 @@ void sy_music_resume(void)
         sy_hover_reset();
     }
 }
-
 
 
 void sy_reset_queues(void)
@@ -145,7 +142,6 @@ void sy_reset_queues(void)
 }
 
 
-
 void sy_timer_remove(int n)
 {
     register int i;
@@ -171,7 +167,6 @@ void sy_timer_remove(int n)
 }
 
 
-
 void sy_unhook(void)
 {
     _disable();
@@ -184,7 +179,6 @@ void sy_unhook(void)
     g_kbdHooked = 0;
     g_sysHooked = 0;
 }
-
 
 
 void sy_exit(void)
@@ -207,8 +201,9 @@ void sy_exit(void)
 
 char g_064d = 0;
 char g_keymapGroup = 0;
-struct KeyMap g_keymapSaved[30] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
-
+struct KeyMap g_keymapSaved[30] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},
+                                   {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},
+                                   {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 
 
 void sy_crit_error(unsigned deverr, unsigned char errcode)
@@ -248,7 +243,6 @@ void sy_crit_error(unsigned deverr, unsigned char errcode)
         sy_exit();
     _hardresume(action);
 }
-
 
 
 void sy_init(void)
@@ -321,7 +315,6 @@ void sy_init(void)
 }
 
 
-
 void sy_keymap_set(enum ScreenId n)
 {
     struct KeyMap *p;
@@ -348,7 +341,6 @@ void sy_keymap_set(enum ScreenId n)
     g_scanMap[c] = p->val;
     q[1].key = 0;
 }
-
 
 
 int sy_keymap_restore(int keep)
@@ -390,7 +382,6 @@ char g_lastFire = 0;
 char g_squealPhase = 0;
 
 
-
 int sy_wait_input(int ticks)
 {
     register struct Link *p;
@@ -421,8 +412,8 @@ int sy_wait_input(int ticks)
             g_demoControl.quit = 0x63;
             sy_exit();
         }
-        if (g_protectCycle && (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
-            && !(g_tick & 0xf) && g_musicOn && g_speakerOn) {
+        if (g_protectCycle && (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) && !(g_tick & 0xf) && g_musicOn &&
+            g_speakerOn) {
             old = g_protectPal[8];
             g_protectPal[8] = g_protectPal[7];
             g_protectPal[7] = g_protectPal[6];
@@ -487,8 +478,10 @@ int sy_wait_input(int ticks)
                 return KR_ANY_INPUT;
             }
             if (g_menuLevel) {
-                if (i = (x >= g_boxSpotHitData.x1 && x < g_boxSpotHitData.x2 && y >= g_boxSpotHitData.y1 && y < g_boxSpotHitData.y2)
-                        ? g_cursHoverCodeVal : mn_hit(x, y))
+                if (i = (x >= g_boxSpotHitData.x1 && x < g_boxSpotHitData.x2 && y >= g_boxSpotHitData.y1 &&
+                         y < g_boxSpotHitData.y2)
+                            ? g_cursHoverCodeVal
+                            : mn_hit(x, y))
                     return i;
             }
             if (g_input.any) {
@@ -512,8 +505,8 @@ int sy_wait_input(int ticks)
             g_drawnCursor.dirty = 0;
             _enable();
             cu_draw(x = g_drawnCursor.x, y = g_drawnCursor.y);
-            if (g_menuLevel
-                && (x < g_boxSpotHitData.x1 || x >= g_boxSpotHitData.x2 || y < g_boxSpotHitData.y1 || y >= g_boxSpotHitData.y2)) {
+            if (g_menuLevel && (x < g_boxSpotHitData.x1 || x >= g_boxSpotHitData.x2 || y < g_boxSpotHitData.y1 ||
+                                y >= g_boxSpotHitData.y2)) {
                 res = g_cursHoverCodeVal;
                 if (i = mn_hit(x, y)) {
                     if (res != i) {
@@ -545,7 +538,6 @@ int sy_wait_input(int ticks)
 struct Eng g_driveEng;
 int g_vibratoActive;
 struct Tone *g_toneShapePlaybackPointer;
-
 
 
 int sy_timer_add(int delay, int pri)
@@ -602,7 +594,6 @@ int sy_timer_add(int delay, int pri)
 }
 
 
-
 void sy_timer_anim(int fc, int delay)
 {
     int n;
@@ -611,7 +602,6 @@ void sy_timer_anim(int fc, int delay)
     g_timers[n].action = TIMER_RESUME_ANIM;
     g_timers[n].argument = fc;
 }
-
 
 
 void sy_timer_cancel(int n)
@@ -623,7 +613,6 @@ void sy_timer_cancel(int n)
         if ((p = g_timers + i)->action == 1 && p->argument == n)
             p->action = TIMER_CANCELLED;
 }
-
 
 
 void sy_music_start(int n, int cnt)
@@ -646,7 +635,6 @@ void sy_music_start(int n, int cnt)
 }
 
 
-
 void sy_music_stop(void)
 {
     g_voice->active = 0;
@@ -655,7 +643,6 @@ void sy_music_stop(void)
     g_voice->dirty = 1;
     g_voice->phraseStart = g_voice->cur = g_voice->song;
 }
-
 
 
 void sy_drive_start(void)
@@ -680,7 +667,6 @@ void sy_drive_start(void)
 }
 
 
-
 void sy_drive_stop(void)
 {
     _dos_setvect(TIMER_INT, sy_timer_isr);
@@ -699,7 +685,6 @@ void sy_drive_stop(void)
 }
 
 
-
 int sy_sign(int x)
 {
     if (x == 0)
@@ -710,7 +695,6 @@ int sy_sign(int x)
 }
 
 #pragma loop_opt(off)
-
 
 
 void sy_demo_step(void)
@@ -879,7 +863,6 @@ void sy_demo_step(void)
 }
 
 
-
 void interrupt far sy_timer_isr(void)
 {
     int x, y;
@@ -910,7 +893,10 @@ void interrupt far sy_timer_isr(void)
     if (g_voice->active && --g_voice->ticksLeft) {
         if (g_vibratoActive && g_voice->divisor.w && !--g_vibCount) {
             g_toneShapePlaybackPointer->phase = g_toneShapePlaybackPointer->phase % g_toneShapePlaybackPointer->length;
-            g_vibrato.divisor = g_toneShapes[g_toneShapePlaybackPointer->waveform][g_toneShapePlaybackPointer->phase++] * g_vibrato.gain + g_voice->divisor.w;
+            g_vibrato.divisor =
+                g_toneShapes[g_toneShapePlaybackPointer->waveform][g_toneShapePlaybackPointer->phase++] *
+                    g_vibrato.gain +
+                g_voice->divisor.w;
             outp(PIT_CH2, g_vibrato.divisor);
             outp(PIT_CH2, g_vibrato.divisor >> 8);
             g_vibCount = g_toneShapePlaybackPointer->delay;
@@ -998,13 +984,11 @@ long g_mphAccumulator;
 int g_xCoordSprite;
 
 
-
 void sy_stop_drive(void)
 {
     g_driveEng.accelStep = g_driveEng.decelStep = g_driveEng.steeringInput = g_driveEng.steering = g_05d6 = 0;
     g_driveEng.fbe = g_driveEng.elapsedTicks;
 }
-
 
 
 void interrupt far sy_drive_isr(void)
@@ -1181,34 +1165,33 @@ void interrupt far sy_drive_isr(void)
                             sy_stop_drive();
                         }
                     }
-                } else if (g_driveEng.rpm > 1500 ||
-                           (g_driveEng.gearIndex > 0 && g_driveEng.rpm > g_driveEng.decelStep))
+                } else if (g_driveEng.rpm > 1500 || (g_driveEng.gearIndex > 0 && g_driveEng.rpm > g_driveEng.decelStep))
                     g_driveEng.rpm -= g_driveEng.decelStep;
                 if (g_driveEng.rpm < 5700)
                     g_overRev = 0;
                 top = g_driveEng.speed < 5 && !flag && g_driveEng.gearIndex > 0;
                 if (c || top ||
                     (g_driveEng.automatic && g_driveEng.autoSelector > SELECTOR_NEUTRAL &&
-                     ((flag && g_driveEng.rpm > g_driveEng.autoShiftRpm && g_driveEng.gearIndex < g_driveEng.gearCount) ||
+                     ((flag && g_driveEng.rpm > g_driveEng.autoShiftRpm &&
+                       g_driveEng.gearIndex < g_driveEng.gearCount) ||
                       (!flag && g_driveEng.gearIndex > 1 && !g_driveEng.rpmBand)))) {
                     g_driver.currentCar->transmission->wear += g_driveEng.rpm > 5000 ? 15 : 3;
                     if (g_demo == 0) {
                         i = g_driver.currentCar->transmission->wear;
-                        if (i >= 9900 ||
-                            (g_driveEng.automatic == 0 && flag && g_driveEng.rpm > 5000 &&
-                             i / 100 + 100 > rn_int(3277))) {
+                        if (i >= 9900 || (g_driveEng.automatic == 0 && flag && g_driveEng.rpm > 5000 &&
+                                          i / 100 + 100 > rn_int(3277))) {
                             g_driveEng.stopFlags |= (STOP_LOST | STOP_TRANSMISSION);
                             sy_stop_drive();
                         }
                     }
                     if ((prev || (!g_driveEng.rpmBand && !flag)) && g_driveEng.gearIndex > 0)
                         g_driveEng.gearIndex--;
-                    else if ((flag || (g_driveEng.rpmBand > 0 && !prev)) &&
-                             g_driveEng.gearIndex < g_driveEng.gearCount)
+                    else if ((flag || (g_driveEng.rpmBand > 0 && !prev)) && g_driveEng.gearIndex < g_driveEng.gearCount)
                         g_driveEng.gearIndex++;
                     if (g_driveEng.automatic) {
                         if (c)
-                            g_driveEng.autoSelector = g_driveEng.autoSelector == SELECTOR_NEUTRAL ? SELECTOR_DRIVE : SELECTOR_NEUTRAL;
+                            g_driveEng.autoSelector =
+                                g_driveEng.autoSelector == SELECTOR_NEUTRAL ? SELECTOR_DRIVE : SELECTOR_NEUTRAL;
                         if (top || g_driveEng.gearIndex == 0)
                             g_driveEng.autoSelector = SELECTOR_NEUTRAL;
                         if (g_driveEng.autoSelector == SELECTOR_NEUTRAL)
@@ -1252,8 +1235,8 @@ void interrupt far sy_drive_isr(void)
                 } else
                     g_driveEng.steeringInput = 0;
                 if (abs(g_driveEng.steering) > 0)
-                    g_driveEng.steering += g_driveEng.steering > 0 ? -((g_driveEng.steering >> 2) + 1)
-                                               : ((-g_driveEng.steering >> 2) + 1);
+                    g_driveEng.steering +=
+                        g_driveEng.steering > 0 ? -((g_driveEng.steering >> 2) + 1) : ((-g_driveEng.steering >> 2) + 1);
                 if (g_runRacingFlag && rd_check_crash()) {
                     g_driveEng.stopFlags |= (STOP_LOST | STOP_ROADSIDE_CRASH);
                     sy_stop_drive();

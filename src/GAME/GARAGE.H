@@ -44,7 +44,7 @@ void near ga_body(unsigned mask);
 void near ga_stickers(void);
 void near ga_spares(enum PartCategory t, struct Node **list, char *buf, int start);
 void near ga_install(struct Node *n, struct Node **slot);
-struct Node * near ga_unlink(struct Node *n);
+struct Node *near ga_unlink(struct Node *n);
 void near ga_tires(void);
 void ga_info(void);
 void near ga_transmission(void);

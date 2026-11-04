@@ -7,7 +7,11 @@
 #include "SYS.H"
 
 int g_toneShapes[3][8] = {{0, 1, 2, 1, 0, -1, -2, -1}, {0, 1, 2, 3, 4, 5, 6, 7}, {0, 1, 0, 0, 0, 0, 0, 0}};
-struct Tone g_tones[5] = {{0, WAVE_TRIANGLE, 0, 0, 0}, {0, WAVE_TRIANGLE, 0, 8, 10}, {0, WAVE_TRIANGLE, 4, 8, 1}, {0, WAVE_TRIANGLE, 6, 8, 1}, {0, WAVE_PULSE, 5, 2, 1}};
+struct Tone g_tones[5] = {{0, WAVE_TRIANGLE, 0, 0, 0},
+                          {0, WAVE_TRIANGLE, 0, 8, 10},
+                          {0, WAVE_TRIANGLE, 4, 8, 1},
+                          {0, WAVE_TRIANGLE, 6, 8, 1},
+                          {0, WAVE_PULSE, 5, 2, 1}};
 
 /* Start the sound song with its tone list tones. Song g_songBgState's own song restarts the
    first voice (g_voiceNum = 1); any other song goes into the second voice g_secondaryMusicStateData (g_voiceNum = 2), the
@@ -42,7 +46,6 @@ void mu_play(void far *song, void *tones)
 }
 
 
-
 void mu_set_vibrato(int on, enum Waveform waveform, int length, int depth, int delay)
 {
     if (on) {
@@ -54,7 +57,6 @@ void mu_set_vibrato(int on, enum Waveform waveform, int length, int depth, int d
     }
     g_vibratoActive = on;
 }
-
 
 
 void mu_stop(void)

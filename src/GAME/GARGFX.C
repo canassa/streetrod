@@ -29,7 +29,8 @@ int g_enginePos[3][2] = {{24, 68}, {24, 68}, {16, 68}};
 int g_engineBoltPos[6] = {109, 112, 120, 111, 124, 116};
 int g_wiresPos[12] = {75, 113, 64, 122, 83, 110, 72, 119, 83, 118, 72, 127};
 int g_manifoldBoltPos[8] = {68, 74, 144, 74, 68, 74, 160, 74};
-int g_carbPos[10][2] = {{90, 70}, {98, 70}, {94, 70}, {64, 70}, {90, 70}, {115, 70}, {72, 71}, {111, 71}, {71, 69}, {115, 69}};
+int g_carbPos[10][2] = {{90, 70},  {98, 70}, {94, 70},  {64, 70}, {90, 70},
+                        {115, 70}, {72, 71}, {111, 71}, {71, 69}, {115, 69}};
 int g_carbBoltOff[10] = {10, -1, 21, -1, 11, -1, 29, -1, 11, -1};
 char g_partSlotMap[14] = {29, 0, -1, -1, 2, 2, 2, 2, 3, 4, 2, 3, 2, 3};
 char g_carbPosBase[6] = {5, 6, 7, 10, 12, 0};
@@ -278,7 +279,7 @@ void gx_draw_bolt(int n)
 {
     struct Bitmap far *pict;
     struct Bitmap far *saved;
-    long unused;    /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
+    long unused; /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
     struct Blt move;
     int px;
     int height;
@@ -396,7 +397,7 @@ void gx_draw_part(int n, int flag)
 {
     struct Bitmap far *pict;
     struct Bitmap far *saved;
-    long unused;    /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
+    long unused; /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
     int w;
     struct Blt move;
     int x;
@@ -450,7 +451,7 @@ void gx_draw_part(int n, int flag)
 void gx_erase_part(int n, int flag)
 {
     struct Bitmap far *pict;
-    long unused;    /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
+    long unused; /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
     int w;
     struct Blt move;
     int h;
@@ -497,10 +498,12 @@ void gx_draw_wires(void)
     ys = blt.dy = (blt.sy = g_wiresPos[next * 2 + 1]) + 9;
     blt.h = r_vid.hoodBg->height - blt.sy - 4;
     (*g_videoOps.copy)(r_vid.hoodBg, r_vid.back, &blt, 1);
-    bm_draw_pic(r_vid.back, g_slotSelec.wirePic, (unsigned char)(x2 = g_wiresPos[pair * 2] + 0x60), (unsigned char)(y2 = g_wiresPos[pair * 2 + 1] + 9), 0);
+    bm_draw_pic(r_vid.back, g_slotSelec.wirePic, (unsigned char)(x2 = g_wiresPos[pair * 2] + 0x60),
+                (unsigned char)(y2 = g_wiresPos[pair * 2 + 1] + 9), 0);
     cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
-        bm_copy_box(r_vid.back, r_vid.front, x2 > xs ? xs : x2, y2 > ys ? ys : y2, blt.w + x2 + 0x18, blt.h + y2 + 0x18);
+        bm_copy_box(r_vid.back, r_vid.front, x2 > xs ? xs : x2, y2 > ys ? ys : y2, blt.w + x2 + 0x18,
+                    blt.h + y2 + 0x18);
 }
 
 /* Draw the item pictures of a car's parts for slots 0, 1 and then 2..4, with the

@@ -15,9 +15,11 @@
 #include "VIDEO.H"
 
 static struct Win *g_popupLayout;
-static int g_6c42[2];                      /* PROVISIONAL: 4 unreferenced bytes after g_popupLayout */
+static int g_6c42[2]; /* PROVISIONAL: 4 unreferenced bytes after g_popupLayout */
 
-struct Win g_popupWins[3] = {{1072, 1, 72, 30, 152, 37, 0, 6, 144}, {1073, 1, 80, 30, 232, 37, 0, 6, 223}, {1074, 2, 80, 20, 232, 46, 0, 6, 223}};
+struct Win g_popupWins[3] = {{1072, 1, 72, 30, 152, 37, 0, 6, 144},
+                             {1073, 1, 80, 30, 232, 37, 0, 6, 223},
+                             {1074, 2, 80, 20, 232, 46, 0, 6, 223}};
 struct Bitmap far *g_popupSave = 0;
 
 /* Copy the rectangle (x, y, w, h) of the back buffer into pict new bitmap and return it.
@@ -101,7 +103,8 @@ void pu_open(int n)
     txt = g_descHdr + n + 1;
     rec = txt[-1] - 1;
     g_popupLayout = &g_popupWins[rec];
-    g_popupSave = pu_grab(x0 = g_popupLayout->x, y1 = g_popupLayout->y, w1 = g_popupLayout->w, h1 = g_popupLayout->h, 0);
+    g_popupSave =
+        pu_grab(x0 = g_popupLayout->x, y1 = g_popupLayout->y, w1 = g_popupLayout->w, h1 = g_popupLayout->h, 0);
     bm_draw_pic(r_vid.back, g_popupLayout->bg, (unsigned char)x0, (unsigned char)y1, 0);
     x_colors = bustyle->popup;
     x0 += g_popupLayout->tx;
@@ -114,7 +117,8 @@ void pu_open(int n)
     }
     cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
-        bm_copy_box(r_vid.back, r_vid.front, g_popupLayout->x, g_popupLayout->y, g_popupLayout->x + w1 - 1, g_popupLayout->y + h1 - 1);
+        bm_copy_box(r_vid.back, r_vid.front, g_popupLayout->x, g_popupLayout->y, g_popupLayout->x + w1 - 1,
+                    g_popupLayout->y + h1 - 1);
     if (close) {
         ma_pop_high(1);
         g_popupSave = 0;

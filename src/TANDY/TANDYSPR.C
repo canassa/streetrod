@@ -54,8 +54,7 @@ int ts_step(struct Sprite *s)
     fr = s->frame;
     fp = s->save;
     d = fr->data;
-    sp_clip_box(fr->pos->width, fr->pos->height - g_spriteBottomCut,
-        s->x, s->y, pg->bm->width, pg->bm->height, &rc);
+    sp_clip_box(fr->pos->width, fr->pos->height - g_spriteBottomCut, s->x, s->y, pg->bm->width, pg->bm->height, &rc);
     if (sp_rect_sub(&rc, &pg->rect, &c2, s->seq->dx))
         restore_rect_back(&c2, r_vid.back, fp, s->seq->dx);
     pg->rect = rc;
@@ -124,7 +123,7 @@ int ts_step(struct Sprite *s)
     }
     if (r_vid.back->bits.p != pg->bm->bits.p)
         bm_copy_box(r_vid.back, pg->bm, rc.x1 > c2.x1 ? c2.x1 : rc.x1, rc.y1 > c2.y1 ? c2.y1 : rc.y1,
-            rc.x2 < c2.x2 ? c2.x2 : rc.x2, rc.y2 < c2.y2 ? c2.y2 : rc.y2);
+                    rc.x2 < c2.x2 ? c2.x2 : rc.x2, rc.y2 < c2.y2 ? c2.y2 : rc.y2);
     sp_advance(s);
     return 1;
 }

@@ -34,12 +34,50 @@ static void near build_narrows(void);
 static void near build_left_closed(void);
 
 int g_hillProfile[22] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, -4, -4, -4, -3, -2, -1};
-int g_hillDipProfile[38] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, -5, -5, -5, -5, -5, -5, -4, -3, -2, -1, 0, 0, 1, 2, 3, 4, 4, 4, 4, 3, 2, 1};
+int g_hillDipProfile[38] = {1,  2,  3,  4,  4,  4,  4,  3, 2, 1, 0, 0, -1, -2, -3, -4, -5, -5, -5,
+                            -5, -5, -5, -4, -3, -2, -1, 0, 0, 1, 2, 3, 4,  4,  4,  4,  3,  2,  1};
 int g_bumpProfile[17] = {1, 2, 3, 3, 3, 2, 1, 0, 0, 0, -1, -2, -3, -3, -3, -2, -1};
 int g_layoutLen = 12;
-enum RoadSection g_roadLayouts[10][12] = {{SECTION_RIGHT_CURVE, SECTION_HILL, SECTION_LEFT_CURVE, SECTION_RIGHT_CLOSED, SECTION_DIP, SECTION_S_CURVE_LR, SECTION_HILL_DIP, SECTION_LEFT_CLOSED, SECTION_DIP_HILL, SECTION_RIGHT_CURVE, SECTION_NARROWS, SECTION_LEFT_CURVE}, {SECTION_S_CURVE_RL, SECTION_DIP, SECTION_LEFT_CLOSED, SECTION_LEFT_CURVE, SECTION_DIP_HILL, SECTION_NARROWS, SECTION_RIGHT_CURVE, SECTION_HILL_DIP, SECTION_RIGHT_CLOSED, SECTION_RIGHT_CURVE, SECTION_HILL, SECTION_LEFT_CURVE}, {SECTION_LEFT_CURVE, SECTION_HILL_DIP, SECTION_LEFT_CURVE, SECTION_HILL, SECTION_LEFT_CLOSED, SECTION_S_CURVE_RL, SECTION_DIP_HILL, SECTION_RIGHT_CLOSED, SECTION_RIGHT_CURVE, SECTION_DIP, SECTION_NARROWS, SECTION_LEFT_CURVE}, {SECTION_HILL, SECTION_LEFT_CURVE, SECTION_DIP, SECTION_NARROWS, SECTION_RIGHT_CURVE, SECTION_DIP_HILL, SECTION_LEFT_CLOSED, SECTION_LEFT_CURVE, SECTION_HILL, SECTION_LEFT_CLOSED, SECTION_S_CURVE_LR, SECTION_RIGHT_CURVE}, {SECTION_S_CURVE_LR, SECTION_NARROWS, SECTION_HILL_DIP, SECTION_LEFT_CURVE, SECTION_DIP_HILL, SECTION_RIGHT_CURVE, SECTION_HILL, SECTION_RIGHT_CLOSED, SECTION_DIP, SECTION_RIGHT_CURVE, SECTION_LEFT_CLOSED, SECTION_RIGHT_CURVE}, {SECTION_RIGHT_CURVE, SECTION_HILL, SECTION_LEFT_CLOSED, SECTION_S_CURVE_LR, SECTION_HILL_DIP, SECTION_S_CURVE_RL, SECTION_DIP, SECTION_RIGHT_CLOSED, SECTION_LEFT_CURVE, SECTION_DIP_HILL, SECTION_NARROWS, SECTION_RIGHT_CURVE}, {SECTION_LEFT_CURVE, SECTION_HILL_DIP, SECTION_NARROWS, SECTION_LEFT_CURVE, SECTION_DIP, SECTION_RIGHT_CURVE, SECTION_HILL, SECTION_S_CURVE_LR, SECTION_LEFT_CLOSED, SECTION_DIP, SECTION_LEFT_CURVE, SECTION_NARROWS}, {SECTION_RIGHT_CURVE, SECTION_DIP, SECTION_RIGHT_CLOSED, SECTION_S_CURVE_RL, SECTION_RIGHT_CURVE, SECTION_HILL_DIP, SECTION_LEFT_CLOSED, SECTION_DIP, SECTION_LEFT_CURVE, SECTION_RIGHT_CLOSED, SECTION_DIP_HILL, SECTION_RIGHT_CURVE}, {SECTION_RIGHT_CURVE, SECTION_DIP_HILL, SECTION_LEFT_CLOSED, SECTION_S_CURVE_LR, SECTION_DIP_HILL, SECTION_LEFT_CURVE, SECTION_HILL, SECTION_RIGHT_CLOSED, SECTION_HILL_DIP, SECTION_LEFT_CURVE, SECTION_DIP, SECTION_NARROWS}, {SECTION_LEFT_CURVE, SECTION_HILL, SECTION_LEFT_CURVE, SECTION_DIP_HILL, SECTION_LEFT_CURVE, SECTION_DIP, SECTION_NARROWS, SECTION_S_CURVE_LR, SECTION_DIP_HILL, SECTION_LEFT_CLOSED, SECTION_RIGHT_CURVE, SECTION_HILL}};
-struct Bitmap g_egaPage1 = {SCREEN_WIDTH, SCREEN_HEIGHT, 8000, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0}, {EGA_PAGE1_BITS}, {0}, EGA_PITCH, VID_EGA};
-struct Bitmap g_egaPage2 = {SCREEN_WIDTH, SCREEN_HEIGHT, 8000, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0}, {EGA_PAGE2_BITS}, {0}, EGA_PITCH, VID_EGA};
+enum RoadSection g_roadLayouts[10][12] = {
+    {SECTION_RIGHT_CURVE, SECTION_HILL, SECTION_LEFT_CURVE, SECTION_RIGHT_CLOSED, SECTION_DIP, SECTION_S_CURVE_LR,
+     SECTION_HILL_DIP, SECTION_LEFT_CLOSED, SECTION_DIP_HILL, SECTION_RIGHT_CURVE, SECTION_NARROWS, SECTION_LEFT_CURVE},
+    {SECTION_S_CURVE_RL, SECTION_DIP, SECTION_LEFT_CLOSED, SECTION_LEFT_CURVE, SECTION_DIP_HILL, SECTION_NARROWS,
+     SECTION_RIGHT_CURVE, SECTION_HILL_DIP, SECTION_RIGHT_CLOSED, SECTION_RIGHT_CURVE, SECTION_HILL,
+     SECTION_LEFT_CURVE},
+    {SECTION_LEFT_CURVE, SECTION_HILL_DIP, SECTION_LEFT_CURVE, SECTION_HILL, SECTION_LEFT_CLOSED, SECTION_S_CURVE_RL,
+     SECTION_DIP_HILL, SECTION_RIGHT_CLOSED, SECTION_RIGHT_CURVE, SECTION_DIP, SECTION_NARROWS, SECTION_LEFT_CURVE},
+    {SECTION_HILL, SECTION_LEFT_CURVE, SECTION_DIP, SECTION_NARROWS, SECTION_RIGHT_CURVE, SECTION_DIP_HILL,
+     SECTION_LEFT_CLOSED, SECTION_LEFT_CURVE, SECTION_HILL, SECTION_LEFT_CLOSED, SECTION_S_CURVE_LR,
+     SECTION_RIGHT_CURVE},
+    {SECTION_S_CURVE_LR, SECTION_NARROWS, SECTION_HILL_DIP, SECTION_LEFT_CURVE, SECTION_DIP_HILL, SECTION_RIGHT_CURVE,
+     SECTION_HILL, SECTION_RIGHT_CLOSED, SECTION_DIP, SECTION_RIGHT_CURVE, SECTION_LEFT_CLOSED, SECTION_RIGHT_CURVE},
+    {SECTION_RIGHT_CURVE, SECTION_HILL, SECTION_LEFT_CLOSED, SECTION_S_CURVE_LR, SECTION_HILL_DIP, SECTION_S_CURVE_RL,
+     SECTION_DIP, SECTION_RIGHT_CLOSED, SECTION_LEFT_CURVE, SECTION_DIP_HILL, SECTION_NARROWS, SECTION_RIGHT_CURVE},
+    {SECTION_LEFT_CURVE, SECTION_HILL_DIP, SECTION_NARROWS, SECTION_LEFT_CURVE, SECTION_DIP, SECTION_RIGHT_CURVE,
+     SECTION_HILL, SECTION_S_CURVE_LR, SECTION_LEFT_CLOSED, SECTION_DIP, SECTION_LEFT_CURVE, SECTION_NARROWS},
+    {SECTION_RIGHT_CURVE, SECTION_DIP, SECTION_RIGHT_CLOSED, SECTION_S_CURVE_RL, SECTION_RIGHT_CURVE, SECTION_HILL_DIP,
+     SECTION_LEFT_CLOSED, SECTION_DIP, SECTION_LEFT_CURVE, SECTION_RIGHT_CLOSED, SECTION_DIP_HILL, SECTION_RIGHT_CURVE},
+    {SECTION_RIGHT_CURVE, SECTION_DIP_HILL, SECTION_LEFT_CLOSED, SECTION_S_CURVE_LR, SECTION_DIP_HILL,
+     SECTION_LEFT_CURVE, SECTION_HILL, SECTION_RIGHT_CLOSED, SECTION_HILL_DIP, SECTION_LEFT_CURVE, SECTION_DIP,
+     SECTION_NARROWS},
+    {SECTION_LEFT_CURVE, SECTION_HILL, SECTION_LEFT_CURVE, SECTION_DIP_HILL, SECTION_LEFT_CURVE, SECTION_DIP,
+     SECTION_NARROWS, SECTION_S_CURVE_LR, SECTION_DIP_HILL, SECTION_LEFT_CLOSED, SECTION_RIGHT_CURVE, SECTION_HILL}};
+struct Bitmap g_egaPage1 = {SCREEN_WIDTH,
+                            SCREEN_HEIGHT,
+                            8000,
+                            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
+                            {EGA_PAGE1_BITS},
+                            {0},
+                            EGA_PITCH,
+                            VID_EGA};
+struct Bitmap g_egaPage2 = {SCREEN_WIDTH,
+                            SCREEN_HEIGHT,
+                            8000,
+                            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
+                            {EGA_PAGE2_BITS},
+                            {0},
+                            EGA_PITCH,
+                            VID_EGA};
 int g_roadLayout = 0;
 int g_onShoulder = 0;
 int g_turnRight = 0;
@@ -51,7 +89,6 @@ static int near rnd(int n)
 {
     return rn_int(n);
 }
-
 
 
 static void near build_left_curve(void)
@@ -77,7 +114,6 @@ static void near build_left_curve(void)
 }
 
 
-
 static void near build_right_curve(void)
 {
     int i;
@@ -99,7 +135,6 @@ static void near build_right_curve(void)
     }
     g_buildX = i * g_bendStep;
 }
-
 
 
 static void near build_s_curve_lr(void)
@@ -133,7 +168,6 @@ static void near build_s_curve_lr(void)
 }
 
 
-
 static void near build_s_curve_rl(void)
 {
     int i;
@@ -163,7 +197,6 @@ static void near build_s_curve_rl(void)
     }
     g_buildX = i * g_bendStep;
 }
-
 
 
 static void near build_hill(void)
@@ -241,7 +274,6 @@ static void near build_dip_hill(void)
 }
 
 
-
 static void near build_right_closed(void)
 {
     int i, start;
@@ -263,7 +295,6 @@ static void near build_right_closed(void)
 }
 
 
-
 static void near build_narrows(void)
 {
     int i, start;
@@ -283,7 +314,6 @@ static void near build_narrows(void)
     for (i = start; i < g_buildEntry; i++)
         g_terrain2[i] = g_buildX;
 }
-
 
 
 static void near build_left_closed(void)
@@ -328,17 +358,39 @@ void rd_build_layout(int n)
         g_roadLayout = rnd(10);
     for (i = 0; i < g_layoutLen; i++) {
         switch (g_roadLayouts[g_roadLayout][i]) {
-        case SECTION_LEFT_CURVE: build_left_curve(); break;
-        case SECTION_RIGHT_CURVE: build_right_curve(); break;
-        case SECTION_HILL: build_hill(); break;
-        case SECTION_DIP: build_dip(); break;
-        case SECTION_HILL_DIP: build_hill_dip(); break;
-        case SECTION_DIP_HILL: build_dip_hill(); break;
-        case SECTION_RIGHT_CLOSED: build_right_closed(); break;
-        case SECTION_LEFT_CLOSED: build_left_closed(); break;
-        case SECTION_NARROWS: build_narrows(); break;
-        case SECTION_S_CURVE_LR: build_s_curve_lr(); break;
-        case SECTION_S_CURVE_RL: build_s_curve_rl(); break;
+        case SECTION_LEFT_CURVE:
+            build_left_curve();
+            break;
+        case SECTION_RIGHT_CURVE:
+            build_right_curve();
+            break;
+        case SECTION_HILL:
+            build_hill();
+            break;
+        case SECTION_DIP:
+            build_dip();
+            break;
+        case SECTION_HILL_DIP:
+            build_hill_dip();
+            break;
+        case SECTION_DIP_HILL:
+            build_dip_hill();
+            break;
+        case SECTION_RIGHT_CLOSED:
+            build_right_closed();
+            break;
+        case SECTION_LEFT_CLOSED:
+            build_left_closed();
+            break;
+        case SECTION_NARROWS:
+            build_narrows();
+            break;
+        case SECTION_S_CURVE_LR:
+            build_s_curve_lr();
+            break;
+        case SECTION_S_CURVE_RL:
+            build_s_curve_rl();
+            break;
         }
     }
     for (; g_buildEntry < 0x460; g_buildEntry++) {
@@ -589,7 +641,6 @@ void rd_seek(int n)
 }
 
 
-
 int rd_proj_x(int a, int b, int c)
 {
     int u, v;
@@ -602,7 +653,6 @@ int rd_proj_x(int a, int b, int c)
     u = u / a;
     return 0xa0 - u;
 }
-
 
 
 int rd_proj_y(int a, int b, int c)
@@ -619,7 +669,6 @@ int rd_proj_y(int a, int b, int c)
 }
 
 
-
 int rd_mirror_x(int a, int b, int c)
 {
     int u, v;
@@ -631,7 +680,6 @@ int rd_mirror_x(int a, int b, int c)
     u = v / a;
     return 0x118 - u;
 }
-
 
 
 int rd_mirror_y(int a, int b, int c)
@@ -869,7 +917,6 @@ void rd_draw_frame(void)
 }
 
 
-
 void rd_advance(void)
 {
     int bits7, goal6, diff;
@@ -910,7 +957,8 @@ void rd_advance(void)
         g_trackViewMotion.rightEdge = 0xce4;
     }
     g_trackViewMotion.roadHeight = *g_heightRoadPtr;
-    if (g_demo != 0 || g_autoDrive != 0 || (g_driver.raceType == RACE_DRAG ? 0x17c : 0x3fc) < g_trackViewMotion.roadIndex) {
+    if (g_demo != 0 || g_autoDrive != 0 ||
+        (g_driver.raceType == RACE_DRAG ? 0x17c : 0x3fc) < g_trackViewMotion.roadIndex) {
         goal6 = 0x960;
         if (g_roadOppPos.lateralX > 0x960)
             goal6 -= 0x140;
@@ -935,15 +983,18 @@ void rd_advance(void)
 int rd_check_crash(void)
 {
     g_onShoulder = 0;
-    if (g_leftEdgeX - 0x104 < g_trackViewMotion.lateralX - 0x1e && g_trackViewMotion.lateralX + 0x46 < g_edgeXR + 0x104) {
+    if (g_leftEdgeX - 0x104 < g_trackViewMotion.lateralX - 0x1e &&
+        g_trackViewMotion.lateralX + 0x46 < g_edgeXR + 0x104) {
         if (g_leftEdgeX > g_trackViewMotion.lateralX - 0x1e) {
-            if ((g_terrain0[g_trackViewMotion.roadIndex] & 0x1000) || (g_terrain0[g_trackViewMotion.roadIndex - 1] & 0x1000))
+            if ((g_terrain0[g_trackViewMotion.roadIndex] & 0x1000) ||
+                (g_terrain0[g_trackViewMotion.roadIndex - 1] & 0x1000))
                 return 1;
             if (g_terrain3[g_trackViewMotion.roadIndex + 1] & 0xf000)
                 return 1;
             g_onShoulder = 1;
         } else if (g_trackViewMotion.lateralX + 0x46 > g_edgeXR) {
-            if ((g_terrain1[g_trackViewMotion.roadIndex] & 0x1000) || (g_terrain1[g_trackViewMotion.roadIndex - 1] & 0x1000))
+            if ((g_terrain1[g_trackViewMotion.roadIndex] & 0x1000) ||
+                (g_terrain1[g_trackViewMotion.roadIndex - 1] & 0x1000))
                 return 1;
             if (g_terrain3[g_trackViewMotion.roadIndex + 1] & 0xf002)
                 return 1;
@@ -955,14 +1006,12 @@ int rd_check_crash(void)
 }
 
 
-
 void rd_start(void)
 {
     g_turnRight = g_turnLeft = 0;
     rd_reset();
     vw_start();
 }
-
 
 
 void rd_turn(int dir)
@@ -974,10 +1023,10 @@ void rd_turn(int dir)
 }
 
 
-
 void rd_update(void)
 {
-    if (g_driveEng.steeringInput && g_driveEng.speed && abs(g_trackViewMotion.curveX - *g_hereCurvePtr - g_driveEng.steeringInput) < 200)
+    if (g_driveEng.steeringInput && g_driveEng.speed &&
+        abs(g_trackViewMotion.curveX - *g_hereCurvePtr - g_driveEng.steeringInput) < 200)
         g_trackViewMotion.curveX -= (g_driveEng.steeringInput >> 1) + 1;
     if (!g_runRacingFlag) {
         if (g_hasSlowCpu)
@@ -992,7 +1041,9 @@ void rd_update(void)
         if (g_failureTire)
             g_trackViewMotion.lateralX += 25;
         else if (g_driveEng.speed)
-            g_trackViewMotion.lateralX -= (g_trackViewMotion.curveX - *g_hereCurvePtr) * (g_trackViewMotion.distanceStep + g_driveEng.tireSlip) >> 2;
+            g_trackViewMotion.lateralX -=
+                (g_trackViewMotion.curveX - *g_hereCurvePtr) * (g_trackViewMotion.distanceStep + g_driveEng.tireSlip) >>
+                2;
     }
     if (!g_runRacingFlag) {
         g_trackViewMotion.roadFraction += g_trackViewMotion.distanceStep;

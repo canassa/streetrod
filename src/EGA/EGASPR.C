@@ -17,8 +17,8 @@ static void near restore_rect_latch(struct Rect *r, struct Bitmap far *dst, stru
 {
     int off = rows ? EGA_PITCH * r->y1 : r->x1 >> 3;
 
-    ea_rect(src->bits.p - off, dst->bits.p, (r->x2 >> 3) - (r->x1 >> 3) + 1,
-            r->y2 - r->y1 + 1, r->x1 >> 3, r->y1, dst->pitch);
+    ea_rect(src->bits.p - off, dst->bits.p, (r->x2 >> 3) - (r->x1 >> 3) + 1, r->y2 - r->y1 + 1, r->x1 >> 3, r->y1,
+            dst->pitch);
 }
 
 /* Advance a sprite to its next display page and redraw it there */
@@ -29,10 +29,10 @@ int es_step(struct Sprite *s)
     struct Rect first;
     struct Rect f;
     struct Blt16 dest;
-    struct Frame *box;      /* current frame */
-    struct Page *count;     /* current page */
+    struct Frame *box;         /* current frame */
+    struct Page *count;        /* current page */
     struct Bitmap far *height; /* background save */
-    struct Bitmap far *key; /* sprite image */
+    struct Bitmap far *key;    /* sprite image */
     int i;
 
     if (s->seq->count < 0) {
@@ -49,9 +49,8 @@ int es_step(struct Sprite *s)
     box = s->frame;
     key = s->img;
     height = s->save;
-    sp_clip_box(box->pos->width,
-        box->pos->height - g_spriteBottomCut, s->x, s->y,
-        count->bm->width, count->bm->height, &clip);
+    sp_clip_box(box->pos->width, box->pos->height - g_spriteBottomCut, s->x, s->y, count->bm->width, count->bm->height,
+                &clip);
     if (sp_rect_sub(&clip, &count->rect, &f, s->seq->dx))
         restore_rect_latch(&f, count->bm, key, s->seq->dx);
     count->rect = clip;

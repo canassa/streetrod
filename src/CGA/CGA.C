@@ -19,11 +19,12 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-struct Hooks g_cgaHooks = {cb_copy, cx_blit, cb_masked, cg_draw_text, uc_cga, cg_copy_page, cg_recolor_rect, cg_screen_off, cg_screen_on, cs_step, cg_reveal, sp_slide_v, cl_draw, cl_span, cl_fill_below};
+struct Hooks g_cgaHooks = {cb_copy,      cx_blit,         cb_masked,     cg_draw_text, uc_cga,
+                           cg_copy_page, cg_recolor_rect, cg_screen_off, cg_screen_on, cs_step,
+                           cg_reveal,    sp_slide_v,      cl_draw,       cl_span,      cl_fill_below};
 unsigned char g_cgaPixMask[4] = {192, 48, 12, 3};
 unsigned char g_cgaPixKeep[4] = {63, 207, 243, 252};
 int g_cgaRevealOrder[5] = {0, 2, 4, 1, 3};
-
 
 
 void cg_install(void)
@@ -225,28 +226,36 @@ void cg_draw_text(struct Bitmap far *bm, int x, int y, char *s)
     }
 }
 
-#define PIX(k, cv, bv) \
-    if ((*p5 & g_cgaPixMask[k]) != (cv)) { *p5 &= g_cgaPixKeep[k]; *p5 |= (bv); }
-
-#define EDGES_LEFT \
-    if (lx) { \
-        if (lx <= 1) PIX(1, c4z, b4k) \
-        if (lx <= 2) { \
-            if (nmid8 < 0 && (rx == 1 || rx == 2)) return; \
-            PIX(2, c2, b2) \
-        } \
-        if (nmid8 < 0 && rx != 0) return; \
-        PIX(3, cc, bb1) \
-        p5++; \
+#define PIX(k, cv, bv)                                                                                                 \
+    if ((*p5 & g_cgaPixMask[k]) != (cv)) {                                                                             \
+        *p5 &= g_cgaPixKeep[k];                                                                                        \
+        *p5 |= (bv);                                                                                                   \
     }
 
-#define EDGES_RIGHT \
-    if (rx != 0 && nmid8 >= 0) { \
-        PIX(0, c67, b68) \
-        if (rx <= 1) continue; \
-        PIX(1, c4z, b4k) \
-        if (rx <= 2) continue; \
-        PIX(2, c2, b2) \
+#define EDGES_LEFT                                                                                                     \
+    if (lx) {                                                                                                          \
+        if (lx <= 1)                                                                                                   \
+            PIX(1, c4z, b4k)                                                                                           \
+        if (lx <= 2) {                                                                                                 \
+            if (nmid8 < 0 && (rx == 1 || rx == 2))                                                                     \
+                return;                                                                                                \
+            PIX(2, c2, b2)                                                                                             \
+        }                                                                                                              \
+        if (nmid8 < 0 && rx != 0)                                                                                      \
+            return;                                                                                                    \
+        PIX(3, cc, bb1)                                                                                                \
+        p5++;                                                                                                          \
+    }
+
+#define EDGES_RIGHT                                                                                                    \
+    if (rx != 0 && nmid8 >= 0) {                                                                                       \
+        PIX(0, c67, b68)                                                                                               \
+        if (rx <= 1)                                                                                                   \
+            continue;                                                                                                  \
+        PIX(1, c4z, b4k)                                                                                               \
+        if (rx <= 2)                                                                                                   \
+            continue;                                                                                                  \
+        PIX(2, c2, b2)                                                                                                 \
     }
 
 /* Fill a rectangle of 2-bit CGA pixels with a colour, recolouring every pixel that is not colour

@@ -162,7 +162,9 @@ int ed_spot_number(int *out, char *buf)
     x_colors = bustyle->pal[g_menuList.header->palIndex];
     g_editDigits = 1;
     rl = ed_line(g_menuList.header->x1, g_menuList.header->y1, buf,
-        (g_menuList.header->x2 - g_menuList.header->x1) / 6 > 10 ? 10 : (g_menuList.header->x2 - g_menuList.header->x1) / 6);
+                 (g_menuList.header->x2 - g_menuList.header->x1) / 6 > 10
+                     ? 10
+                     : (g_menuList.header->x2 - g_menuList.header->x1) / 6);
     g_editDigits = 0;
     *out = atoi(buf);
     return rl > 0 ? 0 : rl;

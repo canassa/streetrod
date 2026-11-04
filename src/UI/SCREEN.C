@@ -26,7 +26,6 @@
 char *g_gearNames[7] = {"0", "1", "2", "3", "4", "N", "D"};
 
 
-
 void sc_status_init(int y)
 {
     g_statusLine.y = y + 1;
@@ -43,7 +42,6 @@ struct DriverState g_driver;
 struct TextEnd g_penPoint;
 struct StatusText g_statusLine;
 int g_xMoneyRhsVal;
-
 
 
 void sc_status_text(int x, char *s, int w)
@@ -76,7 +74,6 @@ void sc_status_text(int x, char *s, int w)
 }
 
 
-
 void sc_add_money(int n)
 {
     int old;
@@ -88,7 +85,6 @@ void sc_add_money(int n)
     g_xMoneyRhsVal = g_penPoint.x;
     g_statusLine.shown = old;
 }
-
 
 
 void sc_label(char *s)
@@ -111,7 +107,6 @@ void sc_label(char *s)
 }
 
 
-
 void sc_show_gear(int i)
 {
     int saved;
@@ -123,7 +118,6 @@ void sc_show_gear(int i)
 }
 
 char g_displaySplitYVal;
-
 
 
 void sc_fill_rect(int x, int y, int w, int h, char color)
@@ -139,7 +133,6 @@ void sc_fill_rect(int x, int y, int w, int h, char color)
     x_colors.fill = old;
     cu_ctl(CURSOR_SHOW);
 }
-
 
 
 void sc_msg_box(char *s)
@@ -216,7 +209,7 @@ void sc_wait_msg(char *msg)
 int sc_picture(int a, int b)
 {
     struct Bitmap far *p;
-    long unused;    /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
+    long unused; /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
     struct Blt pkt;
 
     cu_ctl(CURSOR_HIDE);
@@ -231,11 +224,11 @@ int sc_picture(int a, int b)
     (*g_videoOps.copy)(p, r_vid.back, &pkt, 1);
     cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
-        bm_copy_box(r_vid.back, r_vid.front, g_picturePlacement.x, g_picturePlacement.y, pkt.dx + pkt.w - 1, pkt.dy + pkt.h - 1);
+        bm_copy_box(r_vid.back, r_vid.front, g_picturePlacement.x, g_picturePlacement.y, pkt.dx + pkt.w - 1,
+                    pkt.dy + pkt.h - 1);
     g_picturePlacement.x = g_picturePlacement.y = 0;
     ma_pop_high(1);
 }
-
 
 
 int sc_picture_at(int a, int b, int c, int d)

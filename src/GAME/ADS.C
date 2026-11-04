@@ -19,14 +19,13 @@
 
 int g_adIdxEndPageState;
 
-static struct Bitmap far * near ad_picture(int n);
+static struct Bitmap far *near ad_picture(int n);
 
 struct Pages g_pages = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 0, 0, 0};
 struct Bitmap far *g_adPicture = 0;
 char g_adRedraw = 0;
 struct Blt g_adPacket = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int g_adResume = 0;
-
 
 
 void av_open(int *list, int base)
@@ -65,12 +64,10 @@ void av_open(int *list, int base)
 }
 
 
-
-static struct Bitmap far * near ad_picture(int n)
+static struct Bitmap far *near ad_picture(int n)
 {
     return di_bm(0x403, n);
 }
-
 
 
 int av_run(void)
@@ -187,7 +184,6 @@ int av_run(void)
         return key;
     }
 }
-
 
 
 void av_close(void)

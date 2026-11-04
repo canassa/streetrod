@@ -6,7 +6,7 @@
 
 void bm_copy(struct Bitmap far *src, struct Bitmap far *dst, int e);
 void bm_opaque_span(struct Bitmap far *bm, int *left, int *right);
-struct Bitmap far * bm_shift_right(struct Bitmap far *src, int n, struct Bitmap far *dst);
+struct Bitmap far *bm_shift_right(struct Bitmap far *src, int n, struct Bitmap far *dst);
 void bm_draw_masked(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *r, int flag);
 void bm_underlay(struct Bitmap far *src, struct Bitmap far *dst, int x, int y);
 void bm_put(struct Bitmap far *dst, struct Bitmap far *bm, int x, int y, int mode);

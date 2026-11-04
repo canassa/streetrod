@@ -22,7 +22,6 @@ int g_cruiseRatios[5] = {0, 200, 125, 71, 56};
 int g_keepCruiseMusic = 0;
 
 
-
 int dt_step(void)
 {
     char key;
@@ -100,7 +99,8 @@ int dt_step(void)
                 g_demo--;
                 sy_exit();
             }
-            if ((g_terrain0[g_trackViewMotion.roadIndex + 1] & 1) || (g_terrain1[g_trackViewMotion.roadIndex + 1] & 1) || g_firePressed) {
+            if ((g_terrain0[g_trackViewMotion.roadIndex + 1] & 1) ||
+                (g_terrain1[g_trackViewMotion.roadIndex + 1] & 1) || g_firePressed) {
                 g_click = 0;
                 g_buttons = 0;
                 sy_drive_stop();

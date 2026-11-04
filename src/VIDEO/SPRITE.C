@@ -85,7 +85,7 @@ void sp_clip_box(int a, int b, int c, int d, int amax, int bmax, struct Rect *ou
    clipped rectangle */
 
 struct Sprite *sp_setup(int x, int y, struct Bitmap far **imgs, char (*cell)[8], int n, struct Bitmap far *img,
-    struct Bitmap far *save, struct Rect *a8, struct Rect *a9)
+                        struct Bitmap far *save, struct Rect *a8, struct Rect *a9)
 {
     int i;
 
@@ -126,9 +126,8 @@ struct Sprite *sp_setup(int x, int y, struct Bitmap far **imgs, char (*cell)[8],
         g_sprPageRing[0].link = g_sprPageRing;
     }
     g_mainCarSprite.page = g_sprPageRing;
-    sp_clip_box(g_mainCarSprite.frame->pos->width,
-        g_mainCarSprite.frame->pos->height, g_mainCarSprite.x, g_mainCarSprite.y,
-        g_sprPageRing[0].bm->width, g_sprPageRing[0].bm->height, &g_sprPageRing[0].rect);
+    sp_clip_box(g_mainCarSprite.frame->pos->width, g_mainCarSprite.frame->pos->height, g_mainCarSprite.x,
+                g_mainCarSprite.y, g_sprPageRing[0].bm->width, g_sprPageRing[0].bm->height, &g_sprPageRing[0].rect);
     g_mainCarSprite.seq = g_seqSpriteMoveData;
     return &g_mainCarSprite;
 }
@@ -294,7 +293,8 @@ void sp_slide_v(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
     }
     if (r_vid.copyToFront)
         bm_copy_box(r_vid.front, r_vid.back, x, (y0 > y1 ? y1 : y0) < 0 ? 0 : (y0 > y1 ? y1 : y0), bm->width + x,
-            (y0 < y1 ? y1 : y0) + bm->height > (SCREEN_HEIGHT - 1) ? (SCREEN_HEIGHT - 1) : (y0 < y1 ? y1 : y0) + bm->height);
+                    (y0 < y1 ? y1 : y0) + bm->height > (SCREEN_HEIGHT - 1) ? (SCREEN_HEIGHT - 1)
+                                                                           : (y0 < y1 ? y1 : y0) + bm->height);
     g_xCoordSprite = old;
     ma_pop_high(2);
 }

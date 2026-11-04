@@ -41,52 +41,50 @@ int g_dashBuffered = 0;
 int g_autoTrans = 0;
 int g_wheelPicIds[3] = {1001, 1002, 1000};
 int g_driveRebuild = 0;
-struct Cmd g_animScripts[44] = {
-    {ANIM_NOP_1, 0, -1, -1},
-    {ANIM_STOP, 0, 0, 0},
-    {ANIM_BLIT, BOX_KEEP, -1, -1},
-    {ANIM_SET_SIZE, 0, 8, 1},
-    {ANIM_SET_BOX, BOX_SET_DESTINATION, 48, 111},
-    {ANIM_HOOK, 0, 250, -1},
-    {ANIM_WAIT, ANIM_WAIT_ONLY, 10, 7},
-    {ANIM_HOOK, 0, 0, -1},
-    {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 10, 7},
-    {ANIM_STOP, 0, 0, 0},
-    {ANIM_BLIT_MASKED, BOX_KEEP, -1, -1},
-    {ANIM_STOP, 0, 0, 0},
-    {ANIM_NOP_3, 0, -1, -1},
-    {ANIM_LOAD_IMAGE, 0, 1233, 2},
-    {ANIM_SET_SIZE, 0, 48, 64},
-    {ANIM_SET_BOX, BOX_SET_DESTINATION, 200, 81},
-    {ANIM_TILE_CAR, 0, -1, -1},
-    {ANIM_WAIT, ANIM_WAIT_ONLY, 16, 0},
-    {ANIM_BLIT, BOX_SET_SOURCE, 0, 0},
-    {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 16, 0},
-    {ANIM_BLIT, BOX_SET_SOURCE, 48, 0},
-    {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 16, 0},
-    {ANIM_BLIT, BOX_SET_SOURCE, 96, 0},
-    {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 20, 0},
-    {ANIM_STOP, 0, 0, 0},
-    {ANIM_HOOK, 0, -1, -1},
-    {ANIM_STOP, 0, 0, 0},
-    {ANIM_STOP, 0, -1, -1},
-    {ANIM_STOP, 0, 0, 0},
-    {ANIM_JUMP, 0, -1, -1},
-    {ANIM_STOP, 0, 0, 0},
-    {ANIM_LOAD_IMAGE, 0, -1, -1},
-    {ANIM_LOAD_IMAGE, 0, 1075, 2},
-    {ANIM_SET_SIZE, 0, 16, 94},
-    {ANIM_SET_BOX, BOX_SET_DESTINATION, 160, 52},
-    {ANIM_WAIT, ANIM_WAIT_ONLY, 4, 0},
-    {ANIM_BLIT, BOX_SET_SOURCE, 0, 0},
-    {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 4, 0},
-    {ANIM_BLIT, BOX_SET_SOURCE, 16, 0},
-    {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 4, 0},
-    {ANIM_BLIT, BOX_SET_SOURCE, 32, 0},
-    {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 4, 36},
-    {ANIM_STOP, 0, 0, 0},
-    {ANIM_STOP, 0, 0, 0}
-};
+struct Cmd g_animScripts[44] = {{ANIM_NOP_1, 0, -1, -1},
+                                {ANIM_STOP, 0, 0, 0},
+                                {ANIM_BLIT, BOX_KEEP, -1, -1},
+                                {ANIM_SET_SIZE, 0, 8, 1},
+                                {ANIM_SET_BOX, BOX_SET_DESTINATION, 48, 111},
+                                {ANIM_HOOK, 0, 250, -1},
+                                {ANIM_WAIT, ANIM_WAIT_ONLY, 10, 7},
+                                {ANIM_HOOK, 0, 0, -1},
+                                {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 10, 7},
+                                {ANIM_STOP, 0, 0, 0},
+                                {ANIM_BLIT_MASKED, BOX_KEEP, -1, -1},
+                                {ANIM_STOP, 0, 0, 0},
+                                {ANIM_NOP_3, 0, -1, -1},
+                                {ANIM_LOAD_IMAGE, 0, 1233, 2},
+                                {ANIM_SET_SIZE, 0, 48, 64},
+                                {ANIM_SET_BOX, BOX_SET_DESTINATION, 200, 81},
+                                {ANIM_TILE_CAR, 0, -1, -1},
+                                {ANIM_WAIT, ANIM_WAIT_ONLY, 16, 0},
+                                {ANIM_BLIT, BOX_SET_SOURCE, 0, 0},
+                                {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 16, 0},
+                                {ANIM_BLIT, BOX_SET_SOURCE, 48, 0},
+                                {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 16, 0},
+                                {ANIM_BLIT, BOX_SET_SOURCE, 96, 0},
+                                {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 20, 0},
+                                {ANIM_STOP, 0, 0, 0},
+                                {ANIM_HOOK, 0, -1, -1},
+                                {ANIM_STOP, 0, 0, 0},
+                                {ANIM_STOP, 0, -1, -1},
+                                {ANIM_STOP, 0, 0, 0},
+                                {ANIM_JUMP, 0, -1, -1},
+                                {ANIM_STOP, 0, 0, 0},
+                                {ANIM_LOAD_IMAGE, 0, -1, -1},
+                                {ANIM_LOAD_IMAGE, 0, 1075, 2},
+                                {ANIM_SET_SIZE, 0, 16, 94},
+                                {ANIM_SET_BOX, BOX_SET_DESTINATION, 160, 52},
+                                {ANIM_WAIT, ANIM_WAIT_ONLY, 4, 0},
+                                {ANIM_BLIT, BOX_SET_SOURCE, 0, 0},
+                                {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 4, 0},
+                                {ANIM_BLIT, BOX_SET_SOURCE, 16, 0},
+                                {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 4, 0},
+                                {ANIM_BLIT, BOX_SET_SOURCE, 32, 0},
+                                {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 4, 36},
+                                {ANIM_STOP, 0, 0, 0},
+                                {ANIM_STOP, 0, 0, 0}};
 int g_animScriptStart[9] = {8, 0, 2, 12, 10, 25, 27, 29, 31};
 struct Bitmap far *g_backdrop = (struct Bitmap far *)&g_carBackdropHdrBmp;
 int g_carMoving = 0;
@@ -116,8 +114,7 @@ static void near blit_planes(char far *src, char far *dst, char far *mask, int w
 /* For each of n bitmaps, lay a band of h rows into the scratch bitmap g_pageBmps[2], fill or copy it,
    then blit the bitmap through the EGA planes */
 
-static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2, int h,
-    char far *mask, char c)
+static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2, int h, char far *mask, char c)
 {
     int i;
     int j;
@@ -140,8 +137,7 @@ static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2
             outp(GC_DATA, GC_WRITE_MODE0);
         }
         j = A[i].y * B[i]->pitch;
-        blit_planes(B[i]->bits.p + j, A[i].p, B[i]->alt.p + j, B[i]->pitch, h, B[i]->pitch,
-            B[i]->height * B[i]->pitch);
+        blit_planes(B[i]->bits.p + j, A[i].p, B[i]->alt.p + j, B[i]->pitch, h, B[i]->pitch, B[i]->height * B[i]->pitch);
     }
 }
 
@@ -184,8 +180,8 @@ static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int co
 /* Make a copy of a bitmap header that views the rows below y0, plus a bitmap to hold them (*pa), a
    second one (*pb), and two clip rects */
 
-void cp_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bitmap far **pb,
-    int y1, int y0, struct Rect **pr1, struct Rect **pr2)
+void cp_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bitmap far **pb, int y1, int y0,
+                 struct Rect **pr1, struct Rect **pr2)
 {
     struct Bitmap far *p2;
     struct Blt blt;
@@ -344,8 +340,8 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
     }
     j5 = 1;
     for (j5 = 1; j5 < n; j5++)
-        out[j5] = ar_bm((*out)->width + (r_vid.mode == VID_TANDY ? 0 : 8), (*out)->height,
-            r_vid.mode != VID_TANDY, ARENA_LOW_STACK);
+        out[j5] = ar_bm((*out)->width + (r_vid.mode == VID_TANDY ? 0 : 8), (*out)->height, r_vid.mode != VID_TANDY,
+                        ARENA_LOW_STACK);
     if (n > 1) {
         switch (r_vid.mode) {
         case VID_EGA:
@@ -411,7 +407,6 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
 }
 
 
-
 void cp_show_car(enum CarAnimKind kind, int idx, int flags, int kk, int q, int bot, int mode2, int *ids)
 {
     int n2;
@@ -445,17 +440,22 @@ again:
     di_pic_size(g_carData[idx].bodyPic, &w1, &h7, &x7);
     g_spriteBottomCut = g_carBottomCuts[g_scene];
     tmpn = (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? g_carBg4[g_scene] : g_carBg16[g_scene];
-    hh8 = (kind == CAR_SHOW_BACK_PAGE || kind == CAR_SHOW_SCREEN || kind == CAR_SHOW_BACKDROP) ? h7 - g_spriteBottomCut : g_carBandHeights[g_scene];
+    hh8 = (kind == CAR_SHOW_BACK_PAGE || kind == CAR_SHOW_SCREEN || kind == CAR_SHOW_BACKDROP)
+              ? h7 - g_spriteBottomCut
+              : g_carBandHeights[g_scene];
     x0 = ((SCREEN_WIDTH - w1) / 2 + 4) & 0xfff8;
     right = kind == CAR_DRIVE_OUT ? SCREEN_WIDTH - x0 : x0 + w1;
     if (g_carPassBy != 2) {
         if (kind == CAR_PULL_IN) {
             g_4f4a = 1;
             if (r_vid.mode == VID_EGA) {
-                me_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, SCREEN_WIDTH, BACKDROP_ROWS - g_spriteBottomCut, VID_EGA);
-                ea_rect(r_vid.back->bits.p, g_backdrop->bits.p - EGA_PITCH * top7, EGA_PITCH, g_backdrop->height, 0, top7, EGA_PITCH);
+                me_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, SCREEN_WIDTH, BACKDROP_ROWS - g_spriteBottomCut,
+                              VID_EGA);
+                ea_rect(r_vid.back->bits.p, g_backdrop->bits.p - EGA_PITCH * top7, EGA_PITCH, g_backdrop->height, 0,
+                        top7, EGA_PITCH);
             } else {
-                me_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, SCREEN_WIDTH, BACKDROP_ROWS - g_spriteBottomCut, -1);
+                me_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, SCREEN_WIDTH, BACKDROP_ROWS - g_spriteBottomCut,
+                              -1);
                 pu_grab(0, top7, SCREEN_WIDTH, g_backdrop->height, g_backdrop);
             }
         }
@@ -473,7 +473,8 @@ again:
         if (!g_stickerBg)
             g_stickerBg = ar_bm(0x40, 0x19, 0, ARENA_LOW_BASE);
         cp_build(bms6, idx, flags, kk, q, ids, 1, n2);
-        if (r_vid.mode == VID_TANDY && kind != CAR_SHOW_BACK_PAGE && kind != CAR_SHOW_SCREEN && kind != CAR_SHOW_BACKDROP) {
+        if (r_vid.mode == VID_TANDY && kind != CAR_SHOW_BACK_PAGE && kind != CAR_SHOW_SCREEN &&
+            kind != CAR_SHOW_BACKDROP) {
             make_frames(bms6, n2, g_spriteBottomCut, hh8, tmpn);
             bms6[1] = bms6[2] = bms6[3] = bms6[0];
             ma_pop_low(3);
@@ -540,7 +541,7 @@ again:
         if (kind == CAR_SHOW_BACK_PAGE) {
             if (r_vid.mode == VID_EGA)
                 ea_to_page(g_carSpriteStrips[0].p, bms6[0]->pitch, bms6[0]->height - g_spriteBottomCut,
-                    r_vid.back->bits.p + ((bot - h7) * EGA_PITCH + (x0 >> 3)) + EGA_PITCH, bms6[0]->pitch);
+                           r_vid.back->bits.p + ((bot - h7) * EGA_PITCH + (x0 >> 3)) + EGA_PITCH, bms6[0]->pitch);
             else
                 (*g_videoOps.copy)(bm48, r_vid.back, &blt, 1);
             (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
@@ -548,7 +549,7 @@ again:
         } else if (kind == CAR_SHOW_SCREEN || kind == CAR_SHOW_BACKDROP) {
             if (r_vid.mode == VID_EGA)
                 ea_to_page(g_carSpriteStrips[0].p, bms6[0]->pitch, h7 - g_spriteBottomCut,
-                    r_vid.front->bits.p + ((bot - h7) * EGA_PITCH + (x0 >> 3)) + EGA_PITCH, bms6[0]->pitch);
+                           r_vid.front->bits.p + ((bot - h7) * EGA_PITCH + (x0 >> 3)) + EGA_PITCH, bms6[0]->pitch);
             else
                 (*g_videoOps.copy)(bm48, r_vid.front, &blt, 1);
             bm_copy_box(r_vid.front, r_vid.back, x0, bot - h7 + 1, x0 + w1 - 1, bot);

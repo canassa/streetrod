@@ -43,7 +43,6 @@ int g_004a = 0;
 int g_004c = 0;
 
 
-
 static void near dos_print(char *s)
 {
     union REGS inr, outr;
@@ -61,11 +60,13 @@ static void near dos_print(char *s)
     int86(DOS_INT, &inr, &outr);
 }
 
-char *g_videoMenu[6] = {"                    1 - CGA      320 x 200 x  4 colors", "                    2 - EGA      320 x 200 x 16 colors", "                    3 - VGA      320 x 200 x 16 colors", "                    4 - Hercules monochrome", "                    5 - Tandy    320 x 200 x 16 colors", "\n                  Esc - Back to DOS"};
+char *g_videoMenu[6] = {
+    "                    1 - CGA      320 x 200 x  4 colors", "                    2 - EGA      320 x 200 x 16 colors",
+    "                    3 - VGA      320 x 200 x 16 colors", "                    4 - Hercules monochrome",
+    "                    5 - Tandy    320 x 200 x 16 colors", "\n                  Esc - Back to DOS"};
 int g_egaCard = 0;
 int g_forceEga = 0;
 int g_vga = 0;
-
 
 
 static int near show_video_menu(enum VideoChoice mode)
@@ -100,7 +101,6 @@ static int near show_video_menu(enum VideoChoice mode)
 }
 
 
-
 static int near is_vga(void)
 {
     union REGS r;
@@ -116,7 +116,6 @@ static int near is_vga(void)
 }
 
 
-
 void mi_set_mode(int ax)
 {
     union REGS r;
@@ -124,7 +123,6 @@ void mi_set_mode(int ax)
     r.x.ax = ax;
     int86(BIOS_VIDEO, &r, &r);
 }
-
 
 
 void mi_set_palette(unsigned char color)
@@ -139,7 +137,6 @@ void mi_set_palette(unsigned char color)
 }
 
 int g_useMouse = 1;
-
 
 
 static int near choose_video(enum VideoChoice mode)
@@ -161,8 +158,7 @@ static int near choose_video(enum VideoChoice mode)
         mode = VIDEO_CHOICE_CGA;
     if (herc)
         mode = VIDEO_CHOICE_HERCULES;
-    if (ms_find("Tandy", BIOS_ROM, 0xffff) ||
-        ms_find("TANDY", BIOS_ROM, 0xffff))
+    if (ms_find("Tandy", BIOS_ROM, 0xffff) || ms_find("TANDY", BIOS_ROM, 0xffff))
         mode = VIDEO_CHOICE_TANDY;
     if (is_vga())
         mode = VIDEO_CHOICE_VGA;
@@ -177,7 +173,6 @@ static int near choose_video(enum VideoChoice mode)
     }
     return mode;
 }
-
 
 
 static void near init_screens(enum VideoChoice mode)
@@ -226,7 +221,6 @@ static void near init_screens(enum VideoChoice mode)
 }
 
 
-
 static void near set_video_mode(enum VideoChoice mode)
 {
     int far *p;
@@ -259,7 +253,6 @@ static void near set_video_mode(enum VideoChoice mode)
 }
 
 
-
 static int near cpu_speed(void)
 {
     long count;
@@ -286,7 +279,6 @@ int g_processorSpeedRating;
 int g_attractSwitchStartup;
 
 
-
 static void near check_slow_cpu(void)
 {
     if (g_processorSpeedRating < 4)
@@ -308,7 +300,6 @@ int g_carBottomCuts[7] = {0, 0, 8, 0, 0, 0, 9};
 int g_carBg4[7] = {0, 2, 0, 2, 0, 0, 0};
 int g_carBg16[7] = {0, 3, 1, 3, 0, 3, 1};
 int g_spriteBottomCut = 0;
-
 
 
 int main(int argc, char **argv)

@@ -172,7 +172,7 @@ struct Car {
     signed char timing;
     char pad21;
     int fuel;
-    unsigned appearance;    /* bits 8-12 sticker (ga_menu), 13 roof chopped, 14 front and 15 rear bumper stripped */
+    unsigned appearance; /* bits 8-12 sticker (ga_menu), 13 roof chopped, 14 front and 15 rear bumper stripped */
     struct Car *next;
 };
 
@@ -302,7 +302,7 @@ struct Style {
     char pad2[5];
     struct Colors hilite;
     struct Colors popup;
-    struct Colors bank;         /* fifth palette bank, part of the 80-byte record */
+    struct Colors bank; /* fifth palette bank, part of the 80-byte record */
 };
 
 struct Mask {
@@ -492,7 +492,6 @@ struct KeyMap {
 };
 
 
-
 struct Glyph {
     unsigned char w;
     char rows[8];
@@ -558,7 +557,7 @@ struct Sheet {
 };
 
 struct Btn {
-    struct Bitmap far * near *src;
+    struct Bitmap far *near *src;
     int sx;
     int sy;
     int w;
@@ -650,10 +649,10 @@ struct Video {
     struct Bitmap far *back;
     struct Bitmap far *hoodBg;
     int mode;
-    int planes;     /* 4 on EGA (-2), else 1 */
-    int shift;      /* log2 pixels per byte: 3, 2, 1 */
-    int bpp;        /* bits per pixel: 1, 2, 4 */
-    int mask;       /* ~(pixels per byte - 1): -8, -4, -2 */
+    int planes; /* 4 on EGA (-2), else 1 */
+    int shift;  /* log2 pixels per byte: 3, 2, 1 */
+    int bpp;    /* bits per pixel: 1, 2, 4 */
+    int mask;   /* ~(pixels per byte - 1): -8, -4, -2 */
     int copyToFront;
 };
 
@@ -676,15 +675,15 @@ enum CursorDrawState {
 };
 
 struct Cursor {
-    struct Bitmap far *save;    /* background under the cursor */
-    struct Clip clip;           /* last drawn strip; memset as 12 bytes */
+    struct Bitmap far *save; /* background under the cursor */
+    struct Clip clip;        /* last drawn strip; memset as 12 bytes */
     char far *shape;
     char far *mask;
-    unsigned shapeOffset;               /* shape offset, cu_shape_off(n) */
-    unsigned shapeSize;              /* bytes per shape */
-    int shapeIndex;                      /* shape number */
-    char state;                 /* 0 hidden, 1 shown, <0 hide pending */
-    struct Rect drawnRect;              /* last drawn extent, x2 < 0 when none */
+    unsigned shapeOffset;  /* shape offset, cu_shape_off(n) */
+    unsigned shapeSize;    /* bytes per shape */
+    int shapeIndex;        /* shape number */
+    char state;            /* 0 hidden, 1 shown, <0 hide pending */
+    struct Rect drawnRect; /* last drawn extent, x2 < 0 when none */
 };
 
 /* one cell of the intro picture tables g_endCellsA / g_endCellsB (6 bytes): source origin in the sheet,
@@ -760,21 +759,21 @@ struct CarDisplay {
 };
 
 struct Hooks {
-    int (far *copy)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
-    int (far *shiftBlit)(struct Bitmap far *, struct Bitmap far *, struct Blt *);
-    int (far *maskedBlit)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
-    void (far *drawText)(struct Bitmap far *, int, int, char *);
-    void (far *cursorBlit)(char far *, char far *, char far *, char far *, int, int, int, int);
-    void (far *copyPage)(char far *, char far *);
-    void (far *recolorRegion)(struct Bitmap far *, int, int, int, int, int, int);
-    void (far *blank)(void);
-    void (far *show)(void);
-    int (far *spriteStep)(struct Sprite *);
-    void (far *reveal)(char far *, char far *);
-    void (far *slideSprite)(int, int, int, int, int, struct Bitmap far *);
-    void (far *drawLine)(int, int, int, int, int);
-    void (far *fillSpan)(int, int, int, int);
-    void (far *fillBelow)(int, int);
+    int(far *copy)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
+    int(far *shiftBlit)(struct Bitmap far *, struct Bitmap far *, struct Blt *);
+    int(far *maskedBlit)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
+    void(far *drawText)(struct Bitmap far *, int, int, char *);
+    void(far *cursorBlit)(char far *, char far *, char far *, char far *, int, int, int, int);
+    void(far *copyPage)(char far *, char far *);
+    void(far *recolorRegion)(struct Bitmap far *, int, int, int, int, int, int);
+    void(far *blank)(void);
+    void(far *show)(void);
+    int(far *spriteStep)(struct Sprite *);
+    void(far *reveal)(char far *, char far *);
+    void(far *slideSprite)(int, int, int, int, int, struct Bitmap far *);
+    void(far *drawLine)(int, int, int, int, int);
+    void(far *fillSpan)(int, int, int, int);
+    void(far *fillBelow)(int, int);
 };
 
 
@@ -828,7 +827,14 @@ struct InputState {
     int key;
 };
 
-enum BetKind { BET_NONE, BET_10, BET_50, BET_25, BET_100, BET_CAR };
+enum BetKind {
+    BET_NONE,
+    BET_10,
+    BET_50,
+    BET_25,
+    BET_100,
+    BET_CAR
+};
 
 struct Wager {
     enum BetKind kind;

@@ -42,11 +42,10 @@ static int near write_cars(int handle, struct Car *c, int flag);
 
 char g_noNameMsg[] = "The game must have a name !";
 char g_saveSlots[16] = {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-int g_slotNameOfs[16] = {6661, 6678, 6695, 6712, 6729, 6746, 6763, 6780, 6797, 6814, 6831, 6848, 6865, 6882, 6899, 6916};
+int g_slotNameOfs[16] = {6661, 6678, 6695, 6712, 6729, 6746, 6763, 6780,
+                         6797, 6814, 6831, 6848, 6865, 6882, 6899, 6916};
 char *g_noNameMsgPtr = g_noNameMsg;
 int g_demoRacer = 0;
-
-
 
 
 void sg_init_racer(int k, int *list)
@@ -78,7 +77,6 @@ void sg_init_racer(int k, int *list)
     if (g_models[x].roofPic > 0)
         g_racerRecordsArray[k].bodyMods |= (rn_int(30) < y) ? 4 : 0;
 }
-
 
 
 static void near init_racers(void)
@@ -118,7 +116,6 @@ static void near init_racers(void)
 }
 
 
-
 static void near init_new_game(void)
 {
     pl_init(1);
@@ -132,7 +129,6 @@ static void near init_new_game(void)
     g_gameClock.timeBase = g_gameClock.biosTicks;
     g_betRaces = g_dragWins = g_roadWins = g_kingDragWon = 0;
 }
-
 
 
 int near sg_new(void)
@@ -156,7 +152,6 @@ int near sg_new(void)
 }
 
 
-
 static int near write_nodes(int handle, struct Node *p)
 {
     unsigned written;
@@ -167,7 +162,6 @@ static int near write_nodes(int handle, struct Node *p)
     }
     return 0;
 }
-
 
 
 static int near read_nodes(int handle, struct Node **head)
@@ -199,7 +193,6 @@ static int near read_nodes(int handle, struct Node **head)
 }
 
 
-
 static int near write_cars(int handle, struct Car *c, int flag)
 {
     int i;
@@ -219,7 +212,6 @@ static int near write_cars(int handle, struct Car *c, int flag)
     }
     return 0;
 }
-
 
 
 static int near read_cars(int handle, struct Car **head, int flag)
@@ -259,7 +251,6 @@ static int near read_cars(int handle, struct Car **head, int flag)
 }
 
 
-
 static void near scan_save_slots(int create)
 {
     int fd7;
@@ -291,7 +282,6 @@ static void near scan_save_slots(int create)
     }
     g_list[0] = cnt;
 }
-
 
 
 enum SaveLoadResult near sg_load(void)
@@ -329,7 +319,7 @@ enum SaveLoadResult near sg_load(void)
         r = mn_sel();
         break;
     default:
-        if (r >= 1)             /* PROVISIONAL: the original loads g_list[0] here and drops it */
+        if (r >= 1) /* PROVISIONAL: the original loads g_list[0] here and drops it */
             g_list[0] = g_list[0];
         break;
     }
@@ -342,17 +332,12 @@ enum SaveLoadResult near sg_load(void)
     strcpy(name + 1, ":HOTROD");
     itoa(g_saveSlots[r], name + 8, 10);
     strcat(name, ".SAV");
-    if (_dos_open(name, O_RDONLY, &fd7)
-        || _dos_read(fd7, g_driverName, 0x24, &n) != 0 || n != 0x24
-        || (pl_init(0), 0)
-        || read_cars(fd7, &g_driver.currentCar, 1)
-        || read_cars(fd7, &g_driver.otherCars, 0)
-        || read_nodes(fd7, &g_driver.spareParts)
-        || _dos_read(fd7, &g_betRaces, 8, &n) != 0 || n != 8
-        || _dos_read(fd7, g_racerRecordsArray, 0x18c, &n) != 0 || n != 0x18c
-        || _dos_read(fd7, &g_gameClock.actionTicks, 4, &n) != 0 || n != 4
-        || _dos_read(fd7, &delta, 4, &n) != 0 || n != 4
-        || _dos_read(fd7, &g_roadLayout, 2, &n) != 0 || n != 2) {
+    if (_dos_open(name, O_RDONLY, &fd7) || _dos_read(fd7, g_driverName, 0x24, &n) != 0 || n != 0x24 ||
+        (pl_init(0), 0) || read_cars(fd7, &g_driver.currentCar, 1) || read_cars(fd7, &g_driver.otherCars, 0) ||
+        read_nodes(fd7, &g_driver.spareParts) || _dos_read(fd7, &g_betRaces, 8, &n) != 0 || n != 8 ||
+        _dos_read(fd7, g_racerRecordsArray, 0x18c, &n) != 0 || n != 0x18c ||
+        _dos_read(fd7, &g_gameClock.actionTicks, 4, &n) != 0 || n != 4 || _dos_read(fd7, &delta, 4, &n) != 0 ||
+        n != 4 || _dos_read(fd7, &g_roadLayout, 2, &n) != 0 || n != 2) {
         cu_ctl(CURSOR_SHOW_NOW);
         mn_wait(KM_LOAD_ERROR);
         cu_ctl(CURSOR_HIDE);
@@ -386,7 +371,6 @@ static int near is_blank(char *p)
 
 char g_501d = 0;
 char g_buyCarMsg[] = "Buy a car first !";
-
 
 
 void near sg_save(void)
@@ -476,16 +460,12 @@ again:
     strcpy(g_driverName, is_blank(g_saveName) ? g_desc + g_list[r] : g_saveName);
     delta = g_gameClock.biosTicks - g_gameClock.timeBase;
     name[0] = di_data_drive();
-    if (_dos_creat(name, _A_NORMAL, &fd8)
-        || _dos_write(fd8, g_driverName, 0x24, &n) != 0 || n != 0x24
-        || write_cars(fd8, g_driver.currentCar, 1)
-        || write_cars(fd8, g_driver.otherCars, 0)
-        || write_nodes(fd8, g_driver.spareParts)
-        || _dos_write(fd8, &g_betRaces, 8, &n) != 0 || n != 8
-        || _dos_write(fd8, g_racerRecordsArray, 0x18c, &n) != 0 || n != 0x18c
-        || _dos_write(fd8, &g_gameClock.actionTicks, 4, &n) != 0 || n != 4
-        || _dos_write(fd8, &delta, 4, &n) != 0 || n != 4
-        || _dos_write(fd8, &g_roadLayout, 2, &n) != 0 || n != 2) {
+    if (_dos_creat(name, _A_NORMAL, &fd8) || _dos_write(fd8, g_driverName, 0x24, &n) != 0 || n != 0x24 ||
+        write_cars(fd8, g_driver.currentCar, 1) || write_cars(fd8, g_driver.otherCars, 0) ||
+        write_nodes(fd8, g_driver.spareParts) || _dos_write(fd8, &g_betRaces, 8, &n) != 0 || n != 8 ||
+        _dos_write(fd8, g_racerRecordsArray, 0x18c, &n) != 0 || n != 0x18c ||
+        _dos_write(fd8, &g_gameClock.actionTicks, 4, &n) != 0 || n != 4 || _dos_write(fd8, &delta, 4, &n) != 0 ||
+        n != 4 || _dos_write(fd8, &g_roadLayout, 2, &n) != 0 || n != 2) {
         cu_ctl(CURSOR_SHOW_NOW);
         mn_modal(KM_SAVE_ERROR);
         cu_ctl(CURSOR_HIDE_NOW);
@@ -501,7 +481,6 @@ again:
     }
     goto again;
 }
-
 
 
 int near sg_menu(void)

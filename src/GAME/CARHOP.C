@@ -19,7 +19,9 @@ static struct Rect g_carhopRect;
 static struct Bitmap far *g_carhopBg;
 
 struct Sheet g_carhopSheets[2] = {{1142, 6, 11}, {1141, 6, 11}};
-char g_carhopFrames[84] = {4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 11};
+char g_carhopFrames[84] = {4, 4, 4, 5, 5, 6, 6, 7,  7,  8, 8, 9,  9,  9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5,
+                           5, 6, 6, 7, 7, 8, 8, 9,  9,  9, 9, 10, 10, 1, 1, 2,  2,  3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7,
+                           7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2,  2,  3, 3, 4,  4,  5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 11};
 struct Seq g_carhopInSeq[4] = {{78, 3, 0}, {3, 2, 0}, {3, 1, 0}, {-1, 0, 0}};
 struct Seq g_carhopOutSeq[4] = {{4, -1, 0}, {3, -2, 0}, {77, -3, 0}, {-1, 0, 0}};
 char g_keepMask = 0;
@@ -60,7 +62,8 @@ static void near grab_strip(struct Bitmap far **pbm)
     int w, x, h;
 
     di_pic_size(0x474, &w, &h, &x);
-    me_set_bitmap(*pbm, g_pageBmps[2]->bits.p + BACKDROP_ROWS * g_pageBmps[2]->pitch, 0L, w, h, r_vid.mode == VID_EGA ? VID_EGA : -1);
+    me_set_bitmap(*pbm, g_pageBmps[2]->bits.p + BACKDROP_ROWS * g_pageBmps[2]->pitch, 0L, w, h,
+                  r_vid.mode == VID_EGA ? VID_EGA : -1);
     if (r_vid.mode == VID_EGA) {
         ea_rect(r_vid.front->bits.p, (*pbm)->bits.p - 0xaa0, (*pbm)->pitch, (*pbm)->height, 0, 0x44, EGA_PITCH);
     } else {

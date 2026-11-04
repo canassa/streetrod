@@ -122,7 +122,7 @@ void tb_masked(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *in, i
     union FarPtr bits_b;
     int pa6;
     int w;
-    void (far *fn4)(char far *, unsigned, int, int, int, int, int, int);
+    void(far * fn4)(char far *, unsigned, int, int, int, int, int, int);
     struct Blt clip;
     int h;
     int pb9;

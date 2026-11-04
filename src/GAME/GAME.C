@@ -56,7 +56,6 @@ int g_paperPick = 0;
 int g_paperDay = -1;
 
 
-
 static int near start_game(void)
 {
     da_set_view(DASH_VIEW_SAVE);
@@ -87,7 +86,6 @@ static int near start_game(void)
 }
 
 
-
 void gm_pause(int a)
 {
     g_waitUntil = a + g_tick;
@@ -96,7 +94,6 @@ void gm_pause(int a)
     g_waitUntil = 0;
     g_input.any = 0;
 }
-
 
 
 void gm_message(int n)
@@ -113,7 +110,6 @@ void gm_message(int n)
 }
 
 
-
 static int near check_room(void)
 {
     if (g_driver.carCount > 15) {
@@ -126,7 +122,6 @@ static int near check_room(void)
     }
     return 0;
 }
-
 
 
 static int near read_paper(void)
@@ -156,8 +151,7 @@ static int near read_paper(void)
 }
 
 
-
-struct Node * near gm_new_part(void)
+struct Node *near gm_new_part(void)
 {
     struct Node *p;
 
@@ -169,7 +163,6 @@ struct Node * near gm_new_part(void)
 }
 
 
-
 static void near free_part(struct Node *p)
 {
     p->next = g_driver.freeParts;
@@ -177,7 +170,6 @@ static void near free_part(struct Node *p)
     g_driver.freeParts = p;
     g_driver.partCount--;
 }
-
 
 
 int gm_part_value(struct Node *n)
@@ -192,7 +184,6 @@ int gm_part_value(struct Node *n)
 }
 
 #pragma loop_opt(off)
-
 
 
 static void near sell_parts(void)
@@ -249,8 +240,7 @@ static void near sell_parts(void)
             rl = rn_int(20);
             price1 = (float)price1 * ((rl + 70) / 100.0);
             break;
-        case PART_ENGINE:
-            ;
+        case PART_ENGINE:;
         case PART_TRANSMISSION:
             cut = price1 * (pct / 100.0) * 0.9;
             price1 -= cut;
@@ -285,8 +275,7 @@ static void near sell_parts(void)
 #pragma loop_opt(on)
 
 
-
-struct Node2 * near gm_new_car(void)
+struct Node2 *near gm_new_car(void)
 {
     struct Node2 *p;
 
@@ -298,7 +287,6 @@ struct Node2 * near gm_new_car(void)
 }
 
 
-
 static void near free_car(struct Node2 *p)
 {
     p->next = g_driver.freeCars;
@@ -308,8 +296,7 @@ static void near free_car(struct Node2 *p)
 }
 
 
-
-struct Node * near gm_add_part(int idx, int a)
+struct Node *near gm_add_part(int idx, int a)
 {
     struct Node *n;
     struct Item *it;
@@ -325,8 +312,7 @@ struct Node * near gm_add_part(int idx, int a)
 }
 
 
-
-struct Car * near gm_make_car(int idx, int value, struct Car *old)
+struct Car *near gm_make_car(int idx, int value, struct Car *old)
 {
     struct Node *node;
     struct Car *car;
@@ -403,7 +389,6 @@ struct Car * near gm_make_car(int idx, int value, struct Car *old)
 }
 
 
-
 int near gm_take_part(struct Node *n, int keep)
 {
     int r;
@@ -418,7 +403,6 @@ int near gm_take_part(struct Node *n, int keep)
         free_part(n);
     return r;
 }
-
 
 
 int near gm_scrap_car(struct Car *c, int keep)
@@ -438,7 +422,6 @@ int near gm_scrap_car(struct Car *c, int keep)
     free_car((struct Node2 *)c);
     return r;
 }
-
 
 
 static void near buy_from_ads(int tab)
@@ -557,7 +540,7 @@ static void near buy_from_ads(int tab)
             pu_show(bm1, 0, 0x40);
             ma_clear();
         }
-test:
+    test:
         n = av_run();
     } while (n != KR_AD_CLOSE);
 done:
@@ -568,7 +551,6 @@ done:
 }
 
 char *g_offerText = g_msgHowAbout;
-
 
 
 static int near counter_offer(unsigned *price)
@@ -587,7 +569,6 @@ static int near counter_offer(unsigned *price)
 }
 
 
-
 int gm_car_look(struct Car *c)
 {
     int r;
@@ -603,7 +584,6 @@ int gm_car_look(struct Car *c)
         r |= 8;
     return r;
 }
-
 
 
 static enum GarageMode near your_cars(void)
@@ -660,7 +640,7 @@ static enum GarageMode near your_cars(void)
         case KR_SELL_CAR:
             break;
         default:
-            if (item > 0)       /* PROVISIONAL: the original loads g_list[0] here and drops it */
+            if (item > 0) /* PROVISIONAL: the original loads g_list[0] here and drops it */
                 g_list[0] = g_list[0];
         }
         cur = tbl[item = mn_sel()];
@@ -725,7 +705,7 @@ static enum GarageMode near your_cars(void)
             mid = g_driver.currentCar->specIndex;
             result = gm_car_look(g_driver.currentCar);
             cp_show_car(CAR_BACK_OUT, mid, result, (g_driver.currentCar->appearance >> 8) & 0x1f, 0, 0x98, 0,
-                    g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
+                        g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
             mn_pop(1);
             ga_clear_name();
             mn_push(KM_GARAGE);
@@ -739,7 +719,7 @@ static enum GarageMode near your_cars(void)
                 tbl[item - 1]->next = cur->next;
             gm_scrap_car(cur, 0);
         }
-tail:
+    tail:
         mn_pop(1);
         if (pict) {
             pu_show(pict, rx, ye);
@@ -750,14 +730,12 @@ tail:
 }
 
 
-
 void gm_play_anim(int h)
 {
     vi_anim_start(h);
     while (vi_anim_active(h))
         sy_wait_input(10);
 }
-
 
 
 void gm_popup(int a, int b, int c)
@@ -770,7 +748,6 @@ void gm_popup(int a, int b, int c)
     pu_close();
     g_waitUntil = saved;
 }
-
 
 
 void near gm_run(void)

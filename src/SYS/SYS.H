@@ -89,7 +89,7 @@ extern int g_vibratoActive;
 extern struct Eng g_driveEng;
 extern struct Dev g_songBgState;
 extern struct Dev g_secondaryMusicStateData;
-extern void (interrupt far *g_clockPrev)(void);
+extern void(interrupt far *g_clockPrev)(void);
 extern struct RoadView g_trackViewMotion;
 extern struct RivalPosition g_roadOppPos;
 extern char g_strOpp[];

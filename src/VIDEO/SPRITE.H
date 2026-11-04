@@ -12,7 +12,8 @@ extern struct Page g_sprPageRing[];
 struct Rect *sp_rect_and(struct Rect *a, struct Rect *b, struct Rect *out);
 struct Rect *sp_car_clip(int x, int y, int w, int h, struct Rect *out);
 void sp_clip_box(int a, int b, int c, int d, int amax, int bmax, struct Rect *out);
-struct Sprite *sp_setup(int x, int y, struct Bitmap far **imgs, char (*cell)[8], int n, struct Bitmap far *img, struct Bitmap far *save, struct Rect *a8, struct Rect *a9);
+struct Sprite *sp_setup(int x, int y, struct Bitmap far **imgs, char (*cell)[8], int n, struct Bitmap far *img,
+                        struct Bitmap far *save, struct Rect *a8, struct Rect *a9);
 struct Rect *sp_rect_sub(struct Rect *a, struct Rect *b, struct Rect *out, int horiz);
 void sp_reverse(struct Sprite *s);
 void sp_set_step(struct Sprite *s, int i, int count, signed char dx, signed char dy);

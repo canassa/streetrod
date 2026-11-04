@@ -58,7 +58,11 @@ static void near render_overlays(void);
 static void near render_mirror(void);
 static void near select_draw_page(void);
 
-int g_opponentPics[5][4] = {{1003, 1004, 1057, 1091}, {1010, 1012, 1011, 1239}, {1010, 1247, 1248, 1092}, {1010, 1249, 1250, 1251}, {1010, 1253, 1252, 1254}};
+int g_opponentPics[5][4] = {{1003, 1004, 1057, 1091},
+                            {1010, 1012, 1011, 1239},
+                            {1010, 1247, 1248, 1092},
+                            {1010, 1249, 1250, 1251},
+                            {1010, 1253, 1252, 1254}};
 int g_5e3c = 0;
 struct ViewPages g_viewPages = {1, 2};
 struct Clip g_viewRect = {SCREEN_WIDTH, 82, 0, 18, 0, 18};
@@ -67,8 +71,8 @@ unsigned char g_shrinkMasks[3][4] = {{87, 37, 34, 0}, {247, 117, 82, 0}, {117, 8
 int g_sceneBitmapIds[4] = {1258, 1237, 1236, 1238};
 int g_roadLineWidths[21] = {8, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int g_5e94[4] = {0, 0, 0, 0};
-struct Ball g_sheetRects[7] = {{256, 8, 8}, {240, 16, 13}, {208, 32, 19}, {168, 40, 24}, {120, 48, 30}, {64, 56, 37}, {0, 64, 43}};
-
+struct Ball g_sheetRects[7] = {{256, 8, 8},   {240, 16, 13}, {208, 32, 19}, {168, 40, 24},
+                               {120, 48, 30}, {64, 56, 37},  {0, 64, 43}};
 
 
 static void near select_draw_page(void)
@@ -90,7 +94,6 @@ struct Bitmap far *g_imageFullMirror;
 struct Bitmap far *g_rearBasePic;
 int far *g_viewTerrainBitsData;
 struct Bitmap far *g_windowBorderImage;
-
 
 
 static void near flip_page(void)
@@ -156,7 +159,6 @@ static void near clip_vline(int color, int x, int y1, int y2)
 }
 
 
-
 void vw_unclip_top(void)
 {
     g_viewClip.yMin = 0;
@@ -183,11 +185,10 @@ void vw_clip(void)
 }
 
 
-
 void vw_load(void)
 {
     struct Bitmap far *bm1;
-    struct Bitmap far *(far *load)(struct Bitmap far *, unsigned char, unsigned char);
+    struct Bitmap far *(far * load)(struct Bitmap far *, unsigned char, unsigned char);
     struct Blt pkt1;
     int sel;
     struct Bitmap far *bm24;
@@ -265,7 +266,8 @@ void vw_load(void)
         g_policeFramesTable[0] = g_spritesOpp[0];
         g_policeFramesTable[1] = di_bm(0x4d9, ARENA_LOW_STACK);
         g_policeFramesTable[2] = di_bm(0x4da, ARENA_HIGH_STACK);
-        g_policeFramesTable[2] = g_policeFramesTable[3] = (*load)(g_policeFramesTable[2], g_shrinkMasks[0][0], g_shrinkMasks[0][0]);
+        g_policeFramesTable[2] = g_policeFramesTable[3] =
+            (*load)(g_policeFramesTable[2], g_shrinkMasks[0][0], g_shrinkMasks[0][0]);
         ma_pop_high(1);
         for (il = 0; il < 3; il++)
             g_policeFramesTable[4 + il] = g_policeFramesTable[3];
@@ -274,7 +276,6 @@ void vw_load(void)
             g_policeFramesTable[10 + il] = (*load)(g_policeFramesTable[9], g_shrinkMasks[2][il], g_shrinkMasks[2][il]);
     }
 }
-
 
 
 static void near render_backdrop(void)
@@ -357,7 +358,6 @@ static void near render_backdrop(void)
 }
 
 
-
 void vw_sprite(int x, int y, int first, struct List l, int dir)
 {
     struct Run run;
@@ -387,14 +387,12 @@ void vw_sprite(int x, int y, int first, struct List l, int dir)
 }
 
 
-
 static int near edge_step(int x1, int y1, int x2, int y2)
 {
     if (y2 == y1)
         return 0;
     return ((x2 - x1) << 4) / (y2 - y1);
 }
-
 
 
 static void near fill_quad(int col, int a, int b, int c, int d, int e, int f)
@@ -489,7 +487,6 @@ static void near fill_quad(int col, int a, int b, int c, int d, int e, int f)
 }
 
 
-
 static int near sgn(int n)
 {
     if (n > 0)
@@ -498,7 +495,6 @@ static int near sgn(int n)
         return -1;
     return 0;
 }
-
 
 
 void vw_road_row(int n)
@@ -599,7 +595,6 @@ void vw_road_row(int n)
 }
 
 
-
 void vw_mirror_row(void)
 {
     int xl;
@@ -689,7 +684,6 @@ void vw_mirror_row(void)
         cx0k = ((xl + xrl) >> 1) - (wid >> 1);
     }
 }
-
 
 
 static void near render_buildings(int a, int b, int c, int d, int e, int f, int rev)
@@ -788,7 +782,6 @@ static void near render_buildings(int a, int b, int c, int d, int e, int f, int 
 }
 
 
-
 static void near render_mirror_buildings(int a, int b, int c, int d, int e, int f, int rev)
 {
     int c10;
@@ -860,19 +853,18 @@ static void near render_mirror_buildings(int a, int b, int c, int d, int e, int 
 }
 
 
-
 static void near render_left_buildings(void)
 {
-    render_buildings(*g_renderRows.prevLeftOuterX, *g_renderRows.leftOuterX, *g_renderRows.prevY, *g_renderRows.y, *g_renderRows.buildingY, *g_renderRows.prevBuildingY, 1);
+    render_buildings(*g_renderRows.prevLeftOuterX, *g_renderRows.leftOuterX, *g_renderRows.prevY, *g_renderRows.y,
+                     *g_renderRows.buildingY, *g_renderRows.prevBuildingY, 1);
 }
-
 
 
 static void near render_right_buildings(void)
 {
-    render_buildings(*g_renderRows.rightOuterX, *g_renderRows.prevRightOuterX, *g_renderRows.y, *g_renderRows.prevY, *g_renderRows.prevBuildingY, *g_renderRows.buildingY, 0);
+    render_buildings(*g_renderRows.rightOuterX, *g_renderRows.prevRightOuterX, *g_renderRows.y, *g_renderRows.prevY,
+                     *g_renderRows.prevBuildingY, *g_renderRows.buildingY, 0);
 }
-
 
 
 static void near render_row(int n)
@@ -885,19 +877,18 @@ static void near render_row(int n)
 }
 
 
-
 static void near render_mirror_left(void)
 {
-    render_mirror_buildings(*g_renderRows.prevLeftOuterX, *g_renderRows.leftOuterX, *g_renderRows.prevY, *g_renderRows.y, *g_renderRows.buildingY, *g_renderRows.prevBuildingY, 1);
+    render_mirror_buildings(*g_renderRows.prevLeftOuterX, *g_renderRows.leftOuterX, *g_renderRows.prevY,
+                            *g_renderRows.y, *g_renderRows.buildingY, *g_renderRows.prevBuildingY, 1);
 }
-
 
 
 static void near render_mirror_right(void)
 {
-    render_mirror_buildings(*g_renderRows.rightOuterX, *g_renderRows.prevRightOuterX, *g_renderRows.y, *g_renderRows.prevY, *g_renderRows.prevBuildingY, *g_renderRows.buildingY, 0);
+    render_mirror_buildings(*g_renderRows.rightOuterX, *g_renderRows.prevRightOuterX, *g_renderRows.y,
+                            *g_renderRows.prevY, *g_renderRows.prevBuildingY, *g_renderRows.buildingY, 0);
 }
-
 
 
 static void near render_mirror_row(void)
@@ -908,14 +899,12 @@ static void near render_mirror_row(void)
 }
 
 
-
 void vw_draw_dot(int x, int y)
 {
     en_begin();
     vw_sprite(x, y, 0, *g_scenery[20], 1);
     en_end();
 }
-
 
 
 static void near render_object(int x, int y, int n, int f, int idx)
@@ -931,7 +920,6 @@ static void near render_object(int x, int y, int n, int f, int idx)
 }
 
 
-
 static void near render_hydrant(int x, int y, int n, int f)
 {
     n = 9 - n;
@@ -941,7 +929,6 @@ static void near render_hydrant(int x, int y, int n, int f)
         n = 0;
     vw_sprite(x, y, n, *g_scenery[2], f);
 }
-
 
 
 static void near render_scaled_pic(int x, int y, int n, int align, int clip, int mode)
@@ -984,9 +971,9 @@ static void near render_scaled_pic(int x, int y, int n, int align, int clip, int
     if (mode == 1)
         (*g_videoOps.copy)(g_bufferSceneA, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
     else
-        (*g_videoOps.copy)(r_vid.mode == VID_EGA ? g_driveDisplayPage : g_bufferSceneA, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+        (*g_videoOps.copy)(r_vid.mode == VID_EGA ? g_driveDisplayPage : g_bufferSceneA,
+                           g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
 }
-
 
 
 static void near render_gantry(int x1, int x2, int y1, int y2, int n, int clip, int flags)
@@ -1015,7 +1002,6 @@ static void near render_gantry(int x1, int x2, int y1, int y2, int n, int clip, 
 }
 
 
-
 static void near render_start_signal(void)
 {
     struct Blt b;
@@ -1036,7 +1022,6 @@ static void near render_start_signal(void)
 }
 
 
-
 static void near render_overlays(void)
 {
     struct Blt b;
@@ -1053,7 +1038,6 @@ static void near render_overlays(void)
     b.dy = 0x5f;
     (*g_videoOps.maskedBlit)(g_windowBorderImage, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
 }
-
 
 
 static void near render_mirror_frame(void)
@@ -1074,7 +1058,6 @@ static void near render_mirror_frame(void)
     clip_blit_y(&b);
     (*g_videoOps.copy)(g_rearBasePic, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
 }
-
 
 
 static void near render_opponent(void)
@@ -1141,8 +1124,8 @@ static void near render_opponent(void)
         }
     }
     g_carCollisionRange = seln == 0 || (seln == 2 && xk <= 10);
-    g_carHit = seln == 2 && xk <= 10 && abs(z9) < 180 &&
-        (g_processorSpeedRating < 4 ? 100 : 180) > abs(z9) && g_roadOppPos.distanceStep < g_trackViewMotion.distanceStep;
+    g_carHit = seln == 2 && xk <= 10 && abs(z9) < 180 && (g_processorSpeedRating < 4 ? 100 : 180) > abs(z9) &&
+               g_roadOppPos.distanceStep < g_trackViewMotion.distanceStep;
     g_prevRivalFrame = g_picOpponent;
     g_picOpponent = seln;
     g_5ec6 = xk > 16 ? (xk + 8) & 15 : 0;
@@ -1216,7 +1199,6 @@ static void near render_opponent(void)
 }
 
 
-
 static void near render_mirror(void)
 {
     int w36;
@@ -1251,7 +1233,9 @@ static void near render_mirror(void)
         if (*g_viewTerrainBitsData & 4)
             goto next;
         if (*g_viewTerrainBitsData & 0xf000)
-            render_gantry(*g_renderRows.leftX, *g_renderRows.rightX, -((*g_renderRows.y - *g_renderRows.buildingY) * 4 - *g_renderRows.y), *g_renderRows.y, i + 5, 1, *g_viewTerrainBitsData & 0xf000);
+            render_gantry(*g_renderRows.leftX, *g_renderRows.rightX,
+                          -((*g_renderRows.y - *g_renderRows.buildingY) * 4 - *g_renderRows.y), *g_renderRows.y, i + 5,
+                          1, *g_viewTerrainBitsData & 0xf000);
         if (i >= 6)
             goto next;
         f3 = *g_viewTerrainBitsData & 1;
@@ -1268,7 +1252,8 @@ static void near render_mirror(void)
             if (f3)
                 render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, -1, 4);
             else if (w11 & 0x200)
-                render_object(*g_renderRows.leftOuterX - *g_renderRows.leftX + *g_renderRows.leftOuterX, *g_renderRows.y, i + 5, -1, 4);
+                render_object(*g_renderRows.leftOuterX - *g_renderRows.leftX + *g_renderRows.leftOuterX,
+                              *g_renderRows.y, i + 5, -1, 4);
             else
                 render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i + 5, -1, 4);
         }
@@ -1289,7 +1274,8 @@ static void near render_mirror(void)
             if (w11 & 8)
                 render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, -1, 8);
             if (w11 & 0x40)
-                render_object(-(((*g_renderRows.leftX - *g_renderRows.leftOuterX) >> 1) - *g_renderRows.leftOuterX), *g_renderRows.y, i + 5, -1, 10);
+                render_object(-(((*g_renderRows.leftX - *g_renderRows.leftOuterX) >> 1) - *g_renderRows.leftOuterX),
+                              *g_renderRows.y, i + 5, -1, 10);
             if (w11 & 0x80)
                 render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i + 5, -1, 11);
             if (w2 & 1)
@@ -1301,7 +1287,8 @@ static void near render_mirror(void)
             if (w2 & 0x40)
                 render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i + 5, 1, 10);
             if (w2 & 0x80)
-                render_object(((*g_renderRows.rightOuterX - *g_renderRows.rightX) >> 1) + *g_renderRows.rightOuterX, *g_renderRows.y, i + 5, 1, 11);
+                render_object(((*g_renderRows.rightOuterX - *g_renderRows.rightX) >> 1) + *g_renderRows.rightOuterX,
+                              *g_renderRows.y, i + 5, 1, 11);
             if (w36 & 2)
                 render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 9);
         }
@@ -1373,7 +1360,6 @@ static void near render_mirror(void)
 }
 
 
-
 void vw_draw(void)
 {
     int w36;
@@ -1422,7 +1408,8 @@ void vw_draw(void)
             if (f3)
                 render_object(*g_renderRows.leftX, *g_renderRows.y, i, -1, 4);
             else if (w11 & 0x200)
-                render_object(*g_renderRows.leftOuterX - *g_renderRows.leftX + *g_renderRows.leftOuterX, *g_renderRows.y, i, -1, 4);
+                render_object(*g_renderRows.leftOuterX - *g_renderRows.leftX + *g_renderRows.leftOuterX,
+                              *g_renderRows.y, i, -1, 4);
             else
                 render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i, -1, 4);
         }
@@ -1449,7 +1436,8 @@ void vw_draw(void)
             if (w11 & 8)
                 render_object(*g_renderRows.leftX, *g_renderRows.y, i, -1, 8);
             if (w11 & 0x40)
-                render_object(-(((*g_renderRows.leftX - *g_renderRows.leftOuterX) >> 1) - *g_renderRows.leftOuterX), *g_renderRows.y, i, -1, 10);
+                render_object(-(((*g_renderRows.leftX - *g_renderRows.leftOuterX) >> 1) - *g_renderRows.leftOuterX),
+                              *g_renderRows.y, i, -1, 10);
             if (w11 & 0x80)
                 render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i, -1, 11);
             if (w2 & 4)
@@ -1459,7 +1447,8 @@ void vw_draw(void)
             if (w2 & 0x40)
                 render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i, 1, 10);
             if (w2 & 0x80)
-                render_object(((*g_renderRows.rightOuterX - *g_renderRows.rightX) >> 1) + *g_renderRows.rightOuterX, *g_renderRows.y, i, 1, 11);
+                render_object(((*g_renderRows.rightOuterX - *g_renderRows.rightX) >> 1) + *g_renderRows.rightOuterX,
+                              *g_renderRows.y, i, 1, 11);
             if (w36 & 2)
                 render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 9);
         }
@@ -1494,7 +1483,9 @@ void vw_draw(void)
                 render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 1);
         }
         if (w36 & 0xf000)
-            render_gantry(*g_renderRows.leftX, *g_renderRows.rightX, -((*g_renderRows.y - *g_renderRows.buildingY) * 4 - *g_renderRows.y), *g_renderRows.y, i, 0, w36 & 0xf000);
+            render_gantry(*g_renderRows.leftX, *g_renderRows.rightX,
+                          -((*g_renderRows.y - *g_renderRows.buildingY) * 4 - *g_renderRows.y), *g_renderRows.y, i, 0,
+                          w36 & 0xf000);
         if (w36 & 0x100)
             render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 5);
         if (w36 & 0x800)
@@ -1538,7 +1529,6 @@ void vw_draw(void)
         render_start_signal();
     flip_page();
 }
-
 
 
 void vw_start(void)

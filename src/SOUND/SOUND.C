@@ -25,7 +25,43 @@ static void near sweep_down(int start, int end, int step, int delay);
 
 int g_songRepeats[19] = {2, 1, 0, 2, 2, 0, 2, 1, 0, 1, 0, 0, 2, 2, 0, 2, 1, 0, -1};
 char g_jingleRepeats[4] = {0, 0, -1, -1};
-enum ToneSlot g_songTones[37] = {TONE_PLAIN, TONE_LIGHT_VIBRATO, TONE_PLAIN, TONE_LIGHT_VIBRATO, TONE_WIDE_VIBRATO, TONE_WIDE_VIBRATO, TONE_PLAIN, TONE_LIGHT_VIBRATO, TONE_PLAIN, TONE_WIDE_VIBRATO, TONE_PLAIN, TONE_TRILL, TONE_TRILL, TONE_PLAIN, TONE_LIGHT_VIBRATO, TONE_PLAIN, TONE_WIDE_VIBRATO, TONE_PLAIN, TONE_LIGHT_VIBRATO, TONE_PLAIN, TONE_WIDE_VIBRATO, TONE_TRILL, TONE_TRILL, TONE_PLAIN, TONE_LIGHT_VIBRATO, TONE_PLAIN, TONE_WIDE_VIBRATO, TONE_TRILL, TONE_PLAIN, TONE_PLAIN, TONE_PLAIN, TONE_LIGHT_VIBRATO, TONE_PLAIN, TONE_TRILL, TONE_WIDE_VIBRATO, TONE_WIDE_VIBRATO, TONE_END};
+enum ToneSlot g_songTones[37] = {TONE_PLAIN,
+                                 TONE_LIGHT_VIBRATO,
+                                 TONE_PLAIN,
+                                 TONE_LIGHT_VIBRATO,
+                                 TONE_WIDE_VIBRATO,
+                                 TONE_WIDE_VIBRATO,
+                                 TONE_PLAIN,
+                                 TONE_LIGHT_VIBRATO,
+                                 TONE_PLAIN,
+                                 TONE_WIDE_VIBRATO,
+                                 TONE_PLAIN,
+                                 TONE_TRILL,
+                                 TONE_TRILL,
+                                 TONE_PLAIN,
+                                 TONE_LIGHT_VIBRATO,
+                                 TONE_PLAIN,
+                                 TONE_WIDE_VIBRATO,
+                                 TONE_PLAIN,
+                                 TONE_LIGHT_VIBRATO,
+                                 TONE_PLAIN,
+                                 TONE_WIDE_VIBRATO,
+                                 TONE_TRILL,
+                                 TONE_TRILL,
+                                 TONE_PLAIN,
+                                 TONE_LIGHT_VIBRATO,
+                                 TONE_PLAIN,
+                                 TONE_WIDE_VIBRATO,
+                                 TONE_TRILL,
+                                 TONE_PLAIN,
+                                 TONE_PLAIN,
+                                 TONE_PLAIN,
+                                 TONE_LIGHT_VIBRATO,
+                                 TONE_PLAIN,
+                                 TONE_TRILL,
+                                 TONE_WIDE_VIBRATO,
+                                 TONE_WIDE_VIBRATO,
+                                 TONE_END};
 enum ToneSlot g_jingleTones[2] = {TONE_PROGRAMMABLE, TONE_END};
 int g_musicOn = 1;
 struct Dev *g_voice = &g_songBgState;
@@ -334,7 +370,6 @@ void so_part_move(int on)
 }
 
 
-
 void so_siren(int on)
 {
     if (on)
@@ -342,7 +377,6 @@ void so_siren(int on)
     else
         g_sirenOn = 0;
 }
-
 
 
 void so_squeal(int on)
@@ -354,7 +388,6 @@ void so_squeal(int on)
 }
 
 
-
 void so_warble1(void)
 {
     if (g_soundOn) {
@@ -363,7 +396,6 @@ void so_warble1(void)
         so_off();
     }
 }
-
 
 
 void so_warble2(void)

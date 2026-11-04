@@ -53,14 +53,21 @@ int g_needleColor = -1;
 char g_introPalette[18] = {0, 8, 7, 15, 14, 1, 9, 11, 0, 2, 4, 12, 13, 10, 5, 6, 0, 0};
 struct Bitmap far *g_savedBack = 0;
 struct Bitmap far *g_savedFront = 0;
-signed char g_steerLeftPoints[24][2] = {{87, 69}, {88, 64}, {90, 58}, {91, 54}, {93, 49}, {95, 45}, {98, 40}, {101, 36}, {104, 33}, {108, 29}, {111, 26}, {114, 23}, {118, 20}, {121, 19}, {125, 16}, {-127, 14}, {-122, 12}, {-117, 11}, {-113, 9}, {-108, 8}, {-104, 7}, {-99, 7}, {-95, 6}, {-91, 6}};
-unsigned char g_steerPoints[25][2] = {{170, 6}, {175, 6}, {179, 6}, {183, 7}, {188, 7}, {192, 8}, {197, 9}, {201, 11}, {206, 12}, {211, 14}, {215, 16}, {219, 19}, {222, 20}, {226, 23}, {229, 26}, {232, 29}, {236, 33}, {239, 36}, {242, 40}, {245, 45}, {247, 49}, {249, 54}, {250, 58}, {252, 64}, {253, 69}};
+signed char g_steerLeftPoints[24][2] = {{87, 69},  {88, 64},  {90, 58},  {91, 54},   {93, 49},   {95, 45},
+                                        {98, 40},  {101, 36}, {104, 33}, {108, 29},  {111, 26},  {114, 23},
+                                        {118, 20}, {121, 19}, {125, 16}, {-127, 14}, {-122, 12}, {-117, 11},
+                                        {-113, 9}, {-108, 8}, {-104, 7}, {-99, 7},   {-95, 6},   {-91, 6}};
+unsigned char g_steerPoints[25][2] = {{170, 6},  {175, 6},  {179, 6},  {183, 7},  {188, 7},  {192, 8},  {197, 9},
+                                      {201, 11}, {206, 12}, {211, 14}, {215, 16}, {219, 19}, {222, 20}, {226, 23},
+                                      {229, 26}, {232, 29}, {236, 33}, {239, 36}, {242, 40}, {245, 45}, {247, 49},
+                                      {249, 54}, {250, 58}, {252, 64}, {253, 69}};
 int g_wheelShown = 0;
 int g_wheelSlotY[3] = {148, 174, 73};
-signed char g_shiftPts[11][2] = {{14, 17}, {14, 28}, {13, 12}, {13, 2}, {13, 20}, {22, 2}, {13, 12}, {13, 2}, {13, 20}, {22, 2}, {22, 20}};
-struct Track g_shifters[3] = {{2, 1229, 1232, 8, g_shiftPts[0]}, {4, 1227, 1230, 19, g_shiftPts[2]}, {5, 1228, 1231, 19, g_shiftPts[6]}};
+signed char g_shiftPts[11][2] = {{14, 17}, {14, 28}, {13, 12}, {13, 2}, {13, 20}, {22, 2},
+                                 {13, 12}, {13, 2},  {13, 20}, {22, 2}, {22, 20}};
+struct Track g_shifters[3] = {
+    {2, 1229, 1232, 8, g_shiftPts[0]}, {4, 1227, 1230, 19, g_shiftPts[2]}, {5, 1228, 1231, 19, g_shiftPts[6]}};
 struct Pair g_shiftSlots[5] = {{0, 162}, {32, 162}, {64, 162}, {96, 162}, {264, 102}};
-
 
 
 static void near restore_under(int x, int y, int w, int h, enum DashSaveKind kind)
@@ -77,7 +84,6 @@ static void near restore_under(int x, int y, int w, int h, enum DashSaveKind kin
 }
 
 
-
 static void near save_under(int x, int y, int w, int h, enum DashSaveKind kind)
 {
     struct Blt pkt;
@@ -88,9 +94,9 @@ static void near save_under(int x, int y, int w, int h, enum DashSaveKind kind)
     pkt.sy = y;
     pkt.dx = 0x108;
     pkt.dy = (r_vid.mode == VID_EGA ? DASH_Y : 0) + (kind == DASH_SAVE_WHEEL ? 5 : kind == DASH_SAVE_SPEEDO ? 12 : 35);
-    (*g_videoOps.copy)(g_dashBuffered ? g_bufBackgroundDashPtr : g_driveDisplayPage, r_vid.mode == VID_EGA ? g_driveDisplayPage : g_bufferSceneA, &pkt, 1);
+    (*g_videoOps.copy)(g_dashBuffered ? g_bufBackgroundDashPtr : g_driveDisplayPage,
+                       r_vid.mode == VID_EGA ? g_driveDisplayPage : g_bufferSceneA, &pkt, 1);
 }
-
 
 
 void da_speedo_pts(int i, int *x1, int *y1, int *x2, int *y2)
@@ -110,9 +116,11 @@ void da_speedo_pts(int i, int *x1, int *y1, int *x2, int *y2)
        block-scope extern is part of that provisional text (the symbols are labels in
        NEEDLE.ASM; see docs/RECONSTRUCTION.md). */
     return;
-    { extern char far x_trk0[][2]; *x1 = x_trk0[i][0]; }
+    {
+        extern char far x_trk0[][2];
+        *x1 = x_trk0[i][0];
+    }
 }
-
 
 
 void da_speedo_init(int i)
@@ -137,7 +145,6 @@ void da_speedo_init(int i)
 }
 
 
-
 void da_tach_pts(int i, int *x1, int *y1, int *x2, int *y2)
 {
     if (i < 0)
@@ -150,9 +157,11 @@ void da_tach_pts(int i, int *x1, int *y1, int *x2, int *y2)
     *y2 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[NEEDLE_HUB][i].y + GAUGE_CENTER_Y;
     /* PROVISIONAL: second unreachable far access, see da_speedo_pts. */
     return;
-    { extern char far x_trk1[][2]; *x2 = x_trk1[i][0]; }
+    {
+        extern char far x_trk1[][2];
+        *x2 = x_trk1[i][0];
+    }
 }
-
 
 
 void da_tach_init(int v)
@@ -175,7 +184,6 @@ void da_tach_init(int v)
         g_targetPixelOffset = saveOff;
     }
 }
-
 
 
 int da_move_needle(int cur, int old, int flag)
@@ -287,7 +295,6 @@ void da_draw_clock(void)
 }
 
 
-
 void da_pal_blank(void)
 {
     vi_set_palette(g_blackPalette);
@@ -295,13 +302,11 @@ void da_pal_blank(void)
 }
 
 
-
 void da_pal_show(void)
 {
     vi_set_palette(g_palette);
     g_displayEnabled = 1;
 }
-
 
 
 void da_wait_key(int ticks)
@@ -340,7 +345,6 @@ void da_wait_key(int ticks)
 }
 
 
-
 void da_intro(void)
 {
     int saved;
@@ -375,7 +379,6 @@ void da_intro(void)
 }
 
 
-
 void da_time_up(void)
 {
     gm_message(0x17bb);
@@ -388,7 +391,6 @@ void da_time_up(void)
     (*g_videoOps.show)();
     gm_pause(300);
 }
-
 
 
 void da_set_view(enum DashView mode)
@@ -451,7 +453,6 @@ void da_set_view(enum DashView mode)
 }
 
 
-
 void da_load_wheel(void)
 {
     int i6;
@@ -483,7 +484,6 @@ void da_load_wheel(void)
 }
 
 
-
 void da_steer_marker(int n)
 {
     int x, y2;
@@ -510,7 +510,6 @@ void da_steer_marker(int n)
     g_videoAddrSegment = seg;
     g_targetPixelOffset = off;
 }
-
 
 
 void da_draw_wheel(int a, int b, struct Bitmap far *dst)
@@ -617,7 +616,6 @@ void da_init_shifter(int a, int b)
 }
 
 
-
 void da_draw_shifter(struct Bitmap far *dst, struct Eng *e)
 {
     struct Blt16 pkt1;
@@ -635,7 +633,8 @@ void da_draw_shifter(struct Bitmap far *dst, struct Eng *e)
         pkt1.sy = g_shiftSlots[g_shifterDraw.knobPosition].b;
         x = g_shifterDraw.track->pt[g_shifterDraw.knobPosition * 2] & 0xfff8;
         pkt1.dx = x + 0x108;
-        pkt1.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + g_shifterDraw.track->pt[g_shifterDraw.knobPosition * 2 + 1] + 0x17;
+        pkt1.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) +
+                  g_shifterDraw.track->pt[g_shifterDraw.knobPosition * 2 + 1] + 0x17;
         pkt1.w = 0x30 - x > 0x20 ? 0x20 : 0x30 - x;
         (*g_videoOps.copy)(g_bufferSceneA, dst, (struct Blt *)&pkt1, 1);
     }
@@ -649,7 +648,6 @@ void da_draw_shifter(struct Bitmap far *dst, struct Eng *e)
     g_shifterDraw.knobPosition = idx3;
     e->shifterDirty = 0;
 }
-
 
 
 void da_fmemset(char far *p, int c, unsigned n)
@@ -704,7 +702,6 @@ int da_clip_blt(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *in, 
 }
 
 
-
 void da_retrace(int n)
 {
     int i;
@@ -723,7 +720,6 @@ void da_retrace(int n)
         }
     }
 }
-
 
 
 int da_text_width(char *s)

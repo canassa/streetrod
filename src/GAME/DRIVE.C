@@ -164,8 +164,10 @@ int dv_run(void)
         (*g_videoOps.copy)(g_driveDisplayPage, g_viewPages.draw == 1 ? g_bufferSceneA : g_driveScreenB, &blt, 1);
         ct_set_split(-1);
         g_displaySplitYVal = 0;
-        (*g_videoOps.copyPage)(g_viewPages.draw == 1 ? g_bufferSceneA->bits.p : g_driveScreenB->bits.p, g_driveDisplayPage->bits.p);
-        (*g_videoOps.copyPage)(g_viewPages.draw == 1 ? g_bufferSceneA->bits.p : g_driveScreenB->bits.p, g_viewPages.draw == 1 ? g_driveScreenB->bits.p : g_bufferSceneA->bits.p);
+        (*g_videoOps.copyPage)(g_viewPages.draw == 1 ? g_bufferSceneA->bits.p : g_driveScreenB->bits.p,
+                               g_driveDisplayPage->bits.p);
+        (*g_videoOps.copyPage)(g_viewPages.draw == 1 ? g_bufferSceneA->bits.p : g_driveScreenB->bits.p,
+                               g_viewPages.draw == 1 ? g_driveScreenB->bits.p : g_bufferSceneA->bits.p);
     } else
         (*g_videoOps.copyPage)(g_driveDisplayPage->bits.p, g_driveScreenB->bits.p);
     da_set_view(DASH_VIEW_RESTORE);

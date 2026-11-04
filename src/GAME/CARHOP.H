@@ -4,7 +4,10 @@
 #define CARHOP_H
 #include "STRUCTS.H"
 
-enum CarhopMode { CARHOP_ENTER = 0, CARHOP_LEAVE = 1 };
+enum CarhopMode {
+    CARHOP_ENTER = 0,
+    CARHOP_LEAVE = 1
+};
 
 extern struct Sheet g_carhopSheets[];
 extern char g_carhopFrames[];

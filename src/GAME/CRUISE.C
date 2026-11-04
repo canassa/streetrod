@@ -19,7 +19,6 @@ char g_savedPal12 = -1;
 char g_savedPal3 = -1;
 
 
-
 void cr_go(void)
 {
     g_firePressed = g_mouse.left = g_joyButtons = g_buttons = 0;
@@ -39,7 +38,6 @@ void cr_go(void)
         }
     }
 }
-
 
 
 void cr_rival_paint(int mode)
@@ -69,7 +67,6 @@ void cr_rival_paint(int mode)
 }
 
 int g_startingGoActive;
-
 
 
 int cr_drive(void)

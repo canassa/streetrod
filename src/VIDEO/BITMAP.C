@@ -77,7 +77,7 @@ struct Bitmap far *bm_shift_right(struct Bitmap far *src, int n, struct Bitmap f
     int mask;
 
     shl5 = (n * r_vid.bpp) & 7;
-    compl = 8 - shl5;
+    compl= 8 - shl5;
     mask = 0xff >> compl;
     h3 = src->height;
     pitch = src->pitch;

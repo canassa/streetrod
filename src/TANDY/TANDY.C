@@ -15,9 +15,10 @@
 #include "TANDYTXT.H"
 #include "VIDEO.H"
 
-struct Hooks g_tandyHooks = {tb_copy, tb_shifted, tb_masked, ta_draw_text, uc_tandy, ta_copy_page, ta_recolor_rect, da_pal_blank, da_pal_show, ts_step, ta_reveal, sp_slide_v, tl_draw, tl_span, tl_fill_below};
+struct Hooks g_tandyHooks = {tb_copy,      tb_shifted,      tb_masked,    ta_draw_text, uc_tandy,
+                             ta_copy_page, ta_recolor_rect, da_pal_blank, da_pal_show,  ts_step,
+                             ta_reveal,    sp_slide_v,      tl_draw,      tl_span,      tl_fill_below};
 int g_tandyRevealOrder[5] = {0, 2, 4, 1, 3};
-
 
 
 void ta_install(void)
@@ -48,9 +49,8 @@ void ta_draw_text(struct Bitmap far *bm, int x, int y, int glyph)
         m3 = (n2 >> 1) - ph;
         if (y + (h = 8) > bm->height)
             h = bm->height - y;
-        tt_copy(buf3, bm->bits.w.seg,
-            (bm->planesize >> 2) * (y & 3) + (y >> 2) * 160 + bm->bits.w.off + (x >> 1),
-            y, h, m3, ph, n2);
+        tt_copy(buf3, bm->bits.w.seg, (bm->planesize >> 2) * (y & 3) + (y >> 2) * 160 + bm->bits.w.off + (x >> 1), y, h,
+                m3, ph, n2);
     }
 }
 

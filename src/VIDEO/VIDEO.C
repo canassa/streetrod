@@ -32,12 +32,41 @@ struct Bitmap far *g_autoSprImagePtr;
 int g_picXDraw;
 int g_sprDrawY;
 
-struct Style g_style16 = {{{0, 0, 0, 0, 0}, {13, 9, 9, 15, 1}, {9, 13, 13, 15, 1}, {1, 5, 5, 1, 1}, {1, 5, 5, 4, 1}, {15, 9, 9, 15, 1}, {14, 15, 15, 10, 1}}, {1, 4, 4, 1, 1}, {1, 3, 3, 4, 2}, {15, 9, 9, 15, 1}, {13, 9, 9, 15, 1}, {11, 2, 2, 11, 1}, {1, 4, 4, 11, 1}, {1, 4, 4, 1, 1}, {1, 4, 4, 1, 1}, {1, 3, 3, 4, 1}};
-struct Style g_style4 = {{{0, 0, 0, 0, 0}, {1, 2, 2, 3, 1}, {2, 1, 1, 3, 1}, {0, 3, 3, 0, 1}, {0, 3, 3, 2, 1}, {3, 2, 2, 3, 1}, {2, 1, 1, 1, 1}}, {0, 3, 3, 0, 1}, {0, 3, 3, 2, 2}, {3, 2, 2, 3, 1}, {1, 2, 2, 3, 1}, {0, 2, 2, 0, 1}, {0, 3, 3, 1, 1}, {0, 3, 3, 0, 1}, {0, 3, 3, 0, 1}, {1, 2, 2, 3, 1}};
+struct Style g_style16 = {{{0, 0, 0, 0, 0},
+                           {13, 9, 9, 15, 1},
+                           {9, 13, 13, 15, 1},
+                           {1, 5, 5, 1, 1},
+                           {1, 5, 5, 4, 1},
+                           {15, 9, 9, 15, 1},
+                           {14, 15, 15, 10, 1}},
+                          {1, 4, 4, 1, 1},
+                          {1, 3, 3, 4, 2},
+                          {15, 9, 9, 15, 1},
+                          {13, 9, 9, 15, 1},
+                          {11, 2, 2, 11, 1},
+                          {1, 4, 4, 11, 1},
+                          {1, 4, 4, 1, 1},
+                          {1, 4, 4, 1, 1},
+                          {1, 3, 3, 4, 1}};
+struct Style g_style4 = {{{0, 0, 0, 0, 0},
+                          {1, 2, 2, 3, 1},
+                          {2, 1, 1, 3, 1},
+                          {0, 3, 3, 0, 1},
+                          {0, 3, 3, 2, 1},
+                          {3, 2, 2, 3, 1},
+                          {2, 1, 1, 1, 1}},
+                         {0, 3, 3, 0, 1},
+                         {0, 3, 3, 2, 2},
+                         {3, 2, 2, 3, 1},
+                         {1, 2, 2, 3, 1},
+                         {0, 2, 2, 0, 1},
+                         {0, 3, 3, 1, 1},
+                         {0, 3, 3, 0, 1},
+                         {0, 3, 3, 0, 1},
+                         {1, 2, 2, 3, 1}};
 unsigned char g_palette[17] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14};
 char g_blackPalette[16] = "";
 unsigned char g_altPalette[17] = {9, 1, 8, 0, 15, 7, 11, 3, 14, 2, 4, 12, 13, 10, 6, 14};
-
 
 
 void vi_garage_pal(void)
@@ -46,12 +75,10 @@ void vi_garage_pal(void)
 }
 
 
-
 void vi_bobs_pal(void)
 {
     vi_palette_reg(12, 13);
 }
-
 
 
 void vi_name_pal(void)
@@ -60,7 +87,6 @@ void vi_name_pal(void)
     g_palette[7] = 1;
     g_palette[8] = 3;
 }
-
 
 
 void vi_swap_pal(void)
@@ -74,7 +100,6 @@ void vi_swap_pal(void)
         g_altPalette[i] = save;
     }
 }
-
 
 
 void vi_init(struct Bitmap far *front, struct Bitmap far *back)
@@ -138,7 +163,6 @@ void vi_init(struct Bitmap far *front, struct Bitmap far *back)
 }
 
 
-
 void vi_anim_stop(int n)
 {
     struct Obj *o;
@@ -153,7 +177,6 @@ void vi_anim_stop(int n)
     if (o->pendingTimers)
         sy_timer_cancel(n);
 }
-
 
 
 static void near anim_set_box(void)
@@ -250,7 +273,7 @@ static void near anim_run(int n)
                 cu_ctl(CURSOR_SHOW);
             if (g_animRun.command->sub == ANIM_WAIT_COPY_TO_FRONT && r_vid.copyToFront)
                 bm_copy_box(r_vid.back, r_vid.front, g_animRun.box->dx, g_animRun.box->dy,
-                        g_animRun.box->dx + g_animRun.box->w - 1, g_animRun.box->dy + g_animRun.box->h - 1);
+                            g_animRun.box->dx + g_animRun.box->w - 1, g_animRun.box->dy + g_animRun.box->h - 1);
             return;
         case ANIM_COPY_TO_FRONT:
             cu_ctl(CURSOR_SHOW);
@@ -258,14 +281,13 @@ static void near anim_run(int n)
             if (!r_vid.copyToFront)
                 break;
             bm_copy_box(r_vid.back, r_vid.front, g_animRun.box->dx, g_animRun.box->dy,
-                    g_animRun.box->dx + g_animRun.box->w - 1, g_animRun.box->dy + g_animRun.box->h - 1);
+                        g_animRun.box->dx + g_animRun.box->w - 1, g_animRun.box->dy + g_animRun.box->h - 1);
             break;
         }
         g_animRun.command++;
-    next: ;
+    next:;
     }
 }
-
 
 
 int vi_anim_start(int n)
@@ -286,7 +308,6 @@ int vi_anim_start(int n)
 }
 
 
-
 void vi_anim_resume(int n)
 {
     int k;
@@ -297,12 +318,10 @@ void vi_anim_resume(int n)
 }
 
 
-
 int vi_anim_active(int n)
 {
     return g_animScripts[g_animScriptStart[n]].a >= 0;
 }
-
 
 
 int vi_anim_hook(struct Obj *o, struct Cmd *c)
@@ -317,7 +336,7 @@ int vi_anim_hook(struct Obj *o, struct Cmd *c)
             return 0;
         }
         if (g_pumpBlinkCount--) {
-            struct Colors save;     /* PROVISIONAL: never used; fills the 6-byte frame slot (original local unknown) */
+            struct Colors save; /* PROVISIONAL: never used; fills the 6-byte frame slot (original local unknown) */
             old = x_colors.line;
             x_colors.line = (g_pumpBlinkCount & 1) ? 4 : 0;
             dr_hline(r_vid.back, 0x33, 0x6f, 2);

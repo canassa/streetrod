@@ -22,7 +22,7 @@ static int g_drawnMinX;
 static int g_drawnMinY;
 static int g_drawnMaxX;
 static int g_drawnMaxY;
-static char * near wear_text(int wear);
+static char *near wear_text(int wear);
 
 int g_menuGrpHistoryList[4];
 char g_hideSelectFrameVal;
@@ -76,8 +76,7 @@ void mn_draw_hot(struct Hot *p)
             dr_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, h = p->y2 - p->y1);
             dr_bevel(r_vid.back, p->x1, p->y1, w, h);
             str = g_txt + p->textOffset;
-            (*g_videoOps.drawText)(r_vid.back, ((w - da_text_width(str)) >> 1) + p->x1,
-                      p->y1 + ((h - 8) >> 1), str);
+            (*g_videoOps.drawText)(r_vid.back, ((w - da_text_width(str)) >> 1) + p->x1, p->y1 + ((h - 8) >> 1), str);
             goto box;
         case HOT_TEXT:
             if (p->palIndex != colr)
@@ -89,7 +88,7 @@ void mn_draw_hot(struct Hot *p)
                 x_colors = bustyle->pal[colr = p->palIndex];
             str = g_txt + p->textOffset;
             (*g_videoOps.drawText)(r_vid.back, ((p->x2 - p->x1 - da_text_width(str)) >> 1) + p->x1,
-                      ((p->y2 - p->y1 - 8) >> 1) + p->y1, str);
+                                   ((p->y2 - p->y1 - 8) >> 1) + p->y1, str);
             goto box;
         case HOT_EDIT_HEADER:
             g_headerEditableState = 1;
@@ -173,11 +172,11 @@ void mn_pop(int keep)
         } else {
             g_hotMenuGroupState = 0;
             g_hotsCurMenu = 0;
-            g_boxSpotHitData.x1 = g_boxSpotHitData.y1 = g_boxSpotHitData.x2 = g_boxSpotHitData.y2 = g_cursHoverCodeVal = -1;
+            g_boxSpotHitData.x1 = g_boxSpotHitData.y1 = g_boxSpotHitData.x2 = g_boxSpotHitData.y2 = g_cursHoverCodeVal =
+                -1;
         }
     }
 }
-
 
 
 void mn_reset(void)
@@ -319,7 +318,6 @@ int mn_modal(enum ScreenId id)
 }
 
 
-
 int mn_wait(enum ScreenId a)
 {
     int key;
@@ -355,7 +353,7 @@ char g_wearPad[4] = "   ";
 /* Wear text for a part: "(new)" when wear is 0, else "(xx% worn)" built in place in g_wearText
    (initialised data "(xx% worn)") with the number written over the xx */
 
-static char * near wear_text(int wear)
+static char *near wear_text(int wear)
 {
     char *p;
 
@@ -367,7 +365,20 @@ static char * near wear_text(int wear)
     return g_wearText;
 }
 
-int g_cgaPicMap[277] = {0, 1, 2, 3, 5, 6, 7, 4, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276};
+int g_cgaPicMap[277] = {
+    0,   1,   2,   3,   5,   6,   7,   4,   8,   9,   10,  11,  12,  13,  14,  15,  16,  17,  18,  19,  20,  21,
+    22,  23,  24,  25,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,
+    44,  45,  46,  47,  48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63,  64,  65,
+    66,  67,  68,  69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79,  80,  81,  82,  83,  84,  85,  86,  87,
+    88,  89,  90,  91,  92,  93,  94,  95,  96,  97,  98,  99,  100, 101, 102, 103, 104, 105, 106, 107, 108, 109,
+    110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131,
+    132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153,
+    154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175,
+    176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197,
+    198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
+    220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241,
+    242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263,
+    264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276};
 
 /* List dialog. Shows the entries list[1..list[0]] (offsets into the string table g_desc,
    or, when negative, d[-entry - 1]) in the windows of the current menu, optionally with a column c
@@ -451,7 +462,7 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
         cu_ctl(CURSOR_SHOW);
         if (r_vid.copyToFront)
             bm_copy_box(r_vid.back, r_vid.front, wx8 - 1, wy7 - 1, right + 1, bottom9 + 1);
-restore:
+    restore:
         x_colors = bustyle->pal[idx2];
         if (r_vid.mode == VID_HERCULES)
             x_colors.text = 0;
@@ -518,11 +529,9 @@ restore:
                     dr_frame(r_vid.back, w->w, w->h, ww9, 8);
                     cu_ctl(CURSOR_SHOW);
                     if (r_vid.copyToFront)
-                        bm_copy_box(r_vid.back, r_vid.front,
-                            (w->w - 1 > x1) ? x1 : w->w - 1,
-                            (w->h - 1 > y1) ? y1 : w->h - 1,
-                            (w->w + ww9 + 2 < x2) ? x2 : w->w + ww9 + 2,
-                            (w->h + wh9 + 2 < y2) ? y2 : w->h + wh9 + 2);
+                        bm_copy_box(r_vid.back, r_vid.front, (w->w - 1 > x1) ? x1 : w->w - 1,
+                                    (w->h - 1 > y1) ? y1 : w->h - 1, (w->w + ww9 + 2 < x2) ? x2 : w->w + ww9 + 2,
+                                    (w->h + wh9 + 2 < y2) ? y2 : w->h + wh9 + 2);
                 }
                 sel = i;
             }
@@ -558,12 +567,11 @@ restore:
             i = topk;
             if (i + 1 < count5)
                 topk++;
-scroll:
+        scroll:
             if (i < topk) {
                 if ((nw5 = count5 - topk) < page) {
                     w = (struct Win *)(0x12 * nw5 + g_menuList.lineBase);
-                    dr_fill_rect(r_vid.back, w->w, w->h, ww9,
-                        ((topk - i > page - nw5) ? page - nw5 : topk - i) * wh9);
+                    dr_fill_rect(r_vid.back, w->w, w->h, ww9, ((topk - i > page - nw5) ? page - nw5 : topk - i) * wh9);
                 }
             }
         }

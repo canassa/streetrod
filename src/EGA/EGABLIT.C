@@ -15,25 +15,25 @@
 
 void eb_copy(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, int flags)
 {
-    int p;                /* source bitmap height */
-    char far *a;          /* destination pointer */
-    char far *b;          /* row copy: source */
-    int c;                /* last plane + 1 */
-    int d;                /* width */
-    int e;                /* destination plane size */
-    int f;                /* both planes are flat */
-    int g;                /* source plane size */
+    int p;       /* source bitmap height */
+    char far *a; /* destination pointer */
+    char far *b; /* row copy: source */
+    int c;       /* last plane + 1 */
+    int d;       /* width */
+    int e;       /* destination plane size */
+    int f;       /* both planes are flat */
+    int g;       /* source plane size */
     struct Blt h;
-    int i;                /* source pitch */
-    int j;                /* height */
-    int k;                /* plane write mask */
+    int i; /* source pitch */
+    int j; /* height */
+    int k; /* plane write mask */
     int L;
-    int l;                /* current plane */
+    int l; /* current plane */
     int M;
     int N;
-    char far *m;          /* source pointer */
-    char far *n;          /* row copy: destination */
-    int o;                /* first plane */
+    char far *m; /* source pointer */
+    char far *n; /* row copy: destination */
+    int o;       /* first plane */
 
     N = (flags & 2) && dst->alt.p && src->alt.p;
     if (!da_clip_blt(dst, src, rect, &h))
@@ -95,29 +95,28 @@ void eb_copy(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, i
 
 /* Masked blit between planar VGA bitmaps */
 
-void eb_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *bm3,
-             struct Mask *mask, struct Blt *r)
+void eb_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *bm3, struct Mask *mask, struct Blt *r)
 {
-    int p;                /* mask height */
-    int a;                /* bm2 height */
-    int b;                /* bm3 plane size */
-    char far *c;          /* destination pointer */
-    int d;                /* width */
-    int e;                /* bm3 offset */
-    int f;                /* bm2 plane size */
-    int g;                /* bm1 pitch */
-    int h;                /* bm3 pitch */
+    int p;       /* mask height */
+    int a;       /* bm2 height */
+    int b;       /* bm3 plane size */
+    char far *c; /* destination pointer */
+    int d;       /* width */
+    int e;       /* bm3 offset */
+    int f;       /* bm2 plane size */
+    int g;       /* bm1 pitch */
+    int h;       /* bm3 pitch */
     struct Blt i;
-    int j;                /* bm2 width */
-    int K;                /* bm2 pitch */
-    int k;                /* plane write mask */
-    int L;                /* offset of the second bm1 plane */
-    int l;                /* height */
-    int M;                /* segment of bm1 */
-    int m;                /* offset of bm1 */
-    int N;                /* bm1 plane size */
-    char far *n;          /* mask pointer */
-    int o;                /* height below the mask */
+    int j;       /* bm2 width */
+    int K;       /* bm2 pitch */
+    int k;       /* plane write mask */
+    int L;       /* offset of the second bm1 plane */
+    int l;       /* height */
+    int M;       /* segment of bm1 */
+    int m;       /* offset of bm1 */
+    int N;       /* bm1 plane size */
+    char far *n; /* mask pointer */
+    int o;       /* height below the mask */
 
     if (mask) {
         p = mask->h;
@@ -175,21 +174,21 @@ void eb_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far
 
 void eb_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int flag)
 {
-    int p;                /* bm2 height */
-    char far *a;          /* destination pointer */
-    int b;                /* width */
-    int c;                /* bm2 plane size */
-    int d;                /* bm1 pitch */
+    int p;       /* bm2 height */
+    char far *a; /* destination pointer */
+    int b;       /* width */
+    int c;       /* bm2 plane size */
+    int d;       /* bm1 pitch */
     struct Blt e;
-    void (far *f)(char far *, unsigned, int, int, int, int, int, int);
-    int g;                /* bm2 pitch */
-    int h;                /* height */
-    int i;                /* offset of the second bm1 plane */
-    int j;                /* offset of bm1 */
-    int k;                /* plane write mask */
-    int l;                /* segment of bm1 */
-    int m;                /* current plane */
-    int n;                /* bm1 plane size */
+    void(far * f)(char far *, unsigned, int, int, int, int, int, int);
+    int g; /* bm2 pitch */
+    int h; /* height */
+    int i; /* offset of the second bm1 plane */
+    int j; /* offset of bm1 */
+    int k; /* plane write mask */
+    int l; /* segment of bm1 */
+    int m; /* current plane */
+    int n; /* bm1 plane size */
 
     if (!da_clip_blt(bm1, bm2, r, &e))
         return;

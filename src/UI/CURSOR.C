@@ -17,7 +17,6 @@ struct Cursor g_cursor2;
 struct Pair g_cursorPairs[4] = {{1, 1}, {2, 2}, {1, 1}, {8, 8}};
 
 
-
 unsigned cu_shape_off(unsigned n)
 {
     return n * g_cursor2.shapeSize;
@@ -46,7 +45,7 @@ void cu_init(void)
     img = me_new_bitmap(0x18 << r_vid.shift, 0x40, 1, -1, mem);
     g_cursor2.save = (struct Bitmap far *)(img->alt.p + bytes);
     me_set_bitmap(g_cursor2.save, r_vid.mode == VID_EGA ? CURSOR_EGA_SAVE : (char far *)(g_cursor2.save + 1), 0L,
-            (0x18 >> r_vid.shift) << r_vid.shift, 0x10, r_vid.mode == VID_EGA ? VID_EGA : -1);
+                  (0x18 >> r_vid.shift) << r_vid.shift, 0x10, r_vid.mode == VID_EGA ? VID_EGA : -1);
     memset(&g_cursor2.clip, 0, 12);
     g_cursor2.state = CURSOR_HIDDEN;
     pict = di_bm(2, ARENA_HIGH_STACK);
@@ -95,8 +94,8 @@ void cu_ctl(int mode)
 
     a = g_cursorX;
     b = g_cursorY;
-    a = a < 0 ? 0 : a > (SCREEN_WIDTH - 1) ? (SCREEN_WIDTH - 1) : a;
-    b = b < 0 ? 0 : b > (SCREEN_HEIGHT - 1) ? (SCREEN_HEIGHT - 1) : b;
+    a = a<0 ? 0 : a>(SCREEN_WIDTH - 1) ? (SCREEN_WIDTH - 1) : a;
+    b = b<0 ? 0 : b>(SCREEN_HEIGHT - 1) ? (SCREEN_HEIGHT - 1) : b;
     if (mode >= 0) {
         g_4742 = g_cursorPairs[g_cursor2.shapeIndex = mode].a;
         g_4744 = g_cursorPairs[mode].b;
@@ -133,7 +132,9 @@ void cu_draw(int x, int y)
     if (g_cursor2.state) {
         if (g_cursor2.clip.w > 0) {
             if (r_vid.mode == VID_EGA)
-                ea_to_page(g_cursor2.save->bits.p, g_cursor2.clip.w >> 3, g_cursor2.clip.h, r_vid.back->bits.p + EGA_PITCH * g_cursor2.clip.dy + (g_cursor2.clip.dx >> 3), 0x18 >> r_vid.shift);
+                ea_to_page(g_cursor2.save->bits.p, g_cursor2.clip.w >> 3, g_cursor2.clip.h,
+                           r_vid.back->bits.p + EGA_PITCH * g_cursor2.clip.dy + (g_cursor2.clip.dx >> 3),
+                           0x18 >> r_vid.shift);
             else
                 (*g_videoOps.copy)(g_cursor2.save, r_vid.back, (struct Blt *)&g_cursor2.clip, 1);
             g_cursor2.clip.w = 0;
@@ -153,12 +154,17 @@ void cu_draw(int x, int y)
             g_cursor2.clip.h = SCREEN_HEIGHT - y > 16 ? 16 : SCREEN_HEIGHT - y;
             g_cursor2.clip.dy = y;
             a = (x & ~r_vid.mask) * (0x18 >> r_vid.shift) + g_cursor2.shapeOffset;
-            (*g_videoOps.cursorBlit)(g_cursor2.shape + a, g_cursor2.mask + a, g_cursor2.save->bits.p, r_vid.back->bits.p, g_cursor2.clip.dx >> r_vid.shift, y, g_cursor2.clip.w >> r_vid.shift, g_cursor2.clip.h);
+            (*g_videoOps.cursorBlit)(g_cursor2.shape + a, g_cursor2.mask + a, g_cursor2.save->bits.p,
+                                     r_vid.back->bits.p, g_cursor2.clip.dx >> r_vid.shift, y,
+                                     g_cursor2.clip.w >> r_vid.shift, g_cursor2.clip.h);
         }
         a = x + 15;
         b = y + 15;
         if (r_vid.copyToFront && g_cursor2.state == CURSOR_DRAWN)
-            bm_copy_box(r_vid.back, r_vid.front, g_cursor2.drawnRect.x1 > x ? x : g_cursor2.drawnRect.x1, g_cursor2.drawnRect.y1 > y ? y : g_cursor2.drawnRect.y1, g_cursor2.drawnRect.x2 < a ? a : g_cursor2.drawnRect.x2, g_cursor2.drawnRect.y2 < b ? b : g_cursor2.drawnRect.y2);
+            bm_copy_box(r_vid.back, r_vid.front, g_cursor2.drawnRect.x1 > x ? x : g_cursor2.drawnRect.x1,
+                        g_cursor2.drawnRect.y1 > y ? y : g_cursor2.drawnRect.y1,
+                        g_cursor2.drawnRect.x2 < a ? a : g_cursor2.drawnRect.x2,
+                        g_cursor2.drawnRect.y2 < b ? b : g_cursor2.drawnRect.y2);
         g_cursor2.drawnRect.x1 = x;
         g_cursor2.drawnRect.y1 = y;
         g_cursor2.drawnRect.x2 = a;

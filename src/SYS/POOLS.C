@@ -6,7 +6,6 @@ struct Node2 g_storageCarAllocTable[16];
 struct Node g_allocationNodesPartList[140];
 
 
-
 void near pl_init(int reset)
 {
     struct Node2 *p2;

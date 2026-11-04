@@ -10,8 +10,16 @@ static void near write_plane_row(unsigned char far *dst, unsigned char *src, int
 /* EGA/VGA register writes (graphics controller, sequencer). Written as braced blocks: the
    block boundary is visible in ex_blit's code; every other pair in the file (and the 38
    such pairs of seven other files) compiles the same either way. */
-#define GCREG(i, v)  { outp(GC_INDEX, (i)); outp(GC_DATA, (v)); }
-#define SEQREG(i, v) { outp(SEQ_INDEX, (i)); outp(SEQ_DATA, (v)); }
+#define GCREG(i, v)                                                                                                    \
+    {                                                                                                                  \
+        outp(GC_INDEX, (i));                                                                                           \
+        outp(GC_DATA, (v));                                                                                            \
+    }
+#define SEQREG(i, v)                                                                                                   \
+    {                                                                                                                  \
+        outp(SEQ_INDEX, (i));                                                                                          \
+        outp(SEQ_DATA, (v));                                                                                           \
+    }
 
 unsigned char g_leftBitMasks[8] = {128, 192, 224, 240, 248, 252, 254, 255};
 int g_egaGcFunction = 0;
@@ -139,17 +147,17 @@ static void near write_plane_row(unsigned char far *dst, unsigned char *src, int
 
 void ex_blit(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r)
 {
-    int p;                 /* bytes per row */
-    unsigned char far *a;  /* source row */
-    unsigned char far *b;  /* destination row */
+    int p;                /* bytes per row */
+    unsigned char far *a; /* source row */
+    unsigned char far *b; /* destination row */
     unsigned char c[4][EGA_PITCH];
-    unsigned d;            /* plane size in bytes */
+    unsigned d; /* plane size in bytes */
     int e;
-    int f;                 /* rows */
-    int g;                 /* byte in row */
-    int h;                 /* shift */
-    int i;                 /* plane */
-    int j;                 /* destination bit offset */
+    int f; /* rows */
+    int g; /* byte in row */
+    int h; /* shift */
+    int i; /* plane */
+    int j; /* destination bit offset */
 
     a = bm1->bits.p + bm1->pitch * r->sy + r->sx / 8;
     b = bm2->bits.p + bm2->pitch * r->dy + r->dx / 8;

@@ -4,14 +4,12 @@
 #include "MAIN.H"
 
 
-
 void ma_clear(void)
 {
     g_offsetArenaMarksList[g_lowArenaMarker = 0] = g_loHeapLimit = 0;
     g_offsetArenaMarksList[g_markerIndexHigh = 60] = g_arenaTopVal;
     g_stickerBg = 0;
 }
-
 
 
 void ma_release(void)
@@ -21,7 +19,6 @@ void ma_release(void)
 }
 
 
-
 void ma_pop_low(int n)
 {
     if (n == 0)
@@ -29,7 +26,6 @@ void ma_pop_low(int n)
     else
         g_lowArenaMarker -= n;
 }
-
 
 
 void ma_pop_high(int n)

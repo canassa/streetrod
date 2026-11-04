@@ -50,8 +50,7 @@ int cs_step(struct Sprite *s)
     bits = s->img;
     fp = s->save;
     d = fr->data;
-    sp_clip_box(fr->pos->width, fr->pos->height,
-        s->x, s->y, pg->bm->width, pg->bm->height, &rc);
+    sp_clip_box(fr->pos->width, fr->pos->height, s->x, s->y, pg->bm->width, pg->bm->height, &rc);
     if (sp_rect_sub(&rc, &pg->rect, &c2, s->seq->dx))
         restore_rect(&c2, bits, fp, s->seq->dx);
     pg->rect = rc;

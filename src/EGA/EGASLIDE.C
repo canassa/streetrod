@@ -16,7 +16,7 @@
 void ev_sprite(int top, int bottom, int x, int y0, int y1, struct Bitmap far *bm)
 {
     int k5;
-    int pitch;            /* bm pitch */
+    int pitch; /* bm pitch */
     int stridem;
     union FarPtr src0;
     union FarPtr alt16;
@@ -24,14 +24,14 @@ void ev_sprite(int top, int bottom, int x, int y0, int y1, struct Bitmap far *bm
     union FarPtr curn;
     int stepl;
     int hh8;
-    int psizem;           /* bm plane size */
+    int psizem; /* bm plane size */
     char far *row;
     char far *dstm;
     char far *scratch;
     int y;
     int i;
-    int rowsn;            /* bm height */
-    int bpitch;           /* r_vid.back pitch */
+    int rowsn;  /* bm height */
+    int bpitch; /* r_vid.back pitch */
     union FarPtr base1;
     union FarPtr abase;
     int m;

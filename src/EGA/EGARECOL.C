@@ -5,8 +5,7 @@
 
 /* Fill a rectangle in a planar VGA bitmap using the bit mask register */
 
-void er_rect(struct Bitmap far *bm, int mode, char color,
-             int x1, int y1, int x2, int y2)
+void er_rect(struct Bitmap far *bm, int mode, char color, int x1, int y1, int x2, int y2)
 {
     unsigned char e = 0xff;
     unsigned char o = 0xff;

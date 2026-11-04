@@ -83,7 +83,6 @@ int g_bannerX = 100;
 int g_passCount = 0;
 
 
-
 static int near maybe_carhop(enum CarhopMode mode, int arg, int pct1, int pct2)
 {
     int r;
@@ -128,7 +127,6 @@ struct Racer *g_selectedRacerPointer;
 int g_rivalHereState;
 
 
-
 static void near drop_last_word(char *s)
 {
     int i;
@@ -146,7 +144,6 @@ static void near drop_last_word(char *s)
 int g_lastRival = -1;
 
 
-
 static void near show_rival_car(enum CarAnimKind mode, int b, int c, int d, int e, int *f)
 {
     int x, n, old;
@@ -159,7 +156,8 @@ static void near show_rival_car(enum CarAnimKind mode, int b, int c, int d, int 
     if (mode == CAR_PULL_IN)
         g_carhop = CARHOP_DISABLED;
     g_rivalHereState = mode == CAR_DRIVE_OUT;
-    if (mode == CAR_DRIVE_IN && !maybe_carhop(CARHOP_ENTER, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, 10))
+    if (mode == CAR_DRIVE_IN &&
+        !maybe_carhop(CARHOP_ENTER, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, 10))
         maybe_carhop(CARHOP_LEAVE, g_rivalHereState, 20, 0);
     if (g_strOpp[n = strlen(g_strOpp) - 1] == '.')
         g_strOpp[n] = 0;
@@ -190,14 +188,14 @@ static void near show_rival_car(enum CarAnimKind mode, int b, int c, int d, int 
         g_carhop = CARHOP_ABSENT;
     g_rivalHereState = (mode == CAR_DRIVE_OUT) ? 0 : 1;
     if (!(x && g_rivalHereState))
-        if (!maybe_carhop(CARHOP_ENTER, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, g_rivalHereState == 0 ? 8 : 0))
+        if (!maybe_carhop(CARHOP_ENTER, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5,
+                          g_rivalHereState == 0 ? 8 : 0))
             maybe_carhop(CARHOP_LEAVE, g_rivalHereState, 40, 0);
 }
 
 int g_opponentSpecIndex;
 int g_isKingState;
 int g_driverIdxSelVal;
-
 
 
 static int near spec_class(int n)
@@ -211,7 +209,6 @@ static int near spec_class(int n)
         return 2;
     return 1;
 }
-
 
 
 static enum KingStatus near king_status(void)
@@ -241,7 +238,6 @@ static enum KingStatus near king_status(void)
 }
 
 
-
 static int near king_chance(void)
 {
     enum KingStatus kind;
@@ -267,7 +263,6 @@ static int near king_chance(void)
 }
 
 
-
 static void near build_rival_pool(int flag)
 {
     int result;
@@ -278,7 +273,8 @@ static void near build_rival_pool(int flag)
     for (k = 0; k < RACER_KING; k++) {
         item = &g_carData[g_racerRecordsArray[k].specIndex];
         map[k].dr = abs(pf_vmax(g_racerRecordsArray[k].specIndex) - pf_vmax(-1));
-        map[k].dk = abs(g_carData[g_racerRecordsArray[k].specIndex].rank - g_carData[g_driver.currentCar->specIndex].rank);
+        map[k].dk =
+            abs(g_carData[g_racerRecordsArray[k].specIndex].rank - g_carData[g_driver.currentCar->specIndex].rank);
         map[k].taken = (g_racerRecordsArray[k].status != RACER_EMPTY) ? 0 : 1;
     }
     g_poolCount = 0;
@@ -315,7 +311,6 @@ static void near build_rival_pool(int flag)
 }
 
 
-
 static int near pick_rival(int chance, int arg)
 {
     int pick;
@@ -333,7 +328,6 @@ static int near pick_rival(int chance, int arg)
 }
 
 
-
 static void near select_rival(int n)
 {
     int skill;
@@ -349,7 +343,8 @@ static void near select_rival(int n)
             g_selectedRacerPointer->sticker = rn_int(20) < skill ? rn_int(9) : 0;
         else if (g_selectedRacerPointer->sticker > 0 && g_selectedRacerPointer->betRaces > 10)
             g_selectedRacerPointer->sticker = rn_int(40) < skill ? rn_int(9) : g_selectedRacerPointer->sticker;
-        if (g_models[g_opponentSpecIndex].frontBumperPic > 0 && g_models[g_opponentSpecIndex].rearBumperPic > 0 && g_selectedRacerPointer->betRaces > 8)
+        if (g_models[g_opponentSpecIndex].frontBumperPic > 0 && g_models[g_opponentSpecIndex].rearBumperPic > 0 &&
+            g_selectedRacerPointer->betRaces > 8)
             g_selectedRacerPointer->bodyMods |= rn_int(25) < skill ? 3 : g_selectedRacerPointer->bodyMods;
         if (g_models[g_opponentSpecIndex].roofPic > 0 && g_selectedRacerPointer->betRaces > 8)
             g_selectedRacerPointer->bodyMods |= rn_int(30) < skill ? 4 : g_selectedRacerPointer->bodyMods;
@@ -363,7 +358,6 @@ static void near select_rival(int n)
 }
 
 
-
 static void near rival_arrives(int n, enum CarAnimKind a, enum RivalArrival mode)
 {
     select_rival(n);
@@ -373,7 +367,6 @@ static void near rival_arrives(int n, enum CarAnimKind a, enum RivalArrival mode
         g_carPassBy = king_status() == KING_NOVICE;
     show_rival_car(a, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
 }
-
 
 
 static void near list_met_rivals(int *ids, int *slots, int *kinds)
@@ -400,7 +393,6 @@ int g_refuseMsgs[2][5] = {{4779, 4803, 4822, 4840, 4663}, {4663, 4675, 4694, 471
 int g_acceptMsgs[2][3] = {{4859, 4867, 4875}, {4743, 4756, 4767}};
 
 
-
 static int near look_for_rival(enum CarAnimKind n)
 {
     int list[24], sel[24], kinds[24], choice;
@@ -424,7 +416,6 @@ static int near look_for_rival(enum CarAnimKind n)
         return 0;
     }
 }
-
 
 
 static int near accepts_bet(enum BetKind kind)
@@ -479,7 +470,6 @@ calc:
         scorel += (scorel >> 2) + 10;
     return rn_int(100) <= scorel;
 }
-
 
 
 static int near challenge(int arg)
@@ -624,7 +614,6 @@ quit:
 }
 
 
-
 static void near setup_bobs_spots(int a, int b)
 {
     struct Hot save;
@@ -676,13 +665,22 @@ static void near setup_bobs_spots(int a, int b)
     }
 }
 
-struct Step g_animSteps[30] = {{2, 15}, {3, 15}, {4, 22}, {5, 15}, {6, 37}, {5, 15}, {6, 45}, {5, 15}, {4, 15}, {3, 15}, {2, 15}, {8, 90}, {7, 15}, {9, 15}, {10, 30}, {9, 15}, {7, 7}, {8, 75}, {11, 15}, {12, 30}, {13, 15}, {12, 15}, {11, 15}, {8, 90}, {7, 15}, {9, 15}, {10, 30}, {9, 15}, {7, 7}, {14, 15}};
+struct Step g_animSteps[30] = {{2, 15}, {3, 15}, {4, 22},  {5, 15},  {6, 37},  {5, 15},  {6, 45},  {5, 15},
+                               {4, 15}, {3, 15}, {2, 15},  {8, 90},  {7, 15},  {9, 15},  {10, 30}, {9, 15},
+                               {7, 7},  {8, 75}, {11, 15}, {12, 30}, {13, 15}, {12, 15}, {11, 15}, {8, 90},
+                               {7, 15}, {9, 15}, {10, 30}, {9, 15},  {7, 7},   {14, 15}};
 char g_animCells[16] = {1, 15, 7, 8, 9, 10, 11, 12, 2, 3, 0, 1, 5, 6, 13, 4};
-struct Cell g_endCellsA[20] = {{0, 0, 48, 24, 80, 0}, {48, 0, 32, 24, 88, 0}, {80, 0, 32, 24, 96, 0}, {112, 0, 64, 24, 88, 0}, {0, 24, 40, 44, 96, 0}, {40, 24, 40, 44, 96, 0}, {80, 24, 40, 44, 96, 0}, {120, 24, 40, 44, 96, 0}, {0, 68, 40, 44, 96, 0}, {40, 68, 40, 44, 96, 0}, {80, 68, 40, 44, 96, 0}, {120, 68, 40, 44, 96, 0}, {0, 112, 40, 44, 96, 0}, {40, 112, 40, 44, 96, 0}, {80, 112, 40, 44, 96, 0}, {120, 112, 40, 44, 96, 0}, {0, 156, 48, 44, 88, 0}, {48, 156, 56, 44, 80, 0}, {104, 156, 56, 44, 80, 0}, {160, 156, 40, 44, 96, 0}};
-struct Cell g_endCellsB[9] = {{208, 54, 8, 2, 128, 84}, {200, 54, 8, 3, 112, 88}, {184, 54, 16, 4, 96, 94}, {160, 54, 24, 10, 112, 113}, {160, 86, 40, 10, 128, 113}, {160, 65, 48, 20, 136, 104}, {160, 1, 112, 52, 128, 70}, {0, 1, 160, 97, 112, 52}, {0, 99, 224, 101, 80, 51}};
+struct Cell g_endCellsA[20] = {
+    {0, 0, 48, 24, 80, 0},   {48, 0, 32, 24, 88, 0},   {80, 0, 32, 24, 96, 0},    {112, 0, 64, 24, 88, 0},
+    {0, 24, 40, 44, 96, 0},  {40, 24, 40, 44, 96, 0},  {80, 24, 40, 44, 96, 0},   {120, 24, 40, 44, 96, 0},
+    {0, 68, 40, 44, 96, 0},  {40, 68, 40, 44, 96, 0},  {80, 68, 40, 44, 96, 0},   {120, 68, 40, 44, 96, 0},
+    {0, 112, 40, 44, 96, 0}, {40, 112, 40, 44, 96, 0}, {80, 112, 40, 44, 96, 0},  {120, 112, 40, 44, 96, 0},
+    {0, 156, 48, 44, 88, 0}, {48, 156, 56, 44, 80, 0}, {104, 156, 56, 44, 80, 0}, {160, 156, 40, 44, 96, 0}};
+struct Cell g_endCellsB[9] = {{208, 54, 8, 2, 128, 84},    {200, 54, 8, 3, 112, 88},    {184, 54, 16, 4, 96, 94},
+                              {160, 54, 24, 10, 112, 113}, {160, 86, 40, 10, 128, 113}, {160, 65, 48, 20, 136, 104},
+                              {160, 1, 112, 52, 128, 70},  {0, 1, 160, 97, 112, 52},    {0, 99, 224, 101, 80, 51}};
 int g_endPics[8] = {1201, 1217, 1106, 1107, 1108, 1109, 1073, 0};
 int g_endPics2[3] = {6, 7, 0};
-
 
 
 static void near pop_rival_hood(void)
@@ -752,7 +750,6 @@ int g_resultWin;
 struct Bitmap far *g_edgeBmpJail;
 
 
-
 static void near play_cell_anim(void)
 {
     struct Bitmap far *pict;
@@ -790,7 +787,6 @@ static void near play_cell_anim(void)
     mn_pop(1);
     ma_release();
 }
-
 
 
 static void near play_ending(void)
@@ -844,7 +840,8 @@ static void near play_ending(void)
     (*g_videoOps.show)();
     g_racerRecordsArray[RACER_KING].overlayPic = 0x4c1;
     select_rival(RACER_KING);
-    cp_show_car(CAR_PULL_IN, g_opponentSpecIndex, g_selectedRacerPointer->bodyMods, g_selectedRacerPointer->sticker, 1, 0x98, 0, g_tirePics[g_carDraw.tireVariant]);
+    cp_show_car(CAR_PULL_IN, g_opponentSpecIndex, g_selectedRacerPointer->bodyMods, g_selectedRacerPointer->sticker, 1,
+                0x98, 0, g_tirePics[g_carDraw.tireVariant]);
     g_racerRecordsArray[RACER_KING].overlayPic = 0x4dc;
     pic24 = ar_bm(0x50, 0x2c, 0, ARENA_HIGH_BASE);
     pu_grab(0x78, 0x45, 0x50, 0x2c, pic24);
@@ -948,9 +945,11 @@ static void near play_ending(void)
     di_free_list(g_endPics);
 }
 
-struct Btn g_jailBars[7] = {{&g_barJailPixels, 0, 0, 16, 149, 40, 5}, {&g_barJailPixels, 0, 0, 16, 149, 96, 5}, {&g_barJailPixels, 0, 0, 16, 149, 152, 5}, {&g_barJailPixels, 0, 0, 16, 149, 208, 5}, {&g_barJailPixels, 0, 0, 16, 149, 264, 5}, {&g_edgeBmpJail, 0, 0, 32, 149, 0, 5}, {&g_edgeBmpJail, 32, 0, 32, 149, 288, 5}};
+struct Btn g_jailBars[7] = {{&g_barJailPixels, 0, 0, 16, 149, 40, 5},  {&g_barJailPixels, 0, 0, 16, 149, 96, 5},
+                            {&g_barJailPixels, 0, 0, 16, 149, 152, 5}, {&g_barJailPixels, 0, 0, 16, 149, 208, 5},
+                            {&g_barJailPixels, 0, 0, 16, 149, 264, 5}, {&g_edgeBmpJail, 0, 0, 32, 149, 0, 5},
+                            {&g_edgeBmpJail, 32, 0, 32, 149, 288, 5}};
 struct Pair g_jailGaps[6] = {{32, 8}, {56, 40}, {112, 40}, {168, 40}, {224, 40}, {280, 8}};
-
 
 
 void bo_visit(void)
@@ -1016,7 +1015,7 @@ void bo_visit(void)
             mn_pop(1);
             break;
         default:
-out:
+        out:
             mn_pop(1);
             break;
         case KR_BOBS_FIND_RIVAL:
@@ -1029,7 +1028,7 @@ out:
         case KR_BOBS_CHALLENGE:
             if (g_rivalHereState == 0) {
                 g_waitUntil = g_tick;
-race:
+            race:
                 rival_arrives(pick_rival(rival, 0), class, RIVAL_CHALLENGE);
                 class = CAR_DRIVE_IN;
                 mn_pop(1);
@@ -1037,7 +1036,7 @@ race:
                 g_statusLine.shown = 1;
                 sc_status_text(-1, "", 0);
                 sc_status_text(g_bannerX, "", g_wRivBanner);
-test:
+            test:
                 while ((sc_status_text(-1, "", 0), challenge(g_isKingState))) {
                     g_strOpp[0] = 0;
                     sc_status_text(g_bannerX, " ", g_wRivBanner);
@@ -1133,7 +1132,6 @@ test:
 }
 
 
-
 static void near set_jail_spots(enum HotKind id, char c)
 {
     struct Hot *h;
@@ -1149,7 +1147,6 @@ static void near set_jail_spots(enum HotKind id, char c)
     h[4].kind = id;
     g_keyMaps[KM_BOBS]->key = c;
 }
-
 
 
 void bo_jail(void)

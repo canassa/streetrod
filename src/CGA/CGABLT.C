@@ -66,8 +66,8 @@ void cb_compose(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap fa
     if (da_clip_blt(bm1, bm2, r, (struct Blt *)&out7)) {
         soff = bm1->pitch * out7.sy + out7.sx;
         doff = bm2->pitch * out7.dy + out7.dx;
-        mg_blit(db + doff, FP_SEG(sbz), (unsigned)sbz + soff, (unsigned)sak + soff, (unsigned)mb + doff,
-                bm1->pitch, out7.w, out7.h, bm3->pitch, bm2->pitch);
+        mg_blit(db + doff, FP_SEG(sbz), (unsigned)sbz + soff, (unsigned)sak + soff, (unsigned)mb + doff, bm1->pitch,
+                out7.w, out7.h, bm3->pitch, bm2->pitch);
     }
 }
 
@@ -83,7 +83,7 @@ void cb_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, in
     int h3;
     int pitch21;
     int rows0;
-    void (far *f5)(char far *, unsigned, int, int, int, int, int, int);
+    void(far * f5)(char far *, unsigned, int, int, int, int, int, int);
     struct Blt ol;
     int rows1;
     int ak;

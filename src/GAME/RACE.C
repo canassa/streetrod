@@ -72,7 +72,6 @@ static void near cop_appears(void);
 int g_gasSpotIds[6] = {2, 1, 4, 6, 5, 3};
 
 
-
 static int near find_gas_spot(int id)
 {
     int base, n, i;
@@ -83,7 +82,6 @@ static int near find_gas_spot(int id)
         if (g_hots[base + i].id == id)
             return base + i;
 }
-
 
 
 static void near sort_gas_spots(void)
@@ -104,7 +102,6 @@ int g_finishAheadPlayerState;
 float g_raceSecsElapsedValue;
 
 
-
 static void near clear_gas_spots(void)
 {
     int k;
@@ -117,7 +114,6 @@ static void near clear_gas_spots(void)
 }
 
 
-
 static void near place_gas_spot(int id, int x, int y, int w, int h)
 {
     struct Hot *p;
@@ -126,7 +122,6 @@ static void near place_gas_spot(int id, int x, int y, int w, int h)
     p->y2 = (p->y1 = y) + h - 1;
     p->kind = HOT_REGION;
 }
-
 
 
 static void near spots_idle(void)
@@ -140,7 +135,6 @@ static void near spots_idle(void)
 }
 
 
-
 static void near spots_cap(void)
 {
     clear_gas_spots();
@@ -148,7 +142,6 @@ static void near spots_cap(void)
     sort_gas_spots();
     g_fuelStationActions.capAvailable = 1;
 }
-
 
 
 static void near spots_nozzle(void)
@@ -160,7 +153,6 @@ static void near spots_nozzle(void)
     g_fuelStationActions.nozzleAvailable = 1;
     g_fuelStationActions.capAvailable = 1;
 }
-
 
 
 static void near spots_rag(void)
@@ -176,12 +168,10 @@ static void near spots_rag(void)
 }
 
 
-
 static void near spots_none(void)
 {
     clear_gas_spots();
 }
-
 
 
 static void near show_tank_cap(struct Dlg *d, int id)
@@ -207,7 +197,6 @@ static void near show_tank_cap(struct Dlg *d, int id)
     pu_show(work, g_featurePos.gasCapX - 16, g_featurePos.gasCapY - 5);
     ma_pop_high(2);
 }
-
 
 
 static void near leave_station(struct Dlg *d)
@@ -236,13 +225,12 @@ static void near leave_station(struct Dlg *d)
     }
     g_driver.currentCar->fuel = g_driver.currentCar->fuel > 0xaa ? 0xaa : g_driver.currentCar->fuel;
     cp_show_car(CAR_DRIVE_OUT, d->specIndex, d->bodyMods, (g_driver.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
-            g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
+                g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
     mn_pop(1);
     ma_clear();
     g_scene = SCENE_GARAGE;
     cr_go();
 }
-
 
 
 void ra_gas_station(void)
@@ -265,7 +253,7 @@ void ra_gas_station(void)
     dl.specIndex = g_driver.currentCar->specIndex;
     dl.bodyMods = gm_car_look(g_driver.currentCar);
     cp_show_car(CAR_PULL_IN, dl.specIndex, dl.bodyMods, (g_driver.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
-            g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
+                g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
     mu_suspend(0);
     label = pu_grab(0x50, 0xaa, 0x28, 0xc, 0);
     dl.bm1 = pu_grab(g_featurePos.gasCapX - 0x10, g_featurePos.gasCapY - 5, 0x18, 0xc, 0);
@@ -349,7 +337,7 @@ top:
                 sc_picture_at(0x473, 0x50, 0xaa, -1);
                 mn_pop(1);
                 spots_rag();
-        redraw:
+            redraw:
                 mn_push(KM_GAS_STATION);
                 goto top;
             } else {
@@ -427,7 +415,6 @@ top:
 }
 
 
-
 static int near replace_tires(void)
 {
     struct Node *tbl[142];
@@ -458,7 +445,6 @@ static int near replace_tires(void)
 int g_winMsgs[6] = {4973, 5015, 5073, 5043, 5099, 5130};
 struct Spot g_crashPics[3] = {{1264, 64, 84}, {1266, 208, 82}, {1265, 272, 123}};
 int g_statsDone = 0;
-
 
 
 static void near show_ticket(void)
@@ -516,7 +502,6 @@ static void near show_ticket(void)
 }
 
 
-
 static void near show_crash(void)
 {
     struct Bitmap far *a, far *b;
@@ -568,27 +553,29 @@ static void near show_crash(void)
 }
 
 
-
 void ra_finish_stats(void)
 {
     if (g_statsDone == 0) {
-        if ((g_roadOppPos.roadIndex - g_trackViewMotion.roadIndex) * 8 + g_roadOppPos.roadFraction <= g_trackViewMotion.roadFraction)
+        if ((g_roadOppPos.roadIndex - g_trackViewMotion.roadIndex) * 8 + g_roadOppPos.roadFraction <=
+            g_trackViewMotion.roadFraction)
             g_finishAheadPlayerState = 1;
         else
             g_finishAheadPlayerState = 0;
         g_finishMeanSpeedVal = g_mphAccumulator / g_driveEng.elapsedTicks;
         g_raceSecsElapsedValue = g_driveEng.elapsedTicks / 6.068827333333334;
-        g_coveredRacePct = (int)((g_trackViewMotion.roadIndex - 200) * 100.0 / (g_roadOppPos.roadIndex - 200)) > 99 ? 99 : (int)((g_trackViewMotion.roadIndex - 200) * 100.0 / (g_roadOppPos.roadIndex - 200));
+        g_coveredRacePct = (int)((g_trackViewMotion.roadIndex - 200) * 100.0 / (g_roadOppPos.roadIndex - 200)) > 99
+                               ? 99
+                               : (int)((g_trackViewMotion.roadIndex - 200) * 100.0 / (g_roadOppPos.roadIndex - 200));
         g_statsDone = 1;
     }
 }
 
 
-
 static void near show_race_stats(void)
 {
     if (g_resultWin) {
-        sprintf(g_raceResult1, "Your``winning``time %2.1f sec.,`avg. speed %2d mph", g_raceSecsElapsedValue, g_finishMeanSpeedVal);
+        sprintf(g_raceResult1, "Your``winning``time %2.1f sec.,`avg. speed %2d mph", g_raceSecsElapsedValue,
+                g_finishMeanSpeedVal);
         strcpy(g_raceResult2, "Congratulations !");
     } else {
         sprintf(g_raceResult1, "In %2.1f sec you covered only %2d%%", g_raceSecsElapsedValue, g_coveredRacePct);
@@ -597,7 +584,6 @@ static void near show_race_stats(void)
     mn_push(KM_RACE_STATS);
     mn_pop(1);
 }
-
 
 
 static void near blow_engine(int n)
@@ -619,7 +605,6 @@ static void near blow_engine(int n)
     so_noise();
     gm_popup(-n, -1, 0x49);
 }
-
 
 
 static void near drop_transmission(int n)
@@ -647,7 +632,6 @@ int g_contactFrames = 0;
 int g_brakeTicks = 0;
 
 
-
 int near ra_outcome(void)
 {
     int units;
@@ -669,7 +653,9 @@ int near ra_outcome(void)
     v = g_raceWagerTerms.amount;
     engine = g_driveEng.stopFlags & STOP_ENGINE;
     opt = g_driveEng.stopFlags & STOP_TRANSMISSION;
-    stop = g_driveEng.stopFlags == (STOP_LOST | STOP_ENGINE) || g_driveEng.stopFlags == (STOP_LOST | STOP_TRANSMISSION) || g_driveEng.stopFlags == (STOP_LOST | STOP_ENGINE | STOP_TRANSMISSION);
+    stop = g_driveEng.stopFlags == (STOP_LOST | STOP_ENGINE) ||
+           g_driveEng.stopFlags == (STOP_LOST | STOP_TRANSMISSION) ||
+           g_driveEng.stopFlags == (STOP_LOST | STOP_ENGINE | STOP_TRANSMISSION);
     if (g_driver.currentCar->transmission->wear > 9900)
         g_driver.currentCar->transmission->wear = 9900;
     if (g_driver.currentCar->rack.parts[0]->wear > 9900)
@@ -702,9 +688,12 @@ int near ra_outcome(void)
             found = gm_make_car(g_opponentSpecIndex, g_oppSpecPointer->price, 0);
             found->tires->wear = rn_int(500);
             found->appearance = ((g_selectedRacerPointer->sticker & 0x1f) << 8) | (found->appearance & 0xe0ff);
-            found->appearance = (((g_selectedRacerPointer->bodyMods & 4) != 0 & 1) << 13) | (found->appearance & 0xdfff);
-            found->appearance = (((g_selectedRacerPointer->bodyMods & 2) != 0 & 1) << 14) | (found->appearance & 0xbfff);
-            found->appearance = (((g_selectedRacerPointer->bodyMods & 1) != 0 & 1) << 15) | (found->appearance & 0x7fff);
+            found->appearance =
+                (((g_selectedRacerPointer->bodyMods & 4) != 0 & 1) << 13) | (found->appearance & 0xdfff);
+            found->appearance =
+                (((g_selectedRacerPointer->bodyMods & 2) != 0 & 1) << 14) | (found->appearance & 0xbfff);
+            found->appearance =
+                (((g_selectedRacerPointer->bodyMods & 1) != 0 & 1) << 15) | (found->appearance & 0x7fff);
             found->paintScheme = g_selectedRacerPointer->paintScheme;
             if (found->rank > g_driver.currentCar->rank) {
                 g_driver.currentCar->next = g_driver.otherCars->next;
@@ -729,7 +718,7 @@ int near ra_outcome(void)
                 }
             }
         }
-done:
+    done:
         mn_pop(1);
         if (g_driveEng.stopFlags & STOP_TIRES)
             if ((i = replace_tires()) != 0)
@@ -760,7 +749,7 @@ done:
         sc_add_money(-g_driver.money);
         sc_status_text(-1, " ", SCREEN_WIDTH - g_statusLine.messageX);
         return 4;
-pay:
+    pay:
         sc_add_money(-i);
         cost = g_waitUntil;
         gm_pause(g_msgTicks);
@@ -784,7 +773,7 @@ pay:
             mn_pop(1);
             if (kind != BET_CAR)
                 return 3;
-ret2:
+        ret2:
             return 2;
         } else if (stop) {
             cu_ctl(CURSOR_SHOW_NOW);
@@ -795,7 +784,7 @@ ret2:
                 drop_transmission(kind == BET_CAR ? 0x1678 : 0x1608);
                 goto finishstop;
             }
-finishstop:
+        finishstop:
             goto fin;
         } else {
             show_crash();
@@ -878,7 +867,7 @@ finishstop:
                 }
             }
         }
-fin:
+    fin:
         mn_pop(1);
         goto ret2;
     }
@@ -890,7 +879,6 @@ struct RoadEdges g_edgesRoad;
 int g_idxAtCop;
 enum CopPhase g_pursuitPhaseIndex;
 int g_shownShiftPosition;
-
 
 
 void near ra_reset_eng(struct Eng *p)
@@ -948,7 +936,6 @@ nx:
 }
 
 
-
 static void near init_rival_eng(void)
 {
     struct Range *r;
@@ -977,7 +964,6 @@ static void near init_rival_eng(void)
 }
 
 
-
 void near ra_run(void)
 {
     int one;
@@ -1004,14 +990,18 @@ void near ra_run(void)
     if (g_trackViewMotion.roadIndex > 200) {
         if (rn_int(3) > 0) {
             if (g_driver.currentCar->timing > 0)
-                g_driver.currentCar->timing = g_driver.currentCar->timing < rn_int(4) ? rn_int(4) : g_driver.currentCar->timing;
+                g_driver.currentCar->timing =
+                    g_driver.currentCar->timing < rn_int(4) ? rn_int(4) : g_driver.currentCar->timing;
             else if (g_driver.currentCar->timing < 0)
-                g_driver.currentCar->timing = -rn_int(8) < g_driver.currentCar->timing ? -rn_int(8) : g_driver.currentCar->timing;
+                g_driver.currentCar->timing =
+                    -rn_int(8) < g_driver.currentCar->timing ? -rn_int(8) : g_driver.currentCar->timing;
             else
                 g_driver.currentCar->timing = rn_int(8) - 4;
         }
         slot = g_driver.currentCar->tires;
-        slot->wear += (g_parts[slot->idx].variant == TRANS_AUTOMATIC ? (g_driver.raceType == RACE_ROAD ? 700 : 300) : (g_driver.raceType == RACE_ROAD ? 400 : 200)) + rn_int(300);
+        slot->wear += (g_parts[slot->idx].variant == TRANS_AUTOMATIC ? (g_driver.raceType == RACE_ROAD ? 700 : 300)
+                                                                     : (g_driver.raceType == RACE_ROAD ? 400 : 200)) +
+                      rn_int(300);
         if (slot->wear > 10000)
             slot->wear = 10000;
     }
@@ -1024,7 +1014,7 @@ static void near fit_gear(int rpm, struct Eng *p)
 {
     struct Range *r;
 
-    for (p->gearIndex = 1; ; p->gearIndex++) {
+    for (p->gearIndex = 1;; p->gearIndex++) {
         p->rpmPerSpeed = p->f34[p->gearIndex];
         p->rpm = p->rpmPerSpeed * rpm;
         if ((r = &p->gear[p->gearIndex].bands[1])->maxRpm > p->rpm) {
@@ -1042,7 +1032,6 @@ static void near fit_gear(int rpm, struct Eng *p)
     p->accelStep = r->accelStep;
     p->speed = p->rpm / p->rpmPerSpeed;
 }
-
 
 
 static void near rival_accelerate(void)
@@ -1065,7 +1054,9 @@ static void near rival_accelerate(void)
         if (g_terrain2[g_roadOppPos.roadIndex] != g_terrain2[g_roadOppPos.roadIndex + 1]) {
             if (g_rivalCurveBrake == 0) {
                 g_rivalCurveBrake = 1;
-                vl = g_rivalPace.topSpeed - (g_roadOppPos.roadIndex > g_trackViewMotion.roadIndex ? g_selectedRacerPointer->f2 : g_selectedRacerPointer->f2 >> 1);
+                vl = g_rivalPace.topSpeed - (g_roadOppPos.roadIndex > g_trackViewMotion.roadIndex
+                                                 ? g_selectedRacerPointer->f2
+                                                 : g_selectedRacerPointer->f2 >> 1);
                 if (vl < g_oppEngState.speed)
                     fit_gear(vl, &g_oppEngState);
             }
@@ -1091,7 +1082,8 @@ static void near rival_accelerate(void)
                 vl = g_rivalPace.slowSpeed;
             goto chk;
         }
-        if (g_pursuitPhaseIndex >= COP_APPROACHING && g_driveEng.speed > 50 && g_oppEngState.speed > g_driveEng.speed + 32)
+        if (g_pursuitPhaseIndex >= COP_APPROACHING && g_driveEng.speed > 50 &&
+            g_oppEngState.speed > g_driveEng.speed + 32)
             fit_gear(g_driveEng.speed + 32, &g_oppEngState);
         else {
             g_oppEngState.rpm += g_oppEngState.accelStep;
@@ -1099,18 +1091,23 @@ static void near rival_accelerate(void)
                 g_oppEngState.rpm = g_shiftPoint;
             if (g_oppEngState.rpm > g_oppEngState.maxRpm) {
                 g_oppEngState.rpmBand++;
-                g_oppEngState.maxRpm = (r = &g_oppEngState.gear[g_oppEngState.gearIndex].bands[g_oppEngState.rpmBand])->maxRpm;
+                g_oppEngState.maxRpm =
+                    (r = &g_oppEngState.gear[g_oppEngState.gearIndex].bands[g_oppEngState.rpmBand])->maxRpm;
                 g_oppEngState.accelStep = r->accelStep;
             }
             if (g_oppEngState.gearIndex < g_oppEngState.gearCount &&
-                ((g_oppEngState.autoSelector && g_oppEngState.rpm >= g_oppEngState.autoShiftRpm) || g_oppEngState.rpm >= g_shiftPoint)) {
+                ((g_oppEngState.autoSelector && g_oppEngState.rpm >= g_oppEngState.autoShiftRpm) ||
+                 g_oppEngState.rpm >= g_shiftPoint)) {
                 g_oppEngState.gearIndex++;
                 if (g_oppEngState.autoSelector == SELECTOR_MANUAL)
-                    g_shiftPoint = g_oppEngState.gearIndex < g_oppEngState.gearCount ? g_oppEngState.shiftRpm - 100 * g_shiftPenalty
-                           : g_processorSpeedRating < 4 && r_vid.mode != VID_TANDY ? 0x14b4 : 0x1518;
+                    g_shiftPoint = g_oppEngState.gearIndex < g_oppEngState.gearCount
+                                       ? g_oppEngState.shiftRpm - 100 * g_shiftPenalty
+                                   : g_processorSpeedRating < 4 && r_vid.mode != VID_TANDY ? 0x14b4
+                                                                                           : 0x1518;
                 g_oppEngState.rpmPerSpeed = g_oppEngState.f34[g_oppEngState.gearIndex];
                 g_oppEngState.rpm = g_oppEngState.speed * g_oppEngState.rpmPerSpeed;
-                if ((r = &g_oppEngState.gear[g_oppEngState.gearIndex].bands[g_rpmBand = 1])->maxRpm <= g_oppEngState.rpm) {
+                if ((r = &g_oppEngState.gear[g_oppEngState.gearIndex].bands[g_rpmBand = 1])->maxRpm <=
+                    g_oppEngState.rpm) {
                     g_rpmBand = 2;
                     r++;
                 } else if (r->minRpm > g_oppEngState.rpm) {
@@ -1133,7 +1130,6 @@ static void near rival_accelerate(void)
             g_oppEngState.speed = 0;
     }
 }
-
 
 
 int ra_speed_step(int rpm)
@@ -1195,10 +1191,10 @@ struct Bitmap far *g_spritesOpp[13];
 int g_edgeXR;
 
 
-
 static void near move_player(void)
 {
-    g_trackViewMotion.roadFraction += g_trackViewMotion.distanceStep = g_driveEng.speed ? ra_speed_step(g_driveEng.speed) : 0;
+    g_trackViewMotion.roadFraction += g_trackViewMotion.distanceStep =
+        g_driveEng.speed ? ra_speed_step(g_driveEng.speed) : 0;
     if (g_trackViewMotion.roadFraction >= 8)
         rd_advance();
     if (g_trackViewMotion.roadIndex >= g_finishLineIndex && g_statsDone && g_driveEng.speed <= 0) {
@@ -1209,7 +1205,6 @@ static void near move_player(void)
         sy_stop_drive();
     }
 }
-
 
 
 static void near move_rival(void)
@@ -1254,7 +1249,9 @@ static void near move_rival(void)
                 g_rivalLeft = 0;
             }
         } else
-            g_targetLane = flag ? (g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1 : g_rivalLeft ? ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) - 200 : ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) + 300;
+            g_targetLane = flag          ? (g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1
+                           : g_rivalLeft ? ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) - 200
+                                         : ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) + 300;
     } else if ((g_processorSpeedRating < 4 ? 4 : 2) < dist) {
         if (slope) {
             if (slope < 0) {
@@ -1298,7 +1295,8 @@ static void near move_rival(void)
                     }
                 }
             } else if (g_picOpponent == 0 || g_picOpponent == 2) {
-                g_targetLane = g_trackViewMotion.lateralX > g_roadOppPos.lateralX ? g_trackViewMotion.lateralX - 330 : g_trackViewMotion.lateralX + 530;
+                g_targetLane = g_trackViewMotion.lateralX > g_roadOppPos.lateralX ? g_trackViewMotion.lateralX - 330
+                                                                                  : g_trackViewMotion.lateralX + 530;
             }
         } else if (g_picOpponent == 0)
             g_targetLane = g_trackViewMotion.lateralX - 330;
@@ -1313,7 +1311,9 @@ static void near move_rival(void)
                 g_rivalLeft = 0;
             }
         } else
-            g_targetLane = flag ? (g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1 : g_rivalLeft ? ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) - 200 : ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) + 300;
+            g_targetLane = flag          ? (g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1
+                           : g_rivalLeft ? ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) - 200
+                                         : ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) + 300;
     } else {
         g_targetLane = (g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1;
         g_swapArmedRivalValue = 1;
@@ -1328,7 +1328,6 @@ static void near move_rival(void)
             g_roadOppPos.lateralX += dist;
     }
 }
-
 
 
 static void near cop_appears(void)
@@ -1351,7 +1350,6 @@ static void near cop_appears(void)
 
 int g_carHit;
 int g_carCollisionRange;
-
 
 
 void ra_tick(void)
@@ -1426,7 +1424,8 @@ void ra_tick(void)
     if (g_picOpponent == 0 && g_trackViewMotion.distanceStep > 1) {
         g_contactFrames++;
         if (g_driveEng.steeringInput < 0) {
-            if (g_terrain2[g_trackViewMotion.roadIndex] - g_terrain2[g_trackViewMotion.roadIndex + 1] >= 0 || ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) >= g_trackViewMotion.lateralX) {
+            if (g_terrain2[g_trackViewMotion.roadIndex] - g_terrain2[g_trackViewMotion.roadIndex + 1] >= 0 ||
+                ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) >= g_trackViewMotion.lateralX) {
                 so_bump();
                 if (g_bumpAlternate == 0) {
                     g_roadOppPos.roadIndex--;

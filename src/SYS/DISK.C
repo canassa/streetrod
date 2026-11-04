@@ -28,9 +28,17 @@
 #define PIC_MARK 0xbc
 #define NOT_IN_VRAM 0xff
 
-enum PictureLibrary { LIBRARY_FIRST = 1, LIBRARY_SECOND = 2 };
+enum PictureLibrary {
+    LIBRARY_FIRST = 1,
+    LIBRARY_SECOND = 2
+};
 
-enum LoadResult { LOAD_NO_MEMORY, LOAD_CACHED, LOAD_READ, LOAD_READ_VRAM };
+enum LoadResult {
+    LOAD_NO_MEMORY,
+    LOAD_CACHED,
+    LOAD_READ,
+    LOAD_READ_VRAM
+};
 
 static int g_initialDrive;
 static struct PicLibSelection g_picLib;
@@ -58,7 +66,19 @@ static void near unscramble_hall(void);
 static void near scramble_hall(void);
 
 char *g_dataFileName = "hot_data";
-char *g_dataBlocks[13] = {(char *)g_racerRecordsArray, (char *)g_carData, (char *)g_models, (char *)g_layoutAutoSprArray, (char *)g_bodyRects, (char *)g_pointsModelService, g_desc, (char *)&g_usedCarAdFirst, g_txt, (char *)g_carRatingsTable, (char *)g_rivalStakeToleranceTable, (char *)g_acceptProbability, (char *)g_imageDecalLayout};
+char *g_dataBlocks[13] = {(char *)g_racerRecordsArray,
+                          (char *)g_carData,
+                          (char *)g_models,
+                          (char *)g_layoutAutoSprArray,
+                          (char *)g_bodyRects,
+                          (char *)g_pointsModelService,
+                          g_desc,
+                          (char *)&g_usedCarAdFirst,
+                          g_txt,
+                          (char *)g_carRatingsTable,
+                          (char *)g_rivalStakeToleranceTable,
+                          (char *)g_acceptProbability,
+                          (char *)g_imageDecalLayout};
 unsigned g_dataSizes[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};
 int g_lib1Handle = 0;
 int g_lib2Handle = 0;
@@ -133,7 +153,9 @@ static void near open_lib(int n)
     if (*g_picLib.handle == 0) {
         _dos_close(*g_picLib.otherHandle);
         *g_picLib.otherHandle = 0;
-        g_msgInsertDisk[12] = kind == LIBRARY_FIRST ? '1' : (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3' : '2';
+        g_msgInsertDisk[12] = kind == LIBRARY_FIRST                                ? '1'
+                              : (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3'
+                                                                                   : '2';
         g_msgInsertDisk[25] = *g_picLib.path;
         tries = 0;
         while (_dos_open(g_picLib.path, O_RDONLY, g_picLib.handle)) {
@@ -141,7 +163,8 @@ static void near open_lib(int n)
                 sy_exit();
             sc_wait_msg(g_msgInsertDisk);
         }
-        if (_dos_read(*g_picLib.handle, (void far *)g_picLib.count, 2, &got) || got != 2 || g_lib1Count + g_countLibBmB != 0x115) {
+        if (_dos_read(*g_picLib.handle, (void far *)g_picLib.count, 2, &got) || got != 2 ||
+            g_lib1Count + g_countLibBmB != 0x115) {
             sc_wait_msg(g_msgBadFormat);
             sy_exit();
         }
@@ -246,7 +269,9 @@ static enum LoadResult near load_pic(int n, int load, char far *dst)
             do {
                 if (++retries > 3)
                     sy_exit();
-                g_msgInsertDisk[12] = *g_picLib.handle == g_lib1Handle ? 1 : (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3' : '2';
+                g_msgInsertDisk[12] = *g_picLib.handle == g_lib1Handle                     ? 1
+                                      : (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? '3'
+                                                                                           : '2';
                 g_msgInsertDisk[25] = *g_picLib.path;
                 sc_wait_msg(g_msgInsertDisk);
                 _dos_close(*g_picLib.handle);
@@ -268,7 +293,7 @@ bad:
 
 void di_free_pic(int n)
 {
-    char far * far *pp;
+    char far *far *pp;
 
     n = pic_index(n);
     if (*(pp = &g_slot[n].ptr.p)) {
@@ -459,7 +484,8 @@ void di_open_libs(int disks, enum VideoChoice mode)
         }
     }
     if (g_lib2Handle) {
-        if (_dos_read(g_lib2Handle, (void far *)&g_countLibBmB, 2, &err) || err != 2 || g_lib1Count + g_countLibBmB != 0x115) {
+        if (_dos_read(g_lib2Handle, (void far *)&g_countLibBmB, 2, &err) || err != 2 ||
+            g_lib1Count + g_countLibBmB != 0x115) {
             sc_wait_msg(g_msgBadFormat);
             sy_exit();
         }
@@ -612,7 +638,7 @@ void di_save_hall(void)
         }
     }
     if (_dos_write(fd, (void far *)&g_nScore, 2, &got) || got != 2) {
-bad:
+    bad:
         sc_wait_msg(g_msgWriteError);
         unlink(g_hallFileName);
         sc_wait_msg(g_msgWriteError);
