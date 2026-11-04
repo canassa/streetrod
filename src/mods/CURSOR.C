@@ -54,7 +54,7 @@ void cursor_init(void)
             (0x18 >> r_vid.shift) << r_vid.shift, 0x10, r_vid.mode == -2 ? -2 : -1);
     memset(&g_cursor2.clip, 0, 12);
     g_cursor2.state = 0;
-    pict = F_15BBE(2, 2);
+    pict = F_15BBE(2, ARENA_HIGH_STACK);
     if (pict == 0)
         mem_out_of_memory();
     blt.w = 0x18;
@@ -62,7 +62,7 @@ void cursor_init(void)
     blt.sx = blt.sy = blt.dx = blt.dy = 0;
     (*b_78a2)(pict, img, &blt, 3);
     for (step = 1; step <= ~r_vid.mask; step++) {
-        tmp = F_1934E(0x18, 0x40, 1, 1);
+        tmp = F_1934E(0x18, 0x40, 1, ARENA_LOW_STACK);
         bitmap_shift_right(pict, step, tmp);
         blt.dx += 0x18;
         (*b_78a2)(tmp, img, &blt, 3);
@@ -109,9 +109,9 @@ void cursor_ctl(int mode)
         g_4744 = g_cursorPairs[mode].b;
         g_cursor2.off = cursor_shape_off(g_cursor2.n);
         cursor_draw(a, b);
-    } else if (mode >= -2) {
+    } else if (mode >= CURSOR_SHOW_NOW) {
         if (++g_4733 > 0) {
-            g_cursor2.state = (mode == -1) + 1;
+            g_cursor2.state = (mode == CURSOR_SHOW) + 1;
             if (g_cursor2.r.x2 >= 0)
                 cursor_draw(g_cursor2.r.x1, g_cursor2.r.y1);
             else
@@ -120,7 +120,7 @@ void cursor_ctl(int mode)
         }
     } else {
         if (--g_4733 >= 0) {
-            g_cursor2.state = -((mode == -3) - 0xff);
+            g_cursor2.state = -((mode == CURSOR_HIDE) - 0xff);
             if (g_cursor2.r.x2 >= 0)
                 cursor_draw(g_cursor2.r.x1, g_cursor2.r.y1);
             else

@@ -69,35 +69,35 @@ static int near maybe_walker(int mode, int arg, int pct1, int pct2)
 
     r = 0;
     switch (mode) {
-    case 0:
+    case WALKER_ENTER:
         if (g_walkState != 0)
             break;
         if (g_passCount < 3 || random_int(100) >= pct1)
             break;
         r = 1;
-        cursor_ctl(-4);
-        walker_walk(0, arg);
+        cursor_ctl(CURSOR_HIDE_NOW);
+        walker_walk(WALKER_ENTER, arg);
         g_walkState = 1;
         if (random_int(100) < pct2) {
             F_10AFD(100);
-            walker_walk(1, arg);
+            walker_walk(WALKER_LEAVE, arg);
             g_walkState = 0;
             g_ordered = 0;
         }
         break;
-    case 1:
+    case WALKER_LEAVE:
         if (g_walkState != 1 || random_int(100) >= pct1)
             break;
         r = 1;
-        cursor_ctl(-4);
-        walker_walk(1, arg);
+        cursor_ctl(CURSOR_HIDE_NOW);
+        walker_walk(WALKER_LEAVE, arg);
         g_walkState = 0;
         g_ordered = 0;
         g_passCount = 0;
         break;
     }
     if (r)
-        cursor_ctl(-2);
+        cursor_ctl(CURSOR_SHOW_NOW);
     return r;
 }
 
@@ -138,8 +138,8 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
     if (mode == 4)
         g_walkState = -1;
     g_rivalHereState = mode == 2;
-    if (mode == 1 && !maybe_walker(0, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, 10))
-        maybe_walker(1, g_rivalHereState, 20, 0);
+    if (mode == 1 && !maybe_walker(WALKER_ENTER, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, 10))
+        maybe_walker(WALKER_LEAVE, g_rivalHereState, 20, 0);
     if (g7f32s[n = strlen(g7f32s) - 1] == '.')
         g7f32s[n] = 0;
     for (;;) {
@@ -169,8 +169,8 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
         g_walkState = 0;
     g_rivalHereState = (mode == 2) ? 0 : 1;
     if (!(x && g_rivalHereState))
-        if (!maybe_walker(0, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, g_rivalHereState == 0 ? 8 : 0))
-            maybe_walker(1, g_rivalHereState, 40, 0);
+        if (!maybe_walker(WALKER_ENTER, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, g_rivalHereState == 0 ? 8 : 0))
+            maybe_walker(WALKER_LEAVE, g_rivalHereState, 40, 0);
 }
 
 int bn7648;
@@ -515,7 +515,7 @@ static int near challenge(int arg)
         game_message(0x1761);
         return 0;
     }
-    pict = menu_grab(0x12, &x, &sy, 1);
+    pict = menu_grab(0x12, &x, &sy, ARENA_LOW_STACK);
     menu_push(0x16);
     g_waitUntil = g_tick + 800;
     while ((ch = sys_wait_input(3000)) == 0)
@@ -742,7 +742,7 @@ static void near play_cell_anim(void)
     int i, key;
 
     marks_release();
-    pict = F_15BBE(0x4c9, 2);
+    pict = F_15BBE(0x4c9, ARENA_HIGH_STACK);
     i = 0;
     menu_push(0x18);
     g_waitUntil = g_tick + 10;
@@ -802,7 +802,7 @@ static void near play_ending(void)
     int savedl;
 
     flag8 = 0;
-    cursor_ctl(-4);
+    cursor_ctl(CURSOR_HIDE_NOW);
     screen_status_init(0xbe);
     F_119B8(9, 8, 0x14, 2);
     r_vid.f16 = 0;
@@ -815,7 +815,7 @@ static void near play_ending(void)
     game_pause(0x2ee);
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
     g_scene = 1;
-    pic15 = F_1934E(0x50, 0x2c, 0, 3);
+    pic15 = F_1934E(0x50, 0x2c, 0, ARENA_HIGH_BASE);
     popup_grab(0x78, 0x45, 0x50, 0x2c, pic15);
     disk_free_list(g_gamePics);
     g_picsFreed = 1;
@@ -828,10 +828,10 @@ static void near play_ending(void)
     select_rival(0x15);
     F_181C8(4, bn7648, g7d84o->fe, g7d84o->ff, 1, 0x98, 0, g_5030[m_8272.m827e]);
     av7ff8[21].f4 = 0x4dc;
-    pic24 = F_1934E(0x50, 0x2c, 0, 3);
+    pic24 = F_1934E(0x50, 0x2c, 0, ARENA_HIGH_BASE);
     popup_grab(0x78, 0x45, 0x50, 0x2c, pic24);
-    pic3 = F_15BBE(6, 1);
-    pic4 = F_1934E(0x50, 0x2c, 0, 3);
+    pic3 = F_15BBE(6, ARENA_LOW_STACK);
+    pic4 = F_1934E(0x50, 0x2c, 0, ARENA_HIGH_BASE);
     p3 = g_endCellsA;
     blt.w = g_endCellsA[0].w;
     blt.h = g_endCellsA[0].h;
@@ -875,7 +875,7 @@ static void near play_ending(void)
     }
     marks_clear();
     if (flag8 == 0) {
-        pic58 = F_15BBE(7, 1);
+        pic58 = F_15BBE(7, ARENA_LOW_STACK);
         cntz = 9;
         if (r_vid.mode == -6) {
             arena_shrink(10000);
@@ -888,7 +888,7 @@ static void near play_ending(void)
             w8 = max((int)p2m->w + (int)p2m->x, v32 + v2a) - (minx = min((int)p2m->x, v32));
             h8 = max((int)p2m->h + (int)p2m->y, v38l + v2a);
             h8 -= miny = min((int)p2m->y, v38l);
-            pic6m = F_1934E(w8, h8, 0, 2);
+            pic6m = F_1934E(w8, h8, 0, ARENA_HIGH_STACK);
             blt2k.w = w8;
             blt2k.h = h8;
             blt2k.sx = minx;
@@ -960,7 +960,7 @@ void bobs_visit(void)
     F_16381(0);
     if (random_int(100) < 25)
         play_cell_anim();
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
     g_rivalHereState = 0;
     g_walkState = -1;
     g_ordered = 0;
@@ -1048,7 +1048,7 @@ test:
                         F_16381(0);
                         menu_pop(1);
                         bobs_jail();
-                        cursor_ctl(-4);
+                        cursor_ctl(CURSOR_HIDE_NOW);
                         g_end |= 4;
                         return;
                     }
@@ -1149,13 +1149,13 @@ void bobs_jail(void)
     mode = 4;
     flag = 0;
     r_vid.f16 = 0;
-    cursor_ctl(-3);
+    cursor_ctl(CURSOR_HIDE);
     marks_clear();
-    x_82b8 = F_15BBE(0x4e7, 1);
-    c_6e64 = F_15BBE(0x4e9, 1);
+    x_82b8 = F_15BBE(0x4e7, ARENA_LOW_STACK);
+    c_6e64 = F_15BBE(0x4e9, ARENA_LOW_STACK);
     F_118D4(0x445, -1);
     video_bobs_pal();
-    pict = F_15BBE(0x4e8, 2);
+    pict = F_15BBE(0x4e8, ARENA_HIGH_STACK);
     blt.w = pict->width;
     blt.h = 5;
     blt.dx = blt.dy = blt.sx = blt.sy = 0;
@@ -1182,7 +1182,7 @@ void bobs_jail(void)
     g_walkState = -1;
     g_ordered = 0;
     cursor_ctl(1);
-    cursor_ctl(-1);
+    cursor_ctl(CURSOR_SHOW);
     g_scene = 6;
     set_jail_spots(14, 16);
     for (;;) {
@@ -1203,10 +1203,10 @@ void bobs_jail(void)
             return;
         case 1000:
             if (random_int(100) < 6) {
-                cursor_ctl(-4);
+                cursor_ctl(CURSOR_HIDE_NOW);
                 F_11421(-1, "", 0);
                 play_cell_anim();
-                cursor_ctl(-2);
+                cursor_ctl(CURSOR_SHOW_NOW);
             }
             rival_arrives(pick_rival(who, 1), mode, 1);
             mode = 1;

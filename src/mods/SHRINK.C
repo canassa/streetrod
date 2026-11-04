@@ -58,7 +58,7 @@ static struct Bitmap far * near alloc_shrunk(struct Bitmap far *p, unsigned char
             rows6++;
         m2 >>= 1;
     }
-    q = F_1934E(bytes, rows6, p->alt.p != 0, 1);
+    q = F_1934E(bytes, rows6, p->alt.p != 0, ARENA_LOW_STACK);
     dash_fmemset(q->bits.p, 0, q->planesize);
     dash_fmemset(q->alt.p, 0xff, q->planesize / (unsigned)r_vid.planes);
     return q;

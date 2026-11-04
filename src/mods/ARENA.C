@@ -54,23 +54,23 @@ char far *arena_alloc(int size, int mode)
 
     p = g_arenaBase;
     switch (mode) {
-    case 0:
+    case ARENA_LOW_BASE:
         p += o_8f00;
         o_8f00 += size;
         c_8b02[0] = o_8f00;
         break;
-    case 1:
+    case ARENA_LOW_STACK:
         p += c_8b02[g7b14o];
         c_8b02[g7b14o + 1] = size + c_8b02[g7b14o];
         g7b14o++;
         break;
-    case 2:
+    case ARENA_HIGH_STACK:
         c_8b02[g7d80q] -= size;
         p += c_8b02[g7d80q];
         c_8b02[g7d80q - 1] = c_8b02[g7d80q] - 1;
         g7d80q--;
         break;
-    case 3:
+    case ARENA_HIGH_BASE:
         bl78de -= size;
         p += bl78de--;
         c_8b02[60] = bl78de;

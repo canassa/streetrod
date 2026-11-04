@@ -4,6 +4,12 @@
 #define MAIN_H
 #include "STRUCTS.H"
 
+#define VIDEO_CHOICE_CGA 1
+#define VIDEO_CHOICE_EGA 2
+#define VIDEO_CHOICE_VGA 3
+#define VIDEO_CHOICE_HERCULES 4
+#define VIDEO_CHOICE_TANDY 5
+
 extern int g_hercules;                                  /* DS:0042 */
 extern int g_sysHooked;                                 /* DS:0044 */
 extern int g_0046;                                      /* DS:0046 */

@@ -85,6 +85,7 @@ def generate():
     problems: a name declared by two headers, or by a header whose file does not define it."""
     from . import source
     decls = {}
+    header_macros = set()
     for kind in ('globals', 'fardata', 'functions'):
         for d in source.headers()[kind]:
             decls.setdefault(d['name'], []).append(d['header'])
@@ -92,6 +93,7 @@ def generate():
         macros = re.findall(r'^#[ \t]*define[ \t]+([A-Za-z_]\w*)(?:\([^\n)]*\))?[ \t]+[^\s]',
                             _strip(path.read_text(encoding='latin-1')), re.M)
         for name in macros:
+            header_macros.add(name)
             decls.setdefault(name, []).append(path.stem.upper())
     files = owners_layout()
     stems = {stem for stem, _ in files}
@@ -106,7 +108,7 @@ def generate():
     for stem, srcs in files:
         mine = {n for n, h in owner.items() if h == stem}
         defined = set().union(*(_defines(p, mine) for p in srcs))
-        for n in sorted(mine - defined):
+        for n in sorted(mine - defined - header_macros):
             problems.append(f'{n}: declared in {stem}.H, but {", ".join(p.name for p in srcs)} does not define it')
     for stem, srcs in files:
         for p in srcs:

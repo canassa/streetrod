@@ -217,7 +217,7 @@ static int near load_pic(int n, int load, char far *dst)
     if (sl->ptr.p == 0) {
         if (load) {
             fp = mem_vram_alloc(ent->f1c, &pool);
-            sl->ptr.p = fp == 0 ? (char far *)0 : arena_alloc(ent->f1c + 1, 2);
+            sl->ptr.p = fp == 0 ? (char far *)0 : arena_alloc(ent->f1c + 1, ARENA_HIGH_STACK);
             sl->f1e = pool;
         } else {
             sl->ptr.p = dst ? dst : mem_alloc(ent->f1c + 1, 0);
@@ -303,7 +303,7 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
     struct Bitmap far *pic;
     struct Slot far *sl;
 
-    cursor_ctl(-4);
+    cursor_ctl(CURSOR_HIDE_NOW);
     res = load_pic(id, 0, g_imageBufferPointer);
     cur = sl = &g_slot[pic_index(id)];
     if (g_picNewHeader)
@@ -343,7 +343,7 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
     }
     if (res == 2)
         sl->ptr.p = 0;
-    cursor_ctl(-2);
+    cursor_ctl(CURSOR_SHOW_NOW);
     return pic;
 }
 

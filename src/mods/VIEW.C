@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "STRUCTS.H"
 #include "VIEW.H"
+#include "ARENA.H"
 #include "BOBS.H"
 #include "CRUISE.H"
 #include "DASH.H"
@@ -242,7 +243,7 @@ void view_load(void)
     int idx;
 
     marks_clear();
-    bm1 = F_15BBE(0x3ed, 2);
+    bm1 = F_15BBE(0x3ed, ARENA_HIGH_STACK);
     pkt1.w = bm1->width;
     pkt1.h = bm1->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
@@ -250,7 +251,7 @@ void view_load(void)
     (*b_78a2)(bm1, g8188w, &pkt1, 1);
     F_19438(1);
     sel = *(int *)&bw8aca == 0 ? g_scene : 0;
-    bm24 = F_15BBE(g_5e62[sel], 2);
+    bm24 = F_15BBE(g_5e62[sel], ARENA_HIGH_STACK);
     pkt1.w = bm24->width;
     pkt1.h = bm24->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
@@ -258,14 +259,14 @@ void view_load(void)
     (*b_78a2)(bm24, g82b4s, &pkt1, 1);
     F_19438(1);
     if (*(int *)&bw8aca == 0) {
-        bm24 = F_15BBE(0x4ed, 2);
+        bm24 = F_15BBE(0x4ed, ARENA_HIGH_STACK);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
         pkt1.dy = (r_vid.mode == -2 ? 0x63 : 0) + 1;
         (*b_78a2)(bm24, r_vid.mode == -2 ? bm7678 : g82b4s, &pkt1, 1);
         F_19438(1);
-        bm24 = F_15BBE(0x4ee, 2);
+        bm24 = F_15BBE(0x4ee, ARENA_HIGH_STACK);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
@@ -273,9 +274,9 @@ void view_load(void)
         (*b_78a2)(bm24, r_vid.mode == -2 ? bm7678 : g82b4s, &pkt1, 1);
         F_19438(1);
     }
-    ar767eu = F_15BBE(0x4f3, 1);
+    ar767eu = F_15BBE(0x4f3, ARENA_LOW_STACK);
     if (*(int *)&bw8aca == 0) {
-        g764aw = F_15BBE(0x3f0, 1);
+        g764aw = F_15BBE(0x3f0, ARENA_LOW_STACK);
         pkt1.w = g764aw->width;
         pkt1.h = g764aw->height;
         pkt1.sx = pkt1.sy = 0;
@@ -290,33 +291,33 @@ void view_load(void)
     pkt1.dy = 0xc8 - ar767eu->height;
     (*b_78a2)(ar767eu, g8188w, &pkt1, 1);
     marks_pop_low(1);
-    ax72f4 = F_15BBE(0x3ee, 1);
-    ak8bcat = F_15BBE(0x3ef, 1);
-    g8184y = F_15BBE(0x3f1, 1);
-    bz8b7ex = F_15BBE(0x4db, 1);
+    ax72f4 = F_15BBE(0x3ee, ARENA_LOW_STACK);
+    ak8bcat = F_15BBE(0x3ef, ARENA_LOW_STACK);
+    g8184y = F_15BBE(0x3f1, ARENA_LOW_STACK);
+    bz8b7ex = F_15BBE(0x4db, ARENA_LOW_STACK);
     if (*(int *)&bw8aca) {
         idx = w_8df0[bn7648].kind;
-        k_6e60 = F_15BBE(0x3f5, 1);
+        k_6e60 = F_15BBE(0x3f5, ARENA_LOW_STACK);
         aw7aaex = k_6e60->height;
-        g8acew[0] = F_15BBE(g_opponentPics[idx][0], 1);
-        g8acew[1] = F_15BBE(g_opponentPics[idx][1], 1);
-        g8acew[2] = F_15BBE(g_opponentPics[idx][2], 2);
+        g8acew[0] = F_15BBE(g_opponentPics[idx][0], ARENA_LOW_STACK);
+        g8acew[1] = F_15BBE(g_opponentPics[idx][1], ARENA_LOW_STACK);
+        g8acew[2] = F_15BBE(g_opponentPics[idx][2], ARENA_HIGH_STACK);
         load = r_vid.mode == -2 ? shrink_ega : r_vid.mode == -6 ? shrink_tandy : shrink_cga;
         for (il = 0; il < 3; il++)
             g8acew[3 + il] = (*load)(g8acew[2], g_shrinkMasks[0][il], g_shrinkMasks[0][il]);
         for (il = 0; il < 3; il++)
             g8acew[6 + il] = (*load)(g8acew[5], g_shrinkMasks[1][il], g_shrinkMasks[1][il]);
-        g8acew[9] = F_15BBE(g_opponentPics[idx][3], 1);
+        g8acew[9] = F_15BBE(g_opponentPics[idx][3], ARENA_LOW_STACK);
         for (il = 0; il < 3; il++)
             g8acew[10 + il] = (*load)(g8acew[9], g_shrinkMasks[2][il], g_shrinkMasks[2][il]);
         ab7526x[0] = g8acew[0];
-        ab7526x[1] = F_15BBE(0x4d9, 1);
-        ab7526x[2] = F_15BBE(0x4da, 2);
+        ab7526x[1] = F_15BBE(0x4d9, ARENA_LOW_STACK);
+        ab7526x[2] = F_15BBE(0x4da, ARENA_HIGH_STACK);
         ab7526x[2] = ab7526x[3] = (*load)(ab7526x[2], g_shrinkMasks[0][0], g_shrinkMasks[0][0]);
         F_19438(1);
         for (il = 0; il < 3; il++)
             ab7526x[4 + il] = ab7526x[3];
-        ab7526x[9] = F_15BBE(0x4de, 1);
+        ab7526x[9] = F_15BBE(0x4de, ARENA_LOW_STACK);
         for (il = 0; il < 3; il++)
             ab7526x[10 + il] = (*load)(ab7526x[9], g_shrinkMasks[2][il], g_shrinkMasks[2][il]);
     }
