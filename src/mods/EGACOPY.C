@@ -53,7 +53,7 @@ void egacopy_reveal(char far *dst, char far *src)
             b = a;
             outp(GC_INDEX, GC_MODE);
             outp(GC_DATA, GC_WRITE_MODE2);
-            g = 40;
+            g = EGA_PITCH;
             do {
                 *b = 0;
                 b++;
@@ -61,7 +61,7 @@ void egacopy_reveal(char far *dst, char far *src)
             } while (g != 0);
             outp(GC_INDEX, GC_MODE);
             outp(GC_DATA, GC_WRITE_MODE1);
-            movedata(FP_SEG(c), FP_OFF(c), FP_SEG(a), FP_OFF(a), 40);
+            movedata(FP_SEG(c), FP_OFF(c), FP_SEG(a), FP_OFF(a), EGA_PITCH);
             f++;
             a += 200;
             c += 200;

@@ -93,7 +93,7 @@ static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2
         A[i].h = h;
         base += B[i]->pitch * h;
         if (mask)
-            egablit_latch_pack(mask, B[i]->pitch, h, A[i].p, 0x28);
+            egablit_latch_pack(mask, B[i]->pitch, h, A[i].p, EGA_PITCH);
         else {
             outp(GC_INDEX, GC_MODE);
             outp(GC_DATA, GC_WRITE_MODE2);
@@ -430,7 +430,7 @@ again:
             g_4f4a = 1;
             if (r_vid.mode == -2) {
                 mem_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, 0x140, 0x46 - g_spriteBottomCut, -2);
-                egalatch_rect(r_vid.back->bits.p, g_backdrop->bits.p - 0x28 * top7, 0x28, g_backdrop->height, 0, top7, 0x28);
+                egalatch_rect(r_vid.back->bits.p, g_backdrop->bits.p - EGA_PITCH * top7, EGA_PITCH, g_backdrop->height, 0, top7, EGA_PITCH);
             } else {
                 mem_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, 0x140, 0x46 - g_spriteBottomCut, -1);
                 popup_grab(0, top7, 0x140, g_backdrop->height, g_backdrop);
@@ -517,7 +517,7 @@ again:
         if (kind == 3) {
             if (r_vid.mode == -2)
                 egalatch_to_page(dz7ec2[0].p, bms6[0]->pitch, bms6[0]->height - g_spriteBottomCut,
-                    r_vid.back->bits.p + ((bot - h7) * 0x28 + (x0 >> 3)) + 0x28, bms6[0]->pitch);
+                    r_vid.back->bits.p + ((bot - h7) * EGA_PITCH + (x0 >> 3)) + EGA_PITCH, bms6[0]->pitch);
             else
                 (*b_78a2)(bm48, r_vid.back, &blt, 1);
             (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
@@ -525,7 +525,7 @@ again:
         } else if (kind == 7 || kind == 8) {
             if (r_vid.mode == -2)
                 egalatch_to_page(dz7ec2[0].p, bms6[0]->pitch, h7 - g_spriteBottomCut,
-                    r_vid.front->bits.p + ((bot - h7) * 0x28 + (x0 >> 3)) + 0x28, bms6[0]->pitch);
+                    r_vid.front->bits.p + ((bot - h7) * EGA_PITCH + (x0 >> 3)) + EGA_PITCH, bms6[0]->pitch);
             else
                 (*b_78a2)(bm48, r_vid.front, &blt, 1);
             bitmap_copy_box(r_vid.front, r_vid.back, x0, bot - h7 + 1, x0 + w1 - 1, bot);

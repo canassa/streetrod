@@ -10,6 +10,7 @@
 #include "MARKS.H"
 #include "MEM.H"
 #include "M_02B9A.H"
+#include "PC.H"
 
 #define CURSOR_EGA_SAVE ((char far *)0xa0001f40L)
 
@@ -142,7 +143,7 @@ void cursor_draw(int x, int y)
     if (g_cursor2.state) {
         if (g_cursor2.clip.w > 0) {
             if (r_vid.mode == -2)
-                egalatch_to_page(g_cursor2.save->bits.p, g_cursor2.clip.w >> 3, g_cursor2.clip.h, r_vid.back->bits.p + 40 * g_cursor2.clip.dy + (g_cursor2.clip.dx >> 3), 0x18 >> r_vid.shift);
+                egalatch_to_page(g_cursor2.save->bits.p, g_cursor2.clip.w >> 3, g_cursor2.clip.h, r_vid.back->bits.p + EGA_PITCH * g_cursor2.clip.dy + (g_cursor2.clip.dx >> 3), 0x18 >> r_vid.shift);
             else
                 (*b_78a2)(g_cursor2.save, r_vid.back, (struct Blt *)&g_cursor2.clip, 1);
             g_cursor2.clip.w = 0;

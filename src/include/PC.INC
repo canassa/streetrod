@@ -1,3 +1,4 @@
+EGA_PITCH                  EQU 40
 BIOS_VIDEO                 EQU 010h
 EQUIP_INT                  EQU 11h
 DOS_INT                    EQU 021h

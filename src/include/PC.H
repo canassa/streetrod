@@ -3,6 +3,8 @@
 #ifndef PC_H
 #define PC_H
 
+#define EGA_PITCH 40
+
 #define BIOS_EQUIP ((unsigned char far *)0x410L)
 #define BIOS_TICKS ((long far *)0x46cL)
 #define MOUSE_VECTOR ((long far *)0xccL)
