@@ -138,6 +138,21 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
     words, like the existing post-return access. Thus unreachable control flow is
     a measured explanation, not proof that the original contained `return` there.
     The original expressions, alias offsets and symbol names remain unknown.
+    A second pass (needle2, 2026-11-04; 112 compiler jobs) found that a
+    constant `if/else` with the live arm first also preserves all segment bytes
+    and the target-resolved fixup sequence; constant `?:` table/value selection
+    removes the spare word. This is a compiler mechanism, not a recovered table
+    selection: selecting separate speedo/tach tables in the two functions emits
+    only two needle words, with a different live word in each function. Declaring
+    both far arrays together shares one segment constant, also insufficient.
+    Disabled feature/type-size branches and early-break macro forms can preserve
+    the layout only when supplied the same unsupported alternate symbols.
+    No such replacement was applied. The original relocation stream contains
+    DS:68E6, DS:68E4, then DS:68E8 consecutively; it carries segment values, not
+    symbol offsets or names, and does not identify which table an unused word
+    named. `_x_trk0` at offset 0 and `_x_trk1` at 0x106 are reconstruction labels,
+    not evidence that the unused words originally named the tip and hub. The full
+    experiment matrix and comparison limits are in the needle2 diary entry.
   - `NeedlePoint`, `NEEDLE_TIP`/`NEEDLE_HUB` and gauge centre constants describe the
     observed table and coordinate transforms, not recovered original declarations.
     The tip reaches radius 18 and the hub radius 5; the latter includes axial

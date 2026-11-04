@@ -1585,105 +1585,168 @@ negative-result completeness check in tests/test_keymaps.py closes that gap
 while retaining the existing check of each name's value. Equal negative values
 can mean different things across screens or entirely different APIs; follow
 the active key map and the result's producer before choosing a KR_* name.
-||||||| 45b300c
 
-## 2026-11-04 22:23 CET: initialized-data placeholder naming (globalsB)
-
-### What I did
-
-Audited all 39 exact g_XXXX placeholders and both uncalled SOUND.C wrappers. Renamed 12 globals: the left steering points; the Calendar, transmission-bolt, gas-exit and body-change hotspots; the current car-name buffer; transmission picture IDs; the bankroll label; and the small/large rock sprite lists and their LOD arrays. Read their uses, original disassembly and initial bytes; decoded the rock spans using vw_sprite's drawing rules. Left the other 27 globals and two functions unchanged, with a separate concrete reason for each in work/LEDGER.md. Regenerated plans/unnamed.md from tools/sr/source.py. No hash-style placeholders were changed.
-
-Validation passed: headers --check; check --all (572/572); a clean rm -rf work followed by sr build (packed EXE IDENTICAL, 572/572 functions at original positions, 748/748 near calls exact); dgroup check and order; all 67 unit tests; and dosbox.sh --make (DOS-native EXE IDENTICAL).
-
-### What I learned
-
-The apparently unused DS:02EE table is reached by negative indexes from g_steerPoints: the driving ISR bounds steering to -24..24, so the preceding 24 pairs form its left arc. A source-name search alone misses that use. The four hotspot allocations cross screen boundaries; their first directly addressed controls supply the names, while g_groupHot and ScreenId establish the additional screen lists in each allocation. The first unnamed hotspot is Calendar, not a garage exit.
-
-Several SYS words are reset-only rather than configuration/detection values: g_05ba gets -1 only in queue reset, g_05d6 is cleared at driving transitions, g_05d8/g_05da only in engine reset, and g_060a only when installing the driving ISR. Those writes do not establish their intended roles. The tire-dependent PERF expression ends in f34[5], whose consumers only select gear slots 0..4; calling the unused sixth value a gear ratio or braking coefficient would go beyond the evidence. Neither uncalled sound wrapper supplies an event identity.
-||||||| 66bcf79
-
-
-## 2026-11-04 22:25 CET: car-animation kind enum
+## 2026-11-04 22:41 CET: needle2 natural unreachable-source search (BLOCKED)
 
 ### What I did
 
-Added enum CarAnimKind to CARPIC.H with seven evidence-backed values: CAR_DRIVE_IN (1), CAR_DRIVE_OUT (2), CAR_SHOW_BACK_PAGE (3), CAR_PULL_IN (4), CAR_BACK_OUT (6), CAR_SHOW_SCREEN (7), and CAR_SHOW_BACKDROP (8). Replaced every car-kind literal at callers, comparisons, assignments and sprite planner switches. Typed the kind parameters through cp_show_car, show_rival_car, rival_arrives, look_for_rival, sp_plan_drive and sp_plan_move. Preserved the char storage in bo_visit and bo_jail. No other identifiers were renamed and no code comments were added. Recorded each value and the unused value 5 in work/LEDGER.md.
+Worked only in ~/wt/needle2 on branch needle2. Read PROMPT.md, CLAUDE.md,
+the previous needle entry, the MSC recipe book, DASH.C/NEEDLE.H/NEEDLE.ASM,
+the original point-function disassembly, and the original relocation stream.
+Used real MSC 5.1 through tools.sr.dosbox.Job/compile_all (emu2), with exact
+`/AM /Oalsi /Gs /FPi /NTS0F38_TEXT`. All probes and scripts were under work/.
+There were **112 compiler jobs: 80 small probes and 32 whole-DASH jobs**,
+including baselines and declaration controls; six intentionally varied declaration
+forms failed compilation, leaving 106 compiled objects to inspect. No source,
+header, assembly, build flag or symbol name was changed. Updated
+RECONSTRUCTION.md and the recipe book with the new negative results.
 
-Verified ./sr headers --check; ./sr check --all (572/572); a fresh rm -rf work followed by ./sr build (Packed EXE vs orig/SR.EXE: IDENTICAL); ./sr dgroup check and ./sr dgroup order; all 68 unittest tests; and ./dosbox.sh --make (DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL).
+Full experiment list follows. For compact probe notation, a/b are signed-char far
+arrays of two-byte points, i is int, x/y are near int output pointers; `A` is
+`*x=a[i][0]`, `B` is `*x=b[i][0]`. All constant predicates are compile-time
+constants, not a changed flag set. A successful small probe is not a full-module
+match. The previous session's post-return and if(0) shapes were used only as
+controls to isolate the newly discovered declaration effect.
+
+**Batch 1: 18 small controls with a/b declared together.** Tried `1?A:B`,
+`0?B:A`, `(1?a:b)[i][0]`, `(0?b:a)[i][0]`, `if(1) A; else B`,
+`if(0) B; else A`, switch(0) with the selected case first and last,
+enum equality, sizeof(int)==2, `A; if(DEBUG && b[i][0]) *x=0`,
+zero-trip for/while, do/early-break, constant switch/return,
+for(;;)/return followed by B, while(1)/break followed by if(DEBUG) B,
+and a constant ternary in the index clamp. All emitted one needle SEG word.
+This batch revealed that a combined far-array declaration shares segment state;
+it cannot establish behavior for separately declared far symbols. Loop/return
+forms could retain extra code even when it was unreachable.
+
+**Batch 2: 36 small declaration controls.** Crossed the following twelve forms
+with separate file-scope declarations, one combined declaration, and a block-scope
+b declaration: `A; return; B`, `A; if(0) B`, `1?A:B`,
+`if(1) A; else B`, live A then `*y=b[i][0]`, local gauge=1 with ?:,
+local gauge=1 with if/else, local gauge=0 with a following if,
+`A; if(DEBUG) B`, `A; if(sizeof(int)==4) B`, pointer selection using a local
+gauge, and `A; if(DEBUG && b[i][0]) *x=0`. Block-declaration variants of
+ternary, live-y, local ternary, local pointer selection and logical condition
+failed because b was deliberately not visible there (five failures).
+With separate declarations the post-return, false-if, live-first if/else,
+debug, type-size and logical-control forms retained b's word. Constant ?: and
+pointer selection removed it. Locals added frame/code bytes even when folded.
+Every combined-declaration form shared one word. Live separately declared a/b
+needed two segment constants and an extra ES reload; the combined declaration
+needed one. Thus unused-word behavior depends on declaration structure too.
+
+**Batch 3: 26 further small probes with separate declarations.** Tried:
+
+| Form | Result |
+|---|---|
+| `*x=a ? a[i][0] : b[i][0]`, corresponding if/else | Two words but runtime far-address test and 52 bytes; not folded |
+| `*x=b ? a[i][0] : a[i][0]`, corresponding if/else | 28 bytes, one word; discarded condition leaves no b word |
+| `1?A:A`, `if(1) A; else A` | 26 bytes, one word; repeated use does not manufacture another constant |
+| for(;;)/return then B; while(1)/return then B | 46 bytes, two words; extra unreachable machine code survives |
+| switch(i) with default and case both A/return, followed by B | 28 bytes, two words |
+| do { if(1) {A; break;} B; } while(0) | 26 bytes, two words; natural macro shape, but still needs alternate b identity |
+| Same macro with while(1); for(;;) with if(1)/break then B | 26 bytes, two words |
+| do/switch(1)/case/continue then B, while(0) | 28 bytes, two words |
+| if(DEBUG) B else A; enum comparison; sizeof(int)==4 | 26 bytes, two words, dead b allocated before live a |
+| if(sizeof(a)==262) A else B | 26 bytes, two words, live a allocated first |
+| COORD(0,i) as a constant ?: macro | 26 bytes, one word |
+| COORD_IF(0,i,x) and COORD_IF(1,i,x) as do/if/else macros | 26 bytes each, two words |
+| comma expression `(1,a[i][0])` | 26 bytes, one word |
+| Nested compatible extern a redeclaration after live A | 26 bytes, one word; no extra cache entry |
+| Same local-only extern a in two different functions | Two words, both live, one per function |
+| Two functions expanding COORD_IF with opposite constants | Two words; functions use different words |
+| Same pair using constant ?: macros | Two words; functions use different words |
+| Separate declarations followed by a combined redeclaration | C2086 b redefinition (sixth compile failure) |
+
+**Batch 4: 20 whole-DASH jobs.** Baseline module code is 6130 bytes; both point
+functions are 155. Removed only the existing provisional blocks to form the clean
+control. Retained x_trk0/x_trk1 solely as experimental inputs, with separate
+file-scope point-array declarations; no role was inferred from their names.
+Applied each transformation to both point functions, with the same live clamp
+and four coordinate assignments:
+
+| Transformation | Module bytes and object result |
+|---|---|
+| Original baseline | 6130; three needle words, original fixup order |
+| Clean removal | 6130; live non-fixup instructions equal, but two words missing and later CONST offsets shifted |
+| if(1) { live body } else alternate read | 6130; all parsed segment bytes and ordered resolved fixups equal |
+| if(0) alternate read else { live body } | 6130; live non-fixup bytes equal, live word moves to CONST+2 |
+| if(positive gauge-center constant) live else alternate | 6130; same complete parsed signature as baseline |
+| switch(0) live case first / dead case first | 6128 each; wrong code/public positions; dead-first also changes word allocation |
+| Live body then while(0) / for(;0;) alternate read | 6198 each; wrong code/public positions |
+| Live body then sizeof(int)==4 / DEBUG=0 / enum NEEDLE_HUB>1 read | 6130 each; same complete parsed signature, unsupported disabled access remains |
+| for(;;) { live body; return; } then alternate read | 6150; wrong code/public positions |
+| switch(i>=0) with cases 0/1 returning, then alternate read | 6230; wrong code/public positions |
+| goto past alternate read | 6130; same parsed signature, simply another explicitly skipped access |
+| do { live body; break; alternate read; } while(0) | 6130; same parsed signature, simply another explicitly skipped access |
+| Constant ?: in upper clamp / tip-x scalar read / pointer selection | 6130 each; two words missing and later CONST offsets shifted |
+| Separate live tip/hub arrays declared together | 6118; one needle word, wrong instructions/public positions |
+
+Here “same complete parsed signature” means equality of every segment's byte
+contents, every public's segment/offset, communal sizes, and every fixup's
+segment, offset, location type, self-relative flag, target kind/name and
+addend **in record order**. Also inspected raw OBJ record differences:
+these are not raw-byte-identical objects. Moving extern declarations to file
+scope changes EXTDEF order/indices, public record grouping and FIXUPP encodings;
+resolved fixup order and segment bytes still agree. No result was accepted on
+masked code equality alone. Small-job COD listings and OMF CONST records were
+also available from each real compiler run.
+
+**Batch 5: 12 final whole-DASH jobs.** Six jobs selected genuinely separate
+speedo/tach two-dimensional point tables for each coordinate, using if/else,
+?: and switch, with separate versus combined far declarations. The separately
+declared variants produced 6156, 6130 and 6174 module bytes; all had only two
+needle words and different words live in the two functions. Combined declarations
+produced 6140, 6114 and 6158 bytes and only one needle word. None matched the
+complete object. These are the concrete two-table selection hypothesis tests;
+a shared macro does not create a third symbol's segment constant.
+
+The other six jobs kept the original block-scope char-array declarations and
+output destinations: live-first if/else, do/if(1)/break macro, sizeof(int)==4,
+DEBUG=0, switch(i) with default returning before the alternate read, and
+while(1)/if(1)/break before that read. The first four gave 6130 bytes and the
+same complete parsed signature; switch gave 6132 and while/break gave 6156.
+Raw comparison of the first matching block-scope candidate still showed altered
+EXTDEF order and the FIXUPP bytes that encode external indices, not an exact
+raw OBJ. A matching conditional skeleton still provides no evidence for a
+feature flag, alternate table, or old-format data access, so it was not applied.
 
 ### What I learned
 
-Kinds 3, 7 and 8 share one-frame rendering but differ in page/background handling: 3 draws on the back page and copies the full page forward; 7 uses the current screen beneath the car (no backdrop mask on EGA); 8 composites against the saved backdrop and refreshes only the car box. Their garage and advertisement callers confirm the distinction. Kind 4 saves the backdrop and scene-specific carhop/pump setup before the same decelerating arrival as kind 1. The pass-by path changes the kind to 2 and reuses the frames for departure. Kind 5 has neither a caller nor a distinguishing branch, so no meaning was invented for it. The shared enum and enum-typed parameters preserve all original machine bytes without changing any names subject to the communal, static or external-symbol budgets.
+- A constant `if/else` really can emit an unused SEG word with natural control
+  flow. A constant conditional **expression** does not. This narrows the compiler
+  mechanism, but does not justify replacing the existing hack with an invented
+  gauge/feature branch. An enum, sizeof predicate or early-break macro can reproduce
+  the same remnant, so byte identity alone cannot distinguish their intent.
+- The simple shared speedo/tach selector hypothesis fails the complete layout:
+  there are two declaration identities, so at most two needle SEG words, and the
+  two functions read different words. The original has three and both functions
+  read DS:68E4. Three speculative symbols or a different fallback are still
+  required for the matching if/else constructions. No observed data supports
+  that fallback, so no names or flags were invented.
+- The original unpacked relocation stream at indices 1990..1992 is consecutively
+  DS:68E6, DS:68E4, DS:68E8; each word contains 2E47. The preceding entry is
+  DS:68E2 (2E3E, the SCREENS far-data segment), before it image offset 0x215F6;
+  the following entry is DS:691A. There is no intervening instruction relocation
+  that locates the folded expression. In the baseline OBJ, CONST fixups 2/0 are
+  one flush and 4 is later, with code-fixup records between. Live-first if/else
+  preserves that sequence; dead-first changes the allocated live word. This
+  constrains first encounter/record flushing, not an exact source statement.
+- x_trk0 labels offset 0 (also g_needlePts); x_trk1 labels 0x106 (hub start).
+  These aliases were chosen by reconstruction. The original words are SEG-only,
+  contain no symbol offsets, and cannot say whether either unused target was a
+  tip, hub, tach or speedo table, or another symbol in the same segment. Claiming
+  that those arbitrary labels identify the original targets would be circular.
+- The combined far-declaration behavior and constant-statement/expression
+  distinction are now in the MSC recipe book. The full unresolved limitation is
+  also in docs/RECONSTRUCTION.md. **BLOCKED:** no evidence-backed natural source
+  has been found; existing provisional source is unchanged, as requested.
 
-## 2026-11-04 22:31 CET: Needle table and unused far segment constants
-
-### What I did
-
-Read DASH.C, its needle callers, NEEDLE.H/ASM, the original da_speedo_pts and
-da_tach_pts disassemblies, DS:68E0..68EF, RECONSTRUCTION.md, and the MSC recipe
-book. Worked on branch needle in ~/wt/needle only. Compiled 25 small probe jobs
-and 10 whole-DASH.C jobs with the real MSC 5.1 using tools.sr.dosbox.Job and
-compile_all (emu2). Inspected COD listings and OMF CONST fixups, including their
-record order; compared function sizes and non-fixup bytes to the current module.
-The ignored work/needle scripts and outputs were removed for the required clean
-build; the reproducible forms and results are recorded here and in the recipe book.
-
-Kept x_trk0/x_trk1 and both post-return statements: none of the natural candidates
-reproduced the complete code and CONST layout. Added NeedlePoint with signed x/y,
-NEEDLE_TIP/NEEDLE_HUB, NEEDLE_MAX_POS, and gauge centre constants; changed only the
-two point functions' coordinate expressions. Corrected the assembly's track 0/1
-wording to needle tip/hub. These names describe observed roles; no original spelling
-is claimed, and neither provisional alias has been given an invented role.
-
-Validation: ./sr headers --check; ./sr check DASH.C (whole module match);
-./sr check --all (572/572); rm -rf work && ./sr build (96/96 objects pass,
-Packed EXE vs orig/SR.EXE: IDENTICAL); ./sr dgroup check and ./sr dgroup order;
-nix-shell shell.nix --run "python3 -m unittest discover -s tests" (68 tests, OK).
-
-### What I learned
-
-- The live functions share DS:68E4 for every coordinate read, with offsets
-  0/1/0x106/0x107. Their original size is 155 bytes each. The existing needle
-  CONST fixups are recorded at offsets 2, 0, then 4, targeting x_trk0,
-  g_needlePts, x_trk1 respectively. Removing the dead accesses preserves live
-  instructions but drops the last two words; it cannot preserve the EXE.
-- Separate far tip/hub arrays under /AM /Oalsi /Gs /FPi add an ES reload before
-  the hub read (159 bytes) and give two needle words, both used. Removing /Oa
-  gives 172 bytes. /Gt1 warns that the threshold is ignored in this model and
-  leaves the split result unchanged. /NDNEEDLE gives 166 bytes and different
-  DS/SS assumptions. Merely linking both symbols in one segment does not let
-  MSC equate their segment constants.
-- A far record holding both coordinate arrays and a far array of two-byte point
-  structs preserve the live 155-byte code but only produce one needle word.
-  The point struct with the existing dead references preserves all CONST fixup
-  positions/order and the entire final packed EXE. A huge array instead gives
-  257-byte functions with segment normalization and no needle CONST word.
-- File-global, file-static and local-static `char far *p = (char far *)b`
-  initializers produce four-byte DD pointers in _DATA. Automatic `char far *p`
-  assigned or initialized from b[i], including register, retains a four-byte
-  slot and immediate segment store, not an unused CONST word. Unused int reads
-  from b[i][0], including register, retain frame/code too.
-- An unused declaration, `(void)b[i][0]`, and `sizeof(b[i][0])` leave no extra
-  word. With `*x=b[i][0]; *x=a[i][0]; *y=a[i][1];`, MSC removes the first store
-  and b's SEG word; overwriting `*x=b[i][0]-b[i][0]` does the same. An empty
-  `if (b[i][0]) ;` leaves segment/index instructions, so it does not match.
-- Both `return; *x=b[i][0];` and `if (0) *x=b[i][0];` retain b's SEG word with
-  no live instructions. `if (0 && b[i][0]) *x=1;` does too. This supports a
-  compiler-generated remnant of unreachable control flow, but cannot recover
-  the original statements, offsets, or symbol names. Do not turn that mechanism
-  into a confident claim that the original had a post-return statement.
-- The hub table includes radius-5 axis samples, despite the task's approximate
-  3-to-4-pixel description. Both ends use positive-up coordinates, converted to
-  screen coordinates around (196,42) or (145,42), with the existing DASH_Y offset.
-
-## 2026-11-04 22:40 CET: Hot-spot kind enum and id
-
-### What I did
-
-Defined enum HotKind for all fifteen observed values and typed Hot.kind, mn_hit's kind local and set_jail_spots' kind argument with it. Replaced the raw kind numbers in every writer, comparison, drawing case and all 366 initialized Hot records. Named the hit-test boundary HOT_LAST_NONCLICKABLE and renamed Hot.f6 to id, including the demo's lookup. Removed the redundant numeric drawing summary. Recorded 18 naming items with evidence and no skips in work/LEDGER.md.
-
-Validated headers --check; check --all (572/572); a clean rm -rf work followed by sr build (packed executable IDENTICAL); dgroup check and order; all 68 unit tests; and dosbox.sh --make (DOS-native executable IDENTICAL). Every table initializer also reduces to the exact integers present before the edit. GARAGE.C, including ga_transmission, passes its full file gate with no budget adjustments.
-
-### What I learned
-
-Kind 10 draws a filled, beveled button with text centered on both axes; the old header's text-only description was inaccurate. Kind 13 registers every list row and remembers the first row's address. Kind 12 both draws a box and links the hit list through the id word, while never returning a hit itself. The two kind-2 roots are the load/save list menus; the code gives them no additional runtime distinction from ordinary kind-1 roots, so HOT_LIST_MENU describes their observed use. Kind 3 suppresses the selection frame. Zero is the unset state in scratch and BOBS records. Enum constants and the id member preserve the 18-byte layout and do not consume the external name budget.
+Validation passed before committing: `./sr headers --check`;
+`./sr check --all` (572/572, 551 MATCH and 21 MATCH*); a fresh removal of work/
+followed by `./sr build` (96/96 objects, 572/572 function positions and bytes,
+748/748 exact near calls, Packed EXE vs orig/SR.EXE: IDENTICAL);
+`./sr dgroup check` and `./sr dgroup order`; and
+`nix-shell shell.nix --run "python3 -m unittest discover -s tests"`
+(68 tests, OK). The clean build removed every probe and compiled experiment;
+the matrices above preserve their forms and results. No work/ files are committed.
