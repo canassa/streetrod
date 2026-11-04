@@ -95,30 +95,30 @@ int fame_end_menu(void)
 
     screen_status_init(190);
     r_vid.f16 = 1;
-    c01 = x_colors.c[0];
-    c1 = x_colors.c[1];
-    c3 = x_colors.c[3];
-    c21 = x_colors.c[2];
+    c01 = x_colors.text;
+    c1 = x_colors.textBg;
+    c3 = x_colors.line;
+    c21 = x_colors.fill;
     if (r_vid.mode != -2 && r_vid.mode != -6) {
-        x_colors.c[0] = 3;
-        x_colors.c[1] = 0;
-        x_colors.c[3] = 2;
-        x_colors.c[2] = 1;
+        x_colors.text = 3;
+        x_colors.textBg = 0;
+        x_colors.line = 2;
+        x_colors.fill = 1;
     } else {
-        x_colors.c[0] = 15;
-        x_colors.c[1] = 1;
-        x_colors.c[3] = 13;
-        x_colors.c[2] = 3;
+        x_colors.text = 15;
+        x_colors.textBg = 1;
+        x_colors.line = 13;
+        x_colors.fill = 3;
     }
-    screen_fill_rect(0, 0, 320, 190, x_colors.c[1]);
+    screen_fill_rect(0, 0, 320, 190, x_colors.textBg);
     draw_frame(r_vid.back, 100, 50, 120, 90);
     draw_frame(r_vid.front, 100, 50, 120, 90);
     draw_frame(r_vid.back, 102, 52, 116, 86);
     draw_frame(r_vid.front, 102, 52, 116, 86);
-    x_colors.c[0] = c01;
-    x_colors.c[1] = c1;
-    x_colors.c[3] = c3;
-    x_colors.c[2] = c21;
+    x_colors.text = c01;
+    x_colors.textBg = c1;
+    x_colors.line = c3;
+    x_colors.fill = c21;
     cursor_ctl(-2);
     (*m_present)();
     key = menu_wait(41);
@@ -177,8 +177,8 @@ static int near elapsed_hours(void)
     return garage_day() * 24 + a + 12;
 }
 
-struct Colors g_fameColors1 = {{3, 5, 5, 4, 1}};   /* DS:4BE2 */
-struct Colors g_fameColors2 = {{3, 4, 4, 3, 1}};   /* DS:4BE8 */
+struct Colors g_fameColors1 = {3, 5, 5, 4, 1};   /* DS:4BE2 */
+struct Colors g_fameColors2 = {3, 4, 4, 3, 1};   /* DS:4BE8 */
 char g_4bed = 0;   /* DS:4BED */
 
 /* fame_show @ 0000:339F (linear 0x0339F, 628 bytes) */
@@ -225,11 +225,11 @@ void fame_show(int add)
         insert_entry(pos7);
     }
     if (r_vid.mode != -2 && r_vid.mode != -6) {
-        x_colors.c[0] = 3;
-        x_colors.c[1] = 2;
+        x_colors.text = 3;
+        x_colors.textBg = 2;
     } else {
-        x_colors.c[0] = 4;
-        x_colors.c[1] = 0;
+        x_colors.text = 4;
+        x_colors.textBg = 0;
     }
     for (i = 0, p = aytablex; i < bucount; i++) {
         (*a_78aem)(r_vid.back, 46, g_fameRowY[i], p->name);

@@ -186,7 +186,11 @@ struct Clip {
 };
 
 struct Colors {
-    char c[5];
+    char text;
+    char textBg;
+    char fill;
+    char line;
+    char frame;
 };
 
 struct Style {

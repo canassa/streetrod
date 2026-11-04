@@ -79,11 +79,11 @@ void cga_draw_text(struct Bitmap far *bm, int x, int y, char *s)
     rmask = 0xff;
     memset(buf7, 0, sizeof buf7);
     if (r_vid.mode == -4)
-        x_colors.c[0] = 0;
-    t = x_colors.c[0];
+        x_colors.text = 0;
+    t = x_colors.text;
     fg7 = (t << 2) | (t << 4) | (t << 6) | t;
     fg7 |= fg7 << 8;
-    t = x_colors.c[1];
+    t = x_colors.textBg;
     bgn = (t << 2) | (t << 4) | (t << 6) | t;
     bgn |= bgn << 8;
     col4 = bitoff1 = shl;
@@ -271,7 +271,7 @@ void cga_recolor_rect(struct Bitmap far *bm, int a, int b, int x1, int y1, int x
     unsigned char c2, cc, w2;
     int i, y, v4, rx;
 
-    c1l = x_colors.c[1];
+    c1l = x_colors.textBg;
     if (x1 < 0)
         x1 = 0;
     if (x2 < 0)

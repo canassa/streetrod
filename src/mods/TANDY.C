@@ -42,8 +42,8 @@ void tandy_draw_text(struct Bitmap far *bm, int x, int y, int glyph)
 
     ph = x & 1;
     memset(buf3, 0, 0x500);
-    c1 = x_colors.c[0];
-    c2 = x_colors.c[1];
+    c1 = x_colors.text;
+    c2 = x_colors.textBg;
     n2 = tandytxt_render(x, glyph, buf3, c1, c2);
     g824cd = x + n2 - ph;
     bq824e = y;

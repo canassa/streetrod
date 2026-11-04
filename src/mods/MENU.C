@@ -66,7 +66,7 @@ void menu_draw_hot(struct Hot *p)
                 if (p->f2 != colr)
                     x_colors = bustyle->pal[colr = p->f2];
                 draw_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, h = p->y2 - p->y1);
-                if (x_colors.c[4])
+                if (x_colors.frame)
                     draw_bevel(r_vid.back, p->x1, p->y1, w, h);
                 if (p->f4) {
                     str = g_239e + p->f4;
@@ -454,7 +454,7 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
     bottom9 = page * wh9 + wy7 - 1;
     idx2 = ((struct Win *)a_8b9ap)->lines;
     bustyle->c2d = bustyle->pal[idx2];
-    sv5 = bustyle->pal[idx2].c[3];
+    sv5 = bustyle->pal[idx2].line;
     for (;;) {
         x_colors = bustyle->pal[idx2];
         w = (struct Win *)a_8b9ap;
@@ -482,7 +482,7 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
 restore:
         x_colors = bustyle->pal[idx2];
         if (r_vid.mode == -4)
-            x_colors.c[0] = 0;
+            x_colors.text = 0;
         while ((key2 = sys_wait_input(0)) == 0) {
             i = az8baa > 0 && topk + az8baa <= count5;
             if (!i && curl < 0)
@@ -498,14 +498,14 @@ restore:
                 y1 = w->h;
                 x2 = w->tx;
                 if (kind != 0x26)
-                    (*g_drvRecolorRegion)(r_vid.back, x_colors.c[0], sv5, x1, y1, x2, w->h + 8);
+                    (*g_drvRecolorRegion)(r_vid.back, x_colors.text, sv5, x1, y1, x2, w->h + 8);
                 y2 = w->ty;
             } else
                 nw5 = -1;
             if (curl >= 0) {
                 w = (struct Win *)(0x12 * curl + a_8b9ap);
                 if (kind != 0x26)
-                    (*g_drvRecolorRegion)(r_vid.back, sv5, x_colors.c[0], w->w, w->h, w->tx, w->h + 8);
+                    (*g_drvRecolorRegion)(r_vid.back, sv5, x_colors.text, w->w, w->h, w->tx, w->h + 8);
                 x1 = (w->w > x1) ? x1 : w->w;
                 y1 = (w->h > y1) ? y1 : w->h;
                 x2 = (w->tx < x2) ? x2 : w->tx;
@@ -536,12 +536,12 @@ restore:
                     cursor_ctl(-3);
                     w = (struct Win *)(0x12 * sel + a_8b9ap);
                     x_colors = bustyle->pal[idx2];
-                    nw5 = x_colors.c[3];
-                    x_colors.c[3] = x_colors.c[1];
+                    nw5 = x_colors.line;
+                    x_colors.line = x_colors.textBg;
                     draw_frame(r_vid.back, x1 = w->w, y1 = w->h, ww9, 8);
                     x2 = x1-- + ww9;
                     y2 = y1-- + 8;
-                    x_colors.c[3] = nw5;
+                    x_colors.line = nw5;
                     w = (struct Win *)(0x12 * i + a_8b9ap);
                     draw_frame(r_vid.back, w->w, w->h, ww9, 8);
                     cursor_ctl(-1);

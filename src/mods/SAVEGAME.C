@@ -450,13 +450,13 @@ again:
         box7 = (struct Win *)(0x12 * (int)r + a_8b9ap - 0x12);
         pal4 = x_colors;
         x_colors = bustyle->pal[((struct Win *)a_8b9ap)->lines];
-        sv7 = x_colors.c[3];
-        x_colors.c[3] = x_colors.c[1];
+        sv7 = x_colors.line;
+        x_colors.line = x_colors.textBg;
         wk = ((struct Win *)a_8b9ap)->tx - ((struct Win *)a_8b9ap)->w;
         draw_frame(r_vid.back, box7->w, box7->h, wk, 8);
         draw_frame(r_vid.front, box7->w, box7->h, wk, 8);
         x_colors = pal4;
-        x_colors.c[3] = sv7;
+        x_colors.line = sv7;
         cursor_ctl(-1);
         sel = r = i5;
     }

@@ -133,13 +133,13 @@ void screen_fill_rect(int x, int y, int w, int h, char color)
 {
     char old;
 
-    old = x_colors.c[2];
+    old = x_colors.fill;
     cursor_ctl(-3);
-    x_colors.c[2] = color;
+    x_colors.fill = color;
     draw_fill_rect(r_vid.back, x, y, w, h);
     if (r_vid.f16)
         bitmap_copy_box(r_vid.back, r_vid.front, x, y, x + w - 1, y + h - 1);
-    x_colors.c[2] = old;
+    x_colors.fill = old;
     cursor_ctl(-1);
 }
 

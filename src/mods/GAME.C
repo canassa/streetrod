@@ -531,17 +531,17 @@ static void near buy_from_ads(int tab)
             x_colors = bustyle->colors;
             ck = (r_vid.mode == -2 || r_vid.mode == -6) ? g_carBg16[5] : g_carBg4[5];
             screen_fill_rect(0, 0x41, 0x140, 0x46, ck);
-            screen_fill_rect(0, 0x87, 0x140, 0xa, x_colors.c[1]);
+            screen_fill_rect(0, 0x87, 0x140, 0xa, x_colors.textBg);
             if (r_vid.mode != -2 && r_vid.mode != -6) {
-                sv = x_colors.c[3];
-                x_colors.c[3] = 3;
+                sv = x_colors.line;
+                x_colors.line = 3;
                 draw_vline(r_vid.back, 0, 0x40, 0x52);
                 draw_vline(r_vid.back, 0x13f, 0x40, 0x52);
                 draw_vline(r_vid.front, 0, 0x40, 0x52);
                 draw_vline(r_vid.front, 0x13f, 0x40, 0x52);
                 screen_hline(0, 0x40, 0x140);
                 screen_hline(0, 0x91, 0x140);
-                x_colors.c[3] = sv;
+                x_colors.line = sv;
             }
             if (color == -1) {
                 color = random_int(5);

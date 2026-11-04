@@ -24,7 +24,7 @@ void draw_fill_rect(struct Bitmap far *s, int x, int y, int w, int h)
     oldoff = at767ct;
     av787at = s->bits.w.seg;
     at767ct = s->bits.w.off;
-    col = x_colors.c[2];
+    col = x_colors.fill;
     x2 = x + w - 1;
     for (j = 0; j < h; j++)
         (*a_78d2)(x, y + j, x2, y + j, col);
@@ -47,7 +47,7 @@ void draw_vline(struct Bitmap far *s, int x, int y, int h)
     oldoff = at767ct;
     av787at = s->bits.w.seg;
     at767ct = s->bits.w.off;
-    (*a_78d2)(x, y, x, y + h - 1, x_colors.c[3]);
+    (*a_78d2)(x, y, x, y + h - 1, x_colors.line);
     av787at = oldseg;
     at767ct = oldoff;
 }
@@ -60,10 +60,10 @@ void draw_hline(struct Bitmap far *s, int x, int y, int w)
 {
     char old;
 
-    old = x_colors.c[2];
-    x_colors.c[2] = x_colors.c[3];
+    old = x_colors.fill;
+    x_colors.fill = x_colors.line;
     draw_fill_rect(s, x, y, w, 1);
-    x_colors.c[2] = old;
+    x_colors.fill = old;
 }
 
 /* draw_bevel @ 0F38:4432 (linear 0x137B2, 421 bytes)
@@ -74,7 +74,7 @@ void draw_hline(struct Bitmap far *s, int x, int y, int w)
 
 void draw_bevel(struct Bitmap far *s, int x, int y, int w, int h)
 {
-    int bm = x_colors.c[4] == 2 ? 3 : 3;
+    int bm = x_colors.frame == 2 ? 3 : 3;
     int bh6;
     int right2;
     int bottom;
@@ -89,21 +89,21 @@ void draw_bevel(struct Bitmap far *s, int x, int y, int w, int h)
     top8 = y - bm;
     bh6 = h + bm * 2;
     bw = w + bm * 2;
-    old = x_colors.c[2];
-    if (x_colors.c[4] == 3)
-        x_colors.c[2] = x_colors.c[3];
+    old = x_colors.fill;
+    if (x_colors.frame == 3)
+        x_colors.fill = x_colors.line;
     draw_fill_rect(s, left, top8, bm, bh6);
     draw_fill_rect(s, x, bottom, w, bm);
     draw_fill_rect(s, right2, top8, bm, bh6);
     draw_fill_rect(s, x, top8, w, bm);
-    if (x_colors.c[4] == 3)
-        x_colors.c[2] = old;
+    if (x_colors.frame == 3)
+        x_colors.fill = old;
     else {
         draw_vline(s, left + 1, top8 + 1, bh6 - 2);
         draw_hline(s, left + 1, bottom + 1, bw - 2);
         draw_vline(s, right2 + 1, top8 + 1, bh6 - 2);
         draw_hline(s, left + 1, top8 + 1, bw - 2);
-        if (x_colors.c[4] == 2) {
+        if (x_colors.frame == 2) {
             draw_vline(s, left + 2, top8 + 2, bh6 - 4);
             draw_hline(s, left + 2, bottom, bw - 4);
             draw_vline(s, right2, top8 + 2, bh6 - 4);

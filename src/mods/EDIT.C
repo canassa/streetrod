@@ -32,16 +32,16 @@ int edit_line(int x, int y, char *buf, int max)
     char ip;
     int key, mono, cx, ret, cy, n;
 
-    pos = x_colors.c[2];
-    oc = x_colors.c[3];
+    pos = x_colors.fill;
+    oc = x_colors.line;
     mono = (unsigned char)(r_vid.back->flags <= -1);
     if ((w = 6 * max) + x >= r_vid.back->width) {
         max = (r_vid.back->width - x - 1) / 6;
         buf[max] = 0;
         w = 6 * max;
     }
-    x_colors.c[2] = x_colors.c[1];
-    x_colors.c[3] = x_colors.c[0];
+    x_colors.fill = x_colors.textBg;
+    x_colors.line = x_colors.text;
     cursor_ctl(-3);
     draw_fill_rect(r_vid.back, x, y, w, 8);
     (*a_78aem)(r_vid.back, x, y, buf);
@@ -81,7 +81,7 @@ int edit_line(int x, int y, char *buf, int max)
                     }
                 }
                 cursor_ctl(-3);
-                x_colors.c[3] = x_colors.c[1];
+                x_colors.line = x_colors.textBg;
                 draw_vline(r_vid.back, cx, cy, 8);
                 if (key == 8) {
                     if (end > 0) {
@@ -98,7 +98,7 @@ int edit_line(int x, int y, char *buf, int max)
                     cx = g824cd;
                 } else
                     sound_buzz();
-                x_colors.c[3] = x_colors.c[0];
+                x_colors.line = x_colors.text;
                 draw_vline(r_vid.back, cx, cy, 8);
                 colr = -1;
                 cursor_ctl(-1);
@@ -107,7 +107,7 @@ int edit_line(int x, int y, char *buf, int max)
             }
         } else {
             cursor_ctl(-3);
-            x_colors.c[3] = colr ? x_colors.c[1] : x_colors.c[0];
+            x_colors.line = colr ? x_colors.textBg : x_colors.text;
             draw_vline(r_vid.back, cx, cy, 8);
             colr = ~colr;
             cursor_ctl(-1);
@@ -117,13 +117,13 @@ int edit_line(int x, int y, char *buf, int max)
     }
     buf[end] = 0;
     cursor_ctl(-3);
-    x_colors.c[3] = x_colors.c[1];
+    x_colors.line = x_colors.textBg;
     draw_vline(r_vid.back, cx, cy, 8);
     cursor_ctl(-1);
     if (r_vid.f16)
         bitmap_copy_box(r_vid.back, r_vid.front, cx - 6, y, cx, y + 8);
-    x_colors.c[3] = oc;
-    x_colors.c[2] = pos;
+    x_colors.line = oc;
+    x_colors.fill = pos;
     g_msgClickToEdit[0] = ip;
     sys_hover_reset();
     g_anyInput = n;
