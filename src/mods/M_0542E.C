@@ -325,7 +325,7 @@ int near F_05B4A(void)
         r = F_14C8B();
         break;
     default:
-        if (r >= 1)
+        if (r >= 1)             /* PROVISIONAL: the original loads g_49e0[0] here and drops it */
             g_49e0[0] = g_49e0[0];
         break;
     }

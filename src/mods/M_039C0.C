@@ -661,7 +661,7 @@ static int near F_049ED(void)
         case -2:
             break;
         default:
-            if (item > 0)
+            if (item > 0)       /* PROVISIONAL: the original loads g_49e0[0] here and drops it */
                 g_49e0[0] = g_49e0[0];
         }
         cur = tbl[item = F_14C8B()];
