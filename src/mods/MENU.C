@@ -166,8 +166,8 @@ void F_13DE6(int id)
         F_120FE(-1);
         if (r_vid.f16 && g_6c5a >= 0)
             bitmap_copy_box(r_vid.back, r_vid.front, g_6c56 - 3, g_6c58 - 3, g_6c5a + 6, g_6c5c + 6);
-        F_012DE(id);
-        F_00D78();
+        sys_keymap_set(id);
+        sys_hover_reset();
     }
 }
 
@@ -179,7 +179,7 @@ void F_13DE6(int id)
 void F_13F21(int keep)
 {
     if (g8b8eb) {
-        F_01391(0);
+        sys_keymap_restore(0);
         av8ba6v = 0;
         if (--g8b8eb && keep) {
             --g8b8eb;
@@ -347,7 +347,7 @@ int F_14294(int a)
     int key;
 
     F_13DE6(a);
-    while ((key = F_01417(0x7d00)) == 0)
+    while ((key = sys_wait_input(0x7d00)) == 0)
         ;
     F_13F21(1);
     return key;
@@ -483,7 +483,7 @@ restore:
         x_colors = bustyle->pal[idx2];
         if (r_vid.mode == -4)
             x_colors.c[0] = 0;
-        while ((key2 = F_01417(0)) == 0) {
+        while ((key2 = sys_wait_input(0)) == 0) {
             i = az8baa > 0 && topk + az8baa <= count5;
             if (!i && curl < 0)
                 continue;

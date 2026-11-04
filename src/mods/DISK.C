@@ -142,12 +142,12 @@ static void near F_15409(int n)
         tries = 0;
         while (_dos_open(g_6c6e, 0, g_6c6c)) {
             if (tries++ == 3)
-                F_00FEA();
+                sys_exit();
             F_1174E(g_4ee4);
         }
         if (_dos_read(*g_6c6c, (void far *)g_6c6a, 2, &got) || got != 2 || h_8bc8 + s_8dd2 != 0x115) {
             F_1174E(g_4ee8);
-            F_00FEA();
+            sys_exit();
         }
     }
 }
@@ -178,7 +178,7 @@ int F_1552B(int which)
         if (F_15396(*g_6c6c, (long)(i * 0x1e + 2)) ||
             _dos_read(*g_6c6c, (void far *)sl, 0x1e, &got) || got != 0x1e) {
             F_1174E(g_4ee8);
-            F_00FEA();
+            sys_exit();
         }
         sl->f1e = 0xff;
         sl->ptr.p = 0;
@@ -195,7 +195,7 @@ int F_1552B(int which)
 /* F_1563A @ 0F38:62BA (linear 0x1563A, 676 bytes)
 
    Bring picture number n into memory. With load set the picture goes through a work
-   area in the fast pool (F_03967) and is copied there after it has been read; otherwise it is read
+   area in the fast pool (mem_vram_alloc) and is copied there after it has been read; otherwise it is read
    into dst, or into a new block when dst is 0. The file position and the disk are looked after by
    F_15409 and the read is repeated after asking for the disk again when the data does not start
    and end with 0xbc. Returns 0 when there was no memory, 1 when the picture was loaded already,
@@ -217,11 +217,11 @@ static int near F_1563A(int n, int load, char far *dst)
     ent = sl = &g_slot[n];
     if (sl->ptr.p == 0) {
         if (load) {
-            fp = F_03967(ent->f1c, &pool);
+            fp = mem_vram_alloc(ent->f1c, &pool);
             sl->ptr.p = fp == 0 ? (char far *)0 : F_192AC(ent->f1c + 1, 2);
             sl->f1e = pool;
         } else {
-            sl->ptr.p = dst ? dst : F_03709(ent->f1c + 1, 0);
+            sl->ptr.p = dst ? dst : mem_alloc(ent->f1c + 1, 0);
             sl->f1e = 0xff;
         }
         if (sl->ptr.p == 0)
@@ -253,7 +253,7 @@ static int near F_1563A(int n, int load, char far *dst)
                 goto bad;
             do {
                 if (++retries > 3)
-                    F_00FEA();
+                    sys_exit();
                 g_4ee4[12] = *g_6c6c == g_4ed8 ? 1 : (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
                 g_4ee4[25] = *g_6c6e;
                 F_1174E(g_4ee4);
@@ -269,7 +269,7 @@ static int near F_1563A(int n, int load, char far *dst)
         return 1;
 bad:
     F_1174E(g_4ee8);
-    F_00FEA();
+    sys_exit();
 }
 
 /* F_158DE @ 0F38:655E (linear 0x158DE, 80 bytes)
@@ -282,7 +282,7 @@ void F_158DE(int n)
 
     n = F_153D7(n);
     if (*(pp = &g_slot[n].ptr.p)) {
-        F_036D6(*pp);
+        mem_free(*pp);
         *pp = 0;
     }
 }
@@ -308,7 +308,7 @@ struct Bitmap far *F_1592E(int id, struct Bitmap far *bm)
     res = F_1563A(id, 0, ab7564z);
     cur = sl = &g_slot[F_153D7(id)];
     if (g_4f0e)
-        pic = F_0376B(cur->f0, cur->f2, cur->f6, 1, bm);
+        pic = mem_new_bitmap(cur->f0, cur->f2, cur->f6, 1, bm);
     else
         pic = bm;
     for (j = 0; j < 16; j++)
@@ -455,18 +455,18 @@ void F_15CC3(int disks, int mode)
             strcpy(g_4eec + 0x10, aw8dd4x + 2);
             F_1174E(g_4eec);
         }
-        F_00FEA();
+        sys_exit();
     }
     if (_dos_read(g_4ed8, (void far *)&h_8bc8, 2, &err) || err != 2) {
         F_1174E(g_4ee8);
-        F_00FEA();
+        sys_exit();
     }
     au8dd6y = (mode == 2 || mode == 5) ? g_4ee0 : g_4ee2;
     *au8dd6y = *aw8dd4x;
     if (_dos_open(au8dd6y, 0, &g_4eda) || g_4eda == 0) {
         if (g_6c68 > 2) {
             F_1174E(g_4ee6);
-            F_00FEA();
+            sys_exit();
         } else if (disks == 1) {
             g_4eda = 0;
         } else {
@@ -474,7 +474,7 @@ void F_15CC3(int disks, int mode)
             err = _dos_open(au8dd6y, 0, &g_4eda);
             for (tries = 0; err || g_4eda == 0; tries++) {
                 if (tries == 3)
-                    F_00FEA();
+                    sys_exit();
                 g_4ee4[12] = (mode != 2 && mode != 5) ? '3' : '2';
                 g_4ee4[0x19] = *au8dd6y;
                 F_1174E(g_4ee4);
@@ -485,7 +485,7 @@ void F_15CC3(int disks, int mode)
     if (g_4eda) {
         if (_dos_read(g_4eda, (void far *)&s_8dd2, 2, &err) || err != 2 || h_8bc8 + s_8dd2 != 0x115) {
             F_1174E(g_4ee8);
-            F_00FEA();
+            sys_exit();
         }
     }
 }
@@ -514,13 +514,13 @@ void F_15EF9(void)
         ;
     if (_dos_open(g_6c72a, 0, &fd)) {
         F_1174E("Can't open data file");
-        F_00FEA();
+        sys_exit();
     }
     for (i = j = 0; i < 13; i++) {
         if (!_dos_read(fd, (void far *)g_4ea4[i], g_4ebe[i], &got) && got == g_4ebe[i])
             continue;
         F_1174E("Data disc read fail");
-        F_00FEA();
+        sys_exit();
     }
     _dos_close(fd);
     F_16089();
@@ -544,7 +544,7 @@ int F_15FBD(void)
     for (;;) {
         if (_dos_open(g_6c72a, 0, &file)) {
             if (++tries > 3)
-                F_00FEA();
+                sys_exit();
             g_4ee4[12] = (r_vid.mode != -2 && r_vid.mode != -6) ? '3' : '2';
             g_4ee4[25] = *au8dd6y;
             F_1174E(g_4ee4);
@@ -601,12 +601,12 @@ void F_16089(void)
     else {
         if (_dos_read(fd, (void far *)&bucount, 2, &got) || got != 2) {
             F_1174E(g_4ee8);
-            F_00FEA();
+            sys_exit();
         }
         for (i = 0, p = aytablex; i < bucount; p++, i++) {
             if (_dos_read(fd, (void far *)p, sizeof *p, &got) || got != sizeof *p) {
                 F_1174E(g_4ee8);
-                F_00FEA();
+                sys_exit();
             }
         }
         _dos_close(fd);
@@ -635,14 +635,14 @@ void F_16152(void)
     if (g_6c68 > 2) {
         if (fd == 0 || got) {
             F_1174E(g_4eea);
-            F_00FEA();
+            sys_exit();
         }
     } else {
         g_4ee4[12] = '1';
         g_4ee4[25] = g_4f3a[0];
         for (tries = 0; fd == 0 || got; tries++) {
             if (tries == 3)
-                F_00FEA();
+                sys_exit();
             F_1174E(g_4ee8);
             got = _dos_creat(g_4f3a, 0, &fd);
         }

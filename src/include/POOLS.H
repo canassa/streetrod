@@ -6,6 +6,6 @@
 
 extern struct Node2 as83b0[16];                         /* DS:83B0 */
 extern struct Node aj866au[140];                        /* DS:866A */
-void near F_03614(int reset);                           /* 0x03614 */
+void near pools_init(int reset);                        /* 0x03614 */
 
 #endif

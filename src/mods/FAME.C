@@ -21,7 +21,7 @@
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_score;                        /* DS:6C5E */
-static int near score_index(void);
+static int near elapsed_hours(void);
 static int near entry_beats_score(int i);
 static void near insert_entry(int pos);
 
@@ -32,12 +32,12 @@ struct ManualEntry g_manual[51] = {{2, 2}, {3, 11}, {4, 6}, {6, 5}, {7, 9}, {8, 
 int g_4bc8 = 0;   /* DS:4BC8 */
 int g_4bca[10] = {59, 70, 81, 92, 103, 114, 125, 136, 147, 158};   /* DS:4BCA */
 
-/* protect_check @ 0000:2FC8 (linear 0x02FC8, 403 bytes)
+/* fame_protect_check @ 0000:2FC8 (linear 0x02FC8, 403 bytes)
 
    The manual lookup copy protection: asks for the colour of the car key or car
    icon on a random manual page and returns 1 if the answer matches. */
 
-int protect_check(void)
+int fame_protect_check(void)
 {
     int f;
     int e;
@@ -83,9 +83,9 @@ int protect_check(void)
     return 1;
 }
 
-/* F_0315B @ 0000:315B (linear 0x0315B, 373 bytes) */
+/* fame_end_menu @ 0000:315B (linear 0x0315B, 373 bytes) */
 
-int F_0315B(void)
+int fame_end_menu(void)
 {
     char c01;
     char c1;
@@ -166,9 +166,9 @@ static void near insert_entry(int pos)
     }
 }
 
-/* score_index @ 0000:3375 (linear 0x03375, 42 bytes) */
+/* elapsed_hours @ 0000:3375 (linear 0x03375, 42 bytes) */
 
-static int near score_index(void)
+static int near elapsed_hours(void)
 {
     int a;
     int b;
@@ -181,9 +181,9 @@ struct Colors g_4be2 = {{3, 5, 5, 4, 1}};   /* DS:4BE2 */
 struct Colors g_4be8 = {{3, 4, 4, 3, 1}};   /* DS:4BE8 */
 char g_4bed = 0;   /* DS:4BED */
 
-/* F_0339F @ 0000:339F (linear 0x0339F, 628 bytes) */
+/* fame_show @ 0000:339F (linear 0x0339F, 628 bytes) */
 
-void F_0339F(int add)
+void fame_show(int add)
 {
     char buf3[16];
     int n2;
@@ -211,7 +211,7 @@ void F_0339F(int add)
     }
     (*m_present)();
     if (add) {
-        g_score = score_index();
+        g_score = elapsed_hours();
         for (i = 0; i < bucount; i++)
             if (entry_beats_score(i)) {
                 pos7 = i;

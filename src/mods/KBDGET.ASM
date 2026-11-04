@@ -6,38 +6,38 @@
         EXTRN   _g_47d6:WORD
 
         .CODE S0000_TEXT
-        EXTRN   _F_02C42:FAR
+        EXTRN   _kbd_isr:FAR
 
-; F_02DB6 @ 0000:2DB6 (linear 0x02DB6, 13 bytes)
+; kbdget_key @ 0000:2DB6 (linear 0x02DB6, 13 bytes)
 
-        PUBLIC  _F_02DB6
-_F_02DB6  PROC  FAR
+        PUBLIC  _kbdget_key
+_kbdget_key  PROC  FAR
         cli
         mov     al,_g_47d0
         xor     ah,ah
         mov     _g_47d0,0
         sti
         ret
-_F_02DB6  ENDP
+_kbdget_key  ENDP
 
-; F_02DC3 @ 0000:2DC3 (linear 0x02DC3, 31 bytes)
+; kbdget_hook @ 0000:2DC3 (linear 0x02DC3, 31 bytes)
 
-        PUBLIC  _F_02DC3
-_F_02DC3  PROC  FAR
+        PUBLIC  _kbdget_hook
+_kbdget_hook  PROC  FAR
         push    ds
         mov     ah,35h
         mov     al,9
         int     21h
         mov     _g_47d4,es
         mov     _g_47d6,bx
-        mov     ax,SEG _F_02C42
+        mov     ax,SEG _kbd_isr
         mov     ds,ax
-        mov     dx,OFFSET _F_02C42
+        mov     dx,OFFSET _kbd_isr
         mov     ah,25h
         mov     al,9
         int     21h
         pop     ds
         ret
-_F_02DC3  ENDP
+_kbdget_hook  ENDP
 
         END

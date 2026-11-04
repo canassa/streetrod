@@ -181,7 +181,7 @@ void cga_draw_text(struct Bitmap far *bm, int x, int y, char *s)
         rp++;
     }
     if (nb2 > 0) {
-        dseg4 = data_segment();
+        dseg4 = mem_data_segment();
         seg0 = FP_SEG(b0);
         seg1 = FP_SEG(b1);
         off0 = FP_OFF(b0);

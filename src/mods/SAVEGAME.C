@@ -117,7 +117,7 @@ static void near F_05584(void)
 
 static void near F_056A9(void)
 {
-    F_03614(1);
+    pools_init(1);
     a_7eaap.m7eaa = 750L;
     if (g_0610)
         a_7eaap.m7eaa = 10000L;
@@ -180,7 +180,7 @@ static int near F_057DC(int handle, struct Node **head)
     for (;;) {
         if (_dos_read(handle, &buf, 8, &n) != 0 || n != 8)
             return 1;
-        p = F_03C1B();
+        p = game_new_part();
         *p = buf;
         if (prev) {
             prev->next = p;
@@ -238,7 +238,7 @@ static int near F_0590F(int handle, struct Car **head, int flag)
                 return 1;
         if (F_057DC(handle, &buf.slot12))
             return 1;
-        car = (struct Car *)F_03FB1();
+        car = (struct Car *)game_new_car();
         *car = buf;
         if (prev) {
             prev->f26 = car;
@@ -340,7 +340,7 @@ int near F_05B4A(void)
     strcat(name, ".SAV");
     if (_dos_open(name, 0, &fd7)
         || _dos_read(fd7, atnewName, 0x24, &n) != 0 || n != 0x24
-        || (F_03614(0), 0)
+        || (pools_init(0), 0)
         || F_0590F(fd7, &a_7eaap.m7eb0, 1)
         || F_0590F(fd7, &a_7eaap.m7eb2, 0)
         || F_057DC(fd7, &a_7eaap.m7eb8)

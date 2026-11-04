@@ -4,7 +4,7 @@
 #define KBD_H
 #include "STRUCTS.H"
 
-void F_02C04(int a);                                    /* 0x02C04 */
-void F_02C2B(void);                                     /* 0x02C2B */
+void kbd_text_on(int a);                                /* 0x02C04 */
+void kbd_text_off(void);                                /* 0x02C2B */
 
 #endif

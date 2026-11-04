@@ -39,7 +39,7 @@ struct Bitmap far *F_11A72(int x, int y, int w, int h, struct Bitmap far *src)
     x &= r_vid.mask;
     if (src) {
         color = src->alt.p != 0;
-        pict = F_0376B(x2 - x, ye - y, color, -1, src);
+        pict = mem_new_bitmap(x2 - x, ye - y, color, -1, src);
     } else
         pict = F_1934E(x2 - x, ye - y, 0, 2);
     blit.w = pict->width;

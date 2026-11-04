@@ -43,14 +43,14 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **Equivalent forms.** Wherever several C forms compile to the same bytes, the source uses
   one of them. The DB notes list some arbitrary picks: the equal-arm ternaries
-  `!x ? 1 : 1` in F_0238C (the condition leaves no code), `case -2: case -1:` in F_0503F
+  `!x ? 1 : 1` in sys_drive_isr (the condition leaves no code), `case -2: case -1:` in game_run
   (any run above -3 gives the same code), the empty increment of `for (; *str; str)` in
   ega_draw_text, and `i = 4` after F_1ABAC's loops.
 - **F_137B2's `int bm = x_colors.c[4] == 2 ? 3 : 3;`** (DRAW.C). The original stores 3
   through `ax` and reloads `bm` from memory (including a `bm * 2` CSE in `si`), so the
   constant was not propagated; a plain `int bm = 3` (also as a statement, `volatile`, any
   flags) is folded. An equal-arm `?:` gives exactly that: the compare goes, the value stays
-  in `ax` and blocks propagation (as in F_0238C). `if (bm = 3)` also matches. It reads as a
+  in `ax` and blocks propagation (as in sys_drive_isr). `if (bm = 3)` also matches. It reads as a
   leftover of a style-dependent border width; the condition and the arm values are a
   guess, only "a ?: or assignment-condition with value 3" is evidence.
 - **Block-layout forms.** MSC 5.1 emits basic blocks in source order (with cross-jumping),
@@ -66,11 +66,11 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   F_29170's goto loop (escapes `/Ol`, see `loop_opt` below), F_2A84D/F_2AFDC's `goto next`,
   F_181C8's `again`/`done`, F_05EEA's shared retry tail; and the loop forms
   `for (;; g_05d2 = 0)` in F_14C90 (the increment gives the `jmp test` entry) and
-  F_008B4's accumulation inside the inner `while` test (keeps `cx` for the outer loop).
+  ads_open's accumulation inside the inner `while` test (keeps `cx` for the outer loop).
   That the original had a jump at each of these points is evidence; the exact statement
   (a `goto`, a `continue`, a differently nested `if`) is not.
-- **`#pragma loop_opt`** in SYS.C (off before F_01BAE, to the end of the file),
-  GAME.C (off/on around F_03C8D) and EGABLIT.C (off before egablit_latch_pack). These five
+- **`#pragma loop_opt`** in SYS.C (off before sys_demo_step, to the end of the file),
+  GAME.C (off/on around sell_parts) and EGABLIT.C (off before egablit_latch_pack). These five
   functions keep plain memory loops that the file's `/Ol` would otherwise optimize. Only
   `goto` loops escape `/Ol`, and a pragma is the more plausible source. Where exactly the
   pragmas sat in the original is unknown.
@@ -89,7 +89,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   - `x_trk0`/`x_trk1` (DASH.C, labels in `src/data/NEEDLE.ASM`): two unreachable far
     accesses for the two SEG constants in CONST (DS:68E6, DS:68E8) that nothing reads.
   - `g_6c42` (POPUP.C): four unreferenced `_BSS` bytes after `g_6c40`.
-  - `g_49e0[0] = g_49e0[0];` in the default cases of F_049ED (GAME.C) and F_05B4A
+  - `g_49e0[0] = g_49e0[0];` in the default cases of your_cars (GAME.C) and F_05B4A
     (SAVEGAME.C): after the menu F_142CF returns a positive item, the original loads
     `g_49e0[0]` (the list's item count) into `ax` and drops it. MSC drops the store of a
     self-assignment and keeps the load. The only other forms found that give these bytes
@@ -109,7 +109,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   (GARAGE.C) addresses its four messages as offsets into the message block,
   `g_239e + 1283`, `+ 1299`, `+ 1318`, `+ 1337` ("Chop roof - $70" ...), not as named
   globals; the game addresses messages by offset into g_239e everywhere (`Hot.f4`, the
-  argument of F_03AB8), so the original may have had named constants there. That the
+  argument of game_message), so the original may have had named constants there. That the
   blocks are grouped is evidence; the member list (a wider State8272 changes F_081AB's
   loop temps, so the arrays from DS:8290 stay separate) and the spelling are not.
 - **Per-module type views.** ROADVIEW.C reads the char `bw8aca` (DS:8ACA) as a word, so it

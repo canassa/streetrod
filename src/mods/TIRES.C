@@ -226,7 +226,7 @@ void F_1B213(int *a, int *b)
     r_vid.f16 = 0;
     g_6da0 = z_8b7c;
     modelm = a_7eaap.m7eb0->f2;
-    attr3 = F_049A2(a_7eaap.m7eb0);
+    attr3 = game_car_look(a_7eaap.m7eb0);
     tinto = (a_7eaap.m7eb0->f24 >> 8) & 0x1f;
     for (n = 0; n < 3; n++)
         g_6cdaaa[n] = F_15BBE(g_5aaa[n], 1);
@@ -302,10 +302,10 @@ void F_1B213(int *a, int *b)
     (*ab78aat)(g_6cdaaa[2], g_6d24ajz, &blt, 1);
     if (r_vid.mode == -2) {
         g_6cd4oz = &g_6cf4wz;
-        F_03904(g_6cd4oz, bp7316[2]->bits.p, 0, g_6df6a->width, 200, -2);
-        F_03904(g_5ab0, bp7316[2]->bits.p + g_6df6a->pitch, 0, pic->width, 200, -2);
-        F_03904(g_5ab4, bp7316[3]->bits.p, 0, 0x140, g_6d24ajz->height, -2);
-        F_03904(g_5ab8, bp7316[3]->bits.p, 0, g_6d28agz->width, 200, -2);
+        mem_set_bitmap(g_6cd4oz, bp7316[2]->bits.p, 0, g_6df6a->width, 200, -2);
+        mem_set_bitmap(g_5ab0, bp7316[2]->bits.p + g_6df6a->pitch, 0, pic->width, 200, -2);
+        mem_set_bitmap(g_5ab4, bp7316[3]->bits.p, 0, 0x140, g_6d24ajz->height, -2);
+        mem_set_bitmap(g_5ab8, bp7316[3]->bits.p, 0, g_6d28agz->width, 200, -2);
         blt.w = g_6dfa7->width;
         blt.h = g_6df6a->height + 4;
         blt.sx = blt.dx = 0;

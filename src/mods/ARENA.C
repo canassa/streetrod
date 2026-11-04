@@ -29,7 +29,7 @@ void F_19269(void)
     if (r_vid.mode == -6)
         g_6cd0 = (char far *)0x80000000L;
     else
-        g_6cd0 = F_03709(0xfde8, 1);
+        g_6cd0 = mem_alloc(0xfde8, 1);
     F_1923C();
 }
 
@@ -98,6 +98,6 @@ struct Bitmap far *F_1934E(int w, int h, int flags, int mode)
         total += size * r_vid.planes;
     bm = mem = (struct Bitmap far *)F_192AC(total, mode);
     bm->bits.p = (char far *)mem + 0x30;
-    F_0376B(w, h, flags, -1, bm);
+    mem_new_bitmap(w, h, flags, -1, bm);
     return bm;
 }

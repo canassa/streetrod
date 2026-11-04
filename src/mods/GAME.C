@@ -35,14 +35,14 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-static void near F_03C3E(struct Node *p7);
-static int near F_04940(unsigned *price);
-static int near F_039C0(void);
-static int near F_03B33(void);
-static void near F_0442B(int r);
-static int near F_03B0C(void);
-static void near F_03C8D(void);
-static int near F_049ED(void);
+static void near free_part(struct Node *p7);
+static int near counter_offer(unsigned *price);
+static int near start_game(void);
+static int near read_paper(void);
+static void near buy_from_ads(int r);
+static int near check_room(void);
+static void near sell_parts(void);
+static int near your_cars(void);
 
 struct Car *g_4f46 = 0;   /* DS:4F46 */
 struct Car *g_4f48 = 0;   /* DS:4F48 */
@@ -52,12 +52,12 @@ int g_4f4e[5] = {1022, 1023, 1025, 1024, 1026};   /* DS:4F4E */
 int g_4f58 = 0;   /* DS:4F58 */
 int g_4f5a = -1;   /* DS:4F5A */
 
-/* F_039C0 @ 0000:39C0 (linear 0x039C0, 195 bytes) */
+/* start_game @ 0000:39C0 (linear 0x039C0, 195 bytes) */
 
-static int near F_039C0(void)
+static int near start_game(void)
 {
     F_1013D(0);
-    F_01A05(2, 10);
+    sys_music_start(2, 10);
     F_0FF70();
     (*bl78be)();
     F_1013D(1);
@@ -66,8 +66,8 @@ static int near F_039C0(void)
     if (by70e2 == 0)
         F_1552B(2);
     if (ag8bcet == 0) {
-        if (protect_check() == 0)
-            F_00FEA();
+        if (fame_protect_check() == 0)
+            sys_exit();
         F_120FE(-4);
     }
     F_27198();
@@ -83,50 +83,50 @@ static int near F_039C0(void)
     return -1;
 }
 
-/* F_03A83 @ 0000:3A83 (linear 0x03A83, 53 bytes) */
+/* game_pause @ 0000:3A83 (linear 0x03A83, 53 bytes) */
 
-void F_03A83(int a)
+void game_pause(int a)
 {
     g_05cc = a + g_tick;
     g_05d0 = 1;
-    F_01417(30000);
+    sys_wait_input(30000);
     g_05cc = 0;
     g_05d0 = 0;
 }
 
-/* F_03AB8 @ 0000:3AB8 (linear 0x03AB8, 84 bytes) */
+/* game_message @ 0000:3AB8 (linear 0x03AB8, 84 bytes) */
 
-void F_03AB8(int n)
+void game_message(int n)
 {
     long saved;
 
     saved = g_05cc;
     F_13DE6(24);
     F_11C24(n);
-    F_03A83(g_05dc);
+    game_pause(g_05dc);
     F_11E5F();
     F_13F21(1);
     g_05cc = saved;
 }
 
-/* F_03B0C @ 0000:3B0C (linear 0x03B0C, 39 bytes) */
+/* check_room @ 0000:3B0C (linear 0x03B0C, 39 bytes) */
 
-static int near F_03B0C(void)
+static int near check_room(void)
 {
     if (a_7eaap.m7eb6 > 15) {
-        F_03AB8(0x0e27);
+        game_message(0x0e27);
         return 1;
     }
     if (a_7eaap.m7ebc > 130) {
-        F_03AB8(0x0e3f);
+        game_message(0x0e3f);
         return 1;
     }
     return 0;
 }
 
-/* F_03B33 @ 0000:3B33 (linear 0x03B33, 232 bytes) */
+/* read_paper @ 0000:3B33 (linear 0x03B33, 232 bytes) */
 
-static int near F_03B33(void)
+static int near read_paper(void)
 {
     int pick5;
     int tune;
@@ -152,9 +152,9 @@ static int near F_03B33(void)
     return F_14294(7);
 }
 
-/* F_03C1B @ 0000:3C1B (linear 0x03C1B, 35 bytes) */
+/* game_new_part @ 0000:3C1B (linear 0x03C1B, 35 bytes) */
 
-struct Node * near F_03C1B(void)
+struct Node * near game_new_part(void)
 {
     struct Node *p;
 
@@ -165,9 +165,9 @@ struct Node * near F_03C1B(void)
     return p;
 }
 
-/* F_03C3E @ 0000:3C3E (linear 0x03C3E, 28 bytes) */
+/* free_part @ 0000:3C3E (linear 0x03C3E, 28 bytes) */
 
-static void near F_03C3E(struct Node *p)
+static void near free_part(struct Node *p)
 {
     p->next = a_7eaap.m7eba;
     p->idx = -1;
@@ -175,9 +175,9 @@ static void near F_03C3E(struct Node *p)
     a_7eaap.m7ebc--;
 }
 
-/* F_03C5A @ 0000:3C5A (linear 0x03C5A, 51 bytes) */
+/* game_part_value @ 0000:3C5A (linear 0x03C5A, 51 bytes) */
 
-int F_03C5A(struct Node *n)
+int game_part_value(struct Node *n)
 {
     int r;
 
@@ -188,15 +188,15 @@ int F_03C5A(struct Node *n)
     return r;
 }
 
-/* The file is compiled /Oalsi, but the loops of F_03C8D are plain /Ol-off
+/* The file is compiled /Oalsi, but the loops of sell_parts are plain /Ol-off
    loops in the shipped code (list counters and pointers kept in memory, test
    reached by a jmp). No for/while/do formulation reproduces that under /Ol,
    so loop optimization is switched off for this function only. */
 #pragma loop_opt(off)
 
-/* F_03C8D @ 0000:3C8D (linear 0x03C8D, 804 bytes) */
+/* sell_parts @ 0000:3C8D (linear 0x03C8D, 804 bytes) */
 
-static void near F_03C8D(void)
+static void near sell_parts(void)
 {
     unsigned price1;
     struct Node *list8[142];
@@ -234,14 +234,14 @@ static void near F_03C8D(void)
         case -4:
             return;
         case 0x3ea:
-            F_03AB8(tries3 ? 0x0ed7 : 0x0f2a);
+            game_message(tries3 ? 0x0ed7 : 0x0f2a);
             return;
         case -3:
             sel = F_14C8B();
             break;
         }
         p7 = list8[sel];
-        price1 = F_03C5A(p7);
+        price1 = game_part_value(p7);
         type8 = p7->idx;
         pct = (10000 - p7->b) / 100;
         switch (g_4806[type8].f4) {
@@ -277,7 +277,7 @@ static void near F_03C8D(void)
             a_7eaap.m7eb8 = p7->next;
         else
             list8[sel - 1]->next = p7->next;
-        F_03C3E(p7);
+        free_part(p7);
         g_05fc += 0x444L;
         F_11540(price1);
     }
@@ -285,9 +285,9 @@ static void near F_03C8D(void)
 
 #pragma loop_opt(on)
 
-/* F_03FB1 @ 0000:3FB1 (linear 0x03FB1, 35 bytes) */
+/* game_new_car @ 0000:3FB1 (linear 0x03FB1, 35 bytes) */
 
-struct Node2 * near F_03FB1(void)
+struct Node2 * near game_new_car(void)
 {
     struct Node2 *p;
 
@@ -298,9 +298,9 @@ struct Node2 * near F_03FB1(void)
     return p;
 }
 
-/* F_03FD4 @ 0000:3FD4 (linear 0x03FD4, 28 bytes) */
+/* free_car @ 0000:3FD4 (linear 0x03FD4, 28 bytes) */
 
-static void near F_03FD4(struct Node2 *p)
+static void near free_car(struct Node2 *p)
 {
     p->next = a_7eaap.m7eb4;
     p->b = -1;
@@ -308,14 +308,14 @@ static void near F_03FD4(struct Node2 *p)
     a_7eaap.m7eb6--;
 }
 
-/* F_03FF0 @ 0000:3FF0 (linear 0x03FF0, 70 bytes) */
+/* game_add_part @ 0000:3FF0 (linear 0x03FF0, 70 bytes) */
 
-struct Node * near F_03FF0(int idx, int a)
+struct Node * near game_add_part(int idx, int a)
 {
     struct Node *n;
     struct Item *it;
 
-    n = F_03C1B();
+    n = game_new_part();
     n->idx = idx;
     it = &g_4806[idx];
     n->b = g_4966[it->f4];
@@ -325,15 +325,15 @@ struct Node * near F_03FF0(int idx, int a)
     return n;
 }
 
-/* F_04036 @ 0000:4036 (linear 0x04036, 848 bytes) */
+/* game_make_car @ 0000:4036 (linear 0x04036, 848 bytes) */
 
-struct Car * near F_04036(int idx, int weight, struct Car *old)
+struct Car * near game_make_car(int idx, int weight, struct Car *old)
 {
     struct Node *node;
     struct Car *car;
     int kind, w, i, j;
 
-    car = (old == 0) ? (struct Car *)F_03FB1() : old;
+    car = (old == 0) ? (struct Car *)game_new_car() : old;
     car->f2 = idx;
     car->weight = weight;
     car->f22 = 0x28;
@@ -344,26 +344,26 @@ struct Car * near F_04036(int idx, int weight, struct Car *old)
     car->f4 = i;
     car->f1f = 1;
     car->f20 = random_int(13) - 8;
-    car->slot6 = node = (old == 0) ? F_03C1B() : car->slot6;
+    car->slot6 = node = (old == 0) ? game_new_part() : car->slot6;
     w = (g7d86n[idx].f4 >> 6) & 3;
     w = (kind = (g7d86n[idx].f4 & 0xf) >> 1) + (w == 3) + 3 * w + 9;
     node->idx = w;
     node->a = g_4806[w].f0;
     node->b = g_4966[1];
     node->next = 0;
-    car->rack.s[0] = node = (old == 0) ? F_03C1B() : car->rack.s[0];
+    car->rack.s[0] = node = (old == 0) ? game_new_part() : car->rack.s[0];
     w = (g7d86n[idx].f4 >> 8 & 7) * 3 + kind;
     node->idx = w;
     node->a = g_4806[w].f0;
     node->b = g_4966[0];
     node->next = 0;
-    car->slot12 = node = (old == 0) ? F_03C1B() : car->slot12;
+    car->slot12 = node = (old == 0) ? game_new_part() : car->slot12;
     w = (g7d86n[idx].f4 >> 4 & 3) + 0x28;
     node->idx = w;
     node->a = g_4806[w].f0;
     node->b = g_4966[4];
     node->next = 0;
-    car->rack.s[1] = node = (old == 0) ? F_03C1B() : car->rack.s[1];
+    car->rack.s[1] = node = (old == 0) ? game_new_part() : car->rack.s[1];
     for (i = 3; i < 9; i++)
         car->b16[i] = 0;
     w = (i = g7d86n[idx].f4 >> 11 & 7) * 3 + kind + 0x19;
@@ -376,7 +376,7 @@ struct Car * near F_04036(int idx, int weight, struct Car *old)
     for (j = 2; j > i; j--)
         car->rack.s[j + 2] = 0;
     for (; i >= 0; i--) {
-        car->rack.s[i + 2] = node = (old == 0) ? F_03C1B() : car->rack.s[i + 2];
+        car->rack.s[i + 2] = node = (old == 0) ? game_new_part() : car->rack.s[i + 2];
         node->idx = w;
         node->a = g_4806[w].f0;
         node->b = g_4966[2];
@@ -403,9 +403,9 @@ struct Car * near F_04036(int idx, int weight, struct Car *old)
     return car;
 }
 
-/* F_04386 @ 0000:4386 (linear 0x04386, 57 bytes) */
+/* game_take_part @ 0000:4386 (linear 0x04386, 57 bytes) */
 
-int near F_04386(struct Node *n, int keep)
+int near game_take_part(struct Node *n, int keep)
 {
     int r;
 
@@ -416,33 +416,33 @@ int near F_04386(struct Node *n, int keep)
         n->next = a_7eaap.m7eb8;
         a_7eaap.m7eb8 = n;
     } else
-        F_03C3E(n);
+        free_part(n);
     return r;
 }
 
-/* F_043BF @ 0000:43BF (linear 0x043BF, 108 bytes) */
+/* game_scrap_car @ 0000:43BF (linear 0x043BF, 108 bytes) */
 
-int near F_043BF(struct Car *c, int keep)
+int near game_scrap_car(struct Car *c, int keep)
 {
     register struct Node **p2;
     int r;
     register int i;
 
-    c->weight -= F_04386(c->slot6, keep);
+    c->weight -= game_take_part(c->slot6, keep);
     r = 5;
     for (p2 = c->rack.s, i = r; i; p2++, i--)
-        c->weight -= F_04386(*p2, keep);
-    F_04386(c->slot12, 0);
+        c->weight -= game_take_part(*p2, keep);
+    game_take_part(c->slot12, 0);
     r = c->weight;
     if (r < 0)
         r = 0;
-    F_03FD4((struct Node2 *)c);
+    free_car((struct Node2 *)c);
     return r;
 }
 
-/* F_0442B @ 0000:442B (linear 0x0442B, 1301 bytes) */
+/* buy_from_ads @ 0000:442B (linear 0x0442B, 1301 bytes) */
 
-static void near F_0442B(int tab)
+static void near buy_from_ads(int tab)
 {
     char list4[70];
     struct Bitmap far *bm1;
@@ -481,7 +481,7 @@ static void near F_0442B(int tab)
         }
     }
     g_49e0[0] = n - 1;
-    F_008B4(g_49e0, (tab == 1) ? 2 : 0x1c);
+    ads_open(g_49e0, (tab == 1) ? 2 : 0x1c);
     goto test;
     do {
         used = n >= n0;
@@ -505,20 +505,20 @@ static void near F_0442B(int tab)
                 if ((long)price6 > a_7eaap.m7eaa) {
                     p1 = strchr(g_3a5a, '$');
                     sprintf(++p1, "%d short.", price6 - (int)a_7eaap.m7eaa);
-                    F_03AB8(0xf1a8);
+                    game_message(0xf1a8);
                     break;
                 }
                 F_11540(-price6);
                 if (used) {
-                    F_03FF0(i5, price6);
+                    game_add_part(i5, price6);
                     g_05fc += 0x222;
                     if (a_7eaap.m7ebc > 0x82)
                         goto done;
                     break;
                 }
-                car = F_04036(i5, price6, 0);
+                car = game_make_car(i5, price6, 0);
                 car->f4 = (color != -1) ? color : random_int(5);
-                F_03AB8(0xf2de);
+                game_message(0xf2de);
                 g_05fc += 0x444;
                 goto done;
             }
@@ -559,10 +559,10 @@ static void near F_0442B(int tab)
             F_193D4();
         }
 test:
-        n = F_009CB();
+        n = ads_run();
     } while (n != -3);
 done:
-    F_00D58();
+    ads_close();
     if (a_7eaap.m7eb0)
         F_067CF(a_7eaap.m7eb0->f4);
     g_0284 = 0;
@@ -570,9 +570,9 @@ done:
 
 char *g_4fa4 = g_3bf9;   /* DS:4FA4 */
 
-/* F_04940 @ 0000:4940 (linear 0x04940, 98 bytes) */
+/* counter_offer @ 0000:4940 (linear 0x04940, 98 bytes) */
 
-static int near F_04940(unsigned *price)
+static int near counter_offer(unsigned *price)
 {
     unsigned r;
     int key;
@@ -587,9 +587,9 @@ static int near F_04940(unsigned *price)
     return key;
 }
 
-/* F_049A2 @ 0000:49A2 (linear 0x049A2, 75 bytes) */
+/* game_car_look @ 0000:49A2 (linear 0x049A2, 75 bytes) */
 
-int F_049A2(struct Car *c)
+int game_car_look(struct Car *c)
 {
     int r;
 
@@ -605,9 +605,9 @@ int F_049A2(struct Car *c)
     return r;
 }
 
-/* F_049ED @ 0000:49ED (linear 0x049ED, 1501 bytes) */
+/* your_cars @ 0000:49ED (linear 0x049ED, 1501 bytes) */
 
-static int near F_049ED(void)
+static int near your_cars(void)
 {
     struct Bitmap far *pict;
     struct Car *tbl[142];
@@ -639,7 +639,7 @@ static int near F_049ED(void)
         g_49e0[0] = n;
         switch (item = F_142CF(0xb, (n > item) ? item : n, 0, g_49e0, 0, 0)) {
         case 0x3ea:
-            F_03AB8(ticks ? 0xee9 : 0xefa);
+            game_message(ticks ? 0xee9 : 0xefa);
         case -3:
             return 0;
         case -1:
@@ -675,23 +675,23 @@ static int near F_049ED(void)
                 goto tail;
         } while (cash == 0);
         if ((unsigned)(cur->weight * 1.15) < cash) {
-            F_03AB8(0xec0);
+            game_message(0xec0);
             goto tail;
         }
         if (cur->weight < cash) {
-            F_03AB8(0x106e);
+            game_message(0x106e);
             do {
                 if ((n = F_15127(&cash, g_29f8)) == -22)
                     goto tail;
             } while (cash == 0);
             if (cur->weight < cash) {
-                F_03AB8(0x1078);
+                game_message(0x1078);
                 goto tail;
             }
         }
         if (cash > offer) {
             offer = (random_int(5) + 85.0) * price / 100.0;
-            if (cash > offer && F_04940(&offer) == -20)
+            if (cash > offer && counter_offer(&offer) == -20)
                 cash = offer;
         }
         if (cash > offer) {
@@ -702,7 +702,7 @@ static int near F_049ED(void)
         }
         if (cash > offer) {
             offer = (random_int(5) + 91.0) * price / 100.0;
-            if (cash > offer && F_04940(&offer) == -20)
+            if (cash > offer && counter_offer(&offer) == -20)
                 cash = offer;
         }
         if (cash > offer) {
@@ -712,10 +712,10 @@ static int near F_049ED(void)
             } while (cash == 0);
         }
         if ((float)offer < (float)cash * 0.9) {
-            F_03AB8(0x1084);
+            game_message(0x1084);
             goto tail;
         }
-        F_03AB8((cur->weight > cash * 2) ? 0x104b : 0x1091);
+        game_message((cur->weight > cash * 2) ? 0x104b : 0x1091);
         g_05fc += 0x888L;
         F_11540(cash);
         if (item == 1 && a_7eaap.m7eb0) {
@@ -724,21 +724,21 @@ static int near F_049ED(void)
             pict = 0;
             F_120FE(-4);
             mid = a_7eaap.m7eb0->f2;
-            result = F_049A2(a_7eaap.m7eb0);
+            result = game_car_look(a_7eaap.m7eb0);
             F_181C8(6, mid, result, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0x98, 0,
                     g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
             F_13F21(1);
             F_06AA6();
             F_13DE6(10);
             F_120FE(-2);
-            F_043BF(a_7eaap.m7eb0, 0);
+            game_scrap_car(a_7eaap.m7eb0, 0);
             a_7eaap.m7eb0 = 0;
         } else {
             if (item == ((a_7eaap.m7eb0 != 0) + 1))
                 a_7eaap.m7eb2 = cur->f26;
             else
                 tbl[item - 1]->f26 = cur->f26;
-            F_043BF(cur, 0);
+            game_scrap_car(cur, 0);
         }
 tail:
         F_13F21(1);
@@ -750,31 +750,31 @@ tail:
     }
 }
 
-/* F_04FCA @ 0000:4FCA (linear 0x04FCA, 48 bytes) */
+/* game_play_anim @ 0000:4FCA (linear 0x04FCA, 48 bytes) */
 
-void F_04FCA(int h)
+void game_play_anim(int h)
 {
     F_11149(h);
     while (F_111F2(h))
-        F_01417(10);
+        sys_wait_input(10);
 }
 
-/* F_04FFA @ 0000:4FFA (linear 0x04FFA, 69 bytes) */
+/* game_popup @ 0000:4FFA (linear 0x04FFA, 69 bytes) */
 
-void F_04FFA(int a, int b, int c)
+void game_popup(int a, int b, int c)
 {
     long saved;
 
     saved = g_05cc;
     F_11DE2(a, b, c);
-    F_03A83(g_05dc);
+    game_pause(g_05dc);
     F_11E5F();
     g_05cc = saved;
 }
 
-/* F_0503F @ 0000:503F (linear 0x0503F, 1007 bytes) */
+/* game_run @ 0000:503F (linear 0x0503F, 1007 bytes) */
 
-void near F_0503F(void)
+void near game_run(void)
 {
     int again;
     int kind;
@@ -782,7 +782,7 @@ void near F_0503F(void)
     int w;
 
     again = 1;
-    kind = F_039C0();
+    kind = start_game();
     for (;;) {
         if (kind == -1)
             again = 1;
@@ -804,9 +804,9 @@ void near F_0503F(void)
         if (kind == 0 && w == -2)
             v = 1;
         if (w == -1 && a_7eaap.m7eb6 <= 15 && a_7eaap.m7ebc <= 130) {
-            kind = F_03B33();
+            kind = read_paper();
             if (kind == 2 || kind == 1)
-                F_0442B(kind);
+                buy_from_ads(kind);
         }
         again = 0;
         while ((kind = F_06B06(v)) != 0) {
@@ -814,11 +814,11 @@ void near F_0503F(void)
             if (kind == 0x29a) {
                 if (g_0282 == 1)
                     F_100E2();
-                F_0339F(g_0282 & 2);
+                fame_show(g_0282 & 2);
                 F_120FE(1);
                 g_0282 = 0;
                 again = 1;
-                kind = F_0315B();
+                kind = fame_end_menu();
                 if (kind != -2 && kind != -1 && kind == 4)
                     return;
                 F_120FE(-2);
@@ -828,14 +828,14 @@ void near F_0503F(void)
             v = 2;
             switch (kind) {
             case 1:
-                if (F_03B0C())
+                if (check_room())
                     v = 0;
                 else {
                     if (a_7eaap.m7eb0 == 0)
                         v = 1;
-                    kind = F_03B33();
+                    kind = read_paper();
                     if (kind == 2 || kind == 1)
-                        F_0442B(kind);
+                        buy_from_ads(kind);
                     if (a_7eaap.m7eb0 == 0)
                         v = 2;
                     if (a_7eaap.m7eb0 == 0 && a_7eaap.m7eb2)
@@ -845,7 +845,7 @@ void near F_0503F(void)
                 continue;
             case 2:
             case 15:
-                if (F_03B0C()) {
+                if (check_room()) {
                     v = 0;
                     continue;
                 }
@@ -854,7 +854,7 @@ void near F_0503F(void)
                         F_0DCBE(a_7eaap.m7eb0, &e_78e0);
                         if (kind == 2) {
                             if (a_7eaap.m7eb0->f22 < 9) {
-                                F_03AB8(0x172e);
+                                game_message(0x172e);
                                 v = 0;
                                 continue;
                             }
@@ -864,12 +864,12 @@ void near F_0503F(void)
                             F_0AB8B();
                         } else {
                             if (a_7eaap.m7eb0->f22 >= 0x8c) {
-                                F_03AB8(0x19b1);
+                                game_message(0x19b1);
                                 v = 0;
                                 continue;
                             }
                             if (a_7eaap.m7eaa == 0) {
-                                F_03AB8(0x199f);
+                                game_message(0x199f);
                                 v = 0;
                                 continue;
                             }
@@ -881,14 +881,14 @@ void near F_0503F(void)
                         g_05fc += 0x222;
                         v = 1;
                     } else {
-                        F_03AB8(0x0e7f);
+                        game_message(0x0e7f);
                         v = 0;
                     }
                 } else {
                     if (a_7eaap.m7eb2)
-                        F_03AB8(0x0f16);
+                        game_message(0x0f16);
                     else
-                        F_03AB8(0x0efa);
+                        game_message(0x0efa);
                     v = 0;
                 }
                 continue;
@@ -901,7 +901,7 @@ void near F_0503F(void)
                 case -4:
                     continue;
                 case -3:
-                    if (F_03B0C()) {
+                    if (check_room()) {
                         v = 0;
                         kind = 0x309;
                     } else {
@@ -919,11 +919,11 @@ void near F_0503F(void)
                 }
                 break;
             case 5:
-                F_03C8D();
+                sell_parts();
                 v = 0;
                 continue;
             case 6:
-                v = F_049ED();
+                v = your_cars();
                 continue;
             case 7:
                 F_06F6B();
@@ -965,16 +965,16 @@ void near F_0503F(void)
                 v = 0;
                 continue;
             case 17:
-                F_03AB8(0x18f6);
+                game_message(0x18f6);
                 v = 0;
                 continue;
             case -40:
                 if (g_58d0) {
-                    F_00D99();
+                    sys_music_pause();
                     g_58d0 = 0;
                 } else {
                     g_58d0 = 1;
-                    F_00DD8();
+                    sys_music_resume();
                 }
                 v = 0;
                 continue;

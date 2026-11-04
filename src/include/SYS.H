@@ -88,29 +88,29 @@ extern int g8ef6q;                                      /* DS:8EF6 */
 extern int g_8ef8;                                      /* DS:8EF8 */
 extern int aj8efax;                                     /* DS:8EFA */
 extern int bw8efc;                                      /* DS:8EFC */
-void F_00D78(void);                                     /* 0x00D78 */
-void F_00D99(void);                                     /* 0x00D99 */
-void F_00DD8(void);                                     /* 0x00DD8 */
-void F_00E24(void);                                     /* 0x00E24 */
-void F_00F0B(int n);                                    /* 0x00F0B */
-void F_00FB7(void);                                     /* 0x00FB7 */
-void F_00FEA(void);                                     /* 0x00FEA */
-void F_0105B(unsigned deverr, unsigned char errcode);   /* 0x0105B */
-void F_01111(void);                                     /* 0x01111 */
-void F_012DE(int n);                                    /* 0x012DE */
-int F_01391(int keep);                                  /* 0x01391 */
-int F_01417(int n);                                     /* 0x01417 */
-int F_01843(int delay, int pri);                        /* 0x01843 */
-void F_0198A(int fc, int delay);                        /* 0x0198A */
-void F_019BC(int n);                                    /* 0x019BC */
-void F_01A05(int n, int cnt);                           /* 0x01A05 */
-void F_01A7C(void);                                     /* 0x01A7C */
-void F_01AAD(void);                                     /* 0x01AAD */
-void F_01B27(void);                                     /* 0x01B27 */
-int F_01B91(int x);                                     /* 0x01B91 */
-void F_01BAE(void);                                     /* 0x01BAE */
-void interrupt far F_01FE2(void);                       /* 0x01FE2 */
-void F_02374(void);                                     /* 0x02374 */
-void interrupt far F_0238C(void);                       /* 0x0238C */
+void sys_hover_reset(void);                             /* 0x00D78 */
+void sys_music_pause(void);                             /* 0x00D99 */
+void sys_music_resume(void);                            /* 0x00DD8 */
+void sys_input_reset(void);                             /* 0x00E24 */
+void sys_timer_remove(int n);                           /* 0x00F0B */
+void sys_unhook(void);                                  /* 0x00FB7 */
+void sys_exit(void);                                    /* 0x00FEA */
+void sys_crit_error(unsigned deverr, unsigned char errcode);/* 0x0105B */
+void sys_init(void);                                    /* 0x01111 */
+void sys_keymap_set(int n);                             /* 0x012DE */
+int sys_keymap_restore(int keep);                       /* 0x01391 */
+int sys_wait_input(int n);                              /* 0x01417 */
+int sys_timer_add(int delay, int pri);                  /* 0x01843 */
+void sys_timer_anim(int fc, int delay);                 /* 0x0198A */
+void sys_timer_cancel(int n);                           /* 0x019BC */
+void sys_music_start(int n, int cnt);                   /* 0x01A05 */
+void sys_music_stop(void);                              /* 0x01A7C */
+void sys_drive_start(void);                             /* 0x01AAD */
+void sys_drive_stop(void);                              /* 0x01B27 */
+int sys_sign(int x);                                    /* 0x01B91 */
+void sys_demo_step(void);                               /* 0x01BAE */
+void interrupt far sys_timer_isr(void);                 /* 0x01FE2 */
+void sys_car_halt(void);                                /* 0x02374 */
+void interrupt far sys_drive_isr(void);                 /* 0x0238C */
 
 #endif

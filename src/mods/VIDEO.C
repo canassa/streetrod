@@ -159,7 +159,7 @@ void F_10D6C(int n)
     g_58f0[g_59f8[n]].a = -1;
     o->id = -1;
     if (o->f4)
-        F_019BC(n);
+        sys_timer_cancel(n);
 }
 
 /* F_10DDF @ 0F38:1A5F (linear 0x10DDF, 94 bytes) */
@@ -254,7 +254,7 @@ static void near F_10E3D(int n)
         case 11:
             if (!(g_obj->f2 = g_cmd->b))
                 g_obj->f2 = ++k;
-            F_0198A(g_obj->id, g_cmd->a);
+            sys_timer_anim(g_obj->id, g_cmd->a);
             g_obj->f4++;
             if (wait)
                 F_120FE(-1);

@@ -132,7 +132,7 @@ int F_16EA2(void)
         F_2858D();
         if (g_0610 == 0x63) {
             g_0610--;
-            F_00FEA();
+            sys_exit();
         }
         if (ret = F_08EA8())
             break;

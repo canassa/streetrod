@@ -21,14 +21,14 @@ class RenameTests(unittest.TestCase):
                          'MODS\\PROTECT.C PROTECT.OBJ _M_02FC8')
 
     def test_pairs(self):
-        self.assertEqual(rename.parse_pairs(['# c', 'F_00000 a  # why', '', 'FAME.C B.C']),
-                         [('F_00000', 'a'), ('FAME.C', 'B.C')])
+        self.assertEqual(rename.parse_pairs(['# c', 'dos_print a  # why', '', 'FAME.C B.C']),
+                         [('dos_print', 'a'), ('FAME.C', 'B.C')])
 
     def test_refuses_taken_and_bad_names(self):
         con = db.connect()
         used = con.execute("SELECT name FROM functions WHERE name = 'main'").fetchone()[0]
         con.close()
-        for pairs in ([('F_00000', used)], [('F_00000', 'MAIN')], [('F_00000', '1x')],
+        for pairs in ([('dos_print', used)], [('dos_print', 'MAIN')], [('dos_print', '1x')],
                       [('FAME.C', 'protect.c')], [('FAME.C', 'PROTECT.ASM')], [('no_such_name', 'x_y')]):
             with self.assertRaises(SystemExit, msg=pairs):
                 rename.rename(pairs, dry=True)

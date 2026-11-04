@@ -35,15 +35,15 @@ int F_08EA8(void)
             g_05d6 = 0;
             if (g_51ec == 0)
                 F_16381(1);
-            F_01AAD();
-            F_00E24();
+            sys_drive_start();
+            sys_input_reset();
             jz79a6 = 1;
             F_11421(-1, "Get ready !", 0);
             g_05cc = g_tick + random_int(103) + 110;
             return e_78e0.fbc | g79e2g.fbc;
         case 1:
             if (e_78e0.f0 > 0) {
-                F_01B27();
+                sys_drive_stop();
                 e_78e0.fbc |= 0x81;
                 return 1;
             }
@@ -74,8 +74,8 @@ int F_08EA8(void)
             g_05d6 = 0;
             if (g_51ec == 0)
                 F_16381(1);
-            F_01AAD();
-            F_00E24();
+            sys_drive_start();
+            sys_input_reset();
             jz79a6 = 1;
             F_11421(-1, "Cruising in town...", 0);
             e_78e0.f1a = 1;
@@ -86,7 +86,7 @@ int F_08EA8(void)
             return 0;
         case 1:
             if (g_0610 == 0) {
-                key = F_02DB6();
+                key = kbdget_key();
                 if (key == 0x1b || key == 0x1f)
                     g_47ee = 1;
                 if (g_05f2) {
@@ -94,18 +94,18 @@ int F_08EA8(void)
                     g_47ee |= g_05ee;
                 }
                 if (g_471d) {
-                    F_02DF4();
+                    joy_read();
                     g_47ee |= g_471c;
                 }
             }
             if (g_0610 == 99) {
                 g_0610--;
-                F_00FEA();
+                sys_exit();
             }
             if ((g_terrain0[ao7d2ev.m7d30 + 1] & 1) || (g_terrain1[ao7d2ev.m7d30 + 1] & 1) || g_47ee) {
                 g_4736 = 0;
                 g_4732 = 0;
-                F_01B27();
+                sys_drive_stop();
                 return 1;
             }
             e_78e0.fe += g_6c82;

@@ -20,7 +20,7 @@ void bitmap_copy(struct Bitmap far *src, struct Bitmap far *dst, int e)
 {
     struct Blt pkt;
 
-    F_0376B(src->width, src->height, dst->alt.p ? 1 : 0, -1, dst);
+    mem_new_bitmap(src->width, src->height, dst->alt.p ? 1 : 0, -1, dst);
     pkt.w = src->width;
     pkt.h = src->height;
     pkt.dx = pkt.dy = pkt.sx = pkt.sy = 0;
@@ -98,7 +98,7 @@ struct Bitmap far *bitmap_shift_right(struct Bitmap far *src, int n, struct Bitm
         sp8 += pitch;
     }
     extra8 = (acc1 & mask) == mask ? 0 : 1 << r_vid.shift;
-    out = F_0376B(src->width + extra8, src->height, src->alt.p ? 1 : 0, -1, dst);
+    out = mem_new_bitmap(src->width + extra8, src->height, src->alt.p ? 1 : 0, -1, dst);
     dp8 = (unsigned char far *)out->bits.p;
     sp8 = (unsigned char far *)src->bits.p;
     for (k = 0; k < h3 * r_vid.planes; k++) {

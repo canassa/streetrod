@@ -189,7 +189,7 @@ void F_1174E(char *msg)
         if (g_58ee)
             F_11324(g_04ac);
         r_vid.f16 = 1;
-        F_00E24();
+        sys_input_reset();
         back = r_vid.back;
         r_vid.back = r_vid.front;
         F_14241(0x20);
@@ -207,7 +207,7 @@ void F_1174E(char *msg)
         puts(g_293e);
         puts(g_2967);
         if (g_05e0) {
-            while (!F_02DB6())
+            while (!kbdget_key())
                 ;
         } else {
             while (!kbhit() == 0)

@@ -273,7 +273,7 @@ void F_0B8A1(void)
     dl.f0c = 1;
     F_120FE(1);
     dl.f0 = a_7eaap.m7eb0->f2;
-    dl.f2 = F_049A2(a_7eaap.m7eb0);
+    dl.f2 = game_car_look(a_7eaap.m7eb0);
     F_181C8(4, dl.f0, dl.f2, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0xa9, 1,
             g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
     F_16381(0);
@@ -301,7 +301,7 @@ void F_0B8A1(void)
 top:
     g_05cc = g_tick + 20;
     for (;;) {
-        while ((key = F_01417(3000)) == 0)
+        while ((key = sys_wait_input(3000)) == 0)
             ;
         switch (key) {
         case 1000:
@@ -331,8 +331,8 @@ top:
                 F_13DE6(0x17);
                 pos <<= 1;
                 dl.f16 = 1;
-                F_04FCA(3);
-                F_03AB8(0x19e1);
+                game_play_anim(3);
+                game_message(0x19e1);
                 dl.f10 = 0;
                 if (done)
                     goto fin;
@@ -407,11 +407,11 @@ top:
                 dl.f12 = 0;
                 F_120FE(dl.f0c = 2);
                 if (dl.f0e > 0 && pos <= a_7eaap.m7eaa)
-                    F_03AB8(0x18dd);
+                    game_message(0x18dd);
                 goto both;
             }
             if (dl.f0e == 0 || pos > a_7eaap.m7eaa)
-                F_03AB8(0x10b5);
+                game_message(0x10b5);
             else {
                 F_0B61B(&dl, 0x471);
                 dl.f12 = 1;
@@ -426,7 +426,7 @@ top:
             }
             break;
         case 3:
-            F_03AB8(0x10f6);
+            game_message(0x10f6);
             continue;
         case 5:
             break;
@@ -446,7 +446,7 @@ static int near F_0BED4(void)
     ret = 0;
     if (a_7eaap.m7eb0 == 0)
         return 0;
-    a_7eaap.m7eb0->weight -= F_04386(a_7eaap.m7eb0->slot12, 0);
+    a_7eaap.m7eb0->weight -= game_take_part(a_7eaap.m7eb0->slot12, 0);
     a_7eaap.m7eb0->slot12 = 0;
     F_076A7(4, tbl, 0, 0);
     if (g_49e0[0]) {
@@ -457,7 +457,7 @@ static int near F_0BED4(void)
             ret = (int)-a_7eaap.m7eaa;
             a_7eaap.m7eaa = 0;
         }
-        F_03FF0(0x28, g_4806[40].f0);
+        game_add_part(0x28, g_4806[40].f0);
         tbl[0] = a_7eaap.m7eb8;
         a_7eaap.m7eb8 = tbl[0]->next;
         F_07741(tbl[0], &a_7eaap.m7eb0->slot12);
@@ -522,7 +522,7 @@ static void near F_0BF94(void)
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.f16 = 1;
     F_120FE(-2);
-    F_00E24();
+    sys_input_reset();
 }
 
 /* F_0C1D8 @ 0000:C1D8 (linear 0x0C1D8, 559 bytes) */
@@ -571,9 +571,9 @@ static void near F_0C1D8(void)
     }
     F_120FE(-2);
     (*m_present)();
-    F_00E24();
-    F_03A83(0x64);
-    F_00E24();
+    sys_input_reset();
+    game_pause(0x64);
+    sys_input_reset();
     F_193D4();
 }
 
@@ -618,16 +618,16 @@ static void near F_0C52C(int n)
 
     if (a_7eaap.m7eb0) {
         for (i = 0, p = a_7eaap.m7eb0->rack.s; i < 5; i++, p++) {
-            a_7eaap.m7eb0->weight -= F_04386(*p, 0);
+            a_7eaap.m7eb0->weight -= game_take_part(*p, 0);
             *p = 0;
         }
         for (i = 0, q = a_7eaap.m7eb0->b16; i < 9; i++)
             *q++ = 0;
         a_7eaap.m7eb0->f1f = 0;
     }
-    F_00E24();
+    sys_input_reset();
     F_16BC1();
-    F_04FFA(-n, -1, 0x49);
+    game_popup(-n, -1, 0x49);
 }
 
 /* F_0C5AC @ 0000:C5AC (linear 0x0C5AC, 103 bytes) */
@@ -638,14 +638,14 @@ static void near F_0C5AC(int n)
     int i;
 
     if (a_7eaap.m7eb0) {
-        a_7eaap.m7eb0->weight -= F_04386(a_7eaap.m7eb0->slot6, 0);
+        a_7eaap.m7eb0->weight -= game_take_part(a_7eaap.m7eb0->slot6, 0);
         a_7eaap.m7eb0->slot6 = 0;
         for (i = 0, q = a_7eaap.m7eb0->b14; i < 2; i++)
             *q++ = 0;
     }
-    F_00E24();
+    sys_input_reset();
     F_16BC1();
-    F_04FFA(-n, -1, 0x49);
+    game_popup(-n, -1, 0x49);
 }
 
 int g_54b2[3][5] = {{2, 5, 8, 11, 14}, {0, 2, 4, 6, 8}, {0, 0, 1, 2, 4}};   /* DS:54B2 */
@@ -706,10 +706,10 @@ int near F_0C613(void)
         bo7676 = 1;
         F_0C497();
         F_120FE(-2);
-        F_03AB8(g7d40q == 0 ? (i = g_53c8[kind]) : a_7eaap.m7ec0 == 0 ? 0x14bd : 0x14d6);
+        game_message(g7d40q == 0 ? (i = g_53c8[kind]) : a_7eaap.m7ec0 == 0 ? 0x14bd : 0x14d6);
         F_11540(v);
         if (kind == 5) {
-            found = F_04036(bn7648, ar7d7au->f0, 0);
+            found = game_make_car(bn7648, ar7d7au->f0, 0);
             found->slot12->b = random_int(500);
             found->f24 = ((g7d84o->ff & 0x1f) << 8) | (found->f24 & 0xe0ff);
             found->f24 = (((g7d84o->fe & 4) != 0 & 1) << 13) | (found->f24 & 0xdfff);
@@ -758,13 +758,13 @@ done:
         else
             i += 0x14;
         F_13DE6(0x18);
-        F_01417(0);
+        sys_wait_input(0);
         sprintf(temp, "You have been fined $%2d for speeding", i);
         F_11421(-1, temp, 0x140 - o_8250);
-        F_03A83(0xfa);
+        game_pause(0xfa);
         if (i <= a_7eaap.m7eaa)
             goto pay;
-        F_03AB8(0x1793);
+        game_message(0x1793);
         F_13F21(1);
         F_13F21(1);
         F_11540(-a_7eaap.m7eaa);
@@ -773,16 +773,16 @@ done:
 pay:
         F_11540(-i);
         cost = g_05cc;
-        F_03A83(g_05dc);
+        game_pause(g_05dc);
         g_05cc = cost;
         F_13F21(1);
         F_11421(-1, "", 0x140 - o_8250);
     } else if (e_78e0.fbc == 0x81) {
         F_120FE(-2);
-        F_03AB8(0xecb2);
+        game_message(0xecb2);
     } else {
         if (kind == 5) {
-            F_043BF(a_7eaap.m7eb0, 0);
+            game_scrap_car(a_7eaap.m7eb0, 0);
             a_7eaap.m7eb0 = 0;
         }
         F_11540(-v);
@@ -790,7 +790,7 @@ pay:
             F_0C497();
             F_120FE(-2);
             i = kind == 5 ? 0x143a : 0x1427;
-            F_03AB8(g7d40q == 0 ? i : a_7eaap.m7ec0 == 0 ? 0x1450 : 0x146c);
+            game_message(g7d40q == 0 ? i : a_7eaap.m7ec0 == 0 ? 0x1450 : 0x146c);
             F_13F21(1);
             if (kind != 5)
                 return 3;
@@ -811,12 +811,12 @@ finishstop:
             F_0C1D8();
             if (kind == 5) {
                 if (e_78e0.fbc & 8) {
-                    F_03AB8(0x16f6);
+                    game_message(0x16f6);
                     F_0BED4();
                 } else
-                    F_03AB8(0x1658);
+                    game_message(0x1658);
             } else if (e_78e0.f0 > 0x5a) {
-                v = F_043BF(a_7eaap.m7eb0, 0) / 10 + 0x13;
+                v = game_scrap_car(a_7eaap.m7eb0, 0) / 10 + 0x13;
                 a_7eaap.m7eb0 = 0;
                 F_11540(v);
                 ptr = g_4115;
@@ -826,8 +826,8 @@ finishstop:
                 ptr[2] = ' ';
                 itoa(v, ptr, 10);
                 ptr[strlen(ptr)] = ' ';
-                F_00E24();
-                F_03AB8(0x1513);
+                sys_input_reset();
+                game_message(0x1513);
             } else {
                 if (e_78e0.f0 > 0x3c) {
                     i = 0;
@@ -837,11 +837,11 @@ finishstop:
                     v = random_int(0x14) + 100;
                 } else {
                     if (e_78e0.fbc & 8) {
-                        F_03AB8(0x1590);
+                        game_message(0x1590);
                         all = F_0BED4();
                         goto fin;
                     }
-                    F_03AB8(0x1561);
+                    game_message(0x1561);
                     F_13F21(1);
                     return 1;
                 }
@@ -868,8 +868,8 @@ finishstop:
                     g_579f[sel][1].val = 0xcf;
                 }
                 F_13DE6(sel);
-                F_00E24();
-                while ((i = F_01417(3000)) == 0)
+                sys_input_reset();
+                while ((i = sys_wait_input(3000)) == 0)
                     ;
                 F_13F21(1);
                 switch (i) {
@@ -996,7 +996,7 @@ void near F_0D031(void)
     one = 1;
     F_120FE(-4);
     F_120FE(1);
-    F_00E24();
+    sys_input_reset();
     F_0CDAF(&e_78e0);
     F_0CF5C();
     if (a_7eaap.m7ec0 == 1 && g7d40q == 0) {
@@ -1007,9 +1007,9 @@ void near F_0D031(void)
     jz79a6 = 0;
     bw8aca = 1;
     F_08E2D();
-    F_01B27();
+    sys_drive_stop();
     g_05cc = 0;
-    F_00E24();
+    sys_input_reset();
     F_11593(g_49dc);
     if (ao7d2ev.m7d30 > 200) {
         if (random_int(3) > 0) {
@@ -1218,7 +1218,7 @@ static void near F_0D624(void)
             g79e2g.fbc |= 1;
         else
             e_78e0.fbc |= 1;
-        F_02374();
+        sys_car_halt();
     }
 }
 
@@ -1244,7 +1244,7 @@ static void near F_0D67D(void)
             e_78e0.fbc |= 1;
         else
             g79e2g.fbc |= 1;
-        F_02374();
+        sys_car_halt();
         return;
     }
     flag = g_terrain3[ar7e8av.m7e8a + 4] & 0xe0;
@@ -1402,7 +1402,7 @@ void F_0DA25(void)
     case 3:
         if (ar7e8av.m7e8a - 2 > ao7d2ev.m7d30) {
             e_78e0.fbc |= 0x41;
-            F_02374();
+            sys_car_halt();
             return;
         }
         break;
@@ -1421,7 +1421,7 @@ void F_0DA25(void)
                 e_78e0.fbc |= 0x41;
             F_16AA8(0);
         }
-        F_02374();
+        sys_car_halt();
         return;
     }
     if (ay8bc2z == 0)
@@ -1432,7 +1432,7 @@ void F_0DA25(void)
         return;
     if (by72f2 && a_7f88d <= 1) {
         e_78e0.fbc |= 3;
-        F_02374();
+        sys_car_halt();
         return;
     }
     if (ap7d7cv == 0 && ao7d2ev.m7d34 > 1) {

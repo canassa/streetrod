@@ -321,18 +321,18 @@ void F_0FED1(int ticks)
                 break;
         }
         if (g_471d) {
-            F_02DF4();
+            joy_read();
             if (g_471c)
                 break;
         }
-        key = F_02DB6();
+        key = kbdget_key();
         if (key == 0x4d) {
             if (g_58d0) {
-                F_00D99();
+                sys_music_pause();
                 g_58d0 = 0;
             } else {
                 g_58d0 = 1;
-                F_00DD8();
+                sys_music_resume();
             }
         } else if (key == 0xd || key == 0x1b)
             break;
@@ -350,7 +350,7 @@ void F_0FF70(void)
         (*bl78be)();
     g_04c2 = 200;
     if (r_vid.mode != -2 && r_vid.mode != -6)
-        F_001F2(0);
+        main_set_palette(0);
     F_119B8(3, 0x28, 0x28, 0);
     F_158DE(3);
     (*m_present)();
@@ -360,7 +360,7 @@ void F_0FF70(void)
     F_0FED1(400);
     (*m_present)();
     if (r_vid.mode != -2 && r_vid.mode != -6)
-        F_001F2(1);
+        main_set_palette(1);
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
     F_118D4(4, 0);
     F_158DE(4);
@@ -378,7 +378,7 @@ void F_0FF70(void)
 
 void F_100E2(void)
 {
-    F_03AB8(0x17bb);
+    game_message(0x17bb);
     (*bl78be)();
     F_120FE(-4);
     r_vid.f16 = 1;
@@ -386,7 +386,7 @@ void F_100E2(void)
     F_065AF(1);
     F_10B7C();
     (*m_present)();
-    F_03A83(300);
+    game_pause(300);
 }
 
 /* F_1013D @ 0F38:0DBD (linear 0x1013D, 406 bytes) */

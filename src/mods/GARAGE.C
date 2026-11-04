@@ -132,7 +132,7 @@ void F_065AF(int a1)
     F_120FE(-1);
     if (a1 == 0) {
         F_11421(-1, "", 0);
-        F_03A83(500);
+        game_pause(500);
         g_05fc += 0L;
         F_11BD3(img, px5, py4);
     }
@@ -301,12 +301,12 @@ int near F_06B06(int mode)
     case 3:
         if (g_4f48 == 0) {
             F_120FE(-2);
-            F_03AB8(0x1867);
+            game_message(0x1867);
             F_120FE(-4);
             break;
         }
         if (g_4f46) {
-            n = F_049A2(g_4f46);
+            n = game_car_look(g_4f46);
             F_181C8(6, g_4f46->f2, n, (g_4f46->f24 >> 8) & 0x1f,
                     0, 0x98, 0, g_5030[g_4806[g_4f46->slot12->idx].f2]);
             F_06AA6();
@@ -343,7 +343,7 @@ int near F_06B06(int mode)
             m_8272.m8284.rear = (a_7eaap.m7eb0->f24 >> 15) & 1;
             for (r = 0; r < 5; r++)
                 o_8290[r] = a_7eaap.m7eb0->rack.s[r]->idx;
-            n = F_049A2(a_7eaap.m7eb0);
+            n = game_car_look(a_7eaap.m7eb0);
             strcpy(g_29ff, g_2c02 + g7d86n[a_7eaap.m7eb0->f2].f6);
             if (mode == 2)
                 F_181C8(3, m_8272.m8282, n, m_8272.m8284.shade, 0, 0x98, 0, g_5030[m_8272.m827e]);
@@ -365,25 +365,25 @@ int near F_06B06(int mode)
     F_11593(g_49dc);
     F_120FE(-2);
     if (a_7eaap.m7eb6 > 15)
-        F_03AB8(0x0d30);
+        game_message(0x0d30);
     else if (a_7eaap.m7ebc > 130) {
         if (a_7eaap.m7ebc == 131)
-            F_03AB8(0x0d76);
+            game_message(0x0d76);
         else {
             p = g_39c9;
             p += strlen(p) + 1;
             p += strcspn(p, "1234567890");
             itoa(a_7eaap.m7ebc - 130, p, 10);
             p[strlen(p)] = ' ';
-            F_03AB8(0x0dc7);
+            game_message(0x0dc7);
         }
     }
     if (F_06AD8()) {
-        F_03AB8(0x17ff);
+        game_message(0x17ff);
         g_0282 |= 0x10;
     } else {
         F_16381(0);
-        F_00E24();
+        sys_input_reset();
         r = F_14294(10);
     }
     F_06529(0);
@@ -408,16 +408,16 @@ void near F_06F6B(void)
     int key;
 
     if (!a_7eaap.m7eb0)
-        F_03AB8(0x0efa);
+        game_message(0x0efa);
     else if (r_vid.mode != -2 && r_vid.mode != -6)
-        F_03AB8(0x18ad);
+        game_message(0x18ad);
     else {
         bm1 = F_14090(14, &x, &y, 2);
         F_13DE6(14);
         idx4 = a_7eaap.m7eb0->f4;
         for (;;) {
             F_112CB(12, g_50c2[idx4][0]);
-            while ((key = F_01417(3000)) == 0)
+            while ((key = sys_wait_input(3000)) == 0)
                 ;
             switch (key) {
             case 1:
@@ -430,7 +430,7 @@ void near F_06F6B(void)
                 continue;
             case 3:
                 if (a_7eaap.m7eaa < 20L) {
-                    F_03AB8(0x10a1);
+                    game_message(0x10a1);
                     break;
                 }
                 r_vid.f16 = 1;
@@ -474,12 +474,12 @@ void near F_0711A(unsigned mask)
 
     p9 = &w_8df0[a_7eaap.m7eb0->f2];
     if (!a_7eaap.m7eb0) {
-        F_03AB8(0x0efa);
+        game_message(0x0efa);
         return;
     }
     if (mask & 4) {
         if (p9->f2 == 0) {
-            F_03AB8(0x1914);
+            game_message(0x1914);
             return;
         }
         msg = (a_7eaap.m7eb0->f24 & 0x2000) ? (g_239e + 1299) : (g_239e + 1283);
@@ -488,7 +488,7 @@ void near F_0711A(unsigned mask)
     }
     if (mask & 2) {
         if (p9->f6 == 0) {
-            F_03AB8(0x1936);
+            game_message(0x1936);
             return;
         }
         msg = (a_7eaap.m7eb0->f24 & 0x4000) ? (g_239e + 1337) : (g_239e + 1318);
@@ -497,7 +497,7 @@ void near F_0711A(unsigned mask)
     }
     if (mask & 1) {
         if (p9->f8 == 0) {
-            F_03AB8(0x1936);
+            game_message(0x1936);
             return;
         }
         msg = (a_7eaap.m7eb0->f24 & 0x8000) ? (g_239e + 1337) : (g_239e + 1318);
@@ -505,13 +505,13 @@ void near F_0711A(unsigned mask)
         val5 = 0x888;
     }
     if ((long)cost > a_7eaap.m7eaa) {
-        F_03AB8(0x1959);
+        game_message(0x1959);
         return;
     }
     bm1 = F_14090(34, &x, &y, 2);
     g_1e34[0].f4 = msg - g_239e;
     F_13DE6(34);
-    while ((key = F_01417(3000)) == 0)
+    while ((key = sys_wait_input(3000)) == 0)
         ;
     switch (key) {
     case -20:
@@ -526,7 +526,7 @@ void near F_0711A(unsigned mask)
         F_11BD3(bm1, x, y);
         F_19438(1);
         n9 = a_7eaap.m7eb0->f2;
-        r7 = F_049A2(a_7eaap.m7eb0);
+        r7 = game_car_look(a_7eaap.m7eb0);
         F_181C8(8, n9, r7, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0x98, 0,
                 g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
         F_16BC1();
@@ -559,9 +559,9 @@ void near F_07367(void)
     int k;
 
     if (!a_7eaap.m7eb0)
-        F_03AB8(0x0efa);
+        game_message(0x0efa);
     else if (a_7eaap.m7eaa < 5L)
-        F_03AB8(0x1975);
+        game_message(0x1975);
     else {
         r_vid.f16 = 1;
         x = 24;
@@ -570,7 +570,7 @@ void near F_07367(void)
         F_11A72(x, y, 264, 69, bm1);
         F_119B8(1200, x, y, -1);
         F_13DE6(35);
-        while ((k = F_01417(3000)) == 0)
+        while ((k = sys_wait_input(3000)) == 0)
             ;
         switch (k) {
         case -38: case -37: case -36: case -35:
@@ -654,11 +654,11 @@ void near F_07741(struct Node *n, struct Node **slot)
 {
     if (*slot) {
         (*slot)->next = a_7eaap.m7eb8;
-        a_7eaap.m7eb0->weight -= F_03C5A(a_7eaap.m7eb8 = *slot);
+        a_7eaap.m7eb0->weight -= game_part_value(a_7eaap.m7eb8 = *slot);
     }
     *slot = n;
     n->next = 0;
-    a_7eaap.m7eb0->weight += F_03C5A(n);
+    a_7eaap.m7eb0->weight += game_part_value(n);
 }
 
 /* F_07789 @ 0000:7789 (linear 0x07789, 46 bytes) */
@@ -666,7 +666,7 @@ void near F_07741(struct Node *n, struct Node **slot)
 static void near F_07789(struct Node **slot)
 {
     (*slot)->next = a_7eaap.m7eb8;
-    a_7eaap.m7eb0->weight -= F_03C5A(a_7eaap.m7eb8 = *slot);
+    a_7eaap.m7eb0->weight -= game_part_value(a_7eaap.m7eb8 = *slot);
     *slot = 0;
 }
 
@@ -700,7 +700,7 @@ void near F_07800(void)
 
     car = a_7eaap.m7eb0;
     if (car == 0) {
-        F_03AB8(0x0efa);
+        game_message(0x0efa);
         return;
     }
     F_076A7(4, tbl, line, 0);
@@ -711,7 +711,7 @@ void near F_07800(void)
         sel = F_14C8B();
         break;
     case 0x3ea:
-        F_03AB8(0x0f4e);
+        game_message(0x0f4e);
         return;
     }
     y = g_4806[car->slot12->idx].f2;
@@ -774,7 +774,7 @@ void F_079EB(void)
     char vals[144];
 
     if (a_7eaap.m7eb0 == 0) {
-        F_03AB8(0x0efa);
+        game_message(0x0efa);
         return;
     }
     F_078F1(ids, vals);
@@ -784,7 +784,7 @@ void F_079EB(void)
     case -3:
         return;
     case 0x3ea:
-        F_03AB8(0x0f4e);
+        game_message(0x0f4e);
         return;
     }
 }
@@ -802,7 +802,7 @@ void near F_07AA4(void)
 
     owner = a_7eaap.m7eb0;
     if (!owner) {
-        F_03AB8(0x0efa);
+        game_message(0x0efa);
         return;
     }
     for (k = 0; k < 2; k++) {
@@ -819,7 +819,7 @@ void near F_07AA4(void)
     F_127DB(m_8272.m8286, owner->b14);
     F_13DE6(20);
     for (;;) {
-        while ((k = F_01417(3000)) == 0)
+        while ((k = sys_wait_input(3000)) == 0)
             ;
         switch (k) {
         case -1:
@@ -831,7 +831,7 @@ void near F_07AA4(void)
                 switch (k = F_142CF(4, 1, 0, g_49e0, buf, 0)) {
                 case -3:
                     if (owner->slot6) {
-                        F_03AB8(0x1875);
+                        game_message(0x1875);
                         k = 0;
                     } else
                         k = F_14C8B();
@@ -840,7 +840,7 @@ void near F_07AA4(void)
                     k = 0;
                     break;
                 case 0x3ea:
-                    F_03AB8(0xf72);
+                    game_message(0xf72);
                     k = 0;
                     break;
                 }
@@ -862,12 +862,12 @@ void near F_07AA4(void)
                         F_16B61();
                         g_1804[k].f0 = 11;
                     }
-                    F_00D78();
+                    sys_hover_reset();
                     F_120FE(-2);
                     break;
                 }
                     F_1264E(m_8272.m8286, 1);
-                    F_03AB8(0x10cd);
+                    game_message(0x10cd);
                     F_12784(m_8272.m8286, 1);
                     g_05fc += 0x888L;
                     m_8272.m8286 = prev;
@@ -882,7 +882,7 @@ void near F_07AA4(void)
                     flags[k + 1] = owner->b14[k] = 0;
                     F_12525(k);
                     F_16B61();
-                    F_00D78();
+                    sys_hover_reset();
                 } else {
                     F_123F4(owner->b14[k], k);
                     F_16CF3();
@@ -894,7 +894,7 @@ void near F_07AA4(void)
                 m_8272.m8286 = 0;
                 owner->b14[0] = owner->b14[1] = 0;
                 F_07789(&owner->slot6);
-                F_00D78();
+                sys_hover_reset();
             } else if (flags[k + 1] == 1) {
                 if (owner->b14[k] == 3) {
                     flags[k + 1] = 2;
@@ -963,7 +963,7 @@ static void near F_07FB1(struct Car *car)
     F_119B8(0x42f, 0x60, 9, -1);
     p = bm7568 + F_11149(8);
     tmp = g_0600;
-    F_00D99();
+    sys_music_pause();
     g_58d4 = 2;
     if (g_47ce) {
         outp(0x61, inp(0x61) | 3);
@@ -983,7 +983,7 @@ static void near F_07FB1(struct Car *car)
         (*b_78a2)(p->img, r_vid.back, &blt, 1);
         bitmap_copy_box(r_vid.back, r_vid.front, 0xb0, y, 0xb7, y + 10);
         F_120FE(-2);
-        while ((key = F_01417(0)) == 0) {
+        while ((key = sys_wait_input(0)) == 0) {
             if (g_47ce && g_47ce != g_47cf) {
                 outp(0x61, inp(0x61) | 3);
                 g_47cf = 1;
@@ -1005,7 +1005,7 @@ static void near F_07FB1(struct Car *car)
     outp(0x61, inp(0x61) & 0xfc);
     g_47cf = 0;
     g_58d4 = 1;
-    F_00DD8();
+    sys_music_resume();
     F_10D6C(8);
     n = ((unsigned)g_0600 - (unsigned)tmp) * 3;
     n = n > 0x444 ? 0x444 : n;
@@ -1033,7 +1033,7 @@ void near F_081AB(struct Car *car)
     int havek[10];
 
     if (car == 0) {
-        F_03AB8(0xefa);
+        game_message(0xefa);
         return;
     }
     for (key = 1; key <= 9; key++) {
@@ -1067,7 +1067,7 @@ void near F_081AB(struct Car *car)
     F_1344A(g_5186, g_519a);
     F_13DE6(0x15);
     for (;;) {
-        while ((key = F_01417(3000)) == 0)
+        while ((key = sys_wait_input(3000)) == 0)
             ;
         switch (key) {
         case -1:
@@ -1099,7 +1099,7 @@ void near F_081AB(struct Car *car)
                 F_132AD(g_5186, g_519a, 1);
                 F_120FE(-2);
             } else
-                F_03AB8(0xea1);
+                game_message(0xea1);
             continue;
         case -2:
             F_076A7(g_513c[cnt1], list4, buf, 0);
@@ -1111,11 +1111,11 @@ void near F_081AB(struct Car *car)
                 break;
             case 0x3ea:
                 if (g_513c[cnt1] == 0)
-                    F_03AB8(0xf97);
+                    game_message(0xf97);
                 if (g_513c[cnt1] == 3)
-                    F_03AB8(0xfd7);
+                    game_message(0xfd7);
                 if (g_513c[cnt1] == 2)
-                    F_03AB8(0xfb5);
+                    game_message(0xfb5);
                 key = 0;
                 break;
             case -4:
@@ -1125,7 +1125,7 @@ void near F_081AB(struct Car *car)
             if (key == 0)
                 continue;
             if (cnt1 >= n) {
-                F_03AB8(0x1875);
+                game_message(0x1875);
                 continue;
             }
             sel2 = cnt1;
@@ -1219,7 +1219,7 @@ void near F_081AB(struct Car *car)
                 F_12DD8(o_8290[sel2], 1);
                 F_16A5A(0);
                 F_16B97();
-                F_03AB8(0x10cd);
+                game_message(0x10cd);
                 F_16A5A(1);
                 F_12F99(o_8290[sel2], 1);
                 F_16A5A(0);

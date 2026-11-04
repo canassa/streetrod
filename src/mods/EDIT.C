@@ -52,16 +52,16 @@ int F_14C90(int x, int y, char *buf, int max)
         bitmap_copy_box(r_vid.back, r_vid.front, x, y, x + w, y + 8);
     ip = g_290c[0];
     g_290c[0] = 0;
-    F_00D78();
-    ret = F_01391(1);
-    F_02C04(g_09f2);
+    sys_hover_reset();
+    ret = sys_keymap_restore(1);
+    kbd_text_on(g_09f2);
     n = g_05d0;
     g_05d0 = 1;
     g_05d2 = 0;
     dest[1] = 0;
     end = strlen(buf);
     for (;; g_05d2 = 0) {
-        if ((key = F_01417(0x23)) != 0) {
+        if ((key = sys_wait_input(0x23)) != 0) {
             if (key < 0)
                 break;
             key = g_05d2;
@@ -125,11 +125,11 @@ int F_14C90(int x, int y, char *buf, int max)
     x_colors.c[3] = oc;
     x_colors.c[2] = pos;
     g_290c[0] = ip;
-    F_00D78();
+    sys_hover_reset();
     g_05d0 = n;
-    F_02C2B();
+    kbd_text_off();
     if (ret)
-        F_012DE(ret);
+        sys_keymap_set(ret);
     return key;
 }
 

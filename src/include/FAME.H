@@ -13,8 +13,8 @@ extern char g_4bed;                                     /* DS:4BED */
 extern int bucount;                                     /* DS:7646 */
 extern char atnewName[];                                /* DS:7E9A */
 extern struct Entry aytablex[];                         /* DS:82CA */
-int protect_check(void);                                /* 0x02FC8 */
-int F_0315B(void);                                      /* 0x0315B */
-void F_0339F(int add);                                  /* 0x0339F */
+int fame_protect_check(void);                           /* 0x02FC8 */
+int fame_end_menu(void);                                /* 0x0315B */
+void fame_show(int add);                                /* 0x0339F */
 
 #endif

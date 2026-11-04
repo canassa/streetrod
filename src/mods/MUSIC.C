@@ -40,7 +40,7 @@ void F_1628A(void far *song, void *tones)
         ao79c6t.cur = ao79c6t.lc = ao79c6t.l8 = song;
         ao79c6t.f16 = ao79c6t.f14 = tones;
         g_58d2 = &ao79c6t;
-        F_01A05(2, 0);
+        sys_music_start(2, 0);
     }
 }
 
@@ -66,18 +66,18 @@ void F_1636C(void)
 {
     t_72ec = 0;
     outp(0x61, inp(0x61) & 0xfc);
-    F_01A7C();
+    sys_music_stop();
 }
 
 /* F_16381 @ 0F38:7001 (linear 0x16381, 61 bytes)
 
-   Toggle between two states (calls F_00D99 on entering, F_00DD8 on leaving) */
+   Toggle between two states (calls sys_music_pause on entering, sys_music_resume on leaving) */
 
 void F_16381(int on)
 {
     if (on) {
         if (g_58d0) {
-            F_00D99();
+            sys_music_pause();
             g_58d0 = 0;
             g_58d8 = 1;
         } else
@@ -85,7 +85,7 @@ void F_16381(int on)
     } else {
         if (g_58d8) {
             g_58d0 = 1;
-            F_00DD8();
+            sys_music_resume();
             g_58d8 = 0;
         }
     }

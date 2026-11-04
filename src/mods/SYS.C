@@ -100,21 +100,21 @@ char *g_060e = "disk ? is write protected";   /* DS:060E */
 int g_0610 = 0;   /* DS:0610 */
 int g_0612 = 0;   /* DS:0612 */
 
-/* F_00D78 @ 0000:0D78 (linear 0x00D78, 33 bytes) */
+/* sys_hover_reset @ 0000:0D78 (linear 0x00D78, 33 bytes) */
 
-void F_00D78(void)
+void sys_hover_reset(void)
 {
     g_6c4a = 1;
     ao8b90v.x2 = -1;
     az8baa = 0x7d00;
     g_4736 = 0;
     g_4737 = 0;
-    F_02DB6();
+    kbdget_key();
 }
 
-/* F_00D99 @ 0000:0D99 (linear 0x00D99, 63 bytes) */
+/* sys_music_pause @ 0000:0D99 (linear 0x00D99, 63 bytes) */
 
-void F_00D99(void)
+void sys_music_pause(void)
 {
     if (g_58d2->off) {
         g_58d2->off = 0;
@@ -122,25 +122,25 @@ void F_00D99(void)
         g_47cf = 0;
         g_58d2->dirty = 1;
         g_09f4[F_06827(-40)].f4 = g_2bab;
-        F_00D78();
+        sys_hover_reset();
     }
 }
 
-/* F_00DD8 @ 0000:0DD8 (linear 0x00DD8, 76 bytes) */
+/* sys_music_resume @ 0000:0DD8 (linear 0x00DD8, 76 bytes) */
 
-void F_00DD8(void)
+void sys_music_resume(void)
 {
     if (g_58d0 && !g_58d2->off && g_58d2->lc != g_58d2->l8) {
         g_58d2->off = 1;
         g_58d2->dirty = 1;
         g_09f4[F_06827(-40)].f4 = g_2ba9;
-        F_00D78();
+        sys_hover_reset();
     }
 }
 
-/* F_00E24 @ 0000:0E24 (linear 0x00E24, 231 bytes) */
+/* sys_input_reset @ 0000:0E24 (linear 0x00E24, 231 bytes) */
 
-void F_00E24(void)
+void sys_input_reset(void)
 {
     int i;
     long deadline;
@@ -154,7 +154,7 @@ void F_00E24(void)
     g_05ba = -1;
     deadline = g_tick + 10;
     while (deadline > g_tick) {
-        for (i = 0; F_02DB6(); i++)
+        for (i = 0; kbdget_key(); i++)
             ;
         if (i)
             deadline = g_tick + 10;
@@ -170,9 +170,9 @@ void F_00E24(void)
     g_4732 = g_472e = g_472f = g_4730 = g_4731 = 0;
 }
 
-/* F_00F0B @ 0000:0F0B (linear 0x00F0B, 172 bytes) */
+/* sys_timer_remove @ 0000:0F0B (linear 0x00F0B, 172 bytes) */
 
-void F_00F0B(int n)
+void sys_timer_remove(int n)
 {
     register int i;
 
@@ -196,9 +196,9 @@ void F_00F0B(int n)
     g_056a = n;
 }
 
-/* F_00FB7 @ 0000:0FB7 (linear 0x00FB7, 51 bytes) */
+/* sys_unhook @ 0000:0FB7 (linear 0x00FB7, 51 bytes) */
 
-void F_00FB7(void)
+void sys_unhook(void)
 {
     _disable();
     outp(0x43, 0x36);
@@ -206,14 +206,14 @@ void F_00FB7(void)
     outp(0x40, 0);
     _dos_setvect(8, w_7aaa);
     _enable();
-    F_02DE2();
+    kbdoff_unhook();
     g_05e0 = 0;
     g_0044 = 0;
 }
 
-/* F_00FEA @ 0000:0FEA (linear 0x00FEA, 113 bytes) */
+/* sys_exit @ 0000:0FEA (linear 0x00FEA, 113 bytes) */
 
-void F_00FEA(void)
+void sys_exit(void)
 {
     if (g_0610) {
         g_0610 = (g_0610 == 0x62) ? 0 : 1;
@@ -221,7 +221,7 @@ void F_00FEA(void)
         F_1169A(0, 0, 320, 200, 0);
     }
     if (g_0044)
-        F_00FB7();
+        sys_unhook();
     if (g_0048) {
         (*m_present)();
         F_0E610();
@@ -235,9 +235,9 @@ char g_064d = 0;   /* DS:064D */
 char g_064e = 0;   /* DS:064E */
 struct KeyMap g_0650[30] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};   /* DS:0650 */
 
-/* F_0105B @ 0000:105B (linear 0x0105B, 182 bytes) */
+/* sys_crit_error @ 0000:105B (linear 0x0105B, 182 bytes) */
 
-void F_0105B(unsigned deverr, unsigned char errcode)
+void sys_crit_error(unsigned deverr, unsigned char errcode)
 {
     int disk;
     int action;
@@ -271,13 +271,13 @@ void F_0105B(unsigned deverr, unsigned char errcode)
         }
     }
     if (action == 2)
-        F_00FEA();
+        sys_exit();
     _hardresume(action);
 }
 
-/* F_01111 @ 0000:1111 (linear 0x01111, 461 bytes) */
+/* sys_init @ 0000:1111 (linear 0x01111, 461 bytes) */
 
-void F_01111(void)
+void sys_init(void)
 {
     int sumx;
     int sumy;
@@ -299,13 +299,13 @@ void F_01111(void)
             break;
     if (g_0610 == 0 && j != 0 && v != first) {
         g_471d = 1;
-        F_02DF4();
+        joy_read();
         sumx = g_4718;
         sumy = g_471a;
-        F_02DF4();
+        joy_read();
         sumx += g_4718;
         sumy += g_471a;
-        F_02DF4();
+        joy_read();
         sumx += g_4718;
         sumy += g_471a;
         g_471e = sumx / 3;
@@ -331,24 +331,24 @@ void F_01111(void)
     bs79aa.f1a = bs79aa.f18 = g_5882;
     ao79c6t.off = 0;
     ao79c6t.f1a = ao79c6t.f18 = g_58cc;
-    _harderr(F_0105B);
+    _harderr(sys_crit_error);
     _disable();
     outp(0x43, 0x36);
     outp(0x40, 0);
     outp(0x40, 0x40);
     w_7aaa = _dos_getvect(8);
-    _dos_setvect(8, F_01FE2);
+    _dos_setvect(8, sys_timer_isr);
     _enable();
-    F_02DC3();
+    kbdget_hook();
     g_05e0 = 1;
     outp(0x43, 0xb6);
-    F_00E24();
+    sys_input_reset();
     g_0044 = 1;
 }
 
-/* F_012DE @ 0000:12DE (linear 0x012DE, 179 bytes) */
+/* sys_keymap_set @ 0000:12DE (linear 0x012DE, 179 bytes) */
 
-void F_012DE(int n)
+void sys_keymap_set(int n)
 {
     struct KeyMap *p;
     int num;
@@ -359,7 +359,7 @@ void F_012DE(int n)
     if (g_0610)
         g_47cc = 0;
     g_6c4c = n;
-    F_01391(0);
+    sys_keymap_restore(0);
     g_064e = n;
     p = g_579f[n];
     q = g_0650;
@@ -375,9 +375,9 @@ void F_012DE(int n)
     q[1].key = 0;
 }
 
-/* F_01391 @ 0000:1391 (linear 0x01391, 134 bytes) */
+/* sys_keymap_restore @ 0000:1391 (linear 0x01391, 134 bytes) */
 
-int F_01391(int keep)
+int sys_keymap_restore(int keep)
 {
     int i;
     struct KeyMap *p;
@@ -420,9 +420,9 @@ char g_06e8 = 0;   /* DS:06E8 */
 char g_06e9 = 0;   /* DS:06E9 */
 char g_06ea = 0;   /* DS:06EA */
 
-/* F_01417 @ 0000:1417 (linear 0x01417, 1068 bytes) */
+/* sys_wait_input @ 0000:1417 (linear 0x01417, 1068 bytes) */
 
-int F_01417(int ticks)
+int sys_wait_input(int ticks)
 {
     register struct Link *p;
     long end;
@@ -450,7 +450,7 @@ int F_01417(int ticks)
     do {
         if (g_0610 == 0x63 && g_06a4 != 0x63) {
             g_06a4 = 0x63;
-            F_00FEA();
+            sys_exit();
         }
         if (g_4bc8 && (r_vid.mode == -2 || r_vid.mode == -6)
             && !(g_tick & 0xf) && g_58d0 && g_47cf) {
@@ -462,24 +462,24 @@ int F_01417(int ticks)
             F_112CB(7, g_0692[7]);
             F_112CB(8, g_0692[8]);
         }
-        res = F_02DB6();
+        res = kbdget_key();
         if (res > 0) {
             if (g_05d0) {
                 g_05d2 = res;
                 return 0x3eb;
             }
             if (res == 0x7f)
-                F_00FEA();
+                sys_exit();
         } else if (res < 0) {
             res += 0x32;
             if (res == -0x28) {
                 if (g_58d4 == 1) {
                     if (g_58d0) {
-                        F_00D99();
+                        sys_music_pause();
                         g_58d0 = 0;
                     } else {
                         g_58d0 = 1;
-                        F_00DD8();
+                        sys_music_resume();
                     }
                 }
             } else
@@ -490,11 +490,11 @@ int F_01417(int ticks)
             switch (p->fa) {
             case 0:
             default:
-                F_00F0B(i);
+                sys_timer_remove(i);
                 break;
             case 1:
                 res = p->fc;
-                F_00F0B(i);
+                sys_timer_remove(i);
                 F_111C1(res);
                 break;
             }
@@ -577,9 +577,9 @@ struct Eng e_78e0;
 int t_72ec;
 struct Tone *bn82c4;
 
-/* F_01843 @ 0000:1843 (linear 0x01843, 327 bytes) */
+/* sys_timer_add @ 0000:1843 (linear 0x01843, 327 bytes) */
 
-int F_01843(int delay, int pri)
+int sys_timer_add(int delay, int pri)
 {
     register int i, cur3;
     int prev;
@@ -632,20 +632,20 @@ int F_01843(int delay, int pri)
     return i;
 }
 
-/* F_0198A @ 0000:198A (linear 0x0198A, 50 bytes) */
+/* sys_timer_anim @ 0000:198A (linear 0x0198A, 50 bytes) */
 
-void F_0198A(int fc, int delay)
+void sys_timer_anim(int fc, int delay)
 {
     int n;
 
-    n = F_01843(delay, g8ef6q);
+    n = sys_timer_add(delay, g8ef6q);
     g_0572[n].fa = 1;
     g_0572[n].fc = fc;
 }
 
-/* F_019BC @ 0000:19BC (linear 0x019BC, 73 bytes) */
+/* sys_timer_cancel @ 0000:19BC (linear 0x019BC, 73 bytes) */
 
-void F_019BC(int n)
+void sys_timer_cancel(int n)
 {
     struct Link *p;
     int i;
@@ -655,9 +655,9 @@ void F_019BC(int n)
             p->fa = 0;
 }
 
-/* F_01A05 @ 0000:1A05 (linear 0x01A05, 119 bytes) */
+/* sys_music_start @ 0000:1A05 (linear 0x01A05, 119 bytes) */
 
-void F_01A05(int n, int cnt)
+void sys_music_start(int n, int cnt)
 {
     if (g_58d0) {
         g_58d2->off = 0;
@@ -676,9 +676,9 @@ void F_01A05(int n, int cnt)
     }
 }
 
-/* F_01A7C @ 0000:1A7C (linear 0x01A7C, 49 bytes) */
+/* sys_music_stop @ 0000:1A7C (linear 0x01A7C, 49 bytes) */
 
-void F_01A7C(void)
+void sys_music_stop(void)
 {
     g_58d2->off = 0;
     outp(0x61, inp(0x61) & 0xfc);
@@ -687,12 +687,12 @@ void F_01A7C(void)
     g_58d2->lc = g_58d2->cur = g_58d2->l8;
 }
 
-/* F_01AAD @ 0000:1AAD (linear 0x01AAD, 122 bytes) */
+/* sys_drive_start @ 0000:1AAD (linear 0x01AAD, 122 bytes) */
 
-void F_01AAD(void)
+void sys_drive_start(void)
 {
     g_060a = 0;
-    _dos_setvect(8, F_0238C);
+    _dos_setvect(8, sys_drive_isr);
     if (!g_0610 && g_05f2) {
         F_16DC7();
         g_05e6 = g_05e8 = 0;
@@ -710,11 +710,11 @@ void F_01AAD(void)
     }
 }
 
-/* F_01B27 @ 0000:1B27 (linear 0x01B27, 106 bytes) */
+/* sys_drive_stop @ 0000:1B27 (linear 0x01B27, 106 bytes) */
 
-void F_01B27(void)
+void sys_drive_stop(void)
 {
-    _dos_setvect(8, F_01FE2);
+    _dos_setvect(8, sys_timer_isr);
     g_58dc = 0;
     g_58da = 0;
     g_5e0e = 0;
@@ -729,9 +729,9 @@ void F_01B27(void)
     g_4730 = g_4731 = g_4732 = g_4736 = 0;
 }
 
-/* F_01B91 @ 0000:1B91 (linear 0x01B91, 29 bytes) */
+/* sys_sign @ 0000:1B91 (linear 0x01B91, 29 bytes) */
 
-int F_01B91(int x)
+int sys_sign(int x)
 {
     if (x == 0)
         return 0;
@@ -741,16 +741,16 @@ int F_01B91(int x)
 }
 
 /* Loop optimization is off from here to the end of the file. The file is
-   compiled /Oalsi, but in the shipped code the loops of F_01BAE, F_01FE2 and
-   F_0238C (the timer interrupt handler) are plain /Ol-off loops: counters and
+   compiled /Oalsi, but in the shipped code the loops of sys_demo_step, sys_timer_isr and
+   sys_drive_isr (the timer interrupt handler) are plain /Ol-off loops: counters and
    pointers stay in memory, the test is reached by a jmp, no induction
    variables. No for/while/do formulation reproduces that under /Ol (/Ol takes
    every such loop here); this one pragma reproduces all three functions. */
 #pragma loop_opt(off)
 
-/* F_01BAE @ 0000:1BAE (linear 0x01BAE, 1076 bytes) */
+/* sys_demo_step @ 0000:1BAE (linear 0x01BAE, 1076 bytes) */
 
-void F_01BAE(void)
+void sys_demo_step(void)
 {
     int num;
     int cx;
@@ -764,7 +764,7 @@ void F_01BAE(void)
     if (g_06a6) {
         g_47cc |= 0x80;
         g_06a6 = 0;
-        F_02E93();
+        joy_demo_key();
         return;
     }
     if (!g_06a7) {
@@ -902,7 +902,7 @@ void F_01BAE(void)
     } else
         g_06aa = g_6c4c;
     if (a_7eaap.m7eb8 == 0 && g_6c4c == 7)
-        F_03FF0(0x2a, g_4806[42].f0);
+        game_add_part(0x2a, g_4806[42].f0);
     if (a_7eaap.m7eb0 == 0) {
         if (g_6c4c == 10)
             g_47cc = 0x31;
@@ -912,12 +912,12 @@ void F_01BAE(void)
     if (g_47cc == 0x46)
         g_47cc = 0x1c;
     g_06a6 = 1;
-    F_02E93();
+    joy_demo_key();
 }
 
-/* F_01FE2 @ 0000:1FE2 (linear 0x01FE2, 914 bytes) */
+/* sys_timer_isr @ 0000:1FE2 (linear 0x01FE2, 914 bytes) */
 
-void interrupt far F_01FE2(void)
+void interrupt far sys_timer_isr(void)
 {
     int x, y;
     register int delta;
@@ -937,10 +937,10 @@ void interrupt far F_01FE2(void)
     }
     if (g_0610) {
         if (((g_06a6 ? 0xf : 0x7f) & g_tick) == 0)
-            F_01BAE();
+            sys_demo_step();
         if ((g_06ae || g_06b0) && (g_472a != g_06ae || g_472c != g_06b0)) {
-            g_472a += F_01B91(g_06ae - g_472a);
-            g_472c += F_01B91(g_06b0 - g_472c);
+            g_472a += sys_sign(g_06ae - g_472a);
+            g_472c += sys_sign(g_06b0 - g_472c);
             g_6c4a = 1;
         }
     }
@@ -1008,7 +1008,7 @@ tail:
                     y = delta > 0 ? 1 : -1;
             }
             if (g_0610 == 0 && g_471d) {
-                F_02DF4();
+                joy_read();
                 if ((delta = g_4718) < g_4722)
                     x = -1;
                 else if (g_4724 < delta)
@@ -1034,17 +1034,17 @@ int ao8228u;
 long b_82bc;
 int z_8b7c;
 
-/* F_02374 @ 0000:2374 (linear 0x02374, 24 bytes) */
+/* sys_car_halt @ 0000:2374 (linear 0x02374, 24 bytes) */
 
-void F_02374(void)
+void sys_car_halt(void)
 {
     e_78e0.f14 = e_78e0.f16 = e_78e0.f2 = e_78e0.f4 = g_05d6 = 0;
     e_78e0.fbe = e_78e0.fc0;
 }
 
-/* F_0238C @ 0000:238C (linear 0x0238C, 2062 bytes) */
+/* sys_drive_isr @ 0000:238C (linear 0x0238C, 2062 bytes) */
 
-void interrupt far F_0238C(void)
+void interrupt far sys_drive_isr(void)
 {
     struct Range *sp;
     char flag = 0;
@@ -1130,7 +1130,7 @@ void interrupt far F_0238C(void)
                             flag = 1;
                     }
                     if (g_0610 == 0 && g_471d) {
-                        F_02DF4();
+                        joy_read();
                         if ((n = g_4718) < g_4722) {
                             g_6c4a = s = 1;
                             g_472a += -1;
@@ -1205,7 +1205,7 @@ void interrupt far F_0238C(void)
                     a_7eaap.m7eb0->rack.s[0]->b++;
                 if ((i = a_7eaap.m7eb0->rack.s[0]->b) >= 9900) {
                     e_78e0.fbc |= 5;
-                    F_02374();
+                    sys_car_halt();
                 }
                 if (flag) {
                     e_78e0.fe += e_78e0.f14;
@@ -1215,7 +1215,7 @@ void interrupt far F_0238C(void)
                         e_78e0.fe = 5700;
                         if (15 - i / 1000 < ++g_06e6) {
                             e_78e0.fbc |= 5;
-                            F_02374();
+                            sys_car_halt();
                         }
                     }
                 } else if (e_78e0.fe > 1500 ||
@@ -1235,7 +1235,7 @@ void interrupt far F_0238C(void)
                             (e_78e0.f20 == 0 && flag && e_78e0.fe > 5000 &&
                              i / 100 + 100 > random_int(3277))) {
                             e_78e0.fbc |= 0x11;
-                            F_02374();
+                            sys_car_halt();
                         }
                     }
                     if ((prev || (!e_78e0.f42 && !flag)) && e_78e0.f18 > 0)
@@ -1293,7 +1293,7 @@ void interrupt far F_0238C(void)
                                                : ((-e_78e0.f4 >> 2) + 1);
                 if (bw8aca && F_284BB()) {
                     e_78e0.fbc |= 0x21;
-                    F_02374();
+                    sys_car_halt();
                 }
                 g_06e8 = 0;
             }

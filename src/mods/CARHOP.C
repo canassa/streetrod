@@ -65,7 +65,7 @@ static void near F_18C8F(struct Bitmap far **pbm)
     int w, x, h;
 
     F_15B7F(0x474, &w, &h, &x);
-    F_03904(*pbm, bp7316[2]->bits.p + 0x46 * bp7316[2]->pitch, 0L, w, h, r_vid.mode == -2 ? -2 : -1);
+    mem_set_bitmap(*pbm, bp7316[2]->bits.p + 0x46 * bp7316[2]->pitch, 0L, w, h, r_vid.mode == -2 ? -2 : -1);
     if (r_vid.mode == -2) {
         egalatch_rect(r_vid.front->bits.p, (*pbm)->bits.p - 0xaa0, (*pbm)->pitch, (*pbm)->height, 0, 0x44, 0x28);
     } else {

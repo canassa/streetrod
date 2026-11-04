@@ -44,17 +44,17 @@ void F_11EA8(void)
     size = (r_vid.planes + 1) * bytes + 0x60;
     if (r_vid.mode != -2)
         size += (0x18 >> r_vid.shift) << 4;
-    mem = (struct Bitmap far *)F_03709(size, 1);
+    mem = (struct Bitmap far *)mem_alloc(size, 1);
     mem->bits.p = (char far *)mem + 0x30;
-    img = F_0376B(0x18 << r_vid.shift, 0x40, 1, -1, mem);
+    img = mem_new_bitmap(0x18 << r_vid.shift, 0x40, 1, -1, mem);
     g_cursor2.save = (struct Bitmap far *)(img->alt.p + bytes);
-    F_03904(g_cursor2.save, r_vid.mode == -2 ? (char far *)0xa0001f40L : (char far *)(g_cursor2.save + 1), 0L,
+    mem_set_bitmap(g_cursor2.save, r_vid.mode == -2 ? (char far *)0xa0001f40L : (char far *)(g_cursor2.save + 1), 0L,
             (0x18 >> r_vid.shift) << r_vid.shift, 0x10, r_vid.mode == -2 ? -2 : -1);
     memset(&g_cursor2.clip, 0, 12);
     g_cursor2.state = 0;
     pict = F_15BBE(2, 2);
     if (pict == 0)
-        out_of_memory();
+        mem_out_of_memory();
     blt.w = 0x18;
     blt.h = 0x40;
     blt.sx = blt.sy = blt.dx = blt.dy = 0;

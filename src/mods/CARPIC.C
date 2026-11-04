@@ -430,10 +430,10 @@ again:
         if (kind == 4) {
             g_4f4a = 1;
             if (r_vid.mode == -2) {
-                F_03904(g_5a0a, bp7316[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -2);
+                mem_set_bitmap(g_5a0a, bp7316[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -2);
                 egalatch_rect(r_vid.back->bits.p, g_5a0a->bits.p - 0x28 * top7, 0x28, g_5a0a->height, 0, top7, 0x28);
             } else {
-                F_03904(g_5a0a, bp7316[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -1);
+                mem_set_bitmap(g_5a0a, bp7316[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -1);
                 F_11A72(0, top7, 0x140, g_5a0a->height, g_5a0a);
             }
         }
@@ -541,11 +541,11 @@ again:
         g_0286 = 1;
         g_5a0e = 1;
         if (g_5a24 != 2)
-            F_01AAD();
+            sys_drive_start();
         while ((*g78c6c)(spr3))
             ;
         if (g_5a24 != 1)
-            F_01B27();
+            sys_drive_stop();
         bu825a = g_0288;
         g_5a0e = 0;
         g_0286 = 0;

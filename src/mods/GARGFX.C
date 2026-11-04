@@ -707,7 +707,7 @@ void F_1344A(int *xs, int *ys)
     g_184c[num].f0 = 9;
     hz82ae = rx;
     g82b2t = rh;
-    F_00D78();
+    sys_hover_reset();
 }
 
 /* F_135E5 @ 0F38:4265 (linear 0x135E5, 156 bytes)

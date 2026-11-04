@@ -401,7 +401,7 @@ static int near F_09AF4(int n)
         F_09A27(sel[choice - 1], n, 0);
         return 1;
     case 0x3ea:
-        F_03AB8(0x198c);
+        game_message(0x198c);
         return 0;
     }
 }
@@ -480,29 +480,29 @@ static int near F_09D6D(int arg)
         ch = F_09556();
         switch (ch) {
         case 2:
-            F_03AB8(0x1113);
+            game_message(0x1113);
             break;
         case 3:
-            F_03AB8(0x113d);
+            game_message(0x113d);
             break;
         case 4:
-            F_03AB8(0x117d);
+            game_message(0x117d);
             break;
         case 5:
-            F_03AB8(0x11a7);
+            game_message(0x11a7);
             break;
         case 0:
             if (g_4976 == 0) {
                 if (a_7eaap.m7eb0->f22 < 22) {
-                    F_03AB8(0x1761);
+                    game_message(0x1761);
                     return 0;
                 }
                 a_7eaap.m7ec0 = 0;
-                F_03AB8(0x11d1);
+                game_message(0x11d1);
                 as79a2z = 0;
             } else {
                 a_7eaap.m7ec0 = 1;
-                F_03AB8(0x11f7);
+                game_message(0x11f7);
                 as79a2z = 5;
             }
             d_79a4 = 0;
@@ -514,13 +514,13 @@ static int near F_09D6D(int arg)
         return 0;
     }
     if (a_7eaap.m7eb0->f22 < 7) {
-        F_03AB8(0x1761);
+        game_message(0x1761);
         return 0;
     }
     pict = F_14090(0x12, &x, &sy, 1);
     F_13DE6(0x16);
     g_05cc = g_tick + 800;
-    while ((ch = F_01417(3000)) == 0)
+    while ((ch = sys_wait_input(3000)) == 0)
         ;
     switch (ch) {
     case 1:
@@ -533,11 +533,11 @@ static int near F_09D6D(int arg)
         break;
     case -23:
     case 1000:
-        F_03AB8(0x122c);
+        game_message(0x122c);
         goto quit;
     }
     if (a_7eaap.m7ec0 == 1 && a_7eaap.m7eb0->f22 < 17) {
-        F_03AB8(0x1761);
+        game_message(0x1761);
         goto quit;
     }
     F_13F21(1);
@@ -545,13 +545,13 @@ static int near F_09D6D(int arg)
     F_13DE6(num);
     for (step = 0; step < 2; step++) {
         g_05cc = g_tick + 800;
-        while ((ch = F_01417(3000)) == 0)
+        while ((ch = sys_wait_input(3000)) == 0)
             ;
         m_8272.m8278 = ch;
         switch (ch) {
         case -23:
         case 1000:
-            F_03AB8(0x122c);
+            game_message(0x122c);
             goto quit;
         case 1:
             price = 0;
@@ -585,16 +585,16 @@ static int near F_09D6D(int arg)
                 F_13F21(1);
                 F_11BD3(pict, x, sy);
                 pict = 0;
-                F_03AB8(g_5210[a_7eaap.m7ec0][random_int(3)]);
+                game_message(g_5210[a_7eaap.m7ec0][random_int(3)]);
                 F_0D031();
                 g_05fc += a_7eaap.m7ec0 == 0 ? 0x444u : 0x777u;
                 return 2;
             }
             while ((ch = random_int(5)) == prev)
                 ;
-            F_03AB8(g_51fc[a_7eaap.m7ec0][prev = ch]);
+            game_message(g_51fc[a_7eaap.m7ec0][prev = ch]);
         } else
-            F_03AB8(0x131b);
+            game_message(0x131b);
     }
 quit:
     F_13F21(1);
@@ -681,12 +681,12 @@ static void near F_0A265(void)
     chassis.slot12 = &na;
     for (n = 0; n < 5; n++)
         chassis.rack.s[n] = &nodes[n];
-    F_04036(bn7648, 0, &chassis);
+    game_make_car(bn7648, 0, &chassis);
     F_081AB(&chassis);
     F_11421(-1, "", 0);
     F_13DE6(0x18);
     g_05cc = g_tick + 800;
-    while ((n = F_01417(3000)) == 0)
+    while ((n = sys_wait_input(3000)) == 0)
         ;
     r_vid.f8 = 0;
     F_11BD3(pict, 0x60, 9);
@@ -750,7 +750,7 @@ static void near F_0A416(void)
     g_05cc = g_tick + 10;
     going = 1;
     do {
-        while ((key = F_01417(3000)) == 0)
+        while ((key = sys_wait_input(3000)) == 0)
             ;
         switch (key) {
         case -26:
@@ -814,7 +814,7 @@ static void near F_0A544(void)
     F_118D4(0x408, -1);
     g_04c2 = savedl;
     (*m_present)();
-    F_03A83(0x2ee);
+    game_pause(0x2ee);
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
     g_0284 = 1;
     pic15 = F_1934E(0x50, 0x2c, 0, 3);
@@ -849,7 +849,7 @@ static void near F_0A544(void)
     blt.dx = blt.sx;
     blt.dy = blt.sy;
     (*b_78a2)(pic15, pic24, &blt, 1);
-    F_03A83(10);
+    game_pause(10);
     for (i2 = 1; i2 < 0x14; i2++) {
         if (i2 == 13)
             F_10AFD(0x14);
@@ -918,14 +918,14 @@ static void near F_0A544(void)
     }
     blt2k.sx = minx;
     blt2k.sy = miny;
-    F_03A83(0x50);
+    game_pause(0x50);
     F_10AFD(1);
     (*b_78a2)(r_vid.back, r_vid.front, &blt2k, 1);
     F_10AFD(1);
     (*b_78a2)(pic4, r_vid.front, &blt, 1);
     (*b_78a2)(pic4, r_vid.back, &blt, 1);
-    F_03A83(0x32);
-    F_03AB8(0x183c);
+    game_pause(0x32);
+    game_message(0x183c);
     r_vid.f16 = 0;
     F_1923C();
     F_15C95(g_5328);
@@ -978,7 +978,7 @@ void F_0AB8B(void)
         F_06529(0);
         if (g_0282)
             return;
-        while ((choice = F_01417(3000)) == 0)
+        while ((choice = sys_wait_input(3000)) == 0)
             ;
         switch (choice) {
         case 1:
@@ -1097,7 +1097,7 @@ test:
             if (bm7f86 == 0)
                 goto out;
             if (n > 0 || g7d40q) {
-                F_03AB8(0x122c);
+                game_message(0x122c);
                 F_092A4(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
                 n = 0;
             } else {
@@ -1195,7 +1195,7 @@ void F_0B08C(void)
             g_05cc = g_tick + 5;
         flag = 0;
         who = mode == 4 ? 0 : F_095F1();
-        while ((ch = F_01417(3000)) == 0)
+        while ((ch = sys_wait_input(3000)) == 0)
             ;
         switch (ch) {
         case 1:

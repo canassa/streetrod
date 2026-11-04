@@ -6,9 +6,9 @@
 struct Node2 as83b0[16];
 struct Node aj866au[140];
 
-/* F_03614 @ 0000:3614 (linear 0x03614, 148 bytes) */
+/* pools_init @ 0000:3614 (linear 0x03614, 148 bytes) */
 
-void near F_03614(int reset)
+void near pools_init(int reset)
 {
     struct Node2 *p2;
     struct Node *r;

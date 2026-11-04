@@ -12,18 +12,18 @@ extern int g_4f4e[];                                    /* DS:4F4E */
 extern int g_4f58;                                      /* DS:4F58 */
 extern int g_4f5a;                                      /* DS:4F5A */
 extern char *g_4fa4;                                    /* DS:4FA4 */
-void F_03A83(int a);                                    /* 0x03A83 */
-void F_03AB8(int n);                                    /* 0x03AB8 */
-struct Node * near F_03C1B(void);                       /* 0x03C1B */
-int F_03C5A(struct Node *n);                            /* 0x03C5A */
-struct Node2 * near F_03FB1(void);                      /* 0x03FB1 */
-struct Node * near F_03FF0(int idx, int a);             /* 0x03FF0 */
-struct Car * near F_04036(int idx, int weight, struct Car *old);/* 0x04036 */
-int near F_04386(struct Node *n, int keep);             /* 0x04386 */
-int near F_043BF(struct Car *c, int keep);              /* 0x043BF */
-int F_049A2(struct Car *c);                             /* 0x049A2 */
-void F_04FCA(int h);                                    /* 0x04FCA */
-void F_04FFA(int a, int b, int c);                      /* 0x04FFA */
-void near F_0503F(void);                                /* 0x0503F */
+void game_pause(int a);                                 /* 0x03A83 */
+void game_message(int n);                               /* 0x03AB8 */
+struct Node * near game_new_part(void);                 /* 0x03C1B */
+int game_part_value(struct Node *n);                    /* 0x03C5A */
+struct Node2 * near game_new_car(void);                 /* 0x03FB1 */
+struct Node * near game_add_part(int idx, int a);       /* 0x03FF0 */
+struct Car * near game_make_car(int idx, int weight, struct Car *old);/* 0x04036 */
+int near game_take_part(struct Node *n, int keep);      /* 0x04386 */
+int near game_scrap_car(struct Car *c, int keep);       /* 0x043BF */
+int game_car_look(struct Car *c);                       /* 0x049A2 */
+void game_play_anim(int h);                             /* 0x04FCA */
+void game_popup(int a, int b, int c);                   /* 0x04FFA */
+void near game_run(void);                               /* 0x0503F */
 
 #endif

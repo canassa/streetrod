@@ -18,7 +18,7 @@
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int g7f84q;
 
-static struct Bitmap far * near F_009B7(int n);
+static struct Bitmap far * near ad_picture(int n);
 
 struct Pages g_pages = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 0, 0, 0};   /* DS:04FE */
 struct Bitmap far *g_051c = 0;   /* DS:051C */
@@ -33,9 +33,9 @@ int g_052e = 0;   /* DS:052E */
 int g_0530[3] = {0, 0, 0};   /* DS:0530 */
 int g_0536 = 0;   /* DS:0536 */
 
-/* F_008B4 @ 0000:08B4 (linear 0x008B4, 259 bytes) */
+/* ads_open @ 0000:08B4 (linear 0x008B4, 259 bytes) */
 
-void F_008B4(int *list, int base)
+void ads_open(int *list, int base)
 {
     int num;
     int pos;
@@ -70,16 +70,16 @@ void F_008B4(int *list, int base)
     F_120FE(-1);
 }
 
-/* F_009B7 @ 0000:09B7 (linear 0x009B7, 20 bytes) */
+/* ad_picture @ 0000:09B7 (linear 0x009B7, 20 bytes) */
 
-static struct Bitmap far * near F_009B7(int n)
+static struct Bitmap far * near ad_picture(int n)
 {
     return F_15BBE(0x403, n);
 }
 
-/* F_009CB @ 0000:09CB (linear 0x009CB, 909 bytes) */
+/* ads_run @ 0000:09CB (linear 0x009CB, 909 bytes) */
 
-int F_009CB(void)
+int ads_run(void)
 {
     int hsave;
     int key;
@@ -99,7 +99,7 @@ int F_009CB(void)
         if (g_0520) {
             F_120FE(-4);
             x_colors = bustyle->hilite;
-            g_051c = F_009B7(2);
+            g_051c = ad_picture(2);
             F_13682(r_vid.back, 0x40, 0, 0xc0, 0xbe);
             g_0526 = g_052a = 0;
             b_78a2(g_051c, r_vid.back, (struct Blt *)&g_0522, 1);
@@ -161,9 +161,9 @@ int F_009CB(void)
             F_120FE(-1);
             if (r_vid.f16)
                 bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
-            F_00D78();
+            sys_hover_reset();
         }
-        while ((key = F_01417(3000)) == 0)
+        while ((key = sys_wait_input(3000)) == 0)
             ;
         switch (key) {
         case -3:
@@ -194,9 +194,9 @@ int F_009CB(void)
     }
 }
 
-/* F_00D58 @ 0000:0D58 (linear 0x00D58, 32 bytes) */
+/* ads_close @ 0000:0D58 (linear 0x00D58, 32 bytes) */
 
-void F_00D58(void)
+void ads_close(void)
 {
     F_193D4();
     g_pages.list = 0;

@@ -537,7 +537,7 @@ struct Video {
     int f16;
 };
 
-/* DS:04FE, the pages of a list menu (F_008B4 fills it, F_009CB pages through it): start[k] is the
+/* DS:04FE, the pages of a list menu (ads_open fills it, ads_run pages through it): start[k] is the
    first entry of page k, n the page count, cur the current page, list the menu (count, then items). */
 struct Pages {
     int start[12];

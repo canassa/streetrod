@@ -36,7 +36,7 @@ extern char ap8247u;                                    /* DS:8247 */
 extern int bl82c6;                                      /* DS:82C6 */
 extern int bu8acc;                                      /* DS:8ACC */
 extern int ag8bcet;                                     /* DS:8BCE */
-void F_001D1(int ax);                                   /* 0x001D1 */
-void F_001F2(unsigned char color);                      /* 0x001F2 */
+void main_set_mode(int ax);                             /* 0x001D1 */
+void main_set_palette(unsigned char color);             /* 0x001F2 */
 
 #endif

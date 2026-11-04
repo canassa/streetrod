@@ -21,14 +21,14 @@
 #include "VIDDET.H"
 #include "VIDEO.H"
 
-static void near F_00000(char *s);
-static int near F_0018B(void);
-static int near F_00082(int mode);
-static int near F_005C6(void);
-static int near F_00226(int mode);
-static void near F_00316(int mode);
-static void near F_004F4(int mode);
-static void near F_00659(void);
+static void near dos_print(char *s);
+static int near is_vga(void);
+static int near show_video_menu(int mode);
+static int near cpu_speed(void);
+static int near choose_video(int mode);
+static void near init_screens(int mode);
+static void near set_video_mode(int mode);
+static void near check_slow_cpu(void);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Video r_vid;
@@ -40,9 +40,9 @@ int g_0048 = 0;   /* DS:0048 */
 int g_004a = 0;   /* DS:004A */
 int g_004c = 0;   /* DS:004C */
 
-/* F_00000 @ 0000:0000 (linear 0x00000, 130 bytes) */
+/* dos_print @ 0000:0000 (linear 0x00000, 130 bytes) */
 
-static void near F_00000(char *s)
+static void near dos_print(char *s)
 {
     union REGS inr, outr;
     char crlf[4];
@@ -64,9 +64,9 @@ int g_0250 = 0;   /* DS:0250 */
 int g_0252 = 0;   /* DS:0252 */
 int g_0254 = 0;   /* DS:0254 */
 
-/* F_00082 @ 0000:0082 (linear 0x00082, 265 bytes) */
+/* show_video_menu @ 0000:0082 (linear 0x00082, 265 bytes) */
 
-static int near F_00082(int mode)
+static int near show_video_menu(int mode)
 {
     union REGS r;
     char rec[84];
@@ -78,28 +78,28 @@ static int near F_00082(int mode)
     int86(0x10, &r, &r);
     memcpy(rec, "\n           Recommended mode: #", 32);
     strcat(rec, g_videoMenu[mode - 1] + 20);
-    F_00000("\n\n\n\n\n\n                    STREET ROD:  Video Options\n");
-    F_00000("\n              Use numeric keys to select graphic mode");
-    F_00000("           or press any other key to accept recommendation\n");
+    dos_print("\n\n\n\n\n\n                    STREET ROD:  Video Options\n");
+    dos_print("\n              Use numeric keys to select graphic mode");
+    dos_print("           or press any other key to accept recommendation\n");
 
     for (choice = 0; choice < 6; choice++)
-        F_00000(g_videoMenu[choice]);
-    F_00000(rec);
+        dos_print(g_videoMenu[choice]);
+    dos_print(rec);
     while (kbhit())
         getch();
     while (!kbhit())
         ;
     choice = getch() - '0';
     if (choice == -21)
-        F_00FEA();
+        sys_exit();
     if (choice <= 0 || choice > 5)
         return 0;
     return choice;
 }
 
-/* F_0018B @ 0000:018B (linear 0x0018B, 70 bytes) */
+/* is_vga @ 0000:018B (linear 0x0018B, 70 bytes) */
 
-static int near F_0018B(void)
+static int near is_vga(void)
 {
     union REGS r;
     int s;
@@ -113,9 +113,9 @@ static int near F_0018B(void)
     return s && c == 8;
 }
 
-/* F_001D1 @ 0000:01D1 (linear 0x001D1, 33 bytes) */
+/* main_set_mode @ 0000:01D1 (linear 0x001D1, 33 bytes) */
 
-void F_001D1(int ax)
+void main_set_mode(int ax)
 {
     union REGS r;
 
@@ -123,9 +123,9 @@ void F_001D1(int ax)
     int86(0x10, &r, &r);
 }
 
-/* F_001F2 @ 0000:01F2 (linear 0x001F2, 52 bytes) */
+/* main_set_palette @ 0000:01F2 (linear 0x001F2, 52 bytes) */
 
-void F_001F2(unsigned char color)
+void main_set_palette(unsigned char color)
 {
     union REGS r;
 
@@ -138,9 +138,9 @@ void F_001F2(unsigned char color)
 
 int g_0262 = 1;   /* DS:0262 */
 
-/* F_00226 @ 0000:0226 (linear 0x00226, 240 bytes) */
+/* choose_video @ 0000:0226 (linear 0x00226, 240 bytes) */
 
-static int near F_00226(int mode)
+static int near choose_video(int mode)
 {
     int herc;
     int pick;
@@ -162,9 +162,9 @@ static int near F_00226(int mode)
     if (memstr_find("Tandy", (char far *)0xF0000000L, 0xffff) ||
         memstr_find("TANDY", (char far *)0xF0000000L, 0xffff))
         mode = 5;
-    if (F_0018B())
+    if (is_vga())
         mode = 3;
-    pick = F_00082(mode);
+    pick = show_video_menu(mode);
     if (pick)
         mode = pick;
     if (mode == 1 && g_0250)
@@ -176,9 +176,9 @@ static int near F_00226(int mode)
     return mode;
 }
 
-/* F_00316 @ 0000:0316 (linear 0x00316, 478 bytes) */
+/* init_screens @ 0000:0316 (linear 0x00316, 478 bytes) */
 
-static void near F_00316(int mode)
+static void near init_screens(int mode)
 {
     switch (mode) {
     case 3:
@@ -197,7 +197,7 @@ static void near F_00316(int mode)
         g_screens[0].pitch = g_screens[1].pitch = g_screens[2].pitch = 0xa0;
         g_screens[1].flags = g_screens[2].flags = 0xfa;
         g_screens[1].bits.p = (char far *)0x90000000L;
-        g_screens[2].bits.p = F_03709(0x8000, 1);
+        g_screens[2].bits.p = mem_alloc(0x8000, 1);
         F_109C0(g_screens[1].bits.p, 0, 0x8000);
         F_109C0(g_screens[2].bits.p, 0, 0x8000);
         return;
@@ -219,25 +219,25 @@ static void near F_00316(int mode)
     g_screens[0].planesize = g_screens[1].planesize = 0x4000;
     g_screens[0].pitch = g_screens[1].pitch = 0x50;
     g_screens[1].flags = 0xfd;
-    g_screens[1].bits.p = F_03709(0x4000, 1);
+    g_screens[1].bits.p = mem_alloc(0x4000, 1);
     F_109C0(g_screens[1].bits.p, 0, 0x4000);
-    g_screens[2].bits.p = F_03709(0x4000, 1);
+    g_screens[2].bits.p = mem_alloc(0x4000, 1);
     F_109C0(g_screens[2].bits.p, 0, 0x4000);
 }
 
-/* F_004F4 @ 0000:04F4 (linear 0x004F4, 210 bytes) */
+/* set_video_mode @ 0000:04F4 (linear 0x004F4, 210 bytes) */
 
-static void near F_004F4(int mode)
+static void near set_video_mode(int mode)
 {
     int far *p;
 
     switch (mode) {
     case 2:
     case 3:
-        F_001D1(0xd);
+        main_set_mode(0xd);
         break;
     case 5:
-        F_001D1(9);
+        main_set_mode(9);
         outp(0x3df, 0xf6);
         break;
     case 4:
@@ -251,16 +251,16 @@ static void near F_004F4(int mode)
         break;
     case 1:
     case 6:
-        F_001D1(4);
-        F_001F2(1);
+        main_set_mode(4);
+        main_set_palette(1);
         break;
     }
     g_0048 = 1;
 }
 
-/* F_005C6 @ 0000:05C6 (linear 0x005C6, 147 bytes) */
+/* cpu_speed @ 0000:05C6 (linear 0x005C6, 147 bytes) */
 
-static int near F_005C6(void)
+static int near cpu_speed(void)
 {
     long count;
     long prev;
@@ -285,9 +285,9 @@ int bl82c6;
 int bu8acc;
 int ag8bcet;
 
-/* F_00659 @ 0000:0659 (linear 0x00659, 22 bytes) */
+/* check_slow_cpu @ 0000:0659 (linear 0x00659, 22 bytes) */
 
-static void near F_00659(void)
+static void near check_slow_cpu(void)
 {
     if (bu8acc < 4)
         bl82c6 = 1;
@@ -320,7 +320,7 @@ int main(int argc, char **argv)
     int a;
 
     ap8247u = 0;
-    bu8acc = F_005C6();
+    bu8acc = cpu_speed();
     e = 2;
     b = 0;
     g_0262 = 1;
@@ -339,24 +339,24 @@ int main(int argc, char **argv)
         else if (strcmpi(*argv, "nouemem") == 0)
             g_0280 = 1;
     }
-    b = F_00226(b);
-    F_036BE();
+    b = choose_video(b);
+    mem_init();
     F_19269();
-    F_00316(b);
-    F_004F4(b);
+    init_screens(b);
+    set_video_mode(b);
     F_10BD9(g_screens, &g_screen1);
-    F_01111();
+    sys_init();
     if (r_vid.mode == -2 || r_vid.mode == -6)
         F_11324(g_palette);
     F_15CC3(e, b);
-    F_00659();
+    check_slow_cpu();
     d = F_1552B(1);
     F_11EA8();
     F_16481();
     F_1013D(0);
     if (r_vid.mode == -3 && g_0250)
-        g755cu = F_0376B(320, 100, 0, -1, 0);
-    ab7564z = F_03709(r_vid.mode != -2 && r_vid.mode != -6 ? 16000 : 18000, 1);
+        g755cu = mem_new_bitmap(320, 100, 0, -1, 0);
+    ab7564z = mem_alloc(r_vid.mode != -2 && r_vid.mode != -6 ? 16000 : 18000, 1);
     a = F_15C4A(g_4c20, 0);
     if (a == 3) {
         by70e2 = 1;
@@ -369,6 +369,6 @@ int main(int argc, char **argv)
         by70e2 = 0;
         F_15C95(g_4c20);
     }
-    F_0503F();
-    F_00FEA();
+    game_run();
+    sys_exit();
 }
