@@ -187,6 +187,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **BuildingRows** (`g_currentBuildingRowsInfo`, DS:7AB0..7ACD): a natural, byte-identical reconstruction choice; separate globals also match.
 
+- **ListDialog** (`g_menuList`, DS:8B9A..8BA3): a natural, byte-identical reconstruction choice; separate globals also match.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only

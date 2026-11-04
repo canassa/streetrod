@@ -718,4 +718,12 @@ struct BuildingRows {
     int prevY;
     int lastY;
 };
+
+struct ListDialog {
+    int lineBase;
+    int rows;
+    int *list;
+    int selection;
+    struct Hot *header;
+};
 #endif

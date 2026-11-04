@@ -451,12 +451,12 @@ again:
         ;
     if (cmp == 0) {
         cursor_ctl(CURSOR_HIDE);
-        box7 = (struct Win *)(0x12 * (int)r + g_listLineBasePointerValue - 0x12);
+        box7 = (struct Win *)(0x12 * (int)r + g_menuList.lineBase - 0x12);
         pal4 = x_colors;
-        x_colors = bustyle->pal[((struct Win *)g_listLineBasePointerValue)->lines];
+        x_colors = bustyle->pal[((struct Win *)g_menuList.lineBase)->lines];
         sv7 = x_colors.line;
         x_colors.line = x_colors.textBg;
-        wk = ((struct Win *)g_listLineBasePointerValue)->tx - ((struct Win *)g_listLineBasePointerValue)->w;
+        wk = ((struct Win *)g_menuList.lineBase)->tx - ((struct Win *)g_menuList.lineBase)->w;
         draw_frame(r_vid.back, box7->w, box7->h, wk, 8);
         draw_frame(r_vid.front, box7->w, box7->h, wk, 8);
         x_colors = pal4;

@@ -156,7 +156,7 @@ int edit_number(int x, int y, char *s, int *out)
 
 /* edit_spot_number @ 0F38:5DA7 (linear 0x15127, 119 bytes)
 
-   Number field of the current hot spot g_hotTextFld: edit a text into buf (at most 10 characters,
+   Number field of the current hot spot g_menuList.header: edit a text into buf (at most 10 characters,
    fewer when the box is narrow: 6 pixels each) with the spot's colours and store its value in *out.
    Returns the editor's result when that is 0 or negative, else 0 */
 
@@ -164,10 +164,10 @@ int edit_spot_number(int *out, char *buf)
 {
     int rl;
 
-    x_colors = bustyle->pal[g_hotTextFld->palIndex];
+    x_colors = bustyle->pal[g_menuList.header->palIndex];
     g_editDigits = 1;
-    rl = edit_line(g_hotTextFld->x1, g_hotTextFld->y1, buf,
-        (g_hotTextFld->x2 - g_hotTextFld->x1) / 6 > 10 ? 10 : (g_hotTextFld->x2 - g_hotTextFld->x1) / 6);
+    rl = edit_line(g_menuList.header->x1, g_menuList.header->y1, buf,
+        (g_menuList.header->x2 - g_menuList.header->x1) / 6 > 10 ? 10 : (g_menuList.header->x2 - g_menuList.header->x1) / 6);
     g_editDigits = 0;
     *out = atoi(buf);
     return rl > 0 ? 0 : rl;
@@ -200,8 +200,8 @@ int edit_text_box(int id, int len, char *s)
     int rl;
 
     menu_push(id);
-    x_colors = bustyle->pal[g_hotTextFld->palIndex];
-    rl = edit_line(g_hotTextFld->x1, g_hotTextFld->y1, s, len);
+    x_colors = bustyle->pal[g_menuList.header->palIndex];
+    rl = edit_line(g_menuList.header->x1, g_menuList.header->y1, s, len);
     menu_pop(1);
     return rl > 0 ? 0 : rl;
 }
