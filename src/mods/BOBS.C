@@ -4,6 +4,7 @@
 #include "BOBS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
+#include "CARHOP.H"
 #include "CARPIC.H"
 #include "CRUISE.H"
 #include "CURSOR.H"
@@ -29,13 +30,12 @@
 #include "SCREEN.H"
 #include "SYS.H"
 #include "VIDEO.H"
-#include "WALKER.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_walkState;                         /* DS:6C84 */
+static int g_carhop;                         /* DS:6C84 */
 static int g_ordered;                         /* DS:6C88 */
 static void near drop_last_word(char *s);
-static int near maybe_walker(int mode, int arg, int pct1, int pct2);
+static int near maybe_carhop(int mode, int arg, int pct1, int pct2);
 static int g_poolCount;                         /* DS:6C86 */
 static int g_poolRivals[12];                  /* DS:6C8A */
 static int g_justArrived;                         /* DS:6CA2 */
@@ -61,37 +61,37 @@ static void near set_jail_spots(int id, char c);
 int g_bannerX = 100;   /* DS:51EE */
 int g_passCount = 0;   /* DS:51F0 */
 
-/* maybe_walker @ 0000:914C (linear 0x0914C, 266 bytes) */
+/* maybe_carhop @ 0000:914C (linear 0x0914C, 266 bytes) */
 
-static int near maybe_walker(int mode, int arg, int pct1, int pct2)
+static int near maybe_carhop(int mode, int arg, int pct1, int pct2)
 {
     int r;
 
     r = 0;
     switch (mode) {
-    case WALKER_ENTER:
-        if (g_walkState != 0)
+    case CARHOP_ENTER:
+        if (g_carhop != 0)
             break;
         if (g_passCount < 3 || random_int(100) >= pct1)
             break;
         r = 1;
         cursor_ctl(CURSOR_HIDE_NOW);
-        walker_walk(WALKER_ENTER, arg);
-        g_walkState = 1;
+        carhop_skate(CARHOP_ENTER, arg);
+        g_carhop = 1;
         if (random_int(100) < pct2) {
             F_10AFD(100);
-            walker_walk(WALKER_LEAVE, arg);
-            g_walkState = 0;
+            carhop_skate(CARHOP_LEAVE, arg);
+            g_carhop = 0;
             g_ordered = 0;
         }
         break;
-    case WALKER_LEAVE:
-        if (g_walkState != 1 || random_int(100) >= pct1)
+    case CARHOP_LEAVE:
+        if (g_carhop != 1 || random_int(100) >= pct1)
             break;
         r = 1;
         cursor_ctl(CURSOR_HIDE_NOW);
-        walker_walk(WALKER_LEAVE, arg);
-        g_walkState = 0;
+        carhop_skate(CARHOP_LEAVE, arg);
+        g_carhop = 0;
         g_ordered = 0;
         g_passCount = 0;
         break;
@@ -136,10 +136,10 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
     strcat(g7f32s, g_desc + g_oppSpecPointer->f6);
     x = g_scene == 6;
     if (mode == 4)
-        g_walkState = -1;
+        g_carhop = -1;
     g_rivalHereState = mode == 2;
-    if (mode == 1 && !maybe_walker(WALKER_ENTER, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, 10))
-        maybe_walker(WALKER_LEAVE, g_rivalHereState, 20, 0);
+    if (mode == 1 && !maybe_carhop(CARHOP_ENTER, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, 10))
+        maybe_carhop(CARHOP_LEAVE, g_rivalHereState, 20, 0);
     if (g7f32s[n = strlen(g7f32s) - 1] == '.')
         g7f32s[n] = 0;
     for (;;) {
@@ -166,11 +166,11 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
         F_11421(g_bannerX, " ", cz8bc0y);
     }
     if (mode == 4)
-        g_walkState = 0;
+        g_carhop = 0;
     g_rivalHereState = (mode == 2) ? 0 : 1;
     if (!(x && g_rivalHereState))
-        if (!maybe_walker(WALKER_ENTER, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, g_rivalHereState == 0 ? 8 : 0))
-            maybe_walker(WALKER_LEAVE, g_rivalHereState, 40, 0);
+        if (!maybe_carhop(CARHOP_ENTER, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, g_rivalHereState == 0 ? 8 : 0))
+            maybe_carhop(CARHOP_LEAVE, g_rivalHereState, 40, 0);
 }
 
 int bn7648;
@@ -962,13 +962,13 @@ void bobs_visit(void)
         play_cell_anim();
     cursor_ctl(CURSOR_SHOW_NOW);
     g_rivalHereState = 0;
-    g_walkState = -1;
+    g_carhop = -1;
     g_ordered = 0;
     g_justArrived = 1;
     g_scene = 2;
     g_mouseLeft = g_joyButtons = g_buttons = 0;
     for (;;) {
-        setup_bobs_spots(g_rivalHereState, !g_walkState & !g_ordered);
+        setup_bobs_spots(g_rivalHereState, !g_carhop & !g_ordered);
         menu_push(0x25);
         g_waitUntil = flag == 0 ? (unsigned)(class == 4 ? 140 : 280) + g_tick : g_tick + 5;
         flag = 0;
@@ -1078,7 +1078,7 @@ test:
                     (*m_present)();
                     class = 4;
                     g_rivalHereState = 0;
-                    g_walkState = -1;
+                    g_carhop = -1;
                     g_ordered = 0;
                     n = 0;
                     if (g_kingDragWon == 0)
@@ -1106,7 +1106,7 @@ test:
             menu_pop(1);
             break;
         case 5:
-            if (g_walkState == 0)
+            if (g_carhop == 0)
                 g_ordered = 1;
             menu_pop(1);
             break;
@@ -1179,7 +1179,7 @@ void bobs_jail(void)
     r_vid.f16 = 1;
     (*m_present)();
     g_rivalHereState = 0;
-    g_walkState = -1;
+    g_carhop = -1;
     g_ordered = 0;
     cursor_ctl(1);
     cursor_ctl(CURSOR_SHOW);

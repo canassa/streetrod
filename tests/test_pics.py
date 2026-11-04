@@ -137,7 +137,7 @@ class PictureTests(unittest.TestCase):
     def test_output_and_errors(self):
         with tempfile.TemporaryDirectory() as tmp:
             args = SimpleNamespace(ids=[1142, 1141], scale=3, cells=[6, 11], list=False,
-                                   mode='ega', palette='game', png=Path(tmp) / 'walkers.png')
+                                   mode='ega', palette='game', png=Path(tmp) / 'carhops.png')
             with redirect_stdout(io.StringIO()):
                 pics.run(args)
             self.assertEqual(struct.unpack_from('>II', args.png.read_bytes(), 16), (1320, 246))

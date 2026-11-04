@@ -1008,3 +1008,12 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - New `./sr pic` (tools/sr/pics.py): reads the resource libraries in orig/freeware (LIB1/LIB2 and the CGA variants), decodes a picture exactly as the game's loader and RLE unpacker do (EGA planar and CGA forms), and writes a PNG or prints it inline with the kitty graphics protocol (`--list`, `--scale`, `--cells` to cut sprite sheets like `cut_sheet`, palettes). All 554 pictures decode. Done by a Codex agent.
 - Used it on the walker's sprite sheets: two 11-frame rows of a blonde woman on roller skates carrying a tray, facing right then left. The drive-in figure is a roller-skating carhop.
+
+## 2026-11-05 13:30 CET: The walker is a carhop
+
+### What I did
+- The drive-in figure's sprite sheets (pictures 1141/1142) show a blonde woman on roller skates carrying a tray, so the module is CARHOP.C again: `carhop_skate` (was walker_walk; skates in from the left or back out), `carhop_save_bg`, `maybe_carhop` (BOBS.C), `CARHOP_ENTER`/`CARHOP_LEAVE`, and the state static `g_carhop` (-1 none, 0 may come, 1 present; chosen to keep its MSC hash slot, key 99).
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
+
+### What I learned
+- The game's pictures are evidence too: the review's modest "walker" was right on the code alone, and the sprite settled it.
