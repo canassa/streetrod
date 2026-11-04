@@ -30,6 +30,15 @@ class ModuleTests(unittest.TestCase):
         self.assertNotIn('L00000_L00000', again)
         self.assertNotIn('EXTRN F_00010', again)
 
+    def test_asm_merge_keeps_the_source_model(self):
+        # .MODEL SMALL declares _TEXT first (M_21962.ASM): the merge must not replace it
+        rows = [dict(addr=0, name=None, far=1)]
+        merged = module.merge_asm([".MODEL SMALL\nX_TEXT SEGMENT\nX_TEXT ENDS\nEND\n"], rows)
+        self.assertTrue(merged.lstrip().startswith('.MODEL SMALL'))
+        self.assertNotIn('MEDIUM', merged)
+        merged = module.merge_asm(["X_TEXT SEGMENT\nX_TEXT ENDS\nEND\n"], rows)
+        self.assertTrue(merged.lstrip().startswith('.MODEL MEDIUM'))
+
     def test_placeholder_public_is_not_an_in_module_definition(self):
         # A public stub precedes the member. Its EXTDEF fixup must remain external,
         # and must be counted even though raw 0000 points inside the member.
