@@ -20,7 +20,7 @@ state. `CRT.H` maps three previously unnamed runtime references to `errno`,
 the unpacked file's FF filler is not an initializer.
 
 PARTS2 ends at 3884:0000. The following 0x170-byte block belongs to
-EM.LIB, which supplies it in the layout build before SLOTS at 389B:0000.
+EM.LIB (via MLIBCE.LIB), which supplies it in the layout build before SLOTS at 389B:0000.
 Those bytes were previously misidentified as the end of the Part array.
 
 Far-data modules contain font glyphs, Bitmap descriptors, track coordinates,

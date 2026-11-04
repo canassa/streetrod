@@ -79,8 +79,9 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 ## Whole-binary layout lessons (2026-11-03)
 
 - `./sr build --layout` compiles/gates 103 reconstructed code units + 12 data
-  modules + an empty runtime segment-order anchor. LAYOUT.JSON selects unchanged
-  MSC archive members; preparation never reads/extracts original game bytes.
+  modules + an empty runtime segment-order anchor. The runtime comes from
+  MLIBCE.LIB, built by LIB 3.11 from the untouched MLIBCR+LIBH+EM+MLIBFP and
+  linked as the default library; preparation never reads original game bytes.
 - `./sr linkcheck [EXE]` is the raw linked-file gate. It masks nothing, fails on
   extra/missing bytes, and treats MZ relocation-row order as part of identity.
   Mapped function/call comparisons are diagnostics, never a replacement verdict.

@@ -31,7 +31,7 @@ def run_dos(root, program, args, log):
     # emu2 creates DOS outputs with lowercase host filenames. Normalize them for
     # the exported DOS build tree and make host-side existence checks unambiguous.
     for path in root.iterdir():
-        if path.is_file() and path.suffix.lower() in ('.obj', '.lst', '.exe', '.map'):
+        if path.is_file() and path.suffix.lower() in ('.obj', '.lst', '.exe', '.map', '.lib'):
             target = path.with_name(path.name.upper())
             if path != target:
                 path.replace(target)

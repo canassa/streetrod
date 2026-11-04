@@ -1,4 +1,4 @@
-"""Build the recovered linked layout from source and untouched MSC archive members.
+"""Build the recovered linked layout from source and the untouched MSC libraries.
 
 LAYOUT.JSON records recovered compilation groups and link inputs, not binary bytes.
 Normal preparation/compilation never reads the original executable. The comparison
@@ -10,7 +10,7 @@ from pathlib import Path
 import re
 import shutil
 
-from . import build, cod, config, db, headers, lib, module
+from . import build, cod, config, db, headers, module
 from .exe import image
 from .omf import Obj
 
@@ -18,22 +18,29 @@ OUT = config.WORK/'layout'
 PLAN = config.SRC/'link/LAYOUT.JSON'
 
 
-def _archive_objects(plan):
-    inventory = {}
-    for name in sorted({r['library'] for r in plan['runtime']+plan['emulator']}):
-        inventory[name] = list(lib.objects(config.TOOLCHAIN/'LIB'/name))
-    result = {}
-    for category in ('runtime', 'emulator'):
-        result[category] = []
-        for i, row in enumerate(plan[category]):
-            choices = [obj for name, obj in inventory[row['library']]
-                       if name == row['member'] and len(obj.code) == row['code_size']
-                       and (row['public'] is None or row['public'] in obj.all_publics)]
-            if len(choices) != 1:
-                raise ValueError(f"Ambiguous/missing MSC archive member: {row}")
-            filename = ('CRT' if category == 'runtime' else 'EM')+f'{i:03d}.OBJ'
-            result[category].append((filename, choices[0].raw))
-    return result
+# MSC 5.1 SETUP's combined medium-model emulator library. The objects' default-library
+# record names it, so LINK pulls the runtime from it without /NOD or a library field.
+# LIB keeps all 402 component modules in this order, and LINK extracts modules in
+# library order: other component orders move runtime code (5381..12426 bytes differ).
+LIBRARY = 'MLIBCE.LIB'
+COMPONENTS = ('MLIBCR.LIB', 'LIBH.LIB', 'EM.LIB', 'MLIBFP.LIB')
+LIB_ARGS = [LIBRARY, ''.join('+D:\\LIB\\'+name for name in COMPONENTS)+';']
+LINK_OPTIONS = ('/MAP', '/STACK:2560', '/EXEPACK')
+
+
+def build_library():
+    """Build MLIBCE.LIB with LIB 3.11 from the untouched component libraries."""
+    root = OUT/'BUILD'/'MLIBCE'
+    root.mkdir(parents=True, exist_ok=True)
+    for path in root.iterdir():
+        if path.is_file():
+            path.unlink()
+    rc = build.run_dos(root, 'LIB', LIB_ARGS, root/'LIB.LOG')
+    if rc or not (root/LIBRARY).exists():
+        print(f'{LIBRARY}: LIB failed\n'+(root/'LIB.LOG').read_text(errors='replace')[-2000:])
+        return False
+    shutil.copyfile(root/LIBRARY, OUT/LIBRARY)
+    return True
 
 
 def prepare():
@@ -44,7 +51,6 @@ def prepare():
     con.close()
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT/'INCLUDE').mkdir(exist_ok=True)
-    (OUT/'RUNTIME').mkdir(exist_ok=True)
     for directory in (config.INCLUDE, config.SRC/'data'):
         for path in directory.glob('*.H'):
             shutil.copyfile(path, OUT/'INCLUDE'/path.name)
@@ -125,10 +131,6 @@ def prepare():
         sequence.append(stem+'.OBJ')
     if sorted(covered) != sorted(r['addr'] for r in rows):
         raise ValueError('Layout must compile every matched game function exactly once')
-    archives = _archive_objects(plan)
-    for group in archives.values():
-        for filename, raw in group:
-            (OUT/'RUNTIME'/filename).write_bytes(raw)
     for name in ('SCREENS', 'TRACKPTS', 'SCRATCH', 'SONG', 'EFFECTS', 'SCREEN2', 'PARTS1', 'PARTS2'):
         sequence.append(assembly(config.SRC/'data'/(name+'.ASM')))
     # SLOTS is far communal storage (src/data/SLOTS.C): LINK places FAR_BSS after the
@@ -140,11 +142,6 @@ def prepare():
     sequence.append(slots)
     sequence.append(assembly(config.SRC/'data/DGROUP.ASM'))
     next(job for job in jobs if job['stem'] == 'DGROUP')['args'].insert(0, '/DORIGINAL_LAYOUT')
-    runtime = ['RUNTIME\\'+name for name, _ in archives['runtime']]
-    # the original links EM.LIB's objects right after fltused (relocation order)
-    k = next(i for i, r in enumerate(plan['runtime']) if r['member'].endswith('fltused.ASM')) + 1
-    runtime[k:k] = ['RUNTIME\\'+name for name, _ in archives['emulator']]
-    sequence += runtime
     # DS:6E60..8F02 is communal storage (C tentative definitions in the game files): LINK
     # creates c_common after crt0's XOB/XO/XOE and allocates it by symbol-hash bucket
     response = '+\n'.join(sequence)+'\nSR.EXE\nSR.MAP\n\n;\n'
@@ -155,13 +152,17 @@ def prepare():
     (OUT/'TMP').mkdir(exist_ok=True)
     make = ['# MSC MAKE 4.07: ENV.BAT, then MAKE MAKEFILE.', '']
     batch = ['@echo off', 'if exist SR.EXE del SR.EXE']
+    # MAKE 4.07 runs rules in file order: the library comes before the link
+    command = 'LIB '+' '.join(LIB_ARGS)
+    make += [f'{LIBRARY}: '+' '.join('D:\\LIB\\'+name for name in COMPONENTS), '\t'+command, '']
+    batch += [f'if exist {LIBRARY} del {LIBRARY}', command, 'if errorlevel 1 goto failed']
     for job in jobs:
         command = job['program']+' '+' '.join(job['args'])
         deps = build.header_deps((OUT/job['source']).read_text(errors='replace')) if job['program'] == 'CL' else ''
         make += [f"{job['stem']}.OBJ: {job['source']}{deps}", '\t'+command, '']
         batch += [command, 'if errorlevel 1 goto failed']
-    command = 'LINK /NOD /MAP /STACK:2560 @LINK.RSP'
-    make += ['SR.EXE: '+' \\\n    '.join(sequence)+' LINK.RSP', '\t'+command, '']
+    command = 'LINK '+' '.join(LINK_OPTIONS)+' @LINK.RSP'
+    make += ['SR.EXE: '+' \\\n    '.join(sequence)+f' {LIBRARY} LINK.RSP', '\t'+command, '']
     batch += [command, 'if errorlevel 1 goto failed', 'goto done', ':failed',
               'if exist SR.EXE del SR.EXE', 'echo BUILD FAILED', ':done']
     (OUT/'MAKEFILE').write_bytes(('\n'.join(make)).replace('\n','\r\n').encode())
@@ -172,7 +173,7 @@ def prepare():
 
 def run(prepare_only=False, objects_only=False):
     jobs = prepare()
-    print(f'Prepared {len(jobs)} source jobs and 100 unchanged MSC runtime objects in work/layout', flush=True)
+    print(f'Prepared {len(jobs)} source jobs and the {LIBRARY} rule in work/layout', flush=True)
     if prepare_only:
         return 0
     for name in ('SR.EXE', 'SR.MAP'):
@@ -204,7 +205,10 @@ def run(prepare_only=False, objects_only=False):
         shutil.copyfile(objpath, OUT/objpath.name)
         return job['stem'], None
     with concurrent.futures.ThreadPoolExecutor(max_workers=12) as pool:
+        library = pool.submit(build_library)
         results = list(pool.map(compile_one, jobs))
+    if not library.result():
+        return 1
     failures = [(name, error) for name, error in results if error]
     print(f'{len(results)-len(failures)}/{len(results)} compiled and gated source jobs', flush=True)
     if failures:
@@ -215,9 +219,9 @@ def run(prepare_only=False, objects_only=False):
         return 0
     # the shipped file is EXEPACK-packed by LINK: build it first, then the unpacked file
     # the diagnostics read
-    if build.link(OUT, options=('/NOD', '/MAP', '/STACK:2560', '/EXEPACK')):
+    if build.link(OUT, options=LINK_OPTIONS):
         (OUT/'SR.EXE').replace(OUT/'SRPACKED.EXE')
-    ok = build.link(OUT, options=('/NOD', '/MAP', '/STACK:2560'))
+    ok = build.link(OUT, options=tuple(o for o in LINK_OPTIONS if o != '/EXEPACK'))
     build.link_report(OUT)
     if not ok:
         (OUT/'SR.EXE').unlink(missing_ok=True)
