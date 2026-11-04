@@ -81,8 +81,8 @@ static void near swap_wheel(int a, int *p, int *q)
 {
     int i;
 
-    g_tires.underlay = F_15BBE(0x4d2, ARENA_LOW_STACK);
-    g_tires.wheelBitmap = F_15BBE(*p, ARENA_LOW_STACK);
+    g_tires.underlay = disk_bm(0x4d2, ARENA_LOW_STACK);
+    g_tires.wheelBitmap = disk_bm(*p, ARENA_LOW_STACK);
     g_tires.phase = a & ~r_vid.mask;
     g_tires.frames[0] = arena_bm(g_tires.wheelBitmap->width + 8, g_tires.wheelBitmap->height, 1, ARENA_LOW_STACK);
     bitmap_shift_right(g_tires.wheelBitmap, g_tires.phase, g_tires.frames[0]);
@@ -108,12 +108,12 @@ static void near swap_wheel(int a, int *p, int *q)
     for (i = 1; i < 4; i++) {
         g_tires.rollShift = (i * 2 + g_tires.phase) & ~r_vid.mask;
         if (g_tires.rollShift) {
-            g_tires.wheelBitmap = F_15BBE(p[i], ARENA_HIGH_STACK);
+            g_tires.wheelBitmap = disk_bm(p[i], ARENA_HIGH_STACK);
             g_tires.frames[4 - i] = arena_bm(g_tires.wheelBitmap->width + 8, g_tires.wheelBitmap->height, 1, ARENA_LOW_STACK);
             bitmap_shift_right(g_tires.wheelBitmap, g_tires.rollShift, g_tires.frames[4 - i]);
             F_19438(1);
         } else
-            g_tires.frames[4 - i] = F_15BBE(p[i], ARENA_LOW_STACK);
+            g_tires.frames[4 - i] = disk_bm(p[i], ARENA_LOW_STACK);
         bitmap_underlay(g_tires.underlay, g_tires.frames[4 - i], g_tires.rollShift, g_tires.underlayY);
     }
     i = 4;
@@ -126,17 +126,17 @@ static void near swap_wheel(int a, int *p, int *q)
     marks_pop_low(6);
     if (r_vid.mode == VID_EGA)
         (*g_videoOps.copyPage)(g_pageBmps[0]->bits.p, g_pageBmps[1]->bits.p);
-    g_tires.frames[0] = F_15BBE(*q, ARENA_LOW_STACK);
+    g_tires.frames[0] = disk_bm(*q, ARENA_LOW_STACK);
     g_tires.phase = ((unsigned char)a & 7) >> 1;
     for (i = 1; i < 4; i++) {
         g_tires.rollShift = (i * 2) & ~r_vid.mask;
         if (g_tires.rollShift) {
-            g_tires.wheelBitmap = F_15BBE(q[i], ARENA_HIGH_STACK);
+            g_tires.wheelBitmap = disk_bm(q[i], ARENA_HIGH_STACK);
             g_tires.frames[i] = arena_bm(g_tires.wheelBitmap->width + 8, g_tires.wheelBitmap->height, 1, ARENA_LOW_STACK);
             bitmap_shift_right(g_tires.wheelBitmap, g_tires.rollShift, g_tires.frames[i]);
             F_19438(1);
         } else
-            g_tires.frames[i] = F_15BBE(q[i], ARENA_LOW_STACK);
+            g_tires.frames[i] = disk_bm(q[i], ARENA_LOW_STACK);
     }
     for (i = 0; i < 4; i++) {
         if (i == g_tires.phase) {
@@ -202,7 +202,7 @@ void F_1B213(int *a, int *b)
     attr3 = game_car_look(a_7eaap.currentCar);
     tinto = (a_7eaap.currentCar->appearance >> 8) & 0x1f;
     for (n = 0; n < 3; n++)
-        g_tires.liftPics[n] = F_15BBE(g_liftPicIds[n], ARENA_LOW_STACK);
+        g_tires.liftPics[n] = disk_bm(g_liftPicIds[n], ARENA_LOW_STACK);
     screen_fill_rect(0x88, 0xba - g_tires.liftPics[1]->height, g_tires.liftPics[1]->width, g_tires.liftPics[1]->height,
             (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? g_carBg4[1] : g_carBg16[1]);
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x97 - g_tires.liftPics[0]->height : 0;
@@ -217,7 +217,7 @@ void F_1B213(int *a, int *b)
     blt.sy = ybot = g_tires.liftCar->height - 0x1c;
     g_tires.vehicleBottom = bitmap_grab(g_tires.liftCar, &blt, ARENA_LOW_STACK);
     F_118D4(0x408, -1);
-    g_tires.basePic = F_15BBE(0x49d, ARENA_HIGH_STACK);
+    g_tires.basePic = disk_bm(0x49d, ARENA_HIGH_STACK);
     bitmap_opaque_span(g_tires.liftCar, &left, &right);
     g_tires.groundStrip = arena_bm(g_tires.liftCar->width, g_tires.basePic->height, 0, ARENA_HIGH_STACK);
     popup_grab(g_tires.carX, 0x99 - g_tires.basePic->height, g_tires.liftCar->width, g_tires.basePic->height, g_tires.groundStrip);
@@ -252,7 +252,7 @@ void F_1B213(int *a, int *b)
     clip6.dy = -(g_tires.liftPics[1]->height + g_spriteBgY - 0x9a);
     (*g_videoOps.maskedBlit)(g_tires.liftPics[0], g_tires.liftBackdrop, &clip6, 1);
     (*g_videoOps.copy)(g_tires.liftPics[0], g_tires.liftBackdrop, &clip6, 2);
-    g_tires.column = F_15BBE(0x4c7, ARENA_HIGH_STACK);
+    g_tires.column = disk_bm(0x4c7, ARENA_HIGH_STACK);
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x76 : 0;
     pic = grab_wheel_column(g_tires.wheelX2);
     dst = grab_wheel_column(g_tires.wheelX1);
@@ -317,7 +317,7 @@ void F_1B213(int *a, int *b)
         F_10AFD(3);
     F_16381(1);
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x92 - g_tires.liftCar->height : 0;
-    g_tires.wheelBitmap = F_15BBE(*a, ARENA_HIGH_STACK);
+    g_tires.wheelBitmap = disk_bm(*a, ARENA_HIGH_STACK);
     bitmap_underlay(g_tires.wheelBitmap, g_tires.liftCar, g_tires.wheelX1, ybot);
     bitmap_underlay(g_tires.wheelBitmap, g_tires.liftCar, g_tires.wheelX2, ybot);
     F_19438(1);
@@ -374,7 +374,7 @@ void F_1B213(int *a, int *b)
         (*g_videoOps.copy)(r_vid.front, g_rollBuf, &blt, 1);
     swap_wheel(g_tires.carX + g_tires.wheelX2, a, b);
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x92 - g_tires.liftCar->height : 0;
-    g_tires.frames[0] = F_15BBE(*b, ARENA_LOW_STACK);
+    g_tires.frames[0] = disk_bm(*b, ARENA_LOW_STACK);
     blt.w = g_tires.liftCar->width;
     blt.h = g_tires.frames[0]->height;
     blt.dy = g_tires.liftCar->height - g_tires.frames[0]->height;

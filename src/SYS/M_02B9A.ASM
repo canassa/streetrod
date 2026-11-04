@@ -248,8 +248,8 @@ _g_part DW      13h                      ; DS:4806 struct Item[]
         DW      0
         PUBLIC  _g_partWear
 _g_partWear DW      0, 0                     ; DS:4966 int[]
-        PUBLIC  _g_496a
-_g_496a DW      0FF80h                   ; DS:496A int
+        PUBLIC  _g_specPartWear
+_g_specPartWear DW      0FF80h                   ; DS:496A int
         PUBLIC  _g_496c
 _g_496c DW      0FF80h, 0                ; DS:496C int[2]
         PUBLIC  _g_betRaces
