@@ -151,8 +151,8 @@ struct Box {
 
 struct Obj {
     int id;
-    int f2;
-    int f4;
+    int scriptIndex;
+    int pendingTimers;
     int f6;
     struct Bitmap far *img;
     void far *fc;

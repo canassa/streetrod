@@ -125,7 +125,7 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
     i = 5;
     do {
         i--;
-        bm7568[i].id = bm7568[i].f2 = -1;
+        bm7568[i].id = bm7568[i].scriptIndex = -1;
     } while (i);
     (*m_present)();
     menu_reset();
@@ -157,7 +157,7 @@ void video_anim_stop(int n)
         o->fc = 0;
     g_animScripts[g_animScriptStart[n]].a = -1;
     o->id = -1;
-    if (o->f4)
+    if (o->pendingTimers)
         sys_timer_cancel(n);
 }
 
@@ -197,7 +197,7 @@ static void near anim_run(int n)
     wait = 1;
     cursor_ctl(-3);
     g_obj = &bm7568[n];
-    g_cmd = &g_animScripts[k = g_obj->f2];
+    g_cmd = &g_animScripts[k = g_obj->scriptIndex];
     g_box = &g_obj->box;
     for (; k >= 0; k++) {
         switch (g_cmd->op) {
@@ -251,10 +251,10 @@ static void near anim_run(int n)
             g_box->h = g_cmd->b;
             break;
         case 11:
-            if (!(g_obj->f2 = g_cmd->b))
-                g_obj->f2 = ++k;
+            if (!(g_obj->scriptIndex = g_cmd->b))
+                g_obj->scriptIndex = ++k;
             sys_timer_anim(g_obj->id, g_cmd->a);
-            g_obj->f4++;
+            g_obj->pendingTimers++;
             if (wait)
                 cursor_ctl(-1);
             if (g_cmd->sub == 4 && r_vid.f16)
@@ -285,8 +285,8 @@ int video_anim_start(int n)
         if (bm7568[i].id == -1) {
             g_animScripts[g_animScriptStart[n]].a = i;
             bm7568[i].id = n;
-            bm7568[i].f2 = g_animScriptStart[n] + 1;
-            bm7568[i].f4 = 0;
+            bm7568[i].scriptIndex = g_animScriptStart[n] + 1;
+            bm7568[i].pendingTimers = 0;
             anim_run(i);
             break;
         }
@@ -301,7 +301,7 @@ void video_anim_resume(int n)
     int k;
 
     k = g_animScripts[g_animScriptStart[n]].a;
-    bm7568[k].f4--;
+    bm7568[k].pendingTimers--;
     anim_run(k);
 }
 
