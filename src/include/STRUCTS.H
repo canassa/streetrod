@@ -712,4 +712,10 @@ struct MirrorEdges {
     int prevRightX;
     int lastRightX;
 };
+
+struct BuildingRows {
+    int y[13];
+    int prevY;
+    int lastY;
+};
 #endif

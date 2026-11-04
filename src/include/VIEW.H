@@ -47,8 +47,6 @@ extern struct Bitmap far *g764aw;                       /* DS:764A */
 extern struct Bitmap far *ar767eu;                      /* DS:767E */
 extern int g789eu;                                      /* DS:789E */
 extern int f_78a0;                                      /* DS:78A0 */
-extern int az7acaz;                                     /* DS:7ACA */
-extern int r_7acc;                                      /* DS:7ACC */
 extern int ac7ae8t;                                     /* DS:7AE8 */
 extern int az7aeau;                                     /* DS:7AEA */
 extern int e_7f2e;                                      /* DS:7F2E */

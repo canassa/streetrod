@@ -4,6 +4,8 @@
 #define ROAD_H
 #include "STRUCTS.H"
 
+extern struct BuildingRows g_currentBuildingRowsInfo; /* DS:7AB0 */
+
 extern struct MirrorEdges g_videoMirrorEdgesSet; /* DS:864A */
 
 extern struct MirrorRoad g_sharedMirrorRoadSet; /* DS:8634 */
@@ -25,7 +27,6 @@ extern int far *g_hereCurvePtr;                                /* DS:7560 */
 extern int far *af7880z;                                /* DS:7880 */
 extern int bq7884[];                                    /* DS:7884 */
 extern int aw7aaex;                                     /* DS:7AAE */
-extern int g_yBuildingTopArray[];                                   /* DS:7AB0 */
 extern int g_rightXProjectionTable[];                                    /* DS:7ACE */
 extern unsigned far *g7d62p;                            /* DS:7D62 */
 extern int g_lhsRdMirrorX[];                                    /* DS:7F22 */
