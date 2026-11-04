@@ -479,9 +479,26 @@ def cmd_build(args):
     sys.exit(run(args.prepare_only, args.objects_only, verify=not args.no_verify))
 
 
+def cmd_pic(args):
+    from sr.pics import run
+    run(args)
+
+
 def main():
     p = argparse.ArgumentParser(prog="sr", description="Street Rod decompilation driver")
     sub = p.add_subparsers(dest="cmd", required=True)
+
+    s = sub.add_parser("pic", help="decode resource pictures as PNG or inline kitty graphics")
+    s.add_argument("ids", nargs="*", type=lambda n: int(n, 0), help="picture ids (decimal or 0x hex)")
+    s.add_argument("--list", action="store_true", help="list ids, dimensions, packed sizes and libraries")
+    s.add_argument("--png", type=Path, help="write a PNG; multiple pictures are stacked vertically")
+    s.add_argument("--scale", type=int, default=1, help="positive integer nearest-neighbour scale")
+    s.add_argument("--cells", type=int, nargs=2, metavar=("COLS", "N"),
+                   help="cut N cells from COLS columns and two rows, then lay them in one row")
+    s.add_argument("--mode", choices=("ega", "cga"), default="ega", help="resource variant (default ega)")
+    s.add_argument("--palette", choices=("game", "intro", "standard", "cga-green"), default="game",
+                   help="EGA game/intro/standard palette; CGA defaults to bright cyan/magenta/white")
+    s.set_defaults(func=cmd_pic)
 
     s = sub.add_parser("dgroup", help="recover DGROUP ownership from the data layout; check the sources against it")
     s.add_argument("what", choices=["report", "problems", "order", "check"],
