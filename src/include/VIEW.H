@@ -4,6 +4,24 @@
 #define VIEW_H
 #include "STRUCTS.H"
 
+struct RenderRows {
+    int *leftX;
+    int *leftOuterX;
+    int *buildingY;
+    int *rightOuterX;
+    int *prevLeftX;
+    int *prevLeftOuterX;
+    int *prevBuildingY;
+    int *prevRightOuterX;
+    int *rightX;
+    int *y;
+    int *prevRightX;
+    int *prevY;
+    int far *leftFlags;
+    int far *rightFlags;
+    int *beamWidth;
+};
+
 extern int g_opponentPics[][4];                         /* DS:5E14 */
 extern int g_5e3c;                                      /* DS:5E3C */
 extern int g_drawPage;                                  /* DS:5E3E */

@@ -173,6 +173,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **Hooks** (`g_videoOps`, DS:78A2..78DD): supported by the three MSC struct-copy installers.
 
+- **RenderRows** (`g_renderRows`, DS:6E08..6E29): a natural, byte-identical reconstruction choice; separate globals also match.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only

@@ -22,21 +22,7 @@
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6e04aay;                      /* DS:6E04 */
 static int g_6e06aax;                      /* DS:6E06 */
-static int *g_farLeftX;                     /* DS:6E08 */
-static int *g_6e0awz;                      /* DS:6E0A */
-static int *g_6e0cvz;                      /* DS:6E0C */
-static int *g_6e0euz;                      /* DS:6E0E */
-static int *g_6e10;                        /* DS:6E10 */
-static int *g_6e12;                        /* DS:6E12 */
-static int *g_6e14;                        /* DS:6E14 */
-static int *g_6e16;                        /* DS:6E16 */
-static int *g_6e18;                        /* DS:6E18 */
-static int *g_6e1a;                        /* DS:6E1A */
-static int *g_6e1c;                        /* DS:6E1C */
-static int *g_6e1e;                        /* DS:6E1E */
-static int far *g_6e20a;                   /* DS:6E20 */
-static int far *g_6e24a;                   /* DS:6E24 */
-static int *g_6e28a;                       /* DS:6E28 */
+static struct RenderRows g_renderRows; /* DS:6E08 */
 static int g_oldF;                        /* DS:6E2A */
 static void near clip_blit_y(struct Blt *b);
 static int near edge_step(int x1, int y1, int x2, int y2);
@@ -573,25 +559,25 @@ void view_road_row(int n)
     int xl2s6;
     int m2;
 
-    xl = *g_farLeftX;
-    xrl = *g_6e18;
+    xl = *g_renderRows.leftX;
+    xrl = *g_renderRows.rightX;
     xlsn = xl << 4;
     xrs = xrl << 4;
-    yk = *g_6e1a;
-    ybot6 = *g_6e1e;
-    dxlm = edge_step(*g_6e10, ybot6, xl, yk);
-    dxr7 = edge_step(*g_6e1c, ybot6, xrl, yk);
+    yk = *g_renderRows.y;
+    ybot6 = *g_renderRows.prevY;
+    dxlm = edge_step(*g_renderRows.prevLeftX, ybot6, xl, yk);
+    dxr7 = edge_step(*g_renderRows.prevRightX, ybot6, xrl, yk);
     flagk = *am8b82y & 1;
     if (flagk) {
-        xl2 = *g_6e0awz;
-        xr28 = *g_6e0euz;
+        xl2 = *g_renderRows.leftOuterX;
+        xr28 = *g_renderRows.rightOuterX;
         xl2s6 = xl2 << 4;
         xr2s6 = xr28 << 4;
-        dxl2k = edge_step(*g_6e12, ybot6, xl2, yk);
-        dxr26 = edge_step(*g_6e16, ybot6, xr28, yk);
+        dxl2k = edge_step(*g_renderRows.prevLeftOuterX, ybot6, xl2, yk);
+        dxr26 = edge_step(*g_renderRows.prevRightOuterX, ybot6, xr28, yk);
     }
     if (*am8b82y & 8) {
-        wid = *g_6e28a;
+        wid = *g_renderRows.beamWidth;
         cx0k = ((xl + xrl) >> 1) - (wid >> 1);
     }
     if (sgn(ybot6 - yk) < 0)
@@ -600,7 +586,7 @@ void view_road_row(int n)
         if (flagk) {
             if (*am8b82y & 4)
                 break;
-            if (*g_6e20a & 0x80) {
+            if (*g_renderRows.leftFlags & 0x80) {
                 m17 = xl2 + ((xl - xl2) >> 1);
                 (*g_videoOps.fillSpan)(xl2, m17, yk, 4);
                 (*g_videoOps.fillSpan)(m17, xl, yk, 9);
@@ -611,7 +597,7 @@ void view_road_row(int n)
                 if (cnt == last2 && n < 6)
                     (*g_videoOps.fillSpan)(xl2, xl, yk, 2);
             }
-            if (*g_6e24a & 0x80) {
+            if (*g_renderRows.rightFlags & 0x80) {
                 m2 = xr28 - ((xr28 - xrl) >> 1);
                 (*g_videoOps.fillSpan)(m2, xr28, yk, 4);
                 (*g_videoOps.fillSpan)(xrl, m2, yk, 9);
@@ -671,25 +657,25 @@ void view_mirror_row(void)
     int xl2s6;
     int m2;
 
-    xl = *g_farLeftX;
-    xrl = *g_6e18;
+    xl = *g_renderRows.leftX;
+    xrl = *g_renderRows.rightX;
     xlsn = xl << 4;
     xrs = xrl << 4;
-    yk = *g_6e1a;
-    ybot6 = *g_6e1e;
-    dxlm = edge_step(*g_6e10, ybot6, xl, yk);
-    dxr7 = edge_step(*g_6e1c, ybot6, xrl, yk);
+    yk = *g_renderRows.y;
+    ybot6 = *g_renderRows.prevY;
+    dxlm = edge_step(*g_renderRows.prevLeftX, ybot6, xl, yk);
+    dxr7 = edge_step(*g_renderRows.prevRightX, ybot6, xrl, yk);
     flagk = *am8b82y & 1;
     if (flagk) {
-        xl2 = *g_6e0awz;
-        xr28 = *g_6e0euz;
+        xl2 = *g_renderRows.leftOuterX;
+        xr28 = *g_renderRows.rightOuterX;
         xl2s6 = xl2 << 4;
         xr2s6 = xr28 << 4;
-        dxl2k = edge_step(*g_6e12, ybot6, xl2, yk);
-        dxr26 = edge_step(*g_6e16, ybot6, xr28, yk);
+        dxl2k = edge_step(*g_renderRows.prevLeftOuterX, ybot6, xl2, yk);
+        dxr26 = edge_step(*g_renderRows.prevRightOuterX, ybot6, xr28, yk);
     }
     if (*am8b82y & 8) {
-        wid = *g_6e28a;
+        wid = *g_renderRows.beamWidth;
         cx0k = ((xl + xrl) >> 1) - (wid >> 1);
     }
     if (sgn(ybot6 - yk) < 0)
@@ -698,14 +684,14 @@ void view_mirror_row(void)
         if (flagk) {
             if (*am8b82y & 4)
                 break;
-            if (*g_6e20a & 0x80) {
+            if (*g_renderRows.leftFlags & 0x80) {
                 m17 = xl2 + ((xl - xl2) >> 1);
                 (*g_videoOps.fillSpan)(xl2, m17, yk, 4);
                 (*g_videoOps.fillSpan)(m17, xl, yk, 9);
             } else {
                 (*g_videoOps.fillSpan)(xl2, xl, yk, 4);
             }
-            if (*g_6e24a & 0x80) {
+            if (*g_renderRows.rightFlags & 0x80) {
                 m2 = xr28 - ((xr28 - xrl) >> 1);
                 (*g_videoOps.fillSpan)(m2, xr28, yk, 4);
                 (*g_videoOps.fillSpan)(xrl, m2, yk, 9);
@@ -749,15 +735,15 @@ static void near render_buildings(int a, int b, int c, int d, int e, int f, int 
 
     t8l = *am8b82y & 1;
     if (rev) {
-        a41 = g_6e20a[0] & 4;
-        b8l = g_6e20a[0] & 8;
-        b4 = g_6e20a[-1] & 4;
-        c10 = g_6e20a[0] & 0x10;
+        a41 = g_renderRows.leftFlags[0] & 4;
+        b8l = g_renderRows.leftFlags[0] & 8;
+        b4 = g_renderRows.leftFlags[-1] & 4;
+        c10 = g_renderRows.leftFlags[0] & 0x10;
     } else {
-        a41 = g_6e24a[0] & 4;
-        b8l = g_6e24a[0] & 8;
-        b4 = g_6e24a[-1] & 4;
-        c10 = g_6e24a[0] & 0x10;
+        a41 = g_renderRows.rightFlags[0] & 4;
+        b8l = g_renderRows.rightFlags[0] & 8;
+        b4 = g_renderRows.rightFlags[-1] & 4;
+        c10 = g_renderRows.rightFlags[0] & 0x10;
     }
     if (!(*am8b82y & 4)) {
         if (c10)
@@ -845,13 +831,13 @@ static void near render_mirror_buildings(int a, int b, int c, int d, int e, int 
 
     if (t8l = *am8b82y & 1) {
         if (rev) {
-            a41 = g_6e20a[0] & 4;
-            b4 = g_6e20a[1] & 4;
-            c10 = g_6e20a[0] & 0x10;
+            a41 = g_renderRows.leftFlags[0] & 4;
+            b4 = g_renderRows.leftFlags[1] & 4;
+            c10 = g_renderRows.leftFlags[0] & 0x10;
         } else {
-            a41 = g_6e24a[0] & 4;
-            b4 = g_6e24a[1] & 4;
-            c10 = g_6e24a[0] & 0x10;
+            a41 = g_renderRows.rightFlags[0] & 4;
+            b4 = g_renderRows.rightFlags[1] & 4;
+            c10 = g_renderRows.rightFlags[0] & 0x10;
         }
         if (!(*am8b82y & 4)) {
             if (c10)
@@ -909,14 +895,14 @@ static void near render_mirror_buildings(int a, int b, int c, int d, int e, int 
 
 static void near render_left_buildings(void)
 {
-    render_buildings(*g_6e12, *g_6e0awz, *g_6e1e, *g_6e1a, *g_6e0cvz, *g_6e14, 1);
+    render_buildings(*g_renderRows.prevLeftOuterX, *g_renderRows.leftOuterX, *g_renderRows.prevY, *g_renderRows.y, *g_renderRows.buildingY, *g_renderRows.prevBuildingY, 1);
 }
 
 /* render_right_buildings @ 2645:3A0D (linear 0x29E5D, 46 bytes) */
 
 static void near render_right_buildings(void)
 {
-    render_buildings(*g_6e0euz, *g_6e16, *g_6e1a, *g_6e1e, *g_6e14, *g_6e0cvz, 0);
+    render_buildings(*g_renderRows.rightOuterX, *g_renderRows.prevRightOuterX, *g_renderRows.y, *g_renderRows.prevY, *g_renderRows.prevBuildingY, *g_renderRows.buildingY, 0);
 }
 
 /* render_row @ 2645:3A3B (linear 0x29E8B, 28 bytes) */
@@ -934,14 +920,14 @@ static void near render_row(int n)
 
 static void near render_mirror_left(void)
 {
-    render_mirror_buildings(*g_6e12, *g_6e0awz, *g_6e1e, *g_6e1a, *g_6e0cvz, *g_6e14, 1);
+    render_mirror_buildings(*g_renderRows.prevLeftOuterX, *g_renderRows.leftOuterX, *g_renderRows.prevY, *g_renderRows.y, *g_renderRows.buildingY, *g_renderRows.prevBuildingY, 1);
 }
 
 /* render_mirror_right @ 2645:3A86 (linear 0x29ED6, 46 bytes) */
 
 static void near render_mirror_right(void)
 {
-    render_mirror_buildings(*g_6e0euz, *g_6e16, *g_6e1a, *g_6e1e, *g_6e14, *g_6e0cvz, 0);
+    render_mirror_buildings(*g_renderRows.rightOuterX, *g_renderRows.prevRightOuterX, *g_renderRows.y, *g_renderRows.prevY, *g_renderRows.prevBuildingY, *g_renderRows.buildingY, 0);
 }
 
 /* render_mirror_row @ 2645:3AB4 (linear 0x29F04, 11 bytes) */
@@ -1039,7 +1025,7 @@ static void near render_gantry(int x1, int x2, int y1, int y2, int n, int clip, 
 {
     int j;
 
-    for (j = *g_6e28a + 1; j; j--) {
+    for (j = *g_renderRows.beamWidth + 1; j; j--) {
         egaspan_end();
         clip_vline(10, x1 - j, y1, y2);
         clip_vline(10, x2 + j, y1, y2);
@@ -1272,21 +1258,21 @@ static void near render_mirror(void)
     int f3;
     int w2;
 
-    g_farLeftX = &g7f30t;
-    g_6e18 = &as8668u;
-    g_6e1a = &k_8646;
-    g_6e0awz = &al70c0x.m70d0;
-    g_6e0euz = &dz70e0;
-    g_6e0cvz = &g_8658;
-    g_6e10 = &e_7f2e;
-    g_6e1c = &au8666t;
-    g_6e1e = &aw8644v;
-    g_6e14 = &au8656u;
-    g_6e12 = &al70c0x.m70ce;
-    g_6e16 = &al70c0x.m70de;
-    g_6e28a = &g_5e92;
-    g_6e20a = (int far *)(q_72ee - 8);
-    g_6e24a = (int far *)(aw8634x - 8);
+    g_renderRows.leftX = &g7f30t;
+    g_renderRows.rightX = &as8668u;
+    g_renderRows.y = &k_8646;
+    g_renderRows.leftOuterX = &al70c0x.m70d0;
+    g_renderRows.rightOuterX = &dz70e0;
+    g_renderRows.buildingY = &g_8658;
+    g_renderRows.prevLeftX = &e_7f2e;
+    g_renderRows.prevRightX = &au8666t;
+    g_renderRows.prevY = &aw8644v;
+    g_renderRows.prevBuildingY = &au8656u;
+    g_renderRows.prevLeftOuterX = &al70c0x.m70ce;
+    g_renderRows.prevRightOuterX = &al70c0x.m70de;
+    g_renderRows.beamWidth = &g_5e92;
+    g_renderRows.leftFlags = (int far *)(q_72ee - 8);
+    g_renderRows.rightFlags = (int far *)(aw8634x - 8);
     am8b82y = (int far *)(g7d62p - 8);
     egaspan_end();
     render_mirror_frame();
@@ -1297,112 +1283,112 @@ static void near render_mirror(void)
         if (*am8b82y & 4)
             goto next;
         if (*am8b82y & 0xf000)
-            render_gantry(*g_farLeftX, *g_6e18, -((*g_6e1a - *g_6e0cvz) * 4 - *g_6e1a), *g_6e1a, i + 5, 1, *am8b82y & 0xf000);
+            render_gantry(*g_renderRows.leftX, *g_renderRows.rightX, -((*g_renderRows.y - *g_renderRows.buildingY) * 4 - *g_renderRows.y), *g_renderRows.y, i + 5, 1, *am8b82y & 0xf000);
         if (i >= 6)
             goto next;
         f3 = *am8b82y & 1;
-        w11 = *g_6e20a;
-        w2 = *g_6e24a;
+        w11 = *g_renderRows.leftFlags;
+        w2 = *g_renderRows.rightFlags;
         w36 = *am8b82y;
         if (w11 & 0x20) {
             if (f3)
-                render_object(*g_farLeftX, *g_6e1a, i + 5, -1, 0);
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, -1, 0);
             else
-                render_object(*g_6e0awz, *g_6e1a, i + 5, -1, 0);
+                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i + 5, -1, 0);
         }
         if (w11 & 0x100) {
             if (f3)
-                render_object(*g_farLeftX, *g_6e1a, i + 5, -1, 4);
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, -1, 4);
             else if (w11 & 0x200)
-                render_object(*g_6e0awz - *g_farLeftX + *g_6e0awz, *g_6e1a, i + 5, -1, 4);
+                render_object(*g_renderRows.leftOuterX - *g_renderRows.leftX + *g_renderRows.leftOuterX, *g_renderRows.y, i + 5, -1, 4);
             else
-                render_object(*g_6e0awz, *g_6e1a, i + 5, -1, 4);
+                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i + 5, -1, 4);
         }
         if (w11 & 0x800)
-            render_object(*g_farLeftX, *g_6e1a, i + 5, 1, 3);
+            render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, 1, 3);
         if (w11 & 0x1000)
-            render_object(*g_farLeftX, *g_6e1a, i + 5, 1, 6);
+            render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, 1, 6);
         if (f3) {
             if (w11 & 0x40)
-                render_hydrant(*g_farLeftX, *g_6e1a, i + 5, 1);
+                render_hydrant(*g_renderRows.leftX, *g_renderRows.y, i + 5, 1);
             if (w2 & 0x40)
-                render_hydrant(*g_6e18, *g_6e1a, i + 5, -1);
+                render_hydrant(*g_renderRows.rightX, *g_renderRows.y, i + 5, -1);
         } else {
             if (w11 & 1)
-                render_object(*g_farLeftX, *g_6e1a, i + 5, 1, 1);
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, 1, 1);
             if (w11 & 4)
-                render_object(*g_farLeftX, *g_6e1a, i + 5, -1, 7);
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, -1, 7);
             if (w11 & 8)
-                render_object(*g_farLeftX, *g_6e1a, i + 5, -1, 8);
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, -1, 8);
             if (w11 & 0x40)
-                render_object(-(((*g_farLeftX - *g_6e0awz) >> 1) - *g_6e0awz), *g_6e1a, i + 5, -1, 10);
+                render_object(-(((*g_renderRows.leftX - *g_renderRows.leftOuterX) >> 1) - *g_renderRows.leftOuterX), *g_renderRows.y, i + 5, -1, 10);
             if (w11 & 0x80)
-                render_object(*g_6e0awz, *g_6e1a, i + 5, -1, 11);
+                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i + 5, -1, 11);
             if (w2 & 1)
-                render_object(*g_6e18, *g_6e1a, i + 5, 1, 1);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 1);
             if (w2 & 4)
-                render_object(*g_6e18, *g_6e1a, i + 5, 1, 7);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 7);
             if (w2 & 8)
-                render_object(*g_6e18, *g_6e1a, i + 5, 1, 8);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 8);
             if (w2 & 0x40)
-                render_object(*g_6e0euz, *g_6e1a, i + 5, 1, 10);
+                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i + 5, 1, 10);
             if (w2 & 0x80)
-                render_object(((*g_6e0euz - *g_6e18) >> 1) + *g_6e0euz, *g_6e1a, i + 5, 1, 11);
+                render_object(((*g_renderRows.rightOuterX - *g_renderRows.rightX) >> 1) + *g_renderRows.rightOuterX, *g_renderRows.y, i + 5, 1, 11);
             if (w36 & 2)
-                render_object(*g_6e18, *g_6e1a, i + 5, 1, 9);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 9);
         }
         if (w2 & 0x20) {
             if (f3)
-                render_object(*g_6e18, *g_6e1a, i + 5, 1, 0);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 0);
             else
-                render_object(*g_6e0euz, *g_6e1a, i + 5, 1, 0);
+                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i + 5, 1, 0);
         }
         if (w2 & 0x100) {
             if (f3)
-                render_object(*g_6e18, *g_6e1a, i + 5, 1, 4);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 4);
             else if (w2 & 0x200)
-                render_object((*g_6e0euz << 1) - *g_6e18, *g_6e1a, i + 5, 1, 4);
+                render_object((*g_renderRows.rightOuterX << 1) - *g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 4);
             else
-                render_object(*g_6e0euz, *g_6e1a, i + 5, 1, 4);
+                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i + 5, 1, 4);
         }
         if (w2 & 0x2000)
-            render_object(*g_6e18, *g_6e1a, i + 5, 1, 0x12);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 0x12);
         if (w2 & 0x4000)
-            render_object(*g_6e18, *g_6e1a, i + 5, 1, 0x13);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 0x13);
         if (w2 & 0x800)
-            render_object(*g_6e18, *g_6e1a, i + 5, 1, 3);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 3);
         if (w2 & 0x1000)
-            render_object(*g_6e18, *g_6e1a, i + 5, -1, 6);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, -1, 6);
         if (w36 & 0x100)
-            render_object(*g_6e18, *g_6e1a, i + 5, 1, 5);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 5);
         if (w36 & 0x200)
-            render_object(*g_6e18, *g_6e1a, i + 5, 1, 0x10);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 0x10);
         if (w36 & 0x400)
-            render_object(*g_6e18, *g_6e1a, i + 5, 1, 0x11);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 0x11);
         if (w36 & 0x800)
-            render_object(*g_6e18, *g_6e1a, i + 5, 1, 0xf);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 0xf);
     next:
         if (ao7d2ev.roadIndex - ar7e8av.roadIndex == i && *(int *)&bw8aca) {
             egaspan_end();
             render_opponent();
             egaspan_begin();
         }
-        g_6e10--;
-        g_6e1c--;
-        g_6e1e--;
-        g_farLeftX--;
-        g_6e18--;
-        g_6e1a--;
-        g_6e28a--;
-        g_6e20a++;
-        g_6e24a++;
+        g_renderRows.prevLeftX--;
+        g_renderRows.prevRightX--;
+        g_renderRows.prevY--;
+        g_renderRows.leftX--;
+        g_renderRows.rightX--;
+        g_renderRows.y--;
+        g_renderRows.beamWidth--;
+        g_renderRows.leftFlags++;
+        g_renderRows.rightFlags++;
         am8b82y++;
-        g_6e0awz--;
-        g_6e0euz--;
-        g_6e0cvz--;
-        g_6e12--;
-        g_6e16--;
-        g_6e14--;
+        g_renderRows.leftOuterX--;
+        g_renderRows.rightOuterX--;
+        g_renderRows.buildingY--;
+        g_renderRows.prevLeftOuterX--;
+        g_renderRows.prevRightOuterX--;
+        g_renderRows.prevBuildingY--;
     }
     view_clip();
     clip_vline(2, 0xf0, 0x17, 0x2a);
@@ -1428,21 +1414,21 @@ void view_draw(void)
     int f3;
     int w2;
 
-    g_farLeftX = &br7314;
-    g_6e18 = &az7aeau;
-    g_6e1a = &f_78a0;
-    g_6e0awz = &by7fa6;
-    g_6e0euz = &g7ff4g;
-    g_6e0cvz = &r_7acc;
-    g_6e10 = &a7312av;
-    g_6e1c = &ac7ae8t;
-    g_6e1e = &g789eu;
-    g_6e14 = &az7acaz;
-    g_6e12 = &al7fa4z;
-    g_6e16 = &dz7ff2;
-    g_6e28a = &g_5e86;
-    g_6e20a = (int far *)(q_72ee + 14);
-    g_6e24a = (int far *)(aw8634x + 14);
+    g_renderRows.leftX = &br7314;
+    g_renderRows.rightX = &az7aeau;
+    g_renderRows.y = &f_78a0;
+    g_renderRows.leftOuterX = &by7fa6;
+    g_renderRows.rightOuterX = &g7ff4g;
+    g_renderRows.buildingY = &r_7acc;
+    g_renderRows.prevLeftX = &a7312av;
+    g_renderRows.prevRightX = &ac7ae8t;
+    g_renderRows.prevY = &g789eu;
+    g_renderRows.prevBuildingY = &az7acaz;
+    g_renderRows.prevLeftOuterX = &al7fa4z;
+    g_renderRows.prevRightOuterX = &dz7ff2;
+    g_renderRows.beamWidth = &g_5e86;
+    g_renderRows.leftFlags = (int far *)(q_72ee + 14);
+    g_renderRows.rightFlags = (int far *)(aw8634x + 14);
     am8b82y = (int far *)(g7d62p + 14);
     view_clip();
     render_backdrop();
@@ -1455,122 +1441,122 @@ void view_draw(void)
         if (i >= 11)
             goto next;
         f3 = *am8b82y & 1;
-        w11 = *g_6e20a;
-        w2 = *g_6e24a;
+        w11 = *g_renderRows.leftFlags;
+        w2 = *g_renderRows.rightFlags;
         w36 = *am8b82y;
         if (w11 & 0x20) {
             if (f3)
-                render_object(*g_farLeftX, *g_6e1a, i, -1, 0);
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i, -1, 0);
             else
-                render_object(*g_6e0awz, *g_6e1a, i, -1, 0);
+                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i, -1, 0);
         }
         if (w11 & 0x100) {
             if (f3)
-                render_object(*g_farLeftX, *g_6e1a, i, -1, 4);
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i, -1, 4);
             else if (w11 & 0x200)
-                render_object(*g_6e0awz - *g_farLeftX + *g_6e0awz, *g_6e1a, i, -1, 4);
+                render_object(*g_renderRows.leftOuterX - *g_renderRows.leftX + *g_renderRows.leftOuterX, *g_renderRows.y, i, -1, 4);
             else
-                render_object(*g_6e0awz, *g_6e1a, i, -1, 4);
+                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i, -1, 4);
         }
         if (w11 & 0x800)
-            render_object(*g_farLeftX, *g_6e1a, i, 1, 3);
+            render_object(*g_renderRows.leftX, *g_renderRows.y, i, 1, 3);
         if (w11 & 0x1000)
-            render_object(*g_farLeftX, *g_6e1a, i, 1, 6);
+            render_object(*g_renderRows.leftX, *g_renderRows.y, i, 1, 6);
         if (w11 & 1) {
             if (f3) {
                 egaspan_end();
-                render_scaled_pic(*g_farLeftX, (*g_6e0cvz + *g_6e1a) >> 1, i, 1, 0, 1);
+                render_scaled_pic(*g_renderRows.leftX, (*g_renderRows.buildingY + *g_renderRows.y) >> 1, i, 1, 0, 1);
                 egaspan_begin();
             } else
-                render_object(*g_farLeftX, *g_6e1a, i, 1, 1);
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i, 1, 1);
         }
         if (f3) {
             if (w11 & 0x40)
-                render_hydrant(*g_farLeftX, *g_6e1a, i, 1);
+                render_hydrant(*g_renderRows.leftX, *g_renderRows.y, i, 1);
             if (w2 & 0x40)
-                render_hydrant(*g_6e18, *g_6e1a, i, -1);
+                render_hydrant(*g_renderRows.rightX, *g_renderRows.y, i, -1);
         } else {
             if (w11 & 4)
-                render_object(*g_farLeftX, *g_6e1a, i, -1, 7);
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i, -1, 7);
             if (w11 & 8)
-                render_object(*g_farLeftX, *g_6e1a, i, -1, 8);
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i, -1, 8);
             if (w11 & 0x40)
-                render_object(-(((*g_farLeftX - *g_6e0awz) >> 1) - *g_6e0awz), *g_6e1a, i, -1, 10);
+                render_object(-(((*g_renderRows.leftX - *g_renderRows.leftOuterX) >> 1) - *g_renderRows.leftOuterX), *g_renderRows.y, i, -1, 10);
             if (w11 & 0x80)
-                render_object(*g_6e0awz, *g_6e1a, i, -1, 11);
+                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i, -1, 11);
             if (w2 & 4)
-                render_object(*g_6e18, *g_6e1a, i, 1, 7);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 7);
             if (w2 & 8)
-                render_object(*g_6e18, *g_6e1a, i, 1, 8);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 8);
             if (w2 & 0x40)
-                render_object(*g_6e0euz, *g_6e1a, i, 1, 10);
+                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i, 1, 10);
             if (w2 & 0x80)
-                render_object(((*g_6e0euz - *g_6e18) >> 1) + *g_6e0euz, *g_6e1a, i, 1, 11);
+                render_object(((*g_renderRows.rightOuterX - *g_renderRows.rightX) >> 1) + *g_renderRows.rightOuterX, *g_renderRows.y, i, 1, 11);
             if (w36 & 2)
-                render_object(*g_6e18, *g_6e1a, i, 1, 9);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 9);
         }
         if (w2 & 0x20) {
             if (f3)
-                render_object(*g_6e18, *g_6e1a, i, 1, 0);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 0);
             else
-                render_object(*g_6e0euz, *g_6e1a, i, 1, 0);
+                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i, 1, 0);
         }
         if (w2 & 0x100) {
             if (f3)
-                render_object(*g_6e18, *g_6e1a, i, 1, 4);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 4);
             else if (w2 & 0x200)
-                render_object((*g_6e0euz << 1) - *g_6e18, *g_6e1a, i, 1, 4);
+                render_object((*g_renderRows.rightOuterX << 1) - *g_renderRows.rightX, *g_renderRows.y, i, 1, 4);
             else
-                render_object(*g_6e0euz, *g_6e1a, i, 1, 4);
+                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i, 1, 4);
         }
         if (w2 & 0x2000)
-            render_object(*g_6e18, *g_6e1a, i, 1, 0x12);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 0x12);
         if (w2 & 0x4000)
-            render_object(*g_6e18, *g_6e1a, i, 1, 0x13);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 0x13);
         if (w2 & 0x800)
-            render_object(*g_6e18, *g_6e1a, i, 1, 3);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 3);
         if (w2 & 0x1000)
-            render_object(*g_6e18, *g_6e1a, i, -1, 6);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i, -1, 6);
         if (w2 & 1) {
             if (f3) {
                 egaspan_end();
-                render_scaled_pic(*g_6e18, (*g_6e0cvz + *g_6e1a) >> 1, i, -1, 0, 1);
+                render_scaled_pic(*g_renderRows.rightX, (*g_renderRows.buildingY + *g_renderRows.y) >> 1, i, -1, 0, 1);
                 egaspan_begin();
             } else
-                render_object(*g_6e18, *g_6e1a, i, 1, 1);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 1);
         }
         if (w36 & 0xf000)
-            render_gantry(*g_farLeftX, *g_6e18, -((*g_6e1a - *g_6e0cvz) * 4 - *g_6e1a), *g_6e1a, i, 0, w36 & 0xf000);
+            render_gantry(*g_renderRows.leftX, *g_renderRows.rightX, -((*g_renderRows.y - *g_renderRows.buildingY) * 4 - *g_renderRows.y), *g_renderRows.y, i, 0, w36 & 0xf000);
         if (w36 & 0x100)
-            render_object(*g_6e18, *g_6e1a, i, 1, 5);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 5);
         if (w36 & 0x800)
-            render_object(*g_6e18, *g_6e1a, i, 1, 0xf);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 0xf);
         if (w36 & 0x200)
-            render_object(*g_6e18, *g_6e1a, i, 1, 0x10);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 0x10);
         if (w36 & 0x400)
-            render_object(*g_6e18, *g_6e1a, i, 1, 0x11);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 0x11);
     next:
         if (ar7e8av.roadIndex - ao7d2ev.roadIndex == i && *(int *)&bw8aca) {
             egaspan_end();
             render_opponent();
             egaspan_begin();
         }
-        g_6e10--;
-        g_6e1c--;
-        g_6e1e--;
-        g_farLeftX--;
-        g_6e18--;
-        g_6e1a--;
-        g_6e28a--;
-        g_6e20a--;
-        g_6e24a--;
+        g_renderRows.prevLeftX--;
+        g_renderRows.prevRightX--;
+        g_renderRows.prevY--;
+        g_renderRows.leftX--;
+        g_renderRows.rightX--;
+        g_renderRows.y--;
+        g_renderRows.beamWidth--;
+        g_renderRows.leftFlags--;
+        g_renderRows.rightFlags--;
         am8b82y--;
-        g_6e0awz--;
-        g_6e0euz--;
-        g_6e0cvz--;
-        g_6e12--;
-        g_6e16--;
-        g_6e14--;
+        g_renderRows.leftOuterX--;
+        g_renderRows.rightOuterX--;
+        g_renderRows.buildingY--;
+        g_renderRows.prevLeftOuterX--;
+        g_renderRows.prevRightOuterX--;
+        g_renderRows.prevBuildingY--;
     }
     if (ar7e8av.roadIndex == ao7d2ev.roadIndex && *(int *)&bw8aca) {
         egaspan_end();
