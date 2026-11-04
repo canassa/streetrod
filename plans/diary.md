@@ -784,3 +784,9 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - Link, NewLink, Button and Win were all views of one 18-byte hot-spot record; the f10 index chain makes the table one array.
 - Whether a table is `char` or `unsigned char` shows in callers (cbw vs zero extension): evidence for the element type.
+
+## 2026-11-05 00:00 CET: Naming conventions adopted
+
+### What I did
+- Adopted the naming conventions of the Betrayal at Krondor reconstruction (its CONTRIBUTING.md / CLAUDE.md) in CLAUDE.md: `camelCase` locals, `g_camelCase` globals, `SCREAMING_SNAKE_CASE` constants and enum values, `PascalCase` types, `camelCase` members, `module_snake_case` public functions, `static snake_case` private ones; plus DOS 8.3 upper-case file names named for the module, "name only from evidence", "never add comments" and `NULL` for pointers.
+- Added what makes a rename load-bearing here: local frame order, LINK's communal hash and MSC's static hash, and the external-symbol budget.

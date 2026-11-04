@@ -112,6 +112,36 @@ function whose literals precede it. Names are `M_<first addr>` until the real fi
 
 Every function is matched. To change a function, edit it in its file and `./sr check` it (the whole file is compiled and gated); the `decompile-function` skill has the loop. Consult `msc51-recipe-book` when a function diverges. Run `wrap-up` at the end of a session. Change the tooling with the `sr-cli` skill.
 
+## Naming conventions
+
+The tree is full of names a machine invented (`F_xxxxx`, `g_xxxx`, `M_xxxxx.C`, hash-tuned placeholders such as `ai70e4t`, struct members `m<addr>`/`fNN`). They are placeholders, not 1989 house style, and they go — one evidence-backed rename at a time. This is the standard from now on:
+
+| Kind | Convention | Example |
+|---|---|---|
+| Trivial variable | one letter (if unclear, make it a local) | `i`, `n`, `c` |
+| Local variable | `camelCase` | `count`, `curSlot` |
+| Global variable | `g_` + `camelCase` (always, even pointers) | `g_trackPoints`, `g_videoDriver` |
+| Const / macro | `SCREAMING_SNAKE_CASE` | `MAX_RACERS` |
+| Struct / enum | bare `PascalCase`, no module prefix | `Car`, `Bitmap` |
+| Struct member | `camelCase` | `kind`, `lodCount` |
+| Enum value | `SCREAMING_SNAKE_CASE` | `GEAR_REVERSE` |
+| Public function | `module_snake_case`, declared in the module `.H` | `garage_buy_part` |
+| Private function | `static`, `snake_case` | `static build_list` |
+| Source file | DOS 8.3, upper case, named for what the module is; its header has the same base name | `GARAGE.C`, `GARAGE.H` |
+
+A *module* is one original source file (one object). The `module_` prefix of its public functions is the file's base name in lower case (`GARAGE.C` → `garage_...`); an assembler routine follows the same rule (`_garage_...` in MASM). Functions the C runtime owns keep their library names.
+
+**Name only from evidence.** Read the function, its callers, what it writes and who reads that back, the strings and data it uses. Only then name it. A wrong name is worse than a placeholder: it is a confident lie the next reader builds on. If you cannot tell what something is, leave the placeholder. Byte identity proves the data flow is right, never that a name is right.
+
+**A rename is a change to verify, not a free edit.** In this project names are often load-bearing:
+- local names decide the stack frame layout (rule 3);
+- uninitialized globals are placed by LINK's communal hash (rule 4e) and file-local statics by MSC's name hash (rule 4f): renaming one can move others;
+- external symbols' name lengths count toward MSC's per-file budget (rule 4d), so renaming an external function or global can change the code of a later function in any file that references it.
+Every rename must keep `./sr check --all`, `./sr build` and `./dosbox.sh --make` IDENTICAL. Rename through the tools so the DB, sources, headers, MAKEFILE and SR.LNK stay consistent (`./sr name`, `./sr global`, then `./sr headers`).
+
+- **Never add comments.** Do not add comments to the code unless instructed to; all documentation is human-reviewed.
+- **`NULL` for pointers.** Use `NULL` for a null pointer, never bare `0`; reserve `0` for integers (in the medium model `NULL` is `0` for data pointers, so it is byte-free — verify).
+
 ## Rules
 
 ### 1. Write the source the 1989 programmers wrote
