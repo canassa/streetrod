@@ -624,12 +624,12 @@ void dash_draw_shifter(struct Bitmap far *dst, struct Eng *e)
     struct Blt16 pkt1;
     int x, idx3;
 
-    if (e->f24 == 0)
-        idx3 = e->f18;
-    else if (e->f18 == 0)
+    if (e->autoSelector == 0)
+        idx3 = e->gearIndex;
+    else if (e->gearIndex == 0)
         idx3 = 0;
     else
-        idx3 = e->f24 - 1;
+        idx3 = e->autoSelector - 1;
     pkt1.h = g_shifter->h;
     if (g_knobPos >= 0) {
         pkt1.sx = g_shiftSlots[g_knobPos].a;
@@ -648,7 +648,7 @@ void dash_draw_shifter(struct Bitmap far *dst, struct Eng *e)
     pkt1.w = 0x30 - x > 0x20 ? 0x20 : 0x30 - x;
     (*b_78a2)(g82b4s, dst, (struct Blt *)&pkt1, 1);
     g_knobPos = idx3;
-    e->f1a = 0;
+    e->shifterDirty = 0;
 }
 
 /* dash_fmemset @ 0F38:1640 (linear 0x109C0, 64 bytes) */

@@ -61,26 +61,26 @@ void near perf_drivetrain(struct Car *c, struct Eng *e)
             xl = 0.2;
         e->f34[i] = (int)(5700.0 / xl);
         gl = &e->gear[i];
-        gl->r[0].f0 = 0;
-        gl->r[1].f0 = gl->r[0].f2 = g_rpmBands[a3][0];
-        gl->r[2].f0 = gl->r[1].f2 = g_rpmBands[a3][1];
-        gl->r[2].f2 = 0x1644;
+        gl->bands[0].minRpm = 0;
+        gl->bands[1].minRpm = gl->bands[0].maxRpm = g_rpmBands[a3][0];
+        gl->bands[2].minRpm = gl->bands[1].maxRpm = g_rpmBands[a3][1];
+        gl->bands[2].maxRpm = 0x1644;
         v3 = (int)(g_rpmStepBase[a3][i] * vl);
-        gl->r[0].f4 = ((i == 1 && e1 == 2) ? 3 : 1) * ((i == 1 && e1 != 2) ? 2 : 1) * (v3 / (i ? 5 : 1));
-        gl->r[1].f4 = v3;
-        gl->r[2].f4 = v3 / (i ? 10 : 1);
+        gl->bands[0].accelStep = ((i == 1 && e1 == 2) ? 3 : 1) * ((i == 1 && e1 != 2) ? 2 : 1) * (v3 / (i ? 5 : 1));
+        gl->bands[1].accelStep = v3;
+        gl->bands[2].accelStep = v3 / (i ? 10 : 1);
         for (k = 0; k < 3; k++)
-            gl->r[k].f6 = i ? v3 / (5 - i) : v3;
+            gl->bands[k].decelStep = i ? v3 / (5 - i) : v3;
     }
-    e->f20 = e->f24 = (d == 0);
-    if (e->f20) {
+    e->automatic = e->autoSelector = (d == 0);
+    if (e->automatic) {
         e->f26 = e->f28 = -1;
-        e->f22 = gl->r[1].f2;
+        e->autoShiftRpm = gl->bands[1].maxRpm;
     }
-    e->f1e = g_shiftRpm[a3];
+    e->shiftRpm = g_shiftRpm[a3];
     e->f34[5] = (int)((int)(0x82 - g7d86n[c->specIndex].modelKind) * 5.0 / 50.0 + g_5568[g_4806[m->idx].variant]);
-    e->f1c = g_transGears[d];
-    e->f1a = 1;
+    e->gearCount = g_transGears[d];
+    e->shifterDirty = 1;
 }
 
 /* perf_drivetrain_spec @ 0000:E0E2 (linear 0x0E0E2, 310 bytes)

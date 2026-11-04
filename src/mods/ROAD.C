@@ -946,9 +946,9 @@ void road_advance(void)
         else
             ao7d2ev.m7d36 = goal6;
         if (abs(*af7560z - ao7d2ev.m7d3c) > 0) {
-            g_driveEng.f4 = (ao7d2ev.m7d3c - *af7560z) * 2;
-            if (abs(g_driveEng.f4) > 24)
-                g_driveEng.f4 = g_driveEng.f4 > 0 ? 24 : -24;
+            g_driveEng.steering = (ao7d2ev.m7d3c - *af7560z) * 2;
+            if (abs(g_driveEng.steering) > 24)
+                g_driveEng.steering = g_driveEng.steering > 0 ? 24 : -24;
         }
         ao7d2ev.m7d3c = *af7560z;
     }
@@ -1003,8 +1003,8 @@ void road_turn(int dir)
 
 void road_update(void)
 {
-    if (g_driveEng.f2 && g_driveEng.f0 && abs(ao7d2ev.m7d3c - *af7560z - g_driveEng.f2) < 200)
-        ao7d2ev.m7d3c -= (g_driveEng.f2 >> 1) + 1;
+    if (g_driveEng.steeringInput && g_driveEng.speed && abs(ao7d2ev.m7d3c - *af7560z - g_driveEng.steeringInput) < 200)
+        ao7d2ev.m7d3c -= (g_driveEng.steeringInput >> 1) + 1;
     if (!bw8aca) {
         if (bl82c6)
             ao7d2ev.m7d34 = 6;
@@ -1017,8 +1017,8 @@ void road_update(void)
     if (g_demo == 0 && g_autoDrive == 0) {
         if (at787cu)
             ao7d2ev.m7d36 += 25;
-        else if (g_driveEng.f0)
-            ao7d2ev.m7d36 -= (ao7d2ev.m7d3c - *af7560z) * (ao7d2ev.m7d34 + g_driveEng.fc) >> 2;
+        else if (g_driveEng.speed)
+            ao7d2ev.m7d36 -= (ao7d2ev.m7d3c - *af7560z) * (ao7d2ev.m7d34 + g_driveEng.tireSlip) >> 2;
     }
     if (!bw8aca) {
         ao7d2ev.m7d32 += ao7d2ev.m7d34;

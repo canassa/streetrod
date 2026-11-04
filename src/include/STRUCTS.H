@@ -389,48 +389,48 @@ struct Spot {
 
 /* one range of the engine curve: 8 bytes */
 struct Range {
-    int f0;
-    int f2;
-    int f4;
-    int f6;
+    int minRpm;
+    int maxRpm;
+    int accelStep;
+    int decelStep;
 };
 
 /* one gear: three ranges */
 struct Gear {
-    struct Range r[3];
+    struct Range bands[3];
 };
 
 /* drive train state; g_driveEng and g_oppEngState are two instances, 0xc2 bytes each */
 struct Eng {
-    int f0;
-    int f2;
-    int f4;
+    int speed;
+    int steeringInput;
+    int steering;
     char pad6[4];
-    int fa;
-    int fc;
-    int fe;
-    int f10;
-    int f12;
-    int f14;
-    int f16;
-    int f18;
-    int f1a;
-    int f1c;
-    int f1e;
-    int f20;
-    int f22;
-    int f24;
+    int tireFailureIndex;
+    int tireSlip;
+    int rpm;
+    int minRpm;
+    int maxRpm;
+    int accelStep;
+    int decelStep;
+    int gearIndex;
+    int shifterDirty;
+    int gearCount;
+    int shiftRpm;
+    int automatic;
+    int autoShiftRpm;
+    int autoSelector;
     int f26;
     int f28;
     int f2a;
     char pad2c[8];
     int f34[6];
-    int f40;
-    int f42;
+    int rpmPerSpeed;
+    int rpmBand;
     struct Gear gear[5];
-    int fbc;
+    int stopFlags;
     int fbe;
-    int fc0;
+    int elapsedTicks;
 };
 
 struct Sheet {

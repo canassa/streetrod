@@ -556,7 +556,7 @@ static void near show_crash(void)
     (*b_78a2)(b, r_vid.back, &pkt, 1);
     dash_steer_marker(bp82c2);
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
-    if (g_driveEng.f0 > 0x5a) {
+    if (g_driveEng.speed > 0x5a) {
         for (i = 0; i < 3; i++) {
             a = F_15BBE(g_crashPics[i].id, 1);
             pkt.w = a->width;
@@ -586,8 +586,8 @@ void race_finish_stats(void)
             s_8632 = 1;
         else
             s_8632 = 0;
-        g7644m = b_82bc / g_driveEng.fc0;
-        p_8bc4 = g_driveEng.fc0 / 6.068827333333334;
+        g7644m = b_82bc / g_driveEng.elapsedTicks;
+        p_8bc4 = g_driveEng.elapsedTicks / 6.068827333333334;
         dz82c8x = (int)((ao7d2ev.m7d30 - 200) * 100.0 / (ar7e8av.m7e8a - 200)) > 99 ? 99 : (int)((ao7d2ev.m7d30 - 200) * 100.0 / (ar7e8av.m7e8a - 200));
         g_statsDone = 1;
     }
@@ -677,9 +677,9 @@ int near race_outcome(void)
 
     kind = as79a2z;
     v = d_79a4;
-    engine = g_driveEng.fbc & 4;
-    opt = g_driveEng.fbc & 0x10;
-    stop = g_driveEng.fbc == 5 || g_driveEng.fbc == 0x11 || g_driveEng.fbc == 0x15;
+    engine = g_driveEng.stopFlags & 4;
+    opt = g_driveEng.stopFlags & 0x10;
+    stop = g_driveEng.stopFlags == 5 || g_driveEng.stopFlags == 0x11 || g_driveEng.stopFlags == 0x15;
     if (a_7eaap.m7eb0->transmission->wear > 9900)
         a_7eaap.m7eb0->transmission->wear = 9900;
     if (a_7eaap.m7eb0->rack.parts[0]->wear > 9900)
@@ -691,10 +691,10 @@ int near race_outcome(void)
     b_82bc = 0;
     g_fireLatch = 0;
     g_buttons = 0;
-    if (g_driveEng.f20)
-        g_driveEng.f24 = 1;
+    if (g_driveEng.automatic)
+        g_driveEng.autoSelector = 1;
     if (at787cu)
-        g_driveEng.fbc |= 8;
+        g_driveEng.stopFlags |= 8;
     menu_push(1);
     i = a_7eaap.m7ec0 == 0 ? 5 : 15;
     if (a_7eaap.m7eb0->fuel > i)
@@ -702,7 +702,7 @@ int near race_outcome(void)
     else
         a_7eaap.m7eb0->fuel = 0;
     (*m_present)();
-    if (g_oppEngState.fbc & 1) {
+    if (g_oppEngState.stopFlags & 1) {
         bo7676 = 1;
         show_race_stats();
         cursor_ctl(-2);
@@ -741,19 +741,19 @@ int near race_outcome(void)
         }
 done:
         menu_pop(1);
-        if (g_driveEng.fbc & 8)
+        if (g_driveEng.stopFlags & 8)
             if ((i = replace_tires()) != 0)
                 goto ret2;
         if (kind == 5)
             return 1;
         return 3;
-    } else if (g_driveEng.fbc & 0x40) {
+    } else if (g_driveEng.stopFlags & 0x40) {
         sound_siren(0);
         show_ticket();
-        i = (g_driveEng.fbc & 8) ? replace_tires() : 0;
-        if (g_driveEng.f0 > 0x50)
+        i = (g_driveEng.stopFlags & 8) ? replace_tires() : 0;
+        if (g_driveEng.speed > 0x50)
             i += 0x4b;
-        else if (g_driveEng.f0 > 0x32)
+        else if (g_driveEng.speed > 0x32)
             i += 0x32;
         else
             i += 0x14;
@@ -777,7 +777,7 @@ pay:
         g_waitUntil = cost;
         menu_pop(1);
         F_11421(-1, "", 0x140 - o_8250);
-    } else if (g_driveEng.fbc == 0x81) {
+    } else if (g_driveEng.stopFlags == 0x81) {
         cursor_ctl(-2);
         game_message(0xecb2);
     } else {
@@ -786,7 +786,7 @@ pay:
             a_7eaap.m7eb0 = 0;
         }
         F_11540(-v);
-        if (g_driveEng.fbc == 1) {
+        if (g_driveEng.stopFlags == 1) {
             show_race_stats();
             cursor_ctl(-2);
             i = kind == 5 ? 0x143a : 0x1427;
@@ -810,12 +810,12 @@ finishstop:
         } else {
             show_crash();
             if (kind == 5) {
-                if (g_driveEng.fbc & 8) {
+                if (g_driveEng.stopFlags & 8) {
                     game_message(0x16f6);
                     replace_tires();
                 } else
                     game_message(0x1658);
-            } else if (g_driveEng.f0 > 0x5a) {
+            } else if (g_driveEng.speed > 0x5a) {
                 v = game_scrap_car(a_7eaap.m7eb0, 0) / 10 + 0x13;
                 a_7eaap.m7eb0 = 0;
                 F_11540(v);
@@ -829,14 +829,14 @@ finishstop:
                 sys_reset_queues();
                 game_message(0x1513);
             } else {
-                if (g_driveEng.f0 > 0x3c) {
+                if (g_driveEng.speed > 0x3c) {
                     i = 0;
                     v = random_int(0x28) + 100;
-                } else if (g_driveEng.f0 > 0x1e) {
+                } else if (g_driveEng.speed > 0x1e) {
                     i = 1;
                     v = random_int(0x14) + 100;
                 } else {
-                    if (g_driveEng.fbc & 8) {
+                    if (g_driveEng.stopFlags & 8) {
                         game_message(0x1590);
                         all = replace_tires();
                         goto fin;
@@ -850,7 +850,7 @@ finishstop:
                 ptr[2] = ' ';
                 itoa(v, ptr, 10);
                 ptr[strlen(ptr)] = ' ';
-                all = g_driveEng.fbc & 8;
+                all = g_driveEng.stopFlags & 8;
                 if (all)
                     strcpy(g_msgPlusTires, "Plus tires !");
                 else
@@ -916,33 +916,33 @@ void near race_reset_eng(struct Eng *p)
     g_cursorX = g_cursorY = g_lastDx = g_lastDy = 0;
     _enable();
     g_fireLatch = 0;
-    p->f0 = p->f18 = p->f42 = p->f2 = p->f4 = 0;
-    p->fbc = p->fbe = p->fc0 = 0;
-    if (p->f20) {
-        p->gear[2].r[1].f2 = p->gear[2].r[2].f0 = p->f1e;
-        p->f24 = 1;
+    p->speed = p->gearIndex = p->rpmBand = p->steeringInput = p->steering = 0;
+    p->stopFlags = p->fbe = p->elapsedTicks = 0;
+    if (p->automatic) {
+        p->gear[2].bands[1].maxRpm = p->gear[2].bands[2].minRpm = p->shiftRpm;
+        p->autoSelector = 1;
     }
     p->f28 = p->f26 = -1;
-    p->fe = 0x5dc;
-    p->f40 = p->f2a;
-    p->f14 = p->gear[0].r[0].f4;
-    p->f16 = p->gear[0].r[0].f6;
-    p->f12 = p->gear[0].r[0].f2;
-    p->f10 = p->gear[0].r[0].f0;
+    p->rpm = 0x5dc;
+    p->rpmPerSpeed = p->f2a;
+    p->accelStep = p->gear[0].bands[0].accelStep;
+    p->decelStep = p->gear[0].bands[0].decelStep;
+    p->maxRpm = p->gear[0].bands[0].maxRpm;
+    p->minRpm = p->gear[0].bands[0].minRpm;
     g_05d6 = 0;
     g_05d8 = g_05da = 0;
     bz8630z = -1;
     g_finishLineIndex = a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc;
     car = a_7eaap.m7eb0->tires;
-    p->fc = g_tireSlip[g_4806[car->idx].variant][car->wear / 2000];
+    p->tireSlip = g_tireSlip[g_4806[car->idx].variant][car->wear / 2000];
     if (car->wear < 8000)
-        p->fa = 0;
+        p->tireFailureIndex = 0;
     else {
         if (car->wear + random_int(2000) <= 9500)
-            p->fa = 0;
+            p->tireFailureIndex = 0;
         else {
             t = (g_finishLineIndex - 200) >> 1;
-            p->fa = random_int(t >> 1) + t + 200;
+            p->tireFailureIndex = random_int(t >> 1) + t + 200;
         }
         goto nx;
     }
@@ -966,21 +966,21 @@ static void near init_rival_eng(void)
     perf_drivetrain_spec(bn7648, &g_oppEngState);
     g_rivalShiftPen = g7d84o->shiftPenalty;
     race_reset_eng(&g_oppEngState);
-    g_oppEngState.f18 = 0;
-    g_oppEngState.f40 = g_oppEngState.f34[0];
-    g_oppEngState.fe = 0x5dc;
-    g_oppEngState.f0 = 0x5dc / g_oppEngState.f40;
-    if ((r = g_oppEngState.gear[0].r + (g_rpmBand = 1))->f2 <= 0x5dc) {
+    g_oppEngState.gearIndex = 0;
+    g_oppEngState.rpmPerSpeed = g_oppEngState.f34[0];
+    g_oppEngState.rpm = 0x5dc;
+    g_oppEngState.speed = 0x5dc / g_oppEngState.rpmPerSpeed;
+    if ((r = g_oppEngState.gear[0].bands + (g_rpmBand = 1))->maxRpm <= 0x5dc) {
         g_rpmBand = 2;
         r++;
-    } else if (r->f0 > g_oppEngState.fe) {
+    } else if (r->minRpm > g_oppEngState.rpm) {
         g_rpmBand = 0;
         r--;
     }
-    g_oppEngState.f42 = g_rpmBand;
-    g_oppEngState.f12 = r->f2;
-    g_oppEngState.f14 = r->f4;
-    g_shiftPoint = g_oppEngState.f24 ? 0x14b4 : g_oppEngState.f1e - 100 * g_rivalShiftPen;
+    g_oppEngState.rpmBand = g_rpmBand;
+    g_oppEngState.maxRpm = r->maxRpm;
+    g_oppEngState.accelStep = r->accelStep;
+    g_shiftPoint = g_oppEngState.autoSelector ? 0x14b4 : g_oppEngState.shiftRpm - 100 * g_rivalShiftPen;
     ar7e8av.m7e8a = 200;
     ar7e8av.m7e8c = 0;
     g_targetLane = ar7e8av.m7e90 = ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) - 200;
@@ -1036,23 +1036,23 @@ static void near fit_gear(int rpm, struct Eng *p)
 {
     struct Range *r;
 
-    for (p->f18 = 1; ; p->f18++) {
-        p->f40 = p->f34[p->f18];
-        p->fe = p->f40 * rpm;
-        if ((r = &p->gear[p->f18].r[1])->f2 > p->fe) {
-            p->f42 = g_rpmBand = p->fe >= r->f0;
+    for (p->gearIndex = 1; ; p->gearIndex++) {
+        p->rpmPerSpeed = p->f34[p->gearIndex];
+        p->rpm = p->rpmPerSpeed * rpm;
+        if ((r = &p->gear[p->gearIndex].bands[1])->maxRpm > p->rpm) {
+            p->rpmBand = g_rpmBand = p->rpm >= r->minRpm;
             if (g_rpmBand == 0)
-                r = &p->gear[p->f18].r[0];
+                r = &p->gear[p->gearIndex].bands[0];
             break;
         }
-        if (p->f18 == p->f1c) {
-            r = &p->gear[p->f18].r[2];
-            p->f42 = g_rpmBand = 2;
+        if (p->gearIndex == p->gearCount) {
+            r = &p->gear[p->gearIndex].bands[2];
+            p->rpmBand = g_rpmBand = 2;
             break;
         }
     }
-    p->f14 = r->f4;
-    p->f0 = p->fe / p->f40;
+    p->accelStep = r->accelStep;
+    p->speed = p->rpm / p->rpmPerSpeed;
 }
 
 /* rival_accelerate @ 0000:D29D (linear 0x0D29D, 679 bytes) */
@@ -1067,18 +1067,18 @@ static void near rival_accelerate(void)
     int i5;
     int ticks;
 
-    old3 = g_oppEngState.f0;
+    old3 = g_oppEngState.speed;
     _disable();
-    ticks = g_driveEng.fc0 - g_lastTicks;
-    g_lastTicks = g_driveEng.fc0;
+    ticks = g_driveEng.elapsedTicks - g_lastTicks;
+    g_lastTicks = g_driveEng.elapsedTicks;
     _enable();
-    r = &g_oppEngState.gear[g_oppEngState.f18].r[g_rpmBand];
+    r = &g_oppEngState.gear[g_oppEngState.gearIndex].bands[g_rpmBand];
     for (i5 = 0; i5 < ticks; i5++) {
         if (g_terrain2[ar7e8av.m7e8a] != g_terrain2[ar7e8av.m7e8a + 1]) {
             if (g_rivalCurveBrake == 0) {
                 g_rivalCurveBrake = 1;
                 vl = g_rivalTop - (ar7e8av.m7e8a > ao7d2ev.m7d30 ? g7d84o->f2 : g7d84o->f2 >> 1);
-                if (vl < g_oppEngState.f0)
+                if (vl < g_oppEngState.speed)
                     fit_gear(vl, &g_oppEngState);
             }
             continue;
@@ -1086,63 +1086,63 @@ static void near rival_accelerate(void)
         g_rivalCurveBrake = 0;
         d = ar7e8av.m7e8a - ao7d2ev.m7d30;
         if (d > 12 && (a_7eaap.m7ec0 != 1 || g_isKingState == 0)) {
-            if (g_driveEng.f0 >= 0x61)
+            if (g_driveEng.speed >= 0x61)
                 vl = g_rivalFast;
             else if (g_isKingState)
                 vl = g_rivalFast;
             else
                 vl = g_rivalSlow;
         chk:
-            if (vl < g_oppEngState.f0) {
+            if (vl < g_oppEngState.speed) {
                 fit_gear(vl, &g_oppEngState);
                 continue;
             }
         } else if (d > -5 && d < 5) {
-            vl = g_driveEng.f0 + g_rivalLead;
+            vl = g_driveEng.speed + g_rivalLead;
             if (ao7d2ev.m7d30 >= 30 && vl < g_rivalSlow)
                 vl = g_rivalSlow;
             goto chk;
         }
-        if (a_7f88d >= 2 && g_driveEng.f0 > 50 && g_oppEngState.f0 > g_driveEng.f0 + 32)
-            fit_gear(g_driveEng.f0 + 32, &g_oppEngState);
+        if (a_7f88d >= 2 && g_driveEng.speed > 50 && g_oppEngState.speed > g_driveEng.speed + 32)
+            fit_gear(g_driveEng.speed + 32, &g_oppEngState);
         else {
-            g_oppEngState.fe += g_oppEngState.f14;
-            if (g_oppEngState.fe > g_shiftPoint)
-                g_oppEngState.fe = g_shiftPoint;
-            if (g_oppEngState.fe > g_oppEngState.f12) {
-                g_oppEngState.f42++;
-                g_oppEngState.f12 = (r = &g_oppEngState.gear[g_oppEngState.f18].r[g_oppEngState.f42])->f2;
-                g_oppEngState.f14 = r->f4;
+            g_oppEngState.rpm += g_oppEngState.accelStep;
+            if (g_oppEngState.rpm > g_shiftPoint)
+                g_oppEngState.rpm = g_shiftPoint;
+            if (g_oppEngState.rpm > g_oppEngState.maxRpm) {
+                g_oppEngState.rpmBand++;
+                g_oppEngState.maxRpm = (r = &g_oppEngState.gear[g_oppEngState.gearIndex].bands[g_oppEngState.rpmBand])->maxRpm;
+                g_oppEngState.accelStep = r->accelStep;
             }
-            if (g_oppEngState.f18 < g_oppEngState.f1c &&
-                ((g_oppEngState.f24 && g_oppEngState.fe >= g_oppEngState.f22) || g_oppEngState.fe >= g_shiftPoint)) {
-                g_oppEngState.f18++;
-                if (g_oppEngState.f24 == 0)
-                    g_shiftPoint = g_oppEngState.f18 < g_oppEngState.f1c ? g_oppEngState.f1e - 100 * g_rivalShiftPen
+            if (g_oppEngState.gearIndex < g_oppEngState.gearCount &&
+                ((g_oppEngState.autoSelector && g_oppEngState.rpm >= g_oppEngState.autoShiftRpm) || g_oppEngState.rpm >= g_shiftPoint)) {
+                g_oppEngState.gearIndex++;
+                if (g_oppEngState.autoSelector == 0)
+                    g_shiftPoint = g_oppEngState.gearIndex < g_oppEngState.gearCount ? g_oppEngState.shiftRpm - 100 * g_rivalShiftPen
                            : bu8acc < 4 && r_vid.mode != -6 ? 0x14b4 : 0x1518;
-                g_oppEngState.f40 = g_oppEngState.f34[g_oppEngState.f18];
-                g_oppEngState.fe = g_oppEngState.f0 * g_oppEngState.f40;
-                if ((r = &g_oppEngState.gear[g_oppEngState.f18].r[g_rpmBand = 1])->f2 <= g_oppEngState.fe) {
+                g_oppEngState.rpmPerSpeed = g_oppEngState.f34[g_oppEngState.gearIndex];
+                g_oppEngState.rpm = g_oppEngState.speed * g_oppEngState.rpmPerSpeed;
+                if ((r = &g_oppEngState.gear[g_oppEngState.gearIndex].bands[g_rpmBand = 1])->maxRpm <= g_oppEngState.rpm) {
                     g_rpmBand = 2;
                     r++;
-                } else if (r->f0 > g_oppEngState.fe) {
+                } else if (r->minRpm > g_oppEngState.rpm) {
                     g_rpmBand = 0;
                     r--;
                 }
-                g_oppEngState.f42 = g_rpmBand;
-                g_oppEngState.f12 = r->f2;
-                g_oppEngState.f14 = r->f4;
+                g_oppEngState.rpmBand = g_rpmBand;
+                g_oppEngState.maxRpm = r->maxRpm;
+                g_oppEngState.accelStep = r->accelStep;
             }
-            g_oppEngState.f0 = g_oppEngState.fe / g_oppEngState.f40;
+            g_oppEngState.speed = g_oppEngState.rpm / g_oppEngState.rpmPerSpeed;
         }
     }
     if (ar7e8av.m7e8a >= g_finishLineIndex) {
         liml = ao7d2ev.m7d30 + 5 < ar7e8av.m7e8a ? 5 : 10;
-        g_oppEngState.f0 = old3;
+        g_oppEngState.speed = old3;
         if (liml < old3)
-            g_oppEngState.f0 -= liml;
+            g_oppEngState.speed -= liml;
         else
-            g_oppEngState.f0 = 0;
+            g_oppEngState.speed = 0;
     }
 }
 
@@ -1210,14 +1210,14 @@ int cz8bd0y;
 
 static void near move_player(void)
 {
-    ao7d2ev.m7d32 += ao7d2ev.m7d34 = g_driveEng.f0 ? race_speed_step(g_driveEng.f0) : 0;
+    ao7d2ev.m7d32 += ao7d2ev.m7d34 = g_driveEng.speed ? race_speed_step(g_driveEng.speed) : 0;
     if (ao7d2ev.m7d32 >= 8)
         road_advance();
-    if (ao7d2ev.m7d30 >= g_finishLineIndex && g_statsDone && g_driveEng.f0 <= 0) {
+    if (ao7d2ev.m7d30 >= g_finishLineIndex && g_statsDone && g_driveEng.speed <= 0) {
         if (s_8632)
-            g_oppEngState.fbc |= 1;
+            g_oppEngState.stopFlags |= 1;
         else
-            g_driveEng.fbc |= 1;
+            g_driveEng.stopFlags |= 1;
         sys_stop_drive();
     }
 }
@@ -1231,19 +1231,19 @@ static void near move_rival(void)
     int t;
     int dist;
 
-    ar7e8av.m7e8e = g_oppEngState.f0 ? race_speed_step(g_oppEngState.f0) : 0;
-    if (g_oppEngState.f0 == 0)
+    ar7e8av.m7e8e = g_oppEngState.speed ? race_speed_step(g_oppEngState.speed) : 0;
+    if (g_oppEngState.speed == 0)
         ar7e8av.m7e8e = 0;
     ar7e8av.m7e8c += ar7e8av.m7e8e;
     if (ar7e8av.m7e8c >= 8 && ar7e8av.m7e8e > 0) {
         ar7e8av.m7e8a += ar7e8av.m7e8c >> 3;
         ar7e8av.m7e8c &= 7;
     }
-    if (ar7e8av.m7e8a >= g_finishLineIndex && g_statsDone && g_driveEng.f0 <= 0) {
+    if (ar7e8av.m7e8a >= g_finishLineIndex && g_statsDone && g_driveEng.speed <= 0) {
         if (s_8632 == 0)
-            g_driveEng.fbc |= 1;
+            g_driveEng.stopFlags |= 1;
         else
-            g_oppEngState.fbc |= 1;
+            g_oppEngState.stopFlags |= 1;
         sys_stop_drive();
         return;
     }
@@ -1294,7 +1294,7 @@ static void near move_rival(void)
                     g_targetLane = t;
                     if (ao7d2ev.m7d36 - ar7e8av.m7e90 < 280) {
                         ar7e8av.m7e8a = ao7d2ev.m7d30 - 1;
-                        fit_gear(g_driveEng.f0, &g_oppEngState);
+                        fit_gear(g_driveEng.speed, &g_oppEngState);
                     }
                 } else {
                     if ((t = ao7d2ev.m7d36 + 430) < cz8bd0y - 30) {
@@ -1302,11 +1302,11 @@ static void near move_rival(void)
                         g_targetLane = t + 200;
                         if (ar7e8av.m7e90 - ao7d2ev.m7d36 < 580) {
                             ar7e8av.m7e8a = ao7d2ev.m7d30 - 2;
-                            fit_gear(g_driveEng.f0, &g_oppEngState);
+                            fit_gear(g_driveEng.speed, &g_oppEngState);
                         }
                     } else {
                         ar7e8av.m7e8a = ao7d2ev.m7d30 - 2;
-                        fit_gear(g_driveEng.f0, &g_oppEngState);
+                        fit_gear(g_driveEng.speed, &g_oppEngState);
                     }
                 }
             } else if (ap7d7cv == 0 || ap7d7cv == 2) {
@@ -1348,7 +1348,7 @@ static void near cop_appears(void)
     int n1;
     int old;
 
-    old = g_oppEngState.f0;
+    old = g_oppEngState.speed;
     g7d84o = &av7ff8[10];
     perf_drivetrain_spec(0x19, &g_oppEngState);
     g_rivalShiftPen = g7d84o->shiftPenalty;
@@ -1370,17 +1370,17 @@ void race_tick(void)
 {
     int a1, b, c1, d;
 
-    if (g_driveEng.f24) {
-        if (g_driveEng.f24 != bz8630z)
-            screen_show_gear((bz8630z = g_driveEng.f24) + 4);
-    } else if (g_driveEng.f18 != bz8630z)
-        screen_show_gear(bz8630z = g_driveEng.f18);
-    if (g_driveEng.fa && ao7d2ev.m7d30 > g_driveEng.fa)
+    if (g_driveEng.autoSelector) {
+        if (g_driveEng.autoSelector != bz8630z)
+            screen_show_gear((bz8630z = g_driveEng.autoSelector) + 4);
+    } else if (g_driveEng.gearIndex != bz8630z)
+        screen_show_gear(bz8630z = g_driveEng.gearIndex);
+    if (g_driveEng.tireFailureIndex && ao7d2ev.m7d30 > g_driveEng.tireFailureIndex)
         at787cu = 1;
     if (g_squealOn == 0) {
-        if (abs(g_driveEng.f4) >= 12)
+        if (abs(g_driveEng.steering) >= 12)
             g_squealOn = 1;
-    } else if (abs(g_driveEng.f4) < 10)
+    } else if (abs(g_driveEng.steering) < 10)
         g_squealOn = 0;
     rival_accelerate();
     switch (a_7f88d) {
@@ -1401,7 +1401,7 @@ void race_tick(void)
         break;
     case 3:
         if (ar7e8av.m7e8a - 2 > ao7d2ev.m7d30) {
-            g_driveEng.fbc |= 0x41;
+            g_driveEng.stopFlags |= 0x41;
             sys_stop_drive();
             return;
         }
@@ -1415,10 +1415,10 @@ void race_tick(void)
     move_rival();
     if (ao7d2ev.m7d30 >= g_finishLineIndex || ar7e8av.m7e8a >= g_finishLineIndex)
         race_finish_stats();
-    if (g_driveEng.fbc || g_oppEngState.fbc) {
+    if (g_driveEng.stopFlags || g_oppEngState.stopFlags) {
         if (a_7f88d >= 2) {
-            if (g_driveEng.fbc)
-                g_driveEng.fbc |= 0x41;
+            if (g_driveEng.stopFlags)
+                g_driveEng.stopFlags |= 0x41;
             sound_siren(0);
         }
         sys_stop_drive();
@@ -1431,13 +1431,13 @@ void race_tick(void)
     if ((a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc) <= ao7d2ev.m7d30)
         return;
     if (by72f2 && a_7f88d <= 1) {
-        g_driveEng.fbc |= 3;
+        g_driveEng.stopFlags |= 3;
         sys_stop_drive();
         return;
     }
     if (ap7d7cv == 0 && ao7d2ev.m7d34 > 1) {
         g_contactFrames++;
-        if (g_driveEng.f2 < 0) {
+        if (g_driveEng.steeringInput < 0) {
             if (g_terrain2[ao7d2ev.m7d30] - g_terrain2[ao7d2ev.m7d30 + 1] >= 0 || ((al70c0x.m70c0 + ao7d2ev.m7d2e) >> 1) >= ao7d2ev.m7d36) {
                 sound_bump();
                 if (g_bumpAlternate == 0) {
@@ -1453,7 +1453,7 @@ void race_tick(void)
                 sound_bump();
                 sound_bump();
                 ao7d2ev.m7d36 += 300;
-                if (g_driveEng.f0 > 20)
+                if (g_driveEng.speed > 20)
                     g_brakeTicks = 2;
                 gz7d7e = 0;
                 ao7d2ev.m7d3c += random_int(2) ? 15 : -15;
