@@ -4,11 +4,10 @@
 #define VIDEO_H
 #include "STRUCTS.H"
 
-struct Animation {
+struct AnimRun {
     struct Cmd *command;
     struct Obj *object;
     struct Box *box;
-    int blinkCount;
 };
 
 enum AnimOp {

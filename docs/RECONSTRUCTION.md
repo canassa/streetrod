@@ -215,7 +215,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **PicturePlacement** (`g_picturePlacement`, DS:04BE..04C3): Screen picture drawing uses the x/y destination and maximum height together to clip and place one bitmap. Separate globals also match; this grouping is a natural reconstruction choice.
 
-- **Animation** (`g_animation`, DS:6C38..6C3F): anim_run and anim_set_box use the command, object and box pointers as one interpreter context, including its blink counter. Separate globals also match; this grouping is a natural reconstruction choice.
+- **AnimRun** (`g_animRun`, DS:6C38..6C3D): anim_run and anim_set_box use command, object and box pointers as the current interpreter position. The pump hook countdown (`g_pumpBlinkCount`, DS:6C3E) persists across calls and stays separate. Separate globals also match; the interpreter record is a natural reconstruction choice.
 
 - **CursorDraw** (`g_cursorStamp`, DS:6C46..6C4B): SYS saves the drawn cursor position and tracks whether it needs repainting as one cursor drawing state. MSC supplies the final byte of alignment padding. Separate globals also match; this grouping is a natural reconstruction choice.
 
