@@ -16,7 +16,7 @@ class SourceTests(unittest.TestCase):
         self.assertEqual(by['ga_day'], dict(addr=0x06476, seg=0, off=0x6476, size=45, kind='c', far=1,
                                                 name='ga_day', src='src/GAME/GARAGE.C', proto='int @(void)'))
         self.assertEqual(by['ga_menu']['far'], 0)
-        self.assertEqual(by['ga_menu']['proto'], 'int near @(int mode)')
+        self.assertEqual(by['ga_menu']['proto'], 'int near @(enum GarageMode mode)')
         self.assertEqual(by['cl_pixel_addr']['far'], 0)
         self.assertEqual(by['cl_draw']['far'], 1)
         # the functions of a file are contiguous: no other file's function inside its extent

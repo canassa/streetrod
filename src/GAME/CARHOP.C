@@ -78,7 +78,7 @@ static void near grab_strip(struct Bitmap far **pbm)
    Build the sprite animation of a moving car body: the cells from the sheet, the pages, the 0x54
    step run */
 
-void ch_skate(int a, int b)
+void ch_skate(enum CarhopMode a, int b)
 {
     struct Blt r2;
     struct Bitmap far *t;

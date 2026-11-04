@@ -40,7 +40,7 @@ int dv_run(void)
 
     sv = r_vid.copyToFront;
     do {
-        da_set_view(3);
+        da_set_view(DASH_VIEW_DRIVE);
         ma_clear();
         (*g_videoOps.blank)();
         g_dashBuffered = r_vid.mode == VID_CGA && g_egaCard;
@@ -171,6 +171,6 @@ int dv_run(void)
         (*g_videoOps.copyPage)(g_viewPages.draw == 1 ? g82b4s->bits.p : g8188w->bits.p, g_viewPages.draw == 1 ? g8188w->bits.p : g82b4s->bits.p);
     } else
         (*g_videoOps.copyPage)(bm7678->bits.p, g8188w->bits.p);
-    da_set_view(1);
+    da_set_view(DASH_VIEW_RESTORE);
     return ret;
 }

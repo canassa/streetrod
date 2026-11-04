@@ -32,19 +32,40 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
+enum CarhopState {
+    CARHOP_DISABLED = -1,
+    CARHOP_ABSENT = 0,
+    CARHOP_PRESENT = 1
+};
+
+enum RivalArrival {
+    RIVAL_REQUESTED = 0,
+    RIVAL_PASS_BY = 1,
+    RIVAL_CHALLENGE = 2
+};
+
+enum KingStatus {
+    KING_READY = 0,
+    KING_NOVICE = 1,
+    KING_NEED_WINS = 2,
+    KING_NEED_WIN_RATE = 3,
+    KING_NEED_DRAG_WINS = 4,
+    KING_NEED_ROAD_WINS = 5
+};
+
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_carhop;                         /* DS:6C84 */
+static enum CarhopState g_carhop;                         /* DS:6C84 */
 static int g_ordered;                         /* DS:6C88 */
 static void near drop_last_word(char *s);
-static int near maybe_carhop(int mode, int arg, int pct1, int pct2);
+static int near maybe_carhop(enum CarhopMode mode, int arg, int pct1, int pct2);
 static int g_poolCount;                         /* DS:6C86 */
 static int g_poolRivals[12];                  /* DS:6C8A */
 static int g_justArrived;                         /* DS:6CA2 */
 static void near build_rival_pool(int);
 static void near select_rival(int);
-static int near king_status(void);
+static enum KingStatus near king_status(void);
 static void near show_rival_car(enum CarAnimKind, int, int, int, int, int *);
-static void near rival_arrives(int, enum CarAnimKind, int);
+static void near rival_arrives(int, enum CarAnimKind, enum RivalArrival);
 static void near list_met_rivals(int *, int *, int *);
 static int near spec_class(int);
 static int near accepts_bet(enum BetKind kind);
@@ -64,35 +85,35 @@ int g_passCount = 0;   /* DS:51F0 */
 
 /* maybe_carhop @ 0000:914C (linear 0x0914C, 266 bytes) */
 
-static int near maybe_carhop(int mode, int arg, int pct1, int pct2)
+static int near maybe_carhop(enum CarhopMode mode, int arg, int pct1, int pct2)
 {
     int r;
 
     r = 0;
     switch (mode) {
     case CARHOP_ENTER:
-        if (g_carhop != 0)
+        if (g_carhop != CARHOP_ABSENT)
             break;
         if (g_passCount < 3 || rn_int(100) >= pct1)
             break;
         r = 1;
         cu_ctl(CURSOR_HIDE_NOW);
         ch_skate(CARHOP_ENTER, arg);
-        g_carhop = 1;
+        g_carhop = CARHOP_PRESENT;
         if (rn_int(100) < pct2) {
             da_wait_retrace(100);
             ch_skate(CARHOP_LEAVE, arg);
-            g_carhop = 0;
+            g_carhop = CARHOP_ABSENT;
             g_ordered = 0;
         }
         break;
     case CARHOP_LEAVE:
-        if (g_carhop != 1 || rn_int(100) >= pct1)
+        if (g_carhop != CARHOP_PRESENT || rn_int(100) >= pct1)
             break;
         r = 1;
         cu_ctl(CURSOR_HIDE_NOW);
         ch_skate(CARHOP_LEAVE, arg);
-        g_carhop = 0;
+        g_carhop = CARHOP_ABSENT;
         g_ordered = 0;
         g_passCount = 0;
         break;
@@ -136,9 +157,9 @@ static void near show_rival_car(enum CarAnimKind mode, int b, int c, int d, int 
     strcpy(g_strOpp, g_desc + g_selectedRacerPointer->nameOffset);
     strcat(g_strOpp, "  ");
     strcat(g_strOpp, g_desc + g_oppSpecPointer->nameOffset);
-    x = g_scene == 6;
+    x = g_scene == SCENE_JAIL;
     if (mode == CAR_PULL_IN)
-        g_carhop = -1;
+        g_carhop = CARHOP_DISABLED;
     g_rivalHereState = mode == CAR_DRIVE_OUT;
     if (mode == CAR_DRIVE_IN && !maybe_carhop(CARHOP_ENTER, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, 10))
         maybe_carhop(CARHOP_LEAVE, g_rivalHereState, 20, 0);
@@ -168,7 +189,7 @@ static void near show_rival_car(enum CarAnimKind mode, int b, int c, int d, int 
         sc_status_text(g_bannerX, " ", g_wRivBanner);
     }
     if (mode == CAR_PULL_IN)
-        g_carhop = 0;
+        g_carhop = CARHOP_ABSENT;
     g_rivalHereState = (mode == CAR_DRIVE_OUT) ? 0 : 1;
     if (!(x && g_rivalHereState))
         if (!maybe_carhop(CARHOP_ENTER, g_rivalHereState, 10 * x + 75 * g_ordered + (g_demo << 3) + 5, g_rivalHereState == 0 ? 8 : 0))
@@ -195,7 +216,7 @@ static int near spec_class(int n)
 
 /* king_status @ 0000:9556 (linear 0x09556, 155 bytes) */
 
-static int near king_status(void)
+static enum KingStatus near king_status(void)
 {
     int k, any, total;
 
@@ -204,36 +225,37 @@ static int near king_status(void)
         if (g_racerRecordsArray[k].status != RACER_EMPTY)
             any = 1;
     if (any == 0)
-        return 0;
+        return KING_READY;
     total = g_dragWins + g_roadWins;
     if (total < 3)
-        return 1;
+        return KING_NOVICE;
     if (total >= 7 && g_dragWins < 6 && g_roadWins < 6)
-        return 3;
+        return KING_NEED_WIN_RATE;
     if (total < 7 && g_dragWins < 6 && g_roadWins < 6)
-        return 2;
+        return KING_NEED_WINS;
     if (g_dragWins < 6)
-        return 4;
+        return KING_NEED_DRAG_WINS;
     if (g_roadWins < 6)
-        return 5;
+        return KING_NEED_ROAD_WINS;
     if (total >= (g_betRaces >> 1))
-        return 0;
-    return 3;
+        return KING_READY;
+    return KING_NEED_WIN_RATE;
 }
 
 /* king_chance @ 0000:95F1 (linear 0x095F1, 85 bytes) */
 
 static int near king_chance(void)
 {
-    int kind, v;
+    enum KingStatus kind;
+    int v;
 
     if (bn7648 == 25)
         return 0;
     kind = king_status();
     if (kind) {
-        if (kind == 1)
+        if (kind == KING_NOVICE)
             v = 5;
-        else if (kind == 2)
+        else if (kind == KING_NEED_WINS)
             v = 8;
         else
             v = 12;
@@ -344,13 +366,13 @@ static void near select_rival(int n)
 
 /* rival_arrives @ 0000:9A27 (linear 0x09A27, 92 bytes) */
 
-static void near rival_arrives(int n, enum CarAnimKind a, int mode)
+static void near rival_arrives(int n, enum CarAnimKind a, enum RivalArrival mode)
 {
     select_rival(n);
-    if (mode == 1)
+    if (mode == RIVAL_PASS_BY)
         g_carPassBy = 1;
-    if (mode == 2 && g_driverIdxSelVal == RACER_KING)
-        g_carPassBy = king_status() == 1;
+    if (mode == RIVAL_CHALLENGE && g_driverIdxSelVal == RACER_KING)
+        g_carPassBy = king_status() == KING_NOVICE;
     show_rival_car(a, bn7648, 1, 0xa3, 0, g_tirePics[m_8272.tireVariant]);
 }
 
@@ -360,7 +382,7 @@ static void near list_met_rivals(int *ids, int *slots, int *kinds)
 {
     int i, n;
 
-    if (king_status() == 0)
+    if (king_status() == KING_READY)
         g_racerRecordsArray[RACER_KING].status = RACER_MET;
     else
         g_racerRecordsArray[RACER_KING].status = RACER_NOT_MET;
@@ -397,9 +419,9 @@ static int near look_for_rival(enum CarAnimKind n)
             show_rival_car(CAR_DRIVE_OUT, bn7648, 1, 0xa3, 0, g_tirePics[m_8272.tireVariant]);
         }
         choice = mn_sel();
-        rival_arrives(sel[choice - 1], n, 0);
+        rival_arrives(sel[choice - 1], n, RIVAL_REQUESTED);
         return 1;
-    case 0x3ea:
+    case KR_EMPTY_LIST:
         gm_message(0x198c);
         return 0;
     }
@@ -478,35 +500,35 @@ static int near challenge(int arg)
     if (arg) {
         ch = king_status();
         switch (ch) {
-        case 2:
+        case KING_NEED_WINS:
             gm_message(0x1113);
             break;
-        case 3:
+        case KING_NEED_WIN_RATE:
             gm_message(0x113d);
             break;
-        case 4:
+        case KING_NEED_DRAG_WINS:
             gm_message(0x117d);
             break;
-        case 5:
+        case KING_NEED_ROAD_WINS:
             gm_message(0x11a7);
             break;
-        case 0:
+        case KING_READY:
             if (g_kingDragWon == 0) {
                 if (a_7eaap.currentCar->fuel < 22) {
                     gm_message(0x1761);
                     return 0;
                 }
-                a_7eaap.raceType = 0;
+                a_7eaap.raceType = RACE_DRAG;
                 gm_message(0x11d1);
                 g_raceWagerTerms.kind = BET_NONE;
             } else {
-                a_7eaap.raceType = 1;
+                a_7eaap.raceType = RACE_ROAD;
                 gm_message(0x11f7);
                 g_raceWagerTerms.kind = BET_CAR;
             }
             g_raceWagerTerms.amount = 0;
             ra_run();
-            g_gameClock.actionTicks += a_7eaap.raceType == 0 ? 0x444u : 0x777u;
+            g_gameClock.actionTicks += a_7eaap.raceType == RACE_DRAG ? 0x444u : 0x777u;
             return 2;
         }
         ma_release();
@@ -522,20 +544,20 @@ static int near challenge(int arg)
     while ((ch = sy_wait_input(3000)) == 0)
         ;
     switch (ch) {
-    case 1:
+    case KR_RACE_DRAG:
         num = KM_DRAG_WAGER;
-        a_7eaap.raceType = 0;
+        a_7eaap.raceType = RACE_DRAG;
         break;
-    case 2:
+    case KR_RACE_ROAD:
         num = KM_ROAD_WAGER;
-        a_7eaap.raceType = 1;
+        a_7eaap.raceType = RACE_ROAD;
         break;
     case KR_FORGET:
-    case 1000:
+    case KR_TIMEOUT:
         gm_message(0x122c);
         goto quit;
     }
-    if (a_7eaap.raceType == 1 && a_7eaap.currentCar->fuel < 17) {
+    if (a_7eaap.raceType == RACE_ROAD && a_7eaap.currentCar->fuel < 17) {
         gm_message(0x1761);
         goto quit;
     }
@@ -549,30 +571,30 @@ static int near challenge(int arg)
         m_8272.betType = ch;
         switch (ch) {
         case KR_FORGET:
-        case 1000:
+        case KR_TIMEOUT:
             gm_message(0x122c);
             goto quit;
-        case 1:
+        case KR_BET_FOR_KICKS:
             price = 0;
             kind = BET_NONE;
             break;
-        case 2:
+        case KR_BET_10:
             price = 10;
             kind = BET_10;
             break;
-        case 3:
+        case KR_BET_50:
             price = 50;
             kind = BET_50;
             break;
-        case 7:
+        case KR_BET_25:
             price = 25;
             kind = BET_25;
             break;
-        case 8:
+        case KR_BET_100:
             price = 100;
             kind = BET_100;
             break;
-        case 9:
+        case KR_BET_PINK_SLIPS:
             price = 0;
             kind = BET_CAR;
             break;
@@ -586,7 +608,7 @@ static int near challenge(int arg)
                 pict = 0;
                 gm_message(g_acceptMsgs[a_7eaap.raceType][rn_int(3)]);
                 ra_run();
-                g_gameClock.actionTicks += a_7eaap.raceType == 0 ? 0x444u : 0x777u;
+                g_gameClock.actionTicks += a_7eaap.raceType == RACE_DRAG ? 0x444u : 0x777u;
                 return 2;
             }
             while ((ch = rn_int(5)) == prev)
@@ -717,7 +739,7 @@ static void near blit_cell(struct Bitmap far *bm, int n, struct Bitmap far *dst)
     cell.sy = 50 * row;
     cell.dx = 184;
     cell.dy = 73;
-    if (g_scene == 6) {
+    if (g_scene == SCENE_JAIL) {
         bl.w = 16;
         bl.h = 50;
         bl.sx = 208;
@@ -754,7 +776,7 @@ static void near play_cell_anim(void)
         case KR_MESSAGE_DISMISS:
             going = 0;
             break;
-        case 1000:
+        case KR_TIMEOUT:
             if (i >= 31)
                 going = 0;
             else {
@@ -814,7 +836,7 @@ static void near play_ending(void)
     (*g_videoOps.show)();
     gm_pause(0x2ee);
     (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
-    g_scene = 1;
+    g_scene = SCENE_GARAGE;
     pic15 = ar_bm(0x50, 0x2c, 0, ARENA_HIGH_BASE);
     pu_grab(0x78, 0x45, 0x50, 0x2c, pic15);
     di_free_list(g_gamePics);
@@ -962,10 +984,10 @@ void bo_visit(void)
         play_cell_anim();
     cu_ctl(CURSOR_SHOW_NOW);
     g_rivalHereState = 0;
-    g_carhop = -1;
+    g_carhop = CARHOP_DISABLED;
     g_ordered = 0;
     g_justArrived = 1;
-    g_scene = 2;
+    g_scene = SCENE_BOBS;
     g_mouse.left = g_joyButtons = g_buttons = 0;
     for (;;) {
         setup_bobs_spots(g_rivalHereState, !g_carhop & !g_ordered);
@@ -979,14 +1001,14 @@ void bo_visit(void)
         while ((choice = sy_wait_input(3000)) == 0)
             ;
         switch (choice) {
-        case 1:
+        case KR_BOBS_GARAGE:
             g_strOpp[0] = 0;
             sc_status_text(g_bannerX, " ", g_wRivBanner);
             mn_pop(1);
-            g_scene = 1;
+            g_scene = SCENE_GARAGE;
             cr_go();
             return;
-        case 1000:
+        case KR_TIMEOUT:
             ga_check_end(0);
             if (g_end)
                 return;
@@ -1001,18 +1023,18 @@ void bo_visit(void)
 out:
             mn_pop(1);
             break;
-        case 4:
+        case KR_BOBS_FIND_RIVAL:
             if ((status = look_for_rival(class)) == 0)
                 flag = 1;
             else
                 n = 0;
             mn_pop(1);
             break;
-        case 2:
+        case KR_BOBS_CHALLENGE:
             if (g_rivalHereState == 0) {
                 g_waitUntil = g_tick;
 race:
-                rival_arrives(pick_rival(rival, 0), class, 2);
+                rival_arrives(pick_rival(rival, 0), class, RIVAL_CHALLENGE);
                 class = CAR_DRIVE_IN;
                 mn_pop(1);
             } else {
@@ -1025,8 +1047,8 @@ test:
                     sc_status_text(g_bannerX, " ", g_wRivBanner);
                     place = ra_outcome();
                     (*g_videoOps.blank)();
-                    cr_rival_paint(-1);
-                    if (m_8272.betType != 1)
+                    cr_rival_paint(RIVAL_PAINT_RESTORE);
+                    if (m_8272.betType != KR_BET_FOR_KICKS)
                         g_betRaces++;
                     if (g_isKingState) {
                         if (g_resultWin == 0) {
@@ -1034,7 +1056,7 @@ test:
                             g_racerRecordsArray[RACER_KING].status = RACER_NOT_MET;
                             g_dragWins -= 3;
                             g_roadWins -= 2;
-                        } else if (a_7eaap.raceType == 0)
+                        } else if (a_7eaap.raceType == RACE_DRAG)
                             g_kingDragWon = 1;
                         else {
                             mu_suspend(0);
@@ -1052,21 +1074,21 @@ test:
                         g_end |= 4;
                         return;
                     }
-                    if (g_resultWin && m_8272.betType != 1) {
-                        if (a_7eaap.raceType == 0)
+                    if (g_resultWin && m_8272.betType != KR_BET_FOR_KICKS) {
+                        if (a_7eaap.raceType == RACE_DRAG)
                             g_dragWins++;
                         else
                             g_roadWins++;
                     }
-                    if (m_8272.betType != 1) {
+                    if (m_8272.betType != KR_BET_FOR_KICKS) {
                         g_selectedRacerPointer->betRaces++;
                         if (g_resultWin == 0)
                             g_selectedRacerPointer->betWins++;
                     }
                     if (place == 2 || place == 1) {
                         mn_pop(1);
-                        g_scene = place == 2 ? 0 : 1;
-                        if (g_scene == 1)
+                        g_scene = place == 2 ? SCENE_NONE : SCENE_GARAGE;
+                        if (g_scene == SCENE_GARAGE)
                             g_keepCruiseMusic = 1;
                         cr_go();
                         g_keepCruiseMusic = 0;
@@ -1078,12 +1100,12 @@ test:
                     (*g_videoOps.show)();
                     class = CAR_PULL_IN;
                     g_rivalHereState = 0;
-                    g_carhop = -1;
+                    g_carhop = CARHOP_DISABLED;
                     g_ordered = 0;
                     n = 0;
                     if (g_kingDragWon == 0)
                         goto out;
-                    rival_arrives(RACER_KING, CAR_PULL_IN, 0);
+                    rival_arrives(RACER_KING, CAR_PULL_IN, RIVAL_REQUESTED);
                     goto test;
                 }
                 show_rival_car(CAR_DRIVE_OUT, bn7648, 1, 0xa3, 0, g_tirePics[m_8272.tireVariant]);
@@ -1091,7 +1113,7 @@ test:
                 mn_pop(1);
             }
             break;
-        case 3:
+        case KR_BOBS_HOOD:
             if (g_rivalHereState == 0)
                 goto out;
             if (n > 0 || g_isKingState) {
@@ -1105,8 +1127,8 @@ test:
             }
             mn_pop(1);
             break;
-        case 5:
-            if (g_carhop == 0)
+        case KR_BOBS_ORDER:
+            if (g_carhop == CARHOP_ABSENT)
                 g_ordered = 1;
             mn_pop(1);
             break;
@@ -1179,11 +1201,11 @@ void bo_jail(void)
     r_vid.copyToFront = 1;
     (*g_videoOps.show)();
     g_rivalHereState = 0;
-    g_carhop = -1;
+    g_carhop = CARHOP_DISABLED;
     g_ordered = 0;
     cu_ctl(1);
     cu_ctl(CURSOR_SHOW);
-    g_scene = 6;
+    g_scene = SCENE_JAIL;
     set_jail_spots(HOT_DISABLED, SC_Q);
     for (;;) {
         mn_push(KM_BOBS);
@@ -1196,26 +1218,26 @@ void bo_jail(void)
         while ((ch = sy_wait_input(3000)) == 0)
             ;
         switch (ch) {
-        case 1:
+        case KR_BOBS_GARAGE:
             mn_pop(1);
             set_jail_spots(HOT_REGION, SC_G);
-            g_scene = 1;
+            g_scene = SCENE_GARAGE;
             return;
-        case 1000:
+        case KR_TIMEOUT:
             if (rn_int(100) < 6) {
                 cu_ctl(CURSOR_HIDE_NOW);
                 sc_status_text(-1, "", 0);
                 play_cell_anim();
                 cu_ctl(CURSOR_SHOW_NOW);
             }
-            rival_arrives(pick_rival(who, 1), mode, 1);
+            rival_arrives(pick_rival(who, 1), mode, RIVAL_PASS_BY);
             mode = CAR_DRIVE_IN;
             g_strOpp[0] = 0;
             sc_status_text(g_bannerX, " ", g_wRivBanner);
-        case 2:
-        case 3:
-        case 4:
-        case 5:
+        case KR_BOBS_CHALLENGE:
+        case KR_BOBS_HOOD:
+        case KR_BOBS_FIND_RIVAL:
+        case KR_BOBS_ORDER:
         default:
             mn_pop(0);
         }

@@ -1785,3 +1785,32 @@ slots differ only in depth (4 versus 6). MSC 5.1 keeps the enum fields, lists an
 parameters byte-identical to their int counterparts throughout both builds.
 The tone-list -1 words are trailing markers in the original data; the ISR resets
 the tone cursor when the repeat-list terminator is reached.
+## 2026-11-04 22:45 CET: Name drive phases, state values and translated input
+
+### What I did
+
+Named the shared race/cruise phase, automatic selector, race type, scene, dashboard and garage modes, road sections, hotspot kinds, timer actions, King eligibility, rival arrival, carhop state, police phase, gas-station hand state, cursor drawing state and save-load outcomes. Named independent stop bits without changing their int bitmask storage. Preserved placeholder global identifiers and all existing source comments.
+
+Traced every kg_key call through the KBD/JOY writers and g_scanMap: its signed byte is translated ASCII/control or encoded menu input, not a scan code. Named ASCII controls and the fire token, wrote the negative-byte menu adjustment as 0x100 - KEY_VALUE_BASE, and named all timeout (1000), empty-list (1002) and captured-input (1003) producers and consumers. Reused existing MASM KR_* action names in C and retained C-only results outside the encoded keymap domain.
+
+Recovered five part categories and separate engine, transmission, carburetor, manifold and tire variant sets from g_parts, its description offsets and drivetrain/garage consumers. Kept category and variant byte-sized and named their MASM initializer constants. Updated the existing prototype/keymap tests for enum parameters, the shared encoding base and C-only results.
+
+The complete sweep ledger is work/LEDGER.md: 50 named entries and 40 specific skips, including each kg_key site, excluded index/arithmetic domains, existing named sets and the unproven scaled-picture identities. No variable/function identifiers changed, so no communal/static spelling fits were required.
+
+Validation: ./sr headers --check passed; ./sr check --all passed 572/572; a build after rm -rf work and the final build both reported Packed EXE vs orig/SR.EXE: IDENTICAL; ./sr dgroup check and order passed; all 68 unit tests passed; ./dosbox.sh --make reported DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL. The final linked image retains all 572 function positions and 748 near-call encodings.
+
+### What I learned
+
+Drive phase 1 has two roles, staging in a race and active cruising, so one enum can expose two aliases while preserving the shared storage. Part variant has category-specific meanings; a single variant enum would hide the real distinction. The keyboard byte's sign selects its decoding path, and the 0x32 adjustment follows directly from the 0xCE encoding base. Menu results 1000/1002/1003 originate in C and have no MASM key-byte counterparts. Existing positive KR_* action names were already present in KEYMAPS.ASM and needed reuse in C, including the front/rear bumper mapping and pump action.
+
+## 2026-11-04 22:49 CET: Merge main hotspot and needle work into states
+
+### What I did
+
+Merged main at 1ba3f6a into states. Kept main's complete HotKind definition and Hot.id member unchanged, removed the duplicate enum, and mapped all states-only hotspot spellings onto main's names. Kept HOT_LAST_NONCLICKABLE for hit-test boundaries. No additional hotspot enumerators were needed. Resolved the dashboard overlap by preserving the needle point types, endpoints and gauge-center constants from main alongside the states dashboard enums. Retained main's hotspot source/data changes and both branches' diary entries.
+
+Updated work/LEDGER.md with the canonical hotspot names and merge result. Validation passed: ./sr headers --check; ./sr check --all (572/572); rm -rf work followed by ./sr build (Packed EXE vs orig/SR.EXE: IDENTICAL); ./sr dgroup check and order; all 68 unit tests; and ./dosbox.sh --make (DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL). The merged HotKind and Hot definitions were also compared directly with main and match exactly.
+
+### What I learned
+
+Main already covered every hotspot kind proved by the states sweep. Its link-box, list-row and centered-text/header names provide a complete shared vocabulary, so the merge only needed spelling reconciliation and preservation of the independent state/input enums.

@@ -3,6 +3,7 @@
 #ifndef DISK_H
 #define DISK_H
 #include "STRUCTS.H"
+#include "MAIN.H"
 
 struct PicLibSelection {
     int *count;
@@ -52,7 +53,7 @@ struct Bitmap far *di_bm(int id, int mode);           /* 0x15BBE */
 int di_cache_list(int *list);                         /* 0x15C07 */
 int di_load_list(int *list, int n);                   /* 0x15C4A */
 void di_free_list(int *list);                         /* 0x15C95 */
-void di_open_libs(int a, int mode);                   /* 0x15CC3 */
+void di_open_libs(int a, enum VideoChoice mode);                   /* 0x15CC3 */
 void di_load_data(void);                              /* 0x15EF9 */
 int di_data_drive(void);                              /* 0x15FBD */
 void di_load_hall(void);                              /* 0x16089 */

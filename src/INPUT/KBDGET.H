@@ -4,6 +4,12 @@
 #define KBDGET_H
 #include "STRUCTS.H"
 
+#define KEY_NONE 0
+#define ASCII_ENTER 0x0d
+#define ASCII_ESCAPE 0x1b
+#define ASCII_DELETE 0x7f
+#define KEY_FIRE 0x1f
+
 char kg_key(void);                                  /* 0x02DB6 */
 void kg_hook(void);                                 /* 0x02DC3 */
 

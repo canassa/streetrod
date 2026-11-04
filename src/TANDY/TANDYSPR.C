@@ -68,7 +68,7 @@ int ts_step(struct Sprite *s)
     t = blt.h = fr->pos->height - top - g_spriteBottomCut;
     blt.sy = 0;
     u = blt.dy = s->y;
-    if (g_scene != 6) {
+    if (g_scene != SCENE_JAIL) {
         blt.w = fr->pos->width;
         blt.sx = 0;
         blt.dx = s->x;

@@ -36,6 +36,8 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
+#define GAME_MENU_BLOCKED 0x309
+
 static void near free_part(struct Node *p7);
 static int near counter_offer(unsigned *price);
 static int near start_game(void);
@@ -43,7 +45,7 @@ static int near read_paper(void);
 static void near buy_from_ads(int r);
 static int near check_room(void);
 static void near sell_parts(void);
-static int near your_cars(void);
+static enum GarageMode near your_cars(void);
 
 struct Car *g_old = 0;   /* DS:4F46 */
 struct Car *g_new = 0;   /* DS:4F48 */
@@ -57,11 +59,11 @@ int g_paperDay = -1;   /* DS:4F5A */
 
 static int near start_game(void)
 {
-    da_set_view(0);
+    da_set_view(DASH_VIEW_SAVE);
     sy_music_start(2, 10);
     da_intro();
     (*g_videoOps.blank)();
-    da_set_view(1);
+    da_set_view(DASH_VIEW_RESTORE);
     rn_int(-1);
     (*g_videoOps.blank)();
     if (g_loadedIntroBmps == 0)
@@ -182,7 +184,7 @@ int gm_part_value(struct Node *n)
 {
     int r;
 
-    if (g_parts[n->idx].category == 0 && g_parts[n->idx].variant == 0)
+    if (g_parts[n->idx].category == PART_ENGINE && g_parts[n->idx].variant == ENGINE_V6)
         r = 100;
     else
         r = n->value;
@@ -234,7 +236,7 @@ static void near sell_parts(void)
         switch ((int)sel) {
         case KR_CANCEL:
             return;
-        case 0x3ea:
+        case KR_EMPTY_LIST:
             gm_message(tries3 ? 0x0ed7 : 0x0f2a);
             return;
         case KR_ACCEPT:
@@ -246,19 +248,19 @@ static void near sell_parts(void)
         type8 = p7->idx;
         pct = (10000 - p7->wear) / 100;
         switch (g_parts[type8].category) {
-        case 2:
-        case 3:
+        case PART_CARBURETOR:
+        case PART_MANIFOLD:
             rl = rn_int(20);
             price1 = (float)price1 * ((rl + 70) / 100.0);
             break;
-        case 0:
+        case PART_ENGINE:
             ;
-        case 1:
+        case PART_TRANSMISSION:
             cut = price1 * (pct / 100.0) * 0.9;
             price1 -= cut;
             price1 = (unsigned)(price1 * (pct / 100.0) * 0.9) + cut;
             break;
-        case 4:
+        case PART_TIRES:
             price1 = 0;
             break;
         }
@@ -343,26 +345,26 @@ struct Car * near gm_make_car(int idx, int value, struct Car *old)
         if (rn_int(2) == 1)
             break;
     car->paintScheme = i;
-    car->wireState = 1;
+    car->wireState = WIRES_CONNECTED;
     car->timing = rn_int(13) - 8;
     car->transmission = node = (old == 0) ? gm_new_part() : car->transmission;
     w = (g7d86n[idx].parts >> 6) & 3;
     w = (kind = (g7d86n[idx].parts & 0xf) >> 1) + (w == 3) + 3 * w + 9;
     node->idx = w;
     node->value = g_parts[w].value;
-    node->wear = g_partWear[1];
+    node->wear = g_partWear[PART_TRANSMISSION];
     node->next = 0;
     car->rack.parts[0] = node = (old == 0) ? gm_new_part() : car->rack.parts[0];
     w = (g7d86n[idx].parts >> 8 & 7) * 3 + kind;
     node->idx = w;
     node->value = g_parts[w].value;
-    node->wear = g_partWear[0];
+    node->wear = g_partWear[PART_ENGINE];
     node->next = 0;
     car->tires = node = (old == 0) ? gm_new_part() : car->tires;
     w = (g7d86n[idx].parts >> 4 & 3) + 0x28;
     node->idx = w;
     node->value = g_parts[w].value;
-    node->wear = g_partWear[4];
+    node->wear = g_partWear[PART_TIRES];
     node->next = 0;
     car->rack.parts[1] = node = (old == 0) ? gm_new_part() : car->rack.parts[1];
     for (i = 3; i < 9; i++)
@@ -370,7 +372,7 @@ struct Car * near gm_make_car(int idx, int value, struct Car *old)
     w = (i = g7d86n[idx].parts >> 11 & 7) * 3 + kind + 0x19;
     node->idx = w;
     node->value = g_parts[w].value;
-    node->wear = g_partWear[3];
+    node->wear = g_partWear[PART_MANIFOLD];
     node->next = 0;
     w = (g7d86n[idx].parts >> 14 & 3) + 0x16;
     i = g_nCarb[i] - 1;
@@ -380,7 +382,7 @@ struct Car * near gm_make_car(int idx, int value, struct Car *old)
         car->rack.parts[i + 2] = node = (old == 0) ? gm_new_part() : car->rack.parts[i + 2];
         node->idx = w;
         node->value = g_parts[w].value;
-        node->wear = g_partWear[2];
+        node->wear = g_partWear[PART_CARBURETOR];
         node->next = 0;
         car->engineBolts[2 * i + 3] = 3;
         car->engineBolts[2 * i + 4] = 3;
@@ -464,7 +466,7 @@ static void near buy_from_ads(int tab)
     char color;
 
     color = 0;
-    g_scene = 5;
+    g_scene = SCENE_ADVERTS;
     g_list[1] = 0xcd8;
     n = 2;
     i5 = price6 = 0;
@@ -482,7 +484,7 @@ static void near buy_from_ads(int tab)
         }
     }
     g_list[0] = n - 1;
-    av_open(g_list, (tab == 1) ? 2 : 0x1c);
+    av_open(g_list, (tab == KR_PAPER_CARS) ? 2 : 0x1c);
     goto test;
     do {
         used = n >= n0;
@@ -566,7 +568,7 @@ done:
     av_close();
     if (a_7eaap.currentCar)
         ga_palette(a_7eaap.currentCar->paintScheme);
-    g_scene = 0;
+    g_scene = SCENE_NONE;
 }
 
 char *g_offerText = g_msgHowAbout;   /* DS:4FA4 */
@@ -601,14 +603,14 @@ int gm_car_look(struct Car *c)
         r |= 2;
     if (c->appearance & 0x8000)
         r |= 1;
-    if (g_parts[c->rack.parts[0]->idx].variant == 2)
+    if (g_parts[c->rack.parts[0]->idx].variant == ENGINE_V8_LARGE)
         r |= 8;
     return r;
 }
 
 /* your_cars @ 0000:49ED (linear 0x049ED, 1501 bytes) */
 
-static int near your_cars(void)
+static enum GarageMode near your_cars(void)
 {
     struct Bitmap far *pict;
     struct Car *tbl[142];
@@ -639,10 +641,10 @@ static int near your_cars(void)
         }
         g_list[0] = n;
         switch (item = mn_modal_list(KM_YOUR_CARS, (n > item) ? item : n, 0, g_list, 0, 0)) {
-        case 0x3ea:
+        case KR_EMPTY_LIST:
             gm_message(ticks ? 0xee9 : 0xefa);
         case KR_CLOSE_CARS:
-            return 0;
+            return GARAGE_KEEP;
         case KR_SWITCH_CAR:
             g_new = tbl[item = mn_sel()];
             g_old = a_7eaap.currentCar;
@@ -658,7 +660,7 @@ static int near your_cars(void)
                 a_7eaap.currentCar = g_new;
             } else
                 g_new = 0;
-            return 3;
+            return GARAGE_SWAP;
         case KR_SELL_CAR:
             break;
         default:
@@ -779,7 +781,7 @@ void near gm_run(void)
 {
     int again;
     int kind;
-    int v;
+    enum GarageMode v;
     int w;
 
     again = 1;
@@ -792,27 +794,27 @@ void near gm_run(void)
             kind = sg_new();
         else
             kind = sg_load();
-        if (kind == -666) {
-            kind = -1;
+        if (kind == LOAD_ERROR) {
+            kind = LOAD_CANCELLED;
             again = 1;
         }
         if (kind && again)
             continue;
         sc_status_label(g_bankrollLabel);
-        v = 1;
-        if (kind == 0 && w == KR_OLD_GAME && a_7eaap.currentCar)
-            v = 2;
-        if (kind == 0 && w == KR_OLD_GAME)
-            v = 1;
+        v = GARAGE_DRIVE_IN;
+        if (kind == LOAD_OK && w == KR_OLD_GAME && a_7eaap.currentCar)
+            v = GARAGE_REDRAW;
+        if (kind == LOAD_OK && w == KR_OLD_GAME)
+            v = GARAGE_DRIVE_IN;
         if (w == KR_NEW_GAME && a_7eaap.carCount <= 15 && a_7eaap.partCount <= 130) {
             kind = read_paper();
-            if (kind == 2 || kind == 1)
+            if (kind == KR_PAPER_PARTS || kind == KR_PAPER_CARS)
                 buy_from_ads(kind);
         }
         again = 0;
         while ((kind = ga_menu(v)) != 0) {
             mu_suspend(0);
-            if (kind == 0x29a) {
+            if (kind == GARAGE_GAME_ENDED) {
                 if (g_end == 1)
                     da_time_up();
                 fa_show(g_end & 2);
@@ -820,81 +822,81 @@ void near gm_run(void)
                 g_end = 0;
                 again = 1;
                 kind = fa_end_menu();
-                if (kind != KR_LOAD_GAME && kind != KR_NEW_GAME && kind == 4)
+                if (kind != KR_LOAD_GAME && kind != KR_NEW_GAME && kind == KR_END_QUIT)
                     return;
                 cu_ctl(CURSOR_SHOW_NOW);
                 g_4f4a = 0;
                 break;
             }
-            v = 2;
+            v = GARAGE_REDRAW;
             switch (kind) {
-            case 1:
+            case KR_GAR_NEWSPAPER:
                 if (check_room())
-                    v = 0;
+                    v = GARAGE_KEEP;
                 else {
                     if (a_7eaap.currentCar == 0)
-                        v = 1;
+                        v = GARAGE_DRIVE_IN;
                     kind = read_paper();
-                    if (kind == 2 || kind == 1)
+                    if (kind == KR_PAPER_PARTS || kind == KR_PAPER_CARS)
                         buy_from_ads(kind);
                     if (a_7eaap.currentCar == 0)
-                        v = 2;
+                        v = GARAGE_REDRAW;
                     if (a_7eaap.currentCar == 0 && a_7eaap.otherCars)
-                        v = 1;
+                        v = GARAGE_DRIVE_IN;
                     g_gameClock.actionTicks += 0x222;
                 }
                 continue;
-            case 2:
-            case 15:
+            case KR_GAR_STREET:
+            case KR_GAR_TANK:
                 if (check_room()) {
-                    v = 0;
+                    v = GARAGE_KEEP;
                     continue;
                 }
                 if (a_7eaap.currentCar) {
                     if (ga_ready(a_7eaap.currentCar, 1)) {
                         pf_drivetrain(a_7eaap.currentCar, &g_driveEng);
-                        if (kind == 2) {
+                        if (kind == KR_GAR_STREET) {
                             if (a_7eaap.currentCar->fuel < 9) {
                                 gm_message(0x172e);
-                                v = 0;
+                                v = GARAGE_KEEP;
                                 continue;
                             }
-                            g_scene = 2;
+                            g_scene = SCENE_BOBS;
                             cr_go();
                             g_gameClock.actionTicks += 0x222;
                             bo_visit();
                         } else {
                             if (a_7eaap.currentCar->fuel >= 0x8c) {
                                 gm_message(0x19b1);
-                                v = 0;
+                                v = GARAGE_KEEP;
                                 continue;
                             }
                             if (a_7eaap.money == 0) {
                                 gm_message(0x199f);
-                                v = 0;
+                                v = GARAGE_KEEP;
                                 continue;
                             }
-                            g_scene = 3;
+                            g_scene = SCENE_GAS_STATION;
                             cr_go();
                             g_gameClock.actionTicks += 0x222;
                             ra_gas_station();
                         }
                         g_gameClock.actionTicks += 0x222;
-                        v = 1;
+                        v = GARAGE_DRIVE_IN;
                     } else {
                         gm_message(0x0e7f);
-                        v = 0;
+                        v = GARAGE_KEEP;
                     }
                 } else {
                     if (a_7eaap.otherCars)
                         gm_message(0x0f16);
                     else
                         gm_message(0x0efa);
-                    v = 0;
+                    v = GARAGE_KEEP;
                 }
                 continue;
-            case 4:
-                v = 0;
+            case KR_GAR_QUIT:
+                v = GARAGE_KEEP;
                 switch (kind = sg_menu()) {
                 case KR_QUIT:
                     return;
@@ -903,71 +905,71 @@ void near gm_run(void)
                     continue;
                 case KR_SAVE_GAME:
                     if (check_room()) {
-                        v = 0;
-                        kind = 0x309;
+                        v = GARAGE_KEEP;
+                        kind = GAME_MENU_BLOCKED;
                     } else {
                         sg_save();
-                        v = 2;
+                        v = GARAGE_REDRAW;
                         if (a_7eaap.currentCar == 0 && a_7eaap.otherCars)
-                            v = 1;
+                            v = GARAGE_DRIVE_IN;
                         continue;
                     }
                 case KR_OLD_GAME:
                 case KR_NEW_GAME:
                 default:
-                    if (kind == 0x309)
+                    if (kind == GAME_MENU_BLOCKED)
                         continue;
                 }
                 break;
-            case 5:
+            case KR_GAR_SELL_PARTS:
                 sell_parts();
-                v = 0;
+                v = GARAGE_KEEP;
                 continue;
-            case 6:
+            case KR_GAR_CARS:
                 v = your_cars();
                 continue;
-            case 7:
+            case KR_GAR_PAINT:
                 ga_paint();
-                v = 0;
+                v = GARAGE_KEEP;
                 continue;
-            case 8:
+            case KR_GAR_TIRES:
                 ga_tires();
-                v = 0;
+                v = GARAGE_KEEP;
                 continue;
-            case 9:
+            case KR_GAR_TRANSMISSION:
                 ga_transmission();
                 continue;
-            case 10:
+            case KR_GAR_HOOD:
                 ma_release();
                 ga_hood(a_7eaap.currentCar);
                 continue;
-            case 13:
+            case KR_GAR_ROOF:
                 ga_body(4);
-                v = 0;
+                v = GARAGE_KEEP;
                 continue;
-            case 11:
+            case KR_GAR_REAR_BUMPER:
                 ga_body(2);
-                v = 0;
+                v = GARAGE_KEEP;
                 continue;
-            case 12:
+            case KR_GAR_FRONT_BUMPER:
                 ga_body(1);
-                v = 0;
+                v = GARAGE_KEEP;
                 continue;
-            case 14:
+            case KR_GAR_STICKERS:
                 ga_stickers();
-                v = 0;
+                v = GARAGE_KEEP;
                 continue;
-            case 3:
+            case KR_GAR_CALENDAR:
                 ga_calendar(0);
-                v = 0;
+                v = GARAGE_KEEP;
                 continue;
-            case 16:
+            case KR_GAR_CAR_INFO:
                 ga_info();
-                v = 0;
+                v = GARAGE_KEEP;
                 continue;
-            case 17:
+            case KR_GAR_DRINK:
                 gm_message(0x18f6);
-                v = 0;
+                v = GARAGE_KEEP;
                 continue;
             case KR_MUSIC:
                 if (g_musicOn) {
@@ -977,7 +979,7 @@ void near gm_run(void)
                     g_musicOn = 1;
                     sy_music_resume();
                 }
-                v = 0;
+                v = GARAGE_KEEP;
                 continue;
             }
             break;
