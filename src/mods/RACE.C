@@ -104,11 +104,7 @@ static void near sort_gas_spots(void)
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int g_finishMeanSpeedVal;
 char g_failureTire;
-int g_hasGlassRear;
-int g_backGlassXState;
-int g_winRearPointY;
-int g_gasCapXVal;
-int g_gasCapYValue;
+struct BodyPoints g_featurePos; /* DS:8264 */
 int g_steeringOld;
 int dz82c8x;
 int g_finishAheadPlayerState;
@@ -155,7 +151,7 @@ static void near spots_idle(void)
 static void near spots_cap(void)
 {
     clear_gas_spots();
-    place_gas_spot(4, g_gasCapXVal - 10, g_gasCapYValue - 5, 18, 12);
+    place_gas_spot(4, g_featurePos.gasCapX - 10, g_featurePos.gasCapY - 5, 18, 12);
     sort_gas_spots();
     g_tankCapIsActive = 1;
 }
@@ -166,7 +162,7 @@ static void near spots_nozzle(void)
 {
     clear_gas_spots();
     place_gas_spot(2, 0x34, 100, 16, 23);
-    place_gas_spot(4, g_gasCapXVal - 1, g_gasCapYValue - 1, 10, 9);
+    place_gas_spot(4, g_featurePos.gasCapX - 1, g_featurePos.gasCapY - 1, 10, 9);
     sort_gas_spots();
     g_pumpOnState = 1;
     g_tankCapIsActive = 1;
@@ -177,9 +173,9 @@ static void near spots_nozzle(void)
 static void near spots_rag(void)
 {
     clear_gas_spots();
-    if (g_hasGlassRear)
-        place_gas_spot(6, g_backGlassXState, g_winRearPointY, 20, 19);
-    place_gas_spot(5, g_frntWindscreenX, g_frontWinPositionYVal, 22, 19);
+    if (g_featurePos.hasRearGlass)
+        place_gas_spot(6, g_featurePos.rearGlassX, g_featurePos.rearGlassY, 20, 19);
+    place_gas_spot(5, g_featurePos.frontGlassX, g_featurePos.frontGlassY, 22, 19);
     place_gas_spot(1, 0x3e, 0xa5, 0x35, 18);
     place_gas_spot(3, 0xc4, 0x5a, 16, 14);
     sort_gas_spots();
@@ -212,10 +208,10 @@ static void near show_tank_cap(struct Dlg *d, int id)
     box.w = label->width;
     box.h = box.fc = label->height;
     box.sx = box.sy = 0;
-    box.dx = (~r_vid.mask & g_gasCapXVal) - box.w + 24;
+    box.dx = (~r_vid.mask & g_featurePos.gasCapX) - box.w + 24;
     box.dy = 12 - label->height;
     bitmap_draw_masked(label, work, &box, 0);
-    popup_show(work, g_gasCapXVal - 16, g_gasCapYValue - 5);
+    popup_show(work, g_featurePos.gasCapX - 16, g_featurePos.gasCapY - 5);
     F_19438(2);
 }
 
@@ -279,10 +275,10 @@ void race_gas_station(void)
             g_whlPic[g_part[a_7eaap.currentCar->tires->idx].variant]);
     F_16381(0);
     label = popup_grab(0x50, 0xaa, 0x28, 0xc, 0);
-    dl.bm1 = popup_grab(g_gasCapXVal - 0x10, g_gasCapYValue - 5, 0x18, 0xc, 0);
+    dl.bm1 = popup_grab(g_featurePos.gasCapX - 0x10, g_featurePos.gasCapY - 5, 0x18, 0xc, 0);
     r_vid.copyToFront = 0;
     popup_show(g_pumpNoNozzle, 0x40, 0x64);
-    dl.bm2 = popup_grab(g_gasCapXVal - 0x10, g_gasCapYValue - 5, 0x18, 0xc, 0);
+    dl.bm2 = popup_grab(g_featurePos.gasCapX - 0x10, g_featurePos.gasCapY - 5, 0x18, 0xc, 0);
     popup_show(g_pumpWithNozzle, 0x40, 0x64);
     r_vid.copyToFront = 1;
     pos = 1;

@@ -179,6 +179,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **StatusText** (`g_statusLine`, DS:824C..8259): a natural, byte-identical reconstruction choice; separate globals also match.
 
+- **BodyPoints** (`g_featurePos`, DS:8264..8271): a natural, byte-identical reconstruction choice; separate globals also match.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only

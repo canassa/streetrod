@@ -320,13 +320,13 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
     p12 = &g_layoutAutoSprArray[idx];
     p69 = &g_pointsModelService[idx];
     *out = F_15BBE(g7d86n[idx].bodyPic, ARENA_LOW_STACK);
-    g_gasCapXVal = p69->fuelCapX;
-    g_gasCapYValue = p69->fuelCapY;
-    g_backGlassXState = p69->rearGlassX;
-    g_winRearPointY = p69->rearGlassY;
-    g_hasGlassRear = p69->rearGlassX && p69->rearGlassY;
-    g_frntWindscreenX = p69->frontGlassX;
-    g_frontWinPositionYVal = p69->frontGlassY;
+    g_featurePos.gasCapX = p69->fuelCapX;
+    g_featurePos.gasCapY = p69->fuelCapY;
+    g_featurePos.rearGlassX = p69->rearGlassX;
+    g_featurePos.rearGlassY = p69->rearGlassY;
+    g_featurePos.hasRearGlass = p69->rearGlassX && p69->rearGlassY;
+    g_featurePos.frontGlassX = p69->frontGlassX;
+    g_featurePos.frontGlassY = p69->frontGlassY;
     m_8272.stickerSubX = ~r_vid.mask & p12->stickerX;
     m_8272.stickerX = r_vid.mask & p12->stickerX;
     m_8272.stickerY = p12->stickerY;
@@ -513,14 +513,14 @@ again:
     ac825et = x0;
     aw8260y = bot - bms6[0]->height + 1;
     g_carVisibleHtValue = bms6[0]->height - g_spriteBottomCut;
-    if (g_frntWindscreenX > 0) {
-        g_frntWindscreenX += x0;
-        g_frontWinPositionYVal += aw8260y;
-        g_backGlassXState += x0;
-        g_winRearPointY += aw8260y;
+    if (g_featurePos.frontGlassX > 0) {
+        g_featurePos.frontGlassX += x0;
+        g_featurePos.frontGlassY += aw8260y;
+        g_featurePos.rearGlassX += x0;
+        g_featurePos.rearGlassY += aw8260y;
     }
-    g_gasCapXVal += x0;
-    g_gasCapYValue += aw8260y;
+    g_featurePos.gasCapX += x0;
+    g_featurePos.gasCapY += aw8260y;
     m_8272.stickerX += x0;
     m_8272.stickerY += aw8260y;
     ang2 = (kind == 1 || kind == 4) ? x0 - right : x0;
@@ -598,8 +598,8 @@ again:
         scratch = arena_bm(0x18, 7, 0, ARENA_HIGH_STACK);
         blt.w = 0x10;
         blt.h = scratch->height;
-        blt.sx = g_gasCapXVal - ac825et;
-        blt.sy = g_gasCapYValue - aw8260y;
+        blt.sx = g_featurePos.gasCapX - ac825et;
+        blt.sy = g_featurePos.gasCapY - aw8260y;
         blt.dx = blt.dy = 0;
         (*g_videoOps.copy)(bms6[0], scratch, &blt, 1);
         bitmap_draw_pic(bms6[0], 0x472, (char)blt.sx, (char)blt.sy, 0);

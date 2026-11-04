@@ -4,6 +4,8 @@
 #define RACE_H
 #include "STRUCTS.H"
 
+extern struct BodyPoints g_featurePos; /* DS:8264 */
+
 extern int g_gasSpotIds[];                              /* DS:53B6 */
 extern int g_winMsgs[];                                 /* DS:53C8 */
 extern struct Spot g_crashPics[];                       /* DS:53D4 */
@@ -25,11 +27,6 @@ extern int ap7d7cv;                                     /* DS:7D7C */
 extern int g_ramAllowed;                                      /* DS:7D7E */
 extern int g_leftEdgeX;                                      /* DS:7D82 */
 extern int a_7f88d;                                     /* DS:7F88 */
-extern int g_hasGlassRear;                                      /* DS:8264 */
-extern int g_backGlassXState;                                      /* DS:826A */
-extern int g_winRearPointY;                                     /* DS:826C */
-extern int g_gasCapXVal;                                      /* DS:826E */
-extern int g_gasCapYValue;                                      /* DS:8270 */
 extern int g_steeringOld;                                      /* DS:82C2 */
 extern int dz82c8x;                                     /* DS:82C8 */
 extern int bz8630z;                                     /* DS:8630 */

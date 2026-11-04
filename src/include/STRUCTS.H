@@ -686,4 +686,14 @@ struct StatusText {
     int shown;
     int valueX;
 };
+
+struct BodyPoints {
+    int hasRearGlass;
+    int frontGlassX;
+    int frontGlassY;
+    int rearGlassX;
+    int rearGlassY;
+    int gasCapX;
+    int gasCapY;
+};
 #endif

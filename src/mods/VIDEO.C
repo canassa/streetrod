@@ -12,6 +12,7 @@
 #include "MAIN.H"
 #include "MENU.H"
 #include "PC.H"
+#include "RACE.H"
 #include "SCRATCH.H"
 #include "SCREENS.H"
 #include "SOUND.H"
@@ -34,8 +35,6 @@ struct Style *bustyle;
 struct Bitmap far *g_autoSprImagePtr;
 int ac825et;
 int aw8260y;
-int g_frntWindscreenX;
-int g_frontWinPositionYVal;
 
 struct Style g_style16 = {{{0, 0, 0, 0, 0}, {13, 9, 9, 15, 1}, {9, 13, 13, 15, 1}, {1, 5, 5, 1, 1}, {1, 5, 5, 4, 1}, {15, 9, 9, 15, 1}, {14, 15, 15, 10, 1}}, {1, 4, 4, 1, 1}, {1, 3, 3, 4, 2}, {15, 9, 9, 15, 1}, {13, 9, 9, 15, 1}, {11, 2, 2, 11, 1}, {1, 4, 4, 11, 1}, {1, 4, 4, 1, 1}, {1, 4, 4, 1, 1}, {1, 3, 3, 4, 1}};   /* DS:03A0 */
 struct Style g_style4 = {{{0, 0, 0, 0, 0}, {1, 2, 2, 3, 1}, {2, 1, 1, 3, 1}, {0, 3, 3, 0, 1}, {0, 3, 3, 2, 1}, {3, 2, 2, 3, 1}, {2, 1, 1, 1, 1}}, {0, 3, 3, 0, 1}, {0, 3, 3, 2, 2}, {3, 2, 2, 3, 1}, {1, 2, 2, 3, 1}, {0, 2, 2, 0, 1}, {0, 3, 3, 1, 1}, {0, 3, 3, 0, 1}, {0, 3, 3, 0, 1}, {1, 2, 2, 3, 1}};   /* DS:03F0 */
@@ -121,7 +120,7 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
         break;
     }
     x_colors = bustyle->pal[1];
-    g_frntWindscreenX = g_frontWinPositionYVal = -1;
+    g_featurePos.frontGlassX = g_featurePos.frontGlassY = -1;
     i = 5;
     do {
         i--;
