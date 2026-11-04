@@ -10,7 +10,7 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 - **Packing:** Microsoft EXEPACK. `orig/SR_unpacked.EXE` is the unpacked image and is what every tool reads.
 - **Addresses** are linear offsets into the load image (file offset minus the `0x22D0` header). `seg:off` is the segment value the callers use.
 - **Size:** 719 real functions: 509 game C, 63 game asm, and 147 MSC runtime entries (`kind = crt`, `status = skip`, never reconstructed).
-- **Hand-written asm:** line drawing, unrolled sprite blitters, video helpers, and small register-saving helpers. They are rebuilt with MASM 5.1 (`toolchain/masm51`, same 1988 release as the compiler) from `src/mods/M_xxxxx.ASM`.
+- **Hand-written asm:** line drawing, unrolled sprite blitters, video helpers, and small register-saving helpers. They are rebuilt with MASM 5.1 (`toolchain/masm51`, same 1988 release as the compiler) from the `.ASM` files of `src/mods/`.
 
 ## The `sr` CLI
 
@@ -91,7 +91,7 @@ ranges are `dgroup.DATA_UNITS`). A code file's extent in the image is the span o
 functions whose `src` it is (`module.files()`). The 55 C files and 25 MASM files hold
 their functions in address order: includes, the file-scope statics and `static ... near`
 forward declarations, then each function with its comment, initialized data before the
-function whose literals precede it. Names are `M_<first addr>` until the real file name is known.
+function whose literals precede it. Each file is named for what the module is (GARAGE.C, DISK.C); M_02B9A.ASM keeps its address name until its identity is known.
 
 - **One command line per file:** its MAKEFILE block. A C file's line ends in
   `/NT S<region>_TEXT` (the code segment shared by near interfaces, a placeholder name: the
@@ -235,7 +235,7 @@ Never redirect a DOS program's output to a file without a timeout and a size bou
 | `dist/` | Downloads as fetched (freeware zip, archive.org, The Good Old Days image) |
 | `toolchain/msc51/` | MSC 5.1 `BIN`, `INCLUDE`, `LIB`, plus the original disk images |
 | `toolchain/masm51/` | MASM 5.1 `BIN`, `INCLUDE`, docs, plus the original disk images (`F:` in DOSBox) |
-| `src/mods/` | One source file per original object (`M_xxxxx.C` / `.ASM`, 8.3 names), plus the data-only HOTSPOT.C, MESSAGES.ASM, SCENERY.C, SCENERY2.C |
+| `src/mods/` | One source file per original object (8.3 names for what each module is, e.g. GARAGE.C, CGALINE.ASM), plus the data-only HOTSPOT.C, MESSAGES.ASM, SCENERY.C, SCENERY2.C |
 | `src/MAKEFILE`, `src/SR.LNK` | The build: one block per object with its command line (MSC MAKE 4.07), the LINK response file (link order) |
 | `src/include/` | per-file headers (maintained by `./sr headers`), `STRUCTS.H` (hand-written); `/IINCLUDE` in the MAKEFILE |
 | `tools/sr/` | The CLI |

@@ -9,23 +9,32 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 ## Names
 
-- **Functions and globals.** `F_xxxxx` and `g_xxxx` are addresses. Names such as `main`,
-  `random_int` and `cgadrv_blit_rect` describe behaviour; only the runtime's names (`./sr crtnames`)
-  come from a library.
+- **Functions and globals.** `F_xxxxx` and `g_xxxx` are addresses. The other names
+  (`garage_day`, `sys_wait_input`, `g_lib1Name`, ...) were given from what the code does
+  (values read and written, callers, strings, ports, data), following CLAUDE.md's naming
+  conventions; they describe behaviour and are not the original identifiers. Only the
+  runtime's names (`./sr crtnames`) come from a library. Name lengths are not free: MSC's
+  external-symbol budget (CLAUDE.md 4d) counts them, so GARAGE.C and VIEW.C keep
+  placeholders for most of the symbols they use, and some public names are shorter than
+  they would otherwise be (VIEW.C rather than ROADVIEW.C, `hide_spots`).
 - **Communal storage** (DS:6E60..8F02, the far communals of `SLOTS.C`) and **file statics**
   (DS:6C22..6E2C). These names are made up, but chosen so that LINK's symbol hash
   (communals) and MSC's static-ordering key (statics) put every block at its original
   address (CLAUDE.md 4e/4f). The constraint fixes each name's hash bucket, not the name.
-  Placeholders of the same length were kept where possible.
+  Placeholders of the same length were kept where possible. Where a descriptive name
+  was found that keeps the bucket or key order (`./sr fit`), it replaced the placeholder;
+  its spelling (`g_drawnMinX`, `g_sprPageRing`) was picked to fit.
 - **Local variables.** MSC's slot order depends on a hash of the names (CLAUDE.md 3).
   Names with digit suffixes come from `./sr layout -w` and only reproduce the frame.
 - **Struct types and members** (`src/include/STRUCTS.H`). The sizes and offsets come from
   the code. Tags and member names are invented. A member that no code touches is padding
   (`pad`, `fNN`).
-- **Files.** `M_<first address>.C/.ASM`, plus HOTSPOT.C, MESSAGES.ASM, SCENERY.C and
-  SCENERY2.C for the data-only units and the `src/data/` names. These are labels for
-  recovered objects: a file boundary is evidence, its name is not (a source path only
-  changes an object's THEADR record).
+- **Files.** Each object's file is named for what its code does (GARAGE.C, DISK.C,
+  CGABLT.C, ...); SCENERY.C/SCENERY2.C and the `src/data/` names likewise describe their
+  data. These are labels for recovered objects: a file boundary is evidence, its name is
+  not (a source path only changes an object's THEADR record). M_02B9A.ASM keeps its
+  address name: its data is the input state, its code four uncalled BIOS video-mode
+  helpers, and neither decides what the original file was.
 - **Code segments** `S<region>_TEXT` (`/NT` in the MAKEFILE, `.CODE` in assembler files).
   Which objects share a segment is recovered; the name is the segment's paragraph.
 - **Assembler labels.** `PROC` names are the functions' names. Local labels are made up
