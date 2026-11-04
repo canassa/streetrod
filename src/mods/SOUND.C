@@ -5,6 +5,7 @@
 #include "EFFECTS.H"
 #include "MUSIC.H"
 #include "M_02B9A.H"
+#include "PC.H"
 #include "RANDOM.H"
 #include "SONG.H"
 #include "SPEAKER.H"
@@ -47,11 +48,11 @@ int sound_calibrate(int n)
 
     count = 0;
     g_delayScale = 0x100;
-    tick = *(long far *)0x46cL;
-    while (tick == *(long far *)0x46cL)
+    tick = *BIOS_TICKS;
+    while (tick == *BIOS_TICKS)
         ;
-    tick = *(long far *)0x46cL;
-    while (tick == *(long far *)0x46cL) {
+    tick = *BIOS_TICKS;
+    while (tick == *BIOS_TICKS) {
         speaker_delay(n);
         count++;
     }

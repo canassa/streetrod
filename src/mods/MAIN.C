@@ -14,12 +14,15 @@
 #include "HERCGFX.H"
 #include "MEM.H"
 #include "MEMSTR.H"
+#include "PC.H"
 #include "SCREENS.H"
 #include "SOUND.H"
 #include "SYS.H"
 #include "TANDY.H"
 #include "VIDDET.H"
 #include "VIDEO.H"
+
+#define TANDY_SCREEN1_BITS ((char far *)0x90000000L)
 
 static void near dos_print(char *s);
 static int near is_vga(void);
@@ -159,8 +162,8 @@ static int near choose_video(int mode)
         mode = 1;
     if (herc)
         mode = 4;
-    if (memstr_find("Tandy", (char far *)0xF0000000L, 0xffff) ||
-        memstr_find("TANDY", (char far *)0xF0000000L, 0xffff))
+    if (memstr_find("Tandy", BIOS_ROM, 0xffff) ||
+        memstr_find("TANDY", BIOS_ROM, 0xffff))
         mode = 5;
     if (is_vga())
         mode = 3;
@@ -185,18 +188,18 @@ static void near init_screens(int mode)
         g_vga = 1;
     case 2:
         r_vid.mode = -2;
-        *(unsigned char far *)0x410L &= 0xcf;
-        *(unsigned char far *)0x410L |= 0x20;
+        *BIOS_EQUIP &= 0xcf;
+        *BIOS_EQUIP |= 0x20;
         ega_install();
         return;
     case 5:
         r_vid.mode = g_screens[0].flags = 0xfa;
         tandy_install();
-        g_screens[0].bits.p = r_vid.mode == -4 ? (char far *)0xb0000000L : (char far *)0xb8000000L;
+        g_screens[0].bits.p = r_vid.mode == -4 ? MONO_VRAM : CGA_VRAM;
         g_screens[0].planesize = g_screens[1].planesize = g_screens[2].planesize = 0x8000;
         g_screens[0].pitch = g_screens[1].pitch = g_screens[2].pitch = 0xa0;
         g_screens[1].flags = g_screens[2].flags = 0xfa;
-        g_screens[1].bits.p = (char far *)0x90000000L;
+        g_screens[1].bits.p = TANDY_SCREEN1_BITS;
         g_screens[2].bits.p = mem_alloc(0x8000, 1);
         dash_fmemset(g_screens[1].bits.p, 0, 0x8000);
         dash_fmemset(g_screens[2].bits.p, 0, 0x8000);
@@ -210,12 +213,12 @@ static void near init_screens(int mode)
         break;
     case 6:
         g_screens[0].flags = 0xfd;
-        *(unsigned char far *)0x410L &= 0xcf;
-        *(unsigned char far *)0x410L |= 0x20;
+        *BIOS_EQUIP &= 0xcf;
+        *BIOS_EQUIP |= 0x20;
         break;
     }
     cga_install();
-    g_screens[0].bits.p = r_vid.mode == -4 ? (char far *)0xb0000000L : (char far *)0xb8000000L;
+    g_screens[0].bits.p = r_vid.mode == -4 ? MONO_VRAM : CGA_VRAM;
     g_screens[0].planesize = g_screens[1].planesize = 0x4000;
     g_screens[0].pitch = g_screens[1].pitch = 0x50;
     g_screens[1].flags = 0xfd;
@@ -242,8 +245,8 @@ static void near set_video_mode(int mode)
         break;
     case 4:
         hercgfx_set_mode();
-        p = r_vid.mode == -4 ? (int far *)0xb0000000L : (int far *)0xb8000000L;
-        while (p < (int far *)((r_vid.mode == -4 ? 0xb0000000L : 0xb8000000L) + 0x8000L))
+        p = r_vid.mode == -4 ? (int far *)MONO_VRAM : (int far *)CGA_VRAM;
+        while (p < (int far *)((r_vid.mode == -4 ? (long)MONO_VRAM : (long)CGA_VRAM) + 0x8000L))
             *p++ = 0;
         outp(0x3b8, 0x2a);
         g_0046 = 1;
@@ -266,11 +269,11 @@ static int near cpu_speed(void)
     long prev;
 
     count = 0;
-    prev = *(long far *)0x0000046cL;
-    while (prev == *(long far *)0x0000046cL)
+    prev = *BIOS_TICKS;
+    while (prev == *BIOS_TICKS)
         ;
-    prev = *(long far *)0x0000046cL;
-    while (prev == *(long far *)0x0000046cL)
+    prev = *BIOS_TICKS;
+    while (prev == *BIOS_TICKS)
         count++;
     count /= 95;
     count /= 10;

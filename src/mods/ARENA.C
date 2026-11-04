@@ -3,6 +3,8 @@
 #include "MAIN.H"
 #include "MEM.H"
 
+#define ARENA_FIXED_BASE ((char far *)0x80000000L)
+
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static char far *g_arenaBase;                   /* DS:6CD0 */
 
@@ -27,7 +29,7 @@ void arena_reset(void)
 void arena_init(void)
 {
     if (r_vid.mode == -6)
-        g_arenaBase = (char far *)0x80000000L;
+        g_arenaBase = ARENA_FIXED_BASE;
     else
         g_arenaBase = mem_alloc(0xfde8, 1);
     arena_reset();

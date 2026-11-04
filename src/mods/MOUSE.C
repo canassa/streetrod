@@ -2,6 +2,7 @@
 #include "STRUCTS.H"
 #include "MOUSE.H"
 #include "M_02B9A.H"
+#include "PC.H"
 #include "SYS.H"
 
 /* mouse_reset @ 0F38:799A (linear 0x16D1A, 61 bytes)
@@ -12,7 +13,7 @@ int mouse_reset(void)
 {
     union REGS r;
 
-    if (*(long far *)0xccL == 0L)
+    if (*MOUSE_VECTOR == 0L)
         return 0;
     r.h.ah = 0;
     r.h.al = 0;

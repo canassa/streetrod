@@ -11,6 +11,8 @@
 #include "MEM.H"
 #include "M_02B9A.H"
 
+#define CURSOR_EGA_SAVE ((char far *)0xa0001f40L)
+
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 void (far *ap78b2z)(char far *, char far *, char far *, char far *, int, int, int, int);
 struct Cursor g_cursor2;
@@ -48,7 +50,7 @@ void cursor_init(void)
     mem->bits.p = (char far *)mem + 0x30;
     img = mem_new_bitmap(0x18 << r_vid.shift, 0x40, 1, -1, mem);
     g_cursor2.save = (struct Bitmap far *)(img->alt.p + bytes);
-    mem_set_bitmap(g_cursor2.save, r_vid.mode == -2 ? (char far *)0xa0001f40L : (char far *)(g_cursor2.save + 1), 0L,
+    mem_set_bitmap(g_cursor2.save, r_vid.mode == -2 ? CURSOR_EGA_SAVE : (char far *)(g_cursor2.save + 1), 0L,
             (0x18 >> r_vid.shift) << r_vid.shift, 0x10, r_vid.mode == -2 ? -2 : -1);
     memset(&g_cursor2.clip, 0, 12);
     g_cursor2.state = 0;

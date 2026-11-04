@@ -13,6 +13,9 @@
 #include "SYS.H"
 #include "VIEW.H"
 
+#define EGA_PAGE1_BITS ((char far *)0xa2000000L)
+#define EGA_PAGE2_BITS ((char far *)0xa4000000L)
+
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_buildX;                       /* DS:6DFE */
 static int g_buildEntry;                         /* DS:6E00 */
@@ -35,8 +38,8 @@ int g_hillDipProfile[38] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, 
 int g_bumpProfile[17] = {1, 2, 3, 3, 3, 2, 1, 0, 0, 0, -1, -2, -3, -3, -3, -2, -1};   /* DS:5C98 */
 int g_layoutLen = 12;   /* DS:5CBA */
 int g_roadLayouts[10][12] = {{2, 3, 1, 7, 4, 10, 5, 8, 6, 2, 9, 1}, {11, 4, 8, 1, 6, 9, 2, 5, 7, 2, 3, 1}, {1, 5, 1, 3, 8, 11, 6, 7, 2, 4, 9, 1}, {3, 1, 4, 9, 2, 6, 8, 1, 3, 8, 10, 2}, {10, 9, 5, 1, 6, 2, 3, 7, 4, 2, 8, 2}, {2, 3, 8, 10, 5, 11, 4, 7, 1, 6, 9, 2}, {1, 5, 9, 1, 4, 2, 3, 10, 8, 4, 1, 9}, {2, 4, 7, 11, 2, 5, 8, 4, 1, 7, 6, 2}, {2, 6, 8, 10, 6, 1, 3, 7, 5, 1, 4, 9}, {1, 3, 1, 6, 1, 4, 9, 10, 6, 8, 2, 3}};   /* DS:5CBC */
-struct Bitmap g_egaPage1 = {320, 200, 8000, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0}, {(char far *)0xA2000000L}, {0}, 40, -2};   /* DS:5DAC */
-struct Bitmap g_egaPage2 = {320, 200, 8000, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0}, {(char far *)0xA4000000L}, {0}, 40, -2};   /* DS:5DDC */
+struct Bitmap g_egaPage1 = {320, 200, 8000, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0}, {EGA_PAGE1_BITS}, {0}, 40, -2};   /* DS:5DAC */
+struct Bitmap g_egaPage2 = {320, 200, 8000, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0}, {EGA_PAGE2_BITS}, {0}, 40, -2};   /* DS:5DDC */
 int g_roadLayout = 0;   /* DS:5E0C */
 int g_onShoulder = 0;   /* DS:5E0E */
 int g_turnRight = 0;   /* DS:5E10 */
