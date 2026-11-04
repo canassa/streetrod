@@ -236,8 +236,8 @@ void F_1B213(int *a, int *b)
     g_6d28agz = F_1934E(g_liftPics[1]->width, 0xba - g_spriteBgY, 0, 1);
     popup_grab(r_vid.mask & 0x88, g_spriteBgY, g_liftPics[1]->width, 0xba - g_spriteBgY, g_6d28agz);
     carpic_build(&g_liftCar, modelm, attr3, tinto, 0, 0, 0, 1);
-    g_6dd4 = g7682n[modelm].b0;
-    g_wheelX2Value = g7682n[modelm].b1;
+    g_6dd4 = g7682n[modelm].wheelX1;
+    g_wheelX2Value = g7682n[modelm].wheelX2;
     blt.w = g_liftCar->width;
     blt.h = 0x1c;
     blt.sx = 0;

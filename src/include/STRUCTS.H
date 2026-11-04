@@ -490,12 +490,12 @@ struct Panel {
 
 /* 12-byte table entry (g7682n[]), read as bytes by carpic_build */
 struct Spr12 {
-    unsigned char b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11;
+    unsigned char wheelX1, wheelX2, b2, b3, roofX, b5, b6, frontBumperY, rearBumperX, rearBumperY, paintX, paintY;
 };
 
 /* 6-byte table entry (ap818c[]) */
 struct Spr6 {
-    unsigned char b0, b1, b2, b3, b4, b5;
+    unsigned char fuelCapX, fuelCapY, rearGlassX, rearGlassY, frontGlassX, frontGlassY;
 };
 
 /* 6-byte table entry (a784als[]): bitmap id, then the (dx, dy) offset it is drawn at */

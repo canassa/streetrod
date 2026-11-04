@@ -276,22 +276,22 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
     p12 = &g7682n[idx];
     p69 = &ap818c[idx];
     *out = F_15BBE(g7d86n[idx].bodyPic, 1);
-    ar826e = p69->b0;
-    q_8270 = p69->b1;
-    g_backGlassXState = p69->b2;
-    ae826cv = p69->b3;
-    h_8264 = p69->b2 && p69->b3;
-    d_8266 = p69->b4;
-    ap8268t = p69->b5;
-    m_8272.m8276 = ~r_vid.mask & p12->b10;
-    m_8272.m8272 = r_vid.mask & p12->b10;
-    m_8272.m8274 = p12->b11;
+    ar826e = p69->fuelCapX;
+    q_8270 = p69->fuelCapY;
+    g_backGlassXState = p69->rearGlassX;
+    ae826cv = p69->rearGlassY;
+    h_8264 = p69->rearGlassX && p69->rearGlassY;
+    d_8266 = p69->frontGlassX;
+    ap8268t = p69->frontGlassY;
+    m_8272.m8276 = ~r_vid.mask & p12->paintX;
+    m_8272.m8272 = r_vid.mask & p12->paintX;
+    m_8272.m8274 = p12->paintY;
     if (flags & 2)
-        bitmap_put_pic(*out, m2->frontBumperPic, 0, p12->b7);
+        bitmap_put_pic(*out, m2->frontBumperPic, 0, p12->frontBumperY);
     if (flags & 1)
-        bitmap_put_pic(*out, m2->rearBumperPic, p12->b8, p12->b9);
+        bitmap_put_pic(*out, m2->rearBumperPic, p12->rearBumperX, p12->rearBumperY);
     if (flags & 4) {
-        bitmap_put_pic(*out, m2->roofPic, p12->b4, 0);
+        bitmap_put_pic(*out, m2->roofPic, p12->roofX, 0);
         for (j5 = 0; j5 < at70a8->planesize / r_vid.planes; j5++)
             if (((unsigned char far *)at70a8->alt.p)[j5] != 0xff)
                 break;
@@ -302,13 +302,13 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
         bitmap_draw_pic(*out, m2->f4, p12->b5, p12->b6, 1);
     blt.w = g_0294->width;
     blt.h = g_0294->height;
-    blt.sx = p12->b10;
-    blt.sy = p12->b11;
+    blt.sx = p12->paintX;
+    blt.sy = p12->paintY;
     blt.dx = blt.dy = 0;
     (*b_78a2)(*out, g_0294, &blt, 1);
     if (kk > 0) {
         pp8 = &a784als[kk - 1];
-        bitmap_draw_pic(*out, pp8->id, p12->b10 + pp8->dx, p12->b11 + pp8->dy, 0);
+        bitmap_draw_pic(*out, pp8->id, p12->paintX + pp8->dx, p12->paintY + pp8->dy, 0);
     }
     if (q) {
         bm = F_15BBE(m_8272.m8280, 2);
@@ -354,8 +354,8 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
                 off = (j5 & 1) << 1;
                 break;
             }
-            bitmap_underlay(bm, out[j5], p12->b0 + off, h);
-            bitmap_underlay(bm, out[j5], p12->b1 + off, h);
+            bitmap_underlay(bm, out[j5], p12->wheelX1 + off, h);
+            bitmap_underlay(bm, out[j5], p12->wheelX2 + off, h);
             F_19438(1);
         }
     }
