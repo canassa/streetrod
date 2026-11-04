@@ -27,6 +27,8 @@ Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in
 - Intrinsics: inline `strlen` (`mov cx,0xffff; xor ax,ax; repne scasb; not cx; dec cx`) or `strcpy` (the same scan, then `shr cx,1; rep movsw; adc cx,cx; rep movsb`) means `/Oi` (`0x032F4`). A `loop` instruction means `/Ol`. `cli`/`sti` in compiled code come from the `_disable()`/`_enable()` intrinsics (MSC 5.1 README).
 - `abs(x)`: `cwd; xor ax,dx; sub ax,dx`.
 - Small struct copy: `movsw ... movsb` without `rep` (a 5-byte struct: `movsw; movsw; movsb`).
+- Struct assignment `a = b;` of a larger struct: `push di; push si` (no frame if nothing else needs one), `mov di,OFFSET a; mov si,OFFSET b; push ds; pop es; mov cx,N/2; f2 a5`. MSC 5.1 encodes its `rep movsw` with the **F2** prefix (disassembled `repne movsw`); MASM's `rep` is F3, so `f2 a5` in a routine is compiled C. The `memcpy` intrinsic is different (`shr cx,1; rep movsw; adc cx,cx; rep movsb`, also F2). In SR.EXE every `f2 a4`/`f2 a5` (116) is in a C function and every `f3 a4`/`f3 a5` in asm (19) or the runtime (11); the three hook installers `0x1C2B8`, `0x22352`, `0x22B28` had been taken for asm.
+- Port loops: MSC's `inp`/`outpw` reload `mov dx,PORT` inside every loop iteration and load the value before the port (`mov ax,0F01h; mov dx,3CEh`), and never reuse a constant left in `ax` (`xor ax,ax; out; inc ax; out`). `dx` loaded once before two `in` loops (`0x21A06`) or `mov dx` before `mov ax` (`0x26458`) is hand-written.
 
 ## C shapes (what the source looked like)
 
