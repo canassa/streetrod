@@ -153,7 +153,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 - MSC enum members occupy two bytes with word alignment. Keep the real-compiler sizeof/offsetof audit passing when adding enum-backed records.
 - Recovered DGROUP fallback regions must not create synthetic aliases inside a fully covering source aggregate. Explicit overlapping source declarations still require the normal alias diagnostics.
 - Grouping statics lowers the symbol count without removing storage. Ownership tests compare actual declarations and uniqueness, not a fixed minimum number of symbols.
-- `check_data_types.py` audits STRUCTS.H; owner-header records need an additional real-compiler sizeof/offsetof probe. The phase-2 probe checked RenderRows, TireWork and TimerPriorities (50 checks).
+- `cdata.Types` and `check_data_types.py` read STRUCTS.H first, then all indexed module headers in deterministic source-index order. The real-compiler audit includes private records, enums and typedefs from those headers; no separate private-type probe is needed.
 
 ## Subsystem layout (2026-11-04)
 
