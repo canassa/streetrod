@@ -13,7 +13,7 @@ extern struct StatusText g_statusLine; /* DS:8250 */
 extern char *g_gearNames[];                             /* DS:0482 */
 extern char g_promptPalette[];                          /* DS:04AC */
 extern struct PicturePlacement g_picturePlacement; /* DS:04BE */
-extern struct State7EAA a_7eaap;                        /* DS:7EAA */
+extern struct DriverState g_driver;                        /* DS:7EAA */
 extern char g_displaySplitYVal;                                    /* DS:824A */
 extern int g_xMoneyRhsVal;                                      /* DS:82C0 */
 void sc_status_init(int y);                         /* 0x113A2 */

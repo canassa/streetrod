@@ -368,13 +368,13 @@ void rd_generate(void)
     int cnt, i, j;
 
     if (r_vid.mode == VID_EGA) {
-        bm7678 = &g_egaPage0;
-        g8188w = &g_egaPage1;
-        g82b4s = &g_egaPage2;
+        g_driveDisplayPage = &g_egaPage0;
+        g_driveScreenB = &g_egaPage1;
+        g_bufferSceneA = &g_egaPage2;
     } else {
-        bm7678 = r_vid.front;
-        g8188w = r_vid.back;
-        g82b4s = &g_screens[2];
+        g_driveDisplayPage = r_vid.front;
+        g_driveScreenB = r_vid.back;
+        g_bufferSceneA = &g_screens[2];
     }
     cnt = g_hasSlowCpu;
     for (i = 0; i < 0xb4; i++) {
@@ -575,15 +575,15 @@ void rd_generate(void)
 }
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-unsigned far *q_72ee;
+unsigned far *g_roadTerrain;
 int g_roadLXArray[15];
 int far *g_hereCurvePtr;
-int far *af7880z;
+int far *g_heightRoadPtr;
 int g_roadYProjectionArray[15];
-int aw7aaex;
+int g_startDrawRows;
 int g_yBuildingTopArray[15]; /* DS:7AB0 */
 int g_rightXProjectionTable[15];
-unsigned far *g7d62p;
+unsigned far *g_hereFlagsPtr;
 int g_lhsRdMirrorX[8];
 int g_roadOuterLeftXArray[15];
 int g_rhsOuterXArray[15];
@@ -597,10 +597,10 @@ struct MirrorEdges g_mirGeom; /* DS:864A */
 
 void rd_seek(int n)
 {
-    q_72ee = &g_terrain0[n];
+    g_roadTerrain = &g_terrain0[n];
     g_rightSideTerrainRow = &g_terrain1[n];
-    g7d62p = &g_terrain3[n];
-    af7880z = &g_terrain4[n];
+    g_hereFlagsPtr = &g_terrain3[n];
+    g_heightRoadPtr = &g_terrain4[n];
     g_hereCurvePtr = &g_terrain2[n];
 }
 
@@ -611,7 +611,7 @@ int rd_proj_x(int a, int b, int c)
     int u, v;
 
     b += a * c >> 2;
-    v = ao7d2ev.lateralX - b;
+    v = g_trackViewMotion.lateralX - b;
     u = v << 2;
     if (a == 0)
         a++;
@@ -626,7 +626,7 @@ int rd_proj_y(int a, int b, int c)
     int u, v;
 
     b += a * c;
-    v = b - ao7d2ev.cameraY;
+    v = b - g_trackViewMotion.cameraY;
     u = v << 2;
     if (a == 0)
         a++;
@@ -641,7 +641,7 @@ int rd_mirror_x(int a, int b, int c)
     int u, v;
 
     b += a * c >> 2;
-    v = ao7d2ev.lateralX - b;
+    v = g_trackViewMotion.lateralX - b;
     if (a == 0)
         a++;
     u = v / a;
@@ -655,7 +655,7 @@ int rd_mirror_y(int a, int b, int c)
     int u, v;
 
     b += a * c;
-    v = b - ao7d2ev.cameraY;
+    v = b - g_trackViewMotion.cameraY;
     if (a == 0)
         a++;
     u = v / a;
@@ -668,30 +668,30 @@ int rd_mirror_y(int a, int b, int c)
 
 void rd_reset(void)
 {
-    if (bw8aca)
-        ao7d2ev.roadIndex = 200;
+    if (g_runRacingFlag)
+        g_trackViewMotion.roadIndex = 200;
     else
         switch (g_scene) {
         case 1:
-            ao7d2ev.roadIndex = 10;
+            g_trackViewMotion.roadIndex = 10;
             break;
         case 2:
-            ao7d2ev.roadIndex = 65;
+            g_trackViewMotion.roadIndex = 65;
             break;
         case 3:
-            ao7d2ev.roadIndex = 115;
+            g_trackViewMotion.roadIndex = 115;
             break;
         }
-    rd_seek(ao7d2ev.roadIndex);
+    rd_seek(g_trackViewMotion.roadIndex);
     g_leftEdgeX = 1500;
     g_edgeXR = 3300;
-    ao7d2ev.roadFraction = 0;
-    ao7d2ev.lateralX = 2560;
-    ao7d2ev.cameraY = 1900;
-    ao7d2ev.m7d3a = 0;
-    ao7d2ev.m7d3e = 0;
-    ao7d2ev.m7d3c = 0;
-    ao7d2ev.distanceStep = 0;
+    g_trackViewMotion.roadFraction = 0;
+    g_trackViewMotion.lateralX = 2560;
+    g_trackViewMotion.cameraY = 1900;
+    g_trackViewMotion.unused = 0;
+    g_trackViewMotion.roadHeight = 0;
+    g_trackViewMotion.curveX = 0;
+    g_trackViewMotion.distanceStep = 0;
     g_rivalLeft = 1;
     g_swapArmedRivalValue = !rn_int(2);
     g_ramAllowed = 1;
@@ -706,8 +706,8 @@ void rd_project_ahead(void)
 {
     int *p5l, k7, bits, *p11, rowz, flag8, *p2, *p3, d1, d2, *p42, *p6;
 
-    flag8 = (*g7d62p & 1) || (*g7d62p & 0xf000);
-    bits = *g7d62p++ & 0xe0;
+    flag8 = (*g_hereFlagsPtr & 1) || (*g_hereFlagsPtr & 0xf000);
+    bits = *g_hereFlagsPtr++ & 0xe0;
     p11 = g_rightXProjectionTable;
     p2 = g_roadLXArray;
     p3 = g_roadYProjectionArray;
@@ -715,8 +715,8 @@ void rd_project_ahead(void)
     p5l = g_rhsOuterXArray;
     p6 = g_yBuildingTopArray;
     rowz = 4;
-    d1 = ao7d2ev.m7d3e - *af7880z++;
-    d2 = ao7d2ev.m7d3c - *g_hereCurvePtr++;
+    d1 = g_trackViewMotion.roadHeight - *g_heightRoadPtr++;
+    d2 = g_trackViewMotion.curveX - *g_hereCurvePtr++;
     *p3++ = rd_proj_y(rowz, 2000, d1);
     if (bits) {
         if (bits & 0x80) {
@@ -739,15 +739,15 @@ void rd_project_ahead(void)
         *p6++ = rd_proj_y(rowz, 0x76c, d1);
     else
         p6++;
-    rowz = 12 - ao7d2ev.roadFraction;
+    rowz = 12 - g_trackViewMotion.roadFraction;
     k7 = 14;
     do {
-        flag8 = (*g7d62p & 1) || (*g7d62p & 0xf000);
-        bits = *g7d62p & 0xe0;
-        g7d62p++;
-        d1 = ao7d2ev.m7d3e - *af7880z;
-        af7880z++;
-        d2 = ao7d2ev.m7d3c - *g_hereCurvePtr;
+        flag8 = (*g_hereFlagsPtr & 1) || (*g_hereFlagsPtr & 0xf000);
+        bits = *g_hereFlagsPtr & 0xe0;
+        g_hereFlagsPtr++;
+        d1 = g_trackViewMotion.roadHeight - *g_heightRoadPtr;
+        g_heightRoadPtr++;
+        d2 = g_trackViewMotion.curveX - *g_hereCurvePtr;
         g_hereCurvePtr++;
         if (bits) {
             if (bits & 0x80) {
@@ -794,17 +794,17 @@ void rd_project_behind(void)
 {
     int *p5l, k7, bits, *p11, rowz, flag8, *p2, *p3, d1, d2, *p42, *p6;
 
-    flag8 = (*g7d62p & 1) || (*g7d62p & 0xf000);
-    bits = *g7d62p-- & 0xe0;
+    flag8 = (*g_hereFlagsPtr & 1) || (*g_hereFlagsPtr & 0xf000);
+    bits = *g_hereFlagsPtr-- & 0xe0;
     p11 = g_mirGeom.rightX;
     p2 = g_lhsRdMirrorX;
     p3 = g_mirYProj;
-    p42 = al70c0x.leftOuterX;
-    p5l = al70c0x.rightOuterX;
+    p42 = g_edgesRoad.leftOuterX;
+    p5l = g_edgesRoad.rightOuterX;
     p6 = g_mirGeom.buildingY;
     rowz = 8;
-    d1 = *af7880z-- - ao7d2ev.m7d3e;
-    d2 = *g_hereCurvePtr-- - ao7d2ev.m7d3c;
+    d1 = *g_heightRoadPtr-- - g_trackViewMotion.roadHeight;
+    d2 = *g_hereCurvePtr-- - g_trackViewMotion.curveX;
     *p3++ = rd_mirror_y(rowz, 2000, d1);
     if (bits) {
         if (bits & 0x80) {
@@ -827,15 +827,15 @@ void rd_project_behind(void)
         *p6++ = rd_mirror_y(rowz, 0x76c, d1);
     else
         p6++;
-    rowz = ao7d2ev.roadFraction + 8;
+    rowz = g_trackViewMotion.roadFraction + 8;
     k7 = 7;
     do {
-        flag8 = (*g7d62p & 1) || (*g7d62p & 0xf000);
-        bits = *g7d62p & 0xe0;
-        g7d62p--;
-        d1 = *af7880z - ao7d2ev.m7d3e;
-        af7880z--;
-        d2 = *g_hereCurvePtr - ao7d2ev.m7d3c;
+        flag8 = (*g_hereFlagsPtr & 1) || (*g_hereFlagsPtr & 0xf000);
+        bits = *g_hereFlagsPtr & 0xe0;
+        g_hereFlagsPtr--;
+        d1 = *g_heightRoadPtr - g_trackViewMotion.roadHeight;
+        g_heightRoadPtr--;
+        d2 = *g_hereCurvePtr - g_trackViewMotion.curveX;
         g_hereCurvePtr--;
         if (bits) {
             if (bits & 0x80) {
@@ -881,11 +881,11 @@ void rd_draw_frame(void)
 {
     long deadline;
 
-    rd_seek(ao7d2ev.roadIndex);
+    rd_seek(g_trackViewMotion.roadIndex);
     rd_project_ahead();
-    rd_seek(ao7d2ev.roadIndex);
+    rd_seek(g_trackViewMotion.roadIndex);
     rd_project_behind();
-    rd_seek(ao7d2ev.roadIndex);
+    rd_seek(g_trackViewMotion.roadIndex);
     deadline = g_tick + 9;
     vw_draw();
     while (deadline > g_tick)
@@ -898,10 +898,10 @@ void rd_advance(void)
 {
     int bits7, goal6, diff;
 
-    ao7d2ev.roadIndex += ao7d2ev.roadFraction >> 3;
-    rd_seek(ao7d2ev.roadIndex);
-    ao7d2ev.roadFraction &= 7;
-    bits7 = *g7d62p & 0xe0;
+    g_trackViewMotion.roadIndex += g_trackViewMotion.roadFraction >> 3;
+    rd_seek(g_trackViewMotion.roadIndex);
+    g_trackViewMotion.roadFraction &= 7;
+    bits7 = *g_hereFlagsPtr & 0xe0;
     if (bits7) {
         if (bits7 & 0x80) {
             g_leftEdgeX = 2000;
@@ -917,40 +917,40 @@ void rd_advance(void)
         g_leftEdgeX = 1500;
         g_edgeXR = 0xce4;
     }
-    bits7 = g7d62p[4] & 0xe0;
+    bits7 = g_hereFlagsPtr[4] & 0xe0;
     if (bits7) {
         if (bits7 & 0x80) {
-            al70c0x.leftEdge = 2000;
-            ao7d2ev.rightEdge = 0xaf0;
+            g_edgesRoad.leftEdge = 2000;
+            g_trackViewMotion.rightEdge = 0xaf0;
         } else if (bits7 & 0x20) {
-            al70c0x.leftEdge = 2000;
-            ao7d2ev.rightEdge = 0xce4;
+            g_edgesRoad.leftEdge = 2000;
+            g_trackViewMotion.rightEdge = 0xce4;
         } else {
-            al70c0x.leftEdge = 1500;
-            ao7d2ev.rightEdge = 0xaf0;
+            g_edgesRoad.leftEdge = 1500;
+            g_trackViewMotion.rightEdge = 0xaf0;
         }
     } else {
-        al70c0x.leftEdge = 1500;
-        ao7d2ev.rightEdge = 0xce4;
+        g_edgesRoad.leftEdge = 1500;
+        g_trackViewMotion.rightEdge = 0xce4;
     }
-    ao7d2ev.m7d3e = *af7880z;
-    if (g_demo != 0 || g_autoDrive != 0 || (a_7eaap.raceType == 0 ? 0x17c : 0x3fc) < ao7d2ev.roadIndex) {
+    g_trackViewMotion.roadHeight = *g_heightRoadPtr;
+    if (g_demo != 0 || g_autoDrive != 0 || (g_driver.raceType == 0 ? 0x17c : 0x3fc) < g_trackViewMotion.roadIndex) {
         goal6 = 0x960;
-        if (ar7e8av.lateralX > 0x960)
+        if (g_roadOppPos.lateralX > 0x960)
             goal6 -= 0x140;
         else
             goal6 += 0xa0;
-        diff = ao7d2ev.lateralX - goal6;
+        diff = g_trackViewMotion.lateralX - goal6;
         if (abs(diff) > 100)
-            ao7d2ev.lateralX = goal6 + (goal6 < ao7d2ev.lateralX ? 100 : -100);
+            g_trackViewMotion.lateralX = goal6 + (goal6 < g_trackViewMotion.lateralX ? 100 : -100);
         else
-            ao7d2ev.lateralX = goal6;
-        if (abs(*g_hereCurvePtr - ao7d2ev.m7d3c) > 0) {
-            g_driveEng.steering = (ao7d2ev.m7d3c - *g_hereCurvePtr) * 2;
+            g_trackViewMotion.lateralX = goal6;
+        if (abs(*g_hereCurvePtr - g_trackViewMotion.curveX) > 0) {
+            g_driveEng.steering = (g_trackViewMotion.curveX - *g_hereCurvePtr) * 2;
             if (abs(g_driveEng.steering) > 24)
                 g_driveEng.steering = g_driveEng.steering > 0 ? 24 : -24;
         }
-        ao7d2ev.m7d3c = *g_hereCurvePtr;
+        g_trackViewMotion.curveX = *g_hereCurvePtr;
     }
 }
 
@@ -961,17 +961,17 @@ void rd_advance(void)
 int rd_check_crash(void)
 {
     g_onShoulder = 0;
-    if (g_leftEdgeX - 0x104 < ao7d2ev.lateralX - 0x1e && ao7d2ev.lateralX + 0x46 < g_edgeXR + 0x104) {
-        if (g_leftEdgeX > ao7d2ev.lateralX - 0x1e) {
-            if ((g_terrain0[ao7d2ev.roadIndex] & 0x1000) || (g_terrain0[ao7d2ev.roadIndex - 1] & 0x1000))
+    if (g_leftEdgeX - 0x104 < g_trackViewMotion.lateralX - 0x1e && g_trackViewMotion.lateralX + 0x46 < g_edgeXR + 0x104) {
+        if (g_leftEdgeX > g_trackViewMotion.lateralX - 0x1e) {
+            if ((g_terrain0[g_trackViewMotion.roadIndex] & 0x1000) || (g_terrain0[g_trackViewMotion.roadIndex - 1] & 0x1000))
                 return 1;
-            if (g_terrain3[ao7d2ev.roadIndex + 1] & 0xf000)
+            if (g_terrain3[g_trackViewMotion.roadIndex + 1] & 0xf000)
                 return 1;
             g_onShoulder = 1;
-        } else if (ao7d2ev.lateralX + 0x46 > g_edgeXR) {
-            if ((g_terrain1[ao7d2ev.roadIndex] & 0x1000) || (g_terrain1[ao7d2ev.roadIndex - 1] & 0x1000))
+        } else if (g_trackViewMotion.lateralX + 0x46 > g_edgeXR) {
+            if ((g_terrain1[g_trackViewMotion.roadIndex] & 0x1000) || (g_terrain1[g_trackViewMotion.roadIndex - 1] & 0x1000))
                 return 1;
-            if (g_terrain3[ao7d2ev.roadIndex + 1] & 0xf002)
+            if (g_terrain3[g_trackViewMotion.roadIndex + 1] & 0xf002)
                 return 1;
             g_onShoulder = 1;
         }
@@ -994,41 +994,41 @@ void rd_start(void)
 void rd_turn(int dir)
 {
     if (dir == 1)
-        ao7d2ev.m7d3c += 3;
+        g_trackViewMotion.curveX += 3;
     else
-        ao7d2ev.m7d3c -= 3;
+        g_trackViewMotion.curveX -= 3;
 }
 
 /* rd_update @ 2645:213D (linear 0x2858D, 272 bytes) */
 
 void rd_update(void)
 {
-    if (g_driveEng.steeringInput && g_driveEng.speed && abs(ao7d2ev.m7d3c - *g_hereCurvePtr - g_driveEng.steeringInput) < 200)
-        ao7d2ev.m7d3c -= (g_driveEng.steeringInput >> 1) + 1;
-    if (!bw8aca) {
+    if (g_driveEng.steeringInput && g_driveEng.speed && abs(g_trackViewMotion.curveX - *g_hereCurvePtr - g_driveEng.steeringInput) < 200)
+        g_trackViewMotion.curveX -= (g_driveEng.steeringInput >> 1) + 1;
+    if (!g_runRacingFlag) {
         if (g_hasSlowCpu)
-            ao7d2ev.distanceStep = 6;
+            g_trackViewMotion.distanceStep = 6;
         else
-            ao7d2ev.distanceStep = 4;
+            g_trackViewMotion.distanceStep = 4;
     }
-    if (ao7d2ev.distanceStep > 0 && aw7aaex > 0)
-        aw7aaex -= 4;
+    if (g_trackViewMotion.distanceStep > 0 && g_startDrawRows > 0)
+        g_startDrawRows -= 4;
     rd_draw_frame();
     if (g_demo == 0 && g_autoDrive == 0) {
         if (g_failureTire)
-            ao7d2ev.lateralX += 25;
+            g_trackViewMotion.lateralX += 25;
         else if (g_driveEng.speed)
-            ao7d2ev.lateralX -= (ao7d2ev.m7d3c - *g_hereCurvePtr) * (ao7d2ev.distanceStep + g_driveEng.tireSlip) >> 2;
+            g_trackViewMotion.lateralX -= (g_trackViewMotion.curveX - *g_hereCurvePtr) * (g_trackViewMotion.distanceStep + g_driveEng.tireSlip) >> 2;
     }
-    if (!bw8aca) {
-        ao7d2ev.roadFraction += ao7d2ev.distanceStep;
-        if (ao7d2ev.roadFraction >= 8)
+    if (!g_runRacingFlag) {
+        g_trackViewMotion.roadFraction += g_trackViewMotion.distanceStep;
+        if (g_trackViewMotion.roadFraction >= 8)
             rd_advance();
-        if ((g_terrain0[ao7d2ev.roadIndex + 7] & 1) || g_turnLeft) {
+        if ((g_terrain0[g_trackViewMotion.roadIndex + 7] & 1) || g_turnLeft) {
             g_turnLeft = 1;
             rd_turn(1);
         }
-        if ((g_terrain1[ao7d2ev.roadIndex + 6] & 1) || g_turnRight) {
+        if ((g_terrain1[g_trackViewMotion.roadIndex + 6] & 1) || g_turnRight) {
             rd_turn(-1);
             g_turnRight = 1;
         }

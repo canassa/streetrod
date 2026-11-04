@@ -45,7 +45,7 @@ void near pf_drivetrain(struct Car *c, struct Eng *e)
     vl = ((c->appearance & 0x2000) || g_models[c->specIndex].roofPic == 0) * 0.09
         + ((c->appearance & 0x8000) || g_models[c->specIndex].rearBumperPic == 0) * 0.05
         + ((c->appearance & 0x4000) || g_models[c->specIndex].frontBumperPic == 0) * 0.01
-        + g_modelScore[g7d86n[c->specIndex].rank] * 0.1 / 88.0
+        + g_modelScore[g_carData[c->specIndex].rank] * 0.1 / 88.0
         + g_carbManifoldFit[c3][bl] * 0.15 / 100.0
         + g_engineScore[a3] * 0.25 / 100.0
         + g_transScore[d] * 0.15 / 100.0
@@ -78,14 +78,14 @@ void near pf_drivetrain(struct Car *c, struct Eng *e)
         e->autoShiftRpm = gl->bands[1].maxRpm;
     }
     e->shiftRpm = g_shiftRpm[a3];
-    e->f34[5] = (int)((int)(0x82 - g7d86n[c->specIndex].rank) * 5.0 / 50.0 + g_5568[g_parts[m->idx].variant]);
+    e->f34[5] = (int)((int)(0x82 - g_carData[c->specIndex].rank) * 5.0 / 50.0 + g_5568[g_parts[m->idx].variant]);
     e->gearCount = g_transGears[d];
     e->shifterDirty = 1;
 }
 
 /* pf_drivetrain_spec @ 0000:E0E2 (linear 0x0E0E2, 310 bytes)
 
-   Builds a struct Car from the spec n of g7d86n and hands it to pf_drivetrain. */
+   Builds a struct Car from the spec n of g_carData and hands it to pf_drivetrain. */
 
 void near pf_drivetrain_spec(int n, struct Eng *e)
 {
@@ -99,7 +99,7 @@ void near pf_drivetrain_spec(int n, struct Eng *e)
     car.specIndex = n;
     car.transmission = &na;
     car.tires = &lo;
-    s = &g7d86n[n];
+    s = &g_carData[n];
     car.rack.parts[3] = car.rack.parts[4] = 0;
     t = ((s->parts >> 14) & 3) + 0x16;
     for (i = g_nCarb[(s->parts >> 11) & 7] + 1; i >= 0; i--) {
@@ -117,7 +117,7 @@ void near pf_drivetrain_spec(int n, struct Eng *e)
 
 /* pf_vmax @ 0000:E218 (linear 0x0E218, 849 bytes)
 
-   Rating of the car spec n (the car in a_7eaap.currentCar when n is negative): builds the
+   Rating of the car spec n (the car in g_driver.currentCar when n is negative): builds the
    car the way pf_drivetrain_spec does, then folds its parts into one number. */
 
 int near pf_vmax(int n)
@@ -139,13 +139,13 @@ int near pf_vmax(int n)
     struct Node na;
 
     if (n < 0)
-        p6 = a_7eaap.currentCar;
+        p6 = g_driver.currentCar;
     else {
         car.timing = 0;
         car.specIndex = n;
         car.transmission = &na;
         car.tires = &lon;
-        s = &g7d86n[n];
+        s = &g_carData[n];
         car.rack.parts[3] = car.rack.parts[4] = 0;
         t = ((s->parts >> 14) & 3) + 0x16;
         for (i = g_nCarb[(s->parts >> 11) & 7] + 1; i >= 0; i--) {
@@ -171,7 +171,7 @@ int near pf_vmax(int n)
     vl = ((p6->appearance & 0x2000) || g_models[p6->specIndex].roofPic == 0) * 0.09
         + ((p6->appearance & 0x8000) || g_models[p6->specIndex].rearBumperPic == 0) * 0.05
         + ((p6->appearance & 0x4000) || g_models[p6->specIndex].frontBumperPic == 0) * 0.01
-        + g_modelScore[g7d86n[p6->specIndex].rank] * 0.1 / 88.0
+        + g_modelScore[g_carData[p6->specIndex].rank] * 0.1 / 88.0
         + g_carbManifoldFit[c3][bl] * 0.15 / 100.0
         + g_engineScore[a3] * 0.25 / 100.0
         + g_transScore[d] * 0.15 / 100.0

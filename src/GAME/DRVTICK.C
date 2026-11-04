@@ -29,7 +29,7 @@ int dt_step(void)
 {
     char key;
 
-    if (bw8aca) {
+    if (g_runRacingFlag) {
         switch (g_phaseDriveRunState) {
         case 0:
             g_05d6 = 0;
@@ -50,7 +50,7 @@ int dt_step(void)
             if (g_waitUntil <= g_tick) {
                 g_phaseDriveRunState = 2;
                 sc_status_text(-1, "Go !", 0);
-                g7d66n = 1;
+                g_startingGoActive = 1;
             }
             return g_driveEng.stopFlags | g_oppEngState.stopFlags;
         case 2:
@@ -102,7 +102,7 @@ int dt_step(void)
                 g_demo--;
                 sy_exit();
             }
-            if ((g_terrain0[ao7d2ev.roadIndex + 1] & 1) || (g_terrain1[ao7d2ev.roadIndex + 1] & 1) || g_firePressed) {
+            if ((g_terrain0[g_trackViewMotion.roadIndex + 1] & 1) || (g_terrain1[g_trackViewMotion.roadIndex + 1] & 1) || g_firePressed) {
                 g_click = 0;
                 g_buttons = 0;
                 sy_drive_stop();

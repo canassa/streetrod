@@ -45,7 +45,7 @@ extern char far *g_imageBufferPointer;                               /* DS:7564 
 extern struct Video r_vid;                              /* DS:822A */
 extern char g_graphicsUp;                               /* DS:8247 */
 extern int g_hasSlowCpu;                                      /* DS:82C6 */
-extern int bu8acc;                                      /* DS:8ACC */
+extern int g_processorSpeedRating;                                      /* DS:8ACC */
 extern int g_attractSwitchStartup;                                     /* DS:8BCE */
 void mi_set_mode(int ax);                             /* 0x001D1 */
 void mi_set_palette(unsigned char color);             /* 0x001F2 */

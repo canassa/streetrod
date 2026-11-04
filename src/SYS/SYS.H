@@ -90,10 +90,10 @@ extern struct Eng g_driveEng;                               /* DS:78E0 */
 extern struct Dev g_songBgState;                               /* DS:79AA */
 extern struct Dev g_secondaryMusicStateData;                              /* DS:79C6 */
 extern void (interrupt far *g_clockPrev)(void);              /* DS:7AAA */
-extern struct State7D2E ao7d2ev;                        /* DS:7D2E */
-extern struct State7E8A ar7e8av;                        /* DS:7E8A */
+extern struct RoadView g_trackViewMotion;                        /* DS:7D2E */
+extern struct RivalPosition g_roadOppPos;                        /* DS:7E8A */
 extern char g_strOpp[];                                   /* DS:7F32 */
-extern int ao8228u;                                     /* DS:8228 */
+extern int g_startLightGo;                                     /* DS:8228 */
 extern long g_mphAccumulator;                                     /* DS:82BC */
 extern struct Tone *g_toneShapePlaybackPointer;                             /* DS:82C4 */
 extern int g_xCoordSprite;                                      /* DS:8B7C */

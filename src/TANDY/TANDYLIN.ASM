@@ -1,8 +1,8 @@
         .MODEL MEDIUM
 
         .DATA
-        EXTRN   _at767ct:WORD
-        EXTRN   _av787at:WORD
+        EXTRN   _g_targetPixelOffset:WORD
+        EXTRN   _g_videoAddrSegment:WORD
         EXTRN   _g_viewRect:BYTE
         EXTRN   _g_viewClip:WORD
 
@@ -294,8 +294,8 @@ _tl_pixel_addr  PROC  NEAR
         shr     ax,1
         add     bx,ax
         shr     bx,1
-        add     bx,_at767ct
-        mov     ax,_av787at
+        add     bx,_g_targetPixelOffset
+        mov     ax,_g_videoAddrSegment
         mov     es,ax
         mov     ah,1
         and     cl,ah

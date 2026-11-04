@@ -31,7 +31,7 @@ char g_hideSelectFrameVal;
 struct ListDialog g_menuList; /* DS:8B9A */
 char g_headerEditableState;
 struct Hot *g_hotsCurMenu;
-int ai8bacx;
+int g_textOfsMenu;
 int g_hotMenuGroupState;
 
 int g_hotChain = 0;   /* DS:07A8 */
@@ -145,7 +145,7 @@ void mn_push(enum ScreenId id)
         cu_ctl(CURSOR_HIDE);
         g_menuGrpHistoryList[g_menuLevel++] = g_hotMenuGroupState = id;
         g_boxSpotHitData.x1 = g_boxSpotHitData.x2 = g_boxSpotHitData.y1 = g_boxSpotHitData.y2 = -1;
-        ai8bacx = (p = &g_hots[g_groupHot[id]])->textOffset;
+        g_textOfsMenu = (p = &g_hots[g_groupHot[id]])->textOffset;
         g_hotsCurMenu = (p + 1)->kind > 9 ? p + 1 : 0;
         g_menuList.rows = g_menuList.lineBase = g_menuList.header = 0;
         g_headerEditableState = 0;
@@ -191,7 +191,7 @@ void mn_pop(int keep)
 
 void mn_reset(void)
 {
-    g_menuLevel = ai8bacx = 0;
+    g_menuLevel = g_textOfsMenu = 0;
     g_hotsCurMenu = 0;
     g_boxSpotHitData.x1 = g_boxSpotHitData.y1 = g_boxSpotHitData.x2 = g_boxSpotHitData.y2 = g_cursHoverCodeVal = 0;
 }

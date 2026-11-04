@@ -510,7 +510,7 @@ struct Spr6 {
     unsigned char fuelCapX, fuelCapY, rearGlassX, rearGlassY, frontGlassX, frontGlassY;
 };
 
-/* 6-byte table entry (a784als[]): bitmap id, then the (dx, dy) offset it is drawn at */
+/* 6-byte table entry (g_imageDecalLayout[]): bitmap id, then the (dx, dy) offset it is drawn at */
 struct Pos6 {
     int id;
     int dx;
@@ -594,28 +594,28 @@ struct CgaGlyph {
 };
 
 /* DS:7D2E..7D3F: one communal; the code reads these as struct members */
-struct State7D2E {
+struct RoadView {
     int rightEdge;
     int roadIndex;
     int roadFraction;
     int distanceStep;
     int lateralX;
     int cameraY;
-    int m7d3a;
-    int m7d3c;
-    int m7d3e;
+    int unused;
+    int curveX;
+    int roadHeight;
 };
 
 /* DS:7E8A..7E99: one communal; the code reads these as struct members */
-struct State7E8A {
+struct RivalPosition {
     int roadIndex;
     int roadFraction;
     int distanceStep;
     int lateralX;
-    char m7e92[8];
+    char unused[8];
 };
 
-struct State70C0 {
+struct RoadEdges {
     int leftEdge;
     int leftOuterX[8];
     int rightOuterX[8];
@@ -623,9 +623,9 @@ struct State70C0 {
 
 /* DS:7EAA..7EC2: one COMMON block in the original (folded from 11 placeholder
    globals: the compiler budget of the original translation units requires fewer external symbols) */
-struct State7EAA {
+struct DriverState {
     long money;
-    int m7eae;
+    int unused;
     struct Car *currentCar;
     struct Car *otherCars;
     struct Node2 *freeCars;
@@ -639,7 +639,7 @@ struct State7EAA {
 
 /* DS:8272..8290: one COMMON block in the original (folded from 11 placeholder
    globals: the compiler budget of the original translation units requires fewer external symbols) */
-struct State8272 {
+struct CarDisplay {
     int stickerX;
     int stickerY;
     int stickerSubX;
@@ -651,7 +651,7 @@ struct State8272 {
     int specIndex;
     struct Look appearance;
     int transmissionPic;
-    char pad8288[8];
+    char unused[8];
 };
 
 struct Hooks {

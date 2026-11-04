@@ -74,7 +74,7 @@ int fa_protect_check(void)
         vi_set_palette(g_protectPal);
     else
         (*g_videoOps.show)();
-    gz8249 = 1;
+    g_displayEnabled = 1;
     r_vid.copyToFront = 1;
     g_protectCycle = 1;
     e = mn_wait(KM_MANUAL_COLORS);

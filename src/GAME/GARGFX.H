@@ -19,7 +19,7 @@ extern char g_carbPosBase[];                                   /* DS:078C */
 extern struct Bitmap far *g_boltOverlay;                       /* DS:0792 */
 extern struct Hot g_boltHot;                            /* DS:0796 */
 extern struct Blt g_cpyBoltPatchRecord;                               /* DS:70AC */
-extern int o_8290[];                                    /* DS:8290 */
+extern int g_partDisplayPicIds[];                                    /* DS:8290 */
 extern int g_engineBoltPicIds[9];                                   /* DS:829A */
 void gx_trans_bolt(int a, int b);                             /* 0x123F4 */
 void gx_trans_drop(int a);                                    /* 0x12525 */

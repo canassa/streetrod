@@ -32,7 +32,7 @@ extern int g_endPics2[];                                /* DS:5328 */
 extern struct Btn g_jailBars[7];                        /* DS:5338 */
 extern struct Pair g_jailGaps[];                        /* DS:539A */
 extern struct Bitmap far *g_barJailPixels;                       /* DS:6E64 */
-extern int bn7648;                                      /* DS:7648 */
+extern int g_opponentSpecIndex;                                      /* DS:7648 */
 extern int g_resultWin;                                      /* DS:7676 */
 extern int g_isKingState;                                      /* DS:7D40 */
 extern struct Spec *g_oppSpecPointer;                            /* DS:7D7A */

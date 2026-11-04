@@ -20,16 +20,16 @@ void dr_fill_rect(struct Bitmap far *s, int x, int y, int w, int h)
         w = s->width - x;
     if (y + h > s->height)
         h = s->height - y;
-    oldseg = av787at;
-    oldoff = at767ct;
-    av787at = s->bits.w.seg;
-    at767ct = s->bits.w.off;
+    oldseg = g_videoAddrSegment;
+    oldoff = g_targetPixelOffset;
+    g_videoAddrSegment = s->bits.w.seg;
+    g_targetPixelOffset = s->bits.w.off;
     col = x_colors.fill;
     x2 = x + w - 1;
     for (j = 0; j < h; j++)
         (*g_videoOps.drawLine)(x, y + j, x2, y + j, col);
-    av787at = oldseg;
-    at767ct = oldoff;
+    g_videoAddrSegment = oldseg;
+    g_targetPixelOffset = oldoff;
 }
 
 /* dr_vline @ 0F38:439C (linear 0x1371C, 99 bytes)
@@ -43,13 +43,13 @@ void dr_vline(struct Bitmap far *s, int x, int y, int h)
 
     if (h + y > s->height)
         h = s->height - y;
-    oldseg = av787at;
-    oldoff = at767ct;
-    av787at = s->bits.w.seg;
-    at767ct = s->bits.w.off;
+    oldseg = g_videoAddrSegment;
+    oldoff = g_targetPixelOffset;
+    g_videoAddrSegment = s->bits.w.seg;
+    g_targetPixelOffset = s->bits.w.off;
     (*g_videoOps.drawLine)(x, y, x, y + h - 1, x_colors.line);
-    av787at = oldseg;
-    at767ct = oldoff;
+    g_videoAddrSegment = oldseg;
+    g_targetPixelOffset = oldoff;
 }
 
 /* dr_hline @ 0F38:43FF (linear 0x1377F, 51 bytes)

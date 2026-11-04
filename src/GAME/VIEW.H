@@ -32,14 +32,14 @@ extern int g_sceneBitmapIds[4];                         /* DS:5E62 */
 extern int g_roadLineWidths[21];                        /* DS:5E6A */
 extern int g_5e94[4];                                   /* DS:5E94 */
 extern struct Ball g_sheetRects[];                      /* DS:5E9C */
-extern struct Bitmap far *k_6e60;                       /* DS:6E60 */
-extern struct Bitmap far *ax72f4;                       /* DS:72F4 */
-extern struct Bitmap far *g764aw;                       /* DS:764A */
-extern struct Bitmap far *ar767eu;                      /* DS:767E */
-extern struct Bitmap far *g8184y;                       /* DS:8184 */
-extern struct Bitmap far *bz8b7ex;                      /* DS:8B7E */
-extern int far *am8b82y;                                /* DS:8B82 */
-extern struct Bitmap far *ak8bcat;                      /* DS:8BCA */
+extern struct Bitmap far *g_lightsBm;                       /* DS:6E60 */
+extern struct Bitmap far *g_windowStrutArt;                       /* DS:72F4 */
+extern struct Bitmap far *g_citySkylineBmp;                       /* DS:764A */
+extern struct Bitmap far *g_skylineCountry;                      /* DS:767E */
+extern struct Bitmap far *g_imageFullMirror;                       /* DS:8184 */
+extern struct Bitmap far *g_rearBasePic;                      /* DS:8B7E */
+extern int far *g_viewTerrainBitsData;                                /* DS:8B82 */
+extern struct Bitmap far *g_windowBorderImage;                      /* DS:8BCA */
 void vw_unclip_top(void);                             /* 0x28840 */
 void vw_clip(void);                                   /* 0x28860 */
 void vw_load(void);                                   /* 0x28879 */

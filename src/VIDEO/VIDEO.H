@@ -44,13 +44,13 @@ extern unsigned char g_palette[17];                       /* DS:0440 */
 extern char g_blackPalette[16];                         /* DS:0452 */
 extern unsigned char g_altPalette[17];                  /* DS:0462 */
 extern struct Bitmap far *g_pageBmps[];                 /* DS:7316 */
-extern struct Obj bm7568[];                             /* DS:7568 */
+extern struct Obj g_scriptObjsData[];                             /* DS:7568 */
 extern struct Style *bustyle;                           /* DS:787E */
 extern struct Colors x_colors;                          /* DS:8242 */
 extern char g_colScreenBorder;                                     /* DS:8248 */
 extern struct Bitmap far *g_autoSprImagePtr;                       /* DS:825A */
-extern int ac825et;                                     /* DS:825E */
-extern int aw8260y;                                     /* DS:8260 */
+extern int g_picXDraw;                                     /* DS:825E */
+extern int g_sprDrawY;                                     /* DS:8260 */
 void vi_garage_pal(void);                                     /* 0x10B7C */
 void vi_bobs_pal(void);                                     /* 0x10B8C */
 void vi_name_pal(void);                                     /* 0x10B9C */

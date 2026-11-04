@@ -105,11 +105,11 @@ int av_run(void)
             hsave = r_vid.back->height;
             r_vid.back->height = SCREEN_BODY_HEIGHT;
             y = 0;
-            i = g_adResume ? a_7eaap.adIndex : g_pages.start[g_pages.cur];
+            i = g_adResume ? g_driver.adIndex : g_pages.start[g_pages.cur];
             next = g_pages.list + i;
             row7 = g_hotPageRows;
             cntz = 0;
-            a_7eaap.adIndex = i;
+            g_driver.adIndex = i;
             do {
                 dr_hline(r_vid.back, 0x44, y + 1, 0xb8);
                 y += 3;
@@ -166,20 +166,20 @@ int av_run(void)
         case -1:
             if (--g_pages.cur < 0)
                 g_pages.cur = g_pages.n - 1;
-            g_adIdxEndPageState = a_7eaap.adIndex - 1;
+            g_adIdxEndPageState = g_driver.adIndex - 1;
             if (g_adIdxEndPageState < 1)
                 g_adIdxEndPageState = limit;
             diff = (SCREEN_BODY_HEIGHT - 1);
             while ((diff -= 9 * g_descHdr[g_pages.list[g_adIdxEndPageState]] + 3) > 0)
                 if (--g_adIdxEndPageState < 1)
                     g_adIdxEndPageState = limit;
-            a_7eaap.adIndex = g_adIdxEndPageState;
+            g_driver.adIndex = g_adIdxEndPageState;
             g_adRedraw = 1;
             continue;
         case -2:
             if (++g_pages.cur >= g_pages.n)
                 g_pages.cur = 0;
-            a_7eaap.adIndex = g_adIdxEndPageState + (y > 0xc1 ? 0 : 1);
+            g_driver.adIndex = g_adIdxEndPageState + (y > 0xc1 ? 0 : 1);
             g_adRedraw = 1;
             continue;
         default:

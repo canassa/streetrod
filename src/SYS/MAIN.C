@@ -283,14 +283,14 @@ struct Bitmap far *g_bufBackgroundDashPtr;
 char far *g_imageBufferPointer;
 char g_graphicsUp;
 int g_hasSlowCpu;
-int bu8acc;
+int g_processorSpeedRating;
 int g_attractSwitchStartup;
 
 /* check_slow_cpu @ 0000:0659 (linear 0x00659, 22 bytes) */
 
 static void near check_slow_cpu(void)
 {
-    if (bu8acc < 4)
+    if (g_processorSpeedRating < 4)
         g_hasSlowCpu = 1;
     else
         g_hasSlowCpu = 0;
@@ -321,7 +321,7 @@ int main(int argc, char **argv)
     int a;
 
     g_graphicsUp = 0;
-    bu8acc = cpu_speed();
+    g_processorSpeedRating = cpu_speed();
     e = 2;
     b = 0;
     g_useMouse = 1;

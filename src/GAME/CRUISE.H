@@ -7,7 +7,7 @@
 extern char g_savedPal12;                               /* DS:51AC */
 extern char g_savedPal3;                                /* DS:51AD */
 extern int g_phaseDriveRunState;                                      /* DS:79A6 */
-extern int g7d66n;                                      /* DS:7D66 */
+extern int g_startingGoActive;                                      /* DS:7D66 */
 void cr_go(void);                                   /* 0x08D26 */
 void cr_rival_paint(int mode);                      /* 0x08D9C */
 int cr_drive(void);                                 /* 0x08E2D */

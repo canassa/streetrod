@@ -42,10 +42,10 @@ struct Rect *sp_car_clip(int x, int y, int w, int h, struct Rect *out)
 {
     struct Rect rect, scr;
 
-    scr.x1 = ac825et;
-    scr.x2 = g_autoSprImagePtr->width + ac825et - 1;
-    scr.y1 = aw8260y;
-    scr.y2 = aw8260y + g_carVisibleHtValue - 1;
+    scr.x1 = g_picXDraw;
+    scr.x2 = g_autoSprImagePtr->width + g_picXDraw - 1;
+    scr.y1 = g_sprDrawY;
+    scr.y2 = g_sprDrawY + g_carVisibleHtValue - 1;
     rect.x1 = x;
     rect.x2 = x + w - 1;
     rect.y1 = y;
@@ -56,7 +56,7 @@ struct Rect *sp_car_clip(int x, int y, int w, int h, struct Rect *out)
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Frame g_frmTable[12];
 struct Seq g_seqSpriteMoveData[10];
-struct Sprite g7d18m;
+struct Sprite g_mainCarSprite;
 struct Page g_sprPageRing[2];
 
 /* sp_clip_box @ 0F38:A1EE (linear 0x1956E, 133 bytes)
@@ -90,7 +90,7 @@ void sp_clip_box(int a, int b, int c, int d, int amax, int bmax, struct Rect *ou
 
 /* sp_setup @ 0F38:A273 (linear 0x195F3, 582 bytes)
 
-   Set up the sprite g7d18m from n frame images: the ring of frames, the display pages and the
+   Set up the sprite g_mainCarSprite from n frame images: the ring of frames, the display pages and the
    clipped rectangle */
 
 struct Sprite *sp_setup(int x, int y, struct Bitmap far **imgs, char (*cell)[8], int n, struct Bitmap far *img,
@@ -107,17 +107,17 @@ struct Sprite *sp_setup(int x, int y, struct Bitmap far **imgs, char (*cell)[8],
             g_frmTable[i].data = 0;
         g_frmTable[i].nxt[0] = &g_frmTable[i + 1];
     }
-    g7d18m.frame = g_frmTable[i - 1].nxt[0] = g_frmTable;
+    g_mainCarSprite.frame = g_frmTable[i - 1].nxt[0] = g_frmTable;
     for (i = 0; i < n; i++)
         g_frmTable[i].nxt[1] = g_frmTable[i].nxt[0]->nxt[0];
     for (i = 0; i < n; i++)
         g_frmTable[i].nxt[2] = g_frmTable[i].nxt[1]->nxt[1];
-    g7d18m.img = img;
-    g7d18m.x = x;
-    g7d18m.y = y;
-    g7d18m.save = save;
-    g7d18m.rc[0] = a8;
-    g7d18m.rc[1] = a9;
+    g_mainCarSprite.img = img;
+    g_mainCarSprite.x = x;
+    g_mainCarSprite.y = y;
+    g_mainCarSprite.save = save;
+    g_mainCarSprite.rc[0] = a8;
+    g_mainCarSprite.rc[1] = a9;
     if (r_vid.mode == VID_EGA) {
         for (i = 0; i < 2; i++) {
             g_sprPageRing[i].bm = g_pageBmps[i];
@@ -134,12 +134,12 @@ struct Sprite *sp_setup(int x, int y, struct Bitmap far **imgs, char (*cell)[8],
         g_sprPageRing[0].rect.x2 = g_sprPageRing[0].rect.y2 = -1;
         g_sprPageRing[0].link = g_sprPageRing;
     }
-    g7d18m.page = g_sprPageRing;
-    sp_clip_box(g7d18m.frame->pos->width,
-        g7d18m.frame->pos->height, g7d18m.x, g7d18m.y,
+    g_mainCarSprite.page = g_sprPageRing;
+    sp_clip_box(g_mainCarSprite.frame->pos->width,
+        g_mainCarSprite.frame->pos->height, g_mainCarSprite.x, g_mainCarSprite.y,
         g_sprPageRing[0].bm->width, g_sprPageRing[0].bm->height, &g_sprPageRing[0].rect);
-    g7d18m.seq = g_seqSpriteMoveData;
-    return &g7d18m;
+    g_mainCarSprite.seq = g_seqSpriteMoveData;
+    return &g_mainCarSprite;
 }
 
 /* sp_rect_sub @ 0F38:A4B9 (linear 0x19839, 236 bytes)

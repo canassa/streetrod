@@ -150,11 +150,11 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   clocks stay separate; folding g_tick while keeping the earlier deadlines plain
   reverses comparison operands in SYS and DRVTICK. The experiments and limits of
   this conclusion are summarized in plans/diary.md (2026-11-05).
-- **Evidence-only structs** `State70C0`, `State7D2E` and `State7E8A`. MSC's operand order
+- **Evidence-only structs** `RoadEdges`, `RoadView` and `RivalPosition`. MSC's operand order
   shows that these blocks are struct members, not plain variables (recipe book). Their
   extent and member types are a reconstruction.
-- **Budget structs and message offsets.** `struct State7EAA` (`a_7eaap`, DS:7EAA..7EC1) and
-  `struct State8272` (`m_8272`, DS:8272..828F) each fold 11 placeholder globals. GARAGE.C
+- **Budget structs and message offsets.** `struct DriverState` (`g_driver`, DS:7EAA..7EC1) and
+  `struct CarDisplay` (`g_carDraw`, DS:8272..828F) each fold 11 placeholder globals. GARAGE.C
   (one object, as the relocation table requires) loses ga_transmission's loop register variables
   once it references more external symbols than MSC 5.1's budget allows (CLAUDE.md 4d), and
   these two COMMON clusters as structs bring it under. For the same reason ga_body
@@ -162,10 +162,10 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   `g_txt + 1283`, `+ 1299`, `+ 1318`, `+ 1337` ("Chop roof - $70" ...), not as named
   globals; the game addresses messages by offset into g_txt everywhere (`Hot.f4`, the
   argument of gm_message), so the original may have had named constants there. That the
-  blocks are grouped is evidence; the member list (a wider State8272 changes ga_hood's
+  blocks are grouped is evidence; the member list (a wider CarDisplay changes ga_hood's
   loop temps, so the arrays from DS:8290 stay separate) and the spelling are not.
-- **Per-module type views.** VIEW.C reads the char `bw8aca` (DS:8ACA) as a word, so it
-  writes `*(int *)&bw8aca`. The original file probably had an `extern int` of its own
+- **Per-module type views.** VIEW.C reads the char `g_runRacingFlag` (DS:8ACA) as a word, so it
+  writes `*(int *)&g_runRacingFlag`. The original file probably had an `extern int` of its own
   there. `struct Win` (MENU.C, SAVEGAME.C) is a second view of the 18-byte hot-spot record
   `struct Hot`: `g_listLineBasePointerValue` holds the address of the first menu-line record as an `int`
   (`g_listLineBasePointerValue = (int)p`) and the code computes `(struct Win *)(0x12 * sel + g_listLineBasePointerValue)`.

@@ -1524,3 +1524,18 @@ All gates passed: headers; 572/572 functions (551 MATCH, 21 MATCH*); a clean bui
 ### What I learned
 
 The cursor-step declarations hid two different mistakes: the -1 entries preceded their named bases, while the supposed Y-table tail was actually sixteen direction bytes reached through negative scan-map offsets. The held-direction writes likewise addressed their real array through the unrelated saved-SP word. The garage slot mappings have a zero entry before the nine bolt positions; both one-based and zero-based consumers establish ten entries. GAME's explicit category reads prove five part-wear values, including the word PERF had named separately. Palette swapping reaches seventeen bytes, with natural alignment supplying the following byte; alignment is not another source global. A largest key map of nineteen bindings needs only twenty-one saved entries including music and sentinel, so the defensive thirty-entry guard does not prove a larger allocation.
+
+## 2026-11-04 22:30 CET: globalsA communal and BSS names
+
+### What I did
+
+- Renamed 46 hash-style communal/BSS globals, starting with a_7eaap -> g_driver and ao7d2ev -> g_trackViewMotion; renamed all five State-address types and six placeholder members (57 identifiers total).
+- Traced source uses and disassembly, inspected uninitialized data and decoded view pictures to distinguish windshield borders, town/country skyline images, mirror borders and start lights. Kept five unreferenced HOTSPOT communals individually unresolved: fz79a8 (2 bytes), ah7aa4w (6), bz7ee2 (64), g7ff6f (2), a8ef4fv (2).
+- Regenerated plans/unnamed.md using tools/sr/source.py and recorded every scoped item, its evidence or specific skip reason, and validation in work/LEDGER.md. Existing source/document edits were mechanically verified to contain identifier substitutions only.
+- Passed headers --check, check --all (572/572), a build after deleting work (packed EXE IDENTICAL), dgroup check/order, all 67 unit tests and the DOS-native MAKE build (IDENTICAL). The LINK map preserves every annotated communal address.
+
+### What I learned
+
+- The existing compiler-budget and communal-tie rules in CLAUDE.md 4d/4e remain decisive: the first long-name batch changed ga_transmission to1113 bytes; shorter equivalent body rectangle, car origin and display names restored1090. Several boundary-bucket names exchanged addresses with their neighbors despite passing the fit window; alternate meaningful spellings restored byte identity.
+- The four unused/reset-only members have no source readers: RoadView.unused is reset to zero, DriverState.unused to10, and RivalPosition/CarDisplay retain their explicit eight-byte unused tails. Their former addresses do not establish a more specific purpose.
+- The five skipped HOTSPOT allocations have only definitions/externs and no initialized bytes or code references; allocation size alone cannot distinguish their intended roles. Their exact addresses, sizes and evidence limits are preserved in the ledger.

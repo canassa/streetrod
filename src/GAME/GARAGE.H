@@ -19,7 +19,7 @@ extern int g_nextPartCategory[];                                    /* DS:513C *
 extern int g_cPos[][6];                                 /* DS:5148 */
 extern int g_boltSlots[10];                                    /* DS:5184 */
 extern int g_boltSubslots[10];                                    /* DS:5198 */
-extern struct State8272 m_8272;                         /* DS:8272 */
+extern struct CarDisplay g_carDraw;                         /* DS:8272 */
 int ga_day(void);                                   /* 0x06476 */
 void ga_time(int *a, int *b);                           /* 0x064A3 */
 void ga_check_end(int n);                                    /* 0x06529 */

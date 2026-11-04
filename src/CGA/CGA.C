@@ -445,7 +445,7 @@ void cg_screen_off(void)
         outp(MONO_MODE, (MODE_CTRL_GRAPHICS | MODE_CTRL_BLINK));
         break;
     }
-    gz8249 = 0;
+    g_displayEnabled = 0;
 }
 
 /* cg_screen_on @ 1C11:0F94 (linear 0x1D0A4, 36 bytes)
@@ -461,5 +461,5 @@ void cg_screen_on(void)
         outp(MONO_MODE, (MODE_CTRL_GRAPHICS | MODE_CTRL_VIDEO | MODE_CTRL_BLINK));
         break;
     }
-    gz8249 = 1;
+    g_displayEnabled = 1;
 }

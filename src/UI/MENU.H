@@ -15,7 +15,7 @@ extern int g_menuGrpHistoryList[];                                   /* DS:8B86 
 extern char g_hideSelectFrameVal;                                     /* DS:8B98 */
 extern char g_headerEditableState;                                    /* DS:8BA4 */
 extern struct Hot *g_hotsCurMenu;                             /* DS:8BA6 */
-extern int ai8bacx;                                     /* DS:8BAC */
+extern int g_textOfsMenu;                                     /* DS:8BAC */
 extern int g_hotMenuGroupState;                                      /* DS:8EFE */
 void mn_draw_hot(struct Hot *p);                      /* 0x139DE */
 void mn_push(enum ScreenId id);                                 /* 0x13DE6 */

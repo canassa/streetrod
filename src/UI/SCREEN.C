@@ -40,7 +40,7 @@ void sc_status_init(int y)
         bm_copy_box(r_vid.back, r_vid.front, 0, y, (SCREEN_WIDTH - 1), y + STATUS_BAR_HEIGHT - 1);
 }
 
-struct State7EAA a_7eaap;
+struct DriverState g_driver;
 struct TextEnd g_penPoint;
 struct StatusText g_statusLine; /* DS:824C */
 int g_xMoneyRhsVal;
@@ -85,7 +85,7 @@ void sc_add_money(int n)
 
     old = g_statusLine.shown;
     g_statusLine.shown = 1;
-    sc_status_text(g_statusLine.valueX, ltoa(a_7eaap.money += n, buf, 10), 0x30);
+    sc_status_text(g_statusLine.valueX, ltoa(g_driver.money += n, buf, 10), 0x30);
     g_xMoneyRhsVal = g_penPoint.x;
     g_statusLine.shown = old;
 }
@@ -172,9 +172,9 @@ void sc_wait_msg(char *msg)
             sc_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
             g_driveRebuild++;
         }
-        prev = gz8249;
+        prev = g_displayEnabled;
         if (!prev) {
-            gz8249 = 1;
+            g_displayEnabled = 1;
             (*g_videoOps.show)();
         }
         dx = g_displaySplitYVal ? 5 : 0x50;
@@ -195,7 +195,7 @@ void sc_wait_msg(char *msg)
             g_hotReadyBox[i].y2 -= dx;
         }
         r_vid.copyToFront = saved;
-        gz8249 = prev;
+        g_displayEnabled = prev;
         if (!prev)
             (*g_videoOps.blank)();
     } else {

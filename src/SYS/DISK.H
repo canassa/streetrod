@@ -29,12 +29,12 @@ extern unsigned char g_rleCounts[16];                   /* DS:4EEE */
 extern unsigned char g_rleValues[16];                   /* DS:4EFE */
 extern int g_picNewHeader;                              /* DS:4F0E */
 extern char g_hallFileName[];                           /* DS:4F3A */
-extern struct Panel ai70e4t[];                          /* DS:70E4 */
+extern struct Panel g_bodyRects[];                          /* DS:70E4 */
 extern struct Spr12 g_layoutAutoSprArray[];                           /* DS:7682 */
-extern struct Pos6 a784als[];                           /* DS:784A */
+extern struct Pos6 g_imageDecalLayout[];                           /* DS:784A */
 extern int g_usedCarAdFirst;                                     /* DS:7D16 */
 extern unsigned g_carRatingsTable[][3];                            /* DS:7D68 */
-extern struct Spec g7d86n[];                            /* DS:7D86 */
+extern struct Spec g_carData[];                            /* DS:7D86 */
 extern struct Spr6 g_pointsModelService[];                            /* DS:818C */
 extern unsigned g_rivalStakeToleranceTable[][3];                           /* DS:8BAE */
 extern int g_lib1Count;                                      /* DS:8BC8 */

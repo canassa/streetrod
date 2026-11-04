@@ -2,7 +2,7 @@
         INCLUDE PC.INC
 
         .DATA
-        EXTRN   _av787at:WORD
+        EXTRN   _g_videoAddrSegment:WORD
         EXTRN   _g_egaGcFunction:WORD
         EXTRN   _g_viewRect:BYTE
         EXTRN   _g_viewClip:WORD
@@ -153,7 +153,7 @@ _en_fill  ENDP
 
 ; en_fill_below @ 2645:00E7 (linear 0x26537, 100 bytes)
 ; en_fill_below(y, colour): EGA, fill the rows from y down to the bottom of the clip
-; rectangle by copying within segment av787at with the set/reset colour (a
+; rectangle by copying within segment g_videoAddrSegment with the set/reset colour (a
 ; latch copy of 40 bytes per row), then restore the graphics controller.
 
         PUBLIC  _en_fill_below
@@ -182,7 +182,7 @@ _en_fill_below  PROC    FAR
         mov     dx,EGA_PITCH
         mul     dx
         mov     cx,ax
-        mov     ax,_av787at
+        mov     ax,_g_videoAddrSegment
         mov     es,ax
         push    es
         pop     ds
@@ -215,7 +215,7 @@ _en_fill_below  ENDP
 
 ; en_pixel_addr @ 2645:014B (linear 0x2659B, 31 bytes)
 ; en_pixel_addr(ax = y, bx = x): EGA address of a pixel.  Out: bx = y * 40 + x / 8,
-; es = av787at, cl = 7 - (x & 7), ah = 1.
+; es = g_videoAddrSegment, cl = 7 - (x & 7), ah = 1.
 
         PUBLIC  _en_pixel_addr
 _en_pixel_addr  PROC    NEAR
@@ -228,7 +228,7 @@ _en_pixel_addr  PROC    NEAR
         shr     bx,1
         shr     bx,1
         add     bx,ax
-        mov     ax,_av787at
+        mov     ax,_g_videoAddrSegment
         mov     es,ax
         and     cl,7
         xor     cl,7

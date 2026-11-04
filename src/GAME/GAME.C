@@ -114,11 +114,11 @@ void gm_message(int n)
 
 static int near check_room(void)
 {
-    if (a_7eaap.carCount > 15) {
+    if (g_driver.carCount > 15) {
         gm_message(0x0e27);
         return 1;
     }
-    if (a_7eaap.partCount > 130) {
+    if (g_driver.partCount > 130) {
         gm_message(0x0e3f);
         return 1;
     }
@@ -159,10 +159,10 @@ struct Node * near gm_new_part(void)
 {
     struct Node *p;
 
-    p = a_7eaap.freeParts;
-    a_7eaap.freeParts = p->next;
+    p = g_driver.freeParts;
+    g_driver.freeParts = p->next;
     p->next = 0;
-    a_7eaap.partCount++;
+    g_driver.partCount++;
     return p;
 }
 
@@ -170,10 +170,10 @@ struct Node * near gm_new_part(void)
 
 static void near free_part(struct Node *p)
 {
-    p->next = a_7eaap.freeParts;
+    p->next = g_driver.freeParts;
     p->idx = -1;
-    a_7eaap.freeParts = p;
-    a_7eaap.partCount--;
+    g_driver.freeParts = p;
+    g_driver.partCount--;
 }
 
 /* gm_part_value @ 0000:3C5A (linear 0x03C5A, 51 bytes) */
@@ -216,7 +216,7 @@ static void near sell_parts(void)
     tries3 = 0;
     sel = 1;
     for (;; tries3++) {
-        for (p7 = a_7eaap.spareParts, nl = 0; p7; p7 = p7->next) {
+        for (p7 = g_driver.spareParts, nl = 0; p7; p7 = p7->next) {
             nl++;
             g_list[nl] = (ip = &g_parts[(list8[nl] = p7)->idx])->nameOffset;
             if (p7->wear != -0x80) {
@@ -275,7 +275,7 @@ static void near sell_parts(void)
         if (nl == KR_SELL_PART_NO_THANKS)
             continue;
         if (sel == 1)
-            a_7eaap.spareParts = p7->next;
+            g_driver.spareParts = p7->next;
         else
             list8[sel - 1]->next = p7->next;
         free_part(p7);
@@ -292,10 +292,10 @@ struct Node2 * near gm_new_car(void)
 {
     struct Node2 *p;
 
-    p = a_7eaap.freeCars;
-    a_7eaap.freeCars = p->next;
+    p = g_driver.freeCars;
+    g_driver.freeCars = p->next;
     p->next = 0;
-    a_7eaap.carCount++;
+    g_driver.carCount++;
     return p;
 }
 
@@ -303,10 +303,10 @@ struct Node2 * near gm_new_car(void)
 
 static void near free_car(struct Node2 *p)
 {
-    p->next = a_7eaap.freeCars;
+    p->next = g_driver.freeCars;
     p->b = -1;
-    a_7eaap.freeCars = p;
-    a_7eaap.carCount--;
+    g_driver.freeCars = p;
+    g_driver.carCount--;
 }
 
 /* gm_add_part @ 0000:3FF0 (linear 0x03FF0, 70 bytes) */
@@ -321,8 +321,8 @@ struct Node * near gm_add_part(int idx, int a)
     it = &g_parts[idx];
     n->wear = g_partWear[it->category];
     n->value = a;
-    n->next = a_7eaap.spareParts;
-    a_7eaap.spareParts = n;
+    n->next = g_driver.spareParts;
+    g_driver.spareParts = n;
     return n;
 }
 
@@ -338,7 +338,7 @@ struct Car * near gm_make_car(int idx, int value, struct Car *old)
     car->specIndex = idx;
     car->value = value;
     car->fuel = 0x28;
-    car->rank = g7d86n[idx].rank;
+    car->rank = g_carData[idx].rank;
     while ((i = rn_int(6)) == 5)
         if (rn_int(2) == 1)
             break;
@@ -346,20 +346,20 @@ struct Car * near gm_make_car(int idx, int value, struct Car *old)
     car->wireState = 1;
     car->timing = rn_int(13) - 8;
     car->transmission = node = (old == 0) ? gm_new_part() : car->transmission;
-    w = (g7d86n[idx].parts >> 6) & 3;
-    w = (kind = (g7d86n[idx].parts & 0xf) >> 1) + (w == 3) + 3 * w + 9;
+    w = (g_carData[idx].parts >> 6) & 3;
+    w = (kind = (g_carData[idx].parts & 0xf) >> 1) + (w == 3) + 3 * w + 9;
     node->idx = w;
     node->value = g_parts[w].value;
     node->wear = g_partWear[1];
     node->next = 0;
     car->rack.parts[0] = node = (old == 0) ? gm_new_part() : car->rack.parts[0];
-    w = (g7d86n[idx].parts >> 8 & 7) * 3 + kind;
+    w = (g_carData[idx].parts >> 8 & 7) * 3 + kind;
     node->idx = w;
     node->value = g_parts[w].value;
     node->wear = g_partWear[0];
     node->next = 0;
     car->tires = node = (old == 0) ? gm_new_part() : car->tires;
-    w = (g7d86n[idx].parts >> 4 & 3) + 0x28;
+    w = (g_carData[idx].parts >> 4 & 3) + 0x28;
     node->idx = w;
     node->value = g_parts[w].value;
     node->wear = g_partWear[4];
@@ -367,12 +367,12 @@ struct Car * near gm_make_car(int idx, int value, struct Car *old)
     car->rack.parts[1] = node = (old == 0) ? gm_new_part() : car->rack.parts[1];
     for (i = 3; i < 9; i++)
         car->engineBolts[i] = 0;
-    w = (i = g7d86n[idx].parts >> 11 & 7) * 3 + kind + 0x19;
+    w = (i = g_carData[idx].parts >> 11 & 7) * 3 + kind + 0x19;
     node->idx = w;
     node->value = g_parts[w].value;
     node->wear = g_partWear[3];
     node->next = 0;
-    w = (g7d86n[idx].parts >> 14 & 3) + 0x16;
+    w = (g_carData[idx].parts >> 14 & 3) + 0x16;
     i = g_nCarb[i] - 1;
     for (j = 2; j > i; j--)
         car->rack.parts[j + 2] = 0;
@@ -395,11 +395,11 @@ struct Car * near gm_make_car(int idx, int value, struct Car *old)
     car->appearance &= 0xbfff;
     car->appearance &= 0x7fff;
     if (old == 0) {
-        if (a_7eaap.currentCar) {
-            car->next = a_7eaap.otherCars;
-            a_7eaap.otherCars = car;
+        if (g_driver.currentCar) {
+            car->next = g_driver.otherCars;
+            g_driver.otherCars = car;
         } else
-            a_7eaap.currentCar = car;
+            g_driver.currentCar = car;
     }
     return car;
 }
@@ -414,8 +414,8 @@ int near gm_take_part(struct Node *n, int keep)
         return 0;
     r = n->value;
     if (keep) {
-        n->next = a_7eaap.spareParts;
-        a_7eaap.spareParts = n;
+        n->next = g_driver.spareParts;
+        g_driver.spareParts = n;
     } else
         free_part(n);
     return r;
@@ -468,8 +468,8 @@ static void near buy_from_ads(int tab)
     g_list[1] = 0xcd8;
     n = 2;
     i5 = price6 = 0;
-    for (k3 = g_usedCarAdFirst; k3 >= 0; k3 = g7d86n[k3].next) {
-        g_list[n++] = g7d86n[k3].nameOffset;
+    for (k3 = g_usedCarAdFirst; k3 >= 0; k3 = g_carData[k3].next) {
+        g_list[n++] = g_carData[k3].nameOffset;
         list4[i5++] = k3;
     }
     g_list[n++] = 0xcfd;
@@ -491,7 +491,7 @@ static void near buy_from_ads(int tab)
             price6 = g_parts[i5].value;
             g_hotBuy[0].kind = 0xe;
         } else {
-            k3 = (specn = &g7d86n[i5 = list4[n - 2]])->nameOffset;
+            k3 = (specn = &g_carData[i5 = list4[n - 2]])->nameOffset;
             price6 = specn->price;
             g_hotBuy[0].kind = 10;
         }
@@ -501,11 +501,11 @@ static void near buy_from_ads(int tab)
         for (;;) {
             n = mn_wait(KM_BUY);
             if (n == KR_BUY_YEAH) {
-                if (g_demo && (long)price6 > a_7eaap.money)
-                    a_7eaap.money += 1999;
-                if ((long)price6 > a_7eaap.money) {
+                if (g_demo && (long)price6 > g_driver.money)
+                    g_driver.money += 1999;
+                if ((long)price6 > g_driver.money) {
                     p1 = strchr(g_msgShort, '$');
-                    sprintf(++p1, "%d short.", price6 - (int)a_7eaap.money);
+                    sprintf(++p1, "%d short.", price6 - (int)g_driver.money);
                     gm_message(0xf1a8);
                     break;
                 }
@@ -513,7 +513,7 @@ static void near buy_from_ads(int tab)
                 if (used) {
                     gm_add_part(i5, price6);
                     g_gameClock.actionTicks += 0x222;
-                    if (a_7eaap.partCount > 0x82)
+                    if (g_driver.partCount > 0x82)
                         goto done;
                     break;
                 }
@@ -548,7 +548,7 @@ static void near buy_from_ads(int tab)
                 color = rn_int(5);
                 ga_palette(color);
             }
-            x1 = ((unsigned)specn - (unsigned)g7d86n) / 10;
+            x1 = ((unsigned)specn - (unsigned)g_carData) / 10;
             y = (((specn->parts >> 8) & 7) == 2) ? 8 : 0;
             cp_show_car(7, x1, y, 0, 0, 0x86, 0, g_tirePics[(specn->parts >> 4) & 3]);
             sc_text((SCREEN_WIDTH - da_text_width(g_offerName)) / 2, 0x88, g_offerName);
@@ -564,8 +564,8 @@ test:
     } while (n != KR_AD_CLOSE);
 done:
     av_close();
-    if (a_7eaap.currentCar)
-        ga_palette(a_7eaap.currentCar->paintScheme);
+    if (g_driver.currentCar)
+        ga_palette(g_driver.currentCar->paintScheme);
     g_scene = 0;
 }
 
@@ -629,13 +629,13 @@ static int near your_cars(void)
     item = 1;
     for (;; ticks++) {
         n = 0;
-        if (a_7eaap.currentCar) {
+        if (g_driver.currentCar) {
             n = 1;
-            g_list[1] = g7d86n[(tbl[1] = a_7eaap.currentCar)->specIndex].nameOffset;
+            g_list[1] = g_carData[(tbl[1] = g_driver.currentCar)->specIndex].nameOffset;
         }
-        for (cur = a_7eaap.otherCars; cur; cur = cur->next) {
+        for (cur = g_driver.otherCars; cur; cur = cur->next) {
             n++;
-            g_list[n] = g7d86n[(tbl[n] = cur)->specIndex].nameOffset;
+            g_list[n] = g_carData[(tbl[n] = cur)->specIndex].nameOffset;
         }
         g_list[0] = n;
         switch (item = mn_modal_list(KM_YOUR_CARS, (n > item) ? item : n, 0, g_list, 0, 0)) {
@@ -645,17 +645,17 @@ static int near your_cars(void)
             return 0;
         case KR_SWITCH_CAR:
             g_new = tbl[item = mn_sel()];
-            g_old = a_7eaap.currentCar;
+            g_old = g_driver.currentCar;
             if (g_new != g_old) {
-                if (item == ((a_7eaap.currentCar != 0) + 1))
-                    a_7eaap.otherCars = g_new->next;
+                if (item == ((g_driver.currentCar != 0) + 1))
+                    g_driver.otherCars = g_new->next;
                 else
                     tbl[item - 1]->next = g_new->next;
-                if (a_7eaap.currentCar) {
-                    a_7eaap.currentCar->next = a_7eaap.otherCars;
-                    a_7eaap.otherCars = a_7eaap.currentCar;
+                if (g_driver.currentCar) {
+                    g_driver.currentCar->next = g_driver.otherCars;
+                    g_driver.otherCars = g_driver.currentCar;
                 }
-                a_7eaap.currentCar = g_new;
+                g_driver.currentCar = g_new;
             } else
                 g_new = 0;
             return 3;
@@ -667,7 +667,7 @@ static int near your_cars(void)
         }
         cur = tbl[item = mn_sel()];
         offer = price = (int)((rn_int(20) + 75.0) * cur->value / 100.0);
-        strcpy(g_offerName, g_desc + g7d86n[cur->specIndex].nameOffset);
+        strcpy(g_offerName, g_desc + g_carData[cur->specIndex].nameOffset);
         g_offerAmount[0] = 0;
         pict = mn_grab(KM_SELL_CAR_OFFER, &rx, &ye, ARENA_LOW_STACK);
         mn_push(KM_SELL_CAR_OFFER);
@@ -719,24 +719,24 @@ static int near your_cars(void)
         gm_message((cur->value > cash * 2) ? 0x104b : 0x1091);
         g_gameClock.actionTicks += 0x888L;
         sc_add_money(cash);
-        if (item == 1 && a_7eaap.currentCar) {
+        if (item == 1 && g_driver.currentCar) {
             pu_show(pict, rx, ye);
             ma_pop_low(1);
             pict = 0;
             cu_ctl(CURSOR_HIDE_NOW);
-            mid = a_7eaap.currentCar->specIndex;
-            result = gm_car_look(a_7eaap.currentCar);
-            cp_show_car(6, mid, result, (a_7eaap.currentCar->appearance >> 8) & 0x1f, 0, 0x98, 0,
-                    g_tirePics[g_parts[a_7eaap.currentCar->tires->idx].variant]);
+            mid = g_driver.currentCar->specIndex;
+            result = gm_car_look(g_driver.currentCar);
+            cp_show_car(6, mid, result, (g_driver.currentCar->appearance >> 8) & 0x1f, 0, 0x98, 0,
+                    g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
             mn_pop(1);
             ga_clear_name();
             mn_push(KM_GARAGE);
             cu_ctl(CURSOR_SHOW_NOW);
-            gm_scrap_car(a_7eaap.currentCar, 0);
-            a_7eaap.currentCar = 0;
+            gm_scrap_car(g_driver.currentCar, 0);
+            g_driver.currentCar = 0;
         } else {
-            if (item == ((a_7eaap.currentCar != 0) + 1))
-                a_7eaap.otherCars = cur->next;
+            if (item == ((g_driver.currentCar != 0) + 1))
+                g_driver.otherCars = cur->next;
             else
                 tbl[item - 1]->next = cur->next;
             gm_scrap_car(cur, 0);
@@ -800,11 +800,11 @@ void near gm_run(void)
             continue;
         sc_status_label(g_49dc);
         v = 1;
-        if (kind == 0 && w == KR_OLD_GAME && a_7eaap.currentCar)
+        if (kind == 0 && w == KR_OLD_GAME && g_driver.currentCar)
             v = 2;
         if (kind == 0 && w == KR_OLD_GAME)
             v = 1;
-        if (w == KR_NEW_GAME && a_7eaap.carCount <= 15 && a_7eaap.partCount <= 130) {
+        if (w == KR_NEW_GAME && g_driver.carCount <= 15 && g_driver.partCount <= 130) {
             kind = read_paper();
             if (kind == 2 || kind == 1)
                 buy_from_ads(kind);
@@ -832,14 +832,14 @@ void near gm_run(void)
                 if (check_room())
                     v = 0;
                 else {
-                    if (a_7eaap.currentCar == 0)
+                    if (g_driver.currentCar == 0)
                         v = 1;
                     kind = read_paper();
                     if (kind == 2 || kind == 1)
                         buy_from_ads(kind);
-                    if (a_7eaap.currentCar == 0)
+                    if (g_driver.currentCar == 0)
                         v = 2;
-                    if (a_7eaap.currentCar == 0 && a_7eaap.otherCars)
+                    if (g_driver.currentCar == 0 && g_driver.otherCars)
                         v = 1;
                     g_gameClock.actionTicks += 0x222;
                 }
@@ -850,11 +850,11 @@ void near gm_run(void)
                     v = 0;
                     continue;
                 }
-                if (a_7eaap.currentCar) {
-                    if (ga_ready(a_7eaap.currentCar, 1)) {
-                        pf_drivetrain(a_7eaap.currentCar, &g_driveEng);
+                if (g_driver.currentCar) {
+                    if (ga_ready(g_driver.currentCar, 1)) {
+                        pf_drivetrain(g_driver.currentCar, &g_driveEng);
                         if (kind == 2) {
-                            if (a_7eaap.currentCar->fuel < 9) {
+                            if (g_driver.currentCar->fuel < 9) {
                                 gm_message(0x172e);
                                 v = 0;
                                 continue;
@@ -864,12 +864,12 @@ void near gm_run(void)
                             g_gameClock.actionTicks += 0x222;
                             bo_visit();
                         } else {
-                            if (a_7eaap.currentCar->fuel >= 0x8c) {
+                            if (g_driver.currentCar->fuel >= 0x8c) {
                                 gm_message(0x19b1);
                                 v = 0;
                                 continue;
                             }
-                            if (a_7eaap.money == 0) {
+                            if (g_driver.money == 0) {
                                 gm_message(0x199f);
                                 v = 0;
                                 continue;
@@ -886,7 +886,7 @@ void near gm_run(void)
                         v = 0;
                     }
                 } else {
-                    if (a_7eaap.otherCars)
+                    if (g_driver.otherCars)
                         gm_message(0x0f16);
                     else
                         gm_message(0x0efa);
@@ -908,7 +908,7 @@ void near gm_run(void)
                     } else {
                         sg_save();
                         v = 2;
-                        if (a_7eaap.currentCar == 0 && a_7eaap.otherCars)
+                        if (g_driver.currentCar == 0 && g_driver.otherCars)
                             v = 1;
                         continue;
                     }
@@ -939,7 +939,7 @@ void near gm_run(void)
                 continue;
             case 10:
                 ma_release();
-                ga_hood(a_7eaap.currentCar);
+                ga_hood(g_driver.currentCar);
                 continue;
             case 13:
                 ga_body(4);

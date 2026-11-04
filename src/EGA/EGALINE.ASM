@@ -2,7 +2,7 @@
         INCLUDE PC.INC
 
         .DATA
-        EXTRN   _av787at:WORD
+        EXTRN   _g_videoAddrSegment:WORD
         EXTRN   _g_egaGcFunction:WORD
 
         .CODE S21A0_TEXT
@@ -226,7 +226,7 @@ _el_pixel_addr  PROC    NEAR
         shr     bx,1
         shr     bx,1
         add     bx,ax
-        mov     ax,_av787at
+        mov     ax,_g_videoAddrSegment
         mov     es,ax
         and     cl,7
         xor     cl,7

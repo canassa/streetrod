@@ -30,12 +30,12 @@ extern int g_wheelSlotY[3];                             /* DS:0352 */
 extern signed char g_shiftPts[11][2];                   /* DS:0358 */
 extern struct Track g_shifters[];                       /* DS:036E */
 extern struct Pair g_shiftSlots[];                      /* DS:038C */
-extern struct Bitmap far *bm7678;                       /* DS:7678 */
-extern unsigned at767ct;                                /* DS:767C */
-extern unsigned av787at;                                /* DS:787A */
-extern char gz8249;                                     /* DS:8249 */
-extern struct Bitmap far *g82b4s;                       /* DS:82B4 */
-extern char bw8aca;                                     /* DS:8ACA */
+extern struct Bitmap far *g_driveDisplayPage;                       /* DS:7678 */
+extern unsigned g_targetPixelOffset;                                /* DS:767C */
+extern unsigned g_videoAddrSegment;                                /* DS:787A */
+extern char g_displayEnabled;                                     /* DS:8249 */
+extern struct Bitmap far *g_bufferSceneA;                       /* DS:82B4 */
+extern char g_runRacingFlag;                                     /* DS:8ACA */
 void da_speedo_pts(int i, int *x1, int *y1, int *x2, int *y2);/* 0x0F4B7 */
 void da_speedo_init(int i);                           /* 0x0F552 */
 void da_tach_pts(int i, int *x1, int *y1, int *x2, int *y2);/* 0x0F62E */

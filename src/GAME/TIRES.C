@@ -190,15 +190,15 @@ void ti_change(int *a, int *b)
     int s74;
 
     sv401 = r_vid.copyToFront;
-    s72 = m_8272.stickerX;
-    s74 = m_8272.stickerY;
+    s72 = g_carDraw.stickerX;
+    s74 = g_carDraw.stickerY;
     ma_release();
     cu_ctl(CURSOR_HIDE_NOW);
     r_vid.copyToFront = 0;
     g_tires.carX = g_xCoordSprite;
-    modelm = a_7eaap.currentCar->specIndex;
-    attr3 = gm_car_look(a_7eaap.currentCar);
-    tinto = (a_7eaap.currentCar->appearance >> 8) & 0x1f;
+    modelm = g_driver.currentCar->specIndex;
+    attr3 = gm_car_look(g_driver.currentCar);
+    tinto = (g_driver.currentCar->appearance >> 8) & 0x1f;
     for (n = 0; n < 3; n++)
         g_tires.liftPics[n] = di_bm(g_liftPicIds[n], ARENA_LOW_STACK);
     sc_fill_rect(0x88, 0xba - g_tires.liftPics[1]->height, g_tires.liftPics[1]->width, g_tires.liftPics[1]->height,
@@ -426,8 +426,8 @@ void ti_change(int *a, int *b)
     (*g_videoOps.copyPage)(r_vid.front->bits.p, r_vid.back->bits.p);
     g_xCoordSprite = g_tires.carX;
     r_vid.copyToFront = sv401;
-    m_8272.stickerX = s72;
-    m_8272.stickerY = s74;
+    g_carDraw.stickerX = s72;
+    g_carDraw.stickerY = s74;
     g_spriteBgY = 0;
     cu_ctl(CURSOR_SHOW_NOW);
 }

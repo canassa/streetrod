@@ -20,7 +20,7 @@
 #include "SYS.H"
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
-static int g_6e04aay;                      /* DS:6E04 */
+static int g_horizonY;                      /* DS:6E04 */
 static int g_roadRowLimit;                      /* DS:6E06 */
 static struct RenderRows g_renderRows; /* DS:6E08 */
 static int g_prevRivalFrame;                        /* DS:6E2A */
@@ -68,23 +68,23 @@ struct Ball g_sheetRects[7] = {{256, 8, 8}, {240, 16, 13}, {208, 32, 19}, {168, 
 static void near select_draw_page(void)
 {
     if (r_vid.mode == VID_EGA) {
-        av787at = (g_viewPages.draw == 1) ? 0xa200 : 0xa400;
+        g_videoAddrSegment = (g_viewPages.draw == 1) ? 0xa200 : 0xa400;
         ep_show(g_viewPages.show);
     } else {
-        av787at = g8188w->bits.w.seg;
-        at767ct = g8188w->bits.w.off;
+        g_videoAddrSegment = g_driveScreenB->bits.w.seg;
+        g_targetPixelOffset = g_driveScreenB->bits.w.off;
     }
 }
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
-struct Bitmap far *k_6e60;
-struct Bitmap far *ax72f4;
-struct Bitmap far *g764aw;
-struct Bitmap far *ar767eu;
-struct Bitmap far *g8184y;
-struct Bitmap far *bz8b7ex;
-int far *am8b82y;
-struct Bitmap far *ak8bcat;
+struct Bitmap far *g_lightsBm;
+struct Bitmap far *g_windowStrutArt;
+struct Bitmap far *g_citySkylineBmp;
+struct Bitmap far *g_skylineCountry;
+struct Bitmap far *g_imageFullMirror;
+struct Bitmap far *g_rearBasePic;
+int far *g_viewTerrainBitsData;
+struct Bitmap far *g_windowBorderImage;
 
 /* flip_page @ 2645:2288 (linear 0x286D8, 116 bytes) */
 
@@ -96,12 +96,12 @@ static void near flip_page(void)
         t = g_viewPages.draw;
         g_viewPages.draw = g_viewPages.show;
         g_viewPages.show = t;
-        av787at = (g_viewPages.draw == 1) ? 0xa200 : 0xa400;
+        g_videoAddrSegment = (g_viewPages.draw == 1) ? 0xa200 : 0xa400;
         ep_show(g_viewPages.show);
     } else {
-        (*g_videoOps.copy)(g8188w, r_vid.front, (struct Blt *)&g_viewRect, 1);
-        av787at = g8188w->bits.w.seg;
-        at767ct = g8188w->bits.w.off;
+        (*g_videoOps.copy)(g_driveScreenB, r_vid.front, (struct Blt *)&g_viewRect, 1);
+        g_videoAddrSegment = g_driveScreenB->bits.w.seg;
+        g_targetPixelOffset = g_driveScreenB->bits.w.off;
     }
 }
 
@@ -205,78 +205,78 @@ void vw_load(void)
     pkt1.h = bm1->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
     pkt1.dy = 0x66;
-    (*g_videoOps.copy)(bm1, g8188w, &pkt1, 1);
+    (*g_videoOps.copy)(bm1, g_driveScreenB, &pkt1, 1);
     ma_pop_high(1);
-    sel = *(int *)&bw8aca == 0 ? g_scene : 0;
+    sel = *(int *)&g_runRacingFlag == 0 ? g_scene : 0;
     bm24 = di_bm(g_sceneBitmapIds[sel], ARENA_HIGH_STACK);
     pkt1.w = bm24->width;
     pkt1.h = bm24->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
     pkt1.dy = 0x66;
-    (*g_videoOps.copy)(bm24, g82b4s, &pkt1, 1);
+    (*g_videoOps.copy)(bm24, g_bufferSceneA, &pkt1, 1);
     ma_pop_high(1);
-    if (*(int *)&bw8aca == 0) {
+    if (*(int *)&g_runRacingFlag == 0) {
         bm24 = di_bm(0x4ed, ARENA_HIGH_STACK);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
         pkt1.dy = (r_vid.mode == VID_EGA ? DASH_Y - 1 : 0) + 1;
-        (*g_videoOps.copy)(bm24, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt1, 1);
+        (*g_videoOps.copy)(bm24, r_vid.mode == VID_EGA ? g_driveDisplayPage : g_bufferSceneA, &pkt1, 1);
         ma_pop_high(1);
         bm24 = di_bm(0x4ee, ARENA_HIGH_STACK);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
         pkt1.dy = (r_vid.mode == VID_EGA ? DASH_Y - 1 : 0) + 0x2c;
-        (*g_videoOps.copy)(bm24, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt1, 1);
+        (*g_videoOps.copy)(bm24, r_vid.mode == VID_EGA ? g_driveDisplayPage : g_bufferSceneA, &pkt1, 1);
         ma_pop_high(1);
     }
-    ar767eu = di_bm(0x4f3, ARENA_LOW_STACK);
-    if (*(int *)&bw8aca == 0) {
-        g764aw = di_bm(0x3f0, ARENA_LOW_STACK);
-        pkt1.w = g764aw->width;
-        pkt1.h = g764aw->height;
+    g_skylineCountry = di_bm(0x4f3, ARENA_LOW_STACK);
+    if (*(int *)&g_runRacingFlag == 0) {
+        g_citySkylineBmp = di_bm(0x3f0, ARENA_LOW_STACK);
+        pkt1.w = g_citySkylineBmp->width;
+        pkt1.h = g_citySkylineBmp->height;
         pkt1.sx = pkt1.sy = 0;
         pkt1.dx = 0x2c;
         pkt1.dy = 0xc;
-        (*g_videoOps.maskedBlit)(g764aw, ar767eu, &pkt1, 1);
+        (*g_videoOps.maskedBlit)(g_citySkylineBmp, g_skylineCountry, &pkt1, 1);
         ma_pop_low(1);
     }
-    pkt1.w = ar767eu->width;
-    pkt1.h = ar767eu->height;
+    pkt1.w = g_skylineCountry->width;
+    pkt1.h = g_skylineCountry->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
-    pkt1.dy = SCREEN_HEIGHT - ar767eu->height;
-    (*g_videoOps.copy)(ar767eu, g8188w, &pkt1, 1);
+    pkt1.dy = SCREEN_HEIGHT - g_skylineCountry->height;
+    (*g_videoOps.copy)(g_skylineCountry, g_driveScreenB, &pkt1, 1);
     ma_pop_low(1);
-    ax72f4 = di_bm(0x3ee, ARENA_LOW_STACK);
-    ak8bcat = di_bm(0x3ef, ARENA_LOW_STACK);
-    g8184y = di_bm(0x3f1, ARENA_LOW_STACK);
-    bz8b7ex = di_bm(0x4db, ARENA_LOW_STACK);
-    if (*(int *)&bw8aca) {
-        idx = g_models[bn7648].kind;
-        k_6e60 = di_bm(0x3f5, ARENA_LOW_STACK);
-        aw7aaex = k_6e60->height;
-        g8acew[0] = di_bm(g_opponentPics[idx][0], ARENA_LOW_STACK);
-        g8acew[1] = di_bm(g_opponentPics[idx][1], ARENA_LOW_STACK);
-        g8acew[2] = di_bm(g_opponentPics[idx][2], ARENA_HIGH_STACK);
+    g_windowStrutArt = di_bm(0x3ee, ARENA_LOW_STACK);
+    g_windowBorderImage = di_bm(0x3ef, ARENA_LOW_STACK);
+    g_imageFullMirror = di_bm(0x3f1, ARENA_LOW_STACK);
+    g_rearBasePic = di_bm(0x4db, ARENA_LOW_STACK);
+    if (*(int *)&g_runRacingFlag) {
+        idx = g_models[g_opponentSpecIndex].kind;
+        g_lightsBm = di_bm(0x3f5, ARENA_LOW_STACK);
+        g_startDrawRows = g_lightsBm->height;
+        g_spritesOpp[0] = di_bm(g_opponentPics[idx][0], ARENA_LOW_STACK);
+        g_spritesOpp[1] = di_bm(g_opponentPics[idx][1], ARENA_LOW_STACK);
+        g_spritesOpp[2] = di_bm(g_opponentPics[idx][2], ARENA_HIGH_STACK);
         load = r_vid.mode == VID_EGA ? sr_ega : r_vid.mode == VID_TANDY ? sr_tandy : sr_cga;
         for (il = 0; il < 3; il++)
-            g8acew[3 + il] = (*load)(g8acew[2], g_shrinkMasks[0][il], g_shrinkMasks[0][il]);
+            g_spritesOpp[3 + il] = (*load)(g_spritesOpp[2], g_shrinkMasks[0][il], g_shrinkMasks[0][il]);
         for (il = 0; il < 3; il++)
-            g8acew[6 + il] = (*load)(g8acew[5], g_shrinkMasks[1][il], g_shrinkMasks[1][il]);
-        g8acew[9] = di_bm(g_opponentPics[idx][3], ARENA_LOW_STACK);
+            g_spritesOpp[6 + il] = (*load)(g_spritesOpp[5], g_shrinkMasks[1][il], g_shrinkMasks[1][il]);
+        g_spritesOpp[9] = di_bm(g_opponentPics[idx][3], ARENA_LOW_STACK);
         for (il = 0; il < 3; il++)
-            g8acew[10 + il] = (*load)(g8acew[9], g_shrinkMasks[2][il], g_shrinkMasks[2][il]);
-        ab7526x[0] = g8acew[0];
-        ab7526x[1] = di_bm(0x4d9, ARENA_LOW_STACK);
-        ab7526x[2] = di_bm(0x4da, ARENA_HIGH_STACK);
-        ab7526x[2] = ab7526x[3] = (*load)(ab7526x[2], g_shrinkMasks[0][0], g_shrinkMasks[0][0]);
+            g_spritesOpp[10 + il] = (*load)(g_spritesOpp[9], g_shrinkMasks[2][il], g_shrinkMasks[2][il]);
+        g_policeFramesTable[0] = g_spritesOpp[0];
+        g_policeFramesTable[1] = di_bm(0x4d9, ARENA_LOW_STACK);
+        g_policeFramesTable[2] = di_bm(0x4da, ARENA_HIGH_STACK);
+        g_policeFramesTable[2] = g_policeFramesTable[3] = (*load)(g_policeFramesTable[2], g_shrinkMasks[0][0], g_shrinkMasks[0][0]);
         ma_pop_high(1);
         for (il = 0; il < 3; il++)
-            ab7526x[4 + il] = ab7526x[3];
-        ab7526x[9] = di_bm(0x4de, ARENA_LOW_STACK);
+            g_policeFramesTable[4 + il] = g_policeFramesTable[3];
+        g_policeFramesTable[9] = di_bm(0x4de, ARENA_LOW_STACK);
         for (il = 0; il < 3; il++)
-            ab7526x[10 + il] = (*load)(ab7526x[9], g_shrinkMasks[2][il], g_shrinkMasks[2][il]);
+            g_policeFramesTable[10 + il] = (*load)(g_policeFramesTable[9], g_shrinkMasks[2][il], g_shrinkMasks[2][il]);
     }
 }
 
@@ -293,15 +293,15 @@ static void near render_backdrop(void)
     int i;
 
     b.dy = 0x12;
-    if (*(int *)&bw8aca) {
-        v = rd_proj_y(n8, m5 * 2, ao7d2ev.m7d3e);
+    if (*(int *)&g_runRacingFlag) {
+        v = rd_proj_y(n8, m5 * 2, g_trackViewMotion.roadHeight);
         b.h = v - 0x1e;
         b.sy = 0x9a - b.h;
-        if (ao7d2ev.m7d3c > 0) {
-            r = (ao7d2ev.m7d3c * 2 % SCREEN_WIDTH) & ~7;
+        if (g_trackViewMotion.curveX > 0) {
+            r = (g_trackViewMotion.curveX * 2 % SCREEN_WIDTH) & ~7;
             ll = SCREEN_WIDTH - r;
         } else {
-            ll = (abs(ao7d2ev.m7d3c) * 2 % SCREEN_WIDTH) & ~7;
+            ll = (abs(g_trackViewMotion.curveX) * 2 % SCREEN_WIDTH) & ~7;
             r = SCREEN_WIDTH - ll;
         }
         b.w = ll;
@@ -314,21 +314,21 @@ static void near render_backdrop(void)
         b.dx = 0;
         b.h = 0x1d;
     }
-    (*g_videoOps.copy)(g8188w, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
-    if (*(int *)&bw8aca) {
+    (*g_videoOps.copy)(g_driveScreenB, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+    if (*(int *)&g_runRacingFlag) {
         b.w = r;
         b.sx = ll;
         b.dx = 0;
-        (*g_videoOps.copy)(g8188w, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
+        (*g_videoOps.copy)(g_driveScreenB, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
     }
-    b.h = *(int *)&bw8aca ? 0x14 : 0x10;
+    b.h = *(int *)&g_runRacingFlag ? 0x14 : 0x10;
     b.sy = 0xa3;
-    if (*(int *)&bw8aca) {
-        if (ao7d2ev.m7d3c > 0) {
-            r = (ao7d2ev.m7d3c * 4 % SCREEN_WIDTH) & ~7;
+    if (*(int *)&g_runRacingFlag) {
+        if (g_trackViewMotion.curveX > 0) {
+            r = (g_trackViewMotion.curveX * 4 % SCREEN_WIDTH) & ~7;
             ll = SCREEN_WIDTH - r;
         } else {
-            ll = (abs(ao7d2ev.m7d3c) * 4 % SCREEN_WIDTH) & ~7;
+            ll = (abs(g_trackViewMotion.curveX) * 4 % SCREEN_WIDTH) & ~7;
             r = SCREEN_WIDTH - ll;
         }
         b.w = ll;
@@ -342,21 +342,21 @@ static void near render_backdrop(void)
         b.dy = 0x2f;
     }
     clip_blit_y(&b);
-    (*g_videoOps.copy)(g8188w, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
+    (*g_videoOps.copy)(g_driveScreenB, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
     g_roadRowLimit = 14;
-    if (*(int *)&bw8aca) {
+    if (*(int *)&g_runRacingFlag) {
         b.w = r;
         b.sx = ll;
         b.dx = 0;
-        (*g_videoOps.copy)(g8188w, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
-        g_6e04aay = v + 8;
+        (*g_videoOps.copy)(g_driveScreenB, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+        g_horizonY = v + 8;
         for (i = 14; i; i--) {
-            if (g_roadYProjectionArray[i] < g_6e04aay) {
-                g_6e04aay = g_roadYProjectionArray[i];
+            if (g_roadYProjectionArray[i] < g_horizonY) {
+                g_horizonY = g_roadYProjectionArray[i];
                 g_roadRowLimit = i;
             }
         }
-        (*g_videoOps.fillBelow)(g_6e04aay, 9);
+        (*g_videoOps.fillBelow)(g_horizonY, 9);
     } else
         (*g_videoOps.fillBelow)(0x3f, 1);
 }
@@ -540,7 +540,7 @@ void vw_road_row(int n)
     ybot6 = *g_renderRows.prevY;
     dxlm = edge_step(*g_renderRows.prevLeftX, ybot6, xl, yk);
     dxr7 = edge_step(*g_renderRows.prevRightX, ybot6, xrl, yk);
-    flagk = *am8b82y & 1;
+    flagk = *g_viewTerrainBitsData & 1;
     if (flagk) {
         xl2 = *g_renderRows.leftOuterX;
         xr28 = *g_renderRows.rightOuterX;
@@ -549,7 +549,7 @@ void vw_road_row(int n)
         dxl2k = edge_step(*g_renderRows.prevLeftOuterX, ybot6, xl2, yk);
         dxr26 = edge_step(*g_renderRows.prevRightOuterX, ybot6, xr28, yk);
     }
-    if (*am8b82y & 8) {
+    if (*g_viewTerrainBitsData & 8) {
         wid = *g_renderRows.lineWidth;
         cx0k = ((xl + xrl) >> 1) - (wid >> 1);
     }
@@ -557,7 +557,7 @@ void vw_road_row(int n)
         return;
     for (cnt = ybot6 - yk; cnt && yk <= 101; cnt--, yk++) {
         if (flagk) {
-            if (*am8b82y & 4)
+            if (*g_viewTerrainBitsData & 4)
                 break;
             if (*g_renderRows.leftFlags & 0x80) {
                 m17 = xl2 + ((xl - xl2) >> 1);
@@ -582,9 +582,9 @@ void vw_road_row(int n)
                     (*g_videoOps.fillSpan)(xrl, xr28, yk, 2);
             }
         } else {
-            (*g_videoOps.fillSpan)(xl, xrl, yk, (*am8b82y & 0x10) ? 15 : 1);
+            (*g_videoOps.fillSpan)(xl, xrl, yk, (*g_viewTerrainBitsData & 0x10) ? 15 : 1);
         }
-        if (*am8b82y & 8) {
+        if (*g_viewTerrainBitsData & 8) {
             t1 = cx0k;
             t2 = t1 + wid;
             (*g_videoOps.fillSpan)(t1, t2, yk, 4);
@@ -638,7 +638,7 @@ void vw_mirror_row(void)
     ybot6 = *g_renderRows.prevY;
     dxlm = edge_step(*g_renderRows.prevLeftX, ybot6, xl, yk);
     dxr7 = edge_step(*g_renderRows.prevRightX, ybot6, xrl, yk);
-    flagk = *am8b82y & 1;
+    flagk = *g_viewTerrainBitsData & 1;
     if (flagk) {
         xl2 = *g_renderRows.leftOuterX;
         xr28 = *g_renderRows.rightOuterX;
@@ -647,7 +647,7 @@ void vw_mirror_row(void)
         dxl2k = edge_step(*g_renderRows.prevLeftOuterX, ybot6, xl2, yk);
         dxr26 = edge_step(*g_renderRows.prevRightOuterX, ybot6, xr28, yk);
     }
-    if (*am8b82y & 8) {
+    if (*g_viewTerrainBitsData & 8) {
         wid = *g_renderRows.lineWidth;
         cx0k = ((xl + xrl) >> 1) - (wid >> 1);
     }
@@ -655,7 +655,7 @@ void vw_mirror_row(void)
         return;
     for (cnt = ybot6 - yk; cnt && yk <= 42; cnt--, yk++) {
         if (flagk) {
-            if (*am8b82y & 4)
+            if (*g_viewTerrainBitsData & 4)
                 break;
             if (*g_renderRows.leftFlags & 0x80) {
                 m17 = xl2 + ((xl - xl2) >> 1);
@@ -676,7 +676,7 @@ void vw_mirror_row(void)
             (*g_videoOps.fillSpan)(xrl, 317, yk, 9);
             (*g_videoOps.fillSpan)(xl, xrl, yk, 1);
         }
-        if (*am8b82y & 8) {
+        if (*g_viewTerrainBitsData & 8) {
             t1 = cx0k;
             t2 = t1 + wid;
             (*g_videoOps.fillSpan)(t1, t2, yk, 4);
@@ -706,7 +706,7 @@ static void near render_buildings(int a, int b, int c, int d, int e, int f, int 
     int t8l;
     int y;
 
-    t8l = *am8b82y & 1;
+    t8l = *g_viewTerrainBitsData & 1;
     if (rev) {
         a41 = g_renderRows.leftFlags[0] & 4;
         b8l = g_renderRows.leftFlags[0] & 8;
@@ -718,7 +718,7 @@ static void near render_buildings(int a, int b, int c, int d, int e, int f, int 
         b4 = g_renderRows.rightFlags[-1] & 4;
         c10 = g_renderRows.rightFlags[0] & 0x10;
     }
-    if (!(*am8b82y & 4)) {
+    if (!(*g_viewTerrainBitsData & 4)) {
         if (c10)
             fill_quad(2, a, b, c, d, e, f);
         else
@@ -730,7 +730,7 @@ static void near render_buildings(int a, int b, int c, int d, int e, int f, int 
                 fill_quad(4, a, b, f, e, e - ((d - e) >> 1), f - ((c - f) >> 1));
             }
         }
-        if (am8b82y[-1] & 4) {
+        if (g_viewTerrainBitsData[-1] & 4) {
             if (rev)
                 (*g_videoOps.fillSpan)(g_viewClip.xMin, a, c - 1, 4);
             else
@@ -802,7 +802,7 @@ static void near render_mirror_buildings(int a, int b, int c, int d, int e, int 
     int t8l;
     int y;
 
-    if (t8l = *am8b82y & 1) {
+    if (t8l = *g_viewTerrainBitsData & 1) {
         if (rev) {
             a41 = g_renderRows.leftFlags[0] & 4;
             b4 = g_renderRows.leftFlags[1] & 4;
@@ -812,7 +812,7 @@ static void near render_mirror_buildings(int a, int b, int c, int d, int e, int 
             b4 = g_renderRows.rightFlags[1] & 4;
             c10 = g_renderRows.rightFlags[0] & 0x10;
         }
-        if (!(*am8b82y & 4)) {
+        if (!(*g_viewTerrainBitsData & 4)) {
             if (c10)
                 fill_quad(2, a, b, c, d, e, f);
             else
@@ -823,7 +823,7 @@ static void near render_mirror_buildings(int a, int b, int c, int d, int e, int 
                 else
                     fill_quad(4, a, b, f, e, e - d + e, f - c + f);
             }
-            if (am8b82y[1] & 4) {
+            if (g_viewTerrainBitsData[1] & 4) {
                 if (rev)
                     (*g_videoOps.fillSpan)(g_viewClip.xMin, a, c - 1, 4);
                 else
@@ -882,7 +882,7 @@ static void near render_right_buildings(void)
 
 static void near render_row(int n)
 {
-    if (*(int *)&bw8aca == 0) {
+    if (*(int *)&g_runRacingFlag == 0) {
         render_left_buildings();
         render_right_buildings();
     }
@@ -987,9 +987,9 @@ static void near render_scaled_pic(int x, int y, int n, int align, int clip, int
     else
         clip_blit_y(&b);
     if (mode == 1)
-        (*g_videoOps.copy)(g82b4s, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
+        (*g_videoOps.copy)(g_bufferSceneA, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
     else
-        (*g_videoOps.copy)(r_vid.mode == VID_EGA ? bm7678 : g82b4s, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
+        (*g_videoOps.copy)(r_vid.mode == VID_EGA ? g_driveDisplayPage : g_bufferSceneA, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
 }
 
 /* render_gantry @ 2645:3CCC (linear 0x2A11C, 247 bytes) */
@@ -1011,7 +1011,7 @@ static void near render_gantry(int x1, int x2, int y1, int y2, int n, int clip, 
         en_end();
         render_scaled_pic((x1 + x2) >> 1, y1, n, 0, clip, 1);
         en_begin();
-    } else if (*am8b82y & 1) {
+    } else if (*g_viewTerrainBitsData & 1) {
         en_end();
         render_scaled_pic((x1 + x2) >> 1, y1, n, 0, clip, (flags & 0x4000) ? 2 : 3);
         en_begin();
@@ -1025,18 +1025,18 @@ static void near render_start_signal(void)
 {
     struct Blt b;
 
-    if (aw7aaex > 0) {
+    if (g_startDrawRows > 0) {
         b.w = 0x18;
-        b.h = aw7aaex;
-        if (g7d66n) {
-            ao8228u = 1;
+        b.h = g_startDrawRows;
+        if (g_startingGoActive) {
+            g_startLightGo = 1;
             b.sx = 0;
         } else
             b.sx = 0x18;
-        b.sy = 0x20 - aw7aaex;
+        b.sy = 0x20 - g_startDrawRows;
         b.dx = 0x82;
         b.dy = 0x12;
-        (*g_videoOps.maskedBlit)(k_6e60, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
+        (*g_videoOps.maskedBlit)(g_lightsBm, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
     }
 }
 
@@ -1046,17 +1046,17 @@ static void near render_overlays(void)
 {
     struct Blt b;
 
-    b.w = ax72f4->width;
-    b.h = ax72f4->height;
+    b.w = g_windowStrutArt->width;
+    b.h = g_windowStrutArt->height;
     b.dx = b.sx = b.sy = 0;
     b.dy = 0x12;
-    (*g_videoOps.maskedBlit)(ax72f4, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
-    b.w = ak8bcat->width;
-    b.h = ak8bcat->height;
+    (*g_videoOps.maskedBlit)(g_windowStrutArt, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+    b.w = g_windowBorderImage->width;
+    b.h = g_windowBorderImage->height;
     b.sx = b.sy = 0;
     b.dx = 0x58;
     b.dy = 0x5f;
-    (*g_videoOps.maskedBlit)(ak8bcat, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
+    (*g_videoOps.maskedBlit)(g_windowBorderImage, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
 }
 
 /* render_mirror_frame @ 2645:3EDB (linear 0x2A32B, 178 bytes) */
@@ -1065,19 +1065,19 @@ static void near render_mirror_frame(void)
 {
     struct Blt b;
 
-    b.w = g8184y->width;
-    b.h = g8184y->height;
+    b.w = g_imageFullMirror->width;
+    b.h = g_imageFullMirror->height;
     b.sx = b.sy = 0;
     b.dx = 0xf0;
     b.dy = 0x12;
-    (*g_videoOps.copy)(g8184y, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
-    b.w = bz8b7ex->width;
+    (*g_videoOps.copy)(g_imageFullMirror, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+    b.w = g_rearBasePic->width;
     b.h = 2;
     b.sx = b.sy = 0;
     b.dx = 0xf0;
     b.dy = g_mirYProj[7] - 2;
     clip_blit_y(&b);
-    (*g_videoOps.copy)(bz8b7ex, g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
+    (*g_videoOps.copy)(g_rearBasePic, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
 }
 
 /* render_opponent @ 2645:3F8D (linear 0x2A3DD, 1136 bytes) */
@@ -1097,9 +1097,9 @@ static void near render_opponent(void)
     int rd;
     struct Bitmap far *bm;
 
-    a2 = ar7e8av.roadIndex;
-    xk = (a2 - ao7d2ev.roadIndex) * 8 + ar7e8av.roadFraction - ao7d2ev.roadFraction;
-    z9 = ar7e8av.lateralX - ao7d2ev.lateralX;
+    a2 = g_roadOppPos.roadIndex;
+    xk = (a2 - g_trackViewMotion.roadIndex) * 8 + g_roadOppPos.roadFraction - g_trackViewMotion.roadFraction;
+    z9 = g_roadOppPos.lateralX - g_trackViewMotion.lateralX;
     if (xk >= 0x78)
         seln = -1;
     else if (xk >= 0x10) {
@@ -1109,7 +1109,7 @@ static void near render_opponent(void)
         seln = ((0x10 - xk) >> 4) + 8;
     else if (xk <= 8) {
         if (abs(z9) < 180) {
-            if (ap7d7cv <= 8)
+            if (g_picOpponent <= 8)
                 seln = 2;
             else
                 seln = 9;
@@ -1119,56 +1119,56 @@ static void near render_opponent(void)
         seln = 1;
     else
         seln = 3;
-    if (bu8acc >= 4 && seln != ap7d7cv) {
+    if (g_processorSpeedRating >= 4 && seln != g_picOpponent) {
         if (seln < 0) {
-            if (ap7d7cv == 8)
+            if (g_picOpponent == 8)
                 return;
-            seln = ap7d7cv + 1;
+            seln = g_picOpponent + 1;
         } else if (seln > 12) {
-            if (ap7d7cv == 12)
+            if (g_picOpponent == 12)
                 return;
-            seln = ap7d7cv + 1;
+            seln = g_picOpponent + 1;
         } else if (seln != g_prevRivalFrame) {
-            if ((seln <= 8 && ap7d7cv > 9) || (seln >= 9 && ap7d7cv <= 8 && ap7d7cv > 0))
-                seln = ap7d7cv - 1;
-            else if (ap7d7cv == 0)
+            if ((seln <= 8 && g_picOpponent > 9) || (seln >= 9 && g_picOpponent <= 8 && g_picOpponent > 0))
+                seln = g_picOpponent - 1;
+            else if (g_picOpponent == 0)
                 seln = seln < 9 ? 1 : 9;
-            else if (ap7d7cv == 9)
+            else if (g_picOpponent == 9)
                 seln = seln < 9 ? (z9 < 0 ? 0 : 2) : 10;
-            else if (ap7d7cv == 1)
+            else if (g_picOpponent == 1)
                 seln = seln < 1 ? 0 : 3;
-            else if (ap7d7cv == 3 && seln == 1)
+            else if (g_picOpponent == 3 && seln == 1)
                 ;
-            else if (seln > ap7d7cv)
-                seln = ap7d7cv + 1;
+            else if (seln > g_picOpponent)
+                seln = g_picOpponent + 1;
             else
-                seln = ap7d7cv - 1;
+                seln = g_picOpponent - 1;
         }
     }
-    ay8bc2z = seln == 0 || (seln == 2 && xk <= 10);
-    by72f2 = seln == 2 && xk <= 10 && abs(z9) < 180 &&
-        (bu8acc < 4 ? 100 : 180) > abs(z9) && ar7e8av.distanceStep < ao7d2ev.distanceStep;
-    g_prevRivalFrame = ap7d7cv;
-    ap7d7cv = seln;
+    g_carCollisionRange = seln == 0 || (seln == 2 && xk <= 10);
+    g_carHit = seln == 2 && xk <= 10 && abs(z9) < 180 &&
+        (g_processorSpeedRating < 4 ? 100 : 180) > abs(z9) && g_roadOppPos.distanceStep < g_trackViewMotion.distanceStep;
+    g_prevRivalFrame = g_picOpponent;
+    g_picOpponent = seln;
     g_5ec6 = xk > 16 ? (xk + 8) & 15 : 0;
     t1 = xk;
     if (seln == 0)
         t1 += 16;
     if (t1 < -2 && seln == 2)
         t1 += 8;
-    rc = ao7d2ev.m7d3e - g_terrain4[a2];
-    rd = ao7d2ev.m7d3c - g_terrain2[a2];
+    rc = g_trackViewMotion.roadHeight - g_terrain4[a2];
+    rd = g_trackViewMotion.curveX - g_terrain2[a2];
     if (seln < 9) {
         t1 += 4;
-        ra = rd_proj_x(t1, ar7e8av.lateralX, rd);
+        ra = rd_proj_x(t1, g_roadOppPos.lateralX, rd);
         rb = rd_proj_y(t1, 2000, rc);
     } else {
         t1 = -t1;
-        ra = rd_mirror_x(t1, ar7e8av.lateralX, -rd);
+        ra = rd_mirror_x(t1, g_roadOppPos.lateralX, -rd);
         rb = rd_mirror_y(t1, 2000, -rc);
     }
     if (seln == 0) {
-        bm = g8acew[seln];
+        bm = g_spritesOpp[seln];
         b.w = bm->width;
         b.h = bm->height;
         if ((b.sx = b.w - ra + 0x40) < 0)
@@ -1177,7 +1177,7 @@ static void near render_opponent(void)
         b.sy = 0;
         b.dy = rb;
     } else if (seln == 1) {
-        bm = g8acew[seln];
+        bm = g_spritesOpp[seln];
         b.w = bm->width;
         b.h = bm->height;
         b.sx = 0;
@@ -1185,13 +1185,13 @@ static void near render_opponent(void)
         b.sy = 0;
         b.dy = rb - b.h + 0x11;
     } else {
-        bm = g8acew[seln];
+        bm = g_spritesOpp[seln];
         b.w = bm->width;
         b.h = bm->height;
         b.sx = 0;
         b.dx = ra - (b.w >> 1);
         b.sy = 0;
-        b.dy = (seln < 9 ? (rb < g_6e04aay ? g_6e04aay : rb) : rb) - b.h;
+        b.dy = (seln < 9 ? (rb < g_horizonY ? g_horizonY : rb) : rb) - b.h;
         if (seln == 2 && b.dy + b.h >= 0x65)
             b.dy = 0x65 - b.h;
     }
@@ -1210,7 +1210,7 @@ static void near render_opponent(void)
             clip_blit(&b);
         else
             clip_blit_y(&b);
-        (*g_videoOps.maskedBlit)(g8acew[seln], g_viewPages.draw == 1 ? g8188w : g82b4s, &b, 1);
+        (*g_videoOps.maskedBlit)(g_spritesOpp[seln], g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
         if (flag9) {
             if (g_viewClip.xMin == 0)
                 clip_mirror();
@@ -1234,35 +1234,35 @@ static void near render_mirror(void)
     g_renderRows.leftX = &g_lhsRdMirrorX[7];
     g_renderRows.rightX = &g_mirGeom.rightX[7];
     g_renderRows.y = &g_mirYProj[7];
-    g_renderRows.leftOuterX = &al70c0x.leftOuterX[7];
-    g_renderRows.rightOuterX = &al70c0x.rightOuterX[7];
+    g_renderRows.leftOuterX = &g_edgesRoad.leftOuterX[7];
+    g_renderRows.rightOuterX = &g_edgesRoad.rightOuterX[7];
     g_renderRows.buildingY = &g_mirGeom.buildingY[7];
     g_renderRows.prevLeftX = &g_lhsRdMirrorX[6];
     g_renderRows.prevRightX = &g_mirGeom.rightX[6];
     g_renderRows.prevY = &g_mirYProj[6];
     g_renderRows.prevBuildingY = &g_mirGeom.buildingY[6];
-    g_renderRows.prevLeftOuterX = &al70c0x.leftOuterX[6];
-    g_renderRows.prevRightOuterX = &al70c0x.rightOuterX[6];
+    g_renderRows.prevLeftOuterX = &g_edgesRoad.leftOuterX[6];
+    g_renderRows.prevRightOuterX = &g_edgesRoad.rightOuterX[6];
     g_renderRows.lineWidth = &g_roadLineWidths[20];
-    g_renderRows.leftFlags = (int far *)(q_72ee - 8);
+    g_renderRows.leftFlags = (int far *)(g_roadTerrain - 8);
     g_renderRows.rightFlags = (int far *)(g_rightSideTerrainRow - 8);
-    am8b82y = (int far *)(g7d62p - 8);
+    g_viewTerrainBitsData = (int far *)(g_hereFlagsPtr - 8);
     en_end();
     render_mirror_frame();
     en_begin();
     clip_mirror();
     for (i = 7; i; i--) {
         render_mirror_row();
-        if (*am8b82y & 4)
+        if (*g_viewTerrainBitsData & 4)
             goto next;
-        if (*am8b82y & 0xf000)
-            render_gantry(*g_renderRows.leftX, *g_renderRows.rightX, -((*g_renderRows.y - *g_renderRows.buildingY) * 4 - *g_renderRows.y), *g_renderRows.y, i + 5, 1, *am8b82y & 0xf000);
+        if (*g_viewTerrainBitsData & 0xf000)
+            render_gantry(*g_renderRows.leftX, *g_renderRows.rightX, -((*g_renderRows.y - *g_renderRows.buildingY) * 4 - *g_renderRows.y), *g_renderRows.y, i + 5, 1, *g_viewTerrainBitsData & 0xf000);
         if (i >= 6)
             goto next;
-        f3 = *am8b82y & 1;
+        f3 = *g_viewTerrainBitsData & 1;
         w11 = *g_renderRows.leftFlags;
         w2 = *g_renderRows.rightFlags;
-        w36 = *am8b82y;
+        w36 = *g_viewTerrainBitsData;
         if (w11 & 0x20) {
             if (f3)
                 render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, -1, 0);
@@ -1341,7 +1341,7 @@ static void near render_mirror(void)
         if (w36 & 0x800)
             render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 0xf);
     next:
-        if (ao7d2ev.roadIndex - ar7e8av.roadIndex == i && *(int *)&bw8aca) {
+        if (g_trackViewMotion.roadIndex - g_roadOppPos.roadIndex == i && *(int *)&g_runRacingFlag) {
             en_end();
             render_opponent();
             en_begin();
@@ -1355,7 +1355,7 @@ static void near render_mirror(void)
         g_renderRows.lineWidth--;
         g_renderRows.leftFlags++;
         g_renderRows.rightFlags++;
-        am8b82y++;
+        g_viewTerrainBitsData++;
         g_renderRows.leftOuterX--;
         g_renderRows.rightOuterX--;
         g_renderRows.buildingY--;
@@ -1369,12 +1369,12 @@ static void near render_mirror(void)
     clip_vline(4, 0x13e, 0x17, 0x2a);
     clip_vline(2, (SCREEN_WIDTH - 1), 0x17, 0x2a);
     pkt1.w = 0x20;
-    pkt1.h = g8184y->height - 6;
+    pkt1.h = g_imageFullMirror->height - 6;
     pkt1.sx = 0xf8;
     pkt1.sy = 0x16;
     pkt1.dx = 8;
     pkt1.dy = (r_vid.mode == VID_EGA ? 0 : DASH_Y) + 3;
-    (*g_videoOps.copy)(g_viewPages.draw == 1 ? g8188w : g82b4s, bm7678, &pkt1, 1);
+    (*g_videoOps.copy)(g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, g_driveDisplayPage, &pkt1, 1);
 }
 
 /* vw_draw @ 2645:4B8C (linear 0x2AFDC, 1774 bytes) */
@@ -1400,23 +1400,23 @@ void vw_draw(void)
     g_renderRows.prevLeftOuterX = &g_roadOuterLeftXArray[13];
     g_renderRows.prevRightOuterX = &g_rhsOuterXArray[13];
     g_renderRows.lineWidth = &g_roadLineWidths[14];
-    g_renderRows.leftFlags = (int far *)(q_72ee + 14);
+    g_renderRows.leftFlags = (int far *)(g_roadTerrain + 14);
     g_renderRows.rightFlags = (int far *)(g_rightSideTerrainRow + 14);
-    am8b82y = (int far *)(g7d62p + 14);
+    g_viewTerrainBitsData = (int far *)(g_hereFlagsPtr + 14);
     vw_clip();
     render_backdrop();
     en_begin();
     for (i = 14; i; i--) {
         if (i <= g_roadRowLimit)
             render_row(i);
-        if (*am8b82y & 4)
+        if (*g_viewTerrainBitsData & 4)
             goto next;
         if (i >= 11)
             goto next;
-        f3 = *am8b82y & 1;
+        f3 = *g_viewTerrainBitsData & 1;
         w11 = *g_renderRows.leftFlags;
         w2 = *g_renderRows.rightFlags;
-        w36 = *am8b82y;
+        w36 = *g_viewTerrainBitsData;
         if (w11 & 0x20) {
             if (f3)
                 render_object(*g_renderRows.leftX, *g_renderRows.y, i, -1, 0);
@@ -1509,7 +1509,7 @@ void vw_draw(void)
         if (w36 & 0x400)
             render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 0x11);
     next:
-        if (ar7e8av.roadIndex - ao7d2ev.roadIndex == i && *(int *)&bw8aca) {
+        if (g_roadOppPos.roadIndex - g_trackViewMotion.roadIndex == i && *(int *)&g_runRacingFlag) {
             en_end();
             render_opponent();
             en_begin();
@@ -1523,7 +1523,7 @@ void vw_draw(void)
         g_renderRows.lineWidth--;
         g_renderRows.leftFlags--;
         g_renderRows.rightFlags--;
-        am8b82y--;
+        g_viewTerrainBitsData--;
         g_renderRows.leftOuterX--;
         g_renderRows.rightOuterX--;
         g_renderRows.buildingY--;
@@ -1531,7 +1531,7 @@ void vw_draw(void)
         g_renderRows.prevRightOuterX--;
         g_renderRows.prevBuildingY--;
     }
-    if (ar7e8av.roadIndex == ao7d2ev.roadIndex && *(int *)&bw8aca) {
+    if (g_roadOppPos.roadIndex == g_trackViewMotion.roadIndex && *(int *)&g_runRacingFlag) {
         en_end();
         render_opponent();
         en_begin();
@@ -1539,7 +1539,7 @@ void vw_draw(void)
     render_mirror();
     en_end();
     render_overlays();
-    if (*(int *)&bw8aca)
+    if (*(int *)&g_runRacingFlag)
         render_start_signal();
     flip_page();
 }
@@ -1548,7 +1548,7 @@ void vw_draw(void)
 
 void vw_start(void)
 {
-    ap7d7cv = g_prevRivalFrame = 0;
+    g_picOpponent = g_prevRivalFrame = 0;
     select_draw_page();
     rd_draw_frame();
 }
