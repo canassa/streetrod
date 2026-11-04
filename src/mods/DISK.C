@@ -16,6 +16,7 @@
 #include "MEM.H"
 #include "MENU.H"
 #include "MESSAGES.H"
+#include "PC.H"
 #include "RLE.H"
 #include "SCREEN.H"
 #include "SLOTS.H"
@@ -80,7 +81,7 @@ int disk_seek(int handle, long pos)
 {
     union REGS in, out;
 
-    in.x.ax = 0x4200;
+    in.x.ax = (DOS_SEEK << 8) | DOS_SEEK_START;
     in.x.bx = handle;
     in.x.cx = (int)(pos >> 16);
     in.x.dx = (int)pos;

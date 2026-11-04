@@ -15,9 +15,9 @@ int mouse_reset(void)
 
     if (*MOUSE_VECTOR == 0L)
         return 0;
-    r.h.ah = 0;
-    r.h.al = 0;
-    int86(0x33, &r, &r);
+    r.h.ah = MOUSE_RESET >> 8;
+    r.h.al = MOUSE_RESET;
+    int86(MOUSE_INT, &r, &r);
     return r.x.ax;
 }
 
@@ -29,11 +29,11 @@ void mouse_buttons(void)
 {
     union REGS r;
 
-    r.h.ah = 0;
-    r.h.al = 3;
-    int86(0x33, &r, &r);
-    g_mouseLeft = r.h.bl & 1;
-    g_mouseRight = r.h.bl & 2;
+    r.h.ah = MOUSE_GET_POSITION >> 8;
+    r.h.al = MOUSE_GET_POSITION;
+    int86(MOUSE_INT, &r, &r);
+    g_mouseLeft = r.h.bl & MOUSE_LEFT_BUTTON;
+    g_mouseRight = r.h.bl & MOUSE_RIGHT_BUTTON;
 }
 
 /* mouse_motion @ 0F38:7A14 (linear 0x16D94, 51 bytes)
@@ -44,9 +44,9 @@ void mouse_motion(int *dx, int *dy)
 {
     union REGS r;
 
-    r.h.ah = 0;
-    r.h.al = 0x0b;
-    int86(0x33, &r, &r);
+    r.h.ah = MOUSE_READ_MOTION >> 8;
+    r.h.al = MOUSE_READ_MOTION;
+    int86(MOUSE_INT, &r, &r);
     *dx = r.x.cx;
     *dy = r.x.dx;
 }

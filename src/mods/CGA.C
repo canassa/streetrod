@@ -14,6 +14,7 @@
 #include "MAIN.H"
 #include "MEM.H"
 #include "MENU.H"
+#include "PC.H"
 #include "SCREEN.H"
 #include "SPRITE.H"
 #include "SYS.H"
@@ -427,9 +428,9 @@ void cga_set_page(int page)
 {
     union REGS r;
 
-    r.h.ah = 5;
+    r.h.ah = VIDEO_SET_PAGE;
     r.h.al = page;
-    int86(0x10, &r, &r);
+    int86(BIOS_VIDEO, &r, &r);
 }
 
 /* cga_screen_off @ 1C11:0F70 (linear 0x1D080, 36 bytes)

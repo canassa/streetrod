@@ -18,6 +18,7 @@
 #include "MOUSE.H"
 #include "M_02B9A.H"
 #include "NEEDLE.H"
+#include "PC.H"
 #include "SCREEN.H"
 #include "SOUND.H"
 #include "SYS.H"
@@ -348,7 +349,7 @@ void dash_intro(void)
         (*bl78be)();
     g_picMaxH = 200;
     if (r_vid.mode != -2 && r_vid.mode != -6)
-        main_set_palette(0);
+        main_set_palette(CGA_PALETTE_GREEN_RED_BROWN);
     F_119B8(3, 0x28, 0x28, 0);
     disk_free_pic(3);
     (*m_present)();
@@ -358,7 +359,7 @@ void dash_intro(void)
     dash_wait_key(400);
     (*m_present)();
     if (r_vid.mode != -2 && r_vid.mode != -6)
-        main_set_palette(1);
+        main_set_palette(CGA_PALETTE_CYAN_MAGENTA_WHITE);
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
     F_118D4(4, 0);
     disk_free_pic(4);
