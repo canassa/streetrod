@@ -799,3 +799,11 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - The bytes cannot tell `/Oi` from the pragma, so `/Oi` is the simpler explanation, not a proven fact (recorded in RECONSTRUCTION.md). A pragma only has to precede the first use (M_1D8C4.C: between the two functions it works, at the end of the file it does not).
+
+## 2026-11-05 01:30 CET: The loop pragmas survive a second search
+
+### What I did
+- Retested the five `loop_opt(off)` functions (F_01BAE, F_01FE2, F_0238C in M_00D58.C; F_03C8D in M_039C0.C; F_2382D in M_23262.C) against every alternative: the files without `l` (13 other functions break: they hold plain locals in cx or si/di with exit stores, e.g. F_01843, F_236D5, F_049ED), extra `/On`/`/Op`/`/Ow`/`/Or`, a 32-case matrix of `volatile`, `register`, static/global counters, `&i`, calls, `setjmp`, intrinsics and `interrupt`, and goto/`while(1)`/`for(;;)`/`continue`/`?:`/comma rewrites of the real functions. Object membership is proven three ways (word-aligned code segments with F_2382D and F_03C8D at odd addresses, `_BSS` statics shared across M_00D58's pragma, CONST doubles shared by F_03C8D and F_049ED). No source changed; RECONSTRUCTION.md records the result.
+
+### What I learned
+- MSC 5.1 ignores `volatile`. `/Ol` leaves a loop alone only when it is entered by a jump; a `goto` to the very next statement makes F_0238C match, but nothing else jumps to that loop head, so the pragma is the better explanation. M_039C0.C also matches as `/Oasi` plus one `loop_opt(on)` after F_03C8D. An `if` + goto loop inside a `for` crashes C1 under `/Ol` (C1001).

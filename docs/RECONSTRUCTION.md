@@ -71,9 +71,14 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   (a `goto`, a `continue`, a differently nested `if`) is not.
 - **`#pragma loop_opt`** in M_00D58.C (off before F_01BAE, to the end of the file),
   M_039C0.C (off/on around F_03C8D) and M_23262.C (off before F_2382D). These five
-  functions keep plain memory loops that the file's `/Ol` would otherwise optimize. Only
-  `goto` loops escape `/Ol`, and a pragma is the more plausible source. Where exactly the
-  pragmas sat in the original is unknown.
+  functions keep plain memory loops that the file's `/Ol` would otherwise optimize; the
+  rest of each file needs `/Ol` (13 functions break without it). `volatile`, `register`,
+  static or global counters, taken addresses, calls, intrinsics and `interrupt` do not stop
+  MSC 5.1's loop optimizer (it ignores `volatile`); only a loop entered by a jump escapes
+  it, and the only goto forms that match are jumps to the next statement. A pragma is the
+  more plausible source. Where exactly the pragmas sat is unknown: in M_00D58.C the `off`
+  fits anywhere after F_019BC, and M_039C0.C matches equally as `/Oasi` with one
+  `loop_opt(on)` after F_03C8D.
 - **`GCREG`/`SEQREG`** in M_238A2.C. F_23C3B needs a block boundary after `GCREG(5, 0)`.
   Braced register-write macros give it. Their names, and the fact that every other port
   pair of the file uses them, are a reconstruction (braced and unbraced pairs compile
