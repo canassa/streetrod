@@ -74,7 +74,7 @@ void F_0DA25(void)
         return;
     if (g_0610)
         return;
-    if ((g_7ec0 == 0 ? 0x17c : 0x3fc) <= g_7d30)
+    if ((g_7eaa.m7ec0 == 0 ? 0x17c : 0x3fc) <= g_7d30)
         return;
     if (g_72f2 && g_7f88 <= 1) {
         g_78e0.fbc |= 3;

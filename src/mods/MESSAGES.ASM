@@ -1289,8 +1289,6 @@ _g_239e LABEL BYTE ; +239E char @[]
         DB 06Ch
         DB 06Ch
         DB 00h
-        PUBLIC _g_28a1
-_g_28a1 LABEL BYTE ; +28A1 char @[]
         DB 043h
         DB 068h
         DB 06Fh
@@ -1307,8 +1305,6 @@ _g_28a1 LABEL BYTE ; +28A1 char @[]
         DB 037h
         DB 030h
         DB 00h
-        PUBLIC _g_28b1
-_g_28b1 LABEL BYTE ; +28B1 char @[]
         DB 052h
         DB 065h
         DB 062h
@@ -1328,8 +1324,6 @@ _g_28b1 LABEL BYTE ; +28B1 char @[]
         DB 037h
         DB 030h
         DB 00h
-        PUBLIC _g_28c4
-_g_28c4 LABEL BYTE ; +28C4 char @[]
         DB 053h
         DB 074h
         DB 072h
@@ -1349,8 +1343,6 @@ _g_28c4 LABEL BYTE ; +28C4 char @[]
         DB 031h
         DB 035h
         DB 00h
-        PUBLIC _g_28d7
-_g_28d7 LABEL BYTE ; +28D7 char @[]
         DB 052h
         DB 065h
         DB 073h

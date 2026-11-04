@@ -32,7 +32,7 @@ static int near F_09AF4(int n)
     case -3:
         if (g_7f86) {
             F_11421(-1, "", 0);
-            F_092A4(2, g_7648, 1, 0xa3, 0, g_5030[g_827e]);
+            F_092A4(2, g_7648, 1, 0xa3, 0, g_5030[g_8272.m827e]);
         }
         choice = F_14C8B();
         F_09A27(sel[choice - 1], n, 0);
@@ -74,9 +74,9 @@ static int near F_09BC5(int kind)
 calc:
     chm = g_7d84->f0;
     p18 = F_09524(g_7648);
-    p27 = F_09524(g_7eb0->f2);
+    p27 = F_09524(g_7eaa.m7eb0->f2);
     clsl = (g_7d7a->f4 >> 8) & 7;
-    item1 = g_4806[g_7eb0->rack.s[0]->idx].f2;
+    item1 = g_4806[g_7eaa.m7eb0->rack.s[0]->idx].f2;
     v11 = g_8bae[chm][row];
     v2 = g_7d68[p18][clsl];
     v3 = g_7d68[p27][item1];
@@ -87,9 +87,9 @@ calc:
     else
         c6 = 1;
     scorel = g_8dd8[col][c6];
-    if ((g_7eb0->f24 & 0x1f00) == 0)
+    if ((g_7eaa.m7eb0->f24 & 0x1f00) == 0)
         bonus2 = 0;
-    else if (g_7eb0->f24 & 0x100)
+    else if (g_7eaa.m7eb0->f24 & 0x100)
         bonus2 = 4;
     else
         bonus2 = 6;
@@ -134,27 +134,27 @@ static int near F_09D6D(int arg)
             break;
         case 0:
             if (g_4976 == 0) {
-                if (g_7eb0->f22 < 22) {
+                if (g_7eaa.m7eb0->f22 < 22) {
                     F_03AB8(0x1761);
                     return 0;
                 }
-                g_7ec0 = 0;
+                g_7eaa.m7ec0 = 0;
                 F_03AB8(0x11d1);
                 g_79a2 = 0;
             } else {
-                g_7ec0 = 1;
+                g_7eaa.m7ec0 = 1;
                 F_03AB8(0x11f7);
                 g_79a2 = 5;
             }
             g_79a4 = 0;
             F_0D031();
-            g_05fc += g_7ec0 == 0 ? 0x444u : 0x777u;
+            g_05fc += g_7eaa.m7ec0 == 0 ? 0x444u : 0x777u;
             return 2;
         }
         F_193FE();
         return 0;
     }
-    if (g_7eb0->f22 < 7) {
+    if (g_7eaa.m7eb0->f22 < 7) {
         F_03AB8(0x1761);
         return 0;
     }
@@ -166,18 +166,18 @@ static int near F_09D6D(int arg)
     switch (ch) {
     case 1:
         num = 0x12;
-        g_7ec0 = 0;
+        g_7eaa.m7ec0 = 0;
         break;
     case 2:
         num = 0x13;
-        g_7ec0 = 1;
+        g_7eaa.m7ec0 = 1;
         break;
     case -23:
     case 1000:
         F_03AB8(0x122c);
         goto quit;
     }
-    if (g_7ec0 == 1 && g_7eb0->f22 < 17) {
+    if (g_7eaa.m7ec0 == 1 && g_7eaa.m7eb0->f22 < 17) {
         F_03AB8(0x1761);
         goto quit;
     }
@@ -188,7 +188,7 @@ static int near F_09D6D(int arg)
         g_05cc = g_tick + 800;
         while ((ch = F_01417(3000)) == 0)
             ;
-        g_8278 = ch;
+        g_8272.m8278 = ch;
         switch (ch) {
         case -23:
         case 1000:
@@ -219,21 +219,21 @@ static int near F_09D6D(int arg)
             kind = 5;
             break;
         }
-        if ((long)price <= g_7eaa) {
+        if ((long)price <= g_7eaa.m7eaa) {
             if (F_09BC5(kind)) {
                 g_79a2 = kind;
                 g_79a4 = price;
                 F_13F21(1);
                 F_11BD3(pict, x, sy);
                 pict = 0;
-                F_03AB8(g_5210[g_7ec0][random_int(3)]);
+                F_03AB8(g_5210[g_7eaa.m7ec0][random_int(3)]);
                 F_0D031();
-                g_05fc += g_7ec0 == 0 ? 0x444u : 0x777u;
+                g_05fc += g_7eaa.m7ec0 == 0 ? 0x444u : 0x777u;
                 return 2;
             }
             while ((ch = random_int(5)) == prev)
                 ;
-            F_03AB8(g_51fc[g_7ec0][prev = ch]);
+            F_03AB8(g_51fc[g_7eaa.m7ec0][prev = ch]);
         } else
             F_03AB8(0x131b);
     }
@@ -298,6 +298,13 @@ static void near F_0A0F8(int a, int b)
         }
     }
 }
+
+struct Step g_521e[30] = {{2, 15}, {3, 15}, {4, 22}, {5, 15}, {6, 37}, {5, 15}, {6, 45}, {5, 15}, {4, 15}, {3, 15}, {2, 15}, {8, 90}, {7, 15}, {9, 15}, {10, 30}, {9, 15}, {7, 7}, {8, 75}, {11, 15}, {12, 30}, {13, 15}, {12, 15}, {11, 15}, {8, 90}, {7, 15}, {9, 15}, {10, 30}, {9, 15}, {7, 7}, {14, 15}};   /* DS:521E */
+char g_525a[16] = {1, 15, 7, 8, 9, 10, 11, 12, 2, 3, 0, 1, 5, 6, 13, 4};   /* DS:525A */
+struct Cell g_526a[20] = {{0, 0, 48, 24, 80, 0}, {48, 0, 32, 24, 88, 0}, {80, 0, 32, 24, 96, 0}, {112, 0, 64, 24, 88, 0}, {0, 24, 40, 44, 96, 0}, {40, 24, 40, 44, 96, 0}, {80, 24, 40, 44, 96, 0}, {120, 24, 40, 44, 96, 0}, {0, 68, 40, 44, 96, 0}, {40, 68, 40, 44, 96, 0}, {80, 68, 40, 44, 96, 0}, {120, 68, 40, 44, 96, 0}, {0, 112, 40, 44, 96, 0}, {40, 112, 40, 44, 96, 0}, {80, 112, 40, 44, 96, 0}, {120, 112, 40, 44, 96, 0}, {0, 156, 48, 44, 88, 0}, {48, 156, 56, 44, 80, 0}, {104, 156, 56, 44, 80, 0}, {160, 156, 40, 44, 96, 0}};   /* DS:526A */
+struct Cell g_52e2[9] = {{208, 54, 8, 2, 128, 84}, {200, 54, 8, 3, 112, 88}, {184, 54, 16, 4, 96, 94}, {160, 54, 24, 10, 112, 113}, {160, 86, 40, 10, 128, 113}, {160, 65, 48, 20, 136, 104}, {160, 1, 112, 52, 128, 70}, {0, 1, 160, 97, 112, 52}, {0, 99, 224, 101, 80, 51}};   /* DS:52E2 */
+int g_5318[8] = {1201, 1217, 1106, 1107, 1108, 1109, 1073, 0};   /* DS:5318 */
+int g_5328[3] = {6, 7, 0};   /* DS:5328 */
 
 /* F_0A265 @ 0000:A265 (linear 0x0A265, 247 bytes) */
 

@@ -249,9 +249,9 @@ void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *id
     g_8264 = p69->b2 && p69->b3;
     g_8266 = p69->b4;
     g_8268 = p69->b5;
-    g_8276 = ~g_vid.mask & p12->b10;
-    g_8272 = g_vid.mask & p12->b10;
-    g_8274 = p12->b11;
+    g_8272.m8276 = ~g_vid.mask & p12->b10;
+    g_8272.m8272 = g_vid.mask & p12->b10;
+    g_8272.m8274 = p12->b11;
     if (flags & 2)
         F_1A6E0(*out, m2->f6, 0, p12->b7);
     if (flags & 1)
@@ -277,7 +277,7 @@ void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *id
         F_1A734(*out, pp8->id, p12->b10 + pp8->dx, p12->b11 + pp8->dy, 0);
     }
     if (q) {
-        bm = F_15BBE(g_8280, 2);
+        bm = F_15BBE(g_8272.m8280, 2);
         F_1A472(bm, *out, p12->b2, p12->b3 - bm->height + row8 + 1);
         F_19438(1);
     }
@@ -442,8 +442,8 @@ again:
     }
     g_826e += x0;
     g_8270 += g_8260;
-    g_8272 += x0;
-    g_8274 += g_8260;
+    g_8272.m8272 += x0;
+    g_8272.m8274 += g_8260;
     ang2 = (kind == 1 || kind == 4) ? x0 - right : x0;
     if (g_5a24 != 2) {
         if (g_vid.mode == -2) {

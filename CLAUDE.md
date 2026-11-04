@@ -142,6 +142,10 @@ The original DGROUP is the modules' `_DATA` in link order: each translation unit
 
 LINK lists relocations object by object, each data record's fixups in descending offset (MSC; MASM ascending). `orig/SR.EXE`'s packed relocation table therefore shows which units were one object and in which order objects were linked. A far call between two functions proves two files (MSC near-calls every function defined in the same file). `src/link/LAYOUT.JSON` holds the recovered units, `link_order` (written by `./sr dgroup order --write`), `order_hints` with the evidence for each, and the runtime member order. `./sr build --layout` ends with the packed EXE's comparison against `orig/SR.EXE`.
 
+### 4d. The compiler budget: global symbols are load-bearing
+
+MSC 5.1's code generator degrades (fewer loop register variables, other temps) once the external symbols referenced so far in a file exceed a budget measured in symbols plus name characters. A function can match alone and fail in its real file. External functions, external data and communals count; locals, statics, prototypes, literals and initialized data do not. Folding globals into the structs/arrays they were (with code evidence: a run-time `a - b` between two addresses or a direct `g[i]` index proves separate symbols) is how the original files stayed under it. `./sr build --layout` must stay IDENTICAL against `orig/SR.EXE`.
+
 ### 5. The DB comes from the EXE and the CLI
 
 The EXE is the ground truth. `db/sr.sqlite` is derived from it by `./sr scan`, plus what we record through `sr` commands. The scanner also checks complete gaps for prologue-free routines, rejecting gaps that do not partition into bounded reachable code and trailing alignment; review new discoveries before matching them. Never edit the DB or the generated headers by hand, and never edit `docs/PROGRESS.md` (`./sr status` regenerates it).

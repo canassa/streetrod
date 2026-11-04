@@ -68,11 +68,11 @@ static void near F_0442B(int tab)
         for (;;) {
             n = F_14294(9);
             if (n == -20) {
-                if (g_0610 && (long)price6 > g_7eaa)
-                    g_7eaa += 1999;
-                if ((long)price6 > g_7eaa) {
+                if (g_0610 && (long)price6 > g_7eaa.m7eaa)
+                    g_7eaa.m7eaa += 1999;
+                if ((long)price6 > g_7eaa.m7eaa) {
                     p1 = strchr(g_3a5a, '$');
-                    sprintf(++p1, "%d short.", price6 - (int)g_7eaa);
+                    sprintf(++p1, "%d short.", price6 - (int)g_7eaa.m7eaa);
                     F_03AB8(0xf1a8);
                     break;
                 }
@@ -80,7 +80,7 @@ static void near F_0442B(int tab)
                 if (used) {
                     F_03FF0(i5, price6);
                     g_05fc += 0x222;
-                    if (g_7ebc > 0x82)
+                    if (g_7eaa.m7ebc > 0x82)
                         goto done;
                     break;
                 }
@@ -131,7 +131,7 @@ test:
     } while (n != -3);
 done:
     F_00D58();
-    if (g_7eb0)
-        F_067CF(g_7eb0->f4);
+    if (g_7eaa.m7eb0)
+        F_067CF(g_7eaa.m7eb0->f4);
     g_0284 = 0;
 }

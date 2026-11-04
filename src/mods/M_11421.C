@@ -38,7 +38,7 @@ void F_11540(int n)
 
     old = g_8256;
     g_8256 = 1;
-    F_11421(g_8258, ltoa(g_7eaa += n, buf, 10), 0x30);
+    F_11421(g_8258, ltoa(g_7eaa.m7eaa += n, buf, 10), 0x30);
     g_82c0 = g_824c;
     g_8256 = old;
 }

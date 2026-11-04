@@ -22,6 +22,8 @@ static void near F_09256(char *s)
         s[i] = 0;
 }
 
+int g_51f8 = -1;   /* DS:51F8 */
+
 /* F_092A4 @ 0000:92A4 (linear 0x092A4, 640 bytes) */
 
 

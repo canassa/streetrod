@@ -62,11 +62,11 @@ void F_03AB8(int n)
 
 static int near F_03B0C(void)
 {
-    if (g_7eb6 > 15) {
+    if (g_7eaa.m7eb6 > 15) {
         F_03AB8(0x0e27);
         return 1;
     }
-    if (g_7ebc > 130) {
+    if (g_7eaa.m7ebc > 130) {
         F_03AB8(0x0e3f);
         return 1;
     }
@@ -106,10 +106,10 @@ static struct Node * near F_03C1B(void)
 {
     struct Node *p;
 
-    p = g_7eba;
-    g_7eba = p->next;
+    p = g_7eaa.m7eba;
+    g_7eaa.m7eba = p->next;
     p->next = 0;
-    g_7ebc++;
+    g_7eaa.m7ebc++;
     return p;
 }
 
@@ -118,10 +118,10 @@ static struct Node * near F_03C1B(void)
 
 static void near F_03C3E(struct Node *p)
 {
-    p->next = g_7eba;
+    p->next = g_7eaa.m7eba;
     p->idx = -1;
-    g_7eba = p;
-    g_7ebc--;
+    g_7eaa.m7eba = p;
+    g_7eaa.m7ebc--;
 }
 
 /* F_03C5A @ 0000:3C5A (linear 0x03C5A, 51 bytes) */

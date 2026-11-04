@@ -76,11 +76,11 @@ static struct Car * near F_04036(int idx, int weight, struct Car *old)
     car->f24 &= 0xbfff;
     car->f24 &= 0x7fff;
     if (old == 0) {
-        if (g_7eb0) {
-            car->f26 = (struct Car *)g_7eb2;
-            g_7eb2 = (int)car;
+        if (g_7eaa.m7eb0) {
+            car->f26 = (struct Car *)g_7eaa.m7eb2;
+            g_7eaa.m7eb2 = (int)car;
         } else
-            g_7eb0 = car;
+            g_7eaa.m7eb0 = car;
     }
     return car;
 }
@@ -96,8 +96,8 @@ static int near F_04386(struct Node *n, int keep)
         return 0;
     r = n->a;
     if (keep) {
-        n->next = g_7eb8;
-        g_7eb8 = n;
+        n->next = g_7eaa.m7eb8;
+        g_7eaa.m7eb8 = n;
     } else
         F_03C3E(n);
     return r;

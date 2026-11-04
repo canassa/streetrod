@@ -145,7 +145,7 @@ void interrupt far F_0238C(void)
                 if (g_0610 || g_0612) {
                     if (g_78e0.f14 * 4 + g_78e0.fe < 5700) {
                         if (g_7e8a > g_7d30 ||
-                            (!g_7ec0 ? 0x17c : 0x3fc) - 60 < g_7d30)
+                            (!g_7eaa.m7ec0 ? 0x17c : 0x3fc) - 60 < g_7d30)
                             flag = 1;
                     } else if (g_78e0.f18 < g_78e0.f1c && g_8228) {
                         c = 1;
@@ -161,7 +161,7 @@ void interrupt far F_0238C(void)
                     g_82bc += g_78e0.f0;
                     g_78e0.fc0++;
                 }
-                if ((!g_7ec0 ? 0x17c : 0x3fc) < g_7d30) {
+                if ((!g_7eaa.m7ec0 ? 0x17c : 0x3fc) < g_7d30) {
                     prev = 1;
                     flag = s = 0;
                     if (g_78e0.f0 > 15)
@@ -173,12 +173,12 @@ void interrupt far F_0238C(void)
                     g_54da--;
                 }
                 if (g_78e0.fe > 5000) {
-                    g_7eb0->rack.s[0]->b += !g_7ec0 ? 1 : 1;
-                    g_7eb0->slot6->b += !g_7ec0 ? 1 : 1;
+                    g_7eaa.m7eb0->rack.s[0]->b += !g_7eaa.m7ec0 ? 1 : 1;
+                    g_7eaa.m7eb0->slot6->b += !g_7eaa.m7ec0 ? 1 : 1;
                 }
-                if (!(g_0600 & (!g_7ec0 ? 0xf : 0xf)))
-                    g_7eb0->rack.s[0]->b++;
-                if ((i = g_7eb0->rack.s[0]->b) >= 9900) {
+                if (!(g_0600 & (!g_7eaa.m7ec0 ? 0xf : 0xf)))
+                    g_7eaa.m7eb0->rack.s[0]->b++;
+                if ((i = g_7eaa.m7eb0->rack.s[0]->b) >= 9900) {
                     g_78e0.fbc |= 5;
                     F_02374();
                 }
@@ -203,9 +203,9 @@ void interrupt far F_0238C(void)
                     (g_78e0.f20 && g_78e0.f24 > 1 &&
                      ((flag && g_78e0.fe > g_78e0.f22 && g_78e0.f18 < g_78e0.f1c) ||
                       (!flag && g_78e0.f18 > 1 && !g_78e0.f42)))) {
-                    g_7eb0->slot6->b += g_78e0.fe > 5000 ? 15 : 3;
+                    g_7eaa.m7eb0->slot6->b += g_78e0.fe > 5000 ? 15 : 3;
                     if (g_0610 == 0) {
-                        i = g_7eb0->slot6->b;
+                        i = g_7eaa.m7eb0->slot6->b;
                         if (i >= 9900 ||
                             (g_78e0.f20 == 0 && flag && g_78e0.fe > 5000 &&
                              i / 100 + 100 > random_int(3277))) {

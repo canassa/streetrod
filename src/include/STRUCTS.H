@@ -668,4 +668,37 @@ struct CgaFont {
     struct CgaGlyph g[0x5b];
 };
 
+/* DS:7EAA..7EC2: one COMMON block in the original (folded from 11 placeholder
+   globals: the compiler budget of the original translation units requires fewer external symbols) */
+struct State7EAA {
+    long m7eaa;
+    int m7eae;
+    struct Car *m7eb0;
+    struct Car *m7eb2;
+    struct Node2 *m7eb4;
+    int m7eb6;
+    struct Node *m7eb8;
+    struct Node *m7eba;
+    int m7ebc;
+    int m7ebe;
+    int m7ec0;
+};
+
+/* DS:8272..8290: one COMMON block in the original (folded from 11 placeholder
+   globals: the compiler budget of the original translation units requires fewer external symbols) */
+struct State8272 {
+    int m8272;
+    int m8274;
+    int m8276;
+    int m8278;
+    int m827a;
+    int m827c;
+    int m827e;
+    int m8280;
+    int m8282;
+    struct Look m8284;
+    int m8286;
+    char pad8288[8];
+};
+
 #endif

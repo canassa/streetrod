@@ -31,11 +31,11 @@ static int near F_049ED(void)
     item = 1;
     for (;; ticks++) {
         n = 0;
-        if (g_7eb0) {
+        if (g_7eaa.m7eb0) {
             n = 1;
-            g_49e0[1] = g_7d86[(tbl[1] = g_7eb0)->f2].f6;
+            g_49e0[1] = g_7d86[(tbl[1] = g_7eaa.m7eb0)->f2].f6;
         }
-        for (cur = g_7eb2; cur; cur = cur->f26) {
+        for (cur = g_7eaa.m7eb2; cur; cur = cur->f26) {
             n++;
             g_49e0[n] = g_7d86[(tbl[n] = cur)->f2].f6;
         }
@@ -47,17 +47,17 @@ static int near F_049ED(void)
             return 0;
         case -1:
             g_4f48 = tbl[item = F_14C8B()];
-            g_4f46 = g_7eb0;
+            g_4f46 = g_7eaa.m7eb0;
             if (g_4f48 != g_4f46) {
-                if (item == ((g_7eb0 != 0) + 1))
-                    g_7eb2 = g_4f48->f26;
+                if (item == ((g_7eaa.m7eb0 != 0) + 1))
+                    g_7eaa.m7eb2 = g_4f48->f26;
                 else
                     tbl[item - 1]->f26 = g_4f48->f26;
-                if (g_7eb0) {
-                    g_7eb0->f26 = g_7eb2;
-                    g_7eb2 = g_7eb0;
+                if (g_7eaa.m7eb0) {
+                    g_7eaa.m7eb0->f26 = g_7eaa.m7eb2;
+                    g_7eaa.m7eb2 = g_7eaa.m7eb0;
                 }
-                g_7eb0 = g_4f48;
+                g_7eaa.m7eb0 = g_4f48;
             } else
                 g_4f48 = 0;
             return 3;
@@ -121,24 +121,24 @@ static int near F_049ED(void)
         F_03AB8((cur->weight > cash * 2) ? 0x104b : 0x1091);
         g_05fc += 0x888L;
         F_11540(cash);
-        if (item == 1 && g_7eb0) {
+        if (item == 1 && g_7eaa.m7eb0) {
             F_11BD3(pict, rx, ye);
             F_1941E(1);
             pict = 0;
             F_120FE(-4);
-            mid = g_7eb0->f2;
-            result = F_049A2(g_7eb0);
-            F_181C8(6, mid, result, (g_7eb0->f24 >> 8) & 0x1f, 0, 0x98, 0,
-                    g_5030[((struct Row8 *)((char *)g_4806 + 2))[g_7eb0->slot12->idx].kind]);
+            mid = g_7eaa.m7eb0->f2;
+            result = F_049A2(g_7eaa.m7eb0);
+            F_181C8(6, mid, result, (g_7eaa.m7eb0->f24 >> 8) & 0x1f, 0, 0x98, 0,
+                    g_5030[((struct Row8 *)((char *)g_4806 + 2))[g_7eaa.m7eb0->slot12->idx].kind]);
             F_13F21(1);
             F_06AA6();
             F_13DE6(10);
             F_120FE(-2);
-            F_043BF(g_7eb0, 0);
-            g_7eb0 = 0;
+            F_043BF(g_7eaa.m7eb0, 0);
+            g_7eaa.m7eb0 = 0;
         } else {
-            if (item == ((g_7eb0 != 0) + 1))
-                g_7eb2 = cur->f26;
+            if (item == ((g_7eaa.m7eb0 != 0) + 1))
+                g_7eaa.m7eb2 = cur->f26;
             else
                 tbl[item - 1]->f26 = cur->f26;
             F_043BF(cur, 0);

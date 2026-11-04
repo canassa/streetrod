@@ -8,8 +8,6 @@ static void near F_098BA(int);
 static int near F_09556(void);
 static void near F_092A4(int, int, int, int, int, int *);
 
-int g_51f8 = -1;   /* DS:51F8 */
-
 /* F_09524 @ 0000:9524 (linear 0x09524, 50 bytes) */
 
 
@@ -96,7 +94,7 @@ static void near F_09646(int flag)
     for (k = 0; k < 21; k++) {
         item = &g_7d86[g_8000[k].f0];
         map[k].dr = abs(F_0E218(g_8000[k].f0) - F_0E218(-1));
-        map[k].dk = abs(g_7d88[g_8000[k].f0].kind - g_7d88[g_7eb0->f2].kind);
+        map[k].dk = abs(g_7d88[g_8000[k].f0].kind - g_7d88[g_7eaa.m7eb0->f2].kind);
         map[k].taken = (g_8000[k].f3 != -1) ? 0 : 1;
     }
     g_6c86 = 0;
@@ -176,11 +174,11 @@ static void near F_098BA(int n)
             g_7d84->fe |= random_int(30) < skill ? 4 : g_7d84->fe;
     } else
         g_7d40 = 1;
-    g_827a = g_7d7a->f8;
-    g_827e = (g_7d7a->f4 >> 4) & 3;
-    g_827c = g_7d84->fa;
-    F_067CF(g_827c);
-    g_8280 = g_7d84->f4;
+    g_8272.m827a = g_7d7a->f8;
+    g_8272.m827e = (g_7d7a->f4 >> 4) & 3;
+    g_8272.m827c = g_7d84->fa;
+    F_067CF(g_8272.m827c);
+    g_8272.m8280 = g_7d84->f4;
 }
 
 /* F_09A27 @ 0000:9A27 (linear 0x09A27, 92 bytes) */
@@ -194,7 +192,7 @@ static void near F_09A27(int n, int a, int mode)
         g_5a24 = 1;
     if (mode == 2 && g_7f82 == 0x15)
         g_5a24 = F_09556() == 1;
-    F_092A4(a, g_7648, 1, 0xa3, 0, g_5030[g_827e]);
+    F_092A4(a, g_7648, 1, 0xa3, 0, g_5030[g_8272.m827e]);
 }
 
 /* F_09A83 @ 0000:9A83 (linear 0x09A83, 113 bytes) */

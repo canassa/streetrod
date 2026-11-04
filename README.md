@@ -38,9 +38,8 @@ directory. The retail manual-color protection is preserved.
 
 `make objects` compiles without linking; `make check` runs the reconstruction
 regression gate. See [src/data/README.md](src/data/README.md) for the data audits.
-The linked build is not yet a byte-identical reproduction of the shipped EXE:
-its segment layout and cross-module call encodings differ. All 572 reconstructed
-game functions still pass their original function/module checks.
+`./sr build --layout` reproduces the shipped EXE byte for byte (see below); the legacy
+`./sr build` is a runnable but differently laid-out build.
 
 ## Findings so far
 
@@ -77,10 +76,9 @@ Addresses are linear offsets into the unpacked load image (`orig/SR_unpacked.EXE
 `./sr build --layout` rebuilds the recovered code/link order into `work/layout`.
 All 572 game functions land at their original addresses, and all 748 near-call
 encodings match. `./sr dgroup` recovers which module owned each DGROUP item from the
-original data positions and writes the definitions into the module sources. The linked
-load image is byte-identical to the original, and the `/EXEPACK` link
-(`work/layout/SRPACKED.EXE`) differs from `orig/SR.EXE` only in the order of its packed
-relocation table (331 bytes; one object boundary is left). `./sr linkcheck work/layout/SR.EXE` compares the linked file
+original data positions and writes the definitions into the module sources. The build links
+with `/EXEPACK` into `work/layout/SRPACKED.EXE`, which is byte-identical to `orig/SR.EXE`
+(SHA-1 `3a5e28b795313028b7e77d147122f41cb29de334`). `./sr linkcheck work/layout/SR.EXE` compares the linked file
 without masking relocations or padding and returns nonzero until it is identical.
 The detailed report is `work/layout/BYTE-MATCH.JSON`. Against the unpacked reference the
 header and relocation order still differ: the unpacker synthesized both.

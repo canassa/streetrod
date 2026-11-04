@@ -42,8 +42,8 @@ static void near F_0CDAF(struct Eng *p)
     g_5d6 = 0;
     g_05d8 = g_05da = 0;
     g_8630 = -1;
-    g_6caa = g_7ec0 == 0 ? 0x17c : 0x3fc;
-    car = g_7eb0->slot12;
+    g_6caa = g_7eaa.m7ec0 == 0 ? 0x17c : 0x3fc;
+    car = g_7eaa.m7eb0->slot12;
     p->fc = g_54b2[((struct Row8 *)((char *)g_4806 + 2))[car->idx].kind][car->b / 2000];
     if (car->b < 8000)
         p->fa = 0;
@@ -113,7 +113,7 @@ static void near F_0D031(void)
     F_00E24();
     F_0CDAF(&g_78e0);
     F_0CF5C();
-    if (g_7ec0 == 1 && g_7d40 == 0) {
+    if (g_7eaa.m7ec0 == 1 && g_7d40 == 0) {
         if (g_7f88 = !random_int(4))
             g_755a = random_int(255) + 0x1fe;
     } else
@@ -127,15 +127,15 @@ static void near F_0D031(void)
     F_11593(g_49dc);
     if (g_7d30 > 200) {
         if (random_int(3) > 0) {
-            if (g_7eb0->f20 > 0)
-                g_7eb0->f20 = g_7eb0->f20 < random_int(4) ? random_int(4) : g_7eb0->f20;
-            else if (g_7eb0->f20 < 0)
-                g_7eb0->f20 = -random_int(8) < g_7eb0->f20 ? -random_int(8) : g_7eb0->f20;
+            if (g_7eaa.m7eb0->f20 > 0)
+                g_7eaa.m7eb0->f20 = g_7eaa.m7eb0->f20 < random_int(4) ? random_int(4) : g_7eaa.m7eb0->f20;
+            else if (g_7eaa.m7eb0->f20 < 0)
+                g_7eaa.m7eb0->f20 = -random_int(8) < g_7eaa.m7eb0->f20 ? -random_int(8) : g_7eaa.m7eb0->f20;
             else
-                g_7eb0->f20 = random_int(8) - 4;
+                g_7eaa.m7eb0->f20 = random_int(8) - 4;
         }
-        slot = g_7eb0->slot12;
-        slot->b += (((struct Row8 *)((char *)g_4806 + 2))[slot->idx].kind == 0 ? (g_7ec0 == 1 ? 700 : 300) : (g_7ec0 == 1 ? 400 : 200)) + random_int(300);
+        slot = g_7eaa.m7eb0->slot12;
+        slot->b += (((struct Row8 *)((char *)g_4806 + 2))[slot->idx].kind == 0 ? (g_7eaa.m7ec0 == 1 ? 700 : 300) : (g_7eaa.m7ec0 == 1 ? 400 : 200)) + random_int(300);
         if (slot->b > 10000)
             slot->b = 10000;
     }
@@ -202,7 +202,7 @@ static void near F_0D29D(void)
         }
         g_54d6 = 0;
         d = g_7e8a - g_7d30;
-        if (d > 12 && (g_7ec0 != 1 || g_7d40 == 0)) {
+        if (d > 12 && (g_7eaa.m7ec0 != 1 || g_7d40 == 0)) {
             if (g_78e0.f0 >= 0x61)
                 vl = g_6cb0;
             else if (g_7d40)

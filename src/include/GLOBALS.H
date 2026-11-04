@@ -165,10 +165,6 @@ extern int g_1e38;                                      /* DS:1E38 */
 extern unsigned g_1e3a[312];                            /* DS:1E3A */
 extern struct Hot g_20aa[];                             /* DS:20AA */
 extern char g_239e[];                                   /* DS:239E */
-extern char g_28a1[];                                   /* DS:28A1 */
-extern char g_28b1[];                                   /* DS:28B1 */
-extern char g_28c4[];                                   /* DS:28C4 */
-extern char g_28d7[];                                   /* DS:28D7 */
 extern char g_28ec[];                                   /* DS:28EC */
 extern char g_28f9[];                                   /* DS:28F9 */
 extern char g_290c;                                     /* DS:290C */
@@ -747,17 +743,7 @@ extern int g_7e8c;                                      /* DS:7E8C */
 extern int g_7e8e;                                      /* DS:7E8E */
 extern int g_7e90;                                      /* DS:7E90 */
 extern char g_newName[];                                /* DS:7E9A */
-extern long g_7eaa;                                     /* DS:7EAA */
-extern int g_7eae;                                      /* DS:7EAE */
-extern struct Car *g_7eb0;                              /* DS:7EB0 */
-extern struct Car *g_7eb2;                              /* DS:7EB2 */
-extern struct Node2 *g_7eb4;                            /* DS:7EB4 */
-extern int g_7eb6;                                      /* DS:7EB6 */
-extern struct Node *g_7eb8;                             /* DS:7EB8 */
-extern struct Node *g_7eba;                             /* DS:7EBA */
-extern int g_7ebc;                                      /* DS:7EBC */
-extern int g_7ebe;                                      /* DS:7EBE */
-extern int g_7ec0;                                      /* DS:7EC0 */
+extern struct State7EAA g_7eaa;                         /* DS:7EAA */
 extern struct Band g_7ec2[4];                           /* DS:7EC2 */
 extern int g_7f22[];                                    /* DS:7F22 */
 extern int g_7f2e;                                      /* DS:7F2E */
@@ -808,17 +794,7 @@ extern int g_826a;                                      /* DS:826A */
 extern int g_826c;                                      /* DS:826C */
 extern int g_826e;                                      /* DS:826E */
 extern int g_8270;                                      /* DS:8270 */
-extern int g_8272;                                      /* DS:8272 */
-extern int g_8274;                                      /* DS:8274 */
-extern int g_8276;                                      /* DS:8276 */
-extern int g_8278;                                      /* DS:8278 */
-extern int g_827a;                                      /* DS:827A */
-extern int g_827c;                                      /* DS:827C */
-extern int g_827e;                                      /* DS:827E */
-extern int g_8280;                                      /* DS:8280 */
-extern int g_8282;                                      /* DS:8282 */
-extern struct Look g_8284;                              /* DS:8284 */
-extern int g_8286;                                      /* DS:8286 */
+extern struct State8272 g_8272;                         /* DS:8272 */
 extern int g_8290[];                                    /* DS:8290 */
 extern int g_829a[];                                    /* DS:829A */
 extern int g_829c[];                                    /* DS:829C */

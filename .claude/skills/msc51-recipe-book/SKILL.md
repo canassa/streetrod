@@ -348,3 +348,6 @@ Do not infer that an optimized scan itself is disabled just because its exit is 
 | A SEG constant in CONST that no instruction reads | An unreachable far access to another far symbol (`return; x = far_arr[i];`); a second use of an already-used symbol shares its constant |
 | `push cs; call near` versus `lcall` to a far function in the same segment | Same file versus different files: MSC near-calls every function defined anywhere in its file, explicit `far` or not |
 | Relocation runs that interleave two units in the packed table | One object; code/data records are cut about every 945 bytes from the object start, so an unexpected split means the object started elsewhere |
+| A function matches alone but its loop loses SI/DI register variables in the merged file | Compiler budget: too many distinct external symbols (count + name length) before it. Bisect by replacing earlier bodies with declarations; fix with the original's grouping (structs, arrays, offsets into one table), not with flags |
+| MSC code (LEDATA) record boundaries | Cut at 99 fixups or ~944 bytes from the object start; the original relocation runs therefore fix where an object starts |
+| `mov ax, OFFSET a; sub ax, OFFSET b` in the original | `a` and `b` are distinct symbols (same-symbol differences fold to constants) |

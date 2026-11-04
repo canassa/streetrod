@@ -98,11 +98,11 @@ int F_009CB(void)
             hsave = g_vid.back->height;
             g_vid.back->height = 0xbe;
             y = 0;
-            i = g_0536 ? g_7ebe : g_pages.start[g_pages.cur];
+            i = g_0536 ? g_7eaa.m7ebe : g_pages.start[g_pages.cur];
             next = g_pages.list + i;
             row7 = g_0f82;
             cntz = 0;
-            g_7ebe = i;
+            g_7eaa.m7ebe = i;
             do {
                 F_1377F(g_vid.back, 0x44, y + 1, 0xb8);
                 y += 3;
@@ -159,20 +159,20 @@ int F_009CB(void)
         case -1:
             if (--g_pages.cur < 0)
                 g_pages.cur = g_pages.n - 1;
-            g_7f84 = g_7ebe - 1;
+            g_7f84 = g_7eaa.m7ebe - 1;
             if (g_7f84 < 1)
                 g_7f84 = limit;
             diff = 0xbd;
             while ((diff -= 9 * g_2c01[g_pages.list[g_7f84]] + 3) > 0)
                 if (--g_7f84 < 1)
                     g_7f84 = limit;
-            g_7ebe = g_7f84;
+            g_7eaa.m7ebe = g_7f84;
             g_0520 = 1;
             continue;
         case -2:
             if (++g_pages.cur >= g_pages.n)
                 g_pages.cur = 0;
-            g_7ebe = g_7f84 + (y > 0xc1 ? 0 : 1);
+            g_7eaa.m7ebe = g_7f84 + (y > 0xc1 ? 0 : 1);
             g_0520 = 1;
             continue;
         default:

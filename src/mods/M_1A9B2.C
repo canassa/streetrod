@@ -167,15 +167,15 @@ void F_1B213(int *a, int *b)
     int s74;
 
     sv401 = g_8240;
-    s72 = g_8272;
-    s74 = g_8274;
+    s72 = g_8272.m8272;
+    s74 = g_8272.m8274;
     F_193FE();
     F_120FE(-4);
     g_8240 = 0;
     g_6da0 = g_8b7c;
-    modelm = g_7eb0->f2;
-    attr3 = F_049A2(g_7eb0);
-    tinto = (g_7eb0->f24 >> 8) & 0x1f;
+    modelm = g_7eaa.m7eb0->f2;
+    attr3 = F_049A2(g_7eaa.m7eb0);
+    tinto = (g_7eaa.m7eb0->f24 >> 8) & 0x1f;
     for (n = 0; n < 3; n++)
         g_6cda[n] = F_15BBE(g_5aaa[n], 1);
     F_1169A(0x88, 0xba - g_6cda[1]->height, g_6cda[1]->width, g_6cda[1]->height,
@@ -403,8 +403,8 @@ void F_1B213(int *a, int *b)
     (*g_78b6)(g_vid.front->bits.p, g_vid.back->bits.p);
     g_8b7c = g_6da0;
     g_8240 = sv401;
-    g_8272 = s72;
-    g_8274 = s74;
+    g_8272.m8272 = s72;
+    g_8272.m8274 = s74;
     g_5aa8 = 0;
     F_120FE(-2);
 }

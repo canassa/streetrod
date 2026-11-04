@@ -69,9 +69,9 @@ static int near F_05B4A(void)
     if (_dos_open(name, 0, &fd7)
         || _dos_read(fd7, g_newName, 0x24, &n) != 0 || n != 0x24
         || (F_03614(0), 0)
-        || F_0590F(fd7, &g_7eb0, 1)
-        || F_0590F(fd7, &g_7eb2, 0)
-        || F_057DC(fd7, &g_7eb8)
+        || F_0590F(fd7, &g_7eaa.m7eb0, 1)
+        || F_0590F(fd7, &g_7eaa.m7eb2, 0)
+        || F_057DC(fd7, &g_7eaa.m7eb8)
         || _dos_read(fd7, &g_4970, 8, &n) != 0 || n != 8
         || _dos_read(fd7, g_7ff8, 0x18c, &n) != 0 || n != 0x18c
         || _dos_read(fd7, &g_05fc, 4, &n) != 0 || n != 4
@@ -88,8 +88,8 @@ static int near F_05B4A(void)
         return -666;
     }
     _dos_close(fd7);
-    if (g_7eb0)
-        F_067CF(g_7eb0->f4);
+    if (g_7eaa.m7eb0)
+        F_067CF(g_7eaa.m7eb0->f4);
     F_26FE1(g_5e0c);
     g_0604 = g_0600 - delta;
     F_120FE(-2);
@@ -205,9 +205,9 @@ again:
     name[0] = F_15FBD();
     if (_dos_creat(name, 0, &fd8)
         || _dos_write(fd8, g_newName, 0x24, &n) != 0 || n != 0x24
-        || F_0586E(fd8, g_7eb0, 1)
-        || F_0586E(fd8, g_7eb2, 0)
-        || F_05795(fd8, g_7eb8)
+        || F_0586E(fd8, g_7eaa.m7eb0, 1)
+        || F_0586E(fd8, g_7eaa.m7eb2, 0)
+        || F_05795(fd8, g_7eaa.m7eb8)
         || _dos_write(fd8, &g_4970, 8, &n) != 0 || n != 8
         || _dos_write(fd8, g_7ff8, 0x18c, &n) != 0 || n != 0x18c
         || _dos_write(fd8, &g_05fc, 4, &n) != 0 || n != 4

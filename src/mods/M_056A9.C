@@ -19,10 +19,10 @@ static struct Node2 * near F_03FB1(void);
 static void near F_056A9(void)
 {
     F_03614(1);
-    g_7eaa = 750L;
+    g_7eaa.m7eaa = 750L;
     if (g_0610)
-        g_7eaa = 10000L;
-    g_7eae = 10;
+        g_7eaa.m7eaa = 10000L;
+    g_7eaa.m7eae = 10;
     F_26FE1(100);
     F_05584();
     g_05fc = 0L;

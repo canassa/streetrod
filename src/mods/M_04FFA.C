@@ -63,11 +63,11 @@ static void near F_0503F(void)
             continue;
         F_11593(g_49dc);
         v = 1;
-        if (kind == 0 && w == -2 && g_7eb0)
+        if (kind == 0 && w == -2 && g_7eaa.m7eb0)
             v = 2;
         if (kind == 0 && w == -2)
             v = 1;
-        if (w == -1 && g_7eb6 <= 15 && g_7ebc <= 130) {
+        if (w == -1 && g_7eaa.m7eb6 <= 15 && g_7eaa.m7ebc <= 130) {
             kind = F_03B33();
             if (kind == 2 || kind == 1)
                 F_0442B(kind);
@@ -95,14 +95,14 @@ static void near F_0503F(void)
                 if (F_03B0C())
                     v = 0;
                 else {
-                    if (g_7eb0 == 0)
+                    if (g_7eaa.m7eb0 == 0)
                         v = 1;
                     kind = F_03B33();
                     if (kind == 2 || kind == 1)
                         F_0442B(kind);
-                    if (g_7eb0 == 0)
+                    if (g_7eaa.m7eb0 == 0)
                         v = 2;
-                    if (g_7eb0 == 0 && g_7eb2)
+                    if (g_7eaa.m7eb0 == 0 && g_7eaa.m7eb2)
                         v = 1;
                     g_05fc += 0x222;
                 }
@@ -113,11 +113,11 @@ static void near F_0503F(void)
                     v = 0;
                     continue;
                 }
-                if (g_7eb0) {
-                    if (F_07EE6(g_7eb0, 1)) {
-                        F_0DCBE(g_7eb0, &g_78e0);
+                if (g_7eaa.m7eb0) {
+                    if (F_07EE6(g_7eaa.m7eb0, 1)) {
+                        F_0DCBE(g_7eaa.m7eb0, &g_78e0);
                         if (kind == 2) {
-                            if (g_7eb0->f22 < 9) {
+                            if (g_7eaa.m7eb0->f22 < 9) {
                                 F_03AB8(0x172e);
                                 v = 0;
                                 continue;
@@ -127,12 +127,12 @@ static void near F_0503F(void)
                             g_05fc += 0x222;
                             F_0AB8B();
                         } else {
-                            if (g_7eb0->f22 >= 0x8c) {
+                            if (g_7eaa.m7eb0->f22 >= 0x8c) {
                                 F_03AB8(0x19b1);
                                 v = 0;
                                 continue;
                             }
-                            if (g_7eaa == 0) {
+                            if (g_7eaa.m7eaa == 0) {
                                 F_03AB8(0x199f);
                                 v = 0;
                                 continue;
@@ -149,7 +149,7 @@ static void near F_0503F(void)
                         v = 0;
                     }
                 } else {
-                    if (g_7eb2)
+                    if (g_7eaa.m7eb2)
                         F_03AB8(0x0f16);
                     else
                         F_03AB8(0x0efa);
@@ -171,7 +171,7 @@ static void near F_0503F(void)
                     } else {
                         F_05EEA();
                         v = 2;
-                        if (g_7eb0 == 0 && g_7eb2)
+                        if (g_7eaa.m7eb0 == 0 && g_7eaa.m7eb2)
                             v = 1;
                         continue;
                     }
@@ -202,7 +202,7 @@ static void near F_0503F(void)
                 continue;
             case 10:
                 F_193FE();
-                F_081AB(g_7eb0);
+                F_081AB(g_7eaa.m7eb0);
                 continue;
             case 13:
                 F_0711A(4);

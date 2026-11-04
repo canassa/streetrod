@@ -41,7 +41,7 @@ static void near F_0E0E2(int n, struct Eng *e)
 
 /* F_0E218 @ 0000:E218 (linear 0x0E218, 849 bytes)
 
-   Rating of the car spec n (the car in g_7eb0 when n is negative): builds the
+   Rating of the car spec n (the car in g_7eaa.m7eb0 when n is negative): builds the
    car the way F_0E0E2 does, then folds its parts into one number. */
 
 
@@ -64,7 +64,7 @@ static int near F_0E218(int n)
     struct Node na;
 
     if (n < 0)
-        p6 = g_7eb0;
+        p6 = g_7eaa.m7eb0;
     else {
         car.f20 = 0;
         car.f2 = n;

@@ -56,9 +56,9 @@ static void near F_081AB(struct Car *car)
     }
     F_120FE(-4);
     F_131B5(car);
-    F_132AD(g_5186, g_519a, car == g_7eb0);
+    F_132AD(g_5186, g_519a, car == g_7eaa.m7eb0);
     F_120FE(-2);
-    if (car != g_7eb0)
+    if (car != g_7eaa.m7eb0)
         return;
     F_1344A(g_5186, g_519a);
     F_13DE6(0x15);

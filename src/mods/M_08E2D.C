@@ -11,8 +11,8 @@ int F_08E2D(void)
     if (g_8aca)
         (*g_78be)();
     g_8228 = g_7d66 = 0;
-    saved = g_827c;
-    F_067CF(g_7eb0->f4);
+    saved = g_8272.m827c;
+    F_067CF(g_7eaa.m7eb0->f4);
     if (g_8aca)
         F_08D9C(saved);
     r = F_16EA2();

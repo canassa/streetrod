@@ -157,20 +157,13 @@
     },
     {
       "start": 25718,
-      "end": 30720,
+      "end": 36133,
       "sources": [
         "src/mods/M_06476.C",
         "src/mods/M_064A3.C",
         "src/mods/M_0653C.C",
         "src/mods/M_06827.C",
-        "src/mods/M_07367.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 30720,
-      "end": 36133,
-      "sources": [
+        "src/mods/M_07367.C",
         "src/mods/M_07800.C",
         "src/mods/M_081AB.C"
       ],
@@ -195,26 +188,12 @@
     },
     {
       "start": 37196,
-      "end": 38180,
-      "sources": [
-        "src/mods/M_0914C.C",
-        "src/mods/M_09256.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 38180,
-      "end": 42006,
-      "sources": [
-        "src/mods/M_09524.C",
-        "src/mods/M_09AF4.C"
-      ],
-      "kind": "c"
-    },
-    {
-      "start": 42006,
       "end": 46025,
       "sources": [
+        "src/mods/M_0914C.C",
+        "src/mods/M_09256.C",
+        "src/mods/M_09524.C",
+        "src/mods/M_09AF4.C",
         "src/mods/M_0A416.C",
         "src/mods/M_0B045.C"
       ],
@@ -1397,12 +1376,9 @@
     14784,
     21550,
     25718,
-    30720,
     36134,
     36520,
     37196,
-    38180,
-    42006,
     46026,
     56510,
     58730,
