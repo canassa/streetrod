@@ -735,3 +735,16 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - A non-empty braced block is the same basic-block boundary as a code-less `if`; before inventing a boundary, check whether stores through pointers explain the reloads.
+
+## 2026-11-04 19:30 CET: C source cleanup
+
+### What I did
+- Removed the duplicate forward declarations the merge left (M_163BE, M_0914C, M_15396; F_1563A takes `char far *`). One `#pragma intrinsic` per file after the includes.
+- Every C function has a `/* NAME @ SSSS:OOOO (linear 0xAAAAA, N bytes)` header from the DB with its description below (fixed 158DE, 286D8, 0F418/0F62E); comments separated from their function by data or pragmas sit next to it again (the data did not move).
+- Warnings fixed without byte changes: casts in `g_4ea4` and the F_2869E blit, Car pointers in M_039C0, `g_0358[0]`, `F_12F99(int n, int flag)`, `(void)` interrupt prototypes; `g_4fa6` is `char[] = "The game must have a name !"`. Left as probably original: C4035 for `main` and F_118D4, C4033 in M_0B3CA, a few C4047 that need struct retyping.
+- Every statics and communal block says its names are fixed by hash (CLAUDE.md 4e/4f); HOTSPOT.C's fillers and g_6c42 are marked as such.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, tests OK.
+
+### What I learned
+- Removing a duplicate prototype reorders MSC's EXTDEF records without touching the EXE.
+- Open: the DB gives segment 0E6C to 11 functions in segments 0F38/1C11; `./sr dgroup apply` would revert the comment moves and initializer casts in M_15396/M_0F38A (its writer still owns those lines).
