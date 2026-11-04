@@ -7,7 +7,7 @@ description: Reconstruct or rework ONE Street Rod function in its source file so
 
 The per-function loop. `./sr check` is the oracle: `MATCH` (or `MATCH*`) is done, anything else isn't.
 
-All 572 game functions are matched and live in their original object's file (`src/mods/M_xxxxx.C|ASM`, one per link unit of `src/link/LAYOUT.JSON`). A function is always edited in that file and compiled with the whole file: there are no per-function files, placeholders or flags any more. A function the scanner newly finds goes into the file whose span contains it (extend the unit's `end` in LAYOUT.JSON if needed).
+All 572 game functions are matched and live in their original object's file (`src/mods/M_xxxxx.C|ASM`, one per object of `src/MAKEFILE`). A function is always edited in that file and compiled with the whole file and the file's MAKEFILE command line: there are no per-function files, placeholders or flags any more. A function the scanner newly finds goes into the file whose span contains it (set its `src`; a file's extent is the span of its functions in the DB).
 
 ## 0. Pick
 
