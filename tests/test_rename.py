@@ -33,6 +33,15 @@ class RenameTests(unittest.TestCase):
             with self.assertRaises(SystemExit, msg=pairs):
                 rename.rename(pairs, dry=True)
 
+    def test_fit_windows(self):
+        self.assertEqual(rename.static_key('g_score'), 34)
+        con = db.connect()
+        common = [r[0] for r in con.execute('SELECT name FROM globals WHERE off >= 0x6E60 AND off < 0x8F02 ORDER BY off')]
+        con.close()
+        lines = rename.fit(common[1], [common[1], 'zz_unlikely_name'])
+        self.assertIn('window', lines[0])
+        self.assertTrue(lines[1].endswith('fits') or lines[1].endswith('(build decides)'), lines)
+
 
 if __name__ == '__main__':
     unittest.main()

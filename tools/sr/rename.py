@@ -172,3 +172,43 @@ def _rewrap_link():
     """The link block's dependency lines, wrapped again after object names changed length."""
     r = makefile.rule("LINK")
     makefile._replace(r, makefile._block(r.target, r.deps, r.raw[0]), makefile.MAKEFILE)
+
+
+def static_key(name):
+    """MSC 5.1's order key for a file's uninitialized statics (CLAUDE.md 4f)."""
+    return sum(b & 0xDF for b in name.encode("ascii")) % 256
+
+
+def fit(old, candidates):
+    """Whether each candidate name keeps a placed global where it is: a communal must stay
+    in its LINK hash-bucket window (CLAUDE.md 4e), a file static in its key window (4f).
+    Ties with a neighbour depend on creation/declaration order: the build decides those.
+    Returns lines of text."""
+    from . import dgroup, fileheaders, linkhash, module
+    con = db.connect()
+    row = con.execute("SELECT off FROM globals WHERE name = ?", (old,)).fetchone()
+    if row is None:
+        return [f"{old}: not a DGROUP global; initialized data, functions and far data are placed "
+                "by their definitions, not their names (only the compiler budget, 4d, counts the length)"]
+    off = row["off"]
+    if dgroup.COMMON_START <= off < dgroup.END:
+        rows = con.execute("SELECT off, name FROM globals WHERE off >= ? AND off < ? ORDER BY off",
+                           (dgroup.COMMON_START, dgroup.END)).fetchall()
+        key, what = (lambda n: linkhash.bucket("_" + n)), "bucket"
+    elif dgroup.BSS_START <= off < dgroup.BSS_PRIVATE_END:
+        mine = next(fileheaders.file_statics(f.path) for f in module.files() if old in fileheaders.file_statics(f.path))
+        rows = con.execute(f"SELECT off, name FROM globals WHERE name IN ({','.join('?' * len(mine))}) ORDER BY off",
+                           tuple(mine)).fetchall()
+        key, what = static_key, "key"
+    else:
+        return [f"{old}: initialized data (DS:{off:04X}) is placed by its definition, not its name"]
+    i = [r["name"] for r in rows].index(old)
+    lo = key(rows[i - 1]["name"]) if i > 0 else -1
+    hi = key(rows[i + 1]["name"]) if i + 1 < len(rows) else 256
+    out = [f"{old} DS:{off:04X} {what} {key(old)}; window {lo}..{hi} "
+           f"({rows[i - 1]['name'] if i else '-'} .. {rows[i + 1]['name'] if i + 1 < len(rows) else '-'})"]
+    for c in candidates:
+        k = key(c)
+        verdict = "fits" if lo < k < hi else "tie (build decides)" if k in (lo, hi) else "no"
+        out.append(f"  {c:<28} {what} {k:3}  {verdict}")
+    return out

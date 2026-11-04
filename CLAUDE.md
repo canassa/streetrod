@@ -35,6 +35,7 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 ./sr flags FILE|ADDR [FLAGS]   # a file's CL/MASM flags: its src/MAKEFILE line (--force when it has matched functions)
 ./sr name ADDR NAME            # name a function (DB only)
 ./sr rename OLD NEW            # rename a function, global or source file everywhere: DB, sources, MAKEFILE, SR.LNK, docs, tools; then ./sr headers (--file PAIRS, -n)
+./sr fit OLD CAND...            # would a renamed communal/static stay at its address? (LINK bucket / MSC key window, 4e/4f)
 ./sr global 82ca g_table --decl "struct Entry @[]"   # declare a DGROUP global (no args: list them)
 ./sr proto 15236 "int @(int n)" # a far (or public near) function's prototype (goes into its file's header) ("" clears; --force replaces an existing one)
 ./sr data 4eee [N]             # hex dump of DGROUP bytes with known globals

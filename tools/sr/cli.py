@@ -422,6 +422,12 @@ def cmd_rename(args):
         print(line)
 
 
+def cmd_fit(args):
+    from sr import rename
+    for line in rename.fit(args.old, args.candidates):
+        print(line)
+
+
 def cmd_kind(args):
     con = db.connect()
     row = db.resolve(con, args.fn)
@@ -832,6 +838,12 @@ def main():
     s.add_argument("--file", help="a file of OLD NEW lines (# comments) applied at once")
     s.add_argument("-n", "--dry-run", action="store_true", help="report what would change, write nothing")
     s.set_defaults(func=cmd_rename)
+
+    s = sub.add_parser("fit", help="would these names keep a communal/static global at its address "
+                       "(LINK bucket / MSC static key window)?")
+    s.add_argument("old", help="the global's current name")
+    s.add_argument("candidates", nargs="*")
+    s.set_defaults(func=cmd_fit)
 
     s = sub.add_parser("kind", help="correct the scanner's c/asm/crt guess")
     s.add_argument("fn")
