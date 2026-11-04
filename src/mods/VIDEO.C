@@ -12,6 +12,7 @@
 #include "MAIN.H"
 #include "MENU.H"
 #include "PC.H"
+#include "RACE.H"
 #include "SCRATCH.H"
 #include "SCREENS.H"
 #include "SOUND.H"
@@ -31,12 +32,9 @@ struct Colors x_colors;
 struct Bitmap far *g_pageBmps[4];
 struct Obj bm7568[5];
 struct Style *bustyle;
-int (far *ab78aat)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
 struct Bitmap far *g_autoSprImagePtr;
 int ac825et;
 int aw8260y;
-int g_frntWindscreenX;
-int g_frontWinPositionYVal;
 
 struct Style g_style16 = {{{0, 0, 0, 0, 0}, {13, 9, 9, 15, 1}, {9, 13, 13, 15, 1}, {1, 5, 5, 1, 1}, {1, 5, 5, 4, 1}, {15, 9, 9, 15, 1}, {14, 15, 15, 10, 1}}, {1, 4, 4, 1, 1}, {1, 3, 3, 4, 2}, {15, 9, 9, 15, 1}, {13, 9, 9, 15, 1}, {11, 2, 2, 11, 1}, {1, 4, 4, 11, 1}, {1, 4, 4, 1, 1}, {1, 4, 4, 1, 1}, {1, 3, 3, 4, 1}};   /* DS:03A0 */
 struct Style g_style4 = {{{0, 0, 0, 0, 0}, {1, 2, 2, 3, 1}, {2, 1, 1, 3, 1}, {0, 3, 3, 0, 1}, {0, 3, 3, 2, 1}, {3, 2, 2, 3, 1}, {2, 1, 1, 1, 1}}, {0, 3, 3, 0, 1}, {0, 3, 3, 2, 2}, {3, 2, 2, 3, 1}, {1, 2, 2, 3, 1}, {0, 2, 2, 0, 1}, {0, 3, 3, 1, 1}, {0, 3, 3, 0, 1}, {0, 3, 3, 0, 1}, {1, 2, 2, 3, 1}};   /* DS:03F0 */
@@ -122,13 +120,13 @@ void video_init(struct Bitmap far *front, struct Bitmap far *back)
         break;
     }
     x_colors = bustyle->pal[1];
-    g_frntWindscreenX = g_frontWinPositionYVal = -1;
+    g_featurePos.frontGlassX = g_featurePos.frontGlassY = -1;
     i = 5;
     do {
         i--;
         bm7568[i].id = bm7568[i].scriptIndex = -1;
     } while (i);
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     menu_reset();
     g_graphicsUp = 1;
     g_pageBmps[0] = r_vid.front;
@@ -207,11 +205,11 @@ static void near anim_run(int n)
             break;
         case ANIM_BLIT:
             anim_set_box();
-            (*b_78a2)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
+            (*g_videoOps.copy)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
             break;
         case ANIM_BLIT_MASKED:
             anim_set_box();
-            (*ab78aat)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
+            (*g_videoOps.maskedBlit)(g_obj->img, r_vid.back, (struct Blt *)g_box, 1);
             break;
         case ANIM_TILE_CAR:
             if (!sprite_car_clip(g_box->dx, g_box->dy, g_box->w, g_box->h, &res))
@@ -226,7 +224,7 @@ static void near anim_run(int n)
                 for (x1 = 0; x1 < g_obj->img->width; x1 += g_box->w) {
                     blt.dx = tx + x1;
                     blt.dy = ty + y;
-                    (*ab78aat)(g_autoSprImagePtr, g_obj->img, &blt, 1);
+                    (*g_videoOps.maskedBlit)(g_autoSprImagePtr, g_obj->img, &blt, 1);
                 }
             }
             break;

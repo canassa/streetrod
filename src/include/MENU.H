@@ -4,19 +4,14 @@
 #define MENU_H
 #include "STRUCTS.H"
 
+extern struct ListDialog g_menuList; /* DS:8B9A */
+
 extern int g_hotChain;                                  /* DS:07A8 */
 extern char g_wearText[];                               /* DS:07AA */
 extern char g_wearPad[4];                               /* DS:07BE */
 extern int g_cgaPicMap[];                                    /* DS:07C6 */
-extern void (far *g_drvRecolorRegion)(struct Bitmap far *, int, int, int, int, int, int);/* DS:78BA */
-extern int g_yLastString;                                      /* DS:824E */
 extern int g_menuGrpHistoryList[];                                   /* DS:8B86 */
 extern char g_hideSelectFrameVal;                                     /* DS:8B98 */
-extern int g_listLineBasePointerValue;                                     /* DS:8B9A */
-extern int g_numPageRow;                                     /* DS:8B9C */
-extern int *az8b9ez;                                    /* DS:8B9E */
-extern int g_selMenuIndex;                                      /* DS:8BA0 */
-extern struct Hot *g_hotTextFld;                             /* DS:8BA2 */
 extern char g_headerEditableState;                                    /* DS:8BA4 */
 extern struct Hot *g_hotsCurMenu;                             /* DS:8BA6 */
 extern int ai8bacx;                                     /* DS:8BAC */

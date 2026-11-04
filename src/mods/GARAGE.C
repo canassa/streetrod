@@ -158,7 +158,7 @@ void F_06750(int x)
     sprintf(buf, "%s %d, 1963", g_mon[mnum], date);
     sv = x_colors;
     x_colors = bustyle->hilite;
-    (*a_78aem)(r_vid.back, 0x61, x, buf);
+    (*g_videoOps.drawText)(r_vid.back, 0x61, x, buf);
     x_colors = sv;
 }
 
@@ -327,7 +327,7 @@ int near F_06B06(int mode)
             }
         }
         r_vid.copyToFront = 1;
-        (*g_fnShow)();
+        (*g_videoOps.show)();
         if (a_7eaap.currentCar) {
             m_8272.bodyPic = g7d86n[a_7eaap.currentCar->specIndex].bodyPic;
             m_8272.paintScheme = a_7eaap.currentCar->paintScheme;
@@ -597,11 +597,11 @@ void near F_07367(void)
             A2.w = B1.w = C.w = 8;
             F_168F3(1);
             for (k = 0; k < bm1->width; k += 8) {
-                (*b_78a2)(bm1, bm4, &A2, 1);
+                (*g_videoOps.copy)(bm1, bm4, &A2, 1);
                 if (bm1->width - 8 > k)
-                    (*ab78aat)(bm3, bm4, &B1, 1);
+                    (*g_videoOps.maskedBlit)(bm3, bm4, &B1, 1);
                 F_10AFD(2);
-                (*b_78a2)(bm4, r_vid.front, &C, 1);
+                (*g_videoOps.copy)(bm4, r_vid.front, &C, 1);
                 A2.w += 8;
                 C.w += 8;
                 B1.dx += 8;
@@ -979,7 +979,7 @@ static void near tune_timing(struct Car *car)
         outp(PIT_CH2, w.b[1]);
         y = blt.dy = gear * 2 + 0x4b;
         cursor_ctl(CURSOR_HIDE_NOW);
-        (*b_78a2)(p->img, r_vid.back, &blt, 1);
+        (*g_videoOps.copy)(p->img, r_vid.back, &blt, 1);
         bitmap_copy_box(r_vid.back, r_vid.front, 0xb0, y, 0xb7, y + 10);
         cursor_ctl(CURSOR_SHOW_NOW);
         while ((key = sys_wait_input(0)) == 0) {
@@ -1044,7 +1044,7 @@ void near garage_hood(struct Car *car)
             af829ax[key - 1] = 0;
         }
     }
-    ap82acz = car->wireState != 0 ? (car->wireState > 0 ? 0x447 : 0x446) : 0;
+    g_slotSelec.wirePic = car->wireState != 0 ? (car->wireState > 0 ? 0x447 : 0x446) : 0;
     if (p6 = car->rack.parts[0])
         g_partPics[1][0] = g_part[p6->idx].variant == 0 ? 0x438 : 0x439;
     for (key = 0; key < 5; key++)
@@ -1079,16 +1079,16 @@ void near garage_hood(struct Car *car)
             if (car->wireState == 0)
                 continue;
             if (car->wireState > 0) {
-                ap82acz = 0x447;
+                g_slotSelec.wirePic = 0x447;
                 gargfx_draw_wires();
                 g_addT += 0x6d;
                 gargfx_build_hots(g_bPos, g_bIdx);
                 continue;
             }
-            ap82acz = 0x446;
+            g_slotSelec.wirePic = 0x446;
             gargfx_draw_wires();
             g_addT += 0x6d;
-            hz82ae = 0;
+            g_slotSelec.slot = 0;
             gargfx_build_hots(g_bPos, g_bIdx);
             break;
         case -3:
@@ -1133,16 +1133,16 @@ void near garage_hood(struct Car *car)
                 goto again;
             case 0:
                 ok = g_part[list4[key]->idx].fitMask & g7d86n[car->specIndex].parts & 0xf;
-                hz82ae = 0;
+                g_slotSelec.slot = 0;
                 step = 0;
                 car->wireState = -1;
-                ap82acz = 0x446;
+                g_slotSelec.wirePic = 0x446;
                 g_addT += ok ? 0x666 : 0x888;
                 break;
             case 1:
                 ok = (g_part[k = list4[key]->idx].fitMask & g7d86n[car->specIndex].parts & 0xf) != 0
                      && g_manifoldFit[g_part[car->rack.parts[0]->idx].variant][tmp29 = g_part[k].variant] != 0;
-                hz82ae = 1;
+                g_slotSelec.slot = 1;
                 step = 1;
                 n = g_nCarb[g_part[list4[key]->idx].variant] + 2;
                 for (k = 4; k < 10; k++)
@@ -1157,7 +1157,7 @@ void near garage_hood(struct Car *car)
                 g_addT += ok ? 0x199u : 0x222u;
                 step = 3;
                 sel2 = 2;
-                switch (hz82ae = g_cPos[tmp29][0]) {
+                switch (g_slotSelec.slot = g_cPos[tmp29][0]) {
                 case 4:
                 case 5:
                 case 6:
@@ -1166,11 +1166,11 @@ void near garage_hood(struct Car *car)
                     if (car->rack.parts[2] == 0)
                         break;
                     if (car->rack.parts[3]) {
-                        hz82ae = 9;
+                        g_slotSelec.slot = 9;
                         step += 4;
                         sel2 = 4;
                     } else {
-                        hz82ae = 8;
+                        g_slotSelec.slot = 8;
                         step += 2;
                         sel2 = 3;
                     }
@@ -1179,7 +1179,7 @@ void near garage_hood(struct Car *car)
                 case 12:
                     if (car->rack.parts[2] == 0)
                         break;
-                    hz82ae++;
+                    g_slotSelec.slot++;
                     step += 2;
                     sel2++;
                     break;
@@ -1198,11 +1198,11 @@ void near garage_hood(struct Car *car)
                 if (sel2 == 0) {
                     g_partPics[1][0] = k == 0x434 ? 0x438 : 0x439;
                     g_cPos[0][0] = g_cPos[0][1] = k == 0x434 ? 4 : 5;
-                    ap82acz = 0x446;
+                    g_slotSelec.wirePic = 0x446;
                     gargfx_draw_wires();
                 }
                 for (k = g_nBolt[cnt1]; --k >= 0;) {
-                    g82b2t = k;
+                    g_slotSelec.subslot = k;
                     gargfx_draw_bolt(af829ax[step + k] = g_boltPics[1]);
                     F_16B61();
                     havek[step + k + 1] = 1;
@@ -1225,7 +1225,7 @@ void near garage_hood(struct Car *car)
                 o_8290[sel2] = 0;
                 if (sel2 == 0) {
                     car->wireState = 0;
-                    ap82acz = 0;
+                    g_slotSelec.wirePic = 0;
                 }
                 goto again;
             }
@@ -1240,8 +1240,8 @@ void near garage_hood(struct Car *car)
                 continue;
             g_addT += 0x36;
             if (havek[key] == 2) {
-                hz82ae = g_5184[key];
-                g82b2t = g_5198[key];
+                g_slotSelec.slot = g_5184[key];
+                g_slotSelec.subslot = g_5198[key];
                 if (--car->engineBolts[key - 1] <= 1) {
                     af829ax[key - 1] = havek[key] = car->engineBolts[key - 1] = 0;
                     gargfx_drop_bolt();
@@ -1253,7 +1253,7 @@ void near garage_hood(struct Car *car)
             done:
                 sel2 = -1;
                 ok = 0;
-                switch (hz82ae) {
+                switch (g_slotSelec.slot) {
                 default:
                     if (g_5198[k = key] == 1)
                         k--;
@@ -1285,14 +1285,14 @@ void near garage_hood(struct Car *car)
                         continue;
                     }
                     af829ax[key - 1] = g_boltPics[++car->engineBolts[key - 1]];
-                    hz82ae = g_5184[key];
-                    g82b2t = g_5198[key];
+                    g_slotSelec.slot = g_5184[key];
+                    g_slotSelec.subslot = g_5198[key];
                     gargfx_draw_bolt(af829ax[key - 1]);
                     F_16CF3();
                     continue;
                 }
-                hz82ae = g_5184[key];
-                g82b2t = g_5198[key];
+                g_slotSelec.slot = g_5184[key];
+                g_slotSelec.subslot = g_5198[key];
                 gargfx_draw_bolt(af829ax[key - 1] = g_boltPics[1]);
                 F_16B61();
                 havek[key] = 1;
@@ -1308,7 +1308,7 @@ void near garage_hood(struct Car *car)
             if (key == 2) {
                 sel2 = 0;
                 car->wireState = 0;
-                ap82acz = 0;
+                g_slotSelec.wirePic = 0;
                 g_addT += 0x666;
             }
         }
@@ -1319,7 +1319,7 @@ void near garage_hood(struct Car *car)
             cursor_ctl(CURSOR_HIDE_NOW);
             o_8290[sel2] = 0;
             if (ok)
-                hz82ae = ok - 1;
+                g_slotSelec.slot = ok - 1;
             gargfx_draw_parts(car);
             gargfx_draw_bolts(g_bPos, g_bIdx, 1);
             gargfx_build_hots(g_bPos, g_bIdx);

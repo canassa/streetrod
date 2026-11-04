@@ -11,7 +11,6 @@
 #include "MARKS.H"
 #include "MEM.H"
 #include "PC.H"
-#include "VIDEO.H"
 
 /* bitmap_copy @ 0F38:AB50 (linear 0x19ED0, 114 bytes)
 
@@ -25,7 +24,7 @@ void bitmap_copy(struct Bitmap far *src, struct Bitmap far *dst, int e)
     pkt.w = src->width;
     pkt.h = src->height;
     pkt.dx = pkt.dy = pkt.sx = pkt.sy = 0;
-    (*b_78a2)(src, dst, &pkt, e);
+    (*g_videoOps.copy)(src, dst, &pkt, e);
 }
 
 /* bitmap_opaque_span @ 0F38:ABC2 (linear 0x19F42, 253 bytes)
@@ -149,7 +148,7 @@ void bitmap_draw_masked(struct Bitmap far *dst, struct Bitmap far *src, struct B
         e.w = j->width;
     } else
         j = dst;
-    (*ab78aat)(j, src, &e, 1);
+    (*g_videoOps.maskedBlit)(j, src, &e, 1);
     if (flag) {
         if (dash_clip_blt(j, src, &e, &a)) {
             d = j->pitch;
@@ -249,7 +248,7 @@ void bitmap_put(struct Bitmap far *dst, struct Bitmap far *bm, int x, int y, int
     pkt.sx = pkt.sy = 0;
     pkt.dx = x;
     pkt.dy = y;
-    (*b_78a2)(bm, dst, &pkt, mode);
+    (*g_videoOps.copy)(bm, dst, &pkt, mode);
 }
 
 /* bitmap_put_pic @ 0F38:B360 (linear 0x1A6E0, 84 bytes)
@@ -341,7 +340,7 @@ struct Bitmap far *bitmap_grab(struct Bitmap far *bm, struct Blt *r, int mode)
     a.sx = c;
     a.sy = e;
     a.dx = a.dy = 0;
-    (*b_78a2)(bm, f, &a, 3);
+    (*g_videoOps.copy)(bm, f, &a, 3);
     return f;
 }
 
@@ -365,5 +364,5 @@ void bitmap_copy_box(struct Bitmap far *dst, struct Bitmap far *src, int x1, int
     pkt.h = y2 - y1 + 1;
     pkt.sx = pkt.dx = x1;
     pkt.sy = pkt.dy = y1;
-    (*b_78a2)(dst, src, &pkt, 1);
+    (*g_videoOps.copy)(dst, src, &pkt, 1);
 }

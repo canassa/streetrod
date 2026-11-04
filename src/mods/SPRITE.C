@@ -4,6 +4,7 @@
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "CARPIC.H"
+#include "DASH.H"
 #include "GARGFX.H"
 #include "MAIN.H"
 #include "MARKS.H"
@@ -307,9 +308,9 @@ void sprite_slide_v(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
     sp = sprite_setup(x, bm->height + y0 - 1, &bm, 0, 1, img2, save, 0, 0);
     sprite_set_step(sp, 0, n1, 0, (char)dir);
     sp->page->bm = r_vid.back;
-    while ((*g_stepSpriteFrm)(sp)) {
+    while ((*g_videoOps.spriteStep)(sp)) {
         if (g_boltOverlay)
-            (*ab78aat)(g_boltOverlay, r_vid.back, &g_cpyBoltPatchRecord, 1);
+            (*g_videoOps.maskedBlit)(g_boltOverlay, r_vid.back, &g_cpyBoltPatchRecord, 1);
         if (r_vid.copyToFront)
             bitmap_copy_box(r_vid.back, r_vid.front, x, a, bm->width + x, b);
     }

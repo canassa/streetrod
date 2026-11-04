@@ -22,7 +22,6 @@ extern int g_backdropW;                                 /* DS:5A22 */
 extern int g_carPassBy;                                 /* DS:5A24 */
 extern struct Bitmap g_bandRecordsSprArray[];                         /* DS:6E68 */
 extern struct Bitmap far *g_lastPic;                       /* DS:70A8 */
-extern int (far *g_stepSpriteFrm)(struct Sprite *);              /* DS:78C6 */
 extern struct Band g_carSpriteStrips[4];                           /* DS:7EC2 */
 extern struct Bitmap g_carBackdropHdrBmp;                            /* DS:7FA8 */
 extern int g_carVisibleHtValue;                                      /* DS:8262 */

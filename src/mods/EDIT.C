@@ -44,8 +44,8 @@ int edit_line(int x, int y, char *buf, int max)
     x_colors.line = x_colors.text;
     cursor_ctl(CURSOR_HIDE);
     draw_fill_rect(r_vid.back, x, y, w, 8);
-    (*a_78aem)(r_vid.back, x, y, buf);
-    draw_vline(r_vid.back, cx = g_xTextR, cy = g_yLastString, 8);
+    (*g_videoOps.drawText)(r_vid.back, x, y, buf);
+    draw_vline(r_vid.back, cx = g_penPoint.x, cy = g_penPoint.y, 8);
     colr = -1;
     cursor_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
@@ -55,16 +55,16 @@ int edit_line(int x, int y, char *buf, int max)
     sys_hover_reset();
     ret = sys_keymap_restore(1);
     kbd_text_on(g_editDigits);
-    n = g_anyInput;
-    g_anyInput = 1;
-    g_inputKey = 0;
+    n = g_input.any;
+    g_input.any = 1;
+    g_input.key = 0;
     dest[1] = 0;
     end = strlen(buf);
-    for (;; g_inputKey = 0) {
+    for (;; g_input.key = 0) {
         if ((key = sys_wait_input(0x23)) != 0) {
             if (key < 0)
                 break;
-            key = g_inputKey;
+            key = g_input.key;
             if (key == 13) {
                 if (!g_editDigits || *buf)
                     break;
@@ -88,14 +88,14 @@ int edit_line(int x, int y, char *buf, int max)
                         dest[0] = buf[--end];
                         cx -= dash_text_width(dest);
                         px = cx;
-                        (*a_78aem)(r_vid.back, cx, cy, " ");
+                        (*g_videoOps.drawText)(r_vid.back, cx, cy, " ");
                     } else
                         sound_buzz();
                 } else if (end < max) {
                     buf[end++] = key;
                     buf[end] = 0;
-                    (*a_78aem)(r_vid.back, px = cx, cy, buf + end - 1);
-                    cx = g_xTextR;
+                    (*g_videoOps.drawText)(r_vid.back, px = cx, cy, buf + end - 1);
+                    cx = g_penPoint.x;
                 } else
                     sound_buzz();
                 x_colors.line = x_colors.text;
@@ -126,7 +126,7 @@ int edit_line(int x, int y, char *buf, int max)
     x_colors.fill = pos;
     g_msgClickToEdit[0] = ip;
     sys_hover_reset();
-    g_anyInput = n;
+    g_input.any = n;
     kbd_text_off();
     if (ret)
         sys_keymap_set(ret);
@@ -136,7 +136,7 @@ int edit_line(int x, int y, char *buf, int max)
 /* edit_number @ 0F38:5D37 (linear 0x150B7, 112 bytes)
 
    Number prompt: draw the prompt s at (x, y) in the style's colours, let the player edit a
-   text of up to 20 characters at (g_xTextR, g_yLastString) and store its value in *out. Returns the result
+   text of up to 20 characters at (g_penPoint.x, g_penPoint.y) and store its value in *out. Returns the result
    of the editor when that is 0 or negative, else 0 */
 
 int edit_number(int x, int y, char *s, int *out)
@@ -148,7 +148,7 @@ int edit_number(int x, int y, char *s, int *out)
     screen_text(x, y, s);
     g_editDigits = 1;
     buf[0] = 0;
-    rl = edit_line(g_xTextR, g_yLastString, buf, 20);
+    rl = edit_line(g_penPoint.x, g_penPoint.y, buf, 20);
     g_editDigits = 0;
     *out = atoi(buf);
     return rl > 0 ? 0 : rl;
@@ -156,7 +156,7 @@ int edit_number(int x, int y, char *s, int *out)
 
 /* edit_spot_number @ 0F38:5DA7 (linear 0x15127, 119 bytes)
 
-   Number field of the current hot spot g_hotTextFld: edit a text into buf (at most 10 characters,
+   Number field of the current hot spot g_menuList.header: edit a text into buf (at most 10 characters,
    fewer when the box is narrow: 6 pixels each) with the spot's colours and store its value in *out.
    Returns the editor's result when that is 0 or negative, else 0 */
 
@@ -164,10 +164,10 @@ int edit_spot_number(int *out, char *buf)
 {
     int rl;
 
-    x_colors = bustyle->pal[g_hotTextFld->palIndex];
+    x_colors = bustyle->pal[g_menuList.header->palIndex];
     g_editDigits = 1;
-    rl = edit_line(g_hotTextFld->x1, g_hotTextFld->y1, buf,
-        (g_hotTextFld->x2 - g_hotTextFld->x1) / 6 > 10 ? 10 : (g_hotTextFld->x2 - g_hotTextFld->x1) / 6);
+    rl = edit_line(g_menuList.header->x1, g_menuList.header->y1, buf,
+        (g_menuList.header->x2 - g_menuList.header->x1) / 6 > 10 ? 10 : (g_menuList.header->x2 - g_menuList.header->x1) / 6);
     g_editDigits = 0;
     *out = atoi(buf);
     return rl > 0 ? 0 : rl;
@@ -200,8 +200,8 @@ int edit_text_box(int id, int len, char *s)
     int rl;
 
     menu_push(id);
-    x_colors = bustyle->pal[g_hotTextFld->palIndex];
-    rl = edit_line(g_hotTextFld->x1, g_hotTextFld->y1, s, len);
+    x_colors = bustyle->pal[g_menuList.header->palIndex];
+    rl = edit_line(g_menuList.header->x1, g_menuList.header->y1, s, len);
     menu_pop(1);
     return rl > 0 ? 0 : rl;
 }

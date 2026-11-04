@@ -104,11 +104,7 @@ static void near sort_gas_spots(void)
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int g_finishMeanSpeedVal;
 char g_failureTire;
-int g_hasGlassRear;
-int g_backGlassXState;
-int g_winRearPointY;
-int g_gasCapXVal;
-int g_gasCapYValue;
+struct BodyPoints g_featurePos; /* DS:8264 */
 int g_steeringOld;
 int dz82c8x;
 int g_finishAheadPlayerState;
@@ -155,7 +151,7 @@ static void near spots_idle(void)
 static void near spots_cap(void)
 {
     clear_gas_spots();
-    place_gas_spot(4, g_gasCapXVal - 10, g_gasCapYValue - 5, 18, 12);
+    place_gas_spot(4, g_featurePos.gasCapX - 10, g_featurePos.gasCapY - 5, 18, 12);
     sort_gas_spots();
     g_tankCapIsActive = 1;
 }
@@ -166,7 +162,7 @@ static void near spots_nozzle(void)
 {
     clear_gas_spots();
     place_gas_spot(2, 0x34, 100, 16, 23);
-    place_gas_spot(4, g_gasCapXVal - 1, g_gasCapYValue - 1, 10, 9);
+    place_gas_spot(4, g_featurePos.gasCapX - 1, g_featurePos.gasCapY - 1, 10, 9);
     sort_gas_spots();
     g_pumpOnState = 1;
     g_tankCapIsActive = 1;
@@ -177,9 +173,9 @@ static void near spots_nozzle(void)
 static void near spots_rag(void)
 {
     clear_gas_spots();
-    if (g_hasGlassRear)
-        place_gas_spot(6, g_backGlassXState, g_winRearPointY, 20, 19);
-    place_gas_spot(5, g_frntWindscreenX, g_frontWinPositionYVal, 22, 19);
+    if (g_featurePos.hasRearGlass)
+        place_gas_spot(6, g_featurePos.rearGlassX, g_featurePos.rearGlassY, 20, 19);
+    place_gas_spot(5, g_featurePos.frontGlassX, g_featurePos.frontGlassY, 22, 19);
     place_gas_spot(1, 0x3e, 0xa5, 0x35, 18);
     place_gas_spot(3, 0xc4, 0x5a, 16, 14);
     sort_gas_spots();
@@ -212,10 +208,10 @@ static void near show_tank_cap(struct Dlg *d, int id)
     box.w = label->width;
     box.h = box.fc = label->height;
     box.sx = box.sy = 0;
-    box.dx = (~r_vid.mask & g_gasCapXVal) - box.w + 24;
+    box.dx = (~r_vid.mask & g_featurePos.gasCapX) - box.w + 24;
     box.dy = 12 - label->height;
     bitmap_draw_masked(label, work, &box, 0);
-    popup_show(work, g_gasCapXVal - 16, g_gasCapYValue - 5);
+    popup_show(work, g_featurePos.gasCapX - 16, g_featurePos.gasCapY - 5);
     F_19438(2);
 }
 
@@ -270,7 +266,7 @@ void race_gas_station(void)
     F_118D4(0x442, -1);
     F_11593(g_49dc);
     r_vid.copyToFront = 1;
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     dl.f0c = 1;
     cursor_ctl(1);
     dl.specIndex = a_7eaap.currentCar->specIndex;
@@ -279,10 +275,10 @@ void race_gas_station(void)
             g_whlPic[g_part[a_7eaap.currentCar->tires->idx].variant]);
     F_16381(0);
     label = popup_grab(0x50, 0xaa, 0x28, 0xc, 0);
-    dl.bm1 = popup_grab(g_gasCapXVal - 0x10, g_gasCapYValue - 5, 0x18, 0xc, 0);
+    dl.bm1 = popup_grab(g_featurePos.gasCapX - 0x10, g_featurePos.gasCapY - 5, 0x18, 0xc, 0);
     r_vid.copyToFront = 0;
     popup_show(g_pumpNoNozzle, 0x40, 0x64);
-    dl.bm2 = popup_grab(g_gasCapXVal - 0x10, g_gasCapYValue - 5, 0x18, 0xc, 0);
+    dl.bm2 = popup_grab(g_featurePos.gasCapX - 0x10, g_featurePos.gasCapY - 5, 0x18, 0xc, 0);
     popup_show(g_pumpWithNozzle, 0x40, 0x64);
     r_vid.copyToFront = 1;
     pos = 1;
@@ -489,13 +485,13 @@ static void near show_ticket(void)
     pkt.h = b->height;
     pkt.dx = pkt.sx = pkt.sy = 0;
     pkt.dy = 0x45;
-    (*ab78aat)(b, r_vid.back, &pkt, 1);
+    (*g_videoOps.maskedBlit)(b, r_vid.back, &pkt, 1);
     pkt.w = a->width;
     pkt.h = a->height;
     pkt.sx = pkt.sy = 0;
     pkt.dx = b->width;
     pkt.dy = 0x14;
-    (*b_78a2)(a, r_vid.back, &pkt, 1);
+    (*g_videoOps.copy)(a, r_vid.back, &pkt, 1);
     maxw2 = a->width - 8;
     r_vid.copyToFront = 0;
     x_colors = bustyle->hilite;
@@ -505,7 +501,7 @@ static void near show_ticket(void)
         p2--;
     d = cl = *p2;
     *p2 = 0;
-    (*a_78aem)(r_vid.back, 0x5e, 0x48, g_driverName);
+    (*g_videoOps.drawText)(r_vid.back, 0x5e, 0x48, g_driverName);
     *p2 = d;
     desc3 = g7d86n[a_7eaap.currentCar->specIndex].nameOffset;
     endk = desc3 + strcspn(g_descHdr + desc3 + 8, " `.") + 7;
@@ -517,10 +513,10 @@ static void near show_ticket(void)
     *p2 = 0;
     e = g_descHdr[endk + 1];
     g_descHdr[endk + 1] = 0;
-    (*a_78aem)(r_vid.back, 0x5e, 0x63, g_descHdr + desc3 + 1);
+    (*g_videoOps.drawText)(r_vid.back, 0x5e, 0x63, g_descHdr + desc3 + 1);
     g_descHdr[endk + 1] = e;
     *p2 = d;
-    (*g_screenCopyPtr)(r_vid.back->bits.p, r_vid.front->bits.p);
+    (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.copyToFront = 1;
     cursor_ctl(CURSOR_SHOW_NOW);
     sys_reset_queues();
@@ -543,20 +539,20 @@ static void near show_crash(void)
     pkt.h = 0x5a;
     pkt.sx = pkt.sy = pkt.dx = 0;
     pkt.dy = 0xb;
-    (*ab78aat)(a, r_vid.back, &pkt, 1);
+    (*g_videoOps.maskedBlit)(a, r_vid.back, &pkt, 1);
     pkt.w = a->width;
     pkt.h = a->height - 0x59;
     pkt.sy = 0x59;
     pkt.sx = pkt.dx = 0;
     pkt.dy = (fast ? 0x5a : 0x59) + 0xb;
-    (*ab78aat)(a, r_vid.back, &pkt, 1);
+    (*g_videoOps.maskedBlit)(a, r_vid.back, &pkt, 1);
     pkt.w = b->width;
     pkt.h = b->height;
     pkt.sx = pkt.sy = pkt.dx = 0;
     pkt.dy = fast ? 0x78 : 0x77;
-    (*b_78a2)(b, r_vid.back, &pkt, 1);
+    (*g_videoOps.copy)(b, r_vid.back, &pkt, 1);
     dash_steer_marker(g_steeringOld);
-    (*g_screenCopyPtr)(r_vid.back->bits.p, r_vid.front->bits.p);
+    (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
     if (g_driveEng.speed > 0x5a) {
         for (i = 0; i < 3; i++) {
             a = F_15BBE(g_crashPics[i].id, ARENA_LOW_STACK);
@@ -566,12 +562,12 @@ static void near show_crash(void)
             pkt.dx = g_crashPics[i].x;
             pkt.dy = g_crashPics[i].y;
             F_10AFD(0x14 - 8 * i);
-            (*ab78aat)(a, r_vid.back, &pkt, 1);
-            (*g_screenCopyPtr)(r_vid.back->bits.p, r_vid.front->bits.p);
+            (*g_videoOps.maskedBlit)(a, r_vid.back, &pkt, 1);
+            (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
         }
     }
     cursor_ctl(CURSOR_SHOW_NOW);
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     sys_reset_queues();
     game_pause(0x64);
     sys_reset_queues();
@@ -664,7 +660,7 @@ int near race_outcome(void)
     int units;
     char opt;
     int sel;
-    int kind;
+    enum BetKind kind;
     unsigned v;
     char stop;
     char *ptr;
@@ -676,8 +672,8 @@ int near race_outcome(void)
     struct Car *found;
     int list[25];
 
-    kind = g_classBetValue;
-    v = d_79a4;
+    kind = g_raceWagerTerms.kind;
+    v = g_raceWagerTerms.amount;
     engine = g_driveEng.stopFlags & 4;
     opt = g_driveEng.stopFlags & 0x10;
     stop = g_driveEng.stopFlags == 5 || g_driveEng.stopFlags == 0x11 || g_driveEng.stopFlags == 0x15;
@@ -702,14 +698,14 @@ int near race_outcome(void)
         a_7eaap.currentCar->fuel -= i;
     else
         a_7eaap.currentCar->fuel = 0;
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     if (g_oppEngState.stopFlags & 1) {
         g_resultWin = 1;
         show_race_stats();
         cursor_ctl(CURSOR_SHOW_NOW);
         game_message(g_isKingState == 0 ? (i = g_winMsgs[kind]) : a_7eaap.raceType == 0 ? 0x14bd : 0x14d6);
         F_11540(v);
-        if (kind == 5) {
+        if (kind == BET_CAR) {
             found = game_make_car(bn7648, g_oppSpecPointer->price, 0);
             found->tires->wear = random_int(500);
             found->appearance = ((g_selectedRacerPointer->sticker & 0x1f) << 8) | (found->appearance & 0xe0ff);
@@ -745,7 +741,7 @@ done:
         if (g_driveEng.stopFlags & 8)
             if ((i = replace_tires()) != 0)
                 goto ret2;
-        if (kind == 5)
+        if (kind == BET_CAR)
             return 1;
         return 3;
     } else if (g_driveEng.stopFlags & 0x40) {
@@ -761,7 +757,7 @@ done:
         menu_push(0x18);
         sys_wait_input(0);
         sprintf(temp, "You have been fined $%2d for speeding", i);
-        F_11421(-1, temp, SCREEN_WIDTH - g_xStatTxtValue);
+        F_11421(-1, temp, SCREEN_WIDTH - g_statusLine.messageX);
         game_pause(0xfa);
         if (i <= a_7eaap.money)
             goto pay;
@@ -769,7 +765,7 @@ done:
         menu_pop(1);
         menu_pop(1);
         F_11540(-a_7eaap.money);
-        F_11421(-1, " ", SCREEN_WIDTH - g_xStatTxtValue);
+        F_11421(-1, " ", SCREEN_WIDTH - g_statusLine.messageX);
         return 4;
 pay:
         F_11540(-i);
@@ -777,12 +773,12 @@ pay:
         game_pause(g_msgTicks);
         g_waitUntil = cost;
         menu_pop(1);
-        F_11421(-1, "", SCREEN_WIDTH - g_xStatTxtValue);
+        F_11421(-1, "", SCREEN_WIDTH - g_statusLine.messageX);
     } else if (g_driveEng.stopFlags == 0x81) {
         cursor_ctl(CURSOR_SHOW_NOW);
         game_message(0xecb2);
     } else {
-        if (kind == 5) {
+        if (kind == BET_CAR) {
             game_scrap_car(a_7eaap.currentCar, 0);
             a_7eaap.currentCar = 0;
         }
@@ -790,27 +786,27 @@ pay:
         if (g_driveEng.stopFlags == 1) {
             show_race_stats();
             cursor_ctl(CURSOR_SHOW_NOW);
-            i = kind == 5 ? 0x143a : 0x1427;
+            i = kind == BET_CAR ? 0x143a : 0x1427;
             game_message(g_isKingState == 0 ? i : a_7eaap.raceType == 0 ? 0x1450 : 0x146c);
             menu_pop(1);
-            if (kind != 5)
+            if (kind != BET_CAR)
                 return 3;
 ret2:
             return 2;
         } else if (stop) {
             cursor_ctl(CURSOR_SHOW_NOW);
             if (engine) {
-                blow_engine(kind == 5 ? 0x16bd : 0x1634);
+                blow_engine(kind == BET_CAR ? 0x16bd : 0x1634);
                 goto finishstop;
             } else if (opt) {
-                drop_transmission(kind == 5 ? 0x1678 : 0x1608);
+                drop_transmission(kind == BET_CAR ? 0x1678 : 0x1608);
                 goto finishstop;
             }
 finishstop:
             goto fin;
         } else {
             show_crash();
-            if (kind == 5) {
+            if (kind == BET_CAR) {
                 if (g_driveEng.stopFlags & 8) {
                     game_message(0x16f6);
                     replace_tires();

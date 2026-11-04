@@ -60,10 +60,10 @@ static int near start_game(void)
     dash_set_view(0);
     sys_music_start(2, 10);
     dash_intro();
-    (*g_displayDisablePtr)();
+    (*g_videoOps.blank)();
     dash_set_view(1);
     random_int(-1);
-    (*g_displayDisablePtr)();
+    (*g_videoOps.blank)();
     if (g_loadedIntroBmps == 0)
         disk_read_index(2);
     if (g_attractSwitchStartup == 0) {
@@ -89,10 +89,10 @@ static int near start_game(void)
 void game_pause(int a)
 {
     g_waitUntil = a + g_tick;
-    g_anyInput = 1;
+    g_input.any = 1;
     sys_wait_input(30000);
     g_waitUntil = 0;
-    g_anyInput = 0;
+    g_input.any = 0;
 }
 
 /* game_message @ 0000:3AB8 (linear 0x03AB8, 84 bytes) */
@@ -553,9 +553,9 @@ static void near buy_from_ads(int tab)
             F_181C8(7, x1, y, 0, 0, 0x86, 0, g_whlPic[(specn->parts >> 4) & 3]);
             screen_text((SCREEN_WIDTH - dash_text_width(g_offerName)) / 2, 0x88, g_offerName);
             cursor_ctl(CURSOR_SHOW_NOW);
-            g_anyInput = 1;
+            g_input.any = 1;
             menu_wait(0x18);
-            g_anyInput = 0;
+            g_input.any = 0;
             popup_show(bm1, 0, 0x40);
             marks_clear();
         }

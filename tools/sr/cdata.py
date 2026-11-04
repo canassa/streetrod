@@ -66,6 +66,10 @@ class Types:
             node=lambda:dict(self.named(name),ctype=name)
             node.ctype=name
             return node,text[named.end():].strip()
+        enum=re.match(r'enum\s+[A-Za-z_]\w*',text)
+        if enum:
+            name=enum.group(0)
+            return dict(kind='scalar',name=name,size=2,align=2,ctype=name),text[enum.end():].strip()
         m=re.match(r'(?:(?:unsigned|signed)\s+)?(?:char|short|int|long|float|double|void)\b|unsigned\b|signed\b',text)
         if not m:raise ValueError('unsupported declaration: '+text)
         name=m.group(0);size=(1 if 'char' in name else 8 if name=='double' else 4 if name in ('long','unsigned long','signed long','float') else 0 if name=='void' else 2)
@@ -103,7 +107,7 @@ class Types:
         for statement in split_top(body,';'):
             base,tail=self.base(statement)
             for decl in split_top(tail,','):
-                m=re.search(r'([A-Za-z_]\w*)\s*(?=\[|:|$)',decl)
+                m=re.search(r'([A-Za-z_]\w*)\s*(?=\[|:|\)\s*\(|$)',decl)
                 if not m:raise ValueError(statement)
                 name=m.group(1);normalized=decl[:m.start()]+'@'+decl[m.end():]
                 node=self.declarator(base,normalized)

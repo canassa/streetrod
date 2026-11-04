@@ -29,7 +29,7 @@ void cruise_go(void)
             a_7eaap.currentCar->fuel -= 2;
         else
             a_7eaap.currentCar->fuel = 0;
-        (*g_displayDisablePtr)();
+        (*g_videoOps.blank)();
         if (g_firePressed == 0) {
             cursor_ctl(CURSOR_HIDE_NOW);
             g_autoTrans = !g_part[a_7eaap.currentCar->transmission->idx].variant;
@@ -78,7 +78,7 @@ int cruise_drive(void)
     int r, saved;
 
     if (bw8aca)
-        (*g_displayDisablePtr)();
+        (*g_videoOps.blank)();
     ao8228u = g7d66n = 0;
     saved = m_8272.paintScheme;
     F_067CF(a_7eaap.currentCar->paintScheme);

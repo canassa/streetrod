@@ -4,6 +4,37 @@
 #define TIRES_H
 #include "STRUCTS.H"
 
+struct TireWork {
+    struct Bitmap far *liftBuf;
+    int wheelX2;
+    struct Bitmap far *liftPics[3];
+    int underlayY;
+    struct Rect overlayBounds;
+    struct Bitmap far *wheelBitmap;
+    struct Bitmap liftHeader;
+    struct Bitmap far *rollCanvas;
+    struct Bitmap far *jackColumn;
+    struct Bitmap far *backdrop;
+    struct Bitmap far *column;
+    struct Bitmap far *groundStrip;
+    struct Bitmap far *underlay;
+    struct Sprite *sprite;
+    int phase;
+    struct Bitmap rollHeader;
+    struct Bitmap jackHeader;
+    int carX;
+    int rollShift;
+    struct Bitmap wheelHeader;
+    int wheelX1;
+    struct Bitmap far *vehicleBottom;
+    struct Bitmap far *groundOverlay;
+    struct Bitmap far *basePic;
+    struct Bitmap far *frames[4];
+    struct Bitmap far *copyBitmap;
+    struct Bitmap far *liftCar;
+    struct Bitmap far *liftBackdrop;
+};
+
 extern int g_spriteBgY;                                 /* DS:5AA8 */
 extern int g_liftPicIds[3];                             /* DS:5AAA */
 extern struct Bitmap far *g_wheelBuf;                       /* DS:5AB0 */

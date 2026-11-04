@@ -6,7 +6,7 @@
 /* draw_fill_rect @ 0F38:4302 (linear 0x13682, 154 bytes)
 
    Fill the rectangle (x, y, w, h) of bitmap s with colour x_colors.fill, clipped to its size,
-   one horizontal line at a time through the line routine a_78d2 */
+   one horizontal line at a time through the line routine g_videoOps.drawLine */
 
 void draw_fill_rect(struct Bitmap far *s, int x, int y, int w, int h)
 {
@@ -27,7 +27,7 @@ void draw_fill_rect(struct Bitmap far *s, int x, int y, int w, int h)
     col = x_colors.fill;
     x2 = x + w - 1;
     for (j = 0; j < h; j++)
-        (*a_78d2)(x, y + j, x2, y + j, col);
+        (*g_videoOps.drawLine)(x, y + j, x2, y + j, col);
     av787at = oldseg;
     at767ct = oldoff;
 }
@@ -47,7 +47,7 @@ void draw_vline(struct Bitmap far *s, int x, int y, int h)
     oldoff = at767ct;
     av787at = s->bits.w.seg;
     at767ct = s->bits.w.off;
-    (*a_78d2)(x, y, x, y + h - 1, x_colors.line);
+    (*g_videoOps.drawLine)(x, y, x, y + h - 1, x_colors.line);
     av787at = oldseg;
     at767ct = oldoff;
 }

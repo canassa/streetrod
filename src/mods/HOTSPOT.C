@@ -23,5 +23,4 @@ char fz79a8[2];
 char ah7aa4w[6];
 char bz7ee2[64];
 char g7ff6f[2];
-char g82b0u[2];
 char a8ef4fv[2];

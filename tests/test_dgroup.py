@@ -30,3 +30,33 @@ class KeymapModuleTests(unittest.TestCase):
         with patch.object(dgroup, 'ORDER_HINTS', hints):
             self.assertEqual(dgroup.Analysis.link_order(analysis),
                              [perf, maps, herc, music, hercgfx])
+
+
+class AggregateRegionTests(unittest.TestCase):
+    def test_fallback_does_not_invent_an_alias_inside_a_source_record(self):
+        for declared_alias in (False, True):
+            with self.subTest(declared_alias=declared_alias):
+                analysis = object.__new__(dgroup.Analysis)
+                analysis.types = dgroup.Types()
+                analysis.types.defs['struct DgroupProbe'] = (
+                    'struct', 'int first; int unused; int last;')
+                analysis.globals = {
+                    0x100: {'name': 'g_probe', 'decl': 'struct DgroupProbe @'}}
+                if declared_alias:
+                    analysis.globals[0x102] = {'name': 'g_overlap', 'decl': 'int @'}
+                analysis.goffs = sorted(analysis.globals)
+                analysis.pools = {}
+                analysis.dg = bytes(dgroup.DATA_END)
+                analysis._masks = lambda: []
+                analysis.pointer_targets = lambda items: set()
+                regions = [(0x102, 0x104, 'int @'), (0x110, 0x112, 'int @')]
+                with patch.object(dgroup, 'REGIONS', regions):
+                    items = analysis._items()
+                self.assertNotIn('g_0102', [item.name for item in items])
+                outside = next(item for item in items if item.off == 0x110)
+                self.assertEqual((outside.name, outside.size, outside.synth),
+                                 ('g_0110', 2, True))
+                self.assertEqual('g_overlap' in analysis.aliases, declared_alias)
+                if declared_alias:
+                    base, offset = analysis.aliases['g_overlap']
+                    self.assertEqual((base.name, offset), ('g_probe', 2))

@@ -4,6 +4,21 @@
 #define SYS_H
 #include "STRUCTS.H"
 
+struct TimerPriorities {
+    int animation;
+    int unused2;
+    int unused4;
+    int unused6;
+};
+
+extern struct InputState g_input; /* DS:05D0 */
+extern int g_05d4; /* DS:05D4 */
+extern int g_05d6; /* DS:05D6 */
+extern int g_05d8; /* DS:05D8 */
+extern int g_05da; /* DS:05DA */
+
+extern struct TimerPriorities g_sysTimerPriorities; /* DS:8EF6 */
+
 extern int g_timerFirst;                                /* DS:0566 */
 extern int g_timerHead;                                 /* DS:0568 */
 extern int g_timerFree;                                 /* DS:056A */
@@ -14,12 +29,6 @@ extern struct Link g_timers[];                          /* DS:0572 */
 extern int g_05ba;                                      /* DS:05BA */
 extern int g_05bc[8];                                   /* DS:05BC */
 extern long g_waitUntil;                                /* DS:05CC */
-extern int g_anyInput;                                  /* DS:05D0 */
-extern int g_inputKey;                                  /* DS:05D2 */
-extern int g_05d4;                                      /* DS:05D4 */
-extern int g_05d6;                                      /* DS:05D6 */
-extern int g_05d8;                                      /* DS:05D8 */
-extern int g_05da;                                      /* DS:05DA */
 extern int g_msgTicks;                                  /* DS:05DC */
 extern int g_clickEnds;                                 /* DS:05DE */
 extern int g_kbdHooked;                                 /* DS:05E0 */
@@ -75,10 +84,6 @@ extern struct Lims g_boxSpotHitData;                             /* DS:8B90 */
 extern struct Hot *g_curHoverPointer;                             /* DS:8BA8 */
 extern int g_cursHoverCodeVal;                                      /* DS:8BAA */
 extern int g_wRivBanner;                                     /* DS:8BC0 */
-extern int g_animationPriCallback;                                      /* DS:8EF6 */
-extern int g_8ef8;                                      /* DS:8EF8 */
-extern int aj8efax;                                     /* DS:8EFA */
-extern int bw8efc;                                      /* DS:8EFC */
 void sys_hover_reset(void);                             /* 0x00D78 */
 void sys_music_pause(void);                             /* 0x00D99 */
 void sys_music_resume(void);                            /* 0x00DD8 */

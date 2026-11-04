@@ -36,3 +36,10 @@ g_5186 g_bPos g_boltPositions
 g_519a g_bIdx g_boltSides
 g_6e2a9 g_oldF g_prevRivalFrame
 ```
+
+## Resolved by struct grouping on branch structs
+
+- `g_fnShow` is now `g_videoOps.show`, restoring the intended `show` member name.
+- `g_xTextR` is now `g_penPoint.x`, the X coordinate of the last text endpoint.
+
+The other entries above remain outside the selected records; their names were not changed in this pass.

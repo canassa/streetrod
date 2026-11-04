@@ -26,9 +26,11 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   its spelling (`g_drawnMinX`, `g_sprPageRing`) was picked to fit.
 - **Local variables.** MSC's slot order depends on a hash of the names (CLAUDE.md 3).
   Names with digit suffixes come from `./sr layout -w` and only reproduce the frame.
-- **Struct types and members** (`src/include/STRUCTS.H`). The sizes and offsets come from
-  the code. Tags and member names are invented. A member that no code touches is padding
-  (`pad`, `fNN`).
+- **Struct types and members** (shared types in `src/include/STRUCTS.H`, private types in
+  their owner's header). Sizes and offsets come from the code; tags and member names are
+  invented. Explicit unused or reset-only fields use `unused` / `unusedN`; legacy `pad` /
+  `fNN` names also remain where meaning is uncertain. Explicit spare storage is distinct
+  from the compiler's automatic alignment padding.
 - **Files.** Each object's file is named for what its code does (GARAGE.C, DISK.C,
   CGABLT.C, ...); SCENERY.C/SCENERY2.C and the `src/data/` names likewise describe their
   data. These are labels for recovered objects: a file boundary is evidence, its name is
@@ -125,13 +127,13 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
     stores to locals stay stores. The two functions share the idiom, so the original
     probably had one construct (a macro, an emptied switch) in both.
 - **The hook installers** cga_install (CGA.C), tandy_install (TANDY.C) and ega_install
-  (EGA.C): `*(struct Hooks *)&b_78a2 = *(struct Hooks *)g_cgaHooks;`. Their bytes are
+  (EGA.C): `g_videoOps = g_cgaHooks;`. Their bytes are
   MSC 5.1's struct assignment (`push di; push si`, no frame, `mov cx,1Eh` and `f2 a5`:
   MSC writes `rep movsw` with the F2 prefix, MASM's `rep` is F3; the `memcpy` intrinsic
   adds `shr cx,1 ... rep movsb`). So the original assigned one 60-byte struct: the hook
   block DS:78A2..78DE was a struct, and each driver's table probably one too. The
-  reconstruction keeps the 15 hook globals (named for LINK's communal hash, CLAUDE.md 4e)
-  and the arrays, and copies them through the 15-pointer `struct Hooks`. Each installer
+  reconstruction uses one `struct Hooks` object and typed driver tables; the object's
+  name fits LINK's communal hash window (CLAUDE.md 4e). Each installer
   is the first function of the driver file whose table it copies (that file's table
   needs no forced owner then). The EXE does not decide this placement: none of the three
   has a segment relocation, so a one-function file of its own, or for tandy_install and ega_install
@@ -170,6 +172,36 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   (RACE.C) returns 1 on one path, a value its caller stores, and `return;` on another
   (C4033). `void` and `int` give the same bytes for the first two; the source keeps `int`
   (`main` by convention, F_118D4 because F_119B8 passes its value on).
+
+- **Hooks** (`g_videoOps`, DS:78A2..78DD): supported by the three MSC struct-copy installers.
+
+- **RenderRows** (`g_renderRows`, DS:6E08..6E29): a natural, byte-identical reconstruction choice; separate globals also match.
+
+- **TireWork** (`g_tires`, DS:6CD4..6DFD): a natural, byte-identical reconstruction choice; separate globals also match.
+
+- **TextEnd** (`g_penPoint`, DS:824C..824F): a natural pair for the last drawn text endpoint, written by the drivers and read by ADS/MENU/EDIT.
+- **StatusText** (`g_statusLine`, DS:8250..8259): a natural record for status-line placement, dimensions and display state; separate from the generic text endpoint.
+
+- **BodyPoints** (`g_featurePos`, DS:8264..8271): a natural, byte-identical reconstruction choice; separate globals also match.
+
+- **Right scenery cursor** (`g_rightSideTerrainRow`, DS:8634..8637): a separate right-side terrain/scenery cursor used by both forward and mirror views.
+- **Mirror road Y projection** (`g_mirYProj[8]`, DS:8638..8647): a full eight-row array matching its writer; the array form is byte-identical.
+
+- **MirrorEdges** (`g_mirGeom`, DS:864A..8669): a natural, byte-identical reconstruction choice; separate globals also match; both member arrays contain all eight rows written by the projection loop.
+
+- **Forward building rows** (`g_yBuildingTopArray[15]`, DS:7AB0..7ACD): one full-length array matches its fifteen-entry writer and is byte-identical; the preceding backdrop reveal height remains separate.
+
+- **ListDialog** (`g_menuList`, DS:8B9A..8BA3): a natural, byte-identical reconstruction choice; separate globals also match.
+
+- **TimerPriorities** (`g_sysTimerPriorities`, DS:8EF6..8EFD; type in SYS.H): a natural, byte-identical reconstruction choice; separate globals also match.
+
+- **PartSelection** (`g_slotSelec`, DS:82AC..82B3): a natural, byte-identical reconstruction choice; separate globals also match; the explicit unused two-byte word is an `int`, not automatic padding.
+
+- **InputState** (`g_input`, DS:05D0..05D3): natural record of the any-input latch and input key only; the unused sentinel and drive-reset words at 05D4..05DB stay separate with neutral placeholder names.
+
+- **Wager** (`g_raceWagerTerms`, DS:79A2..79A5): a natural, byte-identical reconstruction choice; separate globals also match.
+
+- **Blt** (`g_adPacket`, DS:0522..0535): a natural, byte-identical reconstruction choice; separate globals also match.
 
 ## Compiler warnings
 

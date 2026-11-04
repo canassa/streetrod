@@ -4,6 +4,24 @@
 #define VIEW_H
 #include "STRUCTS.H"
 
+struct RenderRows {
+    int *leftX;
+    int *leftOuterX;
+    int *buildingY;
+    int *rightOuterX;
+    int *prevLeftX;
+    int *prevLeftOuterX;
+    int *prevBuildingY;
+    int *prevRightOuterX;
+    int *rightX;
+    int *y;
+    int *prevRightX;
+    int *prevY;
+    int far *leftFlags;
+    int far *rightFlags;
+    int *lineWidth;
+};
+
 extern int g_opponentPics[][4];                         /* DS:5E14 */
 extern int g_5e3c;                                      /* DS:5E3C */
 extern int g_drawPage;                                  /* DS:5E3E */
@@ -29,10 +47,6 @@ extern struct Bitmap far *g764aw;                       /* DS:764A */
 extern struct Bitmap far *ar767eu;                      /* DS:767E */
 extern int g789eu;                                      /* DS:789E */
 extern int f_78a0;                                      /* DS:78A0 */
-extern void (far *g78d6c)(int, int, int, int);          /* DS:78D6 */
-extern void (far *bp78da)(int, int);                    /* DS:78DA */
-extern int az7acaz;                                     /* DS:7ACA */
-extern int r_7acc;                                      /* DS:7ACC */
 extern int ac7ae8t;                                     /* DS:7AE8 */
 extern int az7aeau;                                     /* DS:7AEA */
 extern int e_7f2e;                                      /* DS:7F2E */
@@ -42,12 +56,6 @@ extern int by7fa6;                                      /* DS:7FA6 */
 extern int dz7ff2;                                      /* DS:7FF2 */
 extern int g7ff4g;                                      /* DS:7FF4 */
 extern struct Bitmap far *g8184y;                       /* DS:8184 */
-extern int aw8644v;                                     /* DS:8644 */
-extern int k_8646;                                      /* DS:8646 */
-extern int au8656u;                                     /* DS:8656 */
-extern int g_8658;                                      /* DS:8658 */
-extern int au8666t;                                     /* DS:8666 */
-extern int as8668u;                                     /* DS:8668 */
 extern struct Bitmap far *bz8b7ex;                      /* DS:8B7E */
 extern int far *am8b82y;                                /* DS:8B82 */
 extern struct Bitmap far *ak8bcat;                      /* DS:8BCA */

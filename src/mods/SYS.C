@@ -52,10 +52,7 @@ struct Lims g_boxSpotHitData;
 struct Hot *g_curHoverPointer;
 int g_cursHoverCodeVal;
 int g_wRivBanner;
-int g_animationPriCallback;
-int g_8ef8;
-int aj8efax;
-int bw8efc;
+struct TimerPriorities g_sysTimerPriorities; /* DS:8EF6 */
 
 int g_timerFirst = -1;   /* DS:0566 */
 int g_timerHead = -1;   /* DS:0568 */
@@ -67,12 +64,11 @@ struct Link g_timers[4] = {{0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0,
 int g_05ba = 0;   /* DS:05BA */
 int g_05bc[8] = {0, 0, 0, 0, 0, 0, 0, 0};   /* DS:05BC */
 long g_waitUntil = 0L;   /* DS:05CC */
-int g_anyInput = 0;   /* DS:05D0 */
-int g_inputKey = 0;   /* DS:05D2 */
-int g_05d4 = 32767;   /* DS:05D4 */
-int g_05d6 = 0;   /* DS:05D6 */
-int g_05d8 = 0;   /* DS:05D8 */
-int g_05da = 0;   /* DS:05DA */
+struct InputState g_input = {0, 0}; /* DS:05D0 */
+int g_05d4 = 32767; /* DS:05D4 */
+int g_05d6 = 0; /* DS:05D6 */
+int g_05d8 = 0; /* DS:05D8 */
+int g_05da = 0; /* DS:05DA */
 int g_msgTicks = 350;   /* DS:05DC */
 int g_clickEnds = 0;   /* DS:05DE */
 int g_kbdHooked = 0;   /* DS:05E0 */
@@ -213,7 +209,7 @@ void sys_exit(void)
     if (g_sysHooked)
         sys_unhook();
     if (g_videoSet) {
-        (*g_fnShow)();
+        (*g_videoOps.show)();
         viddet_restore();
     }
     outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
@@ -277,10 +273,10 @@ void sys_init(void)
 
     sumx = 0;
     sumy = 0;
-    g_animationPriCallback = 10;
-    g_8ef8 = 2;
-    aj8efax = 5;
-    bw8efc = 5;
+    g_sysTimerPriorities.animation = 10;
+    g_sysTimerPriorities.unused2 = 2;
+    g_sysTimerPriorities.unused4 = 5;
+    g_sysTimerPriorities.unused6 = 5;
     outp(GAME_PORT, 0);
     outp(GAME_PORT, 0);
     first = inp(GAME_PORT);
@@ -429,9 +425,9 @@ int sys_wait_input(int ticks)
     j = 0;
     bit = 0;
     if (g_keyGroup == 0x16) {
-        g_statusStrShown = 1;
+        g_statusLine.shown = 1;
         F_11421(-1, "", 0);
-        g_statusStrShown = 1;
+        g_statusLine.shown = 1;
         F_11421(g_bannerX, "", g_wRivBanner);
         g_strOpp[0] = 0;
     }
@@ -454,8 +450,8 @@ int sys_wait_input(int ticks)
         }
         res = kbdget_key();
         if (res > 0) {
-            if (g_anyInput) {
-                g_inputKey = res;
+            if (g_input.any) {
+                g_input.key = res;
                 return 0x3eb;
             }
             if (res == 0x7f)
@@ -504,7 +500,7 @@ int sys_wait_input(int ticks)
             g_click2 = g_click = 0;
             _enable();
             if (g_clickEnds) {
-                g_inputKey = 0;
+                g_input.key = 0;
                 return 0x3eb;
             }
             if (g_menuLevel) {
@@ -512,8 +508,8 @@ int sys_wait_input(int ticks)
                         ? g_cursHoverCodeVal : menu_hit(x, y))
                     return i;
             }
-            if (g_anyInput) {
-                g_inputKey = 0;
+            if (g_input.any) {
+                g_input.key = 0;
                 return 0x3eb;
             }
         } else if (flag && g_waitUntil < g_tick) {
@@ -539,9 +535,9 @@ int sys_wait_input(int ticks)
                 if (i = menu_hit(x, y)) {
                     if (res != i) {
                         if (g_keyGroup == 0x25) {
-                            g_statusStrShown = 1;
+                            g_statusLine.shown = 1;
                             F_11421(-1, "", 0);
-                            g_statusStrShown = 1;
+                            g_statusLine.shown = 1;
                             F_11421(g_bannerX, "", g_wRivBanner);
                         }
                         F_11421(-1, g_txt + g_curHoverPointer->textOffset, 0);
@@ -628,7 +624,7 @@ void sys_timer_anim(int fc, int delay)
 {
     int n;
 
-    n = sys_timer_add(delay, g_animationPriCallback);
+    n = sys_timer_add(delay, g_sysTimerPriorities.animation);
     g_timers[n].action = 1;
     g_timers[n].argument = fc;
 }

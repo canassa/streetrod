@@ -171,7 +171,7 @@ struct Obj {
     struct Box box;
 };
 
-/* blit request handed to the b_78a2.. hooks (20 bytes). The first six ints are the same as
+/* blit request handed to the g_videoOps hooks (20 bytes). The first six ints are the same as
    struct Clip; dash_clip_blt reads only those. mx, my: origin in the mask bitmap (tandyblt_compose). */
 struct Blt {
     int w;
@@ -659,7 +659,78 @@ struct State8272 {
 };
 
 struct Hooks {
-    void (far *fn[15])();
+    int (far *copy)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
+    int (far *shiftBlit)(struct Bitmap far *, struct Bitmap far *, struct Blt *);
+    int (far *maskedBlit)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
+    void (far *drawText)(struct Bitmap far *, int, int, char *);
+    void (far *cursorBlit)(char far *, char far *, char far *, char far *, int, int, int, int);
+    void (far *copyPage)(char far *, char far *);
+    void (far *recolorRegion)(struct Bitmap far *, int, int, int, int, int, int);
+    void (far *blank)(void);
+    void (far *show)(void);
+    int (far *spriteStep)(struct Sprite *);
+    void (far *reveal)(char far *, char far *);
+    void (far *slideSprite)(int, int, int, int, int, struct Bitmap far *);
+    void (far *drawLine)(int, int, int, int, int);
+    void (far *fillSpan)(int, int, int, int);
+    void (far *fillBelow)(int, int);
 };
 
+
+struct TextEnd {
+    int x;
+    int y;
+};
+
+struct StatusText {
+    int messageX;
+    int y;
+    int messageWidth;
+    int shown;
+    int valueX;
+};
+
+struct BodyPoints {
+    int hasRearGlass;
+    int frontGlassX;
+    int frontGlassY;
+    int rearGlassX;
+    int rearGlassY;
+    int gasCapX;
+    int gasCapY;
+};
+
+
+struct MirrorEdges {
+    int buildingY[8];
+    int rightX[8];
+};
+
+
+struct ListDialog {
+    int lineBase;
+    int rows;
+    int *list;
+    int selection;
+    struct Hot *header;
+};
+
+struct PartSelection {
+    int wirePic;
+    int slot;
+    int unused;
+    int subslot;
+};
+
+struct InputState {
+    int any;
+    int key;
+};
+
+enum BetKind { BET_NONE, BET_10, BET_50, BET_25, BET_100, BET_CAR };
+
+struct Wager {
+    enum BetKind kind;
+    int amount;
+};
 #endif

@@ -144,7 +144,7 @@ int near savegame_new(void)
     r_vid.copyToFront = 1;
     video_name_pal();
     bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), (SCREEN_BODY_HEIGHT - 1));
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     switch (sel = edit_text_box(2, 15, g_driverName)) {
     case -3:
     case 0:
@@ -451,12 +451,12 @@ again:
         ;
     if (cmp == 0) {
         cursor_ctl(CURSOR_HIDE);
-        box7 = (struct Win *)(0x12 * (int)r + g_listLineBasePointerValue - 0x12);
+        box7 = (struct Win *)(0x12 * (int)r + g_menuList.lineBase - 0x12);
         pal4 = x_colors;
-        x_colors = bustyle->pal[((struct Win *)g_listLineBasePointerValue)->lines];
+        x_colors = bustyle->pal[((struct Win *)g_menuList.lineBase)->lines];
         sv7 = x_colors.line;
         x_colors.line = x_colors.textBg;
-        wk = ((struct Win *)g_listLineBasePointerValue)->tx - ((struct Win *)g_listLineBasePointerValue)->w;
+        wk = ((struct Win *)g_menuList.lineBase)->tx - ((struct Win *)g_menuList.lineBase)->w;
         draw_frame(r_vid.back, box7->w, box7->h, wk, 8);
         draw_frame(r_vid.front, box7->w, box7->h, wk, 8);
         x_colors = pal4;

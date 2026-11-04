@@ -581,16 +581,15 @@ int far *g_hereCurvePtr;
 int far *af7880z;
 int bq7884[13];
 int aw7aaex;
-int g_yBuildingTopArray[13];
+int g_yBuildingTopArray[15]; /* DS:7AB0 */
 int g_rightXProjectionTable[13];
 unsigned far *g7d62p;
 int g_lhsRdMirrorX[6];
 int g_xOuterLProjArray[13];
 int g_rhsOuterXArray[13];
-unsigned far *aw8634x;
-int g_yMirrProjectionArray[6];
-int g_yMirrorBldgArray[6];
-int g_rhsXsRear[6];
+unsigned far *g_rightSideTerrainRow;
+int g_mirYProj[8]; /* DS:8634 */
+struct MirrorEdges g_mirGeom; /* DS:864A */
 
 /* road_seek @ 2645:171D (linear 0x27B6D, 82 bytes)
 
@@ -599,7 +598,7 @@ int g_rhsXsRear[6];
 void road_seek(int n)
 {
     q_72ee = &g_terrain0[n];
-    aw8634x = &g_terrain1[n];
+    g_rightSideTerrainRow = &g_terrain1[n];
     g7d62p = &g_terrain3[n];
     af7880z = &g_terrain4[n];
     g_hereCurvePtr = &g_terrain2[n];
@@ -797,12 +796,12 @@ void road_project_behind(void)
 
     flag8 = (*g7d62p & 1) || (*g7d62p & 0xf000);
     bits = *g7d62p-- & 0xe0;
-    p11 = g_rhsXsRear;
+    p11 = g_mirGeom.rightX;
     p2 = g_lhsRdMirrorX;
-    p3 = g_yMirrProjectionArray;
+    p3 = g_mirYProj;
     p42 = al70c0x.m70c2;
     p5l = al70c0x.m70d2;
-    p6 = g_yMirrorBldgArray;
+    p6 = g_mirGeom.buildingY;
     rowz = 8;
     d1 = *af7880z-- - ao7d2ev.m7d3e;
     d2 = *g_hereCurvePtr-- - ao7d2ev.m7d3c;

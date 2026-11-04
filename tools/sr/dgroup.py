@@ -300,12 +300,6 @@ class Analysis:
             items.append(it)
             lit_at[orig] = it
         items += self._masks()
-        for lo, hi, decl in REGIONS:
-            node = self.types.declaration(decl)
-            name = f'g_{lo:04x}'
-            if lo in self.globals:
-                continue
-            items.append(Item(lo, hi - lo, 'global', name, decl, node, synth=True))
         for off in self.goffs:
             if off >= DATA_END:
                 break
@@ -315,6 +309,13 @@ class Analysis:
                 continue
             node = self.types.declaration(g['decl'])
             items.append(Item(off, node['size'] or 0, 'global', g['name'], g['decl'], node))
+        for lo, hi, decl in REGIONS:
+            node = self.types.declaration(decl)
+            name = f'g_{lo:04x}'
+            if lo in self.globals or any(it.kind == 'global' and not it.synth and
+                                         it.off <= lo and hi <= it.end for it in items):
+                continue
+            items.append(Item(lo, hi - lo, 'global', name, decl, node, synth=True))
         items.sort(key=lambda it: (it.off, 0 if it.kind == 'lit' else 1))
         # Unbounded arrays run to the next item, a pointer target inside them, or their recovered
         # bound. A global whose extent covers a later global's start makes that one an alias.

@@ -1227,3 +1227,38 @@ Append-only log of work on this project. Each session adds an entry at the botto
 - A Codex agent searched honest alternative spellings for the reviewed statics and communals whose first names missed their hash windows (30+ candidates each, checked with `./sr fit`, confirmed by full builds), and for names kept only for length; 146 renames were applied. Phase 3 was paused so the struct grouping comes first. The branch conflicted with 33 files on main, so the 146 renames were replayed onto main with `./sr rename` from its ledger.
 - The renames only work as a set: applying the 114 full-length ones alone broke 28 functions and 32 bytes, because the 32 cramped names (e.g. `g_gar`, `g_pad`, `g_bIdx`) repay the per-file name budget the others spend in GARAGE.C/VIEW.C and some spellings share hash buckets. The 32 are listed in plans/cramped-names.md, to be renamed properly once the structs free budget.
 - Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup/order checks clean, tests OK.
+
+
+## 2026-11-04 17:09 CET: Group evidenced global state into records
+
+**What I did**
+
+- Merged main 2223600 and mapped candidates by DS address after the global-renaming pass. Implemented 14 non-overlapping records: Hooks, RenderRows, TireWork, StatusText, BodyPoints, MirrorRoad, MirrorEdges, BuildingRows, ListDialog, TimerPriorities, PartSelection, InputState, Wager and the existing Blt for the ad packet. This replaces 114 symbols with 14 objects (100 fewer symbols); typed driver tables share Hooks and installers use direct assignments.
+- Restored the cramped spellings as members: g_fnShow becomes g_videoOps.show and g_xTextR becomes g_statusLine.textEndX. Kept unrelated cramped names outside the records.
+- Selected narrow groups, excluded the backdrop reveal-height word from BuildingRows, and skipped the mixed startup flags. Added one reconstruction-choice entry per group. Kept private type definitions in VIEW.H, TIRES.H and SYS.H.
+- Committed four focused tooling/test fixes separately: named callback fields, int-sized enum members, static ownership without a symbol-count threshold, and fallback data regions inside source aggregates. The overlapping-source-global check stays strict.
+- Each group passed 572/572 functions, a clean packed build IDENTICAL, header/DGROUP checks and the unit suite. Final suite: 58 tests OK. Real MSC confirmed 602 sizeof/offsetof checks across 82 shared/owner-header types; native DOS MAKE is IDENTICAL (SHA1 3a5e28b795313028b7e77d147122f41cb29de334). Full mapping and logs are in work/structs/impl/REPORT.md. No work/ artifacts committed, no push or merge back to main.
+
+**What I learned**
+
+- Members remove hash and external-name budget constraints, but the one remaining object name must fit its new neighbor window; deleting the old members can widen that window.
+- Separate globals and a natural record can both match. The callback copies support Hooks; the other chosen records remain explicit reconstruction choices.
+- Unused word-sized storage is not automatic word-alignment padding. Preserve unknown/reset-only fields without inventing semantic names, and do not let recovered fallback ranges reintroduce their old symbols.
+
+Tooling lessons are recorded in [sr-cli](../.claude/skills/sr-cli/SKILL.md); the type-header ownership rule is in [CLAUDE.md](../CLAUDE.md).
+
+
+## 2026-11-04 18:02 CET: Correct the independent struct review findings
+
+**What I did**
+
+- Split generic text endpoints into TextEnd g_penPoint at 824C and narrowed StatusText to status-line state at 8250. Extracted the right-side scenery cursor at 8634 from mirror Y rows at 8638. InputState now contains only any/key; restored 05D4..05DB as separate placeholder globals, preserving the 32767 sentinel and drive-reset writes.
+- Applied the reviewed member names: RenderRows.lineWidth, TireWork.liftBuf/liftHeader/wheelX1. Replaced the five misleading object spellings with g_sysTimerPriorities, g_slotSelec, g_mirGeom, g_raceWagerTerms and g_rightSideTerrainRow (separate from g_mirYProj).
+- Tested four natural array variants with real MSC and full builds; all were byte-identical. Adopted g_yBuildingTopArray[15], g_mirYProj[8] and two eight-element MirrorEdges arrays. No short arrays plus terminal scalar fields remain in those reviewed projection groups.
+- Used BetKind constants at wager-kind writers/tests and typed the corresponding locals/parameter. Changed PartSelection's unused word to int, corrected the old hook comment, and made ADS function-pointer calls consistent.
+- Merged main (already up to date), checked conflicts, and passed 572/572 functions, clean packed build IDENTICAL, headers/DGROUP/order and 58 unit tests. Native DOS MAKE is IDENTICAL; real MSC verified 586 size/offset checks across 81 shared/owner-header types. No further tooling fixes were needed. Current evidence: work/structs/fixes/REPORT.md.
+
+**What I learned**
+
+- Byte identity permits broader groups than a source reconstruction should use. Trace each field's writers/readers to separate generic text output, status-line state, forward/mirror scenery cursors and drive-reset words.
+- Array writers can reveal the true capacity where reconstruction introduced terminal scalar members. The compiler-verified full-array result is recorded in the [recipe book](../.claude/skills/msc51-recipe-book/SKILL.md); explicit unused/reset-only fields remain distinct from automatic padding.

@@ -38,11 +38,7 @@ static int g_knobPos;                         /* DS:6C36 */
 struct Bitmap far *bm7678;
 unsigned at767ct;
 unsigned av787at;
-int (far *b_78a2)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
-void (far *g_displayDisablePtr)(void);
-void (far *g_fnShow)(void);
-void (far *g_pageRevealBlit)(char far *, char far *);
-void (far *a_78d2)(int, int, int, int, int);
+struct Hooks g_videoOps; /* DS:78A2 */
 char gz8249;
 struct Bitmap far *g82b4s;
 char bw8aca;
@@ -71,7 +67,7 @@ static void near restore_under(int x, int y, int w, int h, int kind)
     pkt.sy = (r_vid.mode == VID_EGA ? DASH_Y : 0) + (kind == 1 ? 5 : kind == 2 ? 12 : 35);
     pkt.dx = x & 0xfff8;
     pkt.dy = y;
-    (*b_78a2)(r_vid.mode == VID_EGA ? bm7678 : g82b4s, bm7678, &pkt, 1);
+    (*g_videoOps.copy)(r_vid.mode == VID_EGA ? bm7678 : g82b4s, bm7678, &pkt, 1);
 }
 
 /* save_under @ 0F38:0098 (linear 0x0F418, 159 bytes) */
@@ -86,7 +82,7 @@ static void near save_under(int x, int y, int w, int h, int kind)
     pkt.sy = y;
     pkt.dx = 0x108;
     pkt.dy = (r_vid.mode == VID_EGA ? DASH_Y : 0) + (kind == 1 ? 5 : kind == 2 ? 12 : 35);
-    (*b_78a2)(g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt, 1);
+    (*g_videoOps.copy)(g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, r_vid.mode == VID_EGA ? bm7678 : g82b4s, &pkt, 1);
 }
 
 /* dash_speedo_pts @ 0F38:0137 (linear 0x0F4B7, 155 bytes) */
@@ -128,7 +124,7 @@ void dash_speedo_init(int i)
         saveOff = at767ct;
         av787at = r_vid.mode == VID_EGA ? 0xa000 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
         at767ct = 0;
-        (*a_78d2)(x11, y1, x2, y2, color);
+        (*g_videoOps.drawLine)(x11, y1, x2, y2, color);
         av787at = saveSeg;
         at767ct = saveOff;
     }
@@ -168,7 +164,7 @@ void dash_tach_init(int v)
         saveOff = at767ct;
         av787at = r_vid.mode == VID_EGA ? 0xa000 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
         at767ct = 0;
-        (*a_78d2)(x11, y1, x2, y2, color);
+        (*g_videoOps.drawLine)(x11, y1, x2, y2, color);
         av787at = saveSeg;
         at767ct = saveOff;
     }
@@ -209,7 +205,7 @@ int dash_move_needle(int cur, int old, int flag)
         miny3 = y1 > y2 ? y2 : y1;
         save_under(minx4, miny3, abs(x11 - x2) + 1, abs(y1 - y2) + 1, 2);
     }
-    (*a_78d2)(x11, y1, x2, y2, g_needleColor);
+    (*g_videoOps.drawLine)(x11, y1, x2, y2, g_needleColor);
     av787at = saveSeg;
     at767ct = saveOff;
     return cur;
@@ -257,11 +253,11 @@ void dash_draw_clock(void)
     y3 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - (int)(sin((al + w6) * pi3 / 180.0) * 9.0) + 0x2a;
     x4 = (int)(cos((al - w6) * pi3 / 180.0) * 9.0) + 0x91;
     y4 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - (int)(sin((al - w6) * pi3 / 180.0) * 9.0) + 0x2a;
-    (*a_78d2)(x14, y13, x2, y2, g_needleColor);
-    (*a_78d2)(x14, y13, x3, y3, g_needleColor);
-    (*a_78d2)(x14, y13, x4, y4, g_needleColor);
-    (*a_78d2)(x2, y2, x3, y3, g_needleColor);
-    (*a_78d2)(x2, y2, x4, y4, g_needleColor);
+    (*g_videoOps.drawLine)(x14, y13, x2, y2, g_needleColor);
+    (*g_videoOps.drawLine)(x14, y13, x3, y3, g_needleColor);
+    (*g_videoOps.drawLine)(x14, y13, x4, y4, g_needleColor);
+    (*g_videoOps.drawLine)(x2, y2, x3, y3, g_needleColor);
+    (*g_videoOps.drawLine)(x2, y2, x4, y4, g_needleColor);
     a2 = 0x5a - 6 * m;
     rk = abs(a2 - a2 / 0x5a * 0x5a);
     if (rk < 10 || rk > 0x50)
@@ -277,11 +273,11 @@ void dash_draw_clock(void)
     y3 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - (int)(sin((a2 + w6) * pi3 / 180.0) * 9.0) + 0x2a;
     x4 = (int)(cos((a2 - w6) * pi3 / 180.0) * 9.0) + 0x91;
     y4 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - (int)(sin((a2 - w6) * pi3 / 180.0) * 9.0) + 0x2a;
-    (*a_78d2)(x14, y13, x2, y2, g_needleColor);
-    (*a_78d2)(x14, y13, x3, y3, g_needleColor);
-    (*a_78d2)(x14, y13, x4, y4, g_needleColor);
-    (*a_78d2)(x2, y2, x3, y3, g_needleColor);
-    (*a_78d2)(x2, y2, x4, y4, g_needleColor);
+    (*g_videoOps.drawLine)(x14, y13, x2, y2, g_needleColor);
+    (*g_videoOps.drawLine)(x14, y13, x3, y3, g_needleColor);
+    (*g_videoOps.drawLine)(x14, y13, x4, y4, g_needleColor);
+    (*g_videoOps.drawLine)(x2, y2, x3, y3, g_needleColor);
+    (*g_videoOps.drawLine)(x2, y2, x4, y4, g_needleColor);
     av787at = ssegk;
     at767ct = soffn;
 }
@@ -347,31 +343,31 @@ void dash_intro(void)
 
     saved = g_picMaxH;
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
-        (*g_displayDisablePtr)();
+        (*g_videoOps.blank)();
     g_picMaxH = SCREEN_HEIGHT;
     if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         main_set_palette(CGA_PALETTE_GREEN_RED_BROWN);
     F_119B8(3, 0x28, 0x28, 0);
     disk_free_pic(3);
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     r_vid.copyToFront = 0;
     F_118D4(1, -1);
     disk_free_pic(1);
     dash_wait_key(400);
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         main_set_palette(CGA_PALETTE_CYAN_MAGENTA_WHITE);
-    (*g_pageRevealBlit)(r_vid.front->bits.p, r_vid.back->bits.p);
+    (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
     F_118D4(4, 0);
     disk_free_pic(4);
     dash_wait_key(400);
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
         video_set_palette(g_introPalette);
-    (*g_pageRevealBlit)(r_vid.front->bits.p, r_vid.back->bits.p);
+    (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
     dash_wait_key(400);
     g_picMaxH = saved;
     screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
-    (*g_pageRevealBlit)(r_vid.front->bits.p, r_vid.back->bits.p);
+    (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
 }
 
 /* dash_time_up @ 0F38:0D62 (linear 0x100E2, 91 bytes) */
@@ -379,13 +375,13 @@ void dash_intro(void)
 void dash_time_up(void)
 {
     game_message(0x17bb);
-    (*g_displayDisablePtr)();
+    (*g_videoOps.blank)();
     cursor_ctl(CURSOR_HIDE_NOW);
     r_vid.copyToFront = 1;
     screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     F_065AF(1);
     F_10B7C();
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     game_pause(300);
 }
 
@@ -445,7 +441,7 @@ void dash_set_view(int mode)
             outp(CRTC_DATA, 0);
         }
         r_vid.copyToFront = 1;
-        (*g_fnShow)();
+        (*g_videoOps.show)();
         break;
     }
 }
@@ -473,7 +469,7 @@ void dash_load_wheel(void)
                 g_wheelY[i6] = g_wheelSlotY[i6] + 0x66;
             }
             pkt.dy = g_wheelY[i6];
-            (*b_78a2)(bm, g_wheelPages[i6], &pkt, 1);
+            (*g_videoOps.copy)(bm, g_wheelPages[i6], &pkt, 1);
             marks_pop_low(1);
         }
     } else {
@@ -533,7 +529,7 @@ void dash_draw_wheel(int a, int b, struct Bitmap far *dst)
             pkt1.sx = pkt1.sy = 0;
         pkt1.dx = 0x50;
         pkt1.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + 0x3f;
-        (*b_78a2)(g_wheelPages[sel], dst, &pkt1, 1);
+        (*g_videoOps.copy)(g_wheelPages[sel], dst, &pkt1, 1);
         g_wheelShown = sel;
     }
     if (b != 100) {
@@ -592,7 +588,7 @@ void dash_init_shifter(int a, int b)
     pk5.sx = pk5.sy = 0;
     pk5.dx = 0x108;
     pk5.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + 0x17;
-    (*b_78a2)(bm19, g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, &pk5, 1);
+    (*g_videoOps.copy)(bm19, g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, &pk5, 1);
     bm28 = F_15BBE(g_shifter->id2, ARENA_HIGH_STACK);
     p3.w = p2.w = (pk5.w = bm28->width) + 8;
     p3.h = p2.h = pk5.h = bm28->height;
@@ -607,11 +603,11 @@ void dash_init_shifter(int a, int b)
         cm2 = bitmap_grab(bm19, &p2, ARENA_LOW_STACK);
         p3.dx = g_shiftSlots[i].a;
         p3.dy = g_shiftSlots[i].b;
-        (*b_78a2)(cm2, g82b4s, &p3, 1);
+        (*g_videoOps.copy)(cm2, g82b4s, &p3, 1);
         pk5.dx = x - p2.sx;
         bitmap_draw_masked(bm28, cm2, &pk5, 0);
         p3.dy += 0x13;
-        (*b_78a2)(cm2, g82b4s, &p3, 1);
+        (*g_videoOps.copy)(cm2, g82b4s, &p3, 1);
         marks_pop_low(1);
     }
     g_knobPos = -1;
@@ -639,7 +635,7 @@ void dash_draw_shifter(struct Bitmap far *dst, struct Eng *e)
         pkt1.dx = x + 0x108;
         pkt1.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + g_shifter->pt[g_knobPos * 2 + 1] + 0x17;
         pkt1.w = 0x30 - x > 0x20 ? 0x20 : 0x30 - x;
-        (*b_78a2)(g82b4s, dst, (struct Blt *)&pkt1, 1);
+        (*g_videoOps.copy)(g82b4s, dst, (struct Blt *)&pkt1, 1);
     }
     pkt1.sx = g_shiftSlots[idx3].a;
     pkt1.sy = g_shiftSlots[idx3].b + 0x13;
@@ -647,7 +643,7 @@ void dash_draw_shifter(struct Bitmap far *dst, struct Eng *e)
     pkt1.dx = x + 0x108;
     pkt1.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + g_shifter->pt[idx3 * 2 + 1] + 0x17;
     pkt1.w = 0x30 - x > 0x20 ? 0x20 : 0x30 - x;
-    (*b_78a2)(g82b4s, dst, (struct Blt *)&pkt1, 1);
+    (*g_videoOps.copy)(g82b4s, dst, (struct Blt *)&pkt1, 1);
     g_knobPos = idx3;
     e->shifterDirty = 0;
 }

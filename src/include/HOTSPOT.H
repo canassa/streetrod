@@ -22,7 +22,6 @@ extern char fz79a8[2];                                  /* DS:79A8 */
 extern char ah7aa4w[6];                                 /* DS:7AA4 */
 extern char bz7ee2[64];                                 /* DS:7EE2 */
 extern char g7ff6f[2];                                  /* DS:7FF6 */
-extern char g82b0u[2];                                  /* DS:82B0 */
 extern char a8ef4fv[2];                                 /* DS:8EF4 */
 
 #endif

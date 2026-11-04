@@ -5,7 +5,6 @@
 #include "BITMAP.H"
 #include "CURSBLT.H"
 #include "DASH.H"
-#include "MENU.H"
 #include "PC.H"
 #include "SCREEN.H"
 #include "SPRITE.H"
@@ -16,14 +15,14 @@
 #include "TANDYTXT.H"
 #include "VIDEO.H"
 
-void (far *g_tandyHooks[15])() = {tandyblt_copy, tandyblt_shifted, tandyblt_masked, tandy_draw_text, cursblt_tandy, tandy_copy_page, tandy_recolor_rect, dash_pal_blank, dash_pal_show, tandyspr_step, tandy_reveal, sprite_slide_v, tandylin_draw, tandylin_span, tandylin_fill_below};   /* DS:5B8A */
+struct Hooks g_tandyHooks = {tandyblt_copy, tandyblt_shifted, tandyblt_masked, tandy_draw_text, cursblt_tandy, tandy_copy_page, tandy_recolor_rect, dash_pal_blank, dash_pal_show, tandyspr_step, tandy_reveal, sprite_slide_v, tandylin_draw, tandylin_span, tandylin_fill_below};   /* DS:5B8A */
 int g_tandyRevealOrder[5] = {0, 2, 4, 1, 3};   /* DS:5BC6 */
 
 /* tandy_install @ 21A0:0952 (linear 0x22352, 18 bytes) */
 
 void tandy_install(void)
 {
-    *(struct Hooks *)&b_78a2 = *(struct Hooks *)g_tandyHooks;
+    g_videoOps = g_tandyHooks;
 }
 
 /* tandy_draw_text @ 21A0:0964 (linear 0x22364, 235 bytes)
@@ -46,8 +45,8 @@ void tandy_draw_text(struct Bitmap far *bm, int x, int y, int glyph)
     c1 = x_colors.text;
     c2 = x_colors.textBg;
     n2 = tandytxt_render(x, glyph, buf3, c1, c2);
-    g_xTextR = x + n2 - ph;
-    g_yLastString = y;
+    g_penPoint.x = x + n2 - ph;
+    g_penPoint.y = y;
     if (n2 != ph) {
         m3 = (n2 >> 1) - ph;
         if (y + (h = 8) > bm->height)

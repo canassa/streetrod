@@ -4,7 +4,7 @@
 #define TANDY_H
 #include "STRUCTS.H"
 
-extern void (far *g_tandyHooks[15])();                  /* DS:5B8A */
+extern struct Hooks g_tandyHooks;                  /* DS:5B8A */
 extern int g_tandyRevealOrder[];                        /* DS:5BC6 */
 void tandy_install(void);                               /* 0x22352 */
 void tandy_draw_text(struct Bitmap far *bm, int x, int y, int glyph);/* 0x22364 */

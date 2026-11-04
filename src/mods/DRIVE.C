@@ -2,7 +2,6 @@
 #include "STRUCTS.H"
 #include "DRIVE.H"
 #include "ARENA.H"
-#include "BOBS.H"
 #include "CARPIC.H"
 #include "CRTC.H"
 #include "DASH.H"
@@ -43,7 +42,7 @@ int drive_run(void)
     do {
         dash_set_view(3);
         marks_clear();
-        (*g_displayDisablePtr)();
+        (*g_videoOps.blank)();
         g_dashBuffered = r_vid.mode == VID_CGA && g_egaCard;
         if (g_dashBuffered) {
             popup_grab(0, DASH_Y, SCREEN_WIDTH, DASH_HEIGHT, g_bufBackgroundDashPtr);
@@ -63,22 +62,22 @@ int drive_run(void)
             blt.sx = blt.sy = 0;
             blt.dx = 0x78;
             blt.dy = 0x7a;
-            (*b_78a2)(pict, src, &blt, 1);
+            (*g_videoOps.copy)(pict, src, &blt, 1);
             F_19438(1);
         }
         w = blt.w = src->width;
         blt.h = 0x65;
         blt.sx = 0;
         blt.sy = blt.dx = blt.dy = 0;
-        (*b_78a2)(src, g8188w, &blt, 1);
+        (*g_videoOps.copy)(src, g8188w, &blt, 1);
         if (r_vid.mode == VID_EGA)
-            (*b_78a2)(src, g82b4s, &blt, 1);
+            (*g_videoOps.copy)(src, g82b4s, &blt, 1);
         blt.w = src->width;
         blt.h = 0x5a;
         blt.sx = blt.dx = 0;
         blt.sy = DASH_Y;
         blt.dy = (r_vid.mode == VID_EGA || g_dashBuffered) ? 0 : DASH_Y;
-        (*b_78a2)(src, g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, &blt, 1);
+        (*g_videoOps.copy)(src, g_dashBuffered ? g_bufBackgroundDashPtr : bm7678, &blt, 1);
         F_19438(1);
         view_load();
         dash_init_shifter(g_driveEng.autoSelector, g_driveEng.gearCount);
@@ -111,7 +110,7 @@ int drive_run(void)
         blt.w = SCREEN_WIDTH;
         blt.h = 0x12;
         blt.dy = blt.sy = blt.sx = blt.dx = 0;
-        (*b_78a2)(g8188w, bm7678, &blt, 1);
+        (*g_videoOps.copy)(g8188w, bm7678, &blt, 1);
     }
     if (g_dashBuffered) {
         g_dashBuffered = 0;
@@ -119,7 +118,7 @@ int drive_run(void)
         blt.h = DASH_HEIGHT;
         blt.sy = blt.sx = blt.dx = 0;
         blt.dy = DASH_Y;
-        (*b_78a2)(g_bufBackgroundDashPtr, bm7678, &blt, 1);
+        (*g_videoOps.copy)(g_bufBackgroundDashPtr, bm7678, &blt, 1);
         oldf05 = dash_move_needle(g_driveEng.speed, oldf05, 0);
         if (!g_autoTrans)
             oldfe = dash_move_needle(g_driveEng.rpm, oldfe, 1);
@@ -127,7 +126,7 @@ int drive_run(void)
             dash_draw_clock();
         dash_draw_wheel(shiftx5, g_steeringOld, bm7678);
     }
-    (*g_fnShow)();
+    (*g_videoOps.show)();
     for (;;) {
         road_update();
         if (g_demo == 0x63) {
@@ -158,20 +157,20 @@ int drive_run(void)
         blt.sy = 0;
         blt.dx = 0;
         blt.dy = g_vga ? DASH_Y : 0x65;
-        (*b_78a2)(bm7678, g_drawPage == 1 ? g82b4s : g8188w, &blt, 1);
+        (*g_videoOps.copy)(bm7678, g_drawPage == 1 ? g82b4s : g8188w, &blt, 1);
         blt.w = w;
         blt.h = 1;
         blt.sx = 0;
         blt.sy = 0;
         blt.dx = 0;
         blt.dy = DASH_Y;
-        (*b_78a2)(bm7678, g_drawPage == 1 ? g82b4s : g8188w, &blt, 1);
+        (*g_videoOps.copy)(bm7678, g_drawPage == 1 ? g82b4s : g8188w, &blt, 1);
         crtc_set_split(-1);
         g_displaySplitYVal = 0;
-        (*g_screenCopyPtr)(g_drawPage == 1 ? g82b4s->bits.p : g8188w->bits.p, bm7678->bits.p);
-        (*g_screenCopyPtr)(g_drawPage == 1 ? g82b4s->bits.p : g8188w->bits.p, g_drawPage == 1 ? g8188w->bits.p : g82b4s->bits.p);
+        (*g_videoOps.copyPage)(g_drawPage == 1 ? g82b4s->bits.p : g8188w->bits.p, bm7678->bits.p);
+        (*g_videoOps.copyPage)(g_drawPage == 1 ? g82b4s->bits.p : g8188w->bits.p, g_drawPage == 1 ? g8188w->bits.p : g82b4s->bits.p);
     } else
-        (*g_screenCopyPtr)(bm7678->bits.p, g8188w->bits.p);
+        (*g_videoOps.copyPage)(bm7678->bits.p, g8188w->bits.p);
     dash_set_view(1);
     return ret;
 }
