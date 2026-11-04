@@ -30,21 +30,19 @@ REGIONS = [(0x6076, 0x6078, 'int @'), (0x2ee, 0x31e, 'signed char @[24][2]'), (0
            (0x462, 0x472, 'unsigned char @[16]'), (0x5d4, 0x5d6, 'int @'),
            (0x4734, 0x4736, 'int @'), (0x474a, 0x474c, 'int @'),
            (0x47d1, 0x47d4, 'char @[3]'), (0x496c, 0x4970, 'int @[2]')]
-# Data no C compiler could place (a pointer table at an odd address): assembler-defined,
-# owned by the assembly unit that sits there in the link order.
-FORCE_OWNER = [(0x5580, 0x57F6, 0x0E56A),
-               # keyboard/mouse state and tables shared with the assembler keyboard handlers
-               (0x4718, 0x4AFE, 0x02B9A),
+# Assembler-defined data owned by the assembly unit that sits there in the link order.
+# The keyboard/mouse state and tables are shared with the assembler keyboard handlers.
+FORCE_OWNER = [(0x4718, 0x4AFE, 0x02B9A),
                # VIDDET.ASM's unreferenced tail (a byte and three strings) before the hook
                # table of CGA.C
                (0x5AEE, 0x5B04, 0x0E610)]
-# Data-only translation units: tables a code unit cannot have held (MSC's frame layout of a
-# unit's functions changes with the number of file-scope definitions; these functions match
-# only without them). Each gets a synthetic unit key above any code address.
+# Data-only translation units: recovered splits and reconstruction choices documented in
+# docs/RECONSTRUCTION.md. Each gets a synthetic unit key above any code address.
 # File names describe content; the historical names are unknown.
 DATA_UNITS = [(0x09F4, 0x239E, 'src/mods/HOTSPOT.C'),
               # odd-address ints and arrays, count-prefixed message records: not C-placeable
               (0x239E, 0x4718, 'src/mods/MESSAGES.ASM'),
+              (0x5580, 0x57F6, 'src/mods/KEYMAPS.ASM'),
               # MSC emits a global whose address an earlier initializer takes before that
               # initializer: the table at DS:6078 precedes the second set, so two files
               (0x5EC6, 0x60A2, 'src/mods/SCENERY.C'),
@@ -54,6 +52,9 @@ DATA_KEY = 0x100000
 # why). `link_order()` moves the units after `after`; each code segment's units then keep
 # their code order.
 ORDER_HINTS = [
+    (('0E56A',), '105580',
+     'the original relocation table places the Hercules calls after PERF and before MUSIC; '
+     'KEYMAPS has no segment relocations and is placed before HERCDET by reconstruction choice'),
     (('24602', '2462E', '2487A', '24BE2'), '22352',
      'the original relocation table lists tandytxt_render SEG fixup between TANDY and TANDYSPR'),
     (('26458', '265BA', '2869E', '2B6DC', '105EC6', '1060A2'), '242EC',

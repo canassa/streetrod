@@ -57,7 +57,7 @@ Reverse engineering and decompilation of *Street Rod* (Logical Design Works / Ca
 The build definition is checked in, as the developers had it: `src/MAKEFILE` (MSC MAKE 4.07,
 written like MSC 5.1's own `STARTUP\MAKEFILE`: macros `CC=CL /c /W3 /Fc /IINCLUDE` and
 `ASM=MASM`, one block per object with its source and the headers it includes) and the LINK
-response file `src/SR.LNK` (the 95 objects in link order). MAKE runs the blocks in file order:
+response file `src/SR.LNK` (the 96 objects in link order). MAKE runs the blocks in file order:
 LIB 3.11 combines MSC's untouched libraries into `MLIBCE.LIB`
 (`LIB MLIBCE.LIB +MLIBCR.LIB+LIBH.LIB+EM.LIB+MLIBFP.LIB;`, the component order matters), each
 object's `$(CC) <flags> /NT<segment> MODS\<file>` or `$(ASM) /Ml ...` line, then
@@ -79,7 +79,7 @@ functions, all 748 near calls), and the packed `SRPACKED.EXE` must be byte-ident
 ### Source files: `src/mods/`
 
 Every original object is one source file in `src/mods/` with one block in `src/MAKEFILE`
-(80 code files, plus the data-only HOTSPOT.C, MESSAGES.ASM, SCENERY.C, SCENERY2.C; their DGROUP
+(80 code files, plus the data-only HOTSPOT.C, MESSAGES.ASM, KEYMAPS.ASM, SCENERY.C, SCENERY2.C; their DGROUP
 ranges are `dgroup.DATA_UNITS`). A code file's extent in the image is the span of the
 functions it defines (`module.files()`). The 55 C files and 25 MASM files hold
 their functions in address order: includes, the file-scope statics and `static ... near`
@@ -235,7 +235,7 @@ Never redirect a DOS program's output to a file without a timeout and a size bou
 | `dist/` | Downloads as fetched (freeware zip, archive.org, The Good Old Days image) |
 | `toolchain/msc51/` | MSC 5.1 `BIN`, `INCLUDE`, `LIB`, plus the original disk images |
 | `toolchain/masm51/` | MASM 5.1 `BIN`, `INCLUDE`, docs, plus the original disk images (`F:` in DOSBox) |
-| `src/mods/` | One source file per original object (8.3 names for what each module is, e.g. GARAGE.C, CGALINE.ASM), plus the data-only HOTSPOT.C, MESSAGES.ASM, SCENERY.C, SCENERY2.C |
+| `src/mods/` | One source file per original object (8.3 names for what each module is, e.g. GARAGE.C, CGALINE.ASM), plus the data-only HOTSPOT.C, MESSAGES.ASM, KEYMAPS.ASM, SCENERY.C, SCENERY2.C |
 | `src/MAKEFILE`, `src/SR.LNK` | The build: one block per object with its command line (MSC MAKE 4.07), the LINK response file (link order) |
 | `src/include/` | per-file headers and `STRUCTS.H` (hand-written); `/IINCLUDE` in the MAKEFILE |
 | `tools/sr/` | The CLI |
