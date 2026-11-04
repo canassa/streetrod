@@ -4,6 +4,8 @@
 #define GARGFX_H
 #include "STRUCTS.H"
 
+extern struct PartSelection g_videoPartCursor; /* DS:82AC */
+
 extern char g_partAnimate;                              /* DS:06FC */
 extern int g_tboltY[];                                  /* DS:06FE */
 extern int g_enginePos[][2];                            /* DS:0702 */
@@ -20,9 +22,6 @@ extern struct Blt g_cpyBoltPatchRecord;                               /* DS:70AC
 extern int o_8290[];                                    /* DS:8290 */
 extern int af829ax[];                                   /* DS:829A */
 extern int ad829cy[];                                   /* DS:829C */
-extern int ap82acz;                                     /* DS:82AC */
-extern int hz82ae;                                      /* DS:82AE */
-extern int g82b2t;                                      /* DS:82B2 */
 void F_123F4(int a, int b);                             /* 0x123F4 */
 void F_12525(int a);                                    /* 0x12525 */
 void F_1264E(int n, int flag);                          /* 0x1264E */

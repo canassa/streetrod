@@ -733,4 +733,11 @@ struct TimerPriorities {
     int unused4;
     int unused6;
 };
+
+struct PartSelection {
+    int wirePic;
+    int slot;
+    char unused[2];
+    int subslot;
+};
 #endif
