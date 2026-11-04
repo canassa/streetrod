@@ -23,23 +23,22 @@
 #include "M_24E78.H"
 #include "M_25954.H"
 
+#pragma intrinsic(outp)
+
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static struct Rect g_6cbc;                 /* DS:6CBC */
 static void near F_174A6(char far *src, char far *dst, char far *mask, int w, int h, int n, int step);
 static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, int h, char far *mask, char c);
 static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color);
 static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstbm, int id1, int id2);
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 struct Bitmap am6e68x[12];
 struct Bitmap far *at70a8;
 int (far *g78c6c)(struct Sprite *);
 struct Band dz7ec2[4];
 struct Bitmap bw7fa8;
 int l_8262;
-
-/* F_174A6: blit one 4-plane EGA image row set, one plane at a time via the sequencer map mask */
-
-#pragma intrinsic(outp)
 
 int g_58e2 = 1;   /* DS:58E2 */
 int g_58e4 = 0;   /* DS:58E4 */
@@ -56,6 +55,10 @@ int g_5a20 = 0;   /* DS:5A20 */
 int g_5a22 = 0;   /* DS:5A22 */
 int g_5a24 = 0;   /* DS:5A24 */
 
+/* F_174A6 @ 0F38:8126 (linear 0x174A6, 116 bytes)
+
+   Blit one 4-plane EGA image row set, one plane at a time via the sequencer map mask */
+
 static void near F_174A6(char far *src, char far *dst, char far *mask, int w, int h, int n, int step)
 {
     int plane, bit1;
@@ -71,10 +74,11 @@ static void near F_174A6(char far *src, char far *dst, char far *mask, int w, in
     outp(0x3c5, 0xf);
 }
 
-/* F_1751A: for each of n bitmaps, lay a band of h rows into the scratch bitmap bp7316[2], fill or copy it, then blit the bitmap through the EGA planes */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
+/* F_1751A @ 0F38:819A (linear 0x1751A, 412 bytes)
 
-#pragma intrinsic(outp)
+   For each of n bitmaps, lay a band of h rows into the scratch bitmap bp7316[2], fill or copy it,
+   then blit the bitmap through the EGA planes */
+/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, int h,
     char far *mask, char c)
@@ -105,7 +109,10 @@ static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, i
     }
 }
 
-/* F_176B6: copy n bitmaps into the table am6e68x, each filled with a colour pattern and h rows high, in space cut from the scratch bitmap bp7316[2] */
+/* F_176B6 @ 0F38:8336 (linear 0x176B6, 392 bytes)
+
+   Copy n bitmaps into the table am6e68x, each filled with a colour pattern and h rows high, in
+   space cut from the scratch bitmap bp7316[2] */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color)
@@ -141,7 +148,10 @@ static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color)
     F_19438(1);
 }
 
-/* F_1783E: make a copy of a bitmap header that views the rows below y0, plus a bitmap to hold them (*pa), a second one (*pb), and two clip rects */
+/* F_1783E @ 0F38:84BE (linear 0x1783E, 624 bytes)
+
+   Make a copy of a bitmap header that views the rows below y0, plus a bitmap to hold them (*pa), a
+   second one (*pb), and two clip rects */
 
 void F_1783E(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bitmap far **pb,
     int y1, int y0, struct Rect **pr1, struct Rect **pr2)
@@ -199,15 +209,16 @@ void F_1783E(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bi
         }
         F_19438(1);
         *pr1 = &g_5a10;
-        g_5a10.y2 = (*pa)->height - 1;
+        (*pr1)->y2 = (*pa)->height - 1;
         *pr2 = &g_5a18;
-        g_5a18.y1 = (*pa)->height - 15;
-        if (0) ;
+        (*pr2)->y1 = (*pa)->height - 15;
         (*pr2)->y2 = (*pa)->height - 1;
     }
 }
 
-/* F_17AAE: render a 16x70 strip into a scratch bitmap with two draw passes and blit it onto two bitmaps */
+/* F_17AAE @ 0F38:872E (linear 0x17AAE, 312 bytes)
+
+   Render a 16x70 strip into a scratch bitmap with two draw passes and blit it onto two bitmaps */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstbm, int id1, int id2)
@@ -241,7 +252,10 @@ static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstb
     F_19438(1);
 }
 
-/* F_17BE6: load the bitmap of car part idx into out[0], paint its marks, and build the n frame copies out[1..] */
+/* F_17BE6 @ 0F38:8866 (linear 0x17BE6, 1506 bytes)
+
+   Load the bitmap of car part idx into out[0], paint its marks, and build the n frame copies
+   out[1..] */
 
 void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *ids, int w, int n)
 {
@@ -370,7 +384,10 @@ void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *id
     }
 }
 
-/* F_181C8: draw a pop-up picture (car part, kind 1..8) with its frame sprite, saving and restoring the screen behind it */
+/* F_181C8 @ 0F38:8E48 (linear 0x181C8, 2323 bytes)
+
+   Draw a pop-up picture (car part, kind 1..8) with its frame sprite, saving and restoring the
+   screen behind it */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void F_181C8(int kind, int idx, int flags, int kk, int q, int bot, int mode2, int *ids)
@@ -565,7 +582,10 @@ done:
     F_120FE(-2);
 }
 
-/* F_18ADB: blit a clipped band of a bitmap through the blit hook, then the seven frame cells onto the front buffer */
+/* F_18ADB @ 0F38:975B (linear 0x18ADB, 256 bytes)
+
+   Blit a clipped band of a bitmap through the blit hook, then the seven frame cells onto the front
+   buffer */
 
 void F_18ADB(struct Bitmap far *dst, int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8)
 {

@@ -14,14 +14,17 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static struct Win *g_6c40;                 /* DS:6C40 */
-static int g_6c42[2];                      /* DS:6C42 */
-
-/* F_11A72: copy the rectangle (x, y, w, h) of the back buffer into pict new bitmap and return it.
-   The x range is rounded to the pixel grid r_vid.mask. src, when given, is the bitmap to reuse. */
+static int g_6c42[2];                      /* DS:6C42 PROVISIONAL: 4 unreferenced bytes after g_6c40 */
 
 struct Win g_04c4[3] = {{1072, 1, 72, 30, 152, 37, 0, 6, 144}, {1073, 1, 80, 30, 232, 37, 0, 6, 223}, {1074, 2, 80, 20, 232, 46, 0, 6, 223}};   /* DS:04C4 */
 struct Bitmap far *g_04fa = 0;   /* DS:04FA */
+
+/* F_11A72 @ 0F38:26F2 (linear 0x11A72, 253 bytes)
+
+   Copy the rectangle (x, y, w, h) of the back buffer into pict new bitmap and return it.
+   The x range is rounded to the pixel grid r_vid.mask. src, when given, is the bitmap to reuse. */
 
 struct Bitmap far *F_11A72(int x, int y, int w, int h, struct Bitmap far *src)
 {
@@ -50,8 +53,9 @@ struct Bitmap far *F_11A72(int x, int y, int w, int h, struct Bitmap far *src)
     return pict;
 }
 
-/* F_11B6F: blit bitmap bm to the back buffer at (x, y), x rounded to the pixel grid r_vid.mask */
+/* F_11B6F @ 0F38:27EF (linear 0x11B6F, 100 bytes)
 
+   Blit bitmap bm to the back buffer at (x, y), x rounded to the pixel grid r_vid.mask */
 
 void F_11B6F(struct Bitmap far *bm, int x, int y)
 {
@@ -67,8 +71,9 @@ void F_11B6F(struct Bitmap far *bm, int x, int y)
     F_120FE(-1);
 }
 
-/* F_11BD3: draw bitmap bm at (x, y) on the back buffer and copy the covered rectangle to the front buffer */
+/* F_11BD3 @ 0F38:2853 (linear 0x11BD3, 81 bytes)
 
+   Draw bitmap bm at (x, y) on the back buffer and copy the covered rectangle to the front buffer */
 
 void F_11BD3(struct Bitmap far *bm, int x, int y)
 {
@@ -77,9 +82,10 @@ void F_11BD3(struct Bitmap far *bm, int x, int y)
         F_1A92A(r_vid.back, r_vid.front, x, y, bm->width + x - 1, bm->height + y - 1);
 }
 
-/* F_11C24: pop up message window n (negative n: the window is removed again afterwards).
-   The text is the run of NUL-terminated lines that follows the window's index byte in g_2c01. */
+/* F_11C24 @ 0F38:28A4 (linear 0x11C24, 446 bytes)
 
+   Pop up message window n (negative n: the window is removed again afterwards).
+   The text is the run of NUL-terminated lines that follows the window's index byte in g_2c01. */
 
 void F_11C24(int n)
 {
@@ -125,8 +131,10 @@ void F_11C24(int n)
     g_05de = 1;
 }
 
-/* F_11DE2: pop up message window n with its position temporarily set to (x, y); idx negative coordinate keeps the default */
+/* F_11DE2 @ 0F38:2A62 (linear 0x11DE2, 125 bytes)
 
+   Pop up message window n with its position temporarily set to (x, y); idx negative coordinate
+   keeps the default */
 
 void F_11DE2(int n, int x, int y)
 {
@@ -147,8 +155,9 @@ void F_11DE2(int n, int x, int y)
     g_05de = 0;
 }
 
-/* F_11E5F: remove the pop-up window: put back the saved background */
+/* F_11E5F @ 0F38:2ADF (linear 0x11E5F, 61 bytes)
 
+   Remove the pop-up window: put back the saved background */
 
 void F_11E5F(void)
 {

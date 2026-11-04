@@ -18,16 +18,15 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
+#pragma intrinsic(memcpy)
+
 static int near F_1287B(void);
 static int near F_1289C(int *px, int *py);
 static void near F_12CD1(void);
 static void near F_133CB(struct Link *arr, struct Link *item, int num);
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 void (far *bl78ce)(int, int, int, int, int, struct Bitmap far *);
-
-/* F_123F4: draw the 64 x 6 bar for slot of the dialog; frame selects the highlighted frame.
-   When frame == 1 and the screen is shadowed, the old bar is grabbed and pasted first. */
 
 char g_06fc = 1;   /* DS:06FC */
 int g_06fe[2] = {78, 93};   /* DS:06FE */
@@ -41,6 +40,11 @@ char g_077e[14] = {29, 0, -1, -1, 2, 2, 2, 2, 3, 4, 2, 3, 2, 3};   /* DS:077E */
 char g_078c[6] = {5, 6, 7, 10, 12, 0};   /* DS:078C */
 struct Bitmap far *g_0792 = 0;   /* DS:0792 */
 struct NewLink g_0796 = {11, 0, 0, 1, 0, 0, 0, 0, ""};   /* DS:0796 */
+
+/* F_123F4 @ 0F38:3074 (linear 0x123F4, 305 bytes)
+
+   Draw the 64 x 6 bar for slot of the dialog; frame selects the highlighted frame.
+   When frame == 1 and the screen is shadowed, the old bar is grabbed and pasted first. */
 
 void F_123F4(int frame, int slot)
 {
@@ -76,7 +80,10 @@ void F_123F4(int frame, int slot)
     F_19438(1);
 }
 
-/* F_12525: draw the bar for slot "slot" of the dialog, then (screen shadowed) grab it back and paste the frame */
+/* F_12525 @ 0F38:31A5 (linear 0x12525, 297 bytes)
+
+   Draw the bar for slot "slot" of the dialog, then (screen shadowed) grab it back and paste the
+   frame */
 
 void F_12525(int slot)
 {
@@ -108,7 +115,9 @@ void F_12525(int slot)
     F_19438(1);
 }
 
-/* F_1264E: show picture n centered in the dialog area; flag moves it left by 24.
+/* F_1264E @ 0F38:32CE (linear 0x1264E, 310 bytes)
+
+   Show picture n centered in the dialog area; flag moves it left by 24.
    With the screen shadowed the area under it is saved around the draw and restored afterwards. */
 
 void F_1264E(int n, int flag)
@@ -146,7 +155,9 @@ void F_1264E(int n, int flag)
     F_19438(1);
 }
 
-/* F_12784: paste picture 0x42e at (0x20, 10) */
+/* F_12784 @ 0F38:3404 (linear 0x12784, 87 bytes)
+
+   Paste picture 0x42e at (0x20, 10) */
 
 void F_12784(int n, int flag)
 {
@@ -159,7 +170,9 @@ void F_12784(int n, int flag)
     F_19438(1);
 }
 
-/* F_127DB: redraw the dialog picture n and its two bars; s gives the bar states.
+/* F_127DB @ 0F38:345B (linear 0x127DB, 160 bytes)
+
+   Redraw the dialog picture n and its two bars; s gives the bar states.
    The screen shadow flag is switched off while drawing and the area is copied to the front afterwards. */
 
 void F_127DB(int n, char far *s)
@@ -191,7 +204,9 @@ int ap82acz;
 int hz82ae;
 int g82b2t;
 
-/* F_1287B: slot number for the item in o_8290: 0x434..0x436 map to 0..2 (anything else is returned as it is) */
+/* F_1287B @ 0F38:34FB (linear 0x1287B, 33 bytes)
+
+   Slot number for the item in o_8290: 0x434..0x436 map to 0..2 (anything else is returned as it is) */
 
 static int near F_1287B(void)
 {
@@ -205,7 +220,9 @@ static int near F_1287B(void)
     }
 }
 
-/* F_1289C: position (x, y) of the current slot in the lower table; returns the offset for the item type */
+/* F_1289C @ 0F38:351C (linear 0x1289C, 109 bytes)
+
+   Position (x, y) of the current slot in the lower table; returns the offset for the item type */
 
 static int near F_1289C(int *px, int *py)
 {
@@ -228,7 +245,9 @@ static int near F_1289C(int *px, int *py)
     return r;
 }
 
-/* F_12909: screen position (*px, *py) of the current slot, by game mode hz82ae */
+/* F_12909 @ 0F38:3589 (linear 0x12909, 91 bytes)
+
+   Screen position (*px, *py) of the current slot, by game mode hz82ae */
 
 void F_12909(int *px, int *py)
 {
@@ -249,7 +268,9 @@ void F_12909(int *px, int *py)
     }
 }
 
-/* F_12964: position (*px, *py) for the current item: looked up per slot, with an offset added in one mode */
+/* F_12964 @ 0F38:35E4 (linear 0x12964, 179 bytes)
+
+   Position (*px, *py) for the current item: looked up per slot, with an offset added in one mode */
 
 void F_12964(int *px, int *py)
 {
@@ -277,14 +298,16 @@ void F_12964(int *px, int *py)
     }
 }
 
-/* F_12A17: draw picture n (item id) at the current slot position and restore the background strip
+/* F_12A17 @ 0F38:3697 (linear 0x12A17, 357 bytes)
+
+   Draw picture n (item id) at the current slot position and restore the background strip
    behind it. With the screen shadowed the picture is first copied into a bitmap 8 pixels wider. */
 
 void F_12A17(int n)
 {
     struct Bitmap far *pict;
     struct Bitmap far *saved;
-    long unused;
+    long unused;    /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
     struct Blt move;
     int px;
     int height;
@@ -315,7 +338,9 @@ void F_12A17(int n)
         F_19438(1);
 }
 
-/* F_12B7C: redraw the marker picture (0x43f) at the current slot position, aligned to the pixel grid.
+/* F_12B7C @ 0F38:37FC (linear 0x12B7C, 341 bytes)
+
+   Redraw the marker picture (0x43f) at the current slot position, aligned to the pixel grid.
    With the screen shadowed the area is also copied to the front buffer and a label is drawn beside it. */
 
 void F_12B7C(void)
@@ -362,7 +387,9 @@ void F_12B7C(void)
     F_19438(1);
 }
 
-/* F_12CD1: for the marker items 0x43f/0x440 of the current slot, save a copy of the picture
+/* F_12CD1 @ 0F38:3951 (linear 0x12CD1, 263 bytes)
+
+   For the marker items 0x43f/0x440 of the current slot, save a copy of the picture
    (shifted to the pixel grid) in g_0792 and set up the blit u_70ac that draws it. */
 
 static void near F_12CD1(void)
@@ -395,14 +422,16 @@ static void near F_12CD1(void)
     }
 }
 
-/* F_12DD8: draw item picture n at the current slot position, aligned to the pixel grid;
+/* F_12DD8 @ 0F38:3A58 (linear 0x12DD8, 449 bytes)
+
+   Draw item picture n at the current slot position, aligned to the pixel grid;
    flag (nonzero) raises it by 20 and skips the blit to the back buffer. Frees the temporary copies. */
 
 void F_12DD8(int n, int flag)
 {
     struct Bitmap far *pict;
     struct Bitmap far *saved;
-    long unused;
+    long unused;    /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
     int w;
     struct Blt move;
     int x;
@@ -450,13 +479,15 @@ void F_12DD8(int n, int flag)
         F_19438(1);
 }
 
-/* F_12F99: draw item picture n at the current slot position, 20 above it, via the r_vid.f8 buffer,
+/* F_12F99 @ 0F38:3C19 (linear 0x12F99, 259 bytes)
+
+   Draw item picture n at the current slot position, 20 above it, via the r_vid.f8 buffer,
    and copy the area to the front buffer when the screen is shadowed. */
 
-void F_12F99(int n)
+void F_12F99(int n, int flag)
 {
     struct Bitmap far *pict;
-    long unused;
+    long unused;    /* PROVISIONAL: never used; fills the 4-byte frame slot above the Blt (original local unknown) */
     int w;
     struct Blt move;
     int h;
@@ -482,7 +513,9 @@ void F_12F99(int n)
         F_1A92A(r_vid.back, r_vid.front, px, py, px + w, py + h);
 }
 
-/* F_1309C: draw the current pair of slot pictures: the strip from r_vid.f8 and the sprite ap82acz,
+/* F_1309C @ 0F38:3D1C (linear 0x1309C, 281 bytes)
+
+   Draw the current pair of slot pictures: the strip from r_vid.f8 and the sprite ap82acz,
    copying the area to the front buffer when the screen is shadowed. */
 
 void F_1309C(void)
@@ -509,7 +542,9 @@ void F_1309C(void)
         F_1A92A(r_vid.back, r_vid.front, x2 > xs ? xs : x2, y2 > ys ? ys : y2, blt.w + x2 + 0x18, blt.h + y2 + 0x18);
 }
 
-/* F_131B5: draw the item pictures of a car's parts for slots 0, 1 and then 2..4, with the
+/* F_131B5 @ 0F38:3E35 (linear 0x131B5, 248 bytes)
+
+   Draw the item pictures of a car's parts for slots 0, 1 and then 2..4, with the
    screen shadow off (g_06fc). Loads the r_vid.f8 strip first when it isn't there yet. */
 
 void F_131B5(struct Car *car)
@@ -547,7 +582,9 @@ void F_131B5(struct Car *car)
     hz82ae = mode;
 }
 
-/* F_132AD: redraw all nine slot pictures (a and b give each slot's mode and sub-mode) into the
+/* F_132AD @ 0F38:3F2D (linear 0x132AD, 286 bytes)
+
+   Redraw all nine slot pictures (a and b give each slot's mode and sub-mode) into the
    back buffer over the r_vid.f8 strip, then the ap82acz sprite, and an optional label when flag is set.
    The screen shadow r_vid.f16 is switched off meanwhile and the area is copied to the front afterwards. */
 
@@ -590,7 +627,9 @@ void F_132AD(int *a, int *b, int flag)
     g82b2t = prev2;
 }
 
-/* F_133CB: insert item into the array arr of n records, which is sorted by (f8, fa): it goes before
+/* F_133CB @ 0F38:404B (linear 0x133CB, 127 bytes)
+
+   Insert item into the array arr of n records, which is sorted by (f8, fa): it goes before
    the first record that compares greater, the rest are moved up by one. */
 
 static void near F_133CB(struct Link *arr, struct Link *item, int n)
@@ -614,12 +653,12 @@ static void near F_133CB(struct Link *arr, struct Link *item, int n)
     *p = *item;
 }
 
-/* F_1344A: build the sorted list of menu items in g_184c: the 3 fixed records are copied from g_1948,
+/* F_1344A @ 0F38:40CA (linear 0x1344A, 411 bytes)
+
+   Build the sorted list of menu items in g_184c: the 3 fixed records are copied from g_1948,
    then for each of 9 slots (grouped by the counts in g_5130) that is enabled in o_8290 an item is
    inserted at the position F_12964 gives for the slot's coordinates, plus a last item picked by
    ap82acz. hz82ae/g82b2t are saved and restored around it. */
-
-#pragma intrinsic(memcpy)
 
 void F_1344A(int *xs, int *ys)
 {
@@ -671,7 +710,9 @@ void F_1344A(int *xs, int *ys)
     F_00D78();
 }
 
-/* F_135E5: sort n hot spots of g_09f4 starting at first by x1 (exchange sort, ascending) */
+/* F_135E5 @ 0F38:4265 (linear 0x135E5, 156 bytes)
+
+   Sort n hot spots of g_09f4 starting at first by x1 (exchange sort, ascending) */
 
 void F_135E5(int first, int n)
 {

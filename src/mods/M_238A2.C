@@ -3,17 +3,24 @@
 #include "STRUCTS.H"
 #include "M_238A2.H"
 
+#pragma intrinsic(_rotl, _rotr, outp)
+
 static void near F_238A2(unsigned char *p, int n, int len);
 static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int off, int shift);
 
-/* F_238A2 @ 21A0:1EA2: shift a row of bytes right (n > 0) or left (n < 0) by n bits, carrying between bytes */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
-
-
-#pragma intrinsic(_rotl, _rotr)
+/* EGA/VGA register writes (graphics controller, sequencer). Written as braced blocks: the
+   block boundary is visible in F_23C3B's code; every other pair in the file (and the 38
+   such pairs of seven other files, tried 2026-11-04) compiles the same either way. */
+#define GCREG(i, v)  { outp(0x3ce, (i)); outp(0x3cf, (v)); }
+#define SEQREG(i, v) { outp(0x3c4, (i)); outp(0x3c5, (v)); }
 
 unsigned char g_5c16[8] = {128, 192, 224, 240, 248, 252, 254, 255};   /* DS:5C16 */
 int g_5c1e = 0;   /* DS:5C1E */
+
+/* F_238A2 @ 21A0:1EA2 (linear 0x238A2, 235 bytes)
+
+   Shift a row of bytes right (n > 0) or left (n < 0) by n bits, carrying between bytes */
+/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 static void near F_238A2(unsigned char *p, int n, int len)
 {
@@ -51,12 +58,10 @@ static void near F_238A2(unsigned char *p, int n, int len)
     }
 }
 
-/* F_2398D @ 21A0:1F8D: write one 4 plane row (40 bytes per plane) to planar VGA memory, shifted and edge masked */
+/* F_2398D @ 21A0:1F8D (linear 0x2398D, 686 bytes)
+
+   Write one 4 plane row (40 bytes per plane) to planar VGA memory, shifted and edge masked */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
-
-
-#pragma intrinsic(outp)
-
 
 static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int off, int shift)
 {
@@ -79,48 +84,38 @@ static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int 
         e = off + w;
         if (e < 8)
             g &= g_5c16[e - 1];
-        outp(0x3ce, 8);
-        outp(0x3cf, g);
-        outp(0x3c4, 2);
-        outp(0x3c5, 1);
+        GCREG(8, g);
+        SEQREG(2, 1);
         f = *dst;
         *dst = *a++ & g;
-        outp(0x3c4, 2);
-        outp(0x3c5, 2);
+        SEQREG(2, 2);
         f = *dst;
         *dst = *b++ & g;
-        outp(0x3c4, 2);
-        outp(0x3c5, 4);
+        SEQREG(2, 4);
         f = *dst;
         *dst = *c++ & g;
-        outp(0x3c4, 2);
-        outp(0x3c5, 8);
+        SEQREG(2, 8);
         f = *dst;
         *dst++ = *d++ & g;
         w -= 8 - off;
     }
-    outp(0x3ce, 8);
-    outp(0x3cf, 0xff);
+    GCREG(8, 0xff);
     if (w > 7) {
         int j;
 
         j = -w / -8;
         w += -j << 3;
         do {
-            outp(0x3c4, 2);
-            outp(0x3c5, 1);
+            SEQREG(2, 1);
             f = *dst;
             *dst = *a++;
-            outp(0x3c4, 2);
-            outp(0x3c5, 2);
+            SEQREG(2, 2);
             f = *dst;
             *dst = *b++;
-            outp(0x3c4, 2);
-            outp(0x3c5, 4);
+            SEQREG(2, 4);
             f = *dst;
             *dst = *c++;
-            outp(0x3c4, 2);
-            outp(0x3c5, 8);
+            SEQREG(2, 8);
             f = *dst;
             *dst = *d++;
             dst++;
@@ -130,38 +125,29 @@ static void near F_2398D(unsigned char far *dst, unsigned char *src, int w, int 
         outp(0x3ce, 8);
         g = g_5c16[w - 1];
         outp(0x3cf, g);
-        outp(0x3c4, 2);
-        outp(0x3c5, 1);
+        SEQREG(2, 1);
         f = *dst;
         *dst = *a & g;
-        outp(0x3c4, 2);
-        outp(0x3c5, 2);
+        SEQREG(2, 2);
         f = *dst;
         *dst = *b & g;
-        outp(0x3c4, 2);
-        outp(0x3c5, 4);
+        SEQREG(2, 4);
         f = *dst;
         *dst = *c & g;
-        outp(0x3c4, 2);
-        outp(0x3c5, 8);
+        SEQREG(2, 8);
         f = *dst;
         *dst++ = *d & g;
     }
-    outp(0x3ce, 8);
-    outp(0x3cf, 0xff);
-    outp(0x3c4, 2);
-    outp(0x3c5, 0xf);
+    GCREG(8, 0xff);
+    SEQREG(2, 0xf);
 }
 
-/* F_23C3B @ 21A0:223B: copy a rectangle of a planar VGA bitmap to another, via a per-row 4 plane buffer */
+/* F_23C3B @ 21A0:223B (linear 0x23C3B, 383 bytes)
+
+   Copy a rectangle of a planar VGA bitmap to another, via a per-row 4 plane buffer */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
-/* The empty if before the loop is load-bearing: it leaves no code but ends the basic block that
-   holds the r->sx / 8 CSE in si, so /Ol does not give it a stack slot (the original has none).
-   The condition is a guess; a disabled debug check on the row width (c[] rows hold 40 bytes). */
-
-
-#pragma intrinsic(outp)
-
+/* The braces of GCREG(5, 0) are load-bearing: a block ends the basic block that holds the
+   r->sx / 8 CSE in si, so /Ol does not give it a stack slot (the original has none). */
 
 void F_23C3B(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r)
 {
@@ -182,12 +168,9 @@ void F_23C3B(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r)
     p = (r->sx + r->w - 1) / 8 - r->sx / 8 + 1;
     f = r->h;
     d = bm1->planesize >> 2;
-    outp(0x3ce, 5);
-    outp(0x3cf, 0);
+    GCREG(5, 0);
     j = r->dx & 7;
     h = j - (r->sx & 7);
-    if (p > 40)
-        ;
     for (e = 0; e < f; e++) {
         for (g = 0; g < p; g++) {
             for (i = 0; i < 4; i++)

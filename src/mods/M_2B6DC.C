@@ -14,7 +14,6 @@ static void near F_2BA48(unsigned char v, char *pa, char *pb);
 
    Counts the set bits of a byte. */
 
-
 static int near F_2B6DC(unsigned char b)
 {
     int count;
@@ -30,8 +29,6 @@ static int near F_2B6DC(unsigned char b)
 }
 
 /* F_2B707 @ 2645:52B7 (linear 0x2B707, 336 bytes) */
-
-
 
 static struct Bitmap far * near F_2B707(struct Bitmap far *p, unsigned char a, unsigned char b)
 {
@@ -68,8 +65,6 @@ static struct Bitmap far * near F_2B707(struct Bitmap far *p, unsigned char a, u
 }
 
 /* F_2B857 @ 2645:5407 (linear 0x2B857, 497 bytes) */
-
-
 
 struct Bitmap far *F_2B857(struct Bitmap far *p, unsigned char a, unsigned char b)
 {
@@ -146,7 +141,6 @@ struct Bitmap far *F_2B857(struct Bitmap far *p, unsigned char a, unsigned char 
 
 /* F_2BA48 @ 2645:55F8 (linear 0x2BA48, 120 bytes) */
 
-
 static void near F_2BA48(unsigned char v, char *pa, char *pb)
 {
     int m;
@@ -162,8 +156,6 @@ static void near F_2BA48(unsigned char v, char *pa, char *pb)
 }
 
 /* F_2BAC0 @ 2645:5670 (linear 0x2BAC0, 533 bytes) */
-
-
 
 struct Bitmap far *F_2BAC0(struct Bitmap far *p, unsigned char a, unsigned char c)
 {
@@ -241,8 +233,6 @@ struct Bitmap far *F_2BAC0(struct Bitmap far *p, unsigned char a, unsigned char 
 }
 
 /* F_2BCD5 @ 2645:5885 (linear 0x2BCD5, 470 bytes) */
-
-
 
 struct Bitmap far *F_2BCD5(struct Bitmap far *p, unsigned char a, unsigned char c)
 {

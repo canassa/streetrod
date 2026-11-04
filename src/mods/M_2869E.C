@@ -18,6 +18,9 @@
 #include "M_2B6DC.H"
 #include "SLOTS.H"
 
+#pragma intrinsic(abs)
+
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static int g_6e04aay;                      /* DS:6E04 */
 static int g_6e06aax;                      /* DS:6E06 */
 static int *g_6e08aaw;                     /* DS:6E08 */
@@ -94,7 +97,7 @@ static void near F_2869E(void)
     }
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 int a7312av;
 struct Bitmap far *k_6e60;
 int dz70e0;
@@ -127,7 +130,7 @@ struct Bitmap far *bz8b7ex;
 int far *am8b82y;
 struct Bitmap far *ak8bcat;
 
-/* F_286D8 @ 2645:22D8 (linear 0x286D8, 116 bytes) */
+/* F_286D8 @ 2645:2288 (linear 0x286D8, 116 bytes) */
 
 static void near F_286D8(void)
 {
@@ -140,7 +143,7 @@ static void near F_286D8(void)
         av787at = (g_5e3e == 1) ? 0xa200 : 0xa400;
         F_2322E(g_5e40);
     } else {
-        (*b_78a2)(g8188w, r_vid.front, &g_5e42, 1);
+        (*b_78a2)(g8188w, r_vid.front, (struct Blt *)&g_5e42, 1);
         av787at = g8188w->bits.w.seg;
         at767ct = g8188w->bits.w.off;
     }
@@ -322,8 +325,6 @@ void F_28879(void)
 }
 
 /* F_28DD2 @ 2645:2982 (linear 0x28DD2, 648 bytes) */
-
-#pragma intrinsic(abs)
 
 static void near F_28DD2(void)
 {
@@ -907,14 +908,14 @@ static void near F_29BFF(int a, int b, int c, int d, int e, int f, int rev)
     }
 }
 
-/* F_29E2E @ (linear 0x29E2E) */
+/* F_29E2E @ 2645:39DE (linear 0x29E2E, 47 bytes) */
 
 static void near F_29E2E(void)
 {
     F_2992A(*g_6e12, *g_6e0awz, *g_6e1e, *g_6e1a, *g_6e0cvz, *g_6e14, 1);
 }
 
-/* F_29E5D @ (linear 0x29E5D) */
+/* F_29E5D @ 2645:3A0D (linear 0x29E5D, 46 bytes) */
 
 static void near F_29E5D(void)
 {
@@ -932,14 +933,14 @@ static void near F_29E8B(int n)
     F_29398(n);
 }
 
-/* F_29EA7 @ (linear 0x29EA7) */
+/* F_29EA7 @ 2645:3A57 (linear 0x29EA7, 47 bytes) */
 
 static void near F_29EA7(void)
 {
     F_29BFF(*g_6e12, *g_6e0awz, *g_6e1e, *g_6e1a, *g_6e0cvz, *g_6e14, 1);
 }
 
-/* F_29ED6 @ (linear 0x29ED6) */
+/* F_29ED6 @ 2645:3A86 (linear 0x29ED6, 46 bytes) */
 
 static void near F_29ED6(void)
 {
@@ -1124,8 +1125,6 @@ static void near F_2A32B(void)
 }
 
 /* F_2A3DD @ 2645:3F8D (linear 0x2A3DD, 1136 bytes) */
-
-#pragma intrinsic(abs)
 
 static void near F_2A3DD(void)
 {

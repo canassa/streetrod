@@ -31,6 +31,9 @@
 #include "M_265BA.H"
 #include "SONG.H"
 
+#pragma intrinsic(inp, outp, _enable, _disable, abs)
+
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static int g_6c46;                         /* DS:6C46 */
 static int g_6c48;                         /* DS:6C48 */
 static char g_6c4a;                        /* DS:6C4A */
@@ -40,7 +43,7 @@ static int g_6c50a;                        /* DS:6C50 */
 static int g_6c52a;                        /* DS:6C52 */
 static int g_6c54a;                        /* DS:6C54 */
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 struct Dev bs79aa;
 struct Dev ao79c6t;
 void (interrupt far *w_7aaa)(void);
@@ -110,8 +113,6 @@ void F_00D78(void)
 }
 
 /* F_00D99 @ 0000:0D99 (linear 0x00D99, 63 bytes) */
-
-#pragma intrinsic(inp, outp)
 
 void F_00D99(void)
 {
@@ -197,8 +198,6 @@ void F_00F0B(int n)
 
 /* F_00FB7 @ 0000:0FB7 (linear 0x00FB7, 51 bytes) */
 
-#pragma intrinsic(outp)
-
 void F_00FB7(void)
 {
     _disable();
@@ -213,8 +212,6 @@ void F_00FB7(void)
 }
 
 /* F_00FEA @ 0000:0FEA (linear 0x00FEA, 113 bytes) */
-
-#pragma intrinsic(inp, outp)
 
 void F_00FEA(void)
 {
@@ -279,8 +276,6 @@ void F_0105B(unsigned deverr, unsigned char errcode)
 }
 
 /* F_01111 @ 0000:1111 (linear 0x01111, 461 bytes) */
-
-#pragma intrinsic(inp, outp)
 
 void F_01111(void)
 {
@@ -662,8 +657,6 @@ void F_019BC(int n)
 
 /* F_01A05 @ 0000:1A05 (linear 0x01A05, 119 bytes) */
 
-#pragma intrinsic(inp, outp)
-
 void F_01A05(int n, int cnt)
 {
     if (g_58d0) {
@@ -685,8 +678,6 @@ void F_01A05(int n, int cnt)
 
 /* F_01A7C @ 0000:1A7C (linear 0x01A7C, 49 bytes) */
 
-#pragma intrinsic(inp, outp)
-
 void F_01A7C(void)
 {
     g_58d2->off = 0;
@@ -697,8 +688,6 @@ void F_01A7C(void)
 }
 
 /* F_01AAD @ 0000:1AAD (linear 0x01AAD, 122 bytes) */
-
-#pragma intrinsic(inp, outp)
 
 void F_01AAD(void)
 {
@@ -722,8 +711,6 @@ void F_01AAD(void)
 }
 
 /* F_01B27 @ 0000:1B27 (linear 0x01B27, 106 bytes) */
-
-#pragma intrinsic(inp, outp)
 
 void F_01B27(void)
 {
@@ -753,8 +740,6 @@ int F_01B91(int x)
     return -1;
 }
 
-/* F_01BAE @ 0000:1bae (linear 0x01bae, 1076 bytes) */
-
 /* Loop optimization is off from here to the end of the file. The file is
    compiled /Oalsi, but in the shipped code the loops of F_01BAE, F_01FE2 and
    F_0238C (the timer interrupt handler) are plain /Ol-off loops: counters and
@@ -762,6 +747,8 @@ int F_01B91(int x)
    variables. No for/while/do formulation reproduces that under /Ol (/Ol takes
    every such loop here); this one pragma reproduces all three functions. */
 #pragma loop_opt(off)
+
+/* F_01BAE @ 0000:1BAE (linear 0x01BAE, 1076 bytes) */
 
 void F_01BAE(void)
 {
@@ -928,9 +915,7 @@ void F_01BAE(void)
     F_02E93();
 }
 
-/* F_01FE2 @ 0000:1fe2 (linear 0x01fe2, 914 bytes) */
-
-#pragma intrinsic(inp, outp, _enable, _disable)
+/* F_01FE2 @ 0000:1FE2 (linear 0x01FE2, 914 bytes) */
 
 void interrupt far F_01FE2(void)
 {
@@ -1058,8 +1043,6 @@ void F_02374(void)
 }
 
 /* F_0238C @ 0000:238C (linear 0x0238C, 2062 bytes) */
-
-#pragma intrinsic(inp, outp, _enable, _disable, abs)
 
 void interrupt far F_0238C(void)
 {

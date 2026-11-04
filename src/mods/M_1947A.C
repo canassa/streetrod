@@ -11,7 +11,12 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
-/* F_1947A: intersect rectangles a and b into out, snapped to the r_vid.mask pixel mask; 0 if they do not overlap */
+#pragma intrinsic(abs)
+
+/* F_1947A @ 0F38:A0FA (linear 0x1947A, 158 bytes)
+
+   Intersect rectangles a and b into out, snapped to the r_vid.mask pixel mask; 0 if they do not
+   overlap */
 
 struct Rect *F_1947A(struct Rect *a, struct Rect *b, struct Rect *out)
 {
@@ -29,7 +34,9 @@ struct Rect *F_1947A(struct Rect *a, struct Rect *b, struct Rect *out)
     return out;
 }
 
-/* F_19518: clip the rectangle (x, y, w, h) against the screen window; result in out */
+/* F_19518 @ 0F38:A198 (linear 0x19518, 86 bytes)
+
+   Clip the rectangle (x, y, w, h) against the screen window; result in out */
 
 struct Rect *F_19518(int x, int y, int w, int h, struct Rect *out)
 {
@@ -46,13 +53,15 @@ struct Rect *F_19518(int x, int y, int w, int h, struct Rect *out)
     return F_1947A(&scr, &rect, out);
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 struct Frame g77bal[12];
 struct Seq g_764e[10];
 struct Sprite g7d18m;
 struct Page aq7d42[2];
 
-/* F_1956E: clip the box (c, d, a, b) to 0..amax x 0..bmax, snap to the r_vid.mask pixel mask; result in out */
+/* F_1956E @ 0F38:A1EE (linear 0x1956E, 133 bytes)
+
+   Clip the box (c, d, a, b) to 0..amax x 0..bmax, snap to the r_vid.mask pixel mask; result in out */
 
 void F_1956E(int a, int b, int c, int d, int amax, int bmax, struct Rect *out)
 {
@@ -79,7 +88,10 @@ void F_1956E(int a, int b, int c, int d, int amax, int bmax, struct Rect *out)
     out->y2 = d + b - 1;
 }
 
-/* F_195F3: set up the sprite g7d18m from n frame images: the ring of frames, the display pages and the clipped rectangle */
+/* F_195F3 @ 0F38:A273 (linear 0x195F3, 582 bytes)
+
+   Set up the sprite g7d18m from n frame images: the ring of frames, the display pages and the
+   clipped rectangle */
 
 struct Sprite *F_195F3(int x, int y, struct Bitmap far **imgs, char (*cell)[8], int n, struct Bitmap far *img,
     struct Bitmap far *save, struct Rect *a8, struct Rect *a9)
@@ -130,7 +142,9 @@ struct Sprite *F_195F3(int x, int y, struct Bitmap far **imgs, char (*cell)[8], 
     return &g7d18m;
 }
 
-/* F_19839: subtract rectangle a from b along one axis into out; NULL when nothing is left */
+/* F_19839 @ 0F38:A4B9 (linear 0x19839, 236 bytes)
+
+   Subtract rectangle a from b along one axis into out; NULL when nothing is left */
 
 struct Rect *F_19839(struct Rect *a, struct Rect *b, struct Rect *out, int horiz)
 {
@@ -166,7 +180,9 @@ struct Rect *F_19839(struct Rect *a, struct Rect *b, struct Rect *out, int horiz
     return out;
 }
 
-/* F_19925: rotate the ring of four frames of f1 sprite and pick the one for the current heading */
+/* F_19925 @ 0F38:A5A5 (linear 0x19925, 184 bytes)
+
+   Rotate the ring of four frames of f1 sprite and pick the one for the current heading */
 
 void F_19925(struct Sprite *s)
 {
@@ -197,7 +213,9 @@ void F_19925(struct Sprite *s)
     }
 }
 
-/* F_199DD: store step i of a sprite's motion sequence and terminate the sequence after it */
+/* F_199DD @ 0F38:A65D (linear 0x199DD, 80 bytes)
+
+   Store step i of a sprite's motion sequence and terminate the sequence after it */
 
 void F_199DD(struct Sprite *s, int i, int count, signed char dx, signed char dy)
 {
@@ -209,9 +227,9 @@ void F_199DD(struct Sprite *s, int i, int count, signed char dx, signed char dy)
     s->seq[i + 1].dy = 0;
 }
 
-/* F_19A2D: split a move of size d into the three phases of a sprite's motion sequence */
+/* F_19A2D @ 0F38:A6AD (linear 0x19A2D, 321 bytes)
 
-#pragma intrinsic(abs)
+   Split a move of size d into the three phases of a sprite's motion sequence */
 
 void F_19A2D(struct Sprite *s, int mode, int a, int b, int c, int d, int e, int f)
 {
@@ -237,7 +255,9 @@ void F_19A2D(struct Sprite *s, int mode, int a, int b, int c, int d, int e, int 
     F_199DD(s, 3, -1, 0, 0);
 }
 
-/* F_19B6E: build the motion sequence of a sprite for a given direction */
+/* F_19B6E @ 0F38:A7EE (linear 0x19B6E, 144 bytes)
+
+   Build the motion sequence of a sprite for a given direction */
 
 void F_19B6E(struct Sprite *s, int mode, int d)
 {
@@ -259,7 +279,10 @@ void F_19B6E(struct Sprite *s, int mode, int d)
     }
 }
 
-/* F_19BFE: slide a one-frame sprite of bitmap bm from y0 to y1 at column x, refreshing the front page under it */
+/* F_19BFE @ 0F38:A87E (linear 0x19BFE, 441 bytes)
+
+   Slide a one-frame sprite of bitmap bm from y0 to y1 at column x, refreshing the front page under
+   it */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void F_19BFE(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
@@ -298,7 +321,9 @@ void F_19BFE(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
     F_19438(2);
 }
 
-/* F_19DB7: advance a sprite one tick along its motion sequence */
+/* F_19DB7 @ 0F38:AA37 (linear 0x19DB7, 139 bytes)
+
+   Advance a sprite one tick along its motion sequence */
 
 void F_19DB7(struct Sprite *s)
 {
@@ -320,7 +345,9 @@ void F_19DB7(struct Sprite *s)
     }
 }
 
-/* F_19E42: clip a span [pos, pos+len) against a sprite's frame, masked to r_vid.mask */
+/* F_19E42 @ 0F38:AAC2 (linear 0x19E42, 142 bytes)
+
+   Clip a span [pos, pos+len) against a sprite's frame, masked to r_vid.mask */
 
 int F_19E42(int pos, int len, struct Sprite *s, struct Blt16 *o)
 {

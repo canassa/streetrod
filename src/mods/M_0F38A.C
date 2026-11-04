@@ -24,6 +24,9 @@
 #include "M_2869E.H"
 #include "TRACKPTS.H"
 
+#pragma intrinsic(abs, cos, sin, outp, inp)
+
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static int g_6c22[3];                      /* DS:6C22 */
 static struct Bitmap far *g_6c28gzz[3];    /* DS:6C28 */
 static void near F_0F418(int x, int y, int w, int h, int kind);
@@ -31,7 +34,7 @@ static void near F_0F38A(int x, int y, int w, int h, int kind);
 static struct Track *g_6c34;               /* DS:6C34 */
 static int g_6c36;                         /* DS:6C36 */
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 struct Bitmap far *bm7678;
 unsigned at767ct;
 unsigned av787at;
@@ -53,7 +56,7 @@ unsigned char g_031e[25][2] = {{170, 6}, {175, 6}, {179, 6}, {183, 7}, {188, 7},
 int g_0350 = 0;   /* DS:0350 */
 int g_0352[3] = {148, 174, 73};   /* DS:0352 */
 signed char g_0358[11][2] = {{14, 17}, {14, 28}, {13, 12}, {13, 2}, {13, 20}, {22, 2}, {13, 12}, {13, 2}, {13, 20}, {22, 2}, {22, 20}};   /* DS:0358 */
-struct Track g_036e[3] = {{2, 1229, 1232, 8, g_0358}, {4, 1227, 1230, 19, g_0358[2]}, {5, 1228, 1231, 19, g_0358[6]}};   /* DS:036E */
+struct Track g_036e[3] = {{2, 1229, 1232, 8, g_0358[0]}, {4, 1227, 1230, 19, g_0358[2]}, {5, 1228, 1231, 19, g_0358[6]}};   /* DS:036E */
 struct Pair g_038c[5] = {{0, 162}, {32, 162}, {64, 162}, {96, 162}, {264, 102}};   /* DS:038C */
 
 /* F_0F38A @ 0F38:000A (linear 0x0F38A, 142 bytes) */
@@ -71,7 +74,7 @@ static void near F_0F38A(int x, int y, int w, int h, int kind)
     (*b_78a2)(r_vid.mode == -2 ? bm7678 : g82b4s, bm7678, &pkt, 1);
 }
 
-/* F_0F418 @ 0E9F:0A28 (linear 0x0F418, 159 bytes) */
+/* F_0F418 @ 0F38:0098 (linear 0x0F418, 159 bytes) */
 
 static void near F_0F418(int x, int y, int w, int h, int kind)
 {
@@ -101,14 +104,14 @@ void F_0F4B7(int i, int *x1, int *y1, int *x2, int *y2)
     /* PROVISIONAL: the original CONST holds two more SEG constants for the track segment
        (DS:68E6 with this function's, DS:68E8 later) that no instruction reads: MSC leaves
        them behind for unreachable far accesses to two other far symbols. The statements and
-       symbol names are not recoverable; these keep the bytes and the relocation order. */
+       symbol names are not recoverable; these keep the bytes and the relocation order. The
+       block-scope extern is part of that provisional text (rule 4: tools/sr/lint.py excepts
+       exactly these two declarations; the symbols are EQUs in TRACKPTS.ASM). */
     return;
     { extern char far x_trk0[][2]; *x1 = x_trk0[i][0]; }
 }
 
 /* F_0F552 @ 0F38:01D2 (linear 0x0F552, 220 bytes) */
-
-#pragma intrinsic(abs)
 
 void F_0F552(int i)
 {
@@ -131,7 +134,7 @@ void F_0F552(int i)
     }
 }
 
-/* F_0F62E @ 0E9F:0C3E (linear 0x0F62E, 155 bytes) */
+/* F_0F62E @ 0F38:02AE (linear 0x0F62E, 155 bytes) */
 
 void F_0F62E(int i, int *x1, int *y1, int *x2, int *y2)
 {
@@ -149,8 +152,6 @@ void F_0F62E(int i, int *x1, int *y1, int *x2, int *y2)
 }
 
 /* F_0F6C9 @ 0F38:0349 (linear 0x0F6C9, 220 bytes) */
-
-#pragma intrinsic(abs)
 
 void F_0F6C9(int v)
 {
@@ -173,9 +174,7 @@ void F_0F6C9(int v)
     }
 }
 
-/* F_0F7A5 @ 0F38:0425 (linear 0x0F7A5) */
-
-#pragma intrinsic(abs)
+/* F_0F7A5 @ 0F38:0425 (linear 0x0F7A5, 461 bytes) */
 
 int F_0F7A5(int cur, int old, int flag)
 {
@@ -220,8 +219,6 @@ int F_0F7A5(int cur, int old, int flag)
 
    Draws the clock: the hour hand (width 5 or 8) and the minute hand (width 4 or 8), each a
    diamond of five lines around the face centre, from the time F_064A3 returns. */
-
-#pragma intrinsic(abs, cos, sin)
 
 void F_0F972(void)
 {
@@ -289,11 +286,15 @@ void F_0F972(void)
     at767ct = soffn;
 }
 
+/* F_0FEAD @ 0F38:0B2D (linear 0x0FEAD, 18 bytes) */
+
 void F_0FEAD(void)
 {
     F_11324(g_0452);
     gz8249 = 0;
 }
+
+/* F_0FEBF @ 0F38:0B3F (linear 0x0FEBF, 18 bytes) */
 
 void F_0FEBF(void)
 {
@@ -389,8 +390,6 @@ void F_100E2(void)
 }
 
 /* F_1013D @ 0F38:0DBD (linear 0x1013D, 406 bytes) */
-
-#pragma intrinsic(outp)
 
 void F_1013D(int mode)
 {
@@ -709,8 +708,6 @@ int F_10A00(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *in, stru
 }
 
 /* F_10AFD @ 0F38:177D (linear 0x10AFD, 75 bytes) */
-
-#pragma intrinsic(inp)
 
 void F_10AFD(int n)
 {

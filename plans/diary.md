@@ -725,3 +725,26 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - A source path (`MODS\X.C`) changes only the OBJ's THEADR record, never code or segment names.
+
+## 2026-11-04 19:00 CET: Codegen dummies: four replaced by natural source, three documented
+
+### What I did
+- F_0A544's empty `{ }` was no longer needed. F_1783E's `if (0) ;` became the clip-rect stores through `*pr1`/`*pr2`: the pointer stores kill the known `*pr2` and `(*pa)->height`, which is why the original reloads them. F_23C3B's `if (p > 40) ;` became braced register-write macros `GCREG`/`SEQREG` used for every port pair of M_238A2.C (a reconstruction: any braced block ends the basic block holding the CSE; bracing 38 other pairs elsewhere changes no bytes). F_07AA4's `int n` became a key-indexed `int flags[3]` whose element 0 is the frame hole (an interpretation).
+- F_11213's three unused ints are one unused inner-block `struct Colors save`; it, the four `long unused` (F_118D4, F_12A17, F_12DD8, F_12F99) and the x_trk0/x_trk1 dead far accesses in M_0F38A.C stay, each commented PROVISIONAL in the source and listed in plans/faithful-build.md. Lint now rejects `extern` at any block depth except those two declarations. DB notes updated.
+- Result: `./sr build` IDENTICAL from an empty work dir, `./sr check --all` 572/572, tests OK.
+
+### What I learned
+- A non-empty braced block is the same basic-block boundary as a code-less `if`; before inventing a boundary, check whether stores through pointers explain the reloads.
+
+## 2026-11-04 19:30 CET: C source cleanup
+
+### What I did
+- Removed the duplicate forward declarations the merge left (M_163BE, M_0914C, M_15396; F_1563A takes `char far *`). One `#pragma intrinsic` per file after the includes.
+- Every C function has a `/* NAME @ SSSS:OOOO (linear 0xAAAAA, N bytes)` header from the DB with its description below (fixed 158DE, 286D8, 0F418/0F62E); comments separated from their function by data or pragmas sit next to it again (the data did not move).
+- Warnings fixed without byte changes: casts in `g_4ea4` and the F_2869E blit, Car pointers in M_039C0, `g_0358[0]`, `F_12F99(int n, int flag)`, `(void)` interrupt prototypes; `g_4fa6` is `char[] = "The game must have a name !"`. Left as probably original: C4035 for `main` and F_118D4, C4033 in M_0B3CA, a few C4047 that need struct retyping.
+- Every statics and communal block says its names are fixed by hash (CLAUDE.md 4e/4f); HOTSPOT.C's fillers and g_6c42 are marked as such.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, tests OK.
+
+### What I learned
+- Removing a duplicate prototype reorders MSC's EXTDEF records without touching the EXE.
+- Open: the DB gives segment 0E6C to 11 functions in segments 0F38/1C11; `./sr dgroup apply` would revert the comment moves and initializer casts in M_15396/M_0F38A (its writer still owns those lines).

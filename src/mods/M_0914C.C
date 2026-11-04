@@ -31,6 +31,9 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
+#pragma intrinsic(abs)
+
+/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (CLAUDE.md 4f). */
 static int g_6c84;                         /* DS:6C84 */
 static int g_6c88;                         /* DS:6C88 */
 static void near F_09256(char *s);
@@ -56,8 +59,6 @@ static void near F_0A265(void);
 static int near F_09D6D(int);
 static void near F_0A416(void);
 static void near F_0B045(int id, char c);
-static int near F_0984E(int chance, int arg);
-static void near F_09A27(int n, int a, int mode);
 
 int g_51ee = 100;   /* DS:51EE */
 int g_51f0 = 0;   /* DS:51F0 */
@@ -102,7 +103,7 @@ static int near F_0914C(int mode, int arg, int pct1, int pct2)
     return r;
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 struct Spec *ar7d7au;
 struct Racer *g7d84o;
 int bm7f86;
@@ -246,8 +247,6 @@ static int near F_095F1(void)
 }
 
 /* F_09646 @ 0000:9646 (linear 0x09646, 520 bytes) */
-
-#pragma intrinsic(abs)
 
 static void near F_09646(int flag)
 {
@@ -695,7 +694,9 @@ static void near F_0A265(void)
     F_13F21(1);
 }
 
-/* F_0A35C @ 0000:A35C (linear 0x0A35C, 186 bytes) - blit sprite-sheet cell n (7 per row) of bm into dst */
+/* F_0A35C @ 0000:A35C (linear 0x0A35C, 186 bytes)
+
+   Blit sprite-sheet cell n (7 per row) of bm into dst */
 
 static void near F_0A35C(struct Bitmap far *bm, int n, struct Bitmap far *dst)
 {
@@ -841,7 +842,6 @@ static void near F_0A544(void)
     blt.dx = g_526a[0].x - 0x50;
     blt.dy = 0x2c - g_526a[0].h;
     (*ab78aat)(pic3, pic15, &blt, 1);
-    { }
     blt.w = p3->w;
     blt.h = p3->h;
     blt.sx = p3->x - 0x50;

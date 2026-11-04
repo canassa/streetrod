@@ -28,6 +28,8 @@
 #include "M_19ED0.H"
 #include "M_1A9B2.H"
 
+#pragma intrinsic(inp, outp, abs)
+
 static int near F_0653C(int v, int *out);
 static void near F_068E8(int n, int x, int y);
 static void near F_068B3(void);
@@ -140,7 +142,9 @@ void F_065AF(int a1)
 char *g_5082[4] = {"June", "July", "August", "September"};   /* DS:5082 */
 int g_508a[5] = {11, 13, 9, 10, 12};   /* DS:508A */
 
-/* F_06750 @ 0000:6750 (linear 0x06750, 127 bytes)  - draws the current date ("Month day, 1963") */
+/* F_06750 @ 0000:6750 (linear 0x06750, 127 bytes)
+
+   Draws the current date ("Month day, 1963") */
 
 void F_06750(int x)
 {
@@ -173,7 +177,7 @@ void F_067CF(int a)
     }
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
+/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (CLAUDE.md 4e). */
 struct State8272 m_8272;
 
 /* F_06827 @ 0000:6827 (linear 0x06827, 91 bytes) */
@@ -210,7 +214,9 @@ static void near F_068B3(void)
         g_09f4[F_06827(g_508a[i])].f0 = 14;
 }
 
-/* F_068E8 @ 0000:68E8 (linear 0x068E8, 446 bytes) - rect + hotspot setup for the 5 button rects of panel n */
+/* F_068E8 @ 0000:68E8 (linear 0x068E8, 446 bytes)
+
+   Rect + hotspot setup for the 5 button rects of panel n */
 
 static void near F_068E8(int n, int x, int y)
 {
@@ -391,7 +397,7 @@ int near F_06B06(int mode)
     return r;
 }
 
-/* F_06F6B @ 0000:6F6B (linear 0x06f6b, 431 bytes) */
+/* F_06F6B @ 0000:6F6B (linear 0x06F6B, 431 bytes) */
 
 void near F_06F6B(void)
 {
@@ -451,7 +457,7 @@ void near F_06F6B(void)
     }
 }
 
-/* F_0711A @ 0000:711A (linear 0x0711a, 589 bytes) */
+/* F_0711A @ 0000:711A (linear 0x0711A, 589 bytes) */
 
 void near F_0711A(unsigned mask)
 {
@@ -787,8 +793,7 @@ void F_079EB(void)
 
 void near F_07AA4(void)
 {
-    int n;
-    int flags[2];
+    int flags[3];   /* by key 1, 2; flags[0] is the original's unused 2-byte slot below flags[1] */
     char buf[142];
     int prev;
     struct Car *owner;
@@ -802,9 +807,9 @@ void near F_07AA4(void)
     }
     for (k = 0; k < 2; k++) {
         if (prev = owner->b14[k])
-            flags[k] = prev == 1 ? 1 : 2;
+            flags[k + 1] = prev == 1 ? 1 : 2;
         else
-            flags[k] = 0;
+            flags[k + 1] = 0;
         g_1804[k].f0 = 11;
     }
     m_8272.m8286 = owner->slot6 ? g_49d2[((struct Row8 *)((char *)g_4806 + 2))[owner->slot6->idx].kind] : 0;
@@ -852,7 +857,7 @@ void near F_07AA4(void)
                     F_16B97();
                     g_05fc += 0x666L;
                     for (k = 2; k--;) {
-                        flags[k] = 1;
+                        flags[k + 1] = 1;
                         F_123F4(owner->b14[k] = 1, k);
                         F_16B61();
                         g_1804[k].f0 = 11;
@@ -872,9 +877,9 @@ void near F_07AA4(void)
         case 2:
             if (m_8272.m8286 == 0)
                 break;
-            if (flags[k-- - 1] == 2) {
+            if (flags[k--] == 2) {
                 if (--owner->b14[k] <= 1) {
-                    flags[k] = owner->b14[k] = 0;
+                    flags[k + 1] = owner->b14[k] = 0;
                     F_12525(k);
                     F_16B61();
                     F_00D78();
@@ -882,7 +887,7 @@ void near F_07AA4(void)
                     F_123F4(owner->b14[k], k);
                     F_16CF3();
                 }
-                if (flags[0] || flags[1])
+                if (flags[1] || flags[2])
                     break;
                 F_12784(m_8272.m8286, 0);
                 g_05fc += 0x666L;
@@ -890,9 +895,9 @@ void near F_07AA4(void)
                 owner->b14[0] = owner->b14[1] = 0;
                 F_07789(&owner->slot6);
                 F_00D78();
-            } else if (flags[k] == 1) {
+            } else if (flags[k + 1] == 1) {
                 if (owner->b14[k] == 3) {
-                    flags[k] = 2;
+                    flags[k + 1] = 2;
                     break;
                 }
                 F_123F4(++owner->b14[k], k);
@@ -902,7 +907,7 @@ void near F_07AA4(void)
                 F_123F4(owner->b14[k] = 1, k);
                 F_16B61();
                 F_120FE(-2);
-                flags[k] = 1;
+                flags[k + 1] = 1;
             }
             break;
         }
@@ -937,8 +942,6 @@ int F_07EE6(struct Car *car, int flag)
 }
 
 /* F_07FB1 @ 0000:7FB1 (linear 0x07FB1, 506 bytes) */
-
-#pragma intrinsic(inp, outp, abs)
 
 static void near F_07FB1(struct Car *car)
 {
@@ -1010,7 +1013,9 @@ static void near F_07FB1(struct Car *car)
     F_13F21(1);
 }
 
-/* F_081AB @ 0000:81AB (linear 0x081AB, 2938 bytes): the garage screen: install, remove and tune parts */
+/* F_081AB @ 0000:81AB (linear 0x081AB, 2938 bytes)
+
+   The garage screen: install, remove and tune parts */
 
 void near F_081AB(struct Car *car)
 {

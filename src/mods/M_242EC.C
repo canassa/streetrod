@@ -10,11 +10,12 @@
 #include "M_25954.H"
 #include "M_2634A.H"
 
-/* F_242EC @ 21A0:28EC: copy a range of rows of a planar sprite sheet into the back page, plane by plane */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
-
-
 #pragma intrinsic(outp)
+
+/* F_242EC @ 21A0:28EC (linear 0x242EC, 790 bytes)
+
+   Copy a range of rows of a planar sprite sheet into the back page, plane by plane */
+/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void F_242EC(int top, int bottom, int x, int y0, int y1, struct Bitmap far *bm)
 {
