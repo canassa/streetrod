@@ -215,6 +215,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **PicturePlacement** (`g_picturePlacement`, DS:04BE..04C3): Screen picture drawing uses the x/y destination and maximum height together to clip and place one bitmap. Separate globals also match; this grouping is a natural reconstruction choice.
 
+- **Animation** (`g_animation`, DS:6C38..6C3F): anim_run and anim_set_box use the command, object and box pointers as one interpreter context, including its blink counter. Separate globals also match; this grouping is a natural reconstruction choice.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only
