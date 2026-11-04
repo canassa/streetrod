@@ -210,13 +210,6 @@ struct Mask {
     int h;
 };
 
-struct Button {
-    int x1;
-    int f2;
-    int x2;
-    char pad[12];
-};
-
 struct Rect {
     int x1;
     int y1;
@@ -351,19 +344,6 @@ struct Link {
     int fa;
     int fc;
     char pad[4];
-};
-
-/* the item F_1344A builds in g_0796 before inserting it into a Link array (same 18 bytes) */
-struct NewLink {
-    int nxt;
-    int prv;
-    int f4;
-    int f6;
-    int f8;
-    int fa;
-    int fc;
-    int fe;
-    char pad[2];
 };
 
 struct Pair {

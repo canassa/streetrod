@@ -15,7 +15,7 @@ extern int g_076a[];                                    /* DS:076A */
 extern char g_077e[];                                   /* DS:077E */
 extern char g_078c[];                                   /* DS:078C */
 extern struct Bitmap far *g_0792;                       /* DS:0792 */
-extern struct NewLink g_0796;                           /* DS:0796 */
+extern struct Hot g_0796;                               /* DS:0796 */
 extern struct Blt u_70ac;                               /* DS:70AC */
 extern int (far *am78a6t)(struct Bitmap far *, struct Bitmap far *, struct Blt *);/* DS:78A6 */
 extern void (far *bl78ce)(int, int, int, int, int, struct Bitmap far *);/* DS:78CE */

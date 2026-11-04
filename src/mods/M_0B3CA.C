@@ -857,12 +857,12 @@ finishstop:
                     g_2aea[0] = 0;
                 sel = i ? 0x1a : 0x19;
                 if ((long)v > a_7eaap.m7eaa) {
-                    g_1ac2 = (*(int *)&g_1ac4[62]) = 0xe;
+                    g_1ac2[0].f0 = g_1ac2[7].f0 = 0xe;
                     g_579f[sel][0].val = 0xd0;
                     g_579f[sel][1].key = 1;
                     g_579f[sel][1].val = 0xd0;
                 } else {
-                    g_1ac2 = (*(int *)&g_1ac4[62]) = 0xa;
+                    g_1ac2[0].f0 = g_1ac2[7].f0 = 0xa;
                     g_579f[sel][0].val = 0xcf;
                     g_579f[sel][1].key = 0x21;
                     g_579f[sel][1].val = 0xcf;

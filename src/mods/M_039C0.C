@@ -488,11 +488,11 @@ static void near F_0442B(int tab)
         if (used) {
             k3 = g_4806[i5 = list4[n + off6]].f6;
             price6 = g_4806[i5].f0;
-            g_11b0 = 0xe;
+            g_11b0[0].f0 = 0xe;
         } else {
             k3 = (specn = &g7d86n[i5 = list4[n - 2]])->f6;
             price6 = specn->f0;
-            g_11b0 = 10;
+            g_11b0[0].f0 = 10;
         }
         strcpy(g_2990, g_2c02 + k3);
         sprintf(g_29d6, "$%-3d ?", price6);

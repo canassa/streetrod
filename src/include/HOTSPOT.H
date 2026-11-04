@@ -6,21 +6,17 @@
 
 extern struct Hot g_09f4[];                             /* DS:09F4 */
 extern struct Hot g_0f82[];                             /* DS:0F82 */
-extern int g_11b0;                                      /* DS:11B0 */
-extern unsigned g_11b2[53];                             /* DS:11B2 */
+extern struct Hot g_11b0[];                             /* DS:11B0 */
 extern struct Hot g_121c[];                             /* DS:121C */
 extern struct Hot g_134e[];                             /* DS:134E */
 extern struct Hot g_1804[];                             /* DS:1804 */
-extern struct Link g_184c[];                            /* DS:184C */
-extern struct Link g_1948[];                            /* DS:1948 */
+extern struct Hot g_184c[];                             /* DS:184C */
+extern struct Hot g_1948[];                             /* DS:1948 */
 extern struct Hot g_19ea[];                             /* DS:19EA */
 extern struct Hot g_1a44[];                             /* DS:1A44 */
-extern int g_1ac2;                                      /* DS:1AC2 */
-extern unsigned g_1ac4[355];                            /* DS:1AC4 */
-extern struct Button g_1d8a[];                          /* DS:1D8A */
-extern unsigned g_1e2c[6];                              /* DS:1E2C */
-extern int g_1e38;                                      /* DS:1E38 */
-extern unsigned g_1e3a[312];                            /* DS:1E3A */
+extern struct Hot g_1ac2[];                             /* DS:1AC2 */
+extern struct Hot g_1d80[];                             /* DS:1D80 */
+extern struct Hot g_1e34[];                             /* DS:1E34 */
 extern struct Hot g_20aa[];                             /* DS:20AA */
 extern char fz79a8[2];                                  /* DS:79A8 */
 extern char ah7aa4w[6];                                 /* DS:7AA4 */

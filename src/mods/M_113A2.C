@@ -183,8 +183,8 @@ void F_1174E(char *msg)
         }
         dx = af824ax ? 5 : 0x50;
         for (i = 0; i < 5; i++) {
-            g_1d8a[i].x1 += dx;
-            g_1d8a[i].x2 += dx;
+            g_1d80[i].y1 += dx;
+            g_1d80[i].y2 += dx;
         }
         if (g_58ee)
             F_11324(g_04ac);
@@ -195,8 +195,8 @@ void F_1174E(char *msg)
         F_14241(0x20);
         r_vid.back = back;
         for (i = 0; i < 5; i++) {
-            g_1d8a[i].x1 -= dx;
-            g_1d8a[i].x2 -= dx;
+            g_1d80[i].y1 -= dx;
+            g_1d80[i].y2 -= dx;
         }
         r_vid.f16 = saved;
         gz8249 = prev;

@@ -509,7 +509,7 @@ void near F_0711A(unsigned mask)
         return;
     }
     bm1 = F_14090(34, &x, &y, 2);
-    g_1e38 = msg - g_239e;
+    g_1e34[0].f4 = msg - g_239e;
     F_13DE6(34);
     while ((key = F_01417(3000)) == 0)
         ;

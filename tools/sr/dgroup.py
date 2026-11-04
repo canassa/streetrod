@@ -28,8 +28,7 @@ BOUNDS = {'g_videoMenu': 6, 'g_msgs': 7, 'g_palette': 16, 'g_0692': 16, 'g_5082'
           'g_579f': 43, 'g_6078': 21, 'g_4766': 0x66, 'g_4806': 44, 'g_4998': 5, 'ae7312y': 5, 'bp7316': 4}
 REGIONS = [(0x6076, 0x6078, 'int @'), (0x2ee, 0x31e, 'signed char @[24][2]'), (0x358, 0x36e, 'signed char @[11][2]'),
            (0x462, 0x472, 'unsigned char @[16]'), (0x5d4, 0x5d6, 'int @'),
-           (0x11b2, 0x121c, 'unsigned @[53]'), (0x1ac4, 0x1d8a, 'unsigned @[355]'), (0x1e2c, 0x1e38, 'unsigned @[6]'),
-           (0x1e3a, 0x20aa, 'unsigned @[312]'), (0x4734, 0x4736, 'int @'), (0x474a, 0x474c, 'int @'),
+           (0x4734, 0x4736, 'int @'), (0x474a, 0x474c, 'int @'),
            (0x47d1, 0x47d4, 'char @[3]'), (0x496c, 0x4970, 'int @[2]')]
 # Data no C compiler could place (a pointer table at an odd address): assembler-defined,
 # owned by the assembly unit that sits there in the link order.
