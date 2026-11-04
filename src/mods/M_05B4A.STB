@@ -1,7 +1,0 @@
-#include "STRUCTS.H"
-static void near F_056A9(void) { }
-static int near F_057DC(int handle, struct Node **head) { return 0; }
-static int near F_0590F(int handle, struct Car **head, int flag) { return 0; }
-static void near F_059F6(int create) { }
-static int near F_0586E(int handle, struct Car *c, int flag) { return 0; }
-static int near F_05795(int handle, struct Node *p) { return 0; }

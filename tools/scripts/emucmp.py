@@ -2,8 +2,8 @@
 
 Compiles the same jobs under both backends and compares every file each job leaves behind
 (OBJ, COD, LST, CC.LOG) byte for byte. Job sets:
-  - every src/<t>/funcs and src/<t>/mods source, with its DB flags and a spread of other
-    flag sets (/Ol, /Oi, /Ox, /Od, other models); .STB sidecars pre-expanded
+  - every src/mods source, with its recorded command line (LAYOUT.JSON) and a spread of other
+    flag sets (/Ol, /Oi, /Ox, /Od, other models)
   - the 46 `./sr sweep` combos on a few sources
   - hand-written probes: floating point constants, errors and warnings, MASM
   - with --streetrod DIR: every C/MASM source of that sister project with its DB flags
@@ -21,7 +21,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from sr import cli, config, db, dosbox, stb  # noqa: E402
+from sr import cli, config, dosbox, module  # noqa: E402
 
 FLAGSETS = ["/AM /Oas /Gs /FPi", "/AM /Ol /Gs /FPi", "/AM /Oails /Gs /FPi", "/AM /Oi /Gs /FPi",
             "/AM /Ox /Gs /FPi", "/AM /Od /FPi", "/AL /Oalt /Gs /FPi", "/AS /Ot /FPi87", "/AM /Oas /Zi /Gs /FPi"]
@@ -62,8 +62,8 @@ _qqasm  ENDP
 }
 
 
-def snapshot(srcdirs, include, dest, expand=True):
-    """Copy sources (STB pre-expanded) and headers into dest; return (paths, include copy)."""
+def snapshot(srcdirs, include, dest):
+    """Copy sources and headers into dest; return (paths, include copy)."""
     shutil.copytree(include, dest / "include")
     out = []
     for d in srcdirs:
@@ -72,11 +72,7 @@ def snapshot(srcdirs, include, dest, expand=True):
                 continue
             q = dest / "src" / d.name / p.name.upper()
             q.parent.mkdir(parents=True, exist_ok=True)
-            text = p.read_text(errors="replace")
-            stub = p.with_suffix(".STB")
-            if expand and p.suffix.upper() == ".C" and stub.exists():
-                text = stb.expand(stub.read_text()) + "\n" + text
-            q.write_text(text)
+            q.write_text(p.read_text(errors="replace"))
             out.append(q)
     return out, dest / "include"
 
@@ -151,17 +147,13 @@ def main():
     args = ap.parse_args()
     base = config.WORK / f"emucmp-snap"
     shutil.rmtree(base, ignore_errors=True)
-    con = db.connect()
-    by_src = {r["src"].upper(): r["flags"] for r in con.execute("SELECT src, flags FROM functions WHERE src IS NOT NULL")}
-    srcs, inc = snapshot([d for d in (config.FUNCS, config.SRC / "mods") if d.exists()], config.INCLUDE, base / "mc")
+    # each file's command line; data-only files use the default flags
+    command = {f.path.name.upper(): f.command for f in module.files()}
+    srcs, inc = snapshot([config.SRC / "mods"], config.INCLUDE, base / "mc")
     bad = 0
 
     def own(p):
-        rel = str(p.relative_to(base / "mc" / "src")).upper()
-        for k, v in by_src.items():
-            if k.endswith(rel):
-                return v
-        return None
+        return command.get(p.name.upper())
 
     specs = []
     for p in srcs:
@@ -190,7 +182,7 @@ def main():
         srdb = sqlite3.connect(f"file:{sr / 'db' / 'sr.sqlite'}?mode=ro", uri=True)
         flags = {Path(s).name.upper(): f for s, f in srdb.execute("SELECT src, flags FROM functions WHERE src IS NOT NULL")}
         ssrcs, sinc = snapshot([sr / "src" / "funcs", sr / "src" / "mods"], sr / "src" / "include",
-                               base / "sr", expand=False)
+                               base / "sr")
         sspecs = [(p, flags.get(p.name) or ("/Ml" if p.suffix == ".ASM" else "/AM /Oas /Gs /FPi")) for p in ssrcs]
         if not args.quick:
             sspecs += [(p, "/AM /Ox /Gs /FPi") for p in ssrcs if p.suffix == ".C"]

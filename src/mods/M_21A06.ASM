@@ -1,11 +1,10 @@
         .MODEL MEDIUM
 
-; sr-member 0x21A06
 ; F_21A06 @ 21A0:0006 (linear 0x21A06, 14 bytes)
 ; Wait for the start of vertical retrace on the CRT status port 3DAh:
 ; first until the display is not in the middle of a retrace, then until bit 3 sets.
 
-        .CODE
+        .CODE S21A0_TEXT
 
         PUBLIC  _F_21A06
 _F_21A06  PROC    FAR
@@ -21,7 +20,6 @@ L21A06_wait2:
         ret
 _F_21A06  ENDP
 
-; sr-member 0x21A14
 ; F_21A14 @ 21A0:0014 (linear 0x21A14, 151 bytes)
 ; Set the CRTC line compare register (split screen row) during vertical
 ; retrace. The CRTC base port comes from the BIOS data area (0040:0063).
@@ -33,7 +31,7 @@ _F_21A06  ENDP
         .DATA
         EXTRN   _g_0254:WORD
 
-        .CODE
+        .CODE S21A0_TEXT
 
         PUBLIC  _F_21A14
 _F_21A14  PROC    FAR
@@ -120,4 +118,5 @@ L21A14_biased:
         pop     bp
         ret
 _F_21A14  ENDP
+
         END

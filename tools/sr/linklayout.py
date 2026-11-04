@@ -1,13 +1,12 @@
 """Build the recovered linked layout from source and the untouched MSC libraries.
 
-LAYOUT.JSON records recovered compilation groups and link inputs, not binary bytes.
+LAYOUT.JSON records the recovered objects (one source file each, with its flags) and the
+link order, not binary bytes. Every source is compiled exactly as it is in git.
 Normal preparation/compilation never reads the original executable. The comparison
 and unit gates read it only to verify compiler/linker output.
 """
 import concurrent.futures
 import json
-from pathlib import Path
-import re
 import shutil
 
 from . import build, cod, config, db, headers, module
@@ -15,7 +14,6 @@ from .exe import image
 from .omf import Obj
 
 OUT = config.WORK/'layout'
-PLAN = config.SRC/'link/LAYOUT.JSON'
 
 
 # MSC 5.1 SETUP's combined medium-model emulator library. The objects' default-library
@@ -44,7 +42,7 @@ def build_library():
 
 
 def prepare():
-    plan = json.loads(PLAN.read_text())
+    plan = module.plan()
     con = db.connect()
     headers.generate(con)
     rows = [dict(r) for r in con.execute("SELECT * FROM functions WHERE status='matched' ORDER BY addr")]
@@ -57,10 +55,9 @@ def prepare():
     covered = []
     jobs = []
     sequence = []
-    def assembly(path, filename=None):
-        filename = filename or path.name
+    def assembly(path):
+        filename, stem = path.name, path.stem
         shutil.copyfile(path, OUT/filename)
-        stem = Path(filename).stem
         jobs.append(dict(stem=stem, source=filename, program='MASM',
                          args=['/Ml', f'{filename},{stem}.OBJ,{stem}.LST;']))
         return stem+'.OBJ'
@@ -71,51 +68,42 @@ def prepare():
         units = [by[s] for s in order if s in by] + [u for u in units if u['start'] not in set(order)]
     regions = sorted(plan['code_starts'])
     first_seen = set()
+    files = {f.start: f for f in module.files(plan)}
     for unit in units:
         if unit['kind'] == 'data' and unit['sources'][0].upper().endswith('.ASM'):
-            sequence.append(assembly(config.ROOT / unit['sources'][0], f"D_{unit['lo']:05X}.ASM"))
+            sequence.append(assembly(config.ROOT / unit['sources'][0]))
             continue
         if unit['kind'] == 'data':
             # a data-only translation unit: compiled, linked at its place, no code gate
             src = config.ROOT / unit['sources'][0]
-            stem = f"D_{unit['lo']:05X}"
-            filename = stem + '.C'
-            shutil.copyfile(src, OUT/filename)
-            jobs.append(dict(stem=stem, source=filename, program='CL',
-                             args=['/c', '/W3', *config.DEFAULT_FLAGS.split(), '/Fc', filename]))
-            sequence.append(stem + '.OBJ')
+            shutil.copyfile(src, OUT/src.name)
+            jobs.append(dict(stem=src.stem, source=src.name, program='CL',
+                             args=['/c', '/W3', *config.DEFAULT_FLAGS.split(), '/Fc', src.name]))
+            sequence.append(src.stem + '.OBJ')
             continue
         start, end = unit['start'], unit['end']
         members = [r for r in rows if start <= r['addr'] < end]
-        if not members or list(dict.fromkeys(r['src'] for r in members)) != unit['sources']:
+        if not members or {r['src'] for r in members} != set(unit['sources']):
             raise ValueError(f'Layout source membership changed: {start:05X}; review LAYOUT.JSON')
         if start != members[0]['addr'] or end != members[-1]['addr']+members[-1]['size']:
             raise ValueError(f'Layout extent changed: {start:05X}')
         covered.extend(r['addr'] for r in members)
-        seg = 'S'+f"{max(s for s in plan['code_starts'] if s <= start)//16:04X}"+'_TEXT'
-        stem = f'U_{start:05X}'
-        flags = module.unit_flags(members)
-        if unit['kind'] == 'c':
-            parts = [(config.ROOT/source).read_text() for source in unit['sources']]
-            text = module.merge(parts)
-            filename = stem+'.C'
+        # the file is compiled as it is in git, under its own name
+        f = files[start]
+        filename, stem = f.path.name, f.path.stem
+        shutil.copyfile(f.path, OUT/filename)
+        if f.kind == 'c':
             program = 'CL'
-            args = ['/c', '/W3', *flags.split(), '/NT'+seg, '/Fc', filename]
+            args = ['/c', '/W3', *f.command.split(), '/Fc', filename]
         else:
-            texts = [(config.ROOT/s).read_text() for s in unit['sources']]
-            firsts = [next(r for r in members if r['src'] == s) for s in unit['sources']]
-            text = module.merge_asm(texts, firsts)
-            text = re.sub(r'(?im)^\s*\.CODE\s*$', '        .CODE '+seg, text)
-            filename = stem+'.ASM'
             program = 'MASM'
-            args = [*flags.split(), f'{filename},{stem}.OBJ,{stem}.LST;']
-        (OUT/filename).write_text(text)
+            args = [*f.command.split(), f'{filename},{stem}.OBJ,{stem}.LST;']
         jobs.append(dict(stem=stem, source=filename, program=program, args=args, members=members))
         region = max(s for s in regions if s <= start)
         if region not in first_seen:
             first_seen.add(region)
             if region == 0xf38a:
-                sequence += [assembly(config.SRC/'data'/f) for f in ('FONTDATA.ASM', 'CGAFONT.ASM')]
+                sequence += [assembly(config.SRC/'data'/n) for n in ('FONTDATA.ASM', 'CGAFONT.ASM')]
         sequence.append(stem+'.OBJ')
     if sorted(covered) != sorted(r['addr'] for r in rows):
         raise ValueError('Layout must compile every matched game function exactly once')
@@ -183,7 +171,8 @@ def run(prepare_only=False, objects_only=False):
                 procs = cod.parse(root/(job['stem'].lower()+'.cod'))
                 obj.statics = cod.statics(root/(job['stem'].lower()+'.cod'))
             else:
-                procs = [cod.from_publics(obj, module.fname(r)) for r in members]
+                lengths = cod.asm_lengths(next(root.glob(job['stem']+'.[Ll][Ss][Tt]'), None))
+                procs = [cod.from_publics(obj, module.fname(r), lengths) for r in members]
             gate = module.gate(obj, procs, original.img, members, con=db.connect())
             if not gate.ok:
                 return job['stem'], gate.line(job['stem'])

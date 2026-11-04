@@ -1,13 +1,12 @@
         .MODEL MEDIUM
 
-; sr-member 0x0E6C2
 ; F_0E6C2 @ 0e6c:0002 (linear 0x0E6C2, 191 bytes)
 ; CGA 320x200 4-colour masked blit with background save: for each L0E6C2_row, saves the
 ; screen L0E6C2_words to one buffer, then ANDs with a mask and ORs the sprite data.
 ; Args: sprite, mask, save buffer (far), screen (far), x, y, width in L0E6C2_words, rows.
 ; Screen rows interleave in four banks of 2000h.
 
-        .CODE
+        .CODE S0E6C_TEXT
 
         PUBLIC  _F_0E6C2
 _F_0E6C2  PROC  FAR
@@ -106,11 +105,10 @@ L0E6C2_done:
         ret
 _F_0E6C2  ENDP
 
-; sr-member 0x0E781
 ; F_0E781 @ 0e6c:00c1 (linear 0x0E781, 180 bytes)
 ; Same blit as F_0E6C2 with two interleaved banks and 80 byte rows.
 
-        .CODE
+        .CODE S0E6C_TEXT
 
         PUBLIC  _F_0E781
 _F_0E781  PROC  FAR
@@ -204,13 +202,12 @@ L0E781_done:
         ret
 _F_0E781  ENDP
 
-; sr-member 0x0E835
 ; F_0E835 @ 0e6c:0175 (linear 0x0E835, 240 bytes)
 ; EGA 320x200 16-colour masked blit with background save, planar: the mask is
 ; applied through the graphics controller (write mode 0, bit mask register 8)
 ; and the four sprite planes are 600h bytes apart.
 
-        .CODE
+        .CODE S0E6C_TEXT
 
         PUBLIC  _F_0E835
 _F_0E835  PROC  FAR
@@ -321,4 +318,5 @@ L0E835_done:
         pop     bp
         ret
 _F_0E835  ENDP
+
         END

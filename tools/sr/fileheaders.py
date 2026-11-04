@@ -5,7 +5,6 @@ globals and functions it uses. Declarations still come from the DB (`./sr global
 `./sr proto`); ownership comes from where the definition is."""
 import json
 import re
-from pathlib import Path
 
 from . import config
 from .headers import _write
@@ -20,14 +19,14 @@ _SYSTEM = {'errno': 'stdlib.h', '_doserrno': 'stdlib.h', '_amblksiz': 'malloc.h'
 
 
 def owners_layout():
-    """[(stem, [source paths])] for every original file: link units, then standalone files."""
+    """[(stem, [source path])] for every original file: link units (one source each), then
+    standalone data files."""
     plan = json.loads((config.SRC / 'link' / 'LAYOUT.JSON').read_text())
     out, seen = [], set()
     for u in plan['units'] + plan.get('data_units', []):
         srcs = [config.ROOT / s for s in u['sources']]
         out.append((srcs[0].stem.upper(), srcs)); seen.update(srcs)
-    for p in sorted([*(config.SRC / 'data').glob('*.[CA]*'), *(config.SRC / 'link').glob('*.ASM'),
-                     *(config.SRC / 'funcs').glob('*.[CA]*')]):
+    for p in sorted([*(config.SRC / 'data').glob('*.[CA]*'), *(config.SRC / 'link').glob('*.ASM')]):
         if p.suffix.upper() in ('.C', '.ASM') and p not in seen:
             out.append((p.stem.upper(), [p]))
     return out

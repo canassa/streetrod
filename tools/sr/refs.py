@@ -10,8 +10,8 @@ Here each fixup is resolved against the original instruction:
 - our own data (string literals, statics): the bytes must equal the original's at that offset;
 - DGROUP segment bases: the original's word must be the DGROUP paragraph.
 
-Near calls the compiler resolved inside our OBJ (to an .STB placeholder) are checked by
-name against the original call target.
+Near calls the compiler resolved inside our OBJ (to a function of the same file) are
+checked by name against the original call target.
 """
 
 import bisect

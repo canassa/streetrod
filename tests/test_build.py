@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
-from sr import build, linklayout
+from sr import build, config, linklayout
 from sr.cdata import Types, number
 
 
@@ -23,6 +23,13 @@ class BuildTests(unittest.TestCase):
             linked = {n[:-4] for n in response.split('\nSR.EXE')[0].replace('+', ' ').split()}
             self.assertEqual(linked, stems)
             self.assertNotIn('.STB', response)
+            # each source is compiled under its own name, exactly as it is in git
+            for j in jobs:
+                if j['stem'].startswith('M_'):
+                    src = config.SRC / 'mods' / j['source']
+                    self.assertEqual((root / j['source']).read_bytes(), src.read_bytes(), j['source'])
+            self.assertIn('M_0F38A', stems)
+            self.assertFalse(any(s.startswith(('U_', 'D_')) for s in stems))
             self.assertTrue(response.rstrip().endswith('SR.EXE\nSR.MAP\n\n;'))
             make = (root / 'MAKEFILE').read_text()
             # MAKE 4.07 runs rules in file order: the library first, the link last

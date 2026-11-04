@@ -1,6 +1,5 @@
         .MODEL MEDIUM
 
-; sr-member 0x24F4A
 ; F_24F4A @ 24F4:000A (linear 0x24F4A, 2569 bytes)
 ; F_24F4A(dst_far, src_seg, si_off, bx_off, bp_off, bx_si_pitch, w, h,
 ;         bp_pitch, di_pitch): masked blit, three source streams in the
@@ -13,8 +12,7 @@
 ; over, so they are addressed through CS at fixed offsets (the routine sits
 ; at offset 0Ah of its code segment).
 
-        .CODE
-
+        .CODE S24F4_TEXT
 
         PUBLIC  _F_24F4A
 _F_24F4A  PROC    FAR
@@ -133,4 +131,5 @@ L24F4A_done:
         pop     bp
         ret
 _F_24F4A  ENDP
+
         END

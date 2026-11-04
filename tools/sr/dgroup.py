@@ -193,7 +193,7 @@ class Analysis:
 
     @staticmethod
     def _unit_obj(u):
-        stem = f'U_{u["start"]:05X}' if u['kind'] != 'data' else f'D_{u["lo"]:05X}'
+        stem = Path(u['sources'][0]).stem          # the layout build compiles each file under its own name
         fresh = config.WORK / 'layout' / 'BUILD' / stem / (stem + '.OBJ')
         gated = config.WORK / 'layout' / (stem + '.OBJ')
         if fresh.exists() and (not gated.exists() or fresh.stat().st_mtime >= gated.stat().st_mtime):
@@ -261,7 +261,7 @@ class Analysis:
             if per:
                 pools[u['start']] = {a: sorted(v) for a, v in sorted(per.items())}
                 # a literal's size from the compiler listing ($SG records, emission order)
-                sizes = self._cod_literal_sizes(f'U_{u["start"]:05X}')
+                sizes = self._cod_literal_sizes(Path(u['sources'][0]).stem)
                 litstarts = sorted({o for v in per.values() for o, _ in v})
                 if len(sizes) == len(litstarts):
                     for o, size in zip(litstarts, sizes):
@@ -1280,7 +1280,7 @@ class Analysis:
             block = '\n'.join(['        ; data (recovered DGROUP layout)'] + lines) + '\n'
             m = re.search(r'(?m)^\s*\.DATA\s*$', text)
             if m is None:
-                c = re.search(r'(?m)^\s*\.CODE\b', text)
+                c = re.search(r'(?m)^\s*\.CODE\b|^\w+\s+SEGMENT\b', text)
                 if c is None:
                     raise SystemExit(f'{path}: no .CODE section to put the data before')
                 text = text[:c.start()] + '        .DATA\n\n' + text[c.start():]
@@ -1381,7 +1381,8 @@ class Analysis:
         m = re.search(r'(?m)^        ; data \(recovered DGROUP layout\)\n', text)
         if m is None:
             return text
-        end = re.search(r'(?m)^\s*\.CODE\b', text[m.start():])
+        # up to the code: a .CODE directive, or an explicit code SEGMENT (a small-model file)
+        end = re.search(r'(?m)^\s*\.CODE\b|^\w+\s+SEGMENT\b', text[m.start():])
         return text[:m.start()] + text[m.start() + end.start():]
 
     def apply_aliases(self, write=False):

@@ -1,54 +1,9 @@
         .MODEL MEDIUM
 
-; sr-member 0x0E5D2
 ; F_0E5D2 @ 0000:E5D2 (linear 0x0E5D2, 61 bytes)
 ; Hercules graphics mode set up: BIOS video state, CRTC registers.
 
         .DATA
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         ; data (recovered DGROUP layout)
         PUBLIC _g_5abc
@@ -96,7 +51,7 @@ _g_5ad0 LABEL BYTE ; +5AD0 char @[30]
         DB 02h
         DB 00h
 
-        .CODE
+        .CODE S0000_TEXT
 
         PUBLIC  _F_0E5D2
 _F_0E5D2  PROC    NEAR
@@ -134,4 +89,5 @@ L0E5D2_crtc:
         pop     bp
         ret
 _F_0E5D2  ENDP
+
         END

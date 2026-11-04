@@ -1,5 +1,0 @@
-#include "STRUCTS.H"
-@F_03C1B
-@F_03FB1
-static void near F_03C3E(struct Node *p) { }
-static void near F_03FD4(struct Node2 *p) { }

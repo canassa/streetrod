@@ -1,6 +1,5 @@
         .MODEL MEDIUM
 
-; sr-member 0x2462E
 ; F_2462E @ 2462:000E (linear 0x2462E, 76 bytes)
 ; Near helper shared by F_2467A and F_24740, which keep its tables in their own
 ; frame: [bp-110h] 16 bytes (copy of g_4eee), [bp-120h] 16 bytes (copy of
@@ -12,7 +11,7 @@
         EXTRN   _g_4eee:BYTE
         EXTRN   _g_4efe:BYTE
 
-        .CODE
+        .CODE S2462_TEXT
 
         PUBLIC  _F_2462E
 _F_2462E  PROC  NEAR
@@ -49,13 +48,12 @@ L2462E_index_loop:
         ret
 _F_2462E  ENDP
 
-; sr-member 0x2467A
 ; F_2467A @ 2462:005A (linear 0x2467A, 198 bytes)
 ; F_2467A(src_far, dst_far, count, palette): like F_24740, but ORs the pixels
 ; into the destination, one bit plane at a time: the plane colour word is kept
 ; at [bp-122h] (1111h, shifted left after each pass over the buffer).
 
-        .CODE
+        .CODE S2462_TEXT
 
         PUBLIC  _F_2467A
 _F_2467A  PROC  FAR
@@ -164,13 +162,12 @@ L2467A_done:
         ret
 _F_2467A  ENDP
 
-; sr-member 0x24740
 ; F_24740 @ 2462:0120 (linear 0x24740, 139 bytes)
 ; F_24740(src_far, dst_far, count, palette): expand a compressed 4-bit image.
 ; Each pattern byte gives 8 bits; every set bit makes one 4-bit pixel 0Fh in
 ; the two output words.  Code 0 skips pixels, 0FFh fills with 0FFFFh.
 
-        .CODE
+        .CODE S2462_TEXT
 
         PUBLIC  _F_24740
 _F_24740  PROC  FAR
@@ -256,13 +253,12 @@ L24740_done:
         ret
 _F_24740  ENDP
 
-; sr-member 0x247CB
 ; F_247CB @ 2462:01AB (linear 0x247CB, 73 bytes)
 ; Near helper of F_2467A: expand the 8 bits of al into two words of 4-bit
 ; pixels, masking the colour word kept in the caller's frame ([bp-122h]), and
 ; OR them into the destination (es:di).
 
-        .CODE
+        .CODE S2462_TEXT
 
         PUBLIC  _F_247CB
 _F_247CB  PROC  NEAR
@@ -309,7 +305,6 @@ L247CB_b8:
         ret
 _F_247CB  ENDP
 
-; sr-member 0x24814
 ; F_24814 @ 2462:01F4 (linear 0x24814, 53 bytes)
 ; Near helper of F_2467A and F_24740: fetch the next code from ds:si.
 ; A code byte of 0 or 0FFh is followed by a count byte: returns cx = count+1
@@ -317,7 +312,7 @@ _F_247CB  ENDP
 ; 256-byte table in the caller's frame: returns al = pattern, cx = L24814_run
 ; length, or ah = 0 (return) when the byte isn't in the table.
 
-        .CODE
+        .CODE S2462_TEXT
 
         PUBLIC  _F_24814
 _F_24814  PROC  NEAR
@@ -352,13 +347,12 @@ L24814_run:
         ret
 _F_24814  ENDP
 
-; sr-member 0x24849
 ; F_24849 @ 2462:0229 (linear 0x24849, 48 bytes)
 ; F_24849(src_far, dst_far, count): turn count bytes of packed 4-bit pixels
 ; into a byte-per-pair mask: a nibble that is zero sets the corresponding
 ; nibble of the mask (0F0h for the high one, 0Fh for the low one).
 
-        .CODE
+        .CODE S2462_TEXT
 
         PUBLIC  _F_24849
 _F_24849  PROC  FAR
@@ -393,4 +387,5 @@ L24849_store:
         pop     bp
         ret
 _F_24849  ENDP
+
         END

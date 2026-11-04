@@ -1,7 +1,0 @@
-#include "STRUCTS.H"
-@F_076A7
-@F_07741
-static void near F_07789(struct Node **slot) { }
-@F_077B7
-static void near F_07FB1(struct Car *car) { }
-@F_07EE6

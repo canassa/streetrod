@@ -1,12 +1,11 @@
         .MODEL MEDIUM
 
-; sr-member 0x24D84
 ; F_24D84 @ 24D8:0004 (linear 0x24D84, 67 bytes)
 ; F_24D84(src_far, dst_far, bytes, rows, src_skip, dst_wrap, y): copy rows of
 ; bytes into the interleaved screen.  Four banks of 2000h; after every fourth
 ; L24D84_row the destination steps back by 6000h and forward by dst_wrap.
 
-        .CODE
+        .CODE S24D8_TEXT
 
         PUBLIC  _F_24D84
 _F_24D84  PROC    FAR
@@ -49,13 +48,12 @@ L24D84_done:
         ret
 _F_24D84  ENDP
 
-; sr-member 0x24DC7
 ; F_24DC7 @ 24D8:0047 (linear 0x24DC7, 177 bytes)
 ; F_24DC7(src_far, dst_far, bytes, rows, sx, sy, dx, dy): like F_24D84 but
 ; both ends are positions in the interleaved screen: offset = (y / 4) * 160 +
 ; x, plus 2000h per (y & 1) and 4000h per (y & 2).
 
-        .CODE
+        .CODE S24D8_TEXT
 
         PUBLIC  _F_24DC7
 _F_24DC7  PROC    FAR
@@ -144,4 +142,5 @@ L24DC7_done:
         pop     bp
         ret
 _F_24DC7  ENDP
+
         END

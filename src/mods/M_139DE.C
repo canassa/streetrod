@@ -21,6 +21,7 @@ static int g_6c56;                         /* DS:6C56 */
 static int g_6c58;                         /* DS:6C58 */
 static int g_6c5a;                         /* DS:6C5A */
 static int g_6c5c;                         /* DS:6C5C */
+static char * near F_14341(int wear);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 void (far *bp78ba)(struct Bitmap far *, int, int, int, int, int, int);
@@ -36,8 +37,6 @@ char ax8ba4u;
 struct Hot *av8ba6v;
 int ai8bacx;
 int av8efe;
-
-static char * near F_14341(int wear);
 
 /* F_139DE: draw a hot spot and the spots linked behind it (the chain through Hot.f10 masked with
    g_07a8), by kind: 4/12 filled box with optional centred text, 5/6/10 text only, 7/8 header bar,
@@ -137,7 +136,6 @@ void F_139DE(struct Hot *p)
    current entry globals are reset, F_139DE draws the linked spot, and the touched area is copied
    from the back buffer to the front when the screen shadow is on */
 
-
 void F_13DE6(int id)
 {
     struct Hot *p;
@@ -171,7 +169,6 @@ void F_13DE6(int id)
 /* F_13F21: pop the saved state stack: close the current entry; when keep is set and an entry remains,
    reopen the one below it, otherwise reset the entry globals to "none" */
 
-
 void F_13F21(int keep)
 {
     if (g8b8eb) {
@@ -190,7 +187,6 @@ void F_13F21(int keep)
 
 /* F_13F7F @ 0F38:4BFF (linear 0x13f7f, 27 bytes) */
 
-
 void F_13F7F(void)
 {
     g8b8eb = ai8bacx = 0;
@@ -200,7 +196,6 @@ void F_13F7F(void)
 
 /* F_13F9A: bounding box of hot spot id and the spots linked after it (through f10), widened by 3
    and clipped to the 320 x 200 screen. *x and *y receive the top left corner, *w and *h the size */
-
 
 void F_13F9A(int id, int *x, int *y, int *w, int *h)
 {
@@ -231,7 +226,6 @@ void F_13F9A(int id, int *x, int *y, int *w, int *h)
 /* F_14090: copy the screen area around hot spot id (see F_13F9A, which updates *px and *py to the
    box corner) into a bitmap of the given mode and return it. The x range is rounded to r_vid.mask */
 
-
 struct Bitmap far *F_14090(int id, int *px, int *py, int mode)
 {
     int x;
@@ -255,7 +249,6 @@ struct Bitmap far *F_14090(int id, int *px, int *py, int mode)
 /* F_1412D: find the hot spot of the current menu (list at av8ba6v) under the point (x, y). On a hit
    the spot's box goes to ao8b90v and its id (f6) is returned; on a miss ao8b90v gets the free
    rectangle around the point and 0 is returned */
-
 
 int F_1412D(int x, int y)
 {
@@ -318,7 +311,6 @@ int F_1412D(int x, int y)
 /* F_14241: grab the screen area around hot spot id, show the spot (waiting for a key through
    F_14294), put the saved area back and return the key */
 
-
 int F_14241(int id)
 {
     struct Bitmap far *bm1;
@@ -335,7 +327,6 @@ int F_14241(int id)
 
 /* F_14294 @ 0F38:4F14 (linear 0x14294, 59 bytes) */
 
-
 int F_14294(int a)
 {
     int key;
@@ -349,7 +340,6 @@ int F_14294(int a)
 
 /* F_142CF: run the F_1438E dialog over a grabbed screen area (see F_14241) and restore the area
    afterwards; 0x3ea when *list is zero */
-
 
 int F_142CF(int a, int b, int *c, int *list, char *buf, char **d)
 {
@@ -585,4 +575,11 @@ scroll:
             }
         }
     }
+}
+
+/* F_14C8B: accessor, returns x_8ba0 */
+
+int F_14C8B(void)
+{
+    return x_8ba0;
 }

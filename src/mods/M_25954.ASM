@@ -1,6 +1,5 @@
         .MODEL MEDIUM
 
-; sr-member 0x25954
 ; F_25954 @ 2595:0004 (linear 0x25954, 2549 bytes)
 ; F_25954(dst_far, src_seg, si_off, bx_off, bx_si_pitch, di_pitch, w, h)
 ; sibling of F_24F4A: dst = (bx[] & dst) | si[] with the destination also
@@ -11,8 +10,7 @@
 ; Its scratch variables live in the code segment, in the 6 bytes it jumps
 ; over (routine at offset 04h of its code segment).
 
-        .CODE
-
+        .CODE S2595_TEXT
 
         PUBLIC  _F_25954
 _F_25954  PROC    FAR
@@ -127,4 +125,5 @@ L25954_done:
         pop     bp
         ret
 _F_25954  ENDP
+
         END

@@ -31,10 +31,6 @@ def fn_name(row):
     return row["name"] or f"F_{row['addr']:05X}"
 
 
-def src_path(row):
-    return config.ROOT / (row["src"] or f"src/funcs/F_{row['addr']:05X}.C")
-
-
 # ---------------------------------------------------------------- scan / list / show
 
 
@@ -106,7 +102,7 @@ def cmd_list(args):
     print(f"{'addr':8} {'seg:off':10} {'size':>5} kind far {'status':8} {'mism':>4} name / src")
     for r in rows[: args.limit]:
         mism = "" if r["mismatches"] is None else str(r["mismatches"])
-        extra = fn_name(r) + (f"  {r['src']}" if r["src"] else "") + (f"  [{r['flags']}]" if r["flags"] else "")
+        extra = fn_name(r) + (f"  {r['src']}" if r["src"] else "")
         print(f"{hexa(r['addr'])}  {r['seg']:04x}:{r['off']:04x} {r['size']:5} {r['kind']:4} {'F' if r['far'] else 'N':3} "
               f"{r['status']:8} {mism:>4} {extra}")
     if len(rows) > args.limit:
@@ -149,9 +145,11 @@ def cmd_show(args):
     row = db.resolve(con, args.fn)
     print(f"{fn_name(row)} @ {row['seg']:04x}:{row['off']:04x} (linear {hexa(row['addr'])}), {row['size']} bytes, "
           f"{'far' if row['far'] else 'near'}, kind {row['kind']}, status {row['status']}")
-    for k in ("src", "flags", "notes"):
-        if row[k]:
-            print(f"  {k}: {row[k]}")
+    if row["src"]:
+        f = mod.file_of(row)
+        print(f"  src: {row['src']} ({'CL' if f.kind == 'c' else 'MASM'} {f.command})")
+    if row["notes"]:
+        print(f"  notes: {row['notes']}")
     callers = con.execute("SELECT caller FROM callees WHERE callee = ?", (row["addr"],)).fetchall()
     callees = con.execute("SELECT callee FROM callees WHERE caller = ?", (row["addr"],)).fetchall()
     if callers:
@@ -187,53 +185,29 @@ def cmd_next(args):
 # ---------------------------------------------------------------- authoring / checking
 
 
-def cmd_new(args):
-    con = db.connect()
-    row = db.resolve(con, args.fn)
-    name = row["name"] or f"F_{row['addr']:05X}"
-    path = config.FUNCS / f"F_{row['addr']:05X}.{'ASM' if args.asm else 'C'}"
-    if path.exists():
-        # Adopt an existing file (e.g. written before `kind` was corrected); never overwrite it.
-        db.update(con, row["addr"], status="wip", src=str(path.relative_to(config.ROOT)), name=name)
-        print(f"{path.relative_to(config.ROOT)} already exists, kept it; src -> it, status -> wip")
-        return
-    path.parent.mkdir(parents=True, exist_ok=True)
-    where = f"{name} @ {row['seg']:04X}:{row['off']:04X} (linear 0x{row['addr']:05X}, {row['size']} bytes)"
-    if args.asm:
-        sym = "_" + name
-        path.write_text(
-            f"; {where}\n\n        .MODEL  MEDIUM\n        .CODE\n\n        PUBLIC  {sym}\n"
-            f"{sym}  PROC    {'FAR' if row['far'] else 'NEAR'}\n{sym}  ENDP\n\n        END\n"
-        )
-    else:
-        if row["proto"] and (row["far"] or "interrupt" in row["proto"] or "near @" in row["proto"]):
-            head = row["proto"].replace("@", name)
-        elif row["proto"]:
-            head = "static " + row["proto"].replace("@", "near " + name)
-        else:
-            head = f"{'int' if row['far'] else 'static int near'} {name}(void)"
-        path.write_text(f"/* {where} */\n\n#include \"STRUCTS.H\"\n\n{head}\n{{\n}}\n")
-    db.update(con, row["addr"], status="wip", src=str(path.relative_to(config.ROOT)), name=name)
-    print(f"created {path.relative_to(config.ROOT)}; status -> wip")
-
-
-def _job_key(row, flags_override=None):
-    src = src_path(row)
-    default = config.DEFAULT_ASM_FLAGS if src.suffix.upper() == ".ASM" else config.DEFAULT_FLAGS
-    return (str(src), flags_override or row["flags"] or default)
+def _file_jobs(con, rows, flags_override=None):
+    """One compile job per source file of `rows`: the whole file, with its command line."""
+    fs = mod.files()
+    jobs = {}
+    for r in rows:
+        f = mod.file_of(r, fs)
+        if f.rel not in jobs:
+            flags = f.with_flags(flags_override) if flags_override else f.command
+            jobs[f.rel] = dosbox.Job(f.path, flags, f.rel)
+            jobs[f.rel].file = f
+    return jobs
 
 
 def _check_rows(con, rows, flags_override=None, quiet=False):
+    """Compile the files that define `rows` (once each), compare every function asked for,
+    and run each file's gate over all its functions."""
     im = image()
     gen_headers(con)
-    jobs = {}
-    for r in rows:
-        key = _job_key(r, flags_override)
-        jobs.setdefault(key, dosbox.Job(Path(key[0]), key[1], key))
+    jobs = _file_jobs(con, rows, flags_override)
     dosbox.compile_all(list(jobs.values()), name="check")
     results = {}
     for r in rows:
-        job = jobs[_job_key(r, flags_override)]
+        job = jobs[r["src"]]
         if job.obj is None or (job.cod is None and not job.asm):
             print(f"{hexa(r['addr'])} {fn_name(r)}: build failed\n{job.log}")
             results[r["addr"]] = None
@@ -241,7 +215,7 @@ def _check_rows(con, rows, flags_override=None, quiet=False):
         obj = Obj(job.obj)
         procs = []
         if job.asm:
-            proc = cod.from_publics(obj, fn_name(r))
+            proc = cod.from_publics(obj, fn_name(r), cod.asm_lengths(job.lst))
             found = ", ".join(obj.publics)
         else:
             procs = cod.parse(job.cod)
@@ -257,53 +231,16 @@ def _check_rows(con, rows, flags_override=None, quiet=False):
         if not job.asm:
             res.lint = lint(job.src.read_text(errors="replace"), job.log)
         results[r["addr"]] = (res, proc, job)
-        if not quiet:
-            shown = [ln for ln in job.log.splitlines()
-                     if re.search(r"warning C(?!4071|4016|4100)\d+|error", ln)]
-            warn = "  " + "\n  ".join(shown) if shown else ""
-            print(f"{hexa(r['addr'])} {fn_name(r)}: {res.line()}" + (f"\n{warn}" if warn else ""))
-            if not res.verdict.startswith("MATCH") and not job.asm:
-                miss = _missing_stb(con, im, r, job.src, procs)
-                if miss:
-                    print(f"  hint: the original calls {', '.join(miss)} with `push cs; call near` "
-                          "(same module): list them in the .STB")
-                extra = _extra_stb(con, im, r, job.src)
-                if extra:
-                    print(f"  hint: the original far-calls {', '.join(extra)} (another module): "
-                          "remove them from the .STB")
-    _module_gates(con, im, jobs, rows, results, flags_override)
+    _file_gates(con, im, jobs, results)
+    if not quiet:
+        for job in jobs.values():
+            shown = [ln for ln in job.log.splitlines() if re.search(r"warning C(?!4071|4016|4100)\d+|error", ln)]
+            if shown:
+                print(f"{job.src.name}:\n  " + "\n  ".join(shown))
+        for r in rows:
+            if results.get(r["addr"]):
+                print(f"{hexa(r['addr'])} {fn_name(r)}: {results[r['addr']][0].line()}")
     return results
-
-
-def _extra_stb(con, im, row, src):
-    """`@NAME` lines in the .STB for functions the original reaches with a far `lcall`."""
-    stub = src.with_suffix(".STB")
-    if not stub.exists():
-        return []
-    names = re.findall(r"(?m)^@(\w+)\s*$", stub.read_text(errors="replace"))
-    out = []
-    for ins in linear(im.img, row["addr"], row["addr"] + row["size"]):
-        t = far_call_operand(im, ins)
-        if t is None:
-            continue
-        f = con.execute("SELECT * FROM functions WHERE addr = ?", (t,)).fetchone()
-        if f and fn_name(f) in names and fn_name(f) not in out:
-            out.append(fn_name(f))
-    return out
-
-
-def _missing_stb(con, im, row, src, procs):
-    """Far functions the original reaches by `push cs; call near` that our build doesn't define."""
-    ours = {p.c_name for p in procs}
-    out = []
-    for ins in linear(im.img, row["addr"], row["addr"] + row["size"], ip0=row["off"]):
-        if ins.bytes[0] != 0xE8 or ins.size != 3 or im.img[ins.addr - 1] != 0x0E:
-            continue
-        t = row["seg"] * 16 + (branch_target(ins) & 0xFFFF)
-        f = con.execute("SELECT * FROM functions WHERE addr = ?", (t,)).fetchone()
-        if f and f["far"] and fn_name(f) not in ours and fn_name(f) not in out:
-            out.append(fn_name(f))
-    return out
 
 
 def _record(con, row, res):
@@ -323,12 +260,22 @@ def _record(con, row, res):
                   "global/prototype change), or reopen it with `./sr mark ADDR wip -m why`")
 
 
+def _rows_for(con, what):
+    """A function by address or name, or every function of a source file (M_0914C.C)."""
+    f = mod.find_file(what)
+    if f is not None:
+        return mod.members(con, f.rel)
+    return [db.resolve(con, what)]
+
+
 def cmd_check(args):
     con = db.connect()
     if args.all:
         rows = con.execute("SELECT * FROM functions WHERE status = 'matched' ORDER BY addr").fetchall()
+    elif args.fn:
+        rows = _rows_for(con, args.fn)
     else:
-        rows = [db.resolve(con, args.fn)]
+        raise SystemExit("give a function (address or name), a source file, or --all")
     results = _check_rows(con, rows, args.flags)
     bad = 0
     for r in rows:
@@ -337,10 +284,14 @@ def cmd_check(args):
             _record(con, r, res[0] if res else None)
         if res is None or res[0].verdict == "DIFF":
             bad += 1
-        if res and not args.all and res[1].locals:
+        if res and len(rows) == 1 and res[1].locals:
             print("  locals: " + ", ".join(f"{k}={v}" for k, v in sorted(res[1].locals.items(), key=lambda kv: -kv[1])))
     if args.all:
-        print(f"{len(rows) - bad}/{len(rows)} still match")
+        done = [results[r["addr"]][0] for r in rows if results.get(r["addr"])]
+        exact = sum(res.verdict == "MATCH" for res in done)
+        star = sum(res.verdict == "MATCH*" for res in done)
+        print(f"{len(rows) - bad}/{len(rows)} still match ({exact} MATCH, {star} MATCH* with near "
+              "calls to other objects)")
     sys.exit(1 if bad else 0)
 
 
@@ -370,12 +321,14 @@ def cmd_diff(args):
 def cmd_sweep(args):
     con = db.connect()
     row = db.resolve(con, args.fn)
-    if src_path(row).suffix.upper() == ".ASM":
+    f = mod.file_of(row)
+    if f.kind != "c":
         raise SystemExit("sweep is for C sources; MASM has no codegen flags to search")
     base = args.base or "/AM /FPi"
     combos = [f"{base} {o}{g}" for o in SWEEP_OPTS for g in ("", " /Gs")]
     im = image()
-    jobs = [dosbox.Job(src_path(row), c, c) for c in combos]
+    # every combination compiles the whole file (its other functions change with the flags too)
+    jobs = [dosbox.Job(f.path, f.with_flags(c), c) for c in combos]
     dosbox.compile_all(jobs, name="sweep")
     out = []
     for job in jobs:
@@ -385,12 +338,13 @@ def cmd_sweep(args):
         if proc is None:
             continue
         res = compare(Obj(job.obj), proc, im.img, row["addr"], row["size"])
-        out.append((len(res.mismatches) + abs(res.size_exe - res.size_obj), job.flags, res))
+        out.append((len(res.mismatches) + abs(res.size_exe - res.size_obj), job.tag, res))
     out.sort(key=lambda x: x[0])
     for score, flags, res in out[: args.top]:
         print(f"{score:5}  {flags:<28} {res.verdict}  size {res.size_obj}/{res.size_exe}")
     if out and out[0][0] == 0:
-        print(f"\nset it with: ./sr flags {fn_name(row)} {out[0][1]}")
+        print(f"\nthe file's flags are {f.flags}; set them with: ./sr flags {f.path.name} {out[0][1]} --force "
+              f"(then ./sr check {f.path.name})")
 
 
 def cmd_crtnames(args):
@@ -437,6 +391,11 @@ def cmd_mark(args):
     print(f"{fn_name(row)}: {row['status']} -> {args.status}")
 
 
+def _sources():
+    return sorted(p for d in ("mods", "data") for p in (config.SRC / d).glob("*")
+                  if p.suffix.upper() in (".C", ".ASM"))
+
+
 def cmd_name(args):
     con = db.connect()
     row = db.resolve(con, args.fn)
@@ -445,8 +404,7 @@ def cmd_name(args):
         return
     check_ident(args.name)
     old = fn_name(row)
-    users = [p.name for p in sorted(config.ROOT.glob("src/funcs/*.[CcAaSs]*"))
-             if re.search(rf"\b_?{old}\b", p.read_text(errors="replace"))]
+    users = [p.name for p in _sources() if re.search(rf"\b_?{old}\b", p.read_text(errors="replace"))]
     if users and not args.force:
         raise SystemExit(f"{old} is used by {', '.join(users)}; rename it there too, then rerun with --force")
     db.update(con, row["addr"], name=args.name)
@@ -473,25 +431,22 @@ def cmd_note(args):
 
 
 def cmd_flags(args):
+    """A source file's command line (one per file, recorded in src/link/LAYOUT.JSON)."""
     con = db.connect()
-    row = db.resolve(con, args.fn)
-    if not args.flags and not args.reset:
-        print(f"{fn_name(row)}: flags = {row['flags'] or config.DEFAULT_FLAGS + ' (default)'}")
+    f = mod.find_file(args.fn) or mod.file_of(db.resolve(con, args.fn))
+    if not args.flags:
+        print(f"{f.path.name}: flags = {f.flags}" + (f" (compiled with /NT{f.segment})" if f.kind == "c" else ""))
         return
-    flags = None if args.reset else " ".join(args.flags)
-    if row["status"] == "matched" and flags != row["flags"] and not args.force:
-        raise SystemExit(f"{fn_name(row)} is matched with {row['flags'] or 'the default flags'}; "
-                         "changing them would break it (--force to override, then recheck)")
-    db.update(con, row["addr"], flags=flags)
-    print(f"{fn_name(row)}: flags = {flags or config.DEFAULT_FLAGS + ' (default)'}")
-
-
-def cmd_src(args):
-    con = db.connect()
-    row = db.resolve(con, args.fn)
-    module = Path(args.path).name if Path(args.path).parent.name == 'mods' else None
-    db.update(con, row["addr"], src=args.path, module=module)
-    print(f"{fn_name(row)}: src = {args.path}" + (f", module {module}" if module else ""))
+    flags = " ".join(args.flags)
+    matched = [r for r in mod.members(con, f.rel) if r["status"] == "matched"]
+    if matched and flags != f.flags and not args.force:
+        raise SystemExit(f"{f.path.name} has {len(matched)} matched functions built with {f.flags}; "
+                         "changing them may break them (--force, then ./sr check " + f.path.name + ")")
+    plan = mod.plan()
+    unit = next(u for u in plan["units"] if u["sources"] == [f.rel])
+    unit["flags"] = flags
+    mod.write_plan(plan)
+    print(f"{f.path.name}: flags = {flags}")
 
 
 def cmd_global(args):
@@ -524,8 +479,7 @@ def cmd_global(args):
         raise SystemExit(f"{args.name} is already DS:{clash['off']:04x}")
     old = con.execute("SELECT name FROM globals WHERE off = ?", (off,)).fetchone()
     if old and old["name"] != args.name:
-        users = [p.name for p in sorted(config.ROOT.glob("src/funcs/*.[CcAa]*"))
-                 if re.search(rf"\b_?{old['name']}\b", p.read_text(errors="replace"))]
+        users = [p.name for p in _sources() if re.search(rf"\b_?{old['name']}\b", p.read_text(errors="replace"))]
         if users:
             raise SystemExit(f"DS:{off:04x} is {old['name']}, used by {', '.join(users)}; renaming would "
                              f"break them. Use the existing name, or rename it in those files too")
@@ -664,15 +618,15 @@ def cmd_status(args):
         parts.append(f"{label} {len(done)}/{len(sel)} ({pct_n:.1f}% by count, {pct_b:.1f}% by bytes)")
     summary = "Game functions matched: " + "; ".join(parts)
     lines += ["", summary, ""]
+    flags = {f.rel: f.flags for f in mod.files()}
     for title, st in (("Matched", "matched"), ("In progress", "wip"), ("Partial", "partial"), ("Blocked", "blocked")):
         sel = [r for r in rows if r["status"] == st]
         if not sel:
             continue
         lines += [f"## {title}", "", "| addr | name | size | src | flags | notes |", "|---|---|---|---|---|---|"]
         for r in sel:
-            flags = r["flags"] or ""
-            near = f" ({r['nearcalls']} near calls unverified)" if r["nearcalls"] else ""
-            lines.append(f"| `{hexa(r['addr'])}` | `{fn_name(r)}` | {r['size']} | `{r['src'] or ''}` | {flags} | "
+            near = f" ({r['nearcalls']} near calls to other objects)" if r["nearcalls"] else ""
+            lines.append(f"| `{hexa(r['addr'])}` | `{fn_name(r)}` | {r['size']} | `{r['src'] or ''}` | {flags.get(r['src'], '')} | "
                          f"{(r['notes'] or '') + near} |")
         lines.append("")
     config.PROGRESS.parent.mkdir(exist_ok=True)
@@ -681,179 +635,52 @@ def cmd_status(args):
     print(f"wrote {config.PROGRESS.relative_to(config.ROOT)}")
 
 
-# ---------------------------------------------------------------- modules
+# ---------------------------------------------------------------- source files
 
 
-def _module_gates(con, im, jobs, rows, results, flags_override=None):
-    """Run the whole-span gate once per module object built in this check."""
-    gates = {}
-    for r in rows:
-        name = r["module"]
-        if not name or name in gates:
+def _file_gates(con, im, jobs, results):
+    """Run the whole-span gate once per compiled file, over all its functions."""
+    for job in jobs.values():
+        if job.obj is None or (job.cod is None and not job.asm):
             continue
-        job = jobs.get(_job_key(r, flags_override))
-        if job is None or job.obj is None or (job.cod is None and not job.asm):
-            continue
+        f = job.file
         obj = Obj(job.obj)
-        ms = mod.members(con, name)
-        procs = ([cod.from_publics(obj, fn_name(m)) for m in ms] if job.asm else cod.parse(job.cod))
+        ms = [m for m in mod.members(con, f.rel) if m["status"] == "matched"
+              or results.get(m["addr"])]
+        if not ms:
+            continue
+        lengths = cod.asm_lengths(job.lst) if job.asm else None
+        procs = ([cod.from_publics(obj, fn_name(m), lengths) for m in ms] if job.asm else cod.parse(job.cod))
         if not job.asm:
             obj.statics = cod.statics(job.cod)
         g = mod.gate(obj, [p for p in procs if p is not None], im.img, ms, con=con)
-        gates[name] = g
-        print(g.line(name))
-        for m in mod.members(con, name):
+        print(g.line(f.path.name))
+        lo, hi = ms[0]["addr"], ms[-1]["addr"] + ms[-1]["size"]
+        for m in ms:
             res = results.get(m["addr"])
             if res:
                 res[0].module = g
-                if g.ok and not g.nearcalls:
-                    res[0].nearcalls = 0  # every near call in the span was resolved and verified
-    return gates
-
-
-def _stb_lines(p):
-    if not p.exists():
-        return []
-    # Keep a multiline placeholder definition together when removing member stubs.
-    text = p.read_text(errors="replace")
-    return [m.group(0).strip() for m in re.finditer(
-        r"static\b[^{}]*\{[^{}]*\}|[^\n]+", text) if m.group(0).strip()]
-
-
-def _placeholder_for(text, row):
-    """A near member's definition head from the module text, as an .STB placeholder."""
-    m = re.search(rf"^(static [^;{{]*\bnear\s+{fn_name(row)}\s*\([^)]*\))\s*$", text, re.M)
-    if not m:
-        return None
-    head = m.group(1)
-    return head + (" { }" if re.match(r"static\s+void\b", head) else " { return 0; }")
-
-
-def _module_write(con, name, rows, texts, stubs):
-    names = {fn_name(r) for r in rows}
-    stub = []
-    for ln in stubs:
-        ref = re.match(r"^@(\w+)\s*$", ln) or re.search(r"\b(\w+)\s*\(", ln)
-        if ref and ref.group(1) in names or ln in stub:
-            continue
-        stub.append(ln)
-    mod.MODS.mkdir(exist_ok=True)
-    mod.path(name).write_text(mod.merge_asm(texts, rows) if name.endswith(".ASM") else mod.merge(texts))
-    st = mod.path(name).with_suffix(".STB")
-    if stub:
-        st.write_text("\n".join(stub) + "\n")
-    elif st.exists():
-        st.unlink()
-
-
-def _snapshot(paths):
-    return {p: (p.read_bytes() if p.exists() else None) for p in paths}
-
-
-def _restore(snap):
-    for p, data in snap.items():
-        if data is None:
-            p.unlink(missing_ok=True)
-        else:
-            p.write_bytes(data)
-
-
-def _module_verify(con, name):
-    """Rebuild every member from the module file; True when all match and the span does."""
-    rows = mod.members(con, name)
-    results = _check_rows(con, rows)
-    ok = all(results.get(r["addr"]) and results[r["addr"]][0].verdict.startswith("MATCH") for r in rows)
-    if ok:
-        for r in rows:
-            _record(con, r, results[r["addr"]][0])
-    return ok
+                if g.ok:
+                    # the gate resolved every near call inside the file; what is left
+                    # goes to another object (the layout build checks those encodings)
+                    res[0].nearcalls = sum(not lo <= t < hi for t in res[0].near_targets)
 
 
 def cmd_module(args):
+    """Candidate same-file spans from near-call evidence (how LAYOUT.JSON's units were found)."""
     con = db.connect()
     im = image()
-    if args.op == "list":
-        for (name,) in con.execute("SELECT DISTINCT module FROM functions WHERE module IS NOT NULL ORDER BY module"):
-            ms = mod.members(con, name)
-            print(f"{name:<12} {len(ms):3} functions  {hexa(ms[0]['addr'])}-{hexa(ms[-1]['addr'] + ms[-1]['size'])}"
-                  f"  {sum(m['size'] for m in ms)} bytes  [{ms[0]['flags'] or config.DEFAULT_FLAGS}]")
-        return
-    if args.op == "units":
-        for lo, hi in mod.units(con, im):
-            fs = con.execute("SELECT * FROM functions WHERE addr >= ? AND addr < ? ORDER BY addr", (lo, hi)).fetchall()
-            flags = sorted({f["flags"] or config.DEFAULT_FLAGS for f in fs if f["kind"] == "c"})
-            done = sum(f["status"] == "matched" for f in fs)
-            mods = sorted({f["module"] for f in fs if f["module"]})
-            print(f"{hexa(lo)}-{hexa(hi)}  {len(fs):3} functions, {done} matched"
-                  + (f", modules {', '.join(mods)}" if mods else "") + f"  flags: {' | '.join(flags)}")
-            if args.verbose:
-                for f in fs:
-                    print(f"    {hexa(f['addr'])} {fn_name(f):<10} {f['status']:<8} {f['module'] or ''}")
-        return
-    if args.op == "show":
-        ms = mod.members(con, args.name)
-        if not ms:
-            raise SystemExit(f"no module {args.name}")
-        for m in ms:
-            print(f"{hexa(m['addr'])} {fn_name(m):<10} {m['size']:5} {m['status']}")
-        _module_verify(con, args.name)
-        return
-    name = args.name.upper()
-    if args.op in ("create", "add"):
-        old = mod.members(con, name)
-        if args.op == "create" and old:
-            raise SystemExit(f"{name} exists; use `module add`")
-        if args.op == "add" and not old:
-            raise SystemExit(f"no module {name}; use `module create`")
-        new = [db.resolve(con, f) for f in args.fns]
-        rows = mod.validate(con, list(old) + new, name)
-        texts = ((mod.split_asm if name.endswith(".ASM") else mod.split)(mod.path(name).read_text(), old) if old else {})
-        stubs = _stb_lines(mod.path(name).with_suffix(".STB"))
-        singles = []
-        for r in new:
-            p = src_path(r)
-            if p.parent != config.FUNCS:
-                raise SystemExit(f"{fn_name(r)}'s source is {p}, not a singleton in src/funcs")
-            texts[r["addr"]] = p.read_text()
-            stubs += _stb_lines(p.with_suffix(".STB"))
-            singles += [p, p.with_suffix(".STB")]
-        snap = _snapshot([mod.path(name), mod.path(name).with_suffix(".STB"), *singles])
-        before = {r["addr"]: (r["src"], r["module"], r["flags"]) for r in rows}
-        flags = args.flags or mod.unit_flags(rows)
-        _module_write(con, name, rows, [texts[r["addr"]] for r in rows], stubs)
-        mod.set_members(con, name, rows)
-        for r in rows:
-            db.update(con, r["addr"], flags=None if flags == config.DEFAULT_FLAGS else flags)
-        for p in singles:
-            p.unlink(missing_ok=True)
-        if not _module_verify(con, name):
-            _restore(snap)
-            for a, (s, m, f) in before.items():
-                db.update(con, a, src=s, module=m, flags=f)
-            raise SystemExit(f"{name}: did not verify as a module; restored the previous sources")
-        print(f"{name}: {len(rows)} functions, verified with {flags}")
-        return
-    if args.op == "dissolve":
-        rows = mod.members(con, name)
-        if not rows:
-            raise SystemExit(f"no module {name}")
-        text = mod.path(name).read_text()
-        parts = (mod.split_asm if name.endswith(".ASM") else mod.split)(text, rows)
-        stubs = _stb_lines(mod.path(name).with_suffix(".STB"))
-        for r in rows:
-            body = parts[r["addr"]]
-            st = list(stubs)
-            for o in ([] if name.endswith(".ASM") else rows):
-                if o["addr"] != r["addr"] and re.search(rf"\b{fn_name(o)}\s*\(", body):
-                    st.append(f"@{fn_name(o)}" if o["far"] else _placeholder_for(text, o))
-            p = config.FUNCS / f"F_{r['addr']:05X}{mod.path(name).suffix}"
-            p.write_text(body)
-            if any(st):
-                p.with_suffix(".STB").write_text("\n".join(s for s in st if s) + "\n")
-            db.update(con, r["addr"], src=str(p.relative_to(config.ROOT)), module=None)
-        mod.path(name).unlink()
-        mod.path(name).with_suffix(".STB").unlink(missing_ok=True)
-        print(f"{name}: dissolved into {len(rows)} singletons; run ./sr check on them")
+    srcs = {f.rel: f for f in mod.files()}
+    for lo, hi in mod.units(con, im):
+        fs = con.execute("SELECT * FROM functions WHERE addr >= ? AND addr < ? ORDER BY addr", (lo, hi)).fetchall()
+        done = sum(f["status"] == "matched" for f in fs)
+        files = sorted({f["src"] for f in fs if f["src"]})
+        flags = sorted({srcs[s].flags for s in files if s in srcs})
+        print(f"{hexa(lo)}-{hexa(hi)}  {len(fs):3} functions, {done} matched"
+              + (f", files {', '.join(Path(s).name for s in files)}" if files else "") + f"  flags: {' | '.join(flags)}")
+        if args.verbose:
+            for f in fs:
+                print(f"    {hexa(f['addr'])} {fn_name(f):<10} {f['status']:<8} {f['src'] or ''}")
 
 
 def cmd_dgroup(args):
@@ -979,15 +806,10 @@ def main():
     s.add_argument("--near", help="sort by distance to this function (same module, likely same flags)")
     s.set_defaults(func=cmd_next)
 
-    s = sub.add_parser("new", help="create src/funcs/F_xxxxx.C (or .ASM) for a function and mark it wip")
-    s.add_argument("fn")
-    s.add_argument("--asm", action="store_true", help="hand-written function: create a MASM 5.1 .ASM")
-    s.set_defaults(func=cmd_new)
-
-    s = sub.add_parser("check", help="compile and byte-compare; records the result in the DB")
-    s.add_argument("fn", nargs="?")
-    s.add_argument("--all", action="store_true", help="re-check every matched function (regression gate)")
-    s.add_argument("--flags", help="try these CL flags without recording the result")
+    s = sub.add_parser("check", help="compile the function's whole source file, byte-compare; records the result")
+    s.add_argument("fn", nargs="?", help="address, name, or a source file (M_0914C.C: all its functions)")
+    s.add_argument("--all", action="store_true", help="compile every file once, check every matched function (regression gate)")
+    s.add_argument("--flags", help="try these CL/MASM flags for the file without recording the result")
     s.set_defaults(func=cmd_check)
 
     s = sub.add_parser("diff", help="two-column instruction diff, ours vs original")
@@ -996,7 +818,7 @@ def main():
     s.add_argument("--flags")
     s.set_defaults(func=cmd_diff)
 
-    s = sub.add_parser("sweep", help="try many /O flag combinations in one DOSBox boot")
+    s = sub.add_parser("sweep", help="compile the function's file with 46 /O flag combinations, score the function")
     s.add_argument("fn")
     s.add_argument("--base", help="flags kept in every combo (default: /AM /FPi)")
     s.add_argument("--top", type=int, default=10)
@@ -1026,25 +848,16 @@ def main():
     s.add_argument("--replace", action="store_true")
     s.set_defaults(func=cmd_note)
 
-    s = sub.add_parser("flags", help="set per-function CL flags (no flags + --reset = default)")
-    s.add_argument("fn")
+    s = sub.add_parser("flags", help="a source file's CL/MASM flags (no flags: print them)")
+    s.add_argument("fn", help="a source file (M_0914C.C) or a function in it")
     s.add_argument("flags", nargs="*")
-    s.add_argument("--reset", action="store_true")
-    s.add_argument("--force", action="store_true", help="allow changing a matched function's flags")
+    s.add_argument("--force", action="store_true", help="allow changing the flags of a file with matched functions")
     s.set_defaults(func=cmd_flags)
 
-    s = sub.add_parser("module", help="group matched functions into one source file, gated as a whole")
-    s.add_argument("op", choices=["list", "units", "show", "create", "add", "dissolve"])
-    s.add_argument("name", nargs="?", help="DOS 8.3 file name, e.g. GARAGE.C")
-    s.add_argument("fns", nargs="*", help="functions to put in it (create/add)")
+    s = sub.add_parser("module", help="candidate same-file spans from near-call evidence")
+    s.add_argument("op", choices=["units"])
     s.add_argument("-v", "--verbose", action="store_true")
-    s.add_argument("--flags", help="CL flags for the whole file (default: the union of the members' /O letters)")
     s.set_defaults(func=cmd_module)
-
-    s = sub.add_parser("src", help="point a function at a different source file (e.g. a module)")
-    s.add_argument("fn")
-    s.add_argument("path", help="relative to the project root")
-    s.set_defaults(func=cmd_src)
 
     s = sub.add_parser("global", help="name/declare a DGROUP global (no args: list them)")
     s.add_argument("off", nargs="?", help="hex DGROUP offset, or SEG:OFF for far data")

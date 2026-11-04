@@ -82,8 +82,22 @@ def find(procs, name):
     return None
 
 
-def from_publics(obj, name):
-    """A Proc for an assembled function: from its PUBLIC to the next PUBLIC or the end."""
+def asm_lengths(path):
+    """{PROC name: length} from the symbol table of a MASM 5.1 listing."""
+    out = {}
+    if path is None:
+        return out
+    for line in path.read_text(errors="replace").splitlines():
+        m = re.match(r"^(\S+) [ .]*\s+[FN] PROC\s+[0-9A-F]{4}\s.*Length = ([0-9A-F]{4})", line)
+        if m:
+            out[m.group(1)] = int(m.group(2), 16)
+    return out
+
+
+def from_publics(obj, name, lengths=None):
+    """A Proc for an assembled function: from its PUBLIC over its PROC length (the listing),
+    else to the next PUBLIC or the end. Data between two PROCs (a flag byte in the code
+    segment) belongs to neither; the file's gate compares it."""
     for sym in (name, "_" + name):
         if sym in obj.publics:
             start = obj.publics[sym]
@@ -91,5 +105,7 @@ def from_publics(obj, name):
             p = Proc(sym, "?")
             p.start = start
             p.end = later[0] if later else len(obj.code)
+            if lengths and sym in lengths:
+                p.end = start + lengths[sym]
             return p
     return None

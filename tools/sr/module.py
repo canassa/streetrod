@@ -1,35 +1,78 @@
-"""Contiguous C or MASM compilation groups under src/mods/.
+"""The game's source files: one per original object (a link unit in src/link/LAYOUT.JSON).
 
-Members first match individually. The module gate verifies their positions, intervening
-bytes, internal near-call displacements and code-segment fixups. External relocations
-remain reference-checked; external near calls are counted as outstanding layout work.
-Groups may be parts of original files, whose historical boundaries are not established.
+Each file has one command line: the unit's recorded `flags`, plus `/NT S<region>_TEXT`
+for C (an assembler file names its code segment in its `.CODE` directive). `./sr check`
+and `./sr build --layout` compile the file as it is in git with that line. The module gate
+compares the file's whole span with the image: bytes between functions, internal near-call
+displacements, internal calls and code-segment offsets. References to other objects and
+DGROUP stay relocation-masked and are checked by `refs`.
 """
 
-import re
+import json
 
-from . import config, db
+from . import config
 from .disasm import branch_target, linear
 
 MODS = config.SRC / "mods"
-_NAME = re.compile(r"^[A-Z0-9_]{1,8}\.(C|ASM)$")
-_HEAD = re.compile(r"^/\* (\w+) @ [0-9A-Fa-f]{4}:[0-9A-Fa-f]{4} \(linear 0x([0-9A-Fa-f]{5})", re.M)
-_HOIST = re.compile(r"^(#include .*|static [^;{]*\bnear\b[^;{]*\([^;{]*\);)\s*$")
-# a file-local uninitialized variable: every member source that uses it repeats the definition,
-# the merged file has it once at the top (its position only breaks _BSS hash ties)
-_STATIC = re.compile(r"^static [^;{}=()]*;(\s*/\*.*\*/)?\s*$")
+PLAN = config.SRC / "link" / "LAYOUT.JSON"
 
 
 def fname(row):
     return row["name"] or f"F_{row['addr']:05X}"
 
 
-def members(con, name):
-    return con.execute("SELECT * FROM functions WHERE module = ? ORDER BY addr", (name,)).fetchall()
+class File:
+    """A code unit of LAYOUT.JSON: one source file, one object."""
+
+    def __init__(self, unit, code_starts):
+        self.unit = unit
+        self.rel = unit["sources"][0]
+        self.path = config.ROOT / self.rel
+        self.kind = unit["kind"]
+        self.start, self.end = unit["start"], unit["end"]
+        self.flags = unit["flags"]
+        self.segment = f"S{max(s for s in code_starts if s <= self.start) // 16:04X}_TEXT"
+
+    @property
+    def command(self):
+        """The CL or MASM options this file is built with (the MAKEFILE line)."""
+        return self.with_flags(self.flags)
+
+    def with_flags(self, flags):
+        return f"{flags} /NT{self.segment}" if self.kind == "c" else flags
 
 
-def path(name):
-    return MODS / name
+def plan():
+    return json.loads(PLAN.read_text())
+
+
+def write_plan(p):
+    PLAN.write_text(json.dumps(p, indent=2) + "\n")
+
+
+def files(p=None):
+    p = p or plan()
+    return [File(u, p["code_starts"]) for u in p["units"]]
+
+
+def file_of(row, fs=None):
+    """The source file that defines a function (its DB `src`)."""
+    for f in fs or files():
+        if f.rel == row["src"]:
+            return f
+    raise SystemExit(f"{fname(row)}: src {row['src']!r} is not a source file of src/link/LAYOUT.JSON")
+
+
+def find_file(name, fs=None):
+    """A source file by its name (M_0914C.C) or path, or None."""
+    for f in fs or files():
+        if name.upper() in (f.rel.upper(), f.path.name.upper()):
+            return f
+    return None
+
+
+def members(con, src):
+    return con.execute("SELECT * FROM functions WHERE src = ? ORDER BY addr", (src,)).fetchall()
 
 
 # ---------------------------------------------------------------- evidence
@@ -75,102 +118,6 @@ def units(con, im):
         else:
             out.append([lo, hi])
     return out
-
-
-# ---------------------------------------------------------------- source merge/split
-
-
-def merge(texts):
-    """Concatenate member sources in address order. `#include`s and static near forward
-    declarations move to the top once; everything else stays with its function."""
-    top, seen, bodies = [], set(), []
-    for t in texts:
-        keep = []
-        for ln in t.splitlines():
-            if _HOIST.match(ln) or _STATIC.match(ln):
-                if ln.strip() not in seen:
-                    seen.add(ln.strip())
-                    top.append(ln.rstrip())
-                continue
-            keep.append(ln.rstrip())
-        bodies.append("\n".join(keep).strip("\n"))
-    inc = [ln for ln in top if ln.startswith("#include")]
-    fwd = [ln for ln in top if not ln.startswith("#include")]
-    head = "\n".join(inc) + ("\n\n" + "\n".join(fwd) if fwd else "")
-    return head + "\n\n" + "\n\n".join(bodies) + "\n"
-
-
-def split(text, rows):
-    """Module text -> {addr: singleton text}. A member's chunk runs from the line after the
-    previous member's closing brace to its own closing brace, so comments, pragmas and
-    file-scope declarations just above a function stay with it."""
-    lines = text.splitlines()
-    inc = [ln for ln in lines if _HOIST.match(ln)]
-    out, start = {}, 0
-    for r in sorted(rows, key=lambda r: r["addr"]):
-        name = fname(r)
-        d = next((i for i in range(start, len(lines)) if not lines[i][:1].isspace()
-                  and re.search(rf"\b{name}\s*\(", lines[i]) and not lines[i].rstrip().endswith(";")), None)
-        if d is None:
-            raise SystemExit(f"{name}: no definition found in the module text")
-        e = next(i for i in range(d, len(lines)) if lines[i].startswith("}"))
-        body = [ln for ln in lines[start : e + 1] if not _HOIST.match(ln)]
-        out[r["addr"]] = "\n".join(inc) + "\n\n" + "\n".join(body).strip("\n") + "\n"
-        start = e + 1
-    return out
-
-
-# ---------------------------------------------------------------- validation
-
-
-def validate(con, rows, name):
-    """Fail closed on anything that can't be one contiguous run of one source file."""
-    if not _NAME.match(name):
-        raise SystemExit(f"{name!r}: a module is named by its DOS 8.3 file name, e.g. GARAGE.C")
-    rows = sorted(rows, key=lambda r: r["addr"])
-    for r in rows:
-        kind = "asm" if name.endswith(".ASM") else "c"
-        if r["kind"] != kind:
-            raise SystemExit(f"{fname(r)} is kind {r['kind']}; {name} holds {kind} functions")
-        if r["status"] != "matched" or r["mismatches"]:
-            raise SystemExit(f"{fname(r)} is {r['status']}: only byte-matched functions join a module")
-        if r["module"] and r["module"] != name:
-            raise SystemExit(f"{fname(r)} is already in {r['module']}")
-    for a, b in zip(rows, rows[1:]):
-        between = con.execute("SELECT * FROM functions WHERE addr > ? AND addr < ?",
-                              (a["addr"], b["addr"])).fetchall()
-        # A retired scanner false positive wholly inside the previous member is
-        # not an intervening function. Keep its history in the DB, but require the
-        # real member to cover its complete extent before excluding it here.
-        between = [r for r in between if not (r["status"] == "skip"
-                   and a["addr"] <= r["addr"]
-                   and r["addr"] + r["size"] <= a["addr"] + a["size"])]
-        if between:
-            raise SystemExit(f"{', '.join(fname(x) for x in between)} sit between {fname(a)} and {fname(b)}: "
-                             "a module is a contiguous run")
-        gap = b["addr"] - (a["addr"] + a["size"])
-        if gap > 1:
-            raise SystemExit(f"{gap} bytes between {fname(a)} and {fname(b)} belong to no known function "
-                             f"(0x{a['addr'] + a['size']:05x}): find out what they are first")
-    return rows
-
-
-def unit_flags(rows):
-    """One CL line for the whole file: the union of the members' /O letters. A member
-    matched with fewer letters only had no code those letters change (no loop for l, no
-    intrinsic call for i); the module build re-verifies that."""
-    if all(r["kind"] == "asm" for r in rows):
-        flags = {r["flags"] or config.DEFAULT_ASM_FLAGS for r in rows}
-        if len(flags) != 1:
-            raise SystemExit("assembly module members must use the same MASM flags")
-        return flags.pop()
-    letters = set()
-    for r in rows:
-        m = re.search(r"/O(\w+)", r["flags"] or config.DEFAULT_FLAGS)
-        letters.update(m.group(1) if m else "")
-    order = "alsitdx"
-    o = "".join(c for c in order if c in letters) + "".join(sorted(letters - set(order)))
-    return f"/AM {'/O' + o + ' ' if o else ''}/Gs /FPi"
 
 
 # ---------------------------------------------------------------- the module gate
@@ -262,7 +209,7 @@ def gate(obj, procs, img, rows, con=None):
                 g.problems.append(f"code-segment fixup at 0x{base + f.pos:05x}: ours {want:#06x}, original {have:#06x}")
         else:
             g.masked += f.size
-            # An EXTDEF may name a prepended placeholder. Its raw displacement
+            # An EXTDEF near call to a function of another object. Its raw displacement
             # is zero, which looks like an in-span call until the linker fills it.
             if f.self_rel and f.pos > 0 and obj.code[f.pos - 1] == 0xE8:
                 g.nearcalls += 1
@@ -271,7 +218,7 @@ def gate(obj, procs, img, rows, con=None):
         t = branch_target(ins)
         if (ins.bytes[0] == 0xE8 and ins.size == 3 and ins.addr + 1 not in skip
                 and t is not None and not off0 + lo <= t < off0 + hi):
-            g.nearcalls += 1                 # an .STB placeholder: the callee isn't in the module yet
+            g.nearcalls += 1                 # a near call resolved to a callee outside the file
             skip.update((ins.addr + 1, ins.addr + 2))
     for i in range(lo, min(hi, lo + g.size_exe)):
         if i not in skip and obj.code[i] != img[base + i]:
@@ -282,68 +229,9 @@ def gate(obj, procs, img, rows, con=None):
         problems, g.data = check(obj, con, image(), base)
         dseg = obj.segments.index('_DATA') + 1 if '_DATA' in obj.segments else None
         owns = dseg is not None and any(s == dseg for s, _ in obj.all_publics.values())
-        if owns and g.data is not None and g.data[0] % 2:
-            # an odd original base: this file is the middle of a larger translation unit
-            # (every object's _DATA starts word-aligned); the layout build checks the whole unit
-            g.notes.extend(['odd base, verified by the layout build only: ' + p for p in problems])
-        elif owns:
+        if owns:
             g.problems.extend(problems)
         else:
-            # a module that does not define its data yet: its literal pool may legitimately differ
+            # a file that defines no data: only its literal pool, reported, not gated
             g.notes.extend(problems)
     return g
-
-
-def set_members(con, name, rows):
-    rel = str(path(name).relative_to(config.ROOT))
-    for r in rows:
-        db.update(con, r["addr"], module=name, src=rel)
-
-
-def merge_asm(texts, rows):
-    """Combine MASM sources; local label names are scoped by original function address.
-
-    Each member keeps its DATA/CODE directives. Calls to members use their real PUBLIC
-    definitions, not EXTRNs. No bytes, instruction encodings or alignment are inserted.
-    """
-    publics = set()
-    for text in texts:
-        publics.update(re.findall(r"^\s*PUBLIC\s+(\w+)", text, re.M | re.I))
-    chunks = []
-    for text, row in zip(texts, rows):
-        labels = set(re.findall(r"^\s*(\w+):", text, re.M)) - publics
-        for label in sorted(labels, key=len, reverse=True):
-            if label.startswith(f"L{row['addr']:05X}_"):
-                continue
-            text = re.sub(rf"\b{re.escape(label)}\b", f"L{row['addr']:05X}_{label}", text)
-        lines = []
-        for line in text.splitlines():
-            if re.match(r"^\s*(?:\.MODEL\b|END\s*(?:;.*)?$)", line, re.I):
-                continue
-            ext = re.match(r"^\s*EXTRN\s+(\w+):", line, re.I)
-            if ext and ext.group(1) in publics:
-                continue
-            lines.append(line)
-        chunks.append(f"; sr-member 0x{row['addr']:05X}\n" + "\n".join(lines).strip())
-    model = next((m.group(0).strip() for m in [re.search(r"(?im)^\s*\.MODEL\s+\w+.*$", texts[0])] if m),
-                 ".MODEL MEDIUM")
-    return f"        {model}\n\n" + "\n\n".join(chunks) + "\n        END\n"
-
-
-def split_asm(text, rows):
-    parts = re.split(r"(?m)^; sr-member 0x([0-9A-Fa-f]+)\s*$", text)
-    chunks = {int(parts[i], 16): parts[i + 1] for i in range(1, len(parts), 2)}
-    out = {}
-    for row in rows:
-        body = re.sub(r"(?im)^\s*END\s*$", "", chunks[row["addr"]])
-        declarations = []
-        for other in rows:
-            if other["addr"] != row["addr"]:
-                # MASM members may export either spelling (or both aliases).
-                symbols = re.findall(r"^\s*PUBLIC\s+(\w+)", chunks[other["addr"]], re.M | re.I)
-                for sym in symbols:
-                    if re.search(rf"\b{re.escape(sym)}\b", body):
-                        declarations.append(f"        EXTRN {sym}:{'FAR' if other['far'] else 'NEAR'}")
-        out[row["addr"]] = ("        .MODEL MEDIUM\n        .CODE\n" +
-                            "\n".join(declarations) + "\n" + body.strip() + "\n        END\n")
-    return out

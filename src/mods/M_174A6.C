@@ -24,6 +24,10 @@
 #include "M_25954.H"
 
 static struct Rect g_6cbc;                 /* DS:6CBC */
+static void near F_174A6(char far *src, char far *dst, char far *mask, int w, int h, int n, int step);
+static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, int h, char far *mask, char c);
+static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color);
+static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstbm, int id1, int id2);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Bitmap am6e68x[12];
@@ -33,13 +37,7 @@ struct Band dz7ec2[4];
 struct Bitmap bw7fa8;
 int l_8262;
 
-static void near F_174A6(char far *src, char far *dst, char far *mask, int w, int h, int n, int step);
-static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, int h, char far *mask, char c);
-static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color);
-static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstbm, int id1, int id2);
-
 /* F_174A6: blit one 4-plane EGA image row set, one plane at a time via the sequencer map mask */
-
 
 #pragma intrinsic(outp)
 
@@ -76,9 +74,7 @@ static void near F_174A6(char far *src, char far *dst, char far *mask, int w, in
 /* F_1751A: for each of n bitmaps, lay a band of h rows into the scratch bitmap bp7316[2], fill or copy it, then blit the bitmap through the EGA planes */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-
 #pragma intrinsic(outp)
-
 
 static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, int h,
     char far *mask, char c)
@@ -111,7 +107,6 @@ static void near F_1751A(struct Band *A, struct Bitmap far **B, int n, int y2, i
 
 /* F_176B6: copy n bitmaps into the table am6e68x, each filled with a colour pattern and h rows high, in space cut from the scratch bitmap bp7316[2] */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
-
 
 static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color)
 {
@@ -147,7 +142,6 @@ static void near F_176B6(struct Bitmap far **B, int n, int y2, int h, int color)
 }
 
 /* F_1783E: make a copy of a bitmap header that views the rows below y0, plus a bitmap to hold them (*pa), a second one (*pb), and two clip rects */
-
 
 void F_1783E(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bitmap far **pb,
     int y1, int y0, struct Rect **pr1, struct Rect **pr2)
@@ -216,7 +210,6 @@ void F_1783E(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bi
 /* F_17AAE: render a 16x70 strip into a scratch bitmap with two draw passes and blit it onto two bitmaps */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
 
-
 static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstbm, int id1, int id2)
 {
     char far *save1;
@@ -249,7 +242,6 @@ static void near F_17AAE(int x, int y, int sx0, int top, struct Bitmap far *dstb
 }
 
 /* F_17BE6: load the bitmap of car part idx into out[0], paint its marks, and build the n frame copies out[1..] */
-
 
 void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *ids, int w, int n)
 {
@@ -380,8 +372,6 @@ void F_17BE6(struct Bitmap far **out, int idx, int flags, int kk, int q, int *id
 
 /* F_181C8: draw a pop-up picture (car part, kind 1..8) with its frame sprite, saving and restoring the screen behind it */
 /* Local names are placeholders chosen to reproduce the original stack layout. */
-
-
 
 void F_181C8(int kind, int idx, int flags, int kk, int q, int bot, int mode2, int *ids)
 {
@@ -573,4 +563,37 @@ done:
     F_193FE();
     g_5a24 = 0;
     F_120FE(-2);
+}
+
+/* F_18ADB: blit a clipped band of a bitmap through the blit hook, then the seven frame cells onto the front buffer */
+
+void F_18ADB(struct Bitmap far *dst, int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8)
+{
+    int base7, hi1, lo7, i9;
+    struct Blt r;
+    int top;
+
+    base7 = p7 - 0x45;
+    top = g_5a0a->height + base7 - 1;
+    lo7 = p6 < base7 ? base7 : p6;
+    hi1 = p6 + p4 - 1 > top ? top : p6 + p4 - 1;
+    if (lo7 <= hi1) {
+        r.w = p3;
+        r.h = hi1 - lo7 + 1;
+        r.sx = p1;
+        r.sy = p2 + lo7 - p6;
+        r.dx = p5;
+        r.dy = lo7 - base7;
+        (*b_78a2)(dst, g_5a0a, &r, 1);
+    }
+    if (g_0284 == 6) {
+        r.h = g_5a0a->height;
+        r.sy = p7 - 0x45;
+        r.dy = 0;
+        for (i9 = 0; i9 < 7; i9++) {
+            r.w = g_5338[i9].w;
+            r.sx = r.dx = g_5338[i9].x;
+            (*b_78a2)(r_vid.front, g_5a0a, &r, 1);
+        }
+    }
 }

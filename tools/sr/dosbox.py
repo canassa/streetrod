@@ -13,7 +13,7 @@ import os
 import shutil
 import subprocess
 
-from . import config, emu2, stb
+from . import config, emu2
 
 _SET = ("quit warning=false", "core=dynamic_x86", "cycles=max", "pcspeaker=false",
         "mpu401=none", "serial1=disabled", "serial2=disabled", "parallel1=disabled")
@@ -36,6 +36,10 @@ class Job:
     @property
     def cod(self):
         return self._find(".COD")
+
+    @property
+    def lst(self):
+        return self._find(".LST")
 
     @property
     def log(self):
@@ -75,12 +79,8 @@ def compile_all(jobs, name="build", emu=None):
             shutil.copy2(job.src, job.dir / f"{job.stem}.ASM")
             lines.append(f"masm {job.flags} {job.stem}.ASM,{job.stem}.OBJ,{job.stem}.LST; > CC.LOG")
         else:
-            # A sidecar F_xxxxx.STB holds placeholder definitions of same-module callees, so
-            # a one-function build emits `push cs; call near` for them. It is prepended at
-            # build time and never part of the reconstructed source.
-            stub = job.src.with_suffix(".STB")
-            text = (stb.expand(stub.read_text()) + "\n" if stub.exists() else "") + job.src.read_text()
-            (job.dir / f"{job.stem}.C").write_text(text)
+            # the source exactly as it is in git
+            shutil.copy2(job.src, job.dir / f"{job.stem}.C")
             # /W3 only adds diagnostics (C4071: call without a prototype); codegen is unaffected.
             lines.append(f"cl /c /W3 {job.flags} /Fc{job.stem}.COD {job.stem}.C > CC.LOG")
     if emu == "emu2":

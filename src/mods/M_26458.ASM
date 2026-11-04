@@ -1,6 +1,5 @@
         .MODEL MEDIUM
 
-; sr-member 0x26458
 ; F_26458 @ 2645:0008 (linear 0x26458, 21 bytes)
 ; EGA/VGA: enable set/reset on all four planes (GC index 1 = 0Fh), then
 ; program GC index 3 (data rotate / function select) from the high byte of g_5c1e.
@@ -14,7 +13,7 @@
         EXTRN   _r_vid:WORD
         EXTRN   _g_5c1e:WORD
 
-        .CODE
+        .CODE S2645_TEXT
 
         PUBLIC  _F_26458
 _F_26458  PROC    FAR
@@ -30,7 +29,6 @@ L26458_done:
         ret
 _F_26458  ENDP
 
-; sr-member 0x2646D
 ; F_2646D @ 2645:001D (linear 0x2646D, 23 bytes)
 ; Restore the graphics controller defaults: set/reset 0, enable set/reset 0,
 ; function select 0, bit mask FFh.
@@ -38,7 +36,7 @@ _F_26458  ENDP
         .DATA
         EXTRN   _r_vid:WORD
 
-        .CODE
+        .CODE S2645_TEXT
 
         PUBLIC  _F_2646D
 _F_2646D  PROC    FAR
@@ -57,7 +55,6 @@ L2646D_done:
         ret
 _F_2646D  ENDP
 
-; sr-member 0x26484
 ; F_26484 @ 2645:0034 (linear 0x26484, 179 bytes)
 ; F_26484(x1, x2, y, colour): EGA horizontal line from x1 to x2 on row y,
 ; clipped to the clip rectangle.  Set/reset colour in GC index 0, bit mask
@@ -65,7 +62,7 @@ _F_2646D  ENDP
 
         .DATA
 
-        .CODE
+        .CODE S2645_TEXT
 
         PUBLIC  _F_26484
 _F_26484  PROC    FAR
@@ -164,7 +161,6 @@ L26484_done:
         ret
 _F_26484  ENDP
 
-; sr-member 0x26537
 ; F_26537 @ 2645:00E7 (linear 0x26537, 100 bytes)
 ; F_26537(y, colour): EGA, fill the rows from y down to the bottom of the clip
 ; rectangle by copying within segment av787at with the set/reset colour (a
@@ -174,7 +170,7 @@ _F_26484  ENDP
         EXTRN   _g_5c1e:WORD
         EXTRN   _av787at:WORD
 
-        .CODE
+        .CODE S2645_TEXT
 
         PUBLIC  _F_26537
 _F_26537  PROC    FAR
@@ -233,7 +229,6 @@ L26537_done:
         ret
 _F_26537  ENDP
 
-; sr-member 0x2659B
 ; F_2659B @ 2645:014B (linear 0x2659B, 31 bytes)
 ; F_2659B(ax = y, bx = x): EGA address of a pixel.  Out: bx = y * 40 + x / 8,
 ; es = av787at, cl = 7 - (x & 7), ah = 1.
@@ -241,7 +236,7 @@ _F_26537  ENDP
         .DATA
         EXTRN   _av787at:WORD
 
-        .CODE
+        .CODE S2645_TEXT
 
         PUBLIC  _F_2659B
 _F_2659B  PROC    NEAR
@@ -261,4 +256,5 @@ _F_2659B  PROC    NEAR
         mov     ah,1
         ret
 _F_2659B  ENDP
+
         END

@@ -20,6 +20,8 @@ static struct Cmd *g_cmd;                  /* DS:6C38 */
 static struct Obj *g_obj;                  /* DS:6C3A */
 static struct Box *g_box;                  /* DS:6C3C */
 static int g_6c3ea;                        /* DS:6C3E */
+static void near F_10DDF(void);
+static void near F_10E3D(int n);
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 struct Colors x_colors;
@@ -33,9 +35,6 @@ int aw8260y;
 int d_8266;
 int ap8268t;
 
-static void near F_10DDF(void);
-static void near F_10E3D(int n);
-
 struct Style g_03a0 = {{{""}, {{13, 9, 9, 15, 1}}, {{9, 13, 13, 15, 1}}, {{1, 5, 5, 1, 1}}, {{1, 5, 5, 4, 1}}, {{15, 9, 9, 15, 1}}, {{14, 15, 15, 10, 1}}}, {{1, 4, 4, 1, 1}}, {{1, 3, 3, 4, 2}}, {{15, 9, 9, 15, 1}}, {{13, 9, 9, 15, 1}}, {{11, 2, 2, 11, 1}}, {1, 4, 4, 11, 1}, {{1, 4, 4, 1, 1}}, {{1, 4, 4, 1, 1}}, {{1, 3, 3, 4, 1}}};   /* DS:03A0 */
 struct Style g_03f0 = {{{""}, {{1, 2, 2, 3, 1}}, {{2, 1, 1, 3, 1}}, {{0, 3, 3, 0, 1}}, {{0, 3, 3, 2, 1}}, {{3, 2, 2, 3, 1}}, {{2, 1, 1, 1, 1}}}, {{0, 3, 3, 0, 1}}, {{0, 3, 3, 2, 2}}, {{3, 2, 2, 3, 1}}, {{1, 2, 2, 3, 1}}, {{0, 2, 2, 0, 1}}, {0, 3, 3, 1, 1}, {{0, 3, 3, 0, 1}}, {{0, 3, 3, 0, 1}}, {{1, 2, 2, 3, 1}}};   /* DS:03F0 */
 unsigned char g_palette[16] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14};   /* DS:0440 */
@@ -46,7 +45,6 @@ int g_0472 = 0;   /* DS:0472 */
 
 /* F_10B7C @ 0F38:17FC (linear 0x10B7C, 16 bytes) */
 
-
 void F_10B7C(void)
 {
     F_112CB(12, 5);
@@ -54,14 +52,12 @@ void F_10B7C(void)
 
 /* F_10B8C @ 0F38:180C (linear 0x10B8C, 16 bytes) */
 
-
 void F_10B8C(void)
 {
     F_112CB(12, 13);
 }
 
 /* F_10B9C @ 0F38:181C (linear 0x10B9C, 16 bytes) */
-
 
 void F_10B9C(void)
 {
@@ -71,7 +67,6 @@ void F_10B9C(void)
 }
 
 /* F_10BAC @ 0F38:182C (linear 0x10BAC, 45 bytes) */
-
 
 void F_10BAC(void)
 {
@@ -86,7 +81,6 @@ void F_10BAC(void)
 }
 
 /* F_10BD9 @ 0F38:1859 (linear 0x10BD9, 403 bytes) */
-
 
 #pragma intrinsic(outp)
 
@@ -185,8 +179,6 @@ static void near F_10DDF(void)
 }
 
 /* F_10E3D @ 0F38:1ABD (linear 0x10E3D, 780 bytes): run the script of one Obj slot */
-
-
 
 static void near F_10E3D(int n)
 {
@@ -337,7 +329,6 @@ int F_11213(struct Obj *o, struct Cmd *c)
 
 /* F_112CB: set EGA palette register reg to color (BIOS int 10h function 10h), waiting for vertical retrace */
 
-
 #pragma intrinsic(inp)
 
 void F_112CB(int reg, char color)
@@ -354,5 +345,34 @@ void F_112CB(int reg, char color)
     r.h.bh = color;
     while (!(inp(0x3da) & 8))
         ;
+    int86x(0x10, &r, &r, &s);
+}
+
+char iz8248;
+
+/* F_11324: load all 16 EGA palette registers plus the overscan color (BIOS int 10h function 10h, al = 2) */
+
+void F_11324(char *table)
+{
+    char pal[17];
+    char far *dest;
+    union REGS r;
+    struct SREGS s;
+    int n;
+
+    dest = (char far *)pal;
+    for (n = 0; n < 16; n++) {
+        if (*table > 7)
+            *dest++ = *table | 0x10;
+        else
+            *dest++ = *table;
+        table++;
+    }
+    pal[16] = iz8248;
+    dest = (char far *)pal;
+    s.es = FP_SEG(dest);
+    r.x.dx = FP_OFF(dest);
+    r.h.ah = 0x10;
+    r.h.al = 2;
     int86x(0x10, &r, &r, &s);
 }

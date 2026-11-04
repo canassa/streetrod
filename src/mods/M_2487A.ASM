@@ -1,6 +1,5 @@
         .MODEL MEDIUM
 
-; sr-member 0x2487A
 ; F_2487A @ 2487:000A (linear 0x2487A, 545 bytes)
 ; F_2487A(x1, y1, x2, y2, color): Bresenham line in the 320x200 16-colour screen
 ; (four interlaced banks of 2000h bytes, two pixels per byte), the sibling of
@@ -8,7 +7,7 @@
 ; si = bank step (+-2000h), di = step from the last bank back to the next row
 ; (+-0A0A0h, i.e. -5F60h).
 
-        .CODE
+        .CODE S2487_TEXT
 
         PUBLIC  _F_2487A
 _F_2487A  PROC  FAR
@@ -270,7 +269,6 @@ L2487A_done:
         ret
 _F_2487A  ENDP
 
-; sr-member 0x24A9B
 ; F_24A9B @ 2487:022B (linear 0x24A9B, 44 bytes)
 ; Pixel address helper for the nibble packed 320x200 screen, interlaced in
 ; four banks of 80 bytes per line.  In: ax = y, bx = x.
@@ -286,7 +284,7 @@ _F_2487A  ENDP
         EXTRN   _at767ct:WORD
         EXTRN   _av787at:WORD
 
-        .CODE
+        .CODE S2487_TEXT
 
         PUBLIC  _F_24A9B
 _F_24A9B  PROC  NEAR
@@ -314,14 +312,13 @@ L24A9B_even:
         ret
 _F_24A9B  ENDP
 
-; sr-member 0x24AC7
 ; F_24AC7 @ 2487:0257 (linear 0x24AC7, 178 bytes)
 ; Clipped horizontal span fill in the 16-colour planar-less (nibble packed)
 ; framebuffer: fill_span(x1, x2, y, color), clipped to the L24AC7_clip window.
 
         .DATA
 
-        .CODE
+        .CODE S2487_TEXT
 
         PUBLIC  _fill_span_clipped
 _fill_span_clipped  PROC  FAR
@@ -416,14 +413,13 @@ L24AC7_done:
         ret
 _fill_span_clipped  ENDP
 
-; sr-member 0x24B79
 ; F_24B79 @ 2487:0309 (linear 0x24B79, 104 bytes)
 ; F_24B79(y, color): fill the lines from y down to the bottom of the clip
 ; window with a colour, four interlaced banks one after the other.
 
         .DATA
 
-        .CODE
+        .CODE S2487_TEXT
 
         PUBLIC  _F_24B79
 _F_24B79  PROC  FAR
@@ -483,4 +479,5 @@ L24B79_done:
         pop     bp
         ret
 _F_24B79  ENDP
+
         END

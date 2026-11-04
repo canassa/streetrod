@@ -1,6 +1,5 @@
         .MODEL MEDIUM
 
-; sr-member 0x0E926
 ; F_0E926 @ 0e92:0006 (linear 0x0E926, 201 bytes)
 ; Run-length decoder with a byte dictionary (tables g_4eee and g_4efe copied to
 ; the stack). 0 and 0FFh start a literal L0E926_run: the L0E926_next byte is the repeat count.
@@ -9,7 +8,7 @@
         EXTRN   _g_4eee:BYTE
         EXTRN   _g_4efe:BYTE
 
-        .CODE
+        .CODE S0E92_TEXT
 
         PUBLIC  _F_0E926
 _F_0E926  PROC  FAR
@@ -114,4 +113,5 @@ L0E926_fin:
         ret
 _F_0E926  ENDP
         EVEN
+
         END

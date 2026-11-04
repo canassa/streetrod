@@ -1,12 +1,11 @@
         .MODEL MEDIUM
 
-; sr-member 0x24602
 ; F_24602 @ 2460:0002 (linear 0x24602, 43 bytes)
 ; Search len bytes of a far buffer for a NUL-terminated near string:
 ; F_24602(needle, haystack_far, len). Returns the number of bytes left
 ; (cx) when the match ended, 0 if not found.
 
-        .CODE
+        .CODE S2460_TEXT
 
         PUBLIC  _F_24602
 _F_24602  PROC  FAR
@@ -37,4 +36,5 @@ L24602_done:
         pop     bp
         ret
 _F_24602  ENDP
+
         END
