@@ -395,8 +395,8 @@ struct Car * near F_04036(int idx, int weight, struct Car *old)
     car->f24 &= 0x7fff;
     if (old == 0) {
         if (a_7eaap.m7eb0) {
-            car->f26 = (struct Car *)a_7eaap.m7eb2;
-            a_7eaap.m7eb2 = (int)car;
+            car->f26 = a_7eaap.m7eb2;
+            a_7eaap.m7eb2 = car;
         } else
             a_7eaap.m7eb0 = car;
     }

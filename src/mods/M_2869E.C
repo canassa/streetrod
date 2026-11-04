@@ -142,7 +142,7 @@ static void near F_286D8(void)
         av787at = (g_5e3e == 1) ? 0xa200 : 0xa400;
         F_2322E(g_5e40);
     } else {
-        (*b_78a2)(g8188w, r_vid.front, &g_5e42, 1);
+        (*b_78a2)(g8188w, r_vid.front, (struct Blt *)&g_5e42, 1);
         av787at = g8188w->bits.w.seg;
         at767ct = g8188w->bits.w.off;
     }

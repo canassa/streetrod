@@ -484,7 +484,7 @@ void F_12DD8(int n, int flag)
    Draw item picture n at the current slot position, 20 above it, via the r_vid.f8 buffer,
    and copy the area to the front buffer when the screen is shadowed. */
 
-void F_12F99(int n)
+void F_12F99(int n, int flag)
 {
     struct Bitmap far *pict;
     long unused;

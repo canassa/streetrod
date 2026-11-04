@@ -55,7 +55,7 @@ static void near F_1606C(void);
 static void near F_1604F(void);
 
 char *g_4ea2 = "hot_data";   /* DS:4EA2 */
-char *g_4ea4[13] = {&av7ff8, &g7d86n, &w_8df0, &g7682n, &ai70e4t, &ap818c, g_2c02, &a_7d16q, g_239e, &g7d68m, &ag8baey, &h_8dd8, &a784als};   /* DS:4EA4 */
+char *g_4ea4[13] = {(char *)av7ff8, (char *)g7d86n, (char *)w_8df0, (char *)g7682n, (char *)ai70e4t, (char *)ap818c, g_2c02, (char *)&a_7d16q, g_239e, (char *)g7d68m, (char *)ag8baey, (char *)h_8dd8, (char *)a784als};   /* DS:4EA4 */
 unsigned g_4ebe[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};   /* DS:4EBE */
 int g_4ed8 = 0;   /* DS:4ED8 */
 int g_4eda = 0;   /* DS:4EDA */
