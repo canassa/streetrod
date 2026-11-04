@@ -761,10 +761,8 @@ int g_nCarb[5] = {1, 1, 3, 2, 2};   /* DS:5126 */
 int g_nBolt[6] = {1, 2, 2, 2, 2, 2};   /* DS:5130 */
 int g_nextPartCategory[6] = {0, 3, 2, 2, 2, 2};   /* DS:513C */
 int g_cPos[5][6] = {{5, 5, 0, 0, 0, 0}, {6, 6, 0, 0, 0, 0}, {7, 7, 8, 8, 9, 9}, {10, 10, 11, 11, 0, 0}, {12, 12, 13, 13, 0, 0}};   /* DS:5148 */
-int g_5184[1] = {0};   /* DS:5184 */
-int g_bPos[9] = {0, 1, 1, 5, 5, 5, 5, 5, 5};   /* DS:5186 */
-int g_5198[1] = {0};   /* DS:5198 */
-int g_bIdx[9] = {0, 0, 1, 0, 1, 0, 1, 0, 1};   /* DS:519A */
+int g_boltSlots[10] = {0, 0, 1, 1, 5, 5, 5, 5, 5, 5};   /* DS:5184 */
+int g_boltSubslots[10] = {0, 0, 0, 1, 0, 1, 0, 1, 0, 1};   /* DS:5198 */
 
 /* ga_info @ 0000:79EB (linear 0x079EB, 185 bytes) */
 
@@ -1039,10 +1037,10 @@ void near ga_hood(struct Car *car)
     for (key = 1; key <= 9; key++) {
         if (k = car->engineBolts[key - 1]) {
             havek[key] = k == 1 ? 1 : 2;
-            af829ax[key - 1] = g_boltPics[k];
+            g_engineBoltPicIds[key - 1] = g_boltPics[k];
         } else {
             havek[key] = 0;
-            af829ax[key - 1] = 0;
+            g_engineBoltPicIds[key - 1] = 0;
         }
     }
     g_slotSelec.wirePic = car->wireState != 0 ? (car->wireState > 0 ? 0x447 : 0x446) : 0;
@@ -1056,15 +1054,15 @@ void near ga_hood(struct Car *car)
     if (p6) {
         tmp29 = g_parts[p6->idx].variant;
         for (k = 3; k < 9; k++)
-            g_bPos[k] = g_cPos[tmp29][k - 3];
+            g_boltSlots[k + 1] = g_cPos[tmp29][k - 3];
     }
     cu_ctl(CURSOR_HIDE_NOW);
     gx_draw_parts(car);
-    gx_draw_bolts(g_bPos, g_bIdx, car == a_7eaap.currentCar);
+    gx_draw_bolts(g_boltSlots + 1, g_boltSubslots + 1, car == a_7eaap.currentCar);
     cu_ctl(CURSOR_SHOW_NOW);
     if (car != a_7eaap.currentCar)
         return;
-    gx_build_hots(g_bPos, g_bIdx);
+    gx_build_hots(g_boltSlots + 1, g_boltSubslots + 1);
     mn_push(KM_ENGINE);
     for (;;) {
         while ((key = sy_wait_input(3000)) == 0)
@@ -1083,20 +1081,20 @@ void near ga_hood(struct Car *car)
                 g_slotSelec.wirePic = 0x447;
                 gx_draw_wires();
                 g_gameClock.actionTicks += 0x6d;
-                gx_build_hots(g_bPos, g_bIdx);
+                gx_build_hots(g_boltSlots + 1, g_boltSubslots + 1);
                 continue;
             }
             g_slotSelec.wirePic = 0x446;
             gx_draw_wires();
             g_gameClock.actionTicks += 0x6d;
             g_slotSelec.slot = 0;
-            gx_build_hots(g_bPos, g_bIdx);
+            gx_build_hots(g_boltSlots + 1, g_boltSubslots + 1);
             break;
         case KR_ENGINE_TIMING:
             if (ga_ready(car, 0)) {
                 tune_timing(car);
                 cu_ctl(CURSOR_HIDE_NOW);
-                gx_draw_bolts(g_bPos, g_bIdx, 1);
+                gx_draw_bolts(g_boltSlots + 1, g_boltSubslots + 1, 1);
                 cu_ctl(CURSOR_SHOW_NOW);
             } else
                 gm_message(0xea1);
@@ -1147,7 +1145,7 @@ void near ga_hood(struct Car *car)
                 step = 1;
                 n = g_nCarb[g_parts[list4[key]->idx].variant] + 2;
                 for (k = 4; k < 10; k++)
-                    g_5184[k] = g_cPos[tmp29][k - 4];
+                    g_boltSlots[k] = g_cPos[tmp29][k - 4];
                 g_gameClock.actionTicks += ok ? 0x333u : 0x444u;
                 break;
             case 2:
@@ -1204,12 +1202,12 @@ void near ga_hood(struct Car *car)
                 }
                 for (k = g_nBolt[cnt1]; --k >= 0;) {
                     g_slotSelec.subslot = k;
-                    gx_draw_bolt(af829ax[step + k] = g_boltPics[1]);
+                    gx_draw_bolt(g_engineBoltPicIds[step + k] = g_boltPics[1]);
                     so_bolt();
                     havek[step + k + 1] = 1;
                     car->engineBolts[step + k] = 1;
                 }
-                gx_build_hots(g_bPos, g_bIdx);
+                gx_build_hots(g_boltSlots + 1, g_boltSubslots + 1);
                 cu_ctl(CURSOR_SHOW_NOW);
                 cnt1++;
                 car->timing = rn_int(13) - 8;
@@ -1241,14 +1239,14 @@ void near ga_hood(struct Car *car)
                 continue;
             g_gameClock.actionTicks += 0x36;
             if (havek[key] == 2) {
-                g_slotSelec.slot = g_5184[key];
-                g_slotSelec.subslot = g_5198[key];
+                g_slotSelec.slot = g_boltSlots[key];
+                g_slotSelec.subslot = g_boltSubslots[key];
                 if (--car->engineBolts[key - 1] <= 1) {
-                    af829ax[key - 1] = havek[key] = car->engineBolts[key - 1] = 0;
+                    g_engineBoltPicIds[key - 1] = havek[key] = car->engineBolts[key - 1] = 0;
                     gx_drop_bolt();
                     so_bolt();
                 } else {
-                    gx_draw_bolt(af829ax[key - 1] = g_boltPics[car->engineBolts[key - 1]]);
+                    gx_draw_bolt(g_engineBoltPicIds[key - 1] = g_boltPics[car->engineBolts[key - 1]]);
                     so_bolt_turn();
                 }
             done:
@@ -1256,7 +1254,7 @@ void near ga_hood(struct Car *car)
                 ok = 0;
                 switch (g_slotSelec.slot) {
                 default:
-                    if (g_5198[k = key] == 1)
+                    if (g_boltSubslots[k = key] == 1)
                         k--;
                     if (havek[k] != 0 || havek[k + 1] != 0)
                         goto strip;
@@ -1285,16 +1283,16 @@ void near ga_hood(struct Car *car)
                         havek[key] = 2;
                         continue;
                     }
-                    af829ax[key - 1] = g_boltPics[++car->engineBolts[key - 1]];
-                    g_slotSelec.slot = g_5184[key];
-                    g_slotSelec.subslot = g_5198[key];
-                    gx_draw_bolt(af829ax[key - 1]);
+                    g_engineBoltPicIds[key - 1] = g_boltPics[++car->engineBolts[key - 1]];
+                    g_slotSelec.slot = g_boltSlots[key];
+                    g_slotSelec.subslot = g_boltSubslots[key];
+                    gx_draw_bolt(g_engineBoltPicIds[key - 1]);
                     so_bolt_turn();
                     continue;
                 }
-                g_slotSelec.slot = g_5184[key];
-                g_slotSelec.subslot = g_5198[key];
-                gx_draw_bolt(af829ax[key - 1] = g_boltPics[1]);
+                g_slotSelec.slot = g_boltSlots[key];
+                g_slotSelec.subslot = g_boltSubslots[key];
+                gx_draw_bolt(g_engineBoltPicIds[key - 1] = g_boltPics[1]);
                 so_bolt();
                 havek[key] = 1;
                 car->engineBolts[key - 1] = 1;
@@ -1322,8 +1320,8 @@ void near ga_hood(struct Car *car)
             if (ok)
                 g_slotSelec.slot = ok - 1;
             gx_draw_parts(car);
-            gx_draw_bolts(g_bPos, g_bIdx, 1);
-            gx_build_hots(g_bPos, g_bIdx);
+            gx_draw_bolts(g_boltSlots + 1, g_boltSubslots + 1, 1);
+            gx_build_hots(g_boltSlots + 1, g_boltSubslots + 1);
             car->timing = rn_int(13) - 8;
             cu_ctl(CURSOR_SHOW_NOW);
         }

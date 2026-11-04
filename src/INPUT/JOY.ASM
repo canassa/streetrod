@@ -21,6 +21,8 @@
         EXTRN   _g_demoKey:BYTE
         EXTRN   _g_soundOn:BYTE
         EXTRN   _g_lastKey:BYTE
+        EXTRN   _g_dirHeld:WORD
+        EXTRN   _g_directionSteps:BYTE
         EXTRN   _g_joySavedSp:WORD
 
         .CODE S0000_TEXT
@@ -164,26 +166,26 @@ L4:
         mov     bx,ax
         popf
         jne     L6
-        cmp     BYTE PTR _g_joySavedSp[bx],0
+        cmp     BYTE PTR _g_dirHeld[bx+16],0
         jne     done2
-        mov     BYTE PTR _g_joySavedSp[bx],1
+        mov     BYTE PTR _g_dirHeld[bx+16],1
         mov     _g_inputLock,0FFFFh
-        mov     al,_g_scanMap[bx]
+        mov     al,_g_directionSteps[bx+16]
         add     _g_keyDx,al
-        mov     al,_g_scanMap[bx+1]
+        mov     al,_g_directionSteps[bx+17]
         add     _g_keyDy,al
-        mov     ax,WORD PTR _g_scanMap[bx]
+        mov     ax,WORD PTR _g_directionSteps[bx+16]
         mov     WORD PTR _g_lastDx,ax     ; g_lastDx and g_lastDy
         mov     _g_inputLock,0
         jmp     SHORT done2
 L6:
-        cmp     BYTE PTR _g_joySavedSp[bx],0
+        cmp     BYTE PTR _g_dirHeld[bx+16],0
         je      done2
         mov     _g_inputLock,0FFFFh
-        mov     BYTE PTR _g_joySavedSp[bx],0
-        mov     al,_g_scanMap[bx]
+        mov     BYTE PTR _g_dirHeld[bx+16],0
+        mov     al,_g_directionSteps[bx+16]
         sub     _g_keyDx,al
-        mov     al,_g_scanMap[bx+1]
+        mov     al,_g_directionSteps[bx+17]
         sub     _g_keyDy,al
         mov     _g_inputLock,0
         jmp     SHORT done2

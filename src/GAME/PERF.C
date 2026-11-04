@@ -104,7 +104,7 @@ void near pf_drivetrain_spec(int n, struct Eng *e)
     t = ((s->parts >> 14) & 3) + 0x16;
     for (i = g_nCarb[(s->parts >> 11) & 7] + 1; i >= 0; i--) {
         car.rack.parts[i] = &nd[i];
-        nd[i].wear = g_specPartWear;
+        nd[i].wear = g_partWear[2];
         nd[i].idx = t;
     }
     i = (s->parts >> 6) & 3;
@@ -150,7 +150,7 @@ int near pf_vmax(int n)
         t = ((s->parts >> 14) & 3) + 0x16;
         for (i = g_nCarb[(s->parts >> 11) & 7] + 1; i >= 0; i--) {
             car.rack.parts[i] = &ndm[i];
-            ndm[i].wear = g_specPartWear;
+            ndm[i].wear = g_partWear[2];
             ndm[i].idx = t;
         }
         i = (s->parts >> 6) & 3;

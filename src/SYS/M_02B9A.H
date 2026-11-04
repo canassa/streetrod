@@ -34,9 +34,9 @@ extern int g_4742;                                      /* DS:4742 */
 extern int g_4744;                                      /* DS:4744 */
 extern int g_savedCursorX;                              /* DS:4746 */
 extern int g_savedCursorY;                              /* DS:4748 */
-extern int g_474a;                                      /* DS:474A */
-extern int g_cursorStepX[];                                    /* DS:474C */
-extern int g_cursorStepY[];                                    /* DS:4752 */
+extern int g_cursorStepX[3];                            /* DS:474A */
+extern int g_cursorStepY[3];                            /* DS:4750 */
+extern signed char g_directionSteps[8][2];               /* DS:4756 */
 extern char g_scanMap[];                                /* DS:4766 */
 extern char g_demoKey;                                  /* DS:47CC */
 extern char g_fireLatch;                                /* DS:47CD */
@@ -56,9 +56,7 @@ extern int g_firePressed;                               /* DS:47EE */
 extern char g_47f0;                                     /* DS:47F0 */
 extern char g_gearText[8];                              /* DS:47FE */
 extern struct Item g_parts[];                            /* DS:4806 */
-extern int g_partWear[];                                /* DS:4966 */
-extern int g_specPartWear;                                      /* DS:496A */
-extern int g_496c[2];                                   /* DS:496C */
+extern int g_partWear[5];                                /* DS:4966 */
 extern int g_betRaces;                                  /* DS:4970 */
 extern int g_dragWins;                                  /* DS:4972 */
 extern int g_roadWins;                                  /* DS:4974 */

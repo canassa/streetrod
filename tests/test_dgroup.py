@@ -60,3 +60,27 @@ class AggregateRegionTests(unittest.TestCase):
                 if declared_alias:
                     base, offset = analysis.aliases['g_overlap']
                     self.assertEqual((base.name, offset), ('g_probe', 2))
+
+
+class SegmentAlignmentTests(unittest.TestCase):
+    def test_odd_c_data_end_is_link_alignment_before_byte_data(self):
+        for segment_end in (False, True):
+            with self.subTest(segment_end=segment_end):
+                analysis = object.__new__(dgroup.Analysis)
+                analysis.types = dgroup.Types()
+                analysis.globals = {
+                    0x100: {'name': 'g_first', 'decl': 'char @[7]'},
+                    0x108: {'name': 'g_second', 'decl': 'char @'}}
+                analysis.goffs = sorted(analysis.globals)
+                analysis.pools = {}
+                analysis.dg = bytes(dgroup.DATA_END)
+                analysis.data_ends = {0x107} if segment_end else set()
+                analysis._masks = lambda: []
+                analysis.pointer_targets = lambda items: set()
+                with patch.object(dgroup, 'REGIONS', []):
+                    items = analysis._items()
+                gap = next(item for item in items if item.off == 0x107)
+                self.assertEqual(gap.size, 1)
+                self.assertEqual((gap.kind, gap.note),
+                                 ('gap', 'align') if segment_end else
+                                 ('global', 'unreferenced zero storage'))

@@ -193,8 +193,7 @@ void gx_trans_draw(int n, char far *s)
 
 struct Blt g_cpyBoltPatchRecord;
 int o_8290[5];
-int af829ax[1];
-int ad829cy[8];
+int g_engineBoltPicIds[9];
 struct PartSelection g_slotSelec; /* DS:82AC */
 
 /* engine_index @ 0F38:34FB (linear 0x1287B, 33 bytes)
@@ -398,7 +397,7 @@ static void near make_bolt_overlay(void)
         kind = g_partSlotMap[g_slotSelec.slot];
         if (kind == 3)
             return;
-        what = ad829cy[i = (kind != 2) ? 1 : 0];
+        what = g_engineBoltPicIds[(i = (kind != 2) ? 1 : 0) + 1];
         if (what != 0x43f && what != 0x440)
             return;
         px = g_manifoldBoltPos[i * 2] - 2;
@@ -602,7 +601,7 @@ void gx_draw_bolts(int *a, int *b, int flag)
     blt.h = blt.fc = r_vid.hoodBg->height;
     (*g_videoOps.copy)(r_vid.hoodBg, r_vid.back, &blt, 1);
     for (i = 0; i < 9; i++) {
-        if (id = af829ax[i]) {
+        if (id = g_engineBoltPicIds[i]) {
             g_slotSelec.slot = a[i];
             g_slotSelec.subslot = b[i];
             gx_draw_bolt(id);

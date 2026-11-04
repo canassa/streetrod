@@ -63,13 +63,12 @@ _g_4744 DW      0                        ; DS:4744 int
 _g_savedCursorX DW      0                        ; DS:4746 int
         PUBLIC  _g_savedCursorY
 _g_savedCursorY DW      0                        ; DS:4748 int
-        PUBLIC  _g_474a
-_g_474a DW      0FFFFh                   ; DS:474A int
         PUBLIC  _g_cursorStepX
-_g_cursorStepX DW      0, 1, 0FFFFh             ; DS:474C int[]
-; DS:4752 int[]
+_g_cursorStepX DW      0FFFFh, 0, 1
         PUBLIC  _g_cursorStepY
-_g_cursorStepY DW      0, 1, 101h, 100h, 1FFh, 1, 0FFh, 0FF01h, 0FF00h, 0FFFFh
+_g_cursorStepY DW      0FFFFh, 0, 1
+        PUBLIC  _g_directionSteps
+_g_directionSteps DB      1, 1, 0, 1, 0FFh, 1, 1, 0, 0FFh, 0, 1, 0FFh, 0, 0FFh, 0FFh, 0FFh
         PUBLIC  _g_scanMap
 _g_scanMap DB      0, 1Bh, '1234567890-', 0  ; DS:4766 char[]
         DB      0, 0, 'QWERTYUIOP', 0
@@ -247,11 +246,7 @@ _g_parts DW      13h                      ; DS:4806 struct Item[]
         DB      0, 0, 0, 0
         DW      0
         PUBLIC  _g_partWear
-_g_partWear DW      0, 0                     ; DS:4966 int[]
-        PUBLIC  _g_specPartWear
-_g_specPartWear DW      0FF80h                   ; DS:496A int
-        PUBLIC  _g_496c
-_g_496c DW      0FF80h, 0                ; DS:496C int[2]
+_g_partWear DW      0, 0, 0FF80h, 0FF80h, 0
         PUBLIC  _g_betRaces
 _g_betRaces DW      0                        ; DS:4970 int
         PUBLIC  _g_dragWins

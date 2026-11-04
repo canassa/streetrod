@@ -34,17 +34,13 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 | 4734 | g_4734 | `int @` | M_02B9A |
 | 4742 | g_4742 | `int @` | M_02B9A |
 | 4744 | g_4744 | `int @` | M_02B9A |
-| 474A | g_474a | `int @` | M_02B9A |
 | 47D1 | g_47d1 | `char @[3]` | M_02B9A |
 | 47F0 | g_47f0 | `char @` | M_02B9A |
-| 496C | g_496c | `int @[2]` | M_02B9A |
 | 49D2 | g_49d2 | `int @[]` | M_02B9A |
 | 49DC | g_49dc | `char *@` | M_02B9A |
 | 4BED | g_4bed | `char @` | FAME |
 | 4F4A | g_4f4a | `int @` | GAME |
 | 501D | g_501d | `char @` | SAVEGAME |
-| 5184 | g_5184 | `int @[]` | GARAGE |
-| 5198 | g_5198 | `int @[]` | GARAGE |
 | 5568 | g_5568 | `int @[]` | PERF |
 | 5AF3 | g_5af3 | `char @` | VIDDET |
 | 5E3C | g_5e3c | `int @` | VIEW |
@@ -98,8 +94,6 @@ Regenerated from tools/sr/source.py and current sources; address-bearing placeho
 | 8260 | aw8260y | `int @` | VIDEO |
 | 8272 | m_8272 | `struct State8272 @` | GARAGE |
 | 8290 | o_8290 | `int @[]` | GARGFX |
-| 829A | af829ax | `int @[]` | GARGFX |
-| 829C | ad829cy | `int @[]` | GARGFX |
 | 82B4 | g82b4s | `struct Bitmap far *@` | DASH |
 | 82C8 | dz82c8x | `int @` | RACE |
 | 8630 | bz8630z | `int @` | RACE |

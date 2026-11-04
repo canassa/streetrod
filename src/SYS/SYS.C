@@ -990,8 +990,8 @@ tail:
                     y = 1;
             }
             if (x | y) {
-                g_cursorX += g_cursorStepX[x];
-                g_cursorY += g_cursorStepY[y];
+                g_cursorX += g_cursorStepX[x + 1];
+                g_cursorY += g_cursorStepY[y + 1];
                 g_drawnCursor.dirty = 1;
             }
             g_cursorBusy = 0;

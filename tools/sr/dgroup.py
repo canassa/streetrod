@@ -224,6 +224,7 @@ class Analysis:
     def _pools(self):
         """unit start -> function addr -> sorted [(object offset, original offset)] of its literals."""
         pools = {}
+        self.data_ends = set()
         for u in self.units:
             if u['kind'] != 'c':
                 continue
@@ -232,6 +233,12 @@ class Analysis:
                 continue
             dseg = obj.segments.index('_DATA') + 1
             named = self._public_extents(obj, dseg)
+            bases = {g['off'] - objoff
+                     for g in self.globals.values()
+                     for seg, objoff in [obj.all_publics.get('_' + g['name'], (None, 0))]
+                     if seg == dseg}
+            if len(bases) == 1:
+                self.data_ends.add(bases.pop() + len(obj.data.get(dseg, b'')))
             codebase = u['start'] - min(obj.publics.values())
             per = {}
             for f in obj.fixups:
@@ -367,7 +374,9 @@ class Analysis:
         for it in items:
             if it.off > a:
                 g = Item(a, it.off - a, 'gap')
-                if g.size == 1 and a % 2 == 1 and it.node and max(it.node.get('align', 1), it.node.get('dalign', 1)) == 2:
+                if g.size == 1 and a % 2 == 1 and (
+                        a in getattr(self, 'data_ends', set()) or
+                        it.node and max(it.node.get('align', 1), it.node.get('dalign', 1)) == 2):
                     g.note = 'align'
                 else:
                     # zero storage no code refers to: variables the original kept all the same.

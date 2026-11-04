@@ -1510,3 +1510,17 @@ single table through DS:5E92. LINK accepts the folded allocations without moving
 definitions; the semantic Y and left outer-X names fit buckets 63 and 139, and
 all other communal addresses remain intact. Unreferenced zeros at DS:5E94 remain
 separate because no access proves they belong to the width table.
+
+## 2026-11-04 21:00 CET: Audit the remaining split tables
+
+### What I did
+
+Recorded the evidence before editing in work/splits/FINDINGS.md and audited DGROUP initialized data, communals, statics, struct members, C address seeds/indices and assembly pointer walks. Restored nine engine bolt-picture IDs, two ten-entry bolt slot/subslot mappings, both three-entry cursor step tables, the distinct eight-pair keyboard direction table, both seventeen-byte swapped palettes, and the five-category part-wear table. Replaced loose-tail references and biased array origins with real indexing. Named the bolt and direction tables from their consumers, using sr fit after removing the folded communal tail; the bolt-picture name fits LINK bucket 187. Regenerated plans/unnamed.md. Kept unproven candidates with individual reasons in the findings, including runtime-subtracted hotspot/resource origins, unused tails, theoretical key-map overflow and all remaining mXXXX fields.
+
+Fixed a DGROUP reporting bug exposed by the seventeen-byte alternate palette: the final byte after an odd C _DATA segment is LINK alignment even when the next unit starts with byte data or a literal. The model now derives segment ends from consistent public-symbol bases and the fresh object's data extent. Added a regression that keeps an unexplained identical-sized gap classified as storage, and recorded the lesson in the sr-cli skill. No compiler/linker configuration changes, masks, padding globals or code comments were added.
+
+All gates passed: headers; 572/572 functions (551 MATCH, 21 MATCH*); a clean build after removing work/build* with 96/96 object gates, 572/572 functions at original positions, 748/748 exact near calls and packed EXE IDENTICAL; DGROUP ownership/order; 67 unit tests; DOS-native MAKE IDENTICAL. Inspected sr diff sy_timer_isr (function and module match). work/ is excluded from the commit.
+
+### What I learned
+
+The cursor-step declarations hid two different mistakes: the -1 entries preceded their named bases, while the supposed Y-table tail was actually sixteen direction bytes reached through negative scan-map offsets. The held-direction writes likewise addressed their real array through the unrelated saved-SP word. The garage slot mappings have a zero entry before the nine bolt positions; both one-based and zero-based consumers establish ten entries. GAME's explicit category reads prove five part-wear values, including the word PERF had named separately. Palette swapping reaches seventeen bytes, with natural alignment supplying the following byte; alignment is not another source global. A largest key map of nineteen bindings needs only twenty-one saved entries including music and sentinel, so the defensive thirty-entry guard does not prove a larger allocation.
