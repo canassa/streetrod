@@ -246,7 +246,7 @@ static void near leave_station(struct Dlg *d)
     }
     a_7eaap.m7eb0->f22 = a_7eaap.m7eb0->f22 > 0xaa ? 0xaa : a_7eaap.m7eb0->f22;
     F_181C8(2, d->f0, d->f2, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0xa9, 1,
-            g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
+            g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].variant]);
     menu_pop(1);
     marks_clear();
     g_scene = 1;
@@ -275,7 +275,7 @@ void race_gas_station(void)
     dl.f0 = a_7eaap.m7eb0->f2;
     dl.f2 = game_car_look(a_7eaap.m7eb0);
     F_181C8(4, dl.f0, dl.f2, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0xa9, 1,
-            g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
+            g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].variant]);
     F_16381(0);
     label = popup_grab(0x50, 0xaa, 0x28, 0xc, 0);
     dl.bm1 = popup_grab(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
@@ -457,7 +457,7 @@ static int near replace_tires(void)
             ret = (int)-a_7eaap.m7eaa;
             a_7eaap.m7eaa = 0;
         }
-        game_add_part(0x28, g_4806[40].f0);
+        game_add_part(0x28, g_4806[40].value);
         tbl[0] = a_7eaap.m7eb8;
         a_7eaap.m7eb8 = tbl[0]->next;
         F_07741(tbl[0], &a_7eaap.m7eb0->slot12);
@@ -617,7 +617,7 @@ static void near blow_engine(int n)
     int i;
 
     if (a_7eaap.m7eb0) {
-        for (i = 0, p = a_7eaap.m7eb0->rack.s; i < 5; i++, p++) {
+        for (i = 0, p = a_7eaap.m7eb0->rack.parts; i < 5; i++, p++) {
             a_7eaap.m7eb0->value -= game_take_part(*p, 0);
             *p = 0;
         }
@@ -680,12 +680,12 @@ int near race_outcome(void)
     engine = g_driveEng.fbc & 4;
     opt = g_driveEng.fbc & 0x10;
     stop = g_driveEng.fbc == 5 || g_driveEng.fbc == 0x11 || g_driveEng.fbc == 0x15;
-    if (a_7eaap.m7eb0->slot6->b > 9900)
-        a_7eaap.m7eb0->slot6->b = 9900;
-    if (a_7eaap.m7eb0->rack.s[0]->b > 9900)
-        a_7eaap.m7eb0->rack.s[0]->b = 9900;
-    if (a_7eaap.m7eb0->slot12->b > 9900)
-        a_7eaap.m7eb0->slot12->b = 9900;
+    if (a_7eaap.m7eb0->slot6->wear > 9900)
+        a_7eaap.m7eb0->slot6->wear = 9900;
+    if (a_7eaap.m7eb0->rack.parts[0]->wear > 9900)
+        a_7eaap.m7eb0->rack.parts[0]->wear = 9900;
+    if (a_7eaap.m7eb0->slot12->wear > 9900)
+        a_7eaap.m7eb0->slot12->wear = 9900;
     bo7676 = 0;
     g_statsDone = 0;
     b_82bc = 0;
@@ -710,7 +710,7 @@ int near race_outcome(void)
         F_11540(v);
         if (kind == 5) {
             found = game_make_car(bn7648, g_oppSpecPointer->f0, 0);
-            found->slot12->b = random_int(500);
+            found->slot12->wear = random_int(500);
             found->f24 = ((g7d84o->ff & 0x1f) << 8) | (found->f24 & 0xe0ff);
             found->f24 = (((g7d84o->fe & 4) != 0 & 1) << 13) | (found->f24 & 0xdfff);
             found->f24 = (((g7d84o->fe & 2) != 0 & 1) << 14) | (found->f24 & 0xbfff);
@@ -934,11 +934,11 @@ void near race_reset_eng(struct Eng *p)
     bz8630z = -1;
     g_finishLineIndex = a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc;
     car = a_7eaap.m7eb0->slot12;
-    p->fc = g_tireSlip[g_4806[car->idx].f2][car->b / 2000];
-    if (car->b < 8000)
+    p->fc = g_tireSlip[g_4806[car->idx].variant][car->wear / 2000];
+    if (car->wear < 8000)
         p->fa = 0;
     else {
-        if (car->b + random_int(2000) <= 9500)
+        if (car->wear + random_int(2000) <= 9500)
             p->fa = 0;
         else {
             t = (g_finishLineIndex - 200) >> 1;
@@ -1021,9 +1021,9 @@ void near race_run(void)
                 a_7eaap.m7eb0->f20 = random_int(8) - 4;
         }
         slot = a_7eaap.m7eb0->slot12;
-        slot->b += (g_4806[slot->idx].f2 == 0 ? (a_7eaap.m7ec0 == 1 ? 700 : 300) : (a_7eaap.m7ec0 == 1 ? 400 : 200)) + random_int(300);
-        if (slot->b > 10000)
-            slot->b = 10000;
+        slot->wear += (g_4806[slot->idx].variant == 0 ? (a_7eaap.m7ec0 == 1 ? 700 : 300) : (a_7eaap.m7ec0 == 1 ? 400 : 200)) + random_int(300);
+        if (slot->wear > 10000)
+            slot->wear = 10000;
     }
 }
 

@@ -32,7 +32,7 @@ void cruise_go(void)
         (*bl78be)();
         if (g_firePressed == 0) {
             cursor_ctl(-4);
-            g_autoTrans = !g_4806[a_7eaap.m7eb0->slot6->idx].f2;
+            g_autoTrans = !g_4806[a_7eaap.m7eb0->slot6->idx].variant;
             race_reset_eng(&g_driveEng);
             jz79a6 = 0;
             bw8aca = 0;

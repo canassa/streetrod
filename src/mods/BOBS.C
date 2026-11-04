@@ -435,7 +435,7 @@ calc:
     p18 = spec_class(bn7648);
     p27 = spec_class(a_7eaap.m7eb0->f2);
     clsl = (g_oppSpecPointer->f4 >> 8) & 7;
-    item1 = g_4806[a_7eaap.m7eb0->rack.s[0]->idx].f2;
+    item1 = g_4806[a_7eaap.m7eb0->rack.parts[0]->idx].variant;
     v11 = ag8baey[chm][row];
     v2 = g7d68m[p18][clsl];
     v3 = g7d68m[p27][item1];
@@ -678,7 +678,7 @@ static void near pop_rival_hood(void)
     chassis.slot6 = &n1;
     chassis.slot12 = &na;
     for (n = 0; n < 5; n++)
-        chassis.rack.s[n] = &nodes[n];
+        chassis.rack.parts[n] = &nodes[n];
     game_make_car(bn7648, 0, &chassis);
     garage_hood(&chassis);
     F_11421(-1, "", 0);

@@ -901,7 +901,7 @@ void sys_demo_step(void)
     } else
         g_demoLastGroup = g_keyGroup;
     if (a_7eaap.m7eb8 == 0 && g_keyGroup == 7)
-        game_add_part(0x2a, g_4806[42].f0);
+        game_add_part(0x2a, g_4806[42].value);
     if (a_7eaap.m7eb0 == 0) {
         if (g_keyGroup == 10)
             g_demoKey = 0x31;
@@ -1197,12 +1197,12 @@ void interrupt far sys_drive_isr(void)
                     g_brakeTicks--;
                 }
                 if (g_driveEng.fe > 5000) {
-                    a_7eaap.m7eb0->rack.s[0]->b += !a_7eaap.m7ec0 ? 1 : 1;
-                    a_7eaap.m7eb0->slot6->b += !a_7eaap.m7ec0 ? 1 : 1;
+                    a_7eaap.m7eb0->rack.parts[0]->wear += !a_7eaap.m7ec0 ? 1 : 1;
+                    a_7eaap.m7eb0->slot6->wear += !a_7eaap.m7ec0 ? 1 : 1;
                 }
                 if (!(g_0600 & (!a_7eaap.m7ec0 ? 0xf : 0xf)))
-                    a_7eaap.m7eb0->rack.s[0]->b++;
-                if ((i = a_7eaap.m7eb0->rack.s[0]->b) >= 9900) {
+                    a_7eaap.m7eb0->rack.parts[0]->wear++;
+                if ((i = a_7eaap.m7eb0->rack.parts[0]->wear) >= 9900) {
                     g_driveEng.fbc |= 5;
                     sys_stop_drive();
                 }
@@ -1227,9 +1227,9 @@ void interrupt far sys_drive_isr(void)
                     (g_driveEng.f20 && g_driveEng.f24 > 1 &&
                      ((flag && g_driveEng.fe > g_driveEng.f22 && g_driveEng.f18 < g_driveEng.f1c) ||
                       (!flag && g_driveEng.f18 > 1 && !g_driveEng.f42)))) {
-                    a_7eaap.m7eb0->slot6->b += g_driveEng.fe > 5000 ? 15 : 3;
+                    a_7eaap.m7eb0->slot6->wear += g_driveEng.fe > 5000 ? 15 : 3;
                     if (g_demo == 0) {
-                        i = a_7eaap.m7eb0->slot6->b;
+                        i = a_7eaap.m7eb0->slot6->wear;
                         if (i >= 9900 ||
                             (g_driveEng.f20 == 0 && flag && g_driveEng.fe > 5000 &&
                              i / 100 + 100 > random_int(3277))) {

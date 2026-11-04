@@ -34,14 +34,14 @@ void near perf_drivetrain(struct Car *c, struct Eng *e)
     struct Node **qn;
     struct Node *n6k;
 
-    qn = c->rack.s;
+    qn = c->rack.parts;
     n6k = c->slot6;
     m = c->slot12;
-    a3 = g_4806[qn[0]->idx].f2;
-    bl = g_4806[qn[1]->idx].f2;
-    c3 = g_4806[qn[2]->idx].f2;
-    d = g_4806[n6k->idx].f2;
-    e1 = g_4806[m->idx].f2;
+    a3 = g_4806[qn[0]->idx].variant;
+    bl = g_4806[qn[1]->idx].variant;
+    c3 = g_4806[qn[2]->idx].variant;
+    d = g_4806[n6k->idx].variant;
+    e1 = g_4806[m->idx].variant;
     vl = ((c->f24 & 0x2000) || w_8df0[c->f2].f2 == 0) * 0.09
         + ((c->f24 & 0x8000) || w_8df0[c->f2].f8 == 0) * 0.05
         + ((c->f24 & 0x4000) || w_8df0[c->f2].f6 == 0) * 0.01
@@ -50,7 +50,7 @@ void near perf_drivetrain(struct Car *c, struct Eng *e)
         + g_engineScore[a3] * 0.25 / 100.0
         + g_transScore[d] * 0.15 / 100.0
         + (1.0 - fabs(c->f20 / 8.0)) * 0.2;
-    vl = (10000.0 - qn[0]->b) / 10000.0 * vl;
+    vl = (10000.0 - qn[0]->wear) / 10000.0 * vl;
     vl = (d == 0 ? 0.8 : 1.0) * vl * 0.3 + 0.7;
     w9 = vl * 130.0;
     if (w9 > 130.0)
@@ -78,7 +78,7 @@ void near perf_drivetrain(struct Car *c, struct Eng *e)
         e->f22 = gl->r[1].f2;
     }
     e->f1e = g_shiftRpm[a3];
-    e->f34[5] = (int)((int)(0x82 - g7d86n[c->f2].f2) * 5.0 / 50.0 + g_5568[g_4806[m->idx].f2]);
+    e->f34[5] = (int)((int)(0x82 - g7d86n[c->f2].f2) * 5.0 / 50.0 + g_5568[g_4806[m->idx].variant]);
     e->f1c = g_transGears[d];
     e->f1a = 1;
 }
@@ -100,11 +100,11 @@ void near perf_drivetrain_spec(int n, struct Eng *e)
     car.slot6 = &na;
     car.slot12 = &lo;
     s = &g7d86n[n];
-    car.rack.s[3] = car.rack.s[4] = 0;
+    car.rack.parts[3] = car.rack.parts[4] = 0;
     t = ((s->f4 >> 14) & 3) + 0x16;
     for (i = g_5126[(s->f4 >> 11) & 7] + 1; i >= 0; i--) {
-        car.rack.s[i] = &nd[i];
-        nd[i].b = g_496a;
+        car.rack.parts[i] = &nd[i];
+        nd[i].wear = g_496a;
         nd[i].idx = t;
     }
     i = (s->f4 >> 6) & 3;
@@ -146,11 +146,11 @@ int near F_0E218(int n)
         car.slot6 = &na;
         car.slot12 = &lon;
         s = &g7d86n[n];
-        car.rack.s[3] = car.rack.s[4] = 0;
+        car.rack.parts[3] = car.rack.parts[4] = 0;
         t = ((s->f4 >> 14) & 3) + 0x16;
         for (i = g_5126[(s->f4 >> 11) & 7] + 1; i >= 0; i--) {
-            car.rack.s[i] = &ndm[i];
-            ndm[i].b = g_496a;
+            car.rack.parts[i] = &ndm[i];
+            ndm[i].wear = g_496a;
             ndm[i].idx = t;
         }
         i = (s->f4 >> 6) & 3;
@@ -160,14 +160,14 @@ int near F_0E218(int n)
         ndm[1].idx = (j = (s->f4 >> 11) & 7) * 3 + t + 0x19;
         p6 = &car;
     }
-    qn = p6->rack.s;
+    qn = p6->rack.parts;
     n6k = p6->slot6;
     m = p6->slot12;
-    a3 = g_4806[qn[0]->idx].f2;
-    bl = g_4806[qn[1]->idx].f2;
-    c3 = g_4806[qn[2]->idx].f2;
-    d = g_4806[n6k->idx].f2;
-    e1 = g_4806[m->idx].f2;
+    a3 = g_4806[qn[0]->idx].variant;
+    bl = g_4806[qn[1]->idx].variant;
+    c3 = g_4806[qn[2]->idx].variant;
+    d = g_4806[n6k->idx].variant;
+    e1 = g_4806[m->idx].variant;
     vl = ((p6->f24 & 0x2000) || w_8df0[p6->f2].f2 == 0) * 0.09
         + ((p6->f24 & 0x8000) || w_8df0[p6->f2].f8 == 0) * 0.05
         + ((p6->f24 & 0x4000) || w_8df0[p6->f2].f6 == 0) * 0.01
@@ -176,7 +176,7 @@ int near F_0E218(int n)
         + g_engineScore[a3] * 0.25 / 100.0
         + g_transScore[d] * 0.15 / 100.0
         + (1.0 - fabs(p6->f20 / 8.0)) * 0.2;
-    vl = (10000.0 - qn[0]->b) / 10000.0 * vl;
+    vl = (10000.0 - qn[0]->wear) / 10000.0 * vl;
     vl = (d == 0 ? 0.8 : 1.0) * vl * 0.3 + 0.7;
     w9 = vl * 130.0;
     if (w9 > 130.0)

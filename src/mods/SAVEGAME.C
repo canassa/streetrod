@@ -205,7 +205,7 @@ static int near write_cars(int handle, struct Car *c, int flag)
         if (_dos_write(handle, c, 0x28, &n) != 0 || n != 0x28 || write_nodes(handle, c->slot6))
             return 1;
         for (i = 0; i < 5; i++)
-            if (write_nodes(handle, c->rack.s[i]))
+            if (write_nodes(handle, c->rack.parts[i]))
                 return 1;
         if (write_nodes(handle, c->slot12))
             return 1;
@@ -234,7 +234,7 @@ static int near read_cars(int handle, struct Car **head, int flag)
         if (_dos_read(handle, &buf, 0x28, &n) != 0 || n != 0x28 || read_nodes(handle, &buf.slot6))
             return 1;
         for (m = 0; m < 5; m++)
-            if (read_nodes(handle, &buf.rack.s[m]))
+            if (read_nodes(handle, &buf.rack.parts[m]))
                 return 1;
         if (read_nodes(handle, &buf.slot12))
             return 1;

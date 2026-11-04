@@ -307,7 +307,7 @@ int near F_06B06(int mode)
         if (g_4f46) {
             n = game_car_look(g_4f46);
             F_181C8(6, g_4f46->f2, n, (g_4f46->f24 >> 8) & 0x1f,
-                    0, 0x98, 0, g_5030[g_4806[g_4f46->slot12->idx].f2]);
+                    0, 0x98, 0, g_5030[g_4806[g_4f46->slot12->idx].variant]);
             F_06AA6();
             menu_push(10);
             menu_pop(1);
@@ -331,7 +331,7 @@ int near F_06B06(int mode)
         if (a_7eaap.m7eb0) {
             m_8272.m827a = g7d86n[a_7eaap.m7eb0->f2].f8;
             m_8272.m827c = a_7eaap.m7eb0->f4;
-            m_8272.m827e = g_4806[a_7eaap.m7eb0->slot12->idx].f2;
+            m_8272.m827e = g_4806[a_7eaap.m7eb0->slot12->idx].variant;
             if (mode == 1)
                 F_067CF(m_8272.m827c);
             m_8272.m8280 = 0;
@@ -341,7 +341,7 @@ int near F_06B06(int mode)
             m_8272.m8284.front = (a_7eaap.m7eb0->f24 >> 14) & 1;
             m_8272.m8284.rear = (a_7eaap.m7eb0->f24 >> 15) & 1;
             for (r = 0; r < 5; r++)
-                o_8290[r] = a_7eaap.m7eb0->rack.s[r]->idx;
+                o_8290[r] = a_7eaap.m7eb0->rack.parts[r]->idx;
             n = game_car_look(a_7eaap.m7eb0);
             strcpy(g_29ff, g_desc + g7d86n[a_7eaap.m7eb0->f2].f6);
             if (mode == 2)
@@ -527,7 +527,7 @@ void near F_0711A(unsigned mask)
         n9 = a_7eaap.m7eb0->f2;
         r7 = game_car_look(a_7eaap.m7eb0);
         F_181C8(8, n9, r7, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0x98, 0,
-                g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
+                g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].variant]);
         F_16BC1();
         cursor_ctl(-2);
         g_05fc += val5;
@@ -633,12 +633,12 @@ void near F_076A7(int t, struct Node **list, char *buf, int start)
     n = start;
     p = a_7eaap.m7eb8;
     while (p) {
-        if ((ent7 = &g_4806[p->idx])->f4 == t) {
+        if ((ent7 = &g_4806[p->idx])->category == t) {
             n++;
             list[n] = p;
-            g_list[n] = ent7->f6;
-            if (p->b != -128)
-                buf[n] = p->b / 100;
+            g_list[n] = ent7->nameOffset;
+            if (p->wear != -128)
+                buf[n] = p->wear / 100;
             else
                 buf[n] = 0x80;
         }
@@ -713,8 +713,8 @@ void near F_07800(void)
         game_message(0x0f4e);
         return;
     }
-    y = g_4806[car->slot12->idx].f2;
-    cur = g_4806[tbl[sel]->idx].f2;
+    y = g_4806[car->slot12->idx].variant;
+    cur = g_4806[tbl[sel]->idx].variant;
     F_07741(F_077B7(tbl[sel]), &car->slot12);
     F_1B213(g_5030[y], g_5030[cur]);
     g_05fc += 0x444L;
@@ -731,7 +731,7 @@ static void near build_car_info(int *ids, char *vals)
     struct Node *gear[7];
 
     for (n = 0; n < 5; n++)
-        gear[n] = a_7eaap.m7eb0->rack.s[n];
+        gear[n] = a_7eaap.m7eb0->rack.parts[n];
     gear[n++] = a_7eaap.m7eb0->slot6;
     gear[n] = a_7eaap.m7eb0->slot12;
 
@@ -740,9 +740,9 @@ static void near build_car_info(int *ids, char *vals)
             count++;
             it = &g_4806[node->idx];
             ids[count] = g_50ce[n];
-            g_list[count] = it->f6;
-            if (node->b != -0x80)
-                vals[count] = node->b / 100;
+            g_list[count] = it->nameOffset;
+            if (node->wear != -0x80)
+                vals[count] = node->wear / 100;
             else
                 vals[count] = 0x80;
         }
@@ -811,7 +811,7 @@ void near F_07AA4(void)
             flags[k + 1] = 0;
         g_1804[k].f0 = 11;
     }
-    m_8272.m8286 = owner->slot6 ? g_49d2[g_4806[owner->slot6->idx].f2] : 0;
+    m_8272.m8286 = owner->slot6 ? g_49d2[g_4806[owner->slot6->idx].variant] : 0;
     r_vid.f16 = !m_8272.m8286;
     F_119B8(0x42e, 0x20, 10, -1);
     r_vid.f16 = 1;
@@ -846,8 +846,8 @@ void near F_07AA4(void)
                 if (!k)
                     break;
                 prev = m_8272.m8286;
-                m_8272.m8286 = g_49d2[g_4806[tbl[k]->idx].f2];
-                if (g7d86n[owner->f2].f4 & g_4806[tbl[k]->idx].f3 & 0xf) {
+                m_8272.m8286 = g_49d2[g_4806[tbl[k]->idx].variant];
+                if (g7d86n[owner->f2].f4 & g_4806[tbl[k]->idx].fitMask & 0xf) {
                     F_07741(F_077B7(tbl[k]), &owner->slot6);
                     cursor_ctl(-4);
                     F_16A5A(1);
@@ -919,11 +919,11 @@ int F_07EE6(struct Car *car, int flag)
 {
     int n, i;
 
-    if (car->rack.s[0] == 0 || car->f1f <= 0 || car->rack.s[1] == 0)
+    if (car->rack.parts[0] == 0 || car->f1f <= 0 || car->rack.parts[1] == 0)
         return 0;
-    n = g_5126[g_4806[car->rack.s[1]->idx].f2];
+    n = g_5126[g_4806[car->rack.parts[1]->idx].variant];
     for (i = 2; i < n + 2; i++)
-        if (car->rack.s[i] == 0)
+        if (car->rack.parts[i] == 0)
             return 0;
     for (i = n * 2 + 3; --i >= 0; )
         if (car->b16[i] != 3)
@@ -1045,15 +1045,15 @@ void near garage_hood(struct Car *car)
         }
     }
     ap82acz = car->f1f != 0 ? (car->f1f > 0 ? 0x447 : 0x446) : 0;
-    if (p6 = car->rack.s[0])
-        g_4998[1][0] = g_4806[p6->idx].f2 == 0 ? 0x438 : 0x439;
+    if (p6 = car->rack.parts[0])
+        g_4998[1][0] = g_4806[p6->idx].variant == 0 ? 0x438 : 0x439;
     for (key = 0; key < 5; key++)
-        o_8290[key] = (p6 = car->rack.s[key]) ? g_4998[key][g_4806[p6->idx].f2] : 0;
+        o_8290[key] = (p6 = car->rack.parts[key]) ? g_4998[key][g_4806[p6->idx].variant] : 0;
     g_5148[0][0] = g_5148[0][1] = o_8290[0] == 0x434 ? 4 : 5;
     cnt1 = (o_8290[0] != 0) + (o_8290[1] != 0) + (o_8290[2] != 0) + (o_8290[3] != 0) + (o_8290[4] != 0);
-    n = (p6 = car->rack.s[1]) ? g_5126[g_4806[p6->idx].f2] + 2 : 5;
+    n = (p6 = car->rack.parts[1]) ? g_5126[g_4806[p6->idx].variant] + 2 : 5;
     if (p6) {
-        tmp29 = g_4806[p6->idx].f2;
+        tmp29 = g_4806[p6->idx].variant;
         for (k = 3; k < 9; k++)
             g_5186[k] = g_5148[tmp29][k - 3];
     }
@@ -1132,7 +1132,7 @@ void near garage_hood(struct Car *car)
             default:
                 goto again;
             case 0:
-                ok = g_4806[list4[key]->idx].f3 & g7d86n[car->f2].f4 & 0xf;
+                ok = g_4806[list4[key]->idx].fitMask & g7d86n[car->f2].f4 & 0xf;
                 hz82ae = 0;
                 step = 0;
                 car->f1f = -1;
@@ -1140,11 +1140,11 @@ void near garage_hood(struct Car *car)
                 g_05fc += ok ? 0x666 : 0x888;
                 break;
             case 1:
-                ok = (g_4806[k = list4[key]->idx].f3 & g7d86n[car->f2].f4 & 0xf) != 0
-                     && g_4978[g_4806[car->rack.s[0]->idx].f2][tmp29 = g_4806[k].f2] != 0;
+                ok = (g_4806[k = list4[key]->idx].fitMask & g7d86n[car->f2].f4 & 0xf) != 0
+                     && g_4978[g_4806[car->rack.parts[0]->idx].variant][tmp29 = g_4806[k].variant] != 0;
                 hz82ae = 1;
                 step = 1;
-                n = g_5126[g_4806[list4[key]->idx].f2] + 2;
+                n = g_5126[g_4806[list4[key]->idx].variant] + 2;
                 for (k = 4; k < 10; k++)
                     g_5184[k] = g_5148[tmp29][k - 4];
                 g_05fc += ok ? 0x333u : 0x444u;
@@ -1152,8 +1152,8 @@ void near garage_hood(struct Car *car)
             case 2:
             case 3:
             case 4:
-                ok = (g_4806[k = list4[key]->idx].f3 & g7d86n[car->f2].f4 & 0xf) != 0
-                     && g_4988[tmp29 = g_4806[car->rack.s[1]->idx].f2][g_4806[k].f2] != 0;
+                ok = (g_4806[k = list4[key]->idx].fitMask & g7d86n[car->f2].f4 & 0xf) != 0
+                     && g_4988[tmp29 = g_4806[car->rack.parts[1]->idx].variant][g_4806[k].variant] != 0;
                 g_05fc += ok ? 0x199u : 0x222u;
                 step = 3;
                 sel2 = 2;
@@ -1163,9 +1163,9 @@ void near garage_hood(struct Car *car)
                 case 6:
                     break;
                 case 7:
-                    if (car->rack.s[2] == 0)
+                    if (car->rack.parts[2] == 0)
                         break;
-                    if (car->rack.s[3]) {
+                    if (car->rack.parts[3]) {
                         hz82ae = 9;
                         step += 4;
                         sel2 = 4;
@@ -1177,7 +1177,7 @@ void near garage_hood(struct Car *car)
                     break;
                 case 10:
                 case 12:
-                    if (car->rack.s[2] == 0)
+                    if (car->rack.parts[2] == 0)
                         break;
                     hz82ae++;
                     step += 2;
@@ -1187,9 +1187,9 @@ void near garage_hood(struct Car *car)
                     goto again;
                 }
             }
-            o_8290[sel2] = k = g_4998[sel2][g_4806[list4[key]->idx].f2];
+            o_8290[sel2] = k = g_4998[sel2][g_4806[list4[key]->idx].variant];
             if (ok) {
-                F_07741(F_077B7(list4[key]), &car->rack.s[sel2]);
+                F_07741(F_077B7(list4[key]), &car->rack.parts[sel2]);
                 cursor_ctl(-4);
                 F_16A5A(1);
                 gargfx_draw_part(o_8290[sel2], 0);
@@ -1315,7 +1315,7 @@ void near garage_hood(struct Car *car)
     strip:
         if (sel2 >= 0) {
             cnt1--;
-            remove_part(&car->rack.s[sel2]);
+            remove_part(&car->rack.parts[sel2]);
             cursor_ctl(-4);
             o_8290[sel2] = 0;
             if (ok)

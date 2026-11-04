@@ -568,7 +568,7 @@ void gargfx_draw_parts(struct Car *car)
         if (type = o_8290[1]) {
             hz82ae = 1;
             gargfx_draw_part(type, 0);
-            slot = g_carbPosBase[g_4806[car->rack.s[1]->idx].f2];
+            slot = g_carbPosBase[g_4806[car->rack.parts[1]->idx].variant];
             for (type = 0; type < 3; type++) {
                 hz82ae = slot++;
                 if (other = o_8290[type + 2])

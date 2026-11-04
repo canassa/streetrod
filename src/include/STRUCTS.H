@@ -64,14 +64,14 @@ struct Slot {
 };
 
 struct Node {
-    int a;
-    int b;
+    int value;
+    int wear;
     int idx;
     struct Node *next;
 };
 
 struct Rack {
-    struct Node *s[5];
+    struct Node *parts[5];
 };
 
 struct Car {
@@ -100,12 +100,12 @@ struct Node2 {
 };
 
 struct Item {
-    int f0;
-    char f2;
-    char f3;
-    char f4;
+    int value;
+    char variant;
+    char fitMask;
+    char category;
     char pad3;
-    int f6;
+    int nameOffset;
 };
 
 union Word {
