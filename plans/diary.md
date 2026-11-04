@@ -1157,13 +1157,11 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - Main's animation naming changes also compose with the mouse record without byte differences.
 
-<<<<<<< HEAD
 ## 2026-11-05 19:00 CET: Rule: enum or #define
 
 ### What I did
 - CLAUDE.md: a closed set in int-sized things is an enum and the holder is typed with it; a closed set in char fields uses enum constants with char (or typedef'd char) members, because MSC 5.1 enums are int-sized; lone values are #defines. File-local constants at the top of the file, module interface constants in its header, PC facts in PC.H/PC.INC.
-||||||| ac675c5
-=======
+
 ## 2026-11-04 15:07 CET: MSC 5.1 runtime constants
 
 ### What I did
@@ -1176,4 +1174,3 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - MSC 5.1's fcntl.h supplies plain open-flag constants without prototypes, so including it at the existing dos.h call sites preserves code generation. The existing header tool already preserves arbitrary system includes in their original order.
 - Final integration validation: git merge main was already up to date; repeated sr check --all (572/572), a clean-layout build (packed EXE IDENTICAL), header/DGROUP checks and all 53 unit tests successfully. DOS-native dosbox.sh --make also produced IDENTICAL SR.EXE (SHA-1 3a5e28b795313028b7e77d147122f41cb29de334).
->>>>>>> msconst
