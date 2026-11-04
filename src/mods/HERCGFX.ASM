@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .DATA
 
@@ -21,17 +22,17 @@ _hercgfx_set_mode  PROC    NEAR
         mov     bp,sp
         push    si
         push    di
-        mov     ax,40h
+        mov     ax,BIOS_DATA_SEGMENT
         mov     es,ax
-        mov     di,49h
+        mov     di,BIOS_VIDEO_MODE
         mov     si,OFFSET _g_hercBiosData
         mov     cx,1Eh
         even
         rep     movsb
-        mov     dx,3BFh
-        mov     al,1
+        mov     dx,HERC_CONFIG
+        mov     al,HERC_ENABLE_GRAPHICS
         out     dx,al
-        mov     dx,3B8h
+        mov     dx,MONO_MODE
         xor     al,al
         out     dx,al
         sub     dl,4

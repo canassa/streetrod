@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .DATA
         EXTRN   _g_demo:WORD
@@ -66,15 +67,15 @@ _kbd_isr  PROC  FAR
         push    bx
         push    ds
         push    es
-        in      al,60h
+        in      al,PPI_A
         xor     ah,ah
         push    ax
-        in      al,61h
+        in      al,PPI_B
         mov     ah,al
-        or      al,80h
-        out     61h,al
+        or      al,PPI_KEYBOARD_ACK
+        out     PPI_B,al
         mov     al,ah
-        out     61h,al
+        out     PPI_B,al
         mov     ax,DGROUP
         mov     ds,ax
         mov     es,ax
@@ -169,8 +170,8 @@ L11:
         cmp     al,1Eh
         je      L17
 done:
-        mov     al,20h
-        out     20h,al
+        mov     al,PIC_EOI
+        out     PIC_CMD,al
         pop     es
         pop     ds
         pop     bx

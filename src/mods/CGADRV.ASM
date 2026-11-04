@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .DATA
         EXTRN   _g_hercules:WORD
@@ -67,7 +68,7 @@ _cgadrv_blit_to_ilv  PROC    FAR
         shr     di,1
         shr     di,1
         add     cx,di
-        cmp     cx,0B000h
+        cmp     cx,MONO_SEGMENT
         jb      setup1
         cmp     cx,0B400h
         ja      setup1
@@ -145,7 +146,7 @@ _cgadrv_blit_ilv  PROC    FAR
         shr     di,1
         shr     di,1
         add     cx,di
-        cmp     cx,0B000h
+        cmp     cx,MONO_SEGMENT
         jb      setup2
         cmp     cx,0B400h
         ja      setup2

@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .DATA
         EXTRN   _at767ct:WORD
@@ -51,7 +52,7 @@ _cgaline_draw  PROC    FAR
         mov     WORD PTR [bp-0Ah],0
         cmp     _g_hercules,0
         je      gotdx
-        cmp     _av787at,0B000h
+        cmp     _av787at,MONO_SEGMENT
         jb      gotdx
         cmp     _av787at,0B400h
         ja      gotdx
@@ -366,7 +367,7 @@ _cgaline_span  PROC    FAR
         mov     BYTE PTR cs:dbl,0
         cmp     _g_hercules,0
         je      clip
-        cmp     _av787at,0B000h
+        cmp     _av787at,MONO_SEGMENT
         jb      clip
         cmp     _av787at,0B400h
         ja      clip

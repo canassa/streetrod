@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .DATA
 
@@ -141,15 +142,15 @@ _hercdet_ram_test  ENDP
         PUBLIC  _hercdet_detect
 _hercdet_detect  PROC  FAR
         mov     bx,100h
-        mov     dx,3BAh
+        mov     dx,MONO_STATUS
         in      al,dx
         mov     ah,al
-        and     ah,80h
+        and     ah,HERC_STATUS_VSYNC
 wait1:
         mov     cx,40h
 wait2:
         in      al,dx
-        and     al,80h
+        and     al,HERC_STATUS_VSYNC
         cmp     al,ah
         loope   wait2
         jne     toggled
@@ -157,12 +158,12 @@ wait2:
         jne     wait1
         jmp     SHORT none
 toggled:
-        mov     ax,0B000h
+        mov     ax,MONO_SEGMENT
         mov     es,ax
         call    _hercdet_ram_test
         jne     found
-        mov     al,1
-        mov     dx,3BFh
+        mov     al,HERC_ENABLE_GRAPHICS
+        mov     dx,HERC_CONFIG
         out     dx,al
         call    _hercdet_ram_test
         je      none
@@ -181,9 +182,9 @@ _hercdet_detect  ENDP
 
         PUBLIC  _hercdet_bios_mono
 _hercdet_bios_mono  PROC  FAR
-        int     11h
-        and     ax,30h
-        cmp     ax,30h
+        int     EQUIP_INT
+        and     ax,EQUIP_VIDEO_MASK
+        cmp     ax,EQUIP_VIDEO_MONO
         je      mono
         mov     ax,0
 mono:

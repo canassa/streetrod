@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .CODE S0E6C_TEXT
 
@@ -237,23 +238,23 @@ _cursblt_ega  PROC  FAR
         lds     si,DWORD PTR [bp+6]
         mov     ax,ds
         mov     [bp-0Ch],ax
-        mov     ax,5
-        mov     dx,3CEh
+        mov     ax,GC_MODE
+        mov     dx,GC_INDEX
         out     dx,al
         sub     ax,ax
         inc     dx
         out     dx,al
-        mov     ax,8
+        mov     ax,GC_BIT_MASK
         dec     dx
         out     dx,al
 row3:
         mov     cx,[bp+1Ah]
 pixel:
         sub     ax,ax
-        mov     dx,3CFh
+        mov     dx,GC_DATA
         out     dx,al
-        mov     ax,0Fh
-        mov     dx,3C5h
+        mov     ax,SEQ_ALL_PLANES
+        mov     dx,SEQ_DATA
         out     dx,al
         xchg    bx,[bp-0Ah]
         mov     ax,[bp-8]
@@ -267,25 +268,25 @@ pixel:
         mov     al,[bx]
         inc     bx
         sub     ah,ah
-        mov     dx,3CFh
+        mov     dx,GC_DATA
         out     dx,al
-        mov     ax,1
-        mov     dx,3C5h
+        mov     ax,SEQ_PLANE0
+        mov     dx,SEQ_DATA
         out     dx,al
         mov     al,[si]
         mov     es:[di],al
-        mov     ax,2
-        mov     dx,3C5h
+        mov     ax,SEQ_PLANE1
+        mov     dx,SEQ_DATA
         out     dx,al
         mov     al,[si+600h]
         mov     es:[di],al
-        mov     ax,4
-        mov     dx,3C5h
+        mov     ax,SEQ_PLANE2
+        mov     dx,SEQ_DATA
         out     dx,al
         mov     al,[si+0C00h]
         mov     es:[di],al
-        mov     ax,8
-        mov     dx,3C5h
+        mov     ax,SEQ_PLANE3
+        mov     dx,SEQ_DATA
         out     dx,al
         mov     al,[si+1200h]
         stosb
@@ -301,11 +302,11 @@ pixel:
         add     di,[bp-2]
         jmp     row3
 done3:
-        mov     ax,0Fh
-        mov     dx,3C5h
+        mov     ax,SEQ_ALL_PLANES
+        mov     dx,SEQ_DATA
         out     dx,al
-        mov     ax,0FFh
-        mov     dx,3CFh
+        mov     ax,GC_MASK_ALL
+        mov     dx,GC_DATA
         out     dx,al
         pop     si
         pop     di

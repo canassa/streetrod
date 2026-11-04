@@ -929,3 +929,16 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - Clearing speaker bits needs `0xff ^ MASK`, not `~MASK`: the int-promoted complement changes MSC's byte code.
+
+## 2026-11-04 13:25 CET: Shared MASM PC constants
+
+### What I did
+- Merged main through 141fb0e, then added src/include/PC.INC using PC.H's names for shared facts, including MONO_MODE, GC_MASK_ALL, SEQ_ALL_PLANES, and the port and interrupt constants. Added assembler-only names for BIOS services/data offsets, Hercules configuration, and the register indices the assembler uses.
+- Replaced hardware literals in 16 code assembler files and the two screen descriptor data files. Sources are assembled unchanged; INCLUDE PC.INC follows .MODEL, or precedes the explicit segment in the data files.
+- Added C:\INCLUDE to the linked/native DOS build environment. The check backends already expose src/include as E:\ on INCLUDE. Extended sr headers to maintain recursive MASM .INC dependencies; tested recursion, case handling, cycles, dependency removal, idempotence, and agreement with PC.H's numeric macros.
+- From empty work directories, sr check --all passed 572/572 and sr build reported Packed EXE vs orig/SR.EXE: IDENTICAL. Native dosbox.sh --make also reported IDENTICAL (SHA1 3a5e28b795313028b7e77d147122f41cb29de334). All 748 near calls are exact; sr headers --check, sr dgroup check, and all 43 unit tests passed. sr show crtc_wait_vsync confirms the original instructions. All 36 MASM objects retain identical segment bytes, publics, externs, and fixups compared with the pre-edit baseline.
+
+### What I learned
+- Verified VGA ports, register indices, map masks, write modes and status bits against IBM's [VGA/XGA Technical Reference](https://bitsavers.trailing-edge.com/pdf/ibm/pc/cards/IBM_VGA_XGA_Technical_Reference_Manual_May92.pdf), VGA Function pp. 2-41, 2-45, 2-47 through 2-88. Verified PC ports/BIOS data and interrupt services against the [IBM XT Technical Reference](https://www.minuszerodegrees.net/manuals/IBM/IBM_5155_5160_Technical_Reference_6280089_MAR86.pdf). The [Hercules GB101 owner's manual](https://minuszerodegrees.net/manuals/Hercules/Hercules%20Graphics%20Card%20GB101%20-%20Owner%27s%20Manual.pdf), pp. 8-14, confirms 3B8h is display mode control, 3BFh is the configuration switch, and bit 0 enables graphics mode. Names follow actual code use: CRTC's 201h is an extraction mask, while JOY's 201h is GAME_PORT.
+- Literals retained: HERCGFX's packed 6845 timing words (3500h, 2801h, 2C02h, 803h, FC04h, 705h, 6406h, 7207h, 208h, 209h); CRTC's mode-specific packed masks/defaults/biases (11h, EFh, BFh, 201h, 1FFh, 3FFh, C8h, 64h); VIDDET's switch comparisons (0Fh, 1, 0Eh, 8, 3) and 5Ah writable-register probe; HERCDET's 3FFFh/7FFFh RAM probe and polling bounds; JOY's 400h polling bound and shifted two-button mask 3; graphics bank offsets, pitches, dimensions, and bit-manipulation counts. These are mode settings, probe values, or algorithm/geometry facts rather than independently established shared hardware constants; no speculative names were introduced for them.
+- MASM 5.1 rejects arithmetic on the full 32-bit EGA far pointer (A2029). EGA_VRAM_PAGE1 therefore directly defines A000:2000 as a literal EQU. The sr-cli skill records this and the include-path/dependency behavior.

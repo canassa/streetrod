@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .DATA
 
@@ -332,14 +333,14 @@ _F_02BC0  PROC  FAR
         sub     ax,ax
         mov     es,ax
         cli
-        mov     al,es:[0410h]
-        and     al,0CFh
+        mov     al,es:[BIOS_EQUIP]
+        and     al,0FFh - EQUIP_VIDEO_MASK
         or      al,_g_47ea
-        mov     es:[0410h],al
-        mov     ah,0
+        mov     es:[BIOS_EQUIP],al
+        mov     ah,VIDEO_SET_MODE
         mov     al,_g_47eb
         sti
-        int     10h
+        int     BIOS_VIDEO
         pop     ax
         pop     bp
         ret
@@ -355,14 +356,14 @@ _F_02BE2  PROC  FAR
         sub     ax,ax
         mov     es,ax
         cli
-        mov     al,es:[0410h]
-        and     al,0CFh
+        mov     al,es:[BIOS_EQUIP]
+        and     al,0FFh - EQUIP_VIDEO_MASK
         or      al,_g_47ec
-        mov     es:[0410h],al
-        mov     ah,0
+        mov     es:[BIOS_EQUIP],al
+        mov     ah,VIDEO_SET_MODE
         mov     al,_g_47ed
         sti
-        int     10h
+        int     BIOS_VIDEO
         pop     ax
         pop     bp
         ret

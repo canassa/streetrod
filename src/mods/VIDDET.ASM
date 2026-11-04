@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .DATA
         EXTRN   _cursblt_cga:FAR
@@ -34,12 +35,12 @@ _viddet_restore  PROC  FAR
         push    si
         xor     ax,ax
         mov     es,ax
-        mov     si,410h
+        mov     si,BIOS_EQUIP
         mov     al,_g_savedEquip
         mov     es:[si],al
-        mov     ah,0
+        mov     ah,VIDEO_SET_MODE
         mov     al,_g_savedVideoMode
-        int     10h
+        int     BIOS_VIDEO
         pop     si
         pop     di
         mov     sp,bp
@@ -57,20 +58,20 @@ _viddet_detect  PROC  FAR
         mov     bp,sp
         push    di
         push    si
-        mov     ax,0F00h
-        int     10h
+        mov     ax,VIDEO_GET_MODE SHL 8
+        int     BIOS_VIDEO
         mov     _g_savedVideoMode,al
         xor     ax,ax
         mov     es,ax
-        mov     si,410h
+        mov     si,BIOS_EQUIP
         mov     al,es:[si]
         mov     _g_savedEquip,al
-        mov     ah,12h
-        mov     bl,10h
-        int     10h
+        mov     ah,VIDEO_EGA_INFO
+        mov     bl,EGA_GET_INFO
+        int     BIOS_VIDEO
         mov     _g_egaMono,bh
         mov     _g_egaSwitches,cl
-        cmp     bl,10h
+        cmp     bl,EGA_GET_INFO
         je      probe
         mov     _g_egaCard,1
         mov     _g_egaMemory,bl
@@ -90,8 +91,8 @@ _viddet_detect  PROC  FAR
         mov     _g_egaCard,1
         jmp     done
 probe:
-        mov     dx,3D4h
-        mov     al,0Fh
+        mov     dx,CRTC_INDEX
+        mov     al,CRTC_CURSOR_LO
         out     dx,al
         inc     dx
         in      al,dx

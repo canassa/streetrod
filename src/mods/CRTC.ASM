@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .DATA
         EXTRN   _g_vga:WORD
@@ -11,14 +12,14 @@
 
         PUBLIC  _crtc_wait_vsync
 _crtc_wait_vsync  PROC    FAR
-        mov     dx,3DAh
+        mov     dx,INPUT_STATUS
 wait1a:
         in      al,dx
-        test    al,1
+        test    al,STATUS_DISPLAY_DISABLED
         jne     wait1a
 wait2a:
         in      al,dx
-        test    al,8
+        test    al,STATUS_VRETRACE
         je      wait2a
         ret
 _crtc_wait_vsync  ENDP
@@ -35,17 +36,17 @@ _crtc_wait_vsync  ENDP
 _crtc_set_split  PROC    FAR
         push    bp
         mov     bp,sp
-        mov     ax,40h
+        mov     ax,BIOS_DATA_SEGMENT
         mov     es,ax
-        mov     dx,es:[63h]
+        mov     dx,es:[BIOS_CRTC_BASE]
         add     dl,6
 wait1b:
         in      al,dx
-        test    al,8
+        test    al,STATUS_VRETRACE
         jne     wait1b
 wait2b:
         in      al,dx
-        test    al,8
+        test    al,STATUS_VRETRACE
         je      wait2b
         sub     dl,6
         mov     ax,[bp+6]
@@ -67,12 +68,12 @@ have:
         shl     bh,cl
         cli
         mov     ah,al
-        mov     al,18h
+        mov     al,CRTC_LINE_COMPARE
         out     dx,ax
         mov     ah,11h
         and     ah,0EFh
         or      ah,bh
-        mov     al,7
+        mov     al,CRTC_OVERFLOW
         out     dx,ax
         sti
         pop     bp
@@ -90,9 +91,9 @@ biased:
         shl     bh,1
         cli
         mov     ah,al
-        mov     al,18h
+        mov     al,CRTC_LINE_COMPARE
         out     dx,ax
-        mov     al,7
+        mov     al,CRTC_OVERFLOW
         out     dx,al
         inc     dx
         in      al,dx
@@ -100,9 +101,9 @@ biased:
         mov     ah,al
         and     ah,0EFh
         or      ah,bl
-        mov     al,7
+        mov     al,CRTC_OVERFLOW
         out     dx,ax
-        mov     al,9
+        mov     al,CRTC_MAX_SCAN_LINE
         out     dx,al
         inc     dx
         in      al,dx
@@ -110,7 +111,7 @@ biased:
         mov     ah,al
         and     ah,0BFh
         or      ah,bh
-        mov     al,9
+        mov     al,CRTC_MAX_SCAN_LINE
         out     dx,ax
         sti
         pop     bp

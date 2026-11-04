@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .CODE S24E7_TEXT
 
@@ -19,11 +20,11 @@ _egalatch_rect  PROC    FAR
         cmp     WORD PTR [bp+10h],1
         jl      done1
         cld
-        mov     dx,3CEh
-        mov     al,5
+        mov     dx,GC_INDEX
+        mov     al,GC_MODE
         out     dx,al
         inc     dx
-        mov     al,1
+        mov     al,GC_WRITE_MODE1
         out     dx,al
         lds     si,DWORD PTR [bp+6]
         les     di,DWORD PTR [bp+0Ah]
@@ -66,11 +67,11 @@ whole:
         mov     cx,ax
         rep     movsb
 reset:
-        mov     dx,3CEh
-        mov     al,5
+        mov     dx,GC_INDEX
+        mov     al,GC_MODE
         out     dx,al
         inc     dx
-        mov     al,0
+        mov     al,GC_WRITE_MODE0
         out     dx,al
 done1:
         pop     di
@@ -97,11 +98,11 @@ _egalatch_to_page  PROC    FAR
         cmp     WORD PTR [bp+0Ah],1
         jl      done2
         cld
-        mov     dx,3CEh
-        mov     al,5
+        mov     dx,GC_INDEX
+        mov     al,GC_MODE
         out     dx,al
         inc     dx
-        mov     al,1
+        mov     al,GC_WRITE_MODE1
         out     dx,al
         lds     si,DWORD PTR [bp+6]
         les     di,DWORD PTR [bp+0Eh]
@@ -119,11 +120,11 @@ rows2:
         add     di,cx
         dec     bl
         jne     rows2
-        mov     dx,3CEh
-        mov     al,5
+        mov     dx,GC_INDEX
+        mov     al,GC_MODE
         out     dx,al
         inc     dx
-        mov     al,0
+        mov     al,GC_WRITE_MODE0
         out     dx,al
 done2:
         pop     di

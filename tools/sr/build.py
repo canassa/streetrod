@@ -13,7 +13,7 @@ def _limit():
 
 # The DOS side of the build: C: the build directory (a copy of src/), D: MSC 5.1, F: MASM 5.1,
 # and the environment MSC SETUP sets up for them. The MAKEFILE needs nothing else.
-DOS_ENV = ('PATH=D:\\BIN;F:\\BIN', 'INCLUDE=D:\\INCLUDE;F:\\INCLUDE', 'LIB=D:\\LIB', 'TMP=C:\\TMP')
+DOS_ENV = ('PATH=D:\\BIN;F:\\BIN', 'INCLUDE=C:\\INCLUDE;D:\\INCLUDE;F:\\INCLUDE', 'LIB=D:\\LIB', 'TMP=C:\\TMP')
 
 
 def run_dos(root, program, args, log):
