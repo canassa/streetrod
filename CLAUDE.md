@@ -135,6 +135,7 @@ Every rename must keep `./sr check --all`, `./sr build` and `./dosbox.sh --make`
 
 - **Never add comments.** Do not add comments to the code unless instructed to; all documentation is human-reviewed.
 - **`NULL` for pointers.** Use `NULL` for a null pointer, never bare `0`; reserve `0` for integers (in the medium model `NULL` is `0` for data pointers, so it is byte-free — verify).
+- **Enum or `#define`.** A closed set of values held in `int`-sized things (a function's return codes, an `int` variable or parameter, an `int` struct member) is an `enum`, and the function, variable or member is typed with it: MSC 5.1 enums are `int`, so the bytes stay identical. A closed set held in `char`-sized fields uses enum constants, and the field stays `char` (an enum type would make it 2 bytes and change the layout); a `typedef signed char XxxCode;` may document which enum it holds. A lone value that is not part of a set (a marker byte, a sentinel, a size) is a `#define`. Constants used by one file go at the top of that file; constants of a module's interface go in its header; PC hardware facts go in PC.H / PC.INC.
 
 ## Rules
 
