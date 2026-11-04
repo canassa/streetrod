@@ -54,7 +54,7 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 ## Source-file and scanner lessons
 
 - (2026-11-04) The split `M_*` sources, `.STB` placeholders, `module create/add/dissolve`, `./sr new`/`./sr src` and per-function flags are gone: one file per object. The merge kept the members' declaration order: moving `static ... near` forward declarations relative to the statics, or the communal definitions, or the includes, changes the order of MSC's EXTDEF/LEXTDEF/COMDEF records, so the object differs (the regenerated include blocks did this and the EXE stayed IDENTICAL; recheck with `./sr build` after such a move).
-- MASM 5.1 labels are file-global (no `.MODEL` language): labels that clashed between merged sources carry an `L<addr>_` prefix.
+- MASM 5.1 labels are file-global (no `.MODEL` language): a local label name used by two procedures of one file is numbered (`done1`, `done2`).
 - External near EXTDEF fixups must be counted even when their raw displacement is zero.
 - Near-call hulls are candidate grouping spans, not proof of an original C file; the units come from the relocation table (CLAUDE.md 4c).
 - The scanner now discovers complete prologue-free routines in bounded gaps. It requires reachable instruction coverage, in-gap branches, returns, and only trailing alignment; it rejects the entire gap on ambiguous bytes. The shipped-image regression covers nine recovered game routines and the retired 0x0F8C2 false positive. Existing human metadata is preserved by `scan`.

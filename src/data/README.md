@@ -30,8 +30,8 @@ the far communals of `SLOTS.C` after every object (389B:0000), and it orders the
 hash bucket of each symbol. That is why the names were chosen to fit the original order.
 
 `tools/scripts/check_data_types.py` compiles `sizeof`/`offsetof` for every struct in
-`STRUCTS.H` with MSC 5.1 and compares them with the Python type model that `./sr dgroup`
-uses to write data definitions:
+`STRUCTS.H` with MSC 5.1 and compares them with the Python type model (`tools/sr/cdata.py`)
+that `./sr dgroup` uses to lay out and check the data definitions:
 
 ```
 nix-shell shell.nix --run 'python3 tools/scripts/check_data_types.py'
