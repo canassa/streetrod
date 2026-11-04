@@ -19,7 +19,7 @@ struct RenderRows {
     int *prevY;
     int far *leftFlags;
     int far *rightFlags;
-    int *beamWidth;
+    int *lineWidth;
 };
 
 extern int g_opponentPics[][4];                         /* DS:5E14 */
