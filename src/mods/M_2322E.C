@@ -2,8 +2,6 @@
 #include "STRUCTS.H"
 #include "M_2322E.H"
 
-#pragma intrinsic(inp, outp)
-
 /* F_2322E @ 21A0:182E (linear 0x2322E, 52 bytes)
 
    Set the CRTC start address and wait for a vertical retrace */

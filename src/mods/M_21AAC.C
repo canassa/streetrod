@@ -10,8 +10,6 @@
 #include "M_25954.H"
 #include "M_2634A.H"
 
-#pragma intrinsic(_rotr, _rotl)
-
 static void near F_21B7C(int x, int x0, int y, int *b, int *a);
 static void near F_21AAC(struct Bitmap far *src, struct Bitmap far *dst, struct Clip *o);
 static void near F_22077(unsigned char *p, int dir, int n);

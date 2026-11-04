@@ -2,8 +2,6 @@
 #include "STRUCTS.H"
 #include "M_1D590.H"
 
-#pragma intrinsic(_rotl, _rotr)
-
 static void near F_1D590(unsigned char *p, int n, int cnt);
 static void near F_1D683(char far *dst, unsigned char *src, int n, int ph);
 

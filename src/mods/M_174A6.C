@@ -23,8 +23,6 @@
 #include "M_24E78.H"
 #include "M_25954.H"
 
-#pragma intrinsic(outp)
-
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct Rect g_6cbc;                 /* DS:6CBC */
 static void near F_174A6(char far *src, char far *dst, char far *mask, int w, int h, int n, int step);

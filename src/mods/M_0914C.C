@@ -31,8 +31,6 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
-#pragma intrinsic(abs)
-
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6c84;                         /* DS:6C84 */
 static int g_6c88;                         /* DS:6C88 */

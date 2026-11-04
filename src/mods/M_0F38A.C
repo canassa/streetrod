@@ -24,8 +24,6 @@
 #include "M_2869E.H"
 #include "TRACKPTS.H"
 
-#pragma intrinsic(abs, cos, sin, outp, inp)
-
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6c22[3];                      /* DS:6C22 */
 static struct Bitmap far *g_6c28gzz[3];    /* DS:6C28 */

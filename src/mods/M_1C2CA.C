@@ -19,8 +19,6 @@
 #include "M_1D8C4.H"
 #include "M_1DD22.H"
 
-#pragma intrinsic(_rotl, outp)
-
 void (far *g_5b04[15])() = {F_1D3C8, F_1D741, F_1D262, F_1C2CA, F_0E781, F_1CEE7, F_1C803, F_1D080, F_1D0A4, F_1D925, F_1CF40, F_19BFE, F_1DD22, F_1DFD2, F_1E0FE};   /* DS:5B04 */
 unsigned char g_5b40[4] = {192, 48, 12, 3};   /* DS:5B40 */
 unsigned char g_5b44[4] = {63, 207, 243, 252};   /* DS:5B44 */

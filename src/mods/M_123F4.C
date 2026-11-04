@@ -18,8 +18,6 @@
 #include "M_193D4.H"
 #include "M_19ED0.H"
 
-#pragma intrinsic(memcpy)
-
 static int near F_1287B(void);
 static int near F_1289C(int *px, int *py);
 static void near F_12CD1(void);

@@ -13,8 +13,6 @@
 #include "SCREENS.H"
 #include "SLOTS.H"
 
-#pragma intrinsic(abs)
-
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6dfeaa;                       /* DS:6DFE */
 static int g_6e00;                         /* DS:6E00 */

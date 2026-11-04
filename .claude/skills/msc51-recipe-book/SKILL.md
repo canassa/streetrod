@@ -46,7 +46,7 @@ Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in
 | identical tails, one branch jumping into the other's | cross-jumping of duplicated source: write both branches out in full (`0x19438`, `0x16381`, `0x168C8`) |
 | a `je` that skips into the middle of a branch, landing on a store | that store is unconditional source after the `if` (`0x1633D`) |
 | `jcc` to an earlier address | a loop: `while ((x = f()) == 0) ;` (`0x14294`) |
-| `mov al,[bp-2]; sub ah,ah; out dx,al; mov al,[bp-1]; out dx,al` | `outp` (intrinsic: `/Oi` or `#pragma intrinsic(outp)`) of the bytes of a `union { int i; unsigned char b[2]; }` local (`0x16455`) |
+| `mov al,[bp-2]; sub ah,ah; out dx,al; mov al,[bp-1]; out dx,al` | `outp` (intrinsic, `/Oi`) of the bytes of a `union { int i; unsigned char b[2]; }` local (`0x16455`) |
 | `union REGS` local, word store at `[bp-14]` then byte at `[bp-11]` | `r.x.ax = ...; r.h.bh = ...`; `ax` at -14, `bx` at -12 (`bl`, `bh` at -11) (`0x001F2`) |
 | `call f; mov cx,K; imul cx` | `f() * K`; a constant-first `mov ax,K; imul [mem]` is `K * var` or `var * K` (`0x03375`) |
 | `a%n + b%n + c%n` evaluated `c` first | MSC evaluates such sums right to left; write them in natural order (`0x15236`) |
@@ -62,7 +62,7 @@ Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in
 | `sub sp,N` larger than the used slots, the extra never touched | unreferenced locals still get slots under `/Oas`; under `/Oals` (`0x11213`) function-scope ones got none and inner-block ones did. Keep them, and note it |
 | INT 21h/33h via `int86`, byte stores to `[bp-N]` and `[bp-N+1]` | `r.h.ah = X; r.h.al = Y;`, not `r.x.ax` (`0x16D57`) |
 | `sub bx,bx; mov es,bx; ... es:[0xCC]` | interrupt vector test `*(long far *)0xccL == 0L` (`0x16D1A`) |
-| `in al,dx` / `out dx,al` in compiled code | `inp`/`outp` with `#pragma intrinsic(inp, outp)` and `<conio.h>` |
+| `in al,dx` / `out dx,al` in compiled code | `inp`/`outp` under `/Oi`, with `<conio.h>` |
 | `and al,0xf8` on an int expression | `x & 0xfff8`: MSC narrows the mask to the byte it changes |
 | `cwd; xor ax,dx; sub ax,dx; sar; xor; sub` | signed division by a power of two, e.g. `(w + 7) / 8` on an `int` (`0x23C3B`) |
 | `/Ol`: a product stored to a nameless temp before the loop, the back edge jumping past it; or `i` counted down in `si` with a `cmp n,0; jg` guard | loop-invariant hoisting and induction variables: write the plain `for (i = 0; i < n; i++)` with `w * h` inside; no named temp (`0x23262`, `0x238A2`) |
@@ -71,11 +71,11 @@ Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in
 | `mov cx,N; lea di,[bp-X]; mov si,OFFSET s; mov ax,ss; mov es,ax; shr cx,1; rep movsw; adc cx,cx; rep movsb` | `memcpy(buf, "literal", N)` under `/Oi`; MSC 5.1 can't initialise an auto array (C2073) (`0x00082`) |
 | `cmp byte [x],1; sbb ax,ax; neg ax` | `!x` on a `char` (`0x08D26`) |
 | `mov es,[seg]; lea bx,[bx]` and a store of `bx`/`es` to a far pointer local | assign it inside the dereference: `wd = *(pen = (unsigned char far *)&tbl[i]);`; separate statements give an immediate segment (`0x22B3A`) |
-| `mov ax,K; mov [n],ax; mov cx,S; imul cx` before an inline `rep movsw` copy, constant not folded | `len = (num = K) * sizeof(struct X); memcpy(dst, item, len);` with `#pragma intrinsic(memcpy)`: an assignment's value still in `ax` isn't folded (`0x1344A`) |
+| `mov ax,K; mov [n],ax; mov cx,S; imul cx` before an inline `rep movsw` copy, constant not folded | `len = (num = K) * sizeof(struct X); memcpy(dst, item, len);` under `/Oi`: an assignment's value still in `ax` isn't folded (`0x1344A`) |
 | call first, compare second in `f()*2 + (g == K)` | write the comparison as the left operand: `(g == K) + f() * 2` (`0x1344A`) |
 | empty-body search loop `jmp test; inc; test; jcc inc` | `for (; cond1 && t[i].f != v; i++) ;`; `while` lays it out differently (`0x01BAE`) |
 | `cwd; sub ax,dx; sar ax,1` on a `strlen` | `(int)strlen(p) / 2`; `size_t` gives `shr` (`0x01BAE`) |
-| `_enable`/`_disable` as calls in an ISR | `#pragma intrinsic(inp, outp, _enable, _disable)` in that source (`0x01FE2`) |
+| `_enable`/`_disable` as calls in an ISR | `/Oi` for that source (`0x01FE2`) |
 | `mov ax,[v]; cmp ax,K1; jne +3; jmp; cmp ax,K2` | a `switch`; an `if` chain compares memory, `cmp [v],K1` (`0x17BE6`) |
 | `cmp byte es:[bx+di],0xff` | an `unsigned char far *`; a `char` pointer gives `mov al; cbw; cmp ax,0xff` (`0x17BE6`) |
 | `/Ol` inline far-to-near block move: `push si; push di; shr cx,1; ... push ds; mov ds,dx; rep movsw; jae; movsb; pop ds; ...; add di,si` | `for (off = 0; off < n; off++) near[off] = far[off];` with both element types the same signedness; the index's exit value is the final `add di,si` (`0x1D741`, `0x221AC`) |
@@ -91,7 +91,7 @@ Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in
 | one body for cases 2..5 and the default, placed at the end | `case 2: case 3: case 4: case 5: default: body` (`0x0B08C`) |
 | `inc ax; jne` after storing a value | `if ((w = r) == -1)`; `w = r; if (w == -1)` gives `cmp ax,0xffff` (`0x05B4A`) |
 | `/Ol` loop over `p[i]` keeping two induction pointers and a user `i` | `if (!p[i]) continue;` then the body; `if (p[i]) {...}` merges them and makes `i` a counter (`0x1D925`, `0x23FD9`) |
-| `fld st(0); fstp xword [tmp]` after `cos(r)` | MSC's FP CSE of a repeated pure call with identical argument trees; write `r = expr;` separately (gives `fst [r]`) and `cos(r)`/`sin(r)` (`0x0F972`). `sin`/`cos` with the argument in `st(0)` need `#pragma intrinsic(sin, cos)` |
+| `fld st(0); fstp xword [tmp]` after `cos(r)` | MSC's FP CSE of a repeated pure call with identical argument trees; write `r = expr;` separately (gives `fst [r]`) and `cos(r)`/`sin(r)` (`0x0F972`). `sin`/`cos` with the argument in `st(0)` need `/Oi` |
 | `sar word [h],1; add word [h],0x14` | compound assignments `h >>= 1; h += 0x14;`; `h = (h >> 1) + 0x14` goes through `ax` (`0x0F972`) |
 | `mov [tmp],ax; fild word [tmp]` on unsigned char arithmetic | an `(int)` cast: without it MSC widens to unsigned long (`sub dx,dx; fild dword`) (`0x0DCBE`) |
 | `/Ol`: a value computed once before the loop and passed unchanged every pass, though the source recomputes it | `/Ol` hoists `x = f(n)` out of the loop even when `n` changes (a 5.1 optimizer bug the shipped code has): write the assignment in the body (`0x16830`) |
@@ -135,7 +135,7 @@ Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in
 | `cmp ax,63h; jle; mov ax,63h` with no local | `(int)E > 99 ? 99 : (int)E`: MSC shares the repeated expression (`0x0C407`) |
 | `mov bx,[p]; add [p],2; mov [bx],ax` vs `mov bx,[p]; mov [bx],ax; add [p],2` | `*p++ = f();` vs `*p = f(); p++;` (`0x27D4B`) |
 | a first loop iteration peeled with constants pushed, then the same body as a loop | `r = 4;` then the loop: MSC propagates the constant along the fall-through into the first pass only (`0x27D4B`) |
-| inline `abs` pattern in a module without `/Oi` | `#pragma intrinsic(abs)` in that source (`0x2834C`) |
+| inline `abs`, `inp`/`outp`, `_rotl`/`_rotr` in a module without `/Oi` | add `i` to the file's flags, not a `#pragma intrinsic`: no C code in the EXE calls an intrinsic-capable routine and every C file matches under `/Oi` (`0x2834C`) |
 | `default:` body placed first in the code | `default:` written first in the `switch` (`0x12909`) |
 | `inc ax; mov cx,K; mul cx` where MSC would fold `(g+1)*K` | `unsigned off = K; ((int)g + 1) * off` (`0x11EA8`) |
 | `or byte [a+1],4` / `and byte [a+1],0xf` on an int array | `a[i] \|= 0x400;` / `a[i] &= 0x0fff;`: MSC narrows to the changed byte; the array base is the displacement minus 1 (`0x267F8`) |

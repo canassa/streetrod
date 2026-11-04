@@ -9,8 +9,6 @@
 #include "M_25954.H"
 #include "M_2634A.H"
 
-#pragma intrinsic(inp, outp)
-
 /* F_23262 @ 21A0:1862 (linear 0x23262, 647 bytes)
 
    Copy a rectangle between planar VGA bitmaps, plane by plane */

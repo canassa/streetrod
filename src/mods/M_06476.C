@@ -28,8 +28,6 @@
 #include "M_19ED0.H"
 #include "M_1A9B2.H"
 
-#pragma intrinsic(inp, outp, abs)
-
 static int near F_0653C(int v, int *out);
 static void near F_068E8(int n, int x, int y);
 static void near F_068B3(void);

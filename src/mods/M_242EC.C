@@ -10,8 +10,6 @@
 #include "M_25954.H"
 #include "M_2634A.H"
 
-#pragma intrinsic(outp)
-
 /* F_242EC @ 21A0:28EC (linear 0x242EC, 790 bytes)
 
    Copy a range of rows of a planar sprite sheet into the back page, plane by plane */

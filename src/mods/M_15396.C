@@ -22,8 +22,6 @@
 #include "M_2634A.H"
 #include "SLOTS.H"
 
-#pragma intrinsic(outp)
-
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_6c68;                         /* DS:6C68 */
 static int *g_6c6a;                        /* DS:6C6A */

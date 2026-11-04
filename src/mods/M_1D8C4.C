@@ -8,8 +8,6 @@
 #include "M_1947A.H"
 #include "M_1D0C8.H"
 
-#pragma intrinsic(inp)
-
 static void near F_1D8C4(struct Rect *rect, struct Bitmap far *bm2, struct Bitmap far *bm1, int flag);
 
 /* F_1D8C4 @ 1C11:17B4 (linear 0x1D8C4, 97 bytes)
