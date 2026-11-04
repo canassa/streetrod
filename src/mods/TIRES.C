@@ -219,8 +219,8 @@ void F_1B213(int *a, int *b)
     int s74;
 
     sv401 = r_vid.copyToFront;
-    s72 = m_8272.m8272;
-    s74 = m_8272.m8274;
+    s72 = m_8272.paintX;
+    s74 = m_8272.paintY;
     marks_release();
     cursor_ctl(-4);
     r_vid.copyToFront = 0;
@@ -455,8 +455,8 @@ void F_1B213(int *a, int *b)
     (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
     z_8b7c = g_6da0;
     r_vid.copyToFront = sv401;
-    m_8272.m8272 = s72;
-    m_8272.m8274 = s74;
+    m_8272.paintX = s72;
+    m_8272.paintY = s74;
     g_spriteBgY = 0;
     cursor_ctl(-2);
 }

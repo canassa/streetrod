@@ -632,17 +632,17 @@ struct State7EAA {
 /* DS:8272..8290: one COMMON block in the original (folded from 11 placeholder
    globals: the compiler budget of the original translation units requires fewer external symbols) */
 struct State8272 {
-    int m8272;
-    int m8274;
-    int m8276;
-    int m8278;
-    int m827a;
-    int m827c;
-    int m827e;
-    int m8280;
-    int m8282;
-    struct Look m8284;
-    int m8286;
+    int paintX;
+    int paintY;
+    int paintSubByteX;
+    int betType;
+    int bodyPic;
+    int paintScheme;
+    int tireVariant;
+    int overlayPic;
+    int specIndex;
+    struct Look appearance;
+    int transmissionPic;
     char pad8288[8];
 };
 

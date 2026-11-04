@@ -329,25 +329,25 @@ int near F_06B06(int mode)
         r_vid.copyToFront = 1;
         (*m_present)();
         if (a_7eaap.currentCar) {
-            m_8272.m827a = g7d86n[a_7eaap.currentCar->specIndex].bodyPic;
-            m_8272.m827c = a_7eaap.currentCar->paintScheme;
-            m_8272.m827e = g_4806[a_7eaap.currentCar->tires->idx].variant;
+            m_8272.bodyPic = g7d86n[a_7eaap.currentCar->specIndex].bodyPic;
+            m_8272.paintScheme = a_7eaap.currentCar->paintScheme;
+            m_8272.tireVariant = g_4806[a_7eaap.currentCar->tires->idx].variant;
             if (mode == 1)
-                F_067CF(m_8272.m827c);
-            m_8272.m8280 = 0;
-            m_8272.m8282 = a_7eaap.currentCar->specIndex;
-            m_8272.m8284.shade = (a_7eaap.currentCar->appearance >> 8) & 0x1f;
-            m_8272.m8284.roof = (a_7eaap.currentCar->appearance >> 13) & 1;
-            m_8272.m8284.front = (a_7eaap.currentCar->appearance >> 14) & 1;
-            m_8272.m8284.rear = (a_7eaap.currentCar->appearance >> 15) & 1;
+                F_067CF(m_8272.paintScheme);
+            m_8272.overlayPic = 0;
+            m_8272.specIndex = a_7eaap.currentCar->specIndex;
+            m_8272.appearance.shade = (a_7eaap.currentCar->appearance >> 8) & 0x1f;
+            m_8272.appearance.roof = (a_7eaap.currentCar->appearance >> 13) & 1;
+            m_8272.appearance.front = (a_7eaap.currentCar->appearance >> 14) & 1;
+            m_8272.appearance.rear = (a_7eaap.currentCar->appearance >> 15) & 1;
             for (r = 0; r < 5; r++)
                 o_8290[r] = a_7eaap.currentCar->rack.parts[r]->idx;
             n = game_car_look(a_7eaap.currentCar);
             strcpy(g_29ff, g_desc + g7d86n[a_7eaap.currentCar->specIndex].nameOffset);
             if (mode == 2)
-                F_181C8(3, m_8272.m8282, n, m_8272.m8284.shade, 0, 0x98, 0, g_5030[m_8272.m827e]);
+                F_181C8(3, m_8272.specIndex, n, m_8272.appearance.shade, 0, 0x98, 0, g_5030[m_8272.tireVariant]);
             else
-                F_181C8(4, m_8272.m8282, n, m_8272.m8284.shade, 0, 0x98, 0, g_5030[m_8272.m827e]);
+                F_181C8(4, m_8272.specIndex, n, m_8272.appearance.shade, 0, 0x98, 0, g_5030[m_8272.tireVariant]);
         } else {
             bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xc7);
             g_29ff[0] = 0;
@@ -357,7 +357,7 @@ int near F_06B06(int mode)
         break;
     }
     if (a_7eaap.currentCar)
-        place_spots(m_8272.m8282, ac825et, aw8260y);
+        place_spots(m_8272.specIndex, ac825et, aw8260y);
     else
         hide_spots();
     sort_spots();
@@ -436,7 +436,7 @@ void near F_06F6B(void)
                 menu_pop(1);
                 popup_show(bm1, x, y);
                 F_19438(1);
-                popup_show(g_0294, m_8272.m8272, m_8272.m8274);
+                popup_show(g_0294, m_8272.paintX, m_8272.paintY);
                 a_7eaap.currentCar->appearance &= 0xe0ff;
                 F_067CF(a_7eaap.currentCar->paintScheme = idx4);
                 F_112CB(12, 5);
@@ -584,15 +584,15 @@ void near F_07367(void)
             bm1 = F_1934E(g_0294->width, g_0294->height, 0, 2);
             bitmap_copy(g_0294, bm1, 1);
             q2 = &a784als[idx6 - 1];
-            bitmap_draw_pic(bm1, q2->id, (char)(q2->dx + m_8272.m8276), (char)q2->dy, 0);
+            bitmap_draw_pic(bm1, q2->id, (char)(q2->dx + m_8272.paintSubByteX), (char)q2->dy, 0);
             bm4 = F_1934E(bm1->width, bm1->height, 0, 2);
             bitmap_copy(bm1, bm4, 1);
             A2.sx = B1.sx = C.sx = 0;
             A2.sy = B1.sy = C.sy = 0;
             A2.dy = B1.dy = 0;
             A2.dx = B1.dx = 0;
-            C.dx = m_8272.m8272;
-            C.dy = m_8272.m8274;
+            C.dx = m_8272.paintX;
+            C.dy = m_8272.paintY;
             B1.h = B1.fc = A2.h = C.h = bm1->height;
             A2.w = B1.w = C.w = 8;
             F_168F3(1);
@@ -606,7 +606,7 @@ void near F_07367(void)
                 C.w += 8;
                 B1.dx += 8;
             }
-            popup_show(bm1, m_8272.m8272, m_8272.m8274);
+            popup_show(bm1, m_8272.paintX, m_8272.paintY);
             F_19438(3);
             F_168F3(0);
             g_05fc += 0x222L;
@@ -811,11 +811,11 @@ void near F_07AA4(void)
             flags[k + 1] = 0;
         g_1804[k].kind = 11;
     }
-    m_8272.m8286 = owner->transmission ? g_49d2[g_4806[owner->transmission->idx].variant] : 0;
-    r_vid.copyToFront = !m_8272.m8286;
+    m_8272.transmissionPic = owner->transmission ? g_49d2[g_4806[owner->transmission->idx].variant] : 0;
+    r_vid.copyToFront = !m_8272.transmissionPic;
     F_119B8(0x42e, 0x20, 10, -1);
     r_vid.copyToFront = 1;
-    F_127DB(m_8272.m8286, owner->transmissionBolts);
+    F_127DB(m_8272.transmissionPic, owner->transmissionBolts);
     menu_push(20);
     for (;;) {
         while ((k = sys_wait_input(3000)) == 0)
@@ -845,13 +845,13 @@ void near F_07AA4(void)
                 }
                 if (!k)
                     break;
-                prev = m_8272.m8286;
-                m_8272.m8286 = g_49d2[g_4806[tbl[k]->idx].variant];
+                prev = m_8272.transmissionPic;
+                m_8272.transmissionPic = g_49d2[g_4806[tbl[k]->idx].variant];
                 if (g7d86n[owner->specIndex].parts & g_4806[tbl[k]->idx].fitMask & 0xf) {
                     F_07741(F_077B7(tbl[k]), &owner->transmission);
                     cursor_ctl(-4);
                     F_16A5A(1);
-                    F_1264E(m_8272.m8286, 0);
+                    F_1264E(m_8272.transmissionPic, 0);
                     F_16A5A(0);
                     F_16B97();
                     g_05fc += 0x666L;
@@ -865,16 +865,16 @@ void near F_07AA4(void)
                     cursor_ctl(-2);
                     break;
                 }
-                    F_1264E(m_8272.m8286, 1);
+                    F_1264E(m_8272.transmissionPic, 1);
                     game_message(0x10cd);
-                    F_12784(m_8272.m8286, 1);
+                    F_12784(m_8272.transmissionPic, 1);
                     g_05fc += 0x888L;
-                    m_8272.m8286 = prev;
+                    m_8272.transmissionPic = prev;
             }
             break;
         case 1:
         case 2:
-            if (m_8272.m8286 == 0)
+            if (m_8272.transmissionPic == 0)
                 break;
             if (flags[k--] == 2) {
                 if (--owner->transmissionBolts[k] <= 1) {
@@ -888,9 +888,9 @@ void near F_07AA4(void)
                 }
                 if (flags[1] || flags[2])
                     break;
-                F_12784(m_8272.m8286, 0);
+                F_12784(m_8272.transmissionPic, 0);
                 g_05fc += 0x666L;
-                m_8272.m8286 = 0;
+                m_8272.transmissionPic = 0;
                 owner->transmissionBolts[0] = owner->transmissionBolts[1] = 0;
                 remove_part(&owner->transmission);
                 sys_hover_reset();

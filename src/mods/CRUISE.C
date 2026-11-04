@@ -80,7 +80,7 @@ int cruise_drive(void)
     if (bw8aca)
         (*bl78be)();
     ao8228u = g7d66n = 0;
-    saved = m_8272.m827c;
+    saved = m_8272.paintScheme;
     F_067CF(a_7eaap.currentCar->paintScheme);
     if (bw8aca)
         cruise_rival_paint(saved);

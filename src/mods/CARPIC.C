@@ -283,9 +283,9 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
     h_8264 = p69->rearGlassX && p69->rearGlassY;
     d_8266 = p69->frontGlassX;
     ap8268t = p69->frontGlassY;
-    m_8272.m8276 = ~r_vid.mask & p12->paintX;
-    m_8272.m8272 = r_vid.mask & p12->paintX;
-    m_8272.m8274 = p12->paintY;
+    m_8272.paintSubByteX = ~r_vid.mask & p12->paintX;
+    m_8272.paintX = r_vid.mask & p12->paintX;
+    m_8272.paintY = p12->paintY;
     if (flags & 2)
         bitmap_put_pic(*out, m2->frontBumperPic, 0, p12->frontBumperY);
     if (flags & 1)
@@ -311,7 +311,7 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
         bitmap_draw_pic(*out, pp8->id, p12->paintX + pp8->dx, p12->paintY + pp8->dy, 0);
     }
     if (q) {
-        bm = F_15BBE(m_8272.m8280, 2);
+        bm = F_15BBE(m_8272.overlayPic, 2);
         bitmap_underlay(bm, *out, p12->b2, p12->b3 - bm->height + row8 + 1);
         F_19438(1);
     }
@@ -477,8 +477,8 @@ again:
     }
     ar826e += x0;
     q_8270 += aw8260y;
-    m_8272.m8272 += x0;
-    m_8272.m8274 += aw8260y;
+    m_8272.paintX += x0;
+    m_8272.paintY += aw8260y;
     ang2 = (kind == 1 || kind == 4) ? x0 - right : x0;
     if (g_carPassBy != 2) {
         if (r_vid.mode == -2) {

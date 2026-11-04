@@ -333,11 +333,11 @@ static void near select_rival(int n)
             g7d84o->bodyMods |= random_int(30) < skill ? 4 : g7d84o->bodyMods;
     } else
         g_isKingState = 1;
-    m_8272.m827a = g_oppSpecPointer->bodyPic;
-    m_8272.m827e = (g_oppSpecPointer->parts >> 4) & 3;
-    m_8272.m827c = g7d84o->paintScheme;
-    F_067CF(m_8272.m827c);
-    m_8272.m8280 = g7d84o->overlayPic;
+    m_8272.bodyPic = g_oppSpecPointer->bodyPic;
+    m_8272.tireVariant = (g_oppSpecPointer->parts >> 4) & 3;
+    m_8272.paintScheme = g7d84o->paintScheme;
+    F_067CF(m_8272.paintScheme);
+    m_8272.overlayPic = g7d84o->overlayPic;
 }
 
 /* rival_arrives @ 0000:9A27 (linear 0x09A27, 92 bytes) */
@@ -349,7 +349,7 @@ static void near rival_arrives(int n, int a, int mode)
         g_carPassBy = 1;
     if (mode == 2 && g7f82r == 0x15)
         g_carPassBy = king_status() == 1;
-    show_rival_car(a, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
+    show_rival_car(a, bn7648, 1, 0xa3, 0, g_5030[m_8272.tireVariant]);
 }
 
 /* list_met_rivals @ 0000:9A83 (linear 0x09A83, 113 bytes) */
@@ -393,7 +393,7 @@ static int near look_for_rival(int n)
     case -3:
         if (g_rivalHereState) {
             F_11421(-1, "", 0);
-            show_rival_car(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
+            show_rival_car(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.tireVariant]);
         }
         choice = F_14C8B();
         rival_arrives(sel[choice - 1], n, 0);
@@ -545,7 +545,7 @@ static int near challenge(int arg)
         g_waitUntil = g_tick + 800;
         while ((ch = sys_wait_input(3000)) == 0)
             ;
-        m_8272.m8278 = ch;
+        m_8272.betType = ch;
         switch (ch) {
         case -23:
         case 1000:
@@ -826,7 +826,7 @@ static void near play_ending(void)
     (*m_present)();
     av7ff8[21].overlayPic = 0x4c1;
     select_rival(0x15);
-    F_181C8(4, bn7648, g7d84o->bodyMods, g7d84o->paintShade, 1, 0x98, 0, g_5030[m_8272.m827e]);
+    F_181C8(4, bn7648, g7d84o->bodyMods, g7d84o->paintShade, 1, 0x98, 0, g_5030[m_8272.tireVariant]);
     av7ff8[21].overlayPic = 0x4dc;
     pic24 = F_1934E(0x50, 0x2c, 0, 3);
     popup_grab(0x78, 0x45, 0x50, 0x2c, pic24);
@@ -993,7 +993,7 @@ void bobs_visit(void)
             if (g_rivalHereState == 0)
                 goto race;
             F_11421(-1, "", 0);
-            show_rival_car(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
+            show_rival_car(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.tireVariant]);
             n = 0;
             menu_pop(1);
             break;
@@ -1026,7 +1026,7 @@ test:
                     place = race_outcome();
                     (*bl78be)();
                     cruise_rival_paint(-1);
-                    if (m_8272.m8278 != 1)
+                    if (m_8272.betType != 1)
                         g_betRaces++;
                     if (g_isKingState) {
                         if (bo7676 == 0) {
@@ -1052,13 +1052,13 @@ test:
                         g_end |= 4;
                         return;
                     }
-                    if (bo7676 && m_8272.m8278 != 1) {
+                    if (bo7676 && m_8272.betType != 1) {
                         if (a_7eaap.raceType == 0)
                             g_dragWins++;
                         else
                             g_roadWins++;
                     }
-                    if (m_8272.m8278 != 1) {
+                    if (m_8272.betType != 1) {
                         g7d84o->betRaces++;
                         if (bo7676 == 0)
                             g7d84o->betWins++;
@@ -1086,7 +1086,7 @@ test:
                     rival_arrives(0x15, 4, 0);
                     goto test;
                 }
-                show_rival_car(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
+                show_rival_car(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.tireVariant]);
                 n = 0;
                 menu_pop(1);
             }
@@ -1096,7 +1096,7 @@ test:
                 goto out;
             if (n > 0 || g_isKingState) {
                 game_message(0x122c);
-                show_rival_car(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.m827e]);
+                show_rival_car(2, bn7648, 1, 0xa3, 0, g_5030[m_8272.tireVariant]);
                 n = 0;
             } else {
                 pop_rival_hood();
