@@ -748,3 +748,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - Removing a duplicate prototype reorders MSC's EXTDEF records without touching the EXE.
 - Open: the DB gives segment 0E6C to 11 functions in segments 0F38/1C11; `./sr dgroup apply` would revert the comment moves and initializer casts in M_15396/M_0F38A (its writer still owns those lines).
+
+## 2026-11-04 20:30 CET: Assembler sources as 1989 MASM; `dgroup check` instead of `apply`
+
+### What I did
+- Each .ASM is one MASM module: `.MODEL`, one `.DATA` (sorted EXTRNs, then the file's data), one `.CODE`, the procedures, `END`. The `L<addr>_` label prefixes are gone (73 names shared between procedures of a file are numbered); header comments come from the DB (F_02BE2 said 2BC0). `g_4730` is `char` (EXTRN BYTE, `mov WORD PTR _g_4730,ax` for the pair), `g_47e8` is `int`.
+- DGROUP data in M_02B9A, M_0E56A, M_0E5D2, M_0E610, M_1DD22, M_21962 and MESSAGES.ASM (8797 -> 459 lines) is natural MASM: typed labels on the first value, several values per line, strings, `DUP`, `EVEN`; MASM prints no warnings. src/data/*.ASM: labels instead of BASE+EQU, no DB `@` syntax.
+- `./sr dgroup apply` (and `asm`) are gone: the sources are the truth for data definitions. `./sr dgroup check` verifies every initialized item is defined in the file that owned it (exit 1 otherwise). omf.py reads LIDATA.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, `dgroup check` and `headers --check` clean, tests OK.
+
+### What I learned
+- MASM 5.1 writes EXTDEFs in its own symbol order, so deduplicating EXTRN lines leaves the OBJ unchanged; local code labels never reach the OBJ. `DUP` becomes LIDATA; `EVEN` pads 00h in data, 90h in code.
