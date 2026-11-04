@@ -96,7 +96,7 @@ function whose literals precede it. Names are `M_<first addr>` until the real fi
   segment's first address / 16). An assembler file names that segment in its own `.CODE` directive
   (M_21962.ASM is a `.MODEL SMALL` file with an explicit `SEGMENT`, see its comment).
   `./sr flags FILE` prints or sets it. Code that must not be loop-optimized under the file's
-  `/Ol` carries the real `#pragma loop_opt(off)` (M_00D58.C, M_039C0.C).
+  `/Ol` carries the real `#pragma loop_opt(off)` (M_00D58.C, M_039C0.C, M_23262.C).
 - **What is compiled is the file in git.** `./sr check` and `./sr build` copy it unchanged; no
   placeholders, no text rewriting.
 - **The file gate.** `./sr check` on any function compiles its whole file and also compares

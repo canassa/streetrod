@@ -56,38 +56,33 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 - **Block-layout forms.** MSC 5.1 emits basic blocks in source order (with cross-jumping),
   so a jump the original's layout shows has to be somewhere in the source. Where no
   structured form gives the layout, the source has a `goto` or a particular loop form,
-  with the reason in the function's DB note. 76 `goto`s in 12 files; the layout-driven
+  with the reason in the function's DB note. 74 `goto`s in 11 files; the layout-driven
   ones: F_0AB8B's `while` whose body ends in a redundant `goto test;` (M_0914C.C: the
   original's body-before-test layout, and it keeps `/Ol` from enregistering `n`),
   F_0C613's `goto finishstop` from both arms, F_0CDAF's `goto nx;` to the label right
   after its `else`, F_10E3D's `goto next;` (a `continue` there would pull the loop
   increment up), F_139DE's `goto box;`, F_1412D's `goto next;` into a then-branch,
   F_1438E's `goto restore;`, F_1563A's `goto done;` (a `break` moves the after-loop block),
-  F_29170's and F_2382D's goto loops (escape `/Ol`, see `loop_opt` below), F_2A84D/F_2AFDC's `goto next`,
+  F_29170's goto loop (escapes `/Ol`, see `loop_opt` below), F_2A84D/F_2AFDC's `goto next`,
   F_181C8's `again`/`done`, F_05EEA's shared retry tail; and the loop forms
   `for (;; g_05d2 = 0)` in F_14C90 (the increment gives the `jmp test` entry) and
   F_008B4's accumulation inside the inner `while` test (keeps `cx` for the outer loop).
   That the original had a jump at each of these points is evidence; the exact statement
   (a `goto`, a `continue`, a differently nested `if`) is not.
-- **`#pragma loop_opt`** in M_00D58.C (off before F_01BAE, to the end of the file) and
-  M_039C0.C (off/on around F_03C8D). These four functions keep plain memory loops that the
-  file's `/Ol` would otherwise optimize; the rest of each file needs `/Ol` (13 functions in
-  the three files measured break without it). `volatile`, `register`, static or global
-  counters, taken addresses, calls, intrinsics and `interrupt` do not stop MSC 5.1's loop
-  optimizer (it ignores `volatile`); only a loop entered away from the target of its back
-  edge escapes it (together with every loop nested in it), and for these four the only
-  goto forms tried that match are jumps to the next statement (the mid-entry form below
-  was not tried on them). A pragma is the more plausible source. Where exactly the pragmas sat is unknown: in M_00D58.C the `off` fits anywhere
-  after F_019BC, and M_039C0.C matches equally as `/Oasi` with one `loop_opt(on)` after
-  F_03C8D. F_2382D (M_23262.C, `/Oalsi`) carried a third pragma until its row loop was
-  written as `row = 0; goto test; next: row++; src += pitch; test: if (row < h) { for
-  (...) ...; goto next; }`: the loop is entered at `test`, not at `next`, so `/Ol` leaves
-  it and the inner `for` as plain memory loops and the bytes match with no pragma.
-  `if (row >= h) goto done;` or `while (row < h) { ...; goto next; }` at `test`, and an
-  early `if (h < 1) return;`, match as well; the same loop with its label at the entry
-  (`again: if (row < h) { ...; goto again; }`) is optimized exactly like the `for`. Which
-  of these forms the original had, or whether it was the pragma after all, the bytes do
-  not say.
+- **`#pragma loop_opt`** in M_00D58.C (off before F_01BAE, to the end of the file),
+  M_039C0.C (off/on around F_03C8D) and M_23262.C (off before F_2382D). These five
+  functions keep plain memory loops that the file's `/Ol` would otherwise optimize; the
+  rest of each file needs `/Ol` (13 functions break without it). `volatile`, `register`,
+  static or global counters, taken addresses, calls, intrinsics and `interrupt` do not stop
+  MSC 5.1's loop optimizer (it ignores `volatile`); it only optimizes a loop entered at
+  the target of its back edge. F_2382D also matches without the pragma with its row loop
+  entered at its test (`row = 0; goto test; next: row++; src += pitch; test: if (row < h)
+  { ...; goto next; }`); for the other four the only matching goto forms are jumps to the
+  next statement. The pragma is kept as the more plausible source everywhere: it is MSC's
+  documented mechanism, the same files use it, and F_2382D has a reason (as `rep movsw`
+  its write-mode-1 latch copy would move words). Where exactly the pragmas sat is unknown: in M_00D58.C the `off`
+  fits anywhere after F_019BC, and M_039C0.C matches equally as `/Oasi` with one
+  `loop_opt(on)` after F_03C8D.
 - **`GCREG`/`SEQREG`** in M_238A2.C. F_23C3B needs a block boundary after `GCREG(5, 0)`.
   Braced register-write macros give it. Their names, and the fact that every other port
   pair of the file uses them, are a reconstruction (braced and unbraced pairs compile

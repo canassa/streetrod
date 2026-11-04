@@ -827,3 +827,9 @@ Append-only log of work on this project. Each session adds an entry at the botto
 
 ### What I learned
 - MSC 5.1's `/Ol` only optimizes a loop entered at the target of its back edge. A label-at-entry goto loop (`again: ... goto again;`) is optimized like a `for`; a loop entered elsewhere (`goto test` into a `next:` loop, F_29170's shape) is skipped together with the loops nested in it. Forward gotos to a loop label change nothing. Which of the matching forms (or the pragma) the original had is not recoverable.
+
+## 2026-11-05 03:30 CET: F_2382D keeps its `#pragma loop_opt`
+
+### What I did
+- Reverted F_2382D to the plain nested `for` loops under `#pragma loop_opt(off)`. The goto form (row loop entered at its test) also matches, but needs knowledge of an undocumented `/Ol` rule; the pragma is MSC's documented mechanism, the same idiom stays in M_00D58.C and M_039C0.C, and the latch copy has a reason to avoid `rep movsw`. RECONSTRUCTION.md records both forms. The recipe book keeps the `/Ol` entry-point rule.
+- Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572.
