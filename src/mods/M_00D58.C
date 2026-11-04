@@ -8,8 +8,10 @@
 #include "M_02DE2.H"
 #include "M_02DF4.H"
 #include "M_02FC8.H"
+#include "M_039C0.H"
 #include "M_06476.H"
 #include "M_0914C.H"
+#include "M_0B3CA.H"
 #include "M_0E56A.H"
 #include "M_0E610.H"
 #include "M_0F38A.H"
@@ -17,19 +19,17 @@
 #include "M_113A2.H"
 #include "M_11E9C.H"
 #include "M_139DE.H"
+#include "M_15236.H"
+#include "M_1628A.H"
 #include "M_163BE.H"
 #include "M_16D1A.H"
+#include "M_174A6.H"
+#include "M_265BA.H"
 #include "SONG.H"
 #include <conio.h>
 #include <dos.h>
 #include <stdlib.h>
 #include <string.h>
-#include "M_1628A.H"
-#include "M_265BA.H"
-#include "M_039C0.H"
-#include "M_15236.H"
-#include "M_0B3CA.H"
-#include "M_174A6.H"
 
 static int g_6c46;                         /* DS:6C46 */
 static int g_6c48;                         /* DS:6C48 */

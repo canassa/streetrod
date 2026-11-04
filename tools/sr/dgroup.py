@@ -1294,6 +1294,7 @@ class Analysis:
             ext = ''.join(f'        EXTRN   {s}:{k}\n' for s, k in sorted(externs.items())
                           if s not in own and not re.search(rf'EXTRN\s+{re.escape(s)}:', text))
             text = text[:pos] + '\n' + ext + block + text[pos:]
+            text = re.sub(r'\n{3,}', '\n\n', text)   # rerunning must not add blank lines
             changed[path] = text
         else:
             defs = self.c_definitions(ustart)

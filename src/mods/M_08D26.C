@@ -9,9 +9,9 @@
 #include "M_10B7C.H"
 #include "M_113A2.H"
 #include "M_11E9C.H"
-#include "M_174A6.H"
 #include "M_163BE.H"
 #include "M_16EA2.H"
+#include "M_174A6.H"
 
 /* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02). */
 int jz79a6;

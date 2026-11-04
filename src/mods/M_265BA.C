@@ -1,16 +1,16 @@
 #include "STRUCTS.H"
 #include "M_265BA.H"
 #include "M_00000.H"
+#include "M_00D58.H"
+#include "M_0B3CA.H"
 #include "M_0F38A.H"
+#include "M_113A2.H"
 #include "M_15236.H"
 #include "M_16EA2.H"
+#include "M_2869E.H"
 #include "SCREEN2.H"
 #include "SCREENS.H"
 #include "SLOTS.H"
-#include "M_00D58.H"
-#include "M_0B3CA.H"
-#include "M_113A2.H"
-#include "M_2869E.H"
 #include <stdlib.h>
 
 static int g_6dfeaa;                       /* DS:6DFE */

@@ -1,8 +1,7 @@
 #include "STRUCTS.H"
 #include "M_0B3CA.H"
-#include "HOTSPOT.H"
-#include "M_123F4.H"
 #include "FONTDATA.H"
+#include "HOTSPOT.H"
 #include "MESSAGES.H"
 #include "M_00000.H"
 #include "M_00D58.H"
@@ -21,6 +20,7 @@
 #include "M_113A2.H"
 #include "M_11A72.H"
 #include "M_11E9C.H"
+#include "M_123F4.H"
 #include "M_139DE.H"
 #include "M_15236.H"
 #include "M_15396.H"
@@ -30,12 +30,12 @@
 #include "M_1923C.H"
 #include "M_193D4.H"
 #include "M_19ED0.H"
+#include "M_265BA.H"
+#include "SLOTS.H"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <dos.h>
-#include "SLOTS.H"
-#include "M_265BA.H"
 
 static int g_6ca4rz;                       /* DS:6CA4 */
 static int g_6ca6qz;                       /* DS:6CA6 */

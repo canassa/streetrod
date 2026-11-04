@@ -3,23 +3,23 @@
 #include "STRUCTS.H"
 #include "M_00000.H"
 #include "M_00D58.H"
-#include <conio.h>
 #include "M_036A8.H"
+#include "M_039C0.H"
 #include "M_0E56A.H"
+#include "M_0E5D2.H"
 #include "M_0E610.H"
 #include "M_0F38A.H"
-#include "M_1C11C.H"
-#include "M_22352.H"
-#include "M_22B28.H"
-#include "M_24602.H"
-#include "SCREENS.H"
-#include "M_0E5D2.H"
-#include "M_039C0.H"
 #include "M_10B7C.H"
 #include "M_11E9C.H"
 #include "M_15396.H"
 #include "M_163BE.H"
 #include "M_1923C.H"
+#include "M_1C11C.H"
+#include "M_22352.H"
+#include "M_22B28.H"
+#include "M_24602.H"
+#include "SCREENS.H"
+#include <conio.h>
 
 static void near F_00000(char *s);
 static int near F_0018B(void);

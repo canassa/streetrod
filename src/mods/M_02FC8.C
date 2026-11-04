@@ -5,19 +5,19 @@
 #include "M_00D58.H"
 #include "M_036A8.H"
 #include "M_039C0.H"
+#include "M_06476.H"
 #include "M_0F38A.H"
 #include "M_10B7C.H"
 #include "M_113A2.H"
 #include "M_11E9C.H"
 #include "M_13682.H"
 #include "M_139DE.H"
+#include "M_14C90.H"
 #include "M_15236.H"
 #include "M_15396.H"
+#include "M_19ED0.H"
 #include <stdlib.h>
 #include <string.h>
-#include "M_06476.H"
-#include "M_14C90.H"
-#include "M_19ED0.H"
 
 static int g_score;                        /* DS:6C5E */
 static int near score_index(void);
