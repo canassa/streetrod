@@ -14,26 +14,26 @@ void near pools_init(int reset)
     struct Node *r;
     int i;
 
-    for (i = 0, p2 = a_7eaap.m7eb4 = as83b0; i < 16; i++) {
+    for (i = 0, p2 = a_7eaap.freeCars = as83b0; i < 16; i++) {
         p2->next = p2 + 1;
         p2->b = -1;
         p2++;
     }
     p2--;
     p2->next = 0;
-    for (i = 0, r = a_7eaap.m7eba = aj866au; i < 140; i++) {
+    for (i = 0, r = a_7eaap.freeParts = aj866au; i < 140; i++) {
         r->next = r + 1;
         r->idx = -1;
         r++;
     }
     r--;
     r->next = 0;
-    a_7eaap.m7eb6 = a_7eaap.m7ebc = 0;
+    a_7eaap.carCount = a_7eaap.partCount = 0;
     if (reset) {
-        a_7eaap.m7eb0 = 0;
-        a_7eaap.m7eb2 = 0;
-        a_7eaap.m7eb8 = 0;
-        a_7eaap.m7eaa = 0;
+        a_7eaap.currentCar = 0;
+        a_7eaap.otherCars = 0;
+        a_7eaap.spareParts = 0;
+        a_7eaap.money = 0;
         a_7eaap.m7eae = 10;
     }
 }

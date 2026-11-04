@@ -612,7 +612,7 @@ int road_proj_x(int a, int b, int c)
     int u, v;
 
     b += a * c >> 2;
-    v = ao7d2ev.m7d36 - b;
+    v = ao7d2ev.lateralX - b;
     u = v << 2;
     if (a == 0)
         a++;
@@ -627,7 +627,7 @@ int road_proj_y(int a, int b, int c)
     int u, v;
 
     b += a * c;
-    v = b - ao7d2ev.m7d38;
+    v = b - ao7d2ev.cameraY;
     u = v << 2;
     if (a == 0)
         a++;
@@ -642,7 +642,7 @@ int road_mirror_x(int a, int b, int c)
     int u, v;
 
     b += a * c >> 2;
-    v = ao7d2ev.m7d36 - b;
+    v = ao7d2ev.lateralX - b;
     if (a == 0)
         a++;
     u = v / a;
@@ -656,7 +656,7 @@ int road_mirror_y(int a, int b, int c)
     int u, v;
 
     b += a * c;
-    v = b - ao7d2ev.m7d38;
+    v = b - ao7d2ev.cameraY;
     if (a == 0)
         a++;
     u = v / a;
@@ -670,29 +670,29 @@ int road_mirror_y(int a, int b, int c)
 void road_reset(void)
 {
     if (bw8aca)
-        ao7d2ev.m7d30 = 200;
+        ao7d2ev.roadIndex = 200;
     else
         switch (g_scene) {
         case 1:
-            ao7d2ev.m7d30 = 10;
+            ao7d2ev.roadIndex = 10;
             break;
         case 2:
-            ao7d2ev.m7d30 = 65;
+            ao7d2ev.roadIndex = 65;
             break;
         case 3:
-            ao7d2ev.m7d30 = 115;
+            ao7d2ev.roadIndex = 115;
             break;
         }
-    road_seek(ao7d2ev.m7d30);
+    road_seek(ao7d2ev.roadIndex);
     g7d82p = 1500;
     cz8bd0y = 3300;
-    ao7d2ev.m7d32 = 0;
-    ao7d2ev.m7d36 = 2560;
-    ao7d2ev.m7d38 = 1900;
+    ao7d2ev.roadFraction = 0;
+    ao7d2ev.lateralX = 2560;
+    ao7d2ev.cameraY = 1900;
     ao7d2ev.m7d3a = 0;
     ao7d2ev.m7d3e = 0;
     ao7d2ev.m7d3c = 0;
-    ao7d2ev.m7d34 = 0;
+    ao7d2ev.distanceStep = 0;
     g_rivalLeft = 1;
     g_8648 = !random_int(2);
     gz7d7e = 1;
@@ -740,7 +740,7 @@ void road_project_ahead(void)
         *p6++ = road_proj_y(rowz, 0x76c, d1);
     else
         p6++;
-    rowz = 12 - ao7d2ev.m7d32;
+    rowz = 12 - ao7d2ev.roadFraction;
     k7 = 14;
     do {
         flag8 = (*g7d62p & 1) || (*g7d62p & 0xf000);
@@ -828,7 +828,7 @@ void road_project_behind(void)
         *p6++ = road_mirror_y(rowz, 0x76c, d1);
     else
         p6++;
-    rowz = ao7d2ev.m7d32 + 8;
+    rowz = ao7d2ev.roadFraction + 8;
     k7 = 7;
     do {
         flag8 = (*g7d62p & 1) || (*g7d62p & 0xf000);
@@ -882,11 +882,11 @@ void road_draw_frame(void)
 {
     long deadline;
 
-    road_seek(ao7d2ev.m7d30);
+    road_seek(ao7d2ev.roadIndex);
     road_project_ahead();
-    road_seek(ao7d2ev.m7d30);
+    road_seek(ao7d2ev.roadIndex);
     road_project_behind();
-    road_seek(ao7d2ev.m7d30);
+    road_seek(ao7d2ev.roadIndex);
     deadline = g_tick + 9;
     view_draw();
     while (deadline > g_tick)
@@ -899,9 +899,9 @@ void road_advance(void)
 {
     int bits7, goal6, diff;
 
-    ao7d2ev.m7d30 += ao7d2ev.m7d32 >> 3;
-    road_seek(ao7d2ev.m7d30);
-    ao7d2ev.m7d32 &= 7;
+    ao7d2ev.roadIndex += ao7d2ev.roadFraction >> 3;
+    road_seek(ao7d2ev.roadIndex);
+    ao7d2ev.roadFraction &= 7;
     bits7 = *g7d62p & 0xe0;
     if (bits7) {
         if (bits7 & 0x80) {
@@ -921,35 +921,35 @@ void road_advance(void)
     bits7 = g7d62p[4] & 0xe0;
     if (bits7) {
         if (bits7 & 0x80) {
-            al70c0x.m70c0 = 2000;
-            ao7d2ev.m7d2e = 0xaf0;
+            al70c0x.leftEdge = 2000;
+            ao7d2ev.rightEdge = 0xaf0;
         } else if (bits7 & 0x20) {
-            al70c0x.m70c0 = 2000;
-            ao7d2ev.m7d2e = 0xce4;
+            al70c0x.leftEdge = 2000;
+            ao7d2ev.rightEdge = 0xce4;
         } else {
-            al70c0x.m70c0 = 1500;
-            ao7d2ev.m7d2e = 0xaf0;
+            al70c0x.leftEdge = 1500;
+            ao7d2ev.rightEdge = 0xaf0;
         }
     } else {
-        al70c0x.m70c0 = 1500;
-        ao7d2ev.m7d2e = 0xce4;
+        al70c0x.leftEdge = 1500;
+        ao7d2ev.rightEdge = 0xce4;
     }
     ao7d2ev.m7d3e = *af7880z;
-    if (g_demo != 0 || g_autoDrive != 0 || (a_7eaap.m7ec0 == 0 ? 0x17c : 0x3fc) < ao7d2ev.m7d30) {
+    if (g_demo != 0 || g_autoDrive != 0 || (a_7eaap.raceType == 0 ? 0x17c : 0x3fc) < ao7d2ev.roadIndex) {
         goal6 = 0x960;
-        if (ar7e8av.m7e90 > 0x960)
+        if (ar7e8av.lateralX > 0x960)
             goal6 -= 0x140;
         else
             goal6 += 0xa0;
-        diff = ao7d2ev.m7d36 - goal6;
+        diff = ao7d2ev.lateralX - goal6;
         if (abs(diff) > 100)
-            ao7d2ev.m7d36 = goal6 + (goal6 < ao7d2ev.m7d36 ? 100 : -100);
+            ao7d2ev.lateralX = goal6 + (goal6 < ao7d2ev.lateralX ? 100 : -100);
         else
-            ao7d2ev.m7d36 = goal6;
+            ao7d2ev.lateralX = goal6;
         if (abs(*af7560z - ao7d2ev.m7d3c) > 0) {
-            g_driveEng.f4 = (ao7d2ev.m7d3c - *af7560z) * 2;
-            if (abs(g_driveEng.f4) > 24)
-                g_driveEng.f4 = g_driveEng.f4 > 0 ? 24 : -24;
+            g_driveEng.steering = (ao7d2ev.m7d3c - *af7560z) * 2;
+            if (abs(g_driveEng.steering) > 24)
+                g_driveEng.steering = g_driveEng.steering > 0 ? 24 : -24;
         }
         ao7d2ev.m7d3c = *af7560z;
     }
@@ -962,17 +962,17 @@ void road_advance(void)
 int road_check_crash(void)
 {
     g_onShoulder = 0;
-    if (g7d82p - 0x104 < ao7d2ev.m7d36 - 0x1e && ao7d2ev.m7d36 + 0x46 < cz8bd0y + 0x104) {
-        if (g7d82p > ao7d2ev.m7d36 - 0x1e) {
-            if ((g_terrain0[ao7d2ev.m7d30] & 0x1000) || (g_terrain0[ao7d2ev.m7d30 - 1] & 0x1000))
+    if (g7d82p - 0x104 < ao7d2ev.lateralX - 0x1e && ao7d2ev.lateralX + 0x46 < cz8bd0y + 0x104) {
+        if (g7d82p > ao7d2ev.lateralX - 0x1e) {
+            if ((g_terrain0[ao7d2ev.roadIndex] & 0x1000) || (g_terrain0[ao7d2ev.roadIndex - 1] & 0x1000))
                 return 1;
-            if (g_terrain3[ao7d2ev.m7d30 + 1] & 0xf000)
+            if (g_terrain3[ao7d2ev.roadIndex + 1] & 0xf000)
                 return 1;
             g_onShoulder = 1;
-        } else if (ao7d2ev.m7d36 + 0x46 > cz8bd0y) {
-            if ((g_terrain1[ao7d2ev.m7d30] & 0x1000) || (g_terrain1[ao7d2ev.m7d30 - 1] & 0x1000))
+        } else if (ao7d2ev.lateralX + 0x46 > cz8bd0y) {
+            if ((g_terrain1[ao7d2ev.roadIndex] & 0x1000) || (g_terrain1[ao7d2ev.roadIndex - 1] & 0x1000))
                 return 1;
-            if (g_terrain3[ao7d2ev.m7d30 + 1] & 0xf002)
+            if (g_terrain3[ao7d2ev.roadIndex + 1] & 0xf002)
                 return 1;
             g_onShoulder = 1;
         }
@@ -1004,32 +1004,32 @@ void road_turn(int dir)
 
 void road_update(void)
 {
-    if (g_driveEng.f2 && g_driveEng.f0 && abs(ao7d2ev.m7d3c - *af7560z - g_driveEng.f2) < 200)
-        ao7d2ev.m7d3c -= (g_driveEng.f2 >> 1) + 1;
+    if (g_driveEng.steeringInput && g_driveEng.speed && abs(ao7d2ev.m7d3c - *af7560z - g_driveEng.steeringInput) < 200)
+        ao7d2ev.m7d3c -= (g_driveEng.steeringInput >> 1) + 1;
     if (!bw8aca) {
         if (bl82c6)
-            ao7d2ev.m7d34 = 6;
+            ao7d2ev.distanceStep = 6;
         else
-            ao7d2ev.m7d34 = 4;
+            ao7d2ev.distanceStep = 4;
     }
-    if (ao7d2ev.m7d34 > 0 && aw7aaex > 0)
+    if (ao7d2ev.distanceStep > 0 && aw7aaex > 0)
         aw7aaex -= 4;
     road_draw_frame();
     if (g_demo == 0 && g_autoDrive == 0) {
         if (at787cu)
-            ao7d2ev.m7d36 += 25;
-        else if (g_driveEng.f0)
-            ao7d2ev.m7d36 -= (ao7d2ev.m7d3c - *af7560z) * (ao7d2ev.m7d34 + g_driveEng.fc) >> 2;
+            ao7d2ev.lateralX += 25;
+        else if (g_driveEng.speed)
+            ao7d2ev.lateralX -= (ao7d2ev.m7d3c - *af7560z) * (ao7d2ev.distanceStep + g_driveEng.tireSlip) >> 2;
     }
     if (!bw8aca) {
-        ao7d2ev.m7d32 += ao7d2ev.m7d34;
-        if (ao7d2ev.m7d32 >= 8)
+        ao7d2ev.roadFraction += ao7d2ev.distanceStep;
+        if (ao7d2ev.roadFraction >= 8)
             road_advance();
-        if ((g_terrain0[ao7d2ev.m7d30 + 7] & 1) || g_turnLeft) {
+        if ((g_terrain0[ao7d2ev.roadIndex + 7] & 1) || g_turnLeft) {
             g_turnLeft = 1;
             road_turn(1);
         }
-        if ((g_terrain1[ao7d2ev.m7d30 + 6] & 1) || g_turnRight) {
+        if ((g_terrain1[ao7d2ev.roadIndex + 6] & 1) || g_turnRight) {
             road_turn(-1);
             g_turnRight = 1;
         }

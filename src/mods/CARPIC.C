@@ -275,23 +275,23 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
     m2 = &w_8df0[idx];
     p12 = &g7682n[idx];
     p69 = &ap818c[idx];
-    *out = F_15BBE(g7d86n[idx].f8, ARENA_LOW_STACK);
-    ar826e = p69->b0;
-    q_8270 = p69->b1;
-    g_backGlassXState = p69->b2;
-    ae826cv = p69->b3;
-    h_8264 = p69->b2 && p69->b3;
-    d_8266 = p69->b4;
-    ap8268t = p69->b5;
-    m_8272.m8276 = ~r_vid.mask & p12->b10;
-    m_8272.m8272 = r_vid.mask & p12->b10;
-    m_8272.m8274 = p12->b11;
+    *out = F_15BBE(g7d86n[idx].bodyPic, ARENA_LOW_STACK);
+    ar826e = p69->fuelCapX;
+    q_8270 = p69->fuelCapY;
+    g_backGlassXState = p69->rearGlassX;
+    ae826cv = p69->rearGlassY;
+    h_8264 = p69->rearGlassX && p69->rearGlassY;
+    d_8266 = p69->frontGlassX;
+    ap8268t = p69->frontGlassY;
+    m_8272.stickerSubX = ~r_vid.mask & p12->stickerX;
+    m_8272.stickerX = r_vid.mask & p12->stickerX;
+    m_8272.stickerY = p12->stickerY;
     if (flags & 2)
-        bitmap_put_pic(*out, m2->f6, 0, p12->b7);
+        bitmap_put_pic(*out, m2->frontBumperPic, 0, p12->frontBumperY);
     if (flags & 1)
-        bitmap_put_pic(*out, m2->f8, p12->b8, p12->b9);
+        bitmap_put_pic(*out, m2->rearBumperPic, p12->rearBumperX, p12->rearBumperY);
     if (flags & 4) {
-        bitmap_put_pic(*out, m2->f2, p12->b4, 0);
+        bitmap_put_pic(*out, m2->roofPic, p12->roofX, 0);
         for (j5 = 0; j5 < at70a8->planesize / r_vid.planes; j5++)
             if (((unsigned char far *)at70a8->alt.p)[j5] != 0xff)
                 break;
@@ -302,16 +302,16 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
         bitmap_draw_pic(*out, m2->f4, p12->b5, p12->b6, 1);
     blt.w = g_0294->width;
     blt.h = g_0294->height;
-    blt.sx = p12->b10;
-    blt.sy = p12->b11;
+    blt.sx = p12->stickerX;
+    blt.sy = p12->stickerY;
     blt.dx = blt.dy = 0;
     (*b_78a2)(*out, g_0294, &blt, 1);
     if (kk > 0) {
         pp8 = &a784als[kk - 1];
-        bitmap_draw_pic(*out, pp8->id, p12->b10 + pp8->dx, p12->b11 + pp8->dy, 0);
+        bitmap_draw_pic(*out, pp8->id, p12->stickerX + pp8->dx, p12->stickerY + pp8->dy, 0);
     }
     if (q) {
-        bm = F_15BBE(m_8272.m8280, ARENA_HIGH_STACK);
+        bm = F_15BBE(m_8272.overlayPic, ARENA_HIGH_STACK);
         bitmap_underlay(bm, *out, p12->b2, p12->b3 - bm->height + row8 + 1);
         F_19438(1);
     }
@@ -354,8 +354,8 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
                 off = (j5 & 1) << 1;
                 break;
             }
-            bitmap_underlay(bm, out[j5], p12->b0 + off, h);
-            bitmap_underlay(bm, out[j5], p12->b1 + off, h);
+            bitmap_underlay(bm, out[j5], p12->wheelX1 + off, h);
+            bitmap_underlay(bm, out[j5], p12->wheelX2 + off, h);
             F_19438(1);
         }
     }
@@ -419,7 +419,7 @@ void F_181C8(int kind, int idx, int flags, int kk, int q, int bot, int mode2, in
     cursor_ctl(CURSOR_HIDE_NOW);
 again:
     n2 = (kind == 3 || kind == 7 || kind == 8) ? 1 : 4;
-    disk_pic_size(g7d86n[idx].f8, &w1, &h7, &x7);
+    disk_pic_size(g7d86n[idx].bodyPic, &w1, &h7, &x7);
     g_spriteBottomCut = g_carBottomCuts[g_scene];
     tmpn = (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? g_carBg4[g_scene] : g_carBg16[g_scene];
     hh8 = (kind == 3 || kind == 7 || kind == 8) ? h7 - g_spriteBottomCut : g_carBandHeights[g_scene];
@@ -477,8 +477,8 @@ again:
     }
     ar826e += x0;
     q_8270 += aw8260y;
-    m_8272.m8272 += x0;
-    m_8272.m8274 += aw8260y;
+    m_8272.stickerX += x0;
+    m_8272.stickerY += aw8260y;
     ang2 = (kind == 1 || kind == 4) ? x0 - right : x0;
     if (g_carPassBy != 2) {
         if (r_vid.mode == VID_EGA) {
@@ -535,7 +535,7 @@ again:
     spr3 = sprite_setup(ang2, bot, bms6, (char (*)[8])dz7ec2, n2, pb8, pan, pr16, pr26);
     sprite_plan_drive(spr3, kind, right);
     if (kind == 6)
-        spr3->page->r = g_lastCarRect;
+        spr3->page->rect = g_lastCarRect;
     if (kind == 4 || kind == 1 || kind == 2 || kind == 6) {
         g_carAnim = 1;
         g_carMoving = 1;
@@ -548,7 +548,7 @@ again:
         bu825a = g_spritePic;
         g_carMoving = 0;
         g_carAnim = 0;
-        g_lastCarRect = spr3->page->r;
+        g_lastCarRect = spr3->page->rect;
     }
     if (g_scene == 3 && kind == 4) {
         scratch = F_1934E(0x18, 7, 0, ARENA_HIGH_STACK);

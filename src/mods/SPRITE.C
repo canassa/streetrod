@@ -120,23 +120,23 @@ struct Sprite *sprite_setup(int x, int y, struct Bitmap far **imgs, char (*cell)
     if (r_vid.mode == VID_EGA) {
         for (i = 0; i < 2; i++) {
             g_sprPageRing[i].bm = g_pageBmps[i];
-            g_sprPageRing[i].idx = i;
-            g_sprPageRing[i].r.x1 = g_sprPageRing[i].r.y1 = 0;
-            g_sprPageRing[i].r.x2 = g_sprPageRing[i].r.y2 = -1;
+            g_sprPageRing[i].pageIndex = i;
+            g_sprPageRing[i].rect.x1 = g_sprPageRing[i].rect.y1 = 0;
+            g_sprPageRing[i].rect.x2 = g_sprPageRing[i].rect.y2 = -1;
             g_sprPageRing[i].link = &g_sprPageRing[i + 1];
         }
         g_sprPageRing[i - 1].link = g_sprPageRing;
     } else {
         g_sprPageRing[0].bm = r_vid.front;
-        g_sprPageRing[0].idx = 0;
-        g_sprPageRing[0].r.x1 = g_sprPageRing[0].r.y1 = 0;
-        g_sprPageRing[0].r.x2 = g_sprPageRing[0].r.y2 = -1;
+        g_sprPageRing[0].pageIndex = 0;
+        g_sprPageRing[0].rect.x1 = g_sprPageRing[0].rect.y1 = 0;
+        g_sprPageRing[0].rect.x2 = g_sprPageRing[0].rect.y2 = -1;
         g_sprPageRing[0].link = g_sprPageRing;
     }
     g7d18m.page = g_sprPageRing;
     sprite_clip_box(g7d18m.frame->pos->width,
         g7d18m.frame->pos->height, g7d18m.x, g7d18m.y,
-        g_sprPageRing[0].bm->width, g_sprPageRing[0].bm->height, &g_sprPageRing[0].r);
+        g_sprPageRing[0].bm->width, g_sprPageRing[0].bm->height, &g_sprPageRing[0].rect);
     g7d18m.seq = g_764e;
     return &g7d18m;
 }
@@ -310,10 +310,10 @@ void sprite_slide_v(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
     while ((*g78c6c)(sp)) {
         if (g_boltOverlay)
             (*ab78aat)(g_boltOverlay, r_vid.back, &u_70ac, 1);
-        if (r_vid.f16)
+        if (r_vid.copyToFront)
             bitmap_copy_box(r_vid.back, r_vid.front, x, a, bm->width + x, b);
     }
-    if (r_vid.f16)
+    if (r_vid.copyToFront)
         bitmap_copy_box(r_vid.front, r_vid.back, x, (y0 > y1 ? y1 : y0) < 0 ? 0 : (y0 > y1 ? y1 : y0), bm->width + x,
             (y0 < y1 ? y1 : y0) + bm->height > (SCREEN_HEIGHT - 1) ? (SCREEN_HEIGHT - 1) : (y0 < y1 ? y1 : y0) + bm->height);
     z_8b7c = old;

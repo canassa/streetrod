@@ -42,9 +42,9 @@ int egaspr_step(struct Sprite *s)
     if (s->seq->count < 0) {
         count = s->page;
         egalatch_rect(count->bm->bits.p, count->link->bm->bits.p, EGA_PITCH, SCREEN_BODY_HEIGHT, 0, 0, EGA_PITCH);
-        if (count->idx) {
+        if (count->pageIndex) {
             count = count->link;
-            count->r = count->link->r;
+            count->rect = count->link->rect;
             egapage_show(0);
         }
         return 0;
@@ -56,9 +56,9 @@ int egaspr_step(struct Sprite *s)
     sprite_clip_box(box->pos->width,
         box->pos->height - g_spriteBottomCut, s->x, s->y,
         count->bm->width, count->bm->height, &clip);
-    if (sprite_rect_sub(&clip, &count->r, &f, s->seq->dx))
+    if (sprite_rect_sub(&clip, &count->rect, &f, s->seq->dx))
         restore_rect_latch(&f, count->bm, key, s->seq->dx);
-    count->r = clip;
+    count->rect = clip;
     dest.h = box->pos->height - g_spriteBottomCut;
     dest.sy = 0;
     dest.dy = s->y;
@@ -84,7 +84,7 @@ int egaspr_step(struct Sprite *s)
             first.y1 += s->y;
             first.y2 += s->y;
         }
-        if (sprite_rect_and(&first, &count->r, &f)) {
+        if (sprite_rect_and(&first, &count->rect, &f)) {
             dest.w = f.x2 - f.x1 + 1;
             dest.h = f.y2 - f.y1 + 1;
             if (box->pos->pitch == height->pitch) {
@@ -100,6 +100,6 @@ int egaspr_step(struct Sprite *s)
         }
     }
     sprite_advance(s);
-    egapage_show(count->idx);
+    egapage_show(count->pageIndex);
     return 1;
 }

@@ -354,7 +354,7 @@ void dash_intro(void)
     F_119B8(3, 0x28, 0x28, 0);
     disk_free_pic(3);
     (*m_present)();
-    r_vid.f16 = 0;
+    r_vid.copyToFront = 0;
     F_118D4(1, -1);
     disk_free_pic(1);
     dash_wait_key(400);
@@ -381,7 +381,7 @@ void dash_time_up(void)
     game_message(0x17bb);
     (*bl78be)();
     cursor_ctl(CURSOR_HIDE_NOW);
-    r_vid.f16 = 1;
+    r_vid.copyToFront = 1;
     screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     F_065AF(1);
     F_10B7C();
@@ -413,7 +413,7 @@ void dash_set_view(int mode)
             outp(CRTC_INDEX, CRTC_START_LO);
             outp(CRTC_DATA, 0);
         }
-        r_vid.f16 = 1;
+        r_vid.copyToFront = 1;
         screen_status_init(SCREEN_BODY_HEIGHT);
         break;
     case 2:
@@ -423,11 +423,11 @@ void dash_set_view(int mode)
             outp(CRTC_INDEX, CRTC_START_LO);
             outp(CRTC_DATA, 0);
         }
-        r_vid.f16 = 1;
+        r_vid.copyToFront = 1;
         break;
     case 3:
         r_vid.back = r_vid.front = g_savedFront;
-        r_vid.f16 = 0;
+        r_vid.copyToFront = 0;
         screen_status_init(r_vid.mode == VID_EGA ? 0x5a : SCREEN_BODY_HEIGHT);
         if (bw8aca)
             F_11593(g_gearLabel);
@@ -444,7 +444,7 @@ void dash_set_view(int mode)
             outp(CRTC_INDEX, CRTC_START_LO);
             outp(CRTC_DATA, 0);
         }
-        r_vid.f16 = 1;
+        r_vid.copyToFront = 1;
         (*m_present)();
         break;
     }
@@ -625,12 +625,12 @@ void dash_draw_shifter(struct Bitmap far *dst, struct Eng *e)
     struct Blt16 pkt1;
     int x, idx3;
 
-    if (e->f24 == 0)
-        idx3 = e->f18;
-    else if (e->f18 == 0)
+    if (e->autoSelector == 0)
+        idx3 = e->gearIndex;
+    else if (e->gearIndex == 0)
         idx3 = 0;
     else
-        idx3 = e->f24 - 1;
+        idx3 = e->autoSelector - 1;
     pkt1.h = g_shifter->h;
     if (g_knobPos >= 0) {
         pkt1.sx = g_shiftSlots[g_knobPos].a;
@@ -649,7 +649,7 @@ void dash_draw_shifter(struct Bitmap far *dst, struct Eng *e)
     pkt1.w = 0x30 - x > 0x20 ? 0x20 : 0x30 - x;
     (*b_78a2)(g82b4s, dst, (struct Blt *)&pkt1, 1);
     g_knobPos = idx3;
-    e->f1a = 0;
+    e->shifterDirty = 0;
 }
 
 /* dash_fmemset @ 0F38:1640 (linear 0x109C0, 64 bytes) */

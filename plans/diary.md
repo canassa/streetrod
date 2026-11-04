@@ -1027,6 +1027,20 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I learned
 - MSC canonicalizes `70 * p` and `p * 70` to `mov ax,70; imul p`, so operand order says nothing here; signed vs unsigned does (`imul` vs `mul`).
 
+## 2026-11-04 14:20 CET: Name struct members from typed-use evidence
+
+### What I did
+- Surveyed all 69 named project types and two anonymous nested records: 411 members, with MSC offsets/types and all 6,289 typed C member accesses, read/write/address classification, function/file:line evidence and aggregate/raw-layout contexts. The report is work/members/SURVEY.md; original source coordinates are explicitly tied to its baseline commit. All 58 C sources were covered; the only 74 unresolved accesses belong to MSC REGS/SREGS, not project records.
+- Named or split 155 original fields across 29 structs in 18 small commits. Colors.c became five char fields (text, textBg, fill, line, frame), so those 155 original fields yield 159 named fields. Named picture metadata, parts/car/spec/art coordinates, rival statistics, sound/vibrato state, hot spots/timers/animation state, drivetrain/RPM bands, video/cursor/page state, player inventory, road positions, body-paint state, glyph rows and wiring state. Kept 256 reviewed members, including descriptive existing names and ambiguous/unused placeholders.
+- Retained overloaded Cmd operands, Hot.f6 (hit code versus link index), Win popup/menu geometry views, Pair coordinates/control values, the heterogeneous Eng.f34 array, unproven body-feature overlays and unused/reset-only fields. Glyph.pad is live row data: EGA text drawing reads its eight bytes through a byte pointer, so only its name became rows. No locals, parameters, globals, functions or type tags renamed; no source comments added or changed.
+- Every one of the 18 naming commits passed ./sr check --all (572/572), a fresh-layout ./sr build (Packed EXE vs orig/SR.EXE: IDENTICAL), headers/DGROUP checks and all 43 pre-integration unit tests. The real MSC compiler verified 475 sizeof/offsetof checks across all 69 named types with zero mismatches. A separate scalar/pointer leaf-layout audit verified unchanged sizes, alignments and offsets, including the five-byte Colors split and the 80-byte Style records; all other changes are pure member-token renames.
+- Integrated the manager-requested main updates (mode constants/header macro ownership, plus ./sr pic through 591265d). Resolved 62 adjacent member/mode conflict blocks in 20 files by combining disjoint token edits, preserving both names and constants. The complete merged-tree gate and final DOS-native build outputs are recorded in work/members/g19-*.log and work/members/final-dosbox.log.
+
+### What I learned
+- Value flow prevents plausible but wrong names: Spr12.b10/b11 and State8272.m8272/m8274 locate the saved body-paint region and shade overlays, not the engine. Hot.f6 and Win.w/h have contradictory interpretations across record views, so a one-role rename would mislead.
+- The five Colors slots are accessed only by constant indices; removing the obsolete initializer-array braces preserves both code and initialized bytes. Style palettes remain arrays because their indices vary; no packed/overlaid record was retyped.
+- Survey-only local follow-ups include EDIT.C edit_line pos (saved fill colour), GARAGE.C tune_timing gear (ignition timing), DISK.C disk_read_index height (largest packed byte count), DISK.C disk_pic_size x (flags parameter), and EGASPR bitmap/frame pointer locals named height/key/box. They need an independent stack-layout pass.
+
 ## 2026-11-04 14:27 CET: Name shared screen geometry
 
 ### What I did
@@ -1061,3 +1075,14 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - `VID_EGA` (-2), `VID_CGA` (-3), `VID_HERCULES` (-4), `VID_TANDY` (-6) name the pixel format held by `r_vid.mode` and the screen bitmaps' `flags` (EGA 4 planes 8 px/byte; CGA 2 bpp; Hercules mono at B000; Tandy 4 bpp 2 px/byte), in MAIN.H for C and PC.INC for the assembler; all ~190 comparisons and the flags assignments use them. Done by a Codex agent.
 - Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
+
+## 2026-11-04 14:41 CET: Correct reviewed struct member names
+
+### What I did
+- Resolved the in-progress main merge across 12 files, retaining both diary histories, main's video/geometry constants and the branch's member names; committed as 73f6945. Conflict-marker and whitespace checks were clean, and all required gates passed before the review corrections.
+- Corrected Spec/Car.rank, Dlg.fillsLeft, Racer/Look.sticker, Spr12/State8272 sticker coordinates and Video.hoodBg. Confirmed the optional Hot.palIndex and State7EAA.otherCars corrections from their palette and car-list consumers. Updated only existing stale member references and the wrong appearance comment; no source comments added, parameters or globals renamed.
+- Both the merged baseline and corrected tree passed 572/572 function checks, fresh-layout byte-identical packed builds, clean headers/DGROUP checks, all 53 unit tests and byte-identical native DOSBox MAKE builds. Logs: work/members/merge-*.log and work/members/fix-*.log. A source audit confirmed only member declarations/accesses and existing comment corrections changed.
+
+### What I learned
+- Rank is an ordinal 0..8 used for score lookup, class buckets, rival distance and won-car comparisons; each refuel fill adds three gallons. Appearance bits 8..12 and the $5 overlays represent stickers, distinct from the $20 paint scheme. These corrections now live in src/include/STRUCTS.H and their consumers.
+- The persistent hood background stores picture 0x42d with installed parts, Hot selects one Colors palette, and otherCars omits currentCar; their names now express those roles.

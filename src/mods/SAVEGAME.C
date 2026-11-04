@@ -54,27 +54,27 @@ void savegame_init_racer(int k, int *list)
     while ((i = random_int(6)) == 5)
         if (random_int(2) == 1)
             break;
-    av7ff8[k].fa = i;
-    av7ff8[k].fb = 0;
-    av7ff8[k].fc = 0;
-    av7ff8[k].fd = 0;
-    av7ff8[k].fe = 0;
-    av7ff8[k].ff = 0;
-    av7ff8[k].f10 = 0;
+    av7ff8[k].paintScheme = i;
+    av7ff8[k].status = 0;
+    av7ff8[k].betRaces = 0;
+    av7ff8[k].betWins = 0;
+    av7ff8[k].bodyMods = 0;
+    av7ff8[k].sticker = 0;
+    av7ff8[k].lostCarOnce = 0;
     n = list[0];
     do {
         i = random_int(n);
     } while (list[i + 1] == -1);
-    av7ff8[k].f8 = list[i + 1];
+    av7ff8[k].specIndex = list[i + 1];
     list[i + 1] = -1;
-    x = av7ff8[k].f8;
-    y = (g7d86n[x].f2 >> 1) + 1;
-    av7ff8[k].fe = ((g7d86n[x].f4 >> 8 & 7) == 2) ? 8 : 0;
-    av7ff8[k].ff = (random_int(20) < y) ? random_int(9) : 0;
-    if (w_8df0[x].f6 > 0 && w_8df0[x].f8 > 0)
-        av7ff8[k].fe |= (random_int(25) < y) ? 3 : 0;
-    if (w_8df0[x].f2 > 0)
-        av7ff8[k].fe |= (random_int(30) < y) ? 4 : 0;
+    x = av7ff8[k].specIndex;
+    y = (g7d86n[x].rank >> 1) + 1;
+    av7ff8[k].bodyMods = ((g7d86n[x].parts >> 8 & 7) == 2) ? 8 : 0;
+    av7ff8[k].sticker = (random_int(20) < y) ? random_int(9) : 0;
+    if (w_8df0[x].frontBumperPic > 0 && w_8df0[x].rearBumperPic > 0)
+        av7ff8[k].bodyMods |= (random_int(25) < y) ? 3 : 0;
+    if (w_8df0[x].roofPic > 0)
+        av7ff8[k].bodyMods |= (random_int(30) < y) ? 4 : 0;
 }
 
 /* init_racers @ 0000:5584 (linear 0x05584, 293 bytes) */
@@ -86,7 +86,7 @@ static void near init_racers(void)
 
     i = na1 = nb = nc = 0;
     for (; i < 25; i++) {
-        v = g7d86n[i].f2;
+        v = g7d86n[i].rank;
         if (v >= 6)
             cl[++nc] = i;
         else if (v < 3)
@@ -106,12 +106,12 @@ static void near init_racers(void)
         savegame_init_racer(k++, bm);
     for (i = 0; i < 7; i++)
         savegame_init_racer(k++, cl);
-    av7ff8[21].fb = 0;
+    av7ff8[21].status = 0;
     if (g_demo) {
         an[0] = 1;
         an[1] = 0x18;
         savegame_init_racer(g_demoRacer, an);
-        av7ff8[g_demoRacer].f6 = 0x629;
+        av7ff8[g_demoRacer].nameOffset = 0x629;
     }
 }
 
@@ -120,9 +120,9 @@ static void near init_racers(void)
 static void near init_new_game(void)
 {
     pools_init(1);
-    a_7eaap.m7eaa = 750L;
+    a_7eaap.money = 750L;
     if (g_demo)
-        a_7eaap.m7eaa = 10000L;
+        a_7eaap.money = 10000L;
     a_7eaap.m7eae = 10;
     road_build_layout(100);
     init_racers();
@@ -137,9 +137,9 @@ int near savegame_new(void)
 {
     int sel;
 
-    r_vid.f16 = 0;
+    r_vid.copyToFront = 0;
     F_119B8(0x3f8, 0x10, 6, 0);
-    r_vid.f16 = 1;
+    r_vid.copyToFront = 1;
     video_name_pal();
     bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), (SCREEN_BODY_HEIGHT - 1));
     (*m_present)();
@@ -204,16 +204,16 @@ static int near write_cars(int handle, struct Car *c, int flag)
     unsigned n;
 
     while (c) {
-        if (_dos_write(handle, c, 0x28, &n) != 0 || n != 0x28 || write_nodes(handle, c->slot6))
+        if (_dos_write(handle, c, 0x28, &n) != 0 || n != 0x28 || write_nodes(handle, c->transmission))
             return 1;
         for (i = 0; i < 5; i++)
-            if (write_nodes(handle, c->rack.s[i]))
+            if (write_nodes(handle, c->rack.parts[i]))
                 return 1;
-        if (write_nodes(handle, c->slot12))
+        if (write_nodes(handle, c->tires))
             return 1;
         if (flag)
             return 0;
-        c = c->f26;
+        c = c->next;
     }
     return 0;
 }
@@ -233,25 +233,25 @@ static int near read_cars(int handle, struct Car **head, int flag)
         return 0;
     *head = 0;
     for (;;) {
-        if (_dos_read(handle, &buf, 0x28, &n) != 0 || n != 0x28 || read_nodes(handle, &buf.slot6))
+        if (_dos_read(handle, &buf, 0x28, &n) != 0 || n != 0x28 || read_nodes(handle, &buf.transmission))
             return 1;
         for (m = 0; m < 5; m++)
-            if (read_nodes(handle, &buf.rack.s[m]))
+            if (read_nodes(handle, &buf.rack.parts[m]))
                 return 1;
-        if (read_nodes(handle, &buf.slot12))
+        if (read_nodes(handle, &buf.tires))
             return 1;
         car = (struct Car *)game_new_car();
         *car = buf;
         if (prev) {
-            prev->f26 = car;
+            prev->next = car;
             prev = car;
         } else
             *head = prev = car;
-        if (prev->f26 == 0)
+        if (prev->next == 0)
             break;
         if (flag)
             break;
-        prev->f26 = 0;
+        prev->next = 0;
     }
     return 0;
 }
@@ -304,14 +304,14 @@ int near savegame_load(void)
 
     cursor_ctl(CURSOR_HIDE_NOW);
     scan_save_slots(0);
-    r = r_vid.f16;
-    r_vid.f16 = 0;
+    r = r_vid.copyToFront;
+    r_vid.copyToFront = 0;
     F_118D4(0x3f7, 0);
     if (g_list[0]) {
         F_119B8(0x3fa, 0xf0, 100, -1);
         F_119B8(0x3fc, 0xf0, 0x8c, -1);
     }
-    r_vid.f16 = r;
+    r_vid.copyToFront = r;
     if (r)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, SCREEN_WIDTH, SCREEN_BODY_HEIGHT);
     cursor_ctl(CURSOR_SHOW_NOW);
@@ -343,9 +343,9 @@ int near savegame_load(void)
     if (_dos_open(name, 0, &fd7)
         || _dos_read(fd7, g_driverName, 0x24, &n) != 0 || n != 0x24
         || (pools_init(0), 0)
-        || read_cars(fd7, &a_7eaap.m7eb0, 1)
-        || read_cars(fd7, &a_7eaap.m7eb2, 0)
-        || read_nodes(fd7, &a_7eaap.m7eb8)
+        || read_cars(fd7, &a_7eaap.currentCar, 1)
+        || read_cars(fd7, &a_7eaap.otherCars, 0)
+        || read_nodes(fd7, &a_7eaap.spareParts)
         || _dos_read(fd7, &g_betRaces, 8, &n) != 0 || n != 8
         || _dos_read(fd7, av7ff8, 0x18c, &n) != 0 || n != 0x18c
         || _dos_read(fd7, &g_05fc, 4, &n) != 0 || n != 4
@@ -362,8 +362,8 @@ int near savegame_load(void)
         return -666;
     }
     _dos_close(fd7);
-    if (a_7eaap.m7eb0)
-        F_067CF(a_7eaap.m7eb0->f4);
+    if (a_7eaap.currentCar)
+        F_067CF(a_7eaap.currentCar->paintScheme);
     road_build_layout(g_roadLayout);
     g_0604 = g_0600 - delta;
     cursor_ctl(CURSOR_SHOW_NOW);
@@ -408,13 +408,13 @@ void near savegame_save(void)
     sel = 0;
     cursor_ctl(CURSOR_HIDE_NOW);
     scan_save_slots(1);
-    r = r_vid.f16;
-    r_vid.f16 = 0;
+    r = r_vid.copyToFront;
+    r_vid.copyToFront = 0;
     F_118D4(0x3f7, 0);
     F_119B8(0x3f9, 0x48, 0xa9, -1);
     F_119B8(0x3fb, 0xf0, 100, -1);
     F_119B8(0x3fc, 0xf0, 0x8c, -1);
-    r_vid.f16 = r;
+    r_vid.copyToFront = r;
     if (r)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, SCREEN_WIDTH, SCREEN_BODY_HEIGHT);
     strcpy(g_saveName, g_driverName);
@@ -452,13 +452,13 @@ again:
         box7 = (struct Win *)(0x12 * (int)r + a_8b9ap - 0x12);
         pal4 = x_colors;
         x_colors = bustyle->pal[((struct Win *)a_8b9ap)->lines];
-        sv7 = x_colors.c[3];
-        x_colors.c[3] = x_colors.c[1];
+        sv7 = x_colors.line;
+        x_colors.line = x_colors.textBg;
         wk = ((struct Win *)a_8b9ap)->tx - ((struct Win *)a_8b9ap)->w;
         draw_frame(r_vid.back, box7->w, box7->h, wk, 8);
         draw_frame(r_vid.front, box7->w, box7->h, wk, 8);
         x_colors = pal4;
-        x_colors.c[3] = sv7;
+        x_colors.line = sv7;
         cursor_ctl(CURSOR_SHOW);
         sel = r = i5;
     }
@@ -478,9 +478,9 @@ again:
     name[0] = disk_data_drive();
     if (_dos_creat(name, 0, &fd8)
         || _dos_write(fd8, g_driverName, 0x24, &n) != 0 || n != 0x24
-        || write_cars(fd8, a_7eaap.m7eb0, 1)
-        || write_cars(fd8, a_7eaap.m7eb2, 0)
-        || write_nodes(fd8, a_7eaap.m7eb8)
+        || write_cars(fd8, a_7eaap.currentCar, 1)
+        || write_cars(fd8, a_7eaap.otherCars, 0)
+        || write_nodes(fd8, a_7eaap.spareParts)
         || _dos_write(fd8, &g_betRaces, 8, &n) != 0 || n != 8
         || _dos_write(fd8, av7ff8, 0x18c, &n) != 0 || n != 0x18c
         || _dos_write(fd8, &g_05fc, 4, &n) != 0 || n != 4

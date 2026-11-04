@@ -121,30 +121,30 @@ void ega_draw_text(struct Bitmap far *bm, int x, int y, char *str)
         if (e) {
             ch = *r;
             outp(GC_DATA, e);
-            *r = x_colors.c[1];
+            *r = x_colors.textBg;
             ch = *r;
             outp(GC_DATA, *fill);
             fill++;
-            *r = x_colors.c[0];
+            *r = x_colors.text;
             r++;
         }
         for (left = k; left != 0; left--) {
             outp(GC_DATA, GC_MASK_ALL);
-            *r = x_colors.c[1];
+            *r = x_colors.textBg;
             ch = *r;
             outp(GC_DATA, *fill);
             fill++;
-            *r = x_colors.c[0];
+            *r = x_colors.text;
             r++;
         }
         if (o) {
             ch = *r;
             outp(GC_DATA, o);
-            *r = x_colors.c[1];
+            *r = x_colors.textBg;
             ch = *r;
             outp(GC_DATA, *fill);
             fill++;
-            *r = x_colors.c[0];
+            *r = x_colors.text;
         }
     }
     outp(GC_INDEX, GC_BIT_MASK);
