@@ -89,9 +89,9 @@ int drvtick_step(void)
                 key = kbdget_key();
                 if (key == 0x1b || key == 0x1f)
                     g_firePressed = 1;
-                if (g_mousePresent) {
+                if (g_mouse.present) {
                     mouse_buttons();
-                    g_firePressed |= g_mouseLeft;
+                    g_firePressed |= g_mouse.left;
                 }
                 if (g_joystick) {
                     joy_read();

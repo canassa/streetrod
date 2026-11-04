@@ -967,7 +967,7 @@ void bobs_visit(void)
     g_ordered = 0;
     g_justArrived = 1;
     g_scene = 2;
-    g_mouseLeft = g_joyButtons = g_buttons = 0;
+    g_mouse.left = g_joyButtons = g_buttons = 0;
     for (;;) {
         setup_bobs_spots(g_rivalHereState, !g_carhop & !g_ordered);
         menu_push(0x25);

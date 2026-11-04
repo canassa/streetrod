@@ -2,6 +2,18 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
+struct Mouse {
+    int dx;
+    int dy;
+    int accX;
+    int accY;
+    int shiftX;
+    int shiftY;
+    int left;
+    int right;
+    char present;
+};
+
 struct ManualEntry {
     signed char page;
     signed char color;

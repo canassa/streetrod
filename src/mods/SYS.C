@@ -76,16 +76,7 @@ int g_05da = 0;   /* DS:05DA */
 int g_msgTicks = 350;   /* DS:05DC */
 int g_clickEnds = 0;   /* DS:05DE */
 int g_kbdHooked = 0;   /* DS:05E0 */
-int g_mouseDx = 0;   /* DS:05E2 */
-int g_mouseDy = 0;   /* DS:05E4 */
-int g_mouseAccX = 0;   /* DS:05E6 */
-int g_mouseAccY = 0;   /* DS:05E8 */
-int g_mouseShiftX = 0;   /* DS:05EA */
-int g_mouseShiftY = 0;   /* DS:05EC */
-int g_mouseLeft = 0;   /* DS:05EE */
-int g_mouseRight = 10;   /* DS:05F0 */
-char g_mousePresent = 3;   /* DS:05F2 */
-char g_05f3 = 0;   /* DS:05F3 */
+struct Mouse g_mouse = {0, 0, 0, 0, 0, 0, 0, 10, 3};   /* DS:05E2 */
 int g_05f4[2] = {0, 0};   /* DS:05F4 */
 long g_tick = 0L;   /* DS:05F8 */
 long g_05fc = 0L;   /* DS:05FC */
@@ -159,9 +150,9 @@ void sys_reset_queues(void)
             deadline = g_tick + 10;
     }
     g_waitUntil = 0;
-    if (g_demo == 0 && g_mousePresent) {
+    if (g_demo == 0 && g_mouse.present) {
         mouse_poll();
-        g_mouseAccX = g_mouseAccY = 0;
+        g_mouse.accX = g_mouse.accY = 0;
     }
     g_click = 0;
     for (i = 0; i < 8; i++)
@@ -315,12 +306,12 @@ void sys_init(void)
         g_joyMaxY = g_joyCenterY >> 1;
     }
     if (g_demo == 0 && g_useMouse && mouse_reset() == -1) {
-        g_mousePresent = 1;
-        g_mouseAccX = g_mouseAccY = 0;
-        g_mouseShiftX = 1;
-        g_mouseShiftY = 1;
+        g_mouse.present = 1;
+        g_mouse.accX = g_mouse.accY = 0;
+        g_mouse.shiftX = 1;
+        g_mouse.shiftY = 1;
     } else
-        g_mousePresent = 0;
+        g_mouse.present = 0;
     g_cursorDrawX = -1;
     g_cursorDrawY = -1;
     bs79aa.active = 0;
@@ -498,11 +489,11 @@ int sys_wait_input(int ticks)
                 break;
             }
         }
-        if (g_demo == 0 && g_mousePresent) {
+        if (g_demo == 0 && g_mouse.present) {
             mouse_poll();
-            if (g_cursorDirty |= (g_mouseDx != 0 || g_mouseDy != 0)) {
-                g_cursorX += g_mouseDx;
-                g_cursorY += g_mouseDy;
+            if (g_cursorDirty |= (g_mouse.dx != 0 || g_mouse.dy != 0)) {
+                g_cursorX += g_mouse.dx;
+                g_cursorY += g_mouse.dy;
             }
         }
         if (g_click | g_click2) {
@@ -692,11 +683,11 @@ void sys_drive_start(void)
 {
     g_060a = 0;
     _dos_setvect(TIMER_INT, sys_drive_isr);
-    if (!g_demo && g_mousePresent) {
+    if (!g_demo && g_mouse.present) {
         mouse_poll();
-        g_mouseAccX = g_mouseAccY = 0;
-        g_mouseShiftX = 1;
-        g_mouseShiftY = 6;
+        g_mouse.accX = g_mouse.accY = 0;
+        g_mouse.shiftX = 1;
+        g_mouse.shiftY = 6;
     }
     g_lastDx = g_lastDy = g_buttons = g_click = 0;
     g_driveEng.steeringInput = g_driveEng.steering = 0;
@@ -719,11 +710,11 @@ void sys_drive_stop(void)
     g_onShoulder = 0;
     outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
     g_speakerOn = 0;
-    if (!g_demo && g_mousePresent) {
+    if (!g_demo && g_mouse.present) {
         mouse_poll();
-        g_mouseAccX = g_mouseAccY = 0;
-        g_mouseShiftX = 1;
-        g_mouseShiftY = 1;
+        g_mouse.accX = g_mouse.accY = 0;
+        g_mouse.shiftX = 1;
+        g_mouse.shiftY = 1;
     }
     g_lastDx = g_lastDy = g_buttons = g_click = 0;
 }
@@ -1145,18 +1136,18 @@ void interrupt far sys_drive_isr(void)
                             g_cursorY++;
                         }
                     }
-                    if (g_demo == 0 && g_mousePresent) {
+                    if (g_demo == 0 && g_mouse.present) {
                         mouse_poll();
-                        if (g_mouseDy > 0) {
+                        if (g_mouse.dy > 0) {
                             g_cursorDirty = 1;
                             g_cursorY++;
                             prev = 1;
                         }
-                        if (n = g_mouseDx) {
+                        if (n = g_mouse.dx) {
                             g_cursorDirty = s = 1;
                             g_cursorX += n > 0 ? 1 : -1;
                         }
-                        if (g_mouseRight)
+                        if (g_mouse.right)
                             flag = 1;
                     }
                 }

@@ -1092,3 +1092,15 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - A Codex agent surveyed 71 records and named 155 struct members from their uses (e.g. `Colors` = `text`, `textBg`, `fill`, `line`, `frame`, split from `char c[5]` because every access used a constant index; the hot-spot record's `kind`, `palIndex`, `textOffset`, `next`); 256 members keep placeholders. An independent review confirmed 143 and corrected the rest: six "paint" names are stickers (the game's "Stickers - $5" overlays, distinct from "New paint job - $20"), as was the older `Look.shade`; `modelKind` is a 0..8 `rank`; `gallonsLeft` counts 3-gallon `fillsLeft`; `Video.scratch` holds the garage hood picture (`hoodBg`). Comments naming old members were updated.
 - Result: `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, headers/dgroup checks clean, tests OK.
+
+## 2026-11-04 14:50 CET: mouse record evidence and tail padding
+
+### What I did
+- Surveyed every mouse global reference and neighboring initialized data in SYS. Compared nine struct boundaries with the real compiler and all-file gates; recorded the experiments in work/mouse/REPORT.md.
+- Folded DS:05E2..05F2 into struct Mouse g_mouse; its compiler tail padding supplies the previously unreferenced zero byte at 05F3. Kept neighboring input flags, unused 05F4 words and clocks separate. Updated all six C consumers; no assembly source references these values.
+- Verified 572/572 functions, the packed build and DOS-native MAKE byte-identical, 53 unit tests OK, and headers/DGROUP clean before merging main. The final gates are repeated after that merge.
+
+### What I learned
+- The nine mouse fields are undecidable as separate globals versus a struct: both forms have identical code and no budget effect. This is documented as a natural reconstruction choice in docs/RECONSTRUCTION.md.
+- Folding g_tick while keeping earlier deadlines separate reverses long-comparison operands in SYS and DRVTICK. The tested clock extensions are ruled out.
+- A trailing unreferenced initialized char can represent struct padding; retaining it separately after folding inserts extra bytes. Added this evidence to the msc51 recipe book.

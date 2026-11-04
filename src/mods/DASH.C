@@ -315,9 +315,9 @@ void dash_wait_key(int ticks)
             g_click = 0;
             break;
         }
-        if (g_mousePresent) {
+        if (g_mouse.present) {
             mouse_buttons();
-            if (g_mouseLeft)
+            if (g_mouse.left)
                 break;
         }
         if (g_joystick) {

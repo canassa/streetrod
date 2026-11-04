@@ -136,6 +136,14 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   needs no forced owner then). The EXE does not decide this placement: none of the three
   has a segment relocation, so a one-function file of its own, or for tandy_install and ega_install
   the end of the C file before (TANDYBLT.C, TANDYSPR.C), gives the same image.
+- **Mouse state** (`struct Mouse g_mouse`, DS:05E2..05F3). Eight ints and a
+  present byte are a natural record shared by SYS and MOUSE. Separate globals
+  produce identical code too: neither operand order nor the compiler budget
+  proves the original declaration. The unreferenced byte at 05F3 is represented
+  by MSC's zero tail padding. The neighboring input flags, unused 05F4 words and
+  clocks stay separate; folding g_tick while keeping the earlier deadlines plain
+  reverses comparison operands in SYS and DRVTICK. The experiments and limits of
+  this conclusion are recorded in `work/mouse/REPORT.md`.
 - **Evidence-only structs** `State70C0`, `State7D2E` and `State7E8A`. MSC's operand order
   shows that these blocks are struct members, not plain variables (recipe book). Their
   extent and member types are a reconstruction.
