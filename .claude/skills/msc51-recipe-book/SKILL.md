@@ -34,6 +34,7 @@ Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in
 
 | Original instructions | C |
 |---|---|
+| two separate byte read-modify-writes at 0000:0410, clearing bits 4-5 then setting bit 5 | `SET_EQUIP_VIDEO(EQUIP_VIDEO_COLOR80)` in MAIN.C expands to `(*BIOS_EQUIP &= ~EQUIP_VIDEO_MASK, *BIOS_EQUIP |= (m))`; with mask `0x30` and mode `0x20`, the comma form preserves both accesses and matches the two statements byte for byte under `/Oalsi` |
 | `cmp; jle L; mov ax,1; jmp E; L: sub ax,ax; E:` | `return a > b;` (comparison as a value) |
 | `cmp; jge L; mov ax,1; jmp E; L: sub ax,ax; E: mov [x],ax` | `x = a < b;` |
 | `cmp; je L; sub ax,ax; jmp E; L: mov ax,1; E:` | `if (a != b) return 0; return 1;` |

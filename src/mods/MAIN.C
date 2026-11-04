@@ -188,8 +188,7 @@ static void near init_screens(int mode)
         g_vga = 1;
     case 2:
         r_vid.mode = -2;
-        *BIOS_EQUIP &= 0xcf;
-        *BIOS_EQUIP |= 0x20;
+        SET_EQUIP_VIDEO(EQUIP_VIDEO_COLOR80);
         ega_install();
         return;
     case 5:
@@ -213,8 +212,7 @@ static void near init_screens(int mode)
         break;
     case 6:
         g_screens[0].flags = 0xfd;
-        *BIOS_EQUIP &= 0xcf;
-        *BIOS_EQUIP |= 0x20;
+        SET_EQUIP_VIDEO(EQUIP_VIDEO_COLOR80);
         break;
     }
     cga_install();
