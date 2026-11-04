@@ -1,5 +1,5 @@
-SCREEN_W                   EQU 320
-SCREEN_H                   EQU 200
+SCREEN_WIDTH                   EQU 320
+SCREEN_HEIGHT                   EQU 200
 EGA_PITCH                  EQU 40
 BIOS_VIDEO                 EQU 010h
 EQUIP_INT                  EQU 11h

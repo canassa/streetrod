@@ -20,7 +20,7 @@ _tandytxt_render  PROC    FAR
         push    di
         mov     ax,SEG _g_font
         mov     es,ax
-        mov     ax,SCREEN_W
+        mov     ax,SCREEN_WIDTH
         sub     ax,[bp+6]
         mov     [bp-2],ax
         mov     ax,[bp+6]

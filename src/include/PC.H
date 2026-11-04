@@ -3,8 +3,8 @@
 #ifndef PC_H
 #define PC_H
 
-#define SCREEN_W 320
-#define SCREEN_H 200
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 200
 #define EGA_PITCH 40
 
 #define BIOS_EQUIP ((unsigned char far *)0x410L)

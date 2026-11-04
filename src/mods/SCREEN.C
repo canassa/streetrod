@@ -38,9 +38,9 @@ void screen_status_init(int y)
     o_8250 = 0x58;
     aq8256z = 0;
     x_colors = bustyle->colors;
-    draw_fill_rect(r_vid.back, 0, y, SCREEN_W, STATUS_BAR_H);
+    draw_fill_rect(r_vid.back, 0, y, SCREEN_WIDTH, STATUS_BAR_HEIGHT);
     if (r_vid.f16)
-        bitmap_copy_box(r_vid.back, r_vid.front, 0, y, (SCREEN_W - 1), y + STATUS_BAR_H - 1);
+        bitmap_copy_box(r_vid.back, r_vid.front, 0, y, (SCREEN_WIDTH - 1), y + STATUS_BAR_HEIGHT - 1);
 }
 
 void (far *a_78aem)(struct Bitmap far *, int, int, char *);
@@ -67,7 +67,7 @@ void F_11421(int x, char *s, int w)
         left = (x + (w - dash_text_width(s)) / 2) & 0xfff8;
     } else
         left = x;
-    wd = SCREEN_W - x;
+    wd = SCREEN_WIDTH - x;
     ypos = au8252x;
     cursor_ctl(CURSOR_HIDE);
     if (aq8256z)
@@ -156,7 +156,7 @@ void screen_msg_box(char *s)
 char g_promptPalette[18] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14, 0, 0};   /* DS:04AC */
 int g_picX = 0;   /* DS:04BE */
 int g_picY = 0;   /* DS:04C0 */
-int g_picMaxH = SCREEN_BODY_H;   /* DS:04C2 */
+int g_picMaxH = SCREEN_BODY_HEIGHT;   /* DS:04C2 */
 
 /* screen_wait_msg @ 0F38:23CE (linear 0x1174E, 390 bytes)
 
@@ -175,7 +175,7 @@ void screen_wait_msg(char *msg)
     strcpy(g_promptLine2, "Hit Return when ready ...");
     if (g_graphicsUp >= 1) {
         if (g_driveRebuild) {
-            screen_fill_rect(0, 0, SCREEN_W, SCREEN_H, 0);
+            screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
             g_driveRebuild++;
         }
         prev = gz8249;
@@ -233,7 +233,7 @@ int F_118D4(int a, int b)
     cursor_ctl(CURSOR_HIDE);
     p = F_15BBE(a, ARENA_HIGH_STACK);
     if (b >= 0)
-        screen_fill_rect(0, 0, SCREEN_W, g_picMaxH, b);
+        screen_fill_rect(0, 0, SCREEN_WIDTH, g_picMaxH, b);
     pkt.w = p->width;
     pkt.h = p->height > g_picMaxH ? g_picMaxH : p->height;
     pkt.sx = pkt.sy = pkt.fc = 0;

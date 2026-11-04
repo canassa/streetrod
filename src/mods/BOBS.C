@@ -145,11 +145,11 @@ static void near show_rival_car(int mode, int b, int c, int d, int e, int *f)
         g7f32s[n] = 0;
     for (;;) {
         cz8bc0y = dash_text_width(g7f32s);
-        n = SCREEN_W - (ar82c0 + cz8bc0y);
+        n = SCREEN_WIDTH - (ar82c0 + cz8bc0y);
         n = n > 0 ? n >> 1 : 0;
         n = n < 15 ? 15 : n;
         g_bannerX = (n + ar82c0) & ~7;
-        if (g_bannerX + cz8bc0y > SCREEN_W) {
+        if (g_bannerX + cz8bc0y > SCREEN_WIDTH) {
             drop_last_word(g7f32s);
             continue;
         }
@@ -808,7 +808,7 @@ static void near play_ending(void)
     F_119B8(9, 8, 0x14, 2);
     r_vid.f16 = 0;
     savedl = g_picMaxH;
-    g_picMaxH = SCREEN_H;
+    g_picMaxH = SCREEN_HEIGHT;
     (*dz78b6)(r_vid.front->bits.p, r_vid.back->bits.p);
     F_118D4(0x408, -1);
     g_picMaxH = savedl;

@@ -66,7 +66,7 @@ void ega_draw_text(struct Bitmap far *bm, int x, int y, char *str)
             byte = 0;
         wd = *(pen = (unsigned char far *)&g_font[byte]);
         cols += wd;
-        if (cols > SCREEN_W) {
+        if (cols > SCREEN_WIDTH) {
             cols -= wd;
             break;
         }

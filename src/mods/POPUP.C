@@ -35,8 +35,8 @@ struct Bitmap far *popup_grab(int x, int y, int w, int h, struct Bitmap far *src
     int ye;
     int color;
 
-    x2 = (x + w + ~r_vid.mask & r_vid.mask) > SCREEN_W ? SCREEN_W : (x + w + ~r_vid.mask & r_vid.mask);
-    ye = y + h > SCREEN_H ? SCREEN_H : y + h;
+    x2 = (x + w + ~r_vid.mask & r_vid.mask) > SCREEN_WIDTH ? SCREEN_WIDTH : (x + w + ~r_vid.mask & r_vid.mask);
+    ye = y + h > SCREEN_HEIGHT ? SCREEN_HEIGHT : y + h;
     x &= r_vid.mask;
     if (src) {
         color = src->alt.p != 0;

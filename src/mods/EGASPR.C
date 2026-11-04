@@ -41,7 +41,7 @@ int egaspr_step(struct Sprite *s)
 
     if (s->seq->count < 0) {
         count = s->page;
-        egalatch_rect(count->bm->bits.p, count->link->bm->bits.p, EGA_PITCH, SCREEN_BODY_H, 0, 0, EGA_PITCH);
+        egalatch_rect(count->bm->bits.p, count->link->bm->bits.p, EGA_PITCH, SCREEN_BODY_HEIGHT, 0, 0, EGA_PITCH);
         if (count->idx) {
             count = count->link;
             count->r = count->link->r;

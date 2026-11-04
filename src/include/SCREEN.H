@@ -1,11 +1,11 @@
 /* SCREEN.H - declarations of what SCREEN.C defines. */
 
-#ifndef SCREEN_H_INCLUDED
-#define SCREEN_H_INCLUDED
+#ifndef SCREEN_H
+#define SCREEN_H
 #include "STRUCTS.H"
 
-#define SCREEN_BODY_H 190
-#define STATUS_BAR_H 10
+#define SCREEN_BODY_HEIGHT 190
+#define STATUS_BAR_HEIGHT 10
 
 extern char *g_gearNames[];                             /* DS:0482 */
 extern char g_promptPalette[];                          /* DS:04AC */

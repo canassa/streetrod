@@ -357,10 +357,10 @@ void bitmap_copy_box(struct Bitmap far *dst, struct Bitmap far *src, int x1, int
         x1 = 0;
     if (x2 < 0)
         x2 = 0;
-    if (x2 > (SCREEN_W - 1))
-        x2 = (SCREEN_W - 1);
-    if (y2 > (SCREEN_H - 1))
-        y2 = (SCREEN_H - 1);
+    if (x2 > (SCREEN_WIDTH - 1))
+        x2 = (SCREEN_WIDTH - 1);
+    if (y2 > (SCREEN_HEIGHT - 1))
+        y2 = (SCREEN_HEIGHT - 1);
     pkt.w = ((x2 + ~r_vid.mask + 1) & r_vid.mask) - (x1 & r_vid.mask);
     pkt.h = y2 - y1 + 1;
     pkt.sx = pkt.dx = x1;

@@ -160,7 +160,7 @@ void tandy_reveal(char far *a, char far *b)
 
     for (kl = 0; kl < 5; kl++) {
         dl5 = g_tick + 5;
-        for (row = g_tandyRevealOrder[kl]; row < SCREEN_H; row += 5) {
+        for (row = g_tandyRevealOrder[kl]; row < SCREEN_HEIGHT; row += 5) {
             p1 = a + (((row & 3) << 13) + (row >> 2) * 160);
             p23 = b + (((row & 3) << 13) + (row >> 2) * 160);
             for (e = (int far *)p1, i = 80; i; i--)

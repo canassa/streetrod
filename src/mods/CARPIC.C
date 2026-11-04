@@ -423,17 +423,17 @@ again:
     g_spriteBottomCut = g_carBottomCuts[g_scene];
     tmpn = (r_vid.mode != -2 && r_vid.mode != -6) ? g_carBg4[g_scene] : g_carBg16[g_scene];
     hh8 = (kind == 3 || kind == 7 || kind == 8) ? h7 - g_spriteBottomCut : g_carBandHeights[g_scene];
-    x0 = ((SCREEN_W - w1) / 2 + 4) & 0xfff8;
-    right = kind == 2 ? SCREEN_W - x0 : x0 + w1;
+    x0 = ((SCREEN_WIDTH - w1) / 2 + 4) & 0xfff8;
+    right = kind == 2 ? SCREEN_WIDTH - x0 : x0 + w1;
     if (g_carPassBy != 2) {
         if (kind == 4) {
             g_4f4a = 1;
             if (r_vid.mode == -2) {
-                mem_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, SCREEN_W, BACKDROP_ROWS - g_spriteBottomCut, -2);
+                mem_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, SCREEN_WIDTH, BACKDROP_ROWS - g_spriteBottomCut, -2);
                 egalatch_rect(r_vid.back->bits.p, g_backdrop->bits.p - EGA_PITCH * top7, EGA_PITCH, g_backdrop->height, 0, top7, EGA_PITCH);
             } else {
-                mem_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, SCREEN_W, BACKDROP_ROWS - g_spriteBottomCut, -1);
-                popup_grab(0, top7, SCREEN_W, g_backdrop->height, g_backdrop);
+                mem_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, SCREEN_WIDTH, BACKDROP_ROWS - g_spriteBottomCut, -1);
+                popup_grab(0, top7, SCREEN_WIDTH, g_backdrop->height, g_backdrop);
             }
         }
         if (kind == 4) {
@@ -460,7 +460,7 @@ again:
                 g_backdropW = right;
                 g_backdropX = kind == 2 ? x0 : 0;
             } else {
-                g_backdropW = SCREEN_W;
+                g_backdropW = SCREEN_WIDTH;
                 g_backdropX = 0;
             }
             carpic_backdrop(g_backdrop, &pan, mode2 ? 0x448 : 0, &pb8, BACKDROP_ROWS, h7, &pr16, &pr26);

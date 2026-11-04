@@ -349,7 +349,7 @@ int near F_06B06(int mode)
             else
                 F_181C8(4, m_8272.m8282, n, m_8272.m8284.shade, 0, 0x98, 0, g_5030[m_8272.m827e]);
         } else {
-            bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_W - 1), 0xc7);
+            bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), 0xc7);
             g_29ff[0] = 0;
         }
         break;

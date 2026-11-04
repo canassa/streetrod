@@ -46,9 +46,9 @@ int drive_run(void)
         (*bl78be)();
         g_dashBuffered = r_vid.mode == -3 && g_egaCard;
         if (g_dashBuffered) {
-            popup_grab(0, DASH_Y, SCREEN_W, DASH_H, g755cu);
+            popup_grab(0, DASH_Y, SCREEN_WIDTH, DASH_HEIGHT, g755cu);
             r_vid.f16 = 1;
-            screen_fill_rect(0, 0, SCREEN_W, SCREEN_H, 0);
+            screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
             r_vid.f16 = sv;
         }
         if (r_vid.mode == -2)
@@ -108,7 +108,7 @@ int drive_run(void)
         af824ax = 0;
     road_start();
     if (r_vid.mode != -2) {
-        blt.w = SCREEN_W;
+        blt.w = SCREEN_WIDTH;
         blt.h = 0x12;
         blt.dy = blt.sy = blt.sx = blt.dx = 0;
         (*b_78a2)(g8188w, bm7678, &blt, 1);
@@ -116,7 +116,7 @@ int drive_run(void)
     if (g_dashBuffered) {
         g_dashBuffered = 0;
         blt.w = g755cu->width;
-        blt.h = DASH_H;
+        blt.h = DASH_HEIGHT;
         blt.sy = blt.sx = blt.dx = 0;
         blt.dy = DASH_Y;
         (*b_78a2)(g755cu, bm7678, &blt, 1);
@@ -153,7 +153,7 @@ int drive_run(void)
     marks_clear();
     if (r_vid.mode == -2) {
         blt.w = w;
-        blt.h = DASH_H;
+        blt.h = DASH_HEIGHT;
         blt.sx = 0;
         blt.sy = 0;
         blt.dx = 0;

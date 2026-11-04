@@ -48,12 +48,12 @@ void ads_open(int *list, int base)
     g_pages.list = list;
     g_pages.n = 0;
     ptr = list + 1;
-    pos = SCREEN_BODY_H;
+    pos = SCREEN_BODY_HEIGHT;
     num = first = *list;
     base = num - base;
     g_pages.cur = 1;
     while (num--) {
-        while ((pos += 9 * g_descHdr[*ptr] + 3) > (SCREEN_BODY_H - 1)) {
+        while ((pos += 9 * g_descHdr[*ptr] + 3) > (SCREEN_BODY_HEIGHT - 1)) {
             g_pages.start[g_pages.n++] = first - num;
             pos = 0;
         }
@@ -64,7 +64,7 @@ void ads_open(int *list, int base)
     x_colors = bustyle->hilite;
     cursor_ctl(CURSOR_HIDE);
     g_adBlt = 0x40;
-    g_adHeight = SCREEN_BODY_H;
+    g_adHeight = SCREEN_BODY_HEIGHT;
     g_adSrcX = g_adSrcY = g_adDstX = g_adDstY = g_052e = 0;
     g_adRedraw = 1;
     menu_push(8);
@@ -101,7 +101,7 @@ int ads_run(void)
             cursor_ctl(CURSOR_HIDE_NOW);
             x_colors = bustyle->hilite;
             g_adPicture = ad_picture(2);
-            draw_fill_rect(r_vid.back, 0x40, 0, 0xc0, SCREEN_BODY_H);
+            draw_fill_rect(r_vid.back, 0x40, 0, 0xc0, SCREEN_BODY_HEIGHT);
             g_adSrcX = g_adDstX = 0;
             b_78a2(g_adPicture, r_vid.back, (struct Blt *)&g_adBlt, 1);
             g_adSrcX = 0x40;
@@ -109,7 +109,7 @@ int ads_run(void)
             b_78a2(g_adPicture, r_vid.back, (struct Blt *)&g_adBlt, 1);
             F_19438(1);
             hsave = r_vid.back->height;
-            r_vid.back->height = SCREEN_BODY_H;
+            r_vid.back->height = SCREEN_BODY_HEIGHT;
             y = 0;
             i = g_adResume ? a_7eaap.m7ebe : g_pages.start[g_pages.cur];
             next = g_pages.list + i;
@@ -119,7 +119,7 @@ int ads_run(void)
             do {
                 draw_hline(r_vid.back, 0x44, y + 1, 0xb8);
                 y += 3;
-                if (y > (SCREEN_BODY_H - 1))
+                if (y > (SCREEN_BODY_HEIGHT - 1))
                     break;
                 cntz++;
                 row7++;
@@ -136,21 +136,21 @@ int ads_run(void)
                     if (c6 < 0x20)
                         break;
                     y += 9;
-                    if (y > (SCREEN_BODY_H - 1))
+                    if (y > (SCREEN_BODY_HEIGHT - 1))
                         break;
                     a_78aem(r_vid.back, 0x44, y, str);
                 }
                 y += 9;
-                row7->y2 = y + 1 > (SCREEN_BODY_H - 1) ? (SCREEN_BODY_H - 1) : y + 1;
+                row7->y2 = y + 1 > (SCREEN_BODY_HEIGHT - 1) ? (SCREEN_BODY_HEIGHT - 1) : y + 1;
                 if (i >= limit) {
                     i = 0;
                     next = g_pages.list + g_pages.start[0];
                 }
-            } while (y < (SCREEN_BODY_H - 1) && ++i <= limit);
+            } while (y < (SCREEN_BODY_HEIGHT - 1) && ++i <= limit);
             g7f84q = i;
             g_adResume = 1;
-            row7->y2 = y + 1 > (SCREEN_BODY_H - 1) ? (SCREEN_BODY_H - 1) : y + 1;
-            if (row7->y2 < (SCREEN_BODY_H - 1))
+            row7->y2 = y + 1 > (SCREEN_BODY_HEIGHT - 1) ? (SCREEN_BODY_HEIGHT - 1) : y + 1;
+            if (row7->y2 < (SCREEN_BODY_HEIGHT - 1))
                 draw_hline(r_vid.back, 0x44, y + 1, 0xb8);
             row7++;
             while (row7->f6 >= 0) {
@@ -161,7 +161,7 @@ int ads_run(void)
             r_vid.back->height = hsave;
             cursor_ctl(CURSOR_SHOW);
             if (r_vid.f16)
-                bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_W - 1), (SCREEN_BODY_H - 1));
+                bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), (SCREEN_BODY_HEIGHT - 1));
             sys_hover_reset();
         }
         while ((key = sys_wait_input(3000)) == 0)
@@ -175,7 +175,7 @@ int ads_run(void)
             g7f84q = a_7eaap.m7ebe - 1;
             if (g7f84q < 1)
                 g7f84q = limit;
-            diff = (SCREEN_BODY_H - 1);
+            diff = (SCREEN_BODY_HEIGHT - 1);
             while ((diff -= 9 * g_descHdr[g_pages.list[g7f84q]] + 3) > 0)
                 if (--g7f84q < 1)
                     g7f84q = limit;

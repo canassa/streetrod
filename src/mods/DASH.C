@@ -348,7 +348,7 @@ void dash_intro(void)
     saved = g_picMaxH;
     if (r_vid.mode == -2 || r_vid.mode == -6)
         (*bl78be)();
-    g_picMaxH = SCREEN_H;
+    g_picMaxH = SCREEN_HEIGHT;
     if (r_vid.mode != -2 && r_vid.mode != -6)
         main_set_palette(CGA_PALETTE_GREEN_RED_BROWN);
     F_119B8(3, 0x28, 0x28, 0);
@@ -370,7 +370,7 @@ void dash_intro(void)
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
     dash_wait_key(400);
     g_picMaxH = saved;
-    screen_fill_rect(0, 0, SCREEN_W, SCREEN_H, 0);
+    screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
 }
 
@@ -382,7 +382,7 @@ void dash_time_up(void)
     (*bl78be)();
     cursor_ctl(CURSOR_HIDE_NOW);
     r_vid.f16 = 1;
-    screen_fill_rect(0, 0, SCREEN_W, SCREEN_H, 0);
+    screen_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     F_065AF(1);
     F_10B7C();
     (*m_present)();
@@ -414,7 +414,7 @@ void dash_set_view(int mode)
             outp(CRTC_DATA, 0);
         }
         r_vid.f16 = 1;
-        screen_status_init(SCREEN_BODY_H);
+        screen_status_init(SCREEN_BODY_HEIGHT);
         break;
     case 2:
         if (r_vid.mode == -2) {
@@ -428,7 +428,7 @@ void dash_set_view(int mode)
     case 3:
         r_vid.back = r_vid.front = g_savedFront;
         r_vid.f16 = 0;
-        screen_status_init(r_vid.mode == -2 ? 0x5a : SCREEN_BODY_H);
+        screen_status_init(r_vid.mode == -2 ? 0x5a : SCREEN_BODY_HEIGHT);
         if (bw8aca)
             F_11593(g_gearLabel);
         break;
@@ -501,7 +501,7 @@ void dash_steer_marker(int n)
     y2 = g_steerPoints[n][1] + DASH_Y;
     ymax = g_clipYMax;
     ymin2 = g_clipYMin;
-    g_clipYMax = SCREEN_BODY_H;
+    g_clipYMax = SCREEN_BODY_HEIGHT;
     g_clipYMin = DASH_Y;
     view_draw_dot(x, y2);
     g_clipYMax = ymax;
@@ -553,7 +553,7 @@ void dash_draw_wheel(int a, int b, struct Bitmap far *dst)
         if (r_vid.mode != -2) {
             ymax = g_clipYMax;
             ymin2 = g_clipYMin;
-            g_clipYMax = SCREEN_BODY_H;
+            g_clipYMax = SCREEN_BODY_HEIGHT;
             g_clipYMin = DASH_Y;
         }
         view_draw_dot(x, y2);

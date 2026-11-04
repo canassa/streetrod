@@ -71,11 +71,11 @@ int g_opponentPics[5][4] = {{1003, 1004, 1057, 1091}, {1010, 1012, 1011, 1239}, 
 int g_5e3c = 0;   /* DS:5E3C */
 int g_drawPage = 1;   /* DS:5E3E */
 int g_showPage = 2;   /* DS:5E40 */
-struct Clip g_viewRect = {SCREEN_W, 82, 0, 18, 0, 18};   /* DS:5E42 */
+struct Clip g_viewRect = {SCREEN_WIDTH, 82, 0, 18, 0, 18};   /* DS:5E42 */
 int g_clipXMin = 0;   /* DS:5E4E */
 int g_clipYMin = 18;   /* DS:5E50 */
 int g_clipYMax = 101;   /* DS:5E52 */
-int g_clipXMax = (SCREEN_W - 1);   /* DS:5E54 */
+int g_clipXMax = (SCREEN_WIDTH - 1);   /* DS:5E54 */
 unsigned char g_shrinkMasks[3][4] = {{87, 37, 34, 0}, {247, 117, 82, 0}, {117, 84, 33, 0}};   /* DS:5E56 */
 int g_5e62[18] = {1258, 1237, 1236, 1238, 8, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0};   /* DS:5E62 */
 int g_5e86 = 0;   /* DS:5E86 */
@@ -228,7 +228,7 @@ void view_clip(void)
     g_clipXMin = 0;
     g_clipYMin = 0x12;
     g_clipYMax = 0x65;
-    g_clipXMax = (SCREEN_W - 1);
+    g_clipXMax = (SCREEN_WIDTH - 1);
 }
 
 /* view_load @ 2645:2429 (linear 0x28879, 1369 bytes) */
@@ -289,7 +289,7 @@ void view_load(void)
     pkt1.w = ar767eu->width;
     pkt1.h = ar767eu->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
-    pkt1.dy = SCREEN_H - ar767eu->height;
+    pkt1.dy = SCREEN_HEIGHT - ar767eu->height;
     (*b_78a2)(ar767eu, g8188w, &pkt1, 1);
     marks_pop_low(1);
     ax72f4 = F_15BBE(0x3ee, ARENA_LOW_STACK);
@@ -342,17 +342,17 @@ static void near render_backdrop(void)
         b.h = v - 0x1e;
         b.sy = 0x9a - b.h;
         if (ao7d2ev.m7d3c > 0) {
-            r = (ao7d2ev.m7d3c * 2 % SCREEN_W) & ~7;
-            ll = SCREEN_W - r;
+            r = (ao7d2ev.m7d3c * 2 % SCREEN_WIDTH) & ~7;
+            ll = SCREEN_WIDTH - r;
         } else {
-            ll = (abs(ao7d2ev.m7d3c) * 2 % SCREEN_W) & ~7;
-            r = SCREEN_W - ll;
+            ll = (abs(ao7d2ev.m7d3c) * 2 % SCREEN_WIDTH) & ~7;
+            r = SCREEN_WIDTH - ll;
         }
         b.w = ll;
         b.sx = 0;
         b.dx = r;
     } else {
-        b.w = SCREEN_W;
+        b.w = SCREEN_WIDTH;
         b.sx = 0;
         b.sy = 0x66;
         b.dx = 0;
@@ -369,18 +369,18 @@ static void near render_backdrop(void)
     b.sy = 0xa3;
     if (*(int *)&bw8aca) {
         if (ao7d2ev.m7d3c > 0) {
-            r = (ao7d2ev.m7d3c * 4 % SCREEN_W) & ~7;
-            ll = SCREEN_W - r;
+            r = (ao7d2ev.m7d3c * 4 % SCREEN_WIDTH) & ~7;
+            ll = SCREEN_WIDTH - r;
         } else {
-            ll = (abs(ao7d2ev.m7d3c) * 4 % SCREEN_W) & ~7;
-            r = SCREEN_W - ll;
+            ll = (abs(ao7d2ev.m7d3c) * 4 % SCREEN_WIDTH) & ~7;
+            r = SCREEN_WIDTH - ll;
         }
         b.w = ll;
         b.sx = 0;
         b.dx = r;
         b.dy = v - 0xc;
     } else {
-        b.w = SCREEN_W;
+        b.w = SCREEN_WIDTH;
         b.sx = 0;
         b.dx = 0;
         b.dy = 0x2f;
@@ -1411,7 +1411,7 @@ static void near render_mirror(void)
     clip_vline(2, 0xf0, 0x17, 0x2a);
     clip_vline(4, 0xf1, 0x17, 0x2a);
     clip_vline(4, 0x13e, 0x17, 0x2a);
-    clip_vline(2, (SCREEN_W - 1), 0x17, 0x2a);
+    clip_vline(2, (SCREEN_WIDTH - 1), 0x17, 0x2a);
     pkt1.w = 0x20;
     pkt1.h = g8184y->height - 6;
     pkt1.sx = 0xf8;

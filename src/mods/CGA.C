@@ -276,10 +276,10 @@ void cga_recolor_rect(struct Bitmap far *bm, int a, int b, int x1, int y1, int x
         x1 = 0;
     if (x2 < 0)
         x2 = 0;
-    if (x2 > (SCREEN_W - 1))
-        x2 = SCREEN_W;
-    if (y2 > (SCREEN_H - 1))
-        y2 = (SCREEN_H - 1);
+    if (x2 > (SCREEN_WIDTH - 1))
+        x2 = SCREEN_WIDTH;
+    if (y2 > (SCREEN_HEIGHT - 1))
+        y2 = (SCREEN_HEIGHT - 1);
     p0 = p1 = bm->bits.p;
     p1 += bm->planesize >> 1;
     p0 += bm->pitch * (y1 >> 1);
@@ -398,7 +398,7 @@ void cga_reveal(char far *dst, char far *src)
 
     for (pass = 0; pass < 5; pass++) {
         deadline = g_tick + 5;
-        for (y = g_cgaRevealOrder[pass]; y < SCREEN_H; y += 5) {
+        for (y = g_cgaRevealOrder[pass]; y < SCREEN_HEIGHT; y += 5) {
             d = dst + (y >> 1) * 0x50;
             s2 = src + (y >> 1) * 0x50;
             if (y & 1) {
