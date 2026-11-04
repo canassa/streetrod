@@ -4,6 +4,15 @@
 #define SYS_H
 #include "STRUCTS.H"
 
+struct DemoControl {
+    int quit;
+    char keyDown;
+    char moving;
+    int count;
+    int lastGroup;
+    int autoShifts;
+};
+
 struct Vibrato {
     int gain;
     int divisor;
@@ -63,12 +72,7 @@ extern char g_keymapGroup;                              /* DS:064E */
 extern struct KeyMap g_keymapSaved[];                   /* DS:0650 */
 extern char g_protectPal[];                             /* DS:0692 */
 extern int g_06a2;                                      /* DS:06A2 */
-extern int g_demoQuit;                                  /* DS:06A4 */
-extern char g_demoKeyDown;                              /* DS:06A6 */
-extern char g_demoMoving;                               /* DS:06A7 */
-extern int g_demoCount;                                 /* DS:06A8 */
-extern int g_demoLastGroup;                             /* DS:06AA */
-extern int g_autoShifts;                                      /* DS:06AC */
+extern struct DemoControl g_demoControl; /* DS:06A4 */
 extern int g_demoTargetX;                               /* DS:06AE */
 extern int g_demoTargetY;                               /* DS:06B0 */
 extern int g_demoScriptPos;                             /* DS:06B2 */

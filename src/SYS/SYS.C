@@ -378,12 +378,7 @@ int sys_keymap_restore(int keep)
 
 char g_protectPal[16] = {0, 0, 8, 7, 15, 7, 15, 8, 7, 2, 4, 12, 5, 10, 6, 14};   /* DS:0692 */
 int g_06a2 = 0;   /* DS:06A2 */
-int g_demoQuit = 0;   /* DS:06A4 */
-char g_demoKeyDown = 0;   /* DS:06A6 */
-char g_demoMoving = 0;   /* DS:06A7 */
-int g_demoCount = 0;   /* DS:06A8 */
-int g_demoLastGroup = 0;   /* DS:06AA */
-int g_autoShifts = 0;   /* DS:06AC */
+struct DemoControl g_demoControl = {0, 0, 0, 0, 0, 0}; /* DS:06A4 */
 int g_demoTargetX = 0;   /* DS:06AE */
 int g_demoTargetY = 0;   /* DS:06B0 */
 int g_demoScriptPos = 0;   /* DS:06B2 */
@@ -424,8 +419,8 @@ int sys_wait_input(int ticks)
     flag = g_waitUntil != 0L;
     end = (long)ticks + g_tick;
     do {
-        if (g_demo == 0x63 && g_demoQuit != 0x63) {
-            g_demoQuit = 0x63;
+        if (g_demo == 0x63 && g_demoControl.quit != 0x63) {
+            g_demoControl.quit = 0x63;
             sys_exit();
         }
         if (g_protectCycle && (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
@@ -737,16 +732,16 @@ void sys_demo_step(void)
 
     if (g_keyGroup == 2)
         random_int(-1);
-    if (g_demoKeyDown) {
+    if (g_demoControl.keyDown) {
         g_demoKey |= 0x80;
-        g_demoKeyDown = 0;
+        g_demoControl.keyDown = 0;
         joy_demo_key();
         return;
     }
-    if (!g_demoMoving) {
-        if (g_autoShifts && g_keyGroup == 10) {
-            g_autoShifts = 0;
-            g_demoCount = 15;
+    if (!g_demoControl.moving) {
+        if (g_demoControl.autoShifts && g_keyGroup == 10) {
+            g_demoControl.autoShifts = 0;
+            g_demoControl.count = 15;
         }
         num = (int)strlen((char *)g_keyMaps[g_keyGroup]) / 2;
         k = 0;
@@ -764,7 +759,7 @@ void sys_demo_step(void)
             k = 1;
             break;
         case 23:
-            g_demoCount = 4;
+            g_demoControl.count = 4;
             break;
         case 8:
             k = 4;
@@ -780,16 +775,16 @@ void sys_demo_step(void)
             num--;
             break;
         }
-        if (g_keyGroup == 10 && g_demoLastGroup != 10) {
-            g_demoChoice = num - g_demoCount++ - 1;
-            g_demoCount = g_demoCount % num;
+        if (g_keyGroup == 10 && g_demoControl.lastGroup != 10) {
+            g_demoChoice = num - g_demoControl.count++ - 1;
+            g_demoControl.count = g_demoControl.count % num;
         } else
             g_demoChoice = random_int(num + k);
         switch (g_keyGroup) {
         case 21:
             if ((g_demoChoice >= 0 && g_demoChoice < 9) || g_demoChoice == 12)
                 g_demoChoice = 9;
-            if (g_demoLastGroup == 28)
+            if (g_demoControl.lastGroup == 28)
                 g_demoChoice = 11;
             break;
         case 20:
@@ -804,7 +799,7 @@ void sys_demo_step(void)
             g_demoChoice = 1;
             break;
         case 4:
-            if (g_demoCount < 11)
+            if (g_demoControl.count < 11)
                 g_demoChoice = 0;
             else
                 g_demoChoice = num - 1;
@@ -814,11 +809,11 @@ void sys_demo_step(void)
             g_demoChoice = 0;
             break;
         case 36:
-            if (g_demoLastGroup == 36)
+            if (g_demoControl.lastGroup == 36)
                 g_demoChoice = 0;
             break;
         case 11:
-            if (g_demoLastGroup == 11)
+            if (g_demoControl.lastGroup == 11)
                 g_demoChoice = 10;
             break;
         case 27:
@@ -866,17 +861,17 @@ void sys_demo_step(void)
             g_demoKey = 0x4c;
     }
     if ((g_demoTargetX && g_cursorX != g_demoTargetX) || (g_demoTargetY && g_cursorY != g_demoTargetY)) {
-        g_demoMoving = 1;
+        g_demoControl.moving = 1;
         return;
     }
-    g_demoMoving = 0;
-    if (g_keyGroup == 0x25 && g_autoShifts < 10 && g_demoKey == 0x22)
+    g_demoControl.moving = 0;
+    if (g_keyGroup == 0x25 && g_demoControl.autoShifts < 10 && g_demoKey == 0x22)
         g_demoKey = 0x1c;
-    if (g_keyGroup == 10 && g_demoLastGroup == 10) {
+    if (g_keyGroup == 10 && g_demoControl.lastGroup == 10) {
         g_demoKey = 0x1c;
-        g_demoLastGroup = 0;
+        g_demoControl.lastGroup = 0;
     } else
-        g_demoLastGroup = g_keyGroup;
+        g_demoControl.lastGroup = g_keyGroup;
     if (a_7eaap.spareParts == 0 && g_keyGroup == 7)
         game_add_part(0x2a, g_part[42].value);
     if (a_7eaap.currentCar == 0) {
@@ -887,7 +882,7 @@ void sys_demo_step(void)
     }
     if (g_demoKey == 0x46)
         g_demoKey = 0x1c;
-    g_demoKeyDown = 1;
+    g_demoControl.keyDown = 1;
     joy_demo_key();
 }
 
@@ -912,7 +907,7 @@ void interrupt far sys_timer_isr(void)
         g_speakerOn = 0;
     }
     if (g_demo) {
-        if (((g_demoKeyDown ? 0xf : 0x7f) & g_tick) == 0)
+        if (((g_demoControl.keyDown ? 0xf : 0x7f) & g_tick) == 0)
             sys_demo_step();
         if ((g_demoTargetX || g_demoTargetY) && (g_cursorX != g_demoTargetX || g_cursorY != g_demoTargetY)) {
             g_cursorX += sys_sign(g_demoTargetX - g_cursorX);
@@ -1151,7 +1146,7 @@ void interrupt far sys_drive_isr(void)
                     } else if (g_driveEng.gearIndex < g_driveEng.gearCount && ao8228u) {
                         c = 1;
                         flag = 1;
-                        g_autoShifts++;
+                        g_demoControl.autoShifts++;
                     }
                     if (g_driveEng.rpm < 2000 && g_driveEng.gearIndex > 1 && !flag)
                         c = 1;

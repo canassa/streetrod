@@ -235,6 +235,8 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **ViewClip** (`g_viewClip`, DS:5E4E..5E55): VIEW and the CGA/EGA/Tandy span assemblers use all four bounds as one clipping rectangle. Assembly references use a WORD external with the corresponding member displacement. Separate globals also match; this grouping is a natural reconstruction choice.
 
+- **DemoControl** (`g_demoControl`, DS:06A4..06AD): sys_demo_step shares key-down, movement, count, previous group and auto-shift controls with SYS input and interrupt paths. The leading unused word and target coordinates stay separate. Separate globals also match; this grouping is a natural reconstruction choice.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only
