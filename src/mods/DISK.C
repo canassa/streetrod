@@ -304,7 +304,7 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
     struct Bitmap far *pic;
     struct Slot far *sl;
 
-    F_120FE(-4);
+    cursor_ctl(-4);
     res = load_pic(id, 0, ab7564z);
     cur = sl = &g_slot[pic_index(id)];
     if (g_picNewHeader)
@@ -344,7 +344,7 @@ struct Bitmap far *disk_unpack_pic(int id, struct Bitmap far *bm)
     }
     if (res == 2)
         sl->ptr.p = 0;
-    F_120FE(-2);
+    cursor_ctl(-2);
     return pic;
 }
 

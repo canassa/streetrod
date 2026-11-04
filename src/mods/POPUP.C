@@ -21,12 +21,12 @@ static int g_6c42[2];                      /* DS:6C42 PROVISIONAL: 4 unreference
 struct Win g_popupWins[3] = {{1072, 1, 72, 30, 152, 37, 0, 6, 144}, {1073, 1, 80, 30, 232, 37, 0, 6, 223}, {1074, 2, 80, 20, 232, 46, 0, 6, 223}};   /* DS:04C4 */
 struct Bitmap far *g_popupSave = 0;   /* DS:04FA */
 
-/* F_11A72 @ 0F38:26F2 (linear 0x11A72, 253 bytes)
+/* popup_grab @ 0F38:26F2 (linear 0x11A72, 253 bytes)
 
    Copy the rectangle (x, y, w, h) of the back buffer into pict new bitmap and return it.
    The x range is rounded to the pixel grid r_vid.mask. src, when given, is the bitmap to reuse. */
 
-struct Bitmap far *F_11A72(int x, int y, int w, int h, struct Bitmap far *src)
+struct Bitmap far *popup_grab(int x, int y, int w, int h, struct Bitmap far *src)
 {
     struct Bitmap far *pict;
     int x2;
@@ -47,9 +47,9 @@ struct Bitmap far *F_11A72(int x, int y, int w, int h, struct Bitmap far *src)
     blit.sx = x;
     blit.sy = y;
     blit.dx = blit.dy = 0;
-    F_120FE(-3);
+    cursor_ctl(-3);
     (*b_78a2)(r_vid.back, pict, &blit, 1);
-    F_120FE(-1);
+    cursor_ctl(-1);
     return pict;
 }
 
@@ -66,16 +66,16 @@ void popup_put(struct Bitmap far *bm, int x, int y)
     pkt.sx = pkt.sy = 0;
     pkt.dx = x & r_vid.mask;
     pkt.dy = y;
-    F_120FE(-3);
+    cursor_ctl(-3);
     (*b_78a2)(bm, r_vid.back, &pkt, 1);
-    F_120FE(-1);
+    cursor_ctl(-1);
 }
 
-/* F_11BD3 @ 0F38:2853 (linear 0x11BD3, 81 bytes)
+/* popup_show @ 0F38:2853 (linear 0x11BD3, 81 bytes)
 
    Draw bitmap bm at (x, y) on the back buffer and copy the covered rectangle to the front buffer */
 
-void F_11BD3(struct Bitmap far *bm, int x, int y)
+void popup_show(struct Bitmap far *bm, int x, int y)
 {
     popup_put(bm, x, y);
     if (r_vid.f16)
@@ -98,7 +98,7 @@ void popup_open(int n)
     int rec;
     int lines;
 
-    F_120FE(-3);
+    cursor_ctl(-3);
     if (g_popupSave) {
         popup_put(g_popupSave, g_popupLayout->x, g_popupLayout->y);
         F_19438(1);
@@ -110,7 +110,7 @@ void popup_open(int n)
     txt = g_2c01 + n + 1;
     rec = txt[-1] - 1;
     g_popupLayout = &g_popupWins[rec];
-    g_popupSave = F_11A72(x0 = g_popupLayout->x, y1 = g_popupLayout->y, w1 = g_popupLayout->w, h1 = g_popupLayout->h, 0);
+    g_popupSave = popup_grab(x0 = g_popupLayout->x, y1 = g_popupLayout->y, w1 = g_popupLayout->w, h1 = g_popupLayout->h, 0);
     bitmap_draw_pic(r_vid.back, g_popupLayout->bg, (unsigned char)x0, (unsigned char)y1, 0);
     x_colors = bustyle->popup;
     x0 += g_popupLayout->tx;
@@ -121,7 +121,7 @@ void popup_open(int n)
         txt = txt + strlen(txt) + 1;
         y1 += 9;
     }
-    F_120FE(-1);
+    cursor_ctl(-1);
     if (r_vid.f16)
         bitmap_copy_box(r_vid.back, r_vid.front, g_popupLayout->x, g_popupLayout->y, g_popupLayout->x + w1 - 1, g_popupLayout->y + h1 - 1);
     if (close) {
@@ -162,7 +162,7 @@ void popup_open_at(int n, int x, int y)
 void popup_close(void)
 {
     if (g_popupSave) {
-        F_11BD3(g_popupSave, g_popupLayout->x, g_popupLayout->y);
+        popup_show(g_popupSave, g_popupLayout->x, g_popupLayout->y);
         F_19438(1);
         g_popupSave = 0;
     }

@@ -57,7 +57,7 @@ void menu_draw_hot(struct Hot *p)
 
     colr = 0;
     if (!g_hotChain && r_vid.f16)
-        F_120FE(-3);
+        cursor_ctl(-3);
     do {
         switch (p->f0) {
         case 4:
@@ -130,24 +130,24 @@ void menu_draw_hot(struct Hot *p)
         break;
     } while ((nxt = p->f10 & g_hotChain) ? (p = &g_09f4[nxt], 1) : 0);
     if (!g_hotChain && r_vid.f16) {
-        F_120FE(-1);
+        cursor_ctl(-1);
         bitmap_copy_box(r_vid.back, r_vid.front, p->x1 - 3, p->y1 - 3, p->x2 + 6, p->y2 + 6);
     }
 }
 
-/* F_13DE6 @ 0F38:4A66 (linear 0x13DE6, 315 bytes)
+/* menu_push @ 0F38:4A66 (linear 0x13DE6, 315 bytes)
 
    Push hot spot id onto the saved state stack (at most four deep) and draw it: the
    current entry globals are reset, menu_draw_hot draws the linked spot, and the touched area is copied
    from the back buffer to the front when the screen shadow is on */
 
-void F_13DE6(int id)
+void menu_push(int id)
 {
     struct Hot *p;
     struct Colors saved;
 
     if (g8b8eb < 4) {
-        F_120FE(-3);
+        cursor_ctl(-3);
         ai8b86y[g8b8eb++] = av8efe = id;
         ao8b90v.x1 = ao8b90v.x2 = ao8b90v.y1 = ao8b90v.y2 = -1;
         ai8bacx = (p = &g_09f4[g_screenHot[id]])->f4;
@@ -163,7 +163,7 @@ void F_13DE6(int id)
             menu_draw_hot(&g_09f4[p->f10]);
         g_hotChain = 0;
         x_colors = saved;
-        F_120FE(-1);
+        cursor_ctl(-1);
         if (r_vid.f16 && g_drawnMaxX >= 0)
             bitmap_copy_box(r_vid.back, r_vid.front, g_drawnMinX - 3, g_drawnMinY - 3, g_drawnMaxX + 6, g_drawnMaxY + 6);
         sys_keymap_set(id);
@@ -171,19 +171,19 @@ void F_13DE6(int id)
     }
 }
 
-/* F_13F21 @ 0F38:4BA1 (linear 0x13F21, 94 bytes)
+/* menu_pop @ 0F38:4BA1 (linear 0x13F21, 94 bytes)
 
    Pop the saved state stack: close the current entry; when keep is set and an entry remains,
    reopen the one below it, otherwise reset the entry globals to "none" */
 
-void F_13F21(int keep)
+void menu_pop(int keep)
 {
     if (g8b8eb) {
         sys_keymap_restore(0);
         av8ba6v = 0;
         if (--g8b8eb && keep) {
             --g8b8eb;
-            F_13DE6(ai8b86y[g8b8eb]);
+            menu_push(ai8b86y[g8b8eb]);
         } else {
             av8efe = 0;
             av8ba6v = 0;
@@ -232,12 +232,12 @@ void menu_bbox(int id, int *x, int *y, int *w, int *h)
     *h -= *y;
 }
 
-/* F_14090 @ 0F38:4D10 (linear 0x14090, 157 bytes)
+/* menu_grab @ 0F38:4D10 (linear 0x14090, 157 bytes)
 
    Copy the screen area around hot spot id (see menu_bbox, which updates *px and *py to the
    box corner) into a bitmap of the given mode and return it. The x range is rounded to r_vid.mask */
 
-struct Bitmap far *F_14090(int id, int *px, int *py, int mode)
+struct Bitmap far *menu_grab(int id, int *px, int *py, int mode)
 {
     int x;
     int y1;
@@ -254,7 +254,7 @@ struct Bitmap far *F_14090(int id, int *px, int *py, int mode)
     y2 = y1 + h3 > 200 ? 200 : y1 + h3;
     x &= r_vid.mask;
     bits9 = F_1934E(x2 - x, y2 - y1, 0, mode);
-    return F_11A72(*px, y1, w4, h3, bits9);
+    return popup_grab(*px, y1, w4, h3, bits9);
 }
 
 /* menu_hit @ 0F38:4DAD (linear 0x1412D, 276 bytes)
@@ -324,7 +324,7 @@ int menu_hit(int x, int y)
 /* menu_modal @ 0F38:4EC1 (linear 0x14241, 83 bytes)
 
    Grab the screen area around hot spot id, show the spot (waiting for a key through
-   F_14294), put the saved area back and return the key */
+   menu_wait), put the saved area back and return the key */
 
 int menu_modal(int id)
 {
@@ -333,23 +333,23 @@ int menu_modal(int id)
     int y1;
     int res;
 
-    bm1 = F_14090(id, &x, &y1, 2);
-    res = F_14294(id);
-    F_11BD3(bm1, x, y1);
+    bm1 = menu_grab(id, &x, &y1, 2);
+    res = menu_wait(id);
+    popup_show(bm1, x, y1);
     F_19438(1);
     return res;
 }
 
-/* F_14294 @ 0F38:4F14 (linear 0x14294, 59 bytes) */
+/* menu_wait @ 0F38:4F14 (linear 0x14294, 59 bytes) */
 
-int F_14294(int a)
+int menu_wait(int a)
 {
     int key;
 
-    F_13DE6(a);
+    menu_push(a);
     while ((key = sys_wait_input(0x7d00)) == 0)
         ;
-    F_13F21(1);
+    menu_pop(1);
     return key;
 }
 
@@ -367,9 +367,9 @@ int F_142CF(int a, int b, int *c, int *list, char *buf, char **d)
 
     if (*list == 0)
         return 0x3ea;
-    bm1 = F_14090(a, &x, &y1, 2);
+    bm1 = menu_grab(a, &x, &y1, 2);
     res = menu_list(a, b, c, list, buf, d);
-    F_11BD3(bm1, x, y1);
+    popup_show(bm1, x, y1);
     F_19438(1);
     return res;
 }
@@ -430,7 +430,7 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
         buf1 = buf + 1;
     if (c)
         c1 = c + 1;
-    F_13DE6(kind);
+    menu_push(kind);
     page = a_8b9ca;
     az8b9ez = list;
     x_8ba0 = sel + 1;
@@ -458,7 +458,7 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
     for (;;) {
         x_colors = bustyle->pal[idx2];
         w = (struct Win *)a_8b9ap;
-        F_120FE(-3);
+        cursor_ctl(-3);
         i = (count5 - topk > page) ? page : count5 - topk;
         lpk = lp11 + topk;
         pc1 = c ? c1 + topk : 0;
@@ -476,7 +476,7 @@ int menu_list(int kind, int sel, int *c, int *list, char *buf, char **d)
             x_colors = bustyle->pal[w->lines];
             draw_frame(r_vid.back, w->w, w->h, ww9, 8);
         }
-        F_120FE(-1);
+        cursor_ctl(-1);
         if (r_vid.f16)
             bitmap_copy_box(r_vid.back, r_vid.front, wx8 - 1, wy7 - 1, right + 1, bottom9 + 1);
 restore:
@@ -489,7 +489,7 @@ restore:
                 continue;
             if (curl == az8baa - 1)
                 continue;
-            F_120FE(-3);
+            cursor_ctl(-3);
             x1 = y1 = 1000;
             x2 = y2 = -1;
             if (i) {
@@ -511,7 +511,7 @@ restore:
                 x2 = (w->tx < x2) ? x2 : w->tx;
                 y2 = (w->ty < y2) ? y2 : w->ty;
             }
-            F_120FE(-1);
+            cursor_ctl(-1);
             if (r_vid.f16)
                 bitmap_copy_box(r_vid.back, r_vid.front, x1, y1, x2, y2);
             curl = nw5;
@@ -533,7 +533,7 @@ restore:
                     }
                 }
                 if (!av8b98) {
-                    F_120FE(-3);
+                    cursor_ctl(-3);
                     w = (struct Win *)(0x12 * sel + a_8b9ap);
                     x_colors = bustyle->pal[idx2];
                     nw5 = x_colors.c[3];
@@ -544,7 +544,7 @@ restore:
                     x_colors.c[3] = nw5;
                     w = (struct Win *)(0x12 * i + a_8b9ap);
                     draw_frame(r_vid.back, w->w, w->h, ww9, 8);
-                    F_120FE(-1);
+                    cursor_ctl(-1);
                     if (r_vid.f16)
                         bitmap_copy_box(r_vid.back, r_vid.front,
                             (w->w - 1 > x1) ? x1 : w->w - 1,
@@ -558,15 +558,15 @@ restore:
         }
         switch (key2) {
         default:
-            F_13F21(1);
+            menu_pop(1);
             return key2;
         case -6:
             if (kind == 5 && !strcmp(g_blankName, bufpl))
                 strcpy(bufpl, "\0");
             x_colors = bustyle->pal[hotn->f2];
-            F_13DE6(0x18);
+            menu_push(0x18);
             edit_line(hotn->x1, hotn->y1, bufpl, n9);
-            F_13F21(1);
+            menu_pop(1);
             continue;
         case -7:
             if (topk)

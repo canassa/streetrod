@@ -380,7 +380,7 @@ void dash_time_up(void)
 {
     game_message(0x17bb);
     (*bl78be)();
-    F_120FE(-4);
+    cursor_ctl(-4);
     r_vid.f16 = 1;
     screen_fill_rect(0, 0, 320, 200, 0);
     F_065AF(1);

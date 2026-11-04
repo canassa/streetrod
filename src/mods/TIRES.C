@@ -75,7 +75,7 @@ static struct Bitmap far *near grab_wheel_column(int n)
     a2 = F_1934E(g_6d30->width + 8, g_6d30->height, g_6d30->alt.p != 0L, 1);
     bitmap_shift_right(g_6d30, n & ~r_vid.mask, a2);
     b = F_1934E(a2->width, a2->height, 0, 1);
-    F_11A72((n + g_6da0) & r_vid.mask, 0x78, a2->width, a2->height, b);
+    popup_grab((n + g_6da0) & r_vid.mask, 0x78, a2->width, a2->height, b);
     blt.w = a2->width;
     blt.h = a2->height;
     blt.sx = blt.sy = blt.dx = blt.dy = 0;
@@ -93,7 +93,7 @@ static struct Bitmap far *near grab_wheel_column(int n)
     blt.sy = blt.dx = 0;
     blt.dy = -(g_6df6a->height + g_spriteBgY - 0x95);
     c = F_1934E(0x28, 0x9c - g_spriteBgY, 1, 1);
-    F_11A72(blt.sx + g_6da0, g_spriteBgY, 0x28, 0x9c - g_spriteBgY, c);
+    popup_grab(blt.sx + g_6da0, g_spriteBgY, 0x28, 0x9c - g_spriteBgY, c);
     dash_fmemset(c->alt.p, 0xff, c->planesize / r_vid.planes);
     (*ab78aat)(g_6df6a, c, &blt, 1);
     (*b_78a2)(g_6df6a, c, &blt, 2);
@@ -222,7 +222,7 @@ void F_1B213(int *a, int *b)
     s72 = m_8272.m8272;
     s74 = m_8272.m8274;
     marks_release();
-    F_120FE(-4);
+    cursor_ctl(-4);
     r_vid.f16 = 0;
     g_6da0 = z_8b7c;
     modelm = a_7eaap.m7eb0->f2;
@@ -234,7 +234,7 @@ void F_1B213(int *a, int *b)
             (r_vid.mode != -2 && r_vid.mode != -6) ? g_02b4[1] : g_02c2[1]);
     g_spriteBgY = (r_vid.mode == -6) ? 0x97 - g_6cdaaa[0]->height : 0;
     g_6d28agz = F_1934E(g_6cdaaa[1]->width, 0xba - g_spriteBgY, 0, 1);
-    F_11A72(r_vid.mask & 0x88, g_spriteBgY, g_6cdaaa[1]->width, 0xba - g_spriteBgY, g_6d28agz);
+    popup_grab(r_vid.mask & 0x88, g_spriteBgY, g_6cdaaa[1]->width, 0xba - g_spriteBgY, g_6d28agz);
     carpic_build(&g_6df6a, modelm, attr3, tinto, 0, 0, 0, 1);
     g_6dd4 = g7682n[modelm].b0;
     g_6cd8lz = g7682n[modelm].b1;
@@ -247,7 +247,7 @@ void F_1B213(int *a, int *b)
     g_6dde = F_15BBE(0x49d, 2);
     bitmap_opaque_span(g_6df6a, &left, &right);
     g_6d34 = F_1934E(g_6df6a->width, g_6dde->height, 0, 2);
-    F_11A72(g_6da0, 0x99 - g_6dde->height, g_6df6a->width, g_6dde->height, g_6d34);
+    popup_grab(g_6da0, 0x99 - g_6dde->height, g_6df6a->width, g_6dde->height, g_6d34);
     g_6dda = F_1934E(g_6dde->width + 8, g_6dde->height, 1, 2);
     bitmap_shift_right(g_6dde, left & ~r_vid.mask, g_6dda);
     blt.w = g_6dda->width;
@@ -270,7 +270,7 @@ void F_1B213(int *a, int *b)
     F_19438(2);
     g_spriteBgY = (r_vid.mode == -6) ? 0x92 - g_6df6a->height : 0;
     g_6dfa7 = F_1934E(g_6df6a->width, 0x99 - g_spriteBgY, 1, 1);
-    F_11A72(g_6da0, g_spriteBgY, g_6df6a->width, 0x99 - g_spriteBgY, g_6dfa7);
+    popup_grab(g_6da0, g_spriteBgY, g_6df6a->width, 0x99 - g_spriteBgY, g_6dfa7);
     dash_fmemset(g_6dfa7->alt.p, 0xff, g_6dfa7->planesize / r_vid.planes);
     clip6.w = g_6cdaaa[1]->width;
     clip6.h = g_6cdaaa[1]->height;
@@ -285,7 +285,7 @@ void F_1B213(int *a, int *b)
     dst = grab_wheel_column(g_6dd4);
     F_19438(1);
     g_6d24ajz = F_1934E(g_6df6a->width + g_6da0, 0x1c, 0, 1);
-    F_11A72(0, 0x80, g_6df6a->width + g_6da0, 0x1c, g_6d24ajz);
+    popup_grab(0, 0x80, g_6df6a->width + g_6da0, 0x1c, g_6d24ajz);
     blt.w = g_6df6a->width;
     blt.h = g_6d24ajz->height - 8;
     blt.sx = 0;
@@ -458,5 +458,5 @@ void F_1B213(int *a, int *b)
     m_8272.m8272 = s72;
     m_8272.m8274 = s74;
     g_spriteBgY = 0;
-    F_120FE(-2);
+    cursor_ctl(-2);
 }

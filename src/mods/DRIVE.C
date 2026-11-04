@@ -46,7 +46,7 @@ int drive_run(void)
         (*bl78be)();
         g_58e4 = r_vid.mode == -3 && g_egaCard;
         if (g_58e4) {
-            F_11A72(0, 0x64, 0x140, 0x64, g755cu);
+            popup_grab(0, 0x64, 0x140, 0x64, g755cu);
             r_vid.f16 = 1;
             screen_fill_rect(0, 0, 0x140, 0xc8, 0);
             r_vid.f16 = sv;

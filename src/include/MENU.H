@@ -22,14 +22,14 @@ extern struct Hot *av8ba6v;                             /* DS:8BA6 */
 extern int ai8bacx;                                     /* DS:8BAC */
 extern int av8efe;                                      /* DS:8EFE */
 void menu_draw_hot(struct Hot *p);                      /* 0x139DE */
-void F_13DE6(int id);                                   /* 0x13DE6 */
-void F_13F21(int keep);                                 /* 0x13F21 */
+void menu_push(int id);                                 /* 0x13DE6 */
+void menu_pop(int keep);                                /* 0x13F21 */
 void menu_reset(void);                                  /* 0x13F7F */
 void menu_bbox(int id, int *x, int *y, int *w, int *h); /* 0x13F9A */
-struct Bitmap far *F_14090(int id, int *px, int *py, int mode);/* 0x14090 */
+struct Bitmap far *menu_grab(int id, int *px, int *py, int mode);/* 0x14090 */
 int menu_hit(int x, int y);                             /* 0x1412D */
 int menu_modal(int id);                                 /* 0x14241 */
-int F_14294(int a);                                     /* 0x14294 */
+int menu_wait(int a);                                   /* 0x14294 */
 int F_142CF(int a, int b, int *c, int *list, char *buf, char **d);/* 0x142CF */
 int menu_list(int a, int b, int *c, int *list, char *buf, char **d);/* 0x1438E */
 int F_14C8B(void);                                      /* 0x14C8B */

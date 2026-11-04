@@ -31,8 +31,8 @@
 #pragma intrinsic(inp, outp, abs)
 
 static int near day_to_date(int v, int *out);
-static void near place_car_spots(int n, int x, int y);
-static void near hide_car_spots(void);
+static void near place_spots(int n, int x, int y);
+static void near hide_spots(void);
 static void near sort_spots(void);
 static int near is_broke(void);
 static void near remove_part(struct Node **slot);
@@ -43,9 +43,9 @@ int g_5048 = 33;   /* DS:5048 */
 int g_504a[4] = {14, 107, 15, 105};   /* DS:504A */
 int g_5052[4] = {0, 5, 9, 14};   /* DS:5052 */
 
-/* F_06476 @ 0000:6476 (linear 0x06476, 45 bytes) */
+/* garage_day @ 0000:6476 (linear 0x06476, 45 bytes) */
 
-int F_06476(void)
+int garage_day(void)
 {
     return (int)((g_05fc + g_0600 - g_0604) / 6552) > 91 ? 91 : (int)((g_05fc + g_0600 - g_0604) / 6552);
 }
@@ -69,7 +69,7 @@ void F_064A3(int *a, int *b)
 
 void F_06529(int n)
 {
-    if (F_06476() >= 91)
+    if (garage_day() >= 91)
         g_0282 |= 1;
 }
 
@@ -111,7 +111,7 @@ void F_065AF(int a1)
     F_06529(0);
     if (a1 == 0 && g_0282)
         return;
-    d9 = F_06476();
+    d9 = garage_day();
     F_064A3(&al, &bl);
     m = day_to_date(d9, &day);
     col = (e9 = d9 + 21) % 7;
@@ -122,19 +122,19 @@ void F_065AF(int a1)
     px5 = 80;
     py4 = 4;
     id = m < 2 ? 0x4c3 : 0x4c5;
-    F_120FE(-3);
+    cursor_ctl(-3);
     pic = F_15BBE(id, 2);
     bitmap_draw_pic(pic, 0x4c4, (unsigned char)x, (unsigned char)y4, 0);
     img = F_1934E(pic->width, pic->height, 0, 2);
-    F_11A72(px5, py4, pic->width, pic->height, img);
-    F_11BD3(pic, px5, py4);
+    popup_grab(px5, py4, pic->width, pic->height, img);
+    popup_show(pic, px5, py4);
     F_19438(1);
-    F_120FE(-1);
+    cursor_ctl(-1);
     if (a1 == 0) {
         F_11421(-1, "", 0);
         game_pause(500);
         g_05fc += 0L;
-        F_11BD3(img, px5, py4);
+        popup_show(img, px5, py4);
     }
     F_19438(1);
 }
@@ -154,7 +154,7 @@ void F_06750(int x)
     char buf[30];
     struct Colors sv;
 
-    today = F_06476();
+    today = garage_day();
     mnum = day_to_date(today, &date);
     sprintf(buf, "%s %d, 1963", g_5082[mnum], date);
     sv = x_colors;
@@ -204,9 +204,9 @@ static void near sort_spots(void)
     F_135E5(base, n);
 }
 
-/* hide_car_spots @ 0000:68B3 (linear 0x068B3, 53 bytes) */
+/* hide_spots @ 0000:68B3 (linear 0x068B3, 53 bytes) */
 
-static void near hide_car_spots(void)
+static void near hide_spots(void)
 {
     int i;
 
@@ -214,11 +214,11 @@ static void near hide_car_spots(void)
         g_09f4[F_06827(g_508a[i])].f0 = 14;
 }
 
-/* place_car_spots @ 0000:68E8 (linear 0x068E8, 446 bytes)
+/* place_spots @ 0000:68E8 (linear 0x068E8, 446 bytes)
 
    Rect + hotspot setup for the 5 button rects of panel n */
 
-static void near place_car_spots(int n, int x, int y)
+static void near place_spots(int n, int x, int y)
 {
     struct Panel *panel;
     struct Hot *hotspot;
@@ -287,22 +287,22 @@ int near F_06B06(int mode)
     int n;
 
     if (g_4733 > 0)
-        F_120FE(-4);
+        cursor_ctl(-4);
     F_06529(0);
     if (g_0282) {
         if (g_0282 & 1)
-            F_120FE(-2);
+            cursor_ctl(-2);
         return 0x29a;
     }
-    F_120FE(0);
+    cursor_ctl(0);
     F_11421(-1, "", 0);
     g_0284 = 1;
     switch (mode) {
     case 3:
         if (g_4f48 == 0) {
-            F_120FE(-2);
+            cursor_ctl(-2);
             game_message(0x1867);
-            F_120FE(-4);
+            cursor_ctl(-4);
             break;
         }
         if (g_4f46) {
@@ -310,8 +310,8 @@ int near F_06B06(int mode)
             F_181C8(6, g_4f46->f2, n, (g_4f46->f24 >> 8) & 0x1f,
                     0, 0x98, 0, g_5030[g_4806[g_4f46->slot12->idx].f2]);
             F_06AA6();
-            F_13DE6(10);
-            F_13F21(1);
+            menu_push(10);
+            menu_pop(1);
         }
     case 2:
         r_vid.f16 = 0;
@@ -358,12 +358,12 @@ int near F_06B06(int mode)
         break;
     }
     if (a_7eaap.m7eb0)
-        place_car_spots(m_8272.m8282, ac825et, aw8260y);
+        place_spots(m_8272.m8282, ac825et, aw8260y);
     else
-        hide_car_spots();
+        hide_spots();
     sort_spots();
     F_11593(g_49dc);
-    F_120FE(-2);
+    cursor_ctl(-2);
     if (a_7eaap.m7eb6 > 15)
         game_message(0x0d30);
     else if (a_7eaap.m7ebc > 130) {
@@ -384,7 +384,7 @@ int near F_06B06(int mode)
     } else {
         F_16381(0);
         sys_input_reset();
-        r = F_14294(10);
+        r = menu_wait(10);
     }
     F_06529(0);
     if (g_0282 & 0x10)
@@ -392,7 +392,7 @@ int near F_06B06(int mode)
     if (g_0282) {
         r = 0x29a;
         if ((g_0282 & 1) == 0)
-            F_120FE(-4);
+            cursor_ctl(-4);
     }
     return r;
 }
@@ -412,8 +412,8 @@ void near F_06F6B(void)
     else if (r_vid.mode != -2 && r_vid.mode != -6)
         game_message(0x18ad);
     else {
-        bm1 = F_14090(14, &x, &y, 2);
-        F_13DE6(14);
+        bm1 = menu_grab(14, &x, &y, 2);
+        menu_push(14);
         idx4 = a_7eaap.m7eb0->f4;
         for (;;) {
             F_112CB(12, g_50c2[idx4][0]);
@@ -434,10 +434,10 @@ void near F_06F6B(void)
                     break;
                 }
                 r_vid.f16 = 1;
-                F_13F21(1);
-                F_11BD3(bm1, x, y);
+                menu_pop(1);
+                popup_show(bm1, x, y);
                 F_19438(1);
-                F_11BD3(g_0294, m_8272.m8272, m_8272.m8274);
+                popup_show(g_0294, m_8272.m8272, m_8272.m8274);
                 a_7eaap.m7eb0->f24 &= 0xe0ff;
                 F_067CF(a_7eaap.m7eb0->f4 = idx4);
                 F_112CB(12, 5);
@@ -450,9 +450,9 @@ void near F_06F6B(void)
             }
             break;
         }
-        F_13F21(1);
+        menu_pop(1);
         F_112CB(12, 5);
-        F_11BD3(bm1, x, y);
+        popup_show(bm1, x, y);
         F_19438(1);
     }
 }
@@ -508,9 +508,9 @@ void near F_0711A(unsigned mask)
         game_message(0x1959);
         return;
     }
-    bm1 = F_14090(34, &x, &y, 2);
+    bm1 = menu_grab(34, &x, &y, 2);
     g_1e34[0].f4 = msg - g_239e;
-    F_13DE6(34);
+    menu_push(34);
     while ((key = sys_wait_input(3000)) == 0)
         ;
     switch (key) {
@@ -521,22 +521,22 @@ void near F_0711A(unsigned mask)
             a_7eaap.m7eb0->f24 ^= 0x4000;
         if (mask & 1)
             a_7eaap.m7eb0->f24 ^= 0x8000;
-        F_120FE(-4);
-        F_13F21(1);
-        F_11BD3(bm1, x, y);
+        cursor_ctl(-4);
+        menu_pop(1);
+        popup_show(bm1, x, y);
         F_19438(1);
         n9 = a_7eaap.m7eb0->f2;
         r7 = game_car_look(a_7eaap.m7eb0);
         F_181C8(8, n9, r7, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0x98, 0,
                 g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
         F_16BC1();
-        F_120FE(-2);
+        cursor_ctl(-2);
         g_05fc += val5;
         F_11540(-cost);
         break;
     case -22:
-        F_13F21(1);
-        F_11BD3(bm1, x, y);
+        menu_pop(1);
+        popup_show(bm1, x, y);
         F_19438(1);
         break;
     }
@@ -567,17 +567,17 @@ void near F_07367(void)
         x = 24;
         y = 11;
         bm1 = F_1934E(264, 69, 0, 2);
-        F_11A72(x, y, 264, 69, bm1);
+        popup_grab(x, y, 264, 69, bm1);
         F_119B8(1200, x, y, -1);
-        F_13DE6(35);
+        menu_push(35);
         while ((k = sys_wait_input(3000)) == 0)
             ;
         switch (k) {
         case -38: case -37: case -36: case -35:
         case -34: case -33: case -32: case -31:
-            F_120FE(-3);
-            F_13F21(1);
-            F_11BD3(bm1, x, y);
+            cursor_ctl(-3);
+            menu_pop(1);
+            popup_show(bm1, x, y);
             F_19438(1);
             idx6 = -30 - k;
             a_7eaap.m7eb0->f24 = ((idx6 & 0x1f) << 8) | (a_7eaap.m7eb0->f24 & 0xe0ff);
@@ -607,16 +607,16 @@ void near F_07367(void)
                 C.w += 8;
                 B1.dx += 8;
             }
-            F_11BD3(bm1, m_8272.m8272, m_8272.m8274);
+            popup_show(bm1, m_8272.m8272, m_8272.m8274);
             F_19438(3);
             F_168F3(0);
             g_05fc += 0x222L;
             F_11540(-5);
-            F_120FE(-1);
+            cursor_ctl(-1);
             break;
         case -22:
-            F_13F21(1);
-            F_11BD3(bm1, x, y);
+            menu_pop(1);
+            popup_show(bm1, x, y);
             F_19438(1);
             break;
         }
@@ -817,13 +817,13 @@ void near F_07AA4(void)
     F_119B8(0x42e, 0x20, 10, -1);
     r_vid.f16 = 1;
     F_127DB(m_8272.m8286, owner->b14);
-    F_13DE6(20);
+    menu_push(20);
     for (;;) {
         while ((k = sys_wait_input(3000)) == 0)
             ;
         switch (k) {
         case -1:
-            F_13F21(1);
+            menu_pop(1);
             return;
         case -2:
             F_076A7(1, tbl, buf, 0);
@@ -850,7 +850,7 @@ void near F_07AA4(void)
                 m_8272.m8286 = g_49d2[g_4806[tbl[k]->idx].f2];
                 if (g7d86n[owner->f2].f4 & g_4806[tbl[k]->idx].f3 & 0xf) {
                     F_07741(F_077B7(tbl[k]), &owner->slot6);
-                    F_120FE(-4);
+                    cursor_ctl(-4);
                     F_16A5A(1);
                     F_1264E(m_8272.m8286, 0);
                     F_16A5A(0);
@@ -863,7 +863,7 @@ void near F_07AA4(void)
                         g_1804[k].f0 = 11;
                     }
                     sys_hover_reset();
-                    F_120FE(-2);
+                    cursor_ctl(-2);
                     break;
                 }
                     F_1264E(m_8272.m8286, 1);
@@ -903,10 +903,10 @@ void near F_07AA4(void)
                 F_123F4(++owner->b14[k], k);
                 F_16CF3();
             } else {
-                F_120FE(-4);
+                cursor_ctl(-4);
                 F_123F4(owner->b14[k] = 1, k);
                 F_16B61();
-                F_120FE(-2);
+                cursor_ctl(-2);
                 flags[k + 1] = 1;
             }
             break;
@@ -954,7 +954,7 @@ static void near tune_timing(struct Car *car)
     unsigned n;
     int gear;
 
-    F_13DE6(0x1c);
+    menu_push(0x1c);
     blt.w = 8;
     blt.h = 11;
     blt.sx = 0x30;
@@ -979,10 +979,10 @@ static void near tune_timing(struct Car *car)
         outp(0x42, w.b[0]);
         outp(0x42, w.b[1]);
         y = blt.dy = gear * 2 + 0x4b;
-        F_120FE(-4);
+        cursor_ctl(-4);
         (*b_78a2)(p->img, r_vid.back, &blt, 1);
         bitmap_copy_box(r_vid.back, r_vid.front, 0xb0, y, 0xb7, y + 10);
-        F_120FE(-2);
+        cursor_ctl(-2);
         while ((key = sys_wait_input(0)) == 0) {
             if (g_soundOn && g_soundOn != g_speakerOn) {
                 outp(0x61, inp(0x61) | 3);
@@ -1010,7 +1010,7 @@ static void near tune_timing(struct Car *car)
     n = ((unsigned)g_0600 - (unsigned)tmp) * 3;
     n = n > 0x444 ? 0x444 : n;
     g_05fc += n;
-    F_13F21(1);
+    menu_pop(1);
 }
 
 /* garage_hood @ 0000:81AB (linear 0x081AB, 2938 bytes)
@@ -1058,20 +1058,20 @@ void near garage_hood(struct Car *car)
         for (k = 3; k < 9; k++)
             g_5186[k] = g_5148[tmp29][k - 3];
     }
-    F_120FE(-4);
+    cursor_ctl(-4);
     gargfx_draw_parts(car);
     gargfx_draw_bolts(g_5186, g_519a, car == a_7eaap.m7eb0);
-    F_120FE(-2);
+    cursor_ctl(-2);
     if (car != a_7eaap.m7eb0)
         return;
     gargfx_build_hots(g_5186, g_519a);
-    F_13DE6(0x15);
+    menu_push(0x15);
     for (;;) {
         while ((key = sys_wait_input(3000)) == 0)
             ;
         switch (key) {
         case -1:
-            F_13F21(1);
+            menu_pop(1);
             r_vid.f8 = 0;
             marks_release();
             return;
@@ -1095,9 +1095,9 @@ void near garage_hood(struct Car *car)
         case -3:
             if (F_07EE6(car, 0)) {
                 tune_timing(car);
-                F_120FE(-4);
+                cursor_ctl(-4);
                 gargfx_draw_bolts(g_5186, g_519a, 1);
-                F_120FE(-2);
+                cursor_ctl(-2);
             } else
                 game_message(0xea1);
             continue;
@@ -1191,7 +1191,7 @@ void near garage_hood(struct Car *car)
             o_8290[sel2] = k = g_4998[sel2][g_4806[list4[key]->idx].f2];
             if (ok) {
                 F_07741(F_077B7(list4[key]), &car->rack.s[sel2]);
-                F_120FE(-4);
+                cursor_ctl(-4);
                 F_16A5A(1);
                 gargfx_draw_part(o_8290[sel2], 0);
                 F_16A5A(0);
@@ -1210,7 +1210,7 @@ void near garage_hood(struct Car *car)
                     car->b16[step + k] = 1;
                 }
                 gargfx_build_hots(g_5186, g_519a);
-                F_120FE(-2);
+                cursor_ctl(-2);
                 cnt1++;
                 car->f20 = random_int(13) - 8;
                 continue;
@@ -1317,7 +1317,7 @@ void near garage_hood(struct Car *car)
         if (sel2 >= 0) {
             cnt1--;
             remove_part(&car->rack.s[sel2]);
-            F_120FE(-4);
+            cursor_ctl(-4);
             o_8290[sel2] = 0;
             if (ok)
                 hz82ae = ok - 1;
@@ -1325,7 +1325,7 @@ void near garage_hood(struct Car *car)
             gargfx_draw_bolts(g_5186, g_519a, 1);
             gargfx_build_hots(g_5186, g_519a);
             car->f20 = random_int(13) - 8;
-            F_120FE(-2);
+            cursor_ctl(-2);
         }
         if (ok == 0)
             continue;

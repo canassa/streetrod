@@ -300,7 +300,7 @@ int near savegame_load(void)
     long delta;
     unsigned n;
 
-    F_120FE(-4);
+    cursor_ctl(-4);
     scan_save_slots(0);
     r = r_vid.f16;
     r_vid.f16 = 0;
@@ -312,9 +312,9 @@ int near savegame_load(void)
     r_vid.f16 = r;
     if (r)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 320, 190);
-    F_120FE(-2);
+    cursor_ctl(-2);
     if (g_49e0[0] == 0) {
-        F_14294(15);
+        menu_wait(15);
         return -1;
     }
     r = F_142CF(3, 1, 0, g_49e0, 0, 0);
@@ -333,7 +333,7 @@ int near savegame_load(void)
         if (g_saveSlots[i])
             cntl++;
     r = i - 1;
-    F_120FE(-4);
+    cursor_ctl(-4);
     name[0] = disk_data_drive();
     strcpy(name + 1, ":HOTROD");
     itoa(g_saveSlots[r], name + 8, 10);
@@ -349,14 +349,14 @@ int near savegame_load(void)
         || _dos_read(fd7, &g_05fc, 4, &n) != 0 || n != 4
         || _dos_read(fd7, &delta, 4, &n) != 0 || n != 4
         || _dos_read(fd7, &g_roadLayout, 2, &n) != 0 || n != 2) {
-        F_120FE(-2);
-        F_14294(0x1f);
-        F_120FE(-3);
+        cursor_ctl(-2);
+        menu_wait(0x1f);
+        cursor_ctl(-3);
         if (fd7 > -1) {
             _dos_close(fd7);
             init_new_game();
         }
-        F_120FE(-1);
+        cursor_ctl(-1);
         return -666;
     }
     _dos_close(fd7);
@@ -364,7 +364,7 @@ int near savegame_load(void)
         F_067CF(a_7eaap.m7eb0->f4);
     road_build_layout(g_roadLayout);
     g_0604 = g_0600 - delta;
-    F_120FE(-2);
+    cursor_ctl(-2);
     return 0;
 }
 
@@ -404,7 +404,7 @@ void near savegame_save(void)
     unsigned n;
 
     sel = 0;
-    F_120FE(-4);
+    cursor_ctl(-4);
     scan_save_slots(1);
     r = r_vid.f16;
     r_vid.f16 = 0;
@@ -423,7 +423,7 @@ again:
         r = g_49e0[0];
     if (sel == 0)
         sel = r;
-    F_120FE(-2);
+    cursor_ctl(-2);
     switch (r = menu_list(5, sel, 0, g_49e0, 0, 0)) {
     case -4:
         return;
@@ -440,13 +440,13 @@ again:
     sel = r;
     if (is_blank(g_2a2e) && is_blank(g_2c02 + g_49e0[r])) {
         screen_msg_box(g_noNameMsgPtr);
-        F_120FE(-4);
+        cursor_ctl(-4);
         goto again;
     }
     for (i5 = 1; i5 <= 15 && (cmp = strcmp(g_2a2e, g_2c02 + g_49e0[i5])) != 0; i5++)
         ;
     if (cmp == 0) {
-        F_120FE(-3);
+        cursor_ctl(-3);
         box7 = (struct Win *)(0x12 * (int)r + a_8b9ap - 0x12);
         pal4 = x_colors;
         x_colors = bustyle->pal[((struct Win *)a_8b9ap)->lines];
@@ -457,14 +457,14 @@ again:
         draw_frame(r_vid.front, box7->w, box7->h, wk, 8);
         x_colors = pal4;
         x_colors.c[3] = sv7;
-        F_120FE(-1);
+        cursor_ctl(-1);
         sel = r = i5;
     }
     strcpy(name + 1, ":HOTROD");
     itoa(r, name + 8, 10);
     strcat(name + 1, ".SAV");
     key = g_saveSlots[r] ? menu_modal(0x1e) : 0;
-    F_120FE(-4);
+    cursor_ctl(-4);
     switch (key) {
     case -0x15:
         goto again;
@@ -484,9 +484,9 @@ again:
         || _dos_write(fd8, &g_05fc, 4, &n) != 0 || n != 4
         || _dos_write(fd8, &delta, 4, &n) != 0 || n != 4
         || _dos_write(fd8, &g_roadLayout, 2, &n) != 0 || n != 2) {
-        F_120FE(-2);
+        cursor_ctl(-2);
         menu_modal(6);
-        F_120FE(-4);
+        cursor_ctl(-4);
         if (fd8 > -1) {
             _dos_close(fd8);
             unlink(name);
@@ -494,7 +494,7 @@ again:
         scan_save_slots(1);
     } else {
         _dos_close(fd8);
-        F_120FE(-2);
+        cursor_ctl(-2);
         return;
     }
     goto again;
@@ -509,9 +509,9 @@ int near savegame_menu(void)
     int x;
     int y;
 
-    p = F_14090(0x1b, &x, &y, 2);
-    row = F_14294(0x1b);
-    F_11BD3(p, x, y);
+    p = menu_grab(0x1b, &x, &y, 2);
+    row = menu_wait(0x1b);
+    popup_show(p, x, y);
     F_19438(1);
     return row;
 }

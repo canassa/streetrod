@@ -66,7 +66,7 @@ int fame_protect_check(void)
     }
     screen_text(0x79, 0x3f, b);
     screen_text(c, 0x48, a);
-    F_120FE(-2);
+    cursor_ctl(-2);
     (*s_blit)(r_vid.front->bits.p, r_vid.back->bits.p);
     if (r_vid.mode == -2 || r_vid.mode == -6)
         video_set_palette(g_protectPal);
@@ -75,7 +75,7 @@ int fame_protect_check(void)
     gz8249 = 1;
     r_vid.f16 = 1;
     g_protectCycle = 1;
-    e = F_14294(0x27);
+    e = menu_wait(0x27);
     g_protectCycle = 0;
     F_11421(-1, "", 0);
     if (g_manual[d].color != e)
@@ -119,10 +119,10 @@ int fame_end_menu(void)
     x_colors.c[1] = c1;
     x_colors.c[3] = c3;
     x_colors.c[2] = c21;
-    F_120FE(-2);
+    cursor_ctl(-2);
     (*m_present)();
-    key = F_14294(41);
-    F_120FE(-4);
+    key = menu_wait(41);
+    cursor_ctl(-4);
     switch (key) {
     case -2:
     case -1:
@@ -174,7 +174,7 @@ static int near elapsed_hours(void)
     int b;
 
     F_064A3(&a, &b);
-    return F_06476() * 24 + a + 12;
+    return garage_day() * 24 + a + 12;
 }
 
 struct Colors g_fameColors1 = {{3, 5, 5, 4, 1}};   /* DS:4BE2 */

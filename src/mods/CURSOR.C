@@ -88,12 +88,12 @@ void cursor_init(void)
     g_graphicsUp = 2;
 }
 
-/* F_120FE @ 0F38:2D7E (linear 0x120FE, 269 bytes)
+/* cursor_ctl @ 0F38:2D7E (linear 0x120FE, 269 bytes)
 
    Mouse cursor control. mode >= 0 selects cursor shape number mode and moves it to the
    (clamped) mouse position; -1/-2 show it and -3/-4 hide it (nested by a counter). */
 
-void F_120FE(int mode)
+void cursor_ctl(int mode)
 {
     int a;
     int b;

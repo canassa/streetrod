@@ -31,7 +31,7 @@ void cruise_go(void)
             a_7eaap.m7eb0->f22 = 0;
         (*bl78be)();
         if (g_firePressed == 0) {
-            F_120FE(-4);
+            cursor_ctl(-4);
             g_autoTrans = !g_4806[a_7eaap.m7eb0->slot6->idx].f2;
             race_reset_eng(&e_78e0);
             jz79a6 = 0;

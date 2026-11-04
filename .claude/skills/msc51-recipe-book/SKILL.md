@@ -304,7 +304,7 @@ Picking names: `./sr layout -w answer kind x y z page` keeps the longest run of 
 
 - **`/Ol` with a `register` local in a nested block.** Its slot reuse and which locals get `si`/`di` aren't modelled (195/200 random cases still matched). Under `/Ol` only some `register` locals get a register, and a block holding one seems to keep its slots longer. Check such functions with `./sr check`.
 
-- **Solved: 0x0C613 shared cleanup (2026-11-03).** Both stop-branch calls explicitly jump to finishstop, and finishstop jumps to the common fin tail. This intermediate label must sit inside the stop branch. It preserves the second call's add sp,2 and the final F_13F21 tail. Giving only the first call that jump, relying on the second call to fall through, or jumping directly to fin gives the wrong survivor. See work/resume_remaining/cnext11/T007.C (MATCH, including refs); this resolves the historical cross-jump question. The earlier deferred list block also needs its goto done, from agent_c613/l2.C.
+- **Solved: 0x0C613 shared cleanup (2026-11-03).** Both stop-branch calls explicitly jump to finishstop, and finishstop jumps to the common fin tail. This intermediate label must sit inside the stop branch. It preserves the second call's add sp,2 and the final menu_pop tail. Giving only the first call that jump, relying on the second call to fall through, or jumping directly to fin gives the wrong survivor. See work/resume_remaining/cnext11/T007.C (MATCH, including refs); this resolves the historical cross-jump question. The earlier deferred list block also needs its goto done, from agent_c613/l2.C.
 
 ## Maintaining this book
 

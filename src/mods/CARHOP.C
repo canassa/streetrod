@@ -69,7 +69,7 @@ static void near grab_strip(struct Bitmap far **pbm)
     if (r_vid.mode == -2) {
         egalatch_rect(r_vid.front->bits.p, (*pbm)->bits.p - 0xaa0, (*pbm)->pitch, (*pbm)->height, 0, 0x44, 0x28);
     } else {
-        F_11A72(0, 0x44, w, h, *pbm);
+        popup_grab(0, 0x44, w, h, *pbm);
     }
 }
 

@@ -417,7 +417,7 @@ void F_181C8(int kind, int idx, int flags, int kk, int q, int bot, int mode2, in
     struct Bitmap far *pan;
 
     top7 = bot - 0x45;
-    F_120FE(-4);
+    cursor_ctl(-4);
 again:
     n2 = (kind == 3 || kind == 7 || kind == 8) ? 1 : 4;
     disk_pic_size(g7d86n[idx].f8, &w1, &h7, &x7);
@@ -434,7 +434,7 @@ again:
                 egalatch_rect(r_vid.back->bits.p, g_backdrop->bits.p - 0x28 * top7, 0x28, g_backdrop->height, 0, top7, 0x28);
             } else {
                 mem_set_bitmap(g_backdrop, g_videoPageBms[2]->bits.p, 0, 0x140, 0x46 - g_02d0, -1);
-                F_11A72(0, top7, 0x140, g_backdrop->height, g_backdrop);
+                popup_grab(0, top7, 0x140, g_backdrop->height, g_backdrop);
             }
         }
         if (kind == 4) {
@@ -500,7 +500,7 @@ again:
                     blt.dx = blt.dy = 0;
                     (*b_78a2)(g_backdrop, bm48, &blt, 1);
                 } else
-                    F_11A72(x0, aw8260y, bm48->width, bm48->height, bm48);
+                    popup_grab(x0, aw8260y, bm48->width, bm48->height, bm48);
                 blt.w = w1;
                 blt.h = blt.fc = h7 - g_02d0;
                 blt.dx = blt.dy = blt.sx = blt.sy = 0;
@@ -579,7 +579,7 @@ done:
     g_02d0 = g_backdropW = g_backdropX = 0;
     marks_release();
     g_carPassBy = 0;
-    F_120FE(-2);
+    cursor_ctl(-2);
 }
 
 /* carpic_patch_bg @ 0F38:975B (linear 0x18ADB, 256 bytes)

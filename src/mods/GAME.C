@@ -68,7 +68,7 @@ static int near start_game(void)
     if (ag8bcet == 0) {
         if (fame_protect_check() == 0)
             sys_exit();
-        F_120FE(-4);
+        cursor_ctl(-4);
     }
     road_generate();
     g_driverName[0] = 0;
@@ -79,7 +79,7 @@ static int near start_game(void)
             disk_cache_list(g_garagePics);
     }
     disk_load_list(g_garagePics, 1);
-    F_120FE(-2);
+    cursor_ctl(-2);
     return -1;
 }
 
@@ -101,11 +101,11 @@ void game_message(int n)
     long saved;
 
     saved = g_waitUntil;
-    F_13DE6(24);
+    menu_push(24);
     popup_open(n);
     game_pause(g_msgTicks);
     popup_close();
-    F_13F21(1);
+    menu_pop(1);
     g_waitUntil = saved;
 }
 
@@ -135,21 +135,21 @@ static int near read_paper(void)
     old = r_vid.f16;
     r_vid.f16 = 0;
     F_118D4(0x3fd, -1);
-    if ((tune = F_06476()) != g_paperDay) {
+    if ((tune = garage_day()) != g_paperDay) {
         if ((pick5 = random_int(5)) == g_paperPick)
             pick5 = random_int(5);
         g_paperPick = pick5;
         g_paperDay = tune;
     }
     F_119B8(g_paperPics[g_paperPick], 0, 0x88, -1);
-    F_120FE(-3);
+    cursor_ctl(-3);
     F_06750(0x79);
-    F_120FE(-1);
+    cursor_ctl(-1);
     r_vid.f16 = old;
     if (r_vid.f16)
         bitmap_copy_box(r_vid.back, r_vid.front, 0, 0, 0x13f, 0xbd);
-    F_120FE(1);
-    return F_14294(7);
+    cursor_ctl(1);
+    return menu_wait(7);
 }
 
 /* game_new_part @ 0000:3C1B (linear 0x03C1B, 35 bytes) */
@@ -498,7 +498,7 @@ static void near buy_from_ads(int tab)
         sprintf(g_buyPrice, "$%-3d ?", price6);
         color = -1;
         for (;;) {
-            n = F_14294(9);
+            n = menu_wait(9);
             if (n == -20) {
                 if (g_demo && (long)price6 > a_7eaap.m7eaa)
                     a_7eaap.m7eaa += 1999;
@@ -524,10 +524,10 @@ static void near buy_from_ads(int tab)
             }
             if (n != -25)
                 break;
-            F_120FE(-4);
+            cursor_ctl(-4);
             marks_clear();
             bm1 = F_1934E(0x140, 0x52, 0, 0);
-            F_11A72(0, 0x40, 0x140, 0x52, bm1);
+            popup_grab(0, 0x40, 0x140, 0x52, bm1);
             x_colors = bustyle->colors;
             ck = (r_vid.mode == -2 || r_vid.mode == -6) ? g_02c2[5] : g_02b4[5];
             screen_fill_rect(0, 0x41, 0x140, 0x46, ck);
@@ -551,11 +551,11 @@ static void near buy_from_ads(int tab)
             y = (((specn->f4 >> 8) & 7) == 2) ? 8 : 0;
             F_181C8(7, x1, y, 0, 0, 0x86, 0, g_5030[(specn->f4 >> 4) & 3]);
             screen_text((0x140 - dash_text_width(g_2990)) / 2, 0x88, g_2990);
-            F_120FE(-2);
+            cursor_ctl(-2);
             g_anyInput = 1;
-            F_14294(0x18);
+            menu_wait(0x18);
             g_anyInput = 0;
-            F_11BD3(bm1, 0, 0x40);
+            popup_show(bm1, 0, 0x40);
             marks_clear();
         }
 test:
@@ -582,7 +582,7 @@ static int near counter_offer(unsigned *price)
             *price = 5;
     sprintf(g_offerText, "How about $%-d ?", *price);
     popup_open_at(0xff7, -1, -1);
-    key = F_14294(0xd);
+    key = menu_wait(0xd);
     popup_close();
     return key;
 }
@@ -668,8 +668,8 @@ static int near your_cars(void)
         offer = price = (int)((random_int(20) + 75.0) * cur->weight / 100.0);
         strcpy(g_2990, g_2c02 + g7d86n[cur->f2].f6);
         g_29f8[0] = 0;
-        pict = F_14090(12, &rx, &ye, 1);
-        F_13DE6(12);
+        pict = menu_grab(12, &rx, &ye, 1);
+        menu_push(12);
         do {
             if ((n = edit_spot_number(&cash, g_29f8)) == -22)
                 goto tail;
@@ -719,18 +719,18 @@ static int near your_cars(void)
         g_05fc += 0x888L;
         F_11540(cash);
         if (item == 1 && a_7eaap.m7eb0) {
-            F_11BD3(pict, rx, ye);
+            popup_show(pict, rx, ye);
             marks_pop_low(1);
             pict = 0;
-            F_120FE(-4);
+            cursor_ctl(-4);
             mid = a_7eaap.m7eb0->f2;
             result = game_car_look(a_7eaap.m7eb0);
             F_181C8(6, mid, result, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0x98, 0,
                     g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
-            F_13F21(1);
+            menu_pop(1);
             F_06AA6();
-            F_13DE6(10);
-            F_120FE(-2);
+            menu_push(10);
+            cursor_ctl(-2);
             game_scrap_car(a_7eaap.m7eb0, 0);
             a_7eaap.m7eb0 = 0;
         } else {
@@ -741,9 +741,9 @@ static int near your_cars(void)
             game_scrap_car(cur, 0);
         }
 tail:
-        F_13F21(1);
+        menu_pop(1);
         if (pict) {
-            F_11BD3(pict, rx, ye);
+            popup_show(pict, rx, ye);
             marks_pop_low(1);
             pict = 0;
         }
@@ -815,13 +815,13 @@ void near game_run(void)
                 if (g_0282 == 1)
                     dash_time_up();
                 fame_show(g_0282 & 2);
-                F_120FE(1);
+                cursor_ctl(1);
                 g_0282 = 0;
                 again = 1;
                 kind = fame_end_menu();
                 if (kind != -2 && kind != -1 && kind == 4)
                     return;
-                F_120FE(-2);
+                cursor_ctl(-2);
                 g_4f4a = 0;
                 break;
             }

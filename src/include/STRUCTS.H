@@ -546,7 +546,7 @@ struct Pages {
     int *list;
 };
 
-/* mouse cursor state at DS:7aec (cursor_init sets it up, F_120FE/cursor_draw move it). The four
+/* mouse cursor state at DS:7aec (cursor_init sets it up, cursor_ctl/cursor_draw move it). The four
    rectangle members compare as nested members (cursor_draw), which plain globals don't reproduce. */
 struct Cursor {
     struct Bitmap far *save;    /* background under the cursor */

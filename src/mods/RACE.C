@@ -203,9 +203,9 @@ static void near show_tank_cap(struct Dlg *d, int id)
         back = d->bm1;
     else
         back = d->bm2;
-    F_120FE(-3);
+    cursor_ctl(-3);
     label = F_15BBE(id, 2);
-    F_120FE(-1);
+    cursor_ctl(-1);
     work = F_1934E(back->width, back->height, 0, 2);
     bitmap_copy(back, work, 1);
     box.w = label->width;
@@ -214,7 +214,7 @@ static void near show_tank_cap(struct Dlg *d, int id)
     box.dx = (~r_vid.mask & ar826e) - box.w + 24;
     box.dy = 12 - label->height;
     bitmap_draw_masked(label, work, &box, 0);
-    F_11BD3(work, ar826e - 16, q_8270 - 5);
+    popup_show(work, ar826e - 16, q_8270 - 5);
     F_19438(2);
 }
 
@@ -225,7 +225,7 @@ static void near leave_station(struct Dlg *d)
     struct Bitmap far *p;
 
     if (d->f0c != 1)
-        F_120FE(1);
+        cursor_ctl(1);
     if (d->f12) {
         show_tank_cap(d, 0x472);
         if (d->f18) {
@@ -234,20 +234,20 @@ static void near leave_station(struct Dlg *d)
         }
     }
     if (d->f14 == 0) {
-        F_11BD3(g_028c, 0x40, 0x64);
+        popup_show(g_028c, 0x40, 0x64);
         if (d->f18)
             F_11540(a_7eaap.m7eaa >= 10 ? -10 : -(int)a_7eaap.m7eaa);
     }
     if (d->f10 == 0) {
-        F_120FE(-3);
+        cursor_ctl(-3);
         p = F_15BBE(0x4d1, 2);
-        F_120FE(-1);
+        cursor_ctl(-1);
         carpic_patch_bg(p, 0x60, 0, 0x30, 0x40, 0xc8, 0x51, 0xa9, 2);
     }
     a_7eaap.m7eb0->f22 = a_7eaap.m7eb0->f22 > 0xaa ? 0xaa : a_7eaap.m7eb0->f22;
     F_181C8(2, d->f0, d->f2, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0xa9, 1,
             g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
-    F_13F21(1);
+    menu_pop(1);
     marks_clear();
     g_0284 = 1;
     cruise_go();
@@ -271,18 +271,18 @@ void race_gas_station(void)
     r_vid.f16 = 1;
     (*m_present)();
     dl.f0c = 1;
-    F_120FE(1);
+    cursor_ctl(1);
     dl.f0 = a_7eaap.m7eb0->f2;
     dl.f2 = game_car_look(a_7eaap.m7eb0);
     F_181C8(4, dl.f0, dl.f2, (a_7eaap.m7eb0->f24 >> 8) & 0x1f, 0, 0xa9, 1,
             g_5030[g_4806[a_7eaap.m7eb0->slot12->idx].f2]);
     F_16381(0);
-    label = F_11A72(0x50, 0xaa, 0x28, 0xc, 0);
-    dl.bm1 = F_11A72(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
+    label = popup_grab(0x50, 0xaa, 0x28, 0xc, 0);
+    dl.bm1 = popup_grab(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
     r_vid.f16 = 0;
-    F_11BD3(g_0290, 0x40, 0x64);
-    dl.bm2 = F_11A72(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
-    F_11BD3(g_028c, 0x40, 0x64);
+    popup_show(g_0290, 0x40, 0x64);
+    dl.bm2 = popup_grab(ar826e - 0x10, q_8270 - 5, 0x18, 0xc, 0);
+    popup_show(g_028c, 0x40, 0x64);
     r_vid.f16 = 1;
     pos = 1;
     dl.f1a = 0;
@@ -296,8 +296,8 @@ void race_gas_station(void)
     dl.f0e = (0xbe - a_7eaap.m7eb0->f22) / 0x1e;
     show_tank_cap(&dl, 0x472);
     spots_idle();
-    F_13DE6(0x17);
-    F_120FE(-2);
+    menu_push(0x17);
+    cursor_ctl(-2);
 top:
     g_waitUntil = g_tick + 20;
     for (;;) {
@@ -326,9 +326,9 @@ top:
             } else {
                 if (--wait1 > 0)
                     goto top;
-                F_13F21(1);
+                menu_pop(1);
                 spots_none();
-                F_13DE6(0x17);
+                menu_push(0x17);
                 pos <<= 1;
                 dl.f16 = 1;
                 game_play_anim(3);
@@ -338,13 +338,13 @@ top:
                     goto fin;
                 dl.f18 = 0;
                 if (dl.f0c == 1) {
-                    F_11BD3(g_0290, 0x40, 0x64);
-                    F_120FE(dl.f0c = 2);
+                    popup_show(g_0290, 0x40, 0x64);
+                    cursor_ctl(dl.f0c = 2);
                     dl.f14 = 0;
                 }
                 show_tank_cap(&dl, 0x471);
                 dl.f12 = 1;
-                F_120FE(dl.f0c = 1);
+                cursor_ctl(dl.f0c = 1);
                 video_anim_start(2);
                 F_16993(1);
                 dl.f1a = 1;
@@ -355,17 +355,17 @@ top:
             if (g_6ca6qz == 0)
                 break;
             if (dl.f0c == 1) {
-                F_120FE(dl.f0c = 3);
+                cursor_ctl(dl.f0c = 3);
                 F_119B8(0x473, 0x50, 0xaa, -1);
-                F_13F21(1);
+                menu_pop(1);
                 spots_rag();
         redraw:
-                F_13DE6(0x17);
+                menu_push(0x17);
                 goto top;
             } else {
-                F_120FE(dl.f0c = 1);
-                F_11BD3(label, 0x50, 0xaa);
-                F_13F21(1);
+                cursor_ctl(dl.f0c = 1);
+                popup_show(label, 0x50, 0xaa);
+                menu_pop(1);
                 spots_idle();
                 goto redraw;
             }
@@ -373,24 +373,24 @@ top:
             if (g_6ca8pz == 0)
                 break;
             if (dl.f0c == 1) {
-                F_120FE(dl.f0c = 2);
-                F_11BD3(g_0290, 0x40, 0x64);
+                cursor_ctl(dl.f0c = 2);
+                popup_show(g_0290, 0x40, 0x64);
                 dl.f14 = 0;
             both:
-                F_13F21(1);
+                menu_pop(1);
                 spots_nozzle();
             } else {
                 if (pos > a_7eaap.m7eaa || done) {
                     dl.f18 = 0;
                     goto fin;
                 }
-                F_120FE(dl.f0c = 1);
-                F_11BD3(g_028c, 0x40, 0x64);
+                cursor_ctl(dl.f0c = 1);
+                popup_show(g_028c, 0x40, 0x64);
                 dl.f14 = 1;
-                F_13F21(1);
+                menu_pop(1);
                 spots_idle();
             }
-            F_13DE6(0x17);
+            menu_push(0x17);
         tail:
             g_waitUntil = g_tick + 20;
             dl.f1a = 0;
@@ -405,7 +405,7 @@ top:
                 }
                 show_tank_cap(&dl, 0x472);
                 dl.f12 = 0;
-                F_120FE(dl.f0c = 2);
+                cursor_ctl(dl.f0c = 2);
                 if (dl.f0e > 0 && pos <= a_7eaap.m7eaa)
                     game_message(0x18dd);
                 goto both;
@@ -415,12 +415,12 @@ top:
             else {
                 show_tank_cap(&dl, 0x471);
                 dl.f12 = 1;
-                F_120FE(dl.f0c = 1);
+                cursor_ctl(dl.f0c = 1);
                 video_anim_start(2);
                 F_16993(1);
-                F_13F21(1);
+                menu_pop(1);
                 spots_cap();
-                F_13DE6(0x17);
+                menu_push(0x17);
                 g_waitUntil = g_tick + 0x4c;
                 dl.f1a = 1;
             }
@@ -521,7 +521,7 @@ static void near show_ticket(void)
     *p2 = d;
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.f16 = 1;
-    F_120FE(-2);
+    cursor_ctl(-2);
     sys_input_reset();
 }
 
@@ -569,7 +569,7 @@ static void near show_crash(void)
             (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
         }
     }
-    F_120FE(-2);
+    cursor_ctl(-2);
     (*m_present)();
     sys_input_reset();
     game_pause(0x64);
@@ -604,8 +604,8 @@ static void near show_race_stats(void)
         sprintf(g_raceResult1, "In %2.1f sec you covered only %2d%%", p_8bc4, dz82c8x);
         sprintf(g_raceResult2, "of the distance. Your avg. speed %2d mph.", g7644m);
     }
-    F_13DE6(0x21);
-    F_13F21(1);
+    menu_push(0x21);
+    menu_pop(1);
 }
 
 /* blow_engine @ 0000:C52C (linear 0x0C52C, 128 bytes) */
@@ -695,7 +695,7 @@ int near race_outcome(void)
         e_78e0.f24 = 1;
     if (at787cu)
         e_78e0.fbc |= 8;
-    F_13DE6(1);
+    menu_push(1);
     i = a_7eaap.m7ec0 == 0 ? 5 : 15;
     if (a_7eaap.m7eb0->f22 > i)
         a_7eaap.m7eb0->f22 -= i;
@@ -705,7 +705,7 @@ int near race_outcome(void)
     if (g79e2g.fbc & 1) {
         bo7676 = 1;
         show_race_stats();
-        F_120FE(-2);
+        cursor_ctl(-2);
         game_message(g7d40q == 0 ? (i = g_winMsgs[kind]) : a_7eaap.m7ec0 == 0 ? 0x14bd : 0x14d6);
         F_11540(v);
         if (kind == 5) {
@@ -740,7 +740,7 @@ int near race_outcome(void)
             }
         }
 done:
-        F_13F21(1);
+        menu_pop(1);
         if (e_78e0.fbc & 8)
             if ((i = replace_tires()) != 0)
                 goto ret2;
@@ -757,7 +757,7 @@ done:
             i += 0x32;
         else
             i += 0x14;
-        F_13DE6(0x18);
+        menu_push(0x18);
         sys_wait_input(0);
         sprintf(temp, "You have been fined $%2d for speeding", i);
         F_11421(-1, temp, 0x140 - o_8250);
@@ -765,8 +765,8 @@ done:
         if (i <= a_7eaap.m7eaa)
             goto pay;
         game_message(0x1793);
-        F_13F21(1);
-        F_13F21(1);
+        menu_pop(1);
+        menu_pop(1);
         F_11540(-a_7eaap.m7eaa);
         F_11421(-1, " ", 0x140 - o_8250);
         return 4;
@@ -775,10 +775,10 @@ pay:
         cost = g_waitUntil;
         game_pause(g_msgTicks);
         g_waitUntil = cost;
-        F_13F21(1);
+        menu_pop(1);
         F_11421(-1, "", 0x140 - o_8250);
     } else if (e_78e0.fbc == 0x81) {
-        F_120FE(-2);
+        cursor_ctl(-2);
         game_message(0xecb2);
     } else {
         if (kind == 5) {
@@ -788,16 +788,16 @@ pay:
         F_11540(-v);
         if (e_78e0.fbc == 1) {
             show_race_stats();
-            F_120FE(-2);
+            cursor_ctl(-2);
             i = kind == 5 ? 0x143a : 0x1427;
             game_message(g7d40q == 0 ? i : a_7eaap.m7ec0 == 0 ? 0x1450 : 0x146c);
-            F_13F21(1);
+            menu_pop(1);
             if (kind != 5)
                 return 3;
 ret2:
             return 2;
         } else if (stop) {
-            F_120FE(-2);
+            cursor_ctl(-2);
             if (engine) {
                 blow_engine(kind == 5 ? 0x16bd : 0x1634);
                 goto finishstop;
@@ -842,7 +842,7 @@ finishstop:
                         goto fin;
                     }
                     game_message(0x1561);
-                    F_13F21(1);
+                    menu_pop(1);
                     return 1;
                 }
                 ptr = strchr(i ? g_msgRunCost : g_msgRepairCost, '$') + 1;
@@ -867,17 +867,17 @@ finishstop:
                     g_keyMaps[sel][1].key = 0x21;
                     g_keyMaps[sel][1].val = 0xcf;
                 }
-                F_13DE6(sel);
+                menu_push(sel);
                 sys_input_reset();
                 while ((i = sys_wait_input(3000)) == 0)
                     ;
-                F_13F21(1);
+                menu_pop(1);
                 switch (i) {
                 case 1:
                     F_11540(-v);
                     if (all)
                         replace_tires();
-                    F_13F21(1);
+                    menu_pop(1);
                     return 1;
                 case 2:
                     F_11540((int)(a_7eaap.m7eb0->weight * 0.4));
@@ -889,10 +889,10 @@ finishstop:
             }
         }
 fin:
-        F_13F21(1);
+        menu_pop(1);
         goto ret2;
     }
-    F_13F21(1);
+    menu_pop(1);
     return 3;
 }
 
@@ -994,8 +994,8 @@ void near race_run(void)
     struct Node *slot;
 
     one = 1;
-    F_120FE(-4);
-    F_120FE(1);
+    cursor_ctl(-4);
+    cursor_ctl(1);
     sys_input_reset();
     race_reset_eng(&e_78e0);
     init_rival_eng();

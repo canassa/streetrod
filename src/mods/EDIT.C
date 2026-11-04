@@ -42,12 +42,12 @@ int edit_line(int x, int y, char *buf, int max)
     }
     x_colors.c[2] = x_colors.c[1];
     x_colors.c[3] = x_colors.c[0];
-    F_120FE(-3);
+    cursor_ctl(-3);
     draw_fill_rect(r_vid.back, x, y, w, 8);
     (*a_78aem)(r_vid.back, x, y, buf);
     draw_vline(r_vid.back, cx = g824cd, cy = bq824e, 8);
     colr = -1;
-    F_120FE(-1);
+    cursor_ctl(-1);
     if (r_vid.f16)
         bitmap_copy_box(r_vid.back, r_vid.front, x, y, x + w, y + 8);
     ip = g_msgClickToEdit[0];
@@ -80,7 +80,7 @@ int edit_line(int x, int y, char *buf, int max)
                         continue;
                     }
                 }
-                F_120FE(-3);
+                cursor_ctl(-3);
                 x_colors.c[3] = x_colors.c[1];
                 draw_vline(r_vid.back, cx, cy, 8);
                 if (key == 8) {
@@ -101,25 +101,25 @@ int edit_line(int x, int y, char *buf, int max)
                 x_colors.c[3] = x_colors.c[0];
                 draw_vline(r_vid.back, cx, cy, 8);
                 colr = -1;
-                F_120FE(-1);
+                cursor_ctl(-1);
                 if (r_vid.f16)
                     bitmap_copy_box(r_vid.back, r_vid.front, px, cy, px + 6, cy + 8);
             }
         } else {
-            F_120FE(-3);
+            cursor_ctl(-3);
             x_colors.c[3] = colr ? x_colors.c[1] : x_colors.c[0];
             draw_vline(r_vid.back, cx, cy, 8);
             colr = ~colr;
-            F_120FE(-1);
+            cursor_ctl(-1);
             if (r_vid.f16)
                 bitmap_copy_box(r_vid.back, r_vid.front, cx, cy, cx + 1, cy + 8);
         }
     }
     buf[end] = 0;
-    F_120FE(-3);
+    cursor_ctl(-3);
     x_colors.c[3] = x_colors.c[1];
     draw_vline(r_vid.back, cx, cy, 8);
-    F_120FE(-1);
+    cursor_ctl(-1);
     if (r_vid.f16)
         bitmap_copy_box(r_vid.back, r_vid.front, cx - 6, y, cx, y + 8);
     x_colors.c[3] = oc;
@@ -183,10 +183,10 @@ int edit_number_box(int id, int *out)
     int res;
     char buf[12];
 
-    F_13DE6(id);
+    menu_push(id);
     buf[0] = 0;
     res = edit_spot_number(out, buf);
-    F_13F21(1);
+    menu_pop(1);
     return res;
 }
 
@@ -199,9 +199,9 @@ int edit_text_box(int id, int len, char *s)
 {
     int rl;
 
-    F_13DE6(id);
+    menu_push(id);
     x_colors = bustyle->pal[az8ba2t->f2];
     rl = edit_line(az8ba2t->x1, az8ba2t->y1, s, len);
-    F_13F21(1);
+    menu_pop(1);
     return rl > 0 ? 0 : rl;
 }

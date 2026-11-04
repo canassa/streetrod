@@ -22,7 +22,7 @@ extern int g_5186[];                                    /* DS:5186 */
 extern int g_5198[];                                    /* DS:5198 */
 extern int g_519a[];                                    /* DS:519A */
 extern struct State8272 m_8272;                         /* DS:8272 */
-int F_06476(void);                                      /* 0x06476 */
+int garage_day(void);                                   /* 0x06476 */
 void F_064A3(int *a, int *b);                           /* 0x064A3 */
 void F_06529(int n);                                    /* 0x06529 */
 void F_065AF(int a);                                    /* 0x065AF */
