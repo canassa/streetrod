@@ -919,7 +919,7 @@ int F_07EE6(struct Car *car, int flag)
 {
     int n, i;
 
-    if (car->rack.parts[0] == 0 || car->f1f <= 0 || car->rack.parts[1] == 0)
+    if (car->rack.parts[0] == 0 || car->wireState <= 0 || car->rack.parts[1] == 0)
         return 0;
     n = g_5126[g_4806[car->rack.parts[1]->idx].variant];
     for (i = 2; i < n + 2; i++)
@@ -1044,7 +1044,7 @@ void near garage_hood(struct Car *car)
             af829ax[key - 1] = 0;
         }
     }
-    ap82acz = car->f1f != 0 ? (car->f1f > 0 ? 0x447 : 0x446) : 0;
+    ap82acz = car->wireState != 0 ? (car->wireState > 0 ? 0x447 : 0x446) : 0;
     if (p6 = car->rack.parts[0])
         g_4998[1][0] = g_4806[p6->idx].variant == 0 ? 0x438 : 0x439;
     for (key = 0; key < 5; key++)
@@ -1075,10 +1075,10 @@ void near garage_hood(struct Car *car)
             marks_release();
             return;
         case 13:
-            car->f1f = -car->f1f;
-            if (car->f1f == 0)
+            car->wireState = -car->wireState;
+            if (car->wireState == 0)
                 continue;
-            if (car->f1f > 0) {
+            if (car->wireState > 0) {
                 ap82acz = 0x447;
                 gargfx_draw_wires();
                 g_05fc += 0x6d;
@@ -1135,7 +1135,7 @@ void near garage_hood(struct Car *car)
                 ok = g_4806[list4[key]->idx].fitMask & g7d86n[car->specIndex].parts & 0xf;
                 hz82ae = 0;
                 step = 0;
-                car->f1f = -1;
+                car->wireState = -1;
                 ap82acz = 0x446;
                 g_05fc += ok ? 0x666 : 0x888;
                 break;
@@ -1224,7 +1224,7 @@ void near garage_hood(struct Car *car)
                 F_16A5A(0);
                 o_8290[sel2] = 0;
                 if (sel2 == 0) {
-                    car->f1f = 0;
+                    car->wireState = 0;
                     ap82acz = 0;
                 }
                 goto again;
@@ -1302,12 +1302,12 @@ void near garage_hood(struct Car *car)
         }
         sel2 = -1;
         ok = 0;
-        if (cnt1 == 1 && car->f1f == -1) {
+        if (cnt1 == 1 && car->wireState == -1) {
             for (key = 1; key < 2 && !havek[key]; key++)
                 continue;
             if (key == 2) {
                 sel2 = 0;
-                car->f1f = 0;
+                car->wireState = 0;
                 ap82acz = 0;
                 g_05fc += 0x666;
             }

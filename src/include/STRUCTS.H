@@ -84,7 +84,7 @@ struct Car {
     struct Node *tires;
     char transmissionBolts[2];
     char engineBolts[9];
-    char f1f;
+    char wireState;
     signed char timing;
     char pad21;
     int fuel;

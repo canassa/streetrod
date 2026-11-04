@@ -623,7 +623,7 @@ static void near blow_engine(int n)
         }
         for (i = 0, q = a_7eaap.currentCar->engineBolts; i < 9; i++)
             *q++ = 0;
-        a_7eaap.currentCar->f1f = 0;
+        a_7eaap.currentCar->wireState = 0;
     }
     sys_reset_queues();
     F_16BC1();

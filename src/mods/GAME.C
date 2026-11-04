@@ -342,7 +342,7 @@ struct Car * near game_make_car(int idx, int value, struct Car *old)
         if (random_int(2) == 1)
             break;
     car->paintScheme = i;
-    car->f1f = 1;
+    car->wireState = 1;
     car->timing = random_int(13) - 8;
     car->transmission = node = (old == 0) ? game_new_part() : car->transmission;
     w = (g7d86n[idx].parts >> 6) & 3;
