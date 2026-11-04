@@ -68,7 +68,9 @@ The entry point F_0066F becomes `main` in staging. `CRT.H` maps runtime-owned da
 LINK runs in DOSBox-X because emu2 crashes on this link workload. The generated
 DOS Makefile works with MSC MAKE 4.07 (`ENV.BAT`, then `MAKE MAKEFILE`).
 `./sr build --layout` uses `src/link/LAYOUT.JSON`, original region boundaries,
-whole-source groups, and untouched MSC library members in recovered order. All
+whole-source groups, and MSC's combined library: it builds `MLIBCE.LIB` with LIB 3.11
+(`LIB MLIBCE.LIB +MLIBCR.LIB+LIBH.LIB+EM.LIB+MLIBFP.LIB;`, the component order matters)
+and links `/MAP /STACK:2560 /EXEPACK` with the objects' default library (no `/NOD`). All
 116 source jobs are compiled and gated. It puts all 572 game functions at their
 original addresses and reproduces all 748 E8 call encodings. Whole-file matching
 is still red: initialized data/literals, uninitialized storage and MZ metadata

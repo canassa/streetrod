@@ -76,8 +76,10 @@ Addresses are linear offsets into the unpacked load image (`orig/SR_unpacked.EXE
 `./sr build --layout` rebuilds the recovered code/link order into `work/layout`.
 All 572 game functions land at their original addresses, and all 748 near-call
 encodings match. `./sr dgroup` recovers which module owned each DGROUP item from the
-original data positions and writes the definitions into the module sources. The build links
-with `/EXEPACK` into `work/layout/SRPACKED.EXE`, which is byte-identical to `orig/SR.EXE`
+original data positions and writes the definitions into the module sources. The build
+combines MSC's untouched MLIBCR, LIBH, EM and MLIBFP into `MLIBCE.LIB` with LIB 3.11
+(as MSC SETUP does), then links `/MAP /STACK:2560 /EXEPACK` against it as the objects'
+default library into `work/layout/SRPACKED.EXE`, which is byte-identical to `orig/SR.EXE`
 (SHA-1 `3a5e28b795313028b7e77d147122f41cb29de334`). `./sr linkcheck work/layout/SR.EXE` compares the linked file
 without masking relocations or padding and returns nonzero until it is identical.
 The detailed report is `work/layout/BYTE-MATCH.JSON`. Against the unpacked reference the
