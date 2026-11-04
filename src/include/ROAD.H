@@ -4,6 +4,10 @@
 #define ROAD_H
 #include "STRUCTS.H"
 
+extern struct MirrorEdges g_videoMirrorEdgesSet; /* DS:864A */
+
+extern struct MirrorRoad g_sharedMirrorRoadSet; /* DS:8634 */
+
 extern int g_hillProfile[];                             /* DS:5C20 */
 extern int g_hillDipProfile[];                          /* DS:5C4C */
 extern int g_bumpProfile[17];                           /* DS:5C98 */
@@ -27,10 +31,6 @@ extern unsigned far *g7d62p;                            /* DS:7D62 */
 extern int g_lhsRdMirrorX[];                                    /* DS:7F22 */
 extern int g_xOuterLProjArray[];                                   /* DS:7F8A */
 extern int g_rhsOuterXArray[];                                    /* DS:7FD8 */
-extern unsigned far *aw8634x;                           /* DS:8634 */
-extern int g_yMirrProjectionArray[];                                   /* DS:8638 */
-extern int g_yMirrorBldgArray[];                                   /* DS:864A */
-extern int g_rhsXsRear[];                                    /* DS:865A */
 void road_build_layout(int n);                          /* 0x26FE1 */
 void road_generate(void);                               /* 0x27198 */
 void road_seek(int n);                                  /* 0x27B6D */

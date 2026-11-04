@@ -696,4 +696,20 @@ struct BodyPoints {
     int gasCapX;
     int gasCapY;
 };
+
+struct MirrorRoad {
+    unsigned far *terrain;
+    int y[6];
+    int prevY;
+    int lastY;
+};
+
+struct MirrorEdges {
+    int buildingY[6];
+    int prevBuildingY;
+    int lastBuildingY;
+    int rightX[6];
+    int prevRightX;
+    int lastRightX;
+};
 #endif

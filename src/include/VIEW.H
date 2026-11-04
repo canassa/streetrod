@@ -58,12 +58,6 @@ extern int by7fa6;                                      /* DS:7FA6 */
 extern int dz7ff2;                                      /* DS:7FF2 */
 extern int g7ff4g;                                      /* DS:7FF4 */
 extern struct Bitmap far *g8184y;                       /* DS:8184 */
-extern int aw8644v;                                     /* DS:8644 */
-extern int k_8646;                                      /* DS:8646 */
-extern int au8656u;                                     /* DS:8656 */
-extern int g_8658;                                      /* DS:8658 */
-extern int au8666t;                                     /* DS:8666 */
-extern int as8668u;                                     /* DS:8668 */
 extern struct Bitmap far *bz8b7ex;                      /* DS:8B7E */
 extern int far *am8b82y;                                /* DS:8B82 */
 extern struct Bitmap far *ak8bcat;                      /* DS:8BCA */

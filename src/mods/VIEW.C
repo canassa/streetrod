@@ -103,12 +103,6 @@ int by7fa6;
 int dz7ff2;
 int g7ff4g;
 struct Bitmap far *g8184y;
-int aw8644v;
-int k_8646;
-int au8656u;
-int g_8658;
-int au8666t;
-int as8668u;
 struct Bitmap far *bz8b7ex;
 int far *am8b82y;
 struct Bitmap far *ak8bcat;
@@ -1102,7 +1096,7 @@ static void near render_mirror_frame(void)
     b.h = 2;
     b.sx = b.sy = 0;
     b.dx = 0xf0;
-    b.dy = k_8646 - 2;
+    b.dy = g_sharedMirrorRoadSet.lastY - 2;
     clip_blit_y(&b);
     (*g_videoOps.copy)(bz8b7ex, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
 }
@@ -1259,20 +1253,20 @@ static void near render_mirror(void)
     int w2;
 
     g_renderRows.leftX = &g7f30t;
-    g_renderRows.rightX = &as8668u;
-    g_renderRows.y = &k_8646;
+    g_renderRows.rightX = &g_videoMirrorEdgesSet.lastRightX;
+    g_renderRows.y = &g_sharedMirrorRoadSet.lastY;
     g_renderRows.leftOuterX = &al70c0x.m70d0;
     g_renderRows.rightOuterX = &dz70e0;
-    g_renderRows.buildingY = &g_8658;
+    g_renderRows.buildingY = &g_videoMirrorEdgesSet.lastBuildingY;
     g_renderRows.prevLeftX = &e_7f2e;
-    g_renderRows.prevRightX = &au8666t;
-    g_renderRows.prevY = &aw8644v;
-    g_renderRows.prevBuildingY = &au8656u;
+    g_renderRows.prevRightX = &g_videoMirrorEdgesSet.prevRightX;
+    g_renderRows.prevY = &g_sharedMirrorRoadSet.prevY;
+    g_renderRows.prevBuildingY = &g_videoMirrorEdgesSet.prevBuildingY;
     g_renderRows.prevLeftOuterX = &al70c0x.m70ce;
     g_renderRows.prevRightOuterX = &al70c0x.m70de;
     g_renderRows.beamWidth = &g_5e92;
     g_renderRows.leftFlags = (int far *)(q_72ee - 8);
-    g_renderRows.rightFlags = (int far *)(aw8634x - 8);
+    g_renderRows.rightFlags = (int far *)(g_sharedMirrorRoadSet.terrain - 8);
     am8b82y = (int far *)(g7d62p - 8);
     egaspan_end();
     render_mirror_frame();
@@ -1428,7 +1422,7 @@ void view_draw(void)
     g_renderRows.prevRightOuterX = &dz7ff2;
     g_renderRows.beamWidth = &g_5e86;
     g_renderRows.leftFlags = (int far *)(q_72ee + 14);
-    g_renderRows.rightFlags = (int far *)(aw8634x + 14);
+    g_renderRows.rightFlags = (int far *)(g_sharedMirrorRoadSet.terrain + 14);
     am8b82y = (int far *)(g7d62p + 14);
     view_clip();
     render_backdrop();

@@ -181,6 +181,10 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **BodyPoints** (`g_featurePos`, DS:8264..8271): a natural, byte-identical reconstruction choice; separate globals also match.
 
+- **MirrorRoad** (`g_sharedMirrorRoadSet`, DS:8634..8647): a natural, byte-identical reconstruction choice; separate globals also match.
+
+- **MirrorEdges** (`g_videoMirrorEdgesSet`, DS:864A..8669): a natural, byte-identical reconstruction choice; separate globals also match.
+
 ## Compiler warnings
 
 The build compiles with `/W3` (see Build). The C files give 109 warnings; at `/W1` only
