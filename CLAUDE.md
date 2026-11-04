@@ -138,7 +138,7 @@ A *module* is one original source file (one object). The `module_` prefix of its
 **A rename is a change to verify, not a free edit.** In this project names are often load-bearing:
 - local names decide the stack frame layout (rule 3);
 - uninitialized globals are placed by LINK's communal hash (rule 4e) and file-local statics by MSC's name hash (rule 4f): renaming one can move others;
-- external symbols' name lengths count toward MSC's per-file budget (rule 4d), so renaming an external function or global can change the code of a later function in any file that references it.
+- external symbols' name lengths count toward MSC's per-file budget (rule 4d), and so do a file's static function names: renaming a function or global can change the code of a later function in any file that references it. GARAGE.C (F_07AA4) and VIEW.C (F_2969D) have almost no slack left.
 Every rename must keep `./sr check --all`, `./sr build` and `./dosbox.sh --make` IDENTICAL. Rename through the tools so the DB, sources, headers, MAKEFILE and SR.LNK stay consistent (`./sr rename OLD NEW`, or `./sr rename M_xxxxx.C NAME.C` for a file; it regenerates the headers).
 
 - **Never add comments.** Do not add comments to the code unless instructed to; all documentation is human-reviewed.
@@ -187,7 +187,7 @@ LINK lists relocations object by object, each data record's fixups in descending
 
 ### 4d. The compiler budget: global symbols are load-bearing
 
-MSC 5.1's code generator degrades (fewer loop register variables, other temps) once the external symbols referenced so far in a file exceed a budget measured in symbols plus name characters. A function can match alone and fail in its real file. External functions, external data and communals count; locals, statics, prototypes, literals and initialized data do not. Folding globals into the structs/arrays they were (with code evidence: a run-time `a - b` between two addresses or a direct `g[i]` index proves separate symbols) is how the original files stayed under it. `./sr build` must stay IDENTICAL against `orig/SR.EXE`.
+MSC 5.1's code generator degrades (fewer loop register variables, other temps) once the external symbols referenced so far in a file exceed a budget measured in symbols plus name characters. A function can match alone and fail in its real file. External functions, external data, communals and the file's own static functions (their names too) count; locals, static variables, prototypes, literals and initialized data do not. Folding globals into the structs/arrays they were (with code evidence: a run-time `a - b` between two addresses or a direct `g[i]` index proves separate symbols) is how the original files stayed under it. `./sr build` must stay IDENTICAL against `orig/SR.EXE`.
 
 ### 4e. Uninitialized storage is communal, and LINK's hash fixes the names
 
