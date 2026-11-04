@@ -1,8 +1,5 @@
         .MODEL SMALL
         INCLUDE PC.INC
-; Written as a small-model file: .MODEL SMALL declares _TEXT (empty here) before any
-; other segment, which is what orders the _TEXT of the runtime between segments
-; 1C11 and 2196. Small model rejects .CODE name (A2063), so the far code has its own SEGMENT.
 
         .DATA
         EXTRN   _g_delayScale:WORD

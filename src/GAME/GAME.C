@@ -191,10 +191,6 @@ int gm_part_value(struct Node *n)
     return r;
 }
 
-/* The file is compiled /Oalsi, but the loops of sell_parts are plain /Ol-off
-   loops in the shipped code (list counters and pointers kept in memory, test
-   reached by a jmp). No for/while/do formulation reproduces that under /Ol,
-   so loop optimization is switched off for this function only. */
 #pragma loop_opt(off)
 
 

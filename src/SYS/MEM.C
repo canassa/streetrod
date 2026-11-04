@@ -8,7 +8,6 @@
 #include "SCREEN.H"
 #include "SYS.H"
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static unsigned g_dataSeg;
 
 

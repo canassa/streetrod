@@ -12,7 +12,6 @@
 #include "PC.H"
 
 /* Copy a range of rows of a planar sprite sheet into the back page, plane by plane */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void ev_sprite(int top, int bottom, int x, int y0, int y1, struct Bitmap far *bm)
 {

@@ -26,7 +26,6 @@ static void near restore_rect(struct Rect *rect, struct Bitmap far *bm2, struct 
 
 /* Erase and redraw one sprite: restore the background under its old rectangles, draw it over the
    screen pg and advance it */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 int cs_step(struct Sprite *s)
 {

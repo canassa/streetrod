@@ -33,7 +33,6 @@ static void near init_screens(enum VideoChoice mode);
 static void near set_video_mode(enum VideoChoice mode);
 static void near check_slow_cpu(void);
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Video r_vid;
 
 int g_hercules = 0;

@@ -49,7 +49,6 @@ struct Rect *sp_car_clip(int x, int y, int w, int h, struct Rect *out)
     return sp_rect_and(&scr, &rect, out);
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Frame g_frmTable[12];
 struct Seq g_seqSpriteMoveData[10];
 struct Sprite g_mainCarSprite;
@@ -263,7 +262,6 @@ void sp_plan_drive(struct Sprite *s, enum CarAnimKind mode, int d)
 
 /* Slide a one-frame sprite of bitmap bm from y0 to y1 at column x, refreshing the front page under
    it */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void sp_slide_v(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
 {

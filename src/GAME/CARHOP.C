@@ -15,7 +15,6 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct Rect g_carhopRect;
 static struct Bitmap far *g_carhopBg;
 

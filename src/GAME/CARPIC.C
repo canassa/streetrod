@@ -24,14 +24,12 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct Rect g_lastCarRect;
 static void near blit_planes(char far *src, char far *dst, char far *mask, int w, int h, int n, int step);
 static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2, int h, char far *mask, char c);
 static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int color);
 static void near build_pump_strip(int x, int y, int sx0, int top, struct Bitmap far *dstbm, int id1, int id2);
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Bitmap g_bandRecordsSprArray[12];
 struct Bitmap far *g_lastPic;
 struct Band g_carSpriteStrips[4];
@@ -117,7 +115,6 @@ static void near blit_planes(char far *src, char far *dst, char far *mask, int w
 
 /* For each of n bitmaps, lay a band of h rows into the scratch bitmap g_pageBmps[2], fill or copy it,
    then blit the bitmap through the EGA planes */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2, int h,
     char far *mask, char c)
@@ -150,7 +147,6 @@ static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2
 
 /* Copy n bitmaps into the table g_bandRecordsSprArray, each filled with a colour pattern and h rows high, in
    space cut from the scratch bitmap g_pageBmps[2] */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int color)
 {
@@ -252,7 +248,6 @@ void cp_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, struc
 }
 
 /* Render a 16x70 strip into a scratch bitmap with two draw passes and blit it onto two bitmaps */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 static void near build_pump_strip(int x, int y, int sx0, int top, struct Bitmap far *dstbm, int id1, int id2)
 {
@@ -416,7 +411,6 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
 }
 
 
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void cp_show_car(enum CarAnimKind kind, int idx, int flags, int kk, int q, int bot, int mode2, int *ids)
 {

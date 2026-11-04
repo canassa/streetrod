@@ -112,3 +112,19 @@ class EnumHeaderTests(unittest.TestCase):
                 caller.write_text('#include "STRUCTS.H"\n/* Mode SHOW HIDE LAST */\n')
                 self.assertEqual(fileheaders.generate(), [])
                 self.assertNotIn('#include "OWNED.H"', caller.read_text())
+
+
+class SourceBodyTests(unittest.TestCase):
+    def test_include_rewrite_preserves_storage_and_body_without_banners(self):
+        body = ('\nstatic int cursorX;\nint pageCount;\n'
+                '/* Draw the selected page. */\n'
+                'void draw(void)\n{\n'
+                '    int unused; /* PROVISIONAL: unresolved frame slot */\n}\n')
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / 'DRAW.C'
+            path.write_text('#include "STRUCTS.H"\n' + body)
+            fileheaders._rewrite_includes(path, 'DRAW', {}, {'DRAW'})
+            expected = '#include "STRUCTS.H"\n#include "DRAW.H"\n' + body
+            self.assertEqual(path.read_text(), expected)
+            fileheaders._rewrite_includes(path, 'DRAW', {}, {'DRAW'})
+            self.assertEqual(path.read_text(), expected)

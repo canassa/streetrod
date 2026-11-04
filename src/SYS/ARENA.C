@@ -5,10 +5,8 @@
 
 #define ARENA_FIXED_BASE ((char far *)0x80000000L)
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static char far *g_arenaBase;
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int g_arenaTopVal;
 int g_lowArenaMarker;
 int g_markerIndexHigh;

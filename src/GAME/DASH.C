@@ -36,13 +36,11 @@ enum DashSaveKind {
 #define TACH_CENTER_X 0x91
 #define GAUGE_CENTER_Y 0x2a
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct WheelPoses g_wheelPoses;
 static void near save_under(int x, int y, int w, int h, enum DashSaveKind kind);
 static void near restore_under(int x, int y, int w, int h, enum DashSaveKind kind);
 static struct ShifterDraw g_shifterDraw;
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Bitmap far *g_driveDisplayPage;
 unsigned g_targetPixelOffset;
 unsigned g_videoAddrSegment;

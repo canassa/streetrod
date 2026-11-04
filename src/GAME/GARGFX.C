@@ -22,7 +22,6 @@ static int near carb_pos(int *px, int *py);
 static void near make_bolt_overlay(void);
 static void near insert_hot(struct Hot *arr, struct Hot *item, int num);
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 
 char g_partAnimate = 1;
 int g_tboltY[2] = {78, 93};

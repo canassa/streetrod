@@ -26,7 +26,6 @@ enum QuadShape {
     QUAD_RIGHT_HIGHER = 5
 };
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_horizonY;
 static int g_roadRowLimit;
 static struct RenderRows g_renderRows;
@@ -83,7 +82,6 @@ static void near select_draw_page(void)
     }
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Bitmap far *g_lightsBm;
 struct Bitmap far *g_windowStrutArt;
 struct Bitmap far *g_citySkylineBmp;

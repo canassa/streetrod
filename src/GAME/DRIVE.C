@@ -17,7 +17,6 @@
 #include "SYS.H"
 #include "VIEW.H"
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Bitmap far *g_driveScreenB;
 
 /* Gearbox/drive screen loop: draws the dashboard, then redraws the changing parts until

@@ -32,7 +32,6 @@ static void near restore_rect_back(struct Rect *r, struct Bitmap far *a, struct 
 
 /* Erase and redraw one sprite on the screen page r_vid.back through the masked blitters, then flush
    the touched rectangle to the page and advance the sprite */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 int ts_step(struct Sprite *s)
 {

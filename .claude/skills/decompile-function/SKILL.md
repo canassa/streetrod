@@ -68,3 +68,13 @@ If the match needed something you can't justify as 1989 source (a dead variable,
 ## 5. Teach the next session
 
 If this function taught you a new codegen tell, add a row to `msc51-recipe-book` now, not at the end. If a step here was wrong or missing, fix this skill. Note anything notable for the diary (`wrap-up`).
+
+
+## Source comments
+
+Keep reconstruction reasoning in `docs/RECONSTRUCTION.md`, including storage
+hashes, local-name constraints, symbol budgets and compiler layout choices. Do not
+add storage banners or decompilation explanations to `src/`. Preserve existing
+game-behaviour comments and every PROVISIONAL marker with its full text.
+`./sr headers` maintains includes and dependencies only; it must not add storage
+comments or rewrite the declarations or function bodies.

@@ -20,10 +20,8 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct TireWork g_tires;
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 
 static struct Bitmap far * near grab_wheel_column(int n);
 static void near swap_wheel(int a, int *p, int *q);

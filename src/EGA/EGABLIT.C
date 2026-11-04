@@ -12,7 +12,6 @@
 #include "PC.H"
 
 /* Copy a rectangle between planar VGA bitmaps, plane by plane */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void eb_copy(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, int flags)
 {
@@ -95,7 +94,6 @@ void eb_copy(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, i
 }
 
 /* Masked blit between planar VGA bitmaps */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void eb_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *bm3,
              struct Mask *mask, struct Blt *r)
@@ -174,7 +172,6 @@ void eb_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far
 }
 
 /* Blit between planar VGA bitmaps through one of two hand-written plane routines */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void eb_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int flag)
 {
@@ -227,12 +224,6 @@ void eb_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, in
     }
 }
 
-/* The file is compiled /Oals, but this copy loop is a plain /Ol-off loop in the
-   shipped code (byte moves through memory variables). Under /Ol MSC turns the
-   inner loop into rep movsw, and every for/while/do form gets registers and
-   loop temps. A word move would also break the write-mode-1 latch copy (the
-   second byte's latches are written to both bytes), a likely reason the
-   programmer switched the loop optimizer off here. */
 #pragma loop_opt(off)
 
 /* Copy a w by h block of planar VGA video memory using write mode 1 (latch copy) */

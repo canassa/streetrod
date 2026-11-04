@@ -175,7 +175,6 @@ void ga_palette(int a)
     }
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct CarDisplay g_carDraw;
 
 
@@ -787,7 +786,7 @@ void ga_info(void)
 
 void near ga_transmission(void)
 {
-    int flags[3];   /* by key 1, 2; flags[0] is the original's unused 2-byte slot below flags[1] */
+    int flags[3];   /* indexed by key 1 or 2 */
     char buf[142];
     int prev;
     struct Car *owner;

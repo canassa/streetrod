@@ -12,7 +12,6 @@
 #include "M_02B9A.H"
 #include "PC.H"
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Cursor g_cursor2;
 
 struct Pair g_cursorPairs[4] = {{1, 1}, {2, 2}, {1, 1}, {8, 8}};

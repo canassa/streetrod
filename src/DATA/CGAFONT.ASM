@@ -1,4 +1,4 @@
-; CGA glyphs: width and eight word rasters; segment offset four is linker alignment.
+; CGA glyphs: width and eight word rasters.
 CGAFONT SEGMENT WORD PUBLIC 'CODE'
         PUBLIC  _g_cgaFont
 

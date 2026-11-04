@@ -17,7 +17,6 @@ unsigned char g_leftBitMasks[8] = {128, 192, 224, 240, 248, 252, 254, 255};
 int g_egaGcFunction = 0;
 
 /* Shift a row of bytes right (n > 0) or left (n < 0) by n bits, carrying between bytes */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 static void near shift_row_bits(unsigned char *p, int n, int len)
 {
@@ -56,7 +55,6 @@ static void near shift_row_bits(unsigned char *p, int n, int len)
 }
 
 /* Write one 4 plane row (40 bytes per plane) to planar VGA memory, shifted and edge masked */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 static void near write_plane_row(unsigned char far *dst, unsigned char *src, int w, int off, int shift)
 {
@@ -138,9 +136,6 @@ static void near write_plane_row(unsigned char far *dst, unsigned char *src, int
 }
 
 /* Copy a rectangle of a planar VGA bitmap to another, via a per-row 4 plane buffer */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
-/* The braces of GCREG(5, 0) are load-bearing: a block ends the basic block that holds the
-   r->sx / 8 CSE in si, so /Ol does not give it a stack slot (the original has none). */
 
 void ex_blit(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r)
 {

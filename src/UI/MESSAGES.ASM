@@ -1,7 +1,6 @@
         .MODEL MEDIUM
 
-; Initialized data DS:239E..4718: the menu and message texts and their tables.
-; Words and arrays at odd addresses: assembler data, not C definitions.
+; Menu and message texts and their tables.
 
         .DATA
         PUBLIC  _g_txt

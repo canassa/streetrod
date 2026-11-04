@@ -1,9 +1,4 @@
-/* Far working storage: 277 Slot records and five 1120-word terrain arrays.
-   Uninitialized far definitions are communal variables (COMDEF): LINK allocates them in
-   FAR_BSS after every object, in its symbol-hash bucket order. The original order (slots,
-   then the five arrays) therefore fixes the order of the names' buckets. The names are
-   placeholders chosen to satisfy it (g_slot 64, g_terrain0..4 158..190); the historical
-   names are unknown. */
+/* Far working storage: 277 Slot records and five 1120-word terrain arrays. */
 #include "STRUCTS.H"
 #include "SLOTS.H"
 

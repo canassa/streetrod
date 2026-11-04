@@ -18,14 +18,12 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_drawnMinX;
 static int g_drawnMinY;
 static int g_drawnMaxX;
 static int g_drawnMaxY;
 static char * near wear_text(int wear);
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int g_menuGrpHistoryList[4];
 char g_hideSelectFrameVal;
 struct ListDialog g_menuList;

@@ -17,7 +17,6 @@
 #define EGA_PAGE1_BITS ((char far *)0xa2000000L)
 #define EGA_PAGE2_BITS ((char far *)0xa4000000L)
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_buildX;
 static int g_buildEntry;
 static int g_bendStep;
@@ -562,7 +561,6 @@ void rd_generate(void)
     rd_build_layout(100);
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 unsigned far *g_roadTerrain;
 int g_roadLXArray[15];
 int far *g_hereCurvePtr;

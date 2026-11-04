@@ -29,7 +29,6 @@ void eg_install(void)
 
 /* Draw a string in the 8-pixel-high font into a planar EGA/VGA bitmap, composing the glyph rows in
    a 320 byte buffer first */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void eg_draw_text(struct Bitmap far *bm, int x, int y, char *str)
 {
@@ -56,7 +55,6 @@ void eg_draw_text(struct Bitmap far *bm, int x, int y, char *str)
     memset(bits, 0, 320);
     cols = sh = d;
     q = bits;
-    /* a for with an increment (here one with no code) gives the original layout: jmp test, the tail of the body, then the test with the body head */
     for (; *str; str) {
         byte = *str++ - 0x20;
         if (byte > 0x5a)

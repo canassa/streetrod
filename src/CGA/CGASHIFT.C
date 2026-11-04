@@ -70,7 +70,6 @@ static void near put_pixels(char far *dst, unsigned char *src, int n, int ph)
 }
 
 /* Blit a rectangle between 4-pixel-per-byte bitmaps, shifting each row through a buffer */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void cx_blit(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *blt)
 {

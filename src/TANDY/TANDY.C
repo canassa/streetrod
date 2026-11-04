@@ -26,7 +26,6 @@ void ta_install(void)
 }
 
 /* Render a glyph into a scratch buffer and copy it to the interleaved screen, 8 rows at most */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void ta_draw_text(struct Bitmap far *bm, int x, int y, int glyph)
 {
@@ -56,7 +55,6 @@ void ta_draw_text(struct Bitmap far *bm, int x, int y, int glyph)
 }
 
 /* Replace one colour by another inside a rectangle of a 2-pixel-per-byte interlaced bitmap */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void ta_recolor_rect(struct Bitmap far *bm, int from, int to, int x1, int y1, int x2, int y2)
 {
@@ -137,7 +135,7 @@ void ta_copy_page(char far *src, char far *dst)
 
 /* Clear one source row, then copy the same row from the second screen: five interlaced passes over
    the lines */
-/* kl: index over the five line phases (name chosen for the stack layout). */
+/* kl: index over the five line phases. */
 
 void ta_reveal(char far *a, char far *b)
 {

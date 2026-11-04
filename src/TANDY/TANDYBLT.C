@@ -71,7 +71,6 @@ static void near split_banks(int x, int x0, int y, int *b, int *a)
 }
 
 /* Masked blit between interleaved-bank bitmaps, one mg_blit call per bank */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void tb_compose(struct Bitmap far *dst, struct Bitmap far *src, struct Bitmap far *mask, struct Blt *in)
 {
@@ -117,7 +116,6 @@ void tb_compose(struct Bitmap far *dst, struct Bitmap far *src, struct Bitmap fa
 
 /* Blit between bitmaps through the blitter selected by flag, in banks when the destination is
    interleaved */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void tb_masked(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *in, int flag)
 {
@@ -247,7 +245,6 @@ static void near put_nibbles(char far *dst, char *src, int n, int odd)
 }
 
 /* Copy rows between 2-pixel-per-byte bitmaps, shifting each row through a buffer by a nibble */
-/* Local names are placeholders chosen to reproduce the original stack layout. */
 
 void tb_shifted(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *blt)
 {

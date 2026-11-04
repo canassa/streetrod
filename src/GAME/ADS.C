@@ -17,7 +17,6 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int g_adIdxEndPageState;
 
 static struct Bitmap far * near ad_picture(int n);

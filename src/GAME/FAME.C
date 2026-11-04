@@ -26,13 +26,11 @@ enum ManualKind {
     MANUAL_CAR_ICON = 1
 };
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_score;
 static int near elapsed_hours(void);
 static int near score_beats_entry(int i);
 static void near insert_entry(int pos);
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Entry g_hallFameTbl[10];
 
 struct ManualEntry g_manual[51] = {{2, 2}, {3, 11}, {4, 6}, {6, 5}, {7, 9}, {8, 1}, {9, 4}, {10, 6}, {11, 10}, {12, 1}, {14, 7}, {15, 12}, {16, 2}, {18, 3}, {19, 11}, {20, 5}, {22, 10}, {23, 6}, {1, 3}, {2, 5}, {3, 9}, {4, 4}, {5, 8}, {6, 10}, {7, 7}, {8, 2}, {9, 12}, {10, 5}, {11, 1}, {12, 3}, {13, 11}, {14, 9}, {15, 8}, {16, 4}, {17, 6}, {18, 1}, {19, 10}, {20, 8}, {21, 9}, {22, 12}, {23, 7}, {24, 2}, {25, 3}, {26, 1}, {27, 8}, {28, 5}, {29, 11}, {30, 10}, {31, 4}, {32, 12}, {33, 9}};

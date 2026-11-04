@@ -1941,3 +1941,52 @@ The newly enum-typed state/category objects and named constants preserve the mea
 - Re-extraction from main's annotated source is essential after symbol renames: carrying the old name-keyed metadata into the merge would leave obsolete function/global keys. The extractor now preserves the current renamed records and the private MASM label addresses through subsequent annotation-free runs.
 - Main had cleaned historical conflict debris in the diary, so its diary was not a simple byte-prefix extension of the merge base. Keeping main's existing history plus noaddr's two appended entries preserves that cleanup without losing either noaddr session record.
 - The inherited MAKEFILE change uses the repository's DOS CRLF format. Checked the final diff with `git -c core.whitespace=cr-at-eol diff --check` (including `--cached`) so legitimate carriage returns are not reported as trailing whitespace; kept main's build file bytes unchanged.
+
+## 2026-11-04 23:14 CET: Remove decompilation explanations from sources
+
+### What I did
+
+- Reviewed and changed 85 source comments: deleted 75 entirely and trimmed 10 to
+  game-behaviour text. Counts by kind: 44 storage banners (deleted), 21 local-name
+  banners (deleted), 5 compiler-layout/optimization explanations (deleted), 7 struct
+  explanations (4 deleted, 3 trimmed), 1 far-storage explanation (trimmed), 2 mixed
+  local explanations (trimmed), 2 remaining address-bearing comments (trimmed),
+  and 3 assembler-layout explanations (1 deleted, 2 trimmed).
+- Kept all 11 PROVISIONAL comments with their complete original text: unresolved
+  frame slots, unused needle segment references, filler storage and dropped list
+  reads remain explicitly flagged. Kept function-top game descriptions, graphics
+  algorithms, bitmap geometry, machine-register interfaces and assembly scratch
+  storage/jump-entry explanations: these describe operation rather than how the
+  decompilation was obtained. Retained useful game text from mixed comments on
+  menu paging, video mode/geometry, cursor lifecycle, far storage contents,
+  font/palette formats, message tables, key-indexed flags and the five line phases.
+- Checked docs/RECONSTRUCTION.md against the removed comments. Existing notes
+  already cover hash-constrained storage/local names, HOTSPOT filler, budget
+  structs, unused flags[0], and SYS/GAME optimization pragmas. Added missing far
+  bucket values, Video/Cursor struct evidence, EGA text/block/latch details and
+  speaker/font/message assembler layout reasoning there. Fixed references to
+  deleted comments and the obsolete claim that headers themselves are generated.
+- Audited tools and skills: fileheaders.py already only maintains include blocks;
+  no current tool generates the deleted banners. Added an exact-body preservation
+  and idempotence regression for a source with static/communal storage, a game
+  comment and a PROVISIONAL marker. Updated CLAUDE.md and the decompile-function
+  and sr-cli skills to keep reconstruction explanations in docs, removing the
+  explicit instruction to use an uninitialized-storage banner.
+- Every required gate passed: headers --check; check --all (572/572: 551 MATCH,
+  21 MATCH*); a fresh build after deleting work (96/96 objects, 572/572 positions
+  and bytes, 748/748 near calls, packed EXE IDENTICAL); dgroup check; dgroup order;
+  unittest discover (85 tests, OK). Also checked eb_latch_pack with sr show,
+  git diff --check, unchanged source tokens and exact preservation of all 11
+  PROVISIONAL comments. The first check run overlapped the work-directory removal
+  and lost its scratch directory; reran it successfully after the build/tests.
+
+### What I learned
+
+- The task's concern about generated storage banners was historical in this
+  checkout: headers already changes only includes/dependencies. The new regression
+  protects that boundary; there was no generator to remove.
+- Keyword hits such as byte, layout, link and frame often describe the game's
+  algorithms or hardware interface. Review the comment's purpose rather than
+  deleting by keyword; keep unresolved reconstruction choices marked PROVISIONAL.
+- Source comments and executable tokens can be checked independently. This cleanup
+  changed no C/MASM tokens; the fresh packed build also confirms byte identity.

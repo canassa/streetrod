@@ -2,7 +2,6 @@
 #include "STRUCTS.H"
 #include "RANDOM.H"
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct RandomState g_random;
 
 /* Wichmann-Hill style generator: three 15-bit LCG state words.

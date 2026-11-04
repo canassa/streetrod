@@ -14,7 +14,6 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct Win *g_popupLayout;
 static int g_6c42[2];                      /* PROVISIONAL: 4 unreferenced bytes after g_popupLayout */
 

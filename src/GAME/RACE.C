@@ -38,7 +38,6 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct GasInteraction g_fuelStationActions;
 static int near find_gas_spot(int);
 static void near clear_gas_spots(void);
@@ -96,7 +95,6 @@ static void near sort_gas_spots(void)
     gx_sort_hots(base, n);
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 int g_finishMeanSpeedVal;
 char g_failureTire;
 struct BodyPoints g_featurePos;

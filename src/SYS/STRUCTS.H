@@ -302,7 +302,7 @@ struct Style {
     char pad2[5];
     struct Colors hilite;
     struct Colors popup;
-    struct Colors bank;         /* fifth palette bank: DS:03EB / 043B, part of the 80-byte record */
+    struct Colors bank;         /* fifth palette bank, part of the 80-byte record */
 };
 
 struct Mask {
@@ -644,9 +644,7 @@ struct Cand {
     int dk;
 };
 
-/* DS:822A, the display state set by vi_init: the visible and drawing bitmaps, a scratch bitmap,
-   the video mode (front->flags), and per-mode geometry. Members, not plain globals: /Ol never
-   hoists r_vid.mode into a register (0x004F4, 0x10AFD). */
+/* Display state set by vi_init; mode follows front->flags and geometry depends on the mode. */
 struct Video {
     struct Bitmap far *front;
     struct Bitmap far *back;
@@ -659,7 +657,7 @@ struct Video {
     int copyToFront;
 };
 
-/* DS:04FE, the pages of a list menu (av_open fills it, av_run pages through it): start[k] is the
+/* List menu pages (av_open fills them, av_run pages through them): start[k] is the
    first entry of page k, n the page count, cur the current page, list the menu (count, then items). */
 struct Pages {
     int start[12];
@@ -668,8 +666,7 @@ struct Pages {
     int *list;
 };
 
-/* mouse cursor state at DS:7aec (cu_init sets it up, cu_ctl/cu_draw move it). The four
-   rectangle members compare as nested members (cu_draw), which plain globals don't reproduce. */
+/* Mouse cursor state: cu_init sets it up, cu_ctl/cu_draw move it. */
 enum CursorDrawState {
     CURSOR_ERASE_BUFFERED = -2,
     CURSOR_ERASE_NOW = -1,
@@ -701,13 +698,12 @@ struct Cell {
     unsigned char y;
 };
 
-/* one glyph of the CGA text font (cg_draw_text; 91 glyphs for ' '..'z' from 0ED2:0004): a width in half pixels and 8 rows of bits */
+/* one glyph of the CGA text font (cg_draw_text; 91 glyphs for ' '..'z'): a width in half pixels and 8 rows of bits */
 struct CgaGlyph {
     unsigned w;
     unsigned rows[8];
 };
 
-/* DS:7D2E..7D3F: one communal; the code reads these as struct members */
 struct RoadView {
     int rightEdge;
     int roadIndex;
@@ -720,7 +716,6 @@ struct RoadView {
     int roadHeight;
 };
 
-/* DS:7E8A..7E99: one communal; the code reads these as struct members */
 struct RivalPosition {
     int roadIndex;
     int roadFraction;
@@ -735,8 +730,6 @@ struct RoadEdges {
     int rightOuterX[8];
 };
 
-/* DS:7EAA..7EC2: one COMMON block in the original (folded from 11 placeholder
-   globals: the compiler budget of the original translation units requires fewer external symbols) */
 struct DriverState {
     long money;
     int unused;
@@ -751,8 +744,6 @@ struct DriverState {
     enum RaceType raceType;
 };
 
-/* DS:8272..8290: one COMMON block in the original (folded from 11 placeholder
-   globals: the compiler budget of the original translation units requires fewer external symbols) */
 struct CarDisplay {
     int stickerX;
     int stickerY;

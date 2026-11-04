@@ -19,13 +19,11 @@
 #include "SPRITE.H"
 #include "SYS.H"
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct AnimRun g_animRun;
 static int g_pumpBlinkCount;
 static void near anim_set_box(void);
 static void near anim_run(int n);
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Colors x_colors;
 struct Bitmap far *g_pageBmps[4];
 struct Obj g_scriptObjsData[5];

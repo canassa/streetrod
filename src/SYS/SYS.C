@@ -32,14 +32,12 @@
 #include "VIDDET.H"
 #include "VIDEO.H"
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct CursorDraw g_drawnCursor;
 static enum ScreenId g_keyGroup;
 static char g_lastClick;
 static int g_demoChoice;
 static struct Vibrato g_vibrato;
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Dev g_songBgState;
 struct Dev g_secondaryMusicStateData;
 void (interrupt far *g_clockPrev)(void);
@@ -711,12 +709,6 @@ int sy_sign(int x)
     return -1;
 }
 
-/* Loop optimization is off from here to the end of the file. The file is
-   compiled /Oalsi, but in the shipped code the loops of sy_demo_step, sy_timer_isr and
-   sy_drive_isr (the timer interrupt handler) are plain /Ol-off loops: counters and
-   pointers stay in memory, the test is reached by a jmp, no induction
-   variables. No for/while/do formulation reproduces that under /Ol (/Ol takes
-   every such loop here); this one pragma reproduces all three functions. */
 #pragma loop_opt(off)
 
 

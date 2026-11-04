@@ -46,7 +46,6 @@ int g_slotNameOfs[16] = {6661, 6678, 6695, 6712, 6729, 6746, 6763, 6780, 6797, 6
 char *g_noNameMsgPtr = g_noNameMsg;
 int g_demoRacer = 0;
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 
 
 

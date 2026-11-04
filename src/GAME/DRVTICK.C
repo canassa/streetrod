@@ -13,10 +13,8 @@
 #include "SLOTS.H"
 #include "SYS.H"
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_cruiseRpmStep;
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Eng g_oppEngState;
 
 int g_cruiseRpmSteps[5] = {42, 26, 12, 8, 4};

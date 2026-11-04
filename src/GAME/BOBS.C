@@ -53,7 +53,6 @@ enum KingStatus {
     KING_NEED_ROAD_WINS = 5
 };
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static enum CarhopState g_carhop;
 static int g_ordered;
 static void near drop_last_word(char *s);
@@ -123,7 +122,6 @@ static int near maybe_carhop(enum CarhopMode mode, int arg, int pct1, int pct2)
     return r;
 }
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Racer g_racerRecordsArray[NUM_RACERS];
 struct Spec *g_oppSpecPointer;
 struct Racer *g_selectedRacerPointer;

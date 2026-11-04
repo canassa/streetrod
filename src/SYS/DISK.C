@@ -32,12 +32,10 @@ enum PictureLibrary { LIBRARY_FIRST = 1, LIBRARY_SECOND = 2 };
 
 enum LoadResult { LOAD_NO_MEMORY, LOAD_CACHED, LOAD_READ, LOAD_READ_VRAM };
 
-/* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static int g_initialDrive;
 static struct PicLibSelection g_picLib;
 static char g_dataPath[16];
 
-/* Uninitialized storage: communals, allocated by LINK (DS:6E60..8F02); names chosen to fit LINK's hash buckets (docs/RECONSTRUCTION.md). */
 struct Model g_models[26];
 struct Spec g_carData[26];
 struct Panel g_bodyRects[26];

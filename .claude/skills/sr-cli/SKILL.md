@@ -182,3 +182,13 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 ### Merging annotated branches
 
 Before removing surviving address comments, run `nix-shell shell.nix --run 'python3 tools/strip_address_comments.py --extract'`. This rebuilds/merges `tools/sr/symbols.json` from the annotations, retains unannotated records for names still present in code and removes stale names absent from code. It includes annotated private MASM data labels. Then run `nix-shell shell.nix --run 'python3 tools/strip_address_comments.py'`. The stripper validates every annotation before writing any source. Missing metadata, mismatched addresses, conflicting annotations or an annotation that cannot be attached to a declaration/label fail closed. Resolve disagreements from binary evidence; a new prototype alone cannot recover a function's size. Re-running extract and strip is idempotent.
+
+
+## Source comments
+
+Keep reconstruction reasoning in `docs/RECONSTRUCTION.md`, including storage
+hashes, local-name constraints, symbol budgets and compiler layout choices. Do not
+add storage banners or decompilation explanations to `src/`. Preserve existing
+game-behaviour comments and every PROVISIONAL marker with its full text.
+`./sr headers` maintains includes and dependencies only; it must not add storage
+comments or rewrite the declarations or function bodies.
