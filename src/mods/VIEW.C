@@ -1094,7 +1094,7 @@ static void near render_mirror_frame(void)
     b.h = 2;
     b.sx = b.sy = 0;
     b.dx = 0xf0;
-    b.dy = g_sharedMirrorRoadSet.lastY - 2;
+    b.dy = g_mirYProj[7] - 2;
     clip_blit_y(&b);
     (*g_videoOps.copy)(bz8b7ex, g_drawPage == 1 ? g8188w : g82b4s, &b, 1);
 }
@@ -1252,19 +1252,19 @@ static void near render_mirror(void)
 
     g_renderRows.leftX = &g7f30t;
     g_renderRows.rightX = &g_videoMirrorEdgesSet.lastRightX;
-    g_renderRows.y = &g_sharedMirrorRoadSet.lastY;
+    g_renderRows.y = &g_mirYProj[7];
     g_renderRows.leftOuterX = &al70c0x.m70d0;
     g_renderRows.rightOuterX = &dz70e0;
     g_renderRows.buildingY = &g_videoMirrorEdgesSet.lastBuildingY;
     g_renderRows.prevLeftX = &e_7f2e;
     g_renderRows.prevRightX = &g_videoMirrorEdgesSet.prevRightX;
-    g_renderRows.prevY = &g_sharedMirrorRoadSet.prevY;
+    g_renderRows.prevY = &g_mirYProj[6];
     g_renderRows.prevBuildingY = &g_videoMirrorEdgesSet.prevBuildingY;
     g_renderRows.prevLeftOuterX = &al70c0x.m70ce;
     g_renderRows.prevRightOuterX = &al70c0x.m70de;
     g_renderRows.lineWidth = &g_5e92;
     g_renderRows.leftFlags = (int far *)(q_72ee - 8);
-    g_renderRows.rightFlags = (int far *)(g_sharedMirrorRoadSet.terrain - 8);
+    g_renderRows.rightFlags = (int far *)(g_rightSideTerrainRow - 8);
     am8b82y = (int far *)(g7d62p - 8);
     egaspan_end();
     render_mirror_frame();
@@ -1420,7 +1420,7 @@ void view_draw(void)
     g_renderRows.prevRightOuterX = &dz7ff2;
     g_renderRows.lineWidth = &g_5e86;
     g_renderRows.leftFlags = (int far *)(q_72ee + 14);
-    g_renderRows.rightFlags = (int far *)(g_sharedMirrorRoadSet.terrain + 14);
+    g_renderRows.rightFlags = (int far *)(g_rightSideTerrainRow + 14);
     am8b82y = (int far *)(g7d62p + 14);
     view_clip();
     render_backdrop();

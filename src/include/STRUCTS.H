@@ -700,12 +700,6 @@ struct BodyPoints {
     int gasCapY;
 };
 
-struct MirrorRoad {
-    unsigned far *terrain;
-    int y[6];
-    int prevY;
-    int lastY;
-};
 
 struct MirrorEdges {
     int buildingY[6];

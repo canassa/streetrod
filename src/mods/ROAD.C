@@ -587,7 +587,8 @@ unsigned far *g7d62p;
 int g_lhsRdMirrorX[6];
 int g_xOuterLProjArray[13];
 int g_rhsOuterXArray[13];
-struct MirrorRoad g_sharedMirrorRoadSet; /* DS:8634 */
+unsigned far *g_rightSideTerrainRow;
+int g_mirYProj[8]; /* DS:8634 */
 struct MirrorEdges g_videoMirrorEdgesSet; /* DS:864A */
 
 /* road_seek @ 2645:171D (linear 0x27B6D, 82 bytes)
@@ -597,7 +598,7 @@ struct MirrorEdges g_videoMirrorEdgesSet; /* DS:864A */
 void road_seek(int n)
 {
     q_72ee = &g_terrain0[n];
-    g_sharedMirrorRoadSet.terrain = &g_terrain1[n];
+    g_rightSideTerrainRow = &g_terrain1[n];
     g7d62p = &g_terrain3[n];
     af7880z = &g_terrain4[n];
     g_hereCurvePtr = &g_terrain2[n];
@@ -797,7 +798,7 @@ void road_project_behind(void)
     bits = *g7d62p-- & 0xe0;
     p11 = g_videoMirrorEdgesSet.rightX;
     p2 = g_lhsRdMirrorX;
-    p3 = g_sharedMirrorRoadSet.y;
+    p3 = g_mirYProj;
     p42 = al70c0x.m70c2;
     p5l = al70c0x.m70d2;
     p6 = g_videoMirrorEdgesSet.buildingY;

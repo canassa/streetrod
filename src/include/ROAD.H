@@ -8,7 +8,8 @@ extern struct BuildingRows g_currentBuildingRowsInfo; /* DS:7AB0 */
 
 extern struct MirrorEdges g_videoMirrorEdgesSet; /* DS:864A */
 
-extern struct MirrorRoad g_sharedMirrorRoadSet; /* DS:8634 */
+extern unsigned far *g_rightSideTerrainRow; /* DS:8634 */
+extern int g_mirYProj[8]; /* DS:8638 */
 
 extern int g_hillProfile[];                             /* DS:5C20 */
 extern int g_hillDipProfile[];                          /* DS:5C4C */
