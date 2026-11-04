@@ -81,7 +81,7 @@ static int near find_gas_spot(int id)
     base = ((unsigned)g_hotGasStation - (unsigned)g_hots) / sizeof(struct Hot);
     n = ((unsigned)g_hotGasExit - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
     for (i = 0; i < n; i++)
-        if (g_hots[base + i].f6 == id)
+        if (g_hots[base + i].id == id)
             return base + i;
 }
 

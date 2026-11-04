@@ -32,6 +32,9 @@ enum DashSaveKind {
     DASH_SAVE_SPEEDO = 2,
     DASH_SAVE_TACH = 3
 };
+#define SPEEDO_CENTER_X 0xc4
+#define TACH_CENTER_X 0x91
+#define GAUGE_CENTER_Y 0x2a
 
 /* File-local storage (_BSS): names chosen to fit MSC's name-hash order (docs/RECONSTRUCTION.md). */
 static struct WheelPoses g_wheelPoses; /* DS:6C22 */
@@ -96,13 +99,13 @@ void da_speedo_pts(int i, int *x1, int *y1, int *x2, int *y2)
 {
     if (i < 0)
         i = 0;
-    else if (i > 0x82)
-        i = 0x82;
-    *x1 = g_needlePts[0][i][0] + 0xc4;
-    *y1 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[0][i][1] + 0x2a;
-    *x2 = g_needlePts[1][i][0] + 0xc4;
-    *y2 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[1][i][1] + 0x2a;
-    /* PROVISIONAL: the original CONST holds two more SEG constants for the track segment
+    else if (i > NEEDLE_MAX_POS)
+        i = NEEDLE_MAX_POS;
+    *x1 = g_needlePts[NEEDLE_TIP][i].x + SPEEDO_CENTER_X;
+    *y1 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[NEEDLE_TIP][i].y + GAUGE_CENTER_Y;
+    *x2 = g_needlePts[NEEDLE_HUB][i].x + SPEEDO_CENTER_X;
+    *y2 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[NEEDLE_HUB][i].y + GAUGE_CENTER_Y;
+    /* PROVISIONAL: the original CONST holds two more SEG constants for the needle segment
        (DS:68E6 with this function's, DS:68E8 later) that no instruction reads: MSC leaves
        them behind for unreachable far accesses to two other far symbols. The statements and
        symbol names are not recoverable; these keep the bytes and the relocation order. The
@@ -141,12 +144,12 @@ void da_tach_pts(int i, int *x1, int *y1, int *x2, int *y2)
 {
     if (i < 0)
         i = 0;
-    else if (i > 0x82)
-        i = 0x82;
-    *x1 = g_needlePts[0][i][0] + 0x91;
-    *y1 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[0][i][1] + 0x2a;
-    *x2 = g_needlePts[1][i][0] + 0x91;
-    *y2 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[1][i][1] + 0x2a;
+    else if (i > NEEDLE_MAX_POS)
+        i = NEEDLE_MAX_POS;
+    *x1 = g_needlePts[NEEDLE_TIP][i].x + TACH_CENTER_X;
+    *y1 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[NEEDLE_TIP][i].y + GAUGE_CENTER_Y;
+    *x2 = g_needlePts[NEEDLE_HUB][i].x + TACH_CENTER_X;
+    *y2 = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) - g_needlePts[NEEDLE_HUB][i].y + GAUGE_CENTER_Y;
     /* PROVISIONAL: second unreachable far access, see da_speedo_pts. */
     return;
     { extern char far x_trk1[][2]; *x2 = x_trk1[i][0]; }

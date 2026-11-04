@@ -189,7 +189,7 @@ int ga_hotspot(int id)
     base = ((unsigned)g_gar - (unsigned)g_hots) / sizeof(struct Hot);
     n = ((unsigned)g_hotCalendar - (unsigned)g_gar) / sizeof(struct Hot) + 1;
     for (k = 0; k < n; k++)
-        if (g_hots[base + k].f6 == id)
+        if (g_hots[base + k].id == id)
             return base + k;
 }
 

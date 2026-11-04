@@ -634,7 +634,7 @@ static void near setup_bobs_spots(int a, int b)
     int y1, x1, y, x;
 
     hot = g_hotBobs;
-    if (g_hotBobs[4].f6 != 4) {
+    if (g_hotBobs[4].id != 4) {
         save = g_hotBobs[3];
         g_hotBobs[3] = g_hotBobs[4];
         g_hotBobs[4] = save;

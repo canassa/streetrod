@@ -676,7 +676,7 @@ void gx_build_hots(int *xs, int *ys)
             gx_bolt_pos(&x, &y);
             x += 0x60;
             y += 9;
-            g_boltHot.f6 = i + 1;
+            g_boltHot.id = i + 1;
             g_boltHot.x2 = (g_boltHot.x1 = x - 2) + 5;
             g_boltHot.y1 = (g_boltHot.y2 = y + 2) - 15;
             insert_hot(g_engineHots, &g_boltHot, num);
@@ -689,7 +689,7 @@ void gx_build_hots(int *xs, int *ys)
     }
     if (o_8290[0]) {
         g_boltHot.textOffset = g_offWires;
-        g_boltHot.f6 = 13;
+        g_boltHot.id = 13;
         i = (g_slotSelec.wirePic == 0x446) + engine_index() * 2;
         g_boltHot.x2 = (g_boltHot.x1 = g_wiresPos[i * 2] + 0x5b) + 10;
         g_boltHot.y2 = (g_boltHot.y1 = g_wiresPos[i * 2 + 1] + 2) + 15;

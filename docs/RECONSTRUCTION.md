@@ -120,6 +120,44 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
     4-byte slot above the `struct Blt` local.
   - `x_trk0`/`x_trk1` (DASH.C, labels in `src/DATA/NEEDLE.ASM`): two unreachable far
     accesses for the two SEG constants in CONST (DS:68E6, DS:68E8) that nothing reads.
+    MSC 5.1 experiments (2026-11-04, `/AM /Oalsi /Gs /FPi`) did not recover a natural
+    replacement. The live code uses only DS:68E4, with offsets 0/1 and 0x106/0x107.
+    Two separate tip/hub arrays require another ES reload: both functions grow from
+    155 to 159 bytes and emit only two needle SEG words, not three. Without `/Oa`
+    they grow to 172 bytes; `/Gt1` is ignored in medium model; `/NDNEEDLE` changes
+    the calling/data assumptions and gives 166 bytes. A `huge` table gives 257
+    bytes and no needle CONST word. A far struct containing both arrays, or a far
+    array of two-byte point structs, preserves live code but still emits just one
+    word when the unreachable accesses are removed. Global, file-static and local-static
+    far pointer initializers emit four-byte `_DATA` pointers, not spare CONST words;
+    unused automatic far pointers retain a four-byte frame slot and immediate SEG
+    stores. Unused scalar reads (also `register`) retain code/frame storage. A
+    discarded read, `sizeof`, an overwritten output store and an overwritten
+    self-subtraction emit no spare word; an empty `if (far_read) ;` retains segment
+    loading code. Both `if (0) far_read` and `if (0 && far_read)` leave unused SEG
+    words, like the existing post-return access. Thus unreachable control flow is
+    a measured explanation, not proof that the original contained `return` there.
+    The original expressions, alias offsets and symbol names remain unknown.
+    A second pass (needle2, 2026-11-04; 112 compiler jobs) found that a
+    constant `if/else` with the live arm first also preserves all segment bytes
+    and the target-resolved fixup sequence; constant `?:` table/value selection
+    removes the spare word. This is a compiler mechanism, not a recovered table
+    selection: selecting separate speedo/tach tables in the two functions emits
+    only two needle words, with a different live word in each function. Declaring
+    both far arrays together shares one segment constant, also insufficient.
+    Disabled feature/type-size branches and early-break macro forms can preserve
+    the layout only when supplied the same unsupported alternate symbols.
+    No such replacement was applied. The original relocation stream contains
+    DS:68E6, DS:68E4, then DS:68E8 consecutively; it carries segment values, not
+    symbol offsets or names, and does not identify which table an unused word
+    named. `_x_trk0` at offset 0 and `_x_trk1` at 0x106 are reconstruction labels,
+    not evidence that the unused words originally named the tip and hub. The full
+    experiment matrix and comparison limits are in the needle2 diary entry.
+  - `NeedlePoint`, `NEEDLE_TIP`/`NEEDLE_HUB` and gauge centre constants describe the
+    observed table and coordinate transforms, not recovered original declarations.
+    The tip reaches radius 18 and the hub radius 5; the latter includes axial
+    `(0,5)` and `(5,0)` samples. The point struct preserves the complete object code
+    and the existing CONST fixup order (offsets 2, 0, then 4).
   - `g_6c42` (POPUP.C): four unreferenced `_BSS` bytes after `g_popupLayout`.
   - `g_list[0] = g_list[0];` in the default cases of your_cars (GAME.C) and sg_load
     (SAVEGAME.C): after the menu mn_modal_list returns a positive item, the original loads
