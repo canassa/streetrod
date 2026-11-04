@@ -1,275 +1,50 @@
-; two arrays of 131 signed coordinate pairs. Reconstructed as source records from the shipped data.
+; Two arrays of 131 signed coordinate pairs.
 TRACKPTS SEGMENT PARA PUBLIC 'FAR_DATA'
-PUBLIC TRACKPTS_BASE
-TRACKPTS_BASE LABEL BYTE
-PUBLIC _g_2e47_0000
 ; PROVISIONAL symbols for the two unreachable far references in M_0F38A.C
-PUBLIC _x_trk0
-_x_trk0 EQU TRACKPTS_BASE+00h
-PUBLIC _x_trk1
-_x_trk1 EQU TRACKPTS_BASE+0106h
-_g_2e47_0000 EQU TRACKPTS_BASE+00h ; char far @[2][0x83][2]
- DB -11,-13 ; track 0, point 0
- DB -12,-13 ; track 0, point 1
- DB -12,-12 ; track 0, point 2
- DB -12,-12 ; track 0, point 3
- DB -13,-11 ; track 0, point 4
- DB -13,-11 ; track 0, point 5
- DB -14,-10 ; track 0, point 6
- DB -14,-10 ; track 0, point 7
- DB -15,-9 ; track 0, point 8
- DB -15,-8 ; track 0, point 9
- DB -15,-8 ; track 0, point 10
- DB -16,-7 ; track 0, point 11
- DB -16,-7 ; track 0, point 12
- DB -16,-6 ; track 0, point 13
- DB -17,-5 ; track 0, point 14
- DB -17,-5 ; track 0, point 15
- DB -17,-4 ; track 0, point 16
- DB -17,-4 ; track 0, point 17
- DB -17,-3 ; track 0, point 18
- DB -17,-2 ; track 0, point 19
- DB -17,-1 ; track 0, point 20
- DB -17,-1 ; track 0, point 21
- DB -17,0 ; track 0, point 22
- DB -18,0 ; track 0, point 23
- DB -17,0 ; track 0, point 24
- DB -17,1 ; track 0, point 25
- DB -17,2 ; track 0, point 26
- DB -17,2 ; track 0, point 27
- DB -17,3 ; track 0, point 28
- DB -17,4 ; track 0, point 29
- DB -17,4 ; track 0, point 30
- DB -17,5 ; track 0, point 31
- DB -16,6 ; track 0, point 32
- DB -16,6 ; track 0, point 33
- DB -16,7 ; track 0, point 34
- DB -16,8 ; track 0, point 35
- DB -15,8 ; track 0, point 36
- DB -15,9 ; track 0, point 37
- DB -15,9 ; track 0, point 38
- DB -14,10 ; track 0, point 39
- DB -14,11 ; track 0, point 40
- DB -13,11 ; track 0, point 41
- DB -13,12 ; track 0, point 42
- DB -12,12 ; track 0, point 43
- DB -12,13 ; track 0, point 44
- DB -11,13 ; track 0, point 45
- DB -11,13 ; track 0, point 46
- DB -10,14 ; track 0, point 47
- DB -10,14 ; track 0, point 48
- DB -9,15 ; track 0, point 49
- DB -8,15 ; track 0, point 50
- DB -8,15 ; track 0, point 51
- DB -7,16 ; track 0, point 52
- DB -7,16 ; track 0, point 53
- DB -6,16 ; track 0, point 54
- DB -5,17 ; track 0, point 55
- DB -5,17 ; track 0, point 56
- DB -4,17 ; track 0, point 57
- DB -4,17 ; track 0, point 58
- DB -3,17 ; track 0, point 59
- DB -2,17 ; track 0, point 60
- DB -1,17 ; track 0, point 61
- DB -1,17 ; track 0, point 62
- DB 0,17 ; track 0, point 63
- DB 0,18 ; track 0, point 64
- DB 0,17 ; track 0, point 65
- DB 1,17 ; track 0, point 66
- DB 1,17 ; track 0, point 67
- DB 2,17 ; track 0, point 68
- DB 3,17 ; track 0, point 69
- DB 3,17 ; track 0, point 70
- DB 4,17 ; track 0, point 71
- DB 4,17 ; track 0, point 72
- DB 5,17 ; track 0, point 73
- DB 6,16 ; track 0, point 74
- DB 6,16 ; track 0, point 75
- DB 7,16 ; track 0, point 76
- DB 7,16 ; track 0, point 77
- DB 8,15 ; track 0, point 78
- DB 9,15 ; track 0, point 79
- DB 9,15 ; track 0, point 80
- DB 10,14 ; track 0, point 81
- DB 10,14 ; track 0, point 82
- DB 11,14 ; track 0, point 83
- DB 11,13 ; track 0, point 84
- DB 12,13 ; track 0, point 85
- DB 12,12 ; track 0, point 86
- DB 12,12 ; track 0, point 87
- DB 13,12 ; track 0, point 88
- DB 13,11 ; track 0, point 89
- DB 14,11 ; track 0, point 90
- DB 14,10 ; track 0, point 91
- DB 14,10 ; track 0, point 92
- DB 15,9 ; track 0, point 93
- DB 15,8 ; track 0, point 94
- DB 15,8 ; track 0, point 95
- DB 16,7 ; track 0, point 96
- DB 16,7 ; track 0, point 97
- DB 16,6 ; track 0, point 98
- DB 16,6 ; track 0, point 99
- DB 17,5 ; track 0, point 100
- DB 17,4 ; track 0, point 101
- DB 17,4 ; track 0, point 102
- DB 17,3 ; track 0, point 103
- DB 17,3 ; track 0, point 104
- DB 17,2 ; track 0, point 105
- DB 17,1 ; track 0, point 106
- DB 17,1 ; track 0, point 107
- DB 17,0 ; track 0, point 108
- DB 18,0 ; track 0, point 109
- DB 17,0 ; track 0, point 110
- DB 17,-1 ; track 0, point 111
- DB 17,-1 ; track 0, point 112
- DB 17,-2 ; track 0, point 113
- DB 17,-3 ; track 0, point 114
- DB 17,-3 ; track 0, point 115
- DB 17,-4 ; track 0, point 116
- DB 17,-4 ; track 0, point 117
- DB 17,-5 ; track 0, point 118
- DB 16,-6 ; track 0, point 119
- DB 16,-6 ; track 0, point 120
- DB 16,-7 ; track 0, point 121
- DB 16,-7 ; track 0, point 122
- DB 15,-8 ; track 0, point 123
- DB 15,-8 ; track 0, point 124
- DB 15,-9 ; track 0, point 125
- DB 14,-10 ; track 0, point 126
- DB 14,-10 ; track 0, point 127
- DB 14,-11 ; track 0, point 128
- DB 13,-11 ; track 0, point 129
- DB 13,-12 ; track 0, point 130
- DB -3,-3 ; track 1, point 0
- DB -3,-3 ; track 1, point 1
- DB -3,-3 ; track 1, point 2
- DB -3,-3 ; track 1, point 3
- DB -3,-3 ; track 1, point 4
- DB -3,-3 ; track 1, point 5
- DB -3,-3 ; track 1, point 6
- DB -4,-2 ; track 1, point 7
- DB -4,-2 ; track 1, point 8
- DB -4,-2 ; track 1, point 9
- DB -4,-2 ; track 1, point 10
- DB -4,-2 ; track 1, point 11
- DB -4,-2 ; track 1, point 12
- DB -4,-1 ; track 1, point 13
- DB -4,-1 ; track 1, point 14
- DB -4,-1 ; track 1, point 15
- DB -4,-1 ; track 1, point 16
- DB -4,-1 ; track 1, point 17
- DB -4,0 ; track 1, point 18
- DB -4,0 ; track 1, point 19
- DB -4,0 ; track 1, point 20
- DB -4,0 ; track 1, point 21
- DB -4,0 ; track 1, point 22
- DB -5,0 ; track 1, point 23
- DB -4,0 ; track 1, point 24
- DB -4,0 ; track 1, point 25
- DB -4,0 ; track 1, point 26
- DB -4,0 ; track 1, point 27
- DB -4,0 ; track 1, point 28
- DB -4,1 ; track 1, point 29
- DB -4,1 ; track 1, point 30
- DB -4,1 ; track 1, point 31
- DB -4,1 ; track 1, point 32
- DB -4,1 ; track 1, point 33
- DB -4,2 ; track 1, point 34
- DB -4,2 ; track 1, point 35
- DB -4,2 ; track 1, point 36
- DB -4,2 ; track 1, point 37
- DB -4,2 ; track 1, point 38
- DB -4,2 ; track 1, point 39
- DB -3,3 ; track 1, point 40
- DB -3,3 ; track 1, point 41
- DB -3,3 ; track 1, point 42
- DB -3,3 ; track 1, point 43
- DB -3,3 ; track 1, point 44
- DB -3,3 ; track 1, point 45
- DB -3,3 ; track 1, point 46
- DB -3,3 ; track 1, point 47
- DB -2,4 ; track 1, point 48
- DB -2,4 ; track 1, point 49
- DB -2,4 ; track 1, point 50
- DB -2,4 ; track 1, point 51
- DB -2,4 ; track 1, point 52
- DB -2,4 ; track 1, point 53
- DB -1,4 ; track 1, point 54
- DB -1,4 ; track 1, point 55
- DB -1,4 ; track 1, point 56
- DB -1,4 ; track 1, point 57
- DB -1,4 ; track 1, point 58
- DB 0,4 ; track 1, point 59
- DB 0,4 ; track 1, point 60
- DB 0,4 ; track 1, point 61
- DB 0,4 ; track 1, point 62
- DB 0,4 ; track 1, point 63
- DB 0,5 ; track 1, point 64
- DB 0,4 ; track 1, point 65
- DB 0,4 ; track 1, point 66
- DB 0,4 ; track 1, point 67
- DB 0,4 ; track 1, point 68
- DB 0,4 ; track 1, point 69
- DB 1,4 ; track 1, point 70
- DB 1,4 ; track 1, point 71
- DB 1,4 ; track 1, point 72
- DB 1,4 ; track 1, point 73
- DB 1,4 ; track 1, point 74
- DB 1,4 ; track 1, point 75
- DB 2,4 ; track 1, point 76
- DB 2,4 ; track 1, point 77
- DB 2,4 ; track 1, point 78
- DB 2,4 ; track 1, point 79
- DB 2,4 ; track 1, point 80
- DB 2,4 ; track 1, point 81
- DB 2,4 ; track 1, point 82
- DB 3,3 ; track 1, point 83
- DB 3,3 ; track 1, point 84
- DB 3,3 ; track 1, point 85
- DB 3,3 ; track 1, point 86
- DB 3,3 ; track 1, point 87
- DB 3,3 ; track 1, point 88
- DB 3,3 ; track 1, point 89
- DB 3,3 ; track 1, point 90
- DB 4,2 ; track 1, point 91
- DB 4,2 ; track 1, point 92
- DB 4,2 ; track 1, point 93
- DB 4,2 ; track 1, point 94
- DB 4,2 ; track 1, point 95
- DB 4,2 ; track 1, point 96
- DB 4,2 ; track 1, point 97
- DB 4,1 ; track 1, point 98
- DB 4,1 ; track 1, point 99
- DB 4,1 ; track 1, point 100
- DB 4,1 ; track 1, point 101
- DB 4,1 ; track 1, point 102
- DB 4,1 ; track 1, point 103
- DB 4,0 ; track 1, point 104
- DB 4,0 ; track 1, point 105
- DB 4,0 ; track 1, point 106
- DB 4,0 ; track 1, point 107
- DB 4,0 ; track 1, point 108
- DB 5,0 ; track 1, point 109
- DB 4,0 ; track 1, point 110
- DB 4,0 ; track 1, point 111
- DB 4,0 ; track 1, point 112
- DB 4,0 ; track 1, point 113
- DB 4,0 ; track 1, point 114
- DB 4,-1 ; track 1, point 115
- DB 4,-1 ; track 1, point 116
- DB 4,-1 ; track 1, point 117
- DB 4,-1 ; track 1, point 118
- DB 4,-1 ; track 1, point 119
- DB 4,-1 ; track 1, point 120
- DB 4,-2 ; track 1, point 121
- DB 4,-2 ; track 1, point 122
- DB 4,-2 ; track 1, point 123
- DB 4,-2 ; track 1, point 124
- DB 4,-2 ; track 1, point 125
- DB 4,-2 ; track 1, point 126
- DB 4,-2 ; track 1, point 127
- DB 3,-3 ; track 1, point 128
- DB 3,-3 ; track 1, point 129
- DB 3,-3 ; track 1, point 130
+        PUBLIC  _x_trk0
+        PUBLIC  _g_2e47_0000
+        PUBLIC  _x_trk1
+
+; track 0: 131 (x, y) points
+_x_trk0 LABEL   BYTE
+_g_2e47_0000 LABEL   BYTE                ; char far[2][0x83][2]
+        DB      -11,-13, -12,-13, -12,-12, -12,-12, -13,-11, -13,-11, -14,-10, -14,-10
+        DB      -15,-9, -15,-8, -15,-8, -16,-7, -16,-7, -16,-6, -17,-5, -17,-5
+        DB      -17,-4, -17,-4, -17,-3, -17,-2, -17,-1, -17,-1, -17,0, -18,0
+        DB      -17,0, -17,1, -17,2, -17,2, -17,3, -17,4, -17,4, -17,5
+        DB      -16,6, -16,6, -16,7, -16,8, -15,8, -15,9, -15,9, -14,10
+        DB      -14,11, -13,11, -13,12, -12,12, -12,13, -11,13, -11,13, -10,14
+        DB      -10,14, -9,15, -8,15, -8,15, -7,16, -7,16, -6,16, -5,17
+        DB      -5,17, -4,17, -4,17, -3,17, -2,17, -1,17, -1,17, 0,17
+        DB      0,18, 0,17, 1,17, 1,17, 2,17, 3,17, 3,17, 4,17
+        DB      4,17, 5,17, 6,16, 6,16, 7,16, 7,16, 8,15, 9,15
+        DB      9,15, 10,14, 10,14, 11,14, 11,13, 12,13, 12,12, 12,12
+        DB      13,12, 13,11, 14,11, 14,10, 14,10, 15,9, 15,8, 15,8
+        DB      16,7, 16,7, 16,6, 16,6, 17,5, 17,4, 17,4, 17,3
+        DB      17,3, 17,2, 17,1, 17,1, 17,0, 18,0, 17,0, 17,-1
+        DB      17,-1, 17,-2, 17,-3, 17,-3, 17,-4, 17,-4, 17,-5, 16,-6
+        DB      16,-6, 16,-7, 16,-7, 15,-8, 15,-8, 15,-9, 14,-10, 14,-10
+        DB      14,-11, 13,-11, 13,-12
+
+; track 1: 131 (x, y) points
+_x_trk1 LABEL   BYTE
+        DB      -3,-3, -3,-3, -3,-3, -3,-3, -3,-3, -3,-3, -3,-3, -4,-2
+        DB      -4,-2, -4,-2, -4,-2, -4,-2, -4,-2, -4,-1, -4,-1, -4,-1
+        DB      -4,-1, -4,-1, -4,0, -4,0, -4,0, -4,0, -4,0, -5,0
+        DB      -4,0, -4,0, -4,0, -4,0, -4,0, -4,1, -4,1, -4,1
+        DB      -4,1, -4,1, -4,2, -4,2, -4,2, -4,2, -4,2, -4,2
+        DB      -3,3, -3,3, -3,3, -3,3, -3,3, -3,3, -3,3, -3,3
+        DB      -2,4, -2,4, -2,4, -2,4, -2,4, -2,4, -1,4, -1,4
+        DB      -1,4, -1,4, -1,4, 0,4, 0,4, 0,4, 0,4, 0,4
+        DB      0,5, 0,4, 0,4, 0,4, 0,4, 0,4, 1,4, 1,4
+        DB      1,4, 1,4, 1,4, 1,4, 2,4, 2,4, 2,4, 2,4
+        DB      2,4, 2,4, 2,4, 3,3, 3,3, 3,3, 3,3, 3,3
+        DB      3,3, 3,3, 3,3, 4,2, 4,2, 4,2, 4,2, 4,2
+        DB      4,2, 4,2, 4,1, 4,1, 4,1, 4,1, 4,1, 4,1
+        DB      4,0, 4,0, 4,0, 4,0, 4,0, 5,0, 4,0, 4,0
+        DB      4,0, 4,0, 4,0, 4,-1, 4,-1, 4,-1, 4,-1, 4,-1
+        DB      4,-1, 4,-2, 4,-2, 4,-2, 4,-2, 4,-2, 4,-2, 4,-2
+        DB      3,-3, 3,-3, 3,-3
 TRACKPTS ENDS
-END
+
+        END

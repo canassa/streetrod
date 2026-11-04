@@ -1,57 +1,19 @@
         .MODEL MEDIUM
 
-; F_0E5D2 @ 0000:E5D2 (linear 0x0E5D2, 61 bytes)
-; Hercules graphics mode set up: BIOS video state, CRTC registers.
-
         .DATA
 
-        ; data (recovered DGROUP layout)
-        PUBLIC _g_5abc
-_g_5abc LABEL BYTE ; +5ABC int @[10]
-        DW 03500h
-        DW 02801h
-        DW 02C02h
-        DW 0803h
-        DW 0FC04h
-        DW 0705h
-        DW 06406h
-        DW 07207h
-        DW 0208h
-        DW 0209h
-        PUBLIC _g_5ad0
-_g_5ad0 LABEL BYTE ; +5AD0 char @[30]
-        DB 07h
-        DB 050h
-        DB 00h
-        DB 00h
-        DB 080h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 00h
-        DB 0B4h
-        DB 03h
-        DB 02h
-        DB 00h
+; DS:5ABC int[10]
+        PUBLIC  _g_5abc
+_g_5abc DW      3500h, 2801h, 2C02h, 803h, 0FC04h, 705h, 6406h, 7207h
+        DW      208h, 209h
+        PUBLIC  _g_5ad0
+_g_5ad0 DB      7, 'P', 0                ; DS:5AD0 char[30]
+        DB      0, 80h, 21 DUP (0), 0B4h, 3, 2, 0
 
         .CODE S0000_TEXT
+
+; F_0E5D2 @ 0000:E5D2 (linear 0x0E5D2, 61 bytes)
+; Hercules graphics mode set up: BIOS video state, CRTC registers.
 
         PUBLIC  _F_0E5D2
 _F_0E5D2  PROC    NEAR
@@ -76,10 +38,10 @@ _F_0E5D2  PROC    NEAR
         mov     si,OFFSET _g_5abc
         mov     cx,0Ah
         even
-L0E5D2_crtc:
+crtc:
         lodsw
         out     dx,ax
-        loop    L0E5D2_crtc
+        loop    crtc
         add     dl,4
         mov     al,_g_5ad0+28
         out     dx,al

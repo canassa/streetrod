@@ -726,29 +726,12 @@ def cmd_dgroup(args):
         print(f'{len(changed)} source files' + (' rewritten' if args.write else ' would change (use --write)'))
         if args.write:
             gen_headers(a.con)
-    elif args.what == 'apply':
-        if args.names == ['all']:
-            units = [s for s in a.order if any(it.owner == s and it.kind not in ('lit',) for it in a.items)]
-            if args.write:
-                # ownership may have moved between files: start from sources without generated data
-                for path in sorted((config.SRC / 'mods').glob('*.C')):
-                    text = path.read_text(errors='replace')
-                    clean = a._strip_c_definitions(text, [])
-                    if clean != text:
-                        path.write_text(clean)
-        else:
-            units = [int(n, 16) for n in args.names] if args.names else []
-        for u in units:
-            changed = a.apply_unit(u, write=args.write)
-            for path, text in changed.items():
-                print(f'{u:05X}: {path.relative_to(config.ROOT)}' + ('' if args.write else ' (dry run)'))
-                if not args.write:
-                    print(text)
-    elif args.what == 'asm':
-        # every DGROUP item is defined by its owning source; anything listed here is not
-        lines = a.unowned()
-        print('\n'.join(lines) if lines else 'Every initialized DGROUP item is owned by a source')
-        if lines:
+    elif args.what == 'check':
+        # the sources are the truth for data definitions; this only verifies them
+        problems = a.check_sources()
+        print('\n'.join(problems) if problems else
+              'Every initialized DGROUP global is defined in the source of the unit that owned it')
+        if problems:
             raise SystemExit(1)
     else:
         raise SystemExit(args.what)
@@ -768,10 +751,10 @@ def main():
     p = argparse.ArgumentParser(prog="sr", description="Street Rod decompilation driver")
     sub = p.add_subparsers(dest="cmd", required=True)
 
-    s = sub.add_parser("dgroup", help="recover DGROUP ownership from the data layout; write definitions")
-    s.add_argument("what", choices=["report", "problems", "order", "register", "aliases", "apply", "asm"],
-                   help="asm: list initialized data no source owns (exit 1 if any)")
-    s.add_argument("names", nargs="*", help="unit starts (hex) for apply; lo hi for report")
+    s = sub.add_parser("dgroup", help="recover DGROUP ownership from the data layout; check the sources against it")
+    s.add_argument("what", choices=["report", "problems", "order", "register", "aliases", "check"],
+                   help="check: every initialized global is defined in the file that owned it (exit 1 if not)")
+    s.add_argument("names", nargs="*", help="lo hi for report")
     s.add_argument("--write", action="store_true")
     s.set_defaults(func=cmd_dgroup)
 

@@ -57,9 +57,9 @@ def _defines(path, names):
     """Names from `names` that this source defines (C file-scope definitions, MASM PUBLICs)."""
     text = path.read_text(encoding='latin-1')
     if path.suffix.upper() == '.ASM':
-        text = re.sub(r';[^\n]*', '', text)  # an apostrophe in a comment is not a quote
-    text = _strip(text)
-    if path.suffix.upper() == '.ASM':
+        # MASM strings have no escapes (a backslash is a character), a ';' outside one starts
+        # a comment, and an apostrophe in a comment is not a quote
+        text = re.sub(r"'[^'\n]*'|\"[^\"\n]*\"|;[^\n]*", '', text)
         pubs = {m.lower() for m in re.findall(r'^\s*PUBLIC\s+_(\w+)', text, re.M | re.I)}
         return {n for n in names if n.lower() in pubs}
     found = set()

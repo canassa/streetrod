@@ -1,17 +1,17 @@
         .MODEL MEDIUM
 
+        .DATA
+        EXTRN   _g_4eee:BYTE
+        EXTRN   _g_4efe:BYTE
+
+        .CODE S2462_TEXT
+
 ; F_2462E @ 2462:000E (linear 0x2462E, 76 bytes)
 ; Near helper shared by F_2467A and F_24740, which keep its tables in their own
 ; frame: [bp-110h] 16 bytes (copy of g_4eee), [bp-120h] 16 bytes (copy of
 ; g_4efe), [bp-100h] 256 bytes mapping a colour byte of the palette passed at
 ; [bp+10h] to its index+1.  Then clears the destination buffer ([bp+0Ah] far,
 ; [bp+0Eh] bytes).
-
-        .DATA
-        EXTRN   _g_4eee:BYTE
-        EXTRN   _g_4efe:BYTE
-
-        .CODE S2462_TEXT
 
         PUBLIC  _F_2462E
 _F_2462E  PROC  NEAR
@@ -32,14 +32,14 @@ _F_2462E  PROC  NEAR
         mov     si,[bp+10h]
         mov     dx,16
         xor     ax,ax
-L2462E_index_loop:
+index_loop:
         mov     bx,ax
         mov     di,[bx+si]
         and     di,0FFh
         inc     al
         mov     [bp+di-100h],al
         cmp     ax,dx
-        jl      L2462E_index_loop
+        jl      index_loop
         les     di,DWORD PTR [bp+0ah]
         mov     cx,[bp+0eh]
         shr     cx,1
@@ -52,8 +52,6 @@ _F_2462E  ENDP
 ; F_2467A(src_far, dst_far, count, palette): like F_24740, but ORs the pixels
 ; into the destination, one bit plane at a time: the plane colour word is kept
 ; at [bp-122h] (1111h, shifted left after each pass over the buffer).
-
-        .CODE S2462_TEXT
 
         PUBLIC  _F_2467A
 _F_2467A  PROC  FAR
@@ -68,40 +66,40 @@ _F_2467A  PROC  FAR
         lds     si,DWORD PTR [bp+6]
         mov     dx,di
         add     dx,[bp+0eh]
-        jnc     L2467A_start
-        jmp     L2467A_done
-L2467A_start:
+        jnc     start
+        jmp     done1
+start:
         mov     ax,1111h
         mov     [bp-122h],ax
-L2467A_next:
+next1:
         cmp     di,dx
-        jb      L2467A_decode
+        jb      decode
         les     di,DWORD PTR [bp+0ah]
         mov     ax,[bp-122h]
         shl     ax,1
         mov     [bp-122h],ax
-        jnc     L2467A_decode
-        jmp     L2467A_done
-L2467A_decode:
+        jnc     decode
+        jmp     done1
+decode:
         call    _F_24814
         or      al,al
-        je      L2467A_skip
+        je      skip1
         cmp     al,0FFh
-        je      L2467A_fill
+        je      fill1
         call    _F_247CB
-        jmp     L2467A_next
-L2467A_skip:
+        jmp     next1
+skip1:
         shl     cx,1
         shl     cx,1
-L2467A_skip_again:
+skip_again:
         mov     bx,di
         add     bx,cx
-        jc      L2467A_skip_wrap
+        jc      skip_wrap
         cmp     bx,dx
-        jnb     L2467A_skip_wrap
+        jnb     skip_wrap
         mov     di,bx
-        jmp     L2467A_next
-L2467A_skip_wrap:
+        jmp     next1
+skip_wrap:
         mov     ax,dx
         sub     ax,di
         sub     cx,ax
@@ -109,18 +107,18 @@ L2467A_skip_wrap:
         mov     ax,[bp-122h]
         shl     ax,1
         mov     [bp-122h],ax
-        jc      L2467A_done
-        jmp     L2467A_skip_again
-L2467A_fill:
+        jc      done1
+        jmp     skip_again
+fill1:
         shl     cx,1
         shl     cx,1
         mov     bx,cx
-L2467A_fill_again:
+fill_again:
         add     bx,di
-        jc      L2467A_fill_wrap
+        jc      fill_wrap
         cmp     bx,dx
-        jb      L2467A_fill_last
-L2467A_fill_wrap:
+        jb      fill_last
+fill_wrap:
         mov     ax,dx
         sub     ax,di
         mov     bx,cx
@@ -128,32 +126,32 @@ L2467A_fill_wrap:
         mov     cx,ax
         shr     cx,1
         mov     ax,[bp-122h]
-        jcxz    L2467A_fill_next
-L2467A_fill_loop:
+        jcxz    fill_next
+fill_loop:
         or      es:[di],ax
         inc     di
         inc     di
-        loop    L2467A_fill_loop
-L2467A_fill_next:
+        loop    fill_loop
+fill_next:
         les     di,DWORD PTR [bp+0ah]
         mov     ax,[bp-122h]
         shl     ax,1
         mov     [bp-122h],ax
-        jc      L2467A_done
+        jc      done1
         mov     cx,bx
-        jmp     L2467A_fill_again
-L2467A_fill_last:
+        jmp     fill_again
+fill_last:
         shr     cx,1
         mov     ax,[bp-122h]
-        jcxz    L2467A_fill_end
-L2467A_fill_loop2:
+        jcxz    fill_end
+fill_loop2:
         or      es:[di],ax
         inc     di
         inc     di
-        loop    L2467A_fill_loop2
-L2467A_fill_end:
-        jmp     L2467A_next
-L2467A_done:
+        loop    fill_loop2
+fill_end:
+        jmp     next1
+done1:
         pop     ds
         pop     si
         pop     di
@@ -166,8 +164,6 @@ _F_2467A  ENDP
 ; F_24740(src_far, dst_far, count, palette): expand a compressed 4-bit image.
 ; Each pattern byte gives 8 bits; every set bit makes one 4-bit pixel 0Fh in
 ; the two output words.  Code 0 skips pixels, 0FFh fills with 0FFFFh.
-
-        .CODE S2462_TEXT
 
         PUBLIC  _F_24740
 _F_24740  PROC  FAR
@@ -182,69 +178,69 @@ _F_24740  PROC  FAR
         lds     si,DWORD PTR [bp+6]
         mov     dx,di
         add     dx,[bp+0eh]
-        jnc     L24740_next
-        jmp     SHORT L24740_done
-L24740_next:
+        jnc     next2
+        jmp     SHORT done2
+next2:
         call    _F_24814
         or      al,al
-        je      L24740_skip
+        je      skip2
         cmp     al,0FFh
-        je      L24740_fill
+        je      fill2
         xor     bx,bx
         rol     al,1
-        jnc     L24740_w1
+        jnc     w1
         or      bl,0F0h
-L24740_w1:
+w1:
         rol     al,1
-        jnc     L24740_w2
+        jnc     w2
         or      bl,0Fh
-L24740_w2:
+w2:
         rol     al,1
-        jnc     L24740_w3
+        jnc     w3
         or      bh,0F0h
-L24740_w3:
+w3:
         rol     al,1
-        jnc     L24740_w4
+        jnc     w4
         or      bh,0Fh
-L24740_w4:
+w4:
         mov     WORD PTR es:[di],bx
         inc     di
         inc     di
         xor     bx,bx
         rol     al,1
-        jnc     L24740_w5
+        jnc     w5
         or      bl,0F0h
-L24740_w5:
+w5:
         rol     al,1
-        jnc     L24740_w6
+        jnc     w6
         or      bl,0Fh
-L24740_w6:
+w6:
         rol     al,1
-        jnc     L24740_w7
+        jnc     w7
         or      bh,0F0h
-L24740_w7:
+w7:
         rol     al,1
-        jnc     L24740_w8
+        jnc     w8
         or      bh,0Fh
-L24740_w8:
+w8:
         mov     WORD PTR es:[di],bx
         inc     di
         inc     di
-        jmp     SHORT L24740_check
-L24740_skip:
+        jmp     SHORT check
+skip2:
         shl     cx,1
         shl     cx,1
         add     di,cx
-        jmp     SHORT L24740_check
-L24740_fill:
+        jmp     SHORT check
+fill2:
         shl     cx,1
         mov     ax,0FFFFh
         rep     stosw
-L24740_check:
+check:
         cmp     di,dx
-        jae     L24740_done
-        jmp     L24740_next
-L24740_done:
+        jae     done2
+        jmp     next2
+done2:
         pop     ds
         pop     si
         pop     di
@@ -258,47 +254,45 @@ _F_24740  ENDP
 ; pixels, masking the colour word kept in the caller's frame ([bp-122h]), and
 ; OR them into the destination (es:di).
 
-        .CODE S2462_TEXT
-
         PUBLIC  _F_247CB
 _F_247CB  PROC  NEAR
         mov     bx,[bp-122h]
         mov     cx,bx
         rol     al,1
-        jc      L247CB_b1
+        jc      b1
         and     bl,0Fh
-L247CB_b1:
+b1:
         rol     al,1
-        jc      L247CB_b2
+        jc      b2
         and     bl,0F0h
-L247CB_b2:
+b2:
         rol     al,1
-        jc      L247CB_b3
+        jc      b3
         and     bh,0Fh
-L247CB_b3:
+b3:
         rol     al,1
-        jc      L247CB_b4
+        jc      b4
         and     bh,0F0h
-L247CB_b4:
+b4:
         or      es:[di],bx
         inc     di
         inc     di
         rol     al,1
-        jc      L247CB_b5
+        jc      b5
         and     cl,0Fh
-L247CB_b5:
+b5:
         rol     al,1
-        jc      L247CB_b6
+        jc      b6
         and     cl,0F0h
-L247CB_b6:
+b6:
         rol     al,1
-        jc      L247CB_b7
+        jc      b7
         and     ch,0Fh
-L247CB_b7:
+b7:
         rol     al,1
-        jc      L247CB_b8
+        jc      b8
         and     ch,0F0h
-L247CB_b8:
+b8:
         or      es:[di],cx
         inc     di
         inc     di
@@ -309,27 +303,25 @@ _F_247CB  ENDP
 ; Near helper of F_2467A and F_24740: fetch the next code from ds:si.
 ; A code byte of 0 or 0FFh is followed by a count byte: returns cx = count+1
 ; and al = the code.  Any other byte is a pixel pattern looked up through the
-; 256-byte table in the caller's frame: returns al = pattern, cx = L24814_run
+; 256-byte table in the caller's frame: returns al = pattern, cx = run
 ; length, or ah = 0 (return) when the byte isn't in the table.
-
-        .CODE S2462_TEXT
 
         PUBLIC  _F_24814
 _F_24814  PROC  NEAR
         lodsb
         or      al,al
-        je      L24814_run
+        je      run
         cmp     al,0FFh
-        je      L24814_run
+        je      run
         mov     bl,al
         xor     bh,bh
         xchg    bx,di
         mov     ah,[bp+di-100h]
         xchg    bx,di
         or      ah,ah
-        jne     L24814_found
+        jne     found
         ret
-L24814_found:
+found:
         dec     ah
         mov     bl,ah
         xchg    bx,di
@@ -338,7 +330,7 @@ L24814_found:
         xor     ch,ch
         xchg    bx,di
         ret
-L24814_run:
+run:
         mov     cl,al
         lodsb
         xor     ah,ah
@@ -352,8 +344,6 @@ _F_24814  ENDP
 ; into a byte-per-pair mask: a nibble that is zero sets the corresponding
 ; nibble of the mask (0F0h for the high one, 0Fh for the low one).
 
-        .CODE S2462_TEXT
-
         PUBLIC  _F_24849
 _F_24849  PROC  FAR
         push    bp
@@ -366,20 +356,20 @@ _F_24849  PROC  FAR
         lds     si,DWORD PTR [bp+6]
         mov     bh,0F0h
         mov     bl,0Fh
-L24849_next:
+next3:
         xor     ah,ah
         lodsb
         xchg    ah,al
         test    ah,0F0h
-        jne     L24849_low_nibble
+        jne     low_nibble
         mov     al,bh
-L24849_low_nibble:
+low_nibble:
         test    ah,0Fh
-        jne     L24849_store
+        jne     store
         or      al,bl
-L24849_store:
+store:
         stosb
-        loop    L24849_next
+        loop    next3
         pop     ds
         pop     si
         pop     di

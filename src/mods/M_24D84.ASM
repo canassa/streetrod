@@ -1,11 +1,11 @@
         .MODEL MEDIUM
 
+        .CODE S24D8_TEXT
+
 ; F_24D84 @ 24D8:0004 (linear 0x24D84, 67 bytes)
 ; F_24D84(src_far, dst_far, bytes, rows, src_skip, dst_wrap, y): copy rows of
 ; bytes into the interleaved screen.  Four banks of 2000h; after every fourth
-; L24D84_row the destination steps back by 6000h and forward by dst_wrap.
-
-        .CODE S24D8_TEXT
+; row the destination steps back by 6000h and forward by dst_wrap.
 
         PUBLIC  _F_24D84
 _F_24D84  PROC    FAR
@@ -20,26 +20,26 @@ _F_24D84  PROC    FAR
         sub     dx,[bp+0Eh]
         mov     ax,[bp+10h]
         mov     bx,[bp+16h]
-L24D84_row:
+row1:
         mov     cx,[bp+0Eh]
         shr     cx,1
-        jnc     L24D84_words
+        jnc     words1
         movsb
-L24D84_words:
+words1:
         rep     movsw
         dec     ax
-        je      L24D84_done
+        je      done1
         add     si,[bp+12h]
         inc     bx
         test    bx,3
-        je      L24D84_wrap
+        je      wrap
         add     di,dx
-        jmp     SHORT L24D84_row
-L24D84_wrap:
+        jmp     SHORT row1
+wrap:
         add     di,[bp+14h]
         sub     di,6000h
-        jmp     SHORT L24D84_row
-L24D84_done:
+        jmp     SHORT row1
+done1:
         pop     si
         pop     di
         pop     ds
@@ -52,8 +52,6 @@ _F_24D84  ENDP
 ; F_24DC7(src_far, dst_far, bytes, rows, sx, sy, dx, dy): like F_24D84 but
 ; both ends are positions in the interleaved screen: offset = (y / 4) * 160 +
 ; x, plus 2000h per (y & 1) and 4000h per (y & 2).
-
-        .CODE S24D8_TEXT
 
         PUBLIC  _F_24DC7
 _F_24DC7  PROC    FAR
@@ -86,21 +84,21 @@ _F_24DC7  PROC    FAR
         mov     bl,bh
         xor     bh,bh
         test    dx,1
-        je      L24DC7_s1
+        je      s1
         add     si,2000h
-L24DC7_s1:
+s1:
         test    dx,2
-        je      L24DC7_s2
+        je      s2
         add     si,4000h
-L24DC7_s2:
+s2:
         test    bx,1
-        je      L24DC7_d1
+        je      d1
         add     di,2000h
-L24DC7_d1:
+d1:
         test    bx,2
-        je      L24DC7_d2
+        je      d2
         add     di,4000h
-L24DC7_d2:
+d2:
         mov     ax,2000h
         sub     ax,[bp+0Eh]
         mov     [bp-2],ax
@@ -109,32 +107,32 @@ L24DC7_d2:
         sub     ax,[bp+0Eh]
         mov     [bp-4],ax
         mov     ax,[bp+10h]
-L24DC7_row:
+row2:
         mov     cx,[bp+0Eh]
         shr     cx,1
-        jnc     L24DC7_words
+        jnc     words2
         movsb
-L24DC7_words:
+words2:
         rep     movsw
         dec     ax
-        je      L24DC7_done
+        je      done2
         inc     dx
         test    dx,3
-        je      L24DC7_swrap
+        je      swrap
         add     si,[bp-2]
-        jmp     SHORT L24DC7_sdone
-L24DC7_swrap:
+        jmp     SHORT sdone
+swrap:
         add     si,[bp-4]
-L24DC7_sdone:
+sdone:
         inc     bx
         test    bx,3
-        je      L24DC7_dwrap
+        je      dwrap
         add     di,[bp-2]
-        jmp     SHORT L24DC7_row
-L24DC7_dwrap:
+        jmp     SHORT row2
+dwrap:
         add     di,[bp-4]
-        jmp     SHORT L24DC7_row
-L24DC7_done:
+        jmp     SHORT row2
+done2:
         pop     si
         pop     di
         pop     ds

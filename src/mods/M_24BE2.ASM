@@ -1,14 +1,14 @@
         .MODEL MEDIUM
 
+        EXTRN   _g_font:BYTE
+
+        .CODE S24BE_TEXT
+
 ; F_24BE2 @ 24BE:0002 (linear 0x24BE2, 201 bytes)
 ; F_24BE2(width, text, dest, fg, bg): draw a string with the 8x8 font in
 ; segment 0E9Fh into the 4-bit packed screen buffer (160 bytes per row).  The
 ; font has 9 bytes per glyph: a width byte, then eight row bits.  Returns the
 ; x position reached (the caller passes the field width and the start parity).
-
-        EXTRN   _g_font:BYTE
-
-        .CODE S24BE_TEXT
 
         PUBLIC  _F_24BE2
 _F_24BE2  PROC    FAR
@@ -25,22 +25,22 @@ _F_24BE2  PROC    FAR
         mov     ax,[bp+6]
         and     ax,1
         mov     [bp-4],ax
-L24BE2_nextch:
+nextch:
         mov     bx,[bp+8]
         mov     al,[bx]
         or      al,al
-        jne     L24BE2_havech
-        jmp     L24BE2_done
-L24BE2_havech:
+        jne     havech
+        jmp     done1
+havech:
         inc     WORD PTR [bp+8]
         cbw
         sub     ax,20h
-        jl      L24BE2_badch
+        jl      badch
         cmp     ax,5Ah
-        jle     L24BE2_goodch
-L24BE2_badch:
+        jle     goodch
+badch:
         xor     ax,ax
-L24BE2_goodch:
+goodch:
         mov     bx,ax
         shl     ax,1
         shl     ax,1
@@ -56,14 +56,14 @@ L24BE2_goodch:
         add     [bp-4],ax
         mov     cx,[bp-2]
         cmp     [bp-4],cx
-        jl      L24BE2_fits
+        jl      fits
         sub     [bp-4],ax
-        jmp     SHORT L24BE2_done
-L24BE2_fits:
+        jmp     SHORT done1
+fits:
         mov     si,[bp+0Ah]
         mov     ch,al
         mov     WORD PTR [bp-8],8
-L24BE2_nextrow:
+nextrow:
         mov     di,si
         inc     bx
         mov     dh,es:[bx]
@@ -71,42 +71,42 @@ L24BE2_nextrow:
         mov     ah,[bp-6]
         mov     cl,ch
         mov     dl,80h
-L24BE2_nextpix:
+nextpix:
         test    dh,dl
-        je      L24BE2_isbg
+        je      isbg
         or      al,[bp+0Ch]
-        jmp     SHORT L24BE2_havepix
-L24BE2_isbg:
+        jmp     SHORT havepix
+isbg:
         or      al,[bp+0Eh]
-L24BE2_havepix:
+havepix:
         xor     ah,1
-        jne     L24BE2_lownib
+        jne     lownib
         mov     [di],al
         inc     di
         xor     al,al
-        jmp     SHORT L24BE2_pixdone
-L24BE2_lownib:
+        jmp     SHORT pixdone
+lownib:
         shl     al,1
         shl     al,1
         shl     al,1
         shl     al,1
-L24BE2_pixdone:
+pixdone:
         dec     cl
-        je      L24BE2_rowdone
+        je      rowdone
         shr     dl,1
-        jmp     SHORT L24BE2_nextpix
-L24BE2_rowdone:
+        jmp     SHORT nextpix
+rowdone:
         mov     [di],al
         dec     WORD PTR [bp-8]
-        je      L24BE2_glyphdone
+        je      glyphdone
         add     si,0A0h
-        jmp     SHORT L24BE2_nextrow
-L24BE2_glyphdone:
+        jmp     SHORT nextrow
+glyphdone:
         mov     ax,di
         sub     ax,si
         add     [bp+0Ah],ax
-        jmp     L24BE2_nextch
-L24BE2_done:
+        jmp     nextch
+done1:
         mov     ax,[bp-4]
         pop     di
         pop     si
@@ -117,11 +117,9 @@ _F_24BE2  ENDP
 
 ; F_24CAB @ 24BE:00CB (linear 0x24CAB, 216 bytes)
 ; F_24CAB(src, dstseg, dstoff, y, height, width, flags, ...): copy a strip of
-; 4-bit pixels from a linear buffer (160 bytes per L24CAB_row) into the interleaved
+; 4-bit pixels from a linear buffer (160 bytes per row) into the interleaved
 ; (4 banks of 2000h) screen.  Handles a leading half byte (merge the low
 ; nibble), the whole bytes, and a trailing half byte (merge the high nibble).
-
-        .CODE S24BE_TEXT
 
         PUBLIC  _F_24CAB
 _F_24CAB  PROC    FAR
@@ -133,89 +131,89 @@ _F_24CAB  PROC    FAR
         mov     es,ax
         mov     ax,[bp+12h]
         or      ax,ax
-        je      L24CAB_middle
+        je      middle
         mov     cx,[bp+0Eh]
         mov     di,[bp+0Ah]
         mov     si,[bp+6]
         mov     dx,[bp+0Ch]
-L24CAB_lead:
+lead:
         and     BYTE PTR es:[di],0F0h
         mov     al,[si]
         or      es:[di],al
         add     si,0A0h
         inc     dx
         test    dx,3
-        je      L24CAB_lead_wrap
+        je      lead_wrap
         add     di,2000h
-        jmp     SHORT L24CAB_lead_next
-L24CAB_lead_wrap:
+        jmp     SHORT lead_next
+lead_wrap:
         sub     di,6000h
         add     di,0A0h
-L24CAB_lead_next:
-        loop    L24CAB_lead
+lead_next:
+        loop    lead
         inc     WORD PTR [bp+0Ah]
         inc     WORD PTR [bp+6]
-L24CAB_middle:
+middle:
         cmp     WORD PTR [bp+10h],0
-        jle     L24CAB_trail
+        jle     trail
         mov     bx,[bp+0Eh]
         mov     di,[bp+0Ah]
         mov     si,[bp+6]
         mov     dx,[bp+0Ch]
-L24CAB_row:
+row:
         mov     cx,[bp+10h]
         shr     cx,1
-        jnc     L24CAB_words
+        jnc     words
         movsb
-        jcxz    L24CAB_rowend
-L24CAB_words:
+        jcxz    rowend
+words:
         rep     movsw
-L24CAB_rowend:
+rowend:
         add     si,0A0h
         mov     ax,[bp+10h]
         sub     si,ax
         sub     di,ax
         inc     dx
         test    dx,3
-        je      L24CAB_row_wrap
+        je      row_wrap
         add     di,2000h
-        jmp     SHORT L24CAB_row_next
-L24CAB_row_wrap:
+        jmp     SHORT row_next
+row_wrap:
         sub     di,6000h
         add     di,0A0h
-L24CAB_row_next:
+row_next:
         dec     bx
-        jne     L24CAB_row
+        jne     row
         mov     ax,[bp+0Ah]
         add     ax,[bp+10h]
         mov     [bp+0Ah],ax
         mov     ax,[bp+6]
         add     ax,[bp+10h]
         mov     [bp+6],ax
-L24CAB_trail:
+trail:
         mov     ax,[bp+14h]
         test    ax,1
-        je      L24CAB_done
+        je      done2
         mov     cx,[bp+0Eh]
         mov     di,[bp+0Ah]
         mov     si,[bp+6]
         mov     dx,[bp+0Ch]
-L24CAB_tail:
+tail:
         and     BYTE PTR es:[di],0Fh
         mov     al,[si]
         or      es:[di],al
         add     si,0A0h
         inc     dx
         test    dx,3
-        je      L24CAB_tail_wrap
+        je      tail_wrap
         add     di,2000h
-        jmp     SHORT L24CAB_tail_next
-L24CAB_tail_wrap:
+        jmp     SHORT tail_next
+tail_wrap:
         sub     di,6000h
         add     di,0A0h
-L24CAB_tail_next:
-        loop    L24CAB_tail
-L24CAB_done:
+tail_next:
+        loop    tail
+done2:
         pop     di
         pop     si
         mov     sp,bp

@@ -1,4 +1,4 @@
-"""Recover DGROUP ownership from positions, and write the C (or MASM) data definitions.
+"""Recover DGROUP ownership from positions, and check the sources' data definitions against it.
 
 MSC 5.1 emits a module's _DATA as: string literals immediately in parse order (an initializer's
 strings at the declaration, a function's literals while it compiles), and named initialized
@@ -8,7 +8,8 @@ so the original offsets of a unit's literal pools pin the unit in the link order
 item's offset tells which function it was declared before.
 
 Reads the original image, the DB and the layout build's objects (`./sr build`, for
-the literal pools). `apply` writes definitions into src/mods/; `asm` lists any data that no source owns.
+the literal pools). The sources are the truth for the definitions: `check` verifies that every
+named item is defined in the file that owned it; the build checks the bytes.
 """
 import bisect
 import re
@@ -63,8 +64,6 @@ ORDER_HINTS = [
 PRINTABLE = set(range(32, 127)) | {9, 10, 13}
 
 
-# start of the hand-kept uninitialized declarations in a data-only unit source
-COMMUNAL_MARK = '/* Uninitialized storage: communals'
 
 
 class Item:
@@ -85,46 +84,26 @@ class Item:
 SOURCE_DECLS = {}
 
 
-def defined_in_sources():
-    """global name -> source file, for globals a C or MASM module already defines.
-    SOURCE_DECLS keeps each C definition's declaration (with @ for the name)."""
+def defined_in_sources(prefix='g_'):
+    """global name -> source file, for the initialized globals the C and MASM sources define
+    (C file-scope definitions with an initializer, MASM PUBLIC data labels); names starting
+    with `prefix`. SOURCE_DECLS keeps each C definition's declaration (with @ for the name)."""
     out = {}
+    name = re.escape(prefix) + r'\w*' if prefix else r'[A-Za-z_]\w*'
     for path in sorted((config.SRC / 'mods').glob('*.C')):
         text = re.sub(r'/\*.*?\*/', '', path.read_text(errors='replace'), flags=re.S)
-        for m in re.finditer(r'(?m)^(?!extern\b|static\b|#)([A-Za-z_][\w *(]*?)\b(g_\w+)\s*((?:\[[^\]]*\]\s*)*)(?:\)\s*\([^)]*\))?\s*=', text):
+        for m in re.finditer(rf'(?m)^(?!extern\b|static\b|#)([A-Za-z_][\w *(]*?)\b({name})\s*((?:\[[^\]]*\]\s*)*)(?:\)\s*\([^)]*\))?\s*=', text):
             out[m.group(2)] = str(path.relative_to(config.ROOT))
-            SOURCE_DECLS[m.group(2)] = (m.group(1) + '@' + m.group(3)).replace(' @', ' @').strip()
+            if m.group(2).startswith('g_'):
+                SOURCE_DECLS[m.group(2)] = (m.group(1) + '@' + m.group(3)).replace(' @', ' @').strip()
     for path in sorted((config.SRC / 'mods').glob('*.ASM')):
         text = path.read_text(errors='replace')
-        for m in re.finditer(r'(?m)^\s*PUBLIC\s+_(g_\w+)', text):
+        for m in re.finditer(rf'(?m)^\s*PUBLIC\s+_({name})', text):
             if re.search(rf'(?m)^_{m.group(1)}\s+(LABEL|D[BWDQ])\b', text):
                 out[m.group(1)] = str(path.relative_to(config.ROOT))
     return out
 
 
-def _marked(lines, i, pat):
-    """Does the top-level statement starting at line i end with the generator's marker?"""
-    depth, inq = 0, False
-    for j in range(i, min(i + 400, len(lines))):
-        s = lines[j]
-        k = 0
-        while k < len(s):
-            c = s[k]
-            if inq:
-                if c == '\\':
-                    k += 1
-                elif c == '"':
-                    inq = False
-            elif c == '"':
-                inq = True
-            elif c == '{':
-                depth += 1
-            elif c == '}':
-                depth -= 1
-            elif c == ';' and depth == 0:
-                return bool(pat.search(s[k:]))
-            k += 1
-    return False
 
 
 class Analysis:
@@ -980,16 +959,6 @@ class Analysis:
         return (f'items {dict(kinds)}; aliases {len(self.aliases)}; orphan strings {len(orphan)}; '
                 f'real gaps {len(gaps)} ({sum(g.size for g in gaps)} bytes); named literals {len(self.named_lits)}')
 
-    def _points_at(self, it, target):
-        try:
-            leaves = list(self.types.leaves(it.node, it.off, it.name))
-        except ValueError:
-            return False
-        for off, node, label in leaves:
-            if node['kind'] == 'pointer' and node['size'] == 2 and self.im.word(self.ds + off) == target.off:
-                return True
-        return False
-
     def forward_refs(self):
         """(item, target) where an initializer in a C unit takes the address of a global the
         same unit defines later: MSC would emit the target first, so the order cannot hold."""
@@ -1103,116 +1072,34 @@ class Analysis:
             out[name] = (expr, f'_{base.name}+{d}' if d else f'_{base.name}')
         return out
 
-    def c_definitions(self, ustart):
-        """{slot function addr: [definition lines]} for a C unit, in address order."""
-        out = {}
+    # ------------------------------------------------------------ checking sources
+    def check_sources(self):
+        """Where the sources' initialized DGROUP data disagrees with the recovered layout:
+        every named item must be defined in the source file of the unit that owned it in the
+        original, and nothing the layout does not hold as a global may be defined. The bytes
+        themselves are checked by the build (datacheck per object, the linked EXE)."""
+        defined = defined_in_sources(prefix='')
+        problems, seen = [], set()
         for it in self.items:
-            if it.owner != ustart or it.kind in ('lit', 'str', 'alias'):
+            if it.kind != 'global':
                 continue
-            text = self.definition(it)
-            if text:
-                out.setdefault(it.slot, []).append(text)
-        return out
-
-    def masm_lines(self, items, label_public=True):
-        """MASM data records for items (remaining data or an assembly unit's own data)."""
-        lines, externs = [], {}
-        for it in items:
-            if it.kind == 'lit':
+            seen.add(it.name)
+            if it.owner is None:
+                problems.append(f'DS:{it.off:04X} {it.name}: no unit owns it')
                 continue
-            if it.kind == 'gap':
-                if it.note == 'align':
-                    lines.append(f'        DB 0 ; +{it.off:04X} alignment')
-                else:
-                    lines.append(f'        DB {it.size} DUP (0) ; +{it.off:04X}')
-                continue
-            if it.kind == 'str':
-                lines.append(f'S_{it.off:04x} LABEL BYTE')
-                lines.append('        ' + self.masm_string(self.cstring(it.off)) + f' ; +{it.off:04X}')
-                continue
-            if it.kind == 'alias':
-                continue
-            if it.node is None:
-                raise ValueError(f'{it!r} has no declaration')
-            if label_public:
-                lines.append(f'        PUBLIC _{it.name}')
-            lines.append(f'_{it.name} LABEL BYTE ; +{it.off:04X} {it.decl}')
-            lines += self.masm_value(it.node, it.off, externs)
-        return lines, externs
+            want = self.unit_by[it.owner]['sources'][0]
+            have = defined.get(it.name)
+            if have is None:
+                problems.append(f'DS:{it.off:04X} {it.name}: not defined; {want} owned it')
+            elif have != want:
+                problems.append(f'DS:{it.off:04X} {it.name}: defined in {have}, but {want} owned it')
+        for g in self.con.execute('SELECT off, name FROM globals WHERE off < ?', (DATA_END,)):
+            if g['name'] in defined and g['name'] not in seen:
+                problems.append(f'DS:{g["off"]:04X} {g["name"]}: defined in {defined[g["name"]]}, '
+                                'but the layout holds no such global (literal, alias or gap)')
+        return problems
 
-    @staticmethod
-    def masm_string(s):
-        vals, part = [], ''
-        for b in s:
-            if 32 <= b < 127 and b != 39:
-                part += chr(b)
-            else:
-                if part:
-                    vals.append("'" + part + "'"); part = ''
-                vals.append(str(b))
-        if part:
-            vals.append("'" + part + "'")
-        vals.append('0')
-        return 'DB ' + ', '.join(vals)
-
-    def masm_symbol(self, off, externs):
-        """MASM operand for a near pointer to DGROUP `off`."""
-        if off < 0x42:
-            return str(off)
-        it = self.by_off.get(off)
-        if it is not None and it.kind == 'str':
-            return f'OFFSET DGROUP:S_{off:04x}'
-        if off >= DATA_END:
-            i = bisect.bisect_right(self.goffs, off) - 1
-            base, name = self.goffs[i], self.globals[self.goffs[i]]['name']
-        else:
-            i = bisect.bisect_right(self.goffs2, off) - 1
-            base, name = self.goffs2[i], self.gitems[self.goffs2[i]].name
-        externs.setdefault('_' + name, 'BYTE')
-        return f'OFFSET DGROUP:_{name}' + (f'+{off - base}' if off != base else '')
-
-    def masm_value(self, node, off, externs):
-        lines = []
-        for loff, leaf, label in self.types.leaves(node, off, ''):
-            if leaf['kind'] == 'scalar':
-                v = int.from_bytes(self.dg[loff:loff + leaf['size']], 'little')
-                op = {1: 'DB', 2: 'DW', 4: 'DD', 8: 'DQ'}[leaf['size']]
-                lines.append(f'        {op} 0{v:X}h')
-            elif leaf['size'] == 2:
-                lines.append(f'        DW {self.masm_symbol(self.im.word(self.ds + loff), externs)}')
-            else:
-                o, s = self.im.word(self.ds + loff), self.im.word(self.ds + loff + 2)
-                if self.ds + loff + 2 not in self.im.reloc_pos:
-                    lines.append(f'        DD 0{s:04X}{o:04X}h')
-                elif s == config.DGROUP_SEG:
-                    lines.append(f'        DW {self.masm_symbol(o, externs)}, SEG DGROUP')
-                else:
-                    a = s * 16 + o
-                    f = self.funcs.get(a)
-                    if f is not None:
-                        sym = '_' + (f['name'] or f'F_{a:05X}')
-                        externs[sym] = 'FAR' if f['far'] else 'NEAR'
-                        lines.append(f'        DD {sym}')
-                    else:
-                        best = max(((fs, fo, n) for fs, fo, n, d in self.fardata if fs == s and fo <= o), key=lambda t: t[1])
-                        externs['_' + best[2]] = 'BYTE'
-                        lines.append(f'        DW OFFSET _{best[2]}+{o - best[1]}, SEG _{best[2]}')
-        return lines
-
-    def unowned(self):
-        """The initialized data no C or MASM module owns, in original order, as MASM lines."""
-        converted = {u for u in self.order if self.unit_converted(u)}
-        remaining = [it for it in self.items if it.owner not in converted and it.kind != 'lit'
-                     and not (it.kind == 'gap' and it.note == 'align')]   # the owner's compiler aligns
-        return self.masm_lines(remaining)[0]
-
-    def unit_converted(self, ustart):
-        """A unit owns its data in source when every named item it owns is defined there."""
-        names = [it.name for it in self.items if it.owner == ustart and it.kind == 'global' and not it.synth]
-        return bool(names) and all(n in self.defined for n in names)
-
-
-    # ------------------------------------------------------------ writing sources
+    # ------------------------------------------------------------ the DB
     def register(self, write=True):
         """Give the DB the synthesized globals (zero storage, typed table pieces, mask records,
         named strings) so the headers and the gate know them. Returns the new rows."""
@@ -1260,171 +1147,6 @@ class Analysis:
         it = iter(mine)
         return [next(it) if o in set(mine) else o for o in objects]
 
-    def apply_unit(self, ustart, write=False):
-        """Insert the unit's data definitions into its module sources. Returns {path: text}."""
-        u = self.unit_by[ustart]
-        changed = {}
-        if u['kind'] == 'data' and u['sources'][0].upper().endswith('.ASM'):
-            items = [it for it in self.items if it.owner == ustart and it.kind != 'lit']
-            body, externs = self.masm_lines(items, label_public=True)
-            own = {ln.split()[0] for ln in body if ' LABEL BYTE' in ln}
-            ext = [f'        EXTRN   {s}:{k}' for s, k in sorted(externs.items()) if s not in own]
-            head = ['        .MODEL MEDIUM', '',
-                    f'; Initialized data DS:{u["lo"]:04X}..{u["hi"]:04X}, recovered from the original layout',
-                    '; (./sr dgroup). Odd-address words and arrays: assembler data, not C definitions.', '',
-                    '        .DATA'] + ext
-            path = config.ROOT / u['sources'][0]
-            changed[path] = '\n'.join(head + body + ['', '        END', ''])
-            if write:
-                path.write_text(changed[path])
-            return changed
-        if u['kind'] == 'data':
-            path = config.ROOT / u['sources'][0]
-            old_inc = [ln for ln in (path.read_text().splitlines() if path.exists() else []) if ln.startswith('#include')]
-            lines = (old_inc or ['#include "STRUCTS.H"']) + ['']
-            own = [it for it in self.items if it.owner == ustart and it.kind not in ('lit', 'str', 'alias')]
-            # a definition that points at the item just before it was written first in the
-            # original: MSC then emits the earlier item at the reference, in a record of its
-            # own (the original relocation table shows one run per such item)
-            k = 0
-            while k + 1 < len(own):
-                if own[k].kind == 'global' and own[k + 1].kind == 'global' and self._points_at(own[k + 1], own[k]):
-                    own[k], own[k + 1] = own[k + 1], own[k]
-                    k += 2
-                else:
-                    k += 1
-            for it in own:
-                text = self.definition(it)
-                if text:
-                    lines.append(text)
-            path = config.ROOT / u['sources'][0]
-            changed[path] = '\n'.join(lines) + '\n'
-            # hand-kept communal declarations (uninitialized storage) follow the data
-            old = path.read_text() if path.exists() else ''
-            if COMMUNAL_MARK in old:
-                changed[path] += '\n' + old[old.index(COMMUNAL_MARK):]
-            if write:
-                path.write_text(changed[path])
-            return changed
-        if u['kind'] == 'asm':
-            items = [it for it in self.items if it.owner == ustart and it.kind != 'lit']
-            if not items:
-                return changed
-            lines, externs = self.masm_lines(items, label_public=True)
-            own = {ln.split()[0] for ln in lines if ' LABEL BYTE' in ln}
-            path = config.ROOT / u['functions'][0]['src']
-            text = path.read_text(errors='replace')
-            text = self._strip_asm_definitions(text, [it.name for it in items if it.kind == 'global'])
-            for sym in own:
-                text = re.sub(rf'(?m)^[ \t]*EXTRN[ \t]+{re.escape(sym)}:\w+[ \t]*\r?\n', '', text)
-            block = '\n'.join(['        ; data (recovered DGROUP layout)'] + lines) + '\n'
-            m = re.search(r'(?m)^\s*\.DATA\s*$', text)
-            if m is None:
-                c = re.search(r'(?m)^\s*\.CODE\b|^\w+\s+SEGMENT\b', text)
-                if c is None:
-                    raise SystemExit(f'{path}: no .CODE section to put the data before')
-                text = text[:c.start()] + '        .DATA\n\n' + text[c.start():]
-                m = re.search(r'(?m)^\s*\.DATA\s*$', text)
-            # after the EXTRNs that follow .DATA
-            pos = m.end()
-            for em in re.finditer(r'(?m)^\s*EXTRN\s+[^\n]*$', text[pos:]):
-                if text[pos:pos + em.start()].strip():
-                    break
-                pos += em.end()
-            ext = ''.join(f'        EXTRN   {s}:{k}\n' for s, k in sorted(externs.items())
-                          if s not in own and not re.search(rf'EXTRN\s+{re.escape(s)}:', text))
-            text = text[:pos] + '\n' + ext + block + text[pos:]
-            text = re.sub(r'\n{3,}', '\n\n', text)   # rerunning must not add blank lines
-            changed[path] = text
-        else:
-            defs = self.c_definitions(ustart)
-            names = [it.name for it in self.items if it.owner == ustart and it.kind == 'global']
-            files = {}
-            for slot, lines in defs.items():
-                fn = self.funcs[slot] if slot is not None else u['functions'][0]
-                path = config.ROOT / fn['src']
-                files.setdefault(path, []).append((fn, lines))
-            for path, inserts in files.items():
-                text = path.read_text(errors='replace')
-                text = self._strip_c_definitions(text, names)
-                for fn, lines in inserts:
-                    text = self._insert_before(text, fn['name'] or f"F_{fn['addr']:05X}", '\n'.join(lines) + '\n')
-                changed[path] = text
-        if write:
-            for path, text in changed.items():
-                path.write_text(text)
-        return changed
-
-    @staticmethod
-    def _insert_before(text, fname, block):
-        lines = text.split('\n')
-        d = next((i for i in range(len(lines)) if not lines[i][:1].isspace()
-                  and re.search(rf'\b{fname}\s*\(', lines[i]) and not lines[i].rstrip().endswith(';')), None)
-        if d is None:
-            raise SystemExit(f'{fname}: no definition found to insert data before')
-        i = d
-        while i > 0 and (not lines[i - 1].strip() or lines[i - 1].lstrip().startswith('/*') and lines[i - 1].rstrip().endswith('*/')):
-            i -= 1
-        # keep one blank line between the previous code and the data block
-        before = lines[:i]
-        while before and not before[-1].strip():
-            before.pop()
-        after = lines[i:]
-        while after and not after[0].strip():
-            after.pop(0)
-        return '\n'.join(before + ([''] if before else []) + block.rstrip('\n').split('\n') + [''] + after)
-
-    @staticmethod
-    def _strip_c_definitions(text, names):
-        """Remove the top-level definitions a previous run of this tool wrote (marked /* DS:xxxx */)."""
-        pat = re.compile(r'/\* DS:[0-9A-F]{4} \*/')
-        out, i, lines = [], 0, text.split('\n')
-        while i < len(lines):
-            ln = lines[i]
-            if ln and (ln[0].isalpha() or ln[0] == '_') and not ln.lstrip().startswith(('static', 'extern')) \
-                    and '=' in ln and _marked(lines, i, pat):
-                # statement runs to the first ';' outside quotes/braces
-                depth, inq, j = 0, False, i
-                done = False
-                while j < len(lines) and not done:
-                    s = lines[j]
-                    k = 0
-                    while k < len(s):
-                        c = s[k]
-                        if inq:
-                            if c == '\\':
-                                k += 1
-                            elif c == '"':
-                                inq = False
-                        elif c == '"':
-                            inq = True
-                        elif c == '{':
-                            depth += 1
-                        elif c == '}':
-                            depth -= 1
-                        elif c == ';' and depth == 0:
-                            done = True
-                            break
-                        k += 1
-                    j += 1
-                i = j
-                while i < len(lines) and not lines[i].strip() and out and not out[-1].strip():
-                    i += 1
-                continue
-            out.append(ln)
-            i += 1
-        return '\n'.join(out)
-
-    @staticmethod
-    def _strip_asm_definitions(text, names):
-        if not names:
-            return text
-        m = re.search(r'(?m)^        ; data \(recovered DGROUP layout\)\n', text)
-        if m is None:
-            return text
-        # up to the code: a .CODE directive, or an explicit code SEGMENT (a small-model file)
-        end = re.search(r'(?m)^\s*\.CODE\b|^\w+\s+SEGMENT\b', text[m.start():])
-        return text[:m.start()] + text[m.start() + end.start():]
 
     def apply_aliases(self, write=False):
         """Rewrite uses of alias globals as views of their base and drop them from the DB."""

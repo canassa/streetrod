@@ -122,14 +122,14 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 
 ## DGROUP lessons (2026-11-04)
 
-- The analysis reads the freshest objects (`work/layout/BUILD/<file stem>/`), the `/Fc` listing for literal sizes (`"\0"` is two bytes) and the source definitions for array bounds: run `./sr build` before `./sr dgroup`. Definitions carry `/* DS:xxxx */`; `apply` strips and rewrites them, so it is idempotent. `work/dg/run.sh` runs apply, asm, order, the gate and the layout build in one go. Known: `apply all` alternates `g_4fa6` between M_0542E.C and M_039C0.C on successive runs (both build IDENTICAL).
+- The analysis reads the freshest objects (`work/layout/BUILD/<file stem>/`), the `/Fc` listing for literal sizes (`"\0"` is two bytes) and the source definitions for array bounds: run `./sr build` before `./sr dgroup`. Definitions carry `/* DS:xxxx */`. The sources are the truth for data definitions: `./sr dgroup check` only verifies that each named item is defined in the file that owned it (since 2026-11-04 there is no writer; the old `apply --write` regenerated every definition from the model and reverted hand edits).
 - `aliases --write` deletes the alias rows: run it once. A later decl change that creates new overlaps needs a fresh run, and the run also removes `EXTRN` lines for the aliases in `.ASM` files (put the base's EXTRN before the first use when it only exists in a later `.DATA` block).
 - The DB is WAL-backed: restoring `db/sr.sqlite` from a backup needs `-wal`/`-shm` removed first.
-- An assembler unit's data goes into its `.DATA` section (`PUBLIC`/`LABEL`/`DB`); EXTRNs for symbols it now defines are removed.
+- An assembler unit's data goes into its one `.DATA` section, after its EXTRNs: `PUBLIC  _name` then `_name DW ...` (the label typed by its first element), several values per line, text as quoted strings, `n DUP (v)` for runs, `EVEN` for an alignment byte (MASM 5.1 pads with 00h in data, 90h in code). DUP becomes LIDATA, which omf.py expands. `./sr dgroup check` recognises a MASM definition as `PUBLIC _x` plus a `_x LABEL|DB|DW|DD|DQ` line.
 
 ## Link-structure lessons (2026-11-04)
 
-- `./sr dgroup apply all --write` strips every `/* DS:xxxx */` definition from `src/mods/*.C` before rewriting; reruns add no blank lines to `.ASM` files. After changing units, run the pipeline twice (the second pass reads the fresh objects of the new units). `work/dg/run.sh` is the pipeline.
+- After moving a definition or changing units, rebuild and run `./sr dgroup check` (the analysis reads the fresh objects of the new units).
 - `dgroup.ORDER_HINTS` move units (data-only units too, key `10xxxx`) after another unit; afterwards each code segment's units are re-sorted into code order within their slots. `./sr dgroup order` compares the result with src/SR.LNK (the other objects keep their lines).
 - Storage objects need `ASSUME DS:DGROUP`, or MASM writes their PUBDEFs without the group and every reference resolves segment-relative.
 - Runtime members: declared `_DATA` length can exceed the data records (`DUP (?)`); read SEGDEF lengths when tiling runtime data.
