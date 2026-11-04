@@ -204,9 +204,9 @@ static void near show_tank_cap(struct Dlg *d, int id)
     else
         back = d->bm2;
     cursor_ctl(CURSOR_HIDE);
-    label = F_15BBE(id, 2);
+    label = F_15BBE(id, ARENA_HIGH_STACK);
     cursor_ctl(CURSOR_SHOW);
-    work = F_1934E(back->width, back->height, 0, 2);
+    work = F_1934E(back->width, back->height, 0, ARENA_HIGH_STACK);
     bitmap_copy(back, work, 1);
     box.w = label->width;
     box.h = box.fc = label->height;
@@ -240,7 +240,7 @@ static void near leave_station(struct Dlg *d)
     }
     if (d->f10 == 0) {
         cursor_ctl(CURSOR_HIDE);
-        p = F_15BBE(0x4d1, 2);
+        p = F_15BBE(0x4d1, ARENA_HIGH_STACK);
         cursor_ctl(CURSOR_SHOW);
         carpic_patch_bg(p, 0x60, 0, 0x30, 0x40, 0xc8, 0x51, 0xa9, 2);
     }
@@ -482,8 +482,8 @@ static void near show_ticket(void)
     struct Blt pkt;
 
     marks_clear();
-    a = F_15BBE(0x456, 1);
-    b = F_15BBE(0x4ef, 1);
+    a = F_15BBE(0x456, ARENA_LOW_STACK);
+    b = F_15BBE(0x4ef, ARENA_LOW_STACK);
     pkt.w = b->width;
     pkt.h = b->height;
     pkt.dx = pkt.sx = pkt.sy = 0;
@@ -536,8 +536,8 @@ static void near show_crash(void)
     fast = r_vid.mode == -2 && g_vga == 0;
     sound_crash();
     marks_clear();
-    a = F_15BBE(0x4eb, 1);
-    b = F_15BBE(0x4ec, 1);
+    a = F_15BBE(0x4eb, ARENA_LOW_STACK);
+    b = F_15BBE(0x4ec, ARENA_LOW_STACK);
     pkt.w = a->width;
     pkt.h = 0x5a;
     pkt.sx = pkt.sy = pkt.dx = 0;
@@ -558,7 +558,7 @@ static void near show_crash(void)
     (*dz78b6)(r_vid.back->bits.p, r_vid.front->bits.p);
     if (g_driveEng.f0 > 0x5a) {
         for (i = 0; i < 3; i++) {
-            a = F_15BBE(g_crashPics[i].id, 1);
+            a = F_15BBE(g_crashPics[i].id, ARENA_LOW_STACK);
             pkt.w = a->width;
             pkt.h = a->height;
             pkt.sx = pkt.sy = 0;

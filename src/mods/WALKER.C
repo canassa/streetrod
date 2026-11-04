@@ -41,7 +41,7 @@ static void near cut_sheet(struct Bitmap far **out, int n)
     id5 = g_carhopSheets[n].id;
     cols8 = g_carhopSheets[n].cols;
     cells = g_carhopSheets[n].n;
-    sheet = F_15BBE(id5, 2);
+    sheet = F_15BBE(id5, ARENA_HIGH_STACK);
     r.w = sheet->width / cols8;
     r.h = sheet->height >> 1;
     r.sx = 0;
@@ -52,7 +52,7 @@ static void near cut_sheet(struct Bitmap far **out, int n)
             r.sx = 0;
             r.sy = r.h;
         }
-        out[i] = bitmap_grab(sheet, &r, 2);
+        out[i] = bitmap_grab(sheet, &r, ARENA_HIGH_STACK);
     }
 }
 
@@ -116,7 +116,7 @@ void walker_walk(int a, int b)
             r3.h = rca2.y2 - rca2.y1 + 1;
             r3.sx = rca2.x1 - ac825et;
             r3.sy = rca2.y1 - aw8260y;
-            clip = bitmap_grab(bu825a, &r3, 2);
+            clip = bitmap_grab(bu825a, &r3, ARENA_HIGH_STACK);
             r3.sx = 0;
             r3.sy = 0;
             r3.dx = rca2.x1;
@@ -127,7 +127,7 @@ void walker_walk(int a, int b)
     }
     carpic_backdrop(bm9, &tab2[0], 0x474, &B7, 0x29, 0x29, &prc3, &prc3);
     if (a == 0) {
-        bm27 = F_1934E(0x30, 0x29, 1, 2);
+        bm27 = F_1934E(0x30, 0x29, 1, ARENA_HIGH_STACK);
         r2.w = 0x30;
         r2.h = 0x29;
         r2.sx = r2.sy = 0;
@@ -142,7 +142,7 @@ void walker_walk(int a, int b)
     rcb1.x2 = tab2[0]->width - 1;
     rcb1.y2 = tab2[0]->height - 1;
     cut_sheet(&tab2[1], a);
-    fr = F_1934E(0x30, 0x29, 1, 2);
+    fr = F_1934E(0x30, 0x29, 1, ARENA_HIGH_STACK);
     sp2 = sprite_setup(a == 0 ? -40 : 200, 0x6c, &fr, 0, 1, B7, tab2[0], &rcb1, 0);
     p9 = a == 0 ? g_carhopInSeq : g_carhopOutSeq;
     for (i = 0; i < 4; i++)
@@ -167,7 +167,7 @@ void walker_walk(int a, int b)
     if (a == 1) {
         carpic_patch_bg(g_carhopBg, 0, 0, 0x30, 0x29, 0xc8, 0x44, 0xa3, 2);
     } else {
-        t = F_1934E(fr->width, 0x29, 1, 2);
+        t = F_1934E(fr->width, 0x29, 1, ARENA_HIGH_STACK);
         r2.w = fr->width;
         r2.h = 0x29;
         r2.sx = r2.sy = 0;
@@ -190,7 +190,7 @@ void walker_save_bg(void)
 {
     struct Blt pkt;
 
-    g_carhopBg = F_1934E(0x30, 0x29, 0, 0);
+    g_carhopBg = F_1934E(0x30, 0x29, 0, ARENA_LOW_BASE);
     pkt.w = g_carhopBg->width;
     pkt.h = g_carhopBg->height;
     pkt.sx = 200;

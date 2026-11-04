@@ -526,7 +526,7 @@ static void near buy_from_ads(int tab)
                 break;
             cursor_ctl(CURSOR_HIDE_NOW);
             marks_clear();
-            bm1 = F_1934E(0x140, 0x52, 0, 0);
+            bm1 = F_1934E(0x140, 0x52, 0, ARENA_LOW_BASE);
             popup_grab(0, 0x40, 0x140, 0x52, bm1);
             x_colors = bustyle->colors;
             ck = (r_vid.mode == -2 || r_vid.mode == -6) ? g_carBg16[5] : g_carBg4[5];
@@ -668,7 +668,7 @@ static int near your_cars(void)
         offer = price = (int)((random_int(20) + 75.0) * cur->value / 100.0);
         strcpy(g_offerName, g_desc + g7d86n[cur->f2].f6);
         g_offerAmount[0] = 0;
-        pict = menu_grab(12, &rx, &ye, 1);
+        pict = menu_grab(12, &rx, &ye, ARENA_LOW_STACK);
         menu_push(12);
         do {
             if ((n = edit_spot_number(&cash, g_offerAmount)) == -22)

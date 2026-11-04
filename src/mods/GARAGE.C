@@ -122,9 +122,9 @@ void F_065AF(int a1)
     py4 = 4;
     id = m < 2 ? 0x4c3 : 0x4c5;
     cursor_ctl(CURSOR_HIDE);
-    pic = F_15BBE(id, 2);
+    pic = F_15BBE(id, ARENA_HIGH_STACK);
     bitmap_draw_pic(pic, 0x4c4, (unsigned char)x, (unsigned char)y4, 0);
-    img = F_1934E(pic->width, pic->height, 0, 2);
+    img = F_1934E(pic->width, pic->height, 0, ARENA_HIGH_STACK);
     popup_grab(px5, py4, pic->width, pic->height, img);
     popup_show(pic, px5, py4);
     F_19438(1);
@@ -411,7 +411,7 @@ void near F_06F6B(void)
     else if (r_vid.mode != -2 && r_vid.mode != -6)
         game_message(0x18ad);
     else {
-        bm1 = menu_grab(14, &x, &y, 2);
+        bm1 = menu_grab(14, &x, &y, ARENA_HIGH_STACK);
         menu_push(14);
         idx4 = a_7eaap.m7eb0->f4;
         for (;;) {
@@ -507,7 +507,7 @@ void near F_0711A(unsigned mask)
         game_message(0x1959);
         return;
     }
-    bm1 = menu_grab(34, &x, &y, 2);
+    bm1 = menu_grab(34, &x, &y, ARENA_HIGH_STACK);
     g_1e34[0].f4 = msg - g_239e;
     menu_push(34);
     while ((key = sys_wait_input(3000)) == 0)
@@ -565,7 +565,7 @@ void near F_07367(void)
         r_vid.f16 = 1;
         x = 24;
         y = 11;
-        bm1 = F_1934E(264, 69, 0, 2);
+        bm1 = F_1934E(264, 69, 0, ARENA_HIGH_STACK);
         popup_grab(x, y, 264, 69, bm1);
         F_119B8(1200, x, y, -1);
         menu_push(35);
@@ -580,12 +580,12 @@ void near F_07367(void)
             F_19438(1);
             idx6 = -30 - k;
             a_7eaap.m7eb0->f24 = ((idx6 & 0x1f) << 8) | (a_7eaap.m7eb0->f24 & 0xe0ff);
-            bm3 = F_15BBE(1218, 2);
-            bm1 = F_1934E(g_0294->width, g_0294->height, 0, 2);
+            bm3 = F_15BBE(1218, ARENA_HIGH_STACK);
+            bm1 = F_1934E(g_0294->width, g_0294->height, 0, ARENA_HIGH_STACK);
             bitmap_copy(g_0294, bm1, 1);
             q2 = &a784als[idx6 - 1];
             bitmap_draw_pic(bm1, q2->id, (char)(q2->dx + m_8272.m8276), (char)q2->dy, 0);
-            bm4 = F_1934E(bm1->width, bm1->height, 0, 2);
+            bm4 = F_1934E(bm1->width, bm1->height, 0, ARENA_HIGH_STACK);
             bitmap_copy(bm1, bm4, 1);
             A2.sx = B1.sx = C.sx = 0;
             A2.sy = B1.sy = C.sy = 0;

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "STRUCTS.H"
 #include "SCREEN.H"
+#include "ARENA.H"
 #include "BITMAP.H"
 #include "CARPIC.H"
 #include "CURSOR.H"
@@ -229,7 +230,7 @@ int F_118D4(int a, int b)
     struct Blt pkt;
 
     cursor_ctl(CURSOR_HIDE);
-    p = F_15BBE(a, 2);
+    p = F_15BBE(a, ARENA_HIGH_STACK);
     if (b >= 0)
         screen_fill_rect(0, 0, 320, g_picMaxH, b);
     pkt.w = p->width;

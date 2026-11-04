@@ -41,7 +41,7 @@ struct Bitmap far *popup_grab(int x, int y, int w, int h, struct Bitmap far *src
         color = src->alt.p != 0;
         pict = mem_new_bitmap(x2 - x, ye - y, color, -1, src);
     } else
-        pict = F_1934E(x2 - x, ye - y, 0, 2);
+        pict = F_1934E(x2 - x, ye - y, 0, ARENA_HIGH_STACK);
     blit.w = pict->width;
     blit.h = pict->height;
     blit.sx = x;

@@ -301,7 +301,7 @@ void sprite_slide_v(int a, int b, int x, int y0, int y1, struct Bitmap far *bm)
     }
     n1++;
     img2 = popup_grab(x, 0, bm->width, 200, 0);
-    save = F_1934E(img2->width, img2->height, 0, 2);
+    save = F_1934E(img2->width, img2->height, 0, ARENA_HIGH_STACK);
     bitmap_copy(img2, save, 1);
     sp = sprite_setup(x, bm->height + y0 - 1, &bm, 0, 1, img2, save, 0, 0);
     sprite_set_step(sp, 0, n1, 0, (char)dir);

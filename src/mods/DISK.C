@@ -217,7 +217,7 @@ static int near load_pic(int n, int load, char far *dst)
     if (sl->ptr.p == 0) {
         if (load) {
             fp = mem_vram_alloc(ent->f1c, &pool);
-            sl->ptr.p = fp == 0 ? (char far *)0 : arena_alloc(ent->f1c + 1, 2);
+            sl->ptr.p = fp == 0 ? (char far *)0 : arena_alloc(ent->f1c + 1, ARENA_HIGH_STACK);
             sl->f1e = pool;
         } else {
             sl->ptr.p = dst ? dst : mem_alloc(ent->f1c + 1, 0);

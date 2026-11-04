@@ -53,7 +53,7 @@ void F_123F4(int frame, int slot)
     int y;
 
     cursor_ctl(CURSOR_HIDE);
-    pict = F_15BBE(0x44f, 2);
+    pict = F_15BBE(0x44f, ARENA_HIGH_STACK);
     x = 0xb8;
     y = g_tboltY[slot] + 10;
     if (frame == 1 && r_vid.f16) {
@@ -61,7 +61,7 @@ void F_123F4(int frame, int slot)
         blt.h = 6;
         blt.sx = 0x40;
         blt.sy = 0;
-        tmp = bitmap_grab(pict, &blt, 2);
+        tmp = bitmap_grab(pict, &blt, ARENA_HIGH_STACK);
         (*bl78ce)(0xe, 0x94, x, 8, y, tmp);
         F_19438(1);
     }
@@ -92,7 +92,7 @@ void F_12525(int slot)
     int y;
 
     cursor_ctl(CURSOR_HIDE);
-    pict = F_15BBE(0x44f, 2);
+    pict = F_15BBE(0x44f, ARENA_HIGH_STACK);
     blt.sx = blt.sy = 0;
     blt.dx = x = 0xb8;
     blt.dy = y = g_tboltY[slot] + 10;
@@ -105,7 +105,7 @@ void F_12525(int slot)
         F_16CF3();
         cursor_ctl(CURSOR_HIDE_NOW);
         blt.sx = 0x40;
-        tmp = bitmap_grab(pict, &blt, 2);
+        tmp = bitmap_grab(pict, &blt, ARENA_HIGH_STACK);
         (*bl78ce)(0xe, 0x94, x, y, 0x94, tmp);
         F_19438(1);
         cursor_ctl(CURSOR_SHOW_NOW);
@@ -129,7 +129,7 @@ void F_1264E(int n, int flag)
     int sy;
 
     cursor_ctl(CURSOR_HIDE_NOW);
-    pict = F_15BBE(n, 2);
+    pict = F_15BBE(n, ARENA_HIGH_STACK);
     sx = 200 - (w1 = pict->width);
     sy = 125 - (h1 = pict->height);
     if (flag)
@@ -162,7 +162,7 @@ void F_12784(int n, int flag)
     struct Bitmap far *p;
 
     cursor_ctl(CURSOR_HIDE);
-    p = F_15BBE(0x42e, 2);
+    p = F_15BBE(0x42e, ARENA_HIGH_STACK);
     cursor_ctl(CURSOR_SHOW);
     popup_show(p, 0x20, 10);
     F_19438(1);
@@ -315,7 +315,7 @@ void gargfx_draw_bolt(int n)
     flag = 0;
     gargfx_bolt_pos(&px, &ypos);
     cursor_ctl(CURSOR_HIDE_NOW);
-    saved = pict = F_15BBE(n, 2);
+    saved = pict = F_15BBE(n, ARENA_HIGH_STACK);
     ypos -= saved->height;
     height = move.h = move.fc = saved->height;
     px -= 2;
@@ -325,7 +325,7 @@ void gargfx_draw_bolt(int n)
     move.w = 6;
     (*am78a6t)(r_vid.f8, r_vid.back, &move);
     if (flag = px & ~r_vid.mask) {
-        saved = F_1934E(pict->width + 8, pict->height, pict->alt.p != 0, 2);
+        saved = F_1934E(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
         bitmap_shift_right(pict, flag, saved);
     }
     px = (px & r_vid.mask) + 0x60;
@@ -356,7 +356,7 @@ void gargfx_drop_bolt(void)
     x1 = xpos - 2;
     y1 = ypos;
     cursor_ctl(CURSOR_HIDE_NOW);
-    pict = F_15BBE(0x43f, 2);
+    pict = F_15BBE(0x43f, ARENA_HIGH_STACK);
     wide = 8;
     if ((rows = xpos & 7) < 2) {
         xpos -= 8;
@@ -408,8 +408,8 @@ static void near make_bolt_overlay(void)
             return;
         px = g_manifoldBoltPos[i * 2] - 2;
         py = g_manifoldBoltPos[i * 2 + 1];
-        picture = F_15BBE(what, 1);
-        g_boltOverlay = F_1934E(picture->width + 8, picture->height, picture->alt.p != 0, 2);
+        picture = F_15BBE(what, ARENA_LOW_STACK);
+        g_boltOverlay = F_1934E(picture->width + 8, picture->height, picture->alt.p != 0, ARENA_HIGH_STACK);
         bitmap_shift_right(picture, px & ~r_vid.mask, g_boltOverlay);
         marks_pop_low(1);
         u_70ac.w = g_boltOverlay->width;
@@ -442,10 +442,10 @@ void gargfx_draw_part(int n, int flag)
     gargfx_part_pos(&x, &ypos);
     if (g_partAnimate)
         cursor_ctl(CURSOR_HIDE_NOW);
-    saved = pict = F_15BBE(n, 2);
+    saved = pict = F_15BBE(n, ARENA_HIGH_STACK);
     w = saved->width;
     if (mask = x & ~r_vid.mask) {
-        saved = F_1934E(pict->width + 8, pict->height, pict->alt.p != 0, 2);
+        saved = F_1934E(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
         bitmap_shift_right(pict, mask, saved);
         w = saved->width;
     }
@@ -495,7 +495,7 @@ void gargfx_erase_part(int n, int flag)
     gargfx_part_pos(&px, &py);
     py -= 0x14;
     cursor_ctl(CURSOR_HIDE);
-    pict = F_15BBE(n, 2);
+    pict = F_15BBE(n, ARENA_HIGH_STACK);
     if (n != 0x434 && n != 0x435 && n != 0x436)
         py -= pict->height;
     move.sx = px;
@@ -555,7 +555,7 @@ void gargfx_draw_parts(struct Car *car)
     mode = hz82ae;
     g_partAnimate = 0;
     if (r_vid.f8 == 0)
-        r_vid.f8 = F_15BBE(0x42d, 1);
+        r_vid.f8 = F_15BBE(0x42d, ARENA_LOW_STACK);
     else
         disk_unpack_pic(0x42d, r_vid.f8);
     if (type = o_8290[0]) {

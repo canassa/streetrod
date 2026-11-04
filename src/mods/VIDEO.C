@@ -2,6 +2,7 @@
 #include <dos.h>
 #include "STRUCTS.H"
 #include "VIDEO.H"
+#include "ARENA.H"
 #include "BITMAP.H"
 #include "CARPIC.H"
 #include "CURSOR.H"
@@ -240,7 +241,7 @@ static void near anim_run(int n)
             g_cmd = &g_animScripts[g_cmd->a];
             goto next;
         case 8:
-            g_obj->img = F_15BBE(g_cmd->a, 2);
+            g_obj->img = F_15BBE(g_cmd->a, ARENA_HIGH_STACK);
             g_cmd++;
             continue;
         case 9:

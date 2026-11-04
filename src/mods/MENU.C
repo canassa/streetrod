@@ -333,7 +333,7 @@ int menu_modal(int id)
     int y1;
     int res;
 
-    bm1 = menu_grab(id, &x, &y1, 2);
+    bm1 = menu_grab(id, &x, &y1, ARENA_HIGH_STACK);
     res = menu_wait(id);
     popup_show(bm1, x, y1);
     F_19438(1);
@@ -367,7 +367,7 @@ int F_142CF(int a, int b, int *c, int *list, char *buf, char **d)
 
     if (*list == 0)
         return 0x3ea;
-    bm1 = menu_grab(a, &x, &y1, 2);
+    bm1 = menu_grab(a, &x, &y1, ARENA_HIGH_STACK);
     res = menu_list(a, b, c, list, buf, d);
     popup_show(bm1, x, y1);
     F_19438(1);

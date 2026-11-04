@@ -131,7 +131,7 @@ static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int co
     for (i = 1; i < n; i++)
         if (B[i]->width > maxw)
             maxw = B[i]->width;
-    bm1 = F_1934E(maxw, h, 0, 2);
+    bm1 = F_1934E(maxw, h, 0, ARENA_HIGH_STACK);
     pkt1.w = maxw;
     pkt1.h = h;
     pkt1.sy = H5;
@@ -164,7 +164,7 @@ void carpic_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, s
     y2 = y0;
     h = y1 - y2;
     flag = mode != 0;
-    start = (struct Bitmap far *)arena_alloc(0x30, 1);
+    start = (struct Bitmap far *)arena_alloc(0x30, ARENA_LOW_STACK);
     *start = *src;
     start->bits.w.off += h * size;
     start->height = y2;
@@ -172,14 +172,14 @@ void carpic_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, s
     if (r_vid.mode == -6) {
         if (g_backdropW == 0)
             g_backdropW = src->width;
-        *pa = F_1934E(g_backdropW, y2, flag, 1);
+        *pa = F_1934E(g_backdropW, y2, flag, ARENA_LOW_STACK);
         blt.w = g_backdropW;
         blt.h = y2;
         blt.sx = g_backdropX;
         blt.sy = blt.dx = blt.dy = 0;
         (*b_78a2)(start, *pa, &blt, 1);
     } else {
-        *pa = F_1934E(src->width, y2, flag, 1);
+        *pa = F_1934E(src->width, y2, flag, ARENA_LOW_STACK);
         bitmap_copy(start, *pa, 1);
     }
     switch (r_vid.mode) {
@@ -190,7 +190,7 @@ void carpic_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, s
         *pb = 0;
         break;
     default:
-        *pb = F_1934E(start->width, y2, 0, 1);
+        *pb = F_1934E(start->width, y2, 0, ARENA_LOW_STACK);
         if (g_scene == 6)
             bitmap_copy(start, *pb, 1);
         break;
@@ -198,7 +198,7 @@ void carpic_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, s
     *pr1 = 0;
     *pr2 = 0;
     if (flag) {
-        p2 = F_15BBE(mode, 2);
+        p2 = F_15BBE(mode, ARENA_HIGH_STACK);
         if (r_vid.mode == -6) {
             blt.sy = p2->height - y2;
             (*b_78a2)(p2, *pa, &blt, 2);
@@ -228,7 +228,7 @@ static void near build_pump_strip(int x, int y, int sx0, int top, struct Bitmap 
     int t;
 
     g_picNewHeader = 0;
-    tmp1 = F_1934E(0x10, 0x46, 1, 2);
+    tmp1 = F_1934E(0x10, 0x46, 1, ARENA_HIGH_STACK);
     disk_unpack_pic(id1, tmp1);
     save1 = tmp1->bits.p;
     tmp1->bits.p = 0;
@@ -275,7 +275,7 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
     m2 = &w_8df0[idx];
     p12 = &g7682n[idx];
     p69 = &ap818c[idx];
-    *out = F_15BBE(g7d86n[idx].f8, 1);
+    *out = F_15BBE(g7d86n[idx].f8, ARENA_LOW_STACK);
     ar826e = p69->b0;
     q_8270 = p69->b1;
     g_backGlassXState = p69->b2;
@@ -311,14 +311,14 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
         bitmap_draw_pic(*out, pp8->id, p12->b10 + pp8->dx, p12->b11 + pp8->dy, 0);
     }
     if (q) {
-        bm = F_15BBE(m_8272.m8280, 2);
+        bm = F_15BBE(m_8272.m8280, ARENA_HIGH_STACK);
         bitmap_underlay(bm, *out, p12->b2, p12->b3 - bm->height + row8 + 1);
         F_19438(1);
     }
     j5 = 1;
     for (j5 = 1; j5 < n; j5++)
         out[j5] = F_1934E((*out)->width + (r_vid.mode == -6 ? 0 : 8), (*out)->height,
-            r_vid.mode != -6, 1);
+            r_vid.mode != -6, ARENA_LOW_STACK);
     if (n > 1) {
         switch (r_vid.mode) {
         case -2:
@@ -340,7 +340,7 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
     }
     if (ids) {
         for (j5 = 0; j5 < n; j5++) {
-            bm = F_15BBE(ids[j5], 2);
+            bm = F_15BBE(ids[j5], ARENA_HIGH_STACK);
             h = out[j5]->height - bm->height;
             switch (r_vid.mode) {
             case -2:
@@ -360,7 +360,7 @@ void carpic_build(struct Bitmap far **out, int idx, int flags, int kk, int q, in
         }
     }
     if (w) {
-        bm2n = F_15BBE(0x49d, 2);
+        bm2n = F_15BBE(0x49d, ARENA_HIGH_STACK);
         bitmap_opaque_span(*out, &left, &right1);
         h = (*out)->height - bm2n->height;
         for (j5 = 0; j5 < n; j5++) {
@@ -440,15 +440,15 @@ again:
             marks_clear();
             if (g_scene == 3) {
                 disk_pic_size(0x449, &w2, &h2, &x2);
-                g_pumpWithNozzle = F_1934E(w2, h2, 0, 0);
-                g_pumpNoNozzle = F_1934E(w2, h2, 0, 0);
+                g_pumpWithNozzle = F_1934E(w2, h2, 0, ARENA_LOW_BASE);
+                g_pumpNoNozzle = F_1934E(w2, h2, 0, ARENA_LOW_BASE);
             }
             if (g_scene == 2 || g_scene == 6)
                 walker_save_bg();
         } else
             marks_release();
         if (!g_0294)
-            g_0294 = F_1934E(0x40, 0x19, 0, 0);
+            g_0294 = F_1934E(0x40, 0x19, 0, ARENA_LOW_BASE);
         carpic_build(bms6, idx, flags, kk, q, ids, 1, n2);
         if (r_vid.mode == -6 && kind != 3 && kind != 7 && kind != 8) {
             make_frames(bms6, n2, g_spriteBottomCut, hh8, tmpn);
@@ -490,7 +490,7 @@ again:
         }
         if (!((r_vid.mode == -2 || r_vid.mode == -6) && r_vid.mode != -6)) {
             if (kind == 3 || kind == 7 || kind == 8) {
-                bm48 = F_1934E(w1, h7 - g_spriteBottomCut, 0, 1);
+                bm48 = F_1934E(w1, h7 - g_spriteBottomCut, 0, ARENA_LOW_STACK);
                 if (kind != 7) {
                     blt.w = w1;
                     blt.h = h7 - g_spriteBottomCut;
@@ -551,7 +551,7 @@ again:
         g_lastCarRect = spr3->page->r;
     }
     if (g_scene == 3 && kind == 4) {
-        scratch = F_1934E(0x18, 7, 0, 2);
+        scratch = F_1934E(0x18, 7, 0, ARENA_HIGH_STACK);
         blt.w = 0x10;
         blt.h = scratch->height;
         blt.sx = ar826e - ac825et;

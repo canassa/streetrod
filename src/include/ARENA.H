@@ -4,6 +4,11 @@
 #define ARENA_H
 #include "STRUCTS.H"
 
+#define ARENA_LOW_BASE 0
+#define ARENA_LOW_STACK 1
+#define ARENA_HIGH_STACK 2
+#define ARENA_HIGH_BASE 3
+
 extern int bl78de;                                      /* DS:78DE */
 extern int g7b14o;                                      /* DS:7B14 */
 extern int g7d80q;                                      /* DS:7D80 */

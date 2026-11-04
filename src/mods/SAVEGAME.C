@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "STRUCTS.H"
 #include "SAVEGAME.H"
+#include "ARENA.H"
 #include "BITMAP.H"
 #include "CURSOR.H"
 #include "DASH.H"
@@ -509,7 +510,7 @@ int near savegame_menu(void)
     int x;
     int y;
 
-    p = menu_grab(0x1b, &x, &y, 2);
+    p = menu_grab(0x1b, &x, &y, ARENA_HIGH_STACK);
     row = menu_wait(0x1b);
     popup_show(p, x, y);
     F_19438(1);
