@@ -971,3 +971,16 @@ Append-only log of work on this project. Each session adds an entry at the botto
 ### What I did
 - src/include/PC.INC gives the assembler files the same names as PC.H for the same facts (interrupts, BIOS/DOS functions, BIOS data addresses, video segments, ports, register indices and bits), plus assembler-only facts (DOS get/set vector, keyboard interrupt, Hercules configuration port, extra CRTC/GC registers). 18 .ASM files `INCLUDE PC.INC`; MASM finds it like CL finds the headers, in `./sr build`, `./sr check` and the native MAKE build. Done by a Codex agent.
 - Result: every asm object's code bytes and fixups unchanged; `./sr build` IDENTICAL from an empty work dir, native MAKE IDENTICAL, `./sr check --all` 572/572, tests OK.
+
+## 2026-11-04 13:51 CET: Evidence-backed numeric modes
+
+### What I did
+- Surveyed numeric mode arguments and states in work/args/SURVEY.md; left scene, bet, sprite direction and undocumented video values numeric where the semantic evidence was incomplete.
+- Added 15 constants in CURSOR.H, ARENA.H, WALKER.H and MAIN.H: four cursor controls, four arena allocation modes, two carhop requests and five original video menu choices. Updated selectors and literal callers, including arena mode forwarding through bitmap_grab, menu_grab and F_15BBE. No symbols renamed, data tables changed or code comments added.
+- Fixed module-header macro validation in tools/sr/fileheaders.py, preserving duplicate-name, missing-owner and missing-function/data errors; expanded the tests and updated the sr-cli skill and CLAUDE.md.
+- Kept each logical concern in its own commit and ran the gates after every batch. Merged main (already up to date), then reran all gates: 572/572 functions match, Packed EXE vs orig/SR.EXE: IDENTICAL, headers and DGROUP clean, 45 unit tests pass, DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL.
+
+### What I learned
+- Module header constants need no duplicate C definition; the checker already used them for include ownership but mistakenly required that duplicate. The rule is now documented in CLAUDE.md and .claude/skills/sr-cli/SKILL.md and covered by tests/test_fileheaders.py.
+- Allocation modes 0/3 advance low/high persistent boundaries, while 1/2 push low/high markers. MARKS.C's release/pop behavior confirms their lifetime. The evidence table remains in work/args/SURVEY.md.
+- Original video menu strings support names for choices 1 through 5; internal choice 6 and signed driver encodings need a separate audit.
