@@ -646,5 +646,5 @@ Changing an unused long to an unused far pointer or array also matches and
 recovers no meaning. Ordinary dead assignments retain code; a color
 save/restore fails, and even a constant-false Colors copy leaves SI/DI saves
 and restores. No tested natural, evidence-backed replacement was found.
-See [the investigation matrix](../plans/investigations/prov-frames.md) for
+See `plans/investigations/prov-frames.md` for
 source context, passing alternatives, rejected hypotheses and final gates.
