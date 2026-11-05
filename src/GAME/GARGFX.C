@@ -263,7 +263,7 @@ void gx_bolt_pos(int *px, int *py)
         break;
     case 1:
         item = g_partsPics[1];
-        slot = (item == PIC_MANIFOLD_TWO_BARREL_V6 || item == PIC_MANIFOLD_DUAL_QUAD) ? 0 : 2;
+        slot = (item == PIC_MANIFOLD_TWO_BARREL_V6 || item == PIC_MANIFOLD_TRI_POWER) ? 0 : 2;
         if (g_slotSelec.subslot == 1)
             slot++;
         *px = g_manifoldBoltPos[slot * 2];
@@ -370,7 +370,7 @@ static void near make_bolt_overlay(void)
     int py;
     struct Bitmap far *picture;
 
-    if (g_partsPics[1] == PIC_MANIFOLD_DUAL_QUAD) {
+    if (g_partsPics[1] == PIC_MANIFOLD_TRI_POWER) {
         kind = g_partSlotMap[g_slotSelec.slot];
         if (kind == 3)
             return;

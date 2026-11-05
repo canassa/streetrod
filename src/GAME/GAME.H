@@ -81,12 +81,13 @@ enum TireVariant {
     TIRES_RACING_SLICKS = 2
 };
 
+/** @brief Intake layouts by carburetor count and size. */
 enum ManifoldVariant {
-    MANIFOLD_TWO_BARREL = 0,
-    MANIFOLD_FOUR_BARREL = 1,
-    MANIFOLD_DUAL_QUAD = 2,
-    MANIFOLD_TRI_POWER = 3,
-    MANIFOLD_RACING = 4
+    MANIFOLD_TWO_BARREL = 0,  /**< One 2-barrel carb. */
+    MANIFOLD_FOUR_BARREL = 1, /**< One 4-barrel carb. */
+    MANIFOLD_TRI_POWER = 2,   /**< Three 2-barrel carbs (Tri-Power). */
+    MANIFOLD_DUAL_QUAD = 3,   /**< Two 4-barrel carbs (Dual-Quad). */
+    MANIFOLD_RACING = 4       /**< Two 4-barrel carbs (racing). */
 };
 
 enum CarburetorVariant {

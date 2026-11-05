@@ -49,7 +49,7 @@ signedness, order, widths, or representation of any member.
 | 4..5 | (word >> 4) & 3 | Existing TireVariant (0..2). Also chooses rival/advert tire sprites (`BOBS.C:365`, `GAME.C:533`). |
 | 6..7 | (word >> 6) & 3 | Existing TransmissionVariant (0..3). Three manufacturer columns per variant except the extra universal four-speed entry, skipped by `(variant == 3)` (`GAME.C:333`, `PERF.C:113,157`). |
 | 8..10 | (word >> 8) & 7 | Existing EngineVariant (0..2). Selects stock engine, large-engine drawing overlay (`GAME.C:532`, `SAVEGAME.C:74`), and betting-rating column (`BOBS.C:467-470`). |
-| 11..13 | (word >> 11) & 7 | Existing ManifoldVariant encoding, resource uses 0,1,3,4. Multiplied by three then manufacturer column is added. The existing manifold naming discrepancy is recorded below. |
+| 11..13 | (word >> 11) & 7 | Existing ManifoldVariant encoding, resource uses 0,1,3,4. Multiplied by three then manufacturer column is added. Variant 2 is Tri-Power; variant 3 is Dual-Quad (see misnames.md). |
 | 14..15 | (word >> 14) & 3 | Existing CarburetorVariant (0..2); stock resource uses 0..2. The manifold selects how many carburetors to allocate through g_nCarb. |
 
 No new duplicate equipment enums are needed: GAME.H already defines all five
@@ -111,17 +111,15 @@ King's shorter name. Retain those resource strings unchanged.
 - No historical real-world horsepower or engine-liter interpretation is implied
   by rank. It is an ordinal game tuning scale with several separate consumers.
 - There are no unresolved questions about the six fields' representations or
-  readers/writers. Equipment variant labels carry the pre-existing issue below.
+  readers/writers. The equipment variant naming issues were resolved in misnames.md.
 
 ## Other misleading identifiers (outside the rename scope)
 
-- `SPEC_POLICE` (`BOBS.H:39`) names index 25, but that HOT_DATA record has the
-  King's Corvette body picture 1201 and the King's racer uses this index. It
-  is not a police-car specification. Leave the identifier unchanged here.
-- `MANIFOLD_DUAL_QUAD` / `MANIFOLD_TRI_POWER` (`GAME.H`) appear reversed against
-  catalog text: INPUTDAT.ASM assigns the former to the three TRI_POWER
-  descriptions, and the latter to the DUAL_QUAD descriptions (entries 31..36).
-  Investigating those variant names is separate from this record's bit layout.
+- The spec-index and manifold naming issues have been resolved: `SPEC_KING`
+  names the King's Corvette spec; `MANIFOLD_TRI_POWER` is variant 2 and
+  `MANIFOLD_DUAL_QUAD` variant 3. Picture 1079 is Tri-Power and 1083 is
+  Dual-Quad. See [misnames.md](misnames.md) for independently checked evidence,
+  including the police code's reuse of the King's performance specification.
 - `item` in build_rival_pool (`BOBS.C:276,281`) receives a specification pointer
   that is never read. No deletion or local rename is needed for this task.
 

@@ -320,7 +320,7 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
         row8 = j5 / g_lastPic->pitch;
     } else
         row8 = 0;
-    if ((flags & 8) && idx != 0x19)
+    if ((flags & 8) && idx != SPEC_KING)
         bm_draw_pic(*out, m2->engineOverlayPic, p12->b5, p12->b6, 1);
     blt.w = g_stickerBg->width;
     blt.h = g_stickerBg->height;

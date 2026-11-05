@@ -1349,13 +1349,13 @@ static void near cop_appears(void)
 
     old = g_oppEngState.speed;
     g_selectedRacerPointer = &g_racerRecordsArray[RACER_COP_ENTRY];
-    pf_drivetrain_spec(SPEC_POLICE, &g_oppEngState);
+    pf_drivetrain_spec(SPEC_KING, &g_oppEngState);
     g_shiftPenalty = g_selectedRacerPointer->earlyShiftPenalty;
     fit_gear(old, &g_oppEngState);
     cr_rival_paint(PAINT_WHITE);
     for (n1 = 0; n1 < 12; n1++)
         g_spritesOpp[n1] = g_policeFramesTable[n1];
-    g_rivalPace.topSpeed = pf_vmax(SPEC_POLICE);
+    g_rivalPace.topSpeed = pf_vmax(SPEC_KING);
     g_rivalPace.slowSpeed = (int)(g_rivalPace.topSpeed * 0.6);
     g_rivalPace.fastSpeed = (int)(g_rivalPace.topSpeed * 0.8);
 }

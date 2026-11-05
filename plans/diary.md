@@ -2713,3 +2713,24 @@ The conflicting lines contain independent substitutions: keep named appearance m
   set. [Model.md](investigations/Model.md) contains the full resource mapping.
 - The unused byte remains unexplained loaded storage; preserve its declaration
   and the signed-byte selector rather than widening either to an enum.
+
+## 2026-11-05 17:49 CET: Correct manifold and King car-spec names
+
+### What I did
+- Verified the catalog text, carb fit/count and performance tables, decoded
+  manifold pictures, and the King's HOT_DATA racer/spec records before renaming.
+- Swapped Tri-Power/Dual-Quad variant and picture names across C, ASM and INC;
+  documented ManifoldVariant's carb counts and sizes. Renamed SPEC_POLICE to
+  SPEC_KING at every use, including CARPIC's raw spec comparison, and corrected
+  the resolved issues in Spec.md.
+- Recorded evidence and the replacement inventory in
+  [misnames.md](investigations/misnames.md).
+- Headers, format, Doxygen, all 572 function checks, DGROUP and 106 unit tests
+  pass; clean packed build and native DOS MAKE both reproduce orig/SR.EXE.
+
+### What I learned
+- The police spawn borrows the King's Corvette performance specification but
+  supplies separate police sprites; naming the specification SPEC_KING preserves
+  that reuse. See [misnames.md](investigations/misnames.md) for the evidence.
+- Variant 2 and picture 1079 are Tri-Power (three 2-barrel carbs); variant 3 and
+  picture 1083 are Dual-Quad (two 4-barrel carbs).

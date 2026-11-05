@@ -250,7 +250,7 @@ static int near king_chance(void)
     enum KingStatus kind;
     int v;
 
-    if (g_opponentSpecIndex == SPEC_POLICE)
+    if (g_opponentSpecIndex == SPEC_KING)
         return 0;
     kind = king_status();
     if (kind) {

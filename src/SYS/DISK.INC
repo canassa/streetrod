@@ -1,10 +1,10 @@
 PIC_ENGINE_V6                              EQU 1076
 PIC_ENGINE_V8_SMALL                        EQU 1077
 PIC_ENGINE_V8_LARGE                        EQU 1078
-PIC_MANIFOLD_DUAL_QUAD                     EQU 1079
+PIC_MANIFOLD_TRI_POWER                     EQU 1079
 PIC_MANIFOLD_TWO_BARREL_V8                 EQU 1081
 PIC_MANIFOLD_FOUR_BARREL                   EQU 1082
-PIC_MANIFOLD_TRI_POWER                     EQU 1083
+PIC_MANIFOLD_DUAL_QUAD                     EQU 1083
 PIC_CARB_TWO_BARREL                        EQU 1084
 PIC_CARB_FOUR_BARREL                       EQU 1085
 PIC_CARB_RACING                            EQU 1086
