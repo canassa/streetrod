@@ -2490,3 +2490,16 @@ The conflicting lines contain independent substitutions: keep named appearance m
 
 - The investigator wrote a contract essay; the user wants documentation a reader can scan.
   Detail belongs in plans/investigations/, not in the doc block.
+
+## 2026-11-05: Note fixed call-site values
+
+### What I did
+
+- animate_rival_car's docs again say which parameters every caller passes the same value
+  (showPortrait always 1, carBottom always 163, useGasMask always 0), in a few words each.
+- doxygen-c skill: when every call site passes the same value, say so briefly.
+
+### What I learned
+
+- The user finds "always 163" valuable: it tells a reader the parameter is effectively
+  fixed. Brevity means no essays, not dropping that.

@@ -46,9 +46,11 @@ that needs byte gates, not a comment-only edit.
 **Every word must pay to be there.** Say what the entity does for the game, and stop.
 Don't restate what a type already documents: a parameter of type `enum Foo` needs no
 list of Foo's values (the enum carries them; Doxygen links the type). Don't document
-callers' current arguments ("all callers pass 163"), steps a reader sees in the code,
+steps a reader sees in the code,
 or preconditions the brief already implies. One short sentence per `@param`; add a
 detail only when a reader would otherwise misuse the value (units, null, odd range).
+When every call site passes the same value, say so in a few words ("always 163"):
+it tells the reader the parameter is effectively fixed.
 
 1. Every documented `.H`/`.C` declaring file-level items needs a `@file` block.
    Use the real uppercase filename or bare `@file`. Without this, file-scope
