@@ -2713,3 +2713,17 @@ The conflicting lines contain independent substitutions: keep named appearance m
   set. [Model.md](investigations/Model.md) contains the full resource mapping.
 - The unused byte remains unexplained loaded storage; preserve its declaration
   and the signed-byte selector rather than widening either to an enum.
+
+## 2026-11-05 18:02 CET: fastest opening Street Rod build
+
+### What I did
+
+- Investigated the normal starting state, fixed HOT_DATA ad chain, complete part catalog, fit matrices, resale, garage actions, drivetrain calculation and timer/render race physics. Wrote [fastest-start.md](investigations/fastest-start.md), with source lines, decoded data, cash-flow recipes and action-time costs. No source changes.
+- Created the scratch calculation in `work/fastcar.py` and enumerated 63,720 compatible configurations (63,360 ordinary-car states), including ordered mixed-carb combinations. Checked 929 direct opening configurations within $750 using minimum resale, and searched discrete ISR upshift trajectories for acceleration. Verified counts, winner, costs, time sums and tick-to-second conversions; did not claim emulator-measured race times.
+
+### What I learned
+
+- Starting money is $750 with an empty garage; $400 is the broke threshold/cheapest car. The classifieds are a permanent chain of 25 ordinary specs, plus 40 advertised parts. Daily headline art is random; inventory/prices are not.
+- The $475 Styleline wins the opening comparisons: a 327/three-speed/single-four-barrel/bumpers build costs $750 net and has the strongest modeled launch acceleration. Keeping its 283 and using Dual-Quad, three-speed and all body mods costs $705–715, rates 119.2555 mph and can show 121 because ratios truncate. A $745 brand-name-tire variant trades some speed for lateral grip.
+- Variant 2 is catalog Tri-Power (three two-barrels, V6 fit); variant 3 is Dual-Quad (two four-barrels, V8 fit), despite swapped enum names. Only the first carb scores. Missing body-mod pictures grant automatic bonuses. Model rank is a score, not weight; car value is resale accounting.
+- Race acceleration is timer-driven but distance advances per rendered frame. Performance tables cache engine wear/timing until rebuilt. Spec helpers apply the -128 carb-wear sentinel to the engine and leave appearance uninitialized. Negative stripped-shell values expose unsigned sale arithmetic, documented as a source-level exploit candidate rather than a runtime-tested money route. The King ends progression; his zero-price record is not an opening purchase.
