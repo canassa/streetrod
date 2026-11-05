@@ -307,7 +307,7 @@ char far *me_alloc(unsigned n, int fatal)
 }
 
 
-struct Bitmap far *me_new_bitmap(int w, int h, int flags, int c, struct Bitmap far *mem)
+struct Bitmap far *me_new_bitmap(int w, int h, int flags, enum BitmapKind c, struct Bitmap far *mem)
 {
     int pitch;
     int extra6;
@@ -335,24 +335,24 @@ struct Bitmap far *me_new_bitmap(int w, int h, int flags, int c, struct Bitmap f
     }
     if (flags & 2) {
         if (bm->bits.p) {
-            bm->alt.p = bm->bits.p;
+            bm->mask.p = bm->bits.p;
             bm->bits.p = 0;
         } else {
-            bm->alt.p = (char far *)bm + BITMAP_HEADER_BYTES;
+            bm->mask.p = (char far *)bm + BITMAP_HEADER_BYTES;
         }
     } else {
-        bm->alt.p = flags ? bm->bits.p + planesize : 0;
+        bm->mask.p = flags ? bm->bits.p + planesize : 0;
     }
-    bm->planesize = planesize;
+    bm->pixelBytes = planesize;
     bm->width = w;
     bm->height = h;
     bm->pitch = pitch;
-    bm->flags = c;
+    bm->kind = c;
     return bm;
 }
 
 
-struct Bitmap far *me_wrap_bitmap(char far *bits, char far *alt, int w, int h, int flags)
+struct Bitmap far *me_wrap_bitmap(char far *bits, char far *alt, int w, int h, enum BitmapKind flags)
 {
     int pitch;
     int size;
@@ -364,17 +364,17 @@ struct Bitmap far *me_wrap_bitmap(char far *bits, char far *alt, int w, int h, i
     if (bm == 0)
         return 0;
     bm->bits.p = bits;
-    bm->alt.p = alt;
-    bm->planesize = size;
+    bm->mask.p = alt;
+    bm->pixelBytes = size;
     bm->width = w;
     bm->height = h;
     bm->pitch = pitch;
-    bm->flags = flags;
+    bm->kind = flags;
     return bm;
 }
 
 
-void me_set_bitmap(struct Bitmap far *bm, char far *bits, char far *alt, int w, int h, int flags)
+void me_set_bitmap(struct Bitmap far *bm, char far *bits, char far *alt, int w, int h, enum BitmapKind flags)
 {
     int pitch;
     int size;
@@ -382,12 +382,12 @@ void me_set_bitmap(struct Bitmap far *bm, char far *bits, char far *alt, int w, 
     pitch = ((w - 1) >> r_vid.shift) + 1;
     size = pitch * h * r_vid.planes;
     bm->bits.p = bits;
-    bm->alt.p = alt;
-    bm->planesize = size;
+    bm->mask.p = alt;
+    bm->pixelBytes = size;
     bm->width = w;
     bm->height = h;
     bm->pitch = pitch;
-    bm->flags = flags;
+    bm->kind = flags;
 }
 
 

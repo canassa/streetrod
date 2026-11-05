@@ -48,8 +48,8 @@ void ta_draw_text(struct Bitmap far *bm, int x, int y, int glyph)
         m3 = (n2 >> 1) - ph;
         if (y + (h = 8) > bm->height)
             h = bm->height - y;
-        tt_copy(buf3, bm->bits.w.seg, (bm->planesize >> 2) * (y & 3) + (y >> 2) * 160 + bm->bits.w.off + (x >> 1), y, h,
-                m3, ph, n2);
+        tt_copy(buf3, bm->bits.w.seg, (bm->pixelBytes >> 2) * (y & 3) + (y >> 2) * 160 + bm->bits.w.off + (x >> 1), y,
+                h, m3, ph, n2);
     }
 }
 
@@ -94,7 +94,7 @@ void ta_recolor_rect(struct Bitmap far *bm, int from, int to, int x1, int y1, in
         mid++;
     pbk = VIDEO_BANK_BYTES - ((xoddl != 0) + mid);
     pa2 = 0xa0a0 - ((xoddl != 0) + mid);
-    pl = (bm->planesize >> 2) * (y1 & 3) + bm->pitch * (y1 >> 2) + bm->bits.p + (x1 >> 1);
+    pl = (bm->pixelBytes >> 2) * (y1 & 3) + bm->pitch * (y1 >> 2) + bm->bits.p + (x1 >> 1);
     for (row3 = y1; row3 < y2; row3++) {
         if (xoddl) {
             if ((*pl & 0xf) == lo1) {

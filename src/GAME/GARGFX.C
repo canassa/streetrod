@@ -299,7 +299,7 @@ void gx_draw_bolt(int n)
     move.w = 6;
     (*g_videoOps.shiftBlit)(r_vid.hoodBg, r_vid.back, &move);
     if (flag = px & ~r_vid.mask) {
-        saved = ar_bm(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
+        saved = ar_bm(pict->width + 8, pict->height, pict->mask.p != 0, ARENA_HIGH_STACK);
         bm_shift_right(pict, flag, saved);
     }
     px = (px & r_vid.mask) + 0x60;
@@ -380,7 +380,7 @@ static void near make_bolt_overlay(void)
         px = g_manifoldBoltPos[i * 2] - 2;
         py = g_manifoldBoltPos[i * 2 + 1];
         picture = di_bm(what, ARENA_LOW_STACK);
-        g_boltOverlay = ar_bm(picture->width + 8, picture->height, picture->alt.p != 0, ARENA_HIGH_STACK);
+        g_boltOverlay = ar_bm(picture->width + 8, picture->height, picture->mask.p != 0, ARENA_HIGH_STACK);
         bm_shift_right(picture, px & ~r_vid.mask, g_boltOverlay);
         ma_pop_low(1);
         g_cpyBoltPatchRecord.w = g_boltOverlay->width;
@@ -414,7 +414,7 @@ void gx_draw_part(int n, int flag)
     saved = pict = di_bm(n, ARENA_HIGH_STACK);
     w = saved->width;
     if (mask = x & ~r_vid.mask) {
-        saved = ar_bm(pict->width + 8, pict->height, pict->alt.p != 0, ARENA_HIGH_STACK);
+        saved = ar_bm(pict->width + 8, pict->height, pict->mask.p != 0, ARENA_HIGH_STACK);
         bm_shift_right(pict, mask, saved);
         w = saved->width;
     }

@@ -42,10 +42,11 @@ void cu_init(void)
         size += (CURSOR_WIDTH >> r_vid.shift) << 4;
     mem = (struct Bitmap far *)me_alloc(size, 1);
     mem->bits.p = (char far *)mem + BITMAP_HEADER_BYTES;
-    img = me_new_bitmap(CURSOR_WIDTH << r_vid.shift, CURSOR_SHEET_HEIGHT, 1, -1, mem);
-    g_cursor2.save = (struct Bitmap far *)(img->alt.p + bytes);
+    img = me_new_bitmap(CURSOR_WIDTH << r_vid.shift, CURSOR_SHEET_HEIGHT, 1, BITMAP_WORK, mem);
+    g_cursor2.save = (struct Bitmap far *)(img->mask.p + bytes);
     me_set_bitmap(g_cursor2.save, r_vid.mode == VID_EGA ? CURSOR_EGA_SAVE : (char far *)(g_cursor2.save + 1), 0L,
-                  (CURSOR_WIDTH >> r_vid.shift) << r_vid.shift, CURSOR_HEIGHT, r_vid.mode == VID_EGA ? VID_EGA : -1);
+                  (CURSOR_WIDTH >> r_vid.shift) << r_vid.shift, CURSOR_HEIGHT,
+                  r_vid.mode == VID_EGA ? VID_EGA : BITMAP_WORK);
     memset(&g_cursor2.clip, 0, 12);
     g_cursor2.state = CURSOR_HIDDEN;
     pict = di_bm(PIC_CURSORS, ARENA_HIGH_STACK);
@@ -64,10 +65,10 @@ void cu_init(void)
     }
     ma_clear();
     g_cursor2.shape = img->bits.p;
-    g_cursor2.mask = img->alt.p;
+    g_cursor2.mask = img->mask.p;
     if (r_vid.mode == VID_EGA) {
         fp = (unsigned far *)g_cursor2.mask;
-        step = img->planesize >> 3;
+        step = img->pixelBytes >> 3;
         while (step--) {
             *fp = ~*fp;
             fp++;

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "SYS.H"
+#include "BITMAP.H"
 #include "BOBS.H"
 #include "CARPIC.H"
 #include "CURSOR.H"

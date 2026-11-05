@@ -109,7 +109,7 @@ void vi_init(struct Bitmap far *front, struct Bitmap far *back)
     r_vid.back = back;
     r_vid.hoodBg = 0;
     r_vid.copyToFront = 1;
-    switch (r_vid.mode = front->flags) {
+    switch (r_vid.mode = front->kind) {
     case VID_EGA:
         r_vid.planes = 4;
         r_vid.shift = 3;
@@ -127,7 +127,7 @@ void vi_init(struct Bitmap far *front, struct Bitmap far *back)
         r_vid.bpp = 2;
         r_vid.mask = -4;
         bustyle = &g_style4;
-        r_vid.front->flags = VID_CGA;
+        r_vid.front->kind = VID_CGA;
         break;
     case VID_TANDY:
         r_vid.planes = 1;

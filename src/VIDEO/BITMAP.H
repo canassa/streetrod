@@ -1,8 +1,27 @@
-/* BITMAP.H - declarations of what BITMAP.C defines. */
+/**
+ * @file BITMAP.H
+ * @brief Bitmap storage and rectangle operations.
+ */
 
 #ifndef BITMAP_H
 #define BITMAP_H
+/** Header allocation size, including alignment. */
 #define BITMAP_HEADER_BYTES 0x30
+
+/**
+ * @brief Bitmap storage kind used by the video drivers.
+ *
+ * Work bitmaps and decoded pictures use the active driver's pixel format.
+ * Display pages use hardware planes or interleaved row banks.
+ */
+enum BitmapKind {
+    BITMAP_WORK = -1,   /**< Linear work bitmap. */
+    BITMAP_PICTURE = 1, /**< Linear decoded picture. */
+    VID_EGA = -2,       /**< EGA page with hardware-selected color planes. */
+    VID_CGA = -3,       /**< CGA page with two interleaved row banks. */
+    VID_HERCULES = -4,  /**< Hercules display, drawn through the CGA driver. */
+    VID_TANDY = -6      /**< Tandy page with four interleaved row banks. */
+};
 
 
 /* blit request handed to the g_videoOps hooks (20 bytes). The first six ints are the same as
@@ -28,15 +47,23 @@ union FarPtr {
     } w;
 };
 
+/**
+ * @brief Pixel rectangle and optional transparency mask.
+ *
+ * Buffers can belong to the bitmap's allocation or be shared external views.
+ * Linear pixel data holds consecutive rows and, on EGA, consecutive planes.
+ */
 struct Bitmap {
-    int width;
-    int height;
-    unsigned planesize;
-    char unused[0x1e];
-    union FarPtr bits;
-    union FarPtr alt;
-    int pitch;
-    signed char flags;
+    int width;  /**< Width in pixels. */
+    int height; /**< Height in pixel rows. */
+    /** Pixel span in bytes; fixed EGA pages store one addressed plane's span. */
+    unsigned pixelBytes;
+    char unused[0x1e]; /**< Reserved bytes. */
+    union FarPtr bits; /**< Color data, or zero for a mask-only image. */
+    /** Optional transparency mask; sole data buffer for a mask-only image. */
+    union FarPtr mask;
+    int pitch;        /**< Bytes per pixel row in one plane or row bank. */
+    signed char kind; /**< Storage selector from @ref BitmapKind. */
 };
 
 struct Rect {

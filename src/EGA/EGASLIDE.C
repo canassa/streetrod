@@ -64,8 +64,8 @@ void ev_sprite(int top, int bottom, int x, int y0, int y1, struct Bitmap far *bm
     }
     n = (n >> 1) + 1;
     row = r_vid.back->bits.p + y0 * bpitch + x;
-    mk_make_mask(bm->bits.p, bm->alt.p, bm->planesize);
-    abase = bm->alt;
+    mk_make_mask(bm->bits.p, bm->mask.p, bm->pixelBytes);
+    abase = bm->mask;
     eb_latch_pack(dst2k, pitch, bottom - top + 1, scratch, bpitch);
     for (i = 0, y = y0; i < n; i++, y += stepl, row += stridem) {
         ea_to_page(scratch, pitch, bottom - top + 1, dst2k, pitch);

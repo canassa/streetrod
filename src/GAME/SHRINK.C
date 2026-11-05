@@ -55,9 +55,9 @@ static struct Bitmap far *near alloc_shrunk(struct Bitmap far *p, unsigned char 
             rows6++;
         m2 >>= 1;
     }
-    q = ar_bm(bytes, rows6, p->alt.p != 0, ARENA_LOW_STACK);
-    da_fmemset(q->bits.p, 0, q->planesize);
-    da_fmemset(q->alt.p, 0xff, q->planesize / (unsigned)r_vid.planes);
+    q = ar_bm(bytes, rows6, p->mask.p != 0, ARENA_LOW_STACK);
+    da_fmemset(q->bits.p, 0, q->pixelBytes);
+    da_fmemset(q->mask.p, 0xff, q->pixelBytes / (unsigned)r_vid.planes);
     return q;
 }
 
@@ -130,8 +130,8 @@ struct Bitmap far *sr_ega(struct Bitmap far *p, unsigned char a, unsigned char b
                 m = 0x80;
         }
     }
-    if (p->alt.p)
-        mk_make_mask(q->bits.p, q->alt.p, q->planesize);
+    if (p->mask.p)
+        mk_make_mask(q->bits.p, q->mask.p, q->pixelBytes);
     return q;
 }
 
@@ -173,11 +173,11 @@ struct Bitmap far *sr_cga(struct Bitmap far *p, unsigned char a, unsigned char c
 
     q = alloc_shrunk(p, a, c);
     sp = p->bits.p;
-    ap8 = p->alt.p;
+    ap8 = p->mask.p;
     shn = p->height;
     spitchn = p->pitch;
     dpl = q->bits.p;
-    ap26 = q->alt.p;
+    ap26 = q->mask.p;
     ml = 0x80;
     expand_mask(c, &pa8, &pb1);
     for (y = 0; y < shn; y++) {
@@ -282,6 +282,6 @@ struct Bitmap far *sr_tandy(struct Bitmap far *p, unsigned char a, unsigned char
         if (ml == 0)
             ml = 0x80;
     }
-    tp_make_mask(q->bits.p, q->alt.p, q->planesize);
+    tp_make_mask(q->bits.p, q->mask.p, q->pixelBytes);
     return q;
 }

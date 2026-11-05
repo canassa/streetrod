@@ -163,7 +163,7 @@ void ex_blit(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r)
     b = bm2->bits.p + bm2->pitch * r->dy + r->dx / 8;
     p = (r->sx + r->w - 1) / 8 - r->sx / 8 + 1;
     f = r->h;
-    d = bm1->planesize >> 2;
+    d = bm1->pixelBytes >> 2;
     GCREG(GC_MODE, GC_WRITE_MODE0);
     j = r->dx & 7;
     h = j - (r->sx & 7);

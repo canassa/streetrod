@@ -90,6 +90,6 @@ struct Bitmap far *ar_bm(int w, int h, int flags, enum ArenaMode mode)
         total += size * r_vid.planes;
     bm = mem = (struct Bitmap far *)ar_alloc(total, mode);
     bm->bits.p = (char far *)mem + BITMAP_HEADER_BYTES;
-    me_new_bitmap(w, h, flags, -1, bm);
+    me_new_bitmap(w, h, flags, BITMAP_WORK, bm);
     return bm;
 }

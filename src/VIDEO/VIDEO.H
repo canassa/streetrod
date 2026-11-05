@@ -134,7 +134,7 @@ struct Hooks {
     void(far *fillBelow)(int, int);
 };
 
-/* Display state set by vi_init; mode follows front->flags and geometry depends on the mode. */
+/* Display state set by vi_init; mode follows front->kind and geometry depends on the mode. */
 struct Video {
     struct Bitmap far *front;
     struct Bitmap far *back;

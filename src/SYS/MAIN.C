@@ -186,34 +186,34 @@ static void near init_screens(enum VideoChoice mode)
         eg_install();
         return;
     case VIDEO_CHOICE_TANDY:
-        r_vid.mode = g_screens[0].flags = VID_TANDY;
+        r_vid.mode = g_screens[0].kind = VID_TANDY;
         ta_install();
         g_screens[0].bits.p = r_vid.mode == VID_HERCULES ? MONO_VRAM : CGA_VRAM;
-        g_screens[0].planesize = g_screens[1].planesize = g_screens[2].planesize = TANDY_PAGE_BYTES;
+        g_screens[0].pixelBytes = g_screens[1].pixelBytes = g_screens[2].pixelBytes = TANDY_PAGE_BYTES;
         g_screens[0].pitch = g_screens[1].pitch = g_screens[2].pitch = TANDY_PITCH;
-        g_screens[1].flags = g_screens[2].flags = VID_TANDY;
+        g_screens[1].kind = g_screens[2].kind = VID_TANDY;
         g_screens[1].bits.p = TANDY_SCREEN1_BITS;
         g_screens[2].bits.p = me_alloc(TANDY_PAGE_BYTES, 1);
         da_fmemset(g_screens[1].bits.p, 0, TANDY_PAGE_BYTES);
         da_fmemset(g_screens[2].bits.p, 0, TANDY_PAGE_BYTES);
         return;
     case VIDEO_CHOICE_HERCULES:
-        g_screens[0].flags = VID_HERCULES;
+        g_screens[0].kind = VID_HERCULES;
         r_vid.mode = VID_HERCULES;
         break;
     case VIDEO_CHOICE_CGA:
-        g_screens[0].flags = VID_CGA;
+        g_screens[0].kind = VID_CGA;
         break;
     case VIDEO_CHOICE_CGA_ON_EGA:
-        g_screens[0].flags = VID_CGA;
+        g_screens[0].kind = VID_CGA;
         SET_EQUIP_VIDEO(EQUIP_VIDEO_COLOR80);
         break;
     }
     cg_install();
     g_screens[0].bits.p = r_vid.mode == VID_HERCULES ? MONO_VRAM : CGA_VRAM;
-    g_screens[0].planesize = g_screens[1].planesize = CGA_PAGE_BYTES;
+    g_screens[0].pixelBytes = g_screens[1].pixelBytes = CGA_PAGE_BYTES;
     g_screens[0].pitch = g_screens[1].pitch = CGA_PITCH;
-    g_screens[1].flags = VID_CGA;
+    g_screens[1].kind = VID_CGA;
     g_screens[1].bits.p = me_alloc(CGA_PAGE_BYTES, 1);
     da_fmemset(g_screens[1].bits.p, 0, CGA_PAGE_BYTES);
     g_screens[2].bits.p = me_alloc(CGA_PAGE_BYTES, 1);
@@ -346,7 +346,7 @@ int main(int argc, char **argv)
     so_init();
     da_set_view(DASH_VIEW_SAVE);
     if (r_vid.mode == VID_CGA && g_egaCard)
-        g_bufBackgroundDashPtr = me_new_bitmap(SCREEN_WIDTH, DASH_HEIGHT, 0, -1, 0);
+        g_bufBackgroundDashPtr = me_new_bitmap(SCREEN_WIDTH, DASH_HEIGHT, 0, BITMAP_WORK, 0);
     g_imageBufferPointer = me_alloc(r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY ? 16000 : 18000, 1);
     a = di_load_list(g_titlePics, 0);
     if (a == 3) {

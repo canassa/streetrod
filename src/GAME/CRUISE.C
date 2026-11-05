@@ -1,4 +1,5 @@
 #include "CRUISE.H"
+#include "BITMAP.H"
 #include "CARPIC.H"
 #include "CURSOR.H"
 #include "DASH.H"
