@@ -2827,3 +2827,16 @@ The conflicting lines contain independent substitutions: keep named appearance m
 - The $475 Styleline wins the opening comparisons: a 327/three-speed/single-four-barrel/bumpers build costs $750 net and has the strongest modeled launch acceleration. Keeping its 283 and using Dual-Quad, three-speed and all body mods costs $705–715, rates 119.2555 mph and can show 121 because ratios truncate. A $745 brand-name-tire variant trades some speed for lateral grip.
 - Variant 2 is catalog Tri-Power (three two-barrels, V6 fit); variant 3 is Dual-Quad (two four-barrels, V8 fit), despite swapped enum names. Only the first carb scores. Missing body-mod pictures grant automatic bonuses. Model rank is a score, not weight; car value is resale accounting.
 - Race acceleration is timer-driven but distance advances per rendered frame. Performance tables cache engine wear/timing until rebuilt. Spec helpers apply the -128 carb-wear sentinel to the engine and leave appearance uninitialized. Negative stripped-shell values expose unsigned sale arithmetic, documented as a source-level exploit candidate rather than a runtime-tested money route. The King ends progression; his zero-price record is not an opening purchase.
+## 2026-11-05 18:03 CET: Investigate Eng driving state
+
+### What I did
+
+- Investigated every member and consumer of Eng; recorded storage, construction, persistence, per-member evidence, remaining unknowns and out-of-scope misleading identifiers in [Eng.md](investigations/Eng.md).
+- Renamed the type to DrivingState and clarified tireFailureRoadIndex, topGear and resetRpmPerSpeed. Typed flags as BOOL, gear/band values as enums and shift thresholds with the existing EngineShiftRpm; replaced the related raw value uses and documented the record.
+- Preserved all 29 member offsets/sizes and the 194-byte record. All 572 functions match; clean packed build and DOS-native MAKE are IDENTICAL. Headers, formatting, zero-diagnostic Doxygen, DGROUP ownership/order, 714 compiler layout checks and all 106 tests pass. Committed on inv-eng; no merge or push.
+
+### What I learned
+
+- This record includes steering, tire drift, dashboard invalidation and race outcomes, so an engine-only name understates it. Top gear is an index; the sixth ratio-array word is an unread tire/model calculation, not a sixth gear. The reset-ratio word has no writer, and several caches are write-only. See the member evidence in [Eng.md](investigations/Eng.md).
+- The existing data-shape reader supports enum constants in dimensions but not macro names. Reusing RPM_BAND_COUNT and DRIVE_GEAR_SLOTS as count enumerators preserves their values and enables both named dimensions and all layout/DGROUP gates without tooling changes.
+- fit_gear and ra_speed_step have parameters named rpm that actually receive mph; retained outside this investigation's scope, with evidence in the note.

@@ -6,31 +6,35 @@
 #include "INPUTDAT.H"
 #include "POOLS.H"
 #include "SCREEN.H"
+#include "STRUCTS.H"
 
-static int g_gearSpeedPct[4][5] = {
+static int g_gearSpeedPct[4][DRIVE_GEAR_SLOTS] = {
     {0, 25, 50, 100, 0}, {0, 25, 50, 100, 0}, {0, 25, 50, 75, 100}, {0, 30, 50, 80, 100}};
-static int g_rpmStepBase[3][5] = {{500, 600, 300, 100, 70}, {600, 700, 350, 120, 90}, {600, 760, 380, 140, 90}};
+static int g_rpmStepBase[3][DRIVE_GEAR_SLOTS] = {
+    {500, 600, 300, 100, 70}, {600, 700, 350, 120, 90}, {600, 760, 380, 140, 90}};
 static int g_rpmBands[3][2] = {{V6_LOW_BAND_RPM, V6_SHIFT_RPM},
                                {SMALL_V8_LOW_BAND_RPM, SMALL_V8_SHIFT_RPM},
                                {LARGE_V8_LOW_BAND_RPM, LARGE_V8_SHIFT_RPM}};
 static int g_carbManifoldFit[3][5] = {{0, 0, 100, 0, 0}, {0, 50, 0, 100, 75}, {0, 0, 0, 50, 100}};
 static int g_engineScore[3] = {0, 50, 100};
 static int g_transScore[4] = {0, 33, 66, 100};
-static int g_shiftRpm[3] = {V6_SHIFT_RPM, SMALL_V8_SHIFT_RPM, LARGE_V8_SHIFT_RPM};
-static int g_transGears[4] = {3, 3, 4, 4};
+static enum EngineShiftRpm g_shiftRpm[3] = {V6_SHIFT_RPM, SMALL_V8_SHIFT_RPM, LARGE_V8_SHIFT_RPM};
+static enum DriveGear g_transGears[4] = {DRIVE_THIRD, DRIVE_THIRD, DRIVE_FOURTH, DRIVE_FOURTH};
 static int g_tireFactors[3] = {9, 8, 5};
 static int g_modelScore[9] = {40, 44, 48, 60, 64, 68, 80, 84, 88};
 
 /* Fills the drive train e (gear ranges, ratio table, limits) for the car c. The first half
    is the rating computation of pf_vmax. */
 
-void near pf_drivetrain(struct Car *c, struct Eng *e)
+void near pf_drivetrain(struct Car *c, struct DrivingState *e)
 {
     double w9, vl;
     struct Gear *gl;
     int a3, d;
     double xl;
-    int c3, e1, v3, i, k;
+    int c3, e1, v3;
+    enum DriveGear i;
+    enum RpmBand k;
     struct Node *m;
     int bl;
     struct Node **qn;
@@ -57,39 +61,40 @@ void near pf_drivetrain(struct Car *c, struct Eng *e)
     w9 = vl * PERFORMANCE_MAX_MPH;
     if (w9 > PERFORMANCE_MAX_MPH)
         w9 = PERFORMANCE_MAX_MPH;
-    for (i = 0; i <= DRIVE_GEAR_SLOTS - 1; i++) {
+    for (i = DRIVE_NEUTRAL; i <= DRIVE_GEAR_SLOTS - 1; i++) {
         xl = g_gearSpeedPct[d][i] * w9 / 100.0;
         if (xl == 0.0)
             xl = 0.2;
         e->gearRpmPerSpeed[i] = (int)((double)ENGINE_REDLINE_RPM / xl);
         gl = &e->gear[i];
-        gl->bands[0].minRpm = 0;
-        gl->bands[1].minRpm = gl->bands[0].maxRpm = g_rpmBands[a3][0];
-        gl->bands[2].minRpm = gl->bands[1].maxRpm = g_rpmBands[a3][1];
-        gl->bands[2].maxRpm = ENGINE_REDLINE_RPM;
+        gl->bands[RPM_BAND_LOW].minRpm = 0;
+        gl->bands[RPM_BAND_MIDDLE].minRpm = gl->bands[RPM_BAND_LOW].maxRpm = g_rpmBands[a3][0];
+        gl->bands[RPM_BAND_HIGH].minRpm = gl->bands[RPM_BAND_MIDDLE].maxRpm = g_rpmBands[a3][1];
+        gl->bands[RPM_BAND_HIGH].maxRpm = ENGINE_REDLINE_RPM;
         v3 = (int)(g_rpmStepBase[a3][i] * vl);
-        gl->bands[0].accelStep = ((i == 1 && e1 == TIRES_RACING_SLICKS) ? 3 : 1) *
-                                 ((i == 1 && e1 != TIRES_RACING_SLICKS) ? 2 : 1) * (v3 / (i ? 5 : 1));
-        gl->bands[1].accelStep = v3;
-        gl->bands[2].accelStep = v3 / (i ? 10 : 1);
-        for (k = 0; k < RPM_BAND_COUNT; k++)
-            gl->bands[k].decelStep = i ? v3 / (5 - i) : v3;
+        gl->bands[RPM_BAND_LOW].accelStep = ((i == DRIVE_FIRST && e1 == TIRES_RACING_SLICKS) ? 3 : 1) *
+                                            ((i == DRIVE_FIRST && e1 != TIRES_RACING_SLICKS) ? 2 : 1) *
+                                            (v3 / (i ? 5 : 1));
+        gl->bands[RPM_BAND_MIDDLE].accelStep = v3;
+        gl->bands[RPM_BAND_HIGH].accelStep = v3 / (i ? 10 : 1);
+        for (k = RPM_BAND_LOW; k < RPM_BAND_COUNT; k++)
+            gl->bands[k].decelStep = i ? v3 / (DRIVE_GEAR_SLOTS - i) : v3;
     }
     e->automatic = e->autoSelector = (d == TRANS_AUTOMATIC);
     if (e->automatic) {
         e->unused2 = e->unused3 = -1;
-        e->autoShiftRpm = gl->bands[1].maxRpm;
+        e->autoShiftRpm = gl->bands[RPM_BAND_MIDDLE].maxRpm;
     }
     e->shiftRpm = g_shiftRpm[a3];
-    e->gearRpmPerSpeed[5] =
+    e->gearRpmPerSpeed[DRIVE_GEAR_SLOTS] =
         (int)((int)(0x82 - g_carData[c->specIndex].rank) * 5.0 / 50.0 + g_tireFactors[g_parts[m->idx].variant]);
-    e->gearCount = g_transGears[d];
-    e->shifterDirty = 1;
+    e->topGear = g_transGears[d];
+    e->shifterDirty = TRUE;
 }
 
 /* Builds a struct Car from the spec n of g_carData and hands it to pf_drivetrain. */
 
-void near pf_drivetrain_spec(int n, struct Eng *e)
+void near pf_drivetrain_spec(int n, struct DrivingState *e)
 {
     struct Car car;
     struct Node nd[5];
