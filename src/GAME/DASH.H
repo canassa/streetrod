@@ -1,4 +1,7 @@
-/* DASH.H - declarations of what DASH.C defines. */
+/**
+ * @file DASH.H
+ * @brief Dashboard gauges, shifter and display pages.
+ */
 
 #ifndef DASH_H
 #define DASH_H
@@ -21,11 +24,16 @@ struct Track {
     signed char *pt;
 };
 
+/** @brief Page pointers and hardware layout for scene transitions. */
 enum DashView {
-    DASH_VIEW_SAVE = 0,
+    DASH_VIEW_SAVE = 0, /**< Remember the original front and back pages once. */
+    /** Restore saved pages, full-screen layout and status line. */
     DASH_VIEW_RESTORE = 1,
+    /** Enable front-page copying and reset the EGA display start. */
     DASH_VIEW_SHOW = 2,
+    /** Share the saved front page for driving; disable front-page copying. */
     DASH_VIEW_DRIVE = 3,
+    /** Restore saved pages and full-screen layout, then show the page. */
     DASH_VIEW_RESTORE_SHOW = 4
 };
 
@@ -41,8 +49,15 @@ struct WheelPoses {
 
 extern struct Hooks g_videoOps;
 
+/**
+ * @name Dashboard screen band
+ * @brief Top row and height in pixels; EGA displays the band with a
+ * split-screen address.
+ * @{
+ */
 #define DASH_Y 100
 #define DASH_HEIGHT 100
+/** @} */
 
 extern struct Bitmap far *g_driveDisplayPage;
 extern unsigned g_targetPixelOffset;

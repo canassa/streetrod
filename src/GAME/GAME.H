@@ -6,9 +6,15 @@
 #ifndef GAME_H
 #define GAME_H
 
+/**
+ * @name Assembly storage
+ * @brief Rack and attachment counts for an engine, manifold and three carbs.
+ * @{
+ */
 #define ENGINE_RACK_SLOTS 5
 #define ENGINE_BOLT_COUNT 9
 #define TRANSMISSION_BOLT_COUNT 2
+/** @} */
 
 /** @brief Assembly-bolt tightness, from missing to fully tightened. */
 enum BoltTightness {
@@ -19,26 +25,58 @@ enum BoltTightness {
     BOLT_TIGHTNESS_COUNT   /**< Number of bolt states and picture slots. */
 };
 
+/** Wear-adjustment factor used twice in engine/transmission resale. */
 #define PART_RESALE_FACTOR 0.9
 
+/** Wear sentinel for parts without a condition percentage. */
 #define PART_WEAR_UNTRACKED (-128)
+/** Menu-label byte suppressing the condition percentage. */
 #define PART_WEAR_LABEL_NONE 0x80
+/** Dollar increment used when rounding sale offers down. */
 #define SALE_PRICE_STEP 5
+/** Dollars added when the demo cannot afford a purchase. */
 #define DEMO_PURCHASE_CASH 1999
+/**
+ * @name Intake resale offers
+ * @brief Offer is 70..89 percent of carburetor or manifold value.
+ * @{
+ */
 #define PART_SALE_RANDOM_PCT 20
 #define PART_SALE_BASE_PCT 70
+/** @} */
+/**
+ * @name Car sale negotiation
+ * @brief Initial offer is 75..94 percent of value; counters scale that offer.
+ * @{
+ */
 #define CAR_SALE_RANDOM_PCT 20
 #define CAR_SALE_BASE_PCT 75.0
+/** Asking prices above this multiple of car value are rejected. */
 #define CAR_SALE_MAX_FACTOR 1.15
+/** Exclusive random percentage-point bound added to each counter base. */
 #define CAR_COUNTER_RANDOM_PCT 5
+/** First counter base, as a percentage of the initial offer. */
 #define CAR_COUNTER_FIRST_PCT 85.0
+/** Second counter base, as a percentage of the initial offer. */
 #define CAR_COUNTER_SECOND_PCT 91.0
+/** Final offer must reach this fraction of the requested price. */
 #define CAR_SALE_ACCEPT_FACTOR 0.9
+/** @} */
 
+/**
+ * @name Game-ending reasons
+ * @brief Bits select the ending and whether to record a victory score.
+ * @{
+ */
+/** The 91-day season expired. */
 #define END_TIME_UP 0x01
+/** The King lost the final road race. */
 #define END_KING_BEATEN 0x02
+/** The post-race jail visit ended the game. */
 #define END_JAIL 0x04
+/** No cars or spares remain and cash cannot fund a restart. */
 #define END_BROKE 0x10
+/** @} */
 
 /** @brief Body overlays drawn on a car, as bits. */
 enum BodyMod {
@@ -48,9 +86,16 @@ enum BodyMod {
     BODY_LARGE_ENGINE = 8  /**< Large-engine overlay. */
 };
 
+/**
+ * @name Packed car appearance
+ * @brief Packed sticker and body-modification fields.
+ * @{
+ */
+/** Sticker bits 8..12; roof and bumper flags occupy bits 13..15. */
 #define APPEARANCE_STICKER_SHIFT 8
 /** Sticker selection field in the packed car appearance. */
 #define APPEARANCE_STICKER_MASK 0x1f00
+/** AND mask clearing the sticker field. */
 #define APPEARANCE_NO_STICKER 0xe0ff
 #define APPEARANCE_ROOF_SHIFT 13
 #define APPEARANCE_ROOF_MASK 1
@@ -64,26 +109,50 @@ enum BodyMod {
 #define APPEARANCE_FRONT_BUMPER_MASK 1
 /** The front bumper has been removed. */
 #define APPEARANCE_FRONT_BUMPER 0x8000
+/** AND mask clearing the chopped-roof bit. */
 #define APPEARANCE_KEEP_ROOF 0xdfff
+/** AND mask clearing the rear-bumper removal bit. */
 #define APPEARANCE_KEEP_REAR_BUMPER 0xbfff
+/** AND mask clearing the front-bumper removal bit. */
 #define APPEARANCE_KEEP_FRONT_BUMPER 0x7fff
+/** AND mask clearing the unused low byte. */
 #define APPEARANCE_KEEP_HIGH_BYTE 0xff00
 #define STICKER_INDEX_MASK 0x1f
+/** @} */
 
+/** Internal menu result when excess inventory prevents saving. */
 #define GAME_MENU_BLOCKED 0x309
+/**
+ * @name Inventory restrictions
+ * @brief Excess stock blocks purchases, travel and saving.
+ * @{
+ */
 #define MAX_OWNED_CARS 15
 #define MAX_OWNED_PARTS 130
+/** @} */
+/** Number of entries scanned when building the parts purchase list. */
 #define PART_CATALOG_COUNT 0x2c
+/**
+ * @name Catalog category bases
+ * @brief Zero-based catalog offsets added to equipment variants.
+ * @{
+ */
 #define PART_TRANSMISSION_FIRST 9
 #define PART_CARBURETOR_FIRST 0x16
 #define PART_MANIFOLD_FIRST 0x19
 #define PART_TIRES_FIRST 0x28
+/** @} */
 /** Stored fuel units per gallon. */
 #define FUEL_UNITS_PER_GALLON 10
+/** Initial fuel in tenths of a gallon: four gallons. */
 #define NEW_CAR_FUEL 0x28
+/** Minimum fuel to leave for Bob's, in tenths of a gallon. */
 #define MIN_BOBS_FUEL 9
+/** Fuel at or above this many tenths of a gallon blocks a pump visit. */
 #define REFUEL_VISIT_LIMIT 0x8c
+/** Dollar value substituted for every V6 engine in part valuation. */
 #define V6_PART_VALUE 100
+/** Minimum catalog base price, in dollars, for a purchase-list entry. */
 #define MIN_AD_PART_PRICE 0x14
 
 #include "POOLS.H"

@@ -1,4 +1,7 @@
-/* DRIVE.H - declarations of what DRIVE.C defines. */
+/**
+ * @file DRIVE.H
+ * @brief Driving display setup and simulation loop.
+ */
 
 #ifndef DRIVE_H
 #define DRIVE_H

@@ -2984,3 +2984,34 @@ cached SEG words and the ES reload between them.
 ### What I learned
 
 - Named constants without a line of meaning still force the reader to the call sites.
+
+## 2026-11-05 20:08 CET: Document GAME header constants and enums
+
+### What I did
+
+- Read constant consumers throughout the game, rendering, input tables and
+  simulation before documenting every enum and non-guard define in
+  `src/GAME/*.H`. Added missing file briefs, grouped related constants, and
+  described units, bounds, packed fields, state transitions and settlement
+  behavior. Left every struct definition and all executable code unchanged.
+- Validation: `./sr headers --check`, `./sr format --check`, `./sr docs`
+  (zero diagnostics), `./sr check --all` (572/572), a clean
+  `rm -rf work && ./sr build` (Packed EXE IDENTICAL; all 572 functions and
+  748 near calls exact), `./sr dgroup check`, `./sr dgroup order`, and
+  `python3 -m unittest discover -s tests` in the Nix shell (106 tests, OK).
+- Compared comment-stripped headers against HEAD and compared struct blocks
+  verbatim: no code changes or struct edits. No merge or push.
+
+### What I learned
+
+- Misleading names retained: `APPEARANCE_KEEP_ROOF`,
+  `APPEARANCE_KEEP_REAR_BUMPER`, and `APPEARANCE_KEEP_FRONT_BUMPER` are AND
+  masks that clear the named modification bit, rather than retain it.
+- `RIVAL_STICKER_CHANCE`, `RIVAL_RESTICKER_CHANCE`, `RIVAL_BUMPER_CHANCE`
+  and `RIVAL_ROOF_CHANCE` are exclusive random-draw bounds compared against
+  `(model rank / 2) + 1`, not percentages; larger bounds reduce the odds.
+- Fuel budgets use tenths of a gallon; garage action time uses 546 ticks per
+  game hour and twelve game hours per day. These runtime contracts now live
+  beside the constants, following `.claude/skills/doxygen-c/SKILL.md`.
+- A stopped race return can also follow an unaffordable tire replacement;
+  it does not necessarily mean the car was lost.

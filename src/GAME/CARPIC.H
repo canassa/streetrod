@@ -1,4 +1,7 @@
-/* CARPIC.H - declarations of what CARPIC.C defines. */
+/**
+ * @file CARPIC.H
+ * @brief Car assembly pictures and arrival animations.
+ */
 
 #ifndef CARPIC_H
 #define CARPIC_H
@@ -12,15 +15,24 @@ struct Band {
     int h;
 };
 
+/**
+ * Height in pixels of the car-animation background band; scratch bands follow
+ * it.
+ */
 #define BACKDROP_ROWS 70
 
+/** @brief Car movement or stationary compositing requested by the scene. */
 enum CarAnimKind {
+    /** Forward arrival using the current saved background. */
     CAR_DRIVE_IN = 1,
-    CAR_DRIVE_OUT = 2,
+    CAR_DRIVE_OUT = 2, /**< Forward departure to the right. */
+    /** Composite a stationary car and copy the back page to the front. */
     CAR_SHOW_BACK_PAGE = 3,
+    /** Capture the scene backdrop before animating arrival. */
     CAR_PULL_IN = 4,
-    CAR_BACK_OUT = 6,
-    CAR_SHOW_SCREEN = 7,
+    CAR_BACK_OUT = 6,    /**< Reverse departure using the last car rectangle. */
+    CAR_SHOW_SCREEN = 7, /**< Draw a stationary car directly over the screen. */
+    /** Redraw a stationary car using the saved backdrop. */
     CAR_SHOW_BACKDROP = 8
 };
 

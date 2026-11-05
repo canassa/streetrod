@@ -1,31 +1,42 @@
-/* SCENERY.H - declarations of what SCENERY.C defines. */
+/**
+ * @file SCENERY.H
+ * @brief Distance-scaled roadside sprite tables.
+ */
 
 #ifndef SCENERY_H
 #define SCENERY_H
 
 
+/**
+ * @brief Indices into the roadside sprite lists, each ordered by distance.
+ *
+ * The dot sprite also draws the dashboard steering marker.
+ */
 enum SceneryId {
-    SCENERY_TREE = 0,
-    SCENERY_POST = 1,
+    SCENERY_TREE = 0, /**< Town curb or country outer verge. */
+    SCENERY_POST = 1, /**< Country road-edge marker. */
+    /** Town curb; also uses a special near-distance drawing path. */
     SCENERY_HYDRANT = 2,
-    SCENERY_WARNING_SIGN = 3,
-    SCENERY_BUSH = 4,
-    SCENERY_SPEED_SIGN = 5,
-    SCENERY_BARRICADE = 6,
-    SCENERY_SMALL_ROCK = 7,
-    SCENERY_LARGE_ROCK = 8,
-    SCENERY_POLE = 9,
-    SCENERY_TREE_2 = 10,
-    SCENERY_TREE_3 = 11,
-    SCENERY_ARROW_LEFT = 12,
-    SCENERY_CITY_LIMITS = 13,
-    SCENERY_ARROW_UP = 14,
-    SCENERY_NARROW_SIGN = 15,
-    SCENERY_CHEVRON_LEFT = 16,
-    SCENERY_CHEVRON_RIGHT = 17,
+    SCENERY_WARNING_SIGN = 3,   /**< At the road edge before a barricade. */
+    SCENERY_BUSH = 4,           /**< Town curb, country verge or beyond the verge. */
+    SCENERY_SPEED_SIGN = 5,     /**< Right road edge after the drag finish. */
+    SCENERY_BARRICADE = 6,      /**< At the closed road edge. */
+    SCENERY_SMALL_ROCK = 7,     /**< Country road edge, facing inward. */
+    SCENERY_LARGE_ROCK = 8,     /**< Country road edge, facing inward. */
+    SCENERY_POLE = 9,           /**< Right country road edge. */
+    SCENERY_TREE_2 = 10,        /**< Country position beyond the outer verge. */
+    SCENERY_TREE_3 = 11,        /**< Country outer-verge position, varying by side. */
+    SCENERY_ARROW_LEFT = 12,    /**< Country overhead gantry face. */
+    SCENERY_CITY_LIMITS = 13,   /**< Overhead drag-finish sign. */
+    SCENERY_ARROW_UP = 14,      /**< Country overhead straight-ahead gantry face. */
+    SCENERY_NARROW_SIGN = 15,   /**< Right road edge before a narrowed section. */
+    SCENERY_CHEVRON_LEFT = 16,  /**< Right road edge on a left bend. */
+    SCENERY_CHEVRON_RIGHT = 17, /**< Right road edge on a right bend. */
+    /** Right road edge before a left-then-right bend. */
     SCENERY_S_CURVE_SIGN = 18,
+    /** Right road edge before a right-then-left bend. */
     SCENERY_S_CURVE_SIGN_2 = 19,
-    SCENERY_DOT = 20
+    SCENERY_DOT = 20 /**< Dashboard steering marker; one size only. */
 };
 
 struct Part {

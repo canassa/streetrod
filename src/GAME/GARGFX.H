@@ -1,4 +1,7 @@
-/* GARGFX.H - declarations of what GARGFX.C defines. */
+/**
+ * @file GARGFX.H
+ * @brief Garage equipment drawing and selection hotspots.
+ */
 
 #ifndef GARGFX_H
 #define GARGFX_H

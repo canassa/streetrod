@@ -1,4 +1,7 @@
-/* SCENERY2.H - declarations of what SCENERY2.C defines. */
+/**
+ * @file SCENERY2.H
+ * @brief Additional roadside signs and sprite tables.
+ */
 
 #ifndef SCENERY2_H
 #define SCENERY2_H

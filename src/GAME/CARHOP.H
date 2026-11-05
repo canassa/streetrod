@@ -15,16 +15,19 @@ struct Sheet {
     int n;
 };
 
+/** @brief Motion and background update for the carhop sprite. */
 enum CarhopMode {
+    /** Skate in from the left and preserve the standing pose. */
     CARHOP_ENTER = 0,
-    CARHOP_LEAVE = 1
+    CARHOP_LEAVE = 1 /**< Skate out and restore the unobstructed scene. */
 };
 
 extern char g_keepMask;
 /**
  * @brief Animate the carhop skating in or out of the scene.
  *
- * Updates the car-animation backdrop with her standing pose or the cleared scene.
+ * Updates the car-animation backdrop with her standing pose or the cleared
+ * scene.
  *
  * @param mode Whether she arrives or leaves.
  * @param carPresent TRUE preserves the parked rival car in the foreground.
