@@ -192,15 +192,18 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
     `(0,5)` and `(5,0)` samples. The point struct preserves the complete object code
     and the existing CONST fixup order (offsets 2, 0, then 4).
   - `g_unused24` (POPUP.C): four unreferenced `_BSS` bytes after `g_popupLayout`.
-  - `g_list[0] = g_list[0];` in the default cases of your_cars (GAME.C) and sg_load
-    (SAVEGAME.C): after the menu mn_modal_list returns a positive item, the original loads
-    `g_list[0]` (the list's item count) into `ax` and drops it. MSC drops the store of a
-    self-assignment and keeps the load. The only other forms found that give these bytes
-    are a `switch (g_list[0])` whose cases are all empty (`{ }`, `{ case 1: break; }`), as
-    if its cases had been removed. A bare `g_list[0];`, a `(void)` or `volatile` cast,
-    `+= 0`, `|= 0`, `if (g_list[0]) ;` and comparisons compile to nothing or to a compare;
-    stores to locals stay stores. The two functions share the idiom, so the original
-    probably had one construct (a macro, an emptied switch) in both.
+  - The discarded `g_list[0]` reads in the default cases of your_cars (GAME.C)
+    and sg_load (SAVEGAME.C) are reproduced by ordinary range checks ending in
+    `break`: `if (item > 0 && item <= g_list[0]) break;` and
+    `if (r >= 1 && r <= g_list[0]) break;`. Both paths leave the switch, so MSC
+    drops the upper comparison and transfer but keeps the count load after the
+    lower test. These replace the former PROVISIONAL self-assignments; each
+    complete raw OBJ is byte-identical to its baseline under the exact file
+    flags. The bounds checks are redundant and do not reject invalid keys;
+    their historical intent and unique original spelling remain unknown.
+    Replacing `> 0` with `>= 1` changes code generation here. See
+    plans/investigations/glist-loads.md for the complete trial matrix, comparison
+    scope and raw-object hashes.
 - **The hook installers** cg_install (CGA.C), ta_install (TANDY.C) and eg_install
   (EGA.C): `g_videoOps = g_cgaHooks;`. Their bytes are
   MSC 5.1's struct assignment (`push di; push si`, no frame, `mov cx,1Eh` and `f2 a5`:
@@ -355,16 +358,22 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
     initializer that takes its address.
   The HOTSPOT, MESSAGES and SCENERY splits are evidence; the files' names and contents
   beyond the bytes are not.
-- **HOTSPOT.C's arrays.** DS:09F4..239E is 365 18-byte `struct Hotspot` records in one index
-  space: `Hotspot.drawNext` links a record to the next by its index into `g_hots`, and the code
-  reaches records as `&g_hots[n]`. It is split into arrays where code names a record
-  directly (`g_hotBuy[0].kind`, `g_hotRepair[7].kind`, `g_hotReadyBox[i].y1`, `g_bodyAsk[0].textOffset`, `g_transBolts[k]`,
-  `g_hotBobs[3]`) or computes a run-time difference (`g_hotCalendar - g_gar`, `g_hotGasExit - g_hotGasStation`),
-  which proves separate symbols; each array starts at the first record so named. Where
-  the original's other boundaries were (one array per menu list, or fewer), and the
-  arrays' names, are not recoverable. `g_engineHots` (a runtime list gx_build_hots builds), `g_engineHotTemplate`
-  (three fixed menu records, then six records of another list) and `g_boltHot` are Hotspot
-  records too; insert_hot sorts them by (x1, y1).
+- **HOTSPOT.C's indexed table.** DS:09F4..239E contains 365 18-byte
+  `struct Hotspot` records. `g_groupHot[ScreenId]` selects a header;
+  `drawNext` and link-box `hitCode` values address the complete `g_hots` array.
+  `HOTS_*` names identify screen headers, and initializers are grouped by screen.
+  Garage's 18 sortable regions include its calendar; the separately drawn car
+  name follows. Gas station's six sortable regions include its exit. Engine's
+  mutable run has 14 records followed by three fixed control templates.
+  The old arrays started at first direct references and often split a screen
+  or included several unrelated screens; they did not establish real bounds.
+  A complete array reproduces all function bytes, including the unsigned
+  address differences in garage/gas lookup and sorting. This cast-and-index
+  form is not folded in the measured modules, so these expressions do not prove
+  distinct original symbols. One array is the chosen readable representation;
+  original names and declaration boundaries remain unknown. The table has
+  no pointer fixups; the packed build also verifies relocation ordering in its
+  consumers. See `plans/investigations/hottables.md` for the full screen map.
 - **KEYMAPS.ASM's key maps.** 42 referenced lists of (scan code, value) pairs, each ended
   by a 0 byte (`g_keyMaps[1..42]`; slot 0 holds the count), for screens plus the
   shared music binding. They are local labels; KEYMAPS.H exports only the first
@@ -596,3 +605,46 @@ not WORD inter-object alignment. The five HOTSPOT arrays are separate COMDEF
 allocations. All are category (c) for this audit; their exact historical grouping
 and meanings remain unproved. The per-candidate ledger distinguishes storage
 necessity from recovered variable identity.
+
+
+## POPUP tail and VIDDET strings follow-up (prov-data)
+
+Neither data marker is settled; both remain verbatim. The complete evidence
+and repeatable trial transformations are in
+`plans/investigations/prov-data.md`.
+
+POPUP's DS:6C40 word is a near pointer into the initialized three-entry Win
+table at DS:04C4, not the Win value itself. All seven original direct accesses
+name 6C40; none names the four bytes at 6C42..6C45. No indexed access or
+escaped address establishes a larger BSS object. Whole-module trials using
+`struct Win *g_popupLayout[3]` with every live use changed to `[0]`, or a
+six-byte record with a live pointer and two spare words, both preserve the
+code, ordered target-resolved fixups, six-byte BSS and IDENTICAL packed EXE.
+Deleting only g_unused24 instead shrinks BSS to two bytes and changes 1426
+packed bytes. Thus explicit storage is required, but the bytes cannot decide
+between a separate unused object and an unused aggregate tail. Do not replace
+the marker with an unsupported array or record claim.
+
+MAIN's actual setup menu owns complete long CGA/Tandy rows and the six-pointer
+menu table. Its ROM detector separately passes its own "Tandy" and "TANDY"
+literals to ms_find. VIDDET's short "Tandy", "Tandy", "CGA" strings have no
+surviving code references or data pointers; their second string also differs
+in case from the second ROM signature. The current menu and ROM search do
+not explain their historical consumer. Fresh full-link trials confirm that
+EVEN, an explicit zero DB byte, and a separate WORD-aligned string-only object
+immediately after the five-byte VIDDET contribution all give IDENTICAL packed
+EXEs. Deleting EVEN alone changes sixteen packed bytes; deleting it and the
+strings changes 9623. The existing alignment choice remains provisional.
+
+### Provisional automatic frames (2026-11-05)
+
+The four `long unused` slots above blit packets and vi_anim_hook's inner
+`struct Colors save` remain PROVISIONAL after 157 real-MSC compiler trials.
+A hypothetical 24-byte record with a Blt prefix, int[12], or Clip[2] reproduces
+all four blit frames, but no use supports the additional fields/elements.
+Changing an unused long to an unused far pointer or array also matches and
+recovers no meaning. Ordinary dead assignments retain code; a color
+save/restore fails, and even a constant-false Colors copy leaves SI/DI saves
+and restores. No tested natural, evidence-backed replacement was found.
+See `plans/investigations/prov-frames.md` for
+source context, passing alternatives, rejected hypotheses and final gates.

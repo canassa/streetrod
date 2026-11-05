@@ -77,8 +77,9 @@ static int near find_gas_spot(int id)
 {
     int base, n, i;
 
-    base = ((unsigned)g_hotGasStation - (unsigned)g_hots) / sizeof(struct Hotspot);
-    n = ((unsigned)g_hotGasExit - (unsigned)g_hotGasStation) / sizeof(struct Hotspot) + 1;
+    base = ((unsigned)&g_hots[HOTS_GAS_STATION + 1] - (unsigned)g_hots) / sizeof(struct Hotspot);
+    n = ((unsigned)&g_hots[HOTS_GAS_STATION + 6] - (unsigned)&g_hots[HOTS_GAS_STATION + 1]) / sizeof(struct Hotspot) +
+        1;
     for (i = 0; i < n; i++)
         if (g_hots[base + i].hitCode == id)
             return base + i;
@@ -89,8 +90,9 @@ static void near sort_gas_spots(void)
 {
     int base, n;
 
-    base = ((unsigned)g_hotGasStation - (unsigned)g_hots) / sizeof(struct Hotspot);
-    n = ((unsigned)g_hotGasExit - (unsigned)g_hotGasStation) / sizeof(struct Hotspot) + 1;
+    base = ((unsigned)&g_hots[HOTS_GAS_STATION + 1] - (unsigned)g_hots) / sizeof(struct Hotspot);
+    n = ((unsigned)&g_hots[HOTS_GAS_STATION + 6] - (unsigned)&g_hots[HOTS_GAS_STATION + 1]) / sizeof(struct Hotspot) +
+        1;
     gx_sort_hots(base, n);
 }
 
@@ -855,12 +857,12 @@ enum RaceExit near ra_outcome(void)
                     g_msgPlusTires[0] = 0;
                 sel = i ? KM_GET_RUNNING : KM_REPAIR;
                 if ((long)v > g_driver.money) {
-                    g_hotRepair[0].kind = g_hotRepair[7].kind = HOT_DISABLED;
+                    g_hots[HOTS_REPAIR + 2].kind = g_hots[HOTS_GET_RUNNING + 2].kind = HOT_DISABLED;
                     g_keyMaps[sel][0].val = KV_REPAIR_JUNK;
                     g_keyMaps[sel][1].key = SC_ESC;
                     g_keyMaps[sel][1].val = KV_REPAIR_JUNK;
                 } else {
-                    g_hotRepair[0].kind = g_hotRepair[7].kind = HOT_BUTTON;
+                    g_hots[HOTS_REPAIR + 2].kind = g_hots[HOTS_GET_RUNNING + 2].kind = HOT_BUTTON;
                     g_keyMaps[sel][0].val = KV_REPAIR_FIX;
                     g_keyMaps[sel][1].key = SC_F;
                     g_keyMaps[sel][1].val = KV_REPAIR_FIX;

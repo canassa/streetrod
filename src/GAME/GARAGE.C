@@ -182,8 +182,8 @@ int ga_hotspot(int id)
 {
     int n, k, base;
 
-    base = ((unsigned)g_gar - (unsigned)g_hots) / sizeof(struct Hotspot);
-    n = ((unsigned)g_hotCalendar - (unsigned)g_gar) / sizeof(struct Hotspot) + 1;
+    base = ((unsigned)&g_hots[HOTS_GARAGE + 1] - (unsigned)g_hots) / sizeof(struct Hotspot);
+    n = ((unsigned)&g_hots[HOTS_GARAGE + 18] - (unsigned)&g_hots[HOTS_GARAGE + 1]) / sizeof(struct Hotspot) + 1;
     for (k = 0; k < n; k++)
         if (g_hots[base + k].hitCode == id)
             return base + k;
@@ -194,8 +194,8 @@ static void near sort_spots(void)
 {
     int base, n;
 
-    base = ((unsigned)g_gar - (unsigned)g_hots) / sizeof(struct Hotspot);
-    n = ((unsigned)g_hotCalendar - (unsigned)g_gar) / sizeof(struct Hotspot) + 1;
+    base = ((unsigned)&g_hots[HOTS_GARAGE + 1] - (unsigned)g_hots) / sizeof(struct Hotspot);
+    n = ((unsigned)&g_hots[HOTS_GARAGE + 18] - (unsigned)&g_hots[HOTS_GARAGE + 1]) / sizeof(struct Hotspot) + 1;
     gx_sort_hots(base, n);
 }
 
@@ -507,7 +507,7 @@ void near ga_body(unsigned mask)
         return;
     }
     bm1 = mn_grab(KM_BODY_CHANGE, &x, &y, ARENA_HIGH_STACK);
-    g_bodyAsk[0].textOffset = msg - g_txt;
+    g_hots[HOTS_BODY_CHANGE + 1].textOffset = msg - g_txt;
     mn_push(KM_BODY_CHANGE);
     while ((key = sy_wait_input(3000)) == 0)
         ;
@@ -807,7 +807,7 @@ void near ga_transmission(void)
             flags[k + 1] = prev == BOLT_INSERTED ? 1 : 2;
         else
             flags[k + 1] = 0;
-        g_transBolts[k].kind = HOT_REGION;
+        g_hots[HOTS_TRANSMISSION + 3 + k].kind = HOT_REGION;
     }
     g_carDraw.transmissionPic = owner->transmission ? g_transPics[g_parts[owner->transmission->idx].variant] : 0;
     r_vid.copyToFront = !g_carDraw.transmissionPic;
@@ -857,7 +857,7 @@ void near ga_transmission(void)
                         flags[k + 1] = 1;
                         gx_trans_bolt(owner->transmissionBolts[k] = BOLT_INSERTED, k);
                         so_bolt();
-                        g_transBolts[k].kind = HOT_REGION;
+                        g_hots[HOTS_TRANSMISSION + 3 + k].kind = HOT_REGION;
                     }
                     sy_hover_reset();
                     cu_ctl(CURSOR_SHOW_NOW);

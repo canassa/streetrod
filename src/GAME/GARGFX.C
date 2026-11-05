@@ -612,7 +612,7 @@ static void near insert_hot(struct Hotspot *arr, struct Hotspot *item, int n)
     *p = *item;
 }
 
-/* Build the sorted list of menu items in g_engineHots: the 3 fixed records are copied from g_engineHotTemplate,
+/* Build the sorted engine menu: fixed controls are copied from the templates,
    then for each of 9 slots (grouped by the counts in g_nBolt) that is enabled in g_partsPics an item is
    inserted at the position gx_bolt_pos gives for the slot's coordinates, plus a last item picked by
    g_slotSelec.wirePic. g_slotSelec.slot/g_slotSelec.subslot are saved and restored around it. */
@@ -629,9 +629,9 @@ void gx_build_hots(int *xs, int *ys)
 
     rx = g_slotSelec.slot;
     rh = g_slotSelec.subslot;
-    item = g_engineHotTemplate;
-    len = (num = 3) * sizeof(struct Hotspot);
-    memcpy(g_engineHots, item, len);
+    item = &g_hots[HOTS_ENGINE_TEMPLATE];
+    len = (num = HOTS_RACE_TYPE - HOTS_ENGINE_TEMPLATE) * sizeof(struct Hotspot);
+    memcpy(&g_hots[HOTS_ENGINE + 1], item, len);
     g_boltHot.textOffset = g_offBolt;
     i = lane = j = 0;
     for (; i < 9; i++) {
@@ -644,7 +644,7 @@ void gx_build_hots(int *xs, int *ys)
             g_boltHot.hitCode = i + 1;
             g_boltHot.x2 = (g_boltHot.x1 = x - 2) + 5;
             g_boltHot.y1 = (g_boltHot.y2 = y + 2) - 15;
-            insert_hot(g_engineHots, &g_boltHot, num);
+            insert_hot(&g_hots[HOTS_ENGINE + 1], &g_boltHot, num);
             num++;
         }
         if (++j == g_nBolt[lane]) {
@@ -658,10 +658,10 @@ void gx_build_hots(int *xs, int *ys)
         i = (g_slotSelec.wirePic == PIC_IGNITION_WIRES_DISCONNECTED) + engine_index() * 2;
         g_boltHot.x2 = (g_boltHot.x1 = g_wiresPos[i * 2] + 0x5b) + 10;
         g_boltHot.y2 = (g_boltHot.y1 = g_wiresPos[i * 2 + 1] + 2) + 15;
-        insert_hot(g_engineHots, &g_boltHot, num);
+        insert_hot(&g_hots[HOTS_ENGINE + 1], &g_boltHot, num);
         num++;
     }
-    g_engineHots[num].kind = HOT_END;
+    g_hots[HOTS_ENGINE + 1 + num].kind = HOT_END;
     g_slotSelec.slot = rx;
     g_slotSelec.subslot = rh;
     sy_hover_reset();

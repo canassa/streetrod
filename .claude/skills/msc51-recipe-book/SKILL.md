@@ -34,6 +34,7 @@ Look at the **first** divergent instruction in `./sr diff`. Fixes are usually in
 
 | Original instructions | C |
 |---|---|
+| Lower test followed by a discarded `mov ax,[g_list]`, no upper compare | A terminal switch default containing `if (item > 0 && item <= g_list[0]) break;` (your_cars) or `if (r >= 1 && r <= g_list[0]) break;` (sg_load). Both paths exit the switch; MSC drops the upper comparison but keeps its load. Preserve `> 0` versus `>= 1`: exchanging them changes code size by two bytes. Both full raw objects match their baselines under `/AM /Oalsi /Gs /FPi`; these redundant bounds checks do not reject invalid keys. See plans/investigations/glist-loads.md. |
 | A counted loop changes its compare/jump bytes after replacing a literal bound with a named count | Preserve the relational form: `i <= 4` becomes `i <= DRIVE_GEAR_SLOTS - 1`, not `i < DRIVE_GEAR_SLOTS`. The latter changed two bytes in `pf_drivetrain` (`0x0DCBE`) despite equal trip counts; restoring `<=` retained all 572 matches and the IDENTICAL packed build. |
 | a single word store of packed AH/AL function and parameter constants | Keep the AX assignment and write `(FUNCTION << 8) \| PARAMETER`: MAIN.C mode 0003h and DISK.C seek 4200h still match; `VIDEO_SET_PALETTE << 8` preserves MAIN.C palette 0B00h. For separate mouse AH/AL writes, use `r.h.ah = 0;` then `r.h.al = FUNCTION;`: the function codes fit in AL, and the explicit zero preserves both byte stores. |
 | two separate byte read-modify-writes at 0000:0410, clearing bits 4-5 then setting bit 5 | `SET_EQUIP_VIDEO(EQUIP_VIDEO_COLOR80)` in MAIN.C expands to `(*BIOS_EQUIP &= ~EQUIP_VIDEO_MASK, *BIOS_EQUIP |= (m))`; with mask `0x30` and mode `0x20`, the comma form preserves both accesses and matches the two statements byte for byte under `/Oalsi` |
@@ -363,7 +364,7 @@ Do not infer that an optimized scan itself is disabled just because its exit is 
 | MSC code (LEDATA) record boundaries | Cut at 99 fixups or ~944 bytes from the object start; the original relocation runs therefore fix where an object starts |
 | Two memory operands of `>`/`<`/`+`: which one MSC loads into AX | MSC loads the simpler operand and keeps the other as the memory operand; a tie (plain/plain or member/member) loads the right one of a comparison and the left one of an addition. `mov ax,[a]; cmp [b],ax` for `b > a` where our `a` is a struct member means `b` is a member too (DS:7D30 against `g_driveEng.fa`; DS:70C0 + DS:7D2E). Fold the plain operand into its struct, check bucket order |
 | A run of initialized ints ending in a char matches as separate globals, but folding it into a struct shifts later data | MSC pads the struct to two-byte alignment. An unreferenced zero byte immediately after the char may already be that tail padding; retaining its old filler global inserts an extra byte (and possibly another alignment byte). Mouse at DS:05E2 has size 18, with present at +16 and implicit padding at +17. Remove only an unreferenced filler, preserve initializer values, and verify every file plus the linked EXE. An identical result permits the struct but does not prove it was original (`work/mouse/REPORT.md`). |
-| `mov ax, OFFSET a; sub ax, OFFSET b` in the original | `a` and `b` are distinct symbols (same-symbol differences fold to constants) |
+| `mov ax, OFFSET a; sub ax, OFFSET b` in the original | Try indexed views before inferring distinct symbols: `((unsigned)&g_hots[A] - (unsigned)&g_hots[B]) / sizeof(struct Hotspot)` retains both address loads, subtraction and division in GARAGE.C and RACE.C (ga_hotspot, sort_spots, find_gas_spot, sort_gas_spots). All 572 functions and the packed EXE match with the complete 365-record table. Plain same-symbol differences may fold; the actual cast-and-index form decides. |
 | A pointer writer fills 15/8 entries across a declared 13/6-element array and two following endpoint words | Test a full-length array before treating the final words as distinct members. Building rows, mirror road Y, and both mirror-edge arrays match as full 15/8-element arrays; both a record member and a plain building array compiled identically. Constant endpoint references become indices 13/14 or 6/7. Verify every function, reference and the full link (`work/structs/fixes/probe-results.json`). Byte identity alone does not justify combining unrelated cursor/status roles. |
 
 
@@ -417,12 +418,35 @@ MSGONLY after SAVEGAME and VDSTRS after VIDDET each produced IDENTICAL packed
 EXEs. Keep those as alternative findings, not established original file splits.
 
 
+POPUP follow-up (prov-data, 2026-11-05): a six-byte BSS region with only its
+first near-pointer word accessed matches as a scalar plus four spare bytes,
+a three-pointer array using only [0], or a record with two unused tail words.
+Whole-module bytes/fixups and the packed EXE are identical for both aggregate
+alternatives. Inspect SEGDEF lengths as well as LEDATA: deleting the spare
+BSS changes no emitted segment bytes but breaks the link. Unused tail extent
+requires evidence from indexing, address escape or another reader; a matching
+aggregate is not proof. See plans/investigations/prov-data.md.
+
+
 ### Unsigned terrain flag top bits (2026-11-05)
 
 MSC 5.1 rejects an enum member equal to `0x8000` with C2141 (out of range).
 Name that unsigned word bit with a `#define`; keep the lower flag bits in the
 enum and preserve unsigned storage. ROAD.H uses this for the terrain gantry
 and unused roadside top bits. All 572 functions and the packed EXE still match.
+
+### Unused automatic slots and dead struct copies (prov-frames, 2026-11-05)
+
+Real MSC 5.1 probes under `/AM /Oalsi /Gs /FPi` and `/AM /Oas /Gs /FPi`:
+unused scalars, pointers, arrays and structs retain their rounded automatic
+slots. Scalar constant-false uses, sizeof, discarded reads/addresses and
+self-assignment can disappear while retaining that slot; ordinary dead
+assignments retain stores. A constant-false struct assignment can still add
+SI/DI saves/restores even when the copy disappears (vi_anim_hook: 184 -> 188
+bytes). A 24-byte Blt-prefix record reproduces the four provisional Blt frame
+slots, but its extra fields have no supporting use; do not treat a matching
+storage shape as recovered source. See plans/investigations/prov-frames.md for
+the 157-compile matrix and retained markers.
 
 ### Retyping one local in a combined declaration (2026-11-05)
 

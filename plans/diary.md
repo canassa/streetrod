@@ -3184,6 +3184,103 @@ constants were renamed.
 - Explicit member references expose stale names during documentation merges;
   the Hotspot link-box comment now uses the current hitCode member name.
 
+## 2026-11-05 20:30 CET: Investigate POPUP spare storage and VIDDET alignment
+
+### What I did
+
+- Investigated both data PROVISIONAL markers, reusing the earlier padding and data-only-split findings. Traced every POPUP pointer use, its initialized Win table and separate saved bitmap, popup callers, both VIDDET procedures, MAIN's actual video-menu rows and ROM-signature literals, and ms_find. Left DASH.C and NEEDLE.ASM unchanged.
+- Wrote plans/investigations/prov-data.md with the observed addresses, consumer contexts, whole-module transformations, segment sizes and packed-link matrix. Compiled ten module variants using real MSC 5.1/MASM 5.1 and linked seven alternatives in private directories against freshly built objects; production sources, MAKEFILE and SR.LNK were never edited.
+- Confirmed that a three-pointer array using only its first element and a record with a live pointer plus two spare words each preserve POPUP's code, data, target-resolved fixups and IDENTICAL packed EXE. Deleting the spare BSS alone changes 1426 packed bytes. Confirmed VIDDET EVEN, explicit DB 0 and a separate string-only object all give IDENTICAL packed EXEs; deleting EVEN alone changes sixteen bytes, deleting it and the strings changes 9623.
+- Retained both complete markers because the alternatives remain indistinguishable. Updated docs/RECONSTRUCTION.md and the MSC recipe book with the evidence and its limits. No identifiers, types or constants changed.
+- Gates passed: headers --check, format --check (157 files), docs (zero diagnostics), check --all (572/572), rm -rf work/layout followed by sr build (96/96 object gates, 748/748 exact near calls, Packed EXE IDENTICAL), fresh dgroup check/order, and unittest discovery (106 tests, OK). The unpacked linkcheck still reports the already-documented unpacker header/relocation ordering and fourteen image-tail bytes; the packed file is identical.
+
+### What I learned
+
+- The three-entry initialized popup layout table does not establish a three-entry pointer array in BSS. Every original direct pointer access names DS:6C40; none names the four following bytes. Grouping those bytes can match perfectly without proving the grouping. Inspect BSS SEGDEF lengths separately from emitted segment data; removal can leave all module code/data/fixups unchanged and still break the link.
+- MAIN's menu uses complete long rows, and its ROM search owns separate Tandy/TANDY literals. Neither consumes VIDDET's Tandy/Tandy/CGA strings. Byte identity cannot distinguish EVEN, an unused byte variable or LINK alignment before a data-only object without a surviving reference/fixup. Full findings and future evidence needed are recorded in plans/investigations/prov-data.md.
+## 2026-11-05 20:30 CET: Recover the discarded list-count loads
+
+### What I did
+
+- Investigated the two PROVISIONAL count reads in your_cars and sg_load with
+  100 complete-file trials (including baselines), using each file's exact
+  `/AM /Oalsi /Gs /FPi /NTS0000_TEXT` flags and the real MSC 5.1 compiler.
+- Replaced both self-assignments/markers with conditional range-check breaks.
+  The entire raw GAME and SAVEGAME objects match their baselines, with no
+  masking or normalization. Removed SAVEGAME's redundant unconditional break.
+- Recorded context, every trial, raw-object hashes and limits in
+  [the investigation](investigations/glist-loads.md), updated RECONSTRUCTION.md
+  and added the compiler behavior to the MSC recipe book.
+- All gates passed: headers, format, docs (zero diagnostics), 572/572 functions,
+  clean packed build IDENTICAL, DGROUP ownership/order and 106 unit tests.
+
+### What I learned
+
+- A terminal switch default's short-circuit bounds check can retain the count
+  load after MSC drops its upper comparison and conditional break. It is an
+  ordinary source explanation for both instruction sequences; the check is
+  redundant and does not validate invalid keys. Historical intent is unknown.
+- Preserve `item > 0` in GAME and `r >= 1` in SAVEGAME: substituting the equivalent
+  spelling changes code size by two bytes. The complete matrix and the new
+  C-shapes row in `.claude/skills/msc51-recipe-book/SKILL.md` document the evidence.
+
+## 2026-11-05 20:31 CET: investigate provisional automatic frames
+
+### What I did
+
+- Investigated gx_draw_bolt, gx_draw_part, gx_erase_part, sc_picture and
+  vi_anim_hook on branch prov-frames, with 53 small MSC 5.1 probes and 104
+  complete-module variants under work/prov-frames.
+- Tested larger packets, arrays, Blt16/Box/Clip, far pointer locals,
+  optimized-away uses, dead assignments and color save/restore. Kept all
+  five original declarations and complete PROVISIONAL markers: matching
+  storage alternatives did not recover an evidence-backed original form.
+- Recorded [the matrix](investigations/prov-frames.md), linked it from
+  docs/RECONSTRUCTION.md, and added the dead-struct-copy lesson to the
+  MSC recipe book.
+- Gates passed: headers, format, zero Doxygen diagnostics, 572/572 functions,
+  clean packed EXE IDENTICAL, DGROUP ownership/order, 106 unittests. A final
+  vi_anim_hook diff also matches. No merge or push.
+
+### What I learned
+
+- A 24-byte Blt-prefix record exactly absorbs the four-byte dummy in all four
+  functions, but so do multiple unsupported array layouts. Storage identity
+  alone cannot identify the missing local or justify a new type.
+- Unused automatic storage survives even when a scalar use vanishes;
+  ordinary dead assignments retain instructions. A constant-false Colors
+  assignment can retain SI/DI saves/restores (vi_anim_hook 184 -> 188 bytes).
+  The reproducible cases and limits are in the investigation note and
+  .claude/skills/msc51-recipe-book/SKILL.md.
+## 2026-11-05 20:33 CET: Map hotspot screens and consolidate their records
+
+### What I did
+
+Mapped all 365 hotspot records to the 41 menu headers selected by g_groupHot.
+Replaced 14 artificial partial arrays with the complete g_hots table and
+HOTS_* screen indexes, grouped each screen's initializers, and replaced every
+old view and numeric drawing/skip link. Named the assembler group-table indexes
+and documented the existing ScreenId values. Added three C/ASM agreement and
+screen-boundary tests, corrected the reconstruction note and compiler recipe,
+and recorded the full map in plans/investigations/hottables.md.
+
+Headers, formatting, Doxygen (zero diagnostics), all 572 functions, all 96
+object gates, DGROUP ownership/order and all 109 unit tests pass. The clean
+packed build and DOS-native MAKE both reproduce orig/SR.EXE exactly. The
+separate uncompressed diagnostic reports its MZ/header/relocation-order and
+14-tail-byte differences; full details are in the investigation note.
+
+### What I learned
+
+The original partial arrays started where callers first named a record, often
+inside a screen or before several later screens. Garage's calendar and the
+gas exit are inside their sorted region runs; the garage car name is outside
+its run. Engine's 14-record mutable buffer is followed by three templates,
+not a nine-record template array. The actual unsigned cast/index address
+differences retain the original instructions even with one table, disproving
+the earlier claim that those instructions establish separate C symbols.
+KM_NONE points at a spare-parts button and KM_MUSIC has no hotspot-table slot.
+
 ## 2026-11-05 20:40 CET: Clarify car renderer, rival state and UI record views
 
 ### What I did
@@ -3216,3 +3313,29 @@ int declaration around idx2 retains its original stack offsets. Added that
 lesson to the MSC recipe book. The auxiliary unpacked comparison still reports
 header/relocation and tail differences; the final packed retail and native EXEs
 are byte-identical, and this investigation does not claim otherwise.
+
+## 2026-11-05 20:45 CET: Merge main hotspot consolidation into inv-names
+
+### What I did
+
+Merged origin/main into inv-names, retaining the complete 365-record g_hots
+array, HOTS_* indexes and main's provisional-storage investigations and fixes.
+Reapplied all sixteen named StyleIndex schemes to the consolidated table;
+kept the Hotspot list-row view, PopupLayout and the car/rival renames.
+Preserved both branches' recipe-book and diary additions and regenerated
+header dependencies. Audited source and metadata for superseded names and
+verified the consolidated table equals main after substituting enum values.
+
+All gates passed: headers, formatting (157 files), docs (zero diagnostics),
+572/572 function matches, a clean work-directory rebuild (96/96 object gates,
+748/748 exact near calls, Packed EXE IDENTICAL), DGROUP ownership/order,
+109 unit tests and DOS-native MAKE (SR.EXE IDENTICAL). The separate unpacked
+diagnostic retains the documented header/relocation-order and 14-tail-byte
+differences. Committed the merge without pushing.
+
+### What I learned
+
+Main's hotspot consolidation and the named drawing schemes compose directly:
+only each record's style word changes spelling; its screen indexes, links,
+coordinates and values remain intact. Existing investigation and compiler
+lessons from both branches remain in the recipe book and investigation notes.

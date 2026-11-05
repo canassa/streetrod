@@ -102,7 +102,7 @@ int av_run(void)
             y = 0;
             i = g_adResume ? g_driver.adIndex : g_pages.start[g_pages.cur];
             next = g_pages.list + i;
-            row7 = g_hotPageRows;
+            row7 = &g_hots[HOTS_ADVERTS + 2];
             cntz = 0;
             g_driver.adIndex = i;
             do {

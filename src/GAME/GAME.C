@@ -471,11 +471,11 @@ static void near buy_from_ads(int tab)
         if (used) {
             k3 = g_parts[i5 = list4[n + off6]].nameOffset;
             price6 = g_parts[i5].basePrice;
-            g_hotBuy[0].kind = HOT_DISABLED;
+            g_hots[HOTS_BUY + 2].kind = HOT_DISABLED;
         } else {
             k3 = (specn = &g_carData[i5 = list4[n - 2]])->nameOffset;
             price6 = specn->basePrice;
-            g_hotBuy[0].kind = HOT_BUTTON;
+            g_hots[HOTS_BUY + 2].kind = HOT_BUTTON;
         }
         strcpy(g_offerName, g_desc + k3);
         sprintf(g_buyPrice, "$%-3d ?", price6);
@@ -643,8 +643,8 @@ static enum GarageMode near your_cars(void)
         case KR_SELL_CAR:
             break;
         default:
-            if (item > 0) /* PROVISIONAL: the original loads g_list[0] here and drops it */
-                g_list[0] = g_list[0];
+            if (item > 0 && item <= g_list[0])
+                break;
         }
         cur = tbl[item = mn_sel()];
         offer = price = (int)((rn_int(CAR_SALE_RANDOM_PCT) + CAR_SALE_BASE_PCT) * cur->value / 100.0);
