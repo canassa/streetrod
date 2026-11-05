@@ -6,6 +6,7 @@
 #ifndef RACE_H
 #define RACE_H
 
+#include "DISK.H"
 #include "GAME.H"
 #include "STRUCTS.H"
 
@@ -141,11 +142,13 @@ enum RaceExit {
 struct Bitmap;
 struct DrivingState;
 
-/** @brief Held tool and cursor shape during a gas-station visit. */
+/** @brief Cursor shapes shared with the gas-station held-tool state. */
 enum GasHand {
+    GAS_HAND_GARAGE = 0, /**< Garage pointer. */
     GAS_HAND_EMPTY = 1,  /**< Empty hand. */
     GAS_HAND_NOZZLE = 2, /**< Holding the pump nozzle. */
-    GAS_HAND_RAG = 3     /**< Holding the cleaning rag. */
+    GAS_HAND_RAG = 3,    /**< Holding the cleaning rag. */
+    GAS_HAND_COUNT = 4   /**< Number of cursor shapes. */
 };
 
 /**
@@ -176,26 +179,40 @@ struct GasStationVisit {
     BOOL pumping;
 };
 
-struct Spot {
-    int id;
-    int x;
-    int y;
+/** @brief Positioned blood artwork in the severe-crash sequence. */
+struct CrashOverlay {
+    enum PictureId pictureId; /**< Picture resource to load. */
+    int x;                    /**< Left destination pixel. */
+    int y;                    /**< Top destination row. */
 };
 
+/**
+ * @brief Rival lookahead left boundary and projected mirror outer verges.
+ *
+ * The boundary is in world coordinates; the arrays are screen pixels,
+ * ordered from nearest to farthest mirror sample.
+ */
 struct RoadEdges {
-    int leftEdge;
-    int leftOuterX[8];
-    int rightOuterX[8];
+    int lookaheadLeftX;       /**< Left road boundary four samples ahead. */
+    int mirrorLeftOuterX[8];  /**< Mirror projection of the left outer verge. */
+    int mirrorRightOuterX[8]; /**< Mirror right outer-verge X. */
 };
 
+/**
+ * @brief Window and fuel-cap anchors for the displayed car.
+ *
+ * Anchors begin as car-relative pixels and become screen pixels when placed.
+ * A negative front-window X marks invalid anchors; rear-window presence is
+ * tracked separately from its translated coordinates.
+ */
 struct BodyPoints {
-    int hasRearGlass;
-    int frontGlassX;
-    int frontGlassY;
-    int rearGlassX;
-    int rearGlassY;
-    int gasCapX;
-    int gasCapY;
+    BOOL hasRearGlass; /**< TRUE when the model has a rear-window anchor. */
+    int frontGlassX;   /**< Front-window anchor X, or negative when invalid. */
+    int frontGlassY;   /**< Front-window anchor Y. */
+    int rearGlassX;    /**< Optional rear-window anchor X. */
+    int rearGlassY;    /**< Optional rear-window anchor Y. */
+    int gasCapX;       /**< Fuel-cap anchor X. */
+    int gasCapY;       /**< Fuel-cap anchor Y. */
 };
 
 /** @brief Police substitution and pursuit during an ordinary road race. */
@@ -219,25 +236,28 @@ enum CopPhase {
 #define STOP_POLICE 0x40         /**< Stopped by police. */
 #define STOP_JUMP_START 0x80     /**< Moved before the start signal. */
 
+/** @brief Rival or police speed targets, in miles per hour. */
 struct RivalPace {
-    int topSpeed;
-    int speedMargin;
-    int fastSpeed;
-    int slowSpeed;
+    int topSpeed;    /**< Stock speed used as the curve-speed base. */
+    int speedMargin; /**< Added to player speed when the rival is nearby. */
+    int fastSpeed;   /**< Faster target while well ahead. */
+    int slowSpeed;   /**< Slower lead target and nearby minimum target. */
 };
 
+/** @brief Accepted gas-station commands for the current interaction state. */
 struct GasInteraction {
-    int capAvailable;
-    int ragAvailable;
-    int nozzleAvailable;
+    BOOL capAvailable;    /**< TRUE accepts a fuel-cap command. */
+    BOOL ragAvailable;    /**< TRUE accepts taking or returning the rag. */
+    BOOL nozzleAvailable; /**< TRUE accepts taking or returning the nozzle. */
 };
 
+/** @brief Rival or police position along and across the generated track. */
 struct RivalPosition {
-    int roadIndex;
-    int roadFraction;
-    int distanceStep;
-    int lateralX;
-    char unused[8];
+    int roadIndex;    /**< Current track-sample index. */
+    int roadFraction; /**< Eighths within the current sample. */
+    int distanceStep; /**< Eighths of a sample advanced per movement update. */
+    int lateralX;     /**< Position across the road in world coordinates. */
+    char unused[8];   /**< Spare bytes with no member accesses. */
 };
 
 extern struct BodyPoints g_featurePos;

@@ -10,6 +10,7 @@
 #include "RACE.H"
 #include "SCREEN.H"
 #include "SOUND.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 #include "VIDEO.H"
 
@@ -21,7 +22,7 @@ static char g_savedPal3 = -1;
 
 void cr_go(void)
 {
-    g_firePressed = g_mouse.left = g_joyButtons = g_buttons = 0;
+    g_firePressed = g_mouse.left = g_joyButtons = g_buttons = FALSE;
     if (g_scene) {
         if (g_driver.currentCar->fuel > TOWN_TRIP_FUEL)
             g_driver.currentCar->fuel -= TOWN_TRIP_FUEL;

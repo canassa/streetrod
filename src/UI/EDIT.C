@@ -12,6 +12,7 @@
 #include "MESSAGES.H"
 #include "SCREEN.H"
 #include "SOUND.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 #include "VIDEO.H"
 
@@ -28,7 +29,8 @@ int ed_line(int x, int y, char *buf, int max)
     char pos, oc;
     int end, w, px;
     char ip;
-    int key, mono, cx, ret, cy, n;
+    int key, mono, cx, ret, cy;
+    BOOL n;
 
     pos = x_colors.fill;
     oc = x_colors.line;
@@ -53,8 +55,8 @@ int ed_line(int x, int y, char *buf, int max)
     sy_hover_reset();
     ret = sy_keymap_restore(1);
     kb_text_on(g_editDigits);
-    n = g_input.any;
-    g_input.any = 1;
+    n = g_input.captureKeys;
+    g_input.captureKeys = TRUE;
     g_input.key = 0;
     dest[1] = 0;
     end = strlen(buf);
@@ -124,7 +126,7 @@ int ed_line(int x, int y, char *buf, int max)
     x_colors.fill = pos;
     g_msgClickToEdit[0] = ip;
     sy_hover_reset();
-    g_input.any = n;
+    g_input.captureKeys = n;
     kb_text_off();
     if (ret)
         sy_keymap_set(ret);

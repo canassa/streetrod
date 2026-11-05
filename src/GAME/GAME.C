@@ -89,10 +89,10 @@ static int near start_game(void)
 void gm_pause(int a)
 {
     g_waitUntil = a + g_tick;
-    g_input.any = 1;
+    g_input.captureKeys = TRUE;
     sy_wait_input(30000);
     g_waitUntil = 0;
-    g_input.any = 0;
+    g_input.captureKeys = FALSE;
 }
 
 
@@ -146,7 +146,7 @@ static int near read_paper(void)
     r_vid.copyToFront = old;
     if (r_vid.copyToFront)
         bm_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), (SCREEN_BODY_HEIGHT - 1));
-    cu_ctl(1);
+    cu_ctl(GAS_HAND_EMPTY);
     return mn_wait(KM_NEWSPAPER);
 }
 
@@ -216,9 +216,9 @@ static void near sell_parts(void)
         }
         g_list[0] = nl;
         strcpy(g_msgSellChange, "Sell it");
-        g_keyMaps[KM_SPARE_PARTS]->key = SC_S;
+        g_keyMaps[KM_SPARE_PARTS]->scanCode = SC_S;
         sel = mn_modal_list(KM_SPARE_PARTS, sel <= g_list[0] ? sel : g_list[0], 0, g_list, lbl, 0);
-        g_keyMaps[KM_SPARE_PARTS]->key = SC_C;
+        g_keyMaps[KM_SPARE_PARTS]->scanCode = SC_C;
         strcpy(g_msgSellChange, "Change");
         switch ((int)sel) {
         case KR_CANCEL:
@@ -537,9 +537,9 @@ static void near buy_from_ads(int tab)
                         g_tirePics[(specn->stockParts >> SPEC_TIRES_SHIFT) & SPEC_TIRES_MASK]);
             sc_text((SCREEN_WIDTH - da_text_width(g_offerName)) / 2, 0x88, g_offerName);
             cu_ctl(CURSOR_SHOW_NOW);
-            g_input.any = 1;
+            g_input.captureKeys = TRUE;
             mn_wait(KM_MESSAGE);
-            g_input.any = 0;
+            g_input.captureKeys = FALSE;
             pu_show(bm1, 0, 0x40);
             ma_clear();
         }
@@ -795,7 +795,7 @@ void near gm_run(void)
                 if (g_end == END_TIME_UP)
                     da_time_up();
                 fa_show(g_end & END_KING_BEATEN);
-                cu_ctl(1);
+                cu_ctl(GAS_HAND_EMPTY);
                 g_end = 0;
                 again = 1;
                 kind = fa_end_menu();

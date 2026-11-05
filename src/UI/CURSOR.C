@@ -10,11 +10,12 @@
 #include "MARKS.H"
 #include "MEM.H"
 #include "PC.H"
+#include "RACE.H"
 #include "STRUCTS.H"
 
 struct Cursor g_cursor2;
 
-static struct Pair g_cursorPairs[4] = {{1, 1}, {2, 2}, {1, 1}, {8, 8}};
+static struct Pair g_cursorPairs[GAS_HAND_COUNT] = {{1, 1}, {2, 2}, {1, 1}, {8, 8}};
 
 
 unsigned cu_shape_off(unsigned n)
@@ -75,8 +76,8 @@ void cu_init(void)
         }
     }
     g_cursor2.shapeSize = img->pitch << 4;
-    g_cursor2.shapeIndex = 1;
-    g_cursor2.shapeOffset = cu_shape_off(1);
+    g_cursor2.shapeIndex = GAS_HAND_EMPTY;
+    g_cursor2.shapeOffset = cu_shape_off(GAS_HAND_EMPTY);
     g_cursor2.drawnRect.x2 = -1;
     g_cursorX = 0x9e;
     g_cursorY = 0x80;

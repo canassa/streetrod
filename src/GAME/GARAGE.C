@@ -23,6 +23,7 @@
 #include "PERF.H"
 #include "POOLS.H"
 #include "POPUP.H"
+#include "RACE.H"
 #include "RANDOM.H"
 #include "SCREEN.H"
 #include "SOUND.H"
@@ -284,7 +285,7 @@ int near ga_menu(enum GarageMode mode)
             cu_ctl(CURSOR_SHOW_NOW);
         return GARAGE_GAME_ENDED;
     }
-    cu_ctl(0);
+    cu_ctl(GAS_HAND_GARAGE);
     sc_status_text(-1, "", 0);
     g_scene = SCENE_GARAGE;
     switch (mode) {

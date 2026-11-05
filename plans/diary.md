@@ -3371,6 +3371,34 @@ lessons from both branches remain in the recipe book and investigation notes.
   rather than purchase entries, and HOT_DATA has an ignored duplicate tail.
   Full evidence and remaining uncertainty live in the linked report.
 
+## 2026-11-05 21:36 CET: Investigate race, road, scenery and view records
+
+### What I did
+
+- Investigated all thirteen records assigned to st-road, one by one, and recorded
+  storage, member domains, producers/consumers and evidence in
+  [the investigation](investigations/st-road.md).
+- Documented every member, clarified lookahead versus mirror coordinates,
+  renamed the crash overlay and scenery record types, and propagated the type
+  names through asset declarations, the DGROUP reader and existing tests.
+- Used BOOL for four proven flags and DrivingPage for drawing/display roles;
+  kept spare fields, signedness, pointer distances and field order intact.
+- All 572 functions match; the clean packed build is identical; DGROUP checks
+  pass and all 109 tests pass. The targeted MSC layout audit passes 65 checks.
+
+### What I learned
+
+- Scenery span extents are inclusive endpoint differences; zero draws one pixel.
+  The assets include positive Y offsets, so treating the offsets as always
+  upward or unsigned would be wrong.
+- The paired lookahead boundaries are four samples ahead; RoadEdges also holds
+  unrelated mirror pixel arrays. ViewClip's bottom is inclusive for spans but
+  exclusive for bitmap height clipping. These contracts and out-of-scope names
+  are documented in [the investigation](investigations/st-road.md).
+- Final review reused the existing PictureId enum for crash-overlay resources
+  and traced car anchors to HOT_DATA's service-coordinate block. The expanded
+  MSC audit passes all 67 layout and enum checks.
+
 ## 2026-11-05 21:37 CET: Disk, picture-slot, glyph and needle structs
 
 ### What I did
@@ -3469,6 +3497,48 @@ Recorded the final results in plans/investigations/st-video.md.
 The documentation and semantic member names preserve all original field offsets
 and linked bytes, including the EGA/CGA/Tandy band views and Hercules mode
 handling. No merge conflict or new reconstruction uncertainty arose.
+
+## 2026-11-05 21:41 CET: Validate merged st-road investigation
+
+### What I did
+
+- Merged origin/main at 3daaa69 into st-road (53440b6); retained both complete
+  diary entries when resolving the sole merge conflict. Source merged cleanly.
+- Reran headers, formatting, Doxygen (zero diagnostics), all 572 function
+  checks, a clean packed build, DGROUP checks and all 109 unit tests.
+- Packed and DOS-native executables are IDENTICAL to the original. All 67
+  targeted layout/enum checks pass; the native source snapshot matches the
+  combined tree. Results are in [st-road.md](investigations/st-road.md).
+
+### What I learned
+
+- The parallel disk investigation's service-point renames integrate without
+  changing the car-relative-to-screen anchor contract established here.
+
+## 2026-11-05 21:39 CET: Investigate system, input, cursor and tone records
+
+### What I did
+- Investigated and documented all fifteen assigned types in plans/investigations/st-sys.md; added concise type/member docs and propagated supported names and value sets.
+- Preserved every layout, spare field and signed char flag. All 572 functions matched; the clean packed EXE was IDENTICAL; headers, formatting, docs, DGROUP and all 109 tests passed before integration.
+- Audited 81 real-MSC size/offset values for fifteen records, compiling seven headers independently; zero mismatches. The origin/main merge and complete gate rerun follow this commit.
+
+### What I learned
+- Timer lists dispatch their tail; cancellation, free-list exhaustion and zero-delay behavior have limitations recorded in the investigation note.
+- Mouse masks and initial values are not normalized booleans; tone scaling wraps its product to sixteen bits; saved KeyMap values can be raw scan-map bytes rather than biased menu results.
+- Pair has incompatible caller-specific units and unconsumed cursor outputs, so generic members are appropriate. The cursor sheet includes a garage pointer in slot zero.
+- Type tags require direct edits because sr rename indexes other symbol kinds. Named array bounds must use enum constants for DGROUP analysis; details and evidence are in the note.
+
+## 2026-11-05 21:42 CET: Validate st-sys after integrating the disk investigation
+
+### What I did
+
+- Merged origin/main at 3daaa69 in bed08f8; preserved both diary entries in timestamp order and accepted the clean source merge.
+- Reran headers/format/docs (zero diagnostics), all 572 functions, a clean packed build (IDENTICAL, 96 object gates, 748 exact near calls), DGROUP checks, all 109 tests and the 81-check fixed-layout audit.
+- Repeated DOS-native MAKE: SR.EXE IDENTICAL to the original, SHA-1 3a5e28b795313028b7e77d147122f41cb29de334. Recorded final evidence in plans/investigations/st-sys.md. No push.
+
+### What I learned
+
+- The disk record changes compose with the system/input member changes without source conflicts. The known unpacked-file diagnostic still differs in header/relocation order and fourteen tail bytes while both packed build paths reproduce the original exactly.
 
 
 ## 2026-11-05 21:38 CET: Investigate car, dashboard, garage and pool structs

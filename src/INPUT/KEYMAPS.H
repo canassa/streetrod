@@ -6,9 +6,15 @@
 #ifndef KEYMAPS_H
 #define KEYMAPS_H
 
+/**
+ * @brief A keyboard scan-code binding or a saved binding to restore.
+ *
+ * Packed menu maps end with a single zero scan byte, with no following value.
+ */
 struct KeyMap {
-    char key;
-    char val;
+    char scanCode; /**< Make scan code; zero terminates the map. */
+    /** Replacement byte; menus add @ref KEY_VALUE_BASE to @ref InputResult. */
+    char mappedByte;
 };
 
 /** Bias added to menu results when stored as keyboard-map bytes. */

@@ -713,7 +713,7 @@ void rd_reset(void)
     g_trackViewMotion.cameraY = 1900;
     g_trackViewMotion.unused = 0;
     g_trackViewMotion.roadHeight = 0;
-    g_trackViewMotion.curveX = 0;
+    g_trackViewMotion.curveReference = 0;
     g_trackViewMotion.distanceStep = 0;
     g_rivalLeft = 1;
     g_swapArmedRivalValue = !rn_int(2);
@@ -741,7 +741,7 @@ void rd_project_ahead(void)
     p6 = g_yBuildingTopArray;
     rowz = 4;
     d1 = g_trackViewMotion.roadHeight - *g_elevationCursor++;
-    d2 = g_trackViewMotion.curveX - *g_sampleCurveXReadPtr++;
+    d2 = g_trackViewMotion.curveReference - *g_sampleCurveXReadPtr++;
     *p3++ = rd_proj_y(rowz, ROAD_SURFACE_Y, d1);
     if (widthBits) {
         if (widthBits & TERRAIN_NARROW) {
@@ -772,7 +772,7 @@ void rd_project_ahead(void)
         g_trackRoadWordsCursor++;
         d1 = g_trackViewMotion.roadHeight - *g_elevationCursor;
         g_elevationCursor++;
-        d2 = g_trackViewMotion.curveX - *g_sampleCurveXReadPtr;
+        d2 = g_trackViewMotion.curveReference - *g_sampleCurveXReadPtr;
         g_sampleCurveXReadPtr++;
         if (widthBits) {
             if (widthBits & TERRAIN_NARROW) {
@@ -826,12 +826,12 @@ void rd_project_behind(void)
     p11 = g_mirGeom.rightX;
     p2 = g_lhsRdMirrorX;
     p3 = g_mirYProj;
-    p42 = g_edgesRoad.leftOuterX;
-    p5l = g_edgesRoad.rightOuterX;
+    p42 = g_edgesRoad.mirrorLeftOuterX;
+    p5l = g_edgesRoad.mirrorRightOuterX;
     p6 = g_mirGeom.buildingY;
     rowz = 8;
     d1 = *g_elevationCursor-- - g_trackViewMotion.roadHeight;
-    d2 = *g_sampleCurveXReadPtr-- - g_trackViewMotion.curveX;
+    d2 = *g_sampleCurveXReadPtr-- - g_trackViewMotion.curveReference;
     *p3++ = rd_mirror_y(rowz, ROAD_SURFACE_Y, d1);
     if (widthBits) {
         if (widthBits & TERRAIN_NARROW) {
@@ -862,7 +862,7 @@ void rd_project_behind(void)
         g_trackRoadWordsCursor--;
         d1 = *g_elevationCursor - g_trackViewMotion.roadHeight;
         g_elevationCursor--;
-        d2 = *g_sampleCurveXReadPtr - g_trackViewMotion.curveX;
+        d2 = *g_sampleCurveXReadPtr - g_trackViewMotion.curveReference;
         g_sampleCurveXReadPtr--;
         if (widthBits) {
             if (widthBits & TERRAIN_NARROW) {
@@ -945,18 +945,18 @@ void rd_advance(void)
     narrow = g_trackRoadWordsCursor[4] & TERRAIN_WIDTH_MASK;
     if (narrow) {
         if (narrow & TERRAIN_NARROW) {
-            g_edgesRoad.leftEdge = 2000;
-            g_trackViewMotion.rightEdge = 0xaf0;
+            g_edgesRoad.lookaheadLeftX = 2000;
+            g_trackViewMotion.lookaheadRightX = 0xaf0;
         } else if (narrow & TERRAIN_LEFT_CLOSED) {
-            g_edgesRoad.leftEdge = 2000;
-            g_trackViewMotion.rightEdge = 0xce4;
+            g_edgesRoad.lookaheadLeftX = 2000;
+            g_trackViewMotion.lookaheadRightX = 0xce4;
         } else {
-            g_edgesRoad.leftEdge = 1500;
-            g_trackViewMotion.rightEdge = 0xaf0;
+            g_edgesRoad.lookaheadLeftX = 1500;
+            g_trackViewMotion.lookaheadRightX = 0xaf0;
         }
     } else {
-        g_edgesRoad.leftEdge = 1500;
-        g_trackViewMotion.rightEdge = 0xce4;
+        g_edgesRoad.lookaheadLeftX = 1500;
+        g_trackViewMotion.lookaheadRightX = 0xce4;
     }
     g_trackViewMotion.roadHeight = *g_elevationCursor;
     if (g_demo != 0 || g_autoDrive != 0 ||
@@ -971,12 +971,12 @@ void rd_advance(void)
             g_trackViewMotion.lateralX = goal6 + (goal6 < g_trackViewMotion.lateralX ? 100 : -100);
         else
             g_trackViewMotion.lateralX = goal6;
-        if (abs(*g_sampleCurveXReadPtr - g_trackViewMotion.curveX) > 0) {
-            g_driveEng.steering = (g_trackViewMotion.curveX - *g_sampleCurveXReadPtr) * 2;
+        if (abs(*g_sampleCurveXReadPtr - g_trackViewMotion.curveReference) > 0) {
+            g_driveEng.steering = (g_trackViewMotion.curveReference - *g_sampleCurveXReadPtr) * 2;
             if (abs(g_driveEng.steering) > 24)
                 g_driveEng.steering = g_driveEng.steering > 0 ? 24 : -24;
         }
-        g_trackViewMotion.curveX = *g_sampleCurveXReadPtr;
+        g_trackViewMotion.curveReference = *g_sampleCurveXReadPtr;
     }
 }
 
@@ -1019,17 +1019,17 @@ void rd_start(void)
 void rd_turn(int dir)
 {
     if (dir == 1)
-        g_trackViewMotion.curveX += 3;
+        g_trackViewMotion.curveReference += 3;
     else
-        g_trackViewMotion.curveX -= 3;
+        g_trackViewMotion.curveReference -= 3;
 }
 
 
 void rd_update(void)
 {
     if (g_driveEng.steeringInput && g_driveEng.speed &&
-        abs(g_trackViewMotion.curveX - *g_sampleCurveXReadPtr - g_driveEng.steeringInput) < 200)
-        g_trackViewMotion.curveX -= (g_driveEng.steeringInput >> 1) + 1;
+        abs(g_trackViewMotion.curveReference - *g_sampleCurveXReadPtr - g_driveEng.steeringInput) < 200)
+        g_trackViewMotion.curveReference -= (g_driveEng.steeringInput >> 1) + 1;
     if (!g_runRacingFlag) {
         if (g_hasSlowCpu)
             g_trackViewMotion.distanceStep = 6;
@@ -1043,7 +1043,7 @@ void rd_update(void)
         if (g_failureTire)
             g_trackViewMotion.lateralX += 25;
         else if (g_driveEng.speed)
-            g_trackViewMotion.lateralX -= (g_trackViewMotion.curveX - *g_sampleCurveXReadPtr) *
+            g_trackViewMotion.lateralX -= (g_trackViewMotion.curveReference - *g_sampleCurveXReadPtr) *
                                               (g_trackViewMotion.distanceStep + g_driveEng.tireSlip) >>
                                           2;
     }

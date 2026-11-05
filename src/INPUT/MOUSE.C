@@ -52,33 +52,33 @@ void mo_poll(void)
     int mag, neg;
 
     mo_motion(&mx, &my);
-    g_mouse.accX += mx;
-    g_mouse.accY += my;
-    if (g_mouse.accX < 0) {
-        mag = -g_mouse.accX;
+    g_mouse.mickeysX += mx;
+    g_mouse.mickeysY += my;
+    if (g_mouse.mickeysX < 0) {
+        mag = -g_mouse.mickeysX;
         neg = -1;
     } else {
-        mag = g_mouse.accX;
+        mag = g_mouse.mickeysX;
         neg = 0;
     }
     g_mouse.dx = mag >> g_mouse.shiftX;
     if (g_mouse.dx) {
         if (neg)
             g_mouse.dx = -g_mouse.dx;
-        g_mouse.accX = 0;
+        g_mouse.mickeysX = 0;
     }
-    if (g_mouse.accY < 0) {
-        mag = -g_mouse.accY;
+    if (g_mouse.mickeysY < 0) {
+        mag = -g_mouse.mickeysY;
         neg = -1;
     } else {
-        mag = g_mouse.accY;
+        mag = g_mouse.mickeysY;
         neg = 0;
     }
     g_mouse.dy = mag >> g_mouse.shiftY;
     if (g_mouse.dy) {
         if (neg)
             g_mouse.dy = -g_mouse.dy;
-        g_mouse.accY = 0;
+        g_mouse.mickeysY = 0;
     }
     mo_buttons();
     if (g_mouse.left) {
