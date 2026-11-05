@@ -2528,3 +2528,28 @@ The conflicting lines contain independent substitutions: keep named appearance m
 
 - The pilot (show_rival_car) and three rounds of user feedback shaped the documentation rules;
   the skill now carries them so a bare "investigate X" brief is enough.
+
+## 2026-11-05 15:16 CET: Investigate ch_skate
+
+### What I did
+
+- Investigated the callers, sprite backends, arena lifetime, background patches
+  and decoded carhop sheets before editing; kept the accurate ch_skate name.
+- Named both parameters and every local for their roles, preserving the complete
+  214-byte stack layout. Replaced the incorrect moving-car-body comment with a
+  concise public Doxygen contract in CARHOP.H.
+- Saved the evidence and out-of-scope misleading comments in
+  [the investigation](investigations/ch_skate.md).
+- Rebased inv-skate onto rewritten origin/main (78df6d2), then passed headers,
+  formatting, zero-diagnostic docs, 572/572 function matches, clean IDENTICAL
+  packed build, DGROUP ownership/order, 104 tests and IDENTICAL DOS-native MAKE.
+
+### What I learned
+
+- The second argument preserves a parked rival car as foreground occlusion; both
+  boolean values are used. The standing-position foreground is saved before
+  combining the rival's mask, so the persistent patch excludes that transient car.
+- The 84-frame motion covers 240 pixels in either direction. The extra terminal
+  sprite step synchronizes EGA pages; its unused result does not make it redundant.
+- Detailed rendering evidence and remaining out-of-scope naming issues live in
+  the investigation; this session found no new compiler or tooling rule.

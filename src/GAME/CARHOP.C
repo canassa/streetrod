@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include "CARHOP.H"
 #include "ARENA.H"
 #include "BITMAP.H"
@@ -71,107 +72,106 @@ static void near grab_strip(struct Bitmap far **pbm)
     }
 }
 
-/* Build the sprite animation of a moving car body: the cells from the sheet, the pages, the 0x54
-   step run */
-
-void ch_skate(enum CarhopMode a, int b)
+void ch_skate(enum CarhopMode mode, int carPresent)
 {
-    struct Blt r2;
-    struct Bitmap far *t;
-    struct Sprite *sp2;
-    struct Blt r3;
-    struct Rect rca2;
-    struct Rect rcb1;
-    struct Bitmap far *bm27, far *fr;
-    struct Seq trk7[4];
-    long tm7;
-    struct Bitmap far *clip;
-    int okn;
-    struct Bitmap hdrz;
-    struct Bitmap far *bm9;
-    struct Rect *prc3;
-    int x, v3;
-    struct Bitmap far *tab2[13];
-    struct Seq *p9;
-    struct Bitmap far *B7;
-    int i;
+    struct Blt patchBlt;
+    struct Bitmap far *patchedBg;
+    struct Blt carCopyBlt;
+    struct Sprite *carhopSprite;
+    int carhopX;
+    struct Bitmap far *captureStrip;
+    struct Rect *ignoredRect;
+    struct Bitmap sceneHeader;
+    int stepActive;
+    struct Seq moves[4];
+    long nextTick;
+    struct Bitmap far *carCutout;
+    struct Rect overlayArea;
+    struct Bitmap far *foreground, far *frame;
+    struct Bitmap far *imagePtrs[13];
+    struct Seq *motionPtr;
+    struct Bitmap far *canvas;
+    int stepNum;
+    struct Rect carClipRect;
+    int shift;
 
-    bm9 = &hdrz;
+    captureStrip = &sceneHeader;
     ma_release();
-    grab_strip(&bm9);
-    if (a == CARHOP_LEAVE) {
-        r3.w = 0x30;
-        r3.h = 0x29;
-        r3.dx = 0xc8;
-        r3.dy = r3.sx = r3.sy = 0;
-        (*g_videoOps.copy)(g_carhopBg, bm9, &r3, 1);
+    grab_strip(&captureStrip);
+    if (mode == CARHOP_LEAVE) {
+        carCopyBlt.w = 0x30;
+        carCopyBlt.h = 0x29;
+        carCopyBlt.dx = 0xc8;
+        carCopyBlt.dy = carCopyBlt.sx = carCopyBlt.sy = 0;
+        (*g_videoOps.copy)(g_carhopBg, captureStrip, &carCopyBlt, 1);
     }
-    if (b) {
-        if (sp_car_clip(0, 0x44, bm9->width, bm9->height, &rca2)) {
-            r3.w = rca2.x2 - rca2.x1;
-            r3.h = rca2.y2 - rca2.y1 + 1;
-            r3.sx = rca2.x1 - g_picXDraw;
-            r3.sy = rca2.y1 - g_sprDrawY;
-            clip = bm_grab(g_autoSprImagePtr, &r3, ARENA_HIGH_STACK);
-            r3.sx = 0;
-            r3.sy = 0;
-            r3.dx = rca2.x1;
-            r3.dy = bm9->height - clip->height;
-            (*g_videoOps.maskedBlit)(clip, bm9, &r3, 1);
+    if (carPresent) {
+        if (sp_car_clip(0, 0x44, captureStrip->width, captureStrip->height, &carClipRect)) {
+            carCopyBlt.w = carClipRect.x2 - carClipRect.x1;
+            carCopyBlt.h = carClipRect.y2 - carClipRect.y1 + 1;
+            carCopyBlt.sx = carClipRect.x1 - g_picXDraw;
+            carCopyBlt.sy = carClipRect.y1 - g_sprDrawY;
+            carCutout = bm_grab(g_autoSprImagePtr, &carCopyBlt, ARENA_HIGH_STACK);
+            carCopyBlt.sx = 0;
+            carCopyBlt.sy = 0;
+            carCopyBlt.dx = carClipRect.x1;
+            carCopyBlt.dy = captureStrip->height - carCutout->height;
+            (*g_videoOps.maskedBlit)(carCutout, captureStrip, &carCopyBlt, 1);
         } else
-            clip = 0;
+            carCutout = NULL;
     }
-    cp_backdrop(bm9, &tab2[0], PIC_CARHOP_SILHOUETTES, &B7, 0x29, 0x29, &prc3, &prc3);
-    if (a == CARHOP_ENTER) {
-        bm27 = ar_bm(0x30, 0x29, 1, ARENA_HIGH_STACK);
-        r2.w = 0x30;
-        r2.h = 0x29;
-        r2.sx = r2.sy = 0;
-        r2.dx = r2.dy = 0;
-        (*g_videoOps.copy)(g_carhopBg, bm27, &r2, 1);
-        r2.sx = 0xc8;
-        (*g_videoOps.copy)(tab2[0], bm27, &r2, 2);
+    cp_backdrop(captureStrip, &imagePtrs[0], PIC_CARHOP_SILHOUETTES, &canvas, 0x29, 0x29, &ignoredRect, &ignoredRect);
+    if (mode == CARHOP_ENTER) {
+        foreground = ar_bm(0x30, 0x29, 1, ARENA_HIGH_STACK);
+        patchBlt.w = 0x30;
+        patchBlt.h = 0x29;
+        patchBlt.sx = patchBlt.sy = 0;
+        patchBlt.dx = patchBlt.dy = 0;
+        (*g_videoOps.copy)(g_carhopBg, foreground, &patchBlt, 1);
+        patchBlt.sx = 0xc8;
+        (*g_videoOps.copy)(imagePtrs[0], foreground, &patchBlt, 2);
     }
-    if (b && clip)
-        bm_and_mask(clip, tab2[0], &r3);
-    rcb1.x1 = rcb1.y1 = 0;
-    rcb1.x2 = tab2[0]->width - 1;
-    rcb1.y2 = tab2[0]->height - 1;
-    cut_sheet(&tab2[1], a);
-    fr = ar_bm(0x30, 0x29, 1, ARENA_HIGH_STACK);
-    sp2 = sp_setup(a == CARHOP_ENTER ? -40 : 200, 0x6c, &fr, 0, 1, B7, tab2[0], &rcb1, 0);
-    p9 = a == CARHOP_ENTER ? g_carhopInSeq : g_carhopOutSeq;
-    for (i = 0; i < 4; i++)
-        trk7[i] = *p9++;
-    sp2->seq = trk7;
-    if (a == CARHOP_LEAVE) {
-        sp2->page->rect = g_carhopRect;
-        sp2->page->link->rect = g_carhopRect;
+    if (carPresent && carCutout)
+        bm_and_mask(carCutout, imagePtrs[0], &carCopyBlt);
+    overlayArea.x1 = overlayArea.y1 = 0;
+    overlayArea.x2 = imagePtrs[0]->width - 1;
+    overlayArea.y2 = imagePtrs[0]->height - 1;
+    cut_sheet(&imagePtrs[1], mode);
+    frame = ar_bm(0x30, 0x29, 1, ARENA_HIGH_STACK);
+    carhopSprite =
+        sp_setup(mode == CARHOP_ENTER ? -40 : 200, 0x6c, &frame, 0, 1, canvas, imagePtrs[0], &overlayArea, 0);
+    motionPtr = mode == CARHOP_ENTER ? g_carhopInSeq : g_carhopOutSeq;
+    for (stepNum = 0; stepNum < 4; stepNum++)
+        moves[stepNum] = *motionPtr++;
+    carhopSprite->seq = moves;
+    if (mode == CARHOP_LEAVE) {
+        carhopSprite->page->rect = g_carhopRect;
+        carhopSprite->page->link->rect = g_carhopRect;
     }
     g_spriteBottomCut = 0;
-    for (i = 0; i < 0x54; i++) {
-        x = sp2->x;
-        v3 = x & ~r_vid.mask;
-        bm_shift_right(tab2[g_carhopFrames[i]], v3, fr);
-        tm7 = g_tick + 2;
-        okn = (*g_videoOps.spriteStep)(sp2);
-        while (tm7 > g_tick)
+    for (stepNum = 0; stepNum < 0x54; stepNum++) {
+        carhopX = carhopSprite->x;
+        shift = carhopX & ~r_vid.mask;
+        bm_shift_right(imagePtrs[g_carhopFrames[stepNum]], shift, frame);
+        nextTick = g_tick + 2;
+        stepActive = (*g_videoOps.spriteStep)(carhopSprite);
+        while (nextTick > g_tick)
             ;
     }
-    okn = (*g_videoOps.spriteStep)(sp2);
-    g_carhopRect = sp2->page->rect;
-    if (a == CARHOP_LEAVE) {
+    stepActive = (*g_videoOps.spriteStep)(carhopSprite);
+    g_carhopRect = carhopSprite->page->rect;
+    if (mode == CARHOP_LEAVE) {
         cp_patch_bg(g_carhopBg, 0, 0, 0x30, 0x29, 0xc8, 0x44, 0xa3, 2);
     } else {
-        t = ar_bm(fr->width, 0x29, 1, ARENA_HIGH_STACK);
-        r2.w = fr->width;
-        r2.h = 0x29;
-        r2.sx = r2.sy = 0;
-        r2.dx = r2.dy = 0;
-        (*g_videoOps.copy)(g_carhopBg, t, &r2, 1);
-        (*g_videoOps.maskedBlit)(fr, t, &r2, 1);
-        (*g_videoOps.maskedBlit)(bm27, t, &r2, 0);
-        cp_patch_bg(t, 0, 0, t->width, 0x29, 0xc8, 0x44, 0xa3, 2);
+        patchedBg = ar_bm(frame->width, 0x29, 1, ARENA_HIGH_STACK);
+        patchBlt.w = frame->width;
+        patchBlt.h = 0x29;
+        patchBlt.sx = patchBlt.sy = 0;
+        patchBlt.dx = patchBlt.dy = 0;
+        (*g_videoOps.copy)(g_carhopBg, patchedBg, &patchBlt, 1);
+        (*g_videoOps.maskedBlit)(frame, patchedBg, &patchBlt, 1);
+        (*g_videoOps.maskedBlit)(foreground, patchedBg, &patchBlt, 0);
+        cp_patch_bg(patchedBg, 0, 0, patchedBg->width, 0x29, 0xc8, 0x44, 0xa3, 2);
     }
     if (r_vid.mode != VID_EGA)
         (*g_videoOps.copyPage)(r_vid.front->bits.p, r_vid.back->bits.p);
