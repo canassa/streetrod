@@ -27,17 +27,17 @@ int g_menuGrpHistoryList[4];
 char g_hideSelectFrameVal;
 struct ListDialog g_menuList;
 char g_headerEditableState;
-struct Hot *g_hotsCurMenu;
+struct Hotspot *g_hotsCurMenu;
 int g_textOfsMenu;
 int g_hotMenuGroupState;
 
 static int g_hotChain = 0;
 static char g_wearText[12] = "(xx% worn)";
 
-/* Draw a hot spot and the spots linked behind it (the chain through Hot.next masked with
+/* Draw a hot spot and the spots linked behind it (the chain through Hotspot.drawNext masked with
    g_hotChain). Grows the touched rectangle g_drawnMinX..g_drawnMaxY. */
 
-void mn_draw_hot(struct Hot *p)
+void mn_draw_hot(struct Hotspot *p)
 {
     int colr;
     int w, h;
@@ -51,9 +51,9 @@ void mn_draw_hot(struct Hot *p)
         switch (p->kind) {
         case HOT_BOX:
         case HOT_LINK_BOX:
-            if (p->palIndex > 0) {
-                if (p->palIndex != colr)
-                    x_colors = bustyle->pal[colr = p->palIndex];
+            if (p->styleIndex > 0) {
+                if (p->styleIndex != colr)
+                    x_colors = bustyle->pal[colr = p->styleIndex];
                 dr_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, h = p->y2 - p->y1);
                 if (x_colors.frame)
                     dr_bevel(r_vid.back, p->x1, p->y1, w, h);
@@ -70,21 +70,21 @@ void mn_draw_hot(struct Hot *p)
             g_drawnMaxY = p->y2 < g_drawnMaxY ? g_drawnMaxY : p->y2;
             continue;
         case HOT_BUTTON:
-            if (p->palIndex != colr)
-                x_colors = bustyle->pal[colr = p->palIndex];
+            if (p->styleIndex != colr)
+                x_colors = bustyle->pal[colr = p->styleIndex];
             dr_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, h = p->y2 - p->y1);
             dr_bevel(r_vid.back, p->x1, p->y1, w, h);
             str = g_txt + p->textOffset;
             (*g_videoOps.drawText)(r_vid.back, ((w - da_text_width(str)) >> 1) + p->x1, p->y1 + ((h - 8) >> 1), str);
             goto box;
         case HOT_TEXT:
-            if (p->palIndex != colr)
-                x_colors = bustyle->pal[colr = p->palIndex];
+            if (p->styleIndex != colr)
+                x_colors = bustyle->pal[colr = p->styleIndex];
             (*g_videoOps.drawText)(r_vid.back, p->x1, p->y1, g_txt + p->textOffset);
             goto box;
         case HOT_CENTERED_TEXT:
-            if (p->palIndex != colr)
-                x_colors = bustyle->pal[colr = p->palIndex];
+            if (p->styleIndex != colr)
+                x_colors = bustyle->pal[colr = p->styleIndex];
             str = g_txt + p->textOffset;
             (*g_videoOps.drawText)(r_vid.back, ((p->x2 - p->x1 - da_text_width(str)) >> 1) + p->x1,
                                    ((p->y2 - p->y1 - 8) >> 1) + p->y1, str);
@@ -92,8 +92,8 @@ void mn_draw_hot(struct Hot *p)
         case HOT_EDIT_HEADER:
             g_headerEditableState = 1;
         case HOT_CENTERED_HEADER:
-            if (p->palIndex != colr)
-                x_colors = bustyle->pal[colr = p->palIndex];
+            if (p->styleIndex != colr)
+                x_colors = bustyle->pal[colr = p->styleIndex];
             dr_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, 8);
             str = g_txt + p->textOffset;
             if (p->kind == HOT_CENTERED_HEADER)
@@ -116,7 +116,7 @@ void mn_draw_hot(struct Hot *p)
             continue;
         }
         break;
-    } while ((nxt = p->next & g_hotChain) ? (p = &g_hots[nxt], 1) : 0);
+    } while ((nxt = p->drawNext & g_hotChain) ? (p = &g_hots[nxt], 1) : 0);
     if (!g_hotChain && r_vid.copyToFront) {
         cu_ctl(CURSOR_SHOW);
         bm_copy_box(r_vid.back, r_vid.front, p->x1 - 3, p->y1 - 3, p->x2 + 6, p->y2 + 6);
@@ -129,7 +129,7 @@ void mn_draw_hot(struct Hot *p)
 
 void mn_push(enum ScreenId id)
 {
-    struct Hot *p;
+    struct Hotspot *p;
     struct Colors saved;
 
     if (g_menuLevel < 4) {
@@ -145,8 +145,8 @@ void mn_push(enum ScreenId id)
         g_hotChain = -1;
         g_drawnMinX = g_drawnMinY = 1000;
         g_drawnMaxX = g_drawnMaxY = -1;
-        if (p->next)
-            mn_draw_hot(&g_hots[p->next]);
+        if (p->drawNext)
+            mn_draw_hot(&g_hots[p->drawNext]);
         g_hotChain = 0;
         x_colors = saved;
         cu_ctl(CURSOR_SHOW);
@@ -190,13 +190,13 @@ void mn_reset(void)
 
 void mn_bbox(enum ScreenId id, int *x, int *y, int *w, int *h)
 {
-    struct Hot *p;
+    struct Hotspot *p;
 
     p = &g_hots[g_groupHot[id]];
     g_drawnMinX = g_drawnMinY = 1000;
     g_drawnMaxX = g_drawnMaxY = 1;
-    while (p->next) {
-        p = &g_hots[p->next];
+    while (p->drawNext) {
+        p = &g_hots[p->drawNext];
         g_drawnMinX = p->x1 > g_drawnMinX ? g_drawnMinX : p->x1;
         g_drawnMaxX = p->x2 < g_drawnMaxX ? g_drawnMaxX : p->x2;
         g_drawnMinY = p->y1 > g_drawnMinY ? g_drawnMinY : p->y1;
@@ -243,7 +243,7 @@ struct Bitmap far *mn_grab(enum ScreenId id, int *px, int *py, int mode)
 
 int mn_hit(int x, int y)
 {
-    struct Hot *p;
+    struct Hotspot *p;
     enum HotKind kind;
 
     p = g_hotsCurMenu;
@@ -270,7 +270,7 @@ int mn_hit(int x, int y)
                 g_boxSpotHitData.x1 = p->x2;
         next:
             if (kind == HOT_LINK_BOX)
-                p = &g_hots[p->id];
+                p = &g_hots[p->hitCode];
             else
                 p++;
         } else {
@@ -290,7 +290,7 @@ int mn_hit(int x, int y)
                 g_boxSpotHitData.y1 = p->y1;
                 g_boxSpotHitData.y2 = p->y2;
                 g_curHoverPointer = p;
-                return g_cursHoverCodeVal = p->id;
+                return g_cursHoverCodeVal = p->hitCode;
             }
             goto next;
         }
@@ -392,7 +392,7 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
     int *lpk, wh9, x;
     char *bufpl;
     int i, x1;
-    struct Hot *hotn;
+    struct Hotspot *hotn;
     int nw5, y1, x2, key2, y2, page, count5, bottom9, sv5;
     char *bpl, *buf1;
     int *lp11, right;
@@ -543,7 +543,7 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
         case KR_EDIT_HEADER:
             if (kind == KM_SAVE && !strcmp(g_blankName, bufpl))
                 strcpy(bufpl, "\0");
-            x_colors = bustyle->pal[hotn->palIndex];
+            x_colors = bustyle->pal[hotn->styleIndex];
             mn_push(KM_MESSAGE);
             ed_line(hotn->x1, hotn->y1, bufpl, n9);
             mn_pop(1);

@@ -3041,3 +3041,26 @@ cached SEG words and the ES reload between them.
   sequential counter used by zero-target waits. LOAD_IMAGE ignores its second
   operand. Unrelated misleading bitmap-copy parameter names and clipping
   commentary are recorded in the investigation note for their owners.
+## 2026-11-05 20:04 CET: Investigate the hotspot record
+
+### What I did
+
+- Investigated all Hot readers/writers, compiled tables, menu traversal,
+  list-row aliasing and runtime scene construction; recorded the evidence in
+  [Hot.md](investigations/Hot.md) before changing source names.
+- Renamed the type to Hotspot and clarified styleIndex, hitCode and drawNext;
+  documented every member and the existing kind enum without changing layout
+  or behavior. Updated reconstruction references and preserved unrelated types.
+- Verified the 18-byte layout directly with MSC 5.1, all 572 functions, zero
+  Doxygen diagnostics, clean headers/formatting, the clean packed and native
+  DOS builds (both IDENTICAL), DGROUP ownership/order and 106 unit tests.
+
+### What I learned
+
+- Drawing follows record indices, while hit testing advances through physical
+  records and uses a link box's hitCode as a separate skip index. They are
+  different traversals; the full contract is in [Hot.md](investigations/Hot.md).
+- List code deliberately reads the same record through Win's different member
+  names. Style selection reaches banks past the declared pal array. Both
+  findings are recorded for the separate Win/Style investigations; neither
+  requires changing their layout in this branch.

@@ -637,12 +637,12 @@ quit:
 
 static void near setup_bobs_spots(int a, int b)
 {
-    struct Hot save;
-    struct Hot *hot;
+    struct Hotspot save;
+    struct Hotspot *hot;
     int y1, x1, y, x;
 
     hot = g_hotBobs;
-    if (g_hotBobs[4].id != 4) {
+    if (g_hotBobs[4].hitCode != 4) {
         save = g_hotBobs[3];
         g_hotBobs[3] = g_hotBobs[4];
         g_hotBobs[4] = save;
@@ -1161,7 +1161,7 @@ void bo_visit(void)
 
 static void near set_jail_spots(enum HotKind id, char c)
 {
-    struct Hot *h;
+    struct Hotspot *h;
 
     h = g_hotBobs;
     if (id == HOT_DISABLED)

@@ -231,16 +231,16 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   these two COMMON clusters as structs bring it under. For the same reason ga_body
   (GARAGE.C) addresses its four messages as offsets into the message block,
   `g_txt + 1283`, `+ 1299`, `+ 1318`, `+ 1337` ("Chop roof - $70" ...), not as named
-  globals; the game addresses messages by offset into g_txt everywhere (`Hot.f4`, the
+  globals; the game addresses messages by offset into g_txt everywhere (`Hotspot.textOffset`, the
   argument of gm_message), so the original may have had named constants there. That the
   blocks are grouped is evidence; the member list (a wider CarDisplay changes ga_hood's
   loop temps, so the arrays from DS:8290 stay separate) and the spelling are not.
 - **Per-module type views.** VIEW.C reads the char `g_runRacingFlag` (DS:8ACA) as a word, so it
   writes `*(int *)&g_runRacingFlag`. The original file probably had an `extern int` of its own
   there. `struct Win` (MENU.C, SAVEGAME.C) is a second view of the 18-byte hot-spot record
-  `struct Hot`: `g_listLineBasePointerValue` holds the address of the first menu-line record as an `int`
+  `struct Hotspot`: `g_listLineBasePointerValue` holds the address of the first menu-line record as an `int`
   (`g_listLineBasePointerValue = (int)p`) and the code computes `(struct Win *)(0x12 * sel + g_listLineBasePointerValue)`.
-  Declaring it `struct Hot *` and writing `g_listLineBasePointerValue + sel` makes mn_list 10 bytes shorter,
+  Declaring it `struct Hotspot *` and writing `g_listLineBasePointerValue + sel` makes mn_list 10 bytes shorter,
   so the int arithmetic is evidence; that there were two struct names is not.
 - **Return types the code does not decide.** `main` (MAIN.C) and sc_picture (SCREEN.C)
   are `int` but end without a `return` (C4035); sc_picture_at returns sc_picture's value. ra_outcome
@@ -324,7 +324,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
 - C4035 "no return value" (2) and C4033 "function must return a value" (1): the return
   types above. Believed original.
 - C4047 "different levels of indirection" (2): mn_draw_hot's
-  `g_numPageRow = g_listLineBasePointerValue = g_hotTextFld = 0;` assigns the `struct Hot *` through to the two ints
+  `g_numPageRow = g_listLineBasePointerValue = g_hotTextFld = 0;` assigns the `struct Hotspot *` through to the two ints
   (int-held pointer, see `struct Win`), and sp_setup's
   `g_frmTable[i].data = r_vid.mode == -2 ? cell++ : &g_bandRecordsSprArray[i];` mixes a `char (*)[8]` cell
   with a `struct Bitmap *` in one `Frame.data` pointer that restore_rect/restore_rect_back read as a
@@ -355,15 +355,15 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
     initializer that takes its address.
   The HOTSPOT, MESSAGES and SCENERY splits are evidence; the files' names and contents
   beyond the bytes are not.
-- **HOTSPOT.C's arrays.** DS:09F4..239E is 365 18-byte `struct Hot` records in one index
-  space: `Hot.f10` links a record to the next by its index into `g_hots`, and the code
+- **HOTSPOT.C's arrays.** DS:09F4..239E is 365 18-byte `struct Hotspot` records in one index
+  space: `Hotspot.drawNext` links a record to the next by its index into `g_hots`, and the code
   reaches records as `&g_hots[n]`. It is split into arrays where code names a record
-  directly (`g_hotBuy[0].f0`, `g_hotRepair[7].f0`, `g_hotReadyBox[i].y1`, `g_bodyAsk[0].f4`, `g_transBolts[k]`,
+  directly (`g_hotBuy[0].kind`, `g_hotRepair[7].kind`, `g_hotReadyBox[i].y1`, `g_bodyAsk[0].textOffset`, `g_transBolts[k]`,
   `g_hotBobs[3]`) or computes a run-time difference (`g_hotCalendar - g_gar`, `g_hotGasExit - g_hotGasStation`),
   which proves separate symbols; each array starts at the first record so named. Where
   the original's other boundaries were (one array per menu list, or fewer), and the
   arrays' names, are not recoverable. `g_engineHots` (a runtime list gx_build_hots builds), `g_engineHotTemplate`
-  (three fixed menu records, then six records of another list) and `g_boltHot` are Hot
+  (three fixed menu records, then six records of another list) and `g_boltHot` are Hotspot
   records too; insert_hot sorts them by (x1, y1).
 - **KEYMAPS.ASM's key maps.** 42 referenced lists of (scan code, value) pairs, each ended
   by a 0 byte (`g_keyMaps[1..42]`; slot 0 holds the count), for screens plus the
@@ -394,7 +394,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   g_keyGroup and the demo's lastGroup use the int-sized ScreenId enum. The header
   tool follows enum tags and
   members as well as macros when choosing source includes.
-  Evidence for screen names is each menu caller, its associated Hot records and
+  Evidence for screen names is each menu caller, its associated Hotspot records and
   g_txt strings, and the decoded newspaper, BOBS and sticker pictures.
   Lists 17 (K_UNUSED_17, empty) and 40 (K_UNUSED_40) have no known callers; the
   names describe that evidence only. List 1 is RACE_OUTCOME, the base menu layer
@@ -420,7 +420,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
   the first two repair entries remain first for RACE.C's Fix/Junk affordability
   patch. BOBS.C's jail setup changes its first G binding to Q and restores it.
   The newspaper's third item stays numeric: the map returns 3 for G/Esc, whereas
-  the corresponding garage Hot record returns 4. No inferred equivalence is
+  the corresponding garage Hotspot record returns 4. No inferred equivalence is
   encoded in a name.
   C and MASM keep hand-written constants because MASM cannot read the C enum.
   tests/test_keymaps.py checks decoded result equality, the raw repair encoding,

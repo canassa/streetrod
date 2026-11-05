@@ -182,10 +182,10 @@ int ga_hotspot(int id)
 {
     int n, k, base;
 
-    base = ((unsigned)g_gar - (unsigned)g_hots) / sizeof(struct Hot);
-    n = ((unsigned)g_hotCalendar - (unsigned)g_gar) / sizeof(struct Hot) + 1;
+    base = ((unsigned)g_gar - (unsigned)g_hots) / sizeof(struct Hotspot);
+    n = ((unsigned)g_hotCalendar - (unsigned)g_gar) / sizeof(struct Hotspot) + 1;
     for (k = 0; k < n; k++)
-        if (g_hots[base + k].id == id)
+        if (g_hots[base + k].hitCode == id)
             return base + k;
 }
 
@@ -194,8 +194,8 @@ static void near sort_spots(void)
 {
     int base, n;
 
-    base = ((unsigned)g_gar - (unsigned)g_hots) / sizeof(struct Hot);
-    n = ((unsigned)g_hotCalendar - (unsigned)g_gar) / sizeof(struct Hot) + 1;
+    base = ((unsigned)g_gar - (unsigned)g_hots) / sizeof(struct Hotspot);
+    n = ((unsigned)g_hotCalendar - (unsigned)g_gar) / sizeof(struct Hotspot) + 1;
     gx_sort_hots(base, n);
 }
 
@@ -213,7 +213,7 @@ static void near hide_spots(void)
 static void near place_spots(int n, int x, int y)
 {
     struct Panel *panel;
-    struct Hot *hotspot;
+    struct Hotspot *hotspot;
 
     panel = &g_bodyRects[n];
     hotspot = &g_hots[ga_hotspot(11)];
