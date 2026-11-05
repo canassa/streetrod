@@ -398,3 +398,29 @@ An independent comparison with the pre-edit headers also confirms unchanged
 size, alignment, member order, every member offset/size and pointer distance
 for all eighteen targets. This includes the unsigned FarPtr words, signed Seq
 bytes, char color/style fields and int-sized BOOL/BitmapKind substitutions.
+
+### Final integration and verification
+
+Committed the implementation as 3b0092b. Ran `git fetch origin` and
+`git merge origin/main`; main was already included (3848b38), with no conflicts.
+Reran every required gate after that merge:
+
+- `./sr headers --check`: up to date.
+- `./sr format --check`: 157 files clean.
+- `./sr docs`: zero diagnostics. An XML audit confirms all 18 requested types
+  and all 101 members (including the FarPtr word overlay) have documentation.
+- `./sr check --all`: 572/572 match, including all 21 MATCH* functions.
+- Removed only work/layout, then `./sr build`: 96/96 objects pass,
+  572/572 mapped functions exact and in place, 748/748 near calls exact,
+  packed executable IDENTICAL.
+- `./sr dgroup check` and `./sr dgroup order`: pass.
+- `nix-shell shell.nix --run 'python3 -m unittest discover -s tests'`:
+  109 tests pass.
+- Repeated the targeted MSC sizeof/offsetof audit: 117 checks, zero mismatches.
+- `./dosbox.sh --make`: DOS-native executable IDENTICAL; SHA-1 matches
+  orig/SR.EXE: 3a5e28b795313028b7e77d147122f41cb29de334.
+
+All unused fields, signedness, field ordering, storage extents and pointer
+qualifiers are preserved. No unproved behavior fixes were made. The unrelated
+whole-tree macro-parser limitation remains documented rather than broadened
+into this task.

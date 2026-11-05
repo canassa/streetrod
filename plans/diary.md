@@ -3394,3 +3394,20 @@ bytes are included in the saved name block, with pool/list state rebuilt on
 load. Resource 1075 is a tuning scale/arrow strip despite its pump-digit name.
 The existing unrelated macro-bound Car parser limitation requires a targeted
 compiler layout audit; no tooling or unrelated types were changed.
+
+## 2026-11-05 21:39 CET: Verify st-video integration
+
+### What I did
+
+Fetched origin and merged origin/main (already up to date), then reran headers,
+formatting, Doxygen, all 572 function comparisons, clean packed build, DGROUP
+ownership/order and all 109 tests. Repeated the 117-check targeted compiler
+layout audit and ran DOS-native MAKE: both packed builds are IDENTICAL.
+Doxygen XML confirms all eighteen requested types and 101 members documented.
+Recorded the final results in plans/investigations/st-video.md.
+
+### What I learned
+
+The documentation and semantic member names preserve all original field offsets
+and linked bytes, including the EGA/CGA/Tandy band views and Hercules mode
+handling. No merge conflict or new reconstruction uncertainty arose.
