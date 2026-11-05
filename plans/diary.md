@@ -2995,3 +2995,26 @@ cached SEG words and the ES reload between them.
 ### What I learned
 - Sprite is shared transient animation state for multiple game objects; its work bitmap has different EGA and CGA roles and is unused on Tandy. The background supplies both transparent-frame pixels and foreground restoration, rather than receiving saved pixels during stepping.
 - Foreground rectangle coordinates depend on relative frame/background pitch. Carhop borrows stack motion records, while the engine normally uses its shared sequence array. See plans/investigations/Sprite.md for the source evidence and other naming issues.
+## 2026-11-05 20:03 CET: Investigate Dev playback state
+
+### What I did
+
+- Traced every Dev member reader/writer, linked music/effect words, repeat and
+  tone tables, playback selection, pause/resume, and save-game exclusion.
+- Wrote plans/investigations/Dev.md before renaming; renamed the type to
+  MusicVoice and clarified stream, cursor, phrase-pass and speaker-enable state.
+  Kept char flags and the complete 28-byte layout; documented the type in its
+  storage owner's SYS.H and kept a SOUND.H pointer forward declaration.
+- Verified all 12 member offsets with real MSC 5.1, 572/572 function matches,
+  clean packed and DOS-native byte-identical builds, header/format/docs gates,
+  both DGROUP checks, and all 106 unit tests. Committed on inv-dev; no push/merge.
+
+### What I learned
+
+- The repeat count means extra phrase passes; tone selections advance on every
+  pass. Negative repeat sentinels wrap before terminal tone/stop entries are read.
+  Effect repeat bytes form signed little-endian words despite their char array.
+- The speaker flag requests re-enabling on an audible note, while the divisor
+  itself is programmed for each note. The two voices share the speaker and
+  external vibrato state. Evidence and out-of-scope names are in
+  plans/investigations/Dev.md; no tooling or compiler-rule change was needed.

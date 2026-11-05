@@ -1,4 +1,7 @@
-/* SYS.H - declarations of what SYS.C defines. */
+/**
+ * @file SYS.H
+ * @brief Timers, input, and PC-speaker playback services.
+ */
 
 #ifndef SYS_H
 #define SYS_H
@@ -14,6 +17,35 @@
 
 #include "MUSIC.H"
 struct Hot;
+
+/**
+ * @brief Playback state for one PC-speaker music or effect stream.
+ *
+ * The selected voice advances on timer interrupts; another voice can retain
+ * its position while an effect plays.
+ */
+struct MusicVoice {
+    /** Base PIT channel-2 divisor; zero denotes a rest. */
+    union {
+        int w;              /**< Whole divisor word. */
+        unsigned char b[2]; /**< Low byte followed by high byte. */
+    } divisor;
+    int ticksLeft;    /**< Timer calls remaining before the next note. */
+    int phrasePasses; /**< Completed passes of the current phrase. */
+    char playing;     /**< The timer advances this voice while set. */
+    /** Enable the speaker on the next audible note when set. */
+    char speakerPending;
+    /** Instruction base, including the initial stop pair. */
+    int far *stream;
+    int far *phraseStart; /**< First duration word of the current phrase. */
+    int far *nextWord;    /**< Next duration, control, or divisor word to read. */
+    /** Near base of extra-pass counts; negative ends the list. */
+    int *repeatTable;
+    int *repeatCursor;         /**< Extra-pass count for the current phrase. */
+    enum ToneSlot *toneTable;  /**< Near base of tone selections for phrase passes. */
+    enum ToneSlot *toneCursor; /**< Tone selection for the current phrase pass. */
+};
+
 
 enum TimerAction {
     TIMER_CANCELLED = 0,
@@ -110,8 +142,8 @@ extern int g_autoDrive;
 extern char g_protectPal[];
 extern int g_vibratoActive;
 extern struct DrivingState g_driveEng;
-extern struct Dev g_songBgState;
-extern struct Dev g_secondaryMusicStateData;
+extern struct MusicVoice g_songBgState;
+extern struct MusicVoice g_secondaryMusicStateData;
 extern void(interrupt far *g_clockPrev)(void);
 extern struct RoadView g_trackViewMotion;
 extern struct RivalPosition g_roadOppPos;

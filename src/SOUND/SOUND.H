@@ -1,4 +1,7 @@
-/* SOUND.H - declarations of what SOUND.C defines. */
+/**
+ * @file SOUND.H
+ * @brief PC-speaker sound effects and music selection.
+ */
 
 #ifndef SOUND_H
 #define SOUND_H
@@ -11,29 +14,13 @@
 #include "MUSIC.H"
 
 
-struct Dev {
-    union {
-        int w;
-        unsigned char b[2];
-    } divisor;
-    int ticksLeft;
-    int repeatCount;
-    char active;
-    char dirty;
-    int far *song;
-    int far *phraseStart;
-    int far *cur;
-    int *repeatTable;
-    int *repeatCursor;
-    enum ToneSlot *toneTable;
-    enum ToneSlot *toneCursor;
-};
+struct MusicVoice;
 
 extern int g_songRepeats[];
 extern enum ToneSlot g_songTones[];
 extern enum ToneSlot g_jingleTones[];
 extern int g_musicOn;
-extern struct Dev *g_voice;
+extern struct MusicVoice *g_voice;
 extern int g_voiceNum;
 extern int g_savedMusicOn;
 extern int g_musicSuspended;
