@@ -274,3 +274,20 @@ The build's unpacked-file diagnostic reports header/relocation ordering and a
 the final packed retail EXE is byte-identical. No comparison rules were changed.
 Native DOS MAKE also passes: DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL;
 SHA-1 3a5e28b795313028b7e77d147122f41cb29de334 for both files.
+
+## BOOL follow-up (2026-11-05)
+
+The shared `src/SYS/STRUCTS.H` now defines `BOOL` as int with TRUE/FALSE.
+`showPortrait`, `useGasMask`, `atJail` and `wasPassBy` use BOOL without
+renaming or changing the control flow. Callers pass TRUE/FALSE for the two
+flag parameters. The local `wasPassBy` snapshots a phase-valued int
+(`g_carPassBy` also takes 2), but only tests it for truth; BOOL deliberately
+accepts any nonzero value without normalizing it. `atJail` is the 0/1 result
+of a scene comparison and also scales CARHOP_JAIL_BONUS. Its arithmetic use
+is intentional: BOOL is still int. `textOffset` is a pixel/string offset,
+not a boolean. Shared globals retain their existing types outside this scope;
+the boolean literals written/tested inside this function use TRUE/FALSE.
+
+MSC's OS2DEF.H defines BOOL as unsigned short plus TRUE/FALSE, but no game
+source includes the OS/2 headers, including transitively through the MSC
+STRING.H and STDLIB.H used here. No conditional compatibility typedef is needed.

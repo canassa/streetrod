@@ -43,6 +43,11 @@ The target function is given in your task.
    side effects on globals; edge cases; open questions. Also list **other** identifiers you
    found to be wrong or misleading along the way (outside your scope) with evidence.
 5. Only then make the changes, within this scope:
+   - Change names, types-for-meaning (enums, BOOL) and docs only; never change code style.
+     Match the surrounding code (e.g. write 0, not NULL; no new includes for style).
+   - Booleanish int values must be BOOL. Their 0/1 assignments, returns and comparisons
+     use TRUE/FALSE. Truth tests stay `if (x)` / `if (!x)`; never compare to TRUE,
+     since any nonzero value is true. Char flags stay char to preserve layout.
    - **Function name:** keep it if it's accurate and specific; otherwise rename it (`./sr rename`;
      public functions keep their module's two-letter prefix (CLAUDE.md); static functions follow the
      file's existing style). Weigh precision against length (rule 4d name budget applies to

@@ -7,6 +7,7 @@
 #define CARHOP_H
 
 #include "SPRITE.H"
+#include "STRUCTS.H"
 
 struct Sheet {
     int id;
@@ -26,9 +27,9 @@ extern char g_keepMask;
  * Updates the car-animation backdrop with her standing pose or the cleared scene.
  *
  * @param mode Whether she arrives or leaves.
- * @param carPresent Nonzero preserves the parked rival car in the foreground.
+ * @param carPresent TRUE preserves the parked rival car in the foreground.
  */
-void ch_skate(enum CarhopMode mode, int carPresent);
+void ch_skate(enum CarhopMode mode, BOOL carPresent);
 void ch_save_bg(void);
 
 #endif

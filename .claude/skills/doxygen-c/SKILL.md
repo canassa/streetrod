@@ -61,7 +61,9 @@ feeds a calculation, such as a screen position.
 3. Start every function, type and file block with an explicit one-line `@brief`; use a
    blank line before any detail. A file's brief names its purpose, not the
    reconstruction work.
-4. Every parameter gets `@param`, including self-evident ones, in one short
+4. BOOL parameter contracts read "TRUE ..." rather than "Nonzero ..."; fixed
+   boolean arguments read "always TRUE" / "always FALSE".
+   Every parameter gets `@param`, including self-evident ones, in one short
    sentence; mention range, units, nullability or ownership only when it matters. Don't use
    direction tags (`[in]`/`[out]`/`[in,out]`); say in the text when a pointer
    receives a result. Use `@p name` in prose.
@@ -129,7 +131,7 @@ for project-wide front matter, not a module's API description.
 
 From BOBS.C (a static function, so the block sits on its definition). Every line earns its
 place: a one-line `@brief`; one sentence of behaviour a reader can't see from the name; one
-short sentence per parameter; "always 1"/"always 0" only on the flags that gate branches.
+short sentence per parameter; "always TRUE"/"always FALSE" only on the flags that gate branches.
 The enum-typed `animation` gets no value list, since `enum CarAnimKind` documents its values.
 
 ```c
@@ -141,13 +143,14 @@ The enum-typed `animation` gets no value list, since `enum CarAnimKind` document
  *
  * @param animation How the car moves.
  * @param specIndex The rival's car specification.
- * @param showPortrait Nonzero draws the driver in the car; always 1.
+ * @param showPortrait TRUE draws the driver in the car; always TRUE.
  * @param carBottom Bottom screen row of the car.
- * @param useGasMask Nonzero draws the gas station's foreground over the car; always 0.
+ * @param useGasMask TRUE draws the gas station's foreground over the car;
+ * always FALSE.
  * @param tirePics The four tire-frame pictures, or null for none.
  */
-static void near animate_rival_car(enum CarAnimKind animation, int specIndex, int showPortrait,
-                                   int carBottom, int useGasMask, int *tirePics)
+static void near animate_rival_car(enum CarAnimKind animation, int specIndex, BOOL showPortrait,
+                                   int carBottom, BOOL useGasMask, int *tirePics)
 ```
 
 ## Build and doc-lint

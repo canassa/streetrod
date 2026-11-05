@@ -71,7 +71,7 @@ static void near grab_strip(struct Bitmap far **pbm)
     }
 }
 
-void ch_skate(enum CarhopMode mode, int carPresent)
+void ch_skate(enum CarhopMode mode, BOOL carPresent)
 {
     struct Blt patchBlt;
     struct Bitmap far *patchedBg;
@@ -81,7 +81,7 @@ void ch_skate(enum CarhopMode mode, int carPresent)
     struct Bitmap far *captureStrip;
     struct Rect *ignoredRect;
     struct Bitmap sceneHeader;
-    int stepActive;
+    BOOL stepActive;
     struct Seq moves[4];
     long nextTick;
     struct Bitmap far *carCutout;

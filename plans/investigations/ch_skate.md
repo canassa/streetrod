@@ -249,3 +249,14 @@ on that base with the final source changes:
 
 Logs and decoded picture evidence remain under work/investigations and work/;
 this note is also committed as plans/investigations/ch_skate.md.
+
+## BOOL follow-up (2026-11-05)
+
+`carPresent` and `stepActive` now use the shared int typedef BOOL.
+`carPresent` is tested only for truth; the preserved sprite-step return in
+`stepActive` is an active/inactive result and remains unused. The other
+locals are coordinates, indices, delays, records or pointers. Keep CarhopMode
+as an enum: it chooses a motion sequence, rather than expressing truth.
+No char flag changes type and no pointer spelling or include changes for style
+are part of this conversion. CARHOP.H includes STRUCTS.H for its BOOL contract;
+`./sr headers` maintains generated C include blocks and build dependencies.

@@ -48,7 +48,7 @@ static int g_justArrived;
 static void near build_rival_pool(int);
 static void near select_rival(int);
 static enum KingStatus near king_status(void);
-static void near animate_rival_car(enum CarAnimKind, int, int, int, int, int *);
+static void near animate_rival_car(enum CarAnimKind, int, BOOL, int, BOOL, int *);
 static void near rival_arrives(int, enum CarAnimKind, enum RivalArrival);
 static void near list_met_rivals(int *, int *, int *);
 static enum CarClass near spec_class(int);
@@ -137,15 +137,18 @@ static int g_lastRival = -1;
  *
  * @param animation How the car moves.
  * @param specIndex The rival's car specification.
- * @param showPortrait Nonzero draws the driver in the car; always 1.
+ * @param showPortrait TRUE draws the driver in the car; always TRUE.
  * @param carBottom Bottom screen row of the car.
- * @param useGasMask Nonzero draws the gas station's foreground over the car; always 0.
+ * @param useGasMask TRUE draws the gas station's foreground over the car;
+ * always FALSE.
  * @param tirePics The four tire-frame pictures, or null for none.
  */
-static void near animate_rival_car(enum CarAnimKind animation, int specIndex, int showPortrait, int carBottom,
-                                   int useGasMask, int *tirePics)
+static void near animate_rival_car(enum CarAnimKind animation, int specIndex, BOOL showPortrait, int carBottom,
+                                   BOOL useGasMask, int *tirePics)
 {
-    int atJail, textOffset, wasPassBy;
+    BOOL atJail;
+    int textOffset;
+    BOOL wasPassBy;
 
     wasPassBy = g_carPassBy;
     strcpy(g_strOpp, g_desc + g_selectedRacerPointer->nameOffset);
@@ -188,12 +191,12 @@ static void near animate_rival_car(enum CarAnimKind animation, int specIndex, in
     }
     if (animation == CAR_PULL_IN)
         g_carhop = CARHOP_ABSENT;
-    g_rivalHereState = (animation == CAR_DRIVE_OUT) ? 0 : 1;
+    g_rivalHereState = (animation == CAR_DRIVE_OUT) ? FALSE : TRUE;
     if (!(atJail && g_rivalHereState))
         if (!maybe_carhop(CARHOP_ENTER, g_rivalHereState,
                           CARHOP_JAIL_BONUS * atJail + CARHOP_ORDER_BONUS * g_ordered + (g_demo << 3) +
                               CARHOP_BASE_CHANCE,
-                          g_rivalHereState == 0 ? CARHOP_EMPTY_LEAVE_CHANCE : 0))
+                          g_rivalHereState == FALSE ? CARHOP_EMPTY_LEAVE_CHANCE : 0))
             maybe_carhop(CARHOP_LEAVE, g_rivalHereState, CARHOP_LEAVE_CHANCE, 0);
 }
 
@@ -373,7 +376,7 @@ static void near rival_arrives(int n, enum CarAnimKind a, enum RivalArrival mode
         g_carPassBy = 1;
     if (mode == RIVAL_CHALLENGE && g_driverIdxSelVal == RACER_KING)
         g_carPassBy = king_status() == KING_NOVICE;
-    animate_rival_car(a, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
+    animate_rival_car(a, g_opponentSpecIndex, TRUE, 0xa3, FALSE, g_tirePics[g_carDraw.tireVariant]);
 }
 
 
@@ -416,7 +419,7 @@ static int near look_for_rival(enum CarAnimKind n)
     case KR_ACCEPT:
         if (g_rivalHereState) {
             sc_status_text(-1, "", 0);
-            animate_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
+            animate_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, TRUE, 0xa3, FALSE, g_tirePics[g_carDraw.tireVariant]);
         }
         choice = mn_sel();
         rival_arrives(sel[choice - 1], n, RIVAL_REQUESTED);
@@ -1031,7 +1034,7 @@ void bo_visit(void)
             if (g_rivalHereState == 0)
                 goto race;
             sc_status_text(-1, "", 0);
-            animate_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
+            animate_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, TRUE, 0xa3, FALSE, g_tirePics[g_carDraw.tireVariant]);
             n = 0;
             mn_pop(1);
             break;
@@ -1124,7 +1127,8 @@ void bo_visit(void)
                     rival_arrives(RACER_KING, CAR_PULL_IN, RIVAL_REQUESTED);
                     goto test;
                 }
-                animate_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
+                animate_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, TRUE, 0xa3, FALSE,
+                                  g_tirePics[g_carDraw.tireVariant]);
                 n = 0;
                 mn_pop(1);
             }
@@ -1134,7 +1138,8 @@ void bo_visit(void)
                 goto out;
             if (n > 0 || g_isKingState) {
                 gm_message(MSG_CHICKEN);
-                animate_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
+                animate_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, TRUE, 0xa3, FALSE,
+                                  g_tirePics[g_carDraw.tireVariant]);
                 n = 0;
             } else {
                 pop_rival_hood();

@@ -2553,3 +2553,26 @@ The conflicting lines contain independent substitutions: keep named appearance m
   sprite step synchronizes EGA pages; its unused result does not make it redundant.
 - Detailed rendering evidence and remaining out-of-scope naming issues live in
   the investigation; this session found no new compiler or tooling rule.
+
+## 2026-11-05 15:36 CET: Introduce BOOL for the two investigated animations
+
+### What I did
+
+- Added the period-correct int typedef BOOL and TRUE/FALSE to SYS/STRUCTS.H.
+- Converted six parameters/locals across animate_rival_car (092A4) and ch_skate
+  (18D59), including declarations, caller flag literals and parameter docs.
+- Kept shared globals and char flags at their current types. Recorded atJail's
+  arithmetic use and wasPassBy's nonzero phase snapshot in the investigation notes.
+- Updated CLAUDE.md and the investigation/Doxygen skills with BOOL conventions
+  and the rule to preserve surrounding code style during investigations.
+- Passed headers and formatting checks, zero-diagnostic docs, 572/572 function
+  matches, a clean packed build (IDENTICAL), both DGROUP gates and all 104 tests.
+
+### What I learned
+
+- BOOL preserves both stack layouts and all original bytes, even when atJail
+  scales a probability and wasPassBy retains a nonzero phase value rather than 1.
+- MSC's OS2DEF.H also defines BOOL/TRUE/FALSE, but no game source includes it.
+  The existing ownerless helper header is sufficient without a file rename.
+- The investigation skill now explicitly limits changes to names, meaningful
+  types and docs; truth tests and surrounding pointer/style conventions stay put.
