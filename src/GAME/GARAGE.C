@@ -119,7 +119,7 @@ void ga_calendar(int a1)
     row5 = e9 / 7 - g_wOff[m];
     x = 18 * col + g_colX;
     y4 = 7 * row5 + g_rowY[m];
-    r_vid.copyToFront = 1;
+    r_vid.copyToFront = TRUE;
     px5 = 80;
     py4 = 4;
     id = m < 2 ? PIC_CALENDAR_JUNE_JULY : PIC_CALENDAR_AUGUST_SEPTEMBER;
@@ -305,7 +305,7 @@ int near ga_menu(enum GarageMode mode)
             mn_pop(1);
         }
     case GARAGE_REDRAW:
-        r_vid.copyToFront = 0;
+        r_vid.copyToFront = FALSE;
     case GARAGE_DRIVE_IN:
         if (mode == GARAGE_SWAP)
             mode = GARAGE_DRIVE_IN;
@@ -318,7 +318,7 @@ int near ga_menu(enum GarageMode mode)
                 mode = GARAGE_DRIVE_IN;
             }
         }
-        r_vid.copyToFront = 1;
+        r_vid.copyToFront = TRUE;
         (*g_videoOps.show)();
         if (g_driver.currentCar) {
             g_carDraw.bodyPic = g_carData[g_driver.currentCar->specIndex].bodyPic;
@@ -429,7 +429,7 @@ void near ga_paint(void)
                     gm_message(MSG_PAINT_AINT_FREE);
                     break;
                 }
-                r_vid.copyToFront = 1;
+                r_vid.copyToFront = TRUE;
                 mn_pop(1);
                 pu_show(popup, x, y);
                 ma_pop_high(1);
@@ -561,7 +561,7 @@ void near ga_stickers(void)
     else if (g_driver.money < (long)STICKER_PRICE)
         gm_message(MSG_STICKERS_AINT_FREE);
     else {
-        r_vid.copyToFront = 1;
+        r_vid.copyToFront = TRUE;
         x = 24;
         y = 11;
         bm1 = ar_bm(264, 69, 0, ARENA_HIGH_STACK);
@@ -826,7 +826,7 @@ void near ga_transmission(void)
         owner->transmission ? g_transPics[g_parts[owner->transmission->catalogIndex].variant] : 0;
     r_vid.copyToFront = !g_carDraw.transmissionPic;
     sc_picture_at(PIC_TRANSMISSION_DIALOG, 0x20, 10, -1);
-    r_vid.copyToFront = 1;
+    r_vid.copyToFront = TRUE;
     gx_trans_draw(g_carDraw.transmissionPic, owner->transmissionBolts);
     mn_push(KM_TRANSMISSION);
     for (;;) {
@@ -989,7 +989,7 @@ static void near tune_timing(struct Car *car)
         outp(PIT_CH2, w.b[1]);
         y = blt.dy = gear * 2 + 0x4b;
         cu_ctl(CURSOR_HIDE_NOW);
-        (*g_videoOps.copy)(p->img, r_vid.back, &blt, 1);
+        (*g_videoOps.copy)(p->image, r_vid.back, &blt, 1);
         bm_copy_box(r_vid.back, r_vid.front, 0xb0, y, 0xb7, y + 10);
         cu_ctl(CURSOR_SHOW_NOW);
         while ((key = sy_wait_input(0)) == 0) {

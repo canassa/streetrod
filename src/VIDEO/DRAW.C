@@ -61,12 +61,12 @@ void dr_hline(struct Bitmap far *s, int x, int y, int w)
 }
 
 /* Draw a raised box frame of width 3 around the rectangle (x, y, w, h) of bitmap s: four
-   filled bars in colour x_colors.fill (x_colors.line when the style in x_colors.frame is 3), then an inner
+   filled bars in colour x_colors.fill (x_colors.line when the style in x_colors.bevelStyle is 3), then an inner
    highlight made of two vertical and two horizontal lines, doubled when the style is 2 */
 
 void dr_bevel(struct Bitmap far *s, int x, int y, int w, int h)
 {
-    int bm = x_colors.frame == 2 ? 3 : 3;
+    int bm = x_colors.bevelStyle == BEVEL_DOUBLE ? 3 : 3;
     int bh6;
     int right2;
     int bottom;
@@ -82,20 +82,20 @@ void dr_bevel(struct Bitmap far *s, int x, int y, int w, int h)
     bh6 = h + bm * 2;
     bw = w + bm * 2;
     old = x_colors.fill;
-    if (x_colors.frame == 3)
+    if (x_colors.bevelStyle == BEVEL_SOLID)
         x_colors.fill = x_colors.line;
     dr_fill_rect(s, left, top8, bm, bh6);
     dr_fill_rect(s, x, bottom, w, bm);
     dr_fill_rect(s, right2, top8, bm, bh6);
     dr_fill_rect(s, x, top8, w, bm);
-    if (x_colors.frame == 3)
+    if (x_colors.bevelStyle == BEVEL_SOLID)
         x_colors.fill = old;
     else {
         dr_vline(s, left + 1, top8 + 1, bh6 - 2);
         dr_hline(s, left + 1, bottom + 1, bw - 2);
         dr_vline(s, right2 + 1, top8 + 1, bh6 - 2);
         dr_hline(s, left + 1, top8 + 1, bw - 2);
-        if (x_colors.frame == 2) {
+        if (x_colors.bevelStyle == BEVEL_DOUBLE) {
             dr_vline(s, left + 2, top8 + 2, bh6 - 4);
             dr_hline(s, left + 2, bottom, bw - 4);
             dr_vline(s, right2, top8 + 2, bh6 - 4);

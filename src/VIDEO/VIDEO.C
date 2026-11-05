@@ -16,6 +16,7 @@
 #include "SCREENS.H"
 #include "SOUND.H"
 #include "SPRITE.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 
 static struct AnimRun g_animRun;
@@ -25,44 +26,44 @@ static void near anim_run(int n);
 
 struct Colors x_colors;
 struct Bitmap far *g_pageBmps[4];
-struct Obj g_scriptObjsData[5];
+struct Obj g_scriptObjsData[ANIMATION_OBJECT_COUNT];
 struct Style *bustyle;
 struct Bitmap far *g_autoSprImagePtr;
 int g_picXDraw;
 int g_sprDrawY;
 
-static struct Style g_style16 = {{{0, 0, 0, 0, 0},
-                                  {13, 9, 9, 15, 1},
-                                  {9, 13, 13, 15, 1},
-                                  {1, 5, 5, 1, 1},
-                                  {1, 5, 5, 4, 1},
-                                  {15, 9, 9, 15, 1},
-                                  {14, 15, 15, 10, 1},
-                                  {1, 4, 4, 1, 1},
-                                  {1, 3, 3, 4, 2},
-                                  {15, 9, 9, 15, 1},
-                                  {13, 9, 9, 15, 1},
-                                  {11, 2, 2, 11, 1},
-                                  {1, 4, 4, 11, 1},
-                                  {1, 4, 4, 1, 1},
-                                  {1, 4, 4, 1, 1},
-                                  {1, 3, 3, 4, 1}}};
-static struct Style g_style4 = {{{0, 0, 0, 0, 0},
-                                 {1, 2, 2, 3, 1},
-                                 {2, 1, 1, 3, 1},
-                                 {0, 3, 3, 0, 1},
-                                 {0, 3, 3, 2, 1},
-                                 {3, 2, 2, 3, 1},
-                                 {2, 1, 1, 1, 1},
-                                 {0, 3, 3, 0, 1},
-                                 {0, 3, 3, 2, 2},
-                                 {3, 2, 2, 3, 1},
-                                 {1, 2, 2, 3, 1},
-                                 {0, 2, 2, 0, 1},
-                                 {0, 3, 3, 1, 1},
-                                 {0, 3, 3, 0, 1},
-                                 {0, 3, 3, 0, 1},
-                                 {1, 2, 2, 3, 1}}};
+static struct Style g_style16 = {{{0, 0, 0, 0, BEVEL_NONE},
+                                  {13, 9, 9, 15, BEVEL_SINGLE},
+                                  {9, 13, 13, 15, BEVEL_SINGLE},
+                                  {1, 5, 5, 1, BEVEL_SINGLE},
+                                  {1, 5, 5, 4, BEVEL_SINGLE},
+                                  {15, 9, 9, 15, BEVEL_SINGLE},
+                                  {14, 15, 15, 10, BEVEL_SINGLE},
+                                  {1, 4, 4, 1, BEVEL_SINGLE},
+                                  {1, 3, 3, 4, BEVEL_DOUBLE},
+                                  {15, 9, 9, 15, BEVEL_SINGLE},
+                                  {13, 9, 9, 15, BEVEL_SINGLE},
+                                  {11, 2, 2, 11, BEVEL_SINGLE},
+                                  {1, 4, 4, 11, BEVEL_SINGLE},
+                                  {1, 4, 4, 1, BEVEL_SINGLE},
+                                  {1, 4, 4, 1, BEVEL_SINGLE},
+                                  {1, 3, 3, 4, BEVEL_SINGLE}}};
+static struct Style g_style4 = {{{0, 0, 0, 0, BEVEL_NONE},
+                                 {1, 2, 2, 3, BEVEL_SINGLE},
+                                 {2, 1, 1, 3, BEVEL_SINGLE},
+                                 {0, 3, 3, 0, BEVEL_SINGLE},
+                                 {0, 3, 3, 2, BEVEL_SINGLE},
+                                 {3, 2, 2, 3, BEVEL_SINGLE},
+                                 {2, 1, 1, 1, BEVEL_SINGLE},
+                                 {0, 3, 3, 0, BEVEL_SINGLE},
+                                 {0, 3, 3, 2, BEVEL_DOUBLE},
+                                 {3, 2, 2, 3, BEVEL_SINGLE},
+                                 {1, 2, 2, 3, BEVEL_SINGLE},
+                                 {0, 2, 2, 0, BEVEL_SINGLE},
+                                 {0, 3, 3, 1, BEVEL_SINGLE},
+                                 {0, 3, 3, 0, BEVEL_SINGLE},
+                                 {0, 3, 3, 0, BEVEL_SINGLE},
+                                 {1, 2, 2, 3, BEVEL_SINGLE}}};
 unsigned char g_palette[17] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14};
 char g_blackPalette[16] = "";
 static unsigned char g_altPalette[17] = {9, 1, 8, 0, 15, 7, 11, 3, 14, 2, 4, 12, 13, 10, 6, 14};
@@ -108,13 +109,13 @@ void vi_init(struct Bitmap far *front, struct Bitmap far *back)
     r_vid.front = front;
     r_vid.back = back;
     r_vid.hoodBg = 0;
-    r_vid.copyToFront = 1;
+    r_vid.copyToFront = TRUE;
     switch (r_vid.mode = front->kind) {
     case VID_EGA:
         r_vid.planes = 4;
         r_vid.shift = 3;
-        r_vid.bpp = 1;
-        r_vid.mask = -8;
+        r_vid.planeBitsPerPixel = 1;
+        r_vid.xByteMask = -8;
         bustyle = &g_style16;
         outp(CRTC_INDEX, CRTC_START_HI);
         outp(CRTC_DATA, 0);
@@ -124,25 +125,25 @@ void vi_init(struct Bitmap far *front, struct Bitmap far *back)
     default:
         r_vid.planes = 1;
         r_vid.shift = 2;
-        r_vid.bpp = 2;
-        r_vid.mask = -4;
+        r_vid.planeBitsPerPixel = 2;
+        r_vid.xByteMask = -4;
         bustyle = &g_style4;
         r_vid.front->kind = VID_CGA;
         break;
     case VID_TANDY:
         r_vid.planes = 1;
         r_vid.shift = 1;
-        r_vid.bpp = 4;
-        r_vid.mask = -2;
+        r_vid.planeBitsPerPixel = 4;
+        r_vid.xByteMask = -2;
         bustyle = &g_style16;
         break;
     }
     x_colors = bustyle->schemes[STYLE_PANEL];
     g_featurePos.frontGlassX = g_featurePos.frontGlassY = -1;
-    i = 5;
+    i = ANIMATION_OBJECT_COUNT;
     do {
         i--;
-        g_scriptObjsData[i].id = g_scriptObjsData[i].scriptIndex = -1;
+        g_scriptObjsData[i].scriptId = g_scriptObjsData[i].resumeIndex = ANIMATION_INACTIVE;
     } while (i);
     (*g_videoOps.show)();
     mn_reset();
@@ -167,12 +168,12 @@ void vi_anim_stop(int n)
     struct Obj *o;
 
     o = &g_scriptObjsData[g_animScripts[g_animScriptStart[n]].operand1];
-    if (o->img)
-        o->img = 0;
+    if (o->image)
+        o->image = 0;
     if (o->unused2)
         o->unused2 = 0;
-    g_animScripts[g_animScriptStart[n]].operand1 = -1;
-    o->id = -1;
+    g_animScripts[g_animScriptStart[n]].operand1 = ANIMATION_INACTIVE;
+    o->scriptId = ANIMATION_INACTIVE;
     if (o->pendingTimers)
         sy_timer_cancel(n);
 }
@@ -210,7 +211,7 @@ static void near anim_run(int n)
     wait = 1;
     cu_ctl(CURSOR_HIDE);
     g_animRun.object = &g_scriptObjsData[n];
-    g_animRun.command = &g_animScripts[k = g_animRun.object->scriptIndex];
+    g_animRun.command = &g_animScripts[k = g_animRun.object->resumeIndex];
     g_animRun.box = &g_animRun.object->box;
     for (; k >= 0; k++) {
         switch (g_animRun.command->opcode) {
@@ -219,11 +220,11 @@ static void near anim_run(int n)
             break;
         case ANIM_BLIT:
             anim_set_box();
-            (*g_videoOps.copy)(g_animRun.object->img, r_vid.back, (struct Blt *)g_animRun.box, 1);
+            (*g_videoOps.copy)(g_animRun.object->image, r_vid.back, (struct Blt *)g_animRun.box, 1);
             break;
         case ANIM_BLIT_MASKED:
             anim_set_box();
-            (*g_videoOps.maskedBlit)(g_animRun.object->img, r_vid.back, (struct Blt *)g_animRun.box, 1);
+            (*g_videoOps.maskedBlit)(g_animRun.object->image, r_vid.back, (struct Blt *)g_animRun.box, 1);
             break;
         case ANIM_TILE_CAR:
             if (!sp_car_clip(g_animRun.box->dx, g_animRun.box->dy, g_animRun.box->w, g_animRun.box->h, &res))
@@ -234,11 +235,11 @@ static void near anim_run(int n)
             blt.sy = res.y1 - g_sprDrawY;
             tx = res.x1 - g_animRun.box->dx;
             ty = res.y1 - g_animRun.box->dy;
-            for (y = 0; y < g_animRun.object->img->height; y += g_animRun.box->h) {
-                for (x1 = 0; x1 < g_animRun.object->img->width; x1 += g_animRun.box->w) {
+            for (y = 0; y < g_animRun.object->image->height; y += g_animRun.box->h) {
+                for (x1 = 0; x1 < g_animRun.object->image->width; x1 += g_animRun.box->w) {
                     blt.dx = tx + x1;
                     blt.dy = ty + y;
-                    (*g_videoOps.maskedBlit)(g_autoSprImagePtr, g_animRun.object->img, &blt, 1);
+                    (*g_videoOps.maskedBlit)(g_autoSprImagePtr, g_animRun.object->image, &blt, 1);
                 }
             }
             break;
@@ -246,14 +247,14 @@ static void near anim_run(int n)
             if (!vi_anim_hook(g_animRun.object, g_animRun.command))
                 break;
         case ANIM_STOP:
-            vi_anim_stop(g_animRun.object->id);
+            vi_anim_stop(g_animRun.object->scriptId);
             cu_ctl(CURSOR_SHOW);
             return;
         case ANIM_JUMP:
             g_animRun.command = &g_animScripts[g_animRun.command->operand1];
             goto next;
         case ANIM_LOAD_IMAGE:
-            g_animRun.object->img = di_bm(g_animRun.command->operand1, ARENA_HIGH_STACK);
+            g_animRun.object->image = di_bm(g_animRun.command->operand1, ARENA_HIGH_STACK);
             g_animRun.command++;
             continue;
         case ANIM_SET_BOX:
@@ -264,9 +265,9 @@ static void near anim_run(int n)
             g_animRun.box->h = g_animRun.command->operand2;
             break;
         case ANIM_WAIT:
-            if (!(g_animRun.object->scriptIndex = g_animRun.command->operand2))
-                g_animRun.object->scriptIndex = ++k;
-            sy_timer_anim(g_animRun.object->id, g_animRun.command->operand1);
+            if (!(g_animRun.object->resumeIndex = g_animRun.command->operand2))
+                g_animRun.object->resumeIndex = ++k;
+            sy_timer_anim(g_animRun.object->scriptId, g_animRun.command->operand1);
             g_animRun.object->pendingTimers++;
             if (wait)
                 cu_ctl(CURSOR_SHOW);
@@ -293,11 +294,11 @@ int vi_anim_start(int n)
 {
     int i;
 
-    for (i = 0; i < 5; i++) {
-        if (g_scriptObjsData[i].id == -1) {
+    for (i = 0; i < ANIMATION_OBJECT_COUNT; i++) {
+        if (g_scriptObjsData[i].scriptId == ANIMATION_INACTIVE) {
             g_animScripts[g_animScriptStart[n]].operand1 = i;
-            g_scriptObjsData[i].id = n;
-            g_scriptObjsData[i].scriptIndex = g_animScriptStart[n] + 1;
+            g_scriptObjsData[i].scriptId = n;
+            g_scriptObjsData[i].resumeIndex = g_animScriptStart[n] + 1;
             g_scriptObjsData[i].pendingTimers = 0;
             anim_run(i);
             break;
@@ -327,7 +328,7 @@ int vi_anim_hook(struct Obj *o, struct AnimCommand *c)
 {
     int old;
 
-    switch (o->id) {
+    switch (o->scriptId) {
     case 2:
         if (c->operand1) {
             g_pumpBlinkCount = c->operand1;

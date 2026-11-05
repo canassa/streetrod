@@ -46,12 +46,12 @@ void bm_opaque_span(struct Bitmap far *bm, int *left, int *right)
     for (d = 0, b = 0x80; d < 8; d++, b >>= 1)
         if (!(c & b))
             break;
-    *left = d / r_vid.bpp;
+    *left = d / r_vid.planeBitsPerPixel;
     for (d = 0, b = 1; d < 8; d++, b <<= 1)
         if (!(e & b))
             break;
     *right = (bm->pitch << r_vid.shift) - 1;
-    *right -= d / r_vid.bpp;
+    *right -= d / r_vid.planeBitsPerPixel;
 }
 
 /* Shift a bitmap (pixels and mask) right by n pixels into a new, wider bitmap */
@@ -75,7 +75,7 @@ struct Bitmap far *bm_shift_right(struct Bitmap far *src, int n, struct Bitmap f
     int j2;
     int mask;
 
-    shl5 = (n * r_vid.bpp) & 7;
+    shl5 = (n * r_vid.planeBitsPerPixel) & 7;
     compl= 8 - shl5;
     mask = 0xff >> compl;
     h3 = src->height;
@@ -132,7 +132,7 @@ void bm_draw_masked(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *
 
     for (i = 0; i < 10; i++)
         ((int *)&e)[i] = ((int *)r)[i];
-    f = r->dx & ~r_vid.mask;
+    f = r->dx & ~r_vid.xByteMask;
     if (f > 0) {
         j = ar_bm(dst->width + 8, dst->height, dst->mask.p != 0L, ARENA_HIGH_STACK);
         bm_shift_right(dst, f, j);
@@ -186,7 +186,7 @@ void bm_underlay(struct Bitmap far *src, struct Bitmap far *dst, int x, int y)
     int pn;
     unsigned char far *dpk;
 
-    sh5 = x & ~r_vid.mask;
+    sh5 = x & ~r_vid.xByteMask;
     if (sh5 > 0) {
         t7 = ar_bm(src->width + 8, src->height, src->mask.p != 0L, ARENA_HIGH_STACK);
         bm_shift_right(src, sh5, t7);
@@ -335,7 +335,7 @@ void bm_copy_box(struct Bitmap far *dst, struct Bitmap far *src, int x1, int y1,
         x2 = (SCREEN_WIDTH - 1);
     if (y2 > (SCREEN_HEIGHT - 1))
         y2 = (SCREEN_HEIGHT - 1);
-    pkt.w = ((x2 + ~r_vid.mask + 1) & r_vid.mask) - (x1 & r_vid.mask);
+    pkt.w = ((x2 + ~r_vid.xByteMask + 1) & r_vid.xByteMask) - (x1 & r_vid.xByteMask);
     pkt.h = y2 - y1 + 1;
     pkt.sx = pkt.dx = x1;
     pkt.sy = pkt.dy = y1;

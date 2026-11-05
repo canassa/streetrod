@@ -131,7 +131,7 @@ static int near read_paper(void)
     int old;
 
     old = r_vid.copyToFront;
-    r_vid.copyToFront = 0;
+    r_vid.copyToFront = FALSE;
     sc_picture(PIC_NEWSPAPER_MASTHEAD, -1);
     if ((tune = ga_day()) != g_paperDay) {
         if ((pick5 = rn_int(5)) == g_paperPick)

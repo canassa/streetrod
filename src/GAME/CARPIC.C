@@ -305,8 +305,8 @@ void cp_build(struct Bitmap far **frames, int specIndex, enum BodyMod bodyMods, 
     g_featurePos.hasRearGlass = servicePoints->rearGlassX && servicePoints->rearGlassY;
     g_featurePos.frontGlassX = servicePoints->frontGlassX;
     g_featurePos.frontGlassY = servicePoints->frontGlassY;
-    g_carDraw.stickerSubX = ~r_vid.mask & carLayout->stickerX;
-    g_carDraw.stickerX = r_vid.mask & carLayout->stickerX;
+    g_carDraw.stickerSubX = ~r_vid.xByteMask & carLayout->stickerX;
+    g_carDraw.stickerX = r_vid.xByteMask & carLayout->stickerX;
     g_carDraw.stickerY = carLayout->stickerY;
     if (bodyMods & BODY_REAR_BUMPER)
         bm_put_pic(*frames, bodyModel->rearBumperRemovalPic, 0, carLayout->rearBumperY);

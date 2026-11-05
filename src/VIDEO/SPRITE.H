@@ -12,17 +12,26 @@
 
 struct Bitmap;
 
+/** Countdown marking the end of a sprite's motion plan. */
+#define MOTION_END (-1)
+
+/** @brief Mutable countdown and per-update displacement for one motion phase. */
 struct Seq {
+    /** Remaining countdown, decremented before movement; @ref MOTION_END ends. */
     int count;
-    signed char dx;
-    signed char dy;
+    signed char dx; /**< Signed horizontal displacement in pixels. */
+    signed char dy; /**< Signed vertical displacement in rows. */
 };
 
-/* one animation frame: 12 bytes, the ring links nxt[0..2] (sp_setup builds g_frmTable[]) */
+/** @brief Borrowed sprite image, optional bottom band and frame-ring links. */
 struct Frame {
-    struct Bitmap far *pos;
-    struct Bitmap *data;
-    struct Frame *nxt[3];
+    struct Bitmap far *image; /**< Image drawn for this frame. */
+    /**
+     * Optional near band view: @ref EgaSpriteBand on EGA, @ref Bitmap otherwise.
+     * The display mode determines the interpretation.
+     */
+    struct Bitmap *bottomBand;
+    struct Frame *next[3]; /**< Ring links advancing one, two or four frames. */
 };
 
 /**

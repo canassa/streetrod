@@ -45,7 +45,7 @@ struct MusicVoice g_secondaryMusicStateData;
 void(interrupt far *g_clockPrev)(void);
 char g_strOpp[80];
 int g_menuLevel;
-struct Lims g_boxSpotHitData;
+struct HoverBounds g_boxSpotHitData;
 struct Hotspot *g_curHoverPointer;
 int g_cursHoverCodeVal;
 int g_wRivBanner;
@@ -402,9 +402,9 @@ int sy_wait_input(int ticks)
     j = 0;
     bit = 0;
     if (g_keyGroup == KM_RACE_TYPE) {
-        g_statusLine.shown = 1;
+        g_statusLine.needsErase = TRUE;
         sc_status_text(-1, "", 0);
-        g_statusLine.shown = 1;
+        g_statusLine.needsErase = TRUE;
         sc_status_text(g_bannerX, "", g_wRivBanner);
         g_strOpp[0] = 0;
     }
@@ -514,9 +514,9 @@ int sy_wait_input(int ticks)
                 if (i = mn_hit(x, y)) {
                     if (res != i) {
                         if (g_keyGroup == KM_BOBS) {
-                            g_statusLine.shown = 1;
+                            g_statusLine.needsErase = TRUE;
                             sc_status_text(-1, "", 0);
-                            g_statusLine.shown = 1;
+                            g_statusLine.needsErase = TRUE;
                             sc_status_text(g_bannerX, "", g_wRivBanner);
                         }
                         sc_status_text(-1, g_txt + g_curHoverPointer->textOffset, 0);

@@ -150,7 +150,7 @@ void ch_skate(enum CarhopMode mode, BOOL carPresent)
     g_spriteBottomCut = 0;
     for (stepNum = 0; stepNum < 0x54; stepNum++) {
         carhopX = carhopSprite->x;
-        shift = carhopX & ~r_vid.mask;
+        shift = carhopX & ~r_vid.xByteMask;
         bm_shift_right(imagePtrs[g_carhopFrames[stepNum]], shift, frame);
         nextTick = g_tick + 2;
         stepActive = (*g_videoOps.spriteStep)(carhopSprite);

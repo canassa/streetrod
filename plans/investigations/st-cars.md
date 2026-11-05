@@ -343,7 +343,7 @@ and Doxygen were rerun. Full gates will run again after the required main merge.
 
 ### Integration and final gates
 
-Fetched main and ran the requested git merge origin/main against 883a1ec;
+Initially fetched main and ran git merge origin/main against 3848b38;
 Git reported already up to date, with no conflicts. Reran all gates after that
 merge step: headers and format pass; Doxygen has zero diagnostics; all 572
 functions match; the clean packed build and DOS-native MAKE are IDENTICAL;

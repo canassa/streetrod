@@ -56,7 +56,7 @@ void cu_init(void)
     blt.h = CURSOR_SHEET_HEIGHT;
     blt.sx = blt.sy = blt.dx = blt.dy = 0;
     (*g_videoOps.copy)(pict, img, &blt, 3);
-    for (step = 1; step <= ~r_vid.mask; step++) {
+    for (step = 1; step <= ~r_vid.xByteMask; step++) {
         tmp = ar_bm(CURSOR_WIDTH, CURSOR_SHEET_HEIGHT, 1, ARENA_LOW_STACK);
         bm_shift_right(pict, step, tmp);
         blt.dx += CURSOR_WIDTH;
@@ -150,12 +150,12 @@ void cu_draw(int x, int y)
                 return;
             g_cursor2.state = CURSOR_DRAWN;
         } else {
-            g_cursor2.clip.dx = x & r_vid.mask;
+            g_cursor2.clip.dx = x & r_vid.xByteMask;
             g_cursor2.clip.w =
                 SCREEN_WIDTH - g_cursor2.clip.dx > CURSOR_WIDTH ? CURSOR_WIDTH : SCREEN_WIDTH - g_cursor2.clip.dx;
             g_cursor2.clip.h = SCREEN_HEIGHT - y > 16 ? 16 : SCREEN_HEIGHT - y;
             g_cursor2.clip.dy = y;
-            a = (x & ~r_vid.mask) * (CURSOR_WIDTH >> r_vid.shift) + g_cursor2.shapeOffset;
+            a = (x & ~r_vid.xByteMask) * (CURSOR_WIDTH >> r_vid.shift) + g_cursor2.shapeOffset;
             (*g_videoOps.cursorBlit)(g_cursor2.shape + a, g_cursor2.mask + a, g_cursor2.save->bits.p,
                                      r_vid.back->bits.p, g_cursor2.clip.dx >> r_vid.shift, y,
                                      g_cursor2.clip.w >> r_vid.shift, g_cursor2.clip.h);
