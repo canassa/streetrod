@@ -1,5 +1,6 @@
         .MODEL MEDIUM
         INCLUDE MESSAGES.INC
+        INCLUDE HOTSPOT.INC
 
 ; Menu and message texts and their tables.
 
@@ -177,11 +178,48 @@ _g_offSquelch DW      TXT_SQUELCH_IT
 _g_offTunes DW      TXT_CATCH_SOME_TUNES
 
         PUBLIC  _g_groupHot
-_g_groupHot DW      29h, 0, 2, 6, 1Ah, 2Eh, 43h, 48h, 4Dh, 6Ch, 73h, 87h
-        DW      9Ch, 0A3h, 0A6h, 0ADh, 0B2h, 0B7h, 0B9h, 0BFh, 0C5h
-        DW      0CBh, 0DDh, 0E2h, 0EAh, 0EDh, 0F4h, 0FAh, 102h, 107h
-        DW      10Ch, 111h, 116h, 11Bh, 11Fh, 124h, 12Fh, 142h, 15Dh
-        DW      149h, 156h, 158h
+_g_groupHot DW      HOTS_NONE
+        DW      HOTS_RACE_OUTCOME
+        DW      HOTS_START_GAME
+        DW      HOTS_LOAD
+        DW      HOTS_SPARE_PARTS
+        DW      HOTS_SAVE
+        DW      HOTS_SAVE_ERROR
+        DW      HOTS_NEWSPAPER
+        DW      HOTS_ADVERTS
+        DW      HOTS_BUY
+        DW      HOTS_GARAGE
+        DW      HOTS_YOUR_CARS
+        DW      HOTS_SELL_CAR_OFFER
+        DW      HOTS_COUNTER_OFFER
+        DW      HOTS_PAINT
+        DW      HOTS_NO_SAVED_GAMES
+        DW      HOTS_SELL_PART_OFFER
+        DW      HOTS_UNUSED_17
+        DW      HOTS_DRAG_WAGER
+        DW      HOTS_ROAD_WAGER
+        DW      HOTS_TRANSMISSION
+        DW      HOTS_ENGINE
+        DW      HOTS_RACE_TYPE
+        DW      HOTS_GAS_STATION
+        DW      HOTS_MESSAGE
+        DW      HOTS_REPAIR
+        DW      HOTS_GET_RUNNING
+        DW      HOTS_SAVE_RESTART_QUIT
+        DW      HOTS_TIMING
+        DW      HOTS_MESSAGE_BOX
+        DW      HOTS_OVERWRITE_SAVE
+        DW      HOTS_LOAD_ERROR
+        DW      HOTS_READY
+        DW      HOTS_RACE_STATS
+        DW      HOTS_BODY_CHANGE
+        DW      HOTS_STICKERS
+        DW      HOTS_CALL_RIVAL
+        DW      HOTS_BOBS
+        DW      HOTS_CAR_INFO
+        DW      HOTS_MANUAL_COLORS
+        DW      HOTS_UNUSED_40
+        DW      HOTS_END_MENU
         PUBLIC  _g_descHdr
 _g_descHdr DB      0
         PUBLIC  _g_desc

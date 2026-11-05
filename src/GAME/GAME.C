@@ -470,11 +470,11 @@ static void near buy_from_ads(int tab)
         if (used) {
             k3 = g_parts[i5 = list4[n + off6]].nameOffset;
             price6 = g_parts[i5].basePrice;
-            g_hotBuy[0].kind = HOT_DISABLED;
+            g_hots[HOTS_BUY + 2].kind = HOT_DISABLED;
         } else {
             k3 = (specn = &g_carData[i5 = list4[n - 2]])->nameOffset;
             price6 = specn->basePrice;
-            g_hotBuy[0].kind = HOT_BUTTON;
+            g_hots[HOTS_BUY + 2].kind = HOT_BUTTON;
         }
         strcpy(g_offerName, g_desc + k3);
         sprintf(g_buyPrice, "$%-3d ?", price6);

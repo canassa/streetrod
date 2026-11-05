@@ -26,6 +26,7 @@ def value(expr, names):
 
 
 def c_enums(text):
+    text = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
     names = {name: value(expr, {}) for name, expr in
              re.findall(r'^#define (KEY_VALUE_BASE) (0x[0-9a-f]+)$', text, re.M)}
     for body in re.findall(r'\benum\s+\w+\s*\{([^}]+)\}', text, re.S):
@@ -103,3 +104,50 @@ class KeyMapAgreementTests(unittest.TestCase):
                re.findall(r'^(SC_\w+)\s+EQU\s+(\S+)', inc, re.M)}
         self.assertTrue(c)
         self.assertEqual(c, asm)
+
+
+class HotspotAgreementTests(unittest.TestCase):
+    def setUp(self):
+        header = (SRC / 'UI/HOTSPOT.H').read_text()
+        self.c = c_enums(header)
+        self.equ = asm_equ((SRC / 'UI/HOTSPOT.INC').read_text())
+        source = (SRC / 'UI/HOTSPOT.C').read_text()
+        self.records = [[field.strip() for field in row.split(',')] for row in
+                        re.findall(r'\{(HOT_\w+,[^{}]+)\}', source)]
+
+    def test_c_and_masm_hotspot_indexes_agree(self):
+        self.assertTrue(self.equ)
+        self.assertEqual({n for n in self.c if n.startswith('HOTS_')}, self.equ.keys())
+        for name, index in self.equ.items():
+            self.assertEqual(self.c[name], index, name)
+        self.assertEqual(len(self.records), self.c['HOTS_COUNT'])
+
+    def test_screen_slots_select_their_own_headers(self):
+        maps = c_enums((SRC / 'INPUT/KEYMAPS.H').read_text())
+        table = (SRC / 'UI/MESSAGES.ASM').read_text().split('_g_groupHot DW', 1)[1]
+        table = table.split('PUBLIC', 1)[0]
+        slots = re.findall(r'\bHOTS_\w+', table)
+        self.assertEqual(len(slots), maps['KM_END_MENU'] + 1)
+        for name, slot in maps.items():
+            if not name.startswith('KM_') or name == 'KM_MUSIC':
+                continue
+            expected = name.replace('KM_', 'HOTS_', 1)
+            self.assertEqual(slots[slot], expected, name)
+            if name != 'KM_NONE':
+                self.assertIn(self.records[self.c[expected]][0],
+                              {'HOT_MENU', 'HOT_LIST_MENU', 'HOT_LIST_NO_FRAME'}, name)
+
+    def test_links_stay_within_their_screen(self):
+        starts = sorted(index for name, index in self.equ.items()
+                        if name not in {'HOTS_NONE', 'HOTS_ENGINE_TEMPLATE', 'HOTS_COUNT'})
+        self.assertEqual(starts, [i for i, row in enumerate(self.records)
+                                  if row[0] in {'HOT_MENU', 'HOT_LIST_MENU', 'HOT_LIST_NO_FRAME'}])
+        for start, end in zip(starts, starts[1:] + [len(self.records)]):
+            for row in self.records[start:end]:
+                links = [row[8]]
+                if row[0] == 'HOT_LINK_BOX':
+                    links.append(row[3])
+                for expr in links:
+                    target = value(expr, self.c)
+                    self.assertTrue(target == 0 or start <= target < end,
+                                    (start, end, expr))

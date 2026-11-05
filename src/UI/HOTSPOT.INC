@@ -1,0 +1,47 @@
+; Screen headers and engine templates in the shared hotspot table.
+; Keep these indexes in agreement with HotspotIndex in HOTSPOT.H.
+
+HOTS_RACE_OUTCOME           EQU 0
+HOTS_START_GAME             EQU 2
+HOTS_LOAD                   EQU 6
+HOTS_SPARE_PARTS            EQU 26
+HOTS_NONE                   EQU 41
+HOTS_SAVE                   EQU 46
+HOTS_SAVE_ERROR             EQU 67
+HOTS_NEWSPAPER              EQU 72
+HOTS_ADVERTS                EQU 77
+HOTS_BUY                    EQU 108
+HOTS_GARAGE                 EQU 115
+HOTS_YOUR_CARS              EQU 135
+HOTS_SELL_CAR_OFFER         EQU 156
+HOTS_COUNTER_OFFER          EQU 163
+HOTS_PAINT                  EQU 166
+HOTS_NO_SAVED_GAMES         EQU 173
+HOTS_SELL_PART_OFFER        EQU 178
+HOTS_UNUSED_17              EQU 183
+HOTS_DRAG_WAGER             EQU 185
+HOTS_ROAD_WAGER             EQU 191
+HOTS_TRANSMISSION           EQU 197
+HOTS_ENGINE                 EQU 203
+HOTS_ENGINE_TEMPLATE        EQU 218
+HOTS_RACE_TYPE              EQU 221
+HOTS_GAS_STATION            EQU 226
+HOTS_MESSAGE                EQU 234
+HOTS_REPAIR                 EQU 237
+HOTS_GET_RUNNING            EQU 244
+HOTS_SAVE_RESTART_QUIT      EQU 250
+HOTS_TIMING                 EQU 258
+HOTS_MESSAGE_BOX            EQU 263
+HOTS_OVERWRITE_SAVE         EQU 268
+HOTS_LOAD_ERROR             EQU 273
+HOTS_READY                  EQU 278
+HOTS_RACE_STATS             EQU 283
+HOTS_BODY_CHANGE            EQU 287
+HOTS_STICKERS               EQU 292
+HOTS_CALL_RIVAL             EQU 303
+HOTS_BOBS                   EQU 322
+HOTS_MANUAL_COLORS          EQU 329
+HOTS_UNUSED_40              EQU 342
+HOTS_END_MENU               EQU 344
+HOTS_CAR_INFO               EQU 349
+HOTS_COUNT                  EQU 365

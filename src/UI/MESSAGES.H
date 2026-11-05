@@ -6,6 +6,8 @@
 #ifndef MESSAGES_H
 #define MESSAGES_H
 
+#include "HOTSPOT.H"
+
 /** @brief Byte offsets into @ref g_txt for labels and editable text. */
 enum TextOffset {
     TXT_HOT_LIPS = 2,
@@ -332,7 +334,8 @@ extern int g_offBolt;
 extern int g_offWires;
 extern int g_offSquelch;
 extern int g_offTunes;
-extern int g_groupHot[];
+/** Screen headers selected by @ref ScreenId. */
+extern enum HotspotIndex g_groupHot[];
 /** Popup records: a layout byte followed by text lines. */
 extern char g_descHdr[];
 /** Names, part descriptions and save-slot labels. */

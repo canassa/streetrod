@@ -46,21 +46,56 @@ struct Hotspot {
     int drawNext; /**< Next drawing index in @ref g_hots, or zero. */
 };
 
-/** @brief Base of the shared hotspot index space. */
-extern struct Hotspot g_hots[];
-extern struct Hotspot g_hotPageRows[];
-extern struct Hotspot g_hotBuy[];
-extern struct Hotspot g_gar[];
-extern struct Hotspot g_hotCalendar[];
-extern struct Hotspot g_transBolts[];
-extern struct Hotspot g_engineHots[];
-extern struct Hotspot g_engineHotTemplate[];
-extern struct Hotspot g_hotGasStation[];
-extern struct Hotspot g_hotGasExit[];
-extern struct Hotspot g_hotRepair[];
-extern struct Hotspot g_hotReadyBox[];
-extern struct Hotspot g_bodyAsk[];
-extern struct Hotspot g_hotBobs[];
+/** @brief Screen headers and template indexes in @ref g_hots. */
+enum HotspotIndex {
+    HOTS_RACE_OUTCOME = 0,        /**< @ref KM_RACE_OUTCOME header. */
+    HOTS_START_GAME = 2,          /**< @ref KM_START_GAME header. */
+    HOTS_LOAD = 6,                /**< @ref KM_LOAD header. */
+    HOTS_SPARE_PARTS = 26,        /**< @ref KM_SPARE_PARTS header. */
+    HOTS_NONE = 41,               /**< Default entry, not a header. */
+    HOTS_SAVE = 46,               /**< @ref KM_SAVE header. */
+    HOTS_SAVE_ERROR = 67,         /**< @ref KM_SAVE_ERROR header. */
+    HOTS_NEWSPAPER = 72,          /**< @ref KM_NEWSPAPER header. */
+    HOTS_ADVERTS = 77,            /**< @ref KM_ADVERTS header. */
+    HOTS_BUY = 108,               /**< @ref KM_BUY header. */
+    HOTS_GARAGE = 115,            /**< @ref KM_GARAGE header. */
+    HOTS_YOUR_CARS = 135,         /**< @ref KM_YOUR_CARS header. */
+    HOTS_SELL_CAR_OFFER = 156,    /**< @ref KM_SELL_CAR_OFFER header. */
+    HOTS_COUNTER_OFFER = 163,     /**< @ref KM_COUNTER_OFFER header. */
+    HOTS_PAINT = 166,             /**< @ref KM_PAINT header. */
+    HOTS_NO_SAVED_GAMES = 173,    /**< @ref KM_NO_SAVED_GAMES header. */
+    HOTS_SELL_PART_OFFER = 178,   /**< @ref KM_SELL_PART_OFFER header. */
+    HOTS_UNUSED_17 = 183,         /**< @ref KM_UNUSED_17 header. */
+    HOTS_DRAG_WAGER = 185,        /**< @ref KM_DRAG_WAGER header. */
+    HOTS_ROAD_WAGER = 191,        /**< @ref KM_ROAD_WAGER header. */
+    HOTS_TRANSMISSION = 197,      /**< @ref KM_TRANSMISSION header. */
+    HOTS_ENGINE = 203,            /**< @ref KM_ENGINE header. */
+    HOTS_ENGINE_TEMPLATE = 218,   /**< Engine control templates. */
+    HOTS_RACE_TYPE = 221,         /**< @ref KM_RACE_TYPE header. */
+    HOTS_GAS_STATION = 226,       /**< @ref KM_GAS_STATION header. */
+    HOTS_MESSAGE = 234,           /**< @ref KM_MESSAGE header. */
+    HOTS_REPAIR = 237,            /**< @ref KM_REPAIR header. */
+    HOTS_GET_RUNNING = 244,       /**< @ref KM_GET_RUNNING header. */
+    HOTS_SAVE_RESTART_QUIT = 250, /**< @ref KM_SAVE_RESTART_QUIT header. */
+    HOTS_TIMING = 258,            /**< @ref KM_TIMING header. */
+    HOTS_MESSAGE_BOX = 263,       /**< @ref KM_MESSAGE_BOX header. */
+    HOTS_OVERWRITE_SAVE = 268,    /**< @ref KM_OVERWRITE_SAVE header. */
+    HOTS_LOAD_ERROR = 273,        /**< @ref KM_LOAD_ERROR header. */
+    HOTS_READY = 278,             /**< @ref KM_READY header. */
+    HOTS_RACE_STATS = 283,        /**< @ref KM_RACE_STATS header. */
+    HOTS_BODY_CHANGE = 287,       /**< @ref KM_BODY_CHANGE header. */
+    HOTS_STICKERS = 292,          /**< @ref KM_STICKERS header. */
+    HOTS_CALL_RIVAL = 303,        /**< @ref KM_CALL_RIVAL header. */
+    HOTS_BOBS = 322,              /**< @ref KM_BOBS header. */
+    HOTS_MANUAL_COLORS = 329,     /**< @ref KM_MANUAL_COLORS header. */
+    HOTS_UNUSED_40 = 342,         /**< @ref KM_UNUSED_40 header. */
+    HOTS_END_MENU = 344,          /**< @ref KM_END_MENU header. */
+    HOTS_CAR_INFO = 349,          /**< @ref KM_CAR_INFO header. */
+    HOTS_COUNT = 365              /**< Number of records in @ref g_hots. */
+};
+
+/** @brief Screen records, mutable regions and engine control templates. */
+extern struct Hotspot g_hots[HOTS_COUNT];
 extern char g_unused596[2];
 extern char g_unused696[6];
 extern char g_unused1239[64];

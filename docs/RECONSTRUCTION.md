@@ -358,16 +358,22 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
     initializer that takes its address.
   The HOTSPOT, MESSAGES and SCENERY splits are evidence; the files' names and contents
   beyond the bytes are not.
-- **HOTSPOT.C's arrays.** DS:09F4..239E is 365 18-byte `struct Hotspot` records in one index
-  space: `Hotspot.drawNext` links a record to the next by its index into `g_hots`, and the code
-  reaches records as `&g_hots[n]`. It is split into arrays where code names a record
-  directly (`g_hotBuy[0].kind`, `g_hotRepair[7].kind`, `g_hotReadyBox[i].y1`, `g_bodyAsk[0].textOffset`, `g_transBolts[k]`,
-  `g_hotBobs[3]`) or computes a run-time difference (`g_hotCalendar - g_gar`, `g_hotGasExit - g_hotGasStation`),
-  which proves separate symbols; each array starts at the first record so named. Where
-  the original's other boundaries were (one array per menu list, or fewer), and the
-  arrays' names, are not recoverable. `g_engineHots` (a runtime list gx_build_hots builds), `g_engineHotTemplate`
-  (three fixed menu records, then six records of another list) and `g_boltHot` are Hotspot
-  records too; insert_hot sorts them by (x1, y1).
+- **HOTSPOT.C's indexed table.** DS:09F4..239E contains 365 18-byte
+  `struct Hotspot` records. `g_groupHot[ScreenId]` selects a header;
+  `drawNext` and link-box `hitCode` values address the complete `g_hots` array.
+  `HOTS_*` names identify screen headers, and initializers are grouped by screen.
+  Garage's 18 sortable regions include its calendar; the separately drawn car
+  name follows. Gas station's six sortable regions include its exit. Engine's
+  mutable run has 14 records followed by three fixed control templates.
+  The old arrays started at first direct references and often split a screen
+  or included several unrelated screens; they did not establish real bounds.
+  A complete array reproduces all function bytes, including the unsigned
+  address differences in garage/gas lookup and sorting. This cast-and-index
+  form is not folded in the measured modules, so these expressions do not prove
+  distinct original symbols. One array is the chosen readable representation;
+  original names and declaration boundaries remain unknown. The table has
+  no pointer fixups; the packed build also verifies relocation ordering in its
+  consumers. See `plans/investigations/hottables.md` for the full screen map.
 - **KEYMAPS.ASM's key maps.** 42 referenced lists of (scan code, value) pairs, each ended
   by a 0 byte (`g_keyMaps[1..42]`; slot 0 holds the count), for screens plus the
   shared music binding. They are local labels; KEYMAPS.H exports only the first
