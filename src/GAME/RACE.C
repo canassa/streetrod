@@ -35,6 +35,7 @@
 #include "SCREEN.H"
 #include "SLOTS.H"
 #include "SOUND.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 #include "VIDEO.H"
 
@@ -43,13 +44,13 @@ static int near find_gas_spot(int);
 static void near clear_gas_spots(void);
 static void near place_gas_spot(int, int, int, int, int);
 static void near sort_gas_spots(void);
-static void near show_tank_cap(struct Dlg *, int);
+static void near show_tank_cap(struct GasStationVisit *, int);
 static void near spots_idle(void);
 static void near spots_cap(void);
 static void near spots_nozzle(void);
 static void near spots_rag(void);
 static void near spots_none(void);
-static void near leave_station(struct Dlg *);
+static void near leave_station(struct GasStationVisit *);
 static void near show_crash(void);
 static void near show_race_stats(void);
 static void near blow_engine(int n);
@@ -174,15 +175,15 @@ static void near spots_none(void)
 }
 
 
-static void near show_tank_cap(struct Dlg *d, int id)
+static void near show_tank_cap(struct GasStationVisit *d, int id)
 {
     struct Bitmap far *back, far *label, far *work;
     struct Blt box;
 
     if (d->nozzleOnPump)
-        back = d->bm1;
+        back = d->capBgNozzleOnPump;
     else
-        back = d->bm2;
+        back = d->capBgNozzleOffPump;
     cu_ctl(CURSOR_HIDE);
     label = di_bm(id, ARENA_HIGH_STACK);
     cu_ctl(CURSOR_SHOW);
@@ -199,25 +200,25 @@ static void near show_tank_cap(struct Dlg *d, int id)
 }
 
 
-static void near leave_station(struct Dlg *d)
+static void near leave_station(struct GasStationVisit *d)
 {
     struct Bitmap far *p;
 
     if (d->hand != GAS_HAND_EMPTY)
-        cu_ctl(1);
+        cu_ctl(GAS_HAND_EMPTY);
     if (d->nozzleInTank) {
         show_tank_cap(d, PIC_FUEL_CAP);
-        if (d->nozzlePenaltyDue) {
+        if (d->chargeNozzlePenalty) {
             sc_add_money(g_driver.money >= NOZZLE_PENALTY ? -NOZZLE_PENALTY : -(int)g_driver.money);
-            d->nozzlePenaltyDue = 0;
+            d->chargeNozzlePenalty = FALSE;
         }
     }
-    if (d->nozzleOnPump == 0) {
+    if (d->nozzleOnPump == FALSE) {
         pu_show(g_pumpWithNozzle, 0x40, 0x64);
-        if (d->nozzlePenaltyDue)
+        if (d->chargeNozzlePenalty)
             sc_add_money(g_driver.money >= NOZZLE_PENALTY ? -NOZZLE_PENALTY : -(int)g_driver.money);
     }
-    if (d->attendantAbsent == 0) {
+    if (d->selfService == FALSE) {
         cu_ctl(CURSOR_HIDE);
         p = di_bm(PIC_GAS_ATTENDANT, ARENA_HIGH_STACK);
         cu_ctl(CURSOR_SHOW);
@@ -237,7 +238,7 @@ static void near leave_station(struct Dlg *d)
 void ra_gas_station(void)
 {
     struct Bitmap far *label;
-    struct Dlg dl;
+    struct GasStationVisit dl;
     int pos;
     int wait1;
     int done;
@@ -250,28 +251,28 @@ void ra_gas_station(void)
     r_vid.copyToFront = 1;
     (*g_videoOps.show)();
     dl.hand = GAS_HAND_EMPTY;
-    cu_ctl(1);
+    cu_ctl(GAS_HAND_EMPTY);
     dl.specIndex = g_driver.currentCar->specIndex;
     dl.bodyMods = gm_car_look(g_driver.currentCar);
     cp_show_car(CAR_PULL_IN, dl.specIndex, dl.bodyMods, (g_driver.currentCar->appearance >> 8) & STICKER_INDEX_MASK, 0,
                 0xa9, 1, g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
     mu_suspend(0);
     label = pu_grab(0x50, 0xaa, 0x28, 0xc, 0);
-    dl.bm1 = pu_grab(g_featurePos.gasCapX - 0x10, g_featurePos.gasCapY - 5, 0x18, 0xc, 0);
+    dl.capBgNozzleOnPump = pu_grab(g_featurePos.gasCapX - 0x10, g_featurePos.gasCapY - 5, 0x18, 0xc, 0);
     r_vid.copyToFront = 0;
     pu_show(g_pumpNoNozzle, 0x40, 0x64);
-    dl.bm2 = pu_grab(g_featurePos.gasCapX - 0x10, g_featurePos.gasCapY - 5, 0x18, 0xc, 0);
+    dl.capBgNozzleOffPump = pu_grab(g_featurePos.gasCapX - 0x10, g_featurePos.gasCapY - 5, 0x18, 0xc, 0);
     pu_show(g_pumpWithNozzle, 0x40, 0x64);
     r_vid.copyToFront = 1;
     pos = 1;
-    dl.pumping = 0;
+    dl.pumping = FALSE;
     wait1 = 0x28;
     done = 0;
-    dl.nozzleInTank = 0;
-    dl.nozzleOnPump = 1;
-    dl.attendantAbsent = 1;
+    dl.nozzleInTank = FALSE;
+    dl.nozzleOnPump = TRUE;
+    dl.selfService = TRUE;
     dl.unused = 0;
-    dl.nozzlePenaltyDue = 1;
+    dl.chargeNozzlePenalty = TRUE;
     dl.fillsLeft = (FUEL_FILL_COUNT_BASE - g_driver.currentCar->fuel) / FUEL_FILL_AMOUNT;
     show_tank_cap(&dl, PIC_FUEL_CAP);
     spots_idle();
@@ -296,7 +297,7 @@ top:
                         so_pump(0);
                         vi_anim_stop(2);
                     }
-                    if (dl.attendantAbsent)
+                    if (dl.selfService)
                         goto tail;
                 fin:
                     leave_station(&dl);
@@ -312,21 +313,21 @@ top:
                 dl.unused = 1;
                 gm_play_anim(3);
                 gm_message(MSG_NEED_FULL_SERVICE);
-                dl.attendantAbsent = 0;
+                dl.selfService = FALSE;
                 if (done)
                     goto fin;
-                dl.nozzlePenaltyDue = 0;
+                dl.chargeNozzlePenalty = FALSE;
                 if (dl.hand == GAS_HAND_EMPTY) {
                     pu_show(g_pumpNoNozzle, 0x40, 0x64);
                     cu_ctl(dl.hand = GAS_HAND_NOZZLE);
-                    dl.nozzleOnPump = 0;
+                    dl.nozzleOnPump = FALSE;
                 }
                 show_tank_cap(&dl, PIC_FUEL_NOZZLE);
-                dl.nozzleInTank = 1;
+                dl.nozzleInTank = TRUE;
                 cu_ctl(dl.hand = GAS_HAND_EMPTY);
                 vi_anim_start(2);
                 so_pump(1);
-                dl.pumping = 1;
+                dl.pumping = TRUE;
             }
             g_waitUntil = g_tick + 0x4c;
             break;
@@ -354,25 +355,25 @@ top:
             if (dl.hand == GAS_HAND_EMPTY) {
                 cu_ctl(dl.hand = GAS_HAND_NOZZLE);
                 pu_show(g_pumpNoNozzle, 0x40, 0x64);
-                dl.nozzleOnPump = 0;
+                dl.nozzleOnPump = FALSE;
             both:
                 mn_pop(1);
                 spots_nozzle();
             } else {
                 if (pos > g_driver.money || done) {
-                    dl.nozzlePenaltyDue = 0;
+                    dl.chargeNozzlePenalty = FALSE;
                     goto fin;
                 }
                 cu_ctl(dl.hand = GAS_HAND_EMPTY);
                 pu_show(g_pumpWithNozzle, 0x40, 0x64);
-                dl.nozzleOnPump = 1;
+                dl.nozzleOnPump = TRUE;
                 mn_pop(1);
                 spots_idle();
             }
             mn_push(KM_GAS_STATION);
         tail:
             g_waitUntil = g_tick + 20;
-            dl.pumping = 0;
+            dl.pumping = FALSE;
             break;
         case KR_GAS_CAP:
             if (g_fuelStationActions.capAvailable == 0)
@@ -383,7 +384,7 @@ top:
                     vi_anim_stop(2);
                 }
                 show_tank_cap(&dl, PIC_FUEL_CAP);
-                dl.nozzleInTank = 0;
+                dl.nozzleInTank = FALSE;
                 cu_ctl(dl.hand = GAS_HAND_NOZZLE);
                 if (dl.fillsLeft > 0 && pos <= g_driver.money)
                     gm_message(MSG_ITS_NOT_FULL_SPEEDY);
@@ -393,7 +394,7 @@ top:
                 gm_message(MSG_PAY_ATTENTION_DUMMY);
             else {
                 show_tank_cap(&dl, PIC_FUEL_NOZZLE);
-                dl.nozzleInTank = 1;
+                dl.nozzleInTank = TRUE;
                 cu_ctl(dl.hand = GAS_HAND_EMPTY);
                 vi_anim_start(2);
                 so_pump(1);
@@ -401,7 +402,7 @@ top:
                 spots_cap();
                 mn_push(KM_GAS_STATION);
                 g_waitUntil = g_tick + 0x4c;
-                dl.pumping = 1;
+                dl.pumping = TRUE;
             }
             break;
         case KR_GAS_LEAVE:
