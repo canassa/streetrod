@@ -7,6 +7,7 @@
 #define SYS_H
 /** PIT input clocks per game tick; four game ticks per BIOS tick. */
 #define SYSTEM_TIMER_RELOAD 0x4000
+
 /** Queue sentinel later than any pending game-tick deadline. */
 #define TIMER_NO_DEADLINE 0x7fffffffL
 
@@ -103,6 +104,7 @@ struct GameClock {
     /** BIOS-tick offset preserving elapsed time across loads. */
     long timeBase;
 };
+
 #include "KEYMAPS.H"
 
 /** @brief Whether demo-exit handling has already been entered. */

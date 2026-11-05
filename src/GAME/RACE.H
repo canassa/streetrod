@@ -19,12 +19,16 @@
 #define MAJOR_REPAIR_PRICE_RANGE 0x28
 #define MINOR_REPAIR_PRICE_RANGE 0x14
 /** @} */
+
 /** Dollars added to one tenth of scrap value after a total-loss crash. */
 #define TOTAL_LOSS_BASE_VALUE 0x13
+
 /** Fraction of car value paid when declining crash repairs. */
 #define JUNK_VALUE_FACTOR 0.4
+
 /** Exclusive initial tire-wear bound for a car won on pink slips. */
 #define WON_TIRE_WEAR_RANGE 500
+
 /**
  * @name Post-race tire wear
  * @brief Standard tires use high bases; others use low, plus 0..299 wear.
@@ -36,12 +40,16 @@
 #define DRAG_TIRE_WEAR_LOW 200
 #define RACE_TIRE_WEAR_RANGE 300
 /** @} */
+
 /** Simulation-update frequency used to convert elapsed ticks to seconds. */
 #define RACE_TICKS_PER_SECOND 6.068827333333334
+
 /** Completion percentage cap when the car has not finished. */
 #define RACE_INCOMPLETE_PCT_MAX 99
+
 /** One in this many ordinary road races schedules a police appearance. */
 #define COP_RACE_CHANCE 4
+
 /**
  * @name Police trigger position
  * @brief Road-sample index is the base plus an exclusive random offset.
@@ -71,6 +79,7 @@ enum RaceExit {
 #define ROAD_FINISH_INDEX 0x3fc
 #define RACE_START_INDEX 200
 /** @} */
+
 /**
  * @name Race fuel budget
  * @brief Tenths of a gallon deducted after racing or required to enter.
@@ -82,6 +91,7 @@ enum RaceExit {
 #define MIN_ROAD_FUEL 17
 #define MIN_KING_FUEL 22
 /** @} */
+
 /**
  * @name Pump delivery
  * @brief Tenths of a gallon: 30 per fill, clamped to 170 on departure.
@@ -92,13 +102,16 @@ enum RaceExit {
 /** Fill count is (this value - current fuel) / fuel delivered per fill. */
 #define FUEL_FILL_COUNT_BASE 0xbe
 /** @} */
+
 /**
  * Dollar charge for leaving without returning the nozzle, capped at available
  * cash.
  */
 #define NOZZLE_PENALTY 10
+
 /** Dollars charged after a failure when no spare tires are available. */
 #define REPLACEMENT_TIRE_PRICE 0x32
+
 /**
  * @name Tire condition bands
  * @brief Failure requires wear plus a 0..1999 draw to exceed 9500.
@@ -109,6 +122,7 @@ enum RaceExit {
 /** Wear units per slip-table column and exclusive random failure-test bound. */
 #define TIRE_WEAR_BAND 2000
 /** @} */
+
 /**
  * @name Crash severity
  * @brief Strict mph thresholds for total loss, major and minor repairs.
@@ -118,6 +132,7 @@ enum RaceExit {
 #define MAJOR_REPAIR_MPH 0x3c
 #define MIN_REPAIR_MPH 0x1e
 /** @} */
+
 /**
  * @name Speeding fines
  * @brief Strict mph thresholds select high, middle or low dollar charges.
@@ -129,6 +144,7 @@ enum RaceExit {
 #define FINE_MID_PRICE 0x32
 #define FINE_LOW_PRICE 0x14
 /** @} */
+
 /**
  * @name Rival RPM targets
  * @brief Automatic upshift and manual top-gear targets.

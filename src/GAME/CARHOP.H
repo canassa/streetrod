@@ -25,6 +25,7 @@ enum CarhopMode {
 };
 
 extern char g_keepMask;
+
 /**
  * @brief Animate the carhop skating in or out of the scene.
  *

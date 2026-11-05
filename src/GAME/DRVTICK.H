@@ -14,6 +14,7 @@
 #define CRUISE_MAX_RPM 4700
 #define CRUISE_SHIFT_RPM 4500
 /** @} */
+
 /**
  * @name Race start delay
  * @brief Timer ticks before Go: 110 plus a random 0..102 ticks.

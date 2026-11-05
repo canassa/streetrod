@@ -17,6 +17,7 @@
 #define FRONT_BUMPER_SPEED_BONUS 0.05
 #define REAR_BUMPER_SPEED_BONUS 0.01
 /** @} */
+
 /**
  * @name Equipment performance contributions
  * @brief Weights applied to normalized equipment and timing scores.
@@ -30,6 +31,7 @@
 #define TRANSMISSION_SPEED_WEIGHT 0.15
 #define TIMING_SPEED_WEIGHT 0.2
 /** @} */
+
 /**
  * @name Rating to speed
  * @brief Scale the worn rating, then add the base fraction of top speed.
@@ -61,18 +63,25 @@ enum EngineShiftRpm {
 
 /** RPM cap; sustained attempts to exceed it can destroy the engine. */
 #define ENGINE_REDLINE_RPM 5700
+
 /** RPM above which engine and transmission wear increase. */
 #define ENGINE_WEAR_RPM 5000
+
 /** Engine/transmission failure threshold; post-race wear is clamped here. */
 #define PART_WEAR_LIMIT 9900
+
 /** Wear denominator: 10000 represents a fully worn part. */
 #define PART_WEAR_FULL 10000
+
 /** Reset RPM and lower bound while braking or free-revving in neutral. */
 #define ENGINE_IDLE_RPM 1500
+
 /** Automatic-transmission RPM cap, below the over-rev threshold. */
 #define AUTO_MAX_RPM 5690
+
 /** Demo/autopilot downshift threshold while coasting above first gear. */
 #define AUTO_DOWNSHIFT_RPM 2000
+
 /** Ceiling for the generated top speed, in miles per hour. */
 #define PERFORMANCE_MAX_MPH 130.0
 

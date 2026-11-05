@@ -18,6 +18,7 @@ struct ListDialog {
     int selection;          /**< One-based selected item in the entire list. */
     struct Hotspot *header; /**< Borrowed header hotspot, or zero for none. */
 };
+
 #include "KEYMAPS.H"
 
 /**

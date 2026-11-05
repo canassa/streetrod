@@ -22,6 +22,7 @@
 #define GAME_LAST_DAY 91
 #define GAME_LAST_TICK 0x91908L
 /** @} */
+
 /**
  * @name Body service prices
  * @brief Dollar charges per operation; bumpers are charged individually.
@@ -32,8 +33,10 @@
 #define ROOF_CHANGE_PRICE 70
 #define BUMPER_CHANGE_PRICE 15
 /** @} */
+
 /** Dollar balance below which an empty inventory ends the game. */
 #define BROKE_CASH_LIMIT 400L
+
 /**
  * @name Ignition adjustment
  * @brief Inclusive settings -8..4, zero optimal; random setup uses all 13.
@@ -161,6 +164,7 @@ enum GarageMode {
 };
 
 extern int g_tirePics[][4];
+
 /** Body-colour pairs indexed by @ref PaintScheme and @ref PaintShade. */
 extern char g_paint[PAINT_SCHEME_COUNT][PAINT_SHADE_COUNT];
 extern int g_nCarb[];
@@ -171,6 +175,7 @@ void ga_time(int *a, int *b);
 void ga_check_end(int n);
 void ga_calendar(int a);
 void ga_date(int x);
+
 /**
  * @brief Apply the player's body colours on EGA and Tandy displays.
  *
@@ -180,6 +185,7 @@ void ga_palette(enum PaintScheme scheme);
 int ga_hotspot(int n);
 void ga_clear_name(void);
 int near ga_menu(enum GarageMode mode);
+
 /**
  * @brief Choose and buy new paint for the current car, removing its sticker.
  */

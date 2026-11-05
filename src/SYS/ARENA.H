@@ -7,8 +7,10 @@
 #define ARENA_H
 /** Exclusive high-end byte offset, encoded as a signed 16-bit value. */
 #define ARENA_INITIAL_TOP (-536)
+
 /** High-end base slot in the shared allocation-marker array. */
 #define ARENA_LAST_MARK 60
+
 /** Bytes reserved for temporary pictures on non-Tandy systems. */
 #define ARENA_BYTES 0xfde8
 

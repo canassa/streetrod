@@ -47,6 +47,7 @@ extern struct AnimCommand g_animScripts[];
 extern int g_animScriptStart[];
 extern int g_carMoving;
 extern int g_backdropX;
+
 /** @brief Progress of a rival car passing through without parking. */
 enum PassByPhase {
     PASS_BY_NONE = 0,     /**< Ordinary arrival, parking or departure. */
@@ -63,6 +64,7 @@ extern struct Bitmap g_carBackdropHdrBmp;
 extern int g_carVisibleHtValue;
 void cp_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bitmap far **pb, int y1, int y0,
                  struct Rect **pr1, struct Rect **pr2);
+
 /**
  * @brief Build car pictures with body changes, a sticker and optional occupant.
  *

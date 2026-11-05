@@ -334,10 +334,13 @@ extern int g_offBolt;
 extern int g_offWires;
 extern int g_offSquelch;
 extern int g_offTunes;
+
 /** Screen headers selected by @ref ScreenId. */
 extern enum HotspotIndex g_groupHot[];
+
 /** Popup records: a layout byte followed by text lines. */
 extern char g_descHdr[];
+
 /** Names, part descriptions and save-slot labels. */
 extern char g_desc[];
 extern char g_junk[];

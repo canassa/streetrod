@@ -29,6 +29,7 @@ enum DrivePhase {
 extern enum DrivePhase g_phaseDriveRunState;
 extern int g_startingGoActive;
 void cr_go(void);
+
 /**
  * @brief Apply rival body colours or restore the palette from before the race.
  *

@@ -289,6 +289,7 @@ enum PictureId {
 
 /** Combined entry count required when validating both picture libraries. */
 #define PICTURE_COUNT 277
+
 /**
  * @name Second picture library numbering
  * @brief Subtract the bias to convert IDs to shared slot indices.
@@ -310,6 +311,7 @@ enum PartFit {
 
 /** Manufacturer compatibility bits in the stock equipment word. */
 #define SPEC_FIT_MASK 0x000f
+
 /**
  * @name Tire stock variant
  * @brief Right-shift the stock equipment word, then mask to obtain the variant.
@@ -318,6 +320,7 @@ enum PartFit {
 #define SPEC_TIRES_SHIFT 4
 #define SPEC_TIRES_MASK 3
 /** @} */
+
 /**
  * @name Transmission stock variant
  * @brief Right-shift the stock equipment word, then mask to obtain the variant.
@@ -326,6 +329,7 @@ enum PartFit {
 #define SPEC_TRANS_SHIFT 6
 #define SPEC_TRANS_MASK 3
 /** @} */
+
 /**
  * @name Engine stock variant
  * @brief Right-shift the stock equipment word, then mask to obtain the variant.
@@ -334,6 +338,7 @@ enum PartFit {
 #define SPEC_ENGINE_SHIFT 8
 #define SPEC_ENGINE_MASK 7
 /** @} */
+
 /**
  * @name Manifold stock variant
  * @brief Right-shift the stock equipment word, then mask to obtain the variant.
@@ -342,6 +347,7 @@ enum PartFit {
 #define SPEC_MANIFOLD_SHIFT 11
 #define SPEC_MANIFOLD_MASK 7
 /** @} */
+
 /**
  * @name Carburetor stock variant
  * @brief Right-shift the stock equipment word, then mask to obtain the variant.
@@ -463,6 +469,7 @@ struct StickerPos {
     int dx;                   /**< Pixel offset rightwards within background. */
     int dy;                   /**< Row offset downwards within background. */
 };
+
 #include "MAIN.H"
 
 /** @brief Borrowed path and state pointers for the selected picture library. */

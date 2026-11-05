@@ -30,12 +30,16 @@ enum BoltTightness {
 
 /** Wear sentinel for parts without a condition percentage. */
 #define PART_WEAR_UNTRACKED (-128)
+
 /** Menu-label byte suppressing the condition percentage. */
 #define PART_WEAR_LABEL_NONE 0x80
+
 /** Dollar increment used when rounding sale offers down. */
 #define SALE_PRICE_STEP 5
+
 /** Dollars added when the demo cannot afford a purchase. */
 #define DEMO_PURCHASE_CASH 1999
+
 /**
  * @name Intake resale offers
  * @brief Offer is 70..89 percent of carburetor or manifold value.
@@ -44,6 +48,7 @@ enum BoltTightness {
 #define PART_SALE_RANDOM_PCT 20
 #define PART_SALE_BASE_PCT 70
 /** @} */
+
 /**
  * @name Car sale negotiation
  * @brief Initial offer is 75..94 percent of value; counters scale that offer.
@@ -122,6 +127,7 @@ enum BodyMod {
 
 /** Internal menu result when excess inventory prevents saving. */
 #define GAME_MENU_BLOCKED 0x309
+
 /**
  * @name Inventory restrictions
  * @brief Excess stock blocks purchases, travel and saving.
@@ -130,8 +136,10 @@ enum BodyMod {
 #define MAX_OWNED_CARS 15
 #define MAX_OWNED_PARTS 130
 /** @} */
+
 /** Number of entries scanned when building the parts purchase list. */
 #define PART_CATALOG_COUNT 0x2c
+
 /**
  * @name Catalog category bases
  * @brief Zero-based catalog offsets added to equipment variants.
@@ -142,16 +150,22 @@ enum BodyMod {
 #define PART_MANIFOLD_FIRST 0x19
 #define PART_TIRES_FIRST 0x28
 /** @} */
+
 /** Stored fuel units per gallon. */
 #define FUEL_UNITS_PER_GALLON 10
+
 /** Initial fuel in tenths of a gallon: four gallons. */
 #define NEW_CAR_FUEL 0x28
+
 /** Minimum fuel to leave for Bob's, in tenths of a gallon. */
 #define MIN_BOBS_FUEL 9
+
 /** Fuel at or above this many tenths of a gallon blocks a pump visit. */
 #define REFUEL_VISIT_LIMIT 0x8c
+
 /** Dollar value substituted for every V6 engine in part valuation. */
 #define V6_PART_VALUE 100
+
 /** Minimum catalog base price, in dollars, for a purchase-list entry. */
 #define MIN_AD_PART_PRICE 0x14
 

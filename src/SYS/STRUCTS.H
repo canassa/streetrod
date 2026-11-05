@@ -7,6 +7,7 @@
 #define STRUCTS_H
 
 typedef int BOOL;
+
 /**
  * @name Boolean values
  * @brief Integer truth values used by game interfaces.
@@ -21,6 +22,7 @@ union Word {
     int w;              /**< Whole word, retaining the raw bit pattern. */
     unsigned char b[2]; /**< Low byte followed by high byte. */
 };
+
 /** @brief Two signed values whose meanings are defined by each table. */
 struct Pair {
     int a; /**< First value: an x coordinate, span start, or auxiliary value. */

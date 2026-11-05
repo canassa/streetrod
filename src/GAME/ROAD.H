@@ -94,13 +94,16 @@ enum TerrainFlags {
 
 /** Unused top bit of a @ref RoadsideFlags word. */
 #define ROADSIDE_UNUSED_15 0x8000
+
 /** Overhead straight arrow, or town Block Out ad; see @ref TerrainFlags. */
 #define TERRAIN_STRAIGHT_GANTRY 0x8000
 
 /** Features retained when clearing incidental scenery beneath a sign. */
 #define ROADSIDE_SIGN_KEEP (ROADSIDE_POST | ROADSIDE_WARNING | ROADSIDE_BARRICADE)
+
 /** Road constriction flags used by projection and rival lane selection. */
 #define TERRAIN_WIDTH_MASK (TERRAIN_LEFT_CLOSED | TERRAIN_RIGHT_CLOSED | TERRAIN_NARROW)
+
 /** All overhead signs and their shoulder obstructions. */
 #define TERRAIN_GANTRY_MASK (TERRAIN_CITY_GANTRY | TERRAIN_SCENE_GANTRY | TERRAIN_LEFT_GANTRY | TERRAIN_STRAIGHT_GANTRY)
 
@@ -159,16 +162,20 @@ extern int g_mirYProj[8];
 
 extern int g_roadLayout;
 extern int g_onShoulder;
+
 /** Left-side sample at the current seek position; @ref RoadsideFlags. */
 extern unsigned far *g_sampleLeftRoadside;
 extern int g_roadLXArray[15];
+
 /** Curve sample cursor, advanced or retreated by projection. */
 extern int far *g_sampleCurveXReadPtr;
+
 /** Road height cursor, advanced or retreated by projection. */
 extern int far *g_elevationCursor;
 extern int g_roadYProjectionArray[15];
 extern int g_startDrawRows;
 extern int g_rightXProjectionTable[15];
+
 /** Shared sample cursor for projection and driving; @ref TerrainFlags. */
 extern unsigned far *g_trackRoadWordsCursor;
 extern int g_lhsRdMirrorX[8];

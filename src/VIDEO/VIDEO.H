@@ -34,6 +34,7 @@ struct Box {
 
 /** Number of concurrently allocated bitmap-animation objects. */
 #define ANIMATION_OBJECT_COUNT 5
+
 /** Script identity or resume index marking an inactive animation object. */
 #define ANIMATION_INACTIVE (-1)
 

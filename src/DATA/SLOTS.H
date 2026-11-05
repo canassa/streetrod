@@ -47,14 +47,19 @@ struct PictureSlot {
 };
 
 extern struct PictureSlot far g_slot[];
+
 /** Left roadside flags per track sample; @ref RoadsideFlags. */
 extern unsigned far g_roadsideLeftBits[];
+
 /** Right roadside flags per track sample; @ref RoadsideFlags. */
 extern unsigned far g_roadsideRightBits[];
+
 /** Signed horizontal curve displacement per track sample. */
 extern int far g_roadCurve[];
+
 /** Shared road flags per track sample; @ref TerrainFlags. */
 extern unsigned far g_roadBitsArray[];
+
 /** Signed road height profile per track sample. */
 extern int far g_roadHeight[];
 

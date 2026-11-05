@@ -57,6 +57,7 @@ feeds a calculation, such as a screen position.
    constant or macro in a `.H` is documented, in the same terse style. Closely related defines
    (a SHIFT/MASK pair, a table of limits) can share a `/** @name ... @{ */` group
    instead of repeating themselves line by line; include guards need nothing.
+   Leave one blank line between documented items in a header (each define, enum, struct, block); only the members of a `@name` group stay together, with a blank line before the group and after its `@}`.
    A group brief does not expose each macro as a link target: add an adjacent
    comment to a macro before referring to it with @ref.
 1. Every documented `.H`/`.C` declaring file-level items needs a `@file` block.

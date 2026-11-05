@@ -8,6 +8,7 @@
 
 /** Maximum number of driver scores retained in the hall of fame. */
 #define HALL_FAME_COUNT 10
+
 /**
  * @name Manual question table
  * @brief Select among 51 questions; the first eighteen ask about car icons.

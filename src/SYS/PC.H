@@ -14,6 +14,7 @@
 #define SCAN_CODE_MASK 0x7f
 #define SCAN_BREAK 0x80
 /** @} */
+
 /**
  * @name Road drawing pages
  * @brief Far pointers to EGA plane storage at byte offsets 0x4000 and 0x2000.
@@ -22,10 +23,13 @@
 #define EGA_PAGE2_BITS ((char far *)0xa4000000L)
 #define EGA_PAGE1_BITS ((char far *)0xa2000000L)
 /** @} */
+
 /** Select CPU and CRT pages for the game's 32 KiB graphics buffer. */
 #define TANDY_PAGE_MAPPING 0xf6
+
 /** Timer input clocks per second, used to convert hertz to a divisor. */
 #define PIT_INPUT_HZ 1193180L
+
 /**
  * @name Video memory locations
  * @brief Real-mode segments and byte offsets of pages and scanline banks.
@@ -42,6 +46,7 @@
 #define CGA_SEGMENT 0xb800
 #define EGA_SEGMENT 0xa000
 /** @} */
+
 /**
  * @name Video storage extents
  * @brief Byte counts include bank padding; paragraphs are 16 bytes each.
@@ -54,6 +59,7 @@
 #define VIDEO_BANK_PARAS 0x200
 #define VIDEO_BANK_BYTES 0x2000
 /** @} */
+
 /**
  * @name Packed display strides
  * @brief Bytes per stored scanline, within each interleaved video bank.
@@ -71,6 +77,7 @@
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
 /** @} */
+
 /** Bytes per scanline in each one-bit EGA plane. */
 #define EGA_PITCH 40
 
@@ -100,6 +107,7 @@
 #define EQUIP_VIDEO_MASK 0x30
 #define EQUIP_VIDEO_COLOR80 0x20
 /** @} */
+
 /**
  * @brief Replace the BIOS equipment byte's display field.
  * @param m Prepositioned display-field bits.
@@ -128,6 +136,7 @@
 #define VIDEO_PALETTE_REGS 0x10
 #define VIDEO_GET_DCC 0x1a
 /** @} */
+
 /**
  * @name Display combination query
  * @brief AL requests the adapter combination; BL reports color VGA.
@@ -157,8 +166,10 @@
 #define CGA_PALETTE_GREEN_RED_BROWN 0
 #define CGA_PALETTE_CYAN_MAGENTA_WHITE 1
 /** @} */
+
 /** AL selector for loading all palette registers through ES:DX. */
 #define PALETTE_SET_ALL 0x02
+
 /** Largest palette index; higher indices select the border register. */
 #define EGA_PALETTE_LAST 0x0f
 
@@ -170,6 +181,7 @@
 #define DOS_WRITE_STRING 0x09
 #define DOS_SEEK 0x42
 /** @} */
+
 /** AL origin for an absolute byte offset from the start of a file. */
 #define DOS_SEEK_START 0x00
 
@@ -181,6 +193,7 @@
 #define CRIT_DEVICE_ERROR 0x8000
 #define CRIT_RETRY_ALLOWED 0x1000
 /** @} */
+
 /**
  * @name Critical error reasons
  * @brief DOS error codes selecting the retry prompt's explanation.
@@ -200,6 +213,7 @@
 #define MOUSE_GET_POSITION 0x03
 #define MOUSE_READ_MOTION 0x0b
 /** @} */
+
 /**
  * @name Mouse button state
  * @brief Bits in the driver's returned button byte; may be set together.
@@ -243,6 +257,7 @@
 #define GC_MODE 5
 #define GC_BIT_MASK 8
 /** @} */
+
 /**
  * @name EGA controller modes
  * @brief Mode bits for direct, latch and color writes or color comparison.
@@ -253,11 +268,13 @@
 #define GC_WRITE_MODE2 2
 #define GC_READ_MODE1 0x08
 /** @} */
+
 /** Enable all eight pixel positions when resetting the EGA bit mask. */
 #define GC_MASK_ALL 0xff
 
 /** Sequencer index selecting the writable EGA plane mask. */
 #define SEQ_MAP_MASK 2
+
 /**
  * @name EGA write planes
  * @brief Combinable bits enabling planes in the sequencer map mask.
@@ -279,6 +296,7 @@
 #define CRTC_START_LO 0x0d
 #define CRTC_OFFSET 0x13
 /** @} */
+
 /**
  * @name Vertical synchronization flags
  * @brief Status-port bits polled before visible-page updates.
@@ -287,6 +305,7 @@
 #define STATUS_VRETRACE 0x08
 #define HERC_STATUS_VSYNC 0x80
 /** @} */
+
 /**
  * @name Display mode control bits
  * @brief Combined when blanking or enabling CGA and Hercules video.
@@ -306,6 +325,7 @@
 #define PPI_SPEAKER_DATA 0x02
 #define PPI_SPEAKER_MASK (PPI_SPEAKER_GATE | PPI_SPEAKER_DATA)
 /** @} */
+
 /**
  * @name Timer programming commands
  * @brief Square-wave counting with low-byte then high-byte divisor writes.
@@ -314,8 +334,10 @@
 #define PIT_CH0_LOHI_MODE3 0x36
 #define PIT_CH2_LOHI_MODE3 0xb6
 /** @} */
+
 /** Acknowledge a serviced hardware interrupt to the master controller. */
 #define PIC_EOI 0x20
+
 /**
  * @name Joystick detection bits
  * @brief Active-low button and first-stick timing bits for detection.

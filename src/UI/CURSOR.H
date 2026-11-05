@@ -7,10 +7,13 @@
 #define CURSOR_H
 /** Bytes per pre-shifted cursor sheet plane, including alignment copies. */
 #define CURSOR_PLANE_BYTES 0x600
+
 /** Pixel rows holding four stacked cursor shapes. */
 #define CURSOR_SHEET_HEIGHT (CURSOR_HEIGHT * GAS_HAND_COUNT)
+
 /** Pixel rows saved beneath one cursor shape. */
 #define CURSOR_HEIGHT 16
+
 /** Pixel span reserved for a cursor, including horizontal alignment padding. */
 #define CURSOR_WIDTH 24
 
@@ -62,6 +65,7 @@ struct Cursor {
 #define CURSOR_HIDE (-3)
 #define CURSOR_HIDE_NOW (-4)
 /** @} */
+
 /** Off-screen EGA storage immediately below the visible page. */
 #define CURSOR_EGA_SAVE (EGA_VRAM + EGA_PITCH * SCREEN_HEIGHT)
 

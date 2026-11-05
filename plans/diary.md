@@ -3583,3 +3583,14 @@ header. A count on a definition need not force the same dependency onto an exter
 array declaration when no consumer uses its compile-time size. Recorded the
 measured chain and fix in the MSC recipe book. The video investigation reached
 the same conclusion about the former Mask view and renamed it EgaSpriteBand.
+
+## 2026-11-06: One blank line between documented header items
+
+### What I did
+
+- Added a blank line between documented items in 24 headers (133 lines); @name groups stay together. Whitespace only.
+- doxygen-c skill now states the rule.
+
+### What I learned
+
+- The docs passes followed the terse style but packed items tight; readers want visual separation between entities.

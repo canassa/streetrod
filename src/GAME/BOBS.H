@@ -17,8 +17,10 @@
 #define KING_MET_CHANCE 10
 #define KING_FIRST_CHANCE 50
 /** @} */
+
 /** Departing cars required before the carhop can arrive. */
 #define CARHOP_MIN_DEPARTURES 3
+
 /**
  * @name Carhop arrival odds
  * @brief Arrival percentage points for orders, jail visits and base odds.
@@ -28,6 +30,7 @@
 #define CARHOP_JAIL_BONUS 10
 #define CARHOP_BASE_CHANCE 5
 /** @} */
+
 /**
  * @name Carhop departure odds
  * @brief Percent departure chances at successive car-movement stages.
@@ -42,6 +45,7 @@
 /** Percent chance of leaving immediately when no rival remains. */
 #define CARHOP_EMPTY_LEAVE_CHANCE 8
 /** @} */
+
 /**
  * @name Jail animation odds
  * @brief Percent chance on entering Bob's or on a jail-visit timeout.
@@ -50,6 +54,7 @@
 #define BOBS_CELL_CHANCE 25
 #define JAIL_CELL_CHANCE 6
 /** @} */
+
 /**
  * @name Wager acceptance bonuses
  * @brief Acceptance percentage points for stickers and demo play.
@@ -59,10 +64,12 @@
 #define BET_STICKER_HIGH_BONUS 6
 #define BET_DEMO_BONUS 10
 /** @} */
+
 /**
  * Low bit of the packed sticker choice; selects the smaller acceptance bonus.
  */
 #define BET_STICKER_LOW_BIT 0x100
+
 /**
  * Initial upper bound when seeking the smallest top-speed difference, in mph.
  */
@@ -73,13 +80,16 @@
 
 /** Model ranks below this use the lowest wager and assignment class. */
 #define CAR_CLASS_LOW_LIMIT 3
+
 /** Model ranks at or above this use the highest wager class. */
 #define BET_CLASS_HIGH_RANK 7
+
 /**
  * Model ranks at or above this enter the highest initial rival-assignment
  * group.
  */
 #define RACER_GROUP_HIGH_RANK 6
+
 /**
  * @name Ordinary encounter pool
  * @brief Closest top speeds, filtered by model-rank difference.
@@ -90,6 +100,7 @@
 #define RIVAL_POOL_REPLACE_ABOVE 6
 #define RIVAL_RANK_DIFFERENCE 1
 /** @} */
+
 /**
  * @name Rival car specifications
  * @brief Ordinary indices 0..24; King and police use index 25.
@@ -98,6 +109,7 @@
 #define SPEC_ORDINARY_COUNT 25
 #define SPEC_KING 25
 /** @} */
+
 /**
  * @name Rival modification draws
  * @brief Exclusive draw bounds compared to (model rank / 2) + 1.
@@ -108,6 +120,7 @@
 #define RIVAL_BUMPER_CHANCE 25
 #define RIVAL_ROOF_CHANCE 30
 /** @} */
+
 /**
  * @name Rival modification eligibility
  * @brief Wagered-race counts must exceed these change thresholds.
@@ -117,6 +130,7 @@
 #define RIVAL_RESTICKER_RACES 10
 #define RIVAL_BODY_RACES 8
 /** @} */
+
 /** Exclusive random choice bound, including zero for no sticker. */
 #define STICKER_CHOICE_COUNT 9
 
@@ -170,10 +184,13 @@ enum WagerAmount {
 #define KING_TOTAL_WINS 7
 #define KING_WINS_PER_TYPE 6
 /** @} */
+
 /** Timer ticks allowed for each race-type or stake selection. */
 #define WAGER_TIMEOUT_TICKS 800
+
 /** Maximum stake proposals before negotiation ends. */
 #define WAGER_TRIES 2
+
 /**
  * @name King defeat penalties
  * @brief Wins deducted after losing either race against the King.
@@ -303,11 +320,13 @@ extern struct JailOverlay g_jailBars[7];
 extern struct Pair g_jailGaps[];
 extern struct Bitmap far *g_barJailPixels;
 extern int g_opponentSpecIndex;
+
 /** TRUE when the player won the most recent race. */
 extern BOOL g_driverWonFlag;
 extern int g_isKingState;
 extern struct CarSpec *g_oppSpecPointer;
 extern struct Racer *g_selectedRacerPointer;
+
 /** Selected rival's index in @ref g_racerRecordsArray. */
 extern int g_racerActiveSlot;
 extern int g_rivalHereState;
