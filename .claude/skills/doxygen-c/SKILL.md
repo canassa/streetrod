@@ -125,6 +125,31 @@ header, followed by `@{` and a closing `@}`. Additional files use `@ingroup` or
 Don't duplicate the same overview in header, source and group. Use the README
 for project-wide front matter, not a module's API description.
 
+## Good example
+
+From BOBS.C (a static function, so the block sits on its definition). Every line earns its
+place: a one-line `@brief`; one sentence of behaviour a reader can't see from the name; one
+short sentence per parameter; "always 1"/"always 0" only on the flags that gate branches.
+The enum-typed `animation` gets no value list, since `enum CarAnimKind` documents its values.
+
+```c
+/**
+ * @brief Drive the selected rival's car in or out and show its name banner.
+ *
+ * A pending pass-by drives the car straight back out. The carhop may come or go
+ * around the movement.
+ *
+ * @param animation How the car moves.
+ * @param specIndex The rival's car specification.
+ * @param showPortrait Nonzero draws the driver in the car; always 1.
+ * @param carBottom Bottom screen row of the car.
+ * @param useGasMask Nonzero draws the gas station's foreground over the car; always 0.
+ * @param tirePics The four tire-frame pictures, or null for none.
+ */
+static void near animate_rival_car(enum CarAnimKind animation, int specIndex, int showPortrait,
+                                   int carBottom, int useGasMask, int *tirePics)
+```
+
 ## Build and doc-lint
 
 ```sh

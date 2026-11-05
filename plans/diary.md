@@ -2514,3 +2514,17 @@ The conflicting lines contain independent substitutions: keep named appearance m
 ### What I learned
 
 - A constant position is just this scene's value; a constant flag means a path never runs.
+
+## 2026-11-05: investigate-function skill and a good Doxygen example
+
+### What I did
+
+- Added .claude/skills/investigate-function/SKILL.md: the investigator method (assume nothing,
+  trust no name, track down what doesn't make sense, write the note first, then rename the
+  function/params/locals and document it, gates, commit with plans/investigations/<func>.md).
+- Added animate_rival_car's block to the doxygen-c skill as the "Good example".
+
+### What I learned
+
+- The pilot (show_rival_car) and three rounds of user feedback shaped the documentation rules;
+  the skill now carries them so a bare "investigate X" brief is enough.
