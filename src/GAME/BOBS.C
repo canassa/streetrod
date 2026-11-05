@@ -365,7 +365,7 @@ static void near select_rival(int n)
     g_carDraw.tireVariant = (g_oppSpecPointer->parts >> 4) & 3;
     g_carDraw.paintScheme = g_selectedRacerPointer->paintScheme;
     ga_palette(g_carDraw.paintScheme);
-    g_carDraw.overlayPic = g_selectedRacerPointer->overlayPic;
+    g_carDraw.overlayPic = g_selectedRacerPointer->portraitPic;
 }
 
 
@@ -461,7 +461,7 @@ static int near accepts_bet(enum BetKind kind)
         goto calc;
     }
 calc:
-    chm = g_selectedRacerPointer->betToleranceClass;
+    chm = g_selectedRacerPointer->stakeToleranceRow;
     p18 = spec_class(g_opponentSpecIndex);
     p27 = spec_class(g_driver.currentCar->specIndex);
     clsl = (g_oppSpecPointer->parts >> 8) & 7;
@@ -482,7 +482,7 @@ calc:
         bonus2 = BET_STICKER_LOW_BONUS;
     else
         bonus2 = BET_STICKER_HIGH_BONUS;
-    adj9 = (2 * g_selectedRacerPointer->betWins - g_selectedRacerPointer->betRaces) * scorel / 4;
+    adj9 = (2 * g_selectedRacerPointer->rivalBetWins - g_selectedRacerPointer->betRaces) * scorel / 4;
     scorel += adj9 + bonus2;
     if (g_demo)
         scorel += (scorel >> 2) + BET_DEMO_BONUS;
@@ -862,11 +862,11 @@ static void near play_ending(void)
     (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.copyToFront = 0;
     (*g_videoOps.show)();
-    g_racerRecordsArray[RACER_KING].overlayPic = PIC_PORTRAIT_KINGS_GIRLFRIEND;
+    g_racerRecordsArray[RACER_KING].portraitPic = PIC_PORTRAIT_KINGS_GIRLFRIEND;
     select_rival(RACER_KING);
     cp_show_car(CAR_PULL_IN, g_opponentSpecIndex, g_selectedRacerPointer->bodyMods, g_selectedRacerPointer->sticker, 1,
                 0x98, 0, g_tirePics[g_carDraw.tireVariant]);
-    g_racerRecordsArray[RACER_KING].overlayPic = PIC_PORTRAIT_THE_KING;
+    g_racerRecordsArray[RACER_KING].portraitPic = PIC_PORTRAIT_THE_KING;
     pic24 = ar_bm(0x50, 0x2c, 0, ARENA_HIGH_BASE);
     pu_grab(0x78, 0x45, 0x50, 0x2c, pic24);
     pic3 = di_bm(PIC_ENDING_COUPLE, ARENA_LOW_STACK);
@@ -1102,7 +1102,7 @@ void bo_visit(void)
                     if (g_carDraw.betType != KR_BET_FOR_KICKS) {
                         g_selectedRacerPointer->betRaces++;
                         if (g_resultWin == 0)
-                            g_selectedRacerPointer->betWins++;
+                            g_selectedRacerPointer->rivalBetWins++;
                     }
                     if (place == RACE_EXIT_STOPPED || place == RACE_EXIT_GARAGE) {
                         mn_pop(1);

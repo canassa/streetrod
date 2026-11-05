@@ -2576,3 +2576,31 @@ The conflicting lines contain independent substitutions: keep named appearance m
   The existing ownerless helper header is sufficient without a file rename.
 - The investigation skill now explicitly limits changes to names, meaningful
   types and docs; truth tests and surrounding pointer/style conventions stay put.
+
+## 2026-11-05 15:48 CET: Investigate the Racer record
+
+### What I did
+
+- Traced all 15 Racer members through resource loading, random car assignment,
+  rival selection, wagering, race AI, pink-slip outcomes and save/load. Decoded
+  the 22 HOT_DATA records and stake-tolerance rows. Evidence and decisions are in
+  [the Racer investigation](investigations/Racer.md).
+- Clarified stakeToleranceRow, earlyShiftPenalty, portraitPic and rivalBetWins;
+  documented the complete record and RacerStatus without changing its 18-byte
+  layout or any field's signedness. Preserved both uninterpreted unused bytes.
+- Passed headers/format/docs, 572/572 function matches, clean packed build,
+  DGROUP checks, 104 unit tests, 708 real-compiler size/offset checks and the
+  DOS-native identical build. No merge or push.
+
+### What I learned
+
+- The win byte counts the rival's victories; the shift penalty subtracts
+  hundreds of RPM rather than delaying gear changes. The driving handicap
+  affects both bend braking and the chance of a contact counterattack.
+- A first pink-slip loss can grant a lower-ranked replacement; a second removes
+  the rival. Outcome processing resets car history before Bob's counts the
+  triggering race, so the replacement can begin with one counted race.
+- The police borrows ordinary rival slot 10's behavior while selecting its own
+  specification. The King's encounter status describes eligibility as well as
+  contact. These behavioral findings belong in the investigation note; no
+  compiler/tooling rule or skill changed.

@@ -59,7 +59,7 @@ void sg_init_racer(int k, int *list)
     g_racerRecordsArray[k].paintScheme = i;
     g_racerRecordsArray[k].status = RACER_NOT_MET;
     g_racerRecordsArray[k].betRaces = 0;
-    g_racerRecordsArray[k].betWins = 0;
+    g_racerRecordsArray[k].rivalBetWins = 0;
     g_racerRecordsArray[k].bodyMods = 0;
     g_racerRecordsArray[k].sticker = 0;
     g_racerRecordsArray[k].lostCarOnce = 0;

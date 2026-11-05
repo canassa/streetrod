@@ -1,4 +1,7 @@
-/* BOBS.H - declarations of what BOBS.C defines. */
+/**
+ * @file BOBS.H
+ * @brief Rival encounters at Bob's and the jail.
+ */
 
 #ifndef BOBS_H
 #define BOBS_H
@@ -87,22 +90,31 @@ enum WagerAmount {
 struct Bitmap;
 struct Spec;
 
+/**
+ * @brief A rival driver's behavior, assigned car and encounter history.
+ *
+ * Each 18-byte record is loaded from the game data and saved intact. Ordinary
+ * rivals receive a random car; the King keeps his assigned car.
+ */
 struct Racer {
-    signed char betToleranceClass;
-    char shiftPenalty;
+    /** Row 0..2 of the stake-tolerance table; higher rows tolerate less. */
+    signed char stakeToleranceRow;
+    char earlyShiftPenalty; /**< Manual upshift RPM deduction, in hundreds. */
+    /** Bend-speed deduction, halved when behind; also reduces ramming odds. */
     signed char drivingPenalty;
-    char unused1;
-    int overlayPic;
-    int nameOffset;
-    int specIndex;
-    signed char paintScheme;
-    char status;
-    signed char betRaces;
-    char betWins;
+    char unused1;            /**< Unused byte preserved by load/save. */
+    int portraitPic;         /**< In-car driver portrait picture ID. */
+    int nameOffset;          /**< Name byte offset in description text. */
+    int specIndex;           /**< Car spec index; -1 before assignment. */
+    signed char paintScheme; /**< Paint palette 0..5; -1 before assignment. */
+    char status;             /**< Availability byte; @ref RacerStatus. */
+    signed char betRaces;    /**< Wagered races; reset with a new car. */
+    char rivalBetWins;       /**< Rival wins in counted wagered races. */
+    /** Overlays: bit 0 rear bumper, 1 front bumper, 2 roof, 3 big engine. */
     char bodyMods;
-    signed char sticker;
-    char lostCarOnce;
-    char unused2;
+    signed char sticker; /**< Sticker choice 1..8, or 0 for none. */
+    char lostCarOnce;    /**< Nonzero after receiving a replacement car. */
+    char unused2;        /**< Unused byte preserved by load/save. */
 };
 
 struct Btn {
@@ -160,10 +172,13 @@ extern struct Wager g_raceWagerTerms;
 #define RACER_COP_ENTRY 10
 #define RACERS_PER_GROUP 7
 
+/**
+ * @brief Rival availability for encounters and the call-rival menu.
+ */
 enum RacerStatus {
-    RACER_EMPTY = -1,
-    RACER_NOT_MET = 0,
-    RACER_MET = 1
+    RACER_EMPTY = -1,  /**< Eliminated from the ordinary rival pool. */
+    RACER_NOT_MET = 0, /**< Not callable; the King may still be ineligible. */
+    RACER_MET = 1      /**< Callable; the King is eligible to race. */
 };
 
 extern struct Racer g_racerRecordsArray[];

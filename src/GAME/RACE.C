@@ -952,7 +952,7 @@ static void near init_rival_eng(void)
     struct Range *r;
 
     pf_drivetrain_spec(g_opponentSpecIndex, &g_oppEngState);
-    g_shiftPenalty = g_selectedRacerPointer->shiftPenalty;
+    g_shiftPenalty = g_selectedRacerPointer->earlyShiftPenalty;
     ra_reset_eng(&g_oppEngState);
     g_oppEngState.gearIndex = 0;
     g_oppEngState.rpmPerSpeed = g_oppEngState.gearRpmPerSpeed[0];
@@ -1350,7 +1350,7 @@ static void near cop_appears(void)
     old = g_oppEngState.speed;
     g_selectedRacerPointer = &g_racerRecordsArray[RACER_COP_ENTRY];
     pf_drivetrain_spec(SPEC_POLICE, &g_oppEngState);
-    g_shiftPenalty = g_selectedRacerPointer->shiftPenalty;
+    g_shiftPenalty = g_selectedRacerPointer->earlyShiftPenalty;
     fit_gear(old, &g_oppEngState);
     cr_rival_paint(5);
     for (n1 = 0; n1 < 12; n1++)
