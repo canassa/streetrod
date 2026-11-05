@@ -194,7 +194,7 @@ static void near show_tank_cap(struct GasStationVisit *d, int id)
     box.w = label->width;
     box.h = box.unused1 = label->height;
     box.sx = box.sy = 0;
-    box.dx = (~r_vid.mask & g_featurePos.gasCapX) - box.w + 24;
+    box.dx = (~r_vid.xByteMask & g_featurePos.gasCapX) - box.w + 24;
     box.dy = 12 - label->height;
     bm_draw_masked(label, work, &box, 0);
     pu_show(work, g_featurePos.gasCapX - 16, g_featurePos.gasCapY - 5);
@@ -251,7 +251,7 @@ void ra_gas_station(void)
     g_scene = SCENE_GAS_STATION;
     sc_picture(PIC_GAS_STATION, -1);
     sc_label(g_cashLabel);
-    r_vid.copyToFront = 1;
+    r_vid.copyToFront = TRUE;
     (*g_videoOps.show)();
     dl.hand = GAS_HAND_EMPTY;
     cu_ctl(GAS_HAND_EMPTY);
@@ -263,11 +263,11 @@ void ra_gas_station(void)
     mu_suspend(0);
     label = pu_grab(0x50, 0xaa, 0x28, 0xc, 0);
     dl.capBgNozzleOnPump = pu_grab(g_featurePos.gasCapX - 0x10, g_featurePos.gasCapY - 5, 0x18, 0xc, 0);
-    r_vid.copyToFront = 0;
+    r_vid.copyToFront = FALSE;
     pu_show(g_pumpNoNozzle, 0x40, 0x64);
     dl.capBgNozzleOffPump = pu_grab(g_featurePos.gasCapX - 0x10, g_featurePos.gasCapY - 5, 0x18, 0xc, 0);
     pu_show(g_pumpWithNozzle, 0x40, 0x64);
-    r_vid.copyToFront = 1;
+    r_vid.copyToFront = TRUE;
     pos = 1;
     dl.pumping = FALSE;
     wait1 = 0x28;
@@ -481,7 +481,7 @@ static void near show_ticket(void)
     pkt.dy = 0x14;
     (*g_videoOps.copy)(a, r_vid.back, &pkt, 1);
     maxw2 = a->width - 8;
-    r_vid.copyToFront = 0;
+    r_vid.copyToFront = FALSE;
     x_colors = bustyle->schemes[STYLE_NEWSPAPER];
     for (p2 = g_driverName, wk = 0; *p2 && wk < maxw2; p2++)
         wk += g_font[*p2 - 32].w;
@@ -505,7 +505,7 @@ static void near show_ticket(void)
     g_descHdr[endk + 1] = e;
     *p2 = d;
     (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
-    r_vid.copyToFront = 1;
+    r_vid.copyToFront = TRUE;
     cu_ctl(CURSOR_SHOW_NOW);
     sy_reset_queues();
 }

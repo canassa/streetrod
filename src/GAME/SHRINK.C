@@ -47,7 +47,7 @@ static struct Bitmap far *near alloc_shrunk(struct Bitmap far *p, unsigned char 
             bytes++;
         m2 >>= 1;
     }
-    bytes = (bytes + ~r_vid.mask) & r_vid.mask;
+    bytes = (bytes + ~r_vid.xByteMask) & r_vid.xByteMask;
     rows6 = ((p->height & ~7) * na) >> 3;
     remk = p->height & 7;
     for (t = 0, m2 = 0x80; t < remk; t++) {

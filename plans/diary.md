@@ -3370,3 +3370,27 @@ lessons from both branches remain in the recipe book and investigation notes.
 - Sticker captions disagree with their art, classified-border cars are pixels
   rather than purchase entries, and HOT_DATA has an ignored duplicate tail.
   Full evidence and remaining uncertainty live in the linked report.
+
+## 2026-11-05 21:37 CET: Investigate menu and video records
+
+### What I did
+
+Traced all eighteen requested menu/screen/bitmap/sprite/video records, recorded
+per-member evidence in plans/investigations/st-video.md, and documented each
+record and member in its owner header. Renamed misleading members and the
+hover-bounds/EGA-band views, named bevel styles and runtime sentinels, and used
+BOOL/BitmapKind without changing storage. All 572 functions match; the clean
+packed build is IDENTICAL; headers, formatting, docs, DGROUP and 109 tests pass.
+A targeted real-compiler audit passed 117 sizeof/offsetof checks. Next step is
+the explicitly requested origin/main merge and repeat of the gates.
+
+### What I learned
+
+Frame auxiliary data is a mode-discriminated bottom-band view, not uniformly a
+Bitmap. EGA's former Mask view holds precomposed VRAM pixels, and Colors.frame
+selects bevel treatment. StatusText's erase flag retains a string's first byte,
+so BOOL must preserve arbitrary nonzero values. DriverState's first twenty
+bytes are included in the saved name block, with pool/list state rebuilt on
+load. Resource 1075 is a tuning scale/arrow strip despite its pump-digit name.
+The existing unrelated macro-bound Car parser limitation requires a targeted
+compiler layout audit; no tooling or unrelated types were changed.

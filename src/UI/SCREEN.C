@@ -18,6 +18,7 @@
 #include "MENU.H"
 #include "MESSAGES.H"
 #include "PC.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 #include "VIDEO.H"
 
@@ -30,7 +31,7 @@ void sc_status_init(int y)
     g_statusLine.y = y + 1;
     g_statusLine.messageWidth = 0xa0;
     g_statusLine.messageX = 0x58;
-    g_statusLine.shown = 0;
+    g_statusLine.needsErase = FALSE;
     x_colors = bustyle->schemes[STYLE_STATUS];
     dr_fill_rect(r_vid.back, 0, y, SCREEN_WIDTH, STATUS_BAR_HEIGHT);
     if (r_vid.copyToFront)
@@ -62,10 +63,10 @@ void sc_status_text(int x, char *s, int w)
     wd = SCREEN_WIDTH - x;
     ypos = g_statusLine.y;
     cu_ctl(CURSOR_HIDE);
-    if (g_statusLine.shown)
+    if (g_statusLine.needsErase)
         dr_fill_rect(r_vid.back, x - 1, ypos, wd, 8);
     (*g_videoOps.drawText)(r_vid.back, left, ypos, s);
-    g_statusLine.shown = *s;
+    g_statusLine.needsErase = *s;
     cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
         bm_copy_box(r_vid.back, r_vid.front, x > 8 ? x - 8 : x, ypos, x + wd, ypos + 7);
@@ -78,11 +79,11 @@ void sc_add_money(int n)
     int old;
     char buf[10];
 
-    old = g_statusLine.shown;
-    g_statusLine.shown = 1;
+    old = g_statusLine.needsErase;
+    g_statusLine.needsErase = TRUE;
     sc_status_text(g_statusLine.valueX, ltoa(g_driver.money += n, buf, 10), 0x30);
     g_xMoneyRhsVal = g_penPoint.x;
-    g_statusLine.shown = old;
+    g_statusLine.needsErase = old;
 }
 
 
@@ -96,7 +97,7 @@ void sc_label(char *s)
     dr_fill_rect(r_vid.back, 0, g_statusLine.y, g_statusLine.messageX & 0xfff8, 8);
     (*g_videoOps.drawText)(r_vid.back, 0, g_statusLine.y, s);
     g_statusLine.valueX = (g_penPoint.x + 7) & 0xfff8;
-    r_vid.copyToFront = 0;
+    r_vid.copyToFront = FALSE;
     if (s[1] != 'G' && s[1] != ' ')
         sc_add_money(0);
     r_vid.copyToFront = saved;
@@ -110,10 +111,10 @@ void sc_show_gear(int i)
 {
     int saved;
 
-    saved = g_statusLine.shown;
-    g_statusLine.shown = 1;
+    saved = g_statusLine.needsErase;
+    g_statusLine.needsErase = TRUE;
     sc_status_text(g_statusLine.valueX, g_gearNames[i], 8);
-    g_statusLine.shown = saved;
+    g_statusLine.needsErase = saved;
 }
 
 char g_displaySplitYVal;
@@ -173,7 +174,7 @@ void sc_wait_msg(char *msg)
         }
         if (g_driveRebuild)
             vi_set_palette(g_promptPalette);
-        r_vid.copyToFront = 1;
+        r_vid.copyToFront = TRUE;
         sy_reset_queues();
         back = r_vid.back;
         r_vid.back = r_vid.front;

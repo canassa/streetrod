@@ -6,6 +6,9 @@
 #ifndef VIDEO_H
 #define VIDEO_H
 
+#include "BITMAP.H"
+#include "STRUCTS.H"
+
 /** @brief Palette registers replaced when applying player or rival paint. */
 enum PaletteSlot {
     PALETTE_CAR_PRIMARY = 6,    /**< Player body base color. */
@@ -18,32 +21,52 @@ struct Bitmap;
 struct Blt;
 struct Sprite;
 
+/** @brief Persistent pixel-copy rectangle for a bitmap animation object. */
 struct Box {
-    int w;
-    int h;
-    int sx;
-    int sy;
-    int dx;
-    int dy;
-    char unused[0x1c - 12];
+    int w;                  /**< Width in pixels. */
+    int h;                  /**< Height in rows. */
+    int sx;                 /**< Source left pixel column. */
+    int sy;                 /**< Source top row. */
+    int dx;                 /**< Destination left pixel column. */
+    int dy;                 /**< Destination top row. */
+    char unused[0x1c - 12]; /**< Reserved bytes after the copy rectangle. */
 };
 
+/** Number of concurrently allocated bitmap-animation objects. */
+#define ANIMATION_OBJECT_COUNT 5
+/** Script identity or resume index marking an inactive animation object. */
+#define ANIMATION_INACTIVE (-1)
+
+/** @brief Runtime bitmap, rectangle and resume state of one animation script. */
 struct Obj {
-    int id;
-    int scriptIndex;
-    int pendingTimers;
-    int unused1;
-    struct Bitmap far *img;
-    void far *unused2;
-    struct Box box;
+    int scriptId;             /**< Script-table index, or @ref ANIMATION_INACTIVE. */
+    int resumeIndex;          /**< Command-array index at which execution resumes. */
+    int pendingTimers;        /**< Number of outstanding animation timer entries. */
+    int unused1;              /**< Reserved word. */
+    struct Bitmap far *image; /**< Borrowed arena bitmap used by the script. */
+    void far *unused2;        /**< Unused pointer, cleared when the script stops. */
+    struct Box box;           /**< Rectangle retained across commands and waits. */
 };
 
+/** @brief Border treatment selected by a menu drawing scheme. */
+enum BevelStyle {
+    BEVEL_NONE = 0,   /**< Suppress the menu bevel. */
+    BEVEL_SINGLE = 1, /**< Fill border with one highlight line. */
+    BEVEL_DOUBLE = 2, /**< Fill border with two highlight lines. */
+    BEVEL_SOLID = 3   /**< Solid border in the line color, without highlights. */
+};
+
+/**
+ * @brief Palette indices and bevel style for text, fills and lines.
+ *
+ * Color indices refer to the active palette, not fixed RGB colors.
+ */
 struct Colors {
-    char text;
-    char textBg;
-    char fill;
-    char line;
-    char frame;
+    char text;       /**< Text foreground palette index. */
+    char textBg;     /**< Text background palette index. */
+    char fill;       /**< Rectangle fill palette index. */
+    char line;       /**< Line and bevel highlight palette index. */
+    char bevelStyle; /**< Border selector from @ref BevelStyle. */
 };
 
 /** @brief Drawing-color schemes shared by menus and scene text. */
@@ -74,10 +97,11 @@ struct Style {
     struct Colors schemes[STYLE_COUNT]; /**< Colors indexed by @ref StyleIndex. */
 };
 
+/** @brief Borrowed interpreter cursor for the currently executing object. */
 struct AnimRun {
-    struct AnimCommand *command;
-    struct Obj *object;
-    struct Box *box;
+    struct AnimCommand *command; /**< Current instruction. */
+    struct Obj *object;          /**< Active animation object. */
+    struct Box *box;             /**< Rectangle within that same object. */
 };
 
 /** @brief Script operations on an object bitmap and rectangle. */
@@ -126,35 +150,62 @@ struct AnimCommand {
     int operand2; /**< Y, height or wait resume index (0 means next); else ignored. */
 };
 
+/**
+ * @brief Mode-selected far entry points for drawing and display updates.
+ *
+ * Rectangle operations receive pixel coordinates. Copy callbacks take source
+ * before destination; the reveal callback takes destination before source.
+ * Drawing callbacks use the current shared drawing target where no bitmap is
+ * passed. Return values of the three bitmap-copy callbacks are ignored.
+ */
 struct Hooks {
+    /** Copy a rectangle and selected pixel/mask planes. */
     int(far *copy)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
+    /** Copy a rectangle with partial-byte pixel alignment. */
     int(far *shiftBlit)(struct Bitmap far *, struct Bitmap far *, struct Blt *);
+    /** Combine a rectangle with its transparency mask. */
     int(far *maskedBlit)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
+    /** Draw a string and update @ref TextEnd. */
     void(far *drawText)(struct Bitmap far *, int, int, char *);
+    /** Save/draw cursor pixels; X and width are in bytes. */
     void(far *cursorBlit)(char far *, char far *, char far *, char far *, int, int, int, int);
+    /** Copy an entire display page, source to destination. */
     void(far *copyPage)(char far *, char far *);
+    /** Replace one palette index within a pixel rectangle. */
     void(far *recolorRegion)(struct Bitmap far *, int, int, int, int, int, int);
+    /** Blank the display or its palette. */
     void(far *blank)(void);
+    /** Enable the display or restore its palette. */
     void(far *show)(void);
+    /** Draw/advance a sprite; nonzero while active. */
     int(far *spriteStep)(struct Sprite *);
+    /** Reveal source rows over destination in timed stages. */
     void(far *reveal)(char far *, char far *);
+    /** Animate a bitmap vertically and refresh its strip. */
     void(far *slideSprite)(int, int, int, int, int, struct Bitmap far *);
+    /** Draw between pixel endpoints using the shared target. */
     void(far *drawLine)(int, int, int, int, int);
+    /** Fill left/right pixel bounds at Y in a given color. */
     void(far *fillSpan)(int, int, int, int);
+    /** Fill from a row through the lower clip row. */
     void(far *fillBelow)(int, int);
 };
 
-/* Display state set by vi_init; mode follows front->kind and geometry depends on the mode. */
+/**
+ * @brief Display pages, linear pixel geometry and automatic-refresh policy.
+ *
+ * Hercules retains its display mode while its visible bitmap uses CGA storage.
+ */
 struct Video {
-    struct Bitmap far *front;
-    struct Bitmap far *back;
-    struct Bitmap far *hoodBg;
-    int mode;
-    int planes; /* 4 on EGA (-2), else 1 */
-    int shift;  /* log2 pixels per byte: 3, 2, 1 */
-    int bpp;    /* bits per pixel: 1, 2, 4 */
-    int mask;   /* ~(pixels per byte - 1): -8, -4, -2 */
-    int copyToFront;
+    struct Bitmap far *front;  /**< Visible display page. */
+    struct Bitmap far *back;   /**< Current drawing page. */
+    struct Bitmap far *hoodBg; /**< Lazy engine-bay background for part drawing. */
+    enum BitmapKind mode;      /**< Active display selector. */
+    int planes;                /**< Number of stored color planes in a linear bitmap. */
+    int shift;                 /**< Log2 pixels per stored byte in one plane. */
+    int planeBitsPerPixel;     /**< Bits per pixel within one stored plane. */
+    int xByteMask;             /**< Signed mask aligning X to a whole pixel-data byte. */
+    BOOL copyToFront;          /**< Refresh visible rectangles after back-page drawing. */
 };
 
 extern unsigned char g_palette[17];

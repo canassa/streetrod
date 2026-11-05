@@ -94,7 +94,8 @@ void eb_copy(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, i
 
 /* Masked blit between planar VGA bitmaps */
 
-void eb_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *bm3, struct Mask *mask, struct Blt *r)
+void eb_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far *bm3, struct EgaSpriteBand *mask,
+               struct Blt *r)
 {
     int p;       /* mask height */
     int a;       /* bm2 height */

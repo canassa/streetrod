@@ -39,12 +39,13 @@ struct Blt {
     int my;
 };
 
+/** @brief Real-mode data pointer viewed directly or as offset/segment words. */
 union FarPtr {
-    char far *p;
+    char far *p; /**< Four-byte far pointer for data access. */
     struct {
-        unsigned off;
-        unsigned seg;
-    } w;
+        unsigned off; /**< Offset word; arithmetic does not normalize segment. */
+        unsigned seg; /**< Segment word. */
+    } w;              /**< Word overlay of the same pointer storage. */
 };
 
 /**
@@ -66,11 +67,17 @@ struct Bitmap {
     signed char kind; /**< Storage selector from @ref BitmapKind. */
 };
 
+/**
+ * @brief Inclusive pixel bounds for sprite clipping, erasure and overlays.
+ *
+ * A maximum below its minimum denotes an empty rectangle. Overlay bounds may
+ * be relative to the sprite until translated for drawing.
+ */
 struct Rect {
-    int x1;
-    int y1;
-    int x2;
-    int y2;
+    int x1; /**< Included left pixel column. */
+    int y1; /**< Included top pixel row. */
+    int x2; /**< Included right pixel column. */
+    int y2; /**< Included bottom pixel row. */
 };
 
 /* clipped rectangle (12 bytes): size, source origin, destination origin. da_clip_blt takes struct Blt *
@@ -84,16 +91,20 @@ struct Clip {
     int dy;
 };
 
-/* 16-byte blit packet of da_draw_shifter (struct Blt without the last two words) */
+/**
+ * @brief Sixteen-byte pixel-copy packet for sprite and shifter drawing.
+ *
+ * The six leading words match @c Blt (TBD-ref: packet undocumented).
+ */
 struct Blt16 {
-    int w;
-    int h;
-    int sx;
-    int sy;
-    int dx;
-    int dy;
-    int unused1;
-    int unused2;
+    int w;       /**< Width in pixels. */
+    int h;       /**< Height in rows. */
+    int sx;      /**< Source left pixel column. */
+    int sy;      /**< Source top row. */
+    int dx;      /**< Destination left pixel column. */
+    int dy;      /**< Destination top row. */
+    int unused1; /**< Reserved word. */
+    int unused2; /**< Reserved word. */
 };
 
 void bm_copy(struct Bitmap far *src, struct Bitmap far *dst, int e);

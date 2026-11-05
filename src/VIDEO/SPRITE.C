@@ -12,7 +12,7 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-/* Intersect rectangles a and b into out, snapped to the r_vid.mask pixel mask; 0 if they do not
+/* Intersect rectangles a and b into out, snapped to the r_vid.xByteMask pixel mask; 0 if they do not
    overlap */
 
 struct Rect *sp_rect_and(struct Rect *a, struct Rect *b, struct Rect *out)
@@ -25,9 +25,9 @@ struct Rect *sp_rect_and(struct Rect *a, struct Rect *b, struct Rect *out)
         return 0;
     out->y1 = (a->y1 < b->y1) ? b->y1 : a->y1;
     out->y2 = (a->y2 > b->y2) ? b->y2 : a->y2;
-    out->x1 &= r_vid.mask;
-    out->x2 += ~r_vid.mask;
-    out->x2 &= r_vid.mask;
+    out->x1 &= r_vid.xByteMask;
+    out->x2 += ~r_vid.xByteMask;
+    out->x2 &= r_vid.xByteMask;
     return out;
 }
 
@@ -53,7 +53,7 @@ struct Seq g_seqSpriteMoveData[10];
 struct Sprite g_mainCarSprite;
 struct Page g_sprPageRing[2];
 
-/* Clip the box (c, d, a, b) to 0..amax x 0..bmax, snap to the r_vid.mask pixel mask; result in out */
+/* Clip the box (c, d, a, b) to 0..amax x 0..bmax, snap to the r_vid.xByteMask pixel mask; result in out */
 
 void sp_clip_box(int a, int b, int c, int d, int amax, int bmax, struct Rect *out)
 {
@@ -65,7 +65,7 @@ void sp_clip_box(int a, int b, int c, int d, int amax, int bmax, struct Rect *ou
         if ((b = bmax - d) < 0)
             b = 0;
     }
-    if ((c &= r_vid.mask) < 0) {
+    if ((c &= r_vid.xByteMask) < 0) {
         a += c;
         c = 0;
     }
@@ -73,7 +73,7 @@ void sp_clip_box(int a, int b, int c, int d, int amax, int bmax, struct Rect *ou
         if ((a = amax - c) < 0)
             a = 0;
     }
-    a &= r_vid.mask;
+    a &= r_vid.xByteMask;
     out->x1 = c;
     out->x2 = c + a - 1;
     out->y1 = d;
@@ -90,18 +90,18 @@ struct Sprite *sp_setup(int x, int y, struct Bitmap far **imgs, char (*cell)[8],
 
     y -= (*imgs)->height - 1;
     for (i = 0; i < n; i++) {
-        g_frmTable[i].pos = *imgs++;
+        g_frmTable[i].image = *imgs++;
         if (cell)
-            g_frmTable[i].data = r_vid.mode == VID_EGA ? cell++ : &g_bandRecordsSprArray[i];
+            g_frmTable[i].bottomBand = r_vid.mode == VID_EGA ? cell++ : &g_bandRecordsSprArray[i];
         else
-            g_frmTable[i].data = 0;
-        g_frmTable[i].nxt[0] = &g_frmTable[i + 1];
+            g_frmTable[i].bottomBand = 0;
+        g_frmTable[i].next[0] = &g_frmTable[i + 1];
     }
-    g_mainCarSprite.frame = g_frmTable[i - 1].nxt[0] = g_frmTable;
+    g_mainCarSprite.frame = g_frmTable[i - 1].next[0] = g_frmTable;
     for (i = 0; i < n; i++)
-        g_frmTable[i].nxt[1] = g_frmTable[i].nxt[0]->nxt[0];
+        g_frmTable[i].next[1] = g_frmTable[i].next[0]->next[0];
     for (i = 0; i < n; i++)
-        g_frmTable[i].nxt[2] = g_frmTable[i].nxt[1]->nxt[1];
+        g_frmTable[i].next[2] = g_frmTable[i].next[1]->next[1];
     g_mainCarSprite.workBitmap = img;
     g_mainCarSprite.x = x;
     g_mainCarSprite.y = y;
@@ -125,7 +125,7 @@ struct Sprite *sp_setup(int x, int y, struct Bitmap far **imgs, char (*cell)[8],
         g_sprPageRing[0].link = g_sprPageRing;
     }
     g_mainCarSprite.page = g_sprPageRing;
-    sp_clip_box(g_mainCarSprite.frame->pos->width, g_mainCarSprite.frame->pos->height, g_mainCarSprite.x,
+    sp_clip_box(g_mainCarSprite.frame->image->width, g_mainCarSprite.frame->image->height, g_mainCarSprite.x,
                 g_mainCarSprite.y, g_sprPageRing[0].bm->width, g_sprPageRing[0].bm->height, &g_sprPageRing[0].rect);
     g_mainCarSprite.motionStep = g_seqSpriteMoveData;
     return &g_mainCarSprite;
@@ -175,15 +175,15 @@ void sp_reverse(struct Sprite *s)
     int idx;
 
     s->x = g_xCoordSprite;
-    f4 = (f3 = (f2 = (f1 = s->frame)->nxt[0])->nxt[0])->nxt[0];
-    f1->nxt[0] = f4;
-    f2->nxt[0] = f1;
-    f3->nxt[0] = f2;
-    f4->nxt[0] = f3;
+    f4 = (f3 = (f2 = (f1 = s->frame)->next[0])->next[0])->next[0];
+    f1->next[0] = f4;
+    f2->next[0] = f1;
+    f3->next[0] = f2;
+    f4->next[0] = f3;
     for (idx = 0; idx < 4; idx++)
-        g_frmTable[idx].nxt[1] = g_frmTable[idx].nxt[0]->nxt[0];
+        g_frmTable[idx].next[1] = g_frmTable[idx].next[0]->next[0];
     for (idx = 0; idx < 4; idx++)
-        g_frmTable[idx].nxt[2] = g_frmTable[idx].nxt[1]->nxt[1];
+        g_frmTable[idx].next[2] = g_frmTable[idx].next[1]->next[1];
     switch (g_xCoordSprite & 7) {
     case 0:
         break;
@@ -205,7 +205,7 @@ void sp_set_step(struct Sprite *s, int i, int count, signed char dx, signed char
     s->motionStep[i].count = count;
     s->motionStep[i].dx = dx;
     s->motionStep[i].dy = dy;
-    s->motionStep[i + 1].count = -1;
+    s->motionStep[i + 1].count = MOTION_END;
     s->motionStep[i + 1].dx = 0;
     s->motionStep[i + 1].dy = 0;
 }
@@ -233,7 +233,7 @@ void sp_plan_move(struct Sprite *s, enum CarAnimKind mode, int a, int b, int c, 
     sp_set_step(s, 0, n1 + 1, (char)a, 0);
     sp_set_step(s, 1, n2, (char)b, 0);
     sp_set_step(s, 2, n3, (char)c, 0);
-    sp_set_step(s, 3, -1, 0, 0);
+    sp_set_step(s, 3, MOTION_END, 0, 0);
 }
 
 /* Build the motion sequence of a sprite for a given direction */
@@ -305,34 +305,34 @@ void sp_advance(struct Sprite *s)
     int n;
 
     g_xCoordSprite = s->x;
-    g_spritePic = s->frame->pos;
+    g_spritePic = s->frame->image;
     s->motionStep->count--;
     if (s->motionStep->count == 0)
         s->motionStep++;
-    if (s->motionStep->count != -1) {
+    if (s->motionStep->count != MOTION_END) {
         s->x += s->motionStep->dx;
         s->y += s->motionStep->dy;
         n = s->motionStep->dx;
         if (n < 0)
             n = -n;
         if (n)
-            s->frame = s->frame->nxt[n >> 2];
+            s->frame = s->frame->next[n >> 2];
     }
 }
 
-/* Clip a span [pos, pos+len) against a sprite's frame, masked to r_vid.mask */
+/* Clip a span [pos, pos+len) against a sprite's frame, masked to r_vid.xByteMask */
 
 int sp_clip_span(int pos, int len, struct Sprite *s, struct Blt16 *o)
 {
     int a, b, c, d;
 
-    b = s->x & r_vid.mask;
-    a = s->frame->pos->width;
+    b = s->x & r_vid.xByteMask;
+    a = s->frame->image->width;
     if (pos + len <= b || b + a < pos)
         return 0;
     c = (b < pos) ? pos : b;
     d = (b + a > pos + len) ? pos + len : b + a;
-    d = (d + ~r_vid.mask) & r_vid.mask;
+    d = (d + ~r_vid.xByteMask) & r_vid.xByteMask;
     o->sx = (c - b < 0) ? 0 : c - b;
     o->dx = c;
     o->w = d - c;

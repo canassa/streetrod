@@ -156,7 +156,7 @@ extern long g_mphAccumulator;
 extern struct Tone *g_toneShapePlaybackPointer;
 extern int g_xCoordSprite;
 extern int g_menuLevel;
-extern struct Lims g_boxSpotHitData;
+extern struct HoverBounds g_boxSpotHitData;
 extern struct Hotspot *g_curHoverPointer;
 extern int g_cursHoverCodeVal;
 extern int g_wRivBanner;

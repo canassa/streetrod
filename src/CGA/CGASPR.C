@@ -49,20 +49,20 @@ int cs_step(struct Sprite *s)
     fr = s->frame;
     bits = s->workBitmap;
     fp = s->background;
-    d = fr->data;
-    sp_clip_box(fr->pos->width, fr->pos->height, s->x, s->y, pg->bm->width, pg->bm->height, &rc);
+    d = fr->bottomBand;
+    sp_clip_box(fr->image->width, fr->image->height, s->x, s->y, pg->bm->width, pg->bm->height, &rc);
     if (sp_rect_sub(&rc, &pg->rect, &c2, s->motionStep->dx))
         restore_rect(&c2, bits, fp, s->motionStep->dx);
     pg->rect = rc;
     top = d ? d->height : 0;
-    t = blt.h = fr->pos->height - top - g_spriteBottomCut;
+    t = blt.h = fr->image->height - top - g_spriteBottomCut;
     blt.sy = 0;
     u = blt.dy = s->motionStep->dy ? s->y : 0;
     if (g_scene != SCENE_JAIL) {
-        blt.w = fr->pos->width;
+        blt.w = fr->image->width;
         blt.sx = 0;
         blt.dx = s->motionStep->dx ? s->x : 0;
-        cb_compose(fr->pos, bits, fp, &blt);
+        cb_compose(fr->image, bits, fp, &blt);
         if (d) {
             blt.dy += blt.h;
             blt.h = top;
@@ -73,7 +73,7 @@ int cs_step(struct Sprite *s)
             if (sp_clip_span(g_jailGaps[idx].a, g_jailGaps[idx].b, s, (struct Blt16 *)&blt)) {
                 blt.dy = u;
                 blt.h = t;
-                cb_compose(fr->pos, bits, fp, &blt);
+                cb_compose(fr->image, bits, fp, &blt);
                 if (d) {
                     blt.dy += t;
                     blt.h = top;
@@ -86,7 +86,7 @@ int cs_step(struct Sprite *s)
         if (s->overlayRects[idx] == 0)
             continue;
         s2 = *s->overlayRects[idx];
-        if (fp->pitch == fr->pos->pitch) {
+        if (fp->pitch == fr->image->pitch) {
             s2.x1 += s->x;
             s2.x2 += s->x;
         } else {
@@ -96,7 +96,7 @@ int cs_step(struct Sprite *s)
         if (sp_rect_and(&s2, &pg->rect, &e)) {
             blt.w = e.x2 - e.x1 + 1;
             blt.h = e.y2 - e.y1 + 1;
-            if (fp->pitch == fr->pos->pitch) {
+            if (fp->pitch == fr->image->pitch) {
                 blt.sx = blt.dx = 0;
                 blt.sy = blt.dy = e.y1;
             } else {

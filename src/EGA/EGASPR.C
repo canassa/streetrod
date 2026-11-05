@@ -49,30 +49,30 @@ int es_step(struct Sprite *s)
     box = s->frame;
     key = s->workBitmap;
     height = s->background;
-    sp_clip_box(box->pos->width, box->pos->height - g_spriteBottomCut, s->x, s->y, count->bm->width, count->bm->height,
-                &clip);
+    sp_clip_box(box->image->width, box->image->height - g_spriteBottomCut, s->x, s->y, count->bm->width,
+                count->bm->height, &clip);
     if (sp_rect_sub(&clip, &count->rect, &f, s->motionStep->dx))
         restore_rect_latch(&f, count->bm, key, s->motionStep->dx);
     count->rect = clip;
-    dest.h = box->pos->height - g_spriteBottomCut;
+    dest.h = box->image->height - g_spriteBottomCut;
     dest.sy = 0;
     dest.dy = s->y;
     if (g_scene != SCENE_JAIL) {
-        dest.w = box->pos->width;
+        dest.w = box->image->width;
         dest.sx = 0;
         dest.dx = s->x;
-        eb_sprite(box->pos, count->bm, height, (struct Mask *)box->data, (struct Blt *)&dest);
+        eb_sprite(box->image, count->bm, height, (struct EgaSpriteBand *)box->bottomBand, (struct Blt *)&dest);
     } else {
         for (i = 0; i < 6; i++) {
             if (sp_clip_span(g_jailGaps[i].a, g_jailGaps[i].b, s, &dest))
-                eb_sprite(box->pos, count->bm, height, (struct Mask *)box->data, (struct Blt *)&dest);
+                eb_sprite(box->image, count->bm, height, (struct EgaSpriteBand *)box->bottomBand, (struct Blt *)&dest);
         }
     }
     for (i = 0; i < 2; i++) {
         if (!s->overlayRects[i])
             continue;
         first = *s->overlayRects[i];
-        if (box->pos->pitch == height->pitch) {
+        if (box->image->pitch == height->pitch) {
             first.x1 += s->x;
             first.x2 += s->x;
         } else {
@@ -82,7 +82,7 @@ int es_step(struct Sprite *s)
         if (sp_rect_and(&first, &count->rect, &f)) {
             dest.w = f.x2 - f.x1 + 1;
             dest.h = f.y2 - f.y1 + 1;
-            if (box->pos->pitch == height->pitch) {
+            if (box->image->pitch == height->pitch) {
                 dest.sx = 0;
                 dest.sy = f.y1;
             } else {

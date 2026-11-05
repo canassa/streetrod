@@ -10,22 +10,26 @@
 
 struct Bitmap;
 
+/** @brief Active scrolling list and its borrowed menu hotspots. */
 struct ListDialog {
-    int lineBase;
-    int rows;
-    int *list;
-    int selection;
-    struct Hotspot *header;
+    int rowBaseAddress;     /**< Near address of the first contiguous row hotspot. */
+    int rows;               /**< Number of visible row hotspots. */
+    int *list;              /**< Borrowed item list, with its count in element zero. */
+    int selection;          /**< One-based selected item in the entire list. */
+    struct Hotspot *header; /**< Borrowed header hotspot, or zero for none. */
 };
 #include "KEYMAPS.H"
 
-/* the free area around the pointer found by mn_hit (x1, x2: left and right limits; y1, y2: top
-   and bottom) or, on a hit, the box of the hot spot */
-struct Lims {
-    int x1;
-    int x2;
-    int y1;
-    int y2;
+/**
+ * @brief Screen region in which the cached cursor hover result remains valid.
+ *
+ * Holds either a hit hotspot's bounds or the surrounding free area on a miss.
+ */
+struct HoverBounds {
+    int x1; /**< Included left pixel column. */
+    int x2; /**< Excluded right pixel column. */
+    int y1; /**< Included top pixel row. */
+    int y2; /**< Excluded bottom pixel row. */
 };
 
 extern struct ListDialog g_menuList;

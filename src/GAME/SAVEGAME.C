@@ -28,6 +28,7 @@
 #include "RANDOM.H"
 #include "ROAD.H"
 #include "SCREEN.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 #include "VIDEO.H"
 
@@ -138,9 +139,9 @@ int near sg_new(void)
 {
     int sel;
 
-    r_vid.copyToFront = 0;
+    r_vid.copyToFront = FALSE;
     sc_picture_at(PIC_DRIVERS_LICENSE, 0x10, 6, 0);
-    r_vid.copyToFront = 1;
+    r_vid.copyToFront = TRUE;
     vi_name_pal();
     bm_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), (SCREEN_BODY_HEIGHT - 1));
     (*g_videoOps.show)();
@@ -300,7 +301,7 @@ enum SaveLoadResult near sg_load(void)
     cu_ctl(CURSOR_HIDE_NOW);
     scan_save_slots(0);
     r = r_vid.copyToFront;
-    r_vid.copyToFront = 0;
+    r_vid.copyToFront = FALSE;
     sc_picture(PIC_SAVE_LOAD_BOOK, 0);
     if (g_list[0]) {
         sc_picture_at(PIC_LOAD_BUTTON, 0xf0, 100, -1);
@@ -394,7 +395,7 @@ void near sg_save(void)
     cu_ctl(CURSOR_HIDE_NOW);
     scan_save_slots(1);
     r = r_vid.copyToFront;
-    r_vid.copyToFront = 0;
+    r_vid.copyToFront = FALSE;
     sc_picture(PIC_SAVE_LOAD_BOOK, 0);
     sc_picture_at(PIC_LICENSE_NAME_STRIP, 0x48, 0xa9, -1);
     sc_picture_at(PIC_SAVE_BUTTON, 0xf0, 100, -1);
@@ -434,12 +435,12 @@ again:
         ;
     if (cmp == 0) {
         cu_ctl(CURSOR_HIDE);
-        box7 = (struct Hotspot *)(0x12 * (int)r + g_menuList.lineBase - 0x12);
+        box7 = (struct Hotspot *)(0x12 * (int)r + g_menuList.rowBaseAddress - 0x12);
         pal4 = x_colors;
-        x_colors = bustyle->schemes[((struct Hotspot *)g_menuList.lineBase)->styleIndex];
+        x_colors = bustyle->schemes[((struct Hotspot *)g_menuList.rowBaseAddress)->styleIndex];
         sv7 = x_colors.line;
         x_colors.line = x_colors.textBg;
-        wk = ((struct Hotspot *)g_menuList.lineBase)->x2 - ((struct Hotspot *)g_menuList.lineBase)->x1;
+        wk = ((struct Hotspot *)g_menuList.rowBaseAddress)->x2 - ((struct Hotspot *)g_menuList.rowBaseAddress)->x1;
         dr_frame(r_vid.back, box7->x1, box7->y1, wk, 8);
         dr_frame(r_vid.front, box7->x1, box7->y1, wk, 8);
         x_colors = pal4;

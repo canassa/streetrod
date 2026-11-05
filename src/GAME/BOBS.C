@@ -844,7 +844,7 @@ static void near play_ending(void)
     cu_ctl(CURSOR_HIDE_NOW);
     sc_status_init(0xbe);
     sc_picture_at(PIC_ENDING_MESSAGE, 8, 0x14, 2);
-    r_vid.copyToFront = 0;
+    r_vid.copyToFront = FALSE;
     savedl = g_picturePlacement.maxHeight;
     g_picturePlacement.maxHeight = SCREEN_HEIGHT;
     (*g_videoOps.copyPage)(r_vid.front->bits.p, r_vid.back->bits.p);
@@ -861,7 +861,7 @@ static void near play_ending(void)
     r = di_load_list(g_endPics, 0);
     r = di_load_list(g_endPics2, 0);
     (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
-    r_vid.copyToFront = 0;
+    r_vid.copyToFront = FALSE;
     (*g_videoOps.show)();
     g_racerRecordsArray[RACER_KING].portraitPic = PIC_PORTRAIT_KINGS_GIRLFRIEND;
     select_rival(RACER_KING);
@@ -964,7 +964,7 @@ static void near play_ending(void)
     (*g_videoOps.copy)(pic4, r_vid.back, &blt, 1);
     gm_pause(0x32);
     gm_message(MSG_YOURE_MY_HERO);
-    r_vid.copyToFront = 0;
+    r_vid.copyToFront = FALSE;
     ar_reset();
     di_free_list(g_endPics2);
     di_free_list(g_endPics);
@@ -1058,7 +1058,7 @@ void bo_visit(void)
                 class = CAR_DRIVE_IN;
                 mn_pop(1);
             } else {
-                g_statusLine.shown = 1;
+                g_statusLine.needsErase = TRUE;
                 sc_status_text(-1, "", 0);
                 sc_status_text(g_bannerX, "", g_wRivBanner);
             test:
@@ -1190,7 +1190,7 @@ void bo_jail(void)
     old = 0;
     mode = CAR_PULL_IN;
     flag = 0;
-    r_vid.copyToFront = 0;
+    r_vid.copyToFront = FALSE;
     cu_ctl(CURSOR_HIDE);
     ma_clear();
     g_edgeBmpJail = di_bm(PIC_JAIL_WALL, ARENA_LOW_STACK);
@@ -1218,7 +1218,7 @@ void bo_jail(void)
     sc_status_text(-1, "", 0);
     sc_label(g_cashLabel);
     (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
-    r_vid.copyToFront = 1;
+    r_vid.copyToFront = TRUE;
     (*g_videoOps.show)();
     g_rivalHereState = 0;
     g_carhop = CARHOP_DISABLED;

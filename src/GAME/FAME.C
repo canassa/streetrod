@@ -17,6 +17,7 @@
 #include "PC.H"
 #include "RANDOM.H"
 #include "SCREEN.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 #include "VIDEO.H"
 
@@ -51,7 +52,7 @@ int fa_protect_check(void)
     d = rn_int(MANUAL_ENTRY_COUNT);
     f = d < MANUAL_ICON_COUNT;
     sc_status_text(-1, "", 0);
-    r_vid.copyToFront = 0;
+    r_vid.copyToFront = FALSE;
     sc_picture_at(PIC_COPY_PROTECTION_JUKEBOX, 8, 0, 0);
     di_free_pic(PIC_COPY_PROTECTION_JUKEBOX);
     switch (f) {
@@ -75,7 +76,7 @@ int fa_protect_check(void)
     else
         (*g_videoOps.show)();
     g_displayEnabled = 1;
-    r_vid.copyToFront = 1;
+    r_vid.copyToFront = TRUE;
     g_protectCycle = 1;
     e = mn_wait(KM_MANUAL_COLORS);
     g_protectCycle = 0;
@@ -95,7 +96,7 @@ int fa_end_menu(void)
     int key;
 
     sc_status_init(SCREEN_BODY_HEIGHT);
-    r_vid.copyToFront = 1;
+    r_vid.copyToFront = TRUE;
     c01 = x_colors.text;
     c1 = x_colors.textBg;
     c3 = x_colors.line;
@@ -195,7 +196,7 @@ void fa_show(int add)
     pos7 = -1;
     (*g_videoOps.blank)();
     g_picturePlacement.maxHeight = SCREEN_HEIGHT;
-    r_vid.copyToFront = 1;
+    r_vid.copyToFront = TRUE;
     sc_picture(PIC_HALL_OF_FAME, -1);
     g_picturePlacement.maxHeight = old;
     vi_swap_pal();

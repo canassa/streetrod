@@ -23,7 +23,7 @@ static struct PopupLayout g_popupWins[3] = {{PIC_SPEECH_BUBBLE_LEFT, 1, 72, 30, 
 static struct Bitmap far *g_popupSave = 0;
 
 /* Copy the rectangle (x, y, w, h) of the back buffer into pict new bitmap and return it.
-   The x range is rounded to the pixel grid r_vid.mask. src, when given, is the bitmap to reuse. */
+   The x range is rounded to the pixel grid r_vid.xByteMask. src, when given, is the bitmap to reuse. */
 
 struct Bitmap far *pu_grab(int x, int y, int w, int h, struct Bitmap far *src)
 {
@@ -33,9 +33,10 @@ struct Bitmap far *pu_grab(int x, int y, int w, int h, struct Bitmap far *src)
     int ye;
     int color;
 
-    x2 = (x + w + ~r_vid.mask & r_vid.mask) > SCREEN_WIDTH ? SCREEN_WIDTH : (x + w + ~r_vid.mask & r_vid.mask);
+    x2 = (x + w + ~r_vid.xByteMask & r_vid.xByteMask) > SCREEN_WIDTH ? SCREEN_WIDTH
+                                                                     : (x + w + ~r_vid.xByteMask & r_vid.xByteMask);
     ye = y + h > SCREEN_HEIGHT ? SCREEN_HEIGHT : y + h;
-    x &= r_vid.mask;
+    x &= r_vid.xByteMask;
     if (src) {
         color = src->mask.p != 0;
         pict = me_new_bitmap(x2 - x, ye - y, color, BITMAP_WORK, src);
@@ -52,7 +53,7 @@ struct Bitmap far *pu_grab(int x, int y, int w, int h, struct Bitmap far *src)
     return pict;
 }
 
-/* Blit bitmap bm to the back buffer at (x, y), x rounded to the pixel grid r_vid.mask */
+/* Blit bitmap bm to the back buffer at (x, y), x rounded to the pixel grid r_vid.xByteMask */
 
 void pu_put(struct Bitmap far *bm, int x, int y)
 {
@@ -61,7 +62,7 @@ void pu_put(struct Bitmap far *bm, int x, int y)
     pkt.w = bm->width;
     pkt.h = bm->height;
     pkt.sx = pkt.sy = 0;
-    pkt.dx = x & r_vid.mask;
+    pkt.dx = x & r_vid.xByteMask;
     pkt.dy = y;
     cu_ctl(CURSOR_HIDE);
     (*g_videoOps.copy)(bm, r_vid.back, &pkt, 1);
