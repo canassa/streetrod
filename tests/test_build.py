@@ -166,8 +166,8 @@ class MakefileTests(unittest.TestCase):
         self.assertEqual(types.declaration('int *@')['size'], 2)
         self.assertEqual(types.declaration('int (*@)(void)')['size'], 4)
         self.assertEqual(types.named('struct Bitmap')['size'], 48)
-        self.assertEqual(types.named('struct Run')['size'], 6)
-        self.assertEqual(types.named('struct List')['size'], 4)
+        self.assertEqual(types.named('struct ScenerySprite')['size'], 6)
+        self.assertEqual(types.named('struct SceneryLods')['size'], 4)
         self.assertEqual(types.named('struct CgaGlyph')['size'], 18)
         self.assertEqual(number('2 * (3 + 4)'), 14)
         with self.assertRaises(ValueError):

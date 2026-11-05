@@ -3370,3 +3370,31 @@ lessons from both branches remain in the recipe book and investigation notes.
 - Sticker captions disagree with their art, classified-border cars are pixels
   rather than purchase entries, and HOT_DATA has an ignored duplicate tail.
   Full evidence and remaining uncertainty live in the linked report.
+
+## 2026-11-05 21:36 CET: Investigate race, road, scenery and view records
+
+### What I did
+
+- Investigated all thirteen records assigned to st-road, one by one, and recorded
+  storage, member domains, producers/consumers and evidence in
+  [the investigation](investigations/st-road.md).
+- Documented every member, clarified lookahead versus mirror coordinates,
+  renamed the crash overlay and scenery record types, and propagated the type
+  names through asset declarations, the DGROUP reader and existing tests.
+- Used BOOL for four proven flags and DrivingPage for drawing/display roles;
+  kept spare fields, signedness, pointer distances and field order intact.
+- All 572 functions match; the clean packed build is identical; DGROUP checks
+  pass and all 109 tests pass. The targeted MSC layout audit passes 65 checks.
+
+### What I learned
+
+- Scenery span extents are inclusive endpoint differences; zero draws one pixel.
+  The assets include positive Y offsets, so treating the offsets as always
+  upward or unsigned would be wrong.
+- The paired lookahead boundaries are four samples ahead; RoadEdges also holds
+  unrelated mirror pixel arrays. ViewClip's bottom is inclusive for spans but
+  exclusive for bitmap height clipping. These contracts and out-of-scope names
+  are documented in [the investigation](investigations/st-road.md).
+- Final review reused the existing PictureId enum for crash-overlay resources
+  and traced car anchors to HOT_DATA's service-coordinate block. The expanded
+  MSC audit passes all 67 layout and enum checks.

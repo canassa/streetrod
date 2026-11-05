@@ -39,44 +39,52 @@ enum SceneryId {
     SCENERY_DOT = 20 /**< Dashboard steering marker; one size only. */
 };
 
-struct Part {
-    signed char dx;
-    signed char dy;
-    signed char w;
-    signed char color;
+/**
+ * @brief One horizontal span in a scenery sprite's four-byte asset format.
+ *
+ * Offsets are pixels relative to the sprite anchor. Horizontal reflection
+ * reverses both the X offset and endpoint direction.
+ */
+struct ScenerySpan {
+    signed char dx;     /**< Horizontal offset from the anchor. */
+    signed char dy;     /**< Vertical offset from the anchor. */
+    signed char extent; /**< Inclusive endpoint distance; zero is a dot. */
+    signed char color;  /**< Logical color index interpreted by the adapter. */
 };
 
-struct Run {
-    int n;
-    struct Part far *parts;
+/** @brief One pre-scaled scenery sprite, stored as horizontal spans. */
+struct ScenerySprite {
+    int spanCount;                 /**< Number of spans to draw. */
+    struct ScenerySpan far *spans; /**< Borrowed slice of a far span pool. */
 };
 
-struct List {
-    int last;
-    struct Run *items;
+/** @brief Sizes of one scenery object, from smallest to largest. */
+struct SceneryLods {
+    int lodCount;               /**< Size count; exclusive index bound. */
+    struct ScenerySprite *lods; /**< Borrowed near array of sizes. */
 };
 
 extern int g_unused22;
-extern struct List *g_scenery[];
+extern struct SceneryLods *g_scenery[];
 
-extern struct Run g_sprTreeLod[7];
+extern struct ScenerySprite g_sprTreeLod[7];
 
-extern struct Run g_sprPostLod[7];
+extern struct ScenerySprite g_sprPostLod[7];
 
-extern struct Run g_sprHydrantLod[8];
+extern struct ScenerySprite g_sprHydrantLod[8];
 
-extern struct Run g_sprWarnSignLod[7];
+extern struct ScenerySprite g_sprWarnSignLod[7];
 
-extern struct Run g_sprBushLod[7];
+extern struct ScenerySprite g_sprBushLod[7];
 
-extern struct Run g_sprSpeedSignLod[7];
+extern struct ScenerySprite g_sprSpeedSignLod[7];
 
-extern struct Run g_sprBarricadeLod[7];
+extern struct ScenerySprite g_sprBarricadeLod[7];
 
-extern struct Run g_sprSmallRockLod[7];
+extern struct ScenerySprite g_sprSmallRockLod[7];
 
-extern struct Run g_sprLargeRockLod[7];
+extern struct ScenerySprite g_sprLargeRockLod[7];
 
-extern struct Run g_sprDotLod[1];
+extern struct ScenerySprite g_sprDotLod[1];
 
 #endif

@@ -105,9 +105,15 @@ enum TerrainFlags {
 #define TERRAIN_GANTRY_MASK (TERRAIN_CITY_GANTRY | TERRAIN_SCENE_GANTRY | TERRAIN_LEFT_GANTRY | TERRAIN_STRAIGHT_GANTRY)
 
 
+/**
+ * @brief Mirror road-edge and building-height projections in screen pixels.
+ *
+ * Rows run from nearest to farthest. Building rows are refreshed only for town
+ * or overhead-sign samples.
+ */
 struct MirrorEdges {
-    int buildingY[8];
-    int rightX[8];
+    int buildingY[8]; /**< Base building-top row per mirror sample. */
+    int rightX[8];    /**< Right road-edge projection for each mirror sample. */
 };
 
 /** @brief Procedural sections concatenated by the road-layout table. */
@@ -125,16 +131,22 @@ enum RoadSection {
     SECTION_S_CURVE_RL = 11   /**< Right bend followed by a left bend. */
 };
 
+/**
+ * @brief Player track position, projection reference and lookahead boundary.
+ *
+ * Longitudinal movement uses eighths of a track sample. Horizontal position,
+ * camera height and the lookahead boundary use world coordinates.
+ */
 struct RoadView {
-    int rightEdge;
-    int roadIndex;
-    int roadFraction;
-    int distanceStep;
-    int lateralX;
-    int cameraY;
-    int unused;
-    int curveX;
-    int roadHeight;
+    int lookaheadRightX; /**< Right road boundary four samples ahead. */
+    int roadIndex;       /**< Current track-sample index. */
+    int roadFraction;    /**< Eighths within the current sample. */
+    int distanceStep;    /**< Sample eighths per movement update. */
+    int lateralX;        /**< Player and camera position across the road. */
+    int cameraY;         /**< Camera's vertical world coordinate. */
+    int unused;          /**< Reset on track entry; otherwise unread. */
+    int curveReference;  /**< View curve reference, adjusted by steering. */
+    int roadHeight;      /**< Current sample's height-profile coefficient. */
 };
 
 extern int g_yBuildingTopArray[15];

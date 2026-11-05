@@ -42,9 +42,9 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 - **Initialized file-private data.** The 193 C initialized globals used by a single
   source are `static`; MSC emits the same data and code bytes, with private names
   recovered from the compiler listing for verification. Their linkage is a source
-  reconstruction choice. The 21 scenery `Run` tables retain public linkage: MSC
+  reconstruction choice. The 21 scenery `ScenerySprite` tables retain public linkage: MSC
   rejects their static forward declarations followed by initializers (C2086).
-  Declaring the initialized tables before the referring `List` records preserves
+  Declaring the initialized tables before the referring `SceneryLods` records preserves
   loaded bytes but changes relocation emission order (256 differing packed EXE
   bytes), so the exact packed-file gate requires the existing order and linkage.
 

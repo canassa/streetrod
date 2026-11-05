@@ -483,7 +483,7 @@ class Analysis:
         return out
 
     def _masks(self):
-        """Run arrays {n, far Part*} and List descriptors {last, near Run*} of the car masks."""
+        """ScenerySprite arrays {spanCount, far ScenerySpan*} and SceneryLods descriptors {lodCount, near ScenerySprite*}."""
         lo, hi = 0x5EC8, DATA_END
         parts = {s for s, o, n, d in self.fardata if n.startswith('g_parts')}
         runs = set()
@@ -497,14 +497,14 @@ class Analysis:
             if 0 < n < 100 and target + n * 6 == a and all(target + k * 6 in runs for k in range(n)):
                 lists[a] = (n, target)
         items = []
-        run_node = self.types.named('struct Run')
-        list_node = self.types.named('struct List')
+        run_node = self.types.named('struct ScenerySprite')
+        list_node = self.types.named('struct SceneryLods')
         for a, (n, target) in sorted(lists.items()):
             node = dict(kind='array', elem=run_node, count=n, size=n * 6, align=2)
             if target not in self.globals:
-                items.append(Item(target, n * 6, 'global', f'g_{target:04x}', f'struct Run @[{n}]', node, synth=True))
+                items.append(Item(target, n * 6, 'global', f'g_{target:04x}', f'struct ScenerySprite @[{n}]', node, synth=True))
             if a not in self.globals:
-                items.append(Item(a, 4, 'global', f'g_{a:04x}', 'struct List @', dict(list_node), synth=True))
+                items.append(Item(a, 4, 'global', f'g_{a:04x}', 'struct SceneryLods @', dict(list_node), synth=True))
         return items
 
     # ------------------------------------------------------------ ownership

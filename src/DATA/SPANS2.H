@@ -8,6 +8,6 @@
 
 #include "SPANS1.H"
 
-extern struct Part far g_spans2[];
+extern struct ScenerySpan far g_spans2[];
 
 #endif
