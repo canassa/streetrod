@@ -226,8 +226,9 @@ static void near leave_station(struct GasStationVisit *d)
     }
     g_driver.currentCar->fuel =
         g_driver.currentCar->fuel > FUEL_TANK_CAPACITY ? FUEL_TANK_CAPACITY : g_driver.currentCar->fuel;
-    cp_show_car(CAR_DRIVE_OUT, d->specIndex, d->bodyMods, (g_driver.currentCar->appearance >> 8) & STICKER_INDEX_MASK,
-                0, 0xa9, 1, g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
+    cp_show_car(CAR_DRIVE_OUT, d->specIndex, d->bodyMods,
+                (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, 0, 0xa9, 1,
+                g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
     mn_pop(1);
     ma_clear();
     g_scene = SCENE_GARAGE;
@@ -254,8 +255,9 @@ void ra_gas_station(void)
     cu_ctl(GAS_HAND_EMPTY);
     dl.specIndex = g_driver.currentCar->specIndex;
     dl.bodyMods = gm_car_look(g_driver.currentCar);
-    cp_show_car(CAR_PULL_IN, dl.specIndex, dl.bodyMods, (g_driver.currentCar->appearance >> 8) & STICKER_INDEX_MASK, 0,
-                0xa9, 1, g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
+    cp_show_car(CAR_PULL_IN, dl.specIndex, dl.bodyMods,
+                (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, 0, 0xa9, 1,
+                g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
     mu_suspend(0);
     label = pu_grab(0x50, 0xaa, 0x28, 0xc, 0);
     dl.capBgNozzleOnPump = pu_grab(g_featurePos.gasCapX - 0x10, g_featurePos.gasCapY - 5, 0x18, 0xc, 0);
@@ -696,14 +698,19 @@ enum RaceExit near ra_outcome(void)
         if (kind == BET_CAR) {
             found = gm_make_car(g_opponentSpecIndex, g_oppSpecPointer->basePrice, 0);
             found->tires->wear = rn_int(WON_TIRE_WEAR_RANGE);
-            found->appearance = ((g_selectedRacerPointer->sticker & STICKER_INDEX_MASK) << 8) |
+            found->appearance = ((g_selectedRacerPointer->sticker & STICKER_INDEX_MASK) << APPEARANCE_STICKER_SHIFT) |
                                 (found->appearance & APPEARANCE_NO_STICKER);
-            found->appearance = (((g_selectedRacerPointer->bodyMods & BODY_ROOF) != 0 & 1) << 13) |
+            found->appearance = (((g_selectedRacerPointer->bodyMods & BODY_ROOF) != 0 & APPEARANCE_ROOF_MASK)
+                                 << APPEARANCE_ROOF_SHIFT) |
                                 (found->appearance & APPEARANCE_KEEP_ROOF);
-            found->appearance = (((g_selectedRacerPointer->bodyMods & BODY_FRONT_BUMPER) != 0 & 1) << 14) |
-                                (found->appearance & APPEARANCE_KEEP_FRONT_BUMPER);
-            found->appearance = (((g_selectedRacerPointer->bodyMods & BODY_REAR_BUMPER) != 0 & 1) << 15) |
-                                (found->appearance & APPEARANCE_KEEP_REAR_BUMPER);
+            found->appearance =
+                (((g_selectedRacerPointer->bodyMods & BODY_REAR_BUMPER) != 0 & APPEARANCE_REAR_BUMPER_MASK)
+                 << APPEARANCE_REAR_BUMPER_SHIFT) |
+                (found->appearance & APPEARANCE_KEEP_REAR_BUMPER);
+            found->appearance =
+                (((g_selectedRacerPointer->bodyMods & BODY_FRONT_BUMPER) != 0 & APPEARANCE_FRONT_BUMPER_MASK)
+                 << APPEARANCE_FRONT_BUMPER_SHIFT) |
+                (found->appearance & APPEARANCE_KEEP_FRONT_BUMPER);
             found->paintScheme = g_selectedRacerPointer->paintScheme;
             if (found->stockRank > g_driver.currentCar->stockRank) {
                 g_driver.currentCar->next = g_driver.otherCars->next;

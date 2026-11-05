@@ -1,5 +1,12 @@
 # Model investigation
 
+The bumper names in this earlier investigation were reversed. The menu,
+loaded patch coordinates and inspected pictures establish Model offset 6 /
+BodyMod 2 / appearance 0x4000 as rear, and Model offset 8 / BodyMod 1 /
+appearance 0x8000 as front. See [the appearance follow-up](appearance.md)
+for the evidence and corrected names; the historical inventory below
+records the names used at the time.
+
 ## Purpose
 
 `Model` supplies a car specification's on-road opponent sprite set and the

@@ -2840,3 +2840,29 @@ The conflicting lines contain independent substitutions: keep named appearance m
 - This record includes steering, tire drift, dashboard invalidation and race outcomes, so an engine-only name understates it. Top gear is an index; the sixth ratio-array word is an unread tire/model calculation, not a sixth gear. The reset-ratio word has no writer, and several caches are write-only. See the member evidence in [Eng.md](investigations/Eng.md).
 - The existing data-shape reader supports enum constants in dimensions but not macro names. Reusing RPM_BAND_COUNT and DRIVE_GEAR_SLOTS as count enumerators preserves their values and enables both named dimensions and all layout/DGROUP gates without tooling changes.
 - fit_gear and ra_speed_step have parameters named rpm that actually receive mph; retained outside this investigation's scope, with evidence in the note.
+
+## 2026-11-05 18:19 CET: Name appearance fields and correct bumper identities
+
+### What I did
+
+- Recorded the menu/key, BodyMod, packed appearance, model/layout and inspected
+  picture evidence in [appearance.md](investigations/appearance.md) before
+  changing names. Added correction notices to the earlier Car and Model notes.
+- Named all appearance extraction/insertion shifts and one-bit masks, reused
+  existing sticker/clearing masks, and replaced all four raw BodyMod tests.
+- Corrected reversed bumper names across flags, model/layout/Look members,
+  both performance calculations and all 46 side-view patch picture constants.
+- Passed headers, format, docs (zero diagnostics), 572/572 function matches,
+  clean packed build, DGROUP ownership/order, all 106 unit tests and the
+  DOS-native build. Both packed executables are identical to the original.
+
+### What I learned
+
+- The menu names were right: rear result 11 selects BodyMod 2 / appearance
+  0x4000 / Model offset 6, and front result 12 selects BodyMod 1 / appearance
+  0x8000 / Model offset 8. All inspected cars face right, confirming the left
+  patch is rear and the right patch is front. Prior type investigations had
+  propagated the reversed member names into their picture and bonus names.
+- The complete evidence and replacement inventory live in
+  [appearance.md](investigations/appearance.md); byte identity verifies this
+  naming correction preserves gameplay, storage and resource ordering.

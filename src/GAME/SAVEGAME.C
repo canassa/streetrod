@@ -74,8 +74,8 @@ void sg_init_racer(int k, int *list)
     g_racerRecordsArray[k].bodyMods =
         ((g_carData[x].stockParts >> SPEC_ENGINE_SHIFT & SPEC_ENGINE_MASK) == ENGINE_V8_LARGE) ? BODY_LARGE_ENGINE : 0;
     g_racerRecordsArray[k].sticker = (rn_int(RIVAL_STICKER_CHANCE) < y) ? rn_int(STICKER_CHOICE_COUNT) : 0;
-    if (g_models[x].frontBumperRemovalPic > 0 && g_models[x].rearBumperRemovalPic > 0)
-        g_racerRecordsArray[k].bodyMods |= (rn_int(RIVAL_BUMPER_CHANCE) < y) ? BODY_FRONT_BUMPER | BODY_REAR_BUMPER : 0;
+    if (g_models[x].rearBumperRemovalPic > 0 && g_models[x].frontBumperRemovalPic > 0)
+        g_racerRecordsArray[k].bodyMods |= (rn_int(RIVAL_BUMPER_CHANCE) < y) ? BODY_REAR_BUMPER | BODY_FRONT_BUMPER : 0;
     if (g_models[x].choppedRoofPic > 0)
         g_racerRecordsArray[k].bodyMods |= (rn_int(RIVAL_ROOF_CHANCE) < y) ? BODY_ROOF : 0;
 }

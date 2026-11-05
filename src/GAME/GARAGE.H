@@ -86,8 +86,8 @@ struct Look {
     unsigned lo : 8;
     unsigned sticker : 5;
     unsigned roof : 1;
-    unsigned front : 1;
     unsigned rear : 1;
+    unsigned front : 1;
 };
 
 struct CarDisplay {

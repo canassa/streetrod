@@ -297,7 +297,8 @@ int near ga_menu(enum GarageMode mode)
         }
         if (g_old) {
             n = gm_car_look(g_old);
-            cp_show_car(CAR_BACK_OUT, g_old->specIndex, n, (g_old->appearance >> 8) & STICKER_INDEX_MASK, 0, 0x98, 0,
+            cp_show_car(CAR_BACK_OUT, g_old->specIndex, n,
+                        (g_old->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, 0, 0x98, 0,
                         g_tirePics[g_parts[g_old->tires->idx].variant]);
             ga_clear_name();
             mn_push(KM_GARAGE);
@@ -327,10 +328,14 @@ int near ga_menu(enum GarageMode mode)
                 ga_palette(g_carDraw.paintScheme);
             g_carDraw.overlayPic = 0;
             g_carDraw.specIndex = g_driver.currentCar->specIndex;
-            g_carDraw.appearance.sticker = (g_driver.currentCar->appearance >> 8) & STICKER_INDEX_MASK;
-            g_carDraw.appearance.roof = (g_driver.currentCar->appearance >> 13) & 1;
-            g_carDraw.appearance.front = (g_driver.currentCar->appearance >> 14) & 1;
-            g_carDraw.appearance.rear = (g_driver.currentCar->appearance >> 15) & 1;
+            g_carDraw.appearance.sticker =
+                (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK;
+            g_carDraw.appearance.roof =
+                (g_driver.currentCar->appearance >> APPEARANCE_ROOF_SHIFT) & APPEARANCE_ROOF_MASK;
+            g_carDraw.appearance.rear =
+                (g_driver.currentCar->appearance >> APPEARANCE_REAR_BUMPER_SHIFT) & APPEARANCE_REAR_BUMPER_MASK;
+            g_carDraw.appearance.front =
+                (g_driver.currentCar->appearance >> APPEARANCE_FRONT_BUMPER_SHIFT) & APPEARANCE_FRONT_BUMPER_MASK;
             for (r = 0; r < ENGINE_RACK_SLOTS; r++)
                 g_partsPics[r] = g_driver.currentCar->rack.parts[r]->idx;
             n = gm_car_look(g_driver.currentCar);
@@ -477,16 +482,6 @@ void near ga_body(unsigned mask)
         cost = ROOF_CHANGE_PRICE;
         val5 = TIME_ROOF_CHANGE;
     }
-    if (mask & BODY_FRONT_BUMPER) {
-        if (p9->frontBumperRemovalPic == 0) {
-            gm_message(MSG_ALREADY_LOST_YOUR_BUMPER);
-            return;
-        }
-        msg = (g_driver.currentCar->appearance & APPEARANCE_FRONT_BUMPER) ? (g_txt + TXT_RESTORE_BUMPER_DOLLARS_15)
-                                                                          : (g_txt + TXT_STRIP_BUMPER_DOLLARS_15);
-        cost = BUMPER_CHANGE_PRICE;
-        val5 = TIME_BUMPER_CHANGE;
-    }
     if (mask & BODY_REAR_BUMPER) {
         if (p9->rearBumperRemovalPic == 0) {
             gm_message(MSG_ALREADY_LOST_YOUR_BUMPER);
@@ -494,6 +489,16 @@ void near ga_body(unsigned mask)
         }
         msg = (g_driver.currentCar->appearance & APPEARANCE_REAR_BUMPER) ? (g_txt + TXT_RESTORE_BUMPER_DOLLARS_15)
                                                                          : (g_txt + TXT_STRIP_BUMPER_DOLLARS_15);
+        cost = BUMPER_CHANGE_PRICE;
+        val5 = TIME_BUMPER_CHANGE;
+    }
+    if (mask & BODY_FRONT_BUMPER) {
+        if (p9->frontBumperRemovalPic == 0) {
+            gm_message(MSG_ALREADY_LOST_YOUR_BUMPER);
+            return;
+        }
+        msg = (g_driver.currentCar->appearance & APPEARANCE_FRONT_BUMPER) ? (g_txt + TXT_RESTORE_BUMPER_DOLLARS_15)
+                                                                          : (g_txt + TXT_STRIP_BUMPER_DOLLARS_15);
         cost = BUMPER_CHANGE_PRICE;
         val5 = TIME_BUMPER_CHANGE;
     }
@@ -510,17 +515,18 @@ void near ga_body(unsigned mask)
     case KR_OK:
         if (mask & BODY_ROOF)
             g_driver.currentCar->appearance ^= APPEARANCE_ROOF;
-        if (mask & BODY_FRONT_BUMPER)
-            g_driver.currentCar->appearance ^= APPEARANCE_FRONT_BUMPER;
         if (mask & BODY_REAR_BUMPER)
             g_driver.currentCar->appearance ^= APPEARANCE_REAR_BUMPER;
+        if (mask & BODY_FRONT_BUMPER)
+            g_driver.currentCar->appearance ^= APPEARANCE_FRONT_BUMPER;
         cu_ctl(CURSOR_HIDE_NOW);
         mn_pop(1);
         pu_show(bm1, x, y);
         ma_pop_high(1);
         n9 = g_driver.currentCar->specIndex;
         r7 = gm_car_look(g_driver.currentCar);
-        cp_show_car(CAR_SHOW_BACKDROP, n9, r7, (g_driver.currentCar->appearance >> 8) & STICKER_INDEX_MASK, 0, 0x98, 0,
+        cp_show_car(CAR_SHOW_BACKDROP, n9, r7,
+                    (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, 0, 0x98, 0,
                     g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
         so_noise();
         cu_ctl(CURSOR_SHOW_NOW);
@@ -578,8 +584,8 @@ void near ga_stickers(void)
             pu_show(bm1, x, y);
             ma_pop_high(1);
             idx6 = -30 - k;
-            g_driver.currentCar->appearance =
-                ((idx6 & STICKER_INDEX_MASK) << 8) | (g_driver.currentCar->appearance & APPEARANCE_NO_STICKER);
+            g_driver.currentCar->appearance = ((idx6 & STICKER_INDEX_MASK) << APPEARANCE_STICKER_SHIFT) |
+                                              (g_driver.currentCar->appearance & APPEARANCE_NO_STICKER);
             bm3 = di_bm(PIC_STICKER_WIPE, ARENA_HIGH_STACK);
             bm1 = ar_bm(g_stickerBg->width, g_stickerBg->height, 0, ARENA_HIGH_STACK);
             bm_copy(g_stickerBg, bm1, 1);

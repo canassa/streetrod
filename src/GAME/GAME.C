@@ -376,8 +376,8 @@ struct Car *near gm_make_car(int idx, int value, struct Car *old)
     car->appearance &= APPEARANCE_KEEP_HIGH_BYTE;
     car->appearance &= APPEARANCE_NO_STICKER;
     car->appearance &= APPEARANCE_KEEP_ROOF;
-    car->appearance &= APPEARANCE_KEEP_FRONT_BUMPER;
     car->appearance &= APPEARANCE_KEEP_REAR_BUMPER;
+    car->appearance &= APPEARANCE_KEEP_FRONT_BUMPER;
     if (old == 0) {
         if (g_driver.currentCar) {
             car->next = g_driver.otherCars;
@@ -578,10 +578,10 @@ int gm_car_look(struct Car *c)
     r = 0;
     if (c->appearance & APPEARANCE_ROOF)
         r |= BODY_ROOF;
-    if (c->appearance & APPEARANCE_FRONT_BUMPER)
-        r |= BODY_FRONT_BUMPER;
     if (c->appearance & APPEARANCE_REAR_BUMPER)
         r |= BODY_REAR_BUMPER;
+    if (c->appearance & APPEARANCE_FRONT_BUMPER)
+        r |= BODY_FRONT_BUMPER;
     if (g_parts[c->rack.parts[0]->idx].variant == ENGINE_V8_LARGE)
         r |= BODY_LARGE_ENGINE;
     return r;
@@ -706,8 +706,9 @@ static enum GarageMode near your_cars(void)
             cu_ctl(CURSOR_HIDE_NOW);
             mid = g_driver.currentCar->specIndex;
             result = gm_car_look(g_driver.currentCar);
-            cp_show_car(CAR_BACK_OUT, mid, result, (g_driver.currentCar->appearance >> 8) & STICKER_INDEX_MASK, 0, 0x98,
-                        0, g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
+            cp_show_car(CAR_BACK_OUT, mid, result,
+                        (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, 0, 0x98, 0,
+                        g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
             mn_pop(1);
             ga_clear_name();
             mn_push(KM_GARAGE);
@@ -923,11 +924,11 @@ void near gm_run(void)
                 v = GARAGE_KEEP;
                 continue;
             case KR_GAR_REAR_BUMPER:
-                ga_body(BODY_FRONT_BUMPER);
+                ga_body(BODY_REAR_BUMPER);
                 v = GARAGE_KEEP;
                 continue;
             case KR_GAR_FRONT_BUMPER:
-                ga_body(BODY_REAR_BUMPER);
+                ga_body(BODY_FRONT_BUMPER);
                 v = GARAGE_KEEP;
                 continue;
             case KR_GAR_STICKERS:

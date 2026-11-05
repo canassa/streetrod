@@ -42,24 +42,31 @@ enum BoltTightness {
 
 /** @brief Body overlays drawn on a car, as bits. */
 enum BodyMod {
-    BODY_REAR_BUMPER = 1,  /**< Rear-bumper overlay. */
-    BODY_FRONT_BUMPER = 2, /**< Front-bumper overlay. */
+    BODY_FRONT_BUMPER = 1, /**< Front-bumper overlay. */
+    BODY_REAR_BUMPER = 2,  /**< Rear-bumper overlay. */
     BODY_ROOF = 4,         /**< Chopped-roof overlay. */
     BODY_LARGE_ENGINE = 8  /**< Large-engine overlay. */
 };
 
+#define APPEARANCE_STICKER_SHIFT 8
 /** Sticker selection field in the packed car appearance. */
 #define APPEARANCE_STICKER_MASK 0x1f00
 #define APPEARANCE_NO_STICKER 0xe0ff
+#define APPEARANCE_ROOF_SHIFT 13
+#define APPEARANCE_ROOF_MASK 1
 /** The car roof has been chopped. */
 #define APPEARANCE_ROOF 0x2000
-/** The front bumper has been removed. */
-#define APPEARANCE_FRONT_BUMPER 0x4000
+#define APPEARANCE_REAR_BUMPER_SHIFT 14
+#define APPEARANCE_REAR_BUMPER_MASK 1
 /** The rear bumper has been removed. */
-#define APPEARANCE_REAR_BUMPER 0x8000
+#define APPEARANCE_REAR_BUMPER 0x4000
+#define APPEARANCE_FRONT_BUMPER_SHIFT 15
+#define APPEARANCE_FRONT_BUMPER_MASK 1
+/** The front bumper has been removed. */
+#define APPEARANCE_FRONT_BUMPER 0x8000
 #define APPEARANCE_KEEP_ROOF 0xdfff
-#define APPEARANCE_KEEP_FRONT_BUMPER 0xbfff
-#define APPEARANCE_KEEP_REAR_BUMPER 0x7fff
+#define APPEARANCE_KEEP_REAR_BUMPER 0xbfff
+#define APPEARANCE_KEEP_FRONT_BUMPER 0x7fff
 #define APPEARANCE_KEEP_HIGH_BYTE 0xff00
 #define STICKER_INDEX_MASK 0x1f
 
@@ -157,8 +164,8 @@ struct Car {
     int fuel;
     /**
      * Sticker field @ref APPEARANCE_STICKER_MASK and modification flags
-     * @ref APPEARANCE_ROOF, @ref APPEARANCE_FRONT_BUMPER,
-     * @ref APPEARANCE_REAR_BUMPER; low byte unused.
+     * @ref APPEARANCE_ROOF, @ref APPEARANCE_REAR_BUMPER,
+     * @ref APPEARANCE_FRONT_BUMPER; low byte unused.
      */
     unsigned appearance;
     struct Car *next; /**< Other-car link; may be stale on current car. */

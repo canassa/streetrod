@@ -49,10 +49,10 @@ void near pf_drivetrain(struct Car *c, struct DrivingState *e)
     d = g_parts[n6k->idx].variant;
     e1 = g_parts[m->idx].variant;
     vl = ((c->appearance & APPEARANCE_ROOF) || g_models[c->specIndex].choppedRoofPic == 0) * ROOF_SPEED_BONUS +
-         ((c->appearance & APPEARANCE_REAR_BUMPER) || g_models[c->specIndex].rearBumperRemovalPic == 0) *
-             REAR_BUMPER_SPEED_BONUS +
          ((c->appearance & APPEARANCE_FRONT_BUMPER) || g_models[c->specIndex].frontBumperRemovalPic == 0) *
              FRONT_BUMPER_SPEED_BONUS +
+         ((c->appearance & APPEARANCE_REAR_BUMPER) || g_models[c->specIndex].rearBumperRemovalPic == 0) *
+             REAR_BUMPER_SPEED_BONUS +
          g_modelScore[g_carData[c->specIndex].rank] * MODEL_SPEED_WEIGHT / MODEL_SCORE_MAX +
          g_carbManifoldFit[c3][bl] * INTAKE_SPEED_WEIGHT / 100.0 + g_engineScore[a3] * ENGINE_SPEED_WEIGHT / 100.0 +
          g_transScore[d] * TRANSMISSION_SPEED_WEIGHT / 100.0 + (1.0 - fabs(c->timing / 8.0)) * TIMING_SPEED_WEIGHT;
@@ -174,10 +174,10 @@ int near pf_vmax(int n)
     d = g_parts[n6k->idx].variant;
     e1 = g_parts[m->idx].variant;
     vl = ((p6->appearance & APPEARANCE_ROOF) || g_models[p6->specIndex].choppedRoofPic == 0) * ROOF_SPEED_BONUS +
-         ((p6->appearance & APPEARANCE_REAR_BUMPER) || g_models[p6->specIndex].rearBumperRemovalPic == 0) *
-             REAR_BUMPER_SPEED_BONUS +
          ((p6->appearance & APPEARANCE_FRONT_BUMPER) || g_models[p6->specIndex].frontBumperRemovalPic == 0) *
              FRONT_BUMPER_SPEED_BONUS +
+         ((p6->appearance & APPEARANCE_REAR_BUMPER) || g_models[p6->specIndex].rearBumperRemovalPic == 0) *
+             REAR_BUMPER_SPEED_BONUS +
          g_modelScore[g_carData[p6->specIndex].rank] * MODEL_SPEED_WEIGHT / MODEL_SCORE_MAX +
          g_carbManifoldFit[c3][bl] * INTAKE_SPEED_WEIGHT / 100.0 + g_engineScore[a3] * ENGINE_SPEED_WEIGHT / 100.0 +
          g_transScore[d] * TRANSMISSION_SPEED_WEIGHT / 100.0 + (1.0 - fabs(p6->timing / 8.0)) * TIMING_SPEED_WEIGHT;

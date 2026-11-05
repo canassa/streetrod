@@ -308,11 +308,11 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
     g_carDraw.stickerSubX = ~r_vid.mask & p12->stickerX;
     g_carDraw.stickerX = r_vid.mask & p12->stickerX;
     g_carDraw.stickerY = p12->stickerY;
-    if (flags & 2)
-        bm_put_pic(*out, m2->frontBumperRemovalPic, 0, p12->frontBumperY);
-    if (flags & 1)
-        bm_put_pic(*out, m2->rearBumperRemovalPic, p12->rearBumperX, p12->rearBumperY);
-    if (flags & 4) {
+    if (flags & BODY_REAR_BUMPER)
+        bm_put_pic(*out, m2->rearBumperRemovalPic, 0, p12->rearBumperY);
+    if (flags & BODY_FRONT_BUMPER)
+        bm_put_pic(*out, m2->frontBumperRemovalPic, p12->frontBumperX, p12->frontBumperY);
+    if (flags & BODY_ROOF) {
         bm_put_pic(*out, m2->choppedRoofPic, p12->roofX, 0);
         for (j5 = 0; j5 < g_lastPic->planesize / r_vid.planes; j5++)
             if (((unsigned char far *)g_lastPic->alt.p)[j5] != 0xff)
@@ -320,7 +320,7 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
         row8 = j5 / g_lastPic->pitch;
     } else
         row8 = 0;
-    if ((flags & 8) && idx != SPEC_KING)
+    if ((flags & BODY_LARGE_ENGINE) && idx != SPEC_KING)
         bm_draw_pic(*out, m2->engineOverlayPic, p12->b5, p12->b6, 1);
     blt.w = g_stickerBg->width;
     blt.h = g_stickerBg->height;

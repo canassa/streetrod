@@ -78,8 +78,8 @@ enum GasHand {
  */
 struct GasStationVisit {
     int specIndex; /**< Current car's specification-table index. */
-    /** Body-overlay bits: @ref BODY_ROOF, @ref BODY_FRONT_BUMPER,
-     * @ref BODY_REAR_BUMPER and @ref BODY_LARGE_ENGINE. */
+    /** Body-overlay bits: @ref BODY_ROOF, @ref BODY_REAR_BUMPER,
+     * @ref BODY_FRONT_BUMPER and @ref BODY_LARGE_ENGINE. */
     enum BodyMod bodyMods;
     /** Cap-area background with the nozzle on the pump. */
     struct Bitmap far *capBgNozzleOnPump;
