@@ -3397,3 +3397,35 @@ lessons from both branches remain in the recipe book and investigation notes.
 - The existing whole-tree layout audit cannot resolve TRANSMISSION_BOLT_COUNT.
   Used a real MSC sizeof/offsetof audit of all nine requested records, following
   the known limitation already recorded in CLAUDE.md and the sr-cli skill.
+## 2026-11-05 21:36 CET: Investigate Bob's, carhop and fame records
+
+### What I did
+
+- Investigated Btn, Step, Cand, Cell, Wager, Sheet, ManualEntry and Entry,
+  recording storage, every member's users/values, persistence and edge cases in
+  plans/investigations/st-bobs.md before renaming.
+- Documented all eight structs, replaced vague tags/member names, used BOOL for
+  candidate exclusion, existing enums for picture/stake fields, and named every
+  manual-color answer across questions, hotspots and keyboard maps.
+- Preserved the original record layouts: real MSC passed35 sizeof/offsetof
+  assertions. Initial gates passed572/572 function matches, zero Doxygen
+  diagnostics, IDENTICAL clean packed EXE, DGROUP ownership/order and109 tests.
+
+### What I learned
+
+- Idle poses index a remapping table with an added one; the timeout bound reads
+  a31st step from the first two bytes of that following remapping table.
+- Ending couple crops use biased work-bitmap columns and bottom alignment;
+  lips crops use direct screen coordinates. Jail overlays include wall edges.
+- Hall-of-fame scores are decimal elapsed-hour strings in23-byte disk records;
+  manual answer colors are menu ordinals rather than video palette indices.
+- The picture named PIC_CARHOP_IDLE contains a different character from the
+  skating carhop. Existing names alone do not establish the depicted subject.
+- cdata cannot resolve preprocessor count macros in table bounds, so the
+  original51/10 table dimensions remain literal; enum color names are unaffected.
+- DOS-native MAKE additionally reproduced orig/SR.EXE byte for byte.
+
+Post-merge verification: fetched origin and ran git merge origin/main (already
+up to date at3848b38), then reran headers, format, docs (zero diagnostics), all572
+function checks, a clean IDENTICAL packed build, DGROUP ownership/order, all109
+unit tests, the35-assertion real-MSC layout audit, and IDENTICAL DOS-native MAKE.

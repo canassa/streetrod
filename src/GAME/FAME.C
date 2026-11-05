@@ -25,14 +25,22 @@ static int near elapsed_hours(void);
 static int near score_beats_entry(int i);
 static void near insert_entry(int pos);
 
-struct Entry g_hallFameTbl[10];
+struct HallEntry g_hallFameTbl[10];
 
-static struct ManualEntry g_manual[51] = {
-    {2, 2},   {3, 11}, {4, 6},   {6, 5},   {7, 9},  {8, 1},   {9, 4},   {10, 6}, {11, 10}, {12, 1}, {14, 7},
-    {15, 12}, {16, 2}, {18, 3},  {19, 11}, {20, 5}, {22, 10}, {23, 6},  {1, 3},  {2, 5},   {3, 9},  {4, 4},
-    {5, 8},   {6, 10}, {7, 7},   {8, 2},   {9, 12}, {10, 5},  {11, 1},  {12, 3}, {13, 11}, {14, 9}, {15, 8},
-    {16, 4},  {17, 6}, {18, 1},  {19, 10}, {20, 8}, {21, 9},  {22, 12}, {23, 7}, {24, 2},  {25, 3}, {26, 1},
-    {27, 8},  {28, 5}, {29, 11}, {30, 10}, {31, 4}, {32, 12}, {33, 9}};
+static struct ManualQuestion g_manual[51] = {
+    {2, MANUAL_BROWN},        {3, MANUAL_DARK_PURPLE},   {4, MANUAL_YELLOW},       {6, MANUAL_ORANGE},
+    {7, MANUAL_DARK_BLUE},    {8, MANUAL_GREY},          {9, MANUAL_PINK},         {10, MANUAL_YELLOW},
+    {11, MANUAL_LIGHT_BLUE},  {12, MANUAL_GREY},         {14, MANUAL_DARK_GREEN},  {15, MANUAL_LIGHT_PURPLE},
+    {16, MANUAL_BROWN},       {18, MANUAL_RED},          {19, MANUAL_DARK_PURPLE}, {20, MANUAL_ORANGE},
+    {22, MANUAL_LIGHT_BLUE},  {23, MANUAL_YELLOW},       {1, MANUAL_RED},          {2, MANUAL_ORANGE},
+    {3, MANUAL_DARK_BLUE},    {4, MANUAL_PINK},          {5, MANUAL_LIGHT_GREEN},  {6, MANUAL_LIGHT_BLUE},
+    {7, MANUAL_DARK_GREEN},   {8, MANUAL_BROWN},         {9, MANUAL_LIGHT_PURPLE}, {10, MANUAL_ORANGE},
+    {11, MANUAL_GREY},        {12, MANUAL_RED},          {13, MANUAL_DARK_PURPLE}, {14, MANUAL_DARK_BLUE},
+    {15, MANUAL_LIGHT_GREEN}, {16, MANUAL_PINK},         {17, MANUAL_YELLOW},      {18, MANUAL_GREY},
+    {19, MANUAL_LIGHT_BLUE},  {20, MANUAL_LIGHT_GREEN},  {21, MANUAL_DARK_BLUE},   {22, MANUAL_LIGHT_PURPLE},
+    {23, MANUAL_DARK_GREEN},  {24, MANUAL_BROWN},        {25, MANUAL_RED},         {26, MANUAL_GREY},
+    {27, MANUAL_LIGHT_GREEN}, {28, MANUAL_ORANGE},       {29, MANUAL_DARK_PURPLE}, {30, MANUAL_LIGHT_BLUE},
+    {31, MANUAL_PINK},        {32, MANUAL_LIGHT_PURPLE}, {33, MANUAL_DARK_BLUE}};
 int g_protectCycle = 0;
 static int g_fameRowY[10] = {59, 70, 81, 92, 103, 114, 125, 136, 147, 158};
 
@@ -42,7 +50,7 @@ static int g_fameRowY[10] = {59, 70, 81, 92, 103, 114, 125, 136, 147, 158};
 int fa_protect_check(void)
 {
     enum ManualKind f;
-    int e;
+    enum ManualColor e;
     int d;
     int c;
     char b[26];
@@ -80,7 +88,7 @@ int fa_protect_check(void)
     e = mn_wait(KM_MANUAL_COLORS);
     g_protectCycle = 0;
     sc_status_text(-1, "", 0);
-    if (g_manual[d].color != e)
+    if (g_manual[d].answerColor != e)
         return 0;
     return 1;
 }
@@ -139,7 +147,7 @@ int fa_end_menu(void)
 
 static int near score_beats_entry(int i)
 {
-    return atoi(g_hallFameTbl[i].score) > g_score;
+    return atoi(g_hallFameTbl[i].elapsedHoursText) > g_score;
 }
 
 int g_nScore;
@@ -156,8 +164,8 @@ static void near insert_entry(int pos)
     if (pos >= 0) {
         src = (char *)&g_hallFameTbl[pos];
         if (cnt > 0) {
-            dst = src + sizeof(struct Entry);
-            memmove(dst, src, cnt * sizeof(struct Entry));
+            dst = src + sizeof(struct HallEntry);
+            memmove(dst, src, cnt * sizeof(struct HallEntry));
         }
         strcpy(src, g_driverName);
         src += 16;
@@ -183,7 +191,7 @@ void fa_show(int add)
 {
     char buf3[16];
     int n2;
-    struct Entry *p;
+    struct HallEntry *p;
     int x;
     struct Colors sv286;
     int pos7;
@@ -228,22 +236,22 @@ void fa_show(int add)
         x_colors.textBg = 0;
     }
     for (i = 0, p = g_hallFameTbl; i < g_nScore; i++) {
-        (*g_videoOps.drawText)(r_vid.back, 46, g_fameRowY[i], p->name);
+        (*g_videoOps.drawText)(r_vid.back, 46, g_fameRowY[i], p->driverName);
         x = 161;
-        n2 = atoi(p->score);
+        n2 = atoi(p->elapsedHoursText);
         while (n2 < 1000) {
             n2 *= 10;
             x += 6;
         }
-        (*g_videoOps.drawText)(r_vid.back, x, g_fameRowY[i], p->score);
+        (*g_videoOps.drawText)(r_vid.back, x, g_fameRowY[i], p->elapsedHoursText);
         p++;
         (*g_videoOps.drawText)(r_vid.back, 191, g_fameRowY[i], "hr");
     }
     bm_copy_box(r_vid.back, r_vid.front, 46, g_fameRowY[0], 211, g_fameRowY[HALL_FAME_COUNT - 1] + 8);
     if (pos7 >= 0) {
-        strcpy(buf3, g_hallFameTbl[pos7].name);
+        strcpy(buf3, g_hallFameTbl[pos7].driverName);
         ed_line(46, g_fameRowY[pos7], buf3, 15);
-        strcpy(g_hallFameTbl[pos7].name, buf3);
+        strcpy(g_hallFameTbl[pos7].driverName, buf3);
         di_save_hall();
     } else {
         da_wait_key(700);

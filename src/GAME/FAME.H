@@ -19,20 +19,47 @@
 
 #include "VIDEO.H"
 
-struct ManualEntry {
-    signed char page;
-    signed char color;
+/** @brief Decoded color choices for manual copy-protection answers. */
+enum ManualColor {
+    MANUAL_GREY = 1,          /**< Grey. */
+    MANUAL_BROWN = 2,         /**< Brown. */
+    MANUAL_RED = 3,           /**< Red. */
+    MANUAL_PINK = 4,          /**< Pink. */
+    MANUAL_ORANGE = 5,        /**< Orange. */
+    MANUAL_YELLOW = 6,        /**< Yellow. */
+    MANUAL_DARK_GREEN = 7,    /**< Dark green. */
+    MANUAL_LIGHT_GREEN = 8,   /**< Light green. */
+    MANUAL_DARK_BLUE = 9,     /**< Dark blue. */
+    MANUAL_LIGHT_BLUE = 10,   /**< Light blue. */
+    MANUAL_DARK_PURPLE = 11,  /**< Dark purple. */
+    MANUAL_LIGHT_PURPLE = 12, /**< Light purple. */
 };
 
-struct Entry {
-    char name[16];
-    char score[7];
+/**
+ * @brief Manual page and expected color for one copy-protection question.
+ *
+ * Table position determines whether the question asks about an icon or a key.
+ */
+struct ManualQuestion {
+    signed char page;        /**< Printed manual page number. */
+    signed char answerColor; /**< Expected choice, @ref ManualColor. */
+};
+
+/**
+ * @brief Driver name and elapsed game hours in a hall-of-fame record.
+ *
+ * Records occupy 23 bytes on disk; saving sets each byte's high bit and loading
+ * clears it. Fewer hours rank ahead of more hours.
+ */
+struct HallEntry {
+    char driverName[16];      /**< NUL-terminated name, at most 15 characters. */
+    char elapsedHoursText[7]; /**< NUL-terminated decimal hours. */
 };
 
 extern int g_protectCycle;
 extern int g_nScore;
 extern char g_driverName[];
-extern struct Entry g_hallFameTbl[];
+extern struct HallEntry g_hallFameTbl[];
 int fa_protect_check(void);
 int fa_end_menu(void);
 void fa_show(int add);

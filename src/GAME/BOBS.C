@@ -274,15 +274,15 @@ static void near build_rival_pool(int flag)
 {
     int result;
     struct CarSpec *item;
-    struct Cand map[RACER_KING];
+    struct RivalCandidate map[RACER_KING];
     int m, found, k, low;
 
     for (k = 0; k < RACER_KING; k++) {
         item = &g_carData[g_racerRecordsArray[k].specIndex];
-        map[k].dr = abs(pf_vmax(g_racerRecordsArray[k].specIndex) - pf_vmax(-1));
-        map[k].dk =
+        map[k].speedDifference = abs(pf_vmax(g_racerRecordsArray[k].specIndex) - pf_vmax(-1));
+        map[k].rankDifference =
             abs(g_carData[g_racerRecordsArray[k].specIndex].rank - g_carData[g_driver.currentCar->specIndex].rank);
-        map[k].taken = (g_racerRecordsArray[k].status != RACER_EMPTY) ? 0 : 1;
+        map[k].excluded = (g_racerRecordsArray[k].status != RACER_EMPTY) ? FALSE : TRUE;
     }
     g_poolCount = 0;
     found = 1;
@@ -292,20 +292,20 @@ static void near build_rival_pool(int flag)
         found = 0;
         low = RIVAL_POOL_DISTANCE_INIT;
         for (m = 0; m < RACER_KING; m++)
-            if (map[m].taken == 0 && map[m].dr < low) {
+            if (map[m].excluded == FALSE && map[m].speedDifference < low) {
                 result = m;
-                low = map[m].dr;
+                low = map[m].speedDifference;
                 found = 1;
             }
         if (found) {
             g_poolRivals[g_poolCount++] = result;
-            map[result].taken = 1;
+            map[result].excluded = TRUE;
         }
     } while (found);
     m = 0;
     k = g_poolCount;
     for (; flag == 0 && k > RIVAL_POOL_REPLACE_ABOVE; k--)
-        if (map[k - 1].dk > RIVAL_RANK_DIFFERENCE)
+        if (map[k - 1].rankDifference > RIVAL_RANK_DIFFERENCE)
             g_poolRivals[k - 1] = g_poolRivals[m++];
     if (g_demo) {
         g_poolRivals[g_poolCount++] = g_demoRacer;
@@ -533,7 +533,7 @@ static int near challenge(int arg)
                 gm_message(MSG_GET_YOUR_PINK_SLIP_OUT);
                 g_raceWagerTerms.kind = BET_CAR;
             }
-            g_raceWagerTerms.amount = 0;
+            g_raceWagerTerms.amount = WAGER_NO_CASH;
             ra_run();
             g_gameClock.actionTicks +=
                 g_driver.raceType == RACE_DRAG ? (unsigned)TIME_DRAG_RACE : (unsigned)TIME_ROAD_RACE;
@@ -583,7 +583,7 @@ static int near challenge(int arg)
             gm_message(MSG_CHICKEN);
             goto quit;
         case KR_BET_FOR_KICKS:
-            price = 0;
+            price = WAGER_NO_CASH;
             kind = BET_NONE;
             break;
         case KR_BET_10:
@@ -603,7 +603,7 @@ static int near challenge(int arg)
             kind = BET_100;
             break;
         case KR_BET_PINK_SLIPS:
-            price = 0;
+            price = WAGER_NO_CASH;
             kind = BET_CAR;
             break;
         }
@@ -686,18 +686,18 @@ static void near setup_bobs_spots(int a, int b)
     }
 }
 
-static struct Step g_animSteps[30] = {{2, 15}, {3, 15}, {4, 22},  {5, 15},  {6, 37},  {5, 15},  {6, 45},  {5, 15},
-                                      {4, 15}, {3, 15}, {2, 15},  {8, 90},  {7, 15},  {9, 15},  {10, 30}, {9, 15},
-                                      {7, 7},  {8, 75}, {11, 15}, {12, 30}, {13, 15}, {12, 15}, {11, 15}, {8, 90},
-                                      {7, 15}, {9, 15}, {10, 30}, {9, 15},  {7, 7},   {14, 15}};
+static struct IdleAnimStep g_animSteps[30] = {
+    {2, 15},  {3, 15},  {4, 22},  {5, 15}, {6, 37},  {5, 15}, {6, 45},  {5, 15}, {4, 15},  {3, 15},
+    {2, 15},  {8, 90},  {7, 15},  {9, 15}, {10, 30}, {9, 15}, {7, 7},   {8, 75}, {11, 15}, {12, 30},
+    {13, 15}, {12, 15}, {11, 15}, {8, 90}, {7, 15},  {9, 15}, {10, 30}, {9, 15}, {7, 7},   {14, 15}};
 static char g_animCells[16] = {1, 15, 7, 8, 9, 10, 11, 12, 2, 3, 0, 1, 5, 6, 13, 4};
-static struct Cell g_endCellsA[20] = {
+static struct EndingCell g_endCellsA[20] = {
     {0, 0, 48, 24, 80, 0},   {48, 0, 32, 24, 88, 0},   {80, 0, 32, 24, 96, 0},    {112, 0, 64, 24, 88, 0},
     {0, 24, 40, 44, 96, 0},  {40, 24, 40, 44, 96, 0},  {80, 24, 40, 44, 96, 0},   {120, 24, 40, 44, 96, 0},
     {0, 68, 40, 44, 96, 0},  {40, 68, 40, 44, 96, 0},  {80, 68, 40, 44, 96, 0},   {120, 68, 40, 44, 96, 0},
     {0, 112, 40, 44, 96, 0}, {40, 112, 40, 44, 96, 0}, {80, 112, 40, 44, 96, 0},  {120, 112, 40, 44, 96, 0},
     {0, 156, 48, 44, 88, 0}, {48, 156, 56, 44, 80, 0}, {104, 156, 56, 44, 80, 0}, {160, 156, 40, 44, 96, 0}};
-static struct Cell g_endCellsB[9] = {
+static struct EndingCell g_endCellsB[9] = {
     {208, 54, 8, 2, 128, 84},    {200, 54, 8, 3, 112, 88},    {184, 54, 16, 4, 96, 94},
     {160, 54, 24, 10, 112, 113}, {160, 86, 40, 10, 128, 113}, {160, 65, 48, 20, 136, 104},
     {160, 1, 112, 52, 128, 70},  {0, 1, 160, 97, 112, 52},    {0, 99, 224, 101, 80, 51}};
@@ -799,8 +799,8 @@ static void near play_cell_anim(void)
                 going = 0;
             else {
                 da_retrace(1);
-                blit_cell(pict, g_animCells[1 + g_animSteps[i].frame], r_vid.front);
-                g_waitUntil = g_tick + (int)g_animSteps[i].delay;
+                blit_cell(pict, g_animCells[1 + g_animSteps[i].poseIndex], r_vid.front);
+                g_waitUntil = g_tick + (int)g_animSteps[i].delayTicks;
                 i++;
             }
             break;
@@ -823,7 +823,7 @@ static void near play_ending(void)
     struct Bitmap far *pic15;
     struct Bitmap far *pic24;
     struct Blt blt;
-    struct Cell *p3;
+    struct EndingCell *p3;
     int v30;
     struct Bitmap far *pic58;
     int v2a;
@@ -833,7 +833,7 @@ static void near play_ending(void)
     int miny;
     int v38l;
     struct Bitmap far *pic3;
-    struct Cell *p2m;
+    struct EndingCell *p2m;
     int w8;
     int cntz;
     struct Blt blt2k;
@@ -873,17 +873,17 @@ static void near play_ending(void)
     pic3 = di_bm(PIC_ENDING_COUPLE, ARENA_LOW_STACK);
     pic4 = ar_bm(0x50, 0x2c, 0, ARENA_HIGH_BASE);
     p3 = g_endCellsA;
-    blt.w = g_endCellsA[0].w;
-    blt.h = g_endCellsA[0].h;
-    blt.sx = g_endCellsA[0].sx;
-    blt.sy = g_endCellsA[0].sy;
-    blt.dx = g_endCellsA[0].x - 0x50;
-    blt.dy = 0x2c - g_endCellsA[0].h;
+    blt.w = g_endCellsA[0].width;
+    blt.h = g_endCellsA[0].height;
+    blt.sx = g_endCellsA[0].sourceX;
+    blt.sy = g_endCellsA[0].sourceY;
+    blt.dx = g_endCellsA[0].destinationX - 0x50;
+    blt.dy = 0x2c - g_endCellsA[0].height;
     (*g_videoOps.maskedBlit)(pic3, pic15, &blt, 1);
-    blt.w = p3->w;
-    blt.h = p3->h;
-    blt.sx = p3->x - 0x50;
-    blt.sy = 0x2c - p3->h;
+    blt.w = p3->width;
+    blt.h = p3->height;
+    blt.sx = p3->destinationX - 0x50;
+    blt.sy = 0x2c - p3->height;
     blt.dx = blt.sx;
     blt.dy = blt.sy;
     (*g_videoOps.copy)(pic15, pic24, &blt, 1);
@@ -893,12 +893,12 @@ static void near play_ending(void)
             da_retrace(0x14);
         p3 = &g_endCellsA[i2];
         bm_copy(pic24, pic4, 1);
-        blt.w = p3->w;
-        blt.h = p3->h;
-        blt.sx = p3->sx;
-        blt.sy = p3->sy;
-        blt.dx = p3->x - 0x50;
-        blt.dy = 0x2c - p3->h;
+        blt.w = p3->width;
+        blt.h = p3->height;
+        blt.sx = p3->sourceX;
+        blt.sy = p3->sourceY;
+        blt.dx = p3->destinationX - 0x50;
+        blt.dy = 0x2c - p3->height;
         (*g_videoOps.maskedBlit)(pic3, pic4, &blt, 1);
         blt.w = 0x50;
         blt.h = 0x2c;
@@ -925,9 +925,9 @@ static void near play_ending(void)
         v2a = v30 = -0x28;
         for (i2 = 0; i2 < cntz; i2++) {
             p2m = &g_endCellsB[i2];
-            w8 = max((int)p2m->w + (int)p2m->x, v32 + v2a) - (minx = min((int)p2m->x, v32));
-            h8 = max((int)p2m->h + (int)p2m->y, v38l + v2a);
-            h8 -= miny = min((int)p2m->y, v38l);
+            w8 = max((int)p2m->width + (int)p2m->destinationX, v32 + v2a) - (minx = min((int)p2m->destinationX, v32));
+            h8 = max((int)p2m->height + (int)p2m->destinationY, v38l + v2a);
+            h8 -= miny = min((int)p2m->destinationY, v38l);
             pic6m = ar_bm(w8, h8, 0, ARENA_HIGH_STACK);
             blt2k.w = w8;
             blt2k.h = h8;
@@ -936,12 +936,12 @@ static void near play_ending(void)
             blt2k.dx = 0;
             blt2k.dy = 0;
             (*g_videoOps.copy)(r_vid.back, pic6m, &blt2k, 1);
-            blt2k.w = v2a = p2m->w;
-            blt2k.h = v30 = p2m->h;
-            blt2k.sx = p2m->sx;
-            blt2k.sy = p2m->sy;
-            blt2k.dx = (v32 = p2m->x) - minx;
-            blt2k.dy = (v38l = p2m->y) - miny;
+            blt2k.w = v2a = p2m->width;
+            blt2k.h = v30 = p2m->height;
+            blt2k.sx = p2m->sourceX;
+            blt2k.sy = p2m->sourceY;
+            blt2k.dx = (v32 = p2m->destinationX) - minx;
+            blt2k.dy = (v38l = p2m->destinationY) - miny;
             (*g_videoOps.maskedBlit)(pic58, pic6m, &blt2k, 1);
             blt2k.w = w8;
             blt2k.h = h8;
@@ -970,10 +970,11 @@ static void near play_ending(void)
     di_free_list(g_endPics);
 }
 
-struct Btn g_jailBars[7] = {{&g_barJailPixels, 0, 0, 16, 149, 40, 5},  {&g_barJailPixels, 0, 0, 16, 149, 96, 5},
-                            {&g_barJailPixels, 0, 0, 16, 149, 152, 5}, {&g_barJailPixels, 0, 0, 16, 149, 208, 5},
-                            {&g_barJailPixels, 0, 0, 16, 149, 264, 5}, {&g_edgeBmpJail, 0, 0, 32, 149, 0, 5},
-                            {&g_edgeBmpJail, 32, 0, 32, 149, 288, 5}};
+struct JailOverlay g_jailBars[7] = {
+    {&g_barJailPixels, 0, 0, 16, 149, 40, 5},  {&g_barJailPixels, 0, 0, 16, 149, 96, 5},
+    {&g_barJailPixels, 0, 0, 16, 149, 152, 5}, {&g_barJailPixels, 0, 0, 16, 149, 208, 5},
+    {&g_barJailPixels, 0, 0, 16, 149, 264, 5}, {&g_edgeBmpJail, 0, 0, 32, 149, 0, 5},
+    {&g_edgeBmpJail, 32, 0, 32, 149, 288, 5}};
 struct Pair g_jailGaps[6] = {{32, 8}, {56, 40}, {112, 40}, {168, 40}, {224, 40}, {280, 8}};
 
 
@@ -1207,13 +1208,13 @@ void bo_jail(void)
     blt.dy = 190 - blt.h;
     (*g_videoOps.copy)(pict, r_vid.back, &blt, 1);
     for (i = 0; i < 7; i++) {
-        blt.w = g_jailBars[i].w;
-        blt.h = g_jailBars[i].h;
-        blt.sx = g_jailBars[i].sx;
-        blt.sy = g_jailBars[i].sy;
-        blt.dx = g_jailBars[i].x;
-        blt.dy = g_jailBars[i].y;
-        (*g_videoOps.copy)(*g_jailBars[i].src, r_vid.back, &blt, 1);
+        blt.w = g_jailBars[i].width;
+        blt.h = g_jailBars[i].height;
+        blt.sx = g_jailBars[i].sourceX;
+        blt.sy = g_jailBars[i].sourceY;
+        blt.dx = g_jailBars[i].screenX;
+        blt.dy = g_jailBars[i].screenY;
+        (*g_videoOps.copy)(*g_jailBars[i].bitmapSlot, r_vid.back, &blt, 1);
     }
     sc_status_text(-1, "", 0);
     sc_label(g_cashLabel);

@@ -580,7 +580,7 @@ static void near unscramble_hall(void)
 
 void di_load_hall(void)
 {
-    struct Entry *p;
+    struct HallEntry *p;
     int i;
     int got;
     int fd;
@@ -612,7 +612,7 @@ void di_load_hall(void)
 
 void di_save_hall(void)
 {
-    struct Entry *p;
+    struct HallEntry *p;
     int tries;
     int i;
     unsigned got;

@@ -644,8 +644,8 @@ void cp_patch_bg(struct Bitmap far *dst, int p1, int p2, int p3, int p4, int p5,
         r.sy = p7 - (BACKDROP_ROWS - 1);
         r.dy = 0;
         for (i9 = 0; i9 < 7; i9++) {
-            r.w = g_jailBars[i9].w;
-            r.sx = r.dx = g_jailBars[i9].x;
+            r.w = g_jailBars[i9].width;
+            r.sx = r.dx = g_jailBars[i9].screenX;
             (*g_videoOps.copy)(r_vid.front, g_backdrop, &r, 1);
         }
     }
