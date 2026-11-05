@@ -3018,3 +3018,26 @@ cached SEG words and the ES reload between them.
   itself is programmed for each note. The two voices share the speaker and
   external vibrato state. Evidence and out-of-scope names are in
   plans/investigations/Dev.md; no tooling or compiler-rule change was needed.
+## 2026-11-05 20:03 CET: Investigate the animation command record
+
+### What I did
+
+- Investigated struct Cmd and every member reader/writer, script initializer,
+  timer resume path and caller; recorded the evidence in
+  [plans/investigations/Cmd.md](investigations/Cmd.md) before renaming.
+- Renamed it to AnimCommand with opcode, mode, operand1 and operand2, and
+  documented its existing operation/mode enums and mutable script-header role.
+- Preserved the six-byte MSC layout (offsets 0,1,2,4). Headers, formatting,
+  documentation (zero diagnostics), all 572 functions, clean packed build,
+  DGROUP ownership/order and 106 unit tests pass. Native DOS MAKE also produces
+  the identical retail EXE. Nothing merged or pushed.
+
+### What I learned
+
+- Script headers reuse the first operand as an object-slot handle, regardless
+  of their opcode; start skips the header. Operands must remain general signed
+  integers because their meanings vary by instruction and header context.
+- The unused jump path changes the command pointer without synchronizing the
+  sequential counter used by zero-target waits. LOAD_IMAGE ignores its second
+  operand. Unrelated misleading bitmap-copy parameter names and clipping
+  commentary are recorded in the investigation note for their owners.

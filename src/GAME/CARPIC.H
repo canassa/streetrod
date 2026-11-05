@@ -29,7 +29,7 @@ extern int g_dashBuffered;
 extern int g_autoTrans;
 extern int g_wheelPicIds[3];
 extern int g_driveRebuild;
-extern struct Cmd g_animScripts[];
+extern struct AnimCommand g_animScripts[];
 extern int g_animScriptStart[];
 extern int g_carMoving;
 extern int g_backdropX;

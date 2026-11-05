@@ -166,12 +166,12 @@ void vi_anim_stop(int n)
 {
     struct Obj *o;
 
-    o = &g_scriptObjsData[g_animScripts[g_animScriptStart[n]].a];
+    o = &g_scriptObjsData[g_animScripts[g_animScriptStart[n]].operand1];
     if (o->img)
         o->img = 0;
     if (o->unused2)
         o->unused2 = 0;
-    g_animScripts[g_animScriptStart[n]].a = -1;
+    g_animScripts[g_animScriptStart[n]].operand1 = -1;
     o->id = -1;
     if (o->pendingTimers)
         sy_timer_cancel(n);
@@ -180,19 +180,19 @@ void vi_anim_stop(int n)
 
 static void near anim_set_box(void)
 {
-    switch (g_animRun.command->sub) {
+    switch (g_animRun.command->mode) {
     case BOX_KEEP:
         break;
     case BOX_SET_SOURCE:
-        g_animRun.box->sx = g_animRun.command->a;
-        g_animRun.box->sy = g_animRun.command->b;
+        g_animRun.box->sx = g_animRun.command->operand1;
+        g_animRun.box->sy = g_animRun.command->operand2;
         break;
     case BOX_SET_BOTH:
-        g_animRun.box->sx = g_animRun.command->a;
-        g_animRun.box->sy = g_animRun.command->b;
+        g_animRun.box->sx = g_animRun.command->operand1;
+        g_animRun.box->sy = g_animRun.command->operand2;
     case BOX_SET_DESTINATION:
-        g_animRun.box->dx = g_animRun.command->a;
-        g_animRun.box->dy = g_animRun.command->b;
+        g_animRun.box->dx = g_animRun.command->operand1;
+        g_animRun.box->dy = g_animRun.command->operand2;
         break;
     }
 }
@@ -213,7 +213,7 @@ static void near anim_run(int n)
     g_animRun.command = &g_animScripts[k = g_animRun.object->scriptIndex];
     g_animRun.box = &g_animRun.object->box;
     for (; k >= 0; k++) {
-        switch (g_animRun.command->op) {
+        switch (g_animRun.command->opcode) {
         case ANIM_NOP_1:
         case ANIM_NOP_3:
             break;
@@ -250,27 +250,27 @@ static void near anim_run(int n)
             cu_ctl(CURSOR_SHOW);
             return;
         case ANIM_JUMP:
-            g_animRun.command = &g_animScripts[g_animRun.command->a];
+            g_animRun.command = &g_animScripts[g_animRun.command->operand1];
             goto next;
         case ANIM_LOAD_IMAGE:
-            g_animRun.object->img = di_bm(g_animRun.command->a, ARENA_HIGH_STACK);
+            g_animRun.object->img = di_bm(g_animRun.command->operand1, ARENA_HIGH_STACK);
             g_animRun.command++;
             continue;
         case ANIM_SET_BOX:
             anim_set_box();
             break;
         case ANIM_SET_SIZE:
-            g_animRun.box->w = g_animRun.command->a;
-            g_animRun.box->h = g_animRun.command->b;
+            g_animRun.box->w = g_animRun.command->operand1;
+            g_animRun.box->h = g_animRun.command->operand2;
             break;
         case ANIM_WAIT:
-            if (!(g_animRun.object->scriptIndex = g_animRun.command->b))
+            if (!(g_animRun.object->scriptIndex = g_animRun.command->operand2))
                 g_animRun.object->scriptIndex = ++k;
-            sy_timer_anim(g_animRun.object->id, g_animRun.command->a);
+            sy_timer_anim(g_animRun.object->id, g_animRun.command->operand1);
             g_animRun.object->pendingTimers++;
             if (wait)
                 cu_ctl(CURSOR_SHOW);
-            if (g_animRun.command->sub == ANIM_WAIT_COPY_TO_FRONT && r_vid.copyToFront)
+            if (g_animRun.command->mode == ANIM_WAIT_COPY_TO_FRONT && r_vid.copyToFront)
                 bm_copy_box(r_vid.back, r_vid.front, g_animRun.box->dx, g_animRun.box->dy,
                             g_animRun.box->dx + g_animRun.box->w - 1, g_animRun.box->dy + g_animRun.box->h - 1);
             return;
@@ -295,7 +295,7 @@ int vi_anim_start(int n)
 
     for (i = 0; i < 5; i++) {
         if (g_scriptObjsData[i].id == -1) {
-            g_animScripts[g_animScriptStart[n]].a = i;
+            g_animScripts[g_animScriptStart[n]].operand1 = i;
             g_scriptObjsData[i].id = n;
             g_scriptObjsData[i].scriptIndex = g_animScriptStart[n] + 1;
             g_scriptObjsData[i].pendingTimers = 0;
@@ -311,7 +311,7 @@ void vi_anim_resume(int n)
 {
     int k;
 
-    k = g_animScripts[g_animScriptStart[n]].a;
+    k = g_animScripts[g_animScriptStart[n]].operand1;
     g_scriptObjsData[k].pendingTimers--;
     anim_run(k);
 }
@@ -319,18 +319,18 @@ void vi_anim_resume(int n)
 
 int vi_anim_active(int n)
 {
-    return g_animScripts[g_animScriptStart[n]].a >= 0;
+    return g_animScripts[g_animScriptStart[n]].operand1 >= 0;
 }
 
 
-int vi_anim_hook(struct Obj *o, struct Cmd *c)
+int vi_anim_hook(struct Obj *o, struct AnimCommand *c)
 {
     int old;
 
     switch (o->id) {
     case 2:
-        if (c->a) {
-            g_pumpBlinkCount = c->a;
+        if (c->operand1) {
+            g_pumpBlinkCount = c->operand1;
             so_pump(1);
             return 0;
         }
