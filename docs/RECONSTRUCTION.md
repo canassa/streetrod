@@ -596,3 +596,16 @@ not WORD inter-object alignment. The five HOTSPOT arrays are separate COMDEF
 allocations. All are category (c) for this audit; their exact historical grouping
 and meanings remain unproved. The per-candidate ledger distinguishes storage
 necessity from recovered variable identity.
+
+### Provisional automatic frames (2026-11-05)
+
+The four `long unused` slots above blit packets and vi_anim_hook's inner
+`struct Colors save` remain PROVISIONAL after 157 real-MSC compiler trials.
+A hypothetical 24-byte record with a Blt prefix, int[12], or Clip[2] reproduces
+all four blit frames, but no use supports the additional fields/elements.
+Changing an unused long to an unused far pointer or array also matches and
+recovers no meaning. Ordinary dead assignments retain code; a color
+save/restore fails, and even a constant-false Colors copy leaves SI/DI saves
+and restores. No tested natural, evidence-backed replacement was found.
+See [the investigation matrix](../plans/investigations/prov-frames.md) for
+source context, passing alternatives, rejected hypotheses and final gates.
