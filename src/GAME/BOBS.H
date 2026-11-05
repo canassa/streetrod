@@ -88,7 +88,7 @@ enum WagerAmount {
 
 #include "CURSOR.H"
 struct Bitmap;
-struct Spec;
+struct CarSpec;
 
 /**
  * @brief A rival driver's behavior, assigned car and encounter history.
@@ -188,7 +188,7 @@ extern struct Bitmap far *g_barJailPixels;
 extern int g_opponentSpecIndex;
 extern int g_resultWin;
 extern int g_isKingState;
-extern struct Spec *g_oppSpecPointer;
+extern struct CarSpec *g_oppSpecPointer;
 extern struct Racer *g_selectedRacerPointer;
 extern int g_driverIdxSelVal;
 extern int g_rivalHereState;

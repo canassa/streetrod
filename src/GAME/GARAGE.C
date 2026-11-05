@@ -839,7 +839,7 @@ void near ga_transmission(void)
                     break;
                 prev = g_carDraw.transmissionPic;
                 g_carDraw.transmissionPic = g_transPics[g_parts[tbl[k]->idx].variant];
-                if (g_carData[owner->specIndex].parts & g_parts[tbl[k]->idx].fitMask & 0xf) {
+                if (g_carData[owner->specIndex].stockParts & g_parts[tbl[k]->idx].fitMask & SPEC_FIT_MASK) {
                     ga_install(ga_unlink(tbl[k]), &owner->transmission);
                     cu_ctl(CURSOR_HIDE_NOW);
                     so_part_move(1);
@@ -1124,7 +1124,7 @@ void near ga_hood(struct Car *car)
             default:
                 goto again;
             case 0:
-                ok = g_parts[list4[key]->idx].fitMask & g_carData[car->specIndex].parts & 0xf;
+                ok = g_parts[list4[key]->idx].fitMask & g_carData[car->specIndex].stockParts & SPEC_FIT_MASK;
                 g_slotSelec.slot = 0;
                 step = 0;
                 car->wireState = WIRES_DISCONNECTED;
@@ -1132,7 +1132,8 @@ void near ga_hood(struct Car *car)
                 g_gameClock.actionTicks += ok ? TIME_ENGINE_CHANGE : TIME_ENGINE_MISFIT;
                 break;
             case 1:
-                ok = (g_parts[k = list4[key]->idx].fitMask & g_carData[car->specIndex].parts & 0xf) != 0 &&
+                ok = (g_parts[k = list4[key]->idx].fitMask & g_carData[car->specIndex].stockParts & SPEC_FIT_MASK) !=
+                         0 &&
                      g_manifoldFit[g_parts[car->rack.parts[0]->idx].variant][tmp29 = g_parts[k].variant] != 0;
                 g_slotSelec.slot = 1;
                 step = 1;
@@ -1144,7 +1145,8 @@ void near ga_hood(struct Car *car)
             case 2:
             case 3:
             case 4:
-                ok = (g_parts[k = list4[key]->idx].fitMask & g_carData[car->specIndex].parts & 0xf) != 0 &&
+                ok = (g_parts[k = list4[key]->idx].fitMask & g_carData[car->specIndex].stockParts & SPEC_FIT_MASK) !=
+                         0 &&
                      g_carbFit[tmp29 = g_parts[car->rack.parts[1]->idx].variant][g_parts[k].variant] != 0;
                 g_gameClock.actionTicks += ok ? (unsigned)TIME_CARB_CHANGE : (unsigned)TIME_CARB_MISFIT;
                 step = 3;

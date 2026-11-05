@@ -45,7 +45,7 @@ static struct PicLibSelection g_picLib;
 static char g_dataPath[16];
 
 struct Model g_models[26];
-struct Spec g_carData[26];
+struct CarSpec g_carData[26];
 struct Panel g_bodyRects[26];
 struct Spr12 g_layoutAutoSprArray[26];
 struct Pos6 g_imageDecalLayout[8];

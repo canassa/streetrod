@@ -16,3 +16,8 @@ PIC_TRANS_THREE_SPEED                      EQU 1100
 PIC_TRANS_FOUR_SPEED                       EQU 1101
 PIC_TRANS_RACING                           EQU 1102
 PIC_MANIFOLD_RACING                        EQU 1104
+
+PART_FIT_GM                              EQU 1
+PART_FIT_FORD                            EQU 2
+PART_FIT_CHRYSLER                        EQU 4
+PART_FIT_ALL                             EQU 7

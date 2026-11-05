@@ -329,20 +329,21 @@ struct Car *near gm_make_car(int idx, int value, struct Car *old)
     car->wireState = WIRES_CONNECTED;
     car->timing = rn_int(TIMING_SETTING_COUNT) + TIMING_MIN;
     car->transmission = node = (old == 0) ? gm_new_part() : car->transmission;
-    w = (g_carData[idx].parts >> 6) & 3;
-    w = (kind = (g_carData[idx].parts & 0xf) >> 1) + (w == 3) + 3 * w + PART_TRANSMISSION_FIRST;
+    w = (g_carData[idx].stockParts >> SPEC_TRANS_SHIFT) & SPEC_TRANS_MASK;
+    w = (kind = (g_carData[idx].stockParts & SPEC_FIT_MASK) >> 1) + (w == TRANS_RACING) + 3 * w +
+        PART_TRANSMISSION_FIRST;
     node->idx = w;
     node->value = g_parts[w].value;
     node->wear = g_partWear[PART_TRANSMISSION];
     node->next = 0;
     car->rack.parts[0] = node = (old == 0) ? gm_new_part() : car->rack.parts[0];
-    w = (g_carData[idx].parts >> 8 & 7) * 3 + kind;
+    w = (g_carData[idx].stockParts >> SPEC_ENGINE_SHIFT & SPEC_ENGINE_MASK) * 3 + kind;
     node->idx = w;
     node->value = g_parts[w].value;
     node->wear = g_partWear[PART_ENGINE];
     node->next = 0;
     car->tires = node = (old == 0) ? gm_new_part() : car->tires;
-    w = (g_carData[idx].parts >> 4 & 3) + PART_TIRES_FIRST;
+    w = (g_carData[idx].stockParts >> SPEC_TIRES_SHIFT & SPEC_TIRES_MASK) + PART_TIRES_FIRST;
     node->idx = w;
     node->value = g_parts[w].value;
     node->wear = g_partWear[PART_TIRES];
@@ -350,12 +351,12 @@ struct Car *near gm_make_car(int idx, int value, struct Car *old)
     car->rack.parts[1] = node = (old == 0) ? gm_new_part() : car->rack.parts[1];
     for (i = 3; i < ENGINE_BOLT_COUNT; i++)
         car->engineBolts[i] = BOLT_ABSENT;
-    w = (i = g_carData[idx].parts >> 11 & 7) * 3 + kind + PART_MANIFOLD_FIRST;
+    w = (i = g_carData[idx].stockParts >> SPEC_MANIFOLD_SHIFT & SPEC_MANIFOLD_MASK) * 3 + kind + PART_MANIFOLD_FIRST;
     node->idx = w;
     node->value = g_parts[w].value;
     node->wear = g_partWear[PART_MANIFOLD];
     node->next = 0;
-    w = (g_carData[idx].parts >> 14 & 3) + PART_CARBURETOR_FIRST;
+    w = (g_carData[idx].stockParts >> SPEC_CARB_SHIFT & SPEC_CARB_MASK) + PART_CARBURETOR_FIRST;
     i = g_nCarb[i] - 1;
     for (j = 2; j > i; j--)
         car->rack.parts[j + 2] = 0;
@@ -435,7 +436,7 @@ static void near buy_from_ads(int tab)
     int x1;
     int y;
     int price6;
-    struct Spec *specn;
+    struct CarSpec *specn;
     int n0;
     int ck;
     int i5;
@@ -448,7 +449,7 @@ static void near buy_from_ads(int tab)
     g_list[1] = DESC_USED_CARS_HEADING;
     n = 2;
     i5 = price6 = 0;
-    for (k3 = g_usedCarAdFirst; k3 >= 0; k3 = g_carData[k3].next) {
+    for (k3 = g_usedCarAdFirst; k3 >= 0; k3 = g_carData[k3].nextAd) {
         g_list[n++] = g_carData[k3].nameOffset;
         list4[i5++] = k3;
     }
@@ -472,7 +473,7 @@ static void near buy_from_ads(int tab)
             g_hotBuy[0].kind = HOT_DISABLED;
         } else {
             k3 = (specn = &g_carData[i5 = list4[n - 2]])->nameOffset;
-            price6 = specn->price;
+            price6 = specn->basePrice;
             g_hotBuy[0].kind = HOT_BUTTON;
         }
         strcpy(g_offerName, g_desc + k3);
@@ -529,8 +530,10 @@ static void near buy_from_ads(int tab)
                 ga_palette(color);
             }
             x1 = ((unsigned)specn - (unsigned)g_carData) / 10;
-            y = (((specn->parts >> 8) & 7) == ENGINE_V8_LARGE) ? BODY_LARGE_ENGINE : 0;
-            cp_show_car(CAR_SHOW_SCREEN, x1, y, 0, 0, 0x86, 0, g_tirePics[(specn->parts >> 4) & 3]);
+            y = (((specn->stockParts >> SPEC_ENGINE_SHIFT) & SPEC_ENGINE_MASK) == ENGINE_V8_LARGE) ? BODY_LARGE_ENGINE
+                                                                                                   : 0;
+            cp_show_car(CAR_SHOW_SCREEN, x1, y, 0, 0, 0x86, 0,
+                        g_tirePics[(specn->stockParts >> SPEC_TIRES_SHIFT) & SPEC_TIRES_MASK]);
             sc_text((SCREEN_WIDTH - da_text_width(g_offerName)) / 2, 0x88, g_offerName);
             cu_ctl(CURSOR_SHOW_NOW);
             g_input.any = 1;

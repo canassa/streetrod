@@ -50,6 +50,10 @@ description: Change or extend the ./sr CLI (tools/sr/) for the Street Rod projec
 
 ## Known limitations (fix when they bite)
 
+- `sr rename` accepts function/global/far-data names, not struct tags or members.
+  Edit type tags and member accesses directly after mapping their users, then run
+  the headers, layout, function and packed-build gates.
+
 - `sr scan` reaches functions through calls, far-pointer tables and prologue patterns. Functions only reached by computed jumps can be missed or split into fragments (a few `kind=c` rows without a prologue are fragments of bigger functions).
 - `sr check` compares a procedure by name against the extent in `tools/sr/symbols.json`. A function with a jump table after its code may have its extent end early.
 - A near call to a function of another object can't be verified from one object (`MATCH*`, 21 functions); `./sr build` verifies all 748 near-call encodings.

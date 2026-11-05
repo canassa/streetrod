@@ -94,7 +94,7 @@ void near pf_drivetrain_spec(int n, struct Eng *e)
     struct Car car;
     struct Node nd[5];
     struct Node na, lo;
-    struct Spec *s;
+    struct CarSpec *s;
     int t, i, j;
 
     car.timing = 0;
@@ -103,17 +103,17 @@ void near pf_drivetrain_spec(int n, struct Eng *e)
     car.tires = &lo;
     s = &g_carData[n];
     car.rack.parts[3] = car.rack.parts[4] = 0;
-    t = ((s->parts >> 14) & 3) + PART_CARBURETOR_FIRST;
-    for (i = g_nCarb[(s->parts >> 11) & 7] + 1; i >= 0; i--) {
+    t = ((s->stockParts >> SPEC_CARB_SHIFT) & SPEC_CARB_MASK) + PART_CARBURETOR_FIRST;
+    for (i = g_nCarb[(s->stockParts >> SPEC_MANIFOLD_SHIFT) & SPEC_MANIFOLD_MASK] + 1; i >= 0; i--) {
         car.rack.parts[i] = &nd[i];
         nd[i].wear = g_partWear[PART_CARBURETOR];
         nd[i].idx = t;
     }
-    i = (s->parts >> 6) & 3;
-    na.idx = (t = (s->parts & 0xf) >> 1) + (i == 3) + i * 3 + PART_TRANSMISSION_FIRST;
-    lo.idx = ((s->parts >> 4) & 3) + PART_TIRES_FIRST;
-    nd[0].idx = ((s->parts >> 8) & 7) * 3 + t;
-    nd[1].idx = (j = (s->parts >> 11) & 7) * 3 + t + PART_MANIFOLD_FIRST;
+    i = (s->stockParts >> SPEC_TRANS_SHIFT) & SPEC_TRANS_MASK;
+    na.idx = (t = (s->stockParts & SPEC_FIT_MASK) >> 1) + (i == TRANS_RACING) + i * 3 + PART_TRANSMISSION_FIRST;
+    lo.idx = ((s->stockParts >> SPEC_TIRES_SHIFT) & SPEC_TIRES_MASK) + PART_TIRES_FIRST;
+    nd[0].idx = ((s->stockParts >> SPEC_ENGINE_SHIFT) & SPEC_ENGINE_MASK) * 3 + t;
+    nd[1].idx = (j = (s->stockParts >> SPEC_MANIFOLD_SHIFT) & SPEC_MANIFOLD_MASK) * 3 + t + PART_MANIFOLD_FIRST;
     pf_drivetrain(&car, e);
 }
 
@@ -123,7 +123,7 @@ void near pf_drivetrain_spec(int n, struct Eng *e)
 int near pf_vmax(int n)
 {
     double w9, vl;
-    struct Spec *s;
+    struct CarSpec *s;
     int a3, t, d, c3;
     struct Car *p6;
     int e1;
@@ -147,17 +147,17 @@ int near pf_vmax(int n)
         car.tires = &lon;
         s = &g_carData[n];
         car.rack.parts[3] = car.rack.parts[4] = 0;
-        t = ((s->parts >> 14) & 3) + PART_CARBURETOR_FIRST;
-        for (i = g_nCarb[(s->parts >> 11) & 7] + 1; i >= 0; i--) {
+        t = ((s->stockParts >> SPEC_CARB_SHIFT) & SPEC_CARB_MASK) + PART_CARBURETOR_FIRST;
+        for (i = g_nCarb[(s->stockParts >> SPEC_MANIFOLD_SHIFT) & SPEC_MANIFOLD_MASK] + 1; i >= 0; i--) {
             car.rack.parts[i] = &ndm[i];
             ndm[i].wear = g_partWear[PART_CARBURETOR];
             ndm[i].idx = t;
         }
-        i = (s->parts >> 6) & 3;
-        na.idx = (t = (s->parts & 0xf) >> 1) + (i == 3) + i * 3 + PART_TRANSMISSION_FIRST;
-        lon.idx = ((s->parts >> 4) & 3) + PART_TIRES_FIRST;
-        ndm[0].idx = ((s->parts >> 8) & 7) * 3 + t;
-        ndm[1].idx = (j = (s->parts >> 11) & 7) * 3 + t + PART_MANIFOLD_FIRST;
+        i = (s->stockParts >> SPEC_TRANS_SHIFT) & SPEC_TRANS_MASK;
+        na.idx = (t = (s->stockParts & SPEC_FIT_MASK) >> 1) + (i == TRANS_RACING) + i * 3 + PART_TRANSMISSION_FIRST;
+        lon.idx = ((s->stockParts >> SPEC_TIRES_SHIFT) & SPEC_TIRES_MASK) + PART_TIRES_FIRST;
+        ndm[0].idx = ((s->stockParts >> SPEC_ENGINE_SHIFT) & SPEC_ENGINE_MASK) * 3 + t;
+        ndm[1].idx = (j = (s->stockParts >> SPEC_MANIFOLD_SHIFT) & SPEC_MANIFOLD_MASK) * 3 + t + PART_MANIFOLD_FIRST;
         p6 = &car;
     }
     qn = p6->rack.parts;

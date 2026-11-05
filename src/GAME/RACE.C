@@ -693,7 +693,7 @@ enum RaceExit near ra_outcome(void)
                                                     : MSG_YOU_RAN_A_GOOD_RACE);
         sc_add_money(v);
         if (kind == BET_CAR) {
-            found = gm_make_car(g_opponentSpecIndex, g_oppSpecPointer->price, 0);
+            found = gm_make_car(g_opponentSpecIndex, g_oppSpecPointer->basePrice, 0);
             found->tires->wear = rn_int(WON_TIRE_WEAR_RANGE);
             found->appearance = ((g_selectedRacerPointer->sticker & STICKER_INDEX_MASK) << 8) |
                                 (found->appearance & APPEARANCE_NO_STICKER);

@@ -139,7 +139,7 @@ struct Car {
 struct Item {
     int value;
     char variant;
-    char fitMask;
+    char fitMask; /**< Manufacturer compatibility; @ref PartFit. */
     char category;
     char unused;
     int nameOffset;

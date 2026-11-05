@@ -107,7 +107,7 @@ static int near maybe_carhop(enum CarhopMode mode, int arg, int pct1, int pct2)
 }
 
 struct Racer g_racerRecordsArray[NUM_RACERS];
-struct Spec *g_oppSpecPointer;
+struct CarSpec *g_oppSpecPointer;
 struct Racer *g_selectedRacerPointer;
 int g_rivalHereState;
 
@@ -273,7 +273,7 @@ static int near king_chance(void)
 static void near build_rival_pool(int flag)
 {
     int result;
-    struct Spec *item;
+    struct CarSpec *item;
     struct Cand map[RACER_KING];
     int m, found, k, low;
 
@@ -362,7 +362,7 @@ static void near select_rival(int n)
     } else
         g_isKingState = 1;
     g_carDraw.bodyPic = g_oppSpecPointer->bodyPic;
-    g_carDraw.tireVariant = (g_oppSpecPointer->parts >> 4) & 3;
+    g_carDraw.tireVariant = (g_oppSpecPointer->stockParts >> SPEC_TIRES_SHIFT) & SPEC_TIRES_MASK;
     g_carDraw.paintScheme = g_selectedRacerPointer->paintScheme;
     ga_palette(g_carDraw.paintScheme);
     g_carDraw.overlayPic = g_selectedRacerPointer->portraitPic;
@@ -464,7 +464,7 @@ calc:
     chm = g_selectedRacerPointer->stakeToleranceRow;
     p18 = spec_class(g_opponentSpecIndex);
     p27 = spec_class(g_driver.currentCar->specIndex);
-    clsl = (g_oppSpecPointer->parts >> 8) & 7;
+    clsl = (g_oppSpecPointer->stockParts >> SPEC_ENGINE_SHIFT) & SPEC_ENGINE_MASK;
     item1 = g_parts[g_driver.currentCar->rack.parts[0]->idx].variant;
     v11 = g_rivalStakeToleranceTable[chm][row];
     v2 = g_carRatingsTable[p18][clsl];

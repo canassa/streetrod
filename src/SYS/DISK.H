@@ -1,4 +1,7 @@
-/* DISK.H - declarations of what DISK.C defines. */
+/**
+ * @file DISK.H
+ * @brief Game data and picture-library access.
+ */
 
 #ifndef DISK_H
 #define DISK_H
@@ -289,13 +292,50 @@ enum PictureId {
 
 struct Bitmap;
 
-struct Spec {
-    int price;
-    unsigned char rank;
-    signed char next;
-    unsigned parts;
-    int nameOffset;
-    enum PictureId bodyPic;
+/** @brief Manufacturer compatibility bits for cars and catalog parts. */
+enum PartFit {
+    PART_FIT_GM = 1,       /**< General Motors. */
+    PART_FIT_FORD = 2,     /**< Ford and Mercury. */
+    PART_FIT_CHRYSLER = 4, /**< Chrysler, Dodge, Plymouth and Valiant. */
+    PART_FIT_ALL = 7       /**< Fits all three manufacturers. */
+};
+
+/** Manufacturer compatibility bits in the stock equipment word. */
+#define SPEC_FIT_MASK 0x000f
+/** Tire variant position in the stock equipment word. */
+#define SPEC_TIRES_SHIFT 4
+/** Tire variant mask after shifting. */
+#define SPEC_TIRES_MASK 3
+/** Transmission variant position in the stock equipment word. */
+#define SPEC_TRANS_SHIFT 6
+/** Transmission variant mask after shifting. */
+#define SPEC_TRANS_MASK 3
+/** Engine variant position in the stock equipment word. */
+#define SPEC_ENGINE_SHIFT 8
+/** Engine variant mask after shifting. */
+#define SPEC_ENGINE_MASK 7
+/** Manifold variant position in the stock equipment word. */
+#define SPEC_MANIFOLD_SHIFT 11
+/** Manifold variant mask after shifting. */
+#define SPEC_MANIFOLD_MASK 7
+/** Carburetor variant position in the stock equipment word. */
+#define SPEC_CARB_SHIFT 14
+/** Carburetor variant mask after shifting. */
+#define SPEC_CARB_MASK 3
+
+/**
+ * @brief A car model's price, performance rank and stock equipment.
+ *
+ * Ten-byte records loaded from the game data file; the last is the King's car.
+ */
+struct CarSpec {
+    int basePrice;      /**< Purchase price and won-car value, in dollars. */
+    unsigned char rank; /**< Model performance rank, 0..8; higher is better. */
+    signed char nextAd; /**< Next model index in the classifieds; negative ends. */
+    /** Packed stock variants and @ref PartFit bits; see @ref SPEC_FIT_MASK. */
+    unsigned stockParts;
+    int nameOffset;         /**< Model-name byte offset in description text. */
+    enum PictureId bodyPic; /**< Base car-body picture. */
 };
 
 /* one car model (10 bytes, g_models[], indexed by Car.specIndex): kind picks its sprites (vw_load); roofPic, frontBumperPic, rearBumperPic
@@ -350,7 +390,7 @@ extern struct Spr12 g_layoutAutoSprArray[];
 extern struct Pos6 g_imageDecalLayout[];
 extern int g_usedCarAdFirst;
 extern unsigned g_carRatingsTable[][3];
-extern struct Spec g_carData[];
+extern struct CarSpec g_carData[];
 extern struct Spr6 g_pointsModelService[];
 extern unsigned g_rivalStakeToleranceTable[][3];
 extern int g_lib1Count;

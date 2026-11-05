@@ -2662,3 +2662,30 @@ The conflicting lines contain independent substitutions: keep named appearance m
 - Naming initialized table dimensions exposed cdata's literal-only bounds:
   the reader now resolves enum members and rejects unsupported/unknown/cyclic
   expressions. See the sr-cli skill's enum-array-bound lesson.
+
+## 2026-11-05 16:41 CET: Investigate the car specification record
+
+### What I did
+
+- Traced every field of the ten-byte car specification through HOT_DATA loading,
+  classifieds, stock-car construction, performance, rival selection, part fitting
+  and rendering. Recorded the resource table and evidence in
+  [the investigation](investigations/Spec.md).
+- Renamed the type to CarSpec and its ambiguous price/next/parts members to
+  basePrice/nextAd/stockParts. Documented the record, named packed equipment
+  masks/shifts and manufacturer compatibility, and updated every affected use,
+  including all 43 live catalog fit-byte initializers.
+- Passed headers, formatting, zero-diagnostic Doxygen, 572/572 function matches,
+  96/96 object gates, a clean byte-identical packed build, DGROUP checks,
+  106 unit tests, 711 compiler layout checks, and a byte-identical DOS-native build.
+
+### What I learned
+
+- The stock equipment word combines manufacturer fit bits with five equipment
+  variants; rank is an independent numeric model scale. See the investigation
+  for the complete layout, immutable resource lifecycle and ad chain.
+- The police specification constant identifies the King's car, and the two
+  manifold names appear reversed against catalog descriptions; both are recorded
+  for separate investigation without renaming them here.
+- The rename CLI does not accept type tags or members. Documented the direct-edit
+  workflow and its gates in the sr-cli skill's known limitations.
