@@ -7,7 +7,6 @@
 #define CARPIC_H
 
 #include "BITMAP.H"
-#include "DASH.H"
 #include "GAME.H"
 #include "STRUCTS.H"
 
@@ -42,7 +41,7 @@ enum CarAnimKind {
 extern int g_delayScale;
 extern int g_dashBuffered;
 extern int g_autoTrans;
-extern int g_wheelPicIds[WHEEL_POSE_COUNT];
+extern int g_wheelPicIds[];
 extern int g_driveRebuild;
 extern struct AnimCommand g_animScripts[];
 extern int g_animScriptStart[];

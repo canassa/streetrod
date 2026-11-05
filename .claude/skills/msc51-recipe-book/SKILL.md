@@ -456,3 +456,14 @@ int declaration changed nineteen stack-offset bytes, despite the same names,
 sizes and function length. Split the int declaration at the original local:
 `int *pc1, *c1, curl; enum StyleIndex idx2; int n9, ww9, wy7, wx8;`.
 This preserves insertion order and all bytes. See plans/investigations/misleading-names.md.
+
+### Header nesting after parallel type work (2026-11-05)
+
+MSC reported C1015 for an existing BITMAP.H through the combined chain SYS.C →
+SYS.H → ROAD.H → CARPIC.H → DASH.H → CURSOR.H → RACE.H → DISK.H → MAIN.H →
+VIDEO.H → BITMAP.H. An include guard still requires opening the file. The extra
+CARPIC.H → DASH.H dependency existed only to put WHEEL_POSE_COUNT on an extern
+array declaration; no caller needed sizeof that declaration. Leaving the extern
+unsized while retaining the named bound on the definition removed that dependency
+and restored all SYS.C matches. Inspect nesting before treating this diagnostic
+as a missing staged file; rerun the full function, packed and native build gates.

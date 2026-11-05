@@ -343,16 +343,36 @@ and Doxygen were rerun. Full gates will run again after the required main merge.
 
 ### Integration and final gates
 
-Initially fetched main and ran git merge origin/main against 3848b38;
-Git reported already up to date, with no conflicts. Reran all gates after that
-merge step: headers and format pass; Doxygen has zero diagnostics; all 572
-functions match; the clean packed build and DOS-native MAKE are IDENTICAL;
-DGROUP ownership and order pass; all 109 unit tests pass. Repeated the 76-value
-MSC layout audit with identical results. Generated Doxygen XML confirms docs for
-all 70 members across all eleven target structs.
+Initially fetched main and ran git merge origin/main against 3848b38; Git
+reported already up to date. While the gates ran, main advanced with disk/Bob's
+(883a1ec), video (c626883), and road/system (c64bd6d) investigations. Merged each
+advance and preserved all investigation notes and diary additions. Reconciled
+TireWork member names with the video xByteMask rename, combined DriverState
+member documentation with the PartNode/CarPoolNode types, and regenerated all
+MAKEFILE dependencies. No conflict required a game-behaviour change.
 
-The uncompressed-link diagnostic reports relocation/header differences from the
-unpacked reference, while all 572 function bytes/positions and all 748 near calls
-are exact. Both packed-build paths reproduce the actual retail executable byte
-for byte, including its relocation representation. No game-behaviour or layout
-change was needed, and the out-of-scope observations above remain reports only.
+The final combined tree exposed a header-depth failure: SYS.C → SYS.H → ROAD.H →
+CARPIC.H → DASH.H → CURSOR.H → RACE.H → DISK.H → MAIN.H → VIDEO.H → BITMAP.H.
+MSC reported C1015 opening the existing final header. CARPIC.H only needed DASH.H
+for the wheel-picture extern array bound. No caller takes sizeof that declaration;
+leaving it unsized removes the dependency while the definition still uses
+WHEEL_POSE_COUNT. SYS.C then matched again. Recorded this compiler lesson in the
+MSC recipe book. The video merge also independently resolved the original Mask
+naming observation above by naming its view EgaSpriteBand.
+
+Reran every gate on the combined tree after that fix:
+
+- Headers and formatting pass; Doxygen reports zero diagnostics.
+- All 572 functions match (551 MATCH, 21 MATCH*), all 96 objects pass, and all
+  748 linked near-call encodings are exact.
+- A clean work/layout build and DOS-native MAKE both reproduce orig/SR.EXE
+  byte for byte: SHA-1 3a5e28b795313028b7e77d147122f41cb29de334.
+- DGROUP ownership/order pass; all 109 unit tests pass.
+- The repeated real-MSC audit preserves all 76 size/offset values; generated
+  Doxygen XML confirms documentation for all 70 members in the eleven types.
+
+The uncompressed-link diagnostic retains the known relocation/header and tail
+representation differences from the unpacked reference. All 572 function bytes
+and positions and all 748 near calls are exact; both packed-build paths reproduce
+the retail executable, including its relocation representation. The out-of-scope
+observations remain reports, except those independently resolved by peer work.

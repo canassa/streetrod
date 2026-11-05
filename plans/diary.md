@@ -3562,3 +3562,24 @@ of the five installed rack slots. Node2 is the free-list view of forty-byte Car
 storage; save loading reconstructs links from serialized presence/end markers.
 CarDisplay also caches raw wager input, including cancellation, rather than a
 BetKind. TireWork reuses its phase word for pixel alignment and frame selection.
+
+## 2026-11-05 21:51 CET: Verify the combined st-cars integrations
+
+### What I did
+
+Merged origin/main through c64bd6d, including all five peer investigation branches.
+Preserved every diary entry, reconciled the tire/video member renames and the
+DriverState pool types, and regenerated dependencies. Removed an unnecessary
+CARPIC.H dashboard dependency by keeping the wheel-picture extern unsized while
+retaining WHEEL_POSE_COUNT on its definition. Reran every gate after the fix:
+572/572 functions, clean packed and native builds IDENTICAL, DGROUP checks,
+zero Doxygen diagnostics, all 109 tests and all 76 target layout checks pass.
+Verified all seventy target members appear documented in Doxygen XML.
+
+### What I learned
+
+The combined eleven-file include chain failed with MSC C1015 on an existing
+header. A count on a definition need not force the same dependency onto an extern
+array declaration when no consumer uses its compile-time size. Recorded the
+measured chain and fix in the MSC recipe book. The video investigation reached
+the same conclusion about the former Mask view and renamed it EgaSpriteBand.
