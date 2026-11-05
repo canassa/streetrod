@@ -2927,3 +2927,15 @@ The conflicting lines contain independent substitutions: keep named appearance m
   deadline before an outer check. Further bounded edges include cached
   performance, mixed carb scoring, police suppression/pointer mismatch,
   signed-byte rival history and unchecked save/hall data.
+
+## 2026-11-05: Negative-value sale confirmed in play
+
+### What I did
+
+- Marked the top exploit in plans/investigations/exploits.md as confirmed: the user played the
+  recipe in the real game (cracked freeware EXE under DOSBox Staging) and it worked.
+
+### What I learned
+
+- Static reading plus simulated arithmetic predicted a real game behaviour correctly: unsigned
+  comparisons in your_cars, a signed sc_add_money, and no zero floor in remove_part.
