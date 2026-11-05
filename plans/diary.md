@@ -2604,3 +2604,20 @@ The conflicting lines contain independent substitutions: keep named appearance m
   specification. The King's encounter status describes eligibility as well as
   contact. These behavioral findings belong in the investigation note; no
   compiler/tooling rule or skill changed.
+
+## 2026-11-05: investigate-function covers types; reuse existing constants
+
+### What I did
+
+- Added a "reuse before you create" rule to the investigate-function skill: search headers and
+  .INC files for an existing enum/#define with the meaning before adding one; docs refer to
+  existing constants with @ref and never restate values or bits.
+- Added a section on investigating a type: member readers/writers instead of callers, a
+  per-member note, layout fixed by the bytes, char members keep their size and @ref the enum,
+  bit flags @ref their constants, terse member docs.
+- Racer.bodyMods' doc now refers to @ref BodyMod instead of listing the bits.
+
+### What I learned
+
+- The Racer benchmark worked from the function-oriented skill, but repeated BodyMod's bits
+  in prose; the type section makes that rule explicit.

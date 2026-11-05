@@ -45,6 +45,10 @@ The target function is given in your task.
 5. Only then make the changes, within this scope:
    - Change names, types-for-meaning (enums, BOOL) and docs only; never change code style.
      Match the surrounding code (e.g. write 0, not NULL; no new includes for style).
+   - **Reuse before you create.** Before adding any enum, enumerator, `#define` or constant,
+     search the headers and .INC files for an existing one with that meaning (`git grep` the
+     value and likely names). Use it, or extend the existing enum, instead of a near-duplicate.
+     Docs refer to existing constants with `@ref`; they never restate their values or bits.
    - Booleanish int values must be BOOL. Their 0/1 assignments, returns and comparisons
      use TRUE/FALSE. Truth tests stay `if (x)` / `if (!x)`; never compare to TRUE,
      since any nonzero value is true. Char flags stay char to preserve layout.
@@ -70,6 +74,23 @@ The target function is given in your task.
      No decompilation talk (addresses, MSC, budget). That belongs in docs/RECONSTRUCTION.md if
      anywhere.
    - Out of scope: renaming other symbols. Report them in the note instead.
+
+### Investigating a type (struct, union, enum) instead of a function
+
+The same mindset and order apply; these replace the function-specific steps:
+- **Context:** for each member, every reader and writer across the tree (not callers), the data
+  that initialises or loads it (`./sr data`, the loaders, save/load code), and the values it
+  actually takes.
+- **The note** (plans/investigations/<Type>.md): the type's purpose; where its storage lives
+  and how it is loaded/saved; per member, its role, value set and evidence.
+- **Layout is fixed by the bytes:** member names are free, but never change a member's size,
+  signedness, order or the struct's total size. `unused`/`unusedN` spare members stay. Char
+  flags stay char (they can't become BOOL); int flags become BOOL.
+- **Members with a value set:** type them as the existing enum when the member's size allows it
+  (an enum is int-sized; a char member stays char and its doc refers to the enum with `@ref`).
+  Bit-flag members refer to their flag constants (`@ref BODY_ROOF`, …), never list the bits.
+- **Docs:** a struct `@brief` plus at most a short paragraph; one short line per member
+  (`/**< ... */` trailing, or a preceding `/** */` line when it doesn't fit).
 6. Gates (all must pass):
    - `./sr headers --check`, `./sr format --check`, `./sr docs` (0 diagnostics);
    - `./sr check --all` (572/572);

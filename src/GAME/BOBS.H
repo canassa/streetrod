@@ -110,11 +110,10 @@ struct Racer {
     char status;             /**< Availability byte; @ref RacerStatus. */
     signed char betRaces;    /**< Wagered races; reset with a new car. */
     char rivalBetWins;       /**< Rival wins in counted wagered races. */
-    /** Overlays: bit 0 rear bumper, 1 front bumper, 2 roof, 3 big engine. */
-    char bodyMods;
-    signed char sticker; /**< Sticker choice 1..8, or 0 for none. */
-    char lostCarOnce;    /**< Nonzero after receiving a replacement car. */
-    char unused2;        /**< Unused byte preserved by load/save. */
+    char bodyMods;           /**< Body overlay bits, @ref BodyMod. */
+    signed char sticker;     /**< Sticker choice 1..8, or 0 for none. */
+    char lostCarOnce;        /**< Nonzero after receiving a replacement car. */
+    char unused2;            /**< Unused byte preserved by load/save. */
 };
 
 struct Btn {
