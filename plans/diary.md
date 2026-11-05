@@ -3339,3 +3339,34 @@ Main's hotspot consolidation and the named drawing schemes compose directly:
 only each record's style word changes spelling; its screen indexes, links,
 coordinates and values remain intact. Existing investigation and compiler
 lessons from both branches remain in the recipe book and investigation notes.
+## 2026-11-05 20:47 CET: Street Rod curiosities and unused-content survey
+
+### What I did
+
+- Read every C/ASM source under src/ (59 C, 37 ASM), the text/data tables and
+  shipped HOT_DATA/HALL_DAT; listed and visually reviewed all 277 picture IDs,
+  enlarging unusual art and decoding police picture 1245 in EGA and CGA.
+- Added [curiosities.md](investigations/curiosities.md), with source-line and
+  resource evidence, routes for seeing reachable details, and explicit limits
+  on static predictions. Compared findings against the existing investigations
+  instead of repeating their exploit/build/record-layout results.
+- Passed ./sr check --all: 572/572 match (551 MATCH, 21 MATCH*). Checked cited
+  paths/line bounds and documentation-only scope. Did not run the game, modify
+  sources, commit PNGs, merge or push.
+
+### What I learned
+
+- Picture 1245 is unused police passing art: the chase inherits the opponent's
+  closest passing frame. The report traces the actual assignment and loads.
+- Startup auto and demo share driving assistance, while demo also stages menu
+  input and game state. Values 0x62/0x63 belong to demo shutdown; the 0x7f exit
+  test does not establish a working physical Delete shortcut.
+- Tandy omits the largest ending-lips frame. The copy-protection jukebox's
+  palette cycling depends on music and speaker state.
+- Bob's/jail code has a 30-entry animation read with a 31-entry bound and a
+  12-slot rival pool that jail can fill past its capacity. Original data shows
+  the animation's extra read selects a valid idle cell for a 15-tick delay;
+  no runtime crash or jail-corruption symptom is claimed.
+- Sticker captions disagree with their art, classified-border cars are pixels
+  rather than purchase entries, and HOT_DATA has an ignored duplicate tail.
+  Full evidence and remaining uncertainty live in the linked report.
