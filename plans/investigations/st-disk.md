@@ -13,7 +13,9 @@ scope. Unrelated identifiers are recorded at the end.
 pointers and their exact read lengths. `di_load_data` (`DISK.C:502-532`) reads
 those blocks sequentially from `hot_data`, with no conversion or write-back.
 These are model/specification tables, not save-game records. The original
-`orig/freeware/HOT_DATA` is 4064 bytes. Its relevant blocks are:
+`orig/freeware/HOT_DATA` is 4116 bytes; the loader consumes its first 4064.
+Its unused tail includes a duplicate sticker table; it is not another loaded
+record set. The relevant loaded blocks are:
 
 | Original type | Table | File offset | Records | Bytes per record |
 | --- | --- | ---: | ---: | ---: |
@@ -318,3 +320,11 @@ targeted audit compiled all nine records with the real compiler and compared
 each sizeof/offsetof result to the fixed layouts above.
 
 Final origin/main merge and repeated gate results follow below.
+
+Fetched origin/main and ran `git merge origin/main` after implementation commit
+1a8c185; Git reported already up to date (main at 3848b38). No conflicts.
+Reran every gate after that merge: headers, formatting, Doxygen (0 diagnostics),
+function check (572/572), clean packed build (IDENTICAL), DGROUP ownership/order,
+unit tests (109, OK), direct MSC layout audit (59, zero mismatches), and native
+DOS MAKE (IDENTICAL, same SHA1). The working source tree is byte-identical to
+the retail executable under both build routes. No push was performed.
