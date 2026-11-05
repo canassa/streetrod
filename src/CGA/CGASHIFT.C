@@ -98,7 +98,7 @@ void cx_blit(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *blt)
     dy = blt->dy;
     s = src->bits.p + src->pitch * sy + sx / 4;
     d1 = dst->bits.p + dst->pitch * (dy >> 1) + dx / 4;
-    d2 = d1 + (dst->planesize >> 1);
+    d2 = d1 + (dst->pixelBytes >> 1);
     n2 = (sx + w9 - 1) / 4 - sx / 4 + 1;
     ph4 = dx & 3;
     sh = ph4 - (sx & 3);

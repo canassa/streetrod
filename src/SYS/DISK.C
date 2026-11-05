@@ -321,7 +321,7 @@ struct Bitmap far *di_unpack_pic(enum PictureId id, struct Bitmap far *bm)
     res = load_pic(id, 0, g_imageBufferPointer);
     cur = sl = &g_slot[pic_index(id)];
     if (g_picNewHeader)
-        pic = me_new_bitmap(cur->width, cur->height, cur->bitmapFlags, 1, bm);
+        pic = me_new_bitmap(cur->width, cur->height, cur->bitmapFlags, BITMAP_PICTURE, bm);
     else
         pic = bm;
     for (j = 0; j < 16; j++)
@@ -334,22 +334,22 @@ struct Bitmap far *di_unpack_pic(enum PictureId id, struct Bitmap far *bm)
     num = cur->packedSize - 1;
     if (r_vid.mode == VID_EGA) {
         if (pic->bits.p == 0) {
-            rl_decode(src, pic->alt.p, num, colors16, 16);
+            rl_decode(src, pic->mask.p, num, colors16, 16);
         } else {
             rl_decode(src, pic->bits.p, num, colors16, 16);
-            if (pic->alt.p)
-                mk_make_mask(pic->bits.p, pic->alt.p, pic->planesize);
+            if (pic->mask.p)
+                mk_make_mask(pic->bits.p, pic->mask.p, pic->pixelBytes);
         }
     } else if (r_vid.mode == VID_TANDY) {
         if (pic->bits.p == 0) {
-            tp_unpack_mask(src, pic->alt.p, pic->planesize, colors16);
+            tp_unpack_mask(src, pic->mask.p, pic->pixelBytes, colors16);
         } else {
-            tp_unpack(src, pic->bits.p, pic->planesize, colors16);
-            if (pic->alt.p)
-                tp_make_mask(pic->bits.p, pic->alt.p, pic->planesize);
+            tp_unpack(src, pic->bits.p, pic->pixelBytes, colors16);
+            if (pic->mask.p)
+                tp_make_mask(pic->bits.p, pic->mask.p, pic->pixelBytes);
         }
     } else {
-        rl_decode(src, pic->bits.p == 0 ? pic->alt.p : pic->bits.p, num, colors16, 16);
+        rl_decode(src, pic->bits.p == 0 ? pic->mask.p : pic->bits.p, num, colors16, 16);
     }
     if (sl->vramPlane != NOT_IN_VRAM) {
         outp(SEQ_INDEX, SEQ_MAP_MASK);

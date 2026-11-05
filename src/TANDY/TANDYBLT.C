@@ -93,7 +93,7 @@ void tb_compose(struct Bitmap far *dst, struct Bitmap far *src, struct Bitmap fa
     unsigned di;
 
     bits_a = dst->bits;
-    alt_a = dst->alt;
+    alt_a = dst->mask;
     bits_bn = src->bits;
     bits_cm = mask->bits;
     if (!da_clip_blt(dst, src, in, (struct Blt *)&clip9))
@@ -146,9 +146,9 @@ void tb_masked(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *in, i
     bits_b = dst->bits;
     seg = src->bits.w.seg;
     off3 = (off04 = clip.sy * pa6 + clip.sx) + src->bits.w.off;
-    off2 = src->alt.w.off + off04;
+    off2 = src->mask.w.off + off04;
     fn4 = flag ? mr_blit : mk_copy;
-    if (dst->flags >= -1) {
+    if (dst->kind >= BITMAP_WORK) {
         (*fn4)(bits_b.p + pb9 * dy2 + clip.dx, seg, off3, off2, pa6, w, h, pb9);
     } else {
         split_banks(clip.h, clip.dx, dy2, bl, al);
@@ -173,23 +173,23 @@ void tb_copy(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *r, int 
     struct Clip o;
 
     f = flags & 1;
-    g8 = (flags & 2) && src->alt.p && dst->alt.p;
+    g8 = (flags & 2) && src->mask.p && dst->mask.p;
     if (!da_clip_blt(src, dst, r, (struct Blt *)&o))
         return;
-    if (src->flags < -1 && dst->flags < -1)
+    if (src->kind < BITMAP_WORK && dst->kind < BITMAP_WORK)
         ty_screen(src->bits.p, dst->bits.p, o.w, o.h, o.sx, o.sy, o.dx, o.dy);
-    else if (src->flags < -1)
+    else if (src->kind < BITMAP_WORK)
         copy_from_tandy(src, dst, &o);
     else {
         sp3 = src->pitch * o.sy + o.sx;
         skip = src->pitch - o.w;
         dskip = dst->pitch - o.w;
-        if (dst->flags >= -1) {
+        if (dst->kind >= BITMAP_WORK) {
             dp3 = dst->pitch * o.dy + o.dx;
             if (f)
                 cd_blit_rect(src->bits.p + sp3, dst->bits.p + dp3, o.w, o.h, skip, dskip);
             if (g8)
-                cd_blit_rect(src->alt.p + sp3, dst->alt.p + dp3, o.w, o.h, skip, dskip);
+                cd_blit_rect(src->mask.p + sp3, dst->mask.p + dp3, o.w, o.h, skip, dskip);
         } else {
             dp3 = dst->pitch * (o.dy >> 2) + ((o.dy & 3) << 13) + o.dx;
             ty_to_screen(src->bits.p + sp3, dst->bits.p + dp3, o.w, o.h, skip, dskip, o.dy);
@@ -274,9 +274,9 @@ void tb_shifted(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *blt)
     dy = blt->dy;
     s = src->bits.p + src->pitch * sy + (sx >> 1);
     dn[0] = dst->bits.p;
-    dn[1] = dn[0] + (dst->planesize >> 2);
-    dn[2] = dn[1] + (dst->planesize >> 2);
-    dn[3] = dn[2] + (dst->planesize >> 2);
+    dn[1] = dn[0] + (dst->pixelBytes >> 2);
+    dn[2] = dn[1] + (dst->pixelBytes >> 2);
+    dn[3] = dn[2] + (dst->pixelBytes >> 2);
     off2 = dst->pitch * (dy >> 2) + (dx >> 1);
     n2 = ((sx + w9 - 1) >> 1) - (sx >> 1) + 1;
     ph4 = dx & 1;

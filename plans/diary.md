@@ -2973,3 +2973,28 @@ checks passing. Names in their original buckets restore DS:7560/7D62 and the
 identical packed EXE; the renderer cursor's tie preserves DS:8B82. Separate
 far extern declarations also matter: dt_step's roadside reads retain distinct
 cached SEG words and the ES reload between them.
+
+## 2026-11-05 20:05 CET: Investigate Bitmap storage and kind
+
+### What I did
+
+- Traced Bitmap constructors, picture decoding, fixed descriptors, buffer views,
+  and all kind/mask/size consumers across EGA, CGA and Tandy.
+- Wrote plans/investigations/Bitmap.md before renaming; documented the record and
+  renamed planesize/alt/flags to pixelBytes/mask/kind throughout their users.
+- Added BitmapKind with the existing VID_* constants and named the two RAM kinds;
+  typed constructor kind arguments while preserving the signed-char member.
+- Passed headers, format, zero-diagnostic docs, 18 MSC size/offset/kind checks,
+  572/572 functions, clean packed build, DGROUP checks, 106 unit tests and native
+  DOS MAKE. Both packed executables remain byte-identical to orig/SR.EXE.
+
+### What I learned
+
+- The size field covers all RAM color planes, one addressed plane on fixed EGA
+  pages, and the full banked span on CGA/Tandy pages; it cannot be called a plane
+  size without qualifying its storage kind.
+- Runtime kind and disk allocation flags are distinct. The mask pointer also
+  holds mask-only picture data, can be shared, and is inverted for the EGA cursor.
+- The thirty unused bytes have differing initialized sentinels but no member
+  readers; their former purpose remains unknown. Evidence, limits and unrelated
+  misleading names are recorded in plans/investigations/Bitmap.md.

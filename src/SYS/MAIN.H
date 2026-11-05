@@ -16,11 +16,6 @@ enum Scene {
     SCENE_JAIL = 6
 };
 
-#define VID_EGA (-2)
-#define VID_CGA (-3)
-#define VID_HERCULES (-4)
-#define VID_TANDY (-6)
-
 enum VideoChoice {
     VIDEO_CHOICE_CGA = 1,
     VIDEO_CHOICE_EGA = 2,

@@ -40,7 +40,7 @@ static struct Bitmap far *near grab_wheel_column(int n)
     struct Bitmap far *a2;
     struct Bitmap far *c;
 
-    a2 = ar_bm(g_tires.column->width + 8, g_tires.column->height, g_tires.column->alt.p != 0L, ARENA_LOW_STACK);
+    a2 = ar_bm(g_tires.column->width + 8, g_tires.column->height, g_tires.column->mask.p != 0L, ARENA_LOW_STACK);
     bm_shift_right(g_tires.column, n & ~r_vid.mask, a2);
     b = ar_bm(a2->width, a2->height, 0, ARENA_LOW_STACK);
     pu_grab((n + g_tires.carX) & r_vid.mask, 0x78, a2->width, a2->height, b);
@@ -62,7 +62,7 @@ static struct Bitmap far *near grab_wheel_column(int n)
     blt.dy = -(g_tires.liftCar->height + g_spriteBgY - 0x95);
     c = ar_bm(0x28, 0x9c - g_spriteBgY, 1, ARENA_LOW_STACK);
     pu_grab(blt.sx + g_tires.carX, g_spriteBgY, 0x28, 0x9c - g_spriteBgY, c);
-    da_fmemset(c->alt.p, 0xff, c->planesize / r_vid.planes);
+    da_fmemset(c->mask.p, 0xff, c->pixelBytes / r_vid.planes);
     (*g_videoOps.maskedBlit)(g_tires.liftCar, c, &blt, 1);
     (*g_videoOps.copy)(g_tires.liftCar, c, &blt, 2);
     return c;
@@ -239,7 +239,7 @@ void ti_change(int *a, int *b)
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x92 - g_tires.liftCar->height : 0;
     g_tires.liftBackdrop = ar_bm(g_tires.liftCar->width, 0x99 - g_spriteBgY, 1, ARENA_LOW_STACK);
     pu_grab(g_tires.carX, g_spriteBgY, g_tires.liftCar->width, 0x99 - g_spriteBgY, g_tires.liftBackdrop);
-    da_fmemset(g_tires.liftBackdrop->alt.p, 0xff, g_tires.liftBackdrop->planesize / r_vid.planes);
+    da_fmemset(g_tires.liftBackdrop->mask.p, 0xff, g_tires.liftBackdrop->pixelBytes / r_vid.planes);
     clip6.w = g_tires.liftPics[1]->width;
     clip6.h = g_tires.liftPics[1]->height;
     clip6.sx = clip6.sy = 0;
@@ -296,13 +296,13 @@ void ti_change(int *a, int *b)
         g_tires.liftBuf = ar_bm(g_tires.liftBackdrop->width, g_tires.liftBackdrop->height, 0, ARENA_LOW_STACK);
         *g_wheelBuf = *pic;
         g_wheelBuf->bits.p = g_tires.liftBuf->bits.p;
-        g_wheelBuf->alt.p = 0;
+        g_wheelBuf->mask.p = 0;
         *g_rollBuf = *g_tires.rollCanvas;
         g_rollBuf->bits.p = g_tires.liftBuf->bits.p;
-        g_rollBuf->alt.p = 0;
+        g_rollBuf->mask.p = 0;
         *g_jackBuf = *g_tires.jackColumn;
         g_jackBuf->bits.p = g_tires.liftBuf->bits.p;
-        g_jackBuf->alt.p = 0;
+        g_jackBuf->mask.p = 0;
     }
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x97 - g_tires.liftPics[0]->height : 0;
     if (r_vid.mode == VID_EGA)

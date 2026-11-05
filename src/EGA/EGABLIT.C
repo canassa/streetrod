@@ -5,7 +5,6 @@
 #include "BITMAP.H"
 #include "DASH.H"
 #include "EGALATCH.H"
-#include "MAIN.H"
 #include "MASKBG.H"
 #include "MASKBLT.H"
 #include "MASKOR.H"
@@ -35,7 +34,7 @@ void eb_copy(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, i
     char far *n; /* row copy: destination */
     int o;       /* first plane */
 
-    N = (flags & 2) && dst->alt.p && src->alt.p;
+    N = (flags & 2) && dst->mask.p && src->mask.p;
     if (!da_clip_blt(dst, src, rect, &h))
         return;
     if (flags & 1) {
@@ -43,21 +42,21 @@ void eb_copy(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *rect, i
         a = src->bits.p;
         o = 0;
     } else {
-        m = dst->alt.p;
-        a = src->alt.p;
+        m = dst->mask.p;
+        a = src->mask.p;
         o = 4;
     }
     c = N ? 5 : 4;
-    M = (dst->flags == VID_EGA) ? EGA_PITCH : dst->pitch;
-    g = (dst->flags == VID_EGA) ? 0 : dst->height * M;
+    M = (dst->kind == VID_EGA) ? EGA_PITCH : dst->pitch;
+    g = (dst->kind == VID_EGA) ? 0 : dst->height * M;
     m += h.sy * M + h.sx;
     p = src->height;
-    i = (src->flags == VID_EGA) ? EGA_PITCH : src->pitch;
-    e = (src->flags == VID_EGA) ? 0 : p * i;
+    i = (src->kind == VID_EGA) ? EGA_PITCH : src->pitch;
+    e = (src->kind == VID_EGA) ? 0 : p * i;
     a += h.dy * i + h.dx;
     d = h.w;
     j = h.h;
-    if (src->flags == VID_EGA && dst->flags == VID_EGA) {
+    if (src->kind == VID_EGA && dst->kind == VID_EGA) {
         ea_rect(m, a, d, j, 0, 0, EGA_PITCH);
         return;
     }
@@ -139,11 +138,11 @@ void eb_sprite(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap far
     a = bm2->height;
     K = bm2->pitch;
     h = bm3->pitch;
-    f = (bm2->flags == VID_EGA) ? 0 : a * K;
+    f = (bm2->kind == VID_EGA) ? 0 : a * K;
     c = bm2->bits.p + i.dy * K + i.dx;
     M = bm1->bits.w.seg;
     m = bm1->bits.w.off + i.sx + i.sy * g;
-    L = bm1->alt.w.off + i.sx + i.sy * g;
+    L = bm1->mask.w.off + i.sx + i.sy * g;
     if (g == h)
         e = i.dy * h + bm3->bits.w.off;
     else
@@ -197,12 +196,12 @@ void eb_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, in
     h = e.h;
     n = bm1->height * d;
     p = bm2->height;
-    g = (bm2->flags == VID_EGA) ? EGA_PITCH : bm2->pitch;
-    c = (bm2->flags == VID_EGA) ? 0 : p * g;
+    g = (bm2->kind == VID_EGA) ? EGA_PITCH : bm2->pitch;
+    c = (bm2->kind == VID_EGA) ? 0 : p * g;
     a = bm2->bits.p + e.dy * g + e.dx;
     l = bm1->bits.w.seg;
     j = bm1->bits.w.off + e.sx + e.sy * d;
-    i = bm1->alt.w.off + e.sx + e.sy * d;
+    i = bm1->mask.w.off + e.sx + e.sy * d;
     f = flag ? mr_blit : mk_copy;
     if (c == 0) {
         outp(GC_INDEX, GC_READ_MAP);

@@ -32,7 +32,7 @@ int ed_line(int x, int y, char *buf, int max)
 
     pos = x_colors.fill;
     oc = x_colors.line;
-    mono = (unsigned char)(r_vid.back->flags <= -1);
+    mono = (unsigned char)(r_vid.back->kind <= BITMAP_WORK);
     if ((w = 6 * max) + x >= r_vid.back->width) {
         max = (r_vid.back->width - x - 1) / 6;
         buf[max] = 0;

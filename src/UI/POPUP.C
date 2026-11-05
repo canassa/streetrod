@@ -37,8 +37,8 @@ struct Bitmap far *pu_grab(int x, int y, int w, int h, struct Bitmap far *src)
     ye = y + h > SCREEN_HEIGHT ? SCREEN_HEIGHT : y + h;
     x &= r_vid.mask;
     if (src) {
-        color = src->alt.p != 0;
-        pict = me_new_bitmap(x2 - x, ye - y, color, -1, src);
+        color = src->mask.p != 0;
+        pict = me_new_bitmap(x2 - x, ye - y, color, BITMAP_WORK, src);
     } else
         pict = ar_bm(x2 - x, ye - y, 0, ARENA_HIGH_STACK);
     blit.w = pict->width;
