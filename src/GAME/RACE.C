@@ -1072,7 +1072,7 @@ static void near rival_accelerate(void)
     _enable();
     r = &g_oppEngState.gear[g_oppEngState.gearIndex].bands[g_rpmBand];
     for (i5 = 0; i5 < ticks; i5++) {
-        if (g_terrain2[g_roadOppPos.roadIndex] != g_terrain2[g_roadOppPos.roadIndex + 1]) {
+        if (g_roadCurve[g_roadOppPos.roadIndex] != g_roadCurve[g_roadOppPos.roadIndex + 1]) {
             if (g_rivalCurveBrake == 0) {
                 g_rivalCurveBrake = 1;
                 vl = g_rivalPace.topSpeed - (g_roadOppPos.roadIndex > g_trackViewMotion.roadIndex
@@ -1251,9 +1251,9 @@ static void near move_rival(void)
         sy_stop_drive();
         return;
     }
-    widthFlags = g_terrain3[g_roadOppPos.roadIndex + 4] & TERRAIN_WIDTH_MASK;
+    widthFlags = g_roadBitsArray[g_roadOppPos.roadIndex + 4] & TERRAIN_WIDTH_MASK;
     dist = g_roadOppPos.roadIndex - g_trackViewMotion.roadIndex;
-    slope = g_terrain2[g_trackViewMotion.roadIndex + 4] - g_terrain2[g_trackViewMotion.roadIndex + 5];
+    slope = g_roadCurve[g_trackViewMotion.roadIndex + 4] - g_roadCurve[g_trackViewMotion.roadIndex + 5];
     if (dist > 12) {
         g_targetLane = (g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1;
         if (slope)
@@ -1445,7 +1445,7 @@ void ra_tick(void)
     if (g_picOpponent == 0 && g_trackViewMotion.distanceStep > 1) {
         g_contactFrames++;
         if (g_driveEng.steeringInput < 0) {
-            if (g_terrain2[g_trackViewMotion.roadIndex] - g_terrain2[g_trackViewMotion.roadIndex + 1] >= 0 ||
+            if (g_roadCurve[g_trackViewMotion.roadIndex] - g_roadCurve[g_trackViewMotion.roadIndex + 1] >= 0 ||
                 ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) >= g_trackViewMotion.lateralX) {
                 so_bump();
                 if (g_bumpAlternate == 0) {

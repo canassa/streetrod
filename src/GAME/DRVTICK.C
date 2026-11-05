@@ -101,8 +101,8 @@ int dt_step(void)
                 g_demo--;
                 sy_exit();
             }
-            if ((g_terrain0[g_trackViewMotion.roadIndex + 1] & ROADSIDE_DESTINATION) ||
-                (g_terrain1[g_trackViewMotion.roadIndex + 1] & ROADSIDE_DESTINATION) || g_firePressed) {
+            if ((g_roadsideLeftBits[g_trackViewMotion.roadIndex + 1] & ROADSIDE_DESTINATION) ||
+                (g_roadsideRightBits[g_trackViewMotion.roadIndex + 1] & ROADSIDE_DESTINATION) || g_firePressed) {
                 g_click = 0;
                 g_buttons = 0;
                 sy_drive_stop();

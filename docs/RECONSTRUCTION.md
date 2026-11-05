@@ -259,7 +259,7 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
 
 - **BodyPoints** (`g_featurePos`, DS:8264..8271): a natural, byte-identical reconstruction choice; separate globals also match.
 
-- **Right scenery cursor** (`g_rightSideTerrainRow`, DS:8634..8637): a separate right-side terrain/scenery cursor used by both forward and mirror views.
+- **Right scenery cursor** (`g_hereRoadsideRightRowPtr`, DS:8634..8637): a separate right-side terrain/scenery cursor used by both forward and mirror views.
 - **Mirror road Y projection** (`g_mirYProj[8]`, DS:8638..8647): a full eight-row array matching its writer; the array form is byte-identical.
 
 - **MirrorEdges** (`g_mirGeom`, DS:864A..8669): a natural, byte-identical reconstruction choice; separate globals also match; both member arrays contain all eight rows written by the projection loop.
@@ -471,9 +471,18 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
 
 - **Far storage order** (`src/DATA/SLOTS.C`). LINK allocates uninitialized far
   COMDEFs in FAR_BSS after the objects, in symbol-hash bucket order. The recovered
-  order is the 277 Slot records followed by five 1120-word terrain arrays.
-  `g_slot` has bucket 64 and `g_terrain0..4` buckets 158..190; their historical
-  names are unknown.
+  order is the 277 Slot records followed by five separate 1120-word arrays:
+  left roadside flags (`g_roadsideLeftBits`), right roadside flags
+  (`g_roadsideRightBits`), horizontal displacement (`g_roadCurve`), shared road
+  flags (`g_roadBitsArray`) and height (`g_roadHeight`). Their buckets are
+  160,166,188,192,241, after `g_slot` (64); their historical names are unknown.
+  Preserve separate definitions and separate extern declarations: `dt_step`
+  reloads ES from a different cached SEG word between the two roadside reads,
+  even though the arrays share a linked segment. A struct or combined extern
+  declaration can change that code. `./sr fit` currently does not model far
+  COMDEF placement; inspect the emitted records, calculate LINK buckets and
+  require the packed build. Cursor spelling also has to preserve near communal
+  placement and the contributing-symbol name budget (CLAUDE.md 4d/4e).
 - **Video and cursor records** (`MAIN.H`, `CURSOR.H`). `Video` at DS:822A is supported by
   `/Ol` leaving `r_vid.mode` in memory at 0x004F4 and 0x10AFD rather than hoisting
   it as a plain global. `Cursor` at DS:7AEC has rectangle members whose comparison

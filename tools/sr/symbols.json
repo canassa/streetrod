@@ -798,7 +798,7 @@
     "g_headerEditableState": {
       "off": 35748
     },
-    "g_heightRoadPtr": {
+    "g_elevationCursor": {
       "off": 30848
     },
     "g_hercBiosData": {
@@ -813,10 +813,10 @@
     "g_hercules": {
       "off": 66
     },
-    "g_hereCurvePtr": {
+    "g_sampleCurveXReadPtr": {
       "off": 30048
     },
-    "g_hereFlagsPtr": {
+    "g_trackRoadWordsCursor": {
       "off": 32098
     },
     "g_hideSelectFrameVal": {
@@ -1483,7 +1483,7 @@
     "g_rhsOuterXArray": {
       "off": 32728
     },
-    "g_rightSideTerrainRow": {
+    "g_hereRoadsideRightRowPtr": {
       "off": 34356
     },
     "g_rightXProjectionTable": {
@@ -1531,7 +1531,7 @@
     "g_roadRowLimit": {
       "off": 28166
     },
-    "g_roadTerrain": {
+    "g_sampleLeftRoadside": {
       "off": 29422
     },
     "g_roadWins": {
@@ -1922,23 +1922,23 @@
     "g_tboltY": {
       "off": 1790
     },
-    "g_terrain0": {
+    "g_roadsideLeftBits": {
       "off": 13296,
       "seg": 14491
     },
-    "g_terrain1": {
+    "g_roadsideRightBits": {
       "off": 15536,
       "seg": 14491
     },
-    "g_terrain2": {
+    "g_roadCurve": {
       "off": 17776,
       "seg": 14491
     },
-    "g_terrain3": {
+    "g_roadBitsArray": {
       "off": 20016,
       "seg": 14491
     },
-    "g_terrain4": {
+    "g_roadHeight": {
       "off": 22256,
       "seg": 14491
     },
@@ -2047,7 +2047,7 @@
     "g_viewRect": {
       "off": 24130
     },
-    "g_viewTerrainBitsData": {
+    "g_renderRoadFlagsWordPtr": {
       "off": 35714
     },
     "g_voice": {

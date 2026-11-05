@@ -275,3 +275,14 @@ generic check_data_types.py audit raises ValueError. Until macro evaluation
 is supported, audit such a record directly with MSC sizeof/offsetof and
 compare every field with the established layout; never guess its dimension
 inside the parser. See plans/investigations/Car.md for the 40-byte Car audit.
+
+### Far communal rename placement (2026-11-05)
+
+`./sr fit` currently models only DGROUP COMMON and private BSS. Its fallback
+claim that far data are always definition-placed is wrong for SLOTS.C's far
+COMDEFs. Inspect the compiled OBJ's `communals`, compute
+`linkhash.bucket("_" + name)` for every far communal, and keep their linked
+order; the packed build decides ties. Preserve separate extern declarations
+as well as definitions: combining far arrays in one declaration can merge
+cached SEG words and remove an ES reload (dt_step's roadside reads). Record
+this limitation when using fit; do not treat its fallback as a placement gate.

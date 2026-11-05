@@ -28,13 +28,15 @@ struct Slot {
 };
 
 extern struct Slot far g_slot[];
-/** Left roadside words, generated for each track; @ref RoadsideFlags. */
-extern unsigned far g_terrain0[];
-/** Right roadside words, generated for each track; @ref RoadsideFlags. */
-extern unsigned far g_terrain1[];
-extern int far g_terrain2[];
-/** Shared road words, generated for each track; @ref TerrainFlags. */
-extern unsigned far g_terrain3[];
-extern int far g_terrain4[];
+/** Left roadside flags per track sample; @ref RoadsideFlags. */
+extern unsigned far g_roadsideLeftBits[];
+/** Right roadside flags per track sample; @ref RoadsideFlags. */
+extern unsigned far g_roadsideRightBits[];
+/** Signed horizontal curve displacement per track sample. */
+extern int far g_roadCurve[];
+/** Shared road flags per track sample; @ref TerrainFlags. */
+extern unsigned far g_roadBitsArray[];
+/** Signed road height profile per track sample. */
+extern int far g_roadHeight[];
 
 #endif

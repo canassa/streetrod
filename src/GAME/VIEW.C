@@ -93,7 +93,7 @@ struct Bitmap far *g_citySkylineBmp;
 struct Bitmap far *g_skylineCountry;
 struct Bitmap far *g_imageFullMirror;
 struct Bitmap far *g_rearBasePic;
-int far *g_viewTerrainBitsData;
+int far *g_renderRoadFlagsWordPtr;
 struct Bitmap far *g_windowBorderImage;
 
 
@@ -532,7 +532,7 @@ void vw_road_row(int n)
     ybot6 = *g_renderRows.prevY;
     dxlm = edge_step(*g_renderRows.prevLeftX, ybot6, xl, yk);
     dxr7 = edge_step(*g_renderRows.prevRightX, ybot6, xrl, yk);
-    isCity = *g_viewTerrainBitsData & TERRAIN_TOWN;
+    isCity = *g_renderRoadFlagsWordPtr & TERRAIN_TOWN;
     if (isCity) {
         xl2 = *g_renderRows.leftOuterX;
         xr28 = *g_renderRows.rightOuterX;
@@ -541,7 +541,7 @@ void vw_road_row(int n)
         dxl2k = edge_step(*g_renderRows.prevLeftOuterX, ybot6, xl2, yk);
         dxr26 = edge_step(*g_renderRows.prevRightOuterX, ybot6, xr28, yk);
     }
-    if (*g_viewTerrainBitsData & TERRAIN_CENTER_LINE) {
+    if (*g_renderRoadFlagsWordPtr & TERRAIN_CENTER_LINE) {
         wid = *g_renderRows.lineWidth;
         cx0k = ((xl + xrl) >> 1) - (wid >> 1);
     }
@@ -549,7 +549,7 @@ void vw_road_row(int n)
         return;
     for (cnt = ybot6 - yk; cnt && yk <= 101; cnt--, yk++) {
         if (isCity) {
-            if (*g_viewTerrainBitsData & TERRAIN_CROSS_STREET)
+            if (*g_renderRoadFlagsWordPtr & TERRAIN_CROSS_STREET)
                 break;
             if (*g_renderRows.leftFlags & ROADSIDE_SIDEWALK_INSET) {
                 m17 = xl2 + ((xl - xl2) >> 1);
@@ -574,9 +574,9 @@ void vw_road_row(int n)
                     (*g_videoOps.fillSpan)(xrl, xr28, yk, 2);
             }
         } else {
-            (*g_videoOps.fillSpan)(xl, xrl, yk, (*g_viewTerrainBitsData & TERRAIN_FINISH_STRIPE) ? 15 : 1);
+            (*g_videoOps.fillSpan)(xl, xrl, yk, (*g_renderRoadFlagsWordPtr & TERRAIN_FINISH_STRIPE) ? 15 : 1);
         }
-        if (*g_viewTerrainBitsData & TERRAIN_CENTER_LINE) {
+        if (*g_renderRoadFlagsWordPtr & TERRAIN_CENTER_LINE) {
             t1 = cx0k;
             t2 = t1 + wid;
             (*g_videoOps.fillSpan)(t1, t2, yk, 4);
@@ -629,7 +629,7 @@ void vw_mirror_row(void)
     ybot6 = *g_renderRows.prevY;
     dxlm = edge_step(*g_renderRows.prevLeftX, ybot6, xl, yk);
     dxr7 = edge_step(*g_renderRows.prevRightX, ybot6, xrl, yk);
-    isCity = *g_viewTerrainBitsData & TERRAIN_TOWN;
+    isCity = *g_renderRoadFlagsWordPtr & TERRAIN_TOWN;
     if (isCity) {
         xl2 = *g_renderRows.leftOuterX;
         xr28 = *g_renderRows.rightOuterX;
@@ -638,7 +638,7 @@ void vw_mirror_row(void)
         dxl2k = edge_step(*g_renderRows.prevLeftOuterX, ybot6, xl2, yk);
         dxr26 = edge_step(*g_renderRows.prevRightOuterX, ybot6, xr28, yk);
     }
-    if (*g_viewTerrainBitsData & TERRAIN_CENTER_LINE) {
+    if (*g_renderRoadFlagsWordPtr & TERRAIN_CENTER_LINE) {
         wid = *g_renderRows.lineWidth;
         cx0k = ((xl + xrl) >> 1) - (wid >> 1);
     }
@@ -646,7 +646,7 @@ void vw_mirror_row(void)
         return;
     for (cnt = ybot6 - yk; cnt && yk <= 42; cnt--, yk++) {
         if (isCity) {
-            if (*g_viewTerrainBitsData & TERRAIN_CROSS_STREET)
+            if (*g_renderRoadFlagsWordPtr & TERRAIN_CROSS_STREET)
                 break;
             if (*g_renderRows.leftFlags & ROADSIDE_SIDEWALK_INSET) {
                 m17 = xl2 + ((xl - xl2) >> 1);
@@ -667,7 +667,7 @@ void vw_mirror_row(void)
             (*g_videoOps.fillSpan)(xrl, 317, yk, 9);
             (*g_videoOps.fillSpan)(xl, xrl, yk, 1);
         }
-        if (*g_viewTerrainBitsData & TERRAIN_CENTER_LINE) {
+        if (*g_renderRoadFlagsWordPtr & TERRAIN_CENTER_LINE) {
             t1 = cx0k;
             t2 = t1 + wid;
             (*g_videoOps.fillSpan)(t1, t2, yk, 4);
@@ -696,7 +696,7 @@ static void near render_buildings(int a, int b, int c, int d, int e, int f, int 
     BOOL town;
     int y;
 
-    town = *g_viewTerrainBitsData & TERRAIN_TOWN;
+    town = *g_renderRoadFlagsWordPtr & TERRAIN_TOWN;
     if (rev) {
         roof = g_renderRows.leftFlags[0] & ROADSIDE_BUILDING;
         highRoof = g_renderRows.leftFlags[0] & ROADSIDE_TALL_BUILDING;
@@ -708,7 +708,7 @@ static void near render_buildings(int a, int b, int c, int d, int e, int f, int 
         prevRaised = g_renderRows.rightFlags[-1] & ROADSIDE_BUILDING;
         shadeFace = g_renderRows.rightFlags[0] & ROADSIDE_WALL_SHADE;
     }
-    if (!(*g_viewTerrainBitsData & TERRAIN_CROSS_STREET)) {
+    if (!(*g_renderRoadFlagsWordPtr & TERRAIN_CROSS_STREET)) {
         if (shadeFace)
             fill_quad(2, a, b, c, d, e, f);
         else
@@ -720,7 +720,7 @@ static void near render_buildings(int a, int b, int c, int d, int e, int f, int 
                 fill_quad(4, a, b, f, e, e - ((d - e) >> 1), f - ((c - f) >> 1));
             }
         }
-        if (g_viewTerrainBitsData[-1] & TERRAIN_CROSS_STREET) {
+        if (g_renderRoadFlagsWordPtr[-1] & TERRAIN_CROSS_STREET) {
             if (rev)
                 (*g_videoOps.fillSpan)(g_viewClip.xMin, a, c - 1, 4);
             else
@@ -791,7 +791,7 @@ static void near render_mirror_buildings(int a, int b, int c, int d, int e, int 
     BOOL town;
     int y;
 
-    if (town = *g_viewTerrainBitsData & TERRAIN_TOWN) {
+    if (town = *g_renderRoadFlagsWordPtr & TERRAIN_TOWN) {
         if (rev) {
             roof = g_renderRows.leftFlags[0] & ROADSIDE_BUILDING;
             prevRaised = g_renderRows.leftFlags[1] & ROADSIDE_BUILDING;
@@ -801,7 +801,7 @@ static void near render_mirror_buildings(int a, int b, int c, int d, int e, int 
             prevRaised = g_renderRows.rightFlags[1] & ROADSIDE_BUILDING;
             shadeFace = g_renderRows.rightFlags[0] & ROADSIDE_WALL_SHADE;
         }
-        if (!(*g_viewTerrainBitsData & TERRAIN_CROSS_STREET)) {
+        if (!(*g_renderRoadFlagsWordPtr & TERRAIN_CROSS_STREET)) {
             if (shadeFace)
                 fill_quad(2, a, b, c, d, e, f);
             else
@@ -812,7 +812,7 @@ static void near render_mirror_buildings(int a, int b, int c, int d, int e, int 
                 else
                     fill_quad(4, a, b, f, e, e - d + e, f - c + f);
             }
-            if (g_viewTerrainBitsData[1] & TERRAIN_CROSS_STREET) {
+            if (g_renderRoadFlagsWordPtr[1] & TERRAIN_CROSS_STREET) {
                 if (rev)
                     (*g_videoOps.fillSpan)(g_viewClip.xMin, a, c - 1, 4);
                 else
@@ -994,7 +994,7 @@ static void near render_gantry(int x1, int x2, int y1, int y2, int n, int clip, 
         en_end();
         render_scaled_pic((x1 + x2) >> 1, y1, n, 0, clip, 1);
         en_begin();
-    } else if (*g_viewTerrainBitsData & TERRAIN_TOWN) {
+    } else if (*g_renderRoadFlagsWordPtr & TERRAIN_TOWN) {
         en_end();
         render_scaled_pic((x1 + x2) >> 1, y1, n, 0, clip, (flags & TERRAIN_LEFT_GANTRY) ? 2 : 3);
         en_begin();
@@ -1135,8 +1135,8 @@ static void near render_opponent(void)
         t1 += 16;
     if (t1 < -2 && seln == 2)
         t1 += 8;
-    rc = g_trackViewMotion.roadHeight - g_terrain4[a2];
-    rd = g_trackViewMotion.curveX - g_terrain2[a2];
+    rc = g_trackViewMotion.roadHeight - g_roadHeight[a2];
+    rd = g_trackViewMotion.curveX - g_roadCurve[a2];
     if (seln < 9) {
         t1 += 4;
         ra = rd_proj_x(t1, g_roadOppPos.lateralX, rd);
@@ -1222,27 +1222,27 @@ static void near render_mirror(void)
     g_renderRows.prevLeftOuterX = &g_edgesRoad.leftOuterX[6];
     g_renderRows.prevRightOuterX = &g_edgesRoad.rightOuterX[6];
     g_renderRows.lineWidth = &g_roadLineWidths[20];
-    g_renderRows.leftFlags = (int far *)(g_roadTerrain - 8);
-    g_renderRows.rightFlags = (int far *)(g_rightSideTerrainRow - 8);
-    g_viewTerrainBitsData = (int far *)(g_hereFlagsPtr - 8);
+    g_renderRows.leftFlags = (int far *)(g_sampleLeftRoadside - 8);
+    g_renderRows.rightFlags = (int far *)(g_hereRoadsideRightRowPtr - 8);
+    g_renderRoadFlagsWordPtr = (int far *)(g_trackRoadWordsCursor - 8);
     en_end();
     render_mirror_frame();
     en_begin();
     clip_mirror();
     for (i = 7; i; i--) {
         render_mirror_row();
-        if (*g_viewTerrainBitsData & TERRAIN_CROSS_STREET)
+        if (*g_renderRoadFlagsWordPtr & TERRAIN_CROSS_STREET)
             goto next;
-        if (*g_viewTerrainBitsData & TERRAIN_GANTRY_MASK)
+        if (*g_renderRoadFlagsWordPtr & TERRAIN_GANTRY_MASK)
             render_gantry(*g_renderRows.leftX, *g_renderRows.rightX,
                           -((*g_renderRows.y - *g_renderRows.buildingY) * 4 - *g_renderRows.y), *g_renderRows.y, i + 5,
-                          1, *g_viewTerrainBitsData & TERRAIN_GANTRY_MASK);
+                          1, *g_renderRoadFlagsWordPtr & TERRAIN_GANTRY_MASK);
         if (i >= 6)
             goto next;
-        city = *g_viewTerrainBitsData & TERRAIN_TOWN;
+        city = *g_renderRoadFlagsWordPtr & TERRAIN_TOWN;
         leftBits = *g_renderRows.leftFlags;
         rightRoadBits = *g_renderRows.rightFlags;
-        roadFlags = *g_viewTerrainBitsData;
+        roadFlags = *g_renderRoadFlagsWordPtr;
         if (leftBits & ROADSIDE_TREE) {
             if (city)
                 render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, -1, SCENERY_TREE);
@@ -1339,7 +1339,7 @@ static void near render_mirror(void)
         g_renderRows.lineWidth--;
         g_renderRows.leftFlags++;
         g_renderRows.rightFlags++;
-        g_viewTerrainBitsData++;
+        g_renderRoadFlagsWordPtr++;
         g_renderRows.leftOuterX--;
         g_renderRows.rightOuterX--;
         g_renderRows.buildingY--;
@@ -1383,23 +1383,23 @@ void vw_draw(void)
     g_renderRows.prevLeftOuterX = &g_roadOuterLeftXArray[13];
     g_renderRows.prevRightOuterX = &g_rhsOuterXArray[13];
     g_renderRows.lineWidth = &g_roadLineWidths[14];
-    g_renderRows.leftFlags = (int far *)(g_roadTerrain + 14);
-    g_renderRows.rightFlags = (int far *)(g_rightSideTerrainRow + 14);
-    g_viewTerrainBitsData = (int far *)(g_hereFlagsPtr + 14);
+    g_renderRows.leftFlags = (int far *)(g_sampleLeftRoadside + 14);
+    g_renderRows.rightFlags = (int far *)(g_hereRoadsideRightRowPtr + 14);
+    g_renderRoadFlagsWordPtr = (int far *)(g_trackRoadWordsCursor + 14);
     vw_clip();
     render_backdrop();
     en_begin();
     for (i = 14; i; i--) {
         if (i <= g_roadRowLimit)
             render_row(i);
-        if (*g_viewTerrainBitsData & TERRAIN_CROSS_STREET)
+        if (*g_renderRoadFlagsWordPtr & TERRAIN_CROSS_STREET)
             goto next;
         if (i >= 11)
             goto next;
-        city = *g_viewTerrainBitsData & TERRAIN_TOWN;
+        city = *g_renderRoadFlagsWordPtr & TERRAIN_TOWN;
         leftBits = *g_renderRows.leftFlags;
         rightRoadBits = *g_renderRows.rightFlags;
-        roadFlags = *g_viewTerrainBitsData;
+        roadFlags = *g_renderRoadFlagsWordPtr;
         if (leftBits & ROADSIDE_TREE) {
             if (city)
                 render_object(*g_renderRows.leftX, *g_renderRows.y, i, -1, SCENERY_TREE);
@@ -1512,7 +1512,7 @@ void vw_draw(void)
         g_renderRows.lineWidth--;
         g_renderRows.leftFlags--;
         g_renderRows.rightFlags--;
-        g_viewTerrainBitsData--;
+        g_renderRoadFlagsWordPtr--;
         g_renderRows.leftOuterX--;
         g_renderRows.rightOuterX--;
         g_renderRows.buildingY--;

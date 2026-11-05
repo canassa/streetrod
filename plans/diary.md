@@ -2939,3 +2939,37 @@ The conflicting lines contain independent substitutions: keep named appearance m
 
 - Static reading plus simulated arithmetic predicted a real game behaviour correctly: unsigned
   comparisons in your_cars, a signed sc_add_money, and no zero floor in remove_part.
+
+## 2026-11-05 19:24 CET: Name generated road arrays and sample cursors
+
+### What I did
+
+Investigated all five SLOTS terrain arrays and their six standalone cursors,
+using the existing terrain-format investigation and their builders, projection,
+renderer, collision, cruise and rival readers. Renamed them with ./sr rename:
+roadsideLeftBits, roadsideRightBits, roadCurve, roadBitsArray and roadHeight
+(all retain the g_ prefix), plus the six role-specific cursors recorded in
+plans/investigations/terrain.md. Kept all five far arrays and separate extern
+declarations, original order/types/sizes, and added a Doxygen line to every
+array. Updated the investigation, reconstruction docs and sr-cli skill.
+
+All gates pass: headers/format, Doxygen zero diagnostics, 572/572 functions,
+clean packed build IDENTICAL, DGROUP ownership/order and 106 unit tests. All
+eleven symbols retain their original linked addresses. Inverse-rename token
+comparison confirms the C changes are identifiers and wrapping only.
+
+### What I learned
+
+SLOTS.OBJ emits far COMDEFs, so the far-array names control LINK bucket order.
+The proposed plain roadsideLeft/right names hash before g_slot; roadFlags and
+roadHeight also reverse order. Meaningful alternative spellings preserve the
+original allocation. ./sr fit currently gives an incorrect definition-placed
+fallback for far data; inspect COMDEFs and calculate LINK buckets directly,
+then require the packed build. The skill now records that limitation.
+
+The first curve/shared-flags cursor choices tied adjacent near-common buckets
+and moved to DS:755A/7D42, causing 76 differing bytes despite all function
+checks passing. Names in their original buckets restore DS:7560/7D62 and the
+identical packed EXE; the renderer cursor's tie preserves DS:8B82. Separate
+far extern declarations also matter: dt_step's roadside reads retain distinct
+cached SEG words and the ES reload between them.

@@ -140,21 +140,23 @@ extern int g_yBuildingTopArray[15];
 extern struct MirrorEdges g_mirGeom;
 
 /** Right-side sample at the current seek position; @ref RoadsideFlags. */
-extern unsigned far *g_rightSideTerrainRow;
+extern unsigned far *g_hereRoadsideRightRowPtr;
 extern int g_mirYProj[8];
 
 extern int g_roadLayout;
 extern int g_onShoulder;
 /** Left-side sample at the current seek position; @ref RoadsideFlags. */
-extern unsigned far *g_roadTerrain;
+extern unsigned far *g_sampleLeftRoadside;
 extern int g_roadLXArray[15];
-extern int far *g_hereCurvePtr;
-extern int far *g_heightRoadPtr;
+/** Curve sample cursor, advanced or retreated by projection. */
+extern int far *g_sampleCurveXReadPtr;
+/** Road height cursor, advanced or retreated by projection. */
+extern int far *g_elevationCursor;
 extern int g_roadYProjectionArray[15];
 extern int g_startDrawRows;
 extern int g_rightXProjectionTable[15];
 /** Shared sample cursor for projection and driving; @ref TerrainFlags. */
-extern unsigned far *g_hereFlagsPtr;
+extern unsigned far *g_trackRoadWordsCursor;
 extern int g_lhsRdMirrorX[8];
 extern int g_roadOuterLeftXArray[15];
 extern int g_rhsOuterXArray[15];

@@ -2,8 +2,8 @@
 #include "SLOTS.H"
 
 struct Slot far g_slot[277];
-unsigned far g_terrain0[1120];
-unsigned far g_terrain1[1120];
-int far g_terrain2[1120];
-unsigned far g_terrain3[1120];
-int far g_terrain4[1120];
+unsigned far g_roadsideLeftBits[1120];
+unsigned far g_roadsideRightBits[1120];
+int far g_roadCurve[1120];
+unsigned far g_roadBitsArray[1120];
+int far g_roadHeight[1120];

@@ -64,7 +64,7 @@ extern struct Bitmap far *g_skylineCountry;
 extern struct Bitmap far *g_imageFullMirror;
 extern struct Bitmap far *g_rearBasePic;
 /** Signed view of the current shared road sample; @ref TerrainFlags. */
-extern int far *g_viewTerrainBitsData;
+extern int far *g_renderRoadFlagsWordPtr;
 extern struct Bitmap far *g_windowBorderImage;
 void vw_unclip_top(void);
 void vw_clip(void);

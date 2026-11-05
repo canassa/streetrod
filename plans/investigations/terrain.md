@@ -6,14 +6,14 @@ The road builder creates two roadside scenery words and one shared road word per
 track sample; projection, front/rear rendering, cruise control, collisions and
 rival steering consume them. The five parallel 1120-entry far arrays in
 `src/DATA/SLOTS.C:5-9` are runtime scratch, rebuilt by `rd_generate`, not loaded
-from pictures or saved as a road format. `g_terrain0` is left, `g_terrain1` right,
-`g_terrain3` the shared word; `g_terrain2` is horizontal curve displacement and
-`g_terrain4` height. Each flag element is an unsigned 16-bit word. Keep sizes,
-signedness and array order unchanged.
+from pictures or saved as a road format. `g_roadsideLeftBits` is left,
+`g_roadsideRightBits` right, `g_roadBitsArray` the shared word; `g_roadCurve` is
+horizontal curve displacement and `g_roadHeight` height. Each flag element is
+an unsigned 16-bit word. Keep sizes, signedness and array order unchanged.
 
-`rd_seek` (`ROAD.C:626-633`) positions `g_roadTerrain`,
-`g_rightSideTerrainRow`, and `g_hereFlagsPtr` at the same index. The projection
-routines advance/retreat the latter; callers seek again between passes
+`rd_seek` (`ROAD.C:626-633`) positions `g_sampleLeftRoadside`,
+`g_hereRoadsideRightRowPtr`, and `g_trackRoadWordsCursor` at the same index. The
+projection routines advance/retreat the latter; callers seek again between passes
 (`ROAD.C:893-906`). VIEW casts the unsigned pointers to signed word pointers,
 then walks far to near: ahead from sample +14 downward, mirror from sample -8
 upward (`VIEW.C:1225-1227,1340-1342,1386-1388,1513-1515`). This is still the same
@@ -22,7 +22,7 @@ whole-tree search for all arrays and pointers.
 
 Evidence line numbers below refer to the source before this investigation's edits.
 
-## Shared road word: g_terrain3
+## Shared road word: g_roadBitsArray
 
 | Bit | Meaning and evidence |
 | --- | --- |
@@ -52,7 +52,7 @@ both projection directions, current/four-sample-ahead player edges and the
 rival's four-sample lookahead (`RACE.C:1247-1279,1334-1344`): any narrowing stops
 the rival choosing an ordinary passing lane.
 
-## Roadside words: g_terrain0 / g_terrain1
+## Roadside words: g_roadsideLeftBits / g_roadsideRightBits
 
 The town bit in the shared word selects the interpretations below; no separate
 per-side tag exists. Extend the existing `RoadsideFlags` in ROAD.H and reuse its
@@ -117,10 +117,8 @@ existing constants wherever their meaning is correct.
 
 ## Out-of-scope misleading identifiers and uncertainties
 
-- g_terrain0..4 and g_roadTerrain do not describe side/format; retain global names
-  to avoid unrelated storage/budget changes, but document them.
-- g_viewTerrainBitsData sounds like another format; it is a signed traversal of
-  g_terrain3. g_hereFlagsPtr is the shared road word only.
+- The original array/cursor naming issues were resolved in the naming follow-up
+  below; the renderer still uses a signed view of the same shared flag words.
 - ROADSIDE_POST/SMALL_ROCK/LARGE_ROCK/TREE_3 are accurate only for country;
   explicit town aliases avoid silently misnaming building and sidewalk tests.
 - The fill_quad forward declaration calls its first argument mode; its
@@ -141,7 +139,8 @@ operation (including zero initializations and complement masks) now uses the
 existing or new names. Mixed town/country post tests retain ROADSIDE_POST,
 whose documentation covers both meanings; town-only sites use DESTINATION.
 Array and pointer storage declarations retain their original sizes/signedness.
-No global/function renames, data layout changes or algorithm changes.
+That flag-decoding pass made no global/function renames, data layout changes
+or algorithm changes. The naming follow-up below renames the arrays/cursors.
 
 Local replacement list:
 
@@ -193,3 +192,118 @@ Validation:
   flag-local names in ROAD.C/VIEW.C (bitmap struct members named bits are
   unrelated and remain unchanged).
 
+
+## Array/cursor naming investigation (2026-11-05, before renaming)
+
+The requested scope is the five numbered arrays and their six standalone
+cursors. The original flag decoding above still applies. All readers/writers
+were searched across src, headers, metadata and documentation before editing.
+
+| Original array | Proven role | Evidence in the original source |
+| --- | --- | --- |
+| g_terrain0 | Left roadside words | rd_generate assigns left town destinations at 108/156 and left scenery; rd_check_crash tests the left shoulder; rd_seek maps the left renderer cursor (ROAD.C:440-459,501-506,629,991-994; VIEW.C:1225,1386). |
+| g_terrain1 | Right roadside words | Right destination at 44, right scenery/collision tests, and right renderer cursor (ROAD.C:462-481,498,630,998-1001; VIEW.C:1226,1387). |
+| g_terrain2 | Signed horizontal curve displacement | Curve builders accumulate g_buildX; projection subtracts this sample from current curveX; rival projection uses the same difference (ROAD.C:86-190,633,744,775,834,865; VIEW.C:1139). |
+| g_terrain3 | Shared road flags | Builder writes TerrainFlags; projection reads width/town/gantry bits; renderer uses the same unsigned words through a signed pointer (ROAD.C:631,734-735; VIEW.C:1227,1388). |
+| g_terrain4 | Signed road height profile | Hill/dip and bump builders write signed profiles; rd_advance takes the current height, then projection compares sampled height to it (ROAD.C:194-265,599-602,632,743,833,961; VIEW.C:1138). |
+
+rd_seek assigns all five ROAD cursors at index n. Forward projection advances
+only shared flags, height and curve; backward projection retreats them.
+rd_draw_frame seeks again before each projection and before rendering
+(ROAD.C:899-912). The roadside cursors remain at the seek position; VIEW seeds
+RenderRows.leftFlags/rightFlags and its separate shared-word cursor at -8 for
+the mirror and +14 for the forward view, traversing far to near. These signed
+renderer pointers do not introduce another word format. Keep their types.
+
+Proposed array meanings are correct. Their exact spellings cannot all fit:
+SLOTS.OBJ contains six far COMDEFs (g_slot is 13296 bytes, each track array is
+2240 bytes), rather than ordered initialized segment data. The baseline clean
+source builds IDENTICAL. LINK buckets for the existing far symbols are
+64,158,166,174,182,190. Proposed roadsideLeft/right hash to 0/39 before g_slot;
+roadCurve/roadFlags/roadHeight hash to 188/255/241, also reversing the last two.
+The definitions and header declarations must each remain separate: dt_step's
+two destination reads use distinct cached SEG words, even though both arrays
+share a linked segment. A struct or combined declaration can change ES reloads.
+
+Tool limitation: ./sr fit only models DGROUP COMMON and private BSS; it wrongly
+claims all far data are definition-placed. For this task inspect SLOTS.OBJ's
+COMDEF records and calculate tools/sr/linkhash.bucket("_" + name), then require
+the full packed build. No relaxation of byte/reference gates is permitted.
+
+Planned array spellings, chosen to preserve increasing far hash order:
+g_roadsideLeftBits (160), g_roadsideRightBits (166), g_roadCurve (188),
+g_roadBitsArray (192), g_roadHeight (241), after unchanged g_slot (64).
+All retain their original order, signedness, far qualifier and 1120 bound.
+
+Planned cursor spellings (subject to ./sr fit and the actual file/build gates):
+
+| Old | Planned | Role |
+| --- | --- | --- |
+| g_roadTerrain | g_sampleLeftRoadside | Left roadside sample at rd_seek position. |
+| g_rightSideTerrainRow | g_hereRoadsideRightRowPtr | Right roadside sample at rd_seek position. |
+| g_hereCurvePtr | g_seekRoadCurvePtr | Curve cursor advanced/retreated by projection. |
+| g_heightRoadPtr | g_elevationCursor | Height cursor advanced/retreated by projection. |
+| g_hereFlagsPtr | g_seekRoadFlagsPtr | Shared flag cursor for projection/driving. |
+| g_viewTerrainBitsData | g_renderRoadFlagsWordPtr | Signed shared flag cursor for rendering. |
+
+The natural shorter Ptr/Row spellings do not fit the communal bucket windows.
+Name growth consumes compiler storage once per contributing symbol (4d), so
+whole-file and all-file gates must validate these together. Do not change any
+unrelated symbol to make budget room. RenderRows members already describe
+left/right flags and require no rename. Existing TerrainFlags constants name
+the decoded format rather than an array number and remain unchanged.
+
+Other identifiers: build_dip/build_hill_dip/build_dip_hill still have inaccurate
+hill-only comments, as recorded above; outside this naming task. No new
+semantic uncertainty was found for the array/cursor roles.
+
+### Linked placement trial and final cursor spellings
+
+The first renamed build passed all 572 function/object gates and all five far
+arrays linked at their original offsets (33F0,3CB0,4570,4E30,56F0 in 389B).
+However, the two near-common ties failed: g_seekRoadCurvePtr (bucket 44) moved
+from DS:7560 to 755A, and g_seekRoadFlagsPtr (111) from DS:7D62 to 7D42. This
+changed 76 loaded/packed bytes. Keep the original buckets for those two:
+
+| Original | Final name | LINK bucket / original address |
+| --- | --- | --- |
+| g_roadTerrain | g_sampleLeftRoadside | 23 / DS:72EE |
+| g_rightSideTerrainRow | g_hereRoadsideRightRowPtr | 203 / DS:8634 |
+| g_hereCurvePtr | g_sampleCurveXReadPtr | 45 / DS:7560 |
+| g_heightRoadPtr | g_elevationCursor | 59 / DS:7880 |
+| g_hereFlagsPtr | g_trackRoadWordsCursor | 112 / DS:7D62 |
+| g_viewTerrainBitsData | g_renderRoadFlagsWordPtr | 215 / DS:8B82 |
+
+The renderer cursor's equal-bucket tie with its following communal preserves
+placement. No source types, declaration order, sizes, flags, expressions or
+algorithms changed. An inverse-rename token comparison of every changed .C
+file against HEAD confirms identifier changes and formatting only.
+
+### Naming follow-up verification
+
+Final array names are the five planned spellings above; the final six cursor
+names are in the linked-placement table. Every rename used ./sr rename,
+including the two corrections after the first linked trial. Sources, headers,
+metadata and reconstruction docs contain no old numbered arrays or cursor
+names; the old spellings remain only in this investigation's historical
+mapping/trial evidence and the append-only diary.
+
+- headers --check and format --check pass; docs has zero diagnostics.
+- check --all: 572/572 (551 MATCH, 21 MATCH*), with whole-file/reference gates.
+  The combined name growth fits the actual contributing-symbol budget; no
+  flags, unrelated names or compiler assumptions were changed to achieve it.
+- Clean build: 96/96 objects pass; Packed EXE vs orig/SR.EXE: IDENTICAL.
+- All 572 mapped game functions are raw-byte exact at original positions;
+  all 748 near-call encodings are exact.
+- SR.MAP independently confirms all eleven renamed data symbols retain their
+  original addresses, including each far array's segment and offset.
+- DGROUP ownership and object/link order pass.
+- 106 unit tests pass.
+- Final inverse-rename token comparison confirms every changed C file differs
+  only in the requested identifiers and formatting; all storage types, sizes,
+  ordering, expressions and algorithms are preserved.
+
+The sr-cli skill and RECONSTRUCTION.md now document fit's far-COMDEF limitation
+and the need to preserve distinct far declarations/cached SEG words. The
+limitation does not prevent this task: emitted records, LINK hash calculations
+and the full identical packed build establish the placement directly.
