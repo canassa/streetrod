@@ -16,6 +16,8 @@ _g_savedEquip DB      0
 _g_egaMemory DB      0
         PUBLIC  _g_egaSwitches
 _g_egaSwitches DB      0
+; PROVISIONAL: the zero byte here is unexplained. EVEN gives the same bytes, but so do a
+; one-byte variable nobody uses, or the three strings below being a separate object file.
         EVEN
 S_5af4  DB      'Tandy', 0
 S_5afa  DB      'Tandy', 0
