@@ -154,6 +154,7 @@ enum CarClass {
 
 /** @brief Dollar stakes offered during race negotiation. */
 enum WagerAmount {
+    WAGER_NO_CASH = 0,      /**< No cash for kicks or pink slips. */
     WAGER_10_DOLLARS = 10,  /**< Smaller drag stake. */
     WAGER_25_DOLLARS = 25,  /**< Larger drag stake. */
     WAGER_50_DOLLARS = 50,  /**< Smaller road stake. */
@@ -183,6 +184,7 @@ enum WagerAmount {
 /** @} */
 
 #include "CURSOR.H"
+#include "STRUCTS.H"
 struct Bitmap;
 struct CarSpec;
 
@@ -212,38 +214,47 @@ struct Racer {
     char unused2;            /**< Unused byte preserved by load/save. */
 };
 
-struct Btn {
-    struct Bitmap far *near *src;
-    int sx;
-    int sy;
-    int w;
-    int h;
-    int x;
-    int y;
+/** @brief A jail bar or wall rectangle drawn over the encounter scene. */
+struct JailOverlay {
+    /** Borrowed bitmap slot populated when the jail scene opens. */
+    struct Bitmap far *near *bitmapSlot;
+    int sourceX; /**< Source column in pixels. */
+    int sourceY; /**< Source row in pixels. */
+    int width;   /**< Rectangle width in pixels. */
+    int height;  /**< Rectangle height in pixels. */
+    int screenX; /**< Destination screen column in pixels. */
+    int screenY; /**< Destination screen row in pixels. */
 };
 
-/* one step of an animation table (g_animSteps): frame number, then the delay in ticks before the next */
-struct Step {
-    unsigned char frame;
-    unsigned char delay;
+/** @brief Background character pose and dwell time at Bob's or jail. */
+struct IdleAnimStep {
+    /** Pose index mapped to a sheet cell after adding one. */
+    unsigned char poseIndex;
+    unsigned char delayTicks; /**< Timer ticks before the next pose. */
 };
 
-/* one candidate of build_rival_pool: rating difference to the current car, an "already taken" flag, kind difference */
-struct Cand {
-    int dr;
-    int taken;
-    int dk;
+/** @brief Per-rival distances and exclusion state for encounter selection. */
+struct RivalCandidate {
+    int speedDifference; /**< Absolute top-speed difference in mph. */
+    BOOL excluded;       /**< TRUE if unavailable or already selected. */
+    int rankDifference;  /**< Absolute model-rank difference. */
 };
 
-/* one cell of the intro picture tables g_endCellsA / g_endCellsB (6 bytes): source origin in the sheet,
-   size, and the on-screen position (x is biased by 0x50) */
-struct Cell {
-    unsigned char sx;
-    unsigned char sy;
-    unsigned char w;
-    unsigned char h;
-    unsigned char x;
-    unsigned char y;
+/**
+ * @brief Crop and destination for a couple or lips ending-animation cell.
+ *
+ * Couple crops are bottom aligned in a 44-row work bitmap; lips crops use
+ * screen coordinates.
+ */
+struct EndingCell {
+    unsigned char sourceX; /**< Source sheet column in pixels. */
+    unsigned char sourceY; /**< Source sheet row in pixels. */
+    unsigned char width;   /**< Crop width in pixels. */
+    unsigned char height;  /**< Crop height in pixels. */
+    /** Couple work-bitmap column plus 80, or lips screen column. */
+    unsigned char destinationX;
+    /** Lips screen row; unused for couple crops. */
+    unsigned char destinationY;
 };
 
 /** @brief Negotiated stake used for acceptance and race settlement. */
@@ -256,9 +267,10 @@ enum BetKind {
     BET_CAR   /**< Winner takes the losing car. */
 };
 
+/** @brief Accepted stake shared by race negotiation and settlement. */
 struct Wager {
-    enum BetKind kind;
-    int amount;
+    enum BetKind kind;       /**< Stake governing messages and car transfer. */
+    enum WagerAmount amount; /**< Cash dollars won or lost. */
 };
 
 extern struct Wager g_raceWagerTerms;
@@ -287,7 +299,7 @@ enum RacerStatus {
 /** Rival records, including the King, indexed by encounter selection. */
 extern struct Racer g_racerRecordsArray[];
 extern int g_bannerX;
-extern struct Btn g_jailBars[7];
+extern struct JailOverlay g_jailBars[7];
 extern struct Pair g_jailGaps[];
 extern struct Bitmap far *g_barJailPixels;
 extern int g_opponentSpecIndex;

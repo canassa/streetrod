@@ -17,7 +17,7 @@
 static struct Rect g_carhopRect;
 static struct Bitmap far *g_carhopBg;
 
-static struct Sheet g_carhopSheets[2] = {{PIC_CARHOP_WALK_RIGHT, 6, 11}, {PIC_CARHOP_WALK_LEFT, 6, 11}};
+static struct CarhopSheet g_carhopSheets[2] = {{PIC_CARHOP_WALK_RIGHT, 6, 11}, {PIC_CARHOP_WALK_LEFT, 6, 11}};
 static char g_carhopFrames[84] = {4,  4,  4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1,  2,  2,
                                   3,  3,  4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9,  9,  9, 10, 10, 1,
                                   1,  2,  2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8,  8,  9, 9,  9,  9,
@@ -37,9 +37,9 @@ static void near cut_sheet(struct Bitmap far **out, int n)
     struct Bitmap far *sheet;
     int i;
 
-    id5 = g_carhopSheets[n].id;
-    cols8 = g_carhopSheets[n].cols;
-    cells = g_carhopSheets[n].n;
+    id5 = g_carhopSheets[n].pictureId;
+    cols8 = g_carhopSheets[n].columns;
+    cells = g_carhopSheets[n].cellCount;
     sheet = di_bm(id5, ARENA_HIGH_STACK);
     r.w = sheet->width / cols8;
     r.h = sheet->height >> 1;

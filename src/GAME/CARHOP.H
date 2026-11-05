@@ -6,13 +6,15 @@
 #ifndef CARHOP_H
 #define CARHOP_H
 
+#include "DISK.H"
 #include "SPRITE.H"
 #include "STRUCTS.H"
 
-struct Sheet {
-    int id;
-    int cols;
-    int n;
+/** @brief Picture and two-row cell geometry for one carhop direction. */
+struct CarhopSheet {
+    enum PictureId pictureId; /**< Sheet loaded for this direction. */
+    int columns;              /**< Equal-width cells in each row. */
+    int cellCount;            /**< Cells extracted in row order. */
 };
 
 /** @brief Motion and background update for the carhop sprite. */

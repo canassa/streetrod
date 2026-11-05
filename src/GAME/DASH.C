@@ -739,6 +739,6 @@ int da_text_width(char *s)
     int w;
 
     for (w = 0; *s; s++)
-        w += g_font[*s - 32].w;
+        w += g_font[*s - 32].advance;
     return w;
 }

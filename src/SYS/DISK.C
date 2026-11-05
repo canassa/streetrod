@@ -26,7 +26,6 @@
 #include "TANDYPIC.H"
 
 #define PIC_MARK 0xbc
-#define NOT_IN_VRAM 0xff
 
 enum PictureLibrary {
     LIBRARY_FIRST = 1,
@@ -46,12 +45,12 @@ static char g_dataPath[16];
 
 struct Model g_models[26];
 struct CarSpec g_carData[26];
-struct Panel g_bodyRects[26];
-struct Spr12 g_layoutAutoSprArray[26];
-struct Pos6 g_imageDecalLayout[8];
+struct CarHotspots g_bodyRects[26];
+struct CarPicLayout g_layoutAutoSprArray[26];
+struct StickerPos g_imageDecalLayout[8];
 int g_usedCarAdFirst;
 unsigned g_carRatingsTable[3][3];
-struct Spr6 g_pointsModelService[26];
+struct ServicePoints g_pointsModelService[26];
 unsigned g_rivalStakeToleranceTable[3][3];
 int g_lib1Count;
 int g_countLibBmB;
@@ -142,13 +141,13 @@ static void near open_lib(int n)
         g_picLib.path = g_picLibBPath;
         g_picLib.handle = &g_lib2Handle;
         g_picLib.otherHandle = &g_lib1Handle;
-        g_picLib.count = &g_countLibBmB;
+        g_picLib.entryCount = &g_countLibBmB;
     } else {
         kind = LIBRARY_FIRST;
         g_picLib.path = g_library1Path;
         g_picLib.handle = &g_lib1Handle;
         g_picLib.otherHandle = &g_lib2Handle;
-        g_picLib.count = &g_lib1Count;
+        g_picLib.entryCount = &g_lib1Count;
     }
     if (*g_picLib.handle == 0) {
         _dos_close(*g_picLib.otherHandle);
@@ -163,7 +162,7 @@ static void near open_lib(int n)
                 sy_exit();
             sc_wait_msg(g_msgInsertDisk);
         }
-        if (_dos_read(*g_picLib.handle, (void far *)g_picLib.count, 2, &got) || got != 2 ||
+        if (_dos_read(*g_picLib.handle, (void far *)g_picLib.entryCount, 2, &got) || got != 2 ||
             g_lib1Count + g_countLibBmB != PICTURE_COUNT) {
             sc_wait_msg(g_msgBadFormat);
             sy_exit();
@@ -183,7 +182,7 @@ int di_read_index(int which)
     int count;
     int got;
     int base;
-    struct Slot far *sl;
+    struct PictureSlot far *sl;
 
     base = which == 1 ? 0 : g_lib1Count;
     num = which == 1 ? 1 : PICTURE_SECOND_BASE;
@@ -198,13 +197,13 @@ int di_read_index(int which)
             sy_exit();
         }
         sl->vramPlane = NOT_IN_VRAM;
-        sl->ptr.p = 0;
+        sl->packed.p = 0;
         sl->unused4 = 0;
         sl->unused5 = 0;
         sl->unused6 = -1;
         sl->unused7 = 1;
-        if (sl->packedSize > height)
-            height = sl->packedSize;
+        if (sl->packedSpan > height)
+            height = sl->packedSpan;
     }
     return height;
 }
@@ -222,27 +221,27 @@ static enum LoadResult near load_pic(int n, int load, char far *dst)
     int total;
     char far *fp;
     long offset;
-    struct Slot far *ent;
+    struct PictureSlot far *ent;
     int got;
     char pool;
     int retries;
-    struct Slot far *sl;
+    struct PictureSlot far *sl;
 
     n = pic_index(num = n);
     ent = sl = &g_slot[n];
-    if (sl->ptr.p == 0) {
+    if (sl->packed.p == 0) {
         if (load) {
-            fp = me_vram_alloc(ent->packedSize, &pool);
-            sl->ptr.p = fp == 0 ? (char far *)0 : ar_alloc(ent->packedSize + 1, ARENA_HIGH_STACK);
+            fp = me_vram_alloc(ent->packedSpan, &pool);
+            sl->packed.p = fp == 0 ? (char far *)0 : ar_alloc(ent->packedSpan + 1, ARENA_HIGH_STACK);
             sl->vramPlane = pool;
         } else {
-            sl->ptr.p = dst ? dst : me_alloc(ent->packedSize + 1, 0);
+            sl->packed.p = dst ? dst : me_alloc(ent->packedSpan + 1, 0);
             sl->vramPlane = NOT_IN_VRAM;
         }
-        if (sl->ptr.p == 0)
+        if (sl->packed.p == 0)
             return LOAD_NO_MEMORY;
         open_lib(num);
-        offset = (long)(*g_picLib.count * 0x1e + 2) + ent->dataOffset;
+        offset = (long)(*g_picLib.entryCount * 0x1e + 2) + ent->dataOffset;
         if (di_seek(*g_picLib.handle, offset))
             goto bad;
         if (sl->vramPlane != NOT_IN_VRAM) {
@@ -250,15 +249,15 @@ static enum LoadResult near load_pic(int n, int load, char far *dst)
             outp(SEQ_DATA, 1 << sl->vramPlane);
         }
         retries = 0;
-        total = ent->packedSize + 1;
+        total = ent->packedSpan + 1;
         for (;;) {
-            if (_dos_read(*g_picLib.handle, sl->ptr.p, total, &got) || got != total)
+            if (_dos_read(*g_picLib.handle, sl->packed.p, total, &got) || got != total)
                 goto bad;
-            if (*sl->ptr.p == (char)PIC_MARK && sl->ptr.p[total - 1] == (char)PIC_MARK) {
+            if (*sl->packed.p == (char)PIC_MARK && sl->packed.p[total - 1] == (char)PIC_MARK) {
                 if (sl->vramPlane == NOT_IN_VRAM)
                     goto done;
-                movedata(sl->ptr.w.seg, sl->ptr.w.off, FP_SEG(fp), FP_OFF(fp), ent->packedSize);
-                sl->ptr.p = fp;
+                movedata(sl->packed.w.seg, sl->packed.w.off, FP_SEG(fp), FP_OFF(fp), ent->packedSpan);
+                sl->packed.p = fp;
                 ma_pop_high(1);
                 outp(SEQ_INDEX, SEQ_MAP_MASK);
                 outp(SEQ_DATA, SEQ_ALL_PLANES);
@@ -296,7 +295,7 @@ void di_free_pic(enum PictureId n)
     char far *far *pp;
 
     n = pic_index(n);
-    if (*(pp = &g_slot[n].ptr.p)) {
+    if (*(pp = &g_slot[n].packed.p)) {
         me_free(*pp);
         *pp = 0;
     }
@@ -311,11 +310,11 @@ struct Bitmap far *di_unpack_pic(enum PictureId id, struct Bitmap far *bm)
     int num;
     char far *src;
     unsigned char colors16[16];
-    struct Slot far *cur;
+    struct PictureSlot far *cur;
     int j;
     enum LoadResult res;
     struct Bitmap far *pic;
-    struct Slot far *sl;
+    struct PictureSlot far *sl;
 
     cu_ctl(CURSOR_HIDE_NOW);
     res = load_pic(id, 0, g_imageBufferPointer);
@@ -325,13 +324,13 @@ struct Bitmap far *di_unpack_pic(enum PictureId id, struct Bitmap far *bm)
     else
         pic = bm;
     for (j = 0; j < 16; j++)
-        colors16[j] = cur->pal[j];
+        colors16[j] = cur->rleTokens[j];
     if (sl->vramPlane != NOT_IN_VRAM) {
         outp(GC_INDEX, GC_READ_MAP);
         outp(GC_DATA, sl->vramPlane);
     }
-    src = sl->ptr.p + 1;
-    num = cur->packedSize - 1;
+    src = sl->packed.p + 1;
+    num = cur->packedSpan - 1;
     if (r_vid.mode == VID_EGA) {
         if (pic->bits.p == 0) {
             rl_decode(src, pic->mask.p, num, colors16, 16);
@@ -356,7 +355,7 @@ struct Bitmap far *di_unpack_pic(enum PictureId id, struct Bitmap far *bm)
         outp(SEQ_DATA, SEQ_ALL_PLANES);
     }
     if (res == LOAD_READ)
-        sl->ptr.p = 0;
+        sl->packed.p = 0;
     cu_ctl(CURSOR_SHOW_NOW);
     return pic;
 }
@@ -581,7 +580,7 @@ static void near unscramble_hall(void)
 
 void di_load_hall(void)
 {
-    struct Entry *p;
+    struct HallEntry *p;
     int i;
     int got;
     int fd;
@@ -613,7 +612,7 @@ void di_load_hall(void)
 
 void di_save_hall(void)
 {
-    struct Entry *p;
+    struct HallEntry *p;
     int tries;
     int i;
     unsigned got;

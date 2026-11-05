@@ -484,7 +484,7 @@ static void near show_ticket(void)
     r_vid.copyToFront = 0;
     x_colors = bustyle->schemes[STYLE_NEWSPAPER];
     for (p2 = g_driverName, wk = 0; *p2 && wk < maxw2; p2++)
-        wk += g_font[*p2 - 32].w;
+        wk += g_font[*p2 - 32].advance;
     if (wk >= maxw2)
         p2--;
     d = cl = *p2;
@@ -494,7 +494,7 @@ static void near show_ticket(void)
     desc3 = g_carData[g_driver.currentCar->specIndex].nameOffset;
     endk = desc3 + strcspn(g_descHdr + desc3 + 8, " `.") + 7;
     for (p2 = g_descHdr + desc3 + 1, wk = 0; *p2 && wk < maxw2; p2++)
-        wk += g_font[*p2 - 32].w;
+        wk += g_font[*p2 - 32].advance;
     if (wk >= maxw2)
         p2--;
     d = cl = *p2;

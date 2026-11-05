@@ -3371,6 +3371,65 @@ lessons from both branches remain in the recipe book and investigation notes.
   rather than purchase entries, and HOT_DATA has an ignored duplicate tail.
   Full evidence and remaining uncertainty live in the linked report.
 
+## 2026-11-05 21:37 CET: Disk, picture-slot, glyph and needle structs
+
+### What I did
+
+- Investigated all nine requested structs in order; recorded their storage,
+  loaders, member roles/value sets, all readers/writers and naming backlog in
+  [st-disk.md](investigations/st-disk.md).
+- Documented each struct/member and replaced vague type/field names with the
+  proven car-hotspot, car-picture, service-point, sticker and picture-cache roles.
+  Added named car-region indices and retained every size, signedness and spare.
+- Committed the implementation as 1a8c185, fetched origin/main and merged it
+  (already up to date at 3848b38), then reran every gate: headers/format pass,
+  Doxygen zero diagnostics, 572/572 functions, clean packed/native DOS builds
+  IDENTICAL, DGROUP checks pass, 109 tests OK, 59 targeted layout checks pass.
+
+### What I learned
+
+- The picture slot's sixteen bytes are RLE token dictionary entries, not colors;
+  its packed span excludes the shared closing frame byte. See the investigation
+  for exact file offsets, cache ownership and decoder evidence.
+- Car interaction rectangles cover transmission and hood as well as bumpers
+  and roof. Portrait placement uses an inclusive bottom anchor; service anchors
+  are distinct from bitmap component positions.
+- The existing whole-tree layout audit cannot resolve TRANSMISSION_BOLT_COUNT.
+  Used a real MSC sizeof/offsetof audit of all nine requested records, following
+  the known limitation already recorded in CLAUDE.md and the sr-cli skill.
+## 2026-11-05 21:36 CET: Investigate Bob's, carhop and fame records
+
+### What I did
+
+- Investigated Btn, Step, Cand, Cell, Wager, Sheet, ManualEntry and Entry,
+  recording storage, every member's users/values, persistence and edge cases in
+  plans/investigations/st-bobs.md before renaming.
+- Documented all eight structs, replaced vague tags/member names, used BOOL for
+  candidate exclusion, existing enums for picture/stake fields, and named every
+  manual-color answer across questions, hotspots and keyboard maps.
+- Preserved the original record layouts: real MSC passed35 sizeof/offsetof
+  assertions. Initial gates passed572/572 function matches, zero Doxygen
+  diagnostics, IDENTICAL clean packed EXE, DGROUP ownership/order and109 tests.
+
+### What I learned
+
+- Idle poses index a remapping table with an added one; the timeout bound reads
+  a31st step from the first two bytes of that following remapping table.
+- Ending couple crops use biased work-bitmap columns and bottom alignment;
+  lips crops use direct screen coordinates. Jail overlays include wall edges.
+- Hall-of-fame scores are decimal elapsed-hour strings in23-byte disk records;
+  manual answer colors are menu ordinals rather than video palette indices.
+- The picture named PIC_CARHOP_IDLE contains a different character from the
+  skating carhop. Existing names alone do not establish the depicted subject.
+- cdata cannot resolve preprocessor count macros in table bounds, so the
+  original51/10 table dimensions remain literal; enum color names are unaffected.
+- DOS-native MAKE additionally reproduced orig/SR.EXE byte for byte.
+
+Post-merge verification: fetched origin and ran git merge origin/main (already
+up to date at3848b38), then reran headers, format, docs (zero diagnostics), all572
+function checks, a clean IDENTICAL packed build, DGROUP ownership/order, all109
+unit tests, the35-assertion real-MSC layout audit, and IDENTICAL DOS-native MAKE.
+
 ## 2026-11-05 21:38 CET: Investigate car, dashboard, garage and pool structs
 
 ### What I did
