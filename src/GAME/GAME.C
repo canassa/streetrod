@@ -642,8 +642,8 @@ static enum GarageMode near your_cars(void)
         case KR_SELL_CAR:
             break;
         default:
-            if (item > 0) /* PROVISIONAL: the original loads g_list[0] here and drops it */
-                g_list[0] = g_list[0];
+            if (item > 0 && item <= g_list[0])
+                break;
         }
         cur = tbl[item = mn_sel()];
         offer = price = (int)((rn_int(CAR_SALE_RANDOM_PCT) + CAR_SALE_BASE_PCT) * cur->value / 100.0);
