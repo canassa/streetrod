@@ -1,7 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include "BOBS.H"
-#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "CARHOP.H"
@@ -30,6 +29,7 @@
 #include "RANDOM.H"
 #include "SAVEGAME.H"
 #include "SCREEN.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 #include "VIDEO.H"
 
@@ -81,7 +81,7 @@ static void near play_cell_anim(void);
 static void near set_jail_spots(enum HotKind id, char c);
 
 int g_bannerX = 100;
-int g_passCount = 0;
+static int g_passCount = 0;
 
 
 static int near maybe_carhop(enum CarhopMode mode, int arg, int pct1, int pct2)
@@ -142,7 +142,7 @@ static void near drop_last_word(char *s)
         s[i] = 0;
 }
 
-int g_lastRival = -1;
+static int g_lastRival = -1;
 
 
 static void near show_rival_car(enum CarAnimKind mode, int b, int c, int d, int e, int *f)
@@ -390,8 +390,8 @@ static void near list_met_rivals(int *ids, int *slots, int *kinds)
 
 struct Wager g_raceWagerTerms;
 
-int g_refuseMsgs[2][5] = {{4779, 4803, 4822, 4840, 4663}, {4663, 4675, 4694, 4715, 4727}};
-int g_acceptMsgs[2][3] = {{4859, 4867, 4875}, {4743, 4756, 4767}};
+static int g_refuseMsgs[2][5] = {{4779, 4803, 4822, 4840, 4663}, {4663, 4675, 4694, 4715, 4727}};
+static int g_acceptMsgs[2][3] = {{4859, 4867, 4875}, {4743, 4756, 4767}};
 
 
 static int near look_for_rival(enum CarAnimKind n)
@@ -666,22 +666,23 @@ static void near setup_bobs_spots(int a, int b)
     }
 }
 
-struct Step g_animSteps[30] = {{2, 15}, {3, 15}, {4, 22},  {5, 15},  {6, 37},  {5, 15},  {6, 45},  {5, 15},
-                               {4, 15}, {3, 15}, {2, 15},  {8, 90},  {7, 15},  {9, 15},  {10, 30}, {9, 15},
-                               {7, 7},  {8, 75}, {11, 15}, {12, 30}, {13, 15}, {12, 15}, {11, 15}, {8, 90},
-                               {7, 15}, {9, 15}, {10, 30}, {9, 15},  {7, 7},   {14, 15}};
-char g_animCells[16] = {1, 15, 7, 8, 9, 10, 11, 12, 2, 3, 0, 1, 5, 6, 13, 4};
-struct Cell g_endCellsA[20] = {
+static struct Step g_animSteps[30] = {{2, 15}, {3, 15}, {4, 22},  {5, 15},  {6, 37},  {5, 15},  {6, 45},  {5, 15},
+                                      {4, 15}, {3, 15}, {2, 15},  {8, 90},  {7, 15},  {9, 15},  {10, 30}, {9, 15},
+                                      {7, 7},  {8, 75}, {11, 15}, {12, 30}, {13, 15}, {12, 15}, {11, 15}, {8, 90},
+                                      {7, 15}, {9, 15}, {10, 30}, {9, 15},  {7, 7},   {14, 15}};
+static char g_animCells[16] = {1, 15, 7, 8, 9, 10, 11, 12, 2, 3, 0, 1, 5, 6, 13, 4};
+static struct Cell g_endCellsA[20] = {
     {0, 0, 48, 24, 80, 0},   {48, 0, 32, 24, 88, 0},   {80, 0, 32, 24, 96, 0},    {112, 0, 64, 24, 88, 0},
     {0, 24, 40, 44, 96, 0},  {40, 24, 40, 44, 96, 0},  {80, 24, 40, 44, 96, 0},   {120, 24, 40, 44, 96, 0},
     {0, 68, 40, 44, 96, 0},  {40, 68, 40, 44, 96, 0},  {80, 68, 40, 44, 96, 0},   {120, 68, 40, 44, 96, 0},
     {0, 112, 40, 44, 96, 0}, {40, 112, 40, 44, 96, 0}, {80, 112, 40, 44, 96, 0},  {120, 112, 40, 44, 96, 0},
     {0, 156, 48, 44, 88, 0}, {48, 156, 56, 44, 80, 0}, {104, 156, 56, 44, 80, 0}, {160, 156, 40, 44, 96, 0}};
-struct Cell g_endCellsB[9] = {{208, 54, 8, 2, 128, 84},    {200, 54, 8, 3, 112, 88},    {184, 54, 16, 4, 96, 94},
-                              {160, 54, 24, 10, 112, 113}, {160, 86, 40, 10, 128, 113}, {160, 65, 48, 20, 136, 104},
-                              {160, 1, 112, 52, 128, 70},  {0, 1, 160, 97, 112, 52},    {0, 99, 224, 101, 80, 51}};
-int g_endPics[8] = {1201, 1217, 1106, 1107, 1108, 1109, 1073, 0};
-int g_endPics2[3] = {6, 7, 0};
+static struct Cell g_endCellsB[9] = {
+    {208, 54, 8, 2, 128, 84},    {200, 54, 8, 3, 112, 88},    {184, 54, 16, 4, 96, 94},
+    {160, 54, 24, 10, 112, 113}, {160, 86, 40, 10, 128, 113}, {160, 65, 48, 20, 136, 104},
+    {160, 1, 112, 52, 128, 70},  {0, 1, 160, 97, 112, 52},    {0, 99, 224, 101, 80, 51}};
+static int g_endPics[8] = {1201, 1217, 1106, 1107, 1108, 1109, 1073, 0};
+static int g_endPics2[3] = {6, 7, 0};
 
 
 static void near pop_rival_hood(void)

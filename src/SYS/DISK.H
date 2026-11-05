@@ -58,24 +58,9 @@ struct PicLibSelection {
     int *otherHandle;
 };
 
-extern char *g_dataFileName;
-extern char *g_dataBlocks[13];
-extern unsigned g_dataSizes[13];
-extern int g_lib1Handle;
-extern int g_lib2Handle;
-extern char *g_lib1Name;
-extern char *g_lib1cName;
-extern char *g_lib2Name;
-extern char *g_lib2cName;
-extern char *g_msgInsertDisk;
-extern char *g_msgCopyFiles;
-extern char *g_msgBadFormat;
-extern char *g_msgWriteError;
-extern char *g_msgNotFound;
 extern unsigned char g_rleCounts[16];
 extern unsigned char g_rleValues[16];
 extern int g_picNewHeader;
-extern char g_hallFileName[];
 extern struct Panel g_bodyRects[];
 extern struct Spr12 g_layoutAutoSprArray[];
 extern struct Pos6 g_imageDecalLayout[];

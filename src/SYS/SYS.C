@@ -22,6 +22,7 @@
 #include "MOUSE.H"
 #include "MUSIC.H"
 #include "PC.H"
+#include "PERF.H"
 #include "RACE.H"
 #include "RANDOM.H"
 #include "ROAD.H"
@@ -49,14 +50,14 @@ int g_cursHoverCodeVal;
 int g_wRivBanner;
 struct TimerPriorities g_sysTimerPriorities;
 
-struct TimerQueue g_timerQueue = {-1, -1, 0, 2147483647L, 0, 0};
-struct Link g_timers[4] = {
+static struct TimerQueue g_timerQueue = {-1, -1, 0, 2147483647L, 0, 0};
+static struct Link g_timers[4] = {
     {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}};
-int g_unused3 = 0;
-int g_unused4[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+static int g_unused3 = 0;
+static int g_unused4[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 long g_waitUntil = 0L;
 struct InputState g_input = {0, 0};
-int g_unused5 = 32767;
+static int g_unused5 = 32767;
 int g_unused6 = 0;
 int g_unused7 = 0;
 int g_unused8 = 0;
@@ -64,14 +65,14 @@ int g_msgTicks = 350;
 int g_clickEnds = 0;
 int g_kbdHooked = 0;
 struct Mouse g_mouse = {0, 0, 0, 0, 0, 0, 0, 10, 3};
-int g_unused9[2] = {0, 0};
+static int g_unused9[2] = {0, 0};
 long g_tick = 0L;
 struct GameClock g_gameClock = {0L, 0L, 0L};
-char g_tickDiv = 0;
-char g_driveDiv = 0;
-int g_unused10 = 0;
-char *g_errRead = "cannot read drive ?";
-char *g_errWriteProt = "disk ? is write protected";
+static char g_tickDiv = 0;
+static char g_driveDiv = 0;
+static int g_unused10 = 0;
+static char *g_errRead = "cannot read drive ?";
+static char *g_errWriteProt = "disk ? is write protected";
 int g_demo = 0;
 int g_autoDrive = 0;
 
@@ -199,11 +200,12 @@ void sy_exit(void)
     exit(5);
 }
 
-char g_unused11 = 0;
-char g_keymapGroup = 0;
-struct KeyMap g_keymapSaved[30] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},
-                                   {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},
-                                   {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
+static char g_unused11 = 0;
+static char g_keymapGroup = 0;
+static struct KeyMap g_keymapSaved[30] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},
+                                          {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},
+                                          {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},
+                                          {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 
 
 void sy_crit_error(unsigned deverr, unsigned char errcode)
@@ -367,19 +369,19 @@ int sy_keymap_restore(int keep)
 }
 
 char g_protectPal[16] = {0, 0, 8, 7, 15, 7, 15, 8, 7, 2, 4, 12, 5, 10, 6, 14};
-int g_unused12 = 0;
-struct DemoControl g_demoControl = {0, 0, 0, 0, 0, 0};
-int g_demoTargetX = 0;
-int g_demoTargetY = 0;
-int g_demoScriptPos = 0;
-int g_demoScript[22] = {-1, 0, -1, 0, 1, 1, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 0, 0, 2};
-char g_cursorBusy = 0;
-int g_vibCount = 1;
-int g_sirenPhase = 0;
-int g_overRev = 0;
-char g_driveBusy = 0;
-char g_lastFire = 0;
-char g_squealPhase = 0;
+static int g_unused12 = 0;
+static struct DemoControl g_demoControl = {0, 0, 0, 0, 0, 0};
+static int g_demoTargetX = 0;
+static int g_demoTargetY = 0;
+static int g_demoScriptPos = 0;
+static int g_demoScript[22] = {-1, 0, -1, 0, 1, 1, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 0, 0, 2};
+static char g_cursorBusy = 0;
+static int g_vibCount = 1;
+static int g_sirenPhase = 0;
+static int g_overRev = 0;
+static char g_driveBusy = 0;
+static char g_lastFire = 0;
+static char g_squealPhase = 0;
 
 
 int sy_wait_input(int ticks)

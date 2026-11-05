@@ -3,7 +3,7 @@
 #include <conio.h>
 #include "MAIN.H"
 #include "ARENA.H"
-#include "CARPIC.H"
+#include "BITMAP.H"
 #include "CGA.H"
 #include "CURSOR.H"
 #include "DASH.H"
@@ -37,9 +37,9 @@ struct Video r_vid;
 
 int g_hercules = 0;
 int g_sysHooked = 0;
-int g_hercModeSet = 0;
+static int g_hercModeSet = 0;
 int g_videoSet = 0;
-int g_unused1 = 0;
+static int g_unused1 = 0;
 int g_dashViewSaved = 0;
 
 
@@ -60,7 +60,7 @@ static void near dos_print(char *s)
     int86(DOS_INT, &inr, &outr);
 }
 
-char *g_videoMenu[6] = {
+static char *g_videoMenu[6] = {
     "                    1 - CGA      320 x 200 x  4 colors", "                    2 - EGA      320 x 200 x 16 colors",
     "                    3 - VGA      320 x 200 x 16 colors", "                    4 - Hercules monochrome",
     "                    5 - Tandy    320 x 200 x 16 colors", "\n                  Esc - Back to DOS"};

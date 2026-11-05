@@ -6,8 +6,6 @@
 #include "DASH.H"
 struct Bitmap;
 
-extern struct Hooks g_tandyHooks;
-extern int g_tandyRevealOrder[];
 void ta_install(void);
 void ta_draw_text(struct Bitmap far *bm, int x, int y, int glyph);
 void ta_recolor_rect(struct Bitmap far *bm, int from, int to, int x1, int y1, int x2, int y2);

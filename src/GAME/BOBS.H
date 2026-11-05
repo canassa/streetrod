@@ -88,16 +88,6 @@ enum RacerStatus {
 
 extern struct Racer g_racerRecordsArray[];
 extern int g_bannerX;
-extern int g_passCount;
-extern int g_lastRival;
-extern int g_refuseMsgs[][5];
-extern int g_acceptMsgs[][3];
-extern struct Step g_animSteps[];
-extern char g_animCells[16];
-extern struct Cell g_endCellsA[20];
-extern struct Cell g_endCellsB[9];
-extern int g_endPics[];
-extern int g_endPics2[];
 extern struct Btn g_jailBars[7];
 extern struct Pair g_jailGaps[];
 extern struct Bitmap far *g_barJailPixels;

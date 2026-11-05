@@ -2,15 +2,13 @@
 #include <memory.h>
 #include <stdlib.h>
 #include "TANDYBLT.H"
-#include "ADS.H"
-#include "CARPIC.H"
+#include "BITMAP.H"
 #include "CGADRV.H"
 #include "DASH.H"
 #include "MASKBG.H"
 #include "MASKBLT.H"
 #include "MASKOR.H"
 #include "TANDYCPY.H"
-#include "VIEW.H"
 
 static void near split_banks(int x, int x0, int y, int *b, int *a);
 static void near copy_from_tandy(struct Bitmap far *src, struct Bitmap far *dst, struct Clip *o);

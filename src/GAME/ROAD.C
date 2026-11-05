@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "ROAD.H"
-#include "CARPIC.H"
+#include "BITMAP.H"
 #include "DASH.H"
 #include "DRIVE.H"
 #include "MAIN.H"
@@ -33,12 +33,12 @@ static void near build_right_closed(void);
 static void near build_narrows(void);
 static void near build_left_closed(void);
 
-int g_hillProfile[22] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, -4, -4, -4, -3, -2, -1};
-int g_hillDipProfile[38] = {1,  2,  3,  4,  4,  4,  4,  3, 2, 1, 0, 0, -1, -2, -3, -4, -5, -5, -5,
-                            -5, -5, -5, -4, -3, -2, -1, 0, 0, 1, 2, 3, 4,  4,  4,  4,  3,  2,  1};
-int g_bumpProfile[17] = {1, 2, 3, 3, 3, 2, 1, 0, 0, 0, -1, -2, -3, -3, -3, -2, -1};
-int g_layoutLen = 12;
-enum RoadSection g_roadLayouts[10][12] = {
+static int g_hillProfile[22] = {1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 0, -1, -2, -3, -4, -4, -4, -4, -3, -2, -1};
+static int g_hillDipProfile[38] = {1,  2,  3,  4,  4,  4,  4,  3, 2, 1, 0, 0, -1, -2, -3, -4, -5, -5, -5,
+                                   -5, -5, -5, -4, -3, -2, -1, 0, 0, 1, 2, 3, 4,  4,  4,  4,  3,  2,  1};
+static int g_bumpProfile[17] = {1, 2, 3, 3, 3, 2, 1, 0, 0, 0, -1, -2, -3, -3, -3, -2, -1};
+static int g_layoutLen = 12;
+static enum RoadSection g_roadLayouts[10][12] = {
     {SECTION_RIGHT_CURVE, SECTION_HILL, SECTION_LEFT_CURVE, SECTION_RIGHT_CLOSED, SECTION_DIP, SECTION_S_CURVE_LR,
      SECTION_HILL_DIP, SECTION_LEFT_CLOSED, SECTION_DIP_HILL, SECTION_RIGHT_CURVE, SECTION_NARROWS, SECTION_LEFT_CURVE},
     {SECTION_S_CURVE_RL, SECTION_DIP, SECTION_LEFT_CLOSED, SECTION_LEFT_CURVE, SECTION_DIP_HILL, SECTION_NARROWS,
@@ -62,26 +62,28 @@ enum RoadSection g_roadLayouts[10][12] = {
      SECTION_NARROWS},
     {SECTION_LEFT_CURVE, SECTION_HILL, SECTION_LEFT_CURVE, SECTION_DIP_HILL, SECTION_LEFT_CURVE, SECTION_DIP,
      SECTION_NARROWS, SECTION_S_CURVE_LR, SECTION_DIP_HILL, SECTION_LEFT_CLOSED, SECTION_RIGHT_CURVE, SECTION_HILL}};
-struct Bitmap g_egaPage1 = {SCREEN_WIDTH,
-                            SCREEN_HEIGHT,
-                            8000,
-                            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
-                            {EGA_PAGE1_BITS},
-                            {0},
-                            EGA_PITCH,
-                            VID_EGA};
-struct Bitmap g_egaPage2 = {SCREEN_WIDTH,
-                            SCREEN_HEIGHT,
-                            8000,
-                            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
-                            {EGA_PAGE2_BITS},
-                            {0},
-                            EGA_PITCH,
-                            VID_EGA};
+static struct Bitmap g_egaPage1 = {
+    SCREEN_WIDTH,
+    SCREEN_HEIGHT,
+    8000,
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
+    {EGA_PAGE1_BITS},
+    {0},
+    EGA_PITCH,
+    VID_EGA};
+static struct Bitmap g_egaPage2 = {
+    SCREEN_WIDTH,
+    SCREEN_HEIGHT,
+    8000,
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
+    {EGA_PAGE2_BITS},
+    {0},
+    EGA_PITCH,
+    VID_EGA};
 int g_roadLayout = 0;
 int g_onShoulder = 0;
-int g_turnRight = 0;
-int g_turnLeft = 0;
+static int g_turnRight = 0;
+static int g_turnLeft = 0;
 
 /* Near wrapper around rn_int, used by the track builder */
 

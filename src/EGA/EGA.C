@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "EGA.H"
-#include "CARPIC.H"
+#include "BITMAP.H"
 #include "CURSBLT.H"
 #include "DASH.H"
 #include "EGABLIT.H"
@@ -18,8 +18,9 @@
 #include "SCREEN.H"
 #include "VIDEO.H"
 
-struct Hooks g_egaHooks = {eb_copy,     ex_blit, eb_masked, eg_draw_text, uc_ega,  ec_page, er_rect,      da_pal_blank,
-                           da_pal_show, es_step, ec_reveal, ev_sprite,    el_draw, en_fill, en_fill_below};
+static struct Hooks g_egaHooks = {eb_copy,   ex_blit,   eb_masked,    eg_draw_text, uc_ega,
+                                  ec_page,   er_rect,   da_pal_blank, da_pal_show,  es_step,
+                                  ec_reveal, ev_sprite, el_draw,      en_fill,      en_fill_below};
 
 
 void eg_install(void)

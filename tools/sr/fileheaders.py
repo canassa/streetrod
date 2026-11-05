@@ -38,18 +38,13 @@ def _strip(text):
 
 
 def file_statics(path):
-    """Names of the uninitialized file-scope `static` variables a C source defines."""
-    if path.suffix.upper() != '.C':
-        return set()
-    out = set()
-    for ln in _strip(path.read_text(encoding='latin-1')).splitlines():
-        if re.match(r'static\s[^;{}=()]*;\s*$', ln):
-            out.add(re.search(r'(\w+)\s*(\[[^]]*\]\s*)*;', ln).group(1))
-    return out
+    """Names of all file-scope static data a C source declares."""
+    from .source import static_declarations
+    return {name for name, _ in static_declarations(path)}
 
 
 def local_statics():
-    """Every file-local uninitialized static of the game sources."""
+    """Every file-local data static of the game sources."""
     return {n for _, srcs in owners_layout() for p in srcs for n in file_statics(p)}
 
 

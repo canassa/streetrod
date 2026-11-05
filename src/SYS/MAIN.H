@@ -3,20 +3,9 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-struct Bitmap;
+#include "VIDEO.H"
 
-/* Display state set by vi_init; mode follows front->flags and geometry depends on the mode. */
-struct Video {
-    struct Bitmap far *front;
-    struct Bitmap far *back;
-    struct Bitmap far *hoodBg;
-    int mode;
-    int planes; /* 4 on EGA (-2), else 1 */
-    int shift;  /* log2 pixels per byte: 3, 2, 1 */
-    int bpp;    /* bits per pixel: 1, 2, 4 */
-    int mask;   /* ~(pixels per byte - 1): -8, -4, -2 */
-    int copyToFront;
-};
+struct Bitmap;
 
 enum Scene {
     SCENE_NONE = 0,
@@ -43,11 +32,8 @@ enum VideoChoice {
 
 extern int g_hercules;
 extern int g_sysHooked;
-extern int g_hercModeSet;
 extern int g_videoSet;
-extern int g_unused1;
 extern int g_dashViewSaved;
-extern char *g_videoMenu[];
 extern int g_egaCard;
 extern int g_forceEga;
 extern int g_vga;

@@ -102,6 +102,7 @@ def gate_objects(rules):
             listing = root/(rule.stem.lower()+'.cod')
             procs = cod.parse(listing)
             obj.statics = cod.statics(listing)
+            obj.data_labels = cod.data_labels(listing)
         else:
             lengths = cod.asm_lengths(next(root.glob(rule.stem+'.[Ll][Ss][Tt]'), None))
             procs = [cod.from_publics(obj, module.fname(r), lengths) for r in members]

@@ -5,8 +5,6 @@
 
 struct Bitmap;
 
-extern char far *g_vramBase;
-extern unsigned g_vramUsed[4];
 extern int g_titlePics[];
 extern int g_gamePics[];
 int me_data_segment(void);

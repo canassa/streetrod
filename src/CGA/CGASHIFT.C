@@ -1,12 +1,11 @@
 #include <stdlib.h>
 #include "CGASHIFT.H"
-#include "ADS.H"
-#include "CARPIC.H"
+#include "BITMAP.H"
 
 static void near shift_pixels(unsigned char *p, int n, int cnt);
 static void near put_pixels(char far *dst, unsigned char *src, int n, int ph);
 
-unsigned char g_cgaLeadMask[4] = {192, 240, 252, 255};
+static unsigned char g_cgaLeadMask[4] = {192, 240, 252, 255};
 
 /* Shift a row of bytes by n pixel pairs (2 bits each), carrying the bits across bytes */
 

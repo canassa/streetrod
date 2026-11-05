@@ -1,7 +1,6 @@
 #include <string.h>
 #include "ADS.H"
 #include "BITMAP.H"
-#include "CARPIC.H"
 #include "CURSOR.H"
 #include "DASH.H"
 #include "DISK.H"
@@ -21,11 +20,11 @@ int g_adIdxEndPageState;
 
 static struct Bitmap far *near ad_picture(int n);
 
-struct Pages g_pages = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 0, 0, 0};
-struct Bitmap far *g_adPicture = 0;
-char g_adRedraw = 0;
-struct Blt g_adPacket = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-int g_adResume = 0;
+static struct Pages g_pages = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 0, 0, 0};
+static struct Bitmap far *g_adPicture = 0;
+static char g_adRedraw = 0;
+static struct Blt g_adPacket = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static int g_adResume = 0;
 
 
 void av_open(int *list, int base)

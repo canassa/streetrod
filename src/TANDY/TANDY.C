@@ -2,7 +2,6 @@
 #include <dos.h>
 #include "TANDY.H"
 #include "BITMAP.H"
-#include "CARPIC.H"
 #include "CURSBLT.H"
 #include "DASH.H"
 #include "PC.H"
@@ -15,10 +14,10 @@
 #include "TANDYTXT.H"
 #include "VIDEO.H"
 
-struct Hooks g_tandyHooks = {tb_copy,      tb_shifted,      tb_masked,    ta_draw_text, uc_tandy,
-                             ta_copy_page, ta_recolor_rect, da_pal_blank, da_pal_show,  ts_step,
-                             ta_reveal,    sp_slide_v,      tl_draw,      tl_span,      tl_fill_below};
-int g_tandyRevealOrder[5] = {0, 2, 4, 1, 3};
+static struct Hooks g_tandyHooks = {tb_copy,      tb_shifted,      tb_masked,    ta_draw_text, uc_tandy,
+                                    ta_copy_page, ta_recolor_rect, da_pal_blank, da_pal_show,  ts_step,
+                                    ta_reveal,    sp_slide_v,      tl_draw,      tl_span,      tl_fill_below};
+static int g_tandyRevealOrder[5] = {0, 2, 4, 1, 3};
 
 
 void ta_install(void)

@@ -13,8 +13,6 @@ enum DrivePhase {
     DRIVE_RUNNING = 3
 };
 
-extern char g_savedPal12;
-extern char g_savedPal3;
 extern enum DrivePhase g_phaseDriveRunState;
 extern int g_startingGoActive;
 void cr_go(void);

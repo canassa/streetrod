@@ -39,8 +39,17 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   full function gate, including GARAGE.C and VIEW.C.
 - **Local variables.** MSC's slot order depends on a hash of the names (CLAUDE.md 3).
   Names with digit suffixes come from `./sr layout -w` and only reproduce the frame.
-- **Struct types and members** (in the primary global owner's header, or the
-  producer/API header for types without global storage). Sizes and offsets come
+- **Initialized file-private data.** The 193 C initialized globals used by a single
+  source are `static`; MSC emits the same data and code bytes, with private names
+  recovered from the compiler listing for verification. Their linkage is a source
+  reconstruction choice. The 21 scenery `Run` tables retain public linkage: MSC
+  rejects their static forward declarations followed by initializers (C2086).
+  Declaring the initialized tables before the referring `List` records preserves
+  loaded bytes but changes relocation emission order (256 differing packed EXE
+  bytes), so the exact packed-file gate requires the existing order and linkage.
+
+- **Struct types and members** (shared types in their producer/API header;
+  module-private records in their module header). Sizes and offsets come
   from the code; tags and member names are invented. Explicit unused or reset-only fields use `unused` / `unusedN`; legacy `pad` /
   `fNN` names also remain where meaning is uncertain. Explicit spare storage is distinct
   from the compiler's automatic alignment padding.
@@ -65,9 +74,11 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
   live beside their sources; shared headers live in SYS. SRENV.BAT supplies INCLUDE for
   both compilers without adding long /I lists to DOS command lines.
 - **Headers.** One hand-written header per source file (`src/<folder>/<FILE>.H`)
-  with type definitions beside their primary global or producer/API, and a tiny
+  with shared type definitions beside their producer/API and private types in their module, and a tiny
   `STRUCTS.H` for ownerless helpers, is a plausible organisation, not a recovered one.
-  The remaining common `union Word` has no global instance or producer API:
+  The ownerless helpers are `union Word` (a word/byte view) and `struct Pair`
+  (two ints used for cursor scaling, shifter positions and jail gaps). `union Word`
+  has no global instance or producer API:
   GARAGE reads paint bytes, SOUND forms a speaker divisor, and SYS forms timer
   bytes independently. Giving one of those modules ownership would add an
   unrelated API dependency to the other two.

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <conio.h>
 #include "CGA.H"
-#include "CARPIC.H"
+#include "BITMAP.H"
 #include "CGABLT.H"
 #include "CGAFONT.H"
 #include "CGALINE.H"
@@ -19,12 +19,12 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-struct Hooks g_cgaHooks = {cb_copy,      cx_blit,         cb_masked,     cg_draw_text, uc_cga,
-                           cg_copy_page, cg_recolor_rect, cg_screen_off, cg_screen_on, cs_step,
-                           cg_reveal,    sp_slide_v,      cl_draw,       cl_span,      cl_fill_below};
-unsigned char g_cgaPixMask[4] = {192, 48, 12, 3};
-unsigned char g_cgaPixKeep[4] = {63, 207, 243, 252};
-int g_cgaRevealOrder[5] = {0, 2, 4, 1, 3};
+static struct Hooks g_cgaHooks = {cb_copy,      cx_blit,         cb_masked,     cg_draw_text, uc_cga,
+                                  cg_copy_page, cg_recolor_rect, cg_screen_off, cg_screen_on, cs_step,
+                                  cg_reveal,    sp_slide_v,      cl_draw,       cl_span,      cl_fill_below};
+static unsigned char g_cgaPixMask[4] = {192, 48, 12, 3};
+static unsigned char g_cgaPixKeep[4] = {63, 207, 243, 252};
+static int g_cgaRevealOrder[5] = {0, 2, 4, 1, 3};
 
 
 void cg_install(void)

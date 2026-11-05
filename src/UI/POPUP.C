@@ -1,10 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "POPUP.H"
-#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
-#include "CARPIC.H"
 #include "CURSOR.H"
 #include "DASH.H"
 #include "MAIN.H"
@@ -18,10 +16,10 @@
 static struct Win *g_popupLayout;
 static int g_unused24[2]; /* PROVISIONAL: 4 unreferenced bytes after g_popupLayout */
 
-struct Win g_popupWins[3] = {{1072, 1, 72, 30, 152, 37, 0, 6, 144},
-                             {1073, 1, 80, 30, 232, 37, 0, 6, 223},
-                             {1074, 2, 80, 20, 232, 46, 0, 6, 223}};
-struct Bitmap far *g_popupSave = 0;
+static struct Win g_popupWins[3] = {{1072, 1, 72, 30, 152, 37, 0, 6, 144},
+                                    {1073, 1, 80, 30, 232, 37, 0, 6, 223},
+                                    {1074, 2, 80, 20, 232, 46, 0, 6, 223}};
+static struct Bitmap far *g_popupSave = 0;
 
 /* Copy the rectangle (x, y, w, h) of the back buffer into pict new bitmap and return it.
    The x range is rounded to the pixel grid r_vid.mask. src, when given, is the bitmap to reuse. */

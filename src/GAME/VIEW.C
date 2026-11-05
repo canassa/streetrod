@@ -1,9 +1,8 @@
 #include <stdlib.h>
 #include "VIEW.H"
-#include "ADS.H"
 #include "ARENA.H"
+#include "BITMAP.H"
 #include "BOBS.H"
-#include "CARPIC.H"
 #include "CRUISE.H"
 #include "DASH.H"
 #include "DISK.H"
@@ -59,21 +58,21 @@ static void near render_overlays(void);
 static void near render_mirror(void);
 static void near select_draw_page(void);
 
-int g_opponentPics[5][4] = {{1003, 1004, 1057, 1091},
-                            {1010, 1012, 1011, 1239},
-                            {1010, 1247, 1248, 1092},
-                            {1010, 1249, 1250, 1251},
-                            {1010, 1253, 1252, 1254}};
-int g_unused20 = 0;
+static int g_opponentPics[5][4] = {{1003, 1004, 1057, 1091},
+                                   {1010, 1012, 1011, 1239},
+                                   {1010, 1247, 1248, 1092},
+                                   {1010, 1249, 1250, 1251},
+                                   {1010, 1253, 1252, 1254}};
+static int g_unused20 = 0;
 struct ViewPages g_viewPages = {1, 2};
 struct Clip g_viewRect = {SCREEN_WIDTH, 82, 0, 18, 0, 18};
 struct ViewClip g_viewClip = {0, 18, 101, (SCREEN_WIDTH - 1)};
-unsigned char g_shrinkMasks[3][4] = {{87, 37, 34, 0}, {247, 117, 82, 0}, {117, 84, 33, 0}};
-int g_sceneBitmapIds[4] = {1258, 1237, 1236, 1238};
-int g_roadLineWidths[21] = {8, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-int g_unused21[4] = {0, 0, 0, 0};
-struct Ball g_sheetRects[7] = {{256, 8, 8},   {240, 16, 13}, {208, 32, 19}, {168, 40, 24},
-                               {120, 48, 30}, {64, 56, 37},  {0, 64, 43}};
+static unsigned char g_shrinkMasks[3][4] = {{87, 37, 34, 0}, {247, 117, 82, 0}, {117, 84, 33, 0}};
+static int g_sceneBitmapIds[4] = {1258, 1237, 1236, 1238};
+static int g_roadLineWidths[21] = {8, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static int g_unused21[4] = {0, 0, 0, 0};
+static struct Ball g_sheetRects[7] = {{256, 8, 8},   {240, 16, 13}, {208, 32, 19}, {168, 40, 24},
+                                      {120, 48, 30}, {64, 56, 37},  {0, 64, 43}};
 
 
 static void near select_draw_page(void)

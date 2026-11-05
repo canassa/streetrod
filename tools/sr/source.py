@@ -16,7 +16,7 @@ from . import config
 SYMBOLS = Path(__file__).with_name('symbols.json')
 _EXTERN = re.compile(r'^extern\s+(.+?);\s*$')
 _PROTO = re.compile(r'^(.+\));\s*$')
-_STATIC = re.compile(r'^static\s+([^;{}=()]*?)\s*;\s*$')
+_STATIC = re.compile(r'^static\s+([^\n;{}=]+?)\s*(?:=|;)', re.M)
 
 
 def symbol_addresses():
@@ -141,23 +141,33 @@ def headers():
     return out
 
 
+def static_declarations(path):
+    """File-scope static data declarators, including initialized data and forward declarations."""
+    from .fileheaders import _strip
+    if path.suffix.upper() != '.C':
+        return []
+    out = {}
+    for m in _STATIC.finditer(_strip(path.read_text(encoding='latin-1'))):
+        decl = m.group(1).strip()
+        # Function declarations are not data; function pointers have a '*' declarator.
+        if '(' in decl and not re.search(r'\([^()]*\*[^()]*\)\s*\(', decl):
+            continue
+        name = declared_name(decl)
+        out[name] = decl
+    return list(out.items())
+
+
 @functools.cache
 def statics():
-    """Uninitialized file statics, with original addresses joined by name."""
-    from .fileheaders import _strip
+    """File-local data in _DATA or _BSS, with original addresses joined by name."""
     addresses = symbol_addresses()['data']
     out = []
     for path in source_files():
-        if path.suffix.upper() != '.C':
-            continue
-        for ln in _strip(path.read_text(encoding='latin-1')).splitlines():
-            m = _STATIC.match(ln)
-            if m:
-                name = declared_name(m[1])
-                if name not in addresses:
-                    raise SystemExit(f'{path.name}: {name}: missing static address in {SYMBOLS.name}')
-                out.append(dict(off=addresses[name]['off'], name=name, decl=_template(m[1], name),
-                                header=None, static=_rel(path)))
+        for name, decl in static_declarations(path):
+            if name not in addresses:
+                raise SystemExit(f'{path.name}: {name}: missing static address in {SYMBOLS.name}')
+            out.append(dict(off=addresses[name]['off'], name=name, decl=_template(decl, name),
+                            header=None, static=_rel(path)))
     return out
 
 

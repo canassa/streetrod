@@ -1,6 +1,6 @@
 #include <conio.h>
 #include "EGASLIDE.H"
-#include "CARPIC.H"
+#include "BITMAP.H"
 #include "CRTC.H"
 #include "DASH.H"
 #include "EGABLIT.H"

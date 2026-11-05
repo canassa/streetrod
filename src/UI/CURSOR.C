@@ -1,9 +1,7 @@
 #include <string.h>
 #include "CURSOR.H"
-#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
-#include "CARPIC.H"
 #include "DASH.H"
 #include "DISK.H"
 #include "EGALATCH.H"
@@ -12,10 +10,11 @@
 #include "MARKS.H"
 #include "MEM.H"
 #include "PC.H"
+#include "STRUCTS.H"
 
 struct Cursor g_cursor2;
 
-struct Pair g_cursorPairs[4] = {{1, 1}, {2, 2}, {1, 1}, {8, 8}};
+static struct Pair g_cursorPairs[4] = {{1, 1}, {2, 2}, {1, 1}, {8, 8}};
 
 
 unsigned cu_shape_off(unsigned n)

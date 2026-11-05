@@ -2,7 +2,6 @@
 #include <math.h>
 #include <conio.h>
 #include "DASH.H"
-#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "CARPIC.H"
@@ -20,9 +19,10 @@
 #include "MOUSE.H"
 #include "NEEDLE.H"
 #include "PC.H"
+#include "PERF.H"
 #include "SCREEN.H"
 #include "SOUND.H"
-#include "SPRITE.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 #include "VIDEO.H"
 #include "VIEW.H"
@@ -50,25 +50,25 @@ char g_displayEnabled;
 struct Bitmap far *g_bufferSceneA;
 char g_runRacingFlag;
 
-int g_needleColor = -1;
-char g_introPalette[18] = {0, 8, 7, 15, 14, 1, 9, 11, 0, 2, 4, 12, 13, 10, 5, 6, 0, 0};
-struct Bitmap far *g_savedBack = 0;
-struct Bitmap far *g_savedFront = 0;
-signed char g_steerLeftPoints[24][2] = {{87, 69},  {88, 64},  {90, 58},  {91, 54},   {93, 49},   {95, 45},
-                                        {98, 40},  {101, 36}, {104, 33}, {108, 29},  {111, 26},  {114, 23},
-                                        {118, 20}, {121, 19}, {125, 16}, {-127, 14}, {-122, 12}, {-117, 11},
-                                        {-113, 9}, {-108, 8}, {-104, 7}, {-99, 7},   {-95, 6},   {-91, 6}};
-unsigned char g_steerPoints[25][2] = {{170, 6},  {175, 6},  {179, 6},  {183, 7},  {188, 7},  {192, 8},  {197, 9},
-                                      {201, 11}, {206, 12}, {211, 14}, {215, 16}, {219, 19}, {222, 20}, {226, 23},
-                                      {229, 26}, {232, 29}, {236, 33}, {239, 36}, {242, 40}, {245, 45}, {247, 49},
-                                      {249, 54}, {250, 58}, {252, 64}, {253, 69}};
-int g_wheelShown = 0;
-int g_wheelSlotY[3] = {148, 174, 73};
-signed char g_shiftPts[11][2] = {{14, 17}, {14, 28}, {13, 12}, {13, 2}, {13, 20}, {22, 2},
-                                 {13, 12}, {13, 2},  {13, 20}, {22, 2}, {22, 20}};
-struct Track g_shifters[3] = {
+static int g_needleColor = -1;
+static char g_introPalette[18] = {0, 8, 7, 15, 14, 1, 9, 11, 0, 2, 4, 12, 13, 10, 5, 6, 0, 0};
+static struct Bitmap far *g_savedBack = 0;
+static struct Bitmap far *g_savedFront = 0;
+static signed char g_steerLeftPoints[24][2] = {{87, 69},  {88, 64},  {90, 58},  {91, 54},   {93, 49},   {95, 45},
+                                               {98, 40},  {101, 36}, {104, 33}, {108, 29},  {111, 26},  {114, 23},
+                                               {118, 20}, {121, 19}, {125, 16}, {-127, 14}, {-122, 12}, {-117, 11},
+                                               {-113, 9}, {-108, 8}, {-104, 7}, {-99, 7},   {-95, 6},   {-91, 6}};
+static unsigned char g_steerPoints[25][2] = {
+    {170, 6},  {175, 6},  {179, 6},  {183, 7},  {188, 7},  {192, 8},  {197, 9},  {201, 11}, {206, 12},
+    {211, 14}, {215, 16}, {219, 19}, {222, 20}, {226, 23}, {229, 26}, {232, 29}, {236, 33}, {239, 36},
+    {242, 40}, {245, 45}, {247, 49}, {249, 54}, {250, 58}, {252, 64}, {253, 69}};
+static int g_wheelShown = 0;
+static int g_wheelSlotY[3] = {148, 174, 73};
+static signed char g_shiftPts[11][2] = {{14, 17}, {14, 28}, {13, 12}, {13, 2}, {13, 20}, {22, 2},
+                                        {13, 12}, {13, 2},  {13, 20}, {22, 2}, {22, 20}};
+static struct Track g_shifters[3] = {
     {2, 1229, 1232, 8, g_shiftPts[0]}, {4, 1227, 1230, 19, g_shiftPts[2]}, {5, 1228, 1231, 19, g_shiftPts[6]}};
-struct Pair g_shiftSlots[5] = {{0, 162}, {32, 162}, {64, 162}, {96, 162}, {264, 102}};
+static struct Pair g_shiftSlots[5] = {{0, 162}, {32, 162}, {64, 162}, {96, 162}, {264, 102}};
 
 
 static void near restore_under(int x, int y, int w, int h, enum DashSaveKind kind)

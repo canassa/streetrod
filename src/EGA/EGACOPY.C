@@ -5,7 +5,7 @@
 #include "PC.H"
 #include "SYS.H"
 
-int g_revealOffsets[5] = {0, 80, 160, 40, 120};
+static int g_revealOffsets[5] = {0, 80, 160, 40, 120};
 
 /* Copy 8000 bytes between planar VGA buffers using write mode 1 (latch copy) */
 

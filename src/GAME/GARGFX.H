@@ -17,18 +17,7 @@ struct PartSelection {
 
 extern struct PartSelection g_slotSelec;
 
-extern char g_partAnimate;
-extern int g_tboltY[];
-extern int g_enginePos[][2];
-extern int g_engineBoltPos[];
-extern int g_wiresPos[];
-extern int g_manifoldBoltPos[];
-extern int g_carbPos[][2];
-extern int g_carbBoltOff[];
-extern char g_partSlotMap[];
-extern char g_carbPosBase[];
 extern struct Bitmap far *g_boltOverlay;
-extern struct Hot g_boltHot;
 extern struct Blt g_cpyBoltPatchRecord;
 extern int g_partsPics[];
 extern int g_engineBoltPicIds[9];

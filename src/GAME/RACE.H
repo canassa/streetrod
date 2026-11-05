@@ -78,18 +78,17 @@ struct GasInteraction {
     int nozzleAvailable;
 };
 
+struct RivalPosition {
+    int roadIndex;
+    int roadFraction;
+    int distanceStep;
+    int lateralX;
+    char unused[8];
+};
+
 extern struct BodyPoints g_featurePos;
 
-extern int g_gasSpotIds[];
-extern int g_winMsgs[];
-extern struct Spot g_crashPics[];
-extern int g_statsDone;
-extern int g_tireSlip[][5];
-extern int g_lastTicks;
-extern int g_bumpAlternate;
 extern int g_rivalLeft;
-extern int g_rivalCurveBrake;
-extern int g_contactFrames;
 extern int g_brakeTicks;
 extern struct RoadEdges g_edgesRoad;
 extern int g_carHit;

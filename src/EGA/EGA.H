@@ -6,7 +6,6 @@
 #include "DASH.H"
 struct Bitmap;
 
-extern struct Hooks g_egaHooks;
 void eg_install(void);
 void eg_draw_text(struct Bitmap far *bm, int x, int y, char *str);
 

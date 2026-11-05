@@ -3,38 +3,7 @@
 #ifndef CARPIC_H
 #define CARPIC_H
 
-union FarPtr {
-    char far *p;
-    struct {
-        unsigned off;
-        unsigned seg;
-    } w;
-};
-
-struct Bitmap {
-    int width;
-    int height;
-    unsigned planesize;
-    char unused[0x1e];
-    union FarPtr bits;
-    union FarPtr alt;
-    int pitch;
-    signed char flags;
-};
-
-struct Cmd {
-    signed char op;
-    signed char sub;
-    int a;
-    int b;
-};
-
-struct Rect {
-    int x1;
-    int y1;
-    int x2;
-    int y2;
-};
+#include "BITMAP.H"
 
 /* one saved band of a screen page (8 bytes): where it sits in the scratch bitmap, its first row and height */
 struct Band {
@@ -62,12 +31,8 @@ extern int g_wheelPicIds[3];
 extern int g_driveRebuild;
 extern struct Cmd g_animScripts[];
 extern int g_animScriptStart[];
-extern struct Bitmap far *g_backdrop;
 extern int g_carMoving;
-extern struct Rect g_overlayRectA;
-extern struct Rect g_overlayRectB;
 extern int g_backdropX;
-extern int g_backdropW;
 extern int g_carPassBy;
 extern struct Bitmap g_bandRecordsSprArray[];
 extern struct Bitmap far *g_lastPic;

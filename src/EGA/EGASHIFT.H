@@ -6,7 +6,6 @@
 struct Bitmap;
 struct Blt;
 
-extern unsigned char g_leftBitMasks[];
 extern int g_egaGcFunction;
 void ex_blit(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r);
 

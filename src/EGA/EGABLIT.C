@@ -2,8 +2,7 @@
 #include <dos.h>
 #include <memory.h>
 #include "EGABLIT.H"
-#include "ADS.H"
-#include "CARPIC.H"
+#include "BITMAP.H"
 #include "DASH.H"
 #include "EGALATCH.H"
 #include "MAIN.H"

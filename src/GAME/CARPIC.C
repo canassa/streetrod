@@ -1,7 +1,6 @@
 #include <conio.h>
 #include <dos.h>
 #include "CARPIC.H"
-#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "BOBS.H"
@@ -86,12 +85,12 @@ struct Cmd g_animScripts[44] = {{ANIM_NOP_1, 0, -1, -1},
                                 {ANIM_STOP, 0, 0, 0},
                                 {ANIM_STOP, 0, 0, 0}};
 int g_animScriptStart[9] = {8, 0, 2, 12, 10, 25, 27, 29, 31};
-struct Bitmap far *g_backdrop = (struct Bitmap far *)&g_carBackdropHdrBmp;
+static struct Bitmap far *g_backdrop = (struct Bitmap far *)&g_carBackdropHdrBmp;
 int g_carMoving = 0;
-struct Rect g_overlayRectA = {0, 0, 80, 0};
-struct Rect g_overlayRectB = {88, 0, 136, 0};
+static struct Rect g_overlayRectA = {0, 0, 80, 0};
+static struct Rect g_overlayRectB = {88, 0, 136, 0};
 int g_backdropX = 0;
-int g_backdropW = 0;
+static int g_backdropW = 0;
 int g_carPassBy = 0;
 
 /* Blit one 4-plane EGA image row set, one plane at a time via the sequencer map mask */

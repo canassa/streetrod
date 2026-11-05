@@ -14,8 +14,8 @@
 
 enum DrivePhase g_phaseDriveRunState;
 
-char g_savedPal12 = -1;
-char g_savedPal3 = -1;
+static char g_savedPal12 = -1;
+static char g_savedPal3 = -1;
 
 
 void cr_go(void)

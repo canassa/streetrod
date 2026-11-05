@@ -6,10 +6,6 @@
 #include "DASH.H"
 struct Bitmap;
 
-extern struct Hooks g_cgaHooks;
-extern unsigned char g_cgaPixMask[4];
-extern unsigned char g_cgaPixKeep[4];
-extern int g_cgaRevealOrder[5];
 void cg_install(void);
 void cg_draw_text(struct Bitmap far *bm, int x, int y, char *s);
 void cg_recolor_rect(struct Bitmap far *bm, int a, int b, int x1, int y1, int x2, int y2);

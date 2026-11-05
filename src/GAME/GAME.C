@@ -51,9 +51,9 @@ struct Car *g_old = 0;
 struct Car *g_new = 0;
 int g_carPulledIn = 0;
 int g_picsFreed = 0;
-int g_paperPics[5] = {1022, 1023, 1025, 1024, 1026};
-int g_paperPick = 0;
-int g_paperDay = -1;
+static int g_paperPics[5] = {1022, 1023, 1025, 1024, 1026};
+static int g_paperPick = 0;
+static int g_paperDay = -1;
 
 
 static int near start_game(void)
@@ -550,7 +550,7 @@ done:
     g_scene = SCENE_NONE;
 }
 
-char *g_offerText = g_msgHowAbout;
+static char *g_offerText = g_msgHowAbout;
 
 
 static int near counter_offer(unsigned *price)

@@ -17,8 +17,6 @@ struct Win {
     int next;
 };
 
-extern struct Win g_popupWins[];
-extern struct Bitmap far *g_popupSave;
 struct Bitmap far *pu_grab(int x, int y, int w, int h, struct Bitmap far *src);
 void pu_put(struct Bitmap far *bm, int x, int y);
 void pu_show(struct Bitmap far *bm, int x, int y);

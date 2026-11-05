@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <conio.h>
 #include "GARAGE.H"
-#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "CARPIC.H"
@@ -41,9 +40,9 @@ static void near remove_part(struct Node **slot);
 static void near tune_timing(struct Car *car);
 
 int g_tirePics[3][4] = {{1065, 1066, 1067, 1068}, {1028, 1029, 1030, 1031}, {1106, 1107, 1108, 1109}};
-int g_colX = 33;
-int g_rowY[4] = {14, 107, 15, 105};
-int g_wOff[4] = {0, 5, 9, 14};
+static int g_colX = 33;
+static int g_rowY[4] = {14, 107, 15, 105};
+static int g_wOff[4] = {0, 5, 9, 14};
 
 
 int ga_day(void)
@@ -138,8 +137,8 @@ void ga_calendar(int a1)
     ma_pop_high(1);
 }
 
-char *g_mon[4] = {"June", "July", "August", "September"};
-int g_hIds[5] = {11, 13, 9, 10, 12};
+static char *g_mon[4] = {"June", "July", "August", "September"};
+static int g_hIds[5] = {11, 13, 9, 10, 12};
 
 /* Draws the current date ("Month day, 1963") */
 
@@ -264,7 +263,7 @@ static int near is_broke(void)
 }
 
 char g_paint[6][2] = {{4, 12}, {3, 11}, {2, 10}, {5, 13}, {1, 9}, {7, 15}};
-int g_pad[7] = {0, 5, 5, 5, 5, 0, 0};
+static int g_pad[7] = {0, 5, 5, 5, 5, 0, 0};
 
 
 int near ga_menu(enum GarageMode mode)
@@ -742,15 +741,15 @@ static void near car_info(int *ids, char *vals)
     g_list[0] = count;
 }
 
-char *g_iTxt[4] = {"", "Fuel                  ", "", "Max speed      mph"};
+static char *g_iTxt[4] = {"", "Fuel                  ", "", "Max speed      mph"};
 int g_nCarb[5] = {1, 1, 3, 2, 2};
 int g_nBolt[6] = {1, 2, 2, 2, 2, 2};
-enum PartCategory g_nextCat[6] = {PART_ENGINE,     PART_MANIFOLD,   PART_CARBURETOR,
-                                  PART_CARBURETOR, PART_CARBURETOR, PART_CARBURETOR};
-int g_cPos[5][6] = {
+static enum PartCategory g_nextCat[6] = {PART_ENGINE,     PART_MANIFOLD,   PART_CARBURETOR,
+                                         PART_CARBURETOR, PART_CARBURETOR, PART_CARBURETOR};
+static int g_cPos[5][6] = {
     {5, 5, 0, 0, 0, 0}, {6, 6, 0, 0, 0, 0}, {7, 7, 8, 8, 9, 9}, {10, 10, 11, 11, 0, 0}, {12, 12, 13, 13, 0, 0}};
-int g_boltSlots[10] = {0, 0, 1, 1, 5, 5, 5, 5, 5, 5};
-int g_boltSubslots[10] = {0, 0, 0, 1, 0, 1, 0, 1, 0, 1};
+static int g_boltSlots[10] = {0, 0, 1, 1, 5, 5, 5, 5, 5, 5};
+static int g_boltSubslots[10] = {0, 0, 0, 1, 0, 1, 0, 1, 0, 1};
 
 
 void ga_info(void)

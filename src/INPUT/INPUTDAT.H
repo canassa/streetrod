@@ -3,14 +3,7 @@
 #ifndef INPUTDAT_H
 #define INPUTDAT_H
 
-struct Item {
-    int value;
-    char variant;
-    char fitMask;
-    char category;
-    char unused;
-    int nameOffset;
-};
+#include "GAME.H"
 
 extern int g_joyX;
 extern int g_joyY;

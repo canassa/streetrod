@@ -68,14 +68,19 @@ struct Car {
     struct Car *next;
 };
 
+struct Item {
+    int value;
+    char variant;
+    char fitMask;
+    char category;
+    char unused;
+    int nameOffset;
+};
+
 extern struct Car *g_old;
 extern struct Car *g_new;
 extern int g_carPulledIn;
 extern int g_picsFreed;
-extern int g_paperPics[];
-extern int g_paperPick;
-extern int g_paperDay;
-extern char *g_offerText;
 void gm_pause(int a);
 void gm_message(int n);
 struct Node *near gm_new_part(void);

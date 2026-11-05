@@ -178,6 +178,7 @@ def _check_rows(rows, flags_override=None, quiet=False):
             procs = cod.parse(job.cod)
             proc = cod.find(procs, fn_name(r))
             obj.statics = cod.statics(job.cod)
+            obj.data_labels = cod.data_labels(job.cod)
             found = ", ".join(p.c_name for p in procs)
         if proc is None:
             print(f"{hexa(r['addr'])}: no procedure {fn_name(r)} in {job.src.name} (found: {found})")
@@ -426,6 +427,7 @@ def _file_gates(im, jobs, results):
         procs = ([cod.from_publics(obj, fn_name(m), lengths) for m in ms] if job.asm else cod.parse(job.cod))
         if not job.asm:
             obj.statics = cod.statics(job.cod)
+            obj.data_labels = cod.data_labels(job.cod)
         g = mod.gate(obj, [p for p in procs if p is not None], im.img, ms, data=True)
         print(g.line(f.path.name))
         lo, hi = ms[0]["addr"], ms[-1]["addr"] + ms[-1]["size"]

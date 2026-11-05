@@ -4,7 +4,8 @@
 #define VIDEO_H
 
 struct Bitmap;
-struct Cmd;
+struct Blt;
+struct Sprite;
 
 struct Box {
     int w;
@@ -81,11 +82,46 @@ enum AnimWaitMode {
     ANIM_WAIT_COPY_TO_FRONT = 4
 };
 
-extern struct Style g_style16;
-extern struct Style g_style4;
+struct Cmd {
+    signed char op;
+    signed char sub;
+    int a;
+    int b;
+};
+
+struct Hooks {
+    int(far *copy)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
+    int(far *shiftBlit)(struct Bitmap far *, struct Bitmap far *, struct Blt *);
+    int(far *maskedBlit)(struct Bitmap far *, struct Bitmap far *, struct Blt *, int);
+    void(far *drawText)(struct Bitmap far *, int, int, char *);
+    void(far *cursorBlit)(char far *, char far *, char far *, char far *, int, int, int, int);
+    void(far *copyPage)(char far *, char far *);
+    void(far *recolorRegion)(struct Bitmap far *, int, int, int, int, int, int);
+    void(far *blank)(void);
+    void(far *show)(void);
+    int(far *spriteStep)(struct Sprite *);
+    void(far *reveal)(char far *, char far *);
+    void(far *slideSprite)(int, int, int, int, int, struct Bitmap far *);
+    void(far *drawLine)(int, int, int, int, int);
+    void(far *fillSpan)(int, int, int, int);
+    void(far *fillBelow)(int, int);
+};
+
+/* Display state set by vi_init; mode follows front->flags and geometry depends on the mode. */
+struct Video {
+    struct Bitmap far *front;
+    struct Bitmap far *back;
+    struct Bitmap far *hoodBg;
+    int mode;
+    int planes; /* 4 on EGA (-2), else 1 */
+    int shift;  /* log2 pixels per byte: 3, 2, 1 */
+    int bpp;    /* bits per pixel: 1, 2, 4 */
+    int mask;   /* ~(pixels per byte - 1): -8, -4, -2 */
+    int copyToFront;
+};
+
 extern unsigned char g_palette[17];
 extern char g_blackPalette[16];
-extern unsigned char g_altPalette[17];
 extern struct Bitmap far *g_pageBmps[];
 extern struct Obj g_scriptObjsData[];
 extern struct Style *bustyle;

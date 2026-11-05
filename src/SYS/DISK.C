@@ -8,8 +8,8 @@
 #include <stdlib.h>
 #include "DISK.H"
 #include "ARENA.H"
+#include "BITMAP.H"
 #include "BOBS.H"
-#include "CARPIC.H"
 #include "CURSOR.H"
 #include "FAME.H"
 #include "MAIN.H"
@@ -65,32 +65,32 @@ static enum LoadResult near load_pic(int n, int load, char far *dst);
 static void near unscramble_hall(void);
 static void near scramble_hall(void);
 
-char *g_dataFileName = "hot_data";
-char *g_dataBlocks[13] = {(char *)g_racerRecordsArray,
-                          (char *)g_carData,
-                          (char *)g_models,
-                          (char *)g_layoutAutoSprArray,
-                          (char *)g_bodyRects,
-                          (char *)g_pointsModelService,
-                          g_desc,
-                          (char *)&g_usedCarAdFirst,
-                          g_txt,
-                          (char *)g_carRatingsTable,
-                          (char *)g_rivalStakeToleranceTable,
-                          (char *)g_acceptProbability,
-                          (char *)g_imageDecalLayout};
-unsigned g_dataSizes[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};
-int g_lib1Handle = 0;
-int g_lib2Handle = 0;
-char *g_lib1Name = "?:lib1";
-char *g_lib1cName = "?:lib1c";
-char *g_lib2Name = "?:lib2";
-char *g_lib2cName = "?:lib2c";
-char *g_msgInsertDisk = "insert disk ? into drive ?";
-char *g_msgCopyFiles = "copy all files to current directory";
-char *g_msgBadFormat = "bad file format";
-char *g_msgWriteError = "write error";
-char *g_msgNotFound = "file not found: ????";
+static char *g_dataFileName = "hot_data";
+static char *g_dataBlocks[13] = {(char *)g_racerRecordsArray,
+                                 (char *)g_carData,
+                                 (char *)g_models,
+                                 (char *)g_layoutAutoSprArray,
+                                 (char *)g_bodyRects,
+                                 (char *)g_pointsModelService,
+                                 g_desc,
+                                 (char *)&g_usedCarAdFirst,
+                                 g_txt,
+                                 (char *)g_carRatingsTable,
+                                 (char *)g_rivalStakeToleranceTable,
+                                 (char *)g_acceptProbability,
+                                 (char *)g_imageDecalLayout};
+static unsigned g_dataSizes[13] = {396, 260, 260, 312, 520, 156, 1850, 2, 200, 18, 18, 24, 48};
+static int g_lib1Handle = 0;
+static int g_lib2Handle = 0;
+static char *g_lib1Name = "?:lib1";
+static char *g_lib1cName = "?:lib1c";
+static char *g_lib2Name = "?:lib2";
+static char *g_lib2cName = "?:lib2c";
+static char *g_msgInsertDisk = "insert disk ? into drive ?";
+static char *g_msgCopyFiles = "copy all files to current directory";
+static char *g_msgBadFormat = "bad file format";
+static char *g_msgWriteError = "write error";
+static char *g_msgNotFound = "file not found: ????";
 unsigned char g_rleCounts[16] = {1, 1, 2, 3, 4, 2, 3, 5, 6, 6, 4, 7, 7, 5, 8, 8};
 unsigned char g_rleValues[16] = {0, 255, 0, 0, 0, 255, 255, 0, 255, 0, 255, 255, 0, 255, 255, 0};
 int g_picNewHeader = 1;
@@ -492,7 +492,7 @@ void di_open_libs(int disks, enum VideoChoice mode)
     }
 }
 
-char g_hallFileName[12] = "?:hall_dat";
+static char g_hallFileName[12] = "?:hall_dat";
 
 /* Load the game data. Builds the file name g_dataPath from the first two characters of
    g_picLibBPath and the text g_dataFileName points to (g_dataFileName ends up behind its terminator), opens it and

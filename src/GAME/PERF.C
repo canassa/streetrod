@@ -6,18 +6,18 @@
 #include "INPUTDAT.H"
 #include "POOLS.H"
 #include "SCREEN.H"
-#include "SYS.H"
 
-int g_gearSpeedPct[4][5] = {{0, 25, 50, 100, 0}, {0, 25, 50, 100, 0}, {0, 25, 50, 75, 100}, {0, 30, 50, 80, 100}};
-int g_rpmStepBase[3][5] = {{500, 600, 300, 100, 70}, {600, 700, 350, 120, 90}, {600, 760, 380, 140, 90}};
-int g_rpmBands[3][2] = {{2900, 4500}, {2900, 5000}, {2500, 5200}};
-int g_carbManifoldFit[3][5] = {{0, 0, 100, 0, 0}, {0, 50, 0, 100, 75}, {0, 0, 0, 50, 100}};
-int g_engineScore[3] = {0, 50, 100};
-int g_transScore[4] = {0, 33, 66, 100};
-int g_shiftRpm[3] = {4500, 5000, 5200};
-int g_transGears[4] = {3, 3, 4, 4};
-int g_tireFactors[3] = {9, 8, 5};
-int g_modelScore[9] = {40, 44, 48, 60, 64, 68, 80, 84, 88};
+static int g_gearSpeedPct[4][5] = {
+    {0, 25, 50, 100, 0}, {0, 25, 50, 100, 0}, {0, 25, 50, 75, 100}, {0, 30, 50, 80, 100}};
+static int g_rpmStepBase[3][5] = {{500, 600, 300, 100, 70}, {600, 700, 350, 120, 90}, {600, 760, 380, 140, 90}};
+static int g_rpmBands[3][2] = {{2900, 4500}, {2900, 5000}, {2500, 5200}};
+static int g_carbManifoldFit[3][5] = {{0, 0, 100, 0, 0}, {0, 50, 0, 100, 75}, {0, 0, 0, 50, 100}};
+static int g_engineScore[3] = {0, 50, 100};
+static int g_transScore[4] = {0, 33, 66, 100};
+static int g_shiftRpm[3] = {4500, 5000, 5200};
+static int g_transGears[4] = {3, 3, 4, 4};
+static int g_tireFactors[3] = {9, 8, 5};
+static int g_modelScore[9] = {40, 44, 48, 60, 64, 68, 80, 84, 88};
 
 /* Fills the drive train e (gear ranges, ratio table, limits) for the car c. The first half
    is the rating computation of pf_vmax. */

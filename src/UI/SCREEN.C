@@ -3,7 +3,6 @@
 #include <conio.h>
 #include <stdio.h>
 #include "SCREEN.H"
-#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "CARPIC.H"
@@ -23,7 +22,7 @@
 #include "VIDEO.H"
 
 
-char *g_gearNames[7] = {"0", "1", "2", "3", "4", "N", "D"};
+static char *g_gearNames[7] = {"0", "1", "2", "3", "4", "N", "D"};
 
 
 void sc_status_init(int y)
@@ -141,7 +140,7 @@ void sc_msg_box(char *s)
     mn_modal(KM_MESSAGE_BOX);
 }
 
-char g_promptPalette[18] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14, 0, 0};
+static char g_promptPalette[18] = {0, 0, 8, 7, 15, 7, 9, 11, 3, 2, 4, 12, 5, 10, 6, 14, 0, 0};
 struct PicturePlacement g_picturePlacement = {0, 0, SCREEN_BODY_HEIGHT};
 
 /* Show a message and wait for a key ("Hit Return when ready ...") */

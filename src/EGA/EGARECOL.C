@@ -1,6 +1,6 @@
 #include <conio.h>
 #include "EGARECOL.H"
-#include "CARPIC.H"
+#include "BITMAP.H"
 #include "PC.H"
 
 /* Fill a rectangle in a planar VGA bitmap using the bit mask register */

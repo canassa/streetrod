@@ -53,8 +53,6 @@ extern struct StatusText g_statusLine;
 #define SCREEN_BODY_HEIGHT 190
 #define STATUS_BAR_HEIGHT 10
 
-extern char *g_gearNames[];
-extern char g_promptPalette[];
 extern struct PicturePlacement g_picturePlacement;
 extern struct DriverState g_driver;
 extern char g_displaySplitYVal;

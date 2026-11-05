@@ -15,7 +15,7 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-char g_editDigits = 0;
+static char g_editDigits = 0;
 
 /* Line editor. Edit the string buf (at most max characters, clipped to the width of
    the back bitmap) at x, y on the back page until Enter or a negative event; backspace, printable

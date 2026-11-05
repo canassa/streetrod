@@ -1,7 +1,6 @@
 #include <memory.h>
 #include <dos.h>
 #include "BITMAP.H"
-#include "ADS.H"
 #include "ARENA.H"
 #include "CARHOP.H"
 #include "CARPIC.H"

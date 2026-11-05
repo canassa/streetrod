@@ -1,5 +1,4 @@
 #include "CARHOP.H"
-#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "CARPIC.H"
@@ -18,12 +17,13 @@
 static struct Rect g_carhopRect;
 static struct Bitmap far *g_carhopBg;
 
-struct Sheet g_carhopSheets[2] = {{1142, 6, 11}, {1141, 6, 11}};
-char g_carhopFrames[84] = {4, 4, 4, 5, 5, 6, 6, 7,  7,  8, 8, 9,  9,  9, 9, 10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5,
-                           5, 6, 6, 7, 7, 8, 8, 9,  9,  9, 9, 10, 10, 1, 1, 2,  2,  3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7,
-                           7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1, 2,  2,  3, 3, 4,  4,  5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 11};
-struct Seq g_carhopInSeq[4] = {{78, 3, 0}, {3, 2, 0}, {3, 1, 0}, {-1, 0, 0}};
-struct Seq g_carhopOutSeq[4] = {{4, -1, 0}, {3, -2, 0}, {77, -3, 0}, {-1, 0, 0}};
+static struct Sheet g_carhopSheets[2] = {{1142, 6, 11}, {1141, 6, 11}};
+static char g_carhopFrames[84] = {4,  4,  4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1,  2,  2,
+                                  3,  3,  4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9,  9,  9, 10, 10, 1,
+                                  1,  2,  2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8,  8,  9, 9,  9,  9,
+                                  10, 10, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7,  8,  8, 9,  9,  11};
+static struct Seq g_carhopInSeq[4] = {{78, 3, 0}, {3, 2, 0}, {3, 1, 0}, {-1, 0, 0}};
+static struct Seq g_carhopOutSeq[4] = {{4, -1, 0}, {3, -2, 0}, {77, -3, 0}, {-1, 0, 0}};
 char g_keepMask = 0;
 
 /* Cut a sheet bitmap into equal cells, one sub-bitmap per cell */

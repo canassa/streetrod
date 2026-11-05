@@ -4,7 +4,6 @@
 #define EDIT_H
 #include "KEYMAPS.H"
 
-extern char g_editDigits;
 int ed_line(int x, int y, char *s, int color);
 int ed_number(int x, int y, char *s, int *out);
 int ed_spot_number(int *out, char *buf);

@@ -16,11 +16,17 @@ struct ListDialog {
 };
 #include "KEYMAPS.H"
 
+/* the free area around the pointer found by mn_hit (x1, x2: left and right limits; y1, y2: top
+   and bottom) or, on a hit, the box of the hot spot */
+struct Lims {
+    int x1;
+    int x2;
+    int y1;
+    int y2;
+};
+
 extern struct ListDialog g_menuList;
 
-extern int g_hotChain;
-extern char g_wearText[];
-extern char g_wearPad[4];
 extern int g_cgaPicMap[];
 extern int g_menuGrpHistoryList[];
 extern char g_hideSelectFrameVal;

@@ -3,7 +3,9 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
+#include "BITMAP.H"
 #include "CARPIC.H"
+
 
 struct Bitmap;
 
@@ -39,18 +41,6 @@ struct Page {
     struct Page *link;
 };
 
-/* 16-byte blit packet of da_draw_shifter (struct Blt without the last two words) */
-struct Blt16 {
-    int w;
-    int h;
-    int sx;
-    int sy;
-    int dx;
-    int dy;
-    int unused1;
-    int unused2;
-};
-#include "CARPIC.H"
 
 extern struct Seq g_seqSpriteMoveData[];
 extern struct Frame g_frmTable[];

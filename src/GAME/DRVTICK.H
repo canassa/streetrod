@@ -5,8 +5,6 @@
 
 #include "SYS.H"
 
-extern int g_cruiseRpmSteps[];
-extern int g_cruiseRatios[];
 extern int g_keepCruiseMusic;
 extern struct Eng g_oppEngState;
 int dt_step(void);

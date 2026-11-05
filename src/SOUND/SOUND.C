@@ -24,7 +24,7 @@ static void near noise_sweep_up(int a, int b, int c, int d, int e);
 static void near sweep_down(int start, int end, int step, int delay);
 
 int g_songRepeats[19] = {2, 1, 0, 2, 2, 0, 2, 1, 0, 1, 0, 0, 2, 2, 0, 2, 1, 0, -1};
-char g_jingleRepeats[4] = {0, 0, -1, -1};
+static char g_jingleRepeats[4] = {0, 0, -1, -1};
 enum ToneSlot g_songTones[37] = {TONE_PLAIN,
                                  TONE_LIGHT_VIBRATO,
                                  TONE_PLAIN,

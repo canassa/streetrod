@@ -13,17 +13,6 @@ struct Ball {
     int h;
 };
 
-/* clipped rectangle (12 bytes): size, source origin, destination origin. da_clip_blt takes struct Blt *
-   but reads and writes only these first 12 bytes, so callers with a Clip local pass it cast. */
-struct Clip {
-    int w;
-    int h;
-    int sx;
-    int sy;
-    int dx;
-    int dy;
-};
-
 /* Draw and show page indices. */
 struct ViewPages {
     int draw;
@@ -56,16 +45,9 @@ struct RenderRows {
     int *lineWidth;
 };
 
-extern int g_opponentPics[][4];
-extern int g_unused20;
 extern struct ViewPages g_viewPages;
 extern struct Clip g_viewRect;
 extern struct ViewClip g_viewClip;
-extern unsigned char g_shrinkMasks[3][4];
-extern int g_sceneBitmapIds[4];
-extern int g_roadLineWidths[21];
-extern int g_unused21[4];
-extern struct Ball g_sheetRects[];
 extern struct Bitmap far *g_lightsBm;
 extern struct Bitmap far *g_windowStrutArt;
 extern struct Bitmap far *g_citySkylineBmp;

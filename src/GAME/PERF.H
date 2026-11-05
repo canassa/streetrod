@@ -3,20 +3,61 @@
 #ifndef PERF_H
 #define PERF_H
 
-struct Eng;
 
 struct Car;
 
-extern int g_gearSpeedPct[][5];
-extern int g_rpmStepBase[][5];
-extern int g_rpmBands[][2];
-extern int g_carbManifoldFit[][5];
-extern int g_engineScore[];
-extern int g_transScore[];
-extern int g_shiftRpm[];
-extern int g_transGears[];
-extern int g_tireFactors[];
-extern int g_modelScore[];
+enum AutoSelector {
+    SELECTOR_MANUAL = 0,
+    SELECTOR_NEUTRAL = 1,
+    SELECTOR_DRIVE = 2
+};
+
+/* one range of the engine curve: 8 bytes */
+struct Range {
+    int minRpm;
+    int maxRpm;
+    int accelStep;
+    int decelStep;
+};
+
+/* one gear: three ranges */
+struct Gear {
+    struct Range bands[3];
+};
+
+/* drive train state; g_driveEng and g_oppEngState are two instances, 0xc2 bytes each */
+struct Eng {
+    int speed;
+    int steeringInput;
+    int steering;
+    char unused1[4];
+    int tireFailureIndex;
+    int tireSlip;
+    int rpm;
+    int minRpm;
+    int maxRpm;
+    int accelStep;
+    int decelStep;
+    int gearIndex;
+    int shifterDirty;
+    int gearCount;
+    int shiftRpm;
+    int automatic;
+    int autoShiftRpm;
+    enum AutoSelector autoSelector;
+    int unused2;
+    int unused3;
+    int initialRpmPerSpeed;
+    char unused4[8];
+    int gearRpmPerSpeed[6];
+    int rpmPerSpeed;
+    int rpmBand;
+    struct Gear gear[5];
+    int stopFlags;
+    int unused5;
+    int elapsedTicks;
+};
+
 void near pf_drivetrain(struct Car *c, struct Eng *e);
 void near pf_drivetrain_spec(int n, struct Eng *e);
 int near pf_vmax(int n);

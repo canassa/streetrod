@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <dos.h>
 #include "RACE.H"
-#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "BOBS.H"
@@ -70,7 +69,7 @@ static void near move_player(void);
 static void near move_rival(void);
 static void near cop_appears(void);
 
-int g_gasSpotIds[6] = {2, 1, 4, 6, 5, 3};
+static int g_gasSpotIds[6] = {2, 1, 4, 6, 5, 3};
 
 
 static int near find_gas_spot(int id)
@@ -443,9 +442,9 @@ static int near replace_tires(void)
     return ret;
 }
 
-int g_winMsgs[6] = {4973, 5015, 5073, 5043, 5099, 5130};
-struct Spot g_crashPics[3] = {{1264, 64, 84}, {1266, 208, 82}, {1265, 272, 123}};
-int g_statsDone = 0;
+static int g_winMsgs[6] = {4973, 5015, 5073, 5043, 5099, 5130};
+static struct Spot g_crashPics[3] = {{1264, 64, 84}, {1266, 208, 82}, {1265, 272, 123}};
+static int g_statsDone = 0;
 
 
 static void near show_ticket(void)
@@ -624,12 +623,12 @@ static void near drop_transmission(int n)
     gm_popup(-n, -1, 0x49);
 }
 
-int g_tireSlip[3][5] = {{2, 5, 8, 11, 14}, {0, 2, 4, 6, 8}, {0, 0, 1, 2, 4}};
-int g_lastTicks = 0;
-int g_bumpAlternate = 0;
+static int g_tireSlip[3][5] = {{2, 5, 8, 11, 14}, {0, 2, 4, 6, 8}, {0, 0, 1, 2, 4}};
+static int g_lastTicks = 0;
+static int g_bumpAlternate = 0;
 int g_rivalLeft = 1;
-int g_rivalCurveBrake = 0;
-int g_contactFrames = 0;
+static int g_rivalCurveBrake = 0;
+static int g_contactFrames = 0;
 int g_brakeTicks = 0;
 
 

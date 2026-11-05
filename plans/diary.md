@@ -2329,3 +2329,17 @@ Ownership inventory (the original 98 definitions):
 - Comparison: pump has 1-tick C3/D3/E-flat3/D3 tones with 3-tick rests (16 ticks); jack uses C1/G1/C1/E1 and a long rest (28 ticks); part movement alternates approximately 7019/30/6818/90/6214/40 Hz (26 ticks); sticker is approximately 4811 Hz for 36 ticks. The unused pulse resembles the pump/wheel rhythm at a much lower pitch; resemblance alone does not establish an event. These observations support descriptive names, with the uncertainty kept in this diary rather than source comments.
 - Both data symbols are initialized far data, so sr fit reports that communal/static hash placement does not apply. The full function and packed-build gates verify the additional identifier lengths against MSC's per-file budget.
 - Final validation: ./dosbox.sh --make also reports DOS-native SR.EXE vs orig/SR.EXE: IDENTICAL (SHA-1 3a5e28b795313028b7e77d147122f41cb29de334); final headers, formatting and git diff whitespace checks pass.
+## 2026-11-05 02:10 CET: File-private initialized globals and shared interface types
+
+### What I did
+
+- Audited C and MASM data symbols and every named struct/enum/union definition. Made 193 single-source initialized C globals static and removed their header externs; kept shared globals, communals and assembler visibility. The per-item audit is in work/LEDGER.md (639 kept entries, including the 21 scenery exceptions).
+- Moved 20 shared types to their meaning-defining interfaces: Bitmap/FarPtr/Blt/Clip/Rect/Blt16 to BITMAP; Hooks/Cmd/Video to VIDEO; AutoSelector/Range/Gear/Eng to PERF; Lims to MENU; Pair to STRUCTS; Part to SCENERY; Item to GAME; Dev to SOUND; RoadView to ROAD; RivalPosition to RACE. Header dependencies are acyclic; regenerated source includes and MAKEFILE dependencies.
+- Extended static data indexing, compiler-listing labels, reference verification and DGROUP ownership recovery to handle initialized private data. Added parser/listing regression tests and extended uniqueness checking to data-only C files. Updated the source policy and reconstruction/recipe notes.
+- All gates pass: headers, format, 572/572 function matches, clean build with 96/96 object gates and packed EXE IDENTICAL, DGROUP ownership/order, 155 unit tests, and Doxygen with zero diagnostics. Remeasured GARAGE's seven-character headroom: g_colX +7 keeps ga_transmission at 1090 bytes; +8 changes it to 1113. Restored both source and metadata after probes.
+
+### What I learned
+
+- Initialized static data has private $Snnn_name labels in MSC's /Fc listing, so PUBDEF-only indexing mistakes it for strings and loses DGROUP ownership evidence. Follow data directives and relative ORGs to recover private names and offsets; keep the real object symbol table unchanged.
+- The 21 scenery Run arrays require their existing public forward declarations. MSC rejects static tentative declarations followed by initializers (C2086). Moving the initialized arrays before their referring List records keeps all loaded bytes but changes relocation emission order, causing 256 packed EXE bytes to differ. Keeping these arrays public restores an identical packed EXE; the exception is documented per symbol in the ledger and in the recipe book.
+- Changing initialized globals to static and relocating types did not change GARAGE's measured contributing-name allowance. Unused extern removal does not buy name-budget space.

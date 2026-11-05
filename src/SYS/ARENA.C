@@ -1,5 +1,5 @@
 #include "ARENA.H"
-#include "CARPIC.H"
+#include "BITMAP.H"
 #include "MAIN.H"
 #include "MEM.H"
 

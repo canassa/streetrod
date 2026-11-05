@@ -3,14 +3,11 @@
 #ifndef CURSOR_H
 #define CURSOR_H
 
-#include "CARPIC.H"
-#include "VIEW.H"
-struct Bitmap;
+#include "STRUCTS.H"
 
-struct Pair {
-    int a;
-    int b;
-};
+#include "BITMAP.H"
+
+struct Bitmap;
 
 /* Mouse cursor state: cu_init sets it up, cu_ctl/cu_draw move it. */
 enum CursorDrawState {
@@ -39,7 +36,6 @@ struct Cursor {
 #define CURSOR_HIDE_NOW (-4)
 #define CURSOR_EGA_SAVE (EGA_VRAM + EGA_PITCH * SCREEN_HEIGHT)
 
-extern struct Pair g_cursorPairs[];
 extern struct Cursor g_cursor2;
 unsigned cu_shape_off(unsigned n);
 void cu_init(void);

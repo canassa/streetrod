@@ -1,5 +1,4 @@
 #include "TIRES.H"
-#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "CARPIC.H"
@@ -27,10 +26,10 @@ static struct Bitmap far *near grab_wheel_column(int n);
 static void near swap_wheel(int a, int *p, int *q);
 
 int g_spriteBgY = 0;
-int g_liftPicIds[3] = {1034, 1035, 1036};
-struct Bitmap far *g_wheelBuf = (struct Bitmap far *)&g_tires.wheelHeader;
-struct Bitmap far *g_rollBuf = (struct Bitmap far *)&g_tires.rollHeader;
-struct Bitmap far *g_jackBuf = (struct Bitmap far *)&g_tires.jackHeader;
+static int g_liftPicIds[3] = {1034, 1035, 1036};
+static struct Bitmap far *g_wheelBuf = (struct Bitmap far *)&g_tires.wheelHeader;
+static struct Bitmap far *g_rollBuf = (struct Bitmap far *)&g_tires.rollHeader;
+static struct Bitmap far *g_jackBuf = (struct Bitmap far *)&g_tires.jackHeader;
 
 /* Build the two scratch bitmaps for a shifted background strip and its 0x28-wide column */
 

@@ -1,7 +1,6 @@
 #include "EGASPR.H"
-#include "ADS.H"
+#include "BITMAP.H"
 #include "BOBS.H"
-#include "CARPIC.H"
 #include "EGABLIT.H"
 #include "EGALATCH.H"
 #include "EGAPAGE.H"

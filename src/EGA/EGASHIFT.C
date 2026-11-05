@@ -1,8 +1,7 @@
 #include <stdlib.h>
 #include <conio.h>
 #include "EGASHIFT.H"
-#include "ADS.H"
-#include "CARPIC.H"
+#include "BITMAP.H"
 #include "PC.H"
 
 static void near shift_row_bits(unsigned char *p, int n, int len);
@@ -22,7 +21,7 @@ static void near write_plane_row(unsigned char far *dst, unsigned char *src, int
         outp(SEQ_DATA, (v));                                                                                           \
     }
 
-unsigned char g_leftBitMasks[8] = {128, 192, 224, 240, 248, 252, 254, 255};
+static unsigned char g_leftBitMasks[8] = {128, 192, 224, 240, 248, 252, 254, 255};
 int g_egaGcFunction = 0;
 
 /* Shift a row of bytes right (n > 0) or left (n < 0) by n bits, carrying between bytes */

@@ -1,9 +1,7 @@
 #include <string.h>
 #include "GARGFX.H"
-#include "ADS.H"
 #include "ARENA.H"
 #include "BITMAP.H"
-#include "CARPIC.H"
 #include "CURSOR.H"
 #include "DASH.H"
 #include "DISK.H"
@@ -25,19 +23,19 @@ static void near make_bolt_overlay(void);
 static void near insert_hot(struct Hot *arr, struct Hot *item, int num);
 
 
-char g_partAnimate = 1;
-int g_tboltY[2] = {78, 93};
-int g_enginePos[3][2] = {{24, 68}, {24, 68}, {16, 68}};
-int g_engineBoltPos[6] = {109, 112, 120, 111, 124, 116};
-int g_wiresPos[12] = {75, 113, 64, 122, 83, 110, 72, 119, 83, 118, 72, 127};
-int g_manifoldBoltPos[8] = {68, 74, 144, 74, 68, 74, 160, 74};
-int g_carbPos[10][2] = {{90, 70},  {98, 70}, {94, 70},  {64, 70}, {90, 70},
-                        {115, 70}, {72, 71}, {111, 71}, {71, 69}, {115, 69}};
-int g_carbBoltOff[10] = {10, -1, 21, -1, 11, -1, 29, -1, 11, -1};
-char g_partSlotMap[14] = {29, 0, -1, -1, 2, 2, 2, 2, 3, 4, 2, 3, 2, 3};
-char g_carbPosBase[6] = {5, 6, 7, 10, 12, 0};
+static char g_partAnimate = 1;
+static int g_tboltY[2] = {78, 93};
+static int g_enginePos[3][2] = {{24, 68}, {24, 68}, {16, 68}};
+static int g_engineBoltPos[6] = {109, 112, 120, 111, 124, 116};
+static int g_wiresPos[12] = {75, 113, 64, 122, 83, 110, 72, 119, 83, 118, 72, 127};
+static int g_manifoldBoltPos[8] = {68, 74, 144, 74, 68, 74, 160, 74};
+static int g_carbPos[10][2] = {{90, 70},  {98, 70}, {94, 70},  {64, 70}, {90, 70},
+                               {115, 70}, {72, 71}, {111, 71}, {71, 69}, {115, 69}};
+static int g_carbBoltOff[10] = {10, -1, 21, -1, 11, -1, 29, -1, 11, -1};
+static char g_partSlotMap[14] = {29, 0, -1, -1, 2, 2, 2, 2, 3, 4, 2, 3, 2, 3};
+static char g_carbPosBase[6] = {5, 6, 7, 10, 12, 0};
 struct Bitmap far *g_boltOverlay = 0;
-struct Hot g_boltHot = {HOT_REGION, 0, 0, 1, 0, 0, 0, 0, 0};
+static struct Hot g_boltHot = {HOT_REGION, 0, 0, 1, 0, 0, 0, 0, 0};
 
 /* Draw the 64 x 6 bar for slot of the dialog; frame selects the highlighted frame.
    When frame == 1 and the screen is shadowed, the old bar is grabbed and pasted first. */

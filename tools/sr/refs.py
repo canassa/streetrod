@@ -171,7 +171,10 @@ def verify(obj, proc, im, addr, row, procs=()):
                 else:
                     r.ok += 1
                 continue
-            pubs = sorted((o, n) for n, (s, o) in obj.all_publics.items() if s == f.index)
+            pubs = [(o, n) for n, (s, o) in obj.all_publics.items() if s == f.index]
+            if seg_name == "_DATA":
+                pubs.extend((o, n) for n, o in getattr(obj, "data_labels", {}).items())
+            pubs.sort()
             k = bisect.bisect_right([o for o, _ in pubs], off) - 1
             if k >= 0 and seg_name == "_DATA" and _canon(pubs[k][1]) in globals_by_name:
                 # the module's own named data: the original must refer to the same global offset

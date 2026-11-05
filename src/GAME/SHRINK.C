@@ -1,6 +1,6 @@
 #include "SHRINK.H"
 #include "ARENA.H"
-#include "CARPIC.H"
+#include "BITMAP.H"
 #include "DASH.H"
 #include "MAIN.H"
 #include "MASKBLT.H"

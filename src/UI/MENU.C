@@ -3,7 +3,6 @@
 #include "MENU.H"
 #include "ARENA.H"
 #include "BITMAP.H"
-#include "CARPIC.H"
 #include "CURSOR.H"
 #include "DASH.H"
 #include "DRAW.H"
@@ -32,8 +31,8 @@ struct Hot *g_hotsCurMenu;
 int g_textOfsMenu;
 int g_hotMenuGroupState;
 
-int g_hotChain = 0;
-char g_wearText[12] = "(xx% worn)";
+static int g_hotChain = 0;
+static char g_wearText[12] = "(xx% worn)";
 
 /* Draw a hot spot and the spots linked behind it (the chain through Hot.next masked with
    g_hotChain). Grows the touched rectangle g_drawnMinX..g_drawnMaxY. */
@@ -348,7 +347,7 @@ int mn_modal_list(enum ScreenId a, int b, int *c, int *list, char *buf, char **d
     return res;
 }
 
-char g_wearPad[4] = "   ";
+static char g_wearPad[4] = "   ";
 
 /* Wear text for a part: "(new)" when wear is 0, else "(xx% worn)" built in place in g_wearText
    (initialised data "(xx% worn)") with the number written over the xx */

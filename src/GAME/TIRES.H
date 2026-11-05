@@ -4,7 +4,6 @@
 #define TIRES_H
 
 #include "CARPIC.H"
-#include "CARPIC.H"
 struct Sprite;
 
 struct TireWork {
@@ -39,10 +38,6 @@ struct TireWork {
 };
 
 extern int g_spriteBgY;
-extern int g_liftPicIds[3];
-extern struct Bitmap far *g_wheelBuf;
-extern struct Bitmap far *g_rollBuf;
-extern struct Bitmap far *g_jackBuf;
 void ti_change(int *a, int *b);
 
 #endif

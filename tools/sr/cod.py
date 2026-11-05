@@ -75,6 +75,59 @@ def statics(path):
     return out
 
 
+def data_labels(path):
+    """Named _DATA offsets, including MSC's private $Snnn_name labels.
+
+    /Fc emits data without byte offsets, so follow its directives and relative ORGs.
+    Segment blocks resume their previous location; strings and DUP contribute storage.
+    """
+    def count(body):
+        # Protect commas inside quoted byte strings and DUP parentheses.
+        terms = re.findall(r"'(?:[^']|'')*'|[^,'()]+|[(),]", body)
+        def group(at=0):
+            total = 0
+            while at < len(terms):
+                term = terms[at].strip(); at += 1
+                if not term or term == ',':
+                    continue
+                if term == ')':
+                    return total, at
+                dup = re.fullmatch(r'(\d+)\s+DUP', term, re.I)
+                if dup:
+                    if at >= len(terms) or terms[at] != '(':
+                        raise ValueError(body)
+                    size, at = group(at + 1)
+                    total += int(dup[1]) * size
+                elif term.startswith("'"):
+                    total += len(term[1:-1].replace("''", "'"))
+                else:
+                    total += 1
+            return total, at
+        return group()[0]
+
+    out, loc, inside = {}, 0, False
+    for line in path.read_text(errors="replace").splitlines():
+        if re.match(r'^_DATA\s+SEGMENT', line):
+            inside = True
+            continue
+        if not inside:
+            continue
+        if re.match(r'^_DATA\s+ENDS', line):
+            inside = False
+            continue
+        m = re.match(r'^\s*ORG\s+\$([+-]\d+)', line)
+        if m:
+            loc += int(m[1])
+            continue
+        m = re.match(r'^(?:(\S+)\s+)?\s*(DB|DW|DD|DQ|DT)\s+(.+)', line)
+        if m:
+            label, directive, body = m.groups()
+            if label and (label.startswith('$S') and not label.startswith('$SG') or label.startswith('_')):
+                out[re.sub(r'^(\$S\d+_|_)', '', label)] = loc
+            loc += _SIZES[directive] * count(body)
+    return out
+
+
 def find(procs, name):
     for p in procs:
         if p.c_name == name or p.name == name:

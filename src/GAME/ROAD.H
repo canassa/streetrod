@@ -24,6 +24,18 @@ enum RoadSection {
     SECTION_S_CURVE_RL = 11
 };
 
+struct RoadView {
+    int rightEdge;
+    int roadIndex;
+    int roadFraction;
+    int distanceStep;
+    int lateralX;
+    int cameraY;
+    int unused;
+    int curveX;
+    int roadHeight;
+};
+
 extern int g_yBuildingTopArray[15];
 
 extern struct MirrorEdges g_mirGeom;
@@ -31,17 +43,8 @@ extern struct MirrorEdges g_mirGeom;
 extern unsigned far *g_rightSideTerrainRow;
 extern int g_mirYProj[8];
 
-extern int g_hillProfile[];
-extern int g_hillDipProfile[];
-extern int g_bumpProfile[17];
-extern int g_layoutLen;
-extern enum RoadSection g_roadLayouts[][12];
-extern struct Bitmap g_egaPage1;
-extern struct Bitmap g_egaPage2;
 extern int g_roadLayout;
 extern int g_onShoulder;
-extern int g_turnRight;
-extern int g_turnLeft;
 extern unsigned far *g_roadTerrain;
 extern int g_roadLXArray[15];
 extern int far *g_hereCurvePtr;

@@ -3,66 +3,12 @@
 #ifndef SYS_H
 #define SYS_H
 
-/* the free area around the pointer found by mn_hit (x1, x2: left and right limits; y1, y2: top
-   and bottom) or, on a hit, the box of the hot spot */
-struct Lims {
-    int x1;
-    int x2;
-    int y1;
-    int y2;
-};
+#include "PERF.H"
+#include "ROAD.H"
+#include "RACE.H"
+#include "MENU.H"
+#include "SOUND.H"
 
-enum AutoSelector {
-    SELECTOR_MANUAL = 0,
-    SELECTOR_NEUTRAL = 1,
-    SELECTOR_DRIVE = 2
-};
-
-/* one range of the engine curve: 8 bytes */
-struct Range {
-    int minRpm;
-    int maxRpm;
-    int accelStep;
-    int decelStep;
-};
-
-/* one gear: three ranges */
-struct Gear {
-    struct Range bands[3];
-};
-
-/* drive train state; g_driveEng and g_oppEngState are two instances, 0xc2 bytes each */
-struct Eng {
-    int speed;
-    int steeringInput;
-    int steering;
-    char unused1[4];
-    int tireFailureIndex;
-    int tireSlip;
-    int rpm;
-    int minRpm;
-    int maxRpm;
-    int accelStep;
-    int decelStep;
-    int gearIndex;
-    int shifterDirty;
-    int gearCount;
-    int shiftRpm;
-    int automatic;
-    int autoShiftRpm;
-    enum AutoSelector autoSelector;
-    int unused2;
-    int unused3;
-    int initialRpmPerSpeed;
-    char unused4[8];
-    int gearRpmPerSpeed[6];
-    int rpmPerSpeed;
-    int rpmBand;
-    struct Gear gear[5];
-    int stopFlags;
-    int unused5;
-    int elapsedTicks;
-};
 
 #include "MUSIC.H"
 struct Hot;
@@ -84,24 +30,6 @@ struct Mouse {
     char present;
 };
 
-struct Dev {
-    union {
-        int w;
-        unsigned char b[2];
-    } divisor;
-    int ticksLeft;
-    int repeatCount;
-    char active;
-    char dirty;
-    int far *song;
-    int far *phraseStart;
-    int far *cur;
-    int *repeatTable;
-    int *repeatCursor;
-    enum ToneSlot *toneTable;
-    enum ToneSlot *toneCursor;
-};
-
 struct Link {
     int nxt;
     int prv;
@@ -110,26 +38,6 @@ struct Link {
     enum TimerAction action;
     int argument;
     char unused[4];
-};
-
-struct RoadView {
-    int rightEdge;
-    int roadIndex;
-    int roadFraction;
-    int distanceStep;
-    int lateralX;
-    int cameraY;
-    int unused;
-    int curveX;
-    int roadHeight;
-};
-
-struct RivalPosition {
-    int roadIndex;
-    int roadFraction;
-    int distanceStep;
-    int lateralX;
-    char unused[8];
 };
 
 struct InputState {
@@ -182,49 +90,22 @@ struct TimerPriorities {
 };
 
 extern struct InputState g_input;
-extern int g_unused5;
 extern int g_unused6;
 extern int g_unused7;
 extern int g_unused8;
 
 extern struct TimerPriorities g_sysTimerPriorities;
 
-extern struct TimerQueue g_timerQueue;
-extern struct Link g_timers[];
-extern int g_unused3;
-extern int g_unused4[8];
 extern long g_waitUntil;
 extern int g_msgTicks;
 extern int g_clickEnds;
 extern int g_kbdHooked;
 extern struct Mouse g_mouse;
-extern int g_unused9[2];
 extern long g_tick;
 extern struct GameClock g_gameClock;
-extern char g_tickDiv;
-extern char g_driveDiv;
-extern int g_unused10;
-extern char *g_errRead;
-extern char *g_errWriteProt;
 extern int g_demo;
 extern int g_autoDrive;
-extern char g_unused11;
-extern char g_keymapGroup;
-extern struct KeyMap g_keymapSaved[];
 extern char g_protectPal[];
-extern int g_unused12;
-extern struct DemoControl g_demoControl;
-extern int g_demoTargetX;
-extern int g_demoTargetY;
-extern int g_demoScriptPos;
-extern int g_demoScript[];
-extern char g_cursorBusy;
-extern int g_vibCount;
-extern int g_sirenPhase;
-extern int g_overRev;
-extern char g_driveBusy;
-extern char g_lastFire;
-extern char g_squealPhase;
 extern int g_vibratoActive;
 extern struct Eng g_driveEng;
 extern struct Dev g_songBgState;

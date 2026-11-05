@@ -9,12 +9,7 @@ enum SaveLoadResult {
     LOAD_ERROR = -666
 };
 
-extern char g_noNameMsg[];
-extern char g_saveSlots[];
-extern int g_slotNameOfs[];
-extern char *g_noNameMsgPtr;
 extern int g_demoRacer;
-extern char g_buyCarMsg[];
 void sg_init_racer(int k, int *list);
 int near sg_new(void);
 enum SaveLoadResult near sg_load(void);

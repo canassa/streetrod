@@ -1,7 +1,7 @@
 #include <dos.h>
 #include <malloc.h>
 #include "MEM.H"
-#include "CARPIC.H"
+#include "BITMAP.H"
 #include "MAIN.H"
 #include "PC.H"
 #include "POOLS.H"
@@ -33,8 +33,8 @@ void me_free(void far *p)
     _ffree(p);
 }
 
-char far *g_vramBase = EGA_VRAM;
-unsigned g_vramUsed[4] = {0, 0, 0, 0};
+static char far *g_vramBase = EGA_VRAM;
+static unsigned g_vramUsed[4] = {0, 0, 0, 0};
 int g_titlePics[4] = {3, 1, 4, 0};
 int g_gamePics[241] = {
     1072, 1073, 1074, 1021, 1022, 1023, 1025, 1024, 1026, 1027, 1259, 1260, 1264, 1266, 1265, 1028, 1029, 1030, 1031,

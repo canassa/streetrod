@@ -92,7 +92,7 @@ def defined_in_sources(prefix='g_'):
     name = re.escape(prefix) + r'\w*' if prefix else r'[A-Za-z_]\w*'
     for path in config.source_files('.C'):
         text = re.sub(r'/\*.*?\*/', '', path.read_text(errors='replace'), flags=re.S)
-        for m in re.finditer(rf'(?m)^(?!extern\b|static\b|#)([A-Za-z_][\w *(]*?)\b({name})\s*((?:\[[^\]]*\]\s*)*)(?:\)\s*\([^)]*\))?\s*=', text):
+        for m in re.finditer(rf'(?m)^(?!extern\b|#)(?:static\s+)?([A-Za-z_][\w *(]*?)\b({name})\s*((?:\[[^\]]*\]\s*)*)(?:\)\s*\([^)]*\))?\s*=', text):
             out[m.group(2)] = str(path.relative_to(config.ROOT))
             if m.group(2).startswith('g_'):
                 SOURCE_DECLS[m.group(2)] = (m.group(1) + '@' + m.group(3)).replace(' @', ' @').strip()
@@ -166,11 +166,22 @@ class Analysis:
         nxt = self.goffs[i] if i < len(self.goffs) else DATA_END
         return max(1, nxt - row['off'])
 
-    def _public_extents(self, obj, dseg):
+    @staticmethod
+    def _data_symbols(obj, stem):
+        """Public symbols plus private _DATA labels recovered from the compiler listing."""
+        from . import cod
+        symbols = dict(obj.all_publics)
+        listing = config.WORK / 'layout' / 'BUILD' / stem / (stem.lower() + '.cod')
+        if '_DATA' in obj.segments and listing.exists():
+            dseg = obj.segments.index('_DATA') + 1
+            symbols.update(('_' + name, (dseg, off)) for name, off in cod.data_labels(listing).items())
+        return symbols
+
+    def _public_extents(self, obj, dseg, symbols=None):
         """[(lo, hi)] of named data the unit defines itself."""
         out = []
         byname = {'_' + g['name']: g for g in self.globals.values()}
-        for name, (seg, off) in obj.all_publics.items():
+        for name, (seg, off) in (symbols if symbols is not None else obj.all_publics).items():
             if seg != dseg:
                 continue
             row = byname.get(name)
@@ -272,10 +283,11 @@ class Analysis:
             if '_DATA' not in obj.segments:
                 continue
             dseg = obj.segments.index('_DATA') + 1
-            named = self._public_extents(obj, dseg)
+            symbols = self._data_symbols(obj, Path(u['sources'][0]).stem)
+            named = self._public_extents(obj, dseg, symbols)
             bases = {g['off'] - objoff
                      for g in self.globals.values()
-                     for seg, objoff in [obj.all_publics.get('_' + g['name'], (None, 0))]
+                     for seg, objoff in [symbols.get('_' + g['name'], (None, 0))]
                      if seg == dseg}
             if len(bases) == 1:
                 self.data_ends.add(bases.pop() + len(obj.data.get(dseg, b'')))
@@ -529,7 +541,8 @@ class Analysis:
             if not dseg:
                 continue
             pubs = sorted((off, off + self._decl_size(byname[name]), name)
-                          for name, (seg, off) in obj.all_publics.items() if seg == dseg and name in byname)
+                          for name, (seg, off) in self._data_symbols(obj, Path(u['sources'][0]).stem).items()
+                          if seg == dseg and name in byname)
             starts = [lo for lo, _, _ in pubs]
             for f in obj.fixups:
                 if f.seg not in segs or f.kind != 'seg' or f.index != dseg or f.loc not in (1, 5) or f.self_rel:

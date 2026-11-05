@@ -47,20 +47,9 @@ enum GarageMode {
 };
 
 extern int g_tirePics[][4];
-extern int g_colX;
-extern int g_rowY[];
-extern int g_wOff[];
-extern char *g_mon[];
-extern int g_hIds[];
 extern char g_paint[][2];
-extern int g_pad[];
-extern char *g_iTxt[];
 extern int g_nCarb[];
 extern int g_nBolt[];
-extern enum PartCategory g_nextCat[];
-extern int g_cPos[][6];
-extern int g_boltSlots[10];
-extern int g_boltSubslots[10];
 extern struct CarDisplay g_carDraw;
 int ga_day(void);
 void ga_time(int *a, int *b);

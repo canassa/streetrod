@@ -6,6 +6,7 @@
 #include "KBDGET.H"
 #include "MOUSE.H"
 #include "MUSIC.H"
+#include "PERF.H"
 #include "RACE.H"
 #include "RANDOM.H"
 #include "SCREEN.H"
@@ -16,8 +17,8 @@ static int g_cruiseRpmStep;
 
 struct Eng g_oppEngState;
 
-int g_cruiseRpmSteps[5] = {42, 26, 12, 8, 4};
-int g_cruiseRatios[5] = {0, 200, 125, 71, 56};
+static int g_cruiseRpmSteps[5] = {42, 26, 12, 8, 4};
+static int g_cruiseRatios[5] = {0, 200, 125, 71, 56};
 int g_keepCruiseMusic = 0;
 
 

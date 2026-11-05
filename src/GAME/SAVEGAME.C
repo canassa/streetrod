@@ -7,7 +7,6 @@
 #include "ARENA.H"
 #include "BITMAP.H"
 #include "BOBS.H"
-#include "CARPIC.H"
 #include "CURSOR.H"
 #include "DASH.H"
 #include "DISK.H"
@@ -40,11 +39,11 @@ static void near scan_save_slots(int create);
 static int near is_blank(char *p);
 static int near write_cars(int handle, struct Car *c, int flag);
 
-char g_noNameMsg[] = "The game must have a name !";
-char g_saveSlots[16] = {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-int g_slotNameOfs[16] = {6661, 6678, 6695, 6712, 6729, 6746, 6763, 6780,
-                         6797, 6814, 6831, 6848, 6865, 6882, 6899, 6916};
-char *g_noNameMsgPtr = g_noNameMsg;
+static char g_noNameMsg[] = "The game must have a name !";
+static char g_saveSlots[16] = {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static int g_slotNameOfs[16] = {6661, 6678, 6695, 6712, 6729, 6746, 6763, 6780,
+                                6797, 6814, 6831, 6848, 6865, 6882, 6899, 6916};
+static char *g_noNameMsgPtr = g_noNameMsg;
 int g_demoRacer = 0;
 
 
@@ -369,7 +368,7 @@ static int near is_blank(char *p)
     return 1;
 }
 
-char g_buyCarMsg[] = "Buy a car first !";
+static char g_buyCarMsg[] = "Buy a car first !";
 
 
 void near sg_save(void)
