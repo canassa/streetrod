@@ -338,3 +338,27 @@ RACE.C's gas-station field updates, merged automatically. Resolved the sole
 conflict in plans/diary.md by retaining both complete appended entries in time
 order. The disk branch renames service-point source types; pre-edit evidence
 above intentionally retains the original names and line pins.
+
+## Final post-merge validation
+
+Implementation commit: 7987669. Integration commit: 53440b6, incorporating
+origin/main at 3daaa69 and preserving both diary entries.
+
+Reran on the combined source tree:
+
+- ./sr headers --check and ./sr format --check: pass.
+- ./sr docs: zero diagnostics.
+- ./sr check --all: 572/572 match (551 MATCH, 21 MATCH*).
+- Removed only work/layout, then ./sr build: 96/96 objects pass,
+  572/572 mapped functions byte-exact and at their original positions,
+  748/748 near-call encodings exact, packed executable IDENTICAL.
+- ./sr dgroup check and ./sr dgroup order: pass.
+- unittest discover -s tests: 109 tests, OK.
+- Targeted MSC size/offset/enum audit: 67 checks, zero mismatches.
+- ./dosbox.sh --make: DOS-native executable IDENTICAL, SHA-1
+  3a5e28b795313028b7e77d147122f41cb29de334. Compared every source file with the
+  native build's snapshot: no differences, so this includes the merged disk
+  changes as well as the enum follow-up.
+
+No open implementation blocker. Physical sample units and complete palette
+semantics remain explicitly bounded questions, not guessed names or code fixes.

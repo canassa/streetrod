@@ -3425,3 +3425,20 @@ lessons from both branches remain in the recipe book and investigation notes.
 - The existing whole-tree layout audit cannot resolve TRANSMISSION_BOLT_COUNT.
   Used a real MSC sizeof/offsetof audit of all nine requested records, following
   the known limitation already recorded in CLAUDE.md and the sr-cli skill.
+
+## 2026-11-05 21:41 CET: Validate merged st-road investigation
+
+### What I did
+
+- Merged origin/main at 3daaa69 into st-road (53440b6); retained both complete
+  diary entries when resolving the sole merge conflict. Source merged cleanly.
+- Reran headers, formatting, Doxygen (zero diagnostics), all 572 function
+  checks, a clean packed build, DGROUP checks and all 109 unit tests.
+- Packed and DOS-native executables are IDENTICAL to the original. All 67
+  targeted layout/enum checks pass; the native source snapshot matches the
+  combined tree. Results are in [st-road.md](investigations/st-road.md).
+
+### What I learned
+
+- The parallel disk investigation's service-point renames integrate without
+  changing the car-relative-to-screen anchor contract established here.
