@@ -2447,3 +2447,19 @@ The conflicting lines contain independent substitutions: keep named appearance m
   standalone carhop-leave path; an enter-then-quick-leave does not reset it.
 - These are game-behavior findings, recorded in the investigation note. No new
   compiler/tooling rule or skill change was needed. Open behavioral questions: 0.
+
+## 2026-11-05: Function documentation moves to the headers
+
+### What I did
+
+- Moved the Doxygen block of `animate_rival_car` (static, BOBS.C) into BOBS.H as an
+  `@fn` block with the full prototype; BOBS.C keeps only the code.
+- Changed the doxygen-c skill's placement rule: all function documentation lives in the
+  module's `.H` (public at the declaration, static via `@fn`), and enum values in docs are
+  `@ref` names, never raw numbers.
+
+### What I learned
+
+- Doxygen attaches an `@fn` block in another file to a static definition when
+  EXTRACT_STATIC is on; `./sr docs` still counts the function as documented (1/509) with 0
+  diagnostics, so headers can carry the docs without static prototypes in them.
