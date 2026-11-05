@@ -2633,3 +2633,32 @@ The conflicting lines contain independent substitutions: keep named appearance m
 ### What I learned
 
 - paintScheme showed the gap: six colours indexed through raw 0..5, rn_int(5/6) and wraps.
+
+## 2026-11-05 16:11 CET: Name every car paint scheme use
+
+### What I did
+
+- Investigated all paintScheme members, table consumers, generation, advert
+  previews, police recolouring, save/load and rival palette restoration.
+  Recorded the evidence and full replacement list in
+  [PaintScheme](investigations/PaintScheme.md).
+- Added PaintScheme and PaintShade enums, replaced all raw paint choices and
+  bounds, typed int-sized holders, retained saved byte fields, and documented
+  the paint interfaces. Reused/extended PaletteSlot for the paint operations.
+- Fixed the data-shape reader's enum-bound crash and added two regression tests;
+  documented the capability in CLAUDE.md and the sr-cli skill.
+- Passed headers/format, zero-diagnostic docs, 572/572 function matches, clean
+  packed and DOS-native IDENTICAL builds, DGROUP ownership/order, 106 tests,
+  and the real compiler audit (156 types, 710 checks, no mismatches).
+
+### What I learned
+
+- The six paint pairs are red, cyan, green, magenta, blue and white. Advert
+  previews/purchases exclude white; random new cars/rivals accept a white roll
+  only half the time. The police explicitly select white; the loaded King is red.
+- Rival recolouring saves one palette snapshot across repeated substitutions;
+  restoration consumes it. Scheme indices, pair columns, palette slots and
+  RGBI values are separate domains even where their numbers coincide.
+- Naming initialized table dimensions exposed cdata's literal-only bounds:
+  the reader now resolves enum members and rejects unsupported/unknown/cyclic
+  expressions. See the sr-cli skill's enum-array-bound lesson.

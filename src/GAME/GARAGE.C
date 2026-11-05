@@ -163,15 +163,15 @@ void ga_date(int x)
 }
 
 
-void ga_palette(int a)
+void ga_palette(enum PaintScheme scheme)
 {
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) {
         if (g_displayEnabled) {
-            vi_palette_reg(6, g_paint[a][0]);
-            vi_palette_reg(7, g_paint[a][1]);
+            vi_palette_reg(PALETTE_CAR_PRIMARY, g_paint[scheme][PAINT_BASE]);
+            vi_palette_reg(PALETTE_CAR_SECONDARY, g_paint[scheme][PAINT_HIGHLIGHT]);
         }
-        g_palette[6] = g_paint[a][0];
-        g_palette[7] = g_paint[a][1];
+        g_palette[PALETTE_CAR_PRIMARY] = g_paint[scheme][PAINT_BASE];
+        g_palette[PALETTE_CAR_SECONDARY] = g_paint[scheme][PAINT_HIGHLIGHT];
     }
 }
 
@@ -266,7 +266,7 @@ static int near is_broke(void)
     return 0;
 }
 
-char g_paint[6][2] = {{4, 12}, {3, 11}, {2, 10}, {5, 13}, {1, 9}, {7, 15}};
+char g_paint[PAINT_SCHEME_COUNT][PAINT_SHADE_COUNT] = {{4, 12}, {3, 11}, {2, 10}, {5, 13}, {1, 9}, {7, 15}};
 static int g_pad[7] = {0, 5, 5, 5, 5, 0, 0};
 
 
@@ -392,9 +392,9 @@ int near ga_menu(enum GarageMode mode)
 
 void near ga_paint(void)
 {
-    struct Bitmap far *bm1;
+    struct Bitmap far *popup;
     int x;
-    int idx4;
+    enum PaintScheme paint;
     int y;
     int key;
 
@@ -403,21 +403,21 @@ void near ga_paint(void)
     else if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         gm_message(MSG_BETTER_GRAPHICS_TO_PAINT);
     else {
-        bm1 = mn_grab(KM_PAINT, &x, &y, ARENA_HIGH_STACK);
+        popup = mn_grab(KM_PAINT, &x, &y, ARENA_HIGH_STACK);
         mn_push(KM_PAINT);
-        idx4 = g_driver.currentCar->paintScheme;
+        paint = g_driver.currentCar->paintScheme;
         for (;;) {
-            vi_palette_reg(12, g_paint[idx4][0]);
+            vi_palette_reg(PALETTE_RIVAL_PRIMARY, g_paint[paint][PAINT_BASE]);
             while ((key = sy_wait_input(3000)) == 0)
                 ;
             switch (key) {
             case KR_PAINT_PREVIOUS:
-                if (--idx4 < 0)
-                    idx4 = 5;
+                if (--paint < PAINT_RED)
+                    paint = PAINT_WHITE;
                 continue;
             case KR_PAINT_NEXT:
-                if (++idx4 >= 6)
-                    idx4 = 0;
+                if (++paint >= PAINT_SCHEME_COUNT)
+                    paint = PAINT_RED;
                 continue;
             case KR_PAINT_GO_AHEAD:
                 if (g_driver.money < (long)PAINT_PRICE) {
@@ -426,12 +426,12 @@ void near ga_paint(void)
                 }
                 r_vid.copyToFront = 1;
                 mn_pop(1);
-                pu_show(bm1, x, y);
+                pu_show(popup, x, y);
                 ma_pop_high(1);
                 pu_show(g_stickerBg, g_carDraw.stickerX, g_carDraw.stickerY);
                 g_driver.currentCar->appearance &= APPEARANCE_NO_STICKER;
-                ga_palette(g_driver.currentCar->paintScheme = idx4);
-                vi_palette_reg(12, 5);
+                ga_palette(g_driver.currentCar->paintScheme = paint);
+                vi_palette_reg(PALETTE_RIVAL_PRIMARY, 5);
                 g_gameClock.actionTicks += (long)TIME_PAINT;
                 sc_add_money(-PAINT_PRICE);
                 return;
@@ -442,8 +442,8 @@ void near ga_paint(void)
             break;
         }
         mn_pop(1);
-        vi_palette_reg(12, 5);
-        pu_show(bm1, x, y);
+        vi_palette_reg(PALETTE_RIVAL_PRIMARY, 5);
+        pu_show(popup, x, y);
         ma_pop_high(1);
     }
 }

@@ -322,7 +322,7 @@ struct Car *near gm_make_car(int idx, int value, struct Car *old)
     car->value = value;
     car->fuel = NEW_CAR_FUEL;
     car->rank = g_carData[idx].rank;
-    while ((i = rn_int(6)) == 5)
+    while ((i = rn_int(PAINT_SCHEME_COUNT)) == PAINT_WHITE)
         if (rn_int(2) == 1)
             break;
     car->paintScheme = i;
@@ -443,7 +443,7 @@ static void near buy_from_ads(int tab)
     int n;
     char color;
 
-    color = 0;
+    color = PAINT_RED;
     g_scene = SCENE_ADVERTS;
     g_list[1] = DESC_USED_CARS_HEADING;
     n = 2;
@@ -477,7 +477,7 @@ static void near buy_from_ads(int tab)
         }
         strcpy(g_offerName, g_desc + k3);
         sprintf(g_buyPrice, "$%-3d ?", price6);
-        color = -1;
+        color = PAINT_UNASSIGNED;
         for (;;) {
             n = mn_wait(KM_BUY);
             if (n == KR_BUY_YEAH) {
@@ -498,7 +498,7 @@ static void near buy_from_ads(int tab)
                     break;
                 }
                 car = gm_make_car(i5, price6, 0);
-                car->paintScheme = (color != -1) ? color : rn_int(5);
+                car->paintScheme = (color != PAINT_UNASSIGNED) ? color : rn_int(PAINT_NONWHITE_COUNT);
                 gm_message(-MSG_ITS_YOURS);
                 g_gameClock.actionTicks += TIME_CAR_PURCHASE;
                 goto done;
@@ -524,8 +524,8 @@ static void near buy_from_ads(int tab)
                 sc_hline(0, 0x91, SCREEN_WIDTH);
                 x_colors.line = sv;
             }
-            if (color == -1) {
-                color = rn_int(5);
+            if (color == PAINT_UNASSIGNED) {
+                color = rn_int(PAINT_NONWHITE_COUNT);
                 ga_palette(color);
             }
             x1 = ((unsigned)specn - (unsigned)g_carData) / 10;

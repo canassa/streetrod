@@ -32,3 +32,36 @@ typedef union { int word; char bytes[2]; } Value;
             self.assertEqual(types.named('enum Mode')['size'], 2)
             self.assertEqual(types.named('ModeCode')['size'], 1)
             self.assertEqual(types.named('Value')['size'], 2)
+
+    def test_named_array_bounds_across_headers(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / 'PAINT.H').write_text('''
+enum Paint { UNASSIGNED = -1, RED, CYAN, GREEN, MAGENTA, BLUE, WHITE, PAINT_COUNT };
+enum Shade { BASE, HIGHLIGHT, SHADE_COUNT = HIGHLIGHT + 1 };
+struct PaintTable { char pairs[PAINT_COUNT][SHADE_COUNT]; int next; };
+''')
+            (root / 'ADVERT.H').write_text('''
+#include "PAINT.H"
+enum Advert { ADVERT_COUNT = WHITE };
+struct Preview { char choices[ADVERT_COUNT]; int next; };
+''')
+            with patch.object(config, 'SRC', root):
+                types = Types()
+            table = types.declaration('char @[PAINT_COUNT][SHADE_COUNT]')
+            self.assertEqual((table['count'], table['elem']['count'], table['size']), (6, 2, 12))
+            self.assertEqual(types.named('struct PaintTable')['size'], 14)
+            self.assertEqual(types.named('struct Preview')['fields'][1][1], 6)
+            self.assertEqual(types.declaration('char @[+UNASSIGNED + 2]')['size'], 1)
+
+    def test_invalid_named_array_bounds_fail_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / 'BOUNDS.H').write_text('''
+enum Bad { FIRST = SECOND, SECOND = FIRST, UNSUPPORTED = (1 < 2) };
+''')
+            with patch.object(config, 'SRC', root):
+                types = Types()
+            for name in ('UNKNOWN', 'FIRST', 'UNSUPPORTED'):
+                with self.subTest(name=name), self.assertRaises(ValueError):
+                    types.declaration('char @[' + name + ']')

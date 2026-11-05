@@ -433,3 +433,10 @@ it. `./sr format --check` writes nothing and exits nonzero on drift. Assembly an
 The nix shell supplies clang-format and lefthook. Install the staged-C formatting
 hook once with `nix-shell shell.nix --run "lefthook install"`; it formats staged
 C sources and headers and re-stages them. Run the byte-match gates before committing.
+
+### Named data dimensions (2026-11-05)
+
+The data-shape reader resolves enum members in array bounds, including aliases,
+implicit increments and arithmetic across indexed headers. Use the named count
+when describing a closed value set; DGROUP checks must read that same bound.
+Unknown constants and unsupported expressions still fail rather than guessing.

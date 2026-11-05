@@ -254,3 +254,11 @@ comments or rewrite the declarations or function bodies.
   base; bare DB bytes, code EVENs and source-declared globals remain checked.
   Layout gating copies OBJ files to work/layout without LST files: read the
   listing from work/layout/BUILD/<stem>, as for C COD literal sizes.
+
+## Enum array bounds (2026-11-05)
+
+`cdata.Types` resolves enum members in array dimensions and bit-field widths,
+including implicit increments, aliases and arithmetic across indexed headers.
+Keep unsupported expressions and unknown/cyclic constants as errors; never
+substitute guessed dimensions. `tests/test_cdata.py` covers this because naming
+an initialized table's dimensions must still permit `sr dgroup check/order`.

@@ -1,4 +1,7 @@
-/* GARAGE.H - declarations of what GARAGE.C defines. */
+/**
+ * @file GARAGE.H
+ * @brief Garage services and car display state.
+ */
 
 #ifndef GARAGE_H
 #define GARAGE_H
@@ -45,6 +48,28 @@ enum ActionTimeCost {
     TIME_RIVAL_HOOD = 0x111
 };
 
+/** @brief Body-colour pairs used by owned cars and rivals. */
+enum PaintScheme {
+    PAINT_UNASSIGNED = -1, /**< No scheme assigned yet. */
+    PAINT_RED = 0,         /**< Red. */
+    PAINT_CYAN = 1,        /**< Cyan. */
+    PAINT_GREEN = 2,       /**< Green. */
+    PAINT_MAGENTA = 3,     /**< Magenta. */
+    PAINT_BLUE = 4,        /**< Blue. */
+    PAINT_WHITE = 5,       /**< Light gray and bright white. */
+    PAINT_SCHEME_COUNT = 6 /**< Number of selectable schemes. */
+};
+
+/** Number of schemes available in advert previews and purchases. */
+#define PAINT_NONWHITE_COUNT PAINT_WHITE
+
+/** @brief Colours within one body-paint pair. */
+enum PaintShade {
+    PAINT_BASE = 0,       /**< Base body colour. */
+    PAINT_HIGHLIGHT = 1,  /**< Bright body colour. */
+    PAINT_SHADE_COUNT = 2 /**< Colours in each scheme. */
+};
+
 struct Car;
 struct Node;
 
@@ -70,7 +95,7 @@ struct CarDisplay {
     int stickerSubX;
     int betType;
     int bodyPic;
-    int paintScheme;
+    enum PaintScheme paintScheme; /**< Displayed car body colours. */
     int tireVariant;
     int overlayPic;
     int specIndex;
@@ -89,7 +114,8 @@ enum GarageMode {
 };
 
 extern int g_tirePics[][4];
-extern char g_paint[][2];
+/** Body-colour pairs indexed by @ref PaintScheme and @ref PaintShade. */
+extern char g_paint[PAINT_SCHEME_COUNT][PAINT_SHADE_COUNT];
 extern int g_nCarb[];
 extern int g_nBolt[];
 extern struct CarDisplay g_carDraw;
@@ -98,10 +124,18 @@ void ga_time(int *a, int *b);
 void ga_check_end(int n);
 void ga_calendar(int a);
 void ga_date(int x);
-void ga_palette(int a);
+/**
+ * @brief Apply the player's body colours on EGA and Tandy displays.
+ *
+ * @param scheme Body-colour pair to display.
+ */
+void ga_palette(enum PaintScheme scheme);
 int ga_hotspot(int n);
 void ga_clear_name(void);
 int near ga_menu(enum GarageMode mode);
+/**
+ * @brief Choose and buy new paint for the current car, removing its sticker.
+ */
 void near ga_paint(void);
 void near ga_body(unsigned mask);
 void near ga_stickers(void);

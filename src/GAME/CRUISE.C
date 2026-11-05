@@ -39,29 +39,29 @@ void cr_go(void)
 }
 
 
-void cr_rival_paint(int mode)
+void cr_rival_paint(enum PaintScheme scheme)
 {
-    char a, b;
+    char primary, highlight;
 
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) {
-        if (mode == RIVAL_PAINT_RESTORE) {
-            a = g_savedPal12;
-            b = g_savedPal3;
+        if (scheme == RIVAL_PAINT_RESTORE) {
+            primary = g_savedPal12;
+            highlight = g_savedPal3;
             g_savedPal12 = g_savedPal3 = -1;
         } else {
             if (g_savedPal12 == -1) {
-                g_savedPal12 = g_palette[12];
-                g_savedPal3 = g_palette[3];
+                g_savedPal12 = g_palette[PALETTE_RIVAL_PRIMARY];
+                g_savedPal3 = g_palette[PALETTE_RIVAL_SECONDARY];
             }
-            a = g_paint[mode][0];
-            b = g_paint[mode][1];
+            primary = g_paint[scheme][PAINT_BASE];
+            highlight = g_paint[scheme][PAINT_HIGHLIGHT];
         }
         if (g_displayEnabled) {
-            vi_palette_reg(12, a);
-            vi_palette_reg(3, b);
+            vi_palette_reg(PALETTE_RIVAL_PRIMARY, primary);
+            vi_palette_reg(PALETTE_RIVAL_SECONDARY, highlight);
         }
-        g_palette[12] = a;
-        g_palette[3] = b;
+        g_palette[PALETTE_RIVAL_PRIMARY] = primary;
+        g_palette[PALETTE_RIVAL_SECONDARY] = highlight;
     }
 }
 
@@ -70,15 +70,16 @@ int g_startingGoActive;
 
 int cr_drive(void)
 {
-    int r, saved;
+    int r;
+    enum PaintScheme savedPaint;
 
     if (g_runRacingFlag)
         (*g_videoOps.blank)();
     g_startLightGo = g_startingGoActive = 0;
-    saved = g_carDraw.paintScheme;
+    savedPaint = g_carDraw.paintScheme;
     ga_palette(g_driver.currentCar->paintScheme);
     if (g_runRacingFlag)
-        cr_rival_paint(saved);
+        cr_rival_paint(savedPaint);
     r = dv_run();
     so_squeal(0);
     so_siren(0);

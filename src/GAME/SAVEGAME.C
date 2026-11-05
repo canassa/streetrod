@@ -53,7 +53,7 @@ void sg_init_racer(int k, int *list)
 {
     int x, i, y, n;
 
-    while ((i = rn_int(6)) == 5)
+    while ((i = rn_int(PAINT_SCHEME_COUNT)) == PAINT_WHITE)
         if (rn_int(2) == 1)
             break;
     g_racerRecordsArray[k].paintScheme = i;

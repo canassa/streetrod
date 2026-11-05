@@ -6,7 +6,8 @@
 enum PaletteSlot {
     PALETTE_CAR_PRIMARY = 6,
     PALETTE_CAR_SECONDARY = 7,
-    PALETTE_RIVAL_PRIMARY = 12
+    PALETTE_RIVAL_PRIMARY = 12,
+    PALETTE_RIVAL_SECONDARY = 3
 };
 
 struct Bitmap;

@@ -1352,7 +1352,7 @@ static void near cop_appears(void)
     pf_drivetrain_spec(SPEC_POLICE, &g_oppEngState);
     g_shiftPenalty = g_selectedRacerPointer->earlyShiftPenalty;
     fit_gear(old, &g_oppEngState);
-    cr_rival_paint(5);
+    cr_rival_paint(PAINT_WHITE);
     for (n1 = 0; n1 < 12; n1++)
         g_spritesOpp[n1] = g_policeFramesTable[n1];
     g_rivalPace.topSpeed = pf_vmax(SPEC_POLICE);

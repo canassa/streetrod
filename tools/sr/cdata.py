@@ -8,9 +8,23 @@ import re
 from . import config
 
 
-def number(s):
+def number(s, constants=None):
+    constants = constants or {}
+    resolving = set()
     def walk(n):
         if isinstance(n, ast.Constant) and isinstance(n.value, int): return n.value
+        if isinstance(n, ast.Name) and n.id in constants:
+            if n.id in resolving:
+                raise ValueError('cyclic constant: ' + n.id)
+            resolving.add(n.id)
+            try:
+                return walk(ast.parse(constants[n.id], mode='eval').body)
+            finally:
+                resolving.remove(n.id)
+        if isinstance(n, ast.UnaryOp):
+            value = walk(n.operand)
+            if isinstance(n.op, ast.USub): return -value
+            if isinstance(n.op, ast.UAdd): return value
         if isinstance(n, ast.BinOp):
             a,b=walk(n.left),walk(n.right)
             if isinstance(n.op,ast.Add): return a+b
@@ -37,7 +51,7 @@ class Types:
     def __init__(self):
         index=config.source_index()
         self.headers=[p for p in index.values() if p.suffix.upper()=='.H']
-        self.defs={};self.typedefs={};self.cache={}
+        self.defs={};self.typedefs={};self.cache={};self.constants={}
         pattern=re.compile(r'\b(typedef\s+)?(struct|union|enum)\s+(?:(\w+)\s*)?\{')
         for path in self.headers:
             text=re.sub(r'/\*.*?\*/','',path.read_text(encoding='latin-1'),flags=re.S)
@@ -45,6 +59,14 @@ class Types:
             while m:=pattern.search(text,at):
                 end=self.brace_end(text,m.end()-1)
                 kind=m.group(2);body=text[m.end():end]
+                if kind == 'enum':
+                    previous = None
+                    for item in split_top(body, ','):
+                        key, explicit, value = item.partition('=')
+                        key = key.strip()
+                        self.constants[key] = (value.strip() if explicit else
+                                               previous + ' + 1' if previous else '0')
+                        previous = key
                 name=kind+' '+m.group(3) if m.group(3) else None
                 if name:self.defs[name]=(kind,body)
                 at=end+1
@@ -114,7 +136,7 @@ class Types:
             node=base() if callable(base) else base
         dims=re.findall(r'\[([^]]*)\]',after)
         for dim in reversed(dims):
-            count=number(dim) if dim.strip() else None
+            count=number(dim, self.constants) if dim.strip() else None
             node=dict(kind='array',elem=node,count=count,size=None if count is None else count*node['size'],align=node['align'],dalign=2)
         return node
 
@@ -145,7 +167,7 @@ class Types:
                 node=self.declarator(base,normalized)
                 alignment=max(alignment,node['align'])
                 if ':' in normalized:
-                    bits=number(normalized.split(':')[1])
+                    bits=number(normalized.split(':')[1], self.constants)
                     if bitpos==0 or bitpos+bits>16:
                         size=align(size,2);off=size;size+=2;bitpos=0
                     else:off=size-2

@@ -121,7 +121,7 @@ struct Rack {
 struct Car {
     int value;
     int specIndex;
-    char paintScheme;
+    char paintScheme; /**< Body-colour pair; @ref PaintScheme. */
     unsigned char rank;
     struct Node *transmission;
     struct Rack rack;

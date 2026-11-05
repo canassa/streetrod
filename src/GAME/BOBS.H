@@ -106,7 +106,7 @@ struct Racer {
     int portraitPic;         /**< In-car driver portrait picture ID. */
     int nameOffset;          /**< Name byte offset in description text. */
     int specIndex;           /**< Car spec index; -1 before assignment. */
-    signed char paintScheme; /**< Paint palette 0..5; -1 before assignment. */
+    signed char paintScheme; /**< Body-colour pair; @ref PaintScheme. */
     char status;             /**< Availability byte; @ref RacerStatus. */
     signed char betRaces;    /**< Wagered races; reset with a new car. */
     char rivalBetWins;       /**< Rival wins in counted wagered races. */
