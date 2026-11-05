@@ -365,7 +365,7 @@ void da_intro(void)
     sc_picture_at(PIC_PUBLISHER_LOGO, 0x28, 0x28, 0);
     di_free_pic(PIC_PUBLISHER_LOGO);
     (*g_videoOps.show)();
-    r_vid.copyToFront = 0;
+    r_vid.copyToFront = FALSE;
     sc_picture(PIC_TITLE, -1);
     di_free_pic(PIC_TITLE);
     da_wait_key(400);
@@ -391,7 +391,7 @@ void da_time_up(void)
     gm_message(MSG_TOOK_TOO_MUCH_TIME);
     (*g_videoOps.blank)();
     cu_ctl(CURSOR_HIDE_NOW);
-    r_vid.copyToFront = 1;
+    r_vid.copyToFront = TRUE;
     sc_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     ga_calendar(1);
     vi_garage_pal();
@@ -422,7 +422,7 @@ void da_set_view(enum DashView mode)
             outp(CRTC_INDEX, CRTC_START_LO);
             outp(CRTC_DATA, 0);
         }
-        r_vid.copyToFront = 1;
+        r_vid.copyToFront = TRUE;
         sc_status_init(SCREEN_BODY_HEIGHT);
         break;
     case DASH_VIEW_SHOW:
@@ -432,11 +432,11 @@ void da_set_view(enum DashView mode)
             outp(CRTC_INDEX, CRTC_START_LO);
             outp(CRTC_DATA, 0);
         }
-        r_vid.copyToFront = 1;
+        r_vid.copyToFront = TRUE;
         break;
     case DASH_VIEW_DRIVE:
         r_vid.back = r_vid.front = g_savedFront;
-        r_vid.copyToFront = 0;
+        r_vid.copyToFront = FALSE;
         sc_status_init(r_vid.mode == VID_EGA ? 0x5a : SCREEN_BODY_HEIGHT);
         if (g_runRacingFlag)
             sc_label(g_gearLabel);
@@ -453,7 +453,7 @@ void da_set_view(enum DashView mode)
             outp(CRTC_INDEX, CRTC_START_LO);
             outp(CRTC_DATA, 0);
         }
-        r_vid.copyToFront = 1;
+        r_vid.copyToFront = TRUE;
         (*g_videoOps.show)();
         break;
     }

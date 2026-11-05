@@ -15,6 +15,7 @@
 #include "POPUP.H"
 #include "SCREEN.H"
 #include "SOUND.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 
 static int near engine_index(void);
@@ -169,7 +170,7 @@ void gx_trans_draw(int n, char far *s)
     saved = r_vid.copyToFront;
     if (n) {
         g_partAnimate = 0;
-        r_vid.copyToFront = 0;
+        r_vid.copyToFront = FALSE;
         cu_ctl(CURSOR_HIDE);
         gx_trans_pic(n, 0);
         for (i = 0; i < TRANSMISSION_BOLT_COUNT; i++)
@@ -298,11 +299,11 @@ void gx_draw_bolt(int n)
     move.dx = (move.sx = px) + 0x60;
     move.w = 6;
     (*g_videoOps.shiftBlit)(r_vid.hoodBg, r_vid.back, &move);
-    if (flag = px & ~r_vid.mask) {
+    if (flag = px & ~r_vid.xByteMask) {
         saved = ar_bm(pict->width + 8, pict->height, pict->mask.p != 0, ARENA_HIGH_STACK);
         bm_shift_right(pict, flag, saved);
     }
-    px = (px & r_vid.mask) + 0x60;
+    px = (px & r_vid.xByteMask) + 0x60;
     (*g_videoOps.slideSprite)(0xd, 0x93, px, (n == PIC_BOLT_TURN_1 && r_vid.copyToFront) ? 0xd - height : ypos, ypos,
                               saved);
     cu_ctl(CURSOR_SHOW_NOW);
@@ -336,7 +337,7 @@ void gx_drop_bolt(void)
         wide = 0x10;
     } else if (rows > 4)
         wide = 0x10;
-    xpos &= r_vid.mask;
+    xpos &= r_vid.xByteMask;
     blt.w = pict->width;
     rows = blt.h = blt.unused1 = pict->height;
     blt.sx = x1;
@@ -381,12 +382,12 @@ static void near make_bolt_overlay(void)
         py = g_manifoldBoltPos[i * 2 + 1];
         picture = di_bm(what, ARENA_LOW_STACK);
         g_boltOverlay = ar_bm(picture->width + 8, picture->height, picture->mask.p != 0, ARENA_HIGH_STACK);
-        bm_shift_right(picture, px & ~r_vid.mask, g_boltOverlay);
+        bm_shift_right(picture, px & ~r_vid.xByteMask, g_boltOverlay);
         ma_pop_low(1);
         g_cpyBoltPatchRecord.w = g_boltOverlay->width;
         g_cpyBoltPatchRecord.h = g_boltOverlay->height;
         g_cpyBoltPatchRecord.sx = g_cpyBoltPatchRecord.sy = 0;
-        g_cpyBoltPatchRecord.dx = (px & r_vid.mask) + 0x60;
+        g_cpyBoltPatchRecord.dx = (px & r_vid.xByteMask) + 0x60;
         g_cpyBoltPatchRecord.dy = py - g_cpyBoltPatchRecord.h + 9;
     }
 }
@@ -413,12 +414,12 @@ void gx_draw_part(int n, int flag)
         cu_ctl(CURSOR_HIDE_NOW);
     saved = pict = di_bm(n, ARENA_HIGH_STACK);
     w = saved->width;
-    if (mask = x & ~r_vid.mask) {
+    if (mask = x & ~r_vid.xByteMask) {
         saved = ar_bm(pict->width + 8, pict->height, pict->mask.p != 0, ARENA_HIGH_STACK);
         bm_shift_right(pict, mask, saved);
         w = saved->width;
     }
-    x &= r_vid.mask;
+    x &= r_vid.xByteMask;
     if (n == PIC_CARB_TWO_BARREL)
         make_bolt_overlay();
     if (n != PIC_ENGINE_V6 && n != PIC_ENGINE_V8_SMALL && n != PIC_ENGINE_V8_LARGE)
@@ -561,7 +562,7 @@ void gx_draw_bolts(int *a, int *b, int flag)
     prev = g_slotSelec.slot;
     prev2 = g_slotSelec.subslot;
     shadow = r_vid.copyToFront;
-    r_vid.copyToFront = 0;
+    r_vid.copyToFront = FALSE;
     blt.sx = 0;
     blt.dx = 0x60;
     blt.sy = 0;

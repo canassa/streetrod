@@ -7,6 +7,7 @@
 #define SCREEN_H
 
 #include "GAME.H"
+#include "STRUCTS.H"
 
 struct Node;
 struct Node2;
@@ -17,38 +18,41 @@ enum RaceType {
     RACE_ROAD = 1  /**< Winding course with roadside hazards. */
 };
 
+/** @brief Player cash, owned inventory, allocation pools and race selection. */
 struct DriverState {
-    long money;
-    int unused;
-    struct Car *currentCar;
-    struct Car *otherCars;
-    struct Node2 *freeCars;
-    int carCount;
-    struct Node *spareParts;
-    struct Node *freeParts;
-    int partCount;
-    int adIndex;
-    enum RaceType raceType;
+    long money;              /**< Cash in dollars. */
+    int unused;              /**< Reserved word, initialized to ten. */
+    struct Car *currentCar;  /**< Selected owned car, or zero. */
+    struct Car *otherCars;   /**< Other owned cars, linked from the first. */
+    struct Node2 *freeCars;  /**< Head of the free car-node pool. */
+    int carCount;            /**< Allocated car nodes, including the selected car. */
+    struct Node *spareParts; /**< Head of the uninstalled parts list. */
+    struct Node *freeParts;  /**< Head of the free part-node pool. */
+    int partCount;           /**< Allocated part nodes, including fitted parts. */
+    int adIndex;             /**< Newspaper advertisement resume index. */
+    enum RaceType raceType;  /**< Selected course for the next race. */
 };
 
+/** @brief Pen position returned by the last text drawing operation. */
 struct TextEnd {
-    int x;
-    int y;
+    int x; /**< Pixel column immediately after the text. */
+    int y; /**< Top pixel row at which the text was drawn. */
 };
 
+/** @brief Status-strip text placement and pending erasure state. */
 struct StatusText {
-    int messageX;
-    int y;
-    int messageWidth;
-    int shown;
-    int valueX;
+    int messageX;     /**< Left edge of the default message area, in pixels. */
+    int y;            /**< Top pixel row of status text. */
+    int messageWidth; /**< Default centering width in pixels. */
+    BOOL needsErase;  /**< Erase the previous text before the next write. */
+    int valueX;       /**< Byte-aligned pixel column for money or gear text. */
 };
 
-/* Picture destination and maximum drawing height. */
+/** @brief Destination and height cap for the next loaded scene picture. */
 struct PicturePlacement {
-    int x;
-    int y;
-    int maxHeight;
+    int x;         /**< Destination left pixel column; reset after drawing. */
+    int y;         /**< Destination top row; reset after drawing. */
+    int maxHeight; /**< Maximum picture height and optional clear height. */
 };
 
 extern struct TextEnd g_penPoint;

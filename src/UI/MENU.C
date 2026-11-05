@@ -55,7 +55,7 @@ void mn_draw_hot(struct Hotspot *p)
                 if (p->styleIndex != colr)
                     x_colors = bustyle->schemes[colr = p->styleIndex];
                 dr_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, h = p->y2 - p->y1);
-                if (x_colors.frame)
+                if (x_colors.bevelStyle)
                     dr_bevel(r_vid.back, p->x1, p->y1, w, h);
                 if (p->textOffset) {
                     str = g_txt + p->textOffset;
@@ -105,7 +105,7 @@ void mn_draw_hot(struct Hotspot *p)
             goto box;
         case HOT_LIST_ROW:
             if (!g_menuList.rows++)
-                g_menuList.lineBase = (int)p;
+                g_menuList.rowBaseAddress = (int)p;
             goto box;
         case HOT_MENU:
         case HOT_LIST_MENU:
@@ -138,7 +138,7 @@ void mn_push(enum ScreenId id)
         g_boxSpotHitData.x1 = g_boxSpotHitData.x2 = g_boxSpotHitData.y1 = g_boxSpotHitData.y2 = -1;
         g_textOfsMenu = (p = &g_hots[g_groupHot[id]])->textOffset;
         g_hotsCurMenu = (p + 1)->kind > HOT_LAST_NONCLICKABLE ? p + 1 : 0;
-        g_menuList.rows = g_menuList.lineBase = g_menuList.header = 0;
+        g_menuList.rows = g_menuList.rowBaseAddress = g_menuList.header = 0;
         g_headerEditableState = 0;
         g_hideSelectFrameVal = p->kind == HOT_LIST_NO_FRAME;
         saved = x_colors;
@@ -215,7 +215,7 @@ void mn_bbox(enum ScreenId id, int *x, int *y, int *w, int *h)
 }
 
 /* Copy the screen area around hot spot id (see mn_bbox, which updates *px and *py to the
-   box corner) into a bitmap of the given mode and return it. The x range is rounded to r_vid.mask */
+   box corner) into a bitmap of the given mode and return it. The x range is rounded to r_vid.xByteMask */
 
 struct Bitmap far *mn_grab(enum ScreenId id, int *px, int *py, int mode)
 {
@@ -230,9 +230,9 @@ struct Bitmap far *mn_grab(enum ScreenId id, int *px, int *py, int mode)
     mn_bbox(id, px, py, &w4, &h3);
     x = *px;
     y1 = *py;
-    x2 = (x + w4 + ~r_vid.mask & r_vid.mask) > 320 ? 320 : (x + w4 + ~r_vid.mask & r_vid.mask);
+    x2 = (x + w4 + ~r_vid.xByteMask & r_vid.xByteMask) > 320 ? 320 : (x + w4 + ~r_vid.xByteMask & r_vid.xByteMask);
     y2 = y1 + h3 > 200 ? 200 : y1 + h3;
-    x &= r_vid.mask;
+    x &= r_vid.xByteMask;
     bits9 = ar_bm(x2 - x, y2 - y1, 0, mode);
     return pu_grab(*px, y1, w4, h3, bits9);
 }
@@ -432,16 +432,16 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
             mn_draw_hot(hotn);
         }
     }
-    ww9 = ((struct Hotspot *)g_menuList.lineBase)->x2 - (wx8 = ((struct Hotspot *)g_menuList.lineBase)->x1);
+    ww9 = ((struct Hotspot *)g_menuList.rowBaseAddress)->x2 - (wx8 = ((struct Hotspot *)g_menuList.rowBaseAddress)->x1);
     right = wx8 + ww9 - 1;
-    wh9 = ((struct Hotspot *)g_menuList.lineBase)->y2 - (wy7 = ((struct Hotspot *)g_menuList.lineBase)->y1);
+    wh9 = ((struct Hotspot *)g_menuList.rowBaseAddress)->y2 - (wy7 = ((struct Hotspot *)g_menuList.rowBaseAddress)->y1);
     bottom9 = page * wh9 + wy7 - 1;
-    idx2 = ((struct Hotspot *)g_menuList.lineBase)->styleIndex;
+    idx2 = ((struct Hotspot *)g_menuList.rowBaseAddress)->styleIndex;
     bustyle->schemes[STYLE_LIST_COPY] = bustyle->schemes[idx2];
     sv5 = bustyle->schemes[idx2].line;
     for (;;) {
         x_colors = bustyle->schemes[idx2];
-        w = (struct Hotspot *)g_menuList.lineBase;
+        w = (struct Hotspot *)g_menuList.rowBaseAddress;
         cu_ctl(CURSOR_HIDE);
         i = (count5 - topk > page) ? page : count5 - topk;
         lpk = lp11 + topk;
@@ -456,7 +456,7 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
                 (*g_videoOps.drawText)(r_vid.back, w->x2 - strlen(g_wearText) * 6, w->y1, wear_text(wear));
         }
         if (!g_hideSelectFrameVal) {
-            w = (struct Hotspot *)(0x12 * sel + g_menuList.lineBase);
+            w = (struct Hotspot *)(0x12 * sel + g_menuList.rowBaseAddress);
             x_colors = bustyle->schemes[w->styleIndex];
             dr_frame(r_vid.back, w->x1, w->y1, ww9, 8);
         }
@@ -477,7 +477,7 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
             x1 = y1 = 1000;
             x2 = y2 = -1;
             if (i) {
-                w = (struct Hotspot *)(0x12 * (nw5 = g_cursHoverCodeVal - 1) + g_menuList.lineBase);
+                w = (struct Hotspot *)(0x12 * (nw5 = g_cursHoverCodeVal - 1) + g_menuList.rowBaseAddress);
                 x1 = w->x1;
                 y1 = w->y1;
                 x2 = w->x2;
@@ -487,7 +487,7 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
             } else
                 nw5 = -1;
             if (curl >= 0) {
-                w = (struct Hotspot *)(0x12 * curl + g_menuList.lineBase);
+                w = (struct Hotspot *)(0x12 * curl + g_menuList.rowBaseAddress);
                 if (kind != KM_CAR_INFO)
                     (*g_videoOps.recolorRegion)(r_vid.back, sv5, x_colors.text, w->x1, w->y1, w->x2, w->y1 + 8);
                 x1 = (w->x1 > x1) ? x1 : w->x1;
@@ -518,7 +518,7 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
                 }
                 if (!g_hideSelectFrameVal) {
                     cu_ctl(CURSOR_HIDE);
-                    w = (struct Hotspot *)(0x12 * sel + g_menuList.lineBase);
+                    w = (struct Hotspot *)(0x12 * sel + g_menuList.rowBaseAddress);
                     x_colors = bustyle->schemes[idx2];
                     nw5 = x_colors.line;
                     x_colors.line = x_colors.textBg;
@@ -526,7 +526,7 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
                     x2 = x1-- + ww9;
                     y2 = y1-- + 8;
                     x_colors.line = nw5;
-                    w = (struct Hotspot *)(0x12 * i + g_menuList.lineBase);
+                    w = (struct Hotspot *)(0x12 * i + g_menuList.rowBaseAddress);
                     dr_frame(r_vid.back, w->x1, w->y1, ww9, 8);
                     cu_ctl(CURSOR_SHOW);
                     if (r_vid.copyToFront)
@@ -571,7 +571,7 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
         scroll:
             if (i < topk) {
                 if ((nw5 = count5 - topk) < page) {
-                    w = (struct Hotspot *)(0x12 * nw5 + g_menuList.lineBase);
+                    w = (struct Hotspot *)(0x12 * nw5 + g_menuList.rowBaseAddress);
                     dr_fill_rect(r_vid.back, w->x1, w->y1, ww9,
                                  ((topk - i > page - nw5) ? page - nw5 : topk - i) * wh9);
                 }

@@ -14,6 +14,7 @@
 #include "RACE.H"
 #include "ROAD.H"
 #include "SCREEN.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 #include "VIEW.H"
 
@@ -43,7 +44,7 @@ int dv_run(void)
         g_dashBuffered = r_vid.mode == VID_CGA && g_egaCard;
         if (g_dashBuffered) {
             pu_grab(0, DASH_Y, SCREEN_WIDTH, DASH_HEIGHT, g_bufBackgroundDashPtr);
-            r_vid.copyToFront = 1;
+            r_vid.copyToFront = TRUE;
             sc_fill_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
             r_vid.copyToFront = sv;
         }

@@ -52,17 +52,18 @@ int ts_step(struct Sprite *s)
     pg = s->page;
     fr = s->frame;
     fp = s->background;
-    d = fr->data;
-    sp_clip_box(fr->pos->width, fr->pos->height - g_spriteBottomCut, s->x, s->y, pg->bm->width, pg->bm->height, &rc);
+    d = fr->bottomBand;
+    sp_clip_box(fr->image->width, fr->image->height - g_spriteBottomCut, s->x, s->y, pg->bm->width, pg->bm->height,
+                &rc);
     if (sp_rect_sub(&rc, &pg->rect, &c2, s->motionStep->dx))
         restore_rect_back(&c2, r_vid.back, fp, s->motionStep->dx);
     pg->rect = rc;
     top = d ? d->height : 0;
-    t = blt.h = fr->pos->height - top - g_spriteBottomCut;
+    t = blt.h = fr->image->height - top - g_spriteBottomCut;
     blt.sy = 0;
     u = blt.dy = s->y;
     if (g_scene != SCENE_JAIL) {
-        blt.w = fr->pos->width;
+        blt.w = fr->image->width;
         blt.sx = 0;
         blt.dx = s->x;
         if (s->motionStep->dx) {
@@ -72,7 +73,7 @@ int ts_step(struct Sprite *s)
             blt.mx = 0;
             blt.my = blt.dy - g_spriteBgY < 0 ? 0 : blt.dy - g_spriteBgY;
         }
-        tb_compose(fr->pos, r_vid.back, fp, &blt);
+        tb_compose(fr->image, r_vid.back, fp, &blt);
         if (d) {
             blt.dy += blt.h;
             blt.h = top;
@@ -85,7 +86,7 @@ int ts_step(struct Sprite *s)
                 blt.dy = u;
                 blt.h = t;
                 blt.mx = blt.dx - g_backdropX;
-                tb_compose(fr->pos, r_vid.back, fp, &blt);
+                tb_compose(fr->image, r_vid.back, fp, &blt);
                 if (d) {
                     blt.dy += t;
                     blt.h = top;
@@ -98,7 +99,7 @@ int ts_step(struct Sprite *s)
         if (s->overlayRects[idx] == 0)
             continue;
         s2 = *s->overlayRects[idx];
-        if (fp->pitch == fr->pos->pitch) {
+        if (fp->pitch == fr->image->pitch) {
             s2.x1 += s->x;
             s2.x2 += s->x;
         } else {
@@ -110,7 +111,7 @@ int ts_step(struct Sprite *s)
             blt.h = e.y2 - e.y1 + 1;
             blt.dx = e.x1;
             blt.dy = e.y1;
-            if (fp->pitch == fr->pos->pitch) {
+            if (fp->pitch == fr->image->pitch) {
                 blt.sx = 0;
                 blt.sy = e.y1 - g_spriteBgY;
             } else {
