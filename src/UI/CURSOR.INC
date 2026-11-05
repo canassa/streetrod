@@ -1,0 +1,1 @@
+CURSOR_PLANE_BYTES         EQU 600h

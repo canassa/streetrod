@@ -17,7 +17,7 @@
 static struct Rect g_carhopRect;
 static struct Bitmap far *g_carhopBg;
 
-static struct Sheet g_carhopSheets[2] = {{1142, 6, 11}, {1141, 6, 11}};
+static struct Sheet g_carhopSheets[2] = {{PIC_CARHOP_WALK_RIGHT, 6, 11}, {PIC_CARHOP_WALK_LEFT, 6, 11}};
 static char g_carhopFrames[84] = {4,  4,  4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 1, 1,  2,  2,
                                   3,  3,  4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9,  9,  9, 10, 10, 1,
                                   1,  2,  2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8,  8,  9, 9,  9,  9,
@@ -61,7 +61,7 @@ static void near grab_strip(struct Bitmap far **pbm)
 {
     int w, x, h;
 
-    di_pic_size(0x474, &w, &h, &x);
+    di_pic_size(PIC_CARHOP_SILHOUETTES, &w, &h, &x);
     me_set_bitmap(*pbm, g_pageBmps[2]->bits.p + BACKDROP_ROWS * g_pageBmps[2]->pitch, 0L, w, h,
                   r_vid.mode == VID_EGA ? VID_EGA : -1);
     if (r_vid.mode == VID_EGA) {
@@ -121,7 +121,7 @@ void ch_skate(enum CarhopMode a, int b)
         } else
             clip = 0;
     }
-    cp_backdrop(bm9, &tab2[0], 0x474, &B7, 0x29, 0x29, &prc3, &prc3);
+    cp_backdrop(bm9, &tab2[0], PIC_CARHOP_SILHOUETTES, &B7, 0x29, 0x29, &prc3, &prc3);
     if (a == CARHOP_ENTER) {
         bm27 = ar_bm(0x30, 0x29, 1, ARENA_HIGH_STACK);
         r2.w = 0x30;

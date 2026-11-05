@@ -2,6 +2,10 @@
 
 #ifndef CURSOR_H
 #define CURSOR_H
+#define CURSOR_PLANE_BYTES 0x600
+#define CURSOR_SHEET_HEIGHT 64
+#define CURSOR_HEIGHT 16
+#define CURSOR_WIDTH 24
 
 #include "STRUCTS.H"
 

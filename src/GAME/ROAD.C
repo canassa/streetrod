@@ -14,8 +14,6 @@
 #include "SYS.H"
 #include "VIEW.H"
 
-#define EGA_PAGE1_BITS ((char far *)0xa2000000L)
-#define EGA_PAGE2_BITS ((char far *)0xa4000000L)
 
 static int g_buildX;
 static int g_buildEntry;
@@ -63,23 +61,15 @@ static enum RoadSection g_roadLayouts[10][12] = {
     {SECTION_LEFT_CURVE, SECTION_HILL, SECTION_LEFT_CURVE, SECTION_DIP_HILL, SECTION_LEFT_CURVE, SECTION_DIP,
      SECTION_NARROWS, SECTION_S_CURVE_LR, SECTION_DIP_HILL, SECTION_LEFT_CLOSED, SECTION_RIGHT_CURVE, SECTION_HILL}};
 static struct Bitmap g_egaPage1 = {
-    SCREEN_WIDTH,
-    SCREEN_HEIGHT,
-    8000,
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
-    {EGA_PAGE1_BITS},
-    {0},
-    EGA_PITCH,
-    VID_EGA};
+    SCREEN_WIDTH,     SCREEN_HEIGHT,
+    EGA_PLANE_BYTES,  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
+    {EGA_PAGE1_BITS}, {0},
+    EGA_PITCH,        VID_EGA};
 static struct Bitmap g_egaPage2 = {
-    SCREEN_WIDTH,
-    SCREEN_HEIGHT,
-    8000,
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
-    {EGA_PAGE2_BITS},
-    {0},
-    EGA_PITCH,
-    VID_EGA};
+    SCREEN_WIDTH,     SCREEN_HEIGHT,
+    EGA_PLANE_BYTES,  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
+    {EGA_PAGE2_BITS}, {0},
+    EGA_PITCH,        VID_EGA};
 int g_roadLayout = 0;
 int g_onShoulder = 0;
 static int g_turnRight = 0;
@@ -747,7 +737,7 @@ void rd_project_ahead(void)
     rowz = 4;
     d1 = g_trackViewMotion.roadHeight - *g_heightRoadPtr++;
     d2 = g_trackViewMotion.curveX - *g_hereCurvePtr++;
-    *p3++ = rd_proj_y(rowz, 2000, d1);
+    *p3++ = rd_proj_y(rowz, ROAD_SURFACE_Y, d1);
     if (bits) {
         if (bits & 0x80) {
             *p11++ = rd_proj_x(rowz, 0xaf0, d2);
@@ -802,7 +792,7 @@ void rd_project_ahead(void)
             *p2 = rd_proj_x(rowz, 1500, d2);
             p2++;
         }
-        *p3 = rd_proj_y(rowz, 2000, d1);
+        *p3 = rd_proj_y(rowz, ROAD_SURFACE_Y, d1);
         p3++;
         *p5l = rd_proj_x(rowz, 0xe74, d2);
         p5l++;
@@ -833,7 +823,7 @@ void rd_project_behind(void)
     rowz = 8;
     d1 = *g_heightRoadPtr-- - g_trackViewMotion.roadHeight;
     d2 = *g_hereCurvePtr-- - g_trackViewMotion.curveX;
-    *p3++ = rd_mirror_y(rowz, 2000, d1);
+    *p3++ = rd_mirror_y(rowz, ROAD_SURFACE_Y, d1);
     if (bits) {
         if (bits & 0x80) {
             *p11++ = rd_mirror_x(rowz, 0xaf0, d2);
@@ -888,7 +878,7 @@ void rd_project_behind(void)
             *p2 = rd_mirror_x(rowz, 1500, d2);
             p2++;
         }
-        *p3 = rd_mirror_y(rowz, 2000, d1);
+        *p3 = rd_mirror_y(rowz, ROAD_SURFACE_Y, d1);
         p3++;
         *p5l = rd_mirror_x(rowz, 0xe74, d2);
         p5l++;

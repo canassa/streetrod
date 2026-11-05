@@ -3,7 +3,23 @@
 #ifndef ROAD_H
 #define ROAD_H
 
+#define ROAD_SURFACE_Y 2000
+
 #include "CARPIC.H"
+
+enum RoadsideFlags {
+    ROADSIDE_POST = 0x1,
+    ROADSIDE_SMALL_ROCK = 0x4,
+    ROADSIDE_LARGE_ROCK = 0x8,
+    ROADSIDE_TREE = 0x20,
+    ROADSIDE_TREE_3 = 0x80,
+    ROADSIDE_BUSH = 0x100,
+    ROADSIDE_BUSH_OUTER = 0x200,
+    ROADSIDE_WARNING = 0x800,
+    ROADSIDE_BARRICADE = 0x1000,
+    ROADSIDE_S_CURVE = 0x2000,
+    ROADSIDE_S_CURVE_2 = 0x4000
+};
 
 struct MirrorEdges {
     int buildingY[8];

@@ -57,8 +57,8 @@ int fa_protect_check(void)
     f = d < 0x12;
     sc_status_text(-1, "", 0);
     r_vid.copyToFront = 0;
-    sc_picture_at(8, 8, 0, 0);
-    di_free_pic(8);
+    sc_picture_at(PIC_COPY_PROTECTION_JUKEBOX, 8, 0, 0);
+    di_free_pic(PIC_COPY_PROTECTION_JUKEBOX);
     switch (f) {
     case MANUAL_CAR_KEY:
         sprintf(b, "What`is`the`color`of");
@@ -201,7 +201,7 @@ void fa_show(int add)
     (*g_videoOps.blank)();
     g_picturePlacement.maxHeight = SCREEN_HEIGHT;
     r_vid.copyToFront = 1;
-    sc_picture(5, -1);
+    sc_picture(PIC_HALL_OF_FAME, -1);
     g_picturePlacement.maxHeight = old;
     vi_swap_pal();
     sv286 = bustyle->c28;

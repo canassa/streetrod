@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .CODE S24D8_TEXT
 
@@ -16,7 +17,7 @@ _ty_to_screen  PROC    FAR
         push    si
         lds     si,DWORD PTR [bp+6]
         les     di,DWORD PTR [bp+0Ah]
-        mov     dx,2000h
+        mov     dx,VIDEO_BANK_BYTES
         sub     dx,[bp+0Eh]
         mov     ax,[bp+10h]
         mov     bx,[bp+16h]
@@ -37,7 +38,7 @@ words1:
         jmp     SHORT row1
 wrap:
         add     di,[bp+14h]
-        sub     di,6000h
+        sub     di,(VIDEO_BANK_BYTES * 3)
         jmp     SHORT row1
 done1:
         pop     si
@@ -63,7 +64,7 @@ _ty_screen  PROC    FAR
         push    si
         lds     si,DWORD PTR [bp+6]
         les     di,DWORD PTR [bp+0Ah]
-        mov     ax,0A0h
+        mov     ax,TANDY_PITCH
         mov     bx,[bp+18h]
         mov     bh,bl
         shr     bl,1
@@ -71,7 +72,7 @@ _ty_screen  PROC    FAR
         mul     bl
         add     di,ax
         add     di,[bp+16h]
-        mov     ax,0A0h
+        mov     ax,TANDY_PITCH
         mov     dx,[bp+14h]
         mov     dh,dl
         shr     dl,1
@@ -85,25 +86,25 @@ _ty_screen  PROC    FAR
         xor     bh,bh
         test    dx,1
         je      s1
-        add     si,2000h
+        add     si,VIDEO_BANK_BYTES
 s1:
         test    dx,2
         je      s2
-        add     si,4000h
+        add     si,(VIDEO_BANK_BYTES * 2)
 s2:
         test    bx,1
         je      d1
-        add     di,2000h
+        add     di,VIDEO_BANK_BYTES
 d1:
         test    bx,2
         je      d2
-        add     di,4000h
+        add     di,(VIDEO_BANK_BYTES * 2)
 d2:
-        mov     ax,2000h
+        mov     ax,VIDEO_BANK_BYTES
         sub     ax,[bp+0Eh]
         mov     [bp-2],ax
-        mov     ax,0A0h
-        sub     ax,6000h
+        mov     ax,TANDY_PITCH
+        sub     ax,(VIDEO_BANK_BYTES * 3)
         sub     ax,[bp+0Eh]
         mov     [bp-4],ax
         mov     ax,[bp+10h]

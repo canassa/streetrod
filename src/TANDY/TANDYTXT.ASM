@@ -145,10 +145,10 @@ lead:
         inc     dx
         test    dx,3
         je      lead_wrap
-        add     di,2000h
+        add     di,VIDEO_BANK_BYTES
         jmp     SHORT lead_next
 lead_wrap:
-        sub     di,6000h
+        sub     di,(VIDEO_BANK_BYTES * 3)
         add     di,0A0h
 lead_next:
         loop    lead
@@ -177,10 +177,10 @@ rowend:
         inc     dx
         test    dx,3
         je      row_wrap
-        add     di,2000h
+        add     di,VIDEO_BANK_BYTES
         jmp     SHORT row_next
 row_wrap:
-        sub     di,6000h
+        sub     di,(VIDEO_BANK_BYTES * 3)
         add     di,0A0h
 row_next:
         dec     bx
@@ -207,10 +207,10 @@ tail:
         inc     dx
         test    dx,3
         je      tail_wrap
-        add     di,2000h
+        add     di,VIDEO_BANK_BYTES
         jmp     SHORT tail_next
 tail_wrap:
-        sub     di,6000h
+        sub     di,(VIDEO_BANK_BYTES * 3)
         add     di,0A0h
 tail_next:
         loop    tail

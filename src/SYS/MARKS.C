@@ -6,7 +6,7 @@
 void ma_clear(void)
 {
     g_offsetArenaMarksList[g_lowArenaMarker = 0] = g_loHeapLimit = 0;
-    g_offsetArenaMarksList[g_markerIndexHigh = 60] = g_arenaTopVal;
+    g_offsetArenaMarksList[g_markerIndexHigh = ARENA_LAST_MARK] = g_arenaTopVal;
     g_stickerBg = 0;
 }
 
@@ -14,7 +14,7 @@ void ma_clear(void)
 void ma_release(void)
 {
     g_offsetArenaMarksList[g_lowArenaMarker = 0] = g_loHeapLimit;
-    g_offsetArenaMarksList[g_markerIndexHigh = 60] = g_arenaTopVal;
+    g_offsetArenaMarksList[g_markerIndexHigh = ARENA_LAST_MARK] = g_arenaTopVal;
 }
 
 
@@ -30,10 +30,10 @@ void ma_pop_low(int n)
 void ma_pop_high(int n)
 {
     if (n == 0)
-        g_offsetArenaMarksList[g_markerIndexHigh = 60] = g_arenaTopVal;
+        g_offsetArenaMarksList[g_markerIndexHigh = ARENA_LAST_MARK] = g_arenaTopVal;
     else {
         g_markerIndexHigh += n;
-        if (g_markerIndexHigh == 60)
+        if (g_markerIndexHigh == ARENA_LAST_MARK)
             g_offsetArenaMarksList[g_markerIndexHigh] = g_arenaTopVal;
         else
             g_offsetArenaMarksList[g_markerIndexHigh] = g_offsetArenaMarksList[g_markerIndexHigh + 1] - 1;

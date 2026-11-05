@@ -206,7 +206,7 @@ static void near leave_station(struct Dlg *d)
     if (d->hand != GAS_HAND_EMPTY)
         cu_ctl(1);
     if (d->nozzleInTank) {
-        show_tank_cap(d, 0x472);
+        show_tank_cap(d, PIC_FUEL_CAP);
         if (d->nozzlePenaltyDue) {
             sc_add_money(g_driver.money >= 10 ? -10 : -(int)g_driver.money);
             d->nozzlePenaltyDue = 0;
@@ -219,7 +219,7 @@ static void near leave_station(struct Dlg *d)
     }
     if (d->attendantAbsent == 0) {
         cu_ctl(CURSOR_HIDE);
-        p = di_bm(0x4d1, ARENA_HIGH_STACK);
+        p = di_bm(PIC_GAS_ATTENDANT, ARENA_HIGH_STACK);
         cu_ctl(CURSOR_SHOW);
         cp_patch_bg(p, 0x60, 0, 0x30, 0x40, 0xc8, 0x51, 0xa9, 2);
     }
@@ -244,7 +244,7 @@ void ra_gas_station(void)
 
     sc_status_text(-1, "\0", 0);
     g_scene = SCENE_GAS_STATION;
-    sc_picture(0x442, -1);
+    sc_picture(PIC_GAS_STATION, -1);
     sc_label(g_cashLabel);
     r_vid.copyToFront = 1;
     (*g_videoOps.show)();
@@ -272,7 +272,7 @@ void ra_gas_station(void)
     dl.unused = 0;
     dl.nozzlePenaltyDue = 1;
     dl.fillsLeft = (0xbe - g_driver.currentCar->fuel) / 0x1e;
-    show_tank_cap(&dl, 0x472);
+    show_tank_cap(&dl, PIC_FUEL_CAP);
     spots_idle();
     mn_push(KM_GAS_STATION);
     cu_ctl(CURSOR_SHOW_NOW);
@@ -320,7 +320,7 @@ top:
                     cu_ctl(dl.hand = GAS_HAND_NOZZLE);
                     dl.nozzleOnPump = 0;
                 }
-                show_tank_cap(&dl, 0x471);
+                show_tank_cap(&dl, PIC_FUEL_NOZZLE);
                 dl.nozzleInTank = 1;
                 cu_ctl(dl.hand = GAS_HAND_EMPTY);
                 vi_anim_start(2);
@@ -334,7 +334,7 @@ top:
                 break;
             if (dl.hand == GAS_HAND_EMPTY) {
                 cu_ctl(dl.hand = GAS_HAND_RAG);
-                sc_picture_at(0x473, 0x50, 0xaa, -1);
+                sc_picture_at(PIC_FUEL_GAUGE, 0x50, 0xaa, -1);
                 mn_pop(1);
                 spots_rag();
             redraw:
@@ -381,7 +381,7 @@ top:
                     so_pump(0);
                     vi_anim_stop(2);
                 }
-                show_tank_cap(&dl, 0x472);
+                show_tank_cap(&dl, PIC_FUEL_CAP);
                 dl.nozzleInTank = 0;
                 cu_ctl(dl.hand = GAS_HAND_NOZZLE);
                 if (dl.fillsLeft > 0 && pos <= g_driver.money)
@@ -391,7 +391,7 @@ top:
             if (dl.fillsLeft == 0 || pos > g_driver.money)
                 gm_message(0x10b5);
             else {
-                show_tank_cap(&dl, 0x471);
+                show_tank_cap(&dl, PIC_FUEL_NOZZLE);
                 dl.nozzleInTank = 1;
                 cu_ctl(dl.hand = GAS_HAND_EMPTY);
                 vi_anim_start(2);
@@ -443,7 +443,8 @@ static int near replace_tires(void)
 }
 
 static int g_winMsgs[6] = {4973, 5015, 5073, 5043, 5099, 5130};
-static struct Spot g_crashPics[3] = {{1264, 64, 84}, {1266, 208, 82}, {1265, 272, 123}};
+static struct Spot g_crashPics[3] = {
+    {PIC_CRASH_BLOOD_LEFT, 64, 84}, {PIC_CRASH_BLOOD_CENTER, 208, 82}, {PIC_CRASH_BLOOD_RIGHT, 272, 123}};
 static int g_statsDone = 0;
 
 
@@ -458,8 +459,8 @@ static void near show_ticket(void)
     struct Blt pkt;
 
     ma_clear();
-    a = di_bm(0x456, ARENA_LOW_STACK);
-    b = di_bm(0x4ef, ARENA_LOW_STACK);
+    a = di_bm(PIC_SPEEDING_TICKET, ARENA_LOW_STACK);
+    b = di_bm(PIC_TUNING_HAND, ARENA_LOW_STACK);
     pkt.w = b->width;
     pkt.h = b->height;
     pkt.dx = pkt.sx = pkt.sy = 0;
@@ -511,8 +512,8 @@ static void near show_crash(void)
     fast = r_vid.mode == VID_EGA && g_vga == 0;
     so_crash();
     ma_clear();
-    a = di_bm(0x4eb, ARENA_LOW_STACK);
-    b = di_bm(0x4ec, ARENA_LOW_STACK);
+    a = di_bm(PIC_CRASHED_WINDSHIELD, ARENA_LOW_STACK);
+    b = di_bm(PIC_CRASH_WINDOW_CORNER, ARENA_LOW_STACK);
     pkt.w = a->width;
     pkt.h = 0x5a;
     pkt.sx = pkt.sy = pkt.dx = 0;

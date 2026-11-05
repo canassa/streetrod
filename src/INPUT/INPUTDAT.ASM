@@ -1,5 +1,6 @@
         .MODEL MEDIUM
         INCLUDE PC.INC
+        INCLUDE DISK.INC
 
 PART_ENGINE EQU 0
 PART_TRANSMISSION EQU 1
@@ -292,15 +293,15 @@ _g_carbFit DB      1, 0, 0
         DB      0, 1, 1
         EVEN
         PUBLIC  _g_partPics
-_g_partPics DW      434h, 435h, 436h, 0, 0
-        DW      439h, 43Ah, 437h, 43Bh, 450h
-        DW      43Ch, 43Dh, 43Eh, 0, 0
-        DW      43Ch, 43Dh, 43Eh, 0, 0
-        DW      43Ch, 43Dh, 43Eh, 0, 0
+_g_partPics DW      PIC_ENGINE_V6, PIC_ENGINE_V8_SMALL, PIC_ENGINE_V8_LARGE, 0, 0
+        DW      PIC_MANIFOLD_TWO_BARREL_V8, PIC_MANIFOLD_FOUR_BARREL, PIC_MANIFOLD_DUAL_QUAD, PIC_MANIFOLD_TRI_POWER, PIC_MANIFOLD_RACING
+        DW      PIC_CARB_TWO_BARREL, PIC_CARB_FOUR_BARREL, PIC_CARB_RACING, 0, 0
+        DW      PIC_CARB_TWO_BARREL, PIC_CARB_FOUR_BARREL, PIC_CARB_RACING, 0, 0
+        DW      PIC_CARB_TWO_BARREL, PIC_CARB_FOUR_BARREL, PIC_CARB_RACING, 0, 0
         PUBLIC  _g_boltPics
-_g_boltPics DW      0, 43Fh, 440h, 441h
+_g_boltPics DW      0, PIC_BOLT_TURN_1, PIC_BOLT_TURN_2, PIC_BOLT_TURN_3
         PUBLIC  _g_transPics
-_g_transPics DW      44Bh, 44Ch, 44Dh, 44Eh, 47F0h
+_g_transPics DW      PIC_TRANS_AUTOMATIC, PIC_TRANS_THREE_SPEED, PIC_TRANS_FOUR_SPEED, PIC_TRANS_RACING, 47F0h
         PUBLIC  _g_cashLabel
 _g_cashLabel DW      OFFSET DGROUP:S_47f1
         PUBLIC  _g_gearLabel

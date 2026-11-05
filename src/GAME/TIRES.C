@@ -26,7 +26,7 @@ static struct Bitmap far *near grab_wheel_column(int n);
 static void near swap_wheel(int a, int *p, int *q);
 
 int g_spriteBgY = 0;
-static int g_liftPicIds[3] = {1034, 1035, 1036};
+static int g_liftPicIds[3] = {PIC_JACK_HANDLE_UP, PIC_JACK_COLUMN, PIC_JACK_HANDLE_DOWN};
 static struct Bitmap far *g_wheelBuf = (struct Bitmap far *)&g_tires.wheelHeader;
 static struct Bitmap far *g_rollBuf = (struct Bitmap far *)&g_tires.rollHeader;
 static struct Bitmap far *g_jackBuf = (struct Bitmap far *)&g_tires.jackHeader;
@@ -74,7 +74,7 @@ static void near swap_wheel(int a, int *p, int *q)
 {
     int i;
 
-    g_tires.underlay = di_bm(0x4d2, ARENA_LOW_STACK);
+    g_tires.underlay = di_bm(PIC_TIRE_SHADOW, ARENA_LOW_STACK);
     g_tires.wheelBitmap = di_bm(*p, ARENA_LOW_STACK);
     g_tires.phase = a & ~r_vid.mask;
     g_tires.frames[0] = ar_bm(g_tires.wheelBitmap->width + 8, g_tires.wheelBitmap->height, 1, ARENA_LOW_STACK);
@@ -210,8 +210,8 @@ void ti_change(int *a, int *b)
     blt.sx = 0;
     blt.sy = ybot = g_tires.liftCar->height - 0x1c;
     g_tires.vehicleBottom = bm_grab(g_tires.liftCar, &blt, ARENA_LOW_STACK);
-    sc_picture(0x408, -1);
-    g_tires.basePic = di_bm(0x49d, ARENA_HIGH_STACK);
+    sc_picture(PIC_GARAGE, -1);
+    g_tires.basePic = di_bm(PIC_CAR_SHADOW, ARENA_HIGH_STACK);
     bm_opaque_span(g_tires.liftCar, &left, &right);
     g_tires.groundStrip = ar_bm(g_tires.liftCar->width, g_tires.basePic->height, 0, ARENA_HIGH_STACK);
     pu_grab(g_tires.carX, 0x99 - g_tires.basePic->height, g_tires.liftCar->width, g_tires.basePic->height,
@@ -247,7 +247,7 @@ void ti_change(int *a, int *b)
     clip6.dy = -(g_tires.liftPics[1]->height + g_spriteBgY - 0x9a);
     (*g_videoOps.maskedBlit)(g_tires.liftPics[0], g_tires.liftBackdrop, &clip6, 1);
     (*g_videoOps.copy)(g_tires.liftPics[0], g_tires.liftBackdrop, &clip6, 2);
-    g_tires.column = di_bm(0x4c7, ARENA_HIGH_STACK);
+    g_tires.column = di_bm(PIC_ROLLING_TIRE, ARENA_HIGH_STACK);
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x76 : 0;
     pic = grab_wheel_column(g_tires.wheelX2);
     dst = grab_wheel_column(g_tires.wheelX1);

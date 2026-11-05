@@ -81,7 +81,7 @@ int so_calibrate(int n)
     int count;
 
     count = 0;
-    g_delayScale = 0x100;
+    g_delayScale = DELAY_SCALE_UNITY;
     tick = *BIOS_TICKS;
     while (tick == *BIOS_TICKS)
         ;
@@ -90,7 +90,7 @@ int so_calibrate(int n)
         sk_delay(n);
         count++;
     }
-    if (count > 0x350)
+    if (count > CALIBRATION_FAST_LIMIT)
         count = 3 * count / 4;
     return count;
 }
@@ -101,7 +101,7 @@ void so_set_freq(long freq)
 {
     union Word div;
 
-    div.w = (int)(1193180L / freq);
+    div.w = (int)(PIT_INPUT_HZ / freq);
     outp(PIT_CH2, div.b[0]);
     outp(PIT_CH2, div.b[1]);
 }

@@ -2,6 +2,7 @@
 
 #ifndef BITMAP_H
 #define BITMAP_H
+#define BITMAP_HEADER_BYTES 0x30
 
 
 /* blit request handed to the g_videoOps hooks (20 bytes). The first six ints are the same as

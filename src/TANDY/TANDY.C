@@ -92,7 +92,7 @@ void ta_recolor_rect(struct Bitmap far *bm, int from, int to, int x1, int y1, in
     xoddl = x1 & 1;
     if (xoddl == 0)
         mid++;
-    pbk = 0x2000 - ((xoddl != 0) + mid);
+    pbk = VIDEO_BANK_BYTES - ((xoddl != 0) + mid);
     pa2 = 0xa0a0 - ((xoddl != 0) + mid);
     pl = (bm->planesize >> 2) * (y1 & 3) + bm->pitch * (y1 >> 2) + bm->bits.p + (x1 >> 1);
     for (row3 = y1; row3 < y2; row3++) {
@@ -129,7 +129,7 @@ void ta_recolor_rect(struct Bitmap far *bm, int from, int to, int x1, int y1, in
 
 void ta_copy_page(char far *src, char far *dst)
 {
-    bm_far_copy(src, dst, 0x8000);
+    bm_far_copy(src, dst, TANDY_PAGE_BYTES);
 }
 
 /* Clear one source row, then copy the same row from the second screen: five interlaced passes over

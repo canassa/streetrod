@@ -8,6 +8,7 @@
 #include "MASKBG.H"
 #include "MASKBLT.H"
 #include "MASKOR.H"
+#include "PC.H"
 #include "TANDYCPY.H"
 
 static void near split_banks(int x, int x0, int y, int *b, int *a);
@@ -35,9 +36,9 @@ static void near copy_from_tandy(struct Bitmap far *src, struct Bitmap far *dst,
     off += x;
     off += FP_OFF(basel);
     sg1[0] = FP_SEG(basel);
-    sg1[1] = sg1[0] + 0x200;
-    sg1[2] = sg1[1] + 0x200;
-    sg1[3] = sg1[2] + 0x200;
+    sg1[1] = sg1[0] + VIDEO_BANK_PARAS;
+    sg1[2] = sg1[1] + VIDEO_BANK_PARAS;
+    sg1[3] = sg1[2] + VIDEO_BANK_PARAS;
     for (i = y; i < end; i++, s8 += pitch) {
         movedata(sg1[i & 3], off, FP_SEG(s8), FP_OFF(s8), w2);
         if ((i & 3) == 3)

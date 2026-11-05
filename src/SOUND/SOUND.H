@@ -2,6 +2,11 @@
 
 #ifndef SOUND_H
 #define SOUND_H
+#define SIREN_HIGH_DIVISOR 0x54b
+#define SIREN_LOW_DIVISOR 0x712
+#define TIRE_SQUEAL_DIVISOR 0x95
+#define CALIBRATION_FAST_LIMIT 0x350
+#define DELAY_SCALE_UNITY 0x100
 
 #include "MUSIC.H"
 

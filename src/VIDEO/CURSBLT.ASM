@@ -1,5 +1,6 @@
         .MODEL MEDIUM
         INCLUDE PC.INC
+        INCLUDE CURSOR.INC
 
         .CODE S0E6C_TEXT
 
@@ -18,7 +19,7 @@ _uc_tandy  PROC  FAR
         push    di
         push    si
         les     di,DWORD PTR [bp+12h]
-        mov     ax,0A0h
+        mov     ax,TANDY_PITCH
         mov     bx,[bp+18h]
         mov     bh,bl
         shr     bl,1
@@ -28,11 +29,11 @@ _uc_tandy  PROC  FAR
         add     di,[bp+16h]
         test    bh,1
         je      bank1a
-        add     di,2000h
+        add     di,VIDEO_BANK_BYTES
 bank1a:
         test    bh,2
         je      bank2
-        add     di,4000h
+        add     di,(VIDEO_BANK_BYTES * 2)
 bank2:
         mov     ax,18h
         sub     ax,[bp+1Ah]
@@ -40,11 +41,11 @@ bank2:
         mov     ax,0Ch
         sub     ax,[bp+1Ah]
         mov     [bp-6],ax
-        mov     ax,2000h
+        mov     ax,VIDEO_BANK_BYTES
         sub     ax,[bp+1Ah]
         mov     [bp-2],ax
-        mov     ax,0A0h
-        sub     ax,6000h
+        mov     ax,TANDY_PITCH
+        sub     ax,(VIDEO_BANK_BYTES * 3)
         sub     ax,[bp+1Ah]
         mov     [bp-4],ax
         lds     si,DWORD PTR [bp+0Eh]
@@ -118,7 +119,7 @@ _uc_cga  PROC  FAR
         push    di
         push    si
         les     di,DWORD PTR [bp+12h]
-        mov     ax,50h
+        mov     ax,CGA_PITCH
         mov     bx,[bp+18h]
         mov     bh,bl
         shr     bl,1
@@ -127,7 +128,7 @@ _uc_cga  PROC  FAR
         add     di,[bp+16h]
         test    bh,1
         je      bank1b
-        add     di,2000h
+        add     di,VIDEO_BANK_BYTES
 bank1b:
         mov     ax,18h
         sub     ax,[bp+1Ah]
@@ -135,11 +136,11 @@ bank1b:
         mov     ax,6
         sub     ax,[bp+1Ah]
         mov     [bp-6],ax
-        mov     ax,2000h
+        mov     ax,VIDEO_BANK_BYTES
         sub     ax,[bp+1Ah]
         mov     [bp-2],ax
-        mov     ax,50h
-        sub     ax,2000h
+        mov     ax,CGA_PITCH
+        sub     ax,VIDEO_BANK_BYTES
         sub     ax,[bp+1Ah]
         mov     [bp-4],ax
         lds     si,DWORD PTR [bp+0Eh]
@@ -278,17 +279,17 @@ pixel:
         mov     ax,SEQ_PLANE1
         mov     dx,SEQ_DATA
         out     dx,al
-        mov     al,[si+600h]
+        mov     al,[si+CURSOR_PLANE_BYTES]
         mov     es:[di],al
         mov     ax,SEQ_PLANE2
         mov     dx,SEQ_DATA
         out     dx,al
-        mov     al,[si+0C00h]
+        mov     al,[si+CURSOR_PLANE_BYTES*2]
         mov     es:[di],al
         mov     ax,SEQ_PLANE3
         mov     dx,SEQ_DATA
         out     dx,al
-        mov     al,[si+1200h]
+        mov     al,[si+CURSOR_PLANE_BYTES*3]
         stosb
         inc     si
         loop    pixel

@@ -681,8 +681,11 @@ static struct Cell g_endCellsB[9] = {
     {208, 54, 8, 2, 128, 84},    {200, 54, 8, 3, 112, 88},    {184, 54, 16, 4, 96, 94},
     {160, 54, 24, 10, 112, 113}, {160, 86, 40, 10, 128, 113}, {160, 65, 48, 20, 136, 104},
     {160, 1, 112, 52, 128, 70},  {0, 1, 160, 97, 112, 52},    {0, 99, 224, 101, 80, 51}};
-static int g_endPics[8] = {1201, 1217, 1106, 1107, 1108, 1109, 1073, 0};
-static int g_endPics2[3] = {6, 7, 0};
+static int g_endPics[8] = {PIC_KINGS_CORVETTE_63_BODY, PIC_PORTRAIT_KINGS_GIRLFRIEND,
+                           PIC_TIRE_SLICK_1,           PIC_TIRE_SLICK_2,
+                           PIC_TIRE_SLICK_3,           PIC_TIRE_SLICK_4,
+                           PIC_SPEECH_BUBBLE_RIGHT,    0};
+static int g_endPics2[3] = {PIC_ENDING_COUPLE, PIC_ENDING_LIPS, 0};
 
 
 static void near pop_rival_hood(void)
@@ -759,7 +762,7 @@ static void near play_cell_anim(void)
     int i, key;
 
     ma_release();
-    pict = di_bm(0x4c9, ARENA_HIGH_STACK);
+    pict = di_bm(PIC_CARHOP_IDLE, ARENA_HIGH_STACK);
     i = 0;
     mn_push(KM_MESSAGE);
     g_waitUntil = g_tick + 10;
@@ -820,12 +823,12 @@ static void near play_ending(void)
     flag8 = 0;
     cu_ctl(CURSOR_HIDE_NOW);
     sc_status_init(0xbe);
-    sc_picture_at(9, 8, 0x14, 2);
+    sc_picture_at(PIC_ENDING_MESSAGE, 8, 0x14, 2);
     r_vid.copyToFront = 0;
     savedl = g_picturePlacement.maxHeight;
     g_picturePlacement.maxHeight = SCREEN_HEIGHT;
     (*g_videoOps.copyPage)(r_vid.front->bits.p, r_vid.back->bits.p);
-    sc_picture(0x408, -1);
+    sc_picture(PIC_GARAGE, -1);
     g_picturePlacement.maxHeight = savedl;
     (*g_videoOps.show)();
     gm_pause(0x2ee);
@@ -840,14 +843,14 @@ static void near play_ending(void)
     (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
     r_vid.copyToFront = 0;
     (*g_videoOps.show)();
-    g_racerRecordsArray[RACER_KING].overlayPic = 0x4c1;
+    g_racerRecordsArray[RACER_KING].overlayPic = PIC_PORTRAIT_KINGS_GIRLFRIEND;
     select_rival(RACER_KING);
     cp_show_car(CAR_PULL_IN, g_opponentSpecIndex, g_selectedRacerPointer->bodyMods, g_selectedRacerPointer->sticker, 1,
                 0x98, 0, g_tirePics[g_carDraw.tireVariant]);
-    g_racerRecordsArray[RACER_KING].overlayPic = 0x4dc;
+    g_racerRecordsArray[RACER_KING].overlayPic = PIC_PORTRAIT_THE_KING;
     pic24 = ar_bm(0x50, 0x2c, 0, ARENA_HIGH_BASE);
     pu_grab(0x78, 0x45, 0x50, 0x2c, pic24);
-    pic3 = di_bm(6, ARENA_LOW_STACK);
+    pic3 = di_bm(PIC_ENDING_COUPLE, ARENA_LOW_STACK);
     pic4 = ar_bm(0x50, 0x2c, 0, ARENA_HIGH_BASE);
     p3 = g_endCellsA;
     blt.w = g_endCellsA[0].w;
@@ -892,7 +895,7 @@ static void near play_ending(void)
     }
     ma_clear();
     if (flag8 == 0) {
-        pic58 = di_bm(7, ARENA_LOW_STACK);
+        pic58 = di_bm(PIC_ENDING_LIPS, ARENA_LOW_STACK);
         cntz = 9;
         if (r_vid.mode == VID_TANDY) {
             ar_shrink(10000);
@@ -970,7 +973,7 @@ void bo_visit(void)
     sc_status_text(-1, "", 0);
     g_cursorX = 0x9e;
     g_cursorY = 0x80;
-    sc_picture(0x445, -1);
+    sc_picture(PIC_BOBS_DRIVE_IN, -1);
     vi_bobs_pal();
     sc_label(g_cashLabel);
     g_cursor2.drawnRect.x2 = -1;
@@ -1092,7 +1095,7 @@ void bo_visit(void)
                         return;
                     }
                     mu_suspend(0);
-                    sc_picture(0x445, -1);
+                    sc_picture(PIC_BOBS_DRIVE_IN, -1);
                     sc_label(g_cashLabel);
                     (*g_videoOps.show)();
                     class = CAR_PULL_IN;
@@ -1168,11 +1171,11 @@ void bo_jail(void)
     r_vid.copyToFront = 0;
     cu_ctl(CURSOR_HIDE);
     ma_clear();
-    g_edgeBmpJail = di_bm(0x4e7, ARENA_LOW_STACK);
-    g_barJailPixels = di_bm(0x4e9, ARENA_LOW_STACK);
-    sc_picture(0x445, -1);
+    g_edgeBmpJail = di_bm(PIC_JAIL_WALL, ARENA_LOW_STACK);
+    g_barJailPixels = di_bm(PIC_JAIL_BAR, ARENA_LOW_STACK);
+    sc_picture(PIC_BOBS_DRIVE_IN, -1);
     vi_bobs_pal();
-    pict = di_bm(0x4e8, ARENA_HIGH_STACK);
+    pict = di_bm(PIC_JAIL_CAR_WINDOW, ARENA_HIGH_STACK);
     blt.w = pict->width;
     blt.h = 5;
     blt.dx = blt.dy = blt.sx = blt.sy = 0;

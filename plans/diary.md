@@ -2343,3 +2343,19 @@ Ownership inventory (the original 98 definitions):
 - Initialized static data has private $Snnn_name labels in MSC's /Fc listing, so PUBDEF-only indexing mistakes it for strings and loses DGROUP ownership evidence. Follow data directives and relative ORGs to recover private names and offsets; keep the real object symbol table unchanged.
 - The 21 scenery Run arrays require their existing public forward declarations. MSC rejects static tentative declarations followed by initializers (C2086). Moving the initialized arrays before their referring List records keeps all loaded bytes but changes relocation emission order, causing 256 packed EXE bytes to differ. Keeping these arrays public restores an identical packed EXE; the exception is documented per symbol in the ledger and in the recipe book.
 - Changing initialized globals to static and relocating types did not change GARAGE's measured contributing-name allowance. Unused extern removal does not buy name-budget space.
+
+## 2026-11-05 02:39 CET: Name picture resources and engine constants
+
+### What I did
+
+Decoded and visually inspected all 277 picture resources. Added PictureId in DISK.H and replaced picture literals in loaders, cache lists, animation commands, popup backgrounds, car part tables and assembly data. Joined HOT_DATA Spec/Model/Racer records to their description offsets to prove car model, detachable part and portrait identities. Typed the owning picture fields and loader parameters with the enum. DISK.INC mirrors the picture constants used by INPUTDAT.ASM.
+
+Named 90 engine/rendering constants: video segments, interleaved bank geometry, page sizes, PIT clock and divisors, keyboard release bits, cursor geometry, bitmap header size, arena modes/markers, palette roles, scenery IDs and roadside flags. Kept game-rule values assigned to cgame unchanged, including the coordinated RPM/wear/finish literals in SYS.C and ROAD.C. Recorded 367 items and nine notable skip categories with evidence in work/LEDGER.md.
+
+Validation passed: headers --check, format --check, check --all (572/572), clean build after removing work (Packed EXE vs orig/SR.EXE: IDENTICAL), dgroup check, dgroup order, all 155 unittests and docs (zero Doxygen diagnostics).
+
+### What I learned
+
+HOT_DATA provides stronger asset identity evidence than appearance alone: body/roof/bumper IDs and racer portrait IDs can be joined directly to named descriptions without guessing makes or characters. Individual inspection of the two nearly blank contact-sheet cells resolved the car shadow and lower crash-window corner.
+
+MSC 5.1 truncates identifiers after 31 characters, including enum values. Short model years and concise part names prevent collisions while enum constants themselves do not consume the contributing-symbol budget. The shared-PC-constants test requires numeric PC.H definitions to be mirrored in PC.INC even when only C currently uses them. Byte equality alone cannot detect a semantically inappropriate name: review must distinguish picture IDs from neighboring array dimensions/animation fields and distinguish equal X/Y projection coordinates with different meanings.

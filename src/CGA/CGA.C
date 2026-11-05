@@ -155,7 +155,7 @@ void cg_draw_text(struct Bitmap far *bm, int x, int y, char *s)
         pp2 += 40;
     }
     b0 = b1 = bm->bits.p;
-    cga5 = (r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800) == FP_SEG(b0);
+    cga5 = (r_vid.mode == VID_HERCULES ? MONO_SEGMENT : CGA_SEGMENT) == FP_SEG(b0);
     b1 += bm->planesize >> 1;
     b0 += bm->pitch * (y >> 1);
     b0 += x >> 2;
@@ -172,7 +172,7 @@ void cg_draw_text(struct Bitmap far *bm, int x, int y, char *s)
                 *s1 &= lmask;
                 *s1 |= *fill & lm28;
                 if (cga5 && r_vid.mode == VID_HERCULES)
-                    s1[0x2000] = *s1;
+                    s1[VIDEO_BANK_BYTES] = *s1;
                 s1 += bm->pitch;
                 s0 += bm->pitch;
             } else {
@@ -195,7 +195,7 @@ void cg_draw_text(struct Bitmap far *bm, int x, int y, char *s)
             if ((y + i) & 1) {
                 movedata(dseg4, (unsigned)from, seg1, off1, nb2);
                 if (cga5 && r_vid.mode == VID_HERCULES)
-                    movedata(dseg4, (unsigned)from, seg1, off1 + 0x2000, nb2);
+                    movedata(dseg4, (unsigned)from, seg1, off1 + VIDEO_BANK_BYTES, nb2);
                 off0 += 80;
                 off1 += 80;
             } else
@@ -215,7 +215,7 @@ void cg_draw_text(struct Bitmap far *bm, int x, int y, char *s)
                 *s1 &= rmask;
                 *s1 |= *fill;
                 if (cga5 && r_vid.mode == VID_HERCULES)
-                    s1[0x2000] = *s1;
+                    s1[VIDEO_BANK_BYTES] = *s1;
                 s1 += bm->pitch;
                 s0 += bm->pitch;
             } else {
@@ -379,9 +379,10 @@ void cg_recolor_rect(struct Bitmap far *bm, int a, int b, int x1, int y1, int x2
 
 void cg_copy_page(char far *src, char far *dst)
 {
-    movedata(FP_SEG(src), FP_OFF(src), FP_SEG(dst), FP_OFF(dst), 0x4000);
-    if (r_vid.mode == VID_HERCULES && (r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800) == FP_SEG(dst))
-        movedata(r_vid.mode == VID_HERCULES ? 0xb200 : 0xba00, 0, 0xb400, 0, 0x2000);
+    movedata(FP_SEG(src), FP_OFF(src), FP_SEG(dst), FP_OFF(dst), CGA_PAGE_BYTES);
+    if (r_vid.mode == VID_HERCULES && (r_vid.mode == VID_HERCULES ? MONO_SEGMENT : CGA_SEGMENT) == FP_SEG(dst))
+        movedata(r_vid.mode == VID_HERCULES ? MONO_BANK1_SEGMENT : CGA_BANK1_SEGMENT, 0, MONO_BANK2_SEGMENT, 0,
+                 VIDEO_BANK_BYTES);
 }
 
 /* Dissolve one 80-byte-per-line CGA screen into another, five interleaved passes */
@@ -402,14 +403,14 @@ void cg_reveal(char far *dst, char far *src)
             d = dst + (y >> 1) * 0x50;
             s2 = src + (y >> 1) * 0x50;
             if (y & 1) {
-                d += 0x2000;
-                s2 += 0x2000;
+                d += VIDEO_BANK_BYTES;
+                s2 += VIDEO_BANK_BYTES;
             }
             for (e = (int far *)d, k = 0x28; k; k--)
                 *e++ = 0;
             movedata(FP_SEG(s2), FP_OFF(s2), FP_SEG(d), FP_OFF(d), 0x50);
             if ((y & 1) && r_vid.mode == VID_HERCULES) {
-                d += 0x2000;
+                d += VIDEO_BANK_BYTES;
                 for (e = (int far *)d, k = 0x28; k; k--)
                     *e++ = 0;
                 movedata(FP_SEG(s2), FP_OFF(s2), FP_SEG(d), FP_OFF(d), 0x50);

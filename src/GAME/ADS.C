@@ -65,7 +65,7 @@ void av_open(int *list, int base)
 
 static struct Bitmap far *near ad_picture(int n)
 {
-    return di_bm(0x403, n);
+    return di_bm(PIC_NEWSPAPER_CLASSIFIEDS, n);
 }
 
 

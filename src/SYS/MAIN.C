@@ -189,13 +189,13 @@ static void near init_screens(enum VideoChoice mode)
         r_vid.mode = g_screens[0].flags = VID_TANDY;
         ta_install();
         g_screens[0].bits.p = r_vid.mode == VID_HERCULES ? MONO_VRAM : CGA_VRAM;
-        g_screens[0].planesize = g_screens[1].planesize = g_screens[2].planesize = 0x8000;
-        g_screens[0].pitch = g_screens[1].pitch = g_screens[2].pitch = 0xa0;
+        g_screens[0].planesize = g_screens[1].planesize = g_screens[2].planesize = TANDY_PAGE_BYTES;
+        g_screens[0].pitch = g_screens[1].pitch = g_screens[2].pitch = TANDY_PITCH;
         g_screens[1].flags = g_screens[2].flags = VID_TANDY;
         g_screens[1].bits.p = TANDY_SCREEN1_BITS;
-        g_screens[2].bits.p = me_alloc(0x8000, 1);
-        da_fmemset(g_screens[1].bits.p, 0, 0x8000);
-        da_fmemset(g_screens[2].bits.p, 0, 0x8000);
+        g_screens[2].bits.p = me_alloc(TANDY_PAGE_BYTES, 1);
+        da_fmemset(g_screens[1].bits.p, 0, TANDY_PAGE_BYTES);
+        da_fmemset(g_screens[2].bits.p, 0, TANDY_PAGE_BYTES);
         return;
     case VIDEO_CHOICE_HERCULES:
         g_screens[0].flags = VID_HERCULES;
@@ -211,13 +211,13 @@ static void near init_screens(enum VideoChoice mode)
     }
     cg_install();
     g_screens[0].bits.p = r_vid.mode == VID_HERCULES ? MONO_VRAM : CGA_VRAM;
-    g_screens[0].planesize = g_screens[1].planesize = 0x4000;
-    g_screens[0].pitch = g_screens[1].pitch = 0x50;
+    g_screens[0].planesize = g_screens[1].planesize = CGA_PAGE_BYTES;
+    g_screens[0].pitch = g_screens[1].pitch = CGA_PITCH;
     g_screens[1].flags = VID_CGA;
-    g_screens[1].bits.p = me_alloc(0x4000, 1);
-    da_fmemset(g_screens[1].bits.p, 0, 0x4000);
-    g_screens[2].bits.p = me_alloc(0x4000, 1);
-    da_fmemset(g_screens[2].bits.p, 0, 0x4000);
+    g_screens[1].bits.p = me_alloc(CGA_PAGE_BYTES, 1);
+    da_fmemset(g_screens[1].bits.p, 0, CGA_PAGE_BYTES);
+    g_screens[2].bits.p = me_alloc(CGA_PAGE_BYTES, 1);
+    da_fmemset(g_screens[2].bits.p, 0, CGA_PAGE_BYTES);
 }
 
 
@@ -232,12 +232,12 @@ static void near set_video_mode(enum VideoChoice mode)
         break;
     case VIDEO_CHOICE_TANDY:
         mi_set_mode(MODE_TANDY_320_200_16);
-        outp(TANDY_PAGE, 0xf6);
+        outp(TANDY_PAGE, TANDY_PAGE_MAPPING);
         break;
     case VIDEO_CHOICE_HERCULES:
         hg_set_mode();
         p = r_vid.mode == VID_HERCULES ? (int far *)MONO_VRAM : (int far *)CGA_VRAM;
-        while (p < (int far *)((r_vid.mode == VID_HERCULES ? (long)MONO_VRAM : (long)CGA_VRAM) + 0x8000L))
+        while (p < (int far *)((r_vid.mode == VID_HERCULES ? (long)MONO_VRAM : (long)CGA_VRAM) + HERC_PAGE_BYTES))
             *p++ = 0;
         outp(MONO_MODE, (MODE_CTRL_GRAPHICS | MODE_CTRL_VIDEO | MODE_CTRL_BLINK));
         g_hercModeSet = 1;

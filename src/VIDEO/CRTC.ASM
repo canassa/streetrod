@@ -39,7 +39,7 @@ _ct_set_split  PROC    FAR
         mov     ax,BIOS_DATA_SEGMENT
         mov     es,ax
         mov     dx,es:[BIOS_CRTC_BASE]
-        add     dl,6
+        add     dl,CRTC_STATUS_DELTA
 wait1b:
         in      al,dx
         test    al,STATUS_VRETRACE
@@ -48,16 +48,16 @@ wait2b:
         in      al,dx
         test    al,STATUS_VRETRACE
         je      wait2b
-        sub     dl,6
+        sub     dl,CRTC_STATUS_DELTA
         mov     ax,[bp+6]
         cmp     ax,0FFFFh
         jne     have
         cmp     _g_vga,0
         je      short1ff
-        mov     ax,3FFh
+        mov     ax,VGA_LINE_COMPARE_MAX
         jmp     SHORT have
 short1ff:
-        mov     ax,1FFh
+        mov     ax,EGA_LINE_COMPARE_MAX
 have:
         nop
         cmp     _g_vga,0
@@ -71,7 +71,7 @@ have:
         mov     al,CRTC_LINE_COMPARE
         out     dx,ax
         mov     ah,11h
-        and     ah,0EFh
+        and     ah,(0FFh XOR CRTC_LINE_COMPARE_BIT8)
         or      ah,bh
         mov     al,CRTC_OVERFLOW
         out     dx,ax
@@ -79,7 +79,7 @@ have:
         pop     bp
         ret
 wide:
-        cmp     ax,0C8h
+        cmp     ax,SCREEN_HEIGHT
         jg      biased
         add     ax,64h
 biased:
@@ -99,7 +99,7 @@ biased:
         in      al,dx
         dec     dx
         mov     ah,al
-        and     ah,0EFh
+        and     ah,(0FFh XOR CRTC_LINE_COMPARE_BIT8)
         or      ah,bl
         mov     al,CRTC_OVERFLOW
         out     dx,ax
@@ -109,7 +109,7 @@ biased:
         in      al,dx
         dec     dx
         mov     ah,al
-        and     ah,0BFh
+        and     ah,(0FFh XOR CRTC_LINE_COMPARE_BIT9)
         or      ah,bh
         mov     al,CRTC_MAX_SCAN_LINE
         out     dx,ax

@@ -50,7 +50,7 @@ int g_cursHoverCodeVal;
 int g_wRivBanner;
 struct TimerPriorities g_sysTimerPriorities;
 
-static struct TimerQueue g_timerQueue = {-1, -1, 0, 2147483647L, 0, 0};
+static struct TimerQueue g_timerQueue = {-1, -1, 0, TIMER_NO_DEADLINE, 0, 0};
 static struct Link g_timers[4] = {
     {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}};
 static int g_unused3 = 0;
@@ -119,7 +119,7 @@ void sy_reset_queues(void)
 
     g_timerQueue.earliest = g_timerQueue.head = -1;
     g_timerQueue.free = 0;
-    g_timerQueue.nextDeadline = 0x7fffffffL;
+    g_timerQueue.nextDeadline = TIMER_NO_DEADLINE;
     g_timerQueue.unused = g_timerQueue.busy = 0;
     for (i = 0; i < 4; i++)
         g_timers[i].nxt = i + 1;
@@ -154,7 +154,7 @@ void sy_timer_remove(int n)
         i = g_timers[n].prv;
         g_timerQueue.earliest = i;
         if (i < 0)
-            g_timerQueue.nextDeadline = 0x7fffffffL;
+            g_timerQueue.nextDeadline = TIMER_NO_DEADLINE;
         else
             g_timerQueue.nextDeadline = g_timers[i].deadline;
     }
@@ -305,7 +305,7 @@ void sy_init(void)
     _disable();
     outp(PIT_CMD, PIT_CH0_LOHI_MODE3);
     outp(PIT_CH0, 0);
-    outp(PIT_CH0, 0x40);
+    outp(PIT_CH0, SYSTEM_TIMER_RELOAD >> 8);
     g_clockPrev = _dos_getvect(TIMER_INT);
     _dos_setvect(TIMER_INT, sy_timer_isr);
     _enable();
@@ -711,7 +711,7 @@ void sy_demo_step(void)
     if (g_keyGroup == KM_START_GAME)
         rn_int(-1);
     if (g_demoControl.keyDown) {
-        g_demoKey |= 0x80;
+        g_demoKey |= SCAN_BREAK;
         g_demoControl.keyDown = 0;
         jy_demo_key();
         return;
@@ -1037,16 +1037,16 @@ void interrupt far sy_drive_isr(void)
                 g_squealPhase ^= 1;
                 if (g_sirenOn) {
                     if (g_sirenPhase++ < 10)
-                        val.w = 0x54b;
+                        val.w = SIREN_HIGH_DIVISOR;
                     else
-                        val.w = 0x712;
+                        val.w = SIREN_LOW_DIVISOR;
                     outp(PIT_CH2, val.b[0]);
                     outp(PIT_CH2, val.b[1]);
                     if (g_sirenPhase > 20)
                         g_sirenPhase = 0;
                 } else if (g_squealOn || g_onShoulder) {
                     if (g_squealPhase) {
-                        val.w = 0x95;
+                        val.w = TIRE_SQUEAL_DIVISOR;
                         outp(PIT_CH2, val.b[0]);
                         outp(PIT_CH2, val.b[1]);
                     }

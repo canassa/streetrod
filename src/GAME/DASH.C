@@ -66,8 +66,9 @@ static int g_wheelShown = 0;
 static int g_wheelSlotY[3] = {148, 174, 73};
 static signed char g_shiftPts[11][2] = {{14, 17}, {14, 28}, {13, 12}, {13, 2}, {13, 20}, {22, 2},
                                         {13, 12}, {13, 2},  {13, 20}, {22, 2}, {22, 20}};
-static struct Track g_shifters[3] = {
-    {2, 1229, 1232, 8, g_shiftPts[0]}, {4, 1227, 1230, 19, g_shiftPts[2]}, {5, 1228, 1231, 19, g_shiftPts[6]}};
+static struct Track g_shifters[3] = {{2, PIC_SHIFTER_AUTOMATIC_GATE, PIC_SHIFTER_AUTOMATIC_KNOB, 8, g_shiftPts[0]},
+                                     {4, PIC_SHIFTER_THREE_SPEED_GATE, PIC_SHIFTER_THREE_SPEED_KNOB, 19, g_shiftPts[2]},
+                                     {5, PIC_SHIFTER_FOUR_SPEED_GATE, PIC_SHIFTER_FOUR_SPEED_KNOB, 19, g_shiftPts[6]}};
 static struct Pair g_shiftSlots[5] = {{0, 162}, {32, 162}, {64, 162}, {96, 162}, {264, 102}};
 
 
@@ -137,7 +138,9 @@ void da_speedo_init(int i)
     if (g_dashBuffered == 0) {
         saveSeg = g_videoAddrSegment;
         saveOff = g_targetPixelOffset;
-        g_videoAddrSegment = r_vid.mode == VID_EGA ? 0xa000 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
+        g_videoAddrSegment = r_vid.mode == VID_EGA        ? EGA_SEGMENT
+                             : r_vid.mode == VID_HERCULES ? MONO_SEGMENT
+                                                          : CGA_SEGMENT;
         g_targetPixelOffset = 0;
         (*g_videoOps.drawLine)(x11, y1, x2, y2, color);
         g_videoAddrSegment = saveSeg;
@@ -178,7 +181,9 @@ void da_tach_init(int v)
     if (g_dashBuffered == 0) {
         saveSeg = g_videoAddrSegment;
         saveOff = g_targetPixelOffset;
-        g_videoAddrSegment = r_vid.mode == VID_EGA ? 0xa000 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
+        g_videoAddrSegment = r_vid.mode == VID_EGA        ? EGA_SEGMENT
+                             : r_vid.mode == VID_HERCULES ? MONO_SEGMENT
+                                                          : CGA_SEGMENT;
         g_targetPixelOffset = 0;
         (*g_videoOps.drawLine)(x11, y1, x2, y2, color);
         g_videoAddrSegment = saveSeg;
@@ -196,7 +201,7 @@ int da_move_needle(int cur, int old, int flag)
         g_needleColor = (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) ? 11 : 3;
     saveSeg = g_videoAddrSegment;
     saveOff = g_targetPixelOffset;
-    g_videoAddrSegment = r_vid.mode == VID_EGA ? 0xa000 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
+    g_videoAddrSegment = r_vid.mode == VID_EGA ? EGA_SEGMENT : r_vid.mode == VID_HERCULES ? MONO_SEGMENT : CGA_SEGMENT;
     g_targetPixelOffset = 0;
     if (flag) {
         da_tach_pts(old / 0x2b, &x11, &y1, &x2, &y2);
@@ -245,7 +250,7 @@ void da_draw_clock(void)
         g_needleColor = (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) ? 11 : 3;
     ssegk = g_videoAddrSegment;
     soffn = g_targetPixelOffset;
-    g_videoAddrSegment = r_vid.mode == VID_EGA ? 0xa000 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
+    g_videoAddrSegment = r_vid.mode == VID_EGA ? EGA_SEGMENT : r_vid.mode == VID_HERCULES ? MONO_SEGMENT : CGA_SEGMENT;
     g_targetPixelOffset = 0;
     ga_time(&h4, &m);
     h4 >>= 1;
@@ -356,19 +361,19 @@ void da_intro(void)
     g_picturePlacement.maxHeight = SCREEN_HEIGHT;
     if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         mi_set_palette(CGA_PALETTE_GREEN_RED_BROWN);
-    sc_picture_at(3, 0x28, 0x28, 0);
-    di_free_pic(3);
+    sc_picture_at(PIC_PUBLISHER_LOGO, 0x28, 0x28, 0);
+    di_free_pic(PIC_PUBLISHER_LOGO);
     (*g_videoOps.show)();
     r_vid.copyToFront = 0;
-    sc_picture(1, -1);
-    di_free_pic(1);
+    sc_picture(PIC_TITLE, -1);
+    di_free_pic(PIC_TITLE);
     da_wait_key(400);
     (*g_videoOps.show)();
     if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
         mi_set_palette(CGA_PALETTE_CYAN_MAGENTA_WHITE);
     (*g_videoOps.reveal)(r_vid.front->bits.p, r_vid.back->bits.p);
-    sc_picture(4, 0);
-    di_free_pic(4);
+    sc_picture(PIC_CREDITS_LICENSE_PLATE, 0);
+    di_free_pic(PIC_CREDITS_LICENSE_PLATE);
     da_wait_key(400);
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY)
         vi_set_palette(g_introPalette);
@@ -495,7 +500,9 @@ void da_steer_marker(int n)
 
     seg = g_videoAddrSegment;
     off = g_targetPixelOffset;
-    g_videoAddrSegment = r_vid.mode == VID_EGA ? 0xa200 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
+    g_videoAddrSegment = r_vid.mode == VID_EGA        ? EGA_PAGE1_SEGMENT
+                         : r_vid.mode == VID_HERCULES ? MONO_SEGMENT
+                                                      : CGA_SEGMENT;
     g_targetPixelOffset = 0;
     vw_unclip_top();
     x = g_steerPoints[n][0];
@@ -547,7 +554,9 @@ void da_draw_wheel(int a, int b, struct Bitmap far *dst)
     if (g_dashBuffered == 0) {
         seg = g_videoAddrSegment;
         off = g_targetPixelOffset;
-        g_videoAddrSegment = r_vid.mode == VID_EGA ? 0xa000 : r_vid.mode == VID_HERCULES ? 0xb000 : 0xb800;
+        g_videoAddrSegment = r_vid.mode == VID_EGA        ? EGA_SEGMENT
+                             : r_vid.mode == VID_HERCULES ? MONO_SEGMENT
+                                                          : CGA_SEGMENT;
         g_targetPixelOffset = 0;
         vw_unclip_top();
         if (r_vid.mode != VID_EGA) {

@@ -49,7 +49,7 @@ void gx_trans_bolt(int frame, int slot)
     int y;
 
     cu_ctl(CURSOR_HIDE);
-    pict = di_bm(0x44f, ARENA_HIGH_STACK);
+    pict = di_bm(PIC_TRANSMISSION_BOLT_TURNS, ARENA_HIGH_STACK);
     x = 0xb8;
     y = g_tboltY[slot] + 10;
     if (frame == 1 && r_vid.copyToFront) {
@@ -86,7 +86,7 @@ void gx_trans_drop(int slot)
     int y;
 
     cu_ctl(CURSOR_HIDE);
-    pict = di_bm(0x44f, ARENA_HIGH_STACK);
+    pict = di_bm(PIC_TRANSMISSION_BOLT_TURNS, ARENA_HIGH_STACK);
     blt.sx = blt.sy = 0;
     blt.dx = x = 0xb8;
     blt.dy = y = g_tboltY[slot] + 10;
@@ -152,7 +152,7 @@ void gx_trans_clear(int n, int flag)
     struct Bitmap far *p;
 
     cu_ctl(CURSOR_HIDE);
-    p = di_bm(0x42e, ARENA_HIGH_STACK);
+    p = di_bm(PIC_TRANSMISSION_DIALOG, ARENA_HIGH_STACK);
     cu_ctl(CURSOR_SHOW);
     pu_show(p, 0x20, 10);
     ma_pop_high(1);
@@ -191,11 +191,11 @@ struct PartSelection g_slotSelec;
 static int near engine_index(void)
 {
     switch (g_partsPics[0]) {
-    case 0x434:
+    case PIC_ENGINE_V6:
         return 0;
-    case 0x435:
+    case PIC_ENGINE_V8_SMALL:
         return 1;
-    case 0x436:
+    case PIC_ENGINE_V8_LARGE:
         return 2;
     }
 }
@@ -208,13 +208,13 @@ static int near carb_pos(int *px, int *py)
     int t;
 
     switch (g_partsPics[g_partSlotMap[g_slotSelec.slot]]) {
-    case 0x43c:
+    case PIC_CARB_TWO_BARREL:
         r = 0;
         break;
-    case 0x43d:
+    case PIC_CARB_FOUR_BARREL:
         r = 2;
         break;
-    case 0x43e:
+    case PIC_CARB_RACING:
         r = 4;
         break;
     }
@@ -263,7 +263,7 @@ void gx_bolt_pos(int *px, int *py)
         break;
     case 1:
         item = g_partsPics[1];
-        slot = (item == 0x438 || item == 0x437) ? 0 : 2;
+        slot = (item == PIC_MANIFOLD_TWO_BARREL_V6 || item == PIC_MANIFOLD_DUAL_QUAD) ? 0 : 2;
         if (g_slotSelec.subslot == 1)
             slot++;
         *px = g_manifoldBoltPos[slot * 2];
@@ -303,7 +303,8 @@ void gx_draw_bolt(int n)
         bm_shift_right(pict, flag, saved);
     }
     px = (px & r_vid.mask) + 0x60;
-    (*g_videoOps.slideSprite)(0xd, 0x93, px, (n == 0x43f && r_vid.copyToFront) ? 0xd - height : ypos, ypos, saved);
+    (*g_videoOps.slideSprite)(0xd, 0x93, px, (n == PIC_BOLT_TURN_1 && r_vid.copyToFront) ? 0xd - height : ypos, ypos,
+                              saved);
     cu_ctl(CURSOR_SHOW_NOW);
     ma_pop_high(1);
     if (pict != saved)
@@ -328,7 +329,7 @@ void gx_drop_bolt(void)
     x1 = xpos - 2;
     y1 = ypos;
     cu_ctl(CURSOR_HIDE_NOW);
-    pict = di_bm(0x43f, ARENA_HIGH_STACK);
+    pict = di_bm(PIC_BOLT_TURN_1, ARENA_HIGH_STACK);
     wide = 8;
     if ((rows = xpos & 7) < 2) {
         xpos -= 8;
@@ -369,12 +370,12 @@ static void near make_bolt_overlay(void)
     int py;
     struct Bitmap far *picture;
 
-    if (g_partsPics[1] == 0x437) {
+    if (g_partsPics[1] == PIC_MANIFOLD_DUAL_QUAD) {
         kind = g_partSlotMap[g_slotSelec.slot];
         if (kind == 3)
             return;
         what = g_engineBoltPicIds[(i = (kind != 2) ? 1 : 0) + 1];
-        if (what != 0x43f && what != 0x440)
+        if (what != PIC_BOLT_TURN_1 && what != PIC_BOLT_TURN_2)
             return;
         px = g_manifoldBoltPos[i * 2] - 2;
         py = g_manifoldBoltPos[i * 2 + 1];
@@ -418,9 +419,9 @@ void gx_draw_part(int n, int flag)
         w = saved->width;
     }
     x &= r_vid.mask;
-    if (n == 0x43c)
+    if (n == PIC_CARB_TWO_BARREL)
         make_bolt_overlay();
-    if (n != 0x434 && n != 0x435 && n != 0x436)
+    if (n != PIC_ENGINE_V6 && n != PIC_ENGINE_V8_SMALL && n != PIC_ENGINE_V8_LARGE)
         ypos -= saved->height;
     if (flag)
         ypos -= 0x14;
@@ -462,7 +463,7 @@ void gx_erase_part(int n, int flag)
     py -= 0x14;
     cu_ctl(CURSOR_HIDE);
     pict = di_bm(n, ARENA_HIGH_STACK);
-    if (n != 0x434 && n != 0x435 && n != 0x436)
+    if (n != PIC_ENGINE_V6 && n != PIC_ENGINE_V8_SMALL && n != PIC_ENGINE_V8_LARGE)
         py -= pict->height;
     move.sx = px;
     move.dx = px += 0x60;
@@ -491,7 +492,7 @@ void gx_draw_wires(void)
     struct Blt blt;
 
     pair = engine_index() * 2;
-    next = (g_slotSelec.wirePic == 0x446) ? pair++ : pair + 1;
+    next = (g_slotSelec.wirePic == PIC_IGNITION_WIRES_DISCONNECTED) ? pair++ : pair + 1;
     cu_ctl(CURSOR_HIDE);
     blt.w = 0x20;
     xs = blt.dx = (blt.sx = g_wiresPos[next * 2]) + 0x60;
@@ -519,13 +520,13 @@ void gx_draw_parts(struct Car *car)
     mode = g_slotSelec.slot;
     g_partAnimate = 0;
     if (r_vid.hoodBg == 0)
-        r_vid.hoodBg = di_bm(0x42d, ARENA_LOW_STACK);
+        r_vid.hoodBg = di_bm(PIC_ENGINE_BAY, ARENA_LOW_STACK);
     else
-        di_unpack_pic(0x42d, r_vid.hoodBg);
+        di_unpack_pic(PIC_ENGINE_BAY, r_vid.hoodBg);
     if (type = g_partsPics[0]) {
         g_slotSelec.slot = 0;
         gx_draw_part(type, 0);
-        if (type == 0x434)
+        if (type == PIC_ENGINE_V6)
             g_carbPosBase[0] = 4;
         else
             g_carbPosBase[0] = 5;
@@ -578,7 +579,7 @@ void gx_draw_bolts(int *a, int *b, int flag)
     if (g_slotSelec.wirePic)
         gx_draw_wires();
     if (flag) {
-        sc_picture_at(0x4c6, 0x60, 0x94, -1);
+        sc_picture_at(PIC_TUNING_BUTTONS, 0x60, 0x94, -1);
         blt.h = 0xaf;
     }
     if (r_vid.copyToFront = shadow)
@@ -654,7 +655,7 @@ void gx_build_hots(int *xs, int *ys)
     if (g_partsPics[0]) {
         g_boltHot.textOffset = g_offWires;
         g_boltHot.id = 13;
-        i = (g_slotSelec.wirePic == 0x446) + engine_index() * 2;
+        i = (g_slotSelec.wirePic == PIC_IGNITION_WIRES_DISCONNECTED) + engine_index() * 2;
         g_boltHot.x2 = (g_boltHot.x1 = g_wiresPos[i * 2] + 0x5b) + 10;
         g_boltHot.y2 = (g_boltHot.y1 = g_wiresPos[i * 2 + 1] + 2) + 15;
         insert_hot(g_engineHots, &g_boltHot, num);

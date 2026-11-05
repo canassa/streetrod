@@ -86,7 +86,7 @@ _kb_isr  PROC  FAR
         je      L1
         cmp     al,SC_CTRL
         je      L1
-        cmp     al,SC_CTRL + 80h
+        cmp     al,SC_CTRL + SCAN_BREAK
         je      L1
         cmp     al,SC_M
         je      L1
@@ -100,13 +100,13 @@ L1:
         jne     L2
         jmp     done
 L2:
-        cmp     al,0E0h
+        cmp     al,SCAN_PREFIX_BASE
         jb      L3
         jmp     done
 L3:
-        test    al,80h
+        test    al,SCAN_BREAK
         pushf
-        and     al,7Fh
+        and     al,SCAN_CODE_MASK
         cmp     al,55h
         jbe     L4
         pop     ax

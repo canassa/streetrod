@@ -134,20 +134,20 @@ _jy_demo_key  PROC  FAR
         xor     ah,ah
         push    ax
         mov     ah,al
-        or      al,80h
+        or      al,SCAN_BREAK
         mov     al,ah
         mov     ax,DGROUP
         mov     ds,ax
         mov     es,ax
         pop     ax
         xor     ah,ah
-        cmp     al,0E0h
+        cmp     al,SCAN_PREFIX_BASE
         jb      L3
         jmp     done2
 L3:
-        test    al,80h
+        test    al,SCAN_BREAK
         pushf
-        and     al,7Fh
+        and     al,SCAN_CODE_MASK
         cmp     al,55h
         jbe     L4
         pop     ax

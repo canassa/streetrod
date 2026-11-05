@@ -7,6 +7,7 @@
 #include "MASKBG.H"
 #include "MASKBLT.H"
 #include "MASKOR.H"
+#include "PC.H"
 
 static void near copy_from_cga(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Clip *o);
 
@@ -33,15 +34,15 @@ static void near copy_from_cga(struct Bitmap far *bm1, struct Bitmap far *bm2, s
     d7 = bm2->bits.p + (bm2->pitch * o->dy + o->dx);
     w4 = o->w;
     sb = bm1->bits.p;
-    off = (y1 >> 1) * 0x50;
+    off = (y1 >> 1) * CGA_PITCH;
     off += x1;
     off += (unsigned)sb;
     seg1 = FP_SEG(sb);
-    seg2 = seg1 + 0x200;
+    seg2 = seg1 + VIDEO_BANK_PARAS;
     for (y2 = y1; y2 < yend1; y2++, d7 += dpitchn) {
         if (y2 & 1) {
             movedata(seg2, off, FP_SEG(d7), FP_OFF(d7), w4);
-            off += 0x50;
+            off += CGA_PITCH;
         } else
             movedata(seg1, off, FP_SEG(d7), FP_OFF(d7), w4);
     }
@@ -113,11 +114,11 @@ void cb_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, in
             rows0++;
         ak = (dy >> 1) * pitch21 + ol.dx;
         if (dy & 1) {
-            off05 = ak + 0x2000;
+            off05 = ak + VIDEO_BANK_BYTES;
             off1k = pitch21 + ak;
         } else {
             off05 = ak;
-            off1k = ak + 0x2000;
+            off1k = ak + VIDEO_BANK_BYTES;
         }
         (*f5)(db + off05, segn, bitsz, altk, pitch1 * 2, w, rows0, pitch21);
         bitsz += pitch1;
@@ -158,7 +159,7 @@ void cb_copy(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int 
             } else {
                 dp3 = bm2->pitch * (o.dy >> 1) + o.dx;
                 if (o.dy & 1)
-                    dp3 += 0x2000;
+                    dp3 += VIDEO_BANK_BYTES;
                 cd_blit_to_ilv(bm1->bits.p + sp3, bm2->bits.p + dp3, o.w, o.h, skip, dskip, o.dy);
             }
         }

@@ -43,7 +43,7 @@ static void near render_mirror_right(void);
 static void near clip_blit(struct Blt *b);
 static void near clip_vline(int color, int x, int y1, int y2);
 static void near render_scaled_pic(int x, int y, int n, int align, int clip, int mode);
-static void near render_object(int x, int y, int n, int f, int idx);
+static void near render_object(int x, int y, int n, int f, enum SceneryId idx);
 static void near clip_mirror(void);
 static void near render_mirror_row(void);
 static void near render_hydrant(int x, int y, int n, int f);
@@ -58,17 +58,18 @@ static void near render_overlays(void);
 static void near render_mirror(void);
 static void near select_draw_page(void);
 
-static int g_opponentPics[5][4] = {{1003, 1004, 1057, 1091},
-                                   {1010, 1012, 1011, 1239},
-                                   {1010, 1247, 1248, 1092},
-                                   {1010, 1249, 1250, 1251},
-                                   {1010, 1253, 1252, 1254}};
+static int g_opponentPics[5][4] = {
+    {PIC_CORVETTE_PASSING, PIC_CORVETTE_REAR_ANGLED, PIC_CORVETTE_REAR, PIC_CORVETTE_DISTANT_REAR},
+    {PIC_SEDAN_PASSING, PIC_SEDAN_REAR_ANGLED, PIC_SEDAN_REAR, PIC_SEDAN_SMALL_REAR},
+    {PIC_SEDAN_PASSING, PIC_COUPE_REAR_ANGLED, PIC_COUPE_REAR, PIC_SEDAN_DISTANT_REAR},
+    {PIC_SEDAN_PASSING, PIC_HOT_ROD_REAR_ANGLED, PIC_HOT_ROD_REAR, PIC_HOT_ROD_DISTANT_REAR},
+    {PIC_SEDAN_PASSING, PIC_SPORTS_CAR_REAR_ANGLED, PIC_SPORTS_CAR_REAR, PIC_SPORTS_CAR_DISTANT_REAR}};
 static int g_unused20 = 0;
 struct ViewPages g_viewPages = {1, 2};
 struct Clip g_viewRect = {SCREEN_WIDTH, 82, 0, 18, 0, 18};
 struct ViewClip g_viewClip = {0, 18, 101, (SCREEN_WIDTH - 1)};
 static unsigned char g_shrinkMasks[3][4] = {{87, 37, 34, 0}, {247, 117, 82, 0}, {117, 84, 33, 0}};
-static int g_sceneBitmapIds[4] = {1258, 1237, 1236, 1238};
+static int g_sceneBitmapIds[4] = {PIC_SIGN_COUNTY_LINE, PIC_SIGN_GARAGE, PIC_SIGN_BOBS, PIC_SIGN_GAS_STATION};
 static int g_roadLineWidths[21] = {8, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static int g_unused21[4] = {0, 0, 0, 0};
 static struct Ball g_sheetRects[7] = {{256, 8, 8},   {240, 16, 13}, {208, 32, 19}, {168, 40, 24},
@@ -78,7 +79,7 @@ static struct Ball g_sheetRects[7] = {{256, 8, 8},   {240, 16, 13}, {208, 32, 19
 static void near select_draw_page(void)
 {
     if (r_vid.mode == VID_EGA) {
-        g_videoAddrSegment = (g_viewPages.draw == 1) ? 0xa200 : 0xa400;
+        g_videoAddrSegment = (g_viewPages.draw == 1) ? EGA_PAGE1_SEGMENT : EGA_PAGE2_SEGMENT;
         ep_show(g_viewPages.show);
     } else {
         g_videoAddrSegment = g_driveScreenB->bits.w.seg;
@@ -104,7 +105,7 @@ static void near flip_page(void)
         t = g_viewPages.draw;
         g_viewPages.draw = g_viewPages.show;
         g_viewPages.show = t;
-        g_videoAddrSegment = (g_viewPages.draw == 1) ? 0xa200 : 0xa400;
+        g_videoAddrSegment = (g_viewPages.draw == 1) ? EGA_PAGE1_SEGMENT : EGA_PAGE2_SEGMENT;
         ep_show(g_viewPages.show);
     } else {
         (*g_videoOps.copy)(g_driveScreenB, r_vid.front, (struct Blt *)&g_viewRect, 1);
@@ -196,7 +197,7 @@ void vw_load(void)
     int idx;
 
     ma_clear();
-    bm1 = di_bm(0x3ed, ARENA_HIGH_STACK);
+    bm1 = di_bm(PIC_DASHBOARD_TOP, ARENA_HIGH_STACK);
     pkt1.w = bm1->width;
     pkt1.h = bm1->height;
     pkt1.dx = pkt1.sx = pkt1.sy = 0;
@@ -212,14 +213,14 @@ void vw_load(void)
     (*g_videoOps.copy)(bm24, g_bufferSceneA, &pkt1, 1);
     ma_pop_high(1);
     if (*(int *)&g_runRacingFlag == 0) {
-        bm24 = di_bm(0x4ed, ARENA_HIGH_STACK);
+        bm24 = di_bm(PIC_SIGN_VEGAS_GAMBLER, ARENA_HIGH_STACK);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
         pkt1.dy = (r_vid.mode == VID_EGA ? DASH_Y - 1 : 0) + 1;
         (*g_videoOps.copy)(bm24, r_vid.mode == VID_EGA ? g_driveDisplayPage : g_bufferSceneA, &pkt1, 1);
         ma_pop_high(1);
-        bm24 = di_bm(0x4ee, ARENA_HIGH_STACK);
+        bm24 = di_bm(PIC_SIGN_BLOCK_OUT, ARENA_HIGH_STACK);
         pkt1.w = bm24->width;
         pkt1.h = bm24->height;
         pkt1.dx = pkt1.sx = pkt1.sy = 0;
@@ -227,9 +228,9 @@ void vw_load(void)
         (*g_videoOps.copy)(bm24, r_vid.mode == VID_EGA ? g_driveDisplayPage : g_bufferSceneA, &pkt1, 1);
         ma_pop_high(1);
     }
-    g_skylineCountry = di_bm(0x4f3, ARENA_LOW_STACK);
+    g_skylineCountry = di_bm(PIC_COUNTRY_SKYLINE, ARENA_LOW_STACK);
     if (*(int *)&g_runRacingFlag == 0) {
-        g_citySkylineBmp = di_bm(0x3f0, ARENA_LOW_STACK);
+        g_citySkylineBmp = di_bm(PIC_CITY_SKYLINE, ARENA_LOW_STACK);
         pkt1.w = g_citySkylineBmp->width;
         pkt1.h = g_citySkylineBmp->height;
         pkt1.sx = pkt1.sy = 0;
@@ -244,13 +245,13 @@ void vw_load(void)
     pkt1.dy = SCREEN_HEIGHT - g_skylineCountry->height;
     (*g_videoOps.copy)(g_skylineCountry, g_driveScreenB, &pkt1, 1);
     ma_pop_low(1);
-    g_windowStrutArt = di_bm(0x3ee, ARENA_LOW_STACK);
-    g_windowBorderImage = di_bm(0x3ef, ARENA_LOW_STACK);
-    g_imageFullMirror = di_bm(0x3f1, ARENA_LOW_STACK);
-    g_rearBasePic = di_bm(0x4db, ARENA_LOW_STACK);
+    g_windowStrutArt = di_bm(PIC_WINDSHIELD_STRUT, ARENA_LOW_STACK);
+    g_windowBorderImage = di_bm(PIC_HOOD_EDGE, ARENA_LOW_STACK);
+    g_imageFullMirror = di_bm(PIC_REARVIEW_MIRROR, ARENA_LOW_STACK);
+    g_rearBasePic = di_bm(PIC_MIRROR_LANDSCAPE, ARENA_LOW_STACK);
     if (*(int *)&g_runRacingFlag) {
         idx = g_models[g_opponentSpecIndex].kind;
-        g_lightsBm = di_bm(0x3f5, ARENA_LOW_STACK);
+        g_lightsBm = di_bm(PIC_START_LIGHTS, ARENA_LOW_STACK);
         g_startDrawRows = g_lightsBm->height;
         g_spritesOpp[0] = di_bm(g_opponentPics[idx][0], ARENA_LOW_STACK);
         g_spritesOpp[1] = di_bm(g_opponentPics[idx][1], ARENA_LOW_STACK);
@@ -264,14 +265,14 @@ void vw_load(void)
         for (il = 0; il < 3; il++)
             g_spritesOpp[10 + il] = (*load)(g_spritesOpp[9], g_shrinkMasks[2][il], g_shrinkMasks[2][il]);
         g_policeFramesTable[0] = g_spritesOpp[0];
-        g_policeFramesTable[1] = di_bm(0x4d9, ARENA_LOW_STACK);
-        g_policeFramesTable[2] = di_bm(0x4da, ARENA_HIGH_STACK);
+        g_policeFramesTable[1] = di_bm(PIC_POLICE_REAR_ANGLED, ARENA_LOW_STACK);
+        g_policeFramesTable[2] = di_bm(PIC_POLICE_REAR, ARENA_HIGH_STACK);
         g_policeFramesTable[2] = g_policeFramesTable[3] =
             (*load)(g_policeFramesTable[2], g_shrinkMasks[0][0], g_shrinkMasks[0][0]);
         ma_pop_high(1);
         for (il = 0; il < 3; il++)
             g_policeFramesTable[4 + il] = g_policeFramesTable[3];
-        g_policeFramesTable[9] = di_bm(0x4de, ARENA_LOW_STACK);
+        g_policeFramesTable[9] = di_bm(PIC_POLICE_DISTANT_REAR, ARENA_LOW_STACK);
         for (il = 0; il < 3; il++)
             g_policeFramesTable[10 + il] = (*load)(g_policeFramesTable[9], g_shrinkMasks[2][il], g_shrinkMasks[2][il]);
     }
@@ -902,12 +903,12 @@ static void near render_mirror_row(void)
 void vw_draw_dot(int x, int y)
 {
     en_begin();
-    vw_sprite(x, y, 0, *g_scenery[20], 1);
+    vw_sprite(x, y, 0, *g_scenery[SCENERY_DOT], 1);
     en_end();
 }
 
 
-static void near render_object(int x, int y, int n, int f, int idx)
+static void near render_object(int x, int y, int n, int f, enum SceneryId idx)
 {
     n = 9 - n;
     if (n >= 7)
@@ -927,7 +928,7 @@ static void near render_hydrant(int x, int y, int n, int f)
         n = 7;
     if (n < 0)
         n = 0;
-    vw_sprite(x, y, n, *g_scenery[2], f);
+    vw_sprite(x, y, n, *g_scenery[SCENERY_HYDRANT], f);
 }
 
 
@@ -988,7 +989,7 @@ static void near render_gantry(int x1, int x2, int y1, int y2, int n, int clip, 
         (*g_videoOps.fillSpan)(x1, x2, y1 + j - 1, 10);
     }
     if (flags & 0x1000)
-        render_object((x1 + x2) >> 1, y1, n, 1, 13);
+        render_object((x1 + x2) >> 1, y1, n, 1, SCENERY_CITY_LIMITS);
     else if (flags & 0x2000) {
         en_end();
         render_scaled_pic((x1 + x2) >> 1, y1, n, 0, clip, 1);
@@ -1139,11 +1140,11 @@ static void near render_opponent(void)
     if (seln < 9) {
         t1 += 4;
         ra = rd_proj_x(t1, g_roadOppPos.lateralX, rd);
-        rb = rd_proj_y(t1, 2000, rc);
+        rb = rd_proj_y(t1, ROAD_SURFACE_Y, rc);
     } else {
         t1 = -t1;
         ra = rd_mirror_x(t1, g_roadOppPos.lateralX, -rd);
-        rb = rd_mirror_y(t1, 2000, -rc);
+        rb = rd_mirror_y(t1, ROAD_SURFACE_Y, -rc);
     }
     if (seln == 0) {
         bm = g_spritesOpp[seln];
@@ -1203,10 +1204,10 @@ static void near render_mirror(void)
 {
     int w36;
     struct Blt pkt1;
-    int w11;
+    enum RoadsideFlags w11;
     int i;
     int f3;
-    int w2;
+    enum RoadsideFlags w2;
 
     g_renderRows.leftX = &g_lhsRdMirrorX[7];
     g_renderRows.rightX = &g_mirGeom.rightX[7];
@@ -1242,86 +1243,87 @@ static void near render_mirror(void)
         w11 = *g_renderRows.leftFlags;
         w2 = *g_renderRows.rightFlags;
         w36 = *g_viewTerrainBitsData;
-        if (w11 & 0x20) {
+        if (w11 & ROADSIDE_TREE) {
             if (f3)
-                render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, -1, 0);
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, -1, SCENERY_TREE);
             else
-                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i + 5, -1, 0);
+                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i + 5, -1, SCENERY_TREE);
         }
-        if (w11 & 0x100) {
+        if (w11 & ROADSIDE_BUSH) {
             if (f3)
-                render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, -1, 4);
-            else if (w11 & 0x200)
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, -1, SCENERY_BUSH);
+            else if (w11 & ROADSIDE_BUSH_OUTER)
                 render_object(*g_renderRows.leftOuterX - *g_renderRows.leftX + *g_renderRows.leftOuterX,
-                              *g_renderRows.y, i + 5, -1, 4);
+                              *g_renderRows.y, i + 5, -1, SCENERY_BUSH);
             else
-                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i + 5, -1, 4);
+                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i + 5, -1, SCENERY_BUSH);
         }
-        if (w11 & 0x800)
-            render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, 1, 3);
-        if (w11 & 0x1000)
-            render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, 1, 6);
+        if (w11 & ROADSIDE_WARNING)
+            render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, 1, SCENERY_WARNING_SIGN);
+        if (w11 & ROADSIDE_BARRICADE)
+            render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, 1, SCENERY_BARRICADE);
         if (f3) {
             if (w11 & 0x40)
                 render_hydrant(*g_renderRows.leftX, *g_renderRows.y, i + 5, 1);
             if (w2 & 0x40)
                 render_hydrant(*g_renderRows.rightX, *g_renderRows.y, i + 5, -1);
         } else {
-            if (w11 & 1)
-                render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, 1, 1);
-            if (w11 & 4)
-                render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, -1, 7);
-            if (w11 & 8)
-                render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, -1, 8);
+            if (w11 & ROADSIDE_POST)
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, 1, SCENERY_POST);
+            if (w11 & ROADSIDE_SMALL_ROCK)
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, -1, SCENERY_SMALL_ROCK);
+            if (w11 & ROADSIDE_LARGE_ROCK)
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i + 5, -1, SCENERY_LARGE_ROCK);
             if (w11 & 0x40)
                 render_object(-(((*g_renderRows.leftX - *g_renderRows.leftOuterX) >> 1) - *g_renderRows.leftOuterX),
-                              *g_renderRows.y, i + 5, -1, 10);
-            if (w11 & 0x80)
-                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i + 5, -1, 11);
-            if (w2 & 1)
-                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 1);
-            if (w2 & 4)
-                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 7);
-            if (w2 & 8)
-                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 8);
+                              *g_renderRows.y, i + 5, -1, SCENERY_TREE_2);
+            if (w11 & ROADSIDE_TREE_3)
+                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i + 5, -1, SCENERY_TREE_3);
+            if (w2 & ROADSIDE_POST)
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, SCENERY_POST);
+            if (w2 & ROADSIDE_SMALL_ROCK)
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, SCENERY_SMALL_ROCK);
+            if (w2 & ROADSIDE_LARGE_ROCK)
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, SCENERY_LARGE_ROCK);
             if (w2 & 0x40)
-                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i + 5, 1, 10);
-            if (w2 & 0x80)
+                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i + 5, 1, SCENERY_TREE_2);
+            if (w2 & ROADSIDE_TREE_3)
                 render_object(((*g_renderRows.rightOuterX - *g_renderRows.rightX) >> 1) + *g_renderRows.rightOuterX,
-                              *g_renderRows.y, i + 5, 1, 11);
+                              *g_renderRows.y, i + 5, 1, SCENERY_TREE_3);
             if (w36 & 2)
-                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 9);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, SCENERY_POLE);
         }
-        if (w2 & 0x20) {
+        if (w2 & ROADSIDE_TREE) {
             if (f3)
-                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 0);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, SCENERY_TREE);
             else
-                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i + 5, 1, 0);
+                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i + 5, 1, SCENERY_TREE);
         }
-        if (w2 & 0x100) {
+        if (w2 & ROADSIDE_BUSH) {
             if (f3)
-                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 4);
-            else if (w2 & 0x200)
-                render_object((*g_renderRows.rightOuterX << 1) - *g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 4);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, SCENERY_BUSH);
+            else if (w2 & ROADSIDE_BUSH_OUTER)
+                render_object((*g_renderRows.rightOuterX << 1) - *g_renderRows.rightX, *g_renderRows.y, i + 5, 1,
+                              SCENERY_BUSH);
             else
-                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i + 5, 1, 4);
+                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i + 5, 1, SCENERY_BUSH);
         }
-        if (w2 & 0x2000)
-            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 0x12);
-        if (w2 & 0x4000)
-            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 0x13);
-        if (w2 & 0x800)
-            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 3);
-        if (w2 & 0x1000)
-            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, -1, 6);
+        if (w2 & ROADSIDE_S_CURVE)
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, SCENERY_S_CURVE_SIGN);
+        if (w2 & ROADSIDE_S_CURVE_2)
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, SCENERY_S_CURVE_SIGN_2);
+        if (w2 & ROADSIDE_WARNING)
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, SCENERY_WARNING_SIGN);
+        if (w2 & ROADSIDE_BARRICADE)
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, -1, SCENERY_BARRICADE);
         if (w36 & 0x100)
-            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 5);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, SCENERY_SPEED_SIGN);
         if (w36 & 0x200)
-            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 0x10);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, SCENERY_CHEVRON_LEFT);
         if (w36 & 0x400)
-            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 0x11);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, SCENERY_CHEVRON_RIGHT);
         if (w36 & 0x800)
-            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, 0xf);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i + 5, 1, SCENERY_NARROW_SIGN);
     next:
         if (g_trackViewMotion.roadIndex - g_roadOppPos.roadIndex == i && *(int *)&g_runRacingFlag) {
             en_end();
@@ -1363,10 +1365,10 @@ static void near render_mirror(void)
 void vw_draw(void)
 {
     int w36;
-    int w11;
+    enum RoadsideFlags w11;
     int i;
     int f3;
-    int w2;
+    enum RoadsideFlags w2;
 
     g_renderRows.leftX = &g_roadLXArray[14];
     g_renderRows.rightX = &g_rightXProjectionTable[14];
@@ -1398,32 +1400,32 @@ void vw_draw(void)
         w11 = *g_renderRows.leftFlags;
         w2 = *g_renderRows.rightFlags;
         w36 = *g_viewTerrainBitsData;
-        if (w11 & 0x20) {
+        if (w11 & ROADSIDE_TREE) {
             if (f3)
-                render_object(*g_renderRows.leftX, *g_renderRows.y, i, -1, 0);
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i, -1, SCENERY_TREE);
             else
-                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i, -1, 0);
+                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i, -1, SCENERY_TREE);
         }
-        if (w11 & 0x100) {
+        if (w11 & ROADSIDE_BUSH) {
             if (f3)
-                render_object(*g_renderRows.leftX, *g_renderRows.y, i, -1, 4);
-            else if (w11 & 0x200)
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i, -1, SCENERY_BUSH);
+            else if (w11 & ROADSIDE_BUSH_OUTER)
                 render_object(*g_renderRows.leftOuterX - *g_renderRows.leftX + *g_renderRows.leftOuterX,
-                              *g_renderRows.y, i, -1, 4);
+                              *g_renderRows.y, i, -1, SCENERY_BUSH);
             else
-                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i, -1, 4);
+                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i, -1, SCENERY_BUSH);
         }
-        if (w11 & 0x800)
-            render_object(*g_renderRows.leftX, *g_renderRows.y, i, 1, 3);
-        if (w11 & 0x1000)
-            render_object(*g_renderRows.leftX, *g_renderRows.y, i, 1, 6);
-        if (w11 & 1) {
+        if (w11 & ROADSIDE_WARNING)
+            render_object(*g_renderRows.leftX, *g_renderRows.y, i, 1, SCENERY_WARNING_SIGN);
+        if (w11 & ROADSIDE_BARRICADE)
+            render_object(*g_renderRows.leftX, *g_renderRows.y, i, 1, SCENERY_BARRICADE);
+        if (w11 & ROADSIDE_POST) {
             if (f3) {
                 en_end();
                 render_scaled_pic(*g_renderRows.leftX, (*g_renderRows.buildingY + *g_renderRows.y) >> 1, i, 1, 0, 1);
                 en_begin();
             } else
-                render_object(*g_renderRows.leftX, *g_renderRows.y, i, 1, 1);
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i, 1, SCENERY_POST);
         }
         if (f3) {
             if (w11 & 0x40)
@@ -1431,69 +1433,70 @@ void vw_draw(void)
             if (w2 & 0x40)
                 render_hydrant(*g_renderRows.rightX, *g_renderRows.y, i, -1);
         } else {
-            if (w11 & 4)
-                render_object(*g_renderRows.leftX, *g_renderRows.y, i, -1, 7);
-            if (w11 & 8)
-                render_object(*g_renderRows.leftX, *g_renderRows.y, i, -1, 8);
+            if (w11 & ROADSIDE_SMALL_ROCK)
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i, -1, SCENERY_SMALL_ROCK);
+            if (w11 & ROADSIDE_LARGE_ROCK)
+                render_object(*g_renderRows.leftX, *g_renderRows.y, i, -1, SCENERY_LARGE_ROCK);
             if (w11 & 0x40)
                 render_object(-(((*g_renderRows.leftX - *g_renderRows.leftOuterX) >> 1) - *g_renderRows.leftOuterX),
-                              *g_renderRows.y, i, -1, 10);
-            if (w11 & 0x80)
-                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i, -1, 11);
-            if (w2 & 4)
-                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 7);
-            if (w2 & 8)
-                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 8);
+                              *g_renderRows.y, i, -1, SCENERY_TREE_2);
+            if (w11 & ROADSIDE_TREE_3)
+                render_object(*g_renderRows.leftOuterX, *g_renderRows.y, i, -1, SCENERY_TREE_3);
+            if (w2 & ROADSIDE_SMALL_ROCK)
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, SCENERY_SMALL_ROCK);
+            if (w2 & ROADSIDE_LARGE_ROCK)
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, SCENERY_LARGE_ROCK);
             if (w2 & 0x40)
-                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i, 1, 10);
-            if (w2 & 0x80)
+                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i, 1, SCENERY_TREE_2);
+            if (w2 & ROADSIDE_TREE_3)
                 render_object(((*g_renderRows.rightOuterX - *g_renderRows.rightX) >> 1) + *g_renderRows.rightOuterX,
-                              *g_renderRows.y, i, 1, 11);
+                              *g_renderRows.y, i, 1, SCENERY_TREE_3);
             if (w36 & 2)
-                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 9);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, SCENERY_POLE);
         }
-        if (w2 & 0x20) {
+        if (w2 & ROADSIDE_TREE) {
             if (f3)
-                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 0);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, SCENERY_TREE);
             else
-                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i, 1, 0);
+                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i, 1, SCENERY_TREE);
         }
-        if (w2 & 0x100) {
+        if (w2 & ROADSIDE_BUSH) {
             if (f3)
-                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 4);
-            else if (w2 & 0x200)
-                render_object((*g_renderRows.rightOuterX << 1) - *g_renderRows.rightX, *g_renderRows.y, i, 1, 4);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, SCENERY_BUSH);
+            else if (w2 & ROADSIDE_BUSH_OUTER)
+                render_object((*g_renderRows.rightOuterX << 1) - *g_renderRows.rightX, *g_renderRows.y, i, 1,
+                              SCENERY_BUSH);
             else
-                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i, 1, 4);
+                render_object(*g_renderRows.rightOuterX, *g_renderRows.y, i, 1, SCENERY_BUSH);
         }
-        if (w2 & 0x2000)
-            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 0x12);
-        if (w2 & 0x4000)
-            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 0x13);
-        if (w2 & 0x800)
-            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 3);
-        if (w2 & 0x1000)
-            render_object(*g_renderRows.rightX, *g_renderRows.y, i, -1, 6);
-        if (w2 & 1) {
+        if (w2 & ROADSIDE_S_CURVE)
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, SCENERY_S_CURVE_SIGN);
+        if (w2 & ROADSIDE_S_CURVE_2)
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, SCENERY_S_CURVE_SIGN_2);
+        if (w2 & ROADSIDE_WARNING)
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, SCENERY_WARNING_SIGN);
+        if (w2 & ROADSIDE_BARRICADE)
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i, -1, SCENERY_BARRICADE);
+        if (w2 & ROADSIDE_POST) {
             if (f3) {
                 en_end();
                 render_scaled_pic(*g_renderRows.rightX, (*g_renderRows.buildingY + *g_renderRows.y) >> 1, i, -1, 0, 1);
                 en_begin();
             } else
-                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 1);
+                render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, SCENERY_POST);
         }
         if (w36 & 0xf000)
             render_gantry(*g_renderRows.leftX, *g_renderRows.rightX,
                           -((*g_renderRows.y - *g_renderRows.buildingY) * 4 - *g_renderRows.y), *g_renderRows.y, i, 0,
                           w36 & 0xf000);
         if (w36 & 0x100)
-            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 5);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, SCENERY_SPEED_SIGN);
         if (w36 & 0x800)
-            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 0xf);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, SCENERY_NARROW_SIGN);
         if (w36 & 0x200)
-            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 0x10);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, SCENERY_CHEVRON_LEFT);
         if (w36 & 0x400)
-            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, 0x11);
+            render_object(*g_renderRows.rightX, *g_renderRows.y, i, 1, SCENERY_CHEVRON_RIGHT);
     next:
         if (g_roadOppPos.roadIndex - g_trackViewMotion.roadIndex == i && *(int *)&g_runRacingFlag) {
             en_end();

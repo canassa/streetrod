@@ -70,20 +70,20 @@ static unsigned char g_altPalette[17] = {9, 1, 8, 0, 15, 7, 11, 3, 14, 2, 4, 12,
 
 void vi_garage_pal(void)
 {
-    vi_palette_reg(12, 5);
+    vi_palette_reg(PALETTE_RIVAL_PRIMARY, 5);
 }
 
 
 void vi_bobs_pal(void)
 {
-    vi_palette_reg(12, 13);
+    vi_palette_reg(PALETTE_RIVAL_PRIMARY, 13);
 }
 
 
 void vi_name_pal(void)
 {
-    g_palette[6] = 9;
-    g_palette[7] = 1;
+    g_palette[PALETTE_CAR_PRIMARY] = 9;
+    g_palette[PALETTE_CAR_SECONDARY] = 1;
     g_palette[8] = 3;
 }
 
@@ -152,12 +152,12 @@ void vi_init(struct Bitmap far *front, struct Bitmap far *back)
     g_pageBmps[2] = &g_screens[2];
     if (r_vid.mode == VID_EGA) {
         *g_pageBmps[2] = *r_vid.back;
-        g_pageBmps[2]->bits.w.off = 0x4000;
-        g_pageBmps[2]->bits.w.seg = 0xa000;
+        g_pageBmps[2]->bits.w.off = EGA_PAGE2_OFFSET;
+        g_pageBmps[2]->bits.w.seg = EGA_SEGMENT;
         g_pageBmps[3] = &g_egaPage3;
         *g_pageBmps[3] = *r_vid.back;
-        g_pageBmps[3]->bits.w.off = 0x6000;
-        g_pageBmps[3]->bits.w.seg = 0xa000;
+        g_pageBmps[3]->bits.w.off = EGA_PAGE3_OFFSET;
+        g_pageBmps[3]->bits.w.seg = EGA_SEGMENT;
     }
 }
 

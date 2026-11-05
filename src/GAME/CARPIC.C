@@ -38,7 +38,7 @@ int g_carVisibleHtValue;
 int g_delayScale = 1;
 int g_dashBuffered = 0;
 int g_autoTrans = 0;
-int g_wheelPicIds[3] = {1001, 1002, 1000};
+int g_wheelPicIds[3] = {PIC_STEERING_WHEEL_CENTER, PIC_STEERING_WHEEL_LEFT, PIC_STEERING_WHEEL_RIGHT};
 int g_driveRebuild = 0;
 struct Cmd g_animScripts[44] = {{ANIM_NOP_1, 0, -1, -1},
                                 {ANIM_STOP, 0, 0, 0},
@@ -53,7 +53,7 @@ struct Cmd g_animScripts[44] = {{ANIM_NOP_1, 0, -1, -1},
                                 {ANIM_BLIT_MASKED, BOX_KEEP, -1, -1},
                                 {ANIM_STOP, 0, 0, 0},
                                 {ANIM_NOP_3, 0, -1, -1},
-                                {ANIM_LOAD_IMAGE, 0, 1233, 2},
+                                {ANIM_LOAD_IMAGE, 0, PIC_GAS_ATTENDANT, 2},
                                 {ANIM_SET_SIZE, 0, 48, 64},
                                 {ANIM_SET_BOX, BOX_SET_DESTINATION, 200, 81},
                                 {ANIM_TILE_CAR, 0, -1, -1},
@@ -72,7 +72,7 @@ struct Cmd g_animScripts[44] = {{ANIM_NOP_1, 0, -1, -1},
                                 {ANIM_JUMP, 0, -1, -1},
                                 {ANIM_STOP, 0, 0, 0},
                                 {ANIM_LOAD_IMAGE, 0, -1, -1},
-                                {ANIM_LOAD_IMAGE, 0, 1075, 2},
+                                {ANIM_LOAD_IMAGE, 0, PIC_FUEL_PUMP_DIGITS, 2},
                                 {ANIM_SET_SIZE, 0, 16, 94},
                                 {ANIM_SET_BOX, BOX_SET_DESTINATION, 160, 52},
                                 {ANIM_WAIT, ANIM_WAIT_ONLY, 4, 0},
@@ -382,7 +382,7 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
         }
     }
     if (w) {
-        bm2n = di_bm(0x49d, ARENA_HIGH_STACK);
+        bm2n = di_bm(PIC_CAR_SHADOW, ARENA_HIGH_STACK);
         bm_opaque_span(*out, &left, &right1);
         h = (*out)->height - bm2n->height;
         for (j5 = 0; j5 < n; j5++) {
@@ -461,7 +461,7 @@ again:
         if (kind == CAR_PULL_IN) {
             ma_clear();
             if (g_scene == SCENE_GAS_STATION) {
-                di_pic_size(0x449, &w2, &h2, &x2);
+                di_pic_size(PIC_PUMP_WITHOUT_NOZZLE, &w2, &h2, &x2);
                 g_pumpWithNozzle = ar_bm(w2, h2, 0, ARENA_LOW_BASE);
                 g_pumpNoNozzle = ar_bm(w2, h2, 0, ARENA_LOW_BASE);
             }
@@ -486,7 +486,7 @@ again:
                 g_backdropW = SCREEN_WIDTH;
                 g_backdropX = 0;
             }
-            cp_backdrop(g_backdrop, &pan, mode2 ? 0x448 : 0, &pb8, BACKDROP_ROWS, h7, &pr16, &pr26);
+            cp_backdrop(g_backdrop, &pan, mode2 ? PIC_GAS_STATION_MASK : 0, &pb8, BACKDROP_ROWS, h7, &pr16, &pr26);
         }
     }
     g_picXDraw = x0;
@@ -581,9 +581,11 @@ again:
         blt.sy = g_featurePos.gasCapY - g_sprDrawY;
         blt.dx = blt.dy = 0;
         (*g_videoOps.copy)(bms6[0], scratch, &blt, 1);
-        bm_draw_pic(bms6[0], 0x472, (char)blt.sx, (char)blt.sy, 0);
-        build_pump_strip(0x40, 0x64, g_xCoordSprite, bot, g_pumpWithNozzle, 0x4c8, 0x4ca);
-        build_pump_strip(0x40, 0x64, g_xCoordSprite, bot, g_pumpNoNozzle, 0x449, 0x44a);
+        bm_draw_pic(bms6[0], PIC_FUEL_CAP, (char)blt.sx, (char)blt.sy, 0);
+        build_pump_strip(0x40, 0x64, g_xCoordSprite, bot, g_pumpWithNozzle, PIC_PUMP_WITH_NOZZLE,
+                         PIC_PUMP_MASK_WITH_NOZZLE);
+        build_pump_strip(0x40, 0x64, g_xCoordSprite, bot, g_pumpNoNozzle, PIC_PUMP_WITHOUT_NOZZLE,
+                         PIC_PUMP_MASK_WITHOUT_NOZZLE);
         blt.dx = blt.sx;
         blt.dy = blt.sy;
         blt.sx = blt.sy = 0;

@@ -70,14 +70,14 @@ _cd_blit_to_ilv  PROC    FAR
         add     cx,di
         cmp     cx,MONO_SEGMENT
         jb      setup1
-        cmp     cx,0B400h
+        cmp     cx,MONO_BANK2_SEGMENT
         ja      setup1
         mov     ah,1
 setup1:
         lds     si,DWORD PTR [bp+6]     ; src
         les     di,DWORD PTR [bp+10]    ; dst
         mov     al,[bp+16]              ; rows
-        mov     dx,2000h
+        mov     dx,VIDEO_BANK_BYTES
         sub     dx,[bp+20]              ; dst_skip
         mov     bx,[bp+22]              ; first row number
 rowloop2:
@@ -86,7 +86,7 @@ rowloop2:
         test    bx,1
         je      copy1
         push    di
-        add     di,2000h
+        add     di,VIDEO_BANK_BYTES
         mov     cx,[bp+14]              ; width in bytes
         shr     cx,1
         jnc     even1a
@@ -108,7 +108,7 @@ even2a:
         inc     bx
         test    bx,1
         je      evenrow
-        add     di,2000h
+        add     di,VIDEO_BANK_BYTES
         sub     di,[bp+14]
         jmp     rowloop2
 evenrow:
@@ -148,20 +148,20 @@ _cd_blit_ilv  PROC    FAR
         add     cx,di
         cmp     cx,MONO_SEGMENT
         jb      setup2
-        cmp     cx,0B400h
+        cmp     cx,MONO_BANK2_SEGMENT
         ja      setup2
         mov     WORD PTR [bp-2],1
 setup2:
         lds     si,DWORD PTR [bp+6]     ; src
         les     di,DWORD PTR [bp+10]    ; dst
-        mov     ax,50h
+        mov     ax,CGA_PITCH
         mov     bx,[bp+24]              ; dst_y
         mov     bh,bl
         shr     bl,1
         mul     bl
         add     di,ax
         add     di,[bp+22]              ; dst_x
-        mov     ax,50h
+        mov     ax,CGA_PITCH
         mov     dx,[bp+20]              ; src_y
         mov     dh,dl
         shr     dl,1
@@ -174,17 +174,17 @@ setup2:
         xor     bh,bh
         test    dx,1
         je      srceven
-        add     si,2000h
+        add     si,VIDEO_BANK_BYTES
 srceven:
         test    bx,1
         je      dsteven
-        add     di,2000h
+        add     di,VIDEO_BANK_BYTES
 dsteven:
-        mov     ax,2000h
+        mov     ax,VIDEO_BANK_BYTES
         sub     ax,[bp+14]
         mov     [bp-4],ax               ; step from an even line to the odd one
-        mov     ax,50h
-        sub     ax,2000h
+        mov     ax,CGA_PITCH
+        sub     ax,VIDEO_BANK_BYTES
         sub     ax,[bp+14]
         mov     [bp-6],ax               ; step from an odd line to the next even one
         mov     ax,[bp+16]              ; rows
@@ -194,7 +194,7 @@ rowloop3:
         test    bx,1
         je      copy2
         push    di
-        add     di,2000h
+        add     di,VIDEO_BANK_BYTES
         mov     cx,[bp+14]
         shr     cx,1
         jnc     even1b

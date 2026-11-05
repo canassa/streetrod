@@ -3,6 +3,9 @@
 #ifndef POOLS_H
 #define POOLS_H
 
+#define CAR_NODE_COUNT 16
+#define PART_NODE_COUNT 140
+
 struct Node {
     int value;
     int wear;
@@ -17,8 +20,8 @@ struct Node2 {
     struct Node2 *next;
 };
 
-extern struct Node2 g_storageCarAllocTable[16];
-extern struct Node g_allocationNodesPartList[140];
+extern struct Node2 g_storageCarAllocTable[CAR_NODE_COUNT];
+extern struct Node g_allocationNodesPartList[PART_NODE_COUNT];
 void near pl_init(int reset);
 
 #endif

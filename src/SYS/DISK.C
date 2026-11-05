@@ -117,8 +117,8 @@ int di_seek(int handle, long pos)
 
 static int near pic_index(int n)
 {
-    if (n >= 1000)
-        n -= 0x3df;
+    if (n >= PICTURE_SECOND_BASE)
+        n -= PICTURE_SECOND_INDEX_BIAS;
     else
         n--;
     if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
@@ -164,7 +164,7 @@ static void near open_lib(int n)
             sc_wait_msg(g_msgInsertDisk);
         }
         if (_dos_read(*g_picLib.handle, (void far *)g_picLib.count, 2, &got) || got != 2 ||
-            g_lib1Count + g_countLibBmB != 0x115) {
+            g_lib1Count + g_countLibBmB != PICTURE_COUNT) {
             sc_wait_msg(g_msgBadFormat);
             sy_exit();
         }
@@ -186,7 +186,7 @@ int di_read_index(int which)
     struct Slot far *sl;
 
     base = which == 1 ? 0 : g_lib1Count;
-    num = which == 1 ? 1 : 1000;
+    num = which == 1 ? 1 : PICTURE_SECOND_BASE;
     height = 0;
     open_lib(num);
     count = which == 1 ? g_lib1Count : g_countLibBmB;
@@ -291,7 +291,7 @@ bad:
 
 /* Frees and clears the far pointer in slot n of the far table g_slot. */
 
-void di_free_pic(int n)
+void di_free_pic(enum PictureId n)
 {
     char far *far *pp;
 
@@ -306,7 +306,7 @@ void di_free_pic(int n)
    loaded to the work area g_imageBufferPointer first; its data is RLE coded (rl_decode) and expanded for the video
    mode in use into the planes bits and alt of the bitmap. Returns the bitmap */
 
-struct Bitmap far *di_unpack_pic(int id, struct Bitmap far *bm)
+struct Bitmap far *di_unpack_pic(enum PictureId id, struct Bitmap far *bm)
 {
     int num;
     char far *src;
@@ -363,7 +363,7 @@ struct Bitmap far *di_unpack_pic(int id, struct Bitmap far *bm)
 
 /* Fields of slot picture number n: *w, *h and the byte *x */
 
-void di_pic_size(int n, int *w, int *h, int *x)
+void di_pic_size(enum PictureId n, int *w, int *h, int *x)
 {
     n = pic_index(n);
     *w = g_slot[n].width;
@@ -374,7 +374,7 @@ void di_pic_size(int n, int *w, int *h, int *x)
 /* Allocate a bitmap of the given mode for slot picture id, draw the picture into it
    (di_unpack_pic) and return it */
 
-struct Bitmap far *di_bm(int id, int mode)
+struct Bitmap far *di_bm(enum PictureId id, int mode)
 {
     int h;
     int w1;
@@ -485,7 +485,7 @@ void di_open_libs(int disks, enum VideoChoice mode)
     }
     if (g_lib2Handle) {
         if (_dos_read(g_lib2Handle, (void far *)&g_countLibBmB, 2, &err) || err != 2 ||
-            g_lib1Count + g_countLibBmB != 0x115) {
+            g_lib1Count + g_countLibBmB != PICTURE_COUNT) {
             sc_wait_msg(g_msgBadFormat);
             sy_exit();
         }
@@ -548,7 +548,7 @@ int di_data_drive(void)
             sc_wait_msg(g_msgInsertDisk);
         } else {
             _dos_close(file);
-            open_lib(1000);
+            open_lib(PICTURE_SECOND_BASE);
             return g_dataPath[0];
         }
     }

@@ -39,7 +39,9 @@ static int near is_broke(void);
 static void near remove_part(struct Node **slot);
 static void near tune_timing(struct Car *car);
 
-int g_tirePics[3][4] = {{1065, 1066, 1067, 1068}, {1028, 1029, 1030, 1031}, {1106, 1107, 1108, 1109}};
+int g_tirePics[3][4] = {{PIC_TIRE_STANDARD_1, PIC_TIRE_STANDARD_2, PIC_TIRE_STANDARD_3, PIC_TIRE_STANDARD_4},
+                        {PIC_TIRE_BRAND_NAME_1, PIC_TIRE_BRAND_NAME_2, PIC_TIRE_BRAND_NAME_3, PIC_TIRE_BRAND_NAME_4},
+                        {PIC_TIRE_SLICK_1, PIC_TIRE_SLICK_2, PIC_TIRE_SLICK_3, PIC_TIRE_SLICK_4}};
 static int g_colX = 33;
 static int g_rowY[4] = {14, 107, 15, 105};
 static int g_wOff[4] = {0, 5, 9, 14};
@@ -119,10 +121,10 @@ void ga_calendar(int a1)
     r_vid.copyToFront = 1;
     px5 = 80;
     py4 = 4;
-    id = m < 2 ? 0x4c3 : 0x4c5;
+    id = m < 2 ? PIC_CALENDAR_JUNE_JULY : PIC_CALENDAR_AUGUST_SEPTEMBER;
     cu_ctl(CURSOR_HIDE);
     pic = di_bm(id, ARENA_HIGH_STACK);
-    bm_draw_pic(pic, 0x4c4, (unsigned char)x, (unsigned char)y4, 0);
+    bm_draw_pic(pic, PIC_CALENDAR_DAY_OUTLINE, (unsigned char)x, (unsigned char)y4, 0);
     img = ar_bm(pic->width, pic->height, 0, ARENA_HIGH_STACK);
     pu_grab(px5, py4, pic->width, pic->height, img);
     pu_show(pic, px5, py4);
@@ -305,7 +307,7 @@ int near ga_menu(enum GarageMode mode)
         if (mode == GARAGE_SWAP)
             mode = GARAGE_DRIVE_IN;
         else {
-            sc_picture(0x408, -1);
+            sc_picture(PIC_GARAGE, -1);
             vi_garage_pal();
             if (mode == GARAGE_REDRAW && g_driver.currentCar == 0 && g_driver.otherCars) {
                 g_driver.currentCar = g_driver.otherCars;
@@ -553,7 +555,7 @@ void near ga_stickers(void)
         y = 11;
         bm1 = ar_bm(264, 69, 0, ARENA_HIGH_STACK);
         pu_grab(x, y, 264, 69, bm1);
-        sc_picture_at(1200, x, y, -1);
+        sc_picture_at(PIC_STICKER_MENU, x, y, -1);
         mn_push(KM_STICKERS);
         while ((k = sy_wait_input(3000)) == 0)
             ;
@@ -572,7 +574,7 @@ void near ga_stickers(void)
             ma_pop_high(1);
             idx6 = -30 - k;
             g_driver.currentCar->appearance = ((idx6 & 0x1f) << 8) | (g_driver.currentCar->appearance & 0xe0ff);
-            bm3 = di_bm(1218, ARENA_HIGH_STACK);
+            bm3 = di_bm(PIC_STICKER_WIPE, ARENA_HIGH_STACK);
             bm1 = ar_bm(g_stickerBg->width, g_stickerBg->height, 0, ARENA_HIGH_STACK);
             bm_copy(g_stickerBg, bm1, 1);
             q2 = &g_imageDecalLayout[idx6 - 1];
@@ -797,7 +799,7 @@ void near ga_transmission(void)
     }
     g_carDraw.transmissionPic = owner->transmission ? g_transPics[g_parts[owner->transmission->idx].variant] : 0;
     r_vid.copyToFront = !g_carDraw.transmissionPic;
-    sc_picture_at(0x42e, 0x20, 10, -1);
+    sc_picture_at(PIC_TRANSMISSION_DIALOG, 0x20, 10, -1);
     r_vid.copyToFront = 1;
     gx_trans_draw(g_carDraw.transmissionPic, owner->transmissionBolts);
     mn_push(KM_TRANSMISSION);
@@ -941,7 +943,7 @@ static void near tune_timing(struct Car *car)
     blt.sx = 0x30;
     blt.sy = 0;
     blt.dx = 0xb0;
-    sc_picture_at(0x42f, 0x60, 9, -1);
+    sc_picture_at(PIC_TUNING_DIALOG, 0x60, 9, -1);
     p = g_scriptObjsData + vi_anim_start(8);
     tmp = g_gameClock.biosTicks;
     sy_music_pause();
@@ -1024,12 +1026,15 @@ void near ga_hood(struct Car *car)
             g_engineBoltPicIds[key - 1] = 0;
         }
     }
-    g_slotSelec.wirePic = car->wireState != WIRES_ABSENT ? (car->wireState > 0 ? 0x447 : 0x446) : 0;
+    g_slotSelec.wirePic = car->wireState != WIRES_ABSENT
+                              ? (car->wireState > 0 ? PIC_IGNITION_WIRES_CONNECTED : PIC_IGNITION_WIRES_DISCONNECTED)
+                              : 0;
     if (p6 = car->rack.parts[0])
-        g_partPics[1][0] = g_parts[p6->idx].variant == MANIFOLD_TWO_BARREL ? 0x438 : 0x439;
+        g_partPics[1][0] =
+            g_parts[p6->idx].variant == MANIFOLD_TWO_BARREL ? PIC_MANIFOLD_TWO_BARREL_V6 : PIC_MANIFOLD_TWO_BARREL_V8;
     for (key = 0; key < 5; key++)
         g_partsPics[key] = (p6 = car->rack.parts[key]) ? g_partPics[key][g_parts[p6->idx].variant] : 0;
-    g_cPos[0][0] = g_cPos[0][1] = g_partsPics[0] == 0x434 ? 4 : 5;
+    g_cPos[0][0] = g_cPos[0][1] = g_partsPics[0] == PIC_ENGINE_V6 ? 4 : 5;
     cnt1 = (g_partsPics[0] != 0) + (g_partsPics[1] != 0) + (g_partsPics[2] != 0) + (g_partsPics[3] != 0) +
            (g_partsPics[4] != 0);
     n = (p6 = car->rack.parts[1]) ? g_nCarb[g_parts[p6->idx].variant] + 2 : 5;
@@ -1060,13 +1065,13 @@ void near ga_hood(struct Car *car)
             if (car->wireState == WIRES_ABSENT)
                 continue;
             if (car->wireState > 0) {
-                g_slotSelec.wirePic = 0x447;
+                g_slotSelec.wirePic = PIC_IGNITION_WIRES_CONNECTED;
                 gx_draw_wires();
                 g_gameClock.actionTicks += 0x6d;
                 gx_build_hots(g_boltSlots + 1, g_boltSubslots + 1);
                 continue;
             }
-            g_slotSelec.wirePic = 0x446;
+            g_slotSelec.wirePic = PIC_IGNITION_WIRES_DISCONNECTED;
             gx_draw_wires();
             g_gameClock.actionTicks += 0x6d;
             g_slotSelec.slot = 0;
@@ -1117,7 +1122,7 @@ void near ga_hood(struct Car *car)
                 g_slotSelec.slot = 0;
                 step = 0;
                 car->wireState = WIRES_DISCONNECTED;
-                g_slotSelec.wirePic = 0x446;
+                g_slotSelec.wirePic = PIC_IGNITION_WIRES_DISCONNECTED;
                 g_gameClock.actionTicks += ok ? 0x666 : 0x888;
                 break;
             case 1:
@@ -1177,9 +1182,9 @@ void near ga_hood(struct Car *car)
                 so_part_move(0);
                 so_part_set();
                 if (sel2 == 0) {
-                    g_partPics[1][0] = k == 0x434 ? 0x438 : 0x439;
-                    g_cPos[0][0] = g_cPos[0][1] = k == 0x434 ? 4 : 5;
-                    g_slotSelec.wirePic = 0x446;
+                    g_partPics[1][0] = k == PIC_ENGINE_V6 ? PIC_MANIFOLD_TWO_BARREL_V6 : PIC_MANIFOLD_TWO_BARREL_V8;
+                    g_cPos[0][0] = g_cPos[0][1] = k == PIC_ENGINE_V6 ? 4 : 5;
+                    g_slotSelec.wirePic = PIC_IGNITION_WIRES_DISCONNECTED;
                     gx_draw_wires();
                 }
                 for (k = g_nBolt[cnt1]; --k >= 0;) {

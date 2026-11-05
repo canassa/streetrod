@@ -2,6 +2,8 @@
 
 #ifndef SYS_H
 #define SYS_H
+#define SYSTEM_TIMER_RELOAD 0x4000
+#define TIMER_NO_DEADLINE 0x7fffffffL
 
 #include "PERF.H"
 #include "ROAD.H"

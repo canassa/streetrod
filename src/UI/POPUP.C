@@ -5,6 +5,7 @@
 #include "BITMAP.H"
 #include "CURSOR.H"
 #include "DASH.H"
+#include "DISK.H"
 #include "MAIN.H"
 #include "MARKS.H"
 #include "MEM.H"
@@ -16,9 +17,9 @@
 static struct Win *g_popupLayout;
 static int g_unused24[2]; /* PROVISIONAL: 4 unreferenced bytes after g_popupLayout */
 
-static struct Win g_popupWins[3] = {{1072, 1, 72, 30, 152, 37, 0, 6, 144},
-                                    {1073, 1, 80, 30, 232, 37, 0, 6, 223},
-                                    {1074, 2, 80, 20, 232, 46, 0, 6, 223}};
+static struct Win g_popupWins[3] = {{PIC_SPEECH_BUBBLE_LEFT, 1, 72, 30, 152, 37, 0, 6, 144},
+                                    {PIC_SPEECH_BUBBLE_RIGHT, 1, 80, 30, 232, 37, 0, 6, 223},
+                                    {PIC_SPEECH_BUBBLE_TWO_LINES, 2, 80, 20, 232, 46, 0, 6, 223}};
 static struct Bitmap far *g_popupSave = 0;
 
 /* Copy the rectangle (x, y, w, h) of the back buffer into pict new bitmap and return it.

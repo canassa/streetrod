@@ -10,14 +10,14 @@ static char far *g_arenaBase;
 int g_arenaTopVal;
 int g_lowArenaMarker;
 int g_markerIndexHigh;
-unsigned g_offsetArenaMarksList[61];
+unsigned g_offsetArenaMarksList[ARENA_LAST_MARK + 1];
 int g_loHeapLimit;
 
 
 void ar_reset(void)
 {
     g_offsetArenaMarksList[g_lowArenaMarker = 0] = g_loHeapLimit = 0;
-    g_offsetArenaMarksList[g_markerIndexHigh = 60] = g_arenaTopVal = -536;
+    g_offsetArenaMarksList[g_markerIndexHigh = ARENA_LAST_MARK] = g_arenaTopVal = ARENA_INITIAL_TOP;
     g_stickerBg = 0;
 }
 
@@ -27,7 +27,7 @@ void ar_init(void)
     if (r_vid.mode == VID_TANDY)
         g_arenaBase = ARENA_FIXED_BASE;
     else
-        g_arenaBase = me_alloc(0xfde8, 1);
+        g_arenaBase = me_alloc(ARENA_BYTES, 1);
     ar_reset();
 }
 
@@ -40,7 +40,7 @@ void ar_shrink(int size)
 
 /* Allocate size bytes from the arena at g_arenaBase; mode picks which of four marker stacks is used */
 
-char far *ar_alloc(int size, int mode)
+char far *ar_alloc(int size, enum ArenaMode mode)
 {
     char far *p;
 
@@ -65,7 +65,7 @@ char far *ar_alloc(int size, int mode)
     case ARENA_HIGH_BASE:
         g_arenaTopVal -= size;
         p += g_arenaTopVal--;
-        g_offsetArenaMarksList[60] = g_arenaTopVal;
+        g_offsetArenaMarksList[ARENA_LAST_MARK] = g_arenaTopVal;
         break;
     }
     return p;
@@ -73,7 +73,7 @@ char far *ar_alloc(int size, int mode)
 
 /* Allocate a bitmap w x h from the arena (header plus pixel rows) and initialise it */
 
-struct Bitmap far *ar_bm(int w, int h, int flags, int mode)
+struct Bitmap far *ar_bm(int w, int h, int flags, enum ArenaMode mode)
 {
     int cols, extra, total;
     unsigned size;
@@ -85,11 +85,11 @@ struct Bitmap far *ar_bm(int w, int h, int flags, int mode)
     extra = 0;
     if (flags)
         extra = size;
-    total = extra + 0x30;
+    total = extra + BITMAP_HEADER_BYTES;
     if (!(flags & 2))
         total += size * r_vid.planes;
     bm = mem = (struct Bitmap far *)ar_alloc(total, mode);
-    bm->bits.p = (char far *)mem + 0x30;
+    bm->bits.p = (char far *)mem + BITMAP_HEADER_BYTES;
     me_new_bitmap(w, h, flags, -1, bm);
     return bm;
 }

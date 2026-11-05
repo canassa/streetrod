@@ -3,6 +3,12 @@
 #ifndef VIDEO_H
 #define VIDEO_H
 
+enum PaletteSlot {
+    PALETTE_CAR_PRIMARY = 6,
+    PALETTE_CAR_SECONDARY = 7,
+    PALETTE_RIVAL_PRIMARY = 12
+};
+
 struct Bitmap;
 struct Blt;
 struct Sprite;

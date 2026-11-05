@@ -35,7 +35,7 @@ void eg_draw_text(struct Bitmap far *bm, int x, int y, char *str)
 {
     int cols;
     unsigned char far *q;
-    unsigned char bits[320];
+    unsigned char bits[SCREEN_WIDTH];
     unsigned char far *r;
     unsigned char far *pen;
     int c, d;
@@ -53,7 +53,7 @@ void eg_draw_text(struct Bitmap far *bm, int x, int y, char *str)
     e = 0xff;
     o = 0xff;
     i = bm->flags <= -1;
-    memset(bits, 0, 320);
+    memset(bits, 0, SCREEN_WIDTH);
     cols = sh = d;
     q = bits;
     for (; *str; str) {

@@ -51,7 +51,8 @@ struct Car *g_old = 0;
 struct Car *g_new = 0;
 int g_carPulledIn = 0;
 int g_picsFreed = 0;
-static int g_paperPics[5] = {1022, 1023, 1025, 1024, 1026};
+static int g_paperPics[5] = {PIC_NEWS_DODGERS_TIDAL_WAVE, PIC_NEWS_DRAG_RACING_CRACKDOWN, PIC_NEWS_OSCARS_ATLAS_ROCKET,
+                             PIC_NEWS_CARS_FROM_JAPAN, PIC_NEWS_VIET_NAM};
 static int g_paperPick = 0;
 static int g_paperDay = -1;
 
@@ -132,7 +133,7 @@ static int near read_paper(void)
 
     old = r_vid.copyToFront;
     r_vid.copyToFront = 0;
-    sc_picture(0x3fd, -1);
+    sc_picture(PIC_NEWSPAPER_MASTHEAD, -1);
     if ((tune = ga_day()) != g_paperDay) {
         if ((pick5 = rn_int(5)) == g_paperPick)
             pick5 = rn_int(5);

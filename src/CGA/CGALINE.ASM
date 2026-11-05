@@ -44,14 +44,14 @@ _cl_draw  PROC    FAR
         mov     al,[bp+14]
         call    _cl_map_color
         mov     [bp+14],al
-        mov     si,2000h
+        mov     si,VIDEO_BANK_BYTES
         mov     di,0E050h
         mov     WORD PTR [bp-0Ah],0
         cmp     _g_hercules,0
         je      gotdx
         cmp     _g_videoAddrSegment,MONO_SEGMENT
         jb      gotdx
-        cmp     _g_videoAddrSegment,0B400h
+        cmp     _g_videoAddrSegment,MONO_BANK2_SEGMENT
         ja      gotdx
         mov     WORD PTR [bp-0Ah],2
         mov     ax,[bp+8]
@@ -110,7 +110,7 @@ minor:
         not     dh
         pop     cx
         inc     cx
-        test    bx,2000h
+        test    bx,VIDEO_BANK_BYTES
         je      enter
         xchg    si,[bp-2]
 enter:
@@ -142,10 +142,10 @@ vloop:
         je      vnext
         test    WORD PTR [bp-0Ah],1
         je      vflip
-        add     bx,2000h
+        add     bx,VIDEO_BANK_BYTES
         and     es:[bx],ah
         or      es:[bx],al
-        sub     bx,2000h
+        sub     bx,VIDEO_BANK_BYTES
 vflip:
         xor     WORD PTR [bp-0Ah],1
 vnext:
@@ -194,10 +194,10 @@ hlead:
         je      hlead1
         test    WORD PTR [bp-0Ah],1
         je      hlead1
-        add     di,2000h
+        add     di,VIDEO_BANK_BYTES
         and     es:[di],dh
         or      es:[di],ah
-        sub     di,2000h
+        sub     di,VIDEO_BANK_BYTES
 hlead1:
         inc     di
         dec     cx
@@ -211,9 +211,9 @@ hmiddle:
         rep stosb
         pop     di
         pop     cx
-        add     di,2000h
+        add     di,VIDEO_BANK_BYTES
         rep stosb
-        sub     di,2000h
+        sub     di,VIDEO_BANK_BYTES
         jmp     SHORT hlast
 hsingle:
         rep stosb
@@ -226,10 +226,10 @@ hlast:
         je      hend
         test    WORD PTR [bp-0Ah],1
         je      hend
-        add     di,2000h
+        add     di,VIDEO_BANK_BYTES
         and     es:[di],dl
         or      es:[di],al
-        sub     di,2000h
+        sub     di,VIDEO_BANK_BYTES
 hend:
         jmp     done1
 xmajor:
@@ -255,9 +255,9 @@ xdiag:
         je      xrow
         test    WORD PTR [bp-0Ah],1
         je      xflip
-        add     bx,2000h
+        add     bx,VIDEO_BANK_BYTES
         mov     es:[bx],ah
-        sub     bx,2000h
+        sub     bx,VIDEO_BANK_BYTES
 xflip:
         xor     WORD PTR [bp-0Ah],1
 xrow:
@@ -288,10 +288,10 @@ ymajor:
         je      yrow
         test    WORD PTR [bp-0Ah],1
         je      yflip
-        add     bx,2000h
+        add     bx,VIDEO_BANK_BYTES
         and     es:[bx],dh
         or      es:[bx],dl
-        sub     bx,2000h
+        sub     bx,VIDEO_BANK_BYTES
 yflip:
         xor     WORD PTR [bp-0Ah],1
 yrow:
@@ -366,7 +366,7 @@ _cl_span  PROC    FAR
         je      clip
         cmp     _g_videoAddrSegment,MONO_SEGMENT
         jb      clip
-        cmp     _g_videoAddrSegment,0B400h
+        cmp     _g_videoAddrSegment,MONO_BANK2_SEGMENT
         ja      clip
         test    WORD PTR [bp+10],1
         je      clip
@@ -447,10 +447,10 @@ lead:
         or      es:[di],ah
         cmp     BYTE PTR cs:dbl,0
         je      lead1
-        add     di,2000h
+        add     di,VIDEO_BANK_BYTES
         and     es:[di],dh
         or      es:[di],ah
-        sub     di,2000h
+        sub     di,VIDEO_BANK_BYTES
 lead1:
         inc     di
         dec     cx
@@ -462,9 +462,9 @@ middle:
         rep stosb
         pop     di
         pop     cx
-        add     di,2000h
+        add     di,VIDEO_BANK_BYTES
         rep stosb
-        sub     di,2000h
+        sub     di,VIDEO_BANK_BYTES
         jmp     SHORT last
 single:
         rep stosb
@@ -475,10 +475,10 @@ last:
         or      es:[di],al
         cmp     BYTE PTR cs:dbl,0
         je      done2
-        add     di,2000h
+        add     di,VIDEO_BANK_BYTES
         and     es:[di],dl
         or      es:[di],al
-        sub     di,2000h
+        sub     di,VIDEO_BANK_BYTES
 done2:
         pop     di
         pop     si

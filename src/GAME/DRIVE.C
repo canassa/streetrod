@@ -51,9 +51,9 @@ int dv_run(void)
             g_driveRebuild = 1;
         else
             g_driveRebuild = 0;
-        src = di_bm(0x3f6, ARENA_HIGH_STACK);
+        src = di_bm(PIC_COCKPIT, ARENA_HIGH_STACK);
         if (g_autoTrans) {
-            pict = di_bm(0x4d8, ARENA_HIGH_STACK);
+            pict = di_bm(PIC_AUTOMATIC_DASH_GAUGE, ARENA_HIGH_STACK);
             blt.w = pict->width;
             blt.h = pict->height;
             blt.sx = blt.sy = 0;

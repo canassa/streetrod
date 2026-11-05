@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE PC.INC
 
         .DATA
         EXTRN   _g_targetPixelOffset:WORD
@@ -22,7 +23,7 @@ _tl_draw  PROC  FAR
         sub     sp,8
         push    si
         push    di
-        mov     si,2000h
+        mov     si,VIDEO_BANK_BYTES
         mov     di,0A0A0h
         mov     cx,[bp+10]
         sub     cx,[bp+6]               ; dx = x2 - x1

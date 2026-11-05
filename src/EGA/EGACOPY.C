@@ -15,7 +15,7 @@ void ec_page(char far *src, char far *dst)
     outp(GC_DATA, GC_WRITE_MODE1);
     outp(SEQ_INDEX, SEQ_MAP_MASK);
     outp(SEQ_DATA, SEQ_ALL_PLANES);
-    movedata(FP_SEG(src), FP_OFF(src), FP_SEG(dst), FP_OFF(dst), 8000);
+    movedata(FP_SEG(src), FP_OFF(src), FP_SEG(dst), FP_OFF(dst), EGA_PLANE_BYTES);
     outp(GC_INDEX, GC_MODE);
     outp(GC_DATA, GC_WRITE_MODE0);
 }
