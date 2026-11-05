@@ -1,11 +1,22 @@
-/* SOUND.H - declarations of what SOUND.C defines. */
+/**
+ * @file SOUND.H
+ * @brief Speaker effects, music streams and delay calibration.
+ */
 
 #ifndef SOUND_H
 #define SOUND_H
+/**
+ * @name Driving effect pitches
+ * @brief PIT channel 2 divisors; smaller values produce higher speaker pitches.
+ * @{
+ */
 #define SIREN_HIGH_DIVISOR 0x54b
 #define SIREN_LOW_DIVISOR 0x712
 #define TIRE_SQUEAL_DIVISOR 0x95
+/** @} */
+/** Delay calls per BIOS tick above which the speed score is reduced by 1/4. */
 #define CALIBRATION_FAST_LIMIT 0x350
+/** Fixed-point delay multiplier representing 1.0 with eight fraction bits. */
 #define DELAY_SCALE_UNITY 0x100
 
 #include "MUSIC.H"

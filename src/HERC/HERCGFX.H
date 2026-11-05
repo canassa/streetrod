@@ -1,4 +1,7 @@
-/* HERCGFX.H - declarations of what HERCGFX.ASM defines. */
+/**
+ * @file HERCGFX.H
+ * @brief Hercules graphics mode setup.
+ */
 
 #ifndef HERCGFX_H
 #define HERCGFX_H

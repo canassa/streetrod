@@ -1,4 +1,7 @@
-/* CGADRV.H - declarations of what CGADRV.ASM defines. */
+/**
+ * @file CGADRV.H
+ * @brief Rectangle transfers between linear and CGA interleaved storage.
+ */
 
 #ifndef CGADRV_H
 #define CGADRV_H

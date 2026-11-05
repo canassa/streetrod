@@ -1,4 +1,7 @@
-/* SCRATCH.H - declarations of what SCRATCH.ASM defines. */
+/**
+ * @file SCRATCH.H
+ * @brief Fourth EGA page bitmap descriptor.
+ */
 
 #ifndef SCRATCH_H
 #define SCRATCH_H

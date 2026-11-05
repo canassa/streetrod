@@ -1,4 +1,7 @@
-/* EGA.H - declarations of what EGA.C defines. */
+/**
+ * @file EGA.H
+ * @brief EGA drawing hooks and text rendering.
+ */
 
 #ifndef EGA_H
 #define EGA_H

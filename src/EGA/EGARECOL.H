@@ -1,4 +1,7 @@
-/* EGARECOL.H - declarations of what EGARECOL.C defines. */
+/**
+ * @file EGARECOL.H
+ * @brief Replacement of selected colors in EGA rectangles.
+ */
 
 #ifndef EGARECOL_H
 #define EGARECOL_H

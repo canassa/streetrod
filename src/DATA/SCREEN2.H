@@ -1,4 +1,7 @@
-/* SCREEN2.H - declarations of what SCREEN2.ASM defines. */
+/**
+ * @file SCREEN2.H
+ * @brief First EGA page bitmap descriptor.
+ */
 
 #ifndef SCREEN2_H
 #define SCREEN2_H

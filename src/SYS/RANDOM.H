@@ -1,4 +1,7 @@
-/* RANDOM.H - declarations of what RANDOM.C defines. */
+/**
+ * @file RANDOM.H
+ * @brief Bounded game random numbers.
+ */
 
 #ifndef RANDOM_H
 #define RANDOM_H

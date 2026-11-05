@@ -1,13 +1,17 @@
-/* VIDEO.H - declarations of what VIDEO.C defines. */
+/**
+ * @file VIDEO.H
+ * @brief Drawing dispatch, palette control and animation scripts.
+ */
 
 #ifndef VIDEO_H
 #define VIDEO_H
 
+/** @brief Palette registers replaced when applying player or rival paint. */
 enum PaletteSlot {
-    PALETTE_CAR_PRIMARY = 6,
-    PALETTE_CAR_SECONDARY = 7,
-    PALETTE_RIVAL_PRIMARY = 12,
-    PALETTE_RIVAL_SECONDARY = 3
+    PALETTE_CAR_PRIMARY = 6,    /**< Player body base color. */
+    PALETTE_CAR_SECONDARY = 7,  /**< Player body highlight. */
+    PALETTE_RIVAL_PRIMARY = 12, /**< Rival paint base and diner name color. */
+    PALETTE_RIVAL_SECONDARY = 3 /**< Rival body highlight. */
 };
 
 struct Bitmap;
@@ -61,32 +65,35 @@ struct AnimRun {
     struct Box *box;
 };
 
+/** @brief Script operations on an object bitmap and rectangle. */
 enum AnimOp {
-    ANIM_NOP_1 = 1,
-    ANIM_BLIT = 2,
-    ANIM_NOP_3 = 3,
-    ANIM_BLIT_MASKED = 4,
-    ANIM_HOOK = 5,
-    ANIM_STOP = 6,
-    ANIM_JUMP = 7,
-    ANIM_LOAD_IMAGE = 8,
-    ANIM_SET_BOX = 9,
-    ANIM_SET_SIZE = 10,
-    ANIM_WAIT = 11,
-    ANIM_COPY_TO_FRONT = 12,
-    ANIM_TILE_CAR = 13
+    ANIM_NOP_1 = 1,          /**< Advance without changing the object. */
+    ANIM_BLIT = 2,           /**< Copy to the back buffer. */
+    ANIM_NOP_3 = 3,          /**< Advance without changing the object. */
+    ANIM_BLIT_MASKED = 4,    /**< Copy opaque pixels to the back buffer. */
+    ANIM_HOOK = 5,           /**< Run a scene callback; stop if requested. */
+    ANIM_STOP = 6,           /**< Deactivate and cancel pending timers. */
+    ANIM_JUMP = 7,           /**< Jump to the first operand command index. */
+    ANIM_LOAD_IMAGE = 8,     /**< Load the first operand picture ID. */
+    ANIM_SET_BOX = 9,        /**< Apply @ref BoxSet to the origins. */
+    ANIM_SET_SIZE = 10,      /**< Set rectangle width and height in pixels. */
+    ANIM_WAIT = 11,          /**< Resume after the first operand ticks. */
+    ANIM_COPY_TO_FRONT = 12, /**< Refresh the page and show the cursor. */
+    ANIM_TILE_CAR = 13       /**< Tile the clipped car into the bitmap. */
 };
 
+/** @brief Coordinate pairs replaced by animation operands. */
 enum BoxSet {
-    BOX_KEEP = 0,
-    BOX_SET_SOURCE = 1,
-    BOX_SET_DESTINATION = 2,
-    BOX_SET_BOTH = 3
+    BOX_KEEP = 0,            /**< Leave both origins unchanged. */
+    BOX_SET_SOURCE = 1,      /**< Set the source origin in bitmap pixels. */
+    BOX_SET_DESTINATION = 2, /**< Set the destination pixel origin. */
+    BOX_SET_BOTH = 3         /**< Set both origins to the same pixels. */
 };
 
+/** @brief Visible-page refresh policy when an animation yields to a timer. */
 enum AnimWaitMode {
-    ANIM_WAIT_ONLY = 0,
-    ANIM_WAIT_COPY_TO_FRONT = 4
+    ANIM_WAIT_ONLY = 0,         /**< Wait without refreshing the page. */
+    ANIM_WAIT_COPY_TO_FRONT = 4 /**< Refresh the rectangle before waiting. */
 };
 
 struct Cmd {

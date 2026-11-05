@@ -1,4 +1,7 @@
-/* SPANS1.H - declarations of what SPANS1.ASM defines. */
+/**
+ * @file SPANS1.H
+ * @brief Scenery sprite span data.
+ */
 
 #ifndef SPANS1_H
 #define SPANS1_H

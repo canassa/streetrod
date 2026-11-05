@@ -1,4 +1,7 @@
-/* DRAW.H - declarations of what DRAW.C defines. */
+/**
+ * @file DRAW.H
+ * @brief Interface rectangle fills, lines and borders.
+ */
 
 #ifndef DRAW_H
 #define DRAW_H

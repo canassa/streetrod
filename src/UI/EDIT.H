@@ -1,4 +1,7 @@
-/* EDIT.H - declarations of what EDIT.C defines. */
+/**
+ * @file EDIT.H
+ * @brief Text and numeric entry in menu dialogs.
+ */
 
 #ifndef EDIT_H
 #define EDIT_H

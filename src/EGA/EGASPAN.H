@@ -1,4 +1,7 @@
-/* EGASPAN.H - declarations of what EGASPAN.ASM defines. */
+/**
+ * @file EGASPAN.H
+ * @brief EGA horizontal span and lower-screen fills.
+ */
 
 #ifndef EGASPAN_H
 #define EGASPAN_H

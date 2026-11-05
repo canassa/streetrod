@@ -1,3 +1,8 @@
+/**
+ * @file KEYMAPS.H
+ * @brief Menu keyboard maps and decoded input results.
+ */
+
 #ifndef KEYMAPS_H
 #define KEYMAPS_H
 
@@ -6,8 +11,10 @@ struct KeyMap {
     char val;
 };
 
+/** Bias added to menu results when stored as keyboard-map bytes. */
 #define KEY_VALUE_BASE 0xce
 
+/** @brief Shared indices selecting menu hotspot groups and keyboard maps. */
 enum ScreenId {
     KM_NONE = 0,
     KM_RACE_OUTCOME = 1,
@@ -54,6 +61,7 @@ enum ScreenId {
     KM_MUSIC = 42
 };
 
+/** @brief Decoded input results; positive choices depend on the active menu. */
 enum InputResult {
     KR_PAPER_CARS = 1,
     KR_PAPER_PARTS = 2,
@@ -158,6 +166,7 @@ enum InputResult {
     KR_SELL_PART_NO_THANKS = KR_NO
 };
 
+/** @brief Biased repair and junk choices compared before input decoding. */
 enum KeyMapByte {
     KV_REPAIR_FIX = KEY_VALUE_BASE + KR_REPAIR_FIX,
     KV_REPAIR_JUNK = KEY_VALUE_BASE + KR_REPAIR_JUNK

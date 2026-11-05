@@ -1,4 +1,7 @@
-/* EGASHIFT.H - declarations of what EGASHIFT.C defines. */
+/**
+ * @file EGASHIFT.H
+ * @brief EGA blits with horizontal pixel alignment.
+ */
 
 #ifndef EGASHIFT_H
 #define EGASHIFT_H

@@ -1,4 +1,7 @@
-/* MASKBG.H - declarations of what MASKBG.ASM defines. */
+/**
+ * @file MASKBG.H
+ * @brief Masked composition with background preservation.
+ */
 
 #ifndef MASKBG_H
 #define MASKBG_H

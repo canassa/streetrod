@@ -1,4 +1,7 @@
-/* MENU.H - declarations of what MENU.C defines. */
+/**
+ * @file MENU.H
+ * @brief Menu stacks, selection and scrolling lists.
+ */
 
 #ifndef MENU_H
 #define MENU_H

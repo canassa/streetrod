@@ -1,4 +1,7 @@
-/* MEM.H - declarations of what MEM.C defines. */
+/**
+ * @file MEM.H
+ * @brief Bitmap allocation, video storage and memory management.
+ */
 
 #ifndef MEM_H
 #define MEM_H

@@ -1,4 +1,7 @@
-/* TANDYTXT.H - declarations of what TANDYTXT.ASM defines. */
+/**
+ * @file TANDYTXT.H
+ * @brief Tandy glyph rasterization and video transfers.
+ */
 
 #ifndef TANDYTXT_H
 #define TANDYTXT_H

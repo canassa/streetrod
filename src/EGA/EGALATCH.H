@@ -1,4 +1,7 @@
-/* EGALATCH.H - declarations of what EGALATCH.ASM defines. */
+/**
+ * @file EGALATCH.H
+ * @brief Rectangle transfers through EGA plane latches.
+ */
 
 #ifndef EGALATCH_H
 #define EGALATCH_H

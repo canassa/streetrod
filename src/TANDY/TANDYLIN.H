@@ -1,4 +1,7 @@
-/* TANDYLIN.H - declarations of what TANDYLIN.ASM defines. */
+/**
+ * @file TANDYLIN.H
+ * @brief Tandy line drawing and span fills.
+ */
 
 #ifndef TANDYLIN_H
 #define TANDYLIN_H

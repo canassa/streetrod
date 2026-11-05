@@ -1,4 +1,7 @@
-/* HERCDET.H - declarations of what HERCDET.ASM defines. */
+/**
+ * @file HERCDET.H
+ * @brief Hercules adapter and video memory detection.
+ */
 
 #ifndef HERCDET_H
 #define HERCDET_H

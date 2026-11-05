@@ -1,4 +1,7 @@
-/* SCREEN.H - declarations of what SCREEN.C defines. */
+/**
+ * @file SCREEN.H
+ * @brief Status messages, money display and picture placement.
+ */
 
 #ifndef SCREEN_H
 #define SCREEN_H
@@ -8,9 +11,10 @@
 struct Node;
 struct Node2;
 
+/** @brief Saved race selection used for wagers and course setup. */
 enum RaceType {
-    RACE_DRAG = 0,
-    RACE_ROAD = 1
+    RACE_DRAG = 0, /**< Straight course with a standing start. */
+    RACE_ROAD = 1  /**< Winding course with roadside hazards. */
 };
 
 struct DriverState {
@@ -50,8 +54,14 @@ struct PicturePlacement {
 extern struct TextEnd g_penPoint;
 extern struct StatusText g_statusLine;
 
+/**
+ * @name Screen vertical partition
+ * @brief Pixel rows available for scene drawing and the status strip.
+ * @{
+ */
 #define SCREEN_BODY_HEIGHT 190
 #define STATUS_BAR_HEIGHT 10
+/** @} */
 
 extern struct PicturePlacement g_picturePlacement;
 extern struct DriverState g_driver;

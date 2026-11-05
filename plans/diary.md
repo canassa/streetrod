@@ -2984,3 +2984,42 @@ cached SEG words and the ES reload between them.
 ### What I learned
 
 - Named constants without a line of meaning still force the reader to the call sites.
+
+## 2026-11-05 20:10 CET: Document non-game header enums and constants
+
+### What I did
+
+Documented 232 non-guard defines and 23 enums across the headers outside
+src/GAME, following their C and assembly readers. Added missing one-line
+file briefs: all 77 headers now have file blocks. Grouped hardware register
+fields, display dimensions, allocation capacities and stock-equipment
+SHIFT/MASK pairs. Kept picture, text-offset and keyboard-ID families at enum
+or group level. Updated 75 headers; code tokens and every struct/union
+body are unchanged, including their existing comments and PROVISIONAL text.
+
+Explained picture-ID indexing, arena allocation lifetimes, padded cursor
+storage, input-byte bias, timer units, animation operands, speaker divisors
+and needle lookup limits. Added brief comments to three message buffers so
+their enum references resolve. Recorded the macro-group linking caveat in
+the doxygen-c skill.
+
+Validation: headers and formatting pass; Doxygen has zero diagnostics;
+572/572 functions match; rm -rf work followed by ./sr build reports Packed
+EXE IDENTICAL; DGROUP ownership and order pass; all 106 unit tests pass.
+A token/record audit confirms source changes contain only comments and
+formatting, with no struct definition changes. No merge or push performed.
+
+### What I learned
+
+A Doxygen member-group brief does not by itself expose its macros as link
+targets. The keyboard agreement test splits raw enum bodies on commas and
+does not remove comments. The encoded repair IDs therefore share an enum
+brief, like the other mechanical keyboard IDs; their inline comments caused
+four test errors before removal, without affecting the game or docs build.
+
+The coupe set reuses sedan passing and distant views; hot rod and sports-car
+sets reuse the sedan passing view. CURSOR_WIDTH is the padded 24-pixel copy
+span, not the 16-pixel visible cursor. TONE_END marks a trailing tone slot
+bypassed when the repeat-table terminator restarts playback; it is not a
+stop instruction. These are naming caveats, not proven wrong names; no
+constants were renamed.

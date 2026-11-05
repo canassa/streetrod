@@ -1,4 +1,7 @@
-/* SPRITE.H - declarations of what SPRITE.C defines. */
+/**
+ * @file SPRITE.H
+ * @brief Car sprite clipping, movement and page management.
+ */
 
 #ifndef SPRITE_H
 #define SPRITE_H

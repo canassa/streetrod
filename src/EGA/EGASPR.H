@@ -1,4 +1,7 @@
-/* EGASPR.H - declarations of what EGASPR.C defines. */
+/**
+ * @file EGASPR.H
+ * @brief Car sprite movement on EGA displays.
+ */
 
 #ifndef EGASPR_H
 #define EGASPR_H

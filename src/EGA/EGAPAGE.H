@@ -1,4 +1,7 @@
-/* EGAPAGE.H - declarations of what EGAPAGE.C defines. */
+/**
+ * @file EGAPAGE.H
+ * @brief Visible EGA page selection.
+ */
 
 #ifndef EGAPAGE_H
 #define EGAPAGE_H

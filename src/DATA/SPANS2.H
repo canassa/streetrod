@@ -1,4 +1,7 @@
-/* SPANS2.H - declarations of what SPANS2.ASM defines. */
+/**
+ * @file SPANS2.H
+ * @brief Additional scenery sprite span data.
+ */
 
 #ifndef SPANS2_H
 #define SPANS2_H

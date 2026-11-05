@@ -1,4 +1,7 @@
-/* FONTDATA.H - declarations of what FONTDATA.ASM defines. */
+/**
+ * @file FONTDATA.H
+ * @brief Glyph metrics and pixels for text rendering.
+ */
 
 #ifndef FONTDATA_H
 #define FONTDATA_H

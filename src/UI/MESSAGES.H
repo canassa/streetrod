@@ -1,8 +1,12 @@
-/* MESSAGES.H - declarations of what MESSAGES.ASM defines. */
+/**
+ * @file MESSAGES.H
+ * @brief Interface text, descriptions and popup message records.
+ */
 
 #ifndef MESSAGES_H
 #define MESSAGES_H
 
+/** @brief Byte offsets into @ref g_txt for labels and editable text. */
 enum TextOffset {
     TXT_HOT_LIPS = 2,
     TXT_RANGER = 27,
@@ -138,6 +142,7 @@ enum TextOffset {
     TXT_RACE_RESULT_2 = 2004
 };
 
+/** @brief Byte offsets into @ref g_desc for names and save slots. */
 enum DescriptionOffset {
     DESC_THE_GEEK = 1577,
     DESC_GM_V_6_ENGINE = 1852,
@@ -203,6 +208,7 @@ enum DescriptionOffset {
     DESC_SAVE_SLOT_15 = 6916
 };
 
+/** @brief Byte offsets from @ref g_descHdr to popup layout bytes and text. */
 enum MessageOffset {
     MSG_ITS_YOURS = 3362,
     MSG_NO_ROOM_SELL_A_CAR = 3376,
@@ -302,6 +308,7 @@ enum MessageOffset {
     MSG_NEED_FULL_SERVICE = 6625
 };
 
+/** Interface labels and mutable dialog text. */
 extern char g_txt[];
 extern char g_msgWannaQuit[];
 extern char g_msgBackToGarage[];
@@ -326,7 +333,9 @@ extern int g_offWires;
 extern int g_offSquelch;
 extern int g_offTunes;
 extern int g_groupHot[];
+/** Popup records: a layout byte followed by text lines. */
 extern char g_descHdr[];
+/** Names, part descriptions and save-slot labels. */
 extern char g_desc[];
 extern char g_junk[];
 extern char g_msgShort[];

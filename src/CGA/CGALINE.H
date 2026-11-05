@@ -1,4 +1,7 @@
-/* CGALINE.H - declarations of what CGALINE.ASM defines. */
+/**
+ * @file CGALINE.H
+ * @brief CGA line drawing and color dithering tables.
+ */
 
 #ifndef CGALINE_H
 #define CGALINE_H

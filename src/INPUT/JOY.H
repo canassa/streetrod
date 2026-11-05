@@ -1,4 +1,7 @@
-/* JOY.H - declarations of what JOY.ASM defines. */
+/**
+ * @file JOY.H
+ * @brief Joystick polling and simulated keyboard input.
+ */
 
 #ifndef JOY_H
 #define JOY_H

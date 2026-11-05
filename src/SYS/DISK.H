@@ -6,6 +6,7 @@
 #ifndef DISK_H
 #define DISK_H
 
+/** @brief Picture-library IDs; the second library starts at 1000. */
 enum PictureId {
     PIC_TITLE = 1,
     PIC_CURSORS = 2,
@@ -286,9 +287,16 @@ enum PictureId {
     PIC_COUNTRY_SKYLINE = 1267
 };
 
+/** Combined entry count required when validating both picture libraries. */
 #define PICTURE_COUNT 277
+/**
+ * @name Second picture library numbering
+ * @brief Subtract the bias to convert IDs to shared slot indices.
+ * @{
+ */
 #define PICTURE_SECOND_BASE 1000
 #define PICTURE_SECOND_INDEX_BIAS 991
+/** @} */
 
 struct Bitmap;
 
@@ -302,26 +310,46 @@ enum PartFit {
 
 /** Manufacturer compatibility bits in the stock equipment word. */
 #define SPEC_FIT_MASK 0x000f
-/** Tire variant position in the stock equipment word. */
+/**
+ * @name Tire stock variant
+ * @brief Right-shift the stock equipment word, then mask to obtain the variant.
+ * @{
+ */
 #define SPEC_TIRES_SHIFT 4
-/** Tire variant mask after shifting. */
 #define SPEC_TIRES_MASK 3
-/** Transmission variant position in the stock equipment word. */
+/** @} */
+/**
+ * @name Transmission stock variant
+ * @brief Right-shift the stock equipment word, then mask to obtain the variant.
+ * @{
+ */
 #define SPEC_TRANS_SHIFT 6
-/** Transmission variant mask after shifting. */
 #define SPEC_TRANS_MASK 3
-/** Engine variant position in the stock equipment word. */
+/** @} */
+/**
+ * @name Engine stock variant
+ * @brief Right-shift the stock equipment word, then mask to obtain the variant.
+ * @{
+ */
 #define SPEC_ENGINE_SHIFT 8
-/** Engine variant mask after shifting. */
 #define SPEC_ENGINE_MASK 7
-/** Manifold variant position in the stock equipment word. */
+/** @} */
+/**
+ * @name Manifold stock variant
+ * @brief Right-shift the stock equipment word, then mask to obtain the variant.
+ * @{
+ */
 #define SPEC_MANIFOLD_SHIFT 11
-/** Manifold variant mask after shifting. */
 #define SPEC_MANIFOLD_MASK 7
-/** Carburetor variant position in the stock equipment word. */
+/** @} */
+/**
+ * @name Carburetor stock variant
+ * @brief Right-shift the stock equipment word, then mask to obtain the variant.
+ * @{
+ */
 #define SPEC_CARB_SHIFT 14
-/** Carburetor variant mask after shifting. */
 #define SPEC_CARB_MASK 3
+/** @} */
 
 /**
  * @brief A car model's price, performance rank and stock equipment.
@@ -338,14 +366,14 @@ struct CarSpec {
     enum PictureId bodyPic; /**< Base car-body picture. */
 };
 
-/** @brief On-road opponent sprite sets. */
+/** @brief Four-view picture-table rows selected by the car model. */
 enum RaceSpriteSet {
-    RACE_SPRITES_KING = 0,   /**< The King's Corvette. */
-    RACE_SPRITES_SEDAN,      /**< Sedan. */
-    RACE_SPRITES_COUPE,      /**< Coupe. */
-    RACE_SPRITES_HOT_ROD,    /**< Hot rod. */
-    RACE_SPRITES_SPORTS_CAR, /**< Sports car. */
-    RACE_SPRITE_SET_COUNT    /**< Number of sprite sets. */
+    RACE_SPRITES_KING = 0,   /**< Unique Corvette passing and rear views. */
+    RACE_SPRITES_SEDAN,      /**< Sedan passing and rear views. */
+    RACE_SPRITES_COUPE,      /**< Uses sedan passing and distant views. */
+    RACE_SPRITES_HOT_ROD,    /**< Uses the sedan passing view. */
+    RACE_SPRITES_SPORTS_CAR, /**< Uses the sedan passing view. */
+    RACE_SPRITE_SET_COUNT    /**< Row count in the opponent picture table. */
 };
 
 /**

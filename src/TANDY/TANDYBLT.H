@@ -1,4 +1,7 @@
-/* TANDYBLT.H - declarations of what TANDYBLT.C defines. */
+/**
+ * @file TANDYBLT.H
+ * @brief Packed four-bit bitmap copies and masked composition.
+ */
 
 #ifndef TANDYBLT_H
 #define TANDYBLT_H

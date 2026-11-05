@@ -1,4 +1,7 @@
-/* TANDY.H - declarations of what TANDY.C defines. */
+/**
+ * @file TANDY.H
+ * @brief Tandy drawing hooks, text and page transfers.
+ */
 
 #ifndef TANDY_H
 #define TANDY_H

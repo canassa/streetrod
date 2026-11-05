@@ -1,7 +1,11 @@
-/* BITMAP.H - declarations of what BITMAP.C defines. */
+/**
+ * @file BITMAP.H
+ * @brief Bitmap storage and clipped image composition.
+ */
 
 #ifndef BITMAP_H
 #define BITMAP_H
+/** Bytes preceding pixel storage in an allocated bitmap. */
 #define BITMAP_HEADER_BYTES 0x30
 
 

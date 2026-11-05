@@ -57,6 +57,8 @@ feeds a calculation, such as a screen position.
    constant or macro in a `.H` is documented, in the same terse style. Closely related defines
    (a SHIFT/MASK pair, a table of limits) can share a `/** @name ... @{ */` group
    instead of repeating themselves line by line; include guards need nothing.
+   A group brief does not expose each macro as a link target: add an adjacent
+   comment to a macro before referring to it with @ref.
 1. Every documented `.H`/`.C` declaring file-level items needs a `@file` block.
    Use the real uppercase filename or bare `@file`. Without this, file-scope
    entities can be omitted with EXTRACT_ALL=NO even when their comments exist.

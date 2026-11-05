@@ -1,4 +1,7 @@
-/* MEMSTR.H - declarations of what MEMSTR.ASM defines. */
+/**
+ * @file MEMSTR.H
+ * @brief Text search within far memory.
+ */
 
 #ifndef MEMSTR_H
 #define MEMSTR_H

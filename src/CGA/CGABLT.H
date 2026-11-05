@@ -1,4 +1,7 @@
-/* CGABLT.H - declarations of what CGABLT.C defines. */
+/**
+ * @file CGABLT.H
+ * @brief Masked and opaque blits for two-bit packed pixels.
+ */
 
 #ifndef CGABLT_H
 #define CGABLT_H

@@ -1,4 +1,7 @@
-/* KBD.H - declarations of what KBD.ASM defines. */
+/**
+ * @file KBD.H
+ * @brief Keyboard interrupt handling and text input mode.
+ */
 
 #ifndef KBD_H
 #define KBD_H

@@ -1,4 +1,7 @@
-/* EGABLIT.H - declarations of what EGABLIT.C defines. */
+/**
+ * @file EGABLIT.H
+ * @brief Planar bitmap copies, masks and sprite composition.
+ */
 
 #ifndef EGABLIT_H
 #define EGABLIT_H

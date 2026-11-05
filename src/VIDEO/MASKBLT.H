@@ -1,4 +1,7 @@
-/* MASKBLT.H - declarations of what MASKBLT.ASM defines. */
+/**
+ * @file MASKBLT.H
+ * @brief Masked pixel copies and transparency mask construction.
+ */
 
 #ifndef MASKBLT_H
 #define MASKBLT_H

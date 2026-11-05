@@ -1,10 +1,19 @@
-/* POOLS.H - declarations of what POOLS.C defines. */
+/**
+ * @file POOLS.H
+ * @brief Fixed car and spare-part storage pools.
+ */
 
 #ifndef POOLS_H
 #define POOLS_H
 
+/**
+ * @name Garage storage capacities
+ * @brief Entries in the car and spare-part free lists, including owned items.
+ * @{
+ */
 #define CAR_NODE_COUNT 16
 #define PART_NODE_COUNT 140
+/** @} */
 
 struct Node {
     int value;

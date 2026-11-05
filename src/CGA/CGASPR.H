@@ -1,4 +1,7 @@
-/* CGASPR.H - declarations of what CGASPR.C defines. */
+/**
+ * @file CGASPR.H
+ * @brief Car sprite movement on CGA and Hercules displays.
+ */
 
 #ifndef CGASPR_H
 #define CGASPR_H

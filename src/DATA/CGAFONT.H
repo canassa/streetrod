@@ -1,4 +1,7 @@
-/* CGAFONT.H - declarations of what CGAFONT.ASM defines. */
+/**
+ * @file CGAFONT.H
+ * @brief Packed glyphs for CGA text rendering.
+ */
 
 #ifndef CGAFONT_H
 #define CGAFONT_H

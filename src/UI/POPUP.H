@@ -1,4 +1,7 @@
-/* POPUP.H - declarations of what POPUP.C defines. */
+/**
+ * @file POPUP.H
+ * @brief Saved-background windows and speech bubbles.
+ */
 
 #ifndef POPUP_H
 #define POPUP_H

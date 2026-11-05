@@ -1,4 +1,7 @@
-/* TANDYCPY.H - declarations of what TANDYCPY.ASM defines. */
+/**
+ * @file TANDYCPY.H
+ * @brief Rectangle transfers to Tandy interleaved video memory.
+ */
 
 #ifndef TANDYCPY_H
 #define TANDYCPY_H

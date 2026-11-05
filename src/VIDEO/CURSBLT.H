@@ -1,4 +1,7 @@
-/* CURSBLT.H - declarations of what CURSBLT.ASM defines. */
+/**
+ * @file CURSBLT.H
+ * @brief Cursor drawing with background preservation.
+ */
 
 #ifndef CURSBLT_H
 #define CURSBLT_H

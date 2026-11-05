@@ -1,4 +1,7 @@
-/* CGA.H - declarations of what CGA.C defines. */
+/**
+ * @file CGA.H
+ * @brief CGA and Hercules drawing hooks and page control.
+ */
 
 #ifndef CGA_H
 #define CGA_H

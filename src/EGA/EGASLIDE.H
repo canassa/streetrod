@@ -1,4 +1,7 @@
-/* EGASLIDE.H - declarations of what EGASLIDE.C defines. */
+/**
+ * @file EGASLIDE.H
+ * @brief Vertical car sprite slides on EGA displays.
+ */
 
 #ifndef EGASLIDE_H
 #define EGASLIDE_H

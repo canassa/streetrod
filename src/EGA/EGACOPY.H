@@ -1,4 +1,7 @@
-/* EGACOPY.H - declarations of what EGACOPY.C defines. */
+/**
+ * @file EGACOPY.H
+ * @brief EGA page copies and patterned scene reveals.
+ */
 
 #ifndef EGACOPY_H
 #define EGACOPY_H

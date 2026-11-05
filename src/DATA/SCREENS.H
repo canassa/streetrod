@@ -1,4 +1,7 @@
-/* SCREENS.H - declarations of what SCREENS.ASM defines. */
+/**
+ * @file SCREENS.H
+ * @brief Screen and backing bitmap descriptors.
+ */
 
 #ifndef SCREENS_H
 #define SCREENS_H

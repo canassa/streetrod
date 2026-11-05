@@ -1,4 +1,7 @@
-/* SPEAKER.H - declarations of what SPEAKER.ASM defines. */
+/**
+ * @file SPEAKER.H
+ * @brief Software delay and speaker sequence playback.
+ */
 
 #ifndef SPEAKER_H
 #define SPEAKER_H

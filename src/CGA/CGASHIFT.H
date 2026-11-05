@@ -1,4 +1,7 @@
-/* CGASHIFT.H - declarations of what CGASHIFT.C defines. */
+/**
+ * @file CGASHIFT.H
+ * @brief CGA blits with horizontal pixel alignment.
+ */
 
 #ifndef CGASHIFT_H
 #define CGASHIFT_H

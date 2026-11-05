@@ -1,4 +1,7 @@
-/* VIDDET.H - declarations of what VIDDET.ASM defines. */
+/**
+ * @file VIDDET.H
+ * @brief Video adapter detection and original mode restoration.
+ */
 
 #ifndef VIDDET_H
 #define VIDDET_H

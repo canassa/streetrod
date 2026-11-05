@@ -1,4 +1,7 @@
-/* EGALINE.H - declarations of what EGALINE.ASM defines. */
+/**
+ * @file EGALINE.H
+ * @brief EGA line drawing.
+ */
 
 #ifndef EGALINE_H
 #define EGALINE_H

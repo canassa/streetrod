@@ -1,4 +1,7 @@
-/* TANDYSPR.H - declarations of what TANDYSPR.C defines. */
+/**
+ * @file TANDYSPR.H
+ * @brief Car sprite movement on Tandy displays.
+ */
 
 #ifndef TANDYSPR_H
 #define TANDYSPR_H

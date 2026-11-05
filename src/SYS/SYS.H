@@ -1,8 +1,13 @@
-/* SYS.H - declarations of what SYS.C defines. */
+/**
+ * @file SYS.H
+ * @brief Game timing, input dispatch and interrupt services.
+ */
 
 #ifndef SYS_H
 #define SYS_H
+/** PIT input clocks per game tick; four game ticks per BIOS tick. */
 #define SYSTEM_TIMER_RELOAD 0x4000
+/** Queue sentinel later than any pending game-tick deadline. */
 #define TIMER_NO_DEADLINE 0x7fffffffL
 
 #include "PERF.H"
@@ -15,9 +20,10 @@
 #include "MUSIC.H"
 struct Hot;
 
+/** @brief Work performed when a queued deadline expires. */
 enum TimerAction {
-    TIMER_CANCELLED = 0,
-    TIMER_RESUME_ANIM = 1
+    TIMER_CANCELLED = 0,  /**< Discard the timer without running a callback. */
+    TIMER_RESUME_ANIM = 1 /**< Resume the timer argument's animation object. */
 };
 
 struct Mouse {

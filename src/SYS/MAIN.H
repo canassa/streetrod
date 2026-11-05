@@ -1,4 +1,7 @@
-/* MAIN.H - declarations of what MAIN.C defines. */
+/**
+ * @file MAIN.H
+ * @brief Startup video selection and current scene state.
+ */
 
 #ifndef MAIN_H
 #define MAIN_H
@@ -7,27 +10,35 @@
 
 struct Bitmap;
 
+/** @brief Location index for car placement and background selection. */
 enum Scene {
-    SCENE_NONE = 0,
-    SCENE_GARAGE = 1,
-    SCENE_BOBS = 2,
-    SCENE_GAS_STATION = 3,
-    SCENE_ADVERTS = 5,
-    SCENE_JAIL = 6
+    SCENE_NONE = 0,        /**< No location-specific car backdrop. */
+    SCENE_GARAGE = 1,      /**< Use the home garage car backdrop. */
+    SCENE_BOBS = 2,        /**< Use the diner car backdrop. */
+    SCENE_GAS_STATION = 3, /**< Use the pump foreground and car backdrop. */
+    SCENE_ADVERTS = 5,     /**< Use the classified-ad car preview backdrop. */
+    SCENE_JAIL = 6         /**< Police backdrop restricts car drawing. */
 };
 
+/**
+ * @name Hardware bitmap formats
+ * @brief Negative display tags used in bitmap flags and video dispatch.
+ * @{
+ */
 #define VID_EGA (-2)
 #define VID_CGA (-3)
 #define VID_HERCULES (-4)
 #define VID_TANDY (-6)
+/** @} */
 
+/** @brief Startup adapter choices before conversion to a drawing format. */
 enum VideoChoice {
-    VIDEO_CHOICE_CGA = 1,
-    VIDEO_CHOICE_EGA = 2,
-    VIDEO_CHOICE_VGA = 3,
-    VIDEO_CHOICE_HERCULES = 4,
-    VIDEO_CHOICE_TANDY = 5,
-    VIDEO_CHOICE_CGA_ON_EGA = 6
+    VIDEO_CHOICE_CGA = 1,       /**< Four-color assets and CGA video memory. */
+    VIDEO_CHOICE_EGA = 2,       /**< Planar assets and EGA pages. */
+    VIDEO_CHOICE_VGA = 3,       /**< EGA drawing with VGA palette handling. */
+    VIDEO_CHOICE_HERCULES = 4,  /**< CGA assets in monochrome memory. */
+    VIDEO_CHOICE_TANDY = 5,     /**< Packed assets in Tandy video memory. */
+    VIDEO_CHOICE_CGA_ON_EGA = 6 /**< CGA assets with EGA palette setup. */
 };
 
 extern int g_hercules;

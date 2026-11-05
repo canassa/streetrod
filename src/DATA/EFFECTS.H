@@ -1,4 +1,7 @@
-/* EFFECTS.H - declarations of what EFFECTS.ASM defines. */
+/**
+ * @file EFFECTS.H
+ * @brief Speaker pitch sequences for mechanical sound effects.
+ */
 
 #ifndef EFFECTS_H
 #define EFFECTS_H

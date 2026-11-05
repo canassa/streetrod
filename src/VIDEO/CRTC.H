@@ -1,4 +1,7 @@
-/* CRTC.H - declarations of what CRTC.ASM defines. */
+/**
+ * @file CRTC.H
+ * @brief Display synchronization and split-screen control.
+ */
 
 #ifndef CRTC_H
 #define CRTC_H

@@ -1,4 +1,7 @@
-/* MOUSE.H - declarations of what MOUSE.C defines. */
+/**
+ * @file MOUSE.H
+ * @brief Mouse driver detection, buttons and relative motion.
+ */
 
 #ifndef MOUSE_H
 #define MOUSE_H

@@ -1,4 +1,7 @@
-/* SONG.H - declarations of what SONG.ASM defines. */
+/**
+ * @file SONG.H
+ * @brief Background music pitch and duration stream.
+ */
 
 #ifndef SONG_H
 #define SONG_H

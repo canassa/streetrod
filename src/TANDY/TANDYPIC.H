@@ -1,4 +1,7 @@
-/* TANDYPIC.H - declarations of what TANDYPIC.ASM defines. */
+/**
+ * @file TANDYPIC.H
+ * @brief Picture expansion and transparency masks for Tandy pixels.
+ */
 
 #ifndef TANDYPIC_H
 #define TANDYPIC_H

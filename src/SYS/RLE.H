@@ -1,4 +1,7 @@
-/* RLE.H - declarations of what RLE.ASM defines. */
+/**
+ * @file RLE.H
+ * @brief Run-length picture expansion through a palette.
+ */
 
 #ifndef RLE_H
 #define RLE_H

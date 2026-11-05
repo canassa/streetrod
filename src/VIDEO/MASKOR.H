@@ -1,4 +1,7 @@
-/* MASKOR.H - declarations of what MASKOR.ASM defines. */
+/**
+ * @file MASKOR.H
+ * @brief Masked pixel overlay transfers.
+ */
 
 #ifndef MASKOR_H
 #define MASKOR_H

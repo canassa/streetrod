@@ -1,4 +1,7 @@
-/* MARKS.H - declarations of what MARKS.C defines. */
+/**
+ * @file MARKS.H
+ * @brief Temporary arena allocation release and stack unwinding.
+ */
 
 #ifndef MARKS_H
 #define MARKS_H
