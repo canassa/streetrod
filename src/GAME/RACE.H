@@ -1,7 +1,13 @@
-/* RACE.H - declarations of what RACE.C defines. */
+/**
+ * @file RACE.H
+ * @brief Race simulation, results and gas-station visits.
+ */
 
 #ifndef RACE_H
 #define RACE_H
+
+#include "GAME.H"
+#include "STRUCTS.H"
 
 #define REPAIR_BASE_PRICE 100
 #define MAJOR_REPAIR_PRICE_RANGE 0x28
@@ -57,25 +63,39 @@ enum RaceExit {
 struct Bitmap;
 struct Eng;
 
+/** @brief Held tool and cursor shape during a gas-station visit. */
 enum GasHand {
-    GAS_HAND_EMPTY = 1,
-    GAS_HAND_NOZZLE = 2,
-    GAS_HAND_RAG = 3
+    GAS_HAND_EMPTY = 1,  /**< Empty hand. */
+    GAS_HAND_NOZZLE = 2, /**< Holding the pump nozzle. */
+    GAS_HAND_RAG = 3     /**< Holding the cleaning rag. */
 };
 
-struct Dlg {
-    int specIndex;
-    int bodyMods;
-    struct Bitmap far *bm1;
-    struct Bitmap far *bm2;
-    enum GasHand hand;
-    int fillsLeft;
-    int attendantAbsent;
-    int nozzleInTank;
-    int nozzleOnPump;
+/**
+ * @brief Car, saved backgrounds and refuelling state for one gas-station visit.
+ *
+ * The cap backgrounds belong to the visit's arena storage and account for
+ * whether the nozzle is on the pump.
+ */
+struct GasStationVisit {
+    int specIndex; /**< Current car's specification-table index. */
+    /** Body-overlay bits: @ref BODY_ROOF, @ref BODY_FRONT_BUMPER,
+     * @ref BODY_REAR_BUMPER and @ref BODY_LARGE_ENGINE. */
+    enum BodyMod bodyMods;
+    /** Cap-area background with the nozzle on the pump. */
+    struct Bitmap far *capBgNozzleOnPump;
+    /** Cap-area background with the nozzle off the pump. */
+    struct Bitmap far *capBgNozzleOffPump;
+    enum GasHand hand; /**< Held tool and cursor shape. */
+    int fillsLeft;     /**< Remaining three-gallon fills. */
+    BOOL selfService;  /**< TRUE until the attendant takes over. */
+    BOOL nozzleInTank; /**< TRUE while the nozzle is in the tank. */
+    BOOL nozzleOnPump; /**< TRUE while the nozzle is on the pump. */
+    /** Written on entry and attendant takeover; never read. */
     int unused;
-    int nozzlePenaltyDue;
-    int pumping;
+    /** TRUE permits a charge for an unreturned nozzle. */
+    BOOL chargeNozzlePenalty;
+    /** TRUE makes timeouts deliver fuel and debit payment. */
+    BOOL pumping;
 };
 
 struct Spot {

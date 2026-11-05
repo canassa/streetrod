@@ -2763,3 +2763,28 @@ The conflicting lines contain independent substitutions: keep named appearance m
   member bounds. Audited Car directly with real MSC sizeof/offsetof instead;
   documented the limitation in the [sr-cli skill](../.claude/skills/sr-cli/SKILL.md).
   No parser weakening or game-layout workaround was introduced.
+## 2026-11-05 18:02 CET: Investigate gas-station visit state
+
+### What I did
+- Traced every Dlg member and its storage lifetime, reviewed cap/pump construction,
+  cursor selection, messages, fuel units, garage entry checks and decoded assets.
+  Recorded the evidence and out-of-scope misleading names in
+  [the investigation note](investigations/Dlg.md) before source renames.
+- Renamed the type to GasStationVisit, named the two cap-area background snapshots,
+  and clarified selfService and chargeNozzlePenalty. Used the existing BodyMod
+  enum and BOOL without changing the 28-byte layout; retained the unread spare.
+  Added focused type/member/GasHand documentation and synchronized dependencies.
+- Passed headers, formatting, zero-diagnostic Doxygen, all 572 function matches,
+  712 real-compiler layout checks, clean packed build, DGROUP checks/order,
+  106 unit tests and DOS-native MAKE. Both EXE build paths are byte-identical
+  to the original (SHA-1 3a5e28b795313028b7e77d147122f41cb29de334).
+
+### What I learned
+- The two saved cap backgrounds differ by whether the nozzle is on the pump;
+  they are high-arena snapshots retained for the entire station visit.
+- The initial attendant is seated on screen, so the old attendantAbsent name
+  actually described self-service mode. The penalty flag enables a conditional
+  charge; it does not mean a penalty has already accrued.
+- Fills count three-gallon increments. The unread spare is only written, and
+  the rag cursor bypasses the inactivity countdown. PIC_FUEL_GAUGE is actually
+  the rag/bucket scenery patch. Details and source evidence live in the note.
