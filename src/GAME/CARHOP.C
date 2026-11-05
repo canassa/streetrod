@@ -1,4 +1,3 @@
-#include <stddef.h>
 #include "CARHOP.H"
 #include "ARENA.H"
 #include "BITMAP.H"
@@ -118,7 +117,7 @@ void ch_skate(enum CarhopMode mode, int carPresent)
             carCopyBlt.dy = captureStrip->height - carCutout->height;
             (*g_videoOps.maskedBlit)(carCutout, captureStrip, &carCopyBlt, 1);
         } else
-            carCutout = NULL;
+            carCutout = 0;
     }
     cp_backdrop(captureStrip, &imagePtrs[0], PIC_CARHOP_SILHOUETTES, &canvas, 0x29, 0x29, &ignoredRect, &ignoredRect);
     if (mode == CARHOP_ENTER) {
