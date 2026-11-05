@@ -77,7 +77,7 @@ int dv_run(void)
         (*g_videoOps.copy)(src, g_dashBuffered ? g_bufBackgroundDashPtr : g_driveDisplayPage, &blt, 1);
         ma_pop_high(1);
         vw_load();
-        da_init_shifter(g_driveEng.autoSelector, g_driveEng.gearCount);
+        da_init_shifter(g_driveEng.autoSelector, g_driveEng.topGear);
         da_draw_shifter(g_dashBuffered ? g_bufBackgroundDashPtr : g_driveDisplayPage, &g_driveEng);
         shiftx5 = 0;
         g_steeringOld = 0x64;

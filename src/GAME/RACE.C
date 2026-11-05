@@ -60,10 +60,10 @@ static int g_finishLineIndex;
 static struct RivalPace g_rivalPace;
 static int g_shiftPenalty;
 static int g_targetLane;
-static int g_rpmBand;
+static enum RpmBand g_rpmBand;
 static int g_shiftPoint;
 static void near init_rival_eng(void);
-static void near fit_gear(int rpm, struct Eng *p);
+static void near fit_gear(int rpm, struct DrivingState *p);
 static void near rival_accelerate(void);
 static void near move_player(void);
 static void near move_rival(void);
@@ -892,7 +892,7 @@ enum CopPhase g_pursuitPhaseIndex;
 int g_shownShiftPosition;
 
 
-void near ra_reset_eng(struct Eng *p)
+void near ra_reset_eng(struct DrivingState *p)
 {
     struct Node *car;
     int t;
@@ -908,16 +908,17 @@ void near ra_reset_eng(struct Eng *p)
     p->speed = p->gearIndex = p->rpmBand = p->steeringInput = p->steering = 0;
     p->stopFlags = p->unused5 = p->elapsedTicks = 0;
     if (p->automatic) {
-        p->gear[2].bands[1].maxRpm = p->gear[2].bands[2].minRpm = p->shiftRpm;
+        p->gear[DRIVE_SECOND].bands[RPM_BAND_MIDDLE].maxRpm = p->gear[DRIVE_SECOND].bands[RPM_BAND_HIGH].minRpm =
+            p->shiftRpm;
         p->autoSelector = SELECTOR_NEUTRAL;
     }
     p->unused3 = p->unused2 = -1;
     p->rpm = ENGINE_IDLE_RPM;
-    p->rpmPerSpeed = p->initialRpmPerSpeed;
-    p->accelStep = p->gear[0].bands[0].accelStep;
-    p->decelStep = p->gear[0].bands[0].decelStep;
-    p->maxRpm = p->gear[0].bands[0].maxRpm;
-    p->minRpm = p->gear[0].bands[0].minRpm;
+    p->rpmPerSpeed = p->resetRpmPerSpeed;
+    p->accelStep = p->gear[DRIVE_NEUTRAL].bands[RPM_BAND_LOW].accelStep;
+    p->decelStep = p->gear[DRIVE_NEUTRAL].bands[RPM_BAND_LOW].decelStep;
+    p->maxRpm = p->gear[DRIVE_NEUTRAL].bands[RPM_BAND_LOW].maxRpm;
+    p->minRpm = p->gear[DRIVE_NEUTRAL].bands[RPM_BAND_LOW].minRpm;
     g_unused6 = 0;
     g_unused7 = g_unused8 = 0;
     g_shownShiftPosition = -1;
@@ -925,13 +926,13 @@ void near ra_reset_eng(struct Eng *p)
     car = g_driver.currentCar->tires;
     p->tireSlip = g_tireSlip[g_parts[car->idx].variant][car->wear / TIRE_WEAR_BAND];
     if (car->wear < TIRE_FAILURE_WEAR_MIN)
-        p->tireFailureIndex = 0;
+        p->tireFailureRoadIndex = 0;
     else {
         if (car->wear + rn_int(TIRE_WEAR_BAND) <= TIRE_FAILURE_WEAR_LIMIT)
-            p->tireFailureIndex = 0;
+            p->tireFailureRoadIndex = 0;
         else {
             t = (g_finishLineIndex - RACE_START_INDEX) >> 1;
-            p->tireFailureIndex = rn_int(t >> 1) + t + RACE_START_INDEX;
+            p->tireFailureRoadIndex = rn_int(t >> 1) + t + RACE_START_INDEX;
         }
         goto nx;
     }
@@ -954,15 +955,15 @@ static void near init_rival_eng(void)
     pf_drivetrain_spec(g_opponentSpecIndex, &g_oppEngState);
     g_shiftPenalty = g_selectedRacerPointer->earlyShiftPenalty;
     ra_reset_eng(&g_oppEngState);
-    g_oppEngState.gearIndex = 0;
-    g_oppEngState.rpmPerSpeed = g_oppEngState.gearRpmPerSpeed[0];
+    g_oppEngState.gearIndex = DRIVE_NEUTRAL;
+    g_oppEngState.rpmPerSpeed = g_oppEngState.gearRpmPerSpeed[DRIVE_NEUTRAL];
     g_oppEngState.rpm = ENGINE_IDLE_RPM;
     g_oppEngState.speed = ENGINE_IDLE_RPM / g_oppEngState.rpmPerSpeed;
-    if ((r = g_oppEngState.gear[0].bands + (g_rpmBand = 1))->maxRpm <= ENGINE_IDLE_RPM) {
-        g_rpmBand = 2;
+    if ((r = g_oppEngState.gear[DRIVE_NEUTRAL].bands + (g_rpmBand = RPM_BAND_MIDDLE))->maxRpm <= ENGINE_IDLE_RPM) {
+        g_rpmBand = RPM_BAND_HIGH;
         r++;
     } else if (r->minRpm > g_oppEngState.rpm) {
-        g_rpmBand = 0;
+        g_rpmBand = RPM_BAND_LOW;
         r--;
     }
     g_oppEngState.rpmBand = g_rpmBand;
@@ -1022,22 +1023,22 @@ void near ra_run(void)
 /* Steps p->f18 up from 1 until gear[f18].r[1].f2 exceeds f34[f18] * rpm or
    f18 reaches f1c. The four pointers the loop advances in memory are /Ol induction temps for the p->f18 indexing. */
 
-static void near fit_gear(int rpm, struct Eng *p)
+static void near fit_gear(int rpm, struct DrivingState *p)
 {
     struct Range *r;
 
-    for (p->gearIndex = 1;; p->gearIndex++) {
+    for (p->gearIndex = DRIVE_FIRST;; p->gearIndex++) {
         p->rpmPerSpeed = p->gearRpmPerSpeed[p->gearIndex];
         p->rpm = p->rpmPerSpeed * rpm;
-        if ((r = &p->gear[p->gearIndex].bands[1])->maxRpm > p->rpm) {
+        if ((r = &p->gear[p->gearIndex].bands[RPM_BAND_MIDDLE])->maxRpm > p->rpm) {
             p->rpmBand = g_rpmBand = p->rpm >= r->minRpm;
-            if (g_rpmBand == 0)
-                r = &p->gear[p->gearIndex].bands[0];
+            if (g_rpmBand == RPM_BAND_LOW)
+                r = &p->gear[p->gearIndex].bands[RPM_BAND_LOW];
             break;
         }
-        if (p->gearIndex == p->gearCount) {
-            r = &p->gear[p->gearIndex].bands[2];
-            p->rpmBand = g_rpmBand = 2;
+        if (p->gearIndex == p->topGear) {
+            r = &p->gear[p->gearIndex].bands[RPM_BAND_HIGH];
+            p->rpmBand = g_rpmBand = RPM_BAND_HIGH;
             break;
         }
     }
@@ -1107,23 +1108,23 @@ static void near rival_accelerate(void)
                     (r = &g_oppEngState.gear[g_oppEngState.gearIndex].bands[g_oppEngState.rpmBand])->maxRpm;
                 g_oppEngState.accelStep = r->accelStep;
             }
-            if (g_oppEngState.gearIndex < g_oppEngState.gearCount &&
+            if (g_oppEngState.gearIndex < g_oppEngState.topGear &&
                 ((g_oppEngState.autoSelector && g_oppEngState.rpm >= g_oppEngState.autoShiftRpm) ||
                  g_oppEngState.rpm >= g_shiftPoint)) {
                 g_oppEngState.gearIndex++;
                 if (g_oppEngState.autoSelector == SELECTOR_MANUAL)
-                    g_shiftPoint = g_oppEngState.gearIndex < g_oppEngState.gearCount
+                    g_shiftPoint = g_oppEngState.gearIndex < g_oppEngState.topGear
                                        ? g_oppEngState.shiftRpm - 100 * g_shiftPenalty
                                    : g_processorSpeedRating < 4 && r_vid.mode != VID_TANDY ? RIVAL_AUTO_SHIFT_RPM
                                                                                            : RIVAL_TOP_GEAR_RPM;
                 g_oppEngState.rpmPerSpeed = g_oppEngState.gearRpmPerSpeed[g_oppEngState.gearIndex];
                 g_oppEngState.rpm = g_oppEngState.speed * g_oppEngState.rpmPerSpeed;
-                if ((r = &g_oppEngState.gear[g_oppEngState.gearIndex].bands[g_rpmBand = 1])->maxRpm <=
+                if ((r = &g_oppEngState.gear[g_oppEngState.gearIndex].bands[g_rpmBand = RPM_BAND_MIDDLE])->maxRpm <=
                     g_oppEngState.rpm) {
-                    g_rpmBand = 2;
+                    g_rpmBand = RPM_BAND_HIGH;
                     r++;
                 } else if (r->minRpm > g_oppEngState.rpm) {
-                    g_rpmBand = 0;
+                    g_rpmBand = RPM_BAND_LOW;
                     r--;
                 }
                 g_oppEngState.rpmBand = g_rpmBand;
@@ -1373,7 +1374,7 @@ void ra_tick(void)
             sc_show_gear((g_shownShiftPosition = g_driveEng.autoSelector) + 4);
     } else if (g_driveEng.gearIndex != g_shownShiftPosition)
         sc_show_gear(g_shownShiftPosition = g_driveEng.gearIndex);
-    if (g_driveEng.tireFailureIndex && g_trackViewMotion.roadIndex > g_driveEng.tireFailureIndex)
+    if (g_driveEng.tireFailureRoadIndex && g_trackViewMotion.roadIndex > g_driveEng.tireFailureRoadIndex)
         g_failureTire = 1;
     if (g_squealOn == 0) {
         if (abs(g_driveEng.steering) >= 12)

@@ -4,10 +4,11 @@
 #define DASH_H
 
 #include "CURSOR.H"
+#include "PERF.H"
 #include "VIDEO.H"
 struct Bitmap;
 struct Blt;
-struct Eng;
+struct DrivingState;
 struct Sprite;
 
 /* what g_shifterDraw.track points at (da_draw_shifter, da_init_shifter): number of points, bitmap ids of the two sprites, bitmap
@@ -64,8 +65,8 @@ void da_set_view(enum DashView n);
 void da_load_wheel(void);
 void da_steer_marker(int a);
 void da_draw_wheel(int a, int b, struct Bitmap far *dst);
-void da_init_shifter(int a, int b);
-void da_draw_shifter(struct Bitmap far *dst, struct Eng *e);
+void da_init_shifter(enum AutoSelector a, enum DriveGear b);
+void da_draw_shifter(struct Bitmap far *dst, struct DrivingState *e);
 void da_fmemset(char far *p, int c, unsigned n);
 int da_clip_blt(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *in, struct Blt *out);
 void da_retrace(int a);

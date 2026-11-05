@@ -2734,3 +2734,17 @@ The conflicting lines contain independent substitutions: keep named appearance m
   that reuse. See [misnames.md](investigations/misnames.md) for the evidence.
 - Variant 2 and picture 1079 are Tri-Power (three 2-barrel carbs); variant 3 and
   picture 1083 are Dual-Quad (two 4-barrel carbs).
+
+## 2026-11-05 18:03 CET: Investigate Eng driving state
+
+### What I did
+
+- Investigated every member and consumer of Eng; recorded storage, construction, persistence, per-member evidence, remaining unknowns and out-of-scope misleading identifiers in [Eng.md](investigations/Eng.md).
+- Renamed the type to DrivingState and clarified tireFailureRoadIndex, topGear and resetRpmPerSpeed. Typed flags as BOOL, gear/band values as enums and shift thresholds with the existing EngineShiftRpm; replaced the related raw value uses and documented the record.
+- Preserved all 29 member offsets/sizes and the 194-byte record. All 572 functions match; clean packed build and DOS-native MAKE are IDENTICAL. Headers, formatting, zero-diagnostic Doxygen, DGROUP ownership/order, 714 compiler layout checks and all 106 tests pass. Committed on inv-eng; no merge or push.
+
+### What I learned
+
+- This record includes steering, tire drift, dashboard invalidation and race outcomes, so an engine-only name understates it. Top gear is an index; the sixth ratio-array word is an unread tire/model calculation, not a sixth gear. The reset-ratio word has no writer, and several caches are write-only. See the member evidence in [Eng.md](investigations/Eng.md).
+- The existing data-shape reader supports enum constants in dimensions but not macro names. Reusing RPM_BAND_COUNT and DRIVE_GEAR_SLOTS as count enumerators preserves their values and enables both named dimensions and all layout/DGROUP gates without tooling changes.
+- fit_gear and ra_speed_step have parameters named rpm that actually receive mph; retained outside this investigation's scope, with evidence in the note.

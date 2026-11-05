@@ -11,7 +11,7 @@
 #include "SYS.H"
 
 extern int g_keepCruiseMusic;
-extern struct Eng g_oppEngState;
+extern struct DrivingState g_oppEngState;
 int dt_step(void);
 
 #endif

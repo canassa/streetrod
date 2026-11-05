@@ -1,4 +1,7 @@
-/* RACE.H - declarations of what RACE.C defines. */
+/**
+ * @file RACE.H
+ * @brief Race simulation, outcomes and gas-station interactions.
+ */
 
 #ifndef RACE_H
 #define RACE_H
@@ -55,7 +58,7 @@ enum RaceExit {
 #define RIVAL_TOP_GEAR_RPM 0x1518
 
 struct Bitmap;
-struct Eng;
+struct DrivingState;
 
 enum GasHand {
     GAS_HAND_EMPTY = 1,
@@ -107,14 +110,14 @@ enum CopPhase {
     COP_PURSUING = 3
 };
 
-#define STOP_LOST 0x01
-#define STOP_COLLISION 0x02
-#define STOP_ENGINE 0x04
-#define STOP_TIRES 0x08
-#define STOP_TRANSMISSION 0x10
-#define STOP_ROADSIDE_CRASH 0x20
-#define STOP_POLICE 0x40
-#define STOP_JUMP_START 0x80
+#define STOP_LOST 0x01           /**< This car lost the race. */
+#define STOP_COLLISION 0x02      /**< Collision with the rival. */
+#define STOP_ENGINE 0x04         /**< Engine failure. */
+#define STOP_TIRES 0x08          /**< Tire failure. */
+#define STOP_TRANSMISSION 0x10   /**< Transmission failure. */
+#define STOP_ROADSIDE_CRASH 0x20 /**< Collision with the roadside. */
+#define STOP_POLICE 0x40         /**< Stopped by police. */
+#define STOP_JUMP_START 0x80     /**< Moved before the start signal. */
 
 struct RivalPace {
     int topSpeed;
@@ -163,7 +166,7 @@ extern int g_edgeXR;
 void ra_gas_station(void);
 void ra_finish_stats(void);
 enum RaceExit near ra_outcome(void);
-void near ra_reset_eng(struct Eng *p);
+void near ra_reset_eng(struct DrivingState *p);
 void near ra_run(void);
 int ra_speed_step(int rpm);
 void ra_tick(void);

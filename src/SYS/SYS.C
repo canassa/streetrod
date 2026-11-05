@@ -537,7 +537,7 @@ int sy_wait_input(int ticks)
     return 0;
 }
 
-struct Eng g_driveEng;
+struct DrivingState g_driveEng;
 int g_vibratoActive;
 struct Tone *g_toneShapePlaybackPointer;
 
@@ -1122,14 +1122,14 @@ void interrupt far sy_drive_isr(void)
                             (!g_driver.raceType ? DRAG_FINISH_INDEX : ROAD_FINISH_INDEX) - 60 <
                                 g_trackViewMotion.roadIndex)
                             flag = 1;
-                    } else if (g_driveEng.gearIndex < g_driveEng.gearCount && g_startLightGo) {
+                    } else if (g_driveEng.gearIndex < g_driveEng.topGear && g_startLightGo) {
                         c = 1;
                         flag = 1;
                         g_demoControl.autoShifts++;
                     }
-                    if (g_driveEng.rpm < AUTO_DOWNSHIFT_RPM && g_driveEng.gearIndex > 1 && !flag)
+                    if (g_driveEng.rpm < AUTO_DOWNSHIFT_RPM && g_driveEng.gearIndex > DRIVE_FIRST && !flag)
                         c = 1;
-                    if (g_driveEng.automatic && g_driveEng.gearIndex > 0)
+                    if (g_driveEng.automatic && g_driveEng.gearIndex > DRIVE_NEUTRAL)
                         c = 0;
                 }
                 if (g_runRacingFlag) {
@@ -1169,49 +1169,49 @@ void interrupt far sy_drive_isr(void)
                         }
                     }
                 } else if (g_driveEng.rpm > ENGINE_IDLE_RPM ||
-                           (g_driveEng.gearIndex > 0 && g_driveEng.rpm > g_driveEng.decelStep))
+                           (g_driveEng.gearIndex > DRIVE_NEUTRAL && g_driveEng.rpm > g_driveEng.decelStep))
                     g_driveEng.rpm -= g_driveEng.decelStep;
                 if (g_driveEng.rpm < ENGINE_REDLINE_RPM)
                     g_overRev = 0;
-                top = g_driveEng.speed < 5 && !flag && g_driveEng.gearIndex > 0;
+                top = g_driveEng.speed < 5 && !flag && g_driveEng.gearIndex > DRIVE_NEUTRAL;
                 if (c || top ||
                     (g_driveEng.automatic && g_driveEng.autoSelector > SELECTOR_NEUTRAL &&
-                     ((flag && g_driveEng.rpm > g_driveEng.autoShiftRpm &&
-                       g_driveEng.gearIndex < g_driveEng.gearCount) ||
-                      (!flag && g_driveEng.gearIndex > 1 && !g_driveEng.rpmBand)))) {
+                     ((flag && g_driveEng.rpm > g_driveEng.autoShiftRpm && g_driveEng.gearIndex < g_driveEng.topGear) ||
+                      (!flag && g_driveEng.gearIndex > DRIVE_FIRST && !g_driveEng.rpmBand)))) {
                     g_driver.currentCar->transmission->wear += g_driveEng.rpm > ENGINE_WEAR_RPM ? 15 : 3;
                     if (g_demo == 0) {
                         i = g_driver.currentCar->transmission->wear;
                         if (i >= PART_WEAR_LIMIT ||
-                            (g_driveEng.automatic == 0 && flag && g_driveEng.rpm > ENGINE_WEAR_RPM &&
+                            (!g_driveEng.automatic && flag && g_driveEng.rpm > ENGINE_WEAR_RPM &&
                              i / 100 + 100 > rn_int(3277))) {
                             g_driveEng.stopFlags |= (STOP_LOST | STOP_TRANSMISSION);
                             sy_stop_drive();
                         }
                     }
-                    if ((prev || (!g_driveEng.rpmBand && !flag)) && g_driveEng.gearIndex > 0)
+                    if ((prev || (!g_driveEng.rpmBand && !flag)) && g_driveEng.gearIndex > DRIVE_NEUTRAL)
                         g_driveEng.gearIndex--;
-                    else if ((flag || (g_driveEng.rpmBand > 0 && !prev)) && g_driveEng.gearIndex < g_driveEng.gearCount)
+                    else if ((flag || (g_driveEng.rpmBand > RPM_BAND_LOW && !prev)) &&
+                             g_driveEng.gearIndex < g_driveEng.topGear)
                         g_driveEng.gearIndex++;
                     if (g_driveEng.automatic) {
                         if (c)
                             g_driveEng.autoSelector =
                                 g_driveEng.autoSelector == SELECTOR_NEUTRAL ? SELECTOR_DRIVE : SELECTOR_NEUTRAL;
-                        if (top || g_driveEng.gearIndex == 0)
+                        if (top || g_driveEng.gearIndex == DRIVE_NEUTRAL)
                             g_driveEng.autoSelector = SELECTOR_NEUTRAL;
                         if (g_driveEng.autoSelector == SELECTOR_NEUTRAL)
-                            g_driveEng.gearIndex = 0;
+                            g_driveEng.gearIndex = DRIVE_NEUTRAL;
                     } else if (top)
-                        g_driveEng.gearIndex = 0;
-                    g_driveEng.shifterDirty = 1;
+                        g_driveEng.gearIndex = DRIVE_NEUTRAL;
+                    g_driveEng.shifterDirty = TRUE;
                     g_driveEng.rpmPerSpeed = g_driveEng.gearRpmPerSpeed[g_driveEng.gearIndex];
                     if ((g_driveEng.rpm = g_driveEng.speed * g_driveEng.rpmPerSpeed) == 0)
                         g_driveEng.rpm = 1505;
                 }
-                i = -1;
+                i = RPM_BAND_LOW - 1;
                 do {
                     sp = &g_driveEng.gear[g_driveEng.gearIndex].bands[++i];
-                } while (i < 2 && sp->maxRpm < g_driveEng.rpm);
+                } while (i < RPM_BAND_HIGH && sp->maxRpm < g_driveEng.rpm);
                 if (i != g_driveEng.rpmBand || g_driveEng.shifterDirty) {
                     g_driveEng.rpmBand = i;
                     g_driveEng.accelStep = sp->accelStep;
@@ -1222,7 +1222,7 @@ void interrupt far sy_drive_isr(void)
                         g_driveEng.speed = 0;
                     if ((g_driveEng.rpm = g_driveEng.speed * g_driveEng.rpmPerSpeed) < ENGINE_IDLE_RPM)
                         g_driveEng.rpm = ENGINE_IDLE_RPM;
-                } else if (g_driveEng.gearIndex == 0 && g_driveEng.speed) {
+                } else if (g_driveEng.gearIndex == DRIVE_NEUTRAL && g_driveEng.speed) {
                     if (g_driveEng.speed)
                         g_driveEng.speed--;
                     g_driveEng.rpm = 30 * g_driveEng.speed + ENGINE_IDLE_RPM;

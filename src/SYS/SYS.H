@@ -109,7 +109,7 @@ extern int g_demo;
 extern int g_autoDrive;
 extern char g_protectPal[];
 extern int g_vibratoActive;
-extern struct Eng g_driveEng;
+extern struct DrivingState g_driveEng;
 extern struct Dev g_songBgState;
 extern struct Dev g_secondaryMusicStateData;
 extern void(interrupt far *g_clockPrev)(void);

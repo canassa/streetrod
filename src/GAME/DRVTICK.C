@@ -11,14 +11,15 @@
 #include "RANDOM.H"
 #include "SCREEN.H"
 #include "SLOTS.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 
 static int g_cruiseRpmStep;
 
-struct Eng g_oppEngState;
+struct DrivingState g_oppEngState;
 
-static int g_cruiseRpmSteps[5] = {42, 26, 12, 8, 4};
-static int g_cruiseRatios[5] = {0, 200, 125, 71, 56};
+static int g_cruiseRpmSteps[DRIVE_GEAR_SLOTS] = {42, 26, 12, 8, 4};
+static int g_cruiseRatios[DRIVE_GEAR_SLOTS] = {0, 200, 125, 71, 56};
 int g_keepCruiseMusic = 0;
 
 
@@ -75,11 +76,11 @@ int dt_step(void)
             sy_reset_queues();
             g_phaseDriveRunState = DRIVE_CRUISING;
             sc_status_text(-1, "Cruising in town...", 0);
-            g_driveEng.shifterDirty = 1;
-            g_driveEng.gearIndex = 1;
+            g_driveEng.shifterDirty = TRUE;
+            g_driveEng.gearIndex = DRIVE_FIRST;
             if (g_driveEng.autoSelector == SELECTOR_NEUTRAL)
                 g_driveEng.autoSelector = SELECTOR_DRIVE;
-            g_cruiseRpmStep = g_cruiseRpmSteps[0];
+            g_cruiseRpmStep = g_cruiseRpmSteps[DRIVE_NEUTRAL];
             return 0;
         case DRIVE_CRUISING:
             if (g_demo == 0) {
@@ -112,8 +113,8 @@ int dt_step(void)
             if (g_driveEng.gearIndex)
                 g_driveEng.speed = g_driveEng.rpm / g_cruiseRatios[g_driveEng.gearIndex];
             if (g_driveEng.rpm > CRUISE_SHIFT_RPM) {
-                if (g_driveEng.gearIndex < g_driveEng.gearCount) {
-                    g_driveEng.shifterDirty = 1;
+                if (g_driveEng.gearIndex < g_driveEng.topGear) {
+                    g_driveEng.shifterDirty = TRUE;
                     g_driveEng.gearIndex++;
                     g_cruiseRpmStep = g_cruiseRpmSteps[g_driveEng.gearIndex];
                     g_driveEng.rpm = g_cruiseRatios[g_driveEng.gearIndex] * g_driveEng.speed;

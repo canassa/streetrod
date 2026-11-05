@@ -581,7 +581,7 @@ void da_draw_wheel(int a, int b, struct Bitmap far *dst)
    track, the wheel sprite (the position comes from the (x, y) pair, the source rectangle from
    g_shiftSlots). da_draw_shifter is the per-frame update that draws the same pieces. */
 
-void da_init_shifter(int a, int b)
+void da_init_shifter(enum AutoSelector a, enum DriveGear b)
 {
     struct Blt pk5;
     struct Bitmap far *cm2;
@@ -593,7 +593,7 @@ void da_init_shifter(int a, int b)
     struct Bitmap far *bm28;
     int y;
 
-    g_shifterDraw.track = &g_shifters[a ? 0 : b == 3 ? 1 : 2];
+    g_shifterDraw.track = &g_shifters[a ? 0 : b == DRIVE_THIRD ? 1 : 2];
     bm19 = di_bm(g_shifterDraw.track->id1, ARENA_HIGH_STACK);
     pk5.w = 0x30;
     pk5.h = 0x2b;
@@ -627,14 +627,14 @@ void da_init_shifter(int a, int b)
 }
 
 
-void da_draw_shifter(struct Bitmap far *dst, struct Eng *e)
+void da_draw_shifter(struct Bitmap far *dst, struct DrivingState *e)
 {
     struct Blt16 pkt1;
     int x, idx3;
 
     if (e->autoSelector == SELECTOR_MANUAL)
         idx3 = e->gearIndex;
-    else if (e->gearIndex == 0)
+    else if (e->gearIndex == DRIVE_NEUTRAL)
         idx3 = 0;
     else
         idx3 = e->autoSelector - 1;
@@ -657,7 +657,7 @@ void da_draw_shifter(struct Bitmap far *dst, struct Eng *e)
     pkt1.w = 0x30 - x > 0x20 ? 0x20 : 0x30 - x;
     (*g_videoOps.copy)(g_bufferSceneA, dst, (struct Blt *)&pkt1, 1);
     g_shifterDraw.knobPosition = idx3;
-    e->shifterDirty = 0;
+    e->shifterDirty = FALSE;
 }
 
 
