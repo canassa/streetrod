@@ -19,13 +19,9 @@ prove a semantic name or explanation.
 ## Ownership and dialect
 
 Files use uppercase DOS 8.3 names in `src/<subsystem>/`. A module's `.H` owns
-its public function/global declarations. All function documentation lives in
-the module's `.H` (user rule, 2026-11-05): public functions at their header
-declaration; private static functions in a `/** @fn <full prototype> ... */`
-block in the same `.H` (they stay declared and defined only in the `.C`; don't add
-static prototypes to headers). The `.C` carries no Doxygen blocks. Use one block
-per entity, not duplicates in both places. Enum values in prose and `@param`
-contracts are `@ref` names (e.g. `@ref CAR_PULL_IN`), never raw numbers. Types belong in the header of
+its public function/global declarations. Document public functions at that
+header declaration, private static functions at their `.C` definition. Use one
+block per entity, not duplicates in both places. Types belong in the header of
 the module defining their primary global, or their producer/API when there is no global storage; related enums and helper records
 follow that owner. Only independent ownerless helpers remain in `src/SYS/STRUCTS.H`.
 
