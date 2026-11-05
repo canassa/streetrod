@@ -8,38 +8,38 @@
 
 #include "SCENERY.H"
 
-extern struct List g_sprPole;
-extern struct List g_sprTree2;
-extern struct List g_sprTree3;
-extern struct List g_sprArrowSignL;
-extern struct List g_sprCityLimits;
-extern struct List g_sprArrowSignUp;
-extern struct List g_sprNarrowSign;
-extern struct List g_sprChevronL;
-extern struct List g_sprChevronR;
-extern struct List g_sprSCurveSign;
-extern struct List g_sprSCurveSign2;
+extern struct SceneryLods g_sprPole;
+extern struct SceneryLods g_sprTree2;
+extern struct SceneryLods g_sprTree3;
+extern struct SceneryLods g_sprArrowSignL;
+extern struct SceneryLods g_sprCityLimits;
+extern struct SceneryLods g_sprArrowSignUp;
+extern struct SceneryLods g_sprNarrowSign;
+extern struct SceneryLods g_sprChevronL;
+extern struct SceneryLods g_sprChevronR;
+extern struct SceneryLods g_sprSCurveSign;
+extern struct SceneryLods g_sprSCurveSign2;
 
-extern struct Run g_sprPoleLod[7];
+extern struct ScenerySprite g_sprPoleLod[7];
 
-extern struct Run g_sprTree2Lod[7];
+extern struct ScenerySprite g_sprTree2Lod[7];
 
-extern struct Run g_sprTree3Lod[7];
+extern struct ScenerySprite g_sprTree3Lod[7];
 
-extern struct Run g_sprArrowSignLLod[7];
+extern struct ScenerySprite g_sprArrowSignLLod[7];
 
-extern struct Run g_sprCityLimitsLod[7];
+extern struct ScenerySprite g_sprCityLimitsLod[7];
 
-extern struct Run g_sprArrowSignUpLod[7];
+extern struct ScenerySprite g_sprArrowSignUpLod[7];
 
-extern struct Run g_sprNarrowSignLod[7];
+extern struct ScenerySprite g_sprNarrowSignLod[7];
 
-extern struct Run g_sprChevronLLod[7];
+extern struct ScenerySprite g_sprChevronLLod[7];
 
-extern struct Run g_sprChevronRLod[7];
+extern struct ScenerySprite g_sprChevronRLod[7];
 
-extern struct Run g_sprSCurveSignLod[7];
+extern struct ScenerySprite g_sprSCurveSignLod[7];
 
-extern struct Run g_sprSCurveSign2Lod[7];
+extern struct ScenerySprite g_sprSCurveSign2Lod[7];
 
 #endif

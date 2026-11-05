@@ -109,9 +109,9 @@ static void near clear_gas_spots(void)
 {
     int k;
 
-    g_fuelStationActions.ragAvailable = 0;
-    g_fuelStationActions.nozzleAvailable = 0;
-    g_fuelStationActions.capAvailable = 0;
+    g_fuelStationActions.ragAvailable = FALSE;
+    g_fuelStationActions.nozzleAvailable = FALSE;
+    g_fuelStationActions.capAvailable = FALSE;
     for (k = 0; k < 6; k++)
         g_hots[find_gas_spot(g_gasSpotIds[k])].kind = HOT_DISABLED;
 }
@@ -133,8 +133,8 @@ static void near spots_idle(void)
     place_gas_spot(2, 0x3f, 100, 12, 23);
     place_gas_spot(1, 0x54, 0xa8, 0x1f, 15);
     sort_gas_spots();
-    g_fuelStationActions.ragAvailable = 1;
-    g_fuelStationActions.nozzleAvailable = 1;
+    g_fuelStationActions.ragAvailable = TRUE;
+    g_fuelStationActions.nozzleAvailable = TRUE;
 }
 
 
@@ -143,7 +143,7 @@ static void near spots_cap(void)
     clear_gas_spots();
     place_gas_spot(4, g_featurePos.gasCapX - 10, g_featurePos.gasCapY - 5, 18, 12);
     sort_gas_spots();
-    g_fuelStationActions.capAvailable = 1;
+    g_fuelStationActions.capAvailable = TRUE;
 }
 
 
@@ -153,8 +153,8 @@ static void near spots_nozzle(void)
     place_gas_spot(2, 0x34, 100, 16, 23);
     place_gas_spot(4, g_featurePos.gasCapX - 1, g_featurePos.gasCapY - 1, 10, 9);
     sort_gas_spots();
-    g_fuelStationActions.nozzleAvailable = 1;
-    g_fuelStationActions.capAvailable = 1;
+    g_fuelStationActions.nozzleAvailable = TRUE;
+    g_fuelStationActions.capAvailable = TRUE;
 }
 
 
@@ -167,7 +167,7 @@ static void near spots_rag(void)
     place_gas_spot(1, 0x3e, 0xa5, 0x35, 18);
     place_gas_spot(3, 0xc4, 0x5a, 16, 14);
     sort_gas_spots();
-    g_fuelStationActions.ragAvailable = 1;
+    g_fuelStationActions.ragAvailable = TRUE;
 }
 
 
@@ -336,7 +336,7 @@ top:
             g_waitUntil = g_tick + 0x4c;
             break;
         case KR_GAS_RAG:
-            if (g_fuelStationActions.ragAvailable == 0)
+            if (g_fuelStationActions.ragAvailable == FALSE)
                 break;
             if (dl.hand == GAS_HAND_EMPTY) {
                 cu_ctl(dl.hand = GAS_HAND_RAG);
@@ -354,7 +354,7 @@ top:
                 goto redraw;
             }
         case KR_GAS_PUMP:
-            if (g_fuelStationActions.nozzleAvailable == 0)
+            if (g_fuelStationActions.nozzleAvailable == FALSE)
                 break;
             if (dl.hand == GAS_HAND_EMPTY) {
                 cu_ctl(dl.hand = GAS_HAND_NOZZLE);
@@ -380,7 +380,7 @@ top:
             dl.pumping = FALSE;
             break;
         case KR_GAS_CAP:
-            if (g_fuelStationActions.capAvailable == 0)
+            if (g_fuelStationActions.capAvailable == FALSE)
                 break;
             if (dl.hand == GAS_HAND_EMPTY) {
                 if (vi_anim_active(2)) {
@@ -451,7 +451,7 @@ static int near replace_tires(void)
 static int g_winMsgs[6] = {MSG_WON_BUT_DIDNT_BET,           MSG_BIG_DEAL_TEN_LOUSY_BUCKS,
                            MSG_FIFTY_SMACKERS_NOT_BAD,      MSG_BIG_DEAL_TWENTY_FIVE_BUCKS,
                            MSG_A_HUNDRED_SMACKERS_HOT_SHOT, MSG_YOU_JUST_WON_A_HELLUVA_CAR};
-static struct Spot g_crashPics[3] = {
+static struct CrashOverlay g_crashPics[3] = {
     {PIC_CRASH_BLOOD_LEFT, 64, 84}, {PIC_CRASH_BLOOD_CENTER, 208, 82}, {PIC_CRASH_BLOOD_RIGHT, 272, 123}};
 static int g_statsDone = 0;
 
@@ -542,7 +542,7 @@ static void near show_crash(void)
     (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
     if (g_driveEng.speed > TOTAL_LOSS_MPH) {
         for (i = 0; i < 3; i++) {
-            a = di_bm(g_crashPics[i].id, ARENA_LOW_STACK);
+            a = di_bm(g_crashPics[i].pictureId, ARENA_LOW_STACK);
             pkt.w = a->width;
             pkt.h = a->height;
             pkt.sx = pkt.sy = 0;
@@ -982,7 +982,8 @@ static void near init_rival_eng(void)
     g_shiftPoint = g_oppEngState.autoSelector ? RIVAL_AUTO_SHIFT_RPM : g_oppEngState.shiftRpm - 100 * g_shiftPenalty;
     g_roadOppPos.roadIndex = RACE_START_INDEX;
     g_roadOppPos.roadFraction = 0;
-    g_targetLane = g_roadOppPos.lateralX = ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) - 200;
+    g_targetLane = g_roadOppPos.lateralX =
+        ((g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1) - 200;
 }
 
 
@@ -1262,7 +1263,7 @@ static void near move_rival(void)
     dist = g_roadOppPos.roadIndex - g_trackViewMotion.roadIndex;
     slope = g_roadCurve[g_trackViewMotion.roadIndex + 4] - g_roadCurve[g_trackViewMotion.roadIndex + 5];
     if (dist > 12) {
-        g_targetLane = (g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1;
+        g_targetLane = (g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1;
         if (slope)
             g_rivalLeft = slope < 0;
         g_swapArmedRivalValue = 1;
@@ -1270,32 +1271,33 @@ static void near move_rival(void)
         g_ramAllowed = 1;
         if (slope) {
             if (slope < 0) {
-                g_targetLane = ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) - 200;
+                g_targetLane = ((g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1) - 200;
                 g_rivalLeft = 1;
             } else {
-                g_targetLane = ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) + 300;
+                g_targetLane = ((g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1) + 300;
                 g_rivalLeft = 0;
             }
         } else
-            g_targetLane = widthFlags    ? (g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1
-                           : g_rivalLeft ? ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) - 200
-                                         : ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) + 300;
+            g_targetLane = widthFlags ? (g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1
+                           : g_rivalLeft
+                               ? ((g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1) - 200
+                               : ((g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1) + 300;
     } else if ((g_processorSpeedRating < 4 ? 4 : 2) < dist) {
         if (slope) {
             if (slope < 0) {
-                g_targetLane = ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) - 200;
+                g_targetLane = ((g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1) - 200;
                 g_rivalLeft = 1;
             } else {
-                g_targetLane = ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) + 300;
+                g_targetLane = ((g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1) + 300;
                 g_rivalLeft = 0;
             }
         } else if (widthFlags)
-            g_targetLane = (g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1;
+            g_targetLane = (g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1;
         else if (g_swapArmedRivalValue) {
             if (g_rivalLeft)
-                g_targetLane = ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) + 300;
+                g_targetLane = ((g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1) + 300;
             else
-                g_targetLane = ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) - 200;
+                g_targetLane = ((g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1) - 200;
             g_swapArmedRivalValue = 0;
             g_rivalLeft = !g_rivalLeft;
         }
@@ -1332,18 +1334,19 @@ static void near move_rival(void)
         g_ramAllowed = 1;
         if (slope) {
             if (slope < 0) {
-                g_targetLane = ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) - 200;
+                g_targetLane = ((g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1) - 200;
                 g_rivalLeft = 1;
             } else {
-                g_targetLane = ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) + 300;
+                g_targetLane = ((g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1) + 300;
                 g_rivalLeft = 0;
             }
         } else
-            g_targetLane = widthFlags    ? (g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1
-                           : g_rivalLeft ? ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) - 200
-                                         : ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) + 300;
+            g_targetLane = widthFlags ? (g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1
+                           : g_rivalLeft
+                               ? ((g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1) - 200
+                               : ((g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1) + 300;
     } else {
-        g_targetLane = (g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1;
+        g_targetLane = (g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1;
         g_swapArmedRivalValue = 1;
     }
     if (g_roadOppPos.lateralX > g_targetLane) {
@@ -1453,7 +1456,7 @@ void ra_tick(void)
         g_contactFrames++;
         if (g_driveEng.steeringInput < 0) {
             if (g_roadCurve[g_trackViewMotion.roadIndex] - g_roadCurve[g_trackViewMotion.roadIndex + 1] >= 0 ||
-                ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) >= g_trackViewMotion.lateralX) {
+                ((g_edgesRoad.lookaheadLeftX + g_trackViewMotion.lookaheadRightX) >> 1) >= g_trackViewMotion.lateralX) {
                 so_bump();
                 if (g_bumpAlternate == 0) {
                     g_roadOppPos.roadIndex--;
@@ -1471,7 +1474,7 @@ void ra_tick(void)
                 if (g_driveEng.speed > 20)
                     g_brakeTicks = 2;
                 g_ramAllowed = 0;
-                g_trackViewMotion.curveX += rn_int(2) ? 15 : -15;
+                g_trackViewMotion.curveReference += rn_int(2) ? 15 : -15;
                 so_bump();
             }
             g_contactFrames = 0;

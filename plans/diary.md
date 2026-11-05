@@ -3371,6 +3371,34 @@ lessons from both branches remain in the recipe book and investigation notes.
   rather than purchase entries, and HOT_DATA has an ignored duplicate tail.
   Full evidence and remaining uncertainty live in the linked report.
 
+## 2026-11-05 21:36 CET: Investigate race, road, scenery and view records
+
+### What I did
+
+- Investigated all thirteen records assigned to st-road, one by one, and recorded
+  storage, member domains, producers/consumers and evidence in
+  [the investigation](investigations/st-road.md).
+- Documented every member, clarified lookahead versus mirror coordinates,
+  renamed the crash overlay and scenery record types, and propagated the type
+  names through asset declarations, the DGROUP reader and existing tests.
+- Used BOOL for four proven flags and DrivingPage for drawing/display roles;
+  kept spare fields, signedness, pointer distances and field order intact.
+- All 572 functions match; the clean packed build is identical; DGROUP checks
+  pass and all 109 tests pass. The targeted MSC layout audit passes 65 checks.
+
+### What I learned
+
+- Scenery span extents are inclusive endpoint differences; zero draws one pixel.
+  The assets include positive Y offsets, so treating the offsets as always
+  upward or unsigned would be wrong.
+- The paired lookahead boundaries are four samples ahead; RoadEdges also holds
+  unrelated mirror pixel arrays. ViewClip's bottom is inclusive for spans but
+  exclusive for bitmap height clipping. These contracts and out-of-scope names
+  are documented in [the investigation](investigations/st-road.md).
+- Final review reused the existing PictureId enum for crash-overlay resources
+  and traced car anchors to HOT_DATA's service-coordinate block. The expanded
+  MSC audit passes all 67 layout and enum checks.
+
 ## 2026-11-05 21:37 CET: Disk, picture-slot, glyph and needle structs
 
 ### What I did
@@ -3469,3 +3497,20 @@ Recorded the final results in plans/investigations/st-video.md.
 The documentation and semantic member names preserve all original field offsets
 and linked bytes, including the EGA/CGA/Tandy band views and Hercules mode
 handling. No merge conflict or new reconstruction uncertainty arose.
+
+## 2026-11-05 21:41 CET: Validate merged st-road investigation
+
+### What I did
+
+- Merged origin/main at 3daaa69 into st-road (53440b6); retained both complete
+  diary entries when resolving the sole merge conflict. Source merged cleanly.
+- Reran headers, formatting, Doxygen (zero diagnostics), all 572 function
+  checks, a clean packed build, DGROUP checks and all 109 unit tests.
+- Packed and DOS-native executables are IDENTICAL to the original. All 67
+  targeted layout/enum checks pass; the native source snapshot matches the
+  combined tree. Results are in [st-road.md](investigations/st-road.md).
+
+### What I learned
+
+- The parallel disk investigation's service-point renames integrate without
+  changing the car-relative-to-screen anchor contract established here.

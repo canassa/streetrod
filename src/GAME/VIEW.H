@@ -16,18 +16,29 @@ struct Ball {
     int h;
 };
 
-/* Draw and show page indices. */
-struct ViewPages {
-    int draw;
-    int show;
+/** @brief The two buffers exchanged while rendering EGA driving scenes. */
+enum DrivingPage {
+    DRIVING_PAGE_ONE = 1, /**< First driving page. */
+    DRIVING_PAGE_TWO = 2  /**< Second driving page. */
 };
 
-/* Clipping bounds shared by VIEW and the span drawing routines. */
+/** @brief Drawing and visible page roles, exchanged on an EGA frame flip. */
+struct ViewPages {
+    enum DrivingPage draw; /**< Page receiving the next driving frame. */
+    enum DrivingPage show; /**< Page selected for display. */
+};
+
+/**
+ * @brief Screen-pixel clipping bounds shared by view and span drawing.
+ *
+ * Lines and spans include both endpoints. Bitmap height clipping instead
+ * treats the bottom bound as an exclusive end row.
+ */
 struct ViewClip {
-    int xMin;
-    int yMin;
-    int yMax;
-    int xMax;
+    int xMin; /**< Inclusive left pixel. */
+    int yMin; /**< Inclusive top row. */
+    int yMax; /**< Span bottom; exclusive bitmap end row. */
+    int xMax; /**< Inclusive right pixel for lines and spans. */
 };
 
 /**
@@ -69,7 +80,7 @@ extern struct Bitmap far *g_windowBorderImage;
 void vw_unclip_top(void);
 void vw_clip(void);
 void vw_load(void);
-void vw_sprite(int x, int y, int first, struct List l, int dir);
+void vw_sprite(int x, int y, int first, struct SceneryLods l, int dir);
 void vw_road_row(int n);
 void vw_mirror_row(void);
 void vw_draw_dot(int x, int y);

@@ -6,7 +6,7 @@ PART    MACRO   dx, dy, w, h
         DB      dx, dy, w, h
         ENDM
 
-_g_spans2 LABEL   BYTE                   ; struct Part far[]
+_g_spans2 LABEL   BYTE                   ; struct ScenerySpan far[]
         PART    3, -4, 0, 14             ; part 0
         PART    2, -3, 2, 2              ; part 1
         PART    3, -2, 0, 14             ; part 2

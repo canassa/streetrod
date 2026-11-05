@@ -65,7 +65,7 @@ static int g_opponentPics[RACE_SPRITE_SET_COUNT][4] = {
     {PIC_SEDAN_PASSING, PIC_HOT_ROD_REAR_ANGLED, PIC_HOT_ROD_REAR, PIC_HOT_ROD_DISTANT_REAR},
     {PIC_SEDAN_PASSING, PIC_SPORTS_CAR_REAR_ANGLED, PIC_SPORTS_CAR_REAR, PIC_SPORTS_CAR_DISTANT_REAR}};
 static int g_unused20 = 0;
-struct ViewPages g_viewPages = {1, 2};
+struct ViewPages g_viewPages = {DRIVING_PAGE_ONE, DRIVING_PAGE_TWO};
 struct Clip g_viewRect = {SCREEN_WIDTH, 82, 0, 18, 0, 18};
 struct ViewClip g_viewClip = {0, 18, 101, (SCREEN_WIDTH - 1)};
 static unsigned char g_shrinkMasks[3][4] = {{87, 37, 34, 0}, {247, 117, 82, 0}, {117, 84, 33, 0}};
@@ -79,7 +79,7 @@ static struct Ball g_sheetRects[7] = {{256, 8, 8},   {240, 16, 13}, {208, 32, 19
 static void near select_draw_page(void)
 {
     if (r_vid.mode == VID_EGA) {
-        g_videoAddrSegment = (g_viewPages.draw == 1) ? EGA_PAGE1_SEGMENT : EGA_PAGE2_SEGMENT;
+        g_videoAddrSegment = (g_viewPages.draw == DRIVING_PAGE_ONE) ? EGA_PAGE1_SEGMENT : EGA_PAGE2_SEGMENT;
         ep_show(g_viewPages.show);
     } else {
         g_videoAddrSegment = g_driveScreenB->bits.w.seg;
@@ -99,13 +99,13 @@ struct Bitmap far *g_windowBorderImage;
 
 static void near flip_page(void)
 {
-    int t;
+    enum DrivingPage t;
 
     if (r_vid.mode == VID_EGA) {
         t = g_viewPages.draw;
         g_viewPages.draw = g_viewPages.show;
         g_viewPages.show = t;
-        g_videoAddrSegment = (g_viewPages.draw == 1) ? EGA_PAGE1_SEGMENT : EGA_PAGE2_SEGMENT;
+        g_videoAddrSegment = (g_viewPages.draw == DRIVING_PAGE_ONE) ? EGA_PAGE1_SEGMENT : EGA_PAGE2_SEGMENT;
         ep_show(g_viewPages.show);
     } else {
         (*g_videoOps.copy)(g_driveScreenB, r_vid.front, (struct Blt *)&g_viewRect, 1);
@@ -294,11 +294,11 @@ static void near render_backdrop(void)
         v = rd_proj_y(n8, m5 * 2, g_trackViewMotion.roadHeight);
         b.h = v - 0x1e;
         b.sy = 0x9a - b.h;
-        if (g_trackViewMotion.curveX > 0) {
-            r = (g_trackViewMotion.curveX * 2 % SCREEN_WIDTH) & ~7;
+        if (g_trackViewMotion.curveReference > 0) {
+            r = (g_trackViewMotion.curveReference * 2 % SCREEN_WIDTH) & ~7;
             ll = SCREEN_WIDTH - r;
         } else {
-            ll = (abs(g_trackViewMotion.curveX) * 2 % SCREEN_WIDTH) & ~7;
+            ll = (abs(g_trackViewMotion.curveReference) * 2 % SCREEN_WIDTH) & ~7;
             r = SCREEN_WIDTH - ll;
         }
         b.w = ll;
@@ -311,21 +311,22 @@ static void near render_backdrop(void)
         b.dx = 0;
         b.h = 0x1d;
     }
-    (*g_videoOps.copy)(g_driveScreenB, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+    (*g_videoOps.copy)(g_driveScreenB, g_viewPages.draw == DRIVING_PAGE_ONE ? g_driveScreenB : g_bufferSceneA, &b, 1);
     if (*(int *)&g_runRacingFlag) {
         b.w = r;
         b.sx = ll;
         b.dx = 0;
-        (*g_videoOps.copy)(g_driveScreenB, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+        (*g_videoOps.copy)(g_driveScreenB, g_viewPages.draw == DRIVING_PAGE_ONE ? g_driveScreenB : g_bufferSceneA, &b,
+                           1);
     }
     b.h = *(int *)&g_runRacingFlag ? 0x14 : 0x10;
     b.sy = 0xa3;
     if (*(int *)&g_runRacingFlag) {
-        if (g_trackViewMotion.curveX > 0) {
-            r = (g_trackViewMotion.curveX * 4 % SCREEN_WIDTH) & ~7;
+        if (g_trackViewMotion.curveReference > 0) {
+            r = (g_trackViewMotion.curveReference * 4 % SCREEN_WIDTH) & ~7;
             ll = SCREEN_WIDTH - r;
         } else {
-            ll = (abs(g_trackViewMotion.curveX) * 4 % SCREEN_WIDTH) & ~7;
+            ll = (abs(g_trackViewMotion.curveReference) * 4 % SCREEN_WIDTH) & ~7;
             r = SCREEN_WIDTH - ll;
         }
         b.w = ll;
@@ -339,13 +340,14 @@ static void near render_backdrop(void)
         b.dy = 0x2f;
     }
     clip_blit_y(&b);
-    (*g_videoOps.copy)(g_driveScreenB, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+    (*g_videoOps.copy)(g_driveScreenB, g_viewPages.draw == DRIVING_PAGE_ONE ? g_driveScreenB : g_bufferSceneA, &b, 1);
     g_roadRowLimit = 14;
     if (*(int *)&g_runRacingFlag) {
         b.w = r;
         b.sx = ll;
         b.dx = 0;
-        (*g_videoOps.copy)(g_driveScreenB, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+        (*g_videoOps.copy)(g_driveScreenB, g_viewPages.draw == DRIVING_PAGE_ONE ? g_driveScreenB : g_bufferSceneA, &b,
+                           1);
         g_horizonY = v + 8;
         for (i = 14; i; i--) {
             if (g_roadYProjectionArray[i] < g_horizonY) {
@@ -359,29 +361,29 @@ static void near render_backdrop(void)
 }
 
 
-void vw_sprite(int x, int y, int first, struct List l, int dir)
+void vw_sprite(int x, int y, int first, struct SceneryLods l, int dir)
 {
-    struct Run run;
+    struct ScenerySprite run;
     int px;
     int x2;
     int y1;
     int j;
 
-    if (l.last > first) {
-        run = l.items[first];
+    if (l.lodCount > first) {
+        run = l.lods[first];
         if (dir == -1) {
-            for (j = 0; j < run.n; j++) {
-                px = x - run.parts[j].dx;
-                x2 = px - run.parts[j].w;
-                y1 = y + run.parts[j].dy;
-                (*g_videoOps.fillSpan)(x2, px, y1, run.parts[j].color);
+            for (j = 0; j < run.spanCount; j++) {
+                px = x - run.spans[j].dx;
+                x2 = px - run.spans[j].extent;
+                y1 = y + run.spans[j].dy;
+                (*g_videoOps.fillSpan)(x2, px, y1, run.spans[j].color);
             }
         } else {
-            for (j = 0; j < run.n; j++) {
-                px = run.parts[j].dx + x;
-                x2 = px + run.parts[j].w;
-                y1 = y + run.parts[j].dy;
-                (*g_videoOps.fillSpan)(px, x2, y1, run.parts[j].color);
+            for (j = 0; j < run.spanCount; j++) {
+                px = run.spans[j].dx + x;
+                x2 = px + run.spans[j].extent;
+                y1 = y + run.spans[j].dy;
+                (*g_videoOps.fillSpan)(px, x2, y1, run.spans[j].color);
             }
         }
     }
@@ -970,10 +972,11 @@ static void near render_scaled_pic(int x, int y, int n, int align, int clip, int
     else
         clip_blit_y(&b);
     if (mode == 1)
-        (*g_videoOps.copy)(g_bufferSceneA, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+        (*g_videoOps.copy)(g_bufferSceneA, g_viewPages.draw == DRIVING_PAGE_ONE ? g_driveScreenB : g_bufferSceneA, &b,
+                           1);
     else
         (*g_videoOps.copy)(r_vid.mode == VID_EGA ? g_driveDisplayPage : g_bufferSceneA,
-                           g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+                           g_viewPages.draw == DRIVING_PAGE_ONE ? g_driveScreenB : g_bufferSceneA, &b, 1);
 }
 
 
@@ -1018,7 +1021,8 @@ static void near render_start_signal(void)
         b.sy = 0x20 - g_startDrawRows;
         b.dx = 0x82;
         b.dy = 0x12;
-        (*g_videoOps.maskedBlit)(g_lightsBm, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+        (*g_videoOps.maskedBlit)(g_lightsBm, g_viewPages.draw == DRIVING_PAGE_ONE ? g_driveScreenB : g_bufferSceneA, &b,
+                                 1);
     }
 }
 
@@ -1031,13 +1035,15 @@ static void near render_overlays(void)
     b.h = g_windowStrutArt->height;
     b.dx = b.sx = b.sy = 0;
     b.dy = 0x12;
-    (*g_videoOps.maskedBlit)(g_windowStrutArt, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+    (*g_videoOps.maskedBlit)(g_windowStrutArt, g_viewPages.draw == DRIVING_PAGE_ONE ? g_driveScreenB : g_bufferSceneA,
+                             &b, 1);
     b.w = g_windowBorderImage->width;
     b.h = g_windowBorderImage->height;
     b.sx = b.sy = 0;
     b.dx = 0x58;
     b.dy = 0x5f;
-    (*g_videoOps.maskedBlit)(g_windowBorderImage, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+    (*g_videoOps.maskedBlit)(g_windowBorderImage,
+                             g_viewPages.draw == DRIVING_PAGE_ONE ? g_driveScreenB : g_bufferSceneA, &b, 1);
 }
 
 
@@ -1050,14 +1056,15 @@ static void near render_mirror_frame(void)
     b.sx = b.sy = 0;
     b.dx = 0xf0;
     b.dy = 0x12;
-    (*g_videoOps.copy)(g_imageFullMirror, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+    (*g_videoOps.copy)(g_imageFullMirror, g_viewPages.draw == DRIVING_PAGE_ONE ? g_driveScreenB : g_bufferSceneA, &b,
+                       1);
     b.w = g_rearBasePic->width;
     b.h = 2;
     b.sx = b.sy = 0;
     b.dx = 0xf0;
     b.dy = g_mirYProj[7] - 2;
     clip_blit_y(&b);
-    (*g_videoOps.copy)(g_rearBasePic, g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+    (*g_videoOps.copy)(g_rearBasePic, g_viewPages.draw == DRIVING_PAGE_ONE ? g_driveScreenB : g_bufferSceneA, &b, 1);
 }
 
 
@@ -1136,7 +1143,7 @@ static void near render_opponent(void)
     if (t1 < -2 && seln == 2)
         t1 += 8;
     rc = g_trackViewMotion.roadHeight - g_roadHeight[a2];
-    rd = g_trackViewMotion.curveX - g_roadCurve[a2];
+    rd = g_trackViewMotion.curveReference - g_roadCurve[a2];
     if (seln < 9) {
         t1 += 4;
         ra = rd_proj_x(t1, g_roadOppPos.lateralX, rd);
@@ -1189,7 +1196,8 @@ static void near render_opponent(void)
             clip_blit(&b);
         else
             clip_blit_y(&b);
-        (*g_videoOps.maskedBlit)(g_spritesOpp[seln], g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, &b, 1);
+        (*g_videoOps.maskedBlit)(g_spritesOpp[seln],
+                                 g_viewPages.draw == DRIVING_PAGE_ONE ? g_driveScreenB : g_bufferSceneA, &b, 1);
         if (flag9) {
             if (g_viewClip.xMin == 0)
                 clip_mirror();
@@ -1212,15 +1220,15 @@ static void near render_mirror(void)
     g_renderRows.leftX = &g_lhsRdMirrorX[7];
     g_renderRows.rightX = &g_mirGeom.rightX[7];
     g_renderRows.y = &g_mirYProj[7];
-    g_renderRows.leftOuterX = &g_edgesRoad.leftOuterX[7];
-    g_renderRows.rightOuterX = &g_edgesRoad.rightOuterX[7];
+    g_renderRows.leftOuterX = &g_edgesRoad.mirrorLeftOuterX[7];
+    g_renderRows.rightOuterX = &g_edgesRoad.mirrorRightOuterX[7];
     g_renderRows.buildingY = &g_mirGeom.buildingY[7];
     g_renderRows.prevLeftX = &g_lhsRdMirrorX[6];
     g_renderRows.prevRightX = &g_mirGeom.rightX[6];
     g_renderRows.prevY = &g_mirYProj[6];
     g_renderRows.prevBuildingY = &g_mirGeom.buildingY[6];
-    g_renderRows.prevLeftOuterX = &g_edgesRoad.leftOuterX[6];
-    g_renderRows.prevRightOuterX = &g_edgesRoad.rightOuterX[6];
+    g_renderRows.prevLeftOuterX = &g_edgesRoad.mirrorLeftOuterX[6];
+    g_renderRows.prevRightOuterX = &g_edgesRoad.mirrorRightOuterX[6];
     g_renderRows.lineWidth = &g_roadLineWidths[20];
     g_renderRows.leftFlags = (int far *)(g_sampleLeftRoadside - 8);
     g_renderRows.rightFlags = (int far *)(g_hereRoadsideRightRowPtr - 8);
@@ -1358,7 +1366,8 @@ static void near render_mirror(void)
     pkt1.sy = 0x16;
     pkt1.dx = 8;
     pkt1.dy = (r_vid.mode == VID_EGA ? 0 : DASH_Y) + 3;
-    (*g_videoOps.copy)(g_viewPages.draw == 1 ? g_driveScreenB : g_bufferSceneA, g_driveDisplayPage, &pkt1, 1);
+    (*g_videoOps.copy)(g_viewPages.draw == DRIVING_PAGE_ONE ? g_driveScreenB : g_bufferSceneA, g_driveDisplayPage,
+                       &pkt1, 1);
 }
 
 
