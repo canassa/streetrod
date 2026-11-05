@@ -851,7 +851,7 @@ void sy_demo_step(void)
     } else
         g_demoControl.lastGroup = g_keyGroup;
     if (g_driver.spareParts == 0 && g_keyGroup == KM_NEWSPAPER)
-        gm_add_part(0x2a, g_parts[42].value);
+        gm_add_part(0x2a, g_parts[42].basePrice);
     if (g_driver.currentCar == 0) {
         if (g_keyGroup == KM_GARAGE)
             g_demoKey = SC_N;

@@ -2734,3 +2734,30 @@ The conflicting lines contain independent substitutions: keep named appearance m
   that reuse. See [misnames.md](investigations/misnames.md) for the evidence.
 - Variant 2 and picture 1079 are Tri-Power (three 2-barrel carbs); variant 3 and
   picture 1083 are Dual-Quad (two 4-barrel carbs).
+
+## 2026-11-05 18:03 CET: Investigate the part catalog specification
+
+### What I did
+
+- Investigated every field and reader of `struct Item`; recorded storage,
+  persistence, the complete catalog mapping and unrelated misleading names in
+  `plans/investigations/Item.md` before editing source.
+- Renamed it to `PartSpec` beside `g_parts` in INPUTDAT.H, renamed only its
+  price to `basePrice`, reused DescriptionOffset for the name field and
+  documented the existing category/variant/fit value sets. Preserved all byte
+  fields and the spare member.
+- Passed headers/format/docs, 572 function matches, clean packed build,
+  DGROUP ownership/order, 106 tests, 712 real-compiler layout checks and the
+  DOS-native packed build. Both packed executables are identical to orig/SR.EXE.
+
+### What I learned
+
+- The catalog is executable data: 43 real records and a zero record. Saved
+  owned parts contain catalog indices, values and wear, not catalog records.
+  V6 catalog prices intentionally fall below the advert threshold while their
+  owned valuation uses a separate constant. See `plans/investigations/Item.md`.
+- Manifold text order differs from equipment variant order, and manufacturer
+  fit alone does not prove intake compatibility. The note maps all the evidence.
+- The DGROUP shape reader resolves enum dimensions but not macro dimensions.
+  Kept the original unsized declaration after an optional PART_CATALOG_COUNT
+  bound failed that checker; no tooling changes were needed for this task.

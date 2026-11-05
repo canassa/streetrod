@@ -1,9 +1,33 @@
-/* INPUTDAT.H - declarations of what INPUTDAT.ASM defines. */
+/**
+ * @file INPUTDAT.H
+ * @brief Shared input state and game tables.
+ */
 
 #ifndef INPUTDAT_H
 #define INPUTDAT_H
 
 #include "GAME.H"
+#include "MESSAGES.H"
+
+/**
+ * @brief A catalog part's base price, equipment variant and compatibility.
+ *
+ * Owned parts keep their value and wear separately and refer to this catalog
+ * by index.
+ */
+struct PartSpec {
+    int basePrice; /**< Base purchase price, in dollars. */
+    /** @ref EngineVariant, @ref TransmissionVariant, @ref CarburetorVariant,
+     * @ref ManifoldVariant or @ref TireVariant, according to equipment category. */
+    char variant;
+    /** Manufacturer bits: @ref PART_FIT_GM, @ref PART_FIT_FORD and
+     * @ref PART_FIT_CHRYSLER; @ref PART_FIT_ALL accepts every make. */
+    char fitMask;
+    char category; /**< Equipment category; @ref PartCategory. */
+    char unused;   /**< Reserved; zero in the catalog. */
+    /** Name byte offset in description text. */
+    enum DescriptionOffset nameOffset;
+};
 
 extern int g_joyX;
 extern int g_joyY;
@@ -56,7 +80,7 @@ extern char g_biosModeB;
 extern int g_firePressed;
 extern char g_unused17;
 extern char g_gearText[8];
-extern struct Item g_parts[];
+extern struct PartSpec g_parts[];
 extern int g_partWear[5];
 extern int g_betRaces;
 extern int g_dragWins;
