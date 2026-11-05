@@ -1,3 +1,8 @@
+/**
+ * @file BOBS.C
+ * @brief Rival encounters and carhop activity at Bob's, and the jail view.
+ */
+
 #include <string.h>
 #include <stdlib.h>
 #include "BOBS.H"
@@ -43,7 +48,7 @@ static int g_justArrived;
 static void near build_rival_pool(int);
 static void near select_rival(int);
 static enum KingStatus near king_status(void);
-static void near show_rival_car(enum CarAnimKind, int, int, int, int, int *);
+static void near animate_rival_car(enum CarAnimKind, int, int, int, int, int *);
 static void near rival_arrives(int, enum CarAnimKind, enum RivalArrival);
 static void near list_met_rivals(int *, int *, int *);
 static enum CarClass near spec_class(int);
@@ -124,31 +129,55 @@ static void near drop_last_word(char *s)
 static int g_lastRival = -1;
 
 
-static void near show_rival_car(enum CarAnimKind mode, int b, int c, int d, int e, int *f)
+/**
+ * Animate the selected rival's car and maintain its banner and presence.
+ *
+ * Fits the rival's name and car description beside the cash display, dropping
+ * final words when needed. Updates carhop activity around the movement. A
+ * pending pass-by drives the car out again and clears its banner and presence.
+ * The selected rival, car specification, portrait and paint must already be set
+ * up, along with the scene's graphics and car backdrop state.
+ *
+ * @param[in] animation Movement kind: 4 for the first arrival in a scene, 1 for
+ * subsequent arrivals, or 2 for departure. The first arrival initializes the
+ * backdrop and enables carhop activity unless the rival passes straight by.
+ * @param[in] specIndex Car specification index, 0 through 25, matching the
+ * selected rival and its selected specification.
+ * @param[in] showPortrait Zero to omit the occupant portrait, nonzero to include
+ * the selected portrait. All callers include it.
+ * @param[in] carBottom Inclusive bottom screen row of the car image, in pixels;
+ * all callers use 163.
+ * @param[in] useGasMask Nonzero to apply the gas-station foreground mask. All
+ * callers use zero for the view of Bob's, including the view from jail.
+ * @param[in] tirePics Borrowed array of four tire-frame picture IDs, read during
+ * this call; a null pointer omits tires.
+ */
+static void near animate_rival_car(enum CarAnimKind animation, int specIndex, int showPortrait, int carBottom,
+                                   int useGasMask, int *tirePics)
 {
-    int x, n, old;
+    int atJail, textOffset, wasPassBy;
 
-    old = g_carPassBy;
+    wasPassBy = g_carPassBy;
     strcpy(g_strOpp, g_desc + g_selectedRacerPointer->nameOffset);
     strcat(g_strOpp, "  ");
     strcat(g_strOpp, g_desc + g_oppSpecPointer->nameOffset);
-    x = g_scene == SCENE_JAIL;
-    if (mode == CAR_PULL_IN)
+    atJail = g_scene == SCENE_JAIL;
+    if (animation == CAR_PULL_IN)
         g_carhop = CARHOP_DISABLED;
-    g_rivalHereState = mode == CAR_DRIVE_OUT;
-    if (mode == CAR_DRIVE_IN &&
+    g_rivalHereState = animation == CAR_DRIVE_OUT;
+    if (animation == CAR_DRIVE_IN &&
         !maybe_carhop(CARHOP_ENTER, g_rivalHereState,
-                      CARHOP_JAIL_BONUS * x + CARHOP_ORDER_BONUS * g_ordered + (g_demo << 3) + CARHOP_BASE_CHANCE,
+                      CARHOP_JAIL_BONUS * atJail + CARHOP_ORDER_BONUS * g_ordered + (g_demo << 3) + CARHOP_BASE_CHANCE,
                       CARHOP_QUICK_LEAVE_CHANCE))
         maybe_carhop(CARHOP_LEAVE, g_rivalHereState, CARHOP_BUSY_LEAVE_CHANCE, 0);
-    if (g_strOpp[n = strlen(g_strOpp) - 1] == '.')
-        g_strOpp[n] = 0;
+    if (g_strOpp[textOffset = strlen(g_strOpp) - 1] == '.')
+        g_strOpp[textOffset] = 0;
     for (;;) {
         g_wRivBanner = da_text_width(g_strOpp);
-        n = SCREEN_WIDTH - (g_xMoneyRhsVal + g_wRivBanner);
-        n = n > 0 ? n >> 1 : 0;
-        n = n < 15 ? 15 : n;
-        g_bannerX = (n + g_xMoneyRhsVal) & ~7;
+        textOffset = SCREEN_WIDTH - (g_xMoneyRhsVal + g_wRivBanner);
+        textOffset = textOffset > 0 ? textOffset >> 1 : 0;
+        textOffset = textOffset < 15 ? 15 : textOffset;
+        g_bannerX = (textOffset + g_xMoneyRhsVal) & ~7;
         if (g_bannerX + g_wRivBanner > SCREEN_WIDTH) {
             drop_last_word(g_strOpp);
             continue;
@@ -157,21 +186,23 @@ static void near show_rival_car(enum CarAnimKind mode, int b, int c, int d, int 
     }
     sc_status_text(-1, "", 0);
     sc_status_text(g_bannerX, g_strOpp, g_wRivBanner);
-    cp_show_car(mode, b, g_selectedRacerPointer->bodyMods, g_selectedRacerPointer->sticker, c, d, e, f);
-    if (old)
-        mode = CAR_DRIVE_OUT;
-    if (mode == CAR_DRIVE_OUT)
+    cp_show_car(animation, specIndex, g_selectedRacerPointer->bodyMods, g_selectedRacerPointer->sticker, showPortrait,
+                carBottom, useGasMask, tirePics);
+    if (wasPassBy)
+        animation = CAR_DRIVE_OUT;
+    if (animation == CAR_DRIVE_OUT)
         g_passCount++;
-    if (mode == CAR_DRIVE_OUT) {
+    if (animation == CAR_DRIVE_OUT) {
         g_strOpp[0] = 0;
         sc_status_text(g_bannerX, " ", g_wRivBanner);
     }
-    if (mode == CAR_PULL_IN)
+    if (animation == CAR_PULL_IN)
         g_carhop = CARHOP_ABSENT;
-    g_rivalHereState = (mode == CAR_DRIVE_OUT) ? 0 : 1;
-    if (!(x && g_rivalHereState))
+    g_rivalHereState = (animation == CAR_DRIVE_OUT) ? 0 : 1;
+    if (!(atJail && g_rivalHereState))
         if (!maybe_carhop(CARHOP_ENTER, g_rivalHereState,
-                          CARHOP_JAIL_BONUS * x + CARHOP_ORDER_BONUS * g_ordered + (g_demo << 3) + CARHOP_BASE_CHANCE,
+                          CARHOP_JAIL_BONUS * atJail + CARHOP_ORDER_BONUS * g_ordered + (g_demo << 3) +
+                              CARHOP_BASE_CHANCE,
                           g_rivalHereState == 0 ? CARHOP_EMPTY_LEAVE_CHANCE : 0))
             maybe_carhop(CARHOP_LEAVE, g_rivalHereState, CARHOP_LEAVE_CHANCE, 0);
 }
@@ -352,7 +383,7 @@ static void near rival_arrives(int n, enum CarAnimKind a, enum RivalArrival mode
         g_carPassBy = 1;
     if (mode == RIVAL_CHALLENGE && g_driverIdxSelVal == RACER_KING)
         g_carPassBy = king_status() == KING_NOVICE;
-    show_rival_car(a, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
+    animate_rival_car(a, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
 }
 
 
@@ -395,7 +426,7 @@ static int near look_for_rival(enum CarAnimKind n)
     case KR_ACCEPT:
         if (g_rivalHereState) {
             sc_status_text(-1, "", 0);
-            show_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
+            animate_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
         }
         choice = mn_sel();
         rival_arrives(sel[choice - 1], n, RIVAL_REQUESTED);
@@ -1010,7 +1041,7 @@ void bo_visit(void)
             if (g_rivalHereState == 0)
                 goto race;
             sc_status_text(-1, "", 0);
-            show_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
+            animate_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
             n = 0;
             mn_pop(1);
             break;
@@ -1103,7 +1134,7 @@ void bo_visit(void)
                     rival_arrives(RACER_KING, CAR_PULL_IN, RIVAL_REQUESTED);
                     goto test;
                 }
-                show_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
+                animate_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
                 n = 0;
                 mn_pop(1);
             }
@@ -1113,7 +1144,7 @@ void bo_visit(void)
                 goto out;
             if (n > 0 || g_isKingState) {
                 gm_message(MSG_CHICKEN);
-                show_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
+                animate_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
                 n = 0;
             } else {
                 pop_rival_hood();

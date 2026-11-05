@@ -2420,3 +2420,30 @@ All gates passed: format --check, headers --check, check --all (572/572), clean 
 ### What I learned
 
 The conflicting lines contain independent substitutions: keep named appearance masks beside sticker picture IDs, rack counts beside part-picture selection, fuel rules beside cap/nozzle sprites, and message tables beside crash-picture tables. Regenerating dependencies retains both assembly include files without hand-editing the DOS MAKEFILE blocks.
+
+## 2026-11-05 03:30 CET: Investigate and name rival car animation
+
+### What I did
+
+- Investigated show_rival_car and its callers, renderer, carhop, banner UI,
+  state producers/consumers and HOT_DATA/resource pictures. Wrote the note before
+  renaming; retained it in [plans/investigations/show_rival_car.md](investigations/show_rival_car.md).
+- Renamed the static function to animate_rival_car with sr rename. Named all six
+  parameters and three locals for their roles and documented the private
+  interface in BOBS.C. Kept the animation enum and preserved the stack layout.
+- Passed headers, formatting, zero-diagnostic Doxygen, all 572 function checks,
+  clean packed build, DGROUP ownership/order, 155 unit tests and native DOS MAKE.
+  Both packed builds reproduce orig/SR.EXE byte for byte. No merge or push.
+
+### What I learned
+
+- The saved pass-by value survives the renderer's 1 -> 2 -> 0 phase sequence so
+  the wrapper can clear the banner, increment departures and mark the rival gone.
+- Forwarded drawing arguments mean spec index, occupant-portrait inclusion,
+  inclusive bottom screen row, gas-station foreground mask and tire-frame IDs.
+- Jail first arrivals pass straight through and leave the carhop disabled. The
+  jail chance bonus does not bypass that state gate on the normal jail path.
+- The departure counter persists across scene visits and resets only on the
+  standalone carhop-leave path; an enter-then-quick-leave does not reset it.
+- These are game-behavior findings, recorded in the investigation note. No new
+  compiler/tooling rule or skill change was needed. Open behavioral questions: 0.
