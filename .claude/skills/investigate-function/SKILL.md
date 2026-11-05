@@ -49,6 +49,13 @@ The target function is given in your task.
      search the headers and .INC files for an existing one with that meaning (`git grep` the
      value and likely names). Use it, or extend the existing enum, instead of a near-duplicate.
      Docs refer to existing constants with `@ref`; they never restate their values or bits.
+   - **Name value sets, and replace every use.** When a member, parameter, global or table
+     index takes a small set of values with a meaning (a colour, a kind, a slot, a mode), give
+     it an enum (or `#define`s) if none exists, including a count when the code loops or
+     wraps over the set. Then replace **every** raw use across the tree, not just the ones in
+     your scope: assignments, comparisons, initializers, table sizes, random ranges
+     (`rn_int(N)`), wrap-arounds, and the type of the variables that hold it (where the size
+     allows). Byte-identical, of course. Report the replacement list in the note.
    - Booleanish int values must be BOOL. Their 0/1 assignments, returns and comparisons
      use TRUE/FALSE. Truth tests stay `if (x)` / `if (!x)`; never compare to TRUE,
      since any nonzero value is true. Char flags stay char to preserve layout.

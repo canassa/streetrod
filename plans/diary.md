@@ -2621,3 +2621,15 @@ The conflicting lines contain independent substitutions: keep named appearance m
 
 - The Racer benchmark worked from the function-oriented skill, but repeated BodyMod's bits
   in prose; the type section makes that rule explicit.
+
+## 2026-11-05: investigate-function: name value sets and replace every use
+
+### What I did
+
+- Added to the skill: a meaningful small value set (colour, kind, slot, mode) gets an enum or
+  defines (with a count when the code loops or wraps), and every raw use across the tree is
+  replaced, including random ranges, wrap-arounds, table sizes and holder types.
+
+### What I learned
+
+- paintScheme showed the gap: six colours indexed through raw 0..5, rn_int(5/6) and wraps.
