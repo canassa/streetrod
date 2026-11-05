@@ -338,15 +338,34 @@ struct CarSpec {
     enum PictureId bodyPic; /**< Base car-body picture. */
 };
 
-/* one car model (10 bytes, g_models[], indexed by Car.specIndex): kind picks its sprites (vw_load); roofPic, frontBumperPic, rearBumperPic
-   are nonzero when the roof can be chopped and the front and rear bumpers stripped (ga_body) */
+/** @brief On-road opponent sprite sets. */
+enum RaceSpriteSet {
+    RACE_SPRITES_KING = 0,   /**< The King's Corvette. */
+    RACE_SPRITES_SEDAN,      /**< Sedan. */
+    RACE_SPRITES_COUPE,      /**< Coupe. */
+    RACE_SPRITES_HOT_ROD,    /**< Hot rod. */
+    RACE_SPRITES_SPORTS_CAR, /**< Sports car. */
+    RACE_SPRITE_SET_COUNT    /**< Number of sprite sets. */
+};
+
+/**
+ * @brief A car model's race sprites and side-view modification pictures.
+ *
+ * Ten-byte records loaded from the game data file, indexed by car
+ * specification. Roof and bumper pictures also determine which body changes
+ * are available and contribute to performance.
+ */
 struct Model {
-    signed char kind;
-    char unused;
-    enum PictureId roofPic;
+    signed char raceSpriteSet; /**< On-road sprites; @ref RaceSpriteSet. */
+    char unused;               /**< Unused byte from the game data file. */
+    /** Chopped-roof patch; zero if unavailable. */
+    enum PictureId choppedRoofPic;
+    /** Large-engine overlay; zero for the King. */
     enum PictureId engineOverlayPic;
-    enum PictureId frontBumperPic;
-    enum PictureId rearBumperPic;
+    /** Front-bumper removal patch; zero if stripping is unavailable. */
+    enum PictureId frontBumperRemovalPic;
+    /** Rear-bumper removal patch; zero if stripping is unavailable. */
+    enum PictureId rearBumperRemovalPic;
 };
 
 struct Offs {

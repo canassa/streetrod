@@ -44,10 +44,10 @@ void near pf_drivetrain(struct Car *c, struct Eng *e)
     c3 = g_parts[qn[2]->idx].variant;
     d = g_parts[n6k->idx].variant;
     e1 = g_parts[m->idx].variant;
-    vl = ((c->appearance & APPEARANCE_ROOF) || g_models[c->specIndex].roofPic == 0) * ROOF_SPEED_BONUS +
-         ((c->appearance & APPEARANCE_REAR_BUMPER) || g_models[c->specIndex].rearBumperPic == 0) *
+    vl = ((c->appearance & APPEARANCE_ROOF) || g_models[c->specIndex].choppedRoofPic == 0) * ROOF_SPEED_BONUS +
+         ((c->appearance & APPEARANCE_REAR_BUMPER) || g_models[c->specIndex].rearBumperRemovalPic == 0) *
              REAR_BUMPER_SPEED_BONUS +
-         ((c->appearance & APPEARANCE_FRONT_BUMPER) || g_models[c->specIndex].frontBumperPic == 0) *
+         ((c->appearance & APPEARANCE_FRONT_BUMPER) || g_models[c->specIndex].frontBumperRemovalPic == 0) *
              FRONT_BUMPER_SPEED_BONUS +
          g_modelScore[g_carData[c->specIndex].rank] * MODEL_SPEED_WEIGHT / MODEL_SCORE_MAX +
          g_carbManifoldFit[c3][bl] * INTAKE_SPEED_WEIGHT / 100.0 + g_engineScore[a3] * ENGINE_SPEED_WEIGHT / 100.0 +
@@ -168,10 +168,10 @@ int near pf_vmax(int n)
     c3 = g_parts[qn[2]->idx].variant;
     d = g_parts[n6k->idx].variant;
     e1 = g_parts[m->idx].variant;
-    vl = ((p6->appearance & APPEARANCE_ROOF) || g_models[p6->specIndex].roofPic == 0) * ROOF_SPEED_BONUS +
-         ((p6->appearance & APPEARANCE_REAR_BUMPER) || g_models[p6->specIndex].rearBumperPic == 0) *
+    vl = ((p6->appearance & APPEARANCE_ROOF) || g_models[p6->specIndex].choppedRoofPic == 0) * ROOF_SPEED_BONUS +
+         ((p6->appearance & APPEARANCE_REAR_BUMPER) || g_models[p6->specIndex].rearBumperRemovalPic == 0) *
              REAR_BUMPER_SPEED_BONUS +
-         ((p6->appearance & APPEARANCE_FRONT_BUMPER) || g_models[p6->specIndex].frontBumperPic == 0) *
+         ((p6->appearance & APPEARANCE_FRONT_BUMPER) || g_models[p6->specIndex].frontBumperRemovalPic == 0) *
              FRONT_BUMPER_SPEED_BONUS +
          g_modelScore[g_carData[p6->specIndex].rank] * MODEL_SPEED_WEIGHT / MODEL_SCORE_MAX +
          g_carbManifoldFit[c3][bl] * INTAKE_SPEED_WEIGHT / 100.0 + g_engineScore[a3] * ENGINE_SPEED_WEIGHT / 100.0 +

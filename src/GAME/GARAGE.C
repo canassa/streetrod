@@ -468,7 +468,7 @@ void near ga_body(unsigned mask)
         return;
     }
     if (mask & BODY_ROOF) {
-        if (p9->roofPic == 0) {
+        if (p9->choppedRoofPic == 0) {
             gm_message(MSG_CANT_CHOP_THIS_ROOF);
             return;
         }
@@ -478,7 +478,7 @@ void near ga_body(unsigned mask)
         val5 = TIME_ROOF_CHANGE;
     }
     if (mask & BODY_FRONT_BUMPER) {
-        if (p9->frontBumperPic == 0) {
+        if (p9->frontBumperRemovalPic == 0) {
             gm_message(MSG_ALREADY_LOST_YOUR_BUMPER);
             return;
         }
@@ -488,7 +488,7 @@ void near ga_body(unsigned mask)
         val5 = TIME_BUMPER_CHANGE;
     }
     if (mask & BODY_REAR_BUMPER) {
-        if (p9->rearBumperPic == 0) {
+        if (p9->rearBumperRemovalPic == 0) {
             gm_message(MSG_ALREADY_LOST_YOUR_BUMPER);
             return;
         }

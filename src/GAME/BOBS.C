@@ -351,12 +351,13 @@ static void near select_rival(int n)
         else if (g_selectedRacerPointer->sticker > 0 && g_selectedRacerPointer->betRaces > RIVAL_RESTICKER_RACES)
             g_selectedRacerPointer->sticker =
                 rn_int(RIVAL_RESTICKER_CHANCE) < skill ? rn_int(STICKER_CHOICE_COUNT) : g_selectedRacerPointer->sticker;
-        if (g_models[g_opponentSpecIndex].frontBumperPic > 0 && g_models[g_opponentSpecIndex].rearBumperPic > 0 &&
+        if (g_models[g_opponentSpecIndex].frontBumperRemovalPic > 0 &&
+            g_models[g_opponentSpecIndex].rearBumperRemovalPic > 0 &&
             g_selectedRacerPointer->betRaces > RIVAL_BODY_RACES)
             g_selectedRacerPointer->bodyMods |= rn_int(RIVAL_BUMPER_CHANCE) < skill
                                                     ? BODY_FRONT_BUMPER | BODY_REAR_BUMPER
                                                     : g_selectedRacerPointer->bodyMods;
-        if (g_models[g_opponentSpecIndex].roofPic > 0 && g_selectedRacerPointer->betRaces > RIVAL_BODY_RACES)
+        if (g_models[g_opponentSpecIndex].choppedRoofPic > 0 && g_selectedRacerPointer->betRaces > RIVAL_BODY_RACES)
             g_selectedRacerPointer->bodyMods |=
                 rn_int(RIVAL_ROOF_CHANCE) < skill ? BODY_ROOF : g_selectedRacerPointer->bodyMods;
     } else

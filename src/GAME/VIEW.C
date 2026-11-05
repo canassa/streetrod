@@ -58,7 +58,7 @@ static void near render_overlays(void);
 static void near render_mirror(void);
 static void near select_draw_page(void);
 
-static int g_opponentPics[5][4] = {
+static int g_opponentPics[RACE_SPRITE_SET_COUNT][4] = {
     {PIC_CORVETTE_PASSING, PIC_CORVETTE_REAR_ANGLED, PIC_CORVETTE_REAR, PIC_CORVETTE_DISTANT_REAR},
     {PIC_SEDAN_PASSING, PIC_SEDAN_REAR_ANGLED, PIC_SEDAN_REAR, PIC_SEDAN_SMALL_REAR},
     {PIC_SEDAN_PASSING, PIC_COUPE_REAR_ANGLED, PIC_COUPE_REAR, PIC_SEDAN_DISTANT_REAR},
@@ -194,7 +194,7 @@ void vw_load(void)
     int sel;
     struct Bitmap far *bm24;
     int il;
-    int idx;
+    enum RaceSpriteSet idx;
 
     ma_clear();
     bm1 = di_bm(PIC_DASHBOARD_TOP, ARENA_HIGH_STACK);
@@ -250,7 +250,7 @@ void vw_load(void)
     g_imageFullMirror = di_bm(PIC_REARVIEW_MIRROR, ARENA_LOW_STACK);
     g_rearBasePic = di_bm(PIC_MIRROR_LANDSCAPE, ARENA_LOW_STACK);
     if (*(int *)&g_runRacingFlag) {
-        idx = g_models[g_opponentSpecIndex].kind;
+        idx = g_models[g_opponentSpecIndex].raceSpriteSet;
         g_lightsBm = di_bm(PIC_START_LIGHTS, ARENA_LOW_STACK);
         g_startDrawRows = g_lightsBm->height;
         g_spritesOpp[0] = di_bm(g_opponentPics[idx][0], ARENA_LOW_STACK);

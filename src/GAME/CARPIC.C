@@ -309,11 +309,11 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
     g_carDraw.stickerX = r_vid.mask & p12->stickerX;
     g_carDraw.stickerY = p12->stickerY;
     if (flags & 2)
-        bm_put_pic(*out, m2->frontBumperPic, 0, p12->frontBumperY);
+        bm_put_pic(*out, m2->frontBumperRemovalPic, 0, p12->frontBumperY);
     if (flags & 1)
-        bm_put_pic(*out, m2->rearBumperPic, p12->rearBumperX, p12->rearBumperY);
+        bm_put_pic(*out, m2->rearBumperRemovalPic, p12->rearBumperX, p12->rearBumperY);
     if (flags & 4) {
-        bm_put_pic(*out, m2->roofPic, p12->roofX, 0);
+        bm_put_pic(*out, m2->choppedRoofPic, p12->roofX, 0);
         for (j5 = 0; j5 < g_lastPic->planesize / r_vid.planes; j5++)
             if (((unsigned char far *)g_lastPic->alt.p)[j5] != 0xff)
                 break;

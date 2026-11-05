@@ -2689,3 +2689,27 @@ The conflicting lines contain independent substitutions: keep named appearance m
   for separate investigation without renaming them here.
 - The rename CLI does not accept type tags or members. Documented the direct-edit
   workflow and its gates in the sr-cli skill's known limitations.
+
+## 2026-11-05 16:52 CET: Investigate Model visual records
+
+### What I did
+- Investigated every Model member and reader, decoded all 26 HOT_DATA records,
+  and inspected the body patches and five on-road sprite sets. Recorded the
+  evidence, fixed layout, capability/performance interactions and remaining
+  out-of-scope names in [Model.md](investigations/Model.md).
+- Named the byte-sized selector raceSpriteSet, added RaceSpriteSet and its
+  count, typed vw_load's selector local, and named the chopped-roof and bumper
+  removal pictures explicitly. Added concise Doxygen member contracts.
+- Passed headers, formatting, zero-diagnostic docs, all 572 function matches,
+  the 712-check real-compiler layout audit, clean packed build, DGROUP checks,
+  106 unit tests and DOS-native MAKE. Both packed builds match orig/SR.EXE.
+
+### What I learned
+- A missing roof/bumper picture is also a performance capability: the rating
+  code grants that contribution automatically when a model cannot receive the
+  modification. The pictures themselves replace chopped/stripped body regions.
+- The sprite selector describes on-road artwork rather than the exact model:
+  ordinary Corvettes use the sports-car set; the King has a distinct Corvette
+  set. [Model.md](investigations/Model.md) contains the full resource mapping.
+- The unused byte remains unexplained loaded storage; preserve its declaration
+  and the signed-byte selector rather than widening either to an enum.
