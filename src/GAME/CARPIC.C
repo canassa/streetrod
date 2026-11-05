@@ -39,7 +39,7 @@ int g_carVisibleHtValue;
 int g_delayScale = 1;
 int g_dashBuffered = 0;
 int g_autoTrans = 0;
-int g_wheelPicIds[3] = {PIC_STEERING_WHEEL_CENTER, PIC_STEERING_WHEEL_LEFT, PIC_STEERING_WHEEL_RIGHT};
+int g_wheelPicIds[WHEEL_POSE_COUNT] = {PIC_STEERING_WHEEL_CENTER, PIC_STEERING_WHEEL_LEFT, PIC_STEERING_WHEEL_RIGHT};
 int g_driveRebuild = 0;
 struct AnimCommand g_animScripts[44] = {{ANIM_NOP_1, 0, -1, -1},
                                         {ANIM_STOP, 0, 0, 0},
@@ -122,22 +122,22 @@ static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2
 
     base = g_pageBmps[2]->bits.p + BACKDROP_ROWS * g_pageBmps[2]->pitch;
     for (i = 0; i < n; i++) {
-        A[i].p = base;
-        A[i].y = B[i]->height - y2 - h;
-        A[i].h = h;
+        A[i].pixels = base;
+        A[i].sourceY = B[i]->height - y2 - h;
+        A[i].height = h;
         base += B[i]->pitch * h;
         if (mask)
-            eb_latch_pack(mask, B[i]->pitch, h, A[i].p, EGA_PITCH);
+            eb_latch_pack(mask, B[i]->pitch, h, A[i].pixels, EGA_PITCH);
         else {
             outp(GC_INDEX, GC_MODE);
             outp(GC_DATA, GC_WRITE_MODE2);
             for (j = 0; j < B[i]->pitch * h; j++)
-                A[i].p[j] = c;
+                A[i].pixels[j] = c;
             outp(GC_INDEX, GC_MODE);
             outp(GC_DATA, GC_WRITE_MODE0);
         }
-        j = A[i].y * B[i]->pitch;
-        blit_planes(B[i]->bits.p + j, A[i].p, B[i]->mask.p + j, B[i]->pitch, h, B[i]->pitch,
+        j = A[i].sourceY * B[i]->pitch;
+        blit_planes(B[i]->bits.p + j, A[i].pixels, B[i]->mask.p + j, B[i]->pitch, h, B[i]->pitch,
                     B[i]->height * B[i]->pitch);
     }
 }
@@ -545,7 +545,7 @@ again:
         }
         if (animation == CAR_SHOW_BACK_PAGE) {
             if (r_vid.mode == VID_EGA)
-                ea_to_page(g_carSpriteStrips[0].p, carFrames[0]->pitch, carFrames[0]->height - g_spriteBottomCut,
+                ea_to_page(g_carSpriteStrips[0].pixels, carFrames[0]->pitch, carFrames[0]->height - g_spriteBottomCut,
                            r_vid.back->bits.p + ((carBottom - carHeight) * EGA_PITCH + (centeredX >> 3)) + EGA_PITCH,
                            carFrames[0]->pitch);
             else
@@ -554,7 +554,7 @@ again:
             goto done;
         } else if (animation == CAR_SHOW_SCREEN || animation == CAR_SHOW_BACKDROP) {
             if (r_vid.mode == VID_EGA)
-                ea_to_page(g_carSpriteStrips[0].p, carFrames[0]->pitch, carHeight - g_spriteBottomCut,
+                ea_to_page(g_carSpriteStrips[0].pixels, carFrames[0]->pitch, carHeight - g_spriteBottomCut,
                            r_vid.front->bits.p + ((carBottom - carHeight) * EGA_PITCH + (centeredX >> 3)) + EGA_PITCH,
                            carFrames[0]->pitch);
             else

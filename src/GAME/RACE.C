@@ -230,7 +230,7 @@ static void near leave_station(struct GasStationVisit *d)
         g_driver.currentCar->fuel > FUEL_TANK_CAPACITY ? FUEL_TANK_CAPACITY : g_driver.currentCar->fuel;
     cp_show_car(CAR_DRIVE_OUT, d->specIndex, d->bodyMods,
                 (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, FALSE, 0xa9, TRUE,
-                g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
+                g_tirePics[g_parts[g_driver.currentCar->tires->catalogIndex].variant]);
     mn_pop(1);
     ma_clear();
     g_scene = SCENE_GARAGE;
@@ -259,7 +259,7 @@ void ra_gas_station(void)
     dl.bodyMods = gm_car_look(g_driver.currentCar);
     cp_show_car(CAR_PULL_IN, dl.specIndex, dl.bodyMods,
                 (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, FALSE, 0xa9, TRUE,
-                g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
+                g_tirePics[g_parts[g_driver.currentCar->tires->catalogIndex].variant]);
     mu_suspend(0);
     label = pu_grab(0x50, 0xaa, 0x28, 0xc, 0);
     dl.capBgNozzleOnPump = pu_grab(g_featurePos.gasCapX - 0x10, g_featurePos.gasCapY - 5, 0x18, 0xc, 0);
@@ -423,7 +423,7 @@ top:
 
 static int near replace_tires(void)
 {
-    struct Node *tbl[142];
+    struct PartNode *tbl[142];
     int ret;
 
     ret = 0;
@@ -599,12 +599,12 @@ static void near show_race_stats(void)
 
 static void near blow_engine(int n)
 {
-    struct Node **p;
+    struct PartNode **p;
     char *q;
     int i;
 
     if (g_driver.currentCar) {
-        for (i = 0, p = g_driver.currentCar->rack.parts; i < 5; i++, p++) {
+        for (i = 0, p = g_driver.currentCar->rack.parts; i < ENGINE_RACK_SLOTS; i++, p++) {
             g_driver.currentCar->value -= gm_take_part(*p, 0);
             *p = 0;
         }
@@ -669,8 +669,8 @@ enum RaceExit near ra_outcome(void)
            g_driveEng.stopFlags == (STOP_LOST | STOP_ENGINE | STOP_TRANSMISSION);
     if (g_driver.currentCar->transmission->wear > PART_WEAR_LIMIT)
         g_driver.currentCar->transmission->wear = PART_WEAR_LIMIT;
-    if (g_driver.currentCar->rack.parts[0]->wear > PART_WEAR_LIMIT)
-        g_driver.currentCar->rack.parts[0]->wear = PART_WEAR_LIMIT;
+    if (g_driver.currentCar->rack.parts[RACK_ENGINE]->wear > PART_WEAR_LIMIT)
+        g_driver.currentCar->rack.parts[RACK_ENGINE]->wear = PART_WEAR_LIMIT;
     if (g_driver.currentCar->tires->wear > PART_WEAR_LIMIT)
         g_driver.currentCar->tires->wear = PART_WEAR_LIMIT;
     g_driverWonFlag = FALSE;
@@ -904,7 +904,7 @@ int g_shownShiftPosition;
 
 void near ra_reset_eng(struct DrivingState *p)
 {
-    struct Node *car;
+    struct PartNode *car;
     int t;
 
     _disable();
@@ -934,7 +934,7 @@ void near ra_reset_eng(struct DrivingState *p)
     g_shownShiftPosition = -1;
     g_finishLineIndex = g_driver.raceType == RACE_DRAG ? DRAG_FINISH_INDEX : ROAD_FINISH_INDEX;
     car = g_driver.currentCar->tires;
-    p->tireSlip = g_tireSlip[g_parts[car->idx].variant][car->wear / TIRE_WEAR_BAND];
+    p->tireSlip = g_tireSlip[g_parts[car->catalogIndex].variant][car->wear / TIRE_WEAR_BAND];
     if (car->wear < TIRE_FAILURE_WEAR_MIN)
         p->tireFailureRoadIndex = 0;
     else {
@@ -989,7 +989,7 @@ static void near init_rival_eng(void)
 void near ra_run(void)
 {
     int one;
-    struct Node *slot;
+    struct PartNode *slot;
 
     one = 1;
     cu_ctl(CURSOR_HIDE_NOW);
@@ -1021,7 +1021,7 @@ void near ra_run(void)
                 g_driver.currentCar->timing = rn_int(8) - 4;
         }
         slot = g_driver.currentCar->tires;
-        slot->wear += (g_parts[slot->idx].variant == TIRES_STANDARD
+        slot->wear += (g_parts[slot->catalogIndex].variant == TIRES_STANDARD
                            ? (g_driver.raceType == RACE_ROAD ? ROAD_TIRE_WEAR_HIGH : DRAG_TIRE_WEAR_HIGH)
                            : (g_driver.raceType == RACE_ROAD ? ROAD_TIRE_WEAR_LOW : DRAG_TIRE_WEAR_LOW)) +
                       rn_int(RACE_TIRE_WEAR_RANGE);

@@ -30,7 +30,7 @@ void cr_go(void)
         (*g_videoOps.blank)();
         if (g_firePressed == 0) {
             cu_ctl(CURSOR_HIDE_NOW);
-            g_autoTrans = !g_parts[g_driver.currentCar->transmission->idx].variant;
+            g_autoTrans = !g_parts[g_driver.currentCar->transmission->catalogIndex].variant;
             ra_reset_eng(&g_driveEng);
             g_phaseDriveRunState = DRIVE_START;
             g_runRacingFlag = 0;

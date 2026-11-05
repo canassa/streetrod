@@ -36,7 +36,7 @@ static void near place_spots(int n, int x, int y);
 static void near hide_spots(void);
 static void near sort_spots(void);
 static int near is_broke(void);
-static void near remove_part(struct Node **slot);
+static void near remove_part(struct PartNode **slot);
 static void near tune_timing(struct Car *car);
 
 int g_tirePics[3][4] = {{PIC_TIRE_STANDARD_1, PIC_TIRE_STANDARD_2, PIC_TIRE_STANDARD_3, PIC_TIRE_STANDARD_4},
@@ -299,7 +299,7 @@ int near ga_menu(enum GarageMode mode)
             n = gm_car_look(g_old);
             cp_show_car(CAR_BACK_OUT, g_old->specIndex, n,
                         (g_old->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, FALSE, 0x98, FALSE,
-                        g_tirePics[g_parts[g_old->tires->idx].variant]);
+                        g_tirePics[g_parts[g_old->tires->catalogIndex].variant]);
             ga_clear_name();
             mn_push(KM_GARAGE);
             mn_pop(1);
@@ -323,21 +323,21 @@ int near ga_menu(enum GarageMode mode)
         if (g_driver.currentCar) {
             g_carDraw.bodyPic = g_carData[g_driver.currentCar->specIndex].bodyPic;
             g_carDraw.paintScheme = g_driver.currentCar->paintScheme;
-            g_carDraw.tireVariant = g_parts[g_driver.currentCar->tires->idx].variant;
+            g_carDraw.tireVariant = g_parts[g_driver.currentCar->tires->catalogIndex].variant;
             if (mode == GARAGE_DRIVE_IN)
                 ga_palette(g_carDraw.paintScheme);
             g_carDraw.portraitPic = 0;
             g_carDraw.specIndex = g_driver.currentCar->specIndex;
             g_carDraw.appearance.sticker =
                 (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK;
-            g_carDraw.appearance.roof =
+            g_carDraw.appearance.choppedRoof =
                 (g_driver.currentCar->appearance >> APPEARANCE_ROOF_SHIFT) & APPEARANCE_ROOF_MASK;
-            g_carDraw.appearance.rear =
+            g_carDraw.appearance.rearBumperRemoved =
                 (g_driver.currentCar->appearance >> APPEARANCE_REAR_BUMPER_SHIFT) & APPEARANCE_REAR_BUMPER_MASK;
-            g_carDraw.appearance.front =
+            g_carDraw.appearance.frontBumperRemoved =
                 (g_driver.currentCar->appearance >> APPEARANCE_FRONT_BUMPER_SHIFT) & APPEARANCE_FRONT_BUMPER_MASK;
             for (r = 0; r < ENGINE_RACK_SLOTS; r++)
-                g_partsPics[r] = g_driver.currentCar->rack.parts[r]->idx;
+                g_partsPics[r] = g_driver.currentCar->rack.parts[r]->catalogIndex;
             n = gm_car_look(g_driver.currentCar);
             strcpy(g_carName, g_desc + g_carData[g_driver.currentCar->specIndex].nameOffset);
             if (mode == GARAGE_REDRAW)
@@ -527,7 +527,7 @@ void near ga_body(unsigned mask)
         r7 = gm_car_look(g_driver.currentCar);
         cp_show_car(CAR_SHOW_BACKDROP, n9, r7,
                     (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, FALSE, 0x98,
-                    FALSE, g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
+                    FALSE, g_tirePics[g_parts[g_driver.currentCar->tires->catalogIndex].variant]);
         so_noise();
         cu_ctl(CURSOR_SHOW_NOW);
         g_gameClock.actionTicks += val5;
@@ -629,16 +629,16 @@ void near ga_stickers(void)
 }
 
 
-void near ga_spares(enum PartCategory t, struct Node **list, char *buf, int start)
+void near ga_spares(enum PartCategory t, struct PartNode **list, char *buf, int start)
 {
-    struct Node *p;
+    struct PartNode *p;
     struct PartSpec *ent7;
     int n;
 
     n = start;
     p = g_driver.spareParts;
     while (p) {
-        if ((ent7 = &g_parts[p->idx])->category == t) {
+        if ((ent7 = &g_parts[p->catalogIndex])->category == t) {
             n++;
             list[n] = p;
             g_list[n] = ent7->nameOffset;
@@ -653,7 +653,7 @@ void near ga_spares(enum PartCategory t, struct Node **list, char *buf, int star
 }
 
 
-void near ga_install(struct Node *n, struct Node **slot)
+void near ga_install(struct PartNode *n, struct PartNode **slot)
 {
     if (*slot) {
         (*slot)->next = g_driver.spareParts;
@@ -665,7 +665,7 @@ void near ga_install(struct Node *n, struct Node **slot)
 }
 
 
-static void near remove_part(struct Node **slot)
+static void near remove_part(struct PartNode **slot)
 {
     (*slot)->next = g_driver.spareParts;
     g_driver.currentCar->value -= gm_part_value(g_driver.spareParts = *slot);
@@ -673,9 +673,9 @@ static void near remove_part(struct Node **slot)
 }
 
 
-struct Node *near ga_unlink(struct Node *n)
+struct PartNode *near ga_unlink(struct PartNode *n)
 {
-    struct Node *p1, *q;
+    struct PartNode *p1, *q;
 
     for (p1 = g_driver.spareParts, q = 0; p1;)
         if (p1 != n)
@@ -694,7 +694,7 @@ void near ga_tires(void)
 {
     struct Car *car;
     int sel;
-    struct Node *tbl[142];
+    struct PartNode *tbl[142];
     char line[142];
     int y, cur;
 
@@ -714,8 +714,8 @@ void near ga_tires(void)
         gm_message(MSG_NO_SPARE_TIRES);
         return;
     }
-    y = g_parts[car->tires->idx].variant;
-    cur = g_parts[tbl[sel]->idx].variant;
+    y = g_parts[car->tires->catalogIndex].variant;
+    cur = g_parts[tbl[sel]->catalogIndex].variant;
     ga_install(ga_unlink(tbl[sel]), &car->tires);
     ti_change(g_tirePics[y], g_tirePics[cur]);
     g_gameClock.actionTicks += (long)TIME_TIRE_CHANGE;
@@ -727,10 +727,10 @@ static void near car_info(int *ids, char *vals)
     int n;
     struct PartSpec *it;
     int count;
-    struct Node *node;
-    struct Node *gear[7];
+    struct PartNode *node;
+    struct PartNode *gear[7];
 
-    for (n = 0; n < 5; n++)
+    for (n = 0; n < ENGINE_RACK_SLOTS; n++)
         gear[n] = g_driver.currentCar->rack.parts[n];
     gear[n++] = g_driver.currentCar->transmission;
     gear[n] = g_driver.currentCar->tires;
@@ -738,10 +738,10 @@ static void near car_info(int *ids, char *vals)
     for (count = 0, n = 0; n < 7; n++) {
         if (node = gear[n]) {
             count++;
-            it = &g_parts[node->idx];
+            it = &g_parts[node->catalogIndex];
             ids[count] = g_pad[n];
             g_list[count] = it->nameOffset;
-            if (node->wear != -0x80)
+            if (node->wear != PART_WEAR_UNTRACKED)
                 vals[count] = node->wear / 100;
             else
                 vals[count] = 0x80;
@@ -760,10 +760,23 @@ int g_nCarb[5] = {1, 1, 3, 2, 2};
 int g_nBolt[6] = {1, 2, 2, 2, 2, 2};
 static enum PartCategory g_nextCat[6] = {PART_ENGINE,     PART_MANIFOLD,   PART_CARBURETOR,
                                          PART_CARBURETOR, PART_CARBURETOR, PART_CARBURETOR};
-static int g_cPos[5][6] = {
-    {5, 5, 0, 0, 0, 0}, {6, 6, 0, 0, 0, 0}, {7, 7, 8, 8, 9, 9}, {10, 10, 11, 11, 0, 0}, {12, 12, 13, 13, 0, 0}};
-static int g_boltSlots[10] = {0, 0, 1, 1, 5, 5, 5, 5, 5, 5};
-static int g_boltSubslots[10] = {0, 0, 0, 1, 0, 1, 0, 1, 0, 1};
+static enum EngineDrawSlot g_cPos[5][6] = {{ENGINE_DRAW_TWO_V8, ENGINE_DRAW_TWO_V8, ENGINE_DRAW_ENGINE,
+                                            ENGINE_DRAW_ENGINE, ENGINE_DRAW_ENGINE, ENGINE_DRAW_ENGINE},
+                                           {ENGINE_DRAW_FOUR, ENGINE_DRAW_FOUR, ENGINE_DRAW_ENGINE, ENGINE_DRAW_ENGINE,
+                                            ENGINE_DRAW_ENGINE, ENGINE_DRAW_ENGINE},
+                                           {ENGINE_DRAW_TRI_FIRST, ENGINE_DRAW_TRI_FIRST, ENGINE_DRAW_TRI_SECOND,
+                                            ENGINE_DRAW_TRI_SECOND, ENGINE_DRAW_TRI_THIRD, ENGINE_DRAW_TRI_THIRD},
+                                           {ENGINE_DRAW_DUAL_FIRST, ENGINE_DRAW_DUAL_FIRST, ENGINE_DRAW_DUAL_SECOND,
+                                            ENGINE_DRAW_DUAL_SECOND, ENGINE_DRAW_ENGINE, ENGINE_DRAW_ENGINE},
+                                           {ENGINE_DRAW_RACING_FIRST, ENGINE_DRAW_RACING_FIRST,
+                                            ENGINE_DRAW_RACING_SECOND, ENGINE_DRAW_RACING_SECOND, ENGINE_DRAW_ENGINE,
+                                            ENGINE_DRAW_ENGINE}};
+static enum EngineDrawSlot g_boltSlots[10] = {
+    ENGINE_DRAW_ENGINE, ENGINE_DRAW_ENGINE, ENGINE_DRAW_MANIFOLD, ENGINE_DRAW_MANIFOLD, ENGINE_DRAW_TWO_V8,
+    ENGINE_DRAW_TWO_V8, ENGINE_DRAW_TWO_V8, ENGINE_DRAW_TWO_V8,   ENGINE_DRAW_TWO_V8,   ENGINE_DRAW_TWO_V8};
+static enum PartBoltSide g_boltSubslots[10] = {PART_BOLT_FIRST, PART_BOLT_FIRST,  PART_BOLT_FIRST, PART_BOLT_SECOND,
+                                               PART_BOLT_FIRST, PART_BOLT_SECOND, PART_BOLT_FIRST, PART_BOLT_SECOND,
+                                               PART_BOLT_FIRST, PART_BOLT_SECOND};
 
 
 void ga_info(void)
@@ -795,7 +808,7 @@ void near ga_transmission(void)
     int prev;
     struct Car *owner;
     int k;
-    struct Node *tbl[142];
+    struct PartNode *tbl[142];
 
     owner = g_driver.currentCar;
     if (!owner) {
@@ -809,7 +822,8 @@ void near ga_transmission(void)
             flags[k + 1] = 0;
         g_hots[HOTS_TRANSMISSION + 3 + k].kind = HOT_REGION;
     }
-    g_carDraw.transmissionPic = owner->transmission ? g_transPics[g_parts[owner->transmission->idx].variant] : 0;
+    g_carDraw.transmissionPic =
+        owner->transmission ? g_transPics[g_parts[owner->transmission->catalogIndex].variant] : 0;
     r_vid.copyToFront = !g_carDraw.transmissionPic;
     sc_picture_at(PIC_TRANSMISSION_DIALOG, 0x20, 10, -1);
     r_vid.copyToFront = 1;
@@ -844,8 +858,8 @@ void near ga_transmission(void)
                 if (!k)
                     break;
                 prev = g_carDraw.transmissionPic;
-                g_carDraw.transmissionPic = g_transPics[g_parts[tbl[k]->idx].variant];
-                if (g_carData[owner->specIndex].stockParts & g_parts[tbl[k]->idx].fitMask & SPEC_FIT_MASK) {
+                g_carDraw.transmissionPic = g_transPics[g_parts[tbl[k]->catalogIndex].variant];
+                if (g_carData[owner->specIndex].stockParts & g_parts[tbl[k]->catalogIndex].fitMask & SPEC_FIT_MASK) {
                     ga_install(ga_unlink(tbl[k]), &owner->transmission);
                     cu_ctl(CURSOR_HIDE_NOW);
                     so_part_move(1);
@@ -916,10 +930,10 @@ int ga_ready(struct Car *car, int flag)
 {
     int n, i;
 
-    if (car->rack.parts[0] == 0 || car->wireState <= WIRES_ABSENT || car->rack.parts[1] == 0)
+    if (car->rack.parts[RACK_ENGINE] == 0 || car->wireState <= WIRES_ABSENT || car->rack.parts[RACK_MANIFOLD] == 0)
         return 0;
-    n = g_nCarb[g_parts[car->rack.parts[1]->idx].variant];
-    for (i = 2; i < n + 2; i++)
+    n = g_nCarb[g_parts[car->rack.parts[RACK_MANIFOLD]->catalogIndex].variant];
+    for (i = RACK_CARB_FIRST; i < n + RACK_CARB_FIRST; i++)
         if (car->rack.parts[i] == 0)
             return 0;
     for (i = n * 2 + 3; --i >= 0;)
@@ -1012,10 +1026,10 @@ static void near tune_timing(struct Car *car)
 
 void near ga_hood(struct Car *car)
 {
-    struct Node *list4[142];
-    struct Node *p6;
+    struct PartNode *list4[142];
+    struct PartNode *p6;
     int cnt1;
-    int sel2;
+    enum EngineRackSlot sel2;
     int key;
     int ok;
     int k;
@@ -1042,17 +1056,19 @@ void near ga_hood(struct Car *car)
         car->wireState != WIRES_ABSENT
             ? (car->wireState > WIRES_ABSENT ? PIC_IGNITION_WIRES_CONNECTED : PIC_IGNITION_WIRES_DISCONNECTED)
             : 0;
-    if (p6 = car->rack.parts[0])
-        g_partPics[1][0] =
-            g_parts[p6->idx].variant == MANIFOLD_TWO_BARREL ? PIC_MANIFOLD_TWO_BARREL_V6 : PIC_MANIFOLD_TWO_BARREL_V8;
+    if (p6 = car->rack.parts[RACK_ENGINE])
+        g_partPics[RACK_MANIFOLD][0] = g_parts[p6->catalogIndex].variant == MANIFOLD_TWO_BARREL
+                                           ? PIC_MANIFOLD_TWO_BARREL_V6
+                                           : PIC_MANIFOLD_TWO_BARREL_V8;
     for (key = 0; key < ENGINE_RACK_SLOTS; key++)
-        g_partsPics[key] = (p6 = car->rack.parts[key]) ? g_partPics[key][g_parts[p6->idx].variant] : 0;
-    g_cPos[0][0] = g_cPos[0][1] = g_partsPics[0] == PIC_ENGINE_V6 ? 4 : 5;
-    cnt1 = (g_partsPics[0] != 0) + (g_partsPics[1] != 0) + (g_partsPics[2] != 0) + (g_partsPics[3] != 0) +
-           (g_partsPics[4] != 0);
-    n = (p6 = car->rack.parts[1]) ? g_nCarb[g_parts[p6->idx].variant] + 2 : 5;
+        g_partsPics[key] = (p6 = car->rack.parts[key]) ? g_partPics[key][g_parts[p6->catalogIndex].variant] : 0;
+    g_cPos[0][0] = g_cPos[0][1] = g_partsPics[RACK_ENGINE] == PIC_ENGINE_V6 ? ENGINE_DRAW_TWO_V6 : ENGINE_DRAW_TWO_V8;
+    cnt1 = (g_partsPics[RACK_ENGINE] != 0) + (g_partsPics[RACK_MANIFOLD] != 0) + (g_partsPics[RACK_CARB_FIRST] != 0) +
+           (g_partsPics[RACK_CARB_SECOND] != 0) + (g_partsPics[RACK_CARB_THIRD] != 0);
+    n = (p6 = car->rack.parts[RACK_MANIFOLD]) ? g_nCarb[g_parts[p6->catalogIndex].variant] + RACK_CARB_FIRST
+                                              : ENGINE_RACK_SLOTS;
     if (p6) {
-        tmp29 = g_parts[p6->idx].variant;
+        tmp29 = g_parts[p6->catalogIndex].variant;
         for (k = 3; k < ENGINE_BOLT_COUNT; k++)
             g_boltSlots[k + 1] = g_cPos[tmp29][k - 3];
     }
@@ -1087,7 +1103,7 @@ void near ga_hood(struct Car *car)
             g_slotSelec.wirePic = PIC_IGNITION_WIRES_DISCONNECTED;
             gx_draw_wires();
             g_gameClock.actionTicks += TIME_WIRE_CHANGE;
-            g_slotSelec.slot = 0;
+            g_slotSelec.drawSlot = ENGINE_DRAW_ENGINE;
             gx_build_hots(g_boltSlots + 1, g_boltSubslots + 1);
             break;
         case KR_ENGINE_TIMING:
@@ -1131,20 +1147,21 @@ void near ga_hood(struct Car *car)
             default:
                 goto again;
             case 0:
-                ok = g_parts[list4[key]->idx].fitMask & g_carData[car->specIndex].stockParts & SPEC_FIT_MASK;
-                g_slotSelec.slot = 0;
+                ok = g_parts[list4[key]->catalogIndex].fitMask & g_carData[car->specIndex].stockParts & SPEC_FIT_MASK;
+                g_slotSelec.drawSlot = ENGINE_DRAW_ENGINE;
                 step = 0;
                 car->wireState = WIRES_DISCONNECTED;
                 g_slotSelec.wirePic = PIC_IGNITION_WIRES_DISCONNECTED;
                 g_gameClock.actionTicks += ok ? TIME_ENGINE_CHANGE : TIME_ENGINE_MISFIT;
                 break;
             case 1:
-                ok = (g_parts[k = list4[key]->idx].fitMask & g_carData[car->specIndex].stockParts & SPEC_FIT_MASK) !=
-                         0 &&
-                     g_manifoldFit[g_parts[car->rack.parts[0]->idx].variant][tmp29 = g_parts[k].variant] != 0;
-                g_slotSelec.slot = 1;
+                ok = (g_parts[k = list4[key]->catalogIndex].fitMask & g_carData[car->specIndex].stockParts &
+                      SPEC_FIT_MASK) != 0 &&
+                     g_manifoldFit[g_parts[car->rack.parts[RACK_ENGINE]->catalogIndex].variant]
+                                  [tmp29 = g_parts[k].variant] != 0;
+                g_slotSelec.drawSlot = ENGINE_DRAW_MANIFOLD;
                 step = 1;
-                n = g_nCarb[g_parts[list4[key]->idx].variant] + 2;
+                n = g_nCarb[g_parts[list4[key]->catalogIndex].variant] + 2;
                 for (k = 4; k < 10; k++)
                     g_boltSlots[k] = g_cPos[tmp29][k - 4];
                 g_gameClock.actionTicks += ok ? (unsigned)TIME_MANIFOLD_CHANGE : (unsigned)TIME_MANIFOLD_MISFIT;
@@ -1152,35 +1169,36 @@ void near ga_hood(struct Car *car)
             case 2:
             case 3:
             case 4:
-                ok = (g_parts[k = list4[key]->idx].fitMask & g_carData[car->specIndex].stockParts & SPEC_FIT_MASK) !=
-                         0 &&
-                     g_carbFit[tmp29 = g_parts[car->rack.parts[1]->idx].variant][g_parts[k].variant] != 0;
+                ok = (g_parts[k = list4[key]->catalogIndex].fitMask & g_carData[car->specIndex].stockParts &
+                      SPEC_FIT_MASK) != 0 &&
+                     g_carbFit[tmp29 = g_parts[car->rack.parts[RACK_MANIFOLD]->catalogIndex].variant]
+                              [g_parts[k].variant] != 0;
                 g_gameClock.actionTicks += ok ? (unsigned)TIME_CARB_CHANGE : (unsigned)TIME_CARB_MISFIT;
                 step = 3;
-                sel2 = 2;
-                switch (g_slotSelec.slot = g_cPos[tmp29][0]) {
-                case 4:
-                case 5:
-                case 6:
+                sel2 = RACK_CARB_FIRST;
+                switch (g_slotSelec.drawSlot = g_cPos[tmp29][0]) {
+                case ENGINE_DRAW_TWO_V6:
+                case ENGINE_DRAW_TWO_V8:
+                case ENGINE_DRAW_FOUR:
                     break;
-                case 7:
-                    if (car->rack.parts[2] == 0)
+                case ENGINE_DRAW_TRI_FIRST:
+                    if (car->rack.parts[RACK_CARB_FIRST] == 0)
                         break;
-                    if (car->rack.parts[3]) {
-                        g_slotSelec.slot = 9;
+                    if (car->rack.parts[RACK_CARB_SECOND]) {
+                        g_slotSelec.drawSlot = ENGINE_DRAW_TRI_THIRD;
                         step += 4;
-                        sel2 = 4;
+                        sel2 = RACK_CARB_THIRD;
                     } else {
-                        g_slotSelec.slot = 8;
+                        g_slotSelec.drawSlot = ENGINE_DRAW_TRI_SECOND;
                         step += 2;
-                        sel2 = 3;
+                        sel2 = RACK_CARB_SECOND;
                     }
                     break;
-                case 10:
-                case 12:
-                    if (car->rack.parts[2] == 0)
+                case ENGINE_DRAW_DUAL_FIRST:
+                case ENGINE_DRAW_RACING_FIRST:
+                    if (car->rack.parts[RACK_CARB_FIRST] == 0)
                         break;
-                    g_slotSelec.slot++;
+                    g_slotSelec.drawSlot++;
                     step += 2;
                     sel2++;
                     break;
@@ -1188,7 +1206,7 @@ void near ga_hood(struct Car *car)
                     goto again;
                 }
             }
-            g_partsPics[sel2] = k = g_partPics[sel2][g_parts[list4[key]->idx].variant];
+            g_partsPics[sel2] = k = g_partPics[sel2][g_parts[list4[key]->catalogIndex].variant];
             if (ok) {
                 ga_install(ga_unlink(list4[key]), &car->rack.parts[sel2]);
                 cu_ctl(CURSOR_HIDE_NOW);
@@ -1196,14 +1214,15 @@ void near ga_hood(struct Car *car)
                 gx_draw_part(g_partsPics[sel2], 0);
                 so_part_move(0);
                 so_part_set();
-                if (sel2 == 0) {
-                    g_partPics[1][0] = k == PIC_ENGINE_V6 ? PIC_MANIFOLD_TWO_BARREL_V6 : PIC_MANIFOLD_TWO_BARREL_V8;
-                    g_cPos[0][0] = g_cPos[0][1] = k == PIC_ENGINE_V6 ? 4 : 5;
+                if (sel2 == RACK_ENGINE) {
+                    g_partPics[RACK_MANIFOLD][0] =
+                        k == PIC_ENGINE_V6 ? PIC_MANIFOLD_TWO_BARREL_V6 : PIC_MANIFOLD_TWO_BARREL_V8;
+                    g_cPos[0][0] = g_cPos[0][1] = k == PIC_ENGINE_V6 ? ENGINE_DRAW_TWO_V6 : ENGINE_DRAW_TWO_V8;
                     g_slotSelec.wirePic = PIC_IGNITION_WIRES_DISCONNECTED;
                     gx_draw_wires();
                 }
                 for (k = g_nBolt[cnt1]; --k >= 0;) {
-                    g_slotSelec.subslot = k;
+                    g_slotSelec.boltSide = k;
                     gx_draw_bolt(g_engineBoltPicIds[step + k] = g_boltPics[BOLT_INSERTED]);
                     so_bolt();
                     havek[step + k + 1] = 1;
@@ -1224,7 +1243,7 @@ void near ga_hood(struct Car *car)
                 gx_erase_part(g_partsPics[sel2], 1);
                 so_part_move(0);
                 g_partsPics[sel2] = 0;
-                if (sel2 == 0) {
+                if (sel2 == RACK_ENGINE) {
                     car->wireState = WIRES_ABSENT;
                     g_slotSelec.wirePic = 0;
                 }
@@ -1241,8 +1260,8 @@ void near ga_hood(struct Car *car)
                 continue;
             g_gameClock.actionTicks += TIME_BOLT_WORK;
             if (havek[key] == 2) {
-                g_slotSelec.slot = g_boltSlots[key];
-                g_slotSelec.subslot = g_boltSubslots[key];
+                g_slotSelec.drawSlot = g_boltSlots[key];
+                g_slotSelec.boltSide = g_boltSubslots[key];
                 if (--car->engineBolts[key - 1] <= BOLT_INSERTED) {
                     g_engineBoltPicIds[key - 1] = havek[key] = car->engineBolts[key - 1] = BOLT_ABSENT;
                     gx_drop_bolt();
@@ -1252,29 +1271,29 @@ void near ga_hood(struct Car *car)
                     so_bolt_turn();
                 }
             done:
-                sel2 = -1;
+                sel2 = RACK_NONE;
                 ok = 0;
-                switch (g_slotSelec.slot) {
+                switch (g_slotSelec.drawSlot) {
                 default:
-                    if (g_boltSubslots[k = key] == 1)
+                    if (g_boltSubslots[k = key] == PART_BOLT_SECOND)
                         k--;
                     if (havek[k] != 0 || havek[k + 1] != 0)
                         goto strip;
-                    sel2 = (k - 4) / 2 + 2;
+                    sel2 = (k - 4) / 2 + RACK_CARB_FIRST;
                     if (cnt1 == 3)
                         ok = 2;
                     g_gameClock.actionTicks += TIME_CARB_CHANGE;
                     goto strip;
-                case 0:
+                case ENGINE_DRAW_ENGINE:
                     break;
-                case 1:
+                case ENGINE_DRAW_MANIFOLD:
                     if (cnt1 != 2)
                         goto strip;
                     for (key = 2; key < 4 && havek[key] == 0; key++)
                         ;
                     if (key != 4)
                         goto strip;
-                    sel2 = 1;
+                    sel2 = RACK_MANIFOLD;
                     ok = 1;
                     g_gameClock.actionTicks += TIME_MANIFOLD_CHANGE;
                     goto strip;
@@ -1286,14 +1305,14 @@ void near ga_hood(struct Car *car)
                         continue;
                     }
                     g_engineBoltPicIds[key - 1] = g_boltPics[++car->engineBolts[key - 1]];
-                    g_slotSelec.slot = g_boltSlots[key];
-                    g_slotSelec.subslot = g_boltSubslots[key];
+                    g_slotSelec.drawSlot = g_boltSlots[key];
+                    g_slotSelec.boltSide = g_boltSubslots[key];
                     gx_draw_bolt(g_engineBoltPicIds[key - 1]);
                     so_bolt_turn();
                     continue;
                 }
-                g_slotSelec.slot = g_boltSlots[key];
-                g_slotSelec.subslot = g_boltSubslots[key];
+                g_slotSelec.drawSlot = g_boltSlots[key];
+                g_slotSelec.boltSide = g_boltSubslots[key];
                 gx_draw_bolt(g_engineBoltPicIds[key - 1] = g_boltPics[BOLT_INSERTED]);
                 so_bolt();
                 havek[key] = 1;
@@ -1301,13 +1320,13 @@ void near ga_hood(struct Car *car)
                 continue;
             }
         }
-        sel2 = -1;
+        sel2 = RACK_NONE;
         ok = 0;
         if (cnt1 == 1 && car->wireState == WIRES_DISCONNECTED) {
             for (key = 1; key < 2 && !havek[key]; key++)
                 continue;
             if (key == 2) {
-                sel2 = 0;
+                sel2 = RACK_ENGINE;
                 car->wireState = WIRES_ABSENT;
                 g_slotSelec.wirePic = 0;
                 g_gameClock.actionTicks += TIME_ENGINE_CHANGE;
@@ -1320,7 +1339,7 @@ void near ga_hood(struct Car *car)
             cu_ctl(CURSOR_HIDE_NOW);
             g_partsPics[sel2] = 0;
             if (ok)
-                g_slotSelec.slot = ok - 1;
+                g_slotSelec.drawSlot = ok - 1;
             gx_draw_parts(car);
             gx_draw_bolts(g_boltSlots + 1, g_boltSubslots + 1, 1);
             gx_build_hots(g_boltSlots + 1, g_boltSubslots + 1);

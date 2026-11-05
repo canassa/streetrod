@@ -63,13 +63,14 @@ static unsigned char g_steerPoints[25][2] = {
     {170, 6},  {175, 6},  {179, 6},  {183, 7},  {188, 7},  {192, 8},  {197, 9},  {201, 11}, {206, 12},
     {211, 14}, {215, 16}, {219, 19}, {222, 20}, {226, 23}, {229, 26}, {232, 29}, {236, 33}, {239, 36},
     {242, 40}, {245, 45}, {247, 49}, {249, 54}, {250, 58}, {252, 64}, {253, 69}};
-static int g_wheelShown = 0;
-static int g_wheelSlotY[3] = {148, 174, 73};
+static enum WheelPose g_wheelShown = WHEEL_POSE_CENTER;
+static int g_wheelSlotY[WHEEL_POSE_COUNT] = {148, 174, 73};
 static signed char g_shiftPts[11][2] = {{14, 17}, {14, 28}, {13, 12}, {13, 2}, {13, 20}, {22, 2},
                                         {13, 12}, {13, 2},  {13, 20}, {22, 2}, {22, 20}};
-static struct Track g_shifters[3] = {{2, PIC_SHIFTER_AUTOMATIC_GATE, PIC_SHIFTER_AUTOMATIC_KNOB, 8, g_shiftPts[0]},
-                                     {4, PIC_SHIFTER_THREE_SPEED_GATE, PIC_SHIFTER_THREE_SPEED_KNOB, 19, g_shiftPts[2]},
-                                     {5, PIC_SHIFTER_FOUR_SPEED_GATE, PIC_SHIFTER_FOUR_SPEED_KNOB, 19, g_shiftPts[6]}};
+static struct ShifterTrack g_shifters[3] = {
+    {2, PIC_SHIFTER_AUTOMATIC_GATE, PIC_SHIFTER_AUTOMATIC_KNOB, 8, g_shiftPts[0]},
+    {4, PIC_SHIFTER_THREE_SPEED_GATE, PIC_SHIFTER_THREE_SPEED_KNOB, 19, g_shiftPts[2]},
+    {5, PIC_SHIFTER_FOUR_SPEED_GATE, PIC_SHIFTER_FOUR_SPEED_KNOB, 19, g_shiftPts[6]}};
 static struct Pair g_shiftSlots[5] = {{0, 162}, {32, 162}, {64, 162}, {96, 162}, {264, 102}};
 
 
@@ -462,7 +463,7 @@ void da_set_view(enum DashView mode)
 
 void da_load_wheel(void)
 {
-    int i6;
+    enum WheelPose i6;
     struct Bitmap far *bm;
     struct Blt pkt;
 
@@ -471,9 +472,9 @@ void da_load_wheel(void)
         pkt.h = 0x1a;
         pkt.sx = pkt.sy = 0;
         pkt.dx = 0x88;
-        for (i6 = 0; i6 < 3; i6++) {
+        for (i6 = WHEEL_POSE_CENTER; i6 < WHEEL_POSE_COUNT; i6++) {
             bm = di_bm(g_wheelPicIds[i6], ARENA_LOW_STACK);
-            if (r_vid.mode != VID_EGA || i6 < 2) {
+            if (r_vid.mode != VID_EGA || i6 < WHEEL_POSE_RIGHT) {
                 g_wheelPoses.bitmaps[i6] = g_bufferSceneA;
                 g_wheelPoses.y[i6] = g_wheelSlotY[i6];
             } else {
@@ -485,7 +486,7 @@ void da_load_wheel(void)
             ma_pop_low(1);
         }
     } else {
-        for (i6 = 0; i6 < 3; i6++)
+        for (i6 = WHEEL_POSE_CENTER; i6 < WHEEL_POSE_COUNT; i6++)
             g_wheelPoses.bitmaps[i6] = di_bm(g_wheelPicIds[i6], ARENA_LOW_STACK);
     }
 }
@@ -524,14 +525,15 @@ void da_steer_marker(int n)
 void da_draw_wheel(int a, int b, struct Bitmap far *dst)
 {
     struct Blt pkt1;
-    int sel, x, y2;
+    enum WheelPose sel;
+    int x, y2;
     unsigned off;
     int ymin2;
     unsigned seg;
     int ymax;
 
     sel = (a != 0) + (a > 0);
-    if (sel < 3 && sel != g_wheelShown) {
+    if (sel < WHEEL_POSE_COUNT && sel != g_wheelShown) {
         pkt1.w = 0xb8;
         pkt1.h = 0x1a;
         if (r_vid.mode != VID_EGA) {
@@ -577,9 +579,7 @@ void da_draw_wheel(int a, int b, struct Bitmap far *dst)
     }
 }
 
-/* Draws the car sprite at the top of the screen and, for each of the g_shifterDraw.track->n points of the
-   track, the wheel sprite (the position comes from the (x, y) pair, the source rectangle from
-   g_shiftSlots). da_draw_shifter is the per-frame update that draws the same pieces. */
+/* Draw the shifter gate and cache clean and knob-covered patches at each position. */
 
 void da_init_shifter(enum AutoSelector a, enum DriveGear b)
 {
@@ -594,22 +594,22 @@ void da_init_shifter(enum AutoSelector a, enum DriveGear b)
     int y;
 
     g_shifterDraw.track = &g_shifters[a ? 0 : b == DRIVE_THIRD ? 1 : 2];
-    bm19 = di_bm(g_shifterDraw.track->id1, ARENA_HIGH_STACK);
+    bm19 = di_bm(g_shifterDraw.track->gatePic, ARENA_HIGH_STACK);
     pk5.w = 0x30;
     pk5.h = 0x2b;
     pk5.sx = pk5.sy = 0;
     pk5.dx = 0x108;
     pk5.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + 0x17;
     (*g_videoOps.copy)(bm19, g_dashBuffered ? g_bufBackgroundDashPtr : g_driveDisplayPage, &pk5, 1);
-    bm28 = di_bm(g_shifterDraw.track->id2, ARENA_HIGH_STACK);
+    bm28 = di_bm(g_shifterDraw.track->knobPic, ARENA_HIGH_STACK);
     p3.w = p2.w = (pk5.w = bm28->width) + 8;
     p3.h = p2.h = pk5.h = bm28->height;
     p3.sx = p3.sy = 0;
     p2.dx = p2.dy = 0;
     pk5.sx = pk5.sy = pk5.dy = 0;
-    for (i = 0; i < g_shifterDraw.track->n; i++) {
-        x = g_shifterDraw.track->pt[i * 2];
-        y = g_shifterDraw.track->pt[i * 2 + 1];
+    for (i = 0; i < g_shifterDraw.track->positionCount; i++) {
+        x = g_shifterDraw.track->positions[i * 2];
+        y = g_shifterDraw.track->positions[i * 2 + 1];
         p2.sx = x & 0xfff8;
         p2.sy = y;
         cm2 = bm_grab(bm19, &p2, ARENA_LOW_STACK);
@@ -622,7 +622,7 @@ void da_init_shifter(enum AutoSelector a, enum DriveGear b)
         (*g_videoOps.copy)(cm2, g_bufferSceneA, &p3, 1);
         ma_pop_low(1);
     }
-    g_shifterDraw.knobPosition = -1;
+    g_shifterDraw.knobPosition = SHIFTER_NOT_DRAWN;
     ma_pop_high(2);
 }
 
@@ -638,22 +638,23 @@ void da_draw_shifter(struct Bitmap far *dst, struct DrivingState *e)
         idx3 = 0;
     else
         idx3 = e->autoSelector - 1;
-    pkt1.h = g_shifterDraw.track->h;
+    pkt1.h = g_shifterDraw.track->knobHeight;
     if (g_shifterDraw.knobPosition >= 0) {
         pkt1.sx = g_shiftSlots[g_shifterDraw.knobPosition].a;
         pkt1.sy = g_shiftSlots[g_shifterDraw.knobPosition].b;
-        x = g_shifterDraw.track->pt[g_shifterDraw.knobPosition * 2] & 0xfff8;
+        x = g_shifterDraw.track->positions[g_shifterDraw.knobPosition * 2] & 0xfff8;
         pkt1.dx = x + 0x108;
         pkt1.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) +
-                  g_shifterDraw.track->pt[g_shifterDraw.knobPosition * 2 + 1] + 0x17;
+                  g_shifterDraw.track->positions[g_shifterDraw.knobPosition * 2 + 1] + 0x17;
         pkt1.w = 0x30 - x > 0x20 ? 0x20 : 0x30 - x;
         (*g_videoOps.copy)(g_bufferSceneA, dst, (struct Blt *)&pkt1, 1);
     }
     pkt1.sx = g_shiftSlots[idx3].a;
     pkt1.sy = g_shiftSlots[idx3].b + 0x13;
-    x = g_shifterDraw.track->pt[idx3 * 2] & 0xfff8;
+    x = g_shifterDraw.track->positions[idx3 * 2] & 0xfff8;
     pkt1.dx = x + 0x108;
-    pkt1.dy = (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + g_shifterDraw.track->pt[idx3 * 2 + 1] + 0x17;
+    pkt1.dy =
+        (r_vid.mode == VID_EGA || g_dashBuffered ? 0 : DASH_Y) + g_shifterDraw.track->positions[idx3 * 2 + 1] + 0x17;
     pkt1.w = 0x30 - x > 0x20 ? 0x20 : 0x30 - x;
     (*g_videoOps.copy)(g_bufferSceneA, dst, (struct Blt *)&pkt1, 1);
     g_shifterDraw.knobPosition = idx3;

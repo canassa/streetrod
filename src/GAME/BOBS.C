@@ -466,7 +466,7 @@ calc:
     p18 = spec_class(g_opponentSpecIndex);
     p27 = spec_class(g_driver.currentCar->specIndex);
     clsl = (g_oppSpecPointer->stockParts >> SPEC_ENGINE_SHIFT) & SPEC_ENGINE_MASK;
-    item1 = g_parts[g_driver.currentCar->rack.parts[0]->idx].variant;
+    item1 = g_parts[g_driver.currentCar->rack.parts[RACK_ENGINE]->catalogIndex].variant;
     v11 = g_rivalStakeToleranceTable[chm][row];
     v2 = g_carRatingsTable[p18][clsl];
     v3 = g_carRatingsTable[p27][item1];
@@ -576,7 +576,7 @@ static int near challenge(int arg)
         g_waitUntil = g_tick + WAGER_TIMEOUT_TICKS;
         while ((ch = sy_wait_input(3000)) == 0)
             ;
-        g_carDraw.betType = ch;
+        g_carDraw.wagerKey = ch;
         switch (ch) {
         case KR_FORGET:
         case KR_TIMEOUT:
@@ -713,15 +713,15 @@ static void near pop_rival_hood(void)
     struct Bitmap far *pict;
     struct Car chassis;
     int n;
-    struct Node nodes[5];
-    struct Node n1;
-    struct Node na;
+    struct PartNode nodes[ENGINE_RACK_SLOTS];
+    struct PartNode n1;
+    struct PartNode na;
 
     ma_release();
     pict = pu_grab(0x60, 9, 200, 143, 0);
     chassis.transmission = &n1;
     chassis.tires = &na;
-    for (n = 0; n < 5; n++)
+    for (n = 0; n < ENGINE_RACK_SLOTS; n++)
         chassis.rack.parts[n] = &nodes[n];
     gm_make_car(g_opponentSpecIndex, 0, &chassis);
     ga_hood(&chassis);
@@ -1068,7 +1068,7 @@ void bo_visit(void)
                     place = ra_outcome();
                     (*g_videoOps.blank)();
                     cr_rival_paint(RIVAL_PAINT_RESTORE);
-                    if (g_carDraw.betType != KR_BET_FOR_KICKS)
+                    if (g_carDraw.wagerKey != KR_BET_FOR_KICKS)
                         g_betRaces++;
                     if (g_isKingState) {
                         if (!g_driverWonFlag) {
@@ -1094,13 +1094,13 @@ void bo_visit(void)
                         g_end |= END_JAIL;
                         return;
                     }
-                    if (g_driverWonFlag && g_carDraw.betType != KR_BET_FOR_KICKS) {
+                    if (g_driverWonFlag && g_carDraw.wagerKey != KR_BET_FOR_KICKS) {
                         if (g_driver.raceType == RACE_DRAG)
                             g_dragWins++;
                         else
                             g_roadWins++;
                     }
-                    if (g_carDraw.betType != KR_BET_FOR_KICKS) {
+                    if (g_carDraw.wagerKey != KR_BET_FOR_KICKS) {
                         g_selectedRacerPointer->betRaces++;
                         if (!g_driverWonFlag)
                             g_selectedRacerPointer->rivalBetWins++;

@@ -157,7 +157,7 @@ enum BodyMod {
 
 #include "POOLS.H"
 
-struct Node2;
+struct CarPoolNode;
 
 /** @brief Tire equipment variants. */
 enum TireVariant {
@@ -204,8 +204,20 @@ enum WireState {
     WIRES_CONNECTED = 1      /**< Wires connected for running. */
 };
 
+/** @brief Installed engine slots, independent of catalog categories. */
+enum EngineRackSlot {
+    RACK_NONE = -1,       /**< No selected installed component. */
+    RACK_ENGINE = 0,      /**< Engine. */
+    RACK_MANIFOLD = 1,    /**< Intake manifold. */
+    RACK_CARB_FIRST = 2,  /**< First carburetor. */
+    RACK_CARB_SECOND = 3, /**< Second carburetor. */
+    RACK_CARB_THIRD = 4   /**< Third carburetor. */
+};
+
+/** @brief An engine, manifold and up to three installed carburetors. */
 struct Rack {
-    struct Node *parts[5];
+    /** Installed pointers by @ref EngineRackSlot; null if absent. */
+    struct PartNode *parts[ENGINE_RACK_SLOTS];
 };
 
 /**
@@ -215,13 +227,13 @@ struct Rack {
  * Rival previews and stock performance calculations also use temporary cars.
  */
 struct Car {
-    int value;                 /**< Accounted car value, in dollars. */
-    int specIndex;             /**< Index into the car specification tables. */
-    char paintScheme;          /**< Body-colour pair; @ref PaintScheme. */
-    unsigned char stockRank;   /**< Cached model rank; higher is better. */
-    struct Node *transmission; /**< Installed transmission, or null. */
-    struct Rack rack;          /**< Engine, manifold and up to three carbs. */
-    struct Node *tires;        /**< Installed tire set, or null. */
+    int value;                     /**< Accounted car value, in dollars. */
+    int specIndex;                 /**< Index into the car specification tables. */
+    char paintScheme;              /**< Body-colour pair; @ref PaintScheme. */
+    unsigned char stockRank;       /**< Cached model rank; higher is better. */
+    struct PartNode *transmission; /**< Installed transmission, or null. */
+    struct Rack rack;              /**< Engine, manifold and up to three carbs. */
+    struct PartNode *tires;        /**< Installed tire set, or null. */
     /** Transmission attachment states; @ref BoltTightness. */
     char transmissionBolts[TRANSMISSION_BOLT_COUNT];
     /** Engine bolt, two manifold bolts, then carb pairs; @ref BoltTightness. */
@@ -246,12 +258,12 @@ extern int g_carPulledIn;
 extern int g_picsFreed;
 void gm_pause(int a);
 void gm_message(int n);
-struct Node *near gm_new_part(void);
-int gm_part_value(struct Node *n);
-struct Node2 *near gm_new_car(void);
-struct Node *near gm_add_part(int idx, int a);
+struct PartNode *near gm_new_part(void);
+int gm_part_value(struct PartNode *n);
+struct CarPoolNode *near gm_new_car(void);
+struct PartNode *near gm_add_part(int idx, int a);
 struct Car *near gm_make_car(int idx, int value, struct Car *old);
-int near gm_take_part(struct Node *n, int keep);
+int near gm_take_part(struct PartNode *n, int keep);
 int near gm_scrap_car(struct Car *c, int keep);
 int gm_car_look(struct Car *c);
 void gm_play_anim(int h);

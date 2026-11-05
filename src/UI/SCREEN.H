@@ -8,8 +8,8 @@
 
 #include "GAME.H"
 
-struct Node;
-struct Node2;
+struct PartNode;
+struct CarPoolNode;
 
 /** @brief Saved race selection used for wagers and course setup. */
 enum RaceType {
@@ -22,10 +22,10 @@ struct DriverState {
     int unused;
     struct Car *currentCar;
     struct Car *otherCars;
-    struct Node2 *freeCars;
+    struct CarPoolNode *freeCars;
     int carCount;
-    struct Node *spareParts;
-    struct Node *freeParts;
+    struct PartNode *spareParts;
+    struct PartNode *freeParts;
     int partCount;
     int adIndex;
     enum RaceType raceType;

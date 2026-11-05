@@ -7,14 +7,15 @@
 #define CARPIC_H
 
 #include "BITMAP.H"
+#include "DASH.H"
 #include "GAME.H"
 #include "STRUCTS.H"
 
-/* one saved band of a screen page (8 bytes): where it sits in the scratch bitmap, its first row and height */
+/** @brief A composited EGA car strip packed into scratch video memory. */
 struct Band {
-    char far *p;
-    int y;
-    int h;
+    char far *pixels; /**< Strip pixels, packed at the car bitmap's pitch. */
+    int sourceY;      /**< First row of the strip within the car frame. */
+    int height;       /**< Strip height in pixels. */
 };
 
 /**
@@ -41,7 +42,7 @@ enum CarAnimKind {
 extern int g_delayScale;
 extern int g_dashBuffered;
 extern int g_autoTrans;
-extern int g_wheelPicIds[3];
+extern int g_wheelPicIds[WHEEL_POSE_COUNT];
 extern int g_driveRebuild;
 extern struct AnimCommand g_animScripts[];
 extern int g_animScriptStart[];

@@ -35,19 +35,19 @@ void near pf_drivetrain(struct Car *c, struct DrivingState *e)
     int c3, e1, v3;
     enum DriveGear i;
     enum RpmBand k;
-    struct Node *m;
+    struct PartNode *m;
     int bl;
-    struct Node **qn;
-    struct Node *n6k;
+    struct PartNode **qn;
+    struct PartNode *n6k;
 
     qn = c->rack.parts;
     n6k = c->transmission;
     m = c->tires;
-    a3 = g_parts[qn[0]->idx].variant;
-    bl = g_parts[qn[1]->idx].variant;
-    c3 = g_parts[qn[2]->idx].variant;
-    d = g_parts[n6k->idx].variant;
-    e1 = g_parts[m->idx].variant;
+    a3 = g_parts[qn[RACK_ENGINE]->catalogIndex].variant;
+    bl = g_parts[qn[RACK_MANIFOLD]->catalogIndex].variant;
+    c3 = g_parts[qn[RACK_CARB_FIRST]->catalogIndex].variant;
+    d = g_parts[n6k->catalogIndex].variant;
+    e1 = g_parts[m->catalogIndex].variant;
     vl = ((c->appearance & APPEARANCE_ROOF) || g_models[c->specIndex].choppedRoofPic == 0) * ROOF_SPEED_BONUS +
          ((c->appearance & APPEARANCE_FRONT_BUMPER) || g_models[c->specIndex].frontBumperRemovalPic == 0) *
              FRONT_BUMPER_SPEED_BONUS +
@@ -56,7 +56,7 @@ void near pf_drivetrain(struct Car *c, struct DrivingState *e)
          g_modelScore[g_carData[c->specIndex].rank] * MODEL_SPEED_WEIGHT / MODEL_SCORE_MAX +
          g_carbManifoldFit[c3][bl] * INTAKE_SPEED_WEIGHT / 100.0 + g_engineScore[a3] * ENGINE_SPEED_WEIGHT / 100.0 +
          g_transScore[d] * TRANSMISSION_SPEED_WEIGHT / 100.0 + (1.0 - fabs(c->timing / 8.0)) * TIMING_SPEED_WEIGHT;
-    vl = ((double)PART_WEAR_FULL - qn[0]->wear) / (double)PART_WEAR_FULL * vl;
+    vl = ((double)PART_WEAR_FULL - qn[RACK_ENGINE]->wear) / (double)PART_WEAR_FULL * vl;
     vl = (d == TRANS_AUTOMATIC ? AUTO_SPEED_FACTOR : 1.0) * vl * PERFORMANCE_RATING_WEIGHT + PERFORMANCE_BASE_FACTOR;
     w9 = vl * PERFORMANCE_MAX_MPH;
     if (w9 > PERFORMANCE_MAX_MPH)
@@ -86,8 +86,8 @@ void near pf_drivetrain(struct Car *c, struct DrivingState *e)
         e->autoShiftRpm = gl->bands[RPM_BAND_MIDDLE].maxRpm;
     }
     e->shiftRpm = g_shiftRpm[a3];
-    e->gearRpmPerSpeed[DRIVE_GEAR_SLOTS] =
-        (int)((int)(0x82 - g_carData[c->specIndex].rank) * 5.0 / 50.0 + g_tireFactors[g_parts[m->idx].variant]);
+    e->gearRpmPerSpeed[DRIVE_GEAR_SLOTS] = (int)((int)(0x82 - g_carData[c->specIndex].rank) * 5.0 / 50.0 +
+                                                 g_tireFactors[g_parts[m->catalogIndex].variant]);
     e->topGear = g_transGears[d];
     e->shifterDirty = TRUE;
 }
@@ -97,8 +97,8 @@ void near pf_drivetrain(struct Car *c, struct DrivingState *e)
 void near pf_drivetrain_spec(int n, struct DrivingState *e)
 {
     struct Car car;
-    struct Node nd[5];
-    struct Node na, lo;
+    struct PartNode nd[ENGINE_RACK_SLOTS];
+    struct PartNode na, lo;
     struct CarSpec *s;
     int t, i, j;
 
@@ -107,18 +107,20 @@ void near pf_drivetrain_spec(int n, struct DrivingState *e)
     car.transmission = &na;
     car.tires = &lo;
     s = &g_carData[n];
-    car.rack.parts[3] = car.rack.parts[4] = 0;
+    car.rack.parts[RACK_CARB_SECOND] = car.rack.parts[RACK_CARB_THIRD] = 0;
     t = ((s->stockParts >> SPEC_CARB_SHIFT) & SPEC_CARB_MASK) + PART_CARBURETOR_FIRST;
     for (i = g_nCarb[(s->stockParts >> SPEC_MANIFOLD_SHIFT) & SPEC_MANIFOLD_MASK] + 1; i >= 0; i--) {
         car.rack.parts[i] = &nd[i];
         nd[i].wear = g_partWear[PART_CARBURETOR];
-        nd[i].idx = t;
+        nd[i].catalogIndex = t;
     }
     i = (s->stockParts >> SPEC_TRANS_SHIFT) & SPEC_TRANS_MASK;
-    na.idx = (t = (s->stockParts & SPEC_FIT_MASK) >> 1) + (i == TRANS_RACING) + i * 3 + PART_TRANSMISSION_FIRST;
-    lo.idx = ((s->stockParts >> SPEC_TIRES_SHIFT) & SPEC_TIRES_MASK) + PART_TIRES_FIRST;
-    nd[0].idx = ((s->stockParts >> SPEC_ENGINE_SHIFT) & SPEC_ENGINE_MASK) * 3 + t;
-    nd[1].idx = (j = (s->stockParts >> SPEC_MANIFOLD_SHIFT) & SPEC_MANIFOLD_MASK) * 3 + t + PART_MANIFOLD_FIRST;
+    na.catalogIndex =
+        (t = (s->stockParts & SPEC_FIT_MASK) >> 1) + (i == TRANS_RACING) + i * 3 + PART_TRANSMISSION_FIRST;
+    lo.catalogIndex = ((s->stockParts >> SPEC_TIRES_SHIFT) & SPEC_TIRES_MASK) + PART_TIRES_FIRST;
+    nd[RACK_ENGINE].catalogIndex = ((s->stockParts >> SPEC_ENGINE_SHIFT) & SPEC_ENGINE_MASK) * 3 + t;
+    nd[RACK_MANIFOLD].catalogIndex =
+        (j = (s->stockParts >> SPEC_MANIFOLD_SHIFT) & SPEC_MANIFOLD_MASK) * 3 + t + PART_MANIFOLD_FIRST;
     pf_drivetrain(&car, e);
 }
 
@@ -134,14 +136,14 @@ int near pf_vmax(int n)
     int e1;
     struct Car car;
     int i;
-    struct Node lon;
+    struct PartNode lon;
     int j;
-    struct Node *m;
+    struct PartNode *m;
     int bl;
-    struct Node **qn;
-    struct Node ndm[5];
-    struct Node *n6k;
-    struct Node na;
+    struct PartNode **qn;
+    struct PartNode ndm[ENGINE_RACK_SLOTS];
+    struct PartNode *n6k;
+    struct PartNode na;
 
     if (n < 0)
         p6 = g_driver.currentCar;
@@ -151,28 +153,30 @@ int near pf_vmax(int n)
         car.transmission = &na;
         car.tires = &lon;
         s = &g_carData[n];
-        car.rack.parts[3] = car.rack.parts[4] = 0;
+        car.rack.parts[RACK_CARB_SECOND] = car.rack.parts[RACK_CARB_THIRD] = 0;
         t = ((s->stockParts >> SPEC_CARB_SHIFT) & SPEC_CARB_MASK) + PART_CARBURETOR_FIRST;
         for (i = g_nCarb[(s->stockParts >> SPEC_MANIFOLD_SHIFT) & SPEC_MANIFOLD_MASK] + 1; i >= 0; i--) {
             car.rack.parts[i] = &ndm[i];
             ndm[i].wear = g_partWear[PART_CARBURETOR];
-            ndm[i].idx = t;
+            ndm[i].catalogIndex = t;
         }
         i = (s->stockParts >> SPEC_TRANS_SHIFT) & SPEC_TRANS_MASK;
-        na.idx = (t = (s->stockParts & SPEC_FIT_MASK) >> 1) + (i == TRANS_RACING) + i * 3 + PART_TRANSMISSION_FIRST;
-        lon.idx = ((s->stockParts >> SPEC_TIRES_SHIFT) & SPEC_TIRES_MASK) + PART_TIRES_FIRST;
-        ndm[0].idx = ((s->stockParts >> SPEC_ENGINE_SHIFT) & SPEC_ENGINE_MASK) * 3 + t;
-        ndm[1].idx = (j = (s->stockParts >> SPEC_MANIFOLD_SHIFT) & SPEC_MANIFOLD_MASK) * 3 + t + PART_MANIFOLD_FIRST;
+        na.catalogIndex =
+            (t = (s->stockParts & SPEC_FIT_MASK) >> 1) + (i == TRANS_RACING) + i * 3 + PART_TRANSMISSION_FIRST;
+        lon.catalogIndex = ((s->stockParts >> SPEC_TIRES_SHIFT) & SPEC_TIRES_MASK) + PART_TIRES_FIRST;
+        ndm[RACK_ENGINE].catalogIndex = ((s->stockParts >> SPEC_ENGINE_SHIFT) & SPEC_ENGINE_MASK) * 3 + t;
+        ndm[RACK_MANIFOLD].catalogIndex =
+            (j = (s->stockParts >> SPEC_MANIFOLD_SHIFT) & SPEC_MANIFOLD_MASK) * 3 + t + PART_MANIFOLD_FIRST;
         p6 = &car;
     }
     qn = p6->rack.parts;
     n6k = p6->transmission;
     m = p6->tires;
-    a3 = g_parts[qn[0]->idx].variant;
-    bl = g_parts[qn[1]->idx].variant;
-    c3 = g_parts[qn[2]->idx].variant;
-    d = g_parts[n6k->idx].variant;
-    e1 = g_parts[m->idx].variant;
+    a3 = g_parts[qn[RACK_ENGINE]->catalogIndex].variant;
+    bl = g_parts[qn[RACK_MANIFOLD]->catalogIndex].variant;
+    c3 = g_parts[qn[RACK_CARB_FIRST]->catalogIndex].variant;
+    d = g_parts[n6k->catalogIndex].variant;
+    e1 = g_parts[m->catalogIndex].variant;
     vl = ((p6->appearance & APPEARANCE_ROOF) || g_models[p6->specIndex].choppedRoofPic == 0) * ROOF_SPEED_BONUS +
          ((p6->appearance & APPEARANCE_FRONT_BUMPER) || g_models[p6->specIndex].frontBumperRemovalPic == 0) *
              FRONT_BUMPER_SPEED_BONUS +
@@ -181,7 +185,7 @@ int near pf_vmax(int n)
          g_modelScore[g_carData[p6->specIndex].rank] * MODEL_SPEED_WEIGHT / MODEL_SCORE_MAX +
          g_carbManifoldFit[c3][bl] * INTAKE_SPEED_WEIGHT / 100.0 + g_engineScore[a3] * ENGINE_SPEED_WEIGHT / 100.0 +
          g_transScore[d] * TRANSMISSION_SPEED_WEIGHT / 100.0 + (1.0 - fabs(p6->timing / 8.0)) * TIMING_SPEED_WEIGHT;
-    vl = ((double)PART_WEAR_FULL - qn[0]->wear) / (double)PART_WEAR_FULL * vl;
+    vl = ((double)PART_WEAR_FULL - qn[RACK_ENGINE]->wear) / (double)PART_WEAR_FULL * vl;
     vl = (d == TRANS_AUTOMATIC ? AUTO_SPEED_FACTOR : 1.0) * vl * PERFORMANCE_RATING_WEIGHT + PERFORMANCE_BASE_FACTOR;
     w9 = vl * PERFORMANCE_MAX_MPH;
     if (w9 > PERFORMANCE_MAX_MPH)

@@ -29,11 +29,25 @@ static int g_enginePos[3][2] = {{24, 68}, {24, 68}, {16, 68}};
 static int g_engineBoltPos[6] = {109, 112, 120, 111, 124, 116};
 static int g_wiresPos[12] = {75, 113, 64, 122, 83, 110, 72, 119, 83, 118, 72, 127};
 static int g_manifoldBoltPos[8] = {68, 74, 144, 74, 68, 74, 160, 74};
-static int g_carbPos[10][2] = {{90, 70},  {98, 70}, {94, 70},  {64, 70}, {90, 70},
-                               {115, 70}, {72, 71}, {111, 71}, {71, 69}, {115, 69}};
+static int g_carbPos[ENGINE_DRAW_SLOT_COUNT - ENGINE_DRAW_TWO_V6][2] = {
+    {90, 70}, {98, 70}, {94, 70}, {64, 70}, {90, 70}, {115, 70}, {72, 71}, {111, 71}, {71, 69}, {115, 69}};
 static int g_carbBoltOff[10] = {10, -1, 21, -1, 11, -1, 29, -1, 11, -1};
-static char g_partSlotMap[14] = {29, 0, -1, -1, 2, 2, 2, 2, 3, 4, 2, 3, 2, 3};
-static char g_carbPosBase[6] = {5, 6, 7, 10, 12, 0};
+static char g_partSlotMap[ENGINE_DRAW_SLOT_COUNT] = {29,
+                                                     RACK_ENGINE,
+                                                     -1,
+                                                     -1,
+                                                     RACK_CARB_FIRST,
+                                                     RACK_CARB_FIRST,
+                                                     RACK_CARB_FIRST,
+                                                     RACK_CARB_FIRST,
+                                                     RACK_CARB_SECOND,
+                                                     RACK_CARB_THIRD,
+                                                     RACK_CARB_FIRST,
+                                                     RACK_CARB_SECOND,
+                                                     RACK_CARB_FIRST,
+                                                     RACK_CARB_SECOND};
+static char g_carbPosBase[6] = {ENGINE_DRAW_TWO_V8,     ENGINE_DRAW_FOUR,         ENGINE_DRAW_TRI_FIRST,
+                                ENGINE_DRAW_DUAL_FIRST, ENGINE_DRAW_RACING_FIRST, ENGINE_DRAW_ENGINE};
 struct Bitmap far *g_boltOverlay = 0;
 static struct Hotspot g_boltHot = {HOT_REGION, 0, 0, 1, 0, 0, 0, 0, 0};
 
@@ -182,7 +196,7 @@ void gx_trans_draw(int n, char far *s)
 }
 
 struct Blt g_cpyBoltPatchRecord;
-int g_partsPics[5];
+int g_partsPics[ENGINE_RACK_SLOTS];
 int g_engineBoltPicIds[9];
 struct PartSelection g_slotSelec;
 
@@ -190,7 +204,7 @@ struct PartSelection g_slotSelec;
 
 static int near engine_index(void)
 {
-    switch (g_partsPics[0]) {
+    switch (g_partsPics[RACK_ENGINE]) {
     case PIC_ENGINE_V6:
         return 0;
     case PIC_ENGINE_V8_SMALL:
@@ -207,7 +221,7 @@ static int near carb_pos(int *px, int *py)
     int r;
     int t;
 
-    switch (g_partsPics[g_partSlotMap[g_slotSelec.slot]]) {
+    switch (g_partsPics[g_partSlotMap[g_slotSelec.drawSlot]]) {
     case PIC_CARB_TWO_BARREL:
         r = 0;
         break;
@@ -218,26 +232,26 @@ static int near carb_pos(int *px, int *py)
         r = 4;
         break;
     }
-    *px = g_carbPos[t = g_slotSelec.slot - 4][0];
+    *px = g_carbPos[t = g_slotSelec.drawSlot - ENGINE_DRAW_TWO_V6][0];
     *py = g_carbPos[t][1];
     return r;
 }
 
-/* Screen position (*px, *py) of the current slot, by game mode g_slotSelec.slot */
+/* Screen position (*px, *py) of the current slot, by game mode g_slotSelec.drawSlot */
 
 void gx_part_pos(int *px, int *py)
 {
     int n;
 
-    switch (g_slotSelec.slot) {
+    switch (g_slotSelec.drawSlot) {
     default:
         carb_pos(px, py);
         break;
-    case 0:
+    case ENGINE_DRAW_ENGINE:
         *px = g_enginePos[n = engine_index()][0];
         *py = g_enginePos[n][1];
         break;
-    case 1:
+    case ENGINE_DRAW_MANIFOLD:
         *px = 0x38;
         *py = 0x4c;
         break;
@@ -251,20 +265,20 @@ void gx_bolt_pos(int *px, int *py)
     int slot;
     int item;
 
-    switch (g_slotSelec.slot) {
+    switch (g_slotSelec.drawSlot) {
     default:
         slot = carb_pos(px, py);
-        *px += g_carbBoltOff[(slot += g_slotSelec.subslot) * 2];
+        *px += g_carbBoltOff[(slot += g_slotSelec.boltSide) * 2];
         *py += g_carbBoltOff[slot * 2 + 1];
         break;
-    case 0:
+    case ENGINE_DRAW_ENGINE:
         *px = g_engineBoltPos[(slot = engine_index()) * 2];
         *py = g_engineBoltPos[slot * 2 + 1];
         break;
-    case 1:
-        item = g_partsPics[1];
+    case ENGINE_DRAW_MANIFOLD:
+        item = g_partsPics[RACK_MANIFOLD];
         slot = (item == PIC_MANIFOLD_TWO_BARREL_V6 || item == PIC_MANIFOLD_TRI_POWER) ? 0 : 2;
-        if (g_slotSelec.subslot == 1)
+        if (g_slotSelec.boltSide == PART_BOLT_SECOND)
             slot++;
         *px = g_manifoldBoltPos[slot * 2];
         *py = g_manifoldBoltPos[slot * 2 + 1];
@@ -370,11 +384,11 @@ static void near make_bolt_overlay(void)
     int py;
     struct Bitmap far *picture;
 
-    if (g_partsPics[1] == PIC_MANIFOLD_TRI_POWER) {
-        kind = g_partSlotMap[g_slotSelec.slot];
-        if (kind == 3)
+    if (g_partsPics[RACK_MANIFOLD] == PIC_MANIFOLD_TRI_POWER) {
+        kind = g_partSlotMap[g_slotSelec.drawSlot];
+        if (kind == RACK_CARB_SECOND)
             return;
-        what = g_engineBoltPicIds[(i = (kind != 2) ? 1 : 0) + 1];
+        what = g_engineBoltPicIds[(i = (kind != RACK_CARB_FIRST) ? 1 : 0) + 1];
         if (what != PIC_BOLT_TURN_1 && what != PIC_BOLT_TURN_2)
             return;
         px = g_manifoldBoltPos[i * 2] - 2;
@@ -512,54 +526,54 @@ void gx_draw_wires(void)
 
 void gx_draw_parts(struct Car *car)
 {
-    int mode;
-    int slot;
+    enum EngineDrawSlot mode;
+    enum EngineDrawSlot slot;
     int type;
     int other;
 
-    mode = g_slotSelec.slot;
+    mode = g_slotSelec.drawSlot;
     g_partAnimate = 0;
     if (r_vid.hoodBg == 0)
         r_vid.hoodBg = di_bm(PIC_ENGINE_BAY, ARENA_LOW_STACK);
     else
         di_unpack_pic(PIC_ENGINE_BAY, r_vid.hoodBg);
-    if (type = g_partsPics[0]) {
-        g_slotSelec.slot = 0;
+    if (type = g_partsPics[RACK_ENGINE]) {
+        g_slotSelec.drawSlot = ENGINE_DRAW_ENGINE;
         gx_draw_part(type, 0);
         if (type == PIC_ENGINE_V6)
-            g_carbPosBase[0] = 4;
+            g_carbPosBase[0] = ENGINE_DRAW_TWO_V6;
         else
-            g_carbPosBase[0] = 5;
-        if (type = g_partsPics[1]) {
-            g_slotSelec.slot = 1;
+            g_carbPosBase[0] = ENGINE_DRAW_TWO_V8;
+        if (type = g_partsPics[RACK_MANIFOLD]) {
+            g_slotSelec.drawSlot = ENGINE_DRAW_MANIFOLD;
             gx_draw_part(type, 0);
-            slot = g_carbPosBase[g_parts[car->rack.parts[1]->idx].variant];
+            slot = g_carbPosBase[g_parts[car->rack.parts[RACK_MANIFOLD]->catalogIndex].variant];
             for (type = 0; type < 3; type++) {
-                g_slotSelec.slot = slot++;
-                if (other = g_partsPics[type + 2])
+                g_slotSelec.drawSlot = slot++;
+                if (other = g_partsPics[type + RACK_CARB_FIRST])
                     gx_draw_part(other, 0);
             }
         }
     }
     g_partAnimate = 1;
-    g_slotSelec.slot = mode;
+    g_slotSelec.drawSlot = mode;
 }
 
 /* Redraw all nine slot pictures (a and b give each slot's mode and sub-mode) into the
    back buffer over the r_vid.hoodBg strip, then the g_slotSelec.wirePic sprite, and an optional label when flag is set.
    The screen shadow r_vid.copyToFront is switched off meanwhile and the area is copied to the front afterwards. */
 
-void gx_draw_bolts(int *a, int *b, int flag)
+void gx_draw_bolts(enum EngineDrawSlot *a, enum PartBoltSide *b, int flag)
 {
-    int prev2;
-    int prev;
+    enum PartBoltSide prev2;
+    enum EngineDrawSlot prev;
     int id;
     int i;
     int shadow;
     struct Blt blt;
 
-    prev = g_slotSelec.slot;
-    prev2 = g_slotSelec.subslot;
+    prev = g_slotSelec.drawSlot;
+    prev2 = g_slotSelec.boltSide;
     shadow = r_vid.copyToFront;
     r_vid.copyToFront = 0;
     blt.sx = 0;
@@ -571,8 +585,8 @@ void gx_draw_bolts(int *a, int *b, int flag)
     (*g_videoOps.copy)(r_vid.hoodBg, r_vid.back, &blt, 1);
     for (i = 0; i < 9; i++) {
         if (id = g_engineBoltPicIds[i]) {
-            g_slotSelec.slot = a[i];
-            g_slotSelec.subslot = b[i];
+            g_slotSelec.drawSlot = a[i];
+            g_slotSelec.boltSide = b[i];
             gx_draw_bolt(id);
         }
     }
@@ -584,8 +598,8 @@ void gx_draw_bolts(int *a, int *b, int flag)
     }
     if (r_vid.copyToFront = shadow)
         bm_copy_box(r_vid.back, r_vid.front, blt.dx, blt.dy, blt.dx + blt.w - 1, blt.dy + blt.h - 1);
-    g_slotSelec.slot = prev;
-    g_slotSelec.subslot = prev2;
+    g_slotSelec.drawSlot = prev;
+    g_slotSelec.boltSide = prev2;
 }
 
 /* Insert item into the array arr of n records, which is sorted by (x1, y1): it goes before
@@ -615,20 +629,21 @@ static void near insert_hot(struct Hotspot *arr, struct Hotspot *item, int n)
 /* Build the sorted engine menu: fixed controls are copied from the templates,
    then for each of 9 slots (grouped by the counts in g_nBolt) that is enabled in g_partsPics an item is
    inserted at the position gx_bolt_pos gives for the slot's coordinates, plus a last item picked by
-   g_slotSelec.wirePic. g_slotSelec.slot/g_slotSelec.subslot are saved and restored around it. */
+   g_slotSelec.wirePic. g_slotSelec.drawSlot/g_slotSelec.boltSide are saved and restored around it. */
 
-void gx_build_hots(int *xs, int *ys)
+void gx_build_hots(enum EngineDrawSlot *xs, enum PartBoltSide *ys)
 {
     int lane;
     int num;
     int x, i, y;
-    int rh, rx;
+    enum PartBoltSide rh;
+    enum EngineDrawSlot rx;
     int j;
     struct Hotspot *item;
     int len;
 
-    rx = g_slotSelec.slot;
-    rh = g_slotSelec.subslot;
+    rx = g_slotSelec.drawSlot;
+    rh = g_slotSelec.boltSide;
     item = &g_hots[HOTS_ENGINE_TEMPLATE];
     len = (num = HOTS_RACE_TYPE - HOTS_ENGINE_TEMPLATE) * sizeof(struct Hotspot);
     memcpy(&g_hots[HOTS_ENGINE + 1], item, len);
@@ -636,8 +651,8 @@ void gx_build_hots(int *xs, int *ys)
     i = lane = j = 0;
     for (; i < 9; i++) {
         if (g_partsPics[lane]) {
-            g_slotSelec.slot = xs[i];
-            g_slotSelec.subslot = ys[i];
+            g_slotSelec.drawSlot = xs[i];
+            g_slotSelec.boltSide = ys[i];
             gx_bolt_pos(&x, &y);
             x += 0x60;
             y += 9;
@@ -652,7 +667,7 @@ void gx_build_hots(int *xs, int *ys)
             j = 0;
         }
     }
-    if (g_partsPics[0]) {
+    if (g_partsPics[RACK_ENGINE]) {
         g_boltHot.textOffset = g_offWires;
         g_boltHot.hitCode = 13;
         i = (g_slotSelec.wirePic == PIC_IGNITION_WIRES_DISCONNECTED) + engine_index() * 2;
@@ -662,8 +677,8 @@ void gx_build_hots(int *xs, int *ys)
         num++;
     }
     g_hots[HOTS_ENGINE + 1 + num].kind = HOT_END;
-    g_slotSelec.slot = rx;
-    g_slotSelec.subslot = rh;
+    g_slotSelec.drawSlot = rx;
+    g_slotSelec.boltSide = rh;
     sy_hover_reset();
 }
 

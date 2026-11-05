@@ -33,8 +33,8 @@
 
 static void near init_racers(void);
 static void near init_new_game(void);
-static int near write_nodes(int handle, struct Node *p);
-static int near read_nodes(int handle, struct Node **head);
+static int near write_nodes(int handle, struct PartNode *p);
+static int near read_nodes(int handle, struct PartNode **head);
 static int near read_cars(int handle, struct Car **head, int flag);
 static void near scan_save_slots(int create);
 static int near is_blank(char *p);
@@ -155,7 +155,7 @@ int near sg_new(void)
 }
 
 
-static int near write_nodes(int handle, struct Node *p)
+static int near write_nodes(int handle, struct PartNode *p)
 {
     unsigned written;
 
@@ -167,11 +167,11 @@ static int near write_nodes(int handle, struct Node *p)
 }
 
 
-static int near read_nodes(int handle, struct Node **head)
+static int near read_nodes(int handle, struct PartNode **head)
 {
-    struct Node *p;
-    struct Node *prev;
-    struct Node buf;
+    struct PartNode *p;
+    struct PartNode *prev;
+    struct PartNode buf;
     unsigned n;
 
     prev = 0;
@@ -204,7 +204,7 @@ static int near write_cars(int handle, struct Car *c, int flag)
     while (c) {
         if (_dos_write(handle, c, 0x28, &n) != 0 || n != 0x28 || write_nodes(handle, c->transmission))
             return 1;
-        for (i = 0; i < 5; i++)
+        for (i = 0; i < ENGINE_RACK_SLOTS; i++)
             if (write_nodes(handle, c->rack.parts[i]))
                 return 1;
         if (write_nodes(handle, c->tires))
@@ -232,7 +232,7 @@ static int near read_cars(int handle, struct Car **head, int flag)
     for (;;) {
         if (_dos_read(handle, &buf, 0x28, &n) != 0 || n != 0x28 || read_nodes(handle, &buf.transmission))
             return 1;
-        for (m = 0; m < 5; m++)
+        for (m = 0; m < ENGINE_RACK_SLOTS; m++)
             if (read_nodes(handle, &buf.rack.parts[m]))
                 return 1;
         if (read_nodes(handle, &buf.tires))

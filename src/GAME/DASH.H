@@ -14,14 +14,24 @@ struct Blt;
 struct DrivingState;
 struct Sprite;
 
-/* what g_shifterDraw.track points at (da_draw_shifter, da_init_shifter): number of points, bitmap ids of the two sprites, bitmap
-   height at +6 and a table of (x, y) signed-byte pairs at +8 */
-struct Track {
-    int n;
-    int id1;
-    int id2;
-    int h;
-    signed char *pt;
+/** @brief Shifter gate artwork and knob coordinates for one transmission. */
+struct ShifterTrack {
+    int positionCount;      /**< Number of available knob positions. */
+    int gatePic;            /**< Gate-background picture ID. */
+    int knobPic;            /**< Knob picture ID. */
+    int knobHeight;         /**< Knob-patch copy height in pixels. */
+    signed char *positions; /**< Interleaved X,Y pixels relative to the gate. */
+};
+
+/** No knob patch has been drawn since shifter initialization. */
+#define SHIFTER_NOT_DRAWN (-1)
+
+/** @brief Steering-wheel artwork slots. */
+enum WheelPose {
+    WHEEL_POSE_CENTER = 0, /**< Straight-ahead wheel. */
+    WHEEL_POSE_LEFT = 1,   /**< Wheel turned left. */
+    WHEEL_POSE_RIGHT = 2,  /**< Wheel turned right. */
+    WHEEL_POSE_COUNT = 3   /**< Number of wheel pictures. */
 };
 
 /** @brief Page pointers and hardware layout for scene transitions. */
@@ -37,14 +47,19 @@ enum DashView {
     DASH_VIEW_RESTORE_SHOW = 4
 };
 
+/** @brief Active shifter layout and the knob patch that needs erasing. */
 struct ShifterDraw {
-    struct Track *track;
+    struct ShifterTrack *track; /**< Borrowed transmission layout. */
+    /** Previous layout index, or @ref SHIFTER_NOT_DRAWN before drawing. */
     int knobPosition;
 };
 
+/** @brief Source images and rows indexed by @ref WheelPose. */
 struct WheelPoses {
-    int y[3];
-    struct Bitmap far *bitmaps[3];
+    /** Source rows for non-EGA wheel copies; unused on EGA. */
+    int y[WHEEL_POSE_COUNT];
+    /** Shared scene bitmap outside EGA; separate wheel images on EGA. */
+    struct Bitmap far *bitmaps[WHEEL_POSE_COUNT];
 };
 
 extern struct Hooks g_videoOps;

@@ -6,6 +6,9 @@
 #ifndef GARAGE_H
 #define GARAGE_H
 
+#include "GAME.H"
+#include "KEYMAPS.H"
+
 /** Action ticks charged for trying an incompatible transmission. */
 #define TIME_TRANSMISSION_MISFIT 0x888
 
@@ -97,7 +100,7 @@ enum PaintShade {
 };
 
 struct Car;
-struct Node;
+struct PartNode;
 
 /** @brief Equipment categories in the parts catalog. */
 enum PartCategory {
@@ -108,27 +111,40 @@ enum PartCategory {
     PART_TIRES = 4         /**< Tires. */
 };
 
+/** @brief Packed sticker and body-modification cache for the garage display. */
 struct Look {
-    unsigned lo : 8;
+    unsigned unusedLow : 8; /**< Unused low byte. */
+    /** One-based sticker choice, or zero for none. */
     unsigned sticker : 5;
-    unsigned roof : 1;
-    unsigned rear : 1;
-    unsigned front : 1;
+    unsigned choppedRoof : 1; /**< Cached @ref APPEARANCE_ROOF flag. */
+    /** Cached @ref APPEARANCE_REAR_BUMPER flag. */
+    unsigned rearBumperRemoved : 1;
+    /** Cached @ref APPEARANCE_FRONT_BUMPER flag. */
+    unsigned frontBumperRemoved : 1;
 };
 
+/** @brief Transient car artwork, sticker placement and last wager input. */
 struct CarDisplay {
+    /** Aligned car-local sticker X; screen X after presenting the car. */
     int stickerX;
+    /** Car-local sticker Y; screen Y after presenting the car. */
     int stickerY;
+    /** Sticker X remainder within the video alignment unit. */
     int stickerSubX;
-    int betType;
+    /** Last wager-menu result, including cancel. */
+    enum InputResult wagerKey;
+    /** Cached body picture ID; currently not read. */
     int bodyPic;
     enum PaintScheme paintScheme; /**< Displayed car body colours. */
-    int tireVariant;
-    int portraitPic; /**< Occupant portrait picture; ignored when unoccupied. */
+    enum TireVariant tireVariant; /**< Tire artwork variant. */
+    /** Occupant portrait picture; ignored when unoccupied. */
+    int portraitPic;
+    /** Current garage car's specification index. */
     int specIndex;
-    struct Look appearance;
+    struct Look appearance; /**< Cached garage sticker and body flags. */
+    /** Transmission-dialog picture, or zero if absent. */
     int transmissionPic;
-    char unused[8];
+    char unused[8]; /**< Unused display-state bytes. */
 };
 
 /** Garage menu result directing the game loop to the ending screen. */
@@ -170,9 +186,9 @@ int near ga_menu(enum GarageMode mode);
 void near ga_paint(void);
 void near ga_body(unsigned mask);
 void near ga_stickers(void);
-void near ga_spares(enum PartCategory t, struct Node **list, char *buf, int start);
-void near ga_install(struct Node *n, struct Node **slot);
-struct Node *near ga_unlink(struct Node *n);
+void near ga_spares(enum PartCategory t, struct PartNode **list, char *buf, int start);
+void near ga_install(struct PartNode *n, struct PartNode **slot);
+struct PartNode *near ga_unlink(struct PartNode *n);
 void near ga_tires(void);
 void ga_info(void);
 void near ga_transmission(void);

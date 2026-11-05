@@ -3370,3 +3370,25 @@ lessons from both branches remain in the recipe book and investigation notes.
 - Sticker captions disagree with their art, classified-border cars are pixels
   rather than purchase entries, and HOT_DATA has an ignored duplicate tail.
   Full evidence and remaining uncertainty live in the linked report.
+
+## 2026-11-05 21:38 CET: Investigate car, dashboard, garage and pool structs
+
+### What I did
+
+Investigated all eleven st-cars structs in order, documented each member and its
+storage/lifetime in plans/investigations/st-cars.md, and added concise header
+contracts. Renamed the shifter and pool types, clarified misleading members, and
+named engine rack/drawing slots, bolt positions and steering-wheel poses. Kept
+all layouts and game behaviour fixed. Initial full gates pass: 572/572 functions,
+clean packed and native DOS builds IDENTICAL, DGROUP checks, zero Doxygen
+diagnostics and 109 unit tests. Captured and compared 76 real-MSC size/offset
+checks, and inspected the original artwork for the image roles.
+
+### What I learned
+
+Band contains a composited EGA car strip, while the sprite blitter's Mask view
+does not read its source-row word. Engine-bay drawing positions are independent
+of the five installed rack slots. Node2 is the free-list view of forty-byte Car
+storage; save loading reconstructs links from serialized presence/end markers.
+CarDisplay also caches raw wager input, including cancellation, rather than a
+BetKind. TireWork reuses its phase word for pixel alignment and frame selection.

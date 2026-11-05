@@ -37,7 +37,7 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-static void near free_part(struct Node *p7);
+static void near free_part(struct PartNode *p7);
 static int near counter_offer(unsigned *price);
 static int near start_game(void);
 static int near read_paper(void);
@@ -151,9 +151,9 @@ static int near read_paper(void)
 }
 
 
-struct Node *near gm_new_part(void)
+struct PartNode *near gm_new_part(void)
 {
-    struct Node *p;
+    struct PartNode *p;
 
     p = g_driver.freeParts;
     g_driver.freeParts = p->next;
@@ -163,20 +163,20 @@ struct Node *near gm_new_part(void)
 }
 
 
-static void near free_part(struct Node *p)
+static void near free_part(struct PartNode *p)
 {
     p->next = g_driver.freeParts;
-    p->idx = -1;
+    p->catalogIndex = POOL_ENTRY_FREE;
     g_driver.freeParts = p;
     g_driver.partCount--;
 }
 
 
-int gm_part_value(struct Node *n)
+int gm_part_value(struct PartNode *n)
 {
     int r;
 
-    if (g_parts[n->idx].category == PART_ENGINE && g_parts[n->idx].variant == ENGINE_V6)
+    if (g_parts[n->catalogIndex].category == PART_ENGINE && g_parts[n->catalogIndex].variant == ENGINE_V6)
         r = V6_PART_VALUE;
     else
         r = n->value;
@@ -189,9 +189,9 @@ int gm_part_value(struct Node *n)
 static void near sell_parts(void)
 {
     unsigned price1;
-    struct Node *list8[142];
+    struct PartNode *list8[142];
     unsigned sel;
-    struct Node *p7;
+    struct PartNode *p7;
     unsigned pct;
     struct PartSpec *ip;
     char lbl[142];
@@ -207,7 +207,7 @@ static void near sell_parts(void)
     for (;; tries3++) {
         for (p7 = g_driver.spareParts, nl = 0; p7; p7 = p7->next) {
             nl++;
-            g_list[nl] = (ip = &g_parts[(list8[nl] = p7)->idx])->nameOffset;
+            g_list[nl] = (ip = &g_parts[(list8[nl] = p7)->catalogIndex])->nameOffset;
             if (p7->wear != PART_WEAR_UNTRACKED) {
                 lbl[nl] = p7->wear / 100;
                 continue;
@@ -232,7 +232,7 @@ static void near sell_parts(void)
         }
         p7 = list8[sel];
         price1 = gm_part_value(p7);
-        type8 = p7->idx;
+        type8 = p7->catalogIndex;
         pct = (PART_WEAR_FULL - p7->wear) / 100;
         switch (g_parts[type8].category) {
         case PART_CARBURETOR:
@@ -275,9 +275,9 @@ static void near sell_parts(void)
 #pragma loop_opt(on)
 
 
-struct Node2 *near gm_new_car(void)
+struct CarPoolNode *near gm_new_car(void)
 {
-    struct Node2 *p;
+    struct CarPoolNode *p;
 
     p = g_driver.freeCars;
     g_driver.freeCars = p->next;
@@ -287,22 +287,22 @@ struct Node2 *near gm_new_car(void)
 }
 
 
-static void near free_car(struct Node2 *p)
+static void near free_car(struct CarPoolNode *p)
 {
     p->next = g_driver.freeCars;
-    p->b = -1;
+    p->specIndex = POOL_ENTRY_FREE;
     g_driver.freeCars = p;
     g_driver.carCount--;
 }
 
 
-struct Node *near gm_add_part(int idx, int a)
+struct PartNode *near gm_add_part(int idx, int a)
 {
-    struct Node *n;
+    struct PartNode *n;
     struct PartSpec *it;
 
     n = gm_new_part();
-    n->idx = idx;
+    n->catalogIndex = idx;
     it = &g_parts[idx];
     n->wear = g_partWear[it->category];
     n->value = a;
@@ -314,7 +314,7 @@ struct Node *near gm_add_part(int idx, int a)
 
 struct Car *near gm_make_car(int idx, int value, struct Car *old)
 {
-    struct Node *node;
+    struct PartNode *node;
     struct Car *car;
     int kind, w, i, j;
 
@@ -333,37 +333,37 @@ struct Car *near gm_make_car(int idx, int value, struct Car *old)
     w = (g_carData[idx].stockParts >> SPEC_TRANS_SHIFT) & SPEC_TRANS_MASK;
     w = (kind = (g_carData[idx].stockParts & SPEC_FIT_MASK) >> 1) + (w == TRANS_RACING) + 3 * w +
         PART_TRANSMISSION_FIRST;
-    node->idx = w;
+    node->catalogIndex = w;
     node->value = g_parts[w].basePrice;
     node->wear = g_partWear[PART_TRANSMISSION];
     node->next = 0;
-    car->rack.parts[0] = node = (old == 0) ? gm_new_part() : car->rack.parts[0];
+    car->rack.parts[RACK_ENGINE] = node = (old == 0) ? gm_new_part() : car->rack.parts[RACK_ENGINE];
     w = (g_carData[idx].stockParts >> SPEC_ENGINE_SHIFT & SPEC_ENGINE_MASK) * 3 + kind;
-    node->idx = w;
+    node->catalogIndex = w;
     node->value = g_parts[w].basePrice;
     node->wear = g_partWear[PART_ENGINE];
     node->next = 0;
     car->tires = node = (old == 0) ? gm_new_part() : car->tires;
     w = (g_carData[idx].stockParts >> SPEC_TIRES_SHIFT & SPEC_TIRES_MASK) + PART_TIRES_FIRST;
-    node->idx = w;
+    node->catalogIndex = w;
     node->value = g_parts[w].basePrice;
     node->wear = g_partWear[PART_TIRES];
     node->next = 0;
-    car->rack.parts[1] = node = (old == 0) ? gm_new_part() : car->rack.parts[1];
+    car->rack.parts[RACK_MANIFOLD] = node = (old == 0) ? gm_new_part() : car->rack.parts[RACK_MANIFOLD];
     for (i = 3; i < ENGINE_BOLT_COUNT; i++)
         car->engineBolts[i] = BOLT_ABSENT;
     w = (i = g_carData[idx].stockParts >> SPEC_MANIFOLD_SHIFT & SPEC_MANIFOLD_MASK) * 3 + kind + PART_MANIFOLD_FIRST;
-    node->idx = w;
+    node->catalogIndex = w;
     node->value = g_parts[w].basePrice;
     node->wear = g_partWear[PART_MANIFOLD];
     node->next = 0;
     w = (g_carData[idx].stockParts >> SPEC_CARB_SHIFT & SPEC_CARB_MASK) + PART_CARBURETOR_FIRST;
     i = g_nCarb[i] - 1;
     for (j = 2; j > i; j--)
-        car->rack.parts[j + 2] = 0;
+        car->rack.parts[j + RACK_CARB_FIRST] = 0;
     for (; i >= 0; i--) {
-        car->rack.parts[i + 2] = node = (old == 0) ? gm_new_part() : car->rack.parts[i + 2];
-        node->idx = w;
+        car->rack.parts[i + RACK_CARB_FIRST] = node = (old == 0) ? gm_new_part() : car->rack.parts[i + RACK_CARB_FIRST];
+        node->catalogIndex = w;
         node->value = g_parts[w].basePrice;
         node->wear = g_partWear[PART_CARBURETOR];
         node->next = 0;
@@ -390,7 +390,7 @@ struct Car *near gm_make_car(int idx, int value, struct Car *old)
 }
 
 
-int near gm_take_part(struct Node *n, int keep)
+int near gm_take_part(struct PartNode *n, int keep)
 {
     int r;
 
@@ -408,7 +408,7 @@ int near gm_take_part(struct Node *n, int keep)
 
 int near gm_scrap_car(struct Car *c, int keep)
 {
-    register struct Node **p2;
+    register struct PartNode **p2;
     int r;
     register int i;
 
@@ -420,7 +420,7 @@ int near gm_scrap_car(struct Car *c, int keep)
     r = c->value;
     if (r < 0)
         r = 0;
-    free_car((struct Node2 *)c);
+    free_car((struct CarPoolNode *)c);
     return r;
 }
 
@@ -583,7 +583,7 @@ int gm_car_look(struct Car *c)
         r |= BODY_REAR_BUMPER;
     if (c->appearance & APPEARANCE_FRONT_BUMPER)
         r |= BODY_FRONT_BUMPER;
-    if (g_parts[c->rack.parts[0]->idx].variant == ENGINE_V8_LARGE)
+    if (g_parts[c->rack.parts[RACK_ENGINE]->catalogIndex].variant == ENGINE_V8_LARGE)
         r |= BODY_LARGE_ENGINE;
     return r;
 }
@@ -709,7 +709,7 @@ static enum GarageMode near your_cars(void)
             result = gm_car_look(g_driver.currentCar);
             cp_show_car(CAR_BACK_OUT, mid, result,
                         (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, FALSE, 0x98,
-                        FALSE, g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
+                        FALSE, g_tirePics[g_parts[g_driver.currentCar->tires->catalogIndex].variant]);
             mn_pop(1);
             ga_clear_name();
             mn_push(KM_GARAGE);

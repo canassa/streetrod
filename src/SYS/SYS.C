@@ -1149,12 +1149,12 @@ void interrupt far sy_drive_isr(void)
                     g_brakeTicks--;
                 }
                 if (g_driveEng.rpm > ENGINE_WEAR_RPM) {
-                    g_driver.currentCar->rack.parts[0]->wear += !g_driver.raceType ? 1 : 1;
+                    g_driver.currentCar->rack.parts[RACK_ENGINE]->wear += !g_driver.raceType ? 1 : 1;
                     g_driver.currentCar->transmission->wear += !g_driver.raceType ? 1 : 1;
                 }
                 if (!(g_gameClock.biosTicks & (!g_driver.raceType ? 0xf : 0xf)))
-                    g_driver.currentCar->rack.parts[0]->wear++;
-                if ((i = g_driver.currentCar->rack.parts[0]->wear) >= PART_WEAR_LIMIT) {
+                    g_driver.currentCar->rack.parts[RACK_ENGINE]->wear++;
+                if ((i = g_driver.currentCar->rack.parts[RACK_ENGINE]->wear) >= PART_WEAR_LIMIT) {
                     g_driveEng.stopFlags |= (STOP_LOST | STOP_ENGINE);
                     sy_stop_drive();
                 }
