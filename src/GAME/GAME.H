@@ -1,4 +1,7 @@
-/* GAME.H - declarations of what GAME.C defines. */
+/**
+ * @file GAME.H
+ * @brief The garage game loop, the player's cars and parts.
+ */
 
 #ifndef GAME_H
 #define GAME_H
@@ -34,11 +37,12 @@ enum BoltTightness {
 #define END_JAIL 0x04
 #define END_BROKE 0x10
 
+/** @brief Body overlays drawn on a car, as bits. */
 enum BodyMod {
-    BODY_REAR_BUMPER = 1,
-    BODY_FRONT_BUMPER = 2,
-    BODY_ROOF = 4,
-    BODY_LARGE_ENGINE = 8
+    BODY_REAR_BUMPER = 1,  /**< Rear-bumper overlay. */
+    BODY_FRONT_BUMPER = 2, /**< Front-bumper overlay. */
+    BODY_ROOF = 4,         /**< Chopped-roof overlay. */
+    BODY_LARGE_ENGINE = 8  /**< Large-engine overlay. */
 };
 
 #define APPEARANCE_STICKER_MASK 0x1f00
