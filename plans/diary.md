@@ -3223,3 +3223,32 @@ constants were renamed.
 - Preserve `item > 0` in GAME and `r >= 1` in SAVEGAME: substituting the equivalent
   spelling changes code size by two bytes. The complete matrix and the new
   C-shapes row in `.claude/skills/msc51-recipe-book/SKILL.md` document the evidence.
+
+## 2026-11-05 20:31 CET: investigate provisional automatic frames
+
+### What I did
+
+- Investigated gx_draw_bolt, gx_draw_part, gx_erase_part, sc_picture and
+  vi_anim_hook on branch prov-frames, with 53 small MSC 5.1 probes and 104
+  complete-module variants under work/prov-frames.
+- Tested larger packets, arrays, Blt16/Box/Clip, far pointer locals,
+  optimized-away uses, dead assignments and color save/restore. Kept all
+  five original declarations and complete PROVISIONAL markers: matching
+  storage alternatives did not recover an evidence-backed original form.
+- Recorded [the matrix](investigations/prov-frames.md), linked it from
+  docs/RECONSTRUCTION.md, and added the dead-struct-copy lesson to the
+  MSC recipe book.
+- Gates passed: headers, format, zero Doxygen diagnostics, 572/572 functions,
+  clean packed EXE IDENTICAL, DGROUP ownership/order, 106 unittests. A final
+  vi_anim_hook diff also matches. No merge or push.
+
+### What I learned
+
+- A 24-byte Blt-prefix record exactly absorbs the four-byte dummy in all four
+  functions, but so do multiple unsupported array layouts. Storage identity
+  alone cannot identify the missing local or justify a new type.
+- Unused automatic storage survives even when a scalar use vanishes;
+  ordinary dead assignments retain instructions. A constant-false Colors
+  assignment can retain SI/DI saves/restores (vi_anim_hook 184 -> 188 bytes).
+  The reproducible cases and limits are in the investigation note and
+  .claude/skills/msc51-recipe-book/SKILL.md.

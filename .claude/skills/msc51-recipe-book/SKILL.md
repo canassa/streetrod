@@ -434,3 +434,16 @@ MSC 5.1 rejects an enum member equal to `0x8000` with C2141 (out of range).
 Name that unsigned word bit with a `#define`; keep the lower flag bits in the
 enum and preserve unsigned storage. ROAD.H uses this for the terrain gantry
 and unused roadside top bits. All 572 functions and the packed EXE still match.
+
+### Unused automatic slots and dead struct copies (prov-frames, 2026-11-05)
+
+Real MSC 5.1 probes under `/AM /Oalsi /Gs /FPi` and `/AM /Oas /Gs /FPi`:
+unused scalars, pointers, arrays and structs retain their rounded automatic
+slots. Scalar constant-false uses, sizeof, discarded reads/addresses and
+self-assignment can disappear while retaining that slot; ordinary dead
+assignments retain stores. A constant-false struct assignment can still add
+SI/DI saves/restores even when the copy disappears (vi_anim_hook: 184 -> 188
+bytes). A 24-byte Blt-prefix record reproduces the four provisional Blt frame
+slots, but its extra fields have no supporting use; do not treat a matching
+storage shape as recovered source. See plans/investigations/prov-frames.md for
+the 157-compile matrix and retained markers.

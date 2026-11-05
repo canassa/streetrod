@@ -629,3 +629,16 @@ EVEN, an explicit zero DB byte, and a separate WORD-aligned string-only object
 immediately after the five-byte VIDDET contribution all give IDENTICAL packed
 EXEs. Deleting EVEN alone changes sixteen packed bytes; deleting it and the
 strings changes 9623. The existing alignment choice remains provisional.
+
+### Provisional automatic frames (2026-11-05)
+
+The four `long unused` slots above blit packets and vi_anim_hook's inner
+`struct Colors save` remain PROVISIONAL after 157 real-MSC compiler trials.
+A hypothetical 24-byte record with a Blt prefix, int[12], or Clip[2] reproduces
+all four blit frames, but no use supports the additional fields/elements.
+Changing an unused long to an unused far pointer or array also matches and
+recovers no meaning. Ordinary dead assignments retain code; a color
+save/restore fails, and even a constant-false Colors copy leaves SI/DI saves
+and restores. No tested natural, evidence-backed replacement was found.
+See [the investigation matrix](../plans/investigations/prov-frames.md) for
+source context, passing alternatives, rejected hypotheses and final gates.
