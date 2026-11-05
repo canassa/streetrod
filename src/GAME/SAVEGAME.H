@@ -3,6 +3,9 @@
 #ifndef SAVEGAME_H
 #define SAVEGAME_H
 
+#define STARTING_MONEY 750L
+#define DEMO_STARTING_MONEY 10000L
+
 enum SaveLoadResult {
     LOAD_OK = 0,
     LOAD_CANCELLED = -1,

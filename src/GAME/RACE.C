@@ -208,14 +208,14 @@ static void near leave_station(struct Dlg *d)
     if (d->nozzleInTank) {
         show_tank_cap(d, PIC_FUEL_CAP);
         if (d->nozzlePenaltyDue) {
-            sc_add_money(g_driver.money >= 10 ? -10 : -(int)g_driver.money);
+            sc_add_money(g_driver.money >= NOZZLE_PENALTY ? -NOZZLE_PENALTY : -(int)g_driver.money);
             d->nozzlePenaltyDue = 0;
         }
     }
     if (d->nozzleOnPump == 0) {
         pu_show(g_pumpWithNozzle, 0x40, 0x64);
         if (d->nozzlePenaltyDue)
-            sc_add_money(g_driver.money >= 10 ? -10 : -(int)g_driver.money);
+            sc_add_money(g_driver.money >= NOZZLE_PENALTY ? -NOZZLE_PENALTY : -(int)g_driver.money);
     }
     if (d->attendantAbsent == 0) {
         cu_ctl(CURSOR_HIDE);
@@ -223,9 +223,10 @@ static void near leave_station(struct Dlg *d)
         cu_ctl(CURSOR_SHOW);
         cp_patch_bg(p, 0x60, 0, 0x30, 0x40, 0xc8, 0x51, 0xa9, 2);
     }
-    g_driver.currentCar->fuel = g_driver.currentCar->fuel > 0xaa ? 0xaa : g_driver.currentCar->fuel;
-    cp_show_car(CAR_DRIVE_OUT, d->specIndex, d->bodyMods, (g_driver.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
-                g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
+    g_driver.currentCar->fuel =
+        g_driver.currentCar->fuel > FUEL_TANK_CAPACITY ? FUEL_TANK_CAPACITY : g_driver.currentCar->fuel;
+    cp_show_car(CAR_DRIVE_OUT, d->specIndex, d->bodyMods, (g_driver.currentCar->appearance >> 8) & STICKER_INDEX_MASK,
+                0, 0xa9, 1, g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
     mn_pop(1);
     ma_clear();
     g_scene = SCENE_GARAGE;
@@ -252,8 +253,8 @@ void ra_gas_station(void)
     cu_ctl(1);
     dl.specIndex = g_driver.currentCar->specIndex;
     dl.bodyMods = gm_car_look(g_driver.currentCar);
-    cp_show_car(CAR_PULL_IN, dl.specIndex, dl.bodyMods, (g_driver.currentCar->appearance >> 8) & 0x1f, 0, 0xa9, 1,
-                g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
+    cp_show_car(CAR_PULL_IN, dl.specIndex, dl.bodyMods, (g_driver.currentCar->appearance >> 8) & STICKER_INDEX_MASK, 0,
+                0xa9, 1, g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
     mu_suspend(0);
     label = pu_grab(0x50, 0xaa, 0x28, 0xc, 0);
     dl.bm1 = pu_grab(g_featurePos.gasCapX - 0x10, g_featurePos.gasCapY - 5, 0x18, 0xc, 0);
@@ -271,7 +272,7 @@ void ra_gas_station(void)
     dl.attendantAbsent = 1;
     dl.unused = 0;
     dl.nozzlePenaltyDue = 1;
-    dl.fillsLeft = (0xbe - g_driver.currentCar->fuel) / 0x1e;
+    dl.fillsLeft = (FUEL_FILL_COUNT_BASE - g_driver.currentCar->fuel) / FUEL_FILL_AMOUNT;
     show_tank_cap(&dl, PIC_FUEL_CAP);
     spots_idle();
     mn_push(KM_GAS_STATION);
@@ -287,7 +288,7 @@ top:
                 goto top;
             if (dl.pumping) {
                 dl.fillsLeft--;
-                g_driver.currentCar->fuel += 0x1e;
+                g_driver.currentCar->fuel += FUEL_FILL_AMOUNT;
                 done = 1;
                 sc_add_money(-(pos <= g_driver.money ? pos : (int)g_driver.money));
                 if (dl.fillsLeft == 0 || pos > g_driver.money) {
@@ -310,7 +311,7 @@ top:
                 pos <<= 1;
                 dl.unused = 1;
                 gm_play_anim(3);
-                gm_message(0x19e1);
+                gm_message(MSG_NEED_FULL_SERVICE);
                 dl.attendantAbsent = 0;
                 if (done)
                     goto fin;
@@ -385,11 +386,11 @@ top:
                 dl.nozzleInTank = 0;
                 cu_ctl(dl.hand = GAS_HAND_NOZZLE);
                 if (dl.fillsLeft > 0 && pos <= g_driver.money)
-                    gm_message(0x18dd);
+                    gm_message(MSG_ITS_NOT_FULL_SPEEDY);
                 goto both;
             }
             if (dl.fillsLeft == 0 || pos > g_driver.money)
-                gm_message(0x10b5);
+                gm_message(MSG_PAY_ATTENTION_DUMMY);
             else {
                 show_tank_cap(&dl, PIC_FUEL_NOZZLE);
                 dl.nozzleInTank = 1;
@@ -404,7 +405,7 @@ top:
             }
             break;
         case KR_GAS_LEAVE:
-            gm_message(0x10f6);
+            gm_message(MSG_GET_OUT_OF_MY_FACE_DUMMY);
             continue;
         case KR_GAS_FRONT_WINDSHIELD:
             break;
@@ -429,12 +430,12 @@ static int near replace_tires(void)
     if (g_list[0]) {
         ga_install(ga_unlink(tbl[1]), &g_driver.currentCar->tires);
     } else {
-        g_driver.money -= 0x32;
+        g_driver.money -= REPLACEMENT_TIRE_PRICE;
         if (g_driver.money < 0) {
             ret = (int)-g_driver.money;
             g_driver.money = 0;
         }
-        gm_add_part(0x28, g_parts[40].value);
+        gm_add_part(PART_TIRES_FIRST, g_parts[PART_TIRES_FIRST].value);
         tbl[0] = g_driver.spareParts;
         g_driver.spareParts = tbl[0]->next;
         ga_install(tbl[0], &g_driver.currentCar->tires);
@@ -442,7 +443,9 @@ static int near replace_tires(void)
     return ret;
 }
 
-static int g_winMsgs[6] = {4973, 5015, 5073, 5043, 5099, 5130};
+static int g_winMsgs[6] = {MSG_WON_BUT_DIDNT_BET,           MSG_BIG_DEAL_TEN_LOUSY_BUCKS,
+                           MSG_FIFTY_SMACKERS_NOT_BAD,      MSG_BIG_DEAL_TWENTY_FIVE_BUCKS,
+                           MSG_A_HUNDRED_SMACKERS_HOT_SHOT, MSG_YOU_JUST_WON_A_HELLUVA_CAR};
 static struct Spot g_crashPics[3] = {
     {PIC_CRASH_BLOOD_LEFT, 64, 84}, {PIC_CRASH_BLOOD_CENTER, 208, 82}, {PIC_CRASH_BLOOD_RIGHT, 272, 123}};
 static int g_statsDone = 0;
@@ -532,7 +535,7 @@ static void near show_crash(void)
     (*g_videoOps.copy)(b, r_vid.back, &pkt, 1);
     da_steer_marker(g_steeringOld);
     (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
-    if (g_driveEng.speed > 0x5a) {
+    if (g_driveEng.speed > TOTAL_LOSS_MPH) {
         for (i = 0; i < 3; i++) {
             a = di_bm(g_crashPics[i].id, ARENA_LOW_STACK);
             pkt.w = a->width;
@@ -563,10 +566,12 @@ void ra_finish_stats(void)
         else
             g_finishAheadPlayerState = 0;
         g_finishMeanSpeedVal = g_mphAccumulator / g_driveEng.elapsedTicks;
-        g_raceSecsElapsedValue = g_driveEng.elapsedTicks / 6.068827333333334;
-        g_coveredRacePct = (int)((g_trackViewMotion.roadIndex - 200) * 100.0 / (g_roadOppPos.roadIndex - 200)) > 99
-                               ? 99
-                               : (int)((g_trackViewMotion.roadIndex - 200) * 100.0 / (g_roadOppPos.roadIndex - 200));
+        g_raceSecsElapsedValue = g_driveEng.elapsedTicks / RACE_TICKS_PER_SECOND;
+        g_coveredRacePct = (int)((g_trackViewMotion.roadIndex - RACE_START_INDEX) * 100.0 /
+                                 (g_roadOppPos.roadIndex - RACE_START_INDEX)) > RACE_INCOMPLETE_PCT_MAX
+                               ? RACE_INCOMPLETE_PCT_MAX
+                               : (int)((g_trackViewMotion.roadIndex - RACE_START_INDEX) * 100.0 /
+                                       (g_roadOppPos.roadIndex - RACE_START_INDEX));
         g_statsDone = 1;
     }
 }
@@ -633,7 +638,7 @@ static int g_contactFrames = 0;
 int g_brakeTicks = 0;
 
 
-int near ra_outcome(void)
+enum RaceExit near ra_outcome(void)
 {
     int units;
     char opt;
@@ -657,12 +662,12 @@ int near ra_outcome(void)
     stop = g_driveEng.stopFlags == (STOP_LOST | STOP_ENGINE) ||
            g_driveEng.stopFlags == (STOP_LOST | STOP_TRANSMISSION) ||
            g_driveEng.stopFlags == (STOP_LOST | STOP_ENGINE | STOP_TRANSMISSION);
-    if (g_driver.currentCar->transmission->wear > 9900)
-        g_driver.currentCar->transmission->wear = 9900;
-    if (g_driver.currentCar->rack.parts[0]->wear > 9900)
-        g_driver.currentCar->rack.parts[0]->wear = 9900;
-    if (g_driver.currentCar->tires->wear > 9900)
-        g_driver.currentCar->tires->wear = 9900;
+    if (g_driver.currentCar->transmission->wear > PART_WEAR_LIMIT)
+        g_driver.currentCar->transmission->wear = PART_WEAR_LIMIT;
+    if (g_driver.currentCar->rack.parts[0]->wear > PART_WEAR_LIMIT)
+        g_driver.currentCar->rack.parts[0]->wear = PART_WEAR_LIMIT;
+    if (g_driver.currentCar->tires->wear > PART_WEAR_LIMIT)
+        g_driver.currentCar->tires->wear = PART_WEAR_LIMIT;
     g_resultWin = 0;
     g_statsDone = 0;
     g_mphAccumulator = 0;
@@ -673,7 +678,7 @@ int near ra_outcome(void)
     if (g_failureTire)
         g_driveEng.stopFlags |= STOP_TIRES;
     mn_push(KM_RACE_OUTCOME);
-    i = g_driver.raceType == RACE_DRAG ? 5 : 15;
+    i = g_driver.raceType == RACE_DRAG ? DRAG_RACE_FUEL : ROAD_RACE_FUEL;
     if (g_driver.currentCar->fuel > i)
         g_driver.currentCar->fuel -= i;
     else
@@ -683,18 +688,21 @@ int near ra_outcome(void)
         g_resultWin = 1;
         show_race_stats();
         cu_ctl(CURSOR_SHOW_NOW);
-        gm_message(g_isKingState == 0 ? (i = g_winMsgs[kind]) : g_driver.raceType == RACE_DRAG ? 0x14bd : 0x14d6);
+        gm_message(g_isKingState == 0               ? (i = g_winMsgs[kind])
+                   : g_driver.raceType == RACE_DRAG ? MSG_BEGINNERS_LUCK_PUNK
+                                                    : MSG_YOU_RAN_A_GOOD_RACE);
         sc_add_money(v);
         if (kind == BET_CAR) {
             found = gm_make_car(g_opponentSpecIndex, g_oppSpecPointer->price, 0);
-            found->tires->wear = rn_int(500);
-            found->appearance = ((g_selectedRacerPointer->sticker & 0x1f) << 8) | (found->appearance & 0xe0ff);
-            found->appearance =
-                (((g_selectedRacerPointer->bodyMods & 4) != 0 & 1) << 13) | (found->appearance & 0xdfff);
-            found->appearance =
-                (((g_selectedRacerPointer->bodyMods & 2) != 0 & 1) << 14) | (found->appearance & 0xbfff);
-            found->appearance =
-                (((g_selectedRacerPointer->bodyMods & 1) != 0 & 1) << 15) | (found->appearance & 0x7fff);
+            found->tires->wear = rn_int(WON_TIRE_WEAR_RANGE);
+            found->appearance = ((g_selectedRacerPointer->sticker & STICKER_INDEX_MASK) << 8) |
+                                (found->appearance & APPEARANCE_NO_STICKER);
+            found->appearance = (((g_selectedRacerPointer->bodyMods & BODY_ROOF) != 0 & 1) << 13) |
+                                (found->appearance & APPEARANCE_KEEP_ROOF);
+            found->appearance = (((g_selectedRacerPointer->bodyMods & BODY_FRONT_BUMPER) != 0 & 1) << 14) |
+                                (found->appearance & APPEARANCE_KEEP_FRONT_BUMPER);
+            found->appearance = (((g_selectedRacerPointer->bodyMods & BODY_REAR_BUMPER) != 0 & 1) << 15) |
+                                (found->appearance & APPEARANCE_KEEP_REAR_BUMPER);
             found->paintScheme = g_selectedRacerPointer->paintScheme;
             if (found->rank > g_driver.currentCar->rank) {
                 g_driver.currentCar->next = g_driver.otherCars->next;
@@ -706,7 +714,7 @@ int near ra_outcome(void)
                 if (g_selectedRacerPointer->lostCarOnce != 0 || g_isKingState != 0)
                     g_selectedRacerPointer->status = RACER_EMPTY;
                 else {
-                    for (i = 0, units = 0; i < 25; i++)
+                    for (i = 0, units = 0; i < SPEC_ORDINARY_COUNT; i++)
                         if (g_carData[i].rank < g_oppSpecPointer->rank)
                             list[++units] = i;
                     if (units > 0) {
@@ -725,18 +733,18 @@ int near ra_outcome(void)
             if ((i = replace_tires()) != 0)
                 goto ret2;
         if (kind == BET_CAR)
-            return 1;
-        return 3;
+            return RACE_EXIT_GARAGE;
+        return RACE_EXIT_BOBS;
     } else if (g_driveEng.stopFlags & STOP_POLICE) {
         so_siren(0);
         show_ticket();
         i = (g_driveEng.stopFlags & STOP_TIRES) ? replace_tires() : 0;
-        if (g_driveEng.speed > 0x50)
-            i += 0x4b;
-        else if (g_driveEng.speed > 0x32)
-            i += 0x32;
+        if (g_driveEng.speed > FINE_HIGH_MPH)
+            i += FINE_HIGH_PRICE;
+        else if (g_driveEng.speed > FINE_MID_MPH)
+            i += FINE_MID_PRICE;
         else
-            i += 0x14;
+            i += FINE_LOW_PRICE;
         mn_push(KM_MESSAGE);
         sy_wait_input(0);
         sprintf(temp, "You have been fined $%2d for speeding", i);
@@ -744,12 +752,12 @@ int near ra_outcome(void)
         gm_pause(0xfa);
         if (i <= g_driver.money)
             goto pay;
-        gm_message(0x1793);
+        gm_message(MSG_SENTENCED_FOR_DEBTS);
         mn_pop(1);
         mn_pop(1);
         sc_add_money(-g_driver.money);
         sc_status_text(-1, " ", SCREEN_WIDTH - g_statusLine.messageX);
-        return 4;
+        return RACE_EXIT_JAIL;
     pay:
         sc_add_money(-i);
         cost = g_waitUntil;
@@ -759,7 +767,7 @@ int near ra_outcome(void)
         sc_status_text(-1, "", SCREEN_WIDTH - g_statusLine.messageX);
     } else if (g_driveEng.stopFlags == (STOP_LOST | STOP_JUMP_START)) {
         cu_ctl(CURSOR_SHOW_NOW);
-        gm_message(0xecb2);
+        gm_message(-MSG_YA_JUMPED_THE_LIGHT_SPEEDY);
     } else {
         if (kind == BET_CAR) {
             gm_scrap_car(g_driver.currentCar, 0);
@@ -769,20 +777,22 @@ int near ra_outcome(void)
         if (g_driveEng.stopFlags == STOP_LOST) {
             show_race_stats();
             cu_ctl(CURSOR_SHOW_NOW);
-            i = kind == BET_CAR ? 0x143a : 0x1427;
-            gm_message(g_isKingState == 0 ? i : g_driver.raceType == RACE_DRAG ? 0x1450 : 0x146c);
+            i = kind == BET_CAR ? MSG_TAKE_A_WALK_SUCKER : MSG_YOU_LOSE_SUCKER;
+            gm_message(g_isKingState == 0               ? i
+                       : g_driver.raceType == RACE_DRAG ? MSG_CLOSE_BUT_NO_CIGAR_PUNK
+                                                        : MSG_KNEW_YOUD_CHOKE);
             mn_pop(1);
             if (kind != BET_CAR)
-                return 3;
+                return RACE_EXIT_BOBS;
         ret2:
-            return 2;
+            return RACE_EXIT_STOPPED;
         } else if (stop) {
             cu_ctl(CURSOR_SHOW_NOW);
             if (engine) {
-                blow_engine(kind == BET_CAR ? 0x16bd : 0x1634);
+                blow_engine(kind == BET_CAR ? MSG_BLEW_ENGINE_AGAIN_LOSE : MSG_BLEW_ENGINE_AGAIN_ACE);
                 goto finishstop;
             } else if (opt) {
-                drop_transmission(kind == BET_CAR ? 0x1678 : 0x1608);
+                drop_transmission(kind == BET_CAR ? MSG_DROPPED_TRANSMISSION_LOSE : MSG_DROPPED_TRANSMISSION_KLUTZ);
                 goto finishstop;
             }
         finishstop:
@@ -791,12 +801,12 @@ int near ra_outcome(void)
             show_crash();
             if (kind == BET_CAR) {
                 if (g_driveEng.stopFlags & STOP_TIRES) {
-                    gm_message(0x16f6);
+                    gm_message(MSG_BLEW_YOUR_TIRES_AGAIN);
                     replace_tires();
                 } else
-                    gm_message(0x1658);
-            } else if (g_driveEng.speed > 0x5a) {
-                v = gm_scrap_car(g_driver.currentCar, 0) / 10 + 0x13;
+                    gm_message(MSG_YOU_LOSE_TAKE_A_WALK_SUCKER);
+            } else if (g_driveEng.speed > TOTAL_LOSS_MPH) {
+                v = gm_scrap_car(g_driver.currentCar, 0) / 10 + TOTAL_LOSS_BASE_VALUE;
                 g_driver.currentCar = 0;
                 sc_add_money(v);
                 ptr = g_msgTotaled;
@@ -807,23 +817,23 @@ int near ra_outcome(void)
                 itoa(v, ptr, 10);
                 ptr[strlen(ptr)] = ' ';
                 sy_reset_queues();
-                gm_message(0x1513);
+                gm_message(MSG_LUCKY_NOT_KILLED_TOTALED);
             } else {
-                if (g_driveEng.speed > 0x3c) {
+                if (g_driveEng.speed > MAJOR_REPAIR_MPH) {
                     i = 0;
-                    v = rn_int(0x28) + 100;
-                } else if (g_driveEng.speed > 0x1e) {
+                    v = rn_int(MAJOR_REPAIR_PRICE_RANGE) + REPAIR_BASE_PRICE;
+                } else if (g_driveEng.speed > MIN_REPAIR_MPH) {
                     i = 1;
-                    v = rn_int(0x14) + 100;
+                    v = rn_int(MINOR_REPAIR_PRICE_RANGE) + REPAIR_BASE_PRICE;
                 } else {
                     if (g_driveEng.stopFlags & STOP_TIRES) {
-                        gm_message(0x1590);
+                        gm_message(MSG_LUCKY_SLOW_NEED_TIRES);
                         all = replace_tires();
                         goto fin;
                     }
-                    gm_message(0x1561);
+                    gm_message(MSG_LUCKY_SLOW_LOST_RACE);
                     mn_pop(1);
-                    return 1;
+                    return RACE_EXIT_GARAGE;
                 }
                 ptr = strchr(i ? g_msgRunCost : g_msgRepairCost, '$') + 1;
                 ptr[1] = ' ';
@@ -858,9 +868,9 @@ int near ra_outcome(void)
                     if (all)
                         replace_tires();
                     mn_pop(1);
-                    return 1;
+                    return RACE_EXIT_GARAGE;
                 case KR_REPAIR_JUNK:
-                    sc_add_money((int)(g_driver.currentCar->value * 0.4));
+                    sc_add_money((int)(g_driver.currentCar->value * JUNK_VALUE_FACTOR));
                     g_driver.currentCar = 0;
                     break;
                 default:
@@ -873,7 +883,7 @@ int near ra_outcome(void)
         goto ret2;
     }
     mn_pop(1);
-    return 3;
+    return RACE_EXIT_BOBS;
 }
 
 struct RoadEdges g_edgesRoad;
@@ -902,7 +912,7 @@ void near ra_reset_eng(struct Eng *p)
         p->autoSelector = SELECTOR_NEUTRAL;
     }
     p->unused3 = p->unused2 = -1;
-    p->rpm = 0x5dc;
+    p->rpm = ENGINE_IDLE_RPM;
     p->rpmPerSpeed = p->initialRpmPerSpeed;
     p->accelStep = p->gear[0].bands[0].accelStep;
     p->decelStep = p->gear[0].bands[0].decelStep;
@@ -911,17 +921,17 @@ void near ra_reset_eng(struct Eng *p)
     g_unused6 = 0;
     g_unused7 = g_unused8 = 0;
     g_shownShiftPosition = -1;
-    g_finishLineIndex = g_driver.raceType == RACE_DRAG ? 0x17c : 0x3fc;
+    g_finishLineIndex = g_driver.raceType == RACE_DRAG ? DRAG_FINISH_INDEX : ROAD_FINISH_INDEX;
     car = g_driver.currentCar->tires;
-    p->tireSlip = g_tireSlip[g_parts[car->idx].variant][car->wear / 2000];
-    if (car->wear < 8000)
+    p->tireSlip = g_tireSlip[g_parts[car->idx].variant][car->wear / TIRE_WEAR_BAND];
+    if (car->wear < TIRE_FAILURE_WEAR_MIN)
         p->tireFailureIndex = 0;
     else {
-        if (car->wear + rn_int(2000) <= 9500)
+        if (car->wear + rn_int(TIRE_WEAR_BAND) <= TIRE_FAILURE_WEAR_LIMIT)
             p->tireFailureIndex = 0;
         else {
-            t = (g_finishLineIndex - 200) >> 1;
-            p->tireFailureIndex = rn_int(t >> 1) + t + 200;
+            t = (g_finishLineIndex - RACE_START_INDEX) >> 1;
+            p->tireFailureIndex = rn_int(t >> 1) + t + RACE_START_INDEX;
         }
         goto nx;
     }
@@ -946,9 +956,9 @@ static void near init_rival_eng(void)
     ra_reset_eng(&g_oppEngState);
     g_oppEngState.gearIndex = 0;
     g_oppEngState.rpmPerSpeed = g_oppEngState.gearRpmPerSpeed[0];
-    g_oppEngState.rpm = 0x5dc;
-    g_oppEngState.speed = 0x5dc / g_oppEngState.rpmPerSpeed;
-    if ((r = g_oppEngState.gear[0].bands + (g_rpmBand = 1))->maxRpm <= 0x5dc) {
+    g_oppEngState.rpm = ENGINE_IDLE_RPM;
+    g_oppEngState.speed = ENGINE_IDLE_RPM / g_oppEngState.rpmPerSpeed;
+    if ((r = g_oppEngState.gear[0].bands + (g_rpmBand = 1))->maxRpm <= ENGINE_IDLE_RPM) {
         g_rpmBand = 2;
         r++;
     } else if (r->minRpm > g_oppEngState.rpm) {
@@ -958,8 +968,8 @@ static void near init_rival_eng(void)
     g_oppEngState.rpmBand = g_rpmBand;
     g_oppEngState.maxRpm = r->maxRpm;
     g_oppEngState.accelStep = r->accelStep;
-    g_shiftPoint = g_oppEngState.autoSelector ? 0x14b4 : g_oppEngState.shiftRpm - 100 * g_shiftPenalty;
-    g_roadOppPos.roadIndex = 200;
+    g_shiftPoint = g_oppEngState.autoSelector ? RIVAL_AUTO_SHIFT_RPM : g_oppEngState.shiftRpm - 100 * g_shiftPenalty;
+    g_roadOppPos.roadIndex = RACE_START_INDEX;
     g_roadOppPos.roadFraction = 0;
     g_targetLane = g_roadOppPos.lateralX = ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) - 200;
 }
@@ -977,8 +987,8 @@ void near ra_run(void)
     ra_reset_eng(&g_driveEng);
     init_rival_eng();
     if (g_driver.raceType == RACE_ROAD && g_isKingState == 0) {
-        if (g_pursuitPhaseIndex = !rn_int(4))
-            g_idxAtCop = rn_int(255) + 0x1fe;
+        if (g_pursuitPhaseIndex = !rn_int(COP_RACE_CHANCE))
+            g_idxAtCop = rn_int(COP_APPEAR_RANGE) + COP_APPEAR_BASE;
     } else
         g_pursuitPhaseIndex = COP_ABSENT;
     g_phaseDriveRunState = DRIVE_START;
@@ -988,7 +998,7 @@ void near ra_run(void)
     g_waitUntil = 0;
     sy_reset_queues();
     sc_label(g_cashLabel);
-    if (g_trackViewMotion.roadIndex > 200) {
+    if (g_trackViewMotion.roadIndex > RACE_START_INDEX) {
         if (rn_int(3) > 0) {
             if (g_driver.currentCar->timing > 0)
                 g_driver.currentCar->timing =
@@ -1000,11 +1010,12 @@ void near ra_run(void)
                 g_driver.currentCar->timing = rn_int(8) - 4;
         }
         slot = g_driver.currentCar->tires;
-        slot->wear += (g_parts[slot->idx].variant == TRANS_AUTOMATIC ? (g_driver.raceType == RACE_ROAD ? 700 : 300)
-                                                                     : (g_driver.raceType == RACE_ROAD ? 400 : 200)) +
-                      rn_int(300);
-        if (slot->wear > 10000)
-            slot->wear = 10000;
+        slot->wear += (g_parts[slot->idx].variant == TIRES_STANDARD
+                           ? (g_driver.raceType == RACE_ROAD ? ROAD_TIRE_WEAR_HIGH : DRAG_TIRE_WEAR_HIGH)
+                           : (g_driver.raceType == RACE_ROAD ? ROAD_TIRE_WEAR_LOW : DRAG_TIRE_WEAR_LOW)) +
+                      rn_int(RACE_TIRE_WEAR_RANGE);
+        if (slot->wear > PART_WEAR_FULL)
+            slot->wear = PART_WEAR_FULL;
     }
 }
 
@@ -1103,8 +1114,8 @@ static void near rival_accelerate(void)
                 if (g_oppEngState.autoSelector == SELECTOR_MANUAL)
                     g_shiftPoint = g_oppEngState.gearIndex < g_oppEngState.gearCount
                                        ? g_oppEngState.shiftRpm - 100 * g_shiftPenalty
-                                   : g_processorSpeedRating < 4 && r_vid.mode != VID_TANDY ? 0x14b4
-                                                                                           : 0x1518;
+                                   : g_processorSpeedRating < 4 && r_vid.mode != VID_TANDY ? RIVAL_AUTO_SHIFT_RPM
+                                                                                           : RIVAL_TOP_GEAR_RPM;
                 g_oppEngState.rpmPerSpeed = g_oppEngState.gearRpmPerSpeed[g_oppEngState.gearIndex];
                 g_oppEngState.rpm = g_oppEngState.speed * g_oppEngState.rpmPerSpeed;
                 if ((r = &g_oppEngState.gear[g_oppEngState.gearIndex].bands[g_rpmBand = 1])->maxRpm <=
@@ -1338,13 +1349,13 @@ static void near cop_appears(void)
 
     old = g_oppEngState.speed;
     g_selectedRacerPointer = &g_racerRecordsArray[RACER_COP_ENTRY];
-    pf_drivetrain_spec(0x19, &g_oppEngState);
+    pf_drivetrain_spec(SPEC_POLICE, &g_oppEngState);
     g_shiftPenalty = g_selectedRacerPointer->shiftPenalty;
     fit_gear(old, &g_oppEngState);
     cr_rival_paint(5);
     for (n1 = 0; n1 < 12; n1++)
         g_spritesOpp[n1] = g_policeFramesTable[n1];
-    g_rivalPace.topSpeed = pf_vmax(0x19);
+    g_rivalPace.topSpeed = pf_vmax(SPEC_POLICE);
     g_rivalPace.slowSpeed = (int)(g_rivalPace.topSpeed * 0.6);
     g_rivalPace.fastSpeed = (int)(g_rivalPace.topSpeed * 0.8);
 }
@@ -1415,7 +1426,7 @@ void ra_tick(void)
         return;
     if (g_demo)
         return;
-    if ((g_driver.raceType == RACE_DRAG ? 0x17c : 0x3fc) <= g_trackViewMotion.roadIndex)
+    if ((g_driver.raceType == RACE_DRAG ? DRAG_FINISH_INDEX : ROAD_FINISH_INDEX) <= g_trackViewMotion.roadIndex)
         return;
     if (g_carHit && g_pursuitPhaseIndex <= COP_WAITING) {
         g_driveEng.stopFlags |= (STOP_LOST | STOP_COLLISION);

@@ -3,6 +3,8 @@
 #ifndef CRUISE_H
 #define CRUISE_H
 
+#define TOWN_TRIP_FUEL 2
+
 #define RIVAL_PAINT_RESTORE (-1)
 
 enum DrivePhase {

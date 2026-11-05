@@ -2344,6 +2344,53 @@ Ownership inventory (the original 98 definitions):
 - The 21 scenery Run arrays require their existing public forward declarations. MSC rejects static tentative declarations followed by initializers (C2086). Moving the initialized arrays before their referring List records keeps all loaded bytes but changes relocation emission order, causing 256 packed EXE bytes to differ. Keeping these arrays public restores an identical packed EXE; the exception is documented per symbol in the ledger and in the recipe book.
 - Changing initialized globals to static and relocating types did not change GARAGE's measured contributing-name allowance. Unused extern removal does not buy name-budget space.
 
+## 2026-11-05 02:30 CET: Name message and text offsets (cmsgs)
+
+### What I did
+
+- Named 290 distinct offsets in module-owned TextOffset, DescriptionOffset and MessageOffset enums in src/UI/MESSAGES.H; supplied the 47 assembly-used values through MESSAGES.INC.
+- Replaced literal offsets in popup calls, race/accept/refuse tables, hotspot text fields, body-customization prompts, source-initialized part descriptions, save-slot names and the demo racer name. Kept negative popup arguments explicit as -MSG_... and preserved every byte.
+- Wrote work/LEDGER.md with one old-value/name/evidence entry per offset and five categories of notable skips. This audit artifact remains in the ignored work directory.
+- Passed headers --check, format --check, check --all (572/572), clean rm -rf work followed by build (Packed EXE vs orig/SR.EXE: IDENTICAL), dgroup check/order, 155 unit tests and docs (zero diagnostics). The clean build also reports 572/572 functions at original positions and 748/748 near-call encodings exact.
+
+### What I learned
+
+- Popup offsets use g_descHdr, description strings use g_desc one byte later, and hotspot strings use g_txt. POPUP.C negates a negative message argument before indexing, then automatically releases its popup storage; the original unsigned-looking literals must preserve that signed behavior.
+- DISK.C loads the first description/text ranges from HOT_DATA. Its block sizes locate descriptions at file offset 1904 and text at 3756; the eight underscore placeholders are actual quoted car nicknames, and the demo racer override is The Geek. Naming only from executable placeholders would have obscured those meanings.
+- Numeric enums/EQUs keep C initializer expressions and the existing assembler data/export layout direct; computed assembler labels alone would still need a separate C constant interface or a generation step. The ledger records the bases and source/asset evidence for maintaining both interfaces.
+
+## 2026-11-05 02:34 CET: Name cgame rules without changing the executable
+
+### What I did
+- Added 233 evidence-backed constant names and recorded 236 mappings (including one relocation and two existing-name reuses) plus 22 skips in work/LEDGER.md. Covered action time, prices and resale rules, fuel, car/part capacity, catalog bases, body/appearance flags, bolt tightness, ending flags, race exits, rpm/wear limits, finish indexes, rival selection/wager table indexes and performance weights.
+- Put the definitions in owning module headers; moved existing private enum sets in BOBS/FAME into their headers. Preserved char storage and the original unsigned/long literal types. Shared only the proven rpm/wear/finish rules with SYS.C and the finish indexes with ROAD.C; left message and resource ids for the other workstreams.
+- Kept declaration array extents literal because the required DGROUP analyzer only accepts numeric expressions in bounds; retained the usable count names in rules/loops, removed five unused proposed dimension constants and documented the limitation in the ledger.
+- Validation: headers and formatting checks; 572/572 function matches; clean packed build IDENTICAL, with 572/572 functions at their original positions and 748/748 near-call encodings; DGROUP ownership/order checks. Unit-test and documentation results are recorded in the follow-up validation entry below.
+
+### What I learned
+- The existing CLAUDE.md local-order rule also matters when splitting a multi-variable int declaration into enum declarations: preserving each variable's original declaration order restored accepts_bet's stack slots. No local names needed changing.
+- Preserve the original relational form as well as values: pf_drivetrain's i <= 4 must remain i <= DRIVE_GEAR_SLOTS - 1; the equivalent i < DRIVE_GEAR_SLOTS changed two instruction bytes.
+- Equal values can mean different rules: the 200 lateral lane offset is separate from the race start index, the 5000 small-V8 shift point is separate from the wear threshold, and the 800-tick hood timeout is separate from wager timeout. cop_appears proves spec 25 is the police car. The source's packed body flags follow ga_body/model fields even where garage menu labels appear reversed; no behavior was corrected.
+
+## 2026-11-05 02:35 CET: Validate and commit cgame constant names
+
+### What I did
+- Completed every requested gate: headers --check, format --check, check --all (572/572), clean build (Packed EXE vs orig/SR.EXE: IDENTICAL), dgroup check/order, all 155 unit tests, and docs (zero Doxygen diagnostics).
+- Kept work/LEDGER.md in the worktree with all evidence and skips. Added the measured loop-comparison lesson to .claude/skills/msc51-recipe-book/SKILL.md under C shapes, following the wrap-up checklist.
+
+### What I learned
+- Named numeric bounds compile correctly in MSC but are not accepted by tools/sr/cdata.py's numeric-only declaration parser. Keeping literal storage extents avoids expanding this naming task into a tooling change; gameplay count comparisons still use the proven names.
+
+## 2026-11-05 02:38 CET: Merge cmsgs main into cgame
+
+### What I did
+- Merged main at d5b8637 into cgame. Resolved 19 source conflicts across BOBS.C, GAME.C, GARAGE.C and RACE.C by retaining both the MSG_*/TXT_* message/text names and the game-rule constants in the same expressions; retained the negative -MSG_ITS_YOURS argument. Preserved both branches' diary entries, in timestamp order.
+- Audited the merged sources against both parents: all 290 message/text names have exactly the same occurrence counts as main, and all cgame ledger rule-name occurrence counts match the cgame parent. Kept the new MESSAGES.INC and the automatically merged header/MAKEFILE dependencies.
+- Passed every requested gate: headers --check, format --check, check --all (572/572), a clean rm -rf work then build (Packed EXE vs orig/SR.EXE: IDENTICAL), dgroup check/order, all 155 unit tests and docs (zero Doxygen diagnostics). The build also retained all 572 original function positions and all 748 near-call encodings. Restored the existing cgame work/LEDGER.md after the clean build.
+
+### What I learned
+- These conflicts were independent substitutions of literal values within overlapping lines. Combining each message substitution with the existing rule-name substitution preserved both branches without changing storage or executable bytes.
+
 ## 2026-11-05 02:39 CET: Name picture resources and engine constants
 
 ### What I did
@@ -2359,3 +2406,17 @@ Validation passed: headers --check, format --check, check --all (572/572), clean
 HOT_DATA provides stronger asset identity evidence than appearance alone: body/roof/bumper IDs and racer portrait IDs can be joined directly to named descriptions without guessing makes or characters. Individual inspection of the two nearly blank contact-sheet cells resolved the car shadow and lower crash-window corner.
 
 MSC 5.1 truncates identifiers after 31 characters, including enum values. Short model years and concise part names prevent collisions while enum constants themselves do not consume the contributing-symbol budget. The shared-PC-constants test requires numeric PC.H definitions to be mirrored in PC.INC even when only C currently uses them. Byte equality alone cannot detect a semantically inappropriate name: review must distinguish picture IDs from neighboring array dimensions/animation fields and distinguish equal X/Y projection coordinates with different meanings.
+
+## 2026-11-05 02:42 CET: Merge main message and game constants into cengine
+
+### What I did
+
+Merged main at 927ab6d into cengine. Resolved GARAGE.C and RACE.C conflicts by retaining the message/game-rule names together with the picture names in the same expressions. INPUTDAT.ASM includes both DISK.INC and MESSAGES.INC; regenerated MAKEFILE dependencies with sr headers. Preserved both branches' diary entries in timestamp order.
+
+Audited source references against both parents: main's named constants have no reduced occurrence counts, MSG_*/TXT_* counts match main exactly, and all 367 cengine ledger symbols retain their source uses. The pre-existing TRANS_AUTOMATIC occurrence removed by main was its correction of the tire-wear comparison to TIRES_STANDARD, not a lost merge substitution.
+
+All gates passed: format --check, headers --check, check --all (572/572), clean build after removing work (Packed EXE vs orig/SR.EXE: IDENTICAL; 572/572 original function positions and 748/748 near-call encodings), dgroup check/order, all 155 unit tests and docs with zero diagnostics. Restored work/LEDGER.md after the clean build. Logs are /tmp/cengine-merge-{check,build,dgroup,tests,docs}.log.
+
+### What I learned
+
+The conflicting lines contain independent substitutions: keep named appearance masks beside sticker picture IDs, rack counts beside part-picture selection, fuel rules beside cap/nozzle sprites, and message tables beside crash-picture tables. Regenerating dependencies retains both assembly include files without hand-editing the DOS MAKEFILE blocks.

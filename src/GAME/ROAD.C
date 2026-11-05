@@ -337,7 +337,7 @@ void rd_build_layout(int n)
     g_buildEntry = 0x186;
     g_buildX = 0;
     g_bendStep = g_hasSlowCpu ? 2 : 3;
-    for (i = 0x17c; i < 0x460; i++) {
+    for (i = DRAG_FINISH_INDEX; i < 0x460; i++) {
         g_terrain2[i] = 0;
         g_terrain4[i] = 0;
         g_terrain3[i] &= 0xf117;
@@ -600,7 +600,7 @@ void rd_generate(void)
         for (j = 0; j < 17; j++)
             g_terrain4[i++] = -g_bumpProfile[j];
         i += 30;
-    } while (i + 90 < 0x17c);
+    } while (i + 90 < DRAG_FINISH_INDEX);
     g_terrain3[385] |= 0x100;
     rd_build_layout(100);
 }
@@ -950,7 +950,7 @@ void rd_advance(void)
     }
     g_trackViewMotion.roadHeight = *g_heightRoadPtr;
     if (g_demo != 0 || g_autoDrive != 0 ||
-        (g_driver.raceType == RACE_DRAG ? 0x17c : 0x3fc) < g_trackViewMotion.roadIndex) {
+        (g_driver.raceType == RACE_DRAG ? DRAG_FINISH_INDEX : ROAD_FINISH_INDEX) < g_trackViewMotion.roadIndex) {
         goal6 = 0x960;
         if (g_roadOppPos.lateralX > 0x960)
             goal6 -= 0x140;

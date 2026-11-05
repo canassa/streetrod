@@ -1020,7 +1020,7 @@ void interrupt far sy_drive_isr(void)
                 if (g_carAnim == 0) {
                     r = (unsigned)(((long)g_driveEng.rpm * g_driveEng.rpm) >> 10);
                     r += r >> (r + 2) >> 3;
-                    val.w = 50000 - ((g_driveEng.rpm == 5700 ? 10000 : 0) + r);
+                    val.w = 50000 - ((g_driveEng.rpm == ENGINE_REDLINE_RPM ? 10000 : 0) + r);
                     outp(PIT_CH2, val.b[0]);
                     outp(PIT_CH2, val.b[1]);
                 } else if (g_carMoving) {
@@ -1117,16 +1117,17 @@ void interrupt far sy_drive_isr(void)
                     g_fireLatch = 0;
                 }
                 if (g_demo || g_autoDrive) {
-                    if (g_driveEng.accelStep * 4 + g_driveEng.rpm < 5700) {
+                    if (g_driveEng.accelStep * 4 + g_driveEng.rpm < ENGINE_REDLINE_RPM) {
                         if (g_roadOppPos.roadIndex > g_trackViewMotion.roadIndex ||
-                            (!g_driver.raceType ? 0x17c : 0x3fc) - 60 < g_trackViewMotion.roadIndex)
+                            (!g_driver.raceType ? DRAG_FINISH_INDEX : ROAD_FINISH_INDEX) - 60 <
+                                g_trackViewMotion.roadIndex)
                             flag = 1;
                     } else if (g_driveEng.gearIndex < g_driveEng.gearCount && g_startLightGo) {
                         c = 1;
                         flag = 1;
                         g_demoControl.autoShifts++;
                     }
-                    if (g_driveEng.rpm < 2000 && g_driveEng.gearIndex > 1 && !flag)
+                    if (g_driveEng.rpm < AUTO_DOWNSHIFT_RPM && g_driveEng.gearIndex > 1 && !flag)
                         c = 1;
                     if (g_driveEng.automatic && g_driveEng.gearIndex > 0)
                         c = 0;
@@ -1135,7 +1136,7 @@ void interrupt far sy_drive_isr(void)
                     g_mphAccumulator += g_driveEng.speed;
                     g_driveEng.elapsedTicks++;
                 }
-                if ((!g_driver.raceType ? 0x17c : 0x3fc) < g_trackViewMotion.roadIndex) {
+                if ((!g_driver.raceType ? DRAG_FINISH_INDEX : ROAD_FINISH_INDEX) < g_trackViewMotion.roadIndex) {
                     prev = 1;
                     flag = s = 0;
                     if (g_driveEng.speed > 15)
@@ -1146,30 +1147,31 @@ void interrupt far sy_drive_isr(void)
                     flag = s = 0;
                     g_brakeTicks--;
                 }
-                if (g_driveEng.rpm > 5000) {
+                if (g_driveEng.rpm > ENGINE_WEAR_RPM) {
                     g_driver.currentCar->rack.parts[0]->wear += !g_driver.raceType ? 1 : 1;
                     g_driver.currentCar->transmission->wear += !g_driver.raceType ? 1 : 1;
                 }
                 if (!(g_gameClock.biosTicks & (!g_driver.raceType ? 0xf : 0xf)))
                     g_driver.currentCar->rack.parts[0]->wear++;
-                if ((i = g_driver.currentCar->rack.parts[0]->wear) >= 9900) {
+                if ((i = g_driver.currentCar->rack.parts[0]->wear) >= PART_WEAR_LIMIT) {
                     g_driveEng.stopFlags |= (STOP_LOST | STOP_ENGINE);
                     sy_stop_drive();
                 }
                 if (flag) {
                     g_driveEng.rpm += g_driveEng.accelStep;
-                    if (g_driveEng.automatic && g_driveEng.rpm > 5690)
-                        g_driveEng.rpm = 5690;
-                    if (g_driveEng.rpm > 5700) {
-                        g_driveEng.rpm = 5700;
+                    if (g_driveEng.automatic && g_driveEng.rpm > AUTO_MAX_RPM)
+                        g_driveEng.rpm = AUTO_MAX_RPM;
+                    if (g_driveEng.rpm > ENGINE_REDLINE_RPM) {
+                        g_driveEng.rpm = ENGINE_REDLINE_RPM;
                         if (15 - i / 1000 < ++g_overRev) {
                             g_driveEng.stopFlags |= (STOP_LOST | STOP_ENGINE);
                             sy_stop_drive();
                         }
                     }
-                } else if (g_driveEng.rpm > 1500 || (g_driveEng.gearIndex > 0 && g_driveEng.rpm > g_driveEng.decelStep))
+                } else if (g_driveEng.rpm > ENGINE_IDLE_RPM ||
+                           (g_driveEng.gearIndex > 0 && g_driveEng.rpm > g_driveEng.decelStep))
                     g_driveEng.rpm -= g_driveEng.decelStep;
-                if (g_driveEng.rpm < 5700)
+                if (g_driveEng.rpm < ENGINE_REDLINE_RPM)
                     g_overRev = 0;
                 top = g_driveEng.speed < 5 && !flag && g_driveEng.gearIndex > 0;
                 if (c || top ||
@@ -1177,11 +1179,12 @@ void interrupt far sy_drive_isr(void)
                      ((flag && g_driveEng.rpm > g_driveEng.autoShiftRpm &&
                        g_driveEng.gearIndex < g_driveEng.gearCount) ||
                       (!flag && g_driveEng.gearIndex > 1 && !g_driveEng.rpmBand)))) {
-                    g_driver.currentCar->transmission->wear += g_driveEng.rpm > 5000 ? 15 : 3;
+                    g_driver.currentCar->transmission->wear += g_driveEng.rpm > ENGINE_WEAR_RPM ? 15 : 3;
                     if (g_demo == 0) {
                         i = g_driver.currentCar->transmission->wear;
-                        if (i >= 9900 || (g_driveEng.automatic == 0 && flag && g_driveEng.rpm > 5000 &&
-                                          i / 100 + 100 > rn_int(3277))) {
+                        if (i >= PART_WEAR_LIMIT ||
+                            (g_driveEng.automatic == 0 && flag && g_driveEng.rpm > ENGINE_WEAR_RPM &&
+                             i / 100 + 100 > rn_int(3277))) {
                             g_driveEng.stopFlags |= (STOP_LOST | STOP_TRANSMISSION);
                             sy_stop_drive();
                         }
@@ -1217,12 +1220,12 @@ void interrupt far sy_drive_isr(void)
                 if (prev || (g_onShoulder && g_driveEng.speed > 8)) {
                     if ((g_driveEng.speed -= (g_driveEng.speed >> 4) + 2) < 0)
                         g_driveEng.speed = 0;
-                    if ((g_driveEng.rpm = g_driveEng.speed * g_driveEng.rpmPerSpeed) < 1500)
-                        g_driveEng.rpm = 1500;
+                    if ((g_driveEng.rpm = g_driveEng.speed * g_driveEng.rpmPerSpeed) < ENGINE_IDLE_RPM)
+                        g_driveEng.rpm = ENGINE_IDLE_RPM;
                 } else if (g_driveEng.gearIndex == 0 && g_driveEng.speed) {
                     if (g_driveEng.speed)
                         g_driveEng.speed--;
-                    g_driveEng.rpm = 30 * g_driveEng.speed + 1500;
+                    g_driveEng.rpm = 30 * g_driveEng.speed + ENGINE_IDLE_RPM;
                 } else if (g_driveEng.rpmPerSpeed)
                     g_driveEng.speed = g_driveEng.rpm / g_driveEng.rpmPerSpeed;
                 if (s && abs(g_driveEng.steeringInput + g_cursorX) > abs(g_driveEng.steeringInput)) {

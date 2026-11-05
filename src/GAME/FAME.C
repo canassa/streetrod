@@ -20,11 +20,6 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-enum ManualKind {
-    MANUAL_CAR_KEY = 0,
-    MANUAL_CAR_ICON = 1
-};
-
 static int g_score;
 static int near elapsed_hours(void);
 static int near score_beats_entry(int i);
@@ -53,8 +48,8 @@ int fa_protect_check(void)
     char b[26];
     char a[50];
 
-    d = rn_int(0x33);
-    f = d < 0x12;
+    d = rn_int(MANUAL_ENTRY_COUNT);
+    f = d < MANUAL_ICON_COUNT;
     sc_status_text(-1, "", 0);
     r_vid.copyToFront = 0;
     sc_picture_at(PIC_COPY_PROTECTION_JUKEBOX, 8, 0, 0);
@@ -218,7 +213,7 @@ void fa_show(int add)
                 pos7 = i;
                 break;
             }
-        if (g_nScore < 10) {
+        if (g_nScore < HALL_FAME_COUNT) {
             if (pos7 < 0)
                 pos7 = g_nScore;
             g_nScore++;
@@ -244,7 +239,7 @@ void fa_show(int add)
         p++;
         (*g_videoOps.drawText)(r_vid.back, 191, g_fameRowY[i], "hr");
     }
-    bm_copy_box(r_vid.back, r_vid.front, 46, g_fameRowY[0], 211, g_fameRowY[9] + 8);
+    bm_copy_box(r_vid.back, r_vid.front, 46, g_fameRowY[0], 211, g_fameRowY[HALL_FAME_COUNT - 1] + 8);
     if (pos7 >= 0) {
         strcpy(buf3, g_hallFameTbl[pos7].name);
         ed_line(46, g_fameRowY[pos7], buf3, 15);

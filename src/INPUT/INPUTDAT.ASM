@@ -1,6 +1,7 @@
         .MODEL MEDIUM
         INCLUDE PC.INC
         INCLUDE DISK.INC
+        INCLUDE MESSAGES.INC
 
 PART_ENGINE EQU 0
 PART_TRANSMISSION EQU 1
@@ -140,133 +141,133 @@ _g_gearText DB      ' Gear: ', 0
         PUBLIC  _g_parts
 _g_parts DW      13h
         DB      ENGINE_V6, 1, PART_ENGINE, 0
-        DW      73Ch
+        DW      DESC_GM_V_6_ENGINE
         DW      13h
         DB      ENGINE_V6, 2, PART_ENGINE, 0
-        DW      74Bh
+        DW      DESC_FORD_V_6_ENGINE
         DW      13h
         DB      ENGINE_V6, 4, PART_ENGINE, 0
-        DW      75Ch
+        DW      DESC_CHRYSLER_V_6_ENGINE
         DW      15Eh
         DB      ENGINE_V8_SMALL, 1, PART_ENGINE, 0
-        DW      771h
+        DW      DESC_GM_V_8_ENGINE_283_CU_IN
         DW      154h
         DB      ENGINE_V8_SMALL, 2, PART_ENGINE, 0
-        DW      7A4h
+        DW      DESC_FORD_V_8_ENGINE_292_CU_IN
         DW      168h
         DB      ENGINE_V8_SMALL, 4, PART_ENGINE, 0
-        DW      7D6h
+        DW      DESC_CHRYSLER_V_8_ENG_285_CU_IN
         DW      1F4h
         DB      ENGINE_V8_LARGE, 1, PART_ENGINE, 0
-        DW      804h
+        DW      DESC_GM_V_8_ENGINE_327_CU_IN
         DW      1DBh
         DB      ENGINE_V8_LARGE, 2, PART_ENGINE, 0
-        DW      833h
+        DW      DESC_FORD_V_8_ENG_351_CU_IN
         DW      20Dh
         DB      ENGINE_V8_LARGE, 4, PART_ENGINE, 0
-        DW      853h
+        DW      DESC_CHRYSLER_V_8_ENG_340_CU_IN
         DW      82h
         DB      TRANS_AUTOMATIC, 1, PART_TRANSMISSION, 0
-        DW      886h
+        DW      DESC_AUTO_TRNSMSN_GM
         DW      78h
         DB      TRANS_AUTOMATIC, 2, PART_TRANSMISSION, 0
-        DW      89Fh
+        DW      DESC_AUTO_TRNSMSN_FORD
         DW      7Dh
         DB      TRANS_AUTOMATIC, 4, PART_TRANSMISSION, 0
-        DW      8B9h
+        DW      DESC_AUTO_TRNSMSN_CHRYSLER
         DW      0AFh
         DB      TRANS_THREE_SPEED, 1, PART_TRANSMISSION, 0
-        DW      8D8h
+        DW      DESC_TRNSMSN_3_SPD_GM
         DW      0A0h
         DB      TRANS_THREE_SPEED, 2, PART_TRANSMISSION, 0
-        DW      8F2h
+        DW      DESC_TRNSMSN_3_SPD_FORD
         DW      0AAh
         DB      TRANS_THREE_SPEED, 4, PART_TRANSMISSION, 0
-        DW      90Eh
+        DW      DESC_TRNSMSN_3_SPD_CHRYSLER
         DW      0FAh
         DB      TRANS_FOUR_SPEED, 1, PART_TRANSMISSION, 0
-        DW      92Eh
+        DW      DESC_TRNSMSN_4_SPD_GM
         DW      104h
         DB      TRANS_FOUR_SPEED, 2, PART_TRANSMISSION, 0
-        DW      949h
+        DW      DESC_TRNSMSN_4_SPD_FORD
         DW      0F5h
         DB      TRANS_FOUR_SPEED, 4, PART_TRANSMISSION, 0
-        DW      966h
+        DW      DESC_TRNSMSN_4_SPD_CHRYSLER
         DW      113h
         DB      TRANS_FOUR_SPEED, 7, PART_TRANSMISSION, 0
-        DW      987h
+        DW      DESC_TRNSMSN_4_SPD_FITS_ALL
         DW      190h
         DB      TRANS_RACING, 1, PART_TRANSMISSION, 0
-        DW      9A8h
+        DW      DESC_RACING_4_SPD_GM
         DW      195h
         DB      TRANS_RACING, 2, PART_TRANSMISSION, 0
-        DW      9C2h
+        DW      DESC_RACING_4_SPD_FORD
         DW      19Ah
         DB      TRANS_RACING, 4, PART_TRANSMISSION, 0
-        DW      9DEh
+        DW      DESC_RACING_4_SPD_CHRYSLER
         DW      19h
         DB      CARB_TWO_BARREL, 7, PART_CARBURETOR, 0
-        DW      9FEh
+        DW      DESC_2_BRL_CARB_FITS_ALL
         DW      28h
         DB      CARB_FOUR_BARREL, 7, PART_CARBURETOR, 0
-        DW      0A1Ch
+        DW      DESC_4_BRL_CARB_FITS_ALL
         DW      3Ch
         DB      CARB_RACING, 7, PART_CARBURETOR, 0
-        DW      0A3Ah
+        DW      DESC_4_BRL_RACING_CARB
         DW      14h
         DB      MANIFOLD_TWO_BARREL, 1, PART_MANIFOLD, 0
-        DW      0A6Bh
+        DW      DESC_GM_2_BRL_MANIFOLD
         DW      14h
         DB      MANIFOLD_TWO_BARREL, 2, PART_MANIFOLD, 0
-        DW      0A85h
+        DW      DESC_FORD_2_BRL_MANIFOLD
         DW      14h
         DB      MANIFOLD_TWO_BARREL, 4, PART_MANIFOLD, 0
-        DW      0AA1h
+        DW      DESC_CHRYSLER_2_BRL_MANIFOLD
         DW      19h
         DB      MANIFOLD_FOUR_BARREL, 1, PART_MANIFOLD, 0
-        DW      0AC1h
+        DW      DESC_GM_4_BRL_MANIFOLD
         DW      19h
         DB      MANIFOLD_FOUR_BARREL, 2, PART_MANIFOLD, 0
-        DW      0ADBh
+        DW      DESC_FORD_4_BRL_MANIFOLD
         DW      19h
         DB      MANIFOLD_FOUR_BARREL, 4, PART_MANIFOLD, 0
-        DW      0AF7h
+        DW      DESC_CHRYSLER_4_BRL_MANIFOLD
         DW      23h
         DB      MANIFOLD_DUAL_QUAD, 1, PART_MANIFOLD, 0
-        DW      0B91h
+        DW      DESC_GM_TRI_POWER_MANIFOLD
         DW      23h
         DB      MANIFOLD_DUAL_QUAD, 2, PART_MANIFOLD, 0
-        DW      0BB6h
+        DW      DESC_FORD_TRI_POWER_MANIFOLD
         DW      23h
         DB      MANIFOLD_DUAL_QUAD, 4, PART_MANIFOLD, 0
-        DW      0BDEh
+        DW      DESC_CHRYSLER_TRI_POWER
         DW      23h
         DB      MANIFOLD_TRI_POWER, 1, PART_MANIFOLD, 0
-        DW      0B17h
+        DW      DESC_GM_DUAL_QUAD_MANIFOLD
         DW      23h
         DB      MANIFOLD_TRI_POWER, 2, PART_MANIFOLD, 0
-        DW      0B3Dh
+        DW      DESC_FORD_DUAL_QUAD_MANIFOLD
         DW      23h
         DB      MANIFOLD_TRI_POWER, 4, PART_MANIFOLD, 0
-        DW      0B66h
+        DW      DESC_CHRYSLER_DUAL_QUAD
         DW      3Ch
         DB      MANIFOLD_RACING, 1, PART_MANIFOLD, 0
-        DW      0C09h
+        DW      DESC_GM_RACING_MANIFOLD
         DW      3Ch
         DB      MANIFOLD_RACING, 2, PART_MANIFOLD, 0
-        DW      0C24h
+        DW      DESC_FORD_RACING_MANIFOLD
         DW      3Ch
         DB      MANIFOLD_RACING, 4, PART_MANIFOLD, 0
-        DW      0C41h
+        DW      DESC_CHRYSLER_RACING_MANIFOLD
         DW      32h
         DB      TIRES_STANDARD, 7, PART_TIRES, 0
-        DW      0C62h
+        DW      DESC_TIRES
         DW      50h
         DB      TIRES_BRAND_NAME, 7, PART_TIRES, 0
-        DW      0C79h
+        DW      DESC_TIRES_BRAND_NAME
         DW      96h
         DB      TIRES_RACING_SLICKS, 7, PART_TIRES, 0
-        DW      0CACh
+        DW      DESC_RACING_SLICKS
         DW      0
         DB      0, 0, 0, 0
         DW      0

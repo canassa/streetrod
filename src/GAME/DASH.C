@@ -16,6 +16,7 @@
 #include "KBDGET.H"
 #include "MAIN.H"
 #include "MARKS.H"
+#include "MESSAGES.H"
 #include "MOUSE.H"
 #include "NEEDLE.H"
 #include "PC.H"
@@ -387,7 +388,7 @@ void da_intro(void)
 
 void da_time_up(void)
 {
-    gm_message(0x17bb);
+    gm_message(MSG_TOOK_TOO_MUCH_TIME);
     (*g_videoOps.blank)();
     cu_ctl(CURSOR_HIDE_NOW);
     r_vid.copyToFront = 1;

@@ -41,8 +41,10 @@ static int near write_cars(int handle, struct Car *c, int flag);
 
 static char g_noNameMsg[] = "The game must have a name !";
 static char g_saveSlots[16] = {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-static int g_slotNameOfs[16] = {6661, 6678, 6695, 6712, 6729, 6746, 6763, 6780,
-                                6797, 6814, 6831, 6848, 6865, 6882, 6899, 6916};
+static int g_slotNameOfs[16] = {DESC_SAVE_SLOT_00, DESC_SAVE_SLOT_01, DESC_SAVE_SLOT_02, DESC_SAVE_SLOT_03,
+                                DESC_SAVE_SLOT_04, DESC_SAVE_SLOT_05, DESC_SAVE_SLOT_06, DESC_SAVE_SLOT_07,
+                                DESC_SAVE_SLOT_08, DESC_SAVE_SLOT_09, DESC_SAVE_SLOT_10, DESC_SAVE_SLOT_11,
+                                DESC_SAVE_SLOT_12, DESC_SAVE_SLOT_13, DESC_SAVE_SLOT_14, DESC_SAVE_SLOT_15};
 static char *g_noNameMsgPtr = g_noNameMsg;
 int g_demoRacer = 0;
 
@@ -69,12 +71,12 @@ void sg_init_racer(int k, int *list)
     list[i + 1] = -1;
     x = g_racerRecordsArray[k].specIndex;
     y = (g_carData[x].rank >> 1) + 1;
-    g_racerRecordsArray[k].bodyMods = ((g_carData[x].parts >> 8 & 7) == 2) ? 8 : 0;
-    g_racerRecordsArray[k].sticker = (rn_int(20) < y) ? rn_int(9) : 0;
+    g_racerRecordsArray[k].bodyMods = ((g_carData[x].parts >> 8 & 7) == ENGINE_V8_LARGE) ? BODY_LARGE_ENGINE : 0;
+    g_racerRecordsArray[k].sticker = (rn_int(RIVAL_STICKER_CHANCE) < y) ? rn_int(STICKER_CHOICE_COUNT) : 0;
     if (g_models[x].frontBumperPic > 0 && g_models[x].rearBumperPic > 0)
-        g_racerRecordsArray[k].bodyMods |= (rn_int(25) < y) ? 3 : 0;
+        g_racerRecordsArray[k].bodyMods |= (rn_int(RIVAL_BUMPER_CHANCE) < y) ? BODY_FRONT_BUMPER | BODY_REAR_BUMPER : 0;
     if (g_models[x].roofPic > 0)
-        g_racerRecordsArray[k].bodyMods |= (rn_int(30) < y) ? 4 : 0;
+        g_racerRecordsArray[k].bodyMods |= (rn_int(RIVAL_ROOF_CHANCE) < y) ? BODY_ROOF : 0;
 }
 
 
@@ -84,11 +86,11 @@ static void near init_racers(void)
     int cl[11], bm[11], an[11];
 
     i = na1 = nb = nc = 0;
-    for (; i < 25; i++) {
+    for (; i < SPEC_ORDINARY_COUNT; i++) {
         v = g_carData[i].rank;
-        if (v >= 6)
+        if (v >= RACER_GROUP_HIGH_RANK)
             cl[++nc] = i;
-        else if (v < 3)
+        else if (v < CAR_CLASS_LOW_LIMIT)
             an[++na1] = i;
         else
             bm[++nb] = i;
@@ -110,7 +112,7 @@ static void near init_racers(void)
         an[0] = 1;
         an[1] = 0x18;
         sg_init_racer(g_demoRacer, an);
-        g_racerRecordsArray[g_demoRacer].nameOffset = 0x629;
+        g_racerRecordsArray[g_demoRacer].nameOffset = DESC_THE_GEEK;
     }
 }
 
@@ -118,9 +120,9 @@ static void near init_racers(void)
 static void near init_new_game(void)
 {
     pl_init(1);
-    g_driver.money = 750L;
+    g_driver.money = STARTING_MONEY;
     if (g_demo)
-        g_driver.money = 10000L;
+        g_driver.money = DEMO_STARTING_MONEY;
     g_driver.unused = 10;
     rd_build_layout(100);
     init_racers();
