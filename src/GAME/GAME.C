@@ -443,7 +443,7 @@ static void near buy_from_ads(int tab)
     int n;
     char color;
 
-    color = PAINT_RED;
+    color = 0;
     g_scene = SCENE_ADVERTS;
     g_list[1] = DESC_USED_CARS_HEADING;
     n = 2;
