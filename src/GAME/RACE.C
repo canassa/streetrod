@@ -436,7 +436,7 @@ static int near replace_tires(void)
             ret = (int)-g_driver.money;
             g_driver.money = 0;
         }
-        gm_add_part(PART_TIRES_FIRST, g_parts[PART_TIRES_FIRST].value);
+        gm_add_part(PART_TIRES_FIRST, g_parts[PART_TIRES_FIRST].basePrice);
         tbl[0] = g_driver.spareParts;
         g_driver.spareParts = tbl[0]->next;
         ga_install(tbl[0], &g_driver.currentCar->tires);

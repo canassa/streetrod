@@ -73,12 +73,13 @@ enum PaintShade {
 struct Car;
 struct Node;
 
+/** @brief Equipment categories in the parts catalog. */
 enum PartCategory {
-    PART_ENGINE = 0,
-    PART_TRANSMISSION = 1,
-    PART_CARBURETOR = 2,
-    PART_MANIFOLD = 3,
-    PART_TIRES = 4
+    PART_ENGINE = 0,       /**< Engine. */
+    PART_TRANSMISSION = 1, /**< Transmission. */
+    PART_CARBURETOR = 2,   /**< Carburetor. */
+    PART_MANIFOLD = 3,     /**< Intake manifold. */
+    PART_TIRES = 4         /**< Tires. */
 };
 
 struct Look {

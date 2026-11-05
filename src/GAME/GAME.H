@@ -83,10 +83,11 @@ enum BodyMod {
 
 struct Node2;
 
+/** @brief Tire equipment variants. */
 enum TireVariant {
-    TIRES_STANDARD = 0,
-    TIRES_BRAND_NAME = 1,
-    TIRES_RACING_SLICKS = 2
+    TIRES_STANDARD = 0,     /**< Standard tires. */
+    TIRES_BRAND_NAME = 1,   /**< Brand-name tires. */
+    TIRES_RACING_SLICKS = 2 /**< Racing slicks. */
 };
 
 /** @brief Intake layouts by carburetor count and size. */
@@ -98,23 +99,26 @@ enum ManifoldVariant {
     MANIFOLD_RACING = 4       /**< Two 4-barrel carbs (racing). */
 };
 
+/** @brief Carburetor equipment variants. */
 enum CarburetorVariant {
-    CARB_TWO_BARREL = 0,
-    CARB_FOUR_BARREL = 1,
-    CARB_RACING = 2
+    CARB_TWO_BARREL = 0,  /**< Two-barrel carburetor. */
+    CARB_FOUR_BARREL = 1, /**< Four-barrel carburetor. */
+    CARB_RACING = 2       /**< Racing four-barrel carburetor. */
 };
 
+/** @brief Transmission equipment variants. */
 enum TransmissionVariant {
-    TRANS_AUTOMATIC = 0,
-    TRANS_THREE_SPEED = 1,
-    TRANS_FOUR_SPEED = 2,
-    TRANS_RACING = 3
+    TRANS_AUTOMATIC = 0,   /**< Automatic. */
+    TRANS_THREE_SPEED = 1, /**< Three-speed manual. */
+    TRANS_FOUR_SPEED = 2,  /**< Four-speed manual. */
+    TRANS_RACING = 3       /**< Racing four-speed manual. */
 };
 
+/** @brief Engine equipment variants. */
 enum EngineVariant {
-    ENGINE_V6 = 0,
-    ENGINE_V8_SMALL = 1,
-    ENGINE_V8_LARGE = 2
+    ENGINE_V6 = 0,       /**< V6. */
+    ENGINE_V8_SMALL = 1, /**< Small V8. */
+    ENGINE_V8_LARGE = 2  /**< Large V8. */
 };
 
 /** @brief Ignition-wire presence and connection state. */
@@ -158,15 +162,6 @@ struct Car {
      */
     unsigned appearance;
     struct Car *next; /**< Other-car link; may be stale on current car. */
-};
-
-struct Item {
-    int value;
-    char variant;
-    char fitMask; /**< Manufacturer compatibility; @ref PartFit. */
-    char category;
-    char unused;
-    int nameOffset;
 };
 
 extern struct Car *g_old;

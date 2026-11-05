@@ -626,7 +626,7 @@ void near ga_stickers(void)
 void near ga_spares(enum PartCategory t, struct Node **list, char *buf, int start)
 {
     struct Node *p;
-    struct Item *ent7;
+    struct PartSpec *ent7;
     int n;
 
     n = start;
@@ -719,7 +719,7 @@ void near ga_tires(void)
 static void near car_info(int *ids, char *vals)
 {
     int n;
-    struct Item *it;
+    struct PartSpec *it;
     int count;
     struct Node *node;
     struct Node *gear[7];
