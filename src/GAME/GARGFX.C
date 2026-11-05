@@ -40,7 +40,7 @@ static struct Hot g_boltHot = {HOT_REGION, 0, 0, 1, 0, 0, 0, 0, 0};
 /* Draw the 64 x 6 bar for slot of the dialog; frame selects the highlighted frame.
    When frame == 1 and the screen is shadowed, the old bar is grabbed and pasted first. */
 
-void gx_trans_bolt(int frame, int slot)
+void gx_trans_bolt(enum BoltTightness frame, int slot)
 {
     struct Bitmap far *pict;
     struct Bitmap far *tmp;
@@ -52,7 +52,7 @@ void gx_trans_bolt(int frame, int slot)
     pict = di_bm(PIC_TRANSMISSION_BOLT_TURNS, ARENA_HIGH_STACK);
     x = 0xb8;
     y = g_tboltY[slot] + 10;
-    if (frame == 1 && r_vid.copyToFront) {
+    if (frame == BOLT_INSERTED && r_vid.copyToFront) {
         blt.w = 0x10;
         blt.h = 6;
         blt.sx = 0x40;
@@ -172,7 +172,7 @@ void gx_trans_draw(int n, char far *s)
         r_vid.copyToFront = 0;
         cu_ctl(CURSOR_HIDE);
         gx_trans_pic(n, 0);
-        for (i = 0; i < 2; i++)
+        for (i = 0; i < TRANSMISSION_BOLT_COUNT; i++)
             gx_trans_bolt(*s++, i);
         cu_ctl(CURSOR_SHOW);
         if (r_vid.copyToFront = saved)

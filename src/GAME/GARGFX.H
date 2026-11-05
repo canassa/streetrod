@@ -4,6 +4,7 @@
 #define GARGFX_H
 
 #include "ADS.H"
+#include "GAME.H"
 #include "HOTSPOT.H"
 struct Bitmap;
 struct Car;
@@ -21,7 +22,7 @@ extern struct Bitmap far *g_boltOverlay;
 extern struct Blt g_cpyBoltPatchRecord;
 extern int g_partsPics[];
 extern int g_engineBoltPicIds[9];
-void gx_trans_bolt(int a, int b);
+void gx_trans_bolt(enum BoltTightness a, int b);
 void gx_trans_drop(int a);
 void gx_trans_pic(int n, int flag);
 void gx_trans_clear(int n, int flag);

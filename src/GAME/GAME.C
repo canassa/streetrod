@@ -321,7 +321,7 @@ struct Car *near gm_make_car(int idx, int value, struct Car *old)
     car->specIndex = idx;
     car->value = value;
     car->fuel = NEW_CAR_FUEL;
-    car->rank = g_carData[idx].rank;
+    car->stockRank = g_carData[idx].rank;
     while ((i = rn_int(PAINT_SCHEME_COUNT)) == PAINT_WHITE)
         if (rn_int(2) == 1)
             break;

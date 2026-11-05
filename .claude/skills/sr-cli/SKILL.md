@@ -266,3 +266,12 @@ including implicit increments, aliases and arithmetic across indexed headers.
 Keep unsupported expressions and unknown/cyclic constants as errors; never
 substitute guessed dimensions. `tests/test_cdata.py` covers this because naming
 an initialized table's dimensions must still permit `sr dgroup check/order`.
+
+
+Car investigation follow-up (2026-11-05): `cdata.Types.constants` collects
+only enum entries, not preprocessor `#define`s. A record bound such as
+`char transmissionBolts[TRANSMISSION_BOLT_COUNT]` compiles correctly but the
+generic check_data_types.py audit raises ValueError. Until macro evaluation
+is supported, audit such a record directly with MSC sizeof/offsetof and
+compare every field with the established layout; never guess its dimension
+inside the parser. See plans/investigations/Car.md for the 40-byte Car audit.

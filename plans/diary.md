@@ -2734,3 +2734,32 @@ The conflicting lines contain independent substitutions: keep named appearance m
   that reuse. See [misnames.md](investigations/misnames.md) for the evidence.
 - Variant 2 and picture 1079 are Tri-Power (three 2-barrel carbs); variant 3 and
   picture 1083 are Dual-Quad (two 4-barrel carbs).
+
+## 2026-11-05 18:02 CET: Investigate Car instance state
+
+### What I did
+
+- Traced all fifteen Car members through pooled allocation, constructors,
+  temporary rival/stock cars, installed-part edits, damage, cosmetics, fuel,
+  sale valuation and save/load. Added [Car investigation](investigations/Car.md)
+  before changing source names, including the fixed 40-byte layout and other
+  misleading identifiers left outside scope.
+- Renamed only Car.rank to stockRank, documented every member, completed the
+  existing BoltTightness enum, and reused existing state/count/mask constants.
+  Kept every width, signedness, offset and the unused byte.
+- Headers, formatting and Doxygen passed with zero diagnostics. All 572
+  functions match; clean packed and independent DOS-native builds are
+  IDENTICAL. DGROUP ownership/order passed; all 106 regression tests passed.
+  Direct MSC layout audit: 33/33 checks, zero mismatches.
+
+### What I learned
+
+- Car's cached model rank only chooses promotion after winning another car;
+  installed upgrades affect separate performance calculations. Current-car
+  next can be stale, so the save/load single-car flag is essential. Fuel is
+  in tenths of gallons and can exceed its departure cap while pumping.
+  Details and evidence are in [Car.md](investigations/Car.md).
+- The generic shape audit accepts enum dimensions but cannot resolve #define
+  member bounds. Audited Car directly with real MSC sizeof/offsetof instead;
+  documented the limitation in the [sr-cli skill](../.claude/skills/sr-cli/SKILL.md).
+  No parser weakening or game-layout workaround was introduced.

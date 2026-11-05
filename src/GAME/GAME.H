@@ -10,10 +10,13 @@
 #define ENGINE_BOLT_COUNT 9
 #define TRANSMISSION_BOLT_COUNT 2
 
+/** @brief Assembly-bolt tightness, from missing to fully tightened. */
 enum BoltTightness {
-    BOLT_ABSENT = 0,
-    BOLT_INSERTED = 1,
-    BOLT_TIGHT = 3
+    BOLT_ABSENT = 0,       /**< Bolt removed. */
+    BOLT_INSERTED = 1,     /**< Inserted, without tightening turns. */
+    BOLT_PARTLY_TIGHT = 2, /**< One tightening turn. */
+    BOLT_TIGHT = 3,        /**< Fully tightened. */
+    BOLT_TIGHTNESS_COUNT   /**< Number of bolt states and picture slots. */
 };
 
 #define PART_RESALE_FACTOR 0.9
@@ -45,10 +48,14 @@ enum BodyMod {
     BODY_LARGE_ENGINE = 8  /**< Large-engine overlay. */
 };
 
+/** Sticker selection field in the packed car appearance. */
 #define APPEARANCE_STICKER_MASK 0x1f00
 #define APPEARANCE_NO_STICKER 0xe0ff
+/** The car roof has been chopped. */
 #define APPEARANCE_ROOF 0x2000
+/** The front bumper has been removed. */
 #define APPEARANCE_FRONT_BUMPER 0x4000
+/** The rear bumper has been removed. */
 #define APPEARANCE_REAR_BUMPER 0x8000
 #define APPEARANCE_KEEP_ROOF 0xdfff
 #define APPEARANCE_KEEP_FRONT_BUMPER 0xbfff
@@ -64,6 +71,7 @@ enum BodyMod {
 #define PART_CARBURETOR_FIRST 0x16
 #define PART_MANIFOLD_FIRST 0x19
 #define PART_TIRES_FIRST 0x28
+/** Stored fuel units per gallon. */
 #define FUEL_UNITS_PER_GALLON 10
 #define NEW_CAR_FUEL 0x28
 #define MIN_BOBS_FUEL 9
@@ -109,32 +117,47 @@ enum EngineVariant {
     ENGINE_V8_LARGE = 2
 };
 
+/** @brief Ignition-wire presence and connection state. */
 enum WireState {
-    WIRES_DISCONNECTED = -1,
-    WIRES_ABSENT = 0,
-    WIRES_CONNECTED = 1
+    WIRES_DISCONNECTED = -1, /**< Wires disconnected. */
+    WIRES_ABSENT = 0,        /**< No engine wires. */
+    WIRES_CONNECTED = 1      /**< Wires connected for running. */
 };
 
 struct Rack {
     struct Node *parts[5];
 };
 
+/**
+ * @brief A car's installed equipment, assembly state and running condition.
+ *
+ * Owned cars use pooled storage and are saved with their installed parts.
+ * Rival previews and stock performance calculations also use temporary cars.
+ */
 struct Car {
-    int value;
-    int specIndex;
-    char paintScheme; /**< Body-colour pair; @ref PaintScheme. */
-    unsigned char rank;
-    struct Node *transmission;
-    struct Rack rack;
-    struct Node *tires;
-    char transmissionBolts[2];
-    char engineBolts[9];
-    char wireState;
-    signed char timing;
-    char unused;
+    int value;                 /**< Accounted car value, in dollars. */
+    int specIndex;             /**< Index into the car specification tables. */
+    char paintScheme;          /**< Body-colour pair; @ref PaintScheme. */
+    unsigned char stockRank;   /**< Cached model rank; higher is better. */
+    struct Node *transmission; /**< Installed transmission, or null. */
+    struct Rack rack;          /**< Engine, manifold and up to three carbs. */
+    struct Node *tires;        /**< Installed tire set, or null. */
+    /** Transmission attachment states; @ref BoltTightness. */
+    char transmissionBolts[TRANSMISSION_BOLT_COUNT];
+    /** Engine bolt, two manifold bolts, then carb pairs; @ref BoltTightness. */
+    char engineBolts[ENGINE_BOLT_COUNT];
+    char wireState;     /**< Ignition-wire connection; @ref WireState. */
+    signed char timing; /**< Ignition timing setting; zero is optimal. */
+    char unused;        /**< Unused saved byte. */
+    /** Fuel remaining; @ref FUEL_UNITS_PER_GALLON units per gallon. */
     int fuel;
-    unsigned appearance; /* bits 8-12 sticker (ga_menu), 13 roof chopped, 14 front and 15 rear bumper stripped */
-    struct Car *next;
+    /**
+     * Sticker field @ref APPEARANCE_STICKER_MASK and modification flags
+     * @ref APPEARANCE_ROOF, @ref APPEARANCE_FRONT_BUMPER,
+     * @ref APPEARANCE_REAR_BUMPER; low byte unused.
+     */
+    unsigned appearance;
+    struct Car *next; /**< Other-car link; may be stale on current car. */
 };
 
 struct Item {

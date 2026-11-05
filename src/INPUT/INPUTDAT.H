@@ -65,7 +65,7 @@ extern int g_kingDragWon;
 extern char g_manifoldFit[][5];
 extern char g_carbFit[][3];
 extern int g_partPics[][5];
-extern int g_boltPics[];
+extern int g_boltPics[BOLT_TIGHTNESS_COUNT];
 extern int g_transPics[];
 extern char *g_cashLabel;
 extern char *g_gearLabel;

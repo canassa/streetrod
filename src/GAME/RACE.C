@@ -603,8 +603,8 @@ static void near blow_engine(int n)
             g_driver.currentCar->value -= gm_take_part(*p, 0);
             *p = 0;
         }
-        for (i = 0, q = g_driver.currentCar->engineBolts; i < 9; i++)
-            *q++ = 0;
+        for (i = 0, q = g_driver.currentCar->engineBolts; i < ENGINE_BOLT_COUNT; i++)
+            *q++ = BOLT_ABSENT;
         g_driver.currentCar->wireState = WIRES_ABSENT;
     }
     sy_reset_queues();
@@ -621,8 +621,8 @@ static void near drop_transmission(int n)
     if (g_driver.currentCar) {
         g_driver.currentCar->value -= gm_take_part(g_driver.currentCar->transmission, 0);
         g_driver.currentCar->transmission = 0;
-        for (i = 0, q = g_driver.currentCar->transmissionBolts; i < 2; i++)
-            *q++ = 0;
+        for (i = 0, q = g_driver.currentCar->transmissionBolts; i < TRANSMISSION_BOLT_COUNT; i++)
+            *q++ = BOLT_ABSENT;
     }
     sy_reset_queues();
     so_noise();
@@ -704,7 +704,7 @@ enum RaceExit near ra_outcome(void)
             found->appearance = (((g_selectedRacerPointer->bodyMods & BODY_REAR_BUMPER) != 0 & 1) << 15) |
                                 (found->appearance & APPEARANCE_KEEP_REAR_BUMPER);
             found->paintScheme = g_selectedRacerPointer->paintScheme;
-            if (found->rank > g_driver.currentCar->rank) {
+            if (found->stockRank > g_driver.currentCar->stockRank) {
                 g_driver.currentCar->next = g_driver.otherCars->next;
                 g_driver.otherCars = g_driver.currentCar;
                 g_driver.currentCar = found;

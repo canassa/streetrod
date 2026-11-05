@@ -194,7 +194,7 @@ void ti_change(int *a, int *b)
     g_tires.carX = g_xCoordSprite;
     modelm = g_driver.currentCar->specIndex;
     attr3 = gm_car_look(g_driver.currentCar);
-    tinto = (g_driver.currentCar->appearance >> 8) & 0x1f;
+    tinto = (g_driver.currentCar->appearance >> 8) & STICKER_INDEX_MASK;
     for (n = 0; n < 3; n++)
         g_tires.liftPics[n] = di_bm(g_liftPicIds[n], ARENA_LOW_STACK);
     sc_fill_rect(0x88, 0xba - g_tires.liftPics[1]->height, g_tires.liftPics[1]->width, g_tires.liftPics[1]->height,

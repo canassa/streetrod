@@ -796,9 +796,9 @@ void near ga_transmission(void)
         gm_message(MSG_YOUVE_GOT_NO_CAR_DUMMY);
         return;
     }
-    for (k = 0; k < 2; k++) {
+    for (k = 0; k < TRANSMISSION_BOLT_COUNT; k++) {
         if (prev = owner->transmissionBolts[k])
-            flags[k + 1] = prev == 1 ? 1 : 2;
+            flags[k + 1] = prev == BOLT_INSERTED ? 1 : 2;
         else
             flags[k + 1] = 0;
         g_transBolts[k].kind = HOT_REGION;
@@ -847,7 +847,7 @@ void near ga_transmission(void)
                     so_part_move(0);
                     so_part_set();
                     g_gameClock.actionTicks += (long)TIME_TRANSMISSION_CHANGE;
-                    for (k = 2; k--;) {
+                    for (k = TRANSMISSION_BOLT_COUNT; k--;) {
                         flags[k + 1] = 1;
                         gx_trans_bolt(owner->transmissionBolts[k] = BOLT_INSERTED, k);
                         so_bolt();
@@ -910,7 +910,7 @@ int ga_ready(struct Car *car, int flag)
 {
     int n, i;
 
-    if (car->rack.parts[0] == 0 || car->wireState <= 0 || car->rack.parts[1] == 0)
+    if (car->rack.parts[0] == 0 || car->wireState <= WIRES_ABSENT || car->rack.parts[1] == 0)
         return 0;
     n = g_nCarb[g_parts[car->rack.parts[1]->idx].variant];
     for (i = 2; i < n + 2; i++)
@@ -925,7 +925,7 @@ int ga_ready(struct Car *car, int flag)
         return 0;
     if (car->tires == 0)
         return 0;
-    for (i = 2; --i >= 0;)
+    for (i = TRANSMISSION_BOLT_COUNT; --i >= 0;)
         if (car->transmissionBolts[i] != BOLT_TIGHT)
             return 0;
     return 1;
@@ -1023,18 +1023,19 @@ void near ga_hood(struct Car *car)
         gm_message(MSG_YOUVE_GOT_NO_CAR_DUMMY);
         return;
     }
-    for (key = 1; key <= 9; key++) {
+    for (key = 1; key <= ENGINE_BOLT_COUNT; key++) {
         if (k = car->engineBolts[key - 1]) {
-            havek[key] = k == 1 ? 1 : 2;
+            havek[key] = k == BOLT_INSERTED ? 1 : 2;
             g_engineBoltPicIds[key - 1] = g_boltPics[k];
         } else {
             havek[key] = 0;
             g_engineBoltPicIds[key - 1] = 0;
         }
     }
-    g_slotSelec.wirePic = car->wireState != WIRES_ABSENT
-                              ? (car->wireState > 0 ? PIC_IGNITION_WIRES_CONNECTED : PIC_IGNITION_WIRES_DISCONNECTED)
-                              : 0;
+    g_slotSelec.wirePic =
+        car->wireState != WIRES_ABSENT
+            ? (car->wireState > WIRES_ABSENT ? PIC_IGNITION_WIRES_CONNECTED : PIC_IGNITION_WIRES_DISCONNECTED)
+            : 0;
     if (p6 = car->rack.parts[0])
         g_partPics[1][0] =
             g_parts[p6->idx].variant == MANIFOLD_TWO_BARREL ? PIC_MANIFOLD_TWO_BARREL_V6 : PIC_MANIFOLD_TWO_BARREL_V8;
@@ -1070,7 +1071,7 @@ void near ga_hood(struct Car *car)
             car->wireState = -car->wireState;
             if (car->wireState == WIRES_ABSENT)
                 continue;
-            if (car->wireState > 0) {
+            if (car->wireState > WIRES_ABSENT) {
                 g_slotSelec.wirePic = PIC_IGNITION_WIRES_CONNECTED;
                 gx_draw_wires();
                 g_gameClock.actionTicks += TIME_WIRE_CHANGE;
@@ -1197,7 +1198,7 @@ void near ga_hood(struct Car *car)
                 }
                 for (k = g_nBolt[cnt1]; --k >= 0;) {
                     g_slotSelec.subslot = k;
-                    gx_draw_bolt(g_engineBoltPicIds[step + k] = g_boltPics[1]);
+                    gx_draw_bolt(g_engineBoltPicIds[step + k] = g_boltPics[BOLT_INSERTED]);
                     so_bolt();
                     havek[step + k + 1] = 1;
                     car->engineBolts[step + k] = BOLT_INSERTED;
@@ -1287,7 +1288,7 @@ void near ga_hood(struct Car *car)
                 }
                 g_slotSelec.slot = g_boltSlots[key];
                 g_slotSelec.subslot = g_boltSubslots[key];
-                gx_draw_bolt(g_engineBoltPicIds[key - 1] = g_boltPics[1]);
+                gx_draw_bolt(g_engineBoltPicIds[key - 1] = g_boltPics[BOLT_INSERTED]);
                 so_bolt();
                 havek[key] = 1;
                 car->engineBolts[key - 1] = BOLT_INSERTED;
