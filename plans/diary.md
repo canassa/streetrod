@@ -2447,3 +2447,18 @@ The conflicting lines contain independent substitutions: keep named appearance m
   standalone carhop-leave path; an enter-then-quick-leave does not reset it.
 - These are game-behavior findings, recorded in the investigation note. No new
   compiler/tooling rule or skill change was needed. Open behavioral questions: 0.
+
+## 2026-11-05: Private function docs stay at their definition
+
+### What I did
+
+- Reverted 723281a: the `@fn` block for the static `animate_rival_car` in BOBS.H attached to no
+  declaration in that file. The user chose to keep private-function docs at their `.C`
+  definition, public ones at the `.H` declaration.
+- Kept the doxygen-c rule that enum values in docs are `@ref` names, and added: never put a
+  static function's block in a header.
+
+### What I learned
+
+- A detached `@fn` block satisfies Doxygen but reads as a stray comment in the source; the
+  documentation has to sit on a declaration a reader can see.

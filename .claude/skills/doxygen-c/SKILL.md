@@ -21,7 +21,9 @@ prove a semantic name or explanation.
 Files use uppercase DOS 8.3 names in `src/<subsystem>/`. A module's `.H` owns
 its public function/global declarations. Document public functions at that
 header declaration, private static functions at their `.C` definition. Use one
-block per entity, not duplicates in both places. Types belong in the header of
+block per entity, not duplicates in both places. Never put a block for a
+static function in a header (it would attach to nothing there). Enum values in prose
+and `@param` contracts are `@ref` names (e.g. `@ref CAR_PULL_IN`), never raw numbers. Types belong in the header of
 the module defining their primary global, or their producer/API when there is no global storage; related enums and helper records
 follow that owner. Only independent ownerless helpers remain in `src/SYS/STRUCTS.H`.
 
