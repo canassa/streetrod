@@ -18,7 +18,7 @@ struct Tone g_tones[5] = {{0, WAVE_TRIANGLE, 0, 0, 0},
 
 void mu_play(void far *song, void *tones)
 {
-    if (song == g_songBgState.song) {
+    if (song == g_songBgState.stream) {
         if (g_savedMusicOn != -1) {
             g_musicOn = g_savedMusicOn;
             g_savedMusicOn = -1;
@@ -37,7 +37,8 @@ void mu_play(void far *song, void *tones)
             g_musicOn = 1;
         }
         g_voiceNum = 2;
-        g_secondaryMusicStateData.cur = g_secondaryMusicStateData.phraseStart = g_secondaryMusicStateData.song = song;
+        g_secondaryMusicStateData.nextWord = g_secondaryMusicStateData.phraseStart = g_secondaryMusicStateData.stream =
+            song;
         g_secondaryMusicStateData.repeatCursor = g_secondaryMusicStateData.repeatTable = tones;
         g_voice = &g_secondaryMusicStateData;
         sy_music_start(2, 0);

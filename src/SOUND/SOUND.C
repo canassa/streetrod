@@ -64,7 +64,7 @@ enum ToneSlot g_songTones[37] = {TONE_PLAIN,
                                  TONE_END};
 enum ToneSlot g_jingleTones[2] = {TONE_PROGRAMMABLE, TONE_END};
 int g_musicOn = 1;
-struct Dev *g_voice = &g_songBgState;
+struct MusicVoice *g_voice = &g_songBgState;
 int g_voiceNum = 1;
 int g_savedMusicOn = -1;
 int g_musicSuspended = 0;

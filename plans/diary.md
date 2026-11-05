@@ -2973,3 +2973,27 @@ checks passing. Names in their original buckets restore DS:7560/7D62 and the
 identical packed EXE; the renderer cursor's tie preserves DS:8B82. Separate
 far extern declarations also matter: dt_step's roadside reads retain distinct
 cached SEG words and the ES reload between them.
+
+## 2026-11-05 20:03 CET: Investigate Dev playback state
+
+### What I did
+
+- Traced every Dev member reader/writer, linked music/effect words, repeat and
+  tone tables, playback selection, pause/resume, and save-game exclusion.
+- Wrote plans/investigations/Dev.md before renaming; renamed the type to
+  MusicVoice and clarified stream, cursor, phrase-pass and speaker-enable state.
+  Kept char flags and the complete 28-byte layout; documented the type in its
+  storage owner's SYS.H and kept a SOUND.H pointer forward declaration.
+- Verified all 12 member offsets with real MSC 5.1, 572/572 function matches,
+  clean packed and DOS-native byte-identical builds, header/format/docs gates,
+  both DGROUP checks, and all 106 unit tests. Committed on inv-dev; no push/merge.
+
+### What I learned
+
+- The repeat count means extra phrase passes; tone selections advance on every
+  pass. Negative repeat sentinels wrap before terminal tone/stop entries are read.
+  Effect repeat bytes form signed little-endian words despite their char array.
+- The speaker flag requests re-enabling on an audible note, while the divisor
+  itself is programmed for each note. The two voices share the speaker and
+  external vibrato state. Evidence and out-of-scope names are in
+  plans/investigations/Dev.md; no tooling or compiler-rule change was needed.

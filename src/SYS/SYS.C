@@ -39,8 +39,8 @@ static char g_lastClick;
 static int g_demoChoice;
 static struct Vibrato g_vibrato;
 
-struct Dev g_songBgState;
-struct Dev g_secondaryMusicStateData;
+struct MusicVoice g_songBgState;
+struct MusicVoice g_secondaryMusicStateData;
 void(interrupt far *g_clockPrev)(void);
 char g_strOpp[80];
 int g_menuLevel;
@@ -90,11 +90,11 @@ void sy_hover_reset(void)
 
 void sy_music_pause(void)
 {
-    if (g_voice->active) {
-        g_voice->active = 0;
+    if (g_voice->playing) {
+        g_voice->playing = FALSE;
         outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
         g_speakerOn = 0;
-        g_voice->dirty = 1;
+        g_voice->speakerPending = TRUE;
         g_hots[ga_hotspot(KR_MUSIC)].textOffset = g_offTunes;
         sy_hover_reset();
     }
@@ -103,9 +103,9 @@ void sy_music_pause(void)
 
 void sy_music_resume(void)
 {
-    if (g_musicOn && !g_voice->active && g_voice->phraseStart != g_voice->song) {
-        g_voice->active = 1;
-        g_voice->dirty = 1;
+    if (g_musicOn && !g_voice->playing && g_voice->phraseStart != g_voice->stream) {
+        g_voice->playing = TRUE;
+        g_voice->speakerPending = TRUE;
         g_hots[ga_hotspot(KR_MUSIC)].textOffset = g_offSquelch;
         sy_hover_reset();
     }
@@ -294,12 +294,12 @@ void sy_init(void)
         g_mouse.present = 0;
     g_drawnCursor.x = -1;
     g_drawnCursor.y = -1;
-    g_songBgState.active = 0;
-    g_songBgState.song = g_song;
-    g_songBgState.cur = g_songBgState.phraseStart = g_songBgState.song;
+    g_songBgState.playing = FALSE;
+    g_songBgState.stream = g_song;
+    g_songBgState.nextWord = g_songBgState.phraseStart = g_songBgState.stream;
     g_songBgState.repeatCursor = g_songBgState.repeatTable = g_songRepeats;
     g_songBgState.toneCursor = g_songBgState.toneTable = g_songTones;
-    g_secondaryMusicStateData.active = 0;
+    g_secondaryMusicStateData.playing = FALSE;
     g_secondaryMusicStateData.toneCursor = g_secondaryMusicStateData.toneTable = g_jingleTones;
     _harderr(sy_crit_error);
     _disable();
@@ -620,30 +620,30 @@ void sy_timer_cancel(int n)
 void sy_music_start(int n, int cnt)
 {
     if (g_musicOn) {
-        g_voice->active = 0;
+        g_voice->playing = FALSE;
         outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
         g_speakerOn = 0;
-        g_voice->repeatCount = 0;
-        g_voice->dirty = 1;
-        g_voice->phraseStart = g_voice->cur = g_voice->song + n;
+        g_voice->phrasePasses = 0;
+        g_voice->speakerPending = TRUE;
+        g_voice->phraseStart = g_voice->nextWord = g_voice->stream + n;
         g_voice->ticksLeft = cnt + 1;
         g_voice->toneCursor = g_voice->toneTable;
         g_toneShapePlaybackPointer = g_tones + *g_voice->toneCursor;
         g_vibratoActive = 1;
-        g_voice->active = 1;
+        g_voice->playing = TRUE;
     } else {
-        g_voice->active = 0;
+        g_voice->playing = FALSE;
     }
 }
 
 
 void sy_music_stop(void)
 {
-    g_voice->active = 0;
+    g_voice->playing = FALSE;
     outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
     g_speakerOn = 0;
-    g_voice->dirty = 1;
-    g_voice->phraseStart = g_voice->cur = g_voice->song;
+    g_voice->speakerPending = TRUE;
+    g_voice->phraseStart = g_voice->nextWord = g_voice->stream;
 }
 
 
@@ -892,7 +892,7 @@ void interrupt far sy_timer_isr(void)
             g_drawnCursor.dirty = 1;
         }
     }
-    if (g_voice->active && --g_voice->ticksLeft) {
+    if (g_voice->playing && --g_voice->ticksLeft) {
         if (g_vibratoActive && g_voice->divisor.w && !--g_vibCount) {
             g_toneShapePlaybackPointer->phase = g_toneShapePlaybackPointer->phase % g_toneShapePlaybackPointer->length;
             g_vibrato.divisor =
@@ -903,31 +903,31 @@ void interrupt far sy_timer_isr(void)
             outp(PIT_CH2, g_vibrato.divisor >> 8);
             g_vibCount = g_toneShapePlaybackPointer->delay;
         }
-    } else if (g_voice->active && g_voice->ticksLeft == 0) {
-        while (!(g_voice->ticksLeft = *g_voice->cur++)) {
-            if (*g_voice->cur++ == 0) {
+    } else if (g_voice->playing && g_voice->ticksLeft == 0) {
+        while (!(g_voice->ticksLeft = *g_voice->nextWord++)) {
+            if (*g_voice->nextWord++ == 0) {
                 outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
                 g_speakerOn = 0;
-                g_voice->active = 0;
-                g_voice->dirty = 1;
-                g_voice->phraseStart = g_voice->cur = g_voice->song;
+                g_voice->playing = FALSE;
+                g_voice->speakerPending = TRUE;
+                g_voice->phraseStart = g_voice->nextWord = g_voice->stream;
                 goto tail;
             }
             g_voice->toneCursor++;
-            if (*g_voice->repeatCursor < ++g_voice->repeatCount) {
+            if (*g_voice->repeatCursor < ++g_voice->phrasePasses) {
                 if (*++g_voice->repeatCursor < 0) {
-                    g_voice->cur = g_voice->song + 2;
+                    g_voice->nextWord = g_voice->stream + 2;
                     g_voice->repeatCursor = g_voice->repeatTable;
                     g_voice->toneCursor = g_voice->toneTable;
                 }
-                g_voice->phraseStart = g_voice->cur;
-                g_voice->repeatCount = 0;
+                g_voice->phraseStart = g_voice->nextWord;
+                g_voice->phrasePasses = 0;
             } else
-                g_voice->cur = g_voice->phraseStart;
+                g_voice->nextWord = g_voice->phraseStart;
             g_toneShapePlaybackPointer = g_tones + *g_voice->toneCursor;
         }
-        if (!(g_voice->divisor.w = *g_voice->cur++)) {
-            g_voice->dirty = 1;
+        if (!(g_voice->divisor.w = *g_voice->nextWord++)) {
+            g_voice->speakerPending = TRUE;
             outp(PPI_B, inp(PPI_B) & (0xff ^ PPI_SPEAKER_MASK));
             g_speakerOn = 0;
         } else {
@@ -937,11 +937,11 @@ void interrupt far sy_timer_isr(void)
             }
             outp(PIT_CH2, g_voice->divisor.b[0]);
             outp(PIT_CH2, g_voice->divisor.b[1]);
-            if (g_soundOn && (g_soundOn != g_speakerOn || g_voice->dirty)) {
+            if (g_soundOn && (g_soundOn != g_speakerOn || g_voice->speakerPending)) {
                 outp(PPI_B, inp(PPI_B) | PPI_SPEAKER_MASK);
                 g_speakerOn = 1;
-                if (g_voice->dirty)
-                    g_voice->dirty = 0;
+                if (g_voice->speakerPending)
+                    g_voice->speakerPending = FALSE;
             }
         }
     }
