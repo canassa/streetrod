@@ -602,7 +602,7 @@ necessity from recovered variable identity.
 
 Neither data marker is settled; both remain verbatim. The complete evidence
 and repeatable trial transformations are in
-[plans/investigations/prov-data.md](../plans/investigations/prov-data.md).
+`plans/investigations/prov-data.md`.
 
 POPUP's DS:6C40 word is a near pointer into the initialized three-entry Win
 table at DS:04C4, not the Win value itself. All seven original direct accesses
