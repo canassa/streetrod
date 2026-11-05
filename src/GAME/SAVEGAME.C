@@ -41,8 +41,10 @@ static int near write_cars(int handle, struct Car *c, int flag);
 
 static char g_noNameMsg[] = "The game must have a name !";
 static char g_saveSlots[16] = {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-static int g_slotNameOfs[16] = {6661, 6678, 6695, 6712, 6729, 6746, 6763, 6780,
-                                6797, 6814, 6831, 6848, 6865, 6882, 6899, 6916};
+static int g_slotNameOfs[16] = {DESC_SAVE_SLOT_00, DESC_SAVE_SLOT_01, DESC_SAVE_SLOT_02, DESC_SAVE_SLOT_03,
+                                DESC_SAVE_SLOT_04, DESC_SAVE_SLOT_05, DESC_SAVE_SLOT_06, DESC_SAVE_SLOT_07,
+                                DESC_SAVE_SLOT_08, DESC_SAVE_SLOT_09, DESC_SAVE_SLOT_10, DESC_SAVE_SLOT_11,
+                                DESC_SAVE_SLOT_12, DESC_SAVE_SLOT_13, DESC_SAVE_SLOT_14, DESC_SAVE_SLOT_15};
 static char *g_noNameMsgPtr = g_noNameMsg;
 int g_demoRacer = 0;
 
@@ -110,7 +112,7 @@ static void near init_racers(void)
         an[0] = 1;
         an[1] = 0x18;
         sg_init_racer(g_demoRacer, an);
-        g_racerRecordsArray[g_demoRacer].nameOffset = 0x629;
+        g_racerRecordsArray[g_demoRacer].nameOffset = DESC_THE_GEEK;
     }
 }
 

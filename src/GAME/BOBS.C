@@ -376,8 +376,10 @@ static void near list_met_rivals(int *ids, int *slots, int *kinds)
 
 struct Wager g_raceWagerTerms;
 
-static int g_refuseMsgs[2][5] = {{4779, 4803, 4822, 4840, 4663}, {4663, 4675, 4694, 4715, 4727}};
-static int g_acceptMsgs[2][3] = {{4859, 4867, 4875}, {4743, 4756, 4767}};
+static int g_refuseMsgs[2][5] = {
+    {MSG_BLOW_IT_OUT_YOUR_EAR, MSG_FORGET_IT_GEEK, MSG_BEAT_IT_TWERP, MSG_NO_WAY_YA_NERD, MSG_GET_LOST_CHALLENGE},
+    {MSG_GET_LOST_CHALLENGE, MSG_GIVE_ME_A_BREAK, MSG_GET_OUTTA_MY_FACE, MSG_BUZZ_OFF, MSG_WHADDA_LOSER}};
+static int g_acceptMsgs[2][3] = {{MSG_COOL, MSG_O_K, MSG_LETS_HIT_IT}, {MSG_YOURE_ON, MSG_ALRIGHT, MSG_LETS_GO}};
 
 
 static int near look_for_rival(enum CarAnimKind n)
@@ -399,7 +401,7 @@ static int near look_for_rival(enum CarAnimKind n)
         rival_arrives(sel[choice - 1], n, RIVAL_REQUESTED);
         return 1;
     case KR_EMPTY_LIST:
-        gm_message(0x198c);
+        gm_message(MSG_WHATS_HIS_NAME);
         return 0;
     }
 }
@@ -481,29 +483,29 @@ static int near challenge(int arg)
         ch = king_status();
         switch (ch) {
         case KING_NEED_WINS:
-            gm_message(0x1113);
+            gm_message(MSG_NO_TIME_FOR_AMATEURS);
             break;
         case KING_NEED_WIN_RATE:
-            gm_message(0x113d);
+            gm_message(MSG_DOING_OK_WIN_MORE_RACES);
             break;
         case KING_NEED_DRAG_WINS:
-            gm_message(0x117d);
+            gm_message(MSG_WIN_MORE_DRAG_RACES);
             break;
         case KING_NEED_ROAD_WINS:
-            gm_message(0x11a7);
+            gm_message(MSG_WIN_MORE_ROAD_RACES);
             break;
         case KING_READY:
             if (g_kingDragWon == 0) {
                 if (g_driver.currentCar->fuel < MIN_KING_FUEL) {
-                    gm_message(0x1761);
+                    gm_message(MSG_GET_MORE_GAS_BEFORE_RACING);
                     return 0;
                 }
                 g_driver.raceType = RACE_DRAG;
-                gm_message(0x11d1);
+                gm_message(MSG_LETS_HIT_THE_DRAG_RACE);
                 g_raceWagerTerms.kind = BET_NONE;
             } else {
                 g_driver.raceType = RACE_ROAD;
-                gm_message(0x11f7);
+                gm_message(MSG_GET_YOUR_PINK_SLIP_OUT);
                 g_raceWagerTerms.kind = BET_CAR;
             }
             g_raceWagerTerms.amount = 0;
@@ -516,7 +518,7 @@ static int near challenge(int arg)
         return 0;
     }
     if (g_driver.currentCar->fuel < MIN_DRAG_FUEL) {
-        gm_message(0x1761);
+        gm_message(MSG_GET_MORE_GAS_BEFORE_RACING);
         return 0;
     }
     pict = mn_grab(KM_DRAG_WAGER, &x, &sy, ARENA_LOW_STACK);
@@ -535,11 +537,11 @@ static int near challenge(int arg)
         break;
     case KR_FORGET:
     case KR_TIMEOUT:
-        gm_message(0x122c);
+        gm_message(MSG_CHICKEN);
         goto quit;
     }
     if (g_driver.raceType == RACE_ROAD && g_driver.currentCar->fuel < MIN_ROAD_FUEL) {
-        gm_message(0x1761);
+        gm_message(MSG_GET_MORE_GAS_BEFORE_RACING);
         goto quit;
     }
     mn_pop(1);
@@ -553,7 +555,7 @@ static int near challenge(int arg)
         switch (ch) {
         case KR_FORGET:
         case KR_TIMEOUT:
-            gm_message(0x122c);
+            gm_message(MSG_CHICKEN);
             goto quit;
         case KR_BET_FOR_KICKS:
             price = 0;
@@ -597,7 +599,7 @@ static int near challenge(int arg)
                 ;
             gm_message(g_refuseMsgs[g_driver.raceType][prev = ch]);
         } else
-            gm_message(0x131b);
+            gm_message(MSG_NOT_ENOUGH_DOUGH_TO_BET);
     }
 quit:
     mn_pop(1);
@@ -933,7 +935,7 @@ static void near play_ending(void)
     (*g_videoOps.copy)(pic4, r_vid.front, &blt, 1);
     (*g_videoOps.copy)(pic4, r_vid.back, &blt, 1);
     gm_pause(0x32);
-    gm_message(0x183c);
+    gm_message(MSG_YOURE_MY_HERO);
     r_vid.copyToFront = 0;
     ar_reset();
     di_free_list(g_endPics2);
@@ -1107,7 +1109,7 @@ void bo_visit(void)
             if (g_rivalHereState == 0)
                 goto out;
             if (n > 0 || g_isKingState) {
-                gm_message(0x122c);
+                gm_message(MSG_CHICKEN);
                 show_rival_car(CAR_DRIVE_OUT, g_opponentSpecIndex, 1, 0xa3, 0, g_tirePics[g_carDraw.tireVariant]);
                 n = 0;
             } else {

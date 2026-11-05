@@ -2344,6 +2344,21 @@ Ownership inventory (the original 98 definitions):
 - The 21 scenery Run arrays require their existing public forward declarations. MSC rejects static tentative declarations followed by initializers (C2086). Moving the initialized arrays before their referring List records keeps all loaded bytes but changes relocation emission order, causing 256 packed EXE bytes to differ. Keeping these arrays public restores an identical packed EXE; the exception is documented per symbol in the ledger and in the recipe book.
 - Changing initialized globals to static and relocating types did not change GARAGE's measured contributing-name allowance. Unused extern removal does not buy name-budget space.
 
+## 2026-11-05 02:30 CET: Name message and text offsets (cmsgs)
+
+### What I did
+
+- Named 290 distinct offsets in module-owned TextOffset, DescriptionOffset and MessageOffset enums in src/UI/MESSAGES.H; supplied the 47 assembly-used values through MESSAGES.INC.
+- Replaced literal offsets in popup calls, race/accept/refuse tables, hotspot text fields, body-customization prompts, source-initialized part descriptions, save-slot names and the demo racer name. Kept negative popup arguments explicit as -MSG_... and preserved every byte.
+- Wrote work/LEDGER.md with one old-value/name/evidence entry per offset and five categories of notable skips. This audit artifact remains in the ignored work directory.
+- Passed headers --check, format --check, check --all (572/572), clean rm -rf work followed by build (Packed EXE vs orig/SR.EXE: IDENTICAL), dgroup check/order, 155 unit tests and docs (zero diagnostics). The clean build also reports 572/572 functions at original positions and 748/748 near-call encodings exact.
+
+### What I learned
+
+- Popup offsets use g_descHdr, description strings use g_desc one byte later, and hotspot strings use g_txt. POPUP.C negates a negative message argument before indexing, then automatically releases its popup storage; the original unsigned-looking literals must preserve that signed behavior.
+- DISK.C loads the first description/text ranges from HOT_DATA. Its block sizes locate descriptions at file offset 1904 and text at 3756; the eight underscore placeholders are actual quoted car nicknames, and the demo racer override is The Geek. Naming only from executable placeholders would have obscured those meanings.
+- Numeric enums/EQUs keep C initializer expressions and the existing assembler data/export layout direct; computed assembler labels alone would still need a separate C constant interface or a generation step. The ledger records the bases and source/asset evidence for maintaining both interfaces.
+
 ## 2026-11-05 02:34 CET: Name cgame rules without changing the executable
 
 ### What I did
@@ -2365,3 +2380,13 @@ Ownership inventory (the original 98 definitions):
 
 ### What I learned
 - Named numeric bounds compile correctly in MSC but are not accepted by tools/sr/cdata.py's numeric-only declaration parser. Keeping literal storage extents avoids expanding this naming task into a tooling change; gameplay count comparisons still use the proven names.
+
+## 2026-11-05 02:38 CET: Merge cmsgs main into cgame
+
+### What I did
+- Merged main at d5b8637 into cgame. Resolved 19 source conflicts across BOBS.C, GAME.C, GARAGE.C and RACE.C by retaining both the MSG_*/TXT_* message/text names and the game-rule constants in the same expressions; retained the negative -MSG_ITS_YOURS argument. Preserved both branches' diary entries, in timestamp order.
+- Audited the merged sources against both parents: all 290 message/text names have exactly the same occurrence counts as main, and all cgame ledger rule-name occurrence counts match the cgame parent. Kept the new MESSAGES.INC and the automatically merged header/MAKEFILE dependencies.
+- Passed every requested gate: headers --check, format --check, check --all (572/572), a clean rm -rf work then build (Packed EXE vs orig/SR.EXE: IDENTICAL), dgroup check/order, all 155 unit tests and docs (zero Doxygen diagnostics). The build also retained all 572 original function positions and all 748 near-call encodings. Restored the existing cgame work/LEDGER.md after the clean build.
+
+### What I learned
+- These conflicts were independent substitutions of literal values within overlapping lines. Combining each message substitution with the existing rule-name substitution preserved both branches without changing storage or executable bytes.

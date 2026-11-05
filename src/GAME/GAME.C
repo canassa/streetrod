@@ -111,11 +111,11 @@ void gm_message(int n)
 static int near check_room(void)
 {
     if (g_driver.carCount > MAX_OWNED_CARS) {
-        gm_message(0x0e27);
+        gm_message(MSG_SELL_SOME_CARS_FIRST);
         return 1;
     }
     if (g_driver.partCount > MAX_OWNED_PARTS) {
-        gm_message(0x0e3f);
+        gm_message(MSG_SELL_SOME_PARTS_FIRST);
         return 1;
     }
     return 0;
@@ -222,7 +222,7 @@ static void near sell_parts(void)
         case KR_CANCEL:
             return;
         case KR_EMPTY_LIST:
-            gm_message(tries3 ? 0x0ed7 : 0x0f2a);
+            gm_message(tries3 ? MSG_ALL_PARTS_GONE : MSG_NO_SPARE_PARTS);
             return;
         case KR_ACCEPT:
             sel = mn_sel();
@@ -251,10 +251,10 @@ static void near sell_parts(void)
         price1 = price1 / SALE_PRICE_STEP * SALE_PRICE_STEP;
         strcpy(g_salePartName, &g_desc[g_parts[type8].nameOffset]);
         if (price1) {
-            msg5 = 0x100a;
+            msg5 = MSG_WILL_YOU_TAKE_OFFER;
             sprintf(g_msgWillYouTake, "Will you take $%-d ?", price1);
         } else
-            msg5 = 0x1021;
+            msg5 = MSG_TAKE_IT_FOR_NOTHING;
         pu_open_at(msg5, -1, -1);
         nl = mn_modal(KM_SELL_PART_OFFER);
         pu_close();
@@ -444,14 +444,14 @@ static void near buy_from_ads(int tab)
 
     color = 0;
     g_scene = SCENE_ADVERTS;
-    g_list[1] = 0xcd8;
+    g_list[1] = DESC_USED_CARS_HEADING;
     n = 2;
     i5 = price6 = 0;
     for (k3 = g_usedCarAdFirst; k3 >= 0; k3 = g_carData[k3].next) {
         g_list[n++] = g_carData[k3].nameOffset;
         list4[i5++] = k3;
     }
-    g_list[n++] = 0xcfd;
+    g_list[n++] = DESC_PARTS_HEADING;
     n0 = n;
     off6 = i5 - n0;
     for (k3 = 0; k3 < PART_CATALOG_COUNT; k3++) {
@@ -485,7 +485,7 @@ static void near buy_from_ads(int tab)
                 if ((long)price6 > g_driver.money) {
                     p1 = strchr(g_msgShort, '$');
                     sprintf(++p1, "%d short.", price6 - (int)g_driver.money);
-                    gm_message(0xf1a8);
+                    gm_message(-MSG_NO_GO_YOURE_SHORT);
                     break;
                 }
                 sc_add_money(-price6);
@@ -498,7 +498,7 @@ static void near buy_from_ads(int tab)
                 }
                 car = gm_make_car(i5, price6, 0);
                 car->paintScheme = (color != -1) ? color : rn_int(5);
-                gm_message(0xf2de);
+                gm_message(-MSG_ITS_YOURS);
                 g_gameClock.actionTicks += TIME_CAR_PURCHASE;
                 goto done;
             }
@@ -560,7 +560,7 @@ static int near counter_offer(unsigned *price)
         if ((*price -= r) == 0)
             *price = SALE_PRICE_STEP;
     sprintf(g_offerText, "How about $%-d ?", *price);
-    pu_open_at(0xff7, -1, -1);
+    pu_open_at(MSG_HOW_ABOUT_OFFER, -1, -1);
     key = mn_wait(KM_COUNTER_OFFER);
     pu_close();
     return key;
@@ -616,7 +616,7 @@ static enum GarageMode near your_cars(void)
         g_list[0] = n;
         switch (item = mn_modal_list(KM_YOUR_CARS, (n > item) ? item : n, 0, g_list, 0, 0)) {
         case KR_EMPTY_LIST:
-            gm_message(ticks ? 0xee9 : 0xefa);
+            gm_message(ticks ? MSG_ALL_CARS_GONE : MSG_YOUVE_GOT_NO_CAR_DUMMY);
         case KR_CLOSE_CARS:
             return GARAGE_KEEP;
         case KR_SWITCH_CAR:
@@ -652,17 +652,17 @@ static enum GarageMode near your_cars(void)
                 goto tail;
         } while (cash == 0);
         if ((unsigned)(cur->value * CAR_SALE_MAX_FACTOR) < cash) {
-            gm_message(0xec0);
+            gm_message(MSG_YOU_MUST_BE_KIDDING);
             goto tail;
         }
         if (cur->value < cash) {
-            gm_message(0x106e);
+            gm_message(MSG_NO_WAY);
             do {
                 if ((n = ed_spot_number(&cash, g_offerAmount)) == KR_NEVER_MIND)
                     goto tail;
             } while (cash == 0);
             if (cur->value < cash) {
-                gm_message(0x1078);
+                gm_message(MSG_GET_LOST_OFFER);
                 goto tail;
             }
         }
@@ -689,10 +689,10 @@ static enum GarageMode near your_cars(void)
             } while (cash == 0);
         }
         if ((float)offer < (float)cash * CAR_SALE_ACCEPT_FACTOR) {
-            gm_message(0x1084);
+            gm_message(MSG_NO_THANKS);
             goto tail;
         }
-        gm_message((cur->value > cash * 2) ? 0x104b : 0x1091);
+        gm_message((cur->value > cash * 2) ? MSG_CRAZY_ILL_TAKE_IT : MSG_ILL_TAKE_IT);
         g_gameClock.actionTicks += (long)TIME_CAR_SALE;
         sc_add_money(cash);
         if (item == 1 && g_driver.currentCar) {
@@ -828,7 +828,7 @@ void near gm_run(void)
                         pf_drivetrain(g_driver.currentCar, &g_driveEng);
                         if (kind == KR_GAR_STREET) {
                             if (g_driver.currentCar->fuel < MIN_BOBS_FUEL) {
-                                gm_message(0x172e);
+                                gm_message(MSG_NOT_ENOUGH_GAS_TO_CRUISE);
                                 v = GARAGE_KEEP;
                                 continue;
                             }
@@ -838,12 +838,12 @@ void near gm_run(void)
                             bo_visit();
                         } else {
                             if (g_driver.currentCar->fuel >= REFUEL_VISIT_LIMIT) {
-                                gm_message(0x19b1);
+                                gm_message(MSG_YOUVE_GOT_A_FULL_TANK);
                                 v = GARAGE_KEEP;
                                 continue;
                             }
                             if (g_driver.money == 0) {
-                                gm_message(0x199f);
+                                gm_message(MSG_GAS_AINT_FREE);
                                 v = GARAGE_KEEP;
                                 continue;
                             }
@@ -855,14 +855,14 @@ void near gm_run(void)
                         g_gameClock.actionTicks += TIME_TOWN_TRIP;
                         v = GARAGE_DRIVE_IN;
                     } else {
-                        gm_message(0x0e7f);
+                        gm_message(MSG_CAR_NOT_RUNNING);
                         v = GARAGE_KEEP;
                     }
                 } else {
                     if (g_driver.otherCars)
-                        gm_message(0x0f16);
+                        gm_message(MSG_PICK_A_CAR_FIRST);
                     else
-                        gm_message(0x0efa);
+                        gm_message(MSG_YOUVE_GOT_NO_CAR_DUMMY);
                     v = GARAGE_KEEP;
                 }
                 continue;
@@ -939,7 +939,7 @@ void near gm_run(void)
                 v = GARAGE_KEEP;
                 continue;
             case KR_GAR_DRINK:
-                gm_message(0x18f6);
+                gm_message(MSG_DONT_DRINK_AND_DRIVE_BUB);
                 v = GARAGE_KEEP;
                 continue;
             case KR_MUSIC:
