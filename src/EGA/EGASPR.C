@@ -35,7 +35,7 @@ int es_step(struct Sprite *s)
     struct Bitmap far *key;    /* sprite image */
     int i;
 
-    if (s->seq->count < 0) {
+    if (s->motionStep->count < 0) {
         count = s->page;
         ea_rect(count->bm->bits.p, count->link->bm->bits.p, EGA_PITCH, SCREEN_BODY_HEIGHT, 0, 0, EGA_PITCH);
         if (count->pageIndex) {
@@ -47,12 +47,12 @@ int es_step(struct Sprite *s)
     }
     count = s->page = s->page->link;
     box = s->frame;
-    key = s->img;
-    height = s->save;
+    key = s->workBitmap;
+    height = s->background;
     sp_clip_box(box->pos->width, box->pos->height - g_spriteBottomCut, s->x, s->y, count->bm->width, count->bm->height,
                 &clip);
-    if (sp_rect_sub(&clip, &count->rect, &f, s->seq->dx))
-        restore_rect_latch(&f, count->bm, key, s->seq->dx);
+    if (sp_rect_sub(&clip, &count->rect, &f, s->motionStep->dx))
+        restore_rect_latch(&f, count->bm, key, s->motionStep->dx);
     count->rect = clip;
     dest.h = box->pos->height - g_spriteBottomCut;
     dest.sy = 0;
@@ -69,9 +69,9 @@ int es_step(struct Sprite *s)
         }
     }
     for (i = 0; i < 2; i++) {
-        if (!s->rc[i])
+        if (!s->overlayRects[i])
             continue;
-        first = *s->rc[i];
+        first = *s->overlayRects[i];
         if (box->pos->pitch == height->pitch) {
             first.x1 += s->x;
             first.x2 += s->x;
