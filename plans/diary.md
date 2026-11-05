@@ -2503,3 +2503,14 @@ The conflicting lines contain independent substitutions: keep named appearance m
 
 - The user finds "always 163" valuable: it tells a reader the parameter is effectively
   fixed. Brevity means no essays, not dropping that.
+
+## 2026-11-05: Fixed values only when they affect flow
+
+### What I did
+
+- Removed "always 163" from carBottom; kept "always 1/0" on showPortrait and useGasMask, which
+  gate branches. doxygen-c skill: note a fixed call-site value only when the parameter controls flow.
+
+### What I learned
+
+- A constant position is just this scene's value; a constant flag means a path never runs.

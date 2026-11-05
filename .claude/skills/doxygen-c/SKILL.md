@@ -49,8 +49,9 @@ list of Foo's values (the enum carries them; Doxygen links the type). Don't docu
 steps a reader sees in the code,
 or preconditions the brief already implies. One short sentence per `@param`; add a
 detail only when a reader would otherwise misuse the value (units, null, odd range).
-When every call site passes the same value, say so in a few words ("always 163"):
-it tells the reader the parameter is effectively fixed.
+When a parameter controls flow and every call site passes the same value, say so in a
+few words ("always 0"): a branch is effectively dead. Don't note a fixed value that only
+feeds a calculation, such as a screen position.
 
 1. Every documented `.H`/`.C` declaring file-level items needs a `@file` block.
    Use the real uppercase filename or bare `@file`. Without this, file-scope

@@ -138,7 +138,7 @@ static int g_lastRival = -1;
  * @param animation How the car moves.
  * @param specIndex The rival's car specification.
  * @param showPortrait Nonzero draws the driver in the car; always 1.
- * @param carBottom Bottom screen row of the car; always 163.
+ * @param carBottom Bottom screen row of the car.
  * @param useGasMask Nonzero draws the gas station's foreground over the car; always 0.
  * @param tirePics The four tire-frame pictures, or null for none.
  */
