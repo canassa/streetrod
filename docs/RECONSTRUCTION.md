@@ -192,15 +192,18 @@ by `./sr build`, `./sr check --all` and `./sr dgroup check`.
     `(0,5)` and `(5,0)` samples. The point struct preserves the complete object code
     and the existing CONST fixup order (offsets 2, 0, then 4).
   - `g_unused24` (POPUP.C): four unreferenced `_BSS` bytes after `g_popupLayout`.
-  - `g_list[0] = g_list[0];` in the default cases of your_cars (GAME.C) and sg_load
-    (SAVEGAME.C): after the menu mn_modal_list returns a positive item, the original loads
-    `g_list[0]` (the list's item count) into `ax` and drops it. MSC drops the store of a
-    self-assignment and keeps the load. The only other forms found that give these bytes
-    are a `switch (g_list[0])` whose cases are all empty (`{ }`, `{ case 1: break; }`), as
-    if its cases had been removed. A bare `g_list[0];`, a `(void)` or `volatile` cast,
-    `+= 0`, `|= 0`, `if (g_list[0]) ;` and comparisons compile to nothing or to a compare;
-    stores to locals stay stores. The two functions share the idiom, so the original
-    probably had one construct (a macro, an emptied switch) in both.
+  - The discarded `g_list[0]` reads in the default cases of your_cars (GAME.C)
+    and sg_load (SAVEGAME.C) are reproduced by ordinary range checks ending in
+    `break`: `if (item > 0 && item <= g_list[0]) break;` and
+    `if (r >= 1 && r <= g_list[0]) break;`. Both paths leave the switch, so MSC
+    drops the upper comparison and transfer but keeps the count load after the
+    lower test. These replace the former PROVISIONAL self-assignments; each
+    complete raw OBJ is byte-identical to its baseline under the exact file
+    flags. The bounds checks are redundant and do not reject invalid keys;
+    their historical intent and unique original spelling remain unknown.
+    Replacing `> 0` with `>= 1` changes code generation here. See
+    plans/investigations/glist-loads.md for the complete trial matrix, comparison
+    scope and raw-object hashes.
 - **The hook installers** cg_install (CGA.C), ta_install (TANDY.C) and eg_install
   (EGA.C): `g_videoOps = g_cgaHooks;`. Their bytes are
   MSC 5.1's struct assignment (`push di; push si`, no frame, `mov cx,1Eh` and `f2 a5`:

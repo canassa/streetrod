@@ -321,9 +321,8 @@ enum SaveLoadResult near sg_load(void)
         r = mn_sel();
         break;
     default:
-        if (r >= 1) /* PROVISIONAL: the original loads g_list[0] here and drops it */
-            g_list[0] = g_list[0];
-        break;
+        if (r >= 1 && r <= g_list[0])
+            break;
     }
     for (i = 1, cntl = 0; cntl < r; i++)
         if (g_saveSlots[i])

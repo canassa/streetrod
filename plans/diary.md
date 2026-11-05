@@ -3198,3 +3198,28 @@ constants were renamed.
 
 - The three-entry initialized popup layout table does not establish a three-entry pointer array in BSS. Every original direct pointer access names DS:6C40; none names the four following bytes. Grouping those bytes can match perfectly without proving the grouping. Inspect BSS SEGDEF lengths separately from emitted segment data; removal can leave all module code/data/fixups unchanged and still break the link.
 - MAIN's menu uses complete long rows, and its ROM search owns separate Tandy/TANDY literals. Neither consumes VIDDET's Tandy/Tandy/CGA strings. Byte identity cannot distinguish EVEN, an unused byte variable or LINK alignment before a data-only object without a surviving reference/fixup. Full findings and future evidence needed are recorded in plans/investigations/prov-data.md.
+## 2026-11-05 20:30 CET: Recover the discarded list-count loads
+
+### What I did
+
+- Investigated the two PROVISIONAL count reads in your_cars and sg_load with
+  100 complete-file trials (including baselines), using each file's exact
+  `/AM /Oalsi /Gs /FPi /NTS0000_TEXT` flags and the real MSC 5.1 compiler.
+- Replaced both self-assignments/markers with conditional range-check breaks.
+  The entire raw GAME and SAVEGAME objects match their baselines, with no
+  masking or normalization. Removed SAVEGAME's redundant unconditional break.
+- Recorded context, every trial, raw-object hashes and limits in
+  [the investigation](investigations/glist-loads.md), updated RECONSTRUCTION.md
+  and added the compiler behavior to the MSC recipe book.
+- All gates passed: headers, format, docs (zero diagnostics), 572/572 functions,
+  clean packed build IDENTICAL, DGROUP ownership/order and 106 unit tests.
+
+### What I learned
+
+- A terminal switch default's short-circuit bounds check can retain the count
+  load after MSC drops its upper comparison and conditional break. It is an
+  ordinary source explanation for both instruction sequences; the check is
+  redundant and does not validate invalid keys. Historical intent is unknown.
+- Preserve `item > 0` in GAME and `r >= 1` in SAVEGAME: substituting the equivalent
+  spelling changes code size by two bytes. The complete matrix and the new
+  C-shapes row in `.claude/skills/msc51-recipe-book/SKILL.md` document the evidence.
