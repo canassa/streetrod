@@ -1028,16 +1028,21 @@ void near ra_run(void)
     }
 }
 
-/* Steps p->f18 up from 1 until gear[f18].r[1].f2 exceeds f34[f18] * rpm or
-   f18 reaches f1c. The four pointers the loop advances in memory are /Ol induction temps for the p->f18 indexing. */
-
-static void near fit_gear(int rpm, struct DrivingState *p)
+/**
+ * @brief Pick the lowest gear whose middle rpm band can hold a road speed.
+ *
+ * Falls back to the top gear's high band when none can.
+ *
+ * @param speed Road speed to fit.
+ * @param p Driving state; receives the gear, rpm, band, acceleration and speed.
+ */
+static void near fit_gear(int speed, struct DrivingState *p)
 {
     struct Range *r;
 
     for (p->gearIndex = DRIVE_FIRST;; p->gearIndex++) {
         p->rpmPerSpeed = p->gearRpmPerSpeed[p->gearIndex];
-        p->rpm = p->rpmPerSpeed * rpm;
+        p->rpm = p->rpmPerSpeed * speed;
         if ((r = &p->gear[p->gearIndex].bands[RPM_BAND_MIDDLE])->maxRpm > p->rpm) {
             p->rpmBand = g_rpmBand = p->rpm >= r->minRpm;
             if (g_rpmBand == RPM_BAND_LOW)
