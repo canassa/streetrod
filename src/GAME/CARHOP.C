@@ -63,7 +63,7 @@ static void near grab_strip(struct Bitmap far **pbm)
 
     di_pic_size(PIC_CARHOP_SILHOUETTES, &w, &h, &x);
     me_set_bitmap(*pbm, g_pageBmps[2]->bits.p + BACKDROP_ROWS * g_pageBmps[2]->pitch, 0L, w, h,
-                  r_vid.mode == VID_EGA ? VID_EGA : -1);
+                  r_vid.mode == VID_EGA ? VID_EGA : BITMAP_WORK);
     if (r_vid.mode == VID_EGA) {
         ea_rect(r_vid.front->bits.p, (*pbm)->bits.p - 0xaa0, (*pbm)->pitch, (*pbm)->height, 0, 0x44, EGA_PITCH);
     } else {
@@ -142,7 +142,7 @@ void ch_skate(enum CarhopMode mode, BOOL carPresent)
     motionPtr = mode == CARHOP_ENTER ? g_carhopInSeq : g_carhopOutSeq;
     for (stepNum = 0; stepNum < 4; stepNum++)
         moves[stepNum] = *motionPtr++;
-    carhopSprite->seq = moves;
+    carhopSprite->motionStep = moves;
     if (mode == CARHOP_LEAVE) {
         carhopSprite->page->rect = g_carhopRect;
         carhopSprite->page->link->rect = g_carhopRect;

@@ -1,6 +1,6 @@
 /**
  * @file SPRITE.H
- * @brief Car sprite clipping, movement and page management.
+ * @brief Moving-image frames, motion plans and display pages.
  */
 
 #ifndef SPRITE_H
@@ -25,15 +25,23 @@ struct Frame {
     struct Frame *nxt[3];
 };
 
+/**
+ * @brief A moving image with its motion cursor and redraw resources.
+ *
+ * Bitmaps and foreground rectangles are borrowed for the animation.
+ */
 struct Sprite {
-    struct Frame *frame;
-    struct Bitmap far *img;
-    struct Bitmap far *save;
-    struct Rect *rc[2];
-    int x;
-    int y;
-    struct Seq *seq;
-    struct Page *page;
+    struct Frame *frame; /**< Current frame in the animation ring. */
+    /** EGA erase source or CGA composition canvas; unused on Tandy. */
+    struct Bitmap far *workBitmap;
+    /** Background pixels and optional foreground mask for composition. */
+    struct Bitmap far *background;
+    /** Optional foreground areas restored over the frame. */
+    struct Rect *overlayRects[2];
+    int x;                  /**< Screen X in pixels before byte alignment. */
+    int y;                  /**< Top screen row in pixels. */
+    struct Seq *motionStep; /**< Current mutable motion step. */
+    struct Page *page;      /**< Destination page and previous clipped bounds. */
 };
 
 /* one display page of the sprite engine (16 bytes): its bitmap, the clipped rectangle, the link to the next page */

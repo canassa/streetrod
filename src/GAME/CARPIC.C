@@ -40,50 +40,50 @@ int g_dashBuffered = 0;
 int g_autoTrans = 0;
 int g_wheelPicIds[3] = {PIC_STEERING_WHEEL_CENTER, PIC_STEERING_WHEEL_LEFT, PIC_STEERING_WHEEL_RIGHT};
 int g_driveRebuild = 0;
-struct Cmd g_animScripts[44] = {{ANIM_NOP_1, 0, -1, -1},
-                                {ANIM_STOP, 0, 0, 0},
-                                {ANIM_BLIT, BOX_KEEP, -1, -1},
-                                {ANIM_SET_SIZE, 0, 8, 1},
-                                {ANIM_SET_BOX, BOX_SET_DESTINATION, 48, 111},
-                                {ANIM_HOOK, 0, 250, -1},
-                                {ANIM_WAIT, ANIM_WAIT_ONLY, 10, 7},
-                                {ANIM_HOOK, 0, 0, -1},
-                                {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 10, 7},
-                                {ANIM_STOP, 0, 0, 0},
-                                {ANIM_BLIT_MASKED, BOX_KEEP, -1, -1},
-                                {ANIM_STOP, 0, 0, 0},
-                                {ANIM_NOP_3, 0, -1, -1},
-                                {ANIM_LOAD_IMAGE, 0, PIC_GAS_ATTENDANT, 2},
-                                {ANIM_SET_SIZE, 0, 48, 64},
-                                {ANIM_SET_BOX, BOX_SET_DESTINATION, 200, 81},
-                                {ANIM_TILE_CAR, 0, -1, -1},
-                                {ANIM_WAIT, ANIM_WAIT_ONLY, 16, 0},
-                                {ANIM_BLIT, BOX_SET_SOURCE, 0, 0},
-                                {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 16, 0},
-                                {ANIM_BLIT, BOX_SET_SOURCE, 48, 0},
-                                {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 16, 0},
-                                {ANIM_BLIT, BOX_SET_SOURCE, 96, 0},
-                                {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 20, 0},
-                                {ANIM_STOP, 0, 0, 0},
-                                {ANIM_HOOK, 0, -1, -1},
-                                {ANIM_STOP, 0, 0, 0},
-                                {ANIM_STOP, 0, -1, -1},
-                                {ANIM_STOP, 0, 0, 0},
-                                {ANIM_JUMP, 0, -1, -1},
-                                {ANIM_STOP, 0, 0, 0},
-                                {ANIM_LOAD_IMAGE, 0, -1, -1},
-                                {ANIM_LOAD_IMAGE, 0, PIC_FUEL_PUMP_DIGITS, 2},
-                                {ANIM_SET_SIZE, 0, 16, 94},
-                                {ANIM_SET_BOX, BOX_SET_DESTINATION, 160, 52},
-                                {ANIM_WAIT, ANIM_WAIT_ONLY, 4, 0},
-                                {ANIM_BLIT, BOX_SET_SOURCE, 0, 0},
-                                {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 4, 0},
-                                {ANIM_BLIT, BOX_SET_SOURCE, 16, 0},
-                                {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 4, 0},
-                                {ANIM_BLIT, BOX_SET_SOURCE, 32, 0},
-                                {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 4, 36},
-                                {ANIM_STOP, 0, 0, 0},
-                                {ANIM_STOP, 0, 0, 0}};
+struct AnimCommand g_animScripts[44] = {{ANIM_NOP_1, 0, -1, -1},
+                                        {ANIM_STOP, 0, 0, 0},
+                                        {ANIM_BLIT, BOX_KEEP, -1, -1},
+                                        {ANIM_SET_SIZE, 0, 8, 1},
+                                        {ANIM_SET_BOX, BOX_SET_DESTINATION, 48, 111},
+                                        {ANIM_HOOK, 0, 250, -1},
+                                        {ANIM_WAIT, ANIM_WAIT_ONLY, 10, 7},
+                                        {ANIM_HOOK, 0, 0, -1},
+                                        {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 10, 7},
+                                        {ANIM_STOP, 0, 0, 0},
+                                        {ANIM_BLIT_MASKED, BOX_KEEP, -1, -1},
+                                        {ANIM_STOP, 0, 0, 0},
+                                        {ANIM_NOP_3, 0, -1, -1},
+                                        {ANIM_LOAD_IMAGE, 0, PIC_GAS_ATTENDANT, 2},
+                                        {ANIM_SET_SIZE, 0, 48, 64},
+                                        {ANIM_SET_BOX, BOX_SET_DESTINATION, 200, 81},
+                                        {ANIM_TILE_CAR, 0, -1, -1},
+                                        {ANIM_WAIT, ANIM_WAIT_ONLY, 16, 0},
+                                        {ANIM_BLIT, BOX_SET_SOURCE, 0, 0},
+                                        {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 16, 0},
+                                        {ANIM_BLIT, BOX_SET_SOURCE, 48, 0},
+                                        {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 16, 0},
+                                        {ANIM_BLIT, BOX_SET_SOURCE, 96, 0},
+                                        {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 20, 0},
+                                        {ANIM_STOP, 0, 0, 0},
+                                        {ANIM_HOOK, 0, -1, -1},
+                                        {ANIM_STOP, 0, 0, 0},
+                                        {ANIM_STOP, 0, -1, -1},
+                                        {ANIM_STOP, 0, 0, 0},
+                                        {ANIM_JUMP, 0, -1, -1},
+                                        {ANIM_STOP, 0, 0, 0},
+                                        {ANIM_LOAD_IMAGE, 0, -1, -1},
+                                        {ANIM_LOAD_IMAGE, 0, PIC_FUEL_PUMP_DIGITS, 2},
+                                        {ANIM_SET_SIZE, 0, 16, 94},
+                                        {ANIM_SET_BOX, BOX_SET_DESTINATION, 160, 52},
+                                        {ANIM_WAIT, ANIM_WAIT_ONLY, 4, 0},
+                                        {ANIM_BLIT, BOX_SET_SOURCE, 0, 0},
+                                        {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 4, 0},
+                                        {ANIM_BLIT, BOX_SET_SOURCE, 16, 0},
+                                        {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 4, 0},
+                                        {ANIM_BLIT, BOX_SET_SOURCE, 32, 0},
+                                        {ANIM_WAIT, ANIM_WAIT_COPY_TO_FRONT, 4, 36},
+                                        {ANIM_STOP, 0, 0, 0},
+                                        {ANIM_STOP, 0, 0, 0}};
 int g_animScriptStart[9] = {8, 0, 2, 12, 10, 25, 27, 29, 31};
 static struct Bitmap far *g_backdrop = (struct Bitmap far *)&g_carBackdropHdrBmp;
 int g_carMoving = 0;
@@ -136,7 +136,8 @@ static void near make_bands(struct Band *A, struct Bitmap far **B, int n, int y2
             outp(GC_DATA, GC_WRITE_MODE0);
         }
         j = A[i].y * B[i]->pitch;
-        blit_planes(B[i]->bits.p + j, A[i].p, B[i]->alt.p + j, B[i]->pitch, h, B[i]->pitch, B[i]->height * B[i]->pitch);
+        blit_planes(B[i]->bits.p + j, A[i].p, B[i]->mask.p + j, B[i]->pitch, h, B[i]->pitch,
+                    B[i]->height * B[i]->pitch);
     }
 }
 
@@ -168,8 +169,8 @@ static void near make_frames(struct Bitmap far **B, int n, int y2, int h, int co
     for (i = 0; i < n; i++) {
         g_bandRecordsSprArray[i] = *bm1;
         g_bandRecordsSprArray[i].bits.p = base2;
-        base2 += bm1->planesize;
-        da_fmemset(bm1->bits.p, v, bm1->planesize);
+        base2 += bm1->pixelBytes;
+        da_fmemset(bm1->bits.p, v, bm1->pixelBytes);
         (*g_videoOps.maskedBlit)(B[i], bm1, &pkt1, 1);
         bm_copy(bm1, &g_bandRecordsSprArray[i], 1);
     }
@@ -195,7 +196,7 @@ void cp_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, struc
     *start = *src;
     start->bits.w.off += h * size;
     start->height = y2;
-    start->planesize = y2 * size * r_vid.planes;
+    start->pixelBytes = y2 * size * r_vid.planes;
     if (r_vid.mode == VID_TANDY) {
         if (g_backdropW == 0)
             g_backdropW = src->width;
@@ -230,8 +231,8 @@ void cp_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, struc
             blt.sy = p2->height - y2;
             (*g_videoOps.copy)(p2, *pa, &blt, 2);
         } else {
-            diff = p2->planesize / r_vid.planes - (*pa)->planesize / r_vid.planes;
-            bm_far_copy(p2->alt.p + diff, (*pa)->alt.p, (*pa)->planesize / r_vid.planes);
+            diff = p2->pixelBytes / r_vid.planes - (*pa)->pixelBytes / r_vid.planes;
+            bm_far_copy(p2->mask.p + diff, (*pa)->mask.p, (*pa)->pixelBytes / r_vid.planes);
         }
         ma_pop_high(1);
         *pr1 = &g_overlayRectA;
@@ -314,8 +315,8 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
         bm_put_pic(*out, m2->frontBumperRemovalPic, p12->frontBumperX, p12->frontBumperY);
     if (flags & BODY_ROOF) {
         bm_put_pic(*out, m2->choppedRoofPic, p12->roofX, 0);
-        for (j5 = 0; j5 < g_lastPic->planesize / r_vid.planes; j5++)
-            if (((unsigned char far *)g_lastPic->alt.p)[j5] != 0xff)
+        for (j5 = 0; j5 < g_lastPic->pixelBytes / r_vid.planes; j5++)
+            if (((unsigned char far *)g_lastPic->mask.p)[j5] != 0xff)
                 break;
         row8 = j5 / g_lastPic->pitch;
     } else
@@ -350,7 +351,7 @@ void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *i
         case VID_TANDY:
             for (j5 = 1; j5 < n; j5++) {
                 bm_copy(out[0], out[j5], 1);
-                out[j5]->alt.p = out[0]->alt.p;
+                out[j5]->mask.p = out[0]->mask.p;
             }
             break;
         default:
@@ -454,7 +455,7 @@ again:
                         top7, EGA_PITCH);
             } else {
                 me_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, SCREEN_WIDTH, BACKDROP_ROWS - g_spriteBottomCut,
-                              -1);
+                              BITMAP_WORK);
                 pu_grab(0, top7, SCREEN_WIDTH, g_backdrop->height, g_backdrop);
             }
         }

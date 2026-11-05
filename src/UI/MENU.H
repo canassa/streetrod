@@ -15,7 +15,7 @@ struct ListDialog {
     int rows;
     int *list;
     int selection;
-    struct Hot *header;
+    struct Hotspot *header;
 };
 #include "KEYMAPS.H"
 
@@ -34,10 +34,10 @@ extern int g_cgaPicMap[];
 extern int g_menuGrpHistoryList[];
 extern char g_hideSelectFrameVal;
 extern char g_headerEditableState;
-extern struct Hot *g_hotsCurMenu;
+extern struct Hotspot *g_hotsCurMenu;
 extern int g_textOfsMenu;
 extern int g_hotMenuGroupState;
-void mn_draw_hot(struct Hot *p);
+void mn_draw_hot(struct Hotspot *p);
 void mn_push(enum ScreenId id);
 void mn_pop(int keep);
 void mn_reset(void);

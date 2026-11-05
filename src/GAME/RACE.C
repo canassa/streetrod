@@ -77,10 +77,10 @@ static int near find_gas_spot(int id)
 {
     int base, n, i;
 
-    base = ((unsigned)g_hotGasStation - (unsigned)g_hots) / sizeof(struct Hot);
-    n = ((unsigned)g_hotGasExit - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
+    base = ((unsigned)g_hotGasStation - (unsigned)g_hots) / sizeof(struct Hotspot);
+    n = ((unsigned)g_hotGasExit - (unsigned)g_hotGasStation) / sizeof(struct Hotspot) + 1;
     for (i = 0; i < n; i++)
-        if (g_hots[base + i].id == id)
+        if (g_hots[base + i].hitCode == id)
             return base + i;
 }
 
@@ -89,8 +89,8 @@ static void near sort_gas_spots(void)
 {
     int base, n;
 
-    base = ((unsigned)g_hotGasStation - (unsigned)g_hots) / sizeof(struct Hot);
-    n = ((unsigned)g_hotGasExit - (unsigned)g_hotGasStation) / sizeof(struct Hot) + 1;
+    base = ((unsigned)g_hotGasStation - (unsigned)g_hots) / sizeof(struct Hotspot);
+    n = ((unsigned)g_hotGasExit - (unsigned)g_hotGasStation) / sizeof(struct Hotspot) + 1;
     gx_sort_hots(base, n);
 }
 
@@ -117,7 +117,7 @@ static void near clear_gas_spots(void)
 
 static void near place_gas_spot(int id, int x, int y, int w, int h)
 {
-    struct Hot *p;
+    struct Hotspot *p;
     p = &g_hots[find_gas_spot(id)];
     p->x2 = (p->x1 = x) + w - 1;
     p->y2 = (p->y1 = y) + h - 1;

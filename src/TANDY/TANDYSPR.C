@@ -47,15 +47,15 @@ int ts_step(struct Sprite *s)
     struct Page *pg;
     struct Frame *fr;
 
-    if (s->seq->count < 0)
+    if (s->motionStep->count < 0)
         return 0;
     pg = s->page;
     fr = s->frame;
-    fp = s->save;
+    fp = s->background;
     d = fr->data;
     sp_clip_box(fr->pos->width, fr->pos->height - g_spriteBottomCut, s->x, s->y, pg->bm->width, pg->bm->height, &rc);
-    if (sp_rect_sub(&rc, &pg->rect, &c2, s->seq->dx))
-        restore_rect_back(&c2, r_vid.back, fp, s->seq->dx);
+    if (sp_rect_sub(&rc, &pg->rect, &c2, s->motionStep->dx))
+        restore_rect_back(&c2, r_vid.back, fp, s->motionStep->dx);
     pg->rect = rc;
     top = d ? d->height : 0;
     t = blt.h = fr->pos->height - top - g_spriteBottomCut;
@@ -65,7 +65,7 @@ int ts_step(struct Sprite *s)
         blt.w = fr->pos->width;
         blt.sx = 0;
         blt.dx = s->x;
-        if (s->seq->dx) {
+        if (s->motionStep->dx) {
             blt.mx = blt.dx - g_backdropX < 0 ? 0 : blt.dx - g_backdropX;
             blt.my = 0;
         } else {
@@ -95,9 +95,9 @@ int ts_step(struct Sprite *s)
         }
     }
     for (idx = 0; idx < 2; idx++) {
-        if (s->rc[idx] == 0)
+        if (s->overlayRects[idx] == 0)
             continue;
-        s2 = *s->rc[idx];
+        s2 = *s->overlayRects[idx];
         if (fp->pitch == fr->pos->pitch) {
             s2.x1 += s->x;
             s2.x2 += s->x;

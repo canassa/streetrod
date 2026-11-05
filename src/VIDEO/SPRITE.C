@@ -102,12 +102,12 @@ struct Sprite *sp_setup(int x, int y, struct Bitmap far **imgs, char (*cell)[8],
         g_frmTable[i].nxt[1] = g_frmTable[i].nxt[0]->nxt[0];
     for (i = 0; i < n; i++)
         g_frmTable[i].nxt[2] = g_frmTable[i].nxt[1]->nxt[1];
-    g_mainCarSprite.img = img;
+    g_mainCarSprite.workBitmap = img;
     g_mainCarSprite.x = x;
     g_mainCarSprite.y = y;
-    g_mainCarSprite.save = save;
-    g_mainCarSprite.rc[0] = a8;
-    g_mainCarSprite.rc[1] = a9;
+    g_mainCarSprite.background = save;
+    g_mainCarSprite.overlayRects[0] = a8;
+    g_mainCarSprite.overlayRects[1] = a9;
     if (r_vid.mode == VID_EGA) {
         for (i = 0; i < 2; i++) {
             g_sprPageRing[i].bm = g_pageBmps[i];
@@ -127,7 +127,7 @@ struct Sprite *sp_setup(int x, int y, struct Bitmap far **imgs, char (*cell)[8],
     g_mainCarSprite.page = g_sprPageRing;
     sp_clip_box(g_mainCarSprite.frame->pos->width, g_mainCarSprite.frame->pos->height, g_mainCarSprite.x,
                 g_mainCarSprite.y, g_sprPageRing[0].bm->width, g_sprPageRing[0].bm->height, &g_sprPageRing[0].rect);
-    g_mainCarSprite.seq = g_seqSpriteMoveData;
+    g_mainCarSprite.motionStep = g_seqSpriteMoveData;
     return &g_mainCarSprite;
 }
 
@@ -202,12 +202,12 @@ void sp_reverse(struct Sprite *s)
 
 void sp_set_step(struct Sprite *s, int i, int count, signed char dx, signed char dy)
 {
-    s->seq[i].count = count;
-    s->seq[i].dx = dx;
-    s->seq[i].dy = dy;
-    s->seq[i + 1].count = -1;
-    s->seq[i + 1].dx = 0;
-    s->seq[i + 1].dy = 0;
+    s->motionStep[i].count = count;
+    s->motionStep[i].dx = dx;
+    s->motionStep[i].dy = dy;
+    s->motionStep[i + 1].count = -1;
+    s->motionStep[i + 1].dx = 0;
+    s->motionStep[i + 1].dy = 0;
 }
 
 /* Split a move of size d into the three phases of a sprite's motion sequence */
@@ -306,13 +306,13 @@ void sp_advance(struct Sprite *s)
 
     g_xCoordSprite = s->x;
     g_spritePic = s->frame->pos;
-    s->seq->count--;
-    if (s->seq->count == 0)
-        s->seq++;
-    if (s->seq->count != -1) {
-        s->x += s->seq->dx;
-        s->y += s->seq->dy;
-        n = s->seq->dx;
+    s->motionStep->count--;
+    if (s->motionStep->count == 0)
+        s->motionStep++;
+    if (s->motionStep->count != -1) {
+        s->x += s->motionStep->dx;
+        s->y += s->motionStep->dy;
+        n = s->motionStep->dx;
         if (n < 0)
             n = -n;
         if (n)

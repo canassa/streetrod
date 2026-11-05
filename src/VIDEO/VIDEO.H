@@ -1,6 +1,6 @@
 /**
  * @file VIDEO.H
- * @brief Drawing dispatch, palette control and animation scripts.
+ * @brief Display state, drawing hooks and bitmap animation scripts.
  */
 
 #ifndef VIDEO_H
@@ -60,7 +60,7 @@ struct Style {
 };
 
 struct AnimRun {
-    struct Cmd *command;
+    struct AnimCommand *command;
     struct Obj *object;
     struct Box *box;
 };
@@ -96,11 +96,19 @@ enum AnimWaitMode {
     ANIM_WAIT_COPY_TO_FRONT = 4 /**< Refresh the rectangle before waiting. */
 };
 
-struct Cmd {
-    signed char op;
-    signed char sub;
-    int a;
-    int b;
+/**
+ * @brief One bitmap animation instruction, or a script's runtime header.
+ *
+ * Operands depend on the opcode. A script starts after its header, whose first
+ * operand holds the active object slot, or -1 after the script stops.
+ */
+struct AnimCommand {
+    signed char opcode; /**< Operation from @ref AnimOp; ignored in headers. */
+    /** @ref BoxSet or @ref AnimWaitMode, according to the opcode; else ignored. */
+    signed char mode;
+    /** X, width, picture ID, command index, wait ticks, hook count or header slot. */
+    int operand1;
+    int operand2; /**< Y, height or wait resume index (0 means next); else ignored. */
 };
 
 struct Hooks {
@@ -121,7 +129,7 @@ struct Hooks {
     void(far *fillBelow)(int, int);
 };
 
-/* Display state set by vi_init; mode follows front->flags and geometry depends on the mode. */
+/* Display state set by vi_init; mode follows front->kind and geometry depends on the mode. */
 struct Video {
     struct Bitmap far *front;
     struct Bitmap far *back;
@@ -153,7 +161,7 @@ void vi_anim_stop(int n);
 int vi_anim_start(int n);
 void vi_anim_resume(int n);
 int vi_anim_active(int n);
-int vi_anim_hook(struct Obj *o, struct Cmd *c);
+int vi_anim_hook(struct Obj *o, struct AnimCommand *c);
 void vi_palette_reg(int reg, char color);
 void vi_set_palette(char *table);
 

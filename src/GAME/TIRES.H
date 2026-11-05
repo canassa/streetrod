@@ -1,4 +1,7 @@
-/* TIRES.H - declarations of what TIRES.C defines. */
+/**
+ * @file TIRES.H
+ * @brief Garage tire-change animation.
+ */
 
 #ifndef TIRES_H
 #define TIRES_H

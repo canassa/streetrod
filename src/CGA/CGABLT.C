@@ -61,7 +61,7 @@ void cb_compose(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Bitmap fa
     char far *mb;
 
     sbz = bm1->bits.p;
-    sak = bm1->alt.p;
+    sak = bm1->mask.p;
     db = bm2->bits.p;
     mb = bm3->bits.p;
     if (da_clip_blt(bm1, bm2, r, (struct Blt *)&out7)) {
@@ -104,9 +104,9 @@ void cb_masked(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, in
     db = bm2->bits.p;
     segn = bm1->bits.w.seg;
     bitsz = (soff = ol.sy * pitch1 + ol.sx) + bm1->bits.w.off;
-    altk = bm1->alt.w.off + soff;
+    altk = bm1->mask.w.off + soff;
     f5 = flag ? mr_blit : mk_copy;
-    if (bm2->flags >= -1) {
+    if (bm2->kind >= BITMAP_WORK) {
         (*f5)(db + (pitch21 * dy + ol.dx), segn, bitsz, altk, pitch1, w, h3, pitch21);
     } else {
         rows0 = rows1 = h3 >> 1;
@@ -140,22 +140,22 @@ void cb_copy(struct Bitmap far *bm1, struct Bitmap far *bm2, struct Blt *r, int 
     struct Clip o;
 
     f = flags & 1;
-    g8 = (flags & 2) && bm1->alt.p && bm2->alt.p ? 1 : 0;
+    g8 = (flags & 2) && bm1->mask.p && bm2->mask.p ? 1 : 0;
     if (da_clip_blt(bm1, bm2, r, (struct Blt *)&o)) {
-        if (bm1->flags < -1 && bm2->flags < -1)
+        if (bm1->kind < BITMAP_WORK && bm2->kind < BITMAP_WORK)
             cd_blit_ilv(bm1->bits.p, bm2->bits.p, o.w, o.h, o.sx, o.sy, o.dx, o.dy);
-        else if (bm1->flags < -1)
+        else if (bm1->kind < BITMAP_WORK)
             copy_from_cga(bm1, bm2, &o);
         else {
             sp3 = bm1->pitch * o.sy + o.sx;
             skip = bm1->pitch - o.w;
             dskip = bm2->pitch - o.w;
-            if (bm2->flags >= -1) {
+            if (bm2->kind >= BITMAP_WORK) {
                 dp3 = bm2->pitch * o.dy + o.dx;
                 if (f)
                     cd_blit_rect(bm1->bits.p + sp3, bm2->bits.p + dp3, o.w, o.h, skip, dskip);
                 if (g8)
-                    cd_blit_rect(bm1->alt.p + sp3, bm2->alt.p + dp3, o.w, o.h, skip, dskip);
+                    cd_blit_rect(bm1->mask.p + sp3, bm2->mask.p + dp3, o.w, o.h, skip, dskip);
             } else {
                 dp3 = bm2->pitch * (o.dy >> 1) + o.dx;
                 if (o.dy & 1)

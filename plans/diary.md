@@ -3023,3 +3023,163 @@ span, not the 16-pixel visible cursor. TONE_END marks a trailing tone slot
 bypassed when the repeat-table terminator restarts playback; it is not a
 stop instruction. These are naming caveats, not proven wrong names; no
 constants were renamed.
+## 2026-11-05 20:02 CET: Investigate Sprite animation state
+
+### What I did
+- Traced every Sprite reader and writer in setup, motion planning, the three video backends, and car, carhop, tire, jack and slide callers.
+- Renamed Sprite img/save/rc/seq to workBitmap/background/overlayRects/motionStep, documented the type, and preserved its 22-byte layout and all eight offsets under MSC 5.1.
+- Recorded evidence, lifetime, coordinate conventions, out-of-scope misleading names and validation in plans/investigations/Sprite.md.
+- Passed headers, formatting, zero-diagnostic Doxygen, all 572 function matches, clean and DOS-native IDENTICAL packed builds, DGROUP checks and all 106 tests. Recorded the separate unpacked-file diagnostic in the investigation note.
+
+### What I learned
+- Sprite is shared transient animation state for multiple game objects; its work bitmap has different EGA and CGA roles and is unused on Tandy. The background supplies both transparent-frame pixels and foreground restoration, rather than receiving saved pixels during stepping.
+- Foreground rectangle coordinates depend on relative frame/background pitch. Carhop borrows stack motion records, while the engine normally uses its shared sequence array. See plans/investigations/Sprite.md for the source evidence and other naming issues.
+## 2026-11-05 20:03 CET: Investigate Dev playback state
+
+### What I did
+
+- Traced every Dev member reader/writer, linked music/effect words, repeat and
+  tone tables, playback selection, pause/resume, and save-game exclusion.
+- Wrote plans/investigations/Dev.md before renaming; renamed the type to
+  MusicVoice and clarified stream, cursor, phrase-pass and speaker-enable state.
+  Kept char flags and the complete 28-byte layout; documented the type in its
+  storage owner's SYS.H and kept a SOUND.H pointer forward declaration.
+- Verified all 12 member offsets with real MSC 5.1, 572/572 function matches,
+  clean packed and DOS-native byte-identical builds, header/format/docs gates,
+  both DGROUP checks, and all 106 unit tests. Committed on inv-dev; no push/merge.
+
+### What I learned
+
+- The repeat count means extra phrase passes; tone selections advance on every
+  pass. Negative repeat sentinels wrap before terminal tone/stop entries are read.
+  Effect repeat bytes form signed little-endian words despite their char array.
+- The speaker flag requests re-enabling on an audible note, while the divisor
+  itself is programmed for each note. The two voices share the speaker and
+  external vibrato state. Evidence and out-of-scope names are in
+  plans/investigations/Dev.md; no tooling or compiler-rule change was needed.
+## 2026-11-05 20:03 CET: Investigate the animation command record
+
+### What I did
+
+- Investigated struct Cmd and every member reader/writer, script initializer,
+  timer resume path and caller; recorded the evidence in
+  [plans/investigations/Cmd.md](investigations/Cmd.md) before renaming.
+- Renamed it to AnimCommand with opcode, mode, operand1 and operand2, and
+  documented its existing operation/mode enums and mutable script-header role.
+- Preserved the six-byte MSC layout (offsets 0,1,2,4). Headers, formatting,
+  documentation (zero diagnostics), all 572 functions, clean packed build,
+  DGROUP ownership/order and 106 unit tests pass. Native DOS MAKE also produces
+  the identical retail EXE. Nothing merged or pushed.
+
+### What I learned
+
+- Script headers reuse the first operand as an object-slot handle, regardless
+  of their opcode; start skips the header. Operands must remain general signed
+  integers because their meanings vary by instruction and header context.
+- The unused jump path changes the command pointer without synchronizing the
+  sequential counter used by zero-target waits. LOAD_IMAGE ignores its second
+  operand. Unrelated misleading bitmap-copy parameter names and clipping
+  commentary are recorded in the investigation note for their owners.
+## 2026-11-05 20:04 CET: Investigate the hotspot record
+
+### What I did
+
+- Investigated all Hot readers/writers, compiled tables, menu traversal,
+  list-row aliasing and runtime scene construction; recorded the evidence in
+  [Hot.md](investigations/Hot.md) before changing source names.
+- Renamed the type to Hotspot and clarified styleIndex, hitCode and drawNext;
+  documented every member and the existing kind enum without changing layout
+  or behavior. Updated reconstruction references and preserved unrelated types.
+- Verified the 18-byte layout directly with MSC 5.1, all 572 functions, zero
+  Doxygen diagnostics, clean headers/formatting, the clean packed and native
+  DOS builds (both IDENTICAL), DGROUP ownership/order and 106 unit tests.
+
+### What I learned
+
+- Drawing follows record indices, while hit testing advances through physical
+  records and uses a link box's hitCode as a separate skip index. They are
+  different traversals; the full contract is in [Hot.md](investigations/Hot.md).
+- List code deliberately reads the same record through Win's different member
+  names. Style selection reaches banks past the declared pal array. Both
+  findings are recorded for the separate Win/Style investigations; neither
+  requires changing their layout in this branch.
+## 2026-11-05 20:05 CET: Investigate Bitmap storage and kind
+
+### What I did
+
+- Traced Bitmap constructors, picture decoding, fixed descriptors, buffer views,
+  and all kind/mask/size consumers across EGA, CGA and Tandy.
+- Wrote plans/investigations/Bitmap.md before renaming; documented the record and
+  renamed planesize/alt/flags to pixelBytes/mask/kind throughout their users.
+- Added BitmapKind with the existing VID_* constants and named the two RAM kinds;
+  typed constructor kind arguments while preserving the signed-char member.
+- Passed headers, format, zero-diagnostic docs, 18 MSC size/offset/kind checks,
+  572/572 functions, clean packed build, DGROUP checks, 106 unit tests and native
+  DOS MAKE. Both packed executables remain byte-identical to orig/SR.EXE.
+
+### What I learned
+
+- The size field covers all RAM color planes, one addressed plane on fixed EGA
+  pages, and the full banked span on CGA/Tandy pages; it cannot be called a plane
+  size without qualifying its storage kind.
+- Runtime kind and disk allocation flags are distinct. The mask pointer also
+  holds mask-only picture data, can be shared, and is inverted for the EGA cursor.
+- The thirty unused bytes have differing initialized sentinels but no member
+  readers; their former purpose remains unknown. Evidence, limits and unrelated
+  misleading names are recorded in plans/investigations/Bitmap.md.
+
+## 2026-11-05 20:08 CET: Document GAME header constants and enums
+
+### What I did
+
+- Read constant consumers throughout the game, rendering, input tables and
+  simulation before documenting every enum and non-guard define in
+  `src/GAME/*.H`. Added missing file briefs, grouped related constants, and
+  described units, bounds, packed fields, state transitions and settlement
+  behavior. Left every struct definition and all executable code unchanged.
+- Validation: `./sr headers --check`, `./sr format --check`, `./sr docs`
+  (zero diagnostics), `./sr check --all` (572/572), a clean
+  `rm -rf work && ./sr build` (Packed EXE IDENTICAL; all 572 functions and
+  748 near calls exact), `./sr dgroup check`, `./sr dgroup order`, and
+  `python3 -m unittest discover -s tests` in the Nix shell (106 tests, OK).
+- Compared comment-stripped headers against HEAD and compared struct blocks
+  verbatim: no code changes or struct edits. No merge or push.
+
+### What I learned
+
+- Misleading names retained: `APPEARANCE_KEEP_ROOF`,
+  `APPEARANCE_KEEP_REAR_BUMPER`, and `APPEARANCE_KEEP_FRONT_BUMPER` are AND
+  masks that clear the named modification bit, rather than retain it.
+- `RIVAL_STICKER_CHANCE`, `RIVAL_RESTICKER_CHANCE`, `RIVAL_BUMPER_CHANCE`
+  and `RIVAL_ROOF_CHANCE` are exclusive random-draw bounds compared against
+  `(model rank / 2) + 1`, not percentages; larger bounds reduce the odds.
+- Fuel budgets use tenths of a gallon; garage action time uses 546 ticks per
+  game hour and twelve game hours per day. These runtime contracts now live
+  beside the constants, following `.claude/skills/doxygen-c/SKILL.md`.
+- A stopped race return can also follow an unaffordable tire replacement;
+  it does not necessarily mean the car was lost.
+
+## 2026-11-05 20:15 CET: Merge main into docs-sys
+
+### What I did
+
+- Merged main (6247ca5) into docs-sys, resolving seven header conflicts and
+  preserving both branches' diary entries. Kept main's struct documentation,
+  renames and file briefs alongside docs-sys enum/define documentation.
+- Retained the hardware bitmap tags only in their owning BitmapKind enum in
+  src/VIDEO/BITMAP.H; removed the obsolete MAIN.H definitions. Updated the
+  hotspot enum comment to reference the renamed Hotspot::hitCode member.
+- Verified all source files match main after stripping comments and whitespace;
+  main's file blocks and five investigated struct documentation blocks are
+  preserved verbatim.
+- Passed ./sr headers --check, ./sr format --check, ./sr docs (0 diagnostics,
+  99/157 files documented), ./sr check --all (572/572), a clean packed build
+  (IDENTICAL; 572 functions and 748 near calls exact), both DGROUP gates and
+  all 106 Python unit tests in the Nix shell. Committed the merge; no push.
+
+### What I learned
+
+- Bitmap storage tags now belong to BitmapKind in BITMAP.H; retaining the old
+  MAIN.H defines would duplicate the declarations after this merge.
+- Explicit member references expose stale names during documentation merges;
+  the Hotspot link-box comment now uses the current hitCode member name.

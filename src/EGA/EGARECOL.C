@@ -22,7 +22,7 @@ void er_rect(struct Bitmap far *bm, int mode, char color, int x1, int y1, int x2
     unsigned char j;
     int l;
 
-    i = bm->flags <= -1;
+    i = bm->kind <= BITMAP_WORK;
     if (x2 > bm->width)
         x2 = m = bm->width;
     if (bm->height < y2)

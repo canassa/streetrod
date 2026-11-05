@@ -156,7 +156,7 @@ void cg_draw_text(struct Bitmap far *bm, int x, int y, char *s)
     }
     b0 = b1 = bm->bits.p;
     cga5 = (r_vid.mode == VID_HERCULES ? MONO_SEGMENT : CGA_SEGMENT) == FP_SEG(b0);
-    b1 += bm->planesize >> 1;
+    b1 += bm->pixelBytes >> 1;
     b0 += bm->pitch * (y >> 1);
     b0 += x >> 2;
     b1 += bm->pitch * (y >> 1);
@@ -285,7 +285,7 @@ void cg_recolor_rect(struct Bitmap far *bm, int a, int b, int x1, int y1, int x2
     if (y2 > (SCREEN_HEIGHT - 1))
         y2 = (SCREEN_HEIGHT - 1);
     p0 = p1 = bm->bits.p;
-    p1 += bm->planesize >> 1;
+    p1 += bm->pixelBytes >> 1;
     p0 += bm->pitch * (y1 >> 1);
     p0 += x1 >> 2;
     p1 += bm->pitch * (y1 >> 1);

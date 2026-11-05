@@ -17,7 +17,7 @@ void bm_copy(struct Bitmap far *src, struct Bitmap far *dst, int e)
 {
     struct Blt pkt;
 
-    me_new_bitmap(src->width, src->height, dst->alt.p ? 1 : 0, -1, dst);
+    me_new_bitmap(src->width, src->height, dst->mask.p ? 1 : 0, BITMAP_WORK, dst);
     pkt.w = src->width;
     pkt.h = src->height;
     pkt.dx = pkt.dy = pkt.sx = pkt.sy = 0;
@@ -34,7 +34,7 @@ void bm_opaque_span(struct Bitmap far *bm, int *left, int *right)
 
     a = bm->pitch;
     f = bm->height;
-    h = (g = bm->alt.p) + a - 1;
+    h = (g = bm->mask.p) + a - 1;
     d = 0;
     c = e = 0xff;
     for (; d < f; d++) {
@@ -81,17 +81,17 @@ struct Bitmap far *bm_shift_right(struct Bitmap far *src, int n, struct Bitmap f
     h3 = src->height;
     pitch = src->pitch;
     if (n <= 0) {
-        bm_copy(src, dst, src->alt.p ? 3 : 1);
+        bm_copy(src, dst, src->mask.p ? 3 : 1);
         return dst;
     }
     acc1 = 0xff;
-    sp8 = (unsigned char far *)src->alt.p + pitch - 1;
+    sp8 = (unsigned char far *)src->mask.p + pitch - 1;
     for (j2 = 0; j2 < h3; j2++) {
         acc1 &= *sp8;
         sp8 += pitch;
     }
     extra8 = (acc1 & mask) == mask ? 0 : 1 << r_vid.shift;
-    out = me_new_bitmap(src->width + extra8, src->height, src->alt.p ? 1 : 0, -1, dst);
+    out = me_new_bitmap(src->width + extra8, src->height, src->mask.p ? 1 : 0, BITMAP_WORK, dst);
     dp8 = (unsigned char far *)out->bits.p;
     sp8 = (unsigned char far *)src->bits.p;
     for (k = 0; k < h3 * r_vid.planes; k++) {
@@ -103,9 +103,9 @@ struct Bitmap far *bm_shift_right(struct Bitmap far *src, int n, struct Bitmap f
         if (extra8)
             *dp8++ = acc1 << compl;
     }
-    if (src->alt.p) {
-        dp25 = (unsigned char far *)out->alt.p;
-        sp24 = (unsigned char far *)src->alt.p;
+    if (src->mask.p) {
+        dp25 = (unsigned char far *)out->mask.p;
+        sp24 = (unsigned char far *)src->mask.p;
         for (k = 0; k < h3; k++) {
             for (i21 = 0, acc2 = 0xff; i21 < pitch; i21++) {
                 *dp25++ = (*sp24 >> shl5) | (acc2 << compl);
@@ -134,7 +134,7 @@ void bm_draw_masked(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *
         ((int *)&e)[i] = ((int *)r)[i];
     f = r->dx & ~r_vid.mask;
     if (f > 0) {
-        j = ar_bm(dst->width + 8, dst->height, dst->alt.p != 0L, ARENA_HIGH_STACK);
+        j = ar_bm(dst->width + 8, dst->height, dst->mask.p != 0L, ARENA_HIGH_STACK);
         bm_shift_right(dst, f, j);
         e.w = j->width;
     } else
@@ -147,8 +147,8 @@ void bm_draw_masked(struct Bitmap far *dst, struct Bitmap far *src, struct Blt *
             h = a.h;
             l = d - b;
             m = src->pitch - b;
-            c = j->alt.p + a.sy * d + a.sx;
-            g = src->alt.p + src->pitch * a.dy + a.dx;
+            c = j->mask.p + a.sy * d + a.sx;
+            g = src->mask.p + src->pitch * a.dy + a.dx;
             for (i = 0; i < h; i++) {
                 for (k = 0; k < b; k++) {
                     *g &= *c;
@@ -188,7 +188,7 @@ void bm_underlay(struct Bitmap far *src, struct Bitmap far *dst, int x, int y)
 
     sh5 = x & ~r_vid.mask;
     if (sh5 > 0) {
-        t7 = ar_bm(src->width + 8, src->height, src->alt.p != 0L, ARENA_HIGH_STACK);
+        t7 = ar_bm(src->width + 8, src->height, src->mask.p != 0L, ARENA_HIGH_STACK);
         bm_shift_right(src, sh5, t7);
     } else
         t7 = src;
@@ -199,9 +199,9 @@ void bm_underlay(struct Bitmap far *src, struct Bitmap far *dst, int x, int y)
     h = t7->height;
     off6 = y * dpitch4 + (x >> r_vid.shift);
     dpk = (unsigned char far *)dst->bits.p + off6;
-    dm1 = dm = (unsigned char far *)dst->alt.p + off6;
+    dm1 = dm = (unsigned char far *)dst->mask.p + off6;
     spn = (unsigned char far *)t7->bits.p;
-    sm1 = sm = (unsigned char far *)t7->alt.p;
+    sm1 = sm = (unsigned char far *)t7->mask.p;
     for (pn = 0; pn < r_vid.planes; pn++) {
         for (r = 0; r < h; r++) {
             for (c8 = 0; c8 < spitch; c8++)
@@ -281,8 +281,8 @@ void bm_and_mask(struct Bitmap far *src, struct Bitmap far *dst, struct Blt *in)
         e = d.h;
         b = src->pitch - c;
         i = dst->pitch - c;
-        h = src->alt.p + src->pitch * d.sy + d.sx;
-        a = dst->alt.p + dst->pitch * d.dy + d.dx;
+        h = src->mask.p + src->pitch * d.sy + d.sx;
+        a = dst->mask.p + dst->pitch * d.dy + d.dx;
         for (f = 0; f < e; f++) {
             for (g = 0; g < c; g++, a++, h++)
                 *a &= *h;
@@ -311,7 +311,7 @@ struct Bitmap far *bm_grab(struct Bitmap far *bm, struct Blt *r, int mode)
     d = r->h;
     c = r->sx;
     e = r->sy;
-    f = ar_bm(b, d, bm->alt.p != 0L, mode);
+    f = ar_bm(b, d, bm->mask.p != 0L, mode);
     a.w = b;
     a.h = d;
     a.sx = c;

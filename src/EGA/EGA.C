@@ -52,7 +52,7 @@ void eg_draw_text(struct Bitmap far *bm, int x, int y, char *str)
     d = x & 7;
     e = 0xff;
     o = 0xff;
-    i = bm->flags <= -1;
+    i = bm->kind <= BITMAP_WORK;
     memset(bits, 0, SCREEN_WIDTH);
     cols = sh = d;
     q = bits;

@@ -20,17 +20,6 @@ enum Scene {
     SCENE_JAIL = 6         /**< Police backdrop restricts car drawing. */
 };
 
-/**
- * @name Hardware bitmap formats
- * @brief Negative display tags used in bitmap flags and video dispatch.
- * @{
- */
-#define VID_EGA (-2)
-#define VID_CGA (-3)
-#define VID_HERCULES (-4)
-#define VID_TANDY (-6)
-/** @} */
-
 /** @brief Startup adapter choices before conversion to a drawing format. */
 enum VideoChoice {
     VIDEO_CHOICE_CGA = 1,       /**< Four-color assets and CGA video memory. */

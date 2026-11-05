@@ -1,4 +1,7 @@
-/* ADS.H - declarations of what ADS.C defines. */
+/**
+ * @file ADS.H
+ * @brief Paged newspaper advertisement lists.
+ */
 
 #ifndef ADS_H
 #define ADS_H

@@ -8,36 +8,72 @@
 
 #include "STRUCTS.H"
 
+/**
+ * @name Body performance contributions
+ * @brief Rating fractions for removed or unavailable body overlays.
+ * @{
+ */
 #define ROOF_SPEED_BONUS 0.09
 #define FRONT_BUMPER_SPEED_BONUS 0.05
 #define REAR_BUMPER_SPEED_BONUS 0.01
+/** @} */
+/**
+ * @name Equipment performance contributions
+ * @brief Weights applied to normalized equipment and timing scores.
+ * @{
+ */
 #define MODEL_SPEED_WEIGHT 0.1
+/** Divisor normalizing the strongest model score to one. */
 #define MODEL_SCORE_MAX 88.0
 #define INTAKE_SPEED_WEIGHT 0.15
 #define ENGINE_SPEED_WEIGHT 0.25
 #define TRANSMISSION_SPEED_WEIGHT 0.15
 #define TIMING_SPEED_WEIGHT 0.2
+/** @} */
+/**
+ * @name Rating to speed
+ * @brief Scale the worn rating, then add the base fraction of top speed.
+ * @{
+ */
 #define AUTO_SPEED_FACTOR 0.8
 #define PERFORMANCE_RATING_WEIGHT 0.3
 #define PERFORMANCE_BASE_FACTOR 0.7
+/** @} */
 
+/**
+ * @name First curve breakpoints
+ * @brief Engine RPM separating low and middle acceleration bands.
+ * @{
+ */
 #define V6_LOW_BAND_RPM 2900
 #define SMALL_V8_LOW_BAND_RPM 2900
 #define LARGE_V8_LOW_BAND_RPM 2500
+/** @} */
 
+/** @brief Recommended shifts and middle-to-high curve breakpoints, in RPM. */
 enum EngineShiftRpm {
-    V6_SHIFT_RPM = 4500,
+    V6_SHIFT_RPM = 4500, /**< V6 breakpoint; acceleration falls above it. */
+    /** Small-V8 breakpoint; acceleration falls above it. */
     SMALL_V8_SHIFT_RPM = 5000,
+    /** Large-V8 breakpoint; acceleration falls above it. */
     LARGE_V8_SHIFT_RPM = 5200
 };
 
+/** RPM cap; sustained attempts to exceed it can destroy the engine. */
 #define ENGINE_REDLINE_RPM 5700
+/** RPM above which engine and transmission wear increase. */
 #define ENGINE_WEAR_RPM 5000
+/** Engine/transmission failure threshold; post-race wear is clamped here. */
 #define PART_WEAR_LIMIT 9900
+/** Wear denominator: 10000 represents a fully worn part. */
 #define PART_WEAR_FULL 10000
+/** Reset RPM and lower bound while braking or free-revving in neutral. */
 #define ENGINE_IDLE_RPM 1500
+/** Automatic-transmission RPM cap, below the over-rev threshold. */
 #define AUTO_MAX_RPM 5690
+/** Demo/autopilot downshift threshold while coasting above first gear. */
 #define AUTO_DOWNSHIFT_RPM 2000
+/** Ceiling for the generated top speed, in miles per hour. */
 #define PERFORMANCE_MAX_MPH 130.0
 
 

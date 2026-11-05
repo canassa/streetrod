@@ -32,7 +32,7 @@ int ed_line(int x, int y, char *buf, int max)
 
     pos = x_colors.fill;
     oc = x_colors.line;
-    mono = (unsigned char)(r_vid.back->flags <= -1);
+    mono = (unsigned char)(r_vid.back->kind <= BITMAP_WORK);
     if ((w = 6 * max) + x >= r_vid.back->width) {
         max = (r_vid.back->width - x - 1) / 6;
         buf[max] = 0;
@@ -158,7 +158,7 @@ int ed_spot_number(int *out, char *buf)
 {
     int rl;
 
-    x_colors = bustyle->pal[g_menuList.header->palIndex];
+    x_colors = bustyle->pal[g_menuList.header->styleIndex];
     g_editDigits = 1;
     rl = ed_line(g_menuList.header->x1, g_menuList.header->y1, buf,
                  (g_menuList.header->x2 - g_menuList.header->x1) / 6 > 10
@@ -192,7 +192,7 @@ int ed_text_box(enum ScreenId id, int len, char *s)
     int rl;
 
     mn_push(id);
-    x_colors = bustyle->pal[g_menuList.header->palIndex];
+    x_colors = bustyle->pal[g_menuList.header->styleIndex];
     rl = ed_line(g_menuList.header->x1, g_menuList.header->y1, s, len);
     mn_pop(1);
     return rl > 0 ? 0 : rl;
