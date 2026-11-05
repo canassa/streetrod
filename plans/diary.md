@@ -2840,3 +2840,42 @@ The conflicting lines contain independent substitutions: keep named appearance m
 - This record includes steering, tire drift, dashboard invalidation and race outcomes, so an engine-only name understates it. Top gear is an index; the sixth ratio-array word is an unread tire/model calculation, not a sixth gear. The reset-ratio word has no writer, and several caches are write-only. See the member evidence in [Eng.md](investigations/Eng.md).
 - The existing data-shape reader supports enum constants in dimensions but not macro names. Reusing RPM_BAND_COUNT and DRIVE_GEAR_SLOTS as count enumerators preserves their values and enables both named dimensions and all layout/DGROUP gates without tooling changes.
 - fit_gear and ra_speed_step have parameters named rpm that actually receive mph; retained outside this investigation's scope, with evidence in the note.
+
+## 2026-11-05 18:38 CET: Investigate Street Rod gameplay exploits
+
+### What I did
+
+- Read fastest-start.md and traced donor purchases, dismantling, offers, wear,
+  shell disposal, signed payments, inventory limits, wagers, race outcomes,
+  AI/police, King progression, clock checks, persistence and malformed data.
+  Wrote [exploits.md](investigations/exploits.md), ranked by player value, with
+  exact recipes, source citations, confidence and validation labels.
+- Simulated all 25 ordinary donor specs, the catalog, every intake percentage
+  and all 20 negative-shell initial offers. Checked signed money arithmetic,
+  wear effects, action-time totals, sticker probabilities, integer speed and
+  the King's final deadline window. Used static original-binary disassembly
+  to confirm signed payment extension, numeric input truncation and safe
+  absent-part reads through DS:0004 on the DOS target.
+- Followed the user's changed instruction: no game execution or DOSBox run.
+  Changed no source. Checked report arithmetic, citations and the docs-only
+  diff; only this diary entry and the investigation are committed.
+
+### What I learned
+
+- The Styleline is the sole ordinary donor whose removed parts sell above
+  purchase price: $20-30 profit, or $21-31 including a $1 shell sale, at least
+  13,343 ticks per repeated complete loop. Ads never deplete. Selling parts
+  frees storage; stripping alone does not.
+- A -$50 shell really bypasses the unsigned sale comparisons, but the money
+  function sign-extends a 16-bit int. Ask 32767 to receive $32,767; asking
+  65479 instead loses $57. One donor plus minimum part sales leaves $33,537
+  from the $750 start. Null engine reads are not a protected-memory crash on
+  the original DOS target: the inspected DS:0004 word is zero/catalog index 0.
+  This is source/disassembly and arithmetic evidence, not a gameplay run.
+- Save/load rolls back time/assets but not RNG state. A pure jump start keeps
+  the stake/car while costing fuel, time and history. Acceptance ignores much
+  upgraded equipment; even sticker IDs give +6 and a zero-score cell still
+  accepts one of 100 rolls. The final King sequence can cross the day-91
+  deadline before an outer check. Further bounded edges include cached
+  performance, mixed carb scoring, police suppression/pointer mismatch,
+  signed-byte rival history and unchecked save/hall data.
