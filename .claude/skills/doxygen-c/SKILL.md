@@ -51,8 +51,9 @@ that needs byte gates, not a comment-only edit.
 3. The first sentence supplies a brief (JAVADOC_AUTOBRIEF); use a blank line
    for details. A file's brief names its purpose, not the reconstruction work.
 4. Every parameter gets `@param`, including self-evident ones. Explain contract:
-   range, units, nullability, ownership, capacity, direction or lifetime. Use
-   `[in]`, `[out]`, `[in,out]` where helpful. Use `@p name` in prose.
+   range, units, nullability, ownership, capacity or lifetime. Don't use
+   direction tags (`[in]`/`[out]`/`[in,out]`); say in the text when a pointer
+   receives a result. Use `@p name` in prose.
 5. Document results with `@return` or individual `@retval` cases. Explain
    sentinel/error values and relevant side effects. Void needs no @return.
 6. Document every struct/union member and enum value. Short descriptions use
@@ -95,7 +96,7 @@ typedef enum MenuResult {
 /**
  * Find a car in the current menu.
  *
- * @param[in] slot Zero-based car slot; must be within the current list.
+ * @param slot Zero-based car slot; must be within the current list.
  * @return Borrowed pointer valid until the menu closes, or NULL if empty.
  * @see @ref MenuCar
  */

@@ -2462,3 +2462,16 @@ The conflicting lines contain independent substitutions: keep named appearance m
 
 - A detached `@fn` block satisfies Doxygen but reads as a stray comment in the source; the
   documentation has to sit on a declaration a reader can see.
+
+## 2026-11-05: No Doxygen direction tags
+
+### What I did
+
+- Dropped `[in]`/`[out]`/`[in,out]` from the doxygen-c skill (rule and examples) and from
+  animate_rival_car's block, at the user's request. Parameter text states when a pointer
+  receives a result.
+
+### What I learned
+
+- The tags were inherited from bak2's skill ("where helpful") and ended up on every value
+  parameter, adding noise without information.
