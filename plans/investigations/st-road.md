@@ -329,3 +329,12 @@ CrashOverlay.pictureId uses that enum and RACE.H includes its owner header;
 there is no new picture enum or duplicate resource-ID set. The three table
 initializers already use the proper PIC_* enumerators. The final layout probe
 also verifies PictureId's two-byte size and signedness.
+
+## Integration
+
+Fetched origin/main again before reporting completion. It had advanced to
+3daaa69 with the parallel disk-struct investigation. Source changes, including
+RACE.C's gas-station field updates, merged automatically. Resolved the sole
+conflict in plans/diary.md by retaining both complete appended entries in time
+order. The disk branch renames service-point source types; pre-edit evidence
+above intentionally retains the original names and line pins.

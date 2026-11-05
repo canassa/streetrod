@@ -13,7 +13,7 @@ placeholders: the shipped EXE does not record them.
 | `NEEDLE.ASM` | Gauge needle points (tip and hub, 131 positions) |
 | `SONG.ASM`, `EFFECTS.ASM` | Sound instruction words |
 | `SPANS1.ASM`, `SPANS2.ASM` | Span records of the roadside sprites |
-| `SLOTS.C` | 277 Slot records and five terrain work arrays: far communals (`FAR_BSS`) |
+| `SLOTS.C` | 277 PictureSlot records and five terrain work arrays: far communals (`FAR_BSS`) |
 
 DGROUP is not here. Each C source defines its own initialized globals and literals
 (addresses in `tools/sr/symbols.json`; `./sr dgroup check` verifies the ownership). Its uninitialized storage is

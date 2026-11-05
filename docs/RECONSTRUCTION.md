@@ -480,7 +480,7 @@ the two C4047 remain, at `/W2` 99 (no C4100, C4101):
 
 - **Far storage order** (`src/DATA/SLOTS.C`). LINK allocates uninitialized far
   COMDEFs in FAR_BSS after the objects, in symbol-hash bucket order. The recovered
-  order is the 277 Slot records followed by five separate 1120-word arrays:
+  order is the 277 PictureSlot records followed by five separate 1120-word arrays:
   left roadside flags (`g_roadsideLeftBits`), right roadside flags
   (`g_roadsideRightBits`), horizontal displacement (`g_roadCurve`), shared road
   flags (`g_roadBitsArray`) and height (`g_roadHeight`). Their buckets are

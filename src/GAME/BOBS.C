@@ -656,19 +656,19 @@ static void near setup_bobs_spots(int a, int b)
         hot[1].kind = HOT_DISABLED;
         hot[3].kind = HOT_DISABLED;
     } else {
-        x1 = g_bodyRects[g_opponentSpecIndex].r[1].x + g_picXDraw;
-        y1 = g_bodyRects[g_opponentSpecIndex].r[1].y + g_sprDrawY;
-        x = g_bodyRects[g_opponentSpecIndex].r[1].w + x1 - 1;
+        x1 = g_bodyRects[g_opponentSpecIndex].regions[CAR_REGION_ROOF].x + g_picXDraw;
+        y1 = g_bodyRects[g_opponentSpecIndex].regions[CAR_REGION_ROOF].y + g_sprDrawY;
+        x = g_bodyRects[g_opponentSpecIndex].regions[CAR_REGION_ROOF].w + x1 - 1;
         y = hot[0].y1 - 1;
         hot[1].x1 = x1;
         hot[1].x2 = x;
         hot[1].y1 = y1;
         hot[1].y2 = y;
         hot[1].kind = HOT_REGION;
-        x1 = g_bodyRects[g_opponentSpecIndex].r[3].x + g_picXDraw;
-        y1 = g_bodyRects[g_opponentSpecIndex].r[3].y + g_sprDrawY;
-        x = g_bodyRects[g_opponentSpecIndex].r[3].w + x1 - 1;
-        y = g_bodyRects[g_opponentSpecIndex].r[3].h + y1 - 1;
+        x1 = g_bodyRects[g_opponentSpecIndex].regions[CAR_REGION_HOOD].x + g_picXDraw;
+        y1 = g_bodyRects[g_opponentSpecIndex].regions[CAR_REGION_HOOD].y + g_sprDrawY;
+        x = g_bodyRects[g_opponentSpecIndex].regions[CAR_REGION_HOOD].w + x1 - 1;
+        y = g_bodyRects[g_opponentSpecIndex].regions[CAR_REGION_HOOD].h + y1 - 1;
         if (hot[1].x2 >= x1)
             x1 = hot[1].x2 + 1;
         hot[3].x1 = x1;
