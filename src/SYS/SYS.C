@@ -45,7 +45,7 @@ void(interrupt far *g_clockPrev)(void);
 char g_strOpp[80];
 int g_menuLevel;
 struct Lims g_boxSpotHitData;
-struct Hot *g_curHoverPointer;
+struct Hotspot *g_curHoverPointer;
 int g_cursHoverCodeVal;
 int g_wRivBanner;
 struct TimerPriorities g_sysTimerPriorities;
@@ -809,9 +809,9 @@ void sy_demo_step(void)
                 g_demoKey = g_keyMaps[g_keyGroup][g_demoChoice].key;
                 mask = g_keyMaps[g_keyGroup][g_demoChoice].val + 0x32;
                 step = g_groupHot[g_keyGroup];
-                for (; step - g_groupHot[g_keyGroup] < 32 && g_hots[step].id != mask; step++)
+                for (; step - g_groupHot[g_keyGroup] < 32 && g_hots[step].hitCode != mask; step++)
                     ;
-                if (g_hots[step].id == mask) {
+                if (g_hots[step].hitCode == mask) {
                     cx = (g_hots[step].x1 + g_hots[step].x2) / 2;
                     if (cx)
                         g_demoTargetX = cx;

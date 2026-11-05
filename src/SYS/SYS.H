@@ -13,7 +13,7 @@
 
 
 #include "MUSIC.H"
-struct Hot;
+struct Hotspot;
 
 enum TimerAction {
     TIMER_CANCELLED = 0,
@@ -122,7 +122,7 @@ extern struct Tone *g_toneShapePlaybackPointer;
 extern int g_xCoordSprite;
 extern int g_menuLevel;
 extern struct Lims g_boxSpotHitData;
-extern struct Hot *g_curHoverPointer;
+extern struct Hotspot *g_curHoverPointer;
 extern int g_cursHoverCodeVal;
 extern int g_wRivBanner;
 void sy_hover_reset(void);

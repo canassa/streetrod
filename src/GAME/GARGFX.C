@@ -20,7 +20,7 @@
 static int near engine_index(void);
 static int near carb_pos(int *px, int *py);
 static void near make_bolt_overlay(void);
-static void near insert_hot(struct Hot *arr, struct Hot *item, int num);
+static void near insert_hot(struct Hotspot *arr, struct Hotspot *item, int num);
 
 
 static char g_partAnimate = 1;
@@ -35,7 +35,7 @@ static int g_carbBoltOff[10] = {10, -1, 21, -1, 11, -1, 29, -1, 11, -1};
 static char g_partSlotMap[14] = {29, 0, -1, -1, 2, 2, 2, 2, 3, 4, 2, 3, 2, 3};
 static char g_carbPosBase[6] = {5, 6, 7, 10, 12, 0};
 struct Bitmap far *g_boltOverlay = 0;
-static struct Hot g_boltHot = {HOT_REGION, 0, 0, 1, 0, 0, 0, 0, 0};
+static struct Hotspot g_boltHot = {HOT_REGION, 0, 0, 1, 0, 0, 0, 0, 0};
 
 /* Draw the 64 x 6 bar for slot of the dialog; frame selects the highlighted frame.
    When frame == 1 and the screen is shadowed, the old bar is grabbed and pasted first. */
@@ -591,20 +591,20 @@ void gx_draw_bolts(int *a, int *b, int flag)
 /* Insert item into the array arr of n records, which is sorted by (x1, y1): it goes before
    the first record that compares greater, the rest are moved up by one. */
 
-static void near insert_hot(struct Hot *arr, struct Hot *item, int n)
+static void near insert_hot(struct Hotspot *arr, struct Hotspot *item, int n)
 {
-    struct Hot *p;
+    struct Hotspot *p;
     int i;
 
     p = arr;
     for (i = 0; i < n; i++, p++) {
         if (item->x1 < p->x1) {
-            memmove(p + 1, p, (n - i) * sizeof(struct Hot));
+            memmove(p + 1, p, (n - i) * sizeof(struct Hotspot));
             *p = *item;
             return;
         }
         if (item->x1 <= p->x1 && item->y1 < p->y1) {
-            memmove(p + 1, p, (n - i) * sizeof(struct Hot));
+            memmove(p + 1, p, (n - i) * sizeof(struct Hotspot));
             *p = *item;
             return;
         }
@@ -624,13 +624,13 @@ void gx_build_hots(int *xs, int *ys)
     int x, i, y;
     int rh, rx;
     int j;
-    struct Hot *item;
+    struct Hotspot *item;
     int len;
 
     rx = g_slotSelec.slot;
     rh = g_slotSelec.subslot;
     item = g_engineHotTemplate;
-    len = (num = 3) * sizeof(struct Hot);
+    len = (num = 3) * sizeof(struct Hotspot);
     memcpy(g_engineHots, item, len);
     g_boltHot.textOffset = g_offBolt;
     i = lane = j = 0;
@@ -641,7 +641,7 @@ void gx_build_hots(int *xs, int *ys)
             gx_bolt_pos(&x, &y);
             x += 0x60;
             y += 9;
-            g_boltHot.id = i + 1;
+            g_boltHot.hitCode = i + 1;
             g_boltHot.x2 = (g_boltHot.x1 = x - 2) + 5;
             g_boltHot.y1 = (g_boltHot.y2 = y + 2) - 15;
             insert_hot(g_engineHots, &g_boltHot, num);
@@ -654,7 +654,7 @@ void gx_build_hots(int *xs, int *ys)
     }
     if (g_partsPics[0]) {
         g_boltHot.textOffset = g_offWires;
-        g_boltHot.id = 13;
+        g_boltHot.hitCode = 13;
         i = (g_slotSelec.wirePic == PIC_IGNITION_WIRES_DISCONNECTED) + engine_index() * 2;
         g_boltHot.x2 = (g_boltHot.x1 = g_wiresPos[i * 2] + 0x5b) + 10;
         g_boltHot.y2 = (g_boltHot.y1 = g_wiresPos[i * 2 + 1] + 2) + 15;
@@ -671,11 +671,11 @@ void gx_build_hots(int *xs, int *ys)
 
 void gx_sort_hots(int first, int n)
 {
-    struct Hot *p;
-    struct Hot *q;
+    struct Hotspot *p;
+    struct Hotspot *q;
     int i;
     int k;
-    struct Hot swap;
+    struct Hotspot swap;
 
     for (i = 0; i < n - 1; i++) {
         p = &g_hots[first + i];

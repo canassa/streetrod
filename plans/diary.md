@@ -2973,3 +2973,27 @@ checks passing. Names in their original buckets restore DS:7560/7D62 and the
 identical packed EXE; the renderer cursor's tie preserves DS:8B82. Separate
 far extern declarations also matter: dt_step's roadside reads retain distinct
 cached SEG words and the ES reload between them.
+
+## 2026-11-05 20:04 CET: Investigate the hotspot record
+
+### What I did
+
+- Investigated all Hot readers/writers, compiled tables, menu traversal,
+  list-row aliasing and runtime scene construction; recorded the evidence in
+  [Hot.md](investigations/Hot.md) before changing source names.
+- Renamed the type to Hotspot and clarified styleIndex, hitCode and drawNext;
+  documented every member and the existing kind enum without changing layout
+  or behavior. Updated reconstruction references and preserved unrelated types.
+- Verified the 18-byte layout directly with MSC 5.1, all 572 functions, zero
+  Doxygen diagnostics, clean headers/formatting, the clean packed and native
+  DOS builds (both IDENTICAL), DGROUP ownership/order and 106 unit tests.
+
+### What I learned
+
+- Drawing follows record indices, while hit testing advances through physical
+  records and uses a link box's hitCode as a separate skip index. They are
+  different traversals; the full contract is in [Hot.md](investigations/Hot.md).
+- List code deliberately reads the same record through Win's different member
+  names. Style selection reaches banks past the declared pal array. Both
+  findings are recorded for the separate Win/Style investigations; neither
+  requires changing their layout in this branch.
