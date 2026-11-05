@@ -2973,3 +2973,14 @@ checks passing. Names in their original buckets restore DS:7560/7D62 and the
 identical packed EXE; the renderer cursor's tie preserves DS:8B82. Separate
 far extern declarations also matter: dt_step's roadside reads retain distinct
 cached SEG words and the ES reload between them.
+
+## 2026-11-05: Header enums and defines need docs
+
+### What I did
+
+- doxygen-c rule 0: every enum and #define in a .H is documented (grouped with @name when
+  closely related); investigate-function repeats it for what an agent adds or touches.
+
+### What I learned
+
+- Named constants without a line of meaning still force the reader to the call sites.

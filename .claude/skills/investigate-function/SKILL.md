@@ -56,6 +56,7 @@ The target function is given in your task.
      your scope: assignments, comparisons, initializers, table sizes, random ranges
      (`rn_int(N)`), wrap-arounds, and the type of the variables that hold it (where the size
      allows). Byte-identical, of course. Report the replacement list in the note.
+   - Every enum and `#define` you add or touch in a header gets docs (doxygen-c rule 0).
    - Booleanish int values must be BOOL. Their 0/1 assignments, returns and comparisons
      use TRUE/FALSE. Truth tests stay `if (x)` / `if (!x)`; never compare to TRUE,
      since any nonzero value is true. Char flags stay char to preserve layout.

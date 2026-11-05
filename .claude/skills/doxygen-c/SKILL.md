@@ -53,6 +53,10 @@ When a parameter controls flow and every call site passes the same value, say so
 few words ("always 0"): a branch is effectively dead. Don't note a fixed value that only
 feeds a calculation, such as a screen position.
 
+0. Every enum (with a `@brief`, plus a `/**< */` on each enumerator) and every `#define`
+   constant or macro in a `.H` is documented, in the same terse style. Closely related defines
+   (a SHIFT/MASK pair, a table of limits) can share a `/** @name ... @{ */` group
+   instead of repeating themselves line by line; include guards need nothing.
 1. Every documented `.H`/`.C` declaring file-level items needs a `@file` block.
    Use the real uppercase filename or bare `@file`. Without this, file-scope
    entities can be omitted with EXTRACT_ALL=NO even when their comments exist.
