@@ -1,14 +1,25 @@
-/* SAVEGAME.H - declarations of what SAVEGAME.C defines. */
+/**
+ * @file SAVEGAME.H
+ * @brief New-game initialization and saved-game menus.
+ */
 
 #ifndef SAVEGAME_H
 #define SAVEGAME_H
 
+/**
+ * @name New-game cash
+ * @brief Initial dollar balances for player and demo games.
+ * @{
+ */
 #define STARTING_MONEY 750L
 #define DEMO_STARTING_MONEY 10000L
+/** @} */
 
+/** @brief Saved-game selection and disk-read outcome. */
 enum SaveLoadResult {
-    LOAD_OK = 0,
-    LOAD_CANCELLED = -1,
+    LOAD_OK = 0,         /**< Selected game loaded and its clock rebased. */
+    LOAD_CANCELLED = -1, /**< Selection dismissed or no saved games exist. */
+    /** Selected game could not be read; the caller may retry. */
     LOAD_ERROR = -666
 };
 

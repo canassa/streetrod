@@ -1,4 +1,7 @@
-/* SHRINK.H - declarations of what SHRINK.C defines. */
+/**
+ * @file SHRINK.H
+ * @brief Car bitmap scaling for the supported video modes.
+ */
 
 #ifndef SHRINK_H
 #define SHRINK_H

@@ -6,6 +6,7 @@
 #ifndef ROAD_H
 #define ROAD_H
 
+/** Vertical world coordinate supplied to forward and mirror road projection. */
 #define ROAD_SURFACE_Y 2000
 
 #include "CARPIC.H"
@@ -109,18 +110,19 @@ struct MirrorEdges {
     int rightX[8];
 };
 
+/** @brief Procedural sections concatenated by the road-layout table. */
 enum RoadSection {
-    SECTION_LEFT_CURVE = 1,
-    SECTION_RIGHT_CURVE = 2,
-    SECTION_HILL = 3,
-    SECTION_DIP = 4,
-    SECTION_HILL_DIP = 5,
-    SECTION_DIP_HILL = 6,
-    SECTION_RIGHT_CLOSED = 7,
-    SECTION_LEFT_CLOSED = 8,
-    SECTION_NARROWS = 9,
-    SECTION_S_CURVE_LR = 10,
-    SECTION_S_CURVE_RL = 11
+    SECTION_LEFT_CURVE = 1,   /**< Left bend with chevrons. */
+    SECTION_RIGHT_CURVE = 2,  /**< Right bend with chevrons. */
+    SECTION_HILL = 3,         /**< Rise and return to level. */
+    SECTION_DIP = 4,          /**< Fall and return to level. */
+    SECTION_HILL_DIP = 5,     /**< Crest followed by a depression. */
+    SECTION_DIP_HILL = 6,     /**< Depression followed by a crest. */
+    SECTION_RIGHT_CLOSED = 7, /**< Barricade and reduced right edge. */
+    SECTION_LEFT_CLOSED = 8,  /**< Barricade and reduced left edge. */
+    SECTION_NARROWS = 9,      /**< Warnings and reduced width on both sides. */
+    SECTION_S_CURVE_LR = 10,  /**< Left bend followed by a right bend. */
+    SECTION_S_CURVE_RL = 11   /**< Right bend followed by a left bend. */
 };
 
 struct RoadView {
