@@ -310,7 +310,7 @@ void so_sticker(int on)
 {
     if (on) {
         mu_play(g_stickerSound, g_jingleRepeats);
-        mu_set_vibrato(1, WAVE_TRIANGLE, 8, 10, 1);
+        mu_set_vibrato(1, WAVE_TRIANGLE, TONE_WAVE_SAMPLES, 10, 1);
     } else
         mu_play(g_song, g_songRepeats);
 }
@@ -321,7 +321,7 @@ void so_low_warble(int on)
 {
     if (on) {
         mu_play(g_lowWarbleSound, g_jingleRepeats);
-        mu_set_vibrato(1, WAVE_TRIANGLE, 8, 5, 1);
+        mu_set_vibrato(1, WAVE_TRIANGLE, TONE_WAVE_SAMPLES, 5, 1);
     } else
         mu_play(g_song, g_songRepeats);
 }
@@ -332,7 +332,7 @@ void so_pump(int on)
 {
     if (on) {
         mu_play(g_pumpSound, g_jingleRepeats);
-        mu_set_vibrato(1, WAVE_SAWTOOTH, 8, 30, 1);
+        mu_set_vibrato(1, WAVE_SAWTOOTH, TONE_WAVE_SAMPLES, 30, 1);
     } else
         mu_play(g_song, g_songRepeats);
 }
@@ -343,7 +343,7 @@ void so_jack(int on)
 {
     if (on) {
         mu_play(g_jackSound, g_jingleRepeats);
-        mu_set_vibrato(1, WAVE_SAWTOOTH, 8, 20, 1);
+        mu_set_vibrato(1, WAVE_SAWTOOTH, TONE_WAVE_SAMPLES, 20, 1);
     } else
         mu_play(g_song, g_songRepeats);
 }
@@ -364,7 +364,7 @@ void so_part_move(int on)
 {
     if (on) {
         mu_play(g_partMoveSound, g_jingleRepeats);
-        mu_set_vibrato(1, WAVE_SAWTOOTH, 8, 14, 1);
+        mu_set_vibrato(1, WAVE_SAWTOOTH, TONE_WAVE_SAMPLES, 14, 1);
     } else
         mu_play(g_song, g_songRepeats);
 }

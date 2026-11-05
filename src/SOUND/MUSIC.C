@@ -5,12 +5,13 @@
 #include "SOUND.H"
 #include "SYS.H"
 
-int g_toneShapes[3][8] = {{0, 1, 2, 1, 0, -1, -2, -1}, {0, 1, 2, 3, 4, 5, 6, 7}, {0, 1, 0, 0, 0, 0, 0, 0}};
-struct Tone g_tones[5] = {{0, WAVE_TRIANGLE, 0, 0, 0},
-                          {0, WAVE_TRIANGLE, 0, 8, 10},
-                          {0, WAVE_TRIANGLE, 4, 8, 1},
-                          {0, WAVE_TRIANGLE, 6, 8, 1},
-                          {0, WAVE_PULSE, 5, 2, 1}};
+int g_toneShapes[WAVEFORM_COUNT][TONE_WAVE_SAMPLES] = {
+    {0, 1, 2, 1, 0, -1, -2, -1}, {0, 1, 2, 3, 4, 5, 6, 7}, {0, 1, 0, 0, 0, 0, 0, 0}};
+struct Tone g_tones[TONE_SLOT_COUNT] = {{0, WAVE_TRIANGLE, 0, 0, 0},
+                                        {0, WAVE_TRIANGLE, 0, TONE_WAVE_SAMPLES, 10},
+                                        {0, WAVE_TRIANGLE, 4, TONE_WAVE_SAMPLES, 1},
+                                        {0, WAVE_TRIANGLE, 6, TONE_WAVE_SAMPLES, 1},
+                                        {0, WAVE_PULSE, 5, 2, 1}};
 
 /* Start the sound song with its tone list tones. Song g_songBgState's own song restarts the
    first voice (g_voiceNum = 1); any other song goes into the second voice g_secondaryMusicStateData (g_voiceNum = 2), the
@@ -49,11 +50,11 @@ void mu_play(void far *song, void *tones)
 void mu_set_vibrato(int on, enum Waveform waveform, int length, int depth, int delay)
 {
     if (on) {
-        g_tones[TONE_PROGRAMMABLE].phase = 0;
+        g_tones[TONE_PROGRAMMABLE].sampleIndex = 0;
         g_tones[TONE_PROGRAMMABLE].waveform = waveform;
-        g_tones[TONE_PROGRAMMABLE].depth = depth;
-        g_tones[TONE_PROGRAMMABLE].length = length;
-        g_tones[TONE_PROGRAMMABLE].delay = delay;
+        g_tones[TONE_PROGRAMMABLE].depthPermille = depth;
+        g_tones[TONE_PROGRAMMABLE].sampleCount = length;
+        g_tones[TONE_PROGRAMMABLE].sampleTicks = delay;
     }
     g_vibratoActive = on;
 }
