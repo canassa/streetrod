@@ -31,7 +31,7 @@ void sc_status_init(int y)
     g_statusLine.messageWidth = 0xa0;
     g_statusLine.messageX = 0x58;
     g_statusLine.shown = 0;
-    x_colors = bustyle->colors;
+    x_colors = bustyle->schemes[STYLE_STATUS];
     dr_fill_rect(r_vid.back, 0, y, SCREEN_WIDTH, STATUS_BAR_HEIGHT);
     if (r_vid.copyToFront)
         bm_copy_box(r_vid.back, r_vid.front, 0, y, (SCREEN_WIDTH - 1), y + STATUS_BAR_HEIGHT - 1);
@@ -51,7 +51,7 @@ void sc_status_text(int x, char *s, int w)
     int ypos;
 
     saved = x_colors;
-    x_colors = bustyle->colors;
+    x_colors = bustyle->schemes[STYLE_STATUS];
     if (w == 0)
         w = g_statusLine.messageWidth;
     if (x < 0) {
@@ -91,7 +91,7 @@ void sc_label(char *s)
     int saved;
 
     saved = r_vid.copyToFront;
-    x_colors = bustyle->colors;
+    x_colors = bustyle->schemes[STYLE_STATUS];
     cu_ctl(CURSOR_HIDE);
     dr_fill_rect(r_vid.back, 0, g_statusLine.y, g_statusLine.messageX & 0xfff8, 8);
     (*g_videoOps.drawText)(r_vid.back, 0, g_statusLine.y, s);

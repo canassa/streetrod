@@ -65,7 +65,7 @@ static void near play_cell_anim(void);
 static void near set_jail_spots(enum HotKind id, char c);
 
 int g_bannerX = 100;
-static int g_passCount = 0;
+static int g_departureCount = 0;
 
 
 static int near maybe_carhop(enum CarhopMode mode, int arg, int pct1, int pct2)
@@ -77,7 +77,7 @@ static int near maybe_carhop(enum CarhopMode mode, int arg, int pct1, int pct2)
     case CARHOP_ENTER:
         if (g_carhop != CARHOP_ABSENT)
             break;
-        if (g_passCount < CARHOP_MIN_PASSES || rn_int(100) >= pct1)
+        if (g_departureCount < CARHOP_MIN_DEPARTURES || rn_int(100) >= pct1)
             break;
         r = 1;
         cu_ctl(CURSOR_HIDE_NOW);
@@ -98,7 +98,7 @@ static int near maybe_carhop(enum CarhopMode mode, int arg, int pct1, int pct2)
         ch_skate(CARHOP_LEAVE, arg);
         g_carhop = CARHOP_ABSENT;
         g_ordered = 0;
-        g_passCount = 0;
+        g_departureCount = 0;
         break;
     }
     if (r)
@@ -148,9 +148,9 @@ static void near animate_rival_car(enum CarAnimKind animation, int specIndex, BO
 {
     BOOL atJail;
     int textOffset;
-    BOOL wasPassBy;
+    enum PassByPhase passPhaseAtEntry;
 
-    wasPassBy = g_carPassBy;
+    passPhaseAtEntry = g_carPassPhase;
     strcpy(g_strOpp, g_desc + g_selectedRacerPointer->nameOffset);
     strcat(g_strOpp, "  ");
     strcat(g_strOpp, g_desc + g_oppSpecPointer->nameOffset);
@@ -181,10 +181,10 @@ static void near animate_rival_car(enum CarAnimKind animation, int specIndex, BO
     sc_status_text(g_bannerX, g_strOpp, g_wRivBanner);
     cp_show_car(animation, specIndex, g_selectedRacerPointer->bodyMods, g_selectedRacerPointer->sticker, showPortrait,
                 carBottom, useGasMask, tirePics);
-    if (wasPassBy)
+    if (passPhaseAtEntry)
         animation = CAR_DRIVE_OUT;
     if (animation == CAR_DRIVE_OUT)
-        g_passCount++;
+        g_departureCount++;
     if (animation == CAR_DRIVE_OUT) {
         g_strOpp[0] = 0;
         sc_status_text(g_bannerX, " ", g_wRivBanner);
@@ -202,7 +202,7 @@ static void near animate_rival_car(enum CarAnimKind animation, int specIndex, BO
 
 int g_opponentSpecIndex;
 int g_isKingState;
-int g_driverIdxSelVal;
+int g_racerActiveSlot;
 
 
 static enum CarClass near spec_class(int n)
@@ -339,7 +339,7 @@ static void near select_rival(int n)
 {
     int skill;
 
-    g_driverIdxSelVal = n;
+    g_racerActiveSlot = n;
     g_selectedRacerPointer = &g_racerRecordsArray[n];
     g_oppSpecPointer = &g_carData[g_opponentSpecIndex = g_selectedRacerPointer->specIndex];
     if (n != RACER_KING) {
@@ -366,7 +366,7 @@ static void near select_rival(int n)
     g_carDraw.tireVariant = (g_oppSpecPointer->stockParts >> SPEC_TIRES_SHIFT) & SPEC_TIRES_MASK;
     g_carDraw.paintScheme = g_selectedRacerPointer->paintScheme;
     ga_palette(g_carDraw.paintScheme);
-    g_carDraw.overlayPic = g_selectedRacerPointer->portraitPic;
+    g_carDraw.portraitPic = g_selectedRacerPointer->portraitPic;
 }
 
 
@@ -374,9 +374,9 @@ static void near rival_arrives(int n, enum CarAnimKind a, enum RivalArrival mode
 {
     select_rival(n);
     if (mode == RIVAL_PASS_BY)
-        g_carPassBy = 1;
-    if (mode == RIVAL_CHALLENGE && g_driverIdxSelVal == RACER_KING)
-        g_carPassBy = king_status() == KING_NOVICE;
+        g_carPassPhase = PASS_BY_ARRIVING;
+    if (mode == RIVAL_CHALLENGE && g_racerActiveSlot == RACER_KING)
+        g_carPassPhase = king_status() == KING_NOVICE ? PASS_BY_ARRIVING : PASS_BY_NONE;
     animate_rival_car(a, g_opponentSpecIndex, TRUE, 0xa3, FALSE, g_tirePics[g_carDraw.tireVariant]);
 }
 
@@ -771,7 +771,7 @@ static void near blit_cell(struct Bitmap far *bm, int n, struct Bitmap far *dst)
 }
 
 struct Bitmap far *g_barJailPixels;
-int g_resultWin;
+BOOL g_driverWonFlag;
 struct Bitmap far *g_edgeBmpJail;
 
 
@@ -865,8 +865,8 @@ static void near play_ending(void)
     (*g_videoOps.show)();
     g_racerRecordsArray[RACER_KING].portraitPic = PIC_PORTRAIT_KINGS_GIRLFRIEND;
     select_rival(RACER_KING);
-    cp_show_car(CAR_PULL_IN, g_opponentSpecIndex, g_selectedRacerPointer->bodyMods, g_selectedRacerPointer->sticker, 1,
-                0x98, 0, g_tirePics[g_carDraw.tireVariant]);
+    cp_show_car(CAR_PULL_IN, g_opponentSpecIndex, g_selectedRacerPointer->bodyMods, g_selectedRacerPointer->sticker,
+                TRUE, 0x98, FALSE, g_tirePics[g_carDraw.tireVariant]);
     g_racerRecordsArray[RACER_KING].portraitPic = PIC_PORTRAIT_THE_KING;
     pic24 = ar_bm(0x50, 0x2c, 0, ARENA_HIGH_BASE);
     pu_grab(0x78, 0x45, 0x50, 0x2c, pic24);
@@ -1071,7 +1071,7 @@ void bo_visit(void)
                     if (g_carDraw.betType != KR_BET_FOR_KICKS)
                         g_betRaces++;
                     if (g_isKingState) {
-                        if (g_resultWin == 0) {
+                        if (!g_driverWonFlag) {
                             g_kingDragWon = 0;
                             g_racerRecordsArray[RACER_KING].status = RACER_NOT_MET;
                             g_dragWins -= DRAG_LOSS_KING_PENALTY;
@@ -1094,7 +1094,7 @@ void bo_visit(void)
                         g_end |= END_JAIL;
                         return;
                     }
-                    if (g_resultWin && g_carDraw.betType != KR_BET_FOR_KICKS) {
+                    if (g_driverWonFlag && g_carDraw.betType != KR_BET_FOR_KICKS) {
                         if (g_driver.raceType == RACE_DRAG)
                             g_dragWins++;
                         else
@@ -1102,7 +1102,7 @@ void bo_visit(void)
                     }
                     if (g_carDraw.betType != KR_BET_FOR_KICKS) {
                         g_selectedRacerPointer->betRaces++;
-                        if (g_resultWin == 0)
+                        if (!g_driverWonFlag)
                             g_selectedRacerPointer->rivalBetWins++;
                     }
                     if (place == RACE_EXIT_STOPPED || place == RACE_EXIT_GARAGE) {

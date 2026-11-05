@@ -52,7 +52,7 @@ void av_open(int *list, int base)
             g_pages.cur = g_pages.n - 1;
         ptr++;
     }
-    x_colors = bustyle->hilite;
+    x_colors = bustyle->schemes[STYLE_NEWSPAPER];
     cu_ctl(CURSOR_HIDE);
     g_adPacket.w = 0x40;
     g_adPacket.h = SCREEN_BODY_HEIGHT;
@@ -88,7 +88,7 @@ int av_run(void)
     for (;;) {
         if (g_adRedraw) {
             cu_ctl(CURSOR_HIDE_NOW);
-            x_colors = bustyle->hilite;
+            x_colors = bustyle->schemes[STYLE_NEWSPAPER];
             g_adPicture = ad_picture(2);
             dr_fill_rect(r_vid.back, 0x40, 0, 0xc0, SCREEN_BODY_HEIGHT);
             g_adPacket.sx = g_adPacket.dx = 0;

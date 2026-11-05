@@ -8,16 +8,17 @@
 
 struct Bitmap;
 
-struct Win {
-    int bg;
-    int lines;
-    int x;
-    int y;
-    int w;
-    int h;
-    int tx;
-    int ty;
-    int next;
+/** @brief Speech-bubble picture, position and text placement. */
+struct PopupLayout {
+    int pictureId; /**< Speech-bubble picture ID. */
+    int lineCount; /**< Number of message lines. */
+    int left;      /**< Left screen pixel. */
+    int top;       /**< Top screen row. */
+    int width;     /**< Background capture width in pixels. */
+    int height;    /**< Background capture height in rows. */
+    int textX;     /**< Text centering offset from the left edge. */
+    int textY;     /**< Text offset below the top edge. */
+    int unused;    /**< Unused placement word. */
 };
 
 struct Bitmap far *pu_grab(int x, int y, int w, int h, struct Bitmap far *src);

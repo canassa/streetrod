@@ -227,7 +227,7 @@ static void near leave_station(struct GasStationVisit *d)
     g_driver.currentCar->fuel =
         g_driver.currentCar->fuel > FUEL_TANK_CAPACITY ? FUEL_TANK_CAPACITY : g_driver.currentCar->fuel;
     cp_show_car(CAR_DRIVE_OUT, d->specIndex, d->bodyMods,
-                (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, 0, 0xa9, 1,
+                (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, FALSE, 0xa9, TRUE,
                 g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
     mn_pop(1);
     ma_clear();
@@ -256,7 +256,7 @@ void ra_gas_station(void)
     dl.specIndex = g_driver.currentCar->specIndex;
     dl.bodyMods = gm_car_look(g_driver.currentCar);
     cp_show_car(CAR_PULL_IN, dl.specIndex, dl.bodyMods,
-                (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, 0, 0xa9, 1,
+                (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, FALSE, 0xa9, TRUE,
                 g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
     mu_suspend(0);
     label = pu_grab(0x50, 0xaa, 0x28, 0xc, 0);
@@ -480,7 +480,7 @@ static void near show_ticket(void)
     (*g_videoOps.copy)(a, r_vid.back, &pkt, 1);
     maxw2 = a->width - 8;
     r_vid.copyToFront = 0;
-    x_colors = bustyle->hilite;
+    x_colors = bustyle->schemes[STYLE_NEWSPAPER];
     for (p2 = g_driverName, wk = 0; *p2 && wk < maxw2; p2++)
         wk += g_font[*p2 - 32].w;
     if (wk >= maxw2)
@@ -582,7 +582,7 @@ void ra_finish_stats(void)
 
 static void near show_race_stats(void)
 {
-    if (g_resultWin) {
+    if (g_driverWonFlag) {
         sprintf(g_raceResult1, "Your``winning``time %2.1f sec.,`avg. speed %2d mph", g_raceSecsElapsedValue,
                 g_finishMeanSpeedVal);
         strcpy(g_raceResult2, "Congratulations !");
@@ -671,7 +671,7 @@ enum RaceExit near ra_outcome(void)
         g_driver.currentCar->rack.parts[0]->wear = PART_WEAR_LIMIT;
     if (g_driver.currentCar->tires->wear > PART_WEAR_LIMIT)
         g_driver.currentCar->tires->wear = PART_WEAR_LIMIT;
-    g_resultWin = 0;
+    g_driverWonFlag = FALSE;
     g_statsDone = 0;
     g_mphAccumulator = 0;
     g_fireLatch = 0;
@@ -688,7 +688,7 @@ enum RaceExit near ra_outcome(void)
         g_driver.currentCar->fuel = 0;
     (*g_videoOps.show)();
     if (g_oppEngState.stopFlags & STOP_LOST) {
-        g_resultWin = 1;
+        g_driverWonFlag = TRUE;
         show_race_stats();
         cu_ctl(CURSOR_SHOW_NOW);
         gm_message(g_isKingState == 0               ? (i = g_winMsgs[kind])
@@ -718,7 +718,7 @@ enum RaceExit near ra_outcome(void)
                 g_driver.currentCar = found;
                 pf_drivetrain(g_driver.currentCar, &g_driveEng);
             }
-            if (g_demo == 0 || g_driverIdxSelVal != g_demoRacer) {
+            if (g_demo == 0 || g_racerActiveSlot != g_demoRacer) {
                 if (g_selectedRacerPointer->lostCarOnce != 0 || g_isKingState != 0)
                     g_selectedRacerPointer->status = RACER_EMPTY;
                 else {
@@ -727,7 +727,7 @@ enum RaceExit near ra_outcome(void)
                             list[++units] = i;
                     if (units > 0) {
                         list[0] = units;
-                        sg_init_racer(g_driverIdxSelVal, list);
+                        sg_init_racer(g_racerActiveSlot, list);
                         g_selectedRacerPointer->lostCarOnce = 1;
                     } else
                         g_selectedRacerPointer->status = RACER_EMPTY;
@@ -1362,7 +1362,7 @@ static void near cop_appears(void)
     int old;
 
     old = g_oppEngState.speed;
-    g_selectedRacerPointer = &g_racerRecordsArray[RACER_COP_ENTRY];
+    g_selectedRacerPointer = &g_racerRecordsArray[RACER_POLICE_BEHAVIOR_SLOT];
     pf_drivetrain_spec(SPEC_KING, &g_oppEngState);
     g_shiftPenalty = g_selectedRacerPointer->earlyShiftPenalty;
     fit_gear(old, &g_oppEngState);

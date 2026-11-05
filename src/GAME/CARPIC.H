@@ -7,6 +7,8 @@
 #define CARPIC_H
 
 #include "BITMAP.H"
+#include "GAME.H"
+#include "STRUCTS.H"
 
 /* one saved band of a screen page (8 bytes): where it sits in the scratch bitmap, its first row and height */
 struct Band {
@@ -45,7 +47,15 @@ extern struct AnimCommand g_animScripts[];
 extern int g_animScriptStart[];
 extern int g_carMoving;
 extern int g_backdropX;
-extern int g_carPassBy;
+/** @brief Progress of a rival car passing through without parking. */
+enum PassByPhase {
+    PASS_BY_NONE = 0,     /**< Ordinary arrival, parking or departure. */
+    PASS_BY_ARRIVING = 1, /**< Arrive, then continue directly into departure. */
+    PASS_BY_DEPARTING = 2 /**< Depart using the arrival frames and backdrop. */
+};
+
+/** Current pass-through animation phase. */
+extern enum PassByPhase g_carPassPhase;
 extern struct Bitmap g_bandRecordsSprArray[];
 extern struct Bitmap far *g_lastPic;
 extern struct Band g_carSpriteStrips[4];
@@ -53,8 +63,39 @@ extern struct Bitmap g_carBackdropHdrBmp;
 extern int g_carVisibleHtValue;
 void cp_backdrop(struct Bitmap far *src, struct Bitmap far **pa, int mode, struct Bitmap far **pb, int y1, int y0,
                  struct Rect **pr1, struct Rect **pr2);
-void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *ids, int w, int n);
-void cp_show_car(enum CarAnimKind kind, int idx, int flags, int kk, int q, int bot, int mode2, int *ids);
+/**
+ * @brief Build car pictures with body changes, a sticker and optional occupant.
+ *
+ * Shifted frames, tires and shadows share the car's arena lifetime.
+ *
+ * @param frames Receives the low-stack bitmap pointers.
+ * @param specIndex Car specification index.
+ * @param bodyMods Body modifications to display.
+ * @param sticker One-based sticker choice, or zero for none.
+ * @param showPortrait TRUE includes the occupant portrait.
+ * @param tirePics Tire picture per frame, or zero for no tires.
+ * @param showShadow TRUE underlays the car shadow.
+ * @param frameCount Number of output frames; one or four in current callers.
+ */
+void cp_build(struct Bitmap far **frames, int specIndex, enum BodyMod bodyMods, int sticker, BOOL showPortrait,
+              int *tirePics, BOOL showShadow, int frameCount);
+
+/**
+ * @brief Draw a parked car or animate its arrival or departure.
+ *
+ * A requested pass-through immediately follows arrival with departure.
+ *
+ * @param animation Movement or stationary presentation.
+ * @param specIndex Car specification index.
+ * @param bodyMods Body modifications to display.
+ * @param sticker One-based sticker choice, or zero for none.
+ * @param showPortrait TRUE includes the occupant portrait.
+ * @param carBottom Bottom screen row of the car.
+ * @param useGasMask TRUE preserves the gas station foreground over the car.
+ * @param tirePics Tire picture per frame, or zero for no tires.
+ */
+void cp_show_car(enum CarAnimKind animation, int specIndex, enum BodyMod bodyMods, int sticker, BOOL showPortrait,
+                 int carBottom, BOOL useGasMask, int *tirePics);
 void cp_patch_bg(struct Bitmap far *bm, int a, int b, int c, int d, int e, int f, int g, int h);
 
 #endif

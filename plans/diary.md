@@ -3183,3 +3183,36 @@ constants were renamed.
   MAIN.H defines would duplicate the declarations after this merge.
 - Explicit member references expose stale names during documentation merges;
   the Hotspot link-box comment now uses the current hitCode member name.
+
+## 2026-11-05 20:40 CET: Clarify car renderer, rival state and UI record views
+
+### What I did
+
+Investigated the inv-names follow-ups before editing and kept the evidence in
+plans/investigations/misleading-names.md. Clarified both car-renderer parameter
+sets and locals, reused BodyMod and BOOL, renamed the occupant portrait,
+departure count and carhop threshold, and gave the three pass-through phases
+an enum. Renamed the communal selected-rival and player-victory globals after
+sr fit, and documented the ordinary rival slot whose behavior police borrow.
+Reused Hotspot for list rows, separated the real PopupLayout, and replaced the
+partial Style palette with sixteen named drawing schemes and enum indices.
+Collected and assessed the other investigations' outstanding naming findings in
+plans/investigations/naming-backlog.md, keeping unrelated workers' scope intact.
+
+Headers, formatting and docs pass with zero documentation diagnostics; all
+572 functions match. Clean packed and DOS-native builds are IDENTICAL to
+orig/SR.EXE, both DGROUP gates pass, all 106 unit tests pass, and a real MSC
+probe confirms 13 relevant record sizes/offsets. Committed on inv-names;
+no merge or push.
+
+### What I learned
+
+The list view of Win was already a Hotspot, so another alias type would repeat
+the confusion. Style's apparent spare bytes are actually the save-list color
+scheme. A pass-phase snapshot must keep the enum word rather than normalize
+to BOOL, which adds instructions. Retyping a local inside a combined declaration
+must preserve its insertion position among hash collisions; splitting mn_list's
+int declaration around idx2 retains its original stack offsets. Added that
+lesson to the MSC recipe book. The auxiliary unpacked comparison still reports
+header/relocation and tail differences; the final packed retail and native EXEs
+are byte-identical, and this investigation does not claim otherwise.

@@ -39,21 +39,21 @@ static char g_wearText[12] = "(xx% worn)";
 
 void mn_draw_hot(struct Hotspot *p)
 {
-    int colr;
+    enum StyleIndex colr;
     int w, h;
     char *str;
     int nxt;
 
-    colr = 0;
+    colr = STYLE_NONE;
     if (!g_hotChain && r_vid.copyToFront)
         cu_ctl(CURSOR_HIDE);
     do {
         switch (p->kind) {
         case HOT_BOX:
         case HOT_LINK_BOX:
-            if (p->styleIndex > 0) {
+            if (p->styleIndex > STYLE_NONE) {
                 if (p->styleIndex != colr)
-                    x_colors = bustyle->pal[colr = p->styleIndex];
+                    x_colors = bustyle->schemes[colr = p->styleIndex];
                 dr_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, h = p->y2 - p->y1);
                 if (x_colors.frame)
                     dr_bevel(r_vid.back, p->x1, p->y1, w, h);
@@ -71,7 +71,7 @@ void mn_draw_hot(struct Hotspot *p)
             continue;
         case HOT_BUTTON:
             if (p->styleIndex != colr)
-                x_colors = bustyle->pal[colr = p->styleIndex];
+                x_colors = bustyle->schemes[colr = p->styleIndex];
             dr_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, h = p->y2 - p->y1);
             dr_bevel(r_vid.back, p->x1, p->y1, w, h);
             str = g_txt + p->textOffset;
@@ -79,12 +79,12 @@ void mn_draw_hot(struct Hotspot *p)
             goto box;
         case HOT_TEXT:
             if (p->styleIndex != colr)
-                x_colors = bustyle->pal[colr = p->styleIndex];
+                x_colors = bustyle->schemes[colr = p->styleIndex];
             (*g_videoOps.drawText)(r_vid.back, p->x1, p->y1, g_txt + p->textOffset);
             goto box;
         case HOT_CENTERED_TEXT:
             if (p->styleIndex != colr)
-                x_colors = bustyle->pal[colr = p->styleIndex];
+                x_colors = bustyle->schemes[colr = p->styleIndex];
             str = g_txt + p->textOffset;
             (*g_videoOps.drawText)(r_vid.back, ((p->x2 - p->x1 - da_text_width(str)) >> 1) + p->x1,
                                    ((p->y2 - p->y1 - 8) >> 1) + p->y1, str);
@@ -93,7 +93,7 @@ void mn_draw_hot(struct Hotspot *p)
             g_headerEditableState = 1;
         case HOT_CENTERED_HEADER:
             if (p->styleIndex != colr)
-                x_colors = bustyle->pal[colr = p->styleIndex];
+                x_colors = bustyle->schemes[colr = p->styleIndex];
             dr_fill_rect(r_vid.back, p->x1, p->y1, w = p->x2 - p->x1, 8);
             str = g_txt + p->textOffset;
             if (p->kind == HOT_CENTERED_HEADER)
@@ -387,8 +387,10 @@ int g_cgaPicMap[277] = {
 
 int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
 {
-    int *pc1, *c1, curl, idx2, n9, ww9, wy7, wx8;
-    struct Win *w;
+    int *pc1, *c1, curl;
+    enum StyleIndex idx2;
+    int n9, ww9, wy7, wx8;
+    struct Hotspot *w;
     int *lpk, wh9, x;
     char *bufpl;
     int i, x1;
@@ -430,16 +432,16 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
             mn_draw_hot(hotn);
         }
     }
-    ww9 = ((struct Win *)g_menuList.lineBase)->tx - (wx8 = ((struct Win *)g_menuList.lineBase)->w);
+    ww9 = ((struct Hotspot *)g_menuList.lineBase)->x2 - (wx8 = ((struct Hotspot *)g_menuList.lineBase)->x1);
     right = wx8 + ww9 - 1;
-    wh9 = ((struct Win *)g_menuList.lineBase)->ty - (wy7 = ((struct Win *)g_menuList.lineBase)->h);
+    wh9 = ((struct Hotspot *)g_menuList.lineBase)->y2 - (wy7 = ((struct Hotspot *)g_menuList.lineBase)->y1);
     bottom9 = page * wh9 + wy7 - 1;
-    idx2 = ((struct Win *)g_menuList.lineBase)->lines;
-    bustyle->c2d = bustyle->pal[idx2];
-    sv5 = bustyle->pal[idx2].line;
+    idx2 = ((struct Hotspot *)g_menuList.lineBase)->styleIndex;
+    bustyle->schemes[STYLE_LIST_COPY] = bustyle->schemes[idx2];
+    sv5 = bustyle->schemes[idx2].line;
     for (;;) {
-        x_colors = bustyle->pal[idx2];
-        w = (struct Win *)g_menuList.lineBase;
+        x_colors = bustyle->schemes[idx2];
+        w = (struct Hotspot *)g_menuList.lineBase;
         cu_ctl(CURSOR_HIDE);
         i = (count5 - topk > page) ? page : count5 - topk;
         lpk = lp11 + topk;
@@ -447,22 +449,22 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
         bpl = buf ? buf1 + topk : 0;
         for (; i--; pc1++, w++, lpk++, bpl++) {
             labeln = (*lpk > -1) ? g_desc + *lpk : d[-*lpk - 1];
-            x = (c ? *pc1 : 0) + w->w;
-            (*g_videoOps.drawText)(r_vid.back, x, w->h, labeln);
-            dr_fill_rect(r_vid.back, g_penPoint.x - 1, g_penPoint.y, w->tx - g_penPoint.x + 1, 8);
+            x = (c ? *pc1 : 0) + w->x1;
+            (*g_videoOps.drawText)(r_vid.back, x, w->y1, labeln);
+            dr_fill_rect(r_vid.back, g_penPoint.x - 1, g_penPoint.y, w->x2 - g_penPoint.x + 1, 8);
             if (buf && (wear = *bpl) != -128)
-                (*g_videoOps.drawText)(r_vid.back, w->tx - strlen(g_wearText) * 6, w->h, wear_text(wear));
+                (*g_videoOps.drawText)(r_vid.back, w->x2 - strlen(g_wearText) * 6, w->y1, wear_text(wear));
         }
         if (!g_hideSelectFrameVal) {
-            w = (struct Win *)(0x12 * sel + g_menuList.lineBase);
-            x_colors = bustyle->pal[w->lines];
-            dr_frame(r_vid.back, w->w, w->h, ww9, 8);
+            w = (struct Hotspot *)(0x12 * sel + g_menuList.lineBase);
+            x_colors = bustyle->schemes[w->styleIndex];
+            dr_frame(r_vid.back, w->x1, w->y1, ww9, 8);
         }
         cu_ctl(CURSOR_SHOW);
         if (r_vid.copyToFront)
             bm_copy_box(r_vid.back, r_vid.front, wx8 - 1, wy7 - 1, right + 1, bottom9 + 1);
     restore:
-        x_colors = bustyle->pal[idx2];
+        x_colors = bustyle->schemes[idx2];
         if (r_vid.mode == VID_HERCULES)
             x_colors.text = 0;
         while ((key2 = sy_wait_input(0)) == 0) {
@@ -475,23 +477,23 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
             x1 = y1 = 1000;
             x2 = y2 = -1;
             if (i) {
-                w = (struct Win *)(0x12 * (nw5 = g_cursHoverCodeVal - 1) + g_menuList.lineBase);
-                x1 = w->w;
-                y1 = w->h;
-                x2 = w->tx;
+                w = (struct Hotspot *)(0x12 * (nw5 = g_cursHoverCodeVal - 1) + g_menuList.lineBase);
+                x1 = w->x1;
+                y1 = w->y1;
+                x2 = w->x2;
                 if (kind != KM_CAR_INFO)
-                    (*g_videoOps.recolorRegion)(r_vid.back, x_colors.text, sv5, x1, y1, x2, w->h + 8);
-                y2 = w->ty;
+                    (*g_videoOps.recolorRegion)(r_vid.back, x_colors.text, sv5, x1, y1, x2, w->y1 + 8);
+                y2 = w->y2;
             } else
                 nw5 = -1;
             if (curl >= 0) {
-                w = (struct Win *)(0x12 * curl + g_menuList.lineBase);
+                w = (struct Hotspot *)(0x12 * curl + g_menuList.lineBase);
                 if (kind != KM_CAR_INFO)
-                    (*g_videoOps.recolorRegion)(r_vid.back, sv5, x_colors.text, w->w, w->h, w->tx, w->h + 8);
-                x1 = (w->w > x1) ? x1 : w->w;
-                y1 = (w->h > y1) ? y1 : w->h;
-                x2 = (w->tx < x2) ? x2 : w->tx;
-                y2 = (w->ty < y2) ? y2 : w->ty;
+                    (*g_videoOps.recolorRegion)(r_vid.back, sv5, x_colors.text, w->x1, w->y1, w->x2, w->y1 + 8);
+                x1 = (w->x1 > x1) ? x1 : w->x1;
+                y1 = (w->y1 > y1) ? y1 : w->y1;
+                x2 = (w->x2 < x2) ? x2 : w->x2;
+                y2 = (w->y2 < y2) ? y2 : w->y2;
             }
             cu_ctl(CURSOR_SHOW);
             if (r_vid.copyToFront)
@@ -516,21 +518,21 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
                 }
                 if (!g_hideSelectFrameVal) {
                     cu_ctl(CURSOR_HIDE);
-                    w = (struct Win *)(0x12 * sel + g_menuList.lineBase);
-                    x_colors = bustyle->pal[idx2];
+                    w = (struct Hotspot *)(0x12 * sel + g_menuList.lineBase);
+                    x_colors = bustyle->schemes[idx2];
                     nw5 = x_colors.line;
                     x_colors.line = x_colors.textBg;
-                    dr_frame(r_vid.back, x1 = w->w, y1 = w->h, ww9, 8);
+                    dr_frame(r_vid.back, x1 = w->x1, y1 = w->y1, ww9, 8);
                     x2 = x1-- + ww9;
                     y2 = y1-- + 8;
                     x_colors.line = nw5;
-                    w = (struct Win *)(0x12 * i + g_menuList.lineBase);
-                    dr_frame(r_vid.back, w->w, w->h, ww9, 8);
+                    w = (struct Hotspot *)(0x12 * i + g_menuList.lineBase);
+                    dr_frame(r_vid.back, w->x1, w->y1, ww9, 8);
                     cu_ctl(CURSOR_SHOW);
                     if (r_vid.copyToFront)
-                        bm_copy_box(r_vid.back, r_vid.front, (w->w - 1 > x1) ? x1 : w->w - 1,
-                                    (w->h - 1 > y1) ? y1 : w->h - 1, (w->w + ww9 + 2 < x2) ? x2 : w->w + ww9 + 2,
-                                    (w->h + wh9 + 2 < y2) ? y2 : w->h + wh9 + 2);
+                        bm_copy_box(r_vid.back, r_vid.front, (w->x1 - 1 > x1) ? x1 : w->x1 - 1,
+                                    (w->y1 - 1 > y1) ? y1 : w->y1 - 1, (w->x1 + ww9 + 2 < x2) ? x2 : w->x1 + ww9 + 2,
+                                    (w->y1 + wh9 + 2 < y2) ? y2 : w->y1 + wh9 + 2);
                 }
                 sel = i;
             }
@@ -543,7 +545,7 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
         case KR_EDIT_HEADER:
             if (kind == KM_SAVE && !strcmp(g_blankName, bufpl))
                 strcpy(bufpl, "\0");
-            x_colors = bustyle->pal[hotn->styleIndex];
+            x_colors = bustyle->schemes[hotn->styleIndex];
             mn_push(KM_MESSAGE);
             ed_line(hotn->x1, hotn->y1, bufpl, n9);
             mn_pop(1);
@@ -569,8 +571,9 @@ int mn_list(enum ScreenId kind, int sel, int *c, int *list, char *buf, char **d)
         scroll:
             if (i < topk) {
                 if ((nw5 = count5 - topk) < page) {
-                    w = (struct Win *)(0x12 * nw5 + g_menuList.lineBase);
-                    dr_fill_rect(r_vid.back, w->w, w->h, ww9, ((topk - i > page - nw5) ? page - nw5 : topk - i) * wh9);
+                    w = (struct Hotspot *)(0x12 * nw5 + g_menuList.lineBase);
+                    dr_fill_rect(r_vid.back, w->x1, w->y1, ww9,
+                                 ((topk - i > page - nw5) ? page - nw5 : topk - i) * wh9);
                 }
             }
         }

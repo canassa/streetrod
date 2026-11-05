@@ -423,3 +423,12 @@ MSC 5.1 rejects an enum member equal to `0x8000` with C2141 (out of range).
 Name that unsigned word bit with a `#define`; keep the lower flag bits in the
 enum and preserve unsigned storage. ROAD.H uses this for the terrain gantry
 and unused roadside top bits. All 572 functions and the packed EXE still match.
+
+### Retyping one local in a combined declaration (2026-11-05)
+
+A local's declaration position matters when its hash bucket is shared. In
+mn_list, changing idx2 to enum StyleIndex by moving it after the whole original
+int declaration changed nineteen stack-offset bytes, despite the same names,
+sizes and function length. Split the int declaration at the original local:
+`int *pc1, *c1, curl; enum StyleIndex idx2; int n9, ww9, wy7, wx8;`.
+This preserves insertion order and all bytes. See plans/investigations/misleading-names.md.

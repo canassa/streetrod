@@ -14,12 +14,12 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-static struct Win *g_popupLayout;
+static struct PopupLayout *g_popupLayout;
 static int g_unused24[2]; /* PROVISIONAL: 4 unreferenced bytes after g_popupLayout */
 
-static struct Win g_popupWins[3] = {{PIC_SPEECH_BUBBLE_LEFT, 1, 72, 30, 152, 37, 0, 6, 144},
-                                    {PIC_SPEECH_BUBBLE_RIGHT, 1, 80, 30, 232, 37, 0, 6, 223},
-                                    {PIC_SPEECH_BUBBLE_TWO_LINES, 2, 80, 20, 232, 46, 0, 6, 223}};
+static struct PopupLayout g_popupWins[3] = {{PIC_SPEECH_BUBBLE_LEFT, 1, 72, 30, 152, 37, 0, 6, 144},
+                                            {PIC_SPEECH_BUBBLE_RIGHT, 1, 80, 30, 232, 37, 0, 6, 223},
+                                            {PIC_SPEECH_BUBBLE_TWO_LINES, 2, 80, 20, 232, 46, 0, 6, 223}};
 static struct Bitmap far *g_popupSave = 0;
 
 /* Copy the rectangle (x, y, w, h) of the back buffer into pict new bitmap and return it.
@@ -93,7 +93,7 @@ void pu_open(int n)
 
     cu_ctl(CURSOR_HIDE);
     if (g_popupSave) {
-        pu_put(g_popupSave, g_popupLayout->x, g_popupLayout->y);
+        pu_put(g_popupSave, g_popupLayout->left, g_popupLayout->top);
         ma_pop_high(1);
         g_popupSave = 0;
     }
@@ -103,13 +103,13 @@ void pu_open(int n)
     txt = g_descHdr + n + 1;
     rec = txt[-1] - 1;
     g_popupLayout = &g_popupWins[rec];
-    g_popupSave =
-        pu_grab(x0 = g_popupLayout->x, y1 = g_popupLayout->y, w1 = g_popupLayout->w, h1 = g_popupLayout->h, 0);
-    bm_draw_pic(r_vid.back, g_popupLayout->bg, (unsigned char)x0, (unsigned char)y1, 0);
-    x_colors = bustyle->popup;
-    x0 += g_popupLayout->tx;
-    y1 += g_popupLayout->ty;
-    lines = g_popupLayout->lines;
+    g_popupSave = pu_grab(x0 = g_popupLayout->left, y1 = g_popupLayout->top, w1 = g_popupLayout->width,
+                          h1 = g_popupLayout->height, 0);
+    bm_draw_pic(r_vid.back, g_popupLayout->pictureId, (unsigned char)x0, (unsigned char)y1, 0);
+    x_colors = bustyle->schemes[STYLE_POPUP];
+    x0 += g_popupLayout->textX;
+    y1 += g_popupLayout->textY;
+    lines = g_popupLayout->lineCount;
     while (lines--) {
         (*g_videoOps.drawText)(r_vid.back, ((w1 - da_text_width(txt)) >> 1) + x0, y1, txt);
         txt = txt + strlen(txt) + 1;
@@ -117,8 +117,8 @@ void pu_open(int n)
     }
     cu_ctl(CURSOR_SHOW);
     if (r_vid.copyToFront)
-        bm_copy_box(r_vid.back, r_vid.front, g_popupLayout->x, g_popupLayout->y, g_popupLayout->x + w1 - 1,
-                    g_popupLayout->y + h1 - 1);
+        bm_copy_box(r_vid.back, r_vid.front, g_popupLayout->left, g_popupLayout->top, g_popupLayout->left + w1 - 1,
+                    g_popupLayout->top + h1 - 1);
     if (close) {
         ma_pop_high(1);
         g_popupSave = 0;
@@ -136,15 +136,15 @@ void pu_open_at(int n, int x, int y)
     int oy;
 
     idx = g_descHdr[abs(n)] - 1;
-    ox = g_popupWins[idx].x;
-    oy = g_popupWins[idx].y;
+    ox = g_popupWins[idx].left;
+    oy = g_popupWins[idx].top;
     if (x >= 0)
-        g_popupWins[idx].x = x;
+        g_popupWins[idx].left = x;
     if (y >= 0)
-        g_popupWins[idx].y = y;
+        g_popupWins[idx].top = y;
     pu_open(n);
-    g_popupWins[idx].x = ox;
-    g_popupWins[idx].y = oy;
+    g_popupWins[idx].left = ox;
+    g_popupWins[idx].top = oy;
     g_clickEnds = 0;
 }
 
@@ -153,7 +153,7 @@ void pu_open_at(int n, int x, int y)
 void pu_close(void)
 {
     if (g_popupSave) {
-        pu_show(g_popupSave, g_popupLayout->x, g_popupLayout->y);
+        pu_show(g_popupSave, g_popupLayout->left, g_popupLayout->top);
         ma_pop_high(1);
         g_popupSave = 0;
     }

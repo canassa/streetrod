@@ -18,7 +18,7 @@
 #define KING_FIRST_CHANCE 50
 /** @} */
 /** Departing cars required before the carhop can arrive. */
-#define CARHOP_MIN_PASSES 3
+#define CARHOP_MIN_DEPARTURES 3
 /**
  * @name Carhop arrival odds
  * @brief Arrival percentage points for orders, jail visits and base odds.
@@ -270,7 +270,8 @@ extern struct Wager g_raceWagerTerms;
  */
 #define NUM_RACERS 22
 #define RACER_KING 21
-#define RACER_COP_ENTRY 10
+/** Ordinary rival slot whose racing behavior is borrowed by police. */
+#define RACER_POLICE_BEHAVIOR_SLOT 10
 #define RACERS_PER_GROUP 7
 /** @} */
 
@@ -283,17 +284,20 @@ enum RacerStatus {
     RACER_MET = 1      /**< Callable; the King is eligible to race. */
 };
 
+/** Rival records, including the King, indexed by encounter selection. */
 extern struct Racer g_racerRecordsArray[];
 extern int g_bannerX;
 extern struct Btn g_jailBars[7];
 extern struct Pair g_jailGaps[];
 extern struct Bitmap far *g_barJailPixels;
 extern int g_opponentSpecIndex;
-extern int g_resultWin;
+/** TRUE when the player won the most recent race. */
+extern BOOL g_driverWonFlag;
 extern int g_isKingState;
 extern struct CarSpec *g_oppSpecPointer;
 extern struct Racer *g_selectedRacerPointer;
-extern int g_driverIdxSelVal;
+/** Selected rival's index in @ref g_racerRecordsArray. */
+extern int g_racerActiveSlot;
 extern int g_rivalHereState;
 extern struct Bitmap far *g_edgeBmpJail;
 void bo_visit(void);

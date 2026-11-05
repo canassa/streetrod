@@ -6,6 +6,8 @@
 #ifndef HOTSPOT_H
 #define HOTSPOT_H
 
+#include "VIDEO.H"
+
 /** @brief Menu drawing operations and hit-test record kinds. */
 enum HotKind {
     HOT_UNSET = 0,           /**< Zero record; draws nothing. */
@@ -35,8 +37,9 @@ enum HotKind {
  */
 struct Hotspot {
     enum HotKind kind; /**< Drawing and hit-test role. */
-    int styleIndex;    /**< Drawing-style bank; zero suppresses box drawing. */
-    int textOffset;    /**< Text/edit-buffer byte offset in UI text storage. */
+    /** Drawing scheme; @ref STYLE_NONE suppresses box drawing. */
+    enum StyleIndex styleIndex;
+    int textOffset; /**< Text/edit-buffer byte offset in UI text storage. */
     /** Hit result, or a @ref g_hots skip index for @ref HOT_LINK_BOX. */
     int hitCode;
     int x1;       /**< Left screen-pixel coordinate. */

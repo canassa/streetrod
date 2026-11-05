@@ -199,11 +199,11 @@ void fa_show(int add)
     sc_picture(PIC_HALL_OF_FAME, -1);
     g_picturePlacement.maxHeight = old;
     vi_swap_pal();
-    sv286 = bustyle->c28;
-    sv23 = bustyle->c23;
+    sv286 = bustyle->schemes[STYLE_MESSAGE_BUTTON];
+    sv23 = bustyle->schemes[STYLE_MESSAGE];
     if (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) {
-        bustyle->c28 = g_fameColors1;
-        bustyle->c23 = g_fameColors2;
+        bustyle->schemes[STYLE_MESSAGE_BUTTON] = g_fameColors1;
+        bustyle->schemes[STYLE_MESSAGE] = g_fameColors2;
     }
     (*g_videoOps.show)();
     if (add) {
@@ -249,7 +249,7 @@ void fa_show(int add)
         da_wait_key(700);
     }
     (*g_videoOps.blank)();
-    bustyle->c28 = sv286;
-    bustyle->c23 = sv23;
+    bustyle->schemes[STYLE_MESSAGE_BUTTON] = sv286;
+    bustyle->schemes[STYLE_MESSAGE] = sv23;
     vi_swap_pal();
 }

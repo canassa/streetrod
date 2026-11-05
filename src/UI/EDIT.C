@@ -140,7 +140,7 @@ int ed_number(int x, int y, char *s, int *out)
     char buf[20];
     int rl;
 
-    x_colors = bustyle->pal[5];
+    x_colors = bustyle->schemes[STYLE_TEXT];
     sc_text(x, y, s);
     g_editDigits = 1;
     buf[0] = 0;
@@ -158,7 +158,7 @@ int ed_spot_number(int *out, char *buf)
 {
     int rl;
 
-    x_colors = bustyle->pal[g_menuList.header->styleIndex];
+    x_colors = bustyle->schemes[g_menuList.header->styleIndex];
     g_editDigits = 1;
     rl = ed_line(g_menuList.header->x1, g_menuList.header->y1, buf,
                  (g_menuList.header->x2 - g_menuList.header->x1) / 6 > 10
@@ -192,7 +192,7 @@ int ed_text_box(enum ScreenId id, int len, char *s)
     int rl;
 
     mn_push(id);
-    x_colors = bustyle->pal[g_menuList.header->styleIndex];
+    x_colors = bustyle->schemes[g_menuList.header->styleIndex];
     rl = ed_line(g_menuList.header->x1, g_menuList.header->y1, s, len);
     mn_pop(1);
     return rl > 0 ? 0 : rl;

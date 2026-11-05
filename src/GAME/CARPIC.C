@@ -20,6 +20,7 @@
 #include "POPUP.H"
 #include "RACE.H"
 #include "SPRITE.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 #include "VIDEO.H"
 
@@ -91,7 +92,7 @@ static struct Rect g_overlayRectA = {0, 0, 80, 0};
 static struct Rect g_overlayRectB = {88, 0, 136, 0};
 int g_backdropX = 0;
 static int g_backdropW = 0;
-int g_carPassBy = 0;
+enum PassByPhase g_carPassPhase = PASS_BY_NONE;
 
 /* Blit one 4-plane EGA image row set, one plane at a time via the sequencer map mask */
 
@@ -276,195 +277,196 @@ static void near build_pump_strip(int x, int y, int sx0, int top, struct Bitmap 
     ma_pop_high(1);
 }
 
-/* Load the bitmap of car part idx into out[0], paint its marks, and build the n frame copies
-   out[1..] */
-
-void cp_build(struct Bitmap far **out, int idx, int flags, int kk, int q, int *ids, int w, int n)
+void cp_build(struct Bitmap far **frames, int specIndex, enum BodyMod bodyMods, int sticker, BOOL showPortrait,
+              int *tirePics, BOOL showShadow, int frameCount)
 {
-    int row8;
-    struct Blt blt;
-    struct Spr12 *p12;
-    struct Pos6 *pp8;
-    int h;
-    int off;
+    struct Model *bodyModel;
+    int right;
+    struct Spr6 *servicePoints;
+    int imageFrame;
+    struct Bitmap far *pic;
+    struct Bitmap far *carShadow;
+    int framePixelShift;
     int left;
-    struct Model *m2;
-    int right1;
-    struct Spr6 *p69;
-    int j5;
-    struct Bitmap far *bm;
-    struct Bitmap far *bm2n;
+    struct Pos6 *decal;
+    int underY;
+    struct Spr12 *carLayout;
+    struct Blt blt;
+    int roofCut;
 
-    m2 = &g_models[idx];
-    p12 = &g_layoutAutoSprArray[idx];
-    p69 = &g_pointsModelService[idx];
-    *out = di_bm(g_carData[idx].bodyPic, ARENA_LOW_STACK);
-    g_featurePos.gasCapX = p69->fuelCapX;
-    g_featurePos.gasCapY = p69->fuelCapY;
-    g_featurePos.rearGlassX = p69->rearGlassX;
-    g_featurePos.rearGlassY = p69->rearGlassY;
-    g_featurePos.hasRearGlass = p69->rearGlassX && p69->rearGlassY;
-    g_featurePos.frontGlassX = p69->frontGlassX;
-    g_featurePos.frontGlassY = p69->frontGlassY;
-    g_carDraw.stickerSubX = ~r_vid.mask & p12->stickerX;
-    g_carDraw.stickerX = r_vid.mask & p12->stickerX;
-    g_carDraw.stickerY = p12->stickerY;
-    if (flags & BODY_REAR_BUMPER)
-        bm_put_pic(*out, m2->rearBumperRemovalPic, 0, p12->rearBumperY);
-    if (flags & BODY_FRONT_BUMPER)
-        bm_put_pic(*out, m2->frontBumperRemovalPic, p12->frontBumperX, p12->frontBumperY);
-    if (flags & BODY_ROOF) {
-        bm_put_pic(*out, m2->choppedRoofPic, p12->roofX, 0);
-        for (j5 = 0; j5 < g_lastPic->pixelBytes / r_vid.planes; j5++)
-            if (((unsigned char far *)g_lastPic->mask.p)[j5] != 0xff)
+    bodyModel = &g_models[specIndex];
+    carLayout = &g_layoutAutoSprArray[specIndex];
+    servicePoints = &g_pointsModelService[specIndex];
+    *frames = di_bm(g_carData[specIndex].bodyPic, ARENA_LOW_STACK);
+    g_featurePos.gasCapX = servicePoints->fuelCapX;
+    g_featurePos.gasCapY = servicePoints->fuelCapY;
+    g_featurePos.rearGlassX = servicePoints->rearGlassX;
+    g_featurePos.rearGlassY = servicePoints->rearGlassY;
+    g_featurePos.hasRearGlass = servicePoints->rearGlassX && servicePoints->rearGlassY;
+    g_featurePos.frontGlassX = servicePoints->frontGlassX;
+    g_featurePos.frontGlassY = servicePoints->frontGlassY;
+    g_carDraw.stickerSubX = ~r_vid.mask & carLayout->stickerX;
+    g_carDraw.stickerX = r_vid.mask & carLayout->stickerX;
+    g_carDraw.stickerY = carLayout->stickerY;
+    if (bodyMods & BODY_REAR_BUMPER)
+        bm_put_pic(*frames, bodyModel->rearBumperRemovalPic, 0, carLayout->rearBumperY);
+    if (bodyMods & BODY_FRONT_BUMPER)
+        bm_put_pic(*frames, bodyModel->frontBumperRemovalPic, carLayout->frontBumperX, carLayout->frontBumperY);
+    if (bodyMods & BODY_ROOF) {
+        bm_put_pic(*frames, bodyModel->choppedRoofPic, carLayout->roofX, 0);
+        for (imageFrame = 0; imageFrame < g_lastPic->pixelBytes / r_vid.planes; imageFrame++)
+            if (((unsigned char far *)g_lastPic->mask.p)[imageFrame] != 0xff)
                 break;
-        row8 = j5 / g_lastPic->pitch;
+        roofCut = imageFrame / g_lastPic->pitch;
     } else
-        row8 = 0;
-    if ((flags & BODY_LARGE_ENGINE) && idx != SPEC_KING)
-        bm_draw_pic(*out, m2->engineOverlayPic, p12->b5, p12->b6, 1);
+        roofCut = 0;
+    if ((bodyMods & BODY_LARGE_ENGINE) && specIndex != SPEC_KING)
+        bm_draw_pic(*frames, bodyModel->engineOverlayPic, carLayout->b5, carLayout->b6, 1);
     blt.w = g_stickerBg->width;
     blt.h = g_stickerBg->height;
-    blt.sx = p12->stickerX;
-    blt.sy = p12->stickerY;
+    blt.sx = carLayout->stickerX;
+    blt.sy = carLayout->stickerY;
     blt.dx = blt.dy = 0;
-    (*g_videoOps.copy)(*out, g_stickerBg, &blt, 1);
-    if (kk > 0) {
-        pp8 = &g_imageDecalLayout[kk - 1];
-        bm_draw_pic(*out, pp8->id, p12->stickerX + pp8->dx, p12->stickerY + pp8->dy, 0);
+    (*g_videoOps.copy)(*frames, g_stickerBg, &blt, 1);
+    if (sticker > 0) {
+        decal = &g_imageDecalLayout[sticker - 1];
+        bm_draw_pic(*frames, decal->id, carLayout->stickerX + decal->dx, carLayout->stickerY + decal->dy, 0);
     }
-    if (q) {
-        bm = di_bm(g_carDraw.overlayPic, ARENA_HIGH_STACK);
-        bm_underlay(bm, *out, p12->b2, p12->b3 - bm->height + row8 + 1);
+    if (showPortrait) {
+        pic = di_bm(g_carDraw.portraitPic, ARENA_HIGH_STACK);
+        bm_underlay(pic, *frames, carLayout->b2, carLayout->b3 - pic->height + roofCut + 1);
         ma_pop_high(1);
     }
-    j5 = 1;
-    for (j5 = 1; j5 < n; j5++)
-        out[j5] = ar_bm((*out)->width + (r_vid.mode == VID_TANDY ? 0 : 8), (*out)->height, r_vid.mode != VID_TANDY,
-                        ARENA_LOW_STACK);
-    if (n > 1) {
+    imageFrame = 1;
+    for (imageFrame = 1; imageFrame < frameCount; imageFrame++)
+        frames[imageFrame] = ar_bm((*frames)->width + (r_vid.mode == VID_TANDY ? 0 : 8), (*frames)->height,
+                                   r_vid.mode != VID_TANDY, ARENA_LOW_STACK);
+    if (frameCount > 1) {
         switch (r_vid.mode) {
         case VID_EGA:
-            for (j5 = 1; j5 < n; j5++)
-                bm_shift_right(out[j5 - 1], 2, out[j5]);
+            for (imageFrame = 1; imageFrame < frameCount; imageFrame++)
+                bm_shift_right(frames[imageFrame - 1], 2, frames[imageFrame]);
             break;
         case VID_TANDY:
-            for (j5 = 1; j5 < n; j5++) {
-                bm_copy(out[0], out[j5], 1);
-                out[j5]->mask.p = out[0]->mask.p;
+            for (imageFrame = 1; imageFrame < frameCount; imageFrame++) {
+                bm_copy(frames[0], frames[imageFrame], 1);
+                frames[imageFrame]->mask.p = frames[0]->mask.p;
             }
             break;
         default:
-            bm_shift_right(out[0], 2, out[1]);
-            bm_copy(out[0], out[2], 3);
-            bm_copy(out[1], out[3], 3);
+            bm_shift_right(frames[0], 2, frames[1]);
+            bm_copy(frames[0], frames[2], 3);
+            bm_copy(frames[1], frames[3], 3);
             break;
         }
     }
-    if (ids) {
-        for (j5 = 0; j5 < n; j5++) {
-            bm = di_bm(ids[j5], ARENA_HIGH_STACK);
-            h = out[j5]->height - bm->height;
+    if (tirePics) {
+        for (imageFrame = 0; imageFrame < frameCount; imageFrame++) {
+            pic = di_bm(tirePics[imageFrame], ARENA_HIGH_STACK);
+            underY = frames[imageFrame]->height - pic->height;
             switch (r_vid.mode) {
             case VID_EGA:
-                off = j5 * 2;
+                framePixelShift = imageFrame * 2;
                 break;
             case VID_TANDY:
-                off = 0;
-                g_keepMask = n - 1 > j5;
+                framePixelShift = 0;
+                g_keepMask = frameCount - 1 > imageFrame;
                 break;
             default:
-                off = (j5 & 1) << 1;
+                framePixelShift = (imageFrame & 1) << 1;
                 break;
             }
-            bm_underlay(bm, out[j5], p12->wheelX1 + off, h);
-            bm_underlay(bm, out[j5], p12->wheelX2 + off, h);
+            bm_underlay(pic, frames[imageFrame], carLayout->wheelX1 + framePixelShift, underY);
+            bm_underlay(pic, frames[imageFrame], carLayout->wheelX2 + framePixelShift, underY);
             ma_pop_high(1);
         }
     }
-    if (w) {
-        bm2n = di_bm(PIC_CAR_SHADOW, ARENA_HIGH_STACK);
-        bm_opaque_span(*out, &left, &right1);
-        h = (*out)->height - bm2n->height;
-        for (j5 = 0; j5 < n; j5++) {
+    if (showShadow) {
+        carShadow = di_bm(PIC_CAR_SHADOW, ARENA_HIGH_STACK);
+        bm_opaque_span(*frames, &left, &right);
+        underY = (*frames)->height - carShadow->height;
+        for (imageFrame = 0; imageFrame < frameCount; imageFrame++) {
             switch (r_vid.mode) {
             case VID_EGA:
-                off = j5 * 2;
+                framePixelShift = imageFrame * 2;
                 break;
             case VID_TANDY:
-                off = 0;
-                g_keepMask = n - 1 > j5;
+                framePixelShift = 0;
+                g_keepMask = frameCount - 1 > imageFrame;
                 break;
             default:
-                off = (j5 & 1) << 1;
+                framePixelShift = (imageFrame & 1) << 1;
                 break;
             }
-            bm_underlay(bm2n, out[j5], left + off, h);
-            bm_underlay(bm2n, out[j5], right1 - bm2n->width + off + 1, h);
+            bm_underlay(carShadow, frames[imageFrame], left + framePixelShift, underY);
+            bm_underlay(carShadow, frames[imageFrame], right - carShadow->width + framePixelShift + 1, underY);
         }
         ma_pop_high(1);
     }
 }
 
 
-void cp_show_car(enum CarAnimKind kind, int idx, int flags, int kk, int q, int bot, int mode2, int *ids)
+void cp_show_car(enum CarAnimKind animation, int specIndex, enum BodyMod bodyMods, int sticker, BOOL showPortrait,
+                 int carBottom, BOOL useGasMask, int *tirePics)
 {
-    int n2;
+    int backgroundColor;
+    int carHeight;
+    char far *bandBackgroundData;
+    int carPicFlags;
+    struct Bitmap far *savedBg;
+    int driveSpan;
+    struct Bitmap far *canvas;
+    int pumpBitmapFlags;
+    struct Bitmap far *workBg;
+    int backdropTop;
+    struct Rect *rightForeground;
+    int pumpPicHeight;
+    struct Rect *leftForeground;
+    int pumpImageWidth;
+    struct Bitmap far *carFrames[4];
+    int spriteXPixels;
+    int imageWidth;
+    struct Bitmap far *capSave;
+    int bandHeightPixels;
+    struct Sprite *carSpritePtr;
+    int centeredX;
     struct Blt blt;
-    struct Bitmap far *bms6[4];
-    int ang2;
-    int w1;
-    struct Bitmap far *scratch;
-    int hh8;
-    struct Sprite *spr3;
-    int x0;
-    struct Rect *pr16;
-    int w2;
-    int x2;
-    struct Bitmap far *pb8;
-    int top7;
-    struct Rect *pr26;
-    int h2;
-    struct Bitmap far *bm48;
-    int right;
-    int tmpn;
-    int h7;
-    char far *mask3;
-    int x7;
-    struct Bitmap far *pan;
+    int frameCnt;
 
-    top7 = bot - (BACKDROP_ROWS - 1);
+    backdropTop = carBottom - (BACKDROP_ROWS - 1);
     cu_ctl(CURSOR_HIDE_NOW);
 again:
-    n2 = (kind == CAR_SHOW_BACK_PAGE || kind == CAR_SHOW_SCREEN || kind == CAR_SHOW_BACKDROP) ? 1 : 4;
-    di_pic_size(g_carData[idx].bodyPic, &w1, &h7, &x7);
+    frameCnt =
+        (animation == CAR_SHOW_BACK_PAGE || animation == CAR_SHOW_SCREEN || animation == CAR_SHOW_BACKDROP) ? 1 : 4;
+    di_pic_size(g_carData[specIndex].bodyPic, &imageWidth, &carHeight, &carPicFlags);
     g_spriteBottomCut = g_carBottomCuts[g_scene];
-    tmpn = (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? g_carBg4[g_scene] : g_carBg16[g_scene];
-    hh8 = (kind == CAR_SHOW_BACK_PAGE || kind == CAR_SHOW_SCREEN || kind == CAR_SHOW_BACKDROP)
-              ? h7 - g_spriteBottomCut
-              : g_carBandHeights[g_scene];
-    x0 = ((SCREEN_WIDTH - w1) / 2 + 4) & 0xfff8;
-    right = kind == CAR_DRIVE_OUT ? SCREEN_WIDTH - x0 : x0 + w1;
-    if (g_carPassBy != 2) {
-        if (kind == CAR_PULL_IN) {
+    backgroundColor = (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY) ? g_carBg4[g_scene] : g_carBg16[g_scene];
+    bandHeightPixels =
+        (animation == CAR_SHOW_BACK_PAGE || animation == CAR_SHOW_SCREEN || animation == CAR_SHOW_BACKDROP)
+            ? carHeight - g_spriteBottomCut
+            : g_carBandHeights[g_scene];
+    centeredX = ((SCREEN_WIDTH - imageWidth) / 2 + 4) & 0xfff8;
+    driveSpan = animation == CAR_DRIVE_OUT ? SCREEN_WIDTH - centeredX : centeredX + imageWidth;
+    if (g_carPassPhase != PASS_BY_DEPARTING) {
+        if (animation == CAR_PULL_IN) {
             g_carPulledIn = 1;
             if (r_vid.mode == VID_EGA) {
                 me_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, SCREEN_WIDTH, BACKDROP_ROWS - g_spriteBottomCut,
                               VID_EGA);
-                ea_rect(r_vid.back->bits.p, g_backdrop->bits.p - EGA_PITCH * top7, EGA_PITCH, g_backdrop->height, 0,
-                        top7, EGA_PITCH);
+                ea_rect(r_vid.back->bits.p, g_backdrop->bits.p - EGA_PITCH * backdropTop, EGA_PITCH, g_backdrop->height,
+                        0, backdropTop, EGA_PITCH);
             } else {
                 me_set_bitmap(g_backdrop, g_pageBmps[2]->bits.p, 0, SCREEN_WIDTH, BACKDROP_ROWS - g_spriteBottomCut,
                               BITMAP_WORK);
-                pu_grab(0, top7, SCREEN_WIDTH, g_backdrop->height, g_backdrop);
+                pu_grab(0, backdropTop, SCREEN_WIDTH, g_backdrop->height, g_backdrop);
             }
         }
-        if (kind == CAR_PULL_IN) {
+        if (animation == CAR_PULL_IN) {
             ma_clear();
             if (g_scene == SCENE_GAS_STATION) {
-                di_pic_size(PIC_PUMP_WITHOUT_NOZZLE, &w2, &h2, &x2);
-                g_pumpWithNozzle = ar_bm(w2, h2, 0, ARENA_LOW_BASE);
-                g_pumpNoNozzle = ar_bm(w2, h2, 0, ARENA_LOW_BASE);
+                di_pic_size(PIC_PUMP_WITHOUT_NOZZLE, &pumpImageWidth, &pumpPicHeight, &pumpBitmapFlags);
+                g_pumpWithNozzle = ar_bm(pumpImageWidth, pumpPicHeight, 0, ARENA_LOW_BASE);
+                g_pumpNoNozzle = ar_bm(pumpImageWidth, pumpPicHeight, 0, ARENA_LOW_BASE);
             }
             if (g_scene == SCENE_BOBS || g_scene == SCENE_JAIL)
                 ch_save_bg();
@@ -472,138 +474,146 @@ again:
             ma_release();
         if (!g_stickerBg)
             g_stickerBg = ar_bm(0x40, 0x19, 0, ARENA_LOW_BASE);
-        cp_build(bms6, idx, flags, kk, q, ids, 1, n2);
-        if (r_vid.mode == VID_TANDY && kind != CAR_SHOW_BACK_PAGE && kind != CAR_SHOW_SCREEN &&
-            kind != CAR_SHOW_BACKDROP) {
-            make_frames(bms6, n2, g_spriteBottomCut, hh8, tmpn);
-            bms6[1] = bms6[2] = bms6[3] = bms6[0];
+        cp_build(carFrames, specIndex, bodyMods, sticker, showPortrait, tirePics, TRUE, frameCnt);
+        if (r_vid.mode == VID_TANDY && animation != CAR_SHOW_BACK_PAGE && animation != CAR_SHOW_SCREEN &&
+            animation != CAR_SHOW_BACKDROP) {
+            make_frames(carFrames, frameCnt, g_spriteBottomCut, bandHeightPixels, backgroundColor);
+            carFrames[1] = carFrames[2] = carFrames[3] = carFrames[0];
             ma_pop_low(3);
         }
-        if (kind != CAR_SHOW_BACK_PAGE && kind != CAR_SHOW_SCREEN && kind != CAR_SHOW_BACKDROP) {
-            if (g_carPassBy != 1) {
-                g_backdropW = right;
-                g_backdropX = kind == CAR_DRIVE_OUT ? x0 : 0;
+        if (animation != CAR_SHOW_BACK_PAGE && animation != CAR_SHOW_SCREEN && animation != CAR_SHOW_BACKDROP) {
+            if (g_carPassPhase != PASS_BY_ARRIVING) {
+                g_backdropW = driveSpan;
+                g_backdropX = animation == CAR_DRIVE_OUT ? centeredX : 0;
             } else {
                 g_backdropW = SCREEN_WIDTH;
                 g_backdropX = 0;
             }
-            cp_backdrop(g_backdrop, &pan, mode2 ? PIC_GAS_STATION_MASK : 0, &pb8, BACKDROP_ROWS, h7, &pr16, &pr26);
+            cp_backdrop(g_backdrop, &savedBg, useGasMask ? PIC_GAS_STATION_MASK : 0, &workBg, BACKDROP_ROWS, carHeight,
+                        &leftForeground, &rightForeground);
         }
     }
-    g_picXDraw = x0;
-    g_sprDrawY = bot - bms6[0]->height + 1;
-    g_carVisibleHtValue = bms6[0]->height - g_spriteBottomCut;
+    g_picXDraw = centeredX;
+    g_sprDrawY = carBottom - carFrames[0]->height + 1;
+    g_carVisibleHtValue = carFrames[0]->height - g_spriteBottomCut;
     if (g_featurePos.frontGlassX > 0) {
-        g_featurePos.frontGlassX += x0;
+        g_featurePos.frontGlassX += centeredX;
         g_featurePos.frontGlassY += g_sprDrawY;
-        g_featurePos.rearGlassX += x0;
+        g_featurePos.rearGlassX += centeredX;
         g_featurePos.rearGlassY += g_sprDrawY;
     }
-    g_featurePos.gasCapX += x0;
+    g_featurePos.gasCapX += centeredX;
     g_featurePos.gasCapY += g_sprDrawY;
-    g_carDraw.stickerX += x0;
+    g_carDraw.stickerX += centeredX;
     g_carDraw.stickerY += g_sprDrawY;
-    ang2 = (kind == CAR_DRIVE_IN || kind == CAR_PULL_IN) ? x0 - right : x0;
-    if (g_carPassBy != 2) {
+    spriteXPixels = (animation == CAR_DRIVE_IN || animation == CAR_PULL_IN) ? centeredX - driveSpan : centeredX;
+    if (g_carPassPhase != PASS_BY_DEPARTING) {
         if (r_vid.mode == VID_EGA) {
-            if (kind == CAR_SHOW_BACK_PAGE || kind == CAR_SHOW_BACKDROP)
-                mask3 = g_backdrop->bits.p + ((g_backdrop->height - hh8) * g_backdrop->pitch + x0 / 8);
+            if (animation == CAR_SHOW_BACK_PAGE || animation == CAR_SHOW_BACKDROP)
+                bandBackgroundData =
+                    g_backdrop->bits.p + ((g_backdrop->height - bandHeightPixels) * g_backdrop->pitch + centeredX / 8);
             else
-                mask3 = 0;
-            make_bands(g_carSpriteStrips, bms6, n2, g_spriteBottomCut, hh8, mask3, tmpn);
+                bandBackgroundData = 0;
+            make_bands(g_carSpriteStrips, carFrames, frameCnt, g_spriteBottomCut, bandHeightPixels, bandBackgroundData,
+                       backgroundColor);
         }
         if (!((r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) && r_vid.mode != VID_TANDY)) {
-            if (kind == CAR_SHOW_BACK_PAGE || kind == CAR_SHOW_SCREEN || kind == CAR_SHOW_BACKDROP) {
-                bm48 = ar_bm(w1, h7 - g_spriteBottomCut, 0, ARENA_LOW_STACK);
-                if (kind != CAR_SHOW_SCREEN) {
-                    blt.w = w1;
-                    blt.h = h7 - g_spriteBottomCut;
-                    blt.sx = x0;
-                    blt.sy = g_backdrop->height - h7;
+            if (animation == CAR_SHOW_BACK_PAGE || animation == CAR_SHOW_SCREEN || animation == CAR_SHOW_BACKDROP) {
+                canvas = ar_bm(imageWidth, carHeight - g_spriteBottomCut, 0, ARENA_LOW_STACK);
+                if (animation != CAR_SHOW_SCREEN) {
+                    blt.w = imageWidth;
+                    blt.h = carHeight - g_spriteBottomCut;
+                    blt.sx = centeredX;
+                    blt.sy = g_backdrop->height - carHeight;
                     blt.dx = blt.dy = 0;
-                    (*g_videoOps.copy)(g_backdrop, bm48, &blt, 1);
+                    (*g_videoOps.copy)(g_backdrop, canvas, &blt, 1);
                 } else
-                    pu_grab(x0, g_sprDrawY, bm48->width, bm48->height, bm48);
-                blt.w = w1;
-                blt.h = blt.unused1 = h7 - g_spriteBottomCut;
+                    pu_grab(centeredX, g_sprDrawY, canvas->width, canvas->height, canvas);
+                blt.w = imageWidth;
+                blt.h = blt.unused1 = carHeight - g_spriteBottomCut;
                 blt.dx = blt.dy = blt.sx = blt.sy = 0;
-                (*g_videoOps.maskedBlit)(bms6[0], bm48, &blt, 1);
+                (*g_videoOps.maskedBlit)(carFrames[0], canvas, &blt, 1);
             } else if (r_vid.mode != VID_TANDY)
-                make_frames(bms6, n2, g_spriteBottomCut, hh8, tmpn);
+                make_frames(carFrames, frameCnt, g_spriteBottomCut, bandHeightPixels, backgroundColor);
         }
         if (!((r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) && r_vid.mode != VID_TANDY)) {
-            blt.w = w1;
-            blt.h = h7 - g_spriteBottomCut;
+            blt.w = imageWidth;
+            blt.h = carHeight - g_spriteBottomCut;
             blt.sx = blt.sy = 0;
-            blt.dx = x0;
-            blt.dy = bot - h7 + 1;
+            blt.dx = centeredX;
+            blt.dy = carBottom - carHeight + 1;
         }
-        if (kind == CAR_SHOW_BACK_PAGE) {
+        if (animation == CAR_SHOW_BACK_PAGE) {
             if (r_vid.mode == VID_EGA)
-                ea_to_page(g_carSpriteStrips[0].p, bms6[0]->pitch, bms6[0]->height - g_spriteBottomCut,
-                           r_vid.back->bits.p + ((bot - h7) * EGA_PITCH + (x0 >> 3)) + EGA_PITCH, bms6[0]->pitch);
+                ea_to_page(g_carSpriteStrips[0].p, carFrames[0]->pitch, carFrames[0]->height - g_spriteBottomCut,
+                           r_vid.back->bits.p + ((carBottom - carHeight) * EGA_PITCH + (centeredX >> 3)) + EGA_PITCH,
+                           carFrames[0]->pitch);
             else
-                (*g_videoOps.copy)(bm48, r_vid.back, &blt, 1);
+                (*g_videoOps.copy)(canvas, r_vid.back, &blt, 1);
             (*g_videoOps.copyPage)(r_vid.back->bits.p, r_vid.front->bits.p);
             goto done;
-        } else if (kind == CAR_SHOW_SCREEN || kind == CAR_SHOW_BACKDROP) {
+        } else if (animation == CAR_SHOW_SCREEN || animation == CAR_SHOW_BACKDROP) {
             if (r_vid.mode == VID_EGA)
-                ea_to_page(g_carSpriteStrips[0].p, bms6[0]->pitch, h7 - g_spriteBottomCut,
-                           r_vid.front->bits.p + ((bot - h7) * EGA_PITCH + (x0 >> 3)) + EGA_PITCH, bms6[0]->pitch);
+                ea_to_page(g_carSpriteStrips[0].p, carFrames[0]->pitch, carHeight - g_spriteBottomCut,
+                           r_vid.front->bits.p + ((carBottom - carHeight) * EGA_PITCH + (centeredX >> 3)) + EGA_PITCH,
+                           carFrames[0]->pitch);
             else
-                (*g_videoOps.copy)(bm48, r_vid.front, &blt, 1);
-            bm_copy_box(r_vid.front, r_vid.back, x0, bot - h7 + 1, x0 + w1 - 1, bot);
+                (*g_videoOps.copy)(canvas, r_vid.front, &blt, 1);
+            bm_copy_box(r_vid.front, r_vid.back, centeredX, carBottom - carHeight + 1, centeredX + imageWidth - 1,
+                        carBottom);
             goto done;
         }
     }
-    spr3 = sp_setup(ang2, bot, bms6, (char (*)[8])g_carSpriteStrips, n2, pb8, pan, pr16, pr26);
-    sp_plan_drive(spr3, kind, right);
-    if (kind == CAR_BACK_OUT)
-        spr3->page->rect = g_lastCarRect;
-    if (kind == CAR_PULL_IN || kind == CAR_DRIVE_IN || kind == CAR_DRIVE_OUT || kind == CAR_BACK_OUT) {
+    carSpritePtr = sp_setup(spriteXPixels, carBottom, carFrames, (char (*)[8])g_carSpriteStrips, frameCnt, workBg,
+                            savedBg, leftForeground, rightForeground);
+    sp_plan_drive(carSpritePtr, animation, driveSpan);
+    if (animation == CAR_BACK_OUT)
+        carSpritePtr->page->rect = g_lastCarRect;
+    if (animation == CAR_PULL_IN || animation == CAR_DRIVE_IN || animation == CAR_DRIVE_OUT ||
+        animation == CAR_BACK_OUT) {
         g_carAnim = 1;
         g_carMoving = 1;
-        if (g_carPassBy != 2)
+        if (g_carPassPhase != PASS_BY_DEPARTING)
             sy_drive_start();
-        while ((*g_videoOps.spriteStep)(spr3))
+        while ((*g_videoOps.spriteStep)(carSpritePtr))
             ;
-        if (g_carPassBy != 1)
+        if (g_carPassPhase != PASS_BY_ARRIVING)
             sy_drive_stop();
         g_autoSprImagePtr = g_spritePic;
         g_carMoving = 0;
         g_carAnim = 0;
-        g_lastCarRect = spr3->page->rect;
+        g_lastCarRect = carSpritePtr->page->rect;
     }
-    if (g_scene == SCENE_GAS_STATION && kind == CAR_PULL_IN) {
-        scratch = ar_bm(0x18, 7, 0, ARENA_HIGH_STACK);
+    if (g_scene == SCENE_GAS_STATION && animation == CAR_PULL_IN) {
+        capSave = ar_bm(0x18, 7, 0, ARENA_HIGH_STACK);
         blt.w = 0x10;
-        blt.h = scratch->height;
+        blt.h = capSave->height;
         blt.sx = g_featurePos.gasCapX - g_picXDraw;
         blt.sy = g_featurePos.gasCapY - g_sprDrawY;
         blt.dx = blt.dy = 0;
-        (*g_videoOps.copy)(bms6[0], scratch, &blt, 1);
-        bm_draw_pic(bms6[0], PIC_FUEL_CAP, (char)blt.sx, (char)blt.sy, 0);
-        build_pump_strip(0x40, 0x64, g_xCoordSprite, bot, g_pumpWithNozzle, PIC_PUMP_WITH_NOZZLE,
+        (*g_videoOps.copy)(carFrames[0], capSave, &blt, 1);
+        bm_draw_pic(carFrames[0], PIC_FUEL_CAP, (char)blt.sx, (char)blt.sy, 0);
+        build_pump_strip(0x40, 0x64, g_xCoordSprite, carBottom, g_pumpWithNozzle, PIC_PUMP_WITH_NOZZLE,
                          PIC_PUMP_MASK_WITH_NOZZLE);
-        build_pump_strip(0x40, 0x64, g_xCoordSprite, bot, g_pumpNoNozzle, PIC_PUMP_WITHOUT_NOZZLE,
+        build_pump_strip(0x40, 0x64, g_xCoordSprite, carBottom, g_pumpNoNozzle, PIC_PUMP_WITHOUT_NOZZLE,
                          PIC_PUMP_MASK_WITHOUT_NOZZLE);
         blt.dx = blt.sx;
         blt.dy = blt.sy;
         blt.sx = blt.sy = 0;
-        (*g_videoOps.copy)(scratch, bms6[0], &blt, 1);
+        (*g_videoOps.copy)(capSave, carFrames[0], &blt, 1);
     }
     da_set_view(DASH_VIEW_SHOW);
     if (r_vid.mode != VID_EGA)
         (*g_videoOps.copyPage)(r_vid.front->bits.p, r_vid.back->bits.p);
-    if (g_carPassBy == 1) {
-        kind = CAR_DRIVE_OUT;
-        g_carPassBy = 2;
+    if (g_carPassPhase == PASS_BY_ARRIVING) {
+        animation = CAR_DRIVE_OUT;
+        g_carPassPhase = PASS_BY_DEPARTING;
         goto again;
     }
 done:
     g_spriteBottomCut = g_backdropW = g_backdropX = 0;
     ma_release();
-    g_carPassBy = 0;
+    g_carPassPhase = PASS_BY_NONE;
     cu_ctl(CURSOR_SHOW_NOW);
 }
 

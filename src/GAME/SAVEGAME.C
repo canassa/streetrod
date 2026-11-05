@@ -15,6 +15,7 @@
 #include "FAME.H"
 #include "GAME.H"
 #include "GARAGE.H"
+#include "HOTSPOT.H"
 #include "INPUTDAT.H"
 #include "KEYMAPS.H"
 #include "MAIN.H"
@@ -378,7 +379,7 @@ void near sg_save(void)
 {
     int cmp;
     char sv7;
-    struct Win *box7;
+    struct Hotspot *box7;
     struct Colors pal4;
     char name[20];
     unsigned r;
@@ -434,14 +435,14 @@ again:
         ;
     if (cmp == 0) {
         cu_ctl(CURSOR_HIDE);
-        box7 = (struct Win *)(0x12 * (int)r + g_menuList.lineBase - 0x12);
+        box7 = (struct Hotspot *)(0x12 * (int)r + g_menuList.lineBase - 0x12);
         pal4 = x_colors;
-        x_colors = bustyle->pal[((struct Win *)g_menuList.lineBase)->lines];
+        x_colors = bustyle->schemes[((struct Hotspot *)g_menuList.lineBase)->styleIndex];
         sv7 = x_colors.line;
         x_colors.line = x_colors.textBg;
-        wk = ((struct Win *)g_menuList.lineBase)->tx - ((struct Win *)g_menuList.lineBase)->w;
-        dr_frame(r_vid.back, box7->w, box7->h, wk, 8);
-        dr_frame(r_vid.front, box7->w, box7->h, wk, 8);
+        wk = ((struct Hotspot *)g_menuList.lineBase)->x2 - ((struct Hotspot *)g_menuList.lineBase)->x1;
+        dr_frame(r_vid.back, box7->x1, box7->y1, wk, 8);
+        dr_frame(r_vid.front, box7->x1, box7->y1, wk, 8);
         x_colors = pal4;
         x_colors.line = sv7;
         cu_ctl(CURSOR_SHOW);

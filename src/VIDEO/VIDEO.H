@@ -46,17 +46,32 @@ struct Colors {
     char frame;
 };
 
+/** @brief Drawing-color schemes shared by menus and scene text. */
+enum StyleIndex {
+    STYLE_NONE = 0,  /**< No box drawing; all-zero drawing colors. */
+    STYLE_PANEL = 1, /**< Parts, cars and general menu panels. */
+    /** Inverse panel colors; not selected by current menus. */
+    STYLE_INVERSE = 2,
+    STYLE_BUTTON = 3,         /**< Ordinary menu button. */
+    STYLE_DEFAULT_BUTTON = 4, /**< Emphasized default menu button. */
+    STYLE_TEXT = 5,           /**< General dialog text and edit cursor. */
+    STYLE_SAVE_NAME = 6,      /**< Save-game name editing. */
+    STYLE_MESSAGE = 7,        /**< Message panel and its text. */
+    STYLE_MESSAGE_BUTTON = 8, /**< Message acknowledgement button. */
+    STYLE_LIST_COPY = 9,      /**< Saved copy of the active list colors. */
+    STYLE_SCROLL_BUTTON = 10, /**< List scroll buttons. */
+    STYLE_STATUS = 11,        /**< Status and offer text outside menu panels. */
+    STYLE_SAVE_LIST = 12,     /**< Saved-game list rows. */
+    /** Newspaper rows, highlighted prices and car labels. */
+    STYLE_NEWSPAPER = 13,
+    STYLE_POPUP = 14,      /**< Speech bubbles and offer panels. */
+    STYLE_RIVAL_LIST = 15, /**< Met-rival list and its controls. */
+    STYLE_COUNT = 16       /**< Number of drawing-color schemes. */
+};
+
+/** @brief Complete drawing-color set for a display mode. */
 struct Style {
-    struct Colors pal[7];
-    struct Colors c23;
-    struct Colors c28;
-    struct Colors c2d;
-    struct Colors c32;
-    struct Colors colors;
-    char unused[5];
-    struct Colors hilite;
-    struct Colors popup;
-    struct Colors bank; /* fifth palette bank, part of the 80-byte record */
+    struct Colors schemes[STYLE_COUNT]; /**< Colors indexed by @ref StyleIndex. */
 };
 
 struct AnimRun {

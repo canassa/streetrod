@@ -16,6 +16,7 @@
 #include "SCREEN.H"
 #include "SOUND.H"
 #include "SPRITE.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 #include "VIDEO.H"
 
@@ -202,7 +203,7 @@ void ti_change(int *a, int *b)
     g_spriteBgY = (r_vid.mode == VID_TANDY) ? 0x97 - g_tires.liftPics[0]->height : 0;
     g_tires.jackColumn = ar_bm(g_tires.liftPics[1]->width, 0xba - g_spriteBgY, 0, ARENA_LOW_STACK);
     pu_grab(r_vid.mask & 0x88, g_spriteBgY, g_tires.liftPics[1]->width, 0xba - g_spriteBgY, g_tires.jackColumn);
-    cp_build(&g_tires.liftCar, modelm, attr3, tinto, 0, 0, 0, 1);
+    cp_build(&g_tires.liftCar, modelm, attr3, tinto, FALSE, 0, FALSE, 1);
     g_tires.wheelX1 = g_layoutAutoSprArray[modelm].wheelX1;
     g_tires.wheelX2 = g_layoutAutoSprArray[modelm].wheelX2;
     blt.w = g_tires.liftCar->width;

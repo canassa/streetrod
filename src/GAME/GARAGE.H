@@ -124,7 +124,7 @@ struct CarDisplay {
     int bodyPic;
     enum PaintScheme paintScheme; /**< Displayed car body colours. */
     int tireVariant;
-    int overlayPic;
+    int portraitPic; /**< Occupant portrait picture; ignored when unoccupied. */
     int specIndex;
     struct Look appearance;
     int transmissionPic;

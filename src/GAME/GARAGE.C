@@ -157,7 +157,7 @@ void ga_date(int x)
     mnum = day_to_date(today, &date);
     sprintf(buf, "%s %d, 1963", g_mon[mnum], date);
     sv = x_colors;
-    x_colors = bustyle->hilite;
+    x_colors = bustyle->schemes[STYLE_NEWSPAPER];
     (*g_videoOps.drawText)(r_vid.back, 0x61, x, buf);
     x_colors = sv;
 }
@@ -298,7 +298,7 @@ int near ga_menu(enum GarageMode mode)
         if (g_old) {
             n = gm_car_look(g_old);
             cp_show_car(CAR_BACK_OUT, g_old->specIndex, n,
-                        (g_old->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, 0, 0x98, 0,
+                        (g_old->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, FALSE, 0x98, FALSE,
                         g_tirePics[g_parts[g_old->tires->idx].variant]);
             ga_clear_name();
             mn_push(KM_GARAGE);
@@ -326,7 +326,7 @@ int near ga_menu(enum GarageMode mode)
             g_carDraw.tireVariant = g_parts[g_driver.currentCar->tires->idx].variant;
             if (mode == GARAGE_DRIVE_IN)
                 ga_palette(g_carDraw.paintScheme);
-            g_carDraw.overlayPic = 0;
+            g_carDraw.portraitPic = 0;
             g_carDraw.specIndex = g_driver.currentCar->specIndex;
             g_carDraw.appearance.sticker =
                 (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK;
@@ -341,10 +341,10 @@ int near ga_menu(enum GarageMode mode)
             n = gm_car_look(g_driver.currentCar);
             strcpy(g_carName, g_desc + g_carData[g_driver.currentCar->specIndex].nameOffset);
             if (mode == GARAGE_REDRAW)
-                cp_show_car(CAR_SHOW_BACK_PAGE, g_carDraw.specIndex, n, g_carDraw.appearance.sticker, 0, 0x98, 0,
-                            g_tirePics[g_carDraw.tireVariant]);
+                cp_show_car(CAR_SHOW_BACK_PAGE, g_carDraw.specIndex, n, g_carDraw.appearance.sticker, FALSE, 0x98,
+                            FALSE, g_tirePics[g_carDraw.tireVariant]);
             else
-                cp_show_car(CAR_PULL_IN, g_carDraw.specIndex, n, g_carDraw.appearance.sticker, 0, 0x98, 0,
+                cp_show_car(CAR_PULL_IN, g_carDraw.specIndex, n, g_carDraw.appearance.sticker, FALSE, 0x98, FALSE,
                             g_tirePics[g_carDraw.tireVariant]);
         } else {
             bm_copy_box(r_vid.back, r_vid.front, 0, 0, (SCREEN_WIDTH - 1), 0xc7);
@@ -526,8 +526,8 @@ void near ga_body(unsigned mask)
         n9 = g_driver.currentCar->specIndex;
         r7 = gm_car_look(g_driver.currentCar);
         cp_show_car(CAR_SHOW_BACKDROP, n9, r7,
-                    (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, 0, 0x98, 0,
-                    g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
+                    (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, FALSE, 0x98,
+                    FALSE, g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
         so_noise();
         cu_ctl(CURSOR_SHOW_NOW);
         g_gameClock.actionTicks += val5;

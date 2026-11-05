@@ -33,6 +33,7 @@
 #include "SAVEGAME.H"
 #include "SCREEN.H"
 #include "SOUND.H"
+#include "STRUCTS.H"
 #include "SYS.H"
 #include "VIDEO.H"
 
@@ -510,7 +511,7 @@ static void near buy_from_ads(int tab)
             ma_clear();
             bm1 = ar_bm(SCREEN_WIDTH, 0x52, 0, ARENA_LOW_BASE);
             pu_grab(0, 0x40, SCREEN_WIDTH, 0x52, bm1);
-            x_colors = bustyle->colors;
+            x_colors = bustyle->schemes[STYLE_STATUS];
             ck = (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) ? g_carBg16[5] : g_carBg4[5];
             sc_fill_rect(0, 0x41, SCREEN_WIDTH, 0x46, ck);
             sc_fill_rect(0, 0x87, SCREEN_WIDTH, 0xa, x_colors.textBg);
@@ -532,7 +533,7 @@ static void near buy_from_ads(int tab)
             x1 = ((unsigned)specn - (unsigned)g_carData) / 10;
             y = (((specn->stockParts >> SPEC_ENGINE_SHIFT) & SPEC_ENGINE_MASK) == ENGINE_V8_LARGE) ? BODY_LARGE_ENGINE
                                                                                                    : 0;
-            cp_show_car(CAR_SHOW_SCREEN, x1, y, 0, 0, 0x86, 0,
+            cp_show_car(CAR_SHOW_SCREEN, x1, y, 0, FALSE, 0x86, FALSE,
                         g_tirePics[(specn->stockParts >> SPEC_TIRES_SHIFT) & SPEC_TIRES_MASK]);
             sc_text((SCREEN_WIDTH - da_text_width(g_offerName)) / 2, 0x88, g_offerName);
             cu_ctl(CURSOR_SHOW_NOW);
@@ -707,8 +708,8 @@ static enum GarageMode near your_cars(void)
             mid = g_driver.currentCar->specIndex;
             result = gm_car_look(g_driver.currentCar);
             cp_show_car(CAR_BACK_OUT, mid, result,
-                        (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, 0, 0x98, 0,
-                        g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
+                        (g_driver.currentCar->appearance >> APPEARANCE_STICKER_SHIFT) & STICKER_INDEX_MASK, FALSE, 0x98,
+                        FALSE, g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
             mn_pop(1);
             ga_clear_name();
             mn_push(KM_GARAGE);
