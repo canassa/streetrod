@@ -1,4 +1,7 @@
-/* VIDEO.H - declarations of what VIDEO.C defines. */
+/**
+ * @file VIDEO.H
+ * @brief Display state, drawing hooks and bitmap animation scripts.
+ */
 
 #ifndef VIDEO_H
 #define VIDEO_H
@@ -56,44 +59,61 @@ struct Style {
 };
 
 struct AnimRun {
-    struct Cmd *command;
+    struct AnimCommand *command;
     struct Obj *object;
     struct Box *box;
 };
 
+/**
+ * @brief Operations interpreted by an animation script.
+ */
 enum AnimOp {
-    ANIM_NOP_1 = 1,
-    ANIM_BLIT = 2,
-    ANIM_NOP_3 = 3,
-    ANIM_BLIT_MASKED = 4,
-    ANIM_HOOK = 5,
-    ANIM_STOP = 6,
-    ANIM_JUMP = 7,
-    ANIM_LOAD_IMAGE = 8,
-    ANIM_SET_BOX = 9,
-    ANIM_SET_SIZE = 10,
-    ANIM_WAIT = 11,
-    ANIM_COPY_TO_FRONT = 12,
-    ANIM_TILE_CAR = 13
+    ANIM_NOP_1 = 1,          /**< Advance without work. */
+    ANIM_BLIT = 2,           /**< Copy the image to the back page. */
+    ANIM_NOP_3 = 3,          /**< Advance without work. */
+    ANIM_BLIT_MASKED = 4,    /**< Masked copy of the image to the back page. */
+    ANIM_HOOK = 5,           /**< Run the script-specific hook; stop if true. */
+    ANIM_STOP = 6,           /**< Release the object and cancel pending timers. */
+    ANIM_JUMP = 7,           /**< Jump to an absolute command index. */
+    ANIM_LOAD_IMAGE = 8,     /**< Load the object's image. */
+    ANIM_SET_BOX = 9,        /**< Set selected box coordinates. */
+    ANIM_SET_SIZE = 10,      /**< Set box width and height in pixels. */
+    ANIM_WAIT = 11,          /**< Schedule a timer to resume the script. */
+    ANIM_COPY_TO_FRONT = 12, /**< Copy the back-page box to the front page. */
+    ANIM_TILE_CAR = 13       /**< Mask the visible car into each image tile. */
 };
 
+/**
+ * @brief Coordinate pairs updated by a blit or box-setting instruction.
+ */
 enum BoxSet {
-    BOX_KEEP = 0,
-    BOX_SET_SOURCE = 1,
-    BOX_SET_DESTINATION = 2,
-    BOX_SET_BOTH = 3
+    BOX_KEEP = 0,            /**< Keep both coordinate pairs. */
+    BOX_SET_SOURCE = 1,      /**< Set the source coordinates. */
+    BOX_SET_DESTINATION = 2, /**< Set the destination coordinates. */
+    BOX_SET_BOTH = 3         /**< Set both coordinate pairs to the same position. */
 };
 
+/**
+ * @brief Front-page update performed when an animation waits.
+ */
 enum AnimWaitMode {
-    ANIM_WAIT_ONLY = 0,
-    ANIM_WAIT_COPY_TO_FRONT = 4
+    ANIM_WAIT_ONLY = 0,         /**< Wait without copying the box. */
+    ANIM_WAIT_COPY_TO_FRONT = 4 /**< Copy the box when front updates are enabled. */
 };
 
-struct Cmd {
-    signed char op;
-    signed char sub;
-    int a;
-    int b;
+/**
+ * @brief One bitmap animation instruction, or a script's runtime header.
+ *
+ * Operands depend on the opcode. A script starts after its header, whose first
+ * operand holds the active object slot, or -1 after the script stops.
+ */
+struct AnimCommand {
+    signed char opcode; /**< Operation from @ref AnimOp; ignored in headers. */
+    /** @ref BoxSet or @ref AnimWaitMode, according to the opcode; else ignored. */
+    signed char mode;
+    /** X, width, picture ID, command index, wait ticks, hook count or header slot. */
+    int operand1;
+    int operand2; /**< Y, height or wait resume index (0 means next); else ignored. */
 };
 
 struct Hooks {
@@ -146,7 +166,7 @@ void vi_anim_stop(int n);
 int vi_anim_start(int n);
 void vi_anim_resume(int n);
 int vi_anim_active(int n);
-int vi_anim_hook(struct Obj *o, struct Cmd *c);
+int vi_anim_hook(struct Obj *o, struct AnimCommand *c);
 void vi_palette_reg(int reg, char color);
 void vi_set_palette(char *table);
 
