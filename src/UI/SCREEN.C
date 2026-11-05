@@ -167,9 +167,9 @@ void sc_wait_msg(char *msg)
             (*g_videoOps.show)();
         }
         dx = g_displaySplitYVal ? 5 : 0x50;
-        for (i = 0; i < 5; i++) {
-            g_hotReadyBox[i].y1 += dx;
-            g_hotReadyBox[i].y2 += dx;
+        for (i = 0; i < HOTS_RACE_STATS - HOTS_READY; i++) {
+            g_hots[HOTS_READY + i].y1 += dx;
+            g_hots[HOTS_READY + i].y2 += dx;
         }
         if (g_driveRebuild)
             vi_set_palette(g_promptPalette);
@@ -179,9 +179,9 @@ void sc_wait_msg(char *msg)
         r_vid.back = r_vid.front;
         mn_modal(KM_READY);
         r_vid.back = back;
-        for (i = 0; i < 5; i++) {
-            g_hotReadyBox[i].y1 -= dx;
-            g_hotReadyBox[i].y2 -= dx;
+        for (i = 0; i < HOTS_RACE_STATS - HOTS_READY; i++) {
+            g_hots[HOTS_READY + i].y1 -= dx;
+            g_hots[HOTS_READY + i].y2 -= dx;
         }
         r_vid.copyToFront = saved;
         g_displayEnabled = prev;

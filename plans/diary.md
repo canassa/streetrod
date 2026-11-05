@@ -3183,3 +3183,32 @@ constants were renamed.
   MAIN.H defines would duplicate the declarations after this merge.
 - Explicit member references expose stale names during documentation merges;
   the Hotspot link-box comment now uses the current hitCode member name.
+
+## 2026-11-05 20:33 CET: Map hotspot screens and consolidate their records
+
+### What I did
+
+Mapped all 365 hotspot records to the 41 menu headers selected by g_groupHot.
+Replaced 14 artificial partial arrays with the complete g_hots table and
+HOTS_* screen indexes, grouped each screen's initializers, and replaced every
+old view and numeric drawing/skip link. Named the assembler group-table indexes
+and documented the existing ScreenId values. Added three C/ASM agreement and
+screen-boundary tests, corrected the reconstruction note and compiler recipe,
+and recorded the full map in plans/investigations/hottables.md.
+
+Headers, formatting, Doxygen (zero diagnostics), all 572 functions, all 96
+object gates, DGROUP ownership/order and all 109 unit tests pass. The clean
+packed build and DOS-native MAKE both reproduce orig/SR.EXE exactly. The
+separate uncompressed diagnostic reports its MZ/header/relocation-order and
+14-tail-byte differences; full details are in the investigation note.
+
+### What I learned
+
+The original partial arrays started where callers first named a record, often
+inside a screen or before several later screens. Garage's calendar and the
+gas exit are inside their sorted region runs; the garage car name is outside
+its run. Engine's 14-record mutable buffer is followed by three templates,
+not a nine-record template array. The actual unsigned cast/index address
+differences retain the original instructions even with one table, disproving
+the earlier claim that those instructions establish separate C symbols.
+KM_NONE points at a spare-parts button and KM_MUSIC has no hotspot-table slot.

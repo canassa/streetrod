@@ -641,11 +641,11 @@ static void near setup_bobs_spots(int a, int b)
     struct Hotspot *hot;
     int y1, x1, y, x;
 
-    hot = g_hotBobs;
-    if (g_hotBobs[4].hitCode != 4) {
-        save = g_hotBobs[3];
-        g_hotBobs[3] = g_hotBobs[4];
-        g_hotBobs[4] = save;
+    hot = &g_hots[HOTS_BOBS + 1];
+    if (g_hots[HOTS_BOBS + 5].hitCode != 4) {
+        save = g_hots[HOTS_BOBS + 4];
+        g_hots[HOTS_BOBS + 4] = g_hots[HOTS_BOBS + 5];
+        g_hots[HOTS_BOBS + 5] = save;
     }
     hot[4].x1 = 0xc2;
     hot[4].x2 = 0xd8;
@@ -1163,9 +1163,9 @@ static void near set_jail_spots(enum HotKind id, char c)
 {
     struct Hotspot *h;
 
-    h = g_hotBobs;
+    h = &g_hots[HOTS_BOBS + 1];
     if (id == HOT_DISABLED)
-        g_hotBobs[0].textOffset = g_msgWannaQuit - g_txt;
+        g_hots[HOTS_BOBS + 1].textOffset = g_msgWannaQuit - g_txt;
     else
         h->textOffset = g_msgBackToGarage - g_txt;
     h[1].kind = id;

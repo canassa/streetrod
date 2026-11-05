@@ -245,9 +245,6 @@
     "g_blankName": {
       "off": 17927
     },
-    "g_bodyAsk": {
-      "off": 7732
-    },
     "g_bodyRects": {
       "off": 28900
     },
@@ -692,12 +689,6 @@
     "g_engineBoltPos": {
       "off": 1806
     },
-    "g_engineHotTemplate": {
-      "off": 6472
-    },
-    "g_engineHots": {
-      "off": 6220
-    },
     "g_enginePos": {
       "off": 1794
     },
@@ -758,9 +749,6 @@
     },
     "g_gamePics": {
       "off": 19496
-    },
-    "g_gar": {
-      "off": 4636
     },
     "g_gasSpotIds": {
       "off": 21430
@@ -831,35 +819,11 @@
     "g_horizonY": {
       "off": 28164
     },
-    "g_hotBobs": {
-      "off": 8362
-    },
-    "g_hotBuy": {
-      "off": 4528
-    },
-    "g_hotCalendar": {
-      "off": 4942
-    },
     "g_hotChain": {
       "off": 1960
     },
-    "g_hotGasExit": {
-      "off": 6724
-    },
-    "g_hotGasStation": {
-      "off": 6634
-    },
     "g_hotMenuGroupState": {
       "off": 36606
-    },
-    "g_hotPageRows": {
-      "off": 3970
-    },
-    "g_hotReadyBox": {
-      "off": 7552
-    },
-    "g_hotRepair": {
-      "off": 6850
     },
     "g_hots": {
       "off": 2548
@@ -1983,9 +1947,6 @@
     },
     "g_trackViewMotion": {
       "off": 32046
-    },
-    "g_transBolts": {
-      "off": 6148
     },
     "g_transGears": {
       "off": 21856
