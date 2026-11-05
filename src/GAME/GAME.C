@@ -36,8 +36,6 @@
 #include "SYS.H"
 #include "VIDEO.H"
 
-#define GAME_MENU_BLOCKED 0x309
-
 static void near free_part(struct Node *p7);
 static int near counter_offer(unsigned *price);
 static int near start_game(void);
@@ -112,11 +110,11 @@ void gm_message(int n)
 
 static int near check_room(void)
 {
-    if (g_driver.carCount > 15) {
+    if (g_driver.carCount > MAX_OWNED_CARS) {
         gm_message(0x0e27);
         return 1;
     }
-    if (g_driver.partCount > 130) {
+    if (g_driver.partCount > MAX_OWNED_PARTS) {
         gm_message(0x0e3f);
         return 1;
     }
@@ -177,7 +175,7 @@ int gm_part_value(struct Node *n)
     int r;
 
     if (g_parts[n->idx].category == PART_ENGINE && g_parts[n->idx].variant == ENGINE_V6)
-        r = 100;
+        r = V6_PART_VALUE;
     else
         r = n->value;
     return r;
@@ -208,11 +206,11 @@ static void near sell_parts(void)
         for (p7 = g_driver.spareParts, nl = 0; p7; p7 = p7->next) {
             nl++;
             g_list[nl] = (ip = &g_parts[(list8[nl] = p7)->idx])->nameOffset;
-            if (p7->wear != -0x80) {
+            if (p7->wear != PART_WEAR_UNTRACKED) {
                 lbl[nl] = p7->wear / 100;
                 continue;
             }
-            lbl[nl] = 0x80;
+            lbl[nl] = PART_WEAR_LABEL_NONE;
         }
         g_list[0] = nl;
         strcpy(g_msgSellChange, "Sell it");
@@ -233,24 +231,24 @@ static void near sell_parts(void)
         p7 = list8[sel];
         price1 = gm_part_value(p7);
         type8 = p7->idx;
-        pct = (10000 - p7->wear) / 100;
+        pct = (PART_WEAR_FULL - p7->wear) / 100;
         switch (g_parts[type8].category) {
         case PART_CARBURETOR:
         case PART_MANIFOLD:
-            rl = rn_int(20);
-            price1 = (float)price1 * ((rl + 70) / 100.0);
+            rl = rn_int(PART_SALE_RANDOM_PCT);
+            price1 = (float)price1 * ((rl + PART_SALE_BASE_PCT) / 100.0);
             break;
         case PART_ENGINE:;
         case PART_TRANSMISSION:
-            cut = price1 * (pct / 100.0) * 0.9;
+            cut = price1 * (pct / 100.0) * PART_RESALE_FACTOR;
             price1 -= cut;
-            price1 = (unsigned)(price1 * (pct / 100.0) * 0.9) + cut;
+            price1 = (unsigned)(price1 * (pct / 100.0) * PART_RESALE_FACTOR) + cut;
             break;
         case PART_TIRES:
             price1 = 0;
             break;
         }
-        price1 = price1 / 5 * 5;
+        price1 = price1 / SALE_PRICE_STEP * SALE_PRICE_STEP;
         strcpy(g_salePartName, &g_desc[g_parts[type8].nameOffset]);
         if (price1) {
             msg5 = 0x100a;
@@ -267,7 +265,7 @@ static void near sell_parts(void)
         else
             list8[sel - 1]->next = p7->next;
         free_part(p7);
-        g_gameClock.actionTicks += 0x444L;
+        g_gameClock.actionTicks += (long)TIME_PART_SALE;
         sc_add_money(price1);
     }
 }
@@ -321,17 +319,17 @@ struct Car *near gm_make_car(int idx, int value, struct Car *old)
     car = (old == 0) ? (struct Car *)gm_new_car() : old;
     car->specIndex = idx;
     car->value = value;
-    car->fuel = 0x28;
+    car->fuel = NEW_CAR_FUEL;
     car->rank = g_carData[idx].rank;
     while ((i = rn_int(6)) == 5)
         if (rn_int(2) == 1)
             break;
     car->paintScheme = i;
     car->wireState = WIRES_CONNECTED;
-    car->timing = rn_int(13) - 8;
+    car->timing = rn_int(TIMING_SETTING_COUNT) + TIMING_MIN;
     car->transmission = node = (old == 0) ? gm_new_part() : car->transmission;
     w = (g_carData[idx].parts >> 6) & 3;
-    w = (kind = (g_carData[idx].parts & 0xf) >> 1) + (w == 3) + 3 * w + 9;
+    w = (kind = (g_carData[idx].parts & 0xf) >> 1) + (w == 3) + 3 * w + PART_TRANSMISSION_FIRST;
     node->idx = w;
     node->value = g_parts[w].value;
     node->wear = g_partWear[PART_TRANSMISSION];
@@ -343,20 +341,20 @@ struct Car *near gm_make_car(int idx, int value, struct Car *old)
     node->wear = g_partWear[PART_ENGINE];
     node->next = 0;
     car->tires = node = (old == 0) ? gm_new_part() : car->tires;
-    w = (g_carData[idx].parts >> 4 & 3) + 0x28;
+    w = (g_carData[idx].parts >> 4 & 3) + PART_TIRES_FIRST;
     node->idx = w;
     node->value = g_parts[w].value;
     node->wear = g_partWear[PART_TIRES];
     node->next = 0;
     car->rack.parts[1] = node = (old == 0) ? gm_new_part() : car->rack.parts[1];
-    for (i = 3; i < 9; i++)
-        car->engineBolts[i] = 0;
-    w = (i = g_carData[idx].parts >> 11 & 7) * 3 + kind + 0x19;
+    for (i = 3; i < ENGINE_BOLT_COUNT; i++)
+        car->engineBolts[i] = BOLT_ABSENT;
+    w = (i = g_carData[idx].parts >> 11 & 7) * 3 + kind + PART_MANIFOLD_FIRST;
     node->idx = w;
     node->value = g_parts[w].value;
     node->wear = g_partWear[PART_MANIFOLD];
     node->next = 0;
-    w = (g_carData[idx].parts >> 14 & 3) + 0x16;
+    w = (g_carData[idx].parts >> 14 & 3) + PART_CARBURETOR_FIRST;
     i = g_nCarb[i] - 1;
     for (j = 2; j > i; j--)
         car->rack.parts[j + 2] = 0;
@@ -366,18 +364,18 @@ struct Car *near gm_make_car(int idx, int value, struct Car *old)
         node->value = g_parts[w].value;
         node->wear = g_partWear[PART_CARBURETOR];
         node->next = 0;
-        car->engineBolts[2 * i + 3] = 3;
-        car->engineBolts[2 * i + 4] = 3;
+        car->engineBolts[2 * i + 3] = BOLT_TIGHT;
+        car->engineBolts[2 * i + 4] = BOLT_TIGHT;
     }
     for (i = 0; i < 3; i++)
-        car->engineBolts[i] = 3;
-    for (i = 0; i < 2; i++)
-        car->transmissionBolts[i] = 3;
-    car->appearance &= 0xff00;
-    car->appearance &= 0xe0ff;
-    car->appearance &= 0xdfff;
-    car->appearance &= 0xbfff;
-    car->appearance &= 0x7fff;
+        car->engineBolts[i] = BOLT_TIGHT;
+    for (i = 0; i < TRANSMISSION_BOLT_COUNT; i++)
+        car->transmissionBolts[i] = BOLT_TIGHT;
+    car->appearance &= APPEARANCE_KEEP_HIGH_BYTE;
+    car->appearance &= APPEARANCE_NO_STICKER;
+    car->appearance &= APPEARANCE_KEEP_ROOF;
+    car->appearance &= APPEARANCE_KEEP_FRONT_BUMPER;
+    car->appearance &= APPEARANCE_KEEP_REAR_BUMPER;
     if (old == 0) {
         if (g_driver.currentCar) {
             car->next = g_driver.otherCars;
@@ -412,7 +410,7 @@ int near gm_scrap_car(struct Car *c, int keep)
     register int i;
 
     c->value -= gm_take_part(c->transmission, keep);
-    r = 5;
+    r = ENGINE_RACK_SLOTS;
     for (p2 = c->rack.parts, i = r; i; p2++, i--)
         c->value -= gm_take_part(*p2, keep);
     gm_take_part(c->tires, 0);
@@ -456,8 +454,8 @@ static void near buy_from_ads(int tab)
     g_list[n++] = 0xcfd;
     n0 = n;
     off6 = i5 - n0;
-    for (k3 = 0; k3 < 0x2c; k3++) {
-        if (g_parts[k3].value >= 0x14) {
+    for (k3 = 0; k3 < PART_CATALOG_COUNT; k3++) {
+        if (g_parts[k3].value >= MIN_AD_PART_PRICE) {
             g_list[n++] = g_parts[k3].nameOffset;
             list4[i5++] = k3;
         }
@@ -483,7 +481,7 @@ static void near buy_from_ads(int tab)
             n = mn_wait(KM_BUY);
             if (n == KR_BUY_YEAH) {
                 if (g_demo && (long)price6 > g_driver.money)
-                    g_driver.money += 1999;
+                    g_driver.money += DEMO_PURCHASE_CASH;
                 if ((long)price6 > g_driver.money) {
                     p1 = strchr(g_msgShort, '$');
                     sprintf(++p1, "%d short.", price6 - (int)g_driver.money);
@@ -493,15 +491,15 @@ static void near buy_from_ads(int tab)
                 sc_add_money(-price6);
                 if (used) {
                     gm_add_part(i5, price6);
-                    g_gameClock.actionTicks += 0x222;
-                    if (g_driver.partCount > 0x82)
+                    g_gameClock.actionTicks += TIME_PART_PURCHASE;
+                    if (g_driver.partCount > MAX_OWNED_PARTS)
                         goto done;
                     break;
                 }
                 car = gm_make_car(i5, price6, 0);
                 car->paintScheme = (color != -1) ? color : rn_int(5);
                 gm_message(0xf2de);
-                g_gameClock.actionTicks += 0x444;
+                g_gameClock.actionTicks += TIME_CAR_PURCHASE;
                 goto done;
             }
             if (n != KR_SEE_IT)
@@ -530,7 +528,7 @@ static void near buy_from_ads(int tab)
                 ga_palette(color);
             }
             x1 = ((unsigned)specn - (unsigned)g_carData) / 10;
-            y = (((specn->parts >> 8) & 7) == 2) ? 8 : 0;
+            y = (((specn->parts >> 8) & 7) == ENGINE_V8_LARGE) ? BODY_LARGE_ENGINE : 0;
             cp_show_car(CAR_SHOW_SCREEN, x1, y, 0, 0, 0x86, 0, g_tirePics[(specn->parts >> 4) & 3]);
             sc_text((SCREEN_WIDTH - da_text_width(g_offerName)) / 2, 0x88, g_offerName);
             cu_ctl(CURSOR_SHOW_NOW);
@@ -558,9 +556,9 @@ static int near counter_offer(unsigned *price)
     unsigned r;
     int key;
 
-    if (r = *price % 5)
+    if (r = *price % SALE_PRICE_STEP)
         if ((*price -= r) == 0)
-            *price = 5;
+            *price = SALE_PRICE_STEP;
     sprintf(g_offerText, "How about $%-d ?", *price);
     pu_open_at(0xff7, -1, -1);
     key = mn_wait(KM_COUNTER_OFFER);
@@ -574,14 +572,14 @@ int gm_car_look(struct Car *c)
     int r;
 
     r = 0;
-    if (c->appearance & 0x2000)
-        r |= 4;
-    if (c->appearance & 0x4000)
-        r |= 2;
-    if (c->appearance & 0x8000)
-        r |= 1;
+    if (c->appearance & APPEARANCE_ROOF)
+        r |= BODY_ROOF;
+    if (c->appearance & APPEARANCE_FRONT_BUMPER)
+        r |= BODY_FRONT_BUMPER;
+    if (c->appearance & APPEARANCE_REAR_BUMPER)
+        r |= BODY_REAR_BUMPER;
     if (g_parts[c->rack.parts[0]->idx].variant == ENGINE_V8_LARGE)
-        r |= 8;
+        r |= BODY_LARGE_ENGINE;
     return r;
 }
 
@@ -644,7 +642,7 @@ static enum GarageMode near your_cars(void)
                 g_list[0] = g_list[0];
         }
         cur = tbl[item = mn_sel()];
-        offer = price = (int)((rn_int(20) + 75.0) * cur->value / 100.0);
+        offer = price = (int)((rn_int(CAR_SALE_RANDOM_PCT) + CAR_SALE_BASE_PCT) * cur->value / 100.0);
         strcpy(g_offerName, g_desc + g_carData[cur->specIndex].nameOffset);
         g_offerAmount[0] = 0;
         pict = mn_grab(KM_SELL_CAR_OFFER, &rx, &ye, ARENA_LOW_STACK);
@@ -653,7 +651,7 @@ static enum GarageMode near your_cars(void)
             if ((n = ed_spot_number(&cash, g_offerAmount)) == KR_NEVER_MIND)
                 goto tail;
         } while (cash == 0);
-        if ((unsigned)(cur->value * 1.15) < cash) {
+        if ((unsigned)(cur->value * CAR_SALE_MAX_FACTOR) < cash) {
             gm_message(0xec0);
             goto tail;
         }
@@ -669,7 +667,7 @@ static enum GarageMode near your_cars(void)
             }
         }
         if (cash > offer) {
-            offer = (rn_int(5) + 85.0) * price / 100.0;
+            offer = (rn_int(CAR_COUNTER_RANDOM_PCT) + CAR_COUNTER_FIRST_PCT) * price / 100.0;
             if (cash > offer && counter_offer(&offer) == KR_OK)
                 cash = offer;
         }
@@ -680,7 +678,7 @@ static enum GarageMode near your_cars(void)
             } while (cash == 0);
         }
         if (cash > offer) {
-            offer = (rn_int(5) + 91.0) * price / 100.0;
+            offer = (rn_int(CAR_COUNTER_RANDOM_PCT) + CAR_COUNTER_SECOND_PCT) * price / 100.0;
             if (cash > offer && counter_offer(&offer) == KR_OK)
                 cash = offer;
         }
@@ -690,12 +688,12 @@ static enum GarageMode near your_cars(void)
                     goto tail;
             } while (cash == 0);
         }
-        if ((float)offer < (float)cash * 0.9) {
+        if ((float)offer < (float)cash * CAR_SALE_ACCEPT_FACTOR) {
             gm_message(0x1084);
             goto tail;
         }
         gm_message((cur->value > cash * 2) ? 0x104b : 0x1091);
-        g_gameClock.actionTicks += 0x888L;
+        g_gameClock.actionTicks += (long)TIME_CAR_SALE;
         sc_add_money(cash);
         if (item == 1 && g_driver.currentCar) {
             pu_show(pict, rx, ye);
@@ -704,8 +702,8 @@ static enum GarageMode near your_cars(void)
             cu_ctl(CURSOR_HIDE_NOW);
             mid = g_driver.currentCar->specIndex;
             result = gm_car_look(g_driver.currentCar);
-            cp_show_car(CAR_BACK_OUT, mid, result, (g_driver.currentCar->appearance >> 8) & 0x1f, 0, 0x98, 0,
-                        g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
+            cp_show_car(CAR_BACK_OUT, mid, result, (g_driver.currentCar->appearance >> 8) & STICKER_INDEX_MASK, 0, 0x98,
+                        0, g_tirePics[g_parts[g_driver.currentCar->tires->idx].variant]);
             mn_pop(1);
             ga_clear_name();
             mn_push(KM_GARAGE);
@@ -779,7 +777,7 @@ void near gm_run(void)
             v = GARAGE_REDRAW;
         if (kind == LOAD_OK && w == KR_OLD_GAME)
             v = GARAGE_DRIVE_IN;
-        if (w == KR_NEW_GAME && g_driver.carCount <= 15 && g_driver.partCount <= 130) {
+        if (w == KR_NEW_GAME && g_driver.carCount <= MAX_OWNED_CARS && g_driver.partCount <= MAX_OWNED_PARTS) {
             kind = read_paper();
             if (kind == KR_PAPER_PARTS || kind == KR_PAPER_CARS)
                 buy_from_ads(kind);
@@ -788,9 +786,9 @@ void near gm_run(void)
         while ((kind = ga_menu(v)) != 0) {
             mu_suspend(0);
             if (kind == GARAGE_GAME_ENDED) {
-                if (g_end == 1)
+                if (g_end == END_TIME_UP)
                     da_time_up();
-                fa_show(g_end & 2);
+                fa_show(g_end & END_KING_BEATEN);
                 cu_ctl(1);
                 g_end = 0;
                 again = 1;
@@ -816,7 +814,7 @@ void near gm_run(void)
                         v = GARAGE_REDRAW;
                     if (g_driver.currentCar == 0 && g_driver.otherCars)
                         v = GARAGE_DRIVE_IN;
-                    g_gameClock.actionTicks += 0x222;
+                    g_gameClock.actionTicks += TIME_READ_PAPER;
                 }
                 continue;
             case KR_GAR_STREET:
@@ -829,17 +827,17 @@ void near gm_run(void)
                     if (ga_ready(g_driver.currentCar, 1)) {
                         pf_drivetrain(g_driver.currentCar, &g_driveEng);
                         if (kind == KR_GAR_STREET) {
-                            if (g_driver.currentCar->fuel < 9) {
+                            if (g_driver.currentCar->fuel < MIN_BOBS_FUEL) {
                                 gm_message(0x172e);
                                 v = GARAGE_KEEP;
                                 continue;
                             }
                             g_scene = SCENE_BOBS;
                             cr_go();
-                            g_gameClock.actionTicks += 0x222;
+                            g_gameClock.actionTicks += TIME_TOWN_TRIP;
                             bo_visit();
                         } else {
-                            if (g_driver.currentCar->fuel >= 0x8c) {
+                            if (g_driver.currentCar->fuel >= REFUEL_VISIT_LIMIT) {
                                 gm_message(0x19b1);
                                 v = GARAGE_KEEP;
                                 continue;
@@ -851,10 +849,10 @@ void near gm_run(void)
                             }
                             g_scene = SCENE_GAS_STATION;
                             cr_go();
-                            g_gameClock.actionTicks += 0x222;
+                            g_gameClock.actionTicks += TIME_TOWN_TRIP;
                             ra_gas_station();
                         }
-                        g_gameClock.actionTicks += 0x222;
+                        g_gameClock.actionTicks += TIME_TOWN_TRIP;
                         v = GARAGE_DRIVE_IN;
                     } else {
                         gm_message(0x0e7f);
@@ -917,15 +915,15 @@ void near gm_run(void)
                 ga_hood(g_driver.currentCar);
                 continue;
             case KR_GAR_ROOF:
-                ga_body(4);
+                ga_body(BODY_ROOF);
                 v = GARAGE_KEEP;
                 continue;
             case KR_GAR_REAR_BUMPER:
-                ga_body(2);
+                ga_body(BODY_FRONT_BUMPER);
                 v = GARAGE_KEEP;
                 continue;
             case KR_GAR_FRONT_BUMPER:
-                ga_body(1);
+                ga_body(BODY_REAR_BUMPER);
                 v = GARAGE_KEEP;
                 continue;
             case KR_GAR_STICKERS:

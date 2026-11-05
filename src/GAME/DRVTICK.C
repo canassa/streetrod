@@ -36,7 +36,7 @@ int dt_step(void)
             sy_reset_queues();
             g_phaseDriveRunState = DRIVE_STAGING;
             sc_status_text(-1, "Get ready !", 0);
-            g_waitUntil = g_tick + rn_int(103) + 110;
+            g_waitUntil = g_tick + rn_int(START_WAIT_RANDOM_TICKS) + START_WAIT_BASE_TICKS;
             return g_driveEng.stopFlags | g_oppEngState.stopFlags;
         case DRIVE_STAGING:
             if (g_driveEng.speed > 0) {
@@ -107,11 +107,11 @@ int dt_step(void)
                 return 1;
             }
             g_driveEng.rpm += g_cruiseRpmStep;
-            if (g_driveEng.rpm > 4700)
-                g_driveEng.rpm = 4700;
+            if (g_driveEng.rpm > CRUISE_MAX_RPM)
+                g_driveEng.rpm = CRUISE_MAX_RPM;
             if (g_driveEng.gearIndex)
                 g_driveEng.speed = g_driveEng.rpm / g_cruiseRatios[g_driveEng.gearIndex];
-            if (g_driveEng.rpm > 4500) {
+            if (g_driveEng.rpm > CRUISE_SHIFT_RPM) {
                 if (g_driveEng.gearIndex < g_driveEng.gearCount) {
                     g_driveEng.shifterDirty = 1;
                     g_driveEng.gearIndex++;

@@ -3,6 +3,10 @@
 #ifndef FAME_H
 #define FAME_H
 
+#define HALL_FAME_COUNT 10
+#define MANUAL_ENTRY_COUNT 51
+#define MANUAL_ICON_COUNT 0x12
+
 #include "VIDEO.H"
 
 struct ManualEntry {
@@ -22,5 +26,10 @@ extern struct Entry g_hallFameTbl[];
 int fa_protect_check(void);
 int fa_end_menu(void);
 void fa_show(int add);
+
+enum ManualKind {
+    MANUAL_CAR_KEY = 0,
+    MANUAL_CAR_ICON = 1
+};
 
 #endif

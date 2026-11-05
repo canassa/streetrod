@@ -2343,3 +2343,25 @@ Ownership inventory (the original 98 definitions):
 - Initialized static data has private $Snnn_name labels in MSC's /Fc listing, so PUBDEF-only indexing mistakes it for strings and loses DGROUP ownership evidence. Follow data directives and relative ORGs to recover private names and offsets; keep the real object symbol table unchanged.
 - The 21 scenery Run arrays require their existing public forward declarations. MSC rejects static tentative declarations followed by initializers (C2086). Moving the initialized arrays before their referring List records keeps all loaded bytes but changes relocation emission order, causing 256 packed EXE bytes to differ. Keeping these arrays public restores an identical packed EXE; the exception is documented per symbol in the ledger and in the recipe book.
 - Changing initialized globals to static and relocating types did not change GARAGE's measured contributing-name allowance. Unused extern removal does not buy name-budget space.
+
+## 2026-11-05 02:34 CET: Name cgame rules without changing the executable
+
+### What I did
+- Added 233 evidence-backed constant names and recorded 236 mappings (including one relocation and two existing-name reuses) plus 22 skips in work/LEDGER.md. Covered action time, prices and resale rules, fuel, car/part capacity, catalog bases, body/appearance flags, bolt tightness, ending flags, race exits, rpm/wear limits, finish indexes, rival selection/wager table indexes and performance weights.
+- Put the definitions in owning module headers; moved existing private enum sets in BOBS/FAME into their headers. Preserved char storage and the original unsigned/long literal types. Shared only the proven rpm/wear/finish rules with SYS.C and the finish indexes with ROAD.C; left message and resource ids for the other workstreams.
+- Kept declaration array extents literal because the required DGROUP analyzer only accepts numeric expressions in bounds; retained the usable count names in rules/loops, removed five unused proposed dimension constants and documented the limitation in the ledger.
+- Validation: headers and formatting checks; 572/572 function matches; clean packed build IDENTICAL, with 572/572 functions at their original positions and 748/748 near-call encodings; DGROUP ownership/order checks. Unit-test and documentation results are recorded in the follow-up validation entry below.
+
+### What I learned
+- The existing CLAUDE.md local-order rule also matters when splitting a multi-variable int declaration into enum declarations: preserving each variable's original declaration order restored accepts_bet's stack slots. No local names needed changing.
+- Preserve the original relational form as well as values: pf_drivetrain's i <= 4 must remain i <= DRIVE_GEAR_SLOTS - 1; the equivalent i < DRIVE_GEAR_SLOTS changed two instruction bytes.
+- Equal values can mean different rules: the 200 lateral lane offset is separate from the race start index, the 5000 small-V8 shift point is separate from the wear threshold, and the 800-tick hood timeout is separate from wager timeout. cop_appears proves spec 25 is the police car. The source's packed body flags follow ga_body/model fields even where garage menu labels appear reversed; no behavior was corrected.
+
+## 2026-11-05 02:35 CET: Validate and commit cgame constant names
+
+### What I did
+- Completed every requested gate: headers --check, format --check, check --all (572/572), clean build (Packed EXE vs orig/SR.EXE: IDENTICAL), dgroup check/order, all 155 unit tests, and docs (zero Doxygen diagnostics).
+- Kept work/LEDGER.md in the worktree with all evidence and skips. Added the measured loop-comparison lesson to .claude/skills/msc51-recipe-book/SKILL.md under C shapes, following the wrap-up checklist.
+
+### What I learned
+- Named numeric bounds compile correctly in MSC but are not accepted by tools/sr/cdata.py's numeric-only declaration parser. Keeping literal storage extents avoids expanding this naming task into a tooling change; gameplay count comparisons still use the proven names.

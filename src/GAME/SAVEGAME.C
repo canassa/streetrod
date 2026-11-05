@@ -69,12 +69,12 @@ void sg_init_racer(int k, int *list)
     list[i + 1] = -1;
     x = g_racerRecordsArray[k].specIndex;
     y = (g_carData[x].rank >> 1) + 1;
-    g_racerRecordsArray[k].bodyMods = ((g_carData[x].parts >> 8 & 7) == 2) ? 8 : 0;
-    g_racerRecordsArray[k].sticker = (rn_int(20) < y) ? rn_int(9) : 0;
+    g_racerRecordsArray[k].bodyMods = ((g_carData[x].parts >> 8 & 7) == ENGINE_V8_LARGE) ? BODY_LARGE_ENGINE : 0;
+    g_racerRecordsArray[k].sticker = (rn_int(RIVAL_STICKER_CHANCE) < y) ? rn_int(STICKER_CHOICE_COUNT) : 0;
     if (g_models[x].frontBumperPic > 0 && g_models[x].rearBumperPic > 0)
-        g_racerRecordsArray[k].bodyMods |= (rn_int(25) < y) ? 3 : 0;
+        g_racerRecordsArray[k].bodyMods |= (rn_int(RIVAL_BUMPER_CHANCE) < y) ? BODY_FRONT_BUMPER | BODY_REAR_BUMPER : 0;
     if (g_models[x].roofPic > 0)
-        g_racerRecordsArray[k].bodyMods |= (rn_int(30) < y) ? 4 : 0;
+        g_racerRecordsArray[k].bodyMods |= (rn_int(RIVAL_ROOF_CHANCE) < y) ? BODY_ROOF : 0;
 }
 
 
@@ -84,11 +84,11 @@ static void near init_racers(void)
     int cl[11], bm[11], an[11];
 
     i = na1 = nb = nc = 0;
-    for (; i < 25; i++) {
+    for (; i < SPEC_ORDINARY_COUNT; i++) {
         v = g_carData[i].rank;
-        if (v >= 6)
+        if (v >= RACER_GROUP_HIGH_RANK)
             cl[++nc] = i;
-        else if (v < 3)
+        else if (v < CAR_CLASS_LOW_LIMIT)
             an[++na1] = i;
         else
             bm[++nb] = i;
@@ -118,9 +118,9 @@ static void near init_racers(void)
 static void near init_new_game(void)
 {
     pl_init(1);
-    g_driver.money = 750L;
+    g_driver.money = STARTING_MONEY;
     if (g_demo)
-        g_driver.money = 10000L;
+        g_driver.money = DEMO_STARTING_MONEY;
     g_driver.unused = 10;
     rd_build_layout(100);
     init_racers();

@@ -22,8 +22,8 @@ void cr_go(void)
 {
     g_firePressed = g_mouse.left = g_joyButtons = g_buttons = 0;
     if (g_scene) {
-        if (g_driver.currentCar->fuel > 2)
-            g_driver.currentCar->fuel -= 2;
+        if (g_driver.currentCar->fuel > TOWN_TRIP_FUEL)
+            g_driver.currentCar->fuel -= TOWN_TRIP_FUEL;
         else
             g_driver.currentCar->fuel = 0;
         (*g_videoOps.blank)();

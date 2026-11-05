@@ -3,6 +3,57 @@
 #ifndef RACE_H
 #define RACE_H
 
+#define REPAIR_BASE_PRICE 100
+#define MAJOR_REPAIR_PRICE_RANGE 0x28
+#define MINOR_REPAIR_PRICE_RANGE 0x14
+#define TOTAL_LOSS_BASE_VALUE 0x13
+#define JUNK_VALUE_FACTOR 0.4
+#define WON_TIRE_WEAR_RANGE 500
+#define ROAD_TIRE_WEAR_HIGH 700
+#define DRAG_TIRE_WEAR_HIGH 300
+#define ROAD_TIRE_WEAR_LOW 400
+#define DRAG_TIRE_WEAR_LOW 200
+#define RACE_TIRE_WEAR_RANGE 300
+#define RACE_TICKS_PER_SECOND 6.068827333333334
+#define RACE_INCOMPLETE_PCT_MAX 99
+#define COP_RACE_CHANCE 4
+#define COP_APPEAR_RANGE 255
+#define COP_APPEAR_BASE 0x1fe
+
+enum RaceExit {
+    RACE_EXIT_GARAGE = 1,
+    RACE_EXIT_STOPPED = 2,
+    RACE_EXIT_BOBS = 3,
+    RACE_EXIT_JAIL = 4
+};
+
+#define DRAG_FINISH_INDEX 0x17c
+#define ROAD_FINISH_INDEX 0x3fc
+#define RACE_START_INDEX 200
+#define DRAG_RACE_FUEL 5
+#define ROAD_RACE_FUEL 15
+#define MIN_DRAG_FUEL 7
+#define MIN_ROAD_FUEL 17
+#define MIN_KING_FUEL 22
+#define FUEL_TANK_CAPACITY 0xaa
+#define FUEL_FILL_AMOUNT 0x1e
+#define FUEL_FILL_COUNT_BASE 0xbe
+#define NOZZLE_PENALTY 10
+#define REPLACEMENT_TIRE_PRICE 0x32
+#define TIRE_FAILURE_WEAR_MIN 8000
+#define TIRE_FAILURE_WEAR_LIMIT 9500
+#define TIRE_WEAR_BAND 2000
+#define TOTAL_LOSS_MPH 0x5a
+#define MAJOR_REPAIR_MPH 0x3c
+#define MIN_REPAIR_MPH 0x1e
+#define FINE_HIGH_MPH 0x50
+#define FINE_MID_MPH 0x32
+#define FINE_HIGH_PRICE 0x4b
+#define FINE_MID_PRICE 0x32
+#define FINE_LOW_PRICE 0x14
+#define RIVAL_AUTO_SHIFT_RPM 0x14b4
+#define RIVAL_TOP_GEAR_RPM 0x1518
+
 struct Bitmap;
 struct Eng;
 
@@ -111,7 +162,7 @@ extern float g_raceSecsElapsedValue;
 extern int g_edgeXR;
 void ra_gas_station(void);
 void ra_finish_stats(void);
-int near ra_outcome(void);
+enum RaceExit near ra_outcome(void);
 void near ra_reset_eng(struct Eng *p);
 void near ra_run(void);
 int ra_speed_step(int rpm);
