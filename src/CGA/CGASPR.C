@@ -43,25 +43,25 @@ int cs_step(struct Sprite *s)
     struct Page *pg;
     struct Frame *fr;
 
-    if (s->seq->count < 0)
+    if (s->motionStep->count < 0)
         return 0;
     pg = s->page;
     fr = s->frame;
-    bits = s->img;
-    fp = s->save;
+    bits = s->workBitmap;
+    fp = s->background;
     d = fr->data;
     sp_clip_box(fr->pos->width, fr->pos->height, s->x, s->y, pg->bm->width, pg->bm->height, &rc);
-    if (sp_rect_sub(&rc, &pg->rect, &c2, s->seq->dx))
-        restore_rect(&c2, bits, fp, s->seq->dx);
+    if (sp_rect_sub(&rc, &pg->rect, &c2, s->motionStep->dx))
+        restore_rect(&c2, bits, fp, s->motionStep->dx);
     pg->rect = rc;
     top = d ? d->height : 0;
     t = blt.h = fr->pos->height - top - g_spriteBottomCut;
     blt.sy = 0;
-    u = blt.dy = s->seq->dy ? s->y : 0;
+    u = blt.dy = s->motionStep->dy ? s->y : 0;
     if (g_scene != SCENE_JAIL) {
         blt.w = fr->pos->width;
         blt.sx = 0;
-        blt.dx = s->seq->dx ? s->x : 0;
+        blt.dx = s->motionStep->dx ? s->x : 0;
         cb_compose(fr->pos, bits, fp, &blt);
         if (d) {
             blt.dy += blt.h;
@@ -83,9 +83,9 @@ int cs_step(struct Sprite *s)
         }
     }
     for (idx = 0; idx < 2; idx++) {
-        if (s->rc[idx] == 0)
+        if (s->overlayRects[idx] == 0)
             continue;
-        s2 = *s->rc[idx];
+        s2 = *s->overlayRects[idx];
         if (fp->pitch == fr->pos->pitch) {
             s2.x1 += s->x;
             s2.x2 += s->x;
@@ -110,8 +110,8 @@ int cs_step(struct Sprite *s)
     blt.h = max(rc.y2, c2.y2) - min(rc.y1, c2.y1) - g_spriteBottomCut + 1;
     blt.dx = min(rc.x1, c2.x1);
     blt.dy = min(rc.y1, c2.y1);
-    blt.sx = s->seq->dx ? blt.dx : 0;
-    blt.sy = s->seq->dy ? blt.dy : 0;
+    blt.sx = s->motionStep->dx ? blt.dx : 0;
+    blt.sy = s->motionStep->dy ? blt.dy : 0;
     if (r_vid.mode != VID_HERCULES) {
         while (inp(INPUT_STATUS) & STATUS_VRETRACE)
             ;

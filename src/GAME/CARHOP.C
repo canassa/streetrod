@@ -142,7 +142,7 @@ void ch_skate(enum CarhopMode mode, BOOL carPresent)
     motionPtr = mode == CARHOP_ENTER ? g_carhopInSeq : g_carhopOutSeq;
     for (stepNum = 0; stepNum < 4; stepNum++)
         moves[stepNum] = *motionPtr++;
-    carhopSprite->seq = moves;
+    carhopSprite->motionStep = moves;
     if (mode == CARHOP_LEAVE) {
         carhopSprite->page->rect = g_carhopRect;
         carhopSprite->page->link->rect = g_carhopRect;

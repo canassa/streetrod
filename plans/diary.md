@@ -2973,3 +2973,15 @@ checks passing. Names in their original buckets restore DS:7560/7D62 and the
 identical packed EXE; the renderer cursor's tie preserves DS:8B82. Separate
 far extern declarations also matter: dt_step's roadside reads retain distinct
 cached SEG words and the ES reload between them.
+
+## 2026-11-05 20:02 CET: Investigate Sprite animation state
+
+### What I did
+- Traced every Sprite reader and writer in setup, motion planning, the three video backends, and car, carhop, tire, jack and slide callers.
+- Renamed Sprite img/save/rc/seq to workBitmap/background/overlayRects/motionStep, documented the type, and preserved its 22-byte layout and all eight offsets under MSC 5.1.
+- Recorded evidence, lifetime, coordinate conventions, out-of-scope misleading names and validation in plans/investigations/Sprite.md.
+- Passed headers, formatting, zero-diagnostic Doxygen, all 572 function matches, clean and DOS-native IDENTICAL packed builds, DGROUP checks and all 106 tests. Recorded the separate unpacked-file diagnostic in the investigation note.
+
+### What I learned
+- Sprite is shared transient animation state for multiple game objects; its work bitmap has different EGA and CGA roles and is unused on Tandy. The background supplies both transparent-frame pixels and foreground restoration, rather than receiving saved pixels during stepping.
+- Foreground rectangle coordinates depend on relative frame/background pitch. Carhop borrows stack motion records, while the engine normally uses its shared sequence array. See plans/investigations/Sprite.md for the source evidence and other naming issues.
