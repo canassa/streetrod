@@ -2475,3 +2475,18 @@ The conflicting lines contain independent substitutions: keep named appearance m
 
 - The tags were inherited from bak2's skill ("where helpful") and ended up on every value
   parameter, adding noise without information.
+
+## 2026-11-05: Terse Doxygen with explicit @brief
+
+### What I did
+
+- Rewrote animate_rival_car's block: explicit `@brief`, two lines of detail, one short
+  sentence per parameter; no restated enum values, caller arguments or internal steps.
+- Added to the doxygen-c skill: "every word must pay to be there" (don't restate what a type
+  documents, no caller trivia or code walk-throughs, one short sentence per `@param`) and
+  an explicit one-line `@brief` on every function, type and file block.
+
+### What I learned
+
+- The investigator wrote a contract essay; the user wants documentation a reader can scan.
+  Detail belongs in plans/investigations/, not in the doc block.

@@ -43,15 +43,23 @@ that needs byte gates, not a comment-only edit.
 
 ## Core rules
 
+**Every word must pay to be there.** Say what the entity does for the game, and stop.
+Don't restate what a type already documents: a parameter of type `enum Foo` needs no
+list of Foo's values (the enum carries them; Doxygen links the type). Don't document
+callers' current arguments ("all callers pass 163"), steps a reader sees in the code,
+or preconditions the brief already implies. One short sentence per `@param`; add a
+detail only when a reader would otherwise misuse the value (units, null, odd range).
+
 1. Every documented `.H`/`.C` declaring file-level items needs a `@file` block.
    Use the real uppercase filename or bare `@file`. Without this, file-scope
    entities can be omitted with EXTRACT_ALL=NO even when their comments exist.
 2. Put comments adjacent to declarations. Avoid detached `@fn`, `@var`,
    `@struct` commands unless adjacency is impossible.
-3. The first sentence supplies a brief (JAVADOC_AUTOBRIEF); use a blank line
-   for details. A file's brief names its purpose, not the reconstruction work.
-4. Every parameter gets `@param`, including self-evident ones. Explain contract:
-   range, units, nullability, ownership, capacity or lifetime. Don't use
+3. Start every function, type and file block with an explicit one-line `@brief`; use a
+   blank line before any detail. A file's brief names its purpose, not the
+   reconstruction work.
+4. Every parameter gets `@param`, including self-evident ones, in one short
+   sentence; mention range, units, nullability or ownership only when it matters. Don't use
    direction tags (`[in]`/`[out]`/`[in,out]`); say in the text when a pointer
    receives a result. Use `@p name` in prose.
 5. Document results with `@return` or individual `@retval` cases. Explain

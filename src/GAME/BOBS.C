@@ -130,27 +130,17 @@ static int g_lastRival = -1;
 
 
 /**
- * Animate the selected rival's car and maintain its banner and presence.
+ * @brief Drive the selected rival's car in or out and show its name banner.
  *
- * Fits the rival's name and car description beside the cash display, dropping
- * final words when needed. Updates carhop activity around the movement. A
- * pending pass-by drives the car out again and clears its banner and presence.
- * The selected rival, car specification, portrait and paint must already be set
- * up, along with the scene's graphics and car backdrop state.
+ * A pending pass-by drives the car straight back out. The carhop may come or go
+ * around the movement.
  *
- * @param animation Movement kind: 4 for the first arrival in a scene, 1 for
- * subsequent arrivals, or 2 for departure. The first arrival initializes the
- * backdrop and enables carhop activity unless the rival passes straight by.
- * @param specIndex Car specification index, 0 through 25, matching the
- * selected rival and its selected specification.
- * @param showPortrait Zero to omit the occupant portrait, nonzero to include
- * the selected portrait. All callers include it.
- * @param carBottom Inclusive bottom screen row of the car image, in pixels;
- * all callers use 163.
- * @param useGasMask Nonzero to apply the gas-station foreground mask. All
- * callers use zero for the view of Bob's, including the view from jail.
- * @param tirePics Borrowed array of four tire-frame picture IDs, read during
- * this call; a null pointer omits tires.
+ * @param animation How the car moves.
+ * @param specIndex The rival's car specification.
+ * @param showPortrait Nonzero draws the driver in the car.
+ * @param carBottom Bottom screen row of the car.
+ * @param useGasMask Nonzero draws the gas station's foreground over the car.
+ * @param tirePics The four tire-frame pictures, or null for none.
  */
 static void near animate_rival_car(enum CarAnimKind animation, int specIndex, int showPortrait, int carBottom,
                                    int useGasMask, int *tirePics)
