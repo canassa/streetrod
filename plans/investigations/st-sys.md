@@ -343,7 +343,26 @@ MSC audit checked all 15 records: 81 size/offset checks across seven headers
 compiled independently, with zero mismatches. The fixed layouts are the
 offsets and sizes tabulated above.
 
-The required origin/main merge and complete post-merge gate rerun follow.
+Merged origin/main at 3daaa69 in bed08f8. The only conflict was the
+append-only diary; both entries were retained in timestamp order. Source
+changes from the disk investigation merged without conflict.
+
+Post-merge validation passed in full:
+
+- `./sr headers --check` and `./sr format --check` (157 files).
+- `./sr docs`: zero diagnostics.
+- `./sr check --all`: 572/572 (551 MATCH, 21 MATCH*).
+- Clean `rm -rf work/layout && ./sr build`: 96/96 object gates, 572/572
+  raw-exact mapped functions, 748/748 exact near calls, packed EXE IDENTICAL.
+- `./sr dgroup check` and `./sr dgroup order`: correct ownership/link order.
+- `nix-shell shell.nix --run "python3 -m unittest discover -s tests"`:
+  109 tests, OK.
+- Repeated real-MSC layout audit: fifteen records, seven independently
+  compiled headers, 81 checks, zero mismatches.
+- `./dosbox.sh --make`: DOS-native SR.EXE IDENTICAL; both SHA-1 hashes
+  3a5e28b795313028b7e77d147122f41cb29de334.
+
+The implementation commit is 10a7e1f. No branch was pushed.
 
 The first DGROUP run rejected TONE_WAVE_SAMPLES as a macro array bound.
 The capacity now uses the documented ToneWaveSize enum, which the analyzer
