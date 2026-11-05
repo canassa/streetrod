@@ -287,7 +287,7 @@ int near ga_menu(enum GarageMode mode)
     case GARAGE_SWAP:
         if (g_new == 0) {
             cu_ctl(CURSOR_SHOW_NOW);
-            gm_message(0x1867);
+            gm_message(MSG_HERE_IT_IS);
             cu_ctl(CURSOR_HIDE_NOW);
             break;
         }
@@ -353,21 +353,21 @@ int near ga_menu(enum GarageMode mode)
     sc_label(g_cashLabel);
     cu_ctl(CURSOR_SHOW_NOW);
     if (g_driver.carCount > 15)
-        gm_message(0x0d30);
+        gm_message(MSG_NO_ROOM_SELL_A_CAR);
     else if (g_driver.partCount > 130) {
         if (g_driver.partCount == 131)
-            gm_message(0x0d76);
+            gm_message(MSG_TOO_MUCH_JUNK_SELL_A_PART);
         else {
             p = g_junk;
             p += strlen(p) + 1;
             p += strcspn(p, "1234567890");
             itoa(g_driver.partCount - 130, p, 10);
             p[strlen(p)] = ' ';
-            gm_message(0x0dc7);
+            gm_message(MSG_TOO_MUCH_JUNK_SELL_12_PARTS);
         }
     }
     if (is_broke()) {
-        gm_message(0x17ff);
+        gm_message(MSG_YOURE_OUTTA_DOUGH);
         g_end |= 0x10;
     } else {
         mu_suspend(0);
@@ -395,9 +395,9 @@ void near ga_paint(void)
     int key;
 
     if (!g_driver.currentCar)
-        gm_message(0x0efa);
+        gm_message(MSG_YOUVE_GOT_NO_CAR_DUMMY);
     else if (r_vid.mode != VID_EGA && r_vid.mode != VID_TANDY)
-        gm_message(0x18ad);
+        gm_message(MSG_BETTER_GRAPHICS_TO_PAINT);
     else {
         bm1 = mn_grab(KM_PAINT, &x, &y, ARENA_HIGH_STACK);
         mn_push(KM_PAINT);
@@ -417,7 +417,7 @@ void near ga_paint(void)
                 continue;
             case KR_PAINT_GO_AHEAD:
                 if (g_driver.money < 20L) {
-                    gm_message(0x10a1);
+                    gm_message(MSG_PAINT_AINT_FREE);
                     break;
                 }
                 r_vid.copyToFront = 1;
@@ -460,38 +460,41 @@ void near ga_body(unsigned mask)
 
     p9 = &g_models[g_driver.currentCar->specIndex];
     if (!g_driver.currentCar) {
-        gm_message(0x0efa);
+        gm_message(MSG_YOUVE_GOT_NO_CAR_DUMMY);
         return;
     }
     if (mask & 4) {
         if (p9->roofPic == 0) {
-            gm_message(0x1914);
+            gm_message(MSG_CANT_CHOP_THIS_ROOF);
             return;
         }
-        msg = (g_driver.currentCar->appearance & 0x2000) ? (g_txt + 1299) : (g_txt + 1283);
+        msg = (g_driver.currentCar->appearance & 0x2000) ? (g_txt + TXT_REBUILD_ROOF_DOLLARS_70)
+                                                         : (g_txt + TXT_CHOP_ROOF_DOLLARS_70);
         cost = 70;
         val5 = 0x2220;
     }
     if (mask & 2) {
         if (p9->frontBumperPic == 0) {
-            gm_message(0x1936);
+            gm_message(MSG_ALREADY_LOST_YOUR_BUMPER);
             return;
         }
-        msg = (g_driver.currentCar->appearance & 0x4000) ? (g_txt + 1337) : (g_txt + 1318);
+        msg = (g_driver.currentCar->appearance & 0x4000) ? (g_txt + TXT_RESTORE_BUMPER_DOLLARS_15)
+                                                         : (g_txt + TXT_STRIP_BUMPER_DOLLARS_15);
         cost = 15;
         val5 = 0x888;
     }
     if (mask & 1) {
         if (p9->rearBumperPic == 0) {
-            gm_message(0x1936);
+            gm_message(MSG_ALREADY_LOST_YOUR_BUMPER);
             return;
         }
-        msg = (g_driver.currentCar->appearance & 0x8000) ? (g_txt + 1337) : (g_txt + 1318);
+        msg = (g_driver.currentCar->appearance & 0x8000) ? (g_txt + TXT_RESTORE_BUMPER_DOLLARS_15)
+                                                         : (g_txt + TXT_STRIP_BUMPER_DOLLARS_15);
         cost = 15;
         val5 = 0x888;
     }
     if ((long)cost > g_driver.money) {
-        gm_message(0x1959);
+        gm_message(MSG_CUSTOMIZATION_AINT_FREE);
         return;
     }
     bm1 = mn_grab(KM_BODY_CHANGE, &x, &y, ARENA_HIGH_STACK);
@@ -544,9 +547,9 @@ void near ga_stickers(void)
     int k;
 
     if (!g_driver.currentCar)
-        gm_message(0x0efa);
+        gm_message(MSG_YOUVE_GOT_NO_CAR_DUMMY);
     else if (g_driver.money < 5L)
-        gm_message(0x1975);
+        gm_message(MSG_STICKERS_AINT_FREE);
     else {
         r_vid.copyToFront = 1;
         x = 24;
@@ -686,7 +689,7 @@ void near ga_tires(void)
 
     car = g_driver.currentCar;
     if (car == 0) {
-        gm_message(0x0efa);
+        gm_message(MSG_YOUVE_GOT_NO_CAR_DUMMY);
         return;
     }
     ga_spares(PART_TIRES, tbl, line, 0);
@@ -697,7 +700,7 @@ void near ga_tires(void)
         sel = mn_sel();
         break;
     case KR_EMPTY_LIST:
-        gm_message(0x0f4e);
+        gm_message(MSG_NO_SPARE_TIRES);
         return;
     }
     y = g_parts[car->tires->idx].variant;
@@ -758,7 +761,7 @@ void ga_info(void)
     char vals[144];
 
     if (g_driver.currentCar == 0) {
-        gm_message(0x0efa);
+        gm_message(MSG_YOUVE_GOT_NO_CAR_DUMMY);
         return;
     }
     car_info(ids, vals);
@@ -768,7 +771,7 @@ void ga_info(void)
     case KR_ACCEPT:
         return;
     case KR_EMPTY_LIST:
-        gm_message(0x0f4e);
+        gm_message(MSG_NO_SPARE_TIRES);
         return;
     }
 }
@@ -785,7 +788,7 @@ void near ga_transmission(void)
 
     owner = g_driver.currentCar;
     if (!owner) {
-        gm_message(0x0efa);
+        gm_message(MSG_YOUVE_GOT_NO_CAR_DUMMY);
         return;
     }
     for (k = 0; k < 2; k++) {
@@ -814,7 +817,7 @@ void near ga_transmission(void)
                 switch (k = mn_modal_list(KM_SPARE_PARTS, 1, 0, g_list, buf, 0)) {
                 case KR_ACCEPT:
                     if (owner->transmission) {
-                        gm_message(0x1875);
+                        gm_message(MSG_WHERE_WILL_YOU_PUT_IT);
                         k = 0;
                     } else
                         k = mn_sel();
@@ -823,7 +826,7 @@ void near ga_transmission(void)
                     k = 0;
                     break;
                 case KR_EMPTY_LIST:
-                    gm_message(0xf72);
+                    gm_message(MSG_NO_SPARE_TRANSMISSIONS);
                     k = 0;
                     break;
                 }
@@ -850,7 +853,7 @@ void near ga_transmission(void)
                     break;
                 }
                 gx_trans_pic(g_carDraw.transmissionPic, 1);
-                gm_message(0x10cd);
+                gm_message(MSG_PAY_ATTENTION_WONT_FIT);
                 gx_trans_clear(g_carDraw.transmissionPic, 1);
                 g_gameClock.actionTicks += 0x888L;
                 g_carDraw.transmissionPic = prev;
@@ -1012,7 +1015,7 @@ void near ga_hood(struct Car *car)
     int havek[10];
 
     if (car == 0) {
-        gm_message(0xefa);
+        gm_message(MSG_YOUVE_GOT_NO_CAR_DUMMY);
         return;
     }
     for (key = 1; key <= 9; key++) {
@@ -1079,7 +1082,7 @@ void near ga_hood(struct Car *car)
                 gx_draw_bolts(g_boltSlots + 1, g_boltSubslots + 1, 1);
                 cu_ctl(CURSOR_SHOW_NOW);
             } else
-                gm_message(0xea1);
+                gm_message(MSG_CANT_TUNE_THAT_MESS_KLUTZ);
             continue;
         case KR_ENGINE_PARTS:
             ga_spares(g_nextCat[cnt1], list4, buf, 0);
@@ -1091,11 +1094,11 @@ void near ga_hood(struct Car *car)
                 break;
             case KR_EMPTY_LIST:
                 if (g_nextCat[cnt1] == PART_ENGINE)
-                    gm_message(0xf97);
+                    gm_message(MSG_NO_SPARE_ENGINE);
                 if (g_nextCat[cnt1] == PART_MANIFOLD)
-                    gm_message(0xfd7);
+                    gm_message(MSG_NO_SPARE_MANIFOLD);
                 if (g_nextCat[cnt1] == PART_CARBURETOR)
-                    gm_message(0xfb5);
+                    gm_message(MSG_NO_SPARE_CARBURATOR);
                 key = 0;
                 break;
             case KR_CANCEL:
@@ -1105,7 +1108,7 @@ void near ga_hood(struct Car *car)
             if (key == 0)
                 continue;
             if (cnt1 >= n) {
-                gm_message(0x1875);
+                gm_message(MSG_WHERE_WILL_YOU_PUT_IT);
                 continue;
             }
             sel2 = cnt1;
@@ -1199,7 +1202,7 @@ void near ga_hood(struct Car *car)
                 gx_draw_part(g_partsPics[sel2], 1);
                 so_part_move(0);
                 so_part_set();
-                gm_message(0x10cd);
+                gm_message(MSG_PAY_ATTENTION_WONT_FIT);
                 so_part_move(1);
                 gx_erase_part(g_partsPics[sel2], 1);
                 so_part_move(0);

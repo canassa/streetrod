@@ -310,7 +310,7 @@ top:
                 pos <<= 1;
                 dl.unused = 1;
                 gm_play_anim(3);
-                gm_message(0x19e1);
+                gm_message(MSG_NEED_FULL_SERVICE);
                 dl.attendantAbsent = 0;
                 if (done)
                     goto fin;
@@ -385,11 +385,11 @@ top:
                 dl.nozzleInTank = 0;
                 cu_ctl(dl.hand = GAS_HAND_NOZZLE);
                 if (dl.fillsLeft > 0 && pos <= g_driver.money)
-                    gm_message(0x18dd);
+                    gm_message(MSG_ITS_NOT_FULL_SPEEDY);
                 goto both;
             }
             if (dl.fillsLeft == 0 || pos > g_driver.money)
-                gm_message(0x10b5);
+                gm_message(MSG_PAY_ATTENTION_DUMMY);
             else {
                 show_tank_cap(&dl, 0x471);
                 dl.nozzleInTank = 1;
@@ -404,7 +404,7 @@ top:
             }
             break;
         case KR_GAS_LEAVE:
-            gm_message(0x10f6);
+            gm_message(MSG_GET_OUT_OF_MY_FACE_DUMMY);
             continue;
         case KR_GAS_FRONT_WINDSHIELD:
             break;
@@ -442,7 +442,9 @@ static int near replace_tires(void)
     return ret;
 }
 
-static int g_winMsgs[6] = {4973, 5015, 5073, 5043, 5099, 5130};
+static int g_winMsgs[6] = {MSG_WON_BUT_DIDNT_BET,           MSG_BIG_DEAL_TEN_LOUSY_BUCKS,
+                           MSG_FIFTY_SMACKERS_NOT_BAD,      MSG_BIG_DEAL_TWENTY_FIVE_BUCKS,
+                           MSG_A_HUNDRED_SMACKERS_HOT_SHOT, MSG_YOU_JUST_WON_A_HELLUVA_CAR};
 static struct Spot g_crashPics[3] = {{1264, 64, 84}, {1266, 208, 82}, {1265, 272, 123}};
 static int g_statsDone = 0;
 
@@ -682,7 +684,9 @@ int near ra_outcome(void)
         g_resultWin = 1;
         show_race_stats();
         cu_ctl(CURSOR_SHOW_NOW);
-        gm_message(g_isKingState == 0 ? (i = g_winMsgs[kind]) : g_driver.raceType == RACE_DRAG ? 0x14bd : 0x14d6);
+        gm_message(g_isKingState == 0               ? (i = g_winMsgs[kind])
+                   : g_driver.raceType == RACE_DRAG ? MSG_BEGINNERS_LUCK_PUNK
+                                                    : MSG_YOU_RAN_A_GOOD_RACE);
         sc_add_money(v);
         if (kind == BET_CAR) {
             found = gm_make_car(g_opponentSpecIndex, g_oppSpecPointer->price, 0);
@@ -743,7 +747,7 @@ int near ra_outcome(void)
         gm_pause(0xfa);
         if (i <= g_driver.money)
             goto pay;
-        gm_message(0x1793);
+        gm_message(MSG_SENTENCED_FOR_DEBTS);
         mn_pop(1);
         mn_pop(1);
         sc_add_money(-g_driver.money);
@@ -758,7 +762,7 @@ int near ra_outcome(void)
         sc_status_text(-1, "", SCREEN_WIDTH - g_statusLine.messageX);
     } else if (g_driveEng.stopFlags == (STOP_LOST | STOP_JUMP_START)) {
         cu_ctl(CURSOR_SHOW_NOW);
-        gm_message(0xecb2);
+        gm_message(-MSG_YA_JUMPED_THE_LIGHT_SPEEDY);
     } else {
         if (kind == BET_CAR) {
             gm_scrap_car(g_driver.currentCar, 0);
@@ -768,8 +772,10 @@ int near ra_outcome(void)
         if (g_driveEng.stopFlags == STOP_LOST) {
             show_race_stats();
             cu_ctl(CURSOR_SHOW_NOW);
-            i = kind == BET_CAR ? 0x143a : 0x1427;
-            gm_message(g_isKingState == 0 ? i : g_driver.raceType == RACE_DRAG ? 0x1450 : 0x146c);
+            i = kind == BET_CAR ? MSG_TAKE_A_WALK_SUCKER : MSG_YOU_LOSE_SUCKER;
+            gm_message(g_isKingState == 0               ? i
+                       : g_driver.raceType == RACE_DRAG ? MSG_CLOSE_BUT_NO_CIGAR_PUNK
+                                                        : MSG_KNEW_YOUD_CHOKE);
             mn_pop(1);
             if (kind != BET_CAR)
                 return 3;
@@ -778,10 +784,10 @@ int near ra_outcome(void)
         } else if (stop) {
             cu_ctl(CURSOR_SHOW_NOW);
             if (engine) {
-                blow_engine(kind == BET_CAR ? 0x16bd : 0x1634);
+                blow_engine(kind == BET_CAR ? MSG_BLEW_ENGINE_AGAIN_LOSE : MSG_BLEW_ENGINE_AGAIN_ACE);
                 goto finishstop;
             } else if (opt) {
-                drop_transmission(kind == BET_CAR ? 0x1678 : 0x1608);
+                drop_transmission(kind == BET_CAR ? MSG_DROPPED_TRANSMISSION_LOSE : MSG_DROPPED_TRANSMISSION_KLUTZ);
                 goto finishstop;
             }
         finishstop:
@@ -790,10 +796,10 @@ int near ra_outcome(void)
             show_crash();
             if (kind == BET_CAR) {
                 if (g_driveEng.stopFlags & STOP_TIRES) {
-                    gm_message(0x16f6);
+                    gm_message(MSG_BLEW_YOUR_TIRES_AGAIN);
                     replace_tires();
                 } else
-                    gm_message(0x1658);
+                    gm_message(MSG_YOU_LOSE_TAKE_A_WALK_SUCKER);
             } else if (g_driveEng.speed > 0x5a) {
                 v = gm_scrap_car(g_driver.currentCar, 0) / 10 + 0x13;
                 g_driver.currentCar = 0;
@@ -806,7 +812,7 @@ int near ra_outcome(void)
                 itoa(v, ptr, 10);
                 ptr[strlen(ptr)] = ' ';
                 sy_reset_queues();
-                gm_message(0x1513);
+                gm_message(MSG_LUCKY_NOT_KILLED_TOTALED);
             } else {
                 if (g_driveEng.speed > 0x3c) {
                     i = 0;
@@ -816,11 +822,11 @@ int near ra_outcome(void)
                     v = rn_int(0x14) + 100;
                 } else {
                     if (g_driveEng.stopFlags & STOP_TIRES) {
-                        gm_message(0x1590);
+                        gm_message(MSG_LUCKY_SLOW_NEED_TIRES);
                         all = replace_tires();
                         goto fin;
                     }
-                    gm_message(0x1561);
+                    gm_message(MSG_LUCKY_SLOW_LOST_RACE);
                     mn_pop(1);
                     return 1;
                 }

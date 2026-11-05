@@ -2343,3 +2343,18 @@ Ownership inventory (the original 98 definitions):
 - Initialized static data has private $Snnn_name labels in MSC's /Fc listing, so PUBDEF-only indexing mistakes it for strings and loses DGROUP ownership evidence. Follow data directives and relative ORGs to recover private names and offsets; keep the real object symbol table unchanged.
 - The 21 scenery Run arrays require their existing public forward declarations. MSC rejects static tentative declarations followed by initializers (C2086). Moving the initialized arrays before their referring List records keeps all loaded bytes but changes relocation emission order, causing 256 packed EXE bytes to differ. Keeping these arrays public restores an identical packed EXE; the exception is documented per symbol in the ledger and in the recipe book.
 - Changing initialized globals to static and relocating types did not change GARAGE's measured contributing-name allowance. Unused extern removal does not buy name-budget space.
+
+## 2026-11-05 02:30 CET: Name message and text offsets (cmsgs)
+
+### What I did
+
+- Named 290 distinct offsets in module-owned TextOffset, DescriptionOffset and MessageOffset enums in src/UI/MESSAGES.H; supplied the 47 assembly-used values through MESSAGES.INC.
+- Replaced literal offsets in popup calls, race/accept/refuse tables, hotspot text fields, body-customization prompts, source-initialized part descriptions, save-slot names and the demo racer name. Kept negative popup arguments explicit as -MSG_... and preserved every byte.
+- Wrote work/LEDGER.md with one old-value/name/evidence entry per offset and five categories of notable skips. This audit artifact remains in the ignored work directory.
+- Passed headers --check, format --check, check --all (572/572), clean rm -rf work followed by build (Packed EXE vs orig/SR.EXE: IDENTICAL), dgroup check/order, 155 unit tests and docs (zero diagnostics). The clean build also reports 572/572 functions at original positions and 748/748 near-call encodings exact.
+
+### What I learned
+
+- Popup offsets use g_descHdr, description strings use g_desc one byte later, and hotspot strings use g_txt. POPUP.C negates a negative message argument before indexing, then automatically releases its popup storage; the original unsigned-looking literals must preserve that signed behavior.
+- DISK.C loads the first description/text ranges from HOT_DATA. Its block sizes locate descriptions at file offset 1904 and text at 3756; the eight underscore placeholders are actual quoted car nicknames, and the demo racer override is The Geek. Naming only from executable placeholders would have obscured those meanings.
+- Numeric enums/EQUs keep C initializer expressions and the existing assembler data/export layout direct; computed assembler labels alone would still need a separate C constant interface or a generation step. The ledger records the bases and source/asset evidence for maintaining both interfaces.

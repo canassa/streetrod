@@ -1,4 +1,5 @@
         .MODEL MEDIUM
+        INCLUDE MESSAGES.INC
 
 ; Menu and message texts and their tables.
 
@@ -167,13 +168,13 @@ _g_raceResult1 DB      51 DUP (0)
         PUBLIC  _g_raceResult2
 _g_raceResult2 DB      51 DUP (0)
         PUBLIC  _g_offBolt
-_g_offBolt DW      3E9h
+_g_offBolt DW      TXT_A_BOLT
         PUBLIC  _g_offWires
-_g_offWires DW      3F0h
+_g_offWires DW      TXT_WIRES
         PUBLIC  _g_offSquelch
-_g_offSquelch DW      336h
+_g_offSquelch DW      TXT_SQUELCH_IT
         PUBLIC  _g_offTunes
-_g_offTunes DW      325h
+_g_offTunes DW      TXT_CATCH_SOME_TUNES
 
         PUBLIC  _g_groupHot
 _g_groupHot DW      29h, 0, 2, 6, 1Ah, 2Eh, 43h, 48h, 4Dh, 6Ch, 73h, 87h
