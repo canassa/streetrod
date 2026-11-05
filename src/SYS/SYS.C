@@ -52,12 +52,14 @@ int g_wRivBanner;
 struct TimerPriorities g_sysTimerPriorities;
 
 static struct TimerQueue g_timerQueue = {-1, -1, 0, TIMER_NO_DEADLINE, 0, 0};
-static struct Link g_timers[4] = {
-    {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}, {0, 0, 0L, 0, 0, 0, ""}};
+static struct TimerLink g_timers[4] = {{0, 0, 0L, 0, TIMER_CANCELLED, 0, ""},
+                                       {0, 0, 0L, 0, TIMER_CANCELLED, 0, ""},
+                                       {0, 0, 0L, 0, TIMER_CANCELLED, 0, ""},
+                                       {0, 0, 0L, 0, TIMER_CANCELLED, 0, ""}};
 static int g_unused3 = 0;
 static int g_unused4[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 long g_waitUntil = 0L;
-struct InputState g_input = {0, 0};
+struct InputState g_input = {FALSE, 0};
 static int g_unused5 = 32767;
 int g_unused6 = 0;
 int g_unused7 = 0;
@@ -65,7 +67,7 @@ int g_unused8 = 0;
 int g_msgTicks = 350;
 int g_clickEnds = 0;
 int g_kbdHooked = 0;
-struct Mouse g_mouse = {0, 0, 0, 0, 0, 0, 0, 10, 3};
+struct Mouse g_mouse = {0, 0, 0, 0, 0, 0, FALSE, 10, 3};
 static int g_unused9[2] = {0, 0};
 long g_tick = 0L;
 struct GameClock g_gameClock = {0L, 0L, 0L};
@@ -123,7 +125,7 @@ void sy_reset_queues(void)
     g_timerQueue.nextDeadline = TIMER_NO_DEADLINE;
     g_timerQueue.unused = g_timerQueue.busy = 0;
     for (i = 0; i < 4; i++)
-        g_timers[i].nxt = i + 1;
+        g_timers[i].next = i + 1;
     g_unused3 = -1;
     deadline = g_tick + 10;
     while (deadline > g_tick) {
@@ -135,7 +137,7 @@ void sy_reset_queues(void)
     g_waitUntil = 0;
     if (g_demo == 0 && g_mouse.present) {
         mo_poll();
-        g_mouse.accX = g_mouse.accY = 0;
+        g_mouse.mickeysX = g_mouse.mickeysY = 0;
     }
     g_click = 0;
     for (i = 0; i < 8; i++)
@@ -148,23 +150,23 @@ void sy_timer_remove(int n)
 {
     register int i;
 
-    i = g_timers[n].nxt;
+    i = g_timers[n].next;
     if (i >= 0)
-        g_timers[i].prv = g_timers[n].prv;
+        g_timers[i].prev = g_timers[n].prev;
     else {
-        i = g_timers[n].prv;
+        i = g_timers[n].prev;
         g_timerQueue.earliest = i;
         if (i < 0)
             g_timerQueue.nextDeadline = TIMER_NO_DEADLINE;
         else
             g_timerQueue.nextDeadline = g_timers[i].deadline;
     }
-    i = g_timers[n].prv;
+    i = g_timers[n].prev;
     if (i >= 0)
-        g_timers[i].nxt = g_timers[n].nxt;
+        g_timers[i].next = g_timers[n].next;
     else
-        g_timerQueue.head = g_timers[n].nxt;
-    g_timers[n].nxt = g_timerQueue.free;
+        g_timerQueue.head = g_timers[n].next;
+    g_timers[n].next = g_timerQueue.free;
     g_timerQueue.free = n;
 }
 
@@ -288,7 +290,7 @@ void sy_init(void)
     }
     if (g_demo == 0 && g_useMouse && mo_reset() == -1) {
         g_mouse.present = 1;
-        g_mouse.accX = g_mouse.accY = 0;
+        g_mouse.mickeysX = g_mouse.mickeysY = 0;
         g_mouse.shiftX = 1;
         g_mouse.shiftY = 1;
     } else
@@ -333,16 +335,16 @@ void sy_keymap_set(enum ScreenId n)
     g_keymapGroup = n;
     p = g_keyMaps[n];
     q = g_keymapSaved;
-    for (; p->key; p++, q++, num++) {
+    for (; p->scanCode; p++, q++, num++) {
         if (num >= 30)
             break;
-        q->val = g_scanMap[q->key = c = p->key];
-        g_scanMap[c] = p->val;
+        q->mappedByte = g_scanMap[q->scanCode = c = p->scanCode];
+        g_scanMap[c] = p->mappedByte;
     }
     p = g_keyMaps[KM_MUSIC];
-    q->val = g_scanMap[q->key = c = p->key];
-    g_scanMap[c] = p->val;
-    q[1].key = 0;
+    q->mappedByte = g_scanMap[q->scanCode = c = p->scanCode];
+    g_scanMap[c] = p->mappedByte;
+    q[1].scanCode = 0;
 }
 
 
@@ -357,12 +359,12 @@ int sy_keymap_restore(int keep)
     i = g_keymapGroup;
     if (i) {
         if (keep) {
-            for (p = g_keymapSaved; p->key; p++)
-                if (p->val >= 0x20)
-                    g_scanMap[p->key] = p->val;
+            for (p = g_keymapSaved; p->scanCode; p++)
+                if (p->mappedByte >= 0x20)
+                    g_scanMap[p->scanCode] = p->mappedByte;
         } else {
-            for (p = g_keymapSaved; p->key; p++)
-                g_scanMap[p->key] = p->val;
+            for (p = g_keymapSaved; p->scanCode; p++)
+                g_scanMap[p->scanCode] = p->mappedByte;
             g_keymapGroup = 0;
         }
     }
@@ -371,7 +373,7 @@ int sy_keymap_restore(int keep)
 
 char g_protectPal[16] = {0, 0, 8, 7, 15, 7, 15, 8, 7, 2, 4, 12, 5, 10, 6, 14};
 static int g_unused12 = 0;
-static struct DemoControl g_demoControl = {0, 0, 0, 0, 0, 0};
+static struct DemoControl g_demoControl = {DEMO_EXIT_READY, 0, 0, 0, KM_NONE, 0};
 static int g_demoTargetX = 0;
 static int g_demoTargetY = 0;
 static int g_demoScriptPos = 0;
@@ -387,7 +389,7 @@ static char g_squealPhase = 0;
 
 int sy_wait_input(int ticks)
 {
-    register struct Link *p;
+    register struct TimerLink *p;
     long end;
     int x;
     register int i;
@@ -411,8 +413,8 @@ int sy_wait_input(int ticks)
     flag = g_waitUntil != 0L;
     end = (long)ticks + g_tick;
     do {
-        if (g_demo == 0x63 && g_demoControl.quit != 0x63) {
-            g_demoControl.quit = 0x63;
+        if (g_demo == 0x63 && g_demoControl.exitState != DEMO_EXIT_ENTERED) {
+            g_demoControl.exitState = DEMO_EXIT_ENTERED;
             sy_exit();
         }
         if (g_protectCycle && (r_vid.mode == VID_EGA || r_vid.mode == VID_TANDY) && !(g_tick & 0xf) && g_musicOn &&
@@ -427,7 +429,7 @@ int sy_wait_input(int ticks)
         }
         res = kg_key();
         if (res > KEY_NONE) {
-            if (g_input.any) {
+            if (g_input.captureKeys) {
                 g_input.key = res;
                 return KR_ANY_INPUT;
             }
@@ -456,7 +458,7 @@ int sy_wait_input(int ticks)
                 sy_timer_remove(i);
                 break;
             case TIMER_RESUME_ANIM:
-                res = p->argument;
+                res = p->animationId;
                 sy_timer_remove(i);
                 vi_anim_resume(res);
                 break;
@@ -487,7 +489,7 @@ int sy_wait_input(int ticks)
                             : mn_hit(x, y))
                     return i;
             }
-            if (g_input.any) {
+            if (g_input.captureKeys) {
                 g_input.key = 0;
                 return KR_ANY_INPUT;
             }
@@ -562,7 +564,7 @@ int sy_timer_add(int delay, int pri)
         for (;;) {
             if (cur3 >= 0) {
                 if ((key = g_timers[cur3].deadline) > when) {
-                    cur3 = g_timers[prev = cur3].nxt;
+                    cur3 = g_timers[prev = cur3].next;
                     continue;
                 }
                 if (when > key)
@@ -570,7 +572,7 @@ int sy_timer_add(int delay, int pri)
                 for (;;) {
                     if (g_timers[cur3].priority >= pri)
                         break;
-                    cur3 = g_timers[prev = cur3].nxt;
+                    cur3 = g_timers[prev = cur3].next;
                     if (cur3 < 0 || g_timers[cur3].deadline != key)
                         break;
                 }
@@ -580,18 +582,18 @@ int sy_timer_add(int delay, int pri)
     }
     g_timers[i].deadline = when;
     g_timers[i].priority = pri;
-    g_timerQueue.free = g_timers[i].nxt;
-    g_timers[i].nxt = cur3;
+    g_timerQueue.free = g_timers[i].next;
+    g_timers[i].next = cur3;
     if (cur3 < 0) {
         g_timerQueue.earliest = i;
         g_timerQueue.nextDeadline = when;
     } else
-        g_timers[cur3].prv = i;
-    g_timers[i].prv = prev;
+        g_timers[cur3].prev = i;
+    g_timers[i].prev = prev;
     if (prev < 0)
         g_timerQueue.head = i;
     else
-        g_timers[prev].nxt = i;
+        g_timers[prev].next = i;
     g_timerQueue.busy = 0;
     return i;
 }
@@ -603,17 +605,17 @@ void sy_timer_anim(int fc, int delay)
 
     n = sy_timer_add(delay, g_sysTimerPriorities.animation);
     g_timers[n].action = TIMER_RESUME_ANIM;
-    g_timers[n].argument = fc;
+    g_timers[n].animationId = fc;
 }
 
 
 void sy_timer_cancel(int n)
 {
-    struct Link *p;
+    struct TimerLink *p;
     int i;
 
-    for (i = g_timerQueue.earliest; i >= 0; i = g_timers[i].nxt)
-        if ((p = g_timers + i)->action == 1 && p->argument == n)
+    for (i = g_timerQueue.earliest; i >= 0; i = g_timers[i].next)
+        if ((p = g_timers + i)->action == TIMER_RESUME_ANIM && p->animationId == n)
             p->action = TIMER_CANCELLED;
 }
 
@@ -654,7 +656,7 @@ void sy_drive_start(void)
     _dos_setvect(TIMER_INT, sy_drive_isr);
     if (!g_demo && g_mouse.present) {
         mo_poll();
-        g_mouse.accX = g_mouse.accY = 0;
+        g_mouse.mickeysX = g_mouse.mickeysY = 0;
         g_mouse.shiftX = 1;
         g_mouse.shiftY = 6;
     }
@@ -680,7 +682,7 @@ void sy_drive_stop(void)
     g_speakerOn = 0;
     if (!g_demo && g_mouse.present) {
         mo_poll();
-        g_mouse.accX = g_mouse.accY = 0;
+        g_mouse.mickeysX = g_mouse.mickeysY = 0;
         g_mouse.shiftX = 1;
         g_mouse.shiftY = 1;
     }
@@ -718,9 +720,9 @@ void sy_demo_step(void)
         return;
     }
     if (!g_demoControl.moving) {
-        if (g_demoControl.autoShifts && g_keyGroup == KM_GARAGE) {
-            g_demoControl.autoShifts = 0;
-            g_demoControl.count = 15;
+        if (g_demoControl.autoUpshifts && g_keyGroup == KM_GARAGE) {
+            g_demoControl.autoUpshifts = 0;
+            g_demoControl.garageStep = 15;
         }
         num = (int)strlen((char *)g_keyMaps[g_keyGroup]) / 2;
         k = 0;
@@ -738,7 +740,7 @@ void sy_demo_step(void)
             k = 1;
             break;
         case KM_GAS_STATION:
-            g_demoControl.count = 4;
+            g_demoControl.garageStep = 4;
             break;
         case KM_ADVERTS:
             k = 4;
@@ -755,8 +757,8 @@ void sy_demo_step(void)
             break;
         }
         if (g_keyGroup == KM_GARAGE && g_demoControl.lastGroup != KM_GARAGE) {
-            g_demoChoice = num - g_demoControl.count++ - 1;
-            g_demoControl.count = g_demoControl.count % num;
+            g_demoChoice = num - g_demoControl.garageStep++ - 1;
+            g_demoControl.garageStep = g_demoControl.garageStep % num;
         } else
             g_demoChoice = rn_int(num + k);
         switch (g_keyGroup) {
@@ -778,7 +780,7 @@ void sy_demo_step(void)
             g_demoChoice = 1;
             break;
         case KM_SPARE_PARTS:
-            if (g_demoControl.count < 11)
+            if (g_demoControl.garageStep < 11)
                 g_demoChoice = 0;
             else
                 g_demoChoice = num - 1;
@@ -807,8 +809,8 @@ void sy_demo_step(void)
             g_demoTargetX = 160;
         if (g_demoChoice >= 0) {
             if (num > g_demoChoice) {
-                g_demoKey = g_keyMaps[g_keyGroup][g_demoChoice].key;
-                mask = g_keyMaps[g_keyGroup][g_demoChoice].val + 0x32;
+                g_demoKey = g_keyMaps[g_keyGroup][g_demoChoice].scanCode;
+                mask = g_keyMaps[g_keyGroup][g_demoChoice].mappedByte + 0x32;
                 step = g_groupHot[g_keyGroup];
                 for (; step - g_groupHot[g_keyGroup] < 32 && g_hots[step].hitCode != mask; step++)
                     ;
@@ -844,7 +846,7 @@ void sy_demo_step(void)
         return;
     }
     g_demoControl.moving = 0;
-    if (g_keyGroup == KM_BOBS && g_demoControl.autoShifts < 10 && g_demoKey == SC_G)
+    if (g_keyGroup == KM_BOBS && g_demoControl.autoUpshifts < 10 && g_demoKey == SC_G)
         g_demoKey = SC_ENTER;
     if (g_keyGroup == KM_GARAGE && g_demoControl.lastGroup == KM_GARAGE) {
         g_demoKey = SC_ENTER;
@@ -895,14 +897,15 @@ void interrupt far sy_timer_isr(void)
     }
     if (g_voice->playing && --g_voice->ticksLeft) {
         if (g_vibratoActive && g_voice->divisor.w && !--g_vibCount) {
-            g_toneShapePlaybackPointer->phase = g_toneShapePlaybackPointer->phase % g_toneShapePlaybackPointer->length;
+            g_toneShapePlaybackPointer->sampleIndex =
+                g_toneShapePlaybackPointer->sampleIndex % g_toneShapePlaybackPointer->sampleCount;
             g_vibrato.divisor =
-                g_toneShapes[g_toneShapePlaybackPointer->waveform][g_toneShapePlaybackPointer->phase++] *
-                    g_vibrato.gain +
+                g_toneShapes[g_toneShapePlaybackPointer->waveform][g_toneShapePlaybackPointer->sampleIndex++] *
+                    g_vibrato.sampleScale +
                 g_voice->divisor.w;
             outp(PIT_CH2, g_vibrato.divisor);
             outp(PIT_CH2, g_vibrato.divisor >> 8);
-            g_vibCount = g_toneShapePlaybackPointer->delay;
+            g_vibCount = g_toneShapePlaybackPointer->sampleTicks;
         }
     } else if (g_voice->playing && g_voice->ticksLeft == 0) {
         while (!(g_voice->ticksLeft = *g_voice->nextWord++)) {
@@ -933,8 +936,8 @@ void interrupt far sy_timer_isr(void)
             g_speakerOn = 0;
         } else {
             if (g_vibratoActive) {
-                g_vibCount = g_toneShapePlaybackPointer->delay;
-                g_vibrato.gain = (unsigned)g_toneShapePlaybackPointer->depth * g_voice->divisor.w / 1000;
+                g_vibCount = g_toneShapePlaybackPointer->sampleTicks;
+                g_vibrato.sampleScale = (unsigned)g_toneShapePlaybackPointer->depthPermille * g_voice->divisor.w / 1000;
             }
             outp(PIT_CH2, g_voice->divisor.b[0]);
             outp(PIT_CH2, g_voice->divisor.b[1]);
@@ -1126,7 +1129,7 @@ void interrupt far sy_drive_isr(void)
                     } else if (g_driveEng.gearIndex < g_driveEng.topGear && g_startLightGo) {
                         c = 1;
                         flag = 1;
-                        g_demoControl.autoShifts++;
+                        g_demoControl.autoUpshifts++;
                     }
                     if (g_driveEng.rpm < AUTO_DOWNSHIFT_RPM && g_driveEng.gearIndex > DRIVE_FIRST && !flag)
                         c = 1;

@@ -8,7 +8,7 @@
 /** Bytes per pre-shifted cursor sheet plane, including alignment copies. */
 #define CURSOR_PLANE_BYTES 0x600
 /** Pixel rows holding four stacked cursor shapes. */
-#define CURSOR_SHEET_HEIGHT 64
+#define CURSOR_SHEET_HEIGHT (CURSOR_HEIGHT * GAS_HAND_COUNT)
 /** Pixel rows saved beneath one cursor shape. */
 #define CURSOR_HEIGHT 16
 /** Pixel span reserved for a cursor, including horizontal alignment padding. */
@@ -17,6 +17,7 @@
 #include "STRUCTS.H"
 
 #include "BITMAP.H"
+#include "RACE.H"
 
 struct Bitmap;
 
@@ -29,16 +30,26 @@ enum CursorDrawState {
     CURSOR_DRAW_BUFFERED = 2    /**< Draw only into the back buffer. */
 };
 
+/**
+ * @brief Cursor shape sheets, saved background and previous drawing extent.
+ *
+ * Shifted sheets share one allocation; the saved EGA background uses video RAM.
+ */
 struct Cursor {
-    struct Bitmap far *save; /* background under the cursor */
-    struct Clip clip;        /* last drawn strip; memset as 12 bytes */
-    char far *shape;
-    char far *mask;
-    unsigned shapeOffset;  /* shape offset, cu_shape_off(n) */
-    unsigned shapeSize;    /* bytes per shape */
-    int shapeIndex;        /* shape number */
-    char state;            /* 0 hidden, 1 shown, <0 hide pending */
-    struct Rect drawnRect; /* last drawn extent, x2 < 0 when none */
+    /** Background bitmap used to restore the back page. */
+    struct Bitmap far *save;
+    /** Aligned restore strip; zero width means none. */
+    struct Clip clip;
+    char far *shape; /**< Base of the pre-shifted color sheets. */
+    char far *mask;  /**< Base of the corresponding mask sheets. */
+    /** Byte offset of the selected shape in each sheet. */
+    unsigned shapeOffset;
+    unsigned shapeSize;      /**< Bytes per shape within one sheet plane. */
+    enum GasHand shapeIndex; /**< Selected cursor shape. */
+    /** Drawing/refresh policy; @ref CursorDrawState. */
+    char state;
+    /** Prior inclusive extent; negative right edge means none. */
+    struct Rect drawnRect;
 };
 
 /**

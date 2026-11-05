@@ -997,7 +997,7 @@ void bo_visit(void)
     vi_bobs_pal();
     sc_label(g_cashLabel);
     g_cursor2.drawnRect.x2 = -1;
-    cu_ctl(1);
+    cu_ctl(GAS_HAND_EMPTY);
     (*g_videoOps.show)();
     mu_suspend(0);
     if (rn_int(100) < BOBS_CELL_CHANCE)
@@ -1008,7 +1008,7 @@ void bo_visit(void)
     g_ordered = 0;
     g_justArrived = 1;
     g_scene = SCENE_BOBS;
-    g_mouse.left = g_joyButtons = g_buttons = 0;
+    g_mouse.left = g_joyButtons = g_buttons = FALSE;
     for (;;) {
         setup_bobs_spots(g_rivalHereState, !g_carhop & !g_ordered);
         mn_push(KM_BOBS);
@@ -1172,7 +1172,7 @@ static void near set_jail_spots(enum HotKind id, char c)
     h[2].kind = id;
     h[3].kind = id;
     h[4].kind = id;
-    g_keyMaps[KM_BOBS]->key = c;
+    g_keyMaps[KM_BOBS]->scanCode = c;
 }
 
 
@@ -1223,7 +1223,7 @@ void bo_jail(void)
     g_rivalHereState = 0;
     g_carhop = CARHOP_DISABLED;
     g_ordered = 0;
-    cu_ctl(1);
+    cu_ctl(GAS_HAND_EMPTY);
     cu_ctl(CURSOR_SHOW);
     g_scene = SCENE_JAIL;
     set_jail_spots(HOT_DISABLED, SC_Q);

@@ -16,13 +16,15 @@ typedef int BOOL;
 #define TRUE 1
 /** @} */
 
+/** @brief A signed word and its two little-endian bytes. */
 union Word {
-    int w;
-    unsigned char b[2];
+    int w;              /**< Whole word, retaining the raw bit pattern. */
+    unsigned char b[2]; /**< Low byte followed by high byte. */
 };
+/** @brief Two signed values whose meanings are defined by each table. */
 struct Pair {
-    int a;
-    int b;
+    int a; /**< First value: an x coordinate, span start, or auxiliary value. */
+    int b; /**< Second value: a y coordinate, span width, or auxiliary value. */
 };
 
 #endif

@@ -858,14 +858,14 @@ enum RaceExit near ra_outcome(void)
                 sel = i ? KM_GET_RUNNING : KM_REPAIR;
                 if ((long)v > g_driver.money) {
                     g_hots[HOTS_REPAIR + 2].kind = g_hots[HOTS_GET_RUNNING + 2].kind = HOT_DISABLED;
-                    g_keyMaps[sel][0].val = KV_REPAIR_JUNK;
-                    g_keyMaps[sel][1].key = SC_ESC;
-                    g_keyMaps[sel][1].val = KV_REPAIR_JUNK;
+                    g_keyMaps[sel][0].mappedByte = KV_REPAIR_JUNK;
+                    g_keyMaps[sel][1].scanCode = SC_ESC;
+                    g_keyMaps[sel][1].mappedByte = KV_REPAIR_JUNK;
                 } else {
                     g_hots[HOTS_REPAIR + 2].kind = g_hots[HOTS_GET_RUNNING + 2].kind = HOT_BUTTON;
-                    g_keyMaps[sel][0].val = KV_REPAIR_FIX;
-                    g_keyMaps[sel][1].key = SC_F;
-                    g_keyMaps[sel][1].val = KV_REPAIR_FIX;
+                    g_keyMaps[sel][0].mappedByte = KV_REPAIR_FIX;
+                    g_keyMaps[sel][1].scanCode = SC_F;
+                    g_keyMaps[sel][1].mappedByte = KV_REPAIR_FIX;
                 }
                 mn_push(sel);
                 sy_reset_queues();
@@ -993,7 +993,7 @@ void near ra_run(void)
 
     one = 1;
     cu_ctl(CURSOR_HIDE_NOW);
-    cu_ctl(1);
+    cu_ctl(GAS_HAND_EMPTY);
     sy_reset_queues();
     ra_reset_eng(&g_driveEng);
     init_rival_eng();

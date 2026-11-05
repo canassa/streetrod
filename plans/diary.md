@@ -3370,3 +3370,16 @@ lessons from both branches remain in the recipe book and investigation notes.
 - Sticker captions disagree with their art, classified-border cars are pixels
   rather than purchase entries, and HOT_DATA has an ignored duplicate tail.
   Full evidence and remaining uncertainty live in the linked report.
+
+## 2026-11-05 21:39 CET: Investigate system, input, cursor and tone records
+
+### What I did
+- Investigated and documented all fifteen assigned types in plans/investigations/st-sys.md; added concise type/member docs and propagated supported names and value sets.
+- Preserved every layout, spare field and signed char flag. All 572 functions matched; the clean packed EXE was IDENTICAL; headers, formatting, docs, DGROUP and all 109 tests passed before integration.
+- Audited 81 real-MSC size/offset values for fifteen records, compiling seven headers independently; zero mismatches. The origin/main merge and complete gate rerun follow this commit.
+
+### What I learned
+- Timer lists dispatch their tail; cancellation, free-list exhaustion and zero-delay behavior have limitations recorded in the investigation note.
+- Mouse masks and initial values are not normalized booleans; tone scaling wraps its product to sixteen bits; saved KeyMap values can be raw scan-map bytes rather than biased menu results.
+- Pair has incompatible caller-specific units and unconsumed cursor outputs, so generic members are appropriate. The cursor sheet includes a garage pointer in slot zero.
+- Type tags require direct edits because sr rename indexes other symbol kinds. Named array bounds must use enum constants for DGROUP analysis; details and evidence are in the note.

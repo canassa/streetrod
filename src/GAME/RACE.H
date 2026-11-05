@@ -141,11 +141,13 @@ enum RaceExit {
 struct Bitmap;
 struct DrivingState;
 
-/** @brief Held tool and cursor shape during a gas-station visit. */
+/** @brief Cursor shapes shared with the gas-station held-tool state. */
 enum GasHand {
+    GAS_HAND_GARAGE = 0, /**< Garage pointer. */
     GAS_HAND_EMPTY = 1,  /**< Empty hand. */
     GAS_HAND_NOZZLE = 2, /**< Holding the pump nozzle. */
-    GAS_HAND_RAG = 3     /**< Holding the cleaning rag. */
+    GAS_HAND_RAG = 3,    /**< Holding the cleaning rag. */
+    GAS_HAND_COUNT = 4   /**< Number of cursor shapes. */
 };
 
 /**

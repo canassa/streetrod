@@ -40,12 +40,15 @@ struct MusicVoice {
     /** Instruction base, including the initial stop pair. */
     int far *stream;
     int far *phraseStart; /**< First duration word of the current phrase. */
-    int far *nextWord;    /**< Next duration, control, or divisor word to read. */
+    /** Next duration, control, or divisor word to read. */
+    int far *nextWord;
     /** Near base of extra-pass counts; negative ends the list. */
     int *repeatTable;
-    int *repeatCursor;         /**< Extra-pass count for the current phrase. */
-    enum ToneSlot *toneTable;  /**< Near base of tone selections for phrase passes. */
-    enum ToneSlot *toneCursor; /**< Tone selection for the current phrase pass. */
+    int *repeatCursor; /**< Extra-pass count for the current phrase. */
+    /** Near base of tone selections for phrase passes. */
+    enum ToneSlot *toneTable;
+    /** Tone selection for the current phrase pass. */
+    enum ToneSlot *toneCursor;
 };
 
 
@@ -55,75 +58,106 @@ enum TimerAction {
     TIMER_RESUME_ANIM = 1 /**< Resume the timer argument's animation object. */
 };
 
+/** @brief Accumulated mouse motion and the latest driver button masks. */
 struct Mouse {
-    int dx;
-    int dy;
-    int accX;
-    int accY;
-    int shiftX;
-    int shiftY;
-    int left;
-    int right;
-    char present;
+    int dx;       /**< Signed horizontal steps from the latest poll. */
+    int dy;       /**< Signed vertical steps from the latest poll. */
+    int mickeysX; /**< Horizontal mickeys retained until a step is produced. */
+    int mickeysY; /**< Vertical mickeys retained until a step is produced. */
+    int shiftX;   /**< Right shift converting horizontal mickeys to steps. */
+    int shiftY;   /**< Right shift converting vertical mickeys to steps. */
+    BOOL left;    /**< TRUE while the left button is down; retains its mask. */
+    BOOL right;   /**< TRUE while the right button is down; retains its mask. */
+    char present; /**< Mouse polling is enabled while set. */
 };
 
-struct Link {
-    int nxt;
-    int prv;
+/** @brief Indexed timer node awaiting an animation continuation. */
+struct TimerLink {
+    /** Next active or free node; negative ends an active list. */
+    int next;
+    /** Active neighbor toward later deadlines; negative at head. */
+    int prev;
+    /** Absolute game timer tick when the action becomes due. */
     long deadline;
+    /** Larger ranks run first among equal deadlines. */
     int priority;
-    enum TimerAction action;
-    int argument;
-    char unused[4];
+    enum TimerAction action; /**< Work to perform when due. */
+    int animationId;         /**< Animation script ID to resume or cancel. */
+    char unused[4];          /**< Reserved bytes. */
 };
 
+/** @brief Raw-key capture request and the last captured character. */
 struct InputState {
-    int any;
-    int key;
+    BOOL captureKeys; /**< TRUE returns positive keys as any-input events. */
+    int key;          /**< Captured character, or zero for a click/reset. */
 };
 
-/* Game time from action ticks, BIOS ticks and a saved time base. */
+/**
+ * @brief Calendar time from action costs and elapsed BIOS-rate ticks.
+ *
+ * Elapsed game time is action ticks plus BIOS ticks minus the time base.
+ */
 struct GameClock {
-    long actionTicks;
-    long biosTicks;
+    long actionTicks; /**< Extra BIOS-rate ticks charged for player actions. */
+    long biosTicks;   /**< Previous timer-handler calls since startup. */
+    /** BIOS-tick offset preserving elapsed time across loads. */
     long timeBase;
 };
 #include "KEYMAPS.H"
 
+/** @brief Whether demo-exit handling has already been entered. */
+enum DemoExitState {
+    DEMO_EXIT_READY = 0,     /**< Exit handling has not been entered. */
+    DEMO_EXIT_ENTERED = 0x63 /**< Suppress recursive demo-exit requests. */
+};
+
+/** @brief Simulated menu key sequencing and automatic-driving progress. */
 struct DemoControl {
-    int quit;
+    enum DemoExitState exitState; /**< Demo-exit reentry guard. */
+    /** A simulated make event awaits its break event. */
     char keyDown;
+    /** Retain the selected action until its cursor arrives. */
     char moving;
-    int count;
+    /** Reverse garage-choice step, also used by parts menus. */
+    int garageStep;
+    /** Screen of the preceding simulated action. */
     enum ScreenId lastGroup;
-    int autoShifts;
+    /** Automatic upshift requests since the last garage visit. */
+    int autoUpshifts;
 };
 
+/** @brief Current note's waveform scale and modulated speaker divisor. */
 struct Vibrato {
-    int gain;
-    int divisor;
+    /** Base-divisor/depth product, wrapped to a word then divided by 1000. */
+    int sampleScale;
+    int divisor; /**< Base divisor plus the scaled waveform sample. */
 };
 
+/** @brief Pending cursor position snapshot for drawing and hover updates. */
 struct CursorDraw {
-    int x;
-    int y;
-    char dirty;
+    int x;      /**< Clamped screen x used for drawing; initially invalid. */
+    int y;      /**< Clamped screen y used for drawing; initially invalid. */
+    char dirty; /**< A movement or hover reset requires a cursor update. */
 };
 
+/** @brief Timer-list endpoints and the cached earliest deadline. */
 struct TimerQueue {
-    int earliest;
-    int head;
+    int earliest; /**< Active tail index, or negative when empty. */
+    int head;     /**< Active head toward later deadlines, or negative. */
+    /** First free node index; negative is treated as exhausted. */
     int free;
+    /** Earliest tick, or @ref TIMER_NO_DEADLINE when empty. */
     long nextDeadline;
-    char unused;
-    char busy;
+    char unused; /**< Reserved byte, cleared on queue reset. */
+    char busy;   /**< Set during insertion; currently never tested. */
 };
 
+/** @brief Timer priority settings, with only animation currently consumed. */
 struct TimerPriorities {
-    int animation;
-    int unused2;
-    int unused4;
-    int unused6;
+    int animation; /**< Equal-deadline rank for animation continuations. */
+    int unused2;   /**< Initialized spare priority; never read. */
+    int unused4;   /**< Initialized spare priority; never read. */
+    int unused6;   /**< Initialized spare priority; never read. */
 };
 
 extern struct InputState g_input;
