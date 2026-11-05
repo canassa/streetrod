@@ -1,4 +1,7 @@
-/* VIEW.H - declarations of what VIEW.C defines. */
+/**
+ * @file VIEW.H
+ * @brief Driving scene rendering and projected row cursors.
+ */
 
 #ifndef VIEW_H
 #define VIEW_H
@@ -27,22 +30,28 @@ struct ViewClip {
     int xMax;
 };
 
+/**
+ * @brief Current and adjacent projected rows, traversed from far to near.
+ *
+ * Coordinates are screen pixels. The far flag pointers are signed word views
+ * of the unsigned track arrays, with the same @ref RoadsideFlags format.
+ */
 struct RenderRows {
-    int *leftX;
-    int *leftOuterX;
-    int *buildingY;
-    int *rightOuterX;
-    int *prevLeftX;
-    int *prevLeftOuterX;
-    int *prevBuildingY;
-    int *prevRightOuterX;
-    int *rightX;
-    int *y;
-    int *prevRightX;
-    int *prevY;
-    int far *leftFlags;
-    int far *rightFlags;
-    int *lineWidth;
+    int *leftX;           /**< Current left road edge. */
+    int *leftOuterX;      /**< Current left outer verge. */
+    int *buildingY;       /**< Current base building-top row. */
+    int *rightOuterX;     /**< Current right outer verge. */
+    int *prevLeftX;       /**< Adjacent near left road edge. */
+    int *prevLeftOuterX;  /**< Adjacent near left outer verge. */
+    int *prevBuildingY;   /**< Adjacent near base building-top row. */
+    int *prevRightOuterX; /**< Adjacent near right outer verge. */
+    int *rightX;          /**< Current right road edge. */
+    int *y;               /**< Current road surface row. */
+    int *prevRightX;      /**< Adjacent near right road edge. */
+    int *prevY;           /**< Adjacent near road surface row. */
+    int far *leftFlags;   /**< Current left sample; @ref RoadsideFlags. */
+    int far *rightFlags;  /**< Current right sample; @ref RoadsideFlags. */
+    int *lineWidth;       /**< Projected center-line width. */
 };
 
 extern struct ViewPages g_viewPages;
@@ -54,6 +63,7 @@ extern struct Bitmap far *g_citySkylineBmp;
 extern struct Bitmap far *g_skylineCountry;
 extern struct Bitmap far *g_imageFullMirror;
 extern struct Bitmap far *g_rearBasePic;
+/** Signed view of the current shared road sample; @ref TerrainFlags. */
 extern int far *g_viewTerrainBitsData;
 extern struct Bitmap far *g_windowBorderImage;
 void vw_unclip_top(void);

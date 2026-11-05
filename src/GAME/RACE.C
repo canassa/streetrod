@@ -1230,7 +1230,7 @@ static void near move_player(void)
 
 static void near move_rival(void)
 {
-    int flag;
+    enum TerrainFlags widthFlags;
     int slope;
     int t;
     int dist;
@@ -1251,7 +1251,7 @@ static void near move_rival(void)
         sy_stop_drive();
         return;
     }
-    flag = g_terrain3[g_roadOppPos.roadIndex + 4] & 0xe0;
+    widthFlags = g_terrain3[g_roadOppPos.roadIndex + 4] & TERRAIN_WIDTH_MASK;
     dist = g_roadOppPos.roadIndex - g_trackViewMotion.roadIndex;
     slope = g_terrain2[g_trackViewMotion.roadIndex + 4] - g_terrain2[g_trackViewMotion.roadIndex + 5];
     if (dist > 12) {
@@ -1270,7 +1270,7 @@ static void near move_rival(void)
                 g_rivalLeft = 0;
             }
         } else
-            g_targetLane = flag          ? (g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1
+            g_targetLane = widthFlags    ? (g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1
                            : g_rivalLeft ? ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) - 200
                                          : ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) + 300;
     } else if ((g_processorSpeedRating < 4 ? 4 : 2) < dist) {
@@ -1282,7 +1282,7 @@ static void near move_rival(void)
                 g_targetLane = ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) + 300;
                 g_rivalLeft = 0;
             }
-        } else if (flag)
+        } else if (widthFlags)
             g_targetLane = (g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1;
         else if (g_swapArmedRivalValue) {
             if (g_rivalLeft)
@@ -1332,7 +1332,7 @@ static void near move_rival(void)
                 g_rivalLeft = 0;
             }
         } else
-            g_targetLane = flag          ? (g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1
+            g_targetLane = widthFlags    ? (g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1
                            : g_rivalLeft ? ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) - 200
                                          : ((g_edgesRoad.leftEdge + g_trackViewMotion.rightEdge) >> 1) + 300;
     } else {

@@ -415,3 +415,11 @@ just those tables after all SYS data. g_unused11 is retained required storage.
 For unused data without relocations, byte identity may not decide: standalone
 MSGONLY after SAVEGAME and VDSTRS after VIDDET each produced IDENTICAL packed
 EXEs. Keep those as alternative findings, not established original file splits.
+
+
+### Unsigned terrain flag top bits (2026-11-05)
+
+MSC 5.1 rejects an enum member equal to `0x8000` with C2141 (out of range).
+Name that unsigned word bit with a `#define`; keep the lower flag bits in the
+enum and preserve unsigned storage. ROAD.H uses this for the terrain gantry
+and unused roadside top bits. All 572 functions and the packed EXE still match.
