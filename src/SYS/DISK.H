@@ -396,49 +396,93 @@ struct Model {
     enum PictureId frontBumperRemovalPic;
 };
 
-struct Offs {
-    unsigned char x, y, w, h;
+/** @brief Car-image rectangle used for model-specific hit targets. */
+struct CarHotRect {
+    unsigned char x; /**< Left offset in car-image pixels. */
+    unsigned char y; /**< Top offset in car-image rows, positive downwards. */
+    unsigned char w; /**< Horizontal extent in pixels. */
+    unsigned char h; /**< Vertical extent in rows. */
 };
 
-struct Panel {
-    struct Offs r[5];
+/** @brief Model-specific car interaction regions, in data-file order. */
+enum CarRegion {
+    CAR_REGION_REAR_BUMPER,  /**< Rear bumper. */
+    CAR_REGION_ROOF,         /**< Roof. */
+    CAR_REGION_TRANSMISSION, /**< Transmission. */
+    CAR_REGION_HOOD,         /**< Hood. */
+    CAR_REGION_FRONT_BUMPER, /**< Front bumper. */
+    CAR_REGION_COUNT         /**< Number of regions per model. */
 };
 
-/* 12-byte table entry (g_layoutAutoSprArray[]), read as bytes by cp_build */
-struct Spr12 {
-    unsigned char wheelX1, wheelX2, b2, b3, roofX, b5, b6, rearBumperY, frontBumperX, frontBumperY, stickerX, stickerY;
+/**
+ * @brief Interactive rectangles on one model's side-view car image.
+ *
+ * Loaded from the game data file and translated to the displayed car origin.
+ */
+struct CarHotspots {
+    /** Indexed by @ref CarRegion. */
+    struct CarHotRect regions[CAR_REGION_COUNT];
 };
 
-/* 6-byte table entry (g_pointsModelService[]) */
-struct Spr6 {
-    unsigned char fuelCapX, fuelCapY, rearGlassX, rearGlassY, frontGlassX, frontGlassY;
+/**
+ * @brief Pixel anchors for assembling one model's side-view car image.
+ *
+ * Coordinates are relative to the car image, with Y positive downwards.
+ */
+struct CarPicLayout {
+    unsigned char wheelX1;   /**< First tire image's left X. */
+    unsigned char wheelX2;   /**< Second tire image's left X. */
+    unsigned char portraitX; /**< Portrait image's left X. */
+    /** Inclusive portrait bottom row before the chopped-roof correction. */
+    unsigned char portraitBottom;
+    unsigned char roofX;        /**< Roof patch X; top row is zero. */
+    unsigned char engineX;      /**< Large-engine overlay's left X. */
+    unsigned char engineY;      /**< Large-engine overlay's top row. */
+    unsigned char rearBumperY;  /**< Rear-removal patch's top row; X is zero. */
+    unsigned char frontBumperX; /**< Front-removal patch's left X. */
+    unsigned char frontBumperY; /**< Front-removal patch's top row. */
+    unsigned char stickerX;     /**< Sticker-background origin X. */
+    unsigned char stickerY;     /**< Sticker-background origin row. */
 };
 
-/* 6-byte table entry (g_imageDecalLayout[]): bitmap id, then the (dx, dy) offset it is drawn at */
-struct Pos6 {
-    enum PictureId id;
-    int dx;
-    int dy;
+/** @brief Gas-station service anchors in car-image pixels, Y downwards. */
+struct ServicePoints {
+    unsigned char fuelCapX; /**< Fuel cap X. */
+    unsigned char fuelCapY; /**< Fuel cap row. */
+    /** Rear-window X; either zero coordinate hides it. */
+    unsigned char rearGlassX;
+    unsigned char rearGlassY; /**< Rear-window row. */
+    /** Windshield X; zero skips window translation. */
+    unsigned char frontGlassX;
+    unsigned char frontGlassY; /**< Windshield row. */
+};
+
+/** @brief One sticker picture's placement within the car sticker background. */
+struct StickerPos {
+    enum PictureId pictureId; /**< Sticker picture. */
+    int dx;                   /**< Pixel offset rightwards within background. */
+    int dy;                   /**< Row offset downwards within background. */
 };
 #include "MAIN.H"
 
+/** @brief Borrowed path and state pointers for the selected picture library. */
 struct PicLibSelection {
-    int *count;
-    int *handle;
-    char *path;
-    int *otherHandle;
+    int *entryCount;  /**< Selected library's directory-entry count. */
+    int *handle;      /**< Selected DOS handle; zero means closed. */
+    char *path;       /**< Selected drive-prefixed library path. */
+    int *otherHandle; /**< Other handle, closed when opening this file. */
 };
 
 extern unsigned char g_rleCounts[16];
 extern unsigned char g_rleValues[16];
 extern int g_picNewHeader;
-extern struct Panel g_bodyRects[];
-extern struct Spr12 g_layoutAutoSprArray[];
-extern struct Pos6 g_imageDecalLayout[];
+extern struct CarHotspots g_bodyRects[];
+extern struct CarPicLayout g_layoutAutoSprArray[];
+extern struct StickerPos g_imageDecalLayout[];
 extern int g_usedCarAdFirst;
 extern unsigned g_carRatingsTable[][3];
 extern struct CarSpec g_carData[];
-extern struct Spr6 g_pointsModelService[];
+extern struct ServicePoints g_pointsModelService[];
 extern unsigned g_rivalStakeToleranceTable[][3];
 extern int g_lib1Count;
 extern int g_countLibBmB;

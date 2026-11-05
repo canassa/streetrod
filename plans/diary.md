@@ -3371,6 +3371,33 @@ lessons from both branches remain in the recipe book and investigation notes.
   rather than purchase entries, and HOT_DATA has an ignored duplicate tail.
   Full evidence and remaining uncertainty live in the linked report.
 
+## 2026-11-05 21:37 CET: Disk, picture-slot, glyph and needle structs
+
+### What I did
+
+- Investigated all nine requested structs in order; recorded their storage,
+  loaders, member roles/value sets, all readers/writers and naming backlog in
+  [st-disk.md](investigations/st-disk.md).
+- Documented each struct/member and replaced vague type/field names with the
+  proven car-hotspot, car-picture, service-point, sticker and picture-cache roles.
+  Added named car-region indices and retained every size, signedness and spare.
+- Committed the implementation as 1a8c185, fetched origin/main and merged it
+  (already up to date at 3848b38), then reran every gate: headers/format pass,
+  Doxygen zero diagnostics, 572/572 functions, clean packed/native DOS builds
+  IDENTICAL, DGROUP checks pass, 109 tests OK, 59 targeted layout checks pass.
+
+### What I learned
+
+- The picture slot's sixteen bytes are RLE token dictionary entries, not colors;
+  its packed span excludes the shared closing frame byte. See the investigation
+  for exact file offsets, cache ownership and decoder evidence.
+- Car interaction rectangles cover transmission and hood as well as bumpers
+  and roof. Portrait placement uses an inclusive bottom anchor; service anchors
+  are distinct from bitmap component positions.
+- The existing whole-tree layout audit cannot resolve TRANSMISSION_BOLT_COUNT.
+  Used a real MSC sizeof/offsetof audit of all nine requested records, following
+  the known limitation already recorded in CLAUDE.md and the sr-cli skill.
+
 ## 2026-11-05 21:39 CET: Investigate system, input, cursor and tone records
 
 ### What I did

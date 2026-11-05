@@ -142,7 +142,7 @@ void ga_calendar(int a1)
 }
 
 static char *g_mon[4] = {"June", "July", "August", "September"};
-static int g_hIds[5] = {11, 13, 9, 10, 12};
+static int g_hIds[CAR_REGION_COUNT] = {11, 13, 9, 10, 12};
 
 /* Draws the current date ("Month day, 1963") */
 
@@ -205,7 +205,7 @@ static void near hide_spots(void)
 {
     int i;
 
-    for (i = 0; i < 5; i++)
+    for (i = 0; i < CAR_REGION_COUNT; i++)
         g_hots[ga_hotspot(g_hIds[i])].kind = HOT_DISABLED;
 }
 
@@ -213,39 +213,39 @@ static void near hide_spots(void)
 
 static void near place_spots(int n, int x, int y)
 {
-    struct Panel *panel;
+    struct CarHotspots *panel;
     struct Hotspot *hotspot;
 
     panel = &g_bodyRects[n];
     hotspot = &g_hots[ga_hotspot(11)];
-    hotspot->x1 = panel->r[0].x + x;
-    hotspot->y1 = panel->r[0].y + y;
-    hotspot->x2 = (unsigned)hotspot->x1 + panel->r[0].w;
-    hotspot->y2 = (unsigned)hotspot->y1 + panel->r[0].h;
+    hotspot->x1 = panel->regions[CAR_REGION_REAR_BUMPER].x + x;
+    hotspot->y1 = panel->regions[CAR_REGION_REAR_BUMPER].y + y;
+    hotspot->x2 = (unsigned)hotspot->x1 + panel->regions[CAR_REGION_REAR_BUMPER].w;
+    hotspot->y2 = (unsigned)hotspot->y1 + panel->regions[CAR_REGION_REAR_BUMPER].h;
     hotspot->kind = HOT_REGION;
     hotspot = &g_hots[ga_hotspot(13)];
-    hotspot->x1 = panel->r[1].x + x;
-    hotspot->y1 = panel->r[1].y + y;
-    hotspot->x2 = (unsigned)hotspot->x1 + panel->r[1].w;
-    hotspot->y2 = (unsigned)hotspot->y1 + panel->r[1].h;
+    hotspot->x1 = panel->regions[CAR_REGION_ROOF].x + x;
+    hotspot->y1 = panel->regions[CAR_REGION_ROOF].y + y;
+    hotspot->x2 = (unsigned)hotspot->x1 + panel->regions[CAR_REGION_ROOF].w;
+    hotspot->y2 = (unsigned)hotspot->y1 + panel->regions[CAR_REGION_ROOF].h;
     hotspot->kind = HOT_REGION;
     hotspot = &g_hots[ga_hotspot(9)];
-    hotspot->x1 = panel->r[2].x + x;
-    hotspot->y1 = panel->r[2].y + y;
-    hotspot->x2 = (unsigned)hotspot->x1 + panel->r[2].w;
-    hotspot->y2 = (unsigned)hotspot->y1 + panel->r[2].h;
+    hotspot->x1 = panel->regions[CAR_REGION_TRANSMISSION].x + x;
+    hotspot->y1 = panel->regions[CAR_REGION_TRANSMISSION].y + y;
+    hotspot->x2 = (unsigned)hotspot->x1 + panel->regions[CAR_REGION_TRANSMISSION].w;
+    hotspot->y2 = (unsigned)hotspot->y1 + panel->regions[CAR_REGION_TRANSMISSION].h;
     hotspot->kind = HOT_REGION;
     hotspot = &g_hots[ga_hotspot(10)];
-    hotspot->x1 = panel->r[3].x + x;
-    hotspot->y1 = panel->r[3].y + y;
-    hotspot->x2 = (unsigned)hotspot->x1 + panel->r[3].w;
-    hotspot->y2 = (unsigned)hotspot->y1 + panel->r[3].h;
+    hotspot->x1 = panel->regions[CAR_REGION_HOOD].x + x;
+    hotspot->y1 = panel->regions[CAR_REGION_HOOD].y + y;
+    hotspot->x2 = (unsigned)hotspot->x1 + panel->regions[CAR_REGION_HOOD].w;
+    hotspot->y2 = (unsigned)hotspot->y1 + panel->regions[CAR_REGION_HOOD].h;
     hotspot->kind = HOT_REGION;
     hotspot = &g_hots[ga_hotspot(12)];
-    hotspot->x1 = panel->r[4].x + x;
-    hotspot->y1 = panel->r[4].y + y;
-    hotspot->x2 = (unsigned)hotspot->x1 + panel->r[4].w;
-    hotspot->y2 = (unsigned)hotspot->y1 + panel->r[4].h;
+    hotspot->x1 = panel->regions[CAR_REGION_FRONT_BUMPER].x + x;
+    hotspot->y1 = panel->regions[CAR_REGION_FRONT_BUMPER].y + y;
+    hotspot->x2 = (unsigned)hotspot->x1 + panel->regions[CAR_REGION_FRONT_BUMPER].w;
+    hotspot->y2 = (unsigned)hotspot->y1 + panel->regions[CAR_REGION_FRONT_BUMPER].h;
     hotspot->kind = HOT_REGION;
 }
 
@@ -547,7 +547,7 @@ void near ga_stickers(void)
 {
     struct Bitmap far *bm1;
     struct Bitmap far *bm3;
-    struct Pos6 *q2;
+    struct StickerPos *q2;
     struct Bitmap far *bm4;
     struct Blt B1;
     struct Blt A2;
@@ -591,7 +591,7 @@ void near ga_stickers(void)
             bm1 = ar_bm(g_stickerBg->width, g_stickerBg->height, 0, ARENA_HIGH_STACK);
             bm_copy(g_stickerBg, bm1, 1);
             q2 = &g_imageDecalLayout[idx6 - 1];
-            bm_draw_pic(bm1, q2->id, (char)(q2->dx + g_carDraw.stickerSubX), (char)q2->dy, 0);
+            bm_draw_pic(bm1, q2->pictureId, (char)(q2->dx + g_carDraw.stickerSubX), (char)q2->dy, 0);
             bm4 = ar_bm(bm1->width, bm1->height, 0, ARENA_HIGH_STACK);
             bm_copy(bm1, bm4, 1);
             A2.sx = B1.sx = C.sx = 0;

@@ -282,15 +282,15 @@ void cp_build(struct Bitmap far **frames, int specIndex, enum BodyMod bodyMods, 
 {
     struct Model *bodyModel;
     int right;
-    struct Spr6 *servicePoints;
+    struct ServicePoints *servicePoints;
     int imageFrame;
     struct Bitmap far *pic;
     struct Bitmap far *carShadow;
     int framePixelShift;
     int left;
-    struct Pos6 *decal;
+    struct StickerPos *decal;
     int underY;
-    struct Spr12 *carLayout;
+    struct CarPicLayout *carLayout;
     struct Blt blt;
     int roofCut;
 
@@ -321,7 +321,7 @@ void cp_build(struct Bitmap far **frames, int specIndex, enum BodyMod bodyMods, 
     } else
         roofCut = 0;
     if ((bodyMods & BODY_LARGE_ENGINE) && specIndex != SPEC_KING)
-        bm_draw_pic(*frames, bodyModel->engineOverlayPic, carLayout->b5, carLayout->b6, 1);
+        bm_draw_pic(*frames, bodyModel->engineOverlayPic, carLayout->engineX, carLayout->engineY, 1);
     blt.w = g_stickerBg->width;
     blt.h = g_stickerBg->height;
     blt.sx = carLayout->stickerX;
@@ -330,11 +330,11 @@ void cp_build(struct Bitmap far **frames, int specIndex, enum BodyMod bodyMods, 
     (*g_videoOps.copy)(*frames, g_stickerBg, &blt, 1);
     if (sticker > 0) {
         decal = &g_imageDecalLayout[sticker - 1];
-        bm_draw_pic(*frames, decal->id, carLayout->stickerX + decal->dx, carLayout->stickerY + decal->dy, 0);
+        bm_draw_pic(*frames, decal->pictureId, carLayout->stickerX + decal->dx, carLayout->stickerY + decal->dy, 0);
     }
     if (showPortrait) {
         pic = di_bm(g_carDraw.portraitPic, ARENA_HIGH_STACK);
-        bm_underlay(pic, *frames, carLayout->b2, carLayout->b3 - pic->height + roofCut + 1);
+        bm_underlay(pic, *frames, carLayout->portraitX, carLayout->portraitBottom - pic->height + roofCut + 1);
         ma_pop_high(1);
     }
     imageFrame = 1;
