@@ -2840,3 +2840,27 @@ The conflicting lines contain independent substitutions: keep named appearance m
 - This record includes steering, tire drift, dashboard invalidation and race outcomes, so an engine-only name understates it. Top gear is an index; the sixth ratio-array word is an unread tire/model calculation, not a sixth gear. The reset-ratio word has no writer, and several caches are write-only. See the member evidence in [Eng.md](investigations/Eng.md).
 - The existing data-shape reader supports enum constants in dimensions but not macro names. Reusing RPM_BAND_COUNT and DRIVE_GEAR_SLOTS as count enumerators preserves their values and enables both named dimensions and all layout/DGROUP gates without tooling changes.
 - fit_gear and ra_speed_step have parameters named rpm that actually receive mph; retained outside this investigation's scope, with evidence in the note.
+
+## 2026-11-05 18:25 CET: Terrain flag formats
+
+### What I did
+- Investigated all terrain roadside/shared flag writers and readers; recorded
+  per-bit evidence and replacement inventory in plans/investigations/terrain.md.
+- Extended RoadsideFlags with town aliases and dormant/unused bits, added
+  TerrainFlags and combined masks, replaced raw flag operations throughout the
+  tree, and renamed/retyped flag locals in ROAD, VIEW and RACE.
+- Documented flag formats and storage/traversal interfaces in ROAD.H, VIEW.H
+  and SLOTS.H. Preserved all storage declarations and behavior.
+- Passed headers, format, Doxygen (zero diagnostics), all 572 function matches,
+  clean packed build, DGROUP checks, 106 tests and DOS-native MAKE. Both packed
+  builds are IDENTICAL to orig/SR.EXE.
+
+### What I learned
+- The roadside word changes meaning in town: rocks become building roof flags,
+  tree shapes become hydrants/sidewalk insets, and posts become destinations.
+  Shared gantry bits likewise select town billboards or country arrows.
+- Roadside bit 1 is only a dormant previous-entry gantry placement test; it is
+  never generated. Bits 10/15 have no feature readers or writers.
+- MSC 5.1 rejects unsigned top-bit enum values; documented the enum/define
+  pattern in .claude/skills/msc51-recipe-book/SKILL.md. See the investigation
+  note for the original compiler/frame evidence and remaining uncertainties.

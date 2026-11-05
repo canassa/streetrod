@@ -89,15 +89,15 @@ static void near build_left_curve(void)
 
     for (i = g_buildEntry; i < g_buildEntry + 50; i++)
         g_terrain2[i] = g_buildX;
-    g_terrain3[g_buildEntry] |= 0x200;
+    g_terrain3[g_buildEntry] |= TERRAIN_CHEVRON_LEFT;
     g_buildEntry += 5;
-    g_terrain0[g_buildEntry] &= 0x1801;
-    g_terrain1[g_buildEntry] &= 0x1801;
-    g_terrain3[g_buildEntry] |= 0x200;
+    g_terrain0[g_buildEntry] &= ROADSIDE_SIGN_KEEP;
+    g_terrain1[g_buildEntry] &= ROADSIDE_SIGN_KEEP;
+    g_terrain3[g_buildEntry] |= TERRAIN_CHEVRON_LEFT;
     g_buildEntry += 6;
     for (i = g_buildX / g_bendStep; i < g_buildX / g_bendStep + 40; i++, g_buildEntry++) {
         if (g_buildEntry < 0x442) {
-            g_terrain3[g_buildEntry] |= 8;
+            g_terrain3[g_buildEntry] |= TERRAIN_CENTER_LINE;
             g_terrain2[g_buildEntry] = i * g_bendStep;
         } else
             break;
@@ -112,15 +112,15 @@ static void near build_right_curve(void)
 
     for (i = g_buildEntry; i < g_buildEntry + 50; i++)
         g_terrain2[i] = g_buildX;
-    g_terrain0[g_buildEntry] &= 0x1801;
-    g_terrain1[g_buildEntry] &= 0x1801;
-    g_terrain3[g_buildEntry] |= 0x400;
+    g_terrain0[g_buildEntry] &= ROADSIDE_SIGN_KEEP;
+    g_terrain1[g_buildEntry] &= ROADSIDE_SIGN_KEEP;
+    g_terrain3[g_buildEntry] |= TERRAIN_CHEVRON_RIGHT;
     g_buildEntry += 3;
-    g_terrain3[g_buildEntry] |= 0x400;
+    g_terrain3[g_buildEntry] |= TERRAIN_CHEVRON_RIGHT;
     g_buildEntry += 3;
     for (i = g_buildX / g_bendStep; i > g_buildX / g_bendStep - 45; i--, g_buildEntry++) {
         if (g_buildEntry < 0x442) {
-            g_terrain3[g_buildEntry] |= 8;
+            g_terrain3[g_buildEntry] |= TERRAIN_CENTER_LINE;
             g_terrain2[g_buildEntry] = i * g_bendStep;
         } else
             break;
@@ -136,14 +136,14 @@ static void near build_s_curve_lr(void)
     for (i = g_buildEntry; i < g_buildEntry + 90; i++)
         g_terrain2[i] = g_buildX;
     g_buildEntry++;
-    g_terrain0[g_buildEntry] &= 0x1801;
-    g_terrain1[g_buildEntry] &= 0x1801;
-    g_terrain1[g_buildEntry] |= 0x2000;
+    g_terrain0[g_buildEntry] &= ROADSIDE_SIGN_KEEP;
+    g_terrain1[g_buildEntry] &= ROADSIDE_SIGN_KEEP;
+    g_terrain1[g_buildEntry] |= ROADSIDE_S_CURVE;
     g_buildEntry += 6;
-    g_terrain1[g_buildEntry] |= 0x2000;
+    g_terrain1[g_buildEntry] |= ROADSIDE_S_CURVE;
     for (i = g_buildX / g_bendStep; i < g_buildX / g_bendStep + 40; i++, g_buildEntry++) {
         if (g_buildEntry < 0x442) {
-            g_terrain3[g_buildEntry] |= 8;
+            g_terrain3[g_buildEntry] |= TERRAIN_CENTER_LINE;
             g_terrain2[g_buildEntry] = i * g_bendStep;
         } else
             break;
@@ -151,7 +151,7 @@ static void near build_s_curve_lr(void)
     g_buildX = i * g_bendStep;
     for (; i > g_buildX / g_bendStep - 43; i--, g_buildEntry++) {
         if (g_buildEntry < 0x442) {
-            g_terrain3[g_buildEntry] |= 8;
+            g_terrain3[g_buildEntry] |= TERRAIN_CENTER_LINE;
             g_terrain2[g_buildEntry] = i * g_bendStep;
         } else
             break;
@@ -167,14 +167,14 @@ static void near build_s_curve_rl(void)
     for (i = g_buildEntry; i < g_buildEntry + 90; i++)
         g_terrain2[i] = g_buildX;
     g_buildEntry++;
-    g_terrain0[g_buildEntry] &= 0x1801;
-    g_terrain1[g_buildEntry] &= 0x1801;
-    g_terrain1[g_buildEntry] |= 0x4000;
+    g_terrain0[g_buildEntry] &= ROADSIDE_SIGN_KEEP;
+    g_terrain1[g_buildEntry] &= ROADSIDE_SIGN_KEEP;
+    g_terrain1[g_buildEntry] |= ROADSIDE_S_CURVE_2;
     g_buildEntry += 6;
-    g_terrain1[g_buildEntry] |= 0x4000;
+    g_terrain1[g_buildEntry] |= ROADSIDE_S_CURVE_2;
     for (i = g_buildX / g_bendStep; i > g_buildX / g_bendStep - 35; i--, g_buildEntry++) {
         if (g_buildEntry < 0x442) {
-            g_terrain3[g_buildEntry] |= 8;
+            g_terrain3[g_buildEntry] |= TERRAIN_CENTER_LINE;
             g_terrain2[g_buildEntry] = i * g_bendStep;
         } else
             break;
@@ -182,7 +182,7 @@ static void near build_s_curve_rl(void)
     g_buildX = i * g_bendStep;
     for (; i < g_buildX / g_bendStep + 48; i++, g_buildEntry++) {
         if (g_buildEntry < 0x442) {
-            g_terrain3[g_buildEntry] |= 8;
+            g_terrain3[g_buildEntry] |= TERRAIN_CENTER_LINE;
             g_terrain2[g_buildEntry] = i * g_bendStep;
         } else
             break;
@@ -272,15 +272,15 @@ static void near build_right_closed(void)
 
     start = g_buildEntry;
     g_buildEntry += 3;
-    g_terrain1[g_buildEntry] |= 0x800;
+    g_terrain1[g_buildEntry] |= ROADSIDE_WARNING;
     g_buildEntry += 4;
-    g_terrain3[g_buildEntry++] &= 0xff7;
-    g_terrain1[g_buildEntry++] |= 0x1000;
+    g_terrain3[g_buildEntry++] &= ~(TERRAIN_GANTRY_MASK | TERRAIN_CENTER_LINE);
+    g_terrain1[g_buildEntry++] |= ROADSIDE_BARRICADE;
     for (i = 0; i < 10; i++) {
-        g_terrain3[g_buildEntry] |= 0x40;
-        g_terrain3[g_buildEntry++] &= 0xff7;
+        g_terrain3[g_buildEntry] |= TERRAIN_RIGHT_CLOSED;
+        g_terrain3[g_buildEntry++] &= ~(TERRAIN_GANTRY_MASK | TERRAIN_CENTER_LINE);
     }
-    g_terrain3[g_buildEntry++] &= 0xff7;
+    g_terrain3[g_buildEntry++] &= ~(TERRAIN_GANTRY_MASK | TERRAIN_CENTER_LINE);
     g_buildEntry += 3;
     for (i = start; i < g_buildEntry; i++)
         g_terrain2[i] = g_buildX;
@@ -292,17 +292,17 @@ static void near build_narrows(void)
     int i, start;
 
     start = g_buildEntry;
-    g_terrain3[g_buildEntry] |= 0x800;
+    g_terrain3[g_buildEntry] |= TERRAIN_NARROW_SIGN;
     g_buildEntry += 4;
-    g_terrain0[g_buildEntry] &= 0x1801;
-    g_terrain1[g_buildEntry] &= 0x1801;
-    g_terrain3[g_buildEntry] |= 0x800;
+    g_terrain0[g_buildEntry] &= ROADSIDE_SIGN_KEEP;
+    g_terrain1[g_buildEntry] &= ROADSIDE_SIGN_KEEP;
+    g_terrain3[g_buildEntry] |= TERRAIN_NARROW_SIGN;
     g_buildEntry += 6;
     for (i = 0; i < 20; i++) {
-        g_terrain3[g_buildEntry] |= 0x80;
-        g_terrain3[g_buildEntry++] &= 0xff7;
+        g_terrain3[g_buildEntry] |= TERRAIN_NARROW;
+        g_terrain3[g_buildEntry++] &= ~(TERRAIN_GANTRY_MASK | TERRAIN_CENTER_LINE);
     }
-    g_terrain3[g_buildEntry] &= 0x0fff;
+    g_terrain3[g_buildEntry] &= ~TERRAIN_GANTRY_MASK;
     for (i = start; i < g_buildEntry; i++)
         g_terrain2[i] = g_buildX;
 }
@@ -314,15 +314,15 @@ static void near build_left_closed(void)
 
     start = g_buildEntry;
     g_buildEntry += 4;
-    g_terrain0[g_buildEntry] |= 0x800;
+    g_terrain0[g_buildEntry] |= ROADSIDE_WARNING;
     g_buildEntry += 4;
-    g_terrain3[g_buildEntry++] &= 0xff7;
-    g_terrain0[g_buildEntry++] |= 0x1000;
+    g_terrain3[g_buildEntry++] &= ~(TERRAIN_GANTRY_MASK | TERRAIN_CENTER_LINE);
+    g_terrain0[g_buildEntry++] |= ROADSIDE_BARRICADE;
     for (i = 0; i < 10; i++) {
-        g_terrain3[g_buildEntry] |= 0x20;
-        g_terrain3[g_buildEntry++] &= 0xff7;
+        g_terrain3[g_buildEntry] |= TERRAIN_LEFT_CLOSED;
+        g_terrain3[g_buildEntry++] &= ~(TERRAIN_GANTRY_MASK | TERRAIN_CENTER_LINE);
     }
-    g_terrain3[g_buildEntry++] &= 0xff7;
+    g_terrain3[g_buildEntry++] &= ~(TERRAIN_GANTRY_MASK | TERRAIN_CENTER_LINE);
     g_buildEntry += 2;
     for (i = start; i < g_buildEntry; i++)
         g_terrain2[i] = g_buildX;
@@ -340,11 +340,12 @@ void rd_build_layout(int n)
     for (i = DRAG_FINISH_INDEX; i < 0x460; i++) {
         g_terrain2[i] = 0;
         g_terrain4[i] = 0;
-        g_terrain3[i] &= 0xf117;
-        g_terrain1[i] &= 0x87ff;
-        g_terrain0[i] &= 0xe7ff;
+        g_terrain3[i] &= ~(TERRAIN_CENTER_LINE | TERRAIN_WIDTH_MASK | TERRAIN_CHEVRON_LEFT | TERRAIN_CHEVRON_RIGHT |
+                           TERRAIN_NARROW_SIGN);
+        g_terrain1[i] &= ~(ROADSIDE_WARNING | ROADSIDE_BARRICADE | ROADSIDE_S_CURVE | ROADSIDE_S_CURVE_2);
+        g_terrain0[i] &= ~(ROADSIDE_WARNING | ROADSIDE_BARRICADE);
         if ((i + 1) % (g_hasSlowCpu * 4 + 4) == 0)
-            g_terrain3[i] |= 8;
+            g_terrain3[i] |= TERRAIN_CENTER_LINE;
     }
     if (n == 100)
         g_roadLayout = rnd(10);
@@ -411,21 +412,21 @@ void rd_generate(void)
     for (i = 0; i < 0xb4; i++) {
         g_terrain4[i] = 0;
         g_terrain2[i] = 0;
-        g_terrain3[i] = 0;
-        g_terrain1[i] = 0;
-        g_terrain0[i] = 0;
-        g_terrain3[i] |= 1;
+        g_terrain3[i] = TERRAIN_NONE;
+        g_terrain1[i] = ROADSIDE_NONE;
+        g_terrain0[i] = ROADSIDE_NONE;
+        g_terrain3[i] |= TERRAIN_TOWN;
         if ((i + 1) % (cnt * 4 + 4) == 0)
-            g_terrain3[i] |= 8;
+            g_terrain3[i] |= TERRAIN_CENTER_LINE;
         if ((i + 2) % 16 == 0) {
-            g_terrain3[i + 2] |= 4;
-            g_terrain3[i + 1] |= 4;
-            g_terrain3[i] |= 4;
-            g_terrain1[i - 1] |= 0x40;
-            g_terrain0[i + 3] |= 0x40;
-            g_terrain3[i + 1] |= 1;
-            g_terrain3[i + 2] |= 1;
-            g_terrain3[i + 3] |= 1;
+            g_terrain3[i + 2] |= TERRAIN_CROSS_STREET;
+            g_terrain3[i + 1] |= TERRAIN_CROSS_STREET;
+            g_terrain3[i] |= TERRAIN_CROSS_STREET;
+            g_terrain1[i - 1] |= ROADSIDE_HYDRANT;
+            g_terrain0[i + 3] |= ROADSIDE_HYDRANT;
+            g_terrain3[i + 1] |= TERRAIN_TOWN;
+            g_terrain3[i + 2] |= TERRAIN_TOWN;
+            g_terrain3[i + 3] |= TERRAIN_TOWN;
             g_terrain4[i + 1] = 0;
             g_terrain2[i + 1] = 0;
             g_terrain4[i + 2] = 0;
@@ -436,162 +437,162 @@ void rd_generate(void)
         } else {
             if ((i + 4) % 16 == 0 || (i + 8) % 16 == 0 || (i + 12) % 16 == 0) {
                 if (rnd(2) == 0) {
-                    g_terrain0[i - 1] |= 4;
-                    g_terrain0[i] |= 4;
+                    g_terrain0[i - 1] |= ROADSIDE_BUILDING;
+                    g_terrain0[i] |= ROADSIDE_BUILDING;
                     if (rnd(3) == 0) {
-                        g_terrain0[i - 1] |= 8;
-                        g_terrain0[i] |= 8;
+                        g_terrain0[i - 1] |= ROADSIDE_TALL_BUILDING;
+                        g_terrain0[i] |= ROADSIDE_TALL_BUILDING;
                     }
-                    g_terrain0[i] |= 0x10;
+                    g_terrain0[i] |= ROADSIDE_WALL_SHADE;
                 } else {
-                    g_terrain0[i - 2] |= 4;
-                    g_terrain0[i] |= 4;
-                    g_terrain0[i - 1] |= 4;
+                    g_terrain0[i - 2] |= ROADSIDE_BUILDING;
+                    g_terrain0[i] |= ROADSIDE_BUILDING;
+                    g_terrain0[i - 1] |= ROADSIDE_BUILDING;
                     if (rnd(3) == 0) {
-                        g_terrain0[i - 2] |= 8;
-                        g_terrain0[i] |= 8;
-                        g_terrain0[i - 1] |= 8;
+                        g_terrain0[i - 2] |= ROADSIDE_TALL_BUILDING;
+                        g_terrain0[i] |= ROADSIDE_TALL_BUILDING;
+                        g_terrain0[i - 1] |= ROADSIDE_TALL_BUILDING;
                     }
-                    g_terrain0[i - 1] |= 0x10;
+                    g_terrain0[i - 1] |= ROADSIDE_WALL_SHADE;
                 }
             } else
-                g_terrain0[i] |= 0x80;
+                g_terrain0[i] |= ROADSIDE_SIDEWALK_INSET;
             if ((i + 5) % 16 == 0 || (i + 9) % 16 == 0 || (i + 12) % 16 == 0) {
                 if (rnd(3) != 0) {
-                    g_terrain1[i - 1] |= 4;
-                    g_terrain1[i] |= 4;
+                    g_terrain1[i - 1] |= ROADSIDE_BUILDING;
+                    g_terrain1[i] |= ROADSIDE_BUILDING;
                     if (rnd(2) == 0) {
-                        g_terrain1[i - 1] |= 8;
-                        g_terrain1[i] |= 8;
+                        g_terrain1[i - 1] |= ROADSIDE_TALL_BUILDING;
+                        g_terrain1[i] |= ROADSIDE_TALL_BUILDING;
                     }
-                    g_terrain1[i] |= 0x10;
+                    g_terrain1[i] |= ROADSIDE_WALL_SHADE;
                 } else {
-                    g_terrain1[i - 2] |= 4;
-                    g_terrain1[i] |= 4;
-                    g_terrain1[i - 1] |= 4;
+                    g_terrain1[i - 2] |= ROADSIDE_BUILDING;
+                    g_terrain1[i] |= ROADSIDE_BUILDING;
+                    g_terrain1[i - 1] |= ROADSIDE_BUILDING;
                     if (rnd(4) == 0) {
-                        g_terrain1[i - 2] |= 8;
-                        g_terrain1[i] |= 8;
-                        g_terrain1[i - 1] |= 8;
+                        g_terrain1[i - 2] |= ROADSIDE_TALL_BUILDING;
+                        g_terrain1[i] |= ROADSIDE_TALL_BUILDING;
+                        g_terrain1[i - 1] |= ROADSIDE_TALL_BUILDING;
                     }
-                    g_terrain1[i - 1] |= 0x10;
+                    g_terrain1[i - 1] |= ROADSIDE_WALL_SHADE;
                 }
             } else
-                g_terrain1[i] |= 0x80;
-            if (rnd(cnt * 40 + 6) == 0 && !(g_terrain0[i] & 0x10))
-                g_terrain0[i] |= 0x20;
-            if (rnd(cnt * 40 + 7) == 0 && !(g_terrain1[i] & 0x10))
-                g_terrain1[i] |= 0x20;
-            if (rnd(cnt * 40 + 3) == 0 && !(g_terrain0[i] & 0x10))
-                g_terrain0[i] |= 0x100;
-            if (rnd(cnt * 40 + 4) == 0 && !(g_terrain1[i] & 0x10))
-                g_terrain1[i] |= 0x100;
+                g_terrain1[i] |= ROADSIDE_SIDEWALK_INSET;
+            if (rnd(cnt * 40 + 6) == 0 && !(g_terrain0[i] & ROADSIDE_WALL_SHADE))
+                g_terrain0[i] |= ROADSIDE_TREE;
+            if (rnd(cnt * 40 + 7) == 0 && !(g_terrain1[i] & ROADSIDE_WALL_SHADE))
+                g_terrain1[i] |= ROADSIDE_TREE;
+            if (rnd(cnt * 40 + 3) == 0 && !(g_terrain0[i] & ROADSIDE_WALL_SHADE))
+                g_terrain0[i] |= ROADSIDE_BUSH;
+            if (rnd(cnt * 40 + 4) == 0 && !(g_terrain1[i] & ROADSIDE_WALL_SHADE))
+                g_terrain1[i] |= ROADSIDE_BUSH;
         }
     }
-    g_terrain3[rnd(45) + 10] |= 0x4000;
-    g_terrain3[rnd(45) + 10] |= 0x8000;
-    g_terrain3[rnd(55) + 65] |= 0x4000;
-    g_terrain3[rnd(55) + 65] |= 0x8000;
-    g_terrain3[rnd(55) + 115] |= 0x4000;
-    g_terrain3[rnd(55) + 115] |= 0x8000;
-    g_terrain1[44] |= 1;
-    g_terrain0[29] |= 0x1000;
-    g_terrain0[24] |= 0x800;
-    g_terrain0[108] |= 1;
-    g_terrain0[87] |= 0x1000;
-    g_terrain0[82] |= 0x800;
-    g_terrain0[156] |= 1;
-    g_terrain0[135] |= 0x1000;
-    g_terrain0[130] |= 0x800;
+    g_terrain3[rnd(45) + 10] |= TERRAIN_LEFT_GANTRY;
+    g_terrain3[rnd(45) + 10] |= TERRAIN_STRAIGHT_GANTRY;
+    g_terrain3[rnd(55) + 65] |= TERRAIN_LEFT_GANTRY;
+    g_terrain3[rnd(55) + 65] |= TERRAIN_STRAIGHT_GANTRY;
+    g_terrain3[rnd(55) + 115] |= TERRAIN_LEFT_GANTRY;
+    g_terrain3[rnd(55) + 115] |= TERRAIN_STRAIGHT_GANTRY;
+    g_terrain1[44] |= ROADSIDE_DESTINATION;
+    g_terrain0[29] |= ROADSIDE_BARRICADE;
+    g_terrain0[24] |= ROADSIDE_WARNING;
+    g_terrain0[108] |= ROADSIDE_DESTINATION;
+    g_terrain0[87] |= ROADSIDE_BARRICADE;
+    g_terrain0[82] |= ROADSIDE_WARNING;
+    g_terrain0[156] |= ROADSIDE_DESTINATION;
+    g_terrain0[135] |= ROADSIDE_BARRICADE;
+    g_terrain0[130] |= ROADSIDE_WARNING;
     for (i = 0xb4; i < 0x460; i++) {
         g_terrain4[i] = 0;
         g_terrain2[i] = 0;
-        g_terrain3[i] = 0;
-        g_terrain0[i] = 0;
-        g_terrain1[i] = 0;
+        g_terrain3[i] = TERRAIN_NONE;
+        g_terrain0[i] = ROADSIDE_NONE;
+        g_terrain1[i] = ROADSIDE_NONE;
         if ((i + 1) % (g_hasSlowCpu * 4 + 4) == 0)
-            g_terrain3[i] |= 8;
+            g_terrain3[i] |= TERRAIN_CENTER_LINE;
         if (i % (cnt * 4 + 4) == 0) {
-            g_terrain0[i] |= 1;
-            g_terrain1[i] |= 1;
+            g_terrain0[i] |= ROADSIDE_POST;
+            g_terrain1[i] |= ROADSIDE_POST;
         }
         if ((i + 2) % (cnt * 8 + 8) == 0)
-            g_terrain3[i] |= 2;
+            g_terrain3[i] |= TERRAIN_POLE;
         if (rnd(cnt * 200 + 7) == 0)
-            g_terrain0[i] |= 0x20;
+            g_terrain0[i] |= ROADSIDE_TREE;
         if (rnd(cnt * 200 + 9) == 0)
-            g_terrain1[i] |= 0x20;
+            g_terrain1[i] |= ROADSIDE_TREE;
         if (cnt == 0) {
             if (rnd(35) == 0) {
-                g_terrain0[i] |= 0x40;
-                g_terrain0[i - 1] |= 0x40;
-                g_terrain0[i - 2] |= 0x40;
-                g_terrain0[i] &= ~0x20;
-                g_terrain0[i - 1] &= ~0x20;
-                g_terrain0[i - 2] &= ~0x20;
+                g_terrain0[i] |= ROADSIDE_TREE_2;
+                g_terrain0[i - 1] |= ROADSIDE_TREE_2;
+                g_terrain0[i - 2] |= ROADSIDE_TREE_2;
+                g_terrain0[i] &= ~ROADSIDE_TREE;
+                g_terrain0[i - 1] &= ~ROADSIDE_TREE;
+                g_terrain0[i - 2] &= ~ROADSIDE_TREE;
             }
             if (rnd(25) == 0) {
-                g_terrain1[i] |= 0x40;
-                g_terrain1[i - 2] |= 0x40;
-                g_terrain1[i] &= ~0x20;
-                g_terrain1[i - 2] &= ~0x20;
+                g_terrain1[i] |= ROADSIDE_TREE_2;
+                g_terrain1[i - 2] |= ROADSIDE_TREE_2;
+                g_terrain1[i] &= ~ROADSIDE_TREE;
+                g_terrain1[i - 2] &= ~ROADSIDE_TREE;
             }
         } else {
             if (rnd(cnt * 100 + 35) == 0) {
-                g_terrain0[i] |= 0x40;
-                g_terrain0[i] &= ~0x20;
+                g_terrain0[i] |= ROADSIDE_TREE_2;
+                g_terrain0[i] &= ~ROADSIDE_TREE;
             }
             if (rnd(cnt * 100 + 25) == 0) {
-                g_terrain1[i] |= 0x40;
-                g_terrain1[i] &= ~0x20;
+                g_terrain1[i] |= ROADSIDE_TREE_2;
+                g_terrain1[i] &= ~ROADSIDE_TREE;
             }
         }
-        if (rnd(cnt * 100 + 7) == 0 && !(g_terrain0[i] & 0x80))
-            g_terrain0[i] |= 0x80;
-        if (rnd(cnt * 100 + 9) == 0 && !(g_terrain1[i] & 0x80))
-            g_terrain1[i] |= 0x80;
+        if (rnd(cnt * 100 + 7) == 0 && !(g_terrain0[i] & ROADSIDE_TREE_3))
+            g_terrain0[i] |= ROADSIDE_TREE_3;
+        if (rnd(cnt * 100 + 9) == 0 && !(g_terrain1[i] & ROADSIDE_TREE_3))
+            g_terrain1[i] |= ROADSIDE_TREE_3;
         if (rnd(cnt * 100 + 21) == 0)
-            g_terrain0[i] |= 4;
+            g_terrain0[i] |= ROADSIDE_SMALL_ROCK;
         if (rnd(cnt * 100 + 25) == 0)
-            g_terrain1[i] |= 4;
-        if (rnd(cnt * 100 + 23) == 0 && !(g_terrain0[i] & 4))
-            g_terrain0[i] |= 8;
-        if (rnd(cnt * 100 + 30) == 0 && !(g_terrain1[i] & 4))
-            g_terrain1[i] |= 8;
+            g_terrain1[i] |= ROADSIDE_SMALL_ROCK;
+        if (rnd(cnt * 100 + 23) == 0 && !(g_terrain0[i] & ROADSIDE_SMALL_ROCK))
+            g_terrain0[i] |= ROADSIDE_LARGE_ROCK;
+        if (rnd(cnt * 100 + 30) == 0 && !(g_terrain1[i] & ROADSIDE_SMALL_ROCK))
+            g_terrain1[i] |= ROADSIDE_LARGE_ROCK;
         if (rnd(cnt * 50 + 4) == 0) {
-            g_terrain0[i] |= 0x100;
+            g_terrain0[i] |= ROADSIDE_BUSH;
             if (rnd(2) == 0)
-                g_terrain0[i] |= 0x200;
+                g_terrain0[i] |= ROADSIDE_BUSH_OUTER;
         }
         if (rnd(cnt * 50 + 4) == 0) {
-            g_terrain1[i] |= 0x100;
+            g_terrain1[i] |= ROADSIDE_BUSH;
             if (rnd(2) == 0)
-                g_terrain1[i] |= 0x200;
+                g_terrain1[i] |= ROADSIDE_BUSH_OUTER;
         }
     }
-    g_terrain0[379] &= 0x1801;
-    g_terrain1[379] &= 0x1801;
-    g_terrain3[379] |= 0x1010;
-    g_terrain0[1019] &= 0x1801;
-    g_terrain1[1019] &= 0x1801;
-    g_terrain3[1019] |= 0x2010;
+    g_terrain0[379] &= ROADSIDE_SIGN_KEEP;
+    g_terrain1[379] &= ROADSIDE_SIGN_KEEP;
+    g_terrain3[379] |= (TERRAIN_CITY_GANTRY | TERRAIN_FINISH_STRIPE);
+    g_terrain0[1019] &= ROADSIDE_SIGN_KEEP;
+    g_terrain1[1019] &= ROADSIDE_SIGN_KEEP;
+    g_terrain3[1019] |= (TERRAIN_SCENE_GANTRY | TERRAIN_FINISH_STRIPE);
     {
         i = rnd(140) + 220;
-        j = (g_terrain1[i] & 2) ? i - 1 : i;
-        g_terrain0[j] &= 0x1801;
-        g_terrain1[j] &= 0x1801;
-        g_terrain3[j] |= 0x8000;
+        j = (g_terrain1[i] & ROADSIDE_GANTRY_PREV) ? i - 1 : i;
+        g_terrain0[j] &= ROADSIDE_SIGN_KEEP;
+        g_terrain1[j] &= ROADSIDE_SIGN_KEEP;
+        g_terrain3[j] |= TERRAIN_STRAIGHT_GANTRY;
         i = rnd(600) + 390;
-        j = (g_terrain1[i] & 2) ? i - 1 : i;
-        g_terrain0[j] &= 0x1801;
-        g_terrain1[j] &= 0x1801;
-        g_terrain3[j] |= 0x8000;
+        j = (g_terrain1[i] & ROADSIDE_GANTRY_PREV) ? i - 1 : i;
+        g_terrain0[j] &= ROADSIDE_SIGN_KEEP;
+        g_terrain1[j] &= ROADSIDE_SIGN_KEEP;
+        g_terrain3[j] |= TERRAIN_STRAIGHT_GANTRY;
     }
     i = rnd(600) + 390;
-    j = (g_terrain1[i] & 2) ? i - 1 : i;
-    g_terrain0[j] &= 0x1801;
-    g_terrain1[j] &= 0x1801;
-    g_terrain3[j] |= 0x4000;
+    j = (g_terrain1[i] & ROADSIDE_GANTRY_PREV) ? i - 1 : i;
+    g_terrain0[j] &= ROADSIDE_SIGN_KEEP;
+    g_terrain1[j] &= ROADSIDE_SIGN_KEEP;
+    g_terrain3[j] |= TERRAIN_LEFT_GANTRY;
     i = 220;
     do {
         for (j = 0; j < 17; j++)
@@ -601,7 +602,7 @@ void rd_generate(void)
             g_terrain4[i++] = -g_bumpProfile[j];
         i += 30;
     } while (i + 90 < DRAG_FINISH_INDEX);
-    g_terrain3[385] |= 0x100;
+    g_terrain3[385] |= TERRAIN_SPEED_SIGN;
     rd_build_layout(100);
 }
 
@@ -724,10 +725,14 @@ void rd_reset(void)
 
 void rd_project_ahead(void)
 {
-    int *p5l, k7, bits, *p11, rowz, flag8, *p2, *p3, d1, d2, *p42, *p6;
+    int *p5l, k7;
+    enum TerrainFlags widthBits;
+    int *p11, rowz;
+    BOOL needTops;
+    int *p2, *p3, d1, d2, *p42, *p6;
 
-    flag8 = (*g_hereFlagsPtr & 1) || (*g_hereFlagsPtr & 0xf000);
-    bits = *g_hereFlagsPtr++ & 0xe0;
+    needTops = (*g_hereFlagsPtr & TERRAIN_TOWN) || (*g_hereFlagsPtr & TERRAIN_GANTRY_MASK);
+    widthBits = *g_hereFlagsPtr++ & TERRAIN_WIDTH_MASK;
     p11 = g_rightXProjectionTable;
     p2 = g_roadLXArray;
     p3 = g_roadYProjectionArray;
@@ -738,11 +743,11 @@ void rd_project_ahead(void)
     d1 = g_trackViewMotion.roadHeight - *g_heightRoadPtr++;
     d2 = g_trackViewMotion.curveX - *g_hereCurvePtr++;
     *p3++ = rd_proj_y(rowz, ROAD_SURFACE_Y, d1);
-    if (bits) {
-        if (bits & 0x80) {
+    if (widthBits) {
+        if (widthBits & TERRAIN_NARROW) {
             *p11++ = rd_proj_x(rowz, 0xaf0, d2);
             *p2++ = rd_proj_x(rowz, 2000, d2);
-        } else if (bits & 0x20) {
+        } else if (widthBits & TERRAIN_LEFT_CLOSED) {
             *p11++ = rd_proj_x(rowz, 0xce4, d2);
             *p2++ = rd_proj_x(rowz, 2000, d2);
         } else {
@@ -755,27 +760,27 @@ void rd_project_ahead(void)
     }
     *p5l++ = rd_proj_x(rowz, 0xe74, d2);
     *p42++ = rd_proj_x(rowz, 0x44c, d2);
-    if (flag8)
+    if (needTops)
         *p6++ = rd_proj_y(rowz, 0x76c, d1);
     else
         p6++;
     rowz = 12 - g_trackViewMotion.roadFraction;
     k7 = 14;
     do {
-        flag8 = (*g_hereFlagsPtr & 1) || (*g_hereFlagsPtr & 0xf000);
-        bits = *g_hereFlagsPtr & 0xe0;
+        needTops = (*g_hereFlagsPtr & TERRAIN_TOWN) || (*g_hereFlagsPtr & TERRAIN_GANTRY_MASK);
+        widthBits = *g_hereFlagsPtr & TERRAIN_WIDTH_MASK;
         g_hereFlagsPtr++;
         d1 = g_trackViewMotion.roadHeight - *g_heightRoadPtr;
         g_heightRoadPtr++;
         d2 = g_trackViewMotion.curveX - *g_hereCurvePtr;
         g_hereCurvePtr++;
-        if (bits) {
-            if (bits & 0x80) {
+        if (widthBits) {
+            if (widthBits & TERRAIN_NARROW) {
                 *p11 = rd_proj_x(rowz, 0xaf0, d2);
                 p11++;
                 *p2 = rd_proj_x(rowz, 2000, d2);
                 p2++;
-            } else if (bits & 0x20) {
+            } else if (widthBits & TERRAIN_LEFT_CLOSED) {
                 *p11 = rd_proj_x(rowz, 0xce4, d2);
                 p11++;
                 *p2 = rd_proj_x(rowz, 2000, d2);
@@ -798,7 +803,7 @@ void rd_project_ahead(void)
         p5l++;
         *p42 = rd_proj_x(rowz, 0x44c, d2);
         p42++;
-        if (flag8)
+        if (needTops)
             *p6 = rd_proj_y(rowz, 0x76c, d1);
         p6++;
         rowz += 8;
@@ -810,10 +815,14 @@ void rd_project_ahead(void)
 
 void rd_project_behind(void)
 {
-    int *p5l, k7, bits, *p11, rowz, flag8, *p2, *p3, d1, d2, *p42, *p6;
+    int *p5l, k7;
+    enum TerrainFlags widthBits;
+    int *p11, rowz;
+    BOOL needTops;
+    int *p2, *p3, d1, d2, *p42, *p6;
 
-    flag8 = (*g_hereFlagsPtr & 1) || (*g_hereFlagsPtr & 0xf000);
-    bits = *g_hereFlagsPtr-- & 0xe0;
+    needTops = (*g_hereFlagsPtr & TERRAIN_TOWN) || (*g_hereFlagsPtr & TERRAIN_GANTRY_MASK);
+    widthBits = *g_hereFlagsPtr-- & TERRAIN_WIDTH_MASK;
     p11 = g_mirGeom.rightX;
     p2 = g_lhsRdMirrorX;
     p3 = g_mirYProj;
@@ -824,11 +833,11 @@ void rd_project_behind(void)
     d1 = *g_heightRoadPtr-- - g_trackViewMotion.roadHeight;
     d2 = *g_hereCurvePtr-- - g_trackViewMotion.curveX;
     *p3++ = rd_mirror_y(rowz, ROAD_SURFACE_Y, d1);
-    if (bits) {
-        if (bits & 0x80) {
+    if (widthBits) {
+        if (widthBits & TERRAIN_NARROW) {
             *p11++ = rd_mirror_x(rowz, 0xaf0, d2);
             *p2++ = rd_mirror_x(rowz, 2000, d2);
-        } else if (bits & 0x20) {
+        } else if (widthBits & TERRAIN_LEFT_CLOSED) {
             *p11++ = rd_mirror_x(rowz, 0xce4, d2);
             *p2++ = rd_mirror_x(rowz, 2000, d2);
         } else {
@@ -841,27 +850,27 @@ void rd_project_behind(void)
     }
     *p5l++ = rd_mirror_x(rowz, 0xe74, d2);
     *p42++ = rd_mirror_x(rowz, 0x44c, d2);
-    if (flag8)
+    if (needTops)
         *p6++ = rd_mirror_y(rowz, 0x76c, d1);
     else
         p6++;
     rowz = g_trackViewMotion.roadFraction + 8;
     k7 = 7;
     do {
-        flag8 = (*g_hereFlagsPtr & 1) || (*g_hereFlagsPtr & 0xf000);
-        bits = *g_hereFlagsPtr & 0xe0;
+        needTops = (*g_hereFlagsPtr & TERRAIN_TOWN) || (*g_hereFlagsPtr & TERRAIN_GANTRY_MASK);
+        widthBits = *g_hereFlagsPtr & TERRAIN_WIDTH_MASK;
         g_hereFlagsPtr--;
         d1 = *g_heightRoadPtr - g_trackViewMotion.roadHeight;
         g_heightRoadPtr--;
         d2 = *g_hereCurvePtr - g_trackViewMotion.curveX;
         g_hereCurvePtr--;
-        if (bits) {
-            if (bits & 0x80) {
+        if (widthBits) {
+            if (widthBits & TERRAIN_NARROW) {
                 *p11 = rd_mirror_x(rowz, 0xaf0, d2);
                 p11++;
                 *p2 = rd_mirror_x(rowz, 2000, d2);
                 p2++;
-            } else if (bits & 0x20) {
+            } else if (widthBits & TERRAIN_LEFT_CLOSED) {
                 *p11 = rd_mirror_x(rowz, 0xce4, d2);
                 p11++;
                 *p2 = rd_mirror_x(rowz, 2000, d2);
@@ -884,7 +893,7 @@ void rd_project_behind(void)
         p5l++;
         *p42 = rd_mirror_x(rowz, 0x44c, d2);
         p42++;
-        if (flag8)
+        if (needTops)
             *p6 = rd_mirror_y(rowz, 0x76c, d1);
         p6++;
         rowz += 8;
@@ -911,17 +920,18 @@ void rd_draw_frame(void)
 
 void rd_advance(void)
 {
-    int bits7, goal6, diff;
+    enum TerrainFlags narrow;
+    int goal6, diff;
 
     g_trackViewMotion.roadIndex += g_trackViewMotion.roadFraction >> 3;
     rd_seek(g_trackViewMotion.roadIndex);
     g_trackViewMotion.roadFraction &= 7;
-    bits7 = *g_hereFlagsPtr & 0xe0;
-    if (bits7) {
-        if (bits7 & 0x80) {
+    narrow = *g_hereFlagsPtr & TERRAIN_WIDTH_MASK;
+    if (narrow) {
+        if (narrow & TERRAIN_NARROW) {
             g_leftEdgeX = 2000;
             g_edgeXR = 0xaf0;
-        } else if (bits7 & 0x20) {
+        } else if (narrow & TERRAIN_LEFT_CLOSED) {
             g_leftEdgeX = 2000;
             g_edgeXR = 0xce4;
         } else {
@@ -932,12 +942,12 @@ void rd_advance(void)
         g_leftEdgeX = 1500;
         g_edgeXR = 0xce4;
     }
-    bits7 = g_hereFlagsPtr[4] & 0xe0;
-    if (bits7) {
-        if (bits7 & 0x80) {
+    narrow = g_hereFlagsPtr[4] & TERRAIN_WIDTH_MASK;
+    if (narrow) {
+        if (narrow & TERRAIN_NARROW) {
             g_edgesRoad.leftEdge = 2000;
             g_trackViewMotion.rightEdge = 0xaf0;
-        } else if (bits7 & 0x20) {
+        } else if (narrow & TERRAIN_LEFT_CLOSED) {
             g_edgesRoad.leftEdge = 2000;
             g_trackViewMotion.rightEdge = 0xce4;
         } else {
@@ -978,17 +988,17 @@ int rd_check_crash(void)
     if (g_leftEdgeX - 0x104 < g_trackViewMotion.lateralX - 0x1e &&
         g_trackViewMotion.lateralX + 0x46 < g_edgeXR + 0x104) {
         if (g_leftEdgeX > g_trackViewMotion.lateralX - 0x1e) {
-            if ((g_terrain0[g_trackViewMotion.roadIndex] & 0x1000) ||
-                (g_terrain0[g_trackViewMotion.roadIndex - 1] & 0x1000))
+            if ((g_terrain0[g_trackViewMotion.roadIndex] & ROADSIDE_BARRICADE) ||
+                (g_terrain0[g_trackViewMotion.roadIndex - 1] & ROADSIDE_BARRICADE))
                 return 1;
-            if (g_terrain3[g_trackViewMotion.roadIndex + 1] & 0xf000)
+            if (g_terrain3[g_trackViewMotion.roadIndex + 1] & TERRAIN_GANTRY_MASK)
                 return 1;
             g_onShoulder = 1;
         } else if (g_trackViewMotion.lateralX + 0x46 > g_edgeXR) {
-            if ((g_terrain1[g_trackViewMotion.roadIndex] & 0x1000) ||
-                (g_terrain1[g_trackViewMotion.roadIndex - 1] & 0x1000))
+            if ((g_terrain1[g_trackViewMotion.roadIndex] & ROADSIDE_BARRICADE) ||
+                (g_terrain1[g_trackViewMotion.roadIndex - 1] & ROADSIDE_BARRICADE))
                 return 1;
-            if (g_terrain3[g_trackViewMotion.roadIndex + 1] & 0xf002)
+            if (g_terrain3[g_trackViewMotion.roadIndex + 1] & (TERRAIN_GANTRY_MASK | TERRAIN_POLE))
                 return 1;
             g_onShoulder = 1;
         }
@@ -1041,11 +1051,11 @@ void rd_update(void)
         g_trackViewMotion.roadFraction += g_trackViewMotion.distanceStep;
         if (g_trackViewMotion.roadFraction >= 8)
             rd_advance();
-        if ((g_terrain0[g_trackViewMotion.roadIndex + 7] & 1) || g_turnLeft) {
+        if ((g_terrain0[g_trackViewMotion.roadIndex + 7] & ROADSIDE_DESTINATION) || g_turnLeft) {
             g_turnLeft = 1;
             rd_turn(1);
         }
-        if ((g_terrain1[g_trackViewMotion.roadIndex + 6] & 1) || g_turnRight) {
+        if ((g_terrain1[g_trackViewMotion.roadIndex + 6] & ROADSIDE_DESTINATION) || g_turnRight) {
             rd_turn(-1);
             g_turnRight = 1;
         }

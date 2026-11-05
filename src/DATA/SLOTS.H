@@ -1,4 +1,7 @@
-/* SLOTS.H - declarations of what SLOTS.C defines. */
+/**
+ * @file SLOTS.H
+ * @brief Picture slots and generated track storage.
+ */
 
 #ifndef SLOTS_H
 #define SLOTS_H
@@ -25,9 +28,12 @@ struct Slot {
 };
 
 extern struct Slot far g_slot[];
+/** Left roadside words, generated for each track; @ref RoadsideFlags. */
 extern unsigned far g_terrain0[];
+/** Right roadside words, generated for each track; @ref RoadsideFlags. */
 extern unsigned far g_terrain1[];
 extern int far g_terrain2[];
+/** Shared road words, generated for each track; @ref TerrainFlags. */
 extern unsigned far g_terrain3[];
 extern int far g_terrain4[];
 
