@@ -596,3 +596,33 @@ not WORD inter-object alignment. The five HOTSPOT arrays are separate COMDEF
 allocations. All are category (c) for this audit; their exact historical grouping
 and meanings remain unproved. The per-candidate ledger distinguishes storage
 necessity from recovered variable identity.
+
+
+## POPUP tail and VIDDET strings follow-up (prov-data)
+
+Neither data marker is settled; both remain verbatim. The complete evidence
+and repeatable trial transformations are in
+[plans/investigations/prov-data.md](../plans/investigations/prov-data.md).
+
+POPUP's DS:6C40 word is a near pointer into the initialized three-entry Win
+table at DS:04C4, not the Win value itself. All seven original direct accesses
+name 6C40; none names the four bytes at 6C42..6C45. No indexed access or
+escaped address establishes a larger BSS object. Whole-module trials using
+`struct Win *g_popupLayout[3]` with every live use changed to `[0]`, or a
+six-byte record with a live pointer and two spare words, both preserve the
+code, ordered target-resolved fixups, six-byte BSS and IDENTICAL packed EXE.
+Deleting only g_unused24 instead shrinks BSS to two bytes and changes 1426
+packed bytes. Thus explicit storage is required, but the bytes cannot decide
+between a separate unused object and an unused aggregate tail. Do not replace
+the marker with an unsupported array or record claim.
+
+MAIN's actual setup menu owns complete long CGA/Tandy rows and the six-pointer
+menu table. Its ROM detector separately passes its own "Tandy" and "TANDY"
+literals to ms_find. VIDDET's short "Tandy", "Tandy", "CGA" strings have no
+surviving code references or data pointers; their second string also differs
+in case from the second ROM signature. The current menu and ROM search do
+not explain their historical consumer. Fresh full-link trials confirm that
+EVEN, an explicit zero DB byte, and a separate WORD-aligned string-only object
+immediately after the five-byte VIDDET contribution all give IDENTICAL packed
+EXEs. Deleting EVEN alone changes sixteen packed bytes; deleting it and the
+strings changes 9623. The existing alignment choice remains provisional.

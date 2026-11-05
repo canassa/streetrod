@@ -417,6 +417,16 @@ MSGONLY after SAVEGAME and VDSTRS after VIDDET each produced IDENTICAL packed
 EXEs. Keep those as alternative findings, not established original file splits.
 
 
+POPUP follow-up (prov-data, 2026-11-05): a six-byte BSS region with only its
+first near-pointer word accessed matches as a scalar plus four spare bytes,
+a three-pointer array using only [0], or a record with two unused tail words.
+Whole-module bytes/fixups and the packed EXE are identical for both aggregate
+alternatives. Inspect SEGDEF lengths as well as LEDATA: deleting the spare
+BSS changes no emitted segment bytes but breaks the link. Unused tail extent
+requires evidence from indexing, address escape or another reader; a matching
+aggregate is not proof. See plans/investigations/prov-data.md.
+
+
 ### Unsigned terrain flag top bits (2026-11-05)
 
 MSC 5.1 rejects an enum member equal to `0x8000` with C2141 (out of range).

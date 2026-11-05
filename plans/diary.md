@@ -3183,3 +3183,18 @@ constants were renamed.
   MAIN.H defines would duplicate the declarations after this merge.
 - Explicit member references expose stale names during documentation merges;
   the Hotspot link-box comment now uses the current hitCode member name.
+
+## 2026-11-05 20:30 CET: Investigate POPUP spare storage and VIDDET alignment
+
+### What I did
+
+- Investigated both data PROVISIONAL markers, reusing the earlier padding and data-only-split findings. Traced every POPUP pointer use, its initialized Win table and separate saved bitmap, popup callers, both VIDDET procedures, MAIN's actual video-menu rows and ROM-signature literals, and ms_find. Left DASH.C and NEEDLE.ASM unchanged.
+- Wrote plans/investigations/prov-data.md with the observed addresses, consumer contexts, whole-module transformations, segment sizes and packed-link matrix. Compiled ten module variants using real MSC 5.1/MASM 5.1 and linked seven alternatives in private directories against freshly built objects; production sources, MAKEFILE and SR.LNK were never edited.
+- Confirmed that a three-pointer array using only its first element and a record with a live pointer plus two spare words each preserve POPUP's code, data, target-resolved fixups and IDENTICAL packed EXE. Deleting the spare BSS alone changes 1426 packed bytes. Confirmed VIDDET EVEN, explicit DB 0 and a separate string-only object all give IDENTICAL packed EXEs; deleting EVEN alone changes sixteen bytes, deleting it and the strings changes 9623.
+- Retained both complete markers because the alternatives remain indistinguishable. Updated docs/RECONSTRUCTION.md and the MSC recipe book with the evidence and its limits. No identifiers, types or constants changed.
+- Gates passed: headers --check, format --check (157 files), docs (zero diagnostics), check --all (572/572), rm -rf work/layout followed by sr build (96/96 object gates, 748/748 exact near calls, Packed EXE IDENTICAL), fresh dgroup check/order, and unittest discovery (106 tests, OK). The unpacked linkcheck still reports the already-documented unpacker header/relocation ordering and fourteen image-tail bytes; the packed file is identical.
+
+### What I learned
+
+- The three-entry initialized popup layout table does not establish a three-entry pointer array in BSS. Every original direct pointer access names DS:6C40; none names the four following bytes. Grouping those bytes can match perfectly without proving the grouping. Inspect BSS SEGDEF lengths separately from emitted segment data; removal can leave all module code/data/fixups unchanged and still break the link.
+- MAIN's menu uses complete long rows, and its ROM search owns separate Tandy/TANDY literals. Neither consumes VIDDET's Tandy/Tandy/CGA strings. Byte identity cannot distinguish EVEN, an unused byte variable or LINK alignment before a data-only object without a surviving reference/fixup. Full findings and future evidence needed are recorded in plans/investigations/prov-data.md.
